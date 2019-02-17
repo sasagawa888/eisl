@@ -1,6 +1,20 @@
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with ISLisp standard.EISL was written by me(Kenichi Sasagawa)
 https://qiita.com/sym_num/items/793adfe118514668e5b0
 
+
+Installation
+On Linux  type "make" on terminal.
+
+On Windows rename winmakefile -> makefile. and type "make" on terminal.
+Require MINGW gcc
+
+We confirmed the operation in the following environment.
+Ubuntu 16.04 GCC 5.4
+Raspbery Pi3
+Windows10 MINGW GCC 5,3
+
+
+Invoke
 eisl (Windows)
 ./eisl (Linux)
 

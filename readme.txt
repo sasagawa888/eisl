@@ -11,7 +11,7 @@ Require MINGW gcc
 We confirmed the operation in the following environment.
 Ubuntu 16.04 GCC 5.4
 Raspbery Pi3
-Windows10 MINGW GCC 5,3
+Windows10 MINGW GCC 5.3
 
 
 Invoke
@@ -24,6 +24,7 @@ Linux version, REPL is editable. If you not use editable REPL, invoke with -r op
 
 Goal
 I hope that Lisp will become more popular. I hope many people enjoy Lisp. EISL aims at easy handling.
+
 Compiler
 EISL has compiler. it generate GCC code and generate object code.
 

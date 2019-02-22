@@ -20,8 +20,8 @@ error.o : error.c eisl.h
 	gcc -O3  -Wno-pointer-to-int-cast -Wall -c error.c -lm
 extension.o : extension.c eisl.h
 	gcc -O3  -Wno-pointer-to-int-cast -Wall -c extension.c -lm
-editor.o : -O4 Wno-pointer-to-int-cast -Wall -c editor.c -lm
-	gcc -O3 -Wno-pointer-to-int-cast -Wall -c editor.c -lm
+edit.o : edit.c eisl.h
+	gcc -O3 -Wno-pointer-to-int-cast -Wall -c edit.c -lm
 .PHONY: clean
 clean: -lm
 	rm -f eisl *.o

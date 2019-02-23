@@ -20,8 +20,3 @@
 
 (defun test1 (n)
   (pwm-write 18 n))
-
-
-
-
-

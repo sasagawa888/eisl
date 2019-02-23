@@ -35,7 +35,7 @@
   (convert (elt memory pointer) <character>))
 
 
- 
+
 (defun repl ()
    (for ((input (read-line)(read-line)))
        ((string= input "end") 'end)
@@ -62,7 +62,7 @@
       (for ((i 0 (+ i 1)))
            ((>= i len))
            (set-elt (elt str i) code i)))))
-      
+
 
 (defun operate-BF-code ()
   (setq pc 0)
@@ -81,7 +81,7 @@
              ((and (char= op #\])(not (char= (ref-mem) #\null)))
               (jump-backward)(inc pc))
              (t (inc pc)))))
-            
+
 
 
 (defun jump-forward ()
@@ -103,6 +103,3 @@
              ((char= op #\])
               (inc nest)(dec pc))
              (t (dec pc)))))
-          
-
-

@@ -37,7 +37,38 @@ or (load "compiler.lsp")
 
 (load "foo.o")
 
+example
+./eisl -c compiler.lsp
+Easy-ISLisp Ver0.91
+> (compile-file "tarai.lsp")
+type inference
+initialize
+pass1
+pass2
+compiling PACK
+compiling TARAI
+compiling FIB
+compiling FIB*
+compiling ACK
+compiling GFIB
+compiling TAK
+compiling LISTN
+compiling TAKL
+compiling CTAK
+compiling CTAK-AUX
 
+finalize
+invoke GCC
+T
+> (load "tarai.o")
+T
+> (time (tarai 12 6 0))
+Elapsed Time(second)=0.024106
+<undef>
+> (time (ack 4 1))
+Elapsed Time(second)=3.728262
+<undef>
+>
 
 Builtin editor
 EISL(Linux version) has builtin editor.

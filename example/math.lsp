@@ -70,9 +70,9 @@
                     ((and (< i r)(> j s)) (set-aref1 (aref1 x i j) y i (- j 1)))
                     ((and (> i r)(> j s)) (set-aref1 (aref1 x i j) y (- i 1) (- j 1)))
                     ((and (= i r)(= j s)) nil))))))
-    
+
 (defun det (x)
-  (unless (square-matrix-p x) 
+  (unless (square-matrix-p x)
     (error "det require square matrix" x))
   (let ((m (elt (array-dimensions x) 0)))
     (det1 x m)))
@@ -90,7 +90,7 @@
                          (aref1 x i 1)
                          (det1 (sub-matrix x i 1) (- m 1)))
                       y)))))
-          
+
 (defun sign (x)
   (expt -1 x))
 
@@ -106,7 +106,7 @@
 
 ;;逆行列　クラメルの公式。効率はよくないが5次元程度なら問題なし。
 (defun inv (x)
-  (unless (square-matrix-p x) 
+  (unless (square-matrix-p x)
     (error "inv require square matrix" x))
   (let ((m (elt (array-dimensions x) 0))
         (n (elt (array-dimensions x) 1)))
@@ -145,14 +145,14 @@
   (if (null ls)
       0
       (+ (funcall f (car ls)) (sum f (cdr ls)))))
-    
+
 ;;lsの各要素について関数fを適用してその積を求める。
 (defun product (f ls)
   (if (null ls)
       1
       (* (funcall f (car ls)) (product f (cdr ls)))))
-    
-    
+
+
 ;;リストlsの要素すべてについて関数ｆが成り立つか？
 (defun for-all (f ls)
   (cond ((null ls) t)
@@ -170,18 +170,18 @@
   (quotient x (log x)))
 
 
-    
+
 ;;; ;;ｍとｎが互いに素であればt そうでなければnil
 (defun coprimep (m n)
   (= (gcd  m n) 1))
-    
+
 ;;ｍがｎで割り切れるかどうか。割り切れればt そうでなければnil
 ;; n|m 相当
 (defun divisiblep (m n)
   (and (integerp m)
        (integerp n)
        (= (mod m n) 0)))
-    
+
 ;;ｍとｎが法ａで合同かどうか。合同ならt そうでなければnil
 (defun eqmodp (m n a)
   (= (mod m a) (mod n a)))
@@ -211,7 +211,7 @@
                        ((primep x) (iter (+ x 1) (+ y 1)))
                        (t (iter (+ x 1) y)))))
     (iter 2 0)))
-    
+
 ;;約数の個数を返す。素因数分解をして計算している。τ(n)
 (defun tau (n)
   (labels ((iter (ls m)
@@ -224,7 +224,7 @@
 
 ;;リュービルのλ関数の下請け
 (defun expt-1 (n)
-  (if (oddp n) 
+  (if (oddp n)
       -1
       1))
 
@@ -266,11 +266,11 @@
   (= (sigma n) (* 2 n)))
 
 ;;メルセンヌ素数を計算して返す。
-;;2^p -1 
+;;2^p -1
 (defun mersenne (p)
   (- (expt 2 p) 1))
 
-;;ダブル完全数 
+;;ダブル完全数
 (defun double-perfect-number-p (n)
   (= (sigma n) (* 3 n)))
 
@@ -345,7 +345,7 @@
 ;;関数本体
 ;;底を2～n-1(ただし32767以下)まで乱数で発生させ10回試行する。
 ;;素数ならt 合成数ならnil
-;;擬素数である確率は 0.25^10 およそ0.000095% 
+;;擬素数である確率は 0.25^10 およそ0.000095%
 (defun rabin-miller-p (n)
   (labels ((iter (m)
                  (cond ((< m 1) nil)
@@ -387,14 +387,14 @@
           ((< n 1) (error "divisors require natural number" n))
           ((= n 1) '(1))
           (t (cons n (iter 1 (ceiling (quotient n 2))'()))))))
-    
-    
+
+
 ;;nを素因数分解する。指数形式ではなく単純に素数を並べたリストで返す。
 ;;n<0の場合には#f、n=0,n=1の場合には'(0),'(1)を返す。
 (defun prime-factors (n)
   (labels ((iter (p x ls z)
                  (cond ((> p z) (cons x ls))
-                       ((= (mod x p) 0) 
+                       ((= (mod x p) 0)
                         (let ((n1 (div x p)))
                           (iter 2 n1 (cons p ls) (isqrt n1))))
                        ((= p 2) (iter 3 x ls z))
@@ -402,7 +402,7 @@
     (cond ((< n 0) nil)
           ((< n 2) (list n))
           (t (iter 2 n '() (isqrt n))))))
-    
+
 ;;nを素因数分解して標準形式にして返す。p^a + q^b + r^c ((p a)(q b)(r c))
 (defun factorize (n)
   (labels ((iter (ls p n mult)
@@ -411,21 +411,21 @@
                        (t (iter (cdr ls) (car ls) 1 (cons (list p n) mult))))))
     (let ((ls (prime-factors n)))
       (iter (cdr ls) (car ls) 1 '()))))
-    
+
 ;;オイラーのφ関数
 ;;ｎ以下の数でｎと互いに素であるものの個数を返す。
 ;;素因数分解により計算している。 φ(n=p^a q^b r^c) = n(1-1/p)(1-1/q)(1-1/r)
 (defun phi (n)
   (if (= n 1)
       1
-      (convert 
-        (* n (product 
+      (convert
+        (* n (product
                (lambda (ls) (- 1 (quotient 1 (elt ls 0))))
                (factorize n)))
         <integer>)))
-    
+
 ;;原始根の判定
-;;ｎが素数ｐを法として原始根であるなら#t 
+;;ｎが素数ｐを法として原始根であるなら#t
 ;;素数なら必ず存在するが条件がそろっていなければ nilが返る。
 (defun primitive-root-p (n p)
   (labels ((iter (i)
@@ -434,7 +434,7 @@
                        (t (iter (+ i 1))))))
     (and (iter 1)
          (= (expmod n (- p 1) p) 1))))
-    
+
 ;;sicp
 ;;繰り返し二乗法によるmod計算。
 ;; a^n (mod m)を計算する。SICPより借用。
@@ -444,7 +444,7 @@
          (mod (square (expmod a (div n 2) m)) m))
         (t
           (mod (* a (expmod a (- n 1) m)) m))))
-    
+
 ;;素数ｐの最小の原始根を返す。
 ;;ｐの任意の原始根に成り立つ定理を試すのに一番小さな原始根を使うこととした。
 ;;計算が楽なので。
@@ -454,7 +454,7 @@
                        ((primitive-root-p n p) n)
                        (t (iter (+ n 1))))))
     (iter 2)))
-    
+
 ;;指数の計算
 ;;原始根ｒを底として素数ｐを法としたaに対する指数を求める
 ;;指数は必ず存在するが与えられた値が条件に合わなければnilが返る。
@@ -464,7 +464,7 @@
                        ((= (expmod r i p) a) i)
                        (t (iter (+ i 1))))))
     (iter 0)))
-    
+
 
 
 ;;高度合成数
@@ -488,38 +488,38 @@
         ((null (cdr ls)) nil)
         (t (cdr (cdr ls)))))
 
-    
+
 (defun arg1 (f)
   (elt f 1))
-    
+
 (defun arg2 (f)
   (elt f 2))
-    
+
 (defun arg3 (f)
   (elt f 3))
-    
+
 (defun op (f)
   (elt f 0))
-    
+
 (defun subst (old new  f)
   (cond ((null f) '())
         ((equal (car f) old) (cons new (subst old new (cdr f))))
         ((atom (car f)) (cons (car f) (subst old new (cdr f))))
         (t (cons (subst old new (car f))(subst old new (cdr f))))))
-    
-    
+
+
 (defun remove (x f)
   (cond ((null f) '())
         ((eq (car f) x) (remove x (cdr f)))
         (t (cons (car f) (remove x (cdr f))))))
-    
+
 ;;-----------------------------------------------------------------------
 ;;内挿表現から前置表現へ変換する。
 
 (defun opcode (op)
   (case op
     ((+) '+)((-) '-)((/) '/)((*) '*)((^) '^)
-    (t 
+    (t
       (if (subrp op)
           op
           (error "opecode else: " op)))))
@@ -573,7 +573,7 @@
         (t (inf2 fmla optr opln)))) ;原著修正
 
 
-    
+
 ;;前置表現から内挿表現へ変換する。
 ;;前置式は２項演算になっていなければならない。Lispの(* a b c)は変換できない仕様。
 (defun prefix->infix (fmla)
@@ -601,7 +601,7 @@
   (append (pret1 (arg1 f) wf)
           (list (op f))
           (pret1 (arg2 f) wf)))
-    
+
 
 ;;----------------------------------------------------------------------------------
 ;;数式の簡単化
@@ -609,11 +609,11 @@
 (defun /nestp (f)
   (and (listp f)
        (eq (op f) '/)))
-    
+
 (defun +nestp (f)
   (and (listp f)
        (eq (op f) '+)))
-    
+
 (defun *simp1 (f)
   (cond ((atom f) (list f))
         ((eq (op f) '*) (mapcan #'*simp1 (cdr f)))
@@ -626,7 +626,7 @@
                ((eq? (arg2 f) 0) 0) ;a*0=0
                ((eq (arg1 f) 1) (simps (arg2 f))) ;1*a=a
                ((eq (arg2 f) 1) (simps (arg1 f))) ;a*1=a
-               ((/nestp (arg2 f)) 
+               ((/nestp (arg2 f))
                 (list '/ (list '* (simps (arg1 f)) (simps (arg1 (arg2 f)))) (simps (arg2 (arg2 f)))))
                ;(* a (/ b c)) = (/ (* a b) c)
                ((not (lat (cdr f))) (cons '* (*simp1 f)))
@@ -641,13 +641,13 @@
                               (cdr (arg2 f))))))
         ((not (lat (cdr f))) (cons '* (*simp1 f)))
         (t (cons '* (mapcar #'simps (cdr f))))))
-    
+
 ;;リストの要素がすべてアトムであるかどうかを調べる述語関数 演習問題３
 (defun lat (ls)
   (cond ((null ls) t)
         ((atom (car ls)) (lat (cdr ls)))
         (t nil)))
-    
+
 (defun +simp (f)
   (cond ((eq (arg1 f) 0)
          (if (= (length f) 3)
@@ -658,21 +658,21 @@
         ((eq (arg1 f) (arg2 f))
          (list '* 2 (simps (arg1 f))))
         (t (cons '+ (mapcar #'simps (cdr f))))))
-    
+
 
 
 (defun -simp (f)
   (cond ((= (length f) 2)
          (cond ((+nestp (arg1 f))
                 (list '+ (list '* -1 (simps (arg1 (arg1 f))))
-                      (list '* -1 (simps (arg2 (arg1 f))))))         
+                      (list '* -1 (simps (arg2 (arg1 f))))))
                ;(- (+ a b)) = (+ (* -1 a) (* -1 b))
                (t (list '* -1 (simps (arg1 f)))))) ;(-a)=(* -1 a)
-        ((= (length f) 3) 
+        ((= (length f) 3)
          (cond ((eq (arg1 f) (arg2 f)) 0) ;(- a a) = 0
                (t (list '+ (simps (arg1 f)) (list '* -1 (simps (arg2 f)))))))))
 ; (- a b) = (+ a (* -1 b))
-    
+
 (defun /simp (f)
   (cond ((eq (arg1 f)(arg2 f)) 1)
         ((eq (arg1 f) 0) 0)
@@ -689,13 +689,13 @@
                (list '/ (simps (list '* (/ 1 (arg1 cdf))(arg1 f)))
                      (simps (cons (car cdf)(cddr cdf)))))))
         (t (list '/ (simps (arg1 f))(simps (arg2 f))))))
-    
-    
+
+
 (defun ^simp (f)
   (cond ((eq (arg2 f) 0) 1)
         ((eq (arg2 f) 1) (arg1 f))
         (t (list (op f) (simps (arg1 f)) (simps (arg2 f))))))
-    
+
 ;;原著へ追加 sin(* m/n pi) を数値化
 (defun sin-simp (f)
   (cond ((and (consp (arg1 f))(eq? (op (arg1 f)) '*)(eq (arg1 (arg1 f)) 'i))
@@ -725,7 +725,7 @@
                 (if (equal arg (arg1 f))
                     (list 'sin arg)
                     (cos-simp (list 'sin (simps (arg1 f)))))))))
-    
+
 ;;原著へ追加 cosの数値化
 (defun cos-simp (f)
   (cond ((and (number? (arg1 f))(= (arg1 f) 0)) 1)
@@ -753,7 +753,7 @@
                 (if (equal arg (arg1 f))
                     (list 'cos arg)
                     (cos-simp (list 'cos (simps (arg1 f)))))))))
-    
+
 ;;原著へ追加 atanの数値化
 (defun atan-simp (f)
   (cond ((and (numberp (arg1 f))(= (arg1 f) 1)) '(/ pi 4))
@@ -772,14 +772,14 @@
   (cond ((and (consp (arg1 f))(eq (op (arg1 f)) '*)(eq (arg1 (arg1 f)) 'i))
          (list '* 'i (list ('sin (arg2 (arg1 f))))))
         (t f)))
-    
+
 
 ;;原著へ追加
 (defun !simp (f)
   (if (>= (arg1 f) 0)
       (factorial (arg1 f))
       (- (factorial (abs (arg1 f))))))
-    
+
 ;;原著へ追加
 (defun factorial (n)
   (if (= n 0)
@@ -804,9 +804,9 @@
 (defun simpf (ff)
   (let ((fs (simps ff)))
     (if (equal ff fs) ff (simpf fs))))
-    
 
-    
+
+
 ;;交換則と数の処理
 (defun *comnum (f numb symb imag)
   (cond ((null f)
@@ -817,26 +817,26 @@
                  ((and (null n)(not(null i))) (cons i (reverse symb)))
                  (t (if (atomp i)
                            (cons i (cons n (reverse symb)))
-                           (cons 'i (cons (- n) (reverse symb))))))))  
+                           (cons 'i (cons (- n) (reverse symb))))))))
         ((numberp (car f))
          (*comnum (cdr f) (cons (car f) numb) symb imag))
         ((eq (car f) 'i)
-         (*comnum (cdr f) numb symb (cons (car f) imag))) 
+         (*comnum (cdr f) numb symb (cons (car f) imag)))
         (t (*comnum (cdr f) numb (cons (car f) symb) imag))))
-    
+
 (defun *numb (s)
   (if (null s)
       '()
       (eval (cons '* s))))
-    
+
 ;;原著へ追加 虚数
 (defun *imag (s)
   (if (null s)
       '()
       (case (mod (length s) 4)
         ((1) 'i)((2) -1)((3) '(* -1 i))((0) 1))))
-    
-    
+
+
 (defun +comnum (f numb symb)
   (cond ((null f)
          (cond ((null numb) (reverse symb))
@@ -846,7 +846,7 @@
         ((numberp (car f))
          (+comnum (cdr f) (cons (car f) numb) symb))
         (t (+comnum (cdr f) numb (cons (car f) symb)))))
-    
+
 (defun comnum (f)
   (cond ((null f) '())
         ((atom f) f)
@@ -866,15 +866,15 @@
                  ((lat ans) (cons '+ ans))
                  (t (cons '+ (mapcar #'comnum ans))))))
         (t (list (op f) (comnum (arg1 f)) (comnum (arg2 f))))))
-    
+
 
 (defun simpc (ff)
   (let ((fc (comnum ff)))
     (if (equal ff fc) ff (simpc fc))))
-    
+
 (defun simpl (ff)
   (simpc (simpf ff)))
-    
+
 
 ;;---------------------------------------------------------------------------
 ;;;微分
@@ -885,27 +885,27 @@
       (cons (cons (derive (car f) var)(cdr f))
             (mapcar (lambda (c)(cons (car f) c))
                     (*aux (cdr f) var)))))
-    
+
 ;; *
 (defun *deriv (fmla var)
   (cons '+ (mapcar (lambda (c) (cons '* c))
                    (*aux (cdr fmla) var))))
-    
+
 ;; /
 (defun /deriv (fmla var)
   (list '/ (list '- (list '* (derive (arg1 fmla) var) (arg2 fmla))
                  (list '* (arg1 fmla) (derive (arg2 fmla) var)))
         (list '^ (arg2 fmla) 2)))
-    
-    
+
+
 ;; +
 (defun +deriv (fmla var)
   (cons '+ (mapcar (lambda (c) (derive c var)) (cdr fmla))))
-    
+
 ;; -
 (defun -deriv (fmla var)
   (cons '- (mapcar (lambda (c) (derive c var)) (cdr fmla))))
-    
+
 
 (defun derive (fmla var)
   (cond ((atom fmla) (if (eq fmla var) 1 0))
@@ -926,7 +926,7 @@
                 ((sinh) (shderiv fmla var))
                 ((cosh) (chderiv fmla var))
                 (t "Undefined")))))
-    
+
 
 ;;sin
 (defun sderiv (f var)
@@ -934,19 +934,19 @@
 ;;cos
 (defun cderiv (f var)
   (list '* (derive (arg1 f) var) (list '* -1 (list 'sin (arg1 f)))))
-    
+
 ;;tan
 (defun tderiv (f var)
   (list '/ (derive (arg1 f) var) (list '^ (list 'cos (arg1 f)) 2)))
-    
+
 ;;asin
 (defun asderiv (f var)
   (list '/ (derive (arg1 f) var) '(sqrt (- 1 (^ x 2)))))
-    
+
 ;;acos
 (defun acderiv (f var)
   (list '* -1 (list '/ (derive (arg1 f) var) '(sqrt (- 1 (^ x 2))))))
-    
+
 ;;atan
 (defun atderiv (f var)
   (list '/ (derive (arg1 f) var) '(+ 1 (^ x 2))))
@@ -962,7 +962,7 @@
 ;;cosh
 (defun chderiv (f var)
   (list '* (derive (arg1 f) var) (list 'sinh (arg1 f))))
-    
+
 (defun ^deriv (fmla var)
   (cond ((and (depend fmla var)
               (free (arg2 fmla) var))
@@ -973,8 +973,8 @@
          (list '* (derive (arg2 fmla) var)
                (list '^ 'e (arg2 fmla))))
         (t (^daux fmla var))))
-    
-    
+
+
 (defun depend (fmla var)
   (cond ((atom fmla)
          (if (eq fmla var) t nil))
@@ -984,59 +984,59 @@
          (or (depend (arg1 fmla) var) (depend (arg2 fmla) var)))
         ((depend (cddr fmla) var) t)
         (t nil)))
-    
+
 (defun free (fmla var)
   (not (depend fmla var)))
-    
+
 ;;ｎ階微分 演習問題４
 (defun nderive (n fmla var)
   (if (= n 0)
       (simpl fmla)
       (nderive (- n 1) (simpl (derive fmla var)) var)))
-    
+
 ;;２階微分 演習問題５
 (defun dif2 (fmla var)
   (simpl (nderive 2 fmla var)))
-    
+
 ;;中置記法の数式を微分し中置記法で返す。笹川追加
 (defun diff (fmla var)
   (prefix->infix (dif (infix->prefix fmla) var)))
-    
-    
+
+
 ;;１階微分、６章で使用されているので
 (defun dif (fmla var)
   (simpl (derive fmla var)))
-    
+
 ;;-----------------------------------------------------------------
 ;;5章 積分
 ;正弦関数の積分
 (defun sint (f var)
   (list '* (list '/ -1 (derive (arg1 f) var))
         (list 'cos (arg1 f))))
-    
+
 ;;余弦関数
 (defun cint (f var)
   (list '* (list '/ 1 (derive (arg1 f) var))
         (list 'sin (arg1 f))))
-    
+
 ;;正接関数
 (defun tint (f var)
       (list '* (list '/ -1 (derive (arg1 f) var))
             (list 'log (list 'cos (arg1 f)))))
-    
+
 ;;cot
 (defun ctint (f var)
   (list '* (list '/ 1 (derive (arg1 f) var))
         (list 'log (list 'sin (arg1 f)))))
-    
-    
+
+
 ;;対数関数の積分
 (defun lint (f var)
   (list '* (list '/ 1 (derive (arg1 f) var))
         (list '- (list '* var
                        (list 'log (arg1 f)))
               var)))
-    
+
 ;;べき乗、指数関数の積分
 (defun ^int (f var)
   (cond ((and (mlin (arg1 f) var)(free (arg2 f) var))
@@ -1050,11 +1050,11 @@
         ((and (eq (arg1 f) 'e)(mlin (arg2 f) var))
          (list '* (list '/ 1 (derive (arg2 f) var))
                (list '^ 'e (arg2 f))))
-        
+
         (t (list '* (list '/ (derive (arg2 f) var))
                     (list '* (list '/ 1 (list 'log (arg1 f)))
                           (list '- (arg1 f)(arg2 f)))))))
-    
+
 ;;演習問題３
 ;; ffが変数の一次式かどうかを調べる述語関数
 (defun mlin (ff var)
@@ -1087,20 +1087,20 @@
     (if (equal fi f)
         f
         (simpl fi))))
-    
-    
+
+
 ;;数式のパターンマッチング
 (defun varp (x)
   (and (symbolp x)
        (char= (character x) #\?)))
-    
+
 (defun character (x)
   (elt (convert x <string>) 0))
-    
-    
+
+
 (defun memberp (a b)
   (if (member a b) t nil))
-    
+
 (defun matchf1 (p f var)
   (if (and (matchf2 (arg1 p) (arg1 f) var)
            (matchf2 (arg2 p) (arg2 f) var))
@@ -1110,22 +1110,21 @@
                (matchf2 (arg1 p) (arg2 f) var))
           t
           nil)))
-    
+
 (defun matchf2 (p f var)
   (cond ((and (null p)(null f)) t)
         ((or (null p)(null f)) t)
         ((equal p f) t)
         ((varp p) (setq ?c f) t)
-        ((and (eq f var)(symbolp p)) t) 
+        ((and (eq f var)(symbolp p)) t)
         ((and (consp p)(consp f)(eq (op p)(op f))(= (length f) 3))
          (matchf1 p f var))
         ((and (consp p)(consp f)(eq (op p)(op f))(= (length f) 2))
          (matchf2 (arg1 p)(arg1 f) var))
         (t nil)))
-    
+
 (defglobal ?c '())
-    
+
 (defun matchf (p f var)
   (setq ?c '())
   (matchf2 p f var))
-    

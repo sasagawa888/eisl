@@ -329,7 +329,7 @@ extern char special[40][12];
 extern char syntax[60][30];
 extern char builtin[200][30];
 extern char extended[50][30];
-#endif 
+#endif
 
 
 //option
@@ -1009,7 +1009,7 @@ int f_symbol_class(int arglist);
 #if __linux
 int f_set_editor(int arglist);
 int f_edit(int arglist);
-void edit_screen();
+void edit_screen(int x);
 void display_command(int arg);
 void display_screen();
 void display_line(int line);
@@ -1057,7 +1057,7 @@ void debugger(void);
 
 //Fast project
 #if _WIN32
-//for dynamic link 
+//for dynamic link
 typedef void (*p_f0)(int, int);
 typedef void (*p_f1)(int, int);
 typedef void (*p_f2)(int, int);
@@ -1134,7 +1134,7 @@ int replace_fragment_buffer(char* newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
-#endif 
+#endif
 
 #if _WIN32
 #include <windows.h>

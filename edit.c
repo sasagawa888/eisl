@@ -45,14 +45,14 @@ int f_set_editor(int arglist){
                         ed_comment_color = GET_INT(arg2);
         else
                 return(NIL);
-        
+
         return(T);
 }
 
 int f_edit(int arglist){
     int arg1,c,i,j;
     FILE *port;
-    
+
     if(length(arglist) != 1)
         error(ILLEGAL_ARGS,"EDIT",arglist);
     arg1 = car(arglist);
@@ -65,7 +65,7 @@ int f_edit(int arglist){
              ed_lparen_row = -1;
              ed_rparen_row = -1;
              ed_clip_start = -1;
-             ed_clip_end = -1;        
+             ed_clip_end = -1;
              goto skip;
         }
         else
@@ -98,7 +98,7 @@ int f_edit(int arglist){
             else{
                 ed_col++;
                 if(ed_col >= 160)
-                   error(OUT_OF_RANGE,"EDIT over max-column", makeint(ed_col)); 
+                   error(OUT_OF_RANGE,"EDIT over max-column", makeint(ed_col));
             }
             c = getc(port);
         }
@@ -111,13 +111,13 @@ int f_edit(int arglist){
     display_command(arg1);
     display_screen();
     ed_row = ed_col = 0;
-    edit_screen(arg1); 
+    edit_screen(arg1);
     return(T);
 }
 
 void edit_screen(int name){
     int c,i,type;
-    
+
     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
     i = 0;
     loop:
@@ -151,7 +151,7 @@ void edit_screen(int name){
                     ESCRST;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                     break;
-       case 11:     copy_selection(); //ctrl+K   
+       case 11:     copy_selection(); //ctrl+K
                     delete_selection();
                     ed_row = ed_clip_start;
                     ed_clip_start = ed_clip_end = -1;
@@ -168,8 +168,8 @@ void edit_screen(int name){
         case 22:    goto pagedn;  //ctrl+V
         case 24:    ESCCLS;       //ctrl+x
                     ESCMOVE(1,1);
-                    f_load(list1(name)); 
-                    return; 
+                    f_load(list1(name));
+                    return;
         case 12:             //CTRL+L
         case 31:    reinput: //CTRL+_
                     ESCREV;
@@ -212,7 +212,7 @@ void edit_screen(int name){
                                    }
                         case TAB:   find_candidate(); //completion
                                     if(ed_candidate_pt == 0)
-                                        break;                                  
+                                        break;
                                     else if(ed_candidate_pt == 1){
                                         replace_fragment(ed_candidate[0]);
                                         ESCMOVE(ed_row+2 - ed_start, 0);
@@ -225,7 +225,7 @@ void edit_screen(int name){
                                         for(i=0; i<5; i++){
                                             if(i >= ed_candidate_pt)
                                                  break;
-                                             printf("%d:%s ", i+1, ed_candidate[i]);         
+                                             printf("%d:%s ", i+1, ed_candidate[i]);
                                         }
                                         ESCRST;
                                         retry:
@@ -240,7 +240,7 @@ void edit_screen(int name){
                                         display_screen();
                                         ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                          }
-                         goto loop;     
+                         goto loop;
                     }
                     c = getch();
                     switch(c){
@@ -250,7 +250,7 @@ void edit_screen(int name){
                                             ed_row == ed_start){
                                         if(ed_row == ed_clip_start)
                                              ed_clip_start--;
-                                        else 
+                                        else
                                              ed_clip_end--;
                                         ed_row--;
                                         ed_start--;
@@ -274,7 +274,7 @@ void edit_screen(int name){
                                     else if(ed_clip_start != -1){
                                         if(ed_row == ed_clip_start)
                                             ed_clip_start--;
-                                        else 
+                                        else
                                             ed_clip_end--;
                                         ed_row--;
                                         i = findeol(ed_row);
@@ -312,14 +312,14 @@ void edit_screen(int name){
                                             ed_row == ed_start+20){
                                         if(ed_row == ed_clip_end)
                                             ed_clip_end++;
-                                        else 
+                                        else
                                             ed_clip_start++;
                                         ed_row++;
                                         ed_start++;
                                         display_screen();
                                         ESCMOVE(ed_row+2-ed_start,1);
                                     }
-                                    else if(ed_row == ed_start+20){  
+                                    else if(ed_row == ed_start+20){
                                         ed_row = ed_row+10;
                                         ed_start = ed_start+10;
                                         if(ed_row > ed_end)
@@ -336,7 +336,7 @@ void edit_screen(int name){
                                     else if(ed_clip_start != -1){
                                         if(ed_row == ed_clip_end)
                                              ed_clip_end++;
-                                        else 
+                                        else
                                              ed_clip_start++;
                                         ed_row++;
                                         i = findeol(ed_row);
@@ -390,7 +390,7 @@ void edit_screen(int name){
                         case RIGHT: if(ed_col == findeol(ed_row) || ed_col >= 159)
                                         break;
                                     ed_col++;
-                                    if(ed_col < 79){            
+                                    if(ed_col < 79){
                                         restore_paren();
                                         emphasis_lparen();
                                         emphasis_rparen();
@@ -409,13 +409,13 @@ void edit_screen(int name){
                                         ESCMOVE(ed_row+2 - ed_start,ed_col-80+1);
                                     }
                                     break;
-                        case HOME:  home: 
+                        case HOME:  home:
                                     ed_row = 0;
                                     ed_start = 0;
                                     display_screen();
                                     ESCMOVE(2,ed_col+1);
                                     break;
-                        case END:   end:  
+                        case END:   end:
                                     ed_row = ed_end;
                                     if(ed_end > 20)
                                         ed_start = ed_row - 10;
@@ -423,13 +423,13 @@ void edit_screen(int name){
                                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
                                     break;
                         case INSERT:
-                                    c = getch(); 
+                                    c = getch();
                                     if(ed_ins == 1)
                                         ed_ins = 0;
                                     else
                                         ed_ins = 1;
                                     break;
-                        case PAGEUP:                                    
+                        case PAGEUP:
                                     c = getch();
                                     pageup:
                                     ed_start = ed_start - 20;
@@ -439,7 +439,7 @@ void edit_screen(int name){
                                     display_screen();
                                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
                                     break;
-                        case PAGEDN:                                    
+                        case PAGEDN:
                                     c = getch();
                                     pagedn:
                                     if(ed_end < ed_start + 20)
@@ -463,7 +463,7 @@ void edit_screen(int name){
                     }
                     break;
         case DEL:   if(ed_row == 0 && ed_col == 0)
-                        break;  
+                        break;
                     else if(ed_col == 0){
                         restore_paren();
                         deleterow();
@@ -486,7 +486,7 @@ void edit_screen(int name){
                     else if(ed_col >= 80){
                         type = check_token(ed_row,ed_col-2);
                         if(type == 6) // #|...
-                           ed_incomment = -1;   
+                           ed_incomment = -1;
                         backspace();
                         display_screen();
                         if(ed_row < ed_start+20)
@@ -497,7 +497,7 @@ void edit_screen(int name){
                     else{
                         type = check_token(ed_row,ed_col-2);
                         if(type == 6) // #|...
-                           ed_incomment = -1;   
+                           ed_incomment = -1;
                         backspace();
                         display_screen();
                         if(ed_row < ed_start+20)
@@ -509,7 +509,7 @@ void edit_screen(int name){
         case EOL:   if(ed_indent == 1)
                         i = calc_tabs();
                     if(ed_row == ed_start+20){
-                        restore_paren();    
+                        restore_paren();
                         insertrow();
                         ed_start++;
                         ed_row++;
@@ -519,7 +519,7 @@ void edit_screen(int name){
                         ESCMOVE(22,1);
                     }
                     else if(ed_col >= 80){
-                        restore_paren();    
+                        restore_paren();
                         insertrow();
                         ed_start++;
                         ed_row++;
@@ -528,8 +528,8 @@ void edit_screen(int name){
                         display_screen();
                         ESCMOVE(ed_row+2 - ed_start,1);
                     }
-                    else{   
-                        restore_paren();    
+                    else{
+                        restore_paren();
                         insertrow();
                         ed_row++;
                         ed_end++;
@@ -537,7 +537,7 @@ void edit_screen(int name){
                         display_screen();
                         ESCMOVE(ed_row+2 - ed_start,1);
                     }
-                    if(ed_indent == 1){ 
+                    if(ed_indent == 1){
                          ed_col = 0;
                          remove_headspace(ed_row);
                          softtabs(i);
@@ -616,14 +616,14 @@ void display_command(int name){
 
 void display_screen(){
     int line1,line2;
-    
+
     ESCTOP;
     ESCCLS1;
     line1 = ed_start;
     line2 = ed_start + 20;
     if(line2 > ed_end)
         line2 = ed_end;
-    
+
     while(line1 <= line2){
         display_line(line1);
         line1++;
@@ -644,8 +644,8 @@ void display_line(int line){
         col = 0;
     else
         col = 80;
-   
-    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+
+    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
           ed_data[line][col] != EOL &&
           ed_data[line][col] != NUL){
           if(line >= ed_clip_start && line <= ed_clip_end)
@@ -656,7 +656,7 @@ void display_line(int line){
           if(ed_incomment != -1 && line >= ed_incomment){ //comment #|...|#
              ESCBOLD;
              setcolor(ed_comment_color);
-             while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+             while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                    ed_data[line][col] != EOL &&
                    ed_data[line][col] != NUL){
                        printf("%c", ed_data[line][col]);
@@ -667,23 +667,23 @@ void display_line(int line){
                              ESCRST;
                              ESCFORG;
                              break;
-                       }  
+                       }
              }
              ESCRST;
              ESCFORG;
-         }         
+         }
          else if(ed_data[line][col] == ' ' ||
                 ed_data[line][col] == '(' ||
                 ed_data[line][col] == ')' ){
             printf("%c", ed_data[line][col]);
-            col++; 
+            col++;
          }
          else{
             type = check_token(line,col);
             if(type == 1){
                 ESCBOLD;
                 setcolor(ed_syntax_color);
-                while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                       ed_data[line][col] != ' ' &&
                       ed_data[line][col] != '(' &&
                       ed_data[line][col] != ')' &&
@@ -698,7 +698,7 @@ void display_line(int line){
                 else if(type == 2){
                         ESCBOLD;
                     setcolor(ed_builtin_color);
-                    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                           ed_data[line][col] != ' ' &&
                           ed_data[line][col] != '(' &&
                           ed_data[line][col] != ')' &&
@@ -715,7 +715,7 @@ void display_line(int line){
                     setcolor(ed_string_color);
                     printf("%c", ed_data[line][col]);
                     col++;
-                    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                           ed_data[line][col] != NUL &&
                           ed_data[line][col] != EOL){
                         printf("%c", ed_data[line][col]);
@@ -730,7 +730,7 @@ void display_line(int line){
                else if(type == 4){
                    ESCBOLD;
                    setcolor(ed_comment_color);
-                   while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                   while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                          ed_data[line][col] != NUL &&
                          ed_data[line][col] != EOL){
                         printf("%c", ed_data[line][col]);
@@ -742,7 +742,7 @@ void display_line(int line){
                else if(type == 5){
                    ESCBOLD;
                    setcolor(ed_extended_color);
-                   while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                   while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                           ed_data[line][col] != ' ' &&
                           ed_data[line][col] != '(' &&
                           ed_data[line][col] != ')' &&
@@ -758,7 +758,7 @@ void display_line(int line){
                    ESCBOLD;
                    setcolor(ed_comment_color);
                    ed_incomment = line;
-                   while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                   while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                          ed_data[line][col] != EOL &&
                          ed_data[line][col] != NUL){
                              printf("%c", ed_data[line][col]);
@@ -769,11 +769,11 @@ void display_line(int line){
                                  ESCRST;
                                  ESCFORG;
                                  break;
-                             }  
+                             }
                    }
                }
                else{
-                    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) && 
+                    while(((ed_col <= 79 && col <= 79) || (ed_col >= 80 && col <= 159)) &&
                           ed_data[line][col] != ' ' &&
                           ed_data[line][col] != '(' &&
                           ed_data[line][col] != ')' &&
@@ -820,14 +820,14 @@ int getch(){
 
 void backspace(){
     int i;
-    
+
     if(ed_data[ed_row][ed_col-1] == ')' ){
-        ed_lparen_row = -1;     
+        ed_lparen_row = -1;
         ed_rparen_row = -1;
     }
     i = ed_col;
     while(i <= 160){
-        ed_data[ed_row][i-1] = ed_data[ed_row][i]; 
+        ed_data[ed_row][i-1] = ed_data[ed_row][i];
         i++;
     }
     ed_col--;
@@ -836,10 +836,10 @@ void backspace(){
 
 void insertcol(){
     int i;
-    
+
     i = findeol(ed_row);
     while(i >= ed_col ){
-        ed_data[ed_row][i+1] = ed_data[ed_row][i]; 
+        ed_data[ed_row][i+1] = ed_data[ed_row][i];
         i--;
     }
     return;
@@ -852,7 +852,7 @@ void insertrow(){
         for(j=0; j<160; j++){
             ed_data[i+1][j] = ed_data[i][j];
         }
-    } 
+    }
     k = 0;
     for(j=ed_col; j<160; j++){
         ed_data[ed_row+1][k] = ed_data[ed_row][j];
@@ -872,16 +872,16 @@ void deleterow(){
         if(ed_data[ed_row][j] == EOL)
             break;
     }
-    
+
     for(i=ed_row; i<ed_end; i++){
         for(j=0; j<160; j++){
             ed_data[i][j] = ed_data[i+1][j];
-        } 
+        }
     }
     ed_row--;
     ed_end--;
     ed_col = l;
-    return; 
+    return;
 }
 
 
@@ -891,7 +891,7 @@ int findeol(int row){
 
     for(i=0; i<160; i++){
         if(ed_data[row][i] == EOL)
-            return(i);  
+            return(i);
     }
     return(-1);
 }
@@ -899,7 +899,7 @@ int findeol(int row){
 struct position findlparen(int bias){
     int nest,row,col,limit;
     struct position pos;
-    
+
     row = ed_row;
     if(ed_col != 0)
         col = ed_col - bias;
@@ -911,12 +911,12 @@ struct position findlparen(int bias){
         }
         col = findeol(row);
     }
-        
+
     nest = 0;
     limit = ed_row-20;
     if(limit < 0)
         limit = 0;
-    
+
     while(row >= limit){
         if(ed_data[row][col] == '(' && nest == 0)
             break;
@@ -924,7 +924,7 @@ struct position findlparen(int bias){
             nest++;
         else if(ed_data[row][col] == '(')
             nest--;
-        
+
 
         if(col == 0){
             row--;
@@ -932,7 +932,7 @@ struct position findlparen(int bias){
         }
         else{
             col--;
-        }   
+        }
     }
     if(row >= limit){
         pos.row = row;
@@ -942,20 +942,20 @@ struct position findlparen(int bias){
         pos.row = -1;
         pos.col = 0;
     }
-    return(pos);    
+    return(pos);
 }
 
 struct position findrparen(int bias){
     int nest,row,col,limit;
     struct position pos;
-    
+
     row = ed_row;
     col = ed_col + bias;
     nest = 0;
     limit = ed_row+20;
     if(limit > ed_end)
         limit = ed_end;
-    
+
     while(row < limit){
         if(ed_data[row][col] == ')' && nest == 0)
             break;
@@ -963,7 +963,7 @@ struct position findrparen(int bias){
             nest++;
         else if(ed_data[row][col] == ')')
             nest--;
-        
+
 
         if(col == findeol(row)){
             row++;
@@ -971,7 +971,7 @@ struct position findrparen(int bias){
         }
         else{
             col++;
-        }   
+        }
     }
     if(row < limit){
         pos.row = row;
@@ -981,7 +981,7 @@ struct position findrparen(int bias){
         pos.row = -1;
         pos.col = 0;
     }
-    return(pos);    
+    return(pos);
 }
 
 void reset_paren(){
@@ -990,7 +990,7 @@ void reset_paren(){
 }
 
 void restore_paren(){
-    
+
     if(ed_lparen_row != -1 && ed_lparen_row >= ed_start && ed_lparen_row <= ed_start+20){
         if(ed_lparen_col <= 79)
             ESCMOVE(ed_lparen_row+2 - ed_start,ed_lparen_col+1);
@@ -1016,7 +1016,7 @@ void emphasis_lparen(){
 
     if(ed_data[ed_row][ed_col] != ')')
         return;
-    
+
     pos = findlparen(1);
     if(ed_col <= 79 && pos.col <= 79){
         if(pos.row != -1){
@@ -1063,7 +1063,7 @@ void emphasis_rparen(){
 
     if(ed_data[ed_row][ed_col] != '(')
         return;
-    
+
     pos = findrparen(1);
     if(ed_col <= 79 && pos.col <= 79){
         if(pos.row != -1){
@@ -1071,7 +1071,7 @@ void emphasis_rparen(){
             ESCBCYAN;
             printf("(");
             ESCBORG;
-            if(pos.row <= ed_start+20){ 
+            if(pos.row <= ed_start+20){
                 ESCMOVE(pos.row+2 - ed_start,pos.col+1);
                 ESCBCYAN;
                 printf(")");
@@ -1090,7 +1090,7 @@ void emphasis_rparen(){
             ESCBCYAN;
             printf("(");
             ESCBORG;
-            if(pos.row <= ed_start+20){ 
+            if(pos.row <= ed_start+20){
                 ESCMOVE(pos.row+2 - ed_start,pos.col-80+1);
                 ESCBCYAN;
                 printf(")");
@@ -1136,16 +1136,16 @@ int is_special(int row, int col){
 
     pos = 0;
     while(ed_data[row][col] != ' ' &&
-          ed_data[row][col] != '(' && 
+          ed_data[row][col] != '(' &&
           ed_data[row][col] >= ' '){
         str[pos] = ed_data[row][col];
         col++;
-        pos++; 
+        pos++;
     }
     str[pos] = NUL;
     if(pos == 0)
         return(0);
-    for(i=0;i<40;i++){ 
+    for(i=0;i<40;i++){
         if(strcmp(special[i],str) == 0){
             return(1);
         }
@@ -1153,16 +1153,16 @@ int is_special(int row, int col){
     return(0);
 }
 
-int findnext(int row, int col){ 
+int findnext(int row, int col){
    if(ed_data[row][col] == '(')
       return(col);
    else{
-        while(ed_data[row][col] != ' ' && ed_data[row][col] >= ' ')     
+        while(ed_data[row][col] != ' ' && ed_data[row][col] >= ' ')
             col++;
-                
+
         while(ed_data[row][col] == ' ' && ed_data[row][col] >= ' ')
             col++;
-    }    
+    }
     return(col);
 }
 
@@ -1186,7 +1186,7 @@ void remove_headspace(int row){
 
 int calc_tabs(){
     struct position pos;
-    
+
     pos = findlparen(0);
 
         if(ed_data[ed_row][ed_col] == '(')
@@ -1205,7 +1205,7 @@ int calc_tabs(){
 
 void copy_selection(){
     int i,j,k;
-    
+
     if(ed_clip_end - ed_clip_start > 500)
         return;
 
@@ -1213,7 +1213,7 @@ void copy_selection(){
     for(i=ed_clip_start; i<=ed_clip_end; i++){
         for(k=0; k<80; k++)
             ed_copy[j][k] = ed_data[i][k];
-            j++;
+        j++;
     }
     ed_copy_end = j;
     return;
@@ -1221,12 +1221,12 @@ void copy_selection(){
 
 void paste_selection(){
     int i,j,k;
-    
+
     if(ed_copy_end == 0)
         return;
     if(ed_end + ed_copy_end > 1000)
         return;
-    
+
     for(i=ed_end; i>=ed_row; i--){
         for(j=0; j<100; j++){
             ed_data[i+ed_copy_end][j] = ed_data[i][j];
@@ -1284,12 +1284,12 @@ int check_token(int row, int col){
         return(6); // #|...|#
     if(pos == 0)
         return(0);
-    for(i=0; i<60; i++){ 
+    for(i=0; i<60; i++){
         if(strcmp(syntax[i],str) == 0){
             return(1); //syntax token
         }
     }
-    for(i=0; i<200; i++){ 
+    for(i=0; i<200; i++){
         if(strcmp(builtin[i],str) == 0){
             return(2); //builtin token
         }
@@ -1316,11 +1316,11 @@ char *get_fragment(){
         col++;
         pos = 0;
     while(ed_data[ed_row][col] != ' ' &&
-          ed_data[ed_row][col] != '(' && 
+          ed_data[ed_row][col] != '(' &&
           ed_data[ed_row][col] >= ' '){
         str[pos] = ed_data[ed_row][col];
         col++;
-        pos++; 
+        pos++;
     }
     str[pos] = NUL;
     return(str);
@@ -1329,24 +1329,24 @@ char *get_fragment(){
 void find_candidate(){
     char* str;
     int i;
-        
+
     str = get_fragment();
     ed_candidate_pt = 0;
     if(str[0] == NUL)
         return;
-    for(i=0;i<60;i++){ 
+    for(i=0;i<60;i++){
         if(strstr(syntax[i],str) !=NULL && syntax[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],syntax[i]);
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<200;i++){ 
+    for(i=0;i<200;i++){
         if(strstr(builtin[i],str) !=NULL && builtin[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],builtin[i]);
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<50;i++){ 
+    for(i=0;i<50;i++){
         if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],extended[i]);
                         ed_candidate_pt++;
@@ -1384,7 +1384,7 @@ void display_buffer(){
     ESCMVLEFT(3);
     ESCCLSL;
     col = 0;
-    
+
     while(buffer[col][0] != EOL &&
           buffer[col][0] != NUL){
 
@@ -1401,16 +1401,16 @@ void display_buffer(){
                              ESCRST;
                              ESCFORG;
                              break;
-                       }  
+                       }
              }
              ESCRST;
              ESCFORG;
-         }         
+         }
          else if(buffer[col][0] == ' ' ||
                  buffer[col][0] == '(' ||
                  buffer[col][0] == ')' ){
             printf("%c", buffer[col][0]);
-            col++; 
+            col++;
          }
          else{
             type = check_token_buffer(col);
@@ -1497,7 +1497,7 @@ void display_buffer(){
                                  ESCRST;
                                  ESCFORG;
                                  break;
-                             }  
+                             }
                    }
                }
                else{
@@ -1540,12 +1540,12 @@ int check_token_buffer(int col){
         return(6); // #|...|#
     if(pos == 0)
         return(0);
-    for(i=0; i<60; i++){ 
+    for(i=0; i<60; i++){
         if(strcmp(syntax[i],str) == 0){
             return(1); //syntax token
         }
     }
-    for(i=0; i<200; i++){ 
+    for(i=0; i<200; i++){
         if(strcmp(builtin[i],str) == 0){
             return(2); //builtin token
         }
@@ -1561,8 +1561,8 @@ int check_token_buffer(int col){
 
 int findlparen_buffer(int col){
     int nest;
-    
-    col--;    
+
+    col--;
     nest = 0;
     while(col >= 0){
         if(buffer[col][0] == '(' && nest == 0)
@@ -1571,21 +1571,21 @@ int findlparen_buffer(int col){
             nest++;
         else if(buffer[col][0] == '(')
             nest--;
-        
+
         col--;
     }
-    return(col);    
+    return(col);
 }
 
 int findrparen_buffer(int col){
     int nest,limit;
-      
+
     col++;
     nest = 0;
     for(limit=0;limit<256;limit++)
         if(buffer[limit][0] == 0)
             break;
-    
+
     while(col <= limit){
         if(buffer[col][0] == ')' && nest == 0)
             break;
@@ -1593,13 +1593,13 @@ int findrparen_buffer(int col){
             nest++;
         else if(buffer[col][0] == ')')
             nest--;
-        
+
         col++;
     }
     if(col > limit)
        return(-1);
     else
-       return(col);    
+       return(col);
 }
 
 void emphasis_rparen_buffer(int col){
@@ -1655,7 +1655,7 @@ void reset_paren_buffer(){
 }
 
 void restore_paren_buffer(int col){
-    
+
     if(ed_lparen_col != -1){
         ESCMVLEFT(ed_lparen_col+3);
         ESCBORG;
@@ -1685,11 +1685,11 @@ char *get_fragment_buffer(int col){
         col++;
         pos = 0;
     while(buffer[col][0] != ' ' &&
-          buffer[col][0] != '(' && 
+          buffer[col][0] != '(' &&
           buffer[col][0] >= ' '){
         str[pos] = buffer[col][0];
         col++;
-        pos++; 
+        pos++;
     }
     str[pos] = NUL;
     return(str);
@@ -1699,24 +1699,24 @@ char *get_fragment_buffer(int col){
 void find_candidate_buffer(int col){
     char* str;
     int i;
-        
+
     str = get_fragment_buffer(col);
     ed_candidate_pt = 0;
     if(str[0] == NUL)
         return;
-    for(i=0;i<60;i++){ 
+    for(i=0;i<60;i++){
         if(strstr(syntax[i],str) !=NULL && syntax[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],syntax[i]);
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<200;i++){ 
+    for(i=0;i<200;i++){
         if(strstr(builtin[i],str) !=NULL && builtin[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],builtin[i]);
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<50;i++){ 
+    for(i=0;i<50;i++){
         if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],extended[i]);
                         ed_candidate_pt++;
@@ -1781,10 +1781,10 @@ int read_line(int flag){
         limit++;
         if(limit >= 10)
             limit = 9;
-               
+
        for(j=0;j<256;j++)
             buffer[j][0] = 0;
-        
+
         line = 0;
         ed_lparen_col = -1;
         ed_rparen_col = -1;
@@ -1820,7 +1820,7 @@ int read_line(int flag){
                          line = limit-2;
                       for(j=0;j<256;j++)
                           buffer[j][0] = buffer[j][line+1];
-        
+
                       for(j=0;j<256;j++)
                           if(buffer[j][0] == EOL)
                               break;
@@ -1849,7 +1849,7 @@ int read_line(int flag){
                       switch(c){
                           case TAB: find_candidate_buffer(j); //completion
                                     if(ed_candidate_pt == 0)
-                                        break;                                  
+                                        break;
                                     else if(ed_candidate_pt == 1){
                                         j = replace_fragment_buffer(ed_candidate[0],j);
                                         display_buffer();
@@ -1862,7 +1862,7 @@ int read_line(int flag){
                                         for(i=0; i<5; i++){
                                             if(i >= ed_candidate_pt)
                                                  break;
-                                             printf("%d:%s ", i+1, ed_candidate[i]);         
+                                             printf("%d:%s ", i+1, ed_candidate[i]);
                                         }
                                         ESCRST;
                                         retry:
@@ -1888,7 +1888,7 @@ int read_line(int flag){
                       switch(c){
                           case UP: goto up;
                           case DOWN: goto down;
-                          case LEFT:  
+                          case LEFT:
                                 if(j <= 0)
                                      break;
                                  j--;
@@ -1897,8 +1897,8 @@ int read_line(int flag){
                                  emphasis_rparen_buffer(j);
                                  ESCMVLEFT(j+3);
                                  break;
-                          
-                          case RIGHT: 
+
+                          case RIGHT:
                                  if(buffer[j][0] == 0)
                                     break;
                                  j++;
@@ -1910,7 +1910,7 @@ int read_line(int flag){
 
                       }
                       break;
-      
+
             default:  for(k=255;k>j;k--)
                           buffer[k][0] = buffer[k-1][0];
                       buffer[j++][0] = c;
@@ -1927,7 +1927,7 @@ int read_line(int flag){
                               ed_lparen_col++;
                       }
                       ESCMVLEFT(j+3);
-                      
+
         }
         c = getch();
         goto loop;
@@ -1936,5 +1936,3 @@ int read_line(int flag){
    exit:
    return(buffer[pos++][0]);
 }
-
-

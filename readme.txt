@@ -12,6 +12,7 @@ We confirmed the operation in the following environment.
 Ubuntu 16.04 GCC 5.4
 Raspbery Pi3 Raspbian GCC 6.3
 openSUSE Leap 42.3 GCC 4.8.5
+Debian GNU/Linux GCC 6.3
 Windows10 MINGW GCC 5.3
 
 

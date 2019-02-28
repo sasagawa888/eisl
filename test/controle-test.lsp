@@ -250,7 +250,7 @@
      (setq i (- i 1)))
    x) (1 2 3 4 5) equal)
 
-;;; ˆø”‚ÌŒÂ”
+;;; arguments count
 
 (test (for () (t)) nil)
 (test (for () (t t)) t)
@@ -265,7 +265,7 @@
    (for ((x x (cdr x))
      (sum 0 (+ sum (car x))))
     ((null x) sum))) 25 eql)
-;;; ˆø”‚ÌŒÂ”
+;;; arguments count
 
 (defglobal x nil)
 (for ((i 0 (+ i 1)))

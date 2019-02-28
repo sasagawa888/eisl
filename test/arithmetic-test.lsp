@@ -75,7 +75,7 @@
 (test (parse-number "#xF") 15 eql)
 (test (parse-number "#x+F") 15 eql)
 (test (parse-number "#x-F") -15 eql)
-;;—vC³
+;;pending
 ;;(test (parse-number "#x1234567890abcdefABCDEF") 22007822917795467892608495 eql)
 
 (test (parse-number "#X0") 0 eql)
@@ -84,7 +84,7 @@
 (test (parse-number "#Xf") 15 eql)
 (test (parse-number "#X+f") 15 eql)
 (test (parse-number "#X-f") -15 eql)
-;;—vC³
+;;pending
 ;;(test (parse-number "#X1234567890abcdefABCDEF") 22007822917795467892608495 eql)
 
 (test (parse-number "0.0") 0.0 eql)
@@ -1180,7 +1180,7 @@
 (test (+  123.45)  123.45 eql)
 (test (+ *most-negative-float*) *most-negative-float* eval-eql)
 (test (+ *most-positive-float*) *most-positive-float* eval-eql)
-;;; 2 ˆø”
+;;; 2 å¼•æ•°
 (test (+ -10000000000 -10000000000)   -20000000000 eql)
 (test (+ -10000000000     -8388609)   -10008388609 eql)
 (test (+ -10000000000     -8388608)   -10008388608 eql)
@@ -1387,7 +1387,7 @@
 (test (+ *most-positive-float* 0)   *most-positive-float* eval-eql)
 (test (+ *most-positive-float* 0.0) *most-positive-float* eval-eql)
 (test (+ *most-positive-float* *most-negative-float*) 0.0 eql)
-;;; 3 ˆø”
+;;; 3 arguments
 (test (+ 0 0 0) 0 eql)
 (test (+ 0.0 0.0 0.0) 0.0 eql)
 (test (+ 10 20 30) 60 eql)
@@ -1407,7 +1407,7 @@
 (test (*  123.45)  123.45 eql)
 (test (* *most-negative-float*) *most-negative-float* eval-eql)
 (test (* *most-positive-float*) *most-positive-float* eval-eql)
-;;; 2 ˆø”
+;;; 2 arguments
 (test (* -10000000000 -10000000000)    100000000000000000000 eql)
 (test (* -10000000000     -8388609)        83886090000000000 eql)
 (test (* -10000000000     -8388608)        83886080000000000 eql)
@@ -1630,7 +1630,7 @@
 (test (* *most-positive-float*           -1) *most-negative-float* eval-eql)
 (test (* *most-positive-float*            0) 0.0 eql)
 (test (* *most-positive-float*            1) *most-positive-float* eval-eql)
-;;; 3 ˆø”
+;;; 3 arguments
 (test (* 0 0 0) 0 eql)
 (test (* 0.0 0.0 0.0) 0.0 eql)
 (test (* 10 20 30) 6000 eql)
@@ -1661,7 +1661,7 @@
 (test (-  123.45) -123.45 eql)
 (test (- *most-negative-float*) *most-positive-float* eval-eql)
 (test (- *most-positive-float*) *most-negative-float* eval-eql)
-;;; 2 ˆø”
+;;; 2 arguments
 (test (- -10000000000 -10000000000)              0 eql)
 (test (- -10000000000     -8388609)    -9991611391 eql)
 (test (- -10000000000     -8388608)    -9991611392 eql)
@@ -1868,7 +1868,7 @@
 (test (- *most-positive-float* 0)   *most-positive-float* eval-eql)
 (test (- *most-positive-float* 0.0) *most-positive-float* eval-eql)
 (test (- *most-positive-float* *most-positive-float*) 0.0 eql)
-;;; 3 ˆø”
+;;; 3 arguments
 (test (- 0 0 0) 0 eql)
 (test (- 0.0 0.0 0.0) 0.0 eql)
 (test (- 10 20 30) -40 eql)
@@ -2128,7 +2128,7 @@
 (test (max 1 5 2 4 3) 5 eql)
 ;;;
 
-;;; 1 ˆø”
+;;; 1 argument
 (test (max -10000000000) -10000000000 eql)
 (test (max     -8388609)     -8388609 eql)
 (test (max     -8388608)     -8388608 eql)
@@ -2143,7 +2143,7 @@
 (test (max       1234.5)       1234.5 eql)
 (test (max *most-negative-float*) *most-negative-float* eval-eql)
 (test (max *most-positive-float*) *most-positive-float* eval-eql)
-;test ;; 2 ˆø”
+;test ;; 2 arguments
 (test (max -10000000000 -10000000000) -10000000000 eql)
 (test (max -10000000000     -8388609)     -8388609 eql)
 (test (max -10000000000     -8388608)     -8388608 eql)
@@ -2340,7 +2340,7 @@
 (test (max *most-positive-float*       1234.5) *most-positive-float* eval-eql)
 (test (max *most-positive-float* *most-negative-float*) *most-positive-float* eval-eql)
 (test (max *most-positive-float* *most-positive-float*) *most-positive-float* eval-eql)
-;;; 3 ˆø”
+;;; 3 arguments
 (test (max 0 0 0) 0 eql)
 (test (max 0.0 0.0 0.0) 0.0 eql)
 (test (max 10 20 30) 30 eql)
@@ -2353,7 +2353,7 @@
 (test (min 1 5 2 4 3) 1 eql)
 ;;;
 
-;;; 1 ˆø”
+;;; 1 argument
 (test (min -10000000000) -10000000000 eql)
 (test (min     -8388609)     -8388609 eql)
 (test (min     -8388608)     -8388608 eql)
@@ -2368,7 +2368,7 @@
 (test (min       1234.5)       1234.5 eql)
 (test (min *most-negative-float*) *most-negative-float* eval-eql)
 (test (min *most-positive-float*) *most-positive-float* eval-eql)
-;test ;; 2 ˆø”
+;test ;; 2 arguments
 (test (min -10000000000 -10000000000) -10000000000 eql)
 (test (min -10000000000     -8388609) -10000000000 eql)
 (test (min -10000000000     -8388608) -10000000000 eql)
@@ -2565,7 +2565,7 @@
 (test (min *most-positive-float*       1234.5)       1234.5 eql)
 (test (min *most-positive-float* *most-negative-float*) *most-negative-float* eval-eql)
 (test (min *most-positive-float* *most-positive-float*) *most-positive-float* eval-eql)
-;;; 3 ˆø”
+;;; 3 arguments
 (test (min 0 0 0) 0 eql)
 (test (min 0.0 0.0 0.0) 0.0 eql)
 (test (min 10 20 30) 10 eql)

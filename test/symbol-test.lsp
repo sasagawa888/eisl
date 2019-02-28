@@ -8,7 +8,7 @@
            (format (standard-output) "~S is bad~%" ',form1))))
 
 
-;;; ŠÖ” (SYMBOLP obj) --> boolean
+;;; (SYMBOLP obj) --> boolean
 ;;;
 (test (symbolp 'a) t)
 (test (symbolp "a") nil)
@@ -22,13 +22,13 @@
 (test (symbolp *pi*) nil)
 ;;;
 ;;;
-;;; ŠÖ” (PROPERTY symbol property-name [obj]) --> <object>
+;;; (PROPERTY symbol property-name [obj]) --> <object>
 ;;;
 (test (property 'aaa 'bbb) nil)
 (test (property 'aaa 'bbb 'zzz) zzz)
 
 ;;;
-;;; ŠÖ” (SET-PROPERTY obj symbol property-name) --> <object>
+;;; (SET-PROPERTY obj symbol property-name) --> <object>
 ;;;
 (test (setf (property 'zeus 'daughter) 'athena) athena)
 (test (set-property 'athena 'zeus 'daughter) athena)
@@ -40,7 +40,7 @@
  (ccc ccc) equal)
 
 ;;;
-;;; ŠÖ” (REMOVE-PROPERTY symbol property-name) --> <object>
+;;; (REMOVE-PROPERTY symbol property-name) --> <object>
 ;;;
 
 (test (remove-property 'zeus 'daughter) athena)

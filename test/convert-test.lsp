@@ -9,7 +9,7 @@
 
 
 ;;;
-;;; “ÁêŒ`® (THE class-name form) --> <object>
+;;;  (THE class-name form) --> <object>
 ;;;
 (test (the <integer> 10) 10 eql)
 (test (the <number> 10) 10 eql)
@@ -17,14 +17,14 @@
 ;;;
 
 ;;;
-;;; “ÁêŒ`® (ASSURE class-name form) --> <object>
+;;; (ASSURE class-name form) --> <object>
 ;;;
 (test (assure <integer> 10) 10 eql)
 (test (assure <number> 10) 10 eql)
 
 
 ;;;
-;;; “ÁêŒ`® (CONVERT obj class-name) --> <object>
+;;; (CONVERT obj class-name) --> <object>
 ;;;
 (test (convert 3 <float>) 3.0 eql)
 (test (convert "abc" <general-vector>) #(#\a #\b #\c) equal)

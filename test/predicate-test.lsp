@@ -37,7 +37,7 @@
 ;;;
 
 ;;;
-;;; ŠÖ” (EQL obj1 obj2) --> boolean
+;;; (EQL obj1 obj2) --> boolean
 ;;;
 (test (eql () ()) t)
 (test (eql '() '()) t)
@@ -72,7 +72,7 @@
 (test (eql *most-negative-float* *most-positive-float*) nil)
 
 ;;;
-;;; ŠÖ” (EQUAL obj1 obj2) --> boolean
+;;; (EQUAL obj1 obj2) --> boolean
 ;;;
 (test (equal 'a 'a) t)
 (test (equal 2 2) t)
@@ -105,7 +105,7 @@
 (test (equal (create-array '(1 2 3) 'a) (create-array '(1 2 3) 'b)) nil)
 
 ;;;
-;;; ŠÖ” (NOT obj) --> boolean
+;;; (NOT obj) --> boolean
 ;;;
 (test (not t) nil)
 (test (not '()) t)
@@ -117,7 +117,7 @@
 ;;;
 
 ;;;
-;;; “ÁêŒ`® (AND form*) --> <object>
+;;; (AND form*) --> <object>
 ;;;
 (test (and (= 2 2) (> 2 1)) t)
 (test (and (= 2 2) (< 2 1)) nil)
@@ -143,7 +143,7 @@
 (test (and (cons 1 2) (cons 3 4) (cons 5 6)) (5 . 6) equal)
 
 ;;;
-;;; “ÁêŒ`® (OR form*) --> <object>
+;;; (OR form*) --> <object>
 ;;;
 (test (or (= 2 2) (> 2 1)) t)
 (test (or (= 2 2) (< 2 1)) t)

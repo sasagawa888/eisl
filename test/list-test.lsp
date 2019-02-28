@@ -8,7 +8,7 @@
            (format (standard-output) "~S is bad~%" ',form1))))
 
 
-;;; ŠÖ” (CONSP obj) --> boolean
+;;; (CONSP obj) --> boolean
 ;;;
 (test (consp '(a . b)) t)
 (test (consp '(a b c)) t)
@@ -18,7 +18,7 @@
 (test (consp (create-list 1000 'a)) t)
 
 ;;;
-;;; ŠÖ” (CONS obj1 obj2) --> <cons>
+;;; (CONS obj1 obj2) --> <cons>
 ;;;
 
 (test (cons 'a '()) (a) equal)
@@ -33,7 +33,7 @@
 (test (length (cons (create-list 1000 'a) (create-list 1000 'b))) 1001 eql)
 
 ;;;
-;;; ŠÖ” (CAR cons) --> <object>
+;;; (CAR cons) --> <object>
 ;;;
 
 (test (car '(a b c)) a)
@@ -45,7 +45,7 @@
 (test (car (create-list 1000 'a)) a)
 
 ;;;
-;;; ŠÖ” (CDR cons) --> <object>
+;;; (CDR cons) --> <object>
 ;;;
 (test (cdr '((a) b c d)) (b c d) equal)
 (test (cdr '(1 . 2)) 2 eql)
@@ -55,7 +55,7 @@
 (test (length (cdr (create-list 1000 'a))) 999 eql)
 
 ;;;
-;;; ŠÖ” (SET-CAR obj cons) --> <object>
+;;; (SET-CAR obj cons) --> <object>
 ;;;
 (test (let ((x (list 'apple 'orange)))
    (list x (car x) (setf (car x) 'banana) x (car x)))
@@ -73,7 +73,7 @@
  (b b) equal)
 
 ;;;
-;;; ŠÖ” (SET-CDR obj cons) --> <object>
+;;; (SET-CDR obj cons) --> <object>
 ;;;
 (test (let ((x (list 'apple 'orange)))
    (list x (cdr x) (setf (cdr x) 'banana) x (cdr x)))
@@ -91,7 +91,7 @@
  (b (a . b)) equal)
 
 ;;;
-;;; ŠÖ” (NULL obj) --> boolean
+;;; (NULL obj) --> boolean
 ;;;
 
 (test (null '(a b c)) nil)
@@ -103,12 +103,12 @@
 (test (null (create-list 1000 'a)) nil)
 
 ;;;
-;;; ŠÖ” (LISTP obj) --> boolean
+;;; LISTP obj) --> boolean
 ;;;
 (test (listp '(a b c)) t)
 (test (listp '()) t)
 (test (listp '(a . b)) t)
-;;’ˆÓ
+;;caution
 ;(test (let ((x (list 'a))) (setf (cdr x) x) (listp x)) t)
 (test (listp "abc") nil)
 (test (listp #(1 2)) nil)
@@ -116,7 +116,7 @@
 ;;;
 (test (listp (create-list 1000 'a)) t)
 ;;;
-;;; ŠÖ” (CREATE-LIST i [initial-element]) --> <list>
+;;; (CREATE-LIST i [initial-element]) --> <list>
 ;;;
 
 (test (create-list 3 17) (17 17 17) equal)
@@ -128,7 +128,7 @@
 (test (length (create-list 1000)) 1000 eql)
 (test (length (create-list 1000 'a)) 1000 eql)
 ;;;
-;;; ŠÖ” (LIST obj*) --> <list>
+;;; (LIST obj*) --> <list>
 ;;;
 (test (list 'a (+ 3 4) 'c) (a 7 c) equal)
 (test (list) nil)
@@ -136,7 +136,7 @@
 ;;;
 (test (list 1 2 3 4 5 6 7 8 9 10) (1 2 3 4 5 6 7 8 9 10) equal)
 ;;;
-;;; ŠÖ” (REVERSE list) --> <list>
+;;; (REVERSE list) --> <list>
 ;;;
 (test (reverse '(a b c d e)) (e d c b a) equal)
 (test (reverse '(a)) (a) equal)
@@ -146,29 +146,29 @@
 (test (length (reverse (create-list 1000 'a))) 1000 eql)
 
 ;;;
-;;; ŠÖ” (NREVERSE list) --> <list>
+;;; (NREVERSE list) --> <list>
 ;;;
 ;;((let* ((x (list 'a 'b)) (y (nreverse x))) (equal x y)) nil)  ; IDEF
 ;;;
 ;;;
 (test (length (nreverse (create-list 1000 'a))) 1000 eql)
 ;;;
-;;; ŠÖ” (APPEND list*) --> <list>
+;;; (APPEND list*) --> <list>
 ;;;
 (test (append '(a b c) '(d e f)) (a b c d e f) equal)
 ;;;
-;;; 0 ˆø”
+;;; 0 arument
 (test (append) ())
-;;; 1 ˆø”
+;;; 1 argument
 (test (append ()) ())
 (test (append '(a b c)) (a b c) equal)
 (test (length (append (create-list 1000 'a))) 1000 eql)
-;;; 2 ˆø”
+;;; 2 arguments
 (test (append () ()) ())
 (test (append () '(a b c)) (a b c) equal)
 (test (append '(a b c) ()) (a b c) equal)
 (test (length (append (create-list 1000 'a) (create-list 1000 'b))) 2000 eql)
-;;; 3 ˆø”
+;;; 3 arguments
 (test (append () () ()) ())
 (test (append () () '(a b c)) (a b c) equal)
 (test (append () '(a b c) ()) (a b c) equal)
@@ -179,7 +179,7 @@
 (test (length
   (append (create-list 1000 'a) (create-list 1000 'b) (create-list 1000 'c)))
  3000 eql)
-;;; ÅŒã‚ÌƒŠƒXƒg‚¾‚¯‹¤—L‚·‚é
+;;; last list
 (test (let* ((x (list 'a 'b 'c))
     (y (append x)))
    (eq y x))
@@ -198,7 +198,7 @@
   nil)
 
 ;;;
-;;; ŠÖ” (MEMBER obj list) --> <list>
+;;; (MEMBER obj list) --> <list>
 ;;;
 (test (member 'c '(a b c d e f)) (c d e f) equal)
 (test (member 'g '(a b c d e f)) nil)
@@ -217,24 +217,24 @@
 (test (member 'b (create-list 1000 'a)) nil)
 
 ;;;
-;;; ŠÖ” (MAPCAR function list+) --> <list>
+;;; (MAPCAR function list+) --> <list>
 ;;;
 (test (mapcar #'car '((1 a) (2 b) (3 c))) (1 2 3) equal)
 (test (mapcar #'abs '(3 -4 2 -5 -6)) (3 4 2 5 6) equal)
 (test (mapcar #'cons '(a b c) '(1 2 3)) ((a . 1) (b . 2) (c . 3)) equal)
 ;;;
-;;; 1 ˆø”ŠÖ”
+;;; 1 high order
 (test (mapcar #'car ()) ())
 (test (mapcar (lambda (x) (car 1)) ()) ())
 (test (mapcar (lambda (x) (+ x 1)) '(1 2 3 4 5)) (2 3 4 5 6) equal)
-;;; 2 ˆø”ŠÖ”
+;;; 2 high order
 
 (test (mapcar #'cons () ()) ())
 (test (mapcar #'cons () '(a b c)) ())
 (test (mapcar #'cons '(a b c) ()) ())
 (test (mapcar (lambda (x y) (+ x y)) '(1 2 3 4 5) '(6 7 8 9 10))
  (7 9 11 13 15) equal)
-;;; rest ˆø”ŠÖ”
+;;; rest high order
 (test (mapcar #'list () () () () ()) ())
 (test (mapcar #'list '(a b c) '(d e f) '(g h i) '(j k l) '(m n o))
  ((a d g j m) (b e h k n) (c f i l o))
@@ -246,17 +246,17 @@
  ((1 4 7) (2 5 8) (3 6 9)) equal)
 
 ;;;
-;;; ŠÖ” (MAPC function list+) --> <list>
+;;; (MAPC function list+) --> <list>
 ;;;
 (test (let ((x 0)) (mapc (lambda (v) (setq x (+ x v))) '(3 5)) x) 8 eql)
 ;;;
 
-;;; 1 ˆø”ŠÖ”
+;;; 1 high order
 (test (mapc #'car ()) ())
 (test (mapc (lambda (x) (car 1)) ()) ())
 (test (let ((x 0)) (list (mapc (lambda (v) (setq x (+ x v))) '(3 5)) x))
  ((3 5) 8) equal)
-;;; 2 ˆø”ŠÖ”
+;;; 2 high order
 (test (mapc #'cons () ()) ())
 (test (mapc #'cons () '(a b c)) ())
 (test (mapc #'cons '(a b c) ()) (a b c) equal)
@@ -264,7 +264,7 @@
    (list (mapc (lambda (x y) (setq ret (+ ret x y))) '(1 2 3) '(4 5 6)) ret))
  ((1 2 3) 21)
  equal)
-;;; rest ˆø”ŠÖ”
+;;; rest high order
 (test (mapc #'list () () () () ()) ())
 (test (mapc #'list '(a b c) '(d e f) '(g h i) '(j k l) '(m n o)) (a b c) equal)
 (test (mapc #'list '(a b c) '(d e f) '(g) '(j k l) '(m n o)) (a b c) equal)
@@ -275,22 +275,22 @@
  equal)
 
 ;;;
-;;; ŠÖ” (MAPCAN function list+) --> <list>
+;;; (MAPCAN function list+) --> <list>
 ;;;
 (test (mapcan (lambda (x) (if (> x 0) (list x))) '(-3 4 0 5 -2 7)) (4 5 7) equal)
 
 ;;;
 
-;;; 1 ˆø”ŠÖ”
+;;; 1 high order
 (test (mapcan #'car ()) ())
 (test (mapcan (lambda (x) (car 1)) ()) ())
 (test (mapcan (lambda (x) (list (+ x 1))) '(1 2 3 4 5)) (2 3 4 5 6) equal)
-;;; 2 ˆø”ŠÖ”
+;;; 2 high order
 (test (mapcan #'cons () ()) ())
 (test (mapcan #'cons () '(a b c)) ())
 (test (mapcan #'cons '(a b c) ()) ())
 (test (mapcan (lambda (x y) (list (+ x y))) '(1 2 3 4 5) '(6 7 8 9 10)) (7 9 11 13 15) equal)
-;;; rest ˆø”ŠÖ”
+;;; rest high order
 (test (mapcan #'list () () () () ()) ())
 (test (mapcan #'list '(a b c) '(d e f) '(g h i) '(j k l) '(m n o))
  (a d g j m b e h k n c f i l o)
@@ -302,7 +302,7 @@
 
 
 ;;;
-;;; ŠÖ” (MAPLIST function list+) --> <list>
+;;; (MAPLIST function list+) --> <list>
 ;;;
 (test (maplist #'append '(1 2 3 4) '(1 2) '(1 2 3)) ((1 2 3 4 1 2 1 2 3) (2 3 4 2 2 3)) equal)
 (test (maplist (lambda (x) (cons 'foo x))
@@ -313,11 +313,11 @@
  equal)
 
 
-;;; 1 ˆø”ŠÖ”
+;;; 1 high order
 (test (maplist #'car ()) ())
 (test (maplist (lambda (x) (car 1)) ()) ())
 (test (maplist (lambda (x) x) '(1 2 3 4 5)) ((1 2 3 4 5) (2 3 4 5) (3 4 5) (4 5) (5)) equal)
-;;; 2 ˆø”ŠÖ”
+;;; 2 high order
 (test (maplist #'cons () ()) ())
 (test (maplist #'cons () '(a b c)) ())
 (test (maplist #'cons '(a b c) ()) ())
@@ -326,7 +326,7 @@
  equal)
 
 
-;;; rest ˆø”ŠÖ”
+;;; rest high order
 (test (maplist #'list () () () () ()) ())
 (test (maplist #'list '(a b c) '(d e f) '(g h i) '(j k l) '(m n o))
  (((a b c) (d e f) (g h i) (j k l) (m n o))
@@ -344,7 +344,7 @@
  equal)
 
 ;;;
-;;; ŠÖ” (MAPL function list+) --> <list>
+;;; (MAPL function list+) --> <list>
 ;;;
 (test (let ((k 0))
    (mapl (lambda (x) (setq k (+ k (if (member (car x) (cdr x)) 0 1))))
@@ -353,14 +353,14 @@
  4
  eql)
 ;;;
-;;; 1 ˆø”ŠÖ”
+;;; 1 high order
 (test (mapl #'car ()) ())
 (test (mapl (lambda (x) (car 1)) ()) ())
 (test (let ((ret ()))
    (list (mapl (lambda (x) (setq ret (cons x ret))) '(1 2 3 4 5))
          (nreverse ret)))
  ((1 2 3 4 5) ((1 2 3 4 5) (2 3 4 5) (3 4 5) (4 5) (5))) equal)
-;;; 2 ˆø”ŠÖ”
+;;; 2 high ordr
 (test (mapl #'cons () ()) ())
 (test (mapl #'cons () '(a b c)) ())
 (test (mapl #'cons '(a b c) ()) (a b c) equal)
@@ -369,7 +369,7 @@
          (nreverse ret)))
  ((1 2 3) (((1 2 3) (4 5 6)) ((2 3) (5 6)) ((3) (6))))
  equal)
-;;; rest ˆø”ŠÖ”
+;;; rest high order
 (test (mapl #'list () () () () ()) ())
 (test (let ((ret ()))
    (list (mapl (lambda (&rest x) (setq ret (cons x ret))) '(1 2 3) '(4 5 6) '(7 8 9))
@@ -381,7 +381,7 @@
  equal)
 
 ;;;
-;;; ŠÖ” (MAPCON function list+) --> <list>
+;;; (MAPCON function list+) --> <list>
 ;;;
 
 (test (mapcon (lambda (x) (if (member (car x) (cdr x)) (list (car x)))) '(a b a c d b c b c))
@@ -391,19 +391,19 @@
 
 ;;;
 
-;;; 1 ˆø”ŠÖ”
+;;; 1 high order
 (test (mapcon #'car ()) ())
 (test (mapcon (lambda (x) (car 1)) ()) ())
 (test (mapcon (lambda (x) (list x)) '(1 2 3 4 5)) ((1 2 3 4 5) (2 3 4 5) (3 4 5) (4 5) (5)) equal)
 
-;;; 2 ˆø”ŠÖ”
+;;; 2 high order
 (test (mapcon #'cons () ()) ())
 (test (mapcon #'cons () '(a b c)) ())
 (test (mapcon #'cons '(a b c) ()) ())
 (test (mapcon (lambda (x y) (list (list x y))) '(1 2 3) '(4 5 6))
  (((1 2 3) (4 5 6)) ((2 3) (5 6)) ((3) (6)))
  equal)
-;;; rest ˆø”ŠÖ”
+;;; rest high order
 (test (mapcon #'list () () () () ()) ())
 (test (mapcon #'list '(a b c) '(d e f) '(g h i) '(j k l) '(m n o))
  ((a b c) (d e f) (g h i) (j k l) (m n o)
@@ -420,7 +420,7 @@
  equal)
 
 ;;;
-;;; ŠÖ” (ASSOC obj association-list) --> <cons>
+;;; (ASSOC obj association-list) --> <cons>
 ;;;
 
 (test (assoc 'a '((a . 1) (b . 2))) (a . 1) equal)

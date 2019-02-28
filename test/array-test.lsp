@@ -71,7 +71,7 @@
 (test (aref array3 0 1 1) 4 eql)
 (test (aref array3 0 1 2) 5 eql)
 
-;;; 関数 (GAREF general-array z*) --> <object>
+;;; (GAREF general-array z*) --> <object>
 ;;;
 
 (test (garef #(a b c) 0) a)
@@ -187,7 +187,7 @@
 
 
 ;;;
-;;; 関数 (SET-GAREF obj general-array z*) --> <object>
+;;; (SET-GAREF obj general-array z*) --> <object>
 ;;;
 
 (test (let ((x #(a b c))) (list (setf (garef x 0) 'z) x)) (z #(z b c)) equal)

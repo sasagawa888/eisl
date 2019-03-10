@@ -125,7 +125,7 @@ n = 0-7
 WiringPi
 Version for Raspberry include library for wiringPi.
 
-In order to use wiringPi, you need to invoke EISL with super user.
+In order to use wiringPi, you need to compile wiringpi.lsp(in example folder) and invoke EISL with super user.
 
 sudo ./eisl
 

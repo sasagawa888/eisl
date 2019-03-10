@@ -2,7 +2,7 @@
 
 (c-include "<stdio.h>")
 
-;;bit shift 
+;;bit shift
 (defun ash (n m)
   (if (>= m 0)
       (c-lang "res = INT_FLAG | ((INT_MASK & N) << (INT_MASK & M));")

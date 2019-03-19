@@ -24,7 +24,7 @@ void initsubr(void){
     bindconst("*PI*",makeflt(3.141592653589793));
     bindconst("*MOST-POSITIVE-FLOAT*",makeflt(DBL_MAX));
     bindconst("*MOST-NEGATIVE-FLOAT*",makeflt(-DBL_MAX));
-    
+
     //function
     defsubr("-",f_minus);
     defsubr("*",f_mult);
@@ -207,35 +207,39 @@ void initsubr(void){
     defsubr("UNDEFINED-ENTITY-NAME",f_undefined_entity_name);
     defsubr("UNDEFINED-ENTITY-NAMESPACE",f_undefined_entity_namespace);
     defsubr("VECTOR",f_vector);
-    defsubr("WRITE-BYTE",f_write_byte); 
+    defsubr("WRITE-BYTE",f_write_byte);
 }
 
 #if __linux
 typedef int (*fn0)();
+typedef void (*tfunc)(char*, int(*func)(int));
 
 void dynamic_link(int x){
     char str[256] = {"./"};
     void* hmod;
-    int (*init_f0)(int x, int y);
-    int (*init_f1)(int x, int y);
-    int (*init_f2)(int x, int y);
-    int (*init_f3)(int x, int y);
-    int (*init_f4)(int x, int y);
-    int (*init_f5)(int x, int y);
-    int (*init_f6)(int x, int y);
-    int (*init_f7)(int x, int y);
-    int (*init_f8)(int x, int y);
-    void (*init_deftfunc)(int x);
-    void (*init_tfunctions)();
-    void (*init_declare)();
-    
+    int (*init_f0)(int x, tfunc y);
+    int (*init_f1)(int x, tfunc y);
+    int (*init_f2)(int x, tfunc y);
+    int (*init_f3)(int x, tfunc y);
+    int (*init_f4)(int x, tfunc y);
+    int (*init_f5)(int x, tfunc y);
+    int (*init_f6)(int x, tfunc y);
+    int (*init_f7)(int x, tfunc y);
+    int (*init_f8)(int x, tfunc y);
+    void (*init_deftfunc)(tfunc x);
+    void (*init_tfunctions)(void);
+    void (*init_declare)(void);
+
     if(strstr(GET_NAME(x),"/"))
         strcpy(str,GET_NAME(x));
     else
         strcat(str,GET_NAME(x));
+
     hmod = dlopen(str, RTLD_LAZY);
+
     if(hmod == NULL)
         error(ILLEGAL_ARGS, "load", x);
+
     init_f0 = dlsym(hmod, "init0");
     init_f1 = dlsym(hmod, "init1");
     init_f2 = dlsym(hmod, "init2");
@@ -253,12 +257,12 @@ void dynamic_link(int x){
 #if _WIN32
 void dynamic_link(int x){
 	HMODULE hmod;
-    
+
     hmod = LoadLibrary((LPCSTR)(GET_NAME(x)));
     if(hmod == NULL)
     	error(ILLEGAL_ARGS,"LOAD",x);
     loadeddll = hmod;
-	p_f0 init_f0 = (p_f0)GetProcAddress(hmod, (LPCSTR)"init0");
+	  p_f0 init_f0 = (p_f0)GetProcAddress(hmod, (LPCSTR)"init0");
     p_f1 init_f1 = (p_f1)GetProcAddress(hmod, (LPCSTR)"init1");
     p_f2 init_f2 = (p_f2)GetProcAddress(hmod, (LPCSTR)"init2");
     p_f3 init_f3 = (p_f3)GetProcAddress(hmod, (LPCSTR)"init3");
@@ -270,113 +274,113 @@ void dynamic_link(int x){
     p_def init_deftfunc = (p_def)GetProcAddress(hmod, (LPCSTR)"init_deftfunc");
     p_init init_tfunctions = (p_init)GetProcAddress(hmod, (LPCSTR)"init_tfunctions");
     p_declare init_declare = (p_declare)GetProcAddress(hmod, (LPCSTR)"init_declare");
-    
+
 #endif
-    
+
     //argument-0 type
-    init_f0(0,(int)checkgbc);  
-    init_f0(1,(int)gbc);
-    init_f0(2,(int)freshcell);
-    init_f0(3,(int)freecell);
-    init_f0(10,(int)shelterpop);
-    init_f0(11,(int)pop);
-    init_f0(12,(int)get_dynpt);
+    init_f0(0,(tfunc)checkgbc);
+    init_f0(1,(tfunc)gbc);
+    init_f0(2,(tfunc)freshcell);
+    init_f0(3,(tfunc)freecell);
+    init_f0(10,(tfunc)shelterpop);
+    init_f0(11,(tfunc)pop);
+    init_f0(12,(tfunc)get_dynpt);
 
     //argument-1 type
-    init_f1(0,(int)car);
-    init_f1(1,(int)cdr);
-    init_f1(2,(int)cadr);
-    init_f1(3,(int)caddr);
-    init_f1(4,(int)caar);
-    init_f1(5,(int)cadar);
-    init_f1(6,(int)list1);
-    init_f1(7,(int)eval);
-    init_f1(8,(int)get_aux);
-    init_f1(9,(int)fast_length);
-    init_f1(10,(int)subrp);
-    init_f1(11,(int)fsubrp);
-    init_f1(12,(int)functionp);
-    init_f1(13,(int)macrop);
-    init_f1(14,(int)integerp);
-    init_f1(15,(int)longnump);
-    init_f1(16,(int)bignump);
-    init_f1(20,(int)get_int);
-    init_f1(21,(int)makeint);
-    init_f1(22,(int)makeintlong);
-    init_f1(23,(int)vector);
-    init_f1(24,(int)fast_car);
-    init_f1(25,(int)fast_cdr);
-    init_f1(30,(int)findenv);
-    init_f1(31,(int)finddyn);
-    init_f1(40,(int)shelterpush);
-    init_f1(41,(int)push);
-    init_f1(42,(int)get_opt);
-    init_f1(43,(int)get_prop);
-    init_f1(44,(int)set_dynpt);
-    init_f1(45,(int)set_catch_symbols);
+    init_f1(0,(tfunc)car);
+    init_f1(1,(tfunc)cdr);
+    init_f1(2,(tfunc)cadr);
+    init_f1(3,(tfunc)caddr);
+    init_f1(4,(tfunc)caar);
+    init_f1(5,(tfunc)cadar);
+    init_f1(6,(tfunc)list1);
+    init_f1(7,(tfunc)eval);
+    init_f1(8,(tfunc)get_aux);
+    init_f1(9,(tfunc)fast_length);
+    init_f1(10,(tfunc)subrp);
+    init_f1(11,(tfunc)fsubrp);
+    init_f1(12,(tfunc)functionp);
+    init_f1(13,(tfunc)macrop);
+    init_f1(14,(tfunc)integerp);
+    init_f1(15,(tfunc)longnump);
+    init_f1(16,(tfunc)bignump);
+    init_f1(20,(tfunc)get_int);
+    init_f1(21,(tfunc)makeint);
+    init_f1(22,(tfunc)makeintlong);
+    init_f1(23,(tfunc)vector);
+    init_f1(24,(tfunc)fast_car);
+    init_f1(25,(tfunc)fast_cdr);
+    init_f1(30,(tfunc)findenv);
+    init_f1(31,(tfunc)finddyn);
+    init_f1(40,(tfunc)shelterpush);
+    init_f1(41,(tfunc)push);
+    init_f1(42,(tfunc)get_opt);
+    init_f1(43,(tfunc)get_prop);
+    init_f1(44,(tfunc)set_dynpt);
+    init_f1(45,(tfunc)set_catch_symbols);
 
-    //argument-2 type 
-    init_f2(0,(int)cons);
-    init_f2(1,(int)nth);
-    init_f2(2,(int)set_car);
-    init_f2(3,(int)set_cdr);
-    init_f2(4,(int)set_aux);
-    init_f2(5,(int)set_opt);
-    init_f2(6,(int)callsubr);
-    init_f2(7,(int)list2);
-    init_f2(8,(int)nth_cdr);
-    init_f2(9,(int)apply);
-    init_f2(10,(int)plus);
-    init_f2(11,(int)minus);
-    init_f2(12,(int)mult);
-    init_f2(13,(int)divide);
-    init_f2(14,(int)s_remainder);
-    init_f2(15,(int)quotient);
-    init_f2(16,(int)eqp);
-    init_f2(17,(int)eqlp);
-    init_f2(18,(int)numeqp);
-    init_f2(19,(int)smallerp);
-    init_f2(20,(int)eqsmallerp);
-    init_f2(21,(int)greaterp);
-    init_f2(22,(int)eqgreaterp);
-    init_f2(23,(int)member);
-    init_f2(30,(int)convert);
-    init_f2(31,(int)array);
-    init_f2(32,(int)setdynenv);
-    init_f2(33,(int)adddynenv);
-    init_f2(34,(int)set_dynamic);
-    init_f2(35,(int)set_prop);
-    init_f2(36,(int)adaptp);
-    
+    //argument-2 type
+    init_f2(0,(tfunc)cons);
+    init_f2(1,(tfunc)nth);
+    init_f2(2,(tfunc)set_car);
+    init_f2(3,(tfunc)set_cdr);
+    init_f2(4,(tfunc)set_aux);
+    init_f2(5,(tfunc)set_opt);
+    init_f2(6,(tfunc)callsubr);
+    init_f2(7,(tfunc)list2);
+    init_f2(8,(tfunc)nth_cdr);
+    init_f2(9,(tfunc)apply);
+    init_f2(10,(tfunc)plus);
+    init_f2(11,(tfunc)minus);
+    init_f2(12,(tfunc)mult);
+    init_f2(13,(tfunc)divide);
+    init_f2(14,(tfunc)s_remainder);
+    init_f2(15,(tfunc)quotient);
+    init_f2(16,(tfunc)eqp);
+    init_f2(17,(tfunc)eqlp);
+    init_f2(18,(tfunc)numeqp);
+    init_f2(19,(tfunc)smallerp);
+    init_f2(20,(tfunc)eqsmallerp);
+    init_f2(21,(tfunc)greaterp);
+    init_f2(22,(tfunc)eqgreaterp);
+    init_f2(23,(tfunc)member);
+    init_f2(30,(tfunc)convert);
+    init_f2(31,(tfunc)array);
+    init_f2(32,(tfunc)setdynenv);
+    init_f2(33,(tfunc)adddynenv);
+    init_f2(34,(tfunc)set_dynamic);
+    init_f2(35,(tfunc)set_prop);
+    init_f2(36,(tfunc)adaptp);
+
 
     //argument-1 string type
-    init_f3(0,(int)makestr);
-    init_f3(1,(int)makesym); 
-    init_f3(2,(int)makechar);
-    init_f3(3,(int)makestrflt);
-    init_f3(4,(int)makebigx);
+    init_f3(0,(tfunc)makestr);
+    init_f3(1,(tfunc)makesym);
+    init_f3(2,(tfunc)makechar);
+    init_f3(3,(tfunc)makestrflt);
+    init_f3(4,(tfunc)makebigx);
 
     //argument-1 long long int type
-    init_f4(0,(int)get_long);
+    init_f4(0,(tfunc)get_long);
 
     //argument-3 type
-    init_f5(0,(int)string_set);
-    init_f5(1,(int)array_set);
-    init_f5(2,(int)member1);
+    init_f5(0,(tfunc)string_set);
+    init_f5(1,(tfunc)array_set);
+    init_f5(2,(tfunc)member1);
 
     //string output type
-    init_f6(0,(int)get_name);
+    init_f6(0,(tfunc)get_name);
 
     //float output type
-    init_f7(0,(int)get_flt);
+    init_f7(0,(tfunc)get_flt);
 
     //float input type
-    init_f8(0,(int)makedoubleflt);
+    init_f8(0,(tfunc)makedoubleflt);
 
-    init_deftfunc((int)defsubr);
+    init_deftfunc((tfunc)defsubr);
     init_tfunctions();
     init_declare();
-    
+
     return;
 }
 
@@ -385,7 +389,7 @@ void dynamic_link(int x){
 
 void initgeneric(void){
     int lamlis,body;
-    
+
     lamlis = list3(makesym("x"),makesym(":REST"),makesym("y"));
     body = list3(makesym(":METHOD"),list3(makesym("x"),makesym(":REST"),makesym("y")),
                 list4(makesym("LET"),list1(list2(makesym("obj"),list3(makesym("CREATE*"),makesym("x"),NIL))),
@@ -399,8 +403,8 @@ void initgeneric(void){
               (initialize-object obj y)
               obj)))
 
-    */ 
-    
+    */
+
     lamlis = list2(makesym("x"),makesym("y"));
     body = list3(makesym(":METHOD"),list2(makesym("x"),makesym("y")),
                  list3(makesym("INITIALIZE-OBJECT*"),makesym("x"),makesym("y")));
@@ -410,7 +414,7 @@ void initgeneric(void){
         (:method (x y)
            (initialize-object* x y)))
     */
-    
+
     lamlis = list2(makesym("x"),makesym("y"));
     body = NIL;
     eval(list4(makesym("DEFGENERIC*"),makesym("REPORT-CONDITION"),lamlis,body));
@@ -423,7 +427,7 @@ void initgeneric(void){
 //arithmetic function
 int f_plus(int arglist){
     int arg,res;
-    
+
     if(nullp(arglist))
         res = makeint(0);
     else{
@@ -442,13 +446,13 @@ int f_plus(int arglist){
 
 int f_minus(int arglist){
     int arg,res,n;
-    
+
     res = car(arglist);
     if((n=length(arglist)) == 0)
         error(WRONG_ARGS,"-",arglist);
     if(n==1)
         return(mult(res,makeint(-1)));
-    
+
     arglist = cdr(arglist);
     while(!(IS_NIL(arglist))){
         arg = car(arglist);
@@ -462,13 +466,13 @@ int f_minus(int arglist){
 
 int f_mult(int arglist){
     int arg,res;
-    
+
     if(nullp(arglist))
         res = makeint(1);
     else{
         res = car(arglist);
         arglist = cdr(arglist);
-    }    
+    }
     while(!(IS_NIL(arglist))){
         arg = car(arglist);
         if(!numberp(arg) && !arrayp(arg) && !vectorp(arg))
@@ -481,7 +485,7 @@ int f_mult(int arglist){
 
 int f_quotient(int arglist){
     int arg,res;
-    
+
     res = car(arglist);
     arglist = cdr(arglist);
     while(!(IS_NIL(arglist))){
@@ -505,7 +509,7 @@ int f_smaller(int arglist){
         error(NOT_NUM, "<", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "<", arg2);
-        
+
     if(smallerp(arg1,arg2))
         return(T);
     else
@@ -514,7 +518,7 @@ int f_smaller(int arglist){
 
 int f_eqsmaller(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -523,7 +527,7 @@ int f_eqsmaller(int arglist){
         error(NOT_NUM, "<=", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "<=", arg2);
-        
+
     if(eqsmallerp(arg1,arg2))
         return(T);
     else
@@ -532,7 +536,7 @@ int f_eqsmaller(int arglist){
 
 int f_greater(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -541,7 +545,7 @@ int f_greater(int arglist){
         error(NOT_NUM, ">", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, ">", arg2);
-    
+
     if(greaterp(arg1,arg2))
         return(T);
     else
@@ -551,7 +555,7 @@ int f_greater(int arglist){
 
 int f_eqgreater(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -562,16 +566,16 @@ int f_eqgreater(int arglist){
         error(NOT_NUM, ">=", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, ">=", arg2);
-    
+
     if(eqgreaterp(arg1,arg2))
         return(T);
     else
         return(NIL);
-}    
+}
 int f_sin(int arglist){
     int arg1;
     double val;
-        
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "sin", arglist);
@@ -584,7 +588,7 @@ int f_sin(int arglist){
 int f_cos(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "cos", arglist);
@@ -597,7 +601,7 @@ int f_cos(int arglist){
 int f_tan(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "tan", arglist);
@@ -610,7 +614,7 @@ int f_tan(int arglist){
 int f_atan(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "atan", arglist);
@@ -623,7 +627,7 @@ int f_atan(int arglist){
 int f_sinh(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "sinh", arglist);
@@ -636,7 +640,7 @@ int f_sinh(int arglist){
 int f_cosh(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "cosh", arglist);
@@ -649,7 +653,7 @@ int f_cosh(int arglist){
 int f_tanh(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "tanh", arglist);
@@ -662,7 +666,7 @@ int f_tanh(int arglist){
 int f_atanh(int arglist){
     int arg1;
     double val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "atanh", arglist);
@@ -674,14 +678,14 @@ int f_atanh(int arglist){
 
 int f_floor(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "floor", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "floor", arg1);
-    
-    
+
+
     if(floatp(arg1))
         return(makeflt(floor(GET_FLT(arg1))));
     else
@@ -690,13 +694,13 @@ int f_floor(int arglist){
 
 int f_ceiling(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "ceiling", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "ceiling", arg1);
-    
+
     if(floatp(arg1))
         return(makeflt(ceil(GET_FLT(arg1))));
     else
@@ -706,13 +710,13 @@ int f_ceiling(int arglist){
 int f_truncate(int arglist){
     int arg1;
     double x;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "truncate", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "truncate", arg1);
-    
+
     if(floatp(arg1)){
         x = GET_FLT(arg1);
         if(x >= 0)
@@ -728,13 +732,13 @@ int f_truncate(int arglist){
 int f_round(int arglist){
     int arg1;
     double x,f,c;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "round", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "round", arg1);
-    
+
     if(floatp(arg1)){
         x = GET_FLT(arg1);
         f = floor(x);
@@ -746,7 +750,7 @@ int f_round(int arglist){
                 x = c;
         else
             x = round(x);
-                
+
         return(makeflt(x));
         }
     else
@@ -755,7 +759,7 @@ int f_round(int arglist){
 
 int f_gcd(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -764,13 +768,13 @@ int f_gcd(int arglist){
         error(NOT_NUM, "gcd", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "gcd", arg2);
-        
+
     return(gcd(arg1,arg2));
 }
 
 int f_lcm(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -779,13 +783,13 @@ int f_lcm(int arglist){
         error(NOT_NUM, "lcm", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "lcm", arg2);
-        
+
     return(lcm(arg1,arg2));
 }
 
 int f_max(int arglist){
     int arg1,res;
-    
+
     res = car(arglist);
     if(!numberp(res))
         error(NOT_NUM, "max", res);
@@ -796,14 +800,14 @@ int f_max(int arglist){
             error(NOT_NUM, "max", arg1);
         if(greaterp(arg1,res))
             res = arg1;
-        arglist = cdr(arglist); 
+        arglist = cdr(arglist);
     }
     return(res);
 }
 
 int f_min(int arglist){
     int arg1,res;
-    
+
     res = car(arglist);
     if(!numberp(res))
         error(NOT_NUM, "min", res);
@@ -814,7 +818,7 @@ int f_min(int arglist){
             error(NOT_NUM, "min", arg1);
         if(smallerp(arg1,res))
             res = arg1;
-        arglist = cdr(arglist); 
+        arglist = cdr(arglist);
     }
     return(res);
 
@@ -822,7 +826,7 @@ int f_min(int arglist){
 
 int f_float(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "float", arglist);
@@ -833,7 +837,7 @@ int f_float(int arglist){
 
 int f_floatp(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "floatp", arglist);
@@ -846,7 +850,7 @@ int f_floatp(int arglist){
 
 int f_div(int arglist){
     int arg1,arg2,q,r;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -857,7 +861,7 @@ int f_div(int arglist){
         error(NOT_NUM, "div", arg2);
     if(zerop(arg2))
         error(DIV_ZERO, "div",arglist);
-    
+
     q = quotient(arg1,arg2);
     r = s_remainder(arg1,arg2);
     if(zerop(r))
@@ -867,13 +871,13 @@ int f_div(int arglist){
             return(minus(q,makeint(1)));
         else if(negativep(arg1) && positivep(arg2))
             return(minus(q,makeint(1)));
-        else       
+        else
             return(q);
 }
 
 int f_integerp(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "integerp", arglist);
@@ -885,7 +889,7 @@ int f_integerp(int arglist){
 
 int f_abs(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "abs", arglist);
@@ -896,7 +900,7 @@ int f_abs(int arglist){
 
 int f_mod(int arglist){
     int arg1,arg2,div;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -905,26 +909,26 @@ int f_mod(int arglist){
         error(NOT_INT, "mod", arg1);
     if(!integerp(arg2) && !longnump(arg2) && !bignump(arg2))
         error(NOT_INT, "mod", arg2);
-    
+
     div = f_div(arglist);
     return(minus(arg1,mult(arg2,div)));
-   
+
 }
 
 int f_exp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "exp", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "exp", arg1);
-    return(makeflt(exp(GET_FLT(exact_to_inexact(arg1))))); 
-}   
+    return(makeflt(exp(GET_FLT(exact_to_inexact(arg1)))));
+}
 
 int f_log(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "log", arglist);
@@ -932,14 +936,14 @@ int f_log(int arglist){
         error(NOT_NUM, "log", arg1);
     if(!positivep(arg1))
         error(NOT_POSITIVE, "log", arglist);
-        
+
     return(makeflt(log(GET_FLT(exact_to_inexact(arg1)))));
 }
 
 int f_expt(int arglist){
     int arg1,arg2;
     double x,y,z;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -948,16 +952,16 @@ int f_expt(int arglist){
         error(NOT_NUM, "expt", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "expt", arg2);
-    
+
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && integerp(arg2) && GET_INT(arg2) == 0)
         return(makeint(1));
-    
+
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && (integerp(arg2) && GET_INT(arg2) > 0))
         return(expt(arg1,GET_INT(arg2)));
-    
+
     if((integerp(arg1) || floatp(arg1)) &&
        (integerp(arg2) || floatp(arg2))){
-       
+
         arg1 = exact_to_inexact(arg1);
         arg2 = exact_to_inexact(arg2);
         x = GET_FLT(arg1);
@@ -999,7 +1003,7 @@ int f_expt(int arglist){
             x = GET_FLT(exact_to_inexact(arg1));
             y = x*x;
             return(makeflt(y));
-        }     
+        }
         else if(GET_INT(arg2) == -1){
             x = GET_FLT(exact_to_inexact(arg1));
             y = 1.0 / x;
@@ -1009,7 +1013,7 @@ int f_expt(int arglist){
             x = GET_FLT(exact_to_inexact(arg1));
             y = 1.0 / (x*x);
             return(makeflt(y));
-        }     
+        }
     }
     if(longnump(arg1) && floatp(arg2)){
         if(GET_FLT(arg2) == 0.0){
@@ -1024,7 +1028,7 @@ int f_expt(int arglist){
             x = GET_FLT(exact_to_inexact(arg1));
             y = x*x;
             return(makeflt(y));
-        }    
+        }
         else if(GET_FLT(arg2) == -1.0){
             x = GET_FLT(exact_to_inexact(arg1));
             y = 1.0 / x;
@@ -1034,7 +1038,7 @@ int f_expt(int arglist){
             x = GET_FLT(exact_to_inexact(arg1));
             y = 1.0 / (x*x);
             return(makeflt(y));
-        }     
+        }
     }
     error(OUT_OF_RANGE,"expt",arglist);
     return(UNDEF);
@@ -1042,7 +1046,7 @@ int f_expt(int arglist){
 
 int expt(int x, int y){
     int res,p;
-    
+
     res = makeint(1);
     p = x;
     while(y > 0){
@@ -1053,7 +1057,7 @@ int expt(int x, int y){
         else{
             res = mult(res,p);
             y = y -1;
-        }   
+        }
     }
     return(res);
 }
@@ -1062,7 +1066,7 @@ int expt(int x, int y){
 int f_sqrt(int arglist){
     int arg1;
     double x;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "sqrt", arglist);
@@ -1080,7 +1084,7 @@ int f_sqrt(int arglist){
 
 int f_isqrt(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "isqrt", arglist);
@@ -1093,7 +1097,7 @@ int f_isqrt(int arglist){
 
 int f_atan2(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1107,7 +1111,7 @@ int f_atan2(int arglist){
 
 int f_reciprocal(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "resiprocal", arglist);
@@ -1118,7 +1122,7 @@ int f_reciprocal(int arglist){
 
 int f_numeqp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1127,7 +1131,7 @@ int f_numeqp(int arglist){
         error(NOT_NUM, "=", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "=", arg2);
-    
+
     if(numeqp(arg1,arg2))
         return(T);
     else
@@ -1136,7 +1140,7 @@ int f_numeqp(int arglist){
 
 int f_notnumeqp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1145,19 +1149,19 @@ int f_notnumeqp(int arglist){
         error(NOT_NUM, "/=", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "/=", arg2);
-    
+
     if(numeqp(arg1,arg2))
         return(NIL);
     else
         return(T);
-}   
+}
 
 
 //list function
 
 int f_car(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(!(IS_LIST(arg)))
         error(NOT_CONS, "car", arg);
@@ -1168,7 +1172,7 @@ int f_car(int arglist){
 
 int f_cdr(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(!(IS_LIST(arg)))
         error(NOT_CONS, "cdr", arg);
@@ -1179,7 +1183,7 @@ int f_cdr(int arglist){
 
 int f_cons(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1189,7 +1193,7 @@ int f_cons(int arglist){
 
 int f_eq(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1202,7 +1206,7 @@ int f_eq(int arglist){
 
 int f_eql(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1215,7 +1219,7 @@ int f_eql(int arglist){
 
 int f_equal(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1228,7 +1232,7 @@ int f_equal(int arglist){
 
 int f_not(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "not", arglist);
@@ -1240,7 +1244,7 @@ int f_not(int arglist){
 
 int f_nullp(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "not", arglist);
@@ -1249,7 +1253,7 @@ int f_nullp(int arglist){
     else
         return(NIL);
 }
-         
+
 int f_atomp(int arglist){
     int arg;
 
@@ -1264,7 +1268,7 @@ int f_atomp(int arglist){
 
 int f_functionp(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "functionp", arglist);
@@ -1276,7 +1280,7 @@ int f_functionp(int arglist){
 
 int f_consp(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "consp", arglist);
@@ -1288,12 +1292,12 @@ int f_consp(int arglist){
 
 
 int f_list(int arglist){
-    return(list(arglist));   
+    return(list(arglist));
 }
 
 int f_append(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(!listp(arg1) && nullp(arglist))
         error(NOT_CONS, "append", arg1);
@@ -1315,7 +1319,7 @@ int f_append(int arglist){
 
 int f_symbolp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "symbolp", arglist);
@@ -1327,7 +1331,7 @@ int f_symbolp(int arglist){
 
 int f_numberp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "numberp", arglist);
@@ -1339,7 +1343,7 @@ int f_numberp(int arglist){
 
 int f_listp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "listp", arglist);
@@ -1352,16 +1356,16 @@ int f_listp(int arglist){
 
 int f_member(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    
+
     return(member(arg1,arg2));
 }
 
 int f_assoc(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1370,13 +1374,13 @@ int f_assoc(int arglist){
         error(NOT_LIST, "assoc", arg2);
     if(!assoclistp(arg2))
         error(ILLEGAL_ARGS, "assoc", arg2);
-        
+
     return(assoc(arg1,arg2));
 }
 
 int f_mapcar(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
@@ -1386,31 +1390,31 @@ int f_mapcar(int arglist){
 
 int f_mapc(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    
+
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
         error(NOT_FUNC, "mapc", arg1);
-    
+
     return(mapc(arg1,arg2));
 }
 
 int f_maplist(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    
+
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
         error(NOT_FUNC, "maplist", arg1);
-    
+
     return(maplist(arg1,arg2));
 }
 
 int f_mapl(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
@@ -1421,19 +1425,19 @@ int f_mapl(int arglist){
 
 int f_mapcon(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    
+
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
         error(NOT_FUNC, "mapcon", arg1);
-    
+
     return(mapcon(arg1,arg2));
 }
 
 int f_mapcan(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
@@ -1444,11 +1448,11 @@ int f_mapcan(int arglist){
 
 int f_map_into(int arglist){
     int arg1,arg2 ,arg3,val,res;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
-    
+
     val = mapcar(arg2,arg3);
     res = arg1;
     while(!nullp(val)){
@@ -1456,13 +1460,13 @@ int f_map_into(int arglist){
         arg1 = cdr(arg1);
         val = cdr(val);
     }
-    return(res);  
+    return(res);
 }
 
 
 int f_reverse(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "reverse", arglist);
@@ -1473,7 +1477,7 @@ int f_reverse(int arglist){
 
 int f_nreverse(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "nreverse", arglist);
@@ -1484,7 +1488,7 @@ int f_nreverse(int arglist){
 
 int f_create_list(int arglist){
     int arg1,arg2,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if((n=length(arglist)) != 1 && n != 2)
@@ -1502,7 +1506,7 @@ int f_create_list(int arglist){
 
 int f_property(int arglist){
     int arg1,arg2,arg3,res,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1510,17 +1514,17 @@ int f_property(int arglist){
         error(ILLEGAL_ARGS,"property",arglist);
     if(!symbolp(arg1))
         error(NOT_SYM,"property",arg1);
-    
+
     res = assoc(arg2,GET_PROP(arg1));
     if(res == 0)
         return(arg3);
     else
-        return(cdr(res));   
+        return(cdr(res));
 }
 
 int f_set_property(int arglist){
     int arg1,arg2,arg3,res;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1534,14 +1538,14 @@ int f_set_property(int arglist){
 
 int f_remove_property(int arglist){
     int arg1,arg2,val,res;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS,"remove-property",arglist);
     if(!symbolp(arg1))
         error(NOT_SYM,"remove-property",arg1);
-       
+
     val = assoc(arg2,GET_PROP(arg1));
     if(nullp(val))
         return(NIL);
@@ -1555,37 +1559,37 @@ int f_remove_property(int arglist){
 int f_gensym(int arglist){
     int res;
     char str1[SYMSIZE],str2[10];
-    
+
     strcpy(str1,"#:G");
     sprintf(str2, "%d",genint);
     genint++;
     strcat(str1,str2);
     res = makesym(str1);
-    return(res);      
+    return(res);
 }
 
 int f_length(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(!nullp(cdr(arglist)))
         error(WRONG_ARGS, "length", arglist);
     if(!listp(arg) && !vectorp(arg) && !stringp(arg))
         error(ILLEGAL_ARGS, "length", arg);
-    
+
     if(listp(arg))
         return(makeint(length(arg)));
     else if(vectorp(arg))
         return(makeint(vector_length(arg)));
-    else 
+    else
         return(makeint(string_length(arg)));
-    
+
 }
 
 
 int f_set_car(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1598,7 +1602,7 @@ int f_set_car(int arglist){
 
 int f_set_cdr(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -1618,7 +1622,7 @@ int f_read(int arglist){
     #if __linux
     int save1;
     #endif
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1626,7 +1630,7 @@ int f_read(int arglist){
         error(WRONG_ARGS, "read", arglist);
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read", arg1);
-    
+
     #if __linux
     save1 = repl_flag;
     repl_flag = 0;
@@ -1644,7 +1648,7 @@ int f_read(int arglist){
             #endif
             error(END_STREAM, "read", NIL);
         }
-        
+
     }
     else{
         save = input_stream;
@@ -1675,7 +1679,7 @@ int f_read_char(int arglist){
     #if __linux
     int save1;
     #endif
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1683,7 +1687,7 @@ int f_read_char(int arglist){
         error(WRONG_ARGS, "read-char", arglist);
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-char", arg1);
-    
+
     #if __linux
     save1 = repl_flag;
     repl_flag = 0;
@@ -1742,7 +1746,7 @@ int f_read_byte(int arglist){
     #if __linux
     int save1;
     #endif
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1750,7 +1754,7 @@ int f_read_byte(int arglist){
         error(WRONG_ARGS, "read-byte", arglist);
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-byte", arg1);
-    
+
     #if __linux
     save1 = repl_flag;
     repl_flag = 0;
@@ -1798,7 +1802,7 @@ int f_read_byte(int arglist){
 int f_preview_char(int arglist){
     int arg1,arg2,arg3,save,n,res;
     char buf[CHARSIZE];
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1806,7 +1810,7 @@ int f_preview_char(int arglist){
         error(WRONG_ARGS, "preview-char", arglist);
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "preview-char", arg1);
-    
+
     if(n==0){
         buf[0] = readc();
         buf[1] = NUL;
@@ -1852,7 +1856,7 @@ int f_read_line(int arglist){
     #if __linux
     int save1;
     #endif
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1860,7 +1864,7 @@ int f_read_line(int arglist){
         error(WRONG_ARGS, "read-line", arglist);
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-line", arg1);
-	
+
 	#if __linux
     save1 = repl_flag;
     repl_flag = 0;
@@ -1913,10 +1917,10 @@ int f_read_line(int arglist){
                 input_stream = save;
                 return(arg3);
             }
-            else   
+            else
                 error(END_STREAM, "read-line", NIL);
         }
-        
+
         while(c != EOL && c != EOF){
             buf[pos] = c;
             pos++;
@@ -1937,7 +1941,7 @@ int f_read_line(int arglist){
 int f_load(int arglist){
     int arg1,sexp,save,n;
     char str[STRSIZE];
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "load", arglist);
@@ -1947,15 +1951,15 @@ int f_load(int arglist){
     //object file ex "foo.o"
     n = strlen(GET_NAME(arg1));
     strcpy(str,GET_NAME(arg1));
-    if(str[n-1] == 'o' && str[n-2] == '.'){ 
-        dynamic_link(arg1); 
+    if(str[n-1] == 'o' && str[n-2] == '.'){
+        dynamic_link(arg1);
         return(T);
     }
-    
+
     //text file
     save = input_stream;
     input_stream = makestream(fopen(GET_NAME(arg1),"r"),EISL_INPUT);
-    
+
     if(GET_PORT(input_stream) == NULL){
         input_stream = save;
         error(CANT_OPEN, "load", arg1);
@@ -1963,12 +1967,12 @@ int f_load(int arglist){
     open_flag = 1;
     line = 1;
     column = 0;
-    while(1){                               
+    while(1){
         sexp = sread();
         if(sexp == FEND)
             break;
         top_flag = 1;
-        eval(sexp);   
+        eval(sexp);
     }
     open_flag = 0;
     fclose(GET_PORT(input_stream));
@@ -1981,7 +1985,7 @@ int f_load(int arglist){
 
 int f_print(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "print", arglist);
@@ -1992,7 +1996,7 @@ int f_print(int arglist){
 
 int f_prin1(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "prin1", arglist);
@@ -2010,7 +2014,7 @@ int f_standard_input(int arglist){
 int f_standard_output(int arglist){
     if(!nullp(arglist))
         error(WRONG_ARGS, "standard-output", arglist);
-    return(standard_output);    
+    return(standard_output);
 }
 
 int f_error_output(int arglist){
@@ -2021,7 +2025,7 @@ int f_error_output(int arglist){
 
 int f_streamp(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "streamp", arglist);
@@ -2033,7 +2037,7 @@ int f_streamp(int arglist){
 
 int f_open_stream_p(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "open-stream-p", arglist);
@@ -2047,7 +2051,7 @@ int f_open_stream_p(int arglist){
 
 int f_input_stream_p(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "input-stream-p", arglist);
@@ -2059,7 +2063,7 @@ int f_input_stream_p(int arglist){
 
 int f_output_stream_p(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "output-stream-p", arglist);
@@ -2072,13 +2076,13 @@ int f_output_stream_p(int arglist){
 int f_stream_ready_p(int arglist){
     int arg1,save;
     char c;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"stream-ready-p",arglist);
     if(!streamp(arg1))
         error(NOT_STREAM,"stream-ready-p",arg1);
-    
+
     if(input_stream_p(arg1)){
         save = input_stream;
         input_stream = arg1;
@@ -2092,7 +2096,7 @@ int f_stream_ready_p(int arglist){
             input_stream = save;
             return(T);
         }
-    }    
+    }
     else
         return(T);
 }
@@ -2101,7 +2105,7 @@ int f_stream_ready_p(int arglist){
 
 int f_eval(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "eval", arglist);
@@ -2110,14 +2114,14 @@ int f_eval(int arglist){
 
 int f_apply(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
         error(NOT_FUNC, "apply", arg1);
     if(!listp(last(arg2)))
         error(NOT_LIST, "apply", last(arg2));
-    
+
     return(apply(arg1,bind_args(arg2)));
 }
 
@@ -2130,23 +2134,23 @@ int bind_args(int x){
 
 int f_funcall(int arglist){
     int arg1,arg2,res;
-   
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if(!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
         error(NOT_FUNC, "funcall", arg1);
-    res = apply(arg1,arg2); 
+    res = apply(arg1,arg2);
     return(res);
 }
 
 
 
 //character function
-      
+
 
 int f_characterp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "characterp", arglist);
@@ -2160,7 +2164,7 @@ int f_characterp(int arglist){
 
 int f_char_eqp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2169,8 +2173,8 @@ int f_char_eqp(int arglist){
         error(NOT_CHAR, "char=", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "char=", arg2);
-    
-    
+
+
     if(SAME_NAME(arg1,arg2))
         return(T);
     else
@@ -2179,7 +2183,7 @@ int f_char_eqp(int arglist){
 
 int f_char_noteqp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2188,8 +2192,8 @@ int f_char_noteqp(int arglist){
         error(NOT_CHAR, "char/=", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "char/=", arg2);
-    
-    
+
+
     if(SAME_NAME(arg1,arg2))
         return(NIL);
     else
@@ -2198,7 +2202,7 @@ int f_char_noteqp(int arglist){
 
 int f_char_smallerp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2207,8 +2211,8 @@ int f_char_smallerp(int arglist){
         error(NOT_CHAR, "char<", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "char<", arg2);
-    
-    
+
+
     if(SMALLER_NAME(arg1,arg2))
         return(T);
     else
@@ -2217,7 +2221,7 @@ int f_char_smallerp(int arglist){
 
 int f_char_eqsmallerp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2226,7 +2230,7 @@ int f_char_eqsmallerp(int arglist){
         error(NOT_CHAR, "char<=", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "char<=", arg2);
-    
+
     if(SMALLER_NAME(arg1,arg2) || SAME_NAME(arg1,arg2))
         return(T);
     else
@@ -2235,7 +2239,7 @@ int f_char_eqsmallerp(int arglist){
 
 int f_char_greaterp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2244,7 +2248,7 @@ int f_char_greaterp(int arglist){
         error(NOT_CHAR, "char>", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "char>", arg2);
-    
+
     if(GREATER_NAME(arg1,arg2))
         return(T);
     else
@@ -2253,7 +2257,7 @@ int f_char_greaterp(int arglist){
 
 int f_char_eqgreaterp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2262,7 +2266,7 @@ int f_char_eqgreaterp(int arglist){
         error(NOT_CHAR, "char>=", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "char>=", arg2);
-    
+
     if(GREATER_NAME(arg1,arg2) || SAME_NAME(arg1,arg2))
         return(T);
     else
@@ -2272,7 +2276,7 @@ int f_char_eqgreaterp(int arglist){
 int f_char_index(int arglist){
     int arg1,arg2,arg3,n,i,j,len;
     char c;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -2288,22 +2292,22 @@ int f_char_index(int arglist){
         error(NOT_POSITIVE, "char-index", arg3);
     if(n == 3 && GET_INT(arg3) >= string_length(arg2))
         error(ILLEGAL_ARGS, "char-index", arg3);
-    
+
     if(string_length(arg2) == 0)
         return(NIL);
-        
+
     if(arg3 != NIL)
         j = GET_INT(arg3);
     else
         j = 0;
-    
+
     c = GET_CHAR(arg1);
     len = strlen(GET_NAME(arg2));
     for(i=j;i<len;i++){
         if(STRING_REF(arg2,i)==c)
             break;
     }
-    if(i<len) 
+    if(i<len)
         return(makeint(i));
     else
         return(NIL);
@@ -2313,7 +2317,7 @@ int f_char_index(int arglist){
 //string function
 int f_stringp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "stringp", arglist);
@@ -2325,7 +2329,7 @@ int f_stringp(int arglist){
 
 int f_string_eqp(int arglist){
     int arg1,arg2;
-    
+
     if(length(arglist) != 2)
         error(WRONG_ARGS, "string=", arglist);
     arg1 = car(arglist);
@@ -2337,12 +2341,12 @@ int f_string_eqp(int arglist){
     if(SAME_NAME(arg1,arg2))
         return(T);
     else
-        return(NIL);    
+        return(NIL);
 }
 
 int f_string_noteqp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2354,7 +2358,7 @@ int f_string_noteqp(int arglist){
     if(SAME_NAME(arg1,arg2))
         return(NIL);
     else
-        return(T);      
+        return(T);
 }
 
 
@@ -2362,14 +2366,14 @@ int f_string_noteqp(int arglist){
 int f_elt(int arglist){
     int arg1,arg2;
     char str[CHARSIZE];
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "elt", arglist);
     if(!integerp(arg2))
         error(NOT_INT, "elt", arg2);
-        
+
     if(listp(arg1)){
         if(length(arg1) <= GET_INT(arg2) || GET_INT(arg2) < 0)
             error(OUT_OF_RANGE, "elt", arg2);
@@ -2384,7 +2388,7 @@ int f_elt(int arglist){
         if(strlen(GET_NAME(arg1)) <= GET_INT(arg2) || GET_INT(arg2) < 0)
             error(OUT_OF_RANGE, "elt", arg2);
         str[0] = GET_NAME_ELT(arg1,GET_INT(arg2));
-        str[1] = NUL; 
+        str[1] = NUL;
         return(makechar(str));
     }
     return(NIL);
@@ -2393,7 +2397,7 @@ int f_elt(int arglist){
 
 int f_set_elt(int arglist){
     int arg1,arg2,arg3;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -2401,22 +2405,22 @@ int f_set_elt(int arglist){
         error(WRONG_ARGS, "set-elt", arglist);
     if(!integerp(arg3))
         error(NOT_INT, "set-elt", arg3);
-        
+
     if(listp(arg2))
         SET_CAR(listref1(arg2,GET_INT(arg3)),arg1);
     else if(vectorp(arg2))
         SET_VEC_ELT(arg2,GET_INT(arg3),arg1);
     else if(stringp(arg2))
         STRING_SET(arg2,GET_INT(arg3),GET_CHAR(arg1));
-    
-    return(arg1);    
+
+    return(arg1);
 }
 
 
 
 int f_string_smallerp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2425,7 +2429,7 @@ int f_string_smallerp(int arglist){
         error(NOT_STR, "string<", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "string<", arg2);
-    
+
     if(SMALLER_NAME(arg1,arg2))
         return(T);
     else
@@ -2434,7 +2438,7 @@ int f_string_smallerp(int arglist){
 
 int f_string_greaterp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2443,7 +2447,7 @@ int f_string_greaterp(int arglist){
         error(NOT_STR, "string>", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "string>", arg2);
-    
+
     if(GREATER_NAME(arg1,arg2))
         return(T);
     else
@@ -2452,7 +2456,7 @@ int f_string_greaterp(int arglist){
 
 int f_string_eqgreaterp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2461,7 +2465,7 @@ int f_string_eqgreaterp(int arglist){
         error(NOT_STR, "string>=", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "string>=", arg2);
-        
+
     if(GREATER_NAME(arg1,arg2) || SAME_NAME(arg1,arg2))
         return(T);
     else
@@ -2472,7 +2476,7 @@ int f_string_eqgreaterp(int arglist){
 
 int f_string_eqsmallerp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -2481,7 +2485,7 @@ int f_string_eqsmallerp(int arglist){
         error(NOT_STR, "string<=", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "string<=", arg2);
-        
+
     if(SMALLER_NAME(arg1,arg2) || SAME_NAME(arg1,arg2))
         return(T);
     else
@@ -2496,8 +2500,8 @@ int f_string_append(int arglist){
     if(nullp(arglist))
         return(makestr(""));
     else if(nullp(cdr(arglist)))
-        return(car(arglist));    
-     
+        return(car(arglist));
+
     arg1 = car(arglist);
     if(!stringp(arg1))
         error(NOT_STR, "string-append", arg1);
@@ -2510,7 +2514,7 @@ int f_string_append(int arglist){
         if(!stringp(arg2))
             error(NOT_STR, "string-append", arg2);
         arglist = cdr(arglist);
-    
+
         strcpy(str2,GET_NAME(arg2));
         strcat(str1,str2);
         strcpy(str2,str1);
@@ -2521,7 +2525,7 @@ int f_string_append(int arglist){
 
 int f_string_index(int arglist){
     int arg1,arg2,arg3,n,i,j,k,len1,len2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -2537,37 +2541,37 @@ int f_string_index(int arglist){
         error(NOT_POSITIVE, "string-index", arg3);
     if(n == 3 && GET_INT(arg3) >= string_length(arg2))
         error(ILLEGAL_ARGS, "string-index", arg3);
-    
+
     if(string_length(arg2) == 0)
         return(NIL);
-    
+
     len1=strlen(GET_NAME(arg1));
     len2=strlen(GET_NAME(arg2));
     if(n==3)
         j = GET_INT(arg3);
     else
         j = 0;
-    
+
     for(i=j;i<len2;i++)
         for(k=0;k<len1+1;k++)
             if(STRING_REF(arg1,k)==NUL)
                 return(makeint(i));
             else if(STRING_REF(arg1,k)!=STRING_REF(arg2,i+k))
                 break;
-            
-        
+
+
     return(NIL);
 }
 
 
 //vector and array
- 
+
 int f_aref(int arglist){
     int arg1,arg2,n;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    
+
     if(length(arglist) < 1)
         error(WRONG_ARGS,"aref",arglist);
     if(!vectorp(arg1) && !arrayp(arg1) && !stringp(arg1))
@@ -2576,10 +2580,10 @@ int f_aref(int arglist){
         error(OUT_OF_RANGE,"aref",arg2);
     if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
         error(OUT_OF_RANGE,"aref",arg2);
-    if(stringp(arg1) && 
+    if(stringp(arg1) &&
        ((n=GET_INT(car(arg2))) >= string_length(arg1) || n < 0))
         error(OUT_OF_RANGE,"aref",arg2);
-    
+
     if(stringp(arg1))
         return(string_ref(arg1,car(arg2)));
     else
@@ -2587,7 +2591,7 @@ int f_aref(int arglist){
 }
 
 int inrangep(int x, int y){
-    
+
     while(!nullp(x)){
         if(longnump(car(x) || bignump(car(x))))
             return(0);
@@ -2595,9 +2599,9 @@ int inrangep(int x, int y){
             return(0);
         else if(nullp(y))
             return(0);
-        
+
         x = cdr(x);
-        y = cdr(y);       
+        y = cdr(y);
     }
     if(nullp(y))
         return(1);
@@ -2607,7 +2611,7 @@ int inrangep(int x, int y){
 
 int f_garef(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if(GET_AUX(arg1) != cgeneral_vector && GET_AUX(arg1) != cgeneral_array_star)
@@ -2616,27 +2620,27 @@ int f_garef(int arglist){
         error(OUT_OF_RANGE,"garef",arg2);
     if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
         error(OUT_OF_RANGE,"garef",arg2);
-    
+
     return(array_ref(arg1,arg2));
 }
 
 
 int f_set_aref(int arglist){
     int arg1,arg2,arg3,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    arg3 = cddr(arglist); 
+    arg3 = cddr(arglist);
     if(!vectorp(arg2) && !arrayp(arg2) &&!stringp(arg2))
         error(ILLEGAL_ARGS, "set-aref", arg2);
     if(vectorp(arg2) && !inrangep(arg3,list1(makeint(vector_length(arg2)))))
         error(OUT_OF_RANGE,"set-aref",arg3);
     if(arrayp(arg2) && !inrangep(arg3,array_length(arg2)))
         error(OUT_OF_RANGE,"set-aref",arg3);
-    if(stringp(arg2) && 
+    if(stringp(arg2) &&
        ((n=GET_INT(car(arg3))) >= string_length(arg2) || n < 0))
-        error(OUT_OF_RANGE,"set-aref",arg3); 
-    
+        error(OUT_OF_RANGE,"set-aref",arg3);
+
     if(stringp(arg2))
         string_set(arg2,car(arg3),arg1);
     else
@@ -2646,7 +2650,7 @@ int f_set_aref(int arglist){
 
 int f_set_garef(int arglist){
     int arg1,arg2,arg3;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
@@ -2656,101 +2660,101 @@ int f_set_garef(int arglist){
         error(OUT_OF_RANGE,"set-garef",arg3);
     if(arrayp(arg2) && !inrangep(arg3,array_length(arg2)))
         error(OUT_OF_RANGE,"set-garef",arg3);
-    
+
     array_set(arg2,arg3,arg1);
     return(arg1);
 }
 
 int f_basic_vector_p(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "basic-vector-p", arglist);
-    
+
     if(!symbolp(arg1) && GET_AUX(arg1) == cbasic_vector)
         return(T);
     else if(!symbolp(arg1) && subclassp(GET_AUX(arg1),cbasic_vector))
         return(T);
     else
         return(NIL);
-    
+
     return(UNDEF);
 }
 
 int f_general_vector_p(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "general-vector-p", arglist);
-    
+
     if(!symbolp(arg1) && GET_AUX(arg1) == cgeneral_vector)
         return(T);
     else if(!symbolp(arg1) && subclassp(GET_AUX(arg1),cgeneral_vector))
         return(T);
     else
         return(NIL);
-    
+
     return(UNDEF);
 }
 
 
 int f_basic_array_p(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "basic-array-p", arglist);
-    
+
     if(!symbolp(arg1) && GET_AUX(arg1) == cbasic_array)
         return(T);
     else if(!symbolp(arg1) && subclassp(GET_AUX(arg1),cbasic_array))
         return(T);
     else
         return(NIL);
-    
+
     return(UNDEF);
 }
 
 int f_basic_array_star_p(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "basic-array-p", arglist);
-    
+
     if(!symbolp(arg1) && GET_AUX(arg1) == cbasic_array_star)
         return(T);
     else if(!symbolp(arg1) && subclassp(GET_AUX(arg1),cbasic_array_star))
         return(T);
     else
         return(NIL);
-    
+
     return(UNDEF);
 }
 
 int f_general_array_star_p(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "general-array*-p", arglist);
-    
+
     if(!symbolp(arg1) && GET_AUX(arg1) == cgeneral_array_star)
         return(T);
     else if(!symbolp(arg1) && subclassp(GET_AUX(arg1),cgeneral_array_star))
         return(T);
     else
         return(NIL);
-    
+
     return(UNDEF);
 }
 
 
 int f_array_dimensions(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "array-dimensions", arglist);
@@ -2774,7 +2778,7 @@ int f_vector(int arglist){
 
 int f_create_star(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist); //class
     arg2 = cadr(arglist); //initargs,vals
     if(length(arglist) != 2)
@@ -2783,13 +2787,13 @@ int f_create_star(int arglist){
         error(NOT_CLASS, "create", arg1);
     if(GET_OPT(arg1) == SYSTEM)
         error(CANT_CREATE, "create", arg1);
-        
+
     return(makeinstance(arg1,arg2));
 }
 
 int f_slot_value(int arglist){
     int arg1,arg2,val;
-        
+
     arg1 = car(arglist);  //instance
     arg2 = cadr(arglist); //var
     if(length(arglist) != 2)
@@ -2798,17 +2802,17 @@ int f_slot_value(int arglist){
         error(NOT_INSTANCE, "slot-value", arg1);
     if(!symbolp(arg2))
         error(NOT_SYM, "slot-value", arg2);
-    
+
     val = assoc(arg2,GET_CDR(arg1));
     if(nullp(val))
         error(UNDEF_VAR, "slot-value", arg2);
-    
+
     return(cdr(val));
 }
 
 int f_set_slot_value(int arglist){
     int arg1,arg2,arg3,val;
-        
+
     arg1 = car(arglist);  //value to set
     arg2 = cadr(arglist);  //instance
     arg3 = caddr(arglist); //var
@@ -2818,11 +2822,11 @@ int f_set_slot_value(int arglist){
         error(NOT_INSTANCE, "set-slot-value", arg1);
     if(!symbolp(arg3))
         error(NOT_SYM, "set-slot-value", arg2);
-    
+
     val = assoc(arg3,GET_CDR(arg2));
     if(nullp(val))
         error(UNDEF_VAR, "set-slot-value", arg3);
-    
+
     set_cdr(val,arg1);
     return(arg1);
 }
@@ -2831,7 +2835,7 @@ int f_set_slot_value(int arglist){
 int f_format(int arglist){
     int arg1,arg2,args,i,save,n,quote_flag;
     char str[STRSIZE],c;
-    
+
     arg1 = car(arglist);  //output-stream
     arg2 = cadr(arglist); //format-string
     args = cddr(arglist); //data
@@ -2840,7 +2844,7 @@ int f_format(int arglist){
         error(NOT_OUT_STREAM, "format", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "format", arg2);
-    
+
     save = output_stream;
     output_stream = arg1;
     strcpy(str,GET_NAME(arg2));
@@ -2898,8 +2902,8 @@ int f_format(int arglist){
                 }
                 else
                     error(ILLEGAL_ARGS,"format ~n?",NIL);
-                
-                
+
+
             }
             else if(c == '%'){
                 if(GET_OPT(output_stream) != EISL_OUTSTR)
@@ -2944,7 +2948,7 @@ int f_format(int arglist){
                 strcat(GET_NAME(output_stream),stream_str);
             }
             i++;
-        }    
+        }
         else{
             if(c == '\'' && str[i+1] == '\''){
             	if(quote_flag == 0)
@@ -2975,12 +2979,12 @@ int f_format(int arglist){
 int fprintr(FILE *p, int r, int n){
     int i,sign,len;
     char b[1024];
-    
+
     sign = 1;
     if(n == 0){
         b[0] = '0';
         i = 0;
-        goto exit;   
+        goto exit;
     }
     if(n >= 0)
         sign = 1;
@@ -3028,7 +3032,7 @@ int fprintr(FILE *p, int r, int n){
             case 34: b[i] = 'Y'; break;
             case 35: b[i] = 'Z'; break;
         }
-        
+
         n = n / r;
         i++;
     }
@@ -3043,19 +3047,19 @@ int fprintr(FILE *p, int r, int n){
         fprintf(p, "%c", b[i]);
         i--;
     }
-    return(len);    
+    return(len);
 }
 
 
 int sprintr(char *str, int r, int n){
     int i,j,sign,len;
     char b[1024];
-    
+
     sign = 1;
     if(n == 0){
         b[0] = '0';
         i = 0;
-        goto exit;   
+        goto exit;
     }
     if(n >= 0)
         sign = 1;
@@ -3103,7 +3107,7 @@ int sprintr(char *str, int r, int n){
             case 34: b[i] = 'Y'; break;
             case 35: b[i] = 'Z'; break;
         }
-        
+
         n = n / r;
         i++;
     }
@@ -3122,12 +3126,12 @@ int sprintr(char *str, int r, int n){
         j++;
     }
     str[j] = NUL;
-    return(len);    
+    return(len);
 }
 
 int f_format_char(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3136,7 +3140,7 @@ int f_format_char(int arglist){
         error(NOT_OUT_STREAM, "format-char", arg1);
     if(!charp(arg2))
         error(NOT_CHAR, "format-char", arg2);
-        
+
     if(GET_OPT(arg1) != EISL_OUTSTR){
         fprintf(GET_PORT(arg1), "%s", GET_NAME(arg2));
         charcnt++;
@@ -3152,13 +3156,13 @@ int f_format_char(int arglist){
 
 int f_format_fresh_line(int arglist){
     int arg1,save;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"format-fresh-line",arglist);
     if(!output_stream_p(arg1))
         error(NOT_STREAM,"format-fresh-line",arg1);
-    
+
     if(!start_flag){
         save = output_stream;
         output_stream = arg1;
@@ -3178,7 +3182,7 @@ int f_format_fresh_line(int arglist){
 
 int f_format_float(int arglist){
     int arg1,arg2,save,flt;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3201,7 +3205,7 @@ int f_format_float(int arglist){
 
 int f_format_integer(int arglist){
     int arg1,arg2,arg3,n,save,len;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -3215,7 +3219,7 @@ int f_format_integer(int arglist){
         error(NOT_INT, "format-integer", arg3);
     if((n=GET_INT(arg3)) < 2 || n > 36)
         error(OUT_OF_RANGE, "format-integer", arg3);
-    
+
     save = output_stream;
     output_stream = arg1;
     if(integerp(arg2)){
@@ -3238,16 +3242,16 @@ int f_format_integer(int arglist){
 
 int f_format_object(int arglist){
     int arg1,arg2,arg3,save;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
-    
+
     if(length(arglist) != 3)
         error(WRONG_ARGS,"format-object",arglist);
     if(!output_stream_p(arg1))
         error(NOT_OUT_STREAM,"format-object",arglist);
-    
+
     save = output_stream;
     output_stream = arg1;
     if(stringp(arg2)){
@@ -3303,7 +3307,7 @@ int f_format_object(int arglist){
 
 int f_format_tab(int arglist){
     int arg1,arg2,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3312,7 +3316,7 @@ int f_format_tab(int arglist){
         error(NOT_OUT_STREAM,"format-tab",arg1);
     if(!integerp(arg2))
         error(NOT_INT,"format-tab",arg2);
-        
+
     n = GET_INT(arg2) - charcnt;
     if(n < 0)
         n = 1;
@@ -3322,7 +3326,7 @@ int f_format_tab(int arglist){
         else{
             sprintf(stream_str,"%s"," ");
             strcat(GET_NAME(arg1),stream_str);
-        }    
+        }
         n--;
         charcnt++;
     }
@@ -3334,74 +3338,74 @@ int f_format_tab(int arglist){
 int f_open_input_file(int arglist){
     int arg1,n;
     FILE *port;
-    
+
     arg1 = car(arglist);
     if((n=length(arglist)) != 1 && n != 2)
         error(WRONG_ARGS, "open-input-file", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "open-input-file", arg1);
-    
+
     if(n == 1)
         port = fopen(GET_NAME(arg1),"r");
     else
         port = fopen(GET_NAME(arg1),"rb");
-        
+
     if(port == NULL)
         error(CANT_OPEN, "open-input-file", arg1);
-    
+
     return(makestream(port,EISL_INPUT));
 }
 
 int f_open_output_file(int arglist){
     int arg1,n;
     FILE *port;
-    
+
     arg1 = car(arglist);
     if((n=length(arglist)) != 1 && n != 2)
         error(WRONG_ARGS, "open-output-file", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "open-output-file", arg1);
-        
+
     port = fopen(GET_NAME(arg1),"w");
     if(port == NULL)
         error(CANT_OPEN, "open-output-file", arg1);
-    
+
     return(makestream(port,EISL_OUTPUT));
 }
 
 int f_open_io_file(int arglist){
     int arg1,n;
     FILE *port;
-    
+
     arg1 = car(arglist);
     if((n=length(arglist)) != 1 && n != 2)
         error(WRONG_ARGS, "open-io-file", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "open-io-file", arg1);
-        
+
     port = fopen(GET_NAME(arg1),"r+");
     if(port == NULL)
         error(CANT_OPEN, "open-io-file", arg1);
-    
+
     return(makestream(port,EISL_OPEN));
 }
 
 int f_close(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "close", arglist);
     if(!streamp(arg1))
         error(NOT_STREAM, "close", arg1);
     fclose(GET_PORT(arg1));
-    start_flag = 1;   
+    start_flag = 1;
     return(UNDEF);
 }
 
 int f_finish_output(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "finish-output", arglist);
@@ -3415,7 +3419,7 @@ int f_finish_output(int arglist){
 int f_file_length(int arglist){
     int arg1,arg2,size,res;
     FILE *p;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3424,58 +3428,58 @@ int f_file_length(int arglist){
         error(NOT_STR,"file-length",arg1);
     if(!integerp(arg2))
         error(NOT_INT,"file-length",arg2);
-        
+
     p = fopen(GET_NAME(arg1),"rb");
     if(p == NULL)
         error(CANT_OPEN,"file-length",arg1);
-    
+
     fseek(p, 0, SEEK_END);
     size = ftell(p);
     fclose(p);
-    res = size; 
+    res = size;
     return(makeint(res));
 }
 
 int f_probe_file(int arglist){
     int arg1,res;
     FILE *p;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"probe-file",arglist);
     if(!stringp(arg1))
         error(NOT_STR,"probe-file",arg1);
-        
+
     res = T;
     p = fopen(GET_NAME(arg1),"rb");
     if(p == NULL)
         res = NIL;
-        
+
     if(res != NIL)
         fclose(p);
-    
+
     return(res);
 }
 
 int f_file_position(int arglist){
     int arg1;
     FILE *p;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"file-position",arglist);
     if(!streamp(arg1))
         error(NOT_STREAM,"file-position",arg1);
-    
+
     p = GET_PORT(arg1);
-    return(makeint(ftell(p)));    
-    
+    return(makeint(ftell(p)));
+
 }
 
 int f_set_file_position(int arglist){
     int arg1,arg2;
     FILE *p;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3486,17 +3490,17 @@ int f_set_file_position(int arglist){
         error(NOT_INT,"set-file-position",arg2);
     if(negativep(arg2))
         error(NOT_POSITIVE,"set-file-position",arg2);
-    
+
     p = GET_PORT(arg1);
     fseek(p,GET_INT(arg2),SEEK_SET);
-    return(arg2);    
+    return(arg2);
 }
 
 
 
 int f_write_byte(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3505,7 +3509,7 @@ int f_write_byte(int arglist){
         error(NOT_INT, "write-byte", arg1);
     if(!(streamp(arg2) && GET_OPT(arg2)))
         error(NOT_OUT_STREAM, "write-byte", arg2);
-    
+
     fprintf(GET_PORT(arg2), "%c", (char)GET_INT(arg1));
     return(arg1);
 }
@@ -3514,26 +3518,26 @@ int f_write_byte(int arglist){
 
 int f_create_vector(int arglist){
     int arg1,arg2,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    
+
     if((n=length(arglist)) != 1 && length(arglist) != 2)
         error(WRONG_ARGS,"create-vector", arglist);
     if(!integerp(arg1) || negativep(arg1))
         error(NOT_INT, "create-vector", arg1);
     if(length(arglist) == 1)
-        arg2 = UNDEF; 
-    
+        arg2 = UNDEF;
+
     return(makevec(GET_INT(arg1),arg2));
 }
 
 int f_create_array(int arglist){
     int arg1,arg2,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    
+
     if((n=length(arglist)) != 1 && length(arglist) != 2)
         error(WRONG_ARGS,"create-array", arglist);
     if(!listp(arg1))
@@ -3541,8 +3545,8 @@ int f_create_array(int arglist){
     if(check_dimension(arg1))
         error(OUT_OF_RANGE,"create-array",arg1);
     if(length(arglist) == 1)
-        arg2 = UNDEF; 
-    
+        arg2 = UNDEF;
+
     return(makearray(arg1,arg2));
 }
 
@@ -3561,20 +3565,20 @@ int check_dimension(int ls){
 int f_create_string(int arglist){
     int arg1,arg2,n,i;
     char str[STRSIZE],c;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if((n=length(arglist)) != 1 && n != 2)
         error(WRONG_ARGS, "create-string", arglist);
     if(!integerp(arg1) || negativep(arg1))
         error(NOT_INT, "create-string", arg1);
-    
+
     n=GET_INT(arg1);
     if(nullp(arg2))
         c = ' ';
     else
         c = GET_CHAR(arg2);
-    
+
     for(i=0;i<n;i++)
         str[i] = c;
     str[i] = NUL;
@@ -3584,50 +3588,50 @@ int f_create_string(int arglist){
 int f_parse_number(int arglist){
     int arg1;
     char *e;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "parse-number", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "parse-number", arg1);
-    
+
     strcpy(stok.buf,GET_NAME(arg1));
-    
+
     if(bignumtoken(stok.buf))
             return(makebigx(stok.buf));
-    
+
     if(inttoken(stok.buf))
         return(makeint(strtol(stok.buf,&e,10)));
-    
+
     if(flttoken(stok.buf) || expttoken(stok.buf))
         return(makeflt(atof(stok.buf)));
-    
+
     if(bintoken(stok.buf))
         return(makeint((int)strtol(stok.buf,&e,2)));
-    
+
     if(octtoken(stok.buf))
         return(makeint((int)strtol(stok.buf,&e,8)));
-    
+
     if(dectoken(stok.buf))
         return(makeint((int)strtol(stok.buf,&e,10)));
-    
+
     if(hextoken(stok.buf))
         return(makeint((int)strtol(stok.buf,&e,16)));
-    
-    error(CANT_PARSE,"parse-number",arg1);       
+
+    error(CANT_PARSE,"parse-number",arg1);
     return(UNDEF);
 }
 
 int f_create_string_input_stream(int arglist){
     int arg1,res;
     char *str;
-    
-    arg1 = car(arglist);    
+
+    arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "create-string-input-stream", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "create-string-input-stream", arg1);
-    
+
     res = makestream(stdin,EISL_INSTR);
     str = (char *)malloc(strlen(GET_NAME(arg1))+1);
     if(str == NULL)
@@ -3640,10 +3644,10 @@ int f_create_string_input_stream(int arglist){
 int f_create_string_output_stream(int arglist){
     int res;
     char *str;
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS, "create-string-output-stream", arglist);
-    
+
     res = makestream(stdout,EISL_OUTSTR);
     str = (char *)malloc(STRSIZE);
     if(str == NULL)
@@ -3655,13 +3659,13 @@ int f_create_string_output_stream(int arglist){
 
 int f_get_output_stream_string(int arglist){
     int arg1,res;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "get-output-stream-string", arglist);
     if(!output_stream_p(arg1))
         error(NOT_STR, "get-output-stream-string", arg1);
-    
+
     res = makestr(GET_NAME(arg1));
     return(res);
 }
@@ -3670,7 +3674,7 @@ int f_get_output_stream_string(int arglist){
 
 int f_subseq(int arglist){
     int arg1,arg2,arg3;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -3680,8 +3684,8 @@ int f_subseq(int arglist){
         error(OUT_OF_RANGE, "subseq", arglist);
     if(negativep(arg2) || negativep(arg3))
         error(OUT_OF_RANGE, "subseq", arglist);
-    
-    
+
+
     if(stringp(arg1)){
         if(strlen(GET_NAME(arg1)) < GET_INT(arg3))
             error(OUT_OF_RANGE, "subseq", arglist);
@@ -3697,7 +3701,7 @@ int f_subseq(int arglist){
             error(OUT_OF_RANGE, "subseq", arglist);
         return(subvec(arg1,GET_INT(arg2),GET_INT(arg3)));
     }
-    
+
     error(ILLEGAL_ARGS, "subseq", arg1);
     return(UNDEF);
 }
@@ -3705,56 +3709,56 @@ int f_subseq(int arglist){
 
 int f_identity(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"identity",arglist);
-    
+
     return(arg1);
 }
 
 int f_get_universal_time(int arglist){
     time_t t;
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS,"get-universal-time",arglist);
-    
+
     t = time(NULL);
     return(makeint((int)t));
 }
 
 int f_get_internal_run_time(int arglist){
     clock_t t;
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS,"get-internal-run-time",arglist);
-    
+
     t = clock();
     return(makeint((int)t));
 }
 
 int f_get_internal_real_time(int arglist){
     clock_t t;
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS,"get-internal-real-time",arglist);
-    
+
     t = clock();
     return(makeint((int)t));
 }
 
 int f_internal_time_units_per_second(int arglist){
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS,"internal-time-units-per-second",arglist);
-    
+
     return(makeint(CLOCKS_PER_SEC));
 }
 
 
 int f_initialize_object_star(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3763,26 +3767,26 @@ int f_initialize_object_star(int arglist){
         error(NOT_INSTANCE,"initialize-object*",arg1);
     if(!listp(arg2))
         error(NOT_LIST,"initialize-object*",arg2);
-    
+
     return(initinst(arg1,arg2));
 }
 
 //controle
 int f_quit(int arglist){
     int addr;
-    
+
     for(addr=0; addr< HEAPSIZE; addr++)
         free(heap[addr].name);
-    
+
     printf("- good bye -\n");
-    longjmp(buf,2); 
+    longjmp(buf,2);
 }
 
 //extension
 
 int f_heapdump(int arglist){
     int arg;
-    
+
     arg = GET_INT(car(arglist));
     heapdump(arg,arg+10);
     return(T);
@@ -3790,37 +3794,37 @@ int f_heapdump(int arglist){
 
 int f_gbc(int arglist){
     int n;
-    
+
     if((n=length(arglist)) != 0 && n != 1)
-        error(WRONG_ARGS, "gbc", arglist); 
+        error(WRONG_ARGS, "gbc", arglist);
     if(nullp(arglist))
         gbc();
     else if(car(arglist) == T)
         gbc_flag= 1;
     else if(car(arglist) == NIL)
         gbc_flag = 0;
-        
+
     return(T);
 }
 
 int f_dummyp(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"dummyp",arg1);
-    
+
     if(GET_TAG(arg1) == DUMMY)
         return(T);
     else
         return(NIL);
 }
 
-//object 
+//object
 
 int f_class_of(int arglist){
     int arg;
-    
+
     arg = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "class-of", arglist);
@@ -3834,7 +3838,7 @@ int f_class_of(int arglist){
 
 int f_instancep(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3854,7 +3858,7 @@ int f_instancep(int arglist){
 
 int f_subclassp(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
@@ -3863,8 +3867,8 @@ int f_subclassp(int arglist){
         error(NOT_CLASS, "subclassp", arg2);
     if(!classp(arg2))
         error(NOT_CLASS, "subclassp", arg2);
-    
-    
+
+
     if(subclassp(arg1,arg2))
         return(T);
     else
@@ -3874,11 +3878,11 @@ int f_subclassp(int arglist){
 
 int f_generic_function_p(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"generic-function-p",arglist);
-    
+
     if(IS_GENERIC(arg1))
         return(T);
     else
@@ -3889,12 +3893,12 @@ int f_generic_function_p(int arglist){
 
 int f_next_method_p(int arglist){
     int method,varlist;
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS,"next-method-p",arglist);
     if(generic_func == NIL)
         error(OUT_OF_RANGE,"next-method-p",NIL);
-        
+
     method = cdr(next_method);
     while(!nullp(method)){
         varlist = car(GET_CAR(car(method)));
@@ -3902,19 +3906,19 @@ int f_next_method_p(int arglist){
             return(T);
         method = cdr(method);
     }
-    return(NIL); 
+    return(NIL);
 }
 
 int f_call_next_method(int arglist){
     int method,varlist,body,res;
-    
+
     if(length(arglist) != 0)
         error(WRONG_ARGS,"call-next-method",arglist);
     if(generic_func == NIL)
         error(OUT_OF_RANGE,"call-next-method",NIL);
-    
+
     res = NIL;
-    varlist = NIL;    
+    varlist = NIL;
     method = cdr(next_method);
     while(!nullp(method)){
         varlist = car(GET_CAR(car(method)));
@@ -3923,7 +3927,7 @@ int f_call_next_method(int arglist){
         method = cdr(method);
     }
     error(NOT_EXIST_METHOD,"call-next-method",NIL);
-    
+
     exit:
     next_method = method;
     varlist = genlamlis_to_lamlis(varlist);
@@ -3934,27 +3938,27 @@ int f_call_next_method(int arglist){
         body = cdr(body);
     }
     unbind();
-    return(res); 
+    return(res);
 }
 
 
 //condition
 int f_error(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist); //error-string
     arg2 = cdr(arglist); //obj
-    
+
     if(!stringp(arg1))
         error(NOT_STR, "error", arg1);
-        
+
     signal_condition(makeusercond(csimple_error,arg1,arg2),NIL);
     return(UNDEF);
 }
 
 int f_cerror(int arglist){
     int arg1,arg2,arg3,strstream,str;
-    
+
     arg1 = car(arglist); //continue-string
     arg2 = cadr(arglist); //error-string
     arg3 = cddr(arglist); //obj
@@ -3962,7 +3966,7 @@ int f_cerror(int arglist){
         error(NOT_STR, "error", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "error", arg2);
-        
+
     strstream = f_create_string_output_stream(NIL);
     f_format(cons(strstream,cons(arg1,arg3)));
     str = f_get_output_stream_string(list1(strstream));
@@ -3972,25 +3976,25 @@ int f_cerror(int arglist){
 
 int f_signal_condition(int arglist){
     int arg1,arg2;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "signal-condition", arglist);
-    
+
     signal_condition(arg1,arg2);
     return(UNDEF);
 }
 
 int f_simple_error_format_string(int arglist){
     int arg1,vars,val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"simple-error-format-string",arglist);
     if(GET_AUX(arg1) != csimple_error)
         error(NOT_CLASS,"simple-error-format-string",arg1);
-    
+
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("a"),vars));
     return(val);
@@ -3998,13 +4002,13 @@ int f_simple_error_format_string(int arglist){
 
 int f_simple_error_format_arguments(int arglist){
     int arg1,vars,val;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"simple-error-format-arguments",arglist);
     if(GET_AUX(arg1) != csimple_error)
         error(NOT_CLASS,"simple-error-format-arguments",arg1);
-    
+
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("b"),vars));
     return(val);
@@ -4012,14 +4016,14 @@ int f_simple_error_format_arguments(int arglist){
 
 int f_arithmetic_error_operation(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"arithmetic-error-operation",arg1);
     if(GET_AUX(arg1) != carithmetic_error &&
         !subclassp(GET_AUX(arg1),carithmetic_error))
         error(NOT_ARITHMETIC,"arithmetic-error-operation",arg1);
-    
+
     fun = cdr(assoc(makesym("c"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4027,53 +4031,53 @@ int f_arithmetic_error_operation(int arglist){
 
 int f_arithmetic_error_operands(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"arithmetic-error-operands",arg1);
     if(GET_AUX(arg1) != carithmetic_error &&
         !subclassp(GET_AUX(arg1),carithmetic_error))
         error(NOT_ARITHMETIC,"arithmetic-error-operands",arg1);
-    
+
     fun = cdr(assoc(makesym("b"),GET_CDR(arg1)));
     return(fun);
 }
 
 int f_domain_error_object(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"domain-error-object",arg1);
     if(GET_AUX(arg1) != cdomain_error)
         error(NOT_ARITHMETIC,"domain-error-object",arg1);
-    
+
     fun = cdr(assoc(makesym("f"),GET_CDR(arg1)));
     return(fun);
 }
 
 int f_domain_error_expected_class(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"domain-error-expected-class",arg1);
     if(GET_AUX(arg1) != cdomain_error)
         error(NOT_ARITHMETIC,"domain-error-expected-class",arg1);
-    
+
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
 }
 
 int f_parse_error_string(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"parse-error-string",arg1);
     if(GET_AUX(arg1) != cparse_error)
         error(NOT_ARITHMETIC,"parse-error-string",arg1);
-    
+
     fun = cdr(assoc(makesym("h"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4081,13 +4085,13 @@ int f_parse_error_string(int arglist){
 
 int f_parse_error_expected_class(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"parse-error-expected-class",arg1);
     if(GET_AUX(arg1) != cparse_error)
         error(NOT_ARITHMETIC,"parse-error-expected-class",arg1);
-    
+
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4095,50 +4099,50 @@ int f_parse_error_expected_class(int arglist){
 
 int f_stream_error_stream(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"stream-error-stream",arg1);
     if(GET_AUX(arg1) != cstream_error)
         error(NOT_ARITHMETIC,"stream-error-stream",arg1);
-    
+
     fun = cdr(assoc(makesym("i"),GET_CDR(arg1)));
     return(fun);
 }
 
 int f_undefined_entity_name(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"undefined-entity-name",arg1);
     if(GET_AUX(arg1) != cundefined_entity)
         error(NOT_ARITHMETIC,"undefined-entity-name",arg1);
-    
+
     fun = cdr(assoc(makesym("j"),GET_CDR(arg1)));
     return(fun);
 }
 
 int f_undefined_entity_namespace(int arglist){
     int arg1,fun;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"undefined-entity-namespace",arg1);
     if(GET_AUX(arg1) != cundefined_entity)
         error(NOT_ARITHMETIC,"undefined-entity-namespace",arg1);
-    
+
     fun = cdr(assoc(makesym("k"),GET_CDR(arg1)));
     return(fun);
 }
 
 int f_condition_continuable(int arglist){
     int arg1;
-    
+
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"condition-continuable",arglist);
-    
+
     if(GET_OPT(arg1) == NOTCONT)
         return(NIL);
     else
@@ -4147,15 +4151,14 @@ int f_condition_continuable(int arglist){
 
 int f_continue_condition(int arglist){
     int arg1,arg2,n;
-    
+
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(!((n=length(arglist)) == 1 || n == 2))
         error(WRONG_ARGS,"continue-condition",arglist);
-    
+
     if(GET_OPT(arg1) == CONTINUABLE)
         return(arg2);
     else
-        return(UNDEF);    
+        return(UNDEF);
 }
-

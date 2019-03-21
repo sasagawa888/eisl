@@ -255,6 +255,8 @@ void dynamic_link(int x){
 #endif
 
 #if _WIN32
+typedef void (*tfunc)(char*, int(*func)(int));
+
 void dynamic_link(int x){
 	HMODULE hmod;
 

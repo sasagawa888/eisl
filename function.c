@@ -255,7 +255,19 @@ void dynamic_link(int x){
 #endif
 
 #if _WIN32
-typedef void (*tfunc)(char*, int(*func)(int));
+typedef void (*tfunc)(char*, int(*func)(int));                        
+typedef void (*p_f0)(int, tfunc);
+typedef void (*p_f1)(int, tfunc);
+typedef void (*p_f2)(int, tfunc);
+typedef void (*p_f3)(int, tfunc);
+typedef void (*p_f4)(int, tfunc);
+typedef void (*p_f5)(int, tfunc);
+typedef void (*p_f6)(int, tfunc);
+typedef void (*p_f7)(int, tfunc);
+typedef void (*p_f8)(int, tfunc);
+typedef void (*p_def)(tfunc);
+typedef void (*p_init)(void);
+typedef void (*p_declare)(void);
 
 void dynamic_link(int x){
 	HMODULE hmod;

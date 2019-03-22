@@ -2375,15 +2375,18 @@ double tarai(double x, double y, double z){
 ;;if it has local function,the output type and input types are
 ;;fixnum or float
 (defun optimize-p (x)
-  (let* ((fn (elt x 1))
-         (dt (assoc fn type-function)))
-    (cond ((null dt) nil)
-          ((and (eq (elt x 0) 'defun)
-                (member (elt dt 1) (list (class <fixnum>)(class <float>)))
-                (subsetp (elt dt 2) (list (class <fixnum>)(class <float>)))
-                (optimize-p1 (cdr (cdr (cdr  dt)))))
-           t)
-          (t nil))))
+  (if (> (length x) 1)
+      (let* ((fn (elt x 1))
+            (dt (assoc fn type-function)))
+                (cond ((null dt) nil)
+                      ((and (eq (elt x 0) 'defun)
+                        (member (elt dt 1) (list (class <fixnum>)(class <float>)))
+                        (subsetp (elt dt 2) (list (class <fixnum>)(class <float>)))
+                        (optimize-p1 (cdr (cdr (cdr  dt)))))
+                        t)
+                      (t nil)))
+      nil))
+
 
 ;;local type is optimizable?
 (defun optimize-p1 (x)

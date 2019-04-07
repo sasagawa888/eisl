@@ -4,8 +4,9 @@
 (defglobal *return-stack* nil)
 (defglobal *word* '((dot dot)(bye t)(: define-word)(dot-s dot-s)(see see)
                    (drop drop)(swap swap)(dup dup)(rot rot)(cr cr)
+                   (over over)
                    (space space)(spaces spaces)(emit emit)
-                   (mod mod*)(/mod /mod)(do do)(loop t)(do? do?)
+                   (mod mod*)(/mod /mod)(do do)(loop t)(?do ?do)
                    (if if*)(then t)
                    (+ plus)(- minus)(* mult)(/ devide)))
 (defglobal *buffer* nil)
@@ -59,7 +60,9 @@
          (let ((y (entity x)))
             (if (symbolp y)
                 (funcall (symbol-function y))
-                (interpret-all y))))
+                (let ((rest *current-code*))
+                  (interpret-all y)
+                  (setq *current-code* rest)))))
         (t (cond ((numberp x) (push x))
                  ((stringp x) (format (standard-output) "~A" x))
                  (t (error* "undefined word" x))))))
@@ -115,6 +118,11 @@
         (third  (elt *data-stack* 2)))
       (setq *data-stack* (cons third (cons second (cons first (cdr (cdr (cdr *data-stack*)))))))))
 
+(defun over ()
+  (if (< (length *data-stack*) 2) (error* "not enough data" 'rot))
+  (let ((second (elt *data-stack* 1)))
+    (setq *data-stack* (cons second *data-stack*))))
+
 (defun cr ()
   (format (standard-output) "~%"))
 
@@ -143,7 +151,7 @@
            (interpret-all loop))
       (setq *current-code* exit)))
 
-(defun do? ()
+(defun ?do ()
   (block do-question
     (let ((start (pop))
           (end   (pop))

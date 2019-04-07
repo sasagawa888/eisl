@@ -90,7 +90,7 @@
            (let ((result (list 'defun (car exp) (cdr exp) (mexp-read))))
              (setq terminal (get-token))
              (if (not (terminalp terminal))
-                 (error* "Syntax error expected period " terminal))         
+                 (error* "Syntax error expected period " terminal))
              result))
           ((terminalp ope)
            exp)
@@ -130,7 +130,7 @@
            (formula token (get-token)))
           ((symbolp token) token)
           ((and (numberp token)(operator-char-p (look)))
-           (formula token (get-token))) 
+           (formula token (get-token)))
           ((and (characterp token)(char= token #\())
            (setq result (list 'quote (sexp-read-list)))
            (if (and (not (char= (look) #\.))
@@ -149,7 +149,7 @@
   (formula1 operand1 (formula-read) operator (get-weight operator) (get-type operator)))
 
 (defun formula1 (operand1 operand2 operator weight type)
-  (let ((token (formula-read))) 
+  (let ((token (formula-read)))
     (cond ((end-of-file-p token) token)
           ((delimiterp token)
            (ungetc token)
@@ -180,7 +180,7 @@
            (getc)
            (cons token (mexp-read-list)))
           ((symbolp token) token)
-          (t (error* "Syntax error illegal formula element" token)))))    
+          (t (error* "Syntax error illegal formula element" token)))))
 
 (defun convert-to-cond (ls)
   (cond ((atom ls) ls)
@@ -202,7 +202,7 @@
     (cond ((and (characterp token)(char= token #\])) nil)
           ((and (characterp token)(char= token #\[))
            (cons (mexp-read-list)(mexp-read-list)))
-          ((and (characterp token)(char= token #\;)) 
+          ((and (characterp token)(char= token #\;))
            (mexp-read-list))
           ((and (symbolp token)(eq token '->))
            (cons token (mexp-read-list)))
@@ -235,7 +235,7 @@
            (cons token (mexp-read-list)))
           (t (error* "M-exp illegal object" token)))))
 
-;;; 
+;;;
 
 ;;S表現を読み取る
 (defun sexp-read ()
@@ -346,34 +346,10 @@
 ;;アルファベット小文字を大文字に変換する
 ;;アルファベット以外はそのまま
 (defun uppercase (x)
-  (cond ((char= x #\a) #\A)
-        ((char= x #\b) #\B)
-        ((char= x #\c) #\C)
-        ((char= x #\d) #\D)
-        ((char= x #\e) #\E)
-        ((char= x #\f) #\F)
-        ((char= x #\g) #\G)
-        ((char= x #\h) #\H)
-        ((char= x #\i) #\I)
-        ((char= x #\j) #\J)
-        ((char= x #\k) #\K)
-        ((char= x #\l) #\L)
-        ((char= x #\m) #\M)
-        ((char= x #\n) #\N)
-        ((char= x #\o) #\O)
-        ((char= x #\p) #\P)
-        ((char= x #\q) #\Q)
-        ((char= x #\r) #\R)
-        ((char= x #\s) #\S)
-        ((char= x #\t) #\T)
-        ((char= x #\u) #\U)
-        ((char= x #\v) #\V)
-        ((char= x #\w) #\W)
-        ((char= x #\x) #\X)
-        ((char= x #\y) #\Y)
-        ((char= x #\z) #\Z)
-        ((char= x #\_) #\-)
-        (t x)))
+  (let ((ascii (convert x <integer>)))
+    (if (and (>= ascii 97)(<= ascii 122))
+        (convert (- ascii 32) <character>)
+        x)))
 
 ;;文字リストを整数に変換する
 (defun convert-to-integer (ls)
@@ -531,4 +507,3 @@
 (defun number-char-p (x)
   (and (char>= x #\0)
        (char<= x #\9)))
-

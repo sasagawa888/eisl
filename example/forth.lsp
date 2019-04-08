@@ -13,7 +13,8 @@
                    (space space)(spaces spaces)(emit emit)
                    (mod mod*)(/mod /mod)(do do)(loop t)(?do ?do)
                    (if if*)(then t)
-                   (+ plus)(- minus)(* mult)(/ devide)))
+                   (+ plus)(- minus)(* mult)(/ devide)(sqrt sqrt*)
+                   (abs abs*)(negate negate)(max max*)(min mnin*)))
 (defglobal *buffer* nil)
 (defglobal *current-code* nil)
 
@@ -21,13 +22,15 @@
 (defmacro push (x)
   `(setq *data-stack* (cons ,x *data-stack*)))
 
-(defmacro pop ()
-  `(let ((x (car *data-stack*)))
-      (setq *data-stack* (cdr *data-stack*))
-      x))
+(defun pop ()
+  (if (null *data-stack*)
+      (error* "not enough data in stack" nil))
+  (let ((x (car *data-stack*)))
+    (setq *data-stack* (cdr *data-stack*))
+    x))
 
-(defmacro get ()
-  `(let ((x (car *current-code*)))
+(defun get ()
+  (let ((x (car *current-code*)))
       (setq *current-code* (cdr *current-code*))
       x))
 
@@ -88,8 +91,7 @@
 ;; . DOT
 (defun dot ()
   (if (null *data-stack*) (error* "no stack data" nil))
-  (format (standard-output) "~A~%" (car *data-stack*))
-  (setq *data-stack* (cdr *data-stack*)))
+  (format (standard-output) "~A~%" (pop)))
 
 ;; word .s
 (defun dot-s ()
@@ -244,6 +246,30 @@
     (push (div second first))
     (push (mod second first))))
 
+(defun abs* ()
+  (let ((x (pop)))
+    (push (abs x))))
+
+(defun negate ()
+  (let ((x (pop)))
+    (if (> x 0)
+        (push (- x))
+        (push (abs x)))))
+
+(defun max* ()
+  (let ((x (pop))
+        (y (pop)))
+    (push (max x y))))
+
+(defun min* ()
+  (let ((x (pop))
+        (y (pop)))
+    (push (min x y))))
+
+(defun sqrt* ()
+  (let ((x (pop)))
+    (push (sqrt (pop)))))
+
 ;; word = (name entity)
 ;; e.g. wntity = (1 + .)
 (defun define-word ()
@@ -261,8 +287,10 @@
 ;; return code as list
 ;; display prompt ?
 (defun read-code ()
-  (format (standard-output) "? ")
-  (setq *buffer* (convert (read-line) <list>))
+  (setq *buffer* '(#\\)) ;; dummy
+  (while (char= (car *buffer*) #\\) ;; skip comment line
+    (format (standard-output) "? ")
+    (setq *buffer* (convert (read-line (standard-input)) <list>)))
   (let ((code nil)
         (token nil))
       (setq token (gettoken))

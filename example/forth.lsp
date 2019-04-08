@@ -1,4 +1,9 @@
-; Forth in ISLISP
+;; Forth in ISLISP
+;; usage
+;; (load "exa,ple/forth.lsp")
+;; (forth)
+;; ? 1 2 + .
+;; 3
 
 (defglobal *data-stack* nil)
 (defglobal *return-stack* nil)
@@ -45,8 +50,8 @@
   (setq *return-stack* nil)
   (format (standard-output) "Forth for learning~%"))
 
-;;一連のコードを解釈する。
-;;実行中のコードのcdrは*current-code* に記憶する。do-loopで使用する。
+;; interpret codes. codes are packed in list.
+;; running codes are stored in *current-code*. The word do,loop use this one.
 (defun interpret-all (x)
   (setq *current-code* (cdr x))
   (cond ((null x) t)
@@ -54,7 +59,7 @@
   (cond ((null *current-code*) t)
         (t (interpret-all *current-code*))))
 
-;;1個のコードを解釈する。
+;;interpret one code.
 (defun interpret (x)
   (cond ((and (symbolp x)(wordp x))
          (let ((y (entity x)))
@@ -67,16 +72,16 @@
                  ((stringp x) (format (standard-output) "~A" x))
                  (t (error* "undefined word" x))))))
 
-;;エラー処理　msgとxを表示してreplに復帰する。
+;;invoke error. display msg and x. Restor to REPL.
 (defun error* (msg x)
   (format (standard-output) "Error ~A ~A~%" msg x)
   (throw 'exit t))
 
-;;ワードか？
+;;is it word?
 (defun wordp (x)
   (assoc x *word*))
 
-;;ワードの実体を取得する
+;;entity of word
 (defun entity (x)
   (elt (assoc x *word*) 1))
 
@@ -97,20 +102,24 @@
         (error* "undefined word" word)
         (format (standard-output) "~A ~A~%" word (elt define 1)))))
 
+;; word drop
 (defun drop ()
   (if (null *data-stack*) (error* "not enough data" 'drop))
   (setq *data-stack* (cdr *data-stack*)))
 
+;; word swap
 (defun swap ()
   (if (< (length *data-stack*) 2) (error* "not enough data" 'swap))
   (let ((first (elt *data-stack* 0))
         (second (elt *data-stack* 1)))
     (setq *data-stack* (cons second (cons first (cdr (cdr *data-stack*)))))))
 
+;; word dup
 (defun dup ()
   (if (null *data-stack*) (error* "not enough data" 'dup))
   (setq *data-stack* (cons (car *data-stack*) *data-stack*)))
 
+;; word rot
 (defun rot ()
   (if (< (length *data-stack*) 2) (error* "not enough data" 'rot))
   (let ((first  (elt *data-stack* 0))
@@ -118,17 +127,21 @@
         (third  (elt *data-stack* 2)))
       (setq *data-stack* (cons third (cons second (cons first (cdr (cdr (cdr *data-stack*)))))))))
 
+;; word over
 (defun over ()
   (if (< (length *data-stack*) 2) (error* "not enough data" 'rot))
   (let ((second (elt *data-stack* 1)))
     (setq *data-stack* (cons second *data-stack*))))
 
+;; word cr
 (defun cr ()
   (format (standard-output) "~%"))
 
+;; word space
 (defun space ()
   (format (standard-output) " "))
 
+;; word spaces
 (defun spaces ()
   (let ((count (pop)))
     (if (< count 0) (error* "illegal number" count))
@@ -136,11 +149,13 @@
          ((= i count) t)
          (format (standard-output) " "))))
 
+;; word emit
 (defun emit ()
   (let ((data (pop)))
     (if (not (integerp data)) (error* "not integer" data))
     (format (standard-output) "~C" (convert data <character>))))
 
+;; word do
 (defun do ()
   (let ((start (pop))
         (end   (pop))
@@ -151,6 +166,7 @@
            (interpret-all loop))
       (setq *current-code* exit)))
 
+;; word ?do
 (defun ?do ()
   (block do-question
     (let ((start (pop))
@@ -163,6 +179,7 @@
            (interpret-all loop))
       (setq *current-code* exit))))
 
+;; e.g. (do ." Hello" cr loop) -> (" Hello" cr)
 (defun get-loop-code ()
   (let ((body nil)
         (code *current-code*))
@@ -171,12 +188,14 @@
         (setq code (cdr code)))
     (reverse body)))
 
+;; e.g. (do ." Hello" cr loop) -> ()
 (defun get-exit-code ()
   (let ((code *current-code*))
     (while (not (eql (car code) 'loop))
         (setq code (cdr code)))
     (cdr code)))
 
+;; word if
 (defun if* ()
   (let ((test (pop))
         (true (get-true-code))
@@ -185,6 +204,7 @@
         (interpret-all true))
     (setq *current-code* else)))
 
+;; e.g. (if a then b) -> (a)
 (defun get-true-code ()
     (let ((body nil)
           (code *current-code*))
@@ -193,13 +213,14 @@
             (setq code (cdr code)))
         (reverse body)))
 
+;; e.g. (if a then b) -> (b)
 (defun get-else-code ()
     (let ((code *current-code*))
         (while (not (eql (car code) 'then))
             (setq code (cdr code)))
         (cdr code)))
 
-;;演算の実体
+;;arithmetic word
 (defun plus ()
   (push (+ (pop) (pop))))
 
@@ -223,11 +244,8 @@
     (push (div second first))
     (push (mod second first))))
 
-
-;;　ワードを定義する。
-;;　ワードは　(name body) というリストとなっている。
-;;　bodyはワードや数のリストとなっている。
-;; 例　(foo (dup 1 +))
+;; word = (name entity)
+;; e.g. wntity = (1 + .)
 (defun define-word ()
   (let ((name nil)
         (body nil)
@@ -239,10 +257,9 @@
       (setq token (get)))
     (setq *word* (cons (list name (reverse body)) *word*))))
 
-;; トークンを読み取る。プロンプトとして？を表示する。
-;;　.　記号はシンボル　dot　に変換される。
-;;　;　記号はシンボル　semicolon に変換される。
-;; トークンはリストにまとめて返す。
+
+;; return code as list
+;; display prompt ?
 (defun read-code ()
   (format (standard-output) "? ")
   (setq *buffer* (convert (read-line) <list>))
@@ -260,7 +277,6 @@
       nil
       (gettoken1)))
 
-;;スペースあるいは行末までトークンを読み取りgettoken2に渡す。
 (defun gettoken1 ()
   (let ((token nil))
     (skip-space)
@@ -271,7 +287,6 @@
       (setq *buffer* (cdr *buffer*)))
     (gettoken2 (reverse token))))
 
-;;トークンの種類に応じてリストからアトムに変換する。
 (defun gettoken2 (ls)
   (cond ((and (= (length ls) 1) (char= (car ls) #\;)) 'semicolon)
         ((and (= (length ls) 1) (char= (car ls) #\.)) 'dot)
@@ -282,7 +297,7 @@
         (t (convert (convert-to-string-upper ls) <symbol>))))
 
 ;; ." dot-string
-;; "の直前までを読み込み文字列として返す。
+;; "e.g. ." hello"
 (defun gettoken3 ()
   (let ((token nil))
     (skip-space)
@@ -293,13 +308,13 @@
     (setq *buffer* (cdr *buffer*)) ;;discard "
     (convert-to-string (reverse token))))
 
-;;空白を読み飛ばす。
+;;skip space
 (defun skip-space ()
   (while (and (not (null *buffer*))
               (char= (car *buffer*) #\space))
     (setq *buffer* (cdr *buffer*))))
 
-;; ( ) をスキップする。　例　( n--n)
+;; ( ) slip paren. e.g. ( n--n )
 (defun skip-paren ()
   (cond ((and (not (null *buffer*)) (char= (car *buffer*) #\( ))
          (while (and (not (null *buffer*))
@@ -308,7 +323,7 @@
          (setq *buffer* (cdr *buffer*))
          (skip-space) )))
 
-;;文字リストが整数を表しているならばtを、そうでなければnilを返す
+;;is it list that discribe integer?
 (defun integer-list-p (ls)
   (cond ((char= (car ls) #\+)
          (integer-list-p1 (cdr ls)))
@@ -316,14 +331,13 @@
          (integer-list-p1 (cdr ls)))
         (t (integer-list-p1 ls))))
 
-;;整数は必ず1文字の数文字から構成されていなければならない
 (defun integer-list-p1 (ls)
   (cond ((null ls) nil)
         ((and (number-char-p (car ls))(null (cdr ls))) t)
         ((not (number-char-p (car ls))) nil)
         (t (integer-list-p1 (cdr ls)))))
 
-;;文字リストが浮動小数点数を表しているならばtを、そうでなければnilを返す
+;;is it list that discribe float number
 (defun float-list-p (ls)
   (cond ((not (number-char-p (car ls))) nil)
         ((char= (car ls) #\+)
@@ -332,7 +346,6 @@
          (float-list-p1 (cdr ls)))
         (t (float-list-p1 ls))))
 
-;;浮動小数点数は 123.4、123e4、123e+4、123e-4のような形式とする
 (defun float-list-p1 (ls)
   (cond ((null ls) nil)
         ((char= (car ls) #\.)
@@ -347,15 +360,15 @@
        (char<= x #\9)))
 
 
-;;文字リストを文字列に変換する。
-;;シンボルは大文字に変換される
+;; convert from list of character to string
+;; lowercase letters are convert to uppercase letter
 (defun convert-to-string-upper (ls)
   (if (null ls)
       ""
       (string-append (convert (uppercase (car ls)) <string>)
                      (convert-to-string-upper (cdr ls)))))
 
-;;文字リストを文字列に変換する。
+;; convert from list of character to string
 (defun convert-to-string (ls)
   (if (null ls)
       ""
@@ -363,8 +376,8 @@
                      (convert-to-string (cdr ls)))))
 
 
-;;アルファベット小文字を大文字に変換する
-;;アルファベット以外はそのまま
+;; convert lowercase leteer to uppercase.
+;; oter charater is same
 (defun uppercase (x)
   (let ((ascii (convert x <integer>)))
     (if (and (>= ascii 97)(<= ascii 122))

@@ -12,7 +12,7 @@
 #define NIL         0
 #define T           2
 #define UNDEF       4
-#define FEND        6 
+#define FEND        6
 #define HASHTBSIZE  107
 #define BIGNUM_BASE 1000000000
 #define SMALL_INT_MAX       1000000000
@@ -45,28 +45,28 @@ typedef double (*fn7)(int);
 typedef int (*fn8)(double);
 typedef void (*tfunc)(char*, int(*func)(int));
 
-
-fn0 f0[50];
-fn1 f1[50];
-fn2 f2[50];
-fn3 f3[50];
-fn4 f4[10];
-fn5 f5[10];
-fn6 f6[10];
-fn7 f7[10];
-fn8 f8[10];
-
 tfunc deftfunc;
 
-void init0(int n, int x){
+fn0 f0[100];
+fn1 f1[100];
+fn2 f2[100];
+fn3 f3[100];
+fn4 f4[100];
+fn5 f5[100];
+fn6 f6[100];
+fn7 f7[100];
+fn8 f8[100];
+
+
+void init0(int n, tfunc x){
     f0[n] = (fn0)x;
 }
 
-void init1(int n, int x){
+void init1(int n, tfunc x){
     f1[n] = (fn1)x;
 }
 
-void init2(int n, int x){
+void init2(int n, tfunc x){
     f2[n] = (fn2)x;
 }
 
@@ -74,27 +74,27 @@ void init3(int n, char* x){
     f3[n] = (fn3)x;
 }
 
-void init4(int n, int x){
+void init4(int n, tfunc x){
 	f4[n] = (fn4)x;
 }
 
-void init5(int n, int x){
+void init5(int n, tfunc x){
     f5[n] = (fn5)x;
 }
 
-void init6(int n, int x){
+void init6(int n, tfunc x){
     f6[n] = (fn6)x;
 }
 
-void init7(int n, int x){
+void init7(int n, tfunc x){
     f7[n] = (fn7)x;
 }
 
-void init8(int n, int x){
+void init8(int n, tfunc x){
     f8[n] = (fn8)x;
 }
 
-void init_deftfunc(int x){
+void init_deftfunc(tfunc x){
     deftfunc = (tfunc)x;
 }
 
@@ -201,7 +201,7 @@ int fast_immediate(int x){
 
 int fast_convert(int x){
 	int res,n;
-    
+
     if(x < 0 || x >= INT_FLAG)
     	return(x);
 	else if(Fintegerp(x)){
@@ -213,7 +213,7 @@ int fast_convert(int x){
     }
     else
     	res = x;
-    
+
     return(res);
 }
 
@@ -226,7 +226,7 @@ int fast_inverse(int x){
     	res = Fmakeint(x);
     else
     	res = x;
-    
+
     return(res);
 }
 
@@ -299,7 +299,7 @@ int fast_eqgreaterp(int x, int y){
 
 int fast_plus(int x, int y){
     int intx,inty,res;
-    
+
     if(x >= INT_FLAG && y >= INT_FLAG){
         intx = (x & INT_MASK);
         inty = (y & INT_MASK);
@@ -326,14 +326,14 @@ int fast_plus(int x, int y){
             res = res | INT_FLAG;
 
         return(res);
-    }   
+    }
     else
         return(fast_convert(Fplus(fast_inverse(x),fast_inverse(y))));
 }
 
 int fast_minus(int x, int y){
     int intx,inty,res;
-    
+
     if(x >= INT_FLAG && y >= INT_FLAG){
         intx = (x & INT_MASK);
         inty = (y & INT_MASK);
@@ -362,14 +362,14 @@ int fast_minus(int x, int y){
         	return(Fmakeintlong(res));
 		else
             return(res);
-    }   
+    }
     else
         return(fast_convert(Fminus(fast_inverse(x),fast_inverse(y))));
 }
 
 int fast_mult(int x, int y){
     int intx,inty,res;
-    
+
     if(x >= INT_FLAG && x <= INT_PSQRT &&
        y >= INT_FLAG && y <= INT_PSQRT){
         intx = (x & INT_MASK);
@@ -390,7 +390,7 @@ int fast_mult(int x, int y){
         inty = (y & INT_MASK);
         res = intx * inty;
         return(res);
-    }   
+    }
     else
         return(fast_convert(Fmult(fast_inverse(x),fast_inverse(y))));
 }
@@ -400,7 +400,7 @@ int fast_mult(int x, int y){
 int fast_mod(int x, int y){
     int intx,inty,res;
     long long int longx,longy;
-    
+
     if(x >= INT_FLAG && y >= INT_FLAG){
         intx = (x & INT_MASK);
         inty = (y & INT_MASK);
@@ -427,7 +427,7 @@ int fast_mod(int x, int y){
     else if(x < 0 && y < 0){
         res = -1*((-1*x) % (-1*y));
         return(res);
-    }   
+    }
     else if((x >= 0 && x <INT_FLAG && Flongnump(x)) && (y >= INT_FLAG || y < 0)){
         longx = Fgetlong(x);
         if(y >= INT_FLAG)
@@ -464,5 +464,5 @@ int fast_setnth(int x, int n, int y){
         n--;
     }
     Fset_car(x,y);
-    return(y); 
+    return(y);
 }

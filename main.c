@@ -437,7 +437,7 @@ int readc(void){
     }
     else
         column++;
-    
+
     return(c);
 }
 
@@ -513,6 +513,9 @@ void gettoken(void){
                         if(c == '\\'){
                             c = readc();
                             stok.buf[pos++] = c;
+                        }
+                        if(c == EOF){
+                            error(SYSTEM_ERR,"not exist right hand double quote", NIL);
                         }
                         c = readc();
                     }
@@ -1126,7 +1129,7 @@ void printlong(int addr){
 #endif
 
 #if _WIN32
-void printlong(int addr){ 
+void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream),"%I64d", GET_LONG(addr));
     else{
@@ -1285,7 +1288,7 @@ void printchar(int addr){
 #if _WIN32
 void printchar(int addr){
     char c;
-    
+
     if(GET_OPT(output_stream) != EISL_OUTSTR){
         fprintf(GET_PORT(output_stream),"%c%c", '#', '\\');
         sprintf(stream_str,"%c%c", '#', '\\');
@@ -1318,7 +1321,7 @@ void printchar(int addr){
             sprintf(stream_str,"%s", GET_NAME(addr));
             strcat(GET_NAME(output_stream),stream_str);
         }
-    } 
+    }
 }
 #endif
 

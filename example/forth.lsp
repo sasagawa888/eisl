@@ -16,8 +16,6 @@
                    (+ plus)(- minus)(* mult)(/ devide)(sqrt sqrt*)
                    (abs abs*)(negate negate)(max max*)(min mnin*)))
 (defglobal *buffer* nil)
-(defglobal *current-code* nil)
-
 
 (defmacro push (x)
   `(setq *data-stack* (cons ,x *data-stack*)))
@@ -28,11 +26,6 @@
   (let ((x (car *data-stack*)))
     (setq *data-stack* (cdr *data-stack*))
     x))
-
-(defun get ()
-  (let ((x (car *current-code*)))
-      (setq *current-code* (cdr *current-code*))
-      x))
 
 (defun forth ()
   (initialize)
@@ -51,16 +44,29 @@
 (defun initialize ()
   (setq *data-stack* nil)
   (setq *return-stack* nil)
-  (format (standard-output) "Forth for learning~%"))
+  (format (standard-output) "Forth in ISLisp~%"))
 
 ;; interpret codes. codes are packed in list.
 ;; running codes are stored in *current-code*. The word do,loop use this one.
 (defun interpret-all (x)
-  (setq *current-code* (cdr x))
   (cond ((null x) t)
-        (t (interpret (car x))))
-  (cond ((null *current-code*) t)
-        (t (interpret-all *current-code*))))
+        ((eql (car x) ':)
+         (let ((y (slice-code (cdr x) 'semicolon)))
+            (define-word (elt y 0)) (interpret-all (elt y 1))))
+        ((eql (car x) 'see)
+         (see (elt x 1))(interpret-all (cdr (cdr x))))
+        ((eql (car x) 'do)
+         (let ((y (slice-code (cdr x) 'loop)))
+            (do (elt y 0))(interpret-all (elt y 1))))
+        ((eql (car x) '?do)
+          (let ((y (slice-code (cdr x) 'loop)))
+            (?do (elt y 0))(interpret-all (elt y 1))))
+        ((eql (car x) 'if)
+          (let* ((y (slice-code (cdr x) 'else))
+                 (z (slice-code (elt y 1) 'endif)))
+            (if* (elt y 0)(elt z 0))(interpret-all (elt z 1))))
+        (t (interpret (car x))
+           (interpret-all (cdr x)))))
 
 ;;interpret one code.
 (defun interpret (x)
@@ -68,9 +74,7 @@
          (let ((y (entity x)))
             (if (symbolp y)
                 (funcall (symbol-function y))
-                (let ((rest *current-code*))
-                  (interpret-all y)
-                  (setq *current-code* rest)))))
+                (interpret-all y))))
         (t (cond ((numberp x) (push x))
                  ((stringp x) (format (standard-output) "~A" x))
                  (t (error* "undefined word" x))))))
@@ -90,50 +94,46 @@
 
 ;; . DOT
 (defun dot ()
-  (if (null *data-stack*) (error* "no stack data" nil))
   (format (standard-output) "~A~%" (pop)))
 
 ;; word .s
 (defun dot-s ()
-  (format (standard-output) "stack ~A ~A~%" (length *data-stack*) (reverse *data-stack*)))
+  (format (standard-output) "<~A> ~A~%" (length *data-stack*) (reverse *data-stack*)))
 ;; word see
-(defun see ()
-  (let* ((word (get))
-         (define (assoc word *word*)))
+(defun see (x)
+  (let* ((define (assoc x *word*)))
     (if (null define)
-        (error* "undefined word" word)
-        (format (standard-output) "~A ~A~%" word (elt define 1)))))
+        (error* "undefined word" x)
+        (format (standard-output) "~A ~A~%" x (elt define 1)))))
 
 ;; word drop
 (defun drop ()
-  (if (null *data-stack*) (error* "not enough data" 'drop))
-  (setq *data-stack* (cdr *data-stack*)))
+  (pop))
 
 ;; word swap
 (defun swap ()
-  (if (< (length *data-stack*) 2) (error* "not enough data" 'swap))
-  (let ((first (elt *data-stack* 0))
-        (second (elt *data-stack* 1)))
-    (setq *data-stack* (cons second (cons first (cdr (cdr *data-stack*)))))))
+  (let ((first (pop))
+        (second (pop)))
+      (push first)
+      (push second)))
 
 ;; word dup
 (defun dup ()
-  (if (null *data-stack*) (error* "not enough data" 'dup))
-  (setq *data-stack* (cons (car *data-stack*) *data-stack*)))
+  (let ((x (pop)))
+    (push x)(push x)))
 
 ;; word rot
 (defun rot ()
-  (if (< (length *data-stack*) 2) (error* "not enough data" 'rot))
-  (let ((first  (elt *data-stack* 0))
-        (second (elt *data-stack* 1))
-        (third  (elt *data-stack* 2)))
-      (setq *data-stack* (cons third (cons second (cons first (cdr (cdr (cdr *data-stack*)))))))))
+  (let ((first  (pop))
+        (second (pop))
+        (third  (pop))
+      (push second)(push first)(push thrid))))
 
 ;; word over
 (defun over ()
   (if (< (length *data-stack*) 2) (error* "not enough data" 'rot))
   (let ((second (elt *data-stack* 1)))
-    (setq *data-stack* (cons second *data-stack*))))
+    (push second)))
 
 ;; word cr
 (defun cr ()
@@ -158,69 +158,30 @@
     (format (standard-output) "~C" (convert data <character>))))
 
 ;; word do
-(defun do ()
+(defun do (x)
   (let ((start (pop))
-        (end   (pop))
-        (loop (get-loop-code))
-        (exit (get-exit-code)))
+        (end   (pop)))
       (for ((i start (+ i 1)))
            ((>= i end) t)
-           (interpret-all loop))
-      (setq *current-code* exit)))
+           (interpret-all x))))
 
 ;; word ?do
-(defun ?do ()
+(defun ?do (x)
   (block do-question
     (let ((start (pop))
-          (end   (pop))
-          (loop (get-loop-code))
-          (exit (get-exit-code)))
+          (end   (pop)))
       (if (< end start) (return-from do-question t))
       (for ((i start (+ i 1)))
            ((>= i end) t)
-           (interpret-all loop))
-      (setq *current-code* exit))))
+           (interpret-all x)))))
 
-;; e.g. (do ." Hello" cr loop) -> (" Hello" cr)
-(defun get-loop-code ()
-  (let ((body nil)
-        (code *current-code*))
-    (while (not (eql (car code) 'loop))
-        (setq body (cons (car code) body))
-        (setq code (cdr code)))
-    (reverse body)))
-
-;; e.g. (do ." Hello" cr loop) -> ()
-(defun get-exit-code ()
-  (let ((code *current-code*))
-    (while (not (eql (car code) 'loop))
-        (setq code (cdr code)))
-    (cdr code)))
 
 ;; word if
-(defun if* ()
-  (let ((test (pop))
-        (true (get-true-code))
-        (else (get-else-code)))
+(defun if* (x y)
+  (let ((test (pop)))
     (if (not (eql test 0))
-        (interpret-all true))
-    (setq *current-code* else)))
-
-;; e.g. (if a then b) -> (a)
-(defun get-true-code ()
-    (let ((body nil)
-          (code *current-code*))
-        (while (not (eql (car code) 'then))
-            (setq body (cons (car code) body))
-            (setq code (cdr code)))
-        (reverse body)))
-
-;; e.g. (if a then b) -> (b)
-(defun get-else-code ()
-    (let ((code *current-code*))
-        (while (not (eql (car code) 'then))
-            (setq code (cdr code)))
-        (cdr code)))
+        (interpret-all x)
+        (interpret-all y))))
 
 ;;arithmetic word
 (defun plus ()
@@ -272,16 +233,10 @@
 
 ;; word = (name entity)
 ;; e.g. wntity = (1 + .)
-(defun define-word ()
-  (let ((name nil)
-        (body nil)
-        (token nil))
-    (setq name (get))
-    (setq token (get))
-    (while (not (eql token 'semicolon))
-      (setq body (cons token body))
-      (setq token (get)))
-    (setq *word* (cons (list name (reverse body)) *word*))))
+(defun define-word (x)
+  (let ((name (car x))
+        (body (cdr x)))
+    (setq *word* (cons (list name body) *word*))))
 
 
 ;; return code as list
@@ -299,6 +254,12 @@
         (setq token (gettoken)))
       (reverse code)))
 
+(defun slice-code (x delimiter)
+  (slice-code1 x delimiter nil))
+
+(defun slice-code1 (x delimiter y)
+  (cond ((eql (car x) delimiter) (list (reverse y) (cdr x)))
+        (t (slice-code1 (cdr x) delimiter (cons (car x) y)))))
 
 (defun gettoken ()
   (if (null *buffer*)

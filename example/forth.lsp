@@ -17,6 +17,7 @@
                    (abs abs*)(negate negate)(max max*)(min mnin*)))
 (defglobal *buffer* nil)
 
+
 (defmacro push (x)
   `(setq *data-stack* (cons ,x *data-stack*)))
 
@@ -126,8 +127,8 @@
 (defun rot ()
   (let ((first  (pop))
         (second (pop))
-        (third  (pop))
-      (push second)(push first)(push thrid))))
+        (third  (pop)))
+      (push second)(push first)(push third)))
 
 ;; word over
 (defun over ()

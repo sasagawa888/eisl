@@ -1,0 +1,101 @@
+This directory contains the Gabriel's benchmarks for ISLISP.
+Copyright (c) 1988-2009 Christian Jullien.
+
+BSD license
+
+---------------------------------------------------------------------
+
+This port is a derived work of Gabriel's Benckmarks form "Performance
+and Evaluation of Lisp Systems - Richard P. Gabriel, MIT Press, 1985"
+
+Changes have been made to accomodate tests to ISLISP syntax.
+
+Copy all the files in a directory named 'bench'
+
+	/usr/local/lisp> unzip gabriel.zip
+
+Run the tests:
+
+/usr/local/islisp> lisp
+> (load "bench/runbench.lsp")
+Test 01: Fib     -> ok, time =   0.032s.
+Test 02: Tak     -> ok, time =   0.125s.
+Test 03: Stak    -> ok, time =   0.204s.
+Test 04: Ctak    -> ok, time =   0.246s.
+Test 05: Takl    -> ok, time =   0.180s.
+Test 06: Takr    -> ok, time =   0.155s.
+Test 07: Boyer   -> ok, time =   1.752s.
+Test 08: Browse  -> ok, time =   2.324s.
+Test 09: Destru  -> ok, time =   0.440s.
+Test 10: Travini -> ok, time =   2.511s.
+Test 11: Travrun -> ok, time =  10.375s.
+Test 12: Deriv   -> ok, time =   0.441s.
+Test 13: Dderiv  -> ok, time =   0.472s.
+Test 14: Divit   -> ok, time =   0.392s.
+Test 15: Divrec  -> ok, time =   0.315s.
+Test 16: FFT     -> ok, time =   1.746s.
+Test 17: Puzzle  -> ok, time =   2.837s.
+Test 18: Triang  -> ok, time =  33.999s.
+Test 19: Fprint  -> ok, time =   0.013s.
+Test 20: Fread   -> ok, time =   0.022s.
+Test 21: Tprint  -> ok, time =   00000s.
+Test 22: Frpoly  -> ok, time =   1.740s.
+ 60.321 s.
+
+If  your  system supports COMPILE-FILE ISLISP extension (OpenLisp and
+OKI ISLISP), you can also compile the tests.
+
+/usr/local/islisp> lisp
+> (load "bench/cpbench.lsp")
+;; Gabriel's benchmark suite for ISLISP.
+;; compiling boyer ..
+;; compiling browse ..
+;; compiling ctak ..
+;; compiling dderiv ..
+;; compiling deriv ..
+;; compiling destru ..
+;; compiling div2 ..
+;; compiling fft ..
+;; compiling fib20 ..
+;; compiling fprint ..
+;; compiling fread ..
+;; compiling frpoly ..
+;; compiling puzzle ..
+;; compiling stak ..
+;; compiling tak ..
+;; compiling takl ..
+;; compiling takr ..
+;; compiling tprint ..
+;; compiling traverse ..
+;; compiling triang ..
+
+Then,  set *cpext* variable to your compiler extension and launch the
+tests again.
+
+/usr/local/islisp> lisp
+> (defglobal *cpext* ".lap") ;; ".ibc" for OKI ISLISP.
+x
+> (load "bench/runbench.lsp")
+Test 01: Fib     -> ok, time =   0.021s.
+Test 02: Tak     -> ok, time =   0.094s.
+Test 03: Stak    -> ok, time =   0.102s.
+Test 04: Ctak    -> ok, time =   0.185s.
+Test 05: Takl    -> ok, time =   0.132s.
+Test 06: Takr    -> ok, time =   0.128s.
+Test 07: Boyer   -> ok, time =   1.408s.
+Test 08: Browse  -> ok, time =   1.424s.
+Test 09: Destru  -> ok, time =   0.251s.
+Test 10: Travini -> ok, time =   1.453s.
+Test 11: Travrun -> ok, time =   6.755s.
+Test 12: Deriv   -> ok, time =   0.439s.
+Test 13: Dderiv  -> ok, time =   0.501s.
+Test 14: Divit   -> ok, time =   0.230s.
+Test 15: Divrec  -> ok, time =   0.274s.
+Test 16: FFT     -> ok, time =   0.744s.
+Test 17: Puzzle  -> ok, time =   1.512s.
+Test 18: Triang  -> ok, time =  16.826s.
+Test 19: Fprint  -> ok, time =   0.012s.
+Test 20: Fread   -> ok, time =   0.022s.
+Test 21: Tprint  -> ok, time =   0.000s.
+Test 22: Frpoly  -> ok, time =   0.785s.
+ 33.298 s.

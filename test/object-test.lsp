@@ -1,3 +1,6 @@
+;still exist error 
+;comment outed
+
 (defmacro test(form1 form2 :rest pred)
   (cond ((null pred)
          `(if (equal ,form1 ',form2)

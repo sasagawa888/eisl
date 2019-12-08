@@ -2120,7 +2120,7 @@ double tarai(double x, double y, double z){
 
 ;;ex prime-factors -> prime_factors
 (defun conv-name (sym)
-  (convert (conv-name1 (convert sym <list>)) <symbol>))
+  (convert (conv-name1 (convert (convert sym <string>) <list>)) <symbol>))
 
 (defun conv-name1 (ls)
   (cond ((char= (car ls) #\0)

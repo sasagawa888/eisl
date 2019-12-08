@@ -260,6 +260,10 @@ int f_setf(int arglist){
     else if(listp(arg1) && eqp(car(arg1),makesym("DYNAMIC"))){
     	newform = cons(makesym("SET-DYNAMIC"),list2(cadr(arg1),arg2));
     }
+    else if(listp(arg1) && macrop(car(arg1))){
+        var = f_macroexpand_1(list1(arg1));
+        return(f_setf(list2(var,arg2)));
+    }
     else if(listp(arg1) && length(arg1) == 2){
         var = eval(list2(car(arg1),NIL));
     	newform = cons(makesym("SET-SLOT-VALUE"),cons(arg2,list2(cadr(arg1),list2(makesym("QUOTE"),var))));
@@ -287,8 +291,11 @@ int f_set_dynamic(int arglist){
         error(WRONG_ARGS, "set-dynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "set-dynamic", arg1);
-    if(finddyn(arg1) != -1)
+
+    if(finddyn(arg1) != -1){
         setdynenv(arg1,arg2);
+        return(arg2);
+    }
     else
     	error(UNDEF_VAR, "setq", arg1);
 

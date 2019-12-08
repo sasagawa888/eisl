@@ -78,6 +78,8 @@ Elapsed Time(second)=3.728262
 <undef>
 >
 ```
+You can compile the compiler itself. Compilation is faster.
+
 # Builtin editor
 EISL(Linux version) has builtin editor.
 

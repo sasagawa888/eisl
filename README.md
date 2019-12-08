@@ -1,4 +1,4 @@
-# Easy-ISLiep
+# Easy-ISLisp
 
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with ISLisp standard.
 EISL was written by Kenichi Sasagawa

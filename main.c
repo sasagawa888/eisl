@@ -252,7 +252,7 @@ char extended[50][30] = {
 int main(int argc, char *argv[]){
     int opt;
 
-    printf("Easy-ISLisp Ver1.0\n");
+    printf("Easy-ISLisp Ver1.01\n");
     initcell();
     initclass();
     initstream();

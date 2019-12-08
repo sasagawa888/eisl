@@ -15,6 +15,9 @@ int f_REMOVE(int arglist);int REMOVE(int X,int LS);
 int f_APPENDexclamation(int arglist);int APPENDexclamation(int X,int Y);
 int f_POSITION(int arglist);int POSITION(int X,int LS);
 int f_FILENAME(int arglist);int FILENAME(int STR);
+int f_FILENAME1(int arglist);int FILENAME1(int STR);
+int f_FILENAME2(int arglist);int FILENAME2(int STR);
+int f_DROPSTRING(int arglist);int DROPSTRING(int STR,int N);
 int f_SUBSTRING(int arglist);int SUBSTRING(int STR,int M,int N);
 int f_ERRORstar(int arglist);int ERRORstar(int STR,int X);
 int f_COMPILE_FILE(int arglist);int COMPILE_FILE(int X);
@@ -275,6 +278,22 @@ int f_FILENAME(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(FILENAME(fast_convert(arg1))));
+}
+int f_FILENAME1(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(FILENAME1(fast_convert(arg1))));
+}
+int f_FILENAME2(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(FILENAME2(fast_convert(arg1))));
+}
+int f_DROPSTRING(int arglist){
+int arg1,arg2;
+arg1 = Fnth(0,arglist);
+arg2 = Fnth(1,arglist);
+return(fast_inverse(DROPSTRING(fast_convert(arg1),fast_convert(arg2))));
 }
 int f_SUBSTRING(int arglist){
 int arg1,arg2,arg3;
@@ -2147,6 +2166,19 @@ int FILENAME(int STR){
 int res;
 if(CELLRANGE(STR)) Fshelterpush(STR);
 if(Ffreecell() < 900) Fgbc();
+res = ({int res;
+if(({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("EQL")),Fcons(fast_inverse(SUBSTRING(STR,fast_immediate(0),fast_immediate(0))),Flist1(fast_inverse(Fmakestr("."))))));res;}) != NIL){
+res = FILENAME2(STR);}
+else{
+res = FILENAME1(STR);}res;})
+;
+if(CELLRANGE(STR)) Fshelterpop();
+return(res);}
+int FILENAME1(int STR){
+int res;
+if(CELLRANGE(STR)) Fshelterpush(STR);
+if(Ffreecell() < 900) Fgbc();
 res = ({int res;int N = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR-INDEX")),Fcons(fast_inverse(Fmakechar(".")),Flist1(fast_inverse(STR))))));({int res;
 if(({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(N))));res;}) != NIL){
@@ -2156,6 +2188,30 @@ res = ERRORstar(Fmakestr("lack of filename ext"),STR);}
 res = SUBSTRING(STR,fast_immediate(0),fast_minus(fast_convert(N),fast_convert(fast_immediate(1))));
 res;})
 ;
+if(CELLRANGE(STR)) Fshelterpop();
+return(res);}
+int FILENAME2(int STR){
+int res;
+if(CELLRANGE(STR)) Fshelterpush(STR);
+if(Ffreecell() < 900) Fgbc();
+res = ({int res;int N = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR-INDEX")),Fcons(fast_inverse(Fmakechar(".")),Flist1(fast_inverse(DROPSTRING(STR,fast_immediate(1))))))));({int res;
+if(({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(N))));res;}) != NIL){
+res = ERRORstar(Fmakestr("lack of filename ext"),STR);}
+ else res = NIL;res;})
+;
+res = SUBSTRING(STR,fast_immediate(0),N);
+res;})
+;
+if(CELLRANGE(STR)) Fshelterpop();
+return(res);}
+int DROPSTRING(int STR,int N){
+int res;
+if(CELLRANGE(STR)) Fshelterpush(STR);
+if(CELLRANGE(N)) Fshelterpush(N);
+if(Ffreecell() < 900) Fgbc();
+res = SUBSTRING(STR,N,fast_minus(fast_convert(Flength(STR)),fast_convert(fast_immediate(1))));
+if(CELLRANGE(N)) Fshelterpop();
 if(CELLRANGE(STR)) Fshelterpop();
 return(res);}
 int SUBSTRING(int STR,int M,int N){
@@ -9378,6 +9434,9 @@ void init_tfunctions(void){
 (deftfunc)("APPEND!" , f_APPENDexclamation);
 (deftfunc)("POSITION" , f_POSITION);
 (deftfunc)("FILENAME" , f_FILENAME);
+(deftfunc)("FILENAME1" , f_FILENAME1);
+(deftfunc)("FILENAME2" , f_FILENAME2);
+(deftfunc)("DROPSTRING" , f_DROPSTRING);
 (deftfunc)("SUBSTRING" , f_SUBSTRING);
 (deftfunc)("ERROR*" , f_ERRORstar);
 (deftfunc)("compiler0" , f_compiler0);

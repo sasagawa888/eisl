@@ -19,8 +19,17 @@ res = ({int res;
 if(fast_eqgreaterp(fast_convert(Y),fast_convert(X)) != NIL){
 res = Z;}
 else{
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("TAK")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("TAK")),Fcons(fast_inverse(fast_minus(fast_convert(X),fast_convert(fast_immediate(1)))),Fcons(fast_inverse(Y),Flist1(fast_inverse(Z))))))),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("TAK")),Fcons(fast_inverse(fast_minus(fast_convert(Y),fast_convert(fast_immediate(1)))),Fcons(fast_inverse(Z),Flist1(fast_inverse(X))))))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("TAK")),Fcons(fast_inverse(fast_minus(fast_convert(Z),fast_convert(fast_immediate(1)))),Fcons(fast_inverse(X),Flist1(fast_inverse(Y))))))))))));res;});}res;})
+{
+temp1 = TAK(fast_minus(fast_convert(X),fast_convert(fast_immediate(1))),Y,Z);
+temp2 = TAK(fast_minus(fast_convert(Y),fast_convert(fast_immediate(1))),Z,X);
+temp3 = TAK(fast_minus(fast_convert(Z),fast_convert(fast_immediate(1))),X,Y);
+if(CELLRANGE(X)) Fshelterpop();
+if(CELLRANGE(Y)) Fshelterpop();
+if(CELLRANGE(Z)) Fshelterpop();
+X = temp1;
+Y = temp2;
+Z = temp3;
+goto TAKloop;};}res;})
 ;
 if(CELLRANGE(Z)) Fshelterpop();
 if(CELLRANGE(Y)) Fshelterpop();

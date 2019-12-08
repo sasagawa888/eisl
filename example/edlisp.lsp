@@ -15,6 +15,10 @@
   '(quote setq if progn defun defglobal defdynamic
      cond lambda function let let*))
 
+(defun islisp ()
+  (initialize)
+  (repl))
+
 (defun repl ()
   (block repl
     (cond ((catch 'exit

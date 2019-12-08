@@ -1,7 +1,6 @@
 #include "fast.h"
 jmp_buf c_EXIT[50];
 jmp_buf c_REPL[50];
-int f_ISLISP(int arglist);int ISLISP();
 int f_REPL(int arglist);int REPL();
 int f_INITIALIZE(int arglist);int INITIALIZE();
 int f_PROMPT(int arglist);int PROMPT();
@@ -28,9 +27,6 @@ int f_EVDEFGLOBAL(int arglist);int EVDEFGLOBAL(int ARG,int ENV);
 int f_EVDYNAMIC(int arglist);int EVDYNAMIC(int ARG,int ENV);
 int f_EVDEFDYNAMIC(int arglist);int EVDEFDYNAMIC(int ARG,int ENV);
 int f_EVDEFUN(int arglist);int EVDEFUN(int ARG,int ENV);
-int f_ISLISP(int arglist){
-return(fast_inverse(ISLISP() ));
-}
 int f_REPL(int arglist){
 return(fast_inverse(REPL() ));
 }
@@ -177,12 +173,6 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(EVDEFUN(fast_convert(arg1),fast_convert(arg2))));
 }
-int ISLISP(){
-int res;
-if(Ffreecell() < 900) Fgbc();
-fast_convert(Fcallsubr(Fcar(Fmakesym("INITIALIZE")),NIL));
-res = REPL();
-return(res);}
 int REPL(){
 int res;
 REPLloop:
@@ -708,7 +698,6 @@ if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(ARG)) Fshelterpop();
 return(res);}
 void init_tfunctions(void){
-(deftfunc)("ISLISP" , f_ISLISP);
 (deftfunc)("REPL" , f_REPL);
 (deftfunc)("INITIALIZE" , f_INITIALIZE);
 (deftfunc)("PROMPT" , f_PROMPT);

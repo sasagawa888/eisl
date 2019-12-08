@@ -107,10 +107,25 @@ double tarai(double x, double y, double z){
         (t (+ 1 (position x (cdr ls))))))
 
 (defun filename (str)
+  (if (eql (substring str 0 0) ".")
+      (filename2 str)
+      (filename1 str)))
+
+(defun filename1 (str)
   (let* ((n (char-index #\. str)))
     (if (null n)
         (error* "lack of filename ext" str))
     (substring str 0 (- n 1))))
+
+;; e.g. ./example/test.lsp 
+(defun filename2 (str)
+  (let* ((n (char-index #\. (dropstring str 1))))
+    (if (null n)
+        (error* "lack of filename ext" str))
+    (substring str 0 n)))
+
+(defun dropstring (str n)
+  (substring str n (- (length str) 1)))
 
 (defun substring (str m n)
   (for ((i m (+ i 1))

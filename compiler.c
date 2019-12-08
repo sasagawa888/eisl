@@ -7605,6 +7605,9 @@ res = ({int res;
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("?")))))) != NIL){
 res = ({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("question")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar(".")))))) != NIL){
+res = ({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("dot")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
 else{
 res = ({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_convert(fast_car(LS))),Fmakesym("<STRING>")))),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}

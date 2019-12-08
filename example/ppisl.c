@@ -234,7 +234,7 @@ int res;
 if(CELLRANGE(FORM)) Fshelterpush(FORM);
 if(CELLRANGE(SUBST)) Fshelterpush(SUBST);
 res = ({int res;int F = fast_convert(FETCH_VALUE(fast_convert(fast_car(FIRST(FORM))),SUBST));res = ({int res=NIL;
-if(UNIFY(fast_convert(Fcallsubr(Fcar(Fmakesym("APPLY")),Fcons(fast_inverse(Fcar(F)),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashppisl5"),Fcons(SUBST,Fcons(T,NIL)));Fcar(Fmakesym("dotslashexampleslashppisl5"));})),Flist1(fast_inverse(CDRstar(FIRST(FORM)))))))))))),SUBST,SECOND(FORM),SUBST) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("UNIFY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPLY")),Fcons(fast_inverse(Fcar(F)),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashppisl5"),Fcons(SUBST,Fcons(T,NIL)));Fcar(Fmakesym("dotslashexampleslashppisl5"));})),Flist1(fast_inverse(CDRstar(FIRST(FORM))))))))))))),Fcons(fast_inverse(SUBST),Fcons(fast_inverse(SECOND(FORM)),Flist1(fast_inverse(SUBST))))))) != NIL){
 res = T;}
 else{
 res = NIL;}
@@ -464,7 +464,7 @@ res = ({int res=NIL;
 if(({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(DEFINITIONS))));res;}) != NIL){
 res = NIL;}
-else if((UNIFY(fast_convert(fast_car(CLAUSE)),OLD_SUBST,CAAR(DEFINITIONS),NEW_SUBST) && REFUTES(CDRstar(FIRST(DEFINITIONS)),NEW_SUBST,Fcons(fast_inverse(Fmakesym("NIL")),fast_inverse(Fmakesym("NIL"))),Fcons(fast_inverse(Fcons(fast_inverse(CDRstar(CLAUSE)),fast_inverse(OLD_SUBST))),fast_inverse(CUE)))) != NIL){
+else if((fast_convert(Fcallsubr(Fcar(Fmakesym("UNIFY")),Fcons(fast_inverse(fast_convert(fast_car(CLAUSE))),Fcons(fast_inverse(OLD_SUBST),Fcons(fast_inverse(CAAR(DEFINITIONS)),Flist1(fast_inverse(NEW_SUBST))))))) && REFUTES(CDRstar(FIRST(DEFINITIONS)),NEW_SUBST,Fcons(fast_inverse(Fmakesym("NIL")),fast_inverse(Fmakesym("NIL"))),Fcons(fast_inverse(Fcons(fast_inverse(CDRstar(CLAUSE)),fast_inverse(OLD_SUBST))),fast_inverse(CUE)))) != NIL){
 res = T;}
 else{
 res = UNDO(fast_convert(Fcdr(Fmakesym("UNDO-LIST"))));
@@ -546,58 +546,22 @@ res = ({int res=NIL;
 if(VARP(X) != NIL){
 res = ({int res=NIL;
 if(ASSIGNEDP(X,X_SUBST) != NIL){
-{
-temp1 = FETCH(X,X_SUBST);
-temp2 = fast_convert(Fcdr(Fmakesym("FETCHED-SUBST")));
-temp3 = Y;
-temp4 = Y_SUBST;
-if(CELLRANGE(X)) Fshelterpop();
-if(CELLRANGE(X_SUBST)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(Y_SUBST)) Fshelterpop();
-X = temp1;
-X_SUBST = temp2;
-Y = temp3;
-Y_SUBST = temp4;
-goto UNIFYloop;};}
+({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("UNIFY")),Fcons(fast_inverse(FETCH(X,X_SUBST)),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("FETCHED-SUBST")))),Fcons(fast_inverse(Y),Flist1(fast_inverse(Y_SUBST)))))));res;});}
 else{
 res = LINK(X,X_SUBST,Y,Y_SUBST);}
 ;res;});}
 else if(VARP(Y) != NIL){
-{
-temp1 = Y;
-temp2 = Y_SUBST;
-temp3 = X;
-temp4 = X_SUBST;
-if(CELLRANGE(X)) Fshelterpop();
-if(CELLRANGE(X_SUBST)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(Y_SUBST)) Fshelterpop();
-X = temp1;
-X_SUBST = temp2;
-Y = temp3;
-Y_SUBST = temp4;
-goto UNIFYloop;};}
+({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("UNIFY")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Y_SUBST),Fcons(fast_inverse(X),Flist1(fast_inverse(X_SUBST)))))));res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("EQL")),Fcons(fast_inverse(X),Flist1(fast_inverse(Y)))));res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(Y)))) != NIL){
 res = NIL;}
-else if(UNIFY(fast_convert(fast_car(X)),X_SUBST,fast_convert(fast_car(Y)),Y_SUBST) != NIL){
-{
-temp1 = CDRstar(X);
-temp2 = X_SUBST;
-temp3 = CDRstar(Y);
-temp4 = Y_SUBST;
-if(CELLRANGE(X)) Fshelterpop();
-if(CELLRANGE(X_SUBST)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(Y_SUBST)) Fshelterpop();
-X = temp1;
-X_SUBST = temp2;
-Y = temp3;
-Y_SUBST = temp4;
-goto UNIFYloop;};}
+else if(fast_convert(Fcallsubr(Fcar(Fmakesym("UNIFY")),Fcons(fast_inverse(fast_convert(fast_car(X))),Fcons(fast_inverse(X_SUBST),Fcons(fast_inverse(fast_convert(fast_car(Y))),Flist1(fast_inverse(Y_SUBST))))))) != NIL){
+({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("UNIFY")),Fcons(fast_inverse(CDRstar(X)),Fcons(fast_inverse(X_SUBST),Fcons(fast_inverse(CDRstar(Y)),Flist1(fast_inverse(Y_SUBST)))))));res;});}
 else{
 res = NIL;}
 ;res;});

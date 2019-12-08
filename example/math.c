@@ -33,7 +33,7 @@ int f_TAU(int arglist);int TAU(int N);
 int f_EXPT_1(int arglist);int EXPT_1(int N);
 int f_LIOUVILLE_LAMBDA(int arglist);int LIOUVILLE_LAMBDA(int N);
 int f_OMEGA(int arglist);int OMEGA(int N);
-int f_exampleslashmath0(int arglist);int exampleslashmath0(int X);
+int f_dotslashexampleslashmath6(int arglist);int dotslashexampleslashmath6(int X);
 int f_G(int arglist);int G(int N);
 int f_SIGMA2(int arglist);int SIGMA2(int LS);
 int f_SIGMA(int arglist);int SIGMA(int N);
@@ -55,7 +55,7 @@ int f_DIVISORS(int arglist);int DIVISORS(int N);
 int f_PRIME_FACTORS(int arglist);int PRIME_FACTORS(int N);
 int f_FACTORIZE(int arglist);int FACTORIZE(int N);
 int f_PHI(int arglist);int PHI(int N);
-int f_exampleslashmath1(int arglist);int exampleslashmath1(int LS);
+int f_dotslashexampleslashmath7(int arglist);int dotslashexampleslashmath7(int LS);
 int f_PRIMITIVE_ROOT_P(int arglist);int PRIMITIVE_ROOT_P(int N,int P);
 int f_EXPMOD(int arglist);int EXPMOD(int A,int N,int M);
 int f_PRIMITIVE_ROOT(int arglist);int PRIMITIVE_ROOT(int P);
@@ -85,7 +85,7 @@ int f_slashNESTP(int arglist);int slashNESTP(int F);
 int f_plusNESTP(int arglist);int plusNESTP(int F);
 int f_starSIMP1(int arglist);int starSIMP1(int F);
 int f_starSIMP(int arglist);int starSIMP(int F);
-int f_exampleslashmath2(int arglist);int exampleslashmath2(int C);
+int f_dotslashexampleslashmath8(int arglist);int dotslashexampleslashmath8(int C);
 int f_LAT(int arglist);int LAT(int LS);
 int f_plusSIMP(int arglist);int plusSIMP(int F);
 int f__SIMP(int arglist);int _SIMP(int F);
@@ -107,14 +107,14 @@ int f_COMNUM(int arglist);int COMNUM(int F);
 int f_SIMPC(int arglist);int SIMPC(int FF);
 int f_SIMPL(int arglist);int SIMPL(int FF);
 int f_starAUX(int arglist);int starAUX(int F,int VAR);
-int f_exampleslashmath3(int arglist);int exampleslashmath3(int C);
+int f_dotslashexampleslashmath9(int arglist);int dotslashexampleslashmath9(int C);
 int f_starDERIV(int arglist);int starDERIV(int FMLA,int VAR);
-int f_exampleslashmath4(int arglist);int exampleslashmath4(int C);
+int f_dotslashexampleslashmath10(int arglist);int dotslashexampleslashmath10(int C);
 int f_slashDERIV(int arglist);int slashDERIV(int FMLA,int VAR);
 int f_plusDERIV(int arglist);int plusDERIV(int FMLA,int VAR);
-int f_exampleslashmath5(int arglist);int exampleslashmath5(int C);
+int f_dotslashexampleslashmath11(int arglist);int dotslashexampleslashmath11(int C);
 int f__DERIV(int arglist);int _DERIV(int FMLA,int VAR);
-int f_exampleslashmath6(int arglist);int exampleslashmath6(int C);
+int f_dotslashexampleslashmath12(int arglist);int dotslashexampleslashmath12(int C);
 int f_DERIVE(int arglist);int DERIVE(int FMLA,int VAR);
 int f_SDERIV(int arglist);int SDERIV(int F,int VAR);
 int f_CDERIV(int arglist);int CDERIV(int F,int VAR);
@@ -337,10 +337,10 @@ int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(OMEGA(fast_convert(arg1))));
 }
-int f_exampleslashmath0(int arglist){
+int f_dotslashexampleslashmath6(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath0(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath6(fast_convert(arg1))));
 }
 int f_G(int arglist){
 int arg1;
@@ -456,10 +456,10 @@ int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(PHI(fast_convert(arg1))));
 }
-int f_exampleslashmath1(int arglist){
+int f_dotslashexampleslashmath7(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath1(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath7(fast_convert(arg1))));
 }
 int f_PRIMITIVE_ROOT_P(int arglist){
 int arg1,arg2;
@@ -623,10 +623,10 @@ int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(starSIMP(fast_convert(arg1))));
 }
-int f_exampleslashmath2(int arglist){
+int f_dotslashexampleslashmath8(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath2(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath8(fast_convert(arg1))));
 }
 int f_LAT(int arglist){
 int arg1;
@@ -739,10 +739,10 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(starAUX(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_exampleslashmath3(int arglist){
+int f_dotslashexampleslashmath9(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath3(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath9(fast_convert(arg1))));
 }
 int f_starDERIV(int arglist){
 int arg1,arg2;
@@ -750,10 +750,10 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(starDERIV(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_exampleslashmath4(int arglist){
+int f_dotslashexampleslashmath10(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath4(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath10(fast_convert(arg1))));
 }
 int f_slashDERIV(int arglist){
 int arg1,arg2;
@@ -767,10 +767,10 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(plusDERIV(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_exampleslashmath5(int arglist){
+int f_dotslashexampleslashmath11(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath5(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath11(fast_convert(arg1))));
 }
 int f__DERIV(int arglist){
 int arg1,arg2;
@@ -778,10 +778,10 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(_DERIV(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_exampleslashmath6(int arglist){
+int f_dotslashexampleslashmath12(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(exampleslashmath6(fast_convert(arg1))));
+return(fast_inverse(dotslashexampleslashmath12(fast_convert(arg1))));
 }
 int f_DERIVE(int arglist){
 int arg1,arg2;
@@ -977,46 +977,46 @@ arg2 = Fnth(1,arglist);
 arg3 = Fnth(2,arglist);
 return(fast_inverse(MATCHF(fast_convert(arg1),fast_convert(arg2),fast_convert(arg3))));
 }
-int exampleslashmath0(int X){
+int dotslashexampleslashmath6(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
-int exampleslashmath1(int LS){
+int dotslashexampleslashmath7(int LS){
 int res;
 if(CELLRANGE(LS)) Fshelterpush(LS);
 res = fast_minus(fast_convert(fast_immediate(1)),fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("QUOTIENT")),Fcons(fast_inverse(fast_immediate(1)),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(LS),Flist1(fast_inverse(fast_immediate(0)))))))))))));
 if(CELLRANGE(LS)) Fshelterpop();
 return(res);}
-int exampleslashmath2(int C){
+int dotslashexampleslashmath8(int C){
 int res;
 if(CELLRANGE(C)) Fshelterpush(C);
-res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("*")),Fcons(fast_inverse(ARG1(Fnth(0,Fcdr(Fmakesym("exampleslashmath2"))))),Flist1(fast_inverse(C))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("*")),Fcons(fast_inverse(ARG1(Fnth(0,Fcdr(Fmakesym("dotslashexampleslashmath8"))))),Flist1(fast_inverse(C))))));
 if(CELLRANGE(C)) Fshelterpop();
 return(res);}
-int exampleslashmath3(int C){
+int dotslashexampleslashmath9(int C){
 int res;
 if(CELLRANGE(C)) Fshelterpush(C);
-res = Fcons(fast_inverse(fast_convert(fast_car(Fnth(0,Fcdr(Fmakesym("exampleslashmath3")))))),fast_inverse(C));
+res = Fcons(fast_inverse(fast_convert(fast_car(Fnth(0,Fcdr(Fmakesym("dotslashexampleslashmath9")))))),fast_inverse(C));
 if(CELLRANGE(C)) Fshelterpop();
 return(res);}
-int exampleslashmath4(int C){
+int dotslashexampleslashmath10(int C){
 int res;
 if(CELLRANGE(C)) Fshelterpush(C);
 res = Fcons(fast_inverse(Fmakesym("*")),fast_inverse(C));
 if(CELLRANGE(C)) Fshelterpop();
 return(res);}
-int exampleslashmath5(int C){
+int dotslashexampleslashmath11(int C){
 int res;
 if(CELLRANGE(C)) Fshelterpush(C);
-res = DERIVE(C,Fnth(0,Fcdr(Fmakesym("exampleslashmath5"))));
+res = DERIVE(C,Fnth(0,Fcdr(Fmakesym("dotslashexampleslashmath11"))));
 if(CELLRANGE(C)) Fshelterpop();
 return(res);}
-int exampleslashmath6(int C){
+int dotslashexampleslashmath12(int C){
 int res;
 if(CELLRANGE(C)) Fshelterpush(C);
-res = DERIVE(C,Fnth(0,Fcdr(Fmakesym("exampleslashmath6"))));
+res = DERIVE(C,Fnth(0,Fcdr(Fmakesym("dotslashexampleslashmath12"))));
 if(CELLRANGE(C)) Fshelterpop();
 return(res);}
 int ODDP(int N){
@@ -1620,7 +1620,7 @@ res = ({int res;
 if(fast_numeqp(fast_convert(N),fast_convert(fast_immediate(1))) != NIL){
 res = fast_immediate(0);}
 else{
-res = SUM(({Fset_cdr(Fmakesym("exampleslashmath0"),Fcons(T,NIL));Fcar(Fmakesym("exampleslashmath0"));}),FACTORIZE(N));}res;})
+res = SUM(({Fset_cdr(Fmakesym("dotslashexampleslashmath6"),Fcons(T,NIL));Fcar(Fmakesym("dotslashexampleslashmath6"));}),FACTORIZE(N));}res;})
 ;
 if(CELLRANGE(N)) Fshelterpop();
 return(res);}
@@ -2071,7 +2071,7 @@ res = ({int res;
 if(fast_numeqp(fast_convert(N),fast_convert(fast_immediate(1))) != NIL){
 res = fast_immediate(1);}
 else{
-res = fast_convert(Fconvert(fast_inverse(fast_mult(fast_convert(N),fast_convert(PRODUCT(({Fset_cdr(Fmakesym("exampleslashmath1"),Fcons(T,NIL));Fcar(Fmakesym("exampleslashmath1"));}),FACTORIZE(N))))),Fmakesym("<INTEGER>")));}res;})
+res = fast_convert(Fconvert(fast_inverse(fast_mult(fast_convert(N),fast_convert(PRODUCT(({Fset_cdr(Fmakesym("dotslashexampleslashmath7"),Fcons(T,NIL));Fcar(Fmakesym("dotslashexampleslashmath7"));}),FACTORIZE(N))))),Fmakesym("<INTEGER>")));}res;})
 ;
 if(CELLRANGE(N)) Fshelterpop();
 return(res);}
@@ -2612,7 +2612,7 @@ res = ({int res;
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_immediate(0)),Flist1(fast_inverse(fast_convert(fast_cdr(F))))))) != NIL){
 res = fast_immediate(0);}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("NUMBERP")),Flist1(fast_inverse(ARG1(F))))) && fast_convert(Fcallsubr(Fcar(Fmakesym("LISTP")),Flist1(fast_inverse(ARG2(F))))) && fast_eq(fast_convert(OP(ARG2(F))),fast_convert(Fmakesym("+")))) != NIL){
-res = SIMPS(Fcons(fast_inverse(Fmakesym("+")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("exampleslashmath2"),Fcons(F,Fcons(T,NIL)));Fcar(Fmakesym("exampleslashmath2"));})),Flist1(fast_inverse(fast_convert(fast_cdr(ARG2(F)))))))))));}
+res = SIMPS(Fcons(fast_inverse(Fmakesym("+")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashmath8"),Fcons(F,Fcons(T,NIL)));Fcar(Fmakesym("dotslashexampleslashmath8"));})),Flist1(fast_inverse(fast_convert(fast_cdr(ARG2(F)))))))))));}
 else if(fast_not(LAT(fast_convert(fast_cdr(F)))) != NIL){
 res = Fcons(fast_inverse(Fmakesym("*")),fast_inverse(starSIMP1(F)));}
 else{
@@ -3249,7 +3249,7 @@ res = ({int res;
 if(Fapply(Fcar(Fmakesym("NULL?")),Flist1(fast_inverse(F))) != NIL){
 res = Fmakesym("NIL");}
 else{
-res = Fcons(fast_inverse(Fcons(fast_inverse(DERIVE(fast_convert(fast_car(F)),VAR)),fast_inverse(fast_convert(fast_cdr(F))))),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("exampleslashmath3"),Fcons(F,Fcons(T,NIL)));Fcar(Fmakesym("exampleslashmath3"));})),Flist1(fast_inverse(starAUX(fast_convert(fast_cdr(F)),VAR))))))));}res;})
+res = Fcons(fast_inverse(Fcons(fast_inverse(DERIVE(fast_convert(fast_car(F)),VAR)),fast_inverse(fast_convert(fast_cdr(F))))),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashmath9"),Fcons(F,Fcons(T,NIL)));Fcar(Fmakesym("dotslashexampleslashmath9"));})),Flist1(fast_inverse(starAUX(fast_convert(fast_cdr(F)),VAR))))))));}res;})
 ;
 if(CELLRANGE(VAR)) Fshelterpop();
 if(CELLRANGE(F)) Fshelterpop();
@@ -3259,7 +3259,7 @@ int res;
 if(CELLRANGE(FMLA)) Fshelterpush(FMLA);
 if(CELLRANGE(VAR)) Fshelterpush(VAR);
 if(Ffreecell() < 900) Fgbc();
-res = Fcons(fast_inverse(Fmakesym("+")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("exampleslashmath4"),Fcons(T,NIL));Fcar(Fmakesym("exampleslashmath4"));})),Flist1(fast_inverse(starAUX(fast_convert(fast_cdr(FMLA)),VAR))))))));
+res = Fcons(fast_inverse(Fmakesym("+")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashmath10"),Fcons(T,NIL));Fcar(Fmakesym("dotslashexampleslashmath10"));})),Flist1(fast_inverse(starAUX(fast_convert(fast_cdr(FMLA)),VAR))))))));
 if(CELLRANGE(VAR)) Fshelterpop();
 if(CELLRANGE(FMLA)) Fshelterpop();
 return(res);}
@@ -3278,7 +3278,7 @@ int res;
 if(CELLRANGE(FMLA)) Fshelterpush(FMLA);
 if(CELLRANGE(VAR)) Fshelterpush(VAR);
 if(Ffreecell() < 900) Fgbc();
-res = Fcons(fast_inverse(Fmakesym("+")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("exampleslashmath5"),Fcons(VAR,Fcons(T,NIL)));Fcar(Fmakesym("exampleslashmath5"));})),Flist1(fast_inverse(fast_convert(fast_cdr(FMLA)))))))));
+res = Fcons(fast_inverse(Fmakesym("+")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashmath11"),Fcons(VAR,Fcons(T,NIL)));Fcar(Fmakesym("dotslashexampleslashmath11"));})),Flist1(fast_inverse(fast_convert(fast_cdr(FMLA)))))))));
 if(CELLRANGE(VAR)) Fshelterpop();
 if(CELLRANGE(FMLA)) Fshelterpop();
 return(res);}
@@ -3287,7 +3287,7 @@ int res;
 if(CELLRANGE(FMLA)) Fshelterpush(FMLA);
 if(CELLRANGE(VAR)) Fshelterpush(VAR);
 if(Ffreecell() < 900) Fgbc();
-res = Fcons(fast_inverse(Fmakesym("-")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("exampleslashmath6"),Fcons(VAR,Fcons(T,NIL)));Fcar(Fmakesym("exampleslashmath6"));})),Flist1(fast_inverse(fast_convert(fast_cdr(FMLA)))))))));
+res = Fcons(fast_inverse(Fmakesym("-")),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(({Fset_cdr(Fmakesym("dotslashexampleslashmath12"),Fcons(VAR,Fcons(T,NIL)));Fcar(Fmakesym("dotslashexampleslashmath12"));})),Flist1(fast_inverse(fast_convert(fast_cdr(FMLA)))))))));
 if(CELLRANGE(VAR)) Fshelterpop();
 if(CELLRANGE(FMLA)) Fshelterpop();
 return(res);}
@@ -3851,7 +3851,7 @@ void init_tfunctions(void){
 (deftfunc)("TAU" , f_TAU);
 (deftfunc)("EXPT-1" , f_EXPT_1);
 (deftfunc)("LIOUVILLE-LAMBDA" , f_LIOUVILLE_LAMBDA);
-(deftfunc)("exampleslashmath0" , f_exampleslashmath0);
+(deftfunc)("dotslashexampleslashmath6" , f_dotslashexampleslashmath6);
 (deftfunc)("OMEGA" , f_OMEGA);
 (deftfunc)("G" , f_G);
 (deftfunc)("SIGMA2" , f_SIGMA2);
@@ -3873,7 +3873,7 @@ void init_tfunctions(void){
 (deftfunc)("DIVISORS" , f_DIVISORS);
 (deftfunc)("PRIME-FACTORS" , f_PRIME_FACTORS);
 (deftfunc)("FACTORIZE" , f_FACTORIZE);
-(deftfunc)("exampleslashmath1" , f_exampleslashmath1);
+(deftfunc)("dotslashexampleslashmath7" , f_dotslashexampleslashmath7);
 (deftfunc)("PHI" , f_PHI);
 (deftfunc)("PRIMITIVE-ROOT-P" , f_PRIMITIVE_ROOT_P);
 (deftfunc)("EXPMOD" , f_EXPMOD);
@@ -3903,7 +3903,7 @@ void init_tfunctions(void){
 (deftfunc)("/NESTP" , f_slashNESTP);
 (deftfunc)("+NESTP" , f_plusNESTP);
 (deftfunc)("*SIMP1" , f_starSIMP1);
-(deftfunc)("exampleslashmath2" , f_exampleslashmath2);
+(deftfunc)("dotslashexampleslashmath8" , f_dotslashexampleslashmath8);
 (deftfunc)("*SIMP" , f_starSIMP);
 (deftfunc)("LAT" , f_LAT);
 (deftfunc)("+SIMP" , f_plusSIMP);
@@ -3925,14 +3925,14 @@ void init_tfunctions(void){
 (deftfunc)("COMNUM" , f_COMNUM);
 (deftfunc)("SIMPC" , f_SIMPC);
 (deftfunc)("SIMPL" , f_SIMPL);
-(deftfunc)("exampleslashmath3" , f_exampleslashmath3);
+(deftfunc)("dotslashexampleslashmath9" , f_dotslashexampleslashmath9);
 (deftfunc)("*AUX" , f_starAUX);
-(deftfunc)("exampleslashmath4" , f_exampleslashmath4);
+(deftfunc)("dotslashexampleslashmath10" , f_dotslashexampleslashmath10);
 (deftfunc)("*DERIV" , f_starDERIV);
 (deftfunc)("/DERIV" , f_slashDERIV);
-(deftfunc)("exampleslashmath5" , f_exampleslashmath5);
+(deftfunc)("dotslashexampleslashmath11" , f_dotslashexampleslashmath11);
 (deftfunc)("+DERIV" , f_plusDERIV);
-(deftfunc)("exampleslashmath6" , f_exampleslashmath6);
+(deftfunc)("dotslashexampleslashmath12" , f_dotslashexampleslashmath12);
 (deftfunc)("-DERIV" , f__DERIV);
 (deftfunc)("DERIVE" , f_DERIVE);
 (deftfunc)("SDERIV" , f_SDERIV);

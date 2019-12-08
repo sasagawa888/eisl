@@ -2208,6 +2208,8 @@ double tarai(double x, double y, double z){
          (string-append "rcurl" (conv-name2 (cdr ls))))
         ((char= (car ls) #\?)
          (string-append "question" (conv-name2 (cdr ls))))
+        ((char= (car ls) #\.)
+         (string-append "dot" (conv-name2 (cdr ls))))
         (t
           (string-append (convert (car ls) <string>)
                          (conv-name2 (cdr ls))))))

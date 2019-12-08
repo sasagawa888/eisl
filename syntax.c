@@ -1315,7 +1315,10 @@ int f_convert(int arglist){
     arg1 = eval(arg1);
     switch(GET_TAG(arg1)){
         case INTN:
-            if(GET_AUX(arg2) == ccharacter){
+            if (GET_AUX(arg2) == cinteger){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == ccharacter){
                 str[0] = GET_INT(arg1);
                 str[1] = NUL;
                 return(makechar(str));
@@ -1326,6 +1329,26 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == cstring){
                 sprintf(str,"%d",GET_INT(arg1));
                 return(makestr(str));
+            }
+            break;
+        case LONGN:
+            if(GET_AUX(arg2) == cinteger){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cfloat){
+                return(exact_to_inexact(arg1));
+            }
+            else if(GET_AUX(arg2) == cstring){
+                sprintf(str,"%lld",GET_LONG(arg1));
+                return(makestr(str));
+            }
+            break;
+        case BIGX:
+            if(GET_AUX(arg2) == cinteger){
+                return(arg2);
+            }
+            else if(GET_AUX(arg2) == cfloat){
+                return(exact_to_inexact(arg1));
             }
             break;
         case CHR:
@@ -1343,7 +1366,10 @@ int f_convert(int arglist){
             }
             break;
         case FLTN:
-            if(GET_AUX(arg2) == cinteger){
+            if(GET_AUX(arg2) == cfloat){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cinteger){
                 return(makeint((int)GET_FLT(arg1)));
             }
             else if(GET_AUX(arg2) == cstring){
@@ -1356,11 +1382,24 @@ int f_convert(int arglist){
             }
             break;
         case SYM:
-            if(GET_AUX(arg2) == cstring){
+            if(GET_AUX(arg2) == csymbol){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cstring){
                 return(makestr(GET_NAME(arg1)));
             }
+            else if(nullp(arg1) && GET_AUX(arg2) == cgeneral_vector){
+                return(vector(arg1));
+            }
+            else if(nullp(arg1) && GET_AUX(arg2) == clist){
+                return(arg1);
+            }
+            break;
         case STR:
-            if(GET_AUX(arg2) == cinteger){
+            if(GET_AUX(arg2) == cstring){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cinteger){
                 return(makeint(atoi(GET_NAME(arg1))));
             }
             else if(GET_AUX(arg2) == cfloat){
@@ -1377,12 +1416,18 @@ int f_convert(int arglist){
             }
             break;
         case LIS:
-            if(GET_AUX(arg2) == cgeneral_vector){
+            if(GET_AUX(arg2) == clist){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cgeneral_vector){
                 return(vector(arg1));
             }
             break;
         case VEC:
-            if(GET_AUX(arg2) == clist){
+            if(GET_AUX(arg2) == cgeneral_vector){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == clist){
                 return(vector_to_list(arg1));
             }
             break;

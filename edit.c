@@ -13,7 +13,7 @@ int f_edit(int arglist){
 	arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "edit", arglist);
-    strcpy(str,"edlis ");
+    strcpy(str,"./edlis ");
     strcat(str,GET_NAME(arg1));
 	if(system(str) == -1)
 		error(SYSTEM_ERR, "edit", arg1);

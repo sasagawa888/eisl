@@ -79,6 +79,7 @@ Elapsed Time(second)=3.728262
 >
 ```
 You can compile the compiler itself. Compilation is faster.
+In raspai3 compiler.o is not possible due to insufficient memory. Please use compiiler.lsp.
 
 # Invoke editor
 edit function invoke Edlis editor.

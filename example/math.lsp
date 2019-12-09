@@ -56,7 +56,7 @@
          ((> i l) y)
           (setq y (+ (aref1 x i i) y)))))
 
-;;ˆÊ’u(r,s)‚É‘Î‚µ‚Ä‚Ì¬s—ñ
+
 (defun sub-matrix (x r s)
   (let* ((m (elt (array-dimensions x) 0))
          (n (elt (array-dimensions x) 1))
@@ -104,7 +104,7 @@
               ((> j n))
               (set-aref1 (aref1 x i j) y j i)))))
 
-;;‹ts—ñ@ƒNƒ‰ƒƒ‹‚ÌŒö®BŒø—¦‚Í‚æ‚­‚È‚¢‚ª5ŸŒ³’ö“x‚È‚ç–â‘è‚È‚µB
+
 (defun inv (x)
   (unless (square-matrix-p x)
     (error "inv require square matrix" x))
@@ -140,59 +140,49 @@
             (set-aref1 y i j (* (sign (+ i j)) (det (sub-matrix x i j))))))))
 
 
-;;ƒŠƒXƒgls‚ÉŠÖ”f‚ğ“K—p‚µ‚½’l‚Ì‘˜a‚ğ‹‚ß‚éB
 (defun sum (f ls)
   (if (null ls)
       0
       (+ (funcall f (car ls)) (sum f (cdr ls)))))
 
-;;ls‚ÌŠe—v‘f‚É‚Â‚¢‚ÄŠÖ”f‚ğ“K—p‚µ‚Ä‚»‚ÌÏ‚ğ‹‚ß‚éB
+
 (defun product (f ls)
   (if (null ls)
       1
       (* (funcall f (car ls)) (product f (cdr ls)))))
 
 
-;;ƒŠƒXƒgls‚Ì—v‘f‚·‚×‚Ä‚É‚Â‚¢‚ÄŠÖ”‚†‚ª¬‚è—§‚Â‚©H
 (defun for-all (f ls)
   (cond ((null ls) t)
         ((not (funcall f (car ls))) nil)
         (t (for-all f (cdr ls)))))
 
-;;ƒŠƒXƒgls‚Ì­‚È‚­‚Æ‚à1‚Â‚ÉŠÖ”‚†‚ª¬‚è—§‚Â‚©H
 (defun at-least (f ls)
   (cond ((null ls) nil)
         ((funcall f (car ls)) t)
         (t (at-least f (cdr ls)))))
 
-;;ƒKƒEƒX‚Ì‘f”’è—‚É‚æ‚è‚wˆÈ‰º‚Ì‘f”‚ÌŠT”‚ğ•Ô‚·B
 (defun gauss-primes (x)
   (quotient x (log x)))
 
 
 
-;;; ;;‚‚Æ‚‚ªŒİ‚¢‚É‘f‚Å‚ ‚ê‚Ît ‚»‚¤‚Å‚È‚¯‚ê‚Înil
 (defun coprimep (m n)
   (= (gcd  m n) 1))
 
-;;‚‚ª‚‚ÅŠ„‚èØ‚ê‚é‚©‚Ç‚¤‚©BŠ„‚èØ‚ê‚ê‚Ît ‚»‚¤‚Å‚È‚¯‚ê‚Înil
-;; n|m ‘Š“–
 (defun divisiblep (m n)
   (and (integerp m)
        (integerp n)
        (= (mod m n) 0)))
 
-;;‚‚Æ‚‚ª–@‚‚Å‡“¯‚©‚Ç‚¤‚©B‡“¯‚È‚çt ‚»‚¤‚Å‚È‚¯‚ê‚Înil
 (defun eqmodp (m n a)
   (= (mod m a) (mod n a)))
 
-;;‘f””»’è 10^18‚æ‚è¬‚³‚¯‚ê‚ÎŒˆ’è“I”»’èƒAƒ‹ƒSƒŠƒYƒ€A‘å‚«‚¯‚ê‚Îƒ‰ƒrƒ“ƒ~ƒ‰[–@‚Å”»’è
 (defun primep (n)
   (if (< n 1000000000000000000)
       (deterministic-prime-p n)
       (rabin-miller-p n)))
 
-;;Œˆ’è“I•û–@‚Ån‚ª‘f”‚Å‚ ‚é‚©‚Ç‚¤‚©‚ğ•Ô‚·B
 (defun deterministic-prime-p (n)
   (labels ((iter (x y)
                  (cond ((> x y) t)
@@ -204,7 +194,6 @@
         (iter 2 (sqrt n)))))
 
 
-;;ƒÎ(n) nˆÈ‰º‚Ì‘f”‚Ì”‚ğ•Ô‚·B
 (defun primepi (n)
   (labels ((iter (x y)
                  (cond ((> x n) y)
@@ -212,7 +201,6 @@
                        (t (iter (+ x 1) y)))))
     (iter 2 0)))
 
-;;–ñ”‚ÌŒÂ”‚ğ•Ô‚·B‘fˆö”•ª‰ğ‚ğ‚µ‚ÄŒvZ‚µ‚Ä‚¢‚éBƒÑ(n)
 (defun tau (n)
   (labels ((iter (ls m)
                  (if (null ls)
@@ -222,17 +210,14 @@
         1
         (iter (factorize n) 1))))
 
-;;ƒŠƒ…[ƒrƒ‹‚ÌƒÉŠÖ”‚Ì‰º¿‚¯
 (defun expt-1 (n)
   (if (oddp n)
       -1
       1))
 
-;;ƒŠƒ…[ƒrƒ‹‚ÌƒÉŠÖ”–{‘Ì
 (defun liouville-lambda (n)
   (expt-1 (omega n)))
 
-;;ƒŠƒ…[ƒrƒ‹‚ÌƒÉŠÖ”‚Ì‰º¿‚¯
 (defun omega (n)
   (if (= n 1)
       0
@@ -240,41 +225,31 @@
 
 
 
-;;ƒŠƒ…[ƒrƒ‹‚ÌƒÉŠÖ”‚Ì«¿‚ğ’²‚×‚é‚½‚ß‚Ì‚à‚Ì
-;;–ñ”‚ğ—^‚¦‚é‚Æ‚»‚Ì‘˜a‚Í•½•û”‚È‚ç‚PA‚»‚Ì‘¼‚Ìê‡‚Í‚OB
 (defun g (n)
   (sum #'liouville-lambda (divisors n)))
 
 
-;;‘fˆö”•ª‰ğ–ñ”‚Ì˜a‚ğ‹‚ß‚éB
 (defun sigma2 (ls)
   (let ((p (elt ls 0))
         (k (elt ls 1)))
     (quotient (- (expt p (+ k 1)) 1) (- p 1))))
 
-;;–ñ”‚Ì˜a‚ğ‹‚ß‚éŠÖ”
-;;ƒĞ(n) ‘Š“–
 (defun sigma (n)
   (cond ((< n 1) nil)
         ((= n 1) 1)
         (t (product #'sigma2 (factorize n)))))
 
 
-;;Š®‘S”‚©‚Ç‚¤‚©‚ğƒĞŠÖ”‚ğ—˜—p‚µ‚ÄŒvZB
-;;Š®‘S”‚È‚çt ‚»‚¤‚Å‚È‚¯‚ê‚Înil
 (defun perfectp (n)
   (= (sigma n) (* 2 n)))
 
-;;ƒƒ‹ƒZƒ“ƒk‘f”‚ğŒvZ‚µ‚Ä•Ô‚·B
 ;;2^p -1
 (defun mersenne (p)
   (- (expt 2 p) 1))
 
-;;ƒ_ƒuƒ‹Š®‘S”
 (defun double-perfect-number-p (n)
   (= (sigma n) (* 3 n)))
 
-;;nˆÈ‰º‚Ìƒ_ƒuƒ‹Š®‘S”‚ğƒŠƒXƒg‚É‚µ‚Ä•Ô‚·B
 (defun find-double-perfect (n)
   (labels ((iter (m ls)
                  (cond ((> m n) ls)
@@ -282,9 +257,7 @@
                        (t (iter (+ m 1) ls)))))
     (iter 1 '())))
 
-;;ƒtƒFƒ‹ƒ}‚Ì¬’è—‚ğ—˜—p‚µ‚ÄŠm—¦“I‚É‘f””»’è‚ğ‚·‚éB
-;;‘f”‚È‚çt ‚»‚¤‚Å‚È‚¯‚ê‚Înil
-;;’ê‚ğ2`n-1‚Ü‚Å—”¶¬‚µ‚Ä10‰ñs‚·‚éB
+
 (defun fermatp (n)
   (labels ((iter (m)
            (cond ((< m 1) t)
@@ -292,8 +265,6 @@
                  (t (iter (- m 1))))))
     (iter 10)))
 
-;;ƒƒ‹ƒZƒ“ƒk”(2^p-1)‚É‘Î‚·‚éƒ‹ƒJƒX-ƒeƒXƒg
-;;‘f”‚È‚ç‚Î#t ‚»‚¤‚Å‚È‚¯‚ê‚Î#f
 (defun lucasp (p)
   (labels ((iter (n i m)
                  (cond ((and (= i (- p 1)) (zerop (mod n m))) t)
@@ -303,12 +274,9 @@
           ((= p 2) t)
           (t (iter 4 1 (mersenne p))))))
 
-;;ƒtƒFƒ‹ƒ}[”
 (defun fermat-number (n)
   (+ (expt 2 (expt 2 n)) 1))
 
-;;ƒ‰ƒrƒ“ƒ~ƒ‰[ƒeƒXƒg
-;;ƒeƒXƒg‘ÎÛ‚Ì‚‚ğ n^k * q ‚É•ª‰ğ‚·‚éB
 (defun rm1 (n)
   (labels ((iter (k q)
                  (if (oddp q)
@@ -316,13 +284,9 @@
                      (iter (+ k 1) (div q 2)))))
     (iter 0 (- n 1))))
 
-;;ƒ‰ƒrƒ“ƒ~ƒ‰[ƒeƒXƒgğŒ‚P
-;;‡¬”‚È‚çt ‘f”‚È‚çnil
 (defun rm2 (a q n)
   (not (= (gaussmod a q n) 1)))
 
-;;ƒ‰ƒrƒ“ƒ~ƒ‰[ƒeƒXƒgğŒ‚Q
-;;‡¬”‚È‚çt ‘f”‚È‚çnil
 (defun rm3 (a k q n)
   (labels ((iter (i)
                  (cond ((>= i k) t)
@@ -330,10 +294,6 @@
                        (t (iter (+ i 1))))))
     (iter 0)))
 
-
-;;ƒ‰ƒrƒ“ƒ~ƒ‰[ƒeƒXƒg
-;;n‚É‚Â‚¢‚Ä’êa‚ÅğŒ‚PC‚Q‚ğƒeƒXƒg
-;;‡¬”‚È‚çt ‘f”‚È‚çnil
 (defun rm4 (n a)
   (let* ((ls (rm1 n))
          (k (elt ls 0))
@@ -341,11 +301,6 @@
     (and (rm2 a q n)
          (rm3 a k q n))))
 
-;;ƒ‰ƒrƒ“ƒ~ƒ‰[ƒeƒXƒg
-;;ŠÖ”–{‘Ì
-;;’ê‚ğ2`n-1(‚½‚¾‚µ32767ˆÈ‰º)‚Ü‚Å—”‚Å”­¶‚³‚¹10‰ñs‚·‚éB
-;;‘f”‚È‚çt ‡¬”‚È‚çnil
-;;‹[‘f”‚Å‚ ‚éŠm—¦‚Í 0.25^10 ‚¨‚æ‚»0.000095%
 (defun rabin-miller-p (n)
   (labels ((iter (m)
                  (cond ((< m 1) nil)
@@ -357,14 +312,12 @@
 
 
 
-;;ŒJ‚è•Ô‚µ“ñæ–@‚É‚æ‚émodŒvZ‚ÅŒ‹‰Ê‚ğ–@‚‚Æ‚µ‚½ê‡ -m/2`m/2 ‚Å•\‚·B
 (defun gaussmod (a k m)
   (let ((k1 (expmod a k m)))
     (cond ((and (> k1 0) (> k1 (quotient m 2)) (< k1 m)) (- k1 m))
           ((and (< k1 0) (< k1 (- (quotient m 2))) (> k1 (- m))) (+ k1 m))
           (t k1))))
 
-;;‘oq‘f”‚ğn`n+m‚Ü‚Å’T‚·B
 (defun twin-primes (n m)
   (labels ((iter (i j ls)
                  (cond ((> i j) (reverse ls))
@@ -377,7 +330,6 @@
 
 
 
-;;–ñ”‚ğ‹‚ß‚ÄƒŠƒXƒg‚É‚µ‚Ä•Ô‚·B
 (defun divisors (n)
   (labels ((iter (m o ls)
                  (cond ((> m o) ls)
@@ -389,8 +341,6 @@
           (t (cons n (iter 1 (ceiling (quotient n 2))'()))))))
 
 
-;;n‚ğ‘fˆö”•ª‰ğ‚·‚éBw”Œ`®‚Å‚Í‚È‚­’Pƒ‚É‘f”‚ğ•À‚×‚½ƒŠƒXƒg‚Å•Ô‚·B
-;;n<0‚Ìê‡‚É‚Í#fAn=0,n=1‚Ìê‡‚É‚Í'(0),'(1)‚ğ•Ô‚·B
 (defun prime-factors (n)
   (labels ((iter (p x ls z)
                  (cond ((> p z) (cons x ls))
@@ -403,7 +353,7 @@
           ((< n 2) (list n))
           (t (iter 2 n '() (isqrt n))))))
 
-;;n‚ğ‘fˆö”•ª‰ğ‚µ‚Ä•W€Œ`®‚É‚µ‚Ä•Ô‚·Bp^a + q^b + r^c ((p a)(q b)(r c))
+;;p^a + q^b + r^c ((p a)(q b)(r c))
 (defun factorize (n)
   (labels ((iter (ls p n mult)
                  (cond ((null ls) (cons (list p n) mult))
@@ -412,9 +362,7 @@
     (let ((ls (prime-factors n)))
       (iter (cdr ls) (car ls) 1 '()))))
 
-;;ƒIƒCƒ‰[‚ÌƒÓŠÖ”
-;;‚ˆÈ‰º‚Ì”‚Å‚‚ÆŒİ‚¢‚É‘f‚Å‚ ‚é‚à‚Ì‚ÌŒÂ”‚ğ•Ô‚·B
-;;‘fˆö”•ª‰ğ‚É‚æ‚èŒvZ‚µ‚Ä‚¢‚éB ƒÓ(n=p^a q^b r^c) = n(1-1/p)(1-1/q)(1-1/r)
+;;(n=p^a q^b r^c) = n(1-1/p)(1-1/q)(1-1/r)
 (defun phi (n)
   (if (= n 1)
       1
@@ -424,9 +372,7 @@
                (factorize n)))
         <integer>)))
 
-;;Œ´nª‚Ì”»’è
-;;‚‚ª‘f”‚‚ğ–@‚Æ‚µ‚ÄŒ´nª‚Å‚ ‚é‚È‚ç#t
-;;‘f”‚È‚ç•K‚¸‘¶İ‚·‚é‚ªğŒ‚ª‚»‚ë‚Á‚Ä‚¢‚È‚¯‚ê‚Î nil‚ª•Ô‚éB
+
 (defun primitive-root-p (n p)
   (labels ((iter (i)
                  (cond ((>= i (- p 1)) t)
@@ -436,8 +382,7 @@
          (= (expmod n (- p 1) p) 1))))
 
 ;;sicp
-;;ŒJ‚è•Ô‚µ“ñæ–@‚É‚æ‚émodŒvZB
-;; a^n (mod m)‚ğŒvZ‚·‚éBSICP‚æ‚èØ—pB
+;; a^n (mod m)
 (defun expmod (a n m)
   (cond ((= 0 n) 1)
         ((evenp n)
@@ -445,9 +390,7 @@
         (t
           (mod (* a (expmod a (- n 1) m)) m))))
 
-;;‘f”‚‚ÌÅ¬‚ÌŒ´nª‚ğ•Ô‚·B
-;;‚‚Ì”CˆÓ‚ÌŒ´nª‚É¬‚è—§‚Â’è—‚ğ‚·‚Ì‚Éˆê”Ô¬‚³‚ÈŒ´nª‚ğg‚¤‚±‚Æ‚Æ‚µ‚½B
-;;ŒvZ‚ªŠy‚È‚Ì‚ÅB
+
 (defun primitive-root (p)
   (labels ((iter (n)
                  (cond ((> n p) nil)
@@ -455,9 +398,7 @@
                        (t (iter (+ n 1))))))
     (iter 2)))
 
-;;w”‚ÌŒvZ
-;;Œ´nª‚’‚ğ’ê‚Æ‚µ‚Ä‘f”‚‚ğ–@‚Æ‚µ‚½a‚É‘Î‚·‚éw”‚ğ‹‚ß‚é
-;;w”‚Í•K‚¸‘¶İ‚·‚é‚ª—^‚¦‚ç‚ê‚½’l‚ªğŒ‚É‡‚í‚È‚¯‚ê‚Înil‚ª•Ô‚éB
+
 (defun ind (r a p)
   (labels ((iter (i)
                  (cond ((> i p) nil)
@@ -467,7 +408,7 @@
 
 
 
-;;‚“x‡¬”
+;;
 (defun highly-composite-number-p (n)
   (cond ((<= n 0) nil)
         ((= n 1) t)
@@ -479,7 +420,7 @@
           ((> x m) (max-tau (- n 1) x))
           (t (max-tau (- n 1) m)))))
 
-;;‰º’n’å•væ¶Au”®ˆ—v‚æ‚è
+;;
 (defun cadr (ls)
   (car (cdr ls)))
 
@@ -514,7 +455,7 @@
         (t (cons (car f) (remove x (cdr f))))))
 
 ;;-----------------------------------------------------------------------
-;;“à‘}•\Œ»‚©‚ç‘O’u•\Œ»‚Ö•ÏŠ·‚·‚éB
+;;
 
 (defun opcode (op)
   (case op
@@ -570,18 +511,18 @@
                   (> (weight (car fmla))
                      (weight (cadr fmla)))))
          (inf1 (cdr fmla) (cons (car fmla) optr) opln))
-        (t (inf2 fmla optr opln)))) ;Œ´’˜C³
+        (t (inf2 fmla optr opln)))) 
 
 
 
-;;‘O’u•\Œ»‚©‚ç“à‘}•\Œ»‚Ö•ÏŠ·‚·‚éB
-;;‘O’u®‚Í‚Q€‰‰Z‚É‚È‚Á‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢BLisp‚Ì(* a b c)‚Í•ÏŠ·‚Å‚«‚È‚¢d—lB
+;;
+;;
 (defun prefix->infix (fmla)
   (if (atom fmla) fmla (pretf fmla)))
 
 (defun pretf (f)
   (if (= (weight (op f)) 6)
-      (let ((arg (pret1 (arg1 f) -1))) ;ƒEƒFƒCƒg‚U‚Ìê‡AŒ´’˜‚ğ‘‚«Š·‚¦
+      (let ((arg (pret1 (arg1 f) -1))) ;
         (if (atom? arg)
             (cons (op f) arg)
             (list (op f) (pret1 (arg1 f) -1))))
@@ -604,7 +545,7 @@
 
 
 ;;----------------------------------------------------------------------------------
-;;”®‚ÌŠÈ’P‰»
+;;
 
 (defun /nestp (f)
   (and (listp f)
@@ -631,9 +572,9 @@
                ;(* a (/ b c)) = (/ (* a b) c)
                ((not (lat (cdr f))) (cons '* (*simp1 f)))
                ((eq (arg1 f) (arg2 f)) (list '^ (arg1 f) 2))
-               ;(* a a) -> (^ a 2) Œ´’˜‚É’Ç‰Á
+               ;(* a a) -> (^ a 2) 
                (t (list '* (simps (arg1 f))(simps (arg2 f))))))
-        ((member 0 (cdr f)) 0) ; (* a .. 0 .. z)=0 Œ´’˜‚É’Ç‰Á
+        ((member 0 (cdr f)) 0) ; (* a .. 0 .. z)=0 
         ((and (numberp (arg1 f))
               (listp (arg2 f))
               (eq (op (arg2 f)) '+))
@@ -642,7 +583,7 @@
         ((not (lat (cdr f))) (cons '* (*simp1 f)))
         (t (cons '* (mapcar #'simps (cdr f))))))
 
-;;ƒŠƒXƒg‚Ì—v‘f‚ª‚·‚×‚ÄƒAƒgƒ€‚Å‚ ‚é‚©‚Ç‚¤‚©‚ğ’²‚×‚éqŒêŠÖ” ‰‰K–â‘è‚R
+;;
 (defun lat (ls)
   (cond ((null ls) t)
         ((atom (car ls)) (lat (cdr ls)))
@@ -696,7 +637,7 @@
         ((eq (arg2 f) 1) (arg1 f))
         (t (list (op f) (simps (arg1 f)) (simps (arg2 f))))))
 
-;;Œ´’˜‚Ö’Ç‰Á sin(* m/n pi) ‚ğ”’l‰»
+;;
 (defun sin-simp (f)
   (cond ((and (consp (arg1 f))(eq? (op (arg1 f)) '*)(eq (arg1 (arg1 f)) 'i))
          (list '* 'i (list 'sinh (arg2 (arg1 f)))))
@@ -726,7 +667,7 @@
                     (list 'sin arg)
                     (cos-simp (list 'sin (simps (arg1 f)))))))))
 
-;;Œ´’˜‚Ö’Ç‰Á cos‚Ì”’l‰»
+;;
 (defun cos-simp (f)
   (cond ((and (number? (arg1 f))(= (arg1 f) 0)) 1)
         ((and (consp (arg1 f))(equal (arg1 f) '(* 1/6 pi))) '(/ (sqrt 3) 2))
@@ -754,7 +695,7 @@
                     (list 'cos arg)
                     (cos-simp (list 'cos (simps (arg1 f)))))))))
 
-;;Œ´’˜‚Ö’Ç‰Á atan‚Ì”’l‰»
+;;
 (defun atan-simp (f)
   (cond ((and (numberp (arg1 f))(= (arg1 f) 1)) '(/ pi 4))
         ((and (consp (arg1 f))(equal (arg1 f) '(/ 1 sqrt(3)))) '(/ pi 6))
@@ -767,20 +708,20 @@
                     (list 'atan arg)
                     (atan-simp (list 'atan (simps (arg1 f)))))))))
 
-;;Œ´’˜‚Ö’Ç‰Á
+;;
 (defun sinh-simp (f)
   (cond ((and (consp (arg1 f))(eq (op (arg1 f)) '*)(eq (arg1 (arg1 f)) 'i))
          (list '* 'i (list ('sin (arg2 (arg1 f))))))
         (t f)))
 
 
-;;Œ´’˜‚Ö’Ç‰Á
+;;
 (defun !simp (f)
   (if (>= (arg1 f) 0)
       (factorial (arg1 f))
       (- (factorial (abs (arg1 f))))))
 
-;;Œ´’˜‚Ö’Ç‰Á
+;;
 (defun factorial (n)
   (if (= n 0)
       1
@@ -794,8 +735,8 @@
         ((*) (*simp f))
         ((/) (/simp f))
         ((^) (^simp f))
-        ((sin) (sin-simp f))   ;;Œ´’˜‚Ö’Ç‰Á
-        ((cos) (cos-simp f))   ;;ˆÈ‰º“¯—l
+        ((sin) (sin-simp f))   ;;
+        ((cos) (cos-simp f))   ;;
         ((atan) (atan-simp f)) ;;
         ((sinh) (sinh-simp f)) ;;
         ((!) (!simp f))        ;;
@@ -807,11 +748,11 @@
 
 
 
-;;ŒğŠ·‘¥‚Æ”‚Ìˆ—
+;;
 (defun *comnum (f numb symb imag)
   (cond ((null f)
          (let ((n (*numb numb))
-               (i (*imag imag))) ;Œ´’˜‚Ö’Ç‰Á ‹•”
+               (i (*imag imag))) ;ï¿½ï¿½ï¿½ï¿½ï¿½Ö’Ç‰ï¿½ ï¿½ï¿½ï¿½ï¿½
            (cond ((and (null n)(null i)) (reverse symb))
                  ((and (not(null n))(null i)) (cons n (reverse symb)))
                  ((and (null n)(not(null i))) (cons i (reverse symb)))
@@ -829,7 +770,7 @@
       '()
       (eval (cons '* s))))
 
-;;Œ´’˜‚Ö’Ç‰Á ‹•”
+;;ï¿½ï¿½ï¿½ï¿½ï¿½Ö’Ç‰ï¿½ ï¿½ï¿½ï¿½ï¿½
 (defun *imag (s)
   (if (null s)
       '()
@@ -877,7 +818,7 @@
 
 
 ;;---------------------------------------------------------------------------
-;;;”÷•ª
+;;;
 ;;;
 (defun *aux (f var)
   (if (null? f)
@@ -988,38 +929,30 @@
 (defun free (fmla var)
   (not (depend fmla var)))
 
-;;‚ŠK”÷•ª ‰‰K–â‘è‚S
 (defun nderive (n fmla var)
   (if (= n 0)
       (simpl fmla)
       (nderive (- n 1) (simpl (derive fmla var)) var)))
 
-;;‚QŠK”÷•ª ‰‰K–â‘è‚T
 (defun dif2 (fmla var)
   (simpl (nderive 2 fmla var)))
 
-;;’†’u‹L–@‚Ì”®‚ğ”÷•ª‚µ’†’u‹L–@‚Å•Ô‚·Bùì’Ç‰Á
 (defun diff (fmla var)
   (prefix->infix (dif (infix->prefix fmla) var)))
 
 
-;;‚PŠK”÷•ªA‚UÍ‚Åg—p‚³‚ê‚Ä‚¢‚é‚Ì‚Å
 (defun dif (fmla var)
   (simpl (derive fmla var)))
 
 ;;-----------------------------------------------------------------
-;;5Í Ï•ª
-;³Œ·ŠÖ”‚ÌÏ•ª
 (defun sint (f var)
   (list '* (list '/ -1 (derive (arg1 f) var))
         (list 'cos (arg1 f))))
 
-;;—]Œ·ŠÖ”
 (defun cint (f var)
   (list '* (list '/ 1 (derive (arg1 f) var))
         (list 'sin (arg1 f))))
 
-;;³ÚŠÖ”
 (defun tint (f var)
       (list '* (list '/ -1 (derive (arg1 f) var))
             (list 'log (list 'cos (arg1 f)))))
@@ -1030,14 +963,12 @@
         (list 'log (list 'sin (arg1 f)))))
 
 
-;;‘Î”ŠÖ”‚ÌÏ•ª
 (defun lint (f var)
   (list '* (list '/ 1 (derive (arg1 f) var))
         (list '- (list '* var
                        (list 'log (arg1 f)))
               var)))
 
-;;‚×‚«æAw”ŠÖ”‚ÌÏ•ª
 (defun ^int (f var)
   (cond ((and (mlin (arg1 f) var)(free (arg2 f) var))
          (cond ((eq (arg2 f) -1)
@@ -1055,14 +986,11 @@
                     (list '* (list '/ 1 (list 'log (arg1 f)))
                           (list '- (arg1 f)(arg2 f)))))))
 
-;;‰‰K–â‘è‚R
-;; ff‚ª•Ï”‚ÌˆêŸ®‚©‚Ç‚¤‚©‚ğ’²‚×‚éqŒêŠÖ”
 (defun mlin (ff var)
   (if (and (depend ff var)(free (simpl (derive ff var)) var))
       t
       nil))
 
-;;Ï•ª‚ÌåŠÖ”
 (defun intf (f var)
   (cond ((free f var)(cons '* (list f var)))
         ((eq f var)(list '* (/ 1 2)(list '^ f 2)))
@@ -1078,10 +1006,9 @@
                       ((matchf '(/ 1 (+ (^ x 2) ?c)) f var) ;integral 1/(x^2+b) = 1/b atan(x/b) + C
                        (list '* (list '/ 1 (list 'sqrt ?c))
                              (list 'atan (list '/ var (list 'sqrt ?c)))))
-                      ((matchf '(/ 1 (sqrt (- ?c (^ x 2)))) f var) ;integral 1/ãd^-x^2 = asin(x/d)+C
+                      ((matchf '(/ 1 (sqrt (- ?c (^ x 2)))) f var) ;integral 1/ï¿½ï¿½d^-x^2 = asin(x/d)+C
                        (list '* (list 'asin (list '/ var (list 'sqrt ?c)))))))))))
 
-;;Œ‹‰Ê‚ÌŠÈ’P‰»
 (defun intl (f var)
   (let ((fi (simpl (intf f var))))
     (if (equal fi f)
@@ -1089,7 +1016,6 @@
         (simpl fi))))
 
 
-;;”®‚Ìƒpƒ^[ƒ“ƒ}ƒbƒ`ƒ“ƒO
 (defun varp (x)
   (and (symbolp x)
        (char= (character x) #\?)))
@@ -1105,7 +1031,7 @@
   (if (and (matchf2 (arg1 p) (arg1 f) var)
            (matchf2 (arg2 p) (arg2 f) var))
       t
-      (if (and (memberp (op p) '(+ *)) ;Œ´’˜C³
+      (if (and (memberp (op p) '(+ *)) 
                (matchf2 (arg2 p) (arg1 f) var)
                (matchf2 (arg1 p) (arg2 f) var))
           t

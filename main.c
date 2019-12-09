@@ -154,24 +154,8 @@ int examin_sym;
 int stepper_flag = 0;
 
 #if __linux
-//-----editor-----
-int ed_row;
-int ed_col;
-int ed_start;
-int ed_end;
-int ed_ins = 1;
-int ed_tab = 0;
-int ed_indent = 1;
-int ed_name = NIL;
-char ed_data[2000][160];
-char ed_copy[500][160];
-int ed_lparen_row;
 int ed_lparen_col;
-int ed_rparen_row;
 int ed_rparen_col;
-int ed_clip_start;
-int ed_clip_end;
-int ed_copy_end;
 char ed_candidate[15][30];
 int ed_candidate_pt;
 int ed_syntax_color = 1;   //default red
@@ -252,7 +236,7 @@ char extended[50][30] = {
 int main(int argc, char *argv[]){
     int opt;
 
-    printf("Easy-ISLisp Ver1.01\n");
+    printf("Easy-ISLisp Ver1.1\n");
     initcell();
     initclass();
     initstream();

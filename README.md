@@ -80,54 +80,11 @@ Elapsed Time(second)=3.728262
 ```
 You can compile the compiler itself. Compilation is faster.
 
-# Builtin editor
-EISL(Linux version) has builtin editor.
+# Invoke editor
+edit function invoke Edlis editor.
+see https://github.com/sasagawa888/Edlis
 
-### Invoke editor
 (edit file-name-string) example (edit "foo.lsp")
-
-(edit nil) edit recent file again.
-
-### Command
-- CTR+O save file.
-- CTRL+X quit editor.
-- CTRL+K delete selection.
-- CTRL+U paste from clip board.
-### Editing
-move cursol
-- ESC A mark current row position. After this operation, cursol up or down reverse selected rows. ESC A again, unmark. Similer to nano editor
-- Enter key insert tab for Lisp automatic
-- Insert key switch insert/overwrite
-- Tab key insert tab for Lisp
-- BackSpace key delete backword char
-- Delete key delete forwaord char
-- Home key display top page
-- ESC |(SSH)
-- End key display end page
-- ESC /(SSH)
-- PageUp key PageUp
-- Ctrl+Y(SSH)
-- PageDown PageDown
-- Ctrl+V(SSH)
-- ESC TAB completion.
-
-### Setting
-- (set-editor 'indent 'auto) set auto indent mode.
-- (set-editor 'indent 'manual) set manual indet mode. To indent tab key.
-- (set-editor 'tab 'lisp) set tab for Lisp style.
-- (set-editor 'tab 2) set tab 2.
-- (set-editor 'tab 4) set tab 4.
-- (set-editor 'tab 8) set tab 8.
-
-### syntax highlighting.
-- n = 0-7
-0=Black, 1=Red, 2 =Green, 4=Blue, 5=Maggenta, 6=Syan, 7=White.
-- (set-editor 'syntax-color n)
-- (set-editor 'builtin-color n)
-- (set-editor 'extended-color n)
-- (set-editor 'string-color n)
-- (set-editor 'comment-color n)
-
 
 # WiringPi
 Version for Raspberry include library for wiringPi.

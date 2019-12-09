@@ -142,10 +142,6 @@ void gbcmark(void){
     //mark symbol list for catch
     markcell(catch_symbols);
 	
-	#if __linux
-    //mark edit file name
-    markcell(ed_name);
-	#endif
 }
 
 void gbcsweep(void){

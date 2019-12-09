@@ -17,18 +17,9 @@
 extern HMODULE loadeddll;
 #endif
 
-//#include <cublas.h>
 #include "eisl.h"
-//int f_set_matmat(int arglist);
-//int f_set_matvec(int arglist);
-//int f_forward(int arglist);
 
 void initexsubr(void){
-    //defsubr("SET-MATMAT",f_set_matmat);
-    //defsubr("SET-MATVEC",f_set_matvec);
-    //defsubr("FORWARD",f_forward);
-    //defsubr("TARAI",f_tarai);
-    //defsubr("FIB",f_fib);
     defsubr("RANDOM-REAL",f_random_real);
     defsubr("RANDOM",f_random);
     defsubr("MAPVEC",f_mapvec);
@@ -41,7 +32,6 @@ void initexsubr(void){
     defsubr("BREAK",f_break);
     #if __linux
     defsubr("EDIT",f_edit);
-    defsubr("SET-EDITOR",f_set_editor);
     #endif
     #if _WIN32
     defsubr("WINEXEC",f_winexec);

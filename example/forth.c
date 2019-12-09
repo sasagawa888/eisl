@@ -266,7 +266,7 @@ int res;
 if(Ffreecell() < 900) Fgbc();
 ({int res;
 if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("*DATA-STACK*"))))))) != NIL){
-res = ERRORstar(Fmakestr("not enough data in stack"),NIL);}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("not enough data in stack")),Flist1(fast_inverse(NIL)))));}
  else res = NIL;res;})
 ;
 res = ({int res;int X = fast_convert(fast_convert(fast_car(fast_convert(Fcdr(Fmakesym("*DATA-STACK*"))))));({int res;
@@ -278,7 +278,7 @@ return(res);}
 int FORTH(){
 int res;
 if(Ffreecell() < 900) Fgbc();
-INITIALIZE();
+fast_convert(Fcallsubr(Fcar(Fmakesym("INITIALIZE")),NIL));
 res = REPL();
 return(res);}
 int REPL(){
@@ -424,7 +424,8 @@ else if(fast_convert(Fcallsubr(Fcar(Fmakesym("STRINGP")),Flist1(fast_inverse(X))
 res = ({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Fcons(fast_inverse(Fmakestr("~A")),Flist1(fast_inverse(X))))));res;});}
 else{
-res = ERRORstar(Fmakestr("undefined word"),X);}
+res = ({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("undefined word")),Flist1(fast_inverse(X)))));res;});}
 ;res;});}
 ;res;});
 if(CELLRANGE(X)) Fshelterpop();
@@ -479,7 +480,8 @@ if(Ffreecell() < 900) Fgbc();
 res = ({int res;int DEFINE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("*WORD*")))))))));res = ({int res;
 if(({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(DEFINE))));res;}) != NIL){
-res = ERRORstar(Fmakestr("undefined word"),X);}
+res = ({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("undefined word")),Flist1(fast_inverse(X)))));res;});}
 else{
 res = ({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Fcons(fast_inverse(Fmakestr("~A ~A~%")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(DEFINE),Flist1(fast_inverse(fast_immediate(1)))))))))))));res;});}res;})
@@ -530,7 +532,7 @@ int res;
 if(Ffreecell() < 900) Fgbc();
 ({int res;
 if(fast_smallerp(fast_convert(Flength(fast_convert(Fcdr(Fmakesym("*DATA-STACK*"))))),fast_convert(fast_immediate(2))) != NIL){
-res = ERRORstar(Fmakestr("not enough data"),Fmakesym("ROT"));}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("not enough data")),Flist1(fast_inverse(Fmakesym("ROT"))))));}
  else res = NIL;res;})
 ;
 res = ({int res;int SECOND = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("*DATA-STACK*")))),Flist1(fast_inverse(fast_immediate(1)))))));res = ({int res;
@@ -555,7 +557,8 @@ int res;
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int COUNT = fast_convert(POP());({int res;
 if(fast_smallerp(fast_convert(COUNT),fast_convert(fast_immediate(0))) != NIL){
-res = ERRORstar(Fmakestr("illegal number"),COUNT);}
+res = ({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("illegal number")),Flist1(fast_inverse(COUNT)))));res;});}
  else res = NIL;res;})
 ;
 res = ({int res;
@@ -575,7 +578,8 @@ if(Ffreecell() < 900) Fgbc();
 res = ({int res;int DATA = fast_convert(POP());({int res;
 if(fast_not(({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("INTEGERP")),Flist1(fast_inverse(DATA))));res;})) != NIL){
-res = ERRORstar(Fmakestr("not integer"),DATA);}
+res = ({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("not integer")),Flist1(fast_inverse(DATA)))));res;});}
  else res = NIL;res;})
 ;
 res = ({int res;

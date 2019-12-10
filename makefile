@@ -1,3 +1,4 @@
+all: eisl edlis
 CC := gcc
 eisl : main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o
 	$(CC) -O3 -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o -o eisl -lm -ldl
@@ -26,3 +27,9 @@ edit.o : edit.c eisl.h
 .PHONY: clean
 clean: -lm
 	rm -f eisl *.o
+
+
+edlis : edlis.o
+	$(CC) -O3 -Wall edlis.o -o edlis
+edlis.o : edlis.c edlis.h
+	$(CC)  -O3 -Wall -c edlis.c

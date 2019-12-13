@@ -484,7 +484,11 @@ int read_line(int flag){
                       if(ed_lparen_col > i)
                           ed_lparen_col--;
                       break;
-            case 25:  //ctrl+Y
+            case 6:   //ctrl+F
+                      goto right;
+            case 2:   //ctrl+B
+                      goto left;
+            case 16:  //ctrl+P
                       up:
                       if(limit <= 1)
                          break;
@@ -502,7 +506,7 @@ int read_line(int flag){
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
-            case 22:  //ctrl+V
+            case 14:  //ctrl+N
                       down:
                       if(line <= 1)
                          line = 1;
@@ -561,6 +565,7 @@ int read_line(int flag){
                           case UP: goto up;
                           case DOWN: goto down;
                           case LEFT:
+                                left:
                                 if(j <= 0)
                                      break;
                                  j--;
@@ -571,6 +576,7 @@ int read_line(int flag){
                                  break;
 
                           case RIGHT:
+                                 right:
                                  if(buffer[j][0] == 0)
                                     break;
                                  j++;

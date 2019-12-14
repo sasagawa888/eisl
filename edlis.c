@@ -176,7 +176,8 @@ void edit_screen(char *fname){
                     printf("CTRL+F  move to right\n");
                     printf("CTRL+B  move to left\n");
                     printf("CTRL+P  move to up\n");
-                    printf("CTRL+B  move to down\n");
+                    printf("CTRL+N  move to down\n");
+                    printf("CTRL+J  end of line\n");
                     printf("CTRL+V  page up\n");
                     printf("ESC V   page down\n");
                     printf("CTRL+O  save file\n");

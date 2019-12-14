@@ -90,6 +90,7 @@ int line;
 int column;
 #if __linux
 int buffer[256][10];
+int buffer1[256];
 #endif
 
 //heap and stack

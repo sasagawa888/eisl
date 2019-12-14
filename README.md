@@ -29,6 +29,20 @@ Linux version, REPL is editable. If you not use editable REPL, invoke with -r op
 ```
 ./eisl -r
 ```
+
+# Editable REPL
+key-bindings are following.
+- ctrl+F  or → move right
+- ctrl+B  or ← move left 
+- ctrl+P  or ↑ recall history older
+- ctrl+N  or ↓ recall history newer
+- ctrl+J  or return insert end of line
+- ctrl+H  or back-space  backspace
+- ctrl+D  delete one char
+- ctrl+K  kill line from prompt
+- ctrl+Y  yank killed line
+- Esc Tab completion
+
 # Goal
 I hope that Lisp will become more popular. I hope many people enjoy Lisp. EISL aims at easy handling.
 

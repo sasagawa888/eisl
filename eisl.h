@@ -236,6 +236,7 @@ extern int line;
 extern int column;
 #if __linux
 extern int buffer[256][10];
+extern int buffer1[256];
 #endif
 
 //heap and stack

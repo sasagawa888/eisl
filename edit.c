@@ -472,7 +472,8 @@ int read_line(int flag){
                       printf("%c",c);
                       pos = 0;
                       goto exit;
-            case DEL:  if(j <= 0)
+            case 8:   //ctrl+H  
+            case DEL: if(j <= 0)
                           break;
                       j--;
                       for(k=j;k<255;k++)
@@ -483,6 +484,38 @@ int read_line(int flag){
                           ed_rparen_col--;
                       if(ed_lparen_col > i)
                           ed_lparen_col--;
+                      break;
+            case 4:   //ctrl+D  
+                      for(k=j;k<255;k++)
+                          buffer[k][0] = buffer[k+1][0];
+                      display_buffer();
+                      ESCMVLEFT(j+3);
+                      if(ed_rparen_col > i)
+                          ed_rparen_col--;
+                      if(ed_lparen_col > i)
+                          ed_lparen_col--;
+                      break;
+            case 11:   //ctrl+K  
+                      memset(buffer1,NUL,255);
+                      for(k=j;k<255;k++){
+                          buffer1[k-j] = buffer[k][0];
+                          buffer[k][0] = NUL;
+                      }
+                      display_buffer();
+                      ESCMVLEFT(j+3);
+                      break;
+            case 25:   //ctrl+Y  
+                      for(k=0;k<255;k++)
+                          buffer[k][0] = buffer1[k];
+                      
+                      for(k=0;k<255;k++){
+                          if(buffer[k][0] == NUL) 
+                            break;
+                      }
+
+                      display_buffer();
+                      j = k;
+                      ESCMVLEFT(k+3);
                       break;
             case 6:   //ctrl+F
                       goto right;

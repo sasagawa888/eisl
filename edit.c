@@ -464,6 +464,7 @@ int read_line(int flag){
         c = getch();
         loop:
         switch(c){
+            case 13:  //ctrl+M
             case EOL: for(j=0;j<256;j++)
                           if(buffer[j][0] == 0)
                               break;
@@ -508,6 +509,20 @@ int read_line(int flag){
                       for(k=0;k<255;k++)
                           buffer[k][0] = buffer1[k];
                       
+                      for(k=0;k<255;k++){
+                          if(buffer[k][0] == NUL) 
+                            break;
+                      }
+
+                      display_buffer();
+                      j = k;
+                      ESCMVLEFT(k+3);
+                      break;
+            case 1:   //ctrl+A  
+                      j = 0;
+                      ESCMVLEFT(j+3);
+                      break;
+            case 5:   //ctrl+E 
                       for(k=0;k<255;k++){
                           if(buffer[k][0] == NUL) 
                             break;

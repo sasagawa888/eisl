@@ -36,10 +36,12 @@ key-bindings are following.
 - ctrl+B  or ← move left 
 - ctrl+P  or ↑ recall history older
 - ctrl+N  or ↓ recall history newer
-- ctrl+J  or return insert end of line
+- ctrl+A  move to begin of line
+- strl+E  move to end of line 
+- ctrl+J ctrl+M or return insert end of line
 - ctrl+H  or back-space  backspace
 - ctrl+D  delete one char
-- ctrl+K  kill line from prompt
+- ctrl+K  kill line from current positon
 - ctrl+Y  yank killed line
 - Esc Tab completion
 

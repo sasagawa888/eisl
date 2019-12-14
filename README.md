@@ -6,12 +6,14 @@ https://qiita.com/sym_num/items/793adfe118514668e5b0
 
 
 # Installation
-On Linux  type "make" on terminal.
+Change to the git cloned or downloaded Easy-ISLisp directory.
 
-On Windows rename winmakefile -> makefile. and type "make" on terminal.
-Require MINGW gcc
+In Linux  type "make" in terminal.
 
-We confirmed the operation in the following environment.
+On Windows rename winmakefile -> makefile. and type "make" in terminal.
+Requires MINGW GCC
+
+We confirmed operation in the following environments.
 - Ubuntu 16.04 GCC 5.4
 - Ubuntu 18.04 GCC 7.3
 - Raspberry Pi3 Raspbian GCC 6.3
@@ -24,14 +26,15 @@ We confirmed the operation in the following environment.
 - eisl (Windows)
 - ./eisl (Linux)
 
-Linux version, REPL is editable. If you not use editable REPL, invoke with -r option.
+In the Linux version,the REPL is editable. If you do not desire to use the editable REPL, invoke with -r option.
 
 ```
 ./eisl -r
 ```
 
 # Editable REPL
-key-bindings are following.
+key-bindings are as follows:
+
 - ctrl+F  or → move right
 - ctrl+B  or ← move left 
 - ctrl+P  or ↑ recall history older
@@ -49,7 +52,7 @@ key-bindings are following.
 I hope that Lisp will become more popular. I hope many people enjoy Lisp. EISL aims at easy handling.
 
 # Compiler
-EISL has compiler. it generate GCC code and generate object code.
+EISL has a compiler. it generates GCC code and generates object code.
 
 ```
 Invoke with -c option
@@ -104,7 +107,7 @@ see https://github.com/sasagawa888/Edlis
 (edit file-name-string) example (edit "foo.lsp")
 
 # WiringPi
-Version for Raspberry include library for wiringPi.
+Version for Raspberry Pi include library for wiringPi.
 
 In order to use wiringPi, you need to compile wiringpi.lsp(in example folder) and invoke EISL with super user.
 
@@ -116,9 +119,9 @@ and
 ```
 (load "wiringpi.o")
 ```
-please see exsample code "led.lsp"
+please see the example code "led.lsp"
 
-"wiringpi.lsp" is source code of wiringpi.o.
+"wiringpi.lsp" is the source code of wiringpi.o.
 
 ```
 EISL <==================================> C

@@ -2,10 +2,13 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include "edlis.h"
 
 
 //-----editor-----
+int ed_hight;
+int ed_width;
 int ed_row;
 int ed_col;
 int ed_start;
@@ -14,7 +17,7 @@ int ed_ins = 1;
 int ed_tab = 0;
 int ed_indent = 1;
 int ed_name = NIL;
-char ed_data[2000][160];
+char ed_data[4000][160];
 char ed_copy[500][160];
 int ed_lparen_row;
 int ed_lparen_col;
@@ -31,6 +34,7 @@ int ed_extended_color = 5; //default magenta
 int ed_string_color = 3;   //default yellow
 int ed_comment_color = 4;  //default blue
 int ed_incomment = -1;     // #|...|# comment
+
 
 //special form token
 char special[40][12] = {
@@ -105,10 +109,16 @@ int main(int argc, char *argv[]){
     char *fname;
 
     fname = argv[1];
-    for(i=0; i<1000; i++)
-        for(j=0; j<100; j++)
+    for(i=0; i<4000; i++)
+        for(j=0; j<160; j++)
             ed_data[i][j] = NUL;
     port = fopen(fname,"r");
+
+    struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+
+    ed_hight = w.ws_row;
+    ed_width = w.ws_col;
     ed_row = 0;
     ed_col = 0;
     ed_start = 0;
@@ -158,29 +168,41 @@ void edit_screen(char *fname){
         case 8:     break;           //ctrl+H discard
         case 7:     ESCMOVE(2,1);    //ctrl+g help
                     ESCCLS1;
-                    printf("This editor is referring to the nano editor.\n");
-                    printf("CTRL+Y  page up\n");
-                    printf("CTRL+V  page down\n");
+                    printf("Key bindings are hybrid of Emacs and nano.\n");
+                    printf("CTRL+F  move to right\n");
+                    printf("CTRL+B  move to left\n");
+                    printf("CTRL+P  move to up\n");
+                    printf("CTRL+B  move to down\n");
+                    printf("CTRL+V  page up\n");
+                    printf("ESC V   page down\n");
                     printf("CTRL+O  save file\n");
-                    printf("CTRL+X  quit from editor and load program\n");
+                    printf("CTRL+X  quit from editor\n");
                     printf("CTRL+K  cut selection\n");
                     printf("CTRL+U  uncut selection\n");
                     printf("CTRL+_ (or CTRL+L) goto line\n");
                     printf("ESC TAB   complete name\n");
-                    printf("ESC |   goto top page\n");
-                    printf("ESC /   goto end page\n");
+                    printf("ESC <   goto top page\n");
+                    printf("ESC >   goto end page\n");
                     printf("ESC A   mark(or unmark) row for selection\n");
                     printf("\n  enter any key to exit help\n");
                     c = getch();
                     display_screen();
                     break;
+        case 6:     //ctrl+F
+                    goto right;
+        case 2:     //ctrl+B
+                    goto left;
+        case 16:    //ctrl+P
+                    goto up;
+        case 14:    //ctrl+N
+                    goto down;
         case 15:    save_data(fname); //ctrl+O
                     ESCMOVE(23,1);
                     ESCREV;
                     printf("saved");
                     ESCRST;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
-                    break;
+                    break; 
        case 11:     copy_selection(); //ctrl+K
                     delete_selection();
                     ed_row = ed_clip_start;
@@ -194,11 +216,12 @@ void edit_screen(char *fname){
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
                     break;
-        case 25:    goto pageup;  //ctrl+Y
-        case 22:    goto pagedn;  //ctrl+V
-        case 24:    ESCCLS;       //ctrl+x
+        case 24:    //ctrl+X
+                    ESCCLS; 
                     ESCMOVE(1,1);
                     return;
+        case 25:                  //ctrl+Y
+        case 22:    goto pageup;  //ctrl+V
         case 12:             //CTRL+L
         case 31:    reinput: //CTRL+_
                     ESCREV;
@@ -221,8 +244,9 @@ void edit_screen(char *fname){
                     break;
         case ESC:   c = getch();
                     switch(c){
-                        case '|': goto home;
-                        case '/': goto end;
+                        case '<': goto home;
+                        case '>': goto end;
+                        case 'v': goto pagedn;
                         case 'a': if(ed_clip_start == -1){
                                         ed_clip_start = ed_clip_end = ed_row;
                                         ESCMOVE(23,1);
@@ -274,7 +298,8 @@ void edit_screen(char *fname){
                     }
                     c = getch();
                     switch(c){
-                        case UP:    if(ed_row == 0)
+                        case UP:    up:
+                                    if(ed_row == 0)
                                         break;
                                     else if(ed_clip_start != -1 &&
                                             ed_row == ed_start){
@@ -336,7 +361,8 @@ void edit_screen(char *fname){
                         case EOL:   ed_row++;
                                     printf("%c", c);
                                     break;
-                        case DOWN:  if(ed_row == ed_end)
+                        case DOWN:  down:
+                                    if(ed_row == ed_end)
                                         break;
                                     else if(ed_clip_start != -1 &&
                                             ed_row == ed_start+20){
@@ -395,7 +421,8 @@ void edit_screen(char *fname){
                                         ESCMOVE(ed_row+2 - ed_start,ed_col+1);
                                     }
                                     break;
-                        case LEFT:  if(ed_col == 0)
+                        case LEFT:  left:
+                                    if(ed_col == 0)
                                         break;
                                     ed_col--;
                                     if(ed_col <= 79){
@@ -417,7 +444,8 @@ void edit_screen(char *fname){
                                         ESCMOVE(ed_row+2 - ed_start,ed_col-80+1);
                                     }
                                     break;
-                        case RIGHT: if(ed_col == findeol(ed_row) || ed_col >= 159)
+                        case RIGHT: right:
+                                    if(ed_col == findeol(ed_row) || ed_col >= 159)
                                         break;
                                     ed_col++;
                                     if(ed_col < 79){
@@ -639,7 +667,7 @@ void edit_screen(char *fname){
 void display_command(char *fname){
     ESCHOME;
     ESCREV;
-    printf("Edlis 1.0        File: %s                                                     ", fname);
+    printf("Edlis 1.1        File: %s                                          %d %d           ", fname,ed_hight,ed_width);
     ESCRST;
     return;
 }

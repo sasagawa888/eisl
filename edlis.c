@@ -169,15 +169,17 @@ void edit_screen(char *fname){
     loop:
     c = getch();
     switch(c){
-        case 8:     break;           //ctrl+H discard
         case 7:     ESCMOVE(2,1);    //ctrl+g help
                     ESCCLS1;
+                    printf("*** Edlis help ***\n");
                     printf("Key bindings are hybrid of Emacs and nano.\n");
                     printf("CTRL+F  move to right\n");
                     printf("CTRL+B  move to left\n");
                     printf("CTRL+P  move to up\n");
                     printf("CTRL+N  move to down\n");
                     printf("CTRL+J  end of line\n");
+                    printf("CTRL+A  begin of line\n");
+                    printf("CTRL+E  end of line\n");
                     printf("CTRL+V  page up\n");
                     printf("ESC V   page down\n");
                     printf("CTRL+O  save file\n");
@@ -201,6 +203,22 @@ void edit_screen(char *fname){
                     goto up;
         case 14:    //ctrl+N
                     goto down;
+        case 8:     //ctrl+H
+                    goto backspace;
+        case 4:     //ctrl+D
+                    goto delete;
+        case 1:     //ctrl+A
+                    ed_col = 0;
+                    ESCMOVE(ed_row+2 - ed_start, ed_col+1);
+                    break; 
+        case 5:     //ctrl+E
+                    for(i=0;i<255;i++){
+                       if(ed_data[ed_row][i] == NUL)
+                            break; 
+                    }
+                    ed_col = i - 1;
+                    ESCMOVE(ed_row+2 - ed_start, ed_col+1);
+                    break; 
         case 15:    save_data(fname); //ctrl+O
                     ESCMOVE(ed_footer,1);
                     ESCREV;
@@ -516,6 +534,7 @@ void edit_screen(char *fname){
                                     break;
                         case DELETE:
                                     c = getch();
+                                    delete:
                                     if(ed_data[ed_row][ed_col] == EOL)
                                         break;
                                     ed_col++;
@@ -525,7 +544,8 @@ void edit_screen(char *fname){
                                     break;
                     }
                     break;
-        case DEL:   if(ed_row == 0 && ed_col == 0)
+        case DEL:   backspace:
+                    if(ed_row == 0 && ed_col == 0)
                         break;
                     else if(ed_col == 0){
                         restore_paren();
@@ -1257,8 +1277,8 @@ int calc_tabs(){
 
     pos = findlparen(0);
 
-        if(ed_data[ed_row][ed_col] == '(')
-                return(0);
+    if(ed_data[ed_row][ed_col] == '(')
+        return(0);
 
     if(pos.row == -1)
         return(0); //can't find left paren

@@ -31,6 +31,24 @@ typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,CHR,STR,SYM,LIS,DUMMY,
               STREAM} tag;
 typedef enum {FRE,USE} flag;
 
+/*
+I wil erase following when I confirm that the fix to the enum is correct.
+//option
+#define AROUND      11
+#define BEFORE      12
+#define PRIORITY    13
+#define AFTER       14
+
+#define EISL_OPEN    21
+#define EISL_INPUT   22
+#define EISL_OUTPUT  23
+#define EISL_INSTR   24
+#define EISL_OUTSTR  25
+*/
+
+typedef enum {AROUND,BEFORE,PRIORITY,AFTER,EISL_OPEN,EISL_INPUT,EISL_OUTPUT,EISL_INSTR,EISL_OUTSTR} option;
+
+
 typedef struct{
     union{
         double fltnum;
@@ -49,10 +67,10 @@ typedef struct{
     } val;
     int     aux;
     int     prop;
+    char    *name;
     char    tag;
     char    flag;
-    char    *name;
-    signed char   option;
+    char    option;
     char    trace;
 } cell;
 
@@ -223,12 +241,6 @@ extern char stream_str[STRSIZE];
 extern char stream_str1[STRSIZE];
 extern int charcnt;
 
-//option
-#define EISL_OPEN    21
-#define EISL_INPUT   22
-#define EISL_OUTPUT  23
-#define EISL_INSTR   24
-#define EISL_OUTSTR  25
 
 //read scaner
 extern token stok;
@@ -251,12 +263,6 @@ extern int generic_func;
 extern int generic_vars;
 extern int next_method;
 extern int generic_list;
-
-//option
-#define AROUND      11
-#define BEFORE      12
-#define PRIORITY    13
-#define AFTER       14
 
 
 //flag
@@ -1082,25 +1088,4 @@ int read_line(int flag);
 #if _WIN32
 #include <windows.h>
 BOOL WINAPI CtrlHandler(DWORD CtrlEvent);
-
-//Deep larning
-int f_neural(int arglist);
-void matrand(int size1, int size2, double arr[size1][size2]);
-double drnd(void);
-void vecrand(int size, double vec[size]);
-void w_u_mult(int size1, int size2, double w[size1][size2],
-              double u1[size2], double u2[size1], double b[size1]);
-void activate(int size, double u1[size], double u2[size], double (*func)(double));
-void backward(int size1, int size2, double w[size1][size2],
-             double d1[size1], double d2[size2], double u[size1],
-             double (*func)(double));
-void update(int size1, int size2, double w[size1][size2],
-            double d[size1],double z[size1], double b[size1], double rate);
-double sigmoid(double x);
-double sigmoid_dash(double x);
-double identity(double x);
-double identity_dash(double x);
-double relu(double x);
-double relu_dash(double x);
-double square_err(int W2R, double o[W2R], double te[W2R]);
 #endif

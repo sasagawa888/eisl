@@ -336,7 +336,7 @@ void initpt(void){
 
 #if __linux
 void signal_handler(int signo){
-    exit_flag = 1;
+   exit_flag = 1;
 }
 #endif
 
@@ -1354,6 +1354,7 @@ int eval(int addr){
     int val,res;
     char c;
 
+    
     if(IS_NIL(addr) || IS_T(addr))
         return(addr);
     else if(numberp(addr))

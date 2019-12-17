@@ -50,10 +50,10 @@ typedef struct{
     int     aux;
     int     prop;
     char    tag;
-    flag    flag;
+    char    flag;
     char    *name;
     signed char   option;
-    unsigned char trace;
+    char    trace;
 } cell;
 
 
@@ -318,7 +318,7 @@ extern char extended[50][30];
 
 
 //option
-#define CONSTN       1
+#define CONSTN      1
 #define IMMUTABLE   2
 #define SYSTEM      3 //class of provided by system
 #define USER        4 //class of user' definition

@@ -1,3 +1,7 @@
+#define ROW_SIZE 4000
+#define COL_SIZE  160
+#define COPY_SIZE 500
+
 
 #define NIL     0
 
@@ -60,6 +64,8 @@ struct position{
 #define ESCBOLD printf("\33[1m")
 
 
+void signal_handler(int signo);
+void input(char* str);
 void edit_screen(char *fname);
 void display_command(char *fname);
 void display_screen();
@@ -90,4 +96,5 @@ int check_token(int row, int col);
 char* get_fragment();
 void find_candidate();
 void replace_fragment(char* newstr);
-
+struct position find_word(char* word);
+void replace_word(char* str1, char* str2);

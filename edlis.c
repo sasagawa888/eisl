@@ -3,6 +3,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 #include "edlis.h"
 
 
@@ -19,8 +20,8 @@ int ed_ins = 1;
 int ed_tab = 0;
 int ed_indent = 1;
 int ed_name = NIL;
-char ed_data[4000][160];
-char ed_copy[500][160];
+char ed_data[ROW_SIZE][COL_SIZE];
+char ed_copy[COPY_SIZE][COL_SIZE];
 int ed_lparen_row;
 int ed_lparen_col;
 int ed_rparen_row;
@@ -36,7 +37,8 @@ int ed_extended_color = 5; //default magenta
 int ed_string_color = 3;   //default yellow
 int ed_comment_color = 4;  //default blue
 int ed_incomment = -1;     // #|...|# comment
-
+int ctrl = 0;
+int modify_flag = 0;
 
 //special form token
 char special[40][12] = {
@@ -111,8 +113,11 @@ int main(int argc, char *argv[]){
     char *fname;
 
     fname = argv[1];
-    for(i=0; i<4000; i++)
-        for(j=0; j<160; j++)
+    signal(SIGINT, signal_handler);
+    signal(SIGSTOP, signal_handler);
+    signal(SIGTSTP, signal_handler);
+    for(i=0; i<ROW_SIZE; i++)
+        for(j=0; j<COL_SIZE; j++)
             ed_data[i][j] = NUL;
     port = fopen(fname,"r");
 
@@ -139,12 +144,12 @@ int main(int argc, char *argv[]){
             if(c == EOL){
                 ed_row++;
                 ed_col = 0;
-                if(ed_row >= 1000)
+                if(ed_row >= ROW_SIZE)
                     printf("row %d over max-row", ed_row);
             }
             else{
                 ed_col++;
-                if(ed_col >= 160)
+                if(ed_col >= COL_SIZE)
                    printf("row %d over max-column", ed_col);
             }
             c = getc(port);
@@ -161,17 +166,41 @@ int main(int argc, char *argv[]){
     return(0);
 }
 
+void signal_handler(int signo){
+   ctrl = signo;
+}
+
+void input(char* str){
+    int c,pos;
+
+    pos = 0;
+    loop:
+    c = getc(stdin);
+    if(c == EOL){
+        str[pos] = '\0';
+        return;
+    }
+    else {
+        str[pos] = c;
+        pos++;
+        goto loop;
+    }
+}
+
 void edit_screen(char *fname){
     int c,i,type;
+    char str1[20],str2[20];
+    struct position pos;
+    FILE *port;
 
     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
     i = 0;
     loop:
     c = getch();
     switch(c){
-        case 7:     ESCMOVE(2,1);    //ctrl+g help
+        case 7:     ESCMOVE(2,1);    //ctrl+G help
                     ESCCLS1;
-                    printf("*** Edlis editor help ***\n");
+                    printf("*** Edlis help ***\n");
                     printf("Key bindings are hybrid of Emacs and nano.\n");
                     printf("CTRL+F  move to right\n");
                     printf("CTRL+B  move to left\n");
@@ -183,10 +212,13 @@ void edit_screen(char *fname){
                     printf("CTRL+V  page up\n");
                     printf("ESC V   page down\n");
                     printf("CTRL+O  save file\n");
+                    printf("CTRL+T  insert file\n");
                     printf("CTRL+X  quit from editor\n");
                     printf("CTRL+K  cut selection\n");
                     printf("CTRL+U  uncut selection\n");
                     printf("CTRL+_ (or CTRL+L) goto line\n");
+                    printf("CTRL+W  search word\n");
+                    printf("CTRL+R  replace word\n");
                     printf("ESC TAB   complete name\n");
                     printf("ESC <   goto top page\n");
                     printf("ESC >   goto end page\n");
@@ -205,6 +237,49 @@ void edit_screen(char *fname){
                     goto down;
         case 8:     //ctrl+H
                     goto backspace;
+        case 20:     //ctrl+T
+                    ESCREV;
+                    ESCMOVE(ed_footer,1);
+                    printf("                                            ");
+                    ESCMOVE(ed_footer,1);
+                    printf("filename: ");
+                    input(str1);
+                    ESCRST;
+                    port = fopen(str1,"r");
+                    if(port == NULL){
+                        ESCREV;
+                        ESCMOVE(ed_footer,1);
+                        printf("                                            ");
+                        ESCMOVE(ed_footer,1);
+                        printf("%s not exist", str1);
+                        ESCRST;
+                        ESCMOVE(ed_row+2 - ed_start, ed_col+1);
+                        break;
+                    }
+                    if(port != NULL){
+                        c = fgetc(port);
+                        while(c != EOF){
+                        ed_data[ed_row][ed_col] = c;
+                        if(c == EOL){
+                            ed_row++;
+                            ed_col = 0;
+                            if(ed_row >= ROW_SIZE)
+                                printf("row %d over max-row", ed_row);
+                        }
+                        else{
+                            ed_col++;
+                        if(ed_col >= COL_SIZE)
+                            printf("row %d over max-column", ed_col);
+                        }
+                    c = getc(port);
+                    }
+                    ed_end = ed_row;
+                    ed_data[ed_end][0] = EOL;
+                        fclose(port);
+                    }
+                    display_screen();
+                    modify_flag = 1;
+                    break;
         case 4:     //ctrl+D
                     goto delete;
         case 1:     //ctrl+A
@@ -218,6 +293,7 @@ void edit_screen(char *fname){
                     }
                     ed_col = i - 1;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
+                    modify_flag = 1;
                     break; 
         case 15:    save_data(fname); //ctrl+O
                     ESCMOVE(ed_footer,1);
@@ -225,6 +301,7 @@ void edit_screen(char *fname){
                     printf("saved");
                     ESCRST;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
+                    modify_flag = 0;
                     break; 
        case 11:     copy_selection(); //ctrl+K
                     delete_selection();
@@ -233,17 +310,140 @@ void edit_screen(char *fname){
                     restore_paren();
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
+                    modify_flag = 1;
                     break;
         case 21:    paste_selection(); //ctrl+U
                     restore_paren();
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
+                    modify_flag = 1;
                     break;
         case 24:    //ctrl+X
-                    ESCCLS; 
-                    ESCMOVE(1,1);
-                    return;
+                    if(modify_flag == 0){
+                        ESCCLS; 
+                        ESCMOVE(1,1);
+                        return;
+                    }
+                    else{
+                        retryX:
+                        ESCREV;
+                        ESCMOVE(ed_footer,1);
+                        printf("save modified buffer? y/n/c ");
+                        c = getch();
+                        ESCRST;
+                        if(c == 'y'){
+                            save_data(fname);
+                            ESCCLS; 
+                            ESCMOVE(1,1);
+                            return;
+                        }
+                        else if(c == 'n'){
+                            ESCCLS; 
+                            ESCMOVE(1,1);
+                            return;
+                        }
+                        else if(c == 'c'){
+                            ESCREV;
+                            ESCMOVE(ed_footer,1);
+                            printf("                                             ");
+                            ESCRST;
+                            ESCMOVE(ed_row+2-ed_start,ed_col+1);
+                        }
+                        else{
+                            goto retryX;
+                        }
+                    }
+                    break;
         case 22:    goto pageup;  //ctrl+V
+        case 23:    //CTRL+W
+                    ESCREV;
+                    ESCMOVE(ed_footer,1);
+                    printf("                                            ");
+                    ESCMOVE(ed_footer,1);
+                    printf("search: ");
+                    input(str1);
+                    ESCRST;
+                    pos = find_word(str1);
+                    if(pos.row == -1){
+                        ESCREV;
+                        ESCMOVE(ed_footer,1);
+                        printf("can't find %s", str1);
+                        ESCRST;
+                        ESCMOVE(ed_row+2-ed_start,ed_col+1);
+                        break;
+                    }
+                    ed_row = pos.row;
+                    ed_col = pos.col;
+                    ed_start = ed_row - ed_scroll/2;
+                    if(ed_start < 0){
+                        ed_start = 0;
+                    }
+	                display_screen();
+                    ESCMOVE(ed_row+2-ed_start,ed_col+1);
+                    break;
+
+        case 18:    //CTRL+R
+                    ESCREV;
+                    ESCMOVE(ed_footer,1);
+                    printf("                                            ");
+                    ESCMOVE(ed_footer,1);
+                    printf("search: ");
+                    input(str1);
+                    ESCMOVE(ed_footer,1);
+                    printf("                                            ");
+                    ESCMOVE(ed_footer,1);
+                    printf("replace: ");
+                    input(str2);
+                    ESCRST;
+                    retry1R:
+                    pos = find_word(str1);
+                    if(pos.row == -1){
+                        ESCREV;
+                        ESCMOVE(ed_footer,1);
+                        printf("                      ");
+                        ESCMOVE(ed_footer,1);
+                        printf("can't find %s", str1);
+                        ESCRST;
+                        ESCMOVE(ed_row+2-ed_start,ed_col+1);
+                        break;
+                    }
+                    else{
+                        ed_row = pos.row;
+                        ed_col = pos.col;
+                        ed_start = ed_row - ed_scroll/2;
+                        if(ed_start < 0){
+                            ed_start = 0;
+                        }
+                        display_screen();
+                        ESCMOVE(ed_row+2 - ed_start, ed_col+1);
+                        ESCREV;
+                        printf("%s",str1);
+                        ESCMOVE(ed_footer,1);
+                        printf("                                            ");
+                        ESCMOVE(ed_footer,1);
+                        retry2R:
+                        printf("replace? y/n ");
+                        ESCRST;
+                        c = getch();
+                        if(c == 'y'){
+                            ed_row = pos.row;
+                            ed_col = pos.col;
+                            replace_word(str1,str2);
+                            display_screen();
+                            modify_flag = 1;
+                            ed_col++;
+                            goto retry1R;
+                        }
+                        else if(c == 'n'){
+                            display_screen();
+                            ed_col++;
+                            goto retry1R;
+                        }
+                        else{
+                            goto retry2R;
+                        }
+                    }
+                    break;
         case 12:             //CTRL+L
         case 31:    reinput: //CTRL+_
                     ESCREV;
@@ -383,6 +583,7 @@ void edit_screen(char *fname){
                                     break;
                         case EOL:   ed_row++;
                                     printf("%c", c);
+                                    modify_flag = 1;
                                     break;
                         case DOWN:  down:
                                     if(ed_row == ed_end)
@@ -541,6 +742,7 @@ void edit_screen(char *fname){
                                     backspace();
                                     display_screen();
                                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
+                                    modify_flag = 1;
                                     break;
                     }
                     break;
@@ -588,6 +790,7 @@ void edit_screen(char *fname){
                         else
                             ESCMOVE(22,ed_col+1);
                     }
+                    modify_flag = 1;
                     break;
         case EOL:   if(ed_indent == 1)
                         i = calc_tabs();
@@ -627,6 +830,7 @@ void edit_screen(char *fname){
                          display_screen();
                          ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                     }
+                    modify_flag = 1;
                     break;
         case TAB:   if(ed_tab == 0){
                         ed_col = 0;
@@ -639,6 +843,7 @@ void edit_screen(char *fname){
                     }
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
+                    modify_flag = 1;
                     break;
         default:    if(ed_ins){
                         if(ed_col > 159)
@@ -685,6 +890,7 @@ void edit_screen(char *fname){
                             ed_col++;
                         }
                     }
+                    modify_flag = 1;
         }
     goto loop;
 }
@@ -693,7 +899,7 @@ void display_command(char *fname){
     int i;
     ESCHOME;
     ESCREV;
-    printf("Edlis 1.1        File: %s    ", fname);
+    printf("Edlis 1.2        File: %s    ", fname);
     for(i=31;i<ed_width;i++)
         printf(" ");
     ESCRST;
@@ -914,7 +1120,7 @@ void backspace(){
         ed_rparen_row = -1;
     }
     i = ed_col;
-    while(i <= 160){
+    while(i <= COL_SIZE){
         ed_data[ed_row][i-1] = ed_data[ed_row][i];
         i++;
     }
@@ -937,12 +1143,12 @@ void insertrow(){
     int i,j,k;
 
     for(i=ed_end; i>=ed_row; i--){
-        for(j=0; j<160; j++){
+        for(j=0; j<COL_SIZE; j++){
             ed_data[i+1][j] = ed_data[i][j];
         }
     }
     k = 0;
-    for(j=ed_col; j<160; j++){
+    for(j=ed_col; j<COL_SIZE; j++){
         ed_data[ed_row+1][k] = ed_data[ed_row][j];
         k++;
     }
@@ -954,7 +1160,7 @@ void deleterow(){
     int i,j,k,l;
 
     k = l = findeol(ed_row-1);
-    for(j=0; j<160; j++){
+    for(j=0; j<COL_SIZE; j++){
         ed_data[ed_row-1][k] = ed_data[ed_row][j];
         k++;
         if(ed_data[ed_row][j] == EOL)
@@ -962,7 +1168,7 @@ void deleterow(){
     }
 
     for(i=ed_row; i<ed_end; i++){
-        for(j=0; j<160; j++){
+        for(j=0; j<COL_SIZE; j++){
             ed_data[i][j] = ed_data[i+1][j];
         }
     }
@@ -977,7 +1183,7 @@ void deleterow(){
 int findeol(int row){
     int i;
 
-    for(i=0; i<160; i++){
+    for(i=0; i<COL_SIZE; i++){
         if(ed_data[row][i] == EOL)
             return(i);
     }
@@ -1294,7 +1500,7 @@ int calc_tabs(){
 void copy_selection(){
     int i,j,k;
 
-    if(ed_clip_end - ed_clip_start > 500)
+    if(ed_clip_end - ed_clip_start > COPY_SIZE)
         return;
 
     j = 0;
@@ -1444,23 +1650,105 @@ void find_candidate(){
 }
 
 void replace_fragment(char* newstr){
-        char* oldstr;
-        int m,n;
+    char* oldstr;
+    int m,n;
 
-        oldstr = get_fragment();
-        m = strlen(oldstr);
-        n = strlen(newstr);
-        while(m>0){
-                backspace();
-                m--;
-        }
-        while(n>0){
-                insertcol();
-                ed_data[ed_row][ed_col] = *newstr;
-                ed_col++;
-                newstr++;
-                n--;
-        }
-        return;
+    oldstr = get_fragment();
+    m = strlen(oldstr);
+    n = strlen(newstr);
+    while(m>0){
+        backspace();
+        m--;
+    }
+    while(n>0){
+        insertcol();
+        ed_data[ed_row][ed_col] = *newstr;
+        ed_col++;
+        newstr++;
+        n--;
+    }
+    return;
 }
 
+struct position find_word(char* word){
+    int i,j,k,len;
+    struct position pos;
+    char* word1; 
+
+    i = ed_row;
+    j = ed_col;
+    word1 = word;
+    len = strlen(word);
+    while(i<=ed_end+1){
+        while(j<COL_SIZE){
+            if(ed_data[i][j] == NUL)
+                goto next1;
+            k = j;
+            while(k<j+len){
+                if(ed_data[i][k] != *word){
+                    goto next2;
+                }
+                word++;
+                k++;
+            }
+            pos.row = i;
+            pos.col = j;
+            return(pos);
+            
+            next2:
+            j++;
+            word = word1;
+        }
+        next1:
+        i++;
+        j = 0;
+    }
+    //can't find word
+    pos.row = -1;
+    pos.col = 0;
+    return(pos);
+}
+
+
+void replace_word(char* str1, char* str2){
+    int len1,len2,i,j;
+
+    len1 = strlen(str1);
+    len2 = strlen(str2);
+
+    if(len1 == len2){
+        for(i=0;i<len1;i++){
+            ed_data[ed_row][ed_col] = *str2;
+            ed_col++;
+            str2++;
+        }
+    }
+    else if (len1 > len2){
+        i = ed_col + len1;
+        j = len1 - len2;
+        while(ed_data[ed_row][i] != NUL){
+            ed_data[ed_row][i-j] = ed_data[ed_row][i];
+            i++; 
+        }
+        ed_data[ed_row][i] = NUL;
+
+        for(i=0;i<len2;i++){
+            ed_data[ed_row][ed_col+i] = *str2;
+            str2++;
+        }
+    }
+    else { //len1 < len2
+        i = findeol(ed_row);
+        j = len2 - len1;
+        while(i >= ed_col+len1){
+            ed_data[ed_row][i+j] = ed_data[ed_row][i];
+            i--; 
+        }
+        ed_data[ed_row][i] = NUL;
+
+        for(i=0;i<len2;i++){
+            ed_data[ed_row][ed_col+i] = *str2;
+            str2++;
+        }
+    }
+}

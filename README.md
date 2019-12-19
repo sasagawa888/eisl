@@ -4,6 +4,8 @@ Easy-ISLisp(EISL) is an interpreter and compiler compatible with ISLisp standard
 EISL was written by Kenichi Sasagawa
 https://qiita.com/sym_num/items/793adfe118514668e5b0
 
+see [ISLisp](https://en.wikipedia.org/wiki/ISLISP)
+
 
 # Installation
 Change to the git cloned or downloaded Easy-ISLisp directory.

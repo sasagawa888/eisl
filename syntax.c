@@ -347,6 +347,8 @@ int f_defun(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) < 3)
+        error(WRONG_ARGS, "defun", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defun", arg1);
     if(IS_SUBR(GET_CAR(arg1)))
@@ -634,6 +636,13 @@ int f_for(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
+    if(length(arglist) < 2)
+        error(WRONG_ARGS, "for", arglist);
+    if(!listp(arg1))
+        error(NOT_LIST, "for", arg1);    
+    if(!listp(arg2))
+        error(NOT_LIST, "for", arg2);
+
     save = ep;
 
     iter = arg1;

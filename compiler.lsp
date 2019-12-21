@@ -2826,14 +2826,16 @@ double tarai(double x, double y, double z){
 (defun inference-let (x type-env)
   (let ((vars (elt x 1))
         (body (cdr (cdr x))))
-    (block exit-let
-      (for ((vars1 vars (cdr vars1)))
-           ((null vars1))
-           (setq type-env (unify (elt (car vars1) 0)
-                                 (elt (car vars1) 1) type-env))
-           (if (eq type-env 'no)
-               (return-from exit-let 'no)))
-      (inference-all1 body type-env nil))))
+    (if (null vars)
+        (inference-all1 body type-env nil)  
+        (block exit-let
+          (for ((vars1 vars (cdr vars1)))
+               ((null vars1))
+               (setq type-env (unify (elt (car vars1) 0)
+                                     (elt (car vars1) 1) type-env))
+               (if (eq type-env 'no)
+                   (return-from exit-let 'no)))
+                   (inference-all1 body type-env nil)))))
 
 ;;for syntax
 (defun inference-for (x type-env)

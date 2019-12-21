@@ -8759,7 +8759,12 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int VARS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));res = ({int res,ret,i;
+res = ({int res;int VARS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));res = ({int res;
+if(({int res;
+ res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(VARS))));res;}) != NIL){
+res = INFERENCE_ALL1(BODY,TYPE_ENV,NIL);}
+else{
+res = ({int res,ret,i;
  i = Fgetprop(Fmakesym("EXIT-LET"));
 Fsetprop(Fmakesym("EXIT-LET"),i+1);
 ret=setjmp(c_EXIT_LET[i]);if(ret == 0){
@@ -8788,7 +8793,8 @@ res = INFERENCE_ALL1(BODY,TYPE_ENV,NIL);Fsetprop(Fmakesym("EXIT-LET"),i);
  else{
 ret = 0;
 compiler0();res=block_arg;}
-res;});
+res;});}res;})
+;
 res;})
 ;
 if(CELLRANGE(TYPE_ENV)) Fshelterpop();

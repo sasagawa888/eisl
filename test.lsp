@@ -9,5 +9,9 @@
       (let ((m1 (- m)))
            (c-lang "res = INT_FLAG | ((INT_MASK & N) >> (INT_MASK & M1));"))))
 
+
+(defun foo (x)
+  (let () (* x x)))
+
     
 

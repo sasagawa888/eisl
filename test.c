@@ -2,6 +2,7 @@
 #include <stdio.h>
 int f_MA(int arglist);int MA(int A,int X,int B);
 int f_ASH(int arglist);int ASH(int N,int M);
+int f_FOO(int arglist);int FOO(int X);
 int f_MA(int arglist){
 int arg1,arg2,arg3;
 arg1 = Fnth(0,arglist);
@@ -14,6 +15,11 @@ int arg1,arg2;
 arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(ASH(fast_convert(arg1),fast_convert(arg2))));
+}
+int f_FOO(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(FOO(fast_convert(arg1))));
 }
 int MA(int A,int X,int B){
 int res;
@@ -43,8 +49,18 @@ res;})
 if(CELLRANGE(M)) Fshelterpop();
 if(CELLRANGE(N)) Fshelterpop();
 return(res);}
+int FOO(int X){
+int res;
+if(CELLRANGE(X)) Fshelterpush(X);
+if(Ffreecell() < 900) Fgbc();
+res = ({int res;res = fast_mult(fast_convert(X),fast_convert(X));
+res;})
+;
+if(CELLRANGE(X)) Fshelterpop();
+return(res);}
 void init_tfunctions(void){
 (deftfunc)("MA" , f_MA);
 (deftfunc)("ASH" , f_ASH);
+(deftfunc)("FOO" , f_FOO);
 }void init_declare(void){
 Fsetcatchsymbols(NIL);;}

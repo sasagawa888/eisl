@@ -347,7 +347,7 @@ int f_defun(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if(length(arglist) < 3)
+    if(length(arglist) < 2)
         error(WRONG_ARGS, "defun", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defun", arg1);

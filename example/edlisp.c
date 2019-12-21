@@ -180,7 +180,7 @@ return(fast_inverse(EVDEFUN(fast_convert(arg1),fast_convert(arg2))));
 int ISLISP(){
 int res;
 if(Ffreecell() < 900) Fgbc();
-fast_convert(Fcallsubr(Fcar(Fmakesym("INITIALIZE")),NIL));
+INITIALIZE();
 res = REPL();
 return(res);}
 int REPL(){
@@ -283,8 +283,7 @@ else{
 res = APPLYstar(FUNCTION_LOOKUP(fast_convert(fast_car(S))),EVLIS(fast_convert(fast_cdr(S)),ENV),ENV);}
 ;res;});}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("undefined object")),Flist1(fast_inverse(S)))));res;});}
+res = ERRORstar(Fmakestr("undefined object"),S);}
 ;res;});
 if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(S)) Fshelterpop();
@@ -313,8 +312,7 @@ res = EVALstar(fast_convert(fast_car(BODY)),ENV1);res;});
 res;})
 ;}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("Illegal function call apply* ")),Flist1(fast_inverse(F)))));res;});}
+res = ERRORstar(Fmakestr("Illegal function call apply* "),F);}
 ;res;});
 if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(ARG)) Fshelterpop();
@@ -373,8 +371,7 @@ res = fast_convert(fast_cdr(({int res;
 else if(PRIMITIVEP(SYM) != NIL){
 res = Fmakesym("PRIMITIVE");}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("Undefined variable ")),Flist1(fast_inverse(SYM)))));res;});}
+res = ERRORstar(Fmakestr("Undefined variable "),SYM);}
 ;res;});
 if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(SYM)) Fshelterpop();
@@ -389,8 +386,7 @@ if(({int res;
 res = fast_convert(fast_cdr(({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(SYM),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("*FUNCTION*"))))))));res;})));}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("Undefined function ")),Flist1(fast_inverse(SYM)))));res;});}
+res = ERRORstar(Fmakestr("Undefined function "),SYM);}
 ;res;});
 if(CELLRANGE(SYM)) Fshelterpop();
 return(res);}
@@ -404,8 +400,7 @@ if(({int res;
 res = fast_convert(fast_cdr(({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(SYM),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("*DYNAMIC*"))))))));res;})));}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("Undefined variable ")),Flist1(fast_inverse(SYM)))));res;});}
+res = ERRORstar(Fmakestr("Undefined variable "),SYM);}
 ;res;});
 if(CELLRANGE(SYM)) Fshelterpop();
 return(res);}
@@ -424,8 +419,7 @@ else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(SYM),F
 res = ({int res;
  res=fast_convert(Fcallsubr(Fcar(Fmakesym("SET-CDR")),Fcons(fast_inverse(VAL),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(SYM),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("*GLOBAL*")))))))))))));res;});}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ERROR*")),Fcons(fast_inverse(Fmakestr("Undefined variable ")),Flist1(fast_inverse(SYM)))));res;});}
+res = ERRORstar(Fmakestr("Undefined variable "),SYM);}
 ;res;});
 if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(VAL)) Fshelterpop();

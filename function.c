@@ -708,6 +708,7 @@ int f_floor(int arglist){
 
 int f_ceiling(int arglist){
     int arg1;
+    double x;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -715,8 +716,13 @@ int f_ceiling(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "ceiling", arg1);
 
-    if(floatp(arg1))
-        return(makeflt(ceil(GET_FLT(arg1))));
+    if(floatp(arg1)){
+        x = GET_FLT(arg1);
+        if(x <= 999999999.0 && x >= -999999999.0)
+            return(makeint((int)ceil(x)));
+        else
+            return(makelong((long long int)(ceil(x))));
+    }
     else
         return(arg1);
 }

@@ -13,5 +13,14 @@
 (defun foo (x)
   (let () (* x x)))
 
+(defclass foo-5 ()
+   ((a :reader read-foo-a
+       :writer write-foo-a
+       :accessor access-foo-a
+       :boundp boundp-foo-a
+       :initarg a
+       :initform 1)))
+
+
     
 

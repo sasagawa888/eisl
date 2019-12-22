@@ -1,5 +1,3 @@
-;still exist error 
-;comment outed
 
 (defmacro test(form1 form2 :rest pred)
   (cond ((null pred)
@@ -33,7 +31,7 @@
 (test (read-foo-a x) 1 eql)
 (test (access-foo-a x) 1 eql)
 ;;
-;(test (write-foo-a 10 x) 10 eql)
+(test (write-foo-a 10 x) 10 eql)
 (test (boundp-foo-a x) t)
 (test (read-foo-a x) 10 eql)
 (test (access-foo-a x) 10 eql)
@@ -65,7 +63,7 @@
 (defglobal x (create (class foo-6)))
 ;;
 (test (boundp-foo-a x) nil)
-;(test (write-foo-a 10 x) 10 eql)
+(test (write-foo-a 10 x) 10 eql)
 (test (boundp-foo-a x) t)
 (test (read-foo-a x) 10 eql)
 (test (access-foo-a x) 10 eql)
@@ -84,7 +82,7 @@
 (defglobal x (create (class foo-6)))
 ;;
 (test (boundp-foo-a x) nil)
-;(test (write-foo-a 10 x) 10 eql)
+(test (write-foo-a 10 x) 10 eql)
 (test (boundp-foo-a x) t)
 (test (read-foo-a x) 10 eql)
 (test (access-foo-a x) 10 eql)

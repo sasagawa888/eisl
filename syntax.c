@@ -264,6 +264,11 @@ int f_setf(int arglist){
         var = f_macroexpand_1(list1(arg1));
         return(f_setf(list2(var,arg2)));
     }
+    // (setf (slot-value instance slot-name) value)
+    else if(listp(arg1) && eqp(car(arg1),makesym("SLOT-VALUE"))){
+    	newform = cons(makesym("SET-SLOT-VALUE"),cons(arg2,cdr(arg1)));
+    }
+    //e.g. (setf (access-foo-a x) 100) 
     else if(listp(arg1) && length(arg1) == 2){
         var = eval(list2(car(arg1),NIL));
     	newform = cons(makesym("SET-SLOT-VALUE"),cons(arg2,list2(cadr(arg1),list2(makesym("QUOTE"),var))));

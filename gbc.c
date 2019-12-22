@@ -169,6 +169,7 @@ void clrcell(int addr){
     SET_CAR(addr,0);
     SET_CDR(addr,0);
     SET_AUX(addr,0);
+    SET_PROP(addr,0);
     SET_OPT(addr,0);
     SET_TR(addr,0);
 }

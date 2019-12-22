@@ -314,8 +314,8 @@ void initpt(void){
     lp = 0;
     ls = catch_symbols;
     while(!nullp(ls)){
-    	SET_PROP(car(catch_symbols),0);
-        SET_OPT(car(catch_symbols),0);
+    	SET_PROP(car(ls),0);
+        SET_OPT(car(ls),0);
         ls = cdr(ls);
     }
     block_pt = 0;

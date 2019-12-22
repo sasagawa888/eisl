@@ -270,6 +270,7 @@ int f_setf(int arglist){
     }
     //e.g. (setf (access-foo-a x) 100) 
     else if(listp(arg1) && length(arg1) == 2){
+        //a method returns it's variable name 
         var = eval(list2(car(arg1),NIL));
     	newform = cons(makesym("SET-SLOT-VALUE"),cons(arg2,list2(cadr(arg1),list2(makesym("QUOTE"),var))));
     }
@@ -740,7 +741,7 @@ int f_return_from(int arglist){
 
 
 int f_catch(int arglist){
-    int arg1,arg2,tag,i,ret,res;
+    int arg1,arg2,i,tag,ret,res;
 
     arg1 = car(arglist); //tag
     arg2 = cdr(arglist); //body
@@ -753,13 +754,13 @@ int f_catch(int arglist){
     if(GET_OPT(tag) == 0){
     	catch_pt++; //opt is 1~5, when 0 symbol is not tag
     	SET_OPT(tag,catch_pt);
-        if(catch_pt > 10)
+        if(catch_pt > CTRLSTK)
         error(CTRL_OVERF, "catch tag count", NIL);
     }
     i = GET_PROP(tag);
     SET_PROP(tag,GET_PROP(tag)+1); //nest level +1
-    if(GET_PROP(tag) >= 50)
-        error(CTRL_OVERF, "catch tag nest", NIL);
+    if(GET_PROP(tag) > CTRLSTK)
+        error(CTRL_OVERF, "catch tag nest", tag);
 
     catch_env[GET_OPT(tag)-1][i] = ep; //save environment
     ret = setjmp(catch_buf[GET_OPT(tag)-1][i]);

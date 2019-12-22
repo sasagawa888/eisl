@@ -404,13 +404,7 @@ int mult(int arg1, int arg2){
                 case LONGN:
                 case BIGX:  return(mult(arg1,exact_to_inexact(arg2)));
             }
-        /*
-        case ARR:
-            switch(tag2){
-                case VEC:   return(mat_vec_mult(arg1,arg2));
-                case ARR:   return(mat_mult(arg1,arg2));
-        }
-        */
+        
     }
     error(NOT_COMPUTABLE, "*", list2(arg1,arg2));
     return(UNDEF);
@@ -426,6 +420,8 @@ int divide(int arg1, int arg2){
         case INTN:
             switch(tag2){
                 case INTN: {n = GET_INT(arg1);
+                            if(n == 0)
+                                return(arg1);
                             x1 = (double)n;
                             s = GET_INT(arg2);
                             y1 = (double)s;
@@ -440,12 +436,22 @@ int divide(int arg1, int arg2){
                             return(makeflt(x1/y1));}
 
                 case LONGN:
-                case BIGX:  return(divide(exact_to_inexact(arg1),exact_to_inexact(arg2)));
+                case BIGX:  if(GET_INT(arg1) == 0)
+                                return(arg1);
+                            else
+                                return(divide(exact_to_inexact(arg1),exact_to_inexact(arg2)));
             }
         case LONGN:
             switch(tag2){
                 case INTN:
-                case LONGN:
+                case LONGN: n = divide(exact_to_inexact(arg1),exact_to_inexact(arg2));
+                            x1 = GET_FLT(n);
+                            x2 = x1 - ceil(x1);
+                            if(x2 == 0.0){
+                                return(quotient(arg1,arg2));
+                            }
+                            else
+                                return(n);
                 case BIGX:  return(divide(exact_to_inexact(arg1),exact_to_inexact(arg2)));
                 case FLTN:  return(divide(exact_to_inexact(arg1),arg2));
             }
@@ -454,7 +460,16 @@ int divide(int arg1, int arg2){
             switch(tag2){
                 case INTN:
                 case LONGN:
-                case BIGX:  return(divide(exact_to_inexact(arg1),exact_to_inexact(arg2)));
+                case BIGX:  
+                            n = divide(exact_to_inexact(arg1),exact_to_inexact(arg2));
+                            x1 = GET_FLT(n);
+                            x2 = x1 - ceil(x1);
+                            if(x1 == 1.0)
+                                return(makeint(1));
+                            else if(x2 == 0.0)
+                                return(quotient(arg1,arg2));
+                            else
+                                return(n);
                 case FLTN:  return(divide(exact_to_inexact(arg1),arg2));
         }
         case FLTN:

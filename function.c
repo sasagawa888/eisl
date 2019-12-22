@@ -764,8 +764,10 @@ int f_round(int arglist){
                 x = c;
         else
             x = round(x);
-
-        return(makeflt(x));
+        if(x <= 999999999.0 && x >= -999999999.0)
+            return(makeint((int)x));
+        else 
+            return(makelong((long long int)x));
         }
     else
         return(arg1);

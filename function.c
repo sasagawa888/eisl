@@ -692,6 +692,7 @@ int f_atanh(int arglist){
 
 int f_floor(int arglist){
     int arg1;
+    double x;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -700,8 +701,15 @@ int f_floor(int arglist){
         error(NOT_NUM, "floor", arg1);
 
 
-    if(floatp(arg1))
-        return(makeflt(floor(GET_FLT(arg1))));
+    if(floatp(arg1)){
+        x = floor(GET_FLT(arg1));
+        if(x <= 999999999 && x >= -999999999)
+            return(makeint((int)x));
+        else if(x <= 999999999999999999 && x >= -999999999999999999)
+            return(makelong((long long int)x));
+        else
+            return(makeflt(x));
+    }
     else
         return(arg1);
 }
@@ -1127,8 +1135,14 @@ int f_sqrt(int arglist){
     if(negativep(arg1))
         error(OUT_OF_RANGE, "sqrt", arg1);
     x = sqrt(GET_FLT(exact_to_inexact(arg1)));
-    if(ceil(x) == floor(x) && x < BIGNUM_BASE)
-        return(makeint((int)x));
+    if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && ceil(x) == floor(x)){
+        if(x <= 999999999.0)
+            return(makeint((int)x));
+        else if(x <= 999999999999999999.0)
+            return(makelong((long long int)x));
+        else 
+            return(makeflt(x));
+    }
     else
         return(makeflt(x));
 }

@@ -982,6 +982,32 @@ int f_expt(int arglist){
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && integerp(arg2) && GET_INT(arg2) == 0)
         return(makeint(1));
 
+    if(integerp(arg1) && GET_INT(arg1) == 1 && (floatp(arg2) || negativep(arg2)))
+        return(makeflt(1.0));
+    
+    if(integerp(arg1) && GET_INT(arg1) == -1 && floatp(arg2)){
+        x = GET_FLT(arg2);
+        if(x - ceil(x) == 0.0 && (int)x % 2 == 0)
+            return(makeflt(1.0));
+        else
+            return(makeflt(-1.0));    
+    }
+    if(integerp(arg1) && GET_INT(arg1) == -1 && 
+        (integerp(arg2) || longnump(arg2) || bignump(arg2))){
+        x = GET_FLT(exact_to_inexact(arg2));
+        if(x - ceil(x) == 0.0 && x >= 0){
+            if((int)x % 2 == 0)
+                return(makeint(1));
+            else
+                return(makeint(-1));
+        }
+        else{
+            if((int)x % 2 == 0)
+                return(makeflt(1.0));
+            else 
+                return(makeflt(-1.0));
+        }   
+    }
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && (integerp(arg2) && GET_INT(arg2) > 0))
         return(expt(arg1,GET_INT(arg2)));
 

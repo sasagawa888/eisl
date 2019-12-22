@@ -97,8 +97,10 @@ int eqlp(int addr1, int addr2){
     
     if(addr1 == addr2)
         return(1);
-    else if(numberp(addr1) && numberp(addr2))
+    else if(numberp(addr1) && numberp(addr2) && math_integerp(addr1) && math_integerp(addr2))
         return(numeqp(addr1,addr2));
+    else if(numberp(addr1) && numberp(addr2) && floatp(addr1) && floatp(addr2))
+        return(numeqp(addr1,addr2));    
     else if(((symbolp(addr1) && symbolp(addr2)))
         && (SAME_NAME(addr1,addr2)))
         return(1);

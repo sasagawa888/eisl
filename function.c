@@ -733,10 +733,14 @@ int f_truncate(int arglist){
 
     if(floatp(arg1)){
         x = GET_FLT(arg1);
-        if(x >= 0)
-            return(makeflt(floor(x)));
+        if(x >= 0 && x <= 999999999.0)
+            return(makeint((int)floor(x)));
+        else if(x >= 0 && x > 999999999.0)
+            return(makelong((long long int)floor(x)));
+        else if(x < 0 && x >= -999999999.0)
+            return(makeint((int)ceil(x)));
         else
-            return(makeflt(ceil(x)));
+            return(makelong((long long int)ceil(x)));
     }
     else
         return(arg1);

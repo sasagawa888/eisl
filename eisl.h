@@ -70,7 +70,7 @@ typedef struct{
     char    *name;
     char    tag;
     char    flag;
-    char    option;
+    signed char    option;
     char    trace;
 } cell;
 

@@ -993,7 +993,7 @@ int bigx_remainder_i(int x, int y){
     return(makeint((int)r*sign1*sign2));
 }
 
-//bignum quotient of bignum and int
+//bignum divide of bignum and int
 int bigx_div_i(int x, int y){
     int res,msb,sign1,sign2;
     long long int i,j,r,q;

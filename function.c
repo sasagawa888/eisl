@@ -1617,9 +1617,17 @@ int f_remove_property(int arglist){
         return(NIL);
     else{
         res = cdr(val);
-        SET_CDR(val,NIL);
+        SET_PROP(arg1,remove_prop(arg2,GET_PROP(arg1)));
         return(res);
     }
+}
+
+int remove_prop(int x,int lis){
+
+    if(car(car(lis)) == x)
+        return(cdr(lis));
+    else
+        return(cons(car(lis),remove_prop(x,cdr(lis))));
 }
 
 int f_gensym(int arglist){

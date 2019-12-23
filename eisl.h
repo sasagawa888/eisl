@@ -892,6 +892,7 @@ int quotient(int x, int y);
 int sread(void);
 int readlist(void);
 int remove_list(int x, int y);
+int remove_prop(int x,int lis);
 int reverse(int x);
 int s_remainder(int x, int y);
 int slotvars(int class);

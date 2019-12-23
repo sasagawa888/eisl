@@ -410,7 +410,7 @@ int mult(int arg1, int arg2){
     return(UNDEF);
 }
 
-int divide(int arg1, int arg2){
+int quotient(int arg1, int arg2){
     int n,s,tag1,tag2;
     double x1,y1,x2;
 
@@ -439,21 +439,21 @@ int divide(int arg1, int arg2){
                 case BIGX:  if(GET_INT(arg1) == 0)
                                 return(arg1);
                             else
-                                return(divide(exact_to_inexact(arg1),exact_to_inexact(arg2)));
+                                return(quotient(exact_to_inexact(arg1),exact_to_inexact(arg2)));
             }
         case LONGN:
             switch(tag2){
                 case INTN:
-                case LONGN: n = divide(exact_to_inexact(arg1),exact_to_inexact(arg2));
+                case LONGN: n = quotient(exact_to_inexact(arg1),exact_to_inexact(arg2));
                             x1 = GET_FLT(n);
                             x2 = x1 - ceil(x1);
                             if(x2 == 0.0){
-                                return(quotient(arg1,arg2));
+                                return(divide(arg1,arg2));
                             }
                             else
                                 return(n);
-                case BIGX:  return(divide(exact_to_inexact(arg1),exact_to_inexact(arg2)));
-                case FLTN:  return(divide(exact_to_inexact(arg1),arg2));
+                case BIGX:  return(quotient(exact_to_inexact(arg1),exact_to_inexact(arg2)));
+                case FLTN:  return(quotient(exact_to_inexact(arg1),arg2));
             }
 
         case BIGX:
@@ -461,16 +461,16 @@ int divide(int arg1, int arg2){
                 case INTN:
                 case LONGN:
                 case BIGX:  
-                            n = divide(exact_to_inexact(arg1),exact_to_inexact(arg2));
+                            n = quotient(exact_to_inexact(arg1),exact_to_inexact(arg2));
                             x1 = GET_FLT(n);
                             x2 = x1 - ceil(x1);
                             if(x1 == 1.0)
                                 return(makeint(1));
                             else if(x2 == 0.0)
-                                return(quotient(arg1,arg2));
+                                return(divide(arg1,arg2));
                             else
                                 return(n);
-                case FLTN:  return(divide(exact_to_inexact(arg1),arg2));
+                case FLTN:  return(quotient(exact_to_inexact(arg1),arg2));
         }
         case FLTN:
             switch(tag2){
@@ -482,7 +482,7 @@ int divide(int arg1, int arg2){
                             x2 = GET_FLT(arg2);
                             return(makeflt(x1/x2));}
                 case LONGN:
-                case BIGX:  return(divide(arg1,exact_to_inexact(arg2)));
+                case BIGX:  return(quotient(arg1,exact_to_inexact(arg2)));
 
             }
     }
@@ -491,7 +491,7 @@ int divide(int arg1, int arg2){
 }
 
 
-int quotient(int x, int y){
+int divide(int x, int y){
 
     if(integerp(x) && longnump(y))
         return(makeint(0));
@@ -502,15 +502,15 @@ int quotient(int x, int y){
     else if(integerp(x) && integerp(y))
         return(makeint(GET_INT(x) / GET_INT(y)));
     else if(longnump(x) && integerp(y))
-        return(long_int_quotient(x,y));
+        return(long_int_div(x,y));
     else if(longnump(x) && longnump(y))
-        return(long_long_quotient(x,y));
+        return(long_long_div(x,y));
     else if(bignump(x) && integerp(y))
-        return(bigx_quotient_i(x,y));
+        return(bigx_div_i(x,y));
     else if(bignump(x) && longnump(y))
-        return(bigx_quotient(x,bigx_long_to_big(y)));
+        return(bigx_div(x,bigx_long_to_big(y)));
     else if(bignump(x) && bignump(y))
-        return(bigx_quotient(x,y));
+        return(bigx_div(x,y));
     else
         error(ILLEGAL_ARGS, "div", list2(x,y));
 
@@ -536,10 +536,10 @@ int s_remainder(int x, int y){
         return(bigx_remainder_i(x,y));
     else if(bignump(x) && longnump(y)){
         i = bigx_long_to_big(y);
-        return(minus(x,mult(quotient(x,i),i)));
+        return(minus(x,mult(divide(x,i),i)));
     }
     else if(bignump(x) && bignump(y))
-        return(minus(x,mult(quotient(x,y),y)));
+        return(minus(x,mult(divide(x,y),y)));
 
     error(ILLEGAL_ARGS, "remainder", NIL);
     return(UNDEF);
@@ -573,8 +573,8 @@ int long_long_remainder(int x, int y){
         return(makelong(r));
 }
 
-//quotient of longnum and int.
-int long_int_quotient(int x, int y){
+//divide of longnum and int.
+int long_int_div(int x, int y){
     long long int m,n,q;
 
 
@@ -588,8 +588,8 @@ int long_int_quotient(int x, int y){
         return(makelong(q));
 }
 
-//quotient of longnum and longnum
-int long_long_quotient(int x, int y){
+//divide of longnum and longnum
+int long_long_div(int x, int y){
     long long int m,n,q;
 
 
@@ -727,7 +727,7 @@ int lcm(int x, int y){
 
     else{
         g = gcd(x,y);
-        d = quotient(absolute(x),g);
+        d = divide(absolute(x),g);
         res = mult(d,absolute(y));
         return(res);
     }
@@ -746,7 +746,7 @@ int isqrt1(int s, int s2, int x){
     if(eqsmallerp(mult(s,s),x) && eqsmallerp(x,mult(s2,s2)))
         return(s);
     else
-        return(isqrt1(quotient(plus(quotient(x,s),s),makeint(2)),s,x));
+        return(isqrt1(divide(plus(divide(x,s),s),makeint(2)),s,x));
 }
 
 /*

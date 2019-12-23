@@ -347,9 +347,9 @@ void dynamic_link(int x){
     init_f2(10,(tfunc)plus);
     init_f2(11,(tfunc)minus);
     init_f2(12,(tfunc)mult);
-    init_f2(13,(tfunc)divide);
+    init_f2(13,(tfunc)quotient);
     init_f2(14,(tfunc)s_remainder);
-    init_f2(15,(tfunc)quotient);
+    init_f2(15,(tfunc)divide);
     init_f2(16,(tfunc)eqp);
     init_f2(17,(tfunc)eqlp);
     init_f2(18,(tfunc)numeqp);
@@ -507,7 +507,7 @@ int f_quotient(int arglist){
         if(!numberp(arg))
             error(NOT_NUM, "quotient", arg);
         arglist = cdr(arglist);
-        res = divide(res,arg);
+        res = quotient(res,arg);
     }
     return(res);
 }
@@ -896,7 +896,7 @@ int f_div(int arglist){
     if(zerop(arg2))
         error(DIV_ZERO, "div",arglist);
 
-    q = quotient(arg1,arg2);
+    q = divide(arg1,arg2);
     r = s_remainder(arg1,arg2);
     if(zerop(r))
         return(q);
@@ -1183,7 +1183,7 @@ int f_reciprocal(int arglist){
         error(WRONG_ARGS, "resiprocal", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "resiprocal", arg1);
-    return(divide(makeint(1),arg1));
+    return(quotient(makeint(1),arg1));
 }
 
 int f_numeqp(int arglist){

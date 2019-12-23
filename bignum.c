@@ -774,7 +774,7 @@ int bigx_mult1(int arg1, int arg2){
 
 
 
-int bigx_quotient(int arg1, int arg2){
+int bigx_div(int arg1, int arg2){
     int res,x,y;
 
     res = UNDEF;
@@ -783,31 +783,29 @@ int bigx_quotient(int arg1, int arg2){
         return(makeint(0));
 
     if(bigx_positivep(arg1) && bigx_positivep(arg2)){
-        res = bigx_quotient1(arg1,arg2);
+        res = bigx_div1(arg1,arg2);
     }
     else if(bigx_positivep(arg1) && bigx_negativep(arg2)){
         y = bigx_abs(arg2);
-        res = bigx_quotient1(arg1,y);
+        res = bigx_div1(arg1,y);
         set_sign(res,-1);
         bigx_gbc(y);
     }
     else if(bigx_negativep(arg1) && bigx_positivep(arg2)){
         x = bigx_abs(arg1);
-        res = bigx_quotient1(x,arg2);
+        res = bigx_div1(x,arg2);
         set_sign(res,-1);
         bigx_gbc(x);
     }
     else if(bigx_negativep(arg1) && bigx_negativep(arg2)){
         x = bigx_abs(arg1);
         y = bigx_abs(arg2);
-        res = bigx_quotient1(x,y);
+        res = bigx_div1(x,y);
         set_sign(res,1);
         bigx_gbc(x);
         bigx_gbc(y);
     }
-    //else
-    //  exception("big_quotient", ILLEGAL_ARGUMENT, list2(arg1,arg2));
-
+    
     if(simp_flag)
         res = bigx_simplify(res);
     return(res);
@@ -820,7 +818,7 @@ bv= if u/v > BIGNUM_BASE, cell of MSB.
 
 //#define TEST
 
-int bigx_quotient1(int arg1, int arg2){
+int bigx_div1(int arg1, int arg2){
     int s,ss,ds,p,t,res,flag1,flag2,i,dig1,dig2;
     long long int d,u,v,q,l1,l2;
     #ifdef TEST
@@ -996,7 +994,7 @@ int bigx_remainder_i(int x, int y){
 }
 
 //bignum quotient of bignum and int
-int bigx_quotient_i(int x, int y){
+int bigx_div_i(int x, int y){
     int res,msb,sign1,sign2;
     long long int i,j,r,q;
 

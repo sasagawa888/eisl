@@ -108,8 +108,7 @@
 (test (listp '(a b c)) t)
 (test (listp '()) t)
 (test (listp '(a . b)) t)
-;;caution
-;(test (let ((x (list 'a))) (setf (cdr x) x) (listp x)) t)
+(test (let ((x (list 'a))) (setf (cdr x) x) (listp x)) t)
 (test (listp "abc") nil)
 (test (listp #(1 2)) nil)
 (test (listp 'jerome) nil)

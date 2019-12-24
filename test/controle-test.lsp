@@ -406,51 +406,50 @@
     tag     (setq x (cons 2 x))
     (setq x (cons 3 x)))
    x) (3 2 1) equal)
-;
-;(test (let ((x ()))
-;   (tagbody
-;    (setq x (cons 1 x))
-;    (go tag)
-;    (setq x (cons 2 x))
-;    tag     (setq x (cons 3 x)))
-;   x) (3 1) equal)
 
-;
-; (test (let ((x ()))
-;    (tagbody
-;     (setq x (cons 1 x))
-;     (lambda () 1)
-;     (go tag1)
-;     (setq x (cons 2 x))
-;     tag1
-;     (setq x (cons 3 x)))
-;    x) (3 1) equal)
-; (test (let ((x ()))
-;    (tagbody
-;     (setq x (cons 1 x))
-;     (lambda () 1)
-;     (lambda () 2)
-;     (go tag1)
-;     (setq x (cons 2 x))
-;     tag1
-;     (setq x (cons 3 x)))
-;    x) (3 1) equal)
-; (test (let ((x ()))
-;    (tagbody
-;     (setq x (cons 1 x))
-;     ((lambda () (go tag1)))
-;     (setq x (cons 2 x))
-;     tag1
-;     (setq x (cons 3 x)))
-;    x) (3 1) equal)
+(test (let ((x ()))
+   (tagbody
+    (setq x (cons 1 x))
+    (go tag)
+    (setq x (cons 2 x))
+    tag     (setq x (cons 3 x)))
+   x) (3 1) equal)
+
+(test (let ((x ()))
+    (tagbody
+     (setq x (cons 1 x))
+     (lambda () 1)
+     (go tag1)
+     (setq x (cons 2 x))
+     tag1
+     (setq x (cons 3 x)))
+    x) (3 1) equal)
+(test (let ((x ()))
+    (tagbody
+     (setq x (cons 1 x))
+     (lambda () 1)
+     (lambda () 2)
+     (go tag1)
+     (setq x (cons 2 x))
+     tag1
+     (setq x (cons 3 x)))
+    x) (3 1) equal)
+ (test (let ((x ()))
+    (tagbody
+     (setq x (cons 1 x))
+     ((lambda () (go tag1)))
+     (setq x (cons 2 x))
+     tag1
+     (setq x (cons 3 x)))
+    x) (3 1) equal)
 ;;;
 (test (unwind-protect 1) 1 eql)
 ;;; ;;;
 (defglobal x nil)
-;(test (unwind-protect
-;     (progn (setq x (cons 1 x)) x)
-;   (setq x (cons 2 x))
-;   (setq x (cons 3 x))) (1) equal)
+(test (unwind-protect
+     (progn (setq x (cons 1 x)) x)
+   (setq x (cons 2 x))
+   (setq x (cons 3 x))) (1) equal)
 (test x (3 2 1) equal)
 ;;; ;;;
 (defglobal x nil)
@@ -493,9 +492,9 @@
      (t nil)))
 
 (test (foo-4 '(a b c)) t)
-;(test (property 'a 'label) nil)
+(test (property 'a 'label) nil)
 (test (foo-4 '(a b a c)) found)
-;(test (property 'a 'label) nil)
+(test (property 'a 'label) nil)
 
 (defun test ()
    (catch 'outer (test2)))

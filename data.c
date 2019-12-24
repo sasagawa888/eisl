@@ -822,13 +822,6 @@ int array_length(int obj){
     return(GET_CDR(obj));
 }
 
-int list_prod(int ls){
-    if(nullp(ls))
-        return(1);
-    else
-        return(GET_INT(car(ls)) * list_prod(cdr(ls)));
-}
-
 
 // obj is array or vector
 // ls is index. e.g. (0 1 1)
@@ -861,7 +854,7 @@ int array_set(int obj, int ls, int val){
     if(vectorp(obj))
         size = list1(vector_length(obj));
     else
-        size = array_length(obj); 
+        size = array_length(obj); // e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
     index = 0;
     while(!nullp(size)){
         if(nullp(cdr(ls)))

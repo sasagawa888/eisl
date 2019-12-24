@@ -680,6 +680,7 @@ int makearray(int ls, int obj){
             size = n * size;
             ls = cdr(ls);
         }
+        size++;
     }
     else
         size = 1;

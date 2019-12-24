@@ -133,13 +133,12 @@ jmp_buf ignore_buf; //jump address of ignore-error
 int block_tag[CTRLSTK]; //array of tag
 int catch_tag[CTRLSTK];
 int catch_symbols = NIL; //to clear tag data
-int tagbody_tag[CTRLSTK][3];
 int block_pt;  //index of oblock. following are similer
 int catch_pt = 0; //catch counter
-int tagbody_pt;
 int unwind_pt; //lambda address for unwind-protect
 int block_arg; //recieve argument of block
 int catch_arg; //recieve argument of catch
+int tagbody_tag = NIL; //tag address fo tagbody
 int error_handler; //for store first argument of with-handler
 int trace_list = NIL; //function list of trace
 int trace_sym;  //function name in trace.
@@ -320,7 +319,6 @@ void initpt(void){
     }
     block_pt = 0;
     catch_pt = 0;
-    tagbody_pt = 0;
     unwind_pt = 0;
     error_handler = NIL;
     top_flag = 1;

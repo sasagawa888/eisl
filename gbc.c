@@ -114,9 +114,8 @@ void gbcmark(void){
     for(i=0; i<HASHTBSIZE; i++)
         markcell(cell_hash_table[i]);
 
-    //mark thunck of tagbody
-    for(i=0; i<tagbody_pt; i++)
-    	markcell(tagbody_tag[i][1]);
+    //mark tagbody symbol
+    markcell(tagbody_tag);
 
     //mark thunk for unwind-protect
     markcell(unwind_pt);

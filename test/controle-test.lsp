@@ -1,5 +1,3 @@
-;still exist error
-;comment outed
 
 (defmacro test(form1 form2 :rest pred)
   (cond ((null pred)
@@ -11,7 +9,7 @@
          `(if (,@pred ,form1 ',form2)
               (format (standard-output) "" ',form1)
               ;;(format (standard-output) "~S is ok~%" ',form1)
-              (format (standard-output) "~S is bad~%" ',form1)))))
+              (format (standard-output) "~S is bad ~S ~%" ',form1)))))
 
 ;;; ;;
 (test #2a((a b c) (d e f)) #2a((a b c) (d e f)) equal)
@@ -56,25 +54,25 @@
 (defmacro first (spot) `(car ,spot))
 (defglobal x '(10 20))
 (test (first x) 10 equal)
-;(test (setf (first x) 2) 2)
+(test (setf (first x) 2) 2)
 (test x (2 20) equal)
 ;;;
 (defmacro first2 (spot) `(first ,spot))
 (defglobal x '(10 20))
 (test (first2 x) 10 equal)
-;(test (setf (first2 x) 2) 2)
+(test (setf (first2 x) 2) 2)
 (test x (2 20) equal)
 ;;;
 (defmacro last (spot) `(cdr ,spot))
 (defglobal x '(10 20))
 (test (last x) (20) equal)
-;(test (setf (last x) 2) 2)
+(test (setf (last x) 2) 2)
 (test x (10 . 2) equal)
 ;;;
 (defmacro last2 (spot) `(last ,spot))
 (defglobal x '(10 20))
 (test (last2 x) (20) equal)
-;(test (setf (last2 x) 2) 2)
+(test (setf (last2 x) 2) 2)
 (test x (10 . 2) equal)
 ;;;
 (defmacro my-dynamic (spot) `(dynamic ,spot))
@@ -394,6 +392,7 @@
 (test (tagbody) nil)
 (test (tagbody 1) nil)
 (test (tagbody 1 2) nil)
+
 (test (let ((x ()))
    (tagbody
     (setq x (cons 1 x))
@@ -407,6 +406,7 @@
     (setq x (cons 3 x)))
    x) (3 2 1) equal)
 
+;;bad
 (test (let ((x ()))
    (tagbody
     (setq x (cons 1 x))
@@ -414,7 +414,7 @@
     (setq x (cons 2 x))
     tag     (setq x (cons 3 x)))
    x) (3 1) equal)
-
+;;bad
 (test (let ((x ()))
     (tagbody
      (setq x (cons 1 x))
@@ -424,6 +424,7 @@
      tag1
      (setq x (cons 3 x)))
     x) (3 1) equal)
+;;bad
 (test (let ((x ()))
     (tagbody
      (setq x (cons 1 x))
@@ -434,6 +435,7 @@
      tag1
      (setq x (cons 3 x)))
     x) (3 1) equal)
+;;bad
  (test (let ((x ()))
     (tagbody
      (setq x (cons 1 x))
@@ -446,6 +448,7 @@
 (test (unwind-protect 1) 1 eql)
 ;;; ;;;
 (defglobal x nil)
+;;
 (test (unwind-protect
      (progn (setq x (cons 1 x)) x)
    (setq x (cons 2 x))
@@ -462,6 +465,7 @@
     999)) 777 eql)
 (test x (2 1) equal)
 ;;;
+;;bad
 (defglobal x nil)
 (defun nest1 (y)
      (unwind-protect

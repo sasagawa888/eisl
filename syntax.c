@@ -803,62 +803,49 @@ int f_throw(int arglist){
 }
 
 int f_tagbody(int arglist){
-    int prog,tag,i,start,res;
-
-    tag = NIL;
-    prog = NIL;
-    start = tagbody_pt;
-    res = NIL;
+    int prog[100],line,end,i;
+    
+    end = 0;
     while(!nullp(arglist)){
-        if(atomp(car(arglist))){
-        	tagbody_tag[tagbody_pt][0]=tag;
-    		tagbody_tag[tagbody_pt][1]=makefunc("",cons(NIL,reverse(prog)));
-            tagbody_tag[tagbody_pt][2]=tagbody_pt + 1;
-    		tagbody_pt++;
-    		if(tagbody_pt > CTRLSTK)
-        		error(CTRL_OVERF, "tagbody", NIL);
-
-            tag = car(arglist);
-            prog = NIL;
-        }
-        else{
-        	prog = cons(car(arglist),prog);
-        }
+        prog[end] = car(arglist);
         arglist = cdr(arglist);
+        end++;
     }
-    tagbody_tag[tagbody_pt][0]=tag;
-    tagbody_tag[tagbody_pt][1]=makefunc("",cons(NIL,reverse(prog)));
-    tagbody_tag[tagbody_pt][2]= -1; //end mark
-    tagbody_pt++;
-    if(tagbody_pt > CTRLSTK)
-        error(CTRL_OVERF, "tagbody", NIL);
 
-    for(i=start;i<tagbody_pt;i++)
-    	res = apply(tagbody_tag[i][1],NIL);
+    line = 0;
+    while(line < end){
+        exit:
+        if(symbolp(prog[line]))
+            line++;
+        else{
+            tagbody_tag = NIL;
+            eval(prog[line]);
+            line++;
+            //when go was evaled
+            if(tagbody_tag != NIL){
+                for(i=0;i<end;i++){
+                    if(tagbody_tag == prog[i]){
+                        line = i+1;
+                        goto exit;
+                    }
+                }
+                error(UNDEF_TAG,"tagbody",tagbody_tag);
+            }
+        }
+    }
 
-    return(res);
+    return(NIL);
 }
 
 int f_go(int arglist){
-    int arg1,i,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "go", arg1);
 
-    for(i=tagbody_pt-1;i>=0;i--){
-        if(tagbody_tag[i][0]==arg1)
-            goto exit;
-    }
-    error(UNDEF_TAG, "go", arg1);
-
-    exit:
-    do{
-		SET_CDR(tagbody_tag[i][1],ep);
-    	res = apply(tagbody_tag[i][1],NIL);
-        i++;
-    }while(tagbody_tag[i-1][2] != -1);
-    return(res);
+    tagbody_tag = arg1;
+    return(T);
 }
 
 

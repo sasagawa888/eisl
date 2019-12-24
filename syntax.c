@@ -741,8 +741,9 @@ int f_return_from(int arglist){
 
 
 int f_catch(int arglist){
-    int arg1,arg2,i,tag,ret,res;
+    int arg1,arg2,i,tag,ret,res,save;
 
+    save = sp;
     arg1 = car(arglist); //tag
     arg2 = cdr(arglist); //body
     tag = eval(arg1);    //tag symbol
@@ -777,6 +778,8 @@ int f_catch(int arglist){
         if(unwind_pt != NIL)
 			apply(unwind_pt,NIL);
         res = catch_arg;
+        catch_arg = NIL;
+        sp = save; //restore stack pointer. longjump destroy sp
         return(res);
     }
     return(UNDEF);

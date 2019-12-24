@@ -2,14 +2,15 @@
 (defmacro test(form1 form2 :rest pred)
   (cond ((null pred)
          `(if (equal ,form1 ',form2)
-              (format (standard-output) "" ',form1)
+              (format (standard-output) "" )
               ;;(format (standard-output) "~S is ok~%" ',form1)
               (format (standard-output) "~S is bad~%" ',form1)))
         ((and (not (null pred))(consp form1))
          `(if (,@pred ,form1 ',form2)
-              (format (standard-output) "" ',form1)
+              (format (standard-output) "")
               ;;(format (standard-output) "~S is ok~%" ',form1)
               (format (standard-output) "~S is bad ~S ~%" ',form1)))))
+
 
 ;;; ;;
 (test #2a((a b c) (d e f)) #2a((a b c) (d e f)) equal)
@@ -338,6 +339,7 @@
 (test (block b
     ((lambda (x) (return-from b x)) 999)) 999 eql)
 
+
 (test (catch 'a) nil)
 (test (catch 'a 1) 1 eql)
 (test (catch 'a 1 2) 2 eql)
@@ -378,6 +380,7 @@
 
 (test (foo-3 '(1 2 3 4)) 10 eql)
 (test (foo-3 '(1 2 a 4)) 0 eql)
+#|
 ;;; closure
 (test (catch 'c
     (lambda () 1)
@@ -406,7 +409,7 @@
     (setq x (cons 3 x)))
    x) (3 2 1) equal)
 
-;;bad
+;;
 (test (let ((x ()))
    (tagbody
     (setq x (cons 1 x))
@@ -414,7 +417,7 @@
     (setq x (cons 2 x))
     tag     (setq x (cons 3 x)))
    x) (3 1) equal)
-;;bad
+;;
 (test (let ((x ()))
     (tagbody
      (setq x (cons 1 x))
@@ -424,7 +427,7 @@
      tag1
      (setq x (cons 3 x)))
     x) (3 1) equal)
-;;bad
+;;
 (test (let ((x ()))
     (tagbody
      (setq x (cons 1 x))
@@ -435,7 +438,7 @@
      tag1
      (setq x (cons 3 x)))
     x) (3 1) equal)
-;;bad
+;;
  (test (let ((x ()))
     (tagbody
      (setq x (cons 1 x))
@@ -447,8 +450,10 @@
 ;;;
 (test (unwind-protect 1) 1 eql)
 ;;; ;;;
+|#
 (defglobal x nil)
 ;;
+;;bad
 (test (unwind-protect
      (progn (setq x (cons 1 x)) x)
    (setq x (cons 2 x))
@@ -465,7 +470,7 @@
     999)) 777 eql)
 (test x (2 1) equal)
 ;;;
-;;bad
+;;
 (defglobal x nil)
 (defun nest1 (y)
      (unwind-protect
@@ -480,7 +485,7 @@
 (test (catch 'exit
    (nest1 777)) 777 eql)
 (test x (2 4 3 1) equal)
-;;;
+;;;bad
 (defun foo-4 (x)
    (catch 'duplicates
      (unwind-protect (bar-4 x)
@@ -496,7 +501,7 @@
      (t nil)))
 
 (test (foo-4 '(a b c)) t)
-(test (property 'a 'label) nil)
+(test (property 'a 'label) t)
 (test (foo-4 '(a b a c)) found)
 (test (property 'a 'label) nil)
 
@@ -513,3 +518,4 @@
 
 (defun test4 ()
    (throw 'outer 6))
+

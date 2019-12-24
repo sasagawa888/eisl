@@ -254,7 +254,7 @@ res = CTAK_AUX(X,Y,Z);Fsetprop(Fmakesym("CTAK-AUX"),i);
 }
  else{
 ret = 0;
-res=catch_arg;}
+compiler0();res=catch_arg;}
 res;});
 if(CELLRANGE(Z)) Fshelterpop();
 if(CELLRANGE(Y)) Fshelterpop();
@@ -286,7 +286,7 @@ res = CTAK_AUX(fast_minus(fast_convert(X),fast_convert(fast_immediate(1))),Y,Z);
 }
  else{
 ret = 0;
-res=catch_arg;}
+compiler0();res=catch_arg;}
 res;});
 temp2 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
@@ -296,7 +296,7 @@ res = CTAK_AUX(fast_minus(fast_convert(Y),fast_convert(fast_immediate(1))),Z,X);
 }
  else{
 ret = 0;
-res=catch_arg;}
+compiler0();res=catch_arg;}
 res;});
 temp3 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
@@ -306,7 +306,7 @@ res = CTAK_AUX(fast_minus(fast_convert(Z),fast_convert(fast_immediate(1))),X,Y);
 }
  else{
 ret = 0;
-res=catch_arg;}
+compiler0();res=catch_arg;}
 res;});
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(Y)) Fshelterpop();

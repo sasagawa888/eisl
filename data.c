@@ -829,28 +829,26 @@ int list_prod(int ls){
         return(GET_INT(car(ls)) * list_prod(cdr(ls)));
 }
 
+
+// obj is array or vector
+// ls is index. e.g. (0 1 1)
 int array_ref(int obj, int ls){
     int size,index;
     
     if(vectorp(obj))
         size = list1(vector_length(obj));
     else
-        size = array_length(obj);
+        size = array_length(obj); // e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
+    
     index = 0;
-    size = reverse(size);
     while(!nullp(size)){
-        if(nullp(cdr(ls))){
-            index = GET_INT(car(ls));
-            break;
-        }
-        else if(nullp(cddr(ls))){
-            index = index + GET_INT(car(ls)) * GET_INT(car(size))
-                    + GET_INT(cadr(ls));
-            break;
-        }
-        else
-            index = index + GET_INT(car(ls)) * list_prod(cdr(size));
-            
+        if(nullp(cdr(ls)))
+            index = index + GET_INT(car(ls));
+        else if(GET_INT(car(ls)) == 0)
+            index = index;
+        else 
+            index = index + GET_INT(car(size)) * GET_INT(car(ls)) + 1;
+         
         size = cdr(size);
         ls = cdr(ls);
     }
@@ -865,20 +863,14 @@ int array_set(int obj, int ls, int val){
     else
         size = array_length(obj); 
     index = 0;
-    size = reverse(size);
     while(!nullp(size)){
-        if(nullp(cdr(ls))){
-            index = GET_INT(car(ls));
-            break;
-        }
-        else if(nullp(cddr(ls))){
-            index = index + GET_INT(car(ls)) * GET_INT(car(size))
-                    + GET_INT(cadr(ls));
-            break;
-        }
-        else
-            index = index + GET_INT(car(ls)) * list_prod(cdr(size));
-            
+        if(nullp(cdr(ls)))
+            index = index + GET_INT(car(ls));
+        else if(GET_INT(car(ls)) == 0)
+            index = index;
+        else 
+            index = index + GET_INT(car(size)) * GET_INT(car(ls)) + 1;
+         
         size = cdr(size);
         ls = cdr(ls);
     }
@@ -887,6 +879,7 @@ int array_set(int obj, int ls, int val){
 }
 
 //calculation of array's dimension
+//e.g. ((1 2)(3 4)(5 6)) -> (3 2)
 int array_dim(int n, int ls){
     if(!nullp(ls) && atomp(ls) && n>0)
         error(ILLEGAL_ARGS,"array",NIL);

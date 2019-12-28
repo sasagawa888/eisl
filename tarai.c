@@ -2,7 +2,7 @@
 jmp_buf c_CTAK_AUX[50];
 int f_TARAI(int arglist);int TARAI(int X,int Y,int Z);
 int f_FIB(int arglist);int FIB(int N);
-int f_FIBstar(int arglist);int FIBstar(int N);
+int f_FIBstar(int arglist);int FIBstar(double N);
 int f_ACK(int arglist);int ACK(int M,int N);
 int f_GFIB(int arglist);int GFIB(int N);
 int f_TAK(int arglist);int TAK(int X,int Y,int Z);
@@ -25,7 +25,7 @@ return(Fmakeint(FIB(Fgetint(arg1))));
 int f_FIBstar(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(FIBstar(fast_convert(arg1))));
+return(Fmakedoubleflt(FIBstar(Fgetflt(arg1))));
 }
 int f_ACK(int arglist){
 int arg1,arg2;
@@ -104,19 +104,16 @@ else{
 res = FIB(N-1)+FIB(N-2);}
 ;res;});
 return(res);}
-int FIBstar(int N){
+int FIBstar(double N){
 int res;
-if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(fast_numeqp(fast_convert(N),fast_convert(Fmakestrflt("1.0"))) != NIL){
-res = Fmakestrflt("1.0");}
-else if(fast_numeqp(fast_convert(N),fast_convert(Fmakestrflt("2.0"))) != NIL){
-res = Fmakestrflt("1.0");}
+if(N==1.0){
+res = 1.0;}
+else if(N==2.0){
+res = 1.0;}
 else{
-res = fast_plus(fast_convert(FIBstar(fast_minus(fast_convert(N),fast_convert(Fmakestrflt("1.0"))))),fast_convert(FIBstar(fast_minus(fast_convert(N),fast_convert(Fmakestrflt("2.0"))))));}
+res = FIBstar(N-1.0)+FIBstar(N-2.0);}
 ;res;});
-if(CELLRANGE(N)) Fshelterpop();
 return(res);}
 int ACK(int M,int N){
 int res;

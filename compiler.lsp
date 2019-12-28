@@ -2787,7 +2787,7 @@ double tarai(double x, double y, double z){
   (cond ((null x) type-env)
         (t (let ((new-env (inference-cond2 (car x) type-env)))
              (cond ((not (eq new-env 'no))
-                    (inference-cond1 (cdr x) type-env))
+                    (inference-cond1 (cdr x) new-env))
                    (t (warning "cond mismatch" (car x))
                       (inference-cond1 (cdr x) type-env)))))))
 

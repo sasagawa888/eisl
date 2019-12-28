@@ -1234,23 +1234,59 @@ double tarai(double x, double y, double z){
   (comp-subrcall2 stream (cdr x) env args nil name global test clos)
   (format stream ")" ))
 
-
-
 ;;SUBR call
+;;Not tail call subr.To avoid data loss by GC, push each data to shelter
+;; ({int arg1,...,argn,res;
+;;   arg1 = code1;
+;;   Fshelterpush(arg1);
+;;   ...
+;;   argn = coden;
+;;   Fshelterpush(argn);
+;;   res = fcallsubr(_,arg1,...arg2);
+;;   Fshelterpop();
+;;   ...;
+;;   res;})
+;; 
 (defun comp-subrcall (stream x env args tail name global test clos)
-  (cond (tail
-          (format stream "({int res;~% res=fast_convert(Fcallsubr(Fcar(Fmakesym(\"" )
-          (format-object stream (car x) nil)
-          (format stream "\"))," )
-          (comp-subrcall1 stream (cdr x) env args nil name global test clos)
-          (format stream "));res;})" ))
-        (t
+  (cond ;; not append
+        ((not (eq (car x) 'append))
           (format stream "fast_convert(Fcallsubr(Fcar(Fmakesym(\"" )
           (format-object stream (car x) nil)
           (format stream "\"))," )
           (comp-subrcall1 stream (cdr x) env args nil name global test clos)
-          (format stream "))" ))))
-
+          (format stream "))" ))
+        ;; append
+        (t
+          (format stream "({int " )
+          (for ((ls (cdr x) (cdr ls))
+                (n 1 (+ n 1)))
+               ((null ls) t)
+               (format stream "arg" )
+               (format-integer stream n 10)
+               (format stream ","))
+          (format stream "res;~%" )
+          (for ((ls (cdr x) (cdr ls))
+                (n 1 (+ n 1)))
+               ((null ls) t)
+               (format stream "arg" )
+               (format-integer stream n 10)
+               (format stream " = fast_inverse(")
+               (comp stream (car ls) env args nil name global test clos)
+               (format stream ");~%")
+               (format stream "Fshelterpush(arg")
+               (format-integer stream n 10)
+               (format stream ");~%"))
+          (format stream "res = fast_convert(Fcallsubr(Fcar(Fmakesym(\"" )
+          (format-object stream (car x) nil)
+          (format stream "\")),")
+          (comp-subrcall3 stream 1 (length (cdr x)))
+          (format stream "));~%" )
+          (for ((ls (cdr x) (cdr ls))
+                (n 1 (+ n 1)))
+               ((null ls) t)
+               (format stream "Fshelterpop();~%" ))
+          (format stream ";res;})"))))
+ 
 (defun comp-subrcall1 (stream x env args tail name global test clos)
   (cond ((null x) (format stream "NIL"))
         ((null (cdr x)) (format stream "Flist1(fast_inverse(" )
@@ -1270,6 +1306,18 @@ double tarai(double x, double y, double z){
            (format stream ")," )
            (comp-subrcall2 stream (cdr x) env args tail name global test clos)
            (format stream ")" ))))
+
+(defun comp-subrcall3 (stream m n)
+  (cond ((= m n) 
+         (format stream "Flist1(arg" )
+         (format-integer stream m 10)
+         (format stream ")" ))
+        (t
+         (format stream "Fcons(arg" )
+         (format-integer stream m 10)
+         (format stream "," )
+         (comp-subrcall3 stream (+ m 1) n)
+         (format stream ")" ))))
 
 ;;labels syntax. flet syntax is same as labels
 (defun comp-labels (stream x env args tail name global test clos)

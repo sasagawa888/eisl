@@ -121,7 +121,7 @@ int init_flag = 1;  //for -c option, 1=initial,0=not-initial
 int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
 int repl_flag = 1;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
-
+int debug_flag = 0;  //for debug
 
 //longjmp control
 jmp_buf buf;

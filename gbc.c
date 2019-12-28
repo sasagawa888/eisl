@@ -10,6 +10,8 @@
 void gbc(void){
     int addr;
 
+    debug_flag = 1;
+
     if(gbc_flag){
         printf("enter GBC free=%d\n", fc); 
         fflush(stdout);

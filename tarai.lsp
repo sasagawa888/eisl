@@ -1,8 +1,6 @@
 ;;sample code for type inference
 ;; benchmark test
 
-(defun pack (x)
-  (let ((y 1)) (+ x y)))
 
 (defun tarai(x y z)
   (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)

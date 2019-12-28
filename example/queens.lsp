@@ -30,20 +30,20 @@
                       (nqueen2 n 1 (cons y board)) )
                   (nqueen2 n (+ y 1) board)))))
 
-;;(defun diagonal (x queen board)
-;;  (if (null board)
-;;      nil
-;;      (if (= (abs (- (car board) queen)) x)
-;;          t
-;;          (diagonal (+ x 1) queen (cdr board)))))
-
 (defun diagonal (x queen board)
-  (block nil
-    (for ((i x (+ i 1)))
-         ((null board) nil)
-        (if (= (abs (- (car board) queen)) i)
-             (return-from nil t)
-             (setq board (cdr board)) ))))
+  (if (null board)
+      nil
+      (if (= (abs (- (car board) queen)) x)
+          t
+          (diagonal (+ x 1) queen (cdr board)))))
+
+;;(defun diagonal (x queen board)
+;;  (block nil
+;;    (for ((i x (+ i 1)))
+;;         ((null board) nil)
+;;        (if (= (abs (- (car board) queen)) i)
+;;             (return-from nil t)
+;;             (setq board (cdr board)) ))))
 
 
 

@@ -1,5 +1,4 @@
 #include "fast.h"
-jmp_buf c_NIL[50];
 int f_QSORT(int arglist);int QSORT(int LAMBDA,int LIST);
 int f_QSORT2(int arglist);int QSORT2(int LAMBDA,int P,int LIST,int LEFT,int RIGHT);
 int f_NQUEEN(int arglist);int NQUEEN(int N);
@@ -45,8 +44,7 @@ if(CELLRANGE(LAMBDA)) Fshelterpush(LAMBDA);
 if(CELLRANGE(LIST)) Fshelterpush(LIST);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LIST))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LIST)))) != NIL){
 res = LIST;}
 else{
 res = QSORT2(LAMBDA,fast_convert(fast_car(LIST)),fast_convert(fast_cdr(LIST)),NIL,NIL);}res;})
@@ -65,14 +63,19 @@ if(CELLRANGE(LEFT)) Fshelterpush(LEFT);
 if(CELLRANGE(RIGHT)) Fshelterpush(RIGHT);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LIST))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(QSORT(LAMBDA,LEFT)),Flist1(fast_inverse(Fcons(fast_inverse(P),fast_inverse(QSORT(LAMBDA,RIGHT))))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LIST)))) != NIL){
+res = ({int arg1,arg2,res;
+arg1 = fast_inverse(QSORT(LAMBDA,LEFT));
+Fshelterpush(arg1);
+arg2 = fast_inverse(Fcons(fast_inverse(P),fast_inverse(QSORT(LAMBDA,RIGHT))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;});}
 else{
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("APPLY")),Fcons(fast_inverse(LAMBDA),Fcons(fast_inverse(fast_convert(fast_car(LIST))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(P))))))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("APPLY")),Fcons(fast_inverse(LAMBDA),Fcons(fast_inverse(fast_convert(fast_car(LIST))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(P)))))))))) != NIL){
 {
 temp1 = LAMBDA;
 temp2 = P;
@@ -149,13 +152,20 @@ Y = temp2;
 BOARD = temp3;
 goto NQUEEN2loop;};}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(({int res;
+res = ({int arg1,arg2,res;
+arg1 = fast_inverse(({int res;
 if(fast_numeqp(fast_convert(Flength(BOARD)),fast_convert(fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(Fcons(fast_inverse(Y),fast_inverse(BOARD))))));}
 else{
 res = NQUEEN2(N,fast_immediate(1),Fcons(fast_inverse(Y),fast_inverse(BOARD)));}res;})
-),Flist1(fast_inverse(NQUEEN2(N,fast_plus(fast_convert(Y),fast_convert(fast_immediate(1))),BOARD))))));res;});}res;})
+);
+Fshelterpush(arg1);
+arg2 = fast_inverse(NQUEEN2(N,fast_plus(fast_convert(Y),fast_convert(fast_immediate(1))),BOARD));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;});}res;})
 ;}res;})
 ;
 if(CELLRANGE(BOARD)) Fshelterpop();
@@ -164,39 +174,33 @@ if(CELLRANGE(N)) Fshelterpop();
 return(res);}
 int DIAGONAL(int X,int QUEEN,int BOARD){
 int res;
+int temp1,temp2,temp3;
+DIAGONALloop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(QUEEN)) Fshelterpush(QUEEN);
 if(CELLRANGE(BOARD)) Fshelterpush(BOARD);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res,ret,i;
- i = Fgetprop(Fmakesym("NIL"));
-Fsetprop(Fmakesym("NIL"),i+1);
-ret=setjmp(c_NIL[i]);if(ret == 0){
 res = ({int res;
-int I = fast_convert(X);int temp1;
-while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(BOARD)))) == NIL){
-({int res;
-if(fast_numeqp(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(fast_minus(fast_convert(fast_convert(fast_car(BOARD))),fast_convert(QUEEN))))))),fast_convert(I)) != NIL){
-({int res,i;
-res = T;block_arg=res;
- i = Fgetprop(Fmakesym("NIL"));
-Fsetprop(Fmakesym("NIL"),i-1);
-longjmp(c_NIL[i-1],1);res;})
-;}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(BOARD)))) != NIL){
+res = NIL;}
 else{
 res = ({int res;
- res = BOARD = fast_convert(fast_cdr(BOARD));res;})
+if(fast_numeqp(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(fast_minus(fast_convert(fast_convert(fast_car(BOARD))),fast_convert(QUEEN))))))),fast_convert(X)) != NIL){
+res = T;}
+else{
+{
+temp1 = fast_plus(fast_convert(X),fast_convert(fast_immediate(1)));
+temp2 = QUEEN;
+temp3 = fast_convert(fast_cdr(BOARD));
+if(CELLRANGE(X)) Fshelterpop();
+if(CELLRANGE(QUEEN)) Fshelterpop();
+if(CELLRANGE(BOARD)) Fshelterpop();
+X = temp1;
+QUEEN = temp2;
+BOARD = temp3;
+goto DIAGONALloop;};}res;})
 ;}res;})
 ;
-temp1 = fast_plus(fast_convert(I),fast_convert(fast_immediate(1)));
-I = temp1;
-}
-res = NIL;res;});Fsetprop(Fmakesym("NIL"),i);
-}
- else{
-ret = 0;
-res=block_arg;}
-res;});
 if(CELLRANGE(BOARD)) Fshelterpop();
 if(CELLRANGE(QUEEN)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
@@ -208,4 +212,4 @@ void init_tfunctions(void){
 (deftfunc)("NQUEEN2" , f_NQUEEN2);
 (deftfunc)("DIAGONAL" , f_DIAGONAL);
 }void init_declare(void){
-Fsetcatchsymbols(Fcons(NIL,NIL));}
+Fsetcatchsymbols(NIL);}

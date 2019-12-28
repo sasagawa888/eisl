@@ -1,6 +1,5 @@
 #include "fast.h"
 jmp_buf c_CTAK_AUX[50];
-int f_PACK(int arglist);int PACK(int X);
 int f_TARAI(int arglist);int TARAI(int X,int Y,int Z);
 int f_FIB(int arglist);int FIB(int N);
 int f_FIBstar(int arglist);int FIBstar(int N);
@@ -11,11 +10,6 @@ int f_LISTN(int arglist);int LISTN(int N);
 int f_TAKL(int arglist);int TAKL(int X,int Y,int Z);
 int f_CTAK(int arglist);int CTAK(int X,int Y,int Z);
 int f_CTAK_AUX(int arglist);int CTAK_AUX(int X,int Y,int Z);
-int f_PACK(int arglist){
-int arg1;
-arg1 = Fnth(0,arglist);
-return(fast_inverse(PACK(fast_convert(arg1))));
-}
 int f_TARAI(int arglist){
 int arg1,arg2,arg3;
 arg1 = Fnth(0,arglist);
@@ -77,15 +71,6 @@ arg2 = Fnth(1,arglist);
 arg3 = Fnth(2,arglist);
 return(fast_inverse(CTAK_AUX(fast_convert(arg1),fast_convert(arg2),fast_convert(arg3))));
 }
-int PACK(int X){
-int res;
-if(CELLRANGE(X)) Fshelterpush(X);
-if(Ffreecell() < 900) Fgbc();
-res = ({int res;int Y = fast_convert(fast_immediate(1));res = fast_plus(fast_convert(X),fast_convert(Y));
-res;})
-;
-if(CELLRANGE(X)) Fshelterpop();
-return(res);}
 int TARAI(int X,int Y,int Z){
 int res;
 int temp1;int temp2;int temp3;
@@ -254,7 +239,7 @@ res = CTAK_AUX(X,Y,Z);Fsetprop(Fmakesym("CTAK-AUX"),i);
 }
  else{
 ret = 0;
-compiler0();res=catch_arg;}
+res=catch_arg;}
 res;});
 if(CELLRANGE(Z)) Fshelterpop();
 if(CELLRANGE(Y)) Fshelterpop();
@@ -286,7 +271,7 @@ res = CTAK_AUX(fast_minus(fast_convert(X),fast_convert(fast_immediate(1))),Y,Z);
 }
  else{
 ret = 0;
-compiler0();res=catch_arg;}
+res=catch_arg;}
 res;});
 temp2 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
@@ -296,7 +281,7 @@ res = CTAK_AUX(fast_minus(fast_convert(Y),fast_convert(fast_immediate(1))),Z,X);
 }
  else{
 ret = 0;
-compiler0();res=catch_arg;}
+res=catch_arg;}
 res;});
 temp3 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
@@ -306,7 +291,7 @@ res = CTAK_AUX(fast_minus(fast_convert(Z),fast_convert(fast_immediate(1))),X,Y);
 }
  else{
 ret = 0;
-compiler0();res=catch_arg;}
+res=catch_arg;}
 res;});
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(Y)) Fshelterpop();
@@ -321,7 +306,6 @@ if(CELLRANGE(Y)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 void init_tfunctions(void){
-(deftfunc)("PACK" , f_PACK);
 (deftfunc)("TARAI" , f_TARAI);
 (deftfunc)("FIB" , f_FIB);
 (deftfunc)("FIB*" , f_FIBstar);

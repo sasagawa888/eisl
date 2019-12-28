@@ -31,20 +31,6 @@ typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,CHR,STR,SYM,LIS,DUMMY,
               STREAM} tag;
 typedef enum {FRE,USE} flag;
 
-/*
-I wil erase following when I confirm that the fix to the enum is correct.
-//option
-#define AROUND      11
-#define BEFORE      12
-#define PRIORITY    13
-#define AFTER       14
-
-#define EISL_OPEN    21
-#define EISL_INPUT   22
-#define EISL_OUTPUT  23
-#define EISL_INSTR   24
-#define EISL_OUTSTR  25
-*/
 
 typedef enum {AROUND,BEFORE,PRIORITY,AFTER,EISL_OPEN,EISL_INPUT,EISL_OUTPUT,EISL_INSTR,EISL_OUTSTR} option;
 
@@ -281,7 +267,7 @@ extern int ignore_topchk;
 extern int repl_flag;
 #endif
 extern int exit_flag;
-
+extern int debug_flag;
 
 //longjmp control
 extern jmp_buf buf;

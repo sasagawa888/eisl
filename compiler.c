@@ -79,6 +79,7 @@ int f_COMP_FUNCALL2(int arglist);int COMP_FUNCALL2(int STREAM,int X,int ENV,int 
 int f_COMP_SUBRCALL(int arglist);int COMP_SUBRCALL(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
 int f_COMP_SUBRCALL1(int arglist);int COMP_SUBRCALL1(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
 int f_COMP_SUBRCALL2(int arglist);int COMP_SUBRCALL2(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
+int f_COMP_SUBRCALL3(int arglist);int COMP_SUBRCALL3(int STREAM,int M,int N);
 int f_COMP_LABELS(int arglist);int COMP_LABELS(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
 int f_COMP_LABELS1(int arglist);int COMP_LABELS1(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
 int f_COMP_LABELS2(int arglist);int COMP_LABELS2(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
@@ -696,6 +697,13 @@ arg7 = Fnth(6,arglist);
 arg8 = Fnth(7,arglist);
 arg9 = Fnth(8,arglist);
 return(fast_inverse(COMP_SUBRCALL2(fast_convert(arg1),fast_convert(arg2),fast_convert(arg3),fast_convert(arg4),fast_convert(arg5),fast_convert(arg6),fast_convert(arg7),fast_convert(arg8),fast_convert(arg9))));
+}
+int f_COMP_SUBRCALL3(int arglist){
+int arg1,arg2,arg3;
+arg1 = Fnth(0,arglist);
+arg2 = Fnth(1,arglist);
+arg3 = Fnth(2,arglist);
+return(fast_inverse(COMP_SUBRCALL3(fast_convert(arg1),fast_convert(arg2),fast_convert(arg3))));
 }
 int f_COMP_LABELS(int arglist){
 int arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9;
@@ -2009,8 +2017,7 @@ if(CELLRANGE(F)) Fshelterpush(F);
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
 res = NIL;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FUNCALL")),Fcons(fast_inverse(F),Flist1(fast_inverse(fast_convert(fast_car(LS))))))) != NIL){
 res = T;}
@@ -2035,8 +2042,7 @@ if(CELLRANGE(F)) Fshelterpush(F);
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
 res = T;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FUNCALL")),Fcons(fast_inverse(F),Flist1(fast_inverse(fast_convert(fast_car(LS))))))) != NIL){
 {
@@ -2094,16 +2100,14 @@ int LAST(int LS){
 int res;
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
-res = fast_convert(fast_car(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(LS))));res;})));
+res = fast_convert(fast_car(fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(LS))))));
 if(CELLRANGE(LS)) Fshelterpop();
 return(res);}
 int SECOND_LAST(int LS){
 int res;
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(LS))))),Flist1(fast_inverse(fast_immediate(1))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(LS))))),Flist1(fast_inverse(fast_immediate(1))))));
 if(CELLRANGE(LS)) Fshelterpop();
 return(res);}
 int REMOVE(int X,int LS){
@@ -2114,8 +2118,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
 res = NIL;}
 else if(fast_eq(fast_convert(X),fast_convert(fast_convert(fast_car(LS)))) != NIL){
 {
@@ -2143,8 +2146,7 @@ res = ({int res;
  res = X = fast_convert(fast_cdr(X));res;})
 ;};res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SET-CDR")),Fcons(fast_inverse(Y),Flist1(fast_inverse(X)))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-CDR")),Fcons(fast_inverse(Y),Flist1(fast_inverse(X)))));
 if(CELLRANGE(Y)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
@@ -2167,8 +2169,7 @@ int res;
 if(CELLRANGE(STR)) Fshelterpush(STR);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EQL")),Fcons(fast_inverse(SUBSTRING(STR,fast_immediate(0),fast_immediate(0))),Flist1(fast_inverse(Fmakestr("."))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("EQL")),Fcons(fast_inverse(SUBSTRING(STR,fast_immediate(0),fast_immediate(0))),Flist1(fast_inverse(Fmakestr(".")))))) != NIL){
 res = FILENAME2(STR);}
 else{
 res = FILENAME1(STR);}res;})
@@ -2180,8 +2181,7 @@ int res;
 if(CELLRANGE(STR)) Fshelterpush(STR);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int N = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR-INDEX")),Fcons(fast_inverse(Fmakechar(".")),Flist1(fast_inverse(STR))))));({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(N))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(N)))) != NIL){
 res = ERRORstar(Fmakestr("lack of filename ext"),STR);}
  else res = NIL;res;})
 ;
@@ -2195,8 +2195,7 @@ int res;
 if(CELLRANGE(STR)) Fshelterpush(STR);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int N = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR-INDEX")),Fcons(fast_inverse(Fmakechar(".")),Flist1(fast_inverse(DROPSTRING(STR,fast_immediate(1))))))));({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(N))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(N)))) != NIL){
 res = ERRORstar(Fmakestr("lack of filename ext"),STR);}
  else res = NIL;res;})
 ;
@@ -2281,26 +2280,18 @@ if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUCTION"
 res = Fmakestr("gcc -O3 -shared -o ");}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUCTION")),NIL))),fast_convert(Fmakesym("LINUX"))) != NIL){
 res = Fmakestr("gcc -O3 -w -shared -fPIC -o ");}
-;res;}));int FNAME = fast_convert(FILENAME(X));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(T))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("initialize~%"))))));res;});
+;res;}));int FNAME = fast_convert(FILENAME(X));fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(T))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("initialize~%"))))));
 INITIALIZE();
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("pass1~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("pass1~%"))))));
 PASS1(X);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("pass2~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("pass2~%"))))));
 PASS2(X);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(NIL))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("finalize~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(NIL))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("finalize~%"))))));
 FINALIZE(X);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("invoke GCC~%"))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SYSTEM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(OPTION),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".o ")),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".c ")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("C-LANG-OPTION"))))))))))))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("invoke GCC~%"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("SYSTEM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(OPTION),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".o ")),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".c ")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("C-LANG-OPTION"))))))))))))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -2314,10 +2305,8 @@ if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUCTION"
 res = Fmakestr("gcc -O3 -shared -o ");}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUCTION")),NIL))),fast_convert(Fmakesym("LINUX"))) != NIL){
 res = Fmakestr("gcc -O3 -w -shared -fPIC -o ");}
-;res;}));int FNAME = fast_convert(FILENAME(X));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("invoke GCC~%"))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SYSTEM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(COMP),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".o ")),Fcons(fast_inverse(FNAME),Flist1(fast_inverse(Fmakestr(".c")))))))))))));res;});
+;res;}));int FNAME = fast_convert(FILENAME(X));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("invoke GCC~%"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("SYSTEM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(COMP),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".o ")),Fcons(fast_inverse(FNAME),Flist1(fast_inverse(Fmakestr(".c")))))))))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -2330,14 +2319,12 @@ if(Ffreecell() < 900) Fgbc();
  res = Fset_cdr(Fmakesym("INSTREAM"),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("OPEN-INPUT-FILE")),Flist1(fast_inverse(X))))));res;});
 res = ({int res;int SEXP = fast_convert(NIL);({int res;
 while(({int res;
- res = SEXP = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("READ")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))),Fcons(fast_inverse(NIL),Flist1(fast_inverse(NIL))))));res;});res;})
+ res = SEXP = fast_convert(Fcallsubr(Fcar(Fmakesym("READ")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))),Fcons(fast_inverse(NIL),Flist1(fast_inverse(NIL))))));res;})
  !=NIL){
 CHECK_ARGS_COUNT(SEXP);
 res = FIND_CATCH_BLOCK_TAG(SEXP);};res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))))));
 res = ({int res;
  res = Fset_cdr(Fmakesym("INSTREAM"),fast_inverse(NIL));res;});
 res;})
@@ -2385,8 +2372,7 @@ res = ERRORstar(Fmakestr("duplicate definition"),fast_convert(Fcallsubr(Fcar(Fma
 ;
 res = ({int res;
  res = Fset_cdr(Fmakesym("FUNCTION-ARG"),fast_inverse(Fcons(fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(1))))))),fast_inverse(COUNT_ARGS(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(2)))))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("FUNCTION-ARG")))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("DEFGLOBAL"))) != NIL){
 res = ({int res;
 if(fast_not(fast_numeqp(fast_convert(Flength(X)),fast_convert(fast_immediate(3)))) != NIL){
@@ -2404,8 +2390,7 @@ res = ({int res;
  res = Fset_cdr(Fmakesym("GLOBAL-VARIABLE"),fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(1))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("GLOBAL-VARIABLE")))))));res;});
 res = ({int res;
 if((fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("COMP-GLOBAL-VAR"))))))))) && fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2))))))))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));}
  else res = NIL;res;})
 ;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("DEFCONSTANT"))) != NIL){
@@ -2425,8 +2410,7 @@ res = ({int res;
  res = Fset_cdr(Fmakesym("GLOBAL-VARIABLE"),fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(1))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("GLOBAL-VARIABLE")))))));res;});
 res = ({int res;
 if((fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("COMP-GLOBAL-VAR"))))))))) && fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2))))))))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));}
  else res = NIL;res;})
 ;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("DEFCLASS"))) != NIL){
@@ -2442,8 +2426,7 @@ res = ({int res;
 res = ERRORstar(Fmakestr("defclass: not list"),fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));res;});}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("DEFGENERIC"))) != NIL){
 res = ({int res;
 if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))) != NIL){
@@ -2467,8 +2450,7 @@ res = ({int res;
  res = Fset_cdr(Fmakesym("FUNCTION-ARG"),fast_inverse(Fcons(fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(1))))))),fast_inverse(COUNT_ARGS(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(2)))))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("FUNCTION-ARG")))))));res;});
 res = ({int res;
  res = Fset_cdr(Fmakesym("GENERIC-NAME-ARG"),fast_inverse(Fcons(fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(1))))))),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(2))))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("GENERIC-NAME-ARG")))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("DEFMETHOD"))) != NIL){
 res = ({int res;
 if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))) != NIL){
@@ -2494,8 +2476,7 @@ res = ({int res;
 res = ERRORstar(Fmakestr("defmethod: not exist body"),X);res;});}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("EVAL")),Flist1(fast_inverse(X))));}
 ;res;});
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
@@ -2506,15 +2487,13 @@ FIND_CATCH_BLOCK_TAGloop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if((fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("CATCH"))) && fast_eqgreaterp(fast_convert(Flength(X)),fast_convert(fast_immediate(3))) && fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))) && fast_numeqp(fast_convert(Flength(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))),fast_convert(fast_immediate(2)))) != NIL){
 res = ({int res;
-if(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CATCH-BLOCK-TAG"))))))));res;})) != NIL){
+if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CATCH-BLOCK-TAG"))))))))) != NIL){
 res = ({int res;
  res = Fset_cdr(Fmakesym("CATCH-BLOCK-TAG"),fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakeint(1))))))),Flist1(fast_inverse(Fmakeint(1))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("CATCH-BLOCK-TAG")))))));res;});}
  else res = NIL;res;})
@@ -2556,8 +2535,7 @@ if(Ffreecell() < 900) Fgbc();
 DECLARE_CATCH_BLOCK_BUFFER();
 res = ({int res;int SEXP = fast_convert(NIL);({int res;
 while(({int res;
- res = SEXP = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("READ")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))),Fcons(fast_inverse(NIL),Flist1(fast_inverse(NIL))))));res;});res;})
+ res = SEXP = fast_convert(Fcallsubr(Fcar(Fmakesym("READ")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))),Fcons(fast_inverse(NIL),Flist1(fast_inverse(NIL))))));res;})
  !=NIL){
 ({int res;
 if(OPTIMIZE_P(SEXP) != NIL){
@@ -2569,8 +2547,7 @@ res = ({int res;
 ;
 res = COMPILE(SEXP);};res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))))));
 res = ({int res;
  res = Fset_cdr(Fmakesym("INSTREAM"),fast_inverse(NIL));res;});
 res;})
@@ -2582,8 +2559,7 @@ int res;
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
 res = fast_immediate(0);}
 else if(fast_numeqp(fast_convert(Flength(LS)),fast_convert(fast_immediate(1))) != NIL){
 res = fast_immediate(1);}
@@ -2619,8 +2595,7 @@ else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("D
 res = COMP_DEFMETHOD(X);}
 else{
 res = COMP(fast_convert(Fcdr(Fmakesym("CODE4"))),X,NIL,NIL,NIL,NIL,T,NIL,NIL);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(";"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(";"))))));}
 ;res;});
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
@@ -2644,33 +2619,27 @@ res = ({int res=NIL;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_immediate("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));}
 ;res;});}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("FIXNUMP")),Flist1(fast_inverse(X)))) && GLOBAL) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakeint("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FLOATP")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res=NIL;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestrflt(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-FLOAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-FLOAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-FLOAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));}
 ;res;});}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("BIGNUMP")),Flist1(fast_inverse(X)))) || fast_convert(Fcallsubr(Fcar(Fmakesym("LONGNUMP")),Flist1(fast_inverse(X))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakebig(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("STRINGP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestr("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
@@ -2678,8 +2647,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHARACTERP")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res=NIL;
 if((fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakechar("\\")))))) || fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(34)),Fmakesym("<CHARACTER>")))))))) || fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))))) != NIL){
@@ -2690,8 +2658,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakechar("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
@@ -2699,56 +2666,45 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("GENERAL-VECTOR-P")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fvector("))))));
 res = LIST_TO_C1(STREAM,fast_convert(Fconvert(fast_inverse(X),Fmakesym("<LIST>"))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("GENERAL-ARRAY*-P")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Farray("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(Flength(fast_convert(Fcallsubr(Fcar(Fmakesym("ARRAY-DIMENSIONS")),Flist1(fast_inverse(X)))))),Flist1(fast_inverse(fast_immediate(10)))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = LIST_TO_C1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("READED-ARRAY-LIST")),Flist1(fast_inverse(X)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) && CLOS) != NIL){
 res = ({int res=NIL;
 if(fast_eq(fast_convert(X),fast_convert(NIL)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else if(fast_eq(fast_convert(X),fast_convert(T)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(X),Flist1(fast_inverse(CLOS))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fnth("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(POSITION(X,CLOS)),Flist1(fast_inverse(fast_immediate(10)))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(",Fcdr(Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(NAME)),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(X),Flist1(fast_inverse(ENV))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert(Fcdr(Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));}
 ;res;});}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) && fast_not(CLOS)) != NIL){
 res = ({int res=NIL;
 if(fast_eq(fast_convert(X),fast_convert(NIL)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else if(fast_eq(fast_convert(X),fast_convert(T)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(X),Flist1(fast_inverse(ENV))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(X)),Fmakesym("<STRING>"))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(X)),Fmakesym("<STRING>"))))))));}
 else{
 res = ({int res;
 if((fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("GLOBAL-VARIABLE"))))))))) && fast_not(fast_eq(fast_convert(X),fast_convert(Fmakesym("*PI*")))) && fast_not(fast_eq(fast_convert(X),fast_convert(Fmakesym("*MOST-NEGATIVE-FLOAT*")))) && fast_not(fast_eq(fast_convert(X),fast_convert(Fmakesym("*MOST-POSITIVE-FLOAT*"))))) != NIL){
@@ -2758,8 +2714,7 @@ res = ERRORstar(Fmakestr("undefined global variable"),X);res;});}
 ;
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert(Fcdr(Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));}
 ;res;});}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("LAMBDA")))) != NIL){
 res = COMP_LAMBDA(X,ENV,GLOBAL);}
@@ -2795,12 +2750,10 @@ CLOS = temp9;
 goto COMPloop;};}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("QUOTE")))) != NIL){
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))) != NIL){
 res = LIST_TO_C1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));}
 else{
@@ -3001,8 +2954,7 @@ if(Ffreecell() < 900) Fgbc();
 ({int res;
  res = Fset_cdr(Fmakesym("CODE7"),fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("CREATE-STRING-OUTPUT-STREAM")),NIL))));res;});
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("void init_tfunctions(void){~%"))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("void init_declare(void){~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("void init_declare(void){~%"))))));
 return(res);}
 int DECLARE_CATCH_BLOCK_BUFFER(){
 int res;
@@ -3027,26 +2979,16 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("}"))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("}"))))));
-res = ({int res;int OUTSTREAM = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("OPEN-OUTPUT-FILE")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(FILENAME(X)),Flist1(fast_inverse(Fmakestr(".c")))))))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(Fmakestr("#include \"fast.h\"~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE5"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE6"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE7"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3"))))))))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4"))))))))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(OUTSTREAM))));res;});
+res = ({int res;int OUTSTREAM = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("OPEN-OUTPUT-FILE")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(FILENAME(X)),Flist1(fast_inverse(Fmakestr(".c")))))))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(Fmakestr("#include \"fast.h\"~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE5"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE6"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE7"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3"))))))))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(OUTSTREAM),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4"))))))))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(OUTSTREAM))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3104,21 +3046,14 @@ res = ({int res;int NAME = fast_convert(LAMBDA_NAME());int ARGS = fast_convert(f
 COMP_LAMBDA1(X,NAME);
 COMP_LAMBDA2(BODY,ENV,ARGS,NAME,FREE);
 COMP_LAMBDA3(NAME);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({Fset_cdr(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({Fset_cdr(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),"))))));
 FREE_VARIABLE_LIST(STREAM,FREE);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcar(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));})"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcar(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));})"))))));
 res = ({int res;
  res = Fset_cdr(Fmakesym("LAMBDA-NEST"),fast_inverse(fast_minus(fast_convert(fast_convert(Fcdr(Fmakesym("LAMBDA-NEST")))),fast_convert(Fmakeint(1)))));res;});
 res;})
@@ -3151,24 +3086,18 @@ int COMP_DEFUN0(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(Flength(ARGS));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("(int arglist);"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(Flength(ARGS));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("(int arglist);"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
 ({int res;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE0"))),ARGS);}
 else{
 res = TYPE_GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE0"))),ARGS,ARGUMENT_TYPE(NAME));}res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(";~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3178,19 +3107,13 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(NAME)) Fshelterpush(NAME);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int N = fast_convert(Flength(ARGS));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("(int arglist);"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
+res = ({int res;int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int N = fast_convert(Flength(ARGS));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("(int arglist);"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
 GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE0"))),ARGS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(";~%"))))));
 res;})
 ;
 if(CELLRANGE(NAME)) Fshelterpop();
@@ -3200,19 +3123,13 @@ int COMP_DEFGENERIC0(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(Flength(ARGS));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("(int arglist);"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(Flength(ARGS));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("(int arglist);"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
 GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE0"))),ARGS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(";~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3221,12 +3138,9 @@ int COMP_DEFUN1(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(COUNT_ARGS(ARGS));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("int f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("(int arglist){~%"))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(COUNT_ARGS(ARGS));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("int f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("(int arglist){~%"))))));
 GEN_ARG1(fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(N)))));
 GEN_ASSIGN(N);
 ({int res;
@@ -3235,8 +3149,7 @@ res = GEN_CALL(CONV_NAME(NAME),fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flis
 else{
 res = TYPE_GEN_CALL(NAME,fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(N)))));}res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("}~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3246,17 +3159,13 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(NAME)) Fshelterpush(NAME);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int N = fast_convert(COUNT_ARGS(ARGS));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("int f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("(int arglist){~%"))))));res;});
+res = ({int res;int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int N = fast_convert(COUNT_ARGS(ARGS));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("int f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("(int arglist){~%"))))));
 GEN_ARG1(fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(N)))));
 GEN_ASSIGN(N);
 GEN_CALL(CONV_NAME(NAME),fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(N)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("}~%"))))));
 res;})
 ;
 if(CELLRANGE(NAME)) Fshelterpop();
@@ -3266,17 +3175,13 @@ int COMP_DEFGENERIC1(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(COUNT_ARGS(ARGS));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("int f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("(int arglist){~%"))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int N = fast_convert(COUNT_ARGS(ARGS));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("int f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("(int arglist){~%"))))));
 GEN_ARG1(fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(N)))));
 GEN_ASSIGN(N);
 GEN_CALL(CONV_NAME(NAME),fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(N)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("}~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3285,20 +3190,16 @@ int COMP_DEFUN2(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
 ({int res;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE2"))),ARGS);}
 else{
 res = TYPE_GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE2"))),ARGS,ARGUMENT_TYPE(NAME));}res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("{~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int res;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("{~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int res;~%"))))));
 ({int res=NIL;
 if((fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) && HAS_TAIL_RECUR_P(BODY,NAME)) != NIL){
 res = GEN_ARG3(Flength(ARGS));}
@@ -3308,8 +3209,7 @@ res = TYPE_GEN_ARG3(Flength(ARGS),ARGUMENT_TYPE(NAME));}
 ({int res=NIL;
 if(HAS_TAIL_RECUR_P(BODY,NAME) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("loop:~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("loop:~%"))))));}
 ;res;});
 ({int res=NIL;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
@@ -3344,8 +3244,7 @@ if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = GEN_SHELTERPOP(fast_convert(Fcdr(Fmakesym("CODE2"))),fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(ARGS)))));}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3358,20 +3257,15 @@ if(CELLRANGE(ARGS)) Fshelterpush(ARGS);
 if(CELLRANGE(NAME)) Fshelterpush(NAME);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int STREAM = fast_convert(LAMBDA_STREAM_CALLEE());({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
+res = ({int res;int STREAM = fast_convert(LAMBDA_STREAM_CALLEE());fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
 GEN_ARG2(STREAM,ARGS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("{~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int res;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("{~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int res;~%"))))));
 ({int res=NIL;
 if(HAS_TAIL_RECUR_P(BODY,NAME) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("loop:~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("loop:~%"))))));}
 ;res;});
 GEN_SHELTERPUSH(STREAM,ARGS);
 res = ({int res;
@@ -3390,8 +3284,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM)
 COMP(STREAM,fast_convert(fast_car(BODY1)),ARGS,ARGS,NIL,NAME,NIL,NIL,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));
 GEN_SHELTERPOP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(ARGS)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -3440,8 +3333,15 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(ENV)) Fshelterpush(ENV);
 if(CELLRANGE(ARGS)) Fshelterpush(ARGS);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(FIND_FREE_VARIABLE1(X,ENV,ARGS)),Flist1(fast_inverse(Fcons(T,NIL))))));res;});
+res = ({int arg1,arg2,res;
+arg1 = fast_inverse(FIND_FREE_VARIABLE1(X,ENV,ARGS));
+Fshelterpush(arg1);
+arg2 = fast_inverse(Fcons(T,NIL));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;});
 if(CELLRANGE(ARGS)) Fshelterpop();
 if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
@@ -3453,17 +3353,22 @@ if(CELLRANGE(ENV)) Fshelterpush(ENV);
 if(CELLRANGE(ARGS)) Fshelterpush(ARGS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) && fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(X),Flist1(fast_inverse(ENV)))))) && fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(X),Flist1(fast_inverse(ARGS)))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(X))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(FIND_FREE_VARIABLE1(fast_convert(fast_car(X)),ENV,ARGS)),Flist1(fast_inverse(FIND_FREE_VARIABLE1(fast_convert(fast_cdr(X)),ENV,ARGS))))));res;});}
+res = ({int arg1,arg2,res;
+arg1 = fast_inverse(FIND_FREE_VARIABLE1(fast_convert(fast_car(X)),ENV,ARGS));
+Fshelterpush(arg1);
+arg2 = fast_inverse(FIND_FREE_VARIABLE1(fast_convert(fast_cdr(X)),ENV,ARGS));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;});}
 ;res;});
 if(CELLRANGE(ARGS)) Fshelterpop();
 if(CELLRANGE(ENV)) Fshelterpop();
@@ -3475,17 +3380,14 @@ if(CELLRANGE(STREAM)) Fshelterpush(STREAM);
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcons("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(X)))),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = FREE_VARIABLE_LIST(STREAM,fast_convert(fast_cdr(X)));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(STREAM)) Fshelterpop();
@@ -3494,21 +3396,16 @@ int COMP_DEFGENERIC2(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(VARLIS_TO_LAMBDA_ARGS(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2))))))));int METHOD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD")),Flist1(fast_inverse(NAME)))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(NAME)),Fmakesym("<STRING>"))))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARGS = fast_convert(VARLIS_TO_LAMBDA_ARGS(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2))))))));int METHOD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD")),Flist1(fast_inverse(NAME)))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(NAME)),Fmakesym("<STRING>"))))))));
 GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE2"))),ARGS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("{~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int res;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("{~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int res;~%"))))));
 GEN_SHELTERPUSH(fast_convert(Fcdr(Fmakesym("CODE2"))),ARGS);
 GEN_CHECKGC();
 COMP_DEFGENERIC_BODY(METHOD,NIL);
 GEN_SHELTERPOP(fast_convert(Fcdr(Fmakesym("CODE2"))),fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(ARGS)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3518,8 +3415,7 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym(":REST"))) != NIL){
 res = fast_convert(fast_cdr(X));}
@@ -3542,59 +3438,47 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(AFTER)) Fshelterpush(AFTER);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = ({int res;int VARBODY = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD-BODY")),Flist1(fast_inverse(fast_convert(fast_car(X)))))));int VARLIS = fast_convert(fast_convert(fast_car(VARBODY)));int BODY = fast_convert(fast_convert(fast_cdr(VARBODY)));int PRIORITY = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD-PRIORITY")),Flist1(fast_inverse(fast_convert(fast_car(X)))))));({int res;
 if((fast_numeqp(fast_convert(PRIORITY),fast_convert(fast_immediate(14))) && fast_not(PRIORITY)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("after:~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("after:~%"))))));}
  else res = NIL;res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("if("))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("if("))))));
 COMP_DEFGENERIC_COND(VARLIS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(")~%{"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(")~%{"))))));
 COMP_PROGN1(fast_convert(Fcdr(Fmakesym("CODE2"))),BODY,VARLIS_TO_LAMBDA_ARGS(VARLIS),NIL,NIL,NIL,NIL,NIL,NIL);
 ({int res;
 if((METHOD_NEED_RETURN_P(X) && fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("EQUAL")),Fcons(fast_inverse(LAST(BODY)),Flist1(fast_inverse(Fcons(Fmakesym("CALL-NEXT-METHOD"),NIL)))))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);"))))));}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("}~%"))))));
 res;})
 ;}
 else{
 res = ({int res;int VARBODY = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD-BODY")),Flist1(fast_inverse(fast_convert(fast_car(X)))))));int VARLIS = fast_convert(fast_convert(fast_car(VARBODY)));int BODY = fast_convert(fast_convert(fast_cdr(VARBODY)));int PRIORITY = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD-PRIORITY")),Flist1(fast_inverse(fast_convert(fast_car(X)))))));({int res;
 if((fast_numeqp(fast_convert(PRIORITY),fast_convert(fast_immediate(14))) && fast_not(AFTER)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("after:~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("after:~%"))))));}
  else res = NIL;res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("if("))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("if("))))));
 COMP_DEFGENERIC_COND(VARLIS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(")~%{"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(")~%{"))))));
 COMP_PROGN1(fast_convert(Fcdr(Fmakesym("CODE2"))),BODY,VARLIS_TO_LAMBDA_ARGS(VARLIS),NIL,NIL,NIL,NIL,NIL,NIL);
 ({int res;
 if((METHOD_NEED_RETURN_P(X) && fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("EQUAL")),Fcons(fast_inverse(LAST(BODY)),Flist1(fast_inverse(Fcons(Fmakesym("CALL-NEXT-METHOD"),NIL)))))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);"))))));}
  else res = NIL;res;})
 ;
 ({int res;
 if((fast_numeqp(fast_convert(PRIORITY),fast_convert(fast_immediate(13))) && METHOD_NEED_RETURN_P1(fast_convert(fast_cdr(X)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("goto after;"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("goto after;"))))));}
  else res = NIL;res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("}~%"))))));
 {
 temp1 = fast_convert(fast_cdr(X));
 temp2 = ({int res;
@@ -3619,8 +3503,7 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = T;}
 else if(fast_numeqp(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD-PRIORITY")),Flist1(fast_inverse(fast_convert(fast_car(X))))))),fast_convert(fast_immediate(11))) != NIL){
 res = T;}
@@ -3644,8 +3527,7 @@ METHOD_NEED_RETURN_P1loop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if(fast_numeqp(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("GET-METHOD-PRIORITY")),Flist1(fast_inverse(fast_convert(fast_car(X))))))),fast_convert(fast_immediate(11))) != NIL){
 res = NIL;}
@@ -3669,8 +3551,7 @@ COMP_DEFGENERIC_CONDloop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym(":REST"))) != NIL){
 res = T;}
@@ -3701,8 +3582,7 @@ COMP_DEFGENERIC_COND1loop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym(":REST"))) != NIL){
 res = T;}
@@ -3734,16 +3614,11 @@ int COMP_DEFUN3(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("(deftfunc)(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("\" , f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr(");~%"))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("(deftfunc)(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("\" , f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr(");~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3756,24 +3631,18 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("\" , f_"))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr(");~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr(");~%"))))));
 if(CELLRANGE(NAME)) Fshelterpop();
 return(res);}
 int COMP_DEFGENERIC3(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("(deftfunc)(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("\" , f_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr(");~%"))))));res;});
+res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("(deftfunc)(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(NAME),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr("\" , f_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE3")))),Flist1(fast_inverse(Fmakestr(");~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -3797,8 +3666,7 @@ M = temp1;
 }
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("arg"))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Fcons(fast_inverse(M),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});res;});}
  else res = NIL;res;})
 ;
 if(CELLRANGE(N)) Fshelterpop();
@@ -3810,10 +3678,8 @@ if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("("))))));
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else{
 res = ({int res;
 int LS1 = fast_convert(REMOVE(Fmakesym("&REST"),REMOVE(Fmakesym(":REST"),LS)));int temp1;
@@ -3826,8 +3692,7 @@ LS1 = temp1;
 }
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int "))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(LS1)))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});res;});}res;})
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}res;})
 ;
 if(CELLRANGE(LS)) Fshelterpop();
 if(CELLRANGE(STREAM)) Fshelterpop();
@@ -3851,8 +3716,7 @@ M = temp1;
 }
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("temp"))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});res;});}
  else res = NIL;res;})
 ;
 if(CELLRANGE(N)) Fshelterpop();
@@ -3880,8 +3744,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr(" = Fnthcdr("))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_minus(fast_convert(M),fast_convert(fast_immediate(1)))),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr(",arglist);~%"))))));res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr(",arglist);~%"))))));res;});}
 else{
 res = ({int res;
 int M = fast_convert(fast_immediate(1));int temp1;
@@ -3907,8 +3770,7 @@ res = ({int res=NIL;
 if(fast_numeqp(fast_convert(N),fast_convert(fast_immediate(0))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("return(fast_inverse("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(NAME),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("() ));~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("() ));~%"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("return(fast_inverse("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(NAME),Fmakesym("<STRING>"))))))));
@@ -3924,8 +3786,7 @@ M = temp1;
 }
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("fast_convert(arg"))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("))));~%"))))));res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("))));~%"))))));res;});}
 ;res;});
 if(CELLRANGE(N)) Fshelterpop();
 if(CELLRANGE(NAME)) Fshelterpop();
@@ -3936,8 +3797,7 @@ if(CELLRANGE(STREAM)) Fshelterpush(STREAM);
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;})) != NIL){
+if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))))) != NIL){
 res = ({int res;
 res = ({int res;
 int LS1 = fast_convert(REMOVE(Fmakesym(":REST"),REMOVE(Fmakesym("&REST"),LS)));int temp1;
@@ -3962,8 +3822,7 @@ if(CELLRANGE(STREAM)) Fshelterpush(STREAM);
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;})) != NIL){
+if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))))) != NIL){
 res = ({int res;
 res = ({int res;
 int LS1 = fast_convert(REMOVE(Fmakesym(":REST"),REMOVE(Fmakesym("&REST"),LS)));int temp1;
@@ -3983,8 +3842,7 @@ return(res);}
 int GEN_CHECKGC(){
 int res;
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("if(Ffreecell() < 900) Fgbc();~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("if(Ffreecell() < 900) Fgbc();~%"))))));
 return(res);}
 int COMP_IF(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS){
 int res;
@@ -4020,8 +3878,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM)
  else res = NIL;res;})
 ;
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";}~% else res = NIL;res;})~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";}~% else res = NIL;res;})~%"))))));}
 else if(fast_numeqp(fast_convert(Flength(X)),fast_convert(fast_immediate(4))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~%if("))))));
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,T,CLOS);
@@ -4045,8 +3902,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM)
  else res = NIL;res;})
 ;
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(3)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";}res;})~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";}res;})~%"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -4074,75 +3930,54 @@ res = ({int res=NIL;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = ({int res=NIL;
 if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("EQ"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_eq("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_eq("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("="))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_numeqp("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_numeqp("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("<"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_smallerp("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_smallerp("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("<="))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_eqsmallerp("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_eqsmallerp("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym(">"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_greaterp("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_greaterp("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym(">="))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_eqgreaterp("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_eqgreaterp("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("+"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_plus("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_plus("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("-"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_minus("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_minus("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("*"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_mult("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_mult("))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("MOD"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_mod("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_mod("))))));}
 ;res;});
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert("))))));
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("),fast_convert("))))));
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));}
 else{
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 res = ({int res=NIL;
 if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("EQ"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("=="))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("=="))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("="))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("=="))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("=="))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("<"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("<"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("<"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("<="))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("<="))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("<="))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym(">"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(">"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(">"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym(">="))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(">="))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(">="))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("+"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("+"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("+"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("-"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("-"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("-"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("*"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("*"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("*"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("MOD"))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("%"))))));}
 ;res;});
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);}
 ;res;});
@@ -4181,8 +4016,7 @@ res = ERRORstar(Fmakestr("call: illegal argument count"),X);res;});}
  else res = NIL;res;})
 ;
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(X)))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("()"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("()"))))));}
 else{
 res = COMP_FUNCALL_CLANG(STREAM,X,ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);}
 ;res;});
@@ -4227,8 +4061,7 @@ temp1 = fast_convert(fast_cdr(LS));
 LS = temp1;
 }
 COMP(STREAM,fast_convert(fast_car(LS)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(X)))),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("("))))));
@@ -4243,8 +4076,7 @@ LS = temp1;
 M = temp2;
 }
 COMP_FUNCALL_CLANG1(STREAM,LS,ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
 ;res;});
 res;})
 ;
@@ -4271,17 +4103,14 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcons(fast_inverse("))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("),"))))));
 res = COMP_FUNCALL_CLANG1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -4340,8 +4169,7 @@ N = temp2;
 res = T;res;});
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("goto "))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(NAME)),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("loop;}"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("loop;}"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -4368,8 +4196,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(NIL))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")),"))))));
 COMP_SUBRCALL2(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -4393,20 +4220,60 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(TAIL != NIL){
-res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~% res=fast_convert(Fcallsubr(Fcar(Fmakesym(\""))))));
-res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(NIL))))));
-res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")),"))))));
-res = COMP_SUBRCALL1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("));res;})"))))));res;});}
-else{
+if(fast_not(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("APPEND")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert(Fcallsubr(Fcar(Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")),"))))));
 res = COMP_SUBRCALL1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));}
+else{
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int "))))));
 res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});}
+int LS = fast_convert(fast_convert(fast_cdr(X)));int N = fast_convert(fast_immediate(1));int temp1,temp2;
+while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) == NIL){
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("arg"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(N),Flist1(fast_inverse(fast_immediate(10)))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
+temp1 = fast_convert(fast_cdr(LS));
+temp2 = fast_plus(fast_convert(N),fast_convert(fast_immediate(1)));
+LS = temp1;
+N = temp2;
+}
+res = T;res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;~%"))))));
+res = ({int res;
+int LS = fast_convert(fast_convert(fast_cdr(X)));int N = fast_convert(fast_immediate(1));int temp1,temp2;
+while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) == NIL){
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("arg"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(N),Flist1(fast_inverse(fast_immediate(10)))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(" = fast_inverse("))))));
+COMP(STREAM,fast_convert(fast_car(LS)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fshelterpush(arg"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(N),Flist1(fast_inverse(fast_immediate(10)))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");~%"))))));
+temp1 = fast_convert(fast_cdr(LS));
+temp2 = fast_plus(fast_convert(N),fast_convert(fast_immediate(1)));
+LS = temp1;
+N = temp2;
+}
+res = T;res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = fast_convert(Fcallsubr(Fcar(Fmakesym(\""))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")),"))))));
+res = COMP_SUBRCALL3(STREAM,fast_immediate(1),Flength(fast_convert(fast_cdr(X))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("));~%"))))));
+res = ({int res;
+int LS = fast_convert(fast_convert(fast_cdr(X)));int N = fast_convert(fast_immediate(1));int temp1,temp2;
+while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) == NIL){
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fshelterpop();~%"))))));
+temp1 = fast_convert(fast_cdr(LS));
+temp2 = fast_plus(fast_convert(N),fast_convert(fast_immediate(1)));
+LS = temp1;
+N = temp2;
+}
+res = T;res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -4431,15 +4298,12 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Flist1(fast_inverse("))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));}
 else{
 res = COMP_SUBRCALL2(STREAM,X,ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);}
 ;res;});
@@ -4466,22 +4330,18 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Flist1(fast_inverse("))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcons(fast_inverse("))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("),"))))));
 res = COMP_SUBRCALL2(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -4491,6 +4351,28 @@ if(CELLRANGE(TAIL)) Fshelterpop();
 if(CELLRANGE(ARGS)) Fshelterpop();
 if(CELLRANGE(ENV)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
+if(CELLRANGE(STREAM)) Fshelterpop();
+return(res);}
+int COMP_SUBRCALL3(int STREAM,int M,int N){
+int res;
+if(CELLRANGE(STREAM)) Fshelterpush(STREAM);
+if(CELLRANGE(M)) Fshelterpush(M);
+if(CELLRANGE(N)) Fshelterpush(N);
+if(Ffreecell() < 900) Fgbc();
+res = ({int res=NIL;
+if(fast_numeqp(fast_convert(M),fast_convert(N)) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Flist1(arg"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(M),Flist1(fast_inverse(fast_immediate(10)))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
+else{
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcons(arg"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(M),Flist1(fast_inverse(fast_immediate(10)))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
+res = COMP_SUBRCALL3(STREAM,fast_plus(fast_convert(M),fast_convert(fast_immediate(1))),N);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
+;res;});
+if(CELLRANGE(N)) Fshelterpop();
+if(CELLRANGE(M)) Fshelterpop();
 if(CELLRANGE(STREAM)) Fshelterpop();
 return(res);}
 int COMP_LABELS(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS){
@@ -4547,8 +4429,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else{
 res = COMP_LABELS2(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
@@ -4630,20 +4511,16 @@ res = ERRORstar(Fmakestr("labels: not exist body"),X);res;});}
 ;
 res = ({int res;int LOCAL_NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0)))))));int ARGS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));({int res;
  res = Fset_cdr(Fmakesym("FUNCTION-ARG"),fast_inverse(Fcons(fast_inverse(Fcons(fast_inverse(LOCAL_NAME),fast_inverse(COUNT_ARGS(ARGS)))),fast_inverse(fast_convert(Fcdr(Fmakesym("FUNCTION-ARG")))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(CONV_NAME(LOCAL_NAME)),Flist1(fast_inverse(NIL))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(CONV_NAME(LOCAL_NAME)),Flist1(fast_inverse(NIL))))));
 ({int res;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE2"))),ARGS);}
 else{
 res = TYPE_GEN_ARG2(fast_convert(Fcdr(Fmakesym("CODE2"))),ARGS,LOCAL_ARGUMENT_TYPE(NAME,LOCAL_NAME));}res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("{~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int res;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("{~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int res;~%"))))));
 ({int res=NIL;
 if((fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) && HAS_TAIL_RECUR_P(BODY,LOCAL_NAME)) != NIL){
 res = GEN_ARG3(Flength(ARGS));}
@@ -4653,8 +4530,7 @@ res = TYPE_GEN_ARG3(Flength(ARGS),LOCAL_ARGUMENT_TYPE(NAME,LOCAL_NAME));}
 ({int res=NIL;
 if(HAS_TAIL_RECUR_P(BODY,LOCAL_NAME) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(CONV_NAME(LOCAL_NAME)),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("loop:~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("loop:~%"))))));}
 ;res;});
 ({int res=NIL;
 if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
@@ -4669,7 +4545,15 @@ if(fast_not(NOT_NEED_RES_P(fast_convert(fast_car(BODY1)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("res = "))))));}
  else res = NIL;res;})
 ;
-COMP(fast_convert(Fcdr(Fmakesym("CODE2"))),fast_convert(fast_car(BODY1)),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(ARGS),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
+COMP(fast_convert(Fcdr(Fmakesym("CODE2"))),fast_convert(fast_car(BODY1)),({int arg1,arg2,res;
+arg1 = fast_inverse(ARGS);
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr(";~%"))))));
 temp1 = fast_convert(fast_cdr(BODY1));
 BODY1 = temp1;
@@ -4679,8 +4563,7 @@ if(fast_not(fast_convert(Fcdr(Fmakesym("OPTIMIZE-ENABLE")))) != NIL){
 res = GEN_SHELTERPOP(fast_convert(Fcdr(Fmakesym("CODE2"))),fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(ARGS)))));}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("return(res);}~%"))))));res;});
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -4716,7 +4599,15 @@ COMP_LET1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse
 res = ({int res;
 int BODY1 = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));int temp1;
 while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(BODY1)))))) == NIL){
-COMP(STREAM,fast_convert(fast_car(BODY1)),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))))),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
+COMP(STREAM,fast_convert(fast_car(BODY1)),({int arg1,arg2,res;
+arg1 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))));
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 ({int res;
 if(fast_not(NOT_NEED_COLON_P(fast_convert(fast_car(BODY1)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));}
@@ -4730,14 +4621,21 @@ if(fast_not(TAILCALLP(fast_convert(fast_car(BODY1)),TAIL,NAME)) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = "))))));}
  else res = NIL;res;})
 ;
-COMP(STREAM,fast_convert(fast_car(BODY1)),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))))),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
+COMP(STREAM,fast_convert(fast_car(BODY1)),({int arg1,arg2,res;
+arg1 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))));
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 ({int res;
 if(fast_not(NOT_NEED_COLON_P(fast_convert(fast_car(BODY1)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})~%"))))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})~%"))))));res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -4767,11 +4665,27 @@ res = ERRORstar(Fmakestr("let*: not list"),fast_convert(Fcallsubr(Fcar(Fmakesym(
  else res = NIL;res;})
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;"))))));
-COMP_LET1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))))),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
+COMP_LET1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),({int arg1,arg2,res;
+arg1 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))));
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 res = ({int res;
 int BODY1 = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));int temp1;
 while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(BODY1)))))) == NIL){
-COMP(STREAM,fast_convert(fast_car(BODY1)),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))))),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
+COMP(STREAM,fast_convert(fast_car(BODY1)),({int arg1,arg2,res;
+arg1 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))));
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 ({int res;
 if(fast_not(NOT_NEED_COLON_P(fast_convert(fast_car(BODY1)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));}
@@ -4785,14 +4699,21 @@ if(fast_not(TAILCALLP(fast_convert(fast_car(BODY1)),TAIL,NAME)) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = "))))));}
  else res = NIL;res;})
 ;
-COMP(STREAM,fast_convert(fast_car(BODY1)),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))))),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
+COMP(STREAM,fast_convert(fast_car(BODY1)),({int arg1,arg2,res;
+arg1 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))));
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 ({int res;
 if(fast_not(NOT_NEED_COLON_P(fast_convert(fast_car(BODY1)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})~%"))))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})~%"))))));res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -4867,8 +4788,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else{
 res = COMP_LET2(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
@@ -4934,8 +4854,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0)))))))),Fmakesym("<STRING>"))))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(" = fast_convert("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -4993,15 +4912,12 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(T)) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else{~%"))))));
 res = COMP_COND2(STREAM,fast_convert(fast_cdr(fast_convert(fast_car(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else if("))))));
 res = COMP(STREAM,fast_convert(fast_car(fast_convert(fast_car(X)))),ENV,ARGS,NIL,NAME,GLOBAL,T,CLOS);
@@ -5073,8 +4989,7 @@ res = ERRORstar(Fmakestr("cond: illegal form"),X);res;});}
  else res = NIL;res;})
 ;
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = ({int res;
 if((fast_not(TAILCALLP(fast_convert(fast_car(X)),T,NAME)) && fast_not(NOT_NEED_RES_P(fast_convert(fast_car(X))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = "))))));}
@@ -5086,8 +5001,7 @@ if(fast_not(NOT_NEED_COLON_P(fast_convert(fast_car(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";"))))));}
  else res = NIL;res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~%"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = "))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
@@ -5187,15 +5101,12 @@ if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(CELLRANGE(KEY)) Fshelterpush(KEY);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(T)) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else{~%"))))));
 res = COMP_COND2(STREAM,fast_convert(fast_cdr(fast_convert(fast_car(X)))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else if(Fmember(fast_inverse("))))));
 res = COMP(STREAM,KEY,ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
@@ -5295,15 +5206,12 @@ if(CELLRANGE(KEY)) Fshelterpush(KEY);
 if(CELLRANGE(PRED)) Fshelterpush(PRED);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(T)) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else{~%"))))));
 res = COMP_COND2(STREAM,fast_convert(fast_cdr(fast_convert(fast_car(X)))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else if(Fmember1(fast_inverse("))))));
 res = COMP(STREAM,KEY,ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
@@ -5367,8 +5275,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(NAME)) Fshelterpush(NAME);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else{
 res = HAS_TAIL_RECUR_P1(LAST(X),NAME);}
@@ -5382,8 +5289,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(NAME)) Fshelterpush(NAME);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
@@ -5447,27 +5353,53 @@ res = ({int res;
 res = ERRORstar(Fmakestr("for: illegal variable"),VARS);res;});}
  else res = NIL;res;})
 ;
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~%"))))));
 COMP_LET1(STREAM,VARS,ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 GEN_ARG3(Flength(VARS));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("while("))))));
+COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(END),Flist1(fast_inverse(fast_immediate(0)))))),({int arg1,arg2,res;
+arg1 = fast_inverse(VAR1);
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(" == NIL){~%"))))));
+COMP_FOR1(STREAM,BODY,({int arg1,arg2,res;
+arg1 = fast_inverse(VAR1);
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
+COMP_FOR2(STREAM,VARS,({int arg1,arg2,res;
+arg1 = fast_inverse(VAR1);
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("while("))))));res;});
-COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(END),Flist1(fast_inverse(fast_immediate(0)))))),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(VAR1),Flist1(fast_inverse(ENV))))),ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(" == NIL){~%"))))));res;});
-COMP_FOR1(STREAM,BODY,fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(VAR1),Flist1(fast_inverse(ENV))))),ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-COMP_FOR2(STREAM,VARS,fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(VAR1),Flist1(fast_inverse(ENV))))),ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
-if(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(END))))));res;})) != NIL){
-res = COMP_PROGN1(STREAM,fast_convert(fast_cdr(END)),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(VAR1),Flist1(fast_inverse(ENV))))),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);}
+if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(END))))))) != NIL){
+res = COMP_PROGN1(STREAM,fast_convert(fast_cdr(END)),({int arg1,arg2,res;
+arg1 = fast_inverse(VAR1);
+Fshelterpush(arg1);
+arg2 = fast_inverse(ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=NIL;"))))));res;});}res;})
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=NIL;"))))));}res;})
 ;
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -5495,8 +5427,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else{
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
@@ -5590,8 +5521,7 @@ UPDATE = temp1;
 N = temp2;
 }
 res = T;res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~%"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -5616,8 +5546,7 @@ if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~%"))))));
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -5643,8 +5572,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = ({int res;
@@ -5655,8 +5583,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM)
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 res = ({int res;
 if(fast_not(NOT_NEED_COLON_P(fast_convert(fast_car(X)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";"))))));}
  else res = NIL;res;})
 ;}
 else{
@@ -5722,8 +5649,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") != NIL)~%"))))));
 COMP_AND1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=NIL;res;})~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=NIL;res;})~%"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -5747,22 +5673,18 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=res;"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=res;"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(Fmakestr("if((res=")),Fcons(fast_inverse(ENV),Fcons(fast_inverse(ARGS),Fcons(fast_inverse(TAIL),Fcons(fast_inverse(NAME),Flist1(fast_inverse(GLOBAL))))))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") !=NIL)~%res=res;~%else res=NIL;~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") !=NIL)~%res=res;~%else res=NIL;~%"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("if((res="))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") != NIL)~%"))))));
 res = COMP_AND1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=NIL;"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=NIL;"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -5790,8 +5712,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") == NIL)~%"))))));
 COMP_OR1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=res;res;})~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=res;res;})~%"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -5815,22 +5736,18 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = res;"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res = res;"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(Fmakestr("if((res=")),Fcons(fast_inverse(ENV),Fcons(fast_inverse(ARGS),Fcons(fast_inverse(TAIL),Fcons(fast_inverse(NAME),Flist1(fast_inverse(GLOBAL))))))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") !=NIL)~%res=res;~%else res=NIL;~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") !=NIL)~%res=res;~%else res=NIL;~%"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("if((res="))))));
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(") == NIL)~%"))))));
 res = COMP_OR1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=res;"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("else res=res;"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -5856,8 +5773,7 @@ if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("("))))));
 COMP_TEST_AND1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -5883,8 +5799,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);}
 else{
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
@@ -5943,8 +5858,7 @@ if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("("))))));
 COMP_TEST_OR1(STREAM,fast_convert(fast_cdr(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -5970,8 +5884,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X))))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(fast_cdr(X)))))) != NIL){
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);}
 else{
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
@@ -6038,8 +5951,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,T,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(" !=NIL){~%"))))));
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("};res;})~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("};res;})~%"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6069,14 +5981,12 @@ res = ERRORstar(Fmakestr("setq: not symbol"),X);res;});}
  else res = NIL;res;})
 ;
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(ENV)))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(ENV))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~% res = "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(" = "))))));
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})~%"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(CLOS))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~% res = "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_setnth(Fcdr(Fmakesym(\""))))));
@@ -6085,16 +5995,14 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM)
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(POSITION(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),CLOS)),Flist1(fast_inverse(fast_immediate(10)))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");res;})"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");res;})"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res;~% res = "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fset_cdr(Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Fmakesym("<STRING>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),fast_inverse("))))));
 res = COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,NIL,NAME,T,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("));res;})"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("));res;})"))))));}
 ;res;});
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
@@ -6128,8 +6036,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))),Fmakesym("<STRING>"))))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(":~%"))))));
 COMP_TAGBODY1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})~%"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6155,8 +6062,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(fast_car(X)))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(fast_convert(fast_car(X)))),Fmakesym("<STRING>"))))))));
@@ -6197,8 +6103,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM)
  else res = NIL;res;})
 ;
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";"))))));}
 else{
 res = COMP(STREAM,fast_convert(fast_car(X)),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));
@@ -6262,8 +6167,7 @@ res = ERRORstar(Fmakestr("go: not symbol"),fast_convert(Fcallsubr(Fcar(Fmakesym(
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("goto "))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(CONV_NAME(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";~%"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6302,8 +6206,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("),Fmakesym(\""))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2))))))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6340,8 +6243,7 @@ res = ERRORstar(Fmakestr("function: illegal form"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcar(Fmakesym(\""))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6378,8 +6280,7 @@ res = ERRORstar(Fmakestr("symbol-function: illegal form"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcar("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6416,8 +6317,7 @@ res = ERRORstar(Fmakestr("class: illegal form"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Faux(Fmakesym(\""))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6454,8 +6354,7 @@ res = ERRORstar(Fmakestr("class: illegal form"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Faux("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6478,49 +6377,30 @@ if(CELLRANGE(GLOBAL)) Fshelterpush(GLOBAL);
 if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,ret,i;~% "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i+1);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret=setjmp(c_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i]);"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("if(ret == 0){~%"))))));res;});
+res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,ret,i;~% "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i+1);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret=setjmp(c_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i]);"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("if(ret == 0){~%"))))));
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~% else{~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret = 0;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~% else{~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret = 0;~%"))))));
 ({int res=NIL;
 if(fast_convert(Fcdr(Fmakesym("UNWIND-THUNK"))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("UNWIND-THUNK")))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("();"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("();"))))));}
 ;res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=catch_arg;}~%"))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=catch_arg;}~%"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -6545,29 +6425,18 @@ if(CELLRANGE(GLOBAL)) Fshelterpush(GLOBAL);
 if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,i;~%"))))));res;});
+res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,i;~%"))))));
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("catch_arg=res;~% "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i-1);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("longjmp(c_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i-1],1);res;})~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("catch_arg=res;~% "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i-1);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("longjmp(c_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i-1],1);res;})~%"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -6598,49 +6467,30 @@ res = ({int res;
 res = ERRORstar(Fmakestr("block: not symbol"),fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));res;});}
  else res = NIL;res;})
 ;
-res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,ret,i;~% "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i+1);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret=setjmp(c_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i]);"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("if(ret == 0){~%"))))));res;});
+res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,ret,i;~% "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i+1);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret=setjmp(c_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i]);"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("if(ret == 0){~%"))))));
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~% else{~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret = 0;~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("}~% else{~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("ret = 0;~%"))))));
 ({int res=NIL;
 if(fast_convert(Fcdr(Fmakesym("UNWIND-THUNK"))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("UNWIND-THUNK")))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("();"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("();"))))));}
 ;res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=block_arg;}~%"))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res=block_arg;}~%"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -6671,29 +6521,18 @@ res = ({int res;
 res = ERRORstar(Fmakestr("return-from: not symbol"),fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));res;});}
  else res = NIL;res;})
 ;
-res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,i;~%"))))));res;});
+res = ({int res;int TAG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,i;~%"))))));
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("block_arg=res;~% "))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i-1);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("longjmp(c_"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i-1],1);res;})~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("block_arg=res;~% "))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("i = Fgetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"));~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetprop(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(TAG),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),i-1);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("longjmp(c_"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(TAG)),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("[i-1],1);res;})~%"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -6723,8 +6562,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
  res = Fset_cdr(Fmakesym("UNWIND-THUNK"),fast_inverse(COMP_UNWIND_PROTECT1(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV)));res;});
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res="))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(";res;})"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6740,7 +6578,15 @@ int res;
 if(CELLRANGE(BODY)) Fshelterpush(BODY);
 if(CELLRANGE(ENV)) Fshelterpush(ENV);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int X = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(Fcons(Fmakesym("LAMBDA"),Fcons(NIL,NIL))),Flist1(fast_inverse(BODY))))));int NAME = fast_convert(LAMBDA_NAME());int ARGS = fast_convert(Fmakesym("NIL"));int FREE = fast_convert(FIND_FREE_VARIABLE(BODY,ARGS,ENV));COMP_LAMBDA0(X,NAME);
+res = ({int res;int X = fast_convert(({int arg1,arg2,res;
+arg1 = fast_inverse(Fcons(Fmakesym("LAMBDA"),Fcons(NIL,NIL)));
+Fshelterpush(arg1);
+arg2 = fast_inverse(BODY);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}));int NAME = fast_convert(LAMBDA_NAME());int ARGS = fast_convert(Fmakesym("NIL"));int FREE = fast_convert(FIND_FREE_VARIABLE(BODY,ARGS,ENV));COMP_LAMBDA0(X,NAME);
 COMP_LAMBDA1(X,NAME);
 COMP_LAMBDA2(BODY,ENV,ARGS,NAME,FREE);
 COMP_LAMBDA3(NAME);
@@ -6850,8 +6696,7 @@ res = ERRORstar(Fmakestr("dynamic: illegal form"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert(Ffinddyn(Fmakesym(\""))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6877,8 +6722,7 @@ if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("({int res,val,save,dynpt;~% save=Fgetdynpt();~%"))))));
 COMP_DYNAMIC_LET1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
 COMP_PROGN1(STREAM,fast_convert(fast_cdr(fast_convert(fast_cdr(X)))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("res;})"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -6904,8 +6748,7 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else{
 res = COMP_DYNAMIC_LET2(STREAM,fast_convert(fast_car(X)),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
@@ -6967,19 +6810,13 @@ res = ({int res;
 res = ERRORstar(Fmakestr("dynamic-let: illegal let form"),X);res;});}
  else res = NIL;res;})
 ;
-res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("dynpt=Fgetdynpt();Fshelterpush(dynpt);Fsetdynpt(save);~%"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("val=fast_inverse("))))));res;});
+res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("dynpt=Fgetdynpt();Fshelterpush(dynpt);Fsetdynpt(save);~%"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("val=fast_inverse("))))));
 COMP(STREAM,VALUE,ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");Fsetdynpt(dynpt);Fshelterpop();"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fadddynenv(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),val);"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(");Fsetdynpt(dynpt);Fshelterpop();"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fadddynenv(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),val);"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -7012,8 +6849,7 @@ res = ERRORstar(Fmakestr("not: illegal form"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_not("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -7050,8 +6886,7 @@ res = ERRORstar(Fmakestr("car: illegal argument"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert(fast_car("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -7088,8 +6923,7 @@ res = ERRORstar(Fmakestr("cdr: illegal argument"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_convert(fast_cdr("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -7122,8 +6956,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("),fast_inverse("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),ENV,ARGS,NIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -7160,8 +6993,7 @@ res = ERRORstar(Fmakestr("length: illegal argument"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Flength("))))));
 COMP(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));
 if(CELLRANGE(CLOS)) Fshelterpop();
 if(CELLRANGE(TEST)) Fshelterpop();
 if(CELLRANGE(GLOBAL)) Fshelterpop();
@@ -7190,8 +7022,7 @@ res = ERRORstar(Fmakestr("c-include: argument must be string"),X);res;});}
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("#include "))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("~%"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int COMP_C_DEFINE(int X){
@@ -7214,8 +7045,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr(" "))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE0")))),Flist1(fast_inverse(Fmakestr("~%"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int COMP_C_LANG(int X){
@@ -7235,8 +7065,7 @@ res = ERRORstar(Fmakestr("c-lang: argument must be string"),X);res;});}
  else res = NIL;res;})
 ;
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("~%"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int COMP_C_OPTION(int X){
@@ -7251,21 +7080,14 @@ int COMP_DEFGLOBAL(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_cdr(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),"))))));res;});
+res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_cdr(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),"))))));
 COMP(fast_convert(Fcdr(Fmakesym("CODE4"))),VALUE,NIL,NIL,NIL,NIL,T,NIL,NIL);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_opt(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),FAST_GLOBAL);~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_opt(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),FAST_GLOBAL);~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -7274,21 +7096,14 @@ int COMP_DEFCONSTANT(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_cdr(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),"))))));res;});
+res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_cdr(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),"))))));
 COMP(fast_convert(Fcdr(Fmakesym("CODE4"))),VALUE,NIL,NIL,NIL,NIL,T,NIL,NIL);
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_opt(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),FAST_CONSTN);~%"))))));res;});
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fset_opt(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),FAST_CONSTN);~%"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -7309,15 +7124,11 @@ res = ({int res;
 res = Fapply(Fcar(Fmakesym("ERROR:")),Fcons(fast_inverse(Fmakestr("defdynamic: not symbol")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))));res;});}
  else res = NIL;res;})
 ;
-res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fsetdynenv(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),"))))));res;});
+res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Fsetdynenv(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("\"),"))))));
 COMP(fast_convert(Fcdr(Fmakesym("CODE4"))),VALUE,NIL,NIL,NIL,NIL,T,NIL,NIL);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -7346,15 +7157,11 @@ res = ({int res;
 res = Fapply(Fcar(Fmakesym("ERROR:")),Fcons(fast_inverse(Fmakestr("set-dynamic: not symbol")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))));res;});}
  else res = NIL;res;})
 ;
-res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetdynamic(Fmakesym(\""))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));res;});
-({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),fast_inverse("))))));res;});
+res = ({int res;int SYMBOL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int VALUE = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fsetdynamic(Fmakesym(\""))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(SYMBOL),Flist1(fast_inverse(NIL))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\"),fast_inverse("))))));
 COMP(STREAM,VALUE,ENV,ARGS,TAIL,NAME,GLOBAL,TEST,CLOS);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("))"))))));
 res;})
 ;
 if(CELLRANGE(CLOS)) Fshelterpop();
@@ -7373,8 +7180,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Feval("))))));
 LIST_TO_C1(fast_convert(Fcdr(Fmakesym("CODE4"))),X);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");~%"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int COMP_DEFCLASS(int X){
@@ -7386,8 +7192,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(
 LIST_TO_C1(fast_convert(Fcdr(Fmakesym("CODE4"))),X);
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");"))))));
 COMP(fast_convert(Fcdr(Fmakesym("CODE4"))),Fcons(Fmakesym("IGNORE-TOPLEVEL-CHECK"),Fcons(NIL,NIL)),NIL,NIL,NIL,NIL,NIL,NIL,NIL);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(";~%"))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(";~%"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int COMP_DEFMETHOD(int X){
@@ -7398,8 +7203,7 @@ res = ({int res=NIL;
 if((fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),fast_convert(Fmakesym("CREATE"))) || fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))),fast_convert(Fmakesym("INITIALIZE-OBJECT")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr("Feval("))))));
 res = LIST_TO_C1(fast_convert(Fcdr(Fmakesym("CODE4"))),X);
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE4")))),Flist1(fast_inverse(Fmakestr(");~%"))))));}
 else{
 res = ({int res;int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int ARG = fast_convert(({int res;
 if(fast_convert(Fcallsubr(Fcar(Fmakesym("LISTP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))))))) != NIL){
@@ -7407,8 +7211,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(3))))));}res;})
 );int RES = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(NAME),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("GENERIC-NAME-ARG")))))))));({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(RES))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(RES)))) != NIL){
 res = ({int res;
 res = ERRORstar(Fmakestr("not exist defgeneric "),NAME);res;});}
  else res = NIL;res;})
@@ -7492,37 +7295,26 @@ int res;
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("0"))))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("zero")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("0")))))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("zero")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("1")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("one")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("one")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("2")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("two")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("two")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("3")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("three")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("three")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("4")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("four")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("four")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("5")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("five")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("five")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("6")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("six")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("six")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("7")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("seven")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("seven")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("8")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("eight")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("eight")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("9")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("nine")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("nine")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else{
 res = CONV_NAME2(LS);}
 ;res;});
@@ -7533,84 +7325,58 @@ int res;
 if(CELLRANGE(LS)) Fshelterpush(LS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
 res = Fmakestr("");}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("-")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("_")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("_")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("+")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("plus")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("plus")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("*")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("star")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("star")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("/")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("slash")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("slash")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("!")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("exclamation")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("exclamation")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("%")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("percent")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("percent")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("$")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("dollar")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("dollar")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("&")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("and")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("and")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("=")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("equal")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("equal")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("^")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("hat")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("hat")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("~")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("tilde")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("tilde")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("\\")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("yen")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("yen")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("|")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("vertical")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("vertical")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("@")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("atmark")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("atmark")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("#")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("sharp")),Flist1(fast_inverse(CONV_NAME1(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("sharp")),Flist1(fast_inverse(CONV_NAME1(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar(":")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("colon")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("colon")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar(">")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("greater")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("greater")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("<")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("smaller")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("smaller")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("[")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("lbracket")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("lbracket")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("]")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("rbracket")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("rbracket")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("{")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("lcurl")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("lcurl")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("}")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("rcurl")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("rcurl")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar("?")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("question")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("question")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(fast_convert(fast_car(LS))),Flist1(fast_inverse(Fmakechar(".")))))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("dot")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(Fmakestr("dot")),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_convert(fast_car(LS))),Fmakesym("<STRING>")))),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_convert(fast_car(LS))),Fmakesym("<STRING>")))),Flist1(fast_inverse(CONV_NAME2(fast_convert(fast_cdr(LS))))))));}
 ;res;});
 if(CELLRANGE(LS)) Fshelterpop();
 return(res);}
@@ -7620,25 +7386,20 @@ if(CELLRANGE(STREAM)) Fshelterpush(STREAM);
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FIXNUMP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("fast_immediate("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FLOATP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestrflt(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-FLOAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("BIGNUMP")),Flist1(fast_inverse(X)))) || fast_convert(Fcallsubr(Fcar(Fmakesym("LONGNUMP")),Flist1(fast_inverse(X))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakebig(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("STRINGP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestr("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
@@ -7646,8 +7407,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHARACTERP")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res=NIL;
 if((fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakechar("\\")))))) || fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(34)),Fmakesym("<CHARACTER>")))))))) || fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))))) != NIL){
@@ -7658,8 +7418,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakechar("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
@@ -7667,47 +7426,39 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("GENERAL-VECTOR-P")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fvector("))))));
 res = LIST_TO_C1(STREAM,fast_convert(Fconvert(fast_inverse(X),Fmakesym("<LIST>"))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("GENERAL-ARRAY*-P")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Farray("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(Flength(fast_convert(Fcallsubr(Fcar(Fmakesym("ARRAY-DIMENSIONS")),Flist1(fast_inverse(X)))))),Flist1(fast_inverse(fast_immediate(10)))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = LIST_TO_C1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("READED-ARRAY-LIST")),Flist1(fast_inverse(X)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res=NIL;
 if(fast_eq(fast_convert(X),fast_convert(T)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));}
 else if(fast_eq(fast_convert(X),fast_convert(NIL)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 ;res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("STRINGP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestr(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcons("))))));
 res = LIST_TO_C(STREAM,fast_convert(fast_car(X)));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = LIST_TO_C(STREAM,fast_convert(fast_cdr(X)));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(STREAM)) Fshelterpop();
@@ -7718,25 +7469,20 @@ if(CELLRANGE(STREAM)) Fshelterpush(STREAM);
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FIXNUMP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakeint("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("FLOATP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestrflt(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-FLOAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("BIGNUMP")),Flist1(fast_inverse(X)))) || fast_convert(Fcallsubr(Fcar(Fmakesym("LONGNUMP")),Flist1(fast_inverse(X))))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakebig(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(10)))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("STRINGP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestr("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
@@ -7744,8 +7490,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(NIL))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("CHARACTERP")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res=NIL;
 if((fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(Fmakechar("\\")))))) || fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(34)),Fmakesym("<CHARACTER>")))))))) || fast_convert(Fcallsubr(Fcar(Fmakesym("CHAR=")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))))) != NIL){
@@ -7756,8 +7501,7 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakechar("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
@@ -7765,47 +7509,39 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(ST
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(X)))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-CHAR")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(fast_immediate(39)),Fmakesym("<CHARACTER>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("GENERAL-VECTOR-P")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fvector("))))));
 res = LIST_TO_C1(STREAM,fast_convert(Fconvert(fast_inverse(X),Fmakesym("<LIST>"))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("GENERAL-ARRAY*-P")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Farray("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-INTEGER")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(Flength(fast_convert(Fcallsubr(Fcar(Fmakesym("ARRAY-DIMENSIONS")),Flist1(fast_inverse(X)))))),Flist1(fast_inverse(fast_immediate(10)))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = LIST_TO_C1(STREAM,fast_convert(Fcallsubr(Fcar(Fmakesym("READED-ARRAY-LIST")),Flist1(fast_inverse(X)))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) != NIL){
 res = ({int res=NIL;
 if(fast_eq(fast_convert(X),fast_convert(T)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("T"))))));}
 else if(fast_eq(fast_convert(X),fast_convert(NIL)) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("NIL"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakesym(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(X),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 ;res;});}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("STRINGP")),Flist1(fast_inverse(X)))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fmakestr(\""))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(X),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("\")"))))));}
 else{
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("Fcons("))))));
 res = LIST_TO_C1(STREAM,fast_convert(fast_car(X)));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));
 res = LIST_TO_C1(STREAM,fast_convert(fast_cdr(X)));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(STREAM)) Fshelterpop();
@@ -7816,36 +7552,26 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(N)) Fshelterpush(N);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = NIL;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(X)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(X)))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(X)))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("UNQUOTE"))) && fast_numeqp(fast_convert(N),fast_convert(fast_immediate(0)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("UNQUOTE-SPLICING"))) && fast_numeqp(fast_convert(N),fast_convert(fast_immediate(0)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("QUASI-QUOTE")))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("LIST")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(Fmakesym("QUASI-QUOTE"))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),fast_plus(fast_convert(N),fast_convert(fast_immediate(1))))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("LIST")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(Fmakesym("QUASI-QUOTE"))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))),fast_plus(fast_convert(N),fast_convert(fast_immediate(1))))))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(fast_car(X)))))) && fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(Fmakesym("UNQUOTE"))) && fast_numeqp(fast_convert(N),fast_convert(fast_immediate(0)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(fast_car(X)))))) && fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(Fmakesym("UNQUOTE-SPLICING"))) && fast_numeqp(fast_convert(N),fast_convert(fast_immediate(0)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("APPEND")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(fast_car(X)))))) && fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(Fmakesym("UNQUOTE")))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("LIST")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(Fmakesym("UNQUOTE"))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1)))))),fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("LIST")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(Fmakesym("UNQUOTE"))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1)))))),fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(fast_car(X)))))) && fast_eq(fast_convert(fast_convert(fast_car(fast_convert(fast_car(X))))),fast_convert(Fmakesym("UNQUOTE-SPLICING")))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("LIST")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(Fmakesym("UNQUOTE-SPLICING"))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1)))))),fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("LIST")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("QUOTE")),Flist1(fast_inverse(Fmakesym("UNQUOTE-SPLICING"))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1)))))),fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))))))))),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(QUASI_TRANSFER(fast_convert(fast_car(X)),N)),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Fmakesym("CONS")),Fcons(fast_inverse(QUASI_TRANSFER(fast_convert(fast_car(X)),N)),Flist1(fast_inverse(QUASI_TRANSFER(fast_convert(fast_cdr(X)),N)))))));}
 ;res;});
 if(CELLRANGE(N)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
@@ -7857,8 +7583,7 @@ if(Ffreecell() < 900) Fgbc();
 res = ({int res;
 if(fast_greaterp(fast_convert(Flength(X)),fast_convert(fast_immediate(1))) != NIL){
 res = ({int res;int FN = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int DT = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION")))))))));res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(DT))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(DT)))) != NIL){
 res = NIL;}
 else if((fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(Fmakesym("DEFUN"))) && fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(DT),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Faux(Fmakesym("<FIXNUM>"))),Flist1(fast_inverse(Faux(Fmakesym("<FLOAT>")))))))))))) && SUBSETP(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(DT),Flist1(fast_inverse(fast_immediate(2)))))),fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Faux(Fmakesym("<FIXNUM>"))),Flist1(fast_inverse(Faux(Fmakesym("<FLOAT>")))))))) && OPTIMIZE_P1(fast_convert(fast_cdr(fast_convert(fast_cdr(fast_convert(fast_cdr(DT)))))))) != NIL){
 res = T;}
@@ -7879,8 +7604,7 @@ OPTIMIZE_P1loop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(1))))))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Faux(Fmakesym("<FIXNUM>"))),Flist1(fast_inverse(Faux(Fmakesym("<FLOAT>")))))))))))) && SUBSETP(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(fast_immediate(2)))))),fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(Faux(Fmakesym("<FIXNUM>"))),Flist1(fast_inverse(Faux(Fmakesym("<FLOAT>"))))))))) != NIL){
 {
@@ -7897,16 +7621,14 @@ int RETURN_TYPE(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(1))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(1))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int ARGUMENT_TYPE(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(2))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(2))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int LOCAL_RETURN_TYPE(int X,int Y){
@@ -7914,8 +7636,7 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int LOCAL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(3)))))));res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(Y),Flist1(fast_inverse(LOCAL)))))),Flist1(fast_inverse(fast_immediate(1))))));res;});
+res = ({int res;int LOCAL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(3)))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(Y),Flist1(fast_inverse(LOCAL)))))),Flist1(fast_inverse(fast_immediate(1))))));
 res;})
 ;
 if(CELLRANGE(Y)) Fshelterpop();
@@ -7926,8 +7647,7 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int LOCAL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(3)))))));res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(Y),Flist1(fast_inverse(LOCAL)))))),Flist1(fast_inverse(fast_immediate(2))))));res;});
+res = ({int res;int LOCAL = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))))),Flist1(fast_inverse(fast_immediate(3)))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(Y),Flist1(fast_inverse(LOCAL)))))),Flist1(fast_inverse(fast_immediate(2))))));
 res;})
 ;
 if(CELLRANGE(Y)) Fshelterpop();
@@ -7941,10 +7661,8 @@ if(CELLRANGE(TYPE)) Fshelterpush(TYPE);
 if(Ffreecell() < 900) Fgbc();
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("("))))));
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS))));res;}) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LS)))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else{
 res = ({int res;
 int LS1 = fast_convert(LS);int N = fast_convert(fast_immediate(0));int temp1,temp2;
@@ -7953,13 +7671,11 @@ while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_con
 if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(TYPE),Flist1(fast_inverse(N)))))),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(LS1)))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(TYPE),Flist1(fast_inverse(N)))))),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("double "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(LS1)))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(","))))));}
 ;res;});
 temp1 = fast_convert(fast_cdr(LS1));
 temp2 = fast_plus(fast_convert(N),fast_convert(fast_immediate(1)));
@@ -7970,13 +7686,11 @@ res = ({int res=NIL;
 if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(TYPE),Flist1(fast_inverse(N)))))),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("int "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(LS1)))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(TYPE),Flist1(fast_inverse(N)))))),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr("double "))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT-OBJECT")),Fcons(fast_inverse(STREAM),Fcons(fast_inverse(CONV_NAME(fast_convert(fast_car(LS1)))),Flist1(fast_inverse(NIL))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(STREAM),Flist1(fast_inverse(Fmakestr(")"))))));}
 ;res;});res;});}res;})
 ;
 if(CELLRANGE(TYPE)) Fshelterpop();
@@ -7996,11 +7710,9 @@ int M = fast_convert(fast_immediate(1));int temp1;
 while(fast_greaterp(fast_convert(M),fast_convert(N)) == NIL){
 ({int res=NIL;
 if(fast_eq(fast_convert(fast_convert(fast_car(LS))),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("int "))))));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(LS))),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("double "))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("double "))))));}
 ;res;});
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("temp"))))));
 fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
@@ -8008,8 +7720,7 @@ fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(
 temp1 = fast_plus(fast_convert(M),fast_convert(fast_immediate(1)));
 M = temp1;
 }
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("~%"))))));res;});res;});res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE2")))),Flist1(fast_inverse(Fmakestr("~%"))))));res;});res;});}
  else res = NIL;res;})
 ;
 if(CELLRANGE(LS)) Fshelterpop();
@@ -8026,26 +7737,22 @@ res = ({int res=NIL;
 if(fast_eq(fast_convert(RETURN),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("return(Fmakeint("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(NAME1),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("() ));~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("() ));~%"))))));}
 else if(fast_eq(fast_convert(RETURN),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("return(Fmakedoubleflt("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(NAME1),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("() ));~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("() ));~%"))))));}
 ;res;});}
 else{
 res = ({int res=NIL;
 if(fast_eq(fast_convert(RETURN),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("return(Fmakeint("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(NAME1),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("("))))));}
 else if(fast_eq(fast_convert(RETURN),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("return(Fmakedoubleflt("))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(NAME1),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("("))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("("))))));}
 ;res;});
 res = ({int res;
 int M = fast_convert(fast_immediate(1));int temp1;
@@ -8054,13 +7761,11 @@ while(fast_numeqp(fast_convert(M),fast_convert(N)) == NIL){
 if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(ARGUMENT),Flist1(fast_inverse(fast_minus(fast_convert(M),fast_convert(fast_immediate(1))))))))),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("Fgetint(arg"))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("),"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("),"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(ARGUMENT),Flist1(fast_inverse(fast_minus(fast_convert(M),fast_convert(fast_immediate(1))))))))),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("Fgetflt(arg"))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("),"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("),"))))));}
 ;res;});
 temp1 = fast_plus(fast_convert(M),fast_convert(fast_immediate(1)));
 M = temp1;
@@ -8069,13 +7774,11 @@ res = ({int res=NIL;
 if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(ARGUMENT),Flist1(fast_inverse(fast_minus(fast_convert(M),fast_convert(fast_immediate(1))))))))),fast_convert(Faux(Fmakesym("<FIXNUM>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("Fgetint(arg"))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("))));~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("))));~%"))))));}
 else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(ARGUMENT),Flist1(fast_inverse(fast_minus(fast_convert(M),fast_convert(fast_immediate(1))))))))),fast_convert(Faux(Fmakesym("<FLOAT>")))) != NIL){
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("Fgetflt(arg"))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(fast_convert(Fconvert(fast_inverse(M),Fmakesym("<STRING>"))))))));
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("))));~%"))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("CODE1")))),Flist1(fast_inverse(Fmakestr("))));~%"))))));}
 ;res;});res;});}
 ;res;});
 res;})
@@ -8091,8 +7794,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = T;}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(Y))))) != NIL){
 {
@@ -8134,8 +7836,7 @@ int res;
 if(CELLRANGE(STR)) Fshelterpush(STR);
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Fcons(fast_inverse(Fmakestr("warning ~A ~A ~A~%")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("INFERENCE-NAME")))),Fcons(fast_inverse(STR),Flist1(fast_inverse(X))))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Fcons(fast_inverse(Fmakestr("warning ~A ~A ~A~%")),Fcons(fast_inverse(fast_convert(Fcdr(Fmakesym("INFERENCE-NAME")))),Fcons(fast_inverse(STR),Flist1(fast_inverse(X))))))));
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(STR)) Fshelterpop();
 return(res);}
@@ -8181,8 +7882,7 @@ res = SET_TYPE_FUNCTION_INPUT(NAME,FIND_ARGUMENT_CLASS(ARG,TYPE_ENV));}
  else res = NIL;res;})
 ;
 res = ({int res;
-if(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))));res;})) != NIL){
+if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))))) != NIL){
 res = ADD_TYPE_FUNCTION_LOCAL(NAME);}
  else res = NIL;res;})
 ;
@@ -8200,12 +7900,27 @@ if(Ffreecell() < 900) Fgbc();
 ({int res;
  res = Fset_cdr(Fmakesym("LOCAL-TYPE-FUNCTION"),fast_inverse(NIL));res;});
 res = ({int res;int LABELS_FUNC = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int LABELS_BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));int LOCAL_TYPE_ENV = fast_convert(NIL);({int res;
-while(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LABELS_FUNC))));res;})) !=NIL){
+while(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LABELS_FUNC))))) !=NIL){
 res = ({int res;int FUNC = fast_convert(fast_convert(fast_car(LABELS_FUNC)));int NAME = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(FUNC),Flist1(fast_inverse(fast_immediate(0)))))));int ARG = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(FUNC),Flist1(fast_inverse(fast_immediate(1)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(FUNC)))));int INIT_TYPE_INPUT = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("CREATE-LIST")),Fcons(fast_inverse(Flength(ARG)),Flist1(fast_inverse(Faux(Fmakesym("<OBJECT>"))))))));int INIT_ENV = fast_convert(CREATE_INIT_ENV(ARG));({int res;
  res = Fset_cdr(Fmakesym("LOCAL-TYPE-FUNCTION"),fast_inverse(Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Fcons(fast_inverse(NAME),Fcons(fast_inverse(Faux(Fmakesym("<OBJECT>"))),Flist1(fast_inverse(INIT_TYPE_INPUT))))))),fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))));res;});
 ({int res;
- res = LOCAL_TYPE_ENV = INFERENCE_ALL(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(LABELS_BODY),Flist1(fast_inverse(BODY))))),fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(INIT_ENV),Flist1(fast_inverse(TYPE_ENV))))),NAME,T);res;})
+ res = LOCAL_TYPE_ENV = INFERENCE_ALL(({int arg1,arg2,res;
+arg1 = fast_inverse(LABELS_BODY);
+Fshelterpush(arg1);
+arg2 = fast_inverse(BODY);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),({int arg1,arg2,res;
+arg1 = fast_inverse(INIT_ENV);
+Fshelterpush(arg1);
+arg2 = fast_inverse(TYPE_ENV);
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;}),NAME,T);res;})
 ;
 ({int res;
 if(fast_not(fast_eq(fast_convert(LOCAL_TYPE_ENV),fast_convert(Fmakesym("NO")))) != NIL){
@@ -8238,8 +7953,7 @@ while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(ARG)))) 
 temp1 = fast_convert(fast_cdr(ARG));
 ARG = temp1;
 }
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(RESULT))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(RESULT))));res;});
 if(CELLRANGE(TYPE_ENV)) Fshelterpop();
 if(CELLRANGE(LS)) Fshelterpop();
 return(res);}
@@ -8256,8 +7970,7 @@ while(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(ARG)))) 
 temp1 = fast_convert(fast_cdr(ARG));
 ARG = temp1;
 }
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(RESULT))));res;});res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("REVERSE")),Flist1(fast_inverse(RESULT))));res;});
 if(CELLRANGE(LS)) Fshelterpop();
 return(res);}
 int INFERENCE(int X,int TYPE_ENV){
@@ -8289,8 +8002,7 @@ else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))
 res = TYPE_ENV;}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("SETQ")))) != NIL){
 res = ({int res=NIL;
-if(fast_not(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))));res;})) != NIL){
+if(fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))))) != NIL){
 res = WARNING(Fmakestr("setq type mismatch"),fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));
 res = TYPE_ENV;}
 else{
@@ -8426,8 +8138,7 @@ if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(CELLRANGE(FN)) Fshelterpush(FN);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = TYPE_ENV;}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(fast_convert(fast_car(X)))))) && fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(fast_car(fast_convert(fast_car(X))))),Flist1(fast_inverse(Fcons(Fmakesym("+"),Fcons(Fmakesym("-"),Fcons(Fmakesym("*"),Fcons(Fmakesym("="),Fcons(Fmakesym(">"),Fcons(Fmakesym("<"),Fcons(Fmakesym(">="),Fcons(Fmakesym("<="),Fcons(Fmakesym("/="),NIL))))))))))))))) != NIL){
 res = ({int res;int NEW_ENV = fast_convert(INFERENCE(fast_convert(fast_car(X)),TYPE_ENV));res = ({int res=NIL;
@@ -8529,8 +8240,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = TYPE_ENV;}
 else{
 res = ({int res;int NEW_ENV = fast_convert(INFERENCE_COND2(fast_convert(fast_car(X)),TYPE_ENV));res = ({int res=NIL;
@@ -8568,8 +8278,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = TYPE_ENV;}
 else{
 res = ({int res;int NEW_ENV = fast_convert(INFERENCE(fast_convert(fast_car(X)),TYPE_ENV));res = ({int res=NIL;
@@ -8616,8 +8325,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = TYPE_ENV;}
 else{
 res = ({int res;int NEW_ENV = fast_convert(INFERENCE_CASE2(fast_convert(fast_cdr(fast_convert(fast_car(X)))),TYPE_ENV));res = ({int res;
@@ -8647,8 +8355,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = TYPE_ENV;}
 else{
 {
@@ -8760,8 +8467,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int VARS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))));res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(VARS))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(VARS)))) != NIL){
 res = INFERENCE_ALL1(BODY,TYPE_ENV,NIL);}
 else{
 res = ({int res,ret,i;
@@ -8877,8 +8583,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = TYPE_ENV;}
 else{
 {
@@ -8915,11 +8620,9 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int Y = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION")))))))));res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Y))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Y)))) != NIL){
 res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))))));res = ({int res;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Z))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Z)))) != NIL){
 res = NIL;}
 else{
 res = fast_convert(fast_cdr(Z));}res;})
@@ -9047,16 +8750,14 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = Faux(Fmakesym("<NULL>"));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(X),fast_convert(Fmakesym("T")))) != NIL){
 res = Faux(Fmakesym("<SYMBOL>"));}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))) != NIL){
 res = REFER(X,TYPE_ENV);}
 else if(fast_convert(Fcallsubr(Fcar(Fmakesym("ATOM")),Flist1(fast_inverse(X)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("CLASS-OF")),Flist1(fast_inverse(X))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("CLASS-OF")),Flist1(fast_inverse(X))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(fast_convert(fast_car(X))),Flist1(fast_inverse(Fcons(Fmakesym("+"),Fcons(Fmakesym("-"),Fcons(Fmakesym("*"),Fcons(Fmakesym("="),Fcons(Fmakesym(">"),Fcons(Fmakesym("<"),Fcons(Fmakesym(">="),Fcons(Fmakesym("<="),Fcons(Fmakesym("/="),NIL))))))))))))))) != NIL){
 res = FIND_CLASS_NUMERIC(X,TYPE_ENV);}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_convert(Fcallsubr(Fcar(Fmakesym("SUBRP")),Flist1(fast_inverse(fast_convert(fast_car(X))))))) != NIL){
@@ -9064,8 +8765,7 @@ res = ({int res;int TYPE_SUBR = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesy
 res;})
 ;}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && TYPE_FUNCTION_P(fast_convert(fast_car(X)))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(FIND_FUNCTION_TYPE(fast_convert(fast_car(X)))),Flist1(fast_inverse(fast_immediate(0))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(FIND_FUNCTION_TYPE(fast_convert(fast_car(X)))),Flist1(fast_inverse(fast_immediate(0))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("LABELS")))) != NIL){
 {
 temp1 = LAST(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));
@@ -9089,8 +8789,7 @@ res = FIND_CLASS_COND(fast_convert(fast_cdr(X)),TYPE_ENV);}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("IF")))) != NIL){
 res = FIND_CLASS_IF(X,TYPE_ENV);}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("QUOTE")))) != NIL){
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("CLASS-OF")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("CLASS-OF")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))))));}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("THE")))) != NIL){
 res = NIL;}
 else if((fast_convert(Fcallsubr(Fcar(Fmakesym("CONSP")),Flist1(fast_inverse(X)))) && fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("SETQ")))) != NIL){
@@ -9174,8 +8873,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X)))) != NIL){
 res = Faux(Fmakesym("<OBJECT>"));}
 else{
 res = FIND_CLASS(LAST(fast_convert(fast_car(X))),TYPE_ENV);}
@@ -9211,8 +8909,7 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int Y = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(TYPE_ENV))))));res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Y))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Y)))) != NIL){
 res = Faux(Fmakesym("<OBJECT>"));}
 else{
 res = fast_convert(fast_cdr(Y));}
@@ -9227,8 +8924,7 @@ int res;
 if(CELLRANGE(FN)) Fshelterpush(FN);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION")))))))));res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(1)))))));res;});
+res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION")))))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(1)))))));
 res;})
 ;
 if(CELLRANGE(Y)) Fshelterpop();
@@ -9239,8 +8935,7 @@ int res;
 if(CELLRANGE(FN)) Fshelterpush(FN);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION")))))))));res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(2)))))));res;});
+res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION")))))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(2)))))));
 res;})
 ;
 if(CELLRANGE(Y)) Fshelterpop();
@@ -9260,8 +8955,7 @@ int res;
 if(CELLRANGE(FN)) Fshelterpush(FN);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))))));res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(1)))))));res;});
+res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(1)))))));
 res;})
 ;
 if(CELLRANGE(Y)) Fshelterpop();
@@ -9272,8 +8966,7 @@ int res;
 if(CELLRANGE(FN)) Fshelterpush(FN);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))))));res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(2)))))));res;});
+res = ({int res;int Z = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(FN),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("LOCAL-TYPE-FUNCTION")))))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-ELT")),Fcons(fast_inverse(Y),Fcons(fast_inverse(Z),Flist1(fast_inverse(fast_immediate(2)))))));
 res;})
 ;
 if(CELLRANGE(Y)) Fshelterpop();
@@ -9283,8 +8976,7 @@ int TYPE_FUNCTION_P(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(Ffreecell() < 900) Fgbc();
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))));res;});
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ASSOC")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("TYPE-FUNCTION"))))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int UNIFY(int X,int Y,int TYPE_ENV){
@@ -9320,8 +9012,7 @@ res = FIND_CLASS(Y,TYPE_ENV);}
 else{
 res = Y;}res;})
 );res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X1))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(X1)))) != NIL){
 res = ({int res;
  res = TYPE_ENV = Fcons(fast_inverse(Fcons(fast_inverse(X),fast_inverse(Y1))),fast_inverse(TYPE_ENV));res;})
 ;
@@ -9344,8 +9035,7 @@ res = FIND_CLASS(X,TYPE_ENV);}
 else{
 res = X;}res;})
 );int Y1 = fast_convert(REFER(Y,TYPE_ENV));res = ({int res=NIL;
-if(({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Y1))));res;}) != NIL){
+if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(Y1)))) != NIL){
 res = ({int res;
  res = TYPE_ENV = Fcons(fast_inverse(Fcons(fast_inverse(Y),fast_inverse(X1))),fast_inverse(TYPE_ENV));res;})
 ;
@@ -9394,8 +9084,7 @@ res = ({int res=NIL;
 if((fast_eq(fast_convert(X),fast_convert(NIL)) || fast_eq(fast_convert(X),fast_convert(T)) || fast_eq(fast_convert(Y),fast_convert(NIL)) || fast_eq(fast_convert(Y),fast_convert(T))) != NIL){
 res = NIL;}
 else{
-res = ({int res;
- res=fast_convert(Fcallsubr(Fcar(Fmakesym("SUBCLASSP")),Fcons(fast_inverse(X),Flist1(fast_inverse(Y)))));res;});}
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("SUBCLASSP")),Fcons(fast_inverse(X),Flist1(fast_inverse(Y)))));}
 ;res;});
 if(CELLRANGE(Y)) Fshelterpop();
 if(CELLRANGE(X)) Fshelterpop();
@@ -9507,6 +9196,7 @@ void init_tfunctions(void){
 (deftfunc)("COMP-SUBRCALL" , f_COMP_SUBRCALL);
 (deftfunc)("COMP-SUBRCALL1" , f_COMP_SUBRCALL1);
 (deftfunc)("COMP-SUBRCALL2" , f_COMP_SUBRCALL2);
+(deftfunc)("COMP-SUBRCALL3" , f_COMP_SUBRCALL3);
 (deftfunc)("COMP-LABELS" , f_COMP_LABELS);
 (deftfunc)("COMP-LABELS1" , f_COMP_LABELS1);
 (deftfunc)("COMP-LABELS2" , f_COMP_LABELS2);
@@ -9682,26 +9372,114 @@ Fset_cdr(Fmakesym("FILE-NAME-AND-EXT"),NIL);Fset_opt(Fmakesym("FILE-NAME-AND-EXT
 Fset_cdr(Fmakesym("INSTREAM"),NIL);Fset_opt(Fmakesym("INSTREAM"),FAST_GLOBAL);
 Fset_cdr(Fmakesym("TYPE-FUNCTION"),NIL);Fset_opt(Fmakesym("TYPE-FUNCTION"),FAST_GLOBAL);
 Fset_cdr(Fmakesym("LOCAL-TYPE-FUNCTION"),NIL);Fset_opt(Fmakesym("LOCAL-TYPE-FUNCTION"),FAST_GLOBAL);
-fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PARSE-NUMBER")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SIN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("COS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("TAN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ATAN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("ATAN2")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SINH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("COSH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("TANH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FLOOR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CEILING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("TRUNCATE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ROUND")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MOD")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("DIV")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("GCD")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("LCM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ISQRT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR/=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR<")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR>")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR<=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR>=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("QUOTIENT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("RECIPROCAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MAX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MIN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ABS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("EXP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LOG")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("EXPT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SQRT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CONS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CDR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SET-CAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SET-CDR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("CREATE-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PARSE-NUMBER")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SIN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("COS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("TAN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ATAN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("ATAN2")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SINH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("COSH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("TANH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FLOOR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CEILING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("TRUNCATE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ROUND")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MOD")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("DIV")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("GCD")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("LCM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ISQRT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR/=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR<")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR>")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR<=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR>=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("QUOTIENT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("RECIPROCAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MAX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MIN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ABS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("EXP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LOG")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("EXPT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SQRT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("CONS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CDR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SET-CAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SET-CDR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("CREATE-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("CREATE-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("REVERSE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NREVERSE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("ASSOC")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MEMBER")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPC")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCAN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPLIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCON")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<BASIC-ARRAY>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-ARRAY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<BASIC-ARRAY>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ARRAY-DIMENSIONS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-VECTOR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("VECTOR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-STRING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING/=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING<")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING>")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING>=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING<=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FUNCALL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CHAR-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("CHAR-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))))))))),Fcons(fast_inverse(Fmakesym("CHAR-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("REVERSE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NREVERSE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("ASSOC")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("MEMBER")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPC")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCAN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPLIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("MAPCON")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<BASIC-ARRAY>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-ARRAY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<BASIC-ARRAY>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ARRAY-DIMENSIONS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-VECTOR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("VECTOR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-STRING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING/=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING<")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING>")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING>=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING<=")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FUNCALL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CHAR-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("CHAR-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("CHAR-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("STRING-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))))))))),Fcons(fast_inverse(Fmakesym("STRING-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("STRING-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("STRING-INDEX")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),NIL))))))))))))))))),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),NIL))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))))))),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))))))))),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))))))))),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("ELT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NULL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("EQ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NOT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("FORMAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NULL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("EQ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NOT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("FORMAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("FORMAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-INTEGER")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-FLOAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-CHAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-OBJECT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-TAB")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-FRESH-LINE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("STANDARD-INPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("STANDARD-OUTPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("SYSTEM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-INPUT-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-OUTPUT-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-IO-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("EVAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ATOM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CONSP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SYMBOLP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LISTP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CONSP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NUMBERP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("INTEGERP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FLOATP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FIXNUMP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LONGNUMP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("BIGNUMP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("STRINGP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CHARACTERP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FUNCTIONP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GENERAL-VECTOR-P")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GENERAL-ARRAY*-P")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("PROPERTY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("SET-PROPERTY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("READ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("READ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))))))))),Fcons(fast_inverse(Fmakesym("READ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-INTEGER")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-FLOAT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<CHARACTER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-CHAR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-OBJECT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-TAB")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FORMAT-FRESH-LINE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("STANDARD-INPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("STANDARD-OUTPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("SYSTEM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-INPUT-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-OUTPUT-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-IO-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("EVAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ATOM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CONSP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SYMBOLP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LISTP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CONSP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("NUMBERP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("INTEGERP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FLOATP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FIXNUMP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("LONGNUMP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("BIGNUMP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("STRINGP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CHARACTERP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FUNCTIONP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GENERAL-VECTOR-P")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GENERAL-ARRAY*-P")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("PROPERTY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("SET-PROPERTY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("READ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("READ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("READ")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("EVAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("APPEND")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("ERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))))))))),Fcons(fast_inverse(Fmakesym("ERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("EVAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("APPEND")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("ERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("ERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
-;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING-APPEND")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SYMBOL-FUNCTION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("APPLY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PRINT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-ARRAY*>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(fast_inverse(OLD),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))))))))),Fcons(fast_inverse(Fmakesym("AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
+;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("STRING-APPEND")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<SYMBOL>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SYMBOL-FUNCTION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("APPLY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PRINT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-ARRAY*>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));({int res;int OLD = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("PROPERTY")),Fcons(fast_inverse(Fmakesym("AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));res = fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(({int arg1,arg2,res;
+arg1 = fast_inverse(OLD);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-VECTOR>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))));
+Fshelterpush(arg2);
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+Fshelterpop();
+Fshelterpop();
+;res;})),Fcons(fast_inverse(Fmakesym("AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));
 res;})
 ;fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-ARRAY*>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("QUOTE"),Fcons(Fmakesym("REPEAT"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("GAREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-ARRAY*>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))))),Fcons(fast_inverse(Fmakesym("SET-AREF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-ARRAY*>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ARRAY-DIMENSIONS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<GENERAL-ARRAY*>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-ARRAY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("EQUAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("OPEN")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CLOSE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("STANDARD-INPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("STANDARD-OUTPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-STRING-INPUT-STREAM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("CREATE-STRING-OUTPUT-STREAM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GET-OUTPUT-STREAM-STRING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-INPUT-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-OUTPUT-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("OPEN-IO-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FINISH-OUTPUT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SYSTEM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("MACROEXPAND-1")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GET-METHOD")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GET-METHOD-BODY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("GET-METHOD-PRIORITY")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("READED-ARRAY-LIST")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CLASS-OF")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SUBCLASSP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("READ-BYTE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("WRITE-BYTE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PROBE-FILE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("FILE-POSITION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SET-FILE-POSITION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("FILE-LENGTH")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))))),Fcons(fast_inverse(Fmakesym("CERROR")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("SIGNAL-CONDITION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CONDITION-CONTINUABLE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("CONTINUE-CONDITION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FUNCTION>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ARITHMETIC-ERROR-OPERATION")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("ARITHMETIC-ERROR-OPERANDS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("DOMAIN-ERROR-OBJECT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("DOMAIN-ERROR-EXPECTED-CLASS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PARSE-ERROR-STRING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("PARSE-ERROR-EXPECTED-CLASS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SIMPLE-ERROR-FORMAT-STRING")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<LIST>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SIMPLE-ERROR-FORMAT-ARGUMENTS")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("STREAM-ERROR-STREAM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STREAM>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("READ-LINE")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<INTEGER>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("RANDOM")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),NIL))))))))))),Fcons(fast_inverse(Fmakesym("RANDOM-REAL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("EQL")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<FLOAT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NUMBER>"),NIL)),NIL))))))))))))),Fcons(fast_inverse(Fmakesym("QUOTIENT")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<OBJECT>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("SUBRP")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));fast_convert(Fcallsubr(Fcar(Fmakesym("SET-PROPERTY")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("EVAL"))),Flist1(fast_inverse(Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<NULL>"),NIL)),Fcons(Fcons(Fmakesym("CLASS"),Fcons(Fmakesym("<STRING>"),NIL)),NIL)))))))))))),Fcons(fast_inverse(Fmakesym("C-LANG")),Flist1(fast_inverse(Fmakesym("INFERENCE")))))));}

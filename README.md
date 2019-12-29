@@ -5,7 +5,7 @@ EISL was written by Kenichi Sasagawa
 https://qiita.com/sym_num/items/793adfe118514668e5b0
 
 see [ISLisp](https://en.wikipedia.org/wiki/ISLISP)
-
+youtube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw8&t=330s)
 
 # Installation
 Change to the git cloned or downloaded Easy-ISLisp directory.

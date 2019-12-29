@@ -35,6 +35,7 @@
             (t (+ (gfib (- n 1)) (gfib (- n 2)))))))
 
 (defun tak (x y z)
+   (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
    (if (>= y x)
        z
        (tak (tak (- x 1) y z)

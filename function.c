@@ -1001,7 +1001,7 @@ int f_expt(int arglist){
             return(makeflt(-1.0));    
     }
     if(integerp(arg1) && GET_INT(arg1) == -1 && 
-        (integerp(arg2) || longnump(arg2) || bignump(arg2))){
+        (integerp(arg2) || longnump(arg2))){
         x = GET_FLT(exact_to_inexact(arg2));
         if(x - ceil(x) == 0.0 && x >= 0){
             if((int)x % 2 == 0)
@@ -1015,6 +1015,25 @@ int f_expt(int arglist){
             else 
                 return(makeflt(-1.0));
         }   
+    }
+    if(integerp(arg1) && GET_INT(arg1) == -1 && bignump(arg2)){
+        int x,y,z;
+
+        x = makeint(2);
+        y = divide(arg2,x);
+        z = minus(arg2,mult(y,makeint(2)));
+        if(positivep(arg2)){
+            if(zerop(z))
+                return(makeint(1));
+            else
+                return(makeint(-1));
+        }
+        else{
+            if(zerop(z))
+                return(makeflt(1.0));
+            else
+                return(makeflt(-1.0));
+        }
     }
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && (integerp(arg2) && GET_INT(arg2) > 0))
         return(expt(arg1,GET_INT(arg2)));

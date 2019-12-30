@@ -975,7 +975,7 @@ int f_log(int arglist){
 }
 
 int f_expt(int arglist){
-    int arg1,arg2;
+    int arg1,arg2,i,j,k;
     double x,y,z;
 
     arg1 = car(arglist);
@@ -1000,36 +1000,33 @@ int f_expt(int arglist){
         else
             return(makeflt(-1.0));    
     }
-    if(integerp(arg1) && GET_INT(arg1) == -1 && 
-        (integerp(arg2) || longnump(arg2))){
-        x = GET_FLT(exact_to_inexact(arg2));
-        if(x - ceil(x) == 0.0 && x >= 0){
-            if((int)x % 2 == 0)
+    if(integerp(arg1) && GET_INT(arg1) == -1 && integerp(arg2)){
+        i = GET_INT(arg2);
+        if(i >= 0){
+            if(i % 2 == 0)
                 return(makeint(1));
             else
                 return(makeint(-1));
         }
         else{
-            if((int)x % 2 == 0)
+            if(i % 2 == 0)
                 return(makeflt(1.0));
             else 
                 return(makeflt(-1.0));
         }   
     }
-    if(integerp(arg1) && GET_INT(arg1) == -1 && bignump(arg2)){
-        int x,y,z;
-
-        x = makeint(2);
-        y = divide(arg2,x);
-        z = minus(arg2,mult(y,makeint(2)));
+    if(integerp(arg1) && GET_INT(arg1) == -1 && (longnump(arg2) || bignump(arg2))){
+        i = makeint(2);
+        j = divide(arg2,i);
+        k = minus(arg2,mult(j,i));
         if(positivep(arg2)){
-            if(zerop(z))
+            if(zerop(k))
                 return(makeint(1));
             else
                 return(makeint(-1));
         }
         else{
-            if(zerop(z))
+            if(zerop(k))
                 return(makeflt(1.0));
             else
                 return(makeflt(-1.0));

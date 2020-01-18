@@ -2,9 +2,9 @@
 
 Easy-ISLisp (EISL) はISLisp標準の解釈実行器及び翻訳系です。
 
-Kenichi Sasagawa氏が制作しました（[Easy-ISLispのコンパイラ](https://qiita.com/sym_num/items/793adfe118514668e5b0)）。
+Kenichi Sasagawa氏が制作しました（[Easy-ISLispのコンパイラ - Qiita](https://qiita.com/sym_num/items/793adfe118514668e5b0)）。
 
-ISLispについては英語版Wikipedia（[ISLisp]((https://en.wikipedia.org/wiki/ISLISP)）もご覧下さい。
+ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki/ISLISP)）もご覧下さい。
 
 次の動画ではEISLの紹介と導入方法の説明を行っています（英語）
 [![Introduction of Easy-ISLisp](http://img.youtube.com/vi/KfrRyKMcTw8/0.jpg)](https://youtu.be/KfrRyKMcTw8)
@@ -67,7 +67,7 @@ EISLは簡単に操作できることを目的にしています。
 
 ## 翻訳系
 
-EISLには翻訳系 (compiler) を備えています。
+EISLは翻訳系 (compiler) を備えています。
 GCC向けのソースコード及び〔GCCを介して〕オブジェクトコードを生成します。
 
 
@@ -124,30 +124,45 @@ Elapsed Time(second)=3.728262
 You can compile the compiler itself. Compilation is faster.
 In raspai3 compiler.o is not possible due to insufficient memory. Please use compiiler.lsp.
 
-# Invoke editor
-edit function invoke Edlis editor.
-see https://github.com/sasagawa888/Edlis
 
-(edit file-name-string) example (edit "foo.lsp")
+## エディタを起動する
 
-# WiringPi
-Version for Raspberry Pi include library for wiringPi.
+EISLはエディタを備えていまう。
+エディタを利用するには`edit`関数を用いて下さい。
+
+併せてご覧ください: [sasagawa888/Edlis: Simple CUI editor for Easy-ISLisp](https://github.com/sasagawa888/Edlis)
+
+### 用法
+
+```scheme
+(edit file-name-string)
+```
+
+### 例
+
+```lisp
+(edit "foo.lsp")
+```
+
+## WiringPi
+
+Raspberry Pi向けの版にはwiringPi用のライブラリが附属しています。
 
 In order to use wiringPi, you need to compile wiringpi.lsp(in example folder) and invoke EISL with super user.
 
+```console
+$ sudo ./eisl
 ```
-sudo ./eisl
-```
-and 
+次に
 
-```
+```lisp
 (load "wiringpi.o")
 ```
 please see the example code "led.lsp"
 
 "wiringpi.lsp" is the source code of wiringpi.o.
 
-```
+```lisp
 EISL <==================================> C
 (wiringpi-spi-setup ch speed) <===> wiringPiSPISetup (SPI_CH, SPI_SPEED)
 (wiringpi-setup-gpio ) <===> wiringPiSetupGpio()
@@ -163,9 +178,10 @@ EISL <==================================> C
 (pwm-write pin value) <===> pwmWrite(pin , value)
 ```
 
-### Examples.
 
-```
+### 例
+
+```lisp
 ;;LED on/off
 
 (defglobal pin 5)
@@ -197,14 +213,14 @@ EISL <==================================> C
 ```
 
 
-# Functions for debug
+## デバッグ用関数
 - (trace fn1 fn2 ... fn)
 - (untrace fn1 fn2 ... fn) or (untrace)
 - (backtrace)
 - (break)
 - (macroexpand-1)
 
-# Extended functions
+## 拡張関数
 - (random n) random-integer from 0 to n
 - (random-real) random-float-number from 0 to 1
 - (gbc) invoke garbage collection.

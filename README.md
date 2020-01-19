@@ -21,6 +21,7 @@ We confirmed operation in the following environments.
 - Raspberry Pi3 Raspbian GCC 6.3
 - openSUSE Leap 42.3 GCC 4.8.5
 - Debian GNU/Linux GCC 6.3 GCC 7.3
+- Linux Mint GCC ver 5.4
 - Windows10 MINGW GCC 5.3
 
 

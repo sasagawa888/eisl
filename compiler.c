@@ -24,6 +24,9 @@ int f_COMPILE_FILE(int arglist);int COMPILE_FILE(int X);
 int f_compiler0(int arglist);int compiler0();
 int f_COMPILE_FILE1(int arglist);int COMPILE_FILE1(int X);
 int f_COMPILE_FILEstar(int arglist);int COMPILE_FILEstar(int X);
+int f_COMPILE_CUDA(int arglist);int COMPILE_CUDA(int X);
+int f_compiler1(int arglist);int compiler1();
+int f_COMPILE_CUDA1(int arglist);int COMPILE_CUDA1(int X);
 int f_PASS1(int arglist);int PASS1(int X);
 int f_CHECK_ARGS_COUNT(int arglist);int CHECK_ARGS_COUNT(int X);
 int f_FIND_CATCH_BLOCK_TAG(int arglist);int FIND_CATCH_BLOCK_TAG(int X);
@@ -99,10 +102,10 @@ int f_COMP_CASE_USING(int arglist);int COMP_CASE_USING(int STREAM,int X,int ENV,
 int f_COMP_CASE_USING1(int arglist);int COMP_CASE_USING1(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS,int KEY,int PRED);
 int f_HAS_TAIL_RECUR_P(int arglist);int HAS_TAIL_RECUR_P(int X,int NAME);
 int f_HAS_TAIL_RECUR_P1(int arglist);int HAS_TAIL_RECUR_P1(int X,int NAME);
-int f_compiler1(int arglist);int compiler1(int Y);
+int f_compiler2(int arglist);int compiler2(int Y);
 int f_COMP_FOR(int arglist);int COMP_FOR(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
-int f_compiler2(int arglist);int compiler2(int X);
 int f_compiler3(int arglist);int compiler3(int X);
+int f_compiler4(int arglist);int compiler4(int X);
 int f_COMP_FOR1(int arglist);int COMP_FOR1(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
 int f_COMP_FOR2(int arglist);int COMP_FOR2(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
 int f_COMP_PROGN(int arglist);int COMP_PROGN(int STREAM,int X,int ENV,int ARGS,int TAIL,int NAME,int GLOBAL,int TEST,int CLOS);
@@ -189,11 +192,11 @@ int f_INFERENCE_IF(int arglist);int INFERENCE_IF(int X,int TYPE_ENV);
 int f_INFERENCE_IF1(int arglist);int INFERENCE_IF1(int X,int TYPE_ENV);
 int f_INFERENCE_IF2(int arglist);int INFERENCE_IF2(int X,int TYPE_ENV);
 int f_INFERENCE_NUMERIC(int arglist);int INFERENCE_NUMERIC(int X,int TYPE_ENV);
-int f_compiler4(int arglist);int compiler4(int X);
 int f_compiler5(int arglist);int compiler5(int X);
 int f_compiler6(int arglist);int compiler6(int X);
 int f_compiler7(int arglist);int compiler7(int X);
 int f_compiler8(int arglist);int compiler8(int X);
+int f_compiler9(int arglist);int compiler9(int X);
 int f_INFERENCE_LET(int arglist);int INFERENCE_LET(int X,int TYPE_ENV);
 int f_INFERENCE_FOR(int arglist);int INFERENCE_FOR(int X,int TYPE_ENV);
 int f_INFERENCE_WHILE(int arglist);int INFERENCE_WHILE(int X,int TYPE_ENV);
@@ -206,11 +209,11 @@ int f_FIND_CLASS(int arglist);int FIND_CLASS(int X,int TYPE_ENV);
 int f_FIND_CLASS_IF(int arglist);int FIND_CLASS_IF(int X,int TYPE_ENV);
 int f_FIND_CLASS_COND(int arglist);int FIND_CLASS_COND(int X,int TYPE_ENV);
 int f_FIND_CLASS_NUMERIC(int arglist);int FIND_CLASS_NUMERIC(int X,int TYPE_ENV);
-int f_compiler9(int arglist);int compiler9(int X);
 int f_compiler10(int arglist);int compiler10(int X);
 int f_compiler11(int arglist);int compiler11(int X);
 int f_compiler12(int arglist);int compiler12(int X);
 int f_compiler13(int arglist);int compiler13(int X);
+int f_compiler14(int arglist);int compiler14(int X);
 int f_REFER(int arglist);int REFER(int X,int TYPE_ENV);
 int f_SET_TYPE_FUNCTION_OUTPUT(int arglist);int SET_TYPE_FUNCTION_OUTPUT(int FN,int Y);
 int f_SET_TYPE_FUNCTION_INPUT(int arglist);int SET_TYPE_FUNCTION_INPUT(int FN,int Y);
@@ -326,6 +329,19 @@ int f_COMPILE_FILEstar(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(COMPILE_FILEstar(fast_convert(arg1))));
+}
+int f_COMPILE_CUDA(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(COMPILE_CUDA(fast_convert(arg1))));
+}
+int f_compiler1(int arglist){
+return(fast_inverse(compiler1() ));
+}
+int f_COMPILE_CUDA1(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(COMPILE_CUDA1(fast_convert(arg1))));
 }
 int f_PASS1(int arglist){
 int arg1;
@@ -919,10 +935,10 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(HAS_TAIL_RECUR_P1(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_compiler1(int arglist){
+int f_compiler2(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(compiler1(fast_convert(arg1))));
+return(fast_inverse(compiler2(fast_convert(arg1))));
 }
 int f_COMP_FOR(int arglist){
 int arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9;
@@ -937,15 +953,15 @@ arg8 = Fnth(7,arglist);
 arg9 = Fnth(8,arglist);
 return(fast_inverse(COMP_FOR(fast_convert(arg1),fast_convert(arg2),fast_convert(arg3),fast_convert(arg4),fast_convert(arg5),fast_convert(arg6),fast_convert(arg7),fast_convert(arg8),fast_convert(arg9))));
 }
-int f_compiler2(int arglist){
-int arg1;
-arg1 = Fnth(0,arglist);
-return(fast_inverse(compiler2(fast_convert(arg1))));
-}
 int f_compiler3(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(compiler3(fast_convert(arg1))));
+}
+int f_compiler4(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(compiler4(fast_convert(arg1))));
 }
 int f_COMP_FOR1(int arglist){
 int arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9;
@@ -1712,11 +1728,6 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(INFERENCE_NUMERIC(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_compiler4(int arglist){
-int arg1;
-arg1 = Fnth(0,arglist);
-return(fast_inverse(compiler4(fast_convert(arg1))));
-}
 int f_compiler5(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
@@ -1736,6 +1747,11 @@ int f_compiler8(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(compiler8(fast_convert(arg1))));
+}
+int f_compiler9(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(compiler9(fast_convert(arg1))));
 }
 int f_INFERENCE_LET(int arglist){
 int arg1,arg2;
@@ -1808,11 +1824,6 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 return(fast_inverse(FIND_CLASS_NUMERIC(fast_convert(arg1),fast_convert(arg2))));
 }
-int f_compiler9(int arglist){
-int arg1;
-arg1 = Fnth(0,arglist);
-return(fast_inverse(compiler9(fast_convert(arg1))));
-}
 int f_compiler10(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
@@ -1832,6 +1843,11 @@ int f_compiler13(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(compiler13(fast_convert(arg1))));
+}
+int f_compiler14(int arglist){
+int arg1;
+arg1 = Fnth(0,arglist);
+return(fast_inverse(compiler14(fast_convert(arg1))));
 }
 int f_REFER(int arglist){
 int arg1,arg2;
@@ -1912,28 +1928,37 @@ res = fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(fast_co
 ;
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(NIL))));
 return(res);}
-int compiler1(int Y){
+int compiler1(){
+int res;
+({int res;
+if(fast_convert(Fcdr(Fmakesym("INSTREAM"))) != NIL){
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("CLOSE")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("INSTREAM")))))));}
+ else res = NIL;res;})
+;
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(NIL))));
+return(res);}
+int compiler2(int Y){
 int res;
 if(CELLRANGE(Y)) Fshelterpush(Y);
-res = HAS_TAIL_RECUR_P(fast_convert(fast_cdr(Y)),Fnth(0,Fcdr(Fmakesym("compiler1"))));
+res = HAS_TAIL_RECUR_P(fast_convert(fast_cdr(Y)),Fnth(0,Fcdr(Fmakesym("compiler2"))));
 if(CELLRANGE(Y)) Fshelterpop();
 return(res);}
-int compiler2(int X){
+int compiler3(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 res = fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(0))))))),fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1))))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
-int compiler3(int X){
+int compiler4(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 res = fast_not(fast_convert(Fcallsubr(Fcar(Fmakesym("SYMBOLP")),Flist1(fast_inverse(X)))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
-int compiler4(int X){
+int compiler5(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = ({int res;int TYPE = fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler4")))));res = ({int res;
+res = ({int res;int TYPE = fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler5")))));res = ({int res;
 if((res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(TYPE))))) == NIL)
 if((res=fast_eq(fast_convert(TYPE),fast_convert(Faux(Fmakesym("<OBJECT>"))))) == NIL)
 if((res=fast_eq(fast_convert(TYPE),fast_convert(Faux(Fmakesym("<NUMBER>"))))) == NIL)
@@ -1947,34 +1972,34 @@ res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
-int compiler5(int X){
-int res;
-if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler5"))))));
-if(CELLRANGE(X)) Fshelterpop();
-return(res);}
 int compiler6(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<FLOAT>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler6"))))));
+res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler6"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int compiler7(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<INTEGER>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler7"))))));
+res = fast_eq(fast_convert(Faux(Fmakesym("<FLOAT>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler7"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int compiler8(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler8"))))));
+res = fast_eq(fast_convert(Faux(Fmakesym("<INTEGER>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler8"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int compiler9(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = ({int res;int TYPE = fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler9")))));res = ({int res;
+res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler9"))))));
+if(CELLRANGE(X)) Fshelterpop();
+return(res);}
+int compiler10(int X){
+int res;
+if(CELLRANGE(X)) Fshelterpush(X);
+res = ({int res;int TYPE = fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler10")))));res = ({int res;
 if((res=fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(TYPE))))) == NIL)
 if((res=fast_eq(fast_convert(TYPE),fast_convert(Faux(Fmakesym("<OBJECT>"))))) !=NIL)
 res=res;
@@ -1985,28 +2010,28 @@ res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
-int compiler10(int X){
-int res;
-if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler10"))))));
-if(CELLRANGE(X)) Fshelterpop();
-return(res);}
 int compiler11(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<FLOAT>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler11"))))));
+res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler11"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int compiler12(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<INTEGER>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler12"))))));
+res = fast_eq(fast_convert(Faux(Fmakesym("<FLOAT>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler12"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int compiler13(int X){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
-res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler13"))))));
+res = fast_eq(fast_convert(Faux(Fmakesym("<INTEGER>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler13"))))));
+if(CELLRANGE(X)) Fshelterpop();
+return(res);}
+int compiler14(int X){
+int res;
+if(CELLRANGE(X)) Fshelterpush(X);
+res = fast_eq(fast_convert(Faux(Fmakesym("<FIXNUM>"))),fast_convert(FIND_CLASS(X,Fnth(0,Fcdr(Fmakesym("compiler14"))))));
 if(CELLRANGE(X)) Fshelterpop();
 return(res);}
 int ANY(int F,int LS){
@@ -2307,6 +2332,54 @@ else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUC
 res = Fmakestr("gcc -O3 -w -shared -fPIC -o ");}
 ;res;}));int FNAME = fast_convert(FILENAME(X));fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("invoke GCC~%"))))));
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("SYSTEM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(COMP),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".o ")),Fcons(fast_inverse(FNAME),Flist1(fast_inverse(Fmakestr(".c")))))))))))));
+res;})
+;
+if(CELLRANGE(X)) Fshelterpop();
+return(res);}
+int COMPILE_CUDA(int X){
+int res;
+if(CELLRANGE(X)) Fshelterpush(X);
+if(Ffreecell() < 900) Fgbc();
+({int res;
+ res = Fset_cdr(Fmakesym("FILE-NAME-AND-EXT"),fast_inverse(X));res;});
+({int res;
+ res = Fset_cdr(Fmakesym("TYPE-FUNCTION"),fast_inverse(NIL));res;});
+INFERENCE_FILE(X);
+({int res,ret,i;
+ i = Fgetprop(Fmakesym("EXIT"));
+Fsetprop(Fmakesym("EXIT"),i+1);
+ret=setjmp(c_EXIT[i]);if(ret == 0){
+res = ({int res;
+res=COMPILE_CUDA1(X);res;});Fsetprop(Fmakesym("EXIT"),i);
+}
+ else{
+ret = 0;
+compiler1();res=catch_arg;}
+res;});
+res = T;
+if(CELLRANGE(X)) Fshelterpop();
+return(res);}
+int COMPILE_CUDA1(int X){
+int res;
+if(CELLRANGE(X)) Fshelterpush(X);
+if(Ffreecell() < 900) Fgbc();
+res = ({int res;int OPTION = fast_convert(({int res=NIL;
+if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUCTION")),NIL))),fast_convert(Fmakesym("WINDOWS"))) != NIL){
+res = Fmakestr("gcc -O3 -shared -o ");}
+else if(fast_eq(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("SELF-INTRODUCTION")),NIL))),fast_convert(Fmakesym("LINUX"))) != NIL){
+res = Fmakestr("nvcc -O3 -w -shared -o -L/usr/include/cuda");}
+;res;}));int FNAME = fast_convert(FILENAME(X));fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(T))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("initialize~%"))))));
+INITIALIZE();
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("pass1~%"))))));
+PASS1(X);
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("pass2~%"))))));
+PASS2(X);
+fast_convert(Fcallsubr(Fcar(Fmakesym("IGNORE-TOPLEVEL-CHECK")),Flist1(fast_inverse(NIL))));
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("finalize~%"))))));
+FINALIZE(X);
+fast_convert(Fcallsubr(Fcar(Fmakesym("FORMAT")),Fcons(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STANDARD-OUTPUT")),NIL))),Flist1(fast_inverse(Fmakestr("invoke GCC~%"))))));
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("SYSTEM")),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("STRING-APPEND")),Fcons(fast_inverse(OPTION),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".o ")),Fcons(fast_inverse(FNAME),Fcons(fast_inverse(Fmakestr(".c ")),Flist1(fast_inverse(fast_convert(Fcdr(Fmakesym("C-LANG-OPTION"))))))))))))))));
 res;})
 ;
 if(CELLRANGE(X)) Fshelterpop();
@@ -5298,7 +5371,7 @@ res = NIL;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(NAME)) != NIL){
 res = T;}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("COND"))) != NIL){
-res = ANY(({Fset_cdr(Fmakesym("compiler1"),Fcons(NAME,Fcons(T,NIL)));Fcar(Fmakesym("compiler1"));}),fast_convert(fast_cdr(X)));}
+res = ANY(({Fset_cdr(Fmakesym("compiler2"),Fcons(NAME,Fcons(T,NIL)));Fcar(Fmakesym("compiler2"));}),fast_convert(fast_cdr(X)));}
 else if(fast_eq(fast_convert(fast_convert(fast_car(X))),fast_convert(Fmakesym("IF"))) != NIL){
 res = ({int res;
 if((res=HAS_TAIL_RECUR_P1(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))),NAME)) == NIL)
@@ -5342,13 +5415,13 @@ if(CELLRANGE(TEST)) Fshelterpush(TEST);
 if(CELLRANGE(CLOS)) Fshelterpush(CLOS);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;int VARS = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(1)))))));int END = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ELT")),Fcons(fast_inverse(X),Flist1(fast_inverse(fast_immediate(2)))))));int BODY = fast_convert(fast_convert(fast_cdr(fast_convert(fast_cdr(fast_convert(fast_cdr(X)))))));int VAR1 = fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("MAPCAR")),Fcons(fast_inverse(Fcar(Fmakesym("CAR"))),Flist1(fast_inverse(VARS))))));({int res;
-if(ANY(({Fset_cdr(Fmakesym("compiler2"),Fcons(T,NIL));Fcar(Fmakesym("compiler2"));}),VARS) != NIL){
+if(ANY(({Fset_cdr(Fmakesym("compiler3"),Fcons(T,NIL));Fcar(Fmakesym("compiler3"));}),VARS) != NIL){
 res = ({int res;
 res = ERRORstar(Fmakestr("for: illegal variable"),VARS);res;});}
  else res = NIL;res;})
 ;
 ({int res;
-if(ANY(({Fset_cdr(Fmakesym("compiler3"),Fcons(T,NIL));Fcar(Fmakesym("compiler3"));}),VAR1) != NIL){
+if(ANY(({Fset_cdr(Fmakesym("compiler4"),Fcons(T,NIL));Fcar(Fmakesym("compiler4"));}),VAR1) != NIL){
 res = ({int res;
 res = ERRORstar(Fmakestr("for: illegal variable"),VARS);res;});}
  else res = NIL;res;})
@@ -8089,7 +8162,7 @@ res = Fmakesym("NO");res;});Fsetprop(Fmakesym("EXIT-INFERENCE"),i);
 }
  else{
 ret = 0;
-compiler0();res=block_arg;}
+compiler1();res=block_arg;}
 res;});
 res;})
 ;}
@@ -8194,7 +8267,7 @@ res = Fmakesym("NO");res;});Fsetprop(Fmakesym("EXIT-ALL"),i);
 }
  else{
 ret = 0;
-compiler0();res=block_arg;}
+compiler1();res=block_arg;}
 res;});
 res;})
 ;}
@@ -8247,7 +8320,7 @@ res = ({int res;int NEW_ENV = fast_convert(INFERENCE_COND2(fast_convert(fast_car
 if(fast_not(fast_eq(fast_convert(NEW_ENV),fast_convert(Fmakesym("NO")))) != NIL){
 {
 temp1 = fast_convert(fast_cdr(X));
-temp2 = TYPE_ENV;
+temp2 = NEW_ENV;
 if(CELLRANGE(X)) Fshelterpop();
 if(CELLRANGE(TYPE_ENV)) Fshelterpop();
 X = temp1;
@@ -8444,15 +8517,15 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(EVERY(({Fset_cdr(Fmakesym("compiler4"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler4"));}),fast_convert(fast_cdr(X))) != NIL){
+if(EVERY(({Fset_cdr(Fmakesym("compiler5"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler5"));}),fast_convert(fast_cdr(X))) != NIL){
 res = ESTIMATE(fast_convert(fast_cdr(X)),Faux(Fmakesym("<NUMBER>")),TYPE_ENV);}
-else if(EVERY(({Fset_cdr(Fmakesym("compiler5"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler5"));}),fast_convert(fast_cdr(X))) != NIL){
+else if(EVERY(({Fset_cdr(Fmakesym("compiler6"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler6"));}),fast_convert(fast_cdr(X))) != NIL){
 res = TYPE_ENV;}
-else if(ANY(({Fset_cdr(Fmakesym("compiler6"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler6"));}),fast_convert(fast_cdr(X))) != NIL){
-res = ESTIMATE(fast_convert(fast_cdr(X)),Faux(Fmakesym("<FLOAT>")),TYPE_ENV);}
 else if(ANY(({Fset_cdr(Fmakesym("compiler7"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler7"));}),fast_convert(fast_cdr(X))) != NIL){
-res = ESTIMATE(fast_convert(fast_cdr(X)),Faux(Fmakesym("<INTEGER>")),TYPE_ENV);}
+res = ESTIMATE(fast_convert(fast_cdr(X)),Faux(Fmakesym("<FLOAT>")),TYPE_ENV);}
 else if(ANY(({Fset_cdr(Fmakesym("compiler8"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler8"));}),fast_convert(fast_cdr(X))) != NIL){
+res = ESTIMATE(fast_convert(fast_cdr(X)),Faux(Fmakesym("<INTEGER>")),TYPE_ENV);}
+else if(ANY(({Fset_cdr(Fmakesym("compiler9"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler9"));}),fast_convert(fast_cdr(X))) != NIL){
 res = ESTIMATE(fast_convert(fast_cdr(X)),Faux(Fmakesym("<INTEGER>")),TYPE_ENV);}
 else{
 res = WARNING(Fmakestr("numerical argument type mismatch"),X);
@@ -8498,7 +8571,7 @@ res = INFERENCE_ALL1(BODY,TYPE_ENV,NIL);Fsetprop(Fmakesym("EXIT-LET"),i);
 }
  else{
 ret = 0;
-compiler0();res=block_arg;}
+compiler1();res=block_arg;}
 res;});}res;})
 ;
 res;})
@@ -8559,7 +8632,7 @@ res = INFERENCE_ALL1(BODY,TYPE_ENV,NIL);Fsetprop(Fmakesym("EXIT-FOR"),i);
 }
  else{
 ret = 0;
-compiler0();res=block_arg;}
+compiler1();res=block_arg;}
 res;});
 res;})
 ;
@@ -8722,7 +8795,7 @@ res = Fmakesym("NO");}
 }
  else{
 ret = 0;
-compiler0();res=block_arg;}
+compiler1();res=block_arg;}
 res;});
 if(CELLRANGE(TYPE_ENV)) Fshelterpop();
 if(CELLRANGE(Y)) Fshelterpop();
@@ -8887,15 +8960,15 @@ if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(TYPE_ENV)) Fshelterpush(TYPE_ENV);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(EVERY(({Fset_cdr(Fmakesym("compiler9"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler9"));}),fast_convert(fast_cdr(X))) != NIL){
+if(EVERY(({Fset_cdr(Fmakesym("compiler10"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler10"));}),fast_convert(fast_cdr(X))) != NIL){
 res = Faux(Fmakesym("<NUMBER>"));}
-else if(EVERY(({Fset_cdr(Fmakesym("compiler10"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler10"));}),fast_convert(fast_cdr(X))) != NIL){
+else if(EVERY(({Fset_cdr(Fmakesym("compiler11"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler11"));}),fast_convert(fast_cdr(X))) != NIL){
 res = Faux(Fmakesym("<FIXNUM>"));}
-else if(ANY(({Fset_cdr(Fmakesym("compiler11"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler11"));}),fast_convert(fast_cdr(X))) != NIL){
-res = Faux(Fmakesym("<FLOAT>"));}
 else if(ANY(({Fset_cdr(Fmakesym("compiler12"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler12"));}),fast_convert(fast_cdr(X))) != NIL){
-res = Faux(Fmakesym("<INTEGER>"));}
+res = Faux(Fmakesym("<FLOAT>"));}
 else if(ANY(({Fset_cdr(Fmakesym("compiler13"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler13"));}),fast_convert(fast_cdr(X))) != NIL){
+res = Faux(Fmakesym("<INTEGER>"));}
+else if(ANY(({Fset_cdr(Fmakesym("compiler14"),Fcons(TYPE_ENV,Fcons(T,NIL)));Fcar(Fmakesym("compiler14"));}),fast_convert(fast_cdr(X))) != NIL){
 res = Faux(Fmakesym("<INTEGER>"));}
 else{
 res = Faux(Fmakesym("<NUMBER>"));}
@@ -9141,6 +9214,9 @@ void init_tfunctions(void){
 (deftfunc)("COMPILE-FILE" , f_COMPILE_FILE);
 (deftfunc)("COMPILE-FILE1" , f_COMPILE_FILE1);
 (deftfunc)("COMPILE-FILE*" , f_COMPILE_FILEstar);
+(deftfunc)("compiler1" , f_compiler1);
+(deftfunc)("COMPILE-CUDA" , f_COMPILE_CUDA);
+(deftfunc)("COMPILE-CUDA1" , f_COMPILE_CUDA1);
 (deftfunc)("PASS1" , f_PASS1);
 (deftfunc)("CHECK-ARGS-COUNT" , f_CHECK_ARGS_COUNT);
 (deftfunc)("FIND-CATCH-BLOCK-TAG" , f_FIND_CATCH_BLOCK_TAG);
@@ -9215,10 +9291,10 @@ void init_tfunctions(void){
 (deftfunc)("COMP-CASE-USING" , f_COMP_CASE_USING);
 (deftfunc)("COMP-CASE-USING1" , f_COMP_CASE_USING1);
 (deftfunc)("HAS-TAIL-RECUR-P" , f_HAS_TAIL_RECUR_P);
-(deftfunc)("compiler1" , f_compiler1);
-(deftfunc)("HAS-TAIL-RECUR-P1" , f_HAS_TAIL_RECUR_P1);
 (deftfunc)("compiler2" , f_compiler2);
+(deftfunc)("HAS-TAIL-RECUR-P1" , f_HAS_TAIL_RECUR_P1);
 (deftfunc)("compiler3" , f_compiler3);
+(deftfunc)("compiler4" , f_compiler4);
 (deftfunc)("COMP-FOR" , f_COMP_FOR);
 (deftfunc)("COMP-FOR1" , f_COMP_FOR1);
 (deftfunc)("COMP-FOR2" , f_COMP_FOR2);
@@ -9305,11 +9381,11 @@ void init_tfunctions(void){
 (deftfunc)("INFERENCE-IF" , f_INFERENCE_IF);
 (deftfunc)("INFERENCE-IF1" , f_INFERENCE_IF1);
 (deftfunc)("INFERENCE-IF2" , f_INFERENCE_IF2);
-(deftfunc)("compiler4" , f_compiler4);
 (deftfunc)("compiler5" , f_compiler5);
 (deftfunc)("compiler6" , f_compiler6);
 (deftfunc)("compiler7" , f_compiler7);
 (deftfunc)("compiler8" , f_compiler8);
+(deftfunc)("compiler9" , f_compiler9);
 (deftfunc)("INFERENCE-NUMERIC" , f_INFERENCE_NUMERIC);
 (deftfunc)("INFERENCE-LET" , f_INFERENCE_LET);
 (deftfunc)("INFERENCE-FOR" , f_INFERENCE_FOR);
@@ -9322,11 +9398,11 @@ void init_tfunctions(void){
 (deftfunc)("FIND-CLASS" , f_FIND_CLASS);
 (deftfunc)("FIND-CLASS-IF" , f_FIND_CLASS_IF);
 (deftfunc)("FIND-CLASS-COND" , f_FIND_CLASS_COND);
-(deftfunc)("compiler9" , f_compiler9);
 (deftfunc)("compiler10" , f_compiler10);
 (deftfunc)("compiler11" , f_compiler11);
 (deftfunc)("compiler12" , f_compiler12);
 (deftfunc)("compiler13" , f_compiler13);
+(deftfunc)("compiler14" , f_compiler14);
 (deftfunc)("FIND-CLASS-NUMERIC" , f_FIND_CLASS_NUMERIC);
 (deftfunc)("REFER" , f_REFER);
 (deftfunc)("SET-TYPE-FUNCTION-OUTPUT" , f_SET_TYPE_FUNCTION_OUTPUT);

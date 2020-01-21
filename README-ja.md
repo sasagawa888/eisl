@@ -148,7 +148,7 @@ EISLはエディタを備えていまう。
 
 Raspberry Pi向けの版にはwiringPi用のライブラリが附属しています。
 
-In order to use wiringPi, you need to compile wiringpi.lsp(in example folder) and invoke EISL with super user.
+wiringPiを使うには，（`example`ディレクトリにある）`wiringpi.lsp`ファイルをコンパイルし，EISLを管理者として実行する必要があります。
 
 ```console
 $ sudo ./eisl
@@ -158,9 +158,9 @@ $ sudo ./eisl
 ```lisp
 (load "wiringpi.o")
 ```
-please see the example code "led.lsp"
+コード例`led.lsp`をご覧下さい。
 
-"wiringpi.lsp" is the source code of wiringpi.o.
+`wiringpi.lsp`ファイルは`wringpi.o`ファイル用のソースコードです。
 
 ```lisp
 EISL <==================================> C
@@ -182,7 +182,7 @@ EISL <==================================> C
 ### 例
 
 ```lisp
-;;LED on/off
+;; LED点滅
 
 (defglobal pin 5)
 (defglobal flag nil)
@@ -198,8 +198,8 @@ EISL <==================================> C
         (delay 1000)))
 
 
-;;control servo moter.
-;;SG90 Micro servo Digital 9g
+;; サーボモータを制御する。
+;; SG90 Micro servo Digital 9g
 
 (defun setup ()
   (cond ((null flag) (wiringpi-setup-gpio ) (setq flag t)))
@@ -214,15 +214,16 @@ EISL <==================================> C
 
 
 ## デバッグ用関数
-- (trace fn1 fn2 ... fn)
-- (untrace fn1 fn2 ... fn) or (untrace)
-- (backtrace)
-- (break)
-- (macroexpand-1)
+- `(trace fn1 fn2 ... fn)`
+- `(untrace fn1 fn2 ... fn)`又は`(untrace)`
+- `(backtrace)`
+- `(break)`
+- `(macroexpand-1)`
+
 
 ## 拡張関数
-- (random n) random-integer from 0 to n
-- (random-real) random-float-number from 0 to 1
-- (gbc) invoke garbage collection.
-- (gbc t) display message when invoke GC.
-- (gbc nil) not display message when invoke GC.
+- `(random n)` 0からnまでの無作為な整数
+- `(random-real)` 0から1までの無作為な浮動小数
+- `(gbc)` ガーベッジコレクション (GC) を実行.
+  - `(gbc t)` GC実行時に通達する。
+  - `(gbc nil)` GC実行時に通達しない。

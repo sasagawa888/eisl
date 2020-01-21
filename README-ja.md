@@ -70,7 +70,6 @@ EISLは簡単に操作できることを目的にしています。
 EISLは翻訳系 (compiler) を備えています。
 GCC向けのソースコード及び〔GCCを介して〕オブジェクトコードを生成します。
 
-
 ### 用法
 
 ```consloe
@@ -121,13 +120,16 @@ Elapsed Time(second)=3.728262
 >
 ```
 
-You can compile the compiler itself. Compilation is faster.
-In raspai3 compiler.o is not possible due to insufficient memory. Please use compiiler.lsp.
+翻訳系自身を翻訳することができます。
+翻訳はずっと早くなります。
+
+Raspberry Pi 3では，主記憶領域不足のせいで`compiler.o`ファイルが利用できません。
+`compiler.lsp`を使って下さい。
 
 
 ## エディタを起動する
 
-EISLはエディタを備えていまう。
+EISLはエディタを備えています。
 エディタを利用するには`edit`関数を用いて下さい。
 
 併せてご覧ください: [sasagawa888/Edlis: Simple CUI editor for Easy-ISLisp](https://github.com/sasagawa888/Edlis)
@@ -143,6 +145,7 @@ EISLはエディタを備えていまう。
 ```lisp
 (edit "foo.lsp")
 ```
+
 
 ## WiringPi
 

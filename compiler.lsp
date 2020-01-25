@@ -222,7 +222,7 @@ double tarai(double x, double y, double z){
   (let ((option (cond ((eq (self-introduction) 'windows)
                        "gcc -O3 -shared -o ")
                       ((eq (self-introduction) 'linux)
-                       "nvcc -O3 -w -shared -o -L/usr/include/cuda")))
+                       "nvcc -O3 -w -shared --compiler-options '-fPIC' -o ")))
         (fname (filename x)))
     (ignore-toplevel-check t)
     (format (standard-output) "initialize~%")

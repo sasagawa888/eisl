@@ -228,7 +228,7 @@ char extended[50][30] = {
 {"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
 {"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
 {"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
-{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},
+{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},
 {"c-include"},{"c-define"},{"c-lang"},{"c-option"}
 };
 #endif

@@ -101,6 +101,19 @@ Elapsed Time(second)=3.728262
 >
 ```
 
+# Compiler for CUDA
+EISL has a compiler. it generates cuda code with nvcc and generates object code.
+
+```
+Invoke with -c option
+./eisl -c compiler.lsp
+
+or (load "compiler.lsp")
+
+(compile-cuda "foo.lsp")
+
+(load "foo.o")
+
 
 # Invoke editor
 edit function invoke Edlis editor.

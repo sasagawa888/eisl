@@ -9,7 +9,6 @@
 #include <termios.h>
 #include <unistd.h>
 #include <dlfcn.h>
-//#include <wiringPi.h>
 #endif
 
 #if _WIN32

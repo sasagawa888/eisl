@@ -191,7 +191,7 @@ double tarai(double x, double y, double z){
     (pass2 x)
     (ignore-toplevel-check nil)
     (format (standard-output) "finalize~%")
-    (finalize x)
+    (finalize x ".c")
     ;(freedll) can't use
     (format (standard-output) "invoke GCC~%")
     (system (string-append option fname ".o " fname ".c " c-lang-option))))
@@ -206,6 +206,8 @@ double tarai(double x, double y, double z){
         (fname (filename x)))
     (format (standard-output) "invoke GCC~%")
     (system (string-append comp fname ".o " fname ".c"))))
+
+
 
 (defun compile-cuda (x)
   (setq file-name-and-ext x)
@@ -222,7 +224,7 @@ double tarai(double x, double y, double z){
   (let ((option (cond ((eq (self-introduction) 'windows)
                        "gcc -O3 -shared -o ")
                       ((eq (self-introduction) 'linux)
-                       "nvcc -O3 -w -shared --compiler-options '-fPIC' -o ")))
+                       "nvcc -O3 -w -shared --compiler-options '-fPIC' -lcublas -o ")))
         (fname (filename x)))
     (ignore-toplevel-check t)
     (format (standard-output) "initialize~%")
@@ -233,9 +235,8 @@ double tarai(double x, double y, double z){
     (pass2 x)
     (ignore-toplevel-check nil)
     (format (standard-output) "finalize~%")
-    (finalize x)
-    ;(freedll) can't use
-    (format (standard-output) "invoke GCC~%")
+    (finalize x ".cu")
+    (format (standard-output) "invoke NVCC~%")
     (system (string-append option fname ".o " fname ".c " c-lang-option))))
 
 
@@ -598,11 +599,11 @@ double tarai(double x, double y, double z){
        (format-object code0 (conv-name (car tag)) nil)
        (format code0 "[50];~%" )))
 
-(defun finalize (x)
+(defun finalize (x ext)
   (format code3 "}")
   (format code4 "}")
   (let ((outstream
-            (open-output-file (string-append (filename x) ".c"))))
+            (open-output-file (string-append (filename x) ext))))
       (format outstream "#include \"fast.h\"~%")
       (format outstream (get-output-stream-string code0))
       (format outstream (get-output-stream-string code1))
@@ -2863,7 +2864,9 @@ double tarai(double x, double y, double z){
               (let ((true (inference (elt x 2) else)))
                 (if (not (eq true 'no))
                     true
-                    (progn (warning "if mismatch" x) 'no))))))))
+                    (progn (warning "if mismatch" x) 'no)))
+              'no))
+        'no)))
 
 ;;(if test true)
 (defun inference-if2 (x type-env)
@@ -2872,7 +2875,8 @@ double tarai(double x, double y, double z){
         (let ((true (inference (elt x 2) test)))
           (if (not (eq true 'no))
               true
-              (progn (warning "if mismatch" x) 'no))))))
+              (progn (warning "if mismatch" x) 'no)))
+        'no)))
 ;; +-* ...
 (defun inference-numeric (x type-env)
   (cond ((every (lambda (x)

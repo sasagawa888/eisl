@@ -1,6 +1,6 @@
 all: eisl edlis
 CC := gcc
-eisl : main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o compiler.o
+eisl : main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o 
 	$(CC) -O3 -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o -o eisl -lm -ldl
 main.o : main.c eisl.h
 	$(CC)  -O3 -Wall -c main.c

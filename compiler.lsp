@@ -133,6 +133,28 @@ double tarai(double x, double y, double z){
        ((> i n) str1)
        (setq str1 (string-append str1 (convert (elt str i) <string>)))))
 
+;; e.g. (a b) -> (asubst bsubst) 
+(defun subst (vars)
+   (if (null vars)
+      '()
+       (cons (convert (string-append (convert (car vars) <string>) "subst") <symbol>) (subst (cdr vars)))))
+
+
+(defun alpha-conv (x vars subst)
+    (cond ((null x) nil)
+          ((and (symbolp x) (member x vars)) (nth subst (- (length vars) (length (member x vars)))))
+          ((atom x) x)
+          (t (cons (alpha-conv (car x) vars subst)
+                  (alpha-conv (cdr x) vars subst)))))
+
+
+(defun nth (x n)
+   (if (= n 0)
+       (car x)
+       (nth (cdr x) (- n 1))))
+
+
+
 (defglobal comp-global-var
   '(instream not-need-res not-need-colon global-variable function-arg generic-name-arg catch-block-tag unwind-thunk file-name-and-ext
     lambda-count lambda-nest c-lang-option code0 code1 code2 code3 code4 code5 code6 code7))
@@ -1599,11 +1621,25 @@ double tarai(double x, double y, double z){
         (t nil)))
 
 
+;; comp-for alpha convert e.g.
+;; from
+;; (defun iota (n m)
+;;  (for ((m m (- m 1))
+;;        (a nil (cons m a)))
+;;       ((< m n) a)))
+;; to 
+;; (defun iota (n m)
+;;  (for ((msubst m (- msubst 1))
+;;        (asubst nil (cons msubst asubst)))
+;;       ((< msubst n) asubst)))
 (defun comp-for (stream x env args tail name global test clos)
-  (let* ((vars (elt x 1))
-         (end (elt x 2))
-         (body (cdr (cdr (cdr x))))
-         (var1 (mapcar #'car vars)))
+  ;;alpha-convert variables.
+  (let* ((vars1 (elt x 1))
+         (var2 (mapcar #'car vars1))
+         (var1 (subst var2))
+         (vars (comp-for3 vars1 var2 var1))
+         (end (alpha-conv (elt x 2) var2 var1))
+         (body (alpha-conv (cdr (cdr (cdr x))) var2 var1)))
     (when (any (lambda (x) (eq (elt x 0)(elt x 1))) vars)
       (error* "for: illegal variable" vars))
     (when (any (lambda (x) (not (symbolp x))) var1)
@@ -1646,6 +1682,12 @@ double tarai(double x, double y, double z){
          (format stream (convert n <string>))
          (format stream ";~%")))
   (format stream "}~%"))
+
+;; alpha convert vars list
+(defun comp-for3 (vars var subst)
+  (mapcar (lambda (x) (list (alpha-conv (elt x 0) var subst)
+                            (elt x 1)
+                            (if (= (length x) 3) (alpha-conv (elt x 2) var subst) nil))) vars))
 
 (defun comp-progn (stream x env args tail name global test clos)
   (format stream "({int res;~%")

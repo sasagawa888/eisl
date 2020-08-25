@@ -783,6 +783,11 @@ double tarai(double x, double y, double z){
         (type-gen-arg2 code2 args (argument-type name)))
     (format code2 "{~%")
     (format code2 "int res;~%")
+    ;;debug print
+    ;(format code2 "printf(\"")
+    ;(format-object code2 name nil)
+    ;(format code2 "   -->   \");")
+
     (cond ((and (not optimize-enable)(has-tail-recur-p body name))  ;;for tail recursive tempn var;
            (gen-arg3 (length args)))
           ((and optimize-enable (has-tail-recur-p body name))
@@ -1685,9 +1690,13 @@ double tarai(double x, double y, double z){
 
 ;; alpha convert vars list
 (defun comp-for3 (vars var subst)
-  (mapcar (lambda (x) (list (alpha-conv (elt x 0) var subst)
-                            (elt x 1)
-                            (if (= (length x) 3) (alpha-conv (elt x 2) var subst) nil))) vars))
+  (mapcar (lambda (x)  (if (= (length x) 3)
+                           (list (alpha-conv (elt x 0) var subst)
+                                 (elt x 1)
+                                 (alpha-conv (elt x 2) var subst))
+                           (list (alpha-conv (elt x 0) var subst)
+                                 (elt x 1))))      
+          vars))
 
 (defun comp-progn (stream x env args tail name global test clos)
   (format stream "({int res;~%")
@@ -2863,7 +2872,7 @@ double tarai(double x, double y, double z){
   (cond ((null x) type-env)
         (t (let ((new-env (inference-cond2 (car x) type-env)))
              (cond ((not (eq new-env 'no))
-                    (inference-cond1 (cdr x) new-env))
+                    (inference-cond1 (cdr x) type-env))
                    (t (warning "cond mismatch" (car x))
                       (inference-cond1 (cdr x) type-env)))))))
 

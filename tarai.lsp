@@ -42,9 +42,9 @@
             (tak (- y 1) z x)
             (tak (- z 1) x y))))
 
-;(defun listn (n)
-;   (if (not (= 0 n))
-;       (cons n (listn (- n 1)))))
+(defun listn (n)
+   (if (not (= 0 n))
+       (cons n (listn (- n 1)))))
 
 (defconstant ll-18 (listn 18))
 (defconstant ll-12 (listn 12))

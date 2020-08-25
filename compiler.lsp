@@ -784,9 +784,9 @@ double tarai(double x, double y, double z){
     (format code2 "{~%")
     (format code2 "int res;~%")
     ;;debug print
-    ;(format code2 "printf(\"")
-    ;(format-object code2 name nil)
-    ;(format code2 "   -->   \");")
+    ;;(format code2 "printf(\"")
+    ;;(format-object code2 name nil)
+    ;;(format code2 "   -->   \");")
 
     (cond ((and (not optimize-enable)(has-tail-recur-p body name))  ;;for tail recursive tempn var;
            (gen-arg3 (length args)))
@@ -3104,7 +3104,8 @@ double tarai(double x, double y, double z){
         ((and (consp x) (macrop x))
          (find-class (macroexpand-1 x) type-env))
         ((consp x)
-         (class <object>))))
+         (class <object>))
+        (t (class <object>))))
 
 (defun find-class-if (x type-env)
   (find-class (elt x 2) type-env))

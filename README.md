@@ -22,6 +22,7 @@ We confirmed operation in the following environments.
 - openSUSE Leap 42.3 GCC 4.8.5
 - Debian GNU/Linux GCC 6.3 GCC 7.3
 - Linux Mint GCC ver 5.4
+- Linux Mint GCC ver9.3.0
 - Windows10 MINGW GCC 5.3
 
 
@@ -99,6 +100,17 @@ Elapsed Time(second)=0.024106
 Elapsed Time(second)=3.728262
 <undef>
 >
+```
+
+# Self compile
+EISL compiler can compile itself on Ubunut or Linux Mint ver20.
+
+```
+./eisl -c compiler.lsp
+(compile-file "compiler.lsp)
+
+invoke with compiled compiler.
+./eisl -c compiler.o
 ```
 
 # Compiler for CUDA

@@ -19,6 +19,7 @@ We confirmed operation in the following environments.
 - Ubuntu 16.04 GCC 5.4
 - Ubuntu 18.04 GCC 7.3
 - Raspberry Pi3 Raspbian GCC 6.3
+- Raspberry Pi3 Raspbian GCC 8.3.0
 - openSUSE Leap 42.3 GCC 4.8.5
 - Debian GNU/Linux GCC 6.3 GCC 7.3
 - Linux Mint GCC ver 5.4

@@ -3023,9 +3023,6 @@ double tarai(double x, double y, double z){
 ;;else if argument is cons, inference the cons.
 ;;and unify the cons and type of argument.
 (defun inference-arg (x y type-env)
-  (print x)
-  (print y)
-  (print type-env)
   (block exit-arg
     (for ((arg x (cdr arg))
           (type y (if (and (>= (length type) 2)

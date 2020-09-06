@@ -102,16 +102,7 @@ Elapsed Time(second)=3.728262
 >
 ```
 
-# Self compile
-EISL compiler can compile itself on Ubunut or Linux Mint ver20.
 
-```
-./eisl -c compiler.lsp
-(compile-file "compiler.lsp)
-
-invoke with compiled compiler.
-./eisl -c compiler.o
-```
 
 # Compiler for CUDA
 EISL has a compiler. it generates cuda code with nvcc and generates object code.

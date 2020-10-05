@@ -27,6 +27,8 @@ edit.o : edit.c eisl.h
 .PHONY: clean
 clean: -lm
 	rm -f *.o
+	rm eisl
+	rm edlis
 
 
 edlis : edlis.o

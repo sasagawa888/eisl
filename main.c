@@ -26,6 +26,8 @@ int sp; //stack pointer
 int fc; //free counter
 int ap; //arglist pointer
 int lp; //shelter pointer
+int wp1; //working area1 pointer
+int wp2; //working area2 pointer
 
 //------class-----
 int cobject;
@@ -94,7 +96,7 @@ int buffer1[256];
 #endif
 
 //heap and stack
-cell heap[HEAPSIZE];
+cell heap[CELLSIZE];
 int stack[STACKSIZE];
 int argstk[STACKSIZE];
 int cell_hash_table[HASHTBSIZE];
@@ -236,7 +238,7 @@ char extended[50][30] = {
 int main(int argc, char *argv[]){
     int opt;
 
-    printf("Easy-ISLisp Ver1.3\n");
+    printf("Easy-ISLisp Ver1.4\n");
     initcell();
     initclass();
     initstream();
@@ -311,6 +313,8 @@ void initpt(void){
     sp = 0;
     ap = 0;
     lp = 0;
+    wp1 = WORK1;
+    wp2 = WORK2;
     ls = catch_symbols;
     while(!nullp(ls)){
     	SET_PROP(car(ls),0);
@@ -1769,7 +1773,7 @@ void debugger(){
 
     printf("debug mode ?(help)\n");
     loop:
-    printf(">> ");fflush(stdout);
+    printf(">>");fflush(stdout);
     x = sread();
 	if(eqp(x,makesym("?"))){
     	printf("?  help\n");

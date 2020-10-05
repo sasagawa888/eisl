@@ -12,13 +12,13 @@
 (defglobal fetched-subst '())
 (defglobal undo-list '())
 (defglobal epilog nil)
-#|
+
 (defun display (x)
   (format (standard-output) "~A" x))
 
 (defun newline ()
   (format (standard-output) "~%"))
-|#
+
 ;;in ISLisp when cdr recieve nil, invoke error.
 ;;so, cdr* is compatible with Common Lisp
 (defun cdr* (x)

@@ -1,10 +1,19 @@
 /* Easy-ISLisp (ISLisp)
 written by kenichi sasagawa 2016/4
 */
-
+/*
+memory map
+address
+0        -  10000000  Heap area
+10000001 -  18000000  Working area1
+18000001 -  20000000  Working area2
+*/
 #include <setjmp.h>
 
 #define HEAPSIZE    10000000
+#define CELLSIZE    20000000
+#define WORK1       10000001
+#define WORK2       18000001
 #define FREESIZE    50
 #define STACKSIZE   300000
 #define SYMSIZE     32
@@ -168,6 +177,8 @@ extern int sp; //stack pointer
 extern int fc; //free counter
 extern int ap; //arglist pointer
 extern int lp; //shelter pointer
+extern int wp1; //working area1 pointer
+extern int wp2; //working area2 pointer
 
 //------class-----
 extern int cobject;
@@ -238,7 +249,7 @@ extern int buffer1[256];
 #endif
 
 //heap and stack
-extern cell heap[HEAPSIZE];
+extern cell heap[CELLSIZE];
 extern int stack[STACKSIZE];
 extern int argstk[STACKSIZE];
 extern int cell_hash_table[HASHTBSIZE];

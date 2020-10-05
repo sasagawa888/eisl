@@ -12,8 +12,7 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 
 In Linux  type "make" in terminal.
 
-On Windows rename winmakefile -> makefile. and type "make" in terminal.
-Requires MINGW GCC
+After version 1.4 Windows OS is not suported. Please use WSL on Windows.
 
 We confirmed operation in the following environments.
 - Ubuntu 16.04 GCC 5.4
@@ -24,12 +23,11 @@ We confirmed operation in the following environments.
 - Debian GNU/Linux GCC 6.3 GCC 7.3
 - Linux Mint GCC ver 5.4
 - Linux Mint GCC ver9.3.0
-- Windows10 MINGW GCC 5.3
+
 
 
 # Invoke
-- eisl (Windows)
-- ./eisl (Linux)
+- ./eisl 
 
 In the Linux version,the REPL is editable. If you do not desire to use the editable REPL, invoke with -r option.
 

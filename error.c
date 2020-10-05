@@ -5,11 +5,14 @@
 #include <setjmp.h>
 #include "eisl.h"
 
+#define ESCERRFRED  fprintf(stderr,"\33[31m")
+#define ESCERRFORG  fprintf(stderr,"\33[39m")
 
 //-------error------
 void error(int errnum, char *fun, int arg){
     int initargs;
 
+    ESCERRFRED;
     switch(errnum){ 
         case DIV_ZERO:  initargs = list6(makesym("format-string"),makestr("division by zero at "),
                                          makesym("format-arguments"),arg,
@@ -336,6 +339,7 @@ void error(int errnum, char *fun, int arg){
 
                            
     }
+    ESCERRFORG;
 }
 /*
 x = class

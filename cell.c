@@ -16,7 +16,8 @@ closure function-address car=arg+body, cdr=environment
 void initcell(void){
     int addr,x;
 
-    for(addr=0; addr < HEAPSIZE; addr++){
+    // heap area
+    for(addr=0; addr <= HEAPSIZE; addr++){
         heap[addr].flag = FRE;
         heap[addr].val.cdr.intnum = addr+1;
         heap[addr].aux = 0;
@@ -27,7 +28,13 @@ void initcell(void){
 
     for(x=0; x<HASHTBSIZE; x++)
         cell_hash_table[x] = NIL;
-
+    
+    // working area
+    for(addr=HEAPSIZE+1; addr < CELLSIZE; addr++){
+        heap[addr].flag = FRE;
+        heap[addr].aux = 0;
+        heap[addr].option = 0;
+    }
 
     //0th address is for NIL, set initial environment
     makesym("NIL");    //0th address NIL

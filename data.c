@@ -1182,3 +1182,30 @@ void redef_generic(void){
     return;
 }
 
+
+//------------for working area-----------------
+int w1cons(int car, int cdr){
+    int addr;
+
+    addr = wp1;
+    wp1++;
+    if(wp1 >= CELLSIZE){
+        error(SYSTEM_ERR,"w1cons ",NIL);
+    }
+    SET_CAR(addr,car);
+    SET_CDR(addr,cdr);
+    return(addr);
+}
+
+int w2cons(int car, int cdr){
+    int addr;
+
+    addr = wp2;
+    wp2++;
+    if(wp2 >= CELLSIZE){
+        error(SYSTEM_ERR,"w2cons ",NIL);
+    }
+    SET_CAR(addr,car);
+    SET_CDR(addr,cdr);
+    return(addr);
+}

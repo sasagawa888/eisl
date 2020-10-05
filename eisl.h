@@ -920,6 +920,8 @@ int vector_length(int x);
 int vector_ref(int v, int n);
 int vector_to_list(int x);
 int vectorp(int x);
+int w1cons(int car, int cdr);
+int w2cons(int car, int cdr);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void adddynenv(int sym, int val);

@@ -88,12 +88,12 @@ typedef struct{
     char after[BUFSIZE];
 } septoken;
 
-#if __linux
+
 struct position{
     int row;
     int col;
 };
-#endif
+
 
 #define DEBUG               printf("debug\n"); longjmp(buf,2);
 #define GET_FLT(addr)       heap[addr].val.fltnum
@@ -243,10 +243,9 @@ extern int charcnt;
 extern token stok;
 extern int line;
 extern int column;
-#if __linux
 extern int buffer[256][10];
 extern int buffer1[256];
-#endif
+
 
 //heap and stack
 extern cell heap[CELLSIZE];

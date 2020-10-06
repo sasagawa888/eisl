@@ -7,17 +7,8 @@
 #include <math.h>
 #include <float.h>
 #include <time.h>
-#if __linux
 #include <dlfcn.h>
-#endif
-#if _WIN32
-#include <windows.h>
-#endif
 #include "eisl.h"
-
-#if _WIN32
-extern HMODULE loadeddll;
-#endif
 
 void initsubr(void){
     //constant

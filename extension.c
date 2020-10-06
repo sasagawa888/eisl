@@ -1,21 +1,6 @@
 #include <stdio.h>
-#include <string.h>
-#include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <math.h>
-#include <float.h>
-#if __linux
-#include <termios.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#endif
-
-#if _WIN32
-#include <windows.h>
-extern HMODULE loadeddll;
-#endif
-
 #include "eisl.h"
 
 void initexsubr(void){

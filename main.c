@@ -10,12 +10,7 @@ written by kenichi sasagawa 2016/4~
 #include <math.h>
 #include <limits.h>
 #include <omp.h>
-#if __linux
 #include <signal.h>
-#endif
-#if _WIN32
-#include <windows.h>
-#endif
 #include "eisl.h"
 
 //------pointer----
@@ -90,10 +85,9 @@ int charcnt; //for format-tab. store number of chars up to now.
 token stok = {GO,OTHER};
 int line;
 int column;
-#if __linux
 int buffer[256][10];
 int buffer1[256];
-#endif
+
 
 //heap and stack
 cell heap[CELLSIZE];
@@ -146,16 +140,11 @@ int trace_list = NIL; //function list of trace
 int trace_sym;  //function name in trace.
 int backtrace[BACKSIZE];
 
-#if _WIN32
-//FAST compiler
-HMODULE loadeddll;
-#endif
-
 //-----debugger-----
 int examin_sym;
 int stepper_flag = 0;
 
-#if __linux
+
 int ed_lparen_col;
 int ed_rparen_col;
 char ed_candidate[15][30];
@@ -233,7 +222,7 @@ char extended[50][30] = {
 {"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},
 {"c-include"},{"c-define"},{"c-lang"},{"c-option"}
 };
-#endif
+
 
 int main(int argc, char *argv[]){
     int opt;
@@ -336,27 +325,13 @@ void initpt(void){
     }
 }
 
-#if __linux
+
 void signal_handler(int signo){
    exit_flag = 1;
 }
-#endif
-
-#if _WIN32
-//-----ctrl+C,D---------------
-BOOL WINAPI CtrlHandler(DWORD CtrlEvent){
-	switch(CtrlEvent){
-		case CTRL_C_EVENT:		exit_flag = 1;
-        						return TRUE;
-        case CTRL_BREAK_EVENT:	exit_flag = 2;
-        						return TRUE;
-        default:        		return FALSE;
-    }
-}
-#endif
 
 
-#if __linux
+
 //-------read()--------
 int readc(void){
     int c;
@@ -398,47 +373,8 @@ void unreadc(char c){
     else
         SET_CDR(input_stream, GET_CDR(input_stream)-1);
 }
-#endif
 
-#if _WIN32
-//-------read()--------
-int readc(void){
-    int c;
-    if(GET_OPT(input_stream) != EISL_INSTR)
-        c = getc(GET_PORT(input_stream));
-    else{
-        c = GET_NAME(input_stream)[GET_CDR(input_stream)];
-        SET_CDR(input_stream,GET_CDR(input_stream)+1);
-        if(c == '\\'){
-            c = GET_NAME(input_stream)[GET_CDR(input_stream)];
-            SET_CDR(input_stream,GET_CDR(input_stream)+1);
-         }
-        else if(c == NUL){
-            c = EOF;
-            SET_CDR(input_stream,GET_CDR(input_stream)-1);
-        }
-    }
-	 if(c == EOL){
-        line++;
-        column = 0;
-    }
-    else
-        column++;
 
-    return(c);
-}
-
-void unreadc(char c){
-	if(c == EOL)
-    	line--;
-    else
-    	column--;
-    if(GET_OPT(input_stream) != EISL_INSTR)
-        ungetc(c,GET_PORT(input_stream));
-    else
-        SET_CDR(input_stream, GET_CDR(input_stream)-1);
-}
-#endif
 
 void gettoken(void){
     int c;

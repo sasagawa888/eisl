@@ -1,5 +1,5 @@
 eisl : main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o
-	gcc  -Wl,--stack,7000000 -O4  -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o -o eisl -lm
+	gcc  -Wl,--stack,7000000 -O4  -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o -o eisl -lm -lwiringPi
 main.o : main.c eisl.h
 	gcc  -O4  -Wall -c main.c -lm
 function.o : function.c eisl.h
@@ -19,7 +19,7 @@ compute.o : compute.c eisl.h
 error.o : error.c eisl.h
 	gcc  -O4  -Wall -c error.c -lm
 extension.o : extension.c eisl.h
-	gcc  -O4  -Wall -c extension.c -lm
+	gcc  -O4  -Wall -c extension.c -lm -lwiringPi
 .PHONY: clean
 clean: -lm
 	rm -f eisl *.o

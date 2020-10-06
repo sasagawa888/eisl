@@ -995,10 +995,10 @@ int f_backtrace(int arglist);
 int f_symbol_function(int arglist);
 int f_symbol_class(int arglist);
 
-#if __linux
 void setcolor(int n);
 int getch();
 int f_edit(int arglist);
+#ifdef TARGET_LINUX_ARM
 int f_wiringpi_setup_gpio(int arglist);
 int f_wiringpi_spi_setup_ch_speed(int arglist);
 int f_pwm_set_mode(int arglist);

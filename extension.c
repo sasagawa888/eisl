@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#ifdef TARGET_LINUX_ARM 
+#include <wiringPi.h>
+#include <wiringPiSPI.h>
+#endif
 #include "eisl.h"
 
 void initexsubr(void){
@@ -14,12 +18,7 @@ void initexsubr(void){
     defsubr("MACROEXPAND-1",f_macroexpand_1);
     defsubr("BACKTRACE",f_backtrace);
     defsubr("BREAK",f_break);
-    #if __linux
     defsubr("EDIT",f_edit);
-    #endif
-    #if _WIN32
-    defsubr("WINEXEC",f_winexec);
-    #endif
     defsubr("FREEDLL",f_freedll);
     defsubr("SYSTEM",f_system);
     defsubr("SUBRP",f_subrp);
@@ -38,6 +37,21 @@ void initexsubr(void){
     defsubr("C-DEFINE",f_ignore);
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
+    #ifdef TARGET_LINUX_ARM
+    defsubr("wiringpi-setup-gpio",f_wiringpi_setup_gpio);
+    defsubr("wiringpi-spi-setup-ch-speed",f_wiringpi_spi_setup_ch_speed);
+    defsubr("pwm-set-mode",pwm_set_mode);
+    defsubr("pwm-set-range",f_pwm_set_range);
+    defsubr("pwm-set-clock",f_pwm_set_clock);
+    defsubr("pin-mode",f_pin_mode);
+    defsubr("digital-write"f_digital_write);
+    defsubr("digital-write-byte",f_digital_write_byte);
+    defsubr("pull_up_dn_control",f_pull_up_dn_control);
+    defsubr("digital-read",f_digital_read);
+    defsubr("delay",f_delay);
+    defsubr("delay-microseconds",f_delay_microseconds);
+    #endif
+    
 }
 
 //Fast Project
@@ -121,7 +135,7 @@ int f_readed_array_list(int arglist){
     return(GET_PROP(arg1));
 }
 
-#if __linux
+
 int f_system(int arglist){
     int arg1;
 
@@ -130,44 +144,15 @@ int f_system(int arglist){
 		error(SYSTEM_ERR, "system", arg1);
 	return(T);
 }
-#endif
-
-#if _WIN32
-int f_system(int arglist){
-	int arg1;
-    
-    arg1 = car(arglist);
-    system(GET_NAME(arg1));
-    return(T);
-}
-
-int f_winexec(int arglist){
-	int arg1;
-    
-    arg1 = car(arglist);
-    
-    WinExec(GET_NAME(arg1), SW_SHOWNORMAL);
-    return(T);
-}
-#endif
 
 
-#if __linux
+
 int f_freedll(int arglist){
   
     //dlclose(hmod);
     return(T);
 }
-#endif
 
-#if _WIN32
-int f_freedll(int arglist){
-    int i;
-    for(i=0; i<10; i++)
-        FreeLibrary(loadeddll);
-    return(T);
-}
-#endif
 
 
 int f_macrop(int arglist){
@@ -418,6 +403,288 @@ int f_break(int arglist){
     longjmp(buf,1); 
     return(T);
 }
+
+
+
+//----------for Raspberry PI
+#ifdef TARGET_LINUX_ARM
+int f_wiringpi_setup_gpio(int arglist){
+    wiringPiSetupGpio());
+} 
+
+int f_wiringpi_spi_setup_ch_speed(int arglist){
+    int arg1,arg2,x,y;
+
+    if(length(arglist) != 2)
+        error(WRONG_ARGS,"wiringpi-spi-setup-ch-speed",arglist);
+
+    arg1 = car(arglist);
+    art2 = cadr(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"wiringpi-spi-setup-ch-speed",arg1);
+    if(!integerp(arg2))
+        error(NOT_INT,"wiringpi-spi-setup-ch-speed",arg2);
+    
+    x = GET_INT(arg1);
+    y = GET_INT(arg2);
+    wiringPiSPISetup(x, y);
+}
+
+int f_pwm_set_mode(int arglist){
+    int arg1;
+
+    if(length(arglist) == 1)
+        error(WRONG_ARGS,"pwm-set-mode",arglist);
+
+    arg1 = car(arglist);
+
+    if(arg1 == makesym("pwm-mode-ms"))
+        pwmSetMode(PWM_MODE_MS);
+    else if(arg1 == makesym("pwm-mode-bal"))
+        pwmSetMode(PWM_MODE_BAL);
+    else 
+        error(WRONG_ARGS,"pwm-set-mode",arg1);
+    
+    return(T);
+}
+
+int f_pwm_set_range(int arglist){
+    int arg1,x;
+
+    if(length(arglist) != 1)
+        error(WRONG_ARGS,"pwm-set-range",arglist);
+
+    arg1 = car(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"pwm-set-range",arg1);
+
+    x = GET_INT(arg1);
+    pwmSetRange(x);
+    return(T);
+}
+
+int f_pwm_set_clock(int arglist){
+    int arg1,x;
+
+    if(length(arglist) != 1)
+        error(WRONG_ARGS,"pwm-set-clock",arglist);
+    
+    arg1 = car(arg1);
+    if(!integerp(arg1))
+        error(NOT_INT,"pwm-set-clock",arg1);
+
+    x = GET_INT(arg1);
+    pwmSetClock(x);
+    return(T);
+}
+
+int f_pin_mode(int arglist){
+    int arg1,arg2;
+
+    if(length(arglist) != 2)
+        error(WRONG_ARGS,"pin-mode",arglist);
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"pin-,mode",arg1);
+    
+    x = GET_INT(arg1);
+    if(arg2 == makesym("intput"))
+        pinMode(x,INPUT);
+    else if(arg2 == makesym("output"))
+        pinMode(x,OUTPUT);
+    else if(arg2 == makesym("pwm-output"))
+        pinMode(x,PWM_OUTPUT);
+    else
+        error(WRONG_ARGS,"pin-mode",arg2);
+    
+    return(T);
+}
+
+int f_digital_write(int arglist){
+    int arg1,arg2,x,y;
+
+    if(length(arglist) != 2)
+        error(WRONG_ARGS,"digital-write",arglist);
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"digital-write",arg1);
+    if(!integerp(arg2))
+        error(NOT_INT,"digital-write",arg2);    
+
+    x = GET_INT(arg1);
+    y = GET_INT(arg2);
+    digitalWrite(x,y);
+    return(T);
+}
+
+int f_digital_write_byte(int arglist){
+    int arg1,x;
+
+    if(length(arglist) != 1)
+        error(WRONG_ARGS,"digital-write-byte",arglist);
+
+    x = GET_INT(arg1);
+    digitalWriteByte(x);
+    return(T);
+} 
+
+int f_pull_up_dn_control(int arglist){
+    int arg1,arg2,x,y;
+
+    if(length(arglist) != 2)
+        error(WRONG_ARGS,"pull-up-dn-control",arglist);
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"pull-up-dn-control",arg1);
+    if(!integerp(arg2))
+        error(NOT_INT,"pull-up-dn-control",arg2);
+
+    x = GET_INT(arg1);
+    y = GET_INT(arg2);
+    pullUpDnControl(x,y);
+    return(T);
+}
+
+int f_digital_read(int arglist){
+    int arg1,x,res;
+
+    if(length(arglist) != 1)
+        error(WRONG_ARGS,"digital-read",arglist);
+    
+    arg1 = car(arglist);
+    if(!integer(arg1))
+        error(NOT_INT,"digital-read",arg1);
+
+    x = GET_INT(arg1);
+    res = digitalRead(x);
+    return(makeint(res));
+}
+
+int f_delay(int arglist){
+    int arg1,x;
+
+    if(length(arglist) != 1)
+         error(WRONG_ARGS,"delay",arglist);
+
+    arg1 = car(arglist);
+    if(!integer(arg1))
+        error(NOT_INT,"delay",arg1);
+
+    x = GET_INT(arg1)
+    delay(x);
+    return(T);
+}
+
+int f_delay_microseconds(int arglist){
+    int arg1,x;
+
+    if(length(arglist) != 1)
+        error(WRONG_ARGS,"delay-microseconds",arglist);
+
+    arg1 = car(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"delay-microseconds",arg1);
+    
+    x = GET_INT(arg1);
+    delayMicroseconds(x);
+    return(T);
+}
+#endif
+
+/*
+(c-include "<wiringPi.h>")
+(c-include "<wiringPiSPI.h>")
+(c-option "-lwiringPi")
+
+
+(defun wiringpi-setup-gpio ()
+  (c-lang "Fmakeint(wiringPiSetupGpio());"))
+
+(defun wiringpi-spi-setup-ch-speed (x y)
+  (if (not (integerp x)) (error "wiringgpi-spi-setup-ch-spped: not integer" x))
+  (if (not (integerp y)) (error "wiringgpi-spi-setup-ch-spped: not integer" y))
+  (c-lang "Fmakeint(wiringPiSPISetup( (INT_MASK & X), (INT_MASK & Y)));"))
+
+(defun pwm-set-mode (x)
+  (cond ((eq x 'pwm-mode-ms)
+         (c-lang "pwmSetMode(PWM_MODE_MS);"))
+        ((eq x 'pwm-mode-bal)
+         (c-lang "pwmSetMode(PWM_MODE_BAL);"))
+        (t (error "pwm-set-mode: not integer" x)))
+  t)
+  
+
+(defun pwm-set-range (x)
+  (if (not (integerp x)) (error "pwm-set-range: not integer" x))
+  (c-lang "pwmSetRange(INT_MASK & X);")
+  t)
+
+(defun pwm-set-clock (x)
+  (if (not (integerp x)) (error "pwm-set-clock: not integer" x))
+  (c-lang "pwmSetClock(INT_MASK & X);")
+  t)
+
+
+(defun pin-mode (x y)
+  (cond ((eq y 'input)
+         (c-lang "pinMode( (INT_MASK & X), INPUT);"))
+        ((eq y 'output)
+         (c-lang "pinMode( (INT_MASK & X), OUTPUT);"))
+        ((eq y 'pwm-output)
+         (c-lang "pinMode( (INT_MASK & X),PWM_OUTPUT);"))
+        (t (error "pin-mode: illegal argument" y)))
+   t)
+
+
+(defun digital-write (x y)
+  (if (not (integerp x)) (error "digital-write: not integer" x))
+  (if (not (integerp y)) (error "digital-write: not integer" y))
+  
+  (c-lang "digitalWrite((INT_MASK & X),(INT_MASK & Y));")
+  t)
+
+(defun digital-write-byte (x)
+  (if (not (integerp x)) (error "digital-write-byte: not integer" x))
+  (c-lang "digitalWriteByte(INT_MASK & X);")
+  t)
+
+
+(defun pwm-write (x y)
+  (if (not (integerp x)) (error "pwm-write: not integer" x))
+  (if (not (integerp y)) (error "pwm-write: not integer" y))
+  (c-lang "pwmWrite((INT_MASK & X),(INT_MASK & Y));")
+  t)
+          
+(defun pull-up-dn-control (x y)
+  (if (not (integerp x)) (error "pull-up-dn-control" x))
+  (if (not (integerp y)) (error "pull-up-dn-control" y))
+  (c-lang "pullUpDnControl((INT_MASK & X),(INT_MASK & Y));")
+  t)
+
+(defun digital-read (x)
+  (if (not (integerp x)) (error "digital-read: not integer" x))
+  (c-lang "Fmakeint(digitalRead(INT_MASK & X));"))
+
+(defun delay (x)
+  (if (not (integerp x)) (error "delay: not integer" x))
+  (c-lang "delay(INT_MASK & X);")
+  t)
+
+(defun delay-microseconds (x)
+  (if (not (integerp x)) (error "delay: not integer" x))
+  (c-lang "delayMicroseconds(INT_MASK & X);")
+  t)
+
+*/
+
+
+
 
 /*
 //---------for CUBLAS-------------------

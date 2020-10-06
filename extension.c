@@ -1,9 +1,8 @@
-//#define RASPI 1
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#ifdef RASPI 
+#ifdef TARGET_LINUX_ARM 
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #endif
@@ -39,7 +38,7 @@ void initexsubr(void){
     defsubr("C-DEFINE",f_ignore);
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
-    #ifdef RASPI
+    #ifdef TARGET_LINUX_ARM
     defsubr("wiringpi-setup-gpio",f_wiringpi_setup_gpio);
     defsubr("wiringpi-spi-setup-ch-speed",f_wiringpi_spi_setup_ch_speed);
     defsubr("pwm-set-mode",pwm_set_mode);
@@ -50,7 +49,7 @@ void initexsubr(void){
     defsubr("digital-write-byte",f_digital_write_byte);
     defsubr("pull_up_dn_control",f_pull_up_dn_control);
     defsubr("digital-read",f_digital_read);
-    defsubr("delay",f_delay);
+    defsubr("DELAY",f_delay);
     defsubr("delay-microseconds",f_delay_microseconds);
     #endif
 }

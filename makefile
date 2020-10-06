@@ -5,7 +5,7 @@ eisl : main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o
 	$(CC) -O3 -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o -o eisl -lm -ldl 
 
 raspi:
-	$(CC) -O3 -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o -o eisl -lm -ldl lwiringPi
+	$(CC) -O3 -Wall main.o function.o data.o gbc.o cell.o syntax.o bignum.o compute.o error.o extension.o edit.o -o eisl -lm -ldl -lwiringPi
 
 
 main.o : main.c eisl.h

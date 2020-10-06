@@ -201,7 +201,7 @@ void initsubr(void){
     defsubr("WRITE-BYTE",f_write_byte);
 }
 
-#if __linux
+
 typedef int (*fn0)();
 typedef void (*tfunc)(char*, int(*func)(int));
 
@@ -243,44 +243,7 @@ void dynamic_link(int x){
     init_deftfunc = dlsym(hmod, "init_deftfunc");
     init_tfunctions = dlsym(hmod, "init_tfunctions");
     init_declare = dlsym(hmod, "init_declare");
-#endif
 
-#if _WIN32
-typedef void (*tfunc)(char*, int(*func)(int));                        
-typedef void (*p_f0)(int, tfunc);
-typedef void (*p_f1)(int, tfunc);
-typedef void (*p_f2)(int, tfunc);
-typedef void (*p_f3)(int, tfunc);
-typedef void (*p_f4)(int, tfunc);
-typedef void (*p_f5)(int, tfunc);
-typedef void (*p_f6)(int, tfunc);
-typedef void (*p_f7)(int, tfunc);
-typedef void (*p_f8)(int, tfunc);
-typedef void (*p_def)(tfunc);
-typedef void (*p_init)(void);
-typedef void (*p_declare)(void);
-
-void dynamic_link(int x){
-	HMODULE hmod;
-
-    hmod = LoadLibrary((LPCSTR)(GET_NAME(x)));
-    if(hmod == NULL)
-    	error(ILLEGAL_ARGS,"LOAD",x);
-    loadeddll = hmod;
-	  p_f0 init_f0 = (p_f0)GetProcAddress(hmod, (LPCSTR)"init0");
-    p_f1 init_f1 = (p_f1)GetProcAddress(hmod, (LPCSTR)"init1");
-    p_f2 init_f2 = (p_f2)GetProcAddress(hmod, (LPCSTR)"init2");
-    p_f3 init_f3 = (p_f3)GetProcAddress(hmod, (LPCSTR)"init3");
-    p_f4 init_f4 = (p_f4)GetProcAddress(hmod, (LPCSTR)"init4");
-    p_f5 init_f5 = (p_f5)GetProcAddress(hmod, (LPCSTR)"init5");
-    p_f6 init_f6 = (p_f6)GetProcAddress(hmod, (LPCSTR)"init6");
-    p_f7 init_f7 = (p_f7)GetProcAddress(hmod, (LPCSTR)"init7");
-    p_f8 init_f8 = (p_f8)GetProcAddress(hmod, (LPCSTR)"init8");
-    p_def init_deftfunc = (p_def)GetProcAddress(hmod, (LPCSTR)"init_deftfunc");
-    p_init init_tfunctions = (p_init)GetProcAddress(hmod, (LPCSTR)"init_tfunctions");
-    p_declare init_declare = (p_declare)GetProcAddress(hmod, (LPCSTR)"init_declare");
-
-#endif
 
     //argument-0 type
     init_f0(0,(tfunc)checkgbc);

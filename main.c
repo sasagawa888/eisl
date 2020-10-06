@@ -235,14 +235,8 @@ int main(int argc, char *argv[]){
     initexsubr();
     initsyntax();
     initgeneric();
-    #if __linux
     signal(SIGINT, signal_handler);
-	#endif
-	#if _WIN32
-	SetConsoleCtrlHandler(NULL, FALSE ); //enabled CTRL+C,D
-    SetConsoleCtrlHandler(CtrlHandler, TRUE );
-	#endif
-
+	
     int ret = setjmp(buf);
     input_stream = standard_input;
     output_stream = standard_output;
@@ -1038,7 +1032,7 @@ void printflt(double x){
     }
 }
 
-#if __linux
+
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
         fprintf(GET_PORT(output_stream),"%lld", GET_LONG(addr));
@@ -1049,19 +1043,6 @@ void printlong(int addr){
         strcat(GET_NAME(output_stream),stream_str);
 	}
 }
-#endif
-
-#if _WIN32
-void printlong(int addr){
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream),"%I64d", GET_LONG(addr));
-    else{
-    	sprintf(stream_str,"%I64d", GET_LONG(addr));
-    	strcat(GET_NAME(output_stream),stream_str);
-    }
-}
-#endif
-
 
 
 void printlist(int addr){
@@ -1175,7 +1156,7 @@ void printstr(int addr){
     }
 }
 
-#if __linux
+
 void printchar(int addr){
     char c;
 
@@ -1206,47 +1187,8 @@ void printchar(int addr){
         }
     }
 }
-#endif
 
-#if _WIN32
-void printchar(int addr){
-    char c;
 
-    if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"%c%c", '#', '\\');
-        sprintf(stream_str,"%c%c", '#', '\\');
-        c = GET_CHAR(addr);
-        if(c == SPACE){
-            fprintf(GET_PORT(output_stream),"space");
-            sprintf(stream_str,"space");
-        }
-        else if(c == EOL){
-            fprintf(GET_PORT(output_stream),"newline");
-            sprintf(stream_str,"newline");
-        }
-        else{
-            fprintf(GET_PORT(output_stream),"%s", GET_NAME(addr));
-            sprintf(stream_str,"%s",GET_NAME(addr));
-        }
-    }
-    else{
-        sprintf(GET_NAME(output_stream),"%c%c", '#', '\\');
-        c = GET_CHAR(addr);
-        if(c == SPACE){
-            sprintf(stream_str,"space");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-        else if(c == EOL){
-            sprintf(stream_str,"newline");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-        else{
-            sprintf(stream_str,"%s", GET_NAME(addr));
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-    }
-}
-#endif
 
 
 void printsym(int addr){

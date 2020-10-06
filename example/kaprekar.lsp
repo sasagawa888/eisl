@@ -1,4 +1,4 @@
-;; when n is kakrekar-number t else nil
+;; when n is kaprekar-number t else nil
 (defun kaprekarp (n)
     (let* ((ls (number-to-list n))
             (a (list-to-number (sort ls #'>)))

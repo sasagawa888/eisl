@@ -1,4 +1,4 @@
-;;MŒ¾Œê‚©‚çS•\Œ»‚Ö‚Ì•ÏŠ·Ší
+;;Mè¨€èªã‹ã‚‰Sè¡¨ç¾ã¸ã®å¤‰æ›å™¨
 
 
 (defglobal buffer nil)
@@ -44,19 +44,19 @@
                   (prompt))) t)
           (t (prompt)(repl)))))
 
-;;‰Šú‰»
-;;ƒƒbƒZ[ƒW‚ğ•\¦‚µAƒvƒƒ“ƒvƒg‚ğ•\¦‚·‚é
+;;åˆæœŸåŒ–
+;;ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã€ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã‚’è¡¨ç¤ºã™ã‚‹
 (defun initialize ()
   (setq buffer nil)
   (format (standard-output) "Meta expression translater~%")
   (prompt))
 
 
-;;ƒvƒƒ“ƒvƒg‚ğ•\¦‚·‚é
+;;ãƒ—ãƒ­ãƒ³ãƒ—ãƒˆã‚’è¡¨ç¤ºã™ã‚‹
 (defun prompt ()
   (format (standard-output) "M> "))
 
-;;ƒGƒ‰[ˆ—
+;;ã‚¨ãƒ©ãƒ¼å‡¦ç†
 (defun error* (msg arg)
   (format (standard-output) msg)
   (format (standard-output) "~A" arg)
@@ -67,7 +67,7 @@
   (setq input-stream (standard-input))
   (throw 'exit nil))
 
-;;ƒtƒ@ƒCƒ‹‚©‚çMŒ¾Œê‚ğ“Ç‚İæ‚èA•]‰¿‚·‚é
+;;ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰Mè¨€èªã‚’èª­ã¿å–ã‚Šã€è©•ä¾¡ã™ã‚‹
 (defun load* (file)
   (let ((exp nil))
     (setq input-stream (open-input-file file))
@@ -79,8 +79,8 @@
     (setq input-stream (standard-input))
     t))
 
-;;MŒ¾Œê‚ğƒXƒgƒŠ[ƒ€‚æ‚è“Ç‚İ‚ñ‚ÅS®‚É•ÏŠ·‚·‚éB
-;;end-of-file‚Ì‚Æ‚«‚É‚Í•¶š—ñ"the end"‚ğ•Ô‚·B
+;;Mè¨€èªã‚’ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚ˆã‚Šèª­ã¿è¾¼ã‚“ã§Så¼ã«å¤‰æ›ã™ã‚‹ã€‚
+;;end-of-fileã®ã¨ãã«ã¯æ–‡å­—åˆ—"the end"ã‚’è¿”ã™ã€‚
 (defun parse ()
   (let ((exp (mexp-read))
         (ope (get-token))
@@ -96,9 +96,9 @@
            exp)
           (t (error* "Syntax error " ope)))))
 
-;;MŒ¾Œê‚ğ•W€“ü—Í‚©‚ç“Ç‚İæ‚èS•\Œ»‚É‚µ‚Ä•Ô‚·B
-;;ƒNƒH[ƒg‹L†‚ğ“Ç‚İæ‚Á‚½ê‡‚É‚Í’¼Œã‚ÍS•\Œ»‚Æ‚İ‚È‚·B
-;;ƒXƒgƒŠ[ƒ€‚©‚çend-of-file‚ğó‚¯æ‚Á‚½‚Æ‚«‚É‚Í•¶š—ñ"the end"‚ğ•Ô‚·B
+;;Mè¨€èªã‚’æ¨™æº–å…¥åŠ›ã‹ã‚‰èª­ã¿å–ã‚ŠSè¡¨ç¾ã«ã—ã¦è¿”ã™ã€‚
+;;ã‚¯ã‚©ãƒ¼ãƒˆè¨˜å·ã‚’èª­ã¿å–ã£ãŸå ´åˆã«ã¯ç›´å¾Œã¯Sè¡¨ç¾ã¨ã¿ãªã™ã€‚
+;;ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‹ã‚‰end-of-fileã‚’å—ã‘å–ã£ãŸã¨ãã«ã¯æ–‡å­—åˆ—"the end"ã‚’è¿”ã™ã€‚
 (defun mexp-read ()
   (let ((token (get-token))
         (result nil))
@@ -194,8 +194,8 @@
         (t (cons (list (elt ls 0)(convert-to-cond (elt ls 2)))
                  (convert-to-cond1 (cdr (cdr (cdr ls))))))))
 
-;;condß‚ğ•\‚·->‹L†‚ª‚ ‚é‚Æ‚«‚Í [a -> b;c -> d] = (a -> b c -> d)‚Ì‚æ‚¤‚É
-;;•ÏŠ·‚·‚éB
+;;condç¯€ã‚’è¡¨ã™->è¨˜å·ãŒã‚ã‚‹ã¨ãã¯ [a -> b;c -> d] = (a -> b c -> d)ã®ã‚ˆã†ã«
+;;å¤‰æ›ã™ã‚‹ã€‚
 (defun mexp-read-list ()
   (let ((token (get-token))
         (result nil))
@@ -237,14 +237,14 @@
 
 ;;;
 
-;;S•\Œ»‚ğ“Ç‚İæ‚é
+;;Sè¡¨ç¾ã‚’èª­ã¿å–ã‚‹
 (defun sexp-read ()
   (let ((token (get-token)))
     (cond ((and (characterp token)(char= token #\())
            (sexp-read-list))
           (t token))))
 
-;;S•\Œ»‚ÌƒŠƒXƒg‚ğ“Ç‚İæ‚é
+;;Sè¡¨ç¾ã®ãƒªã‚¹ãƒˆã‚’èª­ã¿å–ã‚‹
 (defun sexp-read-list ()
   (let ((token nil)
         (result nil))
@@ -260,11 +260,11 @@
           ((atom token)
            (cons token (sexp-read-list))))))
 
-;;ƒg[ƒNƒ“‚ğ“Ç‚İæ‚éB
-;;@1.1‚Ì‚æ‚¤‚ÉƒsƒŠƒIƒh‚ÌŒã‚ª‹ó‚Å‚È‚¢ê‡‚É‚Í•‚“®¬”“_”‚Æl‚¦‚é
-;;  1e-1 ‚Ì‚æ‚¤‚ÈŒ`®‚Ì•‚“®¬”“_”‚ğØ‚èo‚·B
-;;[]()‚Ì‚æ‚¤‚È‹æØ‚è‹L†‚É’B‚µ‚½ê‡‚É‚Í‚»‚Ì•¶š‚ğƒoƒbƒtƒ@‚É–ß‚·
-;;end-of-file‚Ìê‡‚É‚Í"the end"‚ğ•Ô‚·B
+;;ãƒˆãƒ¼ã‚¯ãƒ³ã‚’èª­ã¿å–ã‚‹ã€‚
+;;ã€€1.1ã®ã‚ˆã†ã«ãƒ”ãƒªã‚ªãƒ‰ã®å¾ŒãŒç©ºã§ãªã„å ´åˆã«ã¯æµ®å‹•å°æ•°ç‚¹æ•°ã¨è€ƒãˆã‚‹
+;;  1e-1 ã®ã‚ˆã†ãªå½¢å¼ã®æµ®å‹•å°æ•°ç‚¹æ•°ã‚’åˆ‡ã‚Šå‡ºã™ã€‚
+;;[]()ã®ã‚ˆã†ãªåŒºåˆ‡ã‚Šè¨˜å·ã«é”ã—ãŸå ´åˆã«ã¯ãã®æ–‡å­—ã‚’ãƒãƒƒãƒ•ã‚¡ã«æˆ»ã™
+;;end-of-fileã®å ´åˆã«ã¯"the end"ã‚’è¿”ã™ã€‚
 (defun get-token ()
   (block exit
     (let ((token nil)
@@ -317,7 +317,7 @@
                (ungetc char)
                (convert-to-atom (reverse token)))))))
 
-;;•¶šƒŠƒXƒg‚ğŠeí‚ÌƒAƒgƒ€‚É•ÏŠ·‚·‚é
+;;æ–‡å­—ãƒªã‚¹ãƒˆã‚’å„ç¨®ã®ã‚¢ãƒˆãƒ ã«å¤‰æ›ã™ã‚‹
 (defun convert-to-atom (ls)
   (cond ((string-list-p ls)
          (convert-to-string (cut-both-side ls)))
@@ -327,45 +327,45 @@
          (convert-to-float ls))
         (t (convert-to-symbol ls))))
 
-;;ƒŠƒXƒg‚Ì—¼’[‚ğƒJƒbƒg‚·‚éB
+;;ãƒªã‚¹ãƒˆã®ä¸¡ç«¯ã‚’ã‚«ãƒƒãƒˆã™ã‚‹ã€‚
 (defun cut-both-side (ls)
   (reverse (cdr (reverse (cdr ls)))))
 
-;;•¶šƒŠƒXƒg‚ğƒVƒ“ƒ{ƒ‹‚É•ÏŠ·‚·‚é
+;;æ–‡å­—ãƒªã‚¹ãƒˆã‚’ã‚·ãƒ³ãƒœãƒ«ã«å¤‰æ›ã™ã‚‹
 (defun convert-to-symbol (ls)
   (convert (convert-to-string ls) <symbol>))
 
-;;•¶šƒŠƒXƒg‚ğ•¶š—ñ‚É•ÏŠ·‚·‚éB
-;;ƒVƒ“ƒ{ƒ‹‚Í‘å•¶š‚É•ÏŠ·‚³‚ê‚é
+;;æ–‡å­—ãƒªã‚¹ãƒˆã‚’æ–‡å­—åˆ—ã«å¤‰æ›ã™ã‚‹ã€‚
+;;ã‚·ãƒ³ãƒœãƒ«ã¯å¤§æ–‡å­—ã«å¤‰æ›ã•ã‚Œã‚‹
 (defun convert-to-string (ls)
   (if (null ls)
       ""
       (string-append (convert (uppercase (car ls)) <string>)
                      (convert-to-string (cdr ls)))))
 
-;;ƒAƒ‹ƒtƒ@ƒxƒbƒg¬•¶š‚ğ‘å•¶š‚É•ÏŠ·‚·‚é
-;;ƒAƒ‹ƒtƒ@ƒxƒbƒgˆÈŠO‚Í‚»‚Ì‚Ü‚Ü
+;;ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆå°æ–‡å­—ã‚’å¤§æ–‡å­—ã«å¤‰æ›ã™ã‚‹
+;;ã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆä»¥å¤–ã¯ãã®ã¾ã¾
 (defun uppercase (x)
   (let ((ascii (convert x <integer>)))
     (if (and (>= ascii 97)(<= ascii 122))
         (convert (- ascii 32) <character>)
         x)))
 
-;;•¶šƒŠƒXƒg‚ğ®”‚É•ÏŠ·‚·‚é
+;;æ–‡å­—ãƒªã‚¹ãƒˆã‚’æ•´æ•°ã«å¤‰æ›ã™ã‚‹
 (defun convert-to-integer (ls)
   (convert (convert-to-string ls) <integer>))
 
-;;•¶šƒŠƒXƒg‚ğ•‚“®¬”“_”‚É•ÏŠ·‚·‚é
+;;æ–‡å­—ãƒªã‚¹ãƒˆã‚’æµ®å‹•å°æ•°ç‚¹æ•°ã«å¤‰æ›ã™ã‚‹
 (defun convert-to-float (ls)
   (convert (convert-to-string ls) <float>))
 
-;;ƒtƒ@ƒCƒ‹ƒXƒgƒŠ[ƒ€‚ÌI‚í‚è‚Å‚ ‚ê‚Ît‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;ãƒ•ã‚¡ã‚¤ãƒ«ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®çµ‚ã‚ã‚Šã§ã‚ã‚Œã°tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun end-of-file-p (x)
   (if (and (stringp x)(string= x "the end"))
       t
       nil))
 
-;;ˆø”‚ª‹æØ‚è‹L†‚Å‚ ‚ê‚Ît‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;å¼•æ•°ãŒåŒºåˆ‡ã‚Šè¨˜å·ã§ã‚ã‚Œã°tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun delimiterp (c)
   (if (and (characterp c)
            (member c '(#\space #\[ #\] #\( #\) #\; #\, #\' #\.)))
@@ -373,36 +373,36 @@
       nil))
 
 
-;;MŒ¾Œê‚ÌI’[‹L†‚Å‚ ‚éƒsƒŠƒIƒh‚Å‚ ‚ê‚Ît‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;Mè¨€èªã®çµ‚ç«¯è¨˜å·ã§ã‚ã‚‹ãƒ”ãƒªã‚ªãƒ‰ã§ã‚ã‚Œã°tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun terminalp (c)
   (and (characterp c)(char= c #\.)))
 
-;;‰‰Zq‚Ì•¶š‚Ì‚Æ‚«‚Ét‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;æ¼”ç®—å­ã®æ–‡å­—ã®ã¨ãã«tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun operator-char-p (c)
   (if (and (characterp c)(member c '(#\+ #\- #\* #\/ #\^)))
       t
       nil))
 
-;;¶ƒJƒbƒR‚Ì‚Æ‚«‚Ét‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;å·¦ã‚«ãƒƒã‚³ã®ã¨ãã«tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun left-paren-p (c)
   (if (and (characterp c)(char= #\())
        t
        nil))
 
-;;‰EƒJƒbƒR‚Ì‚Æ‚«‚Ét‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;å³ã‚«ãƒƒã‚³ã®ã¨ãã«tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun right-paren-p (c)
   (if (and (characterp c)(char= #\)))
        t
        nil))
 
-;;‰‰Zq‚ÌƒVƒ“ƒ{ƒ‹‚Ì‚Æ‚«‚Ét‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;æ¼”ç®—å­ã®ã‚·ãƒ³ãƒœãƒ«ã®ã¨ãã«tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun operatorp (x)
   (if (member x '(+ - * / ^))
       t
       nil))
 
-;;ƒXƒy[ƒX•¶š‚¨ŒÄ‚Ñƒ^ƒu•¶š‚ğ“Ç‚İ”ò‚Î‚·B
-;;end-of-file‚É’B‚µ‚½ê‡‚É‚Í•¶š—ñ"the end"‚ğ•Ô‚·B
+;;ã‚¹ãƒšãƒ¼ã‚¹æ–‡å­—ãŠå‘¼ã³ã‚¿ãƒ–æ–‡å­—ã‚’èª­ã¿é£›ã°ã™ã€‚
+;;end-of-fileã«é”ã—ãŸå ´åˆã«ã¯æ–‡å­—åˆ—"the end"ã‚’è¿”ã™ã€‚
 (defun space-skip ()
   (block exit
     (let ((char nil))
@@ -417,9 +417,9 @@
       (ungetc char))))
 
 
-;;ƒoƒbƒtƒ@‚©‚ç1•¶š‚ğæ‚èo‚·Bƒoƒbƒtƒ@‚ª‹ó‚È‚ç‚ÎƒXƒgƒŠ[ƒ€‚æ‚è“Ç‚İæ‚é
-;; !ƒ}[ƒN‚ª‚ ‚Á‚½ê‡‚É‚Íƒoƒbƒtƒ@‚ğ”pŠüAV‚½‚È•¶š‚ğ“Ç‚İæ‚é
-;;end-of-file‚Ìê‡‚É‚Í"the end"‚ğ•Ô‚·B
+;;ãƒãƒƒãƒ•ã‚¡ã‹ã‚‰1æ–‡å­—ã‚’å–ã‚Šå‡ºã™ã€‚ãƒãƒƒãƒ•ã‚¡ãŒç©ºãªã‚‰ã°ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚ˆã‚Šèª­ã¿å–ã‚‹
+;; !ãƒãƒ¼ã‚¯ãŒã‚ã£ãŸå ´åˆã«ã¯ãƒãƒƒãƒ•ã‚¡ã‚’å»ƒæ£„ã€æ–°ãŸãªæ–‡å­—ã‚’èª­ã¿å–ã‚‹
+;;end-of-fileã®å ´åˆã«ã¯"the end"ã‚’è¿”ã™ã€‚
 (defun getc ()
   (block exit
     (let ((input nil)
@@ -438,12 +438,12 @@
       (setq buffer (cdr buffer))
       result)))
 
-;;1•¶š‚ğ–ß‚·B
+;;1æ–‡å­—ã‚’æˆ»ã™ã€‚
 (defun ungetc (c)
   (setq buffer (cons c buffer)))
 
-;;ƒoƒbƒtƒ@‚Ìæ“ª—v‘f‚ğ”`‚«Œ©‚é
-;;ƒoƒbƒtƒ@‚ª‹ó‚È‚ç‚ÎƒsƒŠƒIƒh•¶š‚ğ•Ô‚·
+;;ãƒãƒƒãƒ•ã‚¡ã®å…ˆé ­è¦ç´ ã‚’è¦—ãè¦‹ã‚‹
+;;ãƒãƒƒãƒ•ã‚¡ãŒç©ºãªã‚‰ã°ãƒ”ãƒªã‚ªãƒ‰æ–‡å­—ã‚’è¿”ã™
 (defun look ()
   (block exit
     (let ((max (length buffer)))
@@ -454,7 +454,7 @@
            (if (not (char= (elt buffer pos) #\space))
                (return-from exit (elt buffer pos)))))))
 
-;;look‚Ì‚à‚¤‚Ğ‚Æ‚Âæ‚ğ“Ç‚Ş
+;;lookã®ã‚‚ã†ã²ã¨ã¤å…ˆã‚’èª­ã‚€
 (defun look1 ()
   (block exit
     (let ((max (length buffer)))
@@ -465,12 +465,12 @@
            (if (not (char= (elt buffer pos) #\space))
                (return-from exit (elt buffer (+ pos 1))))))))
 
-;;•¶šƒŠƒXƒg‚ª•¶š—ñ‚ğ•\‚·‚È‚ç‚Ît‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;æ–‡å­—ãƒªã‚¹ãƒˆãŒæ–‡å­—åˆ—ã‚’è¡¨ã™ãªã‚‰ã°tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun string-list-p (ls)
   (and (char= (car ls) #\")
        (char= (car (reverse ls)) #\")))
 
-;;•¶šƒŠƒXƒg‚ª®”‚ğ•\‚µ‚Ä‚¢‚é‚È‚ç‚Ît‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;æ–‡å­—ãƒªã‚¹ãƒˆãŒæ•´æ•°ã‚’è¡¨ã—ã¦ã„ã‚‹ãªã‚‰ã°tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun integer-list-p (ls)
   (cond ((char= (car ls) #\+)
          (integer-list-p1 (cdr ls)))
@@ -478,14 +478,14 @@
          (integer-list-p1 (cdr ls)))
         (t (integer-list-p1 ls))))
 
-;;®”‚Í•K‚¸1•¶š‚Ì”•¶š‚©‚ç\¬‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+;;æ•´æ•°ã¯å¿…ãš1æ–‡å­—ã®æ•°æ–‡å­—ã‹ã‚‰æ§‹æˆã•ã‚Œã¦ã„ãªã‘ã‚Œã°ãªã‚‰ãªã„
 (defun integer-list-p1 (ls)
   (cond ((null ls) nil)
         ((and (number-char-p (car ls))(null (cdr ls))) t)
         ((not (number-char-p (car ls))) nil)
         (t (integer-list-p1 (cdr ls)))))
 
-;;•¶šƒŠƒXƒg‚ª•‚“®¬”“_”‚ğ•\‚µ‚Ä‚¢‚é‚È‚ç‚Ît‚ğA‚»‚¤‚Å‚È‚¯‚ê‚Înil‚ğ•Ô‚·
+;;æ–‡å­—ãƒªã‚¹ãƒˆãŒæµ®å‹•å°æ•°ç‚¹æ•°ã‚’è¡¨ã—ã¦ã„ã‚‹ãªã‚‰ã°tã‚’ã€ãã†ã§ãªã‘ã‚Œã°nilã‚’è¿”ã™
 (defun float-list-p (ls)
   (cond ((not (number-char-p (car ls))) nil)
         ((char= (car ls) #\+)
@@ -494,7 +494,7 @@
          (float-list-p1 (cdr ls)))
         (t (float-list-p1 ls))))
 
-;;•‚“®¬”“_”‚Í 123.4A123e4A123e+4A123e-4‚Ì‚æ‚¤‚ÈŒ`®‚Æ‚·‚é
+;;æµ®å‹•å°æ•°ç‚¹æ•°ã¯ 123.4ã€123e4ã€123e+4ã€123e-4ã®ã‚ˆã†ãªå½¢å¼ã¨ã™ã‚‹
 (defun float-list-p1 (ls)
   (cond ((null ls) nil)
         ((char= (car ls) #\.)

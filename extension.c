@@ -409,7 +409,7 @@ int f_break(int arglist){
 //----------for Raspberry PI
 #ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist){
-    wiringPiSetupGpio());
+    wiringPiSetupGpio();
     return(T);
 } 
 
@@ -420,7 +420,7 @@ int f_wiringpi_spi_setup_ch_speed(int arglist){
         error(WRONG_ARGS,"wiringpi-spi-setup-ch-speed",arglist);
 
     arg1 = car(arglist);
-    art2 = cadr(arglist);
+    arg2 = cadr(arglist);
     if(!integerp(arg1))
         error(NOT_INT,"wiringpi-spi-setup-ch-speed",arg1);
     if(!integerp(arg2))
@@ -429,6 +429,7 @@ int f_wiringpi_spi_setup_ch_speed(int arglist){
     x = GET_INT(arg1);
     y = GET_INT(arg2);
     wiringPiSPISetup(x, y);
+    return(T);
 }
 
 int f_pwm_set_mode(int arglist){
@@ -480,7 +481,7 @@ int f_pwm_set_clock(int arglist){
 }
 
 int f_pin_mode(int arglist){
-    int arg1,arg2;
+    int arg1,arg2,x;
 
     if(length(arglist) != 2)
         error(WRONG_ARGS,"pin-mode",arglist);

@@ -41,7 +41,7 @@ void initexsubr(void){
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
     defsubr("WIRINGPI-SPI-SETUP-CH-SPEED",f_wiringpi_spi_setup_ch_speed);
-    defsubr("PWM-SET-MODE",pwm_set_mode);
+    defsubr("PWM-SET-MODE",f_pwm_set_mode);
     defsubr("PWM-SET-RANGE",f_pwm_set_range);
     defsubr("PWM-SET-CLOCK",f_pwm_set_clock);
     defsubr("PIN-MODE",f_pin_mode);

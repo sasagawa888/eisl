@@ -1011,6 +1011,7 @@ int f_pwm_write(int arglist);
 int f_pull_up_dn_control(int arglist);
 int f_digital_read(int arglist);
 int f_delay(int arglist);
+int f_delay_microseconds(int arglist);
 void dynamic_link(int x);
 #endif
 void debugger(void);

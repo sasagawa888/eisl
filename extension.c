@@ -435,7 +435,7 @@ int f_wiringpi_spi_setup_ch_speed(int arglist){
 int f_pwm_set_mode(int arglist){
     int arg1;
 
-    if(length(arglist) == 1)
+    if(length(arglist) != 1)
         error(WRONG_ARGS,"pwm-set-mode",arglist);
 
     arg1 = car(arglist);

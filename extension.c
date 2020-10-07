@@ -410,6 +410,7 @@ int f_break(int arglist){
 #ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist){
     wiringPiSetupGpio());
+    return(T);
 } 
 
 int f_wiringpi_spi_setup_ch_speed(int arglist){

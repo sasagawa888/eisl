@@ -560,7 +560,7 @@ int f_digital_read(int arglist){
         error(WRONG_ARGS,"digital-read",arglist);
     
     arg1 = car(arglist);
-    if(!integer(arg1))
+    if(!integerp(arg1))
         error(NOT_INT,"digital-read",arg1);
 
     x = GET_INT(arg1);

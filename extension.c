@@ -471,7 +471,7 @@ int f_pwm_set_clock(int arglist){
     if(length(arglist) != 1)
         error(WRONG_ARGS,"pwm-set-clock",arglist);
     
-    arg1 = car(arg1);
+    arg1 = car(arglist);
     if(!integerp(arg1))
         error(NOT_INT,"pwm-set-clock",arg1);
 
@@ -575,7 +575,7 @@ int f_delay(int arglist){
          error(WRONG_ARGS,"delay",arglist);
 
     arg1 = car(arglist);
-    if(!integer(arg1))
+    if(!integerp(arg1))
         error(NOT_INT,"delay",arg1);
 
     x = GET_INT(arg1);

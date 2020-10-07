@@ -407,7 +407,7 @@ int f_break(int arglist){
 
 
 //----------for Raspberry PI
-#ifdef TARGET_LINUX_ARM
+#ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist){
     wiringPiSetupGpio());
 } 

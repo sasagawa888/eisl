@@ -529,6 +529,10 @@ int f_digital_write_byte(int arglist){
     if(length(arglist) != 1)
         error(WRONG_ARGS,"digital-write-byte",arglist);
 
+    arg1 = car(arglist);
+    if(!integerp(arg1))
+        error(NOT_INT,"digital-write-byte",arg1);
+
     x = GET_INT(arg1);
     digitalWriteByte(x);
     return(T);

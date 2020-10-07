@@ -12,6 +12,8 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 
 In Linux  type "make" in terminal.
 
+In Raspberry type "make raspi" in terminal.
+
 After version 1.4 Windows OS is not suported. Please use WSL on Windows.
 
 We confirmed operation in the following environments.

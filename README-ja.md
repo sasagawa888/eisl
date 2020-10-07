@@ -14,6 +14,7 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 
 1. Gitでクローンした，又は単にダウンロードしたEasy-ISLispのディレクトリに移動する。
 1. GNU/Linuxをお使いの場合: 端末上で`make`と入力する。
+1. RaspberryPIをお使いの場合：　端末上で`make raspi`と入力する。
 1. Microsoft Windwosをお使いの場合: （MINGW GCCが必要です）
 winmakefileという名前のファイルを“makefile”に改名してから，端末上で`make`と入力する。
 注意　ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。

@@ -124,21 +124,9 @@ see https://github.com/sasagawa888/Edlis
 (edit file-name-string) example (edit "foo.lsp")
 
 # WiringPi
-Version for Raspberry Pi include library for wiringPi.
+On paspberry PI, on terminal enter "make raspi".
+As a result, Eisl includes system function of WiringPi. 
 
-In order to use wiringPi, you need to compile wiringpi.lsp(in example folder) and invoke EISL with super user.
-
-```
-sudo ./eisl
-```
-and 
-
-```
-(load "wiringpi.o")
-```
-please see the example code "led.lsp"
-
-"wiringpi.lsp" is the source code of wiringpi.o.
 
 ```
 EISL <==================================> C

@@ -153,21 +153,9 @@ EISLはエディタを備えています。
 
 ## WiringPi
 
-Raspberry Pi向けの版にはwiringPi用のライブラリが附属しています。
+Raspberry Piにおいては　'make raspi' とターミナルに入れてコンパイルしてください。
+この結果、EislはWiringPiの組込み関数を含みます。
 
-wiringPiを使うには，（`example`ディレクトリにある）`wiringpi.lsp`ファイルをコンパイルし，EISLを管理者として実行する必要があります。
-
-```console
-$ sudo ./eisl
-```
-次に
-
-```lisp
-(load "wiringpi.o")
-```
-コード例`led.lsp`をご覧下さい。
-
-`wiringpi.lsp`ファイルは`wringpi.o`ファイル用のソースコードです。
 
 ```lisp
 EISL <==================================> C

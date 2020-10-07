@@ -39,18 +39,18 @@ void initexsubr(void){
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
     #ifdef __arm__
-    defsubr("wiringpi-setup-gpio",f_wiringpi_setup_gpio);
-    defsubr("wiringpi-spi-setup-ch-speed",f_wiringpi_spi_setup_ch_speed);
-    defsubr("pwm-set-mode",pwm_set_mode);
-    defsubr("pwm-set-range",f_pwm_set_range);
-    defsubr("pwm-set-clock",f_pwm_set_clock);
-    defsubr("pin-mode",f_pin_mode);
-    defsubr("digital-write"f_digital_write);
-    defsubr("digital-write-byte",f_digital_write_byte);
-    defsubr("pull_up_dn_control",f_pull_up_dn_control);
-    defsubr("digital-read",f_digital_read);
+    defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
+    defsubr("WIRINGPI-SPI-SETUP-CH-SPEED",f_wiringpi_spi_setup_ch_speed);
+    defsubr("PWM-SET-MODE",pwm_set_mode);
+    defsubr("PWM-SET-RANGE",f_pwm_set_range);
+    defsubr("PWM-SET-CLOCK",f_pwm_set_clock);
+    defsubr("PIN-MODE",f_pin_mode);
+    defsubr("DIGITAL-WRITE",f_digital_write);
+    defsubr("DIGITAL-WRITE-BYTE",f_digital_write_byte);
+    defsubr("PULL-UP-DN-CONTROL",f_pull_up_dn_control);
+    defsubr("DIGITAL-READ",f_digital_read);
     defsubr("DELAY",f_delay);
-    defsubr("delay-microseconds",f_delay_microseconds);
+    defsubr("DELAY-MICROSECONDS",f_delay_microseconds);
     #endif
 }
 

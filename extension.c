@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#ifdef TARGET_LINUX_ARM 
+#ifdef __arm__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #endif
@@ -38,7 +38,7 @@ void initexsubr(void){
     defsubr("C-DEFINE",f_ignore);
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
-    #ifdef TARGET_LINUX_ARM
+    #ifdef __arm__
     defsubr("wiringpi-setup-gpio",f_wiringpi_setup_gpio);
     defsubr("wiringpi-spi-setup-ch-speed",f_wiringpi_spi_setup_ch_speed);
     defsubr("pwm-set-mode",pwm_set_mode);

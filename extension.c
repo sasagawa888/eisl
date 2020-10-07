@@ -576,7 +576,7 @@ int f_delay(int arglist){
     if(!integer(arg1))
         error(NOT_INT,"delay",arg1);
 
-    x = GET_INT(arg1)
+    x = GET_INT(arg1);
     delay(x);
     return(T);
 }

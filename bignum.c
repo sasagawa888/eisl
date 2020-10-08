@@ -9,6 +9,8 @@ prop of MSB store NIL.
 opt has sign data. plus=1,minus=-1,zero=0.
 number of data is absolute.
 
+cells = lsb -> ... msb -> NIL
+aux = cbignum class information
 */
 #include <stdio.h>
 #include <string.h>
@@ -129,6 +131,7 @@ void print_bigx(int x){
 /*
 x=new y=link
 if it is first cell, store the cell, else chain a new cell.
+last msb cell, it's cdr is NIL
 */
 int cons_next(int x, int y){
     int res;

@@ -168,6 +168,7 @@ struct position{
 #define GET_VEC_ELT(addr,i)         heap[addr].val.car.dyna_vec[i]
 #define SET_VEC_ELT(addr,i,x)       heap[addr].val.car.dyna_vec[i] = x
 #define SET_VEC(addr,x)             heap[addr].val.car.dyna_vec = x
+#define GET_VEC(addr)               heap[addr].val.car.dyna_vec
 
 //------pointer----
 extern int ep; //environment pointer
@@ -498,6 +499,7 @@ int cons(int car, int cdr);
 int cons_next(int x, int y);
 int cons_prev(int x, int y);
 int copy(int x);
+int copy_heap(int x);
 int count_args(int ls);
 int create_array(int x);
 int create_list(int x, int y);

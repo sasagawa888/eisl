@@ -1231,10 +1231,10 @@ void printstream(int addr){
 
 //--------eval---------------
 int eval(int addr){
-    int val,res;
+    int val,res,save;
     char c;
 
-    
+    save = wp1;
     if(IS_NIL(addr) || IS_T(addr))
         return(addr);
     else if(numberp(addr))
@@ -1282,8 +1282,12 @@ int eval(int addr){
         }
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE")))
             return(eval(quasi_transfer(cadr(addr),0)));
-        else if(subrp(car(addr)))
-            return(apply(caar(addr),evlis(cdr(addr))));
+        else if(subrp(car(addr))){
+            res = apply(caar(addr),evlis(cdr(addr)));
+            //res = copy_work2(res);
+            //wp1 = save;
+            return(res);
+        }
         else if(fsubrp(car(addr)))
             return(apply(caar(addr),cdr(addr)));
         else if((val=functionp(car(addr)))){

@@ -934,6 +934,8 @@ int vector_to_list(int x);
 int vectorp(int x);
 int w1cons(int car, int cdr);
 int w2cons(int car, int cdr);
+int w1freshcell(void);
+int w2freshcell(void);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void adddynenv(int sym, int val);
@@ -1004,6 +1006,7 @@ void unbind(void);
 void unreadc(char c);
 void vector_set(int v, int n, int obj);
 void store_backtrace(int x);
+
 int f_backtrace(int arglist);
 int f_symbol_function(int arglist);
 int f_symbol_class(int arglist);

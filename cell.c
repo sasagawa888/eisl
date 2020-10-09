@@ -36,6 +36,9 @@ void initcell(void){
             heap[addr].val.cdr.intnum = 0;
             heap[addr].aux = 0;
             heap[addr].option = 0;
+            SET_TAG(addr,0);
+            SET_CAR(addr,0);
+
         }
     }
     for(x=0; x<HASHTBSIZE; x++)

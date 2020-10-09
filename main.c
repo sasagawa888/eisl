@@ -297,7 +297,7 @@ void initpt(void){
     sp = 0;
     ap = 0;
     lp = 0;
-    wp = 0;
+    wp = 8;
     ls = catch_symbols;
     while(!nullp(ls)){
     	SET_PROP(car(ls),0);

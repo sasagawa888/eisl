@@ -178,7 +178,7 @@ void clrcell(int addr){
 //when free cells are less FREESIZE, invoke gbc()
 void checkgbc(void){
     if(exit_flag == 1){
-	exit_flag = 0;
+	    exit_flag = 0;
         longjmp(buf,1);
     }
 	#if _WIN32
@@ -186,7 +186,11 @@ void checkgbc(void){
     if(exit_flag == 2)
     	longjmp(buf,2);
     #endif
-    if(fc < FREESIZE)
+    if(gc_flag == 0 && fc < FREESIZE)
+        gbc();
+    else if(gc_flag == 1 && wp < HEAPSIZE && wp > HEAPSIZE - 10)
+        gbc();
+    else if(gc_flag == 1 && wp > HEAPSIZE && wp > CELLSIZE - 10)
         gbc();
 }
 

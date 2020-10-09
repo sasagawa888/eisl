@@ -1183,115 +1183,8 @@ void redef_generic(void){
 }
 
 
-//------------for working area-----------------
-int w1freshcell(void){
-    int addr;
-
-    addr = wp1;
-    wp1++;
-    if(IS_VECTOR(addr) || IS_ARRAY(addr))
-        free(heap[addr].val.car.dyna_vec);
-    heap[addr].name = NULL;
-    SET_CAR(addr,0);
-    SET_CDR(addr,0);
-    SET_AUX(addr,0);
-    SET_PROP(addr,0);
-    SET_OPT(addr,0);
-    SET_TR(addr,0);
-    SET_CDR(addr,0);
-    if(wp1 > WORK2-10)
-        debugger();
-    return(addr);
-}
-
-int w2freshcell(void){
-    int addr;
-
-    addr = wp2;
-    wp2++;
-    if(IS_VECTOR(addr) || IS_ARRAY(addr))
-        free(heap[addr].val.car.dyna_vec);
-    heap[addr].name = NULL;
-    SET_CAR(addr,0);
-    SET_CDR(addr,0);
-    SET_AUX(addr,0);
-    SET_PROP(addr,0);
-    SET_OPT(addr,0);
-    SET_TR(addr,0);
-    SET_CDR(addr,0);
-    if(wp2 > CELLSIZE-10)
-        debugger();
-    return(addr);
-}
-
-
-int w1cons(int car, int cdr){
-    int addr;
-
-    addr = w1freshcell();
-    SET_CAR(addr,car);
-    SET_CDR(addr,cdr);
-    SET_AUX(addr,0);
-    SET_PROP(addr,0);
-    SET_OPT(addr,0);
-    SET_TR(addr,0);
-    SET_TAG(addr,0);
-    return(addr);
-}
-
-int w2cons(int car, int cdr){
-    int addr;
-
-    addr = w2freshcell();
-    SET_CAR(addr,car);
-    SET_CDR(addr,cdr);
-    SET_AUX(addr,0);
-    SET_PROP(addr,0);
-    SET_OPT(addr,0);
-    SET_TR(addr,0);
-    SET_TAG(addr,0);
-    return(addr);
-}
-
-int copy_heap(int x){
-
-    if(nullp(x))
-        return(NIL);
-    else if(symbolp(x))
-        return(x);
-    else if(functionp(x))
-        return(x);
-    else if(macrop(x))
-        return(x);
-    else if(genericp(x))
-        return(x);
-    else if(streamp(x))
-        return(x);
-    else if(classp(x))
-        return(x);
-    else if(integerp(x))
-        return(copy_int(x,0));
-    else if(floatp(x))
-        return(copy_flt(x,0));
-    else if(longnump(x))
-        return(copy_long(x,0));
-    else if(bignump(x))
-        return(copy_bignum(x,0));
-    else if(vectorp(x))
-        return(copy_vec(x,0));
-    else if(arrayp(x))
-        return(copy_array(x,0));
-    else if(stringp(x))
-        return(copy_str(x,0));
-    else if(list(x))
-        return(w2cons(copy_work2(car(x)),
-                    copy_work2(cdr(x))));
-
-    error(SYSTEM_ERR,"copy_heap",x);
-    return(x);
-}
-
-int copy_work2(int x){
+//------------for copy GC-----------------
+int copy_work(int x){
 
     if(nullp(x))
         return(NIL);
@@ -1322,27 +1215,20 @@ int copy_work2(int x){
     else if(stringp(x))
         return(copy_str(x,2));
     else if (listp(x))
-        return(w2cons(copy_work2(car(x)),
-                    copy_work2(cdr(x))));
+        return(cons(copy_work(car(x)),
+                    copy_work(cdr(x))));
 
-    error(SYSTEM_ERR,"copy_work2",x);
+    error(SYSTEM_ERR,"copy_work",x);
     return(x);
 }
 
 /*
-copy_??? 
-when area == 0 to heap
-when area == 2 to work2
+copy_???  for copy GC 
 */
 int copy_int(int x, int area){
     int addr = NIL;
 
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_int",NIL);
+    addr = freshcell();
     SET_TAG(addr,INTN);
     SET_INT(addr,GET_INT(x));
     SET_AUX(addr,cfixnum); //class fixnum
@@ -1352,12 +1238,7 @@ int copy_int(int x, int area){
 int copy_long(int x, int area){
     int addr = NIL;
 
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_long",NIL);
+    addr = freshcell();
     SET_TAG(addr,LONGN);
     SET_LONG(addr,GET_LONG(x));
     SET_AUX(addr,clongnum); //class longnum
@@ -1368,12 +1249,7 @@ int copy_long(int x, int area){
 int copy_flt(int x, int area){
     int addr = NIL;
 
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_flt",NIL);
+    addr = freshcell();
     SET_TAG(addr,FLTN);
     SET_FLT(addr,GET_FLT(x));
     SET_AUX(addr,cfloat); //class float
@@ -1383,12 +1259,7 @@ int copy_flt(int x, int area){
 int copy_vec(int x, int area){
     int addr = NIL;
 
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_vec",NIL);
+    addr = freshcell();
     SET_VEC(addr,GET_VEC(x));  // vector elements
     SET_TAG(addr,VEC);
     SET_CDR(addr,GET_CDR(x));  // vector size
@@ -1400,13 +1271,7 @@ int copy_vec(int x, int area){
 int copy_array(int x, int area){
     int addr = NIL;
 
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_array",NIL);
-    
+    addr = freshcell();
     SET_VEC(addr,GET_VEC(x));  //array or vector
     SET_TAG(addr,GET_TAG(x));  //tag ARR or VEC 
     SET_CDR(addr,GET_CDR(x));  //dimension
@@ -1418,12 +1283,7 @@ int copy_array(int x, int area){
 int copy_str(int x, int area){
     int addr = NIL;
     
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_str",NIL);
+    addr = freshcell();
     addr = freshcell();
     SET_TAG(addr,GET_TAG(x)); //tag  
     heap[addr].name = heap[x].name; //string
@@ -1435,13 +1295,7 @@ int copy_str(int x, int area){
 int copy_char(int x, int area){
     int addr = NIL;
    
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_char",NIL);
-    
+    addr = freshcell();
     SET_TAG(addr,GET_TAG(x));
     heap[addr].name = heap[x].name;
     SET_AUX(addr,GET_AUX(x));
@@ -1477,13 +1331,7 @@ int copy_cons_next(int x, int y, int area){
         addr = y;
     }
     else{
-        if(area == 0)
-            addr = freshcell();
-        else if(area == 2)
-            addr = w2freshcell();
-        else 
-            error(SYSTEM_ERR,"copy_cons_next",NIL);
-        
+        addr = freshcell();
         SET_CAR(addr,x);
         SET_CDR(y,addr);
         SET_PROP(addr,y);
@@ -1502,13 +1350,7 @@ or else chain cell with cons_next.
 int copy_gen_big(int area){
     int addr = NIL;
 
-    if(area == 0)
-        addr = freshcell();
-    else if(area == 2)
-        addr = w2freshcell();
-    else 
-        error(SYSTEM_ERR,"copy_gen_big",NIL);
-
+    addr = freshcell();
     SET_CDR(addr,NIL);
     SET_PROP(addr,-1); //mark of first cell
     return(addr);

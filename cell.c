@@ -16,26 +16,32 @@ closure function-address car=arg+body, cdr=environment
 void initcell(void){
     int addr,x;
 
-    // heap area
-    for(addr=0; addr <= HEAPSIZE; addr++){
-        heap[addr].flag = FRE;
-        heap[addr].val.cdr.intnum = addr+1;
-        heap[addr].aux = 0;
-        heap[addr].option = 0;
+    if(gc_flag == 0){
+        // mark & sweep
+        // initialize heap area
+        for(addr=0; addr < HEAPSIZE; addr++){
+            heap[addr].flag = FRE;
+            heap[addr].val.cdr.intnum = addr+1;
+            heap[addr].aux = 0;
+            heap[addr].option = 0;
+        }
+        hp = 0;
+        fc = HEAPSIZE;
     }
-    hp = 0;
-    fc = HEAPSIZE;
-
+    else{
+        // copy GC
+        // initialize all area
+        for(addr=0; addr < CELLSIZE; addr++){
+            heap[addr].flag = FRE;
+            heap[addr].val.cdr.intnum = 0;
+            heap[addr].aux = 0;
+            heap[addr].option = 0;
+        }
+    }
     for(x=0; x<HASHTBSIZE; x++)
         cell_hash_table[x] = NIL;
     
-    // working area
-    for(addr=HEAPSIZE+1; addr < CELLSIZE; addr++){
-        heap[addr].flag = FRE;
-        heap[addr].aux = 0;
-        heap[addr].option = 0;
-    }
-
+   
     //0th address is for NIL, set initial environment
     makesym("NIL");    //0th address NIL
     SET_AUX(0,28);     //class of nil is null
@@ -210,13 +216,25 @@ void initstream(void){
 int freshcell(void){
     int res;
 
-    res = hp;
-    hp = heap[hp].val.cdr.intnum;
-    SET_CDR(res,0);
-    fc--;
-    if(fc <= 10)
-        debugger();
-    return(res);
+    if(gc_flag == 0){
+        res = hp;
+        hp = heap[hp].val.cdr.intnum;
+        SET_CDR(res,0);
+        fc--;
+        if(fc <= 10)
+            debugger();
+        return(res);
+    }
+    else{
+        res = wp;
+        wp++;
+        if(wp < HEAPSIZE && wp > HEAPSIZE - 10)
+            debugger();
+        else if(wp > HEAPSIZE && wp > CELLSIZE - 10)
+            debugger();
+        
+        return(res);
+    }
 }
 
 //set value to environment by destructive

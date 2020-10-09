@@ -3847,6 +3847,8 @@ int f_gbc(int arglist){
         gbc_flag= 1;
     else if(car(arglist) == NIL)
         gbc_flag = 0;
+    else
+        error(WRONG_ARGS,"gbc",arglist);
 
     return(T);
 }

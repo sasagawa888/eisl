@@ -4,9 +4,8 @@ written by kenichi sasagawa 2016/4
 /*
 memory map
 address
-0        -  10000000  Heap area
-10000001 -  18000000  Working area1
-18000001 -  20000000  Working area2
+0        -   9999999  Heap area
+10000000 -  19999999  Second heap area
 */
 #include <setjmp.h>
 
@@ -178,8 +177,7 @@ extern int sp; //stack pointer
 extern int fc; //free counter
 extern int ap; //arglist pointer
 extern int lp; //shelter pointer
-extern int wp1; //working area1 pointer
-extern int wp2; //working area2 pointer
+extern int wp; //working pointer
 
 //------class-----
 extern int cobject;
@@ -274,11 +272,10 @@ extern int redef_flag;
 extern int start_flag;
 extern int back_flag;
 extern int ignore_topchk;
-#if __linux
 extern int repl_flag;
-#endif
 extern int exit_flag;
 extern int debug_flag;
+extern int gc_flag;
 
 //longjmp control
 extern jmp_buf buf;
@@ -301,7 +298,7 @@ extern int trace_list;
 extern int trace_sym;
 extern int backtrace[BACKSIZE];
 
-#if __linux
+
 extern int ed_lparen_col;
 extern int ed_rparen_col;
 extern char ed_candidate[15][30];
@@ -316,7 +313,7 @@ extern char special[40][12];
 extern char syntax[60][30];
 extern char builtin[200][30];
 extern char extended[50][30];
-#endif
+
 
 
 //option
@@ -341,7 +338,7 @@ extern char extended[50][30];
 
 #if __linux
 #define LEFT    'D'
-#define UP  'A'
+#define UP          'A'
 #define RIGHT   'C'
 #define DOWN    'B'
 #define INSERT  '2'
@@ -349,7 +346,7 @@ extern char extended[50][30];
 #define PAGEUP  '5'
 #define PAGEDN  '6'
 #define HOME    'H'
-#define END 'F'
+#define END     'F'
 #endif
 
 //-------error code---
@@ -499,8 +496,7 @@ int cons(int car, int cdr);
 int cons_next(int x, int y);
 int cons_prev(int x, int y);
 int copy(int x);
-int copy_heap(int x);
-int copy_work2(int x);
+int copy_work(int x);
 int copy_int(int x, int area);
 int copy_long(int x, int area);
 int copy_flt(int x, int area);
@@ -932,10 +928,6 @@ int vector_length(int x);
 int vector_ref(int v, int n);
 int vector_to_list(int x);
 int vectorp(int x);
-int w1cons(int car, int cdr);
-int w2cons(int car, int cdr);
-int w1freshcell(void);
-int w2freshcell(void);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void adddynenv(int sym, int val);

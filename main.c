@@ -16,13 +16,13 @@ written by kenichi sasagawa 2016/4~
 //------pointer----
 int ep; //environment pointer
 int dp; //dynamic pointer
-int hp; //heap pointer
+int hp; //heap pointer  for mark and sweep
 int sp; //stack pointer
 int fc; //free counter
 int ap; //arglist pointer
 int lp; //shelter pointer
-int wp1; //working area1 pointer
-int wp2; //working area2 pointer
+int wp; //working pointer for copy GC
+
 
 //------class-----
 int cobject;
@@ -118,6 +118,7 @@ int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
 int repl_flag = 1;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
+int gc_flag = 0;     //0= mark-and-sweep-GC  1= copy-GC
 
 //longjmp control
 jmp_buf buf;
@@ -296,8 +297,7 @@ void initpt(void){
     sp = 0;
     ap = 0;
     lp = 0;
-    wp1 = WORK1;
-    wp2 = WORK2;
+    wp = 0;
     ls = catch_symbols;
     while(!nullp(ls)){
     	SET_PROP(car(ls),0);

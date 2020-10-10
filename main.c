@@ -119,6 +119,7 @@ int repl_flag = 1;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
 int gc_flag = 0;     //0= mark-and-sweep-GC  1= copy-GC
+int area_sw = 1;     //1= lower area 2=higher area
 
 //longjmp control
 jmp_buf buf;
@@ -236,6 +237,7 @@ int main(int argc, char *argv[]){
     initexsubr();
     initsyntax();
     initgeneric();
+    wp = WORK1;
     signal(SIGINT, signal_handler);
 	
     int ret = setjmp(buf);
@@ -297,7 +299,6 @@ void initpt(void){
     sp = 0;
     ap = 0;
     lp = 0;
-    wp = 8;
     ls = catch_symbols;
     while(!nullp(ls)){
     	SET_PROP(car(ls),0);
@@ -1692,6 +1693,8 @@ void debugger(){
         printf("FC = %d (free counter)\n", fc);
         printf("AP = %d (arglist pointer)\n", ap);
         printf("LP = %d (shelter pointer)\n", lp);
+        printf("WP = %d (work area pointer)\n", wp);
+        printf("SW = %d (current work area 1or2\n", area_sw);
     }
     else if(eqp(x,makesym(":S"))){
     	if(stepper_flag == 0){

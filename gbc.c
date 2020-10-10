@@ -12,19 +12,40 @@ void gbc(void){
 
     debug_flag = 1;
 
-    if(gbc_flag){
-        printf("enter GBC free=%d\n", fc); 
-        fflush(stdout);
+    if(gc_flag == 0){
+        if(gbc_flag){
+            printf("enter GBC free=%d\n", fc); 
+            fflush(stdout);
+        }
+        gbcmark();
+        gbcsweep();
+        fc = 0;
+        for(addr=0; addr < HEAPSIZE; addr++)
+            if(IS_EMPTY(addr))
+                fc++;
+        if(gbc_flag){
+            printf("exit  GBC free=%d\n", fc);
+            fflush(stdout);
+        }
     }
-    gbcmark();
-    gbcsweep();
-    fc = 0;
-    for(addr=0; addr < HEAPSIZE; addr++)
-        if(IS_EMPTY(addr))
-            fc++;
-    if(gbc_flag){
-        printf("exit  GBC free=%d\n", fc);
-         fflush(stdout);
+    else{
+        if(gbc_flag){
+            if(area_sw == 1)
+                printf("enter GBC free=%d\n", WORK2 - wp); 
+            else    
+                printf("enter GBC free=%d\n", CELLSIZE - wp);
+
+            fflush(stdout);
+        }
+        copygbc();
+        if(gbc_flag){
+            if(area_sw == 1)
+                printf("enter GBC free=%d\n", WORK2 - wp); 
+            else    
+                printf("enter GBC free=%d\n", CELLSIZE - wp);
+    
+            fflush(stdout);
+        }
     }
 }
 
@@ -181,16 +202,11 @@ void checkgbc(void){
 	    exit_flag = 0;
         longjmp(buf,1);
     }
-	#if _WIN32
-	//ctrl+d terminate intepreter
-    if(exit_flag == 2)
-    	longjmp(buf,2);
-    #endif
     if(gc_flag == 0 && fc < FREESIZE)
         gbc();
-    else if(gc_flag == 1 && wp < HEAPSIZE && wp > HEAPSIZE - 10)
+    else if(gc_flag == 1 && wp < WORK2 && wp > WORK2 - 10)
         gbc();
-    else if(gc_flag == 1 && wp > HEAPSIZE && wp > CELLSIZE - 10)
+    else if(gc_flag == 1 && wp > WORK2 && wp > CELLSIZE - 10)
         gbc();
 }
 
@@ -198,4 +214,51 @@ void checkgbc(void){
 
 int freecell(void){
 	return(fc);
+}
+
+
+void copygbc(void){
+    int i;
+
+    if(area_sw == 1){
+        area_sw = 2;
+        wp = WORK2;
+    }
+    else{
+        area_sw = 1;
+        wp = WORK1;
+    }
+
+    //mark local environment
+    copy_work(ep);
+    //mark dynamic environment
+    copy_work(dp);
+    //mark stack
+    for(i=0; i<sp; i++)
+        copy_work(stack[i]);
+    //mark cell binded by argstack
+    for(i=0; i<ap; i++)
+        copy_work(argstk[i]);
+
+    //mark cell chained from hash table
+    for(i=0; i<HASHTBSIZE; i++)
+        copy_work(cell_hash_table[i]);
+
+    //mark tagbody symbol
+    copy_work(tagbody_tag);
+
+    //mark thunk for unwind-protect
+    copy_work(unwind_pt);
+
+    
+    //mark shelter
+    for(i=0;i<lp;i++)
+        copy_work(shelter[i]);
+
+    //mark generic_list
+    copy_work(generic_list);
+
+    //mark symbol list for catch
+    copy_work(catch_symbols);
+	
 }

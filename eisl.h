@@ -9,10 +9,10 @@ address
 */
 #include <setjmp.h>
 
-#define HEAPSIZE    10000000
+#define HEAPSIZE    20000000
 #define CELLSIZE    20000000
-#define WORK1       10000001
-#define WORK2       18000001
+#define WORK1        6000000
+#define WORK2       13000000
 #define FREESIZE    50
 #define STACKSIZE   300000
 #define SYMSIZE     32
@@ -276,6 +276,7 @@ extern int repl_flag;
 extern int exit_flag;
 extern int debug_flag;
 extern int gc_flag;
+extern int area_sw;
 
 //longjmp control
 extern jmp_buf buf;
@@ -497,16 +498,21 @@ int cons_next(int x, int y);
 int cons_prev(int x, int y);
 int copy(int x);
 int copy_work(int x);
-int copy_int(int x, int area);
-int copy_long(int x, int area);
-int copy_flt(int x, int area);
-int copy_vec(int x, int area);
-int copy_array(int x, int area);
-int copy_str(int x, int area);
-int copy_char(int x, int area);
-int copy_bignum(int x, int area);
-int copy_cons_next(int x, int y, int area);
-int copy_gen_big(int area);
+int copy_int(int x);
+int copy_long(int x);
+int copy_flt(int x);
+int copy_vec(int x);
+int copy_array(int x);
+int copy_str(int x);
+int copy_char(int x);
+int copy_func(int x);
+int copy_generic(int x);
+int copy_macro(int x);
+int copy_stream(int x);
+int copy_class(int x);
+int copy_bignum(int x);
+int copy_cons_next(int x, int y);
+int copy_gen_big(void);
 int count_args(int ls);
 int create_array(int x);
 int create_list(int x, int y);
@@ -542,6 +548,7 @@ int f_atomp(int addr);
 int f_basic_array_p(int x);
 int f_basic_array_star_p(int arglist);
 int f_basic_vector_p(int arglist);
+int f_debug(int arglist);
 int f_block(int x);
 int f_break(int arglist);
 int f_call_next_method(int arglist);
@@ -945,6 +952,7 @@ void bindmacro(char *name, int addr);
 void cellprint(int addr);
 void checkgbc(void);
 void clrcell(int addr);
+void copygbc(void);
 void cut_zero(int x);
 void deffsubr(char *symname, int(*func)(int));
 void defsubr(char *symname, int(*func)(int));

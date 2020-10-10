@@ -1186,34 +1186,34 @@ void redef_generic(void){
 //------------for copy GC-----------------
 int copy_work(int x){
 
-    if(nullp(x))
-        return(NIL);
+    if(x < WORK1)
+        return(x);
     else if(symbolp(x))
         return(x);
     else if(functionp(x))
-        return(x);
+        return(copy_func(x));
     else if(macrop(x))
-        return(x);
+        return(copy_macro(x));
     else if(genericp(x))
-        return(x);
+        return(copy_generic(x));
     else if(streamp(x))
-        return(x);
+        return(copy_stream(x));
     else if(classp(x))
-        return(x);
+        return(copy_class(x));
     else if(integerp(x))
-        return(copy_int(x,2));
+        return(copy_int(x));
     else if(floatp(x))
-        return(copy_flt(x,2));
+        return(copy_flt(x));
     else if(longnump(x))
-        return(copy_long(x,2));
+        return(copy_long(x));
     else if(bignump(x))
-        return(copy_bignum(x,2));
+        return(copy_bignum(x));
     else if(vectorp(x))
-        return(copy_vec(x,2));
+        return(copy_vec(x));
     else if(arrayp(x))
-        return(copy_array(x,2));
+        return(copy_array(x));
     else if(stringp(x))
-        return(copy_str(x,2));
+        return(copy_str(x));
     else if (listp(x))
         return(cons(copy_work(car(x)),
                     copy_work(cdr(x))));
@@ -1225,7 +1225,7 @@ int copy_work(int x){
 /*
 copy_???  for copy GC 
 */
-int copy_int(int x, int area){
+int copy_int(int x){
     int addr = NIL;
 
     addr = freshcell();
@@ -1235,7 +1235,7 @@ int copy_int(int x, int area){
     return(addr);
 }
 
-int copy_long(int x, int area){
+int copy_long(int x){
     int addr = NIL;
 
     addr = freshcell();
@@ -1246,7 +1246,7 @@ int copy_long(int x, int area){
 }
 
 
-int copy_flt(int x, int area){
+int copy_flt(int x){
     int addr = NIL;
 
     addr = freshcell();
@@ -1256,7 +1256,7 @@ int copy_flt(int x, int area){
     return(addr);
 }
 
-int copy_vec(int x, int area){
+int copy_vec(int x){
     int addr = NIL;
 
     addr = freshcell();
@@ -1268,7 +1268,7 @@ int copy_vec(int x, int area){
 }
 
 
-int copy_array(int x, int area){
+int copy_array(int x){
     int addr = NIL;
 
     addr = freshcell();
@@ -1280,7 +1280,7 @@ int copy_array(int x, int area){
 }
 
 
-int copy_str(int x, int area){
+int copy_str(int x){
     int addr = NIL;
     
     addr = freshcell();
@@ -1292,7 +1292,7 @@ int copy_str(int x, int area){
 }
 
 
-int copy_char(int x, int area){
+int copy_char(int x){
     int addr = NIL;
    
     addr = freshcell();
@@ -1302,14 +1302,72 @@ int copy_char(int x, int area){
     return(addr);
 }
 
+int copy_func(int x){
+    int val;
 
-int copy_bignum(int x, int area){
+    val = freshcell();
+    SET_TAG(val,FUNC);
+    SET_NAME(val,GET_NAME(x));
+    SET_CAR(val,GET_CAR(x));
+    SET_CDR(val,GET_CAR(x));
+    SET_AUX(val,GET_AUX(x)); //class function
+    SET_OPT(val,GET_OPT(x)); //amount of argument
+    return(val);
+}
+
+int copy_generic(int x){
+    int val;
+
+    val = freshcell();
+    SET_TAG(val,GENERIC);
+    SET_NAME(val,GET_NAME(x));
+    SET_CAR(val,GET_CAR(x));
+    SET_OPT(val,GET_OPT(x)); //amount of argument
+    SET_CDR(val,copy_work(GET_CDR(x))); //method 
+    SET_AUX(val,GET_AUX(x));
+    return(val);
+}
+
+int copy_macro(int x){
+    int val;
+
+    val = freshcell();
+    SET_CAR(val,copy_work(GET_CAR(x)));
+    return(val);
+}
+
+int copy_stream(int x){
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr,STREAM);
+    SET_PORT(addr,GET_PORT(x));
+    SET_CDR(addr,GET_CDR(x));       //string-stream-position
+    SET_AUX(addr,GET_AUX(x)); //class
+    SET_OPT(addr,GET_OPT(x)); //input/output/inout
+    return(addr);
+}
+
+int copy_class(int x){
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr,CLASS);
+    SET_NAME(addr,GET_NAME(x));
+    SET_CAR(addr,GET_CAR(x));
+    SET_CDR(addr,GET_CAR(x));
+    SET_AUX(addr,GET_CAR(x));
+    return(addr);
+}
+
+
+int copy_bignum(int x){
     int addr,msb,sign;
 
-    sign = get_sign(area);
-    addr = msb = copy_gen_big(area);
+    sign = get_sign(x);
+    addr = msb = copy_gen_big();
     while(!nullp(next(x))){
-        msb = copy_cons_next(GET_CAR(x),msb,area);
+        msb = copy_cons_next(GET_CAR(x),msb);
         x = next(x);
     }
     SET_TAG(addr,BIGX);
@@ -1322,7 +1380,7 @@ int copy_bignum(int x, int area){
 x=new y=link
 if it is first cell, store the cell, else chain a new cell.
 */
-int copy_cons_next(int x, int y, int area){
+int copy_cons_next(int x, int y){
     int addr = NIL;
 
     if(GET_PROP(y) == -1){
@@ -1347,7 +1405,7 @@ therefor when compute bignum, if it is first cell, store data the cell.
 or else chain cell with cons_next.
 
 */
-int copy_gen_big(int area){
+int copy_gen_big(void){
     int addr = NIL;
 
     addr = freshcell();

@@ -35,6 +35,7 @@ void initexsubr(void){
     defsubr("C-DEFINE",f_ignore);
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
+    defsubr("HEAPDUMP",f_heapdump);
     
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
@@ -319,7 +320,6 @@ int f_break(int arglist){
     debugger();
     return(T);
 }
-
 
 //----------for Raspberry PI
 #ifdef __arm__

@@ -1189,7 +1189,7 @@ int copy_work(int x){
     if(x < 8) // nil t ...
         return(x);
     else if(symbolp(x))
-        return(copy_symbol(x));   
+        return(copy_symbol(x));
     else if(x < WORK1)
         return(x);
     else if(functionp(x))
@@ -1228,6 +1228,7 @@ int copy_symbol(int x){
 
     //SET_CAR(x,copy_work(GET_CAR(x)));
     SET_CDR(x,copy_work(GET_CDR(x)));
+    SET_OPT(x,GET_OPT(x));
     return(x);
 }
 

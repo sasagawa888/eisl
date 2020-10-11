@@ -240,10 +240,6 @@ void copygbc(void){
     for(i=0; i<ap; i++)
         argstk[i] = copy_work(argstk[i]);
 
-    //mark cell chained from hash table
-    for(i=0; i<HASHTBSIZE; i++)
-        copy_hash(cell_hash_table[i]);
-
     //mark tagbody symbol
     tagbody_tag = copy_work(tagbody_tag);
 
@@ -260,5 +256,10 @@ void copygbc(void){
 
     //mark symbol list for catch
     catch_symbols = copy_work(catch_symbols);
+
+    //mark cell chained from hash table
+    for(i=0; i<HASHTBSIZE; i++)
+        copy_hash(cell_hash_table[i]);
+
 	
 }

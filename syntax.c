@@ -400,6 +400,7 @@ int f_defglobal(int arglist){
         error(NOT_SYM, "defglobal", arg1);
     if(GET_OPT(arg1) == CONSTN)
         error(CANT_MODIFY, "defglobal", arg1);
+
     SET_CDR(arg1,eval(arg2));
     SET_OPT(arg1,GLOBAL);
     return(arg1);

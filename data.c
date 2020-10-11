@@ -1186,9 +1186,11 @@ void redef_generic(void){
 //------------for copy GC-----------------
 int copy_work(int x){
 
-    if(x < WORK1)
+    if(x < 8) // nil t ...
         return(x);
     else if(symbolp(x))
+        return(copy_symbol(x));   
+    else if(x < WORK1)
         return(x);
     else if(functionp(x))
         return(copy_func(x));
@@ -1219,6 +1221,13 @@ int copy_work(int x){
                     copy_work(cdr(x))));
 
     error(SYSTEM_ERR,"copy_work",x);
+    return(x);
+}
+
+int copy_symbol(int x){
+
+    SET_CAR(x,copy_work(GET_CAR(x)));
+    SET_CDR(x,copy_work(GET_CDR(x)));
     return(x);
 }
 
@@ -1318,8 +1327,8 @@ int copy_func(int x){
     val = freshcell();
     SET_TAG(val,FUNC);
     SET_NAME(val,GET_NAME(x));
-    SET_CAR(val,GET_CAR(x));
-    SET_CDR(val,GET_CAR(x));
+    SET_CAR(val,copy_work(GET_CAR(x)));
+    SET_CDR(val,copy_work(GET_CAR(x)));
     SET_AUX(val,GET_AUX(x)); //class function
     SET_OPT(val,GET_OPT(x)); //amount of argument
     return(val);

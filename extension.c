@@ -317,7 +317,6 @@ int f_backtrace(int arglist){
 int f_break(int arglist){
     printf("break\n");
     debugger();
-    longjmp(buf,1); 
     return(T);
 }
 

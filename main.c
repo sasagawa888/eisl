@@ -1656,6 +1656,7 @@ void debugger(){
     x = sread();
 	if(eqp(x,makesym("?"))){
     	printf("?  help\n");
+        printf(":a abort\n");
         printf(":b backtrace\n");
         printf(":d dynamic environment\n");
         printf(":e environment\n");
@@ -1664,6 +1665,9 @@ void debugger(){
         printf(":r room\n");
         printf(":s stepper ON/OFF\n");
         printf("other S exps eval\n");
+    }
+    else if(eqp(x,makesym(":A"))){
+        longjmp(buf,1); 
     }
     else if(eqp(x,makesym(":B"))){
     	for(i=0;i<BACKSIZE;i++){
@@ -1696,7 +1700,7 @@ void debugger(){
         printf("LP = %d (shelter pointer)\n", lp);
         printf("GC = %d (GC switch 0=m&sGC 1=copyGC)\n", gc_sw);
         printf("WP = %d (work area pointer)\n", wp);
-        printf("SW = %d (current work area 1or2\n", area_sw);
+        printf("SW = %d (current work area 1or2)\n", area_sw);
     }
     else if(eqp(x,makesym(":S"))){
     	if(stepper_flag == 0){

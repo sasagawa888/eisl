@@ -532,15 +532,15 @@ int makefunc(char *pname, int addr){
     int val;
     char *str;
 
-    val = hfreshcell();
+    val = freshcell();
     SET_TAG(val,FUNC);
     str = (char *)malloc(strlen(pname)+1);
     if(str == NULL)
         error(MALLOC_OVERF,"makefunc",NIL);
     heap[val].name = str;
     strcpy(heap[val].name,pname);
-    SET_CAR(val,copy_heap(addr));
-    SET_CDR(val,copy_heap(ep));
+    SET_CAR(val,addr);
+    SET_CDR(val,ep);
     SET_AUX(val,cfunction); //class function
     SET_OPT(val,count_args(car(addr))); //amount of argument
     return(val);

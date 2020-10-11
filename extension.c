@@ -35,7 +35,7 @@ void initexsubr(void){
     defsubr("C-DEFINE",f_ignore);
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
-    defsubr("DEBUG",f_debug);
+    
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
     defsubr("WIRINGPI-SPI-SETUP-CH-SPEED",f_wiringpi_spi_setup_ch_speed);
@@ -318,14 +318,6 @@ int f_break(int arglist){
     printf("break\n");
     debugger();
     longjmp(buf,1); 
-    return(T);
-}
-
-int f_debug(int arglist){
-    int arg1;
-
-    arg1 = car(arglist);
-    printf("addr=%d",arg1);
     return(T);
 }
 

@@ -645,7 +645,6 @@ int f_get_output_stream_string(int x);
 int f_get_universal_time(int arglist);
 int f_go(int x);
 int f_greater(int addr);
-int f_hadamard(int arglist);
 int f_heapdump(int addr);
 int f_identity(int arglist);
 int f_if(int addr);

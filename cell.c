@@ -16,31 +16,16 @@ closure function-address car=arg+body, cdr=environment
 void initcell(void){
     int addr,x;
 
-    if(gc_flag == 0){
-        // mark & sweep
-        // initialize heap area
-        for(addr=0; addr < HEAPSIZE; addr++){
-            heap[addr].flag = FRE;
-            heap[addr].val.cdr.intnum = addr+1;
-            heap[addr].aux = 0;
-            heap[addr].option = 0;
-        }
-        hp = 0;
-        fc = HEAPSIZE;
+    // initialize heap area
+    for(addr=0; addr < HEAPSIZE; addr++){
+        heap[addr].flag = FRE;
+        heap[addr].val.cdr.intnum = addr+1;
+        heap[addr].aux = 0;
+        heap[addr].option = 0;
     }
-    else{
-        // copy GC
-        // initialize all area
-        for(addr=0; addr < CELLSIZE; addr++){
-            heap[addr].flag = FRE;
-            heap[addr].val.cdr.intnum = 0;
-            heap[addr].aux = 0;
-            heap[addr].option = 0;
-            SET_TAG(addr,0);
-            SET_CAR(addr,0);
-
-        }
-    }
+    hp = 0;
+    fc = HEAPSIZE;
+    
     for(x=0; x<HASHTBSIZE; x++)
         cell_hash_table[x] = NIL;
     
@@ -100,6 +85,7 @@ void initerrargs(int class){
                   cons(makesym("name"),makesym("j")),
                   cons(makesym("namespace"),makesym("k")));
     SET_AUX(class,args);
+
 }
 
 void initclass(void){
@@ -208,6 +194,8 @@ void initclass(void){
     initerrargs(cstream_error);
     initerrargs(cend_of_stream);
     initerrargs(cstorage_exhausted);
+
+   
 }
 
 void initstream(void){
@@ -219,7 +207,7 @@ void initstream(void){
 int freshcell(void){
     int res;
 
-    if(gc_flag == 0){
+    if(gc_sw == 0){
         res = hp;
         hp = heap[hp].val.cdr.intnum;
         SET_CDR(res,0);
@@ -238,6 +226,19 @@ int freshcell(void){
         
         return(res);
     }
+}
+
+
+int hfreshcell(void){
+    int res;
+
+    res = hp;
+    hp = heap[hp].val.cdr.intnum;
+    SET_CDR(res,0);
+    fc--;
+    if(fc <= 10)
+        debugger();
+    return(res);
 }
 
 //set value to environment by destructive
@@ -345,7 +346,7 @@ int makesym1(char *pname){
     int addr;
     char *str;
 
-    addr = freshcell();
+    addr = hfreshcell();
     SET_TAG(addr,SYM);
     str = (char *)malloc(strlen(pname)+1);
     if(str == NULL)

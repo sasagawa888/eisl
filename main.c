@@ -118,7 +118,9 @@ int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
 int repl_flag = 1;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
-int gc_flag = 0;     //0= mark-and-sweep-GC  1= copy-GC
+
+//switch
+int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
 int area_sw = 1;     //1= lower area 2=higher area
 
 //longjmp control
@@ -237,7 +239,6 @@ int main(int argc, char *argv[]){
     initexsubr();
     initsyntax();
     initgeneric();
-    wp = WORK1;
     signal(SIGINT, signal_handler);
 	
     int ret = setjmp(buf);

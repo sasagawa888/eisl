@@ -12,7 +12,7 @@ void gbc(void){
 
     debug_flag = 1;
 
-    if(gc_flag == 0){
+    if(gc_sw == 0){
         if(gbc_flag){
             printf("enter GBC free=%d\n", fc); 
             fflush(stdout);
@@ -202,11 +202,11 @@ void checkgbc(void){
 	    exit_flag = 0;
         longjmp(buf,1);
     }
-    if(gc_flag == 0 && fc < FREESIZE)
+    if(gc_sw == 0 && fc < FREESIZE)
         gbc();
-    else if(gc_flag == 1 && wp < WORK2 && wp > WORK2 - 10)
+    else if(gc_sw == 1 && wp < WORK2 && wp > WORK2 - FREESIZE)
         gbc();
-    else if(gc_flag == 1 && wp > WORK2 && wp > CELLSIZE - 10)
+    else if(gc_sw == 1 && wp > WORK2 && wp > CELLSIZE - FREESIZE)
         gbc();
 }
 

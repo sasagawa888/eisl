@@ -3847,6 +3847,12 @@ int f_gbc(int arglist){
         gbc_flag= 1;
     else if(car(arglist) == NIL)
         gbc_flag = 0;
+    else if(car(arglist) == makesym("M&S"))
+        gc_sw = 0;
+    else if(car(arglist) == makesym("COPY")){
+        gc_sw = 1;
+        wp = WORK1;
+    }
     else
         error(WRONG_ARGS,"gbc",arglist);
 

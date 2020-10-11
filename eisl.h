@@ -275,7 +275,9 @@ extern int ignore_topchk;
 extern int repl_flag;
 extern int exit_flag;
 extern int debug_flag;
-extern int gc_flag;
+
+//switch
+extern int gc_sw;
 extern int area_sw;
 
 //longjmp control
@@ -800,6 +802,7 @@ int hash(char *name);
 int hassamep(int ls);
 int hassysclassp(int ls);
 int hextoken(char buf[]);
+int hfreshcell(void);
 int high_priority_p(int x, int y);
 int illegallambdap(int ls);
 int improperlistp(int ls);

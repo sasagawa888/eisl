@@ -957,6 +957,7 @@ void cellprint(int addr);
 void checkgbc(void);
 void clrcell(int addr);
 void copygbc(void);
+void copy_hash(int x);
 void cut_zero(int x);
 void deffsubr(char *symname, int(*func)(int));
 void defsubr(char *symname, int(*func)(int));

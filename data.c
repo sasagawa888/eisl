@@ -1226,7 +1226,7 @@ int copy_work(int x){
 
 int copy_symbol(int x){
 
-    SET_CAR(x,copy_work(GET_CAR(x)));
+    //SET_CAR(x,copy_work(GET_CAR(x)));
     SET_CDR(x,copy_work(GET_CDR(x)));
     return(x);
 }
@@ -1242,7 +1242,7 @@ int copy_heap(int x){
 }
 
 /*
-copy_???  for copy GC 
+copy_???  for copying GC 
 */
 int copy_int(int x){
     int addr = NIL;
@@ -1433,3 +1433,17 @@ int copy_gen_big(void){
     return(addr);
 }
 
+
+/*
+copy symbol of hash list 
+*/
+
+void copy_hash(int x){
+
+    if(nullp(x))
+        return;
+    else{
+        SET_CAR(x,copy_symbol(car(x)));
+        copy_hash(cdr(x));
+    }
+}

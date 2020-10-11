@@ -1694,6 +1694,7 @@ void debugger(){
         printf("FC = %d (free counter)\n", fc);
         printf("AP = %d (arglist pointer)\n", ap);
         printf("LP = %d (shelter pointer)\n", lp);
+        printf("GC = %d (GC switch 0=m&sGC 1=copyGC)\n", gc_sw);
         printf("WP = %d (work area pointer)\n", wp);
         printf("SW = %d (current work area 1or2\n", area_sw);
     }

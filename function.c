@@ -3837,7 +3837,7 @@ int f_heapdump(int arglist){
 }
 
 int f_gbc(int arglist){
-    int n;
+    int n,addr;
 
     if((n=length(arglist)) != 0 && n != 1)
         error(WRONG_ARGS, "gbc", arglist);
@@ -3850,6 +3850,14 @@ int f_gbc(int arglist){
     else if(car(arglist) == makesym("M&S"))
         gc_sw = 0;
     else if(car(arglist) == makesym("COPY")){
+        // initialize work area
+        for(addr=WORK1; addr < CELLSIZE; addr++){
+            SET_CAR(addr,0);
+            SET_CDR(addr,0);
+            SET_AUX(addr,0);
+            SET_OPT(addr,0);
+        }
+        fc = fc - WORK1;
         gc_sw = 1;
         wp = WORK1;
     }

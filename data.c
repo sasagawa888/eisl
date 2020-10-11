@@ -1222,6 +1222,16 @@ int copy_work(int x){
     return(x);
 }
 
+int copy_heap(int x){
+    int save,res;
+
+    save = gc_sw;
+    gc_sw = 0;
+    res = copy_work(x);
+    gc_sw = save;
+    return(res);
+}
+
 /*
 copy_???  for copy GC 
 */

@@ -183,10 +183,10 @@ void gbcsweep(void){
 }
 
 void clrcell(int addr){
-    SET_TAG(addr,EMP);
-    free(heap[addr].name);
     if(IS_VECTOR(addr) || IS_ARRAY(addr))
         free(heap[addr].val.car.dyna_vec);
+    SET_TAG(addr,EMP);
+    free(heap[addr].name);
     heap[addr].name = NULL;
     SET_CAR(addr,0);
     SET_CDR(addr,0);

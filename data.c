@@ -1197,9 +1197,7 @@ void redef_generic(void){
 
 //------------for copy GC-----------------
 int copy_work(int x){
-    if(x < 8) // nil t ...
-        return(x);
-    else if(x < WORK1 && !symbolp(x))
+    if(x < WORK1) // nil t ...
         return(x);
 
     switch(GET_TAG(x)){
@@ -1211,7 +1209,7 @@ int copy_work(int x){
         case ARR:   return(copy_array(x));
         case STR:   return(copy_str(x));
         case CHR:   return(copy_char(x));
-        case SYM:   return(copy_symbol(x));
+        case SYM:   return(x);
         case SUBR:  return(x);
         case FSUBR: return(x);
         case FUNC:  return(copy_func(x));
@@ -1233,45 +1231,6 @@ int copy_work(int x){
                     error(SYSTEM_ERR,"copy_work",x);
     }
 
-    return(x);
-}
-/*
-copy_work1 does not copy symbol
-*/
-int copy_work1(int x){
-    if(x < WORK1) // nil t ...
-        return(x);
-    
-    switch(GET_TAG(x)){
-        case INTN:  return(copy_int(x));
-        case FLTN:  return(copy_flt(x));
-        case LONGN:  return(copy_long(x));
-        case BIGX:  return(copy_bignum(x));
-        case VEC:   return(copy_vec(x));
-        case ARR:   return(copy_array(x));
-        case STR:   return(copy_str(x));
-        case CHR:   return(copy_char(x));
-        case SYM:   return(copy_symbol(x));
-        case SUBR:  return(x);
-        case FSUBR: return(x);
-        case FUNC:  return(copy_func(x));
-        case MACRO: return(copy_macro(x));
-        case CLASS: return(copy_class(x));
-        case STREAM:
-                    return(copy_stream(x));
-        case GENERIC:
-                    return(copy_generic(x));
-        case METHOD:
-                    return(x); //****
-        case INSTANCE:
-                    return(x); //****
-        case LIS:   return(cons(copy_work1(car(x)),copy_work1(cdr(x))));
-        case DUMMY: return(x);
-        default:    
-                    printf("error addr=%d  ",x);
-                    return(x);
-                    error(SYSTEM_ERR,"copy_work1",x);
-    }
     return(x);
 }
 
@@ -1369,8 +1328,8 @@ int copy_func(int x){
     val = freshcell();
     SET_TAG(val,FUNC);
     SET_NAME(val,GET_NAME(x));
-    SET_CAR(val,copy_work1(GET_CAR(x)));
-    SET_CDR(val,copy_work1(GET_CDR(x)));
+    SET_CAR(val,copy_work(GET_CAR(x)));
+    SET_CDR(val,copy_work(GET_CDR(x)));
     SET_AUX(val,GET_AUX(x)); //class function
     SET_OPT(val,GET_OPT(x)); //amount of argument
     return(val);
@@ -1384,7 +1343,7 @@ int copy_generic(int x){
     SET_NAME(val,GET_NAME(x));
     SET_CAR(val,GET_CAR(x));
     SET_OPT(val,GET_OPT(x)); //amount of argument
-    SET_CDR(val,copy_work1(GET_CDR(x))); //method 
+    SET_CDR(val,copy_work(GET_CDR(x))); //method 
     SET_AUX(val,GET_AUX(x));
     return(val);
 }
@@ -1393,7 +1352,7 @@ int copy_macro(int x){
     int val;
 
     val = freshcell();
-    SET_CAR(val,copy_work1(GET_CAR(x)));
+    SET_CAR(val,copy_work(GET_CAR(x)));
     return(val);
 }
 

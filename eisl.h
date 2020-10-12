@@ -500,7 +500,6 @@ int cons_next(int x, int y);
 int cons_prev(int x, int y);
 int copy(int x);
 int copy_work(int x);
-int copy_work1(int x);
 int copy_symbol(int x);
 int copy_int(int x);
 int copy_long(int x);

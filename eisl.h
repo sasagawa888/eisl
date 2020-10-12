@@ -802,6 +802,7 @@ int hascommonp1(int x, int y);
 int hash(char *name);
 int hassamep(int ls);
 int hassysclassp(int ls);
+int hcons(int x, int y);
 int hextoken(char buf[]);
 int hfreshcell(void);
 int high_priority_p(int x, int y);

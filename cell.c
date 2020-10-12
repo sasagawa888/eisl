@@ -327,11 +327,14 @@ int getsym(char *name, int index){
     return(-1);
 }
 
+/*
+link list is generated in hheap area allways
+*/
 int addsym(char *name, int index){
     int addr,res;
 
     addr = cell_hash_table[index];
-    addr = cons(res=makesym1(name),addr);
+    addr = hcons(res=makesym1(name),addr);
     cell_hash_table[index] = addr;
     return(res);
 }

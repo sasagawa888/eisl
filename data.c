@@ -457,6 +457,18 @@ int cons(int car, int cdr){
     return(addr);
 }
 
+int hcons(int car, int cdr){
+    int addr;
+    
+    addr = hfreshcell();
+    SET_TAG(addr,LIS);
+    SET_CAR(addr,car);
+    SET_CDR(addr,cdr);
+    SET_AUX(addr,ccons); //cons class
+    return(addr);
+}
+
+
 int length(int addr){
     int len = 0;
     

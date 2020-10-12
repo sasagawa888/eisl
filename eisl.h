@@ -653,6 +653,7 @@ int f_if(int addr);
 int f_ignore_errors(int arglist);
 int f_initialize_object_star(int arglist);
 int f_input_stream_p(int x);
+int f_instance(int x);
 int f_instancep(int x);
 int f_integerp(int x);
 int f_internal_time_units_per_second(int arglist);

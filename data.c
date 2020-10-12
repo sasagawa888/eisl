@@ -1238,7 +1238,7 @@ int copy_work(int x){
 
 int copy_symbol(int x){
 
-    //SET_CAR(x,copy_work(GET_CAR(x)));
+    SET_CAR(x,copy_work(GET_CAR(x)));
     SET_CDR(x,copy_work(GET_CDR(x)));
     SET_OPT(x,GET_OPT(x));
     return(x);

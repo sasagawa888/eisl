@@ -218,6 +218,17 @@ int freshcell(void){
     }
     else{
         res = wp;
+        SET_TAG(res,EMP);
+        free(heap[res].name);
+        if(IS_VECTOR(res) || IS_ARRAY(res))
+            free(heap[res].val.car.dyna_vec);
+        heap[res].name = NULL;
+        SET_CAR(res,0);
+        SET_CDR(res,0);
+        SET_AUX(res,0);
+        SET_PROP(res,0);
+        SET_OPT(res,0);
+        SET_TR(res,0);
         wp++;
         if(wp < HEAPSIZE && wp > HEAPSIZE - 10)
             debugger();
@@ -457,7 +468,7 @@ void cellprint(int addr){
     printf("\n");
 }
 
-//deap dump
+//heap dump
 void heapdump(int start, int end){
     int i;
 
@@ -467,6 +478,7 @@ void heapdump(int start, int end){
         cellprint(i);
     }
 }
+
 
 void store_backtrace(int x){
     int i,y;

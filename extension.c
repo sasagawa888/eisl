@@ -36,6 +36,7 @@ void initexsubr(void){
     defsubr("C-LANG",f_ignore);
     defsubr("C-OPTION",f_ignore);
     defsubr("HEAPDUMP",f_heapdump);
+    defsubr("INSTANCE",f_instance);
     
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
@@ -318,6 +319,15 @@ int f_backtrace(int arglist){
 int f_break(int arglist){
     printf("break\n");
     debugger();
+    return(T);
+}
+
+int f_instance(int arglist){
+    int arg1,addr;
+
+    arg1 = car(arglist);
+    addr = get_int(arg1);
+    print(addr);
     return(T);
 }
 

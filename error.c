@@ -334,6 +334,7 @@ void error(int errnum, char *fun, int arg){
                         initargs = list6(makesym("format-string"),makestr("system error "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
+                        printf("addr=%d",arg);
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;  
 

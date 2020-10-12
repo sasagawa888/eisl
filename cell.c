@@ -218,11 +218,12 @@ int freshcell(void){
     }
     else{
         res = wp;
-        SET_TAG(res,EMP);
-        free(heap[res].name);
         if(IS_VECTOR(res) || IS_ARRAY(res))
             free(heap[res].val.car.dyna_vec);
-        heap[res].name = NULL;
+        if(IS_STRING(res))
+            free(heap[res].name);
+        SET_TAG(res,EMP);
+        //heap[res].name = NULL;
         SET_CAR(res,0);
         SET_CDR(res,0);
         SET_AUX(res,0);

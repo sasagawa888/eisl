@@ -40,9 +40,9 @@ void gbc(void){
         copygbc();
         if(gbc_flag){
             if(area_sw == 1)
-                printf("enter GBC free=%d\n", WORK2 - wp); 
+                printf("exit GBC free=%d\n", WORK2 - wp); 
             else    
-                printf("enter GBC free=%d\n", CELLSIZE - wp);
+                printf("exit GBC free=%d\n", CELLSIZE - wp);
     
             fflush(stdout);
         }

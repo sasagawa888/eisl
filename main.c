@@ -1305,6 +1305,7 @@ int eval(int addr){
             return(apply(eval(car(addr)),evlis(cdr(addr))));
         else
             error(UNDEF_FUN, "eval", car(addr));
+        
     }
     error(UNDEF_FUN, "eval", addr);
     return(0);

@@ -1304,8 +1304,7 @@ int copy_str(int x){
     int addr = NIL;
     
     addr = freshcell();
-    addr = freshcell();
-    SET_TAG(addr,GET_TAG(x)); //tag  
+    SET_TAG(addr,STR); //tag  
     heap[addr].name = heap[x].name; //string
     SET_AUX(addr,GET_AUX(x)); //class string
     return(addr);
@@ -1316,7 +1315,7 @@ int copy_char(int x){
     int addr = NIL;
    
     addr = freshcell();
-    SET_TAG(addr,GET_TAG(x));
+    SET_TAG(addr,CHR);
     heap[addr].name = heap[x].name;
     SET_AUX(addr,GET_AUX(x));
     return(addr);
@@ -1352,6 +1351,7 @@ int copy_macro(int x){
     int val;
 
     val = freshcell();
+    SET_TAG(val,MACRO);
     SET_CAR(val,copy_work(GET_CAR(x)));
     return(val);
 }
@@ -1362,7 +1362,7 @@ int copy_stream(int x){
     addr = freshcell();
     SET_TAG(addr,STREAM);
     SET_PORT(addr,GET_PORT(x));
-    SET_CDR(addr,GET_CDR(x));       //string-stream-position
+    SET_CDR(addr,GET_CDR(x)); //string-stream-position
     SET_AUX(addr,GET_AUX(x)); //class
     SET_OPT(addr,GET_OPT(x)); //input/output/inout
     return(addr);

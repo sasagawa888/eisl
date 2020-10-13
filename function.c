@@ -3817,10 +3817,6 @@ int f_initialize_object_star(int arglist){
 
 //controle
 int f_quit(int arglist){
-    int addr;
-
-    for(addr=0; addr< HEAPSIZE; addr++)
-        free(heap[addr].name);
 
     printf("- good bye -\n");
     longjmp(buf,2);

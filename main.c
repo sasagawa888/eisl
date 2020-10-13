@@ -1236,6 +1236,8 @@ int eval(int addr){
     int val,res;
     char c;
 
+    checkgbc();
+
     if(IS_NIL(addr) || IS_T(addr))
         return(addr);
     else if(numberp(addr))
@@ -1470,7 +1472,6 @@ int evlis(int addr){
     int car_addr,cdr_addr;
 
     argpush(addr);
-    checkgbc();
     top_flag = 0;
     if(IS_NIL(addr)){
         argpop();

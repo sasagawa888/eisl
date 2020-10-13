@@ -229,35 +229,35 @@ void copygbc(void){
         wp = WORK1;
     }
 
-    //mark local environment
+    //copy local environment
     ep = copy_work(ep);
-    //mark dynamic environment
+    //copy dynamic environment
     dp = copy_work(dp);
-    //mark stack
+    //copy stack
     for(i=0; i<sp; i++)
         stack[i] = copy_work(stack[i]);
-    //mark cell binded by argstack
+    //copy cell binded by argstack
     for(i=0; i<ap; i++)
         argstk[i] = copy_work(argstk[i]);
 
-    //mark tagbody symbol
+    //copy tagbody symbol
     tagbody_tag = copy_work(tagbody_tag);
 
-    //mark thunk for unwind-protect
+    //copy thunk for unwind-protect
     unwind_pt = copy_work(unwind_pt);
 
     
-    //mark shelter
+    //copy shelter
     for(i=0;i<lp;i++)
         shelter[i] = copy_work(shelter[i]);
 
-    //mark generic_list
+    //copy generic_list
     generic_list = copy_work(generic_list);
 
-    //mark symbol list for catch
+    //copy symbol list for catch
     catch_symbols = copy_work(catch_symbols);
 
-    //mark cell chained from hash table
+    //copy cell chained from hash table
     for(i=0; i<HASHTBSIZE; i++)
         copy_hash(cell_hash_table[i]);
 

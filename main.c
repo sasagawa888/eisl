@@ -1482,8 +1482,8 @@ int evlis(int addr){
         car_addr = eval(car(addr));
         argpush(car_addr);
         cdr_addr = evlis(cdr(addr));
-        argpop();
-        argpop();
+        car_addr = argpop();
+        addr = argpop();
         return(cons(car_addr,cdr_addr));
     }
 }
@@ -1545,8 +1545,8 @@ void argpush(int addr){
     argstk[ap++] = addr;
 }
 
-void argpop(void){
-    --ap;
+int argpop(void){
+    return(argstk[--ap]);
 }
 
 //shelter push/pop

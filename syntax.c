@@ -1112,7 +1112,7 @@ int f_defgeneric(int arglist){
 
 
     if(!member(arg1,generic_list))
-        generic_list = cons(arg1,generic_list);
+        generic_list = hcons(arg1,generic_list);
 
     val = makegeneric(GET_NAME(arg1),arg2,arg3);
     SET_CAR(arg1,val);

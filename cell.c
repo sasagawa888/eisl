@@ -626,14 +626,14 @@ int makegeneric(char *pname, int lamlist,int body){
     int val;
     char *str;
 
-    val = freshcell();
+    val = hfreshcell();
     SET_TAG(val,GENERIC);
     str = (char *)malloc(strlen(pname)+1);
     if(str == NULL)
         error(MALLOC_OVERF,"makegeneric",NIL);
     heap[val].name = str;
     strcpy(heap[val].name,pname);
-    SET_CAR(val,lamlist);
+    SET_CAR(val,copy_heap(lamlist));
     SET_OPT(val,count_args(lamlist)); //amount of argument
     SET_CDR(val,NIL);
     SET_AUX(val,cstandard_generic_function);
@@ -652,9 +652,9 @@ use in defgeneric*
 int makegeneric_star(int lamlist,int body){
     int val;
 
-    val = freshcell();
+    val = hfreshcell();
     SET_TAG(val,GENERIC);
-    SET_CAR(val,lamlist);
+    SET_CAR(val,copy_heap(lamlist));
     SET_OPT(val,count_args(lamlist)); //amount of argument
     SET_CDR(val,NIL);
     SET_AUX(val,cgeneric_function); // difference. only this.
@@ -679,25 +679,25 @@ opt = priority
 int makemethod(int addr){
     int val;
 
-    val = freshcell();
+    val = hfreshcell();
     SET_TAG(val,METHOD);
     if(eqp(car(addr),makesym(":AROUND"))){
-        SET_CAR(val,cdr(addr));
+        SET_CAR(val,copy_heap(cdr(addr)));
         SET_OPT(val,AROUND);
     }
     else if(eqp(car(addr),makesym(":BEFORE"))){
-        SET_CAR(val,cdr(addr));
+        SET_CAR(val,copy_heap(cdr(addr)));
         SET_OPT(val,BEFORE);
     }
     else if(eqp(car(addr),makesym(":AFTER"))){
-        SET_CAR(val,cdr(addr));
+        SET_CAR(val,copy_heap(cdr(addr)));
         SET_OPT(val,AFTER);
     }
     else{
-        SET_CAR(val,addr);
+        SET_CAR(val,copy_heap(addr));
         SET_OPT(val,PRIORITY);
     }
-    SET_CDR(val,ep);
+    SET_CDR(val,copy_heap(ep));
     SET_AUX(val,NIL);
     return(val);
 }

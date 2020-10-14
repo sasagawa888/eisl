@@ -3843,8 +3843,20 @@ int f_gbc(int arglist){
         gbc_flag= 1;
     else if(car(arglist) == NIL)
         gbc_flag = 0;
-    else if(car(arglist) == makesym("M&S"))
+    else if(car(arglist) == makesym("M&S")){
+        // re initialize heap area
+        for(addr=WORK1; addr < HEAPSIZE; addr++){
+            SET_FLAG(addr,FRE);
+            SET_CAR(addr,0);
+            SET_AUX(addr,0);
+            SET_PROP(addr,0);
+            SET_OPT(addr,0);
+            SET_CDR(addr,hp);
+            hp = addr;
+        }
+        fc = fc + (CELLSIZE - WORK1);
         gc_sw = 0;
+    }
     else if(car(arglist) == makesym("COPY")){
         // initialize work area
         for(addr=WORK1; addr < CELLSIZE; addr++){
@@ -3853,7 +3865,7 @@ int f_gbc(int arglist){
             SET_AUX(addr,0);
             SET_OPT(addr,0);
         }
-        fc = fc - WORK1;
+        fc = fc - (CELLSIZE-WORK1);
         gc_sw = 1;
         wp = WORK1;
     }

@@ -125,6 +125,7 @@ struct position{
 #define SET_SUBR(addr,x)    heap[addr].val.car.subr = x
 #define SET_PORT(addr,x)    heap[addr].val.car.port = x
 #define SET_OPT(addr,x)     heap[addr].option = x
+#define SET_FLAG(addr,x)    heap[addr].flag = x
 #define SET_CHAR(addr,x)    heap[addr].name[0] = x
 #define SET_NAME(addr,x)    heap[addr].name = x
 #define SET_TR(addr,x)      heap[addr].trace = x

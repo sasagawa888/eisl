@@ -1137,7 +1137,7 @@ int f_defgeneric_star(int arglist){
         error(NOT_LIST, "defgeneric",arg2);
 
     if(!member(arg1,generic_list))
-        generic_list = cons(arg1,generic_list);
+        generic_list = hcons(arg1,generic_list);
 
     val = makegeneric_star(arg2,arg3);
     SET_CAR(arg1,val);

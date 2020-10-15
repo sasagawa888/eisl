@@ -218,7 +218,7 @@ char builtin[200][30] ={
 
 //extended function
 char extended[50][30] = {
-{"random-real"},{"random"},{"mapvec"},{"hadamard"},{"logistic"},
+{"random-real"},{"random"},{"heapdump"},{"instance"},
 {"nconc"},{"fast-address"},{"macroexpand-1"},{"backtrace"},
 {"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
 {"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},

@@ -596,6 +596,8 @@ int read_line(int flag){
                                         i = c - '1';
                                         if(i > ed_candidate_pt)
                                             goto retry;
+                                        if(c == EOL)
+                                            goto retry;
                                         j = replace_fragment_buffer(ed_candidate[i],j);
                                         escape:
                                         ESCMVLEFT(1);

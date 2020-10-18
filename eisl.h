@@ -1039,15 +1039,10 @@ int f_pull_up_dn_control(int arglist);
 int f_digital_read(int arglist);
 int f_delay(int arglist);
 int f_delay_microseconds(int arglist);
-void dynamic_link(int x);
 #endif
 void debugger(void);
 
 //Fast project
-#if _WIN32
-int f_winexec(int arglist);
-void dynamic_link(int x);
-#endif
 void shelterpush(int addr);
 void shelterpop(void);
 int freecell(void);
@@ -1094,7 +1089,7 @@ int f_classp(int arglist);
 char* get_name(int x);
 double get_flt(int x);
 
-#if __linux
+
 void display_buffer(void);
 int check_token_buffer(int col);
 int findlparen_buffer(int col);
@@ -1109,9 +1104,4 @@ int replace_fragment_buffer(char* newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
-#endif
 
-#if _WIN32
-#include <windows.h>
-BOOL WINAPI CtrlHandler(DWORD CtrlEvent);
-#endif

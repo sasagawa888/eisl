@@ -580,26 +580,27 @@ int read_line(int flag){
                                         ESCMVLEFT(j+3);
                                     }
                                     else{
+                                        #define CANDIDATE 3
                                         k = 0;
                                         ESCSCR;
                                         ESCMVLEFT(1);
                                         next:
                                         ESCREV;
-                                        for(i=0; i<5; i++){
+                                        for(i=0; i<CANDIDATE; i++){
                                             if(i+k >= ed_candidate_pt)
                                                  break;
                                              printf("%d:%s ", i+1, ed_candidate[i+k]);
                                         }
-                                        if(ed_candidate_pt > k+5)
-                                            printf("6:more");
+                                        if(ed_candidate_pt > k+CANDIDATE)
+                                            printf("4:more");
                                         ESCRST;
                                         retry:
                                         c = getch();
                                         if(c == ESC)
                                              goto escape;
                                         i = c - '1';
-                                        if(ed_candidate_pt > k+5 && i == 5){
-                                            k = k+5;
+                                        if(ed_candidate_pt > k+CANDIDATE && i == CANDIDATE){
+                                            k = k+CANDIDATE;
                                             ESCMVLEFT(1);
                                             ESCCLSL;
                                             goto next;

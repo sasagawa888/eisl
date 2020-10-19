@@ -73,17 +73,10 @@ int f_ignore(int arglist){
     return(T);
 }
 
-#if __linux
+
 int f_self_introduction(int arglist){
     return(makesym("LINUX"));
 }
-#endif
-
-#if _WIN32
-int f_self_introduction(int arglist){
-    return(makesym("WINDOWS"));
-}
-#endif
 
 
 int f_ignore_toplevel_check(int arglist){

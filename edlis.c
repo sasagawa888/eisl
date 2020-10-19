@@ -199,12 +199,13 @@ void edit_screen(char *fname){
     switch(c){
         case 7:     ESCMOVE(2,1);    //ctrl+G help
                     ESCCLS1;
-                    printf("CTRL+F  move to right\n");
-                    printf("CTRL+B  move to left\n");
-                    printf("CTRL+P  move to up\n");
-                    printf("CTRL+N  move to down\n");
-                    printf("CTRL+J  end of line\n");
-                    printf("CTRL+A  begin of line\n");
+                    printf("Edlis help\n");        
+                    printf("CTRL+F  move to right          CTRL+W  search word\n");
+                    printf("CTRL+B  move to left           CTRL+R  replace word\n");
+                    printf("CTRL+P  move to up             ESC TAB   complete name\n");
+                    printf("CTRL+N  move to down           ESC <   goto top page\n");
+                    printf("CTRL+J  end of line            ESC >   goto end page\n");
+                    printf("CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n");
                     printf("CTRL+E  end of line\n");
                     printf("CTRL+V  page up\n");
                     printf("ESC V   page down\n");
@@ -214,12 +215,6 @@ void edit_screen(char *fname){
                     printf("CTRL+K  cut selection\n");
                     printf("CTRL+U  uncut selection\n");
                     printf("CTRL+_ (or CTRL+L) goto line\n");
-                    printf("CTRL+W  search word\n");
-                    printf("CTRL+R  replace word\n");
-                    printf("ESC TAB   complete name\n");
-                    printf("ESC <   goto top page\n");
-                    printf("ESC >   goto end page\n");
-                    printf("ESC A   mark(or unmark) row for selection\n");
                     printf("\n  enter any key to exit help\n");
                     c = getch();
                     display_screen();

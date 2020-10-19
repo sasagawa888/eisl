@@ -406,16 +406,9 @@ void cellprint(int addr){
         case FLTN:  printf("FLTN   ");
         			printf("%f" , GET_FLT(addr));
          			break;
-        #if __linux
         case LONGN: printf("LONGN  ");
         			printf("%lld" , GET_LONG(addr));
                     break;
-        #endif
-        #if _WIN32
-        case LONGN: printf("LONGN   ");
-        			printf("%I64d" , GET_LONG(addr));
-                    break;
-        #endif
         case BIGX:  printf("BIGX   ");
         			printf("%d", GET_CAR(addr));
          			break;

@@ -912,7 +912,7 @@ void display_command(char *fname){
     int i;
     ESCHOME;
     ESCREV;
-    printf("Edlis 1.2        File: %s    ", fname);
+    printf("Edlis 1.4        File: %s    ", fname);
     for(i=31;i<ed_width;i++)
         printf(" ");
     ESCRST;

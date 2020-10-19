@@ -29,7 +29,7 @@ int ed_rparen_col;
 int ed_clip_start;
 int ed_clip_end;
 int ed_copy_end;
-char ed_candidate[15][30];
+char ed_candidate[50][30];
 int ed_candidate_pt;
 int ed_syntax_color = 1;   //default red
 int ed_builtin_color = 6;  //default cyan
@@ -188,7 +188,7 @@ void input(char* str){
 }
 
 void edit_screen(char *fname){
-    int c,i,type;
+    int c,i,k,type;
     char str1[20],str2[20];
     struct position pos;
     FILE *port;
@@ -497,22 +497,36 @@ void edit_screen(char *fname){
                                         ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                                     }
                                     else{
+                                        #define CANDIDATE 3
+                                        k = 0;
                                         ESCMOVE(ed_footer,1);
+                                        next:
                                         ESCREV;
-                                        for(i=0; i<5; i++){
-                                            if(i >= ed_candidate_pt)
+                                        for(i=0; i<CANDIDATE; i++){
+                                            if(i+k >= ed_candidate_pt)
                                                  break;
-                                             printf("%d:%s ", i+1, ed_candidate[i]);
+                                             printf("%d:%s ", i+1, ed_candidate[i+k]);
                                         }
+                                        if(ed_candidate_pt > k+CANDIDATE)
+                                            printf("4:more");
+                                        ESCRST;
                                         ESCRST;
                                         retry:
                                         c = getch();
                                         if(c == ESC)
                                              goto escape;
                                         i = c - '1';
-                                        if(i > ed_candidate_pt)
+                                        if(ed_candidate_pt > k+CANDIDATE && i == CANDIDATE){
+                                            k = k+CANDIDATE;
+                                            ESCMVLEFT(1);
+                                            ESCCLSL;
+                                            goto next;
+                                        }
+                                        if(i+k > ed_candidate_pt || i < 0)
                                             goto retry;
-                                        replace_fragment(ed_candidate[i]);
+                                        if(c == EOL)
+                                            goto retry;
+                                        replace_fragment(ed_candidate[i+k]);
                                         escape:
                                         display_screen();
                                         ESCMOVE(ed_row+2 - ed_start, ed_col+1);

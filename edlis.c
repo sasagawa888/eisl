@@ -6,7 +6,6 @@
 #include <signal.h>
 #include "edlis.h"
 
-
 //-----editor-----
 int ed_hight;
 int ed_width;

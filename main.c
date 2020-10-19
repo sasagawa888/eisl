@@ -151,7 +151,7 @@ int stepper_flag = 0;
 
 int ed_lparen_col;
 int ed_rparen_col;
-char ed_candidate[15][30];
+char ed_candidate[50][30];
 int ed_candidate_pt;
 int ed_syntax_color = 1;   //default red
 int ed_builtin_color = 6;  //default cyan

@@ -305,7 +305,7 @@ extern int backtrace[BACKSIZE];
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
-extern char ed_candidate[15][30];
+extern char ed_candidate[50][30];
 extern int ed_candidate_pt;
 extern int ed_syntax_color;
 extern int ed_builtin_color;

@@ -580,25 +580,35 @@ int read_line(int flag){
                                         ESCMVLEFT(j+3);
                                     }
                                     else{
+                                        k = 0;
                                         ESCSCR;
                                         ESCMVLEFT(1);
+                                        next:
                                         ESCREV;
                                         for(i=0; i<5; i++){
-                                            if(i >= ed_candidate_pt)
+                                            if(i+k >= ed_candidate_pt)
                                                  break;
-                                             printf("%d:%s ", i+1, ed_candidate[i]);
+                                             printf("%d:%s ", i+1, ed_candidate[i+k]);
                                         }
+                                        if(ed_candidate_pt > k+5)
+                                            printf("6:more");
                                         ESCRST;
                                         retry:
                                         c = getch();
                                         if(c == ESC)
                                              goto escape;
                                         i = c - '1';
-                                        if(i > ed_candidate_pt)
+                                        if(ed_candidate_pt > k+5 && i == 5){
+                                            k = k+5;
+                                            ESCMVLEFT(1);
+                                            ESCCLSL;
+                                            goto next;
+                                        }
+                                        if(i+k >= ed_candidate_pt || i < 0)
                                             goto retry;
                                         if(c == EOL)
                                             goto retry;
-                                        j = replace_fragment_buffer(ed_candidate[i],j);
+                                        j = replace_fragment_buffer(ed_candidate[i+k],j);
                                         escape:
                                         ESCMVLEFT(1);
                                         ESCCLSL;

@@ -199,8 +199,6 @@ void edit_screen(char *fname){
     switch(c){
         case 7:     ESCMOVE(2,1);    //ctrl+G help
                     ESCCLS1;
-                    printf("*** Edlis help ***\n");
-                    printf("Key bindings are hybrid of Emacs and nano.\n");
                     printf("CTRL+F  move to right\n");
                     printf("CTRL+B  move to left\n");
                     printf("CTRL+P  move to up\n");

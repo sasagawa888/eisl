@@ -10,9 +10,7 @@ youtube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw
 # Installation
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
-In Linux  type "make" in terminal.
-
-In Raspberry type "make raspi" in terminal.
+In Linux  type "make" in terminal and  type "sudo make install".
 
 After version 1.4 Windows OS is not suported. Please use WSL on Windows.
 
@@ -126,8 +124,7 @@ see https://github.com/sasagawa888/Edlis
 (edit file-name-string) example (edit "foo.lsp")
 
 # WiringPi
-On paspberry PI, on terminal enter "make raspi".
-As a result, Eisl includes system function of WiringPi. 
+On paspberry PI, Eisl includes system function of WiringPi. 
 
 
 ```

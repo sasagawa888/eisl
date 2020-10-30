@@ -30,13 +30,12 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 
 ## 実行
 
-* GNU/Linuxをお使いの場合: 端末上で`./eisl`と入力する。
-* Microsoft Windowsをお使いの場合: 端末上で`eisl`と入力する。
+* GNU/Linuxをお使いの場合: 端末上で`eisl`と入力する。
 
 Linux版では，対話状態で編集ができます。
 編集機能を無効にしたい場合は，`-r`オプションを付けて起動して下さい。
 ```console
-$ ./eisl -r
+$ eisl -r
 ```
 
 
@@ -75,7 +74,7 @@ GCC向けのソースコード及び〔GCCを介して〕オブジェクトコ�
 ### 用法
 
 ```consloe
-$ ./eisl -c compiler.lsp # -cオプションを付けて起動する。
+$ eisl -c compiler.lsp # -cオプションを付けて起動する。
 ```
 又は
 ```lisp
@@ -89,8 +88,8 @@ $ ./eisl -c compiler.lsp # -cオプションを付けて起動する。
 ### 使用例
 
 ```console
-$ ./eisl -c compiler.lsp
-Easy-ISLisp Ver0.91
+$ eisl -c compiler.lsp
+Easy-ISLisp Ver1.4
 > (compile-file "tarai.lsp")
 type inference
 initialize
@@ -151,8 +150,7 @@ EISLはエディタを備えています。
 
 ## WiringPi
 
-Raspberry Piにおいては　'make raspi' とターミナルに入れてコンパイルしてください。
-この結果、EislはWiringPiの組込み関数を含みます。
+Raspberry PiにおいてはEislはWiringPiの組込み関数を含みます。
 
 
 ```lisp

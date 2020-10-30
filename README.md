@@ -27,12 +27,15 @@ We confirmed operation in the following environments.
 
 
 # Invoke
-- ./eisl 
+
+```
+eisl 
+```
 
 In the Linux version,the REPL is editable. If you do not desire to use the editable REPL, invoke with -r option.
 
 ```
-./eisl -r
+eisl -r
 ```
 
 # Editable REPL
@@ -59,7 +62,7 @@ EISL has a compiler. it generates GCC code and generates object code.
 
 ```
 Invoke with -c option
-./eisl -c compiler.lsp
+eisl -c compiler.lsp
 
 or (load "compiler.lsp")
 
@@ -68,8 +71,8 @@ or (load "compiler.lsp")
 (load "foo.o")
 
 example
-./eisl -c compiler.lsp
-Easy-ISLisp Ver0.91
+eisl -c compiler.lsp
+Easy-ISLisp Ver1.4
 > (compile-file "tarai.lsp")
 type inference
 initialize
@@ -108,7 +111,7 @@ EISL has a compiler. it generates cuda code with nvcc and generates object code.
 
 ```
 Invoke with -c option
-./eisl -c compiler.lsp
+eisl -c compiler.lsp
 
 or (load "compiler.lsp")
 

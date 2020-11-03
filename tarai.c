@@ -109,12 +109,12 @@ int res;
 if(CELLRANGE(N)) Fshelterpush(N);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res=NIL;
-if(fast_numeqp(fast_convert(N),fast_convert(Fmakestrflt("1.0"))) != NIL){
+if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("1.0")));res=fast_numeqp();res;}) != NIL){
 res = Fmakestrflt("1.0");}
-else if(fast_numeqp(fast_convert(N),fast_convert(Fmakestrflt("2.0"))) != NIL){
+else if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("2.0")));res=fast_numeqp();res;}) != NIL){
 res = Fmakestrflt("1.0");}
 else{
-res = fast_plus(fast_convert(FIBstar(fast_minus(fast_convert(N),fast_convert(Fmakestrflt("1.0"))))),fast_convert(FIBstar(fast_minus(fast_convert(N),fast_convert(Fmakestrflt("2.0"))))));}
+res = ({int res;Fargpush(fast_convert(FIBstar(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("1.0")));res=fast_minus();res;}))));Fargpush(fast_convert(FIBstar(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("2.0")));res=fast_minus();res;}))));res=fast_plus();res;});}
 ;res;});
 if(CELLRANGE(N)) Fshelterpop();
 return(res);}
@@ -149,12 +149,12 @@ if(CELLRANGE(N)) Fshelterpush(N);
 if(Ffreecell() < 900) Fgbc();
 if(Fadaptp(N,Fmakesym("<INTEGER>")))
 {res = ({int res=NIL;
-if(fast_numeqp(fast_convert(N),fast_convert(fast_immediate(1))) != NIL){
+if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_numeqp();res;}) != NIL){
 res = fast_immediate(1);}
-else if(fast_numeqp(fast_convert(N),fast_convert(fast_immediate(2))) != NIL){
+else if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(2)));res=fast_numeqp();res;}) != NIL){
 res = fast_immediate(1);}
 else{
-res = fast_plus(fast_convert(GFIB(fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))),fast_convert(GFIB(fast_minus(fast_convert(N),fast_convert(fast_immediate(2))))));}
+res = ({int res;Fargpush(fast_convert(GFIB(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}))));Fargpush(fast_convert(GFIB(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(2)));res=fast_minus();res;}))));res=fast_plus();res;});}
 ;res;});return(res);}
 if(CELLRANGE(N)) Fshelterpop();
 return(res);}
@@ -184,8 +184,8 @@ int res;
 if(CELLRANGE(N)) Fshelterpush(N);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_not(fast_numeqp(fast_convert(fast_immediate(0)),fast_convert(N))) != NIL){
-res = Fcons(fast_inverse(N),fast_inverse(LISTN(fast_minus(fast_convert(N),fast_convert(fast_immediate(1))))));}
+if(fast_not(({int res;Fargpush(fast_convert(fast_immediate(0)));Fargpush(fast_convert(N));res=fast_numeqp();res;})) != NIL){
+res = Fcons(fast_inverse(N),fast_inverse(LISTN(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}))));}
  else res = NIL;res;})
 ;
 if(CELLRANGE(N)) Fshelterpop();
@@ -199,7 +199,7 @@ if(CELLRANGE(Y)) Fshelterpush(Y);
 if(CELLRANGE(Z)) Fshelterpush(Z);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_not(fast_smallerp(fast_convert(Flength(Y)),fast_convert(Flength(X)))) != NIL){
+if(fast_not(({int res;Fargpush(fast_convert(Flength(Y)));Fargpush(fast_convert(Flength(X)));res=fast_smallerp();res;})) != NIL){
 res = Z;}
 else{
 {
@@ -247,7 +247,7 @@ if(CELLRANGE(Y)) Fshelterpush(Y);
 if(CELLRANGE(Z)) Fshelterpush(Z);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_eqgreaterp(fast_convert(Y),fast_convert(X)) != NIL){
+if(({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(X));res=fast_eqgreaterp();res;}) != NIL){
 res = ({int res,i;
 res = Z;catch_arg=res;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
@@ -260,7 +260,7 @@ temp1 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
 Fsetprop(Fmakesym("CTAK-AUX"),i+1);
 ret=setjmp(c_CTAK_AUX[i]);if(ret == 0){
-res = CTAK_AUX(fast_minus(fast_convert(X),fast_convert(fast_immediate(1))),Y,Z);Fsetprop(Fmakesym("CTAK-AUX"),i);
+res = CTAK_AUX(({int res;Fargpush(fast_convert(X));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}),Y,Z);Fsetprop(Fmakesym("CTAK-AUX"),i);
 }
  else{
 ret = 0;
@@ -270,7 +270,7 @@ temp2 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
 Fsetprop(Fmakesym("CTAK-AUX"),i+1);
 ret=setjmp(c_CTAK_AUX[i]);if(ret == 0){
-res = CTAK_AUX(fast_minus(fast_convert(Y),fast_convert(fast_immediate(1))),Z,X);Fsetprop(Fmakesym("CTAK-AUX"),i);
+res = CTAK_AUX(({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}),Z,X);Fsetprop(Fmakesym("CTAK-AUX"),i);
 }
  else{
 ret = 0;
@@ -280,7 +280,7 @@ temp3 = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
 Fsetprop(Fmakesym("CTAK-AUX"),i+1);
 ret=setjmp(c_CTAK_AUX[i]);if(ret == 0){
-res = CTAK_AUX(fast_minus(fast_convert(Z),fast_convert(fast_immediate(1))),X,Y);Fsetprop(Fmakesym("CTAK-AUX"),i);
+res = CTAK_AUX(({int res;Fargpush(fast_convert(Z));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}),X,Y);Fsetprop(Fmakesym("CTAK-AUX"),i);
 }
  else{
 ret = 0;

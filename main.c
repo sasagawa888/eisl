@@ -1556,10 +1556,10 @@ void shelterpush(int addr){
     shelter[lp++] = addr;
 }
 
-void shelterpop(void){
+int shelterpop(void){
     if(lp <= 0)
     	error(SHELTER_UNDERF, "shelterpop", NIL);
-    --lp;
+    return(shelter[--lp]);
 }
 
 //--------system function

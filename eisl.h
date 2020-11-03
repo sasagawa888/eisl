@@ -916,6 +916,7 @@ int readlist(void);
 int remove_list(int x, int y);
 int remove_prop(int x,int lis);
 int reverse(int x);
+int shelterpop(void);
 int s_remainder(int x, int y);
 int slotvars(int class);
 int smallerp(int x, int y);
@@ -1007,7 +1008,6 @@ void set_sign(int x, int y);
 void setdynenv(int sym, int val);
 void setlexenv(int sym, int val);
 void setval(int sym, int val, int ls);
-void shelterpop(void);
 void shelterpush(int addr);
 void signal_condition(int x, int y);
 #if __linux
@@ -1044,7 +1044,7 @@ void debugger(void);
 
 //Fast project
 void shelterpush(int addr);
-void shelterpop(void);
+int shelterpop(void);
 int freecell(void);
 int get_int(int addr);
 long long int get_long(int addr);

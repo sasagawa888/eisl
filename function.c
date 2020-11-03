@@ -250,6 +250,7 @@ void dynamic_link(int x){
     init_f0(1,(tfunc)gbc);
     init_f0(2,(tfunc)freshcell);
     init_f0(3,(tfunc)freecell);
+    init_f0(9,(tfunc)argpop);
     init_f0(10,(tfunc)shelterpop);
     init_f0(11,(tfunc)pop);
     init_f0(12,(tfunc)get_dynpt);
@@ -280,6 +281,7 @@ void dynamic_link(int x){
     init_f1(25,(tfunc)fast_cdr);
     init_f1(30,(tfunc)findenv);
     init_f1(31,(tfunc)finddyn);
+    init_f1(39,(tfunc)argpush);
     init_f1(40,(tfunc)shelterpush);
     init_f1(41,(tfunc)push);
     init_f1(42,(tfunc)get_opt);

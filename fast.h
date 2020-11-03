@@ -106,6 +106,7 @@ int block_arg; //recieve argument of block
 #define Fgbc()	(f0[1])()
 #define Ffreshcell() (f0[2])()
 #define Ffreecell() (f0[3])()
+#define Fargpop() (f0[9])()
 #define Fshelterpop() (f0[10])()
 #define Fpop() (f0[11])()
 #define Fgetdynpt() (f0[12])()
@@ -135,6 +136,7 @@ int block_arg; //recieve argument of block
 #define fast_cdr(x) (f1[25])(x)
 #define Ffindenv(x) (f1[30])(x)
 #define Ffinddyn(x) (f1[31])(x)
+#define Fargpush(x) (f1[39])(x)
 #define Fshelterpush(x) (f1[40])(x)
 #define Fpush(x) (f1[41])(x)
 #define Fgetopt(x) (f1[42])(x)
@@ -231,7 +233,11 @@ int fast_inverse(int x){
 }
 
 
-int fast_numeqp(int x, int y){
+int fast_numeqp(){
+    int x,y;
+
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && y >= INT_FLAG)
         if(x == y)
             return(T);
@@ -250,7 +256,11 @@ int fast_numeqp(int x, int y){
         return(Fnumeqp(fast_inverse(x),fast_inverse(y)));
 }
 
-int fast_smallerp(int x, int y){
+int fast_smallerp(){
+    int x,y;
+
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && y >= INT_FLAG)
         if(x < y)
             return(T);
@@ -269,7 +279,11 @@ int fast_smallerp(int x, int y){
         return(Fsmallerp(fast_inverse(x),fast_inverse(y)));
 }
 
-int fast_eqsmallerp(int x, int y){
+int fast_eqsmallerp(){
+    int x,y;
+
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && y >= INT_FLAG)
         if(x <= y)
             return(T);
@@ -289,17 +303,31 @@ int fast_eqsmallerp(int x, int y){
 }
 
 
-int fast_greaterp(int x, int y){
+int fast_greaterp(){
+    int x,y;
+
+    y = Fargpop();
+    x = Fargpop();
+    Fargpush(y);
+    Fargpush(x);
     return(fast_smallerp(y,x));
 }
 
-int fast_eqgreaterp(int x, int y){
+int fast_eqgreaterp(){
+    int x,y;
+
+    y = Fargpop();
+    x = Fargpop();
+    Fargpush(y);
+    Fargpush(x);
     return(fast_eqsmallerp(y,x));
 }
 
-int fast_plus(int x, int y){
-    int intx,inty,res;
+int fast_plus(){
+    int x,y,intx,inty,res;
 
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && y >= INT_FLAG){
         intx = (x & INT_MASK);
         inty = (y & INT_MASK);
@@ -331,9 +359,11 @@ int fast_plus(int x, int y){
         return(fast_convert(Fplus(fast_inverse(x),fast_inverse(y))));
 }
 
-int fast_minus(int x, int y){
-    int intx,inty,res;
+int fast_minus(){
+    int x,y,intx,inty,res;
 
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && y >= INT_FLAG){
         intx = (x & INT_MASK);
         inty = (y & INT_MASK);
@@ -367,9 +397,11 @@ int fast_minus(int x, int y){
         return(fast_convert(Fminus(fast_inverse(x),fast_inverse(y))));
 }
 
-int fast_mult(int x, int y){
-    int intx,inty,res;
+int fast_mult(){
+    int x,y,intx,inty,res;
 
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && x <= INT_PSQRT &&
        y >= INT_FLAG && y <= INT_PSQRT){
         intx = (x & INT_MASK);
@@ -397,10 +429,12 @@ int fast_mult(int x, int y){
 
 
 
-int fast_mod(int x, int y){
-    int intx,inty,res;
+int fast_mod(){
+    int x,y,intx,inty,res;
     long long int longx,longy;
 
+    y = Fargpop();
+    x = Fargpop();
     if(x >= INT_FLAG && y >= INT_FLAG){
         intx = (x & INT_MASK);
         inty = (y & INT_MASK);
@@ -451,7 +485,11 @@ int fast_not(int x){
     	return(NIL);
 }
 
-int fast_eq(int x, int y){
+int fast_eq(){
+    int x,y;
+
+    y = Fargpop();
+    x = Fargpop();
     if(x == y)
         return(T);
     else

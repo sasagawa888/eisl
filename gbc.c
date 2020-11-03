@@ -216,6 +216,14 @@ int freecell(void){
 	return(fc);
 }
 
+int gbcsw(void){
+    return(gc_sw);
+}
+
+int getwp(void){
+    return(wp);
+}
+
 
 void copygbc(void){
     int i;

@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <setjmp.h>
 
-#define HEAPSIZE    10000000
-#define FREESIZE    50
+#define HEAPSIZE    20000000
+#define CELLSIZE    20000000
+#define WORK1        6000000
+#define WORK2       13000000
+#define FREESIZE    100
 #define STACKSIZE   30000
 #define SYMSIZE     32
 #define BUFSIZE     256
@@ -106,6 +109,8 @@ int block_arg; //recieve argument of block
 #define Fgbc()	(f0[1])()
 #define Ffreshcell() (f0[2])()
 #define Ffreecell() (f0[3])()
+#define Fgbcsw() (f0[4])()
+#define Fgetwp() (f0[5])()
 #define Fargpop() (f0[9])()
 #define Fshelterpop() (f0[10])()
 #define Fpop() (f0[11])()

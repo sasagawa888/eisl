@@ -22,7 +22,7 @@ int FOO(int X,int Y){
 int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int arg1,arg2,res;
 arg1 = fast_inverse(X);
 Fshelterpush(arg1);
@@ -38,7 +38,7 @@ return(res);}
 int FIBstar(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res=NIL;
 if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("1.0")));res=fast_numeqp();res;}) != NIL){
 res = Fmakestrflt("1.0");}
@@ -52,7 +52,7 @@ return(res);}
 int FIB(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res=NIL;
 if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_numeqp();res;}) != NIL){
 res = fast_immediate(1);}

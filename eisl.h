@@ -8,12 +8,11 @@ address
 10000000 -  19999999  Second heap area
 */
 #include <setjmp.h>
-
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000
 #define WORK2       13000000
-#define FREESIZE    50
+#define FREESIZE    100
 #define STACKSIZE   300000
 #define SYMSIZE     32
 #define BUFSIZE     256
@@ -791,7 +790,9 @@ int fprintr(FILE *p, int r ,int n);
 int freshcell(void);
 int fsubrp(int addr);
 int functionp(int addr);
+int gbcsw(void);
 int gcd(int x, int y);
+int getwp(void);
 int gen_big(void);
 int gen_n(int n);
 int genericp(int addr);

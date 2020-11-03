@@ -250,6 +250,8 @@ void dynamic_link(int x){
     init_f0(1,(tfunc)gbc);
     init_f0(2,(tfunc)freshcell);
     init_f0(3,(tfunc)freecell);
+    init_f0(4,(tfunc)gbcsw);
+    init_f0(5,(tfunc)getwp);
     init_f0(9,(tfunc)argpop);
     init_f0(10,(tfunc)shelterpop);
     init_f0(11,(tfunc)pop);

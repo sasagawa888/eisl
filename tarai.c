@@ -1,6 +1,7 @@
 #include "fast.h"
 jmp_buf c_CTAK_AUX[50];
 int f_TARAI(int arglist);int TARAI(int X,int Y,int Z);
+int f_TARAIstar(int arglist);int TARAIstar(double X,double Y,double Z);
 int f_FIB(int arglist);int FIB(int N);
 int f_FIBstar(int arglist);int FIBstar(int N);
 int f_ACK(int arglist);int ACK(int M,int N);
@@ -16,6 +17,13 @@ arg1 = Fnth(0,arglist);
 arg2 = Fnth(1,arglist);
 arg3 = Fnth(2,arglist);
 return(Fmakeint(TARAI(Fgetint(arg1),Fgetint(arg2),Fgetint(arg3))));
+}
+int f_TARAIstar(int arglist){
+int arg1,arg2,arg3;
+arg1 = Fnth(0,arglist);
+arg2 = Fnth(1,arglist);
+arg3 = Fnth(2,arglist);
+return(Fmakedoubleflt(TARAIstar(Fgetflt(arg1),Fgetflt(arg2),Fgetflt(arg3))));
 }
 int f_FIB(int arglist){
 int arg1;
@@ -92,6 +100,24 @@ Z = temp3;
 goto TARAIloop;};}res;})
 ;
 return(res);}
+int TARAIstar(double X,double Y,double Z){
+int res;
+double temp1;double temp2;double temp3;
+TARAIstarloop:
+res = ({int res;
+if(X<=Y){
+res = Y;}
+else{
+{
+temp1 = TARAIstar(X-1.0,Y,Z);
+temp2 = TARAIstar(Y-1.0,Z,X);
+temp3 = TARAIstar(Z-1.0,X,Y);
+X = temp1;
+Y = temp2;
+Z = temp3;
+goto TARAIstarloop;};}res;})
+;
+return(res);}
 int FIB(int N){
 int res;
 ;
@@ -107,7 +133,7 @@ return(res);}
 int FIBstar(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res=NIL;
 if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("1.0")));res=fast_numeqp();res;}) != NIL){
 res = Fmakestrflt("1.0");}
@@ -146,7 +172,7 @@ return(res);}
 int GFIB(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 if(Fadaptp(N,Fmakesym("<INTEGER>")))
 {res = ({int res=NIL;
 if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_numeqp();res;}) != NIL){
@@ -182,7 +208,7 @@ return(res);}
 int LISTN(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(fast_not(({int res;Fargpush(fast_convert(fast_immediate(0)));Fargpush(fast_convert(N));res=fast_numeqp();res;})) != NIL){
 res = Fcons(fast_inverse(N),fast_inverse(LISTN(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}))));}
@@ -197,7 +223,7 @@ TAKLloop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(CELLRANGE(Z)) Fshelterpush(Z);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(fast_not(({int res;Fargpush(fast_convert(Flength(Y)));Fargpush(fast_convert(Flength(X)));res=fast_smallerp();res;})) != NIL){
 res = Z;}
@@ -223,7 +249,7 @@ int res;
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(CELLRANGE(Z)) Fshelterpush(Z);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res,ret,i;
  i = Fgetprop(Fmakesym("CTAK-AUX"));
 Fsetprop(Fmakesym("CTAK-AUX"),i+1);
@@ -245,7 +271,7 @@ CTAK_AUXloop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(CELLRANGE(Z)) Fshelterpush(Z);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(X));res=fast_eqgreaterp();res;}) != NIL){
 res = ({int res,i;
@@ -300,6 +326,7 @@ if(CELLRANGE(X)) X=Fshelterpop();
 return(res);}
 void init_tfunctions(void){
 (deftfunc)("TARAI" , f_TARAI);
+(deftfunc)("TARAI*" , f_TARAIstar);
 (deftfunc)("FIB" , f_FIB);
 (deftfunc)("FIB*" , f_FIBstar);
 (deftfunc)("ACK" , f_ACK);

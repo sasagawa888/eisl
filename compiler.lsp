@@ -1124,9 +1124,10 @@ double tarai(double x, double y, double z){
          (format-object stream (conv-name (car ls1)) nil)
          (format stream "=Fshelterpop();~%" ))))
 
-;;if(Ffreecell() < 900) Fgbc();
+;;Fcheckgbc();
 (defun gen-checkgc ()
-  (format code2 "if(Ffreecell() < 900) Fgbc();~%"))
+  (format code2 "Fcheckgbc();~%"))
+
 
 (defun comp-if (stream x env args tail name global test clos)
   (unless (or (= (length x) 3) (= (length x) 4))

@@ -10,6 +10,13 @@
              (tarai (- y 1) z x)
              (tarai (- z 1) x y))))
 
+(defun tarai* (x y z)
+  (if (<= x y)
+      y
+      (tarai* (tarai* (- x 1.0) y z)
+             (tarai* (- y 1.0) z x)
+             (tarai* (- z 1.0) x y))))
+
 (defun fib (n)
   (the <fixnum> n)
   (cond ((= n 1) 1)

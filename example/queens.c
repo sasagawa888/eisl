@@ -42,7 +42,7 @@ int QSORT(int LAMBDA,int LIST){
 int res;
 if(CELLRANGE(LAMBDA)) Fshelterpush(LAMBDA);
 if(CELLRANGE(LIST)) Fshelterpush(LIST);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(({int arg1,res;
 arg1 = fast_inverse(LIST);
@@ -66,7 +66,7 @@ if(CELLRANGE(P)) Fshelterpush(P);
 if(CELLRANGE(LIST)) Fshelterpush(LIST);
 if(CELLRANGE(LEFT)) Fshelterpush(LEFT);
 if(CELLRANGE(RIGHT)) Fshelterpush(RIGHT);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(({int arg1,res;
 arg1 = fast_inverse(LIST);
@@ -148,7 +148,7 @@ return(res);}
 int NQUEEN(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = NQUEEN2(N,fast_immediate(1),NIL);
 if(CELLRANGE(N)) N=Fshelterpop();
 return(res);}
@@ -159,7 +159,7 @@ NQUEEN2loop:
 if(CELLRANGE(N)) Fshelterpush(N);
 if(CELLRANGE(Y)) Fshelterpush(Y);
 if(CELLRANGE(BOARD)) Fshelterpush(BOARD);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(N));res=fast_greaterp();res;}) != NIL){
 res = NIL;}
@@ -218,7 +218,7 @@ DIAGONALloop:
 if(CELLRANGE(X)) Fshelterpush(X);
 if(CELLRANGE(QUEEN)) Fshelterpush(QUEEN);
 if(CELLRANGE(BOARD)) Fshelterpush(BOARD);
-if(Ffreecell() < 900) Fgbc();
+Fcheckgbc();
 res = ({int res;
 if(({int arg1,res;
 arg1 = fast_inverse(BOARD);

@@ -12,7 +12,7 @@ address
 #define CELLSIZE    20000000
 #define WORK1        6000000
 #define WORK2       13000000
-#define FREESIZE    100
+#define FREESIZE    900
 #define STACKSIZE   300000
 #define SYMSIZE     32
 #define BUFSIZE     256

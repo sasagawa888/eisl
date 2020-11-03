@@ -116,7 +116,7 @@ res = Fmakestrflt("1.0");}
 else{
 res = ({int res;Fargpush(fast_convert(FIBstar(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("1.0")));res=fast_minus();res;}))));Fargpush(fast_convert(FIBstar(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(Fmakestrflt("2.0")));res=fast_minus();res;}))));res=fast_plus();res;});}
 ;res;});
-if(CELLRANGE(N)) Fshelterpop();
+if(CELLRANGE(N)) N=Fshelterpop();
 return(res);}
 int ACK(int M,int N){
 int res;
@@ -156,7 +156,7 @@ res = fast_immediate(1);}
 else{
 res = ({int res;Fargpush(fast_convert(GFIB(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}))));Fargpush(fast_convert(GFIB(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(2)));res=fast_minus();res;}))));res=fast_plus();res;});}
 ;res;});return(res);}
-if(CELLRANGE(N)) Fshelterpop();
+if(CELLRANGE(N)) N=Fshelterpop();
 return(res);}
 int TAK(int X,int Y,int Z){
 int res;
@@ -188,7 +188,7 @@ if(fast_not(({int res;Fargpush(fast_convert(fast_immediate(0)));Fargpush(fast_co
 res = Fcons(fast_inverse(N),fast_inverse(LISTN(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}))));}
  else res = NIL;res;})
 ;
-if(CELLRANGE(N)) Fshelterpop();
+if(CELLRANGE(N)) N=Fshelterpop();
 return(res);}
 int TAKL(int X,int Y,int Z){
 int res;
@@ -206,17 +206,17 @@ else{
 temp1 = TAKL(fast_convert(fast_cdr(X)),Y,Z);
 temp2 = TAKL(fast_convert(fast_cdr(Y)),Z,X);
 temp3 = TAKL(fast_convert(fast_cdr(Z)),X,Y);
-if(CELLRANGE(X)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(Z)) Fshelterpop();
+if(CELLRANGE(X)) X=Fshelterpop();
+if(CELLRANGE(Y)) Y=Fshelterpop();
+if(CELLRANGE(Z)) Z=Fshelterpop();
 X = temp1;
 Y = temp2;
 Z = temp3;
 goto TAKLloop;};}res;})
 ;
-if(CELLRANGE(Z)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(X)) Fshelterpop();
+if(CELLRANGE(Z)) Z=Fshelterpop();
+if(CELLRANGE(Y)) Y=Fshelterpop();
+if(CELLRANGE(X)) X=Fshelterpop();
 return(res);}
 int CTAK(int X,int Y,int Z){
 int res;
@@ -234,9 +234,9 @@ res = CTAK_AUX(X,Y,Z);Fsetprop(Fmakesym("CTAK-AUX"),i);
 ret = 0;
 res=catch_arg;}
 res;});
-if(CELLRANGE(Z)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(X)) Fshelterpop();
+if(CELLRANGE(Z)) Z=Fshelterpop();
+if(CELLRANGE(Y)) Y=Fshelterpop();
+if(CELLRANGE(X)) X=Fshelterpop();
 return(res);}
 int CTAK_AUX(int X,int Y,int Z){
 int res;
@@ -286,17 +286,17 @@ res = CTAK_AUX(({int res;Fargpush(fast_convert(Z));Fargpush(fast_convert(fast_im
 ret = 0;
 res=catch_arg;}
 res;});
-if(CELLRANGE(X)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(Z)) Fshelterpop();
+if(CELLRANGE(X)) X=Fshelterpop();
+if(CELLRANGE(Y)) Y=Fshelterpop();
+if(CELLRANGE(Z)) Z=Fshelterpop();
 X = temp1;
 Y = temp2;
 Z = temp3;
 goto CTAK_AUXloop;};}res;})
 ;
-if(CELLRANGE(Z)) Fshelterpop();
-if(CELLRANGE(Y)) Fshelterpop();
-if(CELLRANGE(X)) Fshelterpop();
+if(CELLRANGE(Z)) Z=Fshelterpop();
+if(CELLRANGE(Y)) Y=Fshelterpop();
+if(CELLRANGE(X)) X=Fshelterpop();
 return(res);}
 void init_tfunctions(void){
 (deftfunc)("TARAI" , f_TARAI);

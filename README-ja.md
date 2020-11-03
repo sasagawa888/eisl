@@ -25,7 +25,7 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 - Raspberry Pi3 Raspbian GCC 6.3
 - openSUSE Leap 42.3 GCC 4.8.5
 - Debian GNU/Linux GCC 6.3 GCC 7.3
-- Windows10 MINGW GCC 5.3
+
 
 
 ## 実行

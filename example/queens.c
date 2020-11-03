@@ -44,7 +44,12 @@ if(CELLRANGE(LAMBDA)) Fshelterpush(LAMBDA);
 if(CELLRANGE(LIST)) Fshelterpush(LIST);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LIST)))) != NIL){
+if(({int arg1,res;
+arg1 = fast_inverse(LIST);
+Fshelterpush(arg1);
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(arg1)));
+;res;}) != NIL){
 res = LIST;}
 else{
 res = QSORT2(LAMBDA,fast_convert(fast_car(LIST)),fast_convert(fast_cdr(LIST)),NIL,NIL);}res;})
@@ -63,19 +68,40 @@ if(CELLRANGE(LEFT)) Fshelterpush(LEFT);
 if(CELLRANGE(RIGHT)) Fshelterpush(RIGHT);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(LIST)))) != NIL){
+if(({int arg1,res;
+arg1 = fast_inverse(LIST);
+Fshelterpush(arg1);
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(arg1)));
+;res;}) != NIL){
 res = ({int arg1,arg2,res;
 arg1 = fast_inverse(QSORT(LAMBDA,LEFT));
 Fshelterpush(arg1);
 arg2 = fast_inverse(Fcons(fast_inverse(P),fast_inverse(QSORT(LAMBDA,RIGHT))));
 Fshelterpush(arg2);
+arg2=Fshelterpop();
+arg1=Fshelterpop();
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
-Fshelterpop();
-Fshelterpop();
 ;res;});}
 else{
 res = ({int res;
-if(fast_convert(Fcallsubr(Fcar(Fmakesym("APPLY")),Fcons(fast_inverse(LAMBDA),Fcons(fast_inverse(fast_convert(fast_car(LIST))),Flist1(fast_inverse(fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(P)))))))))) != NIL){
+if(({int arg1,arg2,arg3,res;
+arg1 = fast_inverse(LAMBDA);
+Fshelterpush(arg1);
+arg2 = fast_inverse(fast_convert(fast_car(LIST)));
+Fshelterpush(arg2);
+arg3 = fast_inverse(({int arg1,res;
+arg1 = fast_inverse(P);
+Fshelterpush(arg1);
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(arg1)));
+;res;}));
+Fshelterpush(arg3);
+arg3=Fshelterpop();
+arg2=Fshelterpop();
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPLY")),Fcons(arg1,Fcons(arg2,Flist1(arg3)))));
+;res;}) != NIL){
 {
 temp1 = LAMBDA;
 temp2 = P;
@@ -139,7 +165,15 @@ if(({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(N));res=fast_greate
 res = NIL;}
 else{
 res = ({int res;
-if((fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(fast_inverse(Y),Flist1(fast_inverse(BOARD))))) || DIAGONAL(fast_immediate(1),Y,BOARD)) != NIL){
+if((({int arg1,arg2,res;
+arg1 = fast_inverse(Y);
+Fshelterpush(arg1);
+arg2 = fast_inverse(BOARD);
+Fshelterpush(arg2);
+arg2=Fshelterpop();
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("MEMBER")),Fcons(arg1,Flist1(arg2))));
+;res;}) || DIAGONAL(fast_immediate(1),Y,BOARD)) != NIL){
 {
 temp1 = N;
 temp2 = ({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(fast_immediate(1)));res=fast_plus();res;});
@@ -155,16 +189,21 @@ else{
 res = ({int arg1,arg2,res;
 arg1 = fast_inverse(({int res;
 if(({int res;Fargpush(fast_convert(Flength(BOARD)));Fargpush(fast_convert(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;})));res=fast_numeqp();res;}) != NIL){
-res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(fast_inverse(Fcons(fast_inverse(Y),fast_inverse(BOARD))))));}
+res = ({int arg1,res;
+arg1 = fast_inverse(Fcons(fast_inverse(Y),fast_inverse(BOARD)));
+Fshelterpush(arg1);
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("LIST")),Flist1(arg1)));
+;res;});}
 else{
 res = NQUEEN2(N,fast_immediate(1),Fcons(fast_inverse(Y),fast_inverse(BOARD)));}res;})
 );
 Fshelterpush(arg1);
 arg2 = fast_inverse(NQUEEN2(N,({int res;Fargpush(fast_convert(Y));Fargpush(fast_convert(fast_immediate(1)));res=fast_plus();res;}),BOARD));
 Fshelterpush(arg2);
+arg2=Fshelterpop();
+arg1=Fshelterpop();
 res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
-Fshelterpop();
-Fshelterpop();
 ;res;});}res;})
 ;}res;})
 ;
@@ -181,11 +220,21 @@ if(CELLRANGE(QUEEN)) Fshelterpush(QUEEN);
 if(CELLRANGE(BOARD)) Fshelterpush(BOARD);
 if(Ffreecell() < 900) Fgbc();
 res = ({int res;
-if(fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(fast_inverse(BOARD)))) != NIL){
+if(({int arg1,res;
+arg1 = fast_inverse(BOARD);
+Fshelterpush(arg1);
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("NULL")),Flist1(arg1)));
+;res;}) != NIL){
 res = NIL;}
 else{
 res = ({int res;
-if(({int res;Fargpush(fast_convert(fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(fast_inverse(({int res;Fargpush(fast_convert(fast_convert(fast_car(BOARD))));Fargpush(fast_convert(QUEEN));res=fast_minus();res;})))))));Fargpush(fast_convert(X));res=fast_numeqp();res;}) != NIL){
+if(({int res;Fargpush(fast_convert(({int arg1,res;
+arg1 = fast_inverse(({int res;Fargpush(fast_convert(fast_convert(fast_car(BOARD))));Fargpush(fast_convert(QUEEN));res=fast_minus();res;}));
+Fshelterpush(arg1);
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("ABS")),Flist1(arg1)));
+;res;})));Fargpush(fast_convert(X));res=fast_numeqp();res;}) != NIL){
 res = T;}
 else{
 {

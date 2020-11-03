@@ -212,8 +212,9 @@ int freshcell(void){
         hp = heap[hp].val.cdr.intnum;
         SET_CDR(res,0);
         fc--;
-        if(fc <= 10)
-            debugger();
+        if(fc <= 50)
+            error(RESOURCE_ERR,"M&S fleshcell",NIL);
+    
         return(res);
     }
     else{
@@ -234,10 +235,10 @@ int freshcell(void){
         SET_OPT(res,0);
         SET_TR(res,0);
         wp++;
-        if(wp < HEAPSIZE && wp > HEAPSIZE - 10)
-            debugger();
-        else if(wp > HEAPSIZE && wp > CELLSIZE - 10)
-            debugger();
+        if(wp < HEAPSIZE && wp > HEAPSIZE - 50)
+            error(RESOURCE_ERR,"copying fleshcell",NIL);
+        else if(wp > HEAPSIZE && wp > CELLSIZE - 50)
+            error(RESOURCE_ERR,"copying fleshcell",NIL);
         
         return(res);
     }
@@ -251,8 +252,8 @@ int hfreshcell(void){
     hp = heap[hp].val.cdr.intnum;
     SET_CDR(res,0);
     fc--;
-    if(fc <= 10)
-        debugger();
+    if(fc <= 50)
+        error(RESOURCE_ERR,"hfleshcell",NIL);
     return(res);
 }
 

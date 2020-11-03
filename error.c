@@ -336,7 +336,12 @@ void error(int errnum, char *fun, int arg){
                                          makesym("function"),makesym(fun));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;  
-
+        case RESOURCE_ERR:
+                        initargs = list6(makesym("format-string"),makestr("resouce error "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;  
                            
     }
     ESCERRFORG;

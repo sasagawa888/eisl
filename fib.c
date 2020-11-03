@@ -1,6 +1,13 @@
 #include "fast.h"
+int f_FOO(int arglist);int FOO(int X,int Y);
 int f_FIBstar(int arglist);int FIBstar(int N);
 int f_FIB(int arglist);int FIB(int N);
+int f_FOO(int arglist){
+int arg1,arg2;
+arg1 = Fnth(0,arglist);
+arg2 = Fnth(1,arglist);
+return(fast_inverse(FOO(fast_convert(arg1),fast_convert(arg2))));
+}
 int f_FIBstar(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
@@ -11,6 +18,23 @@ int arg1;
 arg1 = Fnth(0,arglist);
 return(fast_inverse(FIB(fast_convert(arg1))));
 }
+int FOO(int X,int Y){
+int res;
+if(CELLRANGE(X)) Fshelterpush(X);
+if(CELLRANGE(Y)) Fshelterpush(Y);
+if(Ffreecell() < 900) Fgbc();
+res = ({int arg1,arg2,res;
+arg1 = fast_inverse(X);
+Fshelterpush(arg1);
+arg2 = fast_inverse(Y);
+Fshelterpush(arg2);
+arg2=Fshelterpop();
+arg1=Fshelterpop();
+res = fast_convert(Fcallsubr(Fcar(Fmakesym("APPEND")),Fcons(arg1,Flist1(arg2))));
+;res;});
+if(CELLRANGE(Y)) Y=Fshelterpop();
+if(CELLRANGE(X)) X=Fshelterpop();
+return(res);}
 int FIBstar(int N){
 int res;
 if(CELLRANGE(N)) Fshelterpush(N);
@@ -40,6 +64,7 @@ res = ({int res;Fargpush(fast_convert(FIB(({int res;Fargpush(fast_convert(N));Fa
 if(CELLRANGE(N)) N=Fshelterpop();
 return(res);}
 void init_tfunctions(void){
+(deftfunc)("FOO" , f_FOO);
 (deftfunc)("FIB*" , f_FIBstar);
 (deftfunc)("FIB" , f_FIB);
 }void init_declare(void){

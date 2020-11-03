@@ -404,7 +404,8 @@ extern char extended[50][30];
 #define SHELTER_OVERF	150
 #define STACK_UNDERF	151
 #define SHELTER_UNDERF	152
-#define SYSTEM_ERR	153
+#define SYSTEM_ERR	    153
+#define RESOURCE_ERR    154
 
 #if __linux
 #define ESCHOME printf("\33[1;1H")

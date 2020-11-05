@@ -38,6 +38,14 @@ In the Linux version,the REPL is editable. If you do not desire to use the edita
 eisl -r
 ```
 
+If you desire to start after reading file, invoke with -c option.
+e.g.
+
+```
+eisl -c compiler.lsp 
+```
+
+
 # Editable REPL
 key-bindings are as follows:
 

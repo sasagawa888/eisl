@@ -271,7 +271,7 @@ int main(int argc, char *argv[]){
                 opt++;
                 printf("List of options:\n");
                 printf("-c filename  -- EISL Starts after reading the file.\n");
-                printf("-r           -- EISL dose not use editable REPL.\n");
+                printf("-r           -- EISL does not use editable REPL.\n");
                 printf("-h           -- display help.\n");
                 return(0);
             }

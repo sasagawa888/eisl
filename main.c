@@ -267,6 +267,14 @@ int main(int argc, char *argv[]){
                 repl_flag = 0;
                 opt++;
             }
+            else if(strcmp(argv[opt],"-h") == 0){
+                opt++;
+                printf("List of options:\n");
+                printf("-c filename  -- EISL Starts after reading the file.\n");
+                printf("-r           -- EISL dose not use editable REPL.\n");
+                printf("-h           -- display help.\n");
+                return(0);
+            }
             else{
         	    printf("illegal option\n");
         	    return 0;

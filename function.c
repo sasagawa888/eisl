@@ -1881,7 +1881,6 @@ int f_preview_char(int arglist){
         input_stream = arg1;
         buf[0] = readc();
         buf[1] = NUL;
-        input_stream = save;
         if(buf[0] == EOF){
             if(nullp(arg2) && n == 2)
                 return(arg2);
@@ -1891,6 +1890,7 @@ int f_preview_char(int arglist){
                 error(END_STREAM, "preview-char", NIL);
         }
         unreadc(arg1);
+        input_stream = save;
         res = makechar(buf);
         if(res==FEND && arg2==NIL)
             res = arg3;
@@ -1913,10 +1913,9 @@ int f_read_line(int arglist){
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-line", arg1);
 
-	#if __linux
+
     save1 = repl_flag;
     repl_flag = 0;
-    #endif
     if(n==0){
         pos = 0;
         c = readc();
@@ -1934,9 +1933,7 @@ int f_read_line(int arglist){
         input_stream = arg1;
         c = readc();
         if(c == EOF){
-        	#if __linux
             repl_flag = save1;
-            #endif
             error(END_STREAM, "read-line", NIL);
         }
         while(c != EOL && c != EOF){
@@ -1954,9 +1951,7 @@ int f_read_line(int arglist){
         input_stream = arg1;
         c = readc();
         if(c == EOF){
-        	#if __linux
             repl_flag = save1;
-            #endif
             if(nullp(arg2) && n == 2){
                 input_stream = save;
                 return(arg2);
@@ -1980,9 +1975,7 @@ int f_read_line(int arglist){
         if(res==FEND && arg2==NIL)
             res = arg3;
     }
-    #if __linux
     repl_flag = save1;
-    #endif
     return(res);
 }
 

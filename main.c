@@ -270,6 +270,7 @@ int main(int argc, char *argv[]){
                 FILE* fp = fopen(argv[opt],"r");
                 if(fp != NULL){
                     fclose(fp);
+                    repl_flag = 0;
                     f_load(list1(makestr(argv[opt])));
                     return(0);
                 }

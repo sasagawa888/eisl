@@ -240,7 +240,6 @@ int main(int argc, char *argv[]){
     initgeneric();
     signal(SIGINT, signal_handler);
 	
-    int ret = setjmp(buf);
     input_stream = standard_input;
     output_stream = standard_output;
     error_stream = standard_error;
@@ -303,7 +302,7 @@ int main(int argc, char *argv[]){
         }
     }
     printf("Easy-ISLisp Ver%1.1f\n", VERSION);
-
+    int ret = setjmp(buf);
     repl:
     if(ret == 0)
         while(1){

@@ -288,7 +288,7 @@ int main(int argc, char *argv[]){
                 printf("-c filename  -- EISL Starts after reading the file.\n");
                 printf("-h           -- display help.\n");
                 printf("-r           -- EISL does not use editable REPL.\n");
-                printf("-s filename  -- EISL runs the file with scropt mode.\n");
+                printf("-s filename  -- EISL runs the file with script mode.\n");
                 printf("-v           -- display version\n");
                 return(0);
             }

@@ -363,8 +363,12 @@ int readc(void){
     int c;
     if(input_stream == standard_input && repl_flag)
         c = read_line(1);
-    else if(GET_OPT(input_stream) != EISL_INSTR)
+    else if(GET_OPT(input_stream) != EISL_INSTR){
         c = getc(GET_PORT(input_stream));
+        //ctrl+D
+        if(input_stream == standard_input && c == EOF)
+                longjmp(buf,2);
+    }
     else{
         c = GET_NAME(input_stream)[GET_CDR(input_stream)];
         SET_CDR(input_stream,GET_CDR(input_stream)+1);

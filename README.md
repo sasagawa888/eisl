@@ -45,6 +45,18 @@ e.g.
 eisl -c compiler.lsp 
 ```
 
+Other options, see EISL -h
+
+```
+$ eisl -h
+List of options:
+-c filename  -- EISL Starts after reading the file.
+-h           -- display help.
+-r           -- EISL does not use editable REPL.
+-s filename  -- EISL runs the file with script mode.
+-v           -- display version number.
+```
+
 
 # Editable REPL
 key-bindings are as follows:

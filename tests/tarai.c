@@ -28,7 +28,7 @@ return(Fmakedoubleflt(TARAIstar(Fgetflt(arg1),Fgetflt(arg2),Fgetflt(arg3))));
 int f_FIB(int arglist){
 int arg1;
 arg1 = Fnth(0,arglist);
-return(fast_inverse(FIB(fast_convert(arg1))));
+return(Fmakeint(FIB(Fgetint(arg1))));
 }
 int f_FIBstar(int arglist){
 int arg1;
@@ -120,17 +120,15 @@ goto TARAIstarloop;};}res;})
 return(res);}
 int FIB(int N){
 int res;
-if(CELLRANGE(N)) Fshelterpush(N);
-Fcheckgbc();
+;
 res = ({int res=NIL;
-if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_numeqp();res;}) != NIL){
-res = fast_immediate(1);}
-else if(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(2)));res=fast_numeqp();res;}) != NIL){
-res = fast_immediate(1);}
+if(N==1){
+res = 1;}
+else if(N==2){
+res = 1;}
 else{
-res = ({int res;Fargpush(fast_convert(FIB(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(1)));res=fast_minus();res;}))));Fargpush(fast_convert(FIB(({int res;Fargpush(fast_convert(N));Fargpush(fast_convert(fast_immediate(2)));res=fast_minus();res;}))));res=fast_plus();res;});}
+res = FIB(N-1)+FIB(N-2);}
 ;res;});
-if(CELLRANGE(N)) N=Fshelterpop();
 return(res);}
 int FIBstar(int N){
 int res;

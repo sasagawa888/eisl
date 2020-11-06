@@ -231,7 +231,6 @@ char extended[50][30] = {
 int main(int argc, char *argv[]){
     int opt;
 
-    printf("Easy-ISLisp Ver1.5\n");
     initcell();
     initclass();
     initstream();
@@ -258,21 +257,43 @@ int main(int argc, char *argv[]){
         	opt++;
                 if(opt >= argc){
                     printf("Illegal option\n");
-        	    return 0;
+        	    return(0);
                 }
                 f_load(list1(makestr(argv[opt])));
                 opt++;
+            }
+            if(strcmp(argv[opt],"-s") == 0){
+                opt++;
+                if(opt >= argc){
+                    printf("Illegal option\n");
+        	    return(0);
+                }
+                FILE* fp = fopen(argv[opt],"r");
+                if(fp != NULL){
+                    fclose(fp);
+                    f_load(list1(makestr(argv[opt])));
+                    return(0);
+                }
+                else{
+                    printf("File not exists.\n");
+                    return(0);
+                }
             }
             else if(strcmp(argv[opt],"-r") == 0){
                 repl_flag = 0;
                 opt++;
             }
             else if(strcmp(argv[opt],"-h") == 0){
-                opt++;
                 printf("List of options:\n");
                 printf("-c filename  -- EISL Starts after reading the file.\n");
-                printf("-r           -- EISL does not use editable REPL.\n");
                 printf("-h           -- display help.\n");
+                printf("-r           -- EISL does not use editable REPL.\n");
+                printf("-s filename  -- EISL runs the file with scropt mode.\n");
+                printf("-v           -- display version\n");
+                return(0);
+            }
+            else if(strcmp(argv[opt],"-v") == 0){
+                printf("Easy-ISLisp version %1.1f\n", VERSION);
                 return(0);
             }
             else{
@@ -281,6 +302,7 @@ int main(int argc, char *argv[]){
             }
         }
     }
+    printf("Easy-ISLisp Ver%1.1f\n", VERSION);
 
     repl:
     if(ret == 0)

@@ -244,6 +244,8 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
     opt = 1;
+    printf("Easy-ISLisp Ver%1.1f\n", VERSION);
+    int ret = setjmp(buf);
     if(init_flag){
         init_flag = 0;
         FILE* fp = fopen("startup.lsp","r");
@@ -302,8 +304,7 @@ int main(int argc, char *argv[]){
             }
         }
     }
-    printf("Easy-ISLisp Ver%1.1f\n", VERSION);
-    int ret = setjmp(buf);
+    
     repl:
     if(ret == 0)
         while(1){

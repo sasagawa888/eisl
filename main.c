@@ -289,7 +289,7 @@ int main(int argc, char *argv[]){
                 printf("-h           -- display help.\n");
                 printf("-r           -- EISL does not use editable REPL.\n");
                 printf("-s filename  -- EISL runs the file with script mode.\n");
-                printf("-v           -- display version\n");
+                printf("-v           -- display version number.\n");
                 return(0);
             }
             else if(strcmp(argv[opt],"-v") == 0){

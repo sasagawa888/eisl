@@ -38,6 +38,17 @@ Linux版では，対話状態で編集ができます。
 $ eisl -r
 ```
 
+他の起動オプショオンについては下記を参照してください。
+
+```
+eisl -h
+List of options:
+-c filename  -- EISL Starts after reading the file.
+-h           -- display help.
+-r           -- EISL does not use editable REPL.
+-s filename  -- EISL runs the file with script mode.
+-v           -- display version number.
+```
 
 ## 対話状態での編集機能
 

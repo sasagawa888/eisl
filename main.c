@@ -254,7 +254,7 @@ int main(int argc, char *argv[]){
         }
         while(opt < argc){
     	    if(strcmp(argv[opt],"-c") == 0){
-        	opt++;
+        	    opt++;
                 if(opt >= argc){
                     printf("Illegal option\n");
         	    return(0);
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]){
                 f_load(list1(makestr(argv[opt])));
                 opt++;
             }
-            if(strcmp(argv[opt],"-s") == 0){
+            else if(strcmp(argv[opt],"-s") == 0){
                 opt++;
                 if(opt >= argc){
                     printf("Illegal option\n");

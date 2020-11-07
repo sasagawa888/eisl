@@ -1882,10 +1882,16 @@ int f_preview_char(int arglist){
         buf[0] = readc();
         buf[1] = NUL;
         if(buf[0] == EOF){
-            if(nullp(arg2) && n == 2)
+            if(nullp(arg2) && n == 2){
+                unreadc(arg1);
+                input_stream = save;
                 return(arg2);
-            else if(nullp(arg2) && n == 3)
+            }
+            else if(nullp(arg2) && n == 3){
+                unreadc(arg1);
+                input_stream = save;
                 return(arg3);
+            }
             else
                 error(END_STREAM, "preview-char", NIL);
         }

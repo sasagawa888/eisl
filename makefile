@@ -3,7 +3,11 @@ LIBS = -lm -ldl
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
 CFLAGS = $(INCS) -Wall -O3 
-DEST = /usr/local/bin
+PREFIX = /usr/local
+bindir = $(PREFIX)/bin
+DESTDIR = 
+INSTALL = install
+INSTALL_PROGRAM = $(INSTALL) -Dm755
 
 EISL = eisl
 EDLIS = edlis
@@ -45,12 +49,12 @@ edlis.o : edlis.c edlis.h
 
 
 install: $(EISL) $(EDLIS)
-	install -s  $(EISL) $(DEST)
-	install -s  $(EDLIS) $(DEST)
+	$(INSTALL_PROGRAM) $(EISL) $(DESTDIR)$(bindir)/$(EISL)
+	$(INSTALL_PROGRAM) $(EDLIS) $(DESTDIR)$(bindir)/$(EDLIS)
 
 uninstall:
-	rm $(DEST)/eisl
-	rm $(DEST)/edlis
+	rm $(DESTDIR)$(bindir)/$(EISL)
+	rm $(DESTDIR)$(bindir)/$(EDLIS)
 
 
 .PHONY: clean

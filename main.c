@@ -255,13 +255,17 @@ int main(int argc, char *argv[]){
             f_load(list1(makestr("startup.lsp")));
         }
         while(opt < argc){
-    	    if(strcmp(argv[opt],"-c") == 0){
+    	    if(strcmp(argv[opt],"-l") == 0){
         	    opt++;
                 if(opt >= argc){
                     printf("Illegal option\n");
         	    return(0);
                 }
                 f_load(list1(makestr(argv[opt])));
+                opt++;
+            }
+            else if(strcmp(argv[opt],"-c") == 0){
+                f_load(list1(makestr("library/compiler.lsp")));
                 opt++;
             }
             else if(strcmp(argv[opt],"-s") == 0){

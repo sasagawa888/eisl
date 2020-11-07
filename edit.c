@@ -571,8 +571,8 @@ int read_line(int flag){
                       display_buffer();
                       break;
             case ESC: c = getch();
-                      switch(c){
-                          case TAB: find_candidate_buffer(j); //completion
+                    switch(c){
+                        case TAB: find_candidate_buffer(j); //completion
                                     if(ed_candidate_pt == 0)
                                         break;
                                     else if(ed_candidate_pt == 1){
@@ -621,6 +621,10 @@ int read_line(int flag){
                                     }
                                     c = getch();
                                     goto loop;
+                        case 113:   //Esc+q
+                                    printf("\n");
+                                    greeting_flag = 0;
+                                    longjmp(buf,2);
                       }
                       c = getch();
                       switch(c){

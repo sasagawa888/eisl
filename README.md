@@ -38,11 +38,11 @@ In the Linux version,the REPL is editable. If you do not desire to use the edita
 eisl -r
 ```
 
-If you desire to start after reading file, invoke with -c option.
+If you desire to start after reading file, invoke with -l option.
 e.g.
 
 ```
-eisl -c compiler.lsp 
+eisl -c foo.lsp 
 ```
 
 Other options, see EISL -h

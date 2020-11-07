@@ -206,7 +206,7 @@ void edit_screen(char *fname){
                     printf("CTRL+N  move to down           ESC <   goto top page\n");
                     printf("CTRL+J  end of line            ESC >   goto end page\n");
                     printf("CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n");
-                    printf("CTRL+E  end of line\n");
+                    printf("CTRL+E  end of line            CTRL+D  delete one char\n");
                     printf("CTRL+V  page up\n");
                     printf("ESC V   page down\n");
                     printf("CTRL+O  save file\n");

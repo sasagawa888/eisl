@@ -277,6 +277,7 @@ extern int repl_flag;
 extern int exit_flag;
 extern int debug_flag;
 extern int greeting_flag;
+extern int script_flag;
 
 //switch
 extern int gc_sw;

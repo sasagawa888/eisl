@@ -118,7 +118,8 @@ int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
 int repl_flag = 1;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
-int greeting_flag = 1; //for -s option
+int greeting_flag = 1; //for (quit)
+int script_flag = 0;   //for -s option
 
 //switch
 int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
@@ -278,6 +279,7 @@ int main(int argc, char *argv[]){
                 if(fp != NULL){
                     fclose(fp);
                     repl_flag = 0;
+                    script_flag = 1;
                     f_load(list1(makestr(argv[opt])));
                     return(0);
                 }
@@ -374,14 +376,12 @@ int readc(void){
         c = read_line(1);
     else if(GET_OPT(input_stream) != EISL_INSTR){
         c = getc(GET_PORT(input_stream));
-        /*
         //ctrl+D
-        if(input_stream == standard_input && c == EOF){
+        if(!script_flag && input_stream == standard_input && c == EOF){
             greeting_flag = 0;
             printf("\n");
             longjmp(buf,2);
         }
-        */
     }
     else{
         c = GET_NAME(input_stream)[GET_CDR(input_stream)];

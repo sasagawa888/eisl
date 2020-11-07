@@ -42,18 +42,19 @@ If you desire to start after reading file, invoke with -l option.
 e.g.
 
 ```
-eisl -c foo.lsp 
+eisl -l foo.lsp 
 ```
 
 Other options, see EISL -h
 
 ```
-$ eisl -h
+eisl -h
 List of options:
 -c filename  -- EISL Starts after reading the file.
 -h           -- display help.
 -r           -- EISL does not use editable REPL.
 -s filename  -- EISL runs the file with script mode.
+-v           -- dislplay version number.
 ```
 
 
@@ -81,9 +82,9 @@ EISL has a compiler. it generates GCC code and generates object code.
 
 ```
 Invoke with -c option
-eisl -c compiler.lsp
+eisl -c
 
-or (load "compiler.lsp")
+or (load "library/compiler.lsp")
 
 (compile-file "foo.lsp")
 
@@ -130,9 +131,9 @@ EISL has a compiler. it generates cuda code with nvcc and generates object code.
 
 ```
 Invoke with -c option
-eisl -c compiler.lsp
+eisl -c
 
-or (load "compiler.lsp")
+or (load "library/compiler.lsp")
 
 (compile-cuda "foo.lsp")
 

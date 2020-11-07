@@ -10,7 +10,7 @@ youtube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw
 # Installation
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
-In Linux  type "make" in terminal and  type "sudo make install".
+In Linux  type "sudo make install".
 
 After version 1.4 Windows OS is not suported. Please use WSL on Windows.
 

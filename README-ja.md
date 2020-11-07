@@ -13,7 +13,7 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 ## 導入方法
 
 1. Gitでクローンした，又は単にダウンロードしたEasy-ISLispのディレクトリに移動する。
-1. GNU/Linuxをお使いの場合: 端末上で`make`と入力する。その後に端末上で`sudo make install`と入力する。
+1. GNU/Linuxをお使いの場合: 端末上で`sudo make install`と入力する。
 注意　ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。
 　　　広く多くの人にLispを知っていただくためにWindowsもサポートしてきました。
 　　　しかし、WSLを無償で使うことができるようになりました。Windowsでも手軽にLinux環境が手に入ります。

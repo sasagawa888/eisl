@@ -102,7 +102,7 @@ $ eisl -c  # -cオプションを付けて起動する。
 ```console
 $ eisl -c
 Easy-ISLisp Ver1.6
-> (compile-file "tarai.lsp")
+> (compile-file "tests/tarai.lsp")
 type inference
 initialize
 pass1
@@ -122,7 +122,7 @@ compiling CTAK-AUX
 finalize
 invoke GCC
 T
-> (load "tarai.o")
+> (load "tests/tarai.o")
 T
 > (time (tarai 12 6 0))
 Elapsed Time(second)=0.024106
@@ -156,7 +156,7 @@ EISLはエディタを備えています。
 ### 例
 
 ```lisp
-(edit "foo.lsp")
+(edit "tests/foo.lsp")
 ```
 
 

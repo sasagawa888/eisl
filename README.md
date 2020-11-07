@@ -91,9 +91,9 @@ or (load "library/compiler.lsp")
 (load "foo.o")
 
 example
-eisl -c compiler.lsp
-Easy-ISLisp Ver1.4
-> (compile-file "tarai.lsp")
+eisl -c
+Easy-ISLisp Ver1.6
+> (compile-file "tests/tarai.lsp")
 type inference
 initialize
 pass1
@@ -113,7 +113,7 @@ compiling CTAK-AUX
 finalize
 invoke GCC
 T
-> (load "tarai.o")
+> (load "tests/tarai.o")
 T
 > (time (tarai 12 6 0))
 Elapsed Time(second)=0.024106
@@ -135,9 +135,9 @@ eisl -c
 
 or (load "library/compiler.lsp")
 
-(compile-cuda "foo.lsp")
+(compile-cuda "tests/foo.lsp")
 
-(load "foo.o")
+(load "tests/foo.o")
 ```
 
 # Invoke editor

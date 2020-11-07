@@ -3816,6 +3816,7 @@ int f_initialize_object_star(int arglist){
 int f_quit(int arglist){
 
     printf("- good bye -\n");
+    greeting_flag = 0;
     longjmp(buf,2);
 }
 

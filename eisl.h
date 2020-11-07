@@ -276,6 +276,7 @@ extern int ignore_topchk;
 extern int repl_flag;
 extern int exit_flag;
 extern int debug_flag;
+extern int greeting_flag;
 
 //switch
 extern int gc_sw;
@@ -407,7 +408,7 @@ extern char extended[50][30];
 #define SYSTEM_ERR	    153
 #define RESOURCE_ERR    154
 
-#if __linux
+
 #define ESCHOME printf("\33[1;1H")
 #define ESCTOP  printf("\33[2;1H")
 #define ESCCLS  printf("\33[2J")
@@ -437,7 +438,7 @@ extern char extended[50][30];
 #define ESCREV  printf("\33[7m")
 #define ESCRST  printf("\33[0m")
 #define ESCBOLD printf("\33[1m")
-#endif
+
 
 double getETime(void);
 int readc(void);

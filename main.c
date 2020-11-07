@@ -118,6 +118,7 @@ int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
 int repl_flag = 1;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
+int greeting_flag = 1; //for -s option
 
 //switch
 int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
@@ -244,7 +245,6 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
     opt = 1;
-    printf("Easy-ISLisp Ver%1.1f\n", VERSION);
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = 0;
@@ -291,15 +291,21 @@ int main(int argc, char *argv[]){
                 printf("-h           -- display help.\n");
                 printf("-r           -- EISL does not use editable REPL.\n");
                 printf("-s filename  -- EISL runs the file with script mode.\n");
+                printf("-v           -- dislplay version number.\n");
+                return(0);
+            }
+            else if(strcmp(argv[opt],"-v") == 0){
+                printf("Easy-ISLisp Ver%1.1f\n", VERSION);
                 return(0);
             }
             else{
         	    printf("illegal option\n");
-        	    return 0;
+        	    return(0);
             }
         }
     }
-    
+    if(greeting_flag == 1)
+        printf("Easy-ISLisp Ver%1.1f\n", VERSION);
     repl:
     if(ret == 0)
         while(1){

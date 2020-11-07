@@ -57,6 +57,11 @@ List of options:
 -v           -- dislplay version number.
 ```
 
+# Quit
+
+On REPL type (quit) or Esc+Q
+
+On not editable REPL type (quit) or CTRL+D
 
 # Editable REPL
 key-bindings are as follows:

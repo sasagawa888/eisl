@@ -244,7 +244,6 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
     opt = 1;
-    printf("Easy-ISLisp Ver%1.1f\n", VERSION);
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = 0;
@@ -304,7 +303,8 @@ int main(int argc, char *argv[]){
             }
         }
     }
-    
+    if(init_flag == 1)
+        printf("Easy-ISLisp Ver%1.1f\n", VERSION);
     repl:
     if(ret == 0)
         while(1){

@@ -5,3 +5,5 @@
     (format (standard-output) "Char: ~S~%" char)
     (read-char in nil))
   (close in))
+
+  ; echo -ne "foo\nbar\nbaz" | eisl -s run2.lsp

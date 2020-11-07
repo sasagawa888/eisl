@@ -1014,9 +1014,7 @@ void setlexenv(int sym, int val);
 void setval(int sym, int val, int ls);
 void shelterpush(int addr);
 void signal_condition(int x, int y);
-#if __linux
-void signal_handler(int signo);
-#endif
+void signal_handler_c(int signo);
 void unbind(void);
 void unreadc(char c);
 void vector_set(int v, int n, int obj);

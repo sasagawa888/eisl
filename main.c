@@ -239,7 +239,8 @@ int main(int argc, char *argv[]){
     initexsubr();
     initsyntax();
     initgeneric();
-    signal(SIGINT, signal_handler);
+    signal(SIGINT, signal_handler_c);
+
 	
     input_stream = standard_input;
     output_stream = standard_output;
@@ -354,9 +355,10 @@ void initpt(void){
 }
 
 
-void signal_handler(int signo){
+void signal_handler_c(int signo){
    exit_flag = 1;
 }
+
 
 
 
@@ -368,8 +370,11 @@ int readc(void){
     else if(GET_OPT(input_stream) != EISL_INSTR){
         c = getc(GET_PORT(input_stream));
         //ctrl+D
-        if(input_stream == standard_input && c == EOF)
-                longjmp(buf,2);
+        if(input_stream == standard_input && c == EOF){
+            greeting_flag = 0;
+            printf("\n");
+            longjmp(buf,2);
+        }
     }
     else{
         c = GET_NAME(input_stream)[GET_CDR(input_stream)];

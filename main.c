@@ -292,8 +292,9 @@ int main(int argc, char *argv[]){
             }
             else if(strcmp(argv[opt],"-h") == 0){
                 printf("List of options:\n");
-                printf("-c filename  -- EISL Starts after reading the file.\n");
+                printf("-c           -- EISL starts after reading compiler.lsp.\n");
                 printf("-h           -- display help.\n");
+                printf("-l filename  -- EISL starts after reading the file.\n");
                 printf("-r           -- EISL does not use editable REPL.\n");
                 printf("-s filename  -- EISL runs the file with script mode.\n");
                 printf("-v           -- dislplay version number.\n");
@@ -373,12 +374,14 @@ int readc(void){
         c = read_line(1);
     else if(GET_OPT(input_stream) != EISL_INSTR){
         c = getc(GET_PORT(input_stream));
+        /*
         //ctrl+D
         if(input_stream == standard_input && c == EOF){
             greeting_flag = 0;
             printf("\n");
             longjmp(buf,2);
         }
+        */
     }
     else{
         c = GET_NAME(input_stream)[GET_CDR(input_stream)];

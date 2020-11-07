@@ -13,4 +13,4 @@
 (format (standard-output) "Word: ~A~%" (gets "> "))
 (format (standard-output) "Word: ~A~%" (gets "> "))
 
-; echo -ne "foo\nbar\nbaz" | eisl -s run.lsp
+; echo -ne "foo\nbar\nbaz" | eisl -s tests/run.lsp

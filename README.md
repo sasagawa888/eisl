@@ -54,7 +54,6 @@ List of options:
 -h           -- display help.
 -r           -- EISL does not use editable REPL.
 -s filename  -- EISL runs the file with script mode.
--v           -- display version number.
 ```
 
 

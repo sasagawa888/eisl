@@ -41,13 +41,13 @@ $ eisl -r
 他の起動オプショオンについては下記を参照してください。
 
 ```
-eisl -h
+$ eisl -h
 List of options:
 -c filename  -- EISL Starts after reading the file.
 -h           -- display help.
 -r           -- EISL does not use editable REPL.
 -s filename  -- EISL runs the file with script mode.
--v           -- display version number.
+-v           -- dislplay version number.
 ```
 
 ## 対話状態での編集機能
@@ -85,11 +85,11 @@ GCC向けのソースコード及び〔GCCを介して〕オブジェクトコ�
 ### 用法
 
 ```consloe
-$ eisl -c compiler.lsp # -cオプションを付けて起動する。
+$ eisl -c  # -cオプションを付けて起動する。
 ```
 又は
 ```lisp
-(load "compiler.lsp")
+(load "library/compiler.lsp")
 
 (compile-file "foo.lsp")
 
@@ -99,8 +99,8 @@ $ eisl -c compiler.lsp # -cオプションを付けて起動する。
 ### 使用例
 
 ```console
-$ eisl -c compiler.lsp
-Easy-ISLisp Ver1.4
+$ eisl -c
+Easy-ISLisp Ver1.6
 > (compile-file "tarai.lsp")
 type inference
 initialize

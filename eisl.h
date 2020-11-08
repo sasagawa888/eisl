@@ -8,7 +8,7 @@ address
 10000000 -  19999999  Second heap area
 */
 #include <setjmp.h>
-#define VERSION     1.6
+#define VERSION     1.63
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000

@@ -303,7 +303,7 @@ int main(int argc, char *argv[]){
                 return(0);
             }
             else if(strcmp(argv[opt],"-v") == 0){
-                printf("Easy-ISLisp Ver%1.1f\n", VERSION);
+                printf("Easy-ISLisp Ver%1.2f\n", VERSION);
                 return(0);
             }
             else{
@@ -313,7 +313,7 @@ int main(int argc, char *argv[]){
         }
     }
     if(greeting_flag == 1)
-        printf("Easy-ISLisp Ver%1.1f\n", VERSION);
+        printf("Easy-ISLisp Ver%1.2f\n", VERSION);
     repl:
     if(ret == 0)
         while(1){

@@ -377,11 +377,13 @@ int readc(void){
     else if(GET_OPT(input_stream) != EISL_INSTR){
         c = getc(GET_PORT(input_stream));
         //ctrl+D
+        /*
         if(!script_flag && input_stream == standard_input && c == EOF){
             greeting_flag = 0;
             printf("\n");
             longjmp(buf,2);
         }
+        */
     }
     else{
         c = GET_NAME(input_stream)[GET_CDR(input_stream)];

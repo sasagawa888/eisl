@@ -8,3 +8,5 @@
 (load "tests/list-test.lsp")
 (load "tests/predicate-test.lsp")
 (load "tests/symbol-test.lsp")
+
+(format (standard-output) "All tests are done!~%")

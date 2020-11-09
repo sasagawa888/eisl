@@ -1883,12 +1883,10 @@ int f_preview_char(int arglist){
         buf[1] = NUL;
         if(buf[0] == EOF){
             if(nullp(arg2) && n == 2){
-                unreadc(arg1);
                 input_stream = save;
                 return(arg2);
             }
             else if(nullp(arg2) && n == 3){
-                unreadc(arg1);
                 input_stream = save;
                 return(arg3);
             }
@@ -3445,7 +3443,11 @@ int f_close(int arglist){
         error(WRONG_ARGS, "close", arglist);
     if(!streamp(arg1))
         error(NOT_STREAM, "close", arg1);
-    fclose(GET_PORT(arg1));
+    
+    if(GET_OPT(arg1) != EISL_INSTR && GET_OPT(arg1) != EISL_OUTSTR)
+        fclose(GET_PORT(arg1));
+    
+    SET_TR(arg1,0);  //closed stream
     start_flag = 1;
     return(UNDEF);
 }
@@ -3680,6 +3682,7 @@ int f_create_string_input_stream(int arglist){
         error(NOT_STR, "create-string-input-stream", arg1);
 
     res = makestream(stdin,EISL_INSTR);
+    SET_TR(res,1); //open stream
     str = (char *)malloc(strlen(GET_NAME(arg1))+1);
     if(str == NULL)
         error(MALLOC_OVERF,"create-string-input-stream",NIL);

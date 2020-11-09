@@ -1,3 +1,4 @@
+;(gbc 'copy)
 (defun println (fmt &rest args)
   (apply #'format (standard-output) (string-append fmt "~%") args))
 
@@ -19,6 +20,8 @@
     (while (and (setq char (preview-char in nil))
                 (whitespacep char))
       (read-char in))))
+
+(defglobal a (create-string-input-stream "123"))
 
 (defun read-number (in)
   (let ((chars nil)
@@ -46,4 +49,4 @@
 
 (println "Tokens: ~S" (tokenize "1 * (2 * 3) + 4"))
 
-; ; eisl -s bug.lsp
+; ; eisl -s tests/bug.lsp

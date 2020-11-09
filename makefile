@@ -2,7 +2,7 @@ CC := gcc
 LIBS = -lm -ldl 
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
-CFLAGS = $(INCS) -Wall -O3 
+CFLAGS ?= $(INCS) -Wall -O3 
 PREFIX = /usr/local
 bindir = $(PREFIX)/bin
 DESTDIR = 
@@ -30,22 +30,22 @@ eisl:
 ifeq  ($(shell uname -n),raspberrypi)
 eisl1: $(EISL_OBJS) $(EISL)
 $(EISL): $(EISL_OBJS)
-	$(CC) $(EISL_OBJS) -o $(EISL) $(LIBSRASPI) 
+	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBSRASPI) 
 else
 eisl2: $(EISL_OBJS) $(EISL)
 $(EISL): $(EISL_OBJS)
-	$(CC) $(EISL_OBJS) -o $(EISL) $(LIBS) 
+	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
 endif
 
 
 
 %.o: %.c eisl.h
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(CC) -O3 -Wall edlis.o -o edlis
+	$(CC) $(CFLAGS) edlis.o -o edlis
 edlis.o : edlis.c edlis.h
-	$(CC)  -O3 -Wall -c edlis.c
+	$(CC) $(CFLAGS) -c edlis.c
 
 
 install: $(EISL) $(EDLIS)

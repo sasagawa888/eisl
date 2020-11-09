@@ -3,9 +3,14 @@ written by kenichi sasagawa 2016/4
 */
 /*
 memory map
+M&S GC mode
 address
-0        -   9999999  Heap area
-10000000 -  19999999  Second heap area
+0        -  19999999  Heap area
+
+Copying GC mode
+       0 -   5999999  Heap area
+ 6000000 -  12999999  Work1 area
+12999999 -  19999999  Wrok2 area
 */
 #include <setjmp.h>
 #define VERSION     1.64

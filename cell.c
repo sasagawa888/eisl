@@ -706,7 +706,6 @@ int makestream(FILE *port, int type){
     SET_CDR(addr,0);       //string-stream-position
     SET_AUX(addr,cstream); //class
     SET_OPT(addr,type); //input/output/inout
-    SET_TR(addr,0); // 0=close 1=open initialy close
     return(addr);
 }
 

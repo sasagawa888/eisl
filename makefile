@@ -12,6 +12,8 @@ INSTALL_PROGRAM = $(INSTALL) -Dm755
 EISL = eisl
 EDLIS = edlis
 
+FILES = library
+
 EISL_OBJS = main.o \
 	function.o \
 	extension.o \
@@ -55,6 +57,7 @@ install: $(EISL) $(EDLIS)
 uninstall:
 	rm $(DESTDIR)$(bindir)/$(EISL)
 	rm $(DESTDIR)$(bindir)/$(EDLIS)
+	
 
 
 .PHONY: clean

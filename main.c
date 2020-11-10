@@ -399,7 +399,8 @@ int readc(void){
             SET_CDR(input_stream,GET_CDR(input_stream)-1);
         }
     }
-     if(c == EOL){
+    
+    if(c == EOL){
         line++;
         column = 0;
     }

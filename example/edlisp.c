@@ -1,4 +1,4 @@
-#include "fast.h"
+#include "../fast.h"
 jmp_buf c_EXIT[50];
 jmp_buf c_REPL[50];
 int f_ISLISP(int arglist);int ISLISP();

@@ -1,4 +1,4 @@
-#include "fast.h"
+#include "../fast.h"
 jmp_buf c_CTAK_AUX[50];
 int f_TARAI(int arglist);int TARAI(int X,int Y,int Z);
 int f_TARAIstar(int arglist);int TARAIstar(double X,double Y,double Z);

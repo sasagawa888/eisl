@@ -626,7 +626,7 @@ double tarai(double x, double y, double z){
   (format code4 "}")
   (let ((outstream
             (open-output-file (string-append (filename x) ext))))
-      (format outstream "#include \"fast.h\"~%")
+      (format outstream "#include \"../fast.h\"~%")
       (format outstream (get-output-stream-string code0))
       (format outstream (get-output-stream-string code1))
       (format outstream (get-output-stream-string code5))

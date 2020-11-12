@@ -53,13 +53,15 @@ edlis.o : edlis.c edlis.h
 install: $(EISL) $(EDLIS)
 	$(INSTALL_PROGRAM) $(EISL) $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) $(EDLIS) $(DESTDIR)$(bindir)/$(EDLIS)
-	mkdir -p /home/header
-	cp fast.h /home/header
+	mkdir -p /home/eisl
+	cp fast.h /home/eisl
+	cp library/compiler.lsp /home/eisl
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/$(EISL)
 	rm $(DESTDIR)$(bindir)/$(EDLIS)
-	rm /home/header/fast.h
+	rm /home/eisl/*.*
+	rmdir /home/eisl
 
 
 .PHONY: clean

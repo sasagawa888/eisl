@@ -266,7 +266,7 @@ int main(int argc, char *argv[]){
                 opt++;
             }
             else if(strcmp(argv[opt],"-c") == 0){
-                f_load(list1(makestr("library/compiler.lsp")));
+                f_load(list1(makestr("/home/eisl/compiler.lsp")));
                 opt++;
             }
             else if(strcmp(argv[opt],"-s") == 0){

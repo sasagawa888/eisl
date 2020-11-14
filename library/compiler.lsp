@@ -202,7 +202,7 @@ double tarai(double x, double y, double z){
   (let ((option (cond ((eq (self-introduction) 'windows)
                        "gcc -O3 -shared -o ")
                       ((eq (self-introduction) 'linux)
-                       "gcc -O3 -w -shared -I/home/eisl -fPIC -o ")))
+                       "gcc -O3 -w -shared -I$HOME/eisl -fPIC -o ")))
         (fname (filename x)))
     (ignore-toplevel-check t)
     (format (standard-output) "initialize~%")

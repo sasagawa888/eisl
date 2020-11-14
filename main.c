@@ -232,6 +232,7 @@ char extended[50][30] = {
 
 int main(int argc, char *argv[]){
     int opt;
+    char *home,str[256];
 
     initcell();
     initclass();
@@ -266,7 +267,10 @@ int main(int argc, char *argv[]){
                 opt++;
             }
             else if(strcmp(argv[opt],"-c") == 0){
-                f_load(list1(makestr("/home/eisl/compiler.lsp")));
+                home = getenv("HOME");
+                strcpy(str,home);
+                strcat(str,"/eisl/library/compiler.lsp");
+                f_load(list1(makestr(str)));
                 opt++;
             }
             else if(strcmp(argv[opt],"-s") == 0){

@@ -1,5 +1,5 @@
 ;;
-;; prity printer
+;; pretty printer for ISLisp
 
 (defglobal lp 0) ;;left-position
 
@@ -14,16 +14,24 @@
           ((numberp x) (space lm stream) (format-object stream x t))))
 
 
-(defun pp-write (x stream)
+(defun pp-write-string (x stream)
     (setq lp (+ lp (length x)))
     (format stream x))
 
-
 (defun pp-cond (x stream lm)
     (space lm stream)
-    (pp-write "(cond (" stream)
+    (pp-write-string "(cond (" stream)
     (pp-body (cdr x) stream (+ lm 7))
-    (format stream ")"))
+    (pp-write-string stream ")"))
+
+(defun pp-defun (x stream lm)
+    (space lm stream)
+    (format stream "(defun ")
+    (format-object stream (elt x 1) t)
+    (format-object stream (elt x 2) t)
+    (newline stream)
+    (pp-body (cdr (cdr (cdr x))) stream (+ lm 2))
+    (pp-write-string ")" stream))
 
 (defun pp-body (x stream lm)
     (for ((s x (cdr s))

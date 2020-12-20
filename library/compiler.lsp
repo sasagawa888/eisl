@@ -214,7 +214,6 @@ double tarai(double x, double y, double z){
     (ignore-toplevel-check nil)
     (format (standard-output) "finalize~%")
     (finalize x ".c")
-    ;(freedll) can't use
     (format (standard-output) "invoke GCC~%")
     (system (string-append option fname ".o " fname ".c " c-lang-option))
     (system (string-append "rm " fname ".c"))))

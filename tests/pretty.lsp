@@ -4,55 +4,70 @@
 (defglobal lp 0) ;;left-position
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
+(defglobal output-stream (standard-output))
 
 
-(defun pp (x)
-    (pp1 x (standard-output) 0))
+(defun pp ()
+    (pp1 (sexp-read) 0))
 
-(defun pp1 (x stream lm)
+(defun pp1 (x lm)
+  (space lm)
     (cond ((consp x)
-           (cond ((eq (car x) 'cond) (pp-cond x stream lm))
-                 ((eq (car x) 'defun) (pp-defun x stream lm))
-                 (t (space lm stream) (format stream "~S" x))))
-          ((numberp x) (space lm stream) (format-object stream x t))))
+           (cond ((and (stringp (car x)) (string= (car x) "cond")) (pp-cond x lm))
+                 ((and (stringp (car x)) (string= (car x) "defun")) (pp-defun x lm))
+                 (t (pp-sexp x lm))))
+          (t (format output-stream x))))
 
 
-(defun pp-write-string (x stream)
+(defun pp-string (x)
     (setq lp (+ lp (length x)))
-    (format stream x))
+    (format output-stream x))
 
-(defun pp-cond (x stream lm)
-    (space lm stream)
-    (pp-write-string "(cond (" stream)
-    (pp-body (cdr x) stream (+ lm 7))
-    (pp-write-string stream ")"))
+(defun pp-cond (x lm)
+    (space lm)
+    (pp-string "(cond ")
+    (pp-body (cdr x) (+ lm 7))
+    (pp-string ")"))
 
-(defun pp-defun (x stream lm)
-    (space lm stream)
-    (format stream "(defun ")
-    (format-object stream (elt x 1) t)
-    (format-object stream (elt x 2) t)
-    (newline stream)
-    (pp-body (cdr (cdr (cdr x))) stream (+ lm 2))
-    (pp-write-string ")" stream))
+(defun pp-defun (x lm)
+    (space lm)
+    (pp-write-string "(defun ")
+    (pp1 (elt x 1) lm)
+    (pp-string " ")
+    (pp1 (elt x 2) lm)
+    (newline)
+    (pp-body (cdr (cdr (cdr x))) (+ lm 2))
+    (pp-string ")" ))
 
-(defun pp-body (x stream lm)
+(defun pp-body (x lm)
     (for ((s x (cdr s))
           (n (length x) (- n 1)))
          ((null s) t)
-         (pp1 (car s) stream lm)
+         (pp1 (car s) lm)
          (if (> n 1)
-            (newline stream))))
+            (newline))))
+
+(defun pp-sexp (x lm)
+  (space lm)
+  (pp-string "(")
+  (for ((s x (cdr s)))
+       ((null s) (pp-string ")"))
+       (if (stringp (car s))
+           (pp-string (car s))
+           (pp1 (car s) lm))
+       (if (not (null (cdr s)))
+           (pp-string " "))))
 
 
-(defun space (n stream)
+
+(defun space (n)
     (for ((m (- n lp) (- m 1)))
          ((<= m 0) t)
-         (format stream " ")))
+         (format output-stream " ")))
 
-(defun newline (stream)
+(defun newline ()
     (setq lp 0)
-    (format stream "~%"))
+    (format output-stream "~%"))
 
 
 
@@ -71,18 +86,11 @@
     (cond ((and (characterp token)(char= token #\))) nil)
           ((and (characterp token)(char= token #\())
            (cons (sexp-read-list)(sexp-read-list)))
-          ((char= (look) #\.)
-           (get-token)
-           (setq result (cons token (sexp-read)))
-           (get-token)
-           result)
           ((atom token)
            (cons token (sexp-read-list))))))
 
 ;;トークンを読み取る。
-;;　1.1のようにピリオドの後が空でない場合には浮動小数点数と考える
-;;  1e-1 のような形式の浮動小数点数を切り出す。
-;;[]()のような区切り記号に達した場合にはその文字をバッファに戻す
+;;()のような区切り記号に達した場合にはその文字をバッファに戻す
 ;;end-of-fileの場合には"the end"を返す。
 (defun get-token ()
   (block exit
@@ -95,11 +103,6 @@
       (if (end-of-file-p char)
           (return-from exit char))
       (cond ((delimiterp char) char)
-            ((operator-char-p char)
-             (cond ((and (char= char #\-)(char= (look) #\>))
-                    (getc)
-                    '->)
-                    (t (convert-to-string (list char)))))
             ((char= char #\")
              (setq token (cons char token))
              (setq char (getc))
@@ -108,31 +111,9 @@
                     (setq char (getc)))
              (setq token (cons char token))
              (convert-to-string (reverse token)))
-            (t (while (and (not (delimiterp char))
-                           (not (operator-char-p char)))
+            (t (while (not (delimiterp char))
                       (setq token (cons char token))
                       (setq char (getc)))
-               (cond ((and (char= char #\.)(not (null buffer))(number-char-p (look)))
-                      (setq token (cons char token))
-                      (setq char (getc))
-                      (while (and (not (delimiterp char))
-                                  (not (operator-char-p char)))
-                             (setq token (cons char token))
-                             (setq char (getc))))
-                     ((and (char= char #\+)(char= (car token) #\e))
-                      (setq token (cons char token))
-                      (setq char (getc))
-                      (while (and (not (delimiterp char))
-                                  (not (operator-char-p char)))
-                             (setq token (cons char token))
-                             (setq char (getc))))
-                     ((and (char= char #\-)(char= (car token) #\e))
-                      (setq token (cons char token))
-                      (setq char (getc))
-                      (while (and (not (delimiterp char))
-                                  (not (operator-char-p char)))
-                             (setq token (cons char token))
-                             (setq char (getc)))))
                (ungetc char)
                (convert-to-string (reverse token)))))))
 
@@ -197,24 +178,7 @@
 ;;引数が区切り記号であればtを、そうでなければnilを返す
 (defun delimiterp (c)
   (if (and (characterp c)
-           (member c '(#\space #\[ #\] #\( #\) #\; #\, #\' #\.)))
+           (member c '(#\space #\( #\))))
       t
       nil))
 
-;;演算子の文字のときにtを、そうでなければnilを返す
-(defun operator-char-p (c)
-  (if (and (characterp c)(member c '(#\+ #\- #\* #\/ #\^)))
-      t
-      nil))
-
-;;バッファの先頭要素を覗き見る
-;;バッファが空ならばピリオド文字を返す
-(defun look ()
-  (block exit
-    (let ((max (length buffer)))
-      (if (null buffer)
-          (return-from exit #\.))
-      (for ((pos 0 (+ pos 1)))
-           ((>= pos max) nil)
-           (if (not (char= (elt buffer pos) #\space))
-               (return-from exit (elt buffer pos)))))))

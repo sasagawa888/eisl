@@ -26,8 +26,10 @@
     (cond ((consp x)
            (cond ((and (stringp (car x)) (string= (car x) "cond")) (pp-cond x lm))
                  ((and (stringp (car x)) (string= (car x) "if")) (pp-if x lm))
+                 ((and (stringp (car x)) (string= (car x) "let")) (pp-let x lm))
                  ((and (stringp (car x)) (string= (car x) "defun")) (pp-defun x lm))
                  ((and (stringp (car x)) (string= (car x) "defconstant")) (pp-defconstant x lm))
+                 ((and (stringp (car x)) (string= (car x) "defglobal")) (pp-defglobal x lm))
                  ((and (stringp (car x)) (string= (car x) "defgeneric")) (pp-defgeneric x lm))
                  ((and (stringp (car x)) (string= (car x) "defmacro")) (pp-defmacro x lm))
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm))
@@ -99,6 +101,27 @@
        (if (not (null (cdr s)))
            (newline lm))))
 
+;; syntax let
+(defun pp-let (x lm)
+  (let ((lm1 (+ lm 5))
+        (lm2 (+ lm 3)))
+    (pp-string "(let ")
+    (pp-let1 (elt x 1) lm1)
+    (newline lm2)
+    (pp-body (cdr (cdr x)) lm2)
+    (pp-string " )" )))
+  
+(defun pp-let1 (x lm)
+  (pp-string "(")
+  (for ((s x (cdr s)))
+       ((null s) (pp-string " )")) 
+       (if (stringp (car s))
+           (pp-string (car s))
+           (pp1 (car s) lm))
+       (if (not (null (cdr s)))
+           (newline (+ lm 1)))))
+
+
 ;;syntax defgeneric
 (defun pp-defgeneric (x lm)
   (let ((lm1 (+ lm 2)))
@@ -133,13 +156,22 @@
     (pp-string ")" )
     (newline lm))
 
+;; syntax defglobal
+(defun pp-defglobal (x lm)
+    (pp-string "(defglobal ")
+    (pp1 (elt x 1) lm)
+    (pp-string " ")
+    (pp1 (elt x 2) lm)
+    (pp-string ")" )
+    (newline lm))
+
+
 ;; write cons as flat
 (defun pp-flat (x lm)
   (pp-string "(")
   (for ((s x (cdr s)))
        ((null s) 
-        (pp-string ")")
-        (if (= lm 0) (newline lm)))
+        (pp-string ")"))
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) lm))

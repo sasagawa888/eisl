@@ -1,4 +1,3 @@
-
 ; 再帰版
 (defun rlast-pair (xs)
   (if (null (cdr xs))

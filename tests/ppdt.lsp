@@ -1,9 +1,7 @@
-; 再帰版
-(defun rlast-pair (xs)
-  (if (null (cdr xs))
-      xs
-      (rlast-pair (cdr xs))))
 
-(defun fact (n)
-  (cond ((= n 0) #X1)
-         (t (fact (- n 1)))))
+;; read S-expression. each atom is represented as string
+(defun sexp-read ()
+  (let ((token (get-token)))
+    (cond ((and (characterp token)(char= token #\()))
+           (sexp-read-list))
+          (t token))))

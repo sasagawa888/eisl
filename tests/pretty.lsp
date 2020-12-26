@@ -12,6 +12,7 @@
     (setq exp (sexp-read))
     (while (not (end-of-file-p exp))
            (pp1 exp 0)
+           ;(print exp)
            (setq exp (sexp-read)))
     (close input-stream)
     (setq input-stream (standard-input))
@@ -32,6 +33,7 @@
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm))
                  (t (pp-indent x lm))))
           ((null x) (pp-string "()"))
+          ((characterp x)) ;; bug???
           ((string= x "") (format output-stream "~%"))
           ((comment-p x) (pp-string x)(newline lm))
           ;((vector-p x) (pp-vector x))
@@ -135,7 +137,9 @@
 (defun pp-flat (x lm)
   (pp-string "(")
   (for ((s x (cdr s)))
-       ((null s) (pp-string ")"))
+       ((null s) 
+        (pp-string ")")
+        (if (= lm 0) (newline lm)))
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) lm))
@@ -146,7 +150,7 @@
 (defun pp-indent (x lm)
   (pp-string "(")
   (for ((s x (cdr s)))
-       ((null s) (pp-string ")")) 
+       ((null s) (pp-string " )")) 
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) lm))
@@ -169,6 +173,7 @@
 ;; calculate size of character 
 (defun flatsize (x)
   (cond ((null x) 1)
+        ((characterp x) 0)
         ((stringp (car x))
          (+ (length (car x)) 1 (flatsize (cdr x))))
         (t (+ (flatsize (car x)) 1 (flatsize (cdr x))))))
@@ -193,7 +198,7 @@
            (cons token (sexp-read-list))))))
 
 ;;get token
-;;if file-end return #\null
+;;if file-end return eof symbol
 ;;if delimiter return the character
 ;;else (symbol number string) return string 
 (defun get-token ()
@@ -217,6 +222,9 @@
              (setq token (cons char token))
              (convert-to-string (reverse token)))
             ((and (char= char #\#) (char= (look) #\\))
+             (setq token (cons (getc) (cons char nil)))
+             (setq token (cons (getc) token))
+             (setq char (getc))
              (while (not (delimiterp char))                 
                       (setq token (cons char token))
                       (setq char (getc)))

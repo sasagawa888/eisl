@@ -1,54 +1,85 @@
 ;;
 ;; pretty printer for ISLisp
 
-(defglobal lp 0) ;;left-position
+(defconstant width 100)
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
 (defglobal output-stream (standard-output))
+
+(defun formatter (file)
+  (let ((exp nil))
+    (setq input-stream (open-input-file file))
+    (setq exp (sexp-read))
+    (while (not (end-of-file-p exp))
+           (pp1 exp 0)
+           (setq exp (sexp-read)))
+    (close input-stream)
+    (setq input-stream (standard-input))
+    t))
 
 
 (defun pp ()
     (pp1 (sexp-read) 0))
 
 (defun pp1 (x lm)
-  (space lm)
     (cond ((consp x)
            (cond ((and (stringp (car x)) (string= (car x) "cond")) (pp-cond x lm))
+                 ((and (stringp (car x)) (string= (car x) "if")) (pp-if x lm))
                  ((and (stringp (car x)) (string= (car x) "defun")) (pp-defun x lm))
-                 (t (pp-sexp x lm))))
-          (t (format output-stream x))))
+                 ((< (+ (flatsize x) lm) width) (pp-flat x lm))
+                 (t (pp-indent x lm))))
+          ((null x) (pp-string "()"))
+          ((string= x "") (format output-stream "~%"))
+          ((char= (elt x 0) #\;) (pp-string x)(newline lm))
+          (t (pp-string x))))
 
-
+;; write symbol number string object
 (defun pp-string (x)
-    (setq lp (+ lp (length x)))
     (format output-stream x))
 
+;; syntax cond
 (defun pp-cond (x lm)
-    (space lm)
     (pp-string "(cond ")
-    (pp-body (cdr x) (+ lm 7))
-    (pp-string ")"))
+    (pp-indent (cdr x) (+ lm 6))
+    (pp-string " )"))
 
+;;syntax if
+(defun pp-if (x lm)
+  (let ((lm1 (+ lm 4)))
+    (pp-string "(if ")
+    (pp1 (elt x 1) lm1)
+    (newline lm1)
+    (pp1 (elt x 2) lm1)
+    (newline lm1)
+    (pp1 (elt x 3) lm1)
+    (pp-string " )")))
+
+;;syntax defun
 (defun pp-defun (x lm)
-    (space lm)
-    (pp-write-string "(defun ")
-    (pp1 (elt x 1) lm)
+  (let ((lm1 (+ lm 2)))
+    (pp-string "(defun ")
+    (pp1 (elt x 1) lm1)
     (pp-string " ")
-    (pp1 (elt x 2) lm)
-    (newline)
-    (pp-body (cdr (cdr (cdr x))) (+ lm 2))
-    (pp-string ")" ))
+    (pp1 (elt x 2) lm1)
+    (newline lm1)
+    (pp-body (cdr (cdr (cdr x))) lm1)
+    (pp-string ")" )
+    (newline lm)))
 
+;; syntax defun body
 (defun pp-body (x lm)
-    (for ((s x (cdr s))
-          (n (length x) (- n 1)))
-         ((null s) t)
-         (pp1 (car s) lm)
-         (if (> n 1)
-            (newline))))
+  (for ((s x (cdr s)))
+       ((null s) t) 
+       (if (stringp (car s))
+           (pp-string (car s))
+           (pp1 (car s) lm))
+       (if (not (null (cdr s)))
+           (newline lm))))
 
-(defun pp-sexp (x lm)
-  (space lm)
+
+
+;; write cons as flat
+(defun pp-flat (x lm)
   (pp-string "(")
   (for ((s x (cdr s)))
        ((null s) (pp-string ")"))
@@ -58,27 +89,46 @@
        (if (not (null (cdr s)))
            (pp-string " "))))
 
+;; write cons with indent
+(defun pp-indent (x lm)
+  (pp-string "(")
+  (for ((s x (cdr s)))
+       ((null s) (pp-string ")")) 
+       (if (stringp (car s))
+           (pp-string (car s))
+           (pp1 (car s) lm))
+       (if (not (null (cdr s)))
+           (newline lm))))
+
+
 
 
 (defun space (n)
-    (for ((m (- n lp) (- m 1)))
+    (for ((m n (- m 1)))
          ((<= m 0) t)
          (format output-stream " ")))
 
-(defun newline ()
-    (setq lp 0)
-    (format output-stream "~%"))
+(defun newline (lm)
+    (format output-stream "~%")
+    (space lm))
+    
+
+;; calculate size of character 
+(defun flatsize (x)
+  (cond ((null x) 1)
+        ((stringp (car x))
+         (+ (length (car x)) 1 (flatsize (cdr x))))
+        (t (+ (flatsize (car x)) 1 (flatsize (cdr x))))))
 
 
-
-;;S表現を読み取る
+;; read S-expression. each atom is represented as string
 (defun sexp-read ()
   (let ((token (get-token)))
     (cond ((and (characterp token)(char= token #\())
            (sexp-read-list))
           (t token))))
 
-;;S表現のリストを読み取る
+
 (defun sexp-read-list ()
   (let ((token nil)
         (result nil))
@@ -89,37 +139,53 @@
           ((atom token)
            (cons token (sexp-read-list))))))
 
-;;トークンを読み取る。
-;;()のような区切り記号に達した場合にはその文字をバッファに戻す
-;;end-of-fileの場合には"the end"を返す。
+;;get token
+;;if file-end return #\null
+;;if delimiter return the character
+;;else (symbol number string) return string 
 (defun get-token ()
   (block exit
     (let ((token nil)
           (char nil))
-      (setq char (space-skip))
-      (if (end-of-file-p char)
-          (return-from exit char))
       (setq char (getc))
-      (if (end-of-file-p char)
-          (return-from exit char))
-      (cond ((delimiterp char) char)
-            ((char= char #\")
+      (cond ((skip-p char)                                  ;;newline skip
+             (space-skip)(setq char (getc))))
+      (cond ((skip-p char)                                  ;;space skip
+             (space-skip)(setq char (getc))))
+      (cond ((end-of-file-p char) (return-from exit char))  ;;EOF
+            ((delimiterp char) char)                        ;;delimiter
+            ((char= char #\")                               ;;string
              (setq token (cons char token))
              (setq char (getc))
              (while (not (char= char #\"))
                     (setq token (cons char token))
                     (setq char (getc)))
              (setq token (cons char token))
-             (convert-to-string (reverse token)))
-            (t (while (not (delimiterp char))
+             (convert-to-string (reverse token))) 
+            ((char= char #\;)                               ;;comment
+             (setq token (cons char token))
+             (setq char (getc))
+             (while (not (char= char #\newline))
+                    (setq token (cons char token))
+                    (setq char (getc)))
+             (ungetc char)
+             (convert-to-string (reverse token))) 
+            (t (while (not (delimiterp char))               ;;atom
                       (setq token (cons char token))
                       (setq char (getc)))
                (ungetc char)
                (convert-to-string (reverse token)))))))
 
 
-;;文字リストを文字列に変換する。
-;;シンボルは大文字に変換される
+(defun space-skip ()
+  ;;space skip
+  (while (and (not (null buffer))
+              (or (char= (car buffer) #\space)
+                  (char= (car buffer) #\tab)
+                  (char= (car buffer) #\newline)))
+    (setq buffer (cdr buffer))))
+
+;; convert atom to string
 (defun convert-to-string (ls)
   (if (null ls)
       ""
@@ -127,58 +193,42 @@
                      (convert-to-string (cdr ls)))))
 
 
-
- ;;バッファから1文字を取り出す。バッファが空ならばストリームより読み取る
-;; !マークがあった場合にはバッファを廃棄、新たな文字を読み取る
-;;end-of-fileの場合には"the end"を返す。
+;; get one character from stream
 (defun getc ()
   (block exit
     (let ((input nil)
           (result nil))
       (while (null buffer)
-             (setq input (read-line input-stream nil "the end"))
-             (if (end-of-file-p input)
-                 (return-from exit "the end")
-                 (setq buffer (convert input <list>))))
-      (cond ((char= (car buffer) #\!)
-             (setq input (read-line input-stream nil "the end"))
-             (if (end-of-file-p input)
-                 (return-from exit "the end")
-                 (setq buffer (convert input <list>)))))
+             (setq input (read-line input-stream nil #\null))
+             (cond ((end-of-file-p input)
+                    (return-from exit #\null))
+                   ((string= input "")
+                    (return-from exit input))
+                   (t (setq buffer (append (convert input <list>) '(#\newline))))))
+      
       (setq result (car buffer))
       (setq buffer (cdr buffer))
       result)))
 
-;;1文字を戻す。
-(defun ungetc (c)
-  (setq buffer (cons c buffer)))
+;; unget character to buffer
+(defun ungetc (x)
+  (setq buffer (cons x buffer)))
 
 
-;;スペース文字お呼びタブ文字を読み飛ばす。
-;;end-of-fileに達した場合には文字列"the end"を返す。
-(defun space-skip ()
-  (block exit
-    (let ((char nil))
-      (setq char (getc))
-      (if (and (stringp char)(string= char "the end"))
-          (return-from exit char))
-      (while (or (char= char #\space)
-                 (char= char #\tab))
-             (setq char (getc))
-             (if (and (stringp char)(string= char "the end"))
-                 (return-from exit char)))
-      (ungetc char))))
-
-;;ファイルストリームの終わりであればtを、そうでなければnilを返す
 (defun end-of-file-p (x)
-  (if (and (stringp x)(string= x "the end"))
+  (if (and (characterp x)(char= x #\null))
       t
       nil))
 
-;;引数が区切り記号であればtを、そうでなければnilを返す
+
 (defun delimiterp (c)
   (if (and (characterp c)
-           (member c '(#\space #\( #\))))
+           (member c '(#\space #\newline #\( #\))))
       t
       nil))
 
+(defun skip-p (c)
+  (if (and (characterp c)
+           (member c '(#\space #\newline)))
+      t
+      nil))

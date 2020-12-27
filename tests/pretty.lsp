@@ -1,5 +1,6 @@
 ;; プリティ−プリンタ
 ;; pretty printer for ISLisp
+;;written by kenichi sasagawa
 
 (defconstant width 80)
 (defglobal buffer nil)
@@ -49,11 +50,11 @@
        ((> i n) str1)
        (setq str1 (string-append str1 (convert (elt str i) <string>)))))
 
-
+;; to test pp1 in standard-input
 (defun pp ()
     (pp1 (sexp-read) 0))
 
-;; pretty-print if omitted ignore, don't care syntax
+;; pretty-print if omitted ignore, pp1 doesn't care syntax
 (defun pp1 (x lm :rest ignore)
     (cond ((consp x)
            (cond ((vector-p x) (pp-vector x lm))
@@ -108,6 +109,7 @@
     (pp-string " )")))
 
 ;;syntax if
+;;2 pattern (if test then) or (if test then else)
 (defun pp-if (x lm)
   (let ((lm1 (+ lm 4)))
     (cond ((= (length x) 4)
@@ -124,7 +126,8 @@
            (pp1 (elt x 2) lm1)
            (pp-string " )")))))
 
-;;syntax defun
+;;syntax defun type
+;;also defmacro defgeneric
 (defun pp-defun (x lm)
   (let ((lm1 (+ lm 4)))
     (pp-string "(")
@@ -139,6 +142,7 @@
     (newline lm)))
 
 ;; syntax defun body
+;; also body of let,let*,for
 (defun pp-body (x lm)
   (for ((s x (cdr s)))
        ((null s) t) 
@@ -226,12 +230,13 @@
 
 
 
-
+;; print n of spaces
 (defun space (n)
     (for ((m n (- m 1)))
          ((<= m 0) t)
          (format output-stream " ")))
 
+;; print linefeed and print spaces
 (defun newline (lm)
     (format output-stream "~%")
     (space lm))
@@ -267,7 +272,15 @@
 ;;get token
 ;;if file-end return eof symbol
 ;;if delimiter return the character
-;;else (symbol number string) return string 
+;;if empty line return ""
+;;if string return extended string. e.g."''~A''"
+;;if quote return ("'" elt1 elt2 ...)
+;;if backquote return ("`" elt1 elt2 ...)
+;;if vector return ("#" elt1 elt2 ...)
+;;if array return  ("#2a" (... )(...))
+;;if hex oct binary number return e.g. "#Xface" "#O0707" "#B01010101"
+;;if omitted function return e.g. "#'foo"
+;;else (symbol number character) return string 
 (defun get-token ()
   (block exit
     (let ((token nil)
@@ -348,7 +361,7 @@
                (ungetc char)
                (convert-to-string (reverse token)))))))
 
-
+;;when first element of buffer is space tab or newline, skip
 (defun space-skip ()
   ;;space skip
   (while (and (not (null buffer))
@@ -386,42 +399,49 @@
 (defun ungetc (x)
   (setq buffer (cons x buffer)))
 
+;; loop buffer not get
 (defun look ()
   (car buffer))
 
-
+;; if eof T else NIL
 (defun end-of-file-p (x)
   (eq x 'eof))
 
-
+;; if delimiter T else NIL. delimiter is space newline ledt-paren right paren
 (defun delimiter-p (c)
   (and (characterp c)
        (member c '(#\space #\newline #\( #\) ))))
 
+;;is it skip able character?
 (defun skip-p (c)
   (and (characterp c)
        (member c '(#\space #\newline))))
 
+;; ;;type comment
 (defun short-comment-p (x)
   (and (stringp x)
        (not (string= x ""))
        (char= (elt x 0) #\;))) 
 
+;; #|    |# type comment
 (defun long-comment-p (x)
   (and (stringp x)
        (char= (elt x 0) #\#)
        (char= (elt x 1) #\|)))
 
+;; e.g. (the a <integer>) return T else NIL
 (defun the-p (x)
   (and (consp x)
        (stringp (car x))
        (string= (car x) "the")))
 
+;; is it vector object?
 (defun vector-p (x)
   (and (consp x)
        (stringp (elt x 0))
       (string= "#" (elt x 0))))
 
+;; is it array object?
 (defun array-p (x)
   (and (consp x)
        (stringp (elt x 0))
@@ -429,11 +449,13 @@
        (stringp (elt (elt x 0) 0))
        (char= (elt (elt x 0) 0) #\#)))
 
+;; is it quote? e.g. 'foo
 (defun quote-p (x)
   (and (consp x)
        (stringp (elt x 0))
        (string= (elt x 0) "'")))
 
+;; is it backquote? e.g. `(if a b c)
 (defun backquote-p (x)
   (and (consp x)
        (stringp (elt x 0))

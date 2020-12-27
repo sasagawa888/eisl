@@ -1,0 +1,1 @@
+(load "tests/pretty.lsp")

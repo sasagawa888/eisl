@@ -1,11 +1,12 @@
 ;; プリティ−プリンタ
 ;; pretty printer for ISLisp
 
-(defconstant width 100)
+(defconstant width 80)
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
 (defglobal output-stream (standard-output))
 
+;; write formated code to **.tmp file
 (defun formatter (file)
   (let ((exp nil)
         (output (string-append (filename file) ".tmp")))
@@ -52,6 +53,7 @@
 (defun pp ()
     (pp1 (sexp-read) 0))
 
+;; pretty-print if omitted ignore, don't care syntax
 (defun pp1 (x lm :rest ignore)
     (cond ((consp x)
            (cond ((vector-p x) (pp-vector x lm))
@@ -84,7 +86,7 @@
 (defun pp-cond (x lm)
     (pp-string "(cond ")
     (pp-cond1 (cdr x) (+ lm 6))
-    (pp-string " )"))
+    (pp-string ")"))
 
 (defun pp-cond1 (x lm)
   (for ((s x (cdr s)))
@@ -127,6 +129,7 @@
   (let ((lm1 (+ lm 4)))
     (pp-string "(")
     (pp1 (elt x 0) lm1)
+    (pp-string " ")
     (pp1 (elt x 1) lm1)
     (pp-string " ")
     (pp1 (elt x 2) lm1)
@@ -211,10 +214,13 @@
 (defun pp-indent (x lm :rest ignore)
   (pp-string "(")
   (for ((s x (cdr s)))
-       ((null s) (pp-string " )")) 
+       ((null s) 
+        (if (= (length x) 0)
+            (pp-string ")")
+            (pp-string " )"))) 
        (if (stringp (car s))
            (pp-string (car s))
-           (pp1 (car s) -1 ignore)) ;;to avoid newline
+           (pp1 (car s) (+ lm 1) ignore))
        (if (not (null (cdr s)))
            (newline (+ lm 3)))))
 

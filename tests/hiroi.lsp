@@ -1,16 +1,19 @@
-;リスト : FizzBuzz 問題
+;　クイックソート
 ; written by M.hiroi
 
-(defun display (x)
-  (format (standard-output) "~A " x))
+(defun quick-sort (xs)
+  (if (null xs)
+      nil
+    (let ((zs (partition (lambda (x) (> x (car xs))) (cdr xs))))
+      (append (quick-sort (car zs))
+              (cons (car xs) (quick-sort (cdr zs)))))))
 
-(defun fizzbuzz ()
-  (for ((x 0 (+ x 1)))
-       ((> x 100))
-       (cond ((= (mod x 15) 0)
-              (display "FizzBuzz"))
-             ((= (mod x 3) 0)
-              (display "Fizz"))
-             ((= (mod x 5) 0)
-              (display "Buzz"))
-             (t (display x)))))
+(defun partition (pred xs)
+  (for ((xs xs (cdr xs))
+        (ys nil)
+        (zs nil))
+       ((null xs) (cons (nreverse ys) (nreverse zs)))
+       (if (funcall pred (car xs))
+           (setq ys (cons (car xs) ys))
+         (setq zs (cons (car xs) zs)))))
+

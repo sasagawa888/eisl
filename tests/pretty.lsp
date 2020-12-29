@@ -3,9 +3,11 @@
 ;;written by kenichi sasagawa
 
 (defconstant width 80)
+(defconstant long 15)
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
 (defglobal output-stream (standard-output))
+
 
 ;; write formated code to **.tmp file
 (defun formatter (file)
@@ -69,6 +71,7 @@
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defun")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defgeneric")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro")) (pp-defun x lm))
+                 ((long-element-p x) (pp-long-element x lm ignore))
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm ignore))
                  (t (pp-indent x lm ignore))))
           ((null x) (pp-string "()"))
@@ -87,7 +90,9 @@
 (defun pp-cond (x lm)
     (pp-string "(cond ")
     (pp-cond1 (cdr x) (+ lm 6))
-    (pp-string ")"))
+    (if (cond-has-otomo-p (cdr x) (+ lm 6))
+        (pp-string ")")
+        (pp-string " )")))
 
 (defun pp-cond1 (x lm)
   (for ((s x (cdr s)))
@@ -98,6 +103,18 @@
        (if (and (not (null (cdr s)))
                 (not (short-comment-p (car (cdr s)))))
            (newline lm))))
+
+(defun cond-has-otomo-p (ls lm)
+  (cond ((null ls) nil)
+        ((cond-has-otomo-p1 (car ls) lm) t)
+        (t (cond-has-otomo-p (cdr ls) lm))))
+
+(defun cond-has-otomo-p1 (ls lm)
+  (cond ((null ls) nil)
+        ((has-otomo-p (car ls) lm) t)
+        (t (cond-has-otomo-p1 (cdr ls) lm))))
+
+
 
 ;; syntax case
 (defun pp-case (x lm)
@@ -204,15 +221,33 @@
 ;; write cons as flat
 (defun pp-flat (x lm :rest ignore)
   (pp-string "(")
-  (for ((s x (cdr s)))
+  (for ((s x (cdr s))
+        (lm1 (+ lm 1) (+ 1 lm1 (flatsize (car s)))))
        ((null s) 
         (pp-string ")")
         (if (= lm 0) (newline lm)))
        (if (stringp (car s))
            (pp-string (car s))
-           (pp1 (car s) -1 ignore)) ;;to avoid newline
+           (pp1 (car s) lm1 ignore)) 
        (if (not (null (cdr s)))
            (pp-string " "))))
+
+;; write subr with long element
+(defun pp-long-element (x lm :rest ignore)
+  (let ((lm1 (+ 2 lm (length (car x)))))
+    (pp-string "(")
+    (pp-string (car x))
+    (pp-string " ")
+    (for ((s (cdr x) (cdr s)))
+         ((null s) 
+          (if (= (length x) 0)
+              (pp-string ")")
+              (pp-string " )")))
+         (if (stringp (car s))
+              (pp-string (car s))
+              (pp1 (car s) lm1 ignore))
+         (if (not (null (cdr s)))
+              (newline lm1)))))
 
 ;; write cons with indent
 (defun pp-indent (x lm :rest ignore)
@@ -462,3 +497,27 @@
        (string= (elt x 0) "`")))
 
 
+;; is subr that has long size element? e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
+(defun long-element-p (x)
+  (and (consp x)
+       (stringp (car x))
+       (subrp (convert (car x) <symbol>))
+       (> (length x) 2)
+       (long-element-p1 (cdr x))))
+
+(defun long-element-p1 (x)
+  (cond ((null x) t)
+        ((> (flatsize (car x)) long) (long-element-p1 (cdr x)))
+        (t nil)))
+
+;; is one-liner?
+(defun one-liner-p (x lm)
+  (< (+ (flatsize x) lm) width))
+
+;; has otomo in elements?
+(defun has-otomo-p (x lm)
+  (cond ((null x) nil)
+        ((long-element-p x) t)
+        ((one-liner-p x lm) nil)
+        (t (or (has-otomo-p (car x) lm)
+               (has-otomo-p (cdr x) lm)))))

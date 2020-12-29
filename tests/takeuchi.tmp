@@ -7,7 +7,7 @@
 
 ;;８９ページ
 (defun atom-count (x)
-    (cond ((nullx ) 0)
+    (cond ((nullx) 0)
           ((atom x) 1)
           (t (+ (atom-count (car x))
                 (atom-count (cdr x)) ))))
@@ -20,7 +20,7 @@
 ;;９６ページ
 (defun my-reverse (x)
     (cond ((null x) x)
-          (t (append (my-reverse (cdr x)) (list (car x))))))
+          (t (append (my-reverse (cdr x)) (list (car x)))) ))
 
 
 #|
@@ -29,10 +29,8 @@ ppの原則（２５１ページ）
 （２）同一行に対応する開きガッコがない閉じガッコ（「お供」と呼ぼう）が並ぶときは
 それの左端に空白を１個はさむ
 （３）カッコのレベルが１つ深まると、段が２文字分深まる。
-
 お供
 コンスが内包するコンスがお供を有している場合には（２）に関わらず空白は挟まない。
-
 追加ルール
 （４）コンスにつき、先頭要素以外の要素につきいずれも文字数が１５を超えるならば
 それらについてインデントする。

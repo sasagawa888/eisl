@@ -1,1 +1,1 @@
-;(load "tests/pretty.lsp")
+(load "tests/pretty.lsp")

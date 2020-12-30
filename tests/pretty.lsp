@@ -7,6 +7,7 @@
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
 (defglobal output-stream (standard-output))
+(defglobal otomo nil)
 
 
 ;; write formated code to **.tmp file
@@ -17,6 +18,7 @@
     (setq output-stream (open-output-file output))
     (setq exp (sexp-read))
     (while (not (end-of-file-p exp))
+           (setq otomo nil)
            (pp1 exp 0)
            ;(print exp)
            (setq exp (sexp-read)))
@@ -74,9 +76,9 @@
                  ((and (null ignore) (stringp (car x)) (string= (car x) "catch")) (pp-catch x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "block")) (pp-catch x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "while")) (pp-catch x lm))
-                 ((long-element-p x) (pp-long-element x lm ignore))
+                 ((long-element-p x) (setq otomo t) (pp-long-element x lm ignore))
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm ignore))
-                 (t (pp-indent x lm ignore))))
+                 (t (setq otomo t) (pp-indent x lm ignore))))
           ((null x) (pp-string "()"))
           ((characterp x) nil)
           ((string= x "") (format output-stream "~%"))
@@ -93,9 +95,8 @@
 (defun pp-cond (x lm)
     (pp-string "(cond ")
     (pp-cond1 (cdr x) (+ lm 6))
-    (if (cond-has-otomo-p (cdr x) (+ lm 6))
-        (pp-string ")")
-        (pp-string " )")))
+    (cond (otomo (pp-string ")"))
+          (t (setq otomo t) (pp-string " )"))))
 
 (defun pp-cond1 (x lm)
   (for ((s x (cdr s)))
@@ -106,19 +107,6 @@
        (if (and (not (null (cdr s)))
                 (not (short-comment-p (car (cdr s)))))
            (newline lm))))
-
-(defun cond-has-otomo-p (ls lm)
-  (cond ((null ls) nil)
-        ((body-has-otomo-p (car ls) lm) t)
-        (t (cond-has-otomo-p (cdr ls) lm))))
-
-(defun body-has-otomo-p (ls lm)
-  (cond ((null ls) nil)
-        ((stringp ls) nil)
-        ((has-otomo-p (car ls) lm) t)
-        (t (body-has-otomo-p (cdr ls) lm))))
-
-
 
 ;; syntax case
 (defun pp-case (x lm)
@@ -159,7 +147,7 @@
     (pp1 (elt x 2) lm1)
     (newline lm1)
     (pp-body (cdr (cdr (cdr x))) lm1)
-    (if (body-has-otomo-p (cdr (cdr (cdr x))) lm1)
+    (if otomo
         (pp-string ")" )
         (pp-string " )"))
     (newline lm)))
@@ -534,24 +522,5 @@
 
 ;; is one-liner?
 (defun one-liner-p (x lm)
-  (and (not (syntax-p x))
-       (< (+ (flatsize x) lm) width)))
+  (< (+ (flatsize x) lm) width))
 
-;; has otomo in elements?
-(defun has-otomo-p (x lm)
-  (cond ((null x) nil)
-        ((stringp x) nil)
-        ((syntax-not-has-otomo-p x lm) t)
-        ((long-element-p x) t)
-        ((one-liner-p x lm) nil)
-        (t (or (has-otomo-p (car x) lm)
-               (has-otomo-p (cdr x) lm)))))
-
-(defun syntax-not-has-otomo-p (x lm)
-  (and (consp x)
-       (or (and (eql (car x) '"cond") (not (cond-has-otomo-p (cdr x) lm))))))
-
-
-(defun syntax-p (x)
-   (and (consp x)
-        (member (car x) '("cond" "if" "let" "let*" "block" "catch" "case"))))

@@ -16,7 +16,7 @@
     (cond ((nullx) 0)
           ((atom x) 1)
           (t (+ (atom-count (car x))
-                (atom-count (cdr x)) ))) )
+                (atom-count (cdr x)) ))))
 
 ;;７９ページ
 (defun last-elm (x)

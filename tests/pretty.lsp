@@ -109,14 +109,14 @@
 
 (defun cond-has-otomo-p (ls lm)
   (cond ((null ls) nil)
-        ((cond-has-otomo-p1 (car ls) lm) t)
+        ((body-has-otomo-p (car ls) lm) t)
         (t (cond-has-otomo-p (cdr ls) lm))))
 
-(defun cond-has-otomo-p1 (ls lm)
+(defun body-has-otomo-p (ls lm)
   (cond ((null ls) nil)
         ((stringp ls) nil)
         ((has-otomo-p (car ls) lm) t)
-        (t (cond-has-otomo-p1 (cdr ls) lm))))
+        (t (body-has-otomo-p (cdr ls) lm))))
 
 
 
@@ -159,7 +159,9 @@
     (pp1 (elt x 2) lm1)
     (newline lm1)
     (pp-body (cdr (cdr (cdr x))) lm1)
-    (pp-string ")" )
+    (if (body-has-otomo-p (cdr (cdr (cdr x))) lm1)
+        (pp-string ")" )
+        (pp-string " )"))
     (newline lm)))
 
 ;; syntax defun body
@@ -532,13 +534,24 @@
 
 ;; is one-liner?
 (defun one-liner-p (x lm)
-  (< (+ (flatsize x) lm) width))
+  (and (not (syntax-p x))
+       (< (+ (flatsize x) lm) width)))
 
 ;; has otomo in elements?
 (defun has-otomo-p (x lm)
   (cond ((null x) nil)
         ((stringp x) nil)
+        ((syntax-not-has-otomo-p x lm) t)
         ((long-element-p x) t)
         ((one-liner-p x lm) nil)
         (t (or (has-otomo-p (car x) lm)
                (has-otomo-p (cdr x) lm)))))
+
+(defun syntax-not-has-otomo-p (x lm)
+  (and (consp x)
+       (or (and (eql (car x) '"cond") (not (cond-has-otomo-p (cdr x) lm))))))
+
+
+(defun syntax-p (x)
+   (and (consp x)
+        (member (car x) '("cond" "if" "let" "let*" "block" "catch" "case"))))

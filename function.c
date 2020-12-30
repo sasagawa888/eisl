@@ -2975,6 +2975,24 @@ int f_format(int arglist){
             }
             i++;
         }
+        else if(c == '\\' && str[i+1] == '\\' && quote_flag == 0){
+            if(GET_OPT(output_stream) != EISL_OUTSTR)
+                fprintf(GET_PORT(output_stream), "%c", c);
+            else{
+                sprintf(stream_str, "%c", c);
+                strcat(GET_NAME(output_stream),stream_str);
+            }
+            i++;
+            i++;
+            c = str[i];
+            if(GET_OPT(output_stream) != EISL_OUTSTR)
+                fprintf(GET_PORT(output_stream), "%c", c);
+            else{
+                sprintf(stream_str, "%c", c);
+                strcat(GET_NAME(output_stream),stream_str);
+            }
+            i++;
+        }
         else if(c == '\\' && quote_flag == 0)
             i++;
         else if(c == '\\' && quote_flag == 1){

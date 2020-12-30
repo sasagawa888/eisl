@@ -2,11 +2,12 @@
 ;; pretty printer for ISLisp
 ;;written by kenichi sasagawa
 
-(defconstant width 80)
+(defconstant width 100)
 (defconstant long 15)
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
 (defglobal output-stream (standard-output))
+(defglobal count 0)
 
 
 ;; write formated code to **.tmp file
@@ -15,9 +16,13 @@
         (output (string-append (filename file) ".tmp")))
     (setq input-stream (open-input-file file))
     (setq output-stream (open-output-file output))
+    (setq count 0)
     (setq exp (sexp-read))
     (while (not (end-of-file-p exp))
            (pp1 exp 0)
+           (setq count (+ count 1))
+           (cond ((> count 2000)
+                  (gbc)(setq count 0)))
            ;(print exp)
            (setq exp (sexp-read)))
     (close input-stream)
@@ -71,11 +76,13 @@
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defun")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defgeneric")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro")) (pp-defun x lm))
+                 ((and (null ignore) (stringp (car x)) (string= (car x) "catch")) (pp-catch x lm))
+                 ((and (null ignore) (stringp (car x)) (string= (car x) "block")) (pp-catch x lm))
                  ((long-element-p x) (pp-long-element x lm ignore))
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm ignore))
                  (t (pp-indent x lm ignore))))
           ((null x) (pp-string "()"))
-          ((characterp x)) ;; bug???
+          ;((characterp x)) ;; bug???
           ((string= x "") (format output-stream "~%"))
           ((short-comment-p x) (pp-string x)(newline lm))
           ((long-comment-p x) (pp-string x)(newline 0))
@@ -111,6 +118,7 @@
 
 (defun cond-has-otomo-p1 (ls lm)
   (cond ((null ls) nil)
+        ((stringp ls) nil)
         ((has-otomo-p (car ls) lm) t)
         (t (cond-has-otomo-p1 (cdr ls) lm))))
 
@@ -216,7 +224,18 @@
 (defun pp-quote (x lm)
   (pp1 (car x) lm)
   (pp1 (cdr x) (+ lm 1) t))
-   
+
+;; syntax catch type
+(defun pp-catch (x lm)
+  (let ((lm1 (+ lm 3)))
+    (pp-string "(")
+    (pp1 (elt x 0) lm1)
+    (pp-string " ")
+    (pp1 (elt x 1) lm1)
+    (newline lm1)
+    (pp-body (cdr (cdr x)) lm1)
+    (pp-string ")")))
+
 
 ;; write cons as flat
 (defun pp-flat (x lm :rest ignore)
@@ -333,11 +352,14 @@
              (setq char (getc))
              (while (not (char= char #\"))
                     (setq token (cons char token))
+                    (cond ((char= char #\\)
+                           (setq token (cons (getc) token))))
                     (setq char (getc)))
              (setq token (cons #\' (cons #\' token)))
              (convert-to-string (reverse token)))
-            ((and (char= char #\#) (char= (look) #\\))       ;;character
-             (setq token (cons (getc) (cons char nil)))
+            ((and (char= char #\#) (char= (look) #\\))       ;;character e.g. "#\\a" double \
+             (setq token (cons (getc) (cons char nil)))      
+             (setq token (cons #\\ token))
              (setq token (cons (getc) token))
              (setq char (getc))
              (while (not (delimiter-p char))             
@@ -517,6 +539,7 @@
 ;; has otomo in elements?
 (defun has-otomo-p (x lm)
   (cond ((null x) nil)
+        ((stringp x) nil)
         ((long-element-p x) t)
         ((one-liner-p x lm) nil)
         (t (or (has-otomo-p (car x) lm)

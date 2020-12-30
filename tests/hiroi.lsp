@@ -1,6 +1,15 @@
 ;　クイックソート
 ; written by M.hiroi
 
+(defun find-if (pred xs)
+  (block exit
+    (for ((xs xs (cdr xs)))
+         ((null xs))
+         (if (funcall pred (car xs))
+             (return-from exit (car xs))))))
+
+(defglobal a #\0)
+
 (defun quick-sort (xs)
   (if (null xs)
       nil
@@ -17,3 +26,4 @@
            (setq ys (cons (car xs) ys))
          (setq zs (cons (car xs) zs)))))
 
+;; nreverse  and reverse

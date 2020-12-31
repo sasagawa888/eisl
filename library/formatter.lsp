@@ -14,10 +14,10 @@
 ;; write formated code to **.tmp file
 (defun formatter (file)
   (let ((exp nil)
+        (temp (string-append (filename file) ".tmp"))
         (original (string-append (filename file) ".org")))
-    (system (string-append "mv " file " " original))
-    (setq input-stream (open-input-file original))
-    (setq output-stream (open-output-file file))
+    (setq input-stream (open-input-file file))
+    (setq output-stream (open-output-file temp))
     (setq exp (sexp-read))
     (while (not (end-of-file-p exp))
            (setq otomo nil)
@@ -25,9 +25,14 @@
            ;(print exp)
            (setq exp (sexp-read)))
     (close input-stream)
+    (close output-stream)
+    (system (string-append "mv " file " " original))
+    (system (string-append "mv " temp " " file))
     (setq input-stream (standard-input))
     (setq output-stream (standard-output))
     t))
+
+
 
 (defun filename (str)
   (if (eql (substring str 0 0) ".")

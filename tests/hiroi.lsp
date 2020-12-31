@@ -41,7 +41,7 @@
                 (cond ((check board x y n)
                          (setf (aref board x y) n)
                          (solver board (+ x 1) y)
-                         (setf (aref board x y) 0) ))) )))
+                         (setf (aref board x y) 0)))))))
 
 (defun test ()
     (solver q00 0 0) )
@@ -57,4 +57,4 @@
        (7 0 0 0 2 0 0 0 6)
        (0 6 0 0 0 0 2 8 0)
        (0 0 0 4 1 9 0 0 5)
-       (0 0 0 0 8 0 0 7 9) ) )
+       (0 0 0 0 8 0 0 7 9)))

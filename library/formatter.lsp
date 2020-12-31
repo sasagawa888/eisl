@@ -3,7 +3,8 @@
 ;;written by kenichi sasagawa
 
 (defconstant width 100)
-(defconstant long 15)
+(defconstant long-element 15)
+(defconstant single-comment-margin 35)
 (defglobal buffer nil)
 (defglobal input-stream (standard-input))
 (defglobal output-stream (standard-output))
@@ -13,9 +14,10 @@
 ;; write formated code to **.tmp file
 (defun formatter (file)
   (let ((exp nil)
-        (output (string-append (filename file) ".tmp")))
-    (setq input-stream (open-input-file file))
-    (setq output-stream (open-output-file output))
+        (original (string-append (filename file) ".org")))
+    (system (string-append "mv " file " " original))
+    (setq input-stream (open-input-file original))
+    (setq output-stream (open-output-file file))
     (setq exp (sexp-read))
     (while (not (end-of-file-p exp))
            (setq otomo nil)
@@ -73,9 +75,8 @@
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defun")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defgeneric")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro")) (pp-defun x lm))
-                 ((and (null ignore) (stringp (car x)) (string= (car x) "catch")) (pp-catch x lm))
-                 ((and (null ignore) (stringp (car x)) (string= (car x) "block")) (pp-catch x lm))
-                 ((and (null ignore) (stringp (car x)) (string= (car x) "while")) (pp-catch x lm))
+                 ((and (null ignore) (stringp (car x)) (string= (car x) "block")) (pp-block x lm))
+                 ((and (null ignore) (stringp (car x)) (string= (car x) "while")) (pp-block x lm))
                  ((long-element-p x) (setq otomo t) (pp-long-element x lm ignore))
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm ignore))
                  (t (setq otomo t) (pp-indent x lm ignore))))
@@ -104,9 +105,13 @@
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) lm))
-       (if (and (not (null (cdr s)))
-                (not (short-comment-p (car (cdr s)))))
-           (newline lm))))
+       (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))
+              (space (+ lm (- single-comment-margin (flatsize (car s)))))
+              (pp-string (car (cdr s)))
+              (newline lm)
+              (setq s (cdr s)))
+             ((not (null (cdr s))) (newline lm)))))
+             
 
 ;; syntax case
 (defun pp-case (x lm)
@@ -121,19 +126,20 @@
 ;;2 pattern (if test then) or (if test then else)
 (defun pp-if (x lm)
   (let ((lm1 (+ lm 4)))
-    (cond ((= (length x) 4)
-           (pp-string "(if ")
-           (pp1 (elt x 1) lm1)
-           (newline lm1)
-           (pp1 (elt x 2) lm1)
-           (newline lm1)
-           (pp1 (elt x 3) lm1)
-           (pp-string " )"))
-          (t (pp-string "(if ")
-           (pp1 (elt x 1) lm1)
-           (newline lm1)
-           (pp1 (elt x 2) lm1)
-           (pp-string " )")))))
+    (pp-string "(if ")
+    (for ((s (cdr x) (cdr s)))
+         ((null s)
+          (cond (otomo (pp-string ")"))
+                (t (setq otomo t) (pp-string " )"))))
+         (if (stringp (car s))
+             (pp-string (car s))
+             (pp1 (car s) lm1))
+         (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))
+                (space (+ lm1 (- single-comment-margin (flatsize (car s)))))
+                (pp-string (car (cdr s)))
+                (newline lm1)
+                (setq s (cdr s)))
+               ((not (null (cdr s))) (newline lm1))))))
 
 ;;syntax defun type
 ;;also defmacro defgeneric
@@ -160,10 +166,14 @@
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) lm))
-      (if (and (not (null (cdr s)))  ;;not end element
-               (not (and (the-p (car s)) (the-p (car (cdr s)))))  ;;not the declare
-               (not (short-comment-p (car (cdr s))))) ;not comment next element
-           (newline lm))))
+       (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s)))) ;single comment
+                (space (+ lm (- single-comment-margin (flatsize (car s)))))
+                (pp-string (car (cdr s)))
+                (newline lm)
+                (setq s (cdr s)))
+             ((and (not (null (cdr s)))  ;not end element
+                   (not (and (the-p (car s)) (the-p (car (cdr s))))))  ;not the declare
+              (newline lm)))))
 
 ;; syntax let
 (defun pp-let (x lm)
@@ -175,7 +185,8 @@
     (pp-let1 (elt x 1) lm1)
     (newline lm2)
     (pp-body (cdr (cdr x)) lm2)
-    (pp-string " )" )))
+    (cond (otomo (pp-string ")" ))
+          (t (setq otomo t) (pp-string " )")))))
   
 (defun pp-let1 (x lm)
   (pp-string "(")
@@ -203,11 +214,11 @@
 
 (defun pp-vector (x lm)
   (pp-string "#")
-  (pp-flat (cdr x) -1)) ;;to avoid newline
+  (pp-flat (cdr x) lm)) 
 
 (defun pp-array (x lm)
   (pp-string (elt x 0))
-  (pp1 (cdr x) -1)) ;;to avoid newline
+  (pp1 (cdr x) lm)) 
 
 (defun pp-quote (x lm)
   (pp1 (car x) lm)
@@ -236,8 +247,13 @@
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) lm1 ignore)) 
-       (if (not (null (cdr s)))
-           (pp-string " "))))
+       (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s)))) ;single comment
+              (space (+ lm (- single-comment-margin (flatsize (car s)))))
+              (pp-string (car (cdr s)))
+              (newline lm)
+              (setq s (cdr s)))
+             ((not (null (cdr s)))  ;not end element
+              (pp-string " ")))))
 
 ;; write subr with long element
 (defun pp-long-element (x lm :rest ignore)
@@ -253,8 +269,13 @@
          (if (stringp (car s))
               (pp-string (car s))
               (pp1 (car s) lm1 ignore))
-         (if (not (null (cdr s)))
-              (newline lm1)))))
+         (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s)))) ;single comment
+                (space (+ lm (- single-comment-margin (flatsize (car s)))))
+                (pp-string (car (cdr s)))
+                (newline lm)
+                (setq s (cdr s)))
+              ((not (null (cdr s)))  ;not end element
+               (newline lm1))))))
 
 ;; write cons with indent
 (defun pp-indent (x lm :rest ignore)
@@ -289,6 +310,10 @@
   (cond ((null x) 1)
         ((characterp x) 0)
         ((stringp x) (length x))
+        ((and (consp x) (stringp (car x)) (char= (elt (car x) 0) #\'))
+         (+ (length (car x)) (flatsize (cdr x))))
+        ((and (consp x) (stringp (car x)) (char= (elt (car x) 0) #\`))
+         (+ (length (car x)) (flatsize (cdr x)))) 
         ((and (consp x) (stringp (car x)))
          (+ (length (car x)) 1 (flatsize (cdr x))))
         ((consp x) (+ (flatsize (car x)) 1 (flatsize (cdr x))))))
@@ -328,14 +353,14 @@
     (let ((token nil)
           (char nil))
       (setq char (getc))
-      (cond ((skip-p char)                                  ;;newline skip
+      (cond ((skip-p char)                                  ;newline skip
              (space-skip)(setq char (getc))))
-      (cond ((skip-p char)                                  ;;space skip
+      (cond ((skip-p char)                                  ;space skip
              (space-skip)(setq char (getc))))
-      (cond ((end-of-file-p char) (return-from exit char))  ;;EOF
-            ((char= char #\null) "")                        ;;empty line
-            ((delimiter-p char) char)                       ;;delimiter
-            ((char= char #\")                               ;;string e.g. ''asdf''
+      (cond ((end-of-file-p char) (return-from exit char))  ;EOF
+            ((char= char #\null) "")                        ;empty line
+            ((delimiter-p char) char)                       ;delimiter
+            ((char= char #\")                               ;string e.g. ''asdf''
              (setq token (cons #\' (cons #\' token)))
              (setq char (getc))
              (while (not (char= char #\"))
@@ -345,7 +370,7 @@
                     (setq char (getc)))
              (setq token (cons #\' (cons #\' token)))
              (convert-to-string (reverse token)))
-            ((and (char= char #\#) (char= (look) #\\))       ;;character e.g. "#\\a" double \
+            ((and (char= char #\#) (char= (look) #\\))       ;character e.g. "#\\a" double \
              (setq token (cons (getc) (cons char nil)))      
              (setq token (cons #\\ token))
              (setq token (cons (getc) token))
@@ -355,13 +380,13 @@
                       (setq char (getc)))
              (ungetc char)
              (convert-to-string (reverse token)))
-            ((char= char #\')                               ;;quote
+            ((char= char #\')                               ;quote
              (setq token (cons char nil))
              (cons (convert-to-string token) (sexp-read)))
-            ((char= char #\`)                               ;;back quote
+            ((char= char #\`)                               ;back quote
              (setq token (cons char nil))
              (cons (convert-to-string token) (sexp-read)))
-            ((and (char= char #\#) (char= (look) #\|))       ;;long comment #|..|#
+            ((and (char= char #\#) (char= (look) #\|))       ;long comment #|..|#
              (setq token (cons (getc) (cons char nil)))
              (setq token (cons (getc) token))
              (setq char (getc))
@@ -371,10 +396,10 @@
              (setq token (cons char token))
              (setq token (cons (getc) token))
              (convert-to-string (reverse token)))
-            ((and (char= char #\#)(char= (look) #\( ))      ;;vector
+            ((and (char= char #\#)(char= (look) #\( ))      ;vector
              (setq token (cons char nil))
              (cons (convert-to-string token) (sexp-read)))
-            ((and (char= char #\#)(char= (look) #\'))       ;;e.g. #'foo
+            ((and (char= char #\#)(char= (look) #\'))       ;e.g. #'foo
              (setq token (cons (getc) (cons char nil)))
              (setq char (getc))
              (while (not (delimiter-p char))                 
@@ -389,10 +414,10 @@
              (ungetc char)
              (setq token (reverse token))
              (cond ((member (elt token 1) '(#\X #\B #\O))
-                    (convert-to-string token))  ;;hex oct bin integer
-                   ((char= (elt token 2) #\a) (cons (convert-to-string token) (sexp-read))) ;;array
-                   (t (convert-to-string token)))) ;;other 
-            ((char= char #\;)                               ;;comment
+                    (convert-to-string token))  ;hex oct bin integer
+                   ((char= (elt token 2) #\a) (cons (convert-to-string token) (sexp-read))) ;array
+                   (t (convert-to-string token)))) ;other 
+            ((char= char #\;)                               ;comment
              (setq token (cons char token))
              (setq char (getc))
              (while (not (char= char #\newline))
@@ -400,7 +425,7 @@
                     (setq char (getc)))
              (ungetc char)
              (convert-to-string (reverse token))) 
-            (t (while (not (delimiter-p char))               ;;atom
+            (t (while (not (delimiter-p char))               ;atom
                       (setq token (cons char token))
                       (setq char (getc)))
                (ungetc char)
@@ -462,11 +487,36 @@
   (and (characterp c)
        (member c '(#\space #\newline))))
 
-;; ;;type comment
+;; ; type comment
 (defun short-comment-p (x)
   (and (stringp x)
        (not (string= x ""))
        (char= (elt x 0) #\;))) 
+
+;; ; single semicolon comment
+(defun single-comment-p (x)
+  (and (stringp x)
+       (> (length x) 1)
+       (char= (elt x 0) #\;)
+       (not (char= (elt x 1) #\;))))
+
+;; ;; double semicolon comment
+(defun double-comment-p (x)
+  (and (stringp x)
+       (> (length x) 2)
+       (char= (elt x 0) #\;)
+       (char= (elt x 1) #\;)
+       (not (char= (elt x 2)) #\;)))
+
+;; ;;; triple seimicolo comment
+(defun triple-comment-p (x)
+  (and (stringp x)
+       (> (length x) 3)
+       (char= (elt x 0) #\;)
+       (char= (elt x 1) #\;)
+       (char= (elt x 2) #\;)
+       (not (char= (elt x 3) #\;))))
+
 
 ;; #|    |# type comment
 (defun long-comment-p (x)
@@ -498,13 +548,13 @@
 (defun quote-p (x)
   (and (consp x)
        (stringp (elt x 0))
-       (string= (elt x 0) "'")))
+       (char= (elt (car x) 0) #\')))
 
 ;; is it backquote? e.g. `(if a b c)
 (defun backquote-p (x)
   (and (consp x)
        (stringp (elt x 0))
-       (string= (elt x 0) "`")))
+       (char= (elt (car x) 0) #\`)))
 
 
 ;; is subr that has long size element? e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
@@ -517,7 +567,7 @@
 
 (defun long-element-p1 (x)
   (cond ((null x) t)
-        ((> (flatsize (car x)) long) (long-element-p1 (cdr x)))
+        ((> (flatsize (car x)) long-element) (long-element-p1 (cdr x)))
         (t nil)))
 
 ;; is one-liner?

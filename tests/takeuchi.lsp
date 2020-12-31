@@ -3,22 +3,27 @@
 竹内郁雄　著　より
 |#
 
-(defglobal a (standard-output))
 
-;;１４７ページ
+(defun fact (n)
+    (if (= n 0)                                    ;base
+        1                                          ;base value
+        (* n (fact (- n 1))) ))
+
+;;;１４７ページ
 (defun delete-1 (x y)
-    (setq y (cons 'dummy))
-    (del2 x y)
-    (cdr y))
+    (setq y (cons 'dummy))                 ;dummy set
+    (del2 x y)                             ;call dek2
+    (cdr y) )
 
-;;８９ページ
+;;;８９ページ
 (defun atom-count (x)
-    (cond ((nullx ) 0)
-          ((atom x) 1)
+    (cond ((nullx) 0)                                  ;null
+          ((atom x) 1)                                 ;atom
+          ;;else
           (t (+ (atom-count (car x))
                 (atom-count (cdr x)) ))))
 
-;;７９ページ
+;;;７９ページ
 (defun last-elm (x)
     (cond ((null x) nil)
           (t (last-elm2 x)) ))
@@ -35,10 +40,8 @@ ppの原則（２５１ページ）
 （２）同一行に対応する開きガッコがない閉じガッコ（「お供」と呼ぼう）が並ぶときは
 それの左端に空白を１個はさむ
 （３）カッコのレベルが１つ深まると、段が２文字分深まる。
-
 お供
 コンスが内包するコンスがお供を有している場合には（２）に関わらず空白は挟まない。
-
 追加ルール
 （４）コンスにつき、先頭要素以外の要素につきいずれも文字数が１５を超えるならば
 それらについてインデントする。

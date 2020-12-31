@@ -225,7 +225,7 @@ char extended[50][30] = {
 {"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
 {"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
 {"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
-{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},
+{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},{"formatter"},
 {"c-include"},{"c-define"},{"c-lang"},{"c-option"}
 };
 
@@ -273,6 +273,13 @@ int main(int argc, char *argv[]){
                 f_load(list1(makestr(str)));
                 opt++;
             }
+            else if(strcmp(argv[opt],"-f") == 0){
+                home = getenv("HOME");
+                strcpy(str,home);
+                strcat(str,"/eisl/library/formatter.lsp");
+                f_load(list1(makestr(str)));
+                opt++;
+            }
             else if(strcmp(argv[opt],"-s") == 0){
                 opt++;
                 if(opt >= argc){
@@ -299,6 +306,7 @@ int main(int argc, char *argv[]){
             else if(strcmp(argv[opt],"-h") == 0){
                 printf("List of options:\n");
                 printf("-c           -- EISL starts after reading compiler.lsp.\n");
+                printf("-f           -- EISL starts after reading formatter.lsp.\n");
                 printf("-h           -- display help.\n");
                 printf("-l filename  -- EISL starts after reading the file.\n");
                 printf("-r           -- EISL does not use editable REPL.\n");

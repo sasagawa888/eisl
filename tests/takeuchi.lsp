@@ -5,20 +5,20 @@
 
 
 (defun fact (n)
-    (if (= n 0)                                    ;base
-        1                                          ;base value
+    (if (= n 0)                          ;base
+        1                                ;base value
         (* n (fact (- n 1))) ))
 
 ;;;１４７ページ
 (defun delete-1 (x y)
-    (setq y (cons 'dummy))                 ;dummy set
-    (del2 x y)                             ;call del2
+    (setq y (cons 'dummy))       ;dummy set
+    (del2 x y)                   ;call del2
     (cdr y) )
 
 ;;;８９ページ
 (defun atom-count (x)
-    (cond ((nullx) 0)                                  ;null
-          ((atom x) 1)                                 ;atom
+    (cond ((nullx) 0)                        ;null
+          ((atom x) 1)                       ;atom
           ;;else
           (t (+ (atom-count (car x))
                 (atom-count (cdr x)) ))))

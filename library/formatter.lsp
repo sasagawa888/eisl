@@ -224,8 +224,8 @@
   (pp1 (car x) lm)
   (pp1 (cdr x) (+ lm 1) t))
 
-;; syntax catch type
-(defun pp-catch (x lm)
+;; syntax block type
+(defun pp-block (x lm)
   (let ((lm1 (+ lm 3)))
     (pp-string "(")
     (pp1 (elt x 0) lm1)

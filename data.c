@@ -869,13 +869,14 @@ int array_ref(int obj, int ls){
         size = array_length(obj); // e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
     
     index = 0;
-    while(!nullp(size)){
+    size = cdr(size);
+    while(!nullp(ls)){
         if(nullp(cdr(ls)))
             index = index + GET_INT(car(ls));
         else if(GET_INT(car(ls)) == 0)
             index = index;
         else 
-            index = index + GET_INT(car(size)) * GET_INT(car(ls));// + 1;
+            index = index + GET_INT(car(size)) * GET_INT(car(ls));
          
         size = cdr(size);
         ls = cdr(ls);
@@ -890,14 +891,16 @@ int array_set(int obj, int ls, int val){
         size = list1(vector_length(obj));
     else
         size = array_length(obj); // e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
+
     index = 0;
-    while(!nullp(size)){
+    size = cdr(size);
+    while(!nullp(ls)){
         if(nullp(cdr(ls)))
             index = index + GET_INT(car(ls));
         else if(GET_INT(car(ls)) == 0)
             index = index;
         else 
-            index = index + GET_INT(car(size)) * GET_INT(car(ls));// + 1;
+            index = index + GET_INT(car(size)) * GET_INT(car(ls));
          
         size = cdr(size);
         ls = cdr(ls);

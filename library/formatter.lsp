@@ -77,9 +77,9 @@
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "block")) (pp-block x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "while")) (pp-block x lm))
-                 ((long-element-p x) (setq otomo t) (pp-long-element x lm ignore))
-                 ((< (+ (flatsize x) lm) width) (pp-flat x lm ignore))
-                 (t (setq otomo t) (pp-indent x lm ignore))))
+                 ((long-element-p x) (setq otomo t) (pp-long-element x lm))
+                 ((< (+ (flatsize x) lm) width) (pp-flat x lm))
+                 (t (setq otomo t) (pp-indent x lm))))
           ((null x) (pp-string "()"))
           ((characterp x) nil)
           ((string= x "") (format output-stream "~%"))
@@ -218,7 +218,7 @@
 
 (defun pp-array (x lm)
   (pp-string (elt x 0))
-  (pp1 (cdr x) lm)) 
+  (pp1 (cdr x) (+ lm 3) t)) 
 
 (defun pp-quote (x lm)
   (pp1 (car x) lm)
@@ -237,7 +237,7 @@
 
 
 ;; write cons as flat
-(defun pp-flat (x lm :rest ignore)
+(defun pp-flat (x lm)
   (pp-string "(")
   (for ((s x (cdr s))
         (lm1 (+ lm 1) (+ 1 lm1 (flatsize (car s)))))
@@ -246,7 +246,7 @@
         (if (= lm 0) (newline lm)))
        (if (stringp (car s))
            (pp-string (car s))
-           (pp1 (car s) lm1 ignore)) 
+           (pp1 (car s) lm1)) 
        (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s)))) ;single comment
               (space (+ lm (- single-comment-margin (flatsize (car s)))))
               (pp-string (car (cdr s)))
@@ -256,7 +256,7 @@
               (pp-string " ")))))
 
 ;; write subr with long element
-(defun pp-long-element (x lm :rest ignore)
+(defun pp-long-element (x lm)
   (let ((lm1 (+ 2 lm (length (car x)))))
     (pp-string "(")
     (pp-string (car x))
@@ -268,7 +268,7 @@
               (pp-string " )")))
          (if (stringp (car s))
               (pp-string (car s))
-              (pp1 (car s) lm1 ignore))
+              (pp1 (car s) lm1))
          (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s)))) ;single comment
                 (space (+ lm (- single-comment-margin (flatsize (car s)))))
                 (pp-string (car (cdr s)))
@@ -278,16 +278,15 @@
                (newline lm1))))))
 
 ;; write cons with indent
-(defun pp-indent (x lm :rest ignore)
+(defun pp-indent (x lm)
   (pp-string "(")
   (for ((s x (cdr s)))
        ((null s) 
-        (if (= (length x) 0)
-            (pp-string ")")
-            (pp-string " )"))) 
+        (cond ((= (length x) 0) (pp-string ")"))
+              (t (setq otomo t) (pp-string " )")))) 
        (if (stringp (car s))
            (pp-string (car s))
-           (pp1 (car s) (+ lm 1) ignore))
+           (pp1 (car s) (+ lm 1)))
        (if (not (null (cdr s)))
            (newline (+ lm 3)))))
 
@@ -544,7 +543,6 @@
   (and (consp x)
        (stringp (elt x 0))
        (> (length (elt x 0)) 1)
-       (stringp (elt (elt x 0) 0))
        (char= (elt (elt x 0) 0) #\#)))
 
 ;; is it quote? e.g. 'foo

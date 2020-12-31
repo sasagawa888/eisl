@@ -1,8 +1,8 @@
 ;testing formatter
 ; written by M.hiroi
 
-;; 縦横枠のチェック
-リスト:ナンバープレースの解法
+;;;リスト : ナンバープレースの解法
+
 ;; 縦横枠のチェック
 (defun check (board x y n)
     (block exit
@@ -36,14 +36,12 @@
           ((= x 9) (solver board 0 (+ y 1)))
           ((/= (aref board x y) 0) (solver board (+ x 1) y))
           (t
-             (for
-              ((n 1 (+ n 1)))
-              ((> n 9))
-              (cond
-               ((check board x y n)
-                (setf (aref board x y) n)
-                (solver board (+ x 1) y)
-                (setf (aref board x y) 0) ) ) ) )))
+             (for ((n 1 (+ n 1)))
+                ((> n 9))
+                (cond ((check board x y n)
+                         (setf (aref board x y) n)
+                         (solver board (+ x 1) y)
+                         (setf (aref board x y) 0) ))) )))
 
 (defun test ()
     (solver q00 0 0) )
@@ -51,13 +49,12 @@
 ;; 問題 (出典: 数独 - Wikipedia の問題例)
 (defglobal
    q00
-   (#2a
-    (5 3 0 0 7 0 0 0 0)
-    (6 0 0 1 9 5 0 0 0)
-    (0 9 8 0 0 0 0 6 0)
-    (8 0 0 0 6 0 0 0 3)
-    (4 0 0 8 0 3 0 0 1)
-    (7 0 0 0 2 0 0 0 6)
-    (0 6 0 0 0 0 2 8 0)
-    (0 0 0 4 1 9 0 0 5)
-    (0 0 0 0 8 0 0 7 9) ) )
+   #2a((5 3 0 0 7 0 0 0 0)
+       (6 0 0 1 9 5 0 0 0)
+       (0 9 8 0 0 0 0 6 0)
+       (8 0 0 0 6 0 0 0 3)
+       (4 0 0 8 0 3 0 0 1)
+       (7 0 0 0 2 0 0 0 6)
+       (0 6 0 0 0 0 2 8 0)
+       (0 0 0 4 1 9 0 0 5)
+       (0 0 0 0 8 0 0 7 9) ) )

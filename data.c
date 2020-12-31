@@ -875,7 +875,7 @@ int array_ref(int obj, int ls){
         else if(GET_INT(car(ls)) == 0)
             index = index;
         else 
-            index = index + GET_INT(car(size)) * GET_INT(car(ls)) + 1;
+            index = index + GET_INT(car(size)) * GET_INT(car(ls));// + 1;
          
         size = cdr(size);
         ls = cdr(ls);
@@ -897,7 +897,7 @@ int array_set(int obj, int ls, int val){
         else if(GET_INT(car(ls)) == 0)
             index = index;
         else 
-            index = index + GET_INT(car(size)) * GET_INT(car(ls)) + 1;
+            index = index + GET_INT(car(size)) * GET_INT(car(ls));// + 1;
          
         size = cdr(size);
         ls = cdr(ls);

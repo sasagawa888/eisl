@@ -548,8 +548,9 @@
 (defun array-p (x)
   (and (consp x)
        (stringp (elt x 0))
-       (> (length (elt x 0)) 1)
-       (char= (elt (elt x 0) 0) #\#)))
+       (= (length (elt x 0)) 3)
+       (char= (elt (elt x 0) 0) #\#)
+       (char= (elt (elt x 2) 0) #\a)))
 
 ;; is it quote? e.g. 'foo
 (defun quote-p (x)

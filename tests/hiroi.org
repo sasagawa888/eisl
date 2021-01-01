@@ -121,7 +121,8 @@
                              'false)))
     (cons '>= (lambda (x y) (if (>= x y)
                               'true
-                              'false)))))(defun print (xs)
+                              'false)))))
+(defun print (xs)
     (format (standard-output) "~A~%" xs) )
 
 (defun princ (xs)

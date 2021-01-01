@@ -1,5 +1,5 @@
-;testing formatter
-; written by M.hiroi
+;;;testing formatter
+;;; written by M.hiroi
 ;リスト : ナンバープレースの解法
 ;;;
 ;;; micro.l : micro Scheme with ISLisp
@@ -121,7 +121,8 @@
                              'false)))
     (cons '>= (lambda (x y) (if (>= x y)
                               'true
-                              'false)))))(defun print (xs)
+                              'false)))))
+(defun print (xs)
     (format (standard-output) "~A~%" xs) )
 
 (defun princ (xs)

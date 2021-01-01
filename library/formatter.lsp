@@ -213,8 +213,9 @@
     (pp-let1 (elt x 1) lm1)
     (newline lm1)
     (pp-let1 (elt x 2) lm1)
-    (newline lm1)
-    (pp-body (cdr (cdr (cdr x))) lm1)
+    (cond ((not (null (cdr (cdr (cdr x)))))
+           (newline lm1)
+           (pp-body (cdr (cdr (cdr x))) lm1)))
     (pp-string ")")))
 
 (defun pp-vector (x lm)

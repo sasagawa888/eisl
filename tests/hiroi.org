@@ -32,8 +32,7 @@
 (defun last-pair (xs)
     (for ((xs xs (cdr xs)))
          ((null (cdr xs))
-          xs )
-         ) )
+          xs )) )
 
 ;; 末尾の要素
 (defun last (xs)
@@ -45,16 +44,14 @@
           (a nil (cons (car xs) a))
           (xs xs (cdr xs)) )
          ((or (<= n 0) (null xs))
-          (nreverse a) )
-         ) )
+          (nreverse a) )) )
 
 ;; 先頭から n 個の要素を取り除く
 (defun drop (xs n)
     (for ((n n (- n 1))
           (xs xs (cdr xs)) )
          ((or (<= n 0) (null xs))
-          xs )
-         ) )
+          xs )) )
 
 ;; xs を反転して ys と連結する
 (defun append-reverse (xs ys)
@@ -104,15 +101,13 @@
     (for ((ys xs (cdr ys))
           (acc a (funcall f acc (car ys))) )
          ((null ys)
-          acc )
-         ) )
+          acc )) )
 
 (defun fold-right (f a xs)
     (for ((ys (reverse xs) (cdr ys))
           (acc a (funcall f (car ys) acc)) )
          ((null ys)
-          acc )
-         ) )
+          acc )) )
 
 ;;
 ;; 巡回

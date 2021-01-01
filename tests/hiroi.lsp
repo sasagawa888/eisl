@@ -32,7 +32,7 @@
 (defun last-pair (xs)
     (for ((xs xs (cdr xs)))
          ((null (cdr xs))
-          xs )) )
+          xs )))
 
 ;; 末尾の要素
 (defun last (xs)
@@ -44,21 +44,21 @@
           (a nil (cons (car xs) a))
           (xs xs (cdr xs)) )
          ((or (<= n 0) (null xs))
-          (nreverse a) )) )
+          (nreverse a) )))
 
 ;; 先頭から n 個の要素を取り除く
 (defun drop (xs n)
     (for ((n n (- n 1))
           (xs xs (cdr xs)) )
          ((or (<= n 0) (null xs))
-          xs )) )
+          xs )))
 
 ;; xs を反転して ys と連結する
 (defun append-reverse (xs ys)
     (for ((xs xs (cdr xs)))
          ((null xs)
           ys )
-         (setq ys (cons (car xs) ys))) )
+         (setq ys (cons (car xs) ys))))
 
 ;;
 ;; リストの生成
@@ -68,7 +68,7 @@
           (a nil) )
          ((> n m)
           a )
-         (setq a (cons m a))) )
+         (setq a (cons m a))))
 ;;
 ;; 削除
 ;;
@@ -80,7 +80,7 @@
          ((null xs)
           (nreverse ys) )
          (if (not (member (car xs) ys))
-             (setq ys (cons (car xs) ys)) )))
+             (setq ys (cons (car xs) ys)))))
 
 ;; フィルター
 (defun remove-if (f xs)
@@ -89,7 +89,7 @@
          ((null xs)
           (nreverse a) )
          (if (not (funcall f (car xs)))
-             (setq a (cons (car xs) a)) )))
+             (setq a (cons (car xs) a)))))
 
 (defun remove (x xs)
     (remove-if (lambda (y) (eql x y)) xs) )
@@ -101,13 +101,13 @@
     (for ((ys xs (cdr ys))
           (acc a (funcall f acc (car ys))) )
          ((null ys)
-          acc )) )
+          acc )))
 
 (defun fold-right (f a xs)
     (for ((ys (reverse xs) (cdr ys))
           (acc a (funcall f (car ys) acc)) )
          ((null ys)
-          acc )) )
+          acc )))
 
 ;;
 ;; 巡回
@@ -128,7 +128,7 @@
           (cons (nreverse ys) (nreverse zs)) )
          (if (funcall pred (car xs))
              (setq ys (cons (car xs) ys))
-             (setq zs (cons (car xs) zs)) )))
+             (setq zs (cons (car xs) zs)))))
 
 ;;
 ;; 検索
@@ -150,7 +150,7 @@
             ((null xs)
              -1 )
             (if (funcall pred (car xs))
-                (return-from exit i) ))))
+                (return-from exit i)))))
 
 (defun position (a xs)
     (position-if (lambda (x) (eql x a)) xs) )
@@ -161,7 +161,7 @@
          ((null xs)
           c )
          (if (funcall pred (car xs))
-             (setq c (+ c 1)) )))
+             (setq c (+ c 1)))))
 
 (defun count (a xs)
     (count-if (lambda (x) (eql x a)) xs) )
@@ -181,7 +181,7 @@
              t )
             (let ((ys (mapcar #'car xs)))
                (if (not (apply pred ys))
-                   (return-from exit nil) )))))
+                   (return-from exit nil))))))
 
 ;;
 ;; 集合演算
@@ -192,7 +192,7 @@
          ((null xs)
           (append-reverse zs ys) )
          (if (not (member (car xs) ys))
-             (setq zs (cons (car xs) zs)) )))
+             (setq zs (cons (car xs) zs)))))
 
 (defun intersection (xs ys)
     (for ((xs xs (cdr xs))
@@ -200,7 +200,7 @@
          ((null xs)
           (nreverse zs) )
          (if (member (car xs) ys)
-             (setq zs (cons (car xs) zs)) )))
+             (setq zs (cons (car xs) zs)))))
 
 (defun difference (xs ys)
     (for ((xs xs (cdr xs))
@@ -208,7 +208,7 @@
          ((null xs)
           (nreverse zs) )
          (if (not (member (car xs) ys))
-             (setq zs (cons (car xs) zs)) )))
+             (setq zs (cons (car xs) zs)))))
 
 (defun subsetp (xs ys)
     (block exit
@@ -216,4 +216,4 @@
             ((null xs)
              t )
             (if (not (member (car xs) ys))
-                (return-from exit nil) ))))
+                (return-from exit nil)))))

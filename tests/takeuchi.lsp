@@ -21,7 +21,7 @@
           ((atom x) 1)                       ;atom
           ;;else
           (t (+ (atom-count (car x))
-                (atom-count (cdr x)) ))))
+                (atom-count (cdr x))))))
 
 ;;;７９ページ
 (defun last-elm (x)

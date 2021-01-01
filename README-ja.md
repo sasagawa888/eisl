@@ -44,6 +44,7 @@ $ eisl -r
 $ eisl -h
 List of options:
 -c           -- EISL starts after reading compiler.lsp.
+-f           -- EISL starts after reading formatter.lsp.
 -h           -- display help.
 -l filename  -- EISL starts after reading the file.
 -r           -- EISL does not use editable REPL.

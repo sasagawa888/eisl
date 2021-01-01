@@ -295,8 +295,13 @@
        (if (stringp (car s))
            (pp-string (car s))
            (pp1 (car s) (+ lm 1)))
-       (if (not (null (cdr s)))
-           (newline (+ lm 3)))))
+       (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s)))) ;single comment
+                (space (+ lm (- single-comment-margin (flatsize (car s)))))
+                (pp-string (car (cdr s)))
+                (newline lm)
+                (setq s (cdr s)))
+              ((not (null (cdr s)))  ;not end element
+               (newline (+ lm 3))))))
 
 
 

@@ -45,9 +45,8 @@
     (let ((proc (m-eval (car expr) env))
           (actuals (mapcar (lambda (x) (m-eval x env)) (cdr expr))) )
        (cond ((functionp proc) (apply proc actuals))
-             ((closurep proc)
-                ; (closure (lambda (args ..) body ...)) env)
-                (let* ((result nil)
+             ((closurep proc)                       ; (closure (lambda (args ..) body ...)) env)
+             (let* ((result nil)
                     (args (second (second proc)))
                     (body (drop (second proc) 2))
                     (env1 (add-binding args actuals (third proc))) )
@@ -62,9 +61,8 @@
 ;;
 (defun m-eval (expr env)
     (cond ((self-eval-p expr) expr)          ; 自己評価フォーム
-          ((symbolp expr)
-             ; 変数
-             (let ((cell (lookup expr env)))
+          ((symbolp expr)                     ; 変数
+          (let ((cell (lookup expr env)))
               (if cell
                   (cdr cell)
                   (error "unbound variable: ~A" expr))))

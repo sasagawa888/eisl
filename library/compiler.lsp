@@ -259,7 +259,8 @@ double tarai(double x, double y, double z){
     (format (standard-output) "finalize~%")
     (finalize x ".cu")
     (format (standard-output) "invoke NVCC~%")
-    (system (string-append option fname ".o " fname ".cu " c-lang-option))))
+    (system (string-append option fname ".o " fname ".cu " c-lang-option))
+    (system (string-append "rm " fname ".cu"))))
 
 
 

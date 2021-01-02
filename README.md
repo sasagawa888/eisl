@@ -87,6 +87,7 @@ I hope that Lisp will become more popular. I hope many people enjoy Lisp. EISL a
 # Compiler
 EISL has a compiler. it generates GCC code and generates object code.
 
+
 ```
 Invoke with -c option
 eisl -c
@@ -133,19 +134,10 @@ Elapsed Time(second)=3.728262
 
 
 
-# Compiler for CUDA
-EISL has a compiler. it generates cuda code with nvcc and generates object code.
+# Compile EISL by CUDA
+You can also compile EISL with nvcc(CUDA) instead of gcc.
 
-```
-Invoke with -c option
-eisl -c
-
-or (load "library/compiler.lsp")
-
-(compile-cuda "tests/foo.lsp")
-
-(load "tests/foo.o")
-```
+On linux terminal type "sudo make -f cudamake install"
 
 # Invoke editor
 edit function invoke Edlis editor.

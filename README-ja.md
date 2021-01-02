@@ -145,6 +145,9 @@ Elapsed Time(second)=3.728262
 Raspberry Pi 3では，主記憶領域不足のせいで`compiler.o`ファイルが利用できません。
 `compiler.lsp`を使って下さい。
 
+## CUDAでEISLをコンパイルする
+GCCの代わりにnvcc（CUDA)でEISLをコンパイルすることもできます。
+端末から　`sudo make -f cudamake install` とタイプしてください。
 
 ## エディタを起動する
 

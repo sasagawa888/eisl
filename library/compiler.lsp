@@ -246,7 +246,7 @@ double tarai(double x, double y, double z){
   (let ((option (cond ((eq (self-introduction) 'windows)
                        "gcc -O3 -shared -o ")
                       ((eq (self-introduction) 'linux)
-                       "nvcc -O3 -w -shared --compiler-options '-fPIC' -lcublas -o ")))
+                       "nvcc -O3 -w -shared -I$HOME/eisl --compiler-options '-fPIC' -lcublas -o ")))
         (fname (filename x)))
     (ignore-toplevel-check t)
     (format (standard-output) "initialize~%")
@@ -259,7 +259,7 @@ double tarai(double x, double y, double z){
     (format (standard-output) "finalize~%")
     (finalize x ".cu")
     (format (standard-output) "invoke NVCC~%")
-    (system (string-append option fname ".o " fname ".c " c-lang-option))))
+    (system (string-append option fname ".o " fname ".cu " c-lang-option))))
 
 
 

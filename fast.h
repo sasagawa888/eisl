@@ -315,7 +315,7 @@ int fast_greaterp(){
     x = Fargpop();
     Fargpush(y);
     Fargpush(x);
-    return(fast_smallerp(y,x));
+    return(fast_smallerp());
 }
 
 int fast_eqgreaterp(){
@@ -325,7 +325,7 @@ int fast_eqgreaterp(){
     x = Fargpop();
     Fargpush(y);
     Fargpush(x);
-    return(fast_eqsmallerp(y,x));
+    return(fast_eqsmallerp());
 }
 
 int fast_plus(){

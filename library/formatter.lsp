@@ -82,6 +82,7 @@
                  ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro")) (pp-defun x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "block")) (pp-block x lm))
                  ((and (null ignore) (stringp (car x)) (string= (car x) "while")) (pp-block x lm))
+                 ((and (null ignore) (stringp (car x)) (string= (car x) "lambda")) (pp-block x lm))
                  ((long-element-p x) (setq otomo t) (pp-long-element x lm))
                  ((< (+ (flatsize x) lm) width) (pp-flat x lm))
                  (t (setq otomo t) (pp-indent x lm))))
@@ -231,13 +232,15 @@
 
 ;; syntax block type
 (defun pp-block (x lm)
-  (let ((lm1 (+ lm 3)))
+  (let ((lm1 (+ lm 3))
+        (body (cdr (cdr x))))
     (pp-string "(")
     (pp1 (elt x 0) lm1)
     (pp-string " ")
     (pp1 (elt x 1) lm1)
-    (newline lm1)
-    (pp-body (cdr (cdr x)) lm1)
+    (cond ((and (= (length body) 1) (<= (flatsize body) long-element))
+           (pp-flat body lm1))
+          (t (newline lm1) (pp-body body lm1)))
     (pp-string ")")))
 
 

@@ -755,6 +755,52 @@ int makearray(int ls, int obj){
     return(res);
 }
 
+// for Deep-Learning float type array
+int makefarray(int ls, float obj){
+    int size,res,i,n,ls1, *vec;
+
+    ls1 = ls;
+    if(!nullp(ls)){
+        size = 1;
+        while(!nullp(ls)){
+            n = GET_INT(car(ls));
+            if(n==0)
+                n=1;
+            size = n * size;
+            ls = cdr(ls);
+        }
+        size++;
+    }
+    else
+        size = 1;
+
+    res = freshcell();
+    vec = (int *)malloc(sizeof(float)*size);
+    if(vec == NULL)
+        error(MALLOC_OVERF, "float array",  NIL);
+
+    SET_VEC(res,vec);
+    for(i=0; i<size; i++)
+        SET_VEC_ELT(res,i,obj);
+    if(nullp(ls1)){
+        SET_TAG(res,FARR);
+        SET_CDR(res,ls1);
+        SET_AUX(res,cgeneral_array_star); //class
+    }
+    else if(length(ls1) == 1){
+        SET_TAG(res,VEC);
+        SET_CDR(res,GET_INT(car(ls1)));
+        SET_AUX(res,cbasic_vector);
+    }
+    else{
+        SET_TAG(res,FARR);
+        SET_CDR(res,ls1);
+        SET_AUX(res,cgeneral_array_star); //class
+    }
+
+    return(res);
+}
+
 
 int makestr(char *string){
     int addr;

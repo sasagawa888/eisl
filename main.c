@@ -547,6 +547,10 @@ void gettoken(void){
                             stok.type = ARRAY;
                             break;
                         }
+                        if(c == 'f' || c =='F'){
+                            stok.type = FARRAY;
+                            break;
+                        }
                         else{
                             stok.type = OTHER;
                             return;
@@ -986,6 +990,8 @@ int sread(void){
         case VECTOR:    return(vector(readlist()));
         case ARRAY:     n = atoi(stok.buf);
                         return(array(n,sread()));
+        case FARRAY:     n = atoi(stok.buf);
+                        return(farray(n,sread()));
         case STRING:    return(makestr(stok.buf));
         case CHARACTER: return(makechar(stok.buf));
         case SYMBOL:    return(makesym(stok.buf));
@@ -1039,10 +1045,11 @@ void print(int addr){
     switch(GET_TAG(addr)){
         case INTN:  printint(addr); break;
         case FLTN:  printflt(GET_FLT(addr)); break;
-        case LONGN:  printlong(addr); break;
+        case LONGN: printlong(addr); break;
         case BIGX:  print_bigx(addr); break;
         case VEC:   printvec(addr); break;
         case ARR:   printarray(addr); break;
+        case FARR:  printfarray(addr); break;
         case STR:   printstr(addr); break;
         case CHR:   printchar(addr); break;
         case SYM:   printsym(addr); break;
@@ -1199,6 +1206,37 @@ void printarray(int x){
         fprintf(GET_PORT(output_stream),"#%da",dim);
     else{
         sprintf(stream_str,"#%da",dim);
+        strcat(GET_NAME(output_stream),stream_str);
+    }
+    if(dim == 0)
+        print(car(ls));
+    else
+        print(structured(ls,st));
+}
+
+void printfarray(int x){
+    int i,size,st,ls,dim;
+
+    st = ls = GET_CDR(x);
+    size = 1;
+    dim = length(ls);
+    while(!nullp(ls)){
+        size = GET_INT(car(ls)) * size;
+        ls = cdr(ls);
+    }
+    ls = NIL;
+    if(size < 100){
+        for(i=0;i<size;i++)
+            ls = cons(makeflt(GET_VEC_ELT(x,i)),ls);
+    }
+    else{
+        ls = cons(makesym("float-element"),ls);
+    }
+    ls = reverse(ls);
+    if(GET_OPT(output_stream) != EISL_INSTR)
+        fprintf(GET_PORT(output_stream),"#%df",dim);
+    else{
+        sprintf(stream_str,"#%df",dim);
         strcat(GET_NAME(output_stream),stream_str);
     }
     if(dim == 0)

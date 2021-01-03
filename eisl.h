@@ -39,7 +39,7 @@ Copying GC mode
 #define CTRLSTK     200
 #define BACKSIZE    30
 
-typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,CHR,STR,SYM,LIS,DUMMY,
+typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,
               SUBR,FSUBR,FUNC,MACRO,CLASS,INSTANCE,GENERIC,METHOD,
               STREAM} tag;
 typedef enum {FRE,USE} flag;
@@ -75,7 +75,7 @@ typedef struct{
 
 
 typedef enum {LPAREN,RPAREN,QUOTE,DOT,BACKQUOTE,COMMA,ATMARK,STRING,SYMBOL,
-              FUNCTION,INTEGER,FLOAT_N,BIGNUM,VECTOR,ARRAY,CHARACTER,
+              FUNCTION,INTEGER,FLOAT_N,BIGNUM,VECTOR,ARRAY,CHARACTER,FARRAY,
               BINARY,OCTAL,DECNUM,HEXNUM,EXPTNUM,FILEEND,OTHER} toktype;
 typedef enum {GO,BACK} backtrack;
 
@@ -147,6 +147,7 @@ struct position{
 #define IS_T(addr)          (addr == 2)
 #define IS_VECTOR(addr)     heap[addr].tag == VEC
 #define IS_ARRAY(addr)      heap[addr].tag == ARR
+#define IS_FARRAY(addr)     heap[addr].tag == FARR
 #define IS_SUBR(addr)       heap[addr].tag == SUBR
 #define IS_FSUBR(addr)      heap[addr].tag == FSUBR
 #define IS_FUNC(addr)       heap[addr].tag == FUNC
@@ -789,6 +790,7 @@ int f_with_open_output_file(int x);
 int f_with_standard_input(int x);
 int f_with_standard_output(int x);
 int f_write_byte(int arglist);
+int farray(int n, int ls);
 int finddyn(int sym);
 int findenv(int sym);
 int flatten(int n, int ls);
@@ -865,6 +867,7 @@ int long_long_remainder(int x, int y);
 int longnump(int x);
 int macrop(int addr);
 int makearray(int lis, int obj);
+int makefarray(int ls, float obj);
 int makebigx(char *bignum);
 int makechar(char *pname);
 int makeclass(char *pname, int superclass);
@@ -1000,6 +1003,7 @@ void markcell(int addr);
 void print(int addr);
 void print_bigx(int x);
 void printarray(int x);
+void printfarray(int x);
 void printchar(int addr);
 void printclass(int x);
 void printflt(double x);

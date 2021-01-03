@@ -238,6 +238,8 @@ int vectorp(int x){
 int arrayp(int x){
     if(IS_ARRAY(x))
         return(1);
+    else if(IS_FARRAY(x))
+        return(1);
     else
         return(0);
 }
@@ -987,6 +989,28 @@ int array(int n, int ls){
     i = 0;
     while(!nullp(ls1)){
         SET_VEC_ELT(res,i,car(ls1));
+        i++;
+        ls1 = cdr(ls1);        
+    } 
+    SET_PROP(res,ls); //for FAST compiler regist original list
+    return(res);  
+}
+
+//generate float type array from list. ex #na(ls) ls=((1.1 2.0)(3.6 4.5))
+int farray(int n, int ls){
+    int dim,res,ls1,i;
+    
+    dim = array_dim(n,ls);
+    if(n == 0)
+        error(NOT_ARR,"float array",n);
+    else if(n == 1)
+        error(NOT_ARR,"float array",n);
+    
+    res = makefarray(dim,0.0);
+    ls1 = flatten(n,ls);
+    i = 0;
+    while(!nullp(ls1)){
+        SET_VEC_ELT(res,i,GET_FLT(car(ls1)));
         i++;
         ls1 = cdr(ls1);        
     } 

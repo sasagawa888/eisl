@@ -1,18 +1,7 @@
 
-;;; written by M.hiroi
-;リスト : delay と force
+;; :rest
 
-(defmacro delay (expr)
-    `(make-promise (lambda ()(,expr))) )
-
-(defun make-promise (f)
-    (let ((flag nil)
-          (result nil) )
-       (lambda ()
-          (if (not flag)
-              (let ((x (funcall f)))
-                 (cond ((not flag) (setq flag t) (setq result x)))))
-          result)))
-
-(defun force (promise)
-    (funcall promise) )
+(defun foo (x :rest y)
+    (print x)
+    (print y))
+    

@@ -12,8 +12,8 @@
 (defun foo (x y)
     (+ x y) )
 
-(defun boo (x y)
+(defun bar (x y)
     (* x y) )
 
-(defun bar (x y)
+(defun boo (x y)
     (- x y) )

@@ -1,5 +1,5 @@
 CC := nvcc
-LIBS = -lm -ldl 
+LIBS = -lm -ldl -lcublas
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
 CFLAGS ?= $(INCS) -O3 
@@ -24,7 +24,8 @@ EISL_OBJS = main.o \
 	error.o \
 	bignum.o \
 	compute.o \
-	edit.o
+	edit.o \
+	gpu.o
 
 all: eisl edlis
 

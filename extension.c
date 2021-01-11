@@ -52,6 +52,10 @@ void initexsubr(void){
     defsubr("DELAY",f_delay);
     defsubr("DELAY-MICROSECONDS",f_delay_microseconds);
     #endif
+
+    #ifdef __NVCC__
+    defsubr("DP-MULT",f_dp_mult);
+    #endif
 }
 
 //Fast Project

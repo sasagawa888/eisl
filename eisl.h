@@ -1052,6 +1052,10 @@ int f_digital_read(int arglist);
 int f_delay(int arglist);
 int f_delay_microseconds(int arglist);
 #endif
+
+#ifdef __NVCC__
+int f_dp_mult(int arglist);
+#endif
 void debugger(void);
 
 //Fast project

@@ -3599,12 +3599,13 @@ int f_create_vector(int arglist){
 }
 
 int f_create_array(int arglist){
-    int arg1,arg2,n;
+    int arg1,arg2,arg3,n;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
 
-    if((n=length(arglist)) != 1 && length(arglist) != 2)
+    if((n=length(arglist)) != 1 && length(arglist) != 2 && length(arglist) != 3)
         error(WRONG_ARGS,"create-array", arglist);
     if(!listp(arg1))
         error(NOT_LIST, "create-array", arg1);
@@ -3613,7 +3614,10 @@ int f_create_array(int arglist){
     if(length(arglist) == 1)
         arg2 = UNDEF;
 
-    return(makearray(arg1,arg2));
+    if(nullp(arg3))
+        return(makearray(arg1,arg2));
+    else
+        return(makefarray(arg1,GET_FLT(arg2)));
 }
 
 int check_dimension(int ls){

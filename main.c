@@ -1246,8 +1246,10 @@ void printfarray(int x){
     }
     if(dim == 0)
         print(car(ls));
-    else
+    else if(size < 100)
         print(structured(ls,st));
+    else 
+        print(ls);
 }
 
 void printstr(int addr){

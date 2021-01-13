@@ -91,13 +91,12 @@ void markcell(int addr){
                         x = GET_VEC_ELT(addr,i);
                         markcell(x);
                     }
-                    markcell(cdr(addr));
+                    markcell(cdr(addr)); // dimension
                     return;
-        /*
-        case FARR:  printf("mark %d", addr);
-                    print(addr);
+        
+        case FARR:  markcell(cdr(addr)); // dimension
                     return;
-        */
+        
         case SYM:   markcell(car(addr));
                     markcell(cdr(addr));
                     markcell(GET_AUX(addr));
@@ -190,14 +189,12 @@ void clrcell(int addr){
     if(IS_VECTOR(addr) || IS_ARRAY(addr))
         free(heap[addr].val.car.dyna_vec);
     
-    /*
+    
     if(IS_FARRAY(addr)){
-        printf("clr %d", addr);
-        print(addr);
         free(heap[addr].val.car.dyna_vec);
         ac = ac - GET_OPT(addr);
     }
-    */
+    
 
     SET_TAG(addr,EMP);
     free(heap[addr].name);

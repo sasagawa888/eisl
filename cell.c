@@ -787,7 +787,9 @@ int makefarray(int ls, float obj){
     SET_CDR(res,ls1);
     SET_AUX(res,cgeneral_array_star); //class
     SET_OPT(res,size); //for GC 
-    ac = ac + size;    //remenber alocate size
+    ac = ac + size;    //remenber allocate size
+    farray_address[farray_pt] = res; //remember address of farray data 
+    farray_pt++;
     return(res);
 }
 

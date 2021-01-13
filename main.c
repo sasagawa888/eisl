@@ -126,7 +126,7 @@ int script_flag = 0;   //for -s option
 int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
 int area_sw = 1;     //1= lower area 2=higher area
 
-//longjmp control
+//longjmp control and etc
 jmp_buf buf;
 jmp_buf block_buf[50];
 int block_env[50][2];
@@ -146,6 +146,8 @@ int error_handler; //for store first argument of with-handler
 int trace_list = NIL; //function list of trace
 int trace_sym;  //function name in trace.
 int backtrace[BACKSIZE];
+int farray_address[FARRAYSIZE];  //address of farray data
+int farray_pt = 0;       //counter of array
 
 //-----debugger-----
 int examin_sym;

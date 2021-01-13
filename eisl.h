@@ -38,6 +38,7 @@ Copying GC mode
 #define PI          3.141592653589793
 #define CTRLSTK     200
 #define BACKSIZE    30
+#define FARRAYSIZE  1000
 
 typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,
               SUBR,FSUBR,FUNC,MACRO,CLASS,INSTANCE,GENERIC,METHOD,
@@ -290,7 +291,7 @@ extern int script_flag;
 extern int gc_sw;
 extern int area_sw;
 
-//longjmp control
+//longjmp control and etc
 extern jmp_buf buf;
 extern jmp_buf block_buf[50];
 extern int block_env[50][2];
@@ -310,6 +311,8 @@ extern int error_handler;
 extern int trace_list;
 extern int trace_sym;
 extern int backtrace[BACKSIZE];
+extern int farray_address[FARRAYSIZE];  //address of farray data
+extern int farray_pt;       //counter of array
 
 
 extern int ed_lparen_col;

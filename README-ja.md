@@ -147,7 +147,7 @@ Raspberry Pi 3では，主記憶領域不足のせいで`compiler.o`ファイル
 
 ## CUDAでEISLをコンパイルする
 GCCの代わりにnvcc（CUDA)でEISLをコンパイルすることもできます。
-端末から　`make -f cudamake`  さらに　`sudo make -f cudamake install` とタイプしてください。
+端末から　`make -f cudamake`  さらに　`sudo make install` とタイプしてください。
 
 現在、CUDAを利用した関数を整備しています。
 

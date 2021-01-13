@@ -9,19 +9,13 @@ Easter project GPGPU of Easy-ISLisp
 #include <stdlib.h>
 #include "eisl.h"
 
+
 #define IDX2C(i,j,ld) (((j)*(ld))+(i))
 #define IDX3C(c,i,j,in_h,in_w) ((c)*((in_h)*(in_w)) + (i)*(in_w) +(j))
 #define IDX4C(n,c,i,j,in_c,in_h,in_w) ((n)*((in_c)*(in_h)*(in_w)) + (c)*((in_h)*(in_w)) + (i)*(in_w) +(j))
 #define IDX5C(t,n,c,i,j,in_n,in_c,in_h,in_w) ((t)*((in_n)*(in_c)*(in_h)*(in_w)) + (n)*((in_c)*(in_h)*(in_w)) + (c)*((in_h)*(in_w)) + (i)*(in_w) +(j))
 #define SIGMOID(x)  (1 / (1+exp(-1*x)))
-#define CHECK(call)                                   \
-{                                                     \
-    const cudaError_t error = call;                   \
-    if (error != cudaSuccess)                         \
-    {                                                 \
-        return enif_make_int(env,10000+(int)error);   \
-    }                                                 \
-}
+
 #define CUBLAS(call)                                  \
 {                                                     \
     const cublasStatus error = call;                  \
@@ -96,5 +90,25 @@ int f_dp_mult(int arglist){
   
     return(res);
 
+}
+
+extern void cuda_add(float *a, float *b, float *c, int n);
+
+int f_dp_add(int arglist){
+    int arg1,arg2,res,dim1,dim2,n;
+    float *a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    res = makefarray(dim1,0.0);
+    n = GET_INT(car(dim1)) + GET_INT(cadr(dim1));
+    a = (float *) GET_VEC(arg1);
+    b = (float *) GET_VEC(arg2);
+    c = (float *) GET_VEC(res);
+
+    //cuda_add(a, b, c, n);
+    return(res);
 }
 

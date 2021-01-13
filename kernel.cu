@@ -1,0 +1,48 @@
+#include <cuda.h>
+
+#define CHECK(call)                                   \
+{                                                     \
+    const cudaError_t error = call;                   \
+    if (error != cudaSuccess)                         \
+    {                                                 \
+        return(10000+(int)error);   \
+    }                                                 \
+}
+
+
+
+__global__ void add1_kernel(float *a, float *b, float *c, int n)
+{
+	int tid = threadIdx.x + blockIdx.x * blockDim.x;
+	while (tid < n)
+	{
+		c[tid] = a[tid] + b[tid];
+		tid += blockDim.x * gridDim.x;
+	}
+}
+
+void cuda_add(float *a, float *b, float *c, int n);
+void cuda_add(float *a, float *b, float *c, int n){
+    float *dev_a, *dev_b, *dev_c;
+
+    // Allocate for GPU
+	cudaMalloc((void**)&dev_a, n * sizeof(float));
+	cudaMalloc((void**)&dev_b, n * sizeof(float));
+	cudaMalloc((void**)&dev_c, n * sizeof(float));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+	cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice);
+
+	add1_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, n);
+
+	// copy to host c from GPU dev_c
+	cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost);
+    
+    // free 
+    cudaFree(dev_a);
+	cudaFree(dev_b);
+	cudaFree(dev_c);
+
+}

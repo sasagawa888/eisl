@@ -55,6 +55,7 @@ void initexsubr(void){
 
     #ifdef __NVCC__
     defsubr("DP-MULT",f_dp_mult);
+    defsubr("DP-ADD",f_dp_add);
     #endif
 }
 

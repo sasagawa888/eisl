@@ -59,6 +59,7 @@ uninstall:
 	rm $(DESTDIR)$(bindir)/$(EDLIS)
 
 
+
 .PHONY: clean
 clean: -lm
 	rm -f *.o

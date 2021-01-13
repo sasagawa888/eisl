@@ -782,22 +782,12 @@ int makefarray(int ls, float obj){
     SET_VEC(res,vec);
     for(i=0; i<size; i++)
         SET_VEC_ELT(res,i,obj);
-    if(nullp(ls1)){
-        SET_TAG(res,FARR);
-        SET_CDR(res,ls1);
-        SET_AUX(res,cgeneral_array_star); //class
-    }
-    else if(length(ls1) == 1){
-        SET_TAG(res,VEC);
-        SET_CDR(res,GET_INT(car(ls1)));
-        SET_AUX(res,cbasic_vector);
-    }
-    else{
-        SET_TAG(res,FARR);
-        SET_CDR(res,ls1);
-        SET_AUX(res,cgeneral_array_star); //class
-    }
-
+    
+    SET_TAG(res,FARR);
+    SET_CDR(res,ls1);
+    SET_AUX(res,cgeneral_array_star); //class
+    SET_OPT(res,size); //for GC 
+    ac = ac + size;    //remenber alocate size
     return(res);
 }
 

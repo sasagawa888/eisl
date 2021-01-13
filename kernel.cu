@@ -5,7 +5,7 @@
     const cudaError_t error = call;                   \
     if (error != cudaSuccess)                         \
     {                                                 \
-        return(10000+(int)error);   \
+        printf("cuda error %d",(int)error);           \
     }                                                 \
 }
 

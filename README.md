@@ -137,7 +137,7 @@ Elapsed Time(second)=3.728262
 # Compile EISL by CUDA
 You can also compile EISL with nvcc(CUDA) instead of gcc.
 
-On linux terminal type "make -f cudamake" and "sudo make install"
+On linux terminal type "make -f cudamake" and "sudo make -f cudamake install"
 
 Now, I am adding function using CUDA
 

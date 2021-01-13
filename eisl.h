@@ -185,6 +185,7 @@ extern int fc; //free counter
 extern int ap; //arglist pointer
 extern int lp; //shelter pointer
 extern int wp; //working pointer
+extern int ac; //allocate counter
 
 //------class-----
 extern int cobject;

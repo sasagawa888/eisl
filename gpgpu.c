@@ -21,7 +21,7 @@ Easter project GPGPU of Easy-ISLisp
     const cublasStatus error = call;                  \
     if (error != CUBLAS_STATUS_SUCCESS)               \
     {                                                 \
-        return(11000+(int)error);   \
+        printf("cublas error %d",(int)error);         \
     }                                                 \
 }
 

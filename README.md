@@ -139,6 +139,16 @@ You can also compile EISL with nvcc(CUDA) instead of gcc.
 
 On linux terminal type "make -f cudamake" and "sudo make install"
 
+Now, I am adding function using CUDA
+
+see tests/gpu.lsp
+```
+(defglobal a #2f((1.0 2.0)(3.0 4.0)))
+(defglobal b #2f((1.0 2.0)(3.0 4.0)))
+(gpu-mult a b)
+(gpu-add a b)
+```
+
 # Invoke editor
 edit function invoke Edlis editor.
 see https://github.com/sasagawa888/Edlis

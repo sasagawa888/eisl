@@ -1,4 +1,5 @@
 CC := gcc
+NVCC := nvcc
 LIBS = -lm -ldl -lcublas
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
@@ -38,7 +39,7 @@ $(EISL): $(EISL_OBJS)
 else
 eisl2: $(EISL_OBJS) $(EISL)
 $(EISL): $(EISL_OBJS)
-	nvcc $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
+	$(NVCC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
 endif
 
 

@@ -25,7 +25,7 @@ EISL_OBJS = main.o \
 	bignum.o \
 	compute.o \
 	edit.o \
-	gpu.o \
+	gpgpu.o \
 	kernel.o
 
 all: eisl edlis
@@ -45,8 +45,11 @@ endif
 kernel.o : 
 	nvcc -c kernel.cu -o kernel.o
 
-gpu.o :
-	nvcc -c gpu.c -o gpu.o
+gpgpu.o :
+	nvcc -c gpgpu.c -o gpgpu.o
+
+extension.o :
+	nvcc -c extension.c -o extension.o
 
 %.o: %.c eisl.h
 	$(CC) $(CFLAGS) -c $< -o $@

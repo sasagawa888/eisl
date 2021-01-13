@@ -26,7 +26,7 @@ Easter project GPGPU of Easy-ISLisp
 }
 
 
-int f_dp_mult(int arglist){
+int f_gpu_mult(int arglist){
     int arg1,arg2,dim1,dim2,dim3,r1, c1, r2, c2, n, i, j, res;
     float *a,*b,*c;
     float* devPtrA;
@@ -94,7 +94,7 @@ int f_dp_mult(int arglist){
 
 extern void cuda_add(float *a, float *b, float *c, int n);
 
-int f_dp_add(int arglist){
+int f_gpu_add(int arglist){
     int arg1,arg2,res,dim1,dim2,n;
     float *a,*b,*c;
 

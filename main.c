@@ -226,7 +226,8 @@ char extended[50][30] = {
 {"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
 {"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
 {"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},{"formatter"},
-{"c-include"},{"c-define"},{"c-lang"},{"c-option"}
+{"c-include"},{"c-define"},{"c-lang"},{"c-option"},
+{"gpu-mult"},{"gpu-add"},
 };
 
 

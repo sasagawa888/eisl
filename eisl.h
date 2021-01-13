@@ -1122,8 +1122,7 @@ void backspace_buffer(int col);
 int read_line(int flag);
 
 #ifdef __NVCC__
-int f_dp_mult(int araglist);
-int f_dp_add(int arglist);
-
+int f_gpu_mult(int araglist);
+int f_gpu_add(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 #endif

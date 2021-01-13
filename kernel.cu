@@ -9,7 +9,7 @@
     }                                                 \
 }
 
-
+extern "C" void cuda_add(float *a, float *b, float *c, int n);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {

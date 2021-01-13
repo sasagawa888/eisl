@@ -1,4 +1,4 @@
-CC := nvcc
+CC := gcc
 LIBS = -lm -ldl -lcublas
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
@@ -38,12 +38,15 @@ $(EISL): $(EISL_OBJS)
 else
 eisl2: $(EISL_OBJS) $(EISL)
 $(EISL): $(EISL_OBJS)
-	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
+	nvcc $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
 endif
 
 
 kernel.o : 
 	nvcc -c kernel.cu -o kernel.o
+
+gpu.o :
+	nvcc -c gpu.c -o gpu.o
 
 %.o: %.c eisl.h
 	$(CC) $(CFLAGS) -c $< -o $@

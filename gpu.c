@@ -108,7 +108,7 @@ int f_dp_add(int arglist){
     b = (float *) GET_VEC(arg2);
     c = (float *) GET_VEC(res);
 
-    //cuda_add(a, b, c, n);
+    cuda_add(a, b, c, n);
     return(res);
 }
 

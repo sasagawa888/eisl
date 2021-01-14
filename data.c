@@ -1010,7 +1010,7 @@ int farray(int n, int ls){
     ls1 = flatten(n,ls);
     i = 0;
     while(!nullp(ls1)){
-        SET_VEC_ELT(res,i,GET_FLT(car(ls1)));
+        SET_FVEC_ELT(res,i,GET_FLT(car(ls1)));
         i++;
         ls1 = cdr(ls1);        
     } 

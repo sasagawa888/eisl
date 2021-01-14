@@ -59,6 +59,7 @@ typedef struct{
                 int     ( *subr) ();
                 FILE    *port;
                 int     *dyna_vec;
+                float   *dyna_fvec;
             } car;
             union{
                 int intnum;
@@ -176,6 +177,10 @@ struct position{
 #define SET_VEC_ELT(addr,i,x)       heap[addr].val.car.dyna_vec[i] = x
 #define SET_VEC(addr,x)             heap[addr].val.car.dyna_vec = x
 #define GET_VEC(addr)               heap[addr].val.car.dyna_vec
+#define GET_FVEC_ELT(addr,i)         heap[addr].val.car.dyna_fvec[i]
+#define SET_FVEC_ELT(addr,i,x)       heap[addr].val.car.dyna_fvec[i] = x
+#define SET_FVEC(addr,x)             heap[addr].val.car.dyna_fvec = x
+#define GET_FVEC(addr)               heap[addr].val.car.dyna_fvec
 
 //------pointer----
 extern int ep; //environment pointer

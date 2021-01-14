@@ -1232,7 +1232,7 @@ void printfarray(int x){
     ls = NIL;
     if(size < 100){
         for(i=0;i<size;i++)
-            ls = cons(makeflt(GET_VEC_ELT(x,i)),ls);
+            ls = cons(makeflt(GET_FVEC_ELT(x,i)),ls);
     }
     else{
         ls = cons(makesym("float-element"),ls);

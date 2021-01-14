@@ -757,7 +757,8 @@ int makearray(int ls, int obj){
 
 // for Deep-Learning float type array
 int makefarray(int ls, float obj){
-    int size,res,i,n,ls1, *vec;
+    int size,res,i,n,ls1;
+    float *vec;
 
     ls1 = ls;
     if(!nullp(ls)){
@@ -775,13 +776,13 @@ int makefarray(int ls, float obj){
         size = 1;
 
     res = freshcell();
-    vec = (int *)malloc(sizeof(float)*size);
+    vec = (float *)malloc(sizeof(float)*size);
     if(vec == NULL)
         error(MALLOC_OVERF, "float array",  NIL);
 
-    SET_VEC(res,vec);
+    SET_FVEC(res,vec);
     for(i=0; i<size; i++)
-        SET_VEC_ELT(res,i,obj);
+        SET_FVEC_ELT(res,i,obj);
     
     SET_TAG(res,FARR);
     SET_CDR(res,ls1);

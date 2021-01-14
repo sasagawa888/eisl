@@ -1,4 +1,5 @@
 #include <cuda.h>
+#include <stdio.h>
 
 #define CHECK(call)                                   \
 {                                                     \
@@ -25,6 +26,7 @@ void cuda_add(float *a, float *b, float *c, int n);
 void cuda_add(float *a, float *b, float *c, int n){
     float *dev_a, *dev_b, *dev_c;
 
+	
     // Allocate for GPU
 	cudaMalloc((void**)&dev_a, n * sizeof(float));
 	cudaMalloc((void**)&dev_b, n * sizeof(float));

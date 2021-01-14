@@ -44,20 +44,11 @@ int f_gpu_mult(int arglist){
     r2 = GET_INT(car(dim2));
     c2 = GET_INT(cadr(dim2));
     n = r1*c2;
-    // Memory Allocation
-    a = (float *)malloc (r1 * c1 * sizeof (*a));
-    b = (float *)malloc (r2 * c2 * sizeof (*b));
-    c = (float *)malloc (r1 * c2 * sizeof (*c));
+
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
     
-    // transform to CuBLAS form
-    for(j=0;j<c1;j++)
-        for(i=0;i<r1;i++)
-            a[IDX2C(i,j,r1)] = vector_ref(arg1,i*c1+j);
-    
-    for (j=0;j<c2;j++)
-        for (i=0;i<r2;i++)
-            b[IDX2C(i,j,r2)] = vector_ref(arg2,i*c2+j);
-        
     // Initialize CUBLAS
     cublasInit();
 
@@ -82,12 +73,6 @@ int f_gpu_mult(int arglist){
     cublasFree(devPtrC);
     cublasShutdown();
     
-    // Set matrix After sgemm
-    for(j=0;j<c2;j++)
-        for (i=0;i<r1;i++){
-            vector_set(res,i*c2+j,c[IDX2C(i,j,r1)]);
-        }
-  
     return(res);
 
 }
@@ -104,9 +89,9 @@ int f_gpu_add(int arglist){
     dim2 = GET_CDR(arg2);
     res = makefarray(dim1,0.0);
     n = GET_INT(car(dim1)) + GET_INT(cadr(dim1));
-    a = (float *) GET_VEC(arg1);
-    b = (float *) GET_VEC(arg2);
-    c = (float *) GET_VEC(res);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
 
     cuda_add(a, b, c, n);
     return(res);

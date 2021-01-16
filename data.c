@@ -1029,7 +1029,6 @@ int farray(int n, int ls){
                 vec2[IDX2C(i,j,r)] = vec1[IDX2R(i,j,c)];
     }
     else{
-    
         i = 0;
         while(!nullp(ls1)){
             SET_FVEC_ELT(res,i,GET_FLT(car(ls1)));

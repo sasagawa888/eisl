@@ -4,7 +4,7 @@
 (defglobal b #2f((4.0 7.0)(5.0 8.0)(6.0 9.0)))
 
 (print (gpu-mult a b))
-(print (gpu-add a a))
+(print (gpu-add b b))
 
 (defglobal c (create-array '(30 30) 1.0 t))
 

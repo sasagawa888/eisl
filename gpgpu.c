@@ -88,7 +88,7 @@ int f_gpu_add(int arglist){
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
     res = makefarray(dim1,0.0);
-    n = GET_INT(car(dim1)) + GET_INT(cadr(dim1));
+    n = GET_INT(car(dim1)) * GET_INT(cadr(dim1));
     a = GET_FVEC(arg1);
     b = GET_FVEC(arg2);
     c = GET_FVEC(res);

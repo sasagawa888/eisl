@@ -97,3 +97,23 @@ int f_gpu_add(int arglist){
     return(res);
 }
 
+extern void cuda_sub(float *a, float *b, float *c, int n);
+
+int f_gpu_sub(int arglist){
+    int arg1,arg2,res,dim1,dim2,n;
+    float *a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    res = makefarray(dim1,0.0);
+    n = GET_INT(car(dim1)) * GET_INT(cadr(dim1));
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
+
+    cuda_sub(a, b, c, n);
+    return(res);
+}
+

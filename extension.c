@@ -56,6 +56,7 @@ void initexsubr(void){
     #ifdef __NVCC__
     defsubr("GPU-MULT",f_gpu_mult);
     defsubr("GPU-ADD",f_gpu_add);
+    defsubr("GPU-SUB",f_gpu_sub);
     #endif
 }
 

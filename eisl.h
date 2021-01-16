@@ -1133,5 +1133,7 @@ int read_line(int flag);
 #ifdef __NVCC__
 int f_gpu_mult(int araglist);
 int f_gpu_add(int arglist);
+int f_gpu_sub(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
+void cuda_sub(float *a, float *b, float *c, int n);
 #endif

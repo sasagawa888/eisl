@@ -1219,8 +1219,11 @@ void printarray(int x){
         print(structured(ls,st));
 }
 
+#define IDX2C(i,j,ld) (((j)*(ld))+(i))
+#define IDX2R(i,j,ld) (((i)*(ld))+(j))
 void printfarray(int x){
-    int i,size,st,ls,dim;
+    int i,j,size,st,ls,dim,r,c;
+    float *vec1,*vec2;
 
     st = ls = GET_CDR(x);
     size = 1;
@@ -1230,12 +1233,30 @@ void printfarray(int x){
         ls = cdr(ls);
     }
     ls = NIL;
-    if(size < 100){
-        for(i=0;i<size;i++)
-            ls = cons(makeflt(GET_FVEC_ELT(x,i)),ls);
+    if(length(st) == 2){
+        if(size < 100){
+            vec1 = GET_FVEC(x);
+            vec2 = (float *)malloc(sizeof(float)*size);
+            r = GET_INT(car(st));
+            c = GET_INT(cadr(st));
+            for(i=0;i<r;i++)
+                for(j=0;j<c;j++)
+                    vec2[IDX2R(i,j,c)] = vec1[IDX2C(i,j,r)];
+            for(i=0;i<size;i++)
+                ls = cons(makeflt(vec2[i]),ls);
+        }
+        else{
+            ls = cons(makesym("float-element"),ls);
+        }
     }
     else{
-        ls = cons(makesym("float-element"),ls);
+         if(size < 100){
+            for(i=0;i<size;i++)
+                ls = cons(makeflt(GET_FVEC_ELT(x,i)),ls);
+        }
+        else{
+            ls = cons(makesym("float-element"),ls);
+        }
     }
     ls = reverse(ls);
     if(GET_OPT(output_stream) != EISL_INSTR)

@@ -152,11 +152,19 @@ GCCの代わりにnvcc（CUDA)でEISLをコンパイルすることもできま�
 現在、CUDAを利用した関数を整備しています。
 
 参照 tests/gpu.lsp
+フロート専用の配列型を拡張しました。
 ```
 (defglobal a #2f((1.0 2.0)(3.0 4.0)))
 (defglobal b #2f((1.0 2.0)(3.0 4.0)))
 (gpu-mult a b)
 (gpu-add a b)
+```
+
+create-array 組み込み関数を拡張しました。
+それはフロート専用の配列を生成することができます。
+例
+```
+(create-array '(3000 3000) 'rand 'float)
 ```
 
 ## エディタを起動する

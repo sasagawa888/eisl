@@ -142,11 +142,18 @@ On linux terminal type "make -f cudamake" and "sudo make install"
 Now, I am adding function using CUDA
 
 see tests/gpu.lsp
+extended array for float.
 ```
 (defglobal a #2f((1.0 2.0)(3.0 4.0)))
 (defglobal b #2f((1.0 2.0)(3.0 4.0)))
 (gpu-mult a b)
 (gpu-add a b)
+```
+
+extended create-array builtin-function.
+it can generate array for float. e.g.
+```
+(create-array '(3000 3000) 'rand 'float)
 ```
 
 # Invoke editor

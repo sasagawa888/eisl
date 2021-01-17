@@ -182,6 +182,9 @@ struct position{
 #define SET_FVEC(addr,x)             heap[addr].val.car.dyna_fvec = x
 #define GET_FVEC(addr)               heap[addr].val.car.dyna_fvec
 
+#define IDX2C(i,j,ld) (((j)*(ld))+(i))
+#define IDX2R(i,j,ld) (((i)*(ld))+(j))
+
 //------pointer----
 extern int ep; //environment pointer
 extern int dp; //dynamic pointer

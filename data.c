@@ -829,11 +829,17 @@ int remove_list(int x, int y){
 }
 
 void vector_set(int v, int n, int obj){
-    SET_VEC_ELT(v,n,obj);
+    if(IS_FARRAY(v))
+        SET_FVEC_ELT(v,n,obj);
+    else
+        SET_VEC_ELT(v,n,obj);
 }
 
 int vector_ref(int v, int n){
-    return(GET_VEC_ELT(v,n));
+    if(IS_FARRAY(v))
+        return(GET_FVEC_ELT(v,n));
+    else
+        return(GET_VEC_ELT(v,n));
 }
 
 int vector_length(int v){   
@@ -870,20 +876,26 @@ int array_ref(int obj, int ls){
     else
         size = array_length(obj); // e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
     
-    index = 0;
-    size = cdr(size);
-    while(!nullp(ls)){
-        if(nullp(cdr(ls)))
-            index = index + GET_INT(car(ls));
-        else if(GET_INT(car(ls)) == 0)
-            index = index;
-        else 
-            index = index + GET_INT(car(size)) * GET_INT(car(ls));
-         
-        size = cdr(size);
-        ls = cdr(ls);
+    if(IS_FARRAY(obj) && length(size) == 2){
+        index = IDX2C(GET_INT(car(ls)),GET_INT(cadr(ls)),GET_INT(car(size)));
+        return(makeflt(vector_ref(obj,index)));
     }
-    return(vector_ref(obj,index));
+    else{
+        index = 0;
+        size = cdr(size);
+        while(!nullp(ls)){
+            if(nullp(cdr(ls)))
+                index = index + GET_INT(car(ls));
+            else if(GET_INT(car(ls)) == 0)
+                index = index;
+            else 
+                index = index + GET_INT(car(size)) * GET_INT(car(ls));
+         
+            size = cdr(size);
+            ls = cdr(ls);
+        }
+        return(vector_ref(obj,index));
+    }
 }
 
 int array_set(int obj, int ls, int val){ 
@@ -894,20 +906,26 @@ int array_set(int obj, int ls, int val){
     else
         size = array_length(obj); // e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
 
-    index = 0;
-    size = cdr(size);
-    while(!nullp(ls)){
-        if(nullp(cdr(ls)))
-            index = index + GET_INT(car(ls));
-        else if(GET_INT(car(ls)) == 0)
-            index = index;
-        else 
-            index = index + GET_INT(car(size)) * GET_INT(car(ls));
-         
-        size = cdr(size);
-        ls = cdr(ls);
+    if(IS_FARRAY(obj) && length(size) == 2){
+        index = IDX2C(GET_INT(car(ls)),GET_INT(cadr(ls)),GET_INT(car(size)));
+        vector_set(obj,index,GET_FLT(val));
     }
-    vector_set(obj,index,val);
+    else{
+        index = 0;
+        size = cdr(size);
+        while(!nullp(ls)){
+            if(nullp(cdr(ls)))
+                index = index + GET_INT(car(ls));
+            else if(GET_INT(car(ls)) == 0)
+                index = index;
+            else 
+                index = index + GET_INT(car(size)) * GET_INT(car(ls));
+         
+            size = cdr(size);
+            ls = cdr(ls);
+        }
+        vector_set(obj,index,val);
+    }
     return(obj);
 }
 
@@ -997,8 +1015,6 @@ int array(int n, int ls){
 }
 
 //generate float type array from list. ex #na(ls) ls=((1.1 2.0)(3.6 4.5))
-#define IDX2C(i,j,ld) (((j)*(ld))+(i))
-#define IDX2R(i,j,ld) (((i)*(ld))+(j))
 int farray(int n, int ls){
     int dim,res,ls1,i,j,r,c,size;
     float *vec1,*vec2;

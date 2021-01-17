@@ -132,6 +132,13 @@ void error(int errnum, char *fun, int arg){
                                           makesym("expected-class"),cbasic_array);
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
                         break;
+        case NOT_FARR:   initargs = list10(makesym("format-string"),makestr("Not an float-array at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cbasic_array);
+                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        break;
         case NOT_VECARR:initargs = list10(makesym("format-string"),makestr("Not a vector or an array at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun),

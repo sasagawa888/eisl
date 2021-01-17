@@ -37,12 +37,20 @@ int f_gpu_mult(int arglist){
     arg2 = cadr(arglist);
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-mult",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-mult",arg2);
+
     dim3 = list2(car(dim1),cadr(dim2));
     res = makefarray(dim3,0.0);
     r1 = GET_INT(car(dim1));
     c1 = GET_INT(cadr(dim1));
     r2 = GET_INT(car(dim2));
     c2 = GET_INT(cadr(dim2));
+    if(c1 != r2)
+        error(WRONG_ARGS,"gpu-mult", arglist);
+
     n = r1*c2;
 
     a = GET_FVEC(arg1);
@@ -87,6 +95,12 @@ int f_gpu_add(int arglist){
     arg2 = cadr(arglist);
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-add",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-add",arg2);
+    if(!equalp(dim1,dim2))
+        error(WRONG_ARGS,"gpu-add", arglist);
     res = makefarray(dim1,0.0);
     n = GET_INT(car(dim1)) * GET_INT(cadr(dim1));
     a = GET_FVEC(arg1);

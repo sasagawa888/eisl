@@ -28,19 +28,19 @@ void cuda_add(float *a, float *b, float *c, int n){
 
 	
     // Allocate for GPU
-	cudaMalloc((void**)&dev_a, n * sizeof(float));
-	cudaMalloc((void**)&dev_b, n * sizeof(float));
-	cudaMalloc((void**)&dev_c, n * sizeof(float));
+	CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+	CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+	CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
 
 
     // copy from host a,b to GPU dev_a, dev_b
-	cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice);
+	CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+	CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
 
 	add1_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, n);
 
 	// copy to host c from GPU dev_c
-	cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost);
+	CHECK(cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost));
     
     // free 
     cudaFree(dev_a);

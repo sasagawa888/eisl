@@ -10,7 +10,12 @@
 
 (defglobal c (create-array '(30 30) 'rand 'float))
 
-(defun test (n)
+(defun test1 (n)
     (for ((i 0 (+ i 1)))
          ((> i n) t)
          (gpu-mult c c)))
+
+(defglobal d (create-array '(3000 3000) 'rand 'float))
+
+(defun test2 ()
+    (gpu-mult d d))

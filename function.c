@@ -1667,7 +1667,7 @@ int f_set_cdr(int arglist){
 
 int f_read(int arglist){
     int arg1,arg2,arg3,save,n,res;
-    #if __linux
+    #if __linux || __APPLE__
     int save1;
     #endif
 
@@ -1679,7 +1679,7 @@ int f_read(int arglist){
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read", arg1);
 
-    #if __linux
+    #if __linux || __APPLE__
     save1 = repl_flag;
     repl_flag = 0;
     #endif
@@ -1691,7 +1691,7 @@ int f_read(int arglist){
         res = sread();
         input_stream = save;
         if(res==FEND){
-           #if __linux
+           #if __linux || __APPLE__
             repl_flag = save1;
             #endif
             error(END_STREAM, "read", NIL);
@@ -1704,7 +1704,7 @@ int f_read(int arglist){
         res =sread();
         input_stream = save;
         if(res==FEND){
-        	#if __linux
+        	#if __linux || __APPLE__
             repl_flag = save1;
             #endif
             if(nullp(arg2) && n == 2)
@@ -1715,7 +1715,7 @@ int f_read(int arglist){
                 error(END_STREAM, "read", NIL);
         }
     }
-    #if __linux
+    #if __linux || __APPLE__
     repl_flag = save1;
     #endif
     return(res);
@@ -1724,7 +1724,7 @@ int f_read(int arglist){
 int f_read_char(int arglist){
     int arg1,arg2,arg3,save,n,res;
     char buf[CHARSIZE];
-    #if __linux
+    #if __linux || __APPLE__
     int save1;
     #endif
 
@@ -1736,7 +1736,7 @@ int f_read_char(int arglist){
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-char", arg1);
 
-    #if __linux
+    #if __linux || __APPLE__
     save1 = repl_flag;
     repl_flag = 0;
     #endif
@@ -1751,7 +1751,7 @@ int f_read_char(int arglist){
         buf[0] = readc();
         buf[1] = NUL;
         if(buf[0] == EOF){
-        	#if __linux
+        	#if __linux || __APPLE__
             repl_flag = save1;
             #endif
             error(END_STREAM, "read-char", NIL);
@@ -1766,7 +1766,7 @@ int f_read_char(int arglist){
         buf[1] = NUL;
         input_stream = save;
         if(buf[0] == EOF){
-        	#if __linux
+        	#if __linux || __APPLE__
             repl_flag = save1;
             #endif
             if(nullp(arg2) && n == 2)
@@ -1782,7 +1782,7 @@ int f_read_char(int arglist){
         else
             res = NIL;
     }
-    #if __linux
+    #if __linux || __APPLE__
     repl_flag = save1;
     #endif
     return(res);
@@ -1791,7 +1791,7 @@ int f_read_char(int arglist){
 int f_read_byte(int arglist){
     int arg1,arg2,arg3,save,n;
     unsigned char res;
-    #if __linux
+    #if __linux || __APPLE__
     int save1;
     #endif
 
@@ -1803,7 +1803,7 @@ int f_read_byte(int arglist){
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-byte", arg1);
 
-    #if __linux
+    #if __linux || __APPLE__
     save1 = repl_flag;
     repl_flag = 0;
     #endif
@@ -1815,7 +1815,7 @@ int f_read_byte(int arglist){
         input_stream = arg1;
         res = readc();
         if(res == EOF){
-        	#if __linux
+        	#if __linux || __APPLE__
             repl_flag = save1;
             #endif
             error(END_STREAM, "read-byte", NIL);
@@ -1828,7 +1828,7 @@ int f_read_byte(int arglist){
         res = readc();
         input_stream = save;
         if(res==EOF){
-        	#if __linux
+        	#if __linux || __APPLE__
             repl_flag = save1;
             #endif
             if(nullp(arg2) && n == 2)
@@ -1839,7 +1839,7 @@ int f_read_byte(int arglist){
                 error(END_STREAM, "read-byte", NIL);
         }
     }
-    #if __linux
+    #if __linux || __APPLE__
     repl_flag = save1;
     #endif
     return(makeint(res));
@@ -1905,7 +1905,7 @@ int f_preview_char(int arglist){
 int f_read_line(int arglist){
     int arg1,arg2,arg3,n,pos,save,res;
     char buf[STRSIZE],c;
-    #if __linux
+    #if __linux || __APPLE__
     int save1;
     #endif
 

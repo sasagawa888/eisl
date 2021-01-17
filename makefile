@@ -7,7 +7,7 @@ PREFIX = /usr/local
 bindir = $(PREFIX)/bin
 DESTDIR = 
 INSTALL = install
-INSTALL_PROGRAM = $(INSTALL) -Dm755
+INSTALL_PROGRAM = $(INSTALL) -m755
 
 EISL = eisl
 EDLIS = edlis

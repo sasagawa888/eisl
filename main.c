@@ -1247,7 +1247,7 @@ void printfarray(int x){
             free(vec2);
         }
         else{
-            ls = cons(makesym("float-element"),ls);
+            ls = cons(makesym("float-elements"),ls);
         }
     }
     else{

@@ -1244,6 +1244,7 @@ void printfarray(int x){
                     vec2[IDX2R(i,j,c)] = vec1[IDX2C(i,j,r)];
             for(i=0;i<size;i++)
                 ls = cons(makeflt(vec2[i]),ls);
+            free(vec2);
         }
         else{
             ls = cons(makesym("float-element"),ls);

@@ -3,10 +3,12 @@
 
 (defglobal b #2f((4.0 7.0)(5.0 8.0)(6.0 9.0)))
 
-(print (gpu-mult a b))
-(print (gpu-add b b))
+(defun foo ()
+    (print (gpu-mult a b))
+    (print (gpu-add b b))
+    (print (gpu-sub b b)))
 
-(defglobal c (create-array '(30 30) 1.0 t))
+(defglobal c (create-array '(30 30) 'rand 'float))
 
 (defun test (n)
     (for ((i 0 (+ i 1)))

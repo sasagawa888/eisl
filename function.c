@@ -3613,11 +3613,13 @@ int f_create_array(int arglist){
         error(OUT_OF_RANGE,"create-array",arg1);
     if(length(arglist) == 1)
         arg2 = UNDEF;
+    if(arg3 != NIL && arg3 != makesym("FLOAT"))
+        error(WRONG_ARGS,"create-array", arglist);
 
     if(nullp(arg3))
         return(makearray(arg1,arg2));
     else
-        return(makefarray(arg1,GET_FLT(arg2)));
+        return(makefarray(arg1,arg2));
 }
 
 int check_dimension(int ls){

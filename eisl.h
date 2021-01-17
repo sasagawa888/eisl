@@ -879,7 +879,7 @@ int long_long_remainder(int x, int y);
 int longnump(int x);
 int macrop(int addr);
 int makearray(int lis, int obj);
-int makefarray(int ls, float obj);
+int makefarray(int ls, int obj);
 int makebigx(char *bignum);
 int makechar(char *pname);
 int makeclass(char *pname, int superclass);

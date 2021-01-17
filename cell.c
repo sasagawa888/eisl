@@ -756,7 +756,7 @@ int makearray(int ls, int obj){
 }
 
 // for Deep-Learning float type array
-int makefarray(int ls, float obj){
+int makefarray(int ls, int obj){
     int size,res,i,n,ls1;
     float *vec;
 
@@ -781,9 +781,14 @@ int makefarray(int ls, float obj){
         error(MALLOC_OVERF, "float array",  NIL);
 
     SET_FVEC(res,vec);
-    for(i=0; i<size; i++)
-        SET_FVEC_ELT(res,i,obj);
-    
+    if(eqp(obj,makesym("RAND"))){
+        for(i=0; i<size; i++)
+            SET_FVEC_ELT(res,i,(float)rand()/RAND_MAX);
+    }
+    else{
+        for(i=0; i<size; i++)
+            SET_FVEC_ELT(res,i,GET_FLT(obj));
+    }
     SET_TAG(res,FARR);
     SET_CDR(res,ls1);
     SET_AUX(res,cgeneral_array_star); //class

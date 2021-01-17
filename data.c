@@ -830,14 +830,14 @@ int remove_list(int x, int y){
 
 void vector_set(int v, int n, int obj){
     if(IS_FARRAY(v))
-        SET_FVEC_ELT(v,n,obj);
+        SET_FVEC_ELT(v,n,GET_FLT(obj));
     else
         SET_VEC_ELT(v,n,obj);
 }
 
 int vector_ref(int v, int n){
     if(IS_FARRAY(v))
-        return(GET_FVEC_ELT(v,n));
+        return(makeflt(GET_FVEC_ELT(v,n)));
     else
         return(GET_VEC_ELT(v,n));
 }
@@ -878,7 +878,7 @@ int array_ref(int obj, int ls){
     
     if(IS_FARRAY(obj) && length(size) == 2){
         index = IDX2C(GET_INT(car(ls)),GET_INT(cadr(ls)),GET_INT(car(size)));
-        return(makeflt(vector_ref(obj,index)));
+        return(vector_ref(obj,index));
     }
     else{
         index = 0;
@@ -908,7 +908,7 @@ int array_set(int obj, int ls, int val){
 
     if(IS_FARRAY(obj) && length(size) == 2){
         index = IDX2C(GET_INT(car(ls)),GET_INT(cadr(ls)),GET_INT(car(size)));
-        vector_set(obj,index,GET_FLT(val));
+        vector_set(obj,index,val);
     }
     else{
         index = 0;
@@ -1043,6 +1043,7 @@ int farray(int n, int ls){
         for(i=0;i<r;i++)
             for(j=0;j<c;j++)
                 vec2[IDX2C(i,j,r)] = vec1[IDX2R(i,j,c)];
+        free(vec1);
     }
     else{
         i = 0;

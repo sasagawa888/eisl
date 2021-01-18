@@ -362,7 +362,7 @@ extern char extended[50][30];
 
 #if __linux || __APPLE__
 #define LEFT    'D'
-#define UP          'A'
+#define UP      'A'
 #define RIGHT   'C'
 #define DOWN    'B'
 #define INSERT  '2'

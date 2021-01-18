@@ -9,7 +9,6 @@ written by kenichi sasagawa 2016/4~
 #include <setjmp.h>
 #include <math.h>
 #include <limits.h>
-#include <omp.h>
 #include <signal.h>
 #include "eisl.h"
 

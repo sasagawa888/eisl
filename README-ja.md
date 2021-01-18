@@ -25,6 +25,9 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 - Raspberry Pi3 Raspbian GCC 6.3
 - openSUSE Leap 42.3 GCC 4.8.5
 - Debian GNU/Linux GCC 6.3 GCC 7.3
+- Linux Mint GCC ver 5.4
+- Linux Mint GCC ver9.3.0
+- macOS 11.1 clang 12.0.0 
 
 
 

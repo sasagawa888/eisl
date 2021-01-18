@@ -23,7 +23,7 @@ We confirmed operation in the following environments.
 - Debian GNU/Linux GCC 6.3 GCC 7.3
 - Linux Mint GCC ver 5.4
 - Linux Mint GCC ver9.3.0
-
+- macOS 11.1 clang 12.0.0 
 
 
 # Invoke

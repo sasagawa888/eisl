@@ -13,7 +13,7 @@ Copying GC mode
 12999999 -  19999999  Wrok2 area
 */
 #include <setjmp.h>
-#define VERSION     1.70
+#define VERSION     1.71
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000

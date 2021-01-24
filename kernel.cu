@@ -1551,3 +1551,318 @@ float sum1(int r1, int c1, float *a, float *b){
 }
 
 
+
+__global__ void dropout1_kernel(float *a, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {
+        a[tid] = 1.0;
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+/*
+1st arg size of mask tensor
+2nd arg rate of dropout
+
+return mask tensor
+element of mask tensor is basicaly 1.0.
+element of dropout rate is 0.0.
+when forward and backward, generate Hadamard product with mask tensor
+*/
+
+void dropout1(int n, float dropout_rate, float *a){ 
+    int count,i,j;
+    float *dev_a;
+
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    dropout1_kernel << <128, 128 >> >(dev_a, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(a, dev_a, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+
+    // dropout
+    count = (int)(double(n)*dropout_rate);
+    for(i=0;i<count;i++){
+        j = rand() % n;
+        a[j] = 0.0;
+    }
+
+    // free 
+    cudaFree(dev_a);
+}
+
+
+__global__ void sgd1_kernel(float *a, float *b, float *c, float lr, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {
+        c[tid] = a[tid] - b[tid]*lr;
+        tid += blockDim.x * gridDim.x;
+    }
+}
+/*
+w - g*lr
+w is weight matrix.
+g is gradient matrix.
+when element of w is zero result is zero. This means dropout.
+return updated weight matrix.
+
+1st arg is size of vectorized matrix
+2nd arg is weight matrix or tensor
+3rd arg is gradient matrix or tensor
+4th arg is output tensor
+5th arg is learning rate
+*/
+
+void sgd1(int n, float *a, float *b, float *c, float lr){
+    float *dev_a, *dev_b, *dev_c;
+
+
+        // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    sgd1_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, lr, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);    
+    cudaFree(dev_c);
+
+}
+
+  
+  /*
+	def momentum(v, g, lr) do
+	  Matrex.apply(v, g, fn v, g -> 0.5 * v - lr * g end)
+	end
+  */
+  __global__ void momentum_kernel(float *a, float *b, float *c, float *d, float *e, float lr, int n)
+  {
+	  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+	  while (tid < n)
+	  {   
+		  
+		  d[tid] = ((0.9 * b[tid]) - (lr * c[tid]));
+		  e[tid] = a[tid] + d[tid];
+		  
+		  tid += blockDim.x * gridDim.x;
+	  }
+  }
+  
+  /*
+  1st arg row-size of vectorized each-matrix
+  2nd arg wight-matrix    (a)
+  3rd arg v-matrix        (b)
+  4th arg gradient-matrix (c)
+  5th arg output next_v-matrix (d)
+  6th arg output weight_matrix (e)
+  7th arg learning rate
+  
+  */
+  
+  void momentum1(int n, float *a, float *b, float *c, float *d, float *e, float lr){
+	  float *dev_a, *dev_b, *dev_c ,*dev_d, *dev_e;
+	
+	 
+	  // Allocate for GPU
+	  CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_d, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_e, n * sizeof(float)));
+	
+	  // copy from host a,b to GPU dev_a, dev_b
+	  CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_c, c, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_d, d, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_e, e, n * sizeof(float), cudaMemcpyHostToDevice));
+	
+	  momentum_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, dev_d, dev_e, lr, n);
+	
+	  // copy to host d from GPU dev_d
+	  CHECK(cudaMemcpy(d, dev_d, n * sizeof(float), cudaMemcpyDeviceToHost));
+	  CHECK(cudaMemcpy(e, dev_e, n * sizeof(float), cudaMemcpyDeviceToHost));
+  
+	  
+	  // free 
+	  cudaFree(dev_a);
+	  cudaFree(dev_b);
+	  cudaFree(dev_c);
+	  cudaFree(dev_d);
+	  cudaFree(dev_e);
+	  
+  }
+  
+
+  /* ADAGRAD
+	  h1 = h + grad*grad
+	  lr1 = lr/(sqrt(h1))
+	  w1 = w - lr1 * grad 
+  
+	  a[] = w
+	  b[] = h
+	  c[] = grad
+	  d[] = h1
+	  e[] = w1
+  */
+	
+  __global__ void adagrad_kernel(float *a, float *b, float *c, float *d, float *e, float lr, int n)
+  {
+	  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+	  float lr1;
+	  while (tid < n)
+	  {   
+		  d[tid] = b[tid] + c[tid]*c[tid];
+		  if(d[tid] != 0.0)
+			  lr1 = lr/(sqrt(d[tid]));
+		  else
+			  lr1 = lr;
+		  e[tid] = a[tid] - lr1 * c[tid];
+  
+		  tid += blockDim.x * gridDim.x;
+	  }
+  }
+   
+  /*
+  1st arg row-size of vectorized each-matrix
+  2nd arg wight-matrix (a)
+  3rd arg h-matrix     (b)
+  4th arg grad-matrix  (c)
+  5th arg output new-h (d)
+  6th arg output new-w (e)
+  7th arg learning rate
+  */
+  
+  void adagrad1(int n, float *a, float *b, float *c, float *d, float *e, float lr){
+	  float *dev_a, *dev_b, *dev_c, *dev_d, *dev_e;
+	  
+	  
+	  // Allocate for GPU
+	  CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_d, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_e, n * sizeof(float)));
+	
+	  // copy from host a,b to GPU dev_a, dev_b
+	  CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_c, c, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_d, d, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_e, e, n * sizeof(float), cudaMemcpyHostToDevice));
+	
+	  adagrad_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, dev_d, dev_e, lr, n);
+	
+	  // copy to host d,e from GPU dev_d,dev_e
+	  CHECK(cudaMemcpy(d, dev_d, n * sizeof(float), cudaMemcpyDeviceToHost));
+	  CHECK(cudaMemcpy(e, dev_e, n * sizeof(float), cudaMemcpyDeviceToHost));
+  
+	  
+  
+	  // free 
+	  cudaFree(dev_a);
+	  cudaFree(dev_b);
+	  cudaFree(dev_c);
+	  cudaFree(dev_d);
+	  cudaFree(dev_e);
+	  
+  }
+  
+
+
+  /* RMSprop
+	  h1 = alpha * h + (1 - alpha) * grad*grad
+	  lr1 = lr /(sqrt(h) + epsilon)
+	  w1 = w - lr1 * grad 
+  
+	  a[] = w
+	  b[] = h
+	  c[] = grad
+	  d[] = h1
+	  e[] = w1
+  */
+	
+  __global__ void rms_kernel(float *a, float *b, float *c, float *d, float *e, float lr, int n)
+  {
+	  int tid = threadIdx.x + blockIdx.x * blockDim.x;
+	  float lr1,alpha,epsilon;
+	  alpha = 0.99;
+	  epsilon = 10.0e-7;
+	  while (tid < n)
+	  {   
+		  d[tid] = alpha * b[tid] + (1-alpha)*c[tid]*c[tid];
+		  lr1 = lr/(sqrt(d[tid])+epsilon);
+		  e[tid] = a[tid] - lr1*c[tid];
+  
+		  tid += blockDim.x * gridDim.x;
+	  }
+  }
+   
+  /*
+  1st arg row-size of vectorized each-matrix
+  2nd arg wight-matrix (a)
+  3rd arg h-matrix     (b)
+  4th arg grad-matrix  (c)
+  5th arg output new-h (d)
+  6th arg output new-w (e)
+  7th arg learning rate
+  */
+  
+  void rms1(int n, float *a, float *b, float *c, float *d, float *e, float  lr){
+	  float *dev_a, *dev_b, *dev_c, *dev_d, *dev_e;
+	  
+	 
+	  // Allocate for GPU
+	  CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_d, n * sizeof(float)));
+	  CHECK(cudaMalloc((void**)&dev_e, n * sizeof(float)));
+	
+	  // copy from host a,b to GPU dev_a, dev_b
+	  CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_c, c, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_d, d, n * sizeof(float), cudaMemcpyHostToDevice));
+	  CHECK(cudaMemcpy(dev_e, e, n * sizeof(float), cudaMemcpyHostToDevice));
+	
+	  rms_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, dev_d, dev_e, lr, n);
+	
+	  // copy to host d,e from GPU dev_d,dev_e
+	  CHECK(cudaMemcpy(d, dev_d, n * sizeof(float), cudaMemcpyDeviceToHost));
+	  CHECK(cudaMemcpy(e, dev_e, n * sizeof(float), cudaMemcpyDeviceToHost));
+  
+	  
+  
+	  // free 
+	  cudaFree(dev_a);
+	  cudaFree(dev_b);
+	  cudaFree(dev_c);
+	  cudaFree(dev_d);
+	  cudaFree(dev_e);
+	  
+  }
+  
+  

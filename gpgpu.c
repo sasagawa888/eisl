@@ -85,7 +85,9 @@ int f_gpu_mult(int arglist){
 
 }
 
-extern void cuda_add(float *a, float *b, float *c, int n);
+//extern void cuda_add(float *a, float *b, float *c, int n);
+//extern void cuda_sub(float *a, float *b, float *c, int n);
+//extern void cuda_smult(float s, int n, float *a, float *b);
 
 int f_gpu_add(int arglist){
     int arg1,arg2,res,dim1,dim2,n;
@@ -111,7 +113,7 @@ int f_gpu_add(int arglist){
     return(res);
 }
 
-extern void cuda_sub(float *a, float *b, float *c, int n);
+
 
 int f_gpu_sub(int arglist){
     int arg1,arg2,res,dim1,dim2,n;
@@ -128,6 +130,26 @@ int f_gpu_sub(int arglist){
     c = GET_FVEC(res);
 
     cuda_sub(a, b, c, n);
+    return(res);
+}
+
+
+
+
+int f_gpu_smult(int arglist){
+    int arg1,arg2,res,dim,n;
+    float *a,*b, s;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim = GET_CDR(arg2);
+    res = makefarray(dim,0.0);
+    s = (float)GET_FLT(arg1);
+    n = GET_INT(car(dim)) * GET_INT(cadr(dim));
+    a = GET_FVEC(arg2);
+    b = GET_FVEC(res);
+
+    cuda_smult(s, n, a, b);
     return(res);
 }
 

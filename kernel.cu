@@ -17,6 +17,8 @@
 }
 
 extern "C" void cuda_add(float *a, float *b, float *c, int n);
+extern "C" void cuda_sub(float *a, float *b, float *c, int n);
+extern "C" void cuda_smult(float s, int n, float *a, float *b);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -28,7 +30,6 @@ __global__ void add1_kernel(float *a, float *b, float *c, int n)
 	}
 }
 
-void cuda_add(float *a, float *b, float *c, int n);
 void cuda_add(float *a, float *b, float *c, int n){
     float *dev_a, *dev_b, *dev_c;
 
@@ -56,7 +57,7 @@ void cuda_add(float *a, float *b, float *c, int n){
 }
 
 
-extern "C" void cuda_sub(float *a, float *b, float *c, int n);
+
 
 __global__ void sub1_kernel(float *a, float *b, float *c, int n)
 {
@@ -68,7 +69,7 @@ __global__ void sub1_kernel(float *a, float *b, float *c, int n)
 	}
 }
 
-void cuda_sub(float *a, float *b, float *c, int n);
+
 void cuda_sub(float *a, float *b, float *c, int n){
     float *dev_a, *dev_b, *dev_c;
 
@@ -92,6 +93,44 @@ void cuda_sub(float *a, float *b, float *c, int n){
     cudaFree(dev_a);
 	cudaFree(dev_b);
 	cudaFree(dev_c);
+
+}
+
+
+
+
+__global__ void smult_kernel(float d, float *a, float *b, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {
+        b[tid] = d * a[tid];
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+
+void cuda_smult(float s, int n, float *a, float *b){
+    float *dev_a, *dev_b;
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    smult_kernel << <128, 128 >> >(s,dev_a, dev_b, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(b, dev_b, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
 
 }
 
@@ -1387,40 +1426,6 @@ void differ_relu(int n, float *a, float *b, float *c){
 
 
   
-__global__ void smult_kernel(float d, float *a, float *b, int n)
-{
-    int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    while (tid < n)
-    {
-        b[tid] = d * a[tid];
-        tid += blockDim.x * gridDim.x;
-    }
-}
-
-
-
-void smult1(float s, int n, float *a, float *b){
-    float *dev_a, *dev_b;
-
-    // Allocate for GPU
-    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
-    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
-
-
-    // copy from host a,b to GPU dev_a, dev_b
-    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
-    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
-
-    smult_kernel << <128, 128 >> >((float)s,dev_a, dev_b, n);
-
-    // copy to host c from GPU dev_c
-    CHECK(cudaMemcpy(b, dev_b, n * sizeof(float), cudaMemcpyDeviceToHost));
-
-    // free 
-    cudaFree(dev_a);
-    cudaFree(dev_b);
-
-}
 
   
 float trace1(int r1, int c1, float *a){

@@ -143,6 +143,11 @@ int f_gpu_smult(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(!floatp(arg1))
+        error(NOT_FLT,"gpu-smult",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-smult",arg2);
+    
     dim = GET_CDR(arg2);
     res = makefarray(dim,0.0);
     s = (float)GET_FLT(arg1);
@@ -152,5 +157,38 @@ int f_gpu_smult(int arglist){
 
     cuda_smult(s, n, a, b);
     return(res);
+}
+
+int f_gpu_pooling(int arglist){
+    int arg1,arg2,res1,res2,dim1,dim2,in_n,in_c,in_h,in_w,st_h,st_w;
+    float *a,*b, *c;
+
+    arg1 = car(arglist);   //farray
+    arg2 = cadr(arglist);  //stride-list (st_h,st_w)
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-pooling",arg1);
+    if(!listp(arg1))
+        error(NOT_LIST,"gpu-pooling",arg2);
+    dim1 = GET_CDR(arg1);
+    if(length(dim1 != 4))
+        error(WRONG_ARGS,"gpu-pooling",arg1);
+    if(length(arg2 != 2))
+        error(WRONG_ARGS,"gpu-pooling",arg2);
+    
+    in_n = GET_INT(nth(0,dim1));
+    in_c = GET_INT(nth(1,dim1));
+    in_h = GET_INT(nth(2,dim1));
+    in_w = GET_INT(nth(3,dim1));
+    st_h = GET_INT(nth(0,arg2));
+    st_w = GET_INT(nth(1,arg2));
+
+    dim2 = list4(nth(dim1,0),nth(dim1,1),makeint(in_h/st_h),makeint(in_w/st_w));
+    res1 = makefarray(dim2,0.0);
+    res2 = makefarray(dim2,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(res1);
+    c = GET_FVEC(res2);
+
+    cuda_pooling(in_n,in_c,in_h,in_w,a,b,c,st_h,st_w);
 }
 

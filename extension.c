@@ -58,6 +58,7 @@ void initexsubr(void){
     defsubr("GPU-ADD",f_gpu_add);
     defsubr("GPU-SUB",f_gpu_sub);
     defsubr("GPU-SMULT",f_gpu_smult);
+    defsubr("GPU-POOLING",f_gpu_pooling);
     #endif
 }
 

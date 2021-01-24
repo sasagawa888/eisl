@@ -167,7 +167,7 @@ int f_gpu_pooling(int arglist){
     arg2 = cadr(arglist);  //stride-list (st_h,st_w)
     if(!IS_FARRAY(arg1))
         error(NOT_FARR,"gpu-pooling",arg1);
-    if(!listp(arg1))
+    if(!listp(arg2))
         error(NOT_LIST,"gpu-pooling",arg2);
     dim1 = GET_CDR(arg1);
     if(length(dim1 != 4))
@@ -190,5 +190,45 @@ int f_gpu_pooling(int arglist){
     c = GET_FVEC(res2);
 
     cuda_pooling(in_n,in_c,in_h,in_w,a,b,c,st_h,st_w);
+}
+
+int f_gpu_unpooling(int arglist){
+    int arg1,arg2,arg3,res,dim1,dim2,dim3,in_n,in_c,in_h,in_w,st_h,st_w;
+    float *a,*b, *c;
+
+    arg1 = car(arglist);   //farray1
+    arg2 = cadr(arglist);  //farray2
+    arg3 = cadr(arglist);  //stride-list (st_h,st_w)
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-unpooling",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-unpooling",arg2);    
+    if(!listp(arg3))
+        error(NOT_LIST,"gpu-unpooling",arg2);
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    if(length(dim1 != 4))
+        error(WRONG_ARGS,"gpu-unpooling",arg1);
+    if(length(dim1 != 4))
+        error(WRONG_ARGS,"gpu-unpooling",arg1);
+    if(!equalp(dim1,dim2))
+        error(WRONG_ARGS,"gpu-unpooling",list2(dim1,dim2));
+    if(length(arg3 != 2))
+        error(WRONG_ARGS,"gpu-unpooling",arg3);
+    
+    in_n = GET_INT(nth(0,dim1));
+    in_c = GET_INT(nth(1,dim1));
+    in_h = GET_INT(nth(2,dim1));
+    in_w = GET_INT(nth(3,dim1));
+    st_h = GET_INT(nth(0,arg2));
+    st_w = GET_INT(nth(1,arg2));
+
+    dim3 = list4(nth(dim1,0),nth(dim1,1),makeint(in_h*st_h),makeint(in_w*st_w));
+    res = makefarray(dim3,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
+
+    cuda_unpooling(in_n,in_c,in_h,in_w,a,b,c,st_h,st_w);
 }
 

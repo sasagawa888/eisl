@@ -1140,8 +1140,10 @@ int f_gpu_add(int arglist);
 int f_gpu_sub(int arglist);
 int f_gpu_smult(int arglist);
 int f_gpu_pooling(int arglist);
+int f_gpu_unpooling(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_sub(float *a, float *b, float *c, int n);
 void cuda_smult(float s, int n, float *a, float *b);
 void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
+void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
 #endif

@@ -85,9 +85,6 @@ int f_gpu_mult(int arglist){
 
 }
 
-//extern void cuda_add(float *a, float *b, float *c, int n);
-//extern void cuda_sub(float *a, float *b, float *c, int n);
-//extern void cuda_smult(float s, int n, float *a, float *b);
 
 int f_gpu_add(int arglist){
     int arg1,arg2,res,dim1,dim2,n;
@@ -123,6 +120,12 @@ int f_gpu_sub(int arglist){
     arg2 = cadr(arglist);
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-sub",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-sub",arg2);
+    if(!equalp(dim1,dim2))
+        error(WRONG_ARGS,"gpu-sub", arglist);
     res = makefarray(dim1,0.0);
     n = GET_INT(car(dim1)) * GET_INT(cadr(dim1));
     a = GET_FVEC(arg1);
@@ -132,8 +135,6 @@ int f_gpu_sub(int arglist){
     cuda_sub(a, b, c, n);
     return(res);
 }
-
-
 
 
 int f_gpu_smult(int arglist){

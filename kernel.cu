@@ -19,6 +19,7 @@
 extern "C" void cuda_add(float *a, float *b, float *c, int n);
 extern "C" void cuda_sub(float *a, float *b, float *c, int n);
 extern "C" void cuda_smult(float s, int n, float *a, float *b);
+extern "C" void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -201,8 +202,8 @@ __global__ void pooling_kernel(float *a, float *b, float *c, int st_h, int st_w,
   |3.0*1000+1.0,3.0*1000+3.0|
   
   */
-  extern "C" void pooling1(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
-  void pooling1(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w){
+  
+  void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w){
 	  int n1, n2;
 	  float *dev_a, *dev_b, *dev_c;
 	

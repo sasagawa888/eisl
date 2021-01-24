@@ -6,7 +6,8 @@
 (defun foo ()
     (print (gpu-mult a b))
     (print (gpu-add b b))
-    (print (gpu-sub b b)))
+    (print (gpu-sub b b))
+    (print (gpu-smult 2.0 a)))
 
 (defglobal c (create-array '(30 30) 'rand 'float))
 

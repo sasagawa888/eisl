@@ -1134,3 +1134,308 @@ void ident1(int n, float *a){
     }
 
 }
+
+
+__global__ void sigmoid_kernel(float *a, float *b, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {   
+        b[tid] = SIGMOID(a[tid]);
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+void activate_sigmoid(int n, float *a, float *b){
+    float *dev_a, *dev_b;
+
+   
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    sigmoid_kernel << <128, 128 >> >(dev_a, dev_b, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(b, dev_b, n * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+
+}
+
+  
+__global__ void tanh_kernel(float *a, float *b, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {
+        b[tid] = tanh(a[tid]);
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+void activate_tanh(int n, float *a, float *b){
+    float *dev_a, *dev_b;
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    tanh_kernel << <128, 128 >> >(dev_a, dev_b, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(b, dev_b, n * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+}
+
+
+  
+__global__ void relu_kernel(float *a, float *b, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {   
+        if(a[tid] >= 0)
+            b[tid] = a[tid];
+        else 
+            b[tid] = 0.0;
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+void activate_relu(int n, float *a, float *b) {
+    float *dev_a, *dev_b;
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    relu_kernel << <128, 128 >> >(dev_a, dev_b, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(b, dev_b, n * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+}
+
+void activate_softmax(int r1, int c1, float *a, float *b){
+    int i, j, k;
+    float max,sum,delta;
+
+    
+    //calculate softmax
+    delta = 0.01;
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            max = -3.402823e38;
+            for(k=0;k<c1;k++){
+                if(a[IDX2C(i,k,r1)] > max)
+                    max = a[IDX2C(i,k,r1)];
+            }
+            sum = 0.0;
+            for(k=0;k<c1;k++){
+                sum = sum + exp(a[IDX2C(i,k,r1)] - max);
+            }
+            b[IDX2C(i,j,r1)] = exp(a[IDX2C(i,j,r1)] - max) / (sum+delta);
+            
+        }
+    }
+
+}
+
+
+
+__global__ void differ_sigmoid_kernel(float *a, float *b, float *c, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {   
+        
+        c[tid] = a[tid] * ((1 - SIGMOID(b[tid])) * SIGMOID(b[tid]));
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+void differ_sigmoid(int n, float *a, float *b, float *c){
+    float *dev_a, *dev_b, *dev_c;
+
+    
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    differ_sigmoid_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+    cudaFree(dev_c);
+
+}
+
+
+__global__ void differ_tanh_kernel(float *a, float *b, float *c, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {   
+        c[tid] = a[tid] * (1/(cosh(b[tid]) * cosh(b[tid])));
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+void differ_tanh(int n, float *a, float *b, float *c){
+    float *dev_a, *dev_b, *dev_c;
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    differ_tanh_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+    cudaFree(dev_c);
+}
+
+
+
+__global__ void differ_relu_kernel(float *a, float *b, float *c, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {   
+        if(b[tid] >= 0)
+            c[tid] = a[tid];
+        else 
+            c[tid] = 0.0;
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+void differ_relu(int n, float *a, float *b, float *c){
+    float *dev_a, *dev_b, *dev_c;
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    differ_relu_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+    cudaFree(dev_c);
+
+}
+
+
+
+  
+__global__ void smult_kernel(float d, float *a, float *b, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {
+        b[tid] = d * a[tid];
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+
+void smult1(float s, int n, float *a, float *b){
+    float *dev_a, *dev_b;
+
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    smult_kernel << <128, 128 >> >((float)s,dev_a, dev_b, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(b, dev_b, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+
+}
+
+  
+void trace1(int r1, int c1, float *a){
+    int i, j;
+    float trace;
+
+    trace = 0.0;
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            if(i==j)
+                trace = trace + a[IDX2C(i,j,r1)];
+        }
+    }
+
+    //result = enif_make_double(env,trace);
+
+}
+

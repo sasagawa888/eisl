@@ -1423,7 +1423,7 @@ void smult1(float s, int n, float *a, float *b){
 }
 
   
-void trace1(int r1, int c1, float *a){
+float trace1(int r1, int c1, float *a){
     int i, j;
     float trace;
 
@@ -1435,7 +1435,119 @@ void trace1(int r1, int c1, float *a){
         }
     }
 
-    //result = enif_make_double(env,trace);
+    return(trace);
+}
+
+
+float mean_square(int r1, int c1, float *a, float *b){
+    int i, j;
+    float d,s;
+
+    
+    s = 0.0;
+    for(i=0;i<r1;i++){
+        for (j=0;j<c1;j++){
+            d = a[IDX2C(i,j,r1)] -  b[IDX2C(i,j,r1)];
+            s = s + d*d;            
+        }
+    } 
+    s = s / (2.0*(float(r1)));
+    return(s);
+}
+
+
+float cross_entropy(int r1, int c1, float *a, float *b){
+    int i, j;
+    float d,s,delta;
+
+    
+    
+    delta = 1e-7;
+    s = 0.0;
+    for(i=0;i<r1;i++){
+        for (j=0;j<c1;j++){
+            d = a[IDX2C(i,j,r1)] + delta;
+            s = s + b[IDX2C(i,j,r1)] * log(d);
+        }
+    }
+    s = -1.0 * s / (float)r1;
+    return(s);
+}
+
+
+
+void add_diff1(int r1, int c1, float *a, float *b, int x, int y, float val) {
+    int i, j;
+    
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            if(i==x && j==y)
+                b[IDX2C(i,j,r1)] = a[IDX2C(i,j,r1)] + (float)val;
+            else 
+                b[IDX2C(i,j,r1)] = a[IDX2C(i,j,r1)];
+        }
+    }
 
 }
+
+
+void add_diff2(int n1, int c1, int h1, int w1, float *a, float *b, int n2, int c2, int h2, int w2,float val){
+    int i, j, k, l;
+    
+    for(i=0;i<n1;i++){
+        for(j=0;j<c1;j++){
+            for(k=0;k<h1;k++){
+                for(l=0;l<w1;l++){
+                    if(i==n2 && j==c2 && k==h2 && l==w2){
+                        b[IDX4C(i,j,k,l,c1,h1,w1)] = a[IDX4C(i,j,k,l,c1,h1,w1)] + (float)val;
+                    }
+                    else {
+                        b[IDX4C(i,j,k,l,c1,h1,w1)] = a[IDX4C(i,j,k,l,c1,h1,w1)];
+                    }
+                }
+            }
+        }
+    }
+
+
+}
+
+
+void average1(int r1, int c1, float *a, float *b){
+    int i, j;
+    float sum;
+
+    
+    for(j=0;j<c1;j++){
+        sum = 0.0;
+        for(i=0;i<r1;i++){
+            sum = sum + a[IDX2C(i,j,r1)];
+        }
+        b[j] = sum / (float)r1;
+    }
+
+}
+
+/*
+1st arg row-size of matrix
+2nd arg col-size of matrix
+3rd arg matrix data 
+*/
+
+
+float sum1(int r1, int c1, float *a, float *b){
+    int i, j;
+    float sum;
+
+    
+    sum = 0.0;
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            sum = sum + a[IDX2C(i,j,r1)];
+        }
+    }
+
+    return(sum);
+}
+
 

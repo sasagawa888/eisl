@@ -668,3 +668,469 @@ void deconvolute2(int in_n, int in_c, int loss_h, int loss_w, int filt_n, int fi
  
 }
 
+  
+__global__ void gradfilter1_kernel(float *a, float *b, float *c, int filt_n, int filt_c, int filt_h, int filt_w, int loss_c, int loss_h, int loss_w, int st_h, int st_w, int pad, int in_c, int in_h, int in_w, int n)
+{
+    int bid = blockIdx.x;
+    int tid = threadIdx.x;
+    int n1,c1,c2,h1,w1,h2,w2,h3,w3;
+    float sum,elt1,elt2;
+
+    n1 = bid;
+    c2 = tid;
+    
+    for(c1=0;c1<filt_c;c1++){
+    //h1,w1 is index of filter
+        for(h1=0;h1<filt_h;h1++){
+            for(w1=0;w1<filt_w;w1++){
+                //h2,w2 is index of loss tensor
+                sum = 0.0;
+                for(h2=0;h2<loss_h;h2++){
+                    for(w2=0;w2<loss_w;w2++){
+                        //h3,w3 is index of input tensor
+                        h3 = h1 - pad + h2;
+                        w3 = w1 - pad + w2;
+                        if(h3>=0 && h3<in_h && w3>=0 && w3<in_w){
+                            elt1 = a[IDX4C(n1,c1,h3,w3,in_c,in_h,in_w)];    //input tensor
+                            elt2 = b[IDX4C(n1,c2,h2,w2,loss_c,loss_h,loss_w)]; //loss tensor
+                            sum = sum + elt1*elt2;
+                        }
+                    }
+                }
+                //set filter tensor
+                c[IDX5C(n1,c2,c1,h1,w1,filt_n,filt_c,filt_h,filt_w)] =  sum;
+            }
+        }
+    } 
+               
+}
+
+
+
+  
+/*
+1st arg in_n of input tensor
+2nd arg in_c of input tensor
+3rd arg in_h of input tensor
+4th arg in_w of input tensor
+5th arg filt_n of filter tensor
+6th arg filt_c of filter tensor
+7th arg filt_h of filter tensor
+8th arg filt_w of filter tensor
+9th arg loss_c of loss tensor
+10th arg loss_h of loss tensor
+11th arg loss_w of loss tensor
+12th arg filter tensor
+13th arg loss tensor
+14th arg output tensor
+15th arg stride hight
+16th arg stride width
+17th arg padding   
+*/
+
+void gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+                 int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad){
+    int n1,n2,n3,n4,i,j,k,l,m;
+    float *c;
+    float *dev_a, *dev_b, *dev_c;
+    float elt;
+  
+    
+    n1 = in_n * in_c * in_h * in_w;
+    n2 = in_n * loss_c * loss_h * loss_w;
+    n3 = in_n * filt_n * filt_c * filt_h * filt_w;
+    n4 = filt_n * filt_c * filt_h * filt_w;
+    c = (float *)malloc (n3 * sizeof (float));
+
+    //initialize c
+    for(i=0;i<n3;i++){
+        c[i] = 0.0;
+    }
+  
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n1 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n2 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n3 * sizeof(float)));
+
+    
+    // copy from host a,b,c to GPU dev_a, dev_b, dev_c
+    CHECK(cudaMemcpy(dev_a, a, n1 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n2 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_c, c, n3 * sizeof(float), cudaMemcpyHostToDevice));
+
+    dim3 blocks(in_n,1,1);
+    dim3 threads(filt_n,1,1);
+    gradfilter1_kernel <<<blocks, threads>>>(dev_a, dev_b, dev_c, filt_n, filt_c, filt_h, filt_w, loss_c, loss_h, loss_w, st_h, st_w, pad, in_c, in_h, in_w, in_n);
+  
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n3 * sizeof(float), cudaMemcpyDeviceToHost));
+
+    //average
+    // clear d
+    for(i=0;i<n4;i++){
+        d[i] = 0.0;
+    }
+    // copy from c to d and compute sum
+    for(i=0;i<in_n;i++){
+        for(j=0;j<filt_n;j++){
+            for(k=0;k<filt_c;k++){
+                for(l=0;l<filt_h;l++){
+                    for(m=0;m<filt_w;m++){
+                        elt = c[IDX5C(i,j,k,l,m,filt_n,filt_c,filt_h,filt_w)];
+                        d[IDX4C(j,k,l,m,filt_c,filt_h,filt_w)] = d[IDX4C(j,k,l,m,filt_c,filt_h,filt_w)] + elt;
+                    }
+                }
+            }
+        }
+    }
+    // average
+    for(i=0;i<n4;i++){
+        d[i] = d[i] / (float)in_n;
+    }
+    
+    
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+    cudaFree(dev_c);
+    free(c);
+}
+
+  
+__global__ void gradfilter2_kernel(float *a, float *b1, float *b, float *c, int filt_n, int filt_c, int filt_h, int filt_w, int loss_c, int loss_h, int loss_w, int st_h, int st_w, int pad, int in_c, int in_h, int in_w, int n)
+{
+    int bid = blockIdx.x;
+    int tid = threadIdx.x;
+    int n1,c1,c2,h1,w1,h2,w2,h3,w3,loss_h1,loss_w1,j,k,l,k1,l1;
+    float sum,elt1,elt2;
+    
+    n1 = bid;
+    c2 = tid;
+    //dilated loss tensor size
+    loss_h1 = loss_h+(loss_h-1)*(st_h-1);
+    loss_w1 = loss_w+(loss_w-1)*(st_w-1);
+    //dilate loss tensor.
+    for(j=0;j<loss_c;j++){
+        for(k=0;k<loss_h;k++){
+            for(l=0;l<loss_w;l++){
+                elt1 = b[IDX4C(n1,j,k,l,loss_c,loss_h,loss_w)];
+                k1 = st_h*k;
+                l1 = st_w*l;
+                b1[IDX4C(n1,j,k1,l1,loss_c,loss_h1,loss_w1)] = elt1;
+            }
+        }
+    }
+    //convolute input tensor with dilated loss tensor. cuation stride is always 1. 
+    for(c1=0;c1<filt_c;c1++){
+    //h1,w1 is index of filter
+        for(h1=0;h1<filt_h;h1++){
+            for(w1=0;w1<filt_w;w1++){
+                //h2,w2 is index of loss tensor
+                sum = 0.0;
+                for(h2=0;h2<loss_h1;h2++){
+                    for(w2=0;w2<loss_w1;w2++){
+                        //h3,w3 is index of input tensor
+                        h3 = h1 - pad + h2;
+                        w3 = w1 - pad + w2;
+                        if(h3>=0 && h3<in_h && w3>=0 && w3<in_w){
+                            elt1 = a[IDX4C(n1,c1,h3,w3,in_c,in_h,in_w)];    //input tensor
+                            elt2 = b1[IDX4C(n1,c2,h2,w2,loss_c,loss_h1,loss_w1)]; //loss tensor
+                            sum = sum + elt1*elt2;
+                        }
+                    }
+                }
+                //set filter tensor
+                c[IDX5C(n1,c2,c1,h1,w1,filt_n,filt_c,filt_h,filt_w)] = + sum;
+            }
+        }
+    } 
+        
+}
+
+/*
+dilate loss tensor 
+e.g.
+
+|1.0,2.0|
+|3.0,4.0|
+
+dilated stride=2
+|1.0,0.0,2.0|
+|0.0,0.0,0.0|
+|3.0,0.0,4.0|
+
+
+*/
+
+/*
+gradfilter2 is for stride >= 2. This one requires dilate
+1st arg in_n of input tensor
+2nd arg in_c of input tensor
+3rd arg in_h of input tensor
+4th arg in_w of input tensor
+5th arg filt_n of filter tensor
+6th arg filt_c of filter tensor
+7th arg filt_h of filter tensor
+8th arg filt_w of filter tensor
+9th arg loss_c of loss tensor
+10th arg loss_h of loss tensor
+11th arg loss_w of loss tensor
+12th arg filter tensor
+13th arg loss tensor
+14th arg output tensor
+15th arg stride hight
+16th arg stride width
+17th arg padding  
+
+*/
+void gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+                 int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad){
+    int n1,n2,n3,n4,n5,i,j,k,l,m;
+    float *b1,*c;
+    float *dev_a, *dev_b, *dev_b1, *dev_c;
+    float elt;
+  
+    n1 = in_n * in_c * in_h * in_w;
+    n2 = in_n * loss_c * loss_h * loss_w;
+    n3 = in_n * filt_n * filt_c * filt_h * filt_w;
+    n4 = filt_n * filt_c * filt_h * filt_w;
+    n5 = in_n * loss_c * (loss_h+(loss_h-1)*(st_h-1)) * (loss_w+(loss_w-1)*(st_w-1));  // dilated loss tensor size  
+    b1 = (float *)malloc (n5 * sizeof (float));  // dilate loss tensor area
+    c = (float *)malloc (n3 * sizeof (float));
+
+    //initialize c
+    for(i=0;i<n3;i++){
+        c[i] = 0.0;
+    }
+    //initialize b1
+    for(i=0;i<n5;i++){
+        b1[i] = 0.0;
+    }
+  
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n1 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n2 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b1, n5 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n3 * sizeof(float)));
+
+    
+    // copy from host a,b,c to GPU dev_a, dev_b, dev_c
+    CHECK(cudaMemcpy(dev_a, a, n1 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n2 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b1, b1, n5 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_c, c, n3 * sizeof(float), cudaMemcpyHostToDevice));
+
+    dim3 blocks(in_n,1,1);
+    dim3 threads(filt_n,1,1);
+    gradfilter2_kernel <<<blocks, threads>> >(dev_a, dev_b1, dev_b, dev_c, filt_n, filt_c, filt_h, filt_w, loss_c, loss_h, loss_w, st_h, st_w, pad, in_c, in_h, in_w, in_n);
+  
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n3 * sizeof(float), cudaMemcpyDeviceToHost));
+
+    //average
+    // clear d
+    for(i=0;i<n4;i++){
+        d[i] = 0.0;
+    }
+    // copy from c to d and compute sum
+    for(i=0;i<in_n;i++){
+        for(j=0;j<filt_n;j++){
+            for(k=0;k<filt_c;k++){
+                for(l=0;l<filt_h;l++){
+                    for(m=0;m<filt_w;m++){
+                        elt = c[IDX5C(i,j,k,l,m,filt_n,filt_c,filt_h,filt_w)];
+                        d[IDX4C(j,k,l,m,filt_c,filt_h,filt_w)] = d[IDX4C(j,k,l,m,filt_c,filt_h,filt_w)] + elt;
+                    }
+                }
+            }
+        }
+    }
+    // average
+    for(i=0;i<n4;i++){
+        d[i] = d[i] / (float)in_n;
+    }
+     
+    
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+    cudaFree(dev_b1);
+    cudaFree(dev_c);
+    free(b1);
+    free(c);
+}
+
+
+
+__global__ void full_kernel(float *a, float *b, int in_n, int in_c, int in_h, int in_w, int n)
+{
+    int tid = threadIdx.x;
+    int n1,i,j,k;
+    float elt;
+    if(tid < n)
+    {   
+        n1 = tid;
+        for(i=0;i<in_c;i++){
+            for(j=0;j<in_h;j++){
+                for(k=0;k<in_w;k++){
+                    elt = a[IDX4C(n1,i,j,k,in_c,in_h,in_w)];
+                    b[IDX2C(n1,i*in_h*in_w + j*in_w + k,in_n)] = elt;
+                }
+            }
+        }
+    }
+}
+  
+/*
+1st arg in_n of input tensor 4DIM
+2nd arg in_c of input tensor
+3rd arg in_h of input tensor
+4th arg in_w of input tensor
+5th arg input tensor
+6th arg output tensor
+*/
+
+void full1(int in_n, int in_c, int in_h, int in_w, float *a, float *b){
+    int n1,n;
+    float *dev_a, *dev_b;
+ 
+    n1 = in_n * in_c * in_h * in_w;
+    n = in_n;
+      
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n1 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n1 * sizeof(float)));
+  
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n1 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n1 * sizeof(float), cudaMemcpyHostToDevice));
+
+    full_kernel << <1, n>> >(dev_a, dev_b, in_n, in_c, in_h, in_w, n);
+  
+    // copy to host d from GPU dev_d
+    CHECK(cudaMemcpy(b, dev_b, n1 * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+
+}
+
+
+__global__ void unfull_kernel(float *a, float *b, int in_n, int in_c, int in_h, int in_w, int n)
+{
+    int tid = threadIdx.x;
+    int n1,i,j,k;
+    float elt;
+    if(tid < n)
+    {   
+        n1 = tid;
+        for(i=0;i<in_c;i++){
+            for(j=0;j<in_h;j++){
+                for(k=0;k<in_w;k++){
+                    elt = a[IDX2C(n1,i*in_h*in_w + j*in_w + k,in_n)];
+                    b[IDX4C(n1,i,j,k,in_c,in_h,in_w)] = elt;
+                }
+            }
+        }
+    }
+}
+  
+/*
+1st arg in_n of input tensor 4DIM
+2nd arg in_c of input tensor
+3rd arg in_h of input tensor
+4th arg in_w of input tensor
+5th arg input tensor
+6th arg output tensor
+*/
+
+void unfull1(int in_n, int in_c, int in_h, int in_w, float *a, float *b){
+    int n1,n;
+    float *dev_a, *dev_b;
+    
+    n1 = in_n * in_c * in_h * in_w;
+    n = in_n;
+      
+      // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n1 * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n1 * sizeof(float)));
+  
+    // copy from host a,b1,c to GPU dev_a, dev_b, dev_c
+    CHECK(cudaMemcpy(dev_a, a, n1 * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n1 * sizeof(float), cudaMemcpyHostToDevice));
+
+    unfull_kernel << <1, n>> >(dev_a, dev_b, in_n, in_c, in_h, in_w, n);
+  
+    // copy to host d from GPU dev_d
+    CHECK(cudaMemcpy(b, dev_b, n1 * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+
+}
+
+__global__ void emult1_kernel(float *a, float *b, float *c, int n)
+{
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    while (tid < n)
+    {
+        c[tid] = a[tid] * b[tid];
+        tid += blockDim.x * gridDim.x;
+    }
+}
+
+
+void emult1(int n, float *a, float *b,float *c) {
+    float *dev_a, *dev_b, *dev_c;
+
+    
+    // Allocate for GPU
+    CHECK(cudaMalloc((void**)&dev_a, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_b, n * sizeof(float)));
+    CHECK(cudaMalloc((void**)&dev_c, n * sizeof(float)));
+
+
+    // copy from host a,b to GPU dev_a, dev_b
+    CHECK(cudaMemcpy(dev_a, a, n * sizeof(float), cudaMemcpyHostToDevice));
+    CHECK(cudaMemcpy(dev_b, b, n * sizeof(float), cudaMemcpyHostToDevice));
+
+    emult1_kernel << <128, 128 >> >(dev_a, dev_b, dev_c, n);
+
+    // copy to host c from GPU dev_c
+    CHECK(cudaMemcpy(c, dev_c, n * sizeof(float), cudaMemcpyDeviceToHost));
+
+    // free 
+    cudaFree(dev_a);
+    cudaFree(dev_b);
+    cudaFree(dev_c);
+}
+
+
+void transpose1(int r1, int c1, float *a, float *b){
+    int i, j;
+    
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            b[IDX2C(j,i,c1)] = a[IDX2C(i,j,r1)];
+        }
+    }
+
+}
+
+
+void ident1(int n, float *a){
+    int i,j;
+
+    // Set matrix data 
+    for(i=0;i<n;i++){
+        for(j=0;j<n;j++){
+            if(i==j)
+                a[IDX2C(i,j,n)] = 1.0;
+            else
+                a[IDX2C(i,j,n)] = 0.0;
+        }
+    }
+
+}

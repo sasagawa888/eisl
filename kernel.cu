@@ -21,6 +21,9 @@ extern "C" void cuda_sub(float *a, float *b, float *c, int n);
 extern "C" void cuda_smult(float s, int n, float *a, float *b);
 extern "C" void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
 extern "C" void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c,int st_h, int st_w);
+extern "C" void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
+	int st_h, int st_w, int pad);
+
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -389,10 +392,8 @@ __global__ void pooling_kernel(float *a, float *b, float *c, int st_h, int st_w,
 13th arg stride width
 14th arg padding   
 */
-extern "C" void convolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
-	int st_h, int st_w, int pad);
 
-void convolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
+void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
                 int st_h, int st_w, int pad){
    int n1, n2, n3, oh, ow;
    float *dev_a, *dev_b, *dev_c;

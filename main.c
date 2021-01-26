@@ -1377,6 +1377,8 @@ int eval(int addr){
         return(addr);
     else if(arrayp(addr))
         return(addr);
+    else if(farrayp(addr))
+        return(addr);
     else if(stringp(addr))
         return(addr);
     else if(charp(addr))

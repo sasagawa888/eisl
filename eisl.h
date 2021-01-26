@@ -804,6 +804,7 @@ int f_with_standard_input(int x);
 int f_with_standard_output(int x);
 int f_write_byte(int arglist);
 int farray(int n, int ls);
+int farrayp(int x);
 int finddyn(int sym);
 int findenv(int sym);
 int flatten(int n, int ls);

@@ -329,3 +329,316 @@ int f_gpu_unpooling(int arglist){
   
   }
   
+
+
+ 
+  /*
+  random_select for 4D-tensor data
+  1st arg nth of matrix a
+  2nd arg channel of matrix a
+  3rd arg hight of matrix a
+  4th arg width of matrix a
+  5th arg matrix a
+  6th arg row ob matrix b
+  7th arg col of matrix b
+  8th arg matrix b
+  9th arg count of select
+  10th arg output random selected a
+  11th arg output random selected b
+  */
+  
+  void random_select2(int n1, int c1, int h1, int w1, float *a, int r2, int c2, float *b, int n, float *c, float *d){
+	  int i, j, k, l, r;
+	
+	  // random-select
+	  for(i=0;i<n;i++){
+		  r = rand() % n1;
+		  for(j=0;j<c1;j++){
+			  for(k=0;k<h1;k++){
+				  for(l=0;l<w1;l++){
+					  c[IDX4C(i,j,k,l,c1,h1,w1)] = a[IDX4C(r,j,k,l,c1,h1,w1)];
+				  }
+			  }
+		  }
+		  for(j=0;j<c2;j++){
+			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
+		  }    
+	  }
+  
+  }
+  
+
+
+  /*
+  random_select for 3D-tensor data
+  1st arg nth of matrix a
+  2nd arg hight of matrix a
+  3rd arg width of matrix a
+  4th arg matrix a
+  5th arg row ob matrix b
+  6th arg col of matrix b
+  7th arg matrix b
+  8th arg count of select
+  9th arg output random selected a
+  10th arg output random selected b
+  */
+  
+  void random_select3(int n1, int h1, int w1, float *a, int r2, int c2, float *b, int n, float *c, float *d){
+	  int i, j, k, r;
+	  
+	  // random-select
+	  for(i=0;i<n;i++){
+		  r = rand() % n1;
+		  for(j=0;j<h1;j++){
+			  for(k=0;k<w1;k++){
+				  c[IDX3C(i,j,k,h1,w1)] = a[IDX3C(r,j,k,h1,w1)];
+			  }
+		  }
+		  for(j=0;j<c2;j++){
+			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
+		  }    
+	  }	 
+  }
+  
+  /*
+  1st arg count of data
+  2nd arg input1
+  3rd arg intpu2
+  */
+  int is_near1(int n, float *a, float *b){
+	  int i, sw;
+	
+	  // near check
+	  sw = 0;
+	  for(i=0;i<n;i++){
+		 if(fabsf(a[i]) > fabsf(b[i])*1.15 || fabsf(a[i]) < fabsf(b[i])*0.85){
+			  printf("%f %f \r\n", a[i], b[i]);
+			  sw = 1;
+		  }
+	  }
+	  if(sw == 0)
+		  return(1); //true
+	  else
+		  return(0); //false
+  }
+  
+  
+
+
+  int is_equal1(int n, float *a, float *b){
+	  int i;
+	 
+	  // equal check
+	  for(i=0;i<n;i++){
+		 if(a[i] != b[i]){
+			  return(0); //false
+		  }
+	  }
+	  
+	  return(1); //true
+  }
+  
+  
+  int analizer1(int n, float *a, int id){
+	  int i;
+	  float max,min,sum;
+	
+	  
+	  // near check
+	  for(i=0;i<n;i++){
+		  if(isnan(a[i])){
+			  return(9999);
+		  }
+		  if(isinf(a[i])){
+			  return(9998);
+		  }
+	  }
+  
+	  //find max min avarage
+	  max = -999999999;
+	  min = 999999999;
+	  sum = 0;
+	  for(i=0;i<n;i++){
+		  if(a[i] > max)
+			  max = a[i];
+		  
+		  if(a[i] < min)
+			  min = a[i];
+		  
+		  sum = sum+a[i];
+  
+	  }
+	  printf("id max min average\r\n");
+	  printf("%d %f %f %f \r\n", id, max, min, sum/(float)n);
+  
+	  return(1);
+  }
+  
+  
+
+  
+	
+	/*
+	1st arg in_n of tensor
+	2nd arg in_c of tensor
+	3rd arg in_h of tensor
+	4th arg in_w of tensor
+	5th arg input tensor
+	6th arg output tensor
+	*/
+
+  void standardize1(int in_n, int in_c, int in_h, int in_w, float *a, float *b){
+	  int n1,i,c1,h1,w1,count;
+	  float sum,average;
+	
+	  n1 = in_n * in_c * in_h * in_w;
+	  
+	  for(i=0;i<in_n;i++){
+		  sum = 0.0;
+		  for(c1=0;c1<in_c;c1++){
+			  for(h1=0;h1<in_h;h1++){
+				  for(w1=0;w1<in_w;w1++){
+					  sum = sum + a[IDX4C(i,c1,h1,w1,in_c,in_h,in_w)];
+				  }
+			  }
+		  }
+		  count = in_c * in_h * in_w;
+		  average = sum / (float)count;
+		  for(c1=0;c1<in_c;c1++){
+			  for(h1=0;h1<in_h;h1++){
+				  for(w1=0;w1<in_w;w1++){
+					  b[IDX4C(i,c1,h1,w1,in_c,in_h,in_w)] = a[IDX4C(i,c1,h1,w1,in_c,in_h,in_w)] - average;
+				  }
+			  }
+		  }
+	  }
+	  
+  }
+  
+
+  /*
+  1st arg in_n of 3D tensor
+  2rd arg in_r of 3D tensor
+  3th arg in_c of 3D tensor
+  4th arg input tensor
+  5th arg nth in_r of 3D tensor
+  6th arg output tensor
+  */
+  
+  void pickup1(int in_n, int in_row, int in_col, float *a, int nth, float *b){
+	  int n1,i,j;
+	  
+
+	  for(i=0;i<in_n;i++){
+		  for(j=0;j<in_col;j++){
+			  b[IDX2C(i,j,in_n)] = a[IDX3C(i,nth,j,in_row,in_col)];
+		  }
+	  }
+		
+  }
+	
+  
+  	
+  /*
+  1st arg size of tensor or matrix
+  2rd arg input tensor or matrix
+  3rd arg output 	
+  */
+  
+  void copy1(int n, float *a, float *b){
+	  int i;
+	  
+	  for(i=0;i<n;i++){
+		  b[i] = a[i];
+	  }
+	
+  }
+  
+  /*
+  1st arg row 
+  2nd arg col
+  3rd arg input tensor
+  4th arg output1
+  5th arg output2
+  6th arg output3
+  7th arg output4
+  */
+
+  void slice1(int in_r, int in_c, float *a, float *b, float *c, float *d, float *e){
+	  int in_c1,i,j,n,bias;
+
+
+	  in_c1 = in_c / 4;
+	  n = in_r * (in_c / 4);
+	  
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c1;j++){
+			  b[IDX2C(i,j,in_r)] = a[IDX2C(i,j,in_r)]; 
+		  }
+	  }
+	  bias = in_c / 4;
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c1;j++){
+			  c[IDX2C(i,j,in_r)] = a[IDX2C(i,j+bias,in_r)]; 
+		  }
+	  }
+	  bias = 2 * (in_c / 4);
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c1;j++){
+			  d[IDX2C(i,j,in_r)] = a[IDX2C(i,j+bias,in_r)]; 
+		  }
+	  }
+	  bias = 3 * (in_c / 4);
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c1;j++){
+			  e[IDX2C(i,j,in_r)] = a[IDX2C(i,j+bias,in_r)]; 
+		  }
+	  }
+		
+	 
+  }
+  
+
+  /*
+  1st arg row 
+  2nd arg col
+  3rd arg output tensor
+  4th arg input1
+  5th arg input2
+  6th arg input3
+  7th arg input4
+  */
+  
+  void unslice1(int in_r, int in_c, float *a, float *b, float *c, float *d, float *e){
+	  int i,j,n,bias;
+	
+	  n = in_r * in_c * 4;
+	  
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c;j++){
+			  a[IDX2C(i,j,in_r)] = b[IDX2C(i,j,in_r)];
+		  }
+	  }
+	  bias = in_c;
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c;j++){
+			  a[IDX2C(i,j+bias,in_r)] = c[IDX2C(i,j,in_r)]; 
+		  }
+	  }
+	  bias = 2 * in_c;
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c;j++){
+			  a[IDX2C(i,j+bias,in_r)] = d[IDX2C(i,j,in_r)] ; 
+		  }
+	  }
+	  bias = 3 * in_c;
+	  for(i=0;i<in_r;i++){
+		  for(j=0;j<in_c;j++){
+			  a[IDX2C(i,j+bias,in_r)] = e[IDX2C(i,j,in_r)]; 
+		  }
+	  }
+	  
+  }
+  
+  
+  

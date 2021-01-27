@@ -1060,7 +1060,10 @@ int farray(int n, int ls){
         vec1 = (float *)malloc(sizeof(float)*size);
         i = 0;
         while(!nullp(ls1)){
-            vec1[i] = GET_FLT(car(ls1));
+            if(floatp(car(ls1)))
+                vec1[i] = GET_FLT(car(ls1));
+            else if(integerp(car(ls1)))
+                vec1[i] = (float)GET_INT(car(ls1));
             i++;
             ls1 = cdr(ls1);        
         }
@@ -1075,7 +1078,10 @@ int farray(int n, int ls){
     else{
         i = 0;
         while(!nullp(ls1)){
-            SET_FVEC_ELT(res,i,GET_FLT(car(ls1)));
+            if(floatp(car(ls1)))
+                SET_FVEC_ELT(res,i,GET_FLT(car(ls1)));
+            else if(integerp(car(ls1)))
+                SET_FVEC_ELT(res,i,(float)GET_INT(car(ls1)));
             i++;
             ls1 = cdr(ls1);        
         } 

@@ -232,3 +232,100 @@ int f_gpu_unpooling(int arglist){
     cuda_unpooling(in_n,in_c,in_h,in_w,a,b,c,st_h,st_w);
 }
 
+
+  
+  /*
+  1st arg row-size of matrix
+  2nd arg col-size of matris
+  3rd arg predicted matrix
+  4th arg list of label. each element is integer
+  return accuracy rate
+  */
+  
+
+  float accuracy1(int r1, int c1, float *a, int list){
+	  int i, j, n, index,sum;
+	  float max,rate;
+	
+	  // calculate accuracy
+	  sum = 0;
+	  for(i=0;i<r1;i++){
+          max = 0.0;
+          n = GET_INT(car(list));
+          list = cdr(list);
+		  for(j=0;j<c1;j++){
+			  if(a[IDX2C(i,j,r1)] > max){
+				  max = a[IDX2C(i,j,r1)];
+				  index = j;
+			  }
+		  }
+		  if(index == n)
+			  sum++;
+	  }
+	  rate = (float)sum / (float)r1;
+	  return(rate);
+  }
+  
+  /*
+  1st arg row-size of matrix
+  2nd arg col-size of matris
+  3rd arg predicted matrix
+  4th arg list of label. each element is integer
+  return correct number
+  */
+  
+
+  float correct1(int r1, int c1, float *a, int list){
+	  int i, j, n, index,sum;
+	  float max;
+	
+	  
+	  // calculate correct number
+	  sum = 0;
+	  for(i=0;i<r1;i++){
+          max = 0.0;
+          n = GET_INT(car(list));
+          list = cdr(list);
+		  for(j=0;j<c1;j++){
+			  if(a[IDX2C(i,j,r1)] > max){
+				  max = a[IDX2C(i,j,r1)];
+				  index = j;
+			  }
+		  }
+		  if(index == n)
+			  sum++;
+	  }
+  
+	  return((float)sum);
+  }
+  
+   /*
+  random_select for matrix data
+  1st arg row of matrix a
+  2nd arg col of matrix a
+  3rd arg matrix a
+  4th arg row ob matrix b
+  5th arg col of matrix b
+  6th arg matrix b
+  7th arg count of select
+  8th arg output random selected a
+  9th arg output random selected b 
+  */
+  
+  void random_select1(int r1, int c1, float *a, int r2, int c2, float *b, int n, float *c, float *d){
+	  int i, j, r;
+	
+	
+	  // random-select
+	  for(i=0;i<n;i++){
+		  r = rand() % r1;
+		  for(j=0;j<c1;j++){
+			  c[IDX2C(i,j,n)] = a[IDX2C(r,j,r1)];
+		  }
+		  for(j=0;j<c2;j++){
+			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
+		  }    
+	  }
+  
+  }
+  

@@ -1596,10 +1596,10 @@ int substitute(int addr, int module){
             return(addr);
         else if(subrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUB")))
+            return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
-            return(cons(car(addr),cons(cadr(addr),substitute(cddr(addr),module))));
-        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFP")))
-            return(cons(makesym("DEFUN"),substitute(cdr(addr),module)));
+            return(cons(car(addr),substitute(cdr(addr),module)));
         else if(fsubrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module)));
         else if(macrop(car(addr)))

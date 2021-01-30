@@ -2803,7 +2803,7 @@ int f_array_dimensions(int arglist){
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "array-dimensions", arglist);
-    if(!vectorp(arg1) && !arrayp(arg1) && !stringp(arg1))
+    if(!vectorp(arg1) && !arrayp(arg1) && !farrayp(arg1) && !stringp(arg1))
         error(NOT_ARR, "array-dimensions", arg1);
 
     if(vectorp(arg1))

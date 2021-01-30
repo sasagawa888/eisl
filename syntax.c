@@ -1596,7 +1596,7 @@ int substitute(int addr, int module){
             return(addr);
         else if(subrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module)));
-        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUB")))
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUBLIC")))
             return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
             return(cons(car(addr),substitute(cdr(addr),module)));

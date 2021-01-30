@@ -1143,6 +1143,7 @@ int f_gpu_smult(int arglist);
 int f_gpu_pooling(int arglist);
 int f_gpu_unpooling(int arglist);
 int f_gpu_accuracy(int arglist);
+int f_gpu_correct(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_sub(float *a, float *b, float *c, int n);
 void cuda_smult(float s, int n, float *a, float *b);

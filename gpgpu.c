@@ -234,75 +234,76 @@ int f_gpu_unpooling(int arglist){
 
 
   
-  /*
-  1st arg row-size of matrix
-  2nd arg col-size of matris
-  3rd arg predicted matrix
-  4th arg list of label. each element is integer
-  return accuracy rate
-  */
+/*
+calculate accuracy
+1st arg predicted matrix
+2nd arg list of label. each element is integer
+return accuracy rate
+*/
   
-  // calculate accuracy
-  int f_gpu_accuracy(int arglist){
-      int arg1,arg2,dim,r1,c1,i,j,n,index,sum;
-      float *a;
-      double max,rate;
+int f_gpu_accuracy(int arglist){
+    int arg1,arg2,dim,r1,c1,i,j,n,index,sum;
+    float *a;
+    double max,rate;
 
-      arg1 = car(arglist);
-      arg2 = cadr(arglist);
-      dim = GET_CDR(arg1);
-      r1 = GET_INT(car(dim));
-      c1 = GET_INT(cadr(dim));
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim = GET_CDR(arg1);
+    r1 = GET_INT(car(dim));
+    c1 = GET_INT(cadr(dim));
       
-	  sum = 0;
-	  for(i=0;i<r1;i++){
-          max = 0.0;
-          n = GET_INT(car(arg2));
-          arg2 = cdr(arg2);
-		  for(j=0;j<c1;j++){
-			  if(a[IDX2C(i,j,r1)] > max){
-				  max = a[IDX2C(i,j,r1)];
-				  index = j;
-			  }
-		  }
-		  if(index == n)
-			  sum++;
-	  }
-	  rate = (double)sum / (double)r1;
-	  return(makeflt(rate));
+	sum = 0;
+	for(i=0;i<r1;i++){
+        max = 0.0;
+        n = GET_INT(car(arg2));
+        arg2 = cdr(arg2);
+		for(j=0;j<c1;j++){
+			if(a[IDX2C(i,j,r1)] > max){
+				max = a[IDX2C(i,j,r1)];
+				index = j;
+			}
+		}
+		if(index == n)
+			sum++;
+	}
+	rate = (double)sum / (double)r1;
+	return(makeflt(rate));
   }
   
-  /*
-  1st arg row-size of matrix
-  2nd arg col-size of matris
-  3rd arg predicted matrix
-  4th arg list of label. each element is integer
-  return correct number
-  */
-  
+/*
+calculate correct number
+1st arg predicted matrix
+2nd arg list of label. each element is integer
+return correct number
+*/
 
-  float correct1(int r1, int c1, float *a, int list){
-	  int i, j, n, index,sum;
-	  float max;
-	
+int f_gpu_correct(int arglist){
+    int arg1,arg2,dim,r1,c1,i,j,n,index,sum;
+    float *a;
+	double max;
+      
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim = GET_CDR(arg1);
+    r1 = GET_INT(car(dim));
+    c1 = GET_INT(cadr(dim));
 	  
-	  // calculate correct number
-	  sum = 0;
-	  for(i=0;i<r1;i++){
-          max = 0.0;
-          n = GET_INT(car(list));
-          list = cdr(list);
-		  for(j=0;j<c1;j++){
-			  if(a[IDX2C(i,j,r1)] > max){
-				  max = a[IDX2C(i,j,r1)];
-				  index = j;
-			  }
-		  }
-		  if(index == n)
-			  sum++;
-	  }
+	sum = 0;
+	for(i=0;i<r1;i++){
+        max = 0.0;
+        n = GET_INT(car(arg2));
+        arg2 = cdr(arg2);
+		for(j=0;j<c1;j++){
+			if(a[IDX2C(i,j,r1)] > max){
+				max = a[IDX2C(i,j,r1)];
+				index = j;
+			}
+		}
+		if(index == n)
+			sum++;
+	}
   
-	  return((float)sum);
+	return(makeflt((double)sum));
   }
   
    /*

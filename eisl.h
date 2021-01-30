@@ -967,7 +967,7 @@ int sublis(int x, int s, int e);
 int subrp(int addr);
 int substr(int x, int s, int e);
 int subvec(int x, int s, int e);
-int substitute(int x, int module);
+int substitute(int x, int module, int fname);
 int substitute1(int x, int module);
 int symbolp(int addr);
 int symboltoken(char buf[]);

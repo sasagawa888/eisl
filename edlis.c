@@ -54,7 +54,7 @@ char syntax[60][30] = {
 {"tagbody"},{"go"},{"unwind-protect"},{"with-standard-input"},
 {"with-standard-output"},{"with-error-output"},{"with-handler"},
 {"convert"},{"with-open-input-file"},{"with-open-output-file"},
-{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"}
+{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defp"},
 };
 //builtin token
 char builtin[200][30] ={
@@ -905,7 +905,7 @@ void display_command(char *fname){
     int i;
     ESCHOME;
     ESCREV;
-    printf("Edlis 1.4        File: %s    ", fname);
+    printf("Edlis %1.2f        File: %s    ", VERSION, fname);
     for(i=31;i<ed_width;i++)
         printf(" ");
     ESCRST;

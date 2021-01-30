@@ -64,6 +64,7 @@ void initsyntax(void){
     deffsubr("TIME",f_time);
     deffsubr("TRACE",f_trace);
     deffsubr("UNTRACE",f_untrace);
+    deffsubr("DEFMODULE",f_defmodule);
 }
 
 //--FSUBR-----------
@@ -1555,4 +1556,68 @@ int f_untrace(int arglist){
         trace_list = remove_list(trace_list,arglist);
     }
     return(T);
+}
+
+int f_defmodule(int arglist){
+    int arg1,arg2;
+
+    arg1 = car(arglist); //module name
+    arg2 = cdr(arglist); //body
+
+    while(!nullp(arg2)){
+        eval(substitute(car(arg2),arg1));
+        arg2 = cdr(arg2);
+    }
+    return(T);
+}
+
+
+int substitute(int addr, int module){
+    if(IS_NIL(addr) || IS_T(addr))
+        return(addr);
+    else if(numberp(addr))
+        return(addr);
+    else if(vectorp(addr))
+        return(addr);
+    else if(arrayp(addr))
+        return(addr);
+    else if(farrayp(addr))
+        return(addr);
+    else if(stringp(addr))
+        return(addr);
+    else if(charp(addr))
+        return(addr);
+    else if(symbolp(addr))
+        return(substitute1(addr,module));
+    else if(listp(addr)){
+        if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUOTE")))
+            return(addr);
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE")))
+            return(addr);
+        else if(subrp(car(addr)))
+            return(cons(car(addr),substitute(cdr(addr),module)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
+            return(cons(car(addr),cons(cadr(addr),substitute(cddr(addr),module))));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFP")))
+            return(cons(makesym("DEFUN"),substitute(cdr(addr),module)));
+        else if(fsubrp(car(addr)))
+            return(cons(car(addr),substitute(cdr(addr),module)));
+        else if(macrop(car(addr)))
+            return(cons(car(addr),substitute(cdr(addr),module)));
+        else if(genericp(car(addr)))
+            return(cons(car(addr),substitute(cdr(addr),module)));
+        else
+            return(cons(substitute(car(addr),module),substitute(cdr(addr),module)));  
+    }
+    return(T);
+}
+
+int substitute1(int x, int module){
+    char str[SYMSIZE];
+
+    str[0] = NUL;
+    strcpy(str,GET_NAME(module));
+    strcat(str,"::");
+    strcat(str,GET_NAME(x));
+    return(makesym(str));
 }

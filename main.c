@@ -179,7 +179,7 @@ char syntax[60][30] = {
 {"tagbody"},{"go"},{"unwind-protect"},{"with-standard-input"},
 {"with-standard-output"},{"with-error-output"},{"with-handler"},
 {"convert"},{"with-open-input-file"},{"with-open-output-file"},
-{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"}
+{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defp"},
 };
 //builtin token
 char builtin[200][30] ={

@@ -22,8 +22,8 @@ extern "C" void cuda_smult(float s, int n, float *a, float *b);
 extern "C" void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
 extern "C" void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c,int st_h, int st_w);
 extern "C" void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
-	int st_h, int st_w, int pad);
-
+    int st_h, int st_w, int pad);
+extern "C" void cuda_emult(int n, float *a, float *b,float *c);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -1124,7 +1124,7 @@ __global__ void emult1_kernel(float *a, float *b, float *c, int n)
 }
 
 
-void emult1(int n, float *a, float *b,float *c) {
+void cuda_emult(int n, float *a, float *b,float *c){
     float *dev_a, *dev_b, *dev_c;
 
     

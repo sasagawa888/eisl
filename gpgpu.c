@@ -159,6 +159,32 @@ int f_gpu_smult(int arglist){
     return(res);
 }
 
+int f_gpu_emult(int arglist){
+    int arg1,arg2,res,dim1,dim2,n;
+    float *a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-emult",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-emult",arg2);
+    
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    if(!equalp(dim1,dim2))
+        error(WRONG_ARGS,"gpu-emult",list2(dim1,dim2));
+    res = makefarray(dim1,0.0);
+    n = GET_INT(car(dim1)) * GET_INT(cadr(dim1));
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
+
+    cuda_emult(n,a,b,c);
+    return(res);
+}
+
+
 int f_gpu_pooling(int arglist){
     int arg1,arg2,res1,res2,dim1,dim2,in_n,in_c,in_h,in_w,st_h,st_w;
     float *a,*b, *c;

@@ -54,15 +54,16 @@ void initexsubr(void){
     #endif
 
     #ifdef __NVCC__
-    defsubr("GPU-MULT",f_gpu_mult);
+    defsubr("GPU-ACCURACY",f_gpu_accuracy);  
     defsubr("GPU-ADD",f_gpu_add);
-    defsubr("GPU-SUB",f_gpu_sub);
-    defsubr("GPU-SMULT",f_gpu_smult);
-    defsubr("GPU-POOLING",f_gpu_pooling);
-    defsubr("GPU-UNPOOLING",f_gpu_unpooling);
-    defsubr("GPU-ACCURACY",f_gpu_accuracy);
     defsubr("GPU-CONVOLUTE",f_gpu_convolute);
     defsubr("GPU-CORRECT",f_gpu_correct);
+    defsubr("GPU-EMULT",f_gpu_emult);
+    defsubr("GPU-MULT",f_gpu_mult);
+    defsubr("GPU-POOLING",f_gpu_pooling);
+    defsubr("GPU-SUB",f_gpu_sub);
+    defsubr("GPU-SMULT",f_gpu_smult);
+    defsubr("GPU-UNPOOLING",f_gpu_unpooling);
     #endif
 }
 

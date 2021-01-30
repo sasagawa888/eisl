@@ -21,7 +21,7 @@ Copying GC mode
 #define FREESIZE    900
 #define STACKSIZE   300000
 #define SYMSIZE     32
-#define BUFSIZE     256
+#define BUFSIZE     25600
 #define STRSIZE     500000
 #define CHARSIZE    2   //ascii char. add \0 to tail
 #define MATSIZE     256

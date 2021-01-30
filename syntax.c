@@ -1591,7 +1591,7 @@ int substitute(int addr, int module, int fname){
     else if(class_symbol_p(addr))
         return(addr);
     else if(symbolp(addr)){
-        if(!eqp(addr,fname))
+        if(!eqp(addr,fname) && !eqp(addr,makesym(":REST")))
             return(substitute1(addr,module));
         else
             return(addr);

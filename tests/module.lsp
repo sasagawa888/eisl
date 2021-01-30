@@ -1,10 +1,11 @@
 (defmodule foo
     (defglobal a 3)
 
-    (defpub a (x)
-        (b x))
+    (defpub bar (x)
+        (boo x))
  
-    (defun b (x)
+    (defun boo (x)
         (+ x a))
         
 )
+

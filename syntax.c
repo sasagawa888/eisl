@@ -1565,6 +1565,7 @@ int f_defmodule(int arglist){
     arg2 = cdr(arglist); //body
 
     while(!nullp(arg2)){
+        //print(substitute(car(arg2),arg1));
         eval(substitute(car(arg2),arg1));
         arg2 = cdr(arg2);
     }
@@ -1587,6 +1588,8 @@ int substitute(int addr, int module){
         return(addr);
     else if(charp(addr))
         return(addr);
+    else if(class_symbol_p(addr))
+        return(addr);
     else if(symbolp(addr))
         return(substitute1(addr,module));
     else if(listp(addr)){
@@ -1599,6 +1602,8 @@ int substitute(int addr, int module){
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUBLIC")))
             return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
+            return(cons(car(addr),substitute(cdr(addr),module)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),":METHOD")))
             return(cons(car(addr),substitute(cdr(addr),module)));
         else if(fsubrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module)));

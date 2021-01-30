@@ -520,6 +520,7 @@ int cdr(int addr);
 int charp(int x);
 int check_dimension(int ls);
 int classp(int x);
+int class_symbol_p(int x);
 int cons(int car, int cdr);
 int cons_next(int x, int y);
 int cons_prev(int x, int y);

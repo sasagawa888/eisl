@@ -292,6 +292,13 @@ int output_stream_p(int x){
         return(0);
 }
 
+int class_symbol_p(int x){
+    if(IS_SYMBOL(x) && GET_OPT(x) == SYSTEM)
+        return(1);
+    else
+        return(0);
+}
+
 int classp(int x){
     if(IS_CLASS(x))
         return(1);

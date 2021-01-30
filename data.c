@@ -467,6 +467,10 @@ int caddar(int addr){
     return(car(cdr(cdr(car(addr)))));
 }
 
+int cadddr(int addr){
+    return(car(cdr((cdr(cdr(addr))))));
+}
+
 int nth(int n, int addr){
     while(n > 0){
         addr = cdr(addr);

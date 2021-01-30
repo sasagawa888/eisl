@@ -233,6 +233,48 @@ int f_gpu_unpooling(int arglist){
 }
 
 
+//int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
+ //               int st_h, int st_w, int pad)
+
+/*
+1st arg input tensor
+2nd arg filter tensor
+3rd arg stride list
+4th arg padding size
+*/
+int f_gpu_convolute(int arglist){
+    int arg1,arg2,arg3,arg4,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,st_h,st_w,pad,oh,ow,res;
+    float *a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = cadddr(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    in_n = GET_INT(nth(0,dim1));
+    in_c = GET_INT(nth(1,dim1));
+    in_h = GET_INT(nth(2,dim1));
+    in_w = GET_INT(nth(3,dim1));
+    filt_n = GET_INT(nth(0,dim2));
+    filt_c = GET_INT(nth(1,dim2));
+    filt_h = GET_INT(nth(2,dim2));
+    filt_w = GET_INT(nth(3,dim2));
+    st_h = GET_INT(nth(0,arg3));
+    st_w = GET_INT(nth(1,arg3));
+    pad = GET_INT(arg4);
+
+    oh = (in_h+2*pad-filt_h)/st_h + 1;
+    ow = (in_w+2*pad-filt_w)/st_w + 1;
+    dim3 = list4(makeint(in_n),makeint(filt_n),makeint(oh),makeint(ow));
+    res = makefarray(dim3,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
+
+    cuda_convolute(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,a,b,c,st_h,st_w,pad);
+    return(res);
+}
   
 /*
 calculate accuracy

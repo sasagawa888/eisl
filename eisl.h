@@ -510,6 +510,7 @@ int caar(int addr);
 int cadar(int addr);
 int caddar(int addr);
 int caddr(int addr);
+int cadddr(int addr);
 int cadr(int addr);
 int car(int addr);
 int cdar(int addr);
@@ -1144,9 +1145,12 @@ int f_gpu_pooling(int arglist);
 int f_gpu_unpooling(int arglist);
 int f_gpu_accuracy(int arglist);
 int f_gpu_correct(int arglist);
+int f_gpu_convolute(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_sub(float *a, float *b, float *c, int n);
 void cuda_smult(float s, int n, float *a, float *b);
 void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
 void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
+void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
+	int st_h, int st_w, int pad);
 #endif

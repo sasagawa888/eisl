@@ -61,6 +61,7 @@ void initexsubr(void){
     defsubr("GPU-POOLING",f_gpu_pooling);
     defsubr("GPU-UNPOOLING",f_gpu_unpooling);
     defsubr("GPU-ACCURACY",f_gpu_accuracy);
+    defsubr("GPU-CONVOLUTE",f_gpu_convolute);
     defsubr("GPU-CORRECT",f_gpu_correct);
     #endif
 }

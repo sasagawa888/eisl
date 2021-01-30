@@ -242,17 +242,23 @@ int f_gpu_unpooling(int arglist){
   return accuracy rate
   */
   
+  // calculate accuracy
+  int f_gpu_accuracy(int arglist){
+      int arg1,arg2,dim,r1,c1,i,j,n,index,sum;
+      float *a;
+      double max,rate;
 
-  float accuracy1(int r1, int c1, float *a, int list){
-	  int i, j, n, index,sum;
-	  float max,rate;
-	
-	  // calculate accuracy
+      arg1 = car(arglist);
+      arg2 = cadr(arglist);
+      dim = GET_CDR(arg1);
+      r1 = GET_INT(car(dim));
+      c1 = GET_INT(cadr(dim));
+      
 	  sum = 0;
 	  for(i=0;i<r1;i++){
           max = 0.0;
-          n = GET_INT(car(list));
-          list = cdr(list);
+          n = GET_INT(car(arg2));
+          arg2 = cdr(arg2);
 		  for(j=0;j<c1;j++){
 			  if(a[IDX2C(i,j,r1)] > max){
 				  max = a[IDX2C(i,j,r1)];
@@ -262,8 +268,8 @@ int f_gpu_unpooling(int arglist){
 		  if(index == n)
 			  sum++;
 	  }
-	  rate = (float)sum / (float)r1;
-	  return(rate);
+	  rate = (double)sum / (double)r1;
+	  return(makeflt(rate));
   }
   
   /*

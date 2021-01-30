@@ -7,7 +7,7 @@
     (defglobal a 3)
 
     (defpublic bar (x)
-        (+ (boo x) (gfib 5)))
+        (+ (boo x) (gfib x)))
  
     (defun boo (x)
         (+ x a))
@@ -16,9 +16,10 @@
         (uoo x))
 
     (defgeneric gfib (n)
-    (:method ((n <integer>)) (cond ((= n 1) 1)
-                                   ((= n 2) 1)
-                                   (t (+ (gfib (- n 1)) (gfib (- n 2)))) )))
+        (:method ((n <integer>)) (cond ((= n 1) 1)
+                                       ((= n 2) 1)
+                                       (t (+ (gfib (- n 1)) (gfib (- n 2)))) )))
+
 
 )
 

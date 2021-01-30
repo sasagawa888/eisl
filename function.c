@@ -2810,6 +2810,8 @@ int f_array_dimensions(int arglist){
         return(list1(makeint(GET_CDR(arg1))));
     else if(arrayp(arg1))
         return(GET_CDR(arg1));
+    else if(farrayp(arg1))
+        return(GET_CDR(arg1));
     else
         return(list1(makeint(strlen(GET_NAME(arg1)))));
 }

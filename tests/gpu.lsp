@@ -19,6 +19,7 @@
 (test (gpu-sub b b) #2f((0.0 0.0) (0.0 0.0) (0.0 0.0)))
 (test (gpu-smult 2.0 a) #2f((2.0 4.0 6.0) (8.0 10.0 12.0)))
 (test (gpu-emult b c) #2f((8.0 21.0) (20.0 40.0) (36.0 63.0)))
+(test (array-dimensions c) (3 2))
 
 (defglobal z (create-array '(3000 3000) 'rand 'float))
 

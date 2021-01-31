@@ -5,7 +5,7 @@
     (defconstant width 100)
     (defconstant long-element 15)
     (defconstant defglobal-long-element 50)
-    (defconstant single-comment-margin 25)
+    (defconstant single-comment-margin 30)
     (defconstant single-comment-margin1 90)
     (defglobal buffer nil)
     (defglobal input-stream (standard-input))

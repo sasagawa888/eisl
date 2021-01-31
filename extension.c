@@ -37,6 +37,7 @@ void initexsubr(void){
     defsubr("C-OPTION",f_ignore);
     defsubr("HEAPDUMP",f_heapdump);
     defsubr("INSTANCE",f_instance);
+    defsubr("SUBSTITUTE",f_substitute);
     
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
@@ -534,7 +535,14 @@ int f_delay_microseconds(int arglist){
 }
 #endif
 
+int f_substitute(int arglist){
+    int arg1,arg2;
 
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+
+    return(substitute(arg1,arg2,NIL));
+}
 
 
 

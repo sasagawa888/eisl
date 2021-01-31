@@ -65,7 +65,6 @@ void initsyntax(void){
     deffsubr("TRACE",f_trace);
     deffsubr("UNTRACE",f_untrace);
     deffsubr("DEFMODULE",f_defmodule);
-    deffsubr("SUBSTITUTE",f_substitute);
 }
 
 //--FSUBR-----------
@@ -1643,11 +1642,3 @@ int substitute1(int x, int module){
     return(makesym(str));
 }
 
-int f_substitute(int arglist){
-    int arg1,arg2;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-
-    return(substitute(arg1,arg2,NIL));
-}

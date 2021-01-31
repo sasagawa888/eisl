@@ -2043,7 +2043,7 @@ int f_import(int arglist){
     strcat(str,GET_NAME(arg1));
     strcat(str,".lsp");
 
-    return(f_load(list1(arg1)));
+    return(f_load(list1(makestr(str))));
 }
 
 int f_print(int arglist){

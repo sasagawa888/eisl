@@ -686,7 +686,6 @@ double tarai(double x, double y, double z){
               (body (cdr (cdr x))))
             (for ((s body (cdr s)))
                  ((null s) t)
-                 (print (substitute (car s) name nil))
                  (compile (substitute (car s) name nil)))))
     
     
@@ -2669,10 +2668,19 @@ double tarai(double x, double y, double z){
         (setq instream (open-input-file x))
         (let ((sexp nil))
            (while (setq sexp (read instream nil nil))
-              (cond ((and (consp sexp) (eq (car sexp) 'defun)) (inference-defun sexp))))
+              (cond ((and (consp sexp) (eq (car sexp) 'defun)) (inference-defun sexp)))
+              (cond ((and (consp sexp) (eq (car sexp) 'defmodule)) (inference-defmodule sexp))))
            (close instream)
            (setq instream nil))
         t)
+    
+    (defun inference-defmodule (x)
+        (for ((body (cdr (cdr x)) (cdr body)))
+             ((null body) t)
+             (let ((sexp (car body)))
+                (if (and (consp sexp) (eq (car sexp) 'defun))
+                    (inference-defun sexp)))))
+
     
     (defun inference-defun (x)
         (let* ((name (elt x 1))

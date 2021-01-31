@@ -428,30 +428,30 @@ double tarai(double x, double y, double z){
          (format stream "\")" ))
         ((stringp x)
          (format stream "Fmakestr(")
-         (format-char stream (convert 39 <character>)) ;;'
-         (format-char stream (convert 39 <character>)) ;;'
+         (format-char stream (convert 39 <character>)) ;'
+         (format-char stream (convert 39 <character>)) ;'
          (format-object stream x nil)
-         (format-char stream (convert 39 <character>)) ;;'
-         (format-char stream (convert 39 <character>)) ;;'
+         (format-char stream (convert 39 <character>)) ;'
+         (format-char stream (convert 39 <character>)) ;'
          (format stream ")"))
         ((characterp x)
          (cond ((or (char= x #\\)
-                    (char= x (convert 34 <character>)) ;;"
-                    (char= x (convert 39 <character>))) ;;'
+                    (char= x (convert 34 <character>)) ;"
+                    (char= x (convert 39 <character>))) ;'
                 (format stream "Fmakechar(" )
-                (format-char stream (convert 39 <character>)) ;;'
-                (format-char stream (convert 39 <character>)) ;;'
+                (format-char stream (convert 39 <character>)) ;'
+                (format-char stream (convert 39 <character>)) ;'
                 (format-char stream #\\)
                 (format-char stream x)
-                (format-char stream (convert 39 <character>)) ;;'
-                (format-char stream (convert 39 <character>)) ;;'
+                (format-char stream (convert 39 <character>)) ;'
+                (format-char stream (convert 39 <character>)) ;'
                 (format stream ")" ))
                (t (format stream "Fmakechar(" )
-                  (format-char stream (convert 39 <character>)) ;;'
-                  (format-char stream (convert 39 <character>)) ;;'
+                  (format-char stream (convert 39 <character>)) ;'
+                  (format-char stream (convert 39 <character>)) ;'
                   (format-char stream x)
-                  (format-char stream (convert 39 <character>)) ;;'
-                  (format-char stream (convert 39 <character>)) ;;'
+                  (format-char stream (convert 39 <character>)) ;'
+                  (format-char stream (convert 39 <character>)) ;'
                   (format stream ")" ))))
         ((general-vector-p x)
          (format stream "Fvector(" )

@@ -108,16 +108,16 @@ double tarai(double x, double y, double z){
     
     (defun filename1 (str)
         (let* ((n (char-index #\. str)))
-           (if (null n)
-               (error* "lack of filename ext" str))
-           (substring str 0 (- n 1))))
+            (if (null n)
+                (error* "lack of filename ext" str))
+            (substring str 0 (- n 1))))
     
     ;; e.g. ./example/test.lsp 
     (defun filename2 (str)
         (let* ((n (char-index #\. (dropstring str 1))))
-           (if (null n)
-               (error* "lack of filename ext" str))
-           (substring str 0 n)))
+            (if (null n)
+                (error* "lack of filename ext" str))
+            (substring str 0 n)))
     
     (defun dropstring (str n)
         (substring str n (- (length str) 1)))
@@ -175,7 +175,6 @@ double tarai(double x, double y, double z){
                  code7))
     
     (defglobal instream nil)
-    
     (defglobal not-need-res
                '(labels
                  flet
@@ -191,45 +190,25 @@ double tarai(double x, double y, double z){
                  c-option))
     
     (defglobal not-need-colon '(c-lang c-define c-include c-option))
-    
     (defglobal global-variable nil)
-    
     (defglobal function-arg nil)
-    
     (defglobal generic-name-arg nil)
-    
     (defglobal catch-block-tag nil)
-    
     (defglobal unwind-thunk nil)
-    
     (defglobal file-name-and-ext nil)
-    
     (defglobal lambda-count 0)
-    
     (defglobal lambda-nest 0)
-    
     (defglobal c-lang-option nil)
-    
     (defglobal optimize-enable nil)
-    
     (defglobal inference-name nil)
-    
     (defglobal code0 nil)
-    
     (defglobal code1 nil)
-    
     (defglobal code2 nil)
-    
     (defglobal code3 nil)
-    
     (defglobal code4 nil)
-    
     (defglobal code5 nil)
-    
     (defglobal code6 nil)
-    
     (defglobal code7 nil)
-    
     (defun error* (str x)
         (format (standard-output) "compile error ~A ~A ~%" str x)
         (throw 'exit t))
@@ -442,46 +421,32 @@ double tarai(double x, double y, double z){
                (format stream "\")"))
               ((stringp x)
                (format stream "Fmakestr(")
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-char stream (convert 39 <character>))
-               ;;'
+               (format-char stream (convert 39 <character>))                               ;'
+               (format-char stream (convert 39 <character>))                               ;'
                (format-object stream x nil)
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-char stream (convert 39 <character>))
-               ;;'
+               (format-char stream (convert 39 <character>))                               ;'
+               (format-char stream (convert 39 <character>))                               ;'
                (format stream ")"))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
-                       (char= x (convert 34 <character>))
-                       ;;"
-                       (char= x (convert 39 <character>)))
-                      ;;'
+                       (char= x (convert 34 <character>))                                  ;"
+                       (char= x (convert 39 <character>)));'
                       (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream #\\)
                       (format-char stream x)
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))
                      (t
                       (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream x)
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))))
               ((general-vector-p x)
                (format stream "Fvector(")
@@ -681,23 +646,23 @@ double tarai(double x, double y, double z){
         (when (null (cdr (cdr x))) (error* "lambda: not exist body" x))
         (setq lambda-nest (+ lambda-nest 1))
         (let* ((name (lambda-name))
-              (args (elt x 1))
-              (body (cdr (cdr x)))
-              (free (find-free-variable body args env))
-              (stream (lambda-stream-caller global)) )
-           (comp-lambda0 x name)
-           (comp-lambda1 x name)
-           (comp-lambda2 body env args name free)
-           (comp-lambda3 name)
-           (format stream "({Fset_cdr(Fmakesym(\"")
-           (format-object stream name nil)
-           (format stream "\"),")
-           (free-variable-list stream free)
-           (format stream ");")
-           (format stream "Fcar(Fmakesym(\"")
-           (format-object stream name nil)
-           (format stream "\"));})")
-           (setq lambda-nest (- lambda-nest 1))))
+               (args (elt x 1))
+               (body (cdr (cdr x)))
+               (free (find-free-variable body args env))
+               (stream (lambda-stream-caller global)) )
+            (comp-lambda0 x name)
+            (comp-lambda1 x name)
+            (comp-lambda2 body env args name free)
+            (comp-lambda3 name)
+            (format stream "({Fset_cdr(Fmakesym(\"")
+            (format-object stream name nil)
+            (format stream "\"),")
+            (free-variable-list stream free)
+            (format stream ");")
+            (format stream "Fcar(Fmakesym(\"")
+            (format-object stream name nil)
+            (format stream "\"));})")
+            (setq lambda-nest (- lambda-nest 1))))
     
     (defun lambda-name ()
         (let ((name
@@ -718,79 +683,79 @@ double tarai(double x, double y, double z){
     
     (defun comp-defun0 (x)
         (let* ((name (elt x 1))
-              (args (elt x 2))
-              (n (length args)) )
-           (format code0 "int f_")
-           (format-object code0 (conv-name name) nil)
-           (format code0 "(int arglist);")
-           (format code0 "int ")
-           (format-object code0 (conv-name name) nil)
-           (if (not optimize-enable)
-               (gen-arg2 code0 args)
-               (type-gen-arg2 code0 args (argument-type name)))
-           (format code0 ";~%")))
+               (args (elt x 2))
+               (n (length args)) )
+            (format code0 "int f_")
+            (format-object code0 (conv-name name) nil)
+            (format code0 "(int arglist);")
+            (format code0 "int ")
+            (format-object code0 (conv-name name) nil)
+            (if (not optimize-enable)
+                (gen-arg2 code0 args)
+                (type-gen-arg2 code0 args (argument-type name)))
+            (format code0 ";~%")))
     
     (defun comp-lambda0 (x name)
         (let* ((args (elt x 1))
-              (n (length args)) )
-           (format code0 "int f_")
-           (format-object code0 (conv-name name) nil)
-           (format code0 "(int arglist);")
-           (format code0 "int ")
-           (format-object code0 (conv-name name) nil)
-           (gen-arg2 code0 args)
-           (format code0 ";~%")))
+               (n (length args)) )
+            (format code0 "int f_")
+            (format-object code0 (conv-name name) nil)
+            (format code0 "(int arglist);")
+            (format code0 "int ")
+            (format-object code0 (conv-name name) nil)
+            (gen-arg2 code0 args)
+            (format code0 ";~%")))
     
     (defun comp-defgeneric0 (x)
         (let* ((name (elt x 1))
-              (args (elt x 2))
-              (n (length args)) )
-           (format code0 "int f_")
-           (format-object code0 (conv-name name) nil)
-           (format code0 "(int arglist);")
-           (format code0 "int ")
-           (format-object code0 (conv-name name) nil)
-           (gen-arg2 code0 args)
-           (format code0 ";~%")))
+               (args (elt x 2))
+               (n (length args)) )
+            (format code0 "int f_")
+            (format-object code0 (conv-name name) nil)
+            (format code0 "(int arglist);")
+            (format code0 "int ")
+            (format-object code0 (conv-name name) nil)
+            (gen-arg2 code0 args)
+            (format code0 ";~%")))
     
     
     ;;generate f_XXX(int arg){...}
     (defun comp-defun1 (x)
         (let* ((name (elt x 1))
-              (args (elt x 2))
-              (n (count-args args)) )
-           (format code1 "int f_")
-           (format-object code1 (conv-name name) nil)
-           (format code1 "(int arglist){~%")
-           (gen-arg1 (abs n))
-           (gen-assign n)
-           (if (not optimize-enable)
-               (gen-call (conv-name name) (abs n))
-               (type-gen-call name (abs n)))
-           (format code1 "}~%")))
+               (args (elt x 2))
+               (n (count-args args)) )
+            (format code1 "int f_")
+            (format-object code1 (conv-name name) nil)
+            (format code1 "(int arglist){~%")
+            (gen-arg1 (abs n))
+            (gen-assign n)
+            (if (not optimize-enable)
+                (gen-call (conv-name name) (abs n))
+                (type-gen-call name (abs n)))
+            (format code1 "}~%")))
     
     (defun comp-lambda1 (x name)
         (let* ((args (elt x 1))
-              (n (count-args args)) )
-           (format code1 "int f_")
-           (format-object code1 (conv-name name) nil)
-           (format code1 "(int arglist){~%")
-           (gen-arg1 (abs n))
-           (gen-assign n)
-           (gen-call (conv-name name) (abs n))
-           (format code1 "}~%")))
+               (n (count-args args)) )
+            (format code1 "int f_")
+            (format-object code1 (conv-name name) nil)
+            (format code1 "(int arglist){~%")
+            (gen-arg1 (abs n))
+            (gen-assign n)
+            (gen-call (conv-name name) (abs n))
+            (format code1 "}~%")))
     
     (defun comp-defgeneric1 (x)
         (let* ((name (elt x 1))
-              (args (elt x 2))
-              (n (count-args args)) )
-           (format code1 "int f_")
-           (format-object code1 (conv-name name) nil)
-           (format code1 "(int arglist){~%")
-           (gen-arg1 (abs n))
-           (gen-assign n)
-           (gen-call (conv-name name) (abs n))
-           (format code1 "}~%")))
+               (args (elt x 2))
+               (n (count-args args)) )
+            (format code1 "int f_")
+            (format-object code1 (conv-name name) nil)
+            (format code1 "(int arglist){~%")
+            (gen-arg1 (abs n))
+            (gen-assign n)
+            (gen-call (conv-name name) (abs n))
+            (format code1 "}~%")))
     
     
     ;;genrate int XXX(int x, ...){...} this is main function.
@@ -893,18 +858,18 @@ double tarai(double x, double y, double z){
     
     (defun comp-defgeneric2 (x)
         (let* ((name (elt x 1))
-              (args (varlis-to-lambda-args (elt x 2)))
-              (method (get-method name)) )
-           (format code2 "int ")
-           (format code2 (convert (conv-name name) <string>))
-           (gen-arg2 code2 args)
-           (format code2 "{~%")
-           (format code2 "int res;~%")
-           (gen-shelterpush code2 args)
-           (gen-checkgc)
-           (comp-defgeneric-body method nil)
-           (gen-shelterpop code2 (reverse args))
-           (format code2 "return(res);}~%")))
+               (args (varlis-to-lambda-args (elt x 2)))
+               (method (get-method name)) )
+            (format code2 "int ")
+            (format code2 (convert (conv-name name) <string>))
+            (gen-arg2 code2 args)
+            (format code2 "{~%")
+            (format code2 "int res;~%")
+            (gen-shelterpush code2 args)
+            (gen-checkgc)
+            (comp-defgeneric-body method nil)
+            (gen-shelterpop code2 (reverse args))
+            (format code2 "return(res);}~%")))
     
     ;;ex ((x <list>)y :rest z) -> (x y z)
     (defun varlis-to-lambda-args (x)
@@ -920,37 +885,37 @@ double tarai(double x, double y, double z){
         (cond ((null x) t)
               ((null (cdr x))
                (let* ((varbody (get-method-body (car x)))
-                     (varlis (car varbody))
-                     (body (cdr varbody))
-                     (priority (get-method-priority (car x))) )
-                  (if (and (= priority 14) (not priority))
-                      (format code2 "after:~%"))
-                  (format code2 "if(")
-                  (comp-defgeneric-cond varlis)
-                  (format code2 ")~%{")
-                  (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                  (if (and (method-need-return-p x) (not (equal (last body) '(call-next-method))))
-                      (format code2 "return(res);"))
-                  (format code2 "}~%")))
+                      (varlis (car varbody))
+                      (body (cdr varbody))
+                      (priority (get-method-priority (car x))) )
+                   (if (and (= priority 14) (not priority))
+                       (format code2 "after:~%"))
+                   (format code2 "if(")
+                   (comp-defgeneric-cond varlis)
+                   (format code2 ")~%{")
+                   (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
+                   (if (and (method-need-return-p x) (not (equal (last body) '(call-next-method))))
+                       (format code2 "return(res);"))
+                   (format code2 "}~%")))
               (t
                (let* ((varbody (get-method-body (car x)))
-                     (varlis (car varbody))
-                     (body (cdr varbody))
-                     (priority (get-method-priority (car x))) )
-                  (if (and (= priority 14) (not after))
-                      (format code2 "after:~%"))
-                  (format code2 "if(")
-                  (comp-defgeneric-cond varlis)
-                  (format code2 ")~%{")
-                  (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                  (if (and (method-need-return-p x) (not (equal (last body) '(call-next-method))))
-                      (format code2 "return(res);"))
-                  (if (and (= priority 13) (method-need-return-p1 (cdr x)))
-                      (format code2 "goto after;"))
-                  (format code2 "}~%")
-                  (comp-defgeneric-body (cdr x) (if (= priority 14)
-                                                    t
-                                                    after))))))
+                      (varlis (car varbody))
+                      (body (cdr varbody))
+                      (priority (get-method-priority (car x))) )
+                   (if (and (= priority 14) (not after))
+                       (format code2 "after:~%"))
+                   (format code2 "if(")
+                   (comp-defgeneric-cond varlis)
+                   (format code2 ")~%{")
+                   (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
+                   (if (and (method-need-return-p x) (not (equal (last body) '(call-next-method))))
+                       (format code2 "return(res);"))
+                   (if (and (= priority 13) (method-need-return-p1 (cdr x)))
+                       (format code2 "goto after;"))
+                   (format code2 "}~%")
+                   (comp-defgeneric-body (cdr x) (if (= priority 14)
+                                                     t
+                                                     after))))))
     
     (defun method-need-return-p (x)
         (cond ((null (cdr x)) t)
@@ -1691,29 +1656,29 @@ double tarai(double x, double y, double z){
     (defun comp-for (stream x env args tail name global test clos)
         ;;alpha-convert variables.
         (let* ((vars1 (elt x 1))
-              (var2 (mapcar #'car vars1))
-              (var1 (subst var2))
-              (vars (comp-for3 vars1 var2 var1))
-              (end (alpha-conv (elt x 2) var2 var1))
-              (body (alpha-conv (cdr (cdr (cdr x))) var2 var1)) )
-           (when
-            (any (lambda (x)
-                    (eq (elt x 0) (elt x 1))) vars)
-            (error* "for: illegal variable" vars))
-           (when (any (lambda (x)
-                         (not (symbolp x))) var1) (error* "for: illegal variable" vars))
-           (format stream "({int res;~%")
-           (comp-let1 stream vars env args nil name global test clos)
-           (gen-arg3 (length vars))
-           (format stream "while(")
-           (comp stream (elt end 0) (append var1 env) args nil name global test clos)
-           (format stream " == NIL){~%")
-           (comp-for1 stream body (append var1 env) args nil name global test clos)
-           (comp-for2 stream vars (append var1 env) args nil name global test clos)
-           (if (not (null (cdr end)))
-               (comp-progn1 stream (cdr end) (append var1 env) args tail name global test clos)
-               (format stream "res=NIL;"))
-           (format stream "res;})")))
+               (var2 (mapcar #'car vars1))
+               (var1 (subst var2))
+               (vars (comp-for3 vars1 var2 var1))
+               (end (alpha-conv (elt x 2) var2 var1))
+               (body (alpha-conv (cdr (cdr (cdr x))) var2 var1)) )
+            (when
+             (any (lambda (x)
+                     (eq (elt x 0) (elt x 1))) vars)
+             (error* "for: illegal variable" vars))
+            (when (any (lambda (x)
+                          (not (symbolp x))) var1) (error* "for: illegal variable" vars))
+            (format stream "({int res;~%")
+            (comp-let1 stream vars env args nil name global test clos)
+            (gen-arg3 (length vars))
+            (format stream "while(")
+            (comp stream (elt end 0) (append var1 env) args nil name global test clos)
+            (format stream " == NIL){~%")
+            (comp-for1 stream body (append var1 env) args nil name global test clos)
+            (comp-for2 stream vars (append var1 env) args nil name global test clos)
+            (if (not (null (cdr end)))
+                (comp-progn1 stream (cdr end) (append var1 env) args tail name global test clos)
+                (format stream "res=NIL;"))
+            (format stream "res;})")))
     
     (defun comp-for1 (stream x env args tail name global test clos)
         (cond ((null x) t)
@@ -2030,14 +1995,14 @@ double tarai(double x, double y, double z){
     ;;create lambda thuck for unwind. and return the lambda-name
     (defun comp-unwind-protect1 (body env)
         (let* ((x (append '(lambda ()) body))
-              (name (lambda-name))
-              (args '())
-              (free (find-free-variable body args env)) )
-           (comp-lambda0 x name)
-           (comp-lambda1 x name)
-           (comp-lambda2 body env args name free)
-           (comp-lambda3 name)
-           name))
+               (name (lambda-name))
+               (args '())
+               (free (find-free-variable body args env)) )
+            (comp-lambda0 x name)
+            (comp-lambda1 x name)
+            (comp-lambda2 body env args name free)
+            (comp-lambda3 name)
+            name))
     
     (defun comp-setf (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "setf: illegal form" x))
@@ -2248,14 +2213,14 @@ double tarai(double x, double y, double z){
                (format code4 ");~%"))
               (t
                (let* ((name (elt x 1))
-                     (arg (if (listp (elt x 2))
-                             (elt x 2)
-                             (elt x 3)))
-                     (res (assoc name generic-name-arg)) )
-                  (when (null res) (error* "not exist defgeneric " name))
-                  (unless
-                   (has-same-varlis-p arg (cdr res))
-                   (error* "args variable name must be same" (list arg (cdr res))))))))
+                      (arg (if (listp (elt x 2))
+                              (elt x 2)
+                              (elt x 3)))
+                      (res (assoc name generic-name-arg)) )
+                   (when (null res) (error* "not exist defgeneric " name))
+                   (unless
+                    (has-same-varlis-p arg (cdr res))
+                    (error* "args variable name must be same" (list arg (cdr res))))))))
     
     
     (defun has-same-varlis-p (x y)
@@ -2528,15 +2493,15 @@ double tarai(double x, double y, double z){
     (defun optimize-p (x)
         (if (> (length x) 1)
             (let* ((fn (elt x 1))
-                  (dt (assoc fn type-function)) )
-               (cond ((null dt) nil)
-                     ((and
-                       (eq (elt x 0) 'defun)
-                       (member (elt dt 1) (list (class <fixnum>) (class <float>)))
-                       (subsetp (elt dt 2) (list (class <fixnum>) (class <float>)))
-                       (optimize-p1 (cdr (cdr (cdr dt)))))
-                      t)
-                     (t nil)))
+                   (dt (assoc fn type-function)) )
+                (cond ((null dt) nil)
+                      ((and
+                        (eq (elt x 0) 'defun)
+                        (member (elt dt 1) (list (class <fixnum>) (class <float>)))
+                        (subsetp (elt dt 2) (list (class <fixnum>) (class <float>)))
+                        (optimize-p1 (cdr (cdr (cdr dt)))))
+                       t)
+                      (t nil)))
             nil))
     
     
@@ -2678,14 +2643,10 @@ double tarai(double x, double y, double z){
     
     ;;type-function ((name output-type (input-type1 input-typr2 ...) (local-type-function)) ...)
     (defglobal file-name-and-ext nil)
-    
     (defglobal instream nil)
-    
     (defglobal type-function nil)
-    
     ;; for global defun
     (defglobal local-type-function nil)
-    
     ;;for lavels flet syntax
     (defun warning (str x)
         (format (standard-output) "warning ~A ~A ~A~%" inference-name str x))
@@ -2706,17 +2667,17 @@ double tarai(double x, double y, double z){
     
     (defun inference-defun (x)
         (let* ((name (elt x 1))
-              (arg (elt x 2))
-              (body (cdr (cdr (cdr x))))
-              (init-type-input (create-list (length arg) (class <object>)))
-              (init-env (create-init-env arg)) )
-           (setq inference-name name)
-           (setq type-function (cons (list name (class <object>) init-type-input) type-function))
-           (let ((type-env (inference-all body init-env name nil)))
-              (if (not (eq type-env 'no))
-                  (set-type-function-input name (find-argument-class arg type-env)))
-              (if (not (null local-type-function))
-                  (add-type-function-local name)))))
+               (arg (elt x 2))
+               (body (cdr (cdr (cdr x))))
+               (init-type-input (create-list (length arg) (class <object>)))
+               (init-env (create-init-env arg)) )
+            (setq inference-name name)
+            (setq type-function (cons (list name (class <object>) init-type-input) type-function))
+            (let ((type-env (inference-all body init-env name nil)))
+               (if (not (eq type-env 'no))
+                   (set-type-function-input name (find-argument-class arg type-env)))
+               (if (not (null local-type-function))
+                   (add-type-function-local name)))))
     
     
     (defun inference-labels (x type-env)
@@ -2726,20 +2687,20 @@ double tarai(double x, double y, double z){
               (local-type-env nil) )
            (while (not (null labels-func))
               (let* ((func (car labels-func))
-                    (name (elt func 0))
-                    (arg (elt func 1))
-                    (body (cdr (cdr func)))
-                    (init-type-input (create-list (length arg) (class <object>)))
-                    (init-env (create-init-env arg)) )
-                 (setq
-                  local-type-function
-                  (cons (list name (class <object>) init-type-input) local-type-function))
-                 (setq
-                  local-type-env
-                  (inference-all (append labels-body body) (append init-env type-env) name t))
-                 (if (not (eq local-type-env 'no))
-                     (set-local-type-function-input name (find-argument-class arg local-type-env)))
-                 (setq labels-func (cdr labels-func))))
+                     (name (elt func 0))
+                     (arg (elt func 1))
+                     (body (cdr (cdr func)))
+                     (init-type-input (create-list (length arg) (class <object>)))
+                     (init-env (create-init-env arg)) )
+                  (setq
+                   local-type-function
+                   (cons (list name (class <object>) init-type-input) local-type-function))
+                  (setq
+                   local-type-env
+                   (inference-all (append labels-body body) (append init-env type-env) name t))
+                  (if (not (eq local-type-env 'no))
+                      (set-local-type-function-input name (find-argument-class arg local-type-env)))
+                  (setq labels-func (cdr labels-func))))
            local-type-env))
     
     

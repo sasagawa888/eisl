@@ -23,7 +23,7 @@
            (while (not (end-of-file-p exp))
               (setq otomo nil)
               (pp1 exp 0)                                                                 
-              (print exp)
+              ;;(print exp)
               (setq exp (sexp-read)))
            (close input-stream)
            (close output-stream)

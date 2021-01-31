@@ -1593,7 +1593,7 @@ int substitute(int addr, int module, int fname){
     else if(class_symbol_p(addr))
         return(addr);
     else if(symbolp(addr)){
-        if(!eqp(addr,fname) && !eqp(addr,makesym(":REST")))
+        if(!eqp(addr,fname) && !eqp(addr,makesym(":REST")) && !eqp(addr,makesym("&REST")))
             return(substitute1(addr,module));
         else
             return(addr);
@@ -1601,7 +1601,7 @@ int substitute(int addr, int module, int fname){
     else if(listp(addr)){
         if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUOTE"))){
             temp = cadr(addr);
-            if((symbolp(car(temp))) &&(HAS_NAME(car(temp),"UNQUOTE")))
+            if(listp(temp) && symbolp(car(temp)) &&(HAS_NAME(car(temp),"UNQUOTE")))
                 return(cons(car(addr),substitute(cdr(addr),module,fname)));
             else
                 return(addr);

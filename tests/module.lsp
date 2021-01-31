@@ -4,11 +4,11 @@
     (defglobal a 3)
 
     (defpublic bar (x)
-        (+ (boo x) (gfib x)) )
+        (+ (boo x) 2 ))
     
     
     (defun boo (x)
-        (+ x a) )
+        (+ x 1) )
     
     
     (defpublic baz (x)
@@ -18,14 +18,14 @@
     (defmacro uoo (x)
         `(+ ,x ,x) )
     
-    
+    #|
     (defgeneric gfib (n)
         (:method
            ((n <integer>))
            (cond ((= n 1) 1)
                ((= n 2) 1)
                (t (+ (gfib (- n 1)) (gfib (- n 2)))))))
-    
+    |#
     
     (defpublic fact (n)
         (if (= n 0)

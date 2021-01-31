@@ -2675,9 +2675,11 @@ double tarai(double x, double y, double z){
         t)
     
     (defun inference-defmodule (x)
-        (for ((body (cdr (cdr x)) (cdr body)))
+        (for ((name (car (cdr x)))
+              (body (cdr (cdr x)) (cdr body)))
              ((null body) t)
-             (let ((sexp (car body)))
+             (let ((sexp (substitute (car body) name nil)))
+                (print sexp)
                 (if (and (consp sexp) (eq (car sexp) 'defun))
                     (inference-defun sexp)))))
 

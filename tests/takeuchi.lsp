@@ -11,7 +11,7 @@
 
 ;;;１４７ページ
 (defun delete-1 (x y)
-    (setq y (cons 'dummy))    ;dummy set
+    (setq y (cons 'dummy y))    ;dummy set
     (del2 x y)                ;call del2
     (cdr y) )
 

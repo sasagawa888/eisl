@@ -1574,6 +1574,8 @@ int f_defmodule(int arglist){
 
 
 int substitute(int addr, int module, int fname){
+    int temp;
+
     if(IS_NIL(addr) || IS_T(addr))
         return(addr);
     else if(numberp(addr))
@@ -1597,12 +1599,19 @@ int substitute(int addr, int module, int fname){
             return(addr);
     }
     else if(listp(addr)){
-        if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUOTE")))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+        if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUOTE"))){
+            temp = cadr(addr);
+            if((symbolp(car(temp))) &&(HAS_NAME(car(temp),"UNQUOTE")))
+                return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            else
+                return(addr);
+        }
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE")))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"UNQUOTE")))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"UNQUOTE-SPLICING")))
+            return(cons(car(addr),substitute(cdr(addr),module,fname)));    
         else if(subrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUBLIC")))

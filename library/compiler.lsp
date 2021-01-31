@@ -58,7 +58,7 @@ double tarai(double x, double y, double z){
 
 
 |#
-
+(defmodule compiler
 (defmacro when (test :rest body)
   `(if ,test (progn ,@body)))
 
@@ -187,7 +187,7 @@ double tarai(double x, double y, double z){
 
 ;; This function generate C code and write to file *.c
 ;; Caution! for raspi "gcc -O3 -w -shared -fPIC -o ";
-(defun compile-file (x)
+(defpublic compile-file (x)
   (setq file-name-and-ext x)
   (setq type-function nil)
   (inference-file x)
@@ -3426,3 +3426,4 @@ double tarai(double x, double y, double z){
 (assert quotient (class <float>) (class <number>)(class <number>))
 (assert subrp (class <object>) (class <object>))
 (assert c-lang (class <null>) (class <string>))
+)

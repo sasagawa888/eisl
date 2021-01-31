@@ -783,6 +783,7 @@ int f_string_smallerp(int arglist);
 int f_stringp(int addr);
 int f_subclassp(int x);
 int f_subseq(int arglist);
+int f_substitute(int arglist);
 int f_symbolp(int addr);
 int f_tagbody(int x);
 int f_tan(int addr);

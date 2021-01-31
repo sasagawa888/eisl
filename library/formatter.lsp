@@ -233,7 +233,7 @@
             (pp1 (elt x 1) lm)
             (cond ((< size defglobal-long-element)
                    (pp-string " ")
-                   (pp1 (elt x 2) lm)
+                   (pp1 (elt x 2) -1)
                    (pp-string ")"))
                   (t (newline (+ lm 11))
                      (pp1 (elt x 2) (+ lm 11))

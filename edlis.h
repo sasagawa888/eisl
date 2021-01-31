@@ -1,4 +1,4 @@
-#define VERSION  1.71
+#define VERSION  1.73
 #define ROW_SIZE 4000
 #define COL_SIZE  160
 #define COPY_SIZE 500

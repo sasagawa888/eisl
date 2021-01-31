@@ -1,7 +1,7 @@
 (defmodule format
     ;; プリティ−プリンタ
     ;; pretty printer for ISLisp
-    ;;written by kenichi sasagawa
+    ;; written by kenichi sasagawa
     (defconstant width 100)
     (defconstant long-element 15)
     (defconstant single-comment-margin 25)
@@ -73,34 +73,34 @@
     ;; pretty-print if omitted ignore, pp1 doesn't care syntax
     (defun pp1 (x lm :rest ignore)
         (cond ((consp x)
-                 (cond ((vector-p x) (pp-vector x lm))
+               (cond ((vector-p x) (pp-vector x lm))
                      ((array-p x) (pp-array x lm))
                      ((or (quote-p x) (backquote-p x)) (pp-quote x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "cond"))
-                        (pp-cond x lm))
+                      (pp-cond x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "case"))
-                        (pp-case x lm))
+                      (pp-case x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "if")) (pp-if x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "let")) (pp-let x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "let*"))
-                        (pp-let x lm))
+                      (pp-let x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "for")) (pp-for x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defun"))
-                        (pp-defun x lm))
+                      (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defpublic"))
-                        (pp-defun x lm))
+                      (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defgeneric"))
-                        (pp-defun x lm))
+                      (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro"))
-                        (pp-defun x lm))
+                      (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defmodule"))
-                        (pp-defmodule x lm))
+                      (pp-defmodule x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "block"))
-                        (pp-block x lm))
+                      (pp-block x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "while"))
-                        (pp-block x lm))
+                      (pp-block x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "lambda"))
-                        (pp-block x lm))
+                      (pp-block x lm))
                      ((long-element-p x) (setq otomo t) (pp-long-element x lm))
                      ((< (+ (flatsize x) lm) width) (pp-flat x lm))
                      (t (setq otomo t) (pp-indent x lm))))
@@ -133,10 +133,10 @@
                  (pp-string (car s))
                  (pp1 (car s) lm))
              (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))
-                      (space (calc (car s) lm))
-                      (pp-string (car (cdr s)))
-                      (newline lm)
-                      (setq s (cdr s)))
+                    (space (calc (car s) lm))
+                    (pp-string (car (cdr s)))
+                    (newline lm)
+                    (setq s (cdr s)))
                    ((not (null (cdr s))) (newline lm)))))
     
     
@@ -163,10 +163,10 @@
                     (pp-string (car s))
                     (pp1 (car s) lm1))
                 (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))
-                         (space (calc (car s) lm))
-                         (pp-string (car (cdr s)))
-                         (newline lm1)
-                         (setq s (cdr s)))
+                       (space (calc (car s) lm))
+                       (pp-string (car (cdr s)))
+                       (newline lm1)
+                       (setq s (cdr s)))
                       ((not (null (cdr s))) (newline lm1))))))
     
     
@@ -198,14 +198,14 @@
                  (pp-string (car s))
                  (pp1 (car s) lm))
              (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))            ;single comment
-                   (space (calc (car s) lm))
-                      (pp-string (car (cdr s)))
-                      (newline lm)
-                      (setq s (cdr s)))
+                    (space (calc (car s) lm))
+                    (pp-string (car (cdr s)))
+                    (newline lm)
+                    (setq s (cdr s)))
                    ((and
-                       (not (null (cdr s)))                                                  ;not end element
-                    (not (and (the-p (car s)) (the-p (car (cdr s))))));not the declare
-                   (newline lm)))))
+                     (not (null (cdr s)))                                                  ;not end element
+                     (not (and (the-p (car s)) (the-p (car (cdr s))))));not the declare
+                    (newline lm)))))
     
     
     ;; syntax defmodule
@@ -302,12 +302,12 @@
                  (pp-string (car s))
                  (pp1 (car s) lm1))
              (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))            ;single comment
-                   (space (calc (car s) lm))
-                      (pp-string (car (cdr s)))
-                      (newline lm)
-                      (setq s (cdr s)))
+                    (space (calc (car s) lm))
+                    (pp-string (car (cdr s)))
+                    (newline (+ lm 1))
+                    (setq s (cdr s)))
                    ((not (null (cdr s)))                                                   ;not end element
-                   (pp-string " ")))))
+                    (pp-string " ")))))
     
     
     ;; write subr with long element
@@ -325,12 +325,12 @@
                     (pp-string (car s))
                     (pp1 (car s) lm1))
                 (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))         ;single comment
-                      (space (calc (car s) lm))
-                         (pp-string (car (cdr s)))
-                         (newline lm)
-                         (setq s (cdr s)))
+                       (space (calc (car s) lm))
+                       (pp-string (car (cdr s)))
+                       (newline lm)
+                       (setq s (cdr s)))
                       ((not (null (cdr s)))                                                ;not end element
-                      (newline lm1))))))
+                       (newline lm1))))))
     
     
     (defun calc (x lm)
@@ -354,12 +354,12 @@
                  (pp-string (car s))
                  (pp1 (car s) (+ lm 1)))
              (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))            ;single comment
-                   (space (calc (car s) lm))
-                      (pp-string (car (cdr s)))
-                      (newline lm)
-                      (setq s (cdr s)))
+                    (space (calc (car s) lm))
+                    (pp-string (car (cdr s)))
+                    (newline (+ lm 1))
+                    (setq s (cdr s)))
                    ((not (null (cdr s)))                                                   ;not end element
-                   (newline (+ lm 3))))))
+                    (newline (+ lm 1))))))
     
     
     ;; print n of spaces
@@ -382,18 +382,18 @@
               ((characterp x) 0)
               ((stringp x) (length x))
               ((and
-                  (consp x)
-                  (stringp (car x))
-                  (not (string= (car x) ""))
-                  (char= (elt (car x) 0) #\'))
-                 (+ (length (car x))
+                (consp x)
+                (stringp (car x))
+                (not (string= (car x) ""))
+                (char= (elt (car x) 0) #\'))
+               (+ (length (car x))
                   (flatsize (cdr x))))
               ((and
-                  (consp x)
-                  (stringp (car x))
-                  (not (string= (car x) ""))
-                  (char= (elt (car x) 0) #\`))
-                 (+ (length (car x))
+                (consp x)
+                (stringp (car x))
+                (not (string= (car x) ""))
+                (char= (elt (car x) 0) #\`))
+               (+ (length (car x))
                   (flatsize (cdr x))))
               ((and (consp x) (stringp (car x))) (+ (length (car x)) 1 (flatsize (cdr x))))
               ((consp x) (+ (flatsize (car x)) 1 (flatsize (cdr x))))))
@@ -414,7 +414,7 @@
                (setq token (get-token)))
            (cond ((and (characterp token) (char= token #\))) nil)
                  ((and (characterp token) (char= token #\())
-                    (cons (sexp-read-list) (sexp-read-list)))
+                  (cons (sexp-read-list) (sexp-read-list)))
                  (t (cons token (sexp-read-list))))))
     
     
@@ -436,94 +436,94 @@
                  (char nil) )
               (setq char (getc))
               (cond ((skip-p char)                                                         ;newline skip
-                    (space-skip) (setq char (getc))))
+                     (space-skip) (setq char (getc))))
               (cond ((skip-p char)                                                         ;space skip
-                    (space-skip) (setq char (getc))))
+                     (space-skip) (setq char (getc))))
               (cond ((end-of-file-p char) (return-from exit char))                        ;EOF
                     ((char= char #\null) "")                                            ;empty line
                     ((delimiter-p char) char)                                             ;delimiter
                     ((char= char #\")                                                     ;string e.g. "asdf"
-                    (setq token (cons #\' (cons #\' token)))
-                       (setq char (getc))
-                       (while (not (char= char #\"))
+                     (setq token (cons #\' (cons #\' token)))
+                     (setq char (getc))
+                     (while (not (char= char #\"))
                         (setq token (cons char token))
                         (cond ((char= char #\\) (setq token (cons (getc) token))))
                         (setq char (getc)))
-                       (setq token (cons #\' (cons #\' token)))
-                       (convert-to-string (reverse token)))
+                     (setq token (cons #\' (cons #\' token)))
+                     (convert-to-string (reverse token)))
                     ((and (char= char #\#) (char= (look) #\\))                           ;character e.g. "#a" double 
-                    (setq token (cons (getc) (cons char nil)))
-                       (setq token (cons #\\ token))
-                       (setq token (cons (getc) token))
-                       (setq char (getc))
-                       (while (not (delimiter-p char))
+                     (setq token (cons (getc) (cons char nil)))
+                     (setq token (cons #\\ token))
+                     (setq token (cons (getc) token))
+                     (setq char (getc))
+                     (while (not (delimiter-p char))
                         (setq token (cons char token))
                         (setq char (getc)))
-                       (ungetc char)
-                       (convert-to-string (reverse token)))
+                     (ungetc char)
+                     (convert-to-string (reverse token)))
                     ((char= char #\')                                                     ;quote
-                    (setq token (cons char nil))
-                       (cons (convert-to-string token) (sexp-read)))
+                     (setq token (cons char nil))
+                     (cons (convert-to-string token) (sexp-read)))
                     ((char= char #\`)                                                     ;back quote
-                    (setq token (cons char nil))
-                       (cons (convert-to-string token) (sexp-read)))
+                     (setq token (cons char nil))
+                     (cons (convert-to-string token) (sexp-read)))
                     ((and (char= char #\#) (char= (look) #\|))                           ;long comment #|..|#
-                    (setq token (cons (getc) (cons char nil)))
-                       (setq token (cons (getc) token))
-                       (setq char (getc))
-                       (while (not (and (char= char #\|) (char= (look) #\#)))
+                     (setq token (cons (getc) (cons char nil)))
+                     (setq token (cons (getc) token))
+                     (setq char (getc))
+                     (while (not (and (char= char #\|) (char= (look) #\#)))
                         (setq token (cons char token))
                         (setq char (getc)))
-                       (setq token (cons char token))
-                       (setq token (cons (getc) token))
-                       (convert-to-string (reverse token)))
+                     (setq token (cons char token))
+                     (setq token (cons (getc) token))
+                     (convert-to-string (reverse token)))
                     ((and (char= char #\#) (char= (look) #\())                           ;vector
-                    (setq token (cons char nil))
-                       (cons (convert-to-string token) (sexp-read)))
+                     (setq token (cons char nil))
+                     (cons (convert-to-string token) (sexp-read)))
                     ((and (char= char #\#) (char= (look) #\'))                           ;e.g. #'foo
-                    (setq token (cons (getc) (cons char nil)))
-                       (setq char (getc))
-                       (while (not (delimiter-p char))
+                     (setq token (cons (getc) (cons char nil)))
+                     (setq char (getc))
+                     (while (not (delimiter-p char))
                         (setq token (cons char token))
                         (setq char (getc)))
-                       (ungetc char)
-                       (convert-to-string (reverse token)))
+                     (ungetc char)
+                     (convert-to-string (reverse token)))
                     ((char= char #\#)
-                       (while (not (delimiter-p char))
+                     (while (not (delimiter-p char))
                         (setq token (cons char token))
                         (setq char (getc)))
-                       (ungetc char)
-                       (setq token (reverse token))
-                       (cond ((member (elt token 1) '(#\X #\B #\O)) (convert-to-string token));hex oct bin integer
+                     (ungetc char)
+                     (setq token (reverse token))
+                     (cond ((member (elt token 1) '(#\X #\B #\O)) (convert-to-string token));hex oct bin integer
                            ((or (char= (elt token 2) #\a) (char= (elt token 2) #\f))
-                              (cons (convert-to-string token) (sexp-read)));array
+                            (cons (convert-to-string token) (sexp-read)));array
                            (t (convert-to-string token))));other 
                     ((char= char #\;)                                                     ;comment
-                    (setq token (cons char token))
-                       (setq char (getc))
-                       (while (not (char= char #\newline))
+                     (setq token (cons char token))
+                     (setq char (getc))
+                     (while (not (char= char #\newline))
                         (setq token (cons char token))
                         (setq char (getc)))
-                       (ungetc char)
-                       (convert-to-string (reverse token)))
+                     (ungetc char)
+                     (convert-to-string (reverse token)))
                     (t
-                       (while (not (delimiter-p char))
+                     (while (not (delimiter-p char))
                         ;atom
                         (setq token (cons char token))
                         (setq char (getc)))
-                       (ungetc char)
-                       (convert-to-string (reverse token)))))))
+                     (ungetc char)
+                     (convert-to-string (reverse token)))))))
     
     
     ;;when first element of buffer is space tab or newline, skip
     (defun space-skip ()
         ;;space skip
         (while (and
-              (not (null buffer))
-              (or
-               (char= (car buffer) #\space)
-               (char= (car buffer) #\tab)
-               (char= (car buffer) #\newline)))
+            (not (null buffer))
+            (or
+             (char= (car buffer) #\space)
+             (char= (car buffer) #\tab)
+             (char= (car buffer) #\newline)))
            (setq buffer (cdr buffer))))
     
     
@@ -588,22 +588,22 @@
     ;; ;; double semicolon comment
     (defun double-comment-p (x)
         (and
-           (stringp x)
-           (> (length x) 2)
-           (char= (elt x 0) #\;)
-           (char= (elt x 1) #\;)
-           (not (char= (elt x 2)) #\;)))
+         (stringp x)
+         (> (length x) 2)
+         (char= (elt x 0) #\;)
+         (char= (elt x 1) #\;)
+         (not (char= (elt x 2)) #\;)))
     
     
     ;; ;;; triple seimicolo comment
     (defun triple-comment-p (x)
         (and
-           (stringp x)
-           (> (length x) 3)
-           (char= (elt x 0) #\;)
-           (char= (elt x 1) #\;)
-           (char= (elt x 2) #\;)
-           (not (char= (elt x 3) #\;))))
+         (stringp x)
+         (> (length x) 3)
+         (char= (elt x 0) #\;)
+         (char= (elt x 1) #\;)
+         (char= (elt x 2) #\;)
+         (not (char= (elt x 3) #\;))))
     
     
     ;; #|    |# type comment
@@ -624,11 +624,11 @@
     ;; is it array object?
     (defun array-p (x)
         (and
-           (consp x)
-           (stringp (elt x 0))
-           (= (length (elt x 0)) 3)
-           (char= (elt (elt x 0) 0) #\#)
-           (or (char= (elt (elt x 0) 2) #\a) (char= (elt (elt x 0) 2) #\f))))
+         (consp x)
+         (stringp (elt x 0))
+         (= (length (elt x 0)) 3)
+         (char= (elt (elt x 0) 0) #\#)
+         (or (char= (elt (elt x 0) 2) #\a) (char= (elt (elt x 0) 2) #\f))))
     
     
     ;; is it quote? e.g. 'foo
@@ -644,11 +644,11 @@
     ;; is subr that has long size element? e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
     (defun long-element-p (x)
         (and
-           (consp x)
-           (stringp (car x))
-           (subrp (convert (car x) <symbol>))
-           (> (length x) 2)
-           (long-element-p1 (cdr x))))
+         (consp x)
+         (stringp (car x))
+         (subrp (convert (car x) <symbol>))
+         (> (length x) 2)
+         (long-element-p1 (cdr x))))
     
     
     (defun long-element-p1 (x)

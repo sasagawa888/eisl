@@ -682,8 +682,8 @@ double tarai(double x, double y, double z){
         (comp-defgeneric3 x))
     
     (defun comp-defmodule (x)
-        (let ((module (cadr x))
-              (body (cddr x)))
+        (let ((module (car (cdr x)))
+              (body (cdr (cdr x))))
             (for ((s body (cdr s)))
                  ((null s) t)
                  (compile s x nil))))

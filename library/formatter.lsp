@@ -270,7 +270,7 @@
     
     (defun pp-array (x lm)
         (pp-string (elt x 0))
-        (pp1 (cdr x) (+ lm 3) t))
+        (pp1 (cdr x) (+ lm 2) t))
     
     
     (defun pp-quote (x lm)
@@ -493,7 +493,7 @@
                        (ungetc char)
                        (setq token (reverse token))
                        (cond ((member (elt token 1) '(#\X #\B #\O)) (convert-to-string token));hex oct bin integer
-                           ((char= (elt token 2) #\a)
+                           ((or (char= (elt token 2) #\a) (char= (elt token 2) #\f))
                               (cons (convert-to-string token) (sexp-read)));array
                            (t (convert-to-string token))));other 
                     ((char= char #\;)                            ;comment
@@ -626,7 +626,8 @@
            (stringp (elt x 0))
            (= (length (elt x 0)) 3)
            (char= (elt (elt x 0) 0) #\#)
-           (char= (elt (elt x 2) 0) #\a)))
+           (or (char= (elt (elt x 0) 2) #\a)
+               (char= (elt (elt x 0) 2) #\f))))
     
     
     ;; is it quote? e.g. 'foo

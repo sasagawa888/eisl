@@ -4,7 +4,7 @@
     (defglobal a 3)
 
     (defpublic bar (x)
-        (+ (boo x) 2 ))
+        (+ (boo x) a ))
     
     
     (defun boo (x)

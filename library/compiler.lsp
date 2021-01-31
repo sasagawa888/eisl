@@ -296,12 +296,19 @@ double tarai(double x, double y, double z){
         (setq instream (open-input-file x))
         (let ((sexp nil))
            (while (setq sexp (read instream nil nil))
-              (check-args-count sexp)
-              (find-catch-block-tag sexp))
+              (cond ((and (consp sexp)(eq (car sexp) 'defmodule)) (module-check sexp))
+                    (t (check-args-count sexp) (find-catch-block-tag sexp))))
            (close instream)
            (setq instream nil)))
     
-    
+    (defun module-check (x)
+        (for ((name (car (cdr x)))
+              (body (cdr (cdr x)) (cdr body)))
+             ((null body) t)
+             (let ((sexp (substitute (car body) name nil)))
+                (check-args-count sexp)
+                (find-catch-block-tag sexp))))
+
     (defun check-args-count (x)
         (cond ((eq (car x) 'defun)
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
@@ -2679,7 +2686,6 @@ double tarai(double x, double y, double z){
               (body (cdr (cdr x)) (cdr body)))
              ((null body) t)
              (let ((sexp (substitute (car body) name nil)))
-                (print sexp)
                 (if (and (consp sexp) (eq (car sexp) 'defun))
                     (inference-defun sexp)))))
 

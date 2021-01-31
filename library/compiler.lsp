@@ -396,6 +396,7 @@ double tarai(double x, double y, double z){
               ((eq (car x) 'defclass) (comp-defclass x))
               ((eq (car x) 'defgeneric) (comp-defgeneric x))
               ((eq (car x) 'defmethod) (comp-defmethod x))
+              ((eq (car x) 'defmodule) (comp-defmodule x))
               (t (comp code4 x nil nil nil nil t nil nil) (format code4 ";"))))
     
     (defun comp (stream x env args tail name global test clos)
@@ -679,6 +680,13 @@ double tarai(double x, double y, double z){
         (comp-defgeneric1 x)
         (comp-defgeneric2 x)
         (comp-defgeneric3 x))
+    
+    (defun comp-defmodule (x)
+        (let ((module (cadr x))
+              (body (cddr x)))
+            (for ((s body (cdr s)))
+                 ((null s) t)
+                 (compile s x nil))))
     
     
     (defun comp-defun0 (x)

@@ -1,31 +1,51 @@
 
-(defglobal a '(#\a #\b #\c))
+;; inference a s-expression
+;; if x is true return type-env else return 'no
+(defun inference (x type-env)
+    (cond ((and (symbolp x) (eq x t)) type-env)
+          ((and (symbolp x) (eq x nil)) type-env)
+          ((symbolp x)
+           (let ((y (refer x type-env)))
+              (if y
+                  type-env
+                  (unify x (class <object>) type-env))))
+          ((atom x) type-env)
+          ((and (consp x) (eq (car x) 'the)) (unify (class* (elt x 1)) (elt x 2) type-env))
+          ((and (consp x) (eq (car x) 'not))                                               ; ignore not function
+           type-env)
+          ((and (consp x) (eq (car x) 'setq))
+           (cond ((not (symbolp (elt x 1))) (warning "setq type mismatch" (elt x 1)) type-env)
+                 (t (cons (cons (elt x 1) (find-class (elt x 2) type-env)) type-env))))
+          ((and (consp x) (eq (car x) 'convert))                                           ; ignore convert function
+           type-env)
+          ((and (consp x) (eq (car x) 'catch)) (inference (elt x 2) type-env))
+          ((and (consp x) (eq (car x) 'throw)) (inference (elt x 2) type-env))
+          ((and (consp x) (eq (car x) 'quote)) type-env)
+          ((and (consp x) (eq (car x) 'cond)) (inference-cond x type-env))
+          ((and (consp x) (eq (car x) 'case)) (inference-case x type-env))
+          ((and (consp x) (eq (car x) 'if)) (inference-if x type-env))
+          ((and (consp x) (eq (car x) 'let)) (inference-let x type-env))
+          ((and (consp x) (eq (car x) 'let*)) (inference-let x type-env))
+          ((and (consp x) (eq (car x) 'for)) (inference-for x type-env))
+          ((and (consp x) (eq (car x) 'while)) (inference-while x type-env))
+          ((and (consp x) (eq (car x) 'labels)) (inference-labels x type-env))
+          ((and (consp x) (eq (car x) 'flet)) (inference-labels x type-env))
+          ((and (consp x) (eq (car x) 'function)) (inference-function x type-env))
+          ((and (consp x) (macrop x)) (inference (macroexpand-1 x) type-env))
+          ((and (consp x) (member (car x) '(+ - * = > < >= <= /=))) (inference-numeric x type-env))
+          ((and (consp x) (subrp (car x)))
+           (let ((type-subr (property (car x) 'inference)))
+              (block exit-inference
+                 (for ((type type-subr (cdr type)))
+                      ((null type)
+                       (warning "subr type mismatch" x)
+                       'no )
+                      (let ((new-env (inference-arg (cdr x) (cdr (car type)) type-env)))
+                         (if (not (eq new-env 'no))
+                             (return-from exit-inference new-env)))))))
+          ((consp x)
+           (let ((type (find-function-type (car x))))
+              (if type
+                  (inference-arg (cdr x) (elt type 1) type-env))))
+          (t (warning "can't inference " x) 'no)))
 
-(defglobal a #2a((1 2) (3 4)))
-
-(defun calc-single-comment-margin (x lm)
-    (let ((size (flatsize x)))
-       (if (< (+ lm size) single-comment-margin)
-           (- single-comment-margin (+ lm size))
-           (- single-comment-margin1 (+ lm size)) )))
-
-;; write cons with indent
-(defun pp-indent (x lm)
-    (pp-string "(")
-    (for ((s x (cdr s)))
-         ((null s)
-          (cond ((= (length x) 0) (pp-string ")"))
-               (otomo (pp-string ")"))
-               (t (setq otomo t) (pp-string " )")) )
-          (if (= lm 0)
-             (newline 0)) )
-         (if (stringp (car s))
-             (pp-string (car s))
-             (pp1 (car s) (+ lm 1)))
-         (cond ((and (not (null (cdr s))) (single-comment-p (car (cdr s))))                ;single comment
-                (space (calc (car s) lm))
-                (pp-string (car (cdr s)))
-                (newline lm)
-                (setq s (cdr s)))
-               ((not (null (cdr s)))                                                       ;asdfads
-                (newline (+ lm 3))))))

@@ -2781,7 +2781,7 @@ double tarai(double x, double y, double z){
         ((atom x) type-env)
         ((and (consp x)(eq (car x) 'the))
          (unify (class* (elt x 1)) (elt x 2) type-env))
-        ((and (consp x)(eq (car x) 'not)) ;; ignore not function
+        ((and (consp x)(eq (car x) 'not)) ; ignore not function
          type-env)
         ((and (consp x)(eq (car x) 'setq))
          (cond ((not (symbolp (elt x 1)))
@@ -2789,7 +2789,7 @@ double tarai(double x, double y, double z){
                 type-env)
                (t (cons (cons (elt x 1)
                               (find-class (elt x 2) type-env)) type-env))))
-        ((and (consp x)(eq (car x) 'convert)) ;; ignore convert function
+        ((and (consp x)(eq (car x) 'convert)) ; ignore convert function
          type-env)
         ((and (consp x)(eq (car x) 'catch))
          (inference (elt x 2) type-env))

@@ -1984,7 +1984,7 @@ int f_read_line(int arglist){
 }
 
 int f_load(int arglist){
-    int arg1,sexp,save,n;
+    int arg1,sexp,save1,save2,n;
     char str[STRSIZE];
 
     arg1 = car(arglist);
@@ -2002,11 +2002,12 @@ int f_load(int arglist){
     }
 
     //text file
-    save = input_stream;
+    save1 = input_stream;
+    save2 = repl_flag;
     input_stream = makestream(fopen(GET_NAME(arg1),"r"),EISL_INPUT);
 
     if(GET_PORT(input_stream) == NULL){
-        input_stream = save;
+        input_stream = save1;
         error(CANT_OPEN, "load", arg1);
     }
     open_flag = 1;
@@ -2021,7 +2022,8 @@ int f_load(int arglist){
     }
     open_flag = 0;
     fclose(GET_PORT(input_stream));
-    input_stream = save;
+    input_stream = save1;
+    repl_flag = save2;
     if(redef_flag)
         redef_generic();
     return(T);

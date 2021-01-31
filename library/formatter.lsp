@@ -4,6 +4,7 @@
     ;; written by kenichi sasagawa
     (defconstant width 100)
     (defconstant long-element 15)
+    (defconstant defglobal-long-element 50)
     (defconstant single-comment-margin 25)
     (defconstant single-comment-margin1 90)
     (defglobal buffer nil)
@@ -21,8 +22,8 @@
            (setq exp (sexp-read))
            (while (not (end-of-file-p exp))
               (setq otomo nil)
-              (pp1 exp 0)
-              ;;(print exp)
+              (pp1 exp 0)                                                                 
+              (print exp)
               (setq exp (sexp-read)))
            (close input-stream)
            (close output-stream)
@@ -96,6 +97,8 @@
                       (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defmodule"))
                       (pp-defmodule x lm))
+                     ((and (null ignore) (stringp (car x)) (string= (car x) "defglobal"))
+                      (pp-defglobal x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "block"))
                       (pp-block x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "while"))
@@ -210,8 +213,6 @@
     
     
     ;; syntax defmodule
-    ;;syntax defun type
-    ;;also defmacro defgeneric
     (defun pp-defmodule (x lm)
         (let ((lm1 (+ lm 4)))
            (pp-string "(")
@@ -223,6 +224,23 @@
            (newline lm)
            (pp-string ")")
            (newline lm)))
+    
+    (defun pp-defglobal (x lm)
+       (let ((size (flatsize (elt x 2))))
+            (pp-string "(")
+            (pp1 (elt x 0) lm)
+            (pp-string " ")
+            (pp1 (elt x 1) lm)
+            (cond ((< size defglobal-long-element)
+                   (pp-string " ")
+                   (pp1 (elt x 2) lm)
+                   (pp-string ")")
+                   (newline lm))
+                  (t (newline (+ lm 11))
+                     (pp1 (elt x 2) (+ lm 11))
+                     (pp-string ")")
+                     (newline lm)))))
+                     
     
     
     ;; syntax let

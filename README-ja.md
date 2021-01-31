@@ -264,3 +264,4 @@ EISL <==================================> C
   - `(gbc 'm&s)`GCの方法をマーク＆スイープGCに切り換える。
 - `(heapdump n)`ｎ番目のセルからダンプリストを表示する。
 - `(instance n)`ｎ番目のセルの実体を表示する。
+- `(defmodule name body)` tests/module.lsp 参照

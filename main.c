@@ -217,7 +217,7 @@ char builtin[200][30] ={
 {"standard-input"},{"standard-output"},{"stream-error-stream"},{"streamp"},
 {"stream-ready-p"},{"string-append"},{"string-index"},{"string/="},{"string<"},{"string<="},{"string="},{"string>"},{"string>="},{"stringp"},{"subclassp"},
 {"subseq"},{"symbolp"},{"tan"},{"tanh"},{"truncate"},{"undefined-entity-name"},
-{"undefined-entity-namespace"},{"vector"},{"write-byte"}
+{"undefined-entity-namespace"},{"vector"},{"write-byte"},{"import"}
 };
 
 //extended function

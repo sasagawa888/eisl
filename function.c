@@ -109,6 +109,7 @@ void initsubr(void){
     defsubr("GET-UNIVERSAL-TIME",f_get_universal_time);
     defsubr("HDMP",f_heapdump);
     defsubr("IDENTITY",f_identity);
+    defsubr("IMPORT",f_import);
     defsubr("INITIALIZE-OBJECT*",f_initialize_object_star);
     defsubr("INPUT-STREAM-P",f_input_stream_p);
     defsubr("INSTANCEP",f_instancep);
@@ -2029,6 +2030,21 @@ int f_load(int arglist){
     return(T);
 }
 
+int f_import(int arglist){
+    int arg1;
+    char str[SYMSIZE];
+
+    arg1 = car(arglist);
+    if(!stringp(arg1))
+        error(NOT_SYM,"import",arg1);
+
+    str[0] = NUL;
+    strcpy(str,"library/");
+    strcat(str,GET_NAME(arg1));
+    strcat(str,".lsp");
+
+    return(f_load(list1(arg1)));
+}
 
 int f_print(int arglist){
     int arg1;

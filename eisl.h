@@ -678,6 +678,7 @@ int f_heapdump(int addr);
 int f_identity(int arglist);
 int f_if(int addr);
 int f_ignore_errors(int arglist);
+int f_import(int arglist);
 int f_initialize_object_star(int arglist);
 int f_input_stream_p(int x);
 int f_instance(int x);

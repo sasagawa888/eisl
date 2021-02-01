@@ -13,7 +13,7 @@
     (defglobal otomo nil)
     
     ;; write formated code to **.tmp file
-    (defun formatter (file)
+    (defpublic formatter (file)
         (let ((exp nil)
               (temp (string-append (filename file) ".tmp"))
               (original (string-append (filename file) ".org")) )

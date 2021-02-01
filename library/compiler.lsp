@@ -448,6 +448,38 @@ double tarai(double x, double y, double z){
                       (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))
+                     ((char= x #\newline)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "newline")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
+                     ((char= x #\tab)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "tab")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
+                     ((char= x #\space)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "space")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
+                     ((char= x #\null)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "null")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
                      (t
                       (format stream "Fmakechar(")
                       (format-char stream (convert 39 <character>))                        ;'
@@ -2429,6 +2461,38 @@ double tarai(double x, double y, double z){
                       ;;'
                       (format-char stream (convert 39 <character>))
                       ;;'
+                      (format stream ")"))
+                     ((char= x #\newline)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "newline")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
+                     ((char= x #\tab)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "tab")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
+                     ((char= x #\space)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "space")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream ")"))
+                     ((char= x #\null)
+                      (format stream "Fmakechar(")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format stream "null")
+                      (format-char stream (convert 39 <character>))                        ;'
+                      (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))
                      (t
                       (format stream "Fmakechar(")

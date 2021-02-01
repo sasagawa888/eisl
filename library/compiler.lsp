@@ -153,26 +153,26 @@ double tarai(double x, double y, double z){
     
     
     (defglobal comp-global-var
-               '(instream
-                 not-need-res
-                 not-need-colon
-                 global-variable
-                 function-arg
-                 generic-name-arg
-                 catch-block-tag
-                 unwind-thunk
-                 file-name-and-ext
-                 lambda-count
-                 lambda-nest
-                 c-lang-option
-                 code0
-                 code1
-                 code2
-                 code3
-                 code4
-                 code5
-                 code6
-                 code7))
+               '(compiler::instream
+                 compiler::not-need-res
+                 compiler::not-need-colon
+                 compiler::global-variable
+                 compiler::function-arg
+                 compiler::generic-name-arg
+                 compiler::catch-block-tag
+                 compiler::unwind-thunk
+                 compiler::file-name-and-ext
+                 compiler::lambda-count
+                 compiler::lambda-nest
+                 compiler::c-lang-option
+                 compiler::code0
+                 compiler::code1
+                 compiler::code2
+                 compiler::code3
+                 compiler::code4
+                 compiler::code5
+                 compiler::code6
+                 compiler::code7))
     
     (defglobal instream nil)
     (defglobal not-need-res

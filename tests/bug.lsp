@@ -1,11 +1,10 @@
-(defmodule foo
+(defmodule f
     
-    (defun substring (str m n)
-        (for ((i m (+ i 1))
-              (str1 "") )
+    (defun bll (str m n)
+        (for ((i 0 (+ i 1)))
            ((> i n)
-             str1 )
-            (setq str1 (string-append str1 (convert (elt str i) <string>)))))
+             t )))
+            ;(setq str1 (string-append str1 (convert (elt str i) <string>)))))
     
 )
 

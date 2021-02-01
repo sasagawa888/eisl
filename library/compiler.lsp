@@ -134,7 +134,7 @@ double tarai(double x, double y, double z){
         (if (null vars)
             '()
             (cons
-             (convert (string-append (convert (car vars) <string>) "subst") <symbol>)
+             (convert (string-append (convert (conv-name (car vars)) <string>) "subst") <symbol>)
              (subst (cdr vars)))))
     
     

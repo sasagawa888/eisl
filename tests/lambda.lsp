@@ -15,7 +15,7 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print (reduce (combinator s)))
+                  (print* (reduce (combinator s)))
                   (prompt))) t)
           (t (prompt)(repl)))))
 
@@ -25,7 +25,10 @@
 
 
 (defun parse (x)
-  x)
+  (let ((1st (elt x 0))
+        (2nd (elt x 1))
+        (3rd (elt x 2)))
+      
 
 (defun print* (x)
   (format (standard-output) "^")

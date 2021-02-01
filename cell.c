@@ -817,7 +817,7 @@ int makestr(char *string){
 
 int makechar(char *pname){
     int addr,pos;
-    char low_name[SYMSIZE],*str;
+    char low_name[SYMSIZE],char_entity[SYMSIZE],*str;
 
     
     pos = 0;
@@ -826,43 +826,43 @@ int makechar(char *pname){
         pos++;
     }
     low_name[pos] = NUL;
-
+    strcpy(char_entity,pname);
     
     if(strcmp(low_name,"alarm") == 0){
-        pname[0] = BEL;
-        pname[1] = NUL;
+        char_entity[0] = BEL;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"backspace") == 0){
-        pname[0] = BS;
-        pname[1] = NUL;
+        char_entity[0] = BS;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"delete") == 0){
-        pname[0] = DEL;
-        pname[1] = NUL;
+        char_entity[0] = DEL;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"escape") == 0){
-        pname[0] = ESC;
-        pname[1] = NUL;
+        char_entity[0] = ESC;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"return") == 0){
-        pname[0] = RET;
-        pname[1] = NUL;
+        char_entity[0] = RET;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"newline") == 0){
-        pname[0] = EOL;
-        pname[1] = NUL;
+        char_entity[0] = EOL;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"null") == 0){
-        pname[0] = NUL;
-        pname[1] = NUL;
+        char_entity[0] = NUL;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"space") == 0){
-        pname[0] = SPACE;
-        pname[1] = NUL;
+        char_entity[0] = SPACE;
+        char_entity[1] = NUL;
     }
     else if(strcmp(low_name,"tab") == 0){
-        pname[0] = TAB;
-        pname[1] = NUL;
+        char_entity[0] = TAB;
+        char_entity[1] = NUL;
     }
 
     addr = freshcell();
@@ -871,7 +871,7 @@ int makechar(char *pname){
     if(str == NULL)
         error(MALLOC_OVERF,"makechar",NIL);
     heap[addr].name = str;
-    strcpy(heap[addr].name,pname);
+    strcpy(heap[addr].name,char_entity);
     SET_AUX(addr,ccharacter);
     return(addr);
 }

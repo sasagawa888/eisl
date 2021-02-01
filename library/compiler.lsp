@@ -448,35 +448,11 @@ double tarai(double x, double y, double z){
                       (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))
-                     ((char= x #\newline)
+                     ((special-char-p x)
                       (format stream "Fmakechar(")
                       (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "NEWLINE")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
-                     ((char= x #\tab)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "TAB")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
-                     ((char= x #\space)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "SPACE")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
-                     ((char= x #\null)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "NULL")
+                      (print-special-char x stream)
                       (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))
@@ -627,6 +603,20 @@ double tarai(double x, double y, double z){
                (comp-subrcall stream x env args tail name global test clos))
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
     
+    (defun special-char-p (x)
+        (member x '(#\alarm #\backspace #\delete #\escape #\return #\newline #\null #\space #\tab)))
+
+    (defun print-special-char (x stream)
+        (cond ((char= x #\alarm) (format stream "ALARM"))
+              ((char= x #\backspace) (format stream "BACKSPACE"))
+              ((char= x #\delete) (format stream "DELETE"))
+              ((char= x #\escape) (format stream "ESCAPE"))
+              ((char= x #\return) (format stream "RETURN"))
+              ((char= x #\newline) (format stream "NEWLINE"))
+              ((char= x #\null) (format stream "NULL"))
+              ((char= x #\space) (format stream "SPACE"))
+              ((char= x #\tab) (format stream "TAB"))))
+
     (defun initialize ()
         (setq global-variable nil)
         (setq function-arg nil)
@@ -2462,35 +2452,11 @@ double tarai(double x, double y, double z){
                       (format-char stream (convert 39 <character>))
                       ;;'
                       (format stream ")"))
-                     ((char= x #\newline)
+                     ((special-char-p x)
                       (format stream "Fmakechar(")
                       (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "NEWLINE")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
-                     ((char= x #\tab)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "TAB")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
-                     ((char= x #\space)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "SPACE")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
-                     ((char= x #\null)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream "NULL")
+                      (print-special-char x stream)
                       (format-char stream (convert 39 <character>))                        ;'
                       (format-char stream (convert 39 <character>))                        ;'
                       (format stream ")"))

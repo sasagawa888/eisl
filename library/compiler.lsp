@@ -245,33 +245,27 @@ double tarai(double x, double y, double z){
            (system (string-append option fname ".o " fname ".c " c-lang-option))
            (system (string-append "rm " fname ".c"))))
     
-    ;;for debug compile c-code only.
-    (defun compile-file* (x)
-        (let ((comp
-              (cond ((eq (self-introduction) 'windows) "gcc -O3 -shared -o ")
-                    ((eq (self-introduction) 'linux) "gcc -O3 -w -shared -I/home/eisl -fPIC -o ")))
-              (fname (filename x)) )
-           (format (standard-output) "invoke GCC~%")
-           (system (string-append comp fname ".o " fname ".c"))))
-    
-    (defun compile-cuda (x)
+
+
+
+    ;;for debug compile and not remove C code
+    (defpublic compile-file* (x)
         (setq file-name-and-ext x)
         (setq type-function nil)
         (inference-file x)
         (catch
          'exit
          (unwind-protect
-          (compile-cuda1 x)
+          (compile-file1* x)
           (if instream
               (close instream))
           (ignore-toplevel-check nil)))
         t)
     
-    (defun compile-cuda1 (x)
+    (defun compile-file1* (x)
         (let ((option
               (cond ((eq (self-introduction) 'windows) "gcc -O3 -shared -o ")
-                    ((eq (self-introduction) 'linux)
-                     "nvcc -O3 -w -shared -I$HOME/eisl --compiler-options '-fPIC' -lcublas -o ")))
+                    ((eq (self-introduction) 'linux) "gcc -O3 -w -shared -I$HOME/eisl -fPIC -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
@@ -282,11 +276,11 @@ double tarai(double x, double y, double z){
            (pass2 x)
            (ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
-           (finalize x ".cu")
-           (format (standard-output) "invoke NVCC~%")
-           (system (string-append option fname ".o " fname ".cu " c-lang-option))
-           (system (string-append "rm " fname ".cu"))))
+           (finalize x ".c")
+           (format (standard-output) "invoke GCC~%")
+           (system (string-append option fname ".o " fname ".c " c-lang-option))))
     
+
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))

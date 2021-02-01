@@ -225,7 +225,6 @@
            (if (= lm 0)
                (newline lm))))
     
-    
     ;; syntax let
     (defun pp-let (x lm)
         (let ((lm1 (+ lm 5))
@@ -251,7 +250,7 @@
            (pp-body (cdr (cdr x)) lm2)
            (cond (otomo (pp-string ")"))
                  (t (setq otomo t) (pp-string " )")))))
-                 
+    
     (defun pp-let1 (x lm)
         (pp-string "(")
         (for ((s x (cdr s)))

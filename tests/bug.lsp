@@ -1,11 +1,8 @@
 (defun foo (x)
-    (char= #\newline #\C) )
+    (let ((y (+ x 1)))
+       (print x)
+       (print x)
+       (print x)
+       (print x) ))
 
-(defun boo (x)
-    (eq x 'abc) )
-
-
-(defun foo1 (x :rest y)
-    (print x)
-    (print y) )
 

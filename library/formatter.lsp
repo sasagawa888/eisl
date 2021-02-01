@@ -13,7 +13,7 @@
     (defglobal otomo nil)
     
     ;; write formated code to **.tmp file
-    (defpublic formatter (file)
+    (defun formatter (file)
         (let ((exp nil)
               (temp (string-append (filename file) ".tmp"))
               (original (string-append (filename file) ".org")) )
@@ -225,6 +225,7 @@
            (if (= lm 0)
                (newline lm))))
     
+    
     ;; syntax let
     (defun pp-let (x lm)
         (let ((lm1 (+ lm 5))
@@ -250,6 +251,7 @@
            (pp-body (cdr (cdr x)) lm2)
            (cond (otomo (pp-string ")"))
                  (t (setq otomo t) (pp-string " )")))))
+                 
     (defun pp-let1 (x lm)
         (pp-string "(")
         (for ((s x (cdr s)))
@@ -578,7 +580,7 @@
          (> (length x) 2)
          (char= (elt x 0) #\;)
          (char= (elt x 1) #\;)
-         (not (char= (elt x 2)) #\;)))
+         (not (char= (elt x 2) #\;))))
     
     ;; ;;; triple seimicolo comment
     (defun triple-comment-p (x)

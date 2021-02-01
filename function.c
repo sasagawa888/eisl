@@ -2033,6 +2033,7 @@ int f_load(int arglist){
 int f_import(int arglist){
     int arg1;
     char str[SYMSIZE];
+    FILE* fp;
 
     arg1 = car(arglist);
     if(!stringp(arg1))
@@ -2041,9 +2042,28 @@ int f_import(int arglist){
     str[0] = NUL;
     strcpy(str,"library/");
     strcat(str,GET_NAME(arg1));
+    strcat(str,".o");
+
+    fp = fopen(str,"r");
+    if(fp != NULL){
+        fclose(fp);
+        f_load(list1(makestr(str)));
+        return(T);
+    }
+    str[0] = NUL;
+    strcpy(str,"library/");
+    strcat(str,GET_NAME(arg1));
     strcat(str,".lsp");
 
-    return(f_load(list1(makestr(str))));
+    fp = fopen(str,"r");
+    if(fp != NULL){
+        fclose(fp);
+        f_load(list1(makestr(str)));
+        return(T);
+    }
+    error(CANT_OPEN,"import",arg1);
+
+    return(T);
 }
 
 int f_print(int arglist){

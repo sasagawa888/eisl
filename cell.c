@@ -819,6 +819,7 @@ int makechar(char *pname){
     int addr,pos;
     char low_name[SYMSIZE],*str;
 
+    
     pos = 0;
     while(pname[pos] != NUL){
         low_name[pos] = tolower(pname[pos]);
@@ -826,6 +827,7 @@ int makechar(char *pname){
     }
     low_name[pos] = NUL;
 
+    
     if(strcmp(low_name,"alarm") == 0){
         pname[0] = BEL;
         pname[1] = NUL;

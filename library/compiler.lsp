@@ -3389,4 +3389,5 @@ double tarai(double x, double y, double z){
     (assert quotient (class <float>) (class <number>) (class <number>))
     (assert subrp (class <object>) (class <object>))
     (assert c-lang (class <null>) (class <string>))
+    (assert substitute (class <object>) (class <object>) (class <symbol>) (class <symbol>))
 )

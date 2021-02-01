@@ -137,7 +137,6 @@ double tarai(double x, double y, double z){
              (convert (string-append (convert (conv-name (car vars)) <string>) "subst") <symbol>)
              (subst (cdr vars)))))
     
-    
     (defun alpha-conv (x vars subst)
         (cond ((null x) nil)
               ((and (symbolp x) (member x vars))
@@ -145,12 +144,10 @@ double tarai(double x, double y, double z){
               ((atom x) x)
               (t (cons (alpha-conv (car x) vars subst) (alpha-conv (cdr x) vars subst)))))
     
-    
     (defun nth (x n)
         (if (= n 0)
             (car x)
             (nth (cdr x) (- n 1))))
-    
     
     (defglobal comp-global-var
                '(compiler::instream
@@ -189,7 +186,8 @@ double tarai(double x, double y, double z){
                  c-include
                  c-option))
     
-    (defglobal not-need-colon '(c-lang c-define c-include c-option))
+    (defglobal not-need-colon '(c-lang c-define c-include c-option)
+)
     (defglobal global-variable nil)
     (defglobal function-arg nil)
     (defglobal generic-name-arg nil)
@@ -247,7 +245,6 @@ double tarai(double x, double y, double z){
            (system (string-append option fname ".o " fname ".c " c-lang-option))
            (system (string-append "rm " fname ".c"))))
     
-    
     ;;for debug compile c-code only.
     (defun compile-file* (x)
         (let ((comp
@@ -256,7 +253,6 @@ double tarai(double x, double y, double z){
               (fname (filename x)) )
            (format (standard-output) "invoke GCC~%")
            (system (string-append comp fname ".o " fname ".c"))))
-    
     
     (defun compile-cuda (x)
         (setq file-name-and-ext x)
@@ -291,24 +287,23 @@ double tarai(double x, double y, double z){
            (system (string-append option fname ".o " fname ".cu " c-lang-option))
            (system (string-append "rm " fname ".cu"))))
     
-    
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))
            (while (setq sexp (read instream nil nil))
-              (cond ((and (consp sexp)(eq (car sexp) 'defmodule)) (module-check sexp))
+              (cond ((and (consp sexp) (eq (car sexp) 'defmodule)) (module-check sexp))
                     (t (check-args-count sexp) (find-catch-block-tag sexp))))
            (close instream)
            (setq instream nil)))
     
     (defun module-check (x)
         (for ((name (car (cdr x)))
-              (body (cdr (cdr x)) (cdr body)))
-             ((null body) t)
+              (body (cdr (cdr x)) (cdr body)) )
+             ((null body)
+              t )
              (let ((sexp (substitute (car body) name nil)))
                 (check-args-count sexp)
                 (find-catch-block-tag sexp))))
-
     (defun check-args-count (x)
         (cond ((eq (car x) 'defun)
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
@@ -373,7 +368,6 @@ double tarai(double x, double y, double z){
               ((consp (car x)) (find-catch-block-tag (car x)) (find-catch-block-tag (cdr x)))
               (t (find-catch-block-tag (cdr x)))))
     
-    
     (defun pass2 (x)
         (setq instream (open-input-file x))
         (declare-catch-block-buffer)
@@ -392,7 +386,6 @@ double tarai(double x, double y, double z){
               ((eq (second-last ls) ':rest) (* -1 (- (length ls) 1)))
               ((eq (second-last ls) '&rest) (* -1 (- (length ls) 1)))
               (t (length ls))))
-    
     
     (defun compile (x)
         (cond ((eq (car x) 'defun) (comp-defun x))
@@ -604,8 +597,9 @@ double tarai(double x, double y, double z){
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
     
     (defun special-char-p (x)
-        (member x '(#\alarm #\backspace #\delete #\escape #\return #\newline #\null #\space #\tab)))
-
+        (member
+         x
+         '(#\alarm #\backspace #\delete #\escape #\return #\newline #\null #\space #\tab)))
     (defun print-special-char (x stream)
         (cond ((char= x #\alarm) (format stream "ALARM"))
               ((char= x #\backspace) (format stream "BACKSPACE"))
@@ -616,7 +610,6 @@ double tarai(double x, double y, double z){
               ((char= x #\null) (format stream "NULL"))
               ((char= x #\space) (format stream "SPACE"))
               ((char= x #\tab) (format stream "TAB"))))
-
     (defun initialize ()
         (setq global-variable nil)
         (setq function-arg nil)
@@ -712,11 +705,11 @@ double tarai(double x, double y, double z){
     
     (defun comp-defmodule (x)
         (let ((name (car (cdr x)))
-              (body (cdr (cdr x))))
-            (for ((s body (cdr s)))
-                 ((null s) t)
-                 (compile (substitute (car s) name nil)))))
-    
+              (body (cdr (cdr x))) )
+           (for ((s body (cdr s)))
+                ((null s)
+                 t )
+                (compile (substitute (car s) name nil)))))
     
     (defun comp-defun0 (x)
         (let* ((name (elt x 1))
@@ -754,7 +747,6 @@ double tarai(double x, double y, double z){
             (format-object code0 (conv-name name) nil)
             (gen-arg2 code0 args)
             (format code0 ";~%")))
-    
     
     ;;generate f_XXX(int arg){...}
     (defun comp-defun1 (x)
@@ -794,7 +786,6 @@ double tarai(double x, double y, double z){
             (gen-call (conv-name name) (abs n))
             (format code1 "}~%")))
     
-    
     ;;genrate int XXX(int x, ...){...} this is main function.
     (defun comp-defun2 (x)
         (let ((name (elt x 1))
@@ -807,8 +798,7 @@ double tarai(double x, double y, double z){
                (type-gen-arg2 code2 args (argument-type name)))
            (format code2 "{~%")
            (format code2 "int res;~%")
-           ;;debug print ;(format code2 "printf("")
-           ;(format-object code2 name nil)                                                ;(format code2 "   -->   ");")
+           ;;debug print ;(format code2 "printf("")                                       ;(format-object code2 name nil)                                                ;(format code2 "   -->   ");")
            (cond ((and (not optimize-enable) (has-tail-recur-p body name))
                   ;;for tail recursive tempn var;
                   (gen-arg3 (length args)))
@@ -1000,7 +990,6 @@ double tarai(double x, double y, double z){
                (comp-defgeneric-cond1 (cdr x)))
               (t (error* "defgeneric" x))))
     
-    
     ;;generate define code
     (defun comp-defun3 (x)
         (let ((name (elt x 1)))
@@ -1068,7 +1057,6 @@ double tarai(double x, double y, double z){
               (format code2 "temp")
               (format code2 (convert m <string>))
               (format code2 ","))))
-    
     
     ;;arg1 = Fnth(1,arglist);
     ;;arg2 = Fnth(2,arglist);
@@ -1150,7 +1138,6 @@ double tarai(double x, double y, double z){
     (defun gen-checkgc ()
         (format code2 "Fcheckgbc();~%"))
     
-    
     (defun comp-if (stream x env args tail name global test clos)
         (unless (or (= (length x) 3) (= (length x) 4)) (error* "if: illegal form" x))
         (cond ((= (length x) 3)
@@ -1221,7 +1208,6 @@ double tarai(double x, double y, double z){
                (comp stream (elt x 2) env args nil name global test clos))))
     
     
-    
     ;; (foo x y z) -> foo(x,y,z)
     (defun comp-funcall (stream x env args tail name global test clos)
         (cond ((and tail (eq (car x) name))
@@ -1238,7 +1224,6 @@ double tarai(double x, double y, double z){
                (format-object stream (conv-name (car x)) nil)
                (format stream "()"))
               (t (comp-funcall-clang stream x env args tail name global test clos))))
-    
     
     (defun comp-funcall-clang (stream x env args tail name global test clos)
         (let ((n (cdr (assoc (car x) function-arg))))
@@ -1360,7 +1345,6 @@ double tarai(double x, double y, double z){
         (format stream "));~%")
         (format stream ";res;})"))
     
-    
     (defun comp-subrcall1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               ((null (cdr x))
@@ -1381,7 +1365,6 @@ double tarai(double x, double y, double z){
                (format stream "),")
                (comp-subrcall2 stream (cdr x) env args tail name global test clos)
                (format stream ")"))))
-    
     
     (defun comp-subrcall3 (stream m n)
         (cond ((> m n) (format stream "NIL"))
@@ -1407,7 +1390,6 @@ double tarai(double x, double y, double z){
                  (format stream "res = "))
              (comp stream (car body1) env args tail name global test clos)
              (format stream ";~%")))
-    
     
     (defun comp-labels1 (stream x env args tail name global test clos)
         (cond ((null x) t)
@@ -1483,7 +1465,6 @@ double tarai(double x, double y, double z){
               clos)
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
-    
     
     (defun comp-let* (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "let*: not list" (elt x 1)))
@@ -1655,7 +1636,6 @@ double tarai(double x, double y, double z){
                (comp-cond2 stream (cdr (car x)) env args nil name global test clos)
                (comp-case-using1 stream (cdr x) env args tail name global test clos key pred))))
     
-    
     (defun has-tail-recur-p (x name)
         (cond ((null x) nil)
               (t (has-tail-recur-p1 (last x) name))))
@@ -1677,7 +1657,6 @@ double tarai(double x, double y, double z){
               ((eq (car x) 'progn) (has-tail-recur-p (cdr x) name))
               ((eq (car x) 'block) (has-tail-recur-p (cdr (cdr x)) name))
               (t nil)))
-    
     
     ;; comp-for alpha convert e.g.
     ;; from
@@ -1775,7 +1754,6 @@ double tarai(double x, double y, double z){
                (if (not (not-need-colon-p (car x)))
                    (format stream ";~%"))
                (comp-progn1 stream (cdr x) env args tail name global test clos))))
-    
     
     (defun comp-and (stream x env args tail name global test clos)
         (format stream "({int res;~%if((res = ")
@@ -1898,13 +1876,11 @@ double tarai(double x, double y, double z){
                (format stream ";~%")
                (comp-tagbody1 stream (cdr x) env args tail name global test clos))))
     
-    
     (defun comp-go (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1)) (error* "go: not symbol" (elt x 1)))
         (format stream "goto ")
         (format stream (convert (conv-name (elt x 1)) <string>))
         (format stream ";~%"))
-    
     
     (defun comp-convert (stream x env args tail name global test clos)
         (unless (symbolp (elt x 2)) (error* "convert: not symbol" x))
@@ -2004,7 +1980,6 @@ double tarai(double x, double y, double z){
            (cond (unwind-thunk (format-object stream unwind-thunk nil) (format stream "();")))
            (format stream "res=block_arg;}~%")
            (format stream "res;})")))
-    
     
     (defun comp-return-from (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1)) (error* "return-from: not symbol" (elt x 1)))
@@ -2114,7 +2089,6 @@ double tarai(double x, double y, double z){
            (format-object stream symbol nil)
            (format stream "\"),val);")))
     
-    
     (defun comp-not (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "not: illegal form" x))
         (format stream "fast_not(")
@@ -2181,7 +2155,6 @@ double tarai(double x, double y, double z){
     (defun comp-c-option (x)
         (setq c-lang-option (elt x 1)))
     
-    
     ;;defglobal
     (defun comp-defglobal (x)
         (let ((symbol (elt x 1))
@@ -2193,8 +2166,7 @@ double tarai(double x, double y, double z){
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),FAST_GLOBAL);~%")))
-    ;defconstant
+           (format code4 "\"),FAST_GLOBAL);~%")));defconstant
     (defun comp-defconstant (x)
         (let ((symbol (elt x 1))
               (value (elt x 2)) )
@@ -2205,8 +2177,7 @@ double tarai(double x, double y, double z){
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),FAST_CONSTN);~%")))
-    ;defdynamic
+           (format code4 "\"),FAST_CONSTN);~%")));defdynamic
     (defun comp-defdynamic (x)
         (unless (= (length x) 3) (error* "defdynamic: illegal form" x))
         (unless (symbolp (elt x 1)) (error: "defdynamic: not symbol" (elt x 1)))
@@ -2216,8 +2187,7 @@ double tarai(double x, double y, double z){
            (format-object code4 symbol nil)
            (format code4 "\"),")
            (comp code4 value nil nil nil nil t nil nil)
-           (format code4 ");")))
-    ;set-dynamic
+           (format code4 ");")));set-dynamic
     (defun comp-set-dynamic (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "set-dynamic: illegal form" x))
         (unless (symbolp (elt x 1)) (error: "set-dynamic: not symbol" (elt x 1)))
@@ -2227,21 +2197,18 @@ double tarai(double x, double y, double z){
            (format-object stream symbol nil)
            (format stream "\"),fast_inverse(")
            (comp stream value env args tail name global test clos)
-           (format stream "))")))
-    ;defmacro
+           (format stream "))")));defmacro
     (defun comp-defmacro (x)
         (format code4 "Feval(")
         (list-to-c1 code4 x)
-        (format code4 ");~%"))
-    ;defclass
+        (format code4 ");~%"));defclass
     (defun comp-defclass (x)
         (comp code4 '(ignore-toplevel-check t) nil nil nil nil nil nil nil)
         (format code4 ";Feval(")
         (list-to-c1 code4 x)
         (format code4 ");")
         (comp code4 '(ignore-toplevel-check nil) nil nil nil nil nil nil nil)
-        (format code4 ";~%"))
-    ;defmethod only create initialize-object
+        (format code4 ";~%"));defmethod only create initialize-object
     ;these are nead to save as C-list
     (defun comp-defmethod (x)
         (cond ((or (eq (elt x 1) 'create) (eq (elt x 1) 'initialize-object))
@@ -2259,7 +2226,6 @@ double tarai(double x, double y, double z){
                     (has-same-varlis-p arg (cdr res))
                     (error* "args variable name must be same" (list arg (cdr res))))))))
     
-    
     (defun has-same-varlis-p (x y)
         (cond ((and (null x) (null y)) t)
               ((and (null x) (not (null y))) nil)
@@ -2273,7 +2239,6 @@ double tarai(double x, double y, double z){
               ((and (symbolp (car x)) (consp (car y)) (eq (car x) (elt (car y) 0)))
                (has-same-varlis-p (cdr x) (cdr y)))
               (t nil)))
-    
     
     ;;ex prime-factors -> prime_factors
     (defun conv-name (sym)
@@ -2500,7 +2465,6 @@ double tarai(double x, double y, double z){
                (list-to-c1 stream (cdr x))
                (format stream ")"))))
     
-    
     ;;quasi-quote
     (defun quasi-transfer (x n)
         (cond ((null x) nil)
@@ -2528,7 +2492,6 @@ double tarai(double x, double y, double z){
                 (quasi-transfer (cdr x) n)))
               (t (list 'cons (quasi-transfer (car x) n) (quasi-transfer (cdr x) n)))))
     
-    
     ;;-----------type inferrence-------------
     ;;if following all test is true, it is optimizable
     ;;output type is fixnum or float
@@ -2548,7 +2511,6 @@ double tarai(double x, double y, double z){
                        t)
                       (t nil)))
             nil))
-    
     
     ;;local type is optimizable?
     (defun optimize-p1 (x)
@@ -2619,7 +2581,6 @@ double tarai(double x, double y, double z){
               (format code2 (convert m <string>))
               (format code2 ";"))))
     
-    
     ;;(foo arg1 arg2) ->
     ;;  return(F_makeint(foo(Fgetint(arg1),Fgetint(arg2))));
     (defun type-gen-call (name n)
@@ -2663,7 +2624,6 @@ double tarai(double x, double y, double z){
                               (format code1 (convert m <string>))
                               (format code1 "),"))))))))
     
-    
     (defun subsetp (x y)
         (cond ((null x) t)
               ((member (car x) y) (subsetp (cdr x) y))
@@ -2684,7 +2644,6 @@ double tarai(double x, double y, double z){
               ((eq c '<vector>) (class <vector>))
               ((eq c '<float>) (class <float>))
               (t (class <object>))))
-    
     
     ;;type-function ((name output-type (input-type1 input-typr2 ...) (local-type-function)) ...)
     (defglobal file-name-and-ext nil)
@@ -2713,13 +2672,12 @@ double tarai(double x, double y, double z){
     
     (defun inference-defmodule (x)
         (for ((name (car (cdr x)))
-              (body (cdr (cdr x)) (cdr body)))
-             ((null body) t)
+              (body (cdr (cdr x)) (cdr body)) )
+             ((null body)
+              t )
              (let ((sexp (substitute (car body) name nil)))
                 (if (and (consp sexp) (eq (car sexp) 'defun))
                     (inference-defun sexp)))))
-
-    
     (defun inference-defun (x)
         (let* ((name (elt x 1))
                (arg (elt x 2))
@@ -2733,7 +2691,6 @@ double tarai(double x, double y, double z){
                    (set-type-function-input name (find-argument-class arg type-env)))
                (if (not (null local-type-function))
                    (add-type-function-local name)))))
-    
     
     (defun inference-labels (x type-env)
         (setq local-type-function nil)
@@ -2757,7 +2714,6 @@ double tarai(double x, double y, double z){
                       (set-local-type-function-input name (find-argument-class arg local-type-env)))
                   (setq labels-func (cdr labels-func))))
            local-type-env))
-    
     
     ;;transform from data in ls to class data.
     (defun find-argument-class (ls type-env)
@@ -2825,7 +2781,6 @@ double tarai(double x, double y, double z){
                   (if type
                       (inference-arg (cdr x) (elt type 1) type-env))))
               (t (warning "can't inference " x) 'no)))
-    
     
     ;; inference s-expressions
     ;; if all success return type-env else return 'no
@@ -2994,7 +2949,6 @@ double tarai(double x, double y, double z){
            (cond ((eq new-env 'no) (warning "function mismatch" x) type-env)
                  (t new-env))))
     
-    
     ;;find type-data of user defined function.
     ;;first look for in type-function environment
     ;;second look for int local-type-function environment
@@ -3041,7 +2995,6 @@ double tarai(double x, double y, double z){
                                           (subclassp (car type) output-class)))
                                         (return-from exit-arg 'no)))))
                           (setq type-env new-env)))))))
-    
     
     ;;if x is registed in type-function data,
     ;;return t (if the output-class is <object>)
@@ -3110,7 +3063,6 @@ double tarai(double x, double y, double z){
                (class <integer>))
               (t (class <number>))))
     
-    
     ;;reference symbol x in type-env
     (defun refer (x type-env)
         (let ((y (assoc x type-env)))
@@ -3144,7 +3096,6 @@ double tarai(double x, double y, double z){
     (defun set-local-type-function-input (fn y)
         (let ((z (assoc fn local-type-function)))
            (setf (elt z 2) y)))
-    
     
     ;;if x is registed in type-function return not nil
     ;;elt return nil

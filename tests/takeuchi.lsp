@@ -17,7 +17,7 @@
 
 ;;;８９ページ
 (defun atom-count (x)
-    (cond ((nullx) 0)         ;null
+    (cond ((null x) 0)         ;null
           ((atom x) 1)        ;atom
           ;;else
           (t (+ (atom-count (car x))

@@ -1,8 +1,10 @@
 (defun foo (x)
-    (let ((y (+ x 1)))
-       (print x)
-       (print x)
-       (print x)
-       (print x) ))
+    (let ((y (car x)))
+       (bar (elt x 0))
+       (bar (elt x 0))
+       (bar (elt x 0))))
+
+(defun bar (x) 
+    (print x))
 
 

@@ -245,9 +245,6 @@ double tarai(double x, double y, double z){
            (system (string-append option fname ".o " fname ".c " c-lang-option))
            (system (string-append "rm " fname ".c"))))
     
-
-
-
     ;;for debug compile and not remove C code
     (defpublic compile-file* (x)
         (setq file-name-and-ext x)
@@ -279,8 +276,6 @@ double tarai(double x, double y, double z){
            (finalize x ".c")
            (format (standard-output) "invoke GCC~%")
            (system (string-append option fname ".o " fname ".c " c-lang-option))))
-    
-
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))
@@ -1201,7 +1196,6 @@ double tarai(double x, double y, double z){
                      ((eq (elt x 0) 'mod) (format stream "%")))
                (comp stream (elt x 2) env args nil name global test clos))))
     
-    
     ;; (foo x y z) -> foo(x,y,z)
     (defun comp-funcall (stream x env args tail name global test clos)
         (cond ((and tail (eq (car x) name))
@@ -1324,7 +1318,13 @@ double tarai(double x, double y, double z){
                     (format stream ");~%")
                     (format stream "Fshelterpush(arg")
                     (format-integer stream n 10)
-                    (format stream ");~%"))
+                    (format stream ");~%"))))
+        (format stream "res = fast_convert(Fcallsubr(Fcar(Fmakesym(\"")
+        (format-object stream (car x) nil)
+        (format stream "\")),")
+        (comp-subrcall3 stream 1 (length (cdr x)))
+        (format stream "));~%")
+        (cond ((not (null (cdr x)))
                (for ((ls (cdr x) (cdr ls))
                      (n (length (cdr x)) (- n 1)) )
                     ((null ls)
@@ -1332,13 +1332,7 @@ double tarai(double x, double y, double z){
                     (format stream "arg")
                     (format-integer stream n 10)
                     (format stream "=Fshelterpop();~%"))))
-        (format stream "res = fast_convert(Fcallsubr(Fcar(Fmakesym(\"")
-        (format-object stream (car x) nil)
-        (format stream "\")),")
-        (comp-subrcall3 stream 1 (length (cdr x)))
-        (format stream "));~%")
         (format stream ";res;})"))
-    
     (defun comp-subrcall1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               ((null (cdr x))

@@ -11,13 +11,13 @@
 
 ;;;１４７ページ
 (defun delete-1 (x y)
-    (setq y (cons 'dummy y))    ;dummy set
+    (setq y (cons 'dummy y))  ;dummy set
     (del2 x y)                ;call del2
     (cdr y) )
 
 ;;;８９ページ
 (defun atom-count (x)
-    (cond ((null x) 0)         ;null
+    (cond ((null x) 0)        ;null
           ((atom x) 1)        ;atom
           ;;else
           (t (+ (atom-count (car x))

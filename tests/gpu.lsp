@@ -24,3 +24,5 @@
 
 (defun test2 ()
     (gpu-mult z z) )
+
+(format (standard-output) "All tests are done~%")

@@ -259,9 +259,6 @@ int f_gpu_unpooling(int arglist){
 }
 
 
-//int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
- //               int st_h, int st_w, int pad)
-
 /*
 1st arg input tensor
 2nd arg filter tensor
@@ -302,6 +299,44 @@ int f_gpu_convolute(int arglist){
     return(res);
 }
   
+
+ //void deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+ //                  float *a, float *b, float *c, int st_h, int st_w, int pad){ 
+/*
+1st arg input loss tensor
+2nd arg filter tensor
+3rd arg stride list
+4th arg padding size
+*/
+int f_gpu_deconvolute(int arglist){
+    int arg1,arg2,arg3,arg4,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,st_h,st_w,pad,res;
+    float *a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = cadddr(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    in_n = GET_INT(nth(0,dim1));
+    in_c = GET_INT(nth(1,dim1));
+    in_h = GET_INT(nth(2,dim1));
+    in_w = GET_INT(nth(3,dim1));
+    filt_n = GET_INT(nth(0,dim2));
+    filt_c = GET_INT(nth(1,dim2));
+    filt_h = GET_INT(nth(2,dim2));
+    filt_w = GET_INT(nth(3,dim2));
+    st_h = GET_INT(nth(0,arg3));
+    st_w = GET_INT(nth(1,arg3));
+    pad = GET_INT(arg4);
+
+    if(st_h == 1 && st_w == 1)
+        cuda_deconvolute2(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,a,b,c,st_h,st_w,pad);
+    else    
+        cuda_deconvolute1(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,a,b,c,st_h,st_w,pad);
+    return(res);
+}
+
 /*
 calculate accuracy
 1st arg predicted matrix

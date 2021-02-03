@@ -23,6 +23,10 @@ extern "C" void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, f
 extern "C" void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c,int st_h, int st_w);
 extern "C" void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
     int st_h, int st_w, int pad);
+extern "C" void cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+    float *a, float *b, float *c, int st_h, int st_w, int pad);
+extern "C" void cuda_deconvolute12(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+        float *a, float *b, float *c, int st_h, int st_w, int pad);
 extern "C" void cuda_emult(int n, float *a, float *b,float *c);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
@@ -496,7 +500,7 @@ decovolute compute 5*5(3*3 padding=1) and save result range 3*3
 
 
 */
-void deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+void cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
                    float *a, float *b, float *c, int st_h, int st_w, int pad){
    int pad1, n1, n2, n3, oh, ow, oh1, ow1, i,j,k,l;
    float *b1;
@@ -645,7 +649,7 @@ dilated stride=2
 14th arg padding   
 */
 
-void deconvolute2(int in_n, int in_c, int loss_h, int loss_w, int filt_n, int filt_c, int filt_h,int filt_w,
+void cuda_deconvolute2(int in_n, int in_c, int loss_h, int loss_w, int filt_n, int filt_c, int filt_h,int filt_w,
              float *a, float *b, float *c,int st_h, int st_w,int pad){
    int pad1, n1, n2, n3, oh, ow, i,j,k,l,in_h, in_w;
    float *a1, *b1;

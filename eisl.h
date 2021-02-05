@@ -1155,6 +1155,7 @@ int f_gpu_convolute(int arglist);
 int f_gpu_deconvolute(int arglist);
 int f_gpu_gradfilter(int arglist);
 int f_gpu_emult(int arglist);
+int f_gpu_full(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);
@@ -1171,4 +1172,5 @@ void cuda_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int fi
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
 void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
+void cuda_full(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
 #endif

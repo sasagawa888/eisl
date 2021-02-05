@@ -380,6 +380,27 @@ int f_gpu_gradfilter(int arglist){
     return(res);
 }
 
+int f_gpu_full(int arglist){
+    int arg1,dim1,dim2,in_n,in_c,in_h,in_w,res;
+    float *a,*b;
+
+    arg1 = car(arglist);
+    dim1 = GET_CDR(arg1);
+    in_n = GET_INT(nth(0,dim1));
+    in_c = GET_INT(nth(1,dim1));
+    in_h = GET_INT(nth(2,dim1));
+    in_w = GET_INT(nth(3,dim1));
+    dim2 = list2(nth(0,dim1),makeint(in_c*in_h*in_w));
+
+    res = makefarray(dim2,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(res);
+    cuda_full(in_n,in_c,in_h,in_w,a,b);
+    return(res);
+}
+
+
+
 
 /*
 calculate accuracy

@@ -33,6 +33,10 @@ extern "C" void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int fil
     int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
 extern "C" void cuda_emult(int n, float *a, float *b,float *c);
 extern "C" void cuda_full(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
+extern "C" void cuda_unfull(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
+
+
+
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -1096,7 +1100,7 @@ __global__ void unfull_kernel(float *a, float *b, int in_n, int in_c, int in_h, 
 6th arg output tensor
 */
 
-void unfull1(int in_n, int in_c, int in_h, int in_w, float *a, float *b){
+void cuda_unfull(int in_n, int in_c, int in_h, int in_w, float *a, float *b){
     int n1,n;
     float *dev_a, *dev_b;
     

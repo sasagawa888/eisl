@@ -229,7 +229,8 @@ char extended[50][30] = {
 {"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
 {"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},{"formatter"},
 {"c-include"},{"c-define"},{"c-lang"},{"c-option"},
-{"gpu-mult"},{"gpu-add"},{"gpu-sub"},{"gpu-smult"},{"gpu-emult"},{"gpu-cobvolute"},
+{"gpu-mult"},{"gpu-add"},{"gpu-sub"},{"gpu-smult"},{"gpu-emult"},{"gpu-convolute"},{"gpu-deconvolute"},{"gpu-transpose"},
+{"gpu-ident"},{"gpu-full"},{"gpu-unfull"},
 };
 
 

@@ -442,9 +442,16 @@ int f_gpu_transpose(int arglist){
 }
 
 
-void ident1(int n, float *a){
-    int i,j;
+int f_gpu_ident(int arglist){
+    int arg1,dim1,n,i,j,res;
+    float *a;
 
+    arg1 = car(arglist);
+    dim1 = list2(arg1,arg1);
+    n = GET_INT(arg1);
+
+    res = makefarray(dim1,0.0);
+    a = GET_FVEC(res);
     // Set matrix data 
     for(i=0;i<n;i++){
         for(j=0;j<n;j++){
@@ -454,7 +461,7 @@ void ident1(int n, float *a){
                 a[IDX2C(i,j,n)] = 0.0;
         }
     }
-
+    return(res);
 }
 
 

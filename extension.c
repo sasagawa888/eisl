@@ -61,15 +61,18 @@ void initexsubr(void){
     defsubr("GPU-CORRECT",f_gpu_correct);
     defsubr("GPU-DECONVOLUTE",f_gpu_deconvolute);
     defsubr("GPU-EMULT",f_gpu_emult);
+    defsubr("GPU-FULL",f_gpu_full);
     defsubr("GPU-GRADFILTER",f_gpu_gradfilter);
+    defsubr("GPU_IDENT",f_gpu_ident);
     defsubr("GPU-MULT",f_gpu_mult);
     defsubr("GPU-POOLING",f_gpu_pooling);
     defsubr("GPU-SUB",f_gpu_sub);
     defsubr("GPU-SMULT",f_gpu_smult);
-    defsubr("GPU-UNPOOLING",f_gpu_unpooling);
-    defsubr("GPU-FULL",f_gpu_full);
-    defsubr("GPU-UNFULL",f_gpu_unfull);
     defsubr("GPU_TRANSPOSE",f_gpu_transpose);
+    defsubr("GPU-UNPOOLING",f_gpu_unpooling);
+    defsubr("GPU-UNFULL",f_gpu_unfull);
+    
+    
     #endif
 }
 

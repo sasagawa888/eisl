@@ -61,6 +61,7 @@ void initexsubr(void){
     defsubr("GPU-CORRECT",f_gpu_correct);
     defsubr("GPU-DECONVOLUTE",f_gpu_deconvolute);
     defsubr("GPU-EMULT",f_gpu_emult);
+    defsubr("GPU-GRADFILTER",f_gpu_gradfilter);
     defsubr("GPU-MULT",f_gpu_mult);
     defsubr("GPU-POOLING",f_gpu_pooling);
     defsubr("GPU-SUB",f_gpu_sub);

@@ -337,10 +337,11 @@ int f_gpu_deconvolute(int arglist){
     return(res);
 }
 
-/*
+
 int f_gpu_gradfilter(int arglist){
     int arg1,arg2,arg3,arg4,arg5,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,
         loss_n,loss_c,loss_h,loss_w,st_h,st_w,pad,res;
+    float *a,*b,*d;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -371,14 +372,14 @@ int f_gpu_gradfilter(int arglist){
     res = makefarray(dim2,0.0);
     d = GET_FVEC(res);
 
-    //if(st_h == 1 && st_w == 1)
-    //    gpu_gradfilter1(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
-    //else
-    //    gpu_gradfilter2(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
+    if(st_h == 1 && st_w == 1)
+        cuda_gradfilter1(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
+    else
+        cuda_gradfilter2(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
     
     return(res);
 }
-*/
+
 
 /*
 calculate accuracy

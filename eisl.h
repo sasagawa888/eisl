@@ -1167,8 +1167,8 @@ void cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int f
     float *a, float *b, float *c, int st_h, int st_w, int pad);
 void cuda_deconvolute2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
     float *a, float *b, float *c, int st_h, int st_w, int pad);
-void gpu_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+void cuda_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
-void gpu_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
 #endif

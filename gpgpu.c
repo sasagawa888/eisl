@@ -338,6 +338,49 @@ int f_gpu_deconvolute(int arglist){
 }
 
 /*
+int f_gpu_gradfilter(int arglist){
+    int arg1,arg2,arg3,arg4,arg5,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,
+        loss_n,loss_c,loss_h,loss_w,st_h,st_w,pad,res;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = nth(3,arglist);
+    arg5 = nth(4,arglist);
+
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    dim3 = GET_CDR(arg3);
+    in_n = GET_INT(nth(0,dim1));
+    in_c = GET_INT(nth(1,dim1));
+    in_h = GET_INT(nth(2,dim1));
+    in_w = GET_INT(nth(3,dim1));
+    filt_n = GET_INT(nth(0,dim2));
+    filt_c = GET_INT(nth(1,dim2));
+    filt_h = GET_INT(nth(2,dim2));
+    filt_w = GET_INT(nth(3,dim2));
+    loss_n = GET_INT(nth(0,dim3));
+    loss_c = GET_INT(nth(1,dim3));
+    loss_h = GET_INT(nth(2,dim3));
+    loss_w = GET_INT(nth(3,dim3));
+    st_h = GET_INT(nth(0,arg3));
+    st_w = GET_INT(nth(1,arg3));
+    pad = GET_INT(arg4);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    res = makefarray(dim2,0.0);
+    d = GET_FVEC(res);
+
+    //if(st_h == 1 && st_w == 1)
+    //    gpu_gradfilter1(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
+    //else
+    //    gpu_gradfilter2(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
+    
+    return(res);
+}
+*/
+
+/*
 calculate accuracy
 1st arg predicted matrix
 2nd arg list of label. each element is integer

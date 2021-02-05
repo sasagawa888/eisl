@@ -1289,10 +1289,10 @@ double tarai(double x, double y, double z){
     ;;   ...
     ;;   argn = coden;
     ;;   Fshelterpush(argn);
+    ;;   res = fcallsubr(_,arg1,...arg2);
     ;;   argn = Fshelterpop();
     ;;   ...
     ;;   arg1 = Fshelterpop();
-    ;;   res = fcallsubr(_,arg1,...arg2);
     ;;   res;})
     ;; 
     (defun comp-subrcall (stream x env args tail name global test clos)
@@ -1333,6 +1333,7 @@ double tarai(double x, double y, double z){
                     (format-integer stream n 10)
                     (format stream "=Fshelterpop();~%"))))
         (format stream ";res;})"))
+
     (defun comp-subrcall1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               ((null (cdr x))

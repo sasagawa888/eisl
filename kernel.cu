@@ -25,8 +25,12 @@ extern "C" void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_
     int st_h, int st_w, int pad);
 extern "C" void cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
     float *a, float *b, float *c, int st_h, int st_w, int pad);
-extern "C" void cuda_deconvolute12(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+extern "C" void cuda_deconvolute2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
         float *a, float *b, float *c, int st_h, int st_w, int pad);
+extern "C" void cuda_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+    int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
+extern "C" void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+    int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
 extern "C" void cuda_emult(int n, float *a, float *b,float *c);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
@@ -774,7 +778,7 @@ __global__ void gradfilter1_kernel(float *a, float *b, float *c, int filt_n, int
 17th arg padding   
 */
 
-void gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+void gpu_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad){
     int n1,n2,n3,n4,i,j,k,l,m;
     float *c;
@@ -929,7 +933,7 @@ gradfilter2 is for stride >= 2. This one requires dilate
 17th arg padding  
 
 */
-void gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+void gpu_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad){
     int n1,n2,n3,n4,n5,i,j,k,l,m;
     float *b1,*c;

@@ -13,7 +13,7 @@
     
     (defmacro uoo (x)
         `(+ ,x ,x) )
-    
+
     (defgeneric gfib (n)
         (:method
          ((n <integer>))
@@ -25,6 +25,7 @@
         (if (= n 0)
             1
             (* n (fact (- n 1)))))
+    
     (defpublic goo (x)
         (if (= x 0)
             t

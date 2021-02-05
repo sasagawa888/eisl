@@ -69,6 +69,7 @@ void initexsubr(void){
     defsubr("GPU-UNPOOLING",f_gpu_unpooling);
     defsubr("GPU-FULL",f_gpu_full);
     defsubr("GPU-UNFULL",f_gpu_unfull);
+    defsubr("GPU_TRANSPOSE",f_gpu_transpose);
     #endif
 }
 

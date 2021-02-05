@@ -400,7 +400,7 @@ int f_gpu_full(int arglist){
 }
 
 int f_gpu_unfull(int arglist){
-    int arg1,arg2,arg3,arg4,dim1,dim2,in_n,in_c,in_h,in_w,res;
+    int arg1,arg2,arg3,arg4,dim1,dim2,r,in_n,in_c,in_h,in_w,res;
     float *a,*b;
 
     arg1 = car(arglist);
@@ -421,7 +421,41 @@ int f_gpu_unfull(int arglist){
     return(res);
 }
 
+int f_gpu_transpose(int arglist){
+    int arg1,i,j,r1,c1,dim1,dim2,res;
+    float *a,*b;
 
+    arg1 = car(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = reverse(dim1);
+    r1 = GET_INT(nth(0,dim1));
+    c1 = GET_INT(nth(1,dim1));
+    res = makefarray(dim2,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(res);
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            b[IDX2C(j,i,c1)] = a[IDX2C(i,j,r1)];
+        }
+    }
+    return(res);
+}
+
+
+void ident1(int n, float *a){
+    int i,j;
+
+    // Set matrix data 
+    for(i=0;i<n;i++){
+        for(j=0;j<n;j++){
+            if(i==j)
+                a[IDX2C(i,j,n)] = 1.0;
+            else
+                a[IDX2C(i,j,n)] = 0.0;
+        }
+    }
+
+}
 
 
 /*

@@ -1163,32 +1163,6 @@ void cuda_emult(int n, float *a, float *b,float *c){
 }
 
 
-void transpose1(int r1, int c1, float *a, float *b){
-    int i, j;
-    
-    for(i=0;i<r1;i++){
-        for(j=0;j<c1;j++){
-            b[IDX2C(j,i,c1)] = a[IDX2C(i,j,r1)];
-        }
-    }
-
-}
-
-
-void ident1(int n, float *a){
-    int i,j;
-
-    // Set matrix data 
-    for(i=0;i<n;i++){
-        for(j=0;j<n;j++){
-            if(i==j)
-                a[IDX2C(i,j,n)] = 1.0;
-            else
-                a[IDX2C(i,j,n)] = 0.0;
-        }
-    }
-
-}
 
 
 __global__ void sigmoid_kernel(float *a, float *b, int n)

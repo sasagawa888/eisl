@@ -586,6 +586,24 @@ int f_gpu_average(int arglist){
 }
 
 
+int f_gpu_sum(int arglist){
+    int arg1,i,j,r1,c1;
+    float *a,sum;
+
+    arg1 = car(arglist);
+    a = GET_FVEC(arg1);
+
+    sum = 0.0;
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            sum = sum + a[IDX2C(i,j,r1)];
+        }
+    }
+
+    return(makeflt((double)sum));
+}
+
+
 
 /*
 calculate accuracy

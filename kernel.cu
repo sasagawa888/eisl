@@ -1455,29 +1455,6 @@ void add_diff2(int n1, int c1, int h1, int w1, float *a, float *b, int n2, int c
 
 
 
-/*
-1st arg row-size of matrix
-2nd arg col-size of matrix
-3rd arg matrix data 
-*/
-
-
-float sum1(int r1, int c1, float *a, float *b){
-    int i, j;
-    float sum;
-
-    
-    sum = 0.0;
-    for(i=0;i<r1;i++){
-        for(j=0;j<c1;j++){
-            sum = sum + a[IDX2C(i,j,r1)];
-        }
-    }
-
-    return(sum);
-}
-
-
 
 __global__ void dropout1_kernel(float *a, int n)
 {

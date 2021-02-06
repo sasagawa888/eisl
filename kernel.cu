@@ -38,6 +38,9 @@ extern "C" void cuda_activate_sigmoid(int n, float *a, float *b);
 extern "C" void cuda_activate_tanh(int n, float *a, float *b);
 extern "C" void cuda_activate_relu(int n, float *a, float *b);
 extern "C" void cuda_activate_softmax(int r1, int c1, float *a, float *b);
+extern "C" void cuda_differ_sigmoid(int n, float *a, float *b, float *c);
+extern "C" void cuda_differ_tanh(int n, float *a, float *b, float *c);
+extern "C" void cuda_differ_relu(int n, float *a, float *b, float *c);
 
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
@@ -1312,7 +1315,7 @@ __global__ void differ_sigmoid_kernel(float *a, float *b, float *c, int n)
 }
 
 
-void differ_sigmoid(int n, float *a, float *b, float *c){
+void cuda_differ_sigmoid(int n, float *a, float *b, float *c){
     float *dev_a, *dev_b, *dev_c;
 
     
@@ -1350,7 +1353,7 @@ __global__ void differ_tanh_kernel(float *a, float *b, float *c, int n)
 }
 
 
-void differ_tanh(int n, float *a, float *b, float *c){
+void cuda_differ_tanh(int n, float *a, float *b, float *c){
     float *dev_a, *dev_b, *dev_c;
 
     // Allocate for GPU
@@ -1390,7 +1393,7 @@ __global__ void differ_relu_kernel(float *a, float *b, float *c, int n)
 }
 
 
-void differ_relu(int n, float *a, float *b, float *c){
+void cuda_differ_relu(int n, float *a, float *b, float *c){
     float *dev_a, *dev_b, *dev_c;
 
     // Allocate for GPU

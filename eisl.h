@@ -320,8 +320,6 @@ extern int error_handler;
 extern int trace_list;
 extern int trace_sym;
 extern int backtrace[BACKSIZE];
-extern int farray_address[FARRAYSIZE];  //address of farray data
-extern int farray_pt;       //counter of array
 
 
 extern int ed_lparen_col;
@@ -1166,6 +1164,7 @@ int f_gpu_mean_square(int arglist);
 int f_gpu_cross_entropy(int arglist);
 int f_gpu_average(int arglist);
 int f_gpu_sum(int arglist);
+int f_gpu_differ(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);
@@ -1188,4 +1187,7 @@ void cuda_activate_sigmoid(int n, float *a, float *b);
 void cuda_activate_tanh(int n, float *a, float *b);
 void cuda_activate_relu(int n, float *a, float *b);
 void cuda_activate_softmax(int r1, int c1, float *a, float *b);
+void cuda_differ_sigmoid(int n, float *a, float *b, float *c);
+void cuda_differ_tanh(int n, float *a, float *b, float *c);
+void cuda_differ_relu(int n, float *a, float *b, float *c);
 #endif

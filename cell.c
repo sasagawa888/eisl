@@ -794,8 +794,6 @@ int makefarray(int ls, int obj){
     SET_AUX(res,cgeneral_array_star); //class
     SET_OPT(res,size); //for GC 
     ac = ac + size;    //remenber allocate size
-    farray_address[farray_pt] = res; //remember address of farray data 
-    farray_pt++;
     return(res);
 }
 

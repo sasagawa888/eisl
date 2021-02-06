@@ -374,6 +374,38 @@ int f_gpu_activate(int arglist){
 
 }
 
+int f_gpu_differ(int arglist){
+    int arg1,arg2,dim1,dim2,n,temp,res;
+    float *a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+
+    temp = dim1;
+    n = 1;
+    while(!nullp(temp)){
+        n = n * GET_INT(car(temp));
+        temp = cdr(temp);
+    }
+    res = makefarray(dim1,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
+    if(arg2 == makesym("SIGMOID")){
+        cuda_differ_sigmoid(n,a,b,c);
+    }
+    else if(arg2 == makesym("TANH")){
+        cuda_differ_tanh(n,a,b,c);
+    }
+    else if(arg2 == makesym("RELU")){
+        cuda_differ_relu(n,a,b,c);
+    }
+   
+   return(res);
+}
+
 int f_gpu_gradfilter(int arglist){
     int arg1,arg2,arg3,arg4,arg5,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,
         loss_n,loss_c,loss_h,loss_w,st_h,st_w,pad,res;

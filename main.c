@@ -145,8 +145,6 @@ int error_handler; //for store first argument of with-handler
 int trace_list = NIL; //function list of trace
 int trace_sym;  //function name in trace.
 int backtrace[BACKSIZE];
-int farray_address[FARRAYSIZE];  //address of farray data
-int farray_pt = 0;       //counter of array
 
 //-----debugger-----
 int examin_sym;

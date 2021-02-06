@@ -489,6 +489,27 @@ int f_gpu_unfull(int arglist){
     return(res);
 }
 
+
+int f_gpu_dropout(int arglist){
+    int arg1,arg2,dim1,n,temp,res;
+    float *a,*b,dropout_rate;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim1 = GET_CDR(arg1);
+    dropout_rate = (float)GET_FLT(arg2);
+    
+    temp = dim1;
+    n = 1;
+    while(!nullp(temp)){
+        n = n * GET_INT(car(temp));
+        temp = cdr(temp);
+    } 
+    a = GET_FVEC(arg1);
+    cuda_dropout(n,dropout_rate,a);
+    return(arg1);
+}
+
 int f_gpu_transpose(int arglist){
     int arg1,i,j,r1,c1,dim1,dim2,res;
     float *a,*b;

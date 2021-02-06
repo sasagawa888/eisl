@@ -1165,6 +1165,7 @@ int f_gpu_cross_entropy(int arglist);
 int f_gpu_average(int arglist);
 int f_gpu_sum(int arglist);
 int f_gpu_differ(int arglist);
+int f_gpu_dropout(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);
@@ -1190,4 +1191,5 @@ void cuda_activate_softmax(int r1, int c1, float *a, float *b);
 void cuda_differ_sigmoid(int n, float *a, float *b, float *c);
 void cuda_differ_tanh(int n, float *a, float *b, float *c);
 void cuda_differ_relu(int n, float *a, float *b, float *c);
+void cuda_dropout(int n, float dropout_rate, float *a);
 #endif

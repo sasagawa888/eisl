@@ -64,6 +64,7 @@ void initexsubr(void){
     defsubr("GPU-CROSS-ENTROPY",f_gpu_cross_entropy);
     defsubr("GPU-DECONVOLUTE",f_gpu_deconvolute);
     defsubr("GPU-DIFFER",f_gpu_differ);
+    defsubr("GPU-DROPOUT",f_gpu_dropout);
     defsubr("GPU-EMULT",f_gpu_emult);
     defsubr("GPU-FULL",f_gpu_full);
     defsubr("GPU-GRADFILTER",f_gpu_gradfilter);

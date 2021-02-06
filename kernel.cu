@@ -41,7 +41,7 @@ extern "C" void cuda_activate_softmax(int r1, int c1, float *a, float *b);
 extern "C" void cuda_differ_sigmoid(int n, float *a, float *b, float *c);
 extern "C" void cuda_differ_tanh(int n, float *a, float *b, float *c);
 extern "C" void cuda_differ_relu(int n, float *a, float *b, float *c);
-
+extern "C" void cuda_dropout(int n, float dropout_rate, float *a);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -1479,7 +1479,7 @@ element of dropout rate is 0.0.
 when forward and backward, generate Hadamard product with mask tensor
 */
 
-void dropout1(int n, float dropout_rate, float *a){ 
+void cuda_dropout(int n, float dropout_rate, float *a){ 
     int count,i,j;
     float *dev_a;
 

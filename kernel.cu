@@ -1417,31 +1417,6 @@ void differ_relu(int n, float *a, float *b, float *c){
 
 
 
-  
-
- 
-
-
-float cross_entropy(int r1, int c1, float *a, float *b){
-    int i, j;
-    float d,s,delta;
-
-    
-    
-    delta = 1e-7;
-    s = 0.0;
-    for(i=0;i<r1;i++){
-        for (j=0;j<c1;j++){
-            d = a[IDX2C(i,j,r1)] + delta;
-            s = s + b[IDX2C(i,j,r1)] * log(d);
-        }
-    }
-    s = -1.0 * s / (float)r1;
-    return(s);
-}
-
-
-
 void add_diff1(int r1, int c1, float *a, float *b, int x, int y, float val) {
     int i, j;
     

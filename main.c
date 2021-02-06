@@ -231,6 +231,7 @@ char extended[50][30] = {
 {"c-include"},{"c-define"},{"c-lang"},{"c-option"},
 {"gpu-mult"},{"gpu-add"},{"gpu-sub"},{"gpu-smult"},{"gpu-emult"},{"gpu-convolute"},{"gpu-deconvolute"},{"gpu-transpose"},
 {"gpu-ident"},{"gpu-full"},{"gpu-unfull"},{"gpu-accuracy"},{"gpu-correct"},{"gpu-activate"},{"gpu-trace"},
+{"gpu_cross_entropy"},
 };
 
 

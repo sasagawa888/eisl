@@ -1160,6 +1160,7 @@ int f_gpu_unfull(int arglist);
 int f_gpu_transpose(int arglist);
 int f_gpu_ident(int arglist);
 int f_gpu_activate(int arglist);
+int f_gpu_trace(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);

@@ -501,6 +501,27 @@ int f_gpu_ident(int arglist){
 }
 
 
+ 
+int f_gpu_trace(int arglist){
+    int arg1,i, j,r1,c1,res;
+    float *a,trace;
+
+    arg1 = car(arglist);
+
+    a = GET_FVEC(arg1);
+    trace = 0.0;
+    for(i=0;i<r1;i++){
+        for(j=0;j<c1;j++){
+            if(i==j)
+                trace = trace + a[IDX2C(i,j,r1)];
+        }
+    }
+
+    return(makeflt((double)trace));
+}
+
+
+
 /*
 calculate accuracy
 1st arg predicted matrix

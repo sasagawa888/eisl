@@ -1420,21 +1420,6 @@ void differ_relu(int n, float *a, float *b, float *c){
   
 
  
-float mean_square(int r1, int c1, float *a, float *b){
-    int i, j;
-    float d,s;
-
-    
-    s = 0.0;
-    for(i=0;i<r1;i++){
-        for (j=0;j<c1;j++){
-            d = a[IDX2C(i,j,r1)] -  b[IDX2C(i,j,r1)];
-            s = s + d*d;            
-        }
-    } 
-    s = s / (2.0*(float(r1)));
-    return(s);
-}
 
 
 float cross_entropy(int r1, int c1, float *a, float *b){

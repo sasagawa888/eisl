@@ -520,6 +520,26 @@ int f_gpu_trace(int arglist){
     return(makeflt((double)trace));
 }
 
+int f_gpu_mean_square(int arglist){
+    int arg1,arg2,i,j,r1,c1;
+    float d,s,*a,*b;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+
+    s = 0.0;
+    for(i=0;i<r1;i++){
+        for (j=0;j<c1;j++){
+            d = a[IDX2C(i,j,r1)] -  b[IDX2C(i,j,r1)];
+            s = s + d*d;            
+        }
+    } 
+    s = s / (2.0*(float(r1)));
+    return(makeflt((double)s));
+}
 
 
 /*

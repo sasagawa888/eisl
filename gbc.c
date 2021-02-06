@@ -219,6 +219,10 @@ void checkgbc(void){
         gbc();
     else if(gc_sw == 1 && wp > WORK2 && wp > CELLSIZE - FREESIZE)
         gbc();
+    else if(ac > FARRMAX){
+        gbc();
+        ac = 0;
+    }
 }
 
 

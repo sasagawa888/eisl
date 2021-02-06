@@ -537,7 +537,7 @@ int f_gpu_mean_square(int arglist){
             s = s + d*d;            
         }
     } 
-    s = s / (2.0*(float(r1)));
+    s = s / (2.0*(float)(r1));
     return(makeflt((double)s));
 }
 

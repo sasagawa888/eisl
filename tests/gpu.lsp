@@ -22,7 +22,12 @@
 
 (defglobal z (create-array '(3000 3000) 'rand 'float))
 
-(defun test2 ()
+(defun test1 ()
     (gpu-mult z z) )
+
+(defun test2 (n)
+  (for ((i n (- i 1)))
+       ((< i 0) t)
+       (test1)))
 
 (format (standard-output) "All tests are done~%")

@@ -338,6 +338,42 @@ int f_gpu_deconvolute(int arglist){
 }
 
 
+int f_gpu_activate(int arglist){
+    int arg1,arg2,dim1,temp,n,res,r1,c1;
+    float *a,*b;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim1 = GET_CDR(arg1);
+    r1 = GET_INT(nth(0,dim1));
+    c1 = GET_INT(nth(1,dim1));
+
+    temp = dim1;
+    n = 1;
+    while(!nullp(temp)){
+        n = n * GET_INT(car(temp));
+        temp = cdr(temp);
+    }
+    res = makefarray(dim1,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(res);
+    if(arg2 == makesym("SIGMOID")){
+        cuda_activate_sigmoid(n,a,b);
+    }
+    else if(arg2 == makesym("TANH")){
+        cuda_activate_tanh(n,a,b);
+    }
+    else if(arg2 == makesym("RELU")){
+        cuda_activate_relu(n,a,b);
+    }
+    else if(arg2 == makesym("SOFTMAX")){
+        cuda_activate_softmax(r1,c1,a,b);
+    }
+
+    return(res);
+
+}
+
 int f_gpu_gradfilter(int arglist){
     int arg1,arg2,arg3,arg4,arg5,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,
         loss_n,loss_c,loss_h,loss_w,st_h,st_w,pad,res;

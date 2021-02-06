@@ -1159,6 +1159,7 @@ int f_gpu_full(int arglist);
 int f_gpu_unfull(int arglist);
 int f_gpu_transpose(int arglist);
 int f_gpu_ident(int arglist);
+int f_gpu_activate(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);
@@ -1177,4 +1178,8 @@ void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int fi
                  int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
 void cuda_full(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
 void cuda_unfull(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
+void cuda_activate_sigmoid(int n, float *a, float *b);
+void cuda_activate_tanh(int n, float *a, float *b);
+void cuda_activate_relu(int n, float *a, float *b);
+void cuda_activate_softmax(int r1, int c1, float *a, float *b);
 #endif

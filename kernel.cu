@@ -34,8 +34,10 @@ extern "C" void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int fil
 extern "C" void cuda_emult(int n, float *a, float *b,float *c);
 extern "C" void cuda_full(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
 extern "C" void cuda_unfull(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
-
-
+extern "C" void cuda_activate_sigmoid(int n, float *a, float *b);
+extern "C" void cuda_activate_tanh(int n, float *a, float *b);
+extern "C" void cuda_activate_relu(int n, float *a, float *b);
+extern "C" void cuda_activate_softmax(int r1, int c1, float *a, float *b);
 
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
@@ -1175,7 +1177,7 @@ __global__ void sigmoid_kernel(float *a, float *b, int n)
     }
 }
 
-void activate_sigmoid(int n, float *a, float *b){
+void cuda_activate_sigmoid(int n, float *a, float *b){
     float *dev_a, *dev_b;
 
    
@@ -1211,7 +1213,7 @@ __global__ void tanh_kernel(float *a, float *b, int n)
 }
 
 
-void activate_tanh(int n, float *a, float *b){
+void cuda_activate_tanh(int n, float *a, float *b){
     float *dev_a, *dev_b;
 
     // Allocate for GPU
@@ -1249,7 +1251,7 @@ __global__ void relu_kernel(float *a, float *b, int n)
 }
 
 
-void activate_relu(int n, float *a, float *b) {
+void cuda_activate_relu(int n, float *a, float *b){
     float *dev_a, *dev_b;
 
     // Allocate for GPU
@@ -1271,7 +1273,7 @@ void activate_relu(int n, float *a, float *b) {
     cudaFree(dev_b);
 }
 
-void activate_softmax(int r1, int c1, float *a, float *b){
+void cuda_activate_softmax(int r1, int c1, float *a, float *b){
     int i, j, k;
     float max,sum,delta;
 

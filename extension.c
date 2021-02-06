@@ -55,7 +55,8 @@ void initexsubr(void){
     #endif
 
     #ifdef __NVCC__
-    defsubr("GPU-ACCURACY",f_gpu_accuracy);  
+    defsubr("GPU-ACCURACY",f_gpu_accuracy); 
+    defsubr("GPU-ACTIVATE",f_gpu_activate); 
     defsubr("GPU-ADD",f_gpu_add);
     defsubr("GPU-CONVOLUTE",f_gpu_convolute);
     defsubr("GPU-CORRECT",f_gpu_correct);

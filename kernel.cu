@@ -1454,20 +1454,6 @@ void add_diff2(int n1, int c1, int h1, int w1, float *a, float *b, int n2, int c
 }
 
 
-void average1(int r1, int c1, float *a, float *b){
-    int i, j;
-    float sum;
-
-    
-    for(j=0;j<c1;j++){
-        sum = 0.0;
-        for(i=0;i<r1;i++){
-            sum = sum + a[IDX2C(i,j,r1)];
-        }
-        b[j] = sum / (float)r1;
-    }
-
-}
 
 /*
 1st arg row-size of matrix

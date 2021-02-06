@@ -565,6 +565,28 @@ int f_gpu_cross_entropy(int arglist){
 }
 
 
+int f_gpu_average(int arglist){
+    int arg1,dim1,dim2,i,j,r1,c1,res;
+    float *a,*b,sum;
+
+    arg1 = car(arglist);
+    dim1 = GET_CDR(arg1);
+    dim2 = list2(makeint(1),nth(1,dim1));
+    res = makefarray(dim2,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(res);
+    for(j=0;j<c1;j++){
+        sum = 0.0;
+        for(i=0;i<r1;i++){
+            sum = sum + a[IDX2C(i,j,r1)];
+        }
+        b[j] = sum / (float)r1;
+    }
+    return(res);
+}
+
+
+
 /*
 calculate accuracy
 1st arg predicted matrix

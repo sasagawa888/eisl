@@ -30,4 +30,11 @@
        ((< i 0) t)
        (test1)))
 
+(defglobal m #2f((1.0 2.0) (3.0, 4.0)))
+(defglobal m1 #2f((1.0 -2.0 3.0) (4.0 5.0 -6.0)))
+(test (gpu-emult m1 m1) #2f((1.0 4.0 9.0) (16.0 25.0 36.0)))
+(test (gpu-sum m1) 10.0)
+
 (format (standard-output) "All tests are done~%")
+
+

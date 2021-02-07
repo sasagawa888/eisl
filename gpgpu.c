@@ -830,11 +830,14 @@ int f_gpu_average(int arglist){
 
 
 int f_gpu_sum(int arglist){
-    int arg1,i,j,r1,c1;
+    int arg1,dim1,i,j,r1,c1;
     float *a,sum;
 
     arg1 = car(arglist);
+    dim1 = GET_CDR(arg1);
     a = GET_FVEC(arg1);
+    r1 = GET_INT(nth(0,dim1));
+    c1 = GET_INT(nth(1,dim1));
 
     sum = 0.0;
     for(i=0;i<r1;i++){

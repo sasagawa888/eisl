@@ -1,5 +1,9 @@
 manual of GPGPU functions
 
+mtn  matrix nth
+tsn  tensor nth
+fun  symbol of faunction name
+
 
 (gpu-accuracy mt1 ls)
 return accuracy rate as float number. mt1 is set of row-vector.Each row-vector is onehot. ls is list each element is label integer number.

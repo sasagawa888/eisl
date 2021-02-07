@@ -42,6 +42,11 @@ extern "C" void cuda_differ_sigmoid(int n, float *a, float *b, float *c);
 extern "C" void cuda_differ_tanh(int n, float *a, float *b, float *c);
 extern "C" void cuda_differ_relu(int n, float *a, float *b, float *c);
 extern "C" void cuda_dropout(int n, float dropout_rate, float *a);
+extern "C" void cuda_sgd(int n, float *a, float *b, float *c, float lr);
+extern "C" void cuda_momentum(int n, float *a, float *b, float *c, float *d, float *e, float lr);
+extern "C" void cuda_adagrad(int n, float *a, float *b, float *c, float *d, float *e, float lr);
+extern "C" void cuda_rms(int n, float *a, float *b, float *c, float *d, float *e, float  lr);
+extern "C" void cuda_adam(int n, float *a, float *b, float *c, float *d, float *e, float *f, float *g, float lr);
 
 __global__ void add1_kernel(float *a, float *b, float *c, int n)
 {
@@ -1531,7 +1536,7 @@ return updated weight matrix.
 5th arg is learning rate
 */
 
-void sgd1(int n, float *a, float *b, float *c, float lr){
+void cuda_sgd(int n, float *a, float *b, float *c, float lr){
     float *dev_a, *dev_b, *dev_c;
 
 
@@ -1588,7 +1593,7 @@ void sgd1(int n, float *a, float *b, float *c, float lr){
   
   */
   
-  void momentum1(int n, float *a, float *b, float *c, float *d, float *e, float lr){
+  void cuda_momentum(int n, float *a, float *b, float *c, float *d, float *e, float lr){
 	  float *dev_a, *dev_b, *dev_c ,*dev_d, *dev_e;
 	
 	 
@@ -1662,7 +1667,7 @@ void sgd1(int n, float *a, float *b, float *c, float lr){
   7th arg learning rate
   */
   
-  void adagrad1(int n, float *a, float *b, float *c, float *d, float *e, float lr){
+  void cuda_adagrad(int n, float *a, float *b, float *c, float *d, float *e, float lr){
 	  float *dev_a, *dev_b, *dev_c, *dev_d, *dev_e;
 	  
 	  
@@ -1737,7 +1742,7 @@ void sgd1(int n, float *a, float *b, float *c, float lr){
   7th arg learning rate
   */
   
-  void rms1(int n, float *a, float *b, float *c, float *d, float *e, float  lr){
+  void cuda_rms(int n, float *a, float *b, float *c, float *d, float *e, float  lr){
 	  float *dev_a, *dev_b, *dev_c, *dev_d, *dev_e;
 	  
 	 
@@ -1826,7 +1831,7 @@ void sgd1(int n, float *a, float *b, float *c, float lr){
    9th arg learning rate
    
    */
-   void adam1(int n, float *a, float *b, float *c, float *d, float *e, float *f, float *g, float lr){
+   void cuda_adam(int n, float *a, float *b, float *c, float *d, float *e, float *f, float *g, float lr){
        float *dev_a, *dev_b, *dev_c, *dev_d, *dev_e, *dev_f, *dev_g;
        
        // Allocate for GPU

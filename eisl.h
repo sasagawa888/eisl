@@ -335,7 +335,7 @@ extern int ed_incomment;
 extern char special[40][12];
 extern char syntax[60][30];
 extern char builtin[200][30];
-extern char extended[50][30];
+extern char extended[60][30];
 
 
 
@@ -1166,6 +1166,7 @@ int f_gpu_average(int arglist);
 int f_gpu_sum(int arglist);
 int f_gpu_differ(int arglist);
 int f_gpu_dropout(int arglist);
+int f_gpu_sgd(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);
@@ -1192,4 +1193,9 @@ void cuda_differ_sigmoid(int n, float *a, float *b, float *c);
 void cuda_differ_tanh(int n, float *a, float *b, float *c);
 void cuda_differ_relu(int n, float *a, float *b, float *c);
 void cuda_dropout(int n, float dropout_rate, float *a);
+void cuda_sgd(int n, float *a, float *b, float *c, float lr);
+void cuda_momentum(int n, float *a, float *b, float *c, float *d, float *e, float lr);
+void cuda_adagrad(int n, float *a, float *b, float *c, float *d, float *e, float lr);
+void cuda_rms(int n, float *a, float *b, float *c, float *d, float *e, float  lr);
+void cuda_adam(int n, float *a, float *b, float *c, float *d, float *e, float *f, float *g, float lr);
 #endif

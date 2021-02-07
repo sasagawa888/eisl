@@ -510,6 +510,33 @@ int f_gpu_dropout(int arglist){
     return(arg1);
 }
 
+int f_gpu_sgd(int arglist){
+    int arg1,arg2,arg3,dim1,dim2,temp,n,res;
+    float lr,*a,*b,*c;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    lr = (float)GET_FLT(arg3);
+
+    temp = dim1;
+    n = 1;
+    while(!nullp(temp)){
+        n = n * GET_INT(car(temp));
+        temp = cdr(temp);
+    }
+    res = makefarray(dim1,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
+    cuda_sgd(n,a,b,c,lr);
+    return(res);
+}
+
+
 int f_gpu_transpose(int arglist){
     int arg1,i,j,r1,c1,dim1,dim2,res;
     float *a,*b;

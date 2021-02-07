@@ -811,7 +811,7 @@ int farray(int n, int ls);
 int farrayp(int x);
 int finddyn(int sym);
 int findenv(int sym);
-int flatten(int n, int ls);
+int flatten(int ls);
 int floatp(int x);
 int flttoken(char buf[]);
 int fprintr(FILE *p, int r ,int n);

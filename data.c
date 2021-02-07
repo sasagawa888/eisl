@@ -980,16 +980,14 @@ int array_dim(int ls){
     return(UNDEF);
 }
 
-// n=0 ex ((1 2) 3 (4 5)) -> (1 2 3 4 5)
-int flatten(int n, int ls){
+// ex ((1 2) 3 (4 5)) -> (1 2 3 4 5)
+int flatten(int ls){
     if(nullp(ls))
         return(ls);
-    else if(n<=1)
-        return(ls);
     else if(atomp(car(ls)))
-        return(cons(car(ls),flatten(n,cdr(ls))));
+        return(cons(car(ls),flatten(cdr(ls))));
     else
-        return(append(flatten(n-1,car(ls)),flatten(n,cdr(ls))));
+        return(append(flatten(car(ls)),flatten(cdr(ls))));
 
 }
 
@@ -1041,7 +1039,7 @@ int array(int n, int ls){
     else
         res = makearray(dim,UNDEF);
 
-    ls1 = flatten(n,ls);
+    ls1 = flatten(ls);
     i = 0;
     while(!nullp(ls1)){
         SET_VEC_ELT(res,i,car(ls1));
@@ -1064,7 +1062,7 @@ int farray(int n, int ls){
         error(NOT_ARR,"float array",n);
     
     res = makefarray(dim,0.0);
-    ls1 = flatten(n,ls);
+    ls1 = flatten(ls);
     
     if(length(dim) == 2){
         size = length(ls1);

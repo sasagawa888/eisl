@@ -774,17 +774,21 @@ int f_gpu_trace(int arglist){
 }
 
 int f_gpu_loss(int arglist){
-    int arg1,arg2,arg3,i,j,r1,c1;
+    int arg1,arg2,arg3,dim1,dim2,i,j,r1,c1;
     float d,s,delta,*a,*b;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
 
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
     a = GET_FVEC(arg1);
     b = GET_FVEC(arg2);
+    r1 = GET_INT(nth(0,dim1));
+    c1 = GET_INT(nth(1,dim1));
 
-    if(arg3 == makesym("MEAN-SQUARE")){
+    if(arg3 == makesym("SQUARE")){
         s = 0.0;
         for(i=0;i<r1;i++){
             for (j=0;j<c1;j++){
@@ -795,7 +799,7 @@ int f_gpu_loss(int arglist){
         s = s / (2.0*(float)(r1));
         return(makeflt((double)s));
     }
-    else if(arg3 == makesym("CROSS-ENTROPY")){
+    else if(arg3 == makesym("CROSS")){
         delta = 1e-7;
         s = 0.0;
         for(i=0;i<r1;i++){
@@ -807,6 +811,8 @@ int f_gpu_loss(int arglist){
         s = -1.0 * s / (float)r1;
         return(makeflt((double)s));
     }
+    else
+        error(WRONG_ARGS,"gpu-loss",arg3);
 }
 
 

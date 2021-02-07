@@ -374,7 +374,7 @@ int f_gpu_activate(int arglist){
 
 }
 
-int f_gpu_differ(int arglist){
+int f_gpu_diff(int arglist){
     int arg1,arg2,dim1,dim2,n,temp,res;
     float *a,*b,*c;
 

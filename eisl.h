@@ -1164,7 +1164,7 @@ int f_gpu_mean_square(int arglist);
 int f_gpu_cross_entropy(int arglist);
 int f_gpu_average(int arglist);
 int f_gpu_sum(int arglist);
-int f_gpu_differ(int arglist);
+int f_gpu_diff(int arglist);
 int f_gpu_dropout(int arglist);
 int f_gpu_sgd(int arglist);
 int f_gpu_momentum(int arglist);

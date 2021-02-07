@@ -63,7 +63,6 @@ void initexsubr(void){
     defsubr("GPU-AVERAGE",f_gpu_average);
     defsubr("GPU-CONVOLUTE",f_gpu_convolute);
     defsubr("GPU-CORRECT",f_gpu_correct);
-    defsubr("GPU-CROSS-ENTROPY",f_gpu_cross_entropy);
     defsubr("GPU-DECONVOLUTE",f_gpu_deconvolute);
     defsubr("GPU-DIFF",f_gpu_diff);
     defsubr("GPU-DROPOUT",f_gpu_dropout);
@@ -71,8 +70,7 @@ void initexsubr(void){
     defsubr("GPU-FULL",f_gpu_full);
     defsubr("GPU-GRADFILTER",f_gpu_gradfilter);
     defsubr("GPU-IDENT",f_gpu_ident);
-    defsubr("GPU-MEAN-SQUARE",f_gpu_mean_square);
-    defsubr("GPU-MOMENTUM",f_gpu_momentum);
+    defsubr("GPU-LOSS",f_gpu_loss);
     defsubr("GPU-MULT",f_gpu_mult);
     defsubr("GPU-POOLING",f_gpu_pooling);
     defsubr("GPU-SGD",f_gpu_sgd);

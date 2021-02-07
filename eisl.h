@@ -458,7 +458,6 @@ extern char extended[60][30];
 #define ESCRST  printf("\33[0m")
 #define ESCBOLD printf("\33[1m")
 
-
 double getETime(void);
 int readc(void);
 int absolute(int x);

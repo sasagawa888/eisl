@@ -656,8 +656,53 @@ int f_gpu_rms(int arglist){
     6th arg output new-w (e)
     7th arg learning rate
     */
-    cuda_momentum(n,a,b,c,d,e,lr);
+    cuda_rms(n,a,b,c,d,e,lr);
     return(list2(res1,res2));
+}
+
+int f_gpu_adam(int arglist){
+    int arg1,arg2,arg3,arg4,arg5,dim1,dim2,dim3,dim4,temp,n,res1,res2,res3;
+    float lr,*a,*b,*c,*d,*e,*f,*g;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = cadddr(arglist);
+    
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    dim3 = GET_CDR(arg3);
+    lr = (float)GET_FLT(arg4);
+
+    temp = dim1;
+    n = 1;
+    while(!nullp(temp)){
+        n = n * GET_INT(car(temp));
+        temp = cdr(temp);
+    }
+    res1 = makefarray(dim1,0.0);
+    res2 = makefarray(dim1,0.0);
+    res3 = makefarray(dim1,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(arg3);
+    d = GET_FVEC(arg4);
+    e = GET_FVEC(res1);
+    f = GET_FVEC(res2);
+    g = GET_FVEC(res3);
+    /*
+    1st arg row-size of vectorized each-matrix
+    2nd arg w-matrix     (a)
+    3rd arg m-matrix     (b)
+    4th arg v-matrix     (c)
+    5th arg grad-matrix  (d)
+    6th arg output m1    (e)
+    7th arg output v1    (f)
+    8th arg output w1    (g)
+    9th arg learning rate
+    */
+    cuda_adam(n,a,b,c,d,e,f,g,lr);
+    return(list3(res1,res2,res3));
 }
 
 

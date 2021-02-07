@@ -369,6 +369,8 @@ int f_gpu_activate(int arglist){
     else if(arg2 == makesym("SOFTMAX")){
         cuda_activate_softmax(r1,c1,a,b);
     }
+    else
+        error(WRONG_ARGS,"gpu-activate",arg2);
 
     return(res);
 
@@ -826,6 +828,8 @@ int f_gpu_average(int arglist){
     res = makefarray(dim2,0.0);
     a = GET_FVEC(arg1);
     b = GET_FVEC(res);
+    r1 = GET_INT(nth(0,dim1));
+    c1 = GET_INT(nth(1,dim1));
     for(j=0;j<c1;j++){
         sum = 0.0;
         for(i=0;i<r1;i++){

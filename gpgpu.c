@@ -505,9 +505,10 @@ int f_gpu_dropout(int arglist){
         n = n * GET_INT(car(temp));
         temp = cdr(temp);
     } 
-    a = GET_FVEC(arg1);
+    res = makefarray(dim1,0.0);
+    a = GET_FVEC(res);
     cuda_dropout(n,dropout_rate,a);
-    return(arg1);
+    return(res);
 }
 
 int f_gpu_sgd(int arglist){

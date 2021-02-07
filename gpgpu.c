@@ -579,6 +579,47 @@ int f_gpu_momentum(int arglist){
 }
 
 
+int f_gpu_adagrad(int arglist){
+    int arg1,arg2,arg3,arg4,dim1,dim2,dim3,temp,n,res1,res2;
+    float lr,*a,*b,*c,*d,*e;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = cadddr(arglist);
+    
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    dim3 = GET_CDR(arg3);
+    lr = (float)GET_FLT(arg4);
+
+    temp = dim1;
+    n = 1;
+    while(!nullp(temp)){
+        n = n * GET_INT(car(temp));
+        temp = cdr(temp);
+    }
+    res1 = makefarray(dim1,0.0);
+    res2 = makefarray(dim1,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(arg3);
+    d = GET_FVEC(res1);
+    e = GET_FVEC(res2);
+    /*
+    1st arg row-size of vectorized each-matrix
+    2nd arg wight-matrix (a)
+    3rd arg h-matrix     (b)
+    4th arg grad-matrix  (c)
+    5th arg output new-h (d)
+    6th arg output new-w (e)
+    7th arg learning rate
+    */
+    cuda_momentum(n,a,b,c,d,e,lr);
+    return(list2(res1,res2));
+}
+
+
 int f_gpu_transpose(int arglist){
     int arg1,i,j,r1,c1,dim1,dim2,res;
     float *a,*b;

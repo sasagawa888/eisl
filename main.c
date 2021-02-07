@@ -230,7 +230,7 @@ char extended[60][30] = {
 {"gpu-mult"},{"gpu-add"},{"gpu-sub"},{"gpu-smult"},{"gpu-emult"},{"gpu-convolute"},{"gpu-deconvolute"},{"gpu-transpose"},
 {"gpu-ident"},{"gpu-full"},{"gpu-unfull"},{"gpu-accuracy"},{"gpu-correct"},{"gpu-activate"},{"gpu-trace"},
 {"gpu_cross_entropy"},{"gpu-average"},{"gpu-sum"},{"gpu-differ"},{"gpu-dropout"},
-{"gpu-sgd"},
+{"gpu-sgd"},{"gpu-momentum"},{"gpu-adagrad"},
 };
 
 

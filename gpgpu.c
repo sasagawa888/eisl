@@ -196,9 +196,9 @@ int f_gpu_pooling(int arglist){
     if(!listp(arg2))
         error(NOT_LIST,"gpu-pooling",arg2);
     dim1 = GET_CDR(arg1);
-    if(length(dim1 != 4))
+    if(length(dim1) != 4)
         error(WRONG_ARGS,"gpu-pooling",arg1);
-    if(length(arg2 != 2))
+    if(length(arg2) != 2)
         error(WRONG_ARGS,"gpu-pooling",arg2);
     
     in_n = GET_INT(nth(0,dim1));
@@ -208,7 +208,7 @@ int f_gpu_pooling(int arglist){
     st_h = GET_INT(nth(0,arg2));
     st_w = GET_INT(nth(1,arg2));
 
-    dim2 = list4(nth(dim1,0),nth(dim1,1),makeint(in_h/st_h),makeint(in_w/st_w));
+    dim2 = list4(nth(0,dim1),nth(1,dim1),makeint(in_h/st_h),makeint(in_w/st_w));
     res1 = makefarray(dim2,0.0);
     res2 = makefarray(dim2,0.0);
     a = GET_FVEC(arg1);
@@ -216,6 +216,7 @@ int f_gpu_pooling(int arglist){
     c = GET_FVEC(res2);
 
     cuda_pooling(in_n,in_c,in_h,in_w,a,b,c,st_h,st_w);
+    return(list2(res1,res2));
 }
 
 int f_gpu_unpooling(int arglist){

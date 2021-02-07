@@ -309,7 +309,8 @@ int f_gpu_convolute(int arglist){
 4th arg padding size
 */
 int f_gpu_deconvolute(int arglist){
-    int arg1,arg2,arg3,arg4,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,st_h,st_w,pad,res;
+    int arg1,arg2,arg3,arg4,dim1,dim2,dim3,in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,st_h,st_w,pad,res,
+        oh,ow,oh1,ow1,pad1;
     float *a,*b,*c;
 
     arg1 = car(arglist);
@@ -329,11 +330,23 @@ int f_gpu_deconvolute(int arglist){
     st_h = GET_INT(nth(0,arg3));
     st_w = GET_INT(nth(1,arg3));
     pad = GET_INT(arg4);
+    pad1 = filt_h - 1;
+    // pad1 = filt_h -1,  pad is original padding size
+    oh = (in_h+2*pad1-filt_h)/st_h + 1;
+    ow = (in_w+2*pad1-filt_w)/st_w + 1;
+    oh1 = (in_h+2*(pad1-pad)-filt_h)/st_h + 1;
+    ow1 = (in_w+2*(pad1-pad)-filt_w)/st_w + 1;
+    dim3 = list4(makeint(in_n),makeint(filt_c),makeint(oh1),makeint(ow1));
+    res = makefarray(dim3,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res);
 
     if(st_h == 1 && st_w == 1)
         cuda_deconvolute2(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,a,b,c,st_h,st_w,pad);
     else    
         cuda_deconvolute1(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,a,b,c,st_h,st_w,pad);
+
     return(res);
 }
 

@@ -70,6 +70,7 @@ void initexsubr(void){
     defsubr("GPU-GRADFILTER",f_gpu_gradfilter);
     defsubr("GPU-IDENT",f_gpu_ident);
     defsubr("GPU-MEAN-SQUARE",f_gpu_mean_square);
+    defsubr("GPU-MOMENTUM",f_gpu_momentum);
     defsubr("GPU-MULT",f_gpu_mult);
     defsubr("GPU-POOLING",f_gpu_pooling);
     defsubr("GPU-SGD",f_gpu_sgd);

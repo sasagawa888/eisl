@@ -223,7 +223,7 @@ int check_token_buffer(int col){
             return(2); //builtin token
         }
     }
-    for(i=0; i<50; i++){
+    for(i=0; i<60; i++){
         if(strcmp(extended[i],str) == 0){
             return(5); //extended token
         }
@@ -389,7 +389,7 @@ void find_candidate_buffer(int col){
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<50;i++){
+    for(i=0;i<60;i++){
         if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
             strcpy(ed_candidate[ed_candidate_pt],extended[i]);
                         ed_candidate_pt++;

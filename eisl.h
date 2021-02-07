@@ -1169,6 +1169,7 @@ int f_gpu_dropout(int arglist);
 int f_gpu_sgd(int arglist);
 int f_gpu_momentum(int arglist);
 int f_gpu_adagrad(int arglist);
+int f_gpu_rms(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);

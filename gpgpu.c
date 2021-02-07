@@ -447,14 +447,14 @@ int f_gpu_gradfilter(int arglist){
     loss_c = GET_INT(nth(1,dim3));
     loss_h = GET_INT(nth(2,dim3));
     loss_w = GET_INT(nth(3,dim3));
-    st_h = GET_INT(nth(0,arg3));
-    st_w = GET_INT(nth(1,arg3));
-    pad = GET_INT(arg4);
+    st_h = GET_INT(nth(0,arg4));
+    st_w = GET_INT(nth(1,arg4));
+    pad = GET_INT(arg5);
     a = GET_FVEC(arg1);
     b = GET_FVEC(arg2);
     res = makefarray(dim2,0.0);
     d = GET_FVEC(res);
-
+    
     if(st_h == 1 && st_w == 1)
         cuda_gradfilter1(in_n,in_c,in_h,in_w,filt_n,filt_c,filt_h,filt_w,loss_c,loss_h,loss_w,a,b,d,st_h,st_w,pad);
     else

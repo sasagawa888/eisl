@@ -969,13 +969,13 @@ int array_set(int obj, int ls, int val){
 
 //calculation of array's dimension
 //e.g. ((1 2)(3 4)(5 6)) -> (3 2)
-int array_dim(int n, int ls){
-    if(!nullp(ls) && atomp(ls) && n>0)
-        error(ILLEGAL_ARGS,"array",NIL);
-    else if(n==0)
+int array_dim(int ls){
+    if(nullp(ls))
+        return(list1(makeint(0)));
+    else if(atomp(ls))
         return(NIL);
     else
-        return(cons(makeint(length(ls)),array_dim(n-1,car(ls))));
+        return(cons(makeint(length(ls)),array_dim(car(ls))));
     
     return(UNDEF);
 }
@@ -1031,7 +1031,7 @@ int list_drop(int ls, int n){
 int array(int n, int ls){
     int dim,res,ls1,i;
     
-    dim = array_dim(n,ls);
+    dim = array_dim(ls);
     if(n == 0){
         res = makearray(dim,ls);
         return(res);
@@ -1057,7 +1057,7 @@ int farray(int n, int ls){
     int dim,res,ls1,i,j,r,c,size;
     float *vec1,*vec2;
     
-    dim = array_dim(n,ls);
+    dim = array_dim(ls);
     if(n == 0)
         error(NOT_ARR,"float array",n);
     else if(n == 1)

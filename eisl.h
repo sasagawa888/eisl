@@ -468,7 +468,7 @@ int append(int x, int y);
 int apply(int func, int arg);
 int argpop(void);
 int array(int n, int ls);
-int array_dim(int n, int ls);
+int array_dim(int ls);
 int array_length(int obj);
 int array_ref(int obj, int ls);
 int array_set(int obj, int ls, int val);

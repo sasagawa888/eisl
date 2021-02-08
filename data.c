@@ -969,27 +969,30 @@ int array_set(int obj, int ls, int val){
 
 //calculation of array's dimension
 //e.g. ((1 2)(3 4)(5 6)) -> (3 2)
-int array_dim(int ls){
-    if(nullp(ls))
-        return(list1(makeint(0)));
-    else if(atomp(ls))
+int array_dim(int n, int ls){
+    if(!nullp(ls) && atomp(ls) && n>0)
+        error(ILLEGAL_ARGS,"array",NIL);
+    else if(n==0)
         return(NIL);
     else
-        return(cons(makeint(length(ls)),array_dim(car(ls))));
+        return(cons(makeint(length(ls)),array_dim(n-1,car(ls))));
     
     return(UNDEF);
 }
 
-// ex ((1 2) 3 (4 5)) -> (1 2 3 4 5)
-int flatten(int ls){
+// n=0 ex ((1 2) 3 (4 5)) -> (1 2 3 4 5)
+int flatten(int n, int ls){
     if(nullp(ls))
         return(ls);
+    else if(n<=1)
+        return(ls);
     else if(atomp(car(ls)))
-        return(cons(car(ls),flatten(cdr(ls))));
+        return(cons(car(ls),flatten(n,cdr(ls))));
     else
-        return(append(flatten(car(ls)),flatten(cdr(ls))));
+        return(append(flatten(n-1,car(ls)),flatten(n,cdr(ls))));
 
 }
+
 
 // ex(1 2 3 4) -> ((1 2)(3 4))
 int structured(int ls, int st){
@@ -1029,7 +1032,7 @@ int list_drop(int ls, int n){
 int array(int n, int ls){
     int dim,res,ls1,i;
     
-    dim = array_dim(ls);
+    dim = array_dim(n,ls);
     if(n == 0){
         res = makearray(dim,ls);
         return(res);
@@ -1039,7 +1042,7 @@ int array(int n, int ls){
     else
         res = makearray(dim,UNDEF);
 
-    ls1 = flatten(ls);
+    ls1 = flatten(n,ls);
     i = 0;
     while(!nullp(ls1)){
         SET_VEC_ELT(res,i,car(ls1));
@@ -1055,14 +1058,14 @@ int farray(int n, int ls){
     int dim,res,ls1,i,j,r,c,size;
     float *vec1,*vec2;
     
-    dim = array_dim(ls);
+    dim = array_dim(n,ls);
     if(n == 0)
         error(NOT_ARR,"float array",n);
     else if(n == 1)
         error(NOT_ARR,"float array",n);
     
     res = makefarray(dim,0.0);
-    ls1 = flatten(ls);
+    ls1 = flatten(n,ls);
     
     if(length(dim) == 2){
         size = length(ls1);

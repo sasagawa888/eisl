@@ -319,6 +319,17 @@ int f_gpu_deconvolute(int arglist){
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
     arg4 = cadddr(arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-deconvolute",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-deconvolute",arg2);
+    if(!listp(arg3))
+        error(NOT_LIST,"gpu-deconvolute",arg3);
+    if(length(arg3) != 2)
+        error(WRONG_ARGS,"gpu-deconvolute",arg3);
+    if(!integerp(arg4))
+        error(NOT_INT,"gpu-deconvolute",arg4);
+
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
     in_n = GET_INT(nth(0,dim1));
@@ -359,6 +370,11 @@ int f_gpu_activate(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-activate",arg1);
+    if(!symbolp(arg2))
+        error(NOT_SYM,"gpu-activate",arg2);
+
     dim1 = GET_CDR(arg1);
     r1 = GET_INT(nth(0,dim1));
     c1 = GET_INT(nth(1,dim1));
@@ -392,13 +408,16 @@ int f_gpu_activate(int arglist){
 }
 
 int f_gpu_diff(int arglist){
-    int arg1,arg2,dim1,dim2,n,temp,res;
+    int arg1,arg2,dim1,n,temp,res;
     float *a,*b,*c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     dim1 = GET_CDR(arg1);
-    dim2 = GET_CDR(arg2);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-diff",arg1);
+    if(!symbolp(arg2))
+        error(NOT_SYM,"gpu-diff",arg2);
 
     temp = dim1;
     n = 1;
@@ -419,6 +438,8 @@ int f_gpu_diff(int arglist){
     else if(arg2 == makesym("RELU")){
         cuda_differ_relu(n,a,b,c);
     }
+    else
+        error(WRONG_ARGS,"gpu-deff",arg2);
    
    return(res);
 }

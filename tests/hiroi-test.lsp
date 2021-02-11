@@ -13,7 +13,8 @@
 
 
 (import "list")
-T(test (caar '((a b) (c d) (e f))) A)
+
+(test (caar '((a b) (c d) (e f))) A)
 (test (cadr '((a b) (c d) (e f))) (C D))
 (test (cdar '((a b) (c d) (e f))) (B))
 (test (cddr '((a b) (c d) (e f))) ((E F)))

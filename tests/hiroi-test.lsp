@@ -47,11 +47,12 @@
 (defun xcons (a b)
     (cons b a) )
 
+
 (test (fold-left #'xcons nil '(a b c d e f)) (F E D C B A))
 (test (fold-right #'+ 0 '(1 2 3 4 5 6 7 8 9 10)) 55)
 (test (fold-right #'cons nil '(a b c d e f)) (A B C D E F))
 (test (partition #'evenp '(1 2 3 4 5 6 7 8 9 10)) ((2 4 6 8 10) 1 3 5 7 9))
-(test (partition (lambda (x)((< x 5))) '(1 2 3 4 5 6 7 8 9 10)) ((1 2 3 4) 5 6 7 8 9 10))
+(test (partition (lambda (x)(< x 5)) '(1 2 3 4 5 6 7 8 9 10)) ((1 2 3 4) 5 6 7 8 9 10))
 (test (find-if #'evenp '(1 2 3 5 7 9)) 2)
 (test (find-if #'evenp '(1 3 5 7 9 4)) 4)
 (test (find-if #'evenp '(1 3 5 7 9)) NIL)

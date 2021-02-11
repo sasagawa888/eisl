@@ -1343,6 +1343,7 @@ int copy_work(int x){
         case BIGX:  return(copy_bignum(x));
         case VEC:   return(copy_vec(x));
         case ARR:   return(copy_array(x));
+        case FARR:  return(copy_array(x));
         case STR:   return(copy_str(x));
         case CHR:   return(copy_char(x));
         case SYM:   return(x);
@@ -1440,7 +1441,7 @@ int copy_array(int x){
 
     addr = freshcell();
     SET_VEC(addr,GET_VEC(x));  //array or vector
-    SET_TAG(addr,GET_TAG(x));  //tag ARR or VEC 
+    SET_TAG(addr,GET_TAG(x));  //tag ARR or VEC or FARR 
     SET_CDR(addr,GET_CDR(x));  //dimension
     SET_AUX(addr,GET_AUX(x));  //class
     return(addr);

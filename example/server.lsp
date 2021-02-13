@@ -1,3 +1,7 @@
+(import "tcpip")
+;; Please compile tcpip.lsp in library before. 
+
+
 (defun server ()
   (let ((s (create (class socket)))
         (c nil)

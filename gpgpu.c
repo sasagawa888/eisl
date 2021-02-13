@@ -971,24 +971,40 @@ int f_gpu_correct(int arglist){
 	return(makeflt((double)sum));
   }
   
-   /*
-  random_select for matrix data
-  1st arg row of matrix a
-  2nd arg col of matrix a
-  3rd arg matrix a
-  4th arg row ob matrix b
-  5th arg col of matrix b
-  6th arg matrix b
-  7th arg count of select
-  8th arg output random selected a
-  9th arg output random selected b 
-  */
+/*
+1st arg matrix a
+2nd arg matrix b
+3rd arg count of random selected matrix
+
+return list of selected a and b matrix
+
+*/
   
-  void random_select1(int r1, int c1, float *a, int r2, int c2, float *b, int n, float *c, float *d){
-	  int i, j, r;
-	
-	
-	  // random-select
+int f_gpu_randome_select(int arglist){
+    int arg1,arg2,arg3,dim1,dim2,dim3,dim4,n,r1,r2,c1,c2,i,j,r,res1,res2;
+    float *a,*b,*c,*d;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+
+    dim1 = GET_CDR(arg1);
+    dim2 = GET_CDR(arg2);
+    n = GET_INT(arg3);
+    r1 = GET_INT(car(dim1));
+    r2 = GET_INT(car(dim2));
+    c1 = GET_INT(cadr(dim1));
+    c2 = GET_INT(cadr(dim2));
+    dim3 = cons(makeint(r),cdr(dim1));
+    dim4 = cons(makeint(r),cdr(dim2));
+    res1 = makefarray(dim3,0.0);
+    res2 = makefarray(dim4,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(arg2);
+    c = GET_FVEC(res1);
+    d = GET_FVEC(res2);
+
+    // random-select
 	  for(i=0;i<n;i++){
 		  r = rand() % r1;
 		  for(j=0;j<c1;j++){
@@ -998,9 +1014,10 @@ int f_gpu_correct(int arglist){
 			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
 		  }    
 	  }
-  
-  }
-  
+    
+    return(list2(res1,res2));
+}
+
 
 
  

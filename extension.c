@@ -73,6 +73,7 @@ void initexsubr(void){
     defsubr("GPU-LOSS",f_gpu_loss);
     defsubr("GPU-MULT",f_gpu_mult);
     defsubr("GPU-POOLING",f_gpu_pooling);
+    defsubr("GPU-RANDOM-SELECT".f_gpu_random_select);
     defsubr("GPU-SGD",f_gpu_sgd);
     defsubr("GPU-SUB",f_gpu_sub);
     defsubr("GPU-SUM",f_gpu_sum);

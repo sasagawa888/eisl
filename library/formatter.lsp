@@ -97,7 +97,7 @@
                      ((and (null ignore) (stringp (car x)) (string= (car x) "while"))
                       (pp-block x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "lambda"))
-                      (pp-block x lm))
+                      (pp-lambda x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "labels"))
                       (pp-labels x lm))
                      ((long-element-p x) (setq otomo t) (pp-long-element x lm))
@@ -298,6 +298,21 @@
                  (t (newline lm1) (pp-body body lm1)))
            (pp-string ")")))
     
+
+    ;; syntax lambda type
+    (defun pp-lambda (x lm)
+        (let ((lm1 (+ lm 3))
+              (body (cdr (cdr x))) )
+           (pp-string "(")
+           (pp1 (elt x 0) lm1)
+           (pp-string " ")
+           (pp1 (elt x 1) lm1)
+           (pp-string " ")
+           (cond ((and (= (length body) 1) (<= (flatsize body) long-element)) (pp-flat (car body) lm1))
+                 (t (newline lm1) (pp-body body lm1)))
+           (pp-string ")")))
+
+
     ;; syntax labels
     (defun pp-labels (x lm)
         (let ((lm1 (+ lm 7))

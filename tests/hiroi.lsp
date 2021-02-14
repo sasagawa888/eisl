@@ -1,18 +1,27 @@
 ;; test from M.Hiroi home page
 
-(defun pascal (n)
-    (for ((n n (- n 1))
-          (xs
-          '(1)
-          (maplist (lambda (xs)
-                      (if (singlep xs)
-                          (car xs)
-                          (+ (car xs) (cadr xs)))) (cons 0 xs))) )
-         ((= n 0))
-         (format (standard-output) "~A~%" xs)))
+(defun factor-sub (n m)
+    (for ((i 0 (+ i 1))
+          (n n) )
+         ((/= (mod n m) 0)
+          (cons i n) )
+         (setq n (quotient n m))))
 
-(defun singlep (xs)
-    (and xs (null (cdr xs))) )
+(defun factorization (n)
+    (let* ((xs (factor-sub n 2))
+           (c (car xs)) )
+        (setq n (cdr xs))
+        (for ((i 3 (+ i 2))
+              (a (if (= c 0)
+                    nil
+                    (list (cons 2 c)))) )
+             ((or (= n 1) (< n (* i i)))
+              (nreverse (if (= n 1)
+                           a
+                           (cons (cons n 1) a))) )
+             (setq xs (factor-sub n i))
+             (setq c (car xs))
+             (setq n (cdr xs))
+             (if (< 0 (car xs))
+                 (setq a (cons (cons i c) a))))))
 
-(defun cadr (x)
-    (car (cdr x)) )

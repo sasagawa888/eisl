@@ -177,7 +177,7 @@
     (= (mod m a) (mod n a)) )
 
 (defun primep (n)
-    (if (< n 1000000000000000000)
+    (if (< n 100000000000000000)
         (deterministic-prime-p n)
         (rabin-miller-p n) ))
 

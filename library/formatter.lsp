@@ -98,6 +98,8 @@
                       (pp-block x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "lambda"))
                       (pp-block x lm))
+                     ((and (null ignore) (stringp (car x)) (string= (car x) "labels"))
+                      (pp-labels x lm))
                      ((long-element-p x) (setq otomo t) (pp-long-element x lm))
                      ((< (+ (flatsize x) lm) width) (pp-flat x lm))
                      (t (setq otomo t) (pp-indent x lm))))
@@ -296,6 +298,40 @@
                  (t (newline lm1) (pp-body body lm1)))
            (pp-string ")")))
     
+    ;; syntax labels
+    (defun pp-labels (x lm)
+        (let ((lm1 (+ lm 7))
+              (lm2 (+ lm 4))
+              (body (cdr (cdr x))))
+            (pp-string "(")
+            (pp1 (elt x 0) lm1)
+            (pp-string " (")
+            (pp-labels1 (elt x 1) lm1)
+            (pp-string ")")
+            (newline lm2)
+            (pp-body body lm2)
+            (pp-string ")")))
+    
+    (defun pp-labels1 (x lm)
+        (for ((s x (cdr s)))
+             ((null s) t)
+             (pp-labels2 (car s) lm)))
+
+    (defun pp-labels2 (x lm)
+        (let ((lm1 (+ lm 4)))
+           (pp-string "(")
+           (pp1 (elt x 0) lm1)
+           (pp-string " ")
+           (pp1 (elt x 1) lm1)
+           (newline lm1)
+           (pp-body (cdr (cdr x)) lm1)
+           (if otomo
+               (pp-string ")")
+               (pp-string " )"))
+           (if (= lm 0)
+               (newline lm))))
+    
+
     ;; write cons as flat
     (defun pp-flat (x lm)
         (pp-string "(")

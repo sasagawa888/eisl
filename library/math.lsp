@@ -182,33 +182,31 @@
         (rabin-miller-p n) ))
 
 (defun deterministic-prime-p (n)
-    (labels
-     ((iter
-       (x y)
-       (cond ((> x y) t)
-             ((divisiblep n x) nil)
-             ((= x 2) (iter 3 y))
-             (t (iter (+ x 2) y)))))
-     (if (< n 2)
-         nil
-         (iter 2 (sqrt n)))))
+    (labels ((iter (x y)
+               (cond ((> x y) t)
+                     ((divisiblep n x) nil)
+                     ((= x 2) (iter 3 y))
+                     (t (iter (+ x 2) y)) )))
+        (if (< n 2)
+            nil
+            (iter 2 (sqrt n)))))
 
 
 (defun primepi (n)
-    (labels
-     ((iter (x y) (cond ((> x n) y)
-                        ((primep x) (iter (+ x 1) (+ y 1)))
-                        (t (iter (+ x 1) y)))))
-     (iter 2 0)))
+    (labels ((iter (x y)
+               (cond ((> x n) y)
+                     ((primep x) (iter (+ x 1) (+ y 1)))
+                     (t (iter (+ x 1) y)) )))
+        (iter 2 0)))
 
 (defun tau (n)
-    (labels
-     ((iter (ls m) (if (null ls)
-                       m
-                       (iter (cdr ls) (* (+ (elt (elt ls 0) 1) 1) m)))))
-     (if (= n 1)
-         1
-         (iter (factorize n) 1))))
+    (labels ((iter (ls m)
+               (if (null ls)
+                   m
+                   (iter (cdr ls) (* (+ (elt (elt ls 0) 1) 1) m)) )))
+        (if (= n 1)
+            1
+            (iter (factorize n) 1))))
 
 (defun expt-1 (n)
     (if (oddp n)
@@ -221,7 +219,7 @@
 (defun omega (n)
     (if (= n 1)
         0
-        (sum (lambda (x)((elt x 1))) (factorize n)) ))
+        (sum (lambda (x)(((elt x 1)))) (factorize n)) ))
 
 
 
@@ -251,54 +249,48 @@
     (= (sigma n) (* 3 n)) )
 
 (defun find-double-perfect (n)
-    (labels
-     ((iter
-       (m ls)
-       (cond ((> m n) ls)
-             ((double-perfect-number-p m) (iter (+ m 1) (cons m ls)))
-             (t (iter (+ m 1) ls)))))
-     (iter 1 '())))
+    (labels ((iter (m ls)
+               (cond ((> m n) ls)
+                     ((double-perfect-number-p m) (iter (+ m 1) (cons m ls)))
+                     (t (iter (+ m 1) ls)) )))
+        (iter 1 '())))
 
 
 (defun fermatp (n)
-    (labels
-     ((iter
-       (m)
-       (cond ((< m 1) t)
-             ((not (= 1 (gaussmod (+ (random (- n 2)) 1) (- n 1) n))) nil)
-             (t (iter (- m 1))))))
-     (iter 10)))
+    (labels ((iter (m)
+               (cond ((< m 1) t)
+                     ((not (= 1 (gaussmod (+ (random (- n 2)) 1) (- n 1) n))) nil)
+                     (t (iter (- m 1))) )))
+        (iter 10)))
 
 (defun lucasp (p)
-    (labels
-     ((iter
-       (n i m)
-       (cond ((and (= i (- p 1)) (zerop (mod n m))) t)
-             ((and (= i (- p 1)) (not (zerop (mod n m)))) nil)
-             (t (iter (mod (- (expt n 2) 2) m) (+ i 1) m)))))
-     (cond ((< p 2) nil)
-           ((= p 2) t)
-           (t (iter 4 1 (mersenne p))))))
+    (labels ((iter (n i m)
+               (cond ((and (= i (- p 1)) (zerop (mod n m))) t)
+                     ((and (= i (- p 1)) (not (zerop (mod n m)))) nil)
+                     (t (iter (mod (- (expt n 2) 2) m) (+ i 1) m)) )))
+        (cond ((< p 2) nil)
+              ((= p 2) t)
+              (t (iter 4 1 (mersenne p))))))
 
 (defun fermat-number (n)
     (+ (expt 2 (expt 2 n)) 1) )
 
 (defun rm1 (n)
-    (labels ((iter (k q) (if (oddp q)
-                             (list k q)
-                             (iter (+ k 1) (div q 2)) ))) (iter 0 (- n 1))))
+    (labels ((iter (k q)
+               (if (oddp q)
+                   (list k q)
+                   (iter (+ k 1) (div q 2)) )))
+        (iter 0 (- n 1))))
 
 (defun rm2 (a q n)
     (not (= (gaussmod a q n) 1)) )
 
 (defun rm3 (a k q n)
-    (labels
-     ((iter
-       (i)
-       (cond ((>= i k) t)
-             ((= (gaussmod a (* (expt 2 i) q) n) -1) nil)
-             (t (iter (+ i 1))))))
-     (iter 0)))
+    (labels ((iter (i)
+               (cond ((>= i k) t)
+                     ((= (gaussmod a (* (expt 2 i) q) n) -1) nil)
+                     (t (iter (+ i 1))) )))
+        (iter 0)))
 
 (defun rm4 (n a)
     (let* ((ls (rm1 n))
@@ -307,15 +299,13 @@
         (and (rm2 a q n) (rm3 a k q n))))
 
 (defun rabin-miller-p (n)
-    (labels
-     ((iter
-       (m)
-       (cond ((< m 1) nil)
-             ((rm4 n (+ (random (min (- n 2) 32767)) 1)) t)
-             (t (iter (- m 1))))))
-     (if (= n 2)
-         t
-         (not (iter 10)))))
+    (labels ((iter (m)
+               (cond ((< m 1) nil)
+                     ((rm4 n (+ (random (min (- n 2) 32767)) 1)) t)
+                     (t (iter (- m 1))) )))
+        (if (= n 2)
+            t
+            (not (iter 10)))))
 
 
 
@@ -326,54 +316,47 @@
              (t k1) )))
 
 (defun twin-primes (n m)
-    (labels
-     ((iter
-       (i j ls)
-       (cond ((> i j) (reverse ls))
-             ((and (primep i) (primep (+ i 2))) (iter (+ i 2) j (cons (list i (+ i 2)) ls)))
-             (t (iter (+ i 2) j ls)))))
-     (cond ((<= n 2) (iter 3 (+ n m) '()))
-           ((evenp n) (iter (+ n 1) (+ n m) '()))
-           (t (iter n (+ n m) '())))))
+    (labels ((iter (i j ls)
+               (cond ((> i j) (reverse ls))
+                     ((and (primep i) (primep (+ i 2)))
+                      (iter (+ i 2) j (cons (list i (+ i 2)) ls)))
+                     (t (iter (+ i 2) j ls)))))
+        (cond ((<= n 2) (iter 3 (+ n m) '()))
+              ((evenp n) (iter (+ n 1) (+ n m) '()))
+              (t (iter n (+ n m) '())))))
 
 
 
 (defun divisors (n)
-    (labels
-     ((iter
-       (m o ls)
-       (cond ((> m o) ls)
-             ((divisiblep n m) (iter (+ m 1) o (cons m ls)))
-             (t (iter (+ m 1) o ls)))))
-     (cond ((not (integerp n)) (error "divisors require natural number" n))
-           ((< n 1) (error "divisors require natural number" n))
-           ((= n 1) '(1))
-           (t (cons n (iter 1 (ceiling (quotient n 2)) '()))))))
+    (labels ((iter (m o ls)
+               (cond ((> m o) ls)
+                     ((divisiblep n m) (iter (+ m 1) o (cons m ls)))
+                     (t (iter (+ m 1) o ls)) )))
+        (cond ((not (integerp n)) (error "divisors require natural number" n))
+              ((< n 1) (error "divisors require natural number" n))
+              ((= n 1) '(1))
+              (t (cons n (iter 1 (ceiling (quotient n 2)) '()))))))
 
 
 (defun prime-factors (n)
-    (labels
-     ((iter
-       (p x ls z)
-       (cond ((> p z) (cons x ls))
-             ((= (mod x p) 0) (let ((n1 (div x p)))
-                                 (iter 2 n1 (cons p ls) (isqrt n1))))
-             ((= p 2) (iter 3 x ls z))
-             (t (iter (+ p 2) x ls z)))))
-     (cond ((< n 0) nil)
-           ((< n 2) (list n))
-           (t (iter 2 n '() (isqrt n))))))
+    (labels ((iter (p x ls z)
+               (cond ((> p z) (cons x ls))
+                     ((= (mod x p) 0) (let ((n1 (div x p)))
+                                         (iter 2 n1 (cons p ls) (isqrt n1)) ))
+                     ((= p 2) (iter 3 x ls z))
+                     (t (iter (+ p 2) x ls z)))))
+        (cond ((< n 0) nil)
+              ((< n 2) (list n))
+              (t (iter 2 n '() (isqrt n))))))
 
 ;;p^a + q^b + r^c ((p a)(q b)(r c))
 (defun factorize (n)
-    (labels
-     ((iter
-       (ls p n mult)
-       (cond ((null ls) (cons (list p n) mult))
-             ((= (car ls) p) (iter (cdr ls) p (+ n 1) mult))
-             (t (iter (cdr ls) (car ls) 1 (cons (list p n) mult))))))
-     (let ((ls (prime-factors n)))
-        (iter (cdr ls) (car ls) 1 '()))))
+    (labels ((iter (ls p n mult)
+               (cond ((null ls) (cons (list p n) mult))
+                     ((= (car ls) p) (iter (cdr ls) p (+ n 1) mult))
+                     (t (iter (cdr ls) (car ls) 1 (cons (list p n) mult))) )))
+        (let ((ls (prime-factors n)))
+           (iter (cdr ls) (car ls) 1 '()))))
 
 ;;(n=p^a q^b r^c) = n(1-1/p)(1-1/q)(1-1/r)
 (defun phi (n)
@@ -386,11 +369,11 @@
 
 
 (defun primitive-root-p (n p)
-    (labels
-     ((iter (i) (cond ((>= i (- p 1)) t)
-                      ((= (expmod n i p) 1) nil)
-                      (t (iter (+ i 1))))))
-     (and (iter 1) (= (expmod n (- p 1) p) 1))))
+    (labels ((iter (i)
+               (cond ((>= i (- p 1)) t)
+                     ((= (expmod n i p) 1) nil)
+                     (t (iter (+ i 1))) )))
+        (and (iter 1) (= (expmod n (- p 1) p) 1))))
 
 ;;sicp
 ;; a^n (mod m)
@@ -401,17 +384,19 @@
 
 
 (defun primitive-root (p)
-    (labels
-     ((iter (n) (cond ((> n p) nil)
-                      ((primitive-root-p n p) n)
-                      (t (iter (+ n 1))))))
-     (iter 2)))
+    (labels ((iter (n)
+               (cond ((> n p) nil)
+                     ((primitive-root-p n p) n)
+                     (t (iter (+ n 1))) )))
+        (iter 2)))
 
 
 (defun ind (r a p)
-    (labels ((iter (i) (cond ((> i p) nil)
-                             ((= (expmod r i p) a) i)
-                             (t (iter (+ i 1))) ))) (iter 0)))
+    (labels ((iter (i)
+               (cond ((> i p) nil)
+                     ((= (expmod r i p) a) i)
+                     (t (iter (+ i 1))) )))
+        (iter 0)))
 
 
 

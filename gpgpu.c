@@ -972,7 +972,7 @@ int f_gpu_correct(int arglist){
   }
   
 /*
-1st arg matrix a
+1st arg matrix or tensor a
 2nd arg matrix b
 3rd arg count of random selected matrix
 
@@ -980,8 +980,8 @@ return list of selected a and b matrix
 
 */
   
-int f_gpu_randome_select(int arglist){
-    int arg1,arg2,arg3,dim1,dim2,dim3,dim4,n,r1,r2,c1,c2,i,j,r,res1,res2;
+int f_gpu_random_select(int arglist){
+    int arg1,arg2,arg3,dim1,dim2,dim3,dim4,n,r1,r2,c1,c2,n1,h1,w1,i,j,k,l,r,res1,res2;
     float *a,*b,*c,*d;
 
     arg1 = car(arglist);
@@ -991,143 +991,95 @@ int f_gpu_randome_select(int arglist){
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
     n = GET_INT(arg3);
-    r1 = GET_INT(car(dim1));
-    r2 = GET_INT(car(dim2));
-    c1 = GET_INT(cadr(dim1));
-    c2 = GET_INT(cadr(dim2));
-    dim3 = cons(makeint(r),cdr(dim1));
-    dim4 = cons(makeint(r),cdr(dim2));
-    res1 = makefarray(dim3,0.0);
-    res2 = makefarray(dim4,0.0);
-    a = GET_FVEC(arg1);
-    b = GET_FVEC(arg2);
-    c = GET_FVEC(res1);
-    d = GET_FVEC(res2);
 
-    // random-select
-	  for(i=0;i<n;i++){
-		  r = rand() % r1;
-		  for(j=0;j<c1;j++){
-			  c[IDX2C(i,j,n)] = a[IDX2C(r,j,r1)];
-		  }
-		  for(j=0;j<c2;j++){
-			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
-		  }    
-	  }
-    
+    if(length(dim1) == 2){
+        r1 = GET_INT(car(dim1));
+        c1 = GET_INT(cadr(dim1));
+        r2 = GET_INT(car(dim2));
+        c2 = GET_INT(cadr(dim2));
+        dim3 = cons(makeint(n),cdr(dim1));
+        dim4 = cons(makeint(n),cdr(dim2));
+        res1 = makefarray(dim3,0.0);
+        res2 = makefarray(dim4,0.0);
+        a = GET_FVEC(arg1);
+        b = GET_FVEC(arg2);
+        c = GET_FVEC(res1);
+        d = GET_FVEC(res2);
+
+        // random-select
+	    for(i=0;i<n;i++){
+		    r = rand() % r1;
+		    for(j=0;j<c1;j++){
+			    c[IDX2C(i,j,n)] = a[IDX2C(r,j,r1)];
+		    }
+		    for(j=0;j<c2;j++){
+			    d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
+		    }    
+	    }
+    }
+    else if(length(dim1) == 3){
+        n1 = GET_INT(nth(0,dim1));
+        h1 = GET_INT(nth(1,dim1));
+        w1 = GET_INT(nth(2,dim1));
+        r2 = GET_INT(car(dim2));
+        c2 = GET_INT(cadr(dim2));
+        dim3 = cons(makeint(n),cdr(dim1));
+        dim4 = cons(makeint(n),cdr(dim2));
+        res1 = makefarray(dim3,0.0);
+        res2 = makefarray(dim4,0.0);
+        a = GET_FVEC(arg1);
+        b = GET_FVEC(arg2);
+        c = GET_FVEC(res1);
+        d = GET_FVEC(res2);
+        // random-select
+	    for(i=0;i<n;i++){
+		    r = rand() % n1;
+		    for(j=0;j<h1;j++){
+			    for(k=0;k<w1;k++){
+				    c[IDX3C(i,j,k,h1,w1)] = a[IDX3C(r,j,k,h1,w1)];
+			    }
+		    }
+		    for(j=0;j<c2;j++){
+			    d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
+		    }    
+	    }	 
+    }
+    else if(length(dim1) == 4){
+        n1 = GET_INT(nth(0,dim1));
+        c1 = GET_INT(nth(1,dim1));
+        h1 = GET_INT(nth(2,dim1));
+        w1 = GET_INT(nth(3,dim1));
+        r2 = GET_INT(car(dim2));
+        c2 = GET_INT(cadr(dim2));
+        dim3 = cons(makeint(n),cdr(dim1));
+        dim4 = cons(makeint(n),cdr(dim2));
+        res1 = makefarray(dim3,0.0);
+        res2 = makefarray(dim4,0.0);
+        a = GET_FVEC(arg1);
+        b = GET_FVEC(arg2);
+        c = GET_FVEC(res1);
+        d = GET_FVEC(res2);
+        // random-select
+        for(i=0;i<n;i++){
+		    r = rand() % n1;
+		    for(j=0;j<c1;j++){
+			    for(k=0;k<h1;k++){
+				    for(l=0;l<w1;l++){
+					    c[IDX4C(i,j,k,l,c1,h1,w1)] = a[IDX4C(r,j,k,l,c1,h1,w1)];
+				    }
+			    }
+		    }
+		    for(j=0;j<c2;j++){
+			    d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
+		    }    
+	    }
+    }
+    else
+        error(WRONG_ARGS,"gpu-random-select",arg1);
+
     return(list2(res1,res2));
 }
 
-
-
- 
-  /*
-  random_select for 4D-tensor data
-  1st arg nth of matrix a
-  2nd arg channel of matrix a
-  3rd arg hight of matrix a
-  4th arg width of matrix a
-  5th arg matrix a
-  6th arg row ob matrix b
-  7th arg col of matrix b
-  8th arg matrix b
-  9th arg count of select
-  10th arg output random selected a
-  11th arg output random selected b
-  */
-  
-  void random_select2(int n1, int c1, int h1, int w1, float *a, int r2, int c2, float *b, int n, float *c, float *d){
-	  int i, j, k, l, r;
-	
-	  // random-select
-	  for(i=0;i<n;i++){
-		  r = rand() % n1;
-		  for(j=0;j<c1;j++){
-			  for(k=0;k<h1;k++){
-				  for(l=0;l<w1;l++){
-					  c[IDX4C(i,j,k,l,c1,h1,w1)] = a[IDX4C(r,j,k,l,c1,h1,w1)];
-				  }
-			  }
-		  }
-		  for(j=0;j<c2;j++){
-			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
-		  }    
-	  }
-  
-  }
-  
-
-
-  /*
-  random_select for 3D-tensor data
-  1st arg nth of matrix a
-  2nd arg hight of matrix a
-  3rd arg width of matrix a
-  4th arg matrix a
-  5th arg row ob matrix b
-  6th arg col of matrix b
-  7th arg matrix b
-  8th arg count of select
-  9th arg output random selected a
-  10th arg output random selected b
-  */
-  
-  void random_select3(int n1, int h1, int w1, float *a, int r2, int c2, float *b, int n, float *c, float *d){
-	  int i, j, k, r;
-	  
-	  // random-select
-	  for(i=0;i<n;i++){
-		  r = rand() % n1;
-		  for(j=0;j<h1;j++){
-			  for(k=0;k<w1;k++){
-				  c[IDX3C(i,j,k,h1,w1)] = a[IDX3C(r,j,k,h1,w1)];
-			  }
-		  }
-		  for(j=0;j<c2;j++){
-			  d[IDX2C(i,j,n)] = b[IDX2C(r,j,r2)];
-		  }    
-	  }	 
-  }
-  
-  /*
-  1st arg count of data
-  2nd arg input1
-  3rd arg intpu2
-  */
-  int is_near1(int n, float *a, float *b){
-	  int i, sw;
-	
-	  // near check
-	  sw = 0;
-	  for(i=0;i<n;i++){
-		 if(fabsf(a[i]) > fabsf(b[i])*1.15 || fabsf(a[i]) < fabsf(b[i])*0.85){
-			  printf("%f %f \r\n", a[i], b[i]);
-			  sw = 1;
-		  }
-	  }
-	  if(sw == 0)
-		  return(1); //true
-	  else
-		  return(0); //false
-  }
-  
-  
-
-
-  int is_equal1(int n, float *a, float *b){
-	  int i;
-	 
-	  // equal check
-	  for(i=0;i<n;i++){
-		 if(a[i] != b[i]){
-			  return(0); //false
-		  }
-	  }
-	  
-	  return(1); //true
-  }
-  
-  
   int analizer1(int n, float *a, int id){
 	  int i;
 	  float max,min,sum;

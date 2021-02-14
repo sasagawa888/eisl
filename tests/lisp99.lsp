@@ -153,7 +153,9 @@
 ;;another version 
 (defun replic (x n)
     (mapcan (lambda (y) (repli1 y n)) x) )
-
+    
+;;> (repli '(a b c) 3)
+;;(A A A B B B C C C)
 
 ;;p16
 (defun drop (x n)

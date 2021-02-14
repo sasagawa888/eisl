@@ -302,19 +302,20 @@
     (defun pp-labels (x lm)
         (let ((lm1 (+ lm 7))
               (lm2 (+ lm 4))
-              (body (cdr (cdr x))))
-            (pp-string "(")
-            (pp1 (elt x 0) lm1)
-            (pp-string " (")
-            (pp-labels1 (elt x 1) lm1)
-            (pp-string ")")
-            (newline lm2)
-            (pp-body body lm2)
-            (pp-string ")")))
-    
+              (body (cdr (cdr x))) )
+           (pp-string "(")
+           (pp1 (elt x 0) lm1)
+           (pp-string " (")
+           (pp-labels1 (elt x 1) lm1)
+           (pp-string ")")
+           (newline lm2)
+           (pp-body body lm2)
+           (pp-string ")")))
+
     (defun pp-labels1 (x lm)
         (for ((s x (cdr s)))
-             ((null s) t)
+             ((null s)
+              t )
              (pp-labels2 (car s) lm)))
 
     (defun pp-labels2 (x lm)
@@ -330,7 +331,6 @@
                (pp-string " )"))
            (if (= lm 0)
                (newline lm))))
-    
 
     ;; write cons as flat
     (defun pp-flat (x lm)

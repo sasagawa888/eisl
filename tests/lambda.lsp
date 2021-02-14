@@ -28,6 +28,7 @@
   (let ((1st (elt x 0))
         (2nd (elt x 1))
         (3rd (elt x 2)))
+      (cond ((and (char= 1st #\^) (char= 3rd #\.))) 
       
 
 (defun print* (x)

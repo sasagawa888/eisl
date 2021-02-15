@@ -212,6 +212,29 @@
 ;;> (slice '(a b c d e f g h i k) 3 7)
 ;;(C D E F G)
 
+
+;;p19
+(defun rotate (x i)
+    (cond ((= i 0) x)
+          ((> i 0) (rotate (append (cdr x) (list (car x))) (- i 1)))
+          ((< i 0) (rotate (append (rotate1 x) (rotate2 x)) (+ i 1)))))
+
+(defun rotate1 (x)
+    (if (null (cdr x))
+        x
+        (rotate1 (cdr x))))
+
+(defun rotate2 (x)
+    (if (null (cdr x))
+        '()
+        (cons (car x) (rotate2 (cdr x)))))
+
+;;> (rotate '(a b c d e f g h) 3)
+;;(D E F G H A B C)
+;;> (rotate '(a b c d e f g h) -2)
+;;(G H A B C D E F)
+;;> 
+
 ;;P20
 (defun remove-at (ls n)
     (if (= n 1)

@@ -202,6 +202,16 @@
 ;;((A B) (C D))
 ;;>
 
+
+;;p18
+(defun slice (x m n)
+    (cond ((and (= m 1) (= n 1)) (list (car x)))
+          ((and (= m 1) (> n 1)) (cons (car x) (slice (cdr x) m (- n 1))))
+          (t (slice (cdr x) (- m 1) (- n 1)))))
+    
+;;> (slice '(a b c d e f g h i k) 3 7)
+;;(C D E F G)
+
 ;;P20
 (defun remove-at (ls n)
     (if (= n 1)

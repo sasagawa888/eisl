@@ -163,7 +163,6 @@
 ;;another version 
 (defun replic (x n)
     (mapcan (lambda (y) (repli1 y n)) x) )
-    
 ;;> (repli '(a b c) 3)
 ;;(A A A B B B C C C)
 
@@ -207,8 +206,7 @@
 (defun slice (x m n)
     (cond ((and (= m 1) (= n 1)) (list (car x)))
           ((and (= m 1) (> n 1)) (cons (car x) (slice (cdr x) m (- n 1))))
-          (t (slice (cdr x) (- m 1) (- n 1)))))
-    
+          (t (slice (cdr x) (- m 1) (- n 1))) ))
 ;;> (slice '(a b c d e f g h i k) 3 7)
 ;;(C D E F G)
 
@@ -217,17 +215,17 @@
 (defun rotate (x i)
     (cond ((= i 0) x)
           ((> i 0) (rotate (append (cdr x) (list (car x))) (- i 1)))
-          ((< i 0) (rotate (append (rotate1 x) (rotate2 x)) (+ i 1)))))
+          ((< i 0) (rotate (append (rotate1 x) (rotate2 x)) (+ i 1))) ))
 
 (defun rotate1 (x)
     (if (null (cdr x))
         x
-        (rotate1 (cdr x))))
+        (rotate1 (cdr x)) ))
 
 (defun rotate2 (x)
     (if (null (cdr x))
         '()
-        (cons (car x) (rotate2 (cdr x)))))
+        (cons (car x) (rotate2 (cdr x))) ))
 
 ;;> (rotate '(a b c d e f g h) 3)
 ;;(D E F G H A B C)
@@ -274,30 +272,30 @@
 
 ;;p23 
 (defun rnd-select (ls n)
-    (rnd-select1 ls n '()))
+    (rnd-select1 ls n '()) )
 
 
 (defun rnd-select1 (ls n rand)
     (if (= n 0)
         '()
         (let ((m (random (length ls))))
-         (if (member m rand)
-             (rnd-select1 ls n rand)
-             (cons (nth ls m) (rnd-select1 ls (- n 1) (cons m rand)))))))
+           (if (member m rand)
+               (rnd-select1 ls n rand)
+               (cons (nth ls m) (rnd-select1 ls (- n 1) (cons m rand))) ))))
 
 (defun nth (ls n)
     (if (= n 0)
         (car ls)
-        (nth (cdr ls) (- n 1))))
+        (nth (cdr ls) (- n 1)) ))
 
 
 ;;p24
 (defun lotto-select (n s)
-    (rnd-select (range 1 s) n))
+    (rnd-select (range 1 s) n) )
 
 ;;p25
 (defun rnd-permu (ls)
-    (rnd-select ls (length ls)))
+    (rnd-select ls (length ls)) )
 
 
 ;;p31

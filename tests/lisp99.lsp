@@ -139,6 +139,16 @@
 ;;((3 A) (4 B) (2 C))
 ;;> 
 
+;;p14
+(defun dupli (x)
+    (if (null x)
+        '()
+        (append (list (car x) (car x)) (dupli (cdr x))) ))
+
+;;> (dupli '(a b c))
+;;(A A B B C C)
+
+
 ;;p15
 (defun repli (x n)
     (if (null x)

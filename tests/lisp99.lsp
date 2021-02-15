@@ -273,13 +273,17 @@
 ;;> 
 
 ;;p23 
-(defun rand-select (ls n)
+(defun rnd-select (ls n)
+    (rnd-select1 ls n '()))
+
+
+(defun rnd-select1 (ls n rand)
     (if (= n 0)
         '()
         (let ((m (random (length ls))))
-                (cons (nth ls m) (rand-select ls (- n 1))))))
-
-
+         (if (member m rand)
+             (rnd-select1 ls n rand)
+             (cons (nth ls m) (rnd-select1 ls (- n 1) (cons m rand)))))))
 
 (defun nth (ls n)
     (if (= n 0)
@@ -289,7 +293,12 @@
 
 ;;p24
 (defun lotto-select (n s)
-    (rand-select (range 1 s) n))
+    (rnd-select (range 1 s) n))
+
+;;p25
+(defun rnd-permu (ls)
+    (rnd-select ls (length ls)))
+
 
 ;;p31
 (defun is-prime (n)

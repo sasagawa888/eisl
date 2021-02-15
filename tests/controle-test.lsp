@@ -1,16 +1,5 @@
 
-(defmacro test(form1 form2 :rest pred)
-  (cond ((null pred)
-         `(if (equal ,form1 ',form2)
-              (format (standard-output) "" )
-              ;;(format (standard-output) "~S is ok~%" ',form1)
-              (format (standard-output) "~S is bad~%" ',form1)))
-        ((and (not (null pred))(consp form1))
-         `(if (,@pred ,form1 ',form2)
-              (format (standard-output) "")
-              ;;(format (standard-output) "~S is ok~%" ',form1)
-              (format (standard-output) "~S is bad ~S ~%" ',form1)))))
-
+(import "test")
 
 ;;; ;;
 (test #2a((a b c) (d e f)) #2a((a b c) (d e f)) equal)
@@ -380,7 +369,7 @@
 
 (test (foo-3 '(1 2 3 4)) 10 eql)
 (test (foo-3 '(1 2 a 4)) 0 eql)
-#|
+
 ;;; closure
 (test (catch 'c
     (lambda () 1)
@@ -450,7 +439,7 @@
 ;;;
 (test (unwind-protect 1) 1 eql)
 ;;; ;;;
-|#
+
 (defglobal x nil)
 ;;
 ;;bad

@@ -1,12 +1,4 @@
-(defmacro test(form1 form2 :rest pred)
-  (if (null pred)
-      `(if (equal ,form1 ',form2)
-           (format (standard-output) "" ',form1)
-           (format (standard-output) "~S is bad~%" ',form1))
-      `(if (,@pred ,form1 ',form2)
-           (format (standard-output) "" ',form1)
-           (format (standard-output) "~S is bad~%" ',form1))))
-
+(import "test")
 
 (defglobal array0 (create-array () 19))
 (defglobal array2 #2a((0 1)))

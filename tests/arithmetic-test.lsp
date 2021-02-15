@@ -1,15 +1,4 @@
-;;
-(defmacro test(form1 form2 :rest pred)
-  (cond ((null pred)
-         `(if (equal ,form1 ',form2)
-              (format (standard-output) "" ',form1)
-              ;;(format (standard-output) "~S is ok~%" ',form1)
-              (format (standard-output) "~S is bad~%" ',form1)))
-        ((and (not (null pred))(consp form1))
-         `(if (,@pred ,form1 ',form2)
-              (format (standard-output) "" ',form1)
-              ;;(format (standard-output) "~S is ok~%" ',form1)
-              (format (standard-output) "~S is bad~%" ',form1)))))
+(import "test")
 
 ;;;
 

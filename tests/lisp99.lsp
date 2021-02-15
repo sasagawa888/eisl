@@ -273,20 +273,23 @@
 ;;> 
 
 ;;p23 
-(defun md-select (ls n)
-    (let* ((len (length ls))
-           (m (random (- len n))) )
-        (md-select1 ls n m)))
-
-(defun md-select1 (ls n m)
-    (if (= m 0)
-        (take ls n)
-        (md-select1 (cdr ls) n (- m 1)) ))
-
-(defun take (ls n)
+(defun rand-select (ls n)
     (if (= n 0)
-        nil
-        (cons (car ls) (take (cdr ls) (- n 1))) ))
+        '()
+        (let ((m (random (length ls))))
+                (cons (nth ls m) (rand-select ls (- n 1))))))
+
+
+
+(defun nth (ls n)
+    (if (= n 0)
+        (car ls)
+        (nth (cdr ls) (- n 1))))
+
+
+;;p24
+(defun lotto-select (n s)
+    (rand-select (range 1 s) n))
 
 ;;p31
 (defun is-prime (n)

@@ -309,6 +309,7 @@ extern int catch_env[10][50];
 extern jmp_buf ignore_buf; //jump address for ignore-error
 extern int block_tag[CTRLSTK]; //array to sotre tag address
 extern int catch_tag[CTRLSTK];
+extern int unwind_buf[CTRLSTK];
 extern int catch_symbols;
 extern int block_pt;  //pointer for block
 extern int catch_pt;  //catch counter

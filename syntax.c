@@ -714,8 +714,14 @@ int f_block(int arglist){
     else if(ret == 1){
         ret = 0;
 
-        if(unwind_pt != NIL)
-			apply(unwind_pt,NIL);
+        if(unwind_pt > 0){
+            unwind_pt--;
+            while(unwind_pt >= 0){
+			    apply(unwind_buf[unwind_pt],NIL);
+                unwind_pt--;
+            }
+            unwind_pt = 0;
+        }
         res = block_arg;
         return(res);
     }
@@ -777,8 +783,14 @@ int f_catch(int arglist){
     else if(ret == 1){
         ret = 0;
 
-        if(unwind_pt != NIL)
-			apply(unwind_pt,NIL);
+        if(unwind_pt > 0){
+            unwind_pt--;
+            while(unwind_pt >= 0){
+			    apply(unwind_buf[unwind_pt],NIL);
+                unwind_pt--;
+            }
+            unwind_pt = 0;
+        }
         res = catch_arg;
         catch_arg = NIL;
         sp = save; //restore stack pointer. longjump destroy sp
@@ -860,10 +872,17 @@ int f_unwind_protect(int arglist){
     arg1 = car(arglist);
     args = cdr(arglist);
 
-    unwind_pt = makefunc("",cons(NIL,args)); //make thunk
+    unwind_buf[unwind_pt] = makefunc("",cons(NIL,args)); //make thunk
+    unwind_pt++;
     res = eval(arg1);
-    //apply(unwind_pt,NIL);
-    //unwind_pt = NIL;
+    if(unwind_pt > 0){
+        unwind_pt--;
+        while(unwind_pt >= 0){
+			apply(unwind_buf[unwind_pt],NIL);
+            unwind_pt--;
+        }
+        unwind_pt = 0;
+    }
     return(res);
 }
 

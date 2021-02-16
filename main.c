@@ -134,8 +134,9 @@ int catch_env[10][50];
 jmp_buf ignore_buf; //jump address of ignore-error
 int block_tag[CTRLSTK]; //array of tag
 int catch_tag[CTRLSTK];
+int unwind_buf[CTRLSTK];
 int catch_symbols = NIL; //to clear tag data
-int block_pt;  //index of oblock. following are similer
+int block_pt;  //index of block. following are similer
 int catch_pt = 0; //catch counter
 int unwind_pt; //lambda address for unwind-protect
 int block_arg; //recieve argument of block

@@ -862,6 +862,8 @@ int f_unwind_protect(int arglist){
 
     unwind_pt = makefunc("",cons(NIL,args)); //make thunk
     res = eval(arg1);
+    //apply(unwind_pt,NIL);
+    //unwind_pt = NIL;
     return(res);
 }
 

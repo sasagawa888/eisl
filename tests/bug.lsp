@@ -1,11 +1,8 @@
 
-(defun foo ()
-(let ((a 1))
-    (print 1)
-    (print 2)
-    (print 3)
-    (print 4)
-    (print 5)
-    (print 6)))
     
 
+(defun fib* (n)
+    (cond ((= n 1.0) 1.0)
+          ((= n 2.0) 1.0)
+          (t (+ (fib* (- n 1.0))
+                (fib* (- n 2.0))))))

@@ -228,8 +228,7 @@ double tarai(double x, double y, double z){
     
     (defun compile-file1 (x)
         (let ((option
-              (cond ((eq (self-introduction) 'windows) "gcc -O3 -shared -o ")
-                    ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+              (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
@@ -262,8 +261,7 @@ double tarai(double x, double y, double z){
     
     (defun compile-file1* (x)
         (let ((option
-              (cond ((eq (self-introduction) 'windows) "gcc -O3 -shared -o ")
-                    ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+              (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
@@ -278,6 +276,7 @@ double tarai(double x, double y, double z){
            (finalize x ".c")
            (format (standard-output) "invoke CC~%")
            (system (string-append option fname ".o " fname ".c " c-lang-option))))
+    
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))
@@ -2645,6 +2644,9 @@ double tarai(double x, double y, double z){
     ;;for lavels flet syntax
     (defun warning (str x)
         (format (standard-output) "warning ~A ~A ~A~%" inference-name str x))
+    ;;for debug
+    (defpublic type* ()
+        (print type-function))
     
     ;;type inference s-expression(s) in file x.
     ;;x is string of filename.
@@ -2669,6 +2671,7 @@ double tarai(double x, double y, double z){
              (let ((sexp (substitute (car body) name nil)))
                 (if (and (consp sexp) (eq (car sexp) 'defun))
                     (inference-defun sexp)))))
+
     (defun inference-defun (x)
         (let* ((name (elt x 1))
                (arg (elt x 2))
@@ -2814,7 +2817,7 @@ double tarai(double x, double y, double z){
         (cond ((null x) type-env)
               (t
                (let ((new-env (inference-cond2 (car x) type-env)))
-                  (cond ((not (eq new-env 'no)) (inference-cond1 (cdr x) type-env))
+                  (cond ((not (eq new-env 'no)) (inference-cond1 (cdr x) new-env))
                         (t (warning "cond mismatch" (car x)) (inference-cond1 (cdr x) type-env)))))))
     
     (defun inference-cond2 (x type-env)
@@ -2872,18 +2875,7 @@ double tarai(double x, double y, double z){
     
     ;; +-* ...
     (defun inference-numeric (x type-env)
-        (cond ((every
-                (lambda (x)
-                   (let ((type (find-class x type-env)))
-                      (or
-                       (null type)
-                       (eq type (class <object>))
-                       (eq type (class <number>))
-                       (eq type (class <longnum>))
-                       (eq type (class <bignum>)))))
-                (cdr x))
-               (estimate (cdr x) (class <number>) type-env))
-              ((every (lambda (x)
+        (cond ((every (lambda (x)
                          (eq (class <fixnum>) (find-class x type-env))) (cdr x)) type-env)
               ((any (lambda (x)
                        (eq (class <float>) (find-class x type-env))) (cdr x))
@@ -2894,6 +2886,17 @@ double tarai(double x, double y, double z){
               ((any (lambda (x)
                        (eq (class <fixnum>) (find-class x type-env))) (cdr x))
                (estimate (cdr x) (class <integer>) type-env))
+              ((every
+                (lambda (x)
+                   (let ((type (find-class x type-env)))
+                      (or
+                       (null type)
+                       (eq type (class <object>))
+                       (eq type (class <number>))
+                       (eq type (class <longnum>))
+                       (eq type (class <bignum>)))))
+                (cdr x))
+               (estimate (cdr x) (class <number>) type-env))
               (t (warning "numerical argument type mismatch" x) 'no)))
     
     ;;let syntax

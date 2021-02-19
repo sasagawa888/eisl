@@ -106,7 +106,13 @@ int f_ignore(int arglist){
 
 
 int f_self_introduction(int arglist){
+#if __APPLE__
+    return(makesym("MACOS"));
+#elif defined(__OpenBSD__)
+    return(makesym("OPENBSD"));
+#else
     return(makesym("LINUX"));
+#endif
 }
 
 

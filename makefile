@@ -1,8 +1,17 @@
-CC := gcc
-LIBS = -lm -ldl 
+OPSYS ?= linux
+LD := cc
+ifneq ($(OPSYS),macos)
+LIBS = -lm -ldl
+endif
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
-CFLAGS ?= $(INCS) -Wall -O3 
+CFLAGS ?= $(INCS) -Wall -O3 -flto
+LDFLAGS := -flto
+ifeq ($(OPSYS),macos)
+LDFLAGS += -Wl,-S,-x
+else
+LDFLAGS += -s
+endif
 PREFIX = /usr/local
 bindir = $(PREFIX)/bin
 DESTDIR = 
@@ -36,7 +45,7 @@ $(EISL): $(EISL_OBJS)
 else
 eisl2: $(EISL_OBJS) $(EISL)
 $(EISL): $(EISL_OBJS)
-	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
+	$(LD) $(LDFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
 endif
 
 
@@ -45,7 +54,7 @@ endif
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(CC) $(CFLAGS) edlis.o -o edlis
+	$(LD) $(LDFLAGS) edlis.o -o edlis
 edlis.o : edlis.c edlis.h
 	$(CC) $(CFLAGS) -c edlis.c
 
@@ -61,7 +70,7 @@ uninstall:
 
 
 .PHONY: clean
-clean: -lm
+clean:
 	rm -f *.o
 	rm eisl
 	rm edlis

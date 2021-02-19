@@ -360,7 +360,7 @@ extern char extended[60][30];
 #define BS      '\b'
 #define DEL     127
 
-#if __linux || __APPLE__
+#if __linux || __APPLE__ || defined(__OpenBSD__)
 #define LEFT    'D'
 #define UP      'A'
 #define RIGHT   'C'

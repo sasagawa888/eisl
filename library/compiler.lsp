@@ -229,7 +229,8 @@ double tarai(double x, double y, double z){
     (defun compile-file1 (x)
         (let ((option
               (cond ((eq (self-introduction) 'windows) "gcc -O3 -shared -o ")
-                    ((eq (self-introduction) 'linux) "gcc -O3 -w -shared -I$HOME/eisl -fPIC -o ")))
+                    ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+                    ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
@@ -241,7 +242,7 @@ double tarai(double x, double y, double z){
            (ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
            (finalize x ".c")
-           (format (standard-output) "invoke GCC~%")
+           (format (standard-output) "invoke CC~%")
            (system (string-append option fname ".o " fname ".c " c-lang-option))
            (system (string-append "rm " fname ".c"))))
     
@@ -262,7 +263,8 @@ double tarai(double x, double y, double z){
     (defun compile-file1* (x)
         (let ((option
               (cond ((eq (self-introduction) 'windows) "gcc -O3 -shared -o ")
-                    ((eq (self-introduction) 'linux) "gcc -O3 -w -shared -I$HOME/eisl -fPIC -o ")))
+                    ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+                    ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
@@ -274,7 +276,7 @@ double tarai(double x, double y, double z){
            (ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
            (finalize x ".c")
-           (format (standard-output) "invoke GCC~%")
+           (format (standard-output) "invoke CC~%")
            (system (string-append option fname ".o " fname ".c " c-lang-option))))
     (defun pass1 (x)
         (setq instream (open-input-file x))

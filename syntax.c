@@ -1374,7 +1374,7 @@ int f_convert(int arglist){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                #if __linux || __APPLE__
+                #if __linux || __APPLE__ || defined(__OpenBSD__)
                 sprintf(str,"%lld",GET_LONG(arg1));
                 #endif
                 #if _WIN32

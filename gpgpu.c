@@ -1080,12 +1080,22 @@ int f_gpu_random_select(int arglist){
     return(list2(res1,res2));
 }
 
-  int analizer1(int n, float *a, int id){
-	  int i;
-	  float max,min,sum;
-	
-	  
-	  // near check
+int f_gpu_analizer(int arglist){
+    int arg1,arg2,dim1,i,n,id;
+    float *a,max,min,sum;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    dim1 = GET_CDR(arg1);
+
+    a = GET_FVEC(arg1);
+    id = GET_INT(arg2);
+    n = 1;
+    while(!nullp(dim1)){
+        n = n * GET_INT(car(dim1));
+        dim1 = cdr(dim1);
+    }
+    // near check
 	  for(i=0;i<n;i++){
 		  if(isnan(a[i])){
 			  return(9999);
@@ -1112,13 +1122,11 @@ int f_gpu_random_select(int arglist){
 	  printf("id max min average\r\n");
 	  printf("%d %f %f %f \r\n", id, max, min, sum/(float)n);
   
-	  return(1);
-  }
-  
+	  return(T);
+
+}
   
 
-  
-	
 	/*
 	1st arg in_n of tensor
 	2nd arg in_c of tensor

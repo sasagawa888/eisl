@@ -232,7 +232,7 @@ char extended[60][30] = {
 {"gpu-ident"},{"gpu-full"},{"gpu-unfull"},{"gpu-accuracy"},{"gpu-correct"},{"gpu-activate"},{"gpu-trace"},
 {"gpu-loss"},{"gpu-average"},{"gpu-sum"},{"gpu-diff"},{"gpu-dropout"},{"gpu-gradfilter"},   
 {"gpu-sgd"},{"gpu-momentum"},{"gpu-adagrad"},{"gpu-rms"},{"gpu-adam"},{"gpu-pooling"},{"gpu-unpooling"},
-{"gpu-random-select"},
+{"gpu-random-select"},{"gpu-nanalizer"},
 };
 
 

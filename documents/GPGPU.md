@@ -118,3 +118,6 @@ transfer from matrix to 4 DIM tensor. tensor(N,C,H,W). N is row size of matrix. 
 
 (gpu-unpooing ts1 ts2 (st_h st_w)) 
 unpooling with stride st. ts1 is sparse tensor that save index of max element. ts2 is loss tensor.
+
+(gpu-copy ts)
+return copy of ts

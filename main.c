@@ -220,7 +220,7 @@ char builtin[200][30] ={
 };
 
 //extended function
-char extended[60][30] = {
+char extended[70][30] = {
 {"random-real"},{"random"},{"heapdump"},{"instance"},
 {"nconc"},{"fast-address"},{"macroexpand-1"},{"backtrace"},
 {"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
@@ -232,7 +232,7 @@ char extended[60][30] = {
 {"gpu-ident"},{"gpu-full"},{"gpu-unfull"},{"gpu-accuracy"},{"gpu-correct"},{"gpu-activate"},{"gpu-trace"},
 {"gpu-loss"},{"gpu-average"},{"gpu-sum"},{"gpu-diff"},{"gpu-dropout"},{"gpu-gradfilter"},   
 {"gpu-sgd"},{"gpu-momentum"},{"gpu-adagrad"},{"gpu-rms"},{"gpu-adam"},{"gpu-pooling"},{"gpu-unpooling"},
-{"gpu-random-select"},{"gpu-nanalizer"},
+{"gpu-random-select"},{"gpu-nanalizer"},{"gpu-copy"},
 };
 
 

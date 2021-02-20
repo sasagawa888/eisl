@@ -1187,21 +1187,26 @@ int f_gpu_analizer(int arglist){
   }
 	
   
-  	
-  /*
-  1st arg size of tensor or matrix
-  2rd arg input tensor or matrix
-  3rd arg output 	
-  */
-  
-  void copy1(int n, float *a, float *b){
-	  int i;
-	  
-	  for(i=0;i<n;i++){
-		  b[i] = a[i];
-	  }
-	
-  }
+int f_gpu_copy(int arglist){
+    int arg1,dim1,i,n,res;
+    float *a,*b;
+
+    arg1 = car(arglist);
+    dim1 = GET_CDR(arg1);
+
+    res = makefarray(dim1,0.0);
+    a = GET_FVEC(arg1);
+    b = GET_FVEC(res);
+    n = 1;
+    while(!nullp(dim1)){
+        n = n * GET_INT(car(dim1));
+        dim1 = cdr(dim1);
+    }
+    for(i=0;i<n;i++){
+		b[i] = a[i];
+	}
+    return(res);
+}
   
   /*
   1st arg row 

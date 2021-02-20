@@ -336,7 +336,7 @@ extern int ed_incomment;
 extern char special[40][12];
 extern char syntax[60][30];
 extern char builtin[200][30];
-extern char extended[60][30];
+extern char extended[70][30];
 
 
 
@@ -1172,6 +1172,7 @@ int f_gpu_rms(int arglist);
 int f_gpu_adam(int arglist);
 int f_gpu_random_select(int arglist);
 int f_gpu_analizer(int arglist);
+int f_gpu_copy(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
 void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);

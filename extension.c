@@ -62,6 +62,7 @@ void initexsubr(void){
     defsubr("GPU-ADD",f_gpu_add);
     defsubr("GPU-ANALIZER",f_gpu_analizer);
     defsubr("GPU-AVERAGE",f_gpu_average);
+    defsubr("GPU-COPY",f_gpu_copy);
     defsubr("GPU-CONVOLUTE",f_gpu_convolute);
     defsubr("GPU-CORRECT",f_gpu_correct);
     defsubr("GPU-DECONVOLUTE",f_gpu_deconvolute);

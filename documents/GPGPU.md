@@ -25,9 +25,9 @@ generate matrix mt1+mt2. if mt1 or mt2 is row vector, expand size to matrix. Thi
 add_diff(mt,r,c,val) elt(mt,x,y) := elt(mt,x,y + val.
 add_diff(arg, n1, c1, h1, w1, val)
 
-analizer(arg, id)
-analizer(mt,id)
-analizer(ts,id) display id-number,max-element,min-element,average. for debug.
+
+(analizer ts,id) 
+display id-number,max-element,min-element,average. for debug.
 
 
 (gpu-average mt) 

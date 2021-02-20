@@ -4,6 +4,7 @@
         (car x)
         (my-last (cdr x)) ))
 
+#|
 (defun my-last (x)
     (car (reverse x)) )
 
@@ -11,7 +12,7 @@
     (while (not (null (cdr x)))
        (setq x (cdr x)))
     (car x) )
-
+|#
 ;;p02
 (defun my-but-last (x)
     (if (< (length x) 2)
@@ -190,13 +191,14 @@
           (t (split1 (cons (car y) x) (cdr y) (- n 1))) ))
 
 ;;imperative
+#|
 (defun split (x n)
     (for ((front nil (cons (car rear) front))
           (rear x (cdr rear))
           (m n (- m 1)) )
          ((= m 0)
           (list (reverse front) rear) )))
-
+|#
 ;;> (split '(a b c d) 2)
 ;;((A B) (C D))
 ;;>
@@ -260,12 +262,13 @@
         nil
         (cons m (range (+ m 1) n)) ))
 ;imperative
+#|
 (defun range (m n)
     (for ((m1 m (+ m1 1))
           (ls nil (cons m1 ls)) )
          ((>= m1 n)
           (reverse ls) )))
-
+|#
 ;;> (range 4 7)
 ;;(4 5 6)
 ;;> 
@@ -297,6 +300,13 @@
 (defun rnd-permu (ls)
     (rnd-select ls (length ls)) )
 
+;;p26
+(defun combination (n xs)
+    (labels ((comb (n xs ys zs)
+               (cond ((= n 0) (cons (reverse ys) zs))
+                     ((null xs) zs)
+                     (t (comb (- n 1) (cdr xs) (cons (car xs) ys) (comb n (cdr xs) ys zs))) )))
+        (comb n xs nil nil)))
 
 ;;p31
 (defun is-prime (n)

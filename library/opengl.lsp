@@ -34,7 +34,7 @@ not tested
     (c-lang "glutMainLoop();"))
 
 (defun gl::clear (x)
-    (c-lang "glClear(GL_COLOR_BUFFER_BIT);"))
+    (cond ((eq x 'gl_color_buffer_bit) (c-lang "glClear(GL_COLOR_BUFFER_BIT);"))))
 
 (defun gl::color3d (r g b)
     (c-lang "glColor3d(Fgetflt(R),Fgetflt(G),Fgetflt(B));"))

@@ -11,13 +11,13 @@
   (gl::clear-color 1.0 1.0 1.0 1.0)
 
   (glut::display-func 'show)
-  ;(glut::main-loop)
+  (glut::main-loop)
 )
 
 (defun show ()
   (gl::clear 'gl_color_buffer_bit)
   (gl::color3d 1.0 0.0 0.0)
-  (gl_begin 'gl_line_loop)
+  (gl::begin)
 
   (gl::vertex2d -0.5 -0.5)
   (gl::vertex2d -0.5 0.5)

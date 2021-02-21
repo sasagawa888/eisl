@@ -24,25 +24,26 @@ not tested
     (c-lang "glutCreateWindow(Fgetname(X));"))
 
 (defun gl::clear-color (x1 y1 x2 y2)
-    (c-lang "glClearColor((INT_MASK & X1),(INT_MASK & Y1),(INT_MASK & X2),(INT_MASK & Y2));"))
+    (c-lang "glClearColor(Fgetflt(X1),Fgetflt(Y1),Fgetflt(X2),Fgetflt(Y2));"))
 
 (defun glut::display-func (x)
-    (c-lang "glutDisplayFunc((void*)Fgetsubr(X));"))
+    (c-lang "callbackfunc = Fcons(X,NIL);")
+    (c-lang "glutDisplayFunc(callback);"))
 
 (defun glut::main-loop ()
     (c-lang "glutMainLoop();"))
 
 (defun gl::clear (x)
-    (cond ((eq x 'gl_color_buffer_bit) (c-lang "glClear(GL_COLOR_BUFFER_BIT);"))))
+    (c-lang "glClear(GL_COLOR_BUFFER_BIT);"))
 
 (defun gl::color3d (r g b)
-    (c-lang "glColor3d((INT_MASK & R),(INT_MASK & G),(INT_MASK & B));"))
+    (c-lang "glColor3d(Fgetflt(R),Fgetflt(G),Fgetflt(B));"))
 
 (defun gl::begin ()
     (c-lang "glBegin(GL_LINE_LOOP);"))
 
 (defun gl::vertex2d (x y)
-    (c-lang "glVertex2d((INT_MASK & X),(INT_MASK & Y));"))
+    (c-lang "glVertex2d(Fgetflt(X),Fgetflt(Y));"))
 
 (defun gl::end ()
     (c-lang "glEnd();"))

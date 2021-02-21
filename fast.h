@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <setjmp.h>
+#include <GL/glut.h>
 
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
@@ -148,7 +149,7 @@ int block_arg; //recieve argument of block
 #define Fgetprop(x) (f1[43])(x)
 #define Fsetdynpt(x) (f1[44])(x)
 #define Fsetcatchsymbols(x) (f1[45])(x)
-#define Fgetsubr(x) (f1[46])(x)
+#define Feval(x) (f1[46])(x)
 
 #define Fcons(x,y) (f2[0])(x,y)
 #define Fnth(x,y) (f2[1])(x,y)
@@ -509,4 +510,10 @@ int fast_setnth(int x, int n, int y){
     }
     Fset_car(x,y);
     return(y);
+}
+
+int callbackfunc;
+
+void callback(void){
+    Feval(callbackfunc);
 }

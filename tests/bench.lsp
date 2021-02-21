@@ -10,7 +10,7 @@
         (tarai* (tarai* (- x 1.0) y z) (tarai* (- y 1.0) z x) (tarai* (- z 1.0) x y)) ))
 
 (defun fib (n)
-    ;;(the <fixnum> n)
+    (the <fixnum> n)
     (cond ((= n 1) 1)
           ((= n 2) 1)
           (t (+ (fib (- n 1)) (fib (- n 2)))) ))

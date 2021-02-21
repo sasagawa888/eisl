@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <setjmp.h>
-#include <GL/glut.h>
 
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000

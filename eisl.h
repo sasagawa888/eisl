@@ -76,6 +76,7 @@ typedef struct{
     char    trace;
 } cell;
 
+typedef int (*subr)(int);
 
 typedef enum {LPAREN,RPAREN,QUOTE,DOT,BACKQUOTE,COMMA,ATMARK,STRING,SYMBOL,
               FUNCTION,INTEGER,FLOAT_N,BIGNUM,VECTOR,ARRAY,CHARACTER,FARRAY,
@@ -1092,6 +1093,7 @@ int set_cdr(int x, int y);
 int set_aux(int x, int y);
 int set_opt(int x, int y);
 int callsubr(int func, int arglist);
+subr getsubr(int func);
 int f_subrp(int arglist);
 int makeintlong(int n);
 int makestrflt(char *str);

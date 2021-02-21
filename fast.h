@@ -148,6 +148,7 @@ int block_arg; //recieve argument of block
 #define Fgetprop(x) (f1[43])(x)
 #define Fsetdynpt(x) (f1[44])(x)
 #define Fsetcatchsymbols(x) (f1[45])(x)
+#define Fgetsubr(x) (f1[46])(x)
 
 #define Fcons(x,y) (f2[0])(x,y)
 #define Fnth(x,y) (f2[1])(x,y)

@@ -291,6 +291,7 @@ void dynamic_link(int x){
     init_f1(43,(tfunc)get_prop);
     init_f1(44,(tfunc)set_dynpt);
     init_f1(45,(tfunc)set_catch_symbols);
+    init_f1(46,(tfunc)getsubr);
 
     //argument-2 type
     init_f2(0,(tfunc)cons);

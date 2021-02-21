@@ -1045,6 +1045,10 @@ int callsubr(int func, int arglist){
     return((GET_SUBR(func))(arglist));
 }
 
+subr getsubr(int func){
+    return(GET_SUBR(func));
+}
+
 int makeintlong(int n){
     int addr;
 

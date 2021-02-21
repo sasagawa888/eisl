@@ -12,7 +12,7 @@ not tested
     (c-lang "glutInit(&argc, argv);"))
 
 (defun glut::init-display-mode (x)
-    (c-lang "glutInitDisplayMode(FGET_NAME(X));"))
+    (c-lang "glutInitDisplayMode(GLUT_SINGLE);"))
 
 (defun glut::init-window-size (hight width)
     (c-lang "glutInitWindowSize((INT_MASK & HIGHT), (INT_MASK & WIDTH));"))
@@ -21,13 +21,13 @@ not tested
     (c-lang "glutInitWindowPosition((INT_MASK & HIGHT), (INT_MASK & WIDTH));"))
 
 (defun glut::create-window (x)
-    (c-lang "glutCreateWindow(FGET_NAME(X));"))
+    (c-lang "glutCreateWindow(Fgetname(X));"))
 
 (defun gl::clear-color (x1 y1 x2 y2)
     (c-lang "glClearColor((INT_MASK & X1),(INT_MASK & Y1),(INT_MASK & X2),(INT_MASK & Y2));"))
 
 (defun glut::display-func (x)
-    (c-lang "glutDisplayFunc((void*)FGET_NAME(X));"))
+    (c-lang "glutDisplayFunc((void*)Fgetname(X));"))
 
 (defun glut::main-loop ()
     (c-lang "glutMainLoop();"))

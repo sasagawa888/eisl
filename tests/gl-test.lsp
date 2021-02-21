@@ -1,4 +1,5 @@
 (import "opengl")
+;;compile library/opengl.lsp before import
 
 (defun main ()
   (glut::init)

@@ -103,11 +103,13 @@ int f_classp(int arglist){
 
 
 int f_ignore(int arglist){
+    (void)arglist;
     return(T);
 }
 
 
 int f_self_introduction(int arglist){
+    (void)arglist;
 #if __APPLE__
     return(makesym("MACOS"));
 #elif defined(__OpenBSD__)
@@ -180,7 +182,7 @@ int f_system(int arglist){
 
 
 int f_freedll(int arglist){
-  
+    (void)arglist;  
     //dlclose(hmod);
     return(T);
 }
@@ -349,6 +351,7 @@ int f_backtrace(int arglist){
 }
 
 int f_break(int arglist){
+    (void)arglist;
     printf("break\n");
     debugger();
     return(T);

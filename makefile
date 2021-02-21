@@ -1,16 +1,26 @@
 OPSYS ?= linux
-LD := cc
+CC ?= cc
+LD := $(CC)
 ifneq ($(OPSYS),macos)
-LIBS = -lm -ldl
+	ifeq ($(OPSYS),openbsd)
+		LIBS = -lm
+	else
+		LIBS = -lm -ldl
+	endif
 endif
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
-CFLAGS ?= $(INCS) -Wall -O3 -flto
+CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 -O3 -flto
+ifeq ($(CC),c++)
+	CFLAGS += -std=c++98 -fno-exceptions -fno-rtti -Weffc++
+else
+	CFLAGS += -std=c17
+endif
 LDFLAGS := -flto
 ifeq ($(OPSYS),macos)
-LDFLAGS += -Wl,-S,-x
+	LDFLAGS += -Wl,-S,-x
 else
-LDFLAGS += -s
+	LDFLAGS += -s
 endif
 PREFIX = /usr/local
 bindir = $(PREFIX)/bin

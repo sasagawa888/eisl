@@ -82,7 +82,7 @@ int charcnt; //for format-tab. store number of chars up to now.
 
 
 //read scaner
-token stok = {GO,OTHER};
+token stok = {'\0',GO,OTHER,{'\0'}};
 int line;
 int column;
 int buffer[256][10];
@@ -181,7 +181,7 @@ char syntax[60][30] = {
 {"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defpublic"},{"substitute"}
 };
 //builtin token
-char builtin[200][30] ={
+char builtin[200][32] ={
 {"-"},{"*"},{"/="},{"+"},{"<"},{"<="},{"="},{">"},{">="},
 {"abs"},{"append"},{"apply"},{"aref"},{"arithmetic-error-operands"},
 {"arithmetic-error-operation"},{"array-dimensions"},{"assoc"},{"atan"},
@@ -382,6 +382,7 @@ void initpt(void){
 
 
 void signal_handler_c(int signo){
+   (void)signo;
    exit_flag = 1;
 }
 
@@ -1338,7 +1339,7 @@ void printsym(int addr){
     }
 }
 
-void printobj(char *str){
+void printobj(const char *str){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream), "%s", str);
     else{
@@ -1700,16 +1701,16 @@ int shelterpop(void){
 
 //--------system function
 //regist subr to environment.
-void defsubr(char *symname, int(*func)(int)){
+void defsubr(const char *symname, int(*func)(int)){
     bindfunc(symname, SUBR, func);
 }
 //regist fsubr(not eval argument)
-void deffsubr(char *symname, int(*func)(int)){
+void deffsubr(const char *symname, int(*func)(int)){
     bindfunc(symname, FSUBR, func);
 }
 
 
-void bindfunc(char *name, tag tag, int(*func)(int)){
+void bindfunc(const char *name, tag tag, int(*func)(int)){
     int sym,val;
 
     sym = makesym(name);
@@ -1744,7 +1745,7 @@ void bindmacro(char *name, int addr){
     SET_CAR(sym,val2);
 }
 
-void bindconst(char *name, int obj){
+void bindconst(const char *name, int obj){
     int sym;
 
     sym = makesym(name);

@@ -47,17 +47,17 @@ void initcell(void){
     ap = 0;
 }
 
-void bindclass(char *name, int class){
+void bindclass(const char *name, int cl){
     int sym;
 
     sym = makesym(name);
-    SET_AUX(sym,class);
-    SET_OPT(class,SYSTEM);     //built-in-class
+    SET_AUX(sym,cl);
+    SET_OPT(cl,SYSTEM);     //built-in-class
     SET_OPT(sym,SYSTEM);       //symbol formated by <***>  are built-in-classes
 }
 
 //class aux = ((format-string . error-msg)(format-arguments . args))
-void initerrargs(int class){
+void initerrargs(int cl){
     int vars,args;
 
     vars = list11(cons(makesym("a"),UNDEF),  //format-string
@@ -72,7 +72,7 @@ void initerrargs(int class){
                   cons(makesym("j"),UNDEF),  //name
                   cons(makesym("k"),UNDEF));  //namespace
 
-    SET_CDR(class,vars);
+    SET_CDR(cl,vars);
     args = list11(cons(makesym("format-string"),makesym("a")),
                   cons(makesym("format-arguments"),makesym("b")),
                   cons(makesym("function"),makesym("c")),
@@ -84,7 +84,7 @@ void initerrargs(int class){
                   cons(makesym("stream"),makesym("i")),
                   cons(makesym("name"),makesym("j")),
                   cons(makesym("namespace"),makesym("k")));
-    SET_AUX(class,args);
+    SET_AUX(cl,args);
 
 }
 
@@ -329,7 +329,7 @@ void setval(int sym, int val, int ls){
 
 
 //for uniqueness of symbol
-int getsym(char *name, int index){
+int getsym(const char *name, int index){
     int addr;
 
     addr = cell_hash_table[index];
@@ -346,7 +346,7 @@ int getsym(char *name, int index){
 /*
 link list is generated in hheap area allways
 */
-int addsym(char *name, int index){
+int addsym(const char *name, int index){
     int addr,res;
 
     addr = cell_hash_table[index];
@@ -361,7 +361,7 @@ cdr = global value
 aux = class symbol
 option = CONSTN(constant )
 */
-int makesym1(char *pname){
+int makesym1(const char *pname){
     int addr;
     char *str;
 
@@ -381,7 +381,7 @@ int makesym1(char *pname){
 //calculate hash number
 //modulo sum of each charactor's ASCII code with
 //HASHTBSIZE(107)
-int hash(char *name){
+int hash(const char *name){
     int res;
 
     res = 0;
@@ -525,7 +525,7 @@ car = function
 cdr = global value
 aux = class
 */
-int makesym(char *pname){
+int makesym(const char *pname){
     int index,res;
 
     index = hash(pname);
@@ -542,7 +542,7 @@ cdr = environment
 aux = null
 func object is generated in heap area.
 */
-int makefunc(char *pname, int addr){
+int makefunc(const char *pname, int addr){
     int val;
     char *str;
 
@@ -798,7 +798,7 @@ int makefarray(int ls, int obj){
 }
 
 
-int makestr(char *string){
+int makestr(const char *string){
     int addr;
     char *str;
 
@@ -813,7 +813,7 @@ int makestr(char *string){
     return(addr);
 }
 
-int makechar(char *pname){
+int makechar(const char *pname){
     int addr,pos;
     char low_name[SYMSIZE],char_entity[SYMSIZE],*str;
 
@@ -881,7 +881,7 @@ cdr = class variable
 aux = method
 name = class name
 */
-int makeclass(char *pname, int superclass){
+int makeclass(const char *pname, int superclass){
     int addr,len;
     char *str;
 
@@ -900,16 +900,16 @@ int makeclass(char *pname, int superclass){
 /*
 initls ((format-string a)(format-argments b))...(initarg var) )
 */
-int makeinstance(int class ,int initls){
+int makeinstance(int cl ,int initls){
     int addr;
 
     addr = freshcell();
     SET_TAG(addr,INSTANCE);
-    SET_CAR(addr,GET_CAR(class));  //super class
-    SET_CDR(addr,slotvars(class)); //slot vars with super class
-    SET_AUX(addr,class);           //class of instance
+    SET_CAR(addr,GET_CAR(cl));  //super class
+    SET_CDR(addr,slotvars(cl)); //slot vars with super class
+    SET_AUX(addr,cl);           //class of instance
     while(!nullp(initls)){
-        setval(cdr(assq(car(initls),GET_AUX(class))),cadr(initls),GET_CDR(addr));
+        setval(cdr(assq(car(initls),GET_AUX(cl))),cadr(initls),GET_CDR(addr));
         initls = cddr(initls);
     }
     return(addr);
@@ -932,10 +932,10 @@ int slotvars(int x){
 
 //initialize instance
 int initinst(int x, int initls){
-    int class,class_vars,inst_vars,n;
+    int cl,class_vars,inst_vars,n;
 
-    class = GET_AUX(x);
-    class_vars = GET_CDR(class);
+    cl = GET_AUX(x);
+    class_vars = GET_CDR(cl);
     inst_vars = GET_CDR(x);
     while(!nullp(class_vars)){
         if((n=assq(caar(class_vars),inst_vars)))
@@ -947,7 +947,7 @@ int initinst(int x, int initls){
             SET_CDR(n,cadr(initls));
         initls = cddr(initls);
     }
-    SET_CDR(x,initinst1(inst_vars,GET_CAR(class)));
+    SET_CDR(x,initinst1(inst_vars,GET_CAR(cl)));
     return(x);
 }
 

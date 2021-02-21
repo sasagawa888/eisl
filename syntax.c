@@ -948,7 +948,7 @@ int f_progn(int arglist){
 }
 
 int f_defclass(int arglist){
-    int arg1,arg2,arg3,arg4,sc,var,val,class,form,sym,ls,
+    int arg1,arg2,arg3,arg4,sc,var,val,cl,form,sym,ls,
         reader,writer,accessor,boundp,initform,initarg,initargs;
 
     arg1 = car(arglist);  //class-name
@@ -1106,11 +1106,11 @@ int f_defclass(int arglist){
     while(!nullp(arg4)){
 
     }
-    class = makeclass(GET_NAME(arg1),sc);
-    SET_OPT(class,USER); //standard-class;
-    SET_CDR(class,var);
-    SET_AUX(class,initargs);
-    SET_AUX(arg1,class);
+    cl = makeclass(GET_NAME(arg1),sc);
+    SET_OPT(cl,USER); //standard-class;
+    SET_CDR(cl,var);
+    SET_AUX(cl,initargs);
+    SET_AUX(arg1,cl);
     return(arg1);
 }
 

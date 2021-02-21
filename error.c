@@ -9,7 +9,7 @@
 #define ESCERRFORG  fprintf(stderr,"\33[39m")
 
 //-------error------
-void error(int errnum, char *fun, int arg){
+void error(int errnum, const char *fun, int arg){
     int initargs;
 
     ESCERRFRED;
@@ -404,11 +404,11 @@ void signal_condition(int x, int y){
     
 } 
 
-int makeusercond(int class, int str, int arg){
+int makeusercond(int cl, int str, int arg){
     int initarg;
     
     initarg = list6(makesym("format-string"),str,
                     makesym("format-arguments"),arg,
                     makesym("function"),makesym(""));
-    return(makeinstance(class,initarg));
+    return(makeinstance(cl,initarg));
 }

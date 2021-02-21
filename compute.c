@@ -233,23 +233,26 @@ int plus(int arg1, int arg2){
                             x1 = (double)n;
                             y1 = GET_FLT(arg2);
                             return(makeflt(x1+y1));}
-                case LONGN:  return(bigx_plus(bigx_int_to_big(arg1),bigx_long_to_big(arg2)));
+                case LONGN: return(bigx_plus(bigx_int_to_big(arg1),bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_plus(bigx_int_to_big(arg1),arg2));
             }
+            break;
         case LONGN:
             switch(tag2){
                 case INTN:  return(bigx_plus(bigx_long_to_big(arg1),bigx_int_to_big(arg2)));
                 case FLTN:  return(plus(exact_to_inexact(arg1),arg2));
-                case LONGN:  return(bigx_plus(bigx_long_to_big(arg1),bigx_long_to_big(arg2)));
+                case LONGN: return(bigx_plus(bigx_long_to_big(arg1),bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_plus(bigx_long_to_big(arg1),arg2));
             }
+            break;
         case BIGX:
             switch(tag2){
                 case INTN:  return(bigx_plus(arg1,bigx_int_to_big(arg2)));
                 case FLTN:  return(plus(exact_to_inexact(arg1),arg2));
-                case LONGN:  return(bigx_plus(arg1,bigx_long_to_big(arg2)));
+                case LONGN: return(bigx_plus(arg1,bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_plus(arg1,arg2));
             }
+            break;
         case FLTN:
             switch(tag2){
                 case INTN: {x1 = GET_FLT(arg1);
@@ -259,16 +262,11 @@ int plus(int arg1, int arg2){
                 case FLTN: {x1 = GET_FLT(arg1);
                             x2 = GET_FLT(arg2);
                             return(makeflt(x1+x2));}
-                case LONGN:  return(plus(arg1,exact_to_inexact(arg2)));
+                case LONGN: return(plus(arg1,exact_to_inexact(arg2)));
                 case BIGX:  return(plus(arg1,exact_to_inexact(arg2)));
-
             }
-        /*
-        case VEC:
-            switch(tag2){
-                case VEC:   return(vec_plus(arg1,arg2));
-            }
-        */
+            break;
+        default: break;
     }
     error(NOT_COMPUTABLE, "+", list2(arg1,arg2));
     return(UNDEF);
@@ -301,6 +299,7 @@ int minus(int arg1, int arg2){
 
                 case BIGX:  return(bigx_minus(bigx_int_to_big(arg1),arg2));
             }
+            break;
         case LONGN:
             switch(tag2){
                 case INTN:  return(bigx_minus(bigx_long_to_big(arg1),bigx_int_to_big(arg2)));
@@ -308,7 +307,7 @@ int minus(int arg1, int arg2){
                 case LONGN:  return(bigx_minus(bigx_long_to_big(arg1),bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_minus(bigx_long_to_big(arg1),arg2));
             }
-
+            break;
         case BIGX:
             switch(tag2){
                 case INTN:  return(bigx_minus(arg1,bigx_int_to_big(arg2)));
@@ -316,7 +315,7 @@ int minus(int arg1, int arg2){
                 case LONGN:  return(bigx_minus(arg1,bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_minus(arg1,arg2));
             }
-
+            break;
         case FLTN:
             switch(tag2){
                 case INTN: {x1 = GET_FLT(arg1);
@@ -329,6 +328,7 @@ int minus(int arg1, int arg2){
                 case LONGN:  return(minus(arg1,exact_to_inexact(arg2)));
                 case BIGX:  return(minus(arg1,exact_to_inexact(arg2)));
             }
+            break;
     }
     error(NOT_COMPUTABLE, "-", list2(arg1,arg2));
     return(UNDEF);
@@ -366,7 +366,7 @@ int mult(int arg1, int arg2){
 
                 case BIGX:  return(bigx_mult_i(arg2,arg1));
             }
-
+            break;
         case LONGN:
             switch(tag2){
                 case INTN:  if(GET_INT(arg2) != 0)
@@ -377,7 +377,7 @@ int mult(int arg1, int arg2){
                 case LONGN:  return(bigx_mult(bigx_long_to_big(arg1),bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_mult(bigx_long_to_big(arg1),arg2));
             }
-
+            break;
         case BIGX:
             switch(tag2){
                 case INTN:  return(bigx_mult_i(arg1,arg2));
@@ -385,7 +385,7 @@ int mult(int arg1, int arg2){
                 case LONGN:  return(bigx_mult(arg1,bigx_long_to_big(arg2)));
                 case BIGX:  return(bigx_mult(arg1,arg2));
             }
-
+            break;
         case FLTN:
             switch(tag2){
                 case INTN: {x1 = GET_FLT(arg1);
@@ -403,7 +403,7 @@ int mult(int arg1, int arg2){
                 case LONGN:
                 case BIGX:  return(mult(arg1,exact_to_inexact(arg2)));
             }
-        
+            break;
     }
     error(NOT_COMPUTABLE, "*", list2(arg1,arg2));
     return(UNDEF);
@@ -440,6 +440,7 @@ int quotient(int arg1, int arg2){
                             else
                                 return(quotient(exact_to_inexact(arg1),exact_to_inexact(arg2)));
             }
+            break;
         case LONGN:
             switch(tag2){
                 case INTN:
@@ -454,7 +455,7 @@ int quotient(int arg1, int arg2){
                 case BIGX:  return(quotient(exact_to_inexact(arg1),exact_to_inexact(arg2)));
                 case FLTN:  return(quotient(exact_to_inexact(arg1),arg2));
             }
-
+            break;
         case BIGX:
             switch(tag2){
                 case INTN:
@@ -470,7 +471,8 @@ int quotient(int arg1, int arg2){
                             else
                                 return(n);
                 case FLTN:  return(quotient(exact_to_inexact(arg1),arg2));
-        }
+            }
+            break;
         case FLTN:
             switch(tag2){
                 case INTN: {x1 = GET_FLT(arg1);
@@ -484,6 +486,7 @@ int quotient(int arg1, int arg2){
                 case BIGX:  return(quotient(arg1,exact_to_inexact(arg2)));
 
             }
+            break;
     }
     error(NOT_COMPUTABLE, "/", list2(arg1,arg2));
     return(UNDEF);

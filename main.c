@@ -581,6 +581,7 @@ void gettoken(void){
                     else
                         unreadc(c);
                     c = '#';
+                    break;
                     }
         default: {
             pos = 0; stok.buf[pos++] = c;

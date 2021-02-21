@@ -1122,6 +1122,7 @@ int convert(int arg1, int arg2){
             if(GET_AUX(arg2) == cstring){
                 return(makestr(GET_NAME(arg1)));
             }
+            break;
         case STR:
             if(GET_AUX(arg2) == cinteger){
                 return(makeint(atoi(GET_NAME(arg1))));

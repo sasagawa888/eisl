@@ -11,6 +11,8 @@ youtube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
 In Linux  type "sudo make install".
+In macOS  type "sudo make install OPSYS=macos".
+In OpenBSD  type "sudo make install OPSYS=openbsd".
 
 After version 1.4 Windows OS is not suported. Please use WSL on Windows.
 

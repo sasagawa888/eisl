@@ -57,7 +57,7 @@ char syntax[60][30] = {
 {"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defpublic"},
 };
 //builtin token
-char builtin[200][30] ={
+char builtin[200][32] ={
 {"-"},{"*"},{"/="},{"+"},{"<"},{"<="},{"="},{">"},{">="},
 {"abs"},{"append"},{"apply"},{"aref"},{"arithmetic-error-operands"},
 {"arithmetic-error-operation"},{"array-dimensions"},{"assoc"},{"atan"},
@@ -111,6 +111,7 @@ int main(int argc, char *argv[]){
     FILE *port;
     char *fname;
 
+    (void)argc;
     fname = argv[1];
     signal(SIGINT, signal_handler);
     signal(SIGSTOP, signal_handler);
@@ -273,7 +274,7 @@ void edit_screen(char *fname){
                     modify_flag = 1;
                     break;
         case 4:     //ctrl+D
-                    goto delete;
+                    goto del;
         case 1:     //ctrl+A
                     ed_col = 0;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
@@ -741,7 +742,7 @@ void edit_screen(char *fname){
                                     break;
                         case DELETE:
                                     c = getch();
-                                    delete:
+                                    del:
                                     if(ed_data[ed_row][ed_col] == EOL)
                                         break;
                                     ed_col++;
@@ -1470,6 +1471,7 @@ int findnext(int row, int col){
 void remove_headspace(int row){
     int col,i,j,k;
 
+    (void)row;
     col = 0;
     while(ed_data[ed_row][col] == ' ')
         col++;

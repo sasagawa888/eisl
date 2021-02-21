@@ -924,10 +924,10 @@ int array_ref(int obj, int ls){
         while(!nullp(ls)){
             if(nullp(cdr(ls)))
                 index = index + GET_INT(car(ls));
-            else if(GET_INT(car(ls)) == 0)
-                index = index;
-            else 
+            else if(GET_INT(car(ls)) != 0)
                 index = index + GET_INT(car(size)) * GET_INT(car(ls));
+            /* else if(GET_INT(car(ls)) == 0)
+               index = index; */
          
             size = cdr(size);
             ls = cdr(ls);
@@ -954,10 +954,10 @@ int array_set(int obj, int ls, int val){
         while(!nullp(ls)){
             if(nullp(cdr(ls)))
                 index = index + GET_INT(car(ls));
-            else if(GET_INT(car(ls)) == 0)
-                index = index;
-            else 
+            else if(GET_INT(car(ls)) != 0)
                 index = index + GET_INT(car(size)) * GET_INT(car(ls));
+            /* else if(GET_INT(car(ls)) == 0)
+               index = index; */
          
             size = cdr(size);
             ls = cdr(ls);

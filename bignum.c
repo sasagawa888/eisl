@@ -975,7 +975,7 @@ int bigx_remainder_i(int x, int y){
 
     j = GET_INT(y);
     if(j < 0){
-        j = abs(j);
+        j = llabs(j);
         sign2 = -1;
     }
     else{
@@ -1008,7 +1008,7 @@ int bigx_div_i(int x, int y){
 
     j = GET_INT(y);
     if(j < 0){
-        j = abs(j);
+        j = llabs(j);
         sign2 = -1;
     }
     else{
@@ -1049,7 +1049,7 @@ int bigx_mult_i(int x, int y){
 
     j = GET_INT(y);
     if(j < 0){
-        j = abs(j);
+        j = llabs(j);
         sign2 = -1;
     }
     else{

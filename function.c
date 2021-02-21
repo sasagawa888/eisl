@@ -205,22 +205,17 @@ void initsubr(void){
 
 typedef int (*fn0)();
 typedef void (*tfunc)(char*, int(*func)(int));
+typedef int (*initfunc_t)(int, tfunc);
+typedef void (*initdeftfunc_t)(tfunc);
+typedef void (*voidfunc_t)(void);
 
 void dynamic_link(int x){
     char str[256] = {"./"};
     void* hmod;
-    int (*init_f0)(int x, tfunc y);
-    int (*init_f1)(int x, tfunc y);
-    int (*init_f2)(int x, tfunc y);
-    int (*init_f3)(int x, tfunc y);
-    int (*init_f4)(int x, tfunc y);
-    int (*init_f5)(int x, tfunc y);
-    int (*init_f6)(int x, tfunc y);
-    int (*init_f7)(int x, tfunc y);
-    int (*init_f8)(int x, tfunc y);
-    void (*init_deftfunc)(tfunc x);
-    void (*init_tfunctions)(void);
-    void (*init_declare)(void);
+    initfunc_t init_f0, init_f1, init_f2, init_f3, init_f4, init_f5, init_f6, init_f7, init_f8;
+    
+    initdeftfunc_t init_deftfunc;
+    voidfunc_t init_tfunctions, init_declare;
 
     if(strstr(GET_NAME(x),"/"))
         strcpy(str,GET_NAME(x));
@@ -232,18 +227,18 @@ void dynamic_link(int x){
     if(hmod == NULL)
         error(ILLEGAL_ARGS, "load", x);
 
-    init_f0 = dlsym(hmod, "init0");
-    init_f1 = dlsym(hmod, "init1");
-    init_f2 = dlsym(hmod, "init2");
-    init_f3 = dlsym(hmod, "init3");
-    init_f4 = dlsym(hmod, "init4");
-    init_f5 = dlsym(hmod, "init5");
-    init_f6 = dlsym(hmod, "init6");
-    init_f7 = dlsym(hmod, "init7");
-    init_f8 = dlsym(hmod, "init8");
-    init_deftfunc = dlsym(hmod, "init_deftfunc");
-    init_tfunctions = dlsym(hmod, "init_tfunctions");
-    init_declare = dlsym(hmod, "init_declare");
+    init_f0 = (initfunc_t)dlsym(hmod, "init0");
+    init_f1 = (initfunc_t)dlsym(hmod, "init1");
+    init_f2 = (initfunc_t)dlsym(hmod, "init2");
+    init_f3 = (initfunc_t)dlsym(hmod, "init3");
+    init_f4 = (initfunc_t)dlsym(hmod, "init4");
+    init_f5 = (initfunc_t)dlsym(hmod, "init5");
+    init_f6 = (initfunc_t)dlsym(hmod, "init6");
+    init_f7 = (initfunc_t)dlsym(hmod, "init7");
+    init_f8 = (initfunc_t)dlsym(hmod, "init8");
+    init_deftfunc = (initdeftfunc_t)dlsym(hmod, "init_deftfunc");
+    init_tfunctions = (voidfunc_t)dlsym(hmod, "init_tfunctions");
+    init_declare = (voidfunc_t)dlsym(hmod, "init_declare");
 
 
     //argument-0 type
@@ -1609,6 +1604,7 @@ int f_gensym(int arglist){
     int res;
     char str1[SYMSIZE],str2[10];
 
+    (void)arglist;
     strcpy(str1,"#:G");
     sprintf(str2, "%d",genint);
     genint++;
@@ -1791,7 +1787,7 @@ int f_read_char(int arglist){
 
 int f_read_byte(int arglist){
     int arg1,arg2,arg3,save,n;
-    unsigned char res;
+    int res;
     #if __linux || __APPLE__ || defined(__OpenBSD__)
     int save1;
     #endif
@@ -2468,7 +2464,7 @@ int f_elt(int arglist){
         return(vector_ref(arg1,GET_INT(arg2)));
     }
     else if(stringp(arg1)){
-        if(strlen(GET_NAME(arg1)) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(((int)strlen(GET_NAME(arg1))) <= GET_INT(arg2) || GET_INT(arg2) < 0)
             error(OUT_OF_RANGE, "elt", arg2);
         str[0] = GET_NAME_ELT(arg1,GET_INT(arg2));
         str[1] = NUL;
@@ -3799,7 +3795,7 @@ int f_subseq(int arglist){
 
 
     if(stringp(arg1)){
-        if(strlen(GET_NAME(arg1)) < GET_INT(arg3))
+        if(((int)strlen(GET_NAME(arg1))) < GET_INT(arg3))
             error(OUT_OF_RANGE, "subseq", arglist);
         return(substr(arg1,GET_INT(arg2),GET_INT(arg3)));
     }
@@ -3885,7 +3881,7 @@ int f_initialize_object_star(int arglist){
 
 //controle
 int f_quit(int arglist){
-
+    (void)arglist;
     printf("- good bye -\n");
     greeting_flag = 0;
     longjmp(buf,2);

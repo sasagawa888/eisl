@@ -4,9 +4,10 @@ not tested
 |#
 
 (c-include "<GL/glut.h>")
+(c-option "-lglut -lGLU -lGL")
 
 (defun glut::init ()
-    (c-lang "int argc;")
+    (c-lang "int argc = 0;")
     (c-lang "char *argv;")
     (c-lang "glutInit(&argc, argv);"))
 

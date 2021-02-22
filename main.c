@@ -582,8 +582,8 @@ void gettoken(void){
                     else
                         unreadc(c);
                     c = '#';
-                    break;
                     }
+                   /*FALLTHROUGH*/
         default: {
             pos = 0; stok.buf[pos++] = c;
             while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE) &&

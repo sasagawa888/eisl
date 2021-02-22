@@ -1747,12 +1747,9 @@ int f_read(int arglist){
 }
 
 int f_read_char(int arglist){
-    int arg1,arg2,arg3,save,n,res;
+    int arg1,arg2,arg3,save,save1,n,res;
     int buf[CHARSIZE];
-    #if __linux || __APPLE__ || defined(__OpenBSD__)
-    int save1;
-    #endif
-
+    
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1761,10 +1758,8 @@ int f_read_char(int arglist){
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-char", arg1);
 
-    #if __linux || __APPLE__ || defined(__OpenBSD__)
     save1 = repl_flag;
     repl_flag = 0;
-    #endif
     if(n==0){
         buf[0] = readc();
         buf[1] = NUL;
@@ -1776,9 +1771,7 @@ int f_read_char(int arglist){
         buf[0] = readc();
         buf[1] = NUL;
         if(buf[0] == EOF){
-        	#if __linux || __APPLE__ || defined(__OpenBSD__)
             repl_flag = save1;
-            #endif
             error(END_STREAM, "read-char", NIL);
         }
         input_stream = save;
@@ -1791,9 +1784,7 @@ int f_read_char(int arglist){
         buf[1] = NUL;
         input_stream = save;
         if(buf[0] == EOF){
-        	#if __linux || __APPLE__ || defined(__OpenBSD__)
             repl_flag = save1;
-            #endif
             if(nullp(arg2) && n == 2)
                 return(arg2);
             else if(nullp(arg2) && n == 3)
@@ -1807,19 +1798,13 @@ int f_read_char(int arglist){
         else
             res = NIL;
     }
-    #if __linux || __APPLE__ || defined(__OpenBSD__)
     repl_flag = save1;
-    #endif
     return(res);
 }
 
 int f_read_byte(int arglist){
-    int arg1,arg2,arg3,save,n;
-    int res;
-    #if __linux || __APPLE__ || defined(__OpenBSD__)
-    int save1;
-    #endif
-
+    int arg1,arg2,arg3,save,save1,n,res;
+    
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
@@ -1828,10 +1813,8 @@ int f_read_byte(int arglist){
     if(n>0 && !input_stream_p(arg1))
         error(NOT_IN_STREAM, "read-byte", arg1);
 
-    #if __linux || __APPLE__ || defined(__OpenBSD__)
     save1 = repl_flag;
     repl_flag = 0;
-    #endif
     if(n==0){
         res = readc();
     }
@@ -1840,9 +1823,7 @@ int f_read_byte(int arglist){
         input_stream = arg1;
         res = readc();
         if(res == EOF){
-        	#if __linux || __APPLE__ || defined(__OpenBSD__)
             repl_flag = save1;
-            #endif
             error(END_STREAM, "read-byte", NIL);
         }
         input_stream = save;
@@ -1853,9 +1834,7 @@ int f_read_byte(int arglist){
         res = readc();
         input_stream = save;
         if(res==EOF){
-        	#if __linux || __APPLE__ || defined(__OpenBSD__)
             repl_flag = save1;
-            #endif
             if(nullp(arg2) && n == 2)
                 return(arg2);
             else if(nullp(arg2) && n == 3)
@@ -1864,9 +1843,7 @@ int f_read_byte(int arglist){
                 error(END_STREAM, "read-byte", NIL);
         }
     }
-    #if __linux || __APPLE__ || defined(__OpenBSD__)
     repl_flag = save1;
-    #endif
     return(makeint(res));
 }
 

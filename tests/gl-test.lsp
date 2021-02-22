@@ -24,7 +24,10 @@
   (gl::vertex2d -0.5 0.5)
   (gl::vertex2d 0.5 0.5)
   (gl::vertex2d 0.5 -0.5)
-
+  
   (gl::end)
+  (glut::solid-teapot 0.5)
   (gl::flush)
 )
+
+(main)

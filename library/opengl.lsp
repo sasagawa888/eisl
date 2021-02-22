@@ -27,8 +27,16 @@ not tested
     (c-lang "glClearColor(Fgetflt(X1),Fgetflt(Y1),Fgetflt(X2),Fgetflt(Y2));"))
 
 (defun glut::display-func (x)
-    (c-lang "callbackfunc = Fcons(X,NIL);")
-    (c-lang "glutDisplayFunc(callback);"))
+    (c-lang "displayfunc = Fcons(X,NIL);")
+    (c-lang "glutDisplayFunc(display_callback);"))
+
+(defun glut::keyboard-func (x)
+    (c-lang "keyboardfunc = Fcons(X,NIL);")
+    (c-lang "glutKeyboardFunc(keyboard_callback);"))
+
+(defun glut::mouse-func (x)
+    (c-lang "mousefunc = Fcons(X,NIL);")
+    (c-lang "glutMouseFunc(mouse_callback);")) 
 
 (defun glut::main-loop ()
     (c-lang "glutMainLoop();"))
@@ -44,6 +52,33 @@ not tested
 
 (defun gl::vertex2d (x y)
     (c-lang "glVertex2d(Fgetflt(X),Fgetflt(Y));"))
+
+(defun glut::solid-cube (x)
+    (c-lang "glutSolidCube(Fgetflt(X));")) 
+
+(defun glut::solid-sphere (x y z)
+    (c-lang "glutSolidSphere(Fgetflt(X),Fgetflt(Y),Fgetflt(Z));"))
+
+(defun glut::solid-torus (x1 x2 x3 x4)
+    (c-lang "glutSolidTorus(Fgetflt(X1),Fgetflt(X2),Fgetflt(X3),Fgetflt(X4));")) 
+
+(defun glut::solid-icosahedron ()
+    (c-lang "glutSolidIcosahedron();"))
+
+(defun glut::solid-octahedron ()
+    (c-lang "glutSolidOctahedron();"))
+
+(defun glut::solid-tetrahedron ()
+    (c-lang "glutSolidTetrahedron();"))
+
+(defun glut::solid-dodecahedron ()
+    (c-lang "glutSolidDodecahedron();"))
+
+(defun glut::solid-cone (x1 x2 x3 x4)    
+    (c-lang "glutSolidCone(Fgetflt(X1),Fgetflt(X2),Fgetflt(X3),Fgetflt(X4));"))
+
+(defun glut::solid-teapot (x)
+    (c-lang "glutSolidTeapot(Fgetflt(X));")) 
 
 (defun gl::end ()
     (c-lang "glEnd();"))

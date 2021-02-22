@@ -510,9 +510,21 @@ int fast_setnth(int x, int n, int y){
     Fset_car(x,y);
     return(y);
 }
+//---------------OPenGL-----------------
+int displayfunc;
 
-int callbackfunc;
+void display_callback(void){
+    Feval(displayfunc);
+}
 
-void callback(void){
-    Feval(callbackfunc);
+int keyboardfunc;
+
+void keyboard_callback(unsigned char key, int x, int y){
+    Feval(keyboardfunc);
+}
+
+int mousefunc;
+
+void mouse_callback(int button, int state, int x, int y) {
+    Feval(mousefunc);
 }

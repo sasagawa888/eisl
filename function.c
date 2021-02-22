@@ -1928,8 +1928,8 @@ int f_preview_char(int arglist){
 }
 
 int f_read_line(int arglist){
-    int arg1,arg2,arg3,n,pos,save,res;
-    char buf[STRSIZE],c;
+    int arg1,arg2,arg3,n,pos,save,res,c;
+    char buf[STRSIZE];
     #if __linux || __APPLE__ || defined(__OpenBSD__)
     int save1;
     #endif

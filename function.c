@@ -1748,7 +1748,7 @@ int f_read(int arglist){
 
 int f_read_char(int arglist){
     int arg1,arg2,arg3,save,n,res;
-    char buf[CHARSIZE];
+    int buf[CHARSIZE];
     #if __linux || __APPLE__ || defined(__OpenBSD__)
     int save1;
     #endif
@@ -1768,7 +1768,7 @@ int f_read_char(int arglist){
     if(n==0){
         buf[0] = readc();
         buf[1] = NUL;
-        res = makechar(buf);
+        res = makechar((char*)buf);
     }
     else if(n==1){
         save = input_stream;
@@ -1782,7 +1782,7 @@ int f_read_char(int arglist){
             error(END_STREAM, "read-char", NIL);
         }
         input_stream = save;
-        res = makechar(buf);
+        res = makechar((char*)buf);
     }
     else{
         save = input_stream;
@@ -1801,7 +1801,7 @@ int f_read_char(int arglist){
             else
                 error(END_STREAM, "read-char", NIL);
         }
-        res = makechar(buf);
+        res = makechar((char*)buf);
         if(res==FEND && arg2==NIL)
             res = arg3;
         else
@@ -1874,7 +1874,7 @@ int f_read_byte(int arglist){
 
 int f_preview_char(int arglist){
     int arg1,arg2,arg3,save,n,res;
-    char buf[CHARSIZE];
+    int buf[CHARSIZE];
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1888,7 +1888,7 @@ int f_preview_char(int arglist){
         buf[0] = readc();
         buf[1] = NUL;
         unreadc(arg1);
-        res = makechar(buf);
+        res = makechar((char*)buf);
     }
     else if(n==1){
         save = input_stream;
@@ -1899,7 +1899,7 @@ int f_preview_char(int arglist){
         if(buf[0] == EOF)
             error(END_STREAM, "preview-char", NIL);
         input_stream = save;
-        res = makechar(buf);
+        res = makechar((char*)buf);
     }
     else{
         save = input_stream;
@@ -1920,7 +1920,7 @@ int f_preview_char(int arglist){
         }
         unreadc(arg1);
         input_stream = save;
-        res = makechar(buf);
+        res = makechar((char*)buf);
         if(res==FEND && arg2==NIL)
             res = arg3;
     }

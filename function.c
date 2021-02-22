@@ -104,7 +104,9 @@ void initsubr(void){
     defsubr("GENERAL-VECTOR-P",f_general_vector_p);
     defsubr("GENERIC-FUNCTION-P",f_generic_function_p);
     defsubr("GENSYM",f_gensym);
-    defsubr("GET-INTERNAM-RUN-TIME",f_get_internal_run_time);
+    defsubr("GET-INTERNAL-RUN-TIME",f_get_internal_run_time);
+    defsubr("GET-INTERNAL-REAL-TIME",f_get_internal_real_time);
+    defsubr("INTERNAL-TIME-UNITS-PER-SECOND",f_internal_time_units_per_second);
     defsubr("GET-OUTPUT-STREAM-STRING",f_get_output_stream_string);
     defsubr("GET-UNIVERSAL-TIME",f_get_universal_time);
     defsubr("HDMP",f_heapdump);
@@ -3833,7 +3835,7 @@ int f_get_universal_time(int arglist){
         error(WRONG_ARGS,"get-universal-time",arglist);
 
     t = time(NULL);
-    return(makeint((int)t));
+    return(makelong((long long int)(t + 70 * 365.25 * 24 * 60 * 60)));
 }
 
 int f_get_internal_run_time(int arglist){
@@ -3847,13 +3849,13 @@ int f_get_internal_run_time(int arglist){
 }
 
 int f_get_internal_real_time(int arglist){
-    clock_t t;
+    time_t t;
 
     if(length(arglist) != 0)
         error(WRONG_ARGS,"get-internal-real-time",arglist);
 
-    t = clock();
-    return(makeint((int)t));
+    t = time(NULL);
+    return(makelong((long long int)(t * CLOCKS_PER_SEC)));
 }
 
 int f_internal_time_units_per_second(int arglist){

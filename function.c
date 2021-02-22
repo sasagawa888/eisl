@@ -2181,12 +2181,7 @@ int f_output_stream_p(int arglist){
 }
 
 int f_stream_ready_p(int arglist){
-    int arg1,save;
-    #ifdef __arm__
-    unsigned char c;
-    #else
-    char c;
-    #endif
+    int arg1,save,c;
     
     arg1 = car(arglist);
     if(length(arglist) != 1)

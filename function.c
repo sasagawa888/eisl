@@ -205,7 +205,6 @@ void initsubr(void){
 }
 
 
-//typedef int (*fn0)();
 typedef void (*tfunc)(char*, int(*func)(int));
 typedef int (*initfunc_t)(int, tfunc);
 typedef void (*initdeftfunc_t)(tfunc);
@@ -2183,8 +2182,12 @@ int f_output_stream_p(int arglist){
 
 int f_stream_ready_p(int arglist){
     int arg1,save;
+    #ifdef __arm__
+    unsigned char c;
+    #else
     char c;
-
+    #endif
+    
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"stream-ready-p",arglist);

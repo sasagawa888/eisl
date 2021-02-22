@@ -369,6 +369,7 @@ int f_instance(int arglist){
 //----------for Raspberry PI
 #ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist){
+    (void)arglist;
     wiringPiSetupGpio();
     return(T);
 } 

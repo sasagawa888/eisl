@@ -10,17 +10,24 @@ ifneq ($(OPSYS),macos)
 endif
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
-CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 -O3 -flto
+CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2
+ifeq ($(DEBUG),1)
+	CFLAGS += -O0 -ggdb
+else
+	CFLAGS += -O3 -flto
+endif
 ifeq ($(CC),c++)
 	CFLAGS += -std=c++98 -fno-exceptions -fno-rtti -Weffc++
 else
 	CFLAGS += -std=c17
 endif
-LDFLAGS := -flto
-ifeq ($(OPSYS),macos)
-	LDFLAGS += -Wl,-S,-x
-else
-	LDFLAGS += -s
+ifneq ($(DEBUG),1)
+	LDFLAGS := -flto
+	ifeq ($(OPSYS),macos)
+		LDFLAGS += -Wl,-S,-x
+	else
+		LDFLAGS += -s
+	endif
 endif
 PREFIX = /usr/local
 bindir = $(PREFIX)/bin

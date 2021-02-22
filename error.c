@@ -12,6 +12,16 @@
 void error(int errnum, const char *fun, int arg){
     int initargs;
 
+    //resolve unwind-protect
+    if(unwind_pt > 0){
+        unwind_pt--;
+        while(unwind_pt >= 0){
+			apply(unwind_buf[unwind_pt],NIL);
+            unwind_pt--;
+        }
+        unwind_pt = 0;
+    }
+
     ESCERRFRED;
     switch(errnum){ 
         case DIV_ZERO:  initargs = list6(makesym("format-string"),makestr("division by zero at "),

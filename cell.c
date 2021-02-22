@@ -270,7 +270,7 @@ void setlexenv(int sym, int val){
 }
 
 //bind value to dynamic environment
-void setdynenv(int sym, int val){
+int setdynenv(int sym, int val){
     int addr;
 
     addr= assq(sym,dp);
@@ -278,6 +278,8 @@ void setdynenv(int sym, int val){
         adddynenv(sym,val);
     else
         SET_CDR(addr,val);
+    
+    return(T);
 }
 
 
@@ -288,8 +290,9 @@ void addlexenv(int sym, int val){
 
 
 //addition of lexical variable
-void adddynenv(int sym, int val){
+int adddynenv(int sym, int val){
     dp = cons(cons(sym,val),dp);
+    return(T);
 }
 
 //environment is association list
@@ -1036,7 +1039,7 @@ int get_prop(int x){
 	return(GET_PROP(x));
 }
 
-int get_dynpt(){
+int get_dynpt(void){
 	return(dp);
 }
 

@@ -1668,11 +1668,14 @@ int genlamlis_to_lamlis(int varlist){
 
 
 //for stack to store ep(environment)
-void push(int pt){
+int push(int pt){
     if(sp >= STACKSIZE)
     	error(STACK_OVERF, "push", NIL);
     stack[sp++] = pt;
+
+    return(T);
 }
+
 int pop(void){
     if(sp <= 0)
     	error(STACK_UNDERF, "pop", NIL);
@@ -1680,8 +1683,10 @@ int pop(void){
 }
 
 //push/pop of arglist
-void argpush(int addr){
+int argpush(int addr){
     argstk[ap++] = addr;
+
+    return(T);
 }
 
 int argpop(void){
@@ -1689,10 +1694,12 @@ int argpop(void){
 }
 
 //shelter push/pop
-void shelterpush(int addr){
+int shelterpush(int addr){
     if(lp >= STACKSIZE)
     	error(SHELTER_OVERF, "shelterpush", NIL);
     shelter[lp++] = addr;
+
+    return(T);
 }
 
 int shelterpop(void){

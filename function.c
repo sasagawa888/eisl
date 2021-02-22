@@ -205,17 +205,43 @@ void initsubr(void){
 }
 
 
-typedef int (*fn0)();
+//typedef int (*fn0)();
 typedef void (*tfunc)(char*, int(*func)(int));
 typedef int (*initfunc_t)(int, tfunc);
 typedef void (*initdeftfunc_t)(tfunc);
 typedef void (*voidfunc_t)(void);
 
+typedef int (*func0)(void);
+typedef int (*initfunc0)(int, func0);
+typedef int (*func1)(int);
+typedef int (*initfunc1)(int, func1);
+typedef int (*func2)(int, int);
+typedef int (*initfunc2)(int, func2);
+typedef int (*func3)(char*);
+typedef int (*initfunc3)(int, func3);
+typedef long long (*func4)(int);
+typedef int (*initfunc4)(int, func4);
+typedef int (*func5)(int, int, int);
+typedef int (*initfunc5)(int, func5);
+typedef char* (*func6)(int);
+typedef int (*initfunc6)(int, func6);
+typedef double (*func7)(int);
+typedef int (*initfunc7)(int, func7);
+typedef int (*func8)(double);
+typedef int (*initfunc8)(int, func8);
+
 void dynamic_link(int x){
     char str[256] = {"./"};
     void* hmod;
-    initfunc_t init_f0, init_f1, init_f2, init_f3, init_f4, init_f5, init_f6, init_f7, init_f8;
-    
+    initfunc0 init_f0;
+    initfunc1 init_f1;
+    initfunc2 init_f2;
+    initfunc3 init_f3;
+    initfunc4 init_f4;
+    initfunc5 init_f5;
+    initfunc6 init_f6;
+    initfunc7 init_f7;
+    initfunc8 init_f8;
     initdeftfunc_t init_deftfunc;
     voidfunc_t init_tfunctions, init_declare;
 
@@ -229,124 +255,124 @@ void dynamic_link(int x){
     if(hmod == NULL)
         error(ILLEGAL_ARGS, "load", x);
 
-    init_f0 = (initfunc_t)dlsym(hmod, "init0");
-    init_f1 = (initfunc_t)dlsym(hmod, "init1");
-    init_f2 = (initfunc_t)dlsym(hmod, "init2");
-    init_f3 = (initfunc_t)dlsym(hmod, "init3");
-    init_f4 = (initfunc_t)dlsym(hmod, "init4");
-    init_f5 = (initfunc_t)dlsym(hmod, "init5");
-    init_f6 = (initfunc_t)dlsym(hmod, "init6");
-    init_f7 = (initfunc_t)dlsym(hmod, "init7");
-    init_f8 = (initfunc_t)dlsym(hmod, "init8");
+    init_f0 = (initfunc0)dlsym(hmod, "init0");
+    init_f1 = (initfunc1)dlsym(hmod, "init1");
+    init_f2 = (initfunc2)dlsym(hmod, "init2");
+    init_f3 = (initfunc3)dlsym(hmod, "init3");
+    init_f4 = (initfunc4)dlsym(hmod, "init4");
+    init_f5 = (initfunc5)dlsym(hmod, "init5");
+    init_f6 = (initfunc6)dlsym(hmod, "init6");
+    init_f7 = (initfunc7)dlsym(hmod, "init7");
+    init_f8 = (initfunc8)dlsym(hmod, "init8");
     init_deftfunc = (initdeftfunc_t)dlsym(hmod, "init_deftfunc");
     init_tfunctions = (voidfunc_t)dlsym(hmod, "init_tfunctions");
     init_declare = (voidfunc_t)dlsym(hmod, "init_declare");
 
 
     //argument-0 type
-    init_f0(0,(tfunc)checkgbc);
-    init_f0(1,(tfunc)gbc);
-    init_f0(2,(tfunc)freshcell);
-    init_f0(3,(tfunc)freecell);
-    init_f0(4,(tfunc)gbcsw);
-    init_f0(5,(tfunc)getwp);
-    init_f0(9,(tfunc)argpop);
-    init_f0(10,(tfunc)shelterpop);
-    init_f0(11,(tfunc)pop);
-    init_f0(12,(tfunc)get_dynpt);
+    init_f0(0,(func0)checkgbc);
+    init_f0(1,(func0)gbc);
+    init_f0(2,(func0)freshcell);
+    init_f0(3,(func0)freecell);
+    init_f0(4,(func0)gbcsw);
+    init_f0(5,(func0)getwp);
+    init_f0(9,(func0)argpop);
+    init_f0(10,(func0)shelterpop);
+    init_f0(11,(func0)pop);
+    init_f0(12,(func0)get_dynpt);
 
     //argument-1 type
-    init_f1(0,(tfunc)car);
-    init_f1(1,(tfunc)cdr);
-    init_f1(2,(tfunc)cadr);
-    init_f1(3,(tfunc)caddr);
-    init_f1(4,(tfunc)caar);
-    init_f1(5,(tfunc)cadar);
-    init_f1(6,(tfunc)list1);
-    init_f1(7,(tfunc)eval);
-    init_f1(8,(tfunc)get_aux);
-    init_f1(9,(tfunc)fast_length);
-    init_f1(10,(tfunc)subrp);
-    init_f1(11,(tfunc)fsubrp);
-    init_f1(12,(tfunc)functionp);
-    init_f1(13,(tfunc)macrop);
-    init_f1(14,(tfunc)integerp);
-    init_f1(15,(tfunc)longnump);
-    init_f1(16,(tfunc)bignump);
-    init_f1(20,(tfunc)get_int);
-    init_f1(21,(tfunc)makeint);
-    init_f1(22,(tfunc)makeintlong);
-    init_f1(23,(tfunc)vector);
-    init_f1(24,(tfunc)fast_car);
-    init_f1(25,(tfunc)fast_cdr);
-    init_f1(30,(tfunc)findenv);
-    init_f1(31,(tfunc)finddyn);
-    init_f1(39,(tfunc)argpush);
-    init_f1(40,(tfunc)shelterpush);
-    init_f1(41,(tfunc)push);
-    init_f1(42,(tfunc)get_opt);
-    init_f1(43,(tfunc)get_prop);
-    init_f1(44,(tfunc)set_dynpt);
-    init_f1(45,(tfunc)set_catch_symbols);
-    init_f1(46,(tfunc)eval);
+    init_f1(0,(func1)car);
+    init_f1(1,(func1)cdr);
+    init_f1(2,(func1)cadr);
+    init_f1(3,(func1)caddr);
+    init_f1(4,(func1)caar);
+    init_f1(5,(func1)cadar);
+    init_f1(6,(func1)list1);
+    init_f1(7,(func1)eval);
+    init_f1(8,(func1)get_aux);
+    init_f1(9,(func1)fast_length);
+    init_f1(10,(func1)subrp);
+    init_f1(11,(func1)fsubrp);
+    init_f1(12,(func1)functionp);
+    init_f1(13,(func1)macrop);
+    init_f1(14,(func1)integerp);
+    init_f1(15,(func1)longnump);
+    init_f1(16,(func1)bignump);
+    init_f1(20,(func1)get_int);
+    init_f1(21,(func1)makeint);
+    init_f1(22,(func1)makeintlong);
+    init_f1(23,(func1)vector);
+    init_f1(24,(func1)fast_car);
+    init_f1(25,(func1)fast_cdr);
+    init_f1(30,(func1)findenv);
+    init_f1(31,(func1)finddyn);
+    init_f1(39,(func1)argpush);
+    init_f1(40,(func1)shelterpush);
+    init_f1(41,(func1)push);
+    init_f1(42,(func1)get_opt);
+    init_f1(43,(func1)get_prop);
+    init_f1(44,(func1)set_dynpt);
+    init_f1(45,(func1)set_catch_symbols);
+    init_f1(46,(func1)eval);
 
     //argument-2 type
-    init_f2(0,(tfunc)cons);
-    init_f2(1,(tfunc)nth);
-    init_f2(2,(tfunc)set_car);
-    init_f2(3,(tfunc)set_cdr);
-    init_f2(4,(tfunc)set_aux);
-    init_f2(5,(tfunc)set_opt);
-    init_f2(6,(tfunc)callsubr);
-    init_f2(7,(tfunc)list2);
-    init_f2(8,(tfunc)nth_cdr);
-    init_f2(9,(tfunc)apply);
-    init_f2(10,(tfunc)plus);
-    init_f2(11,(tfunc)minus);
-    init_f2(12,(tfunc)mult);
-    init_f2(13,(tfunc)quotient);
-    init_f2(14,(tfunc)s_remainder);
-    init_f2(15,(tfunc)divide);
-    init_f2(16,(tfunc)eqp);
-    init_f2(17,(tfunc)eqlp);
-    init_f2(18,(tfunc)numeqp);
-    init_f2(19,(tfunc)smallerp);
-    init_f2(20,(tfunc)eqsmallerp);
-    init_f2(21,(tfunc)greaterp);
-    init_f2(22,(tfunc)eqgreaterp);
-    init_f2(23,(tfunc)member);
-    init_f2(30,(tfunc)convert);
-    init_f2(31,(tfunc)array);
-    init_f2(32,(tfunc)setdynenv);
-    init_f2(33,(tfunc)adddynenv);
-    init_f2(34,(tfunc)set_dynamic);
-    init_f2(35,(tfunc)set_prop);
-    init_f2(36,(tfunc)adaptp);
+    init_f2(0,(func2)cons);
+    init_f2(1,(func2)nth);
+    init_f2(2,(func2)set_car);
+    init_f2(3,(func2)set_cdr);
+    init_f2(4,(func2)set_aux);
+    init_f2(5,(func2)set_opt);
+    init_f2(6,(func2)callsubr);
+    init_f2(7,(func2)list2);
+    init_f2(8,(func2)nth_cdr);
+    init_f2(9,(func2)apply);
+    init_f2(10,(func2)plus);
+    init_f2(11,(func2)minus);
+    init_f2(12,(func2)mult);
+    init_f2(13,(func2)quotient);
+    init_f2(14,(func2)s_remainder);
+    init_f2(15,(func2)divide);
+    init_f2(16,(func2)eqp);
+    init_f2(17,(func2)eqlp);
+    init_f2(18,(func2)numeqp);
+    init_f2(19,(func2)smallerp);
+    init_f2(20,(func2)eqsmallerp);
+    init_f2(21,(func2)greaterp);
+    init_f2(22,(func2)eqgreaterp);
+    init_f2(23,(func2)member);
+    init_f2(30,(func2)convert);
+    init_f2(31,(func2)array);
+    init_f2(32,(func2)setdynenv);
+    init_f2(33,(func2)adddynenv);
+    init_f2(34,(func2)set_dynamic);
+    init_f2(35,(func2)set_prop);
+    init_f2(36,(func2)adaptp);
 
 
     //argument-1 string type
-    init_f3(0,(tfunc)makestr);
-    init_f3(1,(tfunc)makesym);
-    init_f3(2,(tfunc)makechar);
-    init_f3(3,(tfunc)makestrflt);
-    init_f3(4,(tfunc)makebigx);
+    init_f3(0,(func3)makestr);
+    init_f3(1,(func3)makesym);
+    init_f3(2,(func3)makechar);
+    init_f3(3,(func3)makestrflt);
+    init_f3(4,(func3)makebigx);
 
     //argument-1 long long int type
-    init_f4(0,(tfunc)get_long);
+    init_f4(0,(func4)get_long);
 
     //argument-3 type
-    init_f5(0,(tfunc)string_set);
-    init_f5(1,(tfunc)array_set);
-    init_f5(2,(tfunc)member1);
+    init_f5(0,(func5)string_set);
+    init_f5(1,(func5)array_set);
+    init_f5(2,(func5)member1);
 
     //string output type
-    init_f6(0,(tfunc)get_name);
+    init_f6(0,(func6)get_name);
 
     //float output type
-    init_f7(0,(tfunc)get_flt);
+    init_f7(0,(func7)get_flt);
 
     //float input type
-    init_f8(0,(tfunc)makedoubleflt);
+    init_f8(0,(func8)makedoubleflt);
 
     init_deftfunc((tfunc)defsubr);
     init_tfunctions();

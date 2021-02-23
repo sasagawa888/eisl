@@ -144,7 +144,7 @@ On linux terminal type "make -f cudamake" and "sudo make install"
 
 Now, I am adding function using CUDA
 
-see tests/gpu.lsp
+see tests/gpu-test.lsp
 extended array for float.
 ```
 (defglobal a #2f((1.0 2.0)(3.0 4.0)))
@@ -237,3 +237,4 @@ EISL <==================================> C
 - (heapdump n) display cell dump list from nth address
 - (instance n) display instance of nth address
 - (defmodule name body) see tests/module.lsp
+- (import x) import library. e.g. (import "compiler")

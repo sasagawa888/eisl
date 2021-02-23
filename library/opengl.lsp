@@ -47,8 +47,20 @@ not tested
 (defun gl::color3d (r g b)
     (c-lang "glColor3d(Fgetflt(R),Fgetflt(G),Fgetflt(B));"))
 
-(defun gl::begin ()
-    (c-lang "glBegin(GL_LINE_LOOP);"))
+(defun gl::begin (x)
+    (cond ((eq x 'gl-line-loop) (c-lang "glBegin(GL_LINE_LOOP);"))
+          ((eq x 'gl-points) (c-lang "glBegin(GL_POINTS);"))
+          ((eq x 'gl-lines) (c-lang "glBegin(GL_LINES);"))
+          ((eq x 'gl-line-strip) (c-lang "glBegin(GL_LINE_STRIP);"))
+          ((eq x 'gl-triangles) (c-lang "glBegin(GL_TRIANGLES);"))
+          ((eq x 'gl-quads) (c-lang "glBegin(GL_QUADS);"))
+          ((eq x 'gl-triangle-strip) (c-lang "glBegin(GL_TRIANGLE_STRIP);"))
+          ((eq x 'gl-quad-strip) (c-lang "glBegin(GL_QUAD_STRIP);"))
+          ((eq x 'gl-triangle-fan) (c-lang "glBegin(GL_TRIANGLE_FAN);"))
+          ((eq x 'gl-polygon) (c-lang "glBegin(GL_POLYGON);"))
+          (t (error "gl::begin" x))))
+
+  
 
 (defun gl::vertex2d (x y)
     (c-lang "glVertex2d(Fgetflt(X),Fgetflt(Y));"))

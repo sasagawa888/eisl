@@ -1,9 +1,28 @@
-manual of GPGPU functions
+# Manual of GPGPU functions
 
-mtn  matrix nth
-tsn  tensor nth
-fun  symbol of faunction name
+# Install
+You can also compile EISL with nvcc(CUDA) instead of gcc.
 
+On linux terminal type "make -f cudamake" and "sudo make install"
+
+Now, I am adding function using CUDA
+
+see tests/gpu.lsp
+extended array for float.
+```
+(defglobal a #2f((1.0 2.0)(3.0 4.0)))
+(defglobal b #2f((1.0 2.0)(3.0 4.0)))
+(gpu-mult a b)
+(gpu-add a b)
+```
+# Extend
+extended create-array builtin-function.
+it can generate array for float. e.g.
+```
+(create-array '(3000 3000) 'rand 'float)
+```
+
+# Specification
 
 (gpu-accuracy mt1 ls)
 return accuracy rate as float number. mt1 is set of row-vector.Each row-vector is onehot. ls is list each element is label integer number.
@@ -20,10 +39,6 @@ adam optimizer return list (m1,v1,w1)
 
 (gpu-add mt1,mt2) 
 generate matrix mt1+mt2. if mt1 or mt2 is row vector, expand size to matrix. This function is for bias add in DL.
-
-
-add_diff(mt,r,c,val) elt(mt,x,y) := elt(mt,x,y + val.
-add_diff(arg, n1, c1, h1, w1, val)
 
 
 (analizer ts,id) 

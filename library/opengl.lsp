@@ -65,6 +65,12 @@ not tested
 (defun gl::vertex2d (x y)
     (c-lang "glVertex2d(Fgetflt(X),Fgetflt(Y));"))
 
+(defun gl::vertex3d (x y z)
+    (c-lang "glVertex3d(Fgetflt(X),Fgetflt(Y),Fgetflt(Z));"))
+
+(defun gl::vertex4d (x1 x2 x3 x4)
+    (c-lang "glVertex4d(Fgetflt(X1),Fgetflt(X2),Fgetflt(X3),Fgetflt(X4));"))
+
 (defun glut::solid-cube (x)
     (c-lang "glutSolidCube(Fgetflt(X));")) 
 
@@ -97,3 +103,6 @@ not tested
 
 (defun gl::flush ()
     (c-lang "glFlush();"))
+
+(defun gl::finish ()
+    (c-lang "glFinish();"))

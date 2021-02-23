@@ -18,7 +18,7 @@
 (defun show ()
   (gl::clear 'gl_color_buffer_bit)
   (gl::color3d 1.0 0.0 0.0)
-  (gl::begin)
+  (gl::begin 'gl-line-loop)
 
   (gl::vertex2d -0.5 -0.5)
   (gl::vertex2d -0.5 0.5)

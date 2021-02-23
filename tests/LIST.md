@@ -1,8 +1,14 @@
-;; test code for library list(written by M.Hroi)
+# List library
 
-(import "test")
+List library written by M.Hiroi
+
+# Usage 
 (import "list")
 
+# Specification
+see following test cases
+
+```
 (test (caar '((a b) (c d) (e f))) A)
 (test (cadr '((a b) (c d) (e f))) (C D))
 (test (cdar '((a b) (c d) (e f))) (B))
@@ -73,4 +79,4 @@
 (test (subsetp '(1 2) '(1 2 3 4)) T)
 (test (subsetp '(1 2 5) '(1 2 3 4)) NIL)
 
-(format (standard-output) "ALl tests are done!~%")
+```

@@ -520,18 +520,18 @@ void display_callback(void){
 int keyboardfunc;
 
 void keyboard_callback(unsigned char key, int x, int y){
-    SET_CDR(makesym("gl::key"),makeint((int)key));
-    SET_CDR(makesym("gl::x"),makeint(x));
-    SET_CDR(makesym("gl::y"),makeint(y));
+    Fset_cdr(Fmakesym("gl::key"),Fmakeint((int)key));
+    Fset_cdr(Fmakesym("gl::x"),Fmakeint(x));
+    Fset_cdr(Fmakesym("gl::y"),Fmakeint(y));
     Feval(keyboardfunc);
 }
 
 int mousefunc;
 
 void mouse_callback(int button, int state, int x, int y) {
-    SET_CDR(makesym("gl::button"),makeint(button));
-    SET_CDR(makesym("gl::state"),makeint(state));
-    SET_CDR(makesym("gl::x"),makeint(x));
-    SET_CDR(makesym("gl::y"),makeint(y));
+    Fset_cdr(Fmakesym("gl::button"),Fmakeint(button));
+    Fset_cdr(Fmakesym("gl::state"),Fmakeint(state));
+    Fset_cdr(Fmakesym("gl::x"),Fmakeint(x));
+    Fset_cdr(Fmakesym("gl::y"),Fmakeint(y));
     Feval(mousefunc);
 }

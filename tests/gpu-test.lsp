@@ -1,14 +1,4 @@
-(defmacro test (form1 form2 :rest pred)
-    (if (null pred)
-        `(if
-          (equal ,form1 ',form2)
-          (format (standard-output) "" ',form1)
-          (format (standard-output) "~S is bad~%" ',form1))
-        `(if
-          (,@pred ,form1 ',form2)
-          (format (standard-output) "" ',form1)
-          (format (standard-output) "~S is bad~%" ',form1))))
-
+(import "test")
 
 (defglobal a #2f((1.0 2.0 3.0) (4.0 5.0 6.0)))
 (defglobal b #2f((4.0 7.0) (5.0 8.0) (6.0 9.0)))

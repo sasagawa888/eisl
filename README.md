@@ -95,7 +95,7 @@ EISL has a compiler. it generates GCC code and generates object code.
 Invoke with -c option
 eisl -c
 
-or (load "library/compiler.lsp")
+or (import "compiler") in REPL
 
 (compile-file "foo.lsp")
 

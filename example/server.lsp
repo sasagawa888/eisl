@@ -7,9 +7,7 @@
   (let ((s (create (class socket)))
         (c nil)
         (msg ""))
-    (setf (socket-ip s) (if (eq (dynamic *default-ip-version*) 'ipv6)
-                                "::1"
-                                "127.0.0.1"))
+    (setf (socket-ip s) (get-host-address "localhost"))
     (setf (socket-n s) 5000)
     (create-server s)
     (setq c (server-accept s))
@@ -22,9 +20,7 @@
 (defun client ()
   (let ((s (create (class socket)))
         (msg ""))
-    (setf (socket-ip s) (if (eq (dynamic *default-ip-version*) 'ipv6)
-                            "::1"
-                            "127.0.0.1"))
+    (setf (socket-ip s) (get-host-address "localhost"))
     (setf (socket-n s) 5000)
     (client-connect s)
     (while (not (string= msg "end"))

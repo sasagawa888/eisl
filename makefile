@@ -12,7 +12,7 @@ LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
 CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2
 ifeq ($(DEBUG),1)
-	CFLAGS += -O0 -ggdb
+	CFLAGS += -O0 -g
 else
 	CFLAGS += -O3 -flto
 endif

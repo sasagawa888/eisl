@@ -106,7 +106,6 @@ void initsubr(void){
     defsubr("GENSYM",f_gensym);
     defsubr("GET-INTERNAL-RUN-TIME",f_get_internal_run_time);
     defsubr("GET-INTERNAL-REAL-TIME",f_get_internal_real_time);
-    defsubr("INTERNAL-TIME-UNITS-PER-SECOND",f_internal_time_units_per_second);
     defsubr("GET-OUTPUT-STREAM-STRING",f_get_output_stream_string);
     defsubr("GET-UNIVERSAL-TIME",f_get_universal_time);
     defsubr("HDMP",f_heapdump);
@@ -116,7 +115,7 @@ void initsubr(void){
     defsubr("INPUT-STREAM-P",f_input_stream_p);
     defsubr("INSTANCEP",f_instancep);
     defsubr("INTEGERP",f_integerp);
-    defsubr("INTERNAL-TIME-UNITS-PER-SECOND internal",f_internal_time_units_per_second);
+    defsubr("INTERNAL-TIME-UNITS-PER-SECOND",f_internal_time_units_per_second);
     defsubr("ISQRT",f_isqrt);
     defsubr("LCM",f_lcm);
     defsubr("LENGTH",f_length);

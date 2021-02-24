@@ -61,7 +61,8 @@ T
 
 Breaks execution by embedding the break function. 
 
-```(defun fact (n)
+```
+(defun fact (n)
   (if (= n 0)
       (break)
       (* n (fact (- n 1)))))

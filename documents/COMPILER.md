@@ -1,12 +1,12 @@
 # Compiler
 I was developing a compiler for Easy-ISLisp (I called it "FAST" project).
 I have released it in August 2017. 
-I write down the specifications, problems, etc. 
+I write down the specifications, constraints, problems, etc. 
 
 # Basic idea
-I refer to GCL created by Mr. Hagiya etc.
-The compiler converts ISLisp code to equivalent C code and GCC generates an object file.
-By dynamically linking object file, Easy-ISLisp(EISL) loads the compiled code.
+I refered to GCL(GNU Common Lisp) created by Mr. Hagiya and others.
+The Easy-ISLisp(EISL) compiler converts ISLisp code to equivalent C code and GCC generates an object file.
+By dynamically linking object file, EISL loads the compiled code.
 The internal definition of the function uses GCC extensions.
 Therefore, the scope of labels and flet syntax is limited. 
 
@@ -39,7 +39,7 @@ Elapsed Time(second)=1.194000
 # Tail recursive optimization
 The ISLisp standard does not require tail-recursive optimization.
 However, like Scheme, EISL generates code that replaces tail recursion with repetition. 
-It doesn't consume the stack if it's next to it, and it's reasonably fast. 
+It doesn't consume the stack in following code, and it's reasonably fast. 
 
 ```
 (defun foo (n)
@@ -64,14 +64,14 @@ The following functions have been uniquely extended for the compiler.
 ```
 (subrp x) t if x is a built-in function, nil otherwise
 (macrop x) t if x is a macro, nil otherwise
-(system str) Str Executes the string on the OS. To start GCC
+(system str) Str Executes the string on the OS. This is for starting GCC.
 (freedll) Unlinks the last dynamically linked file.
 (fixnump x) t for small integers, nil otherwise
 (longnump x) t for LONGNUM, nil otherwise
 (bignump x) t for BIGNUM, nil otherwise
 (readed-array-list x) Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)).
 (ignore-toplevel-check x) Passing t as an argument removes top-level checks such as defclass, and passing nil restores and checks.
-(self-introduction) Returns the linux symbol for Linux and the windows symbol for Windows.
+(self-introduction) Returns the symbol depending the kind of OS 
 Because the compiler changes its behavior depending on the type of OS.
 
 (get-method x) Get all methods of the generic function with name x.

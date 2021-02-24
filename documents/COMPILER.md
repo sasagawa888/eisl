@@ -266,7 +266,7 @@ T
 Takeuchi function code. 
 Even if you use type inference, it  can only infer that the argument and return value are integers. That is the limitation of type inferencer.
 Since the Takeuchi function requires a huge amount of recursive calculation.
-It can be calculated only when the argument is a small integer within practical time.
+It can be calculated within practical time only when the argument is a small integer.
 Therefore, you can generate efficient code by telling the compiler that compiler should generate code for small integers and not consider that it will become BIGNUM. 
 The syntax has no effect on the interpreter, but the compiler executes type inferences based on this additional data. 
 
@@ -325,7 +325,7 @@ I compared it with SBCL, which is a typical processing system of Common Lisp.
 SBCL has a type declaration to speed it up.
 
 ### ex1 
-takeuchi function
+Takeuchi function
 
 ```
 SBCL

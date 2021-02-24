@@ -236,3 +236,204 @@ The prepared functions are as follows.
 ```
 These functions are ignored by the interpreter. 
 
+# Type inference
+EISL compiler has a type inferencer. Introduced experimentally from ver0.85.
+
+# Examples
+### ex1
+In this example, the function foo gives a number to length, which causes an error at runtime.
+This is checked by type inference and a warning message is issued.
+The code is generated because it can be compiled.
+
+```
+(defun foo (x)
+  (length (+ x 1)))
+
+> (compile-file "tarai.lsp" 'type)
+initialize
+pass1
+inferencing FOO
+("subr type mismatch" ((LENGTH (+ X 1))))
+pass2
+compiling FOO 
+finalize
+invoke GCC
+T
+> 
+```
+
+### ex2
+Takeuchi function code. 
+Even if you use type inference, you can infer that the argument and return value are integers, but that is the limit.
+Since the Takeuchi function requires a huge amount of recursive calculation.
+Tt can be calculated only when the argument is a small integer within practical time.
+Therefore, you can generate efficient code by telling the compiler that you should generate code limited to small integers and not consider it when it becomes BIGNUM. 
+The syntax has no effect on the interpreter, but the compiler makes type inferences based on this additional data. 
+
+```
+(defun tarai(x y z)
+  (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
+  (if (<= x y)
+      y
+      (tarai (tarai (- x 1) y z)
+             (tarai (- y 1) z x)
+             (tarai (- z 1) x y))))
+
+> (compile-file "tarai.lsp" 'type)
+initialize
+pass1
+inferencing TARAI
+pass2
+compiling TARAI 
+finalize
+invoke GCC
+T
+> 
+
+```
+
+### ex3
+The Ackermann function also requires a huge amount of recursive calculations and produces large numbers.
+However, I think that the limit of calculation on a personal computer within practical time is about ack (4,1). 
+In this case, the calculation falls within the range of small integers. 
+This is also possible by adding type information using the syntax. 
+
+```
+(defun ack (m n)
+  (the <fixnum> m)(the <fixnum> n)
+  (cond ((= m 0)(+ n 1))
+        ((= n 0)(ack (- m 1) 1))
+        (t (ack (- m 1) (ack m (- n 1))))))
+
+```
+
+### ex4
+The Fibonacci number is an integer, but it is an example of calculating with a floating point number.
+Type inferencer predicts that the arguments and return values are floating point numbers from constants such as 1.0.
+The compiler produces code that is specific to floating point numbers.
+No additional information about the type is needed in this case. 
+
+```
+(defun fib* (n)
+  (cond ((= n 1.0) 1.0)
+        ((= n 2.0) 1.0)
+        (t (+ (fib* (- n 1.0)) (fib* (- n 2.0))))))
+```
+
+# benchmark
+I compared it with SBCL, which is a typical processing system of Common Lisp.
+SBCL has a type declaration to speed it up.
+
+### ex1 
+takeuchi function
+
+```
+SBCL
+(declaim (ftype (function (fixnum fixnum fixnum) fixnum) tarai))
+(defun tarai(x y z)
+  (declare (optimize (speed 3) (debug 0) (safety 0))
+    (type fixnum x)(type fixnum y)(type fixnum z))
+  (if (<= x y)
+      y
+      (tarai (tarai (- x 1) y z)
+             (tarai (- y 1) z x)
+             (tarai (- z 1) x y))))
+
+* (time (tarai 12 6 0))
+
+Evaluation took:
+  0.028 seconds of real time
+  0.031250 seconds of total run time (0.031250 user, 0.000000 system)
+  110.71% CPU
+  79,247,451 processor cycles
+  0 bytes consed
+
+12
+
+
+EISL
+> (load "tarai.o")
+T
+> (tarai 12 6 0)
+12
+> (time (tarai 12 6 0))
+Elapsed Time(second)=0.019982
+<undef>
+> 
+
+```
+
+### ex2
+Ackermann function
+
+```
+SBCL
+(declaim (ftype (function (fixnum fixnum) fixnum) ack))
+(defun ack (m n)
+  (declare (optimize (speed 3) (debug 0) (safety 0))
+    (type fixnum m)(type fixnum n))
+  (cond ((= m 0)(+ n 1))
+        ((= n 0)(ack (- m 1) 1))
+        (t (ack (- m 1) (ack m (- n 1))))))
+
+
+* (time (ack 4 1))
+
+Evaluation took:
+  4.558 seconds of real time
+  4.531250 seconds of total run time (4.531250 user, 0.000000 system)
+  99.41% CPU
+  14,552,407,668 processor cycles
+  0 bytes consed
+
+65533
+* 
+
+EISL
+> (load "tarai.o")
+T
+> (ack 4 1)
+65533
+> (time (ack 4 1))
+Elapsed Time(second)=2.382881
+<undef>
+> 
+
+```
+
+### ex3
+Fibonacci function (float number)
+
+```
+SBCL
+(declaim (ftype (function (float) float) fib*))
+(defun fib* (n)
+  (declare (optimize (speed 3) (debug 0) (safety 0)) (type float n))
+  (if (< n 2.0)
+    n
+    (+ (fib* (- n 2.0)) (fib* (- n 1.0)))))
+
+* (time (fib* 40.0))
+
+Evaluation took:
+  6.479 seconds of real time
+  6.468750 seconds of total run time (6.406250 user, 0.062500 system)
+  [ Run times consist of 0.156 seconds GC time, and 6.313 seconds non-GC time. ]
+  99.85% CPU
+  20,682,846,107 processor cycles
+  3,973,926,912 bytes consed
+
+1.0233415e8
+* 
+
+EISL
+> (fib* 40.0)
+102334155.0
+> (time (fib* 40.0))
+Elapsed Time(second)=0.479320
+<undef>
+> 
+
+```
+
+

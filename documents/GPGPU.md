@@ -1,4 +1,4 @@
-# Manual of GPGPU functions
+# GPGPU
 
 # Install
 You can also compile EISL with nvcc(CUDA) instead of gcc.

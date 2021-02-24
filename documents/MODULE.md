@@ -74,3 +74,6 @@ Easy-ISLisp Ver1.72
 > 
 
 ```
+
+Function boo is private. The global variable declaration, (defglobal x n), is private and cannot be referenced from the outside. 
+The same applies to dynamic variables (defdynamic x n). 

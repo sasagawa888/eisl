@@ -1,4 +1,4 @@
-# Manual of OpenGL
+# OpenGL
 
 # Install
 install OpenGL on linux and compile library/opengl.lsp with Easy-ISLisp

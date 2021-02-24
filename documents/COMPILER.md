@@ -264,11 +264,11 @@ T
 
 ### ex2
 Takeuchi function code. 
-Even if you use type inference, It  can only infer that the argument and return value are integers. That is the limitation.
+Even if you use type inference, it  can only infer that the argument and return value are integers. That is the limitation of type inferencer.
 Since the Takeuchi function requires a huge amount of recursive calculation.
 It can be calculated only when the argument is a small integer within practical time.
-Therefore, you can generate efficient code by telling the compiler that compiler should generate code limited to small integers and not consider it when it becomes BIGNUM. 
-The syntax has no effect on the interpreter, but the compiler makes type inferences based on this additional data. 
+Therefore, you can generate efficient code by telling the compiler that compiler should generate code for small integers and not consider that it will become BIGNUM. 
+The syntax has no effect on the interpreter, but the compiler executes type inferences based on this additional data. 
 
 ```
 (defun tarai(x y z)

@@ -69,12 +69,12 @@ The following functions have been uniquely extended for the compiler.
 (fixnump x) t for small integers, nil otherwise
 (longnump x) t for LONGNUM, nil otherwise
 (bignump x) t for BIGNUM, nil otherwise
-(readed-array-list x) Convert an array of constants like # 2a ((1 2) (3 4)) to a list ((1 2) (3 4)).
+(readed-array-list x) Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)).
 (ignore-toplevel-check x) Passing t as an argument removes top-level checks such as defclass, and passing nil restores and checks.
 (self-introduction) Returns the linux symbol for Linux and the windows symbol for Windows.
 Because the compiler changes its behavior depending on the type of OS.
 
-(get-method x) Get all methods of the inclusive function with name x.
+(get-method x) Get all methods of the generic function with name x.
 (get-method-body x) Get the entity of method x.
 (get-method-priority x) Gets the priority of method x.
 It is an integer value and looks like this:

@@ -19,7 +19,7 @@ If the identifier is o, the load function handles dynamic linking.
 
 # Immediate value of small integer
 The interpreter of EISL created cell objects for everything, including small integers.
-For this reason, GC started immediately and it was difficult to speed up.
+For this reason, GC starts soon and it was difficult to speed up.
 The compiler instantiates integers from -999999999 to 999999999 to prevent cell consumption.
 As a result, the calculation of the Takeuchi function and the Fibonacci sequence can be considerably speeded up. 
 

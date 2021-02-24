@@ -61,6 +61,7 @@ Elapsed Time(second)=1.789000
 # Extensions for the compiler
 The following functions have been uniquely extended for the compiler.
 
+```
 (subrp x) t if x is a built-in function, nil otherwise
 (macrop x) t if x is a macro, nil otherwise
 (system str) Str Executes the string on the OS. To start GCC
@@ -81,6 +82,7 @@ AROUND 11
 BEFORE 12
 PRIORITY 13
 AFTER 14
+```
 
 These are used to compile generic functions.
 The interpreter evaluates the gemeric function once organizes and saves all methods,
@@ -225,9 +227,12 @@ You can use this to call the Wiring PI of Raspberry Pi or write a function that 
 It does not rely on CFFI, so it can be easily linked to C.
 
 The prepared functions are as follows.
+
+```
 (c-include x) Insert #include. e.g. (c-include "stdio.h")
 (c-define x y) Insert #define. e.g. (c-define "MAXINT" "999999999")
 (c-lang x) Insert a c language source. e.g. (c-lang "a = a + 1;")
 (c-option x) Add a compile option. e.g. (c-option "-lwinmm")
+```
 These functions are ignored by the interpreter. 
 

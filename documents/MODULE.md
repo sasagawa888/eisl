@@ -22,7 +22,7 @@ The library name is given as a character string.
 Save the library created by using the f module in the library folder in advance. 
 If there is a compiled one, it will be read preferentially. 
 
-## defpubulic
+## defpublic
 Only the functions defined by defpublic can be referenced from the outside. 
 
 e.g. 

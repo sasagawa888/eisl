@@ -264,7 +264,7 @@ T
 
 ### ex2
 Takeuchi function code. 
-Even if you use type inference, it  can only infer that the argument and return value are integers. That is the limitation of type inferencer.
+Even if you use type inference, it  can only infer that the argument and return value are integers. This is the limitation of type inferencer.
 Since the Takeuchi function requires a huge amount of recursive calculation.
 It can be calculated within practical time only when the argument is a small integer.
 Therefore, you can generate efficient code by telling the compiler that compiler should generate code for small integers and not consider that it will become BIGNUM. 
@@ -294,9 +294,9 @@ T
 
 ### ex3
 The Ackermann function also requires a huge amount of recursive calculations and produces large numbers.
-However, I think that the limit of calculation on a personal computer within practical time is about ack (4,1). 
-In this case, the calculation falls within the range of small integers. 
-This is also possible by adding type information using the syntax. 
+However, I think that the limit of calculation on a personal computer within practical time is about ack(4,1). 
+In this case, the calculation is possible within small integer. 
+This is also possible by adding type information using "the" syntax. 
 
 ```
 (defun ack (m n)

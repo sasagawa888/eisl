@@ -6,12 +6,14 @@ Simple macro for code test
 
 # Specification
 (test test-S-expression result-S-Expression)
+
 If eval of test-S-expression is same as result-S-expression, no message
 If eval of test-S-expression is not same as result-S-expression, print message 
 The equal function is used for the judgment.
 
 (test test-S-expression result-S-Expression pred-function)
-Then pred-function is used for the judgment. e.g. eq, =, eql ...
+
+The pred-function is used for the judgment. e.g. eq, =, eql ...
 
 # Code
 

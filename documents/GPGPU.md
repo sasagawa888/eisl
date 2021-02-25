@@ -24,6 +24,34 @@ it can generate array for float. e.g.
 
 # Bench
 
+```
+(defglobal z (create-array '(3000 3000) 'rand 'float))
+
+(defun test1 ()
+    (gpu-mult z z) )
+
+(defun test2 (n)
+  (for ((i n (- i 1)))
+       ((< i 0) t)
+       (test1)))
+
+Easy-ISLisp Ver1.77
+> (time (test1))
+Elapsed Time(second)=0.074256
+<undef>
+> (time (test1))
+Elapsed Time(second)=0.059127
+<undef>
+> (time (test2 10))
+Elapsed Time(second)=0.582411
+<undef>
+> (time (test2 10))
+Elapsed Time(second)=0.540693
+<undef>
+> 
+
+```
+
 
 
 # Specification

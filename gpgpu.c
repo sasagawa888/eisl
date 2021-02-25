@@ -454,6 +454,12 @@ int f_gpu_gradfilter(int arglist){
     arg3 = caddr(arglist);
     arg4 = nth(3,arglist);
     arg5 = nth(4,arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-gradfilter",arg1);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-gradfilter",arg2);
+    if(!IS_FARRAY(arg2))
+        error(NOT_FARR,"gpu-gradfilter",arg2);
 
     dim1 = GET_CDR(arg1);
     dim2 = GET_CDR(arg2);
@@ -491,6 +497,9 @@ int f_gpu_full(int arglist){
     float *a,*b;
 
     arg1 = car(arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-full",arg1);
+
     dim1 = GET_CDR(arg1);
     in_n = GET_INT(nth(0,dim1));
     in_c = GET_INT(nth(1,dim1));
@@ -513,6 +522,9 @@ int f_gpu_unfull(int arglist){
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
     arg4 = cadddr(arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-unfull",arg1);
+
     dim1 = GET_CDR(arg1);
     r = GET_INT(nth(0,dim1));
     in_c = GET_INT(arg2);
@@ -534,6 +546,11 @@ int f_gpu_dropout(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(!IS_FARRAY(arg1))
+        error(NOT_FARR,"gpu-dropout",arg1);
+    if(!floatp(arg2))
+        error(NOT_FLT,"gpu-dropout",arg2);
+
     dim1 = GET_CDR(arg1);
     dropout_rate = (float)GET_FLT(arg2);
     

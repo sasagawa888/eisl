@@ -1,5 +1,5 @@
 # Edlis
-Edlis is simple editor for ISLisp 
+Edlis is a simple editor for ISLisp 
 
 ## invoke
 (edit filename) in REPL

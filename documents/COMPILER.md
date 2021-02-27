@@ -4,7 +4,7 @@ I have released it in August 2017.
 I write down the specifications, constraints, problems, etc. 
 
 # Basic idea
-I refered to GCL(GNU Common Lisp) created by Mr. Hagiya and others.
+I refered to GCL(GNU Common Lisp) created by Mr. Hagiya, Mr. Yuasa and others.
 The Easy-ISLisp(EISL) compiler converts ISLisp code to equivalent C code and GCC generates an object file.
 By dynamically linking object file, EISL loads the compiled code.
 The internal definition of the function uses GCC extensions.

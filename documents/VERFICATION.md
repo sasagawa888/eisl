@@ -1,10 +1,10 @@
 # Verification for ISLisp standard
 
 
-tests/
+verify/
 
 ```
-verify.lsp 
+all-test.lsp 
 arithmetic-test.lsp
 array-test.lsp
 controle-test.lsp
@@ -13,8 +13,11 @@ list-test.lsp
 object-test.lsp
 predicate-test.lsp
 symbol-test.lsp
-They are sets of test code to test for ISLisp standard compatibility.
+char-test.lsp
+string-test.lsp
 ```
+They are sets of test code to test for ISLisp standard compatibility.
+
 
 # Acknowledgment
 I am referring to this code. I would like to thank the development members of OKI-ISLisp. 

@@ -125,14 +125,14 @@
 (test (char-index #\a "") nil)
 (test (char-index #\a (create-string 1000 #\a)) 0 eql)
 (test (char-index #\a (create-string 1000 #\b)) nil)
-;($error (char-index #\a "" 0) <program-error>)
-;($error (char-index #\a "" -1) <domain-error>)
-;($error (char-index #\a "" -1234567890) <domain-error>)
-;($error (char-index #\a "" 1234567890) <program-error>)
-;($error (char-index #\a "abc" 3) <program-error>)
-;($error (char-index #\a "abc" -1) <domain-error>)
-;($error (char-index #\a "abc" -1234567890) <domain-error>)
-;($error (char-index #\a "abc" 1234567890) <program-error>)
+($error (char-index #\a "" 0) <program-error>)
+($error (char-index #\a "" -1) <domain-error>)
+($error (char-index #\a "" -1234567890) <domain-error>)
+($error (char-index #\a "" 1234567890) <program-error>)
+($error (char-index #\a "abc" 3) <program-error>)
+($error (char-index #\a "abc" -1) <domain-error>)
+($error (char-index #\a "abc" -1234567890) <domain-error>)
+($error (char-index #\a "abc" 1234567890) <program-error>)
 
 ;;;
 ;;; (STRING-INDEX substring string [start-position]) --> <object>

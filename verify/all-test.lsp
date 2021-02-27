@@ -36,4 +36,4 @@
 (format (standard-output) "seq-test~%")
 (load "verify/seq-test.lsp")
 
-(format (standard-output) "All tests are done!~%")
+(format (standard-output) "All tests were done!~%")

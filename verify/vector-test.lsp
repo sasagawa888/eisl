@@ -21,9 +21,9 @@
 ;;;
 (test (create-vector 0) #() equal)
 (test (create-vector 0 'a) #() equal)
-;($error (create-vector -1) <domain-error>)
-;($error (create-vector -1234567890) <domain-error>)
-;($error (create-vector 1234567890) <storage-exhausted>)
+($error (create-vector -1) <domain-error>)
+($error (create-vector -1234567890) <domain-error>)
+($error (create-vector 1234567890) <storage-exhausted>)
 (test (length (create-vector 1000 'a)) 1000 eql)
 
 ;;;

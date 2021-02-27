@@ -22,7 +22,6 @@ void error(int errnum, const char *fun, int arg){
         unwind_pt = 0;
     }
 
-    ESCERRFRED;
     switch(errnum){ 
         case DIV_ZERO:  initargs = list6(makesym("format-string"),makestr("division by zero at "),
                                          makesym("format-arguments"),arg,
@@ -361,7 +360,6 @@ void error(int errnum, const char *fun, int arg){
                         break;  
                            
     }
-    ESCERRFORG;
 }
 /*
 x = class
@@ -399,14 +397,14 @@ void signal_condition(int x, int y){
     args = cdr(assoc(makesym("b"),GET_CDR(x)));
     fun = cdr(assoc(makesym("c"),GET_CDR(x)));
     output_stream = error_stream;
-    ESCFRED;
+    ESCERRFRED;
     fprintf(stderr,"%s",GET_NAME(str)); 
     print(fun);
     fprintf(stderr,"%s"," ");
     print(args);
     fprintf(stderr,"\n");
     fflush(stderr);
-    ESCFORG;
+    ESCERRFORG;
     input_stream = standard_input;
     output_stream = standard_output;
     debugger();

@@ -24,4 +24,7 @@
 (format (standard-output) "symbol-test~%")
 (load "tests/symbol-test.lsp")
 
+(format (standard-output) "char-test~%")
+(load "tests/char-test.lsp")
+
 (format (standard-output) "All tests are done!~%")

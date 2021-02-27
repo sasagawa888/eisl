@@ -30,4 +30,10 @@
 (format (standard-output) "string-test~%")
 (load "verify/string-test.lsp")
 
+(format (standard-output) "vector-test~%")
+(load "verify/vector-test.lsp")
+
+(format (standard-output) "seq-test~%")
+(load "verify/seq-test.lsp")
+
 (format (standard-output) "All tests are done!~%")

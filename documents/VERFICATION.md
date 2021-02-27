@@ -15,6 +15,8 @@ predicate-test.lsp
 symbol-test.lsp
 char-test.lsp
 string-test.lsp
+vector-test.lsp
+seq-test.lsp
 ```
 They are sets of test code to test for ISLisp standard compatibility.
 

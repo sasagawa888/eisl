@@ -1436,7 +1436,7 @@ int f_assoc(int arglist){
     if(!listp(arg2))
         error(NOT_LIST, "assoc", arg2);
     if(!assoclistp(arg2))
-        error(ILLEGAL_ARGS, "assoc", arg2);
+        error(IMPROPER_ARGS, "assoc", arg2);
 
     return(assoc(arg1,arg2));
 }

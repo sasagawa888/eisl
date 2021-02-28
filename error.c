@@ -255,6 +255,12 @@ void error(int errnum, const char *fun, int arg){
                         initargs = list6(makesym("format-string"),makestr("Out of range at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;  
+        case OUT_OF_DOMAIN:
+                        initargs = list6(makesym("format-string"),makestr("Out of range at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
                         break;  
         case NOT_COMPUTABLE:

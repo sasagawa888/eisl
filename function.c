@@ -2453,21 +2453,35 @@ int f_elt(int arglist){
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "elt", arglist);
-    if(!integerp(arg2))
+    if(!integerp(arg2) && !longnump(arg2))
         error(NOT_INT, "elt", arg2);
+    if(negativep(arg2))
+            error(OUT_OF_DOMAIN, "elt", arg2);
 
     if(listp(arg1)){
-        if(length(arg1) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(length(arg1) == 0)
+            error(OUT_OF_RANGE, "elt", arg1);
+        if(integerp(arg2) && length(arg1) <= GET_INT(arg2))
+            error(OUT_OF_RANGE, "elt", arg2);
+        if(longnump(arg2) && (long long int)length(arg1) <= GET_LONG(arg2))
             error(OUT_OF_RANGE, "elt", arg2);
         return(listref(arg1,GET_INT(arg2)));
     }
     else if(vectorp(arg1)){
-        if(vector_length(arg1) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(vector_length(arg1) == 0)
+            error(OUT_OF_RANGE, "elt", arg1);
+        if(integerp(arg2) && vector_length(arg1) <= GET_INT(arg2))
+            error(OUT_OF_RANGE, "elt", arg2);
+        if(longnump(arg2) && (long long int)vector_length(arg1) <= GET_LONG(arg2))
             error(OUT_OF_RANGE, "elt", arg2);
         return(vector_ref(arg1,GET_INT(arg2)));
     }
     else if(stringp(arg1)){
-        if(((int)strlen(GET_NAME(arg1))) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(strlen(GET_NAME(arg1)) == 0)
+            error(OUT_OF_RANGE, "elt", arg1);
+        if(integerp(arg2) && ((int)strlen(GET_NAME(arg1)) <= GET_INT(arg2)))
+            error(OUT_OF_RANGE, "elt", arg2);
+        if(longnump(arg2) && (long long int)strlen(GET_NAME(arg1)) <= GET_LONG(arg2))
             error(OUT_OF_RANGE, "elt", arg2);
         str[0] = GET_NAME_ELT(arg1,GET_INT(arg2));
         str[1] = NUL;
@@ -2485,16 +2499,38 @@ int f_set_elt(int arglist){
     arg3 = caddr(arglist);
     if(length(arglist) != 3)
         error(WRONG_ARGS, "set-elt", arglist);
-    if(!integerp(arg3))
+    if(!integerp(arg3) && !longnump(arg3))
         error(NOT_INT, "set-elt", arg3);
+    if(negativep(arg3))
+        error(OUT_OF_DOMAIN, "set-elt", arg2);
 
-    if(listp(arg2))
+    if(listp(arg2)){
+        if(length(arg2) == 0)
+            error(OUT_OF_RANGE, "set-elt", arg1);
+        if(integerp(arg3) && length(arg2) <= GET_INT(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg2);
+        if(longnump(arg3) && (long long int)length(arg2) <= GET_LONG(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg2);
         SET_CAR(listref1(arg2,GET_INT(arg3)),arg1);
-    else if(vectorp(arg2))
+    }
+    else if(vectorp(arg2)){
+        if(vector_length(arg2) == 0)
+            error(OUT_OF_RANGE, "set-elt", arg2);
+        if(integerp(arg3) && vector_length(arg2) <= GET_INT(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg3);
+        if(longnump(arg3) && (long long int)vector_length(arg2) <= GET_LONG(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg3);
         SET_VEC_ELT(arg2,GET_INT(arg3),arg1);
-    else if(stringp(arg2))
+    }
+    else if(stringp(arg2)){
+        if(strlen(GET_NAME(arg2)) == 0)
+            error(OUT_OF_RANGE, "set-elt", arg2);
+        if(integerp(arg3) && ((int)strlen(GET_NAME(arg2)) <= GET_INT(arg3)))
+            error(OUT_OF_RANGE, "set-elt", arg3);
+        if(longnump(arg3) && (long long int)strlen(GET_NAME(arg2)) <= GET_LONG(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg2);
         STRING_SET(arg2,GET_INT(arg3),GET_CHAR(arg1));
-
+    }
     return(arg1);
 }
 
@@ -3791,10 +3827,15 @@ int f_subseq(int arglist){
     arg3 = caddr(arglist);
     if(length(arglist) != 3)
         error(WRONG_ARGS, "subseq", arglist);
+    if(!integerp(arg2) && !longnump(arg2))
+        error(NOT_INT, "subseq", arg2);
+    if(!integerp(arg3) && !longnump(arg3))
+        error(NOT_INT, "subseq", arg3);
+    if(negativep(arg2) || negativep(arg3))
+        error(OUT_OF_DOMAIN, "subseq", arglist);
     if(greaterp(arg2,arg3))
         error(OUT_OF_RANGE, "subseq", arglist);
-    if(negativep(arg2) || negativep(arg3))
-        error(OUT_OF_RANGE, "subseq", arglist);
+    
 
 
     if(stringp(arg1)){

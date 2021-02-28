@@ -429,6 +429,7 @@ extern char extended[70][30];
 #define NOT_FARR        155
 #define NOT_EXIST_ARG   156
 #define IMPROPER_ARGS   157
+#define OUT_OF_DOMAIN   158
 
 
 #define ESCHOME printf("\33[1;1H")
@@ -551,6 +552,7 @@ int create_array(int x);
 int create_list(int x, int y);
 int dectoken(char buf[]);
 int divide(int arg1, int arg2);
+int duplicatelistp(int sl);
 int each_car(int x);
 int each_cdr(int x);
 int eqgreaterp(int x, int y);

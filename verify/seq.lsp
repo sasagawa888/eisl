@@ -68,20 +68,9 @@
 ($error (elt () 1234567890) <program-error>)
 (test (elt '(a b c) 0) a)
 ($error (elt '(a b c) 3) <program-error>)
-($error (elt '(a b c) -1) <domain-error>)
-($error (elt '(a b c) -1234567890) <domain-error>)
 ($error (elt '(a b c) 1234567890) <program-error>)
 (test (elt (create-list 1000 'a) 999) a)
 
-;;;
-;;; function (SET-ELT obj sequence z) --> <object>
-;;;
-($ap 2 "set-elt" P.99)
-(test (let ((string (create-string 5 #\x)))
-   (setf (elt string 2) #\O)
-   string)
- "xxOxx"
- string=)
 (test (let ((string (create-string 5 #\x)))
    (set-elt #\O string 2)
    string)

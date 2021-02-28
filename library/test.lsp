@@ -18,9 +18,6 @@
         (ignore-toplevel-check nil)))
           
 
-
-(defmacro $error (form name) `nil)
-#|
 (defmacro $error (form name)
   `(let ((ans (catch 'c-parse-error
            (with-handler 
@@ -29,7 +26,7 @@
       (if (equal (class-of ans) (class ,name))
           (format (standard-output) "" ',form)
           (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans)))))
-|#
+
 (defmacro $ap (n name :rest page)
     (if (null page)
         `(format (standard-output) "~A ~A~%" ,n ,name)

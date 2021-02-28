@@ -1,3 +1,4 @@
+(import "test")
 ;;; -*- lisp -*-
 ;;;
 ;;; Chapter 4 Forms and Evaluation
@@ -12,33 +13,33 @@
 
 ;;;------------------------------------------------------------
 ;;; (a) literal
-(#2a((a b) (c d)) #2a((a b) (c d)) equal)
-(#(a b c) #(a b c) equal)
-(123 123 equal)
-(1.23 1.23 equal)
-(#\a #\a equal)
-("foo" "foo" equal)
+(test #2a((a b) (c d)) #2a((a b) (c d)) equal)
+(test #(a b c) #(a b c) equal)
+(test 123 123 equal)
+(test 1.23 1.23 equal)
+(test #\a #\a equal)
+(test "foo" "foo" equal)
 
 ;;; (b) identifier
-(t t)
-(nil nil)
+(test t t)
+(test nil nil)
 ($eval (defglobal x 1))
-(x 1 equal)
+(test x 1 equal)
 ($error unbound-var <unbound-variable>)
 
 ;;; (c) compound form: (operator argument*)
 ;;;   (c-1) operator: special operator
-((if 1 2 3) 2 equal)
+(test (if 1 2 3) 2 equal)
 
 ;;;   (c-2) operator: defining operator
-((defglobal x 2) x equal)
-(x 2 equal)
+(test (defglobal x 2) x equal)
+(test x 2 equal)
 
 ;;;   (c-3) operator: lambda form
-(((lambda (x) (+ x x)) 4) 8 equal)
+(test ((lambda (x) (+ x x)) 4) 8 equal)
 
 ;;;   (c-4) operator: otherwise --> function application form
-((+ 1 2) 3 equal)
+(test (+ 1 2) 3 equal)
 ($error (undef-func) <undefined-function>)
 
 ;;; (d) otherwise --> undefined-function
@@ -58,14 +59,14 @@
 ;;; 
 ($predicate functionp $function $generic)
 ;;;
-((functionp (function car)) t)
-((functionp #'car) t)
+(test (functionp (function car)) t)
+(test (functionp #'car) t)
 ;;;
 ($eval (defun foo-func ()))
-((functionp (function foo-func)) t)
-((functionp #'foo-func) t)
+(test (functionp (function foo-func)) t)
+(test (functionp #'foo-func) t)
 ;;;
-((functionp 1) nil)
+(test (functionp 1) nil)
 
 ;;;------------------------------------------------------------
 ;;; [special operator] 
@@ -76,13 +77,13 @@
 ;;;
 ($argc function 1 0 0)
 ;;;
-((funcall (function -) 3) -3 equal)
-((funcall #'- 3) -3 equal)
-((apply (function -) '(4 3)) 1 equal)
-((apply #'- '(4 3)) 1 equal)
-;;; ˆø”‚ªdot-list
+(test (funcall (function -) 3) -3 equal)
+(test (funcall #'- 3) -3 equal)
+(test (apply (function -) '(4 3)) 1 equal)
+(test (apply #'- '(4 3)) 1 equal)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½dot-list
 ($error (function + . 1) <error>)
-;;; function-name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; function-name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (function #2a((a b) (c d))) <domain-error>)
 ($error (function #\a) <domain-error>)
 ($error (function 1234) <domain-error>)
@@ -90,7 +91,7 @@
 ($error (function "abc") <domain-error>)
 ($error (function #(a b c)) <domain-error>)
 ($error (function (x y)) <domain-error>)
-;;; function-name ‚É‘Î‚·‚é‘©”›‚ª‚È‚¢(undefined-function)
+;;; function-name ï¿½É‘Î‚ï¿½ï¿½é‘©ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½(undefined-function)
 ($error (function undef-func) <undefined-function>)
 ;;; The consequences are undefined if the function-name names 
 ;;; a macro or special form
@@ -107,19 +108,19 @@
 ;;;------------------------------------------------------------
 ($ap 2 "lambda" P.21)
 ;;;
-(((lambda (x y) (+ (* x x) (* y y))) 3 4) 25 equal)
-(((lambda (x y &rest z) z) 3 4 5 6) (5 6) equal)
-(((lambda (x y :rest z) z) 3 4 5 6) (5 6) equal)
-((funcall (lambda (x y) (- y (* x y))) 7 3) -18 equal)
+(test ((lambda (x y) (+ (* x x) (* y y))) 3 4) 25 equal)
+(test ((lambda (x y &rest z) z) 3 4 5 6) (5 6) equal)
+(test ((lambda (x y :rest z) z) 3 4 5 6) (5 6) equal)
+(test (funcall (lambda (x y) (- y (* x y))) 7 3) -18 equal)
 ;;;
 ($eval (defconstant *const-e* 3))
-(((lambda (*const-e*) *const-e*) 4) 4 equal)
-;;; lambda-list ‚ª‚È‚¢
+(test ((lambda (*const-e*) *const-e*) 4) 4 equal)
+;;; lambda-list ï¿½ï¿½ï¿½È‚ï¿½
 ($error (lambda) <program-error>)
-;;; lambda-list ‚ÌŒ`®‚ª•s“–
+;;; lambda-list ï¿½ÌŒ`ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
 ($error ((lambda x nil)) <error>)
 ($error ((lambda (x . y) nil)) <error>)
-;;; “¯‚¶identifier
+;;; ï¿½ï¿½ï¿½ï¿½identifier
 ($error ((lambda (x x) nil) 1 2) <error>)
 ($error ((lambda (x &rest x) nil) 1 2 3) <error>)
 ($error ((lambda (x :rest x) nil) 1 2 3) <error>)
@@ -130,13 +131,13 @@
 ($error ((lambda (:rest :a) nil) 1) <program-error>)
 ($error ((lambda (&rest &a) nil) 1) <program-error>)
 ($error ((lambda (&rest :a) nil) 1) <program-error>)
-;;; ƒVƒXƒeƒ€’è”
+;;; ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½è”
 ($error ((lambda (nil) nil) 1) <program-error>)
 ($error ((lambda (t) nil) 1) <program-error>)
 ($error ((lambda (*pi*) nil) 1) <program-error>)
 ($error ((lambda (*most-positive-float*) nil) 1) <program-error>)
 ($error ((lambda (*most-negative-float*) nil) 1) <program-error>)
-;;; identifier ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; identifier ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error ((lambda (#2a((a b) (c d))) nil) 1) <domain-error>)
 ($error ((lambda (#\a) nil) 1) <domain-error>)
 ($error ((lambda (1234) nil) 1) <domain-error>)
@@ -144,12 +145,12 @@
 ($error ((lambda ("abc") nil) 1) <domain-error>)
 ($error ((lambda (#(a b c)) nil) 1) <domain-error>)
 ($error ((lambda ((x y)) nil) 1) <domain-error>)
-;;; &rest, :rest ‚ÌŒã‚Ì identifier ‚ÌŒÂ”
+;;; &rest, :rest ï¿½ÌŒï¿½ï¿½ identifier ï¿½ÌŒÂï¿½
 ($error ((lambda (x y &rest) nil) 1 2) <error>)
 ($error ((lambda (x y :rest) nil) 1 2) <error>)
 ($error ((lambda (x y &rest z w) nil) 1 2) <error>)
 ($error ((lambda (x y :rest z w) nil) 1 2) <error>)
-;;; &rest, :rest ‚ÌŒã‚Ì identifier ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; &rest, :rest ï¿½ÌŒï¿½ï¿½ identifier ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error ((lambda (x &rest #2a((a b) (c d))) nil) 1) <domain-error>)
 ($error ((lambda (x :rest #2a((a b) (c d))) nil) 1) <domain-error>)
 ($error ((lambda (x &rest #\a) nil) 1) <domain-error>)
@@ -164,24 +165,24 @@
 ($error ((lambda (x :rest #(a b c)) nil) 1) <domain-error>)
 ($error ((lambda (x &rest (x y)) nil) 1) <domain-error>)
 ($error ((lambda (x :rest (x y)) nil) 1) <domain-error>)
-;;; &rest, :rest ‚ÌŒã‚É &rest, :rest
+;;; &rest, :rest ï¿½ÌŒï¿½ï¿½ &rest, :rest
 ($error ((lambda (&rest &rest) nil) 1) <program-error>)
 ($error ((lambda (&rest :rest) nil) 1) <program-error>)
 ($error ((lambda (:rest &rest) nil) 1) <program-error>)
 ($error ((lambda (:rest &rest) nil) 1) <program-error>)
-;;; w’è‚³‚ê‚½lambda-list‚Æ,
-;;; ŠÖ”‚ªó‚¯æ‚Á‚½ˆø”‚ÌŒÂ”‚ªˆê’v‚µ‚È‚¢(arity-error)
+;;; ï¿½wï¿½è‚³ï¿½ê‚½lambda-listï¿½ï¿½,
+;;; ï¿½Öï¿½ï¿½ï¿½ï¿½ó‚¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½È‚ï¿½(arity-error)
 ($error ((lambda (x y) nil) 1) <program-error>)
 ($error ((lambda (x y) nil) 1 2 3) <program-error>)
 ($error ((lambda (x y &rest z) nil) 1) <program-error>)
 ($error ((lambda (x y :rest z) nil) 1) <program-error>)
-;;; lambda-list ‚Éw’è‚³‚ê‚½identifier ‚Ì—LŒø”ÍˆÍŠO
+;;; lambda-list ï¿½Éwï¿½è‚³ï¿½ê‚½identifier ï¿½Ì—Lï¿½ï¿½ï¿½ÍˆÍŠO
 ($error ((lambda () unbound-var)) <unbound-variable>)
 ($error ((lambda (x) y) 1) <unbound-variable>)
 ($error ((lambda (x &rest y) z) 1) <unbound-variable>)
 ($error ((lambda (x :rest y) z) 1) <unbound-variable>)
 ;;;
-((let ((x 1))
+(test (let ((x 1))
    (lambda () 1)
    (lambda () 2)
    x) 1 equal)
@@ -193,10 +194,10 @@
 ;;;------------------------------------------------------------
 ($ap 2 "labels" P.22)
 ;;;
-((labels ()) nil)
-((labels () 1) 1 equal)
-((labels () 1 2) 2 equal)
-((labels ((evenp (n)
+(test (labels ()) nil)
+(test (labels () 1) 1 equal)
+(test (labels () 1 2) 2 equal)
+(test (labels ((evenp (n)
 		 (if (= n 0)
 		     t
 		   (oddp (- n 1))))
@@ -207,16 +208,16 @@
 	 (evenp 88))
  t)
 ;;;
-((functionp (labels ((foo ())) #'foo)) t)
-;;; ˆø”‚ÌŒÂ”
+(test (functionp (labels ((foo ())) #'foo)) t)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($error (labels) <program-error>)
-;;; ‘©”›ƒŠƒXƒg‚ª•s“–
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½sï¿½ï¿½
 ($error (labels (f)) <error>)
 ($error (labels ((f))) <error>)
-;;; lambda-list ‚ª•s“–
+;;; lambda-list ï¿½ï¿½ï¿½sï¿½ï¿½
 ($error (labels ((f x))) <error>)
 ($error (labels ((f (x . y)))) <error>)
-;;; function-name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; function-name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (labels ((#2a((a b) (c d)) (x) x))) <domain-error>)
 ($error (labels ((#\a (x) x))) <domain-error>)
 ($error (labels ((1234 (x) x))) <domain-error>)
@@ -224,11 +225,11 @@
 ($error (labels (("abc" (x) x))) <domain-error>)
 ($error (labels ((#(a b c) (x) x))) <domain-error>)
 ($error (labels (((x y) (x) x))) <domain-error>)
-;;; ƒL[ƒ[ƒh‚Í‘©”›‚Å‚«‚È‚¢
+;;; ï¿½Lï¿½[ï¿½ï¿½ï¿½[ï¿½hï¿½Í‘ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½È‚ï¿½
 ($error (labels ((:a ()))) <program-error>)
-;;; function-name ‚Ì—LŒø”ÍˆÍŠO
+;;; function-name ï¿½Ì—Lï¿½ï¿½ï¿½ÍˆÍŠO
 ($error (labels ((f (x) (g x))) (f 1)) <undefined-function>)
-;;; body-forms* ‚ª dot-list
+;;; body-forms* ï¿½ï¿½ dot-list
 ($error (labels ((f (x) x)) . 1) <error>)
 ($error (labels ((f (x) x)) (f 1) . 2) <error>)
 
@@ -239,33 +240,33 @@
 ;;;------------------------------------------------------------
 ($ap 2 "flet" P.22)
 ;;;
-((flet ()) nil)
-((flet () 1) 1 equal)
-((flet () 1 2) 2 equal)
-((flet ((f (x) (+ x 3)))
+(test (flet ()) nil)
+(test (flet () 1) 1 equal)
+(test (flet () 1 2) 2 equal)
+(test (flet ((f (x) (+ x 3)))
        (flet ((f (x) (+ x (f x))))
 	     (f 7)))
  17
  equal)
 ;;;
-((functionp (flet ((foo ())) #'foo)) t)
+(test (functionp (flet ((foo ())) #'foo)) t)
 ;;;
 ($eval (defglobal x nil))
 ($eval (flet ((f () 2)) (setq x (lambda () (f)))))
-((funcall x) 2)
+(test (funcall x) 2)
 ;;;
 ($eval (defglobal x nil))
 ($eval (flet ((f () 2)) (setq x (lambda () (f)))))
-((apply x ()) 2)
-;;; ˆø”‚ÌŒÂ”
+(test (apply x ()) 2)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($error (flet) <program-error>)
-;;; ‘©”›ƒŠƒXƒg‚ª•s“–
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½sï¿½ï¿½
 ($error (flet (f)) <error>)
 ($error (flet ((f))) <error>)
-;;; lambda-list ‚ª•s“–
+;;; lambda-list ï¿½ï¿½ï¿½sï¿½ï¿½
 ($error (flet ((f x))) <error>)
 ($error (flet ((f (x . y)))) <error>)
-;;; function-name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; function-name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (flet ((#2a((a b) (c d)) (x) x))) <domain-error>)
 ($error (flet ((#\a (x) x))) <domain-error>)
 ($error (flet ((1234 (x) x))) <domain-error>)
@@ -273,20 +274,20 @@
 ($error (flet (("abc" (x) x))) <domain-error>)
 ($error (flet ((#(a b c) (x) x))) <domain-error>)
 ($error (flet (((x y) (x) x))) <domain-error>)
-;;; ƒL[ƒ[ƒh‚Í‘©”›‚Å‚«‚È‚¢
+;;; ï¿½Lï¿½[ï¿½ï¿½ï¿½[ï¿½hï¿½Í‘ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½È‚ï¿½
 ($error (flet ((:a ()))) <program-error>)
-;;; function-name ‚Ì—LŒø”ÍˆÍŠO
+;;; function-name ï¿½Ì—Lï¿½ï¿½ï¿½ÍˆÍŠO
 ($error (flet ((f (x) (g x))) (f 1)) <undefined-function>)
 ($error 
  (flet ((f (x) (g x))
 	(g (x) x))
        (f 1))  <undefined-function>)
-;;; body-forms* ‚ª dot-list
+;;; body-forms* ï¿½ï¿½ dot-list
 ($error (flet ((f (x) x)) . 1) <error>)
 ($error (flet ((f (x) x)) (f 1) . 2) <error>)
 ;;;
 ($eval (defun foo-5 () 1))
-((flet ((foo-5 () (foo-5))) (foo-5)) 1)
+(test (flet ((foo-5 () (foo-5))) (foo-5)) 1)
 
 ;;;------------------------------------------------------------
 ;;; [function] 
@@ -295,27 +296,27 @@
 ;;;------------------------------------------------------------
 ($ap 2 "apply" P.23)
 ;;;
-((apply #'+ '(1 2)) 3 equal)
-((apply #'+ 3 '(1 2)) 6 equal)
-((apply #'+ 3 4 '(1 2)) 10 equal)
-((apply (if (< 1 2) (function max) (function min))
+(test (apply #'+ '(1 2)) 3 equal)
+(test (apply #'+ 3 '(1 2)) 6 equal)
+(test (apply #'+ 3 4 '(1 2)) 10 equal)
+(test (apply (if (< 1 2) (function max) (function min))
 	1 2 (list 3 4)) 4 equal)
 ($eval (defun compose (f g)
 	 (lambda (:rest args)
 	   (funcall f (apply g args)))))
-((funcall (compose (function sqrt) (function *)) 12 75) 30 equal)
-;;; ˆø”‚ÌŒÂ”
+(test (funcall (compose (function sqrt) (function *)) 12 75) 30 equal)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($argc apply 2 0 1)
-;;; function ‚ªŠÖ”‚Å‚È‚¢(domain-error)
+;;; function ï¿½ï¿½ï¿½Öï¿½ï¿½Å‚È‚ï¿½(domain-error)
 ($type apply ($function $generic) :target 1 (quote (2 3)))
-;;; list ‚ª^ƒŠƒXƒg‚Å‚È‚¢(improper-arglist)
+;;; list ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½Xï¿½gï¿½Å‚È‚ï¿½(improper-arglist)
 ($error (apply #'list '(1 . 2)) <program-error>)
 ($error (apply #'list 1 '(2 . 3)) <program-error>)
 ($error (apply #'list 1 2 '(3 . 4)) <program-error>)
 ;;;
-((apply #'list '(1 2)) (1 2) equal)
-((apply #'list 1 '(2 3)) (1 2 3) equal)
-((apply #'list 1 2 '(3 4)) (1 2 3 4) equal)
+(test (apply #'list '(1 2)) (1 2) equal)
+(test (apply #'list 1 '(2 3)) (1 2 3) equal)
+(test (apply #'list 1 2 '(3 4)) (1 2 3 4) equal)
 
 ;;;------------------------------------------------------------
 ;;; [function] 
@@ -324,15 +325,15 @@
 ;;;------------------------------------------------------------
 ($ap 2 "funcall" P.23)
 ;;;
-((funcall #'+) 0 equal)
-((funcall #'+ 1) 1 equal)
-((funcall #'+ 1 2) 3 equal)
-((let ((x '(1 2 3)))
+(test (funcall #'+) 0 equal)
+(test (funcall #'+ 1) 1 equal)
+(test (funcall #'+ 1 2) 3 equal)
+(test (let ((x '(1 2 3)))
    (funcall (cond ((listp x) (function car))
 		  (t (lambda (x) (cons x 1)))) x)) 1 equal)
-;;; ˆø”‚ÌŒÂ”
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($argc funcall 1 0 1)
-;;; function ‚ªŠÖ”‚Å‚È‚¢(domain-error)
+;;; function ï¿½ï¿½ï¿½Öï¿½ï¿½Å‚È‚ï¿½(domain-error)
 ($type funcall ($function $generic) :target 1)
 
 ($ap 1 "Defining Operators")
@@ -344,27 +345,27 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defconstant")
 ;;;
-((defconstant *const-1* 1) *const-1* equal)
-((defconstant *const-e* 2.718) *const-e* equal)
+(test (defconstant *const-1* 1) *const-1* equal)
+(test (defconstant *const-e* 2.718) *const-e* equal)
 (*const-e* 2.718 equal)
 ($eval (defun f () *const-e*))
-((f) 2.718 equal)
-;;; ˆø”‚ÌŒÂ”
+(test (f) 2.718 equal)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($error (defconstant) <program-error>)
 ($error (defconstant *const-e*) <program-error>)
 ($error (defconstant *const-e* 2 3) <program-error>)
-;;; ˆø”ƒŠƒXƒg‚ªƒhƒbƒgƒŠƒXƒg
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½hï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½g
 ($error (defconstant *const-e* 2 . 3) <error>)
-;;; ƒgƒbƒvƒŒƒxƒ‹’è‹`‚Å‚È‚¢
+;;; ï¿½gï¿½bï¿½vï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½`ï¿½Å‚È‚ï¿½
 ($error (+ (defconstant *const-e* 2)) <error>)
-;;; name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (defconstant #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (defconstant #\a nil) <domain-error>)
 ($error (defconstant 1234 nil) <domain-error>)
 ($error (defconstant "abc" nil) <domain-error>)
 ($error (defconstant #(a b c) nil) <domain-error>)
 ($error (defconstant (x y) nil) <domain-error>)
-;;; ƒVƒXƒeƒ€’è‹`‚Ì’è”‚Í•ÏX‚Å‚«‚È‚¢
+;;; ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½ï¿½`ï¿½Ì’è”ï¿½Í•ÏXï¿½Å‚ï¿½ï¿½È‚ï¿½
 ($error (defconstant nil nil) <program-error>)
 ($error (defconstant t nil) <program-error>)
 ($error (defconstant *pi* nil) <program-error>)
@@ -381,36 +382,36 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defglobal")
 ;;;
-((defglobal *global-1* 1) *global-1* equal)
+(test (defglobal *global-1* 1) *global-1* equal)
 (*global-1* 1 equal)
-((defglobal *global-today* 'wednesday) *global-today* equal)
+(test (defglobal *global-today* 'wednesday) *global-today* equal)
 (*global-today* wednesday equal)
 ($eval (defun what-is-today () *global-today*))
-((what-is-today) wednesday equal)
-((let ((what-is-today 'thursday)) (what-is-today)) wednesday equal)
-((let ((*global-today* 'thursday)) (what-is-today)) wednesday equal)
-;;; ˆø”‚ÌŒÂ”
+(test (what-is-today) wednesday equal)
+(test (let ((what-is-today 'thursday)) (what-is-today)) wednesday equal)
+(test (let ((*global-today* 'thursday)) (what-is-today)) wednesday equal)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($error (defglobal) <program-error>)
 ($error (defglobal *global-2*) <program-error>)
 ($error (defglobal *global-2* 2 3) <program-error>)
-;;; ˆø”ƒŠƒXƒg‚ªƒhƒbƒgƒŠƒXƒg
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½hï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½g
 ($error (defglobal *global-2* 2 . 3) <error>)
-;;; ƒgƒbƒvƒŒƒxƒ‹’è‹`‚Å‚È‚¢
+;;; ï¿½gï¿½bï¿½vï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½`ï¿½Å‚È‚ï¿½
 ($error (+ (defglobal *global-2* 2)) <error>)
-;;; name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (defglobal #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (defglobal #\a nil) <domain-error>)
 ($error (defglobal 1234 nil) <domain-error>)
 ($error (defglobal "abc" nil) <domain-error>)
 ($error (defglobal #(a b c) nil) <domain-error>)
 ($error (defglobal (x y) nil) <domain-error>)
-;;; ƒVƒXƒeƒ€’è”‚Í•ÏX‚Å‚«‚È‚¢
+;;; ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½è”ï¿½Í•ÏXï¿½Å‚ï¿½ï¿½È‚ï¿½
 ($error (defglobal nil nil) <program-error>)
 ($error (defglobal t nil) <program-error>)
 ($error (defglobal *pi* nil) <program-error>)
 ($error (defglobal *most-positive-float* nil) <program-error>)
 ($error (defglobal *most-negative-float* nil) <program-error>)
-;;; ’è”‚Í•ÏX‚Å‚«‚È‚¢
+;;; ï¿½è”ï¿½Í•ÏXï¿½Å‚ï¿½ï¿½È‚ï¿½
 ($eval (defconstant *const-e* 2.718))
 ($error (defglobal *const-e* nil) <program-error>)
 ;;; keyword
@@ -424,23 +425,23 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defdynamic")
 ;;;
-((defdynamic *dynamic-color* 'red) *dynamic-color* equal)
-((dynamic *dynamic-color*) red equal)
+(test (defdynamic *dynamic-color* 'red) *dynamic-color* equal)
+(test (dynamic *dynamic-color*) red equal)
 ($eval (defun what-color () (dynamic *dynamic-color*)))
-((what-color) red equal)
-((dynamic-let ((*dynamic-color* 'green)) (what-color)) green equal)
+(test (what-color) red equal)
+(test (dynamic-let ((*dynamic-color* 'green)) (what-color)) green equal)
 ;;; nil
-((defdynamic nil 3) nil equal)
-((dynamic nil) 3 equal)
-;;; ˆø”‚ÌŒÂ”
+(test (defdynamic nil 3) nil equal)
+(test (dynamic nil) 3 equal)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($error (defdynamic) <program-error>)
 ($error (defdynamic *dynamic-2*) <program-error>)
 ($error (defdynamic *dynamic-2* 2 3) <program-error>)
-;;; ˆø”ƒŠƒXƒg‚ªƒhƒbƒgƒŠƒXƒg
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½hï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½g
 ($error (defdynamic *dynamic-2* 2 . 3) <error>)
-;;; ƒgƒbƒvƒŒƒxƒ‹’è‹`‚Å‚È‚¢
+;;; ï¿½gï¿½bï¿½vï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½`ï¿½Å‚È‚ï¿½
 ($error (+ (defdynamic *dynamic-2* 2)) <error>)
-;;; name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (defdynamic #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (defdynamic #\a nil) <domain-error>)
 ($error (defdynamic 1234 nil) <domain-error>)
@@ -458,16 +459,16 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defun")
 ;;;
-((defun my-f-caar (x) (car (car x))) my-f-caar equal)
-((my-f-caar '((1 2))) 1 equal)
-;;; ˆø”‚ÌŒÂ”
+(test (defun my-f-caar (x) (car (car x))) my-f-caar equal)
+(test (my-f-caar '((1 2))) 1 equal)
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ÌŒÂï¿½
 ($error (defun) <program-error>)
 ($error (defun foo) <program-error>)
-;;; ˆø”ƒŠƒXƒg‚ªƒhƒbƒgƒŠƒXƒg
+;;; ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½gï¿½ï¿½ï¿½hï¿½bï¿½gï¿½ï¿½ï¿½Xï¿½g
 ($error (defun foo 2 . 3) <error>)
-;;; ƒgƒbƒvƒŒƒxƒ‹’è‹`‚Å‚È‚¢
+;;; ï¿½gï¿½bï¿½vï¿½ï¿½ï¿½xï¿½ï¿½ï¿½ï¿½`ï¿½Å‚È‚ï¿½
 ($error (+ (defun foo 2)) <error>)
-;;; name ‚ªƒVƒ“ƒ{ƒ‹‚Å‚È‚¢
+;;; name ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½{ï¿½ï¿½ï¿½Å‚È‚ï¿½
 ($error (defun #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (defun #\a nil) <domain-error>)
 ($error (defun 1234 nil) <domain-error>)
@@ -481,26 +482,26 @@
 ($error (defun foo (x x) nil) <error>)
 ($error (defun foo (x &rest x) nil) <error>)
 ($error (defun foo (x :rest x) nil) <error>)
-;;; ƒVƒXƒeƒ€’è”‚ğŠÖ”‚Æ‚µ‚Ä’è‹`
-((defun nil ()) nil equal)
-((defun t ()) t equal)
-((defun *pi* ()) *pi* equal)
-((defun *most-positive-float* ()) *most-positive-float*)
-((defun *most-negative-float* ()) *most-negative-float*)
-;;; special operator ‚Í•ÏX‚Å‚«‚È‚¢
+;;; ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½è”ï¿½ï¿½ï¿½Öï¿½ï¿½Æ‚ï¿½ï¿½Ä’ï¿½`
+(test (defun nil ()) nil equal)
+(test (defun t ()) t equal)
+(test (defun *pi* ()) *pi* equal)
+(test (defun *most-positive-float* ()) *most-positive-float*)
+(test (defun *most-negative-float* ()) *most-negative-float*)
+;;; special operator ï¿½Í•ÏXï¿½Å‚ï¿½ï¿½È‚ï¿½
 ($error (defun if ()) <program-error>)
-;;; lambda-list ‚Éw’è‚³‚ê‚½¯•Êq‚Ì—LŒø”ÍˆÍ‚ğ‰z‚¦‚Ä‚¢‚é
+;;; lambda-list ï¿½Éwï¿½è‚³ï¿½ê‚½ï¿½ï¿½ï¿½Êqï¿½Ì—Lï¿½ï¿½ï¿½ÍˆÍ‚ï¿½ï¿½zï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
 ($eval (defun foo-6 (x) y))
 ($error (foo-6 1) <unbound-variable>)
 ;;;
 ($eval (defun foo-7 (x) x))
-((foo-7 1) 1 equal)
+(test (foo-7 1) 1 equal)
 ($argc foo-7 1 0 0)
 ;;;
 ($eval (defun foo-8 (x &rest y) (cons x y)))
-((foo-8 1) (1) equal)
-((foo-8 1 2) (1 2) equal)
-((foo-8 1 2 3) (1 2 3) equal)
+(test (foo-8 1) (1) equal)
+(test (foo-8 1 2) (1 2) equal)
+(test (foo-8 1 2 3) (1 2 3) equal)
 ($argc foo-8 1 0 1)
 
 ;;; end of file

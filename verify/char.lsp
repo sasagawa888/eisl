@@ -1,119 +1,120 @@
+(import "test")
 ;;;
-;;;  ëÊÇPÇQèÕ  Character class
+;;;  Character class
 ;;;
 
 ($ap 1 "Character class")
 
 ;;;
-;;; ä÷êî (CHARACTERP obj) --> boolean
+;;; function (CHARACTERP obj) --> boolean
 ;;;
 ($ap 2 "characterp" P.82)
-((characterp #\a) t)
-((characterp "a") nil)
-((characterp 'a) nil)
+(test (characterp #\a) t)
+(test (characterp "a") nil)
+(test (characterp 'a) nil)
 ;;;
 ($argc characterp 1 0 0)
 ($predicate characterp $character)
 ;;;
-((characterp #\newline) t)
-((characterp #\space) t)
+(test (characterp #\newline) t)
+(test (characterp #\space) t)
 
 ;;;
-;;; ä÷êî (CHAR= char1 char2) --> boolean
+;;; function (CHAR= char1 char2) --> boolean
 ;;;
 ($ap 2 "char=" P.82)
-((char= #\a #\a) t)
-((char= #\a #\b) nil)
-((char= #\a #\A) nil)
+(test (char= #\a #\a) t)
+(test (char= #\a #\b) nil)
+(test (char= #\a #\A) nil)
 ;;;
 ($argc char= 2 0 0)
 ($type char= ($character) :target #\a)
 ($type char= ($character) #\a :target)
 ;;;
-((char= #\newline #\newline) t)
-((char= #\space #\space) t)
+(test (char= #\newline #\newline) t)
+(test (char= #\space #\space) t)
 
 ;;;
-;;; ä÷êî (CHAR/= char1 char2) --> boolean
+;;; function (CHAR/= char1 char2) --> boolean
 ;;;
 ($ap 2 "char/=" P.82)
-((char/= #\a #\a) nil)
+(test (char/= #\a #\a) nil)
 ;;;
 ($argc char/= 2 0 0)
 ($type char/= ($character) :target #\a)
 ($type char/= ($character) #\a :target)
 ;;;
-((char/= #\newline #\newline) nil)
-((char/= #\newline #\space) t)
-((char/= #\a #\A) t)
+(test (char/= #\newline #\newline) nil)
+(test (char/= #\newline #\space) t)
+(test (char/= #\a #\A) t)
 
 ;;;
-;;; ä÷êî (CHAR< char1 char2) --> boolean
+;;; function (CHAR< char1 char2) --> boolean
 ;;;
 ($ap 2 "char<" P.82)
-((char< #\a #\a) nil)
-((char< #\a #\b) t)
-((char< #\b #\a) nil)
-;;((char< #\a #\A) nil)					; nil or t (IDEF)
-;;((char< #\* #\a) t)					; nil or t (IDEF)
+(test (char< #\a #\a) nil)
+(test (char< #\a #\b) t)
+(test (char< #\b #\a) nil)
+;;(test (char< #\a #\A) nil)					; nil or t (IDEF)
+;;(test (char< #\* #\a) t)					; nil or t (IDEF)
 ;;;
 ($argc char< 2 0 0)
 ($type char< ($character) :target #\a)
 ($type char< ($character) #\a :target)
 ;;;
-((char< #\a #\z) t)
-((char< #\A #\A) nil)
-((char< #\A #\Z) t)
-((char< #\0 #\0) nil)
-((char< #\0 #\9) t)
+(test (char< #\a #\z) t)
+(test (char< #\A #\A) nil)
+(test (char< #\A #\Z) t)
+(test (char< #\0 #\0) nil)
+(test (char< #\0 #\9) t)
 
 ;;;
-;;; ä÷êî (CHAR> char1 char2) --> boolean
+;;; function (CHAR> char1 char2) --> boolean
 ;;;
 ($ap 2 "char>" P.82)
-((char> #\b #\a) t)
+(test (char> #\b #\a) t)
 ;;;
 ($argc char> 2 0 0)
 ($type char> ($character) :target #\a)
 ($type char> ($character) #\a :target)
 ;;;
-((char> #\a #\a) nil)
-((char> #\z #\a) t)
-((char> #\A #\A) nil)
-((char> #\Z #\A) t)
-((char> #\0 #\0) nil)
-((char> #\9 #\0) t)
+(test (char> #\a #\a) nil)
+(test (char> #\z #\a) t)
+(test (char> #\A #\A) nil)
+(test (char> #\Z #\A) t)
+(test (char> #\0 #\0) nil)
+(test (char> #\9 #\0) t)
 
 ;;;
-;;; ä÷êî (CHAR<= char1 char2) --> boolean
+;;; function (CHAR<= char1 char2) --> boolean
 ;;;
 ($ap 2 "char<=" P.82)
-((char<= #\a #\a) t)
-;;((char<= #\a #\A) nil)				; nil or t (IDEF)
+(test (char<= #\a #\a) t)
+;;(test (char<= #\a #\A) nil)				; nil or t (IDEF)
 ;;;
 ($argc char<= 2 0 0)
 ($type char<= ($character) :target #\a)
 ($type char<= ($character) #\a :target)
 ;;;
-((char<= #\a #\z) t)
-((char<= #\A #\A) t)
-((char<= #\A #\Z) t)
-((char<= #\0 #\0) t)
-((char<= #\0 #\9) t)
+(test (char<= #\a #\z) t)
+(test (char<= #\A #\A) t)
+(test (char<= #\A #\Z) t)
+(test (char<= #\0 #\0) t)
+(test (char<= #\0 #\9) t)
 
 ;;;
-;;; ä÷êî (CHAR>= char1 char2) --> boolean
+;;; function (CHAR>= char1 char2) --> boolean
 ;;;
 ($ap 2 "char>=" P.82)
-((char>= #\b #\a) t)
-((char>= #\a #\a) t)
+(test (char>= #\b #\a) t)
+(test (char>= #\a #\a) t)
 ;;;
 ($argc char>= 2 0 0)
 ($type char>= ($character) :target #\a)
 ($type char>= ($character) #\a :target)
 ;;;
-((char>= #\z #\a) t)
-((char>= #\A #\A) t)
-((char>= #\Z #\A) t)
-((char>= #\0 #\0) t)
-((char>= #\9 #\0) t)
+(test (char>= #\z #\a) t)
+(test (char>= #\A #\A) t)
+(test (char>= #\Z #\A) t)
+(test (char>= #\0 #\0) t)
+(test (char>= #\9 #\0) t)

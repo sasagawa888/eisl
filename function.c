@@ -480,15 +480,27 @@ int f_mult(int arglist){
 
 int f_quotient(int arglist){
     int arg,res;
+    double val;
 
     res = car(arglist);
     arglist = cdr(arglist);
+
+    
     while(!(IS_NIL(arglist))){
         arg = car(arglist);
         if(!numberp(arg))
             error(NOT_NUM, "quotient", arg);
+        if(zerop(arg))
+            error(DIV_ZERO, "quotient", arg);
+        
+        if(fabs(GET_FLT(res)) >= DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0 )
+            error(FLT_OVERF, "quotient" , arg);
+        if((val=fabs(GET_FLT(res))) != 0.0 && val < DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX )
+            error(FLT_UNDERF, "quotient" , arg);
+
         arglist = cdr(arglist);
         res = quotient(res,arg);
+        
     }
     return(res);
 }
@@ -628,7 +640,12 @@ int f_sinh(int arglist){
         error(WRONG_ARGS, "sinh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "sinh", arg1);
-    val = sinh(GET_FLT(exact_to_inexact(arg1)));
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "sinh", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "sinh", arg1);
+    val = sinh(val);
     return(makeflt(val));
 }
 
@@ -641,7 +658,13 @@ int f_cosh(int arglist){
         error(WRONG_ARGS, "cosh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "cosh", arg1);
-    val = cosh(GET_FLT(exact_to_inexact(arg1)));
+
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "cosh", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "cosh", arg1);
+    val = cosh(val);
     return(makeflt(val));
 }
 
@@ -654,7 +677,13 @@ int f_tanh(int arglist){
         error(WRONG_ARGS, "tanh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "tanh", arg1);
-    val = tanh(GET_FLT(exact_to_inexact(arg1)));
+
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "tanh", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "tanh", arg1);
+    val = tanh(val);
     return(makeflt(val));
 }
 
@@ -667,7 +696,10 @@ int f_atanh(int arglist){
         error(WRONG_ARGS, "atanh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "atanh", arg1);
-    val = atanh(GET_FLT(exact_to_inexact(arg1)));
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 1.0 || val <= -1.0)
+        error(FLT_OUT_OF_DOMAIN, "atanh", arg1);
+    val = atanh(val);
     return(makeflt(val));
 }
 
@@ -932,13 +964,20 @@ int f_mod(int arglist){
 
 int f_exp(int arglist){
     int arg1;
+    double val;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "exp", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "exp", arg1);
-    return(makeflt(exp(GET_FLT(exact_to_inexact(arg1)))));
+
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "exp", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "exp", arg1);
+    return(makeflt(exp(val)));
 }
 
 int f_log(int arglist){
@@ -950,7 +989,7 @@ int f_log(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "log", arg1);
     if(!positivep(arg1))
-        error(NOT_POSITIVE, "log", arglist);
+        error(OUT_OF_REAL, "log", arglist);
 
     return(makeflt(log(GET_FLT(exact_to_inexact(arg1)))));
 }
@@ -1130,7 +1169,8 @@ int f_sqrt(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "sqrt", arg1);
     if(negativep(arg1))
-        error(OUT_OF_RANGE, "sqrt", arg1);
+        error(OUT_OF_DOMAIN, "sqrt", arg1);
+
     x = sqrt(GET_FLT(exact_to_inexact(arg1)));
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && ceil(x) == floor(x)){
         if(x <= 999999999.0)
@@ -1174,12 +1214,21 @@ int f_atan2(int arglist){
 
 int f_reciprocal(int arglist){
     int arg1;
+    double val;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "resiprocal", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "resiprocal", arg1);
+    
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val == 0.0)
+        error(DIV_ZERO, "resiprocal", arg1);
+    if(val >= DBL_MAX)
+        error(FLT_UNDERF, "resiprocal", arg1);
+    if(val <= -DBL_MAX)
+        error(FLT_UNDERF, "resiprocal", arg1);
     return(quotient(makeint(1),arg1));
 }
 
@@ -3764,6 +3813,7 @@ int f_parse_number(int arglist){
 
     if(hextoken(stok.buf))
         return(makeint((int)strtol(stok.buf,&e,16)));
+
 
     error(CANT_PARSE,"parse-number",arg1);
     return(UNDEF);

@@ -91,6 +91,22 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("expected-class"),cfloat);
                         signal_condition(makeinstance(cfloating_point_underflow,initargs),NIL);
                         break;
+        case FLT_OUT_OF_DOMAIN:
+                       initargs = list10(makesym("format-string"),makestr("Floating number out of domain at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cfloat);
+                        signal_condition(makeinstance(cerror,initargs),NIL);
+                        break;
+        case OUT_OF_REAL:
+                       initargs = list10(makesym("format-string"),makestr("Number out of real at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cfloat);
+                        signal_condition(makeinstance(cerror,initargs),NIL);
+                        break;
         case NOT_INT:   initargs = list10(makesym("format-string"),makestr("Not an integer at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun),
@@ -376,7 +392,6 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("function"),makesym(fun));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;  
-                           
     }
 }
 /*

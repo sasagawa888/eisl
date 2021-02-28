@@ -430,6 +430,8 @@ extern char extended[70][30];
 #define NOT_EXIST_ARG   156
 #define IMPROPER_ARGS   157
 #define OUT_OF_DOMAIN   158
+#define FLT_OUT_OF_DOMAIN  159
+#define OUT_OF_REAL     160
 
 
 #define ESCHOME printf("\33[1;1H")

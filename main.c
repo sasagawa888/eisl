@@ -1501,7 +1501,9 @@ int apply(int func, int args){
                     }
                     ep = pop();
                     return(res);}
-        case MACRO:{macrofunc = GET_CAR(func);
+        case MACRO:{if(improperlistp(args))
+                        error(IMPROPER_ARGS, "apply", args);
+                    macrofunc = GET_CAR(func);
                     varlist = car(GET_CAR(macrofunc));
                     if(GET_OPT(func) >= 0){
                         if(length(args) != (int)GET_OPT(func))

@@ -2773,9 +2773,9 @@ int f_aref(int arglist){
     if(!vectorp(arg1) && !arrayp(arg1) && !stringp(arg1))
         error(ILLEGAL_ARGS, "aref", arg1);
     if(vectorp(arg1) && !inrangep(arg2,list1(makeint(vector_length(arg1)))))
-        error(OUT_OF_RANGE,"aref",arg2);
+        error(OUT_OF_DOMAIN,"aref",arg2);
     if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
-        error(OUT_OF_RANGE,"aref",arg2);
+        error(OUT_OF_DOMAIN,"aref",arg2);
     if(stringp(arg1) &&
        ((n=GET_INT(car(arg2))) >= string_length(arg1) || n < 0))
         error(OUT_OF_RANGE,"aref",arg2);
@@ -3759,11 +3759,11 @@ int f_create_array(int arglist){
     arg3 = caddr(arglist);
 
     if((n=length(arglist)) != 1 && length(arglist) != 2 && length(arglist) != 3)
-        error(WRONG_ARGS,"create-array", arglist);
+        error(OUT_OF_DOMAIN,"create-array", arglist);
     if(!listp(arg1))
         error(NOT_LIST, "create-array", arg1);
     if(check_dimension(arg1))
-        error(OUT_OF_RANGE,"create-array",arg1);
+        error(OUT_OF_DOMAIN,"create-array",arg1);
     if(length(arglist) == 1)
         arg2 = UNDEF;
     if(arg3 != NIL && arg3 != makesym("FLOAT"))

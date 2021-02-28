@@ -432,13 +432,22 @@ int improperlistp(int ls){
         return(improperlistp(cdr(ls)));
 }
 
-int dulicatelistp(int ls){
+int duplicatelistp(int ls){
     if(nullp(ls))
         return(0);
     else if(member(car(ls),cdr(ls)))
-            return(1);
+        return(1);
     else 
         return(duplicatelistp(cdr(ls)));
+}
+
+int symbollistp(int ls){
+    if(nullp(ls))
+        return(1);
+    else if(!symbolp(car(ls)))
+        return(0);
+    else
+        return(symbollistp(cdr(ls)));
 }
 
 //--------------list operation---------------------

@@ -72,10 +72,15 @@ int f_lambda(int arglist){
 
     if(nullp(arglist))
         error(NOT_EXIST_ARG, "lambda", NIL);
+    if(duplicatelistp(car(arglist)))
+        error(IMPROPER_ARGS, "lambda", car(arglist));
     if(improperlistp(car(arglist)))
         error(IMPROPER_ARGS, "lambda", car(arglist));
     if(illegallambdap(car(arglist)))
         error(ILLEGAL_ARGS, "lambda", car(arglist));
+    if(!symbollistp(car(arglist)))
+        error(OUT_OF_DOMAIN, "lambda", car(arglist));
+    
        
     return(makefunc("",arglist));
 }

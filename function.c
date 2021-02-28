@@ -1154,7 +1154,7 @@ int f_isqrt(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "isqrt", arg1);
     if(negativep(arg1))
-        error(OUT_OF_RANGE, "isqrt", arg1);
+        error(OUT_OF_DOMAIN, "isqrt", arg1);
     return(isqrt(arg1));
 }
 

@@ -70,11 +70,13 @@ void initsyntax(void){
 //--FSUBR-----------
 int f_lambda(int arglist){
 
-    if(!listp(car(arglist)))
-        error(NOT_LIST, "lambda", car(arglist));
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "lambda", NIL);
+    if(improperlistp(car(arglist)))
+        error(IMPROPER_ARGS, "lambda", car(arglist));
     if(illegallambdap(car(arglist)))
-        error(ILLEGAL_ARGS, "lambda" ,car(arglist));
-
+        error(ILLEGAL_ARGS, "lambda", car(arglist));
+       
     return(makefunc("",arglist));
 }
 
@@ -83,6 +85,8 @@ int f_labels(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "labels", NIL);
     if(!listp(arg1))
         error(NOT_LIST, "labels" , arg1);
     save = ep;
@@ -115,6 +119,8 @@ int f_flet(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "flet", NIL);
     if(!listp(arg1))
         error(NOT_LIST, "flet", arg1);
     save = ep;
@@ -395,6 +401,8 @@ int f_defglobal(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "defglobal", NIL);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defglobal", arglist);
     if(!symbolp(arg1))
@@ -485,7 +493,7 @@ int f_function(int arglist){
     else if(listp(arg1) && eqp(car(arg1),makesym("lambda")))
         return(eval(arg1));
     else
-        error(ILLEGAL_ARGS, "function", arg1);
+        error(NOT_FUNC, "function", arg1);
     return(UNDEF);
 }
 //function* diffrence of function is that return nil

@@ -427,6 +427,8 @@ extern char extended[70][30];
 #define SYSTEM_ERR	    153
 #define RESOURCE_ERR    154
 #define NOT_FARR        155
+#define NOT_EXIST_ARG   156
+#define IMPROPER_ARGS   157
 
 
 #define ESCHOME printf("\33[1;1H")

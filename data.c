@@ -404,7 +404,7 @@ int notexistclassp(int ls){
 
 int illegallambdap(int ls){
     while(!nullp(ls)){
-        if(!symbolp(car(ls)))
+        if(!listp(ls))
             return(1);
         else if(car(ls) == T)
             return(1);
@@ -414,8 +414,8 @@ int illegallambdap(int ls){
             ls = cdr(ls);
         else if(eqp(car(ls),makesym("&REST")))
             ls = cdr(ls);
-        else if(STRING_REF(car(ls),0) == ':' ||
-             STRING_REF(car(ls),0) == '&')
+        else if(symbolp(car(ls)) && 
+                (STRING_REF(car(ls),0) == ':' || STRING_REF(car(ls),0) == '&'))
             return(1);
         else
             ls = cdr(ls);
@@ -430,6 +430,15 @@ int improperlistp(int ls){
         return(1);
     else
         return(improperlistp(cdr(ls)));
+}
+
+int dulicatelistp(int ls){
+    if(nullp(ls))
+        return(0);
+    else if(member(car(ls),cdr(ls)))
+            return(1);
+    else 
+        return(duplicatelistp(cdr(ls)));
 }
 
 //--------------list operation---------------------

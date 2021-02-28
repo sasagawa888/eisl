@@ -54,6 +54,12 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("function"),makesym(fun));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;
+        case NOT_EXIST_ARG:
+                        initargs = list6(makesym("format-string"),makestr("Not exist argument at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;
         case NOT_NUM:   initargs = list10(makesym("format-string"),makestr("Not a number at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun),
@@ -237,7 +243,13 @@ void error(int errnum, const char *fun, int arg){
                         initargs = list6(makesym("format-string"),makestr("Illegal argument at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
-                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;
+        case IMPROPER_ARGS:
+                        initargs = list6(makesym("format-string"),makestr("Improper arguments at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cerror,initargs),NIL);
                         break;
         case OUT_OF_RANGE:
                         initargs = list6(makesym("format-string"),makestr("Out of range at "),

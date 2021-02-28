@@ -140,11 +140,11 @@
 ;;; identifier ���V���{���łȂ�
 ($error ((lambda (#2a((a b) (c d))) nil) 1) <domain-error>)
 ($error ((lambda (#\a) nil) 1) <domain-error>)
-;($error ((lambda (1234) nil) 1) <domain-error>)
-;($error ((lambda (1.234) nil) 1) <domain-error>)
-;($error ((lambda ("abc") nil) 1) <domain-error>)
-;($error ((lambda (#(a b c)) nil) 1) <domain-error>)
-;($error ((lambda ((x y)) nil) 1) <domain-error>)
+($error ((lambda (1234) nil) 1) <domain-error>)
+($error ((lambda (1.234) nil) 1) <domain-error>)
+($error ((lambda ("abc") nil) 1) <domain-error>)
+($error ((lambda (#(a b c)) nil) 1) <domain-error>)
+($error ((lambda ((x y)) nil) 1) <domain-error>)
 ;;; &rest, :rest �̌�� identifier �̌�
 ;($error ((lambda (x y &rest) nil) 1 2) <error>)
 ;($error ((lambda (x y :rest) nil) 1 2) <error>)

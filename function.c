@@ -3819,6 +3819,8 @@ int f_parse_number(int arglist){
         error(WRONG_ARGS, "parse-number", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "parse-number", arg1);
+    if(strcmp(GET_NAME(arg1),"") == 0)
+        error(CANT_PARSE,"parse-number",arg1);
 
     strcpy(stok.buf,GET_NAME(arg1));
 

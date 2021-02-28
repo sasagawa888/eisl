@@ -646,6 +646,9 @@ septoken separater(char buf[], char sep){
     septoken res;
 
     res.sepch = NUL;
+    res.before[0] = NUL;
+    res.after[0] = NUL;
+
     res.before[0] = buf[0];
     i = 1; j = 1;
     while((c=buf[i]) != NUL)
@@ -704,6 +707,9 @@ int inttoken(char buf[]){
     int i;
     char c;
 
+    if(buf[0] == NUL) // null string
+        return(0);
+
     if(((buf[0] == '+') || (buf[0] == '-'))){
         if(buf[1] == NUL)
             return(0); // case {+,-} => symbol
@@ -731,11 +737,12 @@ int inttoken_nsgn(char buf[]){
     char c;
 
     i = 0;
-    while((c=buf[i]) != NUL)
+    while((c=buf[i]) != NUL){
         if(isdigit(c))
             i++;
         else
             return(0);
+    }
     return(1);
 }
 
@@ -744,6 +751,8 @@ int flttoken(char buf[]){
     char bufcp[SYMSIZE];
 
     if(buf[0] == '.'){
+        if(buf[1] == '0')
+            return(0);
         strcpy(bufcp,buf);
         insertstr('0',bufcp);
         if(flttoken(bufcp))
@@ -756,11 +765,9 @@ int flttoken(char buf[]){
     if(tok.sepch == NUL)
         return(0);
 
-    if(inttoken(tok.before) && inttoken_nsgn(tok.after))
-        return(1);
-
-    else
-    if((strcmp(tok.before,"-") == 0) && inttoken_nsgn(tok.after))
+    if(tok.after[0] == NUL) // "".""
+        return(0);
+    else if(inttoken(tok.before) && inttoken_nsgn(tok.after))
         return(1);
     else
         return(0);
@@ -822,6 +829,7 @@ int bintoken(char buf[]){
 
     if(!(buf[0] == '#' && (buf[1] == 'b' || buf[1] == 'B')))
         return(0);
+    
     if(buf[2] == '+' || buf[2] == '-')
         i = 3;
     else
@@ -832,8 +840,10 @@ int bintoken(char buf[]){
             i++;
         else
             return(0);
-
-    if(i != 2){
+    
+    if(i == 3 && (buf[2] == '+' || buf[2] == '-'))
+        return(0);
+    else if(i != 2){
         dropchar(buf);
         return(1);
     }
@@ -859,7 +869,9 @@ int octtoken(char buf[]){
         else
             return(0);
 
-    if(i != 2){
+    if(i == 3 && (buf[2] == '+' || buf[2] == '-'))
+        return(0);
+    else if(i != 2){
         dropchar(buf);
         return(1);
     }
@@ -911,7 +923,9 @@ int hextoken(char buf[]){
         else
             return(0);
 
-    if(i != 2){
+    if(i == 3 && (buf[2] == '+' || buf[2] == '-'))
+        return(0);
+    else if(i != 2){
         dropchar(buf);
         return(1);
     }
@@ -923,6 +937,9 @@ int hextoken(char buf[]){
 int expttoken(char buf[]){
     septoken tok;
     char buf1[BUFSIZE];
+
+    if(buf[0] == '.') // e.g. ".2E3"
+        return(0);
 
     strcpy(buf1,buf);
     tok = separater(buf, 'e');

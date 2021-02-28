@@ -433,6 +433,12 @@ int f_plus(int arglist){
         arg = car(arglist);
         if(!numberp(arg) && !vectorp(arg) && !arrayp(arg))
             error(NOT_NUM, "+", arg);
+
+        if(floatp(res) && positivep(res) && GET_FLT(exact_to_inexact(res)) >= DBL_MAX && positivep(arg))
+            error(FLT_OVERF, "+" , arg);
+        if(floatp(res) && negativep(res) && GET_FLT(exact_to_inexact(res)) <= -DBL_MAX && negativep(arg))
+            error(FLT_OVERF, "+" , arg);
+        
         arglist = cdr(arglist);
         res = plus(res,arg);
     }
@@ -453,6 +459,11 @@ int f_minus(int arglist){
         arg = car(arglist);
         if(!numberp(arg) && !vectorp(arg) && !arrayp(arg))
             error(NOT_NUM, "-", arg);
+
+        if(floatp(res) && positivep(res) && GET_FLT(exact_to_inexact(res)) >= DBL_MAX && negativep(arg))
+            error(FLT_OVERF, "+" , arg);
+        if(floatp(res) && negativep(res) && GET_FLT(exact_to_inexact(res)) <= -DBL_MAX && positivep(arg))
+            error(FLT_OVERF, "+" , arg);
         arglist = cdr(arglist);
         res = minus(res,arg);
     }
@@ -461,6 +472,7 @@ int f_minus(int arglist){
 
 int f_mult(int arglist){
     int arg,res;
+    double val;
 
     if(nullp(arglist))
         res = makeint(1);
@@ -472,6 +484,23 @@ int f_mult(int arglist){
         arg = car(arglist);
         if(!numberp(arg) && !arrayp(arg) && !vectorp(arg))
             error(NOT_NUM, "*", arg);
+
+        if(floatp(res) && fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX && 
+           fabs(GET_FLT(exact_to_inexact(arg))) > 1.0 )
+            error(FLT_OVERF, "*" , arg);
+        if(floatp(res) && (val=fabs(GET_FLT(exact_to_inexact(res)))) != 0.0 && val > 1.0 &&
+           fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX)
+            error(FLT_OVERF, "*" , arg);
+        if(floatp(arg) && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX && 
+           fabs(GET_FLT(exact_to_inexact(res))) > 1.0 )
+            error(FLT_OVERF, "*" , arg);
+        if(floatp(arg) && (val=fabs(GET_FLT(exact_to_inexact(arg)))) != 0.0 && val > 1.0 &&
+           fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX)
+            error(FLT_OVERF, "*" , arg);
+        if((val=fabs(GET_FLT(exact_to_inexact(res)))) != 0.0 && val <= DBL_EPSILON 
+           && (val=fabs(GET_FLT(exact_to_inexact(arg)))) != 0.0 && val <= DBL_EPSILON )
+            error(FLT_UNDERF, "*" , arg);
+
         arglist = cdr(arglist);
         res = mult(res,arg);
     }

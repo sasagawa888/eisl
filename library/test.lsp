@@ -39,3 +39,4 @@
 (defmacro $argc (x1 x2 x3 x4) `nil)
 (defmacro $predicate (x1 x2 :rest x3) `nil)
 (defmacro $type (x1 x2 x3 :rest x4) `nil)
+(defmacro $stype (x1 x2 x3 x4 :rest x5) `nil)

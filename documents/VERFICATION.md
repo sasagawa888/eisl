@@ -4,19 +4,25 @@
 verify/
 
 ```
-all-test.lsp 
-arithmetic-test.lsp
-array-test.lsp
-controle-test.lsp
-convert-test.lsp
-list-test.lsp
-object-test.lsp
-predicate-test.lsp
-symbol-test.lsp
-char-test.lsp
-string-test.lsp
-vector-test.lsp
-seq-test.lsp
+array.lsp
+char.lsp
+cond.lsp
+control.lsp
+declare.lsp
+files.lsp
+formeval.lsp
+io.lsp
+list.lsp
+macro.lsp
+misc.lsp
+number.lsp
+object.lsp
+pred.lsp
+seq.lsp
+stream.lsp
+string.lsp
+symbol.lsp
+vector.lsp
 ```
 They are sets of test code to test for ISLisp standard compatibility.
 

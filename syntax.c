@@ -1356,7 +1356,7 @@ int f_with_handler(int arglist){
 int f_convert(int arglist){
     int arg1,arg2;
     double x;
-    char str[STRSIZE];
+    char str[STRSIZE],*e;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1420,9 +1420,6 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == csymbol){
                 return(makesym(GET_NAME(arg1)));
             }
-            else if(GET_AUX(arg2) == cstring){
-                return(makestr(GET_NAME(arg1)));
-            }
             else if(GET_AUX(arg2) == ccharacter){
                 return(arg1);
             }
@@ -1430,9 +1427,6 @@ int f_convert(int arglist){
         case FLTN:
             if(GET_AUX(arg2) == cfloat){
                 return(arg1);
-            }
-            else if(GET_AUX(arg2) == cinteger){
-                return(makeint((int)GET_FLT(arg1)));
             }
             else if(GET_AUX(arg2) == cstring){
                 x = GET_FLT(arg1);
@@ -1462,10 +1456,31 @@ int f_convert(int arglist){
                 return(arg1);
             }
             else if(GET_AUX(arg2) == cinteger){
-                return(makeint(atoi(GET_NAME(arg1))));
+                strcpy(stok.buf,GET_NAME(arg1));
+
+                if(bignumtoken(stok.buf)){
+                    return(makebigx(stok.buf));
+                }
+                else if(inttoken(stok.buf)){
+                    return(makeint(strtol(stok.buf,&e,10)));
+                }
+                else if(bintoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,2)));
+                }
+                else if(octtoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,8)));
+                }
+                else if(dectoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,10)));
+                }
+                else if(hextoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,16)));
+                }
+                break;
             }
             else if(GET_AUX(arg2) == cfloat){
-                return(makeflt(atof(GET_NAME(arg1))));
+                if(flttoken(GET_NAME(arg1)))
+                    return(makeflt(atof(GET_NAME(arg1))));
             }
             else if(GET_AUX(arg2) == csymbol){
                 return(makesym(GET_NAME(arg1)));

@@ -52,7 +52,9 @@
    (and (symbolp x) (string= (convert x <string>) " "))) t)
 (test (let ((x (convert #\1 <symbol>)))
    (and (symbolp x) (string= (convert x <string>) "1"))) t)
-($error (convert #\a <string>) <domain-error>)
+;;; caution
+;;; In Easy-ISLisp extened char -> string. this is for compiler.
+;($error (convert #\a <string>) <domain-error>)
 ($error (convert #\a <general-vector>) <domain-error>)
 ($error (convert #\a <list>) <domain-error>)
 ;;;

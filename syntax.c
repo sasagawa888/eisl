@@ -1423,6 +1423,9 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == ccharacter){
                 return(arg1);
             }
+            else if(GET_AUX(arg2) == cstring){
+                return(makestr(GET_NAME(arg1)));
+            }
             break;
         case FLTN:
             if(GET_AUX(arg2) == cfloat){

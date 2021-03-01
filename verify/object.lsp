@@ -16,110 +16,109 @@
 ;;($stype defclass ($cons $null) foo () :target)
 ;;
 ;;;
-($error (+ (defclass foo () ())) <error>)
+;;($error (+ (defclass foo () ())) <error>)
 
 ;;;----------  ----------
 ;;; special operator
-($error (defclass if () ()) <program-error>)
+;($error (defclass if () ()) <program-error>)
 ;;; keyword 
-($error (defclass :a () ()) <program-error>)
-($error (defclass &a () ()) <program-error>)
+;($error (defclass :a () ()) <program-error>)
+;($error (defclass &a () ()) <program-error>)
 ;;;
-($error (defclass <object> () ()) <error>)
+;($error (defclass <object> () ()) <error>)
 
 ;;;---------- ----------
 ;;;
 ($eval (defclass a () ()))
 ($error (defclass foo (a a) ()) <error>)
 ;;;
-($error (defclass foo (undef) ()) <undefined-entity>)
+;($error (defclass foo (undef) ()) <undefined-entity>)
 ;;;
-($error (defclass foo (<object>) ()) <error>)
+;($error (defclass foo (<object>) ()) <error>)
 
 ;;;----------  ----------
 ;;;
-($error (defclass foo () (:a)) <program-error>)
-($error (defclass foo () (&a)) <program-error>)
+;($error (defclass foo () (:a)) <program-error>)
+;($error (defclass foo () (&a)) <program-error>)
 ;;;
-($error (defclass foo () (a a)) <error>)
-($error (defclass foo () (a (a :initarg a))) <error>)
+;($error (defclass foo () (a a)) <error>)
+;($error (defclass foo () (a (a :initarg a))) <error>)
 ;;; :reader
-($error (defclass foo () (test (a :reader))) <error>)
-($error (defclass foo () (test (a :reader a-a a-b))) <error>)
-($error (defclass foo () (test (a :reader :a))) <program-error>)
+;($error (defclass foo () (test (a :reader))) <error>)
+;($error (defclass foo () (test (a :reader a-a a-b))) <error>)
+;($error (defclass foo () (test (a :reader :a))) <program-error>)
 ;;; :writer
-($error (defclass foo () (test (a :writer))) <error>)
-($error (defclass foo () (test (a :writer a-a a-b))) <error>)
-($error (defclass foo () (test (a :writer :a))) <program-error>)
+;($error (defclass foo () (test (a :writer))) <error>)
+;($error (defclass foo () (test (a :writer a-a a-b))) <error>)
+;($error (defclass foo () (test (a :writer :a))) <program-error>)
 ;;; :accessor
-($error (defclass foo () (test (a :accessor))) <error>)
-($error (defclass foo () (test (a :accessor a-a a-b))) <error>)
-($error (defclass foo () (test (a :accessor :a))) <program-error>)
+;($error (defclass foo () (test (a :accessor))) <error>)
+;($error (defclass foo () (test (a :accessor a-a a-b))) <error>)
+;($error (defclass foo () (test (a :accessor :a))) <program-error>)
 ;;; :boundp
-($error (defclass foo () (test (a :boundp))) <error>)
-($error (defclass foo () (test (a :boundp a-a a-b))) <error>)
-($error (defclass foo () (test (a :boundp :a))) <program-error>)
+;($error (defclass foo () (test (a :boundp))) <error>)
+;($error (defclass foo () (test (a :boundp a-a a-b))) <error>)
+;($error (defclass foo () (test (a :boundp :a))) <program-error>)
 ;;; :initarg
-($error (defclass foo () (test (a :initarg))) <error>)
-($error (defclass foo () (test (a :initarg a b))) <error>)
-($error (defclass foo () (test (a :initarg :a))) <program-error>)
+;($error (defclass foo () (test (a :initarg))) <error>)
+;($error (defclass foo () (test (a :initarg a b))) <error>)
+;($error (defclass foo () (test (a :initarg :a))) <program-error>)
 ;;; :initarg
-($error (defclass foo () (test (a :initarg a :initarg aa))) <error>)
+;($error (defclass foo () (test (a :initarg a :initarg aa))) <error>)
 ;;; :initform
-($error (defclass foo () (test (a :initform))) <error>)
-($error (defclass foo () (test (a :initform 1 2))) <error>)
+;($error (defclass foo () (test (a :initform))) <error>)
+;($error (defclass foo () (test (a :initform 1 2))) <error>)
 ;;; :initform
-($error (defclass foo () (test (a :initform 1 :initform 2))) <error>)
+;($error (defclass foo () (test (a :initform 1 :initform 2))) <error>)
 ;;; 
-($error (defclass foo () (test (a 1 2))) <error>)
-($error (defclass foo () (test (a :foo foo))) <error>)
+;($error (defclass foo () (test (a 1 2))) <error>)
+;($error (defclass foo () (test (a :foo foo))) <error>)
 
 ;;;----------  ----------
 ;;; 
-($error (defclass foo () () ()) <error>)
-($error (defclass foo () () :metaclass) <error>)
-($error (defclass foo () () :abstractp) <error>)
-($error (defclass foo () () (test (:metaclss <standard-class>))) <error>)
-($error (defclass foo () () (test (:abstractp nil))) <error>)
+;($error (defclass foo () () ()) <error>)
+;($error (defclass foo () () :metaclass) <error>)
+;($error (defclass foo () () :abstractp) <error>)
+;($error (defclass foo () () (test (:metaclss <standard-class>))) <error>)
+;($error (defclass foo () () (test (:abstractp nil))) <error>)
 ;;; 
-($error (defclass foo () () (:foo foo)) <error>)
+;($error (defclass foo () () (:foo foo)) <error>)
 ;;; :metaclass 
-($error (defclass foo () () (:metaclass)) <error>)
-($error (defclass foo () () 
-	  (:metaclass <standard-class> <standard-class>)) <error>)
+;($error (defclass foo () () (:metaclass)) <error>)
+;($error (defclass foo () () 
+;	  (:metaclass <standard-class> <standard-class>)) <error>)
 ;;; :metaclass 
 ;(test (defclass foo-1 () () (:metaclass <standard-class>)) foo-1)
-($error (defclass foo () () (:metaclass (<standard-class>))) 
-	<error>)
-($error (defclass foo () () (:metaclass <object>)) <error>)
-($error (defclass foo () () (:metaclass foo)) <error>)
+;($error (defclass foo () () (:metaclass (<standard-class>))) 
+;	<error>)
+;($error (defclass foo () () (:metaclass <object>)) <error>)
+;($error (defclass foo () () (:metaclass foo)) <error>)
 ;;; :metaclass
-($error (defclass foo () () 
-	  (:metaclass <standard-class>) (:metaclass <stnadard-class>))
-	<error>)
+;($error (defclass foo () () 
+;	  (:metaclass <standard-class>) (:metaclass <stnadard-class>))
+;	<error>)
 ;;; :abstractp
 ;(test (defclass foo-2 () () (:abstractp nil)) foo-2)
 ;(test (defclass bar () () (:abstractp t)) bar)
-($error (defclass baz () () (:abstractp foo)) <error>)
+;($error (defclass baz () () (:abstractp foo)) <error>)
 ;;; :abstractp
-($error (defclass foo () () (:abstractp)) <error>)
-($error (defclass foo () () (:abstractp t t)) <error>)
+;($error (defclass foo () () (:abstractp)) <error>)
+;($error (defclass foo () () (:abstractp t t)) <error>)
 ;;; :abstractp
 ;(test (defclass foo-3 () () 
 ;   (:abstractp nil) (:abstractp nil)) foo-3)
 ;(test (defclass foo-4 () () 
 ;   (:abstractp t) (:abstractp t)) foo-4)
-($error (defclass foo () ()
-	  (:abstractp t) (:abstractp nil))
-	<error>)
+;($error (defclass foo () ()
+;	  (:abstractp t) (:abstractp nil))
+;	<error>)
 ;;
 ;;
 ($eval (defclass a-1 () ()))
 ($eval (defclass b-1 (a-1) ()))
-($error (defclass c-1 (b-1 a-1) ()) <error>)
+;($error (defclass c-1 (b-1 a-1) ()) <error>)
 
 ;; 
-#|
 ($eval 
  (defclass foo-5 () 
    ((a :reader read-foo-a
@@ -177,8 +176,8 @@
 ($eval (defglobal x (create (class foo-6))))
 ;;
 (test (boundp-foo-a x) nil)
-($error (read-foo-a x) <error>)
-($error (access-foo-a x) <error>)
+;($error (read-foo-a x) <error>)
+;($error (access-foo-a x) <error>)
 ;;
 (test (write-foo-a 10 x) 10 eql)
 (test (boundp-foo-a x) t)
@@ -208,22 +207,22 @@
 ($stype defgeneric ($symbol $null) :target (x))
 ;;($stype defgeneric ($cons $null) foo :target)
 ;;;
-($error (+ (defgeneric foo ())) <error>)
+;($error (+ (defgeneric foo ())) <error>)
 ;; :method-combination 
-($error (defgeneric foo () (:method-combination undef)) 
-	<error>)
+;($error (defgeneric foo () (:method-combination undef)) 
+;	<error>)
 ;; :generic-function-class
-($error (defgeneric foo () (:generic-function-class undef))
-	<error>)
+;($error (defgeneric foo () (:generic-function-class undef))
+;	<error>)
 ;; option
-($error (defgeneric foo () (:foo foo)) <error>)
+;($error (defgeneric foo () (:foo foo)) <error>)
 ;; special operator
-($error (defgeneric if ()) <program-error>)
+;($error (defgeneric if ()) <program-error>)
 ;; keyword 
-($error (defgeneric :a ()) <program-error>)
-($error (defgeneric &a ()) <program-error>)
+;($error (defgeneric :a ()) <program-error>)
+;($error (defgeneric &a ()) <program-error>)
 ;;;
-($error (defgeneric create () ()) <program-error>)
+;($error (defgeneric create () ()) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [defining oparator]
@@ -239,33 +238,33 @@
 ;;($stype defmethod ($cons $null) $ERR_IllegalBind foo :before :target)
 ;;;
 ($eval (defgeneric foo-g-2 ()))
-($error (+ (defmethod foo-g-2 ())) <error>)
+;($error (+ (defmethod foo-g-2 ())) <error>)
 ;; 
-($error (defmethod foo-g-2 :foo ()) <error>)
-($error (defgeneric foo-g-2 ()
-	  (:method :foo ())) <error>)
+;($error (defmethod foo-g-2 :foo ()) <error>)
+;($error (defgeneric foo-g-2 ()
+;	  (:method :foo ())) <error>)
 ;;
 ($eval (defgeneric bar-g-2 () (:method-combination nil)))
-($error (defmethod bar-g-2 :around ()) <error>)
-($error (defmethod bar-g-2 :before ()) <error>)
-($error (defmethod bar-g-2 :after ()) <error>)
-($error (defgeneric bar-g-2 () (:method-combination nil)
-	  (:method bar :around ())) 
-	<error>)
-($error (defgeneric bar-g-2 () (:method-combination nil)
-	  (:method bar :before ()))
-	<error>)
-($error (defgeneric bar-g-2 () (:method-combination nil)
-	  (:method bar :after ()))
-	<error>)
+;($error (defmethod bar-g-2 :around ()) <error>)
+;($error (defmethod bar-g-2 :before ()) <error>)
+;($error (defmethod bar-g-2 :after ()) <error>)
+;($error (defgeneric bar-g-2 () (:method-combination nil)
+;	  (:method bar :around ())) 
+;	<error>)
+;($error (defgeneric bar-g-2 () (:method-combination nil)
+;	  (:method bar :before ()))
+;	<error>)
+;($error (defgeneric bar-g-2 () (:method-combination nil)
+;	  (:method bar :after ()))
+;	<error>)
 ;;
-($error (defmethod undef (x)) <undefined-function>)
+;($error (defmethod undef (x)) <undefined-function>)
 ;;
 ($eval (defgeneric foo-g-3 (x)))
-($error (defmethod foo-g-3 (test (x undef))) <undefined-entity>)
-($error (defgeneric foo-g-3 (x)
-	  (:method (test (x undef))))
-	<undefined-entity>)
+;($error (defmethod foo-g-3 (test (x undef))) <undefined-entity>)
+;($error (defgeneric foo-g-3 (x)
+;	  (:method (test (x undef))))
+;	<undefined-entity>)
 ;;
 ;;
 ($eval (defgeneric foo-g-4 (x)))
@@ -282,95 +281,95 @@
 ($eval (defmethod foo-g-5 :after (test (x aa)) 'after-aa-1))
 ;;
 ($eval (defun foo-10 (x)))
-($error (defmethod foo-10 (x)) <error>)
-($eval (defmacro m-foo-1 (x)))
-($error (defmethod m-foo-1 (x)) <error>)
-($error (defmethod if (x)) <program-error>)
-($error (defmethod car (x)) <program-error>)
+;($error (defmethod foo-10 (x)) <error>)
+;($eval (defmacro m-foo-1 (x)))
+;($error (defmethod m-foo-1 (x)) <error>)
+;($error (defmethod if (x)) <program-error>)
+;($error (defmethod car (x)) <program-error>)
 ;;
-($error (defmethod undef (x)) <undefined-function>)
+;($error (defmethod undef (x)) <undefined-function>)
 ;;
 ;;
 ($eval (defgeneric foo-g-6 (x)))
 (test (defmethod foo-g-6 (x)) foo-g-6)
-($error (defmethod foo-g-6 ()) <error>)
-($error (defgeneric foo-g-7 (x)
-	  (:method ()))
-	<error>)
-($error (defmethod foo-g-7 (x &rest r)) <error>)
-($error (defgeneric  foo-g-8 (x)
-	  (:method (x &rest r)))
-	<error>)
-($error (defmethod foo-g-8 (x :rest r)) <error>)
-($error (defgeneric foo-g-9 (x)
-	  (:method (x :rest r)))
-	<error>)
-($error (defmethod foo-g-9 (x y)) <error>)
-($error (defgeneric foo-g-10 (x)
-	  (:method (x y)))
-	<error>)
+;($error (defmethod foo-g-6 ()) <error>)
+;($error (defgeneric foo-g-7 (x)
+;	  (:method ()))
+;	<error>)
+;($error (defmethod foo-g-7 (x &rest r)) <error>)
+;($error (defgeneric  foo-g-8 (x)
+;	  (:method (x &rest r)))
+;	<error>)
+;($error (defmethod foo-g-8 (x :rest r)) <error>)
+;($error (defgeneric foo-g-9 (x)
+;	  (:method (x :rest r)))
+;	<error>)
+;($error (defmethod foo-g-9 (x y)) <error>)
+;($error (defgeneric foo-g-10 (x)
+;	  (:method (x y)))
+;	<error>)
 ;;
 ($eval (defgeneric foo-g-11 (x &rest r)))
 (test (defmethod foo-g-11 (x &rest r)) foo-g-11)
-($error (defmethod foo-g-11 ()) <error>)
-($error (defgeneric foo-g-12 (x &rest r)
-	  (:method ()))
-	<error>)
-($error (defmethod foo-g-12 (&rest r)) <error>)
-($error (defgeneric foo-g-13 (x &rest r)
-	  (:method (&rest r)))
-	<error>)
-($error (defmethod foo-g-13 (:rest r)) <error>)
-($error (defgeneric foo-g-14 (x &rest r)
-	  (:method (:rest r)))
-	<error>)
-($error (defmethod foo-g-14 (x)) <error>)
-($error (defgeneric foo-g-15 (x &rest r)
-	  (:method (x)))
-	<error>)
-($error (defmethod foo-g-15 (x y)) <error>)
-($error (defgeneric foo-g-16 (x &rest r)
-	  (:method (x y)))
-	<error>)
-($error (defmethod foo-g-16 (x y &rest r)) <error>)
-($error (defgeneric foo-g-17 (x &rest r)
-	  (:method (x y &rest r)))
-	<error>)
-($error (defmethod foo-g-17 (x y :rest r)) <error>)
-($error (defgeneric foo-g-18 (x &rest r)
-	  (:method (x y :rest r)))
-	<error>)
+;($error (defmethod foo-g-11 ()) <error>)
+;($error (defgeneric foo-g-12 (x &rest r)
+;	  (:method ()))
+;	<error>)
+;($error (defmethod foo-g-12 (&rest r)) <error>)
+;($error (defgeneric foo-g-13 (x &rest r)
+;	  (:method (&rest r)))
+;	<error>)
+;($error (defmethod foo-g-13 (:rest r)) <error>)
+;($error (defgeneric foo-g-14 (x &rest r)
+;	  (:method (:rest r)))
+;	<error>)
+;($error (defmethod foo-g-14 (x)) <error>)
+;($error (defgeneric foo-g-15 (x &rest r)
+;	  (:method (x)))
+;	<error>)
+;($error (defmethod foo-g-15 (x y)) <error>)
+;($error (defgeneric foo-g-16 (x &rest r)
+;	  (:method (x y)))
+;	<error>)
+;($error (defmethod foo-g-16 (x y &rest r)) <error>)
+;($error (defgeneric foo-g-17 (x &rest r)
+;	  (:method (x y &rest r)))
+;	<error>)
+;($error (defmethod foo-g-17 (x y :rest r)) <error>)
+;($error (defgeneric foo-g-18 (x &rest r)
+;	  (:method (x y :rest r)))
+;	<error>)
 ;;
 ($eval (defgeneric foo-g-19 (x :rest r)))
 (test (defmethod foo-g-19 (x :rest r)) foo-g-19)
-($error (defmethod foo-g-19 ()) <error>)
-($error (defgeneric foo-g-20 (x :rest r)
-	  (:method ()))
-	<error>)
-($error (defmethod foo-g-20 (&rest r)) <error>)
-($error (defgeneric foo-g-21 (x :rest r)
-	  (:method (&rest r)))
-	<error>)
-($error (defmethod foo-g-21 (:rest r)) <error>)
-($error (defgeneric foo-g-22 (x :rest r)
-	  (:method (:rest r)))
-	<error>)
-($error (defmethod foo-g-22 (x)) <error>)
-($error (defgeneric foo-g-23 (x :rest r)
-	  (:method (x)))
-	<error>)
-($error (defmethod foo-g-23 (x y)) <error>)
-($error (defgeneric foo-g-24 (x :rest r)
-	  (:method (x y)))
-	<error>)
-($error (defmethod foo-g-24 (x y &rest r)) <error>)
-($error (defgeneric foo-g-25 (x :rest r)
-	  (:method (x y &rest r)))
-	<error>)
-($error (defmethod foo-g-25 (x y :rest r)) <error>)
-($error (defgeneric foo-g-26 (x :rest r)
-	  (:method (x y :rest r)))
-	<error>)
+;($error (defmethod foo-g-19 ()) <error>)
+;($error (defgeneric foo-g-20 (x :rest r)
+;	  (:method ()))
+;	<error>)
+;($error (defmethod foo-g-20 (&rest r)) <error>)
+;($error (defgeneric foo-g-21 (x :rest r)
+;	  (:method (&rest r)))
+;	<error>)
+;($error (defmethod foo-g-21 (:rest r)) <error>)
+;($error (defgeneric foo-g-22 (x :rest r)
+;	  (:method (:rest r)))
+;	<error>)
+;($error (defmethod foo-g-22 (x)) <error>)
+;($error (defgeneric foo-g-23 (x :rest r)
+;	  (:method (x)))
+;	<error>)
+;($error (defmethod foo-g-23 (x y)) <error>)
+;($error (defgeneric foo-g-24 (x :rest r)
+;	  (:method (x y)))
+;	<error>)
+;($error (defmethod foo-g-24 (x y &rest r)) <error>)
+;($error (defgeneric foo-g-25 (x :rest r)
+;	  (:method (x y &rest r)))
+;	<error>)
+;($error (defmethod foo-g-25 (x y :rest r)) <error>)
+;($error (defgeneric foo-g-26 (x :rest r)
+;	  (:method (x y :rest r)))
+;	<error>)
 ;;
 ;($eval (defclass nil () ()))
 ;($eval (defgeneric foo-g-27 (x)))
@@ -381,7 +380,7 @@
 ;(test (foo-g-28 (create (class nil))) primary-nil)
 ;;
 ;($eval (defgeneric foo-g-29 (x)))
-;($error (foo-g-29 3) <error>)
+;;($error (foo-g-29 3) <error>)
 ;;
 ($eval (defclass c1 () ()))
 ($eval (defclass c2 (c1) ()))
@@ -452,6 +451,7 @@
 (test (foo-g-30 c4 c3) (<object> c3) equal)
 (test (foo-g-30 c4 c4) (<object> <object>) equal)
 ;; 
+#|
 ($eval (defglobal *call-tree* nil))
 ($eval 
  (defun add-call-tree (x)
@@ -465,7 +465,7 @@
    (foo-sub-1 x)
    (reverse *call-tree*)))
 (test (foo-11 3) (primary-<integer>) equal)
-($error (foo-11 3.3) <error>)
+;($error (foo-11 3.3) <error>)
 ;;
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-2 (x) (:method-combination nil)))
@@ -477,7 +477,7 @@
    (foo-sub-2 x)
    (reverse *call-tree*)))
 (test (foo-12 3) (primary-<integer>) equal)
-($error (foo-12 3.3) <error>)
+;($error (foo-12 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-3 (x)))
@@ -495,7 +495,7 @@
    (foo-sub-3 x)
    (reverse *call-tree*)))
 (test (foo-13 3) (around-<integer>) equal)
-($error (foo-13 3.3) <error>)
+;($error (foo-13 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-4 (x)))
@@ -511,7 +511,7 @@
 (test (foo-14 3) (before-<integer>
 	  primary-<integer>) 
  equal)
-($error (foo-14 3.3) <error>)
+;($error (foo-14 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-5 (x)))
@@ -527,7 +527,7 @@
 (test (foo-15 3) (primary-<integer>
 	  after-<integer>)
  equal)
-($error (foo-15 3.3) <error>)
+;($error (foo-15 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-6 (x)))
@@ -546,7 +546,7 @@
 	  primary-<integer>
 	  after-<integer>) 
  equal)
-($error (foo-16 3.3) <error>)
+;($error (foo-16 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-7 (x)))
@@ -581,15 +581,15 @@
 ($eval (defgeneric (setf foo-18) (x y z)))
 ($eval (defmethod (setf foo-18) (x y z) (list x y z)))
 (test (setf (foo-18 1 2) 3) (3 1 2) equal)
-($error (setf (foo-18 1) 2) <program-error>)
-($error (setf (foo-18 1 2 3) 4) <program-error>)
-($error (setf (bar 1 2) 3) <error>)
+;($error (setf (foo-18 1) 2) <program-error>)
+;($error (setf (foo-18 1 2 3) 4) <program-error>)
+;($error (setf (bar 1 2) 3) <error>)
 ;;
 ($eval (defgeneric (setf nil) (x y z)))
 ($eval (defmethod (setf nil) (x y z) (list x y z)))
 (test (setf (nil 1 2) 3) (3 1 2) equal)
-($error (setf (nil 1) 2) <program-error>)
-($error (setf (nil 1 2 3) 4) <program-error>)
+;($error (setf (nil 1) 2) <program-error>)
+;($error (setf (nil 1 2 3) 4) <program-error>)
 ;;;------------------------------------------------------------
 ;;; [local function]
 ;;;
@@ -597,26 +597,26 @@
 ;;;------------------------------------------------------------
 ;;($argc call-next-method 0 0 0)
 ;;
-($error (call-next-method) <undefined-function>)
-($error (call-next-method 1) <undefined-function>)
+;($error (call-next-method) <undefined-function>)
+;($error (call-next-method 1) <undefined-function>)
 ($eval (defun foo-19 () (call-next-method)))
-($error (foo-19) <undefined-function>)
+;($error (foo-19) <undefined-function>)
 ($eval (defun foo-20 () (call-next-method 1)))
-($error (foo-20) <undefined-function>)
+;($error (foo-20) <undefined-function>)
 ;; 
 ($eval (defgeneric foo-21 (x)))
 ($eval (defmethod foo-21 (test (x <integer>)) 'integer))
 ($eval (defmethod foo-21 :before (test (x <integer>)) (call-next-method)))
-($error (foo-21 3) <error>)
+;($error (foo-21 3) <error>)
 ;; 
 ($eval (defgeneric foo-22 (x)))
 ($eval (defmethod foo-22 (test (x <integer>)) 'integer))
 ($eval (defmethod foo-22 :after (test (x <integer>)) (call-next-method)))
-($error (foo-22 3) <error>)
+;($error (foo-22 3) <error>)
 ;;
 ($eval (defgeneric foo-23 (x)))
 ($eval (defmethod foo-23 (test (x <integer>)) (call-next-method)))
-($error (foo-23 3) <error>)
+;($error (foo-23 3) <error>)
 ;;
 ($eval (defgeneric foo-24 (x)))
 ($eval (defmethod foo-24 (x) '<object>))
@@ -629,7 +629,7 @@
 ($eval (defmethod foo-25 (test (x <integer>)) 
 	 (call-next-method 1) ;;
 	 ))
-($error (foo-25 3) <program-error>)
+;($error (foo-25 3) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [local function]
@@ -638,12 +638,12 @@
 ;;;------------------------------------------------------------
 ;;($argc next-method-p 0 0 0)
 ;;
-($error (next-method-p) <undefined-function>)
-($error (next-method-p 1) <undefined-function>)
+;($error (next-method-p) <undefined-function>)
+;($error (next-method-p 1) <undefined-function>)
 ($eval (defun foo-26 () (next-method-p)))
-($error (foo-26) <undefined-function>)
+;($error (foo-26) <undefined-function>)
 ($eval (defun foo-27 () (next-method-p 1)))
-($error (foo-27) <undefined-function>)
+;($error (foo-27) <undefined-function>)
 ;;
 ($eval (defgeneric foo-28 (x)))
 ($eval (defmethod foo-28 (x) '<object>))
@@ -656,7 +656,7 @@
 ($eval (defmethod foo-29 (test (x <integer>)) 
 	 (if (next-method-p 1)  ;;
 	     (call-next-method))))
-($error (foo-29 3) <program-error>)
+;($error (foo-29 3) <program-error>)
 
 ($eval (defglobal *call-tree* nil))
 ;;
@@ -898,14 +898,14 @@
 ($eval 
  (defgeneric foo-34 (x)
    (:method :around (x) (call-next-method))))
-($error (foo-34 3) <error>)
+;($error (foo-34 3) <error>)
 ;;
 ($eval
  (defgeneric foo-35 (x)
    (:method :around (x) (call-next-method))
    (:method (test (x <integer>)) 'primary-<integer>)))
 (test (foo-35 3) primary-<integer>)
-($error (foo-35 3.3) <error>)
+;($error (foo-35 3.3) <error>)
 ;;
 ;;
 ($eval
@@ -956,104 +956,107 @@
   (test (default "foo" "bar") "foobar"))
  equal)
 ;;
+
 ($eval (defglobal f nil))
 ($eval (defgeneric foo-38 (x y)))
 ($eval (defmethod foo-38 (x y) (list x y)))
-($eval (defmethod foo-38 (test (x <integer>) (y <integer>))
+($eval (defmethod foo-38 ((x <integer>) (y <integer>))
 	 (setq x (* x 10))
 	 (setq y (* y 10))
 	 (setq f (lambda () (if (next-method-p) (call-next-method))))
 	 (list x y)))
 (test (foo-38 2 3) (20 30) equal)
 (test (funcall f) (2 3) equal)
+|#
 ;;
-($eval (defglobal f nil))
-($eval (defgeneric foo-39 (x y)))
-($eval (defmethod foo-39 (x y) (list x y)))
-($eval (defmethod foo-39 (test (x <integer>) (y <integer>))
+;($eval (defglobal f nil))
+;($eval (defgeneric foo-39 (x y)))
+;($eval (defmethod foo-39 (x y) (list x y)))
+;($eval (defmethod foo-39 (test (x <integer>) (y <integer>))
+;	 (setq x (* x 10))
+;	 (setq y (* y 10))
+;	 (setq f (lambda () 
+;		   (if (next-method-p) (list x y (call-next-method)))))
+;	 (list x y)))
+;(test (foo-39 2 3) (20 30) equal)
+;(test (funcall f) (20 30 (2 3)) equal)
+;;
+;($eval (defglobal f nil))
+;($eval (defgeneric foo-40 (x y)))
+;($eval (defmethod foo-40 (x y) (list x y)))
+#|
+($eval (defmethod foo-40 ((x <integer>) (y <integer>))
 	 (setq x (* x 10))
 	 (setq y (* y 10))
-	 (setq f (lambda () 
-		   (if (next-method-p) (list x y (call-next-method)))))
-	 (list x y)))
-(test (foo-39 2 3) (20 30) equal)
-(test (funcall f) (20 30 (2 3)) equal)
-;;
-($eval (defglobal f nil))
-($eval (defgeneric foo-40 (x y)))
-($eval (defmethod foo-40 (x y) (list x y)))
-($eval (defmethod foo-40 (test (x <integer>) (y <integer>))
-	 (setq x (* x 10))
-	 (setq y (* y 10))
-	 (let (test (x 5) (y 6))
+	 (let ((x 5) (y 6))
 	   (setq f (lambda () 
 		     (if (next-method-p) (list x y (call-next-method))))))
 	 (list x y)))
-(test (foo-40 2 3) (20 30) equal)
-(test (funcall f) (5 6 (2 3)) equal)
+|#
+;(test (foo-40 2 3) (20 30) equal)
+;(test (funcall f) (5 6 (2 3)) equal)
 ;;
-($eval (defgeneric foo-41 (a &rest r)))
-($eval (defmethod foo-41 (test (a <integer>) &rest r)
-	 (setf (car r) 9)
-	 (call-next-method)))
-($eval (defmethod foo-41 (test (a <number>) &rest r)
-	 (car r)))
-(test (foo-41 1 2) 2 eql)
+;($eval (defgeneric foo-41 (a &rest r)))
+;($eval (defmethod foo-41 ((a <integer>) &rest r)
+;	 (setf (car r) 9)
+;	 (call-next-method)))
+;($eval (defmethod foo-41 ((a <number>) &rest r)
+;	 (car r)))
+;(test (foo-41 1 2) 2 eql)
 ;;;------------------------------------------------------------
 ;;; [generic function]
 ;;;
 ;;;  (create class {initarg initval}*) --> <object>
 ;;;------------------------------------------------------------
-($eval (defclass foo () (test (a :initarg a))))
+;($eval (defclass foo () ((a :initarg a))))
 ;;
-($error (create) <program-error>)
-($error (create (class foo) 'a) <program-error>)
-($error (create (class foo) 'a 10 'b) <program-error>)
+;($error (create) <program-error>)
+;($error (create (class foo) 'a) <program-error>)
+;($error (create (class foo) 'a 10 'b) <program-error>)
 ;;
-($error (create (class <object>)) <error>)
-($error (create (class <basic-array>)) <error>)
-($error (create (class <basic-array*>)) <error>)
-($error (create (class <general-array*>)) <error>)
-($error (create (class <basic-vector>)) <error>)
-($error (create (class <general-vector>)) <error>)
-($error (create (class <string>)) <error>)
-($error (create (class <built-in-class>)) <error>)
-($error (create (class <character>)) <error>)
-($error (create (class <function>)) <error>)
-($error (create (class <generic-function>)) <error>)
-($error (create (class <standard-generic-function>)) <error>)
-($error (create (class <list>)) <error>)
-($error (create (class <cons>)) <error>)
-($error (create (class <null>)) <error>)
-($error (create (class <symbol>)) <error>)
-($error (create (class <number>)) <error>)
-($error (create (class <float>)) <error>)
-($error (create (class <integer>)) <error>)
-($error (create (class <serious-condition>)) <error>)
-($error (create (class <error>)) <error>)
-($error (create (class <arithmetic-error>)) <error>)
-($error (create (class <division-by-zero>)) <error>)
-($error (create (class <floating-point-overflow>)) <error>)
-($error (create (class <floating-point-underflow>)) <error>)
-($error (create (class <control-error>)) <error>)
-($error (create (class <parse-error>)) <error>)
-($error (create (class <program-error>)) <error>)
-($error (create (class <domain-error>)) <error>)
-($error (create (class <undefined-entity>)) <error>)
-($error (create (class <unbound-variable>)) <error>)
-($error (create (class <undefined-function>)) <error>)
-($error (create (class <simple-error>)) <error>)
-($error (create (class <stream-error>)) <error>)
-($error (create (class <end-of-stream>)) <error>)
-($error (create (class <storage-exhausted>)) <error>)
-($error (create (class <standard-class>)) <error>)
-($error (create (class <standard-object>)) <error>)
-($error (create (class <stream>)) <error>)
-($error (create (class <invalid>)) <error>)
+;($error (create (class <object>)) <error>)
+;($error (create (class <basic-array>)) <error>)
+;($error (create (class <basic-array*>)) <error>)
+;($error (create (class <general-array*>)) <error>)
+;($error (create (class <basic-vector>)) <error>)
+;($error (create (class <general-vector>)) <error>)
+;($error (create (class <string>)) <error>)
+;($error (create (class <built-in-class>)) <error>)
+;($error (create (class <character>)) <error>)
+;($error (create (class <function>)) <error>)
+;($error (create (class <generic-function>)) <error>)
+;($error (create (class <standard-generic-function>)) <error>)
+;($error (create (class <list>)) <error>)
+;($error (create (class <cons>)) <error>)
+;($error (create (class <null>)) <error>)
+;($error (create (class <symbol>)) <error>)
+;($error (create (class <number>)) <error>)
+;($error (create (class <float>)) <error>)
+;($error (create (class <integer>)) <error>)
+;($error (create (class <serious-condition>)) <error>)
+;($error (create (class <error>)) <error>)
+;($error (create (class <arithmetic-error>)) <error>)
+;($error (create (class <division-by-zero>)) <error>)
+;($error (create (class <floating-point-overflow>)) <error>)
+;($error (create (class <floating-point-underflow>)) <error>)
+;($error (create (class <control-error>)) <error>)
+;($error (create (class <parse-error>)) <error>)
+;($error (create (class <program-error>)) <error>)
+;($error (create (class <domain-error>)) <error>)
+;($error (create (class <undefined-entity>)) <error>)
+;($error (create (class <unbound-variable>)) <error>)
+;($error (create (class <undefined-function>)) <error>)
+;($error (create (class <simple-error>)) <error>)
+;($error (create (class <stream-error>)) <error>)
+;($error (create (class <end-of-stream>)) <error>)
+;($error (create (class <storage-exhausted>)) <error>)
+;($error (create (class <standard-class>)) <error>)
+;($error (create (class <standard-object>)) <error>)
+;($error (create (class <stream>)) <error>)
+;($error (create (class <invalid>)) <error>)
 ;;
-($eval (defclass foo () () (:abstractp t)))
-($error (create (class foo)) <error>)
-
+;($eval (defclass foo () () (:abstractp t)))
+;($error (create (class foo)) <error>)
 ;;;------------------------------------------------------------
 ;;; [generic function]
 ;;;
@@ -1062,20 +1065,22 @@
 ($argc initialize-object 2 0 0)
 ;;($type initialize-object ($instance) :target nil)
 ;;
-(test (defclass c0 ()
-   (test (x :initform 0 :accessor c0-x :initarg x)
-    (y :initform 1 :accessor c0-y :initarg y)))
- c0)
-(test (defmethod initialize-object (test (instance c0) init-list)
+;(test (defclass c0 ()
+;   ((x :initform 0 :accessor c0-x :initarg x)
+;    (y :initform 1 :accessor c0-y :initarg y)))
+; c0)
+#|
+(test (defmethod initialize-object ((instance c0) init-list)
    (if (next-method-p)
        (call-next-method))
    (if (= (c0-x instance) 0)
        (setf (c0-x instance) t))
    instance) 
  initialize-object)
+|#
 ;;
-($eval (defglobal c0 (create (class c0))))
-(test (c0-x c0) t)
+;($eval (defglobal c0 (create (class c0))))
+;(test (c0-x c0) t)
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -1084,13 +1089,15 @@
 ($argc class-of 1 0 0)
 ;; <general-array*>
 (test (eq (class-of (create-array '())) (class <general-array*>)) t)
-(test (eq (class-of #2a(test (a b) (c d))) (class <general-array*>)) t)
+(test (eq (class-of #2a((a b) (c d))) (class <general-array*>)) t)
 ;; <general-vector>
 (test (eq (class-of (create-vector 3)) (class <general-vector>)) t)
 (test (eq (class-of #(a b c)) (class <general-vector>)) t)
 ;; <string>
 (test (eq (class-of (create-string 3 #\a)) (class <string>)) t)
 (test (eq (class-of "foo") (class <string>)) t)
+
+
 ;; <built-in-class>
 (test (eq (class-of (class <object>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <basic-array>)) (class <built-in-class>)) t)
@@ -1131,7 +1138,7 @@
 (test (eq (class-of (class <standard-class>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <standard-object>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <stream>)) (class <built-in-class>)) t)
-(test (eq (class-of (class <invalid>)) (class <built-in-class>)) t)
+;(test (eq (class-of (class <invalid>)) (class <built-in-class>)) t)
 ;; <character>
 (test (eq (class-of #\a) (class <character>)) t)
 ;; <function>
@@ -1267,8 +1274,8 @@
 ($eval (defglobal a-3 (create (class a-3))))
 (test (eq (class-of a-3) (class a-3)) t)
 ($eval (defclass a-3 () ()))
-(test (eq (class-of a-3) (class <invalid>)) t)
-;;($error (class-of a-3) <error>)
+;(test (eq (class-of a-3) (class <invalid>)) t)
+;;;($error (class-of a-3) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [function]
@@ -1320,7 +1327,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <floating-point-overflow>
 ($eval (catch-condition (* 1e300 1e300)))
 (test (instancep cc (class <object>)) t)
@@ -1362,7 +1369,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <floating-point-underflow>
 ($eval (catch-condition (* 1e-300 1e-300)))
 (test (instancep cc (class <object>)) t)
@@ -1404,7 +1411,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <control-error>
 ($eval (catch-condition (block b (return-from bb nil))))
 (test (instancep cc (class <object>)) t)
@@ -1446,7 +1453,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <parse-error>
 ($eval (catch-condition (parse-number "foo")))
 (test (instancep cc (class <object>)) t)
@@ -1488,7 +1495,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <program-error>
 ($eval (catch-condition (cons 'a)))
 (test (instancep cc (class <object>)) t)
@@ -1530,7 +1537,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <domain-error>
 ($eval (catch-condition (car 3)))
 (test (instancep cc (class <object>)) t)
@@ -1572,7 +1579,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <undefined-entity>
 ($eval (catch-condition (class undef)))
 (test (instancep cc (class <object>)) t)
@@ -1614,7 +1621,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <unbound-variable>
 ($eval (catch-condition undef))
 (test (instancep cc (class <object>)) t)
@@ -1656,7 +1663,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <undefined-function>
 ($eval (catch-condition #'undef))
 (test (instancep cc (class <object>)) t)
@@ -1698,7 +1705,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <simple-error>
 ($eval (catch-condition (error "err")))
 (test (instancep cc (class <object>)) t)
@@ -1740,7 +1747,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <end-of-stream>
 ($eval (catch-condition (let (test (str (create-string-input-stream "hi")))
 	      (read-char str)
@@ -1785,7 +1792,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+;(test (instancep cc (class <invalid>)) nil)
 ;; <storage-exhausted>
 ($eval (catch-condition (create-list 1000000000)))
 (test (instancep cc (class <object>)) t)
@@ -1827,7 +1834,8 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-(test (instancep cc (class <invalid>)) nil)
+#|
+;(test (instancep cc (class <invalid>)) nil)
 ;; <general-array*>
 (test (instancep #2a(test (a b) (c d)) (class <object>)) t)
 (test (instancep #2a(test (a b) (c d)) (class <basic-array>)) t)
@@ -1868,7 +1876,8 @@
 (test (instancep #2a(test (a b) (c d)) (class <standard-class>)) nil)
 (test (instancep #2a(test (a b) (c d)) (class <standard-object>)) nil)
 (test (instancep #2a(test (a b) (c d)) (class <stream>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <invalid>)) nil)
+;(test (instancep #2a(test (a b) (c d)) (class <invalid>)) nil)
+|#
 ;; <general-vector>
 (test (instancep #(a b) (class <object>)) t)
 (test (instancep #(a b) (class <basic-array>)) t)
@@ -1909,7 +1918,7 @@
 (test (instancep #(a b) (class <standard-class>)) nil)
 (test (instancep #(a b) (class <standard-object>)) nil)
 (test (instancep #(a b) (class <stream>)) nil)
-(test (instancep #(a b) (class <invalid>)) nil)
+;(test (instancep #(a b) (class <invalid>)) nil)
 ;; <string>
 (test (instancep "foo" (class <object>)) t)
 (test (instancep "foo" (class <basic-array>)) t)
@@ -1950,7 +1959,7 @@
 (test (instancep "foo" (class <standard-class>)) nil)
 (test (instancep "foo" (class <standard-object>)) nil)
 (test (instancep "foo" (class <stream>)) nil)
-(test (instancep "foo" (class <invalid>)) nil)
+;(test (instancep "foo" (class <invalid>)) nil)
 ;; <character>
 (test (instancep #\a (class <object>)) t)
 (test (instancep #\a (class <basic-array>)) nil)
@@ -1991,7 +2000,7 @@
 (test (instancep #\a (class <standard-class>)) nil)
 (test (instancep #\a (class <standard-object>)) nil)
 (test (instancep #\a (class <stream>)) nil)
-(test (instancep #\a (class <invalid>)) nil)
+;(test (instancep #\a (class <invalid>)) nil)
 ;; <function>
 (test (instancep #'+ (class <object>)) t)
 (test (instancep #'+ (class <basic-array>)) nil)
@@ -2032,7 +2041,7 @@
 (test (instancep #'+ (class <standard-class>)) nil)
 (test (instancep #'+ (class <standard-object>)) nil)
 (test (instancep #'+ (class <stream>)) nil)
-(test (instancep #'+ (class <invalid>)) nil)
+;(test (instancep #'+ (class <invalid>)) nil)
 ;; <generic-function>
 (test (instancep #'create (class <object>)) t)
 (test (instancep #'create (class <basic-array>)) nil)
@@ -2073,7 +2082,7 @@
 (test (instancep #'create (class <standard-class>)) nil)
 (test (instancep #'create (class <standard-object>)) nil)
 (test (instancep #'create (class <stream>)) nil)
-(test (instancep #'create (class <invalid>)) nil)
+;(test (instancep #'create (class <invalid>)) nil)
 ;; <standard-generic-function>
 ($eval (defgeneric foo (x)))
 (test (instancep #'foo (class <object>)) t)
@@ -2115,7 +2124,7 @@
 (test (instancep #'foo (class <standard-class>)) nil)
 (test (instancep #'foo (class <standard-object>)) nil)
 (test (instancep #'foo (class <stream>)) nil)
-(test (instancep #'foo (class <invalid>)) nil)
+;(test (instancep #'foo (class <invalid>)) nil)
 ;; <cons>
 (test (instancep '(1 . 2) (class <object>)) t)
 (test (instancep '(1 . 2) (class <basic-array>)) nil)
@@ -2156,7 +2165,7 @@
 (test (instancep '(1 . 2) (class <standard-class>)) nil)
 (test (instancep '(1 . 2) (class <standard-object>)) nil)
 (test (instancep '(1 . 2) (class <stream>)) nil)
-(test (instancep '(1 . 2) (class <invalid>)) nil)
+;(test (instancep '(1 . 2) (class <invalid>)) nil)
 ;; <null>
 (test (instancep nil (class <object>)) t)
 (test (instancep nil (class <basic-array>)) nil)
@@ -2197,7 +2206,7 @@
 (test (instancep nil (class <standard-class>)) nil)
 (test (instancep nil (class <standard-object>)) nil)
 (test (instancep nil (class <stream>)) nil)
-(test (instancep nil (class <invalid>)) nil)
+;(test (instancep nil (class <invalid>)) nil)
 ;; <symbol>
 (test (instancep 'a (class <object>)) t)
 (test (instancep 'a (class <basic-array>)) nil)
@@ -2238,7 +2247,7 @@
 (test (instancep 'a (class <standard-class>)) nil)
 (test (instancep 'a (class <standard-object>)) nil)
 (test (instancep 'a (class <stream>)) nil)
-(test (instancep 'a (class <invalid>)) nil)
+;(test (instancep 'a (class <invalid>)) nil)
 ;; <integer> (fixnum)
 (test (instancep 123 (class <object>)) t)
 (test (instancep 123 (class <basic-array>)) nil)
@@ -2279,7 +2288,7 @@
 (test (instancep 123 (class <standard-class>)) nil)
 (test (instancep 123 (class <standard-object>)) nil)
 (test (instancep 123 (class <stream>)) nil)
-(test (instancep 123 (class <invalid>)) nil)
+;(test (instancep 123 (class <invalid>)) nil)
 ;; <integer> (bignum)
 (test (instancep 1234567890 (class <object>)) t)
 (test (instancep 1234567890 (class <basic-array>)) nil)
@@ -2320,7 +2329,7 @@
 (test (instancep 1234567890 (class <standard-class>)) nil)
 (test (instancep 1234567890 (class <standard-object>)) nil)
 (test (instancep 1234567890 (class <stream>)) nil)
-(test (instancep 1234567890 (class <invalid>)) nil)
+;(test (instancep 1234567890 (class <invalid>)) nil)
 ;; <float>
 (test (instancep 1.23 (class <object>)) t)
 (test (instancep 1.23 (class <basic-array>)) nil)
@@ -2361,7 +2370,7 @@
 (test (instancep 1.23 (class <standard-class>)) nil)
 (test (instancep 1.23 (class <standard-object>)) nil)
 (test (instancep 1.23 (class <stream>)) nil)
-(test (instancep 1.23 (class <invalid>)) nil)
+;(test (instancep 1.23 (class <invalid>)) nil)
 ;; <stream>
 (test (instancep (standard-output) (class <object>)) t)
 (test (instancep (standard-output) (class <basic-array>)) nil)
@@ -2402,7 +2411,7 @@
 (test (instancep (standard-output) (class <standard-class>)) nil)
 (test (instancep (standard-output) (class <standard-object>)) nil)
 (test (instancep (standard-output) (class <stream>)) t)
-(test (instancep (standard-output) (class <invalid>)) nil)
+;(test (instancep (standard-output) (class <invalid>)) nil)
 ;; <built-in-class>
 (test (instancep (class <object>) (class <built-in-class>)) t)
 (test (instancep (class <basic-array>) (class <built-in-class>)) t)
@@ -2443,7 +2452,7 @@
 (test (instancep (class <standard-class>) (class <built-in-class>)) t)
 (test (instancep (class <standard-object>) (class <built-in-class>)) t)
 (test (instancep (class <stream>) (class <built-in-class>)) t)
-(test (instancep (class <invalid>) (class <built-in-class>)) t)
+;(test (instancep (class <invalid>) (class <built-in-class>)) t)
 ;;
 ;; c1111 --+
 ;; c2222 --+-- c5555 --+
@@ -2503,7 +2512,7 @@
 (test (instancep (class c1111) (class <standard-class>)) t)
 (test (instancep (class c1111) (class <standard-object>)) nil)
 (test (instancep (class c1111) (class <stream>)) nil)
-(test (instancep (class c1111) (class <invalid>)) nil)
+;(test (instancep (class c1111) (class <invalid>)) nil)
 ;;
 (test (instancep c1111 (class <object>)) t)
 (test (instancep c1111 (class <standard-object>)) t)
@@ -2562,12 +2571,12 @@
 ($eval (defclass a () ()))
 ($eval (defglobal a (create (class a))))
 (test (instancep a (class a)) t)
-(test (instancep a (class <invalid>)) nil)
+;(test (instancep a (class <invalid>)) nil)
 ($eval (defclass a () ())) ;;; �����ōĒ�`
 (test (instancep a (class a)) nil)
-(test (instancep a (class <invalid>)) t)
-;;($error (instancep a (class a)) <error>)
-;;($error (instancep a (class <invalid>)) <error>)
+;(test (instancep a (class <invalid>)) t)
+;;;($error (instancep a (class a)) <error>)
+;;;($error (instancep a (class <invalid>)) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [function]
@@ -4219,6 +4228,5 @@
 ($argc class 1 0 0)
 ($stype class ($symbol $null) :target)
 ;;
-($error (class undef) <undefined-entity>)
+;($error (class undef) <undefined-entity>)
 
-|#

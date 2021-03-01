@@ -314,8 +314,8 @@ extern int catch_symbols;
 extern int block_pt;  //pointer for block
 extern int catch_pt;  //catch counter
 extern int unwind_pt; //lambda address for unwind-protect
-extern int block_arg; //argument that block will recieve
-extern int catch_arg; //argument that catch will recieve
+extern int block_arg; //argument that block will receive
+extern int catch_arg; //argument that catch will receive
 extern int tagbody_tag; //tag symbol address in tagbody
 extern int error_handler;
 extern int trace_list;

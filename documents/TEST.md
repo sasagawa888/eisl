@@ -1,23 +1,32 @@
 # Test 
-Simple macro for code test
+
+Simple macro for unit testing.
 
 # Usage
+
+```lisp
 (import "test")
+```
 
 # Specification
-(test test-S-expression result-S-Expression)
-If eval of test-S-expression is same as result-S-expression, no message
-If eval of test-S-expression is not same as result-S-expression, print message 
-The equal function is used for the judgment.
 
+```lisp
+(test test-S-expression result-S-Expression)
+```
+If eval of test-S-expression is same as result-S-expression, nothing is printed.
+If eval of test-S-expression is not same as result-S-expression, print a message.
+The `equal` function is used for the judgment.
+
+```lisp
 (test test-S-expression result-S-Expression pred-function)
-Then pred-function is used for the judgment. e.g. eq, =, eql ...
+```
+Pred-function is used for the judgment. e.g. eq, =, eql, etc.
 
 # Code
 
-see following macro code
+See the following macro:
 
-```
+```lisp
 (defmacro test(form1 form2 :rest pred)
   (if (null pred)
       `(let ((ans ,form1))

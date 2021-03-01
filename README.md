@@ -1,20 +1,21 @@
 # Easy-ISLisp
 
-Easy-ISLisp(EISL) is an interpreter and compiler compatible with ISLisp standard.
+Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](minejima.jp/ISLispHyperDraft/islisp-v23.html).
 EISL was written by Kenichi Sasagawa
 https://qiita.com/sym_num/items/793adfe118514668e5b0
 
-see [ISLisp](https://en.wikipedia.org/wiki/ISLISP)
+See [ISLisp](https://en.wikipedia.org/wiki/ISLISP)
 youtube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw8&t=330s)
 
 # Installation
+
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
 In Linux  type "sudo make install".
 In macOS  type "sudo make install OPSYS=macos".
 In OpenBSD  type "sudo make install OPSYS=openbsd".
 
-After version 1.4 Windows OS is not suported. Please use WSL on Windows.
+After version 1.4 Windows OS is not supported. Please use WSL on Windows.
 
 We confirmed operation in the following environments.
 - Ubuntu 16.04 GCC 5.4
@@ -28,10 +29,9 @@ We confirmed operation in the following environments.
 - macOS 11.1 clang 12.0.0 
 - OpenBSD
 
-
 # Invoke
 
-```
+```sh
 eisl 
 ```
 
@@ -41,14 +41,14 @@ In the Linux version,the REPL is editable. If you do not desire to use the edita
 eisl -r
 ```
 
-If you desire to start after reading file, invoke with -l option.
+If you want to start after reading a file, use the -l command-line option.
 e.g.
 
-```
+```sh
 eisl -l foo.lsp 
 ```
 
-Other options, see EISL -h
+For other options, see `eisl -h`:
 
 ```
 $ eisl -h
@@ -69,27 +69,34 @@ On REPL type (quit) or Esc+Q
 On not editable REPL type (quit) or CTRL+D
 
 # Editable REPL
-key-bindings are as follows:
 
-- ctrl+F  or → move right
-- ctrl+B  or ← move left 
-- ctrl+P  or ↑ recall history older
-- ctrl+N  or ↓ recall history newer
-- ctrl+A  move to begin of line
-- strl+E  move to end of line 
-- ctrl+J ctrl+M or return insert end of line
-- ctrl+H  or back-space  backspace
-- ctrl+D  delete one char
-- ctrl+K  kill line from current positon
-- ctrl+Y  yank killed line
-- Esc Tab completion
+Key bindings are as follows:
+
+| Key         | Description           |
+| ----------- | --------------------- |
+| ctrl+F or → | move right            |
+| ctrl+B or ← | move left             |
+| ctrl+P or ↑ | recall history older  |
+| ctrl+N or ↓ | recall history newer  |
+| ctrl+A      | move to begin of line |
+| strl+E      | move to end of line   |
+| ctrl+J ctrl+M or return | insert end of line             |
+| ctrl+H or back-space    | backspace                      |
+| ctrl+D                  | delete one char                |
+| ctrl+K                  | kill line from current positon |
+| ctrl+Y                  | yank killed line               |
+| Esc Tab                 | completion                     |
 
 # Goal
-I hope that Lisp will become more popular. I hope many people enjoy Lisp. EISL aims at easy handling.
+
+I hope that Lisp will become more popular.
+I hope many people enjoy it.
+EISL aims to be user-friendly.
 
 # Compiler
-EISL has a compiler. it generates GCC code and generates object code.
 
+EISL has a compiler.
+It generates GCC code and from that object code.
 
 ```
 Invoke with -c option
@@ -135,9 +142,8 @@ Elapsed Time(second)=3.728262
 >
 ```
 
-
-
 # Compile EISL by CUDA
+
 You can also compile EISL with nvcc(CUDA) instead of gcc.
 
 On linux terminal type "make -f cudamake" and "sudo make install"
@@ -146,7 +152,7 @@ Now, I am adding function using CUDA
 
 see tests/gpu-test.lsp
 extended array for float.
-```
+```lisp
 (defglobal a #2f((1.0 2.0)(3.0 4.0)))
 (defglobal b #2f((1.0 2.0)(3.0 4.0)))
 (gpu-mult a b)
@@ -155,21 +161,23 @@ extended array for float.
 
 extended create-array builtin-function.
 it can generate array for float. e.g.
-```
+```lisp
 (create-array '(3000 3000) 'rand 'float)
 ```
 
 # Invoke editor
-edit function invoke Edlis editor.
-see https://github.com/sasagawa888/Edlis
+
+The `edit` function invokes the
+[Edlis](https://github.com/sasagawa888/Edlis)
+editor.
 
 (edit file-name-string) example (edit "foo.lsp")
 
 # WiringPi
+
 On paspberry PI, Eisl includes system function of WiringPi. 
 
-
-```
+```lisp
 EISL <==================================> C
 (wiringpi-spi-setup ch speed) <===> wiringPiSPISetup (SPI_CH, SPI_SPEED)
 (wiringpi-setup-gpio ) <===> wiringPiSetupGpio()
@@ -187,7 +195,7 @@ EISL <==================================> C
 
 ### Examples.
 
-```
+```lisp
 ;;LED on/off
 
 (defglobal pin 5)
@@ -218,7 +226,6 @@ EISL <==================================> C
    (pwm-write 18 n))
 ```
 
-
 # Functions for debug
 - (trace fn1 fn2 ... fn)
 - (untrace fn1 fn2 ... fn) or (untrace)
@@ -227,14 +234,17 @@ EISL <==================================> C
 - (macroexpand-1)
 
 # Extended functions
-- (random n) random-integer from 0 to n
-- (random-real) random-float-number from 0 to 1
-- (gbc) invoke garbage collection.
-- (gbc t) display message when invoke GC.
-- (gbc nil) not display message when invoke GC.
-- (gbc 'copy) change GC method to copying-GC
-- (gbc 'm&s) change GC method to mark & sweep
-- (heapdump n) display cell dump list from nth address
-- (instance n) display instance of nth address
-- (defmodule name body) see tests/module.lsp
-- (import x) import library. e.g. (import "compiler")
+
+| Function              | Description                              |
+| --------------------- | ---------------------------------------- |
+| (random n)            | random-integer from 0 to n               |
+| (random-real)         | random-float-number from 0 to 1          |
+| (gbc)                 | invoke garbage collection.               |
+| (gbc t)               | display message when invoke GC.          |
+| (gbc nil)             | not display message when invoke GC.      |
+| (gbc 'copy)           | change GC method to copying-GC           | 
+| (gbc 'm&s)            | change GC method to mark & sweep         |
+| (heapdump n)          | display cell dump list from nth address  |
+| (instance n)          | display instance of nth address          |
+| (defmodule name body) | see tests/module.lsp                     |
+| (import x)            | import library. e.g. (import "compiler") |

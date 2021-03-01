@@ -1,13 +1,15 @@
 # TCPIP
-library for TCP/IP.
-We would like to thank Mr. Poldy for his great contributions. 
+
+This is a library for TCP/IP communication.
+We would like to thank Mr. Poldy for his great contributions.
 
 # Usage
-(import "tcpip)
 
-see following code
+(import "tcpip")
 
-```
+See the following sample code:
+
+```lisp
 (import "tcpip")
 ;; Please compile tcpip.lsp in library before. 
 
@@ -22,7 +24,7 @@ see following code
     (create-server s)
     (setq c (server-accept s))
     (while (not (string= msg "end"))
-           (setq msg (socket-recieve c))
+           (setq msg (socket-receive c))
            (print msg)
            (socket-send c msg))
     (socket-close s)))
@@ -36,9 +38,9 @@ see following code
     (while (not (string= msg "end"))
            (setq msg (read))
            (socket-send s msg)
-           (setq msg (socket-recieve s))
+           (setq msg (socket-receive s))
            (print msg))
     (socket-close s)))
-
-
 ```
+
+Support for I/O multiplexing, e.g. `select` or `poll`, may be necessary in the future.

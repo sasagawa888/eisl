@@ -1,13 +1,14 @@
 # Manual of OpenGL
 
-# Install
-install OpenGL on linux and compile library/opengl.lsp with Easy-ISLisp
+# Installation
+
+Install OpenGL on linux and compile *library/opengl.lsp* with Easy-ISLisp.
 
 # Example
 
-```
+```lisp
 (import "opengl")
-;;compile library/opengl.lsp before import
+;; Compile library/opengl.lsp before import
 
 (defun main ()
   (glut::init)
@@ -42,6 +43,7 @@ install OpenGL on linux and compile library/opengl.lsp with Easy-ISLisp
 ```
 
 # Functions
+
 (glut::init)
 
 (glut::init-display-mode x)
@@ -69,14 +71,11 @@ gl::state
 gl::x
 gl::y
 
-
 (glut::main-loop)
 
 (gl::clear x)
 
-
 (gl::color3d r g b)
-
 
 (gl::begin x)
   x is one of them
@@ -90,7 +89,6 @@ gl::y
     'gl-quad-strip
     'gl-triangle-fan
     'gl-polygon
-          
 
 (gl::vertex2d x y)
     

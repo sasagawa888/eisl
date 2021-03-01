@@ -1,10 +1,12 @@
 # Compiler
-I was developing a compiler for Easy-ISLisp (I called it "FAST" project).
-I have released it in August 2017. 
-I write down the specifications, constraints, problems, etc. 
+
+I developed a compiler for Easy-ISLisp (called the "FAST" project).
+I released it in August 2017.
+Here I describe the specifications, constraints, problems, etc. 
 
 # Basic idea
-I refered to GCL(GNU Common Lisp) created by Mr. Hagiya and others.
+
+I referred to GCL (GNU Common Lisp) created by Mr. Hagiya and others.
 The Easy-ISLisp(EISL) compiler converts ISLisp code to equivalent C code and GCC generates an object file.
 By dynamically linking object file, EISL loads the compiled code.
 The internal definition of the function uses GCC extensions.
@@ -59,24 +61,25 @@ Elapsed Time(second)=1.789000
 ```
 
 # Extensions for the compiler
+
 The following functions have been uniquely extended for the compiler.
 
-```
-(subrp x) t if x is a built-in function, nil otherwise
-(macrop x) t if x is a macro, nil otherwise
-(system str) Str Executes the string on the OS. This is for starting GCC.
-(freedll) Unlinks the last dynamically linked file.
-(fixnump x) t for small integers, nil otherwise
-(longnump x) t for LONGNUM, nil otherwise
-(bignump x) t for BIGNUM, nil otherwise
-(readed-array-list x) Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)).
-(ignore-toplevel-check x) Passing t as an argument removes top-level checks such as defclass, and passing nil restores and checks.
-(self-introduction) Returns the symbol depending the kind of OS 
-Because the compiler changes its behavior depending on the type of OS.
-
-(get-method x) Get all methods of the generic function with name x.
-(get-method-body x) Get the entity of method x.
-(get-method-priority x) Gets the priority of method x.
+| Function | Description |
+| -------- | ----------- |
+| (subrp x) t if x is a built-in function, nil otherwise
+| (macrop x) t if x is a macro, nil otherwise
+| (system str) Str Executes the string on the OS. This is for starting GCC.
+| (freedll) Unlinks the last dynamically linked file.
+| (fixnump x) t for small integers, nil otherwise
+| (longnump x) t for LONGNUM, nil otherwise
+| (bignump x)               | t for BIGNUM, nil otherwise
+| (readed-array-list x)     | Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)).
+| (ignore-toplevel-check x) | Passing t as an argument removes top-level checks such as defclass, and passing nil restores and checks. |
+| (self-introduction)       | Returns the symbol depending the kind of OS                                                              |
+|                           | Because the compiler changes its behavior depending on the type of OS.                                   |
+| (get-method x) Get all methods of the generic function with name x.
+| (get-method-body x) Get the entity of method x.
+| (get-method-priority x) Gets the priority of method x.
 It is an integer value and looks like this:
 AROUND 11
 BEFORE 12
@@ -121,7 +124,7 @@ Any more than that will result in an error.
 Below is the quoted code from M.Hiroi's page.
 This is the correct code that meets the ISLisp specification. 
 
-```
+```lisp
 (defun id-search (start goal)
   (labels ((dfs (limit path)
              (if (= limit (length path))
@@ -136,7 +139,6 @@ This is the correct code that meets the ISLisp specification.
          ((= limit 7))
          (format (standard-output) "----- ~D -----~%" limit)
          (dfs limit (list start)))))
-
 ```
 
 The EISL compiler cannot compile this.
@@ -146,7 +148,7 @@ The dfs generated as a C local definition function cannot be referenced from the
 
 Therefore, in such a case, please write without using labels as shown below. 
 
-```
+```lisp
 (defun id-search (start goal)
   (for ((limit 1 (+ limit 1)))
        ((= limit 7))
@@ -162,14 +164,14 @@ Therefore, in such a case, please write without using labels as shown below.
           (if (not (member x path))
               (dfs limit (cons x path))))
         (cdr (assoc (car path) adjacent)))))
-
 ```
 
-# Constraints of generic function
+# Constraints on generic functions
+
 Below is the quoted code from M. Hiroi's page.
 This is the correct code that adapted the ISLisp specification. 
 
-```
+```lisp
 (defgeneric hash-func (k))
 
 (defmethod hash-func ((s <string>))
@@ -184,7 +186,7 @@ The interpreter evaluates exactly that.
 But, the compiler has the restriction that the argument names must be the same for simplicity.
 I think it can be done by α conversion, but I decided to do it easily. It should be written as follows. 
 
-```
+```lisp
 (defgeneric hash-func (k))
 
 (defmethod hash-func ((k <string>))
@@ -237,10 +239,13 @@ The prepared functions are as follows.
 These functions are ignored by the interpreter. 
 
 # Type inference
-EISL compiler has a type inferencer. Introduced experimentally from ver0.85.
+
+EISL compiler has a type inferencer. This was introduced experimentally in ver0.85.
 
 # Examples
+
 ### ex1
+
 In this example, the function foo gives a number to length, which causes an error at runtime.
 This is checked by type inference and a warning message is issued.
 The code is generated because it can be compiled.
@@ -320,7 +325,8 @@ No additional information about the type is needed in this case.
         (t (+ (fib* (- n 1.0)) (fib* (- n 2.0))))))
 ```
 
-# benchmark
+# Benchmark
+
 I compared it with SBCL, which is a typical processing system of Common Lisp.
 SBCL has a type declaration to speed it up.
 
@@ -433,7 +439,4 @@ EISL
 Elapsed Time(second)=0.479320
 <undef>
 > 
-
 ```
-
-

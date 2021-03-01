@@ -102,8 +102,8 @@ void init_deftfunc(tfunc x){
 }
 
 jmp_buf catch_buf[10];
-int catch_arg; //recieve argument of catch
-int block_arg; //recieve argument of block
+int catch_arg; //receive argument of catch
+int block_arg; //receive argument of block
 
 #define Fcheckgbc() (f0[0])()
 #define Fgbc()	(f0[1])()

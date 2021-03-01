@@ -3,7 +3,7 @@
 ## trace
 
 Puts the user-defined function in the trace state.
-Once in the trace state, the arguments and their return values will be displayed when the function is executed. 
+Once in the trace state, the arguments and their return values will be displayed when the function is executed.
 
 ```
 > (trace fact)
@@ -32,9 +32,10 @@ When called with no arguments, the name of the function currently being traced i
 ```
 
 ## untrace
+
 Cancels the trace state.
 
-```
+```lisp
 (untrace fact)
 ```
 
@@ -86,9 +87,9 @@ T
 > 
 ```
 
-## debugger
+## Debugger
 
-The break function or error interrupts execution and launches the debugger.
+The break function and errors interrupt execution and launch the debugger.
 When you enter the debugger, the prompt changes to >>. 
 ? Will bring up the help screen. 
 
@@ -107,5 +108,4 @@ debug mode ?(help)
 :s stepper ON/OFF
 other S exps eval
 >> 
-
 ```

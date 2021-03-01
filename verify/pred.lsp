@@ -129,18 +129,15 @@
 (test (and (eql 'a 'a) (not (> 1 2))) t)
 (test (let ((x 'a)) (and x (setq x 'b))) b)
 (test (let ((x nil)) (and x (setq x 'b))) nil)
-#|
+
 (test (let ((time 10))
    (if (and (< time 24) (> time 12))
-       (- time 12) time))
- 10
- eql)
+       (- time 12) time)) 10 eql)
+
 (test (let ((time 18))
    (if (and (< time 24) (> time 12))
-       (- time 12) time))
- 6
- eql)
-|#
+       (- time 12) time)) 6 eql)
+
 ;;;
 ($argc and 0 0 1)
 ;;;

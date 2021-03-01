@@ -2555,7 +2555,7 @@ int f_elt(int arglist){
         return(vector_ref(arg1,GET_INT(arg2)));
     }
     else if(stringp(arg1)){
-        if(strlen(GET_NAME(arg1)) == 0)
+        if(string_length(arg1) == 0)
             error(OUT_OF_RANGE, "elt", arg1);
         if(integerp(arg2) && ((int)strlen(GET_NAME(arg1)) <= GET_INT(arg2)))
             error(OUT_OF_RANGE, "elt", arg2);
@@ -2601,7 +2601,7 @@ int f_set_elt(int arglist){
         SET_VEC_ELT(arg2,GET_INT(arg3),arg1);
     }
     else if(stringp(arg2)){
-        if(strlen(GET_NAME(arg2)) == 0)
+        if(string_length(arg2) == 0)
             error(OUT_OF_RANGE, "set-elt", arg2);
         if(integerp(arg3) && ((int)strlen(GET_NAME(arg2)) <= GET_INT(arg3)))
             error(OUT_OF_RANGE, "set-elt", arg3);
@@ -2763,28 +2763,50 @@ int f_string_index(int arglist){
 //vector and array
 
 int f_aref(int arglist){
-    int arg1,arg2,n;
+    int arg1,arg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
     if(length(arglist) < 1)
         error(WRONG_ARGS,"aref",arglist);
-    if(!vectorp(arg1) && !arrayp(arg1) && !stringp(arg1))
-        error(ILLEGAL_ARGS, "aref", arg1);
-    if(vectorp(arg1) && !inrangep(arg2,list1(makeint(vector_length(arg1)))))
-        error(OUT_OF_DOMAIN,"aref",arg2);
-    if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
-        error(OUT_OF_DOMAIN,"aref",arg2);
-    if(stringp(arg1) &&
-       ((n=GET_INT(car(arg2))) >= string_length(arg1) || n < 0))
-        error(OUT_OF_RANGE,"aref",arg2);
-
-    if(stringp(arg1))
+    
+    if(stringp(arg1)){
+        if(negativep(car(arg2)))
+            error(OUT_OF_DOMAIN,"aref",arg2);
+        if(GET_INT(car(arg2)) >= string_length(arg1))
+            error(OUT_OF_RANGE,"aref",arg2);
         return(string_ref(arg1,car(arg2)));
-    else
+    }
+    else if(vectorp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"aref",arg2);
+        if(!inrangep(arg2,list1(makeint(vector_length(arg1)))))
+            error(OUT_OF_RANGE,"aref",arg2);
         return(array_ref(arg1,arg2));
+    }
+    else if(arrayp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"aref",arg2);
+        if(!inrangep(arg2,array_length(arg1)))
+            error(OUT_OF_RANGE,"aref",arg2);
+        return(array_ref(arg1,arg2));
+    }
+    else
+        error(ILLEGAL_ARGS, "aref", arg1);
+
+    return(NIL);
 }
+
+int indomainp(int ls){
+    if(nullp(ls))
+        return(1);
+    else if(negativep(car(ls)))
+        return(0);
+    else
+        return(indomainp(cdr(ls)));
+}
+
 
 int inrangep(int x, int y){
 
@@ -2812,35 +2834,58 @@ int f_garef(int arglist){
     arg2 = cdr(arglist);
     if(GET_AUX(arg1) != cgeneral_vector && GET_AUX(arg1) != cgeneral_array_star)
         error(NOT_VECARR, "garef", arg1);
-    if(vectorp(arg1) && !inrangep(arg2,list1(makeint(vector_length(arg1)))))
-        error(OUT_OF_RANGE,"garef",arg2);
-    if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
-        error(OUT_OF_RANGE,"garef",arg2);
+    
+    if(vectorp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"garef",arg2);
+        if(!inrangep(arg2,list1(makeint(vector_length(arg1)))))
+            error(OUT_OF_RANGE,"garef",arg2);
+        return(array_ref(arg1,arg2));
+    }
+    else if(arrayp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"garef",arg2);
+        if(!inrangep(arg2,array_length(arg1)))
+            error(OUT_OF_RANGE,"garef",arg2);
+        return(array_ref(arg1,arg2));
+    }
 
-    return(array_ref(arg1,arg2));
+    return(NIL);
 }
 
 
 int f_set_aref(int arglist){
-    int arg1,arg2,arg3,n;
+    int arg1,arg2,arg3;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
-    if(!vectorp(arg2) && !arrayp(arg2) &&!stringp(arg2))
-        error(ILLEGAL_ARGS, "set-aref", arg2);
-    if(vectorp(arg2) && !inrangep(arg3,list1(makeint(vector_length(arg2)))))
-        error(OUT_OF_RANGE,"set-aref",arg3);
-    if(arrayp(arg2) && !inrangep(arg3,array_length(arg2)))
-        error(OUT_OF_RANGE,"set-aref",arg3);
-    if(stringp(arg2) &&
-       ((n=GET_INT(car(arg3))) >= string_length(arg2) || n < 0))
-        error(OUT_OF_RANGE,"set-aref",arg3);
+    
 
-    if(stringp(arg2))
+    if(stringp(arg2)){
+        if(negativep(car(arg3)))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(GET_INT(car(arg3)) >= string_length(arg2))
+            error(OUT_OF_RANGE,"set-aref",arg3);
         string_set(arg2,car(arg3),arg1);
-    else
+    }
+    else if(vectorp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,list1(makeint(vector_length(arg2)))))
+            error(OUT_OF_RANGE,"set-aref",arg3);
         array_set(arg2,arg3,arg1);
+    }
+    else if(arrayp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,array_length(arg2)))
+            error(OUT_OF_RANGE,"set-aref",arg3);
+        array_set(arg2,arg3,arg1);
+    }
+    else
+        error(ILLEGAL_ARGS, "set-aref", arg2);
+
     return(arg1);
 }
 
@@ -2852,12 +2897,22 @@ int f_set_garef(int arglist){
     arg3 = cddr(arglist);
     if(GET_AUX(arg2) != cgeneral_vector && GET_AUX(arg2) != cgeneral_array_star)
         error(NOT_VECARR, "set-garef", arg2);
-    if(vectorp(arg2) && !inrangep(arg3,list1(makeint(vector_length(arg2)))))
-        error(OUT_OF_RANGE,"set-garef",arg3);
-    if(arrayp(arg2) && !inrangep(arg3,array_length(arg2)))
-        error(OUT_OF_RANGE,"set-garef",arg3);
+    
+    if(vectorp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,list1(makeint(vector_length(arg2)))))
+            error(OUT_OF_RANGE,"set-aref",arg3);
+        array_set(arg2,arg3,arg1);
+    }
+    else if(arrayp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,array_length(arg2)))
+            error(OUT_OF_RANGE,"set-aref",arg3);
+        array_set(arg2,arg3,arg1);
+    }
 
-    array_set(arg2,arg3,arg1);
     return(arg1);
 }
 

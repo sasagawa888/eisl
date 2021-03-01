@@ -857,6 +857,7 @@ int initinst(int x, int initls);
 int initinst1(int ls, int sc);
 int initinst2(int inst_vars, int class_vars);
 int input_stream_p(int x);
+int indomainp(int ls);
 int inrangep(int x, int y);
 int int_gcd(int x, int y);
 int integerp(int x);

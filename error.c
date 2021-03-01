@@ -175,7 +175,7 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("function"),makesym(fun),
                                           makesym("object"),arg,
                                           makesym("expected-class"),cbasic_array);
-                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;
         case NOT_SYM:   initargs = list10(makesym("format-string"),makestr("Not a symbol at "),
                                           makesym("format-arguments"),arg,

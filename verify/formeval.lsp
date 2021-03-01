@@ -134,9 +134,9 @@
 ;;; �V�X�e���萔
 ($error ((lambda (nil) nil) 1) <program-error>)
 ($error ((lambda (t) nil) 1) <program-error>)
-;($error ((lambda (*pi*) nil) 1) <program-error>)
-;($error ((lambda (*most-positive-float*) nil) 1) <program-error>)
-;($error ((lambda (*most-negative-float*) nil) 1) <program-error>)
+($error ((lambda (*pi*) nil) 1) <program-error>)
+($error ((lambda (*most-positive-float*) nil) 1) <program-error>)
+($error ((lambda (*most-negative-float*) nil) 1) <program-error>)
 ;;; identifier ���V���{���łȂ�
 ($error ((lambda (#2a((a b) (c d))) nil) 1) <domain-error>)
 ($error ((lambda (#\a) nil) 1) <domain-error>)
@@ -146,30 +146,30 @@
 ($error ((lambda (#(a b c)) nil) 1) <domain-error>)
 ($error ((lambda ((x y)) nil) 1) <domain-error>)
 ;;; &rest, :rest �̌�� identifier �̌�
-;($error ((lambda (x y &rest) nil) 1 2) <error>)
-;($error ((lambda (x y :rest) nil) 1 2) <error>)
-;($error ((lambda (x y &rest z w) nil) 1 2) <error>)
-;($error ((lambda (x y :rest z w) nil) 1 2) <error>)
+($error ((lambda (x y &rest) nil) 1 2) <error>)
+($error ((lambda (x y :rest) nil) 1 2) <error>)
+($error ((lambda (x y &rest z w) nil) 1 2) <error>)
+($error ((lambda (x y :rest z w) nil) 1 2) <error>)
 ;;; &rest, :rest �̌�� identifier ���V���{���łȂ�
-;($error ((lambda (x &rest #2a((a b) (c d))) nil) 1) <domain-error>)
-;($error ((lambda (x :rest #2a((a b) (c d))) nil) 1) <domain-error>)
-;($error ((lambda (x &rest #\a) nil) 1) <domain-error>)
-;($error ((lambda (x :rest #\a) nil) 1) <domain-error>)
-;($error ((lambda (x &rest 1234) nil) 1) <domain-error>)
-;($error ((lambda (x :rest 1234) nil) 1) <domain-error>)
-;($error ((lambda (x &rest 1.234) nil) 1) <domain-error>)
-;($error ((lambda (x :rest 1.234) nil) 1) <domain-error>)
-;($error ((lambda (x &rest "abc") nil) 1) <domain-error>)
-;($error ((lambda (x :rest "abc") nil) 1) <domain-error>)
-;($error ((lambda (x &rest #(a b c)) nil) 1) <domain-error>)
-;($error ((lambda (x :rest #(a b c)) nil) 1) <domain-error>)
-;($error ((lambda (x &rest (x y)) nil) 1) <domain-error>)
-;($error ((lambda (x :rest (x y)) nil) 1) <domain-error>)
+($error ((lambda (x &rest #2a((a b) (c d))) nil) 1) <domain-error>)
+($error ((lambda (x :rest #2a((a b) (c d))) nil) 1) <domain-error>)
+($error ((lambda (x &rest #\a) nil) 1) <domain-error>)
+($error ((lambda (x :rest #\a) nil) 1) <domain-error>)
+($error ((lambda (x &rest 1234) nil) 1) <domain-error>)
+($error ((lambda (x :rest 1234) nil) 1) <domain-error>)
+($error ((lambda (x &rest 1.234) nil) 1) <domain-error>)
+($error ((lambda (x :rest 1.234) nil) 1) <domain-error>)
+($error ((lambda (x &rest "abc") nil) 1) <domain-error>)
+($error ((lambda (x :rest "abc") nil) 1) <domain-error>)
+($error ((lambda (x &rest #(a b c)) nil) 1) <domain-error>)
+($error ((lambda (x :rest #(a b c)) nil) 1) <domain-error>)
+($error ((lambda (x &rest (x y)) nil) 1) <domain-error>)
+($error ((lambda (x :rest (x y)) nil) 1) <domain-error>)
 ;;; &rest, :rest �̌�� &rest, :rest
-;($error ((lambda (&rest &rest) nil) 1) <program-error>)
-;($error ((lambda (&rest :rest) nil) 1) <program-error>)
-;($error ((lambda (:rest &rest) nil) 1) <program-error>)
-;($error ((lambda (:rest &rest) nil) 1) <program-error>)
+($error ((lambda (&rest &rest) nil) 1) <program-error>)
+($error ((lambda (&rest :rest) nil) 1) <program-error>)
+($error ((lambda (:rest &rest) nil) 1) <program-error>)
+($error ((lambda (:rest &rest) nil) 1) <program-error>)
 ;;; �w�肳�ꂽlambda-list��,
 ;;; �֐����󂯎���������̌�����v���Ȃ�(arity-error)
 ($error ((lambda (x y) nil) 1) <program-error>)
@@ -212,7 +212,7 @@
 ;;; 
 ($error (labels) <program-error>)
 ;;; 
-;($error (labels (f)) <error>)
+($error (labels (f)) <error>)
 ;($error (labels ((f))) <error>)
 ;;; lambda-list ���s��
 ;($error (labels ((f x))) <error>)
@@ -345,19 +345,19 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defconstant")
 ;;;
-#|
+
 (test (defconstant *const-1* 1) *const-1* equal)
 (test (defconstant *const-e* 2.718) *const-e* equal)
-(*const-e* 2.718 equal)
+(test *const-e* 2.718 equal)
 ($eval (defun f () *const-e*))
 (test (f) 2.718 equal)
-|#
+
 ;;; �����̌�
-;($error (defconstant) <program-error>)
-;($error (defconstant *const-e*) <program-error>)
-;($error (defconstant *const-e* 2 3) <program-error>)
+($error (defconstant) <program-error>)
+($error (defconstant *const-e*) <program-error>)
+($error (defconstant *const-e* 2 3) <program-error>)
 ;;; �������X�g���h�b�g���X�g
-;($error (defconstant *const-e* 2 . 3) <error>)
+($error (defconstant *const-e* 2 . 3) <error>)
 ;;; �g�b�v���x����`�łȂ�
 ;($error (+ (defconstant *const-e* 2)) <error>)
 ;;; name ���V���{���łȂ�
@@ -436,9 +436,9 @@
 (test (defdynamic nil 3) nil equal)
 (test (dynamic nil) 3 equal)
 ;;; �����̌�
-;($error (defdynamic) <program-error>)
-;($error (defdynamic *dynamic-2*) <program-error>)
-;($error (defdynamic *dynamic-2* 2 3) <program-error>)
+($error (defdynamic) <program-error>)
+($error (defdynamic *dynamic-2*) <program-error>)
+($error (defdynamic *dynamic-2* 2 3) <program-error>)
 ;;; �������X�g���h�b�g���X�g
 ;($error (defdynamic *dynamic-2* 2 . 3) <error>)
 ;;; �g�b�v���x����`�łȂ�
@@ -464,8 +464,8 @@
 (test (defun my-f-caar (x) (car (car x))) my-f-caar equal)
 (test (my-f-caar '((1 2))) 1 equal)
 ;;; �����̌�
-;($error (defun) <program-error>)
-;($error (defun foo) <program-error>)
+($error (defun) <program-error>)
+($error (defun foo) <program-error>)
 ;;; �������X�g���h�b�g���X�g
 ;($error (defun foo 2 . 3) <error>)
 ;;; �g�b�v���x����`�łȂ�

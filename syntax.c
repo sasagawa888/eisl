@@ -1361,7 +1361,9 @@ int f_convert(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
-        error(WRONG_ARGS, "convert", arglist);
+        error(IMPROPER_ARGS, "convert", arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "convert", arglist);
     if(!symbolp(arg2))
         error(NOT_SYM, "convert", arg2);
     if(GET_OPT(arg2) != SYSTEM)
@@ -1502,9 +1504,9 @@ int f_the(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
-        error(WRONG_ARGS,"the",arglist);
+        error(IMPROPER_ARGS,"the",arglist);
     if(improperlistp(arglist))
-        error(WRONG_ARGS,"the",arglist);
+        error(IMPROPER_ARGS,"the",arglist);
 
     if(GET_AUX(arg1) != NIL)
         return(eval(arg2));
@@ -1520,9 +1522,9 @@ int f_assure(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
-        error(WRONG_ARGS,"assure",arglist);
+        error(IMPROPER_ARGS,"assure",arglist);
     if(improperlistp(arglist))
-        error(WRONG_ARGS,"assure",arglist);
+        error(IMPROPER_ARGS,"assure",arglist);
 
     arg2 = eval(arg2);
     if(GET_AUX(arg1) == GET_AUX(arg2))

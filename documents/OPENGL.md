@@ -1,4 +1,4 @@
-# Manual of OpenGL
+# OpenGL
 
 # Installation
 

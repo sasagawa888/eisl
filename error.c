@@ -22,7 +22,6 @@ void error(int errnum, const char *fun, int arg){
         unwind_pt = 0;
     }
 
-    ESCERRFRED;
     switch(errnum){ 
         case DIV_ZERO:  initargs = list6(makesym("format-string"),makestr("division by zero at "),
                                          makesym("format-arguments"),arg,
@@ -51,6 +50,12 @@ void error(int errnum, const char *fun, int arg){
                         signal_condition(makeinstance(ccontrol_error,initargs),NIL);
                         break;
         case WRONG_ARGS:initargs = list6(makesym("format-string"),makestr("Wrong number of arguments at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;
+        case NOT_EXIST_ARG:
+                        initargs = list6(makesym("format-string"),makestr("Not exist argument at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
@@ -85,6 +90,22 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("object"),arg,
                                           makesym("expected-class"),cfloat);
                         signal_condition(makeinstance(cfloating_point_underflow,initargs),NIL);
+                        break;
+        case FLT_OUT_OF_DOMAIN:
+                       initargs = list10(makesym("format-string"),makestr("Floating number out of domain at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cfloat);
+                        signal_condition(makeinstance(cerror,initargs),NIL);
+                        break;
+        case OUT_OF_REAL:
+                       initargs = list10(makesym("format-string"),makestr("Number out of real at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cfloat);
+                        signal_condition(makeinstance(cerror,initargs),NIL);
                         break;
         case NOT_INT:   initargs = list10(makesym("format-string"),makestr("Not an integer at "),
                                           makesym("format-arguments"),arg,
@@ -154,7 +175,7 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("function"),makesym(fun),
                                           makesym("object"),arg,
                                           makesym("expected-class"),cbasic_array);
-                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;
         case NOT_SYM:   initargs = list10(makesym("format-string"),makestr("Not a symbol at "),
                                           makesym("format-arguments"),arg,
@@ -238,9 +259,21 @@ void error(int errnum, const char *fun, int arg){
                         initargs = list6(makesym("format-string"),makestr("Illegal argument at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
-                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;
+        case IMPROPER_ARGS:
+                        initargs = list6(makesym("format-string"),makestr("Improper arguments at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cerror,initargs),NIL);
                         break;
         case OUT_OF_RANGE:
+                        initargs = list6(makesym("format-string"),makestr("Out of range at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun));
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;  
+        case OUT_OF_DOMAIN:
                         initargs = list6(makesym("format-string"),makestr("Out of range at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
@@ -359,9 +392,7 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("function"),makesym(fun));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;  
-                           
     }
-    ESCERRFORG;
 }
 /*
 x = class
@@ -399,14 +430,14 @@ void signal_condition(int x, int y){
     args = cdr(assoc(makesym("b"),GET_CDR(x)));
     fun = cdr(assoc(makesym("c"),GET_CDR(x)));
     output_stream = error_stream;
-    ESCFRED;
+    ESCERRFRED;
     fprintf(stderr,"%s",GET_NAME(str)); 
     print(fun);
     fprintf(stderr,"%s"," ");
     print(args);
     fprintf(stderr,"\n");
     fflush(stderr);
-    ESCFORG;
+    ESCERRFORG;
     input_stream = standard_input;
     output_stream = standard_output;
     debugger();

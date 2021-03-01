@@ -1,4 +1,4 @@
-# List library
+# List
 
 The list library was written by M. Hiroi.
 

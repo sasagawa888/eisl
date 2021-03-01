@@ -70,11 +70,18 @@ void initsyntax(void){
 //--FSUBR-----------
 int f_lambda(int arglist){
 
-    if(!listp(car(arglist)))
-        error(NOT_LIST, "lambda", car(arglist));
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "lambda", NIL);
+    if(duplicatelistp(car(arglist)))
+        error(IMPROPER_ARGS, "lambda", car(arglist));
+    if(improperlistp(car(arglist)))
+        error(IMPROPER_ARGS, "lambda", car(arglist));
     if(illegallambdap(car(arglist)))
-        error(ILLEGAL_ARGS, "lambda" ,car(arglist));
-
+        error(ILLEGAL_ARGS, "lambda", car(arglist));
+    if(!symbollistp(car(arglist)))
+        error(OUT_OF_DOMAIN, "lambda", car(arglist));
+    
+       
     return(makefunc("",arglist));
 }
 
@@ -83,6 +90,8 @@ int f_labels(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "labels", NIL);
     if(!listp(arg1))
         error(NOT_LIST, "labels" , arg1);
     save = ep;
@@ -115,6 +124,8 @@ int f_flet(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "flet", NIL);
     if(!listp(arg1))
         error(NOT_LIST, "flet", arg1);
     save = ep;
@@ -375,6 +386,7 @@ int f_defmacro(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    
     if(!symbolp(arg1))
         error(NOT_SYM, "defmacro", arg1);
     if(GET_OPT(arg1) == CONSTN)
@@ -383,11 +395,17 @@ int f_defmacro(int arglist){
         error(CANT_MODIFY, "defmacro", arg1);
     if(IS_FSUBR(GET_CAR(arg1)))
         error(CANT_MODIFY, "defmacro", arg1);
+    if(improperlistp(arg2))
+        error(IMPROPER_ARGS,"defmacro", arg2);
+    if(length(arglist) < 2)
+        error(WRONG_ARGS, "defmacro", arglist);
+    if(length(arglist) < 3)
+        error(IMPROPER_ARGS, "defmacro", arglist);
     if(illegallambdap(car(arg2)))
         error(ILLEGAL_ARGS,"defmacro", car(arg2));
 
     bindmacro(GET_NAME(arg1),arg2);
-    return(T);
+    return(arg1);
 }
 
 int f_defglobal(int arglist){
@@ -395,6 +413,8 @@ int f_defglobal(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(nullp(arglist))
+        error(NOT_EXIST_ARG, "defglobal", NIL);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defglobal", arglist);
     if(!symbolp(arg1))
@@ -485,7 +505,7 @@ int f_function(int arglist){
     else if(listp(arg1) && eqp(car(arg1),makesym("lambda")))
         return(eval(arg1));
     else
-        error(ILLEGAL_ARGS, "function", arg1);
+        error(NOT_FUNC, "function", arg1);
     return(UNDEF);
 }
 //function* diffrence of function is that return nil
@@ -1336,12 +1356,14 @@ int f_with_handler(int arglist){
 int f_convert(int arglist){
     int arg1,arg2;
     double x;
-    char str[STRSIZE];
+    char str[STRSIZE],*e;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
-        error(WRONG_ARGS, "convert", arglist);
+        error(IMPROPER_ARGS, "convert", arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "convert", arglist);
     if(!symbolp(arg2))
         error(NOT_SYM, "convert", arg2);
     if(GET_OPT(arg2) != SYSTEM)
@@ -1398,19 +1420,16 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == csymbol){
                 return(makesym(GET_NAME(arg1)));
             }
-            else if(GET_AUX(arg2) == cstring){
-                return(makestr(GET_NAME(arg1)));
-            }
             else if(GET_AUX(arg2) == ccharacter){
                 return(arg1);
+            }
+            else if(GET_AUX(arg2) == cstring){
+                return(makestr(GET_NAME(arg1)));
             }
             break;
         case FLTN:
             if(GET_AUX(arg2) == cfloat){
                 return(arg1);
-            }
-            else if(GET_AUX(arg2) == cinteger){
-                return(makeint((int)GET_FLT(arg1)));
             }
             else if(GET_AUX(arg2) == cstring){
                 x = GET_FLT(arg1);
@@ -1440,10 +1459,31 @@ int f_convert(int arglist){
                 return(arg1);
             }
             else if(GET_AUX(arg2) == cinteger){
-                return(makeint(atoi(GET_NAME(arg1))));
+                strcpy(stok.buf,GET_NAME(arg1));
+
+                if(bignumtoken(stok.buf)){
+                    return(makebigx(stok.buf));
+                }
+                else if(inttoken(stok.buf)){
+                    return(makeint(strtol(stok.buf,&e,10)));
+                }
+                else if(bintoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,2)));
+                }
+                else if(octtoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,8)));
+                }
+                else if(dectoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,10)));
+                }
+                else if(hextoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,16)));
+                }
+                break;
             }
             else if(GET_AUX(arg2) == cfloat){
-                return(makeflt(atof(GET_NAME(arg1))));
+                if(flttoken(GET_NAME(arg1)))
+                    return(makeflt(atof(GET_NAME(arg1))));
             }
             else if(GET_AUX(arg2) == csymbol){
                 return(makesym(GET_NAME(arg1)));
@@ -1472,7 +1512,7 @@ int f_convert(int arglist){
             }
             break;
     }
-    error(ILLEGAL_ARGS,"convert",arg1);
+    error(OUT_OF_DOMAIN,"convert",arg1);
     return(UNDEF);
 }
 
@@ -1482,9 +1522,9 @@ int f_the(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
-        error(WRONG_ARGS,"the",arglist);
+        error(IMPROPER_ARGS,"the",arglist);
     if(improperlistp(arglist))
-        error(WRONG_ARGS,"the",arglist);
+        error(IMPROPER_ARGS,"the",arglist);
 
     if(GET_AUX(arg1) != NIL)
         return(eval(arg2));
@@ -1500,9 +1540,9 @@ int f_assure(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
-        error(WRONG_ARGS,"assure",arglist);
+        error(IMPROPER_ARGS,"assure",arglist);
     if(improperlistp(arglist))
-        error(WRONG_ARGS,"assure",arglist);
+        error(IMPROPER_ARGS,"assure",arglist);
 
     arg2 = eval(arg2);
     if(GET_AUX(arg1) == GET_AUX(arg2))

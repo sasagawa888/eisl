@@ -433,6 +433,12 @@ int f_plus(int arglist){
         arg = car(arglist);
         if(!numberp(arg) && !vectorp(arg) && !arrayp(arg))
             error(NOT_NUM, "+", arg);
+
+        if(floatp(res) && positivep(res) && GET_FLT(exact_to_inexact(res)) >= DBL_MAX && positivep(arg))
+            error(FLT_OVERF, "+" , arg);
+        if(floatp(res) && negativep(res) && GET_FLT(exact_to_inexact(res)) <= -DBL_MAX && negativep(arg))
+            error(FLT_OVERF, "+" , arg);
+        
         arglist = cdr(arglist);
         res = plus(res,arg);
     }
@@ -453,6 +459,11 @@ int f_minus(int arglist){
         arg = car(arglist);
         if(!numberp(arg) && !vectorp(arg) && !arrayp(arg))
             error(NOT_NUM, "-", arg);
+
+        if(floatp(res) && positivep(res) && GET_FLT(exact_to_inexact(res)) >= DBL_MAX && negativep(arg))
+            error(FLT_OVERF, "+" , arg);
+        if(floatp(res) && negativep(res) && GET_FLT(exact_to_inexact(res)) <= -DBL_MAX && positivep(arg))
+            error(FLT_OVERF, "+" , arg);
         arglist = cdr(arglist);
         res = minus(res,arg);
     }
@@ -461,6 +472,7 @@ int f_minus(int arglist){
 
 int f_mult(int arglist){
     int arg,res;
+    double val;
 
     if(nullp(arglist))
         res = makeint(1);
@@ -472,6 +484,23 @@ int f_mult(int arglist){
         arg = car(arglist);
         if(!numberp(arg) && !arrayp(arg) && !vectorp(arg))
             error(NOT_NUM, "*", arg);
+
+        if(floatp(res) && fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX && 
+           fabs(GET_FLT(exact_to_inexact(arg))) > 1.0 )
+            error(FLT_OVERF, "*" , arg);
+        if(floatp(res) && (val=fabs(GET_FLT(exact_to_inexact(res)))) != 0.0 && val > 1.0 &&
+           fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX)
+            error(FLT_OVERF, "*" , arg);
+        if(floatp(arg) && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX && 
+           fabs(GET_FLT(exact_to_inexact(res))) > 1.0 )
+            error(FLT_OVERF, "*" , arg);
+        if(floatp(arg) && (val=fabs(GET_FLT(exact_to_inexact(arg)))) != 0.0 && val > 1.0 &&
+           fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX)
+            error(FLT_OVERF, "*" , arg);
+        if((val=fabs(GET_FLT(exact_to_inexact(res)))) != 0.0 && val <= DBL_EPSILON 
+           && (val=fabs(GET_FLT(exact_to_inexact(arg)))) != 0.0 && val <= DBL_EPSILON )
+            error(FLT_UNDERF, "*" , arg);
+
         arglist = cdr(arglist);
         res = mult(res,arg);
     }
@@ -480,15 +509,27 @@ int f_mult(int arglist){
 
 int f_quotient(int arglist){
     int arg,res;
+    double val;
 
     res = car(arglist);
     arglist = cdr(arglist);
+
+    
     while(!(IS_NIL(arglist))){
         arg = car(arglist);
         if(!numberp(arg))
             error(NOT_NUM, "quotient", arg);
+        if(zerop(arg))
+            error(DIV_ZERO, "quotient", arg);
+        
+        if(fabs(GET_FLT(res)) >= DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0 )
+            error(FLT_OVERF, "quotient" , arg);
+        if((val=fabs(GET_FLT(res))) != 0.0 && val < DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX )
+            error(FLT_UNDERF, "quotient" , arg);
+
         arglist = cdr(arglist);
         res = quotient(res,arg);
+        
     }
     return(res);
 }
@@ -628,7 +669,12 @@ int f_sinh(int arglist){
         error(WRONG_ARGS, "sinh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "sinh", arg1);
-    val = sinh(GET_FLT(exact_to_inexact(arg1)));
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "sinh", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "sinh", arg1);
+    val = sinh(val);
     return(makeflt(val));
 }
 
@@ -641,7 +687,13 @@ int f_cosh(int arglist){
         error(WRONG_ARGS, "cosh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "cosh", arg1);
-    val = cosh(GET_FLT(exact_to_inexact(arg1)));
+
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "cosh", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "cosh", arg1);
+    val = cosh(val);
     return(makeflt(val));
 }
 
@@ -654,7 +706,13 @@ int f_tanh(int arglist){
         error(WRONG_ARGS, "tanh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "tanh", arg1);
-    val = tanh(GET_FLT(exact_to_inexact(arg1)));
+
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "tanh", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "tanh", arg1);
+    val = tanh(val);
     return(makeflt(val));
 }
 
@@ -667,7 +725,10 @@ int f_atanh(int arglist){
         error(WRONG_ARGS, "atanh", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "atanh", arg1);
-    val = atanh(GET_FLT(exact_to_inexact(arg1)));
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 1.0 || val <= -1.0)
+        error(FLT_OUT_OF_DOMAIN, "atanh", arg1);
+    val = atanh(val);
     return(makeflt(val));
 }
 
@@ -932,13 +993,20 @@ int f_mod(int arglist){
 
 int f_exp(int arglist){
     int arg1;
+    double val;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "exp", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "exp", arg1);
-    return(makeflt(exp(GET_FLT(exact_to_inexact(arg1)))));
+
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val >= 10000000000.0)
+        error(FLT_OVERF, "exp", arg1);
+    if(val <= -10000000000.0)
+        error(FLT_UNDERF, "exp", arg1);
+    return(makeflt(exp(val)));
 }
 
 int f_log(int arglist){
@@ -950,7 +1018,7 @@ int f_log(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "log", arg1);
     if(!positivep(arg1))
-        error(NOT_POSITIVE, "log", arglist);
+        error(OUT_OF_REAL, "log", arglist);
 
     return(makeflt(log(GET_FLT(exact_to_inexact(arg1)))));
 }
@@ -1130,7 +1198,8 @@ int f_sqrt(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "sqrt", arg1);
     if(negativep(arg1))
-        error(OUT_OF_RANGE, "sqrt", arg1);
+        error(OUT_OF_DOMAIN, "sqrt", arg1);
+
     x = sqrt(GET_FLT(exact_to_inexact(arg1)));
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && ceil(x) == floor(x)){
         if(x <= 999999999.0)
@@ -1154,7 +1223,7 @@ int f_isqrt(int arglist){
     if(!numberp(arg1))
         error(NOT_NUM, "isqrt", arg1);
     if(negativep(arg1))
-        error(OUT_OF_RANGE, "isqrt", arg1);
+        error(OUT_OF_DOMAIN, "isqrt", arg1);
     return(isqrt(arg1));
 }
 
@@ -1174,12 +1243,21 @@ int f_atan2(int arglist){
 
 int f_reciprocal(int arglist){
     int arg1;
+    double val;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "resiprocal", arglist);
     if(!numberp(arg1))
         error(NOT_NUM, "resiprocal", arg1);
+    
+    val = GET_FLT(exact_to_inexact(arg1));
+    if(val == 0.0)
+        error(DIV_ZERO, "resiprocal", arg1);
+    if(val >= DBL_MAX)
+        error(FLT_UNDERF, "resiprocal", arg1);
+    if(val <= -DBL_MAX)
+        error(FLT_UNDERF, "resiprocal", arg1);
     return(quotient(makeint(1),arg1));
 }
 
@@ -1436,7 +1514,7 @@ int f_assoc(int arglist){
     if(!listp(arg2))
         error(NOT_LIST, "assoc", arg2);
     if(!assoclistp(arg2))
-        error(ILLEGAL_ARGS, "assoc", arg2);
+        error(IMPROPER_ARGS, "assoc", arg2);
 
     return(assoc(arg1,arg2));
 }
@@ -2453,21 +2531,35 @@ int f_elt(int arglist){
     arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "elt", arglist);
-    if(!integerp(arg2))
+    if(!integerp(arg2) && !longnump(arg2))
         error(NOT_INT, "elt", arg2);
+    if(negativep(arg2))
+            error(OUT_OF_DOMAIN, "elt", arg2);
 
     if(listp(arg1)){
-        if(length(arg1) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(length(arg1) == 0)
+            error(OUT_OF_RANGE, "elt", arg1);
+        if(integerp(arg2) && length(arg1) <= GET_INT(arg2))
+            error(OUT_OF_RANGE, "elt", arg2);
+        if(longnump(arg2) && (long long int)length(arg1) <= GET_LONG(arg2))
             error(OUT_OF_RANGE, "elt", arg2);
         return(listref(arg1,GET_INT(arg2)));
     }
     else if(vectorp(arg1)){
-        if(vector_length(arg1) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(vector_length(arg1) == 0)
+            error(OUT_OF_RANGE, "elt", arg1);
+        if(integerp(arg2) && vector_length(arg1) <= GET_INT(arg2))
+            error(OUT_OF_RANGE, "elt", arg2);
+        if(longnump(arg2) && (long long int)vector_length(arg1) <= GET_LONG(arg2))
             error(OUT_OF_RANGE, "elt", arg2);
         return(vector_ref(arg1,GET_INT(arg2)));
     }
     else if(stringp(arg1)){
-        if(((int)strlen(GET_NAME(arg1))) <= GET_INT(arg2) || GET_INT(arg2) < 0)
+        if(string_length(arg1) == 0)
+            error(OUT_OF_RANGE, "elt", arg1);
+        if(integerp(arg2) && ((int)strlen(GET_NAME(arg1)) <= GET_INT(arg2)))
+            error(OUT_OF_RANGE, "elt", arg2);
+        if(longnump(arg2) && (long long int)strlen(GET_NAME(arg1)) <= GET_LONG(arg2))
             error(OUT_OF_RANGE, "elt", arg2);
         str[0] = GET_NAME_ELT(arg1,GET_INT(arg2));
         str[1] = NUL;
@@ -2485,16 +2577,38 @@ int f_set_elt(int arglist){
     arg3 = caddr(arglist);
     if(length(arglist) != 3)
         error(WRONG_ARGS, "set-elt", arglist);
-    if(!integerp(arg3))
+    if(!integerp(arg3) && !longnump(arg3))
         error(NOT_INT, "set-elt", arg3);
+    if(negativep(arg3))
+        error(OUT_OF_DOMAIN, "set-elt", arg2);
 
-    if(listp(arg2))
+    if(listp(arg2)){
+        if(length(arg2) == 0)
+            error(OUT_OF_RANGE, "set-elt", arg1);
+        if(integerp(arg3) && length(arg2) <= GET_INT(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg2);
+        if(longnump(arg3) && (long long int)length(arg2) <= GET_LONG(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg2);
         SET_CAR(listref1(arg2,GET_INT(arg3)),arg1);
-    else if(vectorp(arg2))
+    }
+    else if(vectorp(arg2)){
+        if(vector_length(arg2) == 0)
+            error(OUT_OF_RANGE, "set-elt", arg2);
+        if(integerp(arg3) && vector_length(arg2) <= GET_INT(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg3);
+        if(longnump(arg3) && (long long int)vector_length(arg2) <= GET_LONG(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg3);
         SET_VEC_ELT(arg2,GET_INT(arg3),arg1);
-    else if(stringp(arg2))
+    }
+    else if(stringp(arg2)){
+        if(string_length(arg2) == 0)
+            error(OUT_OF_RANGE, "set-elt", arg2);
+        if(integerp(arg3) && ((int)strlen(GET_NAME(arg2)) <= GET_INT(arg3)))
+            error(OUT_OF_RANGE, "set-elt", arg3);
+        if(longnump(arg3) && (long long int)strlen(GET_NAME(arg2)) <= GET_LONG(arg3))
+            error(OUT_OF_RANGE, "set-elt", arg2);
         STRING_SET(arg2,GET_INT(arg3),GET_CHAR(arg1));
-
+    }
     return(arg1);
 }
 
@@ -2649,28 +2763,50 @@ int f_string_index(int arglist){
 //vector and array
 
 int f_aref(int arglist){
-    int arg1,arg2,n;
+    int arg1,arg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
     if(length(arglist) < 1)
         error(WRONG_ARGS,"aref",arglist);
-    if(!vectorp(arg1) && !arrayp(arg1) && !stringp(arg1))
-        error(ILLEGAL_ARGS, "aref", arg1);
-    if(vectorp(arg1) && !inrangep(arg2,list1(makeint(vector_length(arg1)))))
-        error(OUT_OF_RANGE,"aref",arg2);
-    if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
-        error(OUT_OF_RANGE,"aref",arg2);
-    if(stringp(arg1) &&
-       ((n=GET_INT(car(arg2))) >= string_length(arg1) || n < 0))
-        error(OUT_OF_RANGE,"aref",arg2);
-
-    if(stringp(arg1))
+    
+    if(stringp(arg1)){
+        if(negativep(car(arg2)))
+            error(OUT_OF_DOMAIN,"aref",arg2);
+        if(GET_INT(car(arg2)) >= string_length(arg1))
+            error(OUT_OF_RANGE,"aref",arg2);
         return(string_ref(arg1,car(arg2)));
-    else
+    }
+    else if(vectorp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"aref",arg2);
+        if(!inrangep(arg2,list1(makeint(vector_length(arg1)))))
+            error(OUT_OF_RANGE,"aref",arg2);
         return(array_ref(arg1,arg2));
+    }
+    else if(arrayp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"aref",arg2);
+        if(!inrangep(arg2,array_length(arg1)))
+            error(OUT_OF_RANGE,"aref",arg2);
+        return(array_ref(arg1,arg2));
+    }
+    else
+        error(ILLEGAL_ARGS, "aref", arg1);
+
+    return(NIL);
 }
+
+int indomainp(int ls){
+    if(nullp(ls))
+        return(1);
+    else if(negativep(car(ls)))
+        return(0);
+    else
+        return(indomainp(cdr(ls)));
+}
+
 
 int inrangep(int x, int y){
 
@@ -2698,35 +2834,58 @@ int f_garef(int arglist){
     arg2 = cdr(arglist);
     if(GET_AUX(arg1) != cgeneral_vector && GET_AUX(arg1) != cgeneral_array_star)
         error(NOT_VECARR, "garef", arg1);
-    if(vectorp(arg1) && !inrangep(arg2,list1(makeint(vector_length(arg1)))))
-        error(OUT_OF_RANGE,"garef",arg2);
-    if(arrayp(arg1) && !inrangep(arg2,array_length(arg1)))
-        error(OUT_OF_RANGE,"garef",arg2);
+    
+    if(vectorp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"garef",arg2);
+        if(!inrangep(arg2,list1(makeint(vector_length(arg1)))))
+            error(OUT_OF_RANGE,"garef",arg2);
+        return(array_ref(arg1,arg2));
+    }
+    else if(arrayp(arg1)){
+        if(!indomainp(arg2))
+            error(OUT_OF_DOMAIN,"garef",arg2);
+        if(!inrangep(arg2,array_length(arg1)))
+            error(OUT_OF_RANGE,"garef",arg2);
+        return(array_ref(arg1,arg2));
+    }
 
-    return(array_ref(arg1,arg2));
+    return(NIL);
 }
 
 
 int f_set_aref(int arglist){
-    int arg1,arg2,arg3,n;
+    int arg1,arg2,arg3;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
-    if(!vectorp(arg2) && !arrayp(arg2) &&!stringp(arg2))
-        error(ILLEGAL_ARGS, "set-aref", arg2);
-    if(vectorp(arg2) && !inrangep(arg3,list1(makeint(vector_length(arg2)))))
-        error(OUT_OF_RANGE,"set-aref",arg3);
-    if(arrayp(arg2) && !inrangep(arg3,array_length(arg2)))
-        error(OUT_OF_RANGE,"set-aref",arg3);
-    if(stringp(arg2) &&
-       ((n=GET_INT(car(arg3))) >= string_length(arg2) || n < 0))
-        error(OUT_OF_RANGE,"set-aref",arg3);
+    
 
-    if(stringp(arg2))
+    if(stringp(arg2)){
+        if(negativep(car(arg3)))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(GET_INT(car(arg3)) >= string_length(arg2))
+            error(OUT_OF_RANGE,"set-aref",arg3);
         string_set(arg2,car(arg3),arg1);
-    else
+    }
+    else if(vectorp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,list1(makeint(vector_length(arg2)))))
+            error(OUT_OF_RANGE,"set-aref",arg3);
         array_set(arg2,arg3,arg1);
+    }
+    else if(arrayp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,array_length(arg2)))
+            error(OUT_OF_RANGE,"set-aref",arg3);
+        array_set(arg2,arg3,arg1);
+    }
+    else
+        error(ILLEGAL_ARGS, "set-aref", arg2);
+
     return(arg1);
 }
 
@@ -2738,12 +2897,22 @@ int f_set_garef(int arglist){
     arg3 = cddr(arglist);
     if(GET_AUX(arg2) != cgeneral_vector && GET_AUX(arg2) != cgeneral_array_star)
         error(NOT_VECARR, "set-garef", arg2);
-    if(vectorp(arg2) && !inrangep(arg3,list1(makeint(vector_length(arg2)))))
-        error(OUT_OF_RANGE,"set-garef",arg3);
-    if(arrayp(arg2) && !inrangep(arg3,array_length(arg2)))
-        error(OUT_OF_RANGE,"set-garef",arg3);
+    
+    if(vectorp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,list1(makeint(vector_length(arg2)))))
+            error(OUT_OF_RANGE,"set-aref",arg3);
+        array_set(arg2,arg3,arg1);
+    }
+    else if(arrayp(arg2)){
+        if(!indomainp(arg3))
+            error(OUT_OF_DOMAIN,"set-aref",arg3);
+        if(!inrangep(arg3,array_length(arg2)))
+            error(OUT_OF_RANGE,"set-aref",arg3);
+        array_set(arg2,arg3,arg1);
+    }
 
-    array_set(arg2,arg3,arg1);
     return(arg1);
 }
 
@@ -3645,11 +3814,11 @@ int f_create_array(int arglist){
     arg3 = caddr(arglist);
 
     if((n=length(arglist)) != 1 && length(arglist) != 2 && length(arglist) != 3)
-        error(WRONG_ARGS,"create-array", arglist);
+        error(OUT_OF_DOMAIN,"create-array", arglist);
     if(!listp(arg1))
         error(NOT_LIST, "create-array", arg1);
     if(check_dimension(arg1))
-        error(OUT_OF_RANGE,"create-array",arg1);
+        error(OUT_OF_DOMAIN,"create-array",arg1);
     if(length(arglist) == 1)
         arg2 = UNDEF;
     if(arg3 != NIL && arg3 != makesym("FLOAT"))
@@ -3705,6 +3874,8 @@ int f_parse_number(int arglist){
         error(WRONG_ARGS, "parse-number", arglist);
     if(!stringp(arg1))
         error(NOT_STR, "parse-number", arg1);
+    if(strcmp(GET_NAME(arg1),"") == 0)
+        error(CANT_PARSE,"parse-number",arg1);
 
     strcpy(stok.buf,GET_NAME(arg1));
 
@@ -3728,6 +3899,7 @@ int f_parse_number(int arglist){
 
     if(hextoken(stok.buf))
         return(makeint((int)strtol(stok.buf,&e,16)));
+
 
     error(CANT_PARSE,"parse-number",arg1);
     return(UNDEF);
@@ -3791,10 +3963,15 @@ int f_subseq(int arglist){
     arg3 = caddr(arglist);
     if(length(arglist) != 3)
         error(WRONG_ARGS, "subseq", arglist);
+    if(!integerp(arg2) && !longnump(arg2))
+        error(NOT_INT, "subseq", arg2);
+    if(!integerp(arg3) && !longnump(arg3))
+        error(NOT_INT, "subseq", arg3);
+    if(negativep(arg2) || negativep(arg3))
+        error(OUT_OF_DOMAIN, "subseq", arglist);
     if(greaterp(arg2,arg3))
         error(OUT_OF_RANGE, "subseq", arglist);
-    if(negativep(arg2) || negativep(arg3))
-        error(OUT_OF_RANGE, "subseq", arglist);
+    
 
 
     if(stringp(arg1)){

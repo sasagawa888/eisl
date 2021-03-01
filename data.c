@@ -403,24 +403,35 @@ int notexistclassp(int ls){
 }
 
 int illegallambdap(int ls){
-    while(!nullp(ls)){
-        if(!symbolp(car(ls)))
-            return(1);
-        else if(car(ls) == T)
-            return(1);
-        else if(car(ls) == NIL)
-            return(1);
-        else if(eqp(car(ls),makesym(":REST")))
-            ls = cdr(ls);
-        else if(eqp(car(ls),makesym("&REST")))
-            ls = cdr(ls);
-        else if(STRING_REF(car(ls),0) == ':' ||
-             STRING_REF(car(ls),0) == '&')
-            return(1);
-        else
-            ls = cdr(ls);
-    }
-    return(0);
+    if(!listp(ls) && !nullp(ls))
+        return(1);
+
+    if(nullp(ls))
+        return(0);
+    else if(car(ls) == T)
+        return(1);
+    else if(car(ls) == NIL)
+        return(1);
+    else if(eqp(car(ls),makesym("*PI*")))
+        return(1);
+    else if(eqp(car(ls),makesym("*MOST-POSITIVE-FLOAT*")))
+        return(1);
+    else if(eqp(car(ls),makesym("*MOST-NEGATIVE-FLOAT*")))
+        return(1);
+    else if(eqp(car(ls),makesym(":REST")) && member(makesym(":REST"),cdr(ls)))
+        return(1);
+    else if(eqp(car(ls),makesym("&REST")) && member(makesym("&REST"),cdr(ls)))
+        return(1);
+    else if(eqp(car(ls),makesym(":REST")) && member(makesym("&REST"),cdr(ls)))
+        return(1);
+    else if(eqp(car(ls),makesym("&REST")) && member(makesym(":REST"),cdr(ls)))
+        return(1);
+    else if(symbolp(car(ls)) && !eqp(car(ls),makesym(":REST")) && !eqp(car(ls),makesym("&REST")) &&
+            (STRING_REF(car(ls),0) == ':' || STRING_REF(car(ls),0) == '&'))
+        return(1);
+    else
+        return(illegallambdap(cdr(ls)));
+    
 }
 
 int improperlistp(int ls){
@@ -430,6 +441,38 @@ int improperlistp(int ls){
         return(1);
     else
         return(improperlistp(cdr(ls)));
+}
+
+int duplicatelistp(int ls){
+    if(nullp(ls))
+        return(0);
+    else if(!eqp(car(ls),makesym("&REST")) && !eqp(car(ls),makesym(":REST"))  && member(car(ls),cdr(ls)))
+        return(1);
+    else if(eqp(car(ls),makesym("&REST")) && nullp(cdr(ls)))
+        return(1);
+    else if(eqp(car(ls),makesym(":REST")) && nullp(cdr(ls)))
+        return(1);
+    else if(eqp(car(ls),makesym("&REST")) && length(cdr(ls)) > 1)
+        return(1);
+    else if(eqp(car(ls),makesym(":REST")) && length(cdr(ls)) > 1)
+        return(1);
+    else if(eqp(car(ls),makesym("&REST")) || eqp(car(ls),makesym(":REST")))
+        return(duplicatelistp(cddr(ls)));
+    else 
+        return(duplicatelistp(cdr(ls)));
+}
+
+int symbollistp(int ls){
+    if(nullp(ls))
+        return(1);
+    else if(!symbolp(car(ls)))
+        return(0);
+    else if(eqp(car(ls),makesym("&REST")) && !symbolp(cadr(ls)))
+        return(0);
+    else if(eqp(car(ls),makesym(":REST")) && !symbolp(cadr(ls)))
+        return(0);
+    else
+        return(symbollistp(cdr(ls)));
 }
 
 //--------------list operation---------------------

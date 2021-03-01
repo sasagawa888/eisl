@@ -42,7 +42,7 @@ int modify_flag = 0;
 //special form token
 char special[40][12] = {
 {"defun"},{"defmacro"},{"defglobal"},{"defdynamic"},{"defconstant"},
-{"let"},{"let*"},{"case"},{"while"},{"progn"},{"defmodule"},{"defpub"},
+{"let"},{"let*"},{"case"},{"while"},{"progn"},{"defmodule"},{"defpublic"},
 };
 //syntax token
 char syntax[60][30] = {
@@ -1499,7 +1499,7 @@ int calc_tabs(){
         return(0); //can't find left paren
 
     if(is_special(pos.row, pos.col+1))
-        return(pos.col+2);
+        return(pos.col+4);
     else
         return(findnext(pos.row,pos.col+1));
 

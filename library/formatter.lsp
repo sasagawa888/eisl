@@ -100,6 +100,8 @@
                       (pp-lambda x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "labels"))
                       (pp-labels x lm))
+                     ((and (null ignore) (stringp (car x)) (string= (car x) "flet"))
+                      (pp-labels x lm))
                      ((long-element-p x) (setq otomo t) (pp-long-element x lm))
                      ((< (+ (flatsize x) lm) width) (pp-flat x lm))
                      (t (setq otomo t) (pp-indent x lm))))

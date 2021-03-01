@@ -427,6 +427,11 @@ extern char extended[70][30];
 #define SYSTEM_ERR	    153
 #define RESOURCE_ERR    154
 #define NOT_FARR        155
+#define NOT_EXIST_ARG   156
+#define IMPROPER_ARGS   157
+#define OUT_OF_DOMAIN   158
+#define FLT_OUT_OF_DOMAIN  159
+#define OUT_OF_REAL     160
 
 
 #define ESCHOME printf("\33[1;1H")
@@ -549,6 +554,7 @@ int create_array(int x);
 int create_list(int x, int y);
 int dectoken(char buf[]);
 int divide(int arg1, int arg2);
+int duplicatelistp(int ls);
 int each_car(int x);
 int each_cdr(int x);
 int eqgreaterp(int x, int y);
@@ -851,6 +857,7 @@ int initinst(int x, int initls);
 int initinst1(int ls, int sc);
 int initinst2(int inst_vars, int class_vars);
 int input_stream_p(int x);
+int indomainp(int ls);
 int inrangep(int x, int y);
 int int_gcd(int x, int y);
 int integerp(int x);
@@ -974,6 +981,7 @@ int substr(int x, int s, int e);
 int subvec(int x, int s, int e);
 int substitute(int x, int module, int fname);
 int substitute1(int x, int module);
+int symbollistp(int ls);
 int symbolp(int addr);
 int symboltoken(char buf[]);
 int symnamep(int addr, char *name);

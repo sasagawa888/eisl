@@ -6,7 +6,7 @@ Here I describe the specifications, constraints, problems, etc.
 
 # Basic idea
 
-I referred to GCL (GNU Common Lisp) created by Mr. Hagiya and others.
+I referred to GCL (GNU Common Lisp) created by Mr. Hagiya, Mr. Yuasa and others.
 The Easy-ISLisp(EISL) compiler converts ISLisp code to equivalent C code and GCC generates an object file.
 By dynamically linking object file, EISL loads the compiled code.
 The internal definition of the function uses GCC extensions.
@@ -88,7 +88,7 @@ AFTER 14
 ```
 
 These are used to compile generic functions.
-The interpreter evaluates the gemeric function once organizes and saves all methods,
+The interpreter evaluates the generic function once organizes and saves all methods,
 and compiler extracts methods and converts it to SUBR.
 
 (format stream string)
@@ -117,12 +117,12 @@ A list of free variables that must be retained is linked to the function name sy
 When accessing with the lambda body, it is done with nth function. 
 
 
-# lambda constraints
+# Constraints of lambda
 You can nest lambda expressions up to triple.
 Any more than that will result in an error.
 
 Below is the quoted code from M.Hiroi's page.
-This is the correct code that meets the ISLisp specification. 
+This is the correct code that adapts the ISLisp specification. 
 
 ```lisp
 (defun id-search (start goal)
@@ -141,10 +141,10 @@ This is the correct code that meets the ISLisp specification.
          (dfs limit (list start)))))
 ```
 
-The EISL compiler cannot compile this.
+The EISL compiler cannot compile this code.
 lambda is generated as a C function with a name at the top level. 
-The locally defined function dfs is called in lambda.
-The dfs generated as a C local definition function cannot be referenced from the C function corresponding to the generated lambda.
+The locally defined function dfs function is called in lambda.
+The dfs function generated as a C local definition function cannot be referenced from the C function corresponding to the generated lambda.
 
 Therefore, in such a case, please write without using labels as shown below. 
 
@@ -169,7 +169,7 @@ Therefore, in such a case, please write without using labels as shown below.
 # Constraints on generic functions
 
 Below is the quoted code from M. Hiroi's page.
-This is the correct code that adapted the ISLisp specification. 
+This is the correct code that adapts the ISLisp specification. 
 
 ```lisp
 (defgeneric hash-func (k))
@@ -238,6 +238,32 @@ The prepared functions are as follows.
 ```
 These functions are ignored by the interpreter. 
 
+
+# More explanation
+All variables have been converted to uppercase. Therefore, the n and m variables are N and M in C language.
+Small integers are immediate values for efficiency.
+By setting the second bit from the most significant bit, it is internally recognized as a small integer.
+When using C operators wi must remove this bit. By operation AND with INT_MASK, this bit is removed.
+When the operation in C is completed, it must be returned to the immediate value. 
+By openration OR with INT_FLAG, the second bit is 1. 
+the values INT_MASK and INT_FLAG are described in fast.h.
+The return value of an S-expression is held by a variable "res" in C language.
+We assign a value to res. 
+
+e.g. 
+
+```
+(c-include "<stdio.h>")
+
+(defun ash (n m)
+  (if (>= m 0)
+      (c-lang "res = INT_FLAG | ((INT_MASK & N) << (INT_MASK & M));")
+      (let ((m1 (- m)))
+        (c-lang "res = INT_FLAG | ((INT_MASK & N) >> (INT_MASK & M1));"))))
+
+
+```
+
 # Type inference
 
 EISL compiler has a type inferencer. This was introduced experimentally in ver0.85.
@@ -273,7 +299,7 @@ Even if you use type inference, it  can only infer that the argument and return 
 Since the Takeuchi function requires a huge amount of recursive calculation.
 It can be calculated within practical time only when the argument is a small integer.
 Therefore, you can generate efficient code by telling the compiler that compiler should generate code for small integers and not consider that it will become BIGNUM. 
-The syntax has no effect on the interpreter, but the compiler executes type inferences based on this additional data. 
+"the" syntax has no effect on the interpreter, but the compiler executes type inferences based on this additional data. 
 
 ```
 (defun tarai(x y z)

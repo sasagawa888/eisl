@@ -351,8 +351,8 @@ int f_defconstant(int arglist){
         error(WRONG_ARGS, "defconstant", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defconstant", arg1);
-    //if(!top_flag && !ignore_topchk)
-    //    error(NOT_TOP_LEVEL, "defconstant", arglist);
+    if(!top_flag && !ignore_topchk)
+        error(NOT_TOP_LEVEL, "defconstant", arglist);
 
     SET_CDR(arg1,eval(arg2));
     SET_OPT(arg1,CONSTN); //constant
@@ -1492,7 +1492,7 @@ int f_convert(int arglist){
             }
             break;
     }
-    error(ILLEGAL_ARGS,"convert",arg1);
+    error(OUT_OF_DOMAIN,"convert",arg1);
     return(UNDEF);
 }
 

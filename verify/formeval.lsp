@@ -392,33 +392,35 @@
 (test (what-is-today) wednesday equal)
 (test (let ((what-is-today 'thursday)) (what-is-today)) wednesday equal)
 (test (let ((*global-today* 'thursday)) (what-is-today)) wednesday equal)
-;;; �����̌�
+;;;
 ($error (defglobal) <program-error>)
-;($error (defglobal *global-2*) <program-error>)
-;($error (defglobal *global-2* 2 3) <program-error>)
-;;; �������X�g���h�b�g���X�g
-;($error (defglobal *global-2* 2 . 3) <error>)
-;;; �g�b�v���x����`�łȂ�
+($error (defglobal *global-2*) <program-error>)
+($error (defglobal *global-2* 2 3) <program-error>)
+;;;
+($error (defglobal *global-2* 2 . 3) <error>)
+;;;
+;;; Caution I think result is <domain-error>
+($error (+ (defglobal *global-2* 2)) <domain-error>)
 ;($error (+ (defglobal *global-2* 2)) <error>)
-;;; name ���V���{���łȂ�
-;($error (defglobal #2a((a b c) (d e f)) nil) <domain-error>)
-;($error (defglobal #\a nil) <domain-error>)
-;($error (defglobal 1234 nil) <domain-error>)
-;($error (defglobal "abc" nil) <domain-error>)
-;($error (defglobal #(a b c) nil) <domain-error>)
-;($error (defglobal (x y) nil) <domain-error>)
-;;; �V�X�e���萔�͕ύX�ł��Ȃ�
-;($error (defglobal nil nil) <program-error>)
-;($error (defglobal t nil) <program-error>)
-;($error (defglobal *pi* nil) <program-error>)
-;($error (defglobal *most-positive-float* nil) <program-error>)
-;($error (defglobal *most-negative-float* nil) <program-error>)
-;;; �萔�͕ύX�ł��Ȃ�
+;;; name 
+($error (defglobal #2a((a b c) (d e f)) nil) <domain-error>)
+($error (defglobal #\a nil) <domain-error>)
+($error (defglobal 1234 nil) <domain-error>)
+($error (defglobal "abc" nil) <domain-error>)
+($error (defglobal #(a b c) nil) <domain-error>)
+($error (defglobal (x y) nil) <domain-error>)
+;;; 
+($error (defglobal nil nil) <program-error>)
+($error (defglobal t nil) <program-error>)
+($error (defglobal *pi* nil) <program-error>)
+($error (defglobal *most-positive-float* nil) <program-error>)
+($error (defglobal *most-negative-float* nil) <program-error>)
+;;; 
 ($eval (defconstant *const-e* 2.718))
-;($error (defglobal *const-e* nil) <program-error>)
+($error (defglobal *const-e* nil) <program-error>)
 ;;; keyword
-;($error (defglobal :a nil) <program-error>)
-;($error (defglobal &a nil) <program-error>)
+($error (defglobal :a nil) <program-error>)
+($error (defglobal &a nil) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [defining operator]

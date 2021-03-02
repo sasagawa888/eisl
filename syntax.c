@@ -362,6 +362,11 @@ int f_defconstant(int arglist){
         error(WRONG_ARGS, "defconstant", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defconstant", arg1);
+    if(arg1 == T || arg1 == NIL || arg1 == makesym("*PI*") || 
+      arg1 == makesym("*MOST-POSITIVE-FLOAT*") || arg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+        error(WRONG_ARGS, "defconstant", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defconstant", arg1);
     if(!top_flag && !ignore_topchk)
         error(NOT_TOP_LEVEL, "defconstant", arglist);
 

@@ -352,30 +352,32 @@
 ($eval (defun f () *const-e*))
 (test (f) 2.718 equal)
 
-;;; �����̌�
+;;; 
 ($error (defconstant) <program-error>)
 ($error (defconstant *const-e*) <program-error>)
 ($error (defconstant *const-e* 2 3) <program-error>)
-;;; �������X�g���h�b�g���X�g
+;;;
 ($error (defconstant *const-e* 2 . 3) <error>)
-;;; �g�b�v���x����`�łȂ�
+;;; 
+;;; Caution I think result is <domain-error>.
+($error (+ (defconstant *const-e* 2)) <domain-error>)
 ;($error (+ (defconstant *const-e* 2)) <error>)
-;;; name ���V���{���łȂ�
-;($error (defconstant #2a((a b c) (d e f)) nil) <domain-error>)
-;($error (defconstant #\a nil) <domain-error>)
-;($error (defconstant 1234 nil) <domain-error>)
-;($error (defconstant "abc" nil) <domain-error>)
-;($error (defconstant #(a b c) nil) <domain-error>)
-;($error (defconstant (x y) nil) <domain-error>)
-;;; �V�X�e����`�̒萔�͕ύX�ł��Ȃ�
-;($error (defconstant nil nil) <program-error>)
-;($error (defconstant t nil) <program-error>)
-;($error (defconstant *pi* nil) <program-error>)
-;($error (defconstant *most-positive-float* nil) <program-error>)
-;($error (defconstant *most-negative-float* nil) <program-error>)
+;;; 
+($error (defconstant #2a((a b c) (d e f)) nil) <domain-error>)
+($error (defconstant #\a nil) <domain-error>)
+($error (defconstant 1234 nil) <domain-error>)
+($error (defconstant "abc" nil) <domain-error>)
+($error (defconstant #(a b c) nil) <domain-error>)
+($error (defconstant (x y) nil) <domain-error>)
+;;; 
+($error (defconstant nil nil) <program-error>)
+($error (defconstant t nil) <program-error>)
+($error (defconstant *pi* nil) <program-error>)
+($error (defconstant *most-positive-float* nil) <program-error>)
+($error (defconstant *most-negative-float* nil) <program-error>)
 ;;; keyword
-;($error (defconstant :a nil) <program-error>)
-;($error (defconstant &a nil) <program-error>)
+($error (defconstant :a nil) <program-error>)
+($error (defconstant &a nil) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [defining operator]

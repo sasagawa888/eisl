@@ -86,14 +86,39 @@ int f_lambda(int arglist){
 }
 
 int f_labels(int arglist){
-    int arg1,arg2,save,sym,val,func,res;
+    int arg1,arg2,save,sym,val,func,res,temp,temparg1,temparg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "labels", arglist);
     if(nullp(arglist))
         error(NOT_EXIST_ARG, "labels", NIL);
     if(!listp(arg1))
-        error(NOT_LIST, "labels" , arg1);
+        error(IMPROPER_ARGS, "labels", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        temparg1 = car(car(temp));
+        temparg2 = cdr(car(temp));
+        if(length(car(temp)) < 2)
+            error(IMPROPER_ARGS, "labels", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "labels", temparg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "labels", temparg1);
+        if(duplicatelistp(car(temparg2)))
+            error(IMPROPER_ARGS, "labels", car(temparg2));
+        if(improperlistp(car(temparg2)))
+            error(IMPROPER_ARGS, "labels", car(temparg2));
+        if(illegallambdap(car(temparg2)))
+            error(ILLEGAL_ARGS, "labels", car(temparg2));
+        if(!symbollistp(car(temparg2)))
+            error(OUT_OF_DOMAIN, "labels", car(temparg2));
+
+        temp = cdr(temp);
+    }
+    
+
     save = ep;
     func = NIL;
     res = NIL;
@@ -120,14 +145,38 @@ int f_labels(int arglist){
 }
 
 int f_flet(int arglist){
-    int arg1,arg2,save,ep1,sym,val,res;
+    int arg1,arg2,save,ep1,sym,val,res,temp,temparg1,temparg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "flet", arglist);
     if(nullp(arglist))
         error(NOT_EXIST_ARG, "flet", NIL);
     if(!listp(arg1))
-        error(NOT_LIST, "flet", arg1);
+        error(IMPROPER_ARGS, "flet", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        temparg1 = car(car(temp));
+        temparg2 = cdr(car(temp));
+        if(length(car(temp)) < 2)
+            error(IMPROPER_ARGS, "flet", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "flet", temparg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "flet", temparg1);
+        if(duplicatelistp(car(temparg2)))
+            error(IMPROPER_ARGS, "flet", car(temparg2));
+        if(improperlistp(car(temparg2)))
+            error(IMPROPER_ARGS, "flet", car(temparg2));
+        if(illegallambdap(car(temparg2)))
+            error(ILLEGAL_ARGS, "flet", car(temparg2));
+        if(!symbollistp(car(temparg2)))
+            error(OUT_OF_DOMAIN, "flet", car(temparg2));
+
+        temp = cdr(temp);
+    }
+    
     save = ep;
     ep1 = ep;
     res = NIL;
@@ -356,7 +405,7 @@ int f_defconstant(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if(improperlistp(cdr(arglist)))
+    if(improperlistp(arglist))
         error(IMPROPER_ARGS, "defconstant", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defconstant", arglist);
@@ -438,7 +487,7 @@ int f_defglobal(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if(improperlistp(cdr(arglist)))
+    if(improperlistp(arglist))
         error(IMPROPER_ARGS, "defglobal", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defglobal", arglist);

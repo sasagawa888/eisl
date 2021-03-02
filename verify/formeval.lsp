@@ -213,25 +213,25 @@
 ($error (labels) <program-error>)
 ;;; 
 ($error (labels (f)) <error>)
-;($error (labels ((f))) <error>)
-;;; lambda-list ���s��
-;($error (labels ((f x))) <error>)
-;($error (labels ((f (x . y)))) <error>)
-;;; function-name ���V���{���łȂ�
-;($error (labels ((#2a((a b) (c d)) (x) x))) <domain-error>)
-;($error (labels ((#\a (x) x))) <domain-error>)
-;($error (labels ((1234 (x) x))) <domain-error>)
-;($error (labels ((1.234 (x) x))) <domain-error>)
-;($error (labels (("abc" (x) x))) <domain-error>)
-;($error (labels ((#(a b c) (x) x))) <domain-error>)
-;($error (labels (((x y) (x) x))) <domain-error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
-;($error (labels ((:a ()))) <program-error>)
-;;; function-name �̗L���͈͊O
-;($error (labels ((f (x) (g x))) (f 1)) <undefined-function>)
-;;; body-forms* �� dot-list
-;($error (labels ((f (x) x)) . 1) <error>)
-;($error (labels ((f (x) x)) (f 1) . 2) <error>)
+($error (labels ((f))) <error>)
+;;; lambda-list 
+($error (labels ((f x))) <error>)
+($error (labels ((f (x . y)))) <error>)
+;;; function-name 
+($error (labels ((#2a((a b) (c d)) (x) x))) <domain-error>)
+($error (labels ((#\a (x) x))) <domain-error>)
+($error (labels ((1234 (x) x))) <domain-error>)
+($error (labels ((1.234 (x) x))) <domain-error>)
+($error (labels (("abc" (x) x))) <domain-error>)
+($error (labels ((#(a b c) (x) x))) <domain-error>)
+($error (labels (((x y) (x) x))) <domain-error>)
+;;;
+($error (labels ((:a ()))) <program-error>)
+;;; function-name
+($error (labels ((f (x) (g x))) (f 1)) <undefined-function>)
+;;; body-forms* dot-list
+($error (labels ((f (x) x)) . 1) <error>)
+($error (labels ((f (x) x)) (f 1) . 2) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator] 
@@ -258,33 +258,33 @@
 ($eval (defglobal x nil))
 ($eval (flet ((f () 2)) (setq x (lambda () (f)))))
 (test (apply x ()) 2)
-;;; �����̌�
+;;;
 ($error (flet) <program-error>)
-;;; �������X�g���s��
-;($error (flet (f)) <error>)
-;($error (flet ((f))) <error>)
-;;; lambda-list ���s��
-;($error (flet ((f x))) <error>)
-;($error (flet ((f (x . y)))) <error>)
-;;; function-name ���V���{���łȂ�
-;($error (flet ((#2a((a b) (c d)) (x) x))) <domain-error>)
-;($error (flet ((#\a (x) x))) <domain-error>)
-;($error (flet ((1234 (x) x))) <domain-error>)
-;($error (flet ((1.234 (x) x))) <domain-error>)
-;($error (flet (("abc" (x) x))) <domain-error>)
-;($error (flet ((#(a b c) (x) x))) <domain-error>)
-;($error (flet (((x y) (x) x))) <domain-error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
-;($error (flet ((:a ()))) <program-error>)
-;;; function-name �̗L���͈͊O
-;($error (flet ((f (x) (g x))) (f 1)) <undefined-function>)
-;($error 
-; (flet ((f (x) (g x))
-;	(g (x) x))
-;       (f 1))  <undefined-function>)
-;;; body-forms* �� dot-list
-;($error (flet ((f (x) x)) . 1) <error>)
-;($error (flet ((f (x) x)) (f 1) . 2) <error>)
+;;;
+($error (flet (f)) <error>)
+($error (flet ((f))) <error>)
+;;; lambda-list
+($error (flet ((f x))) <error>)
+($error (flet ((f (x . y)))) <error>)
+;;; function-name 
+($error (flet ((#2a((a b) (c d)) (x) x))) <domain-error>)
+($error (flet ((#\a (x) x))) <domain-error>)
+($error (flet ((1234 (x) x))) <domain-error>)
+($error (flet ((1.234 (x) x))) <domain-error>)
+($error (flet (("abc" (x) x))) <domain-error>)
+($error (flet ((#(a b c) (x) x))) <domain-error>)
+($error (flet (((x y) (x) x))) <domain-error>)
+;;;
+($error (flet ((:a ()))) <program-error>)
+;;; function-name
+($error (flet ((f (x) (g x))) (f 1)) <undefined-function>)
+($error 
+ (flet ((f (x) (g x))
+	(g (x) x))
+       (f 1))  <undefined-function>)
+;;; body-forms* dot-list
+($error (flet ((f (x) x)) . 1) <error>)
+($error (flet ((f (x) x)) (f 1) . 2) <error>)
 ;;;
 ($eval (defun foo-5 () 1))
 (test (flet ((foo-5 () (foo-5))) (foo-5)) 1)

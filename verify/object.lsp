@@ -30,7 +30,7 @@
 ;;;---------- ----------
 ;;;
 ($eval (defclass a () ()))
-($error (defclass foo (a a) ()) <error>)
+;($error (defclass foo (a a) ()) <error>)
 ;;;
 ;($error (defclass foo (undef) ()) <undefined-entity>)
 ;;;
@@ -267,6 +267,7 @@
 ;	<undefined-entity>)
 ;;
 ;;
+#|
 ($eval (defgeneric foo-g-4 (x)))
 ($eval (defmethod foo-g-4 (x) 'object-1))
 ($eval (defmethod foo-g-4 :around (x) 'around-object-1))
@@ -451,7 +452,6 @@
 (test (foo-g-30 c4 c3) (<object> c3) equal)
 (test (foo-g-30 c4 c4) (<object> <object>) equal)
 ;; 
-#|
 ($eval (defglobal *call-tree* nil))
 ($eval 
  (defun add-call-tree (x)
@@ -967,7 +967,6 @@
 	 (list x y)))
 (test (foo-38 2 3) (20 30) equal)
 (test (funcall f) (2 3) equal)
-|#
 ;;
 ;($eval (defglobal f nil))
 ;($eval (defgeneric foo-39 (x y)))
@@ -984,7 +983,6 @@
 ;($eval (defglobal f nil))
 ;($eval (defgeneric foo-40 (x y)))
 ;($eval (defmethod foo-40 (x y) (list x y)))
-#|
 ($eval (defmethod foo-40 ((x <integer>) (y <integer>))
 	 (setq x (* x 10))
 	 (setq y (* y 10))
@@ -992,7 +990,6 @@
 	   (setq f (lambda () 
 		     (if (next-method-p) (list x y (call-next-method))))))
 	 (list x y)))
-|#
 ;(test (foo-40 2 3) (20 30) equal)
 ;(test (funcall f) (5 6 (2 3)) equal)
 ;;
@@ -1069,7 +1066,6 @@
 ;   ((x :initform 0 :accessor c0-x :initarg x)
 ;    (y :initform 1 :accessor c0-y :initarg y)))
 ; c0)
-#|
 (test (defmethod initialize-object ((instance c0) init-list)
    (if (next-method-p)
        (call-next-method))
@@ -1077,7 +1073,6 @@
        (setf (c0-x instance) t))
    instance) 
  initialize-object)
-|#
 ;;
 ;($eval (defglobal c0 (create (class c0))))
 ;(test (c0-x c0) t)
@@ -1097,7 +1092,7 @@
 (test (eq (class-of (create-string 3 #\a)) (class <string>)) t)
 (test (eq (class-of "foo") (class <string>)) t)
 
-
+|#
 ;; <built-in-class>
 (test (eq (class-of (class <object>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <basic-array>)) (class <built-in-class>)) t)
@@ -1158,12 +1153,14 @@
 ;; <symbol>
 (test (eq (class-of 'a) (class <symbol>)) t)
 ;; <integer>
-(test (eq (class-of 1) (class <integer>)) t)
-(test (eq (class-of +1) (class <integer>)) t)
-(test (eq (class-of -1) (class <integer>)) t)
-(test (eq (class-of 1234567890) (class <integer>)) t)
-(test (eq (class-of +1234567890) (class <integer>)) t)
-(test (eq (class-of -1234567890) (class <integer>)) t)
+;; in Easy-ISLisp extened sub class of <integer>
+;; <fixnum> <longnum> <bignum>
+(test (eq (class-of 1) (class <fixnum>)) t)
+(test (eq (class-of +1) (class <fixnum>)) t)
+(test (eq (class-of -1) (class <fixnum>)) t)
+(test (eq (class-of 1234567890) (class <longnum>)) t)
+(test (eq (class-of +1234567890) (class <longnum>)) t)
+(test (eq (class-of -1234567890) (class <longnum>)) t)
 ;; <float>
 (test (eq (class-of 1.234) (class <float>)) t)
 (test (eq (class-of +1.234) (class <float>)) t)
@@ -1834,50 +1831,48 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-#|
 ;(test (instancep cc (class <invalid>)) nil)
 ;; <general-array*>
-(test (instancep #2a(test (a b) (c d)) (class <object>)) t)
-(test (instancep #2a(test (a b) (c d)) (class <basic-array>)) t)
-(test (instancep #2a(test (a b) (c d)) (class <basic-array*>)) t)
-(test (instancep #2a(test (a b) (c d)) (class <general-array*>)) t)
-(test (instancep #2a(test (a b) (c d)) (class <basic-vector>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <general-vector>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <string>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <built-in-class>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <character>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <function>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <generic-function>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <standard-generic-function>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <list>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <cons>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <null>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <symbol>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <number>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <float>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <integer>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <serious-condition>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <arithmetic-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <division-by-zero>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <floating-point-overflow>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <floating-point-underflow>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <control-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <parse-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <program-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <domain-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <undefined-entity>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <unbound-variable>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <undefined-function>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <simple-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <stream-error>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <end-of-stream>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <storage-exhausted>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <standard-class>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <standard-object>)) nil)
-(test (instancep #2a(test (a b) (c d)) (class <stream>)) nil)
-;(test (instancep #2a(test (a b) (c d)) (class <invalid>)) nil)
-|#
+(test (instancep #2a((a b) (c d)) (class <object>)) t)
+(test (instancep #2a((a b) (c d)) (class <basic-array>)) t)
+(test (instancep #2a((a b) (c d)) (class <basic-array*>)) t)
+(test (instancep #2a((a b) (c d)) (class <general-array*>)) t)
+(test (instancep #2a((a b) (c d)) (class <basic-vector>)) nil)
+(test (instancep #2a((a b) (c d)) (class <general-vector>)) nil)
+(test (instancep #2a((a b) (c d)) (class <string>)) nil)
+(test (instancep #2a((a b) (c d)) (class <built-in-class>)) nil)
+(test (instancep #2a((a b) (c d)) (class <character>)) nil)
+(test (instancep #2a((a b) (c d)) (class <function>)) nil)
+(test (instancep #2a((a b) (c d)) (class <generic-function>)) nil)
+(test (instancep #2a((a b) (c d)) (class <standard-generic-function>)) nil)
+(test (instancep #2a((a b) (c d)) (class <list>)) nil)
+(test (instancep #2a((a b) (c d)) (class <cons>)) nil)
+(test (instancep #2a((a b) (c d)) (class <null>)) nil)
+(test (instancep #2a((a b) (c d)) (class <symbol>)) nil)
+(test (instancep #2a((a b) (c d)) (class <number>)) nil)
+(test (instancep #2a((a b) (c d)) (class <float>)) nil)
+(test (instancep #2a((a b) (c d)) (class <integer>)) nil)
+(test (instancep #2a((a b) (c d)) (class <serious-condition>)) nil)
+(test (instancep #2a((a b) (c d)) (class <error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <arithmetic-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <division-by-zero>)) nil)
+(test (instancep #2a((a b) (c d)) (class <floating-point-overflow>)) nil)
+(test (instancep #2a((a b) (c d)) (class <floating-point-underflow>)) nil)
+(test (instancep #2a((a b) (c d)) (class <control-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <parse-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <program-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <domain-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <undefined-entity>)) nil)
+(test (instancep #2a((a b) (c d)) (class <unbound-variable>)) nil)
+(test (instancep #2a((a b) (c d)) (class <undefined-function>)) nil)
+(test (instancep #2a((a b) (c d)) (class <simple-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <stream-error>)) nil)
+(test (instancep #2a((a b) (c d)) (class <end-of-stream>)) nil)
+(test (instancep #2a((a b) (c d)) (class <storage-exhausted>)) nil)
+(test (instancep #2a((a b) (c d)) (class <standard-class>)) nil)
+(test (instancep #2a((a b) (c d)) (class <standard-object>)) nil)
+(test (instancep #2a((a b) (c d)) (class <stream>)) nil)
+(test (instancep #2a((a b) (c d)) (class <invalid>)) nil)
 ;; <general-vector>
 (test (instancep #(a b) (class <object>)) t)
 (test (instancep #(a b) (class <basic-array>)) t)
@@ -4229,4 +4224,5 @@
 ($stype class ($symbol $null) :target)
 ;;
 ;($error (class undef) <undefined-entity>)
+
 

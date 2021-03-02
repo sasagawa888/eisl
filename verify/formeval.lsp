@@ -467,23 +467,23 @@
 ($error (defun) <program-error>)
 ($error (defun foo) <program-error>)
 ;;; �������X�g���h�b�g���X�g
-;($error (defun foo 2 . 3) <error>)
+($error (defun foo 2 . 3) <error>)
 ;;; �g�b�v���x����`�łȂ�
-;($error (+ (defun foo 2)) <error>)
+($error (+ (defun foo 2)) <error>)
 ;;; name ���V���{���łȂ�
-;($error (defun #2a((a b c) (d e f)) nil) <domain-error>)
-;($error (defun #\a nil) <domain-error>)
-;($error (defun 1234 nil) <domain-error>)
-;($error (defun "abc" nil) <domain-error>)
-;($error (defun #(a b c) nil) <domain-error>)
-;($error (defun (x y) nil) <domain-error>)
+($error (defun #2a((a b c) (d e f)) nil) <domain-error>)
+($error (defun #\a nil) <domain-error>)
+($error (defun 1234 nil) <domain-error>)
+($error (defun "abc" nil) <domain-error>)
+($error (defun #(a b c) nil) <domain-error>)
+($error (defun (x y) nil) <domain-error>)
 ;;; keyword 
-;($error (defun :a ()) <program-error>)
-;($error (defun &a ()) <program-error>)
+($error (defun :a ()) <program-error>)
+($error (defun &a ()) <program-error>)
 ;;; same variable
-;($error (defun foo (x x) nil) <error>)
-;($error (defun foo (x &rest x) nil) <error>)
-;($error (defun foo (x :rest x) nil) <error>)
+($error (defun foo (x x) nil) <error>)
+($error (defun foo (x &rest x) nil) <error>)
+($error (defun foo (x :rest x) nil) <error>)
 ;;; �V�X�e���萔���֐��Ƃ��Ē�`
 (test (defun nil ()) nil equal)
 (test (defun t ()) t equal)
@@ -491,10 +491,10 @@
 (test (defun *most-positive-float* ()) *most-positive-float*)
 (test (defun *most-negative-float* ()) *most-negative-float*)
 ;;; special operator �͕ύX�ł��Ȃ�
-;($error (defun if ()) <program-error>)
+($error (defun if ()) <program-error>)
 ;;; lambda-list �Ɏw�肳�ꂽ���ʎq�̗L���͈͂��z���Ă���
 ($eval (defun foo-6 (x) y))
-;($error (foo-6 1) <unbound-variable>)
+($error (foo-6 1) <unbound-variable>)
 ;;;
 ($eval (defun foo-7 (x) x))
 (test (foo-7 1) 1 equal)

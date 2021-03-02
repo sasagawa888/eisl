@@ -382,8 +382,17 @@ int f_defun(int arglist){
         error(CANT_MODIFY, "defun", arg1);
     if(IS_FSUBR(GET_CAR(arg1)))
         error(CANT_MODIFY, "defun", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defun", arg1);
+    if(duplicatelistp(car(arg2)))
+        error(IMPROPER_ARGS, "defun", car(arg2));
+    if(improperlistp(car(arg2)))
+        error(IMPROPER_ARGS, "defun", car(arg2));
     if(illegallambdap(car(arg2)))
         error(ILLEGAL_ARGS,"defun", car(arg2));
+    if(!symbollistp(car(arg2)))
+        error(OUT_OF_DOMAIN, "defun", car(arg2));
+    
 
     val = makefunc(GET_NAME(arg1),arg2);
     SET_CAR(arg1,val);

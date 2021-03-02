@@ -199,6 +199,7 @@
 ($argc with-handler 1 0 1)
 ($type with-handler ($function $generic) :target)
 
+#|
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -413,7 +414,6 @@
 ;;; domain-error
 ($type domain-error-object ($domain-error) :target)
 ($type domain-error-expected-class ($domain-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -504,7 +504,6 @@
 ($argc stream-error-stream 1 0 0)
 ;;; domain-error
 ($type stream-error-stream ($stream-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -545,3 +544,4 @@
 ($type undefined-entity-namespace ($undefined-entity) :target)
 
 ;;; end of file
+|#

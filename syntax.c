@@ -250,6 +250,8 @@ int f_setf(int arglist){
     	error(CANT_MODIFY,"setf",arg1);
     if(listp(arg1) && eqlp(makeint(1),cdr(assoc(makesym("read"),GET_AUX(car(arg1))))))
        error(CANT_MODIFY,"setf",arg1);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "setf", arglist);
 
     if(listp(arg1) && eqp(car(arg1),makesym("AREF"))){
         newform = cons(makesym("SET-AREF"),cons(arg2,cdr(arg1)));
@@ -290,7 +292,7 @@ int f_setf(int arglist){
     	newform = cons(makesym("SETQ"),list2(arg1,arg2));
     }
     else
-    	error(ILLEGAL_ARGS,"setf",arglist);
+    	error(IMPROPER_ARGS,"setf",arglist);
 
     shelterpush(newform);
     res = eval(newform);
@@ -325,13 +327,17 @@ int f_setq(int arglist){
     int arg1,arg2;
 
     arg1 = car(arglist);
-    arg2 = eval(cadr(arglist));
+    arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "setq", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "setq", arg1);
     if(GET_OPT(arg1) == CONSTN)
         error(CANT_MODIFY, "setq" ,arg1);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "setq", arglist);
+
+    arg2 = eval(arg2);
     if(findenv(arg1) != -1)
         setlexenv(arg1,arg2);
     else if(GET_OPT(arg1) == GLOBAL)

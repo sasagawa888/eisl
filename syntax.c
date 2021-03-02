@@ -356,6 +356,8 @@ int f_defconstant(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(improperlistp(cdr(arglist)))
+        error(IMPROPER_ARGS, "defconstant", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defconstant", arglist);
     if(!symbolp(arg1))
@@ -450,10 +452,15 @@ int f_defdynamic(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(improperlistp(cdr(arglist)))
+        error(IMPROPER_ARGS, "defdynamic", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defdynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defdynamic", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defdynamic", arg1);
+    
 
     setdynenv(arg1,eval(arg2));
     return(arg1);

@@ -440,19 +440,22 @@
 ($error (defdynamic *dynamic-2*) <program-error>)
 ($error (defdynamic *dynamic-2* 2 3) <program-error>)
 ;;; �������X�g���h�b�g���X�g
-;($error (defdynamic *dynamic-2* 2 . 3) <error>)
+($error (defdynamic *dynamic-2* 2 . 3) <error>)
 ;;; �g�b�v���x����`�łȂ�
+;;; ??? I think result of following test is  <domain-error> 
+;;; Becuase defdynamic return symbol and symbol is not number
+($error (+ (defdynamic *dynamic-2* 2)) <domain-error>)
 ;($error (+ (defdynamic *dynamic-2* 2)) <error>)
 ;;; name ���V���{���łȂ�
-;($error (defdynamic #2a((a b c) (d e f)) nil) <domain-error>)
-;($error (defdynamic #\a nil) <domain-error>)
-;($error (defdynamic 1234 nil) <domain-error>)
-;($error (defdynamic "abc" nil) <domain-error>)
-;($error (defdynamic #(a b c) nil) <domain-error>)
-;($error (defdynamic (x y) nil) <domain-error>)
+($error (defdynamic #2a((a b c) (d e f)) nil) <domain-error>)
+($error (defdynamic #\a nil) <domain-error>)
+($error (defdynamic 1234 nil) <domain-error>)
+($error (defdynamic "abc" nil) <domain-error>)
+($error (defdynamic #(a b c) nil) <domain-error>)
+($error (defdynamic (x y) nil) <domain-error>)
 ;;; keyword
-;($error (defdynamic :a nil) <program-error>)
-;($error (defdynamic &a nil) <program-error>)
+($error (defdynamic :a nil) <program-error>)
+($error (defdynamic &a nil) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [defining operator]

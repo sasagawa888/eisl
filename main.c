@@ -64,6 +64,7 @@ int cstorage_exhausted;
 int cstandard_class;
 int cstandard_object;
 int cstream;
+int cinvalid;
 int cfixnum;
 int clongnum;
 int cbignum;

@@ -237,6 +237,7 @@ extern int cstorage_exhausted;
 extern int cstandard_class;
 extern int cstandard_object;
 extern int cstream;
+extern int cinvalid;
 extern int cfixnum;
 extern int clongnum;
 extern int cbignum;

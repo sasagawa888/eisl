@@ -1138,7 +1138,7 @@
 (test (eq (class-of (class <standard-class>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <standard-object>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <stream>)) (class <built-in-class>)) t)
-;(test (eq (class-of (class <invalid>)) (class <built-in-class>)) t)
+(test (eq (class-of (class <invalid>)) (class <built-in-class>)) t)
 ;; <character>
 (test (eq (class-of #\a) (class <character>)) t)
 ;; <function>
@@ -1274,7 +1274,7 @@
 ($eval (defglobal a-3 (create (class a-3))))
 (test (eq (class-of a-3) (class a-3)) t)
 ($eval (defclass a-3 () ()))
-;(test (eq (class-of a-3) (class <invalid>)) t)
+(test (eq (class-of a-3) (class <invalid>)) t)
 ;;;($error (class-of a-3) <error>)
 
 ;;;------------------------------------------------------------
@@ -1327,7 +1327,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <floating-point-overflow>
 ($eval (catch-condition (* 1e300 1e300)))
 (test (instancep cc (class <object>)) t)
@@ -1369,7 +1369,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <floating-point-underflow>
 ($eval (catch-condition (* 1e-300 1e-300)))
 (test (instancep cc (class <object>)) t)
@@ -1411,7 +1411,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <control-error>
 ($eval (catch-condition (block b (return-from bb nil))))
 (test (instancep cc (class <object>)) t)
@@ -1453,7 +1453,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <parse-error>
 ($eval (catch-condition (parse-number "foo")))
 (test (instancep cc (class <object>)) t)
@@ -1495,7 +1495,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <program-error>
 ($eval (catch-condition (cons 'a)))
 (test (instancep cc (class <object>)) t)
@@ -1537,7 +1537,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <domain-error>
 ($eval (catch-condition (car 3)))
 (test (instancep cc (class <object>)) t)
@@ -1579,7 +1579,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <undefined-entity>
 ($eval (catch-condition (class undef)))
 (test (instancep cc (class <object>)) t)
@@ -1621,7 +1621,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <unbound-variable>
 ($eval (catch-condition undef))
 (test (instancep cc (class <object>)) t)
@@ -1663,7 +1663,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <undefined-function>
 ($eval (catch-condition #'undef))
 (test (instancep cc (class <object>)) t)
@@ -1705,7 +1705,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <simple-error>
 ($eval (catch-condition (error "err")))
 (test (instancep cc (class <object>)) t)
@@ -1747,7 +1747,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <end-of-stream>
 ($eval (catch-condition (let (test (str (create-string-input-stream "hi")))
 	      (read-char str)
@@ -1792,7 +1792,7 @@
 (test (instancep cc (class <standard-class>)) nil)
 (test (instancep cc (class <standard-object>)) nil)
 (test (instancep cc (class <stream>)) nil)
-;(test (instancep cc (class <invalid>)) nil)
+(test (instancep cc (class <invalid>)) nil)
 ;; <storage-exhausted>
 ($eval (catch-condition (create-list 1000000000)))
 (test (instancep cc (class <object>)) t)
@@ -1918,7 +1918,7 @@
 (test (instancep #(a b) (class <standard-class>)) nil)
 (test (instancep #(a b) (class <standard-object>)) nil)
 (test (instancep #(a b) (class <stream>)) nil)
-;(test (instancep #(a b) (class <invalid>)) nil)
+(test (instancep #(a b) (class <invalid>)) nil)
 ;; <string>
 (test (instancep "foo" (class <object>)) t)
 (test (instancep "foo" (class <basic-array>)) t)
@@ -1959,7 +1959,7 @@
 (test (instancep "foo" (class <standard-class>)) nil)
 (test (instancep "foo" (class <standard-object>)) nil)
 (test (instancep "foo" (class <stream>)) nil)
-;(test (instancep "foo" (class <invalid>)) nil)
+(test (instancep "foo" (class <invalid>)) nil)
 ;; <character>
 (test (instancep #\a (class <object>)) t)
 (test (instancep #\a (class <basic-array>)) nil)
@@ -2000,7 +2000,7 @@
 (test (instancep #\a (class <standard-class>)) nil)
 (test (instancep #\a (class <standard-object>)) nil)
 (test (instancep #\a (class <stream>)) nil)
-;(test (instancep #\a (class <invalid>)) nil)
+(test (instancep #\a (class <invalid>)) nil)
 ;; <function>
 (test (instancep #'+ (class <object>)) t)
 (test (instancep #'+ (class <basic-array>)) nil)
@@ -2041,7 +2041,7 @@
 (test (instancep #'+ (class <standard-class>)) nil)
 (test (instancep #'+ (class <standard-object>)) nil)
 (test (instancep #'+ (class <stream>)) nil)
-;(test (instancep #'+ (class <invalid>)) nil)
+(test (instancep #'+ (class <invalid>)) nil)
 ;; <generic-function>
 (test (instancep #'create (class <object>)) t)
 (test (instancep #'create (class <basic-array>)) nil)
@@ -2082,7 +2082,7 @@
 (test (instancep #'create (class <standard-class>)) nil)
 (test (instancep #'create (class <standard-object>)) nil)
 (test (instancep #'create (class <stream>)) nil)
-;(test (instancep #'create (class <invalid>)) nil)
+(test (instancep #'create (class <invalid>)) nil)
 ;; <standard-generic-function>
 ($eval (defgeneric foo (x)))
 (test (instancep #'foo (class <object>)) t)
@@ -2124,7 +2124,7 @@
 (test (instancep #'foo (class <standard-class>)) nil)
 (test (instancep #'foo (class <standard-object>)) nil)
 (test (instancep #'foo (class <stream>)) nil)
-;(test (instancep #'foo (class <invalid>)) nil)
+(test (instancep #'foo (class <invalid>)) nil)
 ;; <cons>
 (test (instancep '(1 . 2) (class <object>)) t)
 (test (instancep '(1 . 2) (class <basic-array>)) nil)
@@ -2165,7 +2165,7 @@
 (test (instancep '(1 . 2) (class <standard-class>)) nil)
 (test (instancep '(1 . 2) (class <standard-object>)) nil)
 (test (instancep '(1 . 2) (class <stream>)) nil)
-;(test (instancep '(1 . 2) (class <invalid>)) nil)
+(test (instancep '(1 . 2) (class <invalid>)) nil)
 ;; <null>
 (test (instancep nil (class <object>)) t)
 (test (instancep nil (class <basic-array>)) nil)
@@ -2206,7 +2206,7 @@
 (test (instancep nil (class <standard-class>)) nil)
 (test (instancep nil (class <standard-object>)) nil)
 (test (instancep nil (class <stream>)) nil)
-;(test (instancep nil (class <invalid>)) nil)
+(test (instancep nil (class <invalid>)) nil)
 ;; <symbol>
 (test (instancep 'a (class <object>)) t)
 (test (instancep 'a (class <basic-array>)) nil)
@@ -2247,7 +2247,7 @@
 (test (instancep 'a (class <standard-class>)) nil)
 (test (instancep 'a (class <standard-object>)) nil)
 (test (instancep 'a (class <stream>)) nil)
-;(test (instancep 'a (class <invalid>)) nil)
+(test (instancep 'a (class <invalid>)) nil)
 ;; <integer> (fixnum)
 (test (instancep 123 (class <object>)) t)
 (test (instancep 123 (class <basic-array>)) nil)
@@ -2288,7 +2288,7 @@
 (test (instancep 123 (class <standard-class>)) nil)
 (test (instancep 123 (class <standard-object>)) nil)
 (test (instancep 123 (class <stream>)) nil)
-;(test (instancep 123 (class <invalid>)) nil)
+(test (instancep 123 (class <invalid>)) nil)
 ;; <integer> (bignum)
 (test (instancep 1234567890 (class <object>)) t)
 (test (instancep 1234567890 (class <basic-array>)) nil)
@@ -2329,7 +2329,7 @@
 (test (instancep 1234567890 (class <standard-class>)) nil)
 (test (instancep 1234567890 (class <standard-object>)) nil)
 (test (instancep 1234567890 (class <stream>)) nil)
-;(test (instancep 1234567890 (class <invalid>)) nil)
+(test (instancep 1234567890 (class <invalid>)) nil)
 ;; <float>
 (test (instancep 1.23 (class <object>)) t)
 (test (instancep 1.23 (class <basic-array>)) nil)
@@ -2370,7 +2370,7 @@
 (test (instancep 1.23 (class <standard-class>)) nil)
 (test (instancep 1.23 (class <standard-object>)) nil)
 (test (instancep 1.23 (class <stream>)) nil)
-;(test (instancep 1.23 (class <invalid>)) nil)
+(test (instancep 1.23 (class <invalid>)) nil)
 ;; <stream>
 (test (instancep (standard-output) (class <object>)) t)
 (test (instancep (standard-output) (class <basic-array>)) nil)
@@ -2411,7 +2411,7 @@
 (test (instancep (standard-output) (class <standard-class>)) nil)
 (test (instancep (standard-output) (class <standard-object>)) nil)
 (test (instancep (standard-output) (class <stream>)) t)
-;(test (instancep (standard-output) (class <invalid>)) nil)
+(test (instancep (standard-output) (class <invalid>)) nil)
 ;; <built-in-class>
 (test (instancep (class <object>) (class <built-in-class>)) t)
 (test (instancep (class <basic-array>) (class <built-in-class>)) t)
@@ -2452,7 +2452,7 @@
 (test (instancep (class <standard-class>) (class <built-in-class>)) t)
 (test (instancep (class <standard-object>) (class <built-in-class>)) t)
 (test (instancep (class <stream>) (class <built-in-class>)) t)
-;(test (instancep (class <invalid>) (class <built-in-class>)) t)
+(test (instancep (class <invalid>) (class <built-in-class>)) t)
 ;;
 ;; c1111 --+
 ;; c2222 --+-- c5555 --+
@@ -2512,7 +2512,7 @@
 (test (instancep (class c1111) (class <standard-class>)) t)
 (test (instancep (class c1111) (class <standard-object>)) nil)
 (test (instancep (class c1111) (class <stream>)) nil)
-;(test (instancep (class c1111) (class <invalid>)) nil)
+(test (instancep (class c1111) (class <invalid>)) nil)
 ;;
 (test (instancep c1111 (class <object>)) t)
 (test (instancep c1111 (class <standard-object>)) t)

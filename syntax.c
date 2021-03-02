@@ -156,8 +156,11 @@ int f_let(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) == 0)
+        error(WRONG_ARGS, "let", arglist);
     if(!listp(arg1))
         error(NOT_LIST, "let", arg1);
+    
     save = ep;
     res = NIL;
     while(arg1 != NIL){

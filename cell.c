@@ -129,6 +129,7 @@ void initclass(void){
     cstandard_class = makeclass("standard-class",cobject);
     cstandard_object = makeclass("standard-object",cobject);
     cstream = makeclass("stream",cobject);
+    cinvalid = makeclass("invalid",cinvalid);
     cfixnum = makeclass("fixnum",cinteger);
     clongnum = makeclass("longnum",cinteger);
     cbignum = makeclass("bignum",cinteger);
@@ -173,6 +174,7 @@ void initclass(void){
     bindclass("<STANDARD-CLASS>",cstandard_class);
     bindclass("<STANDARD-OBJECT>",cstandard_object);
     bindclass("<STREAM>",cstream);
+    bindclass("<INVALID>",cinvalid);
     bindclass("<FIXNUM>",cfixnum);
     bindclass("<LONGNUM>",clongnum);
     bindclass("<BIGNUM>",cbignum);

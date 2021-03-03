@@ -754,6 +754,8 @@ int f_if(int arglist){
     arg2 = cadr(arglist);
     if((n=length(arglist)) < 2 || n > 3)
         error(WRONG_ARGS, "if", arglist);
+    if(improperlistp(arglist))
+        error(WRONG_ARGS, "if", arglist);
 
     if(length(arglist) == 3)
         arg3 = car(cdr(cdr(arglist)));
@@ -776,6 +778,11 @@ int f_cond(int arglist){
     arg1 = car(arglist);
     arg2 = car(arg1);
     arg3 = cdr(arg1);
+    if(nullp(arg1))
+        error(IMPROPER_ARGS, "cond", arglist);
+    if(improperlistp(arg1))
+        error(IMPROPER_ARGS, "cond", arg1);
+    
 
     if(length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2)))
         return(arg2);
@@ -1097,6 +1104,8 @@ int f_case_using(int arglist){
 int f_progn(int arglist){
     int res;
 
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "progn", arglist);
     res = NIL;
     while(arglist != NIL){
         res = eval(car(arglist));

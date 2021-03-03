@@ -382,8 +382,8 @@
 ;;; 
 ($argc if 2 1 0)
 ;;;
-;($error (if 1 2 . 3) <program-error>)
-;($error (if nil 2 . 3) <program-error>)
+($error (if 1 2 . 3) <program-error>)
+($error (if nil 2 . 3) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]
@@ -405,11 +405,11 @@
        ((< 3 3) 'less)
        (t 'equal)) equal) 
 ;;; (test form)
-;($error (cond ()) <error>)
-;($error (cond 1) <error>)
+($error (cond ()) <error>)
+($error (cond 1) <error>)
 ;;;
-;($error (cond (t . 1)) <error>)
-;($error (cond (t 1 . 2)) <error>)
+($error (cond (t . 1)) <error>)
+($error (cond (t 1 . 2)) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]
@@ -500,8 +500,8 @@
 ;;;
 ($argc progn 0 0 1)
 ;;; dot-list
-;($error (progn . 1) <error>)
-;($error (progn 1 . 2) <error>)
+($error (progn . 1) <error>)
+($error (progn 1 . 2) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]

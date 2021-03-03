@@ -1090,11 +1090,25 @@ int f_case(int arglist){
 }
 
 int f_case_using(int arglist){
-    int arg1,arg2,arg3,key,fun,res;
+    int arg1,arg2,arg3,key,fun,res,temp,temparg1;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
+     if(nullp(car(arg3)))
+        error(IMPROPER_ARGS, "case-using", arg3);
+    temp = arg3;
+    while(!nullp(temp)){
+        temparg1 = car(temp);
+        if(!listp(temparg1))
+            error(WRONG_ARGS, "case-using", temparg1);
+        if(car(temparg1) == T && length(temp) != 1)
+            error(IMPROPER_ARGS, "case-using", temparg1);
+        if(atomp(car(temparg1)) && car(temparg1) != T)
+            error(IMPROPER_ARGS, "case-using", temparg1);
+        temp = cdr(temp);
+    }
+
     res = NIL;
     key = eval(arg2);
     fun = eval(arg1);

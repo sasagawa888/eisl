@@ -473,10 +473,10 @@
 ;;; predform
 ($type case-using ($function $generic) :target 1)
 ;;;
-;($error (case-using #'= 1 ()) <error>)
-;($error (case-using #'= 1 (1)) <error>)
+($error (case-using #'= 1 ()) <error>)
+($error (case-using #'= 1 (1)) <error>)
 ;;;
-;($error (case-using #'string= "a" (t 1) (("a" "b" "c") 0)) <error>)
+($error (case-using #'string= "a" (t 1) (("a" "b" "c") 0)) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]

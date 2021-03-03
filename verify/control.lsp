@@ -35,9 +35,9 @@
 (test '(quote a) (quote a) equal)
 (test ''a (quote a) equal)
 (test (car ''a) quote equal)
-;;; �����̌�
+;;; 
 ($argc quote 1 0 0)
-;;; �������h�b�g���X�g
+;;;
 ;;($error (quote 1 . 2) <error>)
 
 ;;;------------------------------------------------------------
@@ -63,9 +63,9 @@
 (test (+ x 1) 5 equal)
 ;;;
 ($argc setq 2 0 0)
-;;; �������h�b�g���X�g
+;;;
 ($error (setq x 1 . 2) <error>)
-;;; var ���V���{���łȂ�
+;;;
 ($error (setq #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (setq #\a nil) <domain-error>)
 ($error (setq 1234 nil) <domain-error>)
@@ -145,16 +145,16 @@
 (test (my-elt2 x 2) 30)
 (test (setf (my-elt2 x 1) 2) 2)
 (test x (10 2 30) equal)
-;;; �������h�b�g���X�g
+;;;
 ($error (setf x 1 . 2) <error>)
-;;; place ���V���{���łȂ�
+;;; place
 ($error (setf #2a((a b c) (d e f)) nil) <error>)
 ($error (setf #\a nil) <error>)
 ($error (setf 1234 nil) <error>)
 ($error (setf "abc" nil) <error>)
 ($error (setf #(a b c) nil) <error>)
 ($error (setf (x y) nil) <error>)
-;;; place ���s��
+;;; place
 ($error (setf (foo x) nil) <error>)
 ($error (setf (foo (foo x)) nil) <error>)
 ;;;
@@ -185,9 +185,9 @@
 (test (let ((x 1) (y 2))
    (let ((x y) (y x))
      (list x y))) (2 1) equal)
-;;; �������X�g���Ȃ�
+;;;
 ($error (let) <program-error>)
-;;; �������X�g�̌`�����s��
+;;;
 ($error (let x 1) <error>)
 ($error (let (x) 1) <error>)
 ($error (let (x 1) 1) <error>)
@@ -195,25 +195,25 @@
 ($error (let ((x 1 2)) 1) <error>)
 ($error (let ((x 1 . 2)) 1) <error>)
 ($error (let (((x 1))) 1) <error>)
-;;; �����ϐ����V���{���łȂ�
-;($error (let ((#2a((a b c) (d e f)) 1)) 1) <domain-error>)
-;($error (let ((#\a 1)) 1) <domain-error>)
-;($error (let ((1234 1)) 1) <domain-error>)
-;($error (let (("abc" 1)) 1) <domain-error>)
-;($error (let ((#(a b c) 1)) 1) <domain-error>)
-;($error (let (((x y) 1)) 1) <domain-error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
-;($error (let ((:a 1))) <program-error>)
-;;; �V�X�e���萔�͑����ł��Ȃ�
-;($error (let ((nil 1))) <program-error>)
-;($error (let ((t 1))) <program-error>)
-;($error (let ((*pi* 1))) <program-error>)
-;($error (let ((*most-positive-float* 1))) <program-error>)
-;($error (let ((*most-negative-float* 1))) <program-error>)
-;;; �����̗L���͈͂��z���Ă���
-;($error (let ((x 1)) z) <unbound-variable>)
+;;;
+($error (let ((#2a((a b c) (d e f)) 1)) 1) <domain-error>)
+($error (let ((#\a 1)) 1) <domain-error>)
+($error (let ((1234 1)) 1) <domain-error>)
+($error (let (("abc" 1)) 1) <domain-error>)
+($error (let ((#(a b c) 1)) 1) <domain-error>)
+($error (let (((x y) 1)) 1) <domain-error>)
+;;;
+($error (let ((:a 1))) <program-error>)
+;;;
+($error (let ((nil 1))) <program-error>)
+($error (let ((t 1))) <program-error>)
+($error (let ((*pi* 1))) <program-error>)
+($error (let ((*most-positive-float* 1))) <program-error>)
+($error (let ((*most-negative-float* 1))) <program-error>)
+;;;
+($error (let ((x 1)) z) <unbound-variable>)
 ($eval (let ((z 1)) z))
-;($error z <unbound-variable>)
+($error z <unbound-variable>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]
@@ -231,35 +231,35 @@
 (test (let ((x 1) (y 2))
    (let* ((x y) (y x))
      (list x y))) (2 2) equal)
-;;; �������X�g���Ȃ�
-;($error (let*) <program-error>)
-;;; �������X�g�̌`�����s��
-;($error (let* x 1) <error>)
-;($error (let* (x) 1) <error>)
-;($error (let* (x 1) 1) <error>)
-;($error (let* ((x)) 1) <error>)
-;($error (let* ((x 1 2)) 1) <error>)
-;($error (let* ((x 1 . 2)) 1) <error>)
-;($error (let* (((x 1))) 1) <error>)
-;;; �����ϐ����V���{���łȂ�
-;($error (let* ((#2a((a b c) (d e f)) 1)) 1) <domain-error>)
-;($error (let* ((#\a 1)) 1) <domain-error>)
-;($error (let* ((1234 1)) 1) <domain-error>)
-;($error (let* (("abc" 1)) 1) <domain-error>)
-;($error (let* ((#(a b c) 1)) 1) <domain-error>)
-;($error (let* (((x y) 1)) 1) <domain-error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
-;($error (let* ((:a 1))) <program-error>)
-;;; �V�X�e���萔�͑����ł��Ȃ�
-;($error (let* ((nil 1))) <program-error>)
-;($error (let* ((t 1))) <program-error>)
-;($error (let* ((*pi* 1))) <program-error>)
-;($error (let* ((*most-positive-float* 1))) <program-error>)
-;($error (let* ((*most-negative-float* 1))) <program-error>)
-;;; �����̗L���͈͂��z���Ă���
-;($error (let* ((x 1)) z) <unbound-variable>)
+;;;
+($error (let*) <program-error>)
+;;;
+($error (let* x 1) <error>)
+($error (let* (x) 1) <error>)
+($error (let* (x 1) 1) <error>)
+($error (let* ((x)) 1) <error>)
+($error (let* ((x 1 2)) 1) <error>)
+($error (let* ((x 1 . 2)) 1) <error>)
+($error (let* (((x 1))) 1) <error>)
+;;;
+($error (let* ((#2a((a b c) (d e f)) 1)) 1) <domain-error>)
+($error (let* ((#\a 1)) 1) <domain-error>)
+($error (let* ((1234 1)) 1) <domain-error>)
+($error (let* (("abc" 1)) 1) <domain-error>)
+($error (let* ((#(a b c) 1)) 1) <domain-error>)
+($error (let* (((x y) 1)) 1) <domain-error>)
+;;;
+($error (let* ((:a 1))) <program-error>)
+;;;
+($error (let* ((nil 1))) <program-error>)
+($error (let* ((t 1))) <program-error>)
+($error (let* ((*pi* 1))) <program-error>)
+($error (let* ((*most-positive-float* 1))) <program-error>)
+($error (let* ((*most-negative-float* 1))) <program-error>)
+;;;
+($error (let* ((x 1)) z) <unbound-variable>)
 ($eval (let* ((z 1)) z))
-;($error z <unbound-variable>)
+($error z <unbound-variable>)
 ;;;
 ($eval (defglobal x ()))
 ($eval
@@ -291,9 +291,9 @@
 ($eval (defdynamic x 3))
 (test (dynamic x) 3 equal)
 ;($error (dynamic z) <unbound-variable>)
-;;; �������X�g���h�b�g���X�g
+;;;
 ;($error (dynamic x . y) <error>)
-;;; �L�[���[�h�́C��ɖ�����
+;;;
 ;($error (dynamic :a) <unbound-variable>)
 
 ;;;------------------------------------------------------------
@@ -308,17 +308,17 @@
 (test (setf (dynamic x) 4) 4 equal)
 (test (dynamic x) 4 equal)
 ;($error (setf (dynamic z) 5) <unbound-variable>)
-;;; �����̌�
+;;;
 ;($error (setf (dynamic x)) <program-error>)
 ;($error (setf (dynamic x) 1 2) <program-error>)
-;;; place ���s��
+;;; place
 ;($error (setf (dynamic) 1) <error>)
 ;($error (setf (dynamic . x) 1) <error>)
 ;($error (setf (dynamic x . y) 1) <error>)
 ;($error (setf (dynamic x y) 1) <error>)
-;;; �h�b�g���X�g
+;;; 
 ;($error (setf (dynamic x) 1 . 2) <error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
+;;;
 ;($error (setf (dynamic :a) 1) <program-error>)
 
 ;;;------------------------------------------------------------
@@ -340,27 +340,27 @@
 ($eval (defdynamic dynx 1))
 (test (dynamic-let ((dynx 2)) (dynamic dynx)) 2)
 (test (dynamic dynx) 1)
-;;; �������X�g���Ȃ�
-;($error (dynamic-let) <program-error>)
-;;; �������X�g�̌`�����s��
-;($error (dynamic-let x 1) <error>)
-;($error (dynamic-let (x) 1) <error>)
-;($error (dynamic-let (x 1) 1) <error>)
-;($error (dynamic-let ((x)) 1) <error>)
-;($error (dynamic-let ((x 1 2)) 1) <error>)
-;($error (dynamic-let ((x 1 . 2)) 1) <error>)
-;($error (dynamic-let (((x 1))) 1) <error>)
-;;; �����ϐ����V���{���łȂ�
-;($error (dynamic-let ((#2a((a b c) (d e f)) 1)) 1) <domain-error>)
-;($error (dynamic-let ((#\a 1)) 1) <domain-error>)
-;($error (dynamic-let ((1234 1)) 1) <domain-error>)
-;($error (dynamic-let (("abc" 1)) 1) <domain-error>)
-;($error (dynamic-let ((#(a b c) 1)) 1) <domain-error>)
-;($error (dynamic-let (((x y) 1)) 1) <domain-error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
-;($error (dynamic-let ((:a 1))) <program-error>)
 ;;;
-;($error (dynamic-let ((dynx 1)) dynx) <unbound-variable>)
+($error (dynamic-let) <program-error>)
+;;;
+($error (dynamic-let x 1) <error>)
+($error (dynamic-let (x) 1) <error>)
+($error (dynamic-let (x 1) 1) <error>)
+($error (dynamic-let ((x)) 1) <error>)
+($error (dynamic-let ((x 1 2)) 1) <error>)
+($error (dynamic-let ((x 1 . 2)) 1) <error>)
+($error (dynamic-let (((x 1))) 1) <error>)
+;;;
+($error (dynamic-let ((#2a((a b c) (d e f)) 1)) 1) <domain-error>)
+($error (dynamic-let ((#\a 1)) 1) <domain-error>)
+($error (dynamic-let ((1234 1)) 1) <domain-error>)
+($error (dynamic-let (("abc" 1)) 1) <domain-error>)
+($error (dynamic-let ((#(a b c) 1)) 1) <domain-error>)
+($error (dynamic-let (((x y) 1)) 1) <domain-error>)
+;;;
+($error (dynamic-let ((:a 1))) <program-error>)
+;;;
+($error (dynamic-let ((dynx 1)) dynx) <unbound-variable>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]
@@ -379,9 +379,9 @@
 (test (if (> 3 2) (- 3 2) (+ 3 2)) 1 eql)
 (test (let ((x 7))
    (if (< x 0) x (- x))) -7 eql)
-;;; �����̌�
+;;; 
 ($argc if 2 1 0)
-;;; �������h�b�g���X�g
+;;;
 ;($error (if 1 2 . 3) <program-error>)
 ;($error (if nil 2 . 3) <program-error>)
 
@@ -404,10 +404,10 @@
 (test (cond ((> 3 3) 'greater)
        ((< 3 3) 'less)
        (t 'equal)) equal) 
-;;; (test form) �`�����s��
+;;; (test form)
 ;($error (cond ()) <error>)
 ;($error (cond 1) <error>)
-;;; �������X�g���h�b�g���X�g
+;;;
 ;($error (cond (t . 1)) <error>)
 ;($error (cond (t 1 . 2)) <error>)
 
@@ -470,7 +470,7 @@
 (test (case-using #'string= "bar"
 	     (("foo") 1)
 	     (("bar") 2)) 2 eql)
-;;; predform ���֐��łȂ�
+;;; predform
 ($type case-using ($function $generic) :target 1)
 ;;;
 ;($error (case-using #'= 1 ()) <error>)
@@ -497,7 +497,7 @@
 (test (progn
    (setq x 5)
    (+ x 1)) 6 eql)
-;;; �����̌�
+;;;
 ($argc progn 0 0 1)
 ;;; dot-list
 ;($error (progn . 1) <error>)
@@ -517,7 +517,7 @@
      (setq x (cons i x))
      (setq i (- i 1)))
    x) (1 2 3 4 5) equal)
-;;; �����̌�
+;;;
 ($argc while 1 0 1)
 
 ;;;------------------------------------------------------------
@@ -539,17 +539,17 @@
    (for ((x x (cdr x))
 	 (sum 0 (+ sum (car x))))
 	((null x) sum))) 25 eql)
-;;; �����̌�
+;;;
 ($argc for 2 0 1)
 ;($error (for) <program-error>)
 ;;; (end-test result)
 ;($error (for ()) <program-error>)
 ;($error (for () ()) <error>)
-;;; iteration-spec ����������
+;;; iteration-spec
 ;($error (for (x) (t 1)) <error>)
 ;($error (for ((x)) (t 1)) <error>)
 ;($error (for ((x x x x)) (t 1)) <error>)
-;;; iteration-spec �� var ���V���{���łȂ�
+;;; iteration-spec
 ;($error (for ((#2a((a b) (c d)) nil)) (t)) <domain-error>)
 ;($error (for ((#\a nil)) (t)) <domain-error>)
 ;($error (for ((1234 nil)) (t)) <domain-error>)
@@ -557,12 +557,12 @@
 ;($error (for (("abc" nil)) (t)) <domain-error>)
 ;($error (for ((#(a b c) nil)) (t)) <domain-error>)
 ;($error (for (((x y) nil)) (t)) <domain-error>)
-;;; var ���_�u���Ă���
+;;; var 
 ;($error (for ((x 0 (+ x 1))
 ;	      (x 1 (+ x 2))) (t)) <error>)
-;;; �L�[���[�h�͑����ł��Ȃ�
+;;;
 ;($error (for ((:a 1)) (t)) <program-error>)
-;;; �V�X�e���萔�͑����ł��Ȃ�
+;;;
 ;($error (for ((nil 1)) (t)) <program-error>)
 ;($error (for ((t 1)) (t)) <program-error>)
 ;($error (for ((*pi* 1)) (t)) <program-error>)
@@ -659,7 +659,7 @@
 	(return-from b 999)) 999 eql)
 (test (block b
 	((lambda (x) (return-from b x)) 999)) 999 eql)
-;;; �����̌�
+;;;
 ($argc block 1 0 1)
 ;($error (block) <program-error>)
 ;($error (block . 1) <program-error>)
@@ -672,7 +672,7 @@
 ;($error (block b . 1) <error>)
 ;($error (block b
 ;	       (return-from b 1 . 2)) <error>)
-;;; block tag ���V���{���łȂ�
+;;; block tag 
 ;($error (block #2a((a b) (c d))) <domain-error>)
 ;($error (block #\a) <domain-error>)
 ;($error (block 1234) <domain-error>)
@@ -687,10 +687,10 @@
 ;($error (return-from "abc" 1) <domain-error>)
 ;($error (return-from #(a b c) 1) <domain-error>)
 ;($error (return-from (x y) 1) <domain-error>)
-;;; block tag ���L�[���[�h
+;;; block tag
 ;($error (block :a) <error>)
 ;($error (return-from :a 1) <error>)
-;;; �Ή����� tag ���Ȃ�
+;;;
 ;($error (block b
 ;	       (return-from c 88)
 ;	       99) <control-error>)
@@ -760,7 +760,7 @@
 	(throw 'c 999)) 999 eql)
 (test (catch 'c
 	((lambda (x) (throw 'c x)) 999)) 999 eql)
-;;; �����̌�
+;;;
 ($argc catch 1 0 1)
 ;($error (catch) <program-error>)
 ;($error (catch . 1) <program-error>)
@@ -773,14 +773,14 @@
 ;($error (catch 'c . 1) <error>)
 ;($error (catch 'c
 ;	       (throw 'c 1 . 2)) <error>)
-;;; catch tag �� <number> <character> �ł͂����Ȃ�
+;;; catch tag <number> <character> 
 ;($error (catch 1234) <error>)
 ;($error (catch 1.234) <error>)
 ;($error (catch #\a) <error>)
 ;($error (throw 1234 nil) <error>)
 ;($error (throw 1.234 nil) <error>)
 ;($error (throw #\a nil) <error>)
-;;; �Ή����� tag ���Ȃ�
+;;; 
 ;($error (catch 'c
 ;	  (throw 'd 88) 99) <control-error>)
 ;;; invalid-tag
@@ -851,7 +851,7 @@
     tag1
     (setq x (cons 3 x)))
    x) (3 1) equal)
-;;; �����̌�
+;;;
 ($argc tagbody 0 0 1)
 ;($error (tagbody
 ;	 (go)) <program-error>)
@@ -862,7 +862,7 @@
 ;($error (tagbody . 1) <error>)
 ;($error (tagbody
 ;	 (go tag . 1)) <error>)
-;;; �Ή����� tag ���Ȃ�
+;;;
 ;($error
 ; (let ((x ()))
 ;   (tagbody
@@ -959,7 +959,7 @@
  (defun test4 ()
    (throw 'outer 6)))
 ;($error (test) <control-error>)
-;;; �����̌�
+;;; 
 ($argc unwind-protect 1 0 1)
 ;($error (unwind-protect) <program-error>)
 ;($error (unwind-protect . 1) <program-error>)

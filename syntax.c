@@ -200,7 +200,7 @@ int f_flet(int arglist){
 }
 
 int f_let(int arglist){
-    int arg1,arg2,save,ep1,sym,val,res;
+    int arg1,arg2,save,ep1,sym,val,res,temp,temparg1;
 
 
     arg1 = car(arglist);
@@ -208,8 +208,25 @@ int f_let(int arglist){
     if(length(arglist) == 0)
         error(WRONG_ARGS, "let", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "let", arg1);
-    
+        error(IMPROPER_ARGS, "let", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        temparg1 = car(car(temp));
+        if(improperlistp(car(temp)))
+            error(IMPROPER_ARGS, "let", car(temp));
+        if(length(car(temp)) != 2)
+            error(IMPROPER_ARGS, "let", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "let" ,temparg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "let", arg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "let", arg1);
+        
+        temp = cdr(temp);
+    }
+
     save = ep;
     res = NIL;
     while(arg1 != NIL){
@@ -236,12 +253,32 @@ int f_let(int arglist){
 }
 
 int f_letstar(int arglist){
-    int arg1,arg2,save,sym,res;
+    int arg1,arg2,save,sym,res,temp,temparg1;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) == 0)
+        error(WRONG_ARGS, "let*", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "let*", arg1);
+        error(IMPROPER_ARGS, "let*", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        temparg1 = car(car(temp));
+        if(improperlistp(car(temp)))
+            error(IMPROPER_ARGS, "let*", car(temp));
+        if(length(car(temp)) != 2)
+            error(IMPROPER_ARGS, "let*", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "let*" ,temparg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "let*", arg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "let*", arg1);
+        
+        temp = cdr(temp);
+    }
+
     save = ep;
     res = NIL;
     while(arg1 != NIL){
@@ -260,12 +297,32 @@ int f_letstar(int arglist){
 }
 
 int f_dynamic_let(int arglist){
-    int arg1,arg2,save,dp1,sym,val,res;
+    int arg1,arg2,save,dp1,sym,val,res,temp,temparg1;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) == 0)
+        error(WRONG_ARGS, "dynamic-let", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "dynamic-let", arg1);
+        error(IMPROPER_ARGS, "dynamic-let", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        temparg1 = car(car(temp));
+        if(improperlistp(car(temp)))
+            error(IMPROPER_ARGS, "dynamic-let", car(temp));
+        if(length(car(temp)) != 2)
+            error(IMPROPER_ARGS, "dynamic-let", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "dynamic-let" ,temparg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "dynamic-let", arg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "dynamic-let", arg1);
+        
+        temp = cdr(temp);
+    }
+    
     save = dp;
     res = NIL;
     while(arg1 != NIL){

@@ -1053,10 +1053,24 @@ int f_unwind_protect(int arglist){
 
 
 int f_case(int arglist){
-    int arg1,arg2,key,res;
+    int arg1,arg2,key,res,temp,temparg1;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(car(arg2)))
+        error(IMPROPER_ARGS, "case", arg2);
+    temp = arg2;
+    while(!nullp(temp)){
+        temparg1 = car(temp);
+        if(!listp(temparg1))
+            error(WRONG_ARGS, "case", temparg1);
+        if(car(temparg1) == T && length(temp) != 1)
+            error(IMPROPER_ARGS, "case", temparg1);
+        if(atomp(car(temparg1)) && car(temparg1) != T)
+            error(IMPROPER_ARGS, "case", temparg1);
+        temp = cdr(temp);
+    }
+
     res = NIL;
     key = eval(arg1);
     while(arg2 != NIL){

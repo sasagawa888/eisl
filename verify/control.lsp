@@ -443,10 +443,10 @@
 	 ((#\a #\e #\i #\o #\u) 'vowels)
 	 (t 'consonates))) vowels)
 ;;;
-;($error (case 1 ()) <error>)
-;($error (case 1 (1)) <error>)
+($error (case 1 ()) <error>)
+($error (case 1 (1)) <error>)
 ;;;
-;($error (case 'a (t 1) ((a b c) 0)) <error>)
+($error (case 'a (t 1) ((a b c) 0)) <error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]

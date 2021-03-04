@@ -804,7 +804,7 @@ int f_while(int arglist){
 }
 
 int f_for(int arglist){
-    int arg1,arg2,arg3,iter,temp,save,res,save1;
+    int arg1,arg2,arg3,iter,temp,save,res,save1,temp1,temparg1,temparg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -812,9 +812,35 @@ int f_for(int arglist){
     if(length(arglist) < 2)
         error(WRONG_ARGS, "for", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "for", arg1);    
+        error(NOT_LIST, "for", arg1);   
     if(!listp(arg2))
         error(NOT_LIST, "for", arg2);
+    if(nullp(arg2))
+        error(IMPROPER_ARGS, "for", arg2); 
+    
+    temp = arg1;
+    temparg2 = NIL;
+    while(!nullp(temp)){
+        temp1 = car(temp);
+        if(!listp(temp1))
+            error(IMPROPER_ARGS, "for", temp1);
+        temparg1 = car(temp1);
+
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "for", temparg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "for", arg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "defconstant", temparg1);
+        if(length(temp1) !=2 && length(temp1) != 3)
+            error(IMPROPER_ARGS, "for", temp1);
+        if(member(temparg1,temparg2))
+            error(IMPROPER_ARGS, "for", temparg1);
+
+        temparg2 = cons(temparg1,temparg2);
+        temp = cdr(temp);
+    }
 
     save = ep;
 

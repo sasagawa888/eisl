@@ -307,7 +307,7 @@
 (test (dynamic x) 3 equal)
 (test (setf (dynamic x) 4) 4 equal)
 (test (dynamic x) 4 equal)
-;($error (setf (dynamic z) 5) <unbound-variable>)
+($error (setf (dynamic z) 5) <unbound-variable>)
 ;;;
 ;($error (setf (dynamic x)) <program-error>)
 ;($error (setf (dynamic x) 1 2) <program-error>)
@@ -541,36 +541,36 @@
 	((null x) sum))) 25 eql)
 ;;;
 ($argc for 2 0 1)
-;($error (for) <program-error>)
+($error (for) <program-error>)
 ;;; (end-test result)
-;($error (for ()) <program-error>)
-;($error (for () ()) <error>)
+($error (for ()) <program-error>)
+($error (for () ()) <error>)
 ;;; iteration-spec
-;($error (for (x) (t 1)) <error>)
-;($error (for ((x)) (t 1)) <error>)
-;($error (for ((x x x x)) (t 1)) <error>)
+($error (for (x) (t 1)) <error>)
+($error (for ((x)) (t 1)) <error>)
+($error (for ((x x x x)) (t 1)) <error>)
 ;;; iteration-spec
-;($error (for ((#2a((a b) (c d)) nil)) (t)) <domain-error>)
-;($error (for ((#\a nil)) (t)) <domain-error>)
-;($error (for ((1234 nil)) (t)) <domain-error>)
-;($error (for ((1.234 nil)) (t)) <domain-error>)
-;($error (for (("abc" nil)) (t)) <domain-error>)
-;($error (for ((#(a b c) nil)) (t)) <domain-error>)
-;($error (for (((x y) nil)) (t)) <domain-error>)
+($error (for ((#2a((a b) (c d)) nil)) (t)) <domain-error>)
+($error (for ((#\a nil)) (t)) <domain-error>)
+($error (for ((1234 nil)) (t)) <domain-error>)
+($error (for ((1.234 nil)) (t)) <domain-error>)
+($error (for (("abc" nil)) (t)) <domain-error>)
+($error (for ((#(a b c) nil)) (t)) <domain-error>)
+($error (for (((x y) nil)) (t)) <domain-error>)
 ;;; var 
-;($error (for ((x 0 (+ x 1))
-;	      (x 1 (+ x 2))) (t)) <error>)
+($error (for ((x 0 (+ x 1))
+	      (x 1 (+ x 2))) (t)) <error>)
 ;;;
-;($error (for ((:a 1)) (t)) <program-error>)
+($error (for ((:a 1)) (t)) <program-error>)
 ;;;
-;($error (for ((nil 1)) (t)) <program-error>)
-;($error (for ((t 1)) (t)) <program-error>)
-;($error (for ((*pi* 1)) (t)) <program-error>)
-;($error (for ((*most-positive-float* 1)) (t)) <program-error>)
-;($error (for ((*most-negative-float* 1)) (t)) <program-error>)
+($error (for ((nil 1)) (t)) <program-error>)
+($error (for ((t 1)) (t)) <program-error>)
+($error (for ((*pi* 1)) (t)) <program-error>)
+($error (for ((*most-positive-float* 1)) (t)) <program-error>)
+($error (for ((*most-negative-float* 1)) (t)) <program-error>)
 ;;; unbound-variable
-;($error (for ((x 0)) (t y)) <unbound-variable>)
-;($error (for ((x 0 (+ y 1))) ((= x 1) 1)) <unbound-variable>)
+($error (for ((x 0)) (t y)) <unbound-variable>)
+($error (for ((x 0 (+ y 1))) ((= x 1) 1)) <unbound-variable>)
 ;;; close
 ($eval (defglobal x nil))
 ($eval (for ((i 0 (+ i 1)))
@@ -609,12 +609,12 @@
 ;;;
 ($eval (defglobal x nil))
 ($eval (defun terminate-1 (x) (return-from b x)))
-;($error
-; (block b
-;	(setq x (cons 1 x))
-;	(terminate-1 777)
-;	(setq x (cons 2 x))
-;	999) <control-error>)
+($error
+ (block b
+	(setq x (cons 1 x))
+	(terminate-1 777)
+	(setq x (cons 2 x))
+	999) <control-error>)
 ;;;
 (test (block x
 	(+ 10 (return-from x 6) 22)) ;;; Bad programming style
@@ -647,8 +647,8 @@
        result))))
 (test (bar-2 t nil) second-exit)
 (test (bar-2 nil nil) third-exit)
-;($error (bar-2 nil t) <control-error>)
-;($error (bar-2 t t) <control-error>)
+($error (bar-2 nil t) <control-error>)
+($error (bar-2 t t) <control-error>)
 ;;; closure
 (test (block b
 	(lambda () 1)
@@ -673,20 +673,20 @@
 ;($error (block b
 ;	       (return-from b 1 . 2)) <error>)
 ;;; block tag 
-;($error (block #2a((a b) (c d))) <domain-error>)
-;($error (block #\a) <domain-error>)
-;($error (block 1234) <domain-error>)
-;($error (block 1.234) <domain-error>)
-;($error (block "abc") <domain-error>)
-;($error (block #(a b c)) <domain-error>)
-;($error (block (x y)) <domain-error>)
-;($error (return-from #2a((a b) (c d)) 1) <domain-error>)
-;($error (return-from #\a 1) <domain-error>)
-;($error (return-from 1234 1) <domain-error>)
-;($error (return-from 1.234 1) <domain-error>)
-;($error (return-from "abc" 1) <domain-error>)
-;($error (return-from #(a b c) 1) <domain-error>)
-;($error (return-from (x y) 1) <domain-error>)
+($error (block #2a((a b) (c d))) <domain-error>)
+($error (block #\a) <domain-error>)
+($error (block 1234) <domain-error>)
+($error (block 1.234) <domain-error>)
+($error (block "abc") <domain-error>)
+($error (block #(a b c)) <domain-error>)
+($error (block (x y)) <domain-error>)
+($error (return-from #2a((a b) (c d)) 1) <domain-error>)
+($error (return-from #\a 1) <domain-error>)
+($error (return-from 1234 1) <domain-error>)
+($error (return-from 1.234 1) <domain-error>)
+($error (return-from "abc" 1) <domain-error>)
+($error (return-from #(a b c) 1) <domain-error>)
+($error (return-from (x y) 1) <domain-error>)
 ;;; block tag
 ;($error (block :a) <error>)
 ;($error (return-from :a 1) <error>)

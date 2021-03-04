@@ -1075,6 +1075,10 @@ int f_unwind_protect(int arglist){
 
     arg1 = car(arglist);
     args = cdr(arglist);
+    if(nullp(arglist))
+        error(WRONG_ARGS, "unwind-protect", arglist);
+    if(improperlistp(arglist))
+        error(WRONG_ARGS, "unwind-protect", arglist);
 
     unwind_buf[unwind_pt] = makefunc("",cons(NIL,args)); //make thunk
     unwind_pt++;

@@ -958,10 +958,10 @@
 ($eval
  (defun test4 ()
    (throw 'outer 6)))
-;($error (test) <control-error>)
+($error (test) <control-error>)
 ;;; 
 ($argc unwind-protect 1 0 1)
-;($error (unwind-protect) <program-error>)
-;($error (unwind-protect . 1) <program-error>)
+($error (unwind-protect) <program-error>)
+($error (unwind-protect . 1) <program-error>)
 
 ;;; end of file

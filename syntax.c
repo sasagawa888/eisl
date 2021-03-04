@@ -381,6 +381,10 @@ int f_setf(int arglist){
     	newform = cons(makesym("SET-CDR"),cons(arg2,cdr(arg1)));
     }
     else if(listp(arg1) && eqp(car(arg1),makesym("DYNAMIC"))){
+        if(improperlistp(arg1))
+            error(IMPROPER_ARGS, "dynamic", arg1);
+        if(length(arg1) != 2)
+            error(IMPROPER_ARGS, "dynamic", arg1);
     	newform = cons(makesym("SET-DYNAMIC"),list2(cadr(arg1),arg2));
     }
     else if(listp(arg1) && macrop(car(arg1))){
@@ -416,10 +420,16 @@ int f_set_dynamic(int arglist){
 
     arg1 = car(arglist);
     arg2 = eval(cadr(arglist));
+    if(nullp(arglist))
+        error(IMPROPER_ARGS, "set-dynamic", arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "set-dynamic", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "set-dynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "set-dynamic", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "set-dynamic", arg1);
 
     if(finddyn(arg1) != -1){
         setdynenv(arg1,arg2);
@@ -583,10 +593,13 @@ int f_dynamic(int arglist){
     int arg1,res;
 
     arg1 = car(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "dynamic", arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "dynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "dynamic", arg1);
+    
     res = finddyn(arg1);
     if(res == -1)
         error(UNDEF_VAR, "dynamic", arg1);
@@ -832,7 +845,7 @@ int f_for(int arglist){
             error(WRONG_ARGS, "for", arg1);
         if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
            temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
-            error(WRONG_ARGS, "defconstant", temparg1);
+            error(WRONG_ARGS, "for", temparg1);
         if(length(temp1) !=2 && length(temp1) != 3)
             error(IMPROPER_ARGS, "for", temp1);
         if(member(temparg1,temparg2))

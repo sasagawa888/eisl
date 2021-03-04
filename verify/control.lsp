@@ -290,11 +290,11 @@
 ;;;
 ($eval (defdynamic x 3))
 (test (dynamic x) 3 equal)
-;($error (dynamic z) <unbound-variable>)
+($error (dynamic z) <unbound-variable>)
 ;;;
-;($error (dynamic x . y) <error>)
+($error (dynamic x . y) <error>)
 ;;;
-;($error (dynamic :a) <unbound-variable>)
+($error (dynamic :a) <unbound-variable>)
 
 ;;;------------------------------------------------------------
 ;;; [special form]
@@ -309,17 +309,17 @@
 (test (dynamic x) 4 equal)
 ($error (setf (dynamic z) 5) <unbound-variable>)
 ;;;
-;($error (setf (dynamic x)) <program-error>)
-;($error (setf (dynamic x) 1 2) <program-error>)
+($error (setf (dynamic x)) <program-error>)
+($error (setf (dynamic x) 1 2) <program-error>)
 ;;; place
-;($error (setf (dynamic) 1) <error>)
-;($error (setf (dynamic . x) 1) <error>)
-;($error (setf (dynamic x . y) 1) <error>)
-;($error (setf (dynamic x y) 1) <error>)
+($error (setf (dynamic) 1) <error>)
+($error (setf (dynamic . x) 1) <error>)
+($error (setf (dynamic x . y) 1) <error>)
+($error (setf (dynamic x y) 1) <error>)
 ;;; 
-;($error (setf (dynamic x) 1 . 2) <error>)
+($error (setf (dynamic x) 1 . 2) <error>)
 ;;;
-;($error (setf (dynamic :a) 1) <program-error>)
+($error (setf (dynamic :a) 1) <program-error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]

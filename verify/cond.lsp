@@ -135,17 +135,17 @@
 ;;;
 (test (with-handler #'continue-condition-handler
 	       (cerror "cont" "err")) nil)
-;($error (with-handler #'continue-condition-handler
-;		      (error "err")) <error>)		  
+($error (with-handler #'continue-condition-handler
+		      (error "err")) <error>)		  
 ;;;
 ($eval 
  (defun continue-condition-handler-2 (condition)
    (continue-condition condition 999)))
 ;;;
-;(test (with-handler #'continue-condition-handler-2
-;	       (cerror "cont" "err")) 999 equal)
-;($error (with-handler #'continue-condition-handler-2
-;		      (error "err")) <error>)
+(test (with-handler #'continue-condition-handler-2
+	       (cerror "cont" "err")) 999 equal)
+($error (with-handler #'continue-condition-handler-2
+		      (error "err")) <error>)
 ;;;
 ($argc continue-condition 1 1 0)
 ($type continue-condition 
@@ -198,7 +198,7 @@
 ($argc with-handler 1 0 1)
 ($type with-handler ($function $generic) :target)
 
-#|
+
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -215,6 +215,7 @@
 	   (cons (arithmetic-error-operation condition)
 		 (arithmetic-error-operands condition)))
      (throw 'c-arithmetic-error data))))
+#|
 ;;; division-by-zero
 (test (functionp (car 
  (catch 'c-arithmetic-error
@@ -259,7 +260,6 @@
 ($argc arithmetic-error-operands 1 0 0)
 ($type arithmetic-error-operation ($arithmetic-error) :target)
 ($type arithmetic-error-operands ($arithmetic-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -543,4 +543,5 @@
 ($type undefined-entity-namespace ($undefined-entity) :target)
 
 ;;; end of file
+
 |#

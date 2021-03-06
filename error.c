@@ -420,18 +420,9 @@ int signal_condition(int x, int y){
         printf("around here line=%d column=%d\n", line, column); 
     } 
     if(error_handler != NIL){
-        if(y == NIL){ // not continuable
-            handler = car(error_handler);
-            error_handler = cdr(error_handler); 
-            print(apply(handler,list1(x)));
-            printf("\n");
-            longjmp(buf,1);
-        }
-        else{ // continuable
-            handler = car(error_handler);
-            error_handler = cdr(error_handler); 
-            return(apply(handler,list1(x)));
-        }
+        handler = car(error_handler);
+        error_handler = cdr(error_handler); 
+        return(apply(handler,list1(x)));
     }
     str = cdr(assoc(makesym("a"),GET_CDR(x)));
     args = cdr(assoc(makesym("b"),GET_CDR(x)));

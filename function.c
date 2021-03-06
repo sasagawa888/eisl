@@ -4267,8 +4267,7 @@ int f_error(int arglist){
     if(!stringp(arg1))
         error(NOT_STR, "error", arg1);
 
-    signal_condition(makeusercond(csimple_error,arg1,arg2),NIL);
-    return(UNDEF);
+    return(signal_condition(makeusercond(cerror,arg1,arg2),NIL));
 }
 
 int f_cerror(int arglist){
@@ -4306,8 +4305,8 @@ int f_simple_error_format_string(int arglist){
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"simple-error-format-string",arglist);
-    if(GET_AUX(arg1) != csimple_error)
-        error(NOT_CLASS,"simple-error-format-string",arg1);
+    //if(GET_AUX(arg1) != csimple_error)
+    //    error(NOT_CLASS,"simple-error-format-string",arg1);
 
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("a"),vars));
@@ -4320,8 +4319,8 @@ int f_simple_error_format_arguments(int arglist){
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"simple-error-format-arguments",arglist);
-    if(GET_AUX(arg1) != csimple_error)
-        error(NOT_CLASS,"simple-error-format-arguments",arg1);
+    //if(GET_AUX(arg1) != csimple_error)
+    //    error(NOT_CLASS,"simple-error-format-arguments",arg1);
 
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("b"),vars));
@@ -4474,5 +4473,5 @@ int f_continue_condition(int arglist){
     if(GET_OPT(arg1) == CONTINUABLE)
         return(arg2);
     else
-        return(UNDEF);
+        return(arg1);
 }

@@ -3,10 +3,10 @@
         (format (standard-output) "~A~%" substr)))
 
 (defun g (str)
-   (let ((substr str))
-        (format (standard-output) "~A~%" substr)))
+  (let ((substr str))
+        (format (standard-output) "~A~%" str)))
 
 
 (defun h (str)
    (let ((substr str))
-        (format (standard-output) "~A~%" str)))
+        (format (standard-output) "~A~%")))

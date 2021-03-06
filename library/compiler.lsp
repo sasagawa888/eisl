@@ -3328,7 +3328,7 @@ double tarai(double x, double y, double z){
     (assert read-line (class <object>) (class <stream>))
     (assertz read-line (class <object>) (class <stream>) (class <object>))
     (assert subseq (class <string>) (class <string>) (class <integer>) (class <integer>))
-    (assertz subseq (class <general-array*>) (class <general-array*>) (class <integer>) (class <integer>))
+    (assertz subseq (class <general-vector>) (class <general-vector>) (class <integer>) (class <integer>))
     (assertz subseq (class <list>) (class <list>) (class <integer>) (class <integer>))
     (assert random (class <integer>) (class <integer>))
     (assert random-real (class <float>))

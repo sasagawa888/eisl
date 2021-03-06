@@ -9,4 +9,4 @@
 
 (defun h (str)
    (let ((substr str))
-        (format (standard-output) "~A~%")))
+        (format (standard-output) "~A~%" str str str)))

@@ -8,16 +8,16 @@ Here I describe the specifications, constraints, problems, etc.
 
 I referred to GCL (GNU Common Lisp) created by Mr. Hagiya, Mr. Yuasa and others.
 The Easy-ISLisp(EISL) compiler converts ISLisp code to equivalent C code and GCC generates an object file.
-By dynamically linking object file, EISL loads the compiled code.
-The internal definition of the function uses GCC extensions.
+By dynamically linking an object file, EISL loads the compiled code.
+The internal definitions of functions use GCC/clang extensions.
 Therefore, the scope of labels and flet syntax is limited. 
 
 # Usage
 EISL starts compiling with (compile-file filename).
 The filename is given as a string. The compile-file function creates a C file based on a Lisp file.
-It also launches GCC and creates a dynamic link object.
+It also launches GCC/clang and creates a shared object.
 EISL loads it with the load function like a normal text Lisp file.
-If the identifier is o, the load function handles dynamic linking. 
+If the file extension is ".o", the load function handles dynamic linking.
 
 # Immediate value of small integer
 The interpreter of EISL created cell objects for everything, including small integers.
@@ -62,36 +62,37 @@ Elapsed Time(second)=1.789000
 
 # Extensions for the compiler
 
-The following functions have been uniquely extended for the compiler.
+The following non-standard functions have been implemented for use by the compiler:
 
-| Function | Description |
-| -------- | ----------- |
-| (subrp x) t if x is a built-in function, nil otherwise
-| (macrop x) t if x is a macro, nil otherwise
-| (system str) Str Executes the string on the OS. This is for starting GCC.
-| (freedll) Unlinks the last dynamically linked file.
-| (fixnump x) t for small integers, nil otherwise
-| (longnump x) t for LONGNUM, nil otherwise
-| (bignump x)               | t for BIGNUM, nil otherwise
-| (readed-array-list x)     | Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)).
+| Function                  | Description |
+| ------------------------- | ----------- |
+| (subrp x)                 | t if x is a built-in function, nil otherwise                                                             |
+| (macrop x)                | t if x is a macro, nil otherwise                                                                         |
+| (system str)              | Str Executes the string on the OS. This is for starting GCC.                                             |
+| (freedll)                 | Unlinks the last dynamically linked file.                                                                |
+| (fixnump x)               | t for small integers, nil otherwise                                                                      |
+| (longnump x)              | t for LONGNUM, nil otherwise |
+| (bignump x)               | t for BIGNUM, nil otherwise |
+| (readed-array-list x)     | Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)). |
 | (ignore-toplevel-check x) | Passing t as an argument removes top-level checks such as defclass, and passing nil restores and checks. |
 | (self-introduction)       | Returns the symbol depending the kind of OS                                                              |
 |                           | Because the compiler changes its behavior depending on the type of OS.                                   |
-| (get-method x) Get all methods of the generic function with name x.
-| (get-method-body x) Get the entity of method x.
-| (get-method-priority x) Gets the priority of method x.
-It is an integer value and looks like this:
-AROUND 11
-BEFORE 12
-PRIORITY 13
-AFTER 14
-```
+| (get-method x)            | Get all methods of the generic function with name x. |
+| (get-method-body x)       | Get the entity of method x. |
+| (get-method-priority x)   | Gets the priority of method x. |
+|                           | It is an integer value and looks like this: |
+|                           | AROUND 11 |
+|                           | BEFORE 12 |
+|                           | PRIORITY 13 |
+|                           | AFTER 14 |
 
 These are used to compile generic functions.
 The interpreter evaluates the generic function once organizes and saves all methods,
 and compiler extracts methods and converts it to SUBR.
 
+```lisp
 (format stream string)
+```
 It has its own behavior when there are two single quotes in a string.
 Ignores special character controls such as ~% for strings between consecutive single quotes.
 Also, two consecutive single quotes are converted to one double quote.
@@ -181,9 +182,9 @@ This is the correct code that adapts the ISLisp specification.
        (setq a (+ (* a 8) (convert (elt s i) <integer>)))))
 ```
 
-In the method definition, the argument name must work correctly even if you give it a different name intthe generic function.
-The interpreter evaluates exactly that. 
-But, the compiler has the restriction that the argument names must be the same for simplicity.
+In the method definition, the argument name must work correctly even if you give it a different name in the generic function.
+The interpreter evaluates this correctly.
+But the compiler has the restriction that the argument names must be the same for simplicity.
 I think it can be done by α conversion, but I decided to do it easily. It should be written as follows. 
 
 ```lisp
@@ -197,9 +198,11 @@ I think it can be done by α conversion, but I decided to do it easily. It shoul
 
 ```
 
-# Mixed with C language source
-To insert C language source in the function,EISL is extended.
-This is because you can easily use GCC's rich library from ISLisp.
+# Calling C from Lisp
+
+This is only possible in compiled code.
+EISL extends the ISLisp standard to allow insertion of C statements into the compiler output.
+In this way you can use the many libraries that present a C interface.
 Below is a simple sample. 
 
 ```
@@ -221,7 +224,6 @@ T
 > (1+ 3)
 4
 > 
-
 ```
 
 In this way, the description in C can be mixed.
@@ -230,29 +232,30 @@ It does not rely on CFFI, so it can be easily linked to C.
 
 The prepared functions are as follows.
 
-```
-(c-include x) Insert #include. e.g. (c-include "stdio.h")
-(c-define x y) Insert #define. e.g. (c-define "MAXINT" "999999999")
-(c-lang x) Insert a c language source. e.g. (c-lang "a = a + 1;")
-(c-option x) Add a compile option. e.g. (c-option "-lwinmm")
-```
+| Function       | Description                                            |
+| -------------- | ------------------------------------------------------ |
+| (c-include x)  | Insert #include. e.g. (c-include "stdio.h")            |
+| (c-define x y) | Insert #define. e.g. (c-define "MAXINT" "999999999")   |
+| (c-lang x)     | Insert a c language source. e.g. (c-lang "a = a + 1;") |
+| (c-option x)   | Add a compile option. e.g. (c-option "-lwinmm")        |
+
 These functions are ignored by the interpreter. 
 
+# Further explanation
 
-# More explanation
-All variables have been converted to uppercase. Therefore, the n and m variables are N and M in C language.
-Small integers are immediate values for efficiency.
-By setting the second bit from the most significant bit, it is internally recognized as a small integer.
-When using C operators wi must remove this bit. By operation AND with INT_MASK, this bit is removed.
-When the operation in C is completed, it must be returned to the immediate value. 
-By openration OR with INT_FLAG, the second bit is 1. 
-the values INT_MASK and INT_FLAG are described in fast.h.
-The return value of an S-expression is held by a variable "res" in C language.
-We assign a value to res. 
+* All variables have been converted to uppercase. Therefore, the n and m variables are N and M in C language.
+* Small integers are immediate values for efficiency.
+  By setting the second bit from the most significant bit, it is internally recognized as a small integer.
+  When using C operators wi must remove this bit. By operation AND with INT_MASK, this bit is removed.
+  When the operation in C is completed, it must be returned to the immediate value. 
+  By openration OR with INT_FLAG, the second bit is 1. 
+  the values INT_MASK and INT_FLAG are described in fast.h.
+* The return value of an S-expression is held by a variable "res" in C language.
+  We assign a value to res. 
 
 e.g. 
 
-```
+```lisp
 (c-include "<stdio.h>")
 
 (defun ash (n m)
@@ -260,8 +263,6 @@ e.g.
       (c-lang "res = INT_FLAG | ((INT_MASK & N) << (INT_MASK & M));")
       (let ((m1 (- m)))
         (c-lang "res = INT_FLAG | ((INT_MASK & N) >> (INT_MASK & M1));"))))
-
-
 ```
 
 # Type inference
@@ -353,7 +354,7 @@ No additional information about the type is needed in this case.
 
 # Benchmark
 
-I compared it with SBCL, which is a typical processing system of Common Lisp.
+Performance was compared to SBCL, which is a popular Common Lisp compiler.
 SBCL has a type declaration to speed it up.
 
 ### ex1 

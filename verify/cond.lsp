@@ -133,20 +133,19 @@
  (defun continue-condition-handler (condition)
    (continue-condition condition)))
 ;;;
-(test (with-handler #'continue-condition-handler
-	       (cerror "cont" "err")) nil)
+;(test (with-handler #'continue-condition-handler
+;	       (cerror "cont" "err")) nil)
 ;($error (with-handler #'continue-condition-handler
-;		      (error "err")) <error>)
-#|			  
+;		      (error "err")) <error>)		  
 ;;;
 ($eval 
  (defun continue-condition-handler-2 (condition)
    (continue-condition condition 999)))
 ;;;
-(test (with-handler #'continue-condition-handler-2
-	       (cerror "cont" "err")) 999 equal)
-($error (with-handler #'continue-condition-handler-2
-		      (error "err")) <error>)
+;(test (with-handler #'continue-condition-handler-2
+;	       (cerror "cont" "err")) 999 equal)
+;($error (with-handler #'continue-condition-handler-2
+;		      (error "err")) <error>)
 ;;;
 ($argc continue-condition 1 1 0)
 ($type continue-condition 
@@ -156,7 +155,6 @@
 	$simple-error 
 	$stream-error 
 	$undefined-entity) :target)
-|#
 ;;;------------------------------------------------------------
 ;;; [special-operator]
 ;;;

@@ -2597,7 +2597,7 @@
 (defun ~eql1 (x y)
          (let* ((str1 (convert x <string>))
                 (str2 (convert y <string>))
-                (len (- (min (length str1) (length str2)) 1) 0))
+                (len (- (min (length str1) (length str2)) 1 0)))
            (string= (subseq str1 0 len) (subseq str2 0 len))))
 
 (defun ~eql2 (x y)

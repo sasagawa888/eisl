@@ -661,15 +661,15 @@
 	((lambda (x) (return-from b x)) 999)) 999 eql)
 ;;;
 ($argc block 1 0 1)
-;($error (block) <program-error>)
-;($error (block . 1) <program-error>)
+($error (block) <program-error>)
+($error (block . 1) <program-error>)
 ($argc return-from 2 0 0)
 ;($error (block b
 ;	       (return-from b)) <program-error>)
 ;($error (block b
 ;	       (return-from b 1 2)) <program-error>)
 ;;; dot-list
-;($error (block b . 1) <error>)
+($error (block b . 1) <error>)
 ;($error (block b
 ;	       (return-from b 1 . 2)) <error>)
 ;;; block tag 
@@ -762,24 +762,24 @@
 	((lambda (x) (throw 'c x)) 999)) 999 eql)
 ;;;
 ($argc catch 1 0 1)
-;($error (catch) <program-error>)
-;($error (catch . 1) <program-error>)
+($error (catch) <program-error>)
+($error (catch . 1) <program-error>)
 ($argc throw 2 0 0)
 ;($error (catch 'c
 ;	       (throw 'c)) <program-error>)
 ;($error (catch 'c
 ;	       (throw 'c 1 2)) <program-error>)
 ;;; dot-list
-;($error (catch 'c . 1) <error>)
+($error (catch 'c . 1) <error>)
 ;($error (catch 'c
 ;	       (throw 'c 1 . 2)) <error>)
 ;;; catch tag <number> <character> 
-;($error (catch 1234) <error>)
-;($error (catch 1.234) <error>)
-;($error (catch #\a) <error>)
-;($error (throw 1234 nil) <error>)
-;($error (throw 1.234 nil) <error>)
-;($error (throw #\a nil) <error>)
+($error (catch 1234) <error>)
+($error (catch 1.234) <error>)
+($error (catch #\a) <error>)
+($error (throw 1234 nil) <error>)
+($error (throw 1.234 nil) <error>)
+($error (throw #\a nil) <error>)
 ;;; 
 ;($error (catch 'c
 ;	  (throw 'd 88) 99) <control-error>)

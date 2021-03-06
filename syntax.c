@@ -897,8 +897,13 @@ int f_block(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(arglist))
+        error(WRONG_ARGS, "block", arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "block", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "block", arg1);
+    
     tag = arg1;
 
     if(block_pt >= 50)
@@ -958,9 +963,16 @@ int f_catch(int arglist){
     save = sp;
     arg1 = car(arglist); //tag
     arg2 = cdr(arglist); //body
+    if(nullp(arglist))
+        error(WRONG_ARGS,"catch",arglist);
+    if(arg1 == makesym("catch"))
+        error(WRONG_ARGS,"catch",arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS,"catch",arglist);
     tag = eval(arg1);    //tag symbol
     if(!symbolp(tag))
-    	error(NOT_SYM,"catch",tag);
+    	error(IMPROPER_ARGS,"catch",tag);
+
 
     if(!member(tag,catch_symbols))
         catch_symbols = cons(tag,catch_symbols);
@@ -1011,6 +1023,8 @@ int f_throw(int arglist){
     arg2 = cdr(arglist);
     tag = eval(arg1);
 
+    if(!symbolp(tag))
+        error(IMPROPER_ARGS, "throw" , tag);
     if(GET_OPT(tag) == 0) //tag opt has 1~4
     	error(UNDEF_TAG, "throw", tag);
     if(GET_PROP(tag) == 0)

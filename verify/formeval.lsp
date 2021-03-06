@@ -81,9 +81,9 @@
 (test (funcall #'- 3) -3 equal)
 (test (apply (function -) '(4 3)) 1 equal)
 (test (apply #'- '(4 3)) 1 equal)
-;;; ������dot-list
+;;; dot-list
 ;($error (function + . 1) <error>)
-;;; function-name ���V���{���łȂ�
+;;; function-name 
 ($error (function #2a((a b) (c d))) <domain-error>)
 ($error (function #\a) <domain-error>)
 ($error (function 1234) <domain-error>)
@@ -131,13 +131,13 @@
 ($error ((lambda (:rest :a) nil) 1) <program-error>)
 ($error ((lambda (&rest &a) nil) 1) <program-error>)
 ($error ((lambda (&rest :a) nil) 1) <program-error>)
-;;; �V�X�e���萔
+;;; 
 ($error ((lambda (nil) nil) 1) <program-error>)
 ($error ((lambda (t) nil) 1) <program-error>)
 ($error ((lambda (*pi*) nil) 1) <program-error>)
 ($error ((lambda (*most-positive-float*) nil) 1) <program-error>)
 ($error ((lambda (*most-negative-float*) nil) 1) <program-error>)
-;;; identifier ���V���{���łȂ�
+;;; identifier 
 ($error ((lambda (#2a((a b) (c d))) nil) 1) <domain-error>)
 ($error ((lambda (#\a) nil) 1) <domain-error>)
 ($error ((lambda (1234) nil) 1) <domain-error>)
@@ -165,18 +165,18 @@
 ($error ((lambda (x :rest #(a b c)) nil) 1) <domain-error>)
 ($error ((lambda (x &rest (x y)) nil) 1) <domain-error>)
 ($error ((lambda (x :rest (x y)) nil) 1) <domain-error>)
-;;; &rest, :rest �̌�� &rest, :rest
+;;; &rest, :rest  &rest, :rest
 ($error ((lambda (&rest &rest) nil) 1) <program-error>)
 ($error ((lambda (&rest :rest) nil) 1) <program-error>)
 ($error ((lambda (:rest &rest) nil) 1) <program-error>)
 ($error ((lambda (:rest &rest) nil) 1) <program-error>)
-;;; �w�肳�ꂽlambda-list��,
-;;; �֐����󂯎���������̌�����v���Ȃ�(arity-error)
+;;; lambda-list
+;;; (arity-error)
 ($error ((lambda (x y) nil) 1) <program-error>)
 ($error ((lambda (x y) nil) 1 2 3) <program-error>)
 ($error ((lambda (x y &rest z) nil) 1) <program-error>)
 ($error ((lambda (x y :rest z) nil) 1) <program-error>)
-;;; lambda-list �Ɏw�肳�ꂽidentifier �̗L���͈͊O
+;;; lambda-list identifier
 ($error ((lambda () unbound-var)) <unbound-variable>)
 ($error ((lambda (x) y) 1) <unbound-variable>)
 ($error ((lambda (x &rest y) z) 1) <unbound-variable>)
@@ -305,11 +305,11 @@
 	 (lambda (:rest args)
 	   (funcall f (apply g args)))))
 (test (funcall (compose (function sqrt) (function *)) 12 75) 30 equal)
-;;; �����̌�
+;;;
 ($argc apply 2 0 1)
-;;; function ���֐��łȂ�(domain-error)
+;;; function (domain-error)
 ($type apply ($function $generic) :target 1 (quote (2 3)))
-;;; list ���^���X�g�łȂ�(improper-arglist)
+;;; list (improper-arglist)
 ;($error (apply #'list '(1 . 2)) <program-error>)
 ;($error (apply #'list 1 '(2 . 3)) <program-error>)
 ;($error (apply #'list 1 2 '(3 . 4)) <program-error>)
@@ -331,9 +331,9 @@
 (test (let ((x '(1 2 3)))
    (funcall (cond ((listp x) (function car))
 		  (t (lambda (x) (cons x 1)))) x)) 1 equal)
-;;; �����̌�
+;;;
 ($argc funcall 1 0 1)
-;;; function ���֐��łȂ�(domain-error)
+;;; function 
 ($type funcall ($function $generic) :target 1)
 
 ($ap 1 "Defining Operators")
@@ -439,18 +439,18 @@
 ;;; nil
 (test (defdynamic nil 3) nil equal)
 (test (dynamic nil) 3 equal)
-;;; �����̌�
+;;; 
 ($error (defdynamic) <program-error>)
 ($error (defdynamic *dynamic-2*) <program-error>)
 ($error (defdynamic *dynamic-2* 2 3) <program-error>)
-;;; �������X�g���h�b�g���X�g
+;;; 
 ($error (defdynamic *dynamic-2* 2 . 3) <error>)
-;;; �g�b�v���x����`�łȂ�
+;;; 
 ;;; ??? I think result of following test is  <domain-error> 
 ;;; Becuase defdynamic return symbol and symbol is not number
 ($error (+ (defdynamic *dynamic-2* 2)) <domain-error>)
 ;($error (+ (defdynamic *dynamic-2* 2)) <error>)
-;;; name ���V���{���łȂ�
+;;; name 
 ($error (defdynamic #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (defdynamic #\a nil) <domain-error>)
 ($error (defdynamic 1234 nil) <domain-error>)
@@ -470,14 +470,14 @@
 ;;;
 (test (defun my-f-caar (x) (car (car x))) my-f-caar equal)
 (test (my-f-caar '((1 2))) 1 equal)
-;;; �����̌�
+;;; 
 ($error (defun) <program-error>)
 ($error (defun foo) <program-error>)
-;;; �������X�g���h�b�g���X�g
+;;; 
 ($error (defun foo 2 . 3) <error>)
-;;; �g�b�v���x����`�łȂ�
+;;; 
 ($error (+ (defun foo 2)) <error>)
-;;; name ���V���{���łȂ�
+;;; name 
 ($error (defun #2a((a b c) (d e f)) nil) <domain-error>)
 ($error (defun #\a nil) <domain-error>)
 ($error (defun 1234 nil) <domain-error>)
@@ -491,15 +491,15 @@
 ($error (defun foo (x x) nil) <error>)
 ($error (defun foo (x &rest x) nil) <error>)
 ($error (defun foo (x :rest x) nil) <error>)
-;;; �V�X�e���萔���֐��Ƃ��Ē�`
+;;; 
 (test (defun nil ()) nil equal)
 (test (defun t ()) t equal)
 (test (defun *pi* ()) *pi* equal)
 (test (defun *most-positive-float* ()) *most-positive-float*)
 (test (defun *most-negative-float* ()) *most-negative-float*)
-;;; special operator �͕ύX�ł��Ȃ�
+;;; special operator 
 ($error (defun if ()) <program-error>)
-;;; lambda-list �Ɏw�肳�ꂽ���ʎq�̗L���͈͂��z���Ă���
+;;; lambda-list
 ($eval (defun foo-6 (x) y))
 ($error (foo-6 1) <unbound-variable>)
 ;;;

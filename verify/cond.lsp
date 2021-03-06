@@ -121,7 +121,7 @@
 	$stream-error 
 	$undefined-entity) :target)
 
-#|
+
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -135,8 +135,9 @@
 ;;;
 (test (with-handler #'continue-condition-handler
 	       (cerror "cont" "err")) nil)
-($error (with-handler #'continue-condition-handler
-		      (error "err")) <error>)
+;($error (with-handler #'continue-condition-handler
+;		      (error "err")) <error>)
+#|			  
 ;;;
 ($eval 
  (defun continue-condition-handler-2 (condition)

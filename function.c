@@ -59,7 +59,7 @@ void initsubr(void){
     defsubr("CONDITION-CONTINUABLE",f_condition_continuable);
     defsubr("CONS",f_cons);
     defsubr("CONSP",f_consp);
-    defsubr("CONSTINUE-CONDITION",f_continue_condition);
+    defsubr("CONTINUE-CONDITION",f_continue_condition);
     defsubr("COS",f_cos);
     defsubr("COSH",f_cosh);
     defsubr("CREATE-ARRAY",f_create_array);

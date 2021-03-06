@@ -133,8 +133,8 @@
  (defun continue-condition-handler (condition)
    (continue-condition condition)))
 ;;;
-;(test (with-handler #'continue-condition-handler
-;	       (cerror "cont" "err")) nil)
+(test (with-handler #'continue-condition-handler
+	       (cerror "cont" "err")) nil)
 ;($error (with-handler #'continue-condition-handler
 ;		      (error "err")) <error>)		  
 ;;;

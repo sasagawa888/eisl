@@ -4285,8 +4285,7 @@ int f_cerror(int arglist){
     strstream = f_create_string_output_stream(NIL);
     f_format(cons(strstream,cons(arg1,arg3)));
     str = f_get_output_stream_string(list1(strstream));
-    signal_condition(makeusercond(csimple_error,arg2,str),arg1);
-    return(UNDEF);
+    return(signal_condition(makeusercond(csimple_error,arg2,str),arg1));
 }
 
 int f_signal_condition(int arglist){

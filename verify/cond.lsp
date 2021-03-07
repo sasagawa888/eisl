@@ -303,7 +303,6 @@
 				  (string-append 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <string>)) t)
-#|
 ;;; <character>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -347,6 +346,7 @@
 				  (div "a" "b")))))
 (test (car data) "a" equal)
 (test (eq (cdr data) (class <integer>)) t)
+#|
 ;;; <stream>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error

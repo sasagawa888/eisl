@@ -934,9 +934,9 @@ int f_div(int arglist){
     if(length(arglist) != 2)
         error(WRONG_ARGS, "div", arglist);
     if(!numberp(arg1))
-        error(NOT_NUM, "div", arg1);
+        error(NOT_INT, "div", arg1);
     if(!numberp(arg2))
-        error(NOT_NUM, "div", arg2);
+        error(NOT_INT, "div", arg2);
     if(zerop(arg2))
         error(DIV_ZERO, "div",arglist);
 
@@ -2697,9 +2697,7 @@ int f_string_append(int arglist){
 
     if(nullp(arglist))
         return(makestr(""));
-    //else if(nullp(cdr(arglist)))
-    //    return(car(arglist));
-
+    
     arg1 = car(arglist);
     if(!stringp(arg1))
         error(NOT_STR, "string-append", arg1);

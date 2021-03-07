@@ -1037,6 +1037,24 @@ int f_expt(int arglist){
         error(NOT_NUM, "expt", arg1);
     if(!numberp(arg2))
         error(NOT_NUM, "expt", arg2);
+    if(zerop(arg1) && negativep(arg2))
+        error(IMPROPER_ARGS, "expt", arglist);
+    if(zerop(arg1) && zerop(arg2) && floatp(arg2))
+        error(IMPROPER_ARGS, "expt", arglist);
+    if(negativep(arg1) && floatp(arg2))
+        error(IMPROPER_ARGS, "expt", arglist);
+    if(greaterp(arg1,makeint(1)) && floatp(arg2) && GET_FLT(arg2) >= DBL_MAX)
+        error(FLT_OVERF, "expt", arglist);
+    if(greaterp(arg1,makeint(1)) && floatp(arg2) && GET_FLT(arg2) <= -DBL_MAX)
+        error(FLT_UNDERF, "expt", arglist);
+    if(greaterp(arg2,makeint(1)) && floatp(arg1) && GET_FLT(arg1) >= DBL_MAX)
+        error(FLT_OVERF, "expt", arglist);
+    if(negativep(arg2) && floatp(arg1) && GET_FLT(arg1) >= DBL_MAX)
+        error(FLT_UNDERF, "expt", arglist);    
+    if(greaterp(arg2,makeint(1)) && floatp(arg1) && GET_FLT(arg1) <= -DBL_MAX)
+        error(FLT_OVERF, "expt", arglist);
+    if(negativep(arg2) && floatp(arg1) && GET_FLT(arg1) <= -DBL_MAX)
+        error(FLT_UNDERF, "expt", arglist);
 
     if((integerp(arg1) || longnump(arg1) || bignump(arg1)) && integerp(arg2) && GET_INT(arg2) == 0)
         return(makeint(1));
@@ -1167,7 +1185,10 @@ int f_expt(int arglist){
             return(makeflt(y));
         }
     }
-    error(OUT_OF_RANGE,"expt",arglist);
+    if(positivep(arg2))
+        error(FLT_OVERF,"expt",arglist);
+    else
+        error(FLT_UNDERF,"expt",arglist);
     return(UNDEF);
 }
 

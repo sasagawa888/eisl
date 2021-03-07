@@ -391,7 +391,6 @@
 				  (parse-error-string 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <parse-error>)) t)
-#|
 ;;; <simple-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -399,7 +398,6 @@
 				  (simple-error-format-string 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <simple-error>)) t)
-|#
 ;;; <stream-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error

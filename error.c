@@ -325,7 +325,7 @@ void error(int errnum, const char *fun, int arg){
         case CANT_PARSE:initargs = list10(makesym("format-string"),makestr("Can't parse number at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun1),
-                                          makesym("string"),arg,
+                                          makesym("object"),arg,
                                           makesym("expected-class"),cparse_error);
                         signal_condition(makeinstance(cparse_error,initargs),NIL);
                         break;
@@ -443,6 +443,14 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("object"),arg,
                                           makesym("expected-class"),cundefined_entity);
                         signal_condition(makeinstance(cundefined_entity,initargs),NIL);
+                        break; 
+        case SIMPLE_ERR:
+                        initargs = list10(makesym("format-string"),makestr("Simple error at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun1),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),csimple_error);
+                        signal_condition(makeinstance(csimple_error,initargs),NIL);
                         break; 
     }
 }

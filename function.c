@@ -4301,7 +4301,9 @@ int f_simple_error_format_string(int arglist){
     int arg1,vars,val;
 
     arg1 = car(arglist);
-   
+    if(numberp(arg1))
+        error(SIMPLE_ERR,"simple-error-format-string",arg1);
+
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("a"),vars));
     return(val);
@@ -4311,7 +4313,7 @@ int f_simple_error_format_arguments(int arglist){
     int arg1,vars,val;
 
     arg1 = car(arglist);
-    
+
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("b"),vars));
     return(val);

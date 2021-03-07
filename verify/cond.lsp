@@ -286,7 +286,7 @@
 			     (aref 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <basic-array>)) t)
-#|
+
 ;;; <general-array*>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -294,7 +294,6 @@
 				  (garef 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <general-array*>)) t)
-
 ;;; <basic-vector>
 ;;; <vector>
 ;;; <string>
@@ -304,6 +303,7 @@
 				  (string-append 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <string>)) t)
+#|
 ;;; <character>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error

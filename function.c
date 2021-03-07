@@ -2697,8 +2697,8 @@ int f_string_append(int arglist){
 
     if(nullp(arglist))
         return(makestr(""));
-    else if(nullp(cdr(arglist)))
-        return(car(arglist));
+    //else if(nullp(cdr(arglist)))
+    //    return(car(arglist));
 
     arg1 = car(arglist);
     if(!stringp(arg1))
@@ -2834,8 +2834,6 @@ int f_garef(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if(GET_AUX(arg1) != cgeneral_vector && GET_AUX(arg1) != cgeneral_array_star)
-        error(NOT_VECARR, "garef", arg1);
     
     if(vectorp(arg1)){
         if(!indomainp(arg2))
@@ -2851,8 +2849,10 @@ int f_garef(int arglist){
             error(OUT_OF_RANGE,"garef",arg2);
         return(array_ref(arg1,arg2));
     }
-
+    else
+        error(NOT_VECARR, "garef", arg1);
     return(NIL);
+
 }
 
 

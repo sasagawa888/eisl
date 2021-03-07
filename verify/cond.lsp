@@ -215,20 +215,23 @@
 	   (cons (arithmetic-error-operation condition)
 		 (arithmetic-error-operands condition)))
      (throw 'c-arithmetic-error data))))
-#|
+
 ;;; division-by-zero
 (test (functionp (car 
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0))))) t)
+
 (test (equal (function div) (car 
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0))))) t)
+
 (test (cdr
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0)))) (3 0) equal)
+#|
 ;;; floating-point-overflow
 (test (functionp (car
  (catch 'c-arithmetic-error

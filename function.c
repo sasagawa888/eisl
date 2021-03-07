@@ -4337,7 +4337,7 @@ int f_arithmetic_error_operation(int arglist){
         !subclassp(GET_AUX(arg1),carithmetic_error))
         error(NOT_ARITHMETIC,"arithmetic-error-operation",arg1);
 
-    fun = cdr(assoc(makesym("c"),GET_CDR(arg1)));
+    fun = GET_CAR(cdr(assoc(makesym("c"),GET_CDR(arg1))));
     return(fun);
 }
 

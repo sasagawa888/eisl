@@ -602,7 +602,7 @@ int f_dynamic(int arglist){
     
     res = finddyn(arg1);
     if(res == -1)
-        error(UNDEF_VAR, "dynamic", arg1);
+        error(UNDEF_DYN, "dynamic", arg1);
 
     return(res);
 }

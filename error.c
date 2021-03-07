@@ -37,14 +37,25 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("function"),makesym(fun1));
                         signal_condition(makeinstance(cdivision_by_zero,initargs),NIL);
                         break;
-        case UNDEF_VAR: initargs = list6(makesym("format-string"),makestr("Unbound variable at "),
+        case UNDEF_VAR: initargs = list10(makesym("format-string"),makestr("Unbound variable at "),
                                          makesym("format-arguments"),arg,
-                                         makesym("function"),makesym(fun1));
+                                         makesym("function"),makesym(fun1),
+                                         makesym("name"),makesym("UNDEF-VAR"),
+                                         makesym("namespace"),makesym("VARIABLE"));
                         signal_condition(makeinstance(cunbound_variable,initargs),NIL);
                         break;
-        case UNDEF_FUN: initargs = list6(makesym("format-string"),makestr("Unbound function at "),
+        case UNDEF_FUN: initargs = list10(makesym("format-string"),makestr("Unbound function at "),
                                          makesym("format-arguments"),arg,
-                                         makesym("function"),makesym(fun1));
+                                         makesym("function"),makesym(fun1),
+                                         makesym("name"),makesym("UNDEF-FUNC"),
+                                         makesym("namespace"),makesym("FUNCTION"));
+                        signal_condition(makeinstance(cundefined_function,initargs),NIL);
+                        break;
+        case UNDEF_DYN: initargs = list10(makesym("format-string"),makestr("Unbound dynamic variable at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun1),
+                                         makesym("name"),makesym("UNDEF-DYNAMIC-VAR"),
+                                         makesym("namespace"),makesym("DYNAMIC-VARIABLE"));
                         signal_condition(makeinstance(cundefined_function,initargs),NIL);
                         break;
         case UNDEF_CLASS:
@@ -197,7 +208,7 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun1),
                                           makesym("object"),arg,
-                                          makesym("expected-class"),cstream);
+                                          makesym("expected-class"),cstream_error);
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
                         break;
         case NOT_IN_STREAM:
@@ -315,7 +326,7 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun1),
                                           makesym("string"),arg,
-                                          makesym("expected-class"),cobject);
+                                          makesym("expected-class"),cparse_error);
                         signal_condition(makeinstance(cparse_error,initargs),NIL);
                         break;
         case CANT_ASSURE:
@@ -400,7 +411,39 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun1));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
-                        break;  
+                        break;
+        case SERIOUS_ERR:
+                        initargs = list10(makesym("format-string"),makestr("Serious condition at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun1),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cserious_condition);
+                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        break; 
+        case ARITHMETIC_ERR:
+                        initargs = list10(makesym("format-string"),makestr("Arithmetic error at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun1),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),carithmetic_error);
+                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        break; 
+        case DOMAIN_ERR:
+                        initargs = list10(makesym("format-string"),makestr("Domain error at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun1),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cdomain_error);
+                        signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        break; 
+        case UNDEF_ENTITY:
+                        initargs = list10(makesym("format-string"),makestr("Undefined entity error at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun1),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cundefined_entity);
+                        signal_condition(makeinstance(cundefined_entity,initargs),NIL);
+                        break; 
     }
 }
 /*

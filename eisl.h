@@ -434,7 +434,11 @@ extern char extended[70][30];
 #define FLT_OUT_OF_DOMAIN  159
 #define OUT_OF_REAL     160
 #define NOT_BASIC_ARRAY 161
-
+#define SERIOUS_ERR     162
+#define ARITHMETIC_ERR  163   
+#define DOMAIN_ERR      164
+#define UNDEF_DYN       165  
+#define UNDEF_ENTITY    166
 
 #define ESCHOME printf("\33[1;1H")
 #define ESCTOP  printf("\33[2;1H")

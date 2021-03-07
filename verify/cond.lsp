@@ -346,7 +346,6 @@
 				  (div "a" "b")))))
 (test (car data) "a" equal)
 (test (eq (cdr data) (class <integer>)) t)
-#|
 ;;; <stream>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -368,13 +367,16 @@
 				  (condition-continuable 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <serious-condition>)) t)
+#|
 ;;; <arithmetic-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (arithmetic-error-operation 1)))))
+				  
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <arithmetic-error>)) t)
+|#
 ;;; <domain-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -389,6 +391,7 @@
 				  (parse-error-string 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <parse-error>)) t)
+#|
 ;;; <simple-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -396,6 +399,7 @@
 				  (simple-error-format-string 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <simple-error>)) t)
+|#
 ;;; <stream-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -411,6 +415,7 @@
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <undefined-entity>)) t)
 ;;;
+#|
 ($argc domain-error-object 1 0 0)
 ($argc domain-error-expected-class 1 0 0)
 ;;; domain-error
@@ -506,6 +511,7 @@
 ($argc stream-error-stream 1 0 0)
 ;;; domain-error
 ($type stream-error-stream ($stream-error) :target)
+|#
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -546,5 +552,3 @@
 ($type undefined-entity-namespace ($undefined-entity) :target)
 
 ;;; end of file
-
-|#

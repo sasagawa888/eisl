@@ -4297,8 +4297,6 @@ int f_signal_condition(int arglist){
     return(UNDEF);
 }
 
-// following error report functions NOT invoke error
-// Because it is difficult to recover error process
 int f_simple_error_format_string(int arglist){
     int arg1,vars,val;
 
@@ -4333,7 +4331,9 @@ int f_arithmetic_error_operands(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    
+    if(numberp(arg1))
+        error(ARITHMETIC_ERR,"arithmetic-error-operands",arg1);
+
     fun = cdr(assoc(makesym("b"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4342,6 +4342,8 @@ int f_domain_error_object(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
+    if(numberp(arg1))
+        error(DOMAIN_ERR,"domain-error-object",arg1);
 
     fun = cdr(assoc(makesym("f"),GET_CDR(arg1)));
     return(fun);
@@ -4351,6 +4353,8 @@ int f_domain_error_expected_class(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
+    if(numberp(arg1))
+        error(DOMAIN_ERR,"domain-error-expected-class",arg1);
     
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
@@ -4360,7 +4364,9 @@ int f_parse_error_string(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    
+    if(numberp(arg1))
+        error(CANT_PARSE,"parse-error-string",arg1);
+
     fun = cdr(assoc(makesym("h"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4380,6 +4386,8 @@ int f_stream_error_stream(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
+    if(numberp(arg1))
+        error(NOT_STREAM,"stream-error-stream",arg1);
     
     fun = cdr(assoc(makesym("i"),GET_CDR(arg1)));
     return(fun);
@@ -4389,6 +4397,8 @@ int f_undefined_entity_name(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
+    if(numberp(arg1))
+        error(UNDEF_ENTITY,"undefined-entity-name",arg1);
     
     fun = cdr(assoc(makesym("j"),GET_CDR(arg1)));
     return(fun);
@@ -4408,6 +4418,9 @@ int f_condition_continuable(int arglist){
 
     arg1 = car(arglist);
     
+    if(numberp(arg1))
+        error(SERIOUS_ERR,"condition-continuable",arg1);
+
     if(GET_OPT(arg1) == NOTCONT)
         return(NIL);
     else

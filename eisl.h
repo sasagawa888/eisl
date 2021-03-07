@@ -227,6 +227,7 @@ extern int ccontrol_error;
 extern int cparse_error;
 extern int cprogram_error;
 extern int cdomain_error;
+extern int cclass_error;
 extern int cundefined_entity;
 extern int cunbound_variable;
 extern int cundefined_function;

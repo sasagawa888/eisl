@@ -342,7 +342,7 @@ void error(int errnum, const char *fun, int arg){
                         initargs = list6(makesym("format-string"),makestr("Super class has common parents at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun));
-                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        signal_condition(makeinstance(cclass_error,initargs),NIL);
                         break;
         case NOT_TOP_LEVEL:
                         initargs = list6(makesym("format-string"),makestr("Definition must be on top level at "),

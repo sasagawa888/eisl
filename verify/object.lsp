@@ -20,21 +20,21 @@
 
 ;;;----------  ----------
 ;;; special operator
-;($error (defclass if () ()) <program-error>)
+($error (defclass if () ()) <program-error>)
 ;;; keyword 
-;($error (defclass :a () ()) <program-error>)
-;($error (defclass &a () ()) <program-error>)
+($error (defclass :a () ()) <program-error>)
+($error (defclass &a () ()) <program-error>)
 ;;;
-;($error (defclass <object> () ()) <error>)
+($error (defclass <object> () ()) <error>)
 
 ;;;---------- ----------
 ;;;
 ($eval (defclass a () ()))
-;($error (defclass foo (a a) ()) <error>)
+($error (defclass foo (a a) ()) <error>)
 ;;;
-;($error (defclass foo (undef) ()) <undefined-entity>)
+($error (defclass foo (undef) ()) <undefined-entity>)
 ;;;
-;($error (defclass foo (<object>) ()) <error>)
+($error (defclass foo (<object>) ()) <error>)
 
 ;;;----------  ----------
 ;;;
@@ -138,33 +138,33 @@
 ($argc access-foo-a 1 0 0)
 ($argc boundp-foo-a 1 0 0)
 ;;
-;($eval (defglobal x (create (class foo-5))))
+($eval (defglobal x (create (class foo-5))))
 ;;
-;(test (boundp-foo-a x) t)
-;(test (read-foo-a x) 1 eql)
-;(test (access-foo-a x) 1 eql)
+(test (boundp-foo-a x) t)
+(test (read-foo-a x) 1 eql)
+(test (access-foo-a x) 1 eql)
 ;;
-;(test (write-foo-a 10 x) 10 eql)
-;(test (boundp-foo-a x) t)
-;(test (read-foo-a x) 10 eql)
-;(test (access-foo-a x) 10 eql)
+(test (write-foo-a 10 x) 10 eql)
+(test (boundp-foo-a x) t)
+(test (read-foo-a x) 10 eql)
+(test (access-foo-a x) 10 eql)
 ;;
-;(test (setf (access-foo-a x) 100) 100 eql)
-;(test (boundp-foo-a x) t)
-;(test (read-foo-a x) 100 eql)
-;(test (access-foo-a x) 100 eql)
+(test (setf (access-foo-a x) 100) 100 eql)
+(test (boundp-foo-a x) t)
+(test (read-foo-a x) 100 eql)
+(test (access-foo-a x) 100 eql)
 ;;
-;($eval (defglobal x (create (class foo-5) 'a 10)))
+($eval (defglobal x (create (class foo-5) 'a 10)))
 ;;
-;(test (boundp-foo-a x) t)
-;(test (read-foo-a x) 10 eql)
-;(test (access-foo-a x) 10 eql)
+(test (boundp-foo-a x) t)
+(test (read-foo-a x) 10 eql)
+(test (access-foo-a x) 10 eql)
 ;;
-;($eval (defglobal x (create (class foo-5) 'b 99)))
+($eval (defglobal x (create (class foo-5) 'b 99)))
 ;;
-;(test (boundp-foo-a x) t)
-;(test (read-foo-a x) 1 eql)
-;(test (access-foo-a x) 1 eql)
+(test (boundp-foo-a x) t)
+(test (read-foo-a x) 1 eql)
+(test (access-foo-a x) 1 eql)
 ;;
 ($eval
  (defclass foo-6 ()
@@ -176,8 +176,8 @@
 ($eval (defglobal x (create (class foo-6))))
 ;;
 (test (boundp-foo-a x) nil)
-;($error (read-foo-a x) <error>)
-;($error (access-foo-a x) <error>)
+($error (read-foo-a x) <error>)
+($error (access-foo-a x) <error>)
 ;;
 (test (write-foo-a 10 x) 10 eql)
 (test (boundp-foo-a x) t)
@@ -207,7 +207,7 @@
 ($stype defgeneric ($symbol $null) :target (x))
 ;;($stype defgeneric ($cons $null) foo :target)
 ;;;
-;($error (+ (defgeneric foo ())) <error>)
+($error (+ (defgeneric foo ())) <error>)
 ;; :method-combination 
 ;($error (defgeneric foo () (:method-combination undef)) 
 ;	<error>)

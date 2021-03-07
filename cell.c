@@ -118,6 +118,7 @@ void initclass(void){
     cparse_error = makeclass("parse-error",cerror);
     cprogram_error = makeclass("program-error",cerror);
     cdomain_error = makeclass("domain-error",cprogram_error);
+    cclass_error = makeclass("class-error",cprogram_error);
     cundefined_entity = makeclass("undefined-entity",cprogram_error);
     cunbound_variable = makeclass("unbound-variable",cundefined_entity);
     cundefined_function = makeclass("undefined-function",cundefined_entity);
@@ -164,6 +165,7 @@ void initclass(void){
     bindclass("<PARSE-ERROR>",cparse_error);
     bindclass("<PROGRAM-ERROR>",cprogram_error);
     bindclass("<DOMAIN-ERROR>",cdomain_error);
+    bindclass("<CLASS-ERROR>",cclass_error);
     bindclass("<UNDEFINED-ENTITY>",cundefined_entity);
     bindclass("<UNBOUND-VARIABLE>",cunbound_variable);
     bindclass("<UNDEFINED-FUNCTION>",cundefined_function);
@@ -189,6 +191,7 @@ void initclass(void){
     initerrargs(cparse_error);
     initerrargs(cprogram_error);
     initerrargs(cdomain_error);
+    initerrargs(cclass_error);
     initerrargs(cundefined_entity);
     initerrargs(cunbound_variable);
     initerrargs(cundefined_function);

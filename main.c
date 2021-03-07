@@ -54,6 +54,7 @@ int ccontrol_error;
 int cparse_error;
 int cprogram_error;
 int cdomain_error;
+int cclass_error;
 int cundefined_entity;
 int cunbound_variable;
 int cundefined_function;
@@ -190,7 +191,7 @@ char builtin[200][32] ={
 {"basic-vector-p"},{"call-next-method"},{"car"},{"cdr"},{"ceiling"},
 {"cerror"},{"char-index"},{"char/="},{"char<"},{"char<="},{"char="},
 {"char>"},{"char>="},{"characterp"},{"class-of"},{"close"},
-{"condition-continuable"},{"cons"},{"consp"},{"constinue-condition"},
+{"condition-continuable"},{"cons"},{"consp"},{"continue-condition"},
 {"cos"},{"cosh"},{"create-array"},{"create-list"},{"create-string-input-stream"},
 {"create-string-output-stream"},{"create-string"},{"create-vector"},{"create*"},
 {"div"},{"domain-error-object"},{"domain-error-expected-class"},

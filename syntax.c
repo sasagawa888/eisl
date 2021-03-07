@@ -1221,9 +1221,9 @@ int f_defclass(int arglist){
     if(!listp(arg2))
         error(NOT_LIST, "defclass", arg2);
     if(hassamep(arg2))
-        error(ILLEGAL_ARGS,"defclass",arg2);
+        error(IMPROPER_ARGS,"defclass",arg2);
     if(hassysclassp(arg2))
-        error(ILLEGAL_ARGS,"defclass",arg2);
+        error(IMPROPER_ARGS,"defclass",arg2);
     if(notexistclassp(arg2))
         error(UNDEF_CLASS,"defclass",arg2);
     if(hascommonp(arg2))

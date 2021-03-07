@@ -2795,7 +2795,7 @@ int f_aref(int arglist){
         return(array_ref(arg1,arg2));
     }
     else
-        error(ILLEGAL_ARGS, "aref", arg1);
+        error(NOT_BASIC_ARRAY, "aref", arg1);
 
     return(NIL);
 }
@@ -4299,15 +4299,13 @@ int f_signal_condition(int arglist){
     return(UNDEF);
 }
 
+// following error report functions NOT invoke error
+// Because it is difficult to recover error process
 int f_simple_error_format_string(int arglist){
     int arg1,vars,val;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"simple-error-format-string",arglist);
-    //if(GET_AUX(arg1) != csimple_error)
-    //    error(NOT_CLASS,"simple-error-format-string",arg1);
-
+   
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("a"),vars));
     return(val);
@@ -4317,11 +4315,7 @@ int f_simple_error_format_arguments(int arglist){
     int arg1,vars,val;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"simple-error-format-arguments",arglist);
-    //if(GET_AUX(arg1) != csimple_error)
-    //    error(NOT_CLASS,"simple-error-format-arguments",arg1);
-
+    
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("b"),vars));
     return(val);
@@ -4331,11 +4325,6 @@ int f_arithmetic_error_operation(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"arithmetic-error-operation",arg1);
-    if(GET_AUX(arg1) != carithmetic_error &&
-        !subclassp(GET_AUX(arg1),carithmetic_error))
-        error(NOT_ARITHMETIC,"arithmetic-error-operation",arg1);
 
     fun = GET_CAR(cdr(assoc(makesym("c"),GET_CDR(arg1))));
     return(fun);
@@ -4346,12 +4335,7 @@ int f_arithmetic_error_operands(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"arithmetic-error-operands",arg1);
-    if(GET_AUX(arg1) != carithmetic_error &&
-        !subclassp(GET_AUX(arg1),carithmetic_error))
-        error(NOT_ARITHMETIC,"arithmetic-error-operands",arg1);
-
+    
     fun = cdr(assoc(makesym("b"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4360,10 +4344,6 @@ int f_domain_error_object(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"domain-error-object",arg1);
-    if(GET_AUX(arg1) != cdomain_error)
-        error(NOT_ARITHMETIC,"domain-error-object",arg1);
 
     fun = cdr(assoc(makesym("f"),GET_CDR(arg1)));
     return(fun);
@@ -4373,11 +4353,7 @@ int f_domain_error_expected_class(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"domain-error-expected-class",arg1);
-    if(GET_AUX(arg1) != cdomain_error)
-        error(NOT_ARITHMETIC,"domain-error-expected-class",arg1);
-
+    
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4386,11 +4362,7 @@ int f_parse_error_string(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"parse-error-string",arg1);
-    if(GET_AUX(arg1) != cparse_error)
-        error(NOT_ARITHMETIC,"parse-error-string",arg1);
-
+    
     fun = cdr(assoc(makesym("h"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4400,11 +4372,7 @@ int f_parse_error_expected_class(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"parse-error-expected-class",arg1);
-    if(GET_AUX(arg1) != cparse_error)
-        error(NOT_ARITHMETIC,"parse-error-expected-class",arg1);
-
+    
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4414,11 +4382,7 @@ int f_stream_error_stream(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"stream-error-stream",arg1);
-    if(GET_AUX(arg1) != cstream_error)
-        error(NOT_ARITHMETIC,"stream-error-stream",arg1);
-
+    
     fun = cdr(assoc(makesym("i"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4427,11 +4391,7 @@ int f_undefined_entity_name(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"undefined-entity-name",arg1);
-    if(GET_AUX(arg1) != cundefined_entity)
-        error(NOT_ARITHMETIC,"undefined-entity-name",arg1);
-
+    
     fun = cdr(assoc(makesym("j"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4440,11 +4400,7 @@ int f_undefined_entity_namespace(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"undefined-entity-namespace",arg1);
-    if(GET_AUX(arg1) != cundefined_entity)
-        error(NOT_ARITHMETIC,"undefined-entity-namespace",arg1);
-
+    
     fun = cdr(assoc(makesym("k"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4453,9 +4409,7 @@ int f_condition_continuable(int arglist){
     int arg1;
 
     arg1 = car(arglist);
-    if(length(arglist) != 1)
-        error(WRONG_ARGS,"condition-continuable",arglist);
-
+    
     if(GET_OPT(arg1) == NOTCONT)
         return(NIL);
     else
@@ -4463,13 +4417,11 @@ int f_condition_continuable(int arglist){
 }
 
 int f_continue_condition(int arglist){
-    int arg1,arg2,n;
+    int arg1,arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if(!((n=length(arglist)) == 1 || n == 2))
-        error(WRONG_ARGS,"continue-condition",arglist);
-
+    
     if(GET_OPT(arg1) == CONTINUABLE)
         return(arg2);
     else

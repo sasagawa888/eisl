@@ -179,13 +179,6 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("expected-class"),cbasic_array);
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
                         break;
-        case NOT_VECARR:initargs = list10(makesym("format-string"),makestr("Not a vector or an array at "),
-                                          makesym("format-arguments"),arg,
-                                          makesym("function"),makesym(fun1),
-                                          makesym("object"),arg,
-                                          makesym("expected-class"),cbasic_array);
-                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
-                        break;
         case NOT_SYM:   initargs = list10(makesym("format-string"),makestr("Not a symbol at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun1),
@@ -238,13 +231,20 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("expected-class"),cobject);
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
                         break;
-        case NOT_ARITHMETIC:
-                        initargs = list10(makesym("format-string"),makestr("Not a arithmetic condition at "),
+        case NOT_BASIC_ARRAY:
+                        initargs = list10(makesym("format-string"),makestr("Not domain at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun1),
                                           makesym("object"),arg,
-                                          makesym("expected-class"),carithmetic_error);
+                                          makesym("expected-class"),cbasic_array);
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
+                        break;
+        case NOT_VECARR:initargs = list10(makesym("format-string"),makestr("Not a vector or an array at "),
+                                          makesym("format-arguments"),arg,
+                                          makesym("function"),makesym(fun1),
+                                          makesym("object"),arg,
+                                          makesym("expected-class"),cgeneral_array_star);
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;
         case ILLEGAL_RPAREN:
                         initargs = list6(makesym("format-string"),makestr("Illegal right parenthesis at "),

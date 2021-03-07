@@ -414,7 +414,6 @@ extern char extended[70][30];
 #define CANT_CREATE     138
 #define CANT_PARSE      139
 #define CANT_ASSURE     140
-#define NOT_ARITHMETIC  141
 #define NOT_EXIST_METHOD 142
 #define HAS_COMMON_CLASS 143
 #define NOT_TOP_LEVEL   144
@@ -434,6 +433,7 @@ extern char extended[70][30];
 #define OUT_OF_DOMAIN   158
 #define FLT_OUT_OF_DOMAIN  159
 #define OUT_OF_REAL     160
+#define NOT_BASIC_ARRAY 161
 
 
 #define ESCHOME printf("\33[1;1H")

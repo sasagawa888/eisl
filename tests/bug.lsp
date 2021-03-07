@@ -1,12 +1,15 @@
-(defun f (str)
-   (let ((substr (subseq str 0 3)))
-        (format (standard-output) "~A~%" substr)))
 
-(defun g (str)
-  (let ((substr str))
-        (format (standard-output) "~A~%" str)))
+ (defun domain-error-handler (condition)
+   (let ((data ()))
+     (setq data
+	   (cons (domain-error-object condition)
+		 (domain-error-expected-class condition)))
+     (throw 'c-domain-error data)))
+;;; <basic-array>
+(defglobal data nil)
 
+(setq data
+	     (catch 'c-domain-error
+	       (with-handler #'domain-error-handler
+			     (aref 1))))
 
-(defun h (str)
-   (let ((substr str))
-        (format (standard-output) "~A~%" str str str)))

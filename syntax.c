@@ -1674,9 +1674,13 @@ int f_convert(int arglist){
             break;
         case SYM:
             if(GET_AUX(arg2) == csymbol){
+                //if(nullp(arg1))
+                //    error(OUT_OF_DOMAIN,"convert",arglist);
                 return(arg1);
             }
             else if(GET_AUX(arg2) == cstring){
+                //if(nullp(arg1))
+                //    error(OUT_OF_DOMAIN,"convert",arglist);
                 return(makestr(GET_NAME(arg1)));
             }
             else if(nullp(arg1) && GET_AUX(arg2) == cgeneral_vector){

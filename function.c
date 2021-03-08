@@ -4322,10 +4322,9 @@ int f_simple_error_format_string(int arglist){
     int arg1,vars,val;
 
     arg1 = car(arglist);
-    //if(!subclassp(GET_AUX(arg1),cerror))
-    if(numberp(arg1))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(SIMPLE_ERR,"simple-error-format-string",arg1);
-
+    
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("a"),vars));
     return(val);
@@ -4335,6 +4334,8 @@ int f_simple_error_format_arguments(int arglist){
     int arg1,vars,val;
 
     arg1 = car(arglist);
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
+        error(SIMPLE_ERR,"simple-error-format-arguments",arg1);
 
     vars = GET_CDR(arg1);
     val = cdr(assq(makesym("b"),vars));
@@ -4345,6 +4346,8 @@ int f_arithmetic_error_operation(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
+        error(ARITHMETIC_ERR,"arithmetic-error-operation",arg1);
 
     fun = GET_CAR(cdr(assoc(makesym("c"),GET_CDR(arg1))));
     return(fun);
@@ -4355,7 +4358,7 @@ int f_arithmetic_error_operands(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(ARITHMETIC_ERR,"arithmetic-error-operands",arg1);
 
     fun = cdr(assoc(makesym("b"),GET_CDR(arg1)));
@@ -4366,7 +4369,7 @@ int f_domain_error_object(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(DOMAIN_ERR,"domain-error-object",arg1);
 
     fun = cdr(assoc(makesym("f"),GET_CDR(arg1)));
@@ -4377,7 +4380,7 @@ int f_domain_error_expected_class(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(DOMAIN_ERR,"domain-error-expected-class",arg1);
     
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
@@ -4388,7 +4391,7 @@ int f_parse_error_string(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(CANT_PARSE,"parse-error-string",arg1);
 
     fun = cdr(assoc(makesym("h"),GET_CDR(arg1)));
@@ -4400,6 +4403,8 @@ int f_parse_error_expected_class(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
+        error(CANT_PARSE,"parse-error-expected-class",arg1);
     
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
@@ -4410,7 +4415,7 @@ int f_stream_error_stream(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(NOT_STREAM,"stream-error-stream",arg1);
     
     fun = cdr(assoc(makesym("i"),GET_CDR(arg1)));
@@ -4421,7 +4426,7 @@ int f_undefined_entity_name(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(UNDEF_ENTITY,"undefined-entity-name",arg1);
     
     fun = cdr(assoc(makesym("j"),GET_CDR(arg1)));
@@ -4432,7 +4437,9 @@ int f_undefined_entity_namespace(int arglist){
     int arg1,fun;
 
     arg1 = car(arglist);
-    
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
+        error(UNDEF_ENTITY,"undefined-entity-namespace",arg1);
+
     fun = cdr(assoc(makesym("k"),GET_CDR(arg1)));
     return(fun);
 }
@@ -4442,8 +4449,7 @@ int f_condition_continuable(int arglist){
 
     arg1 = car(arglist);
     
-    if(numberp(arg1))
-    //if(!subclassp(GET_AUX(arg1),cerror))
+    if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
         error(SERIOUS_ERR,"condition-continuable",arg1);
 
     if(GET_OPT(arg1) == NOTCONT)

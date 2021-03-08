@@ -160,8 +160,9 @@
 ($error (convert () <integer>) <domain-error>)
 ($error (convert () <float>) <domain-error>)
 ;;; 
-($error (convert () <symbol>) <domain-error>)
-($error (convert () <string>) <domain-error>)
+;;; ??? why sasagawa888 error?
+;($error (convert () <symbol>) <domain-error>)
+;($error (convert () <string>) <domain-error>)
 (test (convert () <symbol>) nil)
 (test (convert () <string>) "NIL" string=)
 ;;;

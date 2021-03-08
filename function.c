@@ -4290,7 +4290,7 @@ int f_error(int arglist){
 }
 
 int f_cerror(int arglist){
-    int arg1,arg2,arg3,strstream,str;
+    int arg1,arg2,arg3;
 
     arg1 = car(arglist); //continue-string
     arg2 = cadr(arglist); //error-string
@@ -4300,10 +4300,7 @@ int f_cerror(int arglist){
     if(!stringp(arg2))
         error(NOT_STR, "error", arg2);
 
-    strstream = f_create_string_output_stream(NIL);
-    f_format(cons(strstream,cons(arg1,arg3)));
-    str = f_get_output_stream_string(list1(strstream));
-    return(signal_condition(makeusercond(csimple_error,arg2,str),arg1));
+    return(signal_condition(makeusercond(csimple_error,arg2,arg3),arg1));
 }
 
 int f_signal_condition(int arglist){
@@ -4370,7 +4367,7 @@ int f_domain_error_object(int arglist){
 
     arg1 = car(arglist);
     if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
-        error(DOMAIN_ERR,"domain-error-object",arg1);
+        error(DOMAIN_ERR,"domain-error-object",cons(arg1,cdomain_error));
 
     fun = cdr(assoc(makesym("f"),GET_CDR(arg1)));
     return(fun);
@@ -4381,7 +4378,7 @@ int f_domain_error_expected_class(int arglist){
 
     arg1 = car(arglist);
     if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
-        error(DOMAIN_ERR,"domain-error-expected-class",arg1);
+        error(DOMAIN_ERR,"domain-error-expected-class",cons(arg1,cdomain_error));
     
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);
@@ -4392,7 +4389,7 @@ int f_parse_error_string(int arglist){
 
     arg1 = car(arglist);
     if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
-        error(CANT_PARSE,"parse-error-string",arg1);
+        error(DOMAIN_ERR,"parse-error-string",cons(arg1,cparse_error));
 
     fun = cdr(assoc(makesym("h"),GET_CDR(arg1)));
     return(fun);
@@ -4404,7 +4401,7 @@ int f_parse_error_expected_class(int arglist){
 
     arg1 = car(arglist);
     if(!subclassp(GET_AUX(arg1),cerror) && GET_AUX(arg1) != cerror)
-        error(CANT_PARSE,"parse-error-expected-class",arg1);
+        error(DOMAIN_ERR,"parse-error-expected-class",cons(arg1,cparse_error));
     
     fun = cdr(assoc(makesym("g"),GET_CDR(arg1)));
     return(fun);

@@ -324,9 +324,9 @@ void error(int errnum, const char *fun, int arg){
                         break; 
         case CANT_PARSE:initargs = list10(makesym("format-string"),makestr("Can't parse number at "),
                                           makesym("format-arguments"),arg,
-                                          makesym("function"),makesym(fun1),
                                           makesym("object"),arg,
-                                          makesym("expected-class"),cparse_error);
+                                          makesym("string"),arg,
+                                          makesym("expected-class"),cnumber);
                         signal_condition(makeinstance(cparse_error,initargs),NIL);
                         break;
         case CANT_ASSURE:
@@ -432,8 +432,8 @@ void error(int errnum, const char *fun, int arg){
                         initargs = list10(makesym("format-string"),makestr("Domain error at "),
                                           makesym("format-arguments"),arg,
                                           makesym("function"),makesym(fun1),
-                                          makesym("object"),arg,
-                                          makesym("expected-class"),cdomain_error);
+                                          makesym("object"),car(arg),
+                                          makesym("expected-class"),cdr(arg));
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
                         break; 
         case UNDEF_ENTITY:

@@ -479,7 +479,6 @@
 ;;; domain-error
 ($type simple-error-format-string ($simple-error) :target)
 ($type simple-error-format-arguments ($simple-error) :target)
-#|
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -495,6 +494,7 @@
 		 nil))
      (throw 'c-simple-error data))))
 ;;;
+#|
 ($eval (tp-make-tmp-file))
 ($eval (defglobal str (open-io-file *tp-example-file*)))
 (test (streamp (car

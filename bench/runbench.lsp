@@ -13,10 +13,10 @@
 (defglobal *extension*  (or (ignore-errors *cpext*) ".lsp")) ;; .ibc, .lap ...
 (defglobal *result*     nil)
 (defglobal *total-time* 0.0)
-(defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
-(defglobal *bignum*     (and (integerp *largeint*)
-                             (> *largeint* 0)
-                             (eql (isqrt *largeint*) 100000)))
+;(defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
+;(defglobal *bignum*     (and (integerp *largeint*)
+;                             (> *largeint* 0)
+;                             (eql (isqrt *largeint*) 100000)))
 
 (defun bench-file (bench)
    (string-append "bench/" bench *extension*))
@@ -54,6 +54,7 @@
                 (if (equal *result* ,expect) "ok" *result*)
                 (format-time time))))
 
+
 (format (standard-output) "~%")
 
 ;;; (1) FIB
@@ -88,89 +89,90 @@
 
 ;;; (7) BOYER
 
-(load (bench-file "boyer"))
-(bench "07" "Boyer" (boyer) nil)
+;(load (bench-file "boyer"))
+;(bench "07" "Boyer" (boyer) nil)
 
 ;;; (8) BROWSE
 
-(load (bench-file "browse"))
-(bench "08" "Browse" (browse) ())
+;(load (bench-file "browse"))
+;(bench "08" "Browse" (browse) ())
 
 ;;; (9) DESTRU
 
-(load (bench-file "destru"))
-(bench "09" "Destru" (destructive 600 50) ())
+;;(load (bench-file "destru"))
+;;(bench "09" "Destru" (destructive 600 50) ())
 
 ;;; (10) TRAVINI
 
-(load (bench-file "traverse"))
-(bench "10" "Travini" (init-traverse) ())
+;;(load (bench-file "traverse"))
+;;(bench "10" "Travini" (init-traverse) ())
 
 ;;; (11) TRAVRUN
 
-(bench "11" "Travrun" (run-traverse) ())
+;;(bench "11" "Travrun" (run-traverse) ())
 
 ;;; (12) DERIV
 
-(load (bench-file "deriv"))
-(bench "12" "Deriv" (deriv-run) ())
+;;(load (bench-file "deriv"))
+;;(bench "12" "Deriv" (deriv-run) ())
 
 ;;; (13) DDERIV
 
-(load (bench-file "dderiv"))
-(bench "13" "Dderiv" (dderiv-run) ())
+;;(load (bench-file "dderiv"))
+;;(bench "13" "Dderiv" (dderiv-run) ())
 
 ;;; (14-15) DIV2
 
-(load (bench-file "div2"))
-(bench "14" "Divit" (test-1 *ll*) ())
-(bench "15" "Divrec" (test-2 *ll*) ())
+;;(load (bench-file "div2"))
+;(bench "14" "Divit" (test-1 *ll*) ())
+;(bench "15" "Divrec" (test-2 *ll*) ())
 
 ;;; (16) FFT
 
-(load (bench-file "fft"))
-(bench "16" "FFT" (fft-bench) ())
+;(load (bench-file "fft"))
+;(bench "16" "FFT" (fft-bench) ())
 
 ;;; (17) PUZZLE
 
-(load (bench-file "puzzle"))
-(bench "17" "Puzzle" (puzzle-start) 2005)
+;(load (bench-file "puzzle"))
+;(bench "17" "Puzzle" (puzzle-start) 2005)
 
 ;;; (18) TRIANG
 
-(load (bench-file "triang"))
-(bench "18" "Triang" (gogogo 22) ())
+;(load (bench-file "triang"))
+;(bench "18" "Triang" (gogogo 22) ())
 
 ;;; (19) FPRINT
 
-(load (bench-file "fprint"))
-(bench "19" "Fprint" (fprint) t)
+;(load (bench-file "fprint"))
+;(bench "19" "Fprint" (fprint) t)
 
 ;;; (20) FREAD
 
-(load (bench-file "fread"))
-(bench "20" "Fread" (fread) t)
+;(load (bench-file "fread"))
+;(bench "20" "Fread" (fread) t)
 
 ;;; (21) TPRINT
 
-(load (bench-file "tprint"))
-(bench "21" "Tprint"
-       (let ((so (create-string-output-stream)))
-            (format so "~s" test-pattern)
-            (close so)
-            t)
-       t)
+;(load (bench-file "tprint"))
+;(bench "21" "Tprint"
+;       (let ((so (create-string-output-stream)))
+;            (format so "~s" test-pattern)
+;            (close so)
+;            t)
+;       t)
 
 ;;; (22) FRPOLY
 
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
 
-(load (bench-file "frpoly"))
-(bench "22" "Frpoly" (mapc (lambda (n)
-                                          (pexptsq r  n)
-                             (if *bignum* (pexptsq r2 n))
-                                          (pexptsq r3 n))
-                          '(2 5 10 15))
-                     '(2 5 10 15))
+;(load (bench-file "frpoly"))
+;(bench "22" "Frpoly" (mapc (lambda (n)
+;                                          (pexptsq r  n)
+;                             (if *bignum* (pexptsq r2 n))
+;                                          (pexptsq r3 n))
+;                          '(2 5 10 15))
+;                     '(2 5 10 15))
 
 (format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
+

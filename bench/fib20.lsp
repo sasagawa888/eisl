@@ -11,8 +11,8 @@
 ;; call (fib 20)
 
 (defun fib (n)
-   (cond ((eq n 1) 1)
-         ((eq n 2) 1)
+   (cond ((= n 1) 1)
+         ((= n 2) 1)
          (t (+ (fib (- n 1)) (fib (- n 2))))))
 
 (defgeneric gfib (n)

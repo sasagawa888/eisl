@@ -17,6 +17,7 @@
 ;(defglobal *bignum*     (and (integerp *largeint*)
 ;                             (> *largeint* 0)
 ;                             (eql (isqrt *largeint*) 100000)))
+(defglobal *bignum* 12345678901234567890)
 
 (defun bench-file (bench)
    (string-append "bench/" bench *extension*))
@@ -165,14 +166,15 @@
 ;;; (22) FRPOLY
 
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
-;(gbc)
-;(load (bench-file "frpoly"))
-;(bench "22" "Frpoly" (mapc (lambda (n)
-;                                          (pexptsq r  n)
-;                             (if *bignum* (pexptsq r2 n))
-;                                          (pexptsq r3 n))
-;                          '(2 5 10 15))
-;                     '(2 5 10 15))
-
+#|
+(gbc)
+(load (bench-file "frpoly"))
+(bench "22" "Frpoly" (mapc (lambda (n)
+                                          (pexptsq r  n)
+                             (if *bignum* (pexptsq r2 n))
+                                          (pexptsq r3 n))
+                          '(2 5 10 15))
+                     '(2 5 10 15))
+|#
 (format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
 

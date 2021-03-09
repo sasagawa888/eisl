@@ -33,7 +33,7 @@
 
 (defmacro quo (x y) `(div ,x ,y))
 
-(defmacro oddp (x) `(eq (mod ,x 2) 1))
+(defmacro oddp (x) `(= (mod ,x 2) 1))
 
 (defmacro pfloor (x y) `(div ,x ,y))
 

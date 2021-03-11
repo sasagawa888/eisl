@@ -48,17 +48,17 @@ typedef double (*fn7)(int);
 typedef int (*fn8)(double);
 typedef void (*tfunc)(char*, int(*func)(int));
 
-tfunc deftfunc;
+static tfunc deftfunc;
 
-fn0 f0[100];
-fn1 f1[100];
-fn2 f2[100];
-fn3 f3[100];
-fn4 f4[100];
-fn5 f5[100];
-fn6 f6[100];
-fn7 f7[100];
-fn8 f8[100];
+static fn0 f0[100];
+static fn1 f1[100];
+static fn2 f2[100];
+static fn3 f3[100];
+static fn4 f4[100];
+static fn5 f5[100];
+static fn6 f6[100];
+static fn7 f7[100];
+static fn8 f8[100];
 
 
 void init0(int n, tfunc x){
@@ -101,9 +101,9 @@ void init_deftfunc(tfunc x){
     deftfunc = (tfunc)x;
 }
 
-jmp_buf catch_buf[10];
-int catch_arg; //recieve argument of catch
-int block_arg; //recieve argument of block
+static jmp_buf catch_buf[10];
+static int catch_arg; //recieve argument of catch
+static int block_arg; //recieve argument of block
 
 #define Fcheckgbc() (f0[0])()
 #define Fgbc()	(f0[1])()
@@ -200,14 +200,14 @@ int block_arg; //recieve argument of block
 
 #define Fmakedoubleflt(x) (f8[0])(x)
 
-int fast_immediate(int x){
+static inline int fast_immediate(int x){
     if(x >= 0)
         return(x | INT_FLAG);
     else
         return(x);
 }
 
-int fast_convert(int x){
+static int fast_convert(int x){
 	int res,n;
 
     if(x < 0 || x >= INT_FLAG)
@@ -225,7 +225,7 @@ int fast_convert(int x){
     return(res);
 }
 
-int fast_inverse(int x){
+static int fast_inverse(int x){
 	int res;
 
     if(x >= INT_FLAG)
@@ -239,7 +239,7 @@ int fast_inverse(int x){
 }
 
 
-int fast_numeqp(){
+static int fast_numeqp(){
     int x,y;
 
     y = Fargpop();
@@ -262,7 +262,7 @@ int fast_numeqp(){
         return(Fnumeqp(fast_inverse(x),fast_inverse(y)));
 }
 
-int fast_smallerp(){
+static int fast_smallerp(){
     int x,y;
 
     y = Fargpop();
@@ -285,7 +285,7 @@ int fast_smallerp(){
         return(Fsmallerp(fast_inverse(x),fast_inverse(y)));
 }
 
-int fast_eqsmallerp(){
+static int fast_eqsmallerp(){
     int x,y;
 
     y = Fargpop();
@@ -309,7 +309,7 @@ int fast_eqsmallerp(){
 }
 
 
-int fast_greaterp(){
+static inline int fast_greaterp(){
     int x,y;
 
     y = Fargpop();
@@ -319,7 +319,7 @@ int fast_greaterp(){
     return(fast_smallerp());
 }
 
-int fast_eqgreaterp(){
+static inline int fast_eqgreaterp(){
     int x,y;
 
     y = Fargpop();
@@ -329,7 +329,7 @@ int fast_eqgreaterp(){
     return(fast_eqsmallerp());
 }
 
-int fast_plus(){
+static int fast_plus(){
     int x,y,intx,inty,res;
 
     y = Fargpop();
@@ -365,7 +365,7 @@ int fast_plus(){
         return(fast_convert(Fplus(fast_inverse(x),fast_inverse(y))));
 }
 
-int fast_minus(){
+static int fast_minus(){
     int x,y,intx,inty,res;
 
     y = Fargpop();
@@ -403,7 +403,7 @@ int fast_minus(){
         return(fast_convert(Fminus(fast_inverse(x),fast_inverse(y))));
 }
 
-int fast_mult(){
+static int fast_mult(){
     int x,y,intx,inty,res;
 
     y = Fargpop();
@@ -435,7 +435,7 @@ int fast_mult(){
 
 
 
-int fast_mod(){
+static int fast_mod(){
     int x,y,intx,inty,res;
     long long int longx,longy;
 
@@ -484,14 +484,14 @@ int fast_mod(){
                            Flist2(fast_inverse(x),fast_inverse(y)))));
 }
 
-int fast_not(int x){
+static inline int fast_not(int x){
 	if(x == NIL)
     	return(T);
     else
     	return(NIL);
 }
 
-int fast_eq(){
+static inline int fast_eq(){
     int x,y;
 
     y = Fargpop();
@@ -502,7 +502,7 @@ int fast_eq(){
         return(NIL);
 }
 
-int fast_setnth(int x, int n, int y){
+static int fast_setnth(int x, int n, int y){
     while(n > 0){
         x = Fcdr(x);
         n--;
@@ -511,24 +511,24 @@ int fast_setnth(int x, int n, int y){
     return(y);
 }
 //---------------OPenGL-----------------
-int displayfunc;
+static int displayfunc;
 
-void display_callback(void){
+static inline void display_callback(void){
     Feval(displayfunc);
 }
 
-int keyboardfunc;
+static int keyboardfunc;
 
-void keyboard_callback(unsigned char key, int x, int y){
+static void keyboard_callback(unsigned char key, int x, int y){
     Fset_cdr(Fmakesym("gl::key"),Fmakeint((int)key));
     Fset_cdr(Fmakesym("gl::x"),Fmakeint(x));
     Fset_cdr(Fmakesym("gl::y"),Fmakeint(y));
     Feval(keyboardfunc);
 }
 
-int mousefunc;
+static int mousefunc;
 
-void mouse_callback(int button, int state, int x, int y) {
+static void mouse_callback(int button, int state, int x, int y) {
     Fset_cdr(Fmakesym("gl::button"),Fmakeint(button));
     Fset_cdr(Fmakesym("gl::state"),Fmakeint(state));
     Fset_cdr(Fmakesym("gl::x"),Fmakeint(x));

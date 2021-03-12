@@ -428,7 +428,7 @@ int f_plus(int arglist){
     else{
         res = car(arglist);
         if(!numberp(res))
-            error(NOT_NUM, "+", arg);
+            error(NOT_NUM, "+", res);
         arglist = cdr(arglist);
     }
     while(!(IS_NIL(arglist))){

@@ -13,10 +13,10 @@
 (defglobal *extension*  (or (ignore-errors *cpext*) ".lsp")) ;; .ibc, .lap ...
 (defglobal *result*     nil)
 (defglobal *total-time* 0.0)
-;(defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
-;(defglobal *bignum*     (and (integerp *largeint*)
-;                             (> *largeint* 0)
-;                             (eql (isqrt *largeint*) 100000)))
+(defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
+(defglobal *bignum*     (and (integerp *largeint*)
+                             (> *largeint* 0)
+                             (eql (isqrt *largeint*) 100000)))
 (defglobal *bignum* 12345678901234567890)
 
 (defun bench-file (bench)

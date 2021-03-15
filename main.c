@@ -1011,10 +1011,10 @@ int sread(void){
         case INTEGER:   return(makeint(atoi(stok.buf)));
         case FLOAT_N:   return(makeflt(atof(stok.buf)));
         case BIGNUM:    return(makebigx(stok.buf));
-        case BINARY:    return(makeint((int)strtol(stok.buf,&e,2)));
-        case OCTAL:     return(makeint((int)strtol(stok.buf,&e,8)));
         case DECNUM:    return(makeint((int)strtol(stok.buf,&e,10)));
-        case HEXNUM:    return(makeint((int)strtol(stok.buf,&e,16)));
+        case BINARY:    return(readbin(stok.buf));
+        case OCTAL:     return(readoct(stok.buf));
+        case HEXNUM:    return(readhex(stok.buf));
         case EXPTNUM:   return(makeflt(atof(stok.buf)));
         case VECTOR:    return(vector(readlist()));
         case ARRAY:     n = atoi(stok.buf);
@@ -1067,6 +1067,73 @@ int readlist(void){
         cdr = readlist();
         return(cons(car,cdr));
     }
+}
+
+int readbin(char* buf){
+    char str[BUFSIZE],*e;
+    int pos,n,res,part,inc;
+
+    n = strlen(buf);
+    if(n <= 31)
+        return(makeint((int)strtol(buf,&e,2)));
+
+    pos = 0;
+    res = makeint(0);
+    inc = makeint(2);
+
+    while(pos < n){
+        str[0] = buf[pos];
+        str[1] = NUL;
+        pos++;
+        part = makeint((int)strtol(str,&e,2));
+        res = plus(mult(res,inc),part);
+    }
+    return(res);
+}
+
+int readoct(char* buf){
+    char str[BUFSIZE],*e;
+    int pos,n,res,part,inc;
+
+    n = strlen(buf);
+    if(n <= 10)
+        return(makeint((int)strtol(buf,&e,8)));
+
+    pos = 0;
+    res = makeint(0);
+    inc = makeint(8);
+
+    while(pos < n){
+        str[0] = buf[pos];
+        str[1] = NUL;
+        pos++;
+        part = makeint((int)strtol(str,&e,8));
+        res = plus(mult(res,inc),part);
+    }
+    return(res);
+}
+
+
+int readhex(char* buf){
+    char str[BUFSIZE],*e;
+    int pos,n,res,part,inc;
+
+    n = strlen(buf);
+    if(n <= 7)
+        return(makeint((int)strtol(buf,&e,16)));
+
+    pos = 0;
+    res = makeint(0);
+    inc = makeint(16);
+
+    while(pos < n){
+        str[0] = buf[pos];
+        str[1] = NUL;
+        pos++;
+        part = makeint((int)strtol(str,&e,16));
+        res = plus(mult(res,inc),part);
+    }
+    return(res);
 }
 
 //-----print------------------

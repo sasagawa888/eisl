@@ -3902,6 +3902,9 @@ int f_parse_number(int arglist){
 
     if(bignumtoken(stok.buf))
             return(makebigx(stok.buf));
+    
+    if(dectoken(stok.buf))
+        return(makeint((int)strtol(stok.buf,&e,10)));
 
     if(inttoken(stok.buf))
         return(makeint(strtol(stok.buf,&e,10)));
@@ -3910,16 +3913,13 @@ int f_parse_number(int arglist){
         return(makeflt(atof(stok.buf)));
 
     if(bintoken(stok.buf))
-        return(makeint((int)strtol(stok.buf,&e,2)));
+        return(readbin(stok.buf));
 
     if(octtoken(stok.buf))
-        return(makeint((int)strtol(stok.buf,&e,8)));
-
-    if(dectoken(stok.buf))
-        return(makeint((int)strtol(stok.buf,&e,10)));
+        return(readoct(stok.buf));
 
     if(hextoken(stok.buf))
-        return(makeint((int)strtol(stok.buf,&e,16)));
+        return(readhex(stok.buf));
 
 
     error(CANT_PARSE,"parse-number",arg1);

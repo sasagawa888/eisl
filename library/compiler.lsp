@@ -277,6 +277,38 @@ double tarai(double x, double y, double z){
            (format (standard-output) "invoke CC~%")
            (system (string-append option fname ".o " fname ".c " c-lang-option))))
     
+    ;;compile cuda code
+    (defpublic compile-cuda (x)
+        (setq file-name-and-ext x)
+        (setq type-function nil)
+        (inference-file x)
+        (catch
+         'exit
+         (unwind-protect
+          (compile-cuda1 x)
+          (if instream
+              (close instream))
+          (ignore-toplevel-check nil)))
+        t)
+    
+    (defun compile-cuda1 (x)
+        (let ((option "nvcc -shared  -Xcompiler -fPIC -O3 -w -I$HOME/eisl  -lm -ldl -o ")
+              (fname (filename x)) )
+           (ignore-toplevel-check t)
+           (format (standard-output) "initialize~%")
+           (initialize)
+           (format (standard-output) "pass1~%")
+           (pass1 x)
+           (format (standard-output) "pass2~%")
+           (pass2 x)
+           (ignore-toplevel-check nil)
+           (format (standard-output) "finalize~%")
+           (finalize x ".cu")
+           (format (standard-output) "invoke NVCC~%")
+           (system (string-append option fname ".o " fname ".cu " c-lang-option))
+           (system (string-append "rm " fname ".cu"))))
+
+    
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))

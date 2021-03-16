@@ -12,7 +12,7 @@ typedef int (*fn5)(int , int , int);
 typedef char* (*fn6)(int);
 typedef double (*fn7)(int);
 typedef int (*fn8)(double);
-typedef void (*tfunc)(char*, int(*func)(int));
+typedef void (*tfunc)(const char*, int(*func)(int));
 
 enum { CHECKGBC_IDX, GBC_IDX, FRESHCELL_IDX, FREECELL_IDX,
   GBCSW_IDX, GETWP_IDX, ARGPOP_IDX, SHELTERPOP_IDX,

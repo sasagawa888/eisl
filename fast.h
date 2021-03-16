@@ -175,10 +175,10 @@ static inline int Fsetdynamic(int x,int y) { return f2[SETDYNAMIC_IDX](x,y); }
 static inline int Fsetprop(int x,int y) { return f2[SETPROP_IDX](x,y); }
 static inline int Fadaptp(int x,int y) { return f2[ADAPTP_IDX](x,y); }
 
-static inline int Fmakestr(char *x) { return f3[MAKESTR_IDX](x); }
-static inline int Fmakesym(char *x) { return f3[MAKESYM_IDX](x); }
-static inline int Fmakechar(char *x) { return f3[MAKECHAR_IDX](x); }
-static inline int Fmakestrflt(char *x) { return f3[MAKESTRFLT_IDX](x); }
+static inline int Fmakestr(const char *x) { return f3[MAKESTR_IDX]((char *)x); }
+static inline int Fmakesym(const char *x) { return f3[MAKESYM_IDX]((char *)x); }
+static inline int Fmakechar(const char *x) { return f3[MAKECHAR_IDX]((char *)x); }
+static inline int Fmakestrflt(const char *x) { return f3[MAKESTRFLT_IDX]((char *)x); }
 static inline int Fmakebig(char *x) { return f3[MAKEBIG_IDX](x); }
 
 static inline long long int Fgetlong(int x) { return f4[GETLONG_IDX](x); }

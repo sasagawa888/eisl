@@ -1459,7 +1459,7 @@ int eval(int addr){
     int val,res,temp;
     char c;
 
-    checkgbc();
+    (void)checkgbc();
 
     if(IS_NIL(addr) || IS_T(addr))
         return(addr);

@@ -9,6 +9,7 @@
 #include <time.h>
 #include <dlfcn.h>
 #include "eisl.h"
+#include "ffi.h"
 
 void initsubr(void){
     //constant
@@ -204,29 +205,18 @@ void initsubr(void){
 }
 
 
-typedef void (*tfunc)(char*, int(*func)(int));
-typedef int (*initfunc_t)(int, tfunc);
 typedef void (*initdeftfunc_t)(tfunc);
 typedef void (*voidfunc_t)(void);
 
-typedef int (*func0)(void);
-typedef int (*initfunc0)(int, func0);
-typedef int (*func1)(int);
-typedef int (*initfunc1)(int, func1);
-typedef int (*func2)(int, int);
-typedef int (*initfunc2)(int, func2);
-typedef int (*func3)(char*);
-typedef int (*initfunc3)(int, func3);
-typedef long long (*func4)(int);
-typedef int (*initfunc4)(int, func4);
-typedef int (*func5)(int, int, int);
-typedef int (*initfunc5)(int, func5);
-typedef char* (*func6)(int);
-typedef int (*initfunc6)(int, func6);
-typedef double (*func7)(int);
-typedef int (*initfunc7)(int, func7);
-typedef int (*func8)(double);
-typedef int (*initfunc8)(int, func8);
+typedef int (*initfunc0)(int, fn0);
+typedef int (*initfunc1)(int, fn1);
+typedef int (*initfunc2)(int, fn2);
+typedef int (*initfunc3)(int, fn3);
+typedef int (*initfunc4)(int, fn4);
+typedef int (*initfunc5)(int, fn5);
+typedef int (*initfunc6)(int, fn6);
+typedef int (*initfunc7)(int, fn7);
+typedef int (*initfunc8)(int, fn8);
 
 void dynamic_link(int x){
     char str[256] = {"./"};
@@ -268,109 +258,108 @@ void dynamic_link(int x){
 
 
     //argument-0 type
-    init_f0(0,(func0)checkgbc);
-    init_f0(1,(func0)gbc);
-    init_f0(2,(func0)freshcell);
-    init_f0(3,(func0)freecell);
-    init_f0(4,(func0)gbcsw);
-    init_f0(5,(func0)getwp);
-    init_f0(9,(func0)argpop);
-    init_f0(10,(func0)shelterpop);
-    init_f0(11,(func0)pop);
-    init_f0(12,(func0)get_dynpt);
+    init_f0(CHECKGBC_IDX,checkgbc);
+    init_f0(GBC_IDX,gbc);
+    init_f0(FRESHCELL_IDX,freshcell);
+    init_f0(FREECELL_IDX,freecell);
+    init_f0(GBCSW_IDX,gbcsw);
+    init_f0(GETWP_IDX,getwp);
+    init_f0(ARGPOP_IDX,argpop);
+    init_f0(SHELTERPOP_IDX,shelterpop);
+    init_f0(POP_IDX,pop);
+    init_f0(GETDYNPT_IDX,get_dynpt);
 
     //argument-1 type
-    init_f1(0,(func1)car);
-    init_f1(1,(func1)cdr);
-    init_f1(2,(func1)cadr);
-    init_f1(3,(func1)caddr);
-    init_f1(4,(func1)caar);
-    init_f1(5,(func1)cadar);
-    init_f1(6,(func1)list1);
-    init_f1(7,(func1)eval);
-    init_f1(8,(func1)get_aux);
-    init_f1(9,(func1)fast_length);
-    init_f1(10,(func1)subrp);
-    init_f1(11,(func1)fsubrp);
-    init_f1(12,(func1)functionp);
-    init_f1(13,(func1)macrop);
-    init_f1(14,(func1)integerp);
-    init_f1(15,(func1)longnump);
-    init_f1(16,(func1)bignump);
-    init_f1(20,(func1)get_int);
-    init_f1(21,(func1)makeint);
-    init_f1(22,(func1)makeintlong);
-    init_f1(23,(func1)vector);
-    init_f1(24,(func1)fast_car);
-    init_f1(25,(func1)fast_cdr);
-    init_f1(30,(func1)findenv);
-    init_f1(31,(func1)finddyn);
-    init_f1(39,(func1)argpush);
-    init_f1(40,(func1)shelterpush);
-    init_f1(41,(func1)push);
-    init_f1(42,(func1)get_opt);
-    init_f1(43,(func1)get_prop);
-    init_f1(44,(func1)set_dynpt);
-    init_f1(45,(func1)set_catch_symbols);
-    init_f1(46,(func1)eval);
+    init_f1(CAR_IDX,car);
+    init_f1(CDR_IDX,cdr);
+    init_f1(CADR_IDX,cadr);
+    init_f1(CADDR_IDX,caddr);
+    init_f1(CAAR_IDX,caar);
+    init_f1(CADAR_IDX,cadar);
+    init_f1(LIST1_IDX,list1);
+    init_f1(EVAL_IDX,eval);
+    init_f1(AUX_IDX,get_aux);
+    init_f1(LENGTH_IDX,fast_length);
+    init_f1(SUBRP_IDX,subrp);
+    init_f1(FSUBRP_IDX,fsubrp);
+    init_f1(FUNCTIONP_IDX,functionp);
+    init_f1(MACROP_IDX,macrop);
+    init_f1(INTEGERP_IDX,integerp);
+    init_f1(LONGNUMP_IDX,longnump);
+    init_f1(BIGNUMP_IDX,bignump);
+    init_f1(GETINT_IDX,get_int);
+    init_f1(MAKEINT_IDX,makeint);
+    init_f1(MAKEINTLONG_IDX,makeintlong);
+    init_f1(VECTOR_IDX,vector);
+    init_f1(FASTCAR_IDX,fast_car);
+    init_f1(FASTCDR_IDX,fast_cdr);
+    init_f1(FINDENV_IDX,findenv);
+    init_f1(FINDDYN_IDX,finddyn);
+    init_f1(ARGPUSH_IDX,argpush);
+    init_f1(SHELTERPUSH_IDX,shelterpush);
+    init_f1(PUSH_IDX,push);
+    init_f1(GETOPT_IDX,get_opt);
+    init_f1(GETPROP_IDX,get_prop);
+    init_f1(SETDYNPT_IDX,set_dynpt);
+    init_f1(SETCATCHSYMBOLS_IDX,set_catch_symbols);
 
     //argument-2 type
-    init_f2(0,(func2)cons);
-    init_f2(1,(func2)nth);
-    init_f2(2,(func2)set_car);
-    init_f2(3,(func2)set_cdr);
-    init_f2(4,(func2)set_aux);
-    init_f2(5,(func2)set_opt);
-    init_f2(6,(func2)callsubr);
-    init_f2(7,(func2)list2);
-    init_f2(8,(func2)nth_cdr);
-    init_f2(9,(func2)apply);
-    init_f2(10,(func2)plus);
-    init_f2(11,(func2)minus);
-    init_f2(12,(func2)mult);
-    init_f2(13,(func2)quotient);
-    init_f2(14,(func2)s_remainder);
-    init_f2(15,(func2)divide);
-    init_f2(16,(func2)eqp);
-    init_f2(17,(func2)eqlp);
-    init_f2(18,(func2)numeqp);
-    init_f2(19,(func2)smallerp);
-    init_f2(20,(func2)eqsmallerp);
-    init_f2(21,(func2)greaterp);
-    init_f2(22,(func2)eqgreaterp);
-    init_f2(23,(func2)member);
-    init_f2(30,(func2)convert);
-    init_f2(31,(func2)array);
-    init_f2(32,(func2)setdynenv);
-    init_f2(33,(func2)adddynenv);
-    init_f2(34,(func2)set_dynamic);
-    init_f2(35,(func2)set_prop);
-    init_f2(36,(func2)adaptp);
+    init_f2(CONS_IDX,cons);
+    init_f2(NTH_IDX,nth);
+    init_f2(SETCAR_IDX,set_car);
+    init_f2(SETCDR_IDX,set_cdr);
+    init_f2(SETAUX_IDX,set_aux);
+    init_f2(SETOPT_IDX,set_opt);
+    init_f2(CALLSUBR_IDX,callsubr);
+    init_f2(LIST2_IDX,list2);
+    init_f2(NTHCDR_IDX,nth_cdr);
+    init_f2(APPLY_IDX,apply);
+    init_f2(PLUS_IDX,plus);
+    init_f2(MINUS_IDX,minus);
+    init_f2(MULT_IDX,mult);
+    init_f2(QUOTIENT_IDX,quotient);
+    init_f2(REMAINDER_IDX,s_remainder);
+    init_f2(DIVIDE_IDX,divide);
+    init_f2(EQP_IDX,eqp);
+    init_f2(EQLP_IDX,eqlp);
+    init_f2(NUMEQP_IDX,numeqp);
+    init_f2(SMALLERP_IDX,smallerp);
+    init_f2(EQSMALLERP_IDX,eqsmallerp);
+    init_f2(GREATERP_IDX,greaterp);
+    init_f2(EQGREATERP_IDX,eqgreaterp);
+    init_f2(MEMBER_IDX,member);
+    init_f2(CONVERT_IDX,convert);
+    init_f2(ARRAY_IDX,array);
+    init_f2(SETDYNENV_IDX,setdynenv);
+    init_f2(ADDDYNENV_IDX,adddynenv);
+    init_f2(SETDYNAMIC_IDX,set_dynamic);
+    init_f2(SETPROP_IDX,set_prop);
+    init_f2(ADAPTP_IDX,adaptp);
 
 
     //argument-1 string type
-    init_f3(0,(func3)makestr);
-    init_f3(1,(func3)makesym);
-    init_f3(2,(func3)makechar);
-    init_f3(3,(func3)makestrflt);
-    init_f3(4,(func3)makebigx);
+    init_f3(MAKESTR_IDX,(fn3)makestr);
+    init_f3(MAKESYM_IDX,(fn3)makesym);
+    init_f3(MAKECHAR_IDX,(fn3)makechar);
+    init_f3(MAKESTRFLT_IDX,(fn3)makestrflt);
+    init_f3(MAKEBIG_IDX,makebigx);
 
     //argument-1 long long int type
-    init_f4(0,(func4)get_long);
+    init_f4(GETLONG_IDX,get_long);
 
     //argument-3 type
-    init_f5(0,(func5)string_set);
-    init_f5(1,(func5)array_set);
-    init_f5(2,(func5)member1);
+    init_f5(STRINGSET_IDX,string_set);
+    init_f5(ARRAYSET_IDX,array_set);
+    init_f5(MEMBER1_IDX,member1);
 
     //string output type
-    init_f6(0,(func6)get_name);
+    init_f6(GETNAME_IDX,get_name);
 
     //float output type
-    init_f7(0,(func7)get_flt);
+    init_f7(GETFLT_IDX,get_flt);
 
     //float input type
-    init_f8(0,(func8)makedoubleflt);
+    init_f8(MAKEDOUBLEFLT_IDX,makedoubleflt);
 
     init_deftfunc((tfunc)defsubr);
     init_tfunctions();
@@ -1467,7 +1456,7 @@ int f_append(int arglist){
         error(NOT_CONS, "append", arg1);
     if(length(arg1) >= fc){
         shelterpush(arglist);
-        gbc();
+        (void)gbc();
         shelterpop();
     }
     if(nullp(arglist))
@@ -4104,7 +4093,7 @@ int f_gbc(int arglist){
     if((n=length(arglist)) != 0 && n != 1)
         error(WRONG_ARGS, "gbc", arglist);
     if(nullp(arglist))
-        gbc();
+      (void)gbc();
     else if(car(arglist) == T)
         gbc_flag= 1;
     else if(car(arglist) == NIL)

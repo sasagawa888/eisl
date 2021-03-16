@@ -1063,7 +1063,7 @@ int makeintlong(int n){
     return(addr);
 }
 
-int makestrflt(char *str){
+int makestrflt(const char *str){
     return(makeflt(atof(str)));
 }
 

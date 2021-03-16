@@ -57,49 +57,41 @@
 
 
 (format (standard-output) "~%")
-(gbc nil)
+;(gbc nil)
 ;;; (1) FIB
-(gbc)
 (load (bench-file "fib20"))
 (bench "01" "Fib" (fib 20) 6765)
 
 ;;; (2) TAK
-(gbc)
 (load (bench-file "tak"))
 (bench "02" "Tak" (tak 18 12 6) 7)
 
 ;;; (3) STAK
-(gbc)
 (load (bench-file "stak"))
 (bench "03" "Stak" (stak 18 12 6) 7)
 
 ;;; (4) CTAK
-(gbc)
 (load (bench-file "ctak"))
 (bench "04" "Ctak" (ctak 18 12 6) 7)
 
 ;;; (5) TAKL
-(gbc)
 (load (bench-file "takl"))
 (bench "05" "Takl" (takl ll-18 ll-12 ll-6) '(7 6 5 4 3 2 1))
 
 ;;; (6) TAKR
-(gbc)
 (load (bench-file "takr"))
 (bench "06" "Takr" (takr 18 12 6) 7)
 
 ;;; (7) BOYER
-(gbc)
 (load (bench-file "boyer"))
 (bench "07" "Boyer" (boyer) nil)
 
 ;;; (8) BROWSE
-;(gbc)
 ;(load (bench-file "browse"))
 ;(bench "08" "Browse" (browse) ())
 
 ;;; (9) DESTRU
-(gbc)
+;(gbc)
 (load (bench-file "destru"))
 (bench "09" "Destru" (destructive 600 50) ())
 
@@ -113,28 +105,23 @@
 ;(bench "11" "Travrun" (run-traverse) ())
 
 ;;; (12) DERIV
-(gbc)
 (load (bench-file "deriv"))
 (bench "12" "Deriv" (deriv-run) ())
 
 ;;; (13) DDERIV
-(gbc)
 (load (bench-file "dderiv"))
 (bench "13" "Dderiv" (dderiv-run) ())
 
 ;;; (14-15) DIV2
-(gbc)
 (load (bench-file "div2"))
 (bench "14" "Divit" (test-1 *ll*) ())
 (bench "15" "Divrec" (test-2 *ll*) ())
 
 ;;; (16) FFT
-(gbc)
 (load (bench-file "fft"))
 (bench "16" "FFT" (fft-bench) ())
 
 ;;; (17) PUZZLE
-(gbc)
 (load (bench-file "puzzle"))
 (bench "17" "Puzzle" (puzzle-start) 2005)
 
@@ -144,17 +131,14 @@
 ;(bench "18" "Triang" (gogogo 22) ())
 
 ;;; (19) FPRINT
-(gbc)
 (load (bench-file "fprint"))
 (bench "19" "Fprint" (fprint) t)
 
 ;;; (20) FREAD
-(gbc)
 (load (bench-file "fread"))
 (bench "20" "Fread" (fread) t)
 
 ;;; (21) TPRINT
-(gbc)
 (load (bench-file "tprint"))
 (bench "21" "Tprint"
        (let ((so (create-string-output-stream)))
@@ -167,7 +151,6 @@
 
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
 #|
-(gbc)
 (load (bench-file "frpoly"))
 (bench "22" "Frpoly" (mapc (lambda (n)
                                           (pexptsq r  n)

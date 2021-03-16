@@ -1456,7 +1456,7 @@ void printstream(int addr){
 
 //--------eval---------------
 int eval(int addr){
-    int val,res;
+    int val,res,temp;
     char c;
 
     checkgbc();
@@ -1508,8 +1508,13 @@ int eval(int addr){
             else
                 return(cadr(addr));
         }
-        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE")))
-            return(eval(quasi_transfer(cadr(addr),0)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE"))){
+            temp = quasi_transfer(cadr(addr),0);
+            shelterpush(temp);
+            res = eval(temp);
+            shelterpop();
+            return(res);
+        }
         else if(subrp(car(addr)))
             return(apply(caar(addr),evlis(cdr(addr))));
         else if(fsubrp(car(addr)))

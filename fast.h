@@ -140,7 +140,7 @@ static inline int Fshelterpush(int x) { return f1[SHELTERPUSH_IDX](x); }
 static inline int Fpush(int x) { return f1[PUSH_IDX](x); }
 static inline int Fgetopt(int x) { return f1[GETOPT_IDX](x); }
 static inline int Fgetprop(int x) { return f1[GETPROP_IDX](x); }
-static inline int Fsetdynpt(int x) { f1[SETDYNPT_IDX](x); }
+static inline int Fsetdynpt(int x) { return f1[SETDYNPT_IDX](x); }
 static inline int Fsetcatchsymbols(int x) { return f1[SETCATCHSYMBOLS_IDX](x); }
 
 static inline int Fcons(int x,int y) { return f2[CONS_IDX](x,y); }

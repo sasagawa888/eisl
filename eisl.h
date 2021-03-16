@@ -12,6 +12,10 @@ Copying GC mode
  6000000 -  12999999  Work1 area
 12999999 -  19999999  Wrok2 area
 */
+
+#ifndef EISL_H
+#define EISL_H
+
 #include <setjmp.h>
 #define VERSION     1.80
 #define HEAPSIZE    20000000
@@ -1015,7 +1019,7 @@ void bindconst(const char *name, int obj);
 void bindfunc(const char *name, tag tag, int(*func)(int));
 void bindmacro(char *name, int addr);
 void cellprint(int addr);
-void checkgbc(void);
+int checkgbc(void);
 void clrcell(int addr);
 void copygbc(void);
 void copy_hash(int x);
@@ -1024,7 +1028,7 @@ void deffsubr(const char *symname, int(*func)(int));
 void defsubr(const char *symname, int(*func)(int));
 void dropchar(char buf[]);
 void error(int errnum, const char *fun, int arg);
-void gbc(void);
+int gbc(void);
 void gbcmark(void);
 void gbcsweep(void);
 void gettoken(void);
@@ -1111,7 +1115,7 @@ int set_opt(int x, int y);
 int callsubr(int func, int arglist);
 int f_subrp(int arglist);
 int makeintlong(int n);
-int makestrflt(char *str);
+int makestrflt(const char *str);
 int makedoubleflt(double x);
 int nth_cdr(int n, int x);
 int f_macrop(int arglist);
@@ -1221,4 +1225,6 @@ void cuda_momentum(int n, float *a, float *b, float *c, float *d, float *e, floa
 void cuda_adagrad(int n, float *a, float *b, float *c, float *d, float *e, float lr);
 void cuda_rms(int n, float *a, float *b, float *c, float *d, float *e, float  lr);
 void cuda_adam(int n, float *a, float *b, float *c, float *d, float *e, float *f, float *g, float lr);
+#endif
+
 #endif

@@ -7,7 +7,7 @@
 
 
 //---------garbage collection-----------
-void gbc(void){
+int gbc(void){
     int addr;
 
     debug_flag = 1;
@@ -47,6 +47,7 @@ void gbc(void){
             fflush(stdout);
         }
     }
+    return 0;
 }
 
 
@@ -208,21 +209,22 @@ void clrcell(int addr){
 }
 
 //when free cells are less FREESIZE, invoke gbc()
-void checkgbc(void){
+int checkgbc(void){
     if(exit_flag == 1){
 	    exit_flag = 0;
         longjmp(buf,1);
     }
     if(gc_sw == 0 && fc < FREESIZE)
-        gbc();
+      (void)gbc();
     else if(gc_sw == 1 && wp < WORK2 && wp > WORK2 - FREESIZE)
-        gbc();
+      (void)gbc();
     else if(gc_sw == 1 && wp > WORK2 && wp > CELLSIZE - FREESIZE)
-        gbc();
+      (void)gbc();
     else if(ac > FARRMAX){
-        gbc();
+      (void)gbc();
         ac = 0;
     }
+    return 0;
 }
 
 

@@ -134,7 +134,7 @@ void initclass(void){
     cfixnum = makeclass("fixnum",cinteger);
     clongnum = makeclass("longnum",cinteger);
     cbignum = makeclass("bignum",cinteger);
-
+    cfloat_array = makeclass("float-array",cbasic_array);
 
     bindclass("<OBJECT>",cobject);
     bindclass("<BASIC-ARRAY>",cbasic_array);
@@ -180,6 +180,7 @@ void initclass(void){
     bindclass("<FIXNUM>",cfixnum);
     bindclass("<LONGNUM>",clongnum);
     bindclass("<BIGNUM>",cbignum);
+    bindclass("<FLOAT-ARRAY>",cfloat_array);
 
     initerrargs(cserious_condition);
     initerrargs(cerror);
@@ -799,7 +800,7 @@ int makefarray(int ls, int obj){
     }
     SET_TAG(res,FARR);
     SET_CDR(res,ls1);
-    SET_AUX(res,cgeneral_array_star); //class
+    SET_AUX(res,cfloat_array); //class
     SET_OPT(res,size); //for GC 
     ac = ac + size;    //remenber allocate size
     return(res);

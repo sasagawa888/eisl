@@ -69,6 +69,7 @@ int cinvalid;
 int cfixnum;
 int clongnum;
 int cbignum;
+int cfloat_array;
 
 
 //stream

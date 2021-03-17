@@ -246,6 +246,7 @@ extern int cinvalid;
 extern int cfixnum;
 extern int clongnum;
 extern int cbignum;
+extern int cfloat_array;
 
 #define CLASS_SYMBOL    1
 

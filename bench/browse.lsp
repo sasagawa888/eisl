@@ -9,7 +9,6 @@
 ;;; data base of units.
 
 ;;; call (browse)
-
 (defglobal browse-rand      21)
 (defglobal *browse-counter* 1)
 

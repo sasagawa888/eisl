@@ -3817,18 +3817,21 @@ int f_create_vector(int arglist){
 }
 
 int f_create_array(int arglist){
-    int arg1,arg2,arg3,n;
+    int arg1,arg2,arg3,n,temp;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
 
+    temp = 0;
     if((n=length(arglist)) != 1 && length(arglist) != 2 && length(arglist) != 3)
         error(OUT_OF_DOMAIN,"create-array", arglist);
     if(!listp(arg1))
         error(NOT_LIST, "create-array", arg1);
-    if(check_dimension(arg1))
+    if((temp=check_dimension(arg1)) == 1)
         error(OUT_OF_DOMAIN,"create-array",arg1);
+    if(temp == 2)
+        error(EXHAUSTED_ERR,"create-array",arg1);
     if(length(arglist) == 1)
         arg2 = UNDEF;
     if(arg3 != NIL && arg3 != makesym("FLOAT"))
@@ -3840,11 +3843,15 @@ int f_create_array(int arglist){
         return(makefarray(arg1,arg2));
 }
 
+// when dimension is domain-error return 1.
+// when dimension is storage-exhausted-error return 2.
 int check_dimension(int ls){
     while(!nullp(ls)){
-        if(!integerp(car(ls)))
+        if(negativep(car(ls)))
             return(1);
-        else if(negativep(car(ls)))
+        else if(longnump(car(ls)) || bignump(car(ls)))
+            return(2);
+        else if(!integerp(car(ls)))
             return(1);
         else
             ls =cdr(ls);

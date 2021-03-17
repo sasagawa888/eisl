@@ -452,6 +452,12 @@ void error(int errnum, const char *fun, int arg){
                                           makesym("expected-class"),csimple_error);
                         signal_condition(makeinstance(csimple_error,initargs),NIL);
                         break; 
+        case EXHAUSTED_ERR:
+                        initargs = list6(makesym("format-string"),makestr("Exhausted error at "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun1));
+                        signal_condition(makeinstance(cstorage_exhausted,initargs),NIL);
+                        break;
     }
 }
 /*

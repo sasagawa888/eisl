@@ -445,6 +445,7 @@ extern char extended[70][30];
 #define UNDEF_DYN       165  
 #define UNDEF_ENTITY    166
 #define SIMPLE_ERR      167
+#define EXHAUSTED_ERR   168 
 
 #define ESCHOME printf("\33[1;1H")
 #define ESCTOP  printf("\33[2;1H")

@@ -17,7 +17,7 @@ Copying GC mode
 #define EISL_H
 
 #include <setjmp.h>
-#define VERSION     1.80
+#define VERSION     1.81
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000

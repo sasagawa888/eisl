@@ -57,6 +57,8 @@
 
 
 (format (standard-output) "~%")
+(gbc nil)
+
 ;;; (1) FIB
 (load (bench-file "fib20"))
 (bench "01" "Fib" (fib 20) 6765)
@@ -90,7 +92,6 @@
 (bench "08" "Browse" (browse) ())
 
 ;;; (9) DESTRU
-;(gbc)
 (load (bench-file "destru"))
 (bench "09" "Destru" (destructive 600 50) ())
 
@@ -99,7 +100,8 @@
 (bench "10" "Travini" (init-traverse) ())
 
 ;;; (11) TRAVRUN
-;(bench "11" "Travrun" (run-traverse) ())
+(gbc)
+(bench "11" "Travrun" (run-traverse) ())
 
 ;;; (12) DERIV
 (load (bench-file "deriv"))

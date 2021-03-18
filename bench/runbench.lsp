@@ -57,7 +57,6 @@
 
 
 (format (standard-output) "~%")
-;(gbc nil)
 ;;; (1) FIB
 (load (bench-file "fib20"))
 (bench "01" "Fib" (fib 20) 6765)
@@ -96,12 +95,10 @@
 (bench "09" "Destru" (destructive 600 50) ())
 
 ;;; (10) TRAVINI
-;(gbc)
 ;(load (bench-file "traverse"))
 ;(bench "10" "Travini" (init-traverse) ())
 
 ;;; (11) TRAVRUN
-;(gbc)
 ;(bench "11" "Travrun" (run-traverse) ())
 
 ;;; (12) DERIV
@@ -126,7 +123,6 @@
 (bench "17" "Puzzle" (puzzle-start) 2005)
 
 ;;; (18) TRIANG
-;(gbc)
 ;(load (bench-file "triang"))
 ;(bench "18" "Triang" (gogogo 22) ())
 
@@ -150,7 +146,6 @@
 ;;; (22) FRPOLY
 
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
-#|
 (load (bench-file "frpoly"))
 (bench "22" "Frpoly" (mapc (lambda (n)
                                           (pexptsq r  n)
@@ -158,6 +153,6 @@
                                           (pexptsq r3 n))
                           '(2 5 10 15))
                      '(2 5 10 15))
-|#
+
 (format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
 

@@ -1061,6 +1061,8 @@ int f_tagbody(int arglist){
                 for(i=0;i<end;i++){
                     if(tagbody_tag == prog[i]){
                         line = i+1;
+                        if(line >= end)
+                            return(NIL);
                         goto exit;
                     }
                 }

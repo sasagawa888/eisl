@@ -62,9 +62,10 @@
                    (t
                     (for ((i n (- i 1))
                           (x l (cdr x)))
-                         ((eq i 1)
+                         ((= i 1)
                           (setq x (cons (car (cdr x)) x))
                           (set-cdr (cdr (cdr x)) x))))))))
+
 
 (defun match (pat dat alist)
    (cond ((null pat)

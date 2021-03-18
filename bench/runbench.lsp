@@ -86,8 +86,8 @@
 (bench "07" "Boyer" (boyer) nil)
 
 ;;; (8) BROWSE
-;(load (bench-file "browse"))
-;(bench "08" "Browse" (browse) ())
+(load (bench-file "browse"))
+(bench "08" "Browse" (browse) ())
 
 ;;; (9) DESTRU
 ;(gbc)

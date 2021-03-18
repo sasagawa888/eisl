@@ -2041,8 +2041,11 @@ double tarai(double x, double y, double z){
     (defun comp-setf (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "setf: illegal form" x))
         (when (or (eq (elt x 1) t) (eq (elt x 1) nil)) (error* "setf: can't modify" x))
-        (let ((form (elt x 1))
-              (val (elt x 2)) )
+        (let* ((form1 (elt x 1))
+               (form (if (and (consp form1) (macrop (car form1)))
+                         (macroexpand-1 form1)
+                         form1))
+               (val (elt x 2)) )
            (cond ((and (consp form) (eq (car form) 'aref))
                   (let ((newform (cons 'set-aref (cons val (cdr form)))))
                      (comp stream newform env args tail name global test clos)))
@@ -2219,19 +2222,22 @@ double tarai(double x, double y, double z){
            (format-object stream symbol nil)
            (format stream "\"),fast_inverse(")
            (comp stream value env args tail name global test clos)
-           (format stream "))")));defmacro
+           (format stream "))")))
+    ;;defmacro
     (defun comp-defmacro (x)
         (format code4 "Feval(")
         (list-to-c1 code4 x)
-        (format code4 ");~%"));defclass
+        (format code4 ");~%"))
+    ;;defclass
     (defun comp-defclass (x)
         (comp code4 '(ignore-toplevel-check t) nil nil nil nil nil nil nil)
         (format code4 ";Feval(")
         (list-to-c1 code4 x)
         (format code4 ");")
         (comp code4 '(ignore-toplevel-check nil) nil nil nil nil nil nil nil)
-        (format code4 ";~%"));defmethod only create initialize-object
-    ;these are nead to save as C-list
+        (format code4 ";~%"))
+    ;;defmethod only create initialize-object
+    ;;these are nead to save as C-list
     (defun comp-defmethod (x)
         (cond ((or (eq (elt x 1) 'create) (eq (elt x 1) 'initialize-object))
                (format code4 "Feval(")

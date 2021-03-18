@@ -29,7 +29,7 @@
         (for ((l (convert str <list>) (cdr l))
               (i 0 (+ i 1)))
              ((or (null l) (char= (car l) #\.)) (setq pos i)))
-        (setq str (string-append (create-string (- 3 pos) #\space) str))
+        (setq str (string-append (create-string (- 3 (min pos 0)) #\space) str))
         (if (< (length str) 7)
             (string-append str (create-string (- 7 (length str)) #\0))
             str)))
@@ -123,8 +123,8 @@
 (bench "17" "Puzzle" (puzzle-start) 2005)
 
 ;;; (18) TRIANG
-;(load (bench-file "triang"))
-;(bench "18" "Triang" (gogogo 22) ())
+(load (bench-file "triang"))
+(bench "18" "Triang" (gogogo 22) ())
 
 ;;; (19) FPRINT
 (load (bench-file "fprint"))
@@ -144,7 +144,6 @@
        t)
 
 ;;; (22) FRPOLY
-
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
 (load (bench-file "frpoly"))
 (bench "22" "Frpoly" (mapc (lambda (n)

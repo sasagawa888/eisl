@@ -29,7 +29,7 @@
         (for ((l (convert str <list>) (cdr l))
               (i 0 (+ i 1)))
              ((or (null l) (char= (car l) #\.)) (setq pos i)))
-        (setq str (string-append (create-string (- 3 (min pos 0)) #\space) str))
+        (setq str (string-append (create-string (- 3 (min pos 3)) #\space) str))
         (if (< (length str) 7)
             (string-append str (create-string (- 7 (length str)) #\0))
             str)))

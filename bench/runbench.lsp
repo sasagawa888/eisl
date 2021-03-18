@@ -95,8 +95,8 @@
 (bench "09" "Destru" (destructive 600 50) ())
 
 ;;; (10) TRAVINI
-;(load (bench-file "traverse"))
-;(bench "10" "Travini" (init-traverse) ())
+(load (bench-file "traverse"))
+(bench "10" "Travini" (init-traverse) ())
 
 ;;; (11) TRAVRUN
 ;(bench "11" "Travrun" (run-traverse) ())

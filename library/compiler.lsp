@@ -2191,7 +2191,9 @@ double tarai(double x, double y, double z){
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),FAST_GLOBAL);~%")));defconstant
+           (format code4 "\"),FAST_GLOBAL);~%")))
+    
+    ;;defconstant
     (defun comp-defconstant (x)
         (let ((symbol (elt x 1))
               (value (elt x 2)) )
@@ -2202,7 +2204,9 @@ double tarai(double x, double y, double z){
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),FAST_CONSTN);~%")));defdynamic
+           (format code4 "\"),FAST_CONSTN);~%")))
+    
+    ;;defdynamic
     (defun comp-defdynamic (x)
         (unless (= (length x) 3) (error* "defdynamic: illegal form" x))
         (unless (symbolp (elt x 1)) (error: "defdynamic: not symbol" (elt x 1)))
@@ -2212,7 +2216,9 @@ double tarai(double x, double y, double z){
            (format-object code4 symbol nil)
            (format code4 "\"),")
            (comp code4 value nil nil nil nil t nil nil)
-           (format code4 ");")));set-dynamic
+           (format code4 ");")))
+    
+    ;;set-dynamic
     (defun comp-set-dynamic (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "set-dynamic: illegal form" x))
         (unless (symbolp (elt x 1)) (error: "set-dynamic: not symbol" (elt x 1)))
@@ -2223,11 +2229,13 @@ double tarai(double x, double y, double z){
            (format stream "\"),fast_inverse(")
            (comp stream value env args tail name global test clos)
            (format stream "))")))
+    
     ;;defmacro
     (defun comp-defmacro (x)
         (format code4 "Feval(")
         (list-to-c1 code4 x)
         (format code4 ");~%"))
+
     ;;defclass
     (defun comp-defclass (x)
         (comp code4 '(ignore-toplevel-check t) nil nil nil nil nil nil nil)
@@ -2236,6 +2244,7 @@ double tarai(double x, double y, double z){
         (format code4 ");")
         (comp code4 '(ignore-toplevel-check nil) nil nil nil nil nil nil nil)
         (format code4 ";~%"))
+        
     ;;defmethod only create initialize-object
     ;;these are nead to save as C-list
     (defun comp-defmethod (x)

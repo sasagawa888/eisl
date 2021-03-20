@@ -1,5 +1,5 @@
 # Benchmark
-I applied the benchmark test written by Julian to Easy-ISLisp. 
+I applied the benchmark test written by Mr. Jullien to Easy-ISLisp. 
 see bench folder.
 
 # Constraint 

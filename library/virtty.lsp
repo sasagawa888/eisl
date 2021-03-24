@@ -25,30 +25,30 @@
    (c-lang "nonl();")
    (c-lang "intrflush(stdscr, FALSE);")
    (tyshowcursor t)
-   (c-lang "set_tabsize(8);"))
+   (c-lang "res = set_tabsize(8) | INT_FLAG;"))
 
 (defun tyepilogue ()
    ;; Reset the terminal to its original mode.
-   (c-lang "endwin();"))
+   (c-lang "res = endwin() | INT_FLAG;"))
 
 (defun tycls ()
    ;; Clears the entire screen.
-   (c-lang "clear();"))
+   (c-lang "res = clear() | INT_FLAG;"))
 
 (defun tycursor (column row)
    ;; Moves the cursor to position (x, y) on the screen.
    (the <fixnum> column)(the <fixnum> row)
-   (c-lang "move(ROW & INT_MASK, COLUMN & INT_MASK);"))
+   (c-lang "res = move(ROW & INT_MASK, COLUMN & INT_MASK) | INT_FLAG;"))
 
 (defun tycleol ()
    ;; Clears the current line to end of line.
-   (c-lang "clrtoeol();"))
+   (c-lang "res = clrtoeol() | INT_FLAG;"))
 
 (defun tyattrib (x)
    ;; Set, if flag is t, or reset, if flag is nil, the reverse-video attribute.
    (if x
-       (c-lang "attron(A_REVERSE);")
-       (c-lang "attroff(A_REVERSE);")))
+       (c-lang "res = attron(A_REVERSE) | INT_FLAG;")
+       (c-lang "res = attroff(A_REVERSE) | INT_FLAG;")))
 
 (defgeneric tyo (o)
    ;; Output the object o (a character, string or list of characters) at the current position.
@@ -79,11 +79,11 @@
 
 (defun tyflush ()
    ;; Flush unsent characters.
-   (c-lang "refresh();"))
+   (c-lang "res = refresh() | INT_FLAG;"))
 
 (defun tybeep ()
    ;; Sounds the bell.
-   (c-lang "beep();"))
+   (c-lang "res = beep() | INT_FLAG;"))
 
 (defun tyi ()
    ;; Reads a single character without echo.
@@ -123,13 +123,13 @@
    ;; Output character ch at the current position.
    (the <character> ch)
    (let ((ch-code (convert ch <integer>)))
-        (c-lang "addch(CH_CODE & INT_MASK);")))
+        (c-lang "res = addch(CH_CODE & INT_MASK) | INT_FLAG;")))
 
 (defun tyshowcursor (flag)
    ;; Shows, if flag is t, or hides, if flag is nil, the cursor.
    (if flag
-       (c-lang "curs_set(1);")
-       (c-lang "curs_set(0);")))
+       (c-lang "res = curs_set(1) | INT_FLAG;")
+       (c-lang "res = curs_set(0) | INT_FLAG;")))
 
 (defun tyco (x y o)
    ;; Output the object o at position (x, y).
@@ -141,7 +141,7 @@
    ;; Output the first n characters of string str at the current position.
    (the <string> str)(the <fixnum> n)
    (let ((substr (subseq str 0 n)))
-        (c-lang "addstr(Fgetname(SUBSTR));")))
+        (c-lang "res = addstr(Fgetname(SUBSTR)) | INT_FLAG;")))
 
 ;; Further extensions from curses:
 
@@ -159,7 +159,7 @@
 
 (defun nodelay ()
    ;; Cause tyi to be a non-blocking call.
-   (c-lang "nodelay(stdscr, TRUE);"))
+   (c-lang "res = nodelay(stdscr, TRUE) | INT_FLAG;"))
 
 ;; From here on is test code
 

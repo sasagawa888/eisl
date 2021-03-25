@@ -1,5 +1,6 @@
 ;;; Virtual Character Mode Terminal (virtty) that can be used to build very simple interfaces, e.g. editors or simple games.
-;;; Interface (but not implementation) inspired by OpenLisp ( http://www.eligis.com ).
+;;; Interface (but not implementation) inspired by OpenLisp ( http://www.eligis.com ) and
+;;; Le-Lisp ( https://github.com/c-jullien/lelisp ).
 ;;;
 ;;; This has moderate dependencies on ncurses.
 ;;;
@@ -92,10 +93,6 @@
 ;; Various ncurses ( https://man.openbsd.org/curses ) constants.
 ;; I got these from https://github.com/HiTECNOLOGYs/cl-charms/blob/master/src/low-level/curses-bindings.lisp but the header file would have done as well.
 
-(defconstant KEY_UP #o403)
-(defconstant KEY_DOWN #o402)
-(defconstant KEY_LEFT #o404)
-(defconstant KEY_RIGHT #o405)
 (defconstant KEY_HOME #o406)
 (defconstant KEY_END #o550)
 (defconstant KEY_NPAGE #o552)
@@ -142,6 +139,86 @@
    (the <string> str)(the <fixnum> n)
    (let ((substr (subseq str 0 n)))
         (c-lang "res = addstr(Fgetname(SUBSTR)) | INT_FLAG;")))
+
+;; Further functions from Le-Lisp.
+
+(defun tyinstring ()
+   ;; Read a line from the keyboard
+   (c-lang "static char str[133];")
+   (c-lang "res = Fmakestr(getstr(str));")) ; Fmakestr copies its argument
+
+(defun tynewline ()
+   ;; Send an end-of-line marker to the screen.
+   (tyo #\newline))
+
+(defconstant +bs+ (convert 8 <character>))
+(defun tyback (cn)
+   ;; Erase the character immediately before the cursor on screen and move the cursor back one space.
+   (tyo +bs+)
+   (tyo #\space)
+   (tyo +bs+))
+
+(defun tyod (n nc)
+   ;; Print the base-10 nc-character representation of the number n.
+   (the <fixnum> n)(the <fixnum> nc)
+   (let ((str (create-string-output-stream)))
+        (format str "~D" n)
+        (subseq (get-output-stream-string str) 0 nc)))
+
+(defun tybs (cn)
+   ;; Moves the cursor position back one space without erasing anything on the screen.
+   (tyo +bs+))
+
+(defconstant +cr+ (convert 13 <character>))
+(defun tycr ()
+   ;; Place the cursor at the beginning of the current line.
+   (tyo +cr+))
+
+(defun tyupkey ()
+   ;; Returns the key code associated with the up arrow key.
+   #o403)
+(defun tydownkey ()
+   ;; Returns the key code associated with the down arrow key.
+   #o402)
+(defun tyleftkey ()
+   ;; Returns the key code associated with the left arrow key.
+   #o404)
+(defun tyrightkey ()
+   ;; Returns the key code associated with the right arrow key.
+   #o405)
+
+(defun tycleos ()
+   ;; Erase from the cursor to the end of screen.
+   (c-lang "res = clrtobot() | INT_FLAG;"))
+
+(defun tyinsch (ch)
+   ;; Insert a character at the current cursor position.
+   (the <character> ch)
+   (c-lang "res = insch(CH) | INT_FLAG;"))
+
+(defun tyinscn (cn)
+   (tyinsch cn))
+
+(defun tydelch ()
+   ;; Erase the character at the current cursor position.
+   (c-lang "res = delch() | INT_FLAG;"))
+
+(defun tydelcn (cn)
+   (tydelch))
+
+(defun tyinsln ()
+   ;; Insert a new line at the current cursor position.
+   (c-lang "res = insertln() | INT_FLAG;"))
+
+(defun tydelln ()
+   ;; Erase the line at the current cursor position.
+   (c-lang "res = deleteln() | INT_FLAG;"))
+
+(defun tycot (x y o)
+   (the <fixnum> x)(the <fixnum> y)
+   (tyattrib t)
+   (tyco x y o)
+   (tyattrib nil))
 
 ;; Further extensions from curses:
 

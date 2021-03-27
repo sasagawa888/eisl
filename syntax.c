@@ -436,7 +436,7 @@ int f_set_dynamic(int arglist){
         return(arg2);
     }
     else
-    	error(UNDEF_VAR, "setq", arg1);
+    	error(UNDEF_VAR, "set-dynamic", arg1);
 
     return(arg2);
 }

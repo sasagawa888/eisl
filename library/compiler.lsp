@@ -832,7 +832,6 @@ double tarai(double x, double y, double z){
                (type-gen-arg2 code2 args (argument-type name)))
            (format code2 "{~%")
            (format code2 "int res;~%")
-           ;;debug print ;(format code2 "printf("")                                       ;(format-object code2 name nil)                                                ;(format code2 "   -->   ");")
            (cond ((and (not optimize-enable) (has-tail-recur-p body name))
                   ;;for tail recursive tempn var;
                   (gen-arg3 (length args)))
@@ -1256,8 +1255,65 @@ double tarai(double x, double y, double z){
                 (error* "call: illegal argument count" x))
                (format-object stream (conv-name (car x)) nil)
                (format stream "()"))
-              (t (comp-funcall-clang stream x env args tail name global test clos))))
+              (optimize-enable
+               (comp-funcall-clang stream x env args tail name global test clos))
+              (t (comp-funcall-clang-left-to-right stream x env args tail name global test clos))))
     
+     (defun comp-funcall-clang-left-to-right (stream x env args tail name global test clos)
+        (let ((n (cdr (assoc (car x) function-arg))))
+           (when (and (> n 0) (/= (length (cdr x)) n)) (error* "call: illegal arument count" x))
+           (cond ((null (cdr x)) (format stream "({int res;"))
+                 (t
+                    (format stream "({int ")
+                 (for ((ls (cdr x) (cdr ls))
+                        (n 1 (+ n 1)) )
+                      ((null ls)
+                        t )
+                      (format stream "arg")
+                      (format-integer stream n 10)
+                    (format stream ","))
+                    (format stream "res;~%")
+                    (for ((ls (cdr x) (cdr ls))
+                          (n 1 (+ n 1)) )
+                         ((null ls)
+                           t )
+                         (format stream "arg")
+                         (format-integer stream n 10)
+                         (format stream " = fast_inverse(")
+                         (comp stream (car ls) env args nil name global test clos)
+                         (format stream ");~%")
+                         (format stream "Fshelterpush(arg")
+                         (format-integer stream n 10)
+                         (format stream ");~%"))))
+           (format stream "res = ")
+           (format-object stream (conv-name (car x)) nil)
+           (format stream "(")
+           (comp-funcall-clang-left-to-right1 stream 1 (length (cdr x)))
+           (format stream ");~%")
+           (cond ((not (null (cdr x)))
+                  (for ((ls (cdr x) (cdr ls))
+                        (n (length (cdr x)) (- n 1)) )
+                       ((null ls)
+                         t )
+                       (format stream "arg")
+                       (format-integer stream n 10)
+                       (format stream "=Fshelterpop();~%"))))
+           (format stream ";res;})"))
+    )
+
+    (defun comp-funcall-clang-left-to-right1 (stream m n)
+        (cond ((> m n) )
+              ((= m n)
+               (format stream "arg")
+               (format-integer stream m 10))
+              (t
+               (format stream "arg")
+               (format-integer stream m 10)
+               (format stream ",")
+               (comp-funcall-clang-left-to-right1 stream (+ m 1) n))))
+
+
+
     (defun comp-funcall-clang (stream x env args tail name global test clos)
         (let ((n (cdr (assoc (car x) function-arg))))
            (when (and (> n 0) (/= (length (cdr x)) n)) (error* "call: illegal arument count" x))
@@ -1289,7 +1345,8 @@ double tarai(double x, double y, double z){
                (format stream "),")
                (comp-funcall-clang1 stream (cdr x) env args tail name global test clos)
                (format stream ")"))))
-    
+
+
     ;;tail recurcive function call
     (defun comp-funcall1 (stream x env args tail name global test clos)
         ;;{temp1=...; temp2=...; ... x=temp1;y=temp2; goto NAMEloop;}

@@ -11,9 +11,9 @@
 ;;; NOTE:  PDIFFER1  appears in the code,  but is not defined; is not
 ;;; called for in the test, however.
 
-(defdynamic v   nil)
-;(defdynamic *x* nil)
-;(defdynamic u*  nil)
+;(defdynamic v   nil)
+;(defdynamic *x* nil)  never use
+;(defdynamic u*  nil)  never use
 
 (defglobal r    nil)
 (defglobal r2   nil)

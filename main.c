@@ -10,6 +10,7 @@ written by kenichi sasagawa 2016/4~
 #include <math.h>
 #include <limits.h>
 #include <signal.h>
+#include <unistd.h>
 #include "eisl.h"
 
 //------pointer----
@@ -106,6 +107,8 @@ int next_method; //head address of finded method.
 int generic_list = NIL; //symbol list of generic function.
 
 //flag
+int gArgC;
+char **gArgV;
 int gbc_flag = 1; //0=GC not display ,1= do display.
 int genint = 1;   //integer of gensym.
 int simp_flag = 1; //1=simplify, 0=Not for bignum
@@ -116,13 +119,13 @@ int top_flag = 1;   //1=top-level, 0=not-top-level
 int redef_flag = 0; //1=redefine-class, 0=not-redefine
 int start_flag = 1; //1=line-start, 1=not-line-start
 int back_flag = 1;  //for backtrace, 1=on, 0=off
-int init_flag = 1;  //for -c option, 1=initial,0=not-initial
+bool init_flag = true;  //for -c option, 1=initial,0=not-initial
 int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
-int repl_flag = 1;  //for REPL read_line 1=on, 0=off
+bool repl_flag = true;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
 int greeting_flag = 1; //for (quit)
-int script_flag = 0;   //for -s option
+bool script_flag = false;   //for -s option
 
 //switch
 int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
@@ -238,10 +241,22 @@ char extended[70][30] = {
 {"gpu-random-select"},{"gpu-nanalizer"},{"gpu-copy"},
 };
 
+static void usage(void)
+{
+    puts("List of options:\n"
+         "-c           -- EISL starts after reading compiler.lsp.\n"
+         "-f           -- EISL starts after reading formatter.lsp.\n"
+         "-h           -- display help.\n"
+         "-l filename  -- EISL starts after reading the file.\n"
+         "-r           -- EISL does not use editable REPL.\n"
+         "-s filename  -- EISL runs the file with script mode.\n"
+         "-v           -- display version number.");
+}
 
 int main(int argc, char *argv[]){
-    int opt;
+    int opt, ch;
     char *home,str[256];
+    char *script_arg;
 
     initcell();
     initclass();
@@ -259,78 +274,57 @@ int main(int argc, char *argv[]){
     opt = 1;
     int ret = setjmp(buf);
     if(init_flag){
-        init_flag = 0;
+        init_flag = false;
         FILE* fp = fopen("startup.lsp","r");
         if(fp != NULL){
             fclose(fp);
             f_load(list1(makestr("startup.lsp")));
         }
-        while(opt < argc){
-    	    if(strcmp(argv[opt],"-l") == 0){
-        	    opt++;
-                if(opt >= argc){
-                    printf("Illegal option\n");
-        	    return(0);
-                }
-                f_load(list1(makestr(argv[opt])));
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-c") == 0){
+        while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
+            switch (ch) {
+            case 'l':
+                f_load(list1(makestr(optarg)));
+                break;
+            case 'c':
                 home = getenv("HOME");
                 strcpy(str,home);
                 strcat(str,"/eisl/library/compiler.lsp");
                 f_load(list1(makestr(str)));
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-f") == 0){
+                break;
+            case 'f':
                 home = getenv("HOME");
                 strcpy(str,home);
                 strcat(str,"/eisl/library/formatter.lsp");
                 f_load(list1(makestr(str)));
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-s") == 0){
-                opt++;
-                if(opt >= argc){
-                    printf("Illegal option\n");
-        	    return(0);
+                break;
+            case 's':
+                if (access(optarg, R_OK) == -1) {
+                    puts("File doesn't exist.");
+                    exit(EXIT_FAILURE);
                 }
-                FILE* fp = fopen(argv[opt],"r");
-                if(fp != NULL){
-                    fclose(fp);
-                    repl_flag = 0;
-                    script_flag = 1;
-                    f_load(list1(makestr(argv[opt])));
-                    return(0);
-                }
-                else{
-                    printf("File not exists.\n");
-                    return(0);
-                }
-            }
-            else if(strcmp(argv[opt],"-r") == 0){
-                repl_flag = 0;
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-h") == 0){
-                printf("List of options:\n");
-                printf("-c           -- EISL starts after reading compiler.lsp.\n");
-                printf("-f           -- EISL starts after reading formatter.lsp.\n");
-                printf("-h           -- display help.\n");
-                printf("-l filename  -- EISL starts after reading the file.\n");
-                printf("-r           -- EISL does not use editable REPL.\n");
-                printf("-s filename  -- EISL runs the file with script mode.\n");
-                printf("-v           -- dislplay version number.\n");
-                return(0);
-            }
-            else if(strcmp(argv[opt],"-v") == 0){
+                repl_flag = false;
+                script_flag = true;
+                script_arg = optarg;
+                break;
+            case 'r':
+                repl_flag = false;
+                break;
+            case 'v':
                 printf("Easy-ISLisp Ver%1.2f\n", VERSION);
-                return(0);
+                exit(EXIT_SUCCESS);
+            case 'h':
+                usage();
+                exit(EXIT_SUCCESS);
+            default:
+                usage();
+                exit(EXIT_FAILURE);
             }
-            else{
-        	    printf("illegal option\n");
-        	    return(0);
-            }
+        }
+        gArgC = argc - optind;
+        gArgV = argv + optind;
+        if (script_flag) {
+            f_load(list1(makestr(script_arg)));
+            exit(EXIT_SUCCESS);
         }
     }
     if(greeting_flag == 1)

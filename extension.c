@@ -38,6 +38,7 @@ void initexsubr(void){
     defsubr("HEAPDUMP",f_heapdump);
     defsubr("INSTANCE",f_instance);
     defsubr("SUBSTITUTE",f_substitute);
+    defsubr("LINE-ARGUMENT",f_line_argument);
     
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
@@ -573,5 +574,18 @@ int f_substitute(int arglist){
     return(substitute(arg1,arg2,NIL));
 }
 
-
-
+int f_line_argument(int arglist)
+{
+    int arg1, n;
+    
+    if (length(arglist) != 1) {
+        error(WRONG_ARGS, "line-argument", arglist);
+    }
+    arg1 = car(arglist);
+    n = GET_INT(arg1);
+    if (n < gArgC) {
+        return makestr(gArgV[n]);
+    } else {
+        return NIL;
+    }
+}

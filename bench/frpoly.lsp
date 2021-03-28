@@ -147,7 +147,6 @@
         (tagbody
          a1  (if (null y) 
                  (go r))
-             (print (dynamic u*))
              (setq e (+ (car (dynamic *x*)) (car y)))
              (setq c (ptimes (car (cdr y)) (car (cdr (dynamic *x*)))))
              (cond ((pzerop c)

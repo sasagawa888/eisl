@@ -791,7 +791,6 @@
 ;		   (throw 'c1 888)  ;;; c2 invalid
 ;		 (throw 'c2 999)))) <control-error>)
 
-#|
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;
@@ -813,7 +812,8 @@
 (test (let ((x ()))
    (tagbody
     (setq x (cons 1 x))
-    tag		(setq x (cons 2 x))
+    tag
+    (setq x (cons 2 x))
     (setq x (cons 3 x)))
    x) (3 2 1) equal)
 (test (let ((x ()))
@@ -821,7 +821,8 @@
     (setq x (cons 1 x))
     (go tag)
     (setq x (cons 2 x))
-    tag		(setq x (cons 3 x)))
+    tag
+    (setq x (cons 3 x)))
    x) (3 1) equal)
 ;;; closure
 (test (let ((x ()))
@@ -856,21 +857,22 @@
 ;($error (tagbody
 ;	 (go)) <program-error>)
 ($argc go 1 0 0)
-;($error (tagbody
-;	 (go tag 1)) <program-error>)
+($error (tagbody
+	 (go tag 1)) <program-error>)
 ;;; dot-list
-;($error (tagbody . 1) <error>)
-;($error (tagbody
-;	 (go tag . 1)) <error>)
+($error (tagbody . 1) <error>)
+($error (tagbody
+	 (go tag . 1)) <error>)
 ;;;
-;($error
-; (let ((x ()))
-;   (tagbody
-;    (setq x (cons 1 x))
-;    (go tag-notexist)
-;    (setq x (cons 2 x))
-;    tag		(setq x (cons 3 x)))
-;   x) <control-error>)
+($error
+ (let ((x ()))
+   (tagbody
+    (setq x (cons 1 x))
+    (go tag-notexist)
+    (setq x (cons 2 x))
+    tag
+    (setq x (cons 3 x)))
+   x) <control-error>)
 ;;; invalid-tag
 ;($error
 ; (tagbody
@@ -881,9 +883,8 @@
 ;       (go tag1) ;;; tag2 invalid
 ;     (go tag2)))) <control-error>)
 ;;;
-;;;($error
-;; (tagbody tag ((lambda ()) (go tagbody))) <control-error>)
-|#
+;($error
+; (tagbody tag ((lambda ()) (go tagbody))) <control-error>)
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;
@@ -924,7 +925,6 @@
 (test (catch 'exit
    (nest1 777)) 777 eql)
 (test x (2 4 3 1) equal)
-
 ;;;
 ($eval 
  (defun foo-4 (x)
@@ -952,16 +952,18 @@
    (block inner
 	  (test3 (lambda ()
 		   (return-from inner 7))))))
+
 ($eval
  (defun test3 (fun)
    (unwind-protect (test4) (funcall fun))))
 ($eval
  (defun test4 ()
    (throw 'outer 6)))
+#|
 ($error (test) <control-error>)
 ;;; 
 ($argc unwind-protect 1 0 1)
 ($error (unwind-protect) <program-error>)
 ($error (unwind-protect . 1) <program-error>)
-
+|#
 ;;; end of file

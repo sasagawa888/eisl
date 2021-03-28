@@ -95,7 +95,7 @@
          (t (cons (car y) (cons (car (cdr y)) (pplus1 x (cdr (cdr y))))))))
 
 (defun psimp (var x)
-   (format (standard-output) "psimp ~A ~A ~%" var x)
+   ;(format (standard-output) "psimp ~A ~A ~%" var x)
    (cond
          ((null x) 0)
          ((not (consp x)) x)

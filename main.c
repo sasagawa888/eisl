@@ -147,7 +147,6 @@ int catch_arg; //recieve argument of catch
 int tagbody_tag = NIL; //tag address fo tagbody
 int error_handler; //for store first argument of with-handler
 int trace_list = NIL; //function list of trace
-int trace_sym;  //function name in trace.
 int backtrace[BACKSIZE];
 
 //-----debugger-----
@@ -1552,14 +1551,14 @@ int apply(int func, int args){
     switch(GET_TAG(func)){
         case SUBR:  return((GET_SUBR(func))(args));
         case FSUBR: return((GET_SUBR(func))(args));
-        case FUNC: {if(!nullp(trace_sym)){
-                        trace = trace_sym;
+        case FUNC:  if(GET_TR(examin_sym) == 1){
+                        trace = examin_sym;
                         n = GET_TR(func);
                         SET_TR(func,n+1);
                         for(i=0; i<n; i++)
                             printf(" ");
                         printf("ENTERING: ");
-                        print(trace_sym);
+                        print(trace);
                         print(args);
                         printf("\n");
                     }
@@ -1581,7 +1580,7 @@ int apply(int func, int args){
                         body = cdr(body);
                     }
                     unbind();
-                    if(trace != 0){
+                    if(trace != NIL){
                         n = GET_TR(func);
                         n = n-1;
                         SET_TR(func,n);
@@ -1594,7 +1593,7 @@ int apply(int func, int args){
                         printf("\n");
                     }
                     ep = pop();
-                    return(res);}
+                    return(res);
         case MACRO:{if(improperlistp(args))
                         error(IMPROPER_ARGS, "apply", args);
                     macrofunc = GET_CAR(func);

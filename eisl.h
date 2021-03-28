@@ -326,7 +326,6 @@ extern int catch_arg; //argument that catch will recieve
 extern int tagbody_tag; //tag symbol address in tagbody
 extern int error_handler;
 extern int trace_list;
-extern int trace_sym;
 extern int backtrace[BACKSIZE];
 
 

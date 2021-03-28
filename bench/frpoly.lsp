@@ -12,8 +12,8 @@
 ;;; called for in the test, however.
 
 (defdynamic v   nil)
-(defdynamic *x* nil)
-(defdynamic u*  nil)
+;(defdynamic *x* nil)
+;(defdynamic u*  nil)
 
 (defglobal r    nil)
 (defglobal r2   nil)
@@ -95,6 +95,7 @@
          (t (cons (car y) (cons (car (cdr y)) (pplus1 x (cdr (cdr y))))))))
 
 (defun psimp (var x)
+   (format (standard-output) "psimp ~A ~A ~%" var x)
    (cond
          ((null x) 0)
          ((not (consp x)) x)

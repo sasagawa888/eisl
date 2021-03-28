@@ -1543,15 +1543,17 @@ int eval(int addr){
 }
 
 int apply(int func, int args){
-    int varlist,body,res,macrofunc,method,pexist,aexist,i,n;
+    int varlist,body,res,macrofunc,method,pexist,aexist,i,n,trace;
     res = NIL;
     pexist = 0;
     aexist = 0;
+    trace = 0;
 
     switch(GET_TAG(func)){
         case SUBR:  return((GET_SUBR(func))(args));
         case FSUBR: return((GET_SUBR(func))(args));
         case FUNC: {if(!nullp(trace_sym)){
+                        trace = trace_sym;
                         n = GET_TR(func);
                         SET_TR(func,n+1);
                         for(i=0; i<n; i++)
@@ -1579,14 +1581,14 @@ int apply(int func, int args){
                         body = cdr(body);
                     }
                     unbind();
-                    if(!nullp(trace_sym)){
+                    if(trace != 0){
                         n = GET_TR(func);
                         n = n-1;
                         SET_TR(func,n);
                         for(i=0; i<n; i++)
                             printf(" ");
-                        printf("EXITING: ");
-                        print(trace_sym);
+                        printf("EXITING:  ");
+                        print(trace);
                         printf(" ");
                         print(res);
                         printf("\n");

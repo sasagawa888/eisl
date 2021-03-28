@@ -11,9 +11,9 @@
 ;;; NOTE:  PDIFFER1  appears in the code,  but is not defined; is not
 ;;; called for in the test, however.
 
-;(defdynamic v   nil)
-;(defdynamic *x* nil)  never use
-;(defdynamic u*  nil)  never use
+(defdynamic v   nil)
+(defdynamic *x* nil)
+(defdynamic u*  nil)
 
 (defglobal r    nil)
 (defglobal r2   nil)
@@ -33,9 +33,14 @@
 
 (defmacro quo (x y) `(div ,x ,y))
 
-(defmacro oddp (x) `(= (mod ,x 2) 1))
+(defmacro oddp (x) `(eq* (mod ,x 2) 1))
 
 (defmacro pfloor (x y) `(div ,x ,y))
+
+;;added for EISL
+(defun eq* (x y)
+   (or (and (numberp x) (numberp y) (= x y))
+       (eq x y)))
 
 (defun pcoefadd (e c x) 
    (if (pzerop c)
@@ -75,7 +80,7 @@
           (pcplus x y))
          ((pcoefp y)
           (pcplus y x))
-         ((eq (car x) (car y))
+         ((eq* (car x) (car y))
           (psimp (car x) (pplus1 (cdr y) (cdr x))))
          ((pointergp (car x) (car y))
           (psimp (car x) (pcplus1 y (cdr x))))
@@ -95,7 +100,6 @@
          (t (cons (car y) (cons (car (cdr y)) (pplus1 x (cdr (cdr y))))))))
 
 (defun psimp (var x)
-   ;(format (standard-output) "psimp ~A ~A ~%" var x)
    (cond
          ((null x) 0)
          ((not (consp x)) x)
@@ -112,7 +116,7 @@
           (pctimes x y))
          ((pcoefp y)
           (pctimes y x))
-         ((eq (car x) (car y))
+         ((eq* (car x) (car y))
           (psimp (car x) (ptimes1 (cdr x) (cdr y))))
          ((pointergp (car x) (car y))
           (psimp (car x) (pctimes1 y (cdr x))))
@@ -143,6 +147,7 @@
         (tagbody
          a1  (if (null y) 
                  (go r))
+             (print (dynamic u*))
              (setq e (+ (car (dynamic *x*)) (car y)))
              (setq c (ptimes (car (cdr y)) (car (cdr (dynamic *x*)))))
              (cond ((pzerop c)

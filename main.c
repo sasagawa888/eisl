@@ -1520,8 +1520,9 @@ int eval(int addr){
         else if(fsubrp(car(addr)))
             return(apply(caar(addr),cdr(addr)));
         else if((val=functionp(car(addr)))){
+            temp = evlis(cdr(addr));
             examin_sym = car(addr);
-            return(apply(val,evlis(cdr(addr))));
+            return(apply(val,temp));
         }
         else if(macrop(car(addr))){
             examin_sym = car(addr);
@@ -1559,6 +1560,7 @@ int apply(int func, int args){
                             printf(" ");
                         printf("ENTERING: ");
                         print(trace);
+                        printf(" ");
                         print(args);
                         printf("\n");
                     }

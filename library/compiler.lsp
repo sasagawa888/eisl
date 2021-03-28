@@ -1380,9 +1380,22 @@ double tarai(double x, double y, double z){
         (format stream "Fapply(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
-        (comp-subrcall2 stream (cdr x) env args nil name global test clos)
+        (comp-funcall3 stream (cdr x) env args nil name global test clos)
         (format stream ")"))
     
+    (defun comp-funcall3 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              ((null (cdr x))
+               (format stream "Flist1(fast_inverse(")
+               (comp stream (car x) env args nil name global test clos)
+               (format stream "))"))
+              (t
+               (format stream "Fcons(fast_inverse(")
+               (comp stream (car x) env args nil name global test clos)
+               (format stream "),")
+               (comp-funcall3 stream (cdr x) env args tail name global test clos)
+               (format stream ")"))))
+
     ;;SUBR call
     ;;Not tail call subr.To avoid data loss by GC, push each data to shelter
     ;; ({int arg1,...,argn,res;
@@ -1436,27 +1449,6 @@ double tarai(double x, double y, double z){
                     (format stream "=Fshelterpop();~%"))))
         (format stream ";res;})"))
 
-    (defun comp-subrcall1 (stream x env args tail name global test clos)
-        (cond ((null x) (format stream "NIL"))
-              ((null (cdr x))
-               (format stream "Flist1(fast_inverse(")
-               (comp stream (car x) env args nil name global test clos)
-               (format stream "))"))
-              (t (comp-subrcall2 stream x env args tail name global test clos))))
-    
-    (defun comp-subrcall2 (stream x env args tail name global test clos)
-        (cond ((null x) (format stream "NIL"))
-              ((null (cdr x))
-               (format stream "Flist1(fast_inverse(")
-               (comp stream (car x) env args nil name global test clos)
-               (format stream "))"))
-              (t
-               (format stream "Fcons(fast_inverse(")
-               (comp stream (car x) env args nil name global test clos)
-               (format stream "),")
-               (comp-subrcall2 stream (cdr x) env args tail name global test clos)
-               (format stream ")"))))
-    
     (defun comp-subrcall3 (stream m n)
         (cond ((> m n) (format stream "NIL"))
               ((= m n)

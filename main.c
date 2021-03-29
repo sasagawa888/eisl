@@ -11,6 +11,7 @@ written by kenichi sasagawa 2016/4~
 #include <limits.h>
 #include <signal.h>
 #include <unistd.h>
+#include <getopt.h>
 #include "eisl.h"
 
 //------pointer----
@@ -254,7 +255,7 @@ static void usage(void)
 }
 
 int main(int argc, char *argv[]){
-    int opt, ch;
+    int ch;
     char *home,str[256];
     char *script_arg;
 
@@ -271,7 +272,7 @@ int main(int argc, char *argv[]){
     input_stream = standard_input;
     output_stream = standard_output;
     error_stream = standard_error;
-    opt = 1;
+    
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = false;

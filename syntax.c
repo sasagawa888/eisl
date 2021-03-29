@@ -1060,9 +1060,10 @@ int f_tagbody(int arglist){
             if(tagbody_tag != NIL){
                 for(i=0;i<end;i++){
                     if(tagbody_tag == prog[i]){
-                        line = i+1;
-                        if(line >= end)
-                            return(NIL);
+                        tagbody_tag = NIL;
+                        line = i;
+                        //if(line >= end)
+                        //    return(NIL);
                         goto exit;
                     }
                 }

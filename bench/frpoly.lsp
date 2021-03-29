@@ -194,7 +194,7 @@
                   (setq u (cdr (cdr u)))
                   (go c)))
             (go b)
-         r
+         r  
             ;; return nil
             )))
 

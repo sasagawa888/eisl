@@ -2155,7 +2155,7 @@ double tarai(double x, double y, double z){
         (format stream "({int res,val,save,dynpt;~% save=Fgetdynpt();~%")
         (comp-dynamic-let1 stream (elt x 1) env args tail name global test clos)
         (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "res;})"))
+        (format stream "Fsetdynpt(save);res;})"))
     
     (defun comp-dynamic-let1 (stream x env args tail name global test clos)
         (cond ((null x) t)

@@ -44,19 +44,19 @@
        (eq x y)))
 
 (defun pcoefadd (e c x) 
-   (print 'pcoefadd)
+   ;(print 'pcoefadd)
    (if (pzerop c)
        x
        (cons e (cons c x))))
 
 (defun pcplus (c p)
-   (print 'pcplus)
+   ;(print 'pcplus)
    (if (pcoefp p)
        (cplus p c)
        (psimp (car p) (pcplus1 c (cdr p)))))
 
 (defun pcplus1 (c x)
-   (print 'pcplus1)
+   ;(print 'pcplus1)
    (cond ((null x)
           (if (pzerop c)
               nil
@@ -67,13 +67,13 @@
           (cons (car x) (cons (car (cdr x)) (pcplus1 c (cdr (cdr x))))))))
 
 (defun pctimes (c p) 
-   (print 'pctimes)
+   ;(print 'pctimes)
    (if (pcoefp p)
        (ctimes c p)
        (psimp (car p) (pctimes1 c (cdr p)))))
 
 (defun pctimes1 (c x)
-   (print 'pctimes1)
+   ;(print 'pctimes1)
    (if (null x)
        nil
        (pcoefadd (car x)
@@ -81,7 +81,7 @@
                  (pctimes1 c (cdr (cdr x))))))
 
 (defun pplus (x y) 
-   (print 'pplus)
+   ;(print 'pplus)
    (cond
          ((pcoefp x)
           (pcplus x y))
@@ -95,7 +95,7 @@
           (psimp (car y) (pcplus1 x (cdr y))))))
 
 (defun pplus1 (x y)
-   (print 'pplus1)
+   ;(print 'pplus1)
    (cond
          ((null x) y)
          ((null y) x)
@@ -108,8 +108,8 @@
          (t (cons (car y) (cons (car (cdr y)) (pplus1 x (cdr (cdr y))))))))
 
 (defun psimp (var x)
-   (print 'psimp)
-   (print x)
+   ;(print 'psimp)
+   ;(print x)
    (cond
          ((null x) 0)
          ((not (consp x)) x)
@@ -119,7 +119,7 @@
           (cons var x))))
 
 (defun ptimes (x y) 
-   (print 'ptimes)
+   ;(print 'ptimes)
    (cond
          ((or (pzerop x) (pzerop y))
           (pzero))
@@ -135,18 +135,19 @@
           (psimp (car y) (pctimes1 x (cdr y))))))
 
 (defun ptimes1 (x y)
-   (print 'ptimes1)
+   ;(print 'ptimes1)
    (dynamic-let ((*x* x))
       (dynamic-let ((u* (ptimes2 y)))
          (dynamic-let ((v (dynamic u*)))
             (setf (dynamic *x*) (cdr (cdr (dynamic *x*))))
             (while (dynamic *x*)
                    (ptimes3 y)
+                   (print (dynamic *x*))
                    (setf (dynamic *x*) (cdr (cdr (dynamic *x*)))))
             (dynamic u*)))))
 
 (defun ptimes2 (y)
-   (print 'ptimes2)
+   ;(print 'ptimes2)
    (if (null y)
        nil
        (pcoefadd (+ (car (dynamic *x*)) (car y))
@@ -154,8 +155,8 @@
                  (ptimes2 (cdr (cdr y))))))
 
 (defun ptimes3 (y) 
-   (print 'ptimes3)
-   (print y)
+   ;(print 'ptimes3)
+   ;(print y)
    (let ((e ())
          (u ())
          (c ()))
@@ -220,7 +221,7 @@
             )))
 
 (defun pexptsq (p x)
-   (print 'pexptsq)
+   ;(print 'pexptsq)
    (for ((n (pfloor x 2) ; (floor x 2) = (quo x 2)
             (pfloor n 2))
          (s (if (oddp x) p 1)))

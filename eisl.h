@@ -25,7 +25,7 @@ Copying GC mode
 #define WORK2       13000000
 #define FREESIZE    900
 #define FARRMAX     100000000
-#define STACKSIZE   300000
+#define STACKSIZE   400000
 #define SYMSIZE     256
 #define BUFSIZE     256
 #define STRSIZE     500000

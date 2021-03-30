@@ -1,244 +1,159 @@
-
-;;;; -*-Mode:LISP; Package:LISP; Base:10; Syntax:ISLISP -*-
-;;;; Title:     frpoly.lsp
-;;;; Author:    Richard Gabriel
+;;;; -*-Mode: LISP; Package:LISP; Base:10; Syntax:ISLISP -*-
+;;;; Title:     runbench.lsp
+;;;; Author:    C. Jullien
 ;;;; License:   New BSD license
-;;;; ISLISP:    Yes
-;;;; CVS:       $Id: frpoly.lsp,v 1.8 2013/06/18 05:21:53 jullien Exp $
+;;;; CVS:       $Id: runbench.lsp,v 1.7 2013/06/18 05:21:53 jullien Exp $
 
-;;; (22)  FRPOLY  --  Benchmark  from  Berkeley  based  on polynomial
-;;; arithmetic.  Originally  writen in Franz Lisp by Richard Fateman.
+;;; Run Gabriel's benchmarks for ISLISP.
 
-;;; NOTE:  PDIFFER1  appears in the code,  but is not defined; is not
-;;; called for in the test, however.
+;;;
+;;; Please, send bug reports to jullien@eligis.com
+;;;
 
-(defdynamic v   nil)
-(defdynamic *x* nil)
-(defdynamic u*  nil)
+(defglobal *extension*  (or (ignore-errors *cpext*) ".lsp")) ;; .ibc, .lap ...
+(defglobal *result*     nil)
+(defglobal *total-time* 0.0)
+(defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
+(defglobal *bignum*     (and (integerp *largeint*)
+                             (> *largeint* 0)
+                             (eql (isqrt *largeint*) 100000)))
 
-(defglobal r    nil)
-(defglobal r2   nil)
-(defglobal r3   nil)
 
-(defmacro pointergp (x y) `(> (property ,x 'order) (property ,y 'order)))
+(defun bench-file (bench)
+   (string-append "bench/" bench *extension*))
 
-(defmacro pcoefp (e) `(not (consp ,e)))
+(defun format-time (time)
+   ;; format time '3.3'
+   (let ((str (convert time <string>))
+         (pos 0))
+        (for ((l (convert str <list>) (cdr l))
+              (i 0 (+ i 1)))
+             ((or (null l) (char= (car l) #\.)) (setq pos i)))
+        (setq str (string-append (create-string (- 3 (min pos 3)) #\space) str))
+        (if (< (length str) 7)
+            (string-append str (create-string (- 7 (length str)) #\0))
+            str)))
 
-(defmacro pzerop (x) `(and (numberp ,x) (= ,x 0)))
+(defmacro elapsed-time (form)
+   ;; returns the elapsed time to compute this form.
+   `(let ((time (get-internal-run-time)))
+         (setq *result* ,form)
+         (quotient (- (get-internal-run-time) time)
+                   (internal-time-units-per-second))))
 
-(defmacro pzero () 0)
+(defmacro bench (test name exp expect)
+  ;; run a bench and display the elapsed time.
+  `(let ((time nil)
+         (name ,name))
+        (setq time         (convert (elapsed-time ,exp) <float>))
+        (setq *total-time* (+ *total-time* time))
+        (format (standard-output)
+                "Test ~A: ~A~A-> ~A, time = ~As.~%"
+                ,test
+                name
+                (create-string (- 8 (length name)))
+                (if (equal *result* ,expect) "ok" *result*)
+                (format-time time))))
 
-(defmacro cplus (x y) `(+ ,x ,y))
+#|
+(format (standard-output) "~%")
+(gbc nil)
 
-(defmacro ctimes (x y) `(* ,x ,y))
+;;; (1) FIB
+(load (bench-file "fib20"))
+(bench "01" "Fib" (fib 20) 6765)
 
-(defmacro quo (x y) `(div ,x ,y))
+;;; (2) TAK
+(load (bench-file "tak"))
+(bench "02" "Tak" (tak 18 12 6) 7)
 
-(defmacro oddp (x) `(eq* (mod ,x 2) 1))
+;;; (3) STAK
+(load (bench-file "stak"))
+(bench "03" "Stak" (stak 18 12 6) 7)
 
-(defmacro pfloor (x y) `(div ,x ,y))
+;;; (4) CTAK
+(load (bench-file "ctak"))
+(bench "04" "Ctak" (ctak 18 12 6) 7)
 
-;;added for EISL
-(defun eq* (x y)
-   (or (and (numberp x) (numberp y) (= x y))
-       (eq x y)))
+;;; (5) TAKL
+(load (bench-file "takl"))
+(bench "05" "Takl" (takl ll-18 ll-12 ll-6) '(7 6 5 4 3 2 1))
 
-(defun pcoefadd (e c x) 
-   ;(print 'pcoefadd)
-   (if (pzerop c)
-       x
-       (cons e (cons c x))))
+;;; (6) TAKR
+(load (bench-file "takr"))
+(bench "06" "Takr" (takr 18 12 6) 7)
 
-(defun pcplus (c p)
-   ;(print 'pcplus)
-   (if (pcoefp p)
-       (cplus p c)
-       (psimp (car p) (pcplus1 c (cdr p)))))
+;;; (7) BOYER
+(load (bench-file "boyer"))
+(bench "07" "Boyer" (boyer) nil)
 
-(defun pcplus1 (c x)
-   ;(print 'pcplus1)
-   (cond ((null x)
-          (if (pzerop c)
-              nil
-              (cons 0 (cons c nil))))
-         ((pzerop (car x))
-          (pcoefadd 0 (pplus c (car (cdr x))) nil))
-         (t
-          (cons (car x) (cons (car (cdr x)) (pcplus1 c (cdr (cdr x))))))))
+;;; (8) BROWSE
+(load (bench-file "browse"))
+(bench "08" "Browse" (browse) ())
 
-(defun pctimes (c p) 
-   ;(print 'pctimes)
-   (if (pcoefp p)
-       (ctimes c p)
-       (psimp (car p) (pctimes1 c (cdr p)))))
+;;; (9) DESTRU
+(load (bench-file "destru"))
+(bench "09" "Destru" (destructive 600 50) ())
 
-(defun pctimes1 (c x)
-   ;(print 'pctimes1)
-   (if (null x)
-       nil
-       (pcoefadd (car x)
-                 (ptimes c (car (cdr x)))
-                 (pctimes1 c (cdr (cdr x))))))
+;;; (10) TRAVINI
+(load (bench-file "traverse"))
+(bench "10" "Travini" (init-traverse) ())
 
-(defun pplus (x y) 
-   ;(print 'pplus)
-   (cond
-         ((pcoefp x)
-          (pcplus x y))
-         ((pcoefp y)
-          (pcplus y x))
-         ((eq* (car x) (car y))
-          (psimp (car x) (pplus1 (cdr y) (cdr x))))
-         ((pointergp (car x) (car y))
-          (psimp (car x) (pcplus1 y (cdr x))))
-         (t
-          (psimp (car y) (pcplus1 x (cdr y))))))
+;;; (11) TRAVRUN
+(gbc)
+(bench "11" "Travrun" (run-traverse) ())
 
-(defun pplus1 (x y)
-   ;(print 'pplus1)
-   (cond
-         ((null x) y)
-         ((null y) x)
-         ((= (car x) (car y))
-          (pcoefadd (car x)
-                    (pplus (car (cdr x)) (car (cdr y)))
-                    (pplus1 (cdr (cdr x)) (cdr (cdr y)))))
-         ((> (car x) (car y))
-          (cons (car x) (cons (car (cdr x)) (pplus1 (cdr (cdr x)) y))))
-         (t (cons (car y) (cons (car (cdr y)) (pplus1 x (cdr (cdr y))))))))
+;;; (12) DERIV
+(load (bench-file "deriv"))
+(bench "12" "Deriv" (deriv-run) ())
 
-(defun psimp (var x)
-   ;(print 'psimp)
-   ;(print x)
-   (cond
-         ((null x) 0)
-         ((not (consp x)) x)
-         ((pzerop (car x))
-          (car (cdr x)))
-         (t
-          (cons var x))))
+;;; (13) DDERIV
+(load (bench-file "dderiv"))
+(bench "13" "Dderiv" (dderiv-run) ())
 
-(defun ptimes (x y) 
-   ;(print 'ptimes)
-   (cond
-         ((or (pzerop x) (pzerop y))
-          (pzero))
-         ((pcoefp x)
-          (pctimes x y))
-         ((pcoefp y)
-          (pctimes y x))
-         ((eq* (car x) (car y))
-          (psimp (car x) (ptimes1 (cdr x) (cdr y))))
-         ((pointergp (car x) (car y))
-          (psimp (car x) (pctimes1 y (cdr x))))
-         (t
-          (psimp (car y) (pctimes1 x (cdr y))))))
+;;; (14-15) DIV2
+(load (bench-file "div2"))
+(bench "14" "Divit" (test-1 *ll*) ())
+(bench "15" "Divrec" (test-2 *ll*) ())
 
-(defun ptimes1 (x y)
-   ;(print 'ptimes1)
-   (dynamic-let ((*x* x))
-      (dynamic-let ((u* (ptimes2 y)))
-         (dynamic-let ((v (dynamic u*)))
-            (setf (dynamic *x*) (cdr (cdr (dynamic *x*))))
-            (while (dynamic *x*)
-                   (ptimes3 y)
-                   (print (dynamic *x*))
-                   (setf (dynamic *x*) (cdr (cdr (dynamic *x*)))))
-            (dynamic u*)))))
+;;; (16) FFT
+(load (bench-file "fft"))
+(bench "16" "FFT" (fft-bench) ())
 
-(defun ptimes2 (y)
-   ;(print 'ptimes2)
-   (if (null y)
-       nil
-       (pcoefadd (+ (car (dynamic *x*)) (car y))
-                 (ptimes (car (cdr (dynamic *x*))) (car (cdr y)))
-                 (ptimes2 (cdr (cdr y))))))
+;;; (17) PUZZLE
+(load (bench-file "puzzle"))
+(bench "17" "Puzzle" (puzzle-start) 2005)
 
-(defun ptimes3 (y) 
-   ;(print 'ptimes3)
-   ;(print y)
-   (let ((e ())
-         (u ())
-         (c ()))
-        (tagbody
-         a1  (print "a1")
-             (if (null y) 
-                 (go r))
-             (setq e (+ (car (dynamic *x*)) (car y)))
-             (setq c (ptimes (car (cdr y)) (car (cdr (dynamic *x*)))))
-             (cond ((pzerop c)
-                    (setq y (cdr (cdr y)))
-                    (go a1))
-                   ((or (null (dynamic v))
-                        (> e (car (dynamic v))))
-                    (setf (dynamic u*) (setf (dynamic v) (pplus1 (dynamic u*)
-                                                                 (list e c))))
-                    (setq y (cdr (cdr y)))
-                    (go a1))
-                   ((= e (car (dynamic v)))
-                    (setq c (pplus c (car (cdr (dynamic v)))))
-                    (if (pzerop c) ; never true, evidently
-                        (setf (dynamic u*)
-                              (setf (dynamic v)
-                                    (pdiffer1 (dynamic u*)
-                                              (list
-                                                    (car (dynamic v))
-                                                    (car (cdr (dynamic v)))))))
-                        (set-car c (cdr (dynamic v))))
-                    (setq y (cdr (cdr y)))
-                    (go a1)))
-         a  (print "a")
-            (cond ((and (cdr (cdr (dynamic v)))
-                        (> (car (cdr (cdr (dynamic v)))) e))
-                   (setf (dynamic v) (cdr (cdr (dynamic v))))
-                   (go a)))
-            (setq u (cdr (dynamic v)))
-         b  (print "b")
-            (if (or (null (cdr u)) (< (car (cdr u)) e))
-                (setf (cdr u) (cons e (cons c (cdr u))))
-                (go e))
-            (setq c (pplus (car (cdr (cdr u))) c))
-            (cond ((pzerop c)
-                   (setf (cdr u) (cdr (cdr (cdr u))))
-                   (go d))
-                  (t
-                    (set-car c (cdr (cdr u)))))
-         e  (print "e")
-            (setq u (cdr (cdr u)))
-         d  (print "d")
-            (setq y (cdr (cdr y)))
-            (if (null y)
-                (go r))
-            (setq e (+ (car (dynamic *x*)) (car y)))
-            (setq c (ptimes (car (cdr y)) (car (cdr (dynamic *x*)))))
-         c  (print "c")
-            (cond ((and (cdr u) (> (car (cdr u)) e))
-                  (setq u (cdr (cdr u)))
-                  (go c)))
-            (go b)
-         r  (print "r")
-            ;; return nil
-            )))
+;;; (18) TRIANG
+(load (bench-file "triang"))
+(bench "18" "Triang" (gogogo 22) ())
 
-(defun pexptsq (p x)
-   ;(print 'pexptsq)
-   (for ((n (pfloor x 2) ; (floor x 2) = (quo x 2)
-            (pfloor n 2))
-         (s (if (oddp x) p 1)))
-        ((= n 0) s)
-        (setq p (ptimes p p))
-        (and (oddp n) (setq s (ptimes s p)))))
+;;; (19) FPRINT
+(load (bench-file "fprint"))
+(bench "19" "Fprint" (fprint) t)
 
-(setf (property 'x 'order) 1)
-(setf (property 'y 'order) 2)
-(setf (property 'z 'order) 3)
+;;; (20) FREAD
+(load (bench-file "fread"))
+(bench "20" "Fread" (fread) t)
 
-(setq r  (pplus '(x 1 1 0 1) (pplus '(y 1 1) '(z 1 1)))) ; r  = x+y+z+1
-(setq r2 (ptimes r 100000))                              ; r2 = 100000*r
-(setq r3 (ptimes r 1.0))                                 ; r3 = r in flonums
+;;; (21) TPRINT
+(load (bench-file "tprint"))
+(bench "21" "Tprint"
+       (let ((so (create-string-output-stream)))
+            (format so "~s" test-pattern)
+            (close so)
+            t)
+       t)
+|#
+;;; (22) FRPOLY
+;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
+(load "bench/frpoly.lsp")
+(gbc)
+(bench "22" "Frpoly" (mapc (lambda (n)
+                                          (pexptsq r  n)
+                             (if *bignum* (pexptsq r2 n))
+                                          (pexptsq r3 n))
+                          '(2 5 10 15))
+                     '(2 5 10 15))
+(format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
 
-;;; four sets of three tests, call:
-;;; (pexptsq r 2) (pexptsq r2 2) (pexptsq r3 2) 
-;;; (pexptsq r 5) (pexptsq r2 5) (pexptsq r3 5)
-;;; (pexptsq r 10) (pexptsq r2 10) (pexptsq r3 10)
-;;; (pexptsq r 15) (pexptsq r2 15) (pexptsq r3 15)

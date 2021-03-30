@@ -148,7 +148,6 @@
 
 ;;; (22) FRPOLY
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
-#|
 (load (bench-file "frpoly"))
 (bench "22" "Frpoly" (mapc (lambda (n)
                                           (pexptsq r  n)
@@ -156,6 +155,6 @@
                                           (pexptsq r3 n))
                           '(2 5 10 15))
                      '(2 5 10 15))
-|#
+
 (format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
 

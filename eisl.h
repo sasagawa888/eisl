@@ -18,7 +18,7 @@ Copying GC mode
 
 #include <setjmp.h>
 #include <stdbool.h>
-#define VERSION     1.84
+#define VERSION     1.85
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000

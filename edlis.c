@@ -108,7 +108,7 @@ char extended[50][30] = {
 };
 
 int main(int argc, char *argv[]){
-    int c,i,j;
+    int i,j;
     FILE *port;
     char *fname;
 
@@ -139,6 +139,8 @@ int main(int argc, char *argv[]){
     ed_clip_end = -1;
     ed_data[0][0] = EOL;
     if(port != NULL){
+        int c;
+        
         c = fgetc(port);
         while(c != EOF){
             ed_data[ed_row][ed_col] = c;
@@ -250,9 +252,8 @@ void edit_screen(char *fname){
                         ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                         break;
                     }
-                    if(port != NULL){
-                        c = fgetc(port);
-                        while(c != EOF){
+                    c = fgetc(port);
+                    while(c != EOF){
                         ed_data[ed_row][ed_col] = c;
                         if(c == EOL){
                             ed_row++;
@@ -262,15 +263,14 @@ void edit_screen(char *fname){
                         }
                         else{
                             ed_col++;
-                        if(ed_col >= COL_SIZE)
-                            printf("row %d over max-column", ed_col);
+                            if(ed_col >= COL_SIZE)
+                                printf("row %d over max-column", ed_col);
                         }
-                    c = getc(port);
+                        c = getc(port);
                     }
                     ed_end = ed_row;
                     ed_data[ed_end][0] = EOL;
-                        fclose(port);
-                    }
+                    fclose(port);
                     display_screen();
                     modify_flag = 1;
                     break;
@@ -445,7 +445,7 @@ void edit_screen(char *fname){
                     printf("          ");
                     ESCMOVE(ed_footer,1);
                     printf("line? ");
-                    c = scanf("%d",&i);
+                    (void)scanf("%d",&i);
                     c = getch();
                     ESCRST;
                     if(i < 0 || i > ed_end)
@@ -686,7 +686,7 @@ void edit_screen(char *fname){
                                         emphasis_rparen();
                                         ESCMOVE(ed_row+2 - ed_start,ed_col+1);
                                     }
-                                    else if(ed_col >= ed_width - 1){
+                                    else {
                                         if(ed_col == ed_width){
                                              reset_paren();
                                              ESCCLSLA;
@@ -1128,7 +1128,7 @@ void backspace(){
         ed_rparen_row = -1;
     }
     i = ed_col;
-    while(i <= COL_SIZE){
+    while(i < COL_SIZE){
         ed_data[ed_row][i-1] = ed_data[ed_row][i];
         i++;
     }
@@ -1208,7 +1208,6 @@ struct position findlparen(int bias){
     else{
         row--;
         if(row < 0){
-            pos.row = -1; //not found
             pos.col = 0;
         }
         col = findeol(row);
@@ -1459,10 +1458,10 @@ int findnext(int row, int col){
    if(ed_data[row][col] == '(')
       return(col);
    else{
-        while(ed_data[row][col] != ' ' && ed_data[row][col] >= ' ')
+        while(ed_data[row][col] != ' ' && ed_data[row][col] > ' ')
             col++;
 
-        while(ed_data[row][col] == ' ' && ed_data[row][col] >= ' ')
+        while(ed_data[row][col] == ' ')
             col++;
     }
     return(col);

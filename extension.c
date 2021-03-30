@@ -329,7 +329,7 @@ int f_macroexpand_1(int arglist){
 }
 
 int f_backtrace(int arglist){
-    int arg1,i,l;
+    int arg1,l;
     
     if((l=length(arglist)) != 0 && l != 1)
         error(WRONG_ARGS,"backtrace",arglist);
@@ -337,6 +337,8 @@ int f_backtrace(int arglist){
     arg1 = car(arglist);
     
     if(l == 0){ 
+        int i;
+
         for(i=0;i<BACKSIZE;i++){
             print(backtrace[i]);
             printf("\n");

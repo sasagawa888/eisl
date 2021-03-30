@@ -426,8 +426,9 @@ int replace_fragment_buffer(char* newstr, int col){
 void backspace_buffer(int col){
     int i;
 
-    for(i=col;i<256;i++)
+    for(i=col;i<255;i++)
         buffer[i][0] = buffer[i+1][0];
+    buffer[255][0] = 0;
 }
 
 void insertcol_buffer(int col){
@@ -438,7 +439,7 @@ void insertcol_buffer(int col){
 }
 
 int read_line(int flag){
-    int c,i,j,k,line;
+    int c,i,j,k,rl_line;
     static int pos=0,limit=0;
 
     if(flag == -1){
@@ -458,7 +459,7 @@ int read_line(int flag){
        for(j=0;j<256;j++)
             buffer[j][0] = 0;
 
-        line = 0;
+        rl_line = 0;
         ed_lparen_col = -1;
         ed_rparen_col = -1;
         j = 0;
@@ -467,9 +468,10 @@ int read_line(int flag){
         switch(c){
             case 13:  //ctrl+M
             case EOL: for(j=0;j<256;j++)
-                          if(buffer[j][0] == 0)
+                          if(buffer[j][0] == 0) {
+                              buffer[j][0] = c;
                               break;
-                      buffer[j][0] = c;
+                          }
                       restore_paren_buffer(j);
                       printf("%c",c);
                       pos = 0;
@@ -541,15 +543,15 @@ int read_line(int flag){
                       up:
                       if(limit <= 1)
                          break;
-                      if(line >= limit-1)
-                         line = limit-2;
+                      if(rl_line >= limit-1)
+                         rl_line = limit-2;
                       for(j=0;j<256;j++)
-                          buffer[j][0] = buffer[j][line+1];
+                          buffer[j][0] = buffer[j][rl_line+1];
 
                       for(j=0;j<256;j++)
                           if(buffer[j][0] == EOL)
                               break;
-                      line++;
+                      rl_line++;
                       pos = 0;
                       ed_rparen_col = -1;
                       ed_lparen_col = -1;
@@ -557,14 +559,14 @@ int read_line(int flag){
                       break;
             case 14:  //ctrl+N
                       down:
-                      if(line <= 1)
-                         line = 1;
+                      if(rl_line <= 1)
+                         rl_line = 1;
                       for(j=0;j<256;j++)
-                          buffer[j][0] = buffer[j][line-1];
+                          buffer[j][0] = buffer[j][rl_line-1];
                       for(j=0;j<256;j++)
                           if(buffer[j][0] == EOL)
                               break;
-                      line--;
+                      rl_line--;
                       pos = 0;
                       ed_rparen_col = -1;
                       ed_lparen_col = -1;
@@ -675,7 +677,6 @@ int read_line(int flag){
         }
         c = getch();
         goto loop;
-        pos=0;
     }
    exit:
    return(buffer[pos++][0]);

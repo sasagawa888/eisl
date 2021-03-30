@@ -215,21 +215,25 @@ int negative_zerop(int x){
 //basic operation
 
 int plus(int arg1, int arg2){
-    int n,s,tag1,tag2;
-    double x1,y1,x2;
-    long long int l;
+    int tag1,tag2;
+    double x1,x2;
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
     switch(tag1){
         case INTN:
             switch(tag2){
-                case INTN: {l = (long long int)GET_INT(arg1) + (long long int)GET_INT(arg2);
+                case INTN: {long long int l;
+
+                l = (long long int)GET_INT(arg1) + (long long int)GET_INT(arg2);
                             if(SMALL_INT_MIN < l && l < SMALL_INT_MAX)
                                 return(makeint((int)l));
                             else
                                 return(makelong(l));}
-                case FLTN: {n = GET_INT(arg1);
+            case FLTN: {int n;
+                double y1;
+
+                n = GET_INT(arg1);
                             x1 = (double)n;
                             y1 = GET_FLT(arg2);
                             return(makeflt(x1+y1));}
@@ -255,7 +259,9 @@ int plus(int arg1, int arg2){
             break;
         case FLTN:
             switch(tag2){
-                case INTN: {x1 = GET_FLT(arg1);
+            case INTN: {int s;
+                
+                x1 = GET_FLT(arg1);
                             s = GET_INT(arg2);
                             x2 = (double)s;
                             return(makeflt(x1+x2));}
@@ -274,22 +280,26 @@ int plus(int arg1, int arg2){
 
 
 int minus(int arg1, int arg2){
-    int n,s,tag1,tag2;
-    double x1,y1,x2;
-    long long int l;
+    int tag1,tag2;
+    double x1,x2;
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
     switch(tag1){
         case INTN:
             switch(tag2){
-                case INTN: {l = (long long int)GET_INT(arg1) - (long long int)GET_INT(arg2);
+                case INTN: {long long int l;
+                
+                l = (long long int)GET_INT(arg1) - (long long int)GET_INT(arg2);
                             if(SMALL_INT_MIN < l && l < SMALL_INT_MAX)
                                 return(makeint((int)l));
                             else
                                 return(makelong(l));}
 
-                case FLTN: {n = GET_INT(arg1);
+            case FLTN: {int n;
+                double y1;
+
+                n = GET_INT(arg1);
                             x1 = (double)n;
                             y1 = GET_FLT(arg2);
                             return(makeflt(x1-y1));}
@@ -318,7 +328,9 @@ int minus(int arg1, int arg2){
             break;
         case FLTN:
             switch(tag2){
-                case INTN: {x1 = GET_FLT(arg1);
+            case INTN: {int s;
+
+                x1 = GET_FLT(arg1);
                             s = GET_INT(arg2);
                             x2 = (double)s;
                             return(makeflt(x1-x2));}
@@ -336,8 +348,7 @@ int minus(int arg1, int arg2){
 
 
 int mult(int arg1, int arg2){
-    int n,s,tag1,tag2;
-    long long int l,l1,l2;
+    int tag1,tag2;
     double x1,y1,x2;
 
     tag1 = GET_TAG(arg1);
@@ -346,7 +357,9 @@ int mult(int arg1, int arg2){
     switch(tag1){
         case INTN:
             switch(tag2){
-                case INTN: {l1 = (long long int)GET_INT(arg1);
+            case INTN: {long long int l1, l2, l;
+
+                l1 = (long long int)GET_INT(arg1);
                             l2 = (long long int)GET_INT(arg2);
                             l = l1 * l2;
                             if(l < SMALL_INT_MAX && l > SMALL_INT_MIN)
@@ -354,7 +367,9 @@ int mult(int arg1, int arg2){
                             else
                                 return(bigx_mult(bigx_int_to_big(arg1),bigx_int_to_big(arg2))); }
 
-                case FLTN: {n = GET_INT(arg1);
+            case FLTN: {int n;
+
+                    n = GET_INT(arg1);
                             x1 = (double)n;
                             y1 = GET_FLT(arg2);
                             return(makeflt(x1*y1));}
@@ -388,7 +403,9 @@ int mult(int arg1, int arg2){
             break;
         case FLTN:
             switch(tag2){
-                case INTN: {x1 = GET_FLT(arg1);
+            case INTN: {int s;
+
+                x1 = GET_FLT(arg1);
                             s = GET_INT(arg2);
                             x2 = (double)s;
                             return(makeflt(x1*x2));}
@@ -666,12 +683,12 @@ int angle(int y, int x){
 
 //GCD of integer
 int int_gcd(int x, int y){
-    int r;
-
     if(y == 0)
         return(x);
 
     while(y != 0){
+        int r;
+
         r = x % y;
         x = y;
         y = r;
@@ -681,8 +698,6 @@ int int_gcd(int x, int y){
 
 //GCD of number(include bignum)
 int gcd(int x, int y){
-    int r;
-
     if(integerp(x) && integerp(y))
         return(makeint(abs(int_gcd(GET_INT(x),GET_INT(y)))));
 
@@ -696,6 +711,8 @@ int gcd(int x, int y){
         return(makeflt((double)abs(int_gcd(GET_FLT(x),(int)GET_FLT(y)))));
 
     while(!zerop(y)){
+        int r;
+
         r = s_remainder(x,y);
         x = y;
         y = r;

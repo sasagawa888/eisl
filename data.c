@@ -207,13 +207,8 @@ int functionp(int addr){
     if((val != -1) && IS_FUNC(val))
         return(val);
     val = GET_CAR(addr);    
-    if(IS_FUNC(val)){
-        if(GET_TR(addr) == 1)
-            trace_sym = addr;
-        else
-            trace_sym = NIL;
+    if(IS_FUNC(val))
         return(val);
-    }
     else
         return(0);
 }

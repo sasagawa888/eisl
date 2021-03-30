@@ -17,14 +17,15 @@ Copying GC mode
 #define EISL_H
 
 #include <setjmp.h>
-#define VERSION     1.83
+#include <stdbool.h>
+#define VERSION     1.85
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000
 #define WORK2       13000000
 #define FREESIZE    900
 #define FARRMAX     100000000
-#define STACKSIZE   300000
+#define STACKSIZE   400000
 #define SYMSIZE     256
 #define BUFSIZE     256
 #define STRSIZE     500000
@@ -286,6 +287,8 @@ extern int generic_list;
 
 
 //flag
+extern int gArgC;
+extern char **gArgV;
 extern int gbc_flag;
 extern int genint;
 extern int simp_flag;
@@ -297,11 +300,11 @@ extern int redef_flag;
 extern int start_flag;
 extern int back_flag;
 extern int ignore_topchk;
-extern int repl_flag;
+extern bool repl_flag;
 extern int exit_flag;
 extern int debug_flag;
 extern int greeting_flag;
-extern int script_flag;
+extern bool script_flag;
 
 //switch
 extern int gc_sw;
@@ -326,7 +329,6 @@ extern int catch_arg; //argument that catch will recieve
 extern int tagbody_tag; //tag symbol address in tagbody
 extern int error_handler;
 extern int trace_list;
-extern int trace_sym;
 extern int backtrace[BACKSIZE];
 
 
@@ -827,6 +829,7 @@ int f_with_open_output_file(int x);
 int f_with_standard_input(int x);
 int f_with_standard_output(int x);
 int f_write_byte(int arglist);
+int f_line_argument(int arglist);
 int farray(int n, int ls);
 int farrayp(int x);
 int finddyn(int sym);

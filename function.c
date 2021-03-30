@@ -4113,7 +4113,9 @@ int f_initialize_object_star(int arglist){
 //controle
 int f_quit(int arglist){
     (void)arglist;
-    printf("- good bye -\n");
+    if (!script_flag) {
+      printf("- good bye -\n");
+    }
     greeting_flag = 0;
     longjmp(buf,2);
 }

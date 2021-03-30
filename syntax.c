@@ -455,7 +455,7 @@ int f_set_dynamic(int arglist){
         return(arg2);
     }
     else
-    	error(UNDEF_VAR, "setq", arg1);
+    	error(UNDEF_VAR, "set-dynamic", arg1);
 
     return(arg2);
 }
@@ -1087,9 +1087,8 @@ int f_tagbody(int arglist){
             if(tagbody_tag != NIL){
                 for(i=0;i<end;i++){
                     if(tagbody_tag == prog[i]){
-                        tb_line = i+1;
-                        if(tb_line >= end)
-                            return(NIL);
+                        tagbody_tag = NIL;
+                        tb_line = i;
                         goto exit;
                     }
                 }

@@ -9,16 +9,15 @@
 ;;;
 ;;; Please, send bug reports to jullien@eligis.com
 ;;;
-(load "bench/cpbench.lsp")
 
-(defglobal *extension*  (or (ignore-errors *cpext*) ".o")) ;; .ibc, .lap ...
+(defglobal *extension*  (or (ignore-errors *cpext*) ".lsp")) ;; .ibc, .lap ...
 (defglobal *result*     nil)
 (defglobal *total-time* 0.0)
 (defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
 (defglobal *bignum*     (and (integerp *largeint*)
                              (> *largeint* 0)
                              (eql (isqrt *largeint*) 100000)))
-(defglobal *bignum* 12345678901234567890)
+
 
 (defun bench-file (bench)
    (string-append "bench/" bench *extension*))
@@ -56,7 +55,7 @@
                 (if (equal *result* ,expect) "ok" *result*)
                 (format-time time))))
 
-
+#|
 (format (standard-output) "~%")
 (gbc nil)
 
@@ -145,16 +144,16 @@
             (close so)
             t)
        t)
-
+|#
 ;;; (22) FRPOLY
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
-(load (bench-file "frpoly"))
+(load "bench/frpoly.lsp")
+(gbc)
 (bench "22" "Frpoly" (mapc (lambda (n)
                                           (pexptsq r  n)
                              (if *bignum* (pexptsq r2 n))
                                           (pexptsq r3 n))
                           '(2 5 10 15))
                      '(2 5 10 15))
-
 (format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
 

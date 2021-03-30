@@ -154,6 +154,7 @@ double tarai(double x, double y, double z){
                  compiler::not-need-res
                  compiler::not-need-colon
                  compiler::global-variable
+                 compiler::global-dynamic
                  compiler::function-arg
                  compiler::generic-name-arg
                  compiler::catch-block-tag
@@ -189,6 +190,7 @@ double tarai(double x, double y, double z){
     (defglobal not-need-colon '(c-lang c-define c-include c-option)
 )
     (defglobal global-variable nil)
+    (defglobal global-dynamic nil)
     (defglobal function-arg nil)
     (defglobal generic-name-arg nil)
     (defglobal catch-block-tag nil)
@@ -326,6 +328,7 @@ double tarai(double x, double y, double z){
              (let ((sexp (substitute (car body) name nil)))
                 (check-args-count sexp)
                 (find-catch-block-tag sexp))))
+
     (defun check-args-count (x)
         (cond ((eq (car x) 'defun)
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
@@ -341,6 +344,12 @@ double tarai(double x, double y, double z){
                (unless (= (length x) 3) (error* "defglobal: illegal form" x))
                (unless (symbolp (elt x 1)) (error: "defglobal: not symbol" (elt x 1)))
                (setq global-variable (cons (elt x 1) global-variable))
+               (if (and (not (member (elt x 1) comp-global-var)) (atom (elt x 2)))
+                   (eval x)))
+              ((eq (car x) 'defdynamic)
+               (unless (= (length x) 3) (error* "defdynamic: illegal form" x))
+               (unless (symbolp (elt x 1)) (error: "defdynamic: not symbol" (elt x 1)))
+               (setq global-dynamic (cons (elt x 1) global-variable))
                (if (and (not (member (elt x 1) comp-global-var)) (atom (elt x 2)))
                    (eval x)))
               ((eq (car x) 'defconstant)
@@ -622,6 +631,7 @@ double tarai(double x, double y, double z){
         (member
          x
          '(#\alarm #\backspace #\delete #\escape #\return #\newline #\null #\space #\tab)))
+
     (defun print-special-char (x stream)
         (cond ((char= x #\alarm) (format stream "ALARM"))
               ((char= x #\backspace) (format stream "BACKSPACE"))
@@ -632,8 +642,10 @@ double tarai(double x, double y, double z){
               ((char= x #\null) (format stream "NULL"))
               ((char= x #\space) (format stream "SPACE"))
               ((char= x #\tab) (format stream "TAB"))))
+
     (defun initialize ()
         (setq global-variable nil)
+        (setq global-dynamic nil)
         (setq function-arg nil)
         (setq generic-name-arg nil)
         (setq catch-block-tag nil)
@@ -820,7 +832,6 @@ double tarai(double x, double y, double z){
                (type-gen-arg2 code2 args (argument-type name)))
            (format code2 "{~%")
            (format code2 "int res;~%")
-           ;;debug print ;(format code2 "printf("")                                       ;(format-object code2 name nil)                                                ;(format code2 "   -->   ");")
            (cond ((and (not optimize-enable) (has-tail-recur-p body name))
                   ;;for tail recursive tempn var;
                   (gen-arg3 (length args)))
@@ -1244,8 +1255,65 @@ double tarai(double x, double y, double z){
                 (error* "call: illegal argument count" x))
                (format-object stream (conv-name (car x)) nil)
                (format stream "()"))
-              (t (comp-funcall-clang stream x env args tail name global test clos))))
+              (optimize-enable
+               (comp-funcall-clang stream x env args tail name global test clos))
+              (t (comp-funcall-clang-left-to-right stream x env args tail name global test clos))))
     
+     (defun comp-funcall-clang-left-to-right (stream x env args tail name global test clos)
+        (let ((n (cdr (assoc (car x) function-arg))))
+           (when (and (> n 0) (/= (length (cdr x)) n)) (error* "call: illegal arument count" x))
+           (cond ((null (cdr x)) (format stream "({int res;"))
+                 (t
+                    (format stream "({int ")
+                 (for ((ls (cdr x) (cdr ls))
+                        (n 1 (+ n 1)) )
+                      ((null ls)
+                        t )
+                      (format stream "arg")
+                      (format-integer stream n 10)
+                    (format stream ","))
+                    (format stream "res;~%")
+                    (for ((ls (cdr x) (cdr ls))
+                          (n 1 (+ n 1)) )
+                         ((null ls)
+                           t )
+                         (format stream "arg")
+                         (format-integer stream n 10)
+                         (format stream " = fast_inverse(")
+                         (comp stream (car ls) env args nil name global test clos)
+                         (format stream ");~%")
+                         (format stream "Fshelterpush(arg")
+                         (format-integer stream n 10)
+                         (format stream ");~%"))))
+           (format stream "res = ")
+           (format-object stream (conv-name (car x)) nil)
+           (format stream "(")
+           (comp-funcall-clang-left-to-right1 stream 1 (length (cdr x)))
+           (format stream ");~%")
+           (cond ((not (null (cdr x)))
+                  (for ((ls (cdr x) (cdr ls))
+                        (n (length (cdr x)) (- n 1)) )
+                       ((null ls)
+                         t )
+                       (format stream "arg")
+                       (format-integer stream n 10)
+                       (format stream "=Fshelterpop();~%"))))
+           (format stream ";res;})"))
+    )
+
+    (defun comp-funcall-clang-left-to-right1 (stream m n)
+        (cond ((> m n) )
+              ((= m n)
+               (format stream "arg")
+               (format-integer stream m 10))
+              (t
+               (format stream "arg")
+               (format-integer stream m 10)
+               (format stream ",")
+               (comp-funcall-clang-left-to-right1 stream (+ m 1) n))))
+
+
+
     (defun comp-funcall-clang (stream x env args tail name global test clos)
         (let ((n (cdr (assoc (car x) function-arg))))
            (when (and (> n 0) (/= (length (cdr x)) n)) (error* "call: illegal arument count" x))
@@ -1277,7 +1345,8 @@ double tarai(double x, double y, double z){
                (format stream "),")
                (comp-funcall-clang1 stream (cdr x) env args tail name global test clos)
                (format stream ")"))))
-    
+
+
     ;;tail recurcive function call
     (defun comp-funcall1 (stream x env args tail name global test clos)
         ;;{temp1=...; temp2=...; ... x=temp1;y=temp2; goto NAMEloop;}
@@ -1311,9 +1380,22 @@ double tarai(double x, double y, double z){
         (format stream "Fapply(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
-        (comp-subrcall2 stream (cdr x) env args nil name global test clos)
+        (comp-funcall3 stream (cdr x) env args nil name global test clos)
         (format stream ")"))
     
+    (defun comp-funcall3 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              ((null (cdr x))
+               (format stream "Flist1(fast_inverse(")
+               (comp stream (car x) env args nil name global test clos)
+               (format stream "))"))
+              (t
+               (format stream "Fcons(fast_inverse(")
+               (comp stream (car x) env args nil name global test clos)
+               (format stream "),")
+               (comp-funcall3 stream (cdr x) env args tail name global test clos)
+               (format stream ")"))))
+
     ;;SUBR call
     ;;Not tail call subr.To avoid data loss by GC, push each data to shelter
     ;; ({int arg1,...,argn,res;
@@ -1367,27 +1449,6 @@ double tarai(double x, double y, double z){
                     (format stream "=Fshelterpop();~%"))))
         (format stream ";res;})"))
 
-    (defun comp-subrcall1 (stream x env args tail name global test clos)
-        (cond ((null x) (format stream "NIL"))
-              ((null (cdr x))
-               (format stream "Flist1(fast_inverse(")
-               (comp stream (car x) env args nil name global test clos)
-               (format stream "))"))
-              (t (comp-subrcall2 stream x env args tail name global test clos))))
-    
-    (defun comp-subrcall2 (stream x env args tail name global test clos)
-        (cond ((null x) (format stream "NIL"))
-              ((null (cdr x))
-               (format stream "Flist1(fast_inverse(")
-               (comp stream (car x) env args nil name global test clos)
-               (format stream "))"))
-              (t
-               (format stream "Fcons(fast_inverse(")
-               (comp stream (car x) env args nil name global test clos)
-               (format stream "),")
-               (comp-subrcall2 stream (cdr x) env args tail name global test clos)
-               (format stream ")"))))
-    
     (defun comp-subrcall3 (stream m n)
         (cond ((> m n) (format stream "NIL"))
               ((= m n)
@@ -2094,7 +2155,7 @@ double tarai(double x, double y, double z){
         (format stream "({int res,val,save,dynpt;~% save=Fgetdynpt();~%")
         (comp-dynamic-let1 stream (elt x 1) env args tail name global test clos)
         (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "res;})"))
+        (format stream "Fsetdynpt(save);res;})"))
     
     (defun comp-dynamic-let1 (stream x env args tail name global test clos)
         (cond ((null x) t)

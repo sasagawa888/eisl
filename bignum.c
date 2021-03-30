@@ -24,7 +24,6 @@ aux = cbignum class information
 int makebigx(char *bignum){
     char integer[15];
     int i,j,res,sign,len,msb;
-    long long int l,m;
 
     //check sign
     if(bignum[0] == '-')
@@ -67,6 +66,8 @@ int makebigx(char *bignum){
     }
 
     if(len==2){
+        long long int l, m;
+
         l = (long long int)GET_CAR(next(res))*BIGNUM_BASE;
         m = (long long int)GET_CAR(res);
         m = (l+m)*sign;
@@ -247,10 +248,12 @@ int get_msb(int x){
 
 //garbage collection of unnecessary bignum cell.
 void bigx_gbc(int x){
-    int addr,addr1;
+    int addr;
 
     addr = x;
-    do{ addr1 = next(addr);
+    do{ int addr1;
+
+        addr1 = next(addr);
         clrcell(addr);
         fc++;
         SET_CDR(addr,hp);
@@ -270,52 +273,6 @@ int bigx_eqp(int x, int y){
     }while(!nullp(x) && !nullp(y));
     if(nullp(x) && nullp(y))
         return(1);
-    else
-        return(0);
-}
-
-int bigx_greaterp(int arg1, int arg2){
-    int l1,l2,a1,a2;
-
-    if(bigx_positivep(arg1) && bigx_negativep(arg2))
-        return(1);
-    if(bigx_negativep(arg1) && bigx_positivep(arg2))
-        return(0);
-
-    l1 = bigx_length(arg1);
-    l2 = bigx_length(arg2);
-
-
-    if(bigx_positivep(arg1) && bigx_positivep(arg2) && l1 > l2)
-        return(1);
-    else if(bigx_negativep(arg1) && bigx_negativep(arg2) && l1 < l2)
-        return(1);
-    else if(l1 == l2 && bigx_positivep(arg1) && bigx_positivep(arg2)){
-        a1 = get_msb(arg1);
-        a2 = get_msb(arg2);
-        do{
-            if(GET_CAR(a1) > GET_CAR(a2))
-                return(1);
-            else
-                return(0);
-            a1 = prev(a1);
-            a2 = prev(a2);
-        }while(!nullp(a1));
-        return(0);
-    }
-    else if(l1 == l2 && bigx_negativep(arg1) && bigx_negativep(arg2)){
-        a1 = get_msb(arg1);
-        a2 = get_msb(arg2);
-        do{
-            if(GET_CAR(a1) < GET_CAR(a2))
-                return(1);
-            else
-                return(0);
-            a1 = prev(a1);
-            a2 = prev(a2);
-        }while(!nullp(a1));
-        return(0);
-    }
     else
         return(0);
 }
@@ -528,12 +485,14 @@ int bigx_shift(int x, int n){
 
 
 int bigx_abs(int x){
-    int res,msb,y;
+    int res,msb;
 
     msb = res = gen_big();
     SET_TAG(res,BIGX);
     set_sign(res,1);
     do{
+        int y;
+
         y = GET_CAR(x);
         msb = cons_next(y,msb);
         x = next(x);
@@ -583,13 +542,15 @@ int bigx_plus(int arg1, int arg2){
 }
 
 int bigx_plus1(int arg1, int arg2){
-    int x,y,z,c,q,res,msb;
+    int c,res,msb;
 
     msb = res = gen_big();
     SET_TAG(res,BIGX);
     set_sign(res,1);
     c = 0;
     do{
+      int x,y,z,q;
+
         x = GET_CAR(arg1);
         y = GET_CAR(arg2);
         z = x + y + c;
@@ -608,10 +569,10 @@ int bigx_plus1(int arg1, int arg2){
 }
 
 void bigx_plus2(int arg, int c, int msb){
-    int q;
-    long long int l;
-
     do{
+      int q;
+      long long int l;
+      
         l = GET_CAR(arg) + c;
         c = l / BIGNUM_BASE;
         q = l % BIGNUM_BASE;
@@ -619,7 +580,7 @@ void bigx_plus2(int arg, int c, int msb){
         arg = next(arg);
     }while(!nullp(arg));
     if(c!=0)
-        msb = cons_next(c,msb);
+        (void)cons_next(c,msb);
 }
 
 int bigx_minus(int arg1, int arg2){
@@ -662,13 +623,15 @@ int bigx_minus(int arg1, int arg2){
 
 // arg1 > arg2
 int bigx_minus1(int arg1, int arg2){
-    int x,y,z,c,res,msb;
+    int z,c,res,msb;
 
     msb = res = gen_big();
     SET_TAG(res,BIGX);
     set_sign(res,1);
     c = 0;
     do{
+      int x,y;
+      
         x = GET_CAR(arg1);
         y = GET_CAR(arg2);
         if((x + c - y) < 0){
@@ -693,9 +656,11 @@ int bigx_minus1(int arg1, int arg2){
 }
 
 void bigx_minus2(int arg, int c, int msb){
-    int q,x;
+    int q;
 
     while(!nullp(arg)){
+      int x;
+      
         x = GET_CAR(arg);
         if(x + c  < 0){
         	q = x + BIGNUM_BASE + c;
@@ -738,14 +703,16 @@ int bigx_mult(int arg1, int arg2){
 }
 
 int bigx_mult1(int arg1, int arg2){
-    int res,msb,dig1,dig2,n;
+    int res,dig2,n;
     long long int x,y,z,l1,l2,c;
 
-    msb = res = gen_n(bigx_length(arg1)+bigx_length(arg2));
+    res = gen_n(bigx_length(arg1)+bigx_length(arg2));
     set_sign(res,1);
     dig2 = arg2;
     n = 0;
     do{
+      int dig1, msb;
+      
         dig1 = arg1;
         msb = get_nth(res,n);
         do{
@@ -948,12 +915,14 @@ int bigx_div1(int arg1, int arg2){
 
 int bigx_big_to_flt(int x){
     double val;
-    int i,msb,res;
+    int msb,res;
 
     res = freshcell();
     val = 0.0;
     msb = get_msb(x);
     do{
+      int i;
+      
         i = GET_CAR(msb);
         val = val * (double)BIGNUM_BASE + (double)i;
         msb = prev(msb);
@@ -967,7 +936,7 @@ int bigx_big_to_flt(int x){
 //bignum remainder of bignum and int
 int bigx_remainder_i(int x, int y){
     int msb,sign1,sign2;
-    long long int i,j,r;
+    long long int j,r;
 
 
     msb = get_msb(bigx_abs(x));
@@ -985,6 +954,8 @@ int bigx_remainder_i(int x, int y){
     r = 0;
 
     do{
+      long long int i;
+        
         i = GET_CAR(msb);
         i = i + r * BIGNUM_BASE;
         if(i >= j)
@@ -999,7 +970,7 @@ int bigx_remainder_i(int x, int y){
 //bignum divide of bignum and int
 int bigx_div_i(int x, int y){
     int res,msb,sign1,sign2;
-    long long int i,j,r,q;
+    long long int j,r,q;
 
 
     res = gen_big();
@@ -1018,6 +989,8 @@ int bigx_div_i(int x, int y){
     r = 0;
 
     do{
+      long long int i;
+      
         i = GET_CAR(msb);
         i = i + r * BIGNUM_BASE;
         if(i >= j){
@@ -1041,7 +1014,7 @@ int bigx_div_i(int x, int y){
 //multple of bignum and int
 int bigx_mult_i(int x, int y){
     int res,msb,sign1,sign2;
-    long long int i,j,c,z;
+    long long int j,c;
 
 
     msb = res = gen_big();
@@ -1059,6 +1032,8 @@ int bigx_mult_i(int x, int y){
     c = 0;
 
     do{
+      long long int i,z;
+      
         i = GET_CAR(x);
         z = i * j + c;
         if(z >= BIGNUM_BASE){
@@ -1073,7 +1048,7 @@ int bigx_mult_i(int x, int y){
         x = next(x);
     }while(!nullp(x));
     if(c != 0)
-        msb = cons_next((int)c,msb);
+        (void)cons_next((int)c,msb);
     SET_TAG(res,BIGX);
     cut_zero(res);
     set_sign(res,sign1*sign2);

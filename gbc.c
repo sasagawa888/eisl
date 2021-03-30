@@ -8,11 +8,11 @@
 
 //---------garbage collection-----------
 int gbc(void){
-    int addr;
-
     debug_flag = 1;
 
     if(gc_sw == 0){
+        int addr;
+
         if(gbc_flag){
             printf("enter M&S-GC free=%d\n", fc); 
             fflush(stdout);

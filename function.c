@@ -11,6 +11,8 @@
 #include "eisl.h"
 #include "ffi.h"
 
+static void* hmod;
+
 void initsubr(void){
     //constant
     bindconst("*PI*",makeflt(3.141592653589793));
@@ -220,7 +222,6 @@ typedef int (*initfunc8)(int, fn8);
 
 void dynamic_link(int x){
     char str[256] = {"./"};
-    void* hmod;
     initfunc0 init_f0;
     initfunc1 init_f1;
     initfunc2 init_f2;
@@ -410,7 +411,7 @@ void initgeneric(void){
 
 //arithmetic function
 int f_plus(int arglist){
-    int arg,res;
+    int res;
 
     if(nullp(arglist))
         res = makeint(0);
@@ -421,6 +422,8 @@ int f_plus(int arglist){
         arglist = cdr(arglist);
     }
     while(!(IS_NIL(arglist))){
+        int arg;
+        
         arg = car(arglist);
         if(!numberp(arg) && !vectorp(arg) && !arrayp(arg))
             error(NOT_NUM, "+", arg);
@@ -437,7 +440,7 @@ int f_plus(int arglist){
 }
 
 int f_minus(int arglist){
-    int arg,res,n;
+    int res,n;
 
     res = car(arglist);
     if((n=length(arglist)) == 0)
@@ -447,6 +450,8 @@ int f_minus(int arglist){
 
     arglist = cdr(arglist);
     while(!(IS_NIL(arglist))){
+        int arg;
+        
         arg = car(arglist);
         if(!numberp(arg) && !vectorp(arg) && !arrayp(arg))
             error(NOT_NUM, "-", arg);
@@ -462,8 +467,7 @@ int f_minus(int arglist){
 }
 
 int f_mult(int arglist){
-    int arg,res;
-    double val;
+    int res;
 
     if(nullp(arglist))
         res = makeint(1);
@@ -472,6 +476,9 @@ int f_mult(int arglist){
         arglist = cdr(arglist);
     }
     while(!(IS_NIL(arglist))){
+        int arg;
+        double val;
+        
         arg = car(arglist);
         if(!numberp(arg) && !arrayp(arg) && !vectorp(arg))
             error(NOT_NUM, "*", arg);
@@ -499,14 +506,16 @@ int f_mult(int arglist){
 }
 
 int f_quotient(int arglist){
-    int arg,res;
-    double val;
+    int res;
 
     res = car(arglist);
     arglist = cdr(arglist);
 
     
     while(!(IS_NIL(arglist))){
+        int arg;
+        double val;
+        
         arg = car(arglist);
         if(!numberp(arg))
             error(NOT_NUM, "quotient", arg);
@@ -725,7 +734,6 @@ int f_atanh(int arglist){
 
 int f_floor(int arglist){
     int arg1;
-    double x;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -735,6 +743,8 @@ int f_floor(int arglist){
 
 
     if(floatp(arg1)){
+        double x;
+        
         x = floor(GET_FLT(arg1));
         if(x <= 999999999 && x >= -999999999)
             return(makeint((int)x));
@@ -749,7 +759,6 @@ int f_floor(int arglist){
 
 int f_ceiling(int arglist){
     int arg1;
-    double x;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -758,6 +767,8 @@ int f_ceiling(int arglist){
         error(NOT_NUM, "ceiling", arg1);
 
     if(floatp(arg1)){
+        double x;
+        
         x = GET_FLT(arg1);
         if(x <= 999999999.0 && x >= -999999999.0)
             return(makeint((int)ceil(x)));
@@ -770,7 +781,6 @@ int f_ceiling(int arglist){
 
 int f_truncate(int arglist){
     int arg1;
-    double x;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -779,10 +789,12 @@ int f_truncate(int arglist){
         error(NOT_NUM, "truncate", arg1);
 
     if(floatp(arg1)){
+        double x;
+        
         x = GET_FLT(arg1);
         if(x >= 0 && x <= 999999999.0)
             return(makeint((int)floor(x)));
-        else if(x >= 0 && x > 999999999.0)
+        else if(x > 999999999.0)
             return(makelong((long long int)floor(x)));
         else if(x < 0 && x >= -999999999.0)
             return(makeint((int)ceil(x)));
@@ -796,7 +808,6 @@ int f_truncate(int arglist){
 
 int f_round(int arglist){
     int arg1;
-    double x,f,c;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -805,6 +816,8 @@ int f_round(int arglist){
         error(NOT_NUM, "round", arg1);
 
     if(floatp(arg1)){
+        double x,f,c;
+        
         x = GET_FLT(arg1);
         f = floor(x);
         c = ceil(x);
@@ -855,13 +868,15 @@ int f_lcm(int arglist){
 }
 
 int f_max(int arglist){
-    int arg1,res;
+    int res;
 
     res = car(arglist);
     if(!numberp(res))
         error(NOT_NUM, "max", res);
     arglist = cdr(arglist);
     while(!nullp(arglist)){
+        int arg1;
+        
         arg1 = car(arglist);
         if(!numberp(arg1))
             error(NOT_NUM, "max", arg1);
@@ -873,13 +888,15 @@ int f_max(int arglist){
 }
 
 int f_min(int arglist){
-    int arg1,res;
+    int res;
 
     res = car(arglist);
     if(!numberp(res))
         error(NOT_NUM, "min", res);
     arglist = cdr(arglist);
     while(!nullp(arglist)){
+        int arg1;
+        
         arg1 = car(arglist);
         if(!numberp(arg1))
             error(NOT_NUM, "min", arg1);
@@ -1015,8 +1032,8 @@ int f_log(int arglist){
 }
 
 int f_expt(int arglist){
-    int arg1,arg2,i,j,k;
-    double x,y,z;
+    int arg1,arg2,i;
+    double x,y;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1074,6 +1091,8 @@ int f_expt(int arglist){
         }   
     }
     if(integerp(arg1) && GET_INT(arg1) == -1 && (longnump(arg2) || bignump(arg2))){
+        int j,k;
+        
         i = makeint(2);
         j = divide(arg2,i);
         k = minus(arg2,mult(j,i));
@@ -1095,6 +1114,7 @@ int f_expt(int arglist){
 
     if((integerp(arg1) || floatp(arg1)) &&
        (integerp(arg2) || floatp(arg2))){
+        double z;
 
         arg1 = exact_to_inexact(arg1);
         arg2 = exact_to_inexact(arg2);
@@ -1690,7 +1710,7 @@ int f_set_property(int arglist){
 }
 
 int f_remove_property(int arglist){
-    int arg1,arg2,val,res;
+    int arg1,arg2,val;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1703,6 +1723,8 @@ int f_remove_property(int arglist){
     if(nullp(val))
         return(NIL);
     else{
+        int res;
+        
         res = cdr(val);
         SET_PROP(arg1,remove_prop(arg2,GET_PROP(arg1)));
         return(res);
@@ -1837,7 +1859,7 @@ int f_read(int arglist){
 
 int f_read_char(int arglist){
     int arg1,arg2,arg3,save,save1,n,res;
-    int buf[CHARSIZE];
+    int rc_buf[CHARSIZE];
     
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1850,29 +1872,29 @@ int f_read_char(int arglist){
     save1 = repl_flag;
     repl_flag = 0;
     if(n==0){
-        buf[0] = readc();
-        buf[1] = NUL;
-        res = makechar((char*)buf);
+        rc_buf[0] = readc();
+        rc_buf[1] = NUL;
+        res = makechar((char*)rc_buf);
     }
     else if(n==1){
         save = input_stream;
         input_stream = arg1;
-        buf[0] = readc();
-        buf[1] = NUL;
-        if(buf[0] == EOF){
+        rc_buf[0] = readc();
+        rc_buf[1] = NUL;
+        if(rc_buf[0] == EOF){
             repl_flag = save1;
             error(END_STREAM, "read-char", NIL);
         }
         input_stream = save;
-        res = makechar((char*)buf);
+        res = makechar((char*)rc_buf);
     }
     else{
         save = input_stream;
         input_stream = arg1;
-        buf[0] = readc();
-        buf[1] = NUL;
+        rc_buf[0] = readc();
+        rc_buf[1] = NUL;
         input_stream = save;
-        if(buf[0] == EOF){
+        if(rc_buf[0] == EOF){
             repl_flag = save1;
             if(nullp(arg2) && n == 2)
                 return(arg2);
@@ -1881,7 +1903,7 @@ int f_read_char(int arglist){
             else
                 error(END_STREAM, "read-char", NIL);
         }
-        res = makechar((char*)buf);
+        res = makechar((char*)rc_buf);
         if(res==FEND && arg2==NIL)
             res = arg3;
         else
@@ -1940,7 +1962,7 @@ int f_read_byte(int arglist){
 
 int f_preview_char(int arglist){
     int arg1,arg2,arg3,save,n,res;
-    int buf[CHARSIZE];
+    int pc_buf[CHARSIZE];
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1951,28 +1973,28 @@ int f_preview_char(int arglist){
         error(NOT_IN_STREAM, "preview-char", arg1);
 
     if(n==0){
-        buf[0] = readc();
-        buf[1] = NUL;
+        pc_buf[0] = readc();
+        pc_buf[1] = NUL;
         unreadc(arg1);
-        res = makechar((char*)buf);
+        res = makechar((char*)pc_buf);
     }
     else if(n==1){
         save = input_stream;
         input_stream = arg1;
-        buf[0] = readc();
-        buf[1] = NUL;
+        pc_buf[0] = readc();
+        pc_buf[1] = NUL;
         unreadc(arg1);
-        if(buf[0] == EOF)
+        if(pc_buf[0] == EOF)
             error(END_STREAM, "preview-char", NIL);
         input_stream = save;
-        res = makechar((char*)buf);
+        res = makechar((char*)pc_buf);
     }
     else{
         save = input_stream;
         input_stream = arg1;
-        buf[0] = readc();
-        buf[1] = NUL;
-        if(buf[0] == EOF){
+        pc_buf[0] = readc();
+        pc_buf[1] = NUL;
+        if(pc_buf[0] == EOF){
             if(nullp(arg2) && n == 2){
                 input_stream = save;
                 return(arg2);
@@ -1986,7 +2008,7 @@ int f_preview_char(int arglist){
         }
         unreadc(arg1);
         input_stream = save;
-        res = makechar((char*)buf);
+        res = makechar((char*)pc_buf);
         if(res==FEND && arg2==NIL)
             res = arg3;
     }
@@ -1995,7 +2017,7 @@ int f_preview_char(int arglist){
 
 int f_read_line(int arglist){
     int arg1,arg2,arg3,n,pos,save,res,c;
-    char buf[STRSIZE];
+    char rl_buf[STRSIZE];
     #if __linux || __APPLE__ || defined(__OpenBSD__)
     int save1;
     #endif
@@ -2015,12 +2037,12 @@ int f_read_line(int arglist){
         pos = 0;
         c = readc();
         while(c != EOL){
-            buf[pos] = c;
+            rl_buf[pos] = c;
             pos++;
             c = readc();
         }
-        buf[pos] = NUL;
-        res = makestr(buf);
+        rl_buf[pos] = NUL;
+        res = makestr(rl_buf);
     }
     else if(n==1){
         pos = 0;
@@ -2032,13 +2054,13 @@ int f_read_line(int arglist){
             error(END_STREAM, "read-line", NIL);
         }
         while(c != EOL && c != EOF){
-            buf[pos] = c;
+            rl_buf[pos] = c;
             pos++;
             c = readc();
         }
-        buf[pos] = NUL;
+        rl_buf[pos] = NUL;
         input_stream = save;
-        res = makestr(buf);
+        res = makestr(rl_buf);
     }
     else{
         pos = 0;
@@ -2060,13 +2082,13 @@ int f_read_line(int arglist){
         }
 
         while(c != EOL && c != EOF){
-            buf[pos] = c;
+            rl_buf[pos] = c;
             pos++;
             c = readc();
         }
-        buf[pos] = NUL;
+        rl_buf[pos] = NUL;
         input_stream = save;
-        res = makestr(buf);
+        res = makestr(rl_buf);
         if(res==FEND && arg2==NIL)
             res = arg3;
     }
@@ -2075,7 +2097,7 @@ int f_read_line(int arglist){
 }
 
 int f_load(int arglist){
-    int arg1,sexp,save1,save2,n;
+    int arg1,save1,save2,n;
     char str[STRSIZE];
 
     arg1 = car(arglist);
@@ -2105,6 +2127,8 @@ int f_load(int arglist){
     line = 1;
     column = 0;
     while(1){
+        int sexp;
+        
         sexp = sread();
         if(sexp == FEND)
             break;
@@ -2247,7 +2271,7 @@ int f_output_stream_p(int arglist){
 }
 
 int f_stream_ready_p(int arglist){
-    int arg1,save,c;
+    int arg1;
     
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -2256,6 +2280,8 @@ int f_stream_ready_p(int arglist){
         error(NOT_STREAM,"stream-ready-p",arg1);
 
     if(input_stream_p(arg1)){
+        int save,c;
+        
         save = input_stream;
         input_stream = arg1;
         c = readc();
@@ -2702,7 +2728,7 @@ int f_string_eqsmallerp(int arglist){
 }
 
 int f_string_append(int arglist){
-    int arg1,arg2;
+    int arg1;
     char str1[STRSIZE],str2[STRSIZE];
 
     if(nullp(arglist))
@@ -2716,6 +2742,8 @@ int f_string_append(int arglist){
     str2[0] = NUL;
     strcpy(str1,GET_NAME(arg1));
     while(!nullp(arglist)){
+        int arg2;
+        
         arg2 = car(arglist);
         if(!stringp(arg2))
             error(NOT_STR, "string-append", arg2);
@@ -3436,7 +3464,7 @@ int f_format_char(int arglist){
 }
 
 int f_format_fresh_line(int arglist){
-    int arg1,save;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -3445,6 +3473,8 @@ int f_format_fresh_line(int arglist){
         error(NOT_STREAM,"format-fresh-line",arg1);
 
     if(!start_flag){
+        int save;
+        
         save = output_stream;
         output_stream = arg1;
         if(GET_OPT(output_stream) != EISL_OUTSTR)
@@ -3485,7 +3515,7 @@ int f_format_float(int arglist){
 
 
 int f_format_integer(int arglist){
-    int arg1,arg2,arg3,n,save,len;
+    int arg1,arg2,arg3,n,save;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -3504,6 +3534,8 @@ int f_format_integer(int arglist){
     save = output_stream;
     output_stream = arg1;
     if(integerp(arg2)){
+        int len;
+        
         if(GET_OPT(output_stream) != EISL_OUTSTR)
             len = fprintr(GET_PORT(arg1),GET_INT(arg3),GET_INT(arg2));
         else{
@@ -3714,8 +3746,10 @@ int f_file_length(int arglist){
         error(NOT_INT,"file-length",arg2);
 
     p = fopen(GET_NAME(arg1),"rb");
-    if(p == NULL)
+    if(p == NULL) {
         error(CANT_OPEN,"file-length",arg1);
+        return NIL;
+    }
 
     fseek(p, 0, SEEK_END);
     size = ftell(p);
@@ -3801,12 +3835,12 @@ int f_write_byte(int arglist){
 
 
 int f_create_vector(int arglist){
-    int arg1,arg2,n;
+    int arg1,arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
 
-    if((n=length(arglist)) != 1 && length(arglist) != 2)
+    if(length(arglist) != 1 && length(arglist) != 2)
         error(WRONG_ARGS,"create-vector", arglist);
     if(!integerp(arg1) || negativep(arg1))
         error(NOT_INT, "create-vector", arg1);
@@ -3817,14 +3851,14 @@ int f_create_vector(int arglist){
 }
 
 int f_create_array(int arglist){
-    int arg1,arg2,arg3,n,temp;
+    int arg1,arg2,arg3,temp;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
 
     temp = 0;
-    if((n=length(arglist)) != 1 && length(arglist) != 2 && length(arglist) != 3)
+    if(length(arglist) != 1 && length(arglist) != 2 && length(arglist) != 3)
         error(OUT_OF_DOMAIN,"create-array", arglist);
     if(!listp(arg1))
         error(NOT_LIST, "create-array", arg1);
@@ -4224,7 +4258,7 @@ int f_generic_function_p(int arglist){
 
 
 int f_next_method_p(int arglist){
-    int method,varlist;
+    int method;
 
     if(length(arglist) != 0)
         error(WRONG_ARGS,"next-method-p",arglist);
@@ -4233,6 +4267,8 @@ int f_next_method_p(int arglist){
 
     method = cdr(next_method);
     while(!nullp(method)){
+        int varlist;
+        
         varlist = car(GET_CAR(car(method)));
         if(matchp(varlist,generic_vars))
             return(T);

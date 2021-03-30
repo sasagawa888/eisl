@@ -705,17 +705,6 @@ int mapcan(int x, int y){
 
 
 //extension
-int mapvec(int x, int y){
-    int i,len,res;
-    
-    len = vector_length(y);
-    res = makevec(len,UNDEF);
-    for(i=0;i<len;i++)
-        vector_set(res,i,apply(x,list1(vector_ref(y,i))));
-    
-    return(res);
-}
-
 int list1(int x){
     return(cons(x,NIL));
 }
@@ -734,10 +723,6 @@ int list3(int x, int y, int z){
 
 int list4(int x1, int x2, int x3, int x4){
     return(cons(x1,cons(x2,cons(x3,cons(x4,NIL)))));
-}
-
-int list5(int x1, int x2, int x3, int x4, int x5){
-    return(cons(x1,cons(x2,cons(x3,cons(x4,cons(x5,NIL))))));
 }
 
 int list6(int x1, int x2, int x3, int x4, int x5, int x6){
@@ -787,10 +772,12 @@ int hreverse(int x){
 }
 
 int nreverse(int x){
-    int y,res;
+    int res;
     
     res = NIL;
     while(!nullp(x) && !atomp(x)){
+        int y;
+        
         y = cdr(x);
         SET_CDR(x,res);
         res = x;
@@ -920,21 +907,6 @@ int vector_ref(int v, int n){
 
 int vector_length(int v){   
     return(GET_CDR(v));
-}
-
-int matrix_ref(int obj, int n, int i, int j){
-    int index;
-    
-    index = n*i + j;
-    return(vector_ref(obj,index));
-}
-
-int matrix_set(int obj, int n, int i, int j, int val){
-    int index;
-    
-    index = n*i + j;
-    vector_set(obj,index,val);
-    return(obj);
 }
 
 int array_length(int obj){
@@ -1093,8 +1065,8 @@ int array(int n, int ls){
 
 //generate float type array from list. ex #na(ls) ls=((1.1 2.0)(3.6 4.5))
 int farray(int n, int ls){
-    int dim,res,ls1,i,j,r,c,size;
-    float *vec1,*vec2;
+    int dim,res,ls1,i;
+    float *vec1;
     
     dim = array_dim(n,ls);
     if(n == 0)
@@ -1106,6 +1078,9 @@ int farray(int n, int ls){
     ls1 = flatten(n,ls);
     
     if(length(dim) == 2){
+        int j, r, c, size;
+        float *vec2;
+
         size = length(ls1);
         vec1 = (float *)malloc(sizeof(float)*size);
         i = 0;
@@ -1155,7 +1130,7 @@ int vector_to_list(int x){
 }
 
 int string_to_vector(int x){
-    int res,len,i,ref,chr;
+    int res,len,i,ref;
     char c;
     
     len = strlen(GET_NAME(x));
@@ -1164,6 +1139,8 @@ int string_to_vector(int x){
     i = 0;
     c = STRING_REF(x,i++);
     while(c != NUL){
+        int chr;
+        
         chr = makechar("?");
         SET_CHAR(chr,c);
         vector_set(res,ref++,chr);
@@ -1173,12 +1150,14 @@ int string_to_vector(int x){
 }
 
 int string_to_list(int x){
-    int i,len,chr,res;
-    char c;
+    int i,len,res;
     
     res = NIL;
     len = strlen(GET_NAME(x));
     for(i=0;i<len;i++){
+        int chr;
+        char c;
+        
         chr = makechar("?");
         c = STRING_REF(x,i);
         SET_CHAR(chr,c);
@@ -1403,7 +1382,6 @@ int copy_work(int x){
         default:    
                     printf("error addr=%d  ",x);
                     return(x);
-                    error(SYSTEM_ERR,"copy_work",x);
     }
 
     return(x);

@@ -465,7 +465,7 @@ x = class
 y = continuable string/NIL
 */
 int signal_condition(int x, int y){
-    int str,args,fun,handler;
+    int str,args,fun;
     char *pname;
     
     if(y == NIL)
@@ -486,6 +486,8 @@ int signal_condition(int x, int y){
         printf("around here line=%d column=%d\n", line, column); 
     } 
     if(error_handler != NIL){
+        int handler;
+
         handler = car(error_handler);
         error_handler = cdr(error_handler); 
         return(apply(handler,list1(x)));

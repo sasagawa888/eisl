@@ -434,7 +434,7 @@ void unreadc(char c){
     else
         column--;
     if(input_stream == standard_input && repl_flag)
-        c = read_line(-1);
+        (void)read_line(-1);
     else if(GET_OPT(input_stream) != EISL_INSTR)
         ungetc(c,GET_PORT(input_stream));
     else
@@ -527,7 +527,7 @@ void gettoken(void){
                         if(c == ' ')
                             goto chskip;
 
-                        while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE) &&
+                        while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE - 1) &&
                                 (c != SPACE) && (c != '(') && (c != ')')){
                             stok.buf[pos++] = c;
                         }
@@ -583,7 +583,7 @@ void gettoken(void){
                    /*FALLTHROUGH*/
         default: {
             pos = 0; stok.buf[pos++] = c;
-            while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE) &&
+            while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE - 1) &&
                     (c != SPACE) && (c != '(') && (c != ')') &&
                     (c != '`') && (c != ',') && (c != '@'))
                 stok.buf[pos++] = c;
@@ -643,7 +643,6 @@ septoken separater(char buf[], char sep){
     septoken res;
 
     res.sepch = NUL;
-    res.before[0] = NUL;
     res.after[0] = NUL;
 
     res.before[0] = buf[0];
@@ -745,9 +744,10 @@ int inttoken_nsgn(char buf[]){
 
 int flttoken(char buf[]){
     septoken tok;
-    char bufcp[SYMSIZE];
 
     if(buf[0] == '.'){
+        char bufcp[SYMSIZE];
+        
         if(buf[1] == '0')
             return(0);
         strcpy(bufcp,buf);
@@ -1041,32 +1041,32 @@ int sread(void){
 }
 
 int readlist(void){
-    int car,cdr;
+    int rl_car,rl_cdr;
 
     gettoken();
     if(stok.type == RPAREN)
         return(NIL);
     else
     if(stok.type == DOT){
-        cdr = sread();
-        if(cdr == FEND)
+        rl_cdr = sread();
+        if(rl_cdr == FEND)
             error(ILLEGAL_RPAREN,"read",makesym("file end"));
         gettoken();
-        return(cdr);
+        return(rl_cdr);
     }
     else{
         stok.flag = BACK;
-        car = sread();
-        if(car == FEND)
+        rl_car = sread();
+        if(rl_car == FEND)
             error(ILLEGAL_RPAREN,"read",makesym("file end"));
-        cdr = readlist();
-        return(cons(car,cdr));
+        rl_cdr = readlist();
+        return(cons(rl_car,rl_cdr));
     }
 }
 
 int readbin(char* buf){
     char str[BUFSIZE],*e;
-    int pos,n,res,part,inc;
+    int pos,n,res,inc;
 
     n = strlen(buf);
     if(n <= 31)
@@ -1077,6 +1077,8 @@ int readbin(char* buf){
     inc = makeint(2);
 
     while(pos < n){
+        int part;
+        
         str[0] = buf[pos];
         str[1] = NUL;
         pos++;
@@ -1088,7 +1090,7 @@ int readbin(char* buf){
 
 int readoct(char* buf){
     char str[BUFSIZE],*e;
-    int pos,n,res,part,inc;
+    int pos,n,res,inc;
 
     n = strlen(buf);
     if(n <= 10)
@@ -1099,6 +1101,8 @@ int readoct(char* buf){
     inc = makeint(8);
 
     while(pos < n){
+        int part;
+        
         str[0] = buf[pos];
         str[1] = NUL;
         pos++;
@@ -1111,7 +1115,7 @@ int readoct(char* buf){
 
 int readhex(char* buf){
     char str[BUFSIZE],*e;
-    int pos,n,res,part,inc;
+    int pos,n,res,inc;
 
     n = strlen(buf);
     if(n <= 7)
@@ -1122,6 +1126,8 @@ int readhex(char* buf){
     inc = makeint(16);
 
     while(pos < n){
+        int part;
+        
         str[0] = buf[pos];
         str[1] = NUL;
         pos++;
@@ -1308,8 +1314,8 @@ void printarray(int x){
 #define IDX2C(i,j,ld) (((j)*(ld))+(i))
 #define IDX2R(i,j,ld) (((i)*(ld))+(j))
 void printfarray(int x){
-    int i,j,size,st,ls,dim,r,c;
-    float *vec1,*vec2;
+    int i,size,st,ls,dim;
+    float *vec1;
 
     st = ls = GET_CDR(x);
     size = 1;
@@ -1321,6 +1327,9 @@ void printfarray(int x){
     ls = NIL;
     if(length(st) == 2){
         if(size < 100){
+            int j,r,c;
+            float *vec2;
+            
             vec1 = GET_FVEC(x);
             vec2 = (float *)malloc(sizeof(float)*size);
             r = GET_INT(car(st));
@@ -1449,6 +1458,14 @@ void printstream(int addr){
     }
 }
 
+static void clean_stdin(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
 //--------eval---------------
 int eval(int addr){
     int val,res,temp;
@@ -1489,7 +1506,7 @@ int eval(int addr){
             store_backtrace(addr);
         if(stepper_flag){
         	print(addr);printf("\n");fflush(stdout);
-        	fflush(stdin);
+        	clean_stdin();
         	c = getc(stdin);
         	if(c == 'q')
         		debugger();
@@ -1626,7 +1643,6 @@ int apply(int func, int args){
                     generic_func = func;
                     generic_vars = args;
                     method = GET_CDR(func);
-                    varlist = NIL;
                     while(!nullp(method)){
                         varlist = car(GET_CAR(car(method)));
                         next_method = method;
@@ -1701,8 +1717,6 @@ void unbind(void){
 
 
 int evlis(int addr){
-    int car_addr,cdr_addr;
-
     argpush(addr);
     top_flag = 0;
     if(IS_NIL(addr)){
@@ -1710,11 +1724,13 @@ int evlis(int addr){
         return(addr);
     }
     else{
+    	int car_addr,cdr_addr;
+
         car_addr = eval(car(addr));
         argpush(car_addr);
         cdr_addr = evlis(cdr(addr));
         car_addr = argpop();
-        addr = argpop();
+        (void)argpop();
         return(cons(car_addr,cdr_addr));
     }
 }

@@ -92,3 +92,6 @@ clean:
 	rm eisl
 	rm edlis
 
+.PHONY: check
+check:
+	cppcheck --enable=all --std=c11 --library=posix .

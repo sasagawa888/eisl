@@ -86,7 +86,7 @@ int f_lambda(int arglist){
 }
 
 int f_labels(int arglist){
-    int arg1,arg2,save,sym,val,func,res,temp,temparg1,temparg2;
+    int arg1,arg2,save,func,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -98,6 +98,8 @@ int f_labels(int arglist){
         error(IMPROPER_ARGS, "labels", arg1);
     temp = arg1;
     while(!nullp(temp)){
+        int temparg1,temparg2;
+
         temparg1 = car(car(temp));
         temparg2 = cdr(car(temp));
         if(length(car(temp)) < 2)
@@ -123,6 +125,8 @@ int f_labels(int arglist){
     func = NIL;
     res = NIL;
     while(arg1 != NIL){
+        int sym,val;
+
         sym = caar(arg1);
         if(!symbolp(sym))
             error(NOT_SYM, "labels", sym);
@@ -145,7 +149,7 @@ int f_labels(int arglist){
 }
 
 int f_flet(int arglist){
-    int arg1,arg2,save,ep1,sym,val,res,temp,temparg1,temparg2;
+    int arg1,arg2,save,ep1,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -157,6 +161,8 @@ int f_flet(int arglist){
         error(IMPROPER_ARGS, "flet", arg1);
     temp = arg1;
     while(!nullp(temp)){
+        int temparg1,temparg2;
+
         temparg1 = car(car(temp));
         temparg2 = cdr(car(temp));
         if(length(car(temp)) < 2)
@@ -181,6 +187,8 @@ int f_flet(int arglist){
     ep1 = ep;
     res = NIL;
     while(arg1 != NIL){
+        int sym,val;
+
         sym = caar(arg1);
         if(!symbolp(sym))
             error(NOT_SYM, "flet", sym);
@@ -200,8 +208,7 @@ int f_flet(int arglist){
 }
 
 int f_let(int arglist){
-    int arg1,arg2,save,ep1,sym,val,res,temp,temparg1;
-
+    int arg1,arg2,save,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -211,6 +218,8 @@ int f_let(int arglist){
         error(IMPROPER_ARGS, "let", arg1);
     temp = arg1;
     while(!nullp(temp)){
+        int temparg1;
+
         temparg1 = car(car(temp));
         if(improperlistp(car(temp)))
             error(IMPROPER_ARGS, "let", car(temp));
@@ -230,6 +239,8 @@ int f_let(int arglist){
     save = ep;
     res = NIL;
     while(arg1 != NIL){
+        int ep1,sym,val;
+
         ep1 = ep;
         ep = save;
         sym = caar(arg1);
@@ -253,7 +264,7 @@ int f_let(int arglist){
 }
 
 int f_letstar(int arglist){
-    int arg1,arg2,save,sym,res,temp,temparg1;
+    int arg1,arg2,save,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -263,6 +274,8 @@ int f_letstar(int arglist){
         error(IMPROPER_ARGS, "let*", arg1);
     temp = arg1;
     while(!nullp(temp)){
+        int temparg1;
+
         temparg1 = car(car(temp));
         if(improperlistp(car(temp)))
             error(IMPROPER_ARGS, "let*", car(temp));
@@ -282,6 +295,8 @@ int f_letstar(int arglist){
     save = ep;
     res = NIL;
     while(arg1 != NIL){
+        int sym;
+
         sym = caar(arg1);
         if(!symbolp(sym))
             error(NOT_SYM, "let*", sym);
@@ -297,7 +312,7 @@ int f_letstar(int arglist){
 }
 
 int f_dynamic_let(int arglist){
-    int arg1,arg2,save,dp1,sym,val,res,temp,temparg1;
+    int arg1,arg2,save,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -307,6 +322,8 @@ int f_dynamic_let(int arglist){
         error(IMPROPER_ARGS, "dynamic-let", arg1);
     temp = arg1;
     while(!nullp(temp)){
+        int temparg1;
+
         temparg1 = car(car(temp));
         if(improperlistp(car(temp)))
             error(IMPROPER_ARGS, "dynamic-let", car(temp));
@@ -326,6 +343,8 @@ int f_dynamic_let(int arglist){
     save = dp;
     res = NIL;
     while(arg1 != NIL){
+        int dp1,sym,val;
+
         dp1 = dp;
         dp = save;
         shelterpush(dp1);
@@ -636,7 +655,7 @@ int f_or(int arglist){
 }
 
 int f_function(int arglist){
-    int arg1,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -645,6 +664,8 @@ int f_function(int arglist){
         error(ILLEGAL_ARGS, "function", arglist);
 
     if(symbolp(arg1)){
+        int res;
+
         res = findenv(arg1);
         if(IS_FUNC(res))
             return(res);
@@ -662,7 +683,7 @@ int f_function(int arglist){
 //function* diffrence of function is that return nil
 //defclass uses this function*
 int f_function_star(int arglist){
-    int arg1,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -671,6 +692,8 @@ int f_function_star(int arglist){
         error(ILLEGAL_ARGS, "function*", arglist);
 
     if(symbolp(arg1)){
+        int res;
+
         res = findenv(arg1);
         if(IS_FUNC(res))
             return(res);
@@ -687,13 +710,15 @@ int f_function_star(int arglist){
 }
 
 int f_symbol_function(int arglist){
-    int arg1,sym,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "symbol-function", arglist);
 
     if(symbolp(arg1)){
+        int sym,res;
+
         sym = findenv(arg1);
         if(sym == -1 && GET_CDR(arg1) != NIL)
             sym = GET_CDR(arg1);
@@ -731,13 +756,15 @@ int f_class(int arglist){
 }
 
 int f_symbol_class(int arglist){
-    int arg1,sym;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "symbol-class", arglist);
 
     if(symbolp(arg1)){
+        int sym;
+
     	sym = findenv(arg1);
         if(sym == -1 && GET_CDR(arg1) != NIL)
             sym = GET_CDR(arg1);
@@ -817,7 +844,7 @@ int f_while(int arglist){
 }
 
 int f_for(int arglist){
-    int arg1,arg2,arg3,iter,temp,save,res,save1,temp1,temparg1,temparg2;
+    int arg1,arg2,arg3,iter,temp,save,res,temparg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -834,6 +861,8 @@ int f_for(int arglist){
     temp = arg1;
     temparg2 = NIL;
     while(!nullp(temp)){
+        int temp1,temparg1;
+
         temp1 = car(temp);
         if(!listp(temp1))
             error(IMPROPER_ARGS, "for", temp1);
@@ -865,6 +894,8 @@ int f_for(int arglist){
     }
     //check condition of end
     while(eval(car(arg2)) == NIL){
+        int save1;
+
         save1 = ep;
         shelterpush(arg3);
         f_progn(arg3);// do body
@@ -921,8 +952,6 @@ int f_block(int arglist){
         return(res);
     }
     else if(ret == 1){
-        ret = 0;
-
         if(unwind_pt > 0){
             unwind_pt--;
             while(unwind_pt >= 0){
@@ -997,8 +1026,6 @@ int f_catch(int arglist){
         return(res);
     }
     else if(ret == 1){
-        ret = 0;
-
         if(unwind_pt > 0){
             unwind_pt--;
             while(unwind_pt >= 0){
@@ -1038,7 +1065,7 @@ int f_throw(int arglist){
 }
 
 int f_tagbody(int arglist){
-    int prog[100],line,end,i;
+    int prog[100],tb_line,end,i;
     
     end = 0;
     while(!nullp(arglist)){
@@ -1047,21 +1074,21 @@ int f_tagbody(int arglist){
         end++;
     }
 
-    line = 0;
-    while(line < end){
+    tb_line = 0;
+    while(tb_line < end){
         exit:
-        if(symbolp(prog[line]))
-            line++;
+        if(symbolp(prog[tb_line]))
+            tb_line++;
         else{
             tagbody_tag = NIL;
-            eval(prog[line]);
-            line++;
+            eval(prog[tb_line]);
+            tb_line++;
             //when go was evaled
             if(tagbody_tag != NIL){
                 for(i=0;i<end;i++){
                     if(tagbody_tag == prog[i]){
                         tagbody_tag = NIL;
-                        line = i;
+                        tb_line = i;
                         goto exit;
                     }
                 }
@@ -1111,7 +1138,7 @@ int f_unwind_protect(int arglist){
 
 
 int f_case(int arglist){
-    int arg1,arg2,key,res,temp,temparg1;
+    int arg1,arg2,key,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1119,6 +1146,8 @@ int f_case(int arglist){
         error(IMPROPER_ARGS, "case", arg2);
     temp = arg2;
     while(!nullp(temp)){
+        int temparg1;
+
         temparg1 = car(temp);
         if(!listp(temparg1))
             error(WRONG_ARGS, "case", temparg1);
@@ -1148,7 +1177,7 @@ int f_case(int arglist){
 }
 
 int f_case_using(int arglist){
-    int arg1,arg2,arg3,key,fun,res,temp,temparg1;
+    int arg1,arg2,arg3,key,fun,res,temp;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1157,6 +1186,8 @@ int f_case_using(int arglist){
         error(IMPROPER_ARGS, "case-using", arg3);
     temp = arg3;
     while(!nullp(temp)){
+        int temparg1;
+
         temparg1 = car(temp);
         if(!listp(temparg1))
             error(WRONG_ARGS, "case-using", temparg1);
@@ -1201,8 +1232,8 @@ int f_progn(int arglist){
 }
 
 int f_defclass(int arglist){
-    int arg1,arg2,arg3,arg4,sc,var,val,cl,form,sym,ls,
-        reader,writer,accessor,boundp,initform,initarg,initargs;
+    int arg1,arg2,arg3,arg4,sc,var,val,cl,form,
+        initargs;
 
     arg1 = car(arglist);  //class-name
     arg2 = cadr(arglist); //super-class
@@ -1242,6 +1273,8 @@ int f_defclass(int arglist){
     val = UNDEF;
     initargs = NIL;
     while(!nullp(arg3)){
+        int sym,ls,reader,writer,accessor,boundp,initform,initarg;
+
         reader = writer = accessor = boundp = initform = initarg = NIL;
         if(!listp(car(arg3)))
             arg3 = list1(arg3); // if form=(a :reader a-read) => ((a :reader a-read))
@@ -1436,12 +1469,14 @@ int f_defmethod(int arglist){
 }
 
 int f_ignore_errors(int arglist){
-    int ret,res;
+    int ret;
 
     ignore_flag = 1;
     ret = setjmp(ignore_buf);
 
     if(ret == 0){
+        int res;
+
         res = f_progn(arglist);
         ignore_flag = 0;
         return(res);
@@ -1465,8 +1500,10 @@ int f_with_open_input_file(int arglist){
     if(!stringp(str))
         error(NOT_STR, "with-open-input-file", str);
     port = fopen(GET_NAME(str),"r");
-    if(port == NULL)
+    if(port == NULL) {
         error(CANT_OPEN, "with-open-input-file", str);
+        return NIL;
+    }
     val = makestream(port,EISL_INPUT);
     ep1 = ep;
     addlexenv(sym,val);
@@ -1489,8 +1526,10 @@ int f_with_open_output_file(int arglist){
     if(!stringp(str))
         error(NOT_STR, "with-open-output-file", str);
     port = fopen(GET_NAME(str),"w");
-    if(port == NULL)
+    if(port == NULL) {
         error(CANT_OPEN, "with-open-output-file", str);
+        return NIL;
+    }
     val = makestream(port,EISL_OUTPUT);
     ep1 = ep;
     addlexenv(sym,val);
@@ -1513,8 +1552,10 @@ int f_with_open_io_file(int arglist){
     if(!stringp(str))
         error(NOT_STR, "with-open-io-file", str);
     port = fopen(GET_NAME(str),"r+");
-    if(port == NULL)
+    if(port == NULL) {
         error(CANT_OPEN, "with-open-io-file", str);
+        return NIL;
+    }
     val = makestream(port,EISL_OPEN);
     ep1 = ep;
     addlexenv(sym,val);

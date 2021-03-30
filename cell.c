@@ -488,9 +488,11 @@ void heapdump(int start, int end){
 
 
 void store_backtrace(int x){
-    int i,y;
+    int i;
 
     for(i=1;i<BACKSIZE;i++){
+      int y;
+      
         y = backtrace[i];
         backtrace[i-1] = y;
     }
@@ -720,12 +722,14 @@ int makestream(FILE *port, int type){
 
 //--------array-------
 int makearray(int ls, int obj){
-    int size,res,i,n,ls1, *vec;
+    int size,res,i,ls1, *vec;
 
     ls1 = ls;
     if(!nullp(ls)){
         size = 1;
         while(!nullp(ls)){
+          int n;
+          
             n = GET_INT(car(ls));
             if(n==0)
                 n=1;
@@ -766,13 +770,15 @@ int makearray(int ls, int obj){
 
 // for Deep-Learning float type array
 int makefarray(int ls, int obj){
-    int size,res,i,n,ls1;
+    int size,res,i,ls1;
     float *vec;
 
     ls1 = ls;
     if(!nullp(ls)){
         size = 1;
         while(!nullp(ls)){
+          int n;
+          
             n = GET_INT(car(ls));
             if(n==0)
                 n=1;
@@ -980,9 +986,9 @@ int initinst1(int inst_vars, int sc){
 }
 
 int initinst2(int inst_vars, int class_vars){
-    int n;
-
     while(!nullp(class_vars)){
+      int n;
+
         if((n=assq(caar(class_vars),inst_vars)))
             SET_CDR(n,copy(cdar(class_vars)));
         class_vars = cdr(class_vars);
@@ -1082,7 +1088,6 @@ int nth_cdr(int n, int x){
 
 
 int convert(int arg1, int arg2){
-    double x;
     char str[STRSIZE];
 
     switch(GET_TAG(arg1)){
@@ -1119,6 +1124,8 @@ int convert(int arg1, int arg2){
                 return(makeint((int)GET_FLT(arg1)));
             }
             else if(GET_AUX(arg2) == cstring){
+              double x;
+              
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
                     sprintf(str, "%0.16g", x);
@@ -1174,7 +1181,10 @@ int adaptp(int x, int y){
         else
         	return(0);
     }
-    if(GET_AUX(x) == GET_AUX(y))
+    if (x >= CELLSIZE) {
+      error(ILLEGAL_ARGS, "adaptp", x);
+      return(0);
+    } else if(GET_AUX(x) == GET_AUX(y))
     	return(1);
     else if(subclassp(GET_AUX(x),GET_AUX(y)))
     	return(1);

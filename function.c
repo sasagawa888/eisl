@@ -2738,6 +2738,8 @@ int f_string_append(int arglist){
     if(!stringp(arg1))
         error(NOT_STR, "string-append", arg1);
     arglist = cdr(arglist);
+    if(nullp(arglist))
+        return(arg1);
     str1[0] = NUL;
     str2[0] = NUL;
     strcpy(str1,GET_NAME(arg1));

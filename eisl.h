@@ -25,6 +25,7 @@ Copying GC mode
 #define WORK2       13000000
 #define FREESIZE    900
 #define FARRMAX     100000000
+#define DYNSIZE     1000
 #define STACKSIZE   400000
 #define SYMSIZE     256
 #define BUFSIZE     256
@@ -278,6 +279,7 @@ extern int stack[STACKSIZE];
 extern int argstk[STACKSIZE];
 extern int cell_hash_table[HASHTBSIZE];
 extern int shelter[STACKSIZE];
+extern int dynamic[DYNSIZE][2];
 
 //object oriented
 extern int generic_func;

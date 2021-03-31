@@ -288,6 +288,21 @@ int setdynenv(int sym, int val){
     return(T);
 }
 
+//for new data structure
+int setdynenv1(int sym, int val){
+    int i;
+
+    for(i=dp-1;i>=0;i--){
+        if(dynamic[i][0] == sym){
+            dynamic[i][1] = val;
+            return(T);
+        }
+    }
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
+    return(T);
+}
+
 
 //additinal of lexical variable
 void addlexenv(int sym, int val){
@@ -298,6 +313,14 @@ void addlexenv(int sym, int val){
 //addition of lexical variable
 int adddynenv(int sym, int val){
     dp = cons(cons(sym,val),dp);
+    return(T);
+}
+
+//for new data structure
+int adddynenv1(int sym, int val){
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
+    dp++;
     return(T);
 }
 
@@ -325,6 +348,17 @@ int finddyn(int sym){
         return(-1);
     else
         return(cdr(addr));
+}
+
+// for new data structure
+int finddyn1(int sym){
+    int i;
+
+    for(i=dp-1;i>=0;i--){
+        if(dynamic[i][0] == sym)
+            return(dynamic[i][1]);
+    }
+    return(-1);
 }
 
 //bind to association list destructively

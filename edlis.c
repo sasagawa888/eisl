@@ -445,7 +445,7 @@ void edit_screen(char *fname){
                     printf("          ");
                     ESCMOVE(ed_footer,1);
                     printf("line? ");
-                    (void)scanf("%d",&i);
+                    c = scanf("%d",&i);
                     c = getch();
                     ESCRST;
                     if(i < 0 || i > ed_end)

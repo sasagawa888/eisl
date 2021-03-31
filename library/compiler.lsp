@@ -1397,6 +1397,19 @@ double tarai(double x, double y, double z){
                (format stream ")"))))
 
     ;;SUBR call
+    (defun comp-subrcall (stream x env args tail name global test clos)
+        (if (simple-subrcall-p (cdr x))
+            (comp-subrcall1 stream x env args tail name global test clos)
+            (comp-subrcall2 stream x env args tail name global test clos)))
+    
+    ;;Simple subrcall arguments are all subr or atom
+    (defun comp-subrcall1 (stream x env args tail name global test clos)
+        (format stream "fast_convert(Fcallsubr(Fcar(Fmakesym(\"")
+        (format-object stream (car x) nil)
+        (format stream "\")),")
+        (comp-funcall3 stream (cdr x) env args nil name global test clos)
+        (format stream "))~%"))
+
     ;;Not tail call subr.To avoid data loss by GC, push each data to shelter
     ;; ({int arg1,...,argn,res;
     ;;   arg1 = code1;
@@ -1410,7 +1423,7 @@ double tarai(double x, double y, double z){
     ;;   arg1 = Fshelterpop();
     ;;   res;})
     ;; 
-    (defun comp-subrcall (stream x env args tail name global test clos)
+    (defun comp-subrcall2 (stream x env args tail name global test clos)
         (cond ((null (cdr x)) (format stream "({int res;"))
               (t
                (format stream "({int ")
@@ -1462,6 +1475,15 @@ double tarai(double x, double y, double z){
                (comp-subrcall3 stream (+ m 1) n)
                (format stream ")"))))
     
+    (defun simple-subrcall-p (x)
+        (cond ((null x) t)
+              ((and (consp (car x))
+                    (subrp (car (car x))))
+                (simple-subrcall-p (cdr x)))
+              ((atom (car x))
+                (simple-subrcall-p (cdr x)))
+              (t nil)))
+
     ;;labels syntax. flet syntax is same as labels
     (defun comp-labels (stream x env args tail name global test clos)
         (comp-labels1 stream (elt x 1) env args tail name global test clos)

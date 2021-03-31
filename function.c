@@ -3903,8 +3903,11 @@ int f_create_string(int arglist){
     arg2 = cadr(arglist);
     if((n=length(arglist)) != 1 && n != 2)
         error(WRONG_ARGS, "create-string", arglist);
-    if(!integerp(arg1) || negativep(arg1))
-        error(NOT_INT, "create-string", arg1);
+    if(negativep(arg1))
+        error(DOMAIN_ERR, "create-string", arg1);
+    if(longnump(arg1) || bignump(arg1))
+        error(EXHAUSTED_ERR, "create-string", arg1);
+    
 
     n=GET_INT(arg1);
     if(nullp(arg2))

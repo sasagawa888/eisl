@@ -275,6 +275,25 @@ void setlexenv(int sym, int val){
         SET_CDR(addr,val);
 }
 
+#ifdef DYN
+//for new data structure
+int setdynenv(int sym, int val){
+    int i;
+
+    for(i=dp;i>0;i--){
+        if(dynamic[i][0] == sym){
+            dynamic[i][1] = val;
+            return(T);
+        }
+    }
+    dp++;
+    if(dp >= DINSIZE)
+        error(DYNAMIC_OVERF, "setdynenv", NIL);
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
+    return(T);
+}
+#else
 //bind value to dynamic environment
 int setdynenv(int sym, int val){
     int addr;
@@ -287,21 +306,7 @@ int setdynenv(int sym, int val){
     
     return(T);
 }
-
-//for new data structure
-int setdynenv1(int sym, int val){
-    int i;
-
-    for(i=dp-1;i>=0;i--){
-        if(dynamic[i][0] == sym){
-            dynamic[i][1] = val;
-            return(T);
-        }
-    }
-    dynamic[dp][0] = sym;
-    dynamic[dp][1] = val;
-    return(T);
-}
+#endif
 
 
 //additinal of lexical variable
@@ -309,20 +314,23 @@ void addlexenv(int sym, int val){
     ep = cons(cons(sym,val),ep);
 }
 
-
+#ifdef DYN
+//for new data structure
+int adddynenv(int sym, int val){
+    dp++
+    if(dp >= DINSIZE)
+        error(DYNAMIC_OVERF, "adddynenv", NIL);
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
+    return(T);
+}
+#else
 //addition of lexical variable
 int adddynenv(int sym, int val){
     dp = cons(cons(sym,val),dp);
     return(T);
 }
-
-//for new data structure
-int adddynenv1(int sym, int val){
-    dynamic[dp][0] = sym;
-    dynamic[dp][1] = val;
-    dp++;
-    return(T);
-}
+#endif
 
 //environment is association list
 // env = ((sym1 . val1) (sym2 . val2) ...)
@@ -338,6 +346,19 @@ int findenv(int sym){
     else
         return(cdr(addr));
 }
+
+#ifdef DYN
+// for new data structure
+int finddyn(int sym){
+    int i;
+
+    for(i=dp;i>0;i--){
+        if(dynamic[i][0] == sym)
+            return(dynamic[i][1]);
+    }
+    return(-1);
+}
+#else
 //find in dynamic environment
 int finddyn(int sym){
     int addr;
@@ -349,17 +370,8 @@ int finddyn(int sym){
     else
         return(cdr(addr));
 }
+#endif
 
-// for new data structure
-int finddyn1(int sym){
-    int i;
-
-    for(i=dp-1;i>=0;i--){
-        if(dynamic[i][0] == sym)
-            return(dynamic[i][1]);
-    }
-    return(-1);
-}
 
 //bind to association list destructively
 void setval(int sym, int val, int ls){

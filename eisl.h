@@ -16,6 +16,8 @@ Copying GC mode
 #ifndef EISL_H
 #define EISL_H
 
+#define DYNTEST 
+
 #include <setjmp.h>
 #include <stdbool.h>
 #define VERSION     1.85
@@ -450,6 +452,7 @@ extern char extended[70][30];
 #define UNDEF_ENTITY    166
 #define SIMPLE_ERR      167
 #define EXHAUSTED_ERR   168 
+#define DYNAMIC_OVERF   169
 
 #define ESCHOME printf("\33[1;1H")
 #define ESCTOP  printf("\33[2;1H")

@@ -388,6 +388,12 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("function"),makesym(fun1));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;
+        case DYNAMIC_OVERF:
+                        initargs = list6(makesym("format-string"),makestr("Shelter over flow "),
+                                         makesym("format-arguments"),arg,
+                                         makesym("function"),makesym(fun1));
+                        signal_condition(makeinstance(cprogram_error,initargs),NIL);
+                        break;
         case STACK_UNDERF:
                         initargs = list6(makesym("format-string"),makestr("Stack under flow "),
                                          makesym("format-arguments"),arg,

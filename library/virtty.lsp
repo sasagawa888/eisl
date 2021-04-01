@@ -51,16 +51,21 @@
        (c-lang "res = attron(A_REVERSE) | INT_FLAG;")
        (c-lang "res = attroff(A_REVERSE) | INT_FLAG;")))
 
-(defgeneric tyo (o)
+(defun tyo (&rest objs)
+   (for ((xs objs (cdr xs)))
+        ((null xs))
+        (tyo1 (car xs))))
+
+(defgeneric tyo1 (o)
    ;; Output the object o (a character, string or list of characters) at the current position.
    )
-(defmethod tyo ((o <character>))
+(defmethod tyo1 ((o <character>))
    (the <character> o)
    (tycn o))
-(defmethod tyo ((o <string>))
+(defmethod tyo1 ((o <string>))
    (the <string> o)
    (tystring o (length o)))
-(defmethod tyo ((o <list>))
+(defmethod tyo1 ((o <list>))
    (the <list> o)
    (for ((xs o (cdr xs)))
         ((null xs))
@@ -128,11 +133,11 @@
        (c-lang "res = curs_set(1) | INT_FLAG;")
        (c-lang "res = curs_set(0) | INT_FLAG;")))
 
-(defun tyco (x y o)
+(defun tyco (x y &rest os)
    ;; Output the object o at position (x, y).
    (the <fixnum> x)(the <fixnum> y)
    (tycursor x y)
-   (tyo o))
+   (apply tyo os))
 
 (defun tystring (str n)
    ;; Output the first n characters of string str at the current position.
@@ -214,10 +219,10 @@
    ;; Erase the line at the current cursor position.
    (c-lang "res = deleteln() | INT_FLAG;"))
 
-(defun tycot (x y o)
+(defun tycot (x y &rest os)
    (the <fixnum> x)(the <fixnum> y)
    (tyattrib t)
-   (tyco x y o)
+   (apply tyco x y os)
    (tyattrib nil))
 
 ;; Further extensions from curses:

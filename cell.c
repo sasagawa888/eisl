@@ -287,7 +287,7 @@ int setdynenv(int sym, int val){
         }
     }
     dp++;
-    if(dp >= DINSIZE)
+    if(dp >= DYNSIZE)
         error(DYNAMIC_OVERF, "setdynenv", NIL);
     dynamic[dp][0] = sym;
     dynamic[dp][1] = val;
@@ -317,8 +317,8 @@ void addlexenv(int sym, int val){
 #ifdef DYN
 //for new data structure
 int adddynenv(int sym, int val){
-    dp++
-    if(dp >= DINSIZE)
+    dp++;
+    if(dp >= DYNSIZE)
         error(DYNAMIC_OVERF, "adddynenv", NIL);
     dynamic[dp][0] = sym;
     dynamic[dp][1] = val;

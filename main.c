@@ -1935,10 +1935,10 @@ void debugger(){
     else if(eqp(x,makesym(":D"))){
         #ifdef DYN
         for(i=1;i<=dp;i++){
-            print(dynamic[i][1])
-            printf(" = ")
-            print(dynamic[1][1])
-            printf("\n")
+            print(dynamic[i][1]);
+            printf(" = ");
+            print(dynamic[1][1]);
+            printf("\n");
         }
         #else
     	print(dp);

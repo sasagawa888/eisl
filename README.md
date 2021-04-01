@@ -1,3 +1,6 @@
+# Caution
+Easy-ISLisp plans to significantly improve the data structure. Therefore, the latest version will malfunction for a while. Please use tentative release version 1.86.  
+
 # Easy-ISLisp
 
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with ISLisp standard.

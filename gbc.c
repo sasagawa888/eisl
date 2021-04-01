@@ -162,10 +162,10 @@ void gbcmark(void){
     for(i=0;i<lp;i++)
         markcell(shelter[i]);
     
-    #ifdef DYN
+    //mark dynamic environment
     for(i=1;i<=dp;i++)
         markcell(dynamic[i][1]);
-    #endif
+
 
     //mark generic_list
     markcell(generic_list);

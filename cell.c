@@ -275,8 +275,7 @@ void setlexenv(int sym, int val){
         SET_CDR(addr,val);
 }
 
-#ifdef DYN
-//for new data structure
+//bind value to dynamic environment
 int setdynenv(int sym, int val){
     int i;
 
@@ -293,20 +292,6 @@ int setdynenv(int sym, int val){
     dynamic[dp][1] = val;
     return(T);
 }
-#else
-//bind value to dynamic environment
-int setdynenv(int sym, int val){
-    int addr;
-
-    addr= assq(sym,dp);
-    if(addr == -1)
-        adddynenv(sym,val);
-    else
-        SET_CDR(addr,val);
-    
-    return(T);
-}
-#endif
 
 
 //additinal of lexical variable
@@ -314,8 +299,7 @@ void addlexenv(int sym, int val){
     ep = cons(cons(sym,val),ep);
 }
 
-#ifdef DYN
-//for new data structure
+//addition of dynamic variable
 int adddynenv(int sym, int val){
     dp++;
     if(dp >= DYNSIZE)
@@ -324,13 +308,7 @@ int adddynenv(int sym, int val){
     dynamic[dp][1] = val;
     return(T);
 }
-#else
-//addition of lexical variable
-int adddynenv(int sym, int val){
-    dp = cons(cons(sym,val),dp);
-    return(T);
-}
-#endif
+
 
 //environment is association list
 // env = ((sym1 . val1) (sym2 . val2) ...)
@@ -347,8 +325,7 @@ int findenv(int sym){
         return(cdr(addr));
 }
 
-#ifdef DYN
-// for new data structure
+//find in dynamic environment
 int finddyn(int sym){
     int i;
 
@@ -358,20 +335,6 @@ int finddyn(int sym){
     }
     return(-1);
 }
-#else
-//find in dynamic environment
-int finddyn(int sym){
-    int addr;
-
-    addr = assq(sym,dp);
-
-    if(addr == -1)
-        return(-1);
-    else
-        return(cdr(addr));
-}
-#endif
-
 
 //bind to association list destructively
 void setval(int sym, int val, int ls){

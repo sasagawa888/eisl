@@ -16,8 +16,6 @@ Copying GC mode
 #ifndef EISL_H
 #define EISL_H
 
-#define DYN 1
-
 #include <setjmp.h>
 #include <stdbool.h>
 #define VERSION     1.85

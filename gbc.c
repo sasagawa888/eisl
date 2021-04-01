@@ -163,7 +163,7 @@ void gbcmark(void){
         markcell(shelter[i]);
     
     #ifdef DYN
-    for(i=0;i<dp;i++)
+    for(i=1;i<=dp;i++)
         markcell(dynamic[i][1]);
     #endif
 

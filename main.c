@@ -16,7 +16,7 @@ written by kenichi sasagawa 2016/4~
 
 //------pointer----
 int ep; //environment pointer
-int dp = 0; //dynamic pointer
+int dp; //dynamic pointer
 int hp; //heap pointer  for mark and sweep
 int sp; //stack pointer
 int fc; //free counter

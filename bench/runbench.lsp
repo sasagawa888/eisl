@@ -17,7 +17,7 @@
 (defglobal *bignum*     (and (integerp *largeint*)
                              (> *largeint* 0)
                              (eql (isqrt *largeint*) 100000)))
-(defglobal *bignum* 12345678901234567890)
+
 
 (defun bench-file (bench)
    (string-append "bench/" bench *extension*))
@@ -96,6 +96,7 @@
 (bench "09" "Destru" (destructive 600 50) ())
 
 ;;; (10) TRAVINI
+(gbc)
 (load (bench-file "traverse"))
 (bench "10" "Travini" (init-traverse) ())
 

@@ -1,6 +1,9 @@
 ;;; Show a simple timer using "virtty".
 ;;; Ported from https://github.com/HiTECNOLOGYs/cl-charms/blob/master/examples/timer.lisp
 
+(import "virtty")
+;; Please compile virtty.lsp in library beforehand.
+
 (defglobal *start* nil)
 (defglobal *stop* nil)
 

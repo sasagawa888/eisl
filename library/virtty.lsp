@@ -1,5 +1,6 @@
 ;;; Virtual Character Mode Terminal (virtty) that can be used to build very simple interfaces, e.g. editors or simple games.
-;;; Interface (but not implementation) inspired by OpenLisp ( http://www.eligis.com ).
+;;; Interface (but not implementation) inspired by OpenLisp ( http://www.eligis.com ) and
+;;; Le-Lisp ( https://github.com/c-jullien/lelisp ).
 ;;;
 ;;; This has moderate dependencies on ncurses.
 ;;;
@@ -25,41 +26,46 @@
    (c-lang "nonl();")
    (c-lang "intrflush(stdscr, FALSE);")
    (tyshowcursor t)
-   (c-lang "set_tabsize(8);"))
+   (c-lang "res = set_tabsize(8) | INT_FLAG;"))
 
 (defun tyepilogue ()
    ;; Reset the terminal to its original mode.
-   (c-lang "endwin();"))
+   (c-lang "res = endwin() | INT_FLAG;"))
 
 (defun tycls ()
    ;; Clears the entire screen.
-   (c-lang "clear();"))
+   (c-lang "res = clear() | INT_FLAG;"))
 
 (defun tycursor (column row)
    ;; Moves the cursor to position (x, y) on the screen.
    (the <fixnum> column)(the <fixnum> row)
-   (c-lang "move(ROW & INT_MASK, COLUMN & INT_MASK);"))
+   (c-lang "res = move(ROW & INT_MASK, COLUMN & INT_MASK) | INT_FLAG;"))
 
 (defun tycleol ()
    ;; Clears the current line to end of line.
-   (c-lang "clrtoeol();"))
+   (c-lang "res = clrtoeol() | INT_FLAG;"))
 
 (defun tyattrib (x)
    ;; Set, if flag is t, or reset, if flag is nil, the reverse-video attribute.
    (if x
-       (c-lang "attron(A_REVERSE);")
-       (c-lang "attroff(A_REVERSE);")))
+       (c-lang "res = attron(A_REVERSE) | INT_FLAG;")
+       (c-lang "res = attroff(A_REVERSE) | INT_FLAG;")))
 
-(defgeneric tyo (o)
+(defun tyo (&rest objs)
+   (for ((xs objs (cdr xs)))
+        ((null xs))
+        (tyo1 (car xs))))
+
+(defgeneric tyo1 (o)
    ;; Output the object o (a character, string or list of characters) at the current position.
    )
-(defmethod tyo ((o <character>))
+(defmethod tyo1 ((o <character>))
    (the <character> o)
    (tycn o))
-(defmethod tyo ((o <string>))
+(defmethod tyo1 ((o <string>))
    (the <string> o)
    (tystring o (length o)))
-(defmethod tyo ((o <list>))
+(defmethod tyo1 ((o <list>))
    (the <list> o)
    (for ((xs o (cdr xs)))
         ((null xs))
@@ -79,11 +85,11 @@
 
 (defun tyflush ()
    ;; Flush unsent characters.
-   (c-lang "refresh();"))
+   (c-lang "res = refresh() | INT_FLAG;"))
 
 (defun tybeep ()
    ;; Sounds the bell.
-   (c-lang "beep();"))
+   (c-lang "res = beep() | INT_FLAG;"))
 
 (defun tyi ()
    ;; Reads a single character without echo.
@@ -92,10 +98,6 @@
 ;; Various ncurses ( https://man.openbsd.org/curses ) constants.
 ;; I got these from https://github.com/HiTECNOLOGYs/cl-charms/blob/master/src/low-level/curses-bindings.lisp but the header file would have done as well.
 
-(defconstant KEY_UP #o403)
-(defconstant KEY_DOWN #o402)
-(defconstant KEY_LEFT #o404)
-(defconstant KEY_RIGHT #o405)
 (defconstant KEY_HOME #o406)
 (defconstant KEY_END #o550)
 (defconstant KEY_NPAGE #o552)
@@ -123,25 +125,105 @@
    ;; Output character ch at the current position.
    (the <character> ch)
    (let ((ch-code (convert ch <integer>)))
-        (c-lang "addch(CH_CODE & INT_MASK);")))
+        (c-lang "res = addch(CH_CODE & INT_MASK) | INT_FLAG;")))
 
 (defun tyshowcursor (flag)
    ;; Shows, if flag is t, or hides, if flag is nil, the cursor.
    (if flag
-       (c-lang "curs_set(1);")
-       (c-lang "curs_set(0);")))
+       (c-lang "res = curs_set(1) | INT_FLAG;")
+       (c-lang "res = curs_set(0) | INT_FLAG;")))
 
-(defun tyco (x y o)
+(defun tyco (x y &rest os)
    ;; Output the object o at position (x, y).
    (the <fixnum> x)(the <fixnum> y)
    (tycursor x y)
-   (tyo o))
+   (apply tyo os))
 
 (defun tystring (str n)
    ;; Output the first n characters of string str at the current position.
    (the <string> str)(the <fixnum> n)
    (let ((substr (subseq str 0 n)))
-        (c-lang "addstr(Fgetname(SUBSTR));")))
+        (c-lang "res = addstr(Fgetname(SUBSTR)) | INT_FLAG;")))
+
+;; Further functions from Le-Lisp.
+
+(defun tyinstring ()
+   ;; Read a line from the keyboard
+   (c-lang "static char str[133];")
+   (c-lang "res = Fmakestr(getstr(str));")) ; Fmakestr copies its argument
+
+(defun tynewline ()
+   ;; Send an end-of-line marker to the screen.
+   (tyo #\newline))
+
+(defconstant +bs+ (convert 8 <character>))
+(defun tyback (cn)
+   ;; Erase the character immediately before the cursor on screen and move the cursor back one space.
+   (tyo +bs+)
+   (tyo #\space)
+   (tyo +bs+))
+
+(defun tyod (n nc)
+   ;; Print the base-10 nc-character representation of the number n.
+   (the <fixnum> n)(the <fixnum> nc)
+   (let ((str (create-string-output-stream)))
+        (format str "~D" n)
+        (subseq (get-output-stream-string str) 0 nc)))
+
+(defun tybs (cn)
+   ;; Moves the cursor position back one space without erasing anything on the screen.
+   (tyo +bs+))
+
+(defconstant +cr+ (convert 13 <character>))
+(defun tycr ()
+   ;; Place the cursor at the beginning of the current line.
+   (tyo +cr+))
+
+(defun tyupkey ()
+   ;; Returns the key code associated with the up arrow key.
+   #o403)
+(defun tydownkey ()
+   ;; Returns the key code associated with the down arrow key.
+   #o402)
+(defun tyleftkey ()
+   ;; Returns the key code associated with the left arrow key.
+   #o404)
+(defun tyrightkey ()
+   ;; Returns the key code associated with the right arrow key.
+   #o405)
+
+(defun tycleos ()
+   ;; Erase from the cursor to the end of screen.
+   (c-lang "res = clrtobot() | INT_FLAG;"))
+
+(defun tyinsch (ch)
+   ;; Insert a character at the current cursor position.
+   (the <character> ch)
+   (c-lang "res = insch(CH) | INT_FLAG;"))
+
+(defun tyinscn (cn)
+   (tyinsch cn))
+
+(defun tydelch ()
+   ;; Erase the character at the current cursor position.
+   (c-lang "res = delch() | INT_FLAG;"))
+
+(defun tydelcn (cn)
+   (tydelch))
+
+(defun tyinsln ()
+   ;; Insert a new line at the current cursor position.
+   (c-lang "res = insertln() | INT_FLAG;"))
+
+(defun tydelln ()
+   ;; Erase the line at the current cursor position.
+   (c-lang "res = deleteln() | INT_FLAG;"))
+
+(defun tycot (x y &rest os)
+   (the <fixnum> x)(the <fixnum> y)
+   (tyattrib t)
+   (apply tyco x y os)
+   (tyattrib nil))
 
 ;; Further extensions from curses:
 
@@ -159,7 +241,7 @@
 
 (defun nodelay ()
    ;; Cause tyi to be a non-blocking call.
-   (c-lang "nodelay(stdscr, TRUE);"))
+   (c-lang "res = nodelay(stdscr, TRUE) | INT_FLAG;"))
 
 ;; From here on is test code
 

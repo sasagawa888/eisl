@@ -9,8 +9,9 @@
 ;;;
 ;;; Please, send bug reports to jullien@eligis.com
 ;;;
+(load "bench/cpbench.lsp")
 
-(defglobal *extension*  (or (ignore-errors *cpext*) ".lsp")) ;; .ibc, .lap ...
+(defglobal *extension*  (or (ignore-errors *cpext*) ".o")) ;; .ibc, .lap ...
 (defglobal *result*     nil)
 (defglobal *total-time* 0.0)
 (defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))
@@ -96,7 +97,6 @@
 (bench "09" "Destru" (destructive 600 50) ())
 
 ;;; (10) TRAVINI
-(gbc)
 (load (bench-file "traverse"))
 (bench "10" "Travini" (init-traverse) ())
 
@@ -148,15 +148,13 @@
 
 ;;; (22) FRPOLY
 ;;; When implementation has no BIGNUMS, only tests for r and r3 are run.
-#|
 (load (bench-file "frpoly"))
-(gbc)
 (bench "22" "Frpoly" (mapc (lambda (n)
                                           (pexptsq r  n)
                              (if *bignum* (pexptsq r2 n))
                                           (pexptsq r3 n))
                           '(2 5 10 15))
                      '(2 5 10 15))
-|#
+
 (format (standard-output) "~%Total ~As.~%~%" (format-time *total-time*))
 

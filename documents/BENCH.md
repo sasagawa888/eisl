@@ -2,9 +2,6 @@
 I applied the benchmark test written by Mr. Jullien to Easy-ISLisp. 
 see bench folder.
 
-# Constraint 
-The compiled code of frpoly.lsp does not work properly due to GCC compiler optimization.
-Therefore, the compiler version excludes frpoly. 
 
 # Hardware
 Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz

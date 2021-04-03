@@ -201,38 +201,17 @@ static inline int fast_immediate(int x){
 }
 
 static int fast_convert(int x){
-	int res,n;
-
-    if(x < 0 || x >= INT_FLAG)
-    	return(x);
-	else if(Fintegerp(x)){
-        n = Fgetint(x);
-        if(n >= 0)
-            res = n | INT_FLAG;
-        else
-            res = n;
-    }
-    else
-    	res = x;
-
-    return(res);
+	
+    return(x);
 }
 
 static int fast_inverse(int x){
-	int res;
-
-    if(x >= INT_FLAG)
-    	res = Fmakeint(x & INT_MASK);
-    else if(x < 0)
-    	res = Fmakeint(x);
-    else
-    	res = x;
-
-    return(res);
+	
+    return(x);
 }
 
 
-static int fast_numeqp(void){
+static int fast_numeqp(){
     int x,y;
 
     y = Fargpop();
@@ -255,7 +234,7 @@ static int fast_numeqp(void){
         return(Fnumeqp(fast_inverse(x),fast_inverse(y)));
 }
 
-static int fast_smallerp(void){
+static int fast_smallerp(){
     int x,y;
 
     y = Fargpop();
@@ -278,7 +257,7 @@ static int fast_smallerp(void){
         return(Fsmallerp(fast_inverse(x),fast_inverse(y)));
 }
 
-static int fast_eqsmallerp(void){
+static int fast_eqsmallerp(){
     int x,y;
 
     y = Fargpop();
@@ -302,7 +281,7 @@ static int fast_eqsmallerp(void){
 }
 
 
-static inline int fast_greaterp(void){
+static inline int fast_greaterp(){
     int x,y;
 
     y = Fargpop();
@@ -312,7 +291,7 @@ static inline int fast_greaterp(void){
     return(fast_smallerp());
 }
 
-static inline int fast_eqgreaterp(void){
+static inline int fast_eqgreaterp(){
     int x,y;
 
     y = Fargpop();
@@ -322,7 +301,7 @@ static inline int fast_eqgreaterp(void){
     return(fast_eqsmallerp());
 }
 
-static int fast_plus(void){
+static int fast_plus(){
     int x,y,intx,inty,res;
 
     y = Fargpop();
@@ -358,7 +337,7 @@ static int fast_plus(void){
         return(fast_convert(Fplus(fast_inverse(x),fast_inverse(y))));
 }
 
-static int fast_minus(void){
+static int fast_minus(){
     int x,y,intx,inty,res;
 
     y = Fargpop();
@@ -396,7 +375,7 @@ static int fast_minus(void){
         return(fast_convert(Fminus(fast_inverse(x),fast_inverse(y))));
 }
 
-static int fast_mult(void){
+static int fast_mult(){
     int x,y,intx,inty,res;
 
     y = Fargpop();
@@ -428,7 +407,7 @@ static int fast_mult(void){
 
 
 
-static int fast_mod(void){
+static int fast_mod(){
     int x,y,intx,inty,res;
     long long int longx,longy;
 
@@ -484,7 +463,7 @@ static inline int fast_not(int x){
     	return(NIL);
 }
 
-static inline int fast_eq(void){
+static inline int fast_eq(){
     int x,y;
 
     y = Fargpop();

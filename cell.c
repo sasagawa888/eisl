@@ -269,7 +269,7 @@ void setlexenv(int sym, int val){
     int addr;
 
     addr= assq(sym,ep);
-    if(addr == -1)
+    if(addr == FAILSE)
         addlexenv(sym,val);
     else
         SET_CDR(addr,val);
@@ -319,8 +319,8 @@ int findenv(int sym){
 
     addr = assq(sym,ep);
 
-    if(addr == -1)
-        return(-1);
+    if(addr == FAILSE)
+        return(FAILSE);
     else
         return(cdr(addr));
 }
@@ -333,7 +333,7 @@ int finddyn(int sym){
         if(dynamic[i][0] == sym)
             return(dynamic[i][1]);
     }
-    return(-1);
+    return(FAILSE);
 }
 
 //bind to association list destructively
@@ -341,7 +341,7 @@ void setval(int sym, int val, int ls){
     int addr;
 
     addr= assq(sym,ls);
-    if(addr != -1)
+    if(addr != FAILSE)
         SET_CDR(addr,val);
 }
 
@@ -511,13 +511,16 @@ void store_backtrace(int x){
 //----------------------------------------
 
 int makeint(int intn){
-    int addr;
+    //int addr;
 
-    addr = freshcell();
-    SET_TAG(addr,INTN);
-    SET_INT(addr,intn);
-    SET_AUX(addr,cfixnum); //class fixnum
-    return(addr);
+    //addr = freshcell();
+    //SET_TAG(addr,INTN);
+    //SET_INT(addr,intn);
+    //SET_AUX(addr,cfixnum); //class fixnum
+    if(intn >= 0)
+        return(INT_FLAG | intn);
+    else
+        return(intn);
 }
 
 int makelong(long long int lngnum){
@@ -1240,7 +1243,7 @@ int fast_cdr(int x){
 
 
 int set_dynamic(int x, int y){
-	if(finddyn(x) != -1)
+	if(finddyn(x) != FAILSE)
         setdynenv(x,y);
     else
     	error(UNDEF_VAR, "set-dynamic", x);

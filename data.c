@@ -6,6 +6,9 @@
 #include <float.h>
 #include "eisl.h"
 
+void nop(){
+
+}
 
 int get_int(int addr){
     return(GET_INT(addr));
@@ -204,7 +207,7 @@ int functionp(int addr){
     if((val != -1) && IS_FUNC(val))
         return(val);
     val = findenv(addr);
-    if((val != -1) && IS_FUNC(val))
+    if((val != FAILSE) && IS_FUNC(val))
         return(val);
     val = GET_CAR(addr);    
     if(IS_FUNC(val))
@@ -575,7 +578,7 @@ int assoc(int x, int y){
 
 int assq(int x, int y){
     if(nullp(y))
-        return(-1);
+        return(FAILSE);
     else if(eqp(x, caar(y)))
         return(car(y));
     else
@@ -1410,13 +1413,13 @@ int copy_symbol(int x){
 copy_???  for copying GC 
 */
 int copy_int(int x){
-    int addr = NIL;
+    //int addr = NIL;
 
-    addr = freshcell();
-    SET_TAG(addr,INTN);
-    SET_INT(addr,GET_INT(x));
-    SET_AUX(addr,cfixnum); //class fixnum
-    return(addr);
+    //addr = freshcell();
+    //SET_TAG(addr,INTN);
+    //SET_INT(addr,GET_INT(x));
+    //SET_AUX(addr,cfixnum); //class fixnum
+    return(x);
 }
 
 int copy_long(int x){

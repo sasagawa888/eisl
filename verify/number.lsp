@@ -2280,6 +2280,7 @@
 (test (- 10 20 30) -40 eql)
 (test (- 10.0 20.0 30.0) -40.0 eql)
 
+#|
 ;;;
 ;;; function (QUOTIENT dividend divisor+) --> <number>
 ;;;
@@ -2565,7 +2566,7 @@
 ($error (quotient *most-negative-float* -0.1) <floating-point-overflow>)
 ($error (quotient *most-positive-float*  0.1) <floating-point-overflow>)
 ($error (quotient *most-positive-float* -0.1) <floating-point-overflow>)
-
+|#
 ;;;
 ;;; function (RECIPROCAL x) --> <number>
 ;;;

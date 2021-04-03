@@ -450,7 +450,7 @@ int f_set_dynamic(int arglist){
     if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
         error(WRONG_ARGS, "set-dynamic", arg1);
 
-    if(finddyn(arg1) != -1){
+    if(finddyn(arg1) != FAILSE){
         setdynenv(arg1,arg2);
         return(arg2);
     }
@@ -476,7 +476,7 @@ int f_setq(int arglist){
         error(IMPROPER_ARGS, "setq", arglist);
 
     arg2 = eval(arg2);
-    if(findenv(arg1) != -1)
+    if(findenv(arg1) != FAILSE)
         setlexenv(arg1,arg2);
     else if(GET_OPT(arg1) == GLOBAL)
         SET_CDR(arg1,arg2);
@@ -620,7 +620,7 @@ int f_dynamic(int arglist){
         error(NOT_SYM, "dynamic", arg1);
     
     res = finddyn(arg1);
-    if(res == -1)
+    if(res == FAILSE)
         error(UNDEF_DYN, "dynamic", arg1);
 
     return(res);
@@ -720,7 +720,7 @@ int f_symbol_function(int arglist){
         int sym,res;
 
         sym = findenv(arg1);
-        if(sym == -1 && GET_CDR(arg1) != NIL)
+        if(sym == FAILSE && GET_CDR(arg1) != NIL)
             sym = GET_CDR(arg1);
 
         if(!symbolp(sym))
@@ -766,7 +766,7 @@ int f_symbol_class(int arglist){
         int sym;
 
     	sym = findenv(arg1);
-        if(sym == -1 && GET_CDR(arg1) != NIL)
+        if(sym == FAILSE && GET_CDR(arg1) != NIL)
             sym = GET_CDR(arg1);
 
         if(!symbolp(sym))

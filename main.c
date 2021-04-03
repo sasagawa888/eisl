@@ -1490,7 +1490,7 @@ int eval(int addr){
         return(addr);
     else if(symbolp(addr)){
         res = findenv(addr);
-        if(res != -1)
+        if(res != FAILSE)
             return(res);
         else{
             if(GET_OPT(addr) == GLOBAL)

@@ -42,6 +42,7 @@ Copying GC mode
 #define SMALL_INT_MIN       -1000000000
 #define INT_FLAG    1073741824 //#b1000000000000000000000000000000
 #define INT_MASK    1073741823 //#b0111111111111111111111111111111
+#define FAILSE      -1000000000
 #define PI          3.141592653589793
 #define CTRLSTK     200
 #define BACKSIZE    30
@@ -109,64 +110,61 @@ struct position{
 
 
 #define DEBUG               printf("debug\n"); longjmp(buf,2);
-#define GET_FLT(addr)       heap[addr].val.fltnum
-#define GET_CAR(addr)       heap[addr].val.car.intnum
-#define GET_CDR(addr)       heap[addr].val.cdr.intnum
-#define GET_AUX(addr)       heap[addr].aux
-#define GET_PROP(addr)      heap[addr].prop
-#define GET_SUBR(addr)      heap[addr].val.car.subr
-#define GET_PORT(addr)      heap[addr].val.car.port
-#define GET_INT(addr)       heap[addr].val.car.intnum
-#define GET_FLT(addr)       heap[addr].val.fltnum
-#define GET_LONG(addr)      heap[addr].val.lngnum
+#define GET_CAR(addr)       (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.car.intnum)
+#define GET_CDR(addr)       (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.cdr.intnum)
+#define GET_AUX(addr)       (((addr) >= INT_FLAG || (addr) < 0)? cfixnum: heap[(addr)].aux)
+#define GET_PROP(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].prop)
+#define GET_SUBR(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.car.subr)
+#define GET_PORT(addr)      heap[(addr)].val.car.port
+#define GET_INT(addr)       (((addr) > 0)? (INT_MASK & (addr)): (addr))
+#define GET_FLT(addr)       (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.fltnum)
+#define GET_LONG(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.lngnum)
 #define GET_NAME(addr)      heap[addr].name
 #define GET_NAME_ELT(addr,n)    heap[addr].name[n]
 #define GET_CHAR(addr)      heap[addr].name[0]
-#define GET_TR(addr)        heap[addr].trace
-#define GET_TAG(addr)       heap[addr].tag
-#define GET_CAR(addr)       heap[addr].val.car.intnum
-#define GET_OPT(addr)       heap[addr].option
-#define GET_FLAG(addr)      heap[addr].flag
-#define SET_TAG(addr,x)     heap[addr].tag = x
-#define SET_CAR(addr,x)     heap[addr].val.car.intnum = x
-#define SET_CDR(addr,x)     heap[addr].val.cdr.intnum = x
-#define SET_AUX(addr,x)     heap[addr].aux = x
-#define SET_PROP(addr,x)    heap[addr].prop = x
-#define SET_INT(addr,x)     heap[addr].val.car.intnum = x
-#define SET_FLT(addr,x)     heap[addr].val.fltnum = x
-#define SET_LONG(addr,x)    heap[addr].val.lngnum = x
-#define SET_CAR(addr,x)     heap[addr].val.car.intnum = x
-#define SET_SUBR(addr,x)    heap[addr].val.car.subr = x
-#define SET_PORT(addr,x)    heap[addr].val.car.port = x
-#define SET_OPT(addr,x)     heap[addr].option = x
-#define SET_FLAG(addr,x)    heap[addr].flag = x
-#define SET_CHAR(addr,x)    heap[addr].name[0] = x
-#define SET_NAME(addr,x)    heap[addr].name = x
-#define SET_TR(addr,x)      heap[addr].trace = x
-#define SET(addr,x)         heap[addr] = heap[x]
-#define IS_SYMBOL(addr)     heap[addr].tag == SYM
-#define IS_INTEGER(addr)    heap[addr].tag == INTN
-#define IS_BIGXNUM(addr)    heap[addr].tag == BIGX
-#define IS_LONGNUM(addr)    heap[addr].tag == LONGN
-#define IS_FLOAT(addr)      heap[addr].tag == FLTN
-#define IS_LIST(addr)       heap[addr].tag == LIS
-#define IS_STRING(addr)     heap[addr].tag == STR
-#define IS_CHARACTER(addr)  heap[addr].tag == CHR
-#define IS_NIL(addr)        (addr == 0)
-#define IS_T(addr)          (addr == 2)
-#define IS_VECTOR(addr)     heap[addr].tag == VEC
-#define IS_ARRAY(addr)      heap[addr].tag == ARR
-#define IS_FARRAY(addr)     heap[addr].tag == FARR
-#define IS_SUBR(addr)       heap[addr].tag == SUBR
-#define IS_FSUBR(addr)      heap[addr].tag == FSUBR
-#define IS_FUNC(addr)       heap[addr].tag == FUNC
-#define IS_MACRO(addr)      heap[addr].tag == MACRO
-#define IS_EMPTY(addr)      heap[addr].tag  == EMP
-#define IS_CLASS(addr)      heap[addr].tag == CLASS
-#define IS_GENERIC(addr)    heap[addr].tag == GENERIC
-#define IS_METHOD(addr)     heap[addr].tag == METHOD
-#define IS_STREAM(addr)     heap[addr].tag == STREAM
-#define IS_INSTANCE(addr)   heap[addr].tag == INSTANCE
+#define GET_TR(addr)        (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].trace)
+#define GET_TAG(addr)       (((addr) >= INT_FLAG || (addr) < 0)? INTN: heap[(addr)].tag)
+#define GET_OPT(addr)       (((addr) >= INT_FLAG || (addr) < 0)? INTN: heap[(addr)].option)
+#define GET_FLAG(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].flag)
+#define SET_TAG(addr,x)     heap[(addr)].tag = x
+#define SET_CAR(addr,x)     heap[(addr)].val.car.intnum = x
+#define SET_CDR(addr,x)     heap[(addr)].val.cdr.intnum = x
+#define SET_AUX(addr,x)     heap[(addr)].aux = x
+#define SET_PROP(addr,x)    ((addr >= INT_FLAG || addr <0)? NIL: (heap[addr].prop = x))
+//#define SET_INT(addr,x)     ((addr >= INT_FLAG || addr <0)? NIL: (heap[addr].val.car.intnum = x))
+#define SET_FLT(addr,x)     heap[(addr)].val.fltnum = x
+#define SET_LONG(addr,x)    heap[(addr)].val.lngnum = x
+#define SET_SUBR(addr,x)    heap[(addr)].val.car.subr = x
+#define SET_PORT(addr,x)    heap[(addr)].val.car.port = x
+#define SET_OPT(addr,x)     heap[(addr)].option = x
+#define SET_FLAG(addr,x)    heap[(addr)].flag = x
+#define SET_CHAR(addr,x)    heap[(addr)].name[0] = x
+#define SET_NAME(addr,x)    heap[(addr)].name = x
+#define SET_TR(addr,x)      heap[(addr)].trace = x
+#define SET(addr,x)         heap[(addr)] = heap[x]
+#define IS_SYMBOL(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == SYM)
+#define IS_INTEGER(addr)    (((addr) >= INT_FLAG || (addr) < 0)? 1: 0)
+#define IS_BIGXNUM(addr)    (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == BIGX)
+#define IS_LONGNUM(addr)    (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == LONGN)
+#define IS_FLOAT(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FLTN)
+#define IS_LIST(addr)       (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == LIS)
+#define IS_STRING(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == STR)
+#define IS_CHARACTER(addr)  (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == CHR)
+#define IS_NIL(addr)        ((addr) == 0)
+#define IS_T(addr)          ((addr) == 2)
+#define IS_VECTOR(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == VEC)
+#define IS_ARRAY(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == ARR)
+#define IS_FARRAY(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FARR)
+#define IS_SUBR(addr)       (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == SUBR)
+#define IS_FSUBR(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FSUBR)
+#define IS_FUNC(addr)       (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FUNC)
+#define IS_MACRO(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == MACRO)
+#define IS_EMPTY(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag  == EMP)
+#define IS_CLASS(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == CLASS)
+#define IS_GENERIC(addr)    (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == GENERIC)
+#define IS_METHOD(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == METHOD)
+#define IS_STREAM(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == STREAM)
+#define IS_INSTANCE(addr)   (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == INSTANCE)
 #define HAS_NAME(addr,x)    strcmp(heap[addr].name,x) == 0
 #define SAME_NAME(addr1,addr2) strcmp(heap[addr1].name, heap[addr2].name) == 0
 #define GREATER_NAME(addr1,addr2) strcmp(heap[addr1].name, heap[addr2].name) > 0
@@ -1048,6 +1046,7 @@ void initsyntax(void);
 void insert_method(int x, int func);
 void insertstr(char ch, char buf[]);
 void markcell(int addr);
+void nop(void);
 void print(int addr);
 void print_bigx(int x);
 void printarray(int x);

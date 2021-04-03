@@ -33,14 +33,10 @@
 
 (defmacro quo (x y) `(div ,x ,y))
 
-(defmacro oddp (x) `(eq* (mod ,x 2) 1))
+(defmacro oddp (x) `(eq (mod ,x 2) 1))
 
 (defmacro pfloor (x y) `(div ,x ,y))
 
-;;added for EISL
-(defun eq* (x y)
-   (or (and (numberp x) (numberp y) (= x y))
-       (eq x y)))
 
 (defun pcoefadd (e c x) 
    (if (pzerop c)
@@ -80,7 +76,7 @@
           (pcplus x y))
          ((pcoefp y)
           (pcplus y x))
-         ((eq* (car x) (car y))
+         ((eq (car x) (car y))
           (psimp (car x) (pplus1 (cdr y) (cdr x))))
          ((pointergp (car x) (car y))
           (psimp (car x) (pcplus1 y (cdr x))))
@@ -116,7 +112,7 @@
           (pctimes x y))
          ((pcoefp y)
           (pctimes y x))
-         ((eq* (car x) (car y))
+         ((eq (car x) (car y))
           (psimp (car x) (ptimes1 (cdr x) (cdr y))))
          ((pointergp (car x) (car y))
           (psimp (car x) (pctimes1 y (cdr x))))

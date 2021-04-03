@@ -232,7 +232,7 @@ static int fast_numeqp(){
     else if(x < 0 && y >= INT_FLAG)
         return(0);
     else
-        return(Fnumeqp(fast_inverse(x),fast_inverse(y)));
+        return(Fnumeqp(x,y));
 }
 
 static int fast_smallerp(){
@@ -255,7 +255,7 @@ static int fast_smallerp(){
     else if(x < 0 && y >= INT_FLAG)
         return(T);
     else
-        return(Fsmallerp(fast_inverse(x),fast_inverse(y)));
+        return(Fsmallerp(x,y));
 }
 
 static int fast_eqsmallerp(){
@@ -278,7 +278,7 @@ static int fast_eqsmallerp(){
     else if(x < 0 && y >= INT_FLAG)
         return(T);
     else
-        return(Feqsmallerp(fast_inverse(x),fast_inverse(y)));
+        return(Feqsmallerp(x,y));
 }
 
 
@@ -335,7 +335,7 @@ static int fast_plus(){
         return(res);
     }
     else
-        return(fast_convert(Fplus(fast_inverse(x),fast_inverse(y))));
+        return(Fplus(x,y));
 }
 
 static int fast_minus(){
@@ -373,7 +373,7 @@ static int fast_minus(){
             return(res);
     }
     else
-        return(fast_convert(Fminus(fast_inverse(x),fast_inverse(y))));
+        return(Fminus(x,y));
 }
 
 static int fast_mult(){
@@ -403,7 +403,7 @@ static int fast_mult(){
         return(res);
     }
     else
-        return(fast_convert(Fmult(fast_inverse(x),fast_inverse(y))));
+        return(Fmult(x,y));
 }
 
 
@@ -452,9 +452,8 @@ static int fast_mod(){
         return(res);
     }
     else
-    	return(fast_convert(
-                 Fcallsubr(Fcar(Fmakesym("MOD")),
-                           Flist2(fast_inverse(x),fast_inverse(y)))));
+    	return(Fcallsubr(Fcar(Fmakesym("MOD")),
+                           Flist2(x,y)));
 }
 
 static inline int fast_not(int x){

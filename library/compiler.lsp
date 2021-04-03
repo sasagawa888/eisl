@@ -1953,9 +1953,9 @@ double tarai(double x, double y, double z){
                (format stream "({int res;~% res = ")
                (format stream "Fset_cdr(Fmakesym(\"")
                (format stream (convert (elt x 1) <string>))
-               (format stream "\"),fast_inverse(")
+               (format stream "\"),")
                (comp stream (elt x 2) env args nil name t test clos)
-               (format stream "));res;})"))))
+               (format stream ");res;})"))))
     
     (defun comp-tagbody (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1)) (error* "tagbody: not symbol" (elt x 1)))

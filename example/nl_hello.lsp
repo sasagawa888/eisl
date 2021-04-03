@@ -3,6 +3,7 @@
 ;;
 ;; ```sh
 ;; # Compile i18n.lsp in library
+;; export NLSPATH="/usr/share/locale/%L/%N:/usr/share/locale/%L/LC_MESSAGES/%N:$HOME/locale/%L/%N"
 ;; gencat $HOME/locale/de_DE.UTF-8/i18n.cat de.msg
 ;; gencat $HOME/locale/en_GB.UTF-8/i18n.cat en.msg
 ;; gencat $HOME/locale/fr_FR.UTF-8/i18n.cat fr.msg

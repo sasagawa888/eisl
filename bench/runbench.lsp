@@ -9,7 +9,8 @@
 ;;;
 ;;; Please, send bug reports to jullien@eligis.com
 ;;;
-(load "bench/cpbench.lsp")
+;; before run compile with cpbench.lsp
+;(load "bench/cpbench.lsp")
 
 (defglobal *extension*  (or (ignore-errors *cpext*) ".o")) ;; .ibc, .lap ...
 (defglobal *result*     nil)

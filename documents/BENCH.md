@@ -7,34 +7,34 @@ see bench folder.
 Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz
 
 # EISL Compiler
-$ eisl -c -s bench/runbench.lsp
+before run, please compile with cpbench.lsp
+$ eisl -s bench/runbench.lsp
 
 ```
-
-Test 01: Fib     -> ok, time =   0.000553s.
-Test 02: Tak     -> ok, time =   0.002216s.
-Test 03: Stak    -> 12, time =   0.020056s.
-Test 04: Ctak    -> ok, time =   0.007955s.
-Test 05: Takl    -> ok, time =   0.004531s.
-Test 06: Takr    -> ok, time =   0.002526s.
-Test 07: Boyer   -> T, time =   0.105065s.
-Test 08: Browse  -> ok, time =   0.331638s.
-Test 09: Destru  -> ok, time =   0.007846000000000001s.
-Test 10: Travini -> ok, time =   0.042804s.
-Test 11: Travrun -> ok, time =   1.158986s.
-Test 12: Deriv   -> ok, time =   0.09643500000000001s.
-Test 13: Dderiv  -> ok, time =   0.086245s.
-Test 14: Divit   -> ok, time =   0.015221s.
-Test 15: Divrec  -> ok, time =   0.002627s.
-Test 16: FFT     -> ok, time =   0.102105s.
-Test 17: Puzzle  -> ok, time =   0.135331s.
-Test 18: Triang  -> ok, time =   2.7569s.
-Test 19: Fprint  -> ok, time =   0.000426s.
-Test 20: Fread   -> ok, time =   0.000546s.
+Test 01: Fib     -> ok, time =   0.000495s.
+Test 02: Tak     -> ok, time =   0.00258s.
+Test 03: Stak    -> 12, time =   0.009302s.
+Test 04: Ctak    -> ok, time =   0.005628s.
+Test 05: Takl    -> ok, time =   0.004742s.
+Test 06: Takr    -> ok, time =   0.002637s.
+Test 07: Boyer   -> T, time =   0.058689s.
+Test 08: Browse  -> ok, time =   0.259957s.
+Test 09: Destru  -> ok, time =   0.006001s.
+Test 10: Travini -> ok, time =   0.033001s.
+Test 11: Travrun -> ok, time =   0.503954s.
+Test 12: Deriv   -> ok, time =   0.045395s.
+Test 13: Dderiv  -> ok, time =   0.045697s.
+Test 14: Divit   -> ok, time =   0.008829s.
+Test 15: Divrec  -> ok, time =   0.002772s.
+Test 16: FFT     -> ok, time =   0.064474s.
+Test 17: Puzzle  -> ok, time =   0.102663s.
+Test 18: Triang  -> ok, time =   1.819389s.
+Test 19: Fprint  -> ok, time =   0.000406s.
+Test 20: Fread   -> ok, time =   0.000601s.
 Test 21: Tprint  -> ok, time = 4e-0600s.
-Test 22: Frpoly  -> ok, time =   0.07212399999999999s.
+Test 22: Frpoly  -> ok, time =   0.047611s.
 
-Total   4.952139999999999s.
+Total   3.024827s.
 
 
 ```

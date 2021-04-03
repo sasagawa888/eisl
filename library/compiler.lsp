@@ -1386,13 +1386,13 @@ double tarai(double x, double y, double z){
     (defun comp-funcall3 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               ((null (cdr x))
-               (format stream "Flist1(fast_inverse(")
+               (format stream "Flist1(")
                (comp stream (car x) env args nil name global test clos)
-               (format stream "))"))
+               (format stream ")"))
               (t
-               (format stream "Fcons(fast_inverse(")
+               (format stream "Fcons(")
                (comp stream (car x) env args nil name global test clos)
-               (format stream "),")
+               (format stream ",")
                (comp-funcall3 stream (cdr x) env args tail name global test clos)
                (format stream ")"))))
 
@@ -1404,11 +1404,11 @@ double tarai(double x, double y, double z){
     
     ;;Simple subrcall arguments are all subr or atom
     (defun comp-subrcall1 (stream x env args tail name global test clos)
-        (format stream "fast_convert(Fcallsubr(Fcar(Fmakesym(\"")
+        (format stream "Fcallsubr(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
         (comp-funcall3 stream (cdr x) env args nil name global test clos)
-        (format stream "))~%"))
+        (format stream ")~%"))
 
     ;;Not tail call subr.To avoid data loss by GC, push each data to shelter
     ;; ({int arg1,...,argn,res;
@@ -1441,17 +1441,17 @@ double tarai(double x, double y, double z){
                      t )
                     (format stream "arg")
                     (format-integer stream n 10)
-                    (format stream " = fast_inverse(")
+                    (format stream " = ")
                     (comp stream (car ls) env args nil name global test clos)
-                    (format stream ");~%")
+                    (format stream ";~%")
                     (format stream "Fshelterpush(arg")
                     (format-integer stream n 10)
                     (format stream ");~%"))))
-        (format stream "res = fast_convert(Fcallsubr(Fcar(Fmakesym(\"")
+        (format stream "res = Fcallsubr(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
         (comp-subrcall3 stream 1 (length (cdr x)))
-        (format stream "));~%")
+        (format stream ");~%")
         (cond ((not (null (cdr x)))
                (for ((ls (cdr x) (cdr ls))
                      (n (length (cdr x)) (- n 1)) )

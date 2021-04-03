@@ -1279,9 +1279,9 @@ double tarai(double x, double y, double z){
                            t )
                          (format stream "arg")
                          (format-integer stream n 10)
-                         (format stream " = fast_inverse(")
+                         (format stream " = ")
                          (comp stream (car ls) env args nil name global test clos)
-                         (format stream ");~%")
+                         (format stream ";~%")
                          (format stream "Fshelterpush(arg")
                          (format-integer stream n 10)
                          (format stream ");~%"))))
@@ -1340,9 +1340,9 @@ double tarai(double x, double y, double z){
     (defun comp-funcall-clang1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               (t
-               (format stream "Fcons(fast_inverse(")
+               (format stream "Fcons(")
                (comp stream (car x) env args tail name global test clos)
-               (format stream "),")
+               (format stream ",")
                (comp-funcall-clang1 stream (cdr x) env args tail name global test clos)
                (format stream ")"))))
 

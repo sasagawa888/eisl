@@ -2309,9 +2309,9 @@ double tarai(double x, double y, double z){
               (value (elt x 2)) )
            (format stream "Fsetdynamic(Fmakesym(\"")
            (format-object stream symbol nil)
-           (format stream "\"),fast_inverse(")
+           (format stream "\"),")
            (comp stream value env args tail name global test clos)
-           (format stream "))")))
+           (format stream ")")))
     
     ;;defmacro
     (defun comp-defmacro (x)

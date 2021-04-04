@@ -6,10 +6,6 @@
 #include <float.h>
 #include "eisl.h"
 
-void nop(){
-
-}
-
 int get_int(int addr){
     return(GET_INT(addr));
 }

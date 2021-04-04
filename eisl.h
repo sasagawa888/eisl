@@ -1045,7 +1045,6 @@ void initsyntax(void);
 void insert_method(int x, int func);
 void insertstr(char ch, char buf[]);
 void markcell(int addr);
-void nop(void);
 void print(int addr);
 void print_bigx(int x);
 void printarray(int x);

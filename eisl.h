@@ -18,7 +18,7 @@ Copying GC mode
 
 #include <setjmp.h>
 #include <stdbool.h>
-#define VERSION     1.88
+#define VERSION     1.89
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000
@@ -131,7 +131,6 @@ struct position{
 #define SET_CDR(addr,x)     heap[(addr)].val.cdr.intnum = x
 #define SET_AUX(addr,x)     heap[(addr)].aux = x
 #define SET_PROP(addr,x)    ((addr >= INT_FLAG || addr <0)? NIL: (heap[addr].prop = x))
-//#define SET_INT(addr,x)     ((addr >= INT_FLAG || addr <0)? NIL: (heap[addr].val.car.intnum = x))
 #define SET_FLT(addr,x)     heap[(addr)].val.fltnum = x
 #define SET_LONG(addr,x)    heap[(addr)].val.lngnum = x
 #define SET_SUBR(addr,x)    heap[(addr)].val.car.subr = x

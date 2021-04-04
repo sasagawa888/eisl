@@ -1633,9 +1633,9 @@ double tarai(double x, double y, double z){
         (unless (symbolp (elt x 0)) (error* "let: illegal let form" x))
         (format stream "int ")
         (format stream (convert (conv-name (elt x 0)) <string>))
-        (format stream " = fast_convert(")
+        (format stream " = ")
         (comp stream (elt x 1) env args nil name global test clos)
-        (format stream ");"))
+        (format stream ";"))
     
     (defun comp-cond (stream x env args tail name global test clos)
         (format stream "({int res=NIL;~%if(")

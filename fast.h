@@ -201,16 +201,6 @@ static inline int fast_immediate(int x){
         return(x);
 }
 
-static int fast_convert(int x){
-	
-    return(x);
-}
-
-static int fast_inverse(int x){
-	
-    return(x);
-}
-
 
 static int fast_numeqp(){
     int x,y;

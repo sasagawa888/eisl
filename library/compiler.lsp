@@ -1120,24 +1120,24 @@ double tarai(double x, double y, double z){
                     (format code1 ",arglist);~%")))))
     
     ;;(foo arg1 arg2) ->
-    ;;  return(fast_inverse(foo(fast_convert(arg1),fast_convert(arg2))));
+    ;;  return(foo(arg1,arg2));
     (defun gen-call (name n)
         (cond ((= n 0)
-               (format code1 "return(fast_inverse(")
+               (format code1 "return(")
                (format code1 (convert name <string>))
-               (format code1 "() ));~%"))
+               (format code1 "() );~%"))
               (t
-               (format code1 "return(fast_inverse(")
+               (format code1 "return(")
                (format code1 (convert name <string>))
                (format code1 "(")
                (for ((m 1 (+ m 1)))
                     ((= m n)
-                     (format code1 "fast_convert(arg")
+                     (format code1 "arg")
                      (format code1 (convert m <string>))
-                     (format code1 "))));~%") )
-                    (format code1 "fast_convert(arg")
+                     (format code1 "));~%") )
+                    (format code1 "arg")
                     (format code1 (convert m <string>))
-                    (format code1 "),")))))
+                    (format code1 ",")))))
     
     ;; args = (x)
     ;; if(CELLRANGE(x)) Fshelterpush(x)

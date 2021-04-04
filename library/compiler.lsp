@@ -510,9 +510,9 @@ double tarai(double x, double y, double z){
                       (format stream "\")))"))
                      ((member x env) (format stream (convert x <string>)))
                      (t
-                      (format stream "fast_convert(Fcdr(Fmakesym(\"")
+                      (format stream "Fcdr(Fmakesym(\"")
                       (format stream (convert x <string>))
-                      (format stream "\")))"))))
+                      (format stream "\"))"))))
               ((and (symbolp x) (not clos))
                ;;not in lambda
                (cond ((eq x nil) (format stream "NIL"))
@@ -526,9 +526,9 @@ double tarai(double x, double y, double z){
                         (not (eq x '*most-negative-float*))
                         (not (eq x '*most-positive-float*)))
                        (error* "undefined global variable" x))
-                      (format stream "fast_convert(Fcdr(Fmakesym(\"")
+                      (format stream "Fcdr(Fmakesym(\"")
                       (format stream (convert x <string>))
-                      (format stream "\")))"))))
+                      (format stream "\"))"))))
               ((and (consp x) (eq (car x) 'lambda)) (comp-lambda x env global))
               ((and (consp x) (macrop (car x)))
                (comp stream (macroexpand-1 x) env args tail name global test clos))
@@ -1207,14 +1207,14 @@ double tarai(double x, double y, double z){
                (comp stream (elt x 3) env args tail name global test clos)
                (format stream ";}res;})~%"))))
     
-    ;;numeric function ex (= x y) etc...
+    ;;two arguments numeric function ex (= x y) etc...
     (defun comp-numeric (stream x env args tail name global test clos)
         (cond ((not optimize-enable)
-               (format stream "({int res;Fargpush(fast_convert(")
+               (format stream "({int res;Fargpush(")
                (comp stream (elt x 1) env args nil name global test clos)
-               (format stream "));Fargpush(fast_convert(")
+               (format stream ");Fargpush(")
                (comp stream (elt x 2) env args nil name global test clos)
-               (format stream "));")
+               (format stream ");")
                (cond ((eq (elt x 0) 'eq) (format stream "res=fast_eq();"))
                      ((eq (elt x 0) '=) (format stream "res=fast_numeqp();"))
                      ((eq (elt x 0) '<) (format stream "res=fast_smallerp();"))

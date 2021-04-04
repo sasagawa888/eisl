@@ -313,7 +313,7 @@ int adddynenv(int sym, int val){
 //environment is association list
 // env = ((sym1 . val1) (sym2 . val2) ...)
 // find value with assq
-// when not find return -1
+// when not find return FAILSE
 int findenv(int sym){
     int addr;
 

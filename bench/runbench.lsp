@@ -59,7 +59,7 @@
 
 
 (format (standard-output) "~%")
-(gbc nil)
+;(gbc nil)
 
 ;;; (1) FIB
 (load (bench-file "fib20"))

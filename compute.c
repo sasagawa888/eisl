@@ -483,6 +483,8 @@ int quotient(int arg1, int arg2){
                             x2 = x1 - ceil(x1);
                             if(x1 == 1.0)
                                 return(makeint(1));
+                            else if(x1 == -1.0)
+                                return(makeint(-1));
                             else if(x2 == 0.0)
                                 return(divide(arg1,arg2));
                             else

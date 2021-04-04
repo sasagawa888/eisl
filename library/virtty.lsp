@@ -137,7 +137,7 @@
    ;; Output the object o at position (x, y).
    (the <fixnum> x)(the <fixnum> y)
    (tycursor x y)
-   (apply tyo os))
+   (apply #'tyo os))
 
 (defun tystring (str n)
    ;; Output the first n characters of string str at the current position.
@@ -150,7 +150,7 @@
 (defun tyinstring ()
    ;; Read a line from the keyboard
    (c-lang "static char str[133];")
-   (c-lang "res = Fmakestr(getstr(str));")) ; Fmakestr copies its argument
+   (c-lang "res = Fmakestr(getnstr(str, 132));")) ; Fmakestr copies its argument
 
 (defun tynewline ()
    ;; Send an end-of-line marker to the screen.
@@ -168,7 +168,7 @@
    (the <fixnum> n)(the <fixnum> nc)
    (let ((str (create-string-output-stream)))
         (format str "~D" n)
-        (subseq (get-output-stream-string str) 0 nc)))
+        (tyo (subseq (get-output-stream-string str) 0 nc))))
 
 (defun tybs (cn)
    ;; Moves the cursor position back one space without erasing anything on the screen.
@@ -222,7 +222,7 @@
 (defun tycot (x y &rest os)
    (the <fixnum> x)(the <fixnum> y)
    (tyattrib t)
-   (apply tyco x y os)
+   (apply #'tyco x y os)
    (tyattrib nil))
 
 ;; Further extensions from curses:

@@ -17,7 +17,7 @@
    ;; Returns t if object is a computed regular  expression  (of  type  <regexp>), nil otherwise.
    ;;
    ;; Supplying hints like `(the <regexp> o)` to the compiler doesn't work for non-builtin classes
-   t)
+   (eq (class-of o) (class <regexp>)))
 
 (defun regcomp (re)
    ;; Compute regular-expression in an internal  format  and  returns  a  <regexp> object.

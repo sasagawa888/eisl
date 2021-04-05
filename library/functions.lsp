@@ -46,7 +46,7 @@
          (setq *oblist* (cons (car (car data)) *oblist*))
          (setq *functions* (cons data *functions*)) )))
 
-(read-functions "ex/functions-dataj.lsp")
+(read-functions "ex/functions-data.lsp")
 
 ;;;
 ;;; search function from *functions*

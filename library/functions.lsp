@@ -91,17 +91,17 @@
         ((null flist))
      (setq fun (car flist))
      (format stream 
-             "関数: ~S~%仕様: ~S ---> ~S~%" (car (car fun)) (car fun) (car (cdr fun)) )
+             "function: ~S~%specification: ~S ---> ~S~%" (car (car fun)) (car fun) (car (cdr fun)) )
      (let ((ex (cdr (cdr fun))))
         (if ex 
-            (format stream "説明: ~A~%~%" (car (cdr (cdr fun))))
+            (format stream "explanation: ~A~%~%" (car (cdr (cdr fun))))
             (format stream "~%") ))))     
 
 (defun say-all (&rest output-file)
    (let ((stream (if (null output-file) 
                      (standard-output) 
                      (open-output-file (car output-file)) )))
-      (format stream "OKI ISLisp 関数一覧 (~S個)*拡張分を含む~%~%" (length *functions*))
+      (format stream "Easy-ISLisp functions(~S)*include extened~%~%" (length *functions*))
       (describe-system-function *functions* stream) 
       (if output-file (close stream)) 
       'end))

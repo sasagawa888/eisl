@@ -4,6 +4,7 @@
 ;;;
 ;;; Programmatic interface following Openlisp ( http://www.eligis.com ),
 ;;; but beware that the RE syntax may be different.
+;;; Also, ensure that you call the new function `regfree` as required.
 
 (c-include "<sys/types.h>")
 (c-include "<regex.h>")

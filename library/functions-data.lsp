@@ -65,17 +65,17 @@
 ((while test-form body-form *) <null> "Execute body-form while est-form is not nil (special form)")
 ((for (iteration-spec *) (end-test result *) form *) <object> "Iterate repeatedly while end-test is not nil, using the initial values and steppers indicated by iteration-spec (special form). ")
 ((block name form *) <object> "Execute sequentially with block tags (special format) ")
-((return-from name result-form) transfers-control-and-data "Exit the name block (special format)")
+((return-from name result-form) transfers-control-and-data "Exit the name block (special form)")
 ((catch tag-form form *) <object> "Catch tag-form and execute form (special form)")
 ((throw tag-form result-form) transfers-control-and-data "Throw tag-form (special form)")
-((tagbody tagbody-tag * form *) <object> "Execute sequentially with tagbody-tag (special format)")
+((tagbody tagbody-tag * form *) <object> "Execute sequentially with tagbody-tag (special form)")
 ((go tagbody-tag) transfers-control "Transfer control to the tag-body block (special format)")
 ((unwind-protect form cleanup-form *) <object>  "Execute cleanup-form whenever you finish the evaluation of form (special form)")
 
 ;;; declare
 ((THE class-name form) <object> "Declare the class of the execution result of form as class-name (special form) ")
 ((ASSURE class-name form) <object> "Claim the class of the execution result of form as class-name, if it is different, an error will occur (special form) ")
-((CONVERT obj class-name) <object> "Convert obj to class class-name (special format)")
+((CONVERT obj class-name) <object> "Convert obj to class class-name (special form)")
 
 ;;; files
 ((probe-file filename) boolean "Check if the file with filename exists")
@@ -136,7 +136,7 @@
 ((ASSOC obj association-list) <cons>  "Return an obj-keyed value for the association-list")
 
 ;;; macro
-((defmacro macro-name lambda-list form *) <symbol> "Define a macro (special format)")
+((defmacro macro-name lambda-list form *) <symbol> "Define a macro (special form)")
 
 ;;; misc
 ((IDENTITY obj) <object> "Return obj as is")

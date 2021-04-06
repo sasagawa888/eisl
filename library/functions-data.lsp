@@ -13,18 +13,18 @@
 ((CREATE-ARRAY dimensions initial-element +) <basic-array> "Generate an array")
 ((AREF basic-array z *) <object> "Extract the zth element of the array basic-array")
 ((GAREF general-array z *) <object> "Extract the zth element of the general-array")
-((SET-AREF obj basic-array z *) <object> "配列 basic-array の z 番目に要素 obj をセットする")
-((SET-GAREF obj general-array z *) <object> "配列 general-array の z 番目に要素 obj をセットする")
-((ARRAY-DIMENSIONS basic-array) <list> "配列 basic-array の次元をリストで返す")
+((SET-AREF obj basic-array z *) <object> "Set the zth element obj of the array basic-array ")
+((SET-GAREF obj general-array z *) <object> "Set the zth element obj of the array general-array")
+((ARRAY-DIMENSIONS basic-array) <list> "Return a list of the dimensions of an array basic-array")
 
 ;;; char
-((CHARACTERP obj) boolean "obj が文字であるかをチェックする")
-((CHAR= char1 char2) boolean "char1 と char2 の文字が等しいかをチェックする")
-((CHAR/= char1 char2) boolean "char1 と char2 の文字が等しくないかをチェックする")
-((CHAR< char1 char2) boolean "char1 の文字コードが char2 よりも大きいかをチェックする")
-((CHAR> char1 char2) boolean "char1 の文字コードが char2 よりも小さいかをチェックする")
-((CHAR<= char1 char2) boolean "char1 の文字コードが char2 よりも大きいかまたは等しいかをチェックする")
-((CHAR>= char1 char2) boolean "char1 の文字コードが char2 よりも小さいまたは等しいかをチェックする")
+((CHARACTERP obj) boolean "Check if obj is a string")
+((CHAR= char1 char2) boolean "Check if the characters in char1 and char2 are equal")
+((CHAR/= char1 char2) boolean "Check if the characters in char1 and char2 are not equal")
+((CHAR< char1 char2) boolean "Check if the character code of char1 is larger than char2")
+((CHAR> char1 char2) boolean "Check if the character code of char1 is smaller than char2")
+((CHAR<= char1 char2) boolean "Check if the character code of char1 is greater than or equal to char2")
+((CHAR>= char1 char2) boolean "Check if the character code of char1 is less than or equal to char2")
 
 ;;; cond
 ((error error-string obj *) <object> "エラーをシグナルする")

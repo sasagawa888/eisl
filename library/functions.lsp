@@ -34,7 +34,7 @@
 (defglobal *oblist* nil)
 
 ;;;
-;;; reaf from data file
+;;; read from data file
 ;;;
 (defun read-functions (file)
    (with-open-input-file 
@@ -101,7 +101,7 @@
    (let ((stream (if (null output-file) 
                      (standard-output) 
                      (open-output-file (car output-file)) )))
-      (format stream "Easy-ISLisp functions(~S)*include extened~%~%" (length *functions*))
+      (format stream "Easy-ISLisp functions(~S)*including extensions~%~%" (length *functions*))
       (describe-system-function *functions* stream) 
       (if output-file (close stream)) 
       'end))

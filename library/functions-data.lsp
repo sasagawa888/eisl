@@ -4,6 +4,7 @@
 ;;;
 ;;; written by GOMI Hiroshi 2011
 ;;; Modifing by Kenichi Sasagawa 2021/4~
+;;; We would like to thank Mr.Poldy for his contribution.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; array
@@ -58,18 +59,18 @@
 ((dynamic-let ((var form) *) body-form *) <object> "Temporarily bind dynamic variables (special form)")
 ((if test-form then-form else-form+) <object> "Branch according to the result of the condition (special form)")
 ((cond (test form *) *) <object> "Branch according to the result of the condition (special form)")
-((case keyform ((key *) form *) * (t form *)+) <object> "keyform の値によって多岐に分岐する(特殊形式)")
-((case-using predform keyform ((key *) form *) * (t form *) +) <object> "case 文とほぼ同様であるが,述語関数 predform を比較に使う(特殊形式)")
-((progn form*) <object> "順次実行を行なう(特殊形式)")
-((while test-form body-form *) <null> "test-form が nil でない間 body-form を実行する(特殊形式)")
-((for (iteration-spec *) (end-test result *) form *) <object> "iteration-spec で示された初期値とステッパを用い end-test が nil でない間繰り返し実行する(特殊形式)")
-((block name form *) <object> "ブロックタグを付けて順次実行する(特殊形式)")
-((return-from name result-form) transfers-control-and-data "name ブロックを抜ける(特殊形式)")
-((catch tag-form form *) <object> "tag-form をキャッチし、form を実行する(特殊形式)")
-((throw tag-form result-form) transfers-control-and-data "tag-form をスローする(特殊形式)")
-((tagbody tagbody-tag * form *) <object> "tagbody-tagを付けて順次実行する(特殊形式)")
-((go tagbody-tag) transfers-control "tag-bodyブロックに制御を移す(特殊形式)")
-((unwind-protect form cleanup-form *) <object>  "formの評価を終了するときは必ず cleanup-form を実行する(特殊形式)")
+((case keyform ((key *) form *) * (t form *)+) <object> "Branches in various ways depending on the value of keyform (special form)")
+((case-using predform keyform ((key *) form *) * (t form *) +) <object> "Almost the same as the case statement, but using the predicate function predform for comparison (special form)")
+((progn form*) <object> "Perform sequential execution (special format)")
+((while test-form body-form *) <null> "Execute body-form while est-form is not nil (special form)")
+((for (iteration-spec *) (end-test result *) form *) <object> "Iterate repeatedly while end-test is not nil, using the initial values and steppers indicated by iteration-spec (special form). ")
+((block name form *) <object> "Execute sequentially with block tags (special format) ")
+((return-from name result-form) transfers-control-and-data "Exit the name block (special format)")
+((catch tag-form form *) <object> "Catch tag-form and execute form (special form)")
+((throw tag-form result-form) transfers-control-and-data "Throw tag-form (special form)")
+((tagbody tagbody-tag * form *) <object> "Execute sequentially with tagbody-tag (special format)")
+((go tagbody-tag) transfers-control "Transfer control to the tag-body block (special format)")
+((unwind-protect form cleanup-form *) <object>  "Execute cleanup-form whenever you finish the evaluation of form (special form)")
 
 ;;; declare
 ((THE class-name form) <object> "form の実行結果のクラスを class-name と宣言する(特殊形式)")

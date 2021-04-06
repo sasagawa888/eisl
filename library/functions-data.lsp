@@ -73,28 +73,28 @@
 ((unwind-protect form cleanup-form *) <object>  "Execute cleanup-form whenever you finish the evaluation of form (special form)")
 
 ;;; declare
-((THE class-name form) <object> "form の実行結果のクラスを class-name と宣言する(特殊形式)")
-((ASSURE class-name form) <object> "form の実行結果のクラスを class-name と主張する、異なる場合はエラーとなる(特殊形式)")
-((CONVERT obj class-name) <object> "obj をクラス class-name に変換する(特殊形式)")
+((THE class-name form) <object> "Declare the class of the execution result of form as class-name (special form) ")
+((ASSURE class-name form) <object> "Claim the class of the execution result of form as class-name, if it is different, an error will occur (special form) ")
+((CONVERT obj class-name) <object> "Convert obj to class class-name (special format)")
 
 ;;; files
-((probe-file filename) boolean "filename のファイルが存在するかをチェックする")
-((file-position stream) <integer> "stream の現在のファイル位置を返す")
-((set-file-position stream z) <integer> " stream のファイル位置を z に設定する")
-((file-length filename element-class) <integer> "filename のファイルを element-class のファイルとしてのサイズを返す")
+((probe-file filename) boolean "Check if the file with filename exists")
+((file-position stream) <integer> "Return the current file position of stream stream")
+((set-file-position stream z) <integer> "Set the file position of stream to z")
+((file-length filename element-class) <integer> "Return the size of the filename file as an element-class file")
 
 ;;; formeval
-((functionp obj) boolean "obj が関数であるかをチェックする")
-((function function-name) <function> "function-name を名前とする関数を返す(特殊形式)")
-((lambda lambda-list form *) <function> "ラムダ式を生成する(特殊形式)")
-((labels ((function-name lambda-list form *) *) body-forms *) <object>  "局所関数の束縛をする、順次束縛（再帰的定義が可能）である点が flet と異なる(特殊形式)")
-((flet ((function-name lambda-list form *) *) body-forms *) <object>  "局所関数の束縛をする(特殊形式)")
-((apply function obj * list) <object> "関数を適用する")
-((funcall function obj *) <object> "関数を呼び出す")
-((defconstant name form) <symbol> "定数を宣言する(特殊形式)")
-((defglobal name form) <symbol> "広域変数を宣言する(特殊形式)")
-((defdynamic name form) <symbol> "動的変数を宣言する(特殊形式)")
-((defun function-name lambda-list form *) <symbol> "関数を定義する(特殊形式)")
+((functionp obj) boolean "Check if obj is a function")
+((function function-name) <function> "Returns a function named function-name (special form)")
+((lambda lambda-list form *) <function> "Generate a lambda expression (special form)")
+((labels ((function-name lambda-list form *) *) body-forms *) <object>  "It differs from flet in that it binds local functions in sequence (recursive definition is possible) (special form). ")
+((flet ((function-name lambda-list form *) *) body-forms *) <object>  "Bind local functions (special form)")
+((apply function obj * list) <object> "Apply function")
+((funcall function obj *) <object> "Call function")
+((defconstant name form) <symbol> "Declare a constant (special form)")
+((defglobal name form) <symbol> "Declare a global variable (special form)")
+((defdynamic name form) <symbol> "Declare a dynamic variable (special form)")
+((defun function-name lambda-list form *) <symbol> "Define a function (special form)")
 
 ;;; io
 ((read input-stream + eos-error-p + eos-value +) <object> "input-stream からS式として読む")

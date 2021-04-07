@@ -1,918 +1,918 @@
-# ŽÓŽ«
-ŒÜ–¡æ¶‚ÌŠÖ”ŒŸõƒVƒXƒeƒ€‚ÌƒeƒLƒXƒg‚ðˆê•”‰ü•ÏA—¬—p‚³‚¹‚Ä‚¢‚½‚¾‚«‚Ü‚µ‚½B‚ ‚è‚ª‚Æ‚¤‚²‚´‚¢‚Ü‚·B
+# è¬è¾ž
+äº”å‘³å…ˆç”Ÿã®é–¢æ•°æ¤œç´¢ã‚·ã‚¹ãƒ†ãƒ ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’ä¸€éƒ¨æ”¹å¤‰ã€æµç”¨ã•ã›ã¦ã„ãŸã ãã¾ã—ãŸã€‚ã‚ã‚ŠãŒã¨ã†ã”ã–ã„ã¾ã™ã€‚
 
-# Easy-ISLisp ŠÖ”ˆê—— *Šg’£•ª‚ðŠÜ‚Þ
+# Easy-ISLisp é–¢æ•°ä¸€è¦§ *æ‹¡å¼µåˆ†ã‚’å«ã‚€
 
 ```
-ŠÖ”: BASIC-ARRAY-P
-Žd—l: (BASIC-ARRAY-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ª”z—ñ‚Ü‚½‚Í•¶Žš—ñ, ƒxƒNƒ^ ‚©‚Ç‚¤‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: BASIC-ARRAY*-P
-Žd—l: (BASIC-ARRAY*-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ª‘½ŽŸŒ³”z—ñ‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: GENERAL-ARRAY*-P
-Žd—l: (GENERAL-ARRAY*-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ª‘½ŽŸŒ³”z—ñ‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CREATE-ARRAY
-Žd—l: (CREATE-ARRAY DIMENSIONS INITIAL-ELEMENT +) ---> <BASIC-ARRAY>
-à–¾: ”z—ñ‚ð¶¬‚·‚é
-
-ŠÖ”: AREF
-Žd—l: (AREF BASIC-ARRAY Z *) ---> <OBJECT>
-à–¾: ”z—ñ basic-array ‚Ì z ”Ô–Ú‚Ì—v‘f‚ðŽæ‚èo‚·
-
-ŠÖ”: GAREF
-Žd—l: (GAREF GENERAL-ARRAY Z *) ---> <OBJECT>
-à–¾: ”z—ñ general-array ‚Ì z ”Ô–Ú‚Ì—v‘f‚ðŽæ‚èo‚·
-
-ŠÖ”: SET-AREF
-Žd—l: (SET-AREF OBJ BASIC-ARRAY Z *) ---> <OBJECT>
-à–¾: ”z—ñ basic-array ‚Ì z ”Ô–Ú‚É—v‘f obj ‚ðƒZƒbƒg‚·‚é
-
-ŠÖ”: SET-GAREF
-Žd—l: (SET-GAREF OBJ GENERAL-ARRAY Z *) ---> <OBJECT>
-à–¾: ”z—ñ general-array ‚Ì z ”Ô–Ú‚É—v‘f obj ‚ðƒZƒbƒg‚·‚é
-
-ŠÖ”: ARRAY-DIMENSIONS
-Žd—l: (ARRAY-DIMENSIONS BASIC-ARRAY) ---> <LIST>
-à–¾: ”z—ñ basic-array ‚ÌŽŸŒ³‚ðƒŠƒXƒg‚Å•Ô‚·
-
-ŠÖ”: CHARACTERP
-Žd—l: (CHARACTERP OBJ) ---> BOOLEAN
-à–¾: obj ‚ª•¶Žš‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CHAR=
-Žd—l: (CHAR= CHAR1 CHAR2) ---> BOOLEAN
-à–¾: char1 ‚Æ char2 ‚Ì•¶Žš‚ª“™‚µ‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CHAR/=
-Žd—l: (CHAR/= CHAR1 CHAR2) ---> BOOLEAN
-à–¾: char1 ‚Æ char2 ‚Ì•¶Žš‚ª“™‚µ‚­‚È‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CHAR<
-Žd—l: (CHAR< CHAR1 CHAR2) ---> BOOLEAN
-à–¾: char1 ‚Ì•¶ŽšƒR[ƒh‚ª char2 ‚æ‚è‚à‘å‚«‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CHAR>
-Žd—l: (CHAR> CHAR1 CHAR2) ---> BOOLEAN
-à–¾: char1 ‚Ì•¶ŽšƒR[ƒh‚ª char2 ‚æ‚è‚à¬‚³‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CHAR<=
-Žd—l: (CHAR<= CHAR1 CHAR2) ---> BOOLEAN
-à–¾: char1 ‚Ì•¶ŽšƒR[ƒh‚ª char2 ‚æ‚è‚à‘å‚«‚¢‚©‚Ü‚½‚Í“™‚µ‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CHAR>=
-Žd—l: (CHAR>= CHAR1 CHAR2) ---> BOOLEAN
-à–¾: char1 ‚Ì•¶ŽšƒR[ƒh‚ª char2 ‚æ‚è‚à¬‚³‚¢‚Ü‚½‚Í“™‚µ‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: ERROR
-Žd—l: (ERROR ERROR-STRING OBJ *) ---> <OBJECT>
-à–¾: ƒGƒ‰[‚ðƒVƒOƒiƒ‹‚·‚é
-
-ŠÖ”: CERROR
-Žd—l: (CERROR CONTINUE-STRING ERROR-STRING OBJ *) ---> <OBJECT>
-à–¾: Œp‘±‰Â”\‚ÈƒGƒ‰[‚ðƒVƒOƒiƒ‹‚·‚é
-
-ŠÖ”: SIGNAL-CONDITION
-Žd—l: (SIGNAL-CONDITION CONDITION CONTINUABLE) ---> <OBJECT>
-à–¾: ƒRƒ“ƒfƒBƒVƒ‡ƒ“‚ð‘€ì‚·‚é‚½‚ß‚ÉƒVƒOƒiƒ‹‚·‚é
-
-ŠÖ”: IGNORE-ERRORS
-Žd—l: (IGNORE-ERRORS FORM *) ---> <OBJECT>
-à–¾: ƒGƒ‰[‚ªo‚Ä‚à–³Ž‹‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: REPORT-CONDITION
-Žd—l: (REPORT-CONDITION CONDITION STREAM) ---> <CONDITION>
-à–¾: ƒRƒ“ƒfƒBƒVƒ‡ƒ“ condition ‚ðƒXƒgƒŠ[ƒ€ stream ‚ÉƒŒƒ|[ƒg‚·‚é
-
-ŠÖ”: CONDITION-CONTINUABLE
-Žd—l: (CONDITION-CONTINUABLE CONDITION) ---> <OBJECT>
-à–¾: Œp‘±‰Â”\‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CONTINUE-CONDITION
-Žd—l: (CONTINUE-CONDITION CONDITION VALUE +) ---> <OBJECT>
-à–¾: ƒRƒ“ƒfƒBƒVƒ‡ƒ“‚©‚çŒp‘±‚·‚é
-
-ŠÖ”: WITH-HANDLER
-Žd—l: (WITH-HANDLER HANDLER FORM *) ---> <OBJECT>
-à–¾: ƒnƒ“ƒhƒ‰‚ð•]‰¿‚µ‚ÄƒtƒH[ƒ€‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: ARITHMETIC-ERROR-OPERATION
-Žd—l: (ARITHMETIC-ERROR-OPERATION ARITHMETIC-ERROR) ---> <FUNCTION>
-à–¾: ŽZp‰‰ŽZƒGƒ‰[‚ÌƒIƒyƒŒ[ƒ^‚ð•Ô‚·
-
-ŠÖ”: ARITHMETIC-ERROR-OPERANDS
-Žd—l: (ARITHMETIC-ERROR-OPERANDS ARITHMETIC-ERROR) ---> <LIST>
-à–¾: ŽZp‰‰ŽZƒGƒ‰[‚ÌƒIƒyƒ‰ƒ“ƒh‚ð•Ô‚·
-
-ŠÖ”: DOMAIN-ERROR-OBJECT
-Žd—l: (DOMAIN-ERROR-OBJECT DOMAIN-ERROR) ---> <OBJECT>
-à–¾: ƒhƒƒCƒ“ƒGƒ‰[ domain-error ‚Å¶¬‚³‚ê‚½ƒIƒuƒWƒFƒNƒg‚ð•Ô‚·
-
-ŠÖ”: DOMAIN-ERROR-EXPECTED-CLASS
-Žd—l: (DOMAIN-ERROR-EXPECTED-CLASS DOMAIN-ERROR) ---> <CLASS>@
-à–¾: ƒhƒƒCƒ“ƒGƒ‰[ domain-error ‚Å¶¬‚³‚ê‚½–]‚Ü‚µ‚©‚Á‚½ƒhƒƒCƒ“‚ð•Ô‚·
-
-ŠÖ”: PARSE-ERROR-STRING
-Žd—l: (PARSE-ERROR-STRING PARSE-ERROR) ---> <STRING>
-à–¾: ‰ðÍƒGƒ‰[ parse-error ‚Å¶¬‚³‚ê‚½•¶Žš—ñ‚ð•Ô‚·
-
-ŠÖ”: PARSE-ERROR-EXPECTED-CLASS
-Žd—l: (PARSE-ERROR-EXPECTED-CLASS PARSE-ERROR) ---> <CLASS>
-à–¾: ‰ðÍƒGƒ‰[ parse-error ‚Å¶¬‚³‚ê‚½–]‚Ü‚µ‚¢ƒNƒ‰ƒX‚ð•Ô‚·
-
-ŠÖ”: SIMPLE-ERROR-FORMAT-STRING
-Žd—l: (SIMPLE-ERROR-FORMAT-STRING SIMPLE-ERROR) ---> <STRING>
-à–¾: simple-error ‚Å¶¬‚³‚ê‚½•¶Žš—ñ‚ð•Ô‚·
-
-ŠÖ”: SIMPLE-ERROR-FORMAT-ARGUMENTS
-Žd—l: (SIMPLE-ERROR-FORMAT-ARGUMENTS SIMPLE-ERROR) ---> <LIST>
-à–¾: simple-error ‚Å¶¬‚³‚ê‚½ˆø”ƒŠƒXƒg‚ð•Ô‚·
-
-ŠÖ”: STREAM-ERROR-STREAM
-Žd—l: (STREAM-ERROR-STREAM STREAM-ERROR) ---> <STREAM>
-à–¾: ƒXƒgƒŠ[ƒ€ƒGƒ‰[ stream-error ‚Å¶¬‚³‚ê‚½ƒXƒgƒŠ[ƒ€‚ð•Ô‚·
-
-ŠÖ”: UNDEFINED-ENTITY-NAME
-Žd—l: (UNDEFINED-ENTITY-NAME UNDEFINED-ENTITY) ---> <SYMBOL>
-à–¾: –¢’è‹`ƒGƒ“ƒeƒBƒeƒB undefined-entity ‚Å¶¬‚³‚ê‚½ƒVƒ“ƒ{ƒ‹‚ð•Ô‚·
-
-ŠÖ”: UNDEFINED-ENTITY-NAMESPACE
-Žd—l: (UNDEFINED-ENTITY-NAMESPACE UNDEFINED-ENTITY) ---> <SYMBOL>
-à–¾: –¢’è‹`ƒGƒ“ƒeƒBƒeƒB undefined-entity ‚Å¶¬‚³‚ê‚½–¼‘O‹óŠÔ‚ð•Ô‚·
-
-ŠÖ”: QUOTE
-Žd—l: (QUOTE OBJ) ---> <OBJECT>
-à–¾: obj ‚ÌŽQÆ‚ð•Ô‚·(“ÁŽêŒ`Ž®)
-
-ŠÖ”: SETQ
-Žd—l: (SETQ VAR FORM) ---> <OBJECT>
-à–¾: •Ï” var ‚ÉƒtƒH[ƒ€ form ‚Ì•]‰¿Œ‹‰Ê‚ð‘ã“ü‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: SETF
-Žd—l: (SETF PLACE FORM) ---> <OBJECT>
-à–¾: êŠ place ‚ÉƒtƒH[ƒ€ form ‚Ì•]‰¿Œ‹‰Ê‚ð‘ã“ü‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: LET
-Žd—l: (LET ((VAR FORM) *) BODY-FORM *) ---> <OBJECT>
-à–¾: ‹ÇŠ•Ï”‚ð’è‹`‚µA‚»‚ÌŠÂ‹«‚ÅŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: LET*
-Žd—l: (LET* ((VAR FORM) *) BODY-FORM *) ---> <OBJECT>
-à–¾: let‚Æ“¯—l‚Å‚ ‚é‚ª‹ÇŠ•Ï”‚ð‡ŽŸ‘©”›‚·‚é‚Æ‚±‚ë‚ªˆÙ‚È‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: DYNAMIC
-Žd—l: (DYNAMIC VAR) ---> <OBJECT>
-à–¾: “®“I•Ï”‚ðéŒ¾‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: SETF
-Žd—l: (SETF (DYNAMIC VAR) FORM) ---> <OBJECT>
-à–¾: “®“I•Ï”‚É’l‚ð‘ã“ü‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: DYNAMIC-LET
-Žd—l: (DYNAMIC-LET ((VAR FORM) *) BODY-FORM *) ---> <OBJECT>
-à–¾: “®“I•Ï”‚ÌˆêŽž“I‘©”›‚ð‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: IF
-Žd—l: (IF TEST-FORM THEN-FORM ELSE-FORM+) ---> <OBJECT>
-à–¾: ðŒ‚ÌŒ‹‰Ê‚Å•ªŠò‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: COND
-Žd—l: (COND (TEST FORM *) *) ---> <OBJECT>
-à–¾: ðŒ‚ÌŒ‹‰Ê‚Å•ªŠò‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: CASE
-Žd—l: (CASE KEYFORM ((KEY *) FORM *) * (T FORM *) +) ---> <OBJECT>
-à–¾: keyform ‚Ì’l‚É‚æ‚Á‚Ä‘½Šò‚É•ªŠò‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: CASE-USING
-Žd—l: (CASE-USING PREDFORM KEYFORM ((KEY *) FORM *) * (T FORM *) +) ---> <OBJECT>
-à–¾: case •¶‚Æ‚Ù‚Ú“¯—l‚Å‚ ‚é‚ª,qŒêŠÖ” predform ‚ð”äŠr‚ÉŽg‚¤(“ÁŽêŒ`Ž®)
-
-ŠÖ”: PROGN
-Žd—l: (PROGN FORM*) ---> <OBJECT>
-à–¾: ‡ŽŸŽÀs‚ðs‚È‚¤(“ÁŽêŒ`Ž®)
-
-ŠÖ”: WHILE
-Žd—l: (WHILE TEST-FORM BODY-FORM *) ---> <NULL>
-à–¾: test-form ‚ª nil ‚Å‚È‚¢ŠÔ body-form ‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: FOR
-Žd—l: (FOR (ITERATION-SPEC *) (END-TEST RESULT *) FORM *) ---> <OBJECT>
-à–¾: iteration-spec ‚ÅŽ¦‚³‚ê‚½‰Šú’l‚ÆƒXƒeƒbƒp‚ð—p‚¢ end-test ‚ª nil ‚Å‚È‚¢ŠÔŒJ‚è•Ô‚µŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: BLOCK
-Žd—l: (BLOCK NAME FORM *) ---> <OBJECT>
-à–¾: ƒuƒƒbƒNƒ^ƒO‚ð•t‚¯‚Ä‡ŽŸŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: RETURN-FROM
-Žd—l: (RETURN-FROM NAME RESULT-FORM) ---> TRANSFERS-CONTROL-AND-DATA
-à–¾: name ƒuƒƒbƒN‚ð”²‚¯‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: CATCH
-Žd—l: (CATCH TAG-FORM FORM *) ---> <OBJECT>
-à–¾: tag-form ‚ðƒLƒƒƒbƒ`‚µAform ‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: THROW
-Žd—l: (THROW TAG-FORM RESULT-FORM) ---> TRANSFERS-CONTROL-AND-DATA
-à–¾: tag-form ‚ðƒXƒ[‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: TAGBODY
-Žd—l: (TAGBODY TAGBODY-TAG * FORM *) ---> <OBJECT>
-à–¾: tagbody-tag‚ð•t‚¯‚Ä‡ŽŸŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: GO
-Žd—l: (GO TAGBODY-TAG) ---> TRANSFERS-CONTROL
-à–¾: tag-bodyƒuƒƒbƒN‚É§Œä‚ðˆÚ‚·(“ÁŽêŒ`Ž®)
-
-ŠÖ”: UNWIND-PROTECT
-Žd—l: (UNWIND-PROTECT FORM CLEANUP-FORM *) ---> <OBJECT>
-à–¾: form‚Ì•]‰¿‚ðI—¹‚·‚é‚Æ‚«‚Í•K‚¸ cleanup-form ‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: THE
-Žd—l: (THE CLASS-NAME FORM) ---> <OBJECT>
-à–¾: form ‚ÌŽÀsŒ‹‰Ê‚ÌƒNƒ‰ƒX‚ð class-name ‚ÆéŒ¾‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: ASSURE
-Žd—l: (ASSURE CLASS-NAME FORM) ---> <OBJECT>
-à–¾: form ‚ÌŽÀsŒ‹‰Ê‚ÌƒNƒ‰ƒX‚ð class-name ‚ÆŽå’£‚·‚éAˆÙ‚È‚éê‡‚ÍƒGƒ‰[‚Æ‚È‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: CONVERT
-Žd—l: (CONVERT OBJ CLASS-NAME) ---> <OBJECT>
-à–¾: obj ‚ðƒNƒ‰ƒX class-name ‚É•ÏŠ·‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: PROBE-FILE
-Žd—l: (PROBE-FILE FILENAME) ---> BOOLEAN@
-à–¾: filename ‚Ìƒtƒ@ƒCƒ‹‚ª‘¶Ý‚·‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: FILE-POSITION
-Žd—l: (FILE-POSITION STREAM) ---> <INTEGER>
-à–¾: stream ‚ÌŒ»Ý‚Ìƒtƒ@ƒCƒ‹ˆÊ’u‚ð•Ô‚·
-
-ŠÖ”: SET-FILE-POSITION
-Žd—l: (SET-FILE-POSITION STREAM Z) ---> <INTEGER>
-à–¾:  stream ‚Ìƒtƒ@ƒCƒ‹ˆÊ’u‚ð z ‚ÉÝ’è‚·‚é
-
-ŠÖ”: FILE-LENGTH
-Žd—l: (FILE-LENGTH FILENAME ELEMENT-CLASS) ---> <INTEGER>
-à–¾: filename ‚Ìƒtƒ@ƒCƒ‹‚ð element-class ‚Ìƒtƒ@ƒCƒ‹‚Æ‚µ‚Ä‚ÌƒTƒCƒY‚ð•Ô‚·
-
-ŠÖ”: FUNCTIONP
-Žd—l: (FUNCTIONP OBJ) ---> BOOLEAN
-à–¾: obj ‚ªŠÖ”‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: FUNCTION
-Žd—l: (FUNCTION FUNCTION-NAME) ---> <FUNCTION>
-à–¾: function-name ‚ð–¼‘O‚Æ‚·‚éŠÖ”‚ð•Ô‚·(“ÁŽêŒ`Ž®)
-
-ŠÖ”: LAMBDA
-Žd—l: (LAMBDA LAMBDA-LIST FORM *) ---> <FUNCTION>
-à–¾: ƒ‰ƒ€ƒ_Ž®‚ð¶¬‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: LABELS
-Žd—l: (LABELS ((FUNCTION-NAME LAMBDA-LIST FORM *) *) BODY-FORMS *) ---> <OBJECT>
-à–¾: ‹ÇŠŠÖ”‚Ì‘©”›‚ð‚·‚éA‡ŽŸ‘©”›iÄ‹A“I’è‹`‚ª‰Â”\j‚Å‚ ‚é“_‚ª flet ‚ÆˆÙ‚È‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: FLET
-Žd—l: (FLET ((FUNCTION-NAME LAMBDA-LIST FORM *) *) BODY-FORMS *) ---> <OBJECT>
-à–¾: ‹ÇŠŠÖ”‚Ì‘©”›‚ð‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: APPLY
-Žd—l: (APPLY FUNCTION OBJ * LIST) ---> <OBJECT>
-à–¾: ŠÖ”‚ð“K—p‚·‚é
-
-ŠÖ”: FUNCALL
-Žd—l: (FUNCALL FUNCTION OBJ *) ---> <OBJECT>
-à–¾: ŠÖ”‚ðŒÄ‚Ño‚·
-
-ŠÖ”: DEFCONSTANT
-Žd—l: (DEFCONSTANT NAME FORM) ---> <SYMBOL>
-à–¾: ’è”‚ðéŒ¾‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: DEFGLOBAL
-Žd—l: (DEFGLOBAL NAME FORM) ---> <SYMBOL>
-à–¾: Lˆæ•Ï”‚ðéŒ¾‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: DEFDYNAMIC
-Žd—l: (DEFDYNAMIC NAME FORM) ---> <SYMBOL>
-à–¾: “®“I•Ï”‚ðéŒ¾‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: DEFUN
-Žd—l: (DEFUN FUNCTION-NAME LAMBDA-LIST FORM *) ---> <SYMBOL>
-à–¾: ŠÖ”‚ð’è‹`‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: READ
-Žd—l: (READ INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
-à–¾: input-stream ‚©‚çSŽ®‚Æ‚µ‚Ä“Ç‚Þ
-
-ŠÖ”: READ-CHAR
-Žd—l: (READ-CHAR INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
-à–¾: input-stream ‚©‚ç1•¶Žš“Ç‚Þ
-
-ŠÖ”: PREVIEW-CHAR
-Žd—l: (PREVIEW-CHAR INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
-à–¾: ŽŸ‚É“Ç‚Ýž‚Þ•¶Žš‚ð•Ô‚·i1•¶Žšæ“Ç‚ÝBƒtƒ@ƒCƒ‹ƒ|ƒWƒVƒ‡ƒ“‚Í•Ï‰»‚µ‚È‚¢j
-
-ŠÖ”: READ-LINE
-Žd—l: (READ-LINE INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
-à–¾: 1s‚ð•¶Žš—ñ‚Æ‚µ‚Ä“Ç‚Þ
-
-ŠÖ”: STREAM-READY-P
-Žd—l: (STREAM-READY-P INPUT-STREAM) ---> BOOLEAN
-à–¾: ƒXƒgƒŠ[ƒ€‚ª“Ç‚Ýž‚Ý‰Â”\‚É‚È‚Á‚Ä‚¢‚é‚©
-
-ŠÖ”: FORMAT
-Žd—l: (FORMAT OUTPUT-STREAM FORMAT-STRING OBJ *) ---> <NULL>
-à–¾: format-string ‚É]‚Á‚Ä obj ‚ðo—Í‚·‚é
-
-ŠÖ”: FORMAT-CHAR
-Žd—l: (FORMAT-CHAR OUTPUT-STREAM CHAR) ---> <NULL>
-à–¾: 1•¶Žšo—Í‚·‚é
-
-ŠÖ”: FORMAT-FLOAT
-Žd—l: (FORMAT-FLOAT OUTPUT-STREAM FLOAT) ---> <NULL>
-à–¾: •‚“®¬”“_”‚Æ‚µ‚Äo—Í‚·‚é
-
-ŠÖ”: FORMAT-FRESH-LINE
-Žd—l: (FORMAT-FRESH-LINE OUTPUT-STREAM) ---> <NULL>
-à–¾: ‰üs‚·‚é
-
-ŠÖ”: FORMAT-INTEGER
-Žd—l: (FORMAT-INTEGER OUTPUT-STREAM INTEGER RADIX) ---> <NULL>
-à–¾: ®”‚Æ‚µ‚Äo—Í‚·‚é
-
-ŠÖ”: FORMAT-OBJECT
-Žd—l: (FORMAT-OBJECT OUTPUT-STREAM OBJ ESCAPE-P) ---> <NULL>
-à–¾: ƒIƒuƒWƒFƒNƒg‚Æ‚µ‚Äo—Í‚·‚é
-
-ŠÖ”: FORMAT-TAB
-Žd—l: (FORMAT-TAB OUTPUT-STREAM COLUMN) ---> <NULL>
-à–¾: ƒ^ƒu‚ðo—Í‚·‚é
-
-ŠÖ”: READ-BYTE
-Žd—l: (READ-BYTE INPUT-STREAM EOS-ERROR-P + EOS-VALUE +) ---> <INTEGER>
-à–¾: ƒoƒCƒg‚Æ‚µ‚Ä“Ç‚Þ
-
-ŠÖ”: WRITE-BYTE
-Žd—l: (WRITE-BYTE Z OUTPUT-STREAM) ---> <INTEGER>
-à–¾: ƒoƒCƒg‚Æ‚µ‚Ä‘‚­
-
-ŠÖ”: CONSP
-Žd—l: (CONSP OBJ) ---> BOOLEAN
-à–¾: ƒRƒ“ƒX‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CONS
-Žd—l: (CONS OBJ1 OBJ2) ---> <CONS>
-à–¾: ƒRƒ“ƒX‚ð¶¬‚·‚é
-
-ŠÖ”: CAR
-Žd—l: (CAR CONS) ---> <OBJECT>
-à–¾: ƒRƒ“ƒX‚Ì Car •”‚ðŽæ‚èo‚·
-
-ŠÖ”: CDR
-Žd—l: (CDR CONS) ---> <OBJECT>
-à–¾: ƒRƒ“ƒX‚Ì Cdr •”‚ðŽæ‚èo‚·
-
-ŠÖ”: SET-CAR
-Žd—l: (SET-CAR OBJ CONS) ---> <OBJECT>
-à–¾: ƒRƒ“ƒX‚Ì Car •”‚ÉƒZƒbƒg‚·‚é
-
-ŠÖ”: SET-CDR
-Žd—l: (SET-CDR OBJ CONS) ---> <OBJECT>
-à–¾: ƒRƒ“ƒX‚Ì Cdr •”‚ÉƒZƒbƒg‚·‚é
-
-ŠÖ”: NULL
-Žd—l: (NULL OBJ) ---> BOOLEAN
-à–¾: NULL ‚©ƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: LISTP
-Žd—l: (LISTP OBJ) ---> BOOLEAN
-à–¾: ƒŠƒXƒg‚©ƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CREATE-LIST
-Žd—l: (CREATE-LIST I INITIAL-ELEMENT +) ---> <LIST>
-à–¾: ’·‚³ i ‰Šú’l initial-element ‚ÌƒŠƒXƒg‚ð¶¬‚·‚é
-
-ŠÖ”: LIST
-Žd—l: (LIST OBJ *) ---> <LIST>
-à–¾: obj ‚ð—v‘f‚Æ‚·‚éƒŠƒXƒg‚ð¶¬‚·‚é
-
-ŠÖ”: REVERSE
-Žd—l: (REVERSE LIST) ---> <LIST>
-à–¾: ƒŠƒXƒg‚ð‹t‡‚É‚·‚éiŒ³‚ÌƒŠƒXƒg‚Í”j‰ó‚µ‚È‚¢j
-
-ŠÖ”: NREVERSE
-Žd—l: (NREVERSE LIST) ---> <LIST>
-à–¾: ƒŠƒXƒg‚ð‹t‡‚É‚·‚éiŒ³‚ÌƒŠƒXƒg‚Í”j‰ó‚³‚ê‚éj
-
-ŠÖ”: APPEND
-Žd—l: (APPEND LIST *) ---> <LIST>
-à–¾: ƒŠƒXƒg‚ð˜AŒ‹‚·‚é
-
-ŠÖ”: MEMBER
-Žd—l: (MEMBER OBJ LIST) ---> <LIST>
-à–¾: ƒŠƒXƒg list ‚É obj ‚ªŠÜ‚Ü‚ê‚Ä‚¢‚ê‚ÎAobj ‚ðæ“ª‚Æ‚·‚é•”•ªƒŠƒXƒg‚ð•Ô‚·
-
-ŠÖ”: MAPCAR
-Žd—l: (MAPCAR FUNCTION LIST +) ---> <LIST>
-à–¾: ƒŠƒXƒg list ‚Ì—v‘f‚ÉŠÖ” function ‚ðŽÀs‚µŒ‹‰Ê‚ÌƒŠƒXƒg‚ð•Ô‚·
-
-ŠÖ”: MAPC
-Žd—l: (MAPC FUNCTION LIST +) ---> <LIST>
-à–¾: ƒŠƒXƒg list ‚Ì—v‘f‚ÉŠÖ” function ‚ðŽÀs‚µˆø”‚ÌƒŠƒXƒg list ‚ð•Ô‚·
-
-ŠÖ”: MAPCAN
-Žd—l: (MAPCAN FUNCTION LIST +) ---> <LIST>
-à–¾: MAPCAR ‚Ì‘€ì‚ð list ‚ð”j‰ó‚µ‚Äs‚È‚¤
-
-ŠÖ”: MAPLIST
-Žd—l: (MAPLIST FUNCTION LIST +) ---> <LIST>
-à–¾: ƒŠƒXƒg list ‚Ì•”•ªƒŠƒXƒg‚ÉŠÖ” function ‚ðŽÀs‚µAŒ‹‰Ê‚ÌƒŠƒXƒg‚ð•Ô‚·
-
-ŠÖ”: MAPL
-Žd—l: (MAPL FUNCTION LIST +) ---> <LIST>
-à–¾: ƒŠƒXƒg list ‚Ì•”•ªƒŠƒXƒg‚ÉŠÖ” function ‚ðŽÀs‚µAˆø”ƒŠƒXƒg list ‚ð•Ô‚·
-
-ŠÖ”: MAPCON
-Žd—l: (MAPCON FUNCTION LIST +) ---> <LIST>
-à–¾: MAPLIST ‚Ì‘€ì‚ð list ‚ð”j‰ó‚µ‚Äs‚È‚¤
-
-ŠÖ”: ASSOC
-Žd—l: (ASSOC OBJ ASSOCIATION-LIST) ---> <CONS>
-à–¾: ˜A‘zƒŠƒXƒg association-list ‚É‘Î‚µ‚Ä obj ‚ðƒL[‚Æ‚·‚é’l‚ð•Ô‚·
-
-ŠÖ”: DEFMACRO
-Žd—l: (DEFMACRO MACRO-NAME LAMBDA-LIST FORM *) ---> <SYMBOL>
-à–¾: ƒ}ƒNƒ‚ð’è‹`‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: IDENTITY
-Žd—l: (IDENTITY OBJ) ---> <OBJECT>@
-à–¾: obj ‚ð‚»‚Ì‚Ü‚Ü•Ô‚·
-
-ŠÖ”: GET-UNIVERSAL-TIME
-Žd—l: (GET-UNIVERSAL-TIME) ---> <INTEGER>
-à–¾: ƒ†ƒjƒo[ƒTƒ‹ƒ^ƒCƒ€i•bj‚ð•Ô‚·
-
-ŠÖ”: GET-INTERNAL-RUN-TIME
-Žd—l: (GET-INTERNAL-RUN-TIME) ---> <INTEGER>
-à–¾: ŽÀsŽžŠÔ‚ð•Ô‚·
-
-ŠÖ”: GET-INTERNAL-REAL-TIME
-Žd—l: (GET-INTERNAL-REAL-TIME) ---> <INTEGER>
-à–¾: Œo‰ßŽžŠÔ‚ð•Ô‚·
-
-ŠÖ”: INTERNAL-TIME-UNITS-PER-SECOND
-Žd—l: (INTERNAL-TIME-UNITS-PER-SECOND) ---> <INTEGER>
-à–¾: 1•b“–‚½‚è‚ÌƒCƒ“ƒ^[ƒiƒ‹ƒ^ƒCƒ€’PˆÊ‚ð•Ô‚·
-
-ŠÖ”: NUMBERP
-Žd—l: (NUMBERP OBJ) ---> BOOLEAN
-à–¾: obj ‚ª”Œ^‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: PARSE-NUMBER
-Žd—l: (PARSE-NUMBER STRING) ---> <NUMBER>
-à–¾: •¶Žš—ñ string ‚ð‰ðÍ‚µ‚Ä”Œ^‚É•ÏŠ·‚·‚é
-
-ŠÖ”: =
-Žd—l: (= X1 X2) ---> BOOLEAN
-à–¾: ”’l‚ª“™‚µ‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: /=
-Žd—l: (/= X1 X2) ---> BOOLEAN
-à–¾: ”’l‚ª“™‚µ‚­‚È‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: >=
-Žd—l: (>= X1 X2) ---> BOOLEAN
-à–¾: ”’l x1 ‚ª x2 ˆÈã‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: <=
-Žd—l: (<= X1 X2) ---> BOOLEAN
-à–¾: ”’l x1 ‚ª x2 ˆÈ‰º‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: >
-Žd—l: (> X1 X2) ---> BOOLEAN
-à–¾: ”’l x1 ‚ª x2 ‚æ‚è‘å‚«‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: <
-Žd—l: (< X1 X2) ---> BOOLEAN
-à–¾: ”’l x1 ‚ª x2 ‚æ‚è¬‚³‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: +
-Žd—l: (+ X *) ---> <NUMBER>
-à–¾: ”’l‚ð‰ÁŽZ‚·‚é
-
-ŠÖ”: *
-Žd—l: (* X *) ---> <NUMBER>
-à–¾: ”’l‚ðæŽZ‚·‚é
-
-ŠÖ”: -
-Žd—l: (- X Y *) ---> <NUMBER>
-à–¾: ”’l‚ðŒ¸ŽZ‚·‚é
-
-ŠÖ”: QUOTIENT
-Žd—l: (QUOTIENT DIVIDEND DIVISOR +) ---> <NUMBER>
-à–¾: ”’l‚ðœŽZ‚·‚é
-
-ŠÖ”: RECIPROCAL
-Žd—l: (RECIPROCAL X) ---> <NUMBER>
-à–¾: ”’l‚ð‹t”‚É‚·‚é
-
-ŠÖ”: MAX
-Žd—l: (MAX X Y *) ---> <NUMBER>
-à–¾: ”’l‚ÌÅ‘å’l‚ð•Ô‚·
-
-ŠÖ”: MIN
-Žd—l: (MIN X Y *) ---> <NUMBER>
-à–¾: ”’l‚ÌÅ¬’l‚ð•Ô‚·
-
-ŠÖ”: ABS
-Žd—l: (ABS X) ---> <NUMBER>
-à–¾: ”’l‚Ìâ‘Î’l‚ð•Ô‚·
-
-ŠÖ”: EXP
-Žd—l: (EXP X) ---> <NUMBER>
-à–¾: ”’l‚ÌŽw”ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: LOG
-Žd—l: (LOG X) ---> <NUMBER>
-à–¾: ”’l‚ÌŽ©‘R‘Î”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: EXPT
-Žd—l: (EXPT X1 X2) ---> <NUMBER>
-à–¾: ”’l‚ð‚×‚«æ‚·‚é
-
-ŠÖ”: SQRT
-Žd—l: (SQRT X) ---> <NUMBER>
-à–¾: ”’l‚Ì•½•ûª‚ð•Ô‚·
-
-ŠÖ”: SIN
-Žd—l: (SIN X) ---> <NUMBER>
-à–¾: ”’l‚Ì sin ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: COS
-Žd—l: (COS X) ---> <NUMBER>
-à–¾: ”’l‚Ì cos ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: TAN
-Žd—l: (TAN X) ---> <NUMBER>
-à–¾: ”’l‚Ì tan ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: ATAN
-Žd—l: (ATAN X) ---> <NUMBER>
-à–¾: ”’l‚Ì atan ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: ATAN2
-Žd—l: (ATAN2 X1 X2) ---> <NUMBER>
-à–¾: ”’l‚Ì atan2 ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: SINH
-Žd—l: (SINH X) ---> <NUMBER>
-à–¾: ”’l‚Ì sinh ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: COSH
-Žd—l: (COSH X) ---> <NUMBER>
-à–¾: ”’l‚Ì cosh ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: TANH
-Žd—l: (TANH X) ---> <NUMBER>
-à–¾: ”’l‚Ì tanh ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: ATANH
-Žd—l: (ATANH X) ---> <NUMBER>
-à–¾: ”’l‚Ì atanh ŠÖ”‚Ì’l‚ð•Ô‚·
-
-ŠÖ”: FLOATP
-Žd—l: (FLOATP OBJ) ---> BOOLEAN
-à–¾: obj ‚ª•‚“®¬”“_”‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: FLOAT
-Žd—l: (FLOAT X) ---> <FLOAT>
-à–¾: ”Œ^ x ‚ð•‚“®¬”“_”‚É•ÏŠ·‚·‚é
-
-ŠÖ”: FLOOR
-Žd—l: (FLOOR X) ---> <INTEGER>
-à–¾: Ø‚è‰º‚°‚ðs‚È‚¤
-
-ŠÖ”: CEILING
-Žd—l: (CEILING X) ---> <INTEGER>
-à–¾: Ø‚èã‚°‚ðs‚È‚¤
-
-ŠÖ”: TRUNCATE
-Žd—l: (TRUNCATE X) ---> <INTEGER>
-à–¾: 0•ûŒü‚ÉŠÛ‚ß‚é
-
-ŠÖ”: ROUND
-Žd—l: (ROUND X) ---> <INTEGER>
-à–¾: ŽlŽÌŒÜ“ü‚ðs‚È‚¤
-
-ŠÖ”: INTEGERP
-Žd—l: (INTEGERP OBJ) ---> BOOLEAN
-à–¾: obj ‚ª®”‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: DIV
-Žd—l: (DIV Z1 Z2) ---> <INTEGER>
-à–¾: ”’l‚ð®”œŽZ‚·‚é
-
-ŠÖ”: MOD
-Žd—l: (MOD Z1 Z2) ---> <INTEGER>
-à–¾: ”’l‚ðè—]ŒvŽZ‚·‚é
-
-ŠÖ”: GCD
-Žd—l: (GCD Z1 Z2) ---> <INTEGER>
-à–¾: Å‘åŒö–ñ”‚ð•Ô‚·
-
-ŠÖ”: LCM
-Žd—l: (LCM Z1 Z2) ---> <INTEGER>
-à–¾: Å¬Œö”{”‚ð•Ô‚·
-
-ŠÖ”: ISQRT
-Žd—l: (ISQRT Z) ---> <INTEGER>
-à–¾: ®”•½•ûª‚ð•Ô‚·
-
-ŠÖ”: DEFCLASS
-Žd—l: (DEFCLASS CLASS-NAME (SC-NAME *) (SLOT-SPEC *) CLASS-OPT *) ---> <SYMBOL>
-à–¾: ƒNƒ‰ƒX’è‹`‚ðs‚È‚¤(“ÁŽêŒ`Ž®)
-
-ŠÖ”: GENERIC-FUNCTION-P
-Žd—l: (GENERIC-FUNCTION-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ª•ïŠ‡ŠÖ”‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: DEFGENERIC
-Žd—l: (DEFGENERIC FUNC-SPEC LAMBDA-LIST OPTION * METHOD-DESC *) ---> <SYMBOL>
-à–¾: •ïŠ‡ŠÖ”‚ð’è‹`‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: DEFMETHOD
-Žd—l: (DEFMETHOD FUNC-SPEC METHOD-QUALIFIER * PARAMETER-PROFILE FORM *) ---> <SYMBOL>
-à–¾: ƒƒ\ƒbƒhŠÖ”‚ð’è‹`‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: CALL-NEXT-METHOD
-Žd—l: (CALL-NEXT-METHOD) ---> <OBJECT>
-à–¾: ƒNƒ‰ƒX—Dæ‡ˆÊ‚ÌŽŸ‚ÌƒNƒ‰ƒX‚Ìƒƒ\ƒbƒh‚ðŒÄ‚Ño‚·(“ÁŽêŒ`Ž®)
-
-ŠÖ”: NEXT-METHOD-P
-Žd—l: (NEXT-METHOD-P) ---> BOOLEAN
-à–¾: ŽŸ‚Ìƒƒ\ƒbƒh‚ª‘¶Ý‚·‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: CREATE
-Žd—l: (CREATE CLASS INITARG * INITVAL *) ---> <OBJECT>
-à–¾: ƒCƒ“ƒXƒ^ƒ“ƒXƒIƒuƒWƒFƒNƒg‚ð¶¬‚·‚é(•ïŠ‡ŠÖ”)
-
-ŠÖ”: INITIALIZE-OBJECT
-Žd—l: (INITIALIZE-OBJECT INSTANCE INITIALIZATION-LIST) ---> <OBJECT>
-à–¾: ƒIƒuƒWƒFƒNƒg‚Ì‰Šú‰»‚ðs‚È‚¤
-
-ŠÖ”: CLASS-OF
-Žd—l: (CLASS-OF OBJ) ---> <CLASS>
-à–¾: ƒNƒ‰ƒX‚ð•Ô‚·
-
-ŠÖ”: INSTANCEP
-Žd—l: (INSTANCEP OBJ CLASS) ---> BOOLEAN
-à–¾: ƒCƒ“ƒXƒ^ƒ“ƒXƒIƒuƒWƒFƒNƒg‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: SUBCLASSP
-Žd—l: (SUBCLASSP CLASS1 CLASS2) ---> BOOLEAN
-à–¾: ƒTƒuƒNƒ‰ƒX‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: CLASS
-Žd—l: (CLASS CLASS-NAME) ---> <CLASS>
-à–¾: –¼‘O class-name ‚ÌƒNƒ‰ƒX‚ð•Ô‚·(“ÁŽêŒ`Ž®)
-
-ŠÖ”: EQ
-Žd—l: (EQ OBJ1 OBJ2) ---> BOOLEAN
-à–¾: obj1 ‚Æ obj2 ‚ª eq ‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: EQL
-Žd—l: (EQL OBJ1 OBJ2) ---> BOOLEAN
-à–¾: obj1 ‚Æ obj2 ‚ª eql ‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: EQUAL
-Žd—l: (EQUAL OBJ1 OBJ2) ---> BOOLEAN
-à–¾: obj1 ‚Æ obj2 ‚ª equal ‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: NOT
-Žd—l: (NOT OBJ) ---> BOOLEAN
-à–¾: obj ‚Ì”Û’è‚ð•Ô‚·
-
-ŠÖ”: AND
-Žd—l: (AND FORM *) ---> <OBJECT>
-à–¾: form ‚Ì AND ‚ð‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: OR
-Žd—l: (OR FORM *) ---> <OBJECT>
-à–¾: form ‚Ì OR ‚ð‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: LENGTH
-Žd—l: (LENGTH SEQUENCE) ---> <INTEGER>
-à–¾: —ñ sequence ‚Ì’·‚³‚ð•Ô‚·
-
-ŠÖ”: ELT
-Žd—l: (ELT SEQUENCE Z) ---> <OBJECT>
-à–¾: —ñ sequence ‚Ì z ”Ô–Ú‚Ì—v‘f‚ð•Ô‚·
-
-ŠÖ”: SET-ELT
-Žd—l: (SET-ELT OBJ SEQUENCE Z) ---> <OBJECT>
-à–¾: —ñ sequence ‚Ì z ”Ô–Ú‚É obj ‚ðƒZƒbƒg‚·‚é
-
-ŠÖ”: SUBSEQ
-Žd—l: (SUBSEQ SEQUENCE Z1 Z2) ---> SEQUENCE
-à–¾: —ñ sequence ‚Ì z1 ”Ô–Ú‚©‚ç z2 ”Ô–Ú‚Ì•”•ª—ñ‚ðŽæ‚èo‚·
-
-ŠÖ”: MAP-INTO
-Žd—l: (MAP-INTO DESTINATION FUNCTION SEQ *) ---> SEQUENCE
-à–¾: —ñ sequence ‚Ì—v‘f‚ÉŠÖ” function ‚ð“K—p‚µ‚ÄA‚»‚ÌŒ‹‰Ê‚ð—ñ destination ‚ÉŠi”[‚·‚é
-
-ŠÖ”: STREAMP
-Žd—l: (STREAMP OBJ) ---> BOOLEAN
-à–¾: obj ‚ªƒXƒgƒŠ[ƒ€‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: OPEN-STREAM-P
-Žd—l: (OPEN-STREAM-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ªƒI[ƒvƒ“‚³‚ê‚½ƒXƒgƒŠ[ƒ€‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: INPUT-STREAM-P
-Žd—l: (INPUT-STREAM-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ª“ü—ÍƒXƒgƒŠ[ƒ€‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: OUTPUT-STREAM-P
-Žd—l: (OUTPUT-STREAM-P OBJ) ---> BOOLEAN
-à–¾: obj ‚ªo—ÍƒXƒgƒŠ[ƒ€‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
-
-ŠÖ”: STANDARD-INPUT
-Žd—l: (STANDARD-INPUT) ---> <STREAM>
-à–¾: •W€“ü—Í‚ð•Ô‚·
-
-ŠÖ”: STANDARD-OUTPUT
-Žd—l: (STANDARD-OUTPUT) ---> <STREAM>
-à–¾: •W€o—Í‚ð•Ô‚·
-
-ŠÖ”: ERROR-OUTPUT
-Žd—l: (ERROR-OUTPUT) ---> <STREAM>
-à–¾: ƒGƒ‰[o—Í‚ð•Ô‚·
-
-ŠÖ”: WITH-STANDARD-INPUT
-Žd—l: (WITH-STANDARD-INPUT STREAM-FORM FORM *) ---> <OBJECT>
-à–¾: •W€“ü—Í‚ð stream-form ‚ÌŽÀsŒ‹‰Ê‚É‚µ‚Ä form ‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: WITH-STANDARD-OUTPUT
-Žd—l: (WITH-STANDARD-OUTPUT STREAM-FORM FORM *) ---> <OBJECT>
-à–¾: •W€o—Í‚ð stream-form ‚ÌŽÀsŒ‹‰Ê‚É‚µ‚Ä form ‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: WITH-ERROR-OUTPUT
-Žd—l: (WITH-ERROR-OUTPUT STREAM-FORM FORM *) ---> <OBJECT>
-à–¾: ƒGƒ‰[o—Í‚ð stream-form ‚ÌŽÀsŒ‹‰Ê‚É‚µ‚Ä form ‚ðŽÀs‚·‚é(“ÁŽêŒ`Ž®)
-
-ŠÖ”: OPEN-INPUT-FILE
-Žd—l: (OPEN-INPUT-FILE FILENAME ELEMENT-CLASS +) ---> <STREAM>
-à–¾: ƒtƒ@ƒCƒ‹–¼ filename ‚Ìƒtƒ@ƒCƒ‹‚ð“ü—ÍƒXƒgƒŠ[ƒ€‚Æ‚µ‚ÄƒI[ƒvƒ“‚·‚é
-
-ŠÖ”: OPEN-OUTPUT-FILE
-Žd—l: (OPEN-OUTPUT-FILE FILENAME ELEMENT-CLASS +) ---> <STREAM>
-à–¾: ƒtƒ@ƒCƒ‹–¼ filename ‚Ìƒtƒ@ƒCƒ‹‚ðo—ÍƒXƒgƒŠ[ƒ€‚Æ‚µ‚ÄƒI[ƒvƒ“‚·‚é
-
-ŠÖ”: OPEN-IO-FILE
-Žd—l: (OPEN-IO-FILE FILENAME ELEMENT-CLASS +) ---> <STREAM>
-à–¾: ƒtƒ@ƒCƒ‹–¼ filename ‚Ìƒtƒ@ƒCƒ‹‚ð“üo—ÍƒXƒgƒŠ[ƒ€‚Æ‚µ‚ÄƒI[ƒvƒ“‚·‚é
-
-ŠÖ”: WITH-OPEN-INPUT-FILE
-Žd—l: (WITH-OPEN-INPUT-FILE (NAME FILE ELEMENT-CLASS +) FORM *) ---> <OBJECT>
-à–¾: ƒtƒ@ƒCƒ‹–¼ file ‚Ìƒtƒ@ƒCƒ‹‚ð“ü—ÍƒXƒgƒŠ[ƒ€‚Æ‚µ‚ÄƒI[ƒvƒ“‚µ‚Ä form ‚ðŽÀs‚µAŽÀsŒãƒNƒ[ƒY‚·‚éi“ÁŽêŒ`Ž®j
-
-ŠÖ”: WITH-OPEN-OUTPUT-FILE
-Žd—l: (WITH-OPEN-OUTPUT-FILE (NAME FILE ELEMENT-CLASS +) FORM *) ---> <OBJECT>
-à–¾: ƒtƒ@ƒCƒ‹–¼ file ‚Ìƒtƒ@ƒCƒ‹‚ðo—ÍƒXƒgƒŠ[ƒ€‚Æ‚µ‚ÄƒI[ƒvƒ“‚µ‚Ä form ‚ðŽÀs‚µAŽÀsŒãƒNƒ[ƒY‚·‚éi“ÁŽêŒ`Ž®j
-
-ŠÖ”: WITH-OPEN-IO-FILE
-Žd—l: (WITH-OPEN-IO-FILE (NAME FILE ELEMENT-CLASS +) FORM *) ---> <OBJECT>
-à–¾: ƒtƒ@ƒCƒ‹–¼ file ‚Ìƒtƒ@ƒCƒ‹‚ð“üo—ÍƒXƒgƒŠ[ƒ€‚Æ‚µ‚ÄƒI[ƒvƒ“‚µ‚Ä form ‚ðŽÀs‚µAŽÀsŒãƒNƒ[ƒY‚·‚éi“ÁŽêŒ`Ž®j
-
-ŠÖ”: CLOSE
-Žd—l: (CLOSE STREAM) ---> IMPLEMENTATION-DEFINED
-à–¾: ƒXƒgƒŠ[ƒ€‚ðƒNƒ[ƒY‚·‚é
-
-ŠÖ”: CREATE-STRING-INPUT-STREAM
-Žd—l: (CREATE-STRING-INPUT-STREAM STRING) ---> <STREAM>
-à–¾: “ü—Í‚Ì•¶Žš—ñƒXƒgƒŠ[ƒ€‚ð¶¬‚·‚é
+é–¢æ•°: BASIC-ARRAY-P
+ä»•æ§˜: (BASIC-ARRAY-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒé…åˆ—ã¾ãŸã¯æ–‡å­—åˆ—, ãƒ™ã‚¯ã‚¿ ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: BASIC-ARRAY*-P
+ä»•æ§˜: (BASIC-ARRAY*-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒå¤šæ¬¡å…ƒé…åˆ—ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: GENERAL-ARRAY*-P
+ä»•æ§˜: (GENERAL-ARRAY*-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒå¤šæ¬¡å…ƒé…åˆ—ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CREATE-ARRAY
+ä»•æ§˜: (CREATE-ARRAY DIMENSIONS INITIAL-ELEMENT +) ---> <BASIC-ARRAY>
+èª¬æ˜Ž: é…åˆ—ã‚’ç”Ÿæˆã™ã‚‹
+
+é–¢æ•°: AREF
+ä»•æ§˜: (AREF BASIC-ARRAY Z *) ---> <OBJECT>
+èª¬æ˜Ž: é…åˆ— basic-array ã® z ç•ªç›®ã®è¦ç´ ã‚’å–ã‚Šå‡ºã™
+
+é–¢æ•°: GAREF
+ä»•æ§˜: (GAREF GENERAL-ARRAY Z *) ---> <OBJECT>
+èª¬æ˜Ž: é…åˆ— general-array ã® z ç•ªç›®ã®è¦ç´ ã‚’å–ã‚Šå‡ºã™
+
+é–¢æ•°: SET-AREF
+ä»•æ§˜: (SET-AREF OBJ BASIC-ARRAY Z *) ---> <OBJECT>
+èª¬æ˜Ž: é…åˆ— basic-array ã® z ç•ªç›®ã«è¦ç´  obj ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
+
+é–¢æ•°: SET-GAREF
+ä»•æ§˜: (SET-GAREF OBJ GENERAL-ARRAY Z *) ---> <OBJECT>
+èª¬æ˜Ž: é…åˆ— general-array ã® z ç•ªç›®ã«è¦ç´  obj ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
+
+é–¢æ•°: ARRAY-DIMENSIONS
+ä»•æ§˜: (ARRAY-DIMENSIONS BASIC-ARRAY) ---> <LIST>
+èª¬æ˜Ž: é…åˆ— basic-array ã®æ¬¡å…ƒã‚’ãƒªã‚¹ãƒˆã§è¿”ã™
+
+é–¢æ•°: CHARACTERP
+ä»•æ§˜: (CHARACTERP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒæ–‡å­—ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CHAR=
+ä»•æ§˜: (CHAR= CHAR1 CHAR2) ---> BOOLEAN
+èª¬æ˜Ž: char1 ã¨ char2 ã®æ–‡å­—ãŒç­‰ã—ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CHAR/=
+ä»•æ§˜: (CHAR/= CHAR1 CHAR2) ---> BOOLEAN
+èª¬æ˜Ž: char1 ã¨ char2 ã®æ–‡å­—ãŒç­‰ã—ããªã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CHAR<
+ä»•æ§˜: (CHAR< CHAR1 CHAR2) ---> BOOLEAN
+èª¬æ˜Ž: char1 ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒ char2 ã‚ˆã‚Šã‚‚å¤§ãã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CHAR>
+ä»•æ§˜: (CHAR> CHAR1 CHAR2) ---> BOOLEAN
+èª¬æ˜Ž: char1 ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒ char2 ã‚ˆã‚Šã‚‚å°ã•ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CHAR<=
+ä»•æ§˜: (CHAR<= CHAR1 CHAR2) ---> BOOLEAN
+èª¬æ˜Ž: char1 ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒ char2 ã‚ˆã‚Šã‚‚å¤§ãã„ã‹ã¾ãŸã¯ç­‰ã—ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CHAR>=
+ä»•æ§˜: (CHAR>= CHAR1 CHAR2) ---> BOOLEAN
+èª¬æ˜Ž: char1 ã®æ–‡å­—ã‚³ãƒ¼ãƒ‰ãŒ char2 ã‚ˆã‚Šã‚‚å°ã•ã„ã¾ãŸã¯ç­‰ã—ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: ERROR
+ä»•æ§˜: (ERROR ERROR-STRING OBJ *) ---> <OBJECT>
+èª¬æ˜Ž: ã‚¨ãƒ©ãƒ¼ã‚’ã‚·ã‚°ãƒŠãƒ«ã™ã‚‹
+
+é–¢æ•°: CERROR
+ä»•æ§˜: (CERROR CONTINUE-STRING ERROR-STRING OBJ *) ---> <OBJECT>
+èª¬æ˜Ž: ç¶™ç¶šå¯èƒ½ãªã‚¨ãƒ©ãƒ¼ã‚’ã‚·ã‚°ãƒŠãƒ«ã™ã‚‹
+
+é–¢æ•°: SIGNAL-CONDITION
+ä»•æ§˜: (SIGNAL-CONDITION CONDITION CONTINUABLE) ---> <OBJECT>
+èª¬æ˜Ž: ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ã‚’æ“ä½œã™ã‚‹ãŸã‚ã«ã‚·ã‚°ãƒŠãƒ«ã™ã‚‹
+
+é–¢æ•°: IGNORE-ERRORS
+ä»•æ§˜: (IGNORE-ERRORS FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ã‚¨ãƒ©ãƒ¼ãŒå‡ºã¦ã‚‚ç„¡è¦–ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: REPORT-CONDITION
+ä»•æ§˜: (REPORT-CONDITION CONDITION STREAM) ---> <CONDITION>
+èª¬æ˜Ž: ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ condition ã‚’ã‚¹ãƒˆãƒªãƒ¼ãƒ  stream ã«ãƒ¬ãƒãƒ¼ãƒˆã™ã‚‹
+
+é–¢æ•°: CONDITION-CONTINUABLE
+ä»•æ§˜: (CONDITION-CONTINUABLE CONDITION) ---> <OBJECT>
+èª¬æ˜Ž: ç¶™ç¶šå¯èƒ½ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CONTINUE-CONDITION
+ä»•æ§˜: (CONTINUE-CONDITION CONDITION VALUE +) ---> <OBJECT>
+èª¬æ˜Ž: ã‚³ãƒ³ãƒ‡ã‚£ã‚·ãƒ§ãƒ³ã‹ã‚‰ç¶™ç¶šã™ã‚‹
+
+é–¢æ•°: WITH-HANDLER
+ä»•æ§˜: (WITH-HANDLER HANDLER FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ãƒãƒ³ãƒ‰ãƒ©ã‚’è©•ä¾¡ã—ã¦ãƒ•ã‚©ãƒ¼ãƒ ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: ARITHMETIC-ERROR-OPERATION
+ä»•æ§˜: (ARITHMETIC-ERROR-OPERATION ARITHMETIC-ERROR) ---> <FUNCTION>
+èª¬æ˜Ž: ç®—è¡“æ¼”ç®—ã‚¨ãƒ©ãƒ¼ã®ã‚ªãƒšãƒ¬ãƒ¼ã‚¿ã‚’è¿”ã™
+
+é–¢æ•°: ARITHMETIC-ERROR-OPERANDS
+ä»•æ§˜: (ARITHMETIC-ERROR-OPERANDS ARITHMETIC-ERROR) ---> <LIST>
+èª¬æ˜Ž: ç®—è¡“æ¼”ç®—ã‚¨ãƒ©ãƒ¼ã®ã‚ªãƒšãƒ©ãƒ³ãƒ‰ã‚’è¿”ã™
+
+é–¢æ•°: DOMAIN-ERROR-OBJECT
+ä»•æ§˜: (DOMAIN-ERROR-OBJECT DOMAIN-ERROR) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ‰ãƒ¡ã‚¤ãƒ³ã‚¨ãƒ©ãƒ¼ domain-error ã§ç”Ÿæˆã•ã‚ŒãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¿”ã™
+
+é–¢æ•°: DOMAIN-ERROR-EXPECTED-CLASS
+ä»•æ§˜: (DOMAIN-ERROR-EXPECTED-CLASS DOMAIN-ERROR) ---> <CLASS>ã€€
+èª¬æ˜Ž: ãƒ‰ãƒ¡ã‚¤ãƒ³ã‚¨ãƒ©ãƒ¼ domain-error ã§ç”Ÿæˆã•ã‚ŒãŸæœ›ã¾ã—ã‹ã£ãŸãƒ‰ãƒ¡ã‚¤ãƒ³ã‚’è¿”ã™
+
+é–¢æ•°: PARSE-ERROR-STRING
+ä»•æ§˜: (PARSE-ERROR-STRING PARSE-ERROR) ---> <STRING>
+èª¬æ˜Ž: è§£æžã‚¨ãƒ©ãƒ¼ parse-error ã§ç”Ÿæˆã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’è¿”ã™
+
+é–¢æ•°: PARSE-ERROR-EXPECTED-CLASS
+ä»•æ§˜: (PARSE-ERROR-EXPECTED-CLASS PARSE-ERROR) ---> <CLASS>
+èª¬æ˜Ž: è§£æžã‚¨ãƒ©ãƒ¼ parse-error ã§ç”Ÿæˆã•ã‚ŒãŸæœ›ã¾ã—ã„ã‚¯ãƒ©ã‚¹ã‚’è¿”ã™
+
+é–¢æ•°: SIMPLE-ERROR-FORMAT-STRING
+ä»•æ§˜: (SIMPLE-ERROR-FORMAT-STRING SIMPLE-ERROR) ---> <STRING>
+èª¬æ˜Ž: simple-error ã§ç”Ÿæˆã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’è¿”ã™
+
+é–¢æ•°: SIMPLE-ERROR-FORMAT-ARGUMENTS
+ä»•æ§˜: (SIMPLE-ERROR-FORMAT-ARGUMENTS SIMPLE-ERROR) ---> <LIST>
+èª¬æ˜Ž: simple-error ã§ç”Ÿæˆã•ã‚ŒãŸå¼•æ•°ãƒªã‚¹ãƒˆã‚’è¿”ã™
+
+é–¢æ•°: STREAM-ERROR-STREAM
+ä»•æ§˜: (STREAM-ERROR-STREAM STREAM-ERROR) ---> <STREAM>
+èª¬æ˜Ž: ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚¨ãƒ©ãƒ¼ stream-error ã§ç”Ÿæˆã•ã‚ŒãŸã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’è¿”ã™
+
+é–¢æ•°: UNDEFINED-ENTITY-NAME
+ä»•æ§˜: (UNDEFINED-ENTITY-NAME UNDEFINED-ENTITY) ---> <SYMBOL>
+èª¬æ˜Ž: æœªå®šç¾©ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ undefined-entity ã§ç”Ÿæˆã•ã‚ŒãŸã‚·ãƒ³ãƒœãƒ«ã‚’è¿”ã™
+
+é–¢æ•°: UNDEFINED-ENTITY-NAMESPACE
+ä»•æ§˜: (UNDEFINED-ENTITY-NAMESPACE UNDEFINED-ENTITY) ---> <SYMBOL>
+èª¬æ˜Ž: æœªå®šç¾©ã‚¨ãƒ³ãƒ†ã‚£ãƒ†ã‚£ undefined-entity ã§ç”Ÿæˆã•ã‚ŒãŸåå‰ç©ºé–“ã‚’è¿”ã™
+
+é–¢æ•°: QUOTE
+ä»•æ§˜: (QUOTE OBJ) ---> <OBJECT>
+èª¬æ˜Ž: obj ã®å‚ç…§ã‚’è¿”ã™(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: SETQ
+ä»•æ§˜: (SETQ VAR FORM) ---> <OBJECT>
+èª¬æ˜Ž: å¤‰æ•° var ã«ãƒ•ã‚©ãƒ¼ãƒ  form ã®è©•ä¾¡çµæžœã‚’ä»£å…¥ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: SETF
+ä»•æ§˜: (SETF PLACE FORM) ---> <OBJECT>
+èª¬æ˜Ž: å ´æ‰€ place ã«ãƒ•ã‚©ãƒ¼ãƒ  form ã®è©•ä¾¡çµæžœã‚’ä»£å…¥ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: LET
+ä»•æ§˜: (LET ((VAR FORM) *) BODY-FORM *) ---> <OBJECT>
+èª¬æ˜Ž: å±€æ‰€å¤‰æ•°ã‚’å®šç¾©ã—ã€ãã®ç’°å¢ƒã§å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: LET*
+ä»•æ§˜: (LET* ((VAR FORM) *) BODY-FORM *) ---> <OBJECT>
+èª¬æ˜Ž: letã¨åŒæ§˜ã§ã‚ã‚‹ãŒå±€æ‰€å¤‰æ•°ã‚’é †æ¬¡æŸç¸›ã™ã‚‹ã¨ã“ã‚ãŒç•°ãªã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: DYNAMIC
+ä»•æ§˜: (DYNAMIC VAR) ---> <OBJECT>
+èª¬æ˜Ž: å‹•çš„å¤‰æ•°ã‚’å®£è¨€ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: SETF
+ä»•æ§˜: (SETF (DYNAMIC VAR) FORM) ---> <OBJECT>
+èª¬æ˜Ž: å‹•çš„å¤‰æ•°ã«å€¤ã‚’ä»£å…¥ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: DYNAMIC-LET
+ä»•æ§˜: (DYNAMIC-LET ((VAR FORM) *) BODY-FORM *) ---> <OBJECT>
+èª¬æ˜Ž: å‹•çš„å¤‰æ•°ã®ä¸€æ™‚çš„æŸç¸›ã‚’ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: IF
+ä»•æ§˜: (IF TEST-FORM THEN-FORM ELSE-FORM+) ---> <OBJECT>
+èª¬æ˜Ž: æ¡ä»¶ã®çµæžœã§åˆ†å²ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: COND
+ä»•æ§˜: (COND (TEST FORM *) *) ---> <OBJECT>
+èª¬æ˜Ž: æ¡ä»¶ã®çµæžœã§åˆ†å²ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: CASE
+ä»•æ§˜: (CASE KEYFORM ((KEY *) FORM *) * (T FORM *) +) ---> <OBJECT>
+èª¬æ˜Ž: keyform ã®å€¤ã«ã‚ˆã£ã¦å¤šå²ã«åˆ†å²ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: CASE-USING
+ä»•æ§˜: (CASE-USING PREDFORM KEYFORM ((KEY *) FORM *) * (T FORM *) +) ---> <OBJECT>
+èª¬æ˜Ž: case æ–‡ã¨ã»ã¼åŒæ§˜ã§ã‚ã‚‹ãŒ,è¿°èªžé–¢æ•° predform ã‚’æ¯”è¼ƒã«ä½¿ã†(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: PROGN
+ä»•æ§˜: (PROGN FORM*) ---> <OBJECT>
+èª¬æ˜Ž: é †æ¬¡å®Ÿè¡Œã‚’è¡Œãªã†(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: WHILE
+ä»•æ§˜: (WHILE TEST-FORM BODY-FORM *) ---> <NULL>
+èª¬æ˜Ž: test-form ãŒ nil ã§ãªã„é–“ body-form ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: FOR
+ä»•æ§˜: (FOR (ITERATION-SPEC *) (END-TEST RESULT *) FORM *) ---> <OBJECT>
+èª¬æ˜Ž: iteration-spec ã§ç¤ºã•ã‚ŒãŸåˆæœŸå€¤ã¨ã‚¹ãƒ†ãƒƒãƒ‘ã‚’ç”¨ã„ end-test ãŒ nil ã§ãªã„é–“ç¹°ã‚Šè¿”ã—å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: BLOCK
+ä»•æ§˜: (BLOCK NAME FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ–ãƒ­ãƒƒã‚¯ã‚¿ã‚°ã‚’ä»˜ã‘ã¦é †æ¬¡å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: RETURN-FROM
+ä»•æ§˜: (RETURN-FROM NAME RESULT-FORM) ---> TRANSFERS-CONTROL-AND-DATA
+èª¬æ˜Ž: name ãƒ–ãƒ­ãƒƒã‚¯ã‚’æŠœã‘ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: CATCH
+ä»•æ§˜: (CATCH TAG-FORM FORM *) ---> <OBJECT>
+èª¬æ˜Ž: tag-form ã‚’ã‚­ãƒ£ãƒƒãƒã—ã€form ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: THROW
+ä»•æ§˜: (THROW TAG-FORM RESULT-FORM) ---> TRANSFERS-CONTROL-AND-DATA
+èª¬æ˜Ž: tag-form ã‚’ã‚¹ãƒ­ãƒ¼ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: TAGBODY
+ä»•æ§˜: (TAGBODY TAGBODY-TAG * FORM *) ---> <OBJECT>
+èª¬æ˜Ž: tagbody-tagã‚’ä»˜ã‘ã¦é †æ¬¡å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: GO
+ä»•æ§˜: (GO TAGBODY-TAG) ---> TRANSFERS-CONTROL
+èª¬æ˜Ž: tag-bodyãƒ–ãƒ­ãƒƒã‚¯ã«åˆ¶å¾¡ã‚’ç§»ã™(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: UNWIND-PROTECT
+ä»•æ§˜: (UNWIND-PROTECT FORM CLEANUP-FORM *) ---> <OBJECT>
+èª¬æ˜Ž: formã®è©•ä¾¡ã‚’çµ‚äº†ã™ã‚‹ã¨ãã¯å¿…ãš cleanup-form ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: THE
+ä»•æ§˜: (THE CLASS-NAME FORM) ---> <OBJECT>
+èª¬æ˜Ž: form ã®å®Ÿè¡Œçµæžœã®ã‚¯ãƒ©ã‚¹ã‚’ class-name ã¨å®£è¨€ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: ASSURE
+ä»•æ§˜: (ASSURE CLASS-NAME FORM) ---> <OBJECT>
+èª¬æ˜Ž: form ã®å®Ÿè¡Œçµæžœã®ã‚¯ãƒ©ã‚¹ã‚’ class-name ã¨ä¸»å¼µã™ã‚‹ã€ç•°ãªã‚‹å ´åˆã¯ã‚¨ãƒ©ãƒ¼ã¨ãªã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: CONVERT
+ä»•æ§˜: (CONVERT OBJ CLASS-NAME) ---> <OBJECT>
+èª¬æ˜Ž: obj ã‚’ã‚¯ãƒ©ã‚¹ class-name ã«å¤‰æ›ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: PROBE-FILE
+ä»•æ§˜: (PROBE-FILE FILENAME) ---> BOOLEANã€€
+èª¬æ˜Ž: filename ã®ãƒ•ã‚¡ã‚¤ãƒ«ãŒå­˜åœ¨ã™ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: FILE-POSITION
+ä»•æ§˜: (FILE-POSITION STREAM) ---> <INTEGER>
+èª¬æ˜Ž: stream ã®ç¾åœ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«ä½ç½®ã‚’è¿”ã™
+
+é–¢æ•°: SET-FILE-POSITION
+ä»•æ§˜: (SET-FILE-POSITION STREAM Z) ---> <INTEGER>
+èª¬æ˜Ž:  stream ã®ãƒ•ã‚¡ã‚¤ãƒ«ä½ç½®ã‚’ z ã«è¨­å®šã™ã‚‹
+
+é–¢æ•°: FILE-LENGTH
+ä»•æ§˜: (FILE-LENGTH FILENAME ELEMENT-CLASS) ---> <INTEGER>
+èª¬æ˜Ž: filename ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ element-class ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¨ã—ã¦ã®ã‚µã‚¤ã‚ºã‚’è¿”ã™
+
+é–¢æ•°: FUNCTIONP
+ä»•æ§˜: (FUNCTIONP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒé–¢æ•°ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: FUNCTION
+ä»•æ§˜: (FUNCTION FUNCTION-NAME) ---> <FUNCTION>
+èª¬æ˜Ž: function-name ã‚’åå‰ã¨ã™ã‚‹é–¢æ•°ã‚’è¿”ã™(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: LAMBDA
+ä»•æ§˜: (LAMBDA LAMBDA-LIST FORM *) ---> <FUNCTION>
+èª¬æ˜Ž: ãƒ©ãƒ ãƒ€å¼ã‚’ç”Ÿæˆã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: LABELS
+ä»•æ§˜: (LABELS ((FUNCTION-NAME LAMBDA-LIST FORM *) *) BODY-FORMS *) ---> <OBJECT>
+èª¬æ˜Ž: å±€æ‰€é–¢æ•°ã®æŸç¸›ã‚’ã™ã‚‹ã€é †æ¬¡æŸç¸›ï¼ˆå†å¸°çš„å®šç¾©ãŒå¯èƒ½ï¼‰ã§ã‚ã‚‹ç‚¹ãŒ flet ã¨ç•°ãªã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: FLET
+ä»•æ§˜: (FLET ((FUNCTION-NAME LAMBDA-LIST FORM *) *) BODY-FORMS *) ---> <OBJECT>
+èª¬æ˜Ž: å±€æ‰€é–¢æ•°ã®æŸç¸›ã‚’ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: APPLY
+ä»•æ§˜: (APPLY FUNCTION OBJ * LIST) ---> <OBJECT>
+èª¬æ˜Ž: é–¢æ•°ã‚’é©ç”¨ã™ã‚‹
+
+é–¢æ•°: FUNCALL
+ä»•æ§˜: (FUNCALL FUNCTION OBJ *) ---> <OBJECT>
+èª¬æ˜Ž: é–¢æ•°ã‚’å‘¼ã³å‡ºã™
+
+é–¢æ•°: DEFCONSTANT
+ä»•æ§˜: (DEFCONSTANT NAME FORM) ---> <SYMBOL>
+èª¬æ˜Ž: å®šæ•°ã‚’å®£è¨€ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: DEFGLOBAL
+ä»•æ§˜: (DEFGLOBAL NAME FORM) ---> <SYMBOL>
+èª¬æ˜Ž: åºƒåŸŸå¤‰æ•°ã‚’å®£è¨€ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: DEFDYNAMIC
+ä»•æ§˜: (DEFDYNAMIC NAME FORM) ---> <SYMBOL>
+èª¬æ˜Ž: å‹•çš„å¤‰æ•°ã‚’å®£è¨€ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: DEFUN
+ä»•æ§˜: (DEFUN FUNCTION-NAME LAMBDA-LIST FORM *) ---> <SYMBOL>
+èª¬æ˜Ž: é–¢æ•°ã‚’å®šç¾©ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: READ
+ä»•æ§˜: (READ INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
+èª¬æ˜Ž: input-stream ã‹ã‚‰Så¼ã¨ã—ã¦èª­ã‚€
+
+é–¢æ•°: READ-CHAR
+ä»•æ§˜: (READ-CHAR INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
+èª¬æ˜Ž: input-stream ã‹ã‚‰1æ–‡å­—èª­ã‚€
+
+é–¢æ•°: PREVIEW-CHAR
+ä»•æ§˜: (PREVIEW-CHAR INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
+èª¬æ˜Ž: æ¬¡ã«èª­ã¿è¾¼ã‚€æ–‡å­—ã‚’è¿”ã™ï¼ˆ1æ–‡å­—å…ˆèª­ã¿ã€‚ãƒ•ã‚¡ã‚¤ãƒ«ãƒã‚¸ã‚·ãƒ§ãƒ³ã¯å¤‰åŒ–ã—ãªã„ï¼‰
+
+é–¢æ•°: READ-LINE
+ä»•æ§˜: (READ-LINE INPUT-STREAM + EOS-ERROR-P + EOS-VALUE +) ---> <OBJECT>
+èª¬æ˜Ž: 1è¡Œã‚’æ–‡å­—åˆ—ã¨ã—ã¦èª­ã‚€
+
+é–¢æ•°: STREAM-READY-P
+ä»•æ§˜: (STREAM-READY-P INPUT-STREAM) ---> BOOLEAN
+èª¬æ˜Ž: ã‚¹ãƒˆãƒªãƒ¼ãƒ ãŒèª­ã¿è¾¼ã¿å¯èƒ½ã«ãªã£ã¦ã„ã‚‹ã‹
+
+é–¢æ•°: FORMAT
+ä»•æ§˜: (FORMAT OUTPUT-STREAM FORMAT-STRING OBJ *) ---> <NULL>
+èª¬æ˜Ž: format-string ã«å¾“ã£ã¦ obj ã‚’å‡ºåŠ›ã™ã‚‹
+
+é–¢æ•°: FORMAT-CHAR
+ä»•æ§˜: (FORMAT-CHAR OUTPUT-STREAM CHAR) ---> <NULL>
+èª¬æ˜Ž: 1æ–‡å­—å‡ºåŠ›ã™ã‚‹
+
+é–¢æ•°: FORMAT-FLOAT
+ä»•æ§˜: (FORMAT-FLOAT OUTPUT-STREAM FLOAT) ---> <NULL>
+èª¬æ˜Ž: æµ®å‹•å°æ•°ç‚¹æ•°ã¨ã—ã¦å‡ºåŠ›ã™ã‚‹
+
+é–¢æ•°: FORMAT-FRESH-LINE
+ä»•æ§˜: (FORMAT-FRESH-LINE OUTPUT-STREAM) ---> <NULL>
+èª¬æ˜Ž: æ”¹è¡Œã™ã‚‹
+
+é–¢æ•°: FORMAT-INTEGER
+ä»•æ§˜: (FORMAT-INTEGER OUTPUT-STREAM INTEGER RADIX) ---> <NULL>
+èª¬æ˜Ž: æ•´æ•°ã¨ã—ã¦å‡ºåŠ›ã™ã‚‹
+
+é–¢æ•°: FORMAT-OBJECT
+ä»•æ§˜: (FORMAT-OBJECT OUTPUT-STREAM OBJ ESCAPE-P) ---> <NULL>
+èª¬æ˜Ž: ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨ã—ã¦å‡ºåŠ›ã™ã‚‹
+
+é–¢æ•°: FORMAT-TAB
+ä»•æ§˜: (FORMAT-TAB OUTPUT-STREAM COLUMN) ---> <NULL>
+èª¬æ˜Ž: ã‚¿ãƒ–ã‚’å‡ºåŠ›ã™ã‚‹
+
+é–¢æ•°: READ-BYTE
+ä»•æ§˜: (READ-BYTE INPUT-STREAM EOS-ERROR-P + EOS-VALUE +) ---> <INTEGER>
+èª¬æ˜Ž: ãƒã‚¤ãƒˆã¨ã—ã¦èª­ã‚€
+
+é–¢æ•°: WRITE-BYTE
+ä»•æ§˜: (WRITE-BYTE Z OUTPUT-STREAM) ---> <INTEGER>
+èª¬æ˜Ž: ãƒã‚¤ãƒˆã¨ã—ã¦æ›¸ã
+
+é–¢æ•°: CONSP
+ä»•æ§˜: (CONSP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: ã‚³ãƒ³ã‚¹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CONS
+ä»•æ§˜: (CONS OBJ1 OBJ2) ---> <CONS>
+èª¬æ˜Ž: ã‚³ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹
+
+é–¢æ•°: CAR
+ä»•æ§˜: (CAR CONS) ---> <OBJECT>
+èª¬æ˜Ž: ã‚³ãƒ³ã‚¹ã® Car éƒ¨ã‚’å–ã‚Šå‡ºã™
+
+é–¢æ•°: CDR
+ä»•æ§˜: (CDR CONS) ---> <OBJECT>
+èª¬æ˜Ž: ã‚³ãƒ³ã‚¹ã® Cdr éƒ¨ã‚’å–ã‚Šå‡ºã™
+
+é–¢æ•°: SET-CAR
+ä»•æ§˜: (SET-CAR OBJ CONS) ---> <OBJECT>
+èª¬æ˜Ž: ã‚³ãƒ³ã‚¹ã® Car éƒ¨ã«ã‚»ãƒƒãƒˆã™ã‚‹
+
+é–¢æ•°: SET-CDR
+ä»•æ§˜: (SET-CDR OBJ CONS) ---> <OBJECT>
+èª¬æ˜Ž: ã‚³ãƒ³ã‚¹ã® Cdr éƒ¨ã«ã‚»ãƒƒãƒˆã™ã‚‹
+
+é–¢æ•°: NULL
+ä»•æ§˜: (NULL OBJ) ---> BOOLEAN
+èª¬æ˜Ž: NULL ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: LISTP
+ä»•æ§˜: (LISTP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CREATE-LIST
+ä»•æ§˜: (CREATE-LIST I INITIAL-ELEMENT +) ---> <LIST>
+èª¬æ˜Ž: é•·ã• i åˆæœŸå€¤ initial-element ã®ãƒªã‚¹ãƒˆã‚’ç”Ÿæˆã™ã‚‹
+
+é–¢æ•°: LIST
+ä»•æ§˜: (LIST OBJ *) ---> <LIST>
+èª¬æ˜Ž: obj ã‚’è¦ç´ ã¨ã™ã‚‹ãƒªã‚¹ãƒˆã‚’ç”Ÿæˆã™ã‚‹
+
+é–¢æ•°: REVERSE
+ä»•æ§˜: (REVERSE LIST) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆã‚’é€†é †ã«ã™ã‚‹ï¼ˆå…ƒã®ãƒªã‚¹ãƒˆã¯ç ´å£Šã—ãªã„ï¼‰
+
+é–¢æ•°: NREVERSE
+ä»•æ§˜: (NREVERSE LIST) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆã‚’é€†é †ã«ã™ã‚‹ï¼ˆå…ƒã®ãƒªã‚¹ãƒˆã¯ç ´å£Šã•ã‚Œã‚‹ï¼‰
+
+é–¢æ•°: APPEND
+ä»•æ§˜: (APPEND LIST *) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆã‚’é€£çµã™ã‚‹
+
+é–¢æ•°: MEMBER
+ä»•æ§˜: (MEMBER OBJ LIST) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆ list ã« obj ãŒå«ã¾ã‚Œã¦ã„ã‚Œã°ã€obj ã‚’å…ˆé ­ã¨ã™ã‚‹éƒ¨åˆ†ãƒªã‚¹ãƒˆã‚’è¿”ã™
+
+é–¢æ•°: MAPCAR
+ä»•æ§˜: (MAPCAR FUNCTION LIST +) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆ list ã®è¦ç´ ã«é–¢æ•° function ã‚’å®Ÿè¡Œã—çµæžœã®ãƒªã‚¹ãƒˆã‚’è¿”ã™
+
+é–¢æ•°: MAPC
+ä»•æ§˜: (MAPC FUNCTION LIST +) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆ list ã®è¦ç´ ã«é–¢æ•° function ã‚’å®Ÿè¡Œã—å¼•æ•°ã®ãƒªã‚¹ãƒˆ list ã‚’è¿”ã™
+
+é–¢æ•°: MAPCAN
+ä»•æ§˜: (MAPCAN FUNCTION LIST +) ---> <LIST>
+èª¬æ˜Ž: MAPCAR ã®æ“ä½œã‚’ list ã‚’ç ´å£Šã—ã¦è¡Œãªã†
+
+é–¢æ•°: MAPLIST
+ä»•æ§˜: (MAPLIST FUNCTION LIST +) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆ list ã®éƒ¨åˆ†ãƒªã‚¹ãƒˆã«é–¢æ•° function ã‚’å®Ÿè¡Œã—ã€çµæžœã®ãƒªã‚¹ãƒˆã‚’è¿”ã™
+
+é–¢æ•°: MAPL
+ä»•æ§˜: (MAPL FUNCTION LIST +) ---> <LIST>
+èª¬æ˜Ž: ãƒªã‚¹ãƒˆ list ã®éƒ¨åˆ†ãƒªã‚¹ãƒˆã«é–¢æ•° function ã‚’å®Ÿè¡Œã—ã€å¼•æ•°ãƒªã‚¹ãƒˆ list ã‚’è¿”ã™
+
+é–¢æ•°: MAPCON
+ä»•æ§˜: (MAPCON FUNCTION LIST +) ---> <LIST>
+èª¬æ˜Ž: MAPLIST ã®æ“ä½œã‚’ list ã‚’ç ´å£Šã—ã¦è¡Œãªã†
+
+é–¢æ•°: ASSOC
+ä»•æ§˜: (ASSOC OBJ ASSOCIATION-LIST) ---> <CONS>
+èª¬æ˜Ž: é€£æƒ³ãƒªã‚¹ãƒˆ association-list ã«å¯¾ã—ã¦ obj ã‚’ã‚­ãƒ¼ã¨ã™ã‚‹å€¤ã‚’è¿”ã™
+
+é–¢æ•°: DEFMACRO
+ä»•æ§˜: (DEFMACRO MACRO-NAME LAMBDA-LIST FORM *) ---> <SYMBOL>
+èª¬æ˜Ž: ãƒžã‚¯ãƒ­ã‚’å®šç¾©ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: IDENTITY
+ä»•æ§˜: (IDENTITY OBJ) ---> <OBJECT>ã€€
+èª¬æ˜Ž: obj ã‚’ãã®ã¾ã¾è¿”ã™
+
+é–¢æ•°: GET-UNIVERSAL-TIME
+ä»•æ§˜: (GET-UNIVERSAL-TIME) ---> <INTEGER>
+èª¬æ˜Ž: ãƒ¦ãƒ‹ãƒãƒ¼ã‚µãƒ«ã‚¿ã‚¤ãƒ ï¼ˆç§’ï¼‰ã‚’è¿”ã™
+
+é–¢æ•°: GET-INTERNAL-RUN-TIME
+ä»•æ§˜: (GET-INTERNAL-RUN-TIME) ---> <INTEGER>
+èª¬æ˜Ž: å®Ÿè¡Œæ™‚é–“ã‚’è¿”ã™
+
+é–¢æ•°: GET-INTERNAL-REAL-TIME
+ä»•æ§˜: (GET-INTERNAL-REAL-TIME) ---> <INTEGER>
+èª¬æ˜Ž: çµŒéŽæ™‚é–“ã‚’è¿”ã™
+
+é–¢æ•°: INTERNAL-TIME-UNITS-PER-SECOND
+ä»•æ§˜: (INTERNAL-TIME-UNITS-PER-SECOND) ---> <INTEGER>
+èª¬æ˜Ž: 1ç§’å½“ãŸã‚Šã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒŠãƒ«ã‚¿ã‚¤ãƒ å˜ä½ã‚’è¿”ã™
+
+é–¢æ•°: NUMBERP
+ä»•æ§˜: (NUMBERP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒæ•°åž‹ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: PARSE-NUMBER
+ä»•æ§˜: (PARSE-NUMBER STRING) ---> <NUMBER>
+èª¬æ˜Ž: æ–‡å­—åˆ— string ã‚’è§£æžã—ã¦æ•°åž‹ã«å¤‰æ›ã™ã‚‹
+
+é–¢æ•°: =
+ä»•æ§˜: (= X1 X2) ---> BOOLEAN
+èª¬æ˜Ž: æ•°å€¤ãŒç­‰ã—ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: /=
+ä»•æ§˜: (/= X1 X2) ---> BOOLEAN
+èª¬æ˜Ž: æ•°å€¤ãŒç­‰ã—ããªã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: >=
+ä»•æ§˜: (>= X1 X2) ---> BOOLEAN
+èª¬æ˜Ž: æ•°å€¤ x1 ãŒ x2 ä»¥ä¸Šã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: <=
+ä»•æ§˜: (<= X1 X2) ---> BOOLEAN
+èª¬æ˜Ž: æ•°å€¤ x1 ãŒ x2 ä»¥ä¸‹ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: >
+ä»•æ§˜: (> X1 X2) ---> BOOLEAN
+èª¬æ˜Ž: æ•°å€¤ x1 ãŒ x2 ã‚ˆã‚Šå¤§ãã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: <
+ä»•æ§˜: (< X1 X2) ---> BOOLEAN
+èª¬æ˜Ž: æ•°å€¤ x1 ãŒ x2 ã‚ˆã‚Šå°ã•ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: +
+ä»•æ§˜: (+ X *) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã‚’åŠ ç®—ã™ã‚‹
+
+é–¢æ•°: *
+ä»•æ§˜: (* X *) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã‚’ä¹—ç®—ã™ã‚‹
+
+é–¢æ•°: -
+ä»•æ§˜: (- X Y *) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã‚’æ¸›ç®—ã™ã‚‹
+
+é–¢æ•°: QUOTIENT
+ä»•æ§˜: (QUOTIENT DIVIDEND DIVISOR +) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã‚’é™¤ç®—ã™ã‚‹
+
+é–¢æ•°: RECIPROCAL
+ä»•æ§˜: (RECIPROCAL X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã‚’é€†æ•°ã«ã™ã‚‹
+
+é–¢æ•°: MAX
+ä»•æ§˜: (MAX X Y *) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã®æœ€å¤§å€¤ã‚’è¿”ã™
+
+é–¢æ•°: MIN
+ä»•æ§˜: (MIN X Y *) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã®æœ€å°å€¤ã‚’è¿”ã™
+
+é–¢æ•°: ABS
+ä»•æ§˜: (ABS X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã®çµ¶å¯¾å€¤ã‚’è¿”ã™
+
+é–¢æ•°: EXP
+ä»•æ§˜: (EXP X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã®æŒ‡æ•°é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: LOG
+ä»•æ§˜: (LOG X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã®è‡ªç„¶å¯¾æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: EXPT
+ä»•æ§˜: (EXPT X1 X2) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã‚’ã¹ãä¹—ã™ã‚‹
+
+é–¢æ•°: SQRT
+ä»•æ§˜: (SQRT X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã®å¹³æ–¹æ ¹ã‚’è¿”ã™
+
+é–¢æ•°: SIN
+ä»•æ§˜: (SIN X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® sin é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: COS
+ä»•æ§˜: (COS X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® cos é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: TAN
+ä»•æ§˜: (TAN X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® tan é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: ATAN
+ä»•æ§˜: (ATAN X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® atan é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: ATAN2
+ä»•æ§˜: (ATAN2 X1 X2) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® atan2 é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: SINH
+ä»•æ§˜: (SINH X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® sinh é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: COSH
+ä»•æ§˜: (COSH X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® cosh é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: TANH
+ä»•æ§˜: (TANH X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® tanh é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: ATANH
+ä»•æ§˜: (ATANH X) ---> <NUMBER>
+èª¬æ˜Ž: æ•°å€¤ã® atanh é–¢æ•°ã®å€¤ã‚’è¿”ã™
+
+é–¢æ•°: FLOATP
+ä»•æ§˜: (FLOATP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒæµ®å‹•å°æ•°ç‚¹æ•°ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: FLOAT
+ä»•æ§˜: (FLOAT X) ---> <FLOAT>
+èª¬æ˜Ž: æ•°åž‹ x ã‚’æµ®å‹•å°æ•°ç‚¹æ•°ã«å¤‰æ›ã™ã‚‹
+
+é–¢æ•°: FLOOR
+ä»•æ§˜: (FLOOR X) ---> <INTEGER>
+èª¬æ˜Ž: åˆ‡ã‚Šä¸‹ã’ã‚’è¡Œãªã†
+
+é–¢æ•°: CEILING
+ä»•æ§˜: (CEILING X) ---> <INTEGER>
+èª¬æ˜Ž: åˆ‡ã‚Šä¸Šã’ã‚’è¡Œãªã†
+
+é–¢æ•°: TRUNCATE
+ä»•æ§˜: (TRUNCATE X) ---> <INTEGER>
+èª¬æ˜Ž: 0æ–¹å‘ã«ä¸¸ã‚ã‚‹
+
+é–¢æ•°: ROUND
+ä»•æ§˜: (ROUND X) ---> <INTEGER>
+èª¬æ˜Ž: å››æ¨äº”å…¥ã‚’è¡Œãªã†
+
+é–¢æ•°: INTEGERP
+ä»•æ§˜: (INTEGERP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒæ•´æ•°ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: DIV
+ä»•æ§˜: (DIV Z1 Z2) ---> <INTEGER>
+èª¬æ˜Ž: æ•°å€¤ã‚’æ•´æ•°é™¤ç®—ã™ã‚‹
+
+é–¢æ•°: MOD
+ä»•æ§˜: (MOD Z1 Z2) ---> <INTEGER>
+èª¬æ˜Ž: æ•°å€¤ã‚’å‰°ä½™è¨ˆç®—ã™ã‚‹
+
+é–¢æ•°: GCD
+ä»•æ§˜: (GCD Z1 Z2) ---> <INTEGER>
+èª¬æ˜Ž: æœ€å¤§å…¬ç´„æ•°ã‚’è¿”ã™
+
+é–¢æ•°: LCM
+ä»•æ§˜: (LCM Z1 Z2) ---> <INTEGER>
+èª¬æ˜Ž: æœ€å°å…¬å€æ•°ã‚’è¿”ã™
+
+é–¢æ•°: ISQRT
+ä»•æ§˜: (ISQRT Z) ---> <INTEGER>
+èª¬æ˜Ž: æ•´æ•°å¹³æ–¹æ ¹ã‚’è¿”ã™
+
+é–¢æ•°: DEFCLASS
+ä»•æ§˜: (DEFCLASS CLASS-NAME (SC-NAME *) (SLOT-SPEC *) CLASS-OPT *) ---> <SYMBOL>
+èª¬æ˜Ž: ã‚¯ãƒ©ã‚¹å®šç¾©ã‚’è¡Œãªã†(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: GENERIC-FUNCTION-P
+ä»•æ§˜: (GENERIC-FUNCTION-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒåŒ…æ‹¬é–¢æ•°ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: DEFGENERIC
+ä»•æ§˜: (DEFGENERIC FUNC-SPEC LAMBDA-LIST OPTION * METHOD-DESC *) ---> <SYMBOL>
+èª¬æ˜Ž: åŒ…æ‹¬é–¢æ•°ã‚’å®šç¾©ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: DEFMETHOD
+ä»•æ§˜: (DEFMETHOD FUNC-SPEC METHOD-QUALIFIER * PARAMETER-PROFILE FORM *) ---> <SYMBOL>
+èª¬æ˜Ž: ãƒ¡ã‚½ãƒƒãƒ‰é–¢æ•°ã‚’å®šç¾©ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: CALL-NEXT-METHOD
+ä»•æ§˜: (CALL-NEXT-METHOD) ---> <OBJECT>
+èª¬æ˜Ž: ã‚¯ãƒ©ã‚¹å„ªå…ˆé †ä½ã®æ¬¡ã®ã‚¯ãƒ©ã‚¹ã®ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å‘¼ã³å‡ºã™(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: NEXT-METHOD-P
+ä»•æ§˜: (NEXT-METHOD-P) ---> BOOLEAN
+èª¬æ˜Ž: æ¬¡ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒå­˜åœ¨ã™ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: CREATE
+ä»•æ§˜: (CREATE CLASS INITARG * INITVAL *) ---> <OBJECT>
+èª¬æ˜Ž: ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹(åŒ…æ‹¬é–¢æ•°)
+
+é–¢æ•°: INITIALIZE-OBJECT
+ä»•æ§˜: (INITIALIZE-OBJECT INSTANCE INITIALIZATION-LIST) ---> <OBJECT>
+èª¬æ˜Ž: ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åˆæœŸåŒ–ã‚’è¡Œãªã†
+
+é–¢æ•°: CLASS-OF
+ä»•æ§˜: (CLASS-OF OBJ) ---> <CLASS>
+èª¬æ˜Ž: ã‚¯ãƒ©ã‚¹ã‚’è¿”ã™
+
+é–¢æ•°: INSTANCEP
+ä»•æ§˜: (INSTANCEP OBJ CLASS) ---> BOOLEAN
+èª¬æ˜Ž: ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: SUBCLASSP
+ä»•æ§˜: (SUBCLASSP CLASS1 CLASS2) ---> BOOLEAN
+èª¬æ˜Ž: ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: CLASS
+ä»•æ§˜: (CLASS CLASS-NAME) ---> <CLASS>
+èª¬æ˜Ž: åå‰ class-name ã®ã‚¯ãƒ©ã‚¹ã‚’è¿”ã™(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: EQ
+ä»•æ§˜: (EQ OBJ1 OBJ2) ---> BOOLEAN
+èª¬æ˜Ž: obj1 ã¨ obj2 ãŒ eq ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: EQL
+ä»•æ§˜: (EQL OBJ1 OBJ2) ---> BOOLEAN
+èª¬æ˜Ž: obj1 ã¨ obj2 ãŒ eql ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: EQUAL
+ä»•æ§˜: (EQUAL OBJ1 OBJ2) ---> BOOLEAN
+èª¬æ˜Ž: obj1 ã¨ obj2 ãŒ equal ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: NOT
+ä»•æ§˜: (NOT OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ã®å¦å®šã‚’è¿”ã™
+
+é–¢æ•°: AND
+ä»•æ§˜: (AND FORM *) ---> <OBJECT>
+èª¬æ˜Ž: form ã® AND ã‚’ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: OR
+ä»•æ§˜: (OR FORM *) ---> <OBJECT>
+èª¬æ˜Ž: form ã® OR ã‚’ã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: LENGTH
+ä»•æ§˜: (LENGTH SEQUENCE) ---> <INTEGER>
+èª¬æ˜Ž: åˆ— sequence ã®é•·ã•ã‚’è¿”ã™
+
+é–¢æ•°: ELT
+ä»•æ§˜: (ELT SEQUENCE Z) ---> <OBJECT>
+èª¬æ˜Ž: åˆ— sequence ã® z ç•ªç›®ã®è¦ç´ ã‚’è¿”ã™
+
+é–¢æ•°: SET-ELT
+ä»•æ§˜: (SET-ELT OBJ SEQUENCE Z) ---> <OBJECT>
+èª¬æ˜Ž: åˆ— sequence ã® z ç•ªç›®ã« obj ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
+
+é–¢æ•°: SUBSEQ
+ä»•æ§˜: (SUBSEQ SEQUENCE Z1 Z2) ---> SEQUENCE
+èª¬æ˜Ž: åˆ— sequence ã® z1 ç•ªç›®ã‹ã‚‰ z2 ç•ªç›®ã®éƒ¨åˆ†åˆ—ã‚’å–ã‚Šå‡ºã™
+
+é–¢æ•°: MAP-INTO
+ä»•æ§˜: (MAP-INTO DESTINATION FUNCTION SEQ *) ---> SEQUENCE
+èª¬æ˜Ž: åˆ— sequence ã®è¦ç´ ã«é–¢æ•° function ã‚’é©ç”¨ã—ã¦ã€ãã®çµæžœã‚’åˆ— destination ã«æ ¼ç´ã™ã‚‹
+
+é–¢æ•°: STREAMP
+ä»•æ§˜: (STREAMP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒã‚¹ãƒˆãƒªãƒ¼ãƒ ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: OPEN-STREAM-P
+ä»•æ§˜: (OPEN-STREAM-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒã‚ªãƒ¼ãƒ—ãƒ³ã•ã‚ŒãŸã‚¹ãƒˆãƒªãƒ¼ãƒ ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: INPUT-STREAM-P
+ä»•æ§˜: (INPUT-STREAM-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒå…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: OUTPUT-STREAM-P
+ä»•æ§˜: (OUTPUT-STREAM-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒå‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+
+é–¢æ•°: STANDARD-INPUT
+ä»•æ§˜: (STANDARD-INPUT) ---> <STREAM>
+èª¬æ˜Ž: æ¨™æº–å…¥åŠ›ã‚’è¿”ã™
+
+é–¢æ•°: STANDARD-OUTPUT
+ä»•æ§˜: (STANDARD-OUTPUT) ---> <STREAM>
+èª¬æ˜Ž: æ¨™æº–å‡ºåŠ›ã‚’è¿”ã™
+
+é–¢æ•°: ERROR-OUTPUT
+ä»•æ§˜: (ERROR-OUTPUT) ---> <STREAM>
+èª¬æ˜Ž: ã‚¨ãƒ©ãƒ¼å‡ºåŠ›ã‚’è¿”ã™
+
+é–¢æ•°: WITH-STANDARD-INPUT
+ä»•æ§˜: (WITH-STANDARD-INPUT STREAM-FORM FORM *) ---> <OBJECT>
+èª¬æ˜Ž: æ¨™æº–å…¥åŠ›ã‚’ stream-form ã®å®Ÿè¡Œçµæžœã«ã—ã¦ form ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: WITH-STANDARD-OUTPUT
+ä»•æ§˜: (WITH-STANDARD-OUTPUT STREAM-FORM FORM *) ---> <OBJECT>
+èª¬æ˜Ž: æ¨™æº–å‡ºåŠ›ã‚’ stream-form ã®å®Ÿè¡Œçµæžœã«ã—ã¦ form ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: WITH-ERROR-OUTPUT
+ä»•æ§˜: (WITH-ERROR-OUTPUT STREAM-FORM FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ã‚¨ãƒ©ãƒ¼å‡ºåŠ›ã‚’ stream-form ã®å®Ÿè¡Œçµæžœã«ã—ã¦ form ã‚’å®Ÿè¡Œã™ã‚‹(ç‰¹æ®Šå½¢å¼)
+
+é–¢æ•°: OPEN-INPUT-FILE
+ä»•æ§˜: (OPEN-INPUT-FILE FILENAME ELEMENT-CLASS +) ---> <STREAM>
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ«å filename ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¨ã—ã¦ã‚ªãƒ¼ãƒ—ãƒ³ã™ã‚‹
+
+é–¢æ•°: OPEN-OUTPUT-FILE
+ä»•æ§˜: (OPEN-OUTPUT-FILE FILENAME ELEMENT-CLASS +) ---> <STREAM>
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ«å filename ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¨ã—ã¦ã‚ªãƒ¼ãƒ—ãƒ³ã™ã‚‹
+
+é–¢æ•°: OPEN-IO-FILE
+ä»•æ§˜: (OPEN-IO-FILE FILENAME ELEMENT-CLASS +) ---> <STREAM>
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ«å filename ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å…¥å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¨ã—ã¦ã‚ªãƒ¼ãƒ—ãƒ³ã™ã‚‹
+
+é–¢æ•°: WITH-OPEN-INPUT-FILE
+ä»•æ§˜: (WITH-OPEN-INPUT-FILE (NAME FILE ELEMENT-CLASS +) FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ«å file ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¨ã—ã¦ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ form ã‚’å®Ÿè¡Œã—ã€å®Ÿè¡Œå¾Œã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹ï¼ˆç‰¹æ®Šå½¢å¼ï¼‰
+
+é–¢æ•°: WITH-OPEN-OUTPUT-FILE
+ä»•æ§˜: (WITH-OPEN-OUTPUT-FILE (NAME FILE ELEMENT-CLASS +) FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ«å file ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¨ã—ã¦ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ form ã‚’å®Ÿè¡Œã—ã€å®Ÿè¡Œå¾Œã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹ï¼ˆç‰¹æ®Šå½¢å¼ï¼‰
+
+é–¢æ•°: WITH-OPEN-IO-FILE
+ä»•æ§˜: (WITH-OPEN-IO-FILE (NAME FILE ELEMENT-CLASS +) FORM *) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ«å file ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å…¥å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã¨ã—ã¦ã‚ªãƒ¼ãƒ—ãƒ³ã—ã¦ form ã‚’å®Ÿè¡Œã—ã€å®Ÿè¡Œå¾Œã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹ï¼ˆç‰¹æ®Šå½¢å¼ï¼‰
+
+é–¢æ•°: CLOSE
+ä»•æ§˜: (CLOSE STREAM) ---> IMPLEMENTATION-DEFINED
+èª¬æ˜Ž: ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹
+
+é–¢æ•°: CREATE-STRING-INPUT-STREAM
+ä»•æ§˜: (CREATE-STRING-INPUT-STREAM STRING) ---> <STREAM>
+èª¬æ˜Ž: å…¥åŠ›ã®æ–‡å­—åˆ—ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ç”Ÿæˆã™ã‚‹
 
-ŠÖ”: CREATE-STRING-OUTPUT-STREAM
-Žd—l: (CREATE-STRING-OUTPUT-STREAM) ---> <STREAM>
-à–¾: o—Í‚Ì•¶Žš—ñƒXƒgƒŠ[ƒ€‚ð¶¬‚·‚é
+é–¢æ•°: CREATE-STRING-OUTPUT-STREAM
+ä»•æ§˜: (CREATE-STRING-OUTPUT-STREAM) ---> <STREAM>
+èª¬æ˜Ž: å‡ºåŠ›ã®æ–‡å­—åˆ—ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚’ç”Ÿæˆã™ã‚‹
 
-ŠÖ”: GET-OUTPUT-STREAM-STRING
-Žd—l: (GET-OUTPUT-STREAM-STRING STREAM) ---> <STRING>
-à–¾: o—ÍƒXƒgƒŠ[ƒ€‚Éo—Í‚³‚ê‚½•¶Žš—ñ‚ð•Ô‚·
+é–¢æ•°: GET-OUTPUT-STREAM-STRING
+ä»•æ§˜: (GET-OUTPUT-STREAM-STRING STREAM) ---> <STRING>
+èª¬æ˜Ž: å‡ºåŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã«å‡ºåŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’è¿”ã™
 
-ŠÖ”: STRINGP
-Žd—l: (STRINGP OBJ) ---> BOOLEAN
-à–¾: obj ‚ª•¶Žš—ñ‚Å‚ ‚é‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRINGP
+ä»•æ§˜: (STRINGP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: obj ãŒæ–‡å­—åˆ—ã§ã‚ã‚‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: CREATE-STRING
-Žd—l: (CREATE-STRING I INITIAL-ELEMENT+) ---> <STRING>
-à–¾: ’·‚³ i ‰Šú’l initial-element ‚Ì•¶Žš—ñ‚ð¶¬‚·‚é
+é–¢æ•°: CREATE-STRING
+ä»•æ§˜: (CREATE-STRING I INITIAL-ELEMENT+) ---> <STRING>
+èª¬æ˜Ž: é•·ã• i åˆæœŸå€¤ initial-element ã®æ–‡å­—åˆ—ã‚’ç”Ÿæˆã™ã‚‹
 
-ŠÖ”: STRING=
-Žd—l: (STRING= STRING1 STRING2) ---> QUASI-BOOLEAN
-à–¾: •¶Žš—ñ‚ª“™‚µ‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRING=
+ä»•æ§˜: (STRING= STRING1 STRING2) ---> QUASI-BOOLEAN
+èª¬æ˜Ž: æ–‡å­—åˆ—ãŒç­‰ã—ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: STRING/=
-Žd—l: (STRING/= STRING1 STRING2) ---> QUASI-BOOLEAN
-à–¾: •¶Žš—ñ‚ª“™‚µ‚­‚È‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRING/=
+ä»•æ§˜: (STRING/= STRING1 STRING2) ---> QUASI-BOOLEAN
+èª¬æ˜Ž: æ–‡å­—åˆ—ãŒç­‰ã—ããªã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: STRING<
-Žd—l: (STRING< STRING1 STRING2) ---> QUASI-BOOLEAN
-à–¾: •¶Žš—ñ sting1 ‚ª string2 ‚æ‚è‚à¬‚³‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRING<
+ä»•æ§˜: (STRING< STRING1 STRING2) ---> QUASI-BOOLEAN
+èª¬æ˜Ž: æ–‡å­—åˆ— sting1 ãŒ string2 ã‚ˆã‚Šã‚‚å°ã•ã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: STRING>
-Žd—l: (STRING> STRING1 STRING2) ---> QUASI-BOOLEAN
-à–¾: •¶Žš—ñ sting1 ‚ª string2 ‚æ‚è‚à‘å‚«‚¢‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRING>
+ä»•æ§˜: (STRING> STRING1 STRING2) ---> QUASI-BOOLEAN
+èª¬æ˜Ž: æ–‡å­—åˆ— sting1 ãŒ string2 ã‚ˆã‚Šã‚‚å¤§ãã„ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: STRING>=
-Žd—l: (STRING>= STRING1 STRING2) ---> QUASI-BOOLEAN
-à–¾: •¶Žš—ñ sting1 ‚ª string2 ˆÈ‰º‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRING>=
+ä»•æ§˜: (STRING>= STRING1 STRING2) ---> QUASI-BOOLEAN
+èª¬æ˜Ž: æ–‡å­—åˆ— sting1 ãŒ string2 ä»¥ä¸‹ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: STRING<=
-Žd—l: (STRING<= STRING1 STRING2) ---> QUASI-BOOLEAN
-à–¾: •¶Žš—ñ sting1 ‚ª string2 ˆÈã‚©‚ðƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: STRING<=
+ä»•æ§˜: (STRING<= STRING1 STRING2) ---> QUASI-BOOLEAN
+èª¬æ˜Ž: æ–‡å­—åˆ— sting1 ãŒ string2 ä»¥ä¸Šã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: CHAR-INDEX
-Žd—l: (CHAR-INDEX CHARACTER STRING START-POSITION +) ---> <OBJECT>
-à–¾: •¶Žš—ñ string ’†‚É•¶Žš character ‚ªŒ»‚ê‚éˆÊ’u‚ð•Ô‚·
+é–¢æ•°: CHAR-INDEX
+ä»•æ§˜: (CHAR-INDEX CHARACTER STRING START-POSITION +) ---> <OBJECT>
+èª¬æ˜Ž: æ–‡å­—åˆ— string ä¸­ã«æ–‡å­— character ãŒç¾ã‚Œã‚‹ä½ç½®ã‚’è¿”ã™
 
-ŠÖ”: STRING-INDEX
-Žd—l: (STRING-INDEX SUBSTRING STRING START-POSITION +) ---> <OBJECT>
-à–¾: •¶Žš—ñ string ‚É•”•ª•¶Žš—ñ substring ‚ªŒ»‚ê‚éˆÊ’u‚ð•Ô‚·
+é–¢æ•°: STRING-INDEX
+ä»•æ§˜: (STRING-INDEX SUBSTRING STRING START-POSITION +) ---> <OBJECT>
+èª¬æ˜Ž: æ–‡å­—åˆ— string ã«éƒ¨åˆ†æ–‡å­—åˆ— substring ãŒç¾ã‚Œã‚‹ä½ç½®ã‚’è¿”ã™
 
-ŠÖ”: STRING-APPEND
-Žd—l: (STRING-APPEND STRING *) ---> <STRING>
-à–¾: •¶Žš—ñ‚ð˜AŒ‹‚·‚é
+é–¢æ•°: STRING-APPEND
+ä»•æ§˜: (STRING-APPEND STRING *) ---> <STRING>
+èª¬æ˜Ž: æ–‡å­—åˆ—ã‚’é€£çµã™ã‚‹
 
-ŠÖ”: SYMBOLP
-Žd—l: (SYMBOLP OBJ) ---> BOOLEAN
-à–¾: ƒVƒ“ƒ{ƒ‹‚©ƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: SYMBOLP
+ä»•æ§˜: (SYMBOLP OBJ) ---> BOOLEAN
+èª¬æ˜Ž: ã‚·ãƒ³ãƒœãƒ«ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: PROPERTY
-Žd—l: (PROPERTY SYMBOL PROPERTY-NAME OBJ +) ---> <OBJECT>
-à–¾: ƒVƒ“ƒ{ƒ‹‚ÌƒvƒƒpƒeƒB‚ðŽæ‚èo‚·
+é–¢æ•°: PROPERTY
+ä»•æ§˜: (PROPERTY SYMBOL PROPERTY-NAME OBJ +) ---> <OBJECT>
+èª¬æ˜Ž: ã‚·ãƒ³ãƒœãƒ«ã®ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’å–ã‚Šå‡ºã™
 
-ŠÖ”: SET-PROPERTY
-Žd—l: (SET-PROPERTY OBJ SYMBOL PROPERTY-NAME) ---> <OBJECT>
-à–¾: ƒVƒ“ƒ{ƒ‹‚ÉƒvƒƒpƒeƒB‚ðƒZƒbƒg‚·‚é
+é–¢æ•°: SET-PROPERTY
+ä»•æ§˜: (SET-PROPERTY OBJ SYMBOL PROPERTY-NAME) ---> <OBJECT>
+èª¬æ˜Ž: ã‚·ãƒ³ãƒœãƒ«ã«ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’ã‚»ãƒƒãƒˆã™ã‚‹
 
-ŠÖ”: REMOVE-PROPERTY
-Žd—l: (REMOVE-PROPERTY SYMBOL PROPERTY-NAME) ---> <OBJECT>
-à–¾: ƒVƒ“ƒ{ƒ‹‚©‚çƒvƒƒpƒeƒB‚ðíœ‚·‚é
+é–¢æ•°: REMOVE-PROPERTY
+ä»•æ§˜: (REMOVE-PROPERTY SYMBOL PROPERTY-NAME) ---> <OBJECT>
+èª¬æ˜Ž: ã‚·ãƒ³ãƒœãƒ«ã‹ã‚‰ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’å‰Šé™¤ã™ã‚‹
 
-ŠÖ”: GENSYM
-Žd—l: (GENSYM) ---> <SYMBOL>
-à–¾: –¼‘O‚È‚µƒVƒ“ƒ{ƒ‹‚ð¶¬‚·‚é
+é–¢æ•°: GENSYM
+ä»•æ§˜: (GENSYM) ---> <SYMBOL>
+èª¬æ˜Ž: åå‰ãªã—ã‚·ãƒ³ãƒœãƒ«ã‚’ç”Ÿæˆã™ã‚‹
 
-ŠÖ”: BASIC-VECTOR-P
-Žd—l: (BASIC-VECTOR-P OBJ) ---> BOOLEAN
-à–¾: BASIC ƒxƒNƒ^‚©ƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: BASIC-VECTOR-P
+ä»•æ§˜: (BASIC-VECTOR-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: BASIC ãƒ™ã‚¯ã‚¿ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: GENERAL-VECTOR-P
-Žd—l: (GENERAL-VECTOR-P OBJ) ---> BOOLEAN
-à–¾: GENERIC VECTOR‚©ƒ`ƒFƒbƒN‚·‚é
+é–¢æ•°: GENERAL-VECTOR-P
+ä»•æ§˜: (GENERAL-VECTOR-P OBJ) ---> BOOLEAN
+èª¬æ˜Ž: GENERIC VECTORã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
 
-ŠÖ”: CREATE-VECTOR
-Žd—l: (CREATE-VECTOR I INITIAL-ELEMENT +) ---> <GENERAL-VECTOR>
-à–¾: —v‘f” i ‰Šú’l initial-element ‚ÌƒxƒNƒ^‚ð¶¬‚·‚é
+é–¢æ•°: CREATE-VECTOR
+ä»•æ§˜: (CREATE-VECTOR I INITIAL-ELEMENT +) ---> <GENERAL-VECTOR>
+èª¬æ˜Ž: è¦ç´ æ•° i åˆæœŸå€¤ initial-element ã®ãƒ™ã‚¯ã‚¿ã‚’ç”Ÿæˆã™ã‚‹
 
-ŠÖ”: VECTOR
-Žd—l: (VECTOR OBJ *) ---> <GENERAL-VECTOR>
-à–¾: obj ... ‚ð—v‘f‚Æ‚·‚éƒxƒNƒ^‚ð¶¬‚·‚é
+é–¢æ•°: VECTOR
+ä»•æ§˜: (VECTOR OBJ *) ---> <GENERAL-VECTOR>
+èª¬æ˜Ž: obj ... ã‚’è¦ç´ ã¨ã™ã‚‹ãƒ™ã‚¯ã‚¿ã‚’ç”Ÿæˆã™ã‚‹
 
-ŠÖ”: LOAD
-Žd—l: (LOAD FILE) ---> T
-à–¾: ƒtƒ@ƒCƒ‹ file ‚ðƒ[ƒh‚·‚éiŠg’£j
+é–¢æ•°: LOAD
+ä»•æ§˜: (LOAD FILE) ---> T
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ« file ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ï¼ˆæ‹¡å¼µï¼‰
 
-ŠÖ”: TIME
-Žd—l: (TIME FORM) ---> <OBJECT>
-à–¾: ƒtƒH[ƒ€ form ‚ðŽÀs‚µŒo‰ßŽžŠÔ‚ð•\Ž¦‚·‚éi“ÁŽêŒ`Ž®jiŠg’£j
+é–¢æ•°: TIME
+ä»•æ§˜: (TIME FORM) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ•ã‚©ãƒ¼ãƒ  form ã‚’å®Ÿè¡Œã—çµŒéŽæ™‚é–“ã‚’è¡¨ç¤ºã™ã‚‹ï¼ˆç‰¹æ®Šå½¢å¼ï¼‰ï¼ˆæ‹¡å¼µï¼‰
 
 
-ŠÖ”: EVAL
-Žd—l: (EVAL FORM) ---> <OBJECT>
-à–¾: ƒtƒH[ƒ€ form ‚ð•]‰¿‚·‚éiŠg’£j
+é–¢æ•°: EVAL
+ä»•æ§˜: (EVAL FORM) ---> <OBJECT>
+èª¬æ˜Ž: ãƒ•ã‚©ãƒ¼ãƒ  form ã‚’è©•ä¾¡ã™ã‚‹ï¼ˆæ‹¡å¼µï¼‰
 
 
-ŠÖ”: COMPILE-FILE
-Žd—l: (COMPILE-FILE FILE) ---> BOOLEAN
-à–¾: ƒtƒ@ƒCƒ‹ file ‚ðƒRƒ“ƒpƒCƒ‹‚·‚é(Šg’£)
+é–¢æ•°: COMPILE-FILE
+ä»•æ§˜: (COMPILE-FILE FILE) ---> BOOLEAN
+èª¬æ˜Ž: ãƒ•ã‚¡ã‚¤ãƒ« file ã‚’ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã™ã‚‹(æ‹¡å¼µ)
 
 
-ŠÖ”: GBC
-Žd—l: (GBC) ---> <NULL>
-à–¾: gc ‚ð‹­§“I‚ÉŽÀs‚·‚é (Šg’£)
+é–¢æ•°: GBC
+ä»•æ§˜: (GBC) ---> <NULL>
+èª¬æ˜Ž: gc ã‚’å¼·åˆ¶çš„ã«å®Ÿè¡Œã™ã‚‹ (æ‹¡å¼µ)
 
-ŠÖ”: PRINT
-Žd—l: (PRINT OBJECT) ---> <NULL>
-à–¾: object ‚ð stream ‚É•\Ž¦‚·‚é(Šg’£)
+é–¢æ•°: PRINT
+ä»•æ§˜: (PRINT OBJECT) ---> <NULL>
+èª¬æ˜Ž: object ã‚’ stream ã«è¡¨ç¤ºã™ã‚‹(æ‹¡å¼µ)
 
-ŠÖ”: QUIT
-Žd—l: (QUIT) ---> TRANSFERS-CONTROL
-à–¾: ISLispˆ—Œn‚ðI—¹‚·‚é(Šg’£)
+é–¢æ•°: QUIT
+ä»•æ§˜: (QUIT) ---> TRANSFERS-CONTROL
+èª¬æ˜Ž: ISLispå‡¦ç†ç³»ã‚’çµ‚äº†ã™ã‚‹(æ‹¡å¼µ)
 
 ```

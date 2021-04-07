@@ -3,7 +3,7 @@ Search system for ISLisp functions
 
 # Acknowledgments
 
-The program created by Mr. Gomi was translated into English with the permission of Mr. Gomi.
+The program was created by Dr. Gomi. And we translated into English with the permission of Dr. Gomi.
 
 Mr. Poldy made a great contribution to the English translation.
 

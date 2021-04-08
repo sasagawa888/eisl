@@ -18,7 +18,7 @@ Copying GC mode
 
 #include <setjmp.h>
 #include <stdbool.h>
-#define VERSION     1.89
+#define VERSION     1.90
 #define HEAPSIZE    20000000
 #define CELLSIZE    20000000
 #define WORK1        6000000
@@ -1117,6 +1117,7 @@ int f_subrp(int arglist);
 int makeintlong(int n);
 int makestrflt(const char *str);
 int makedoubleflt(double x);
+int makestrlong(const char *str);
 int nth_cdr(int n, int x);
 int f_macrop(int arglist);
 int f_fixnump(int arglist);

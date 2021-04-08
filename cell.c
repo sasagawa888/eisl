@@ -1090,6 +1090,9 @@ int makedoubleflt(double x){
     return(makeflt(x));
 }
 
+int makestrlong(const char *str){
+    return(makelong(atol(str)));
+}
 
 int nth_cdr(int n, int x){
 	if(n == 0)

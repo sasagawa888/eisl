@@ -344,7 +344,7 @@ void dynamic_link(int x){
     init_f3(MAKECHAR_IDX,(fn3)makechar);
     init_f3(MAKESTRFLT_IDX,(fn3)makestrflt);
     init_f3(MAKEBIG_IDX,makebigx);
-    init_f3(MAKELONG_IDX,(fn3)makelong);
+    init_f3(MAKELONG_IDX,(fn3)makestrlong);
 
     //argument-1 long long int type
     init_f4(GETLONG_IDX,get_long);

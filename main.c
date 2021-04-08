@@ -1006,6 +1006,7 @@ int sread(void){
         case FILEEND:   return(FEND);
         case INTEGER:   return(makeint(atoi(stok.buf)));
         case FLOAT_N:   return(makeflt(atof(stok.buf)));
+        case LONGN:     return(makelong(atol(stok.buf)));
         case BIGNUM:    return(makebigx(stok.buf));
         case DECNUM:    return(makeint((int)strtol(stok.buf,&e,10)));
         case BINARY:    return(readbin(stok.buf));

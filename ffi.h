@@ -9,7 +9,7 @@ static const int SMALL_INT_MAX = 1000000000;
 static const int SMALL_INT_MIN = -1000000000;
 static const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
 static const int INT_MASK = 1073741823; //#b0111111111111111111111111111111
-static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x > 0); }
+static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x >= 0); }
 
 //option
 enum {

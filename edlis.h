@@ -4,9 +4,9 @@
 #include "term.h"
 
 static const float VERSION = 1.73;
-static const int ROW_SIZE = 4000;
+#define ROW_SIZE 4000
 #define COL_SIZE 255
-static const int COPY_SIZE = 500;
+#define COPY_SIZE 500
 
 
 static const int NIL = 0;

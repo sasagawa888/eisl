@@ -10,11 +10,11 @@ const int HEAPSIZE = 20000000;
 const int CELLSIZE = 20000000;
 const int WORK1 = 6000000;
 const int WORK2 = 13000000;
-const int FREESIZE = 100;
-const int STACKSIZE = 30000;
-const int SYMSIZE = 32;
+const int FREESIZE = 900;
+const int STACKSIZE = 40000;
+const int SYMSIZE = 256;
 const int BUFSIZE = 256;
-const int STRSIZE = 5120;
+const int STRSIZE = 500000;
 const int CHARSIZE = 2;   //ascii char. add \0 to tail
 const int MATSIZE = 256;
 const int NIL = 0;
@@ -29,7 +29,7 @@ const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
 const int INT_MASK = 1073741823; //#b0111111111111111111111111111111
 const int INT_PSQRT = 1073773446; //INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;     //- sqrt(999999999)
-const int CTRLSTK = 100;
+const int CTRLSTK = 200;
 static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x > 0); }
 
 //option

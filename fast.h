@@ -6,28 +6,8 @@
 #include <stdbool.h>
 #include "ffi.h"
 
-
-const int NIL = 0;
-const int T = 2;
-const int SMALL_INT_MAX = 1000000000;
-const int SMALL_INT_MIN = -1000000000;
-const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
-const int INT_MASK = 1073741823; //#b0111111111111111111111111111111
 const int INT_PSQRT = 1073773446; //INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;     //- sqrt(999999999)
-
-static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x > 0); }
-
-//option
-enum {
-        FAST_CONSTN = 1,
-        FAST_IMMUTABLE,
-        FAST_SYSTEM,      //class of provided by system
-        FAST_USER,        //class of user' definition
-        FAST_GLOBAL,      //global variable
-        FAST_CONTINUABLE, //continuable condition
-        FAST_NOTCONT,     //no continuable condition
-};
 
 static tfunc deftfunc;
 

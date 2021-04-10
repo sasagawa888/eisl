@@ -24,15 +24,15 @@ int f_edit(int arglist){
 
 void setcolor(int n){
         switch(n){
-                case 0: ESCFBLACK; break;
-                case 1: ESCFRED; break;
-                case 2: ESCFGREEN; break;
-                case 3: ESCFYELLOW; break;
-                case 4: ESCFBLUE; break;
-                case 5: ESCFMAGENTA; break;
-                case 6: ESCFCYAN; break;
-                case 7: ESCFWHITE; break;
-                default: ESCFWHITE; break;
+        case 0: ESCFBLACK(); break;
+        case 1: ESCFRED(); break;
+        case 2: ESCFGREEN(); break;
+        case 3: ESCFYELLOW(); break;
+        case 4: ESCFBLUE(); break;
+        case 5: ESCFMAGENTA(); break;
+        case 6: ESCFCYAN(); break;
+        case 7: ESCFWHITE(); break;
+        default: ESCFWHITE(); break;
         }
         return;
 }
@@ -55,14 +55,14 @@ void display_buffer(){
     int col,type;
 
     ESCMVLEFT(3);
-    ESCCLSL;
+    ESCCLSL();
     col = 0;
 
     while(buffer[col][0] != EOL &&
           buffer[col][0] != NUL){
 
           if(ed_incomment != -1 && line >= ed_incomment){ //comment #|...|#
-             ESCBOLD;
+              ESCBOLD();
              setcolor(ed_comment_color);
              while(buffer[col][0] != EOL &&
                    buffer[col][0] != NUL){
@@ -71,13 +71,13 @@ void display_buffer(){
                        if(buffer[col-2][0] == '|' &&
                           buffer[col-1][0] == '#'){
                              ed_incomment = -1;
-                             ESCRST;
-                             ESCFORG;
+                             ESCRST();
+                             ESCFORG();
                              break;
                        }
              }
-             ESCRST;
-             ESCFORG;
+             ESCRST();
+             ESCFORG();
          }
          else if(buffer[col][0] == ' ' ||
                  buffer[col][0] == '(' ||
@@ -88,7 +88,7 @@ void display_buffer(){
          else{
             type = check_token_buffer(col);
             if(type == 1){
-                ESCBOLD;
+                ESCBOLD();
                 setcolor(ed_syntax_color);
                 while(buffer[col][0] != ' ' &&
                       buffer[col][0] != '(' &&
@@ -98,11 +98,11 @@ void display_buffer(){
                         printf("%c", buffer[col][0]);
                         col++;
                 }
-                ESCRST;
-                ESCFORG;
+                ESCRST();
+                ESCFORG();
                 }
                 else if(type == 2){
-                        ESCBOLD;
+                    ESCBOLD();
                     setcolor(ed_builtin_color);
                     while(buffer[col][0] != ' ' &&
                           buffer[col][0] != '(' &&
@@ -112,11 +112,11 @@ void display_buffer(){
                         printf("%c", buffer[col][0]);
                         col++;
                         }
-                        ESCRST;
-                        ESCFORG;
+                    ESCRST();
+                    ESCFORG();
                 }
                 else if(type == 3){
-                    ESCBOLD;
+                    ESCBOLD();
                     setcolor(ed_string_color);
                     printf("%c", buffer[col][0]);
                     col++;
@@ -127,23 +127,23 @@ void display_buffer(){
                         if(buffer[col-1][0] == '"')
                             break;
                    }
-                   ESCRST;
-                   ESCFORG;
+                    ESCRST();
+                    ESCFORG();
 
                }
                else if(type == 4){
-                   ESCBOLD;
+                   ESCBOLD();
                    setcolor(ed_comment_color);
                    while(buffer[col][0] != NUL &&
                          buffer[col][0] != EOL){
                         printf("%c", buffer[col][0]);
                         col++;
                    }
-                   ESCRST;
-                   ESCFORG;
+                   ESCRST();
+                   ESCFORG();
                }
                else if(type == 5){
-                   ESCBOLD;
+                   ESCBOLD();
                    setcolor(ed_extended_color);
                    while(buffer[col][0] != ' ' &&
                           buffer[col][0] != '(' &&
@@ -153,11 +153,11 @@ void display_buffer(){
                         printf("%c", buffer[col][0]);
                         col++;
                    }
-                   ESCRST;
-                   ESCFORG;
+                   ESCRST();
+                   ESCFORG();
                }
                else if(type == 6){ //comment #|...|#
-                   ESCBOLD;
+                   ESCBOLD();
                    setcolor(ed_comment_color);
                    ed_incomment = line;
                    while(buffer[col][0] != EOL &&
@@ -167,8 +167,8 @@ void display_buffer(){
                              if(buffer[col-2][0] == '|' &&
                                 buffer[col-1][0] == '#'){
                                  ed_incomment = -1;
-                                 ESCRST;
-                                 ESCFORG;
+                                 ESCRST();
+                                 ESCFORG();
                                  break;
                              }
                    }
@@ -185,7 +185,7 @@ void display_buffer(){
                }
                 }
         }
-    ESCRST;
+    ESCRST();
     return;
 }
 
@@ -285,13 +285,13 @@ void emphasis_rparen_buffer(int col){
         return;
 
     ESCMVLEFT(col+3);
-    ESCBCYAN;
+    ESCBCYAN();
     printf("(");
-    ESCBORG;
+    ESCBORG();
     ESCMVLEFT(pos+3);
-    ESCBCYAN;
+    ESCBCYAN();
     printf(")");
-    ESCBORG;
+    ESCBORG();
     ed_rparen_col = pos;
     ed_lparen_col = col;
     ESCMVLEFT(col+3);
@@ -309,13 +309,13 @@ void emphasis_lparen_buffer(int col){
         return;
 
     ESCMVLEFT(col+3);
-    ESCBCYAN;
+    ESCBCYAN();
     printf(")");
-    ESCBORG;
+    ESCBORG();
     ESCMVLEFT(pos+3);
-    ESCBCYAN;
+    ESCBCYAN();
     printf("(");
-    ESCBORG;
+    ESCBORG();
     ed_rparen_col = col;
     ed_lparen_col = pos;
     ESCMVLEFT(col+3);
@@ -331,13 +331,13 @@ void restore_paren_buffer(int col){
 
     if(ed_lparen_col != -1){
         ESCMVLEFT(ed_lparen_col+3);
-        ESCBORG;
+        ESCBORG();
         printf("(");
         ed_lparen_col = -1;
     }
     if(ed_rparen_col != -1){
         ESCMVLEFT(ed_rparen_col+3);
-        ESCBORG;
+        ESCBORG();
         printf(")");
         ed_rparen_col = -1;
     }
@@ -585,10 +585,10 @@ int read_line(int flag){
                                     else{
                                         #define CANDIDATE 3
                                         k = 0;
-                                        ESCSCR;
+                                        ESCSCR();
                                         ESCMVLEFT(1);
                                         next:
-                                        ESCREV;
+                                        ESCREV();
                                         for(i=0; i<CANDIDATE; i++){
                                             if(i+k >= ed_candidate_pt)
                                                  break;
@@ -596,7 +596,7 @@ int read_line(int flag){
                                         }
                                         if(ed_candidate_pt > k+CANDIDATE)
                                             printf("4:more");
-                                        ESCRST;
+                                        ESCRST();
                                         retry:
                                         c = getch();
                                         if(c == ESC)
@@ -605,7 +605,7 @@ int read_line(int flag){
                                         if(ed_candidate_pt > k+CANDIDATE && i == CANDIDATE){
                                             k = k+CANDIDATE;
                                             ESCMVLEFT(1);
-                                            ESCCLSL;
+                                            ESCCLSL();
                                             goto next;
                                         }
                                         if(i+k >= ed_candidate_pt || i < 0)
@@ -615,8 +615,8 @@ int read_line(int flag){
                                         j = replace_fragment_buffer(ed_candidate[i+k],j);
                                         escape:
                                         ESCMVLEFT(1);
-                                        ESCCLSL;
-                                        ESCMVU;
+                                        ESCCLSL();
+                                        ESCMVU();
                                         ESCMVLEFT(3);
                                         display_buffer();
                                         ESCMVLEFT(j+3);

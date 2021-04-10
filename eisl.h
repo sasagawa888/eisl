@@ -18,35 +18,35 @@ Copying GC mode
 
 #include <setjmp.h>
 #include <stdbool.h>
-#define VERSION     1.90
-#define HEAPSIZE    20000000
-#define CELLSIZE    20000000
-#define WORK1        6000000
-#define WORK2       13000000
-#define FREESIZE    900
-#define FARRMAX     100000000
-#define DYNSIZE     1000
-#define STACKSIZE   400000
-#define SYMSIZE     256
-#define BUFSIZE     256
-#define STRSIZE     500000
-#define CHARSIZE    2   //ascii char. add \0 to tail
-#define MATSIZE     256
-#define NIL         0
-#define T           2
-#define UNDEF       4
-#define FEND        6
-#define HASHTBSIZE  107
-#define BIGNUM_BASE 1000000000
-#define SMALL_INT_MAX       1000000000
-#define SMALL_INT_MIN       -1000000000
-#define INT_FLAG    1073741824 //#b1000000000000000000000000000000
-#define INT_MASK    1073741823 //#b0111111111111111111111111111111
-#define FAILSE      -1000000000
-#define PI          3.141592653589793
-#define CTRLSTK     200
-#define BACKSIZE    30
-#define FARRAYSIZE  1000
+#include <assert.h>
+#include <string.h>
+#include <sys/cdefs.h>
+#include "ffi.h"
+#include "term.h"
+
+static const float VERSION = 1.90;
+static const int HEAPSIZE = 20000000;
+static const int CELLSIZE = 20000000;
+static const int WORK1 = 6000000;
+static const int WORK2 = 13000000;
+static const int FREESIZE = 900;
+static const int FARRMAX = 100000000;
+static const int DYNSIZE = 1000;
+static const int STACKSIZE = 400000;
+static const int SYMSIZE = 256;
+static const int BUFSIZE = 256;
+static const int STRSIZE = 500000;
+static const int CHARSIZE = 2;   //ascii char. add \0 to tail
+static const int MATSIZE = 256;
+static const int UNDEF = 4;
+static const int FEND = 6;
+static const int HASHTBSIZE = 107;
+static const int BIGNUM_BASE = 1000000000;
+static const int FAILSE = -1000000000;
+static const double PI = 3.141592653589793;
+static const int CTRLSTK = 200;
+static const int BACKSIZE = 30;
+static const int FARRAYSIZE = 1000;
 
 typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,
               SUBR,FSUBR,FUNC,MACRO,CLASS,INSTANCE,GENERIC,METHOD,
@@ -56,7 +56,7 @@ typedef enum {FRE,USE} flag;
 
 typedef enum {AROUND,BEFORE,PRIORITY,AFTER,EISL_OPEN,EISL_INPUT,EISL_OUTPUT,EISL_INSTR,EISL_OUTSTR} option;
 
-
+typedef int (*subr_t)(int args);
 typedef struct{
     union{
         double fltnum;
@@ -64,7 +64,7 @@ typedef struct{
         struct {
             union{
                 int intnum;
-                int     ( *subr) (int args);
+                subr_t subr;
                 FILE    *port;
                 int     *dyna_vec;
                 float   *dyna_fvec;
@@ -102,92 +102,6 @@ typedef struct{
     char after[BUFSIZE];
 } septoken;
 
-
-struct position{
-    int row;
-    int col;
-};
-
-
-#define DEBUG               printf("debug\n"); longjmp(buf,2);
-#define GET_CAR(addr)       (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.car.intnum)
-#define GET_CDR(addr)       (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.cdr.intnum)
-#define GET_AUX(addr)       (((addr) >= INT_FLAG || (addr) < 0)? cfixnum: heap[(addr)].aux)
-#define GET_PROP(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].prop)
-#define GET_SUBR(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.car.subr)
-#define GET_PORT(addr)      heap[(addr)].val.car.port
-#define GET_INT(addr)       (((addr) > 0)? (INT_MASK & (addr)): (addr))
-#define GET_FLT(addr)       (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.fltnum)
-#define GET_LONG(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].val.lngnum)
-#define GET_NAME(addr)      heap[addr].name
-#define GET_NAME_ELT(addr,n)    heap[addr].name[n]
-#define GET_CHAR(addr)      heap[addr].name[0]
-#define GET_TR(addr)        (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].trace)
-#define GET_TAG(addr)       (((addr) >= INT_FLAG || (addr) < 0)? INTN: heap[(addr)].tag)
-#define GET_OPT(addr)       (((addr) >= INT_FLAG || (addr) < 0)? INTN: heap[(addr)].option)
-#define GET_FLAG(addr)      (((addr) >= INT_FLAG || (addr) < 0)? NIL: heap[(addr)].flag)
-#define SET_TAG(addr,x)     heap[(addr)].tag = x
-#define SET_CAR(addr,x)     heap[(addr)].val.car.intnum = x
-#define SET_CDR(addr,x)     heap[(addr)].val.cdr.intnum = x
-#define SET_AUX(addr,x)     heap[(addr)].aux = x
-#define SET_PROP(addr,x)    ((addr >= INT_FLAG || addr <0)? NIL: (heap[addr].prop = x))
-#define SET_FLT(addr,x)     heap[(addr)].val.fltnum = x
-#define SET_LONG(addr,x)    heap[(addr)].val.lngnum = x
-#define SET_SUBR(addr,x)    heap[(addr)].val.car.subr = x
-#define SET_PORT(addr,x)    heap[(addr)].val.car.port = x
-#define SET_OPT(addr,x)     heap[(addr)].option = x
-#define SET_FLAG(addr,x)    heap[(addr)].flag = x
-#define SET_CHAR(addr,x)    heap[(addr)].name[0] = x
-#define SET_NAME(addr,x)    heap[(addr)].name = x
-#define SET_TR(addr,x)      heap[(addr)].trace = x
-#define SET(addr,x)         heap[(addr)] = heap[x]
-#define IS_SYMBOL(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == SYM)
-#define IS_INTEGER(addr)    (((addr) >= INT_FLAG || (addr) < 0)? 1: 0)
-#define IS_BIGXNUM(addr)    (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == BIGX)
-#define IS_LONGNUM(addr)    (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == LONGN)
-#define IS_FLOAT(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FLTN)
-#define IS_LIST(addr)       (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == LIS)
-#define IS_STRING(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == STR)
-#define IS_CHARACTER(addr)  (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == CHR)
-#define IS_NIL(addr)        ((addr) == 0)
-#define IS_T(addr)          ((addr) == 2)
-#define IS_VECTOR(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == VEC)
-#define IS_ARRAY(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == ARR)
-#define IS_FARRAY(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FARR)
-#define IS_SUBR(addr)       (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == SUBR)
-#define IS_FSUBR(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FSUBR)
-#define IS_FUNC(addr)       (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == FUNC)
-#define IS_MACRO(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == MACRO)
-#define IS_EMPTY(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag  == EMP)
-#define IS_CLASS(addr)      (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == CLASS)
-#define IS_GENERIC(addr)    (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == GENERIC)
-#define IS_METHOD(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == METHOD)
-#define IS_STREAM(addr)     (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == STREAM)
-#define IS_INSTANCE(addr)   (((addr) >= INT_FLAG || (addr) <0)? NIL: heap[(addr)].tag == INSTANCE)
-#define HAS_NAME(addr,x)    strcmp(heap[addr].name,x) == 0
-#define SAME_NAME(addr1,addr2) strcmp(heap[addr1].name, heap[addr2].name) == 0
-#define GREATER_NAME(addr1,addr2) strcmp(heap[addr1].name, heap[addr2].name) > 0
-#define SMALLER_NAME(addr1,addr2) strcmp(heap[addr1].name, heap[addr2].name) < 0
-#define EQUAL_STR(x,y)      strcmp(x,y) == 0
-#define EQUAL_STR(x,y)      strcmp(x,y) == 0
-#define STRING_REF(addr,k)   heap[addr].name[k]
-#define STRING_SET(addr,k,c) heap[addr].name[k] = c
-#define MARK_CELL(addr)     heap[addr].flag = USE
-#define NOMARK_CELL(addr)   heap[addr].flag = FRE
-#define USED_CELL(addr)     heap[addr].flag == USE
-#define FREE_CELL(addr)     heap[addr].flag == FRE
-
-#define GET_VEC_ELT(addr,i)         heap[addr].val.car.dyna_vec[i]
-#define SET_VEC_ELT(addr,i,x)       heap[addr].val.car.dyna_vec[i] = x
-#define SET_VEC(addr,x)             heap[addr].val.car.dyna_vec = x
-#define GET_VEC(addr)               heap[addr].val.car.dyna_vec
-#define GET_FVEC_ELT(addr,i)         heap[addr].val.car.dyna_fvec[i]
-#define SET_FVEC_ELT(addr,i,x)       heap[addr].val.car.dyna_fvec[i] = x
-#define SET_FVEC(addr,x)             heap[addr].val.car.dyna_fvec = x
-#define GET_FVEC(addr)               heap[addr].val.car.dyna_fvec
-
-#define IDX2C(i,j,ld) (((j)*(ld))+(i))
-#define IDX2R(i,j,ld) (((i)*(ld))+(j))
 
 //------pointer----
 extern int ep; //environment pointer
@@ -247,7 +161,7 @@ extern int clongnum;
 extern int cbignum;
 extern int cfloat_array;
 
-#define CLASS_SYMBOL    1
+static const int CLASS_SYMBOL = 1;
 
 
 //stream
@@ -277,6 +191,93 @@ extern int argstk[STACKSIZE];
 extern int cell_hash_table[HASHTBSIZE];
 extern int shelter[STACKSIZE];
 extern int dynamic[DYNSIZE][2];
+
+#define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
+    static inline RETURN_TYPE GET_ ## NAME (int addr)  \
+    {                                                  \
+        if (CELLRANGE(addr)) {                         \
+            assert(addr < HEAPSIZE);                   \
+            return heap[addr].MEMBER;                  \
+        } else {                                       \
+            return DEFAULT;                            \
+        }                                              \
+    }
+DEF_GETTER(int, CAR, val.car.intnum, NIL)
+DEF_GETTER(int, CDR, val.cdr.intnum, NIL)
+DEF_GETTER(int, AUX, aux, cfixnum)
+DEF_GETTER(int, PROP, prop, NIL)
+DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
+static inline FILE *GET_PORT(int addr) { return heap[addr].val.car.port; }
+static inline int GET_INT(int addr) { return ((addr > 0) ? (INT_MASK & addr) : addr); }
+DEF_GETTER(double, FLT, val.fltnum, NIL)
+DEF_GETTER(long long int, LONG, val.lngnum, NIL)
+static inline char *GET_NAME(int addr) { return heap[addr].name; }
+static inline char GET_CHAR(int addr) { return heap[addr].name[0]; }
+DEF_GETTER(char, TAG, tag, INTN)
+DEF_GETTER(signed char, OPT, option, INTN)
+static inline void SET_TAG(int addr,char x) { heap[addr].tag = x; }
+static inline void SET_CAR(int addr,int x) { heap[addr].val.car.intnum = x; }
+static inline void SET_CDR(int addr,int x) { heap[addr].val.cdr.intnum = x; }
+static inline void SET_AUX(int addr,int x) { heap[addr].aux = x; }
+static inline int SET_PROP(int addr,int x)
+{
+    if (CELLRANGE(addr)) {
+        assert(addr < HEAPSIZE);
+        return (heap[addr].prop = x);
+    } else {
+        return NIL;
+    }
+}
+static inline void SET_FLT(int addr,double x) { heap[addr].val.fltnum = x; }
+static inline void SET_LONG(int addr,long long int x) { heap[addr].val.lngnum = x; }
+static inline void SET_PORT(int addr,FILE *x) { heap[addr].val.car.port = x; }
+static inline void SET_OPT(int addr,signed char x) { heap[addr].option = x; }
+static inline void SET_TR(int addr,char x) { heap[addr].trace = x; }
+static inline void SET(int addr,int x) { heap[addr] = heap[x]; }
+#define DEF_PREDICATE(NAME, TAG)                \
+    static inline bool IS_ ## NAME (int addr)   \
+    {                                           \
+        if (CELLRANGE(addr)) {                  \
+            assert(addr < HEAPSIZE);            \
+            return (heap[addr].tag == TAG);     \
+        } else {                                \
+            return NIL;                         \
+        }                                       \
+    }
+static inline bool IS_INTEGER(int addr)
+{
+    return !CELLRANGE(addr);
+}
+DEF_PREDICATE(BIGXNUM, BIGX)
+DEF_PREDICATE(LONGNUM, LONGN)
+DEF_PREDICATE(FLOAT, FLTN)
+DEF_PREDICATE(LIST, LIS)
+DEF_PREDICATE(STRING, STR)
+static inline bool IS_NIL(int addr) { return (addr == NIL); }
+static inline bool IS_T(int addr) { return (addr == T); }
+DEF_PREDICATE(VECTOR, VEC)
+DEF_PREDICATE(ARRAY, ARR)
+DEF_PREDICATE(FARRAY, FARR)
+DEF_PREDICATE(SUBR, SUBR)
+DEF_PREDICATE(FSUBR, FSUBR)
+DEF_PREDICATE(FUNC, FUNC)
+DEF_PREDICATE(MACRO, MACRO)
+DEF_PREDICATE(CLASS, CLASS)
+DEF_PREDICATE(GENERIC, GENERIC)
+static inline bool HAS_NAME(int addr,char *x) { return (strcmp(heap[addr].name,x) == 0); }
+static inline bool SAME_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) == 0); }
+static inline char STRING_REF(int addr,int k) { return heap[addr].name[k]; }
+static inline void STRING_SET(int addr,int k,char c) { heap[addr].name[k] = c; }
+
+static inline int GET_VEC_ELT(int addr,int i) { return heap[addr].val.car.dyna_vec[i]; }
+static inline void SET_VEC_ELT(int addr,int i,int x) { heap[addr].val.car.dyna_vec[i] = x; }
+static inline void SET_VEC(int addr,int *x) { heap[addr].val.car.dyna_vec = x; }
+static inline float GET_FVEC_ELT(int addr,int i) { return heap[addr].val.car.dyna_fvec[i]; }
+static inline void SET_FVEC_ELT(int addr,int i,float x) { heap[addr].val.car.dyna_fvec[i] = x; }
+static inline float *GET_FVEC(int addr) { return heap[addr].val.car.dyna_fvec; }
+
+static inline int IDX2C(int i,int j,int ld) { return (j * ld + i); }
+static inline int IDX2R(int i,int j,int ld) { return (i * ld + j); }
 
 //object oriented
 extern int generic_func;
@@ -330,6 +331,7 @@ extern int error_handler;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 
+__dead static inline void DEBUG(void) { printf("debug\n"); longjmp(buf,2); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
@@ -346,138 +348,75 @@ extern char syntax[60][30];
 extern char builtin[200][32];
 extern char extended[70][30];
 
-
-
-//option
-#define CONSTN      1
-#define IMMUTABLE   2
-#define SYSTEM      3 //class of provided by system
-#define USER        4 //class of user' definition
-#define GLOBAL      5 //global variable
-#define CONTINUABLE 6 //continuable condition
-#define NOTCONT     7 //no continuable condition
-
-//special charactor
-#define EOL     '\n'
-#define RET     '\r'
-#define TAB     '\t'
-#define SPACE   ' '
-#define ESC     27
-#define NUL     '\0'
-#define BEL     '\a'
-#define BS      '\b'
-#define DEL     127
-
-#if __linux || __APPLE__ || defined(__OpenBSD__)
-#define LEFT    'D'
-#define UP      'A'
-#define RIGHT   'C'
-#define DOWN    'B'
-#define INSERT  '2'
-#define DELETE  '3'
-#define PAGEUP  '5'
-#define PAGEDN  '6'
-#define HOME    'H'
-#define END     'F'
-#endif
-
 //-------error code---
-#define UNDEF_VAR       101
-#define UNDEF_FUN       102
-#define NOT_COMPUTABLE  103
-#define OUT_OF_RANGE    104
-#define MALLOC_OVERF    105
-#define UNDEF_CLASS     106
-#define WRONG_ARGS      107
-#define NOT_NUM         108
-#define NOT_STR         109
-#define NOT_LIST        110
-#define NOT_SYM         111
-#define ILLEGAL_INPUT   112
-#define NOT_FUNC        113
-#define UNDEF_TAG       115
-#define CANT_OPEN       116
-#define ILLEGAL_ARGS    117
-#define NOT_VEC         118
-#define NOT_ARR         119
-#define NOT_CLASS       120
-#define NOT_METHOD      121
-#define NOT_CONS        122
-#define CANT_MODIFY     123
-#define NOT_INT         124
-#define NOT_STREAM      125
-#define NOT_OUT_STREAM  126
-#define NOT_IN_STREAM   127
-#define NOT_CHAR        128
-#define NOT_FLT         129
-#define NOT_INSTANCE    130
-#define CTRL_OVERF      131
-#define ILLEGAL_RPAREN  133
-#define END_STREAM      134
-#define ILLEGAL_FORM    135
-#define DIV_ZERO        136
-#define NOT_VECARR      137
-#define CANT_CREATE     138
-#define CANT_PARSE      139
-#define CANT_ASSURE     140
-#define NOT_EXIST_METHOD 142
-#define HAS_COMMON_CLASS 143
-#define NOT_TOP_LEVEL   144
-#define NOT_POSITIVE    145
-#define FLT_OVERF       146
-#define FLT_UNDERF      147
-#define CANT_REDEFINE   148
-#define STACK_OVERF     149
-#define SHELTER_OVERF	150
-#define STACK_UNDERF	151
-#define SHELTER_UNDERF	152
-#define SYSTEM_ERR	    153
-#define RESOURCE_ERR    154
-#define NOT_FARR        155
-#define NOT_EXIST_ARG   156
-#define IMPROPER_ARGS   157
-#define OUT_OF_DOMAIN   158
-#define FLT_OUT_OF_DOMAIN  159
-#define OUT_OF_REAL     160
-#define NOT_BASIC_ARRAY 161
-#define SERIOUS_ERR     162
-#define ARITHMETIC_ERR  163   
-#define DOMAIN_ERR      164
-#define UNDEF_DYN       165  
-#define UNDEF_ENTITY    166
-#define SIMPLE_ERR      167
-#define EXHAUSTED_ERR   168 
-#define DYNAMIC_OVERF   169
-
-#define ESCHOME printf("\33[1;1H")
-#define ESCTOP  printf("\33[2;1H")
-#define ESCCLS  printf("\33[2J")
-#define ESCCLS1 printf("\33[0J")
-#define ESCCLSL printf("\33[0K")
-#define ESCCLSLA printf("\33[2K")
-#define ESCMVLEFT(x) printf("\33[%dG", x)
-#define ESCMVR  printf("\33[C")
-#define ESCMVL  printf("\33[D")
-#define ESCMVU  printf("\33[A")
-#define ESCMVD  printf("\33[B")
-#define ESCSCR  printf("\33[S")
-#define ESCMVLN(x) printf("\33[%dD", x)
-#define ESCMOVE(x,y)    printf("\33[%d;%df", x,y)
-#define ESCFBLACK printf("\33[30m")
-#define ESCFRED  printf("\33[31m")
-#define ESCFGREEN printf("\33[32m")
-#define ESCFYELLOW printf("\33[33m")
-#define ESCFBLUE printf("\33[34m")
-#define ESCFMAGENTA printf("\33[35m")
-#define ESCFCYAN printf("\33[36m")
-#define ESCFWHITE printf("\33[37m")
-#define ESCFORG  printf("\33[39m")
-
-#define ESCBCYAN printf("\33[46m")
-#define ESCBORG  printf("\33[49m")
-#define ESCREV  printf("\33[7m")
-#define ESCRST  printf("\33[0m")
-#define ESCBOLD printf("\33[1m")
+enum {
+    UNDEF_VAR = 101,
+    UNDEF_FUN,
+    NOT_COMPUTABLE,
+    OUT_OF_RANGE,
+    MALLOC_OVERF,
+    UNDEF_CLASS,
+    WRONG_ARGS,
+    NOT_NUM,
+    NOT_STR,
+    NOT_LIST,
+    NOT_SYM,
+    ILLEGAL_INPUT,
+    NOT_FUNC,
+    UNDEF_TAG,
+    CANT_OPEN,
+    ILLEGAL_ARGS,
+    NOT_VEC,
+    NOT_ARR,
+    NOT_CLASS,
+    NOT_METHOD,
+    NOT_CONS,
+    CANT_MODIFY,
+    NOT_INT,
+    NOT_STREAM,
+    NOT_OUT_STREAM,
+    NOT_IN_STREAM,
+    NOT_CHAR,
+    NOT_FLT,
+    NOT_INSTANCE,
+    CTRL_OVERF,
+    ILLEGAL_RPAREN,
+    END_STREAM,
+    ILLEGAL_FORM,
+    DIV_ZERO,
+    NOT_VECARR,
+    CANT_CREATE,
+    CANT_PARSE,
+    CANT_ASSURE,
+    NOT_EXIST_METHOD,
+    HAS_COMMON_CLASS,
+    NOT_TOP_LEVEL,
+    NOT_POSITIVE,
+    FLT_OVERF,
+    FLT_UNDERF,
+    CANT_REDEFINE,
+    STACK_OVERF,
+    SHELTER_OVERF,
+    STACK_UNDERF,
+    SHELTER_UNDERF,
+    SYSTEM_ERR,
+    RESOURCE_ERR,
+    NOT_FARR,
+    NOT_EXIST_ARG,
+    IMPROPER_ARGS,
+    OUT_OF_DOMAIN,
+    FLT_OUT_OF_DOMAIN,
+    OUT_OF_REAL,
+    NOT_BASIC_ARRAY,
+    SERIOUS_ERR,
+    ARITHMETIC_ERR,
+    DOMAIN_ERR,
+    UNDEF_DYN,
+    UNDEF_ENTITY,
+    SIMPLE_ERR,
+    EXHAUSTED_ERR,
+    DYNAMIC_OVERF,
+};
 
 double getETime(void);
 int readc(void);
@@ -757,7 +696,7 @@ int f_print(int addr);
 int f_probe_file(int arglist);
 int f_progn(int x);
 int f_property(int addr);
-int f_quit(int addr);
+__dead int f_quit(int addr);
 int f_quotient(int addr);
 int f_random_real(int arglist);
 int f_random(int arglist);
@@ -1076,7 +1015,7 @@ int f_symbol_function(int arglist);
 int f_symbol_class(int arglist);
 
 void setcolor(int n);
-int getch();
+int getch(void);
 int f_edit(int arglist);
 #ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist);

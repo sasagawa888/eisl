@@ -7,6 +7,7 @@
 
 
 //---------garbage collection-----------
+DEF_PREDICATE(EMPTY, EMP)
 int gbc(void){
     debug_flag = 1;
 
@@ -51,6 +52,8 @@ int gbc(void){
 }
 
 
+static inline void MARK_CELL(int addr) { heap[addr].flag = USE; }
+static inline bool USED_CELL(int addr) { return (heap[addr].flag == USE); }
 void markcell(int addr){
     int i,m,n,x;
 
@@ -175,6 +178,7 @@ void gbcmark(void){
 	
 }
 
+static inline void NOMARK_CELL(int addr) { heap[addr].flag = FRE; }
 void gbcsweep(void){
     int addr;
 

@@ -2278,7 +2278,7 @@ double tarai(double x, double y, double z){
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),FAST_GLOBAL);~%")))
+           (format code4 "\"),GLOBAL);~%")))
     
     ;;defconstant
     (defun comp-defconstant (x)
@@ -2291,7 +2291,7 @@ double tarai(double x, double y, double z){
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),FAST_CONSTN);~%")))
+           (format code4 "\"),CONSTN);~%")))
     
     ;;defdynamic
     (defun comp-defdynamic (x)

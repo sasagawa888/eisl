@@ -380,8 +380,7 @@ void initpt(void){
 }
 
 
-void signal_handler_c(int signo){
-   (void)signo;
+void signal_handler_c(int signo __unused){
    exit_flag = 1;
 }
 
@@ -1555,6 +1554,7 @@ int eval(int addr){
     return(0);
 }
 
+DEF_GETTER(char, TR, trace, NIL)
 int apply(int func, int args){
     int varlist,body,res,macrofunc,method,pexist,aexist,i,n,trace;
     res = NIL;
@@ -1828,6 +1828,7 @@ void deffsubr(const char *symname, int(*func)(int)){
 }
 
 
+static inline void SET_SUBR(int addr,subr_t x) { heap[addr].val.car.subr = x; }
 void bindfunc(const char *name, tag tag, int(*func)(int)){
     int sym,val;
 

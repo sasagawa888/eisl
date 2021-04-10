@@ -103,14 +103,12 @@ int f_classp(int arglist){
 }
 
 
-int f_ignore(int arglist){
-    (void)arglist;
+int f_ignore(int arglist __unused){
     return(T);
 }
 
 
-int f_self_introduction(int arglist){
-    (void)arglist;
+int f_self_introduction(int arglist __unused){
 #if __APPLE__
     return(makesym("MACOS"));
 #elif defined(__OpenBSD__)
@@ -132,6 +130,7 @@ int f_ignore_toplevel_check(int arglist){
     return(T);
 }
 
+DEF_PREDICATE(METHOD, METHOD)
 int f_get_method_priority(int arglist){
 	int arg1;
     
@@ -182,8 +181,7 @@ int f_system(int arglist){
 
 
 
-int f_freedll(int arglist){
-    (void)arglist;  
+int f_freedll(int arglist __unused){
     //dlclose(hmod);
     return(T);
 }
@@ -353,8 +351,7 @@ int f_backtrace(int arglist){
     return(T);
 }
 
-int f_break(int arglist){
-    (void)arglist;
+int f_break(int arglist __unused){
     printf("break\n");
     debugger();
     return(T);
@@ -371,8 +368,7 @@ int f_instance(int arglist){
 
 //----------for Raspberry PI
 #ifdef __arm__
-int f_wiringpi_setup_gpio(int arglist){
-    (void)arglist;
+int f_wiringpi_setup_gpio(int arglist __unused){
     wiringPiSetupGpio();
     return(T);
 } 

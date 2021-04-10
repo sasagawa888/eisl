@@ -14,7 +14,7 @@ CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g
 else
-	CFLAGS += -O3 -flto
+	CFLAGS += -O3 -flto -DNDEBUG=1
 endif
 ifeq ($(CC),c++)
 	CFLAGS += -std=c++98 -fno-exceptions -fno-rtti -Weffc++
@@ -67,12 +67,12 @@ endif
 
 
 
-%.o: %.c eisl.h
+%.o: %.c eisl.h ffi.h term.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
 	$(LD) $(LDFLAGS) edlis.o -o edlis
-edlis.o : edlis.c edlis.h
+edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 
 

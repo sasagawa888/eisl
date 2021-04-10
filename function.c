@@ -9,7 +9,6 @@
 #include <time.h>
 #include <dlfcn.h>
 #include "eisl.h"
-#include "ffi.h"
 
 static void* hmod;
 
@@ -1740,11 +1739,10 @@ int remove_prop(int x,int lis){
         return(cons(car(lis),remove_prop(x,cdr(lis))));
 }
 
-int f_gensym(int arglist){
+int f_gensym(int arglist __unused){
     int res;
     char str1[SYMSIZE],str2[10];
 
-    (void)arglist;
     strcpy(str1,"#:G");
     sprintf(str2, "%d",genint);
     genint++;
@@ -2399,6 +2397,7 @@ int f_char_noteqp(int arglist){
         return(T);
 }
 
+static inline bool SMALLER_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) < 0); }
 int f_char_smallerp(int arglist){
     int arg1,arg2;
 
@@ -2436,6 +2435,7 @@ int f_char_eqsmallerp(int arglist){
         return(NIL);
 }
 
+static inline bool GREATER_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) > 0); }
 int f_char_greaterp(int arglist){
     int arg1,arg2;
 
@@ -2561,7 +2561,7 @@ int f_string_noteqp(int arglist){
 }
 
 
-
+static inline char GET_NAME_ELT(int addr,int n) { return heap[addr].name[n]; }
 int f_elt(int arglist){
     int arg1,arg2;
     char str[CHARSIZE];
@@ -3085,6 +3085,7 @@ int f_create_star(int arglist){
     return(makeinstance(arg1,arg2));
 }
 
+DEF_PREDICATE(INSTANCE, INSTANCE)
 int f_slot_value(int arglist){
     int arg1,arg2,val;
 
@@ -4117,8 +4118,7 @@ int f_initialize_object_star(int arglist){
 }
 
 //controle
-int f_quit(int arglist){
-    (void)arglist;
+__dead int f_quit(int arglist __unused){
     if (!script_flag) {
       printf("- good bye -\n");
     }
@@ -4136,6 +4136,7 @@ int f_heapdump(int arglist){
     return(T);
 }
 
+static inline void SET_FLAG(int addr,char x) { heap[addr].flag = x; }
 int f_gbc(int arglist){
     int n,addr;
 

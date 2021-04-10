@@ -15,7 +15,7 @@ const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
 const int INT_MASK = 1073741823; //#b0111111111111111111111111111111
 const int INT_PSQRT = 1073773446; //INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;     //- sqrt(999999999)
-//const int CTRLSTK = 200;
+
 static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x > 0); }
 
 //option

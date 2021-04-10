@@ -130,6 +130,7 @@ int f_ignore_toplevel_check(int arglist){
     return(T);
 }
 
+DEF_PREDICATE(METHOD, METHOD)
 int f_get_method_priority(int arglist){
 	int arg1;
     

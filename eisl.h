@@ -212,12 +212,9 @@ static inline int GET_INT(int addr) { return ((addr > 0) ? (INT_MASK & addr) : a
 DEF_GETTER(double, FLT, val.fltnum, NIL)
 DEF_GETTER(long long int, LONG, val.lngnum, NIL)
 static inline char *GET_NAME(int addr) { return heap[addr].name; }
-static inline char GET_NAME_ELT(int addr,int n) { return heap[addr].name[n]; }
 static inline char GET_CHAR(int addr) { return heap[addr].name[0]; }
-DEF_GETTER(char, TR, trace, NIL)
 DEF_GETTER(char, TAG, tag, INTN)
 DEF_GETTER(signed char, OPT, option, INTN)
-DEF_GETTER(char, FLAG, flag, NIL)
 static inline void SET_TAG(int addr,char x) { heap[addr].tag = x; }
 static inline void SET_CAR(int addr,int x) { heap[addr].val.car.intnum = x; }
 static inline void SET_CDR(int addr,int x) { heap[addr].val.cdr.intnum = x; }
@@ -233,12 +230,8 @@ static inline int SET_PROP(int addr,int x)
 }
 static inline void SET_FLT(int addr,double x) { heap[addr].val.fltnum = x; }
 static inline void SET_LONG(int addr,long long int x) { heap[addr].val.lngnum = x; }
-static inline void SET_SUBR(int addr,subr_t x) { heap[addr].val.car.subr = x; }
 static inline void SET_PORT(int addr,FILE *x) { heap[addr].val.car.port = x; }
 static inline void SET_OPT(int addr,signed char x) { heap[addr].option = x; }
-static inline void SET_FLAG(int addr,char x) { heap[addr].flag = x; }
-static inline void SET_CHAR(int addr,char x) { heap[addr].name[0] = x; }
-static inline void SET_NAME(int addr,char *x) { heap[addr].name = x; }
 static inline void SET_TR(int addr,char x) { heap[addr].trace = x; }
 static inline void SET(int addr,int x) { heap[addr] = heap[x]; }
 #define DEF_PREDICATE(NAME, TAG)                \
@@ -251,7 +244,6 @@ static inline void SET(int addr,int x) { heap[addr] = heap[x]; }
             return NIL;                         \
         }                                       \
     }
-DEF_PREDICATE(SYMBOL, SYM)
 static inline bool IS_INTEGER(int addr)
 {
     return !CELLRANGE(addr);
@@ -261,7 +253,6 @@ DEF_PREDICATE(LONGNUM, LONGN)
 DEF_PREDICATE(FLOAT, FLTN)
 DEF_PREDICATE(LIST, LIS)
 DEF_PREDICATE(STRING, STR)
-DEF_PREDICATE(CHARACTER, CHR)
 static inline bool IS_NIL(int addr) { return (addr == NIL); }
 static inline bool IS_T(int addr) { return (addr == T); }
 DEF_PREDICATE(VECTOR, VEC)
@@ -271,31 +262,18 @@ DEF_PREDICATE(SUBR, SUBR)
 DEF_PREDICATE(FSUBR, FSUBR)
 DEF_PREDICATE(FUNC, FUNC)
 DEF_PREDICATE(MACRO, MACRO)
-DEF_PREDICATE(EMPTY, EMP)
 DEF_PREDICATE(CLASS, CLASS)
 DEF_PREDICATE(GENERIC, GENERIC)
-DEF_PREDICATE(METHOD, METHOD)
-DEF_PREDICATE(STREAM, STREAM)
-DEF_PREDICATE(INSTANCE, INSTANCE)
 static inline bool HAS_NAME(int addr,char *x) { return (strcmp(heap[addr].name,x) == 0); }
 static inline bool SAME_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) == 0); }
-static inline bool GREATER_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) > 0); }
-static inline bool SMALLER_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) < 0); }
-static inline bool EQUAL_STR(char *x,char *y) { return (strcmp(x,y) == 0); }
 static inline char STRING_REF(int addr,int k) { return heap[addr].name[k]; }
 static inline void STRING_SET(int addr,int k,char c) { heap[addr].name[k] = c; }
-static inline void MARK_CELL(int addr) { heap[addr].flag = USE; }
-static inline void NOMARK_CELL(int addr) { heap[addr].flag = FRE; }
-static inline bool USED_CELL(int addr) { return (heap[addr].flag == USE); }
-static inline bool FREE_CELL(int addr) { return (heap[addr].flag == FRE); }
 
 static inline int GET_VEC_ELT(int addr,int i) { return heap[addr].val.car.dyna_vec[i]; }
 static inline void SET_VEC_ELT(int addr,int i,int x) { heap[addr].val.car.dyna_vec[i] = x; }
 static inline void SET_VEC(int addr,int *x) { heap[addr].val.car.dyna_vec = x; }
-static inline int *GET_VEC(int addr) { return heap[addr].val.car.dyna_vec; }
 static inline float GET_FVEC_ELT(int addr,int i) { return heap[addr].val.car.dyna_fvec[i]; }
 static inline void SET_FVEC_ELT(int addr,int i,float x) { heap[addr].val.car.dyna_fvec[i] = x; }
-static inline void SET_FVEC(int addr,float *x) { heap[addr].val.car.dyna_fvec = x; }
 static inline float *GET_FVEC(int addr) { return heap[addr].val.car.dyna_fvec; }
 
 static inline int IDX2C(int i,int j,int ld) { return (j * ld + i); }

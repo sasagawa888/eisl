@@ -411,6 +411,7 @@ int hash(const char *name){
 }
 
 //-------for debug------------------
+DEF_GETTER(char, FLAG, flag, NIL)
 void cellprint(int addr){
     switch(GET_FLAG(addr)){
         case FRE:   printf("FRE "); break;
@@ -781,6 +782,7 @@ int makearray(int ls, int obj){
 }
 
 // for Deep-Learning float type array
+static inline void SET_FVEC(int addr,float *x) { heap[addr].val.car.dyna_fvec = x; }
 int makefarray(int ls, int obj){
     int size,res,i,ls1;
     float *vec;

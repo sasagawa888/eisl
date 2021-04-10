@@ -64,6 +64,7 @@ int math_integerp(int addr){
 }
 
 
+DEF_PREDICATE(SYMBOL, SYM)
 int symbolp(int addr){  
     if(IS_SYMBOL(addr))
         return(1);
@@ -237,6 +238,7 @@ int stringp(int x){
 }
 
 
+DEF_PREDICATE(CHARACTER, CHR)
 int charp(int x){
     if(IS_CHARACTER(x))
         return(1);
@@ -265,6 +267,7 @@ int farrayp(int x){
         return(0);
 }
 
+DEF_PREDICATE(STREAM, STREAM)
 int streamp(int x){
     if(IS_STREAM(x))
         return(1);
@@ -1128,6 +1131,7 @@ int vector_to_list(int x){
     return(res);   
 }
 
+static inline void SET_CHAR(int addr,char x) { heap[addr].name[0] = x; }
 int string_to_vector(int x){
     int res,len,i,ref;
     char c;
@@ -1439,6 +1443,7 @@ int copy_flt(int x){
     return(addr);
 }
 
+static inline int *GET_VEC(int addr) { return heap[addr].val.car.dyna_vec; }
 int copy_vec(int x){
     int addr = NIL;
 
@@ -1484,6 +1489,7 @@ int copy_char(int x){
     return(addr);
 }
 
+static inline void SET_NAME(int addr,char *x) { heap[addr].name = x; }
 int copy_func(int x){
     int val;
 

@@ -51,6 +51,7 @@
 
 (defun regmatch (str1 str2 &rest maybe-start)
    ;; Match string1 against string2.
+   (the <string> str1)(the <string> str2)
    (let ((re (regcomp str1)))
         (unwind-protect (apply #'regexe re str2 nil maybe-start)
                 (regfree re))))
@@ -68,8 +69,8 @@
 #|
 (defglobal x (regcomp "[A-Z]+"))
 (regexp-p x)
-(regexe x "ABCAB")
-(regexe x "abcab")
+(regexe x "ABCAB" nil)
+(regexe x "abcab" nil)
 (defglobal y #(0 0))
 (regexe x "ABCAB" y)
 (regexe x "ABCAB" y 1)

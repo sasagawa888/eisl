@@ -380,8 +380,7 @@ void initpt(void){
 }
 
 
-void signal_handler_c(int signo){
-   (void)signo;
+void signal_handler_c(int signo __unused){
    exit_flag = 1;
 }
 

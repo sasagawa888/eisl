@@ -9,7 +9,6 @@
 #include <time.h>
 #include <dlfcn.h>
 #include "eisl.h"
-#include "ffi.h"
 
 static void* hmod;
 
@@ -1740,11 +1739,10 @@ int remove_prop(int x,int lis){
         return(cons(car(lis),remove_prop(x,cdr(lis))));
 }
 
-int f_gensym(int arglist){
+int f_gensym(int arglist __unused){
     int res;
     char str1[SYMSIZE],str2[10];
 
-    (void)arglist;
     strcpy(str1,"#:G");
     sprintf(str2, "%d",genint);
     genint++;
@@ -4117,8 +4115,7 @@ int f_initialize_object_star(int arglist){
 }
 
 //controle
-int f_quit(int arglist){
-    (void)arglist;
+__dead int f_quit(int arglist __unused){
     if (!script_flag) {
       printf("- good bye -\n");
     }

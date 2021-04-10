@@ -3,6 +3,36 @@
 #ifndef FFI_H
 #define FFI_H
 
+static const int HEAPSIZE = 20000000;
+static const int CELLSIZE = 20000000;
+static const int WORK1 = 6000000;
+static const int WORK2 = 13000000;
+static const int BUFSIZE = 256;
+static const int CHARSIZE = 2;   //ascii char. add \0 to tail
+static const int MATSIZE = 256;
+static const int NIL = 0;
+static const int T = 2;
+static const int UNDEF = 4;
+static const int FEND = 6;
+static const int HASHTBSIZE = 107;
+static const int BIGNUM_BASE = 1000000000;
+static const int SMALL_INT_MAX = 1000000000;
+static const int SMALL_INT_MIN = -1000000000;
+static const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
+static const int INT_MASK = 1073741823; //#b0111111111111111111111111111111
+static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x > 0); }
+
+//option
+enum {
+        CONSTN = 1,
+        IMMUTABLE,
+        SYSTEM,      //class of provided by system
+        USER,        //class of user' definition
+        GLOBAL,      //global variable
+        CONTINUABLE, //continuable condition
+        NOTCONT,     //no continuable condition
+};
+
 typedef int (*fn0)(void);
 typedef int (*fn1)(int);
 typedef int (*fn2)(int , int);

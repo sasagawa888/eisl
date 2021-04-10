@@ -24,13 +24,24 @@ Copying GC mode
 #include "ffi.h"
 #include "term.h"
 
-static const float VERSION = 1.89;
+static const float VERSION = 1.90;
+static const int HEAPSIZE = 20000000;
+static const int CELLSIZE = 20000000;
+static const int WORK1 = 6000000;
+static const int WORK2 = 13000000;
 static const int FREESIZE = 900;
 static const int FARRMAX = 100000000;
 static const int DYNSIZE = 1000;
 static const int STACKSIZE = 400000;
 static const int SYMSIZE = 256;
+static const int BUFSIZE = 256;
 static const int STRSIZE = 500000;
+static const int CHARSIZE = 2;   //ascii char. add \0 to tail
+static const int MATSIZE = 256;
+static const int UNDEF = 4;
+static const int FEND = 6;
+static const int HASHTBSIZE = 107;
+static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
 static const double PI = 3.141592653589793;
 static const int CTRLSTK = 200;
@@ -77,6 +88,7 @@ typedef enum {LPAREN,RPAREN,QUOTE,DOT,BACKQUOTE,COMMA,ATMARK,STRING,SYMBOL,
               FUNCTION,INTEGER,FLOAT_N,BIGNUM,VECTOR,ARRAY,CHARACTER,FARRAY,
               BINARY,OCTAL,DECNUM,HEXNUM,EXPTNUM,FILEEND,OTHER} toktype;
 typedef enum {GO,BACK} backtrack;
+
 typedef struct{
     char ch;
     backtrack flag;
@@ -1066,6 +1078,7 @@ int f_subrp(int arglist);
 int makeintlong(int n);
 int makestrflt(const char *str);
 int makedoubleflt(double x);
+int makestrlong(const char *str);
 int nth_cdr(int n, int x);
 int f_macrop(int arglist);
 int f_fixnump(int arglist);

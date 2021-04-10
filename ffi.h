@@ -3,19 +3,8 @@
 #ifndef FFI_H
 #define FFI_H
 
-static const int HEAPSIZE = 20000000;
-static const int CELLSIZE = 20000000;
-static const int WORK1 = 6000000;
-static const int WORK2 = 13000000;
-static const int BUFSIZE = 256;
-static const int CHARSIZE = 2;   //ascii char. add \0 to tail
-static const int MATSIZE = 256;
 static const int NIL = 0;
 static const int T = 2;
-static const int UNDEF = 4;
-static const int FEND = 6;
-static const int HASHTBSIZE = 107;
-static const int BIGNUM_BASE = 1000000000;
 static const int SMALL_INT_MAX = 1000000000;
 static const int SMALL_INT_MIN = -1000000000;
 static const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
@@ -65,7 +54,7 @@ enum { CONS_IDX, NTH_IDX, SETCAR_IDX, SETCDR_IDX,
   CONVERT_IDX, ARRAY_IDX, SETDYNENV_IDX, ADDDYNENV_IDX,
   SETDYNAMIC_IDX, SETPROP_IDX, ADAPTP_IDX, NUM_FN2S };
 enum { MAKESTR_IDX, MAKESYM_IDX, MAKECHAR_IDX, MAKESTRFLT_IDX,
-    MAKEBIG_IDX, MAKELONG_IDX, NUM_FN3S };
+    MAKEBIG_IDX, MAKESTRLONG_IDX, NUM_FN3S };
 enum { GETLONG_IDX, NUM_FN4S };
 enum { STRINGSET_IDX, ARRAYSET_IDX, MEMBER1_IDX, NUM_FN5S };
 enum { GETNAME_IDX, NUM_FN6S };

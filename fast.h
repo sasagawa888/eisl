@@ -146,7 +146,7 @@ static inline int Fmakesym(const char *x) { return f3[MAKESYM_IDX]((char *)x); }
 static inline int Fmakechar(const char *x) { return f3[MAKECHAR_IDX]((char *)x); }
 static inline int Fmakestrflt(const char *x) { return f3[MAKESTRFLT_IDX]((char *)x); }
 static inline int Fmakebig(char *x) { return f3[MAKEBIG_IDX](x); }
-static inline int Fmakelong(long long int x) { return f3[MAKELONG_IDX](x); }
+static inline int Fmakestrlong(const char *x) { return f3[MAKESTRLONG_IDX](x); }
 
 static inline long long int Fgetlong(int x) { return f4[GETLONG_IDX](x); }
 

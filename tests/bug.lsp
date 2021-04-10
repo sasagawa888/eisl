@@ -1,2 +1,2 @@
 (defun foo (x)
-   (format (standard-output) "~A " x))
+    (+ x 123456789012345))

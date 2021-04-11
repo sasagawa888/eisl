@@ -8,6 +8,7 @@
 
 # Example1
 
+```
 > (import "lazy")
 T
 > (defglobal a (delay (+ 10 20)))
@@ -24,6 +25,7 @@ B
 > (force b)
 30
 > 
+```
 
 # Example2
 

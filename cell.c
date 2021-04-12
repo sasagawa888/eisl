@@ -10,6 +10,7 @@ closure function-address car=arg+body, cdr=environment
 #include <stdlib.h>
 #include <setjmp.h>
 #include <math.h>
+#include <stdint.h>
 #include "eisl.h"
 
 
@@ -1094,6 +1095,25 @@ int makedoubleflt(double x){
 
 int makestrlong(const char *str){
     return(makelong(atol(str)));
+}
+
+static inline int HexDigitToNybble(char c){
+    if (!isdigit(c)){
+        static const int codesToSkip = 'A' - '9' - 1;
+        c -= codesToSkip;
+    }
+    return c - '0';
+}
+int makefaststrlong(const char *str){
+    /* TODO: replace with unsigned long long? */
+    uint64_t u = 0;
+    for (int i = 0; i < 8; i++){
+        uint8_t hi_nybble = HexDigitToNybble(str[14 - (i << 1)]);
+        uint8_t lo_nybble = HexDigitToNybble(str[15 - (i << 1)]);
+        uint64_t byte = (hi_nybble << 4) | lo_nybble;
+        u |= (byte << (i << 3));
+    }
+    return makelong(u);
 }
 
 int nth_cdr(int n, int x){

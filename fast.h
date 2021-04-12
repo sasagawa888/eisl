@@ -4,10 +4,12 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "ffi.h"
 
 const int INT_PSQRT = 1073773446; //INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;     //- sqrt(999999999)
+const int FASTSTRLONG_SIZE = 17;
 
 static tfunc deftfunc;
 
@@ -146,7 +148,8 @@ static inline int Fmakesym(const char *x) { return f3[MAKESYM_IDX]((char *)x); }
 static inline int Fmakechar(const char *x) { return f3[MAKECHAR_IDX]((char *)x); }
 static inline int Fmakestrflt(const char *x) { return f3[MAKESTRFLT_IDX]((char *)x); }
 static inline int Fmakebig(char *x) { return f3[MAKEBIG_IDX](x); }
-static inline int Fmakestrlong(const char *x) { return f3[MAKESTRLONG_IDX](x); }
+static inline int Fmakestrlong(const char *x) { return f3[MAKESTRLONG_IDX]((char *)x); }
+static inline int Fmakefaststrlong(const char *x) { return f3[MAKEFASTSTRLONG_IDX]((char *)x); }
 
 static inline long long int Fgetlong(int x) { return f4[GETLONG_IDX](x); }
 
@@ -437,6 +440,19 @@ static int fast_setnth(int x, int n, int y){
     }
     Fset_car(x,y);
     return(y);
+}
+
+static char *fast_sprint_hex_long(long int n){
+    static char res[FASTSTRLONG_SIZE];
+    static const char *hex_digits = "0123456789ABCDEF";
+    uint64_t u = n;
+    for (int i = 0; i < 8; i++){
+        uint8_t byte = (u >> (i << 3)) & 0xFF;
+        uint8_t hi_nybble = (byte >> 4) & 0x0F, lo_nybble = byte & 0x0F;
+        res[14 - (i << 1)] = hex_digits[hi_nybble];
+        res[15 - (i << 1)] = hex_digits[lo_nybble];
+    }
+    return res;
 }
 //---------------OPenGL-----------------
 static int displayfunc;

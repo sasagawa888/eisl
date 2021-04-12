@@ -19,9 +19,11 @@
 ;; Please compile i18n.lsp in library beforehand.
 
 (defun main ()
-   (setlocale)
-   (let ((catd (catopen "i18n.cat")))
-        (format (standard-output) "~A~%" (catgets catd 1 1 "Hello world"))
+   (let ((locname (setlocale))
+         (catd (catopen "i18n.cat")))
+        (init-iconv)
+        (format (standard-output) "~A~%" (str-ltou (catgets catd 1 1 "Hello world")))
+        (format (standard-output) "~A~%" (str-ltou (catgets catd 1 2 "fallback")))
         (catclose catd)))
 
 (main)

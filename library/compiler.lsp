@@ -231,7 +231,7 @@ double tarai(double x, double y, double z){
     (defun compile-file1 (x)
         (let ((option
               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
-                    ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
+                    ((eq (self-introduction) 'macos) "cc -O0 -g -w -shared -I$HOME/eisl -fPIC -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
@@ -264,7 +264,7 @@ double tarai(double x, double y, double z){
     (defun compile-file1* (x)
         (let ((option
               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
-                    ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
+                    ((eq (self-introduction) 'macos) "cc -O0 -g -w -shared -I$HOME/eisl -fPIC -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")

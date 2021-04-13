@@ -1,5 +1,5 @@
 ;;; Extension of arithmetic operators to complex and rational numbers 
-;;;
+;;; under construction
 
 ;; complex-number
 (defclass <complex> ()
@@ -16,6 +16,12 @@
 
 (defun make-rational (n d)
   (create (class <rational>) `n n `d d))
+
+(defun complexp (x)
+  (eql (class-of x) (class <complex>)))
+
+(defun rationalp (x)
+  (eql (class-of x) (class <rational>)))
 
 (defgeneric display (x))
 
@@ -69,6 +75,55 @@
         
 (defmethod e- ((x <number>) (y <number>))
   (- x y))      
+
+
+
+(defgeneric e* (x y))
+
+(defmethod e* ((x <complex>) (y <complex>))
+  (let* ((a (real-part x))
+         (b (imag-part x))
+         (c (real-part y))
+         (d (imag-part y))
+         (r (- (* a c) (* b d)))
+         (i (- (* a d) (* b c))))
+    (create (class <complex>) 'r r 'i i)))
+
+(defmethod e* ((x <rational>) (y <rational>))
+  (let* ((d (* (denominator x) (denominator y)))
+         (n (* (numerator x) (numerator y)))
+         (d1 (div d (gcd n d)))
+         (n1 (div n (gcd n d))))
+    (create (class <rational>) 'n n1 'd d1)))
+        
+(defmethod e* ((x <number>) (y <number>))
+  (* x y))   
+
+   
+
+(defgeneric e/ (x y))
+
+(defmethod e/ ((x <complex>) (y <complex>))
+  (let* ((a (real-part x))
+         (b (imag-part x))
+         (c (real-part y))
+         (d (imag-part y))
+         (e (+ (* c c) (* d d)))
+         (r (quotient (- (* a c) (* b d)) e))
+         (i (quotient (- (* a d) (* b c)) e)))      
+    (create (class <complex>) 'r r 'i i)))
+
+(defmethod e/ ((x <rational>) (y <rational>))
+  (let* ((d (* (denominator x) (numerator y)))
+         (n (* (numerator x) (denominator y)))
+         (d1 (div d (gcd n d)))
+         (n1 (div n (gcd n d))))
+    (create (class <rational>) 'n n1 'd d1)))
+        
+(defmethod e/ ((x <number>) (y <number>))
+  (quotient x y))   
+
+   
 
 
 ;;; test

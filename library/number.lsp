@@ -125,13 +125,3 @@
 
    
 
-
-;;; test
-(defun test ()
-  (let ((c1 (make-rectangler 3 -4))
-        (c2 (make-rectangler 5 -6))
-        (r1 (make-rational 3 4))
-        (r2 (make-rational 5 8)))
-     (display (e+ c1 c2))
-     (display (e+ r1 r2))))
-    

@@ -21,6 +21,7 @@
 (defun main ()
    (let ((locname (setlocale))
          (catd (catopen "i18n.cat")))
+	(init-locale)
         (init-iconv)
         (format (standard-output) "~A~%" (str-ltou (catgets catd 1 1 "Hello world")))
         (format (standard-output) "~A~%" (str-ltou (catgets catd 1 2 "fallback")))

@@ -8,20 +8,19 @@
 ;;; This "opinionated" way assumes that although I/O is in UTF-8,
 ;;; internally strings are single-byte. Purely because of the
 ;;; author's location, Latin-9 is chosen as an encoding here.
-;;;
-;;; NB: functions beginning with "c-" are for internal use only and
-;;; should not be called by client code.
 
 (c-include "<limits.h>")
 (c-include "<locale.h>")
+(c-include "<xlocale.h>")               ; TODO: macOS only?
 (c-include "<nl_types.h>")
 (c-include "<iconv.h>")
 (c-option "-liconv")
 (c-define "I18N_STR_MAX" "256")
 
-;;; Thin POSIX wrapper:
+;;; Thin UNIX wrapper.
+;;; Using this is not recommended.
 
-(defun c-setlocale (locale)
+(defun setlocale (locale)
    (the <string> locale)
    (c-lang "char *val;")
    (c-lang "val = setlocale(LC_ALL, Fgetname(LOCALE));")
@@ -29,11 +28,8 @@
 
 (defun catopen (name)
    (the <string> name)
-   (c-lang "nl_catd catd;")
    (c-lang "char *res_str;")
-   (c-lang "int temp;")
-   (c-lang "catd = catopen(Fgetname(NAME), NL_CAT_LOCALE);")
-   (c-lang "res_str = fast_sprint_hex_long(catd);")
+   (c-lang "res_str = fast_sprint_hex_long(catopen(Fgetname(NAME), NL_CAT_LOCALE));")
    (c-lang "res = Fmakefaststrlong(res_str);"))
 
 (defun catgets (catd set-id msg-id s)
@@ -46,23 +42,65 @@
 
 (defun iconv-open (tocode fromcode)
    (the <string> tocode)(the <string> fromcode)
-   (c-lang "char res_str[32];")
-   (c-lang "snprintf(res_str, 31, \"%lld\", iconv_open(Fgetname(TOCODE), Fgetname(FROMCODE)));")
-   (c-lang "res = Fmakestrlong(res_str);"))
+   (c-lang "char *res_str;")
+   (c-lang "res_str = fast_sprint_hex_long(iconv_open(Fgetname(TOCODE), Fgetname(FROMCODE)));")
+   (c-lang "res = Fmakefaststrlong(res_str);"))
+
+(defun duplocale ()
+   (c-lang "char *res_str;")
+   (c-lang "res_str = fast_sprint_hex_long(duplocale(LC_GLOBAL_LOCALE));")
+   (c-lang "res = Fmakefaststrlong(res_str);"))
+
+(defun newlocale (nlocname loc)
+   (c-lang "char *res_str;")
+   (c-lang "res_str = fast_sprint_hex_long(newlocale(LC_ALL_MASK, Fgetname(NLOCNAME), Fgetlong(LOC)));")
+   (c-lang "res = Fmakefaststrlong(res_str);"))
+
+(defun freelocale (loc)
+   (c-lang "res = NIL; freelocale(Fgetlong(LOC));"))
+
+(defun isspace-l (c locale)
+   (c-lang "res = ((isspace_l(Fgetname(C)[0], Fgetlong(LOCALE)) == 0) ? NIL : T);"))
+
+(defun strcoll-l (s1 s2 locale)
+   (c-lang "res = strcoll(Fgetname(S1), Fgetname(S2), Fgetlong(LOCALE)) | INT_FLAG;"))
+
+(defun toupper-l (c locale)
+   (c-lang "char uc[2];")
+   (c-lang "uc[0] = toupper_l(Fgetname(C)[0], Fgetlong(LOCALE));")
+   (c-lang "uc[1] = '\\0';")
+   (c-lang "res = Fmakechar(uc);"))
+
+(defun tolower-l (c locale)
+   (c-lang "char lc[2];")
+   (c-lang "lc[0] = tolower_l(Fgetname(C)[0], Fgetlong(LOCALE));")
+   (c-lang "lc[1] = '\\0';")
+   (c-lang "res = Fmakechar(lc);"))
 
 ;;; Recommended usage pattern:
 
-(defun setlocale ()
-   (let ((res (c-setlocale "")))
+;; TODO: is it worth splitting off some code to run interpreted for (flet ...)?
+
+;; Keep some globals here for convenience,
+;; keeping the thin layer closer to UNIX.
+(defglobal *latin-to-utf8* (iconv-open "latin-9" "utf8"))
+(defglobal *utf8-to-latin* (iconv-open "utf8" "latin-9"))
+(defglobal *latin-loc* (duplocale))
+
+(defun safe-getenv (name)
+   ;; I could (import "unix") for the Lisp version,
+   ;; not sure if it's worth funny dependencies like that though.
+   (let ((value (getenv "name")))
+        (if (null value)
+            "(unset)"
+            (string-append "\"" value "\""))))
+
+(defun safe-setlocale ()
+   ;; TODO: better error reporting?
+   (let ((res (setlocale "")))
         (if (null res)
-            (c-setlocale "C")
+            (setlocale "C")
             res)))
-
-(defglobal *iconvs* (cons 0 0))
-
-(defun init-iconv ()
-   (setf (car *iconvs*) (iconv-open "latin-9" "utf8"))
-   (setf (cdr *iconvs*) (iconv-open "utf8" "latin-9")))
 
 (defun str-iconv (cd lstr)
    (the <longnum> cd)(the <string> lstr)
@@ -81,8 +119,7 @@
 (defun str-ltou (lstr)
    ;; Convert a string from Latin-9 to UTF8 encoding
    (the <string> lstr)
-   (let ((latin-to-utf8 (cdr *iconvs*)))
-        (str-iconv latin-to-utf8 lstr)))
+   (str-iconv *latin-to-utf8* lstr))
 
 (defun char-iconv (cd wc)
    (the <longnum> cd)(the <fixnum> wc)
@@ -102,5 +139,36 @@
 (defun wc-to-latin (wc)
    ;; Convert a character from UTF8 to Latin-9 encoding
    (the <fixnum> wc)
-   (let ((utf8-to-latin (car *iconvs*)))
-        (char-iconv utf8-to-latin wc)))
+   (char-iconv *utf8-to-latin* wc))
+
+(defun safe-newlocale (nlocname loc)
+   ;; TODO: better error reporting?
+   (the <string> nlocname)(the <longnum> loc)
+   (let ((res (newlocale nlocname loc)))
+      (if (= res 0)
+          (setq res loc))
+      res))
+
+(defun init-locale (locname)
+   ;; TODO: Finish this.
+   ;;       Do I want same error handling as C?
+   ;;       Same error reporting?
+   (if (= *latin-loc* 0)
+       (error "duplocale"))
+   (if (not (null locname))
+   	   (if (eq (self-introduction) 'macos) ; Run-time, oh well
+	       (setq latin-suffix ".ISO8859-15")
+	       (setq latin-suffix "@euro"))))
+	   ;; (setq *latin-loc* (safe-newlocale nlocname *latin-loc*))))
+
+(defun isspace (c)
+   (isspace-l c *latin-loc*))
+
+(defun strcoll (s1 s2)
+   (strcoll-l s1 s2 *latin-loc*))
+
+(defun toupper (c)
+   (toupper-l c *latin-loc*))
+
+(defun tolower (c)
+   (tolowr-l c *latin-loc*))

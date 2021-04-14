@@ -79,7 +79,9 @@
 
 ;;; Recommended usage pattern:
 
-;; TODO: is it worth splitting off some code to run interpreted for (flet ...)?
+;; Recall that nested functions don't work in clang,
+;; which breaks (flet ...) in compiled code.
+;; But I don't think this is worth splitting up the file over.
 
 ;; Keep some globals here for convenience,
 ;; keeping the thin layer closer to UNIX.
@@ -96,7 +98,7 @@
             (string-append "\"" value "\""))))
 
 (defun safe-setlocale ()
-   ;; TODO: better error reporting?
+   ;; TODO: better error reporting
    (let ((res (setlocale "")))
         (if (null res)
             (setlocale "C")
@@ -142,7 +144,7 @@
    (char-iconv *utf8-to-latin* wc))
 
 (defun safe-newlocale (nlocname loc)
-   ;; TODO: better error reporting?
+   ;; TODO: better error reporting
    (the <string> nlocname)(the <longnum> loc)
    (let ((res (newlocale nlocname loc)))
       (if (= res 0)
@@ -150,16 +152,28 @@
       res))
 
 (defun init-locale (locname)
-   ;; TODO: Finish this.
-   ;;       Do I want same error handling as C?
-   ;;       Same error reporting?
+   ;; TODO: Same error handling as C.
+   ;;       Same error reporting.
    (if (= *latin-loc* 0)
-       (error "duplocale"))
+       (error "duplocale"))             ; TODO: perror too
    (if (not (null locname))
-   	   (if (eq (self-introduction) 'macos) ; Run-time, oh well
-	       (setq latin-suffix ".ISO8859-15")
-	       (setq latin-suffix "@euro"))))
-	   ;; (setq *latin-loc* (safe-newlocale nlocname *latin-loc*))))
+       (let* ((utf8-suffix (if (eq (self-introduction) 'macos)
+                               ".UTF-8"
+                               ".utf8"))
+              (utf8-suffixlen (length utf8-suffix))
+              (latin-suffix (if (eq (self-introduction) 'macos)
+	                            ".ISO8859-15"
+	                            "@euro"))
+              (lang-countrylen (- (length locname) utf8-suffixlen))
+              (lang-country (subseq locname 0 lang-countrylen))
+              (nlocname ""))
+             (if (string= (subseq locname lang-countrylen (length locname))
+                          utf8-suffix)
+                 (progn
+                        ;; (format (standard-output) "init-locale: *latin-loc* ~A~%" *latin-loc*)
+                        (setq nlocname (string-append lang-country latin-suffix))
+                        (format (standard-output) "init-locale: nlocname ~A~%" nlocname)
+                        (setq *latin-loc* (safe-newlocale nlocname *latin-loc*)))))))
 
 (defun isspace (c)
    (isspace-l c *latin-loc*))
@@ -171,4 +185,4 @@
    (toupper-l c *latin-loc*))
 
 (defun tolower (c)
-   (tolowr-l c *latin-loc*))
+   (tolower-l c *latin-loc*))

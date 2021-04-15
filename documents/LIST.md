@@ -2,6 +2,9 @@
 
 List library written by M.Hiroi
 
+# Acknowledgement
+Thank you Mr Hiroi.
+
 # Usage 
 (import "list")
 

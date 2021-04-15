@@ -1,9 +1,6 @@
 
 (defmodule csv
     (defpublic read-csv (s)
-        (read-csv0 s) )
-
-    (defun read-csv0 (s)
         (let ((line (read-line s nil 'eof)))
            (cond ((eq line 'eof) 'eof)
                  ((string= line "") nil)
@@ -20,7 +17,7 @@
         (parse-csv1 s nil))
 
     (defun parse-csv1 (s ans)
-        (let ((line (read-csv0 s)))
+        (let ((line (read-csv s)))
            (if (eq line 'eof)
                (reverse ans)
                (parse-csv1 s (cons line ans)))))

@@ -743,11 +743,14 @@ double tarai(double x, double y, double z){
     
     (defun comp-defmodule (x)
         (let ((name (car (cdr x)))
-              (body (cdr (cdr x))) )
+              (body (cdr (cdr x)))
+              (public nil) )
            (for ((s body (cdr s)))
                 ((null s)
                  t )
-                (compile (substitute (car s) name nil)))))
+                (if (and (consp (car s)) (eq (car (car s)) 'defpublic))
+                    (setq public (cons (elt (car s) 1) public)))
+                (compile (substitute (car s) name public)))))
     
     (defun comp-defun0 (x)
         (let* ((name (elt x 1))

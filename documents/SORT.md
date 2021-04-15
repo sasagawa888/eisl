@@ -3,7 +3,7 @@
   written by M.Hiroi
 
 # Acknowledgement
-Thank you Mr Hiroi.
+Thank you Mr. Hiroi.
 
 # functions
 

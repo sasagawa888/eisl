@@ -24,7 +24,7 @@ Copying GC mode
 #include "ffi.h"
 #include "term.h"
 
-static const float VERSION = 1.90;
+static const float VERSION = 1.91;
 static const int HEAPSIZE = 20000000;
 #define CELLSIZE 20000000
 static const int WORK1 = 6000000;

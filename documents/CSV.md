@@ -10,10 +10,10 @@ read csv format data from file and return list of data.
 # function
 
 ### (read-csv stream)
-read from stream and one line data as list.
+read from stream and return one line data as list.
 
 ### (parse-csv stream)
-read from stream and all lines as nested list.
+read from stream and return all lines as nested list.
 
 ### example
 

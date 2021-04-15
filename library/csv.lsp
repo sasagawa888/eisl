@@ -2,11 +2,13 @@
 (defmodule csv
     (defpublic read-csv (s)
         (read-csv0 s) )
+
     (defun read-csv0 (s)
         (let ((line (read-line s nil 'eof)))
            (cond ((eq line 'eof) 'eof)
                  ((string= line "") nil)
                  (t (read-csv1 (convert line <list>) nil nil)) )))
+
     (defun read-csv1 (ls word ans)
         (cond ((null ls) (reverse (cons (convert-to-atom (reverse word)) ans)))
               ((char= (car ls) #\,)
@@ -16,6 +18,7 @@
     
     (defpublic parse-csv (s)
         (parse-csv1 s nil))
+
     (defun parse-csv1 (s ans)
         (let ((line (read-csv0 s)))
            (if (eq line 'eof)
@@ -33,9 +36,11 @@
         (if (null ls)
             ""
             (string-append (convert (car ls) <string>) (convert-to-string (cdr ls)))))
+
     ;;cut both side of char-list
     (defun cut-both-side (ls)
         (reverse (cdr (reverse (cdr ls)))))
+        
     ;;convert char-list to symbol
     (defun convert-to-symbol (ls)
         (convert (convert-to-string ls) <symbol>))
@@ -77,7 +82,7 @@
               ((char= (car ls) #\e) (integer-list-p (cdr ls)))
               ((not (number-char-p (car ls))) nil)
               (t (float-list-p1 (cdr ls)))))
-              
+
     (defun number-char-p (x)
         (and (char>= x #\0) (char<= x #\9)))
 )

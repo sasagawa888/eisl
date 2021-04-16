@@ -9,7 +9,7 @@
 
 const int INT_PSQRT = 1073773446; //INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;     //- sqrt(999999999)
-const int FASTSTRLONG_SIZE = 17;
+#define FASTSTRLONG_SIZE 17
 
 static tfunc deftfunc;
 

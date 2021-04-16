@@ -20,7 +20,7 @@ Copying GC mode
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
-#include "compat_cdefs.h"
+#include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
 

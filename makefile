@@ -1,4 +1,4 @@
-OPSYS ?= linux
+OPSYS ?= openbsd
 CC ?= cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
@@ -61,7 +61,7 @@ $(EISL): $(EISL_OBJS)
 	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBSRASPI) 
 else
 eisl2: $(EISL_OBJS) $(EISL)
-$(EISL): $(EISL_OBJS)
+$(EISL): $(EISL_OBJS) library/i18n.lsp
 	$(LD) $(LDFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
 endif
 
@@ -69,6 +69,17 @@ endif
 
 %.o: %.c eisl.h ffi.h term.h
 	$(CC) $(CFLAGS) -c $< -o $@
+
+library/i18n.lsp: library/i18n.tmpl
+ifeq ($(OPSYS),macos)
+	sed -e 's/@C_OPTION@/-liconv/g' < $^ > $@
+else
+ifeq ($(OPSYS),openbsd)
+	sed -e 's&@C_OPTION@&-I/usr/local/include -L/usr/local/lib -liconv&g' < $^ > $@
+else
+	sed -e 's/@C_OPTION@//g' < $^ > $@
+endif
+endif
 
 edlis : edlis.o
 	$(LD) $(LDFLAGS) edlis.o -o edlis

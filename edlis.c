@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <signal.h>
-#include "compat_cdefs.h"
+#include "compat/cdefs.h"
 #include "edlis.h"
 
 //-----editor-----

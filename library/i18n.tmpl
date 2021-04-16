@@ -132,7 +132,7 @@
    (c-lang "char *outbuf;")
    (c-lang "size_t inbytesleft, outbytesleft;")
    (c-lang "inbuf = Fgetname(LSTR);")
-   (c-lang "inbytesleft = strlen(Fgetname(LSTR));")
+   (c-lang "inbytesleft = strlen(inbuf);")
    (c-lang "outbuf = ustr;")
    (c-lang "outbytesleft = I18N_STR_MAX;")
    (c-lang "iconv(Fgetlong(CD), (char **)&inbuf, &inbytesleft, &outbuf, &outbytesleft);")
@@ -210,3 +210,6 @@
 (defun tolower (c)
    (the <character> c)
    (tolower-l c *latin-loc*))
+
+(defun cleanup-locale ()
+   (freelocale *latin-loc*))

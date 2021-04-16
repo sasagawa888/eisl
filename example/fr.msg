@@ -5,4 +5,4 @@ $quote "
 
 $set 1
 1 "Bonjour le monde"
-2 "Les quatre saisons sont printemps, été, automne et hiver.
+2 "Les quatre saisons sont printemps, été, automne et hiver."

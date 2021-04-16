@@ -13,6 +13,8 @@
 (c-include "\"compat/locale.h\"")
 (c-include "<nl_types.h>")
 (c-include "<iconv.h>")
+(c-include "<stdlib.h>")
+(c-include "<stdio.h>")
 (c-option "@C_OPTION@")
 (c-define "I18N_STR_MAX" "256")
 
@@ -51,26 +53,32 @@
    (c-lang "res = Fmakefaststrlong(res_str);"))
 
 (defun newlocale (nlocname loc)
+   (the <string> nlocname)(the <longnum> loc)
    (c-lang "char *res_str;")
    (c-lang "res_str = fast_sprint_hex_long(newlocale(LC_ALL_MASK, Fgetname(NLOCNAME), Fgetlong(LOC)));")
    (c-lang "res = Fmakefaststrlong(res_str);"))
 
 (defun freelocale (loc)
+   (the <longnum> loc)
    (c-lang "res = NIL; freelocale(Fgetlong(LOC));"))
 
 (defun isspace-l (c locale)
+   (the <character> c)(the <longnum> locale)
    (c-lang "res = ((isspace_l(Fgetname(C)[0], Fgetlong(LOCALE)) == 0) ? NIL : T);"))
 
 (defun strcoll-l (s1 s2 locale)
+   (the <string> s1)(the <string> s2)(the <longnum> locale)
    (c-lang "res = strcoll(Fgetname(S1), Fgetname(S2), Fgetlong(LOCALE)) | INT_FLAG;"))
 
 (defun toupper-l (c locale)
+   (the <character> c)(the <longnum> locale)
    (c-lang "char uc[2];")
    (c-lang "uc[0] = toupper_l(Fgetname(C)[0], Fgetlong(LOCALE));")
    (c-lang "uc[1] = '\\0';")
    (c-lang "res = Fmakechar(uc);"))
 
 (defun tolower-l (c locale)
+   (the <character> c)(the <longnum> locale)
    (c-lang "char lc[2];")
    (c-lang "lc[0] = tolower_l(Fgetname(C)[0], Fgetlong(LOCALE));")
    (c-lang "lc[1] = '\\0';")
@@ -88,20 +96,34 @@
 (defglobal *utf8-to-latin* (iconv-open "utf8" "latin-9"))
 (defglobal *latin-loc* (duplocale))
 
+;; I could (import "unix")
+;; but I want to avoid funny dependencies like that.
+(defun i18n--getenv (name)
+   (the <string> name)
+   (c-lang "char *val;")
+   (c-lang "val = getenv(Fgetname(NAME));")
+   (c-lang "res = (val == NULL) ? NIL : Fmakestr(val);"))
+
 (defun safe-getenv (name)
-   ;; I could (import "unix") for the Lisp version,
-   ;; not sure if it's worth funny dependencies like that though.
-   (let ((value (getenv "name")))
+   (the <string> name)
+   (let ((value (i18n--getenv name)))
         (if (null value)
             "(unset)"
             (string-append "\"" value "\""))))
 
+(defun i18n--perror (string)
+   (the <string> string)
+   (c-lang "res = NIL; perror(Fgetname(STRING));"))
+
 (defun safe-setlocale ()
-   ;; TODO: better error reporting
    (let ((res (setlocale "")))
         (if (null res)
-            (setlocale "C")
-            res)))
+            (progn (i18n--perror "setlocale")
+                   (format (standard-output) "warning: Setting locale failed.~%warning: Please check that your locale settings:~%        LC_ALL = ~A~%        LANG = ~A~%    are supported and installed on your system.~%warning: Falling back to the standard locale (\"C\").~%" (safe-getenv "LC_ALL") (safe-getenv "LANG"))
+                   (if (null (setlocale "C"))
+                       (progn (i18n--perror "setlocale")
+                              (error "setlocale")))))
+        res))
 
 (defun str-iconv (cd lstr)
    (the <longnum> cd)(the <string> lstr)
@@ -142,19 +164,20 @@
    (the <fixnum> wc)
    (char-iconv *utf8-to-latin* wc))
 
-(defun safe-newlocale (nlocname loc)
-   ;; TODO: better error reporting
-   (the <string> nlocname)(the <longnum> loc)
+(defun safe-newlocale (nlocname loc fallback)
+   (the <string> nlocname)(the <longnum> loc)(the <string> fallback)
    (let ((res (newlocale nlocname loc)))
-      (if (= res 0)
-          (setq res loc))
-      res))
+        (if (= res 0)
+            (progn (i18n--perror "newlocale")
+                   (format (standard-output) "warning: Setting locale failed.~%warning: Please check that the locale \"~A\" is supported and installed on your system.~%warning: Falling back to the global locale (\"~A\").~%" nlocname fallback)
+                   (setq res loc)))
+        res))
 
 (defun init-locale (locname)
-   ;; TODO: Same error handling as C.
-   ;;       Same error reporting.
+   (the <string> locname)
    (if (= *latin-loc* 0)
-       (error "duplocale"))             ; TODO: perror too
+       (progn (i18n--perror "duplocale")
+              (error "duplocale")))
    (if (not (null locname))
        (let* ((utf8-suffix (if (eq (self-introduction) 'macos)
                                ".UTF-8"
@@ -169,19 +192,21 @@
              (if (string= (subseq locname lang-countrylen (length locname))
                           utf8-suffix)
                  (progn
-                        ;; (format (standard-output) "init-locale: *latin-loc* ~A~%" *latin-loc*)
                         (setq nlocname (string-append lang-country latin-suffix))
-                        (format (standard-output) "init-locale: nlocname ~A~%" nlocname)
-                        (setq *latin-loc* (safe-newlocale nlocname *latin-loc*)))))))
+                        (setq *latin-loc* (safe-newlocale nlocname *latin-loc* locname)))))))
 
 (defun isspace (c)
+   (the <character> c)
    (isspace-l c *latin-loc*))
 
 (defun strcoll (s1 s2)
+   (the <string> s1)(the <string> s2)
    (strcoll-l s1 s2 *latin-loc*))
 
 (defun toupper (c)
+   (the <character> c)
    (toupper-l c *latin-loc*))
 
 (defun tolower (c)
+   (the <character> c)
    (tolower-l c *latin-loc*))

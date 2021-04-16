@@ -8,4 +8,5 @@
    (c-lang "res = (val == NULL) ? NIL : Fmakestr(val);"))
 
 (defun perror (string)
+   (the <string> string)
    (c-lang "res = NIL; perror(Fgetname(STRING));"))

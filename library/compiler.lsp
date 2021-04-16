@@ -2243,11 +2243,16 @@ double tarai(double x, double y, double z){
     
     ;;add code0 stream #include C code.
     (defun comp-c-include (x)
-        (unless (= (length x) 2) (error* "c-include: illegal form" x))
+        (unless (or (= (length x) 2) (= (length x) 3)) (error* "c-include: illegal form" x))
         (unless (stringp (elt x 1)) (error* "c-include: argument must be string" x))
-        (format code0 "#include ")
-        (format code0 (elt x 1))
-        (format code0 "~%"))
+        (cond ((and (= (length x) 3) (eq (self-introduction) (elt x 2)))
+               (format code0 "#include ")
+               (format code0 (elt x 1))
+               (format code0 "~%"))
+              ((= (length x) 2)
+               (format code0 "#include ")
+               (format code0 (elt x 1))
+               (format code0 "~%"))))
     
     ;;add code2 stream C define
     (defun comp-c-define (x)
@@ -2268,7 +2273,12 @@ double tarai(double x, double y, double z){
     
     ;;add compile option
     (defun comp-c-option (x)
-        (setq c-lang-option (elt x 1)))
+        (unless (or (= (length x) 2) (= (length x) 3)) (error* "c-option: illegal form" x))
+        (unless (stringp (elt x 1)) (error* "c-option: argument must be string" x))
+        (cond ((and (= (length x) 3) (eq (self-introduction) (elt x 2)))
+               (setq c-lang-option (elt x 1)))
+              ((= (length x) 2)
+               (setq c-lang-option (elt x 1)))))
     
     ;;defglobal
     (defun comp-defglobal (x)

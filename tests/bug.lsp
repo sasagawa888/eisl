@@ -1,2 +1,12 @@
+;;;
+
+(c-include "<locale.h>" macos)
+(c-include "<stdlib.h>" openbsd)
+(c-include "<stdio.h>" linux)
+(c-include "<syslog.h>")
+
+(c-option "-fPIC" linux)
+
 (defun foo (x)
-    (+ x 123456789012345))
+    (c-lang "printf(\"%d\",X);"))
+

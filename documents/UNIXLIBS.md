@@ -5,7 +5,8 @@ Code using them should be portable because they're defined by a vendor-neutral s
 [UNIX V7](https://en.wikipedia.org/wiki/Single_UNIX_Specification)
 or an
 [IETF RFC](https://tools.ietf.org/html/rfc4506).
-I wrapped some I personally found useful in the past for use from Lisp code, an overview follows:
+I wrapped some I personally found useful in the past for use from Lisp code, an overview follows.
+The code can also be consulted for more detailed questions.
 
 ## Syslog
 
@@ -71,6 +72,15 @@ However, OpenBSD have made an (arguably wise) decision to not support the Latin-
 And I think there is a bug in the OS libraries on macOS 11, even my C test code failed there.
 Things do work as designed on Linux, for what it's worth.
 
+How things are *supposed to* work is something like
+
+```lisp
+(import "i18n")
+(defglobal *locname* (safe-setlocale))
+(init-locale *locname*)
+(toupper #\a)  ; But accented letters now work too
+```
+
 At the very least calling `setlocale` is required at the start of curses programs, i.e. virtty programs for eisl.
 This is cleaner as a separate call not coupled to virtty.
 
@@ -81,4 +91,6 @@ For now, only the `getenv` function and `perror` are defined here (but I'm not s
 
 ## Others
 
-Don't forget that there is already a [TCPIP] module for socket communication.
+Don't forget that there is already a
+[TCPIP](TCPIP.md)
+module for socket communication.

@@ -3,10 +3,9 @@
 #ifndef LOCALE_H
 #define LOCALE_H
 
+#include <locale.h>
 #if __APPLE__
 #include <xlocale.h>
-#else
-#include <locale.h>
 #endif
 
 #endif

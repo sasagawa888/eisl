@@ -1,4 +1,4 @@
-OPSYS ?= openbsd
+OPSYS ?= linux
 CC ?= cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
@@ -52,7 +52,7 @@ EISL_OBJS = main.o \
 	compute.o \
 	edit.o
 
-all: eisl edlis
+all: eisl edlis library/i18n.lsp
 
 eisl:
 ifeq  ($(shell uname -n),raspberrypi)
@@ -61,7 +61,7 @@ $(EISL): $(EISL_OBJS)
 	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBSRASPI) 
 else
 eisl2: $(EISL_OBJS) $(EISL)
-$(EISL): $(EISL_OBJS) library/i18n.lsp
+$(EISL): $(EISL_OBJS)
 	$(LD) $(LDFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
 endif
 

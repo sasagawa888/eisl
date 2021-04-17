@@ -14,6 +14,7 @@
 (defmacro match (x :rest body)
     (let ((vars (extract-variables body nil nil))
           (body1 (expand-body x body)))
+          (print body1)
         `(let ,vars ,body1)))
 
 
@@ -21,7 +22,7 @@
     (cons 'cond (expand-body1 x body)))
 
 (defun expand-body1 (x body)
-    (mapcar (lambda (y) (cons (cdr (expand-match (car y) nil nil)) (cdr y)))
+    (mapcar (lambda (y) (cons (cdr (expand-match x (car y) nil nil)) (cdr y)))
             body)) 
 
 ;; e.g. _a _x  return T
@@ -54,10 +55,10 @@
           ((characterp y) (cons env (cons (list 'char= x y) ans)))
           ((stringp y) (cons env (cons (list 'string= x y) ans)))
           ((and (variablep y) (not (member y env)))
-           (cons (cons y env) (list 'setq y x)))
+           (cons (cons y env) (cons (list 'setq y x) ans)))
           ((and (variablep y) (member y env))
            (cons env (cons (list 'equal x y) ans)))
-          ((symbolp y) (cons env (list 'eq x y)))
+          ((symbolp y) (cons env (cons (list 'eq x y) ans)))
           ((consp y)
            (let ((res (expand-match (list 'car x) (car y) env ans)))
                     (expand-match (list 'cdr x) (cdr y) (car res) (cdr res))))))

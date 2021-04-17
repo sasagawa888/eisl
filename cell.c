@@ -1105,7 +1105,6 @@ static inline int HexDigitToNybble(char c){
     return c - '0';
 }
 int makefaststrlong(const char *str){
-    /* TODO: replace with unsigned long long? */
     uint64_t u = 0;
     for (int i = 0; i < 8; i++){
         uint8_t hi_nybble = HexDigitToNybble(str[14 - (i << 1)]);

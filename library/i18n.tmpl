@@ -92,12 +92,15 @@
 
 ;; Keep some globals here for convenience,
 ;; keeping the thin layer closer to UNIX.
-(defglobal *latin-to-utf8* (iconv-open "ISO-8859-15" "UTF-8"))
-(defglobal *utf8-to-latin* (iconv-open "UTF-8" "ISO-8859-15"))
+(defglobal *iconvs* (cons 0 0))
 (defglobal *latin-loc* (duplocale))
 
+(defun init-iconv ()
+   (setf (car *iconvs*) (iconv-open "ISO-8859-15" "UTF-8"))
+   (setf (cdr *iconvs*) (iconv-open "UTF-8" "ISO-8859-15")))
+
 ;; I could (import "unix")
-;; but I want to avoid funny dependencies like that.
+;; but I prefer some small duplication to dependencies.
 (defun i18n--getenv (name)
    (the <string> name)
    (c-lang "char *val;")
@@ -142,7 +145,8 @@
 (defun str-ltou (lstr)
    ;; Convert a string from Latin-9 to UTF8 encoding
    (the <string> lstr)
-   (str-iconv *latin-to-utf8* lstr))
+   (let ((latin-to-utf8 (cdr *iconvs*)))
+        (str-iconv latin-to-utf8 lstr)))
 
 (defun char-iconv (cd wc)
    (the <longnum> cd)(the <fixnum> wc)
@@ -162,7 +166,8 @@
 (defun wc-to-latin (wc)
    ;; Convert a character from UTF8 to Latin-9 encoding
    (the <fixnum> wc)
-   (char-iconv *utf8-to-latin* wc))
+   (let ((utf8-to-latin (car *iconvs*)))
+        (char-iconv utf8-to-latin wc)))
 
 (defun safe-newlocale (nlocname loc fallback)
    (the <string> nlocname)(the <longnum> loc)(the <string> fallback)

@@ -1,17 +1,27 @@
 ;;; pattern match
 ;;; under construction
+;;; (match x
+;;;      ((+ _a _b) (+ _a 2))
+;;;      ((- _a _a) (- _a 3)))
+;;;    expand
+;;;  (let ((_a nil)
+;;;        (_b nil))
+;;;     (cond ((and (eq (car x) '+) (setq _a (car (cdr x))) (setq _b (car (cdr (cdr x))))
+;;;            (+ _a _2))
+;;;           ((and (eq (car x) '0) (setq _a (car (cdr x))) (equal _a (car (cdr (cdr x))))
+;;;            (- _a 3)))))    
 
-(defmacro match (x body)
-    (let ((vars (extract-variables body))
-          (body (expand-body x body)))
-        `(let ,vars ,body)))
+(defmacro match (x :rest body)
+    (let ((vars (extract-variables body nil nil))
+          (body1 (expand-body x body)))
+        `(let ,vars ,body1)))
 
 
 (defun expand-body (x body)
-    (list 'cond (expand-body1 x body)))
+    (cons 'cond (expand-body1 x body)))
 
 (defun expand-body1 (x body)
-    (mapcar (lambda (y) (cons (list 'pattern-match x (car y)) (cdr y)))
+    (mapcar (lambda (y) (cons (cdr (expand-match (car y) nil nil)) (cdr y)))
             body)) 
 
 ;; e.g. _a _x  return T
@@ -20,8 +30,11 @@
          (char= (car (convert (convert x <string>) <list>)) #\_)))
 
 ;; (((+ _a 2)...) ((* _b 3)...)) return ((_a nil)(_b nil))
-(defun extract-variables (body)
-    (mapc (lambda (x) (extract-variable (car x))) body))
+(defun extract-variables (body var ans)
+    (cond ((and (null body) (null var)) (reverse ans))
+          ((null var) (extract-variables (cdr body) (extract-variable (car (car body))) ans))
+          ((not (member (car var) ans)) (extract-variables body (cdr var) (cons (car var) ans)))
+          (t (extract-variables body (cdr var) ans))))
 
 ;; e.g. (+ _a 2 _b) return ((_a nil)(_b nil))
 (defun extract-variable (x)
@@ -31,21 +44,20 @@
           ((variablep (car x)) (cons (list (car x) nil) (extract-variable (cdr x))))
           (t (extract-variable (cdr x)))))
 
-;; e.g. (+ 1 2) (+ _a _b) eval (setq _a 1)(setq _b 2) and return env
-;; e.g. (* 1 2) (+ _a _b) return nil
-(defun pattern-match (x y env)
-    (cond ((and (null x) (null y)) env)
-          ((and (null x) (consp y)) 'no)
-          ((and (consp y) (null y)) 'no)
-          ((and (numberp x) (numberp y) (= x y)) env)
-          ((and (characterp x) (characterp y) (char= x y)) env)
-          ((and (stringp x) (stringp y) (string= x y)) env)
+
+;; e.g. x and (+ _a _b)  ans = (and (eq (car x) '+) (setq _a (car (cdr x)) (setq _b (car (cdr (cdr x))))
+;; env = (_a _b)
+;; return (env . ans)
+(defun expand-match (x y env ans)
+    (cond ((null y) (cons env (cons 'and (reverse ans))))
+          ((numberp y) (cons env (cons (list '= x y) ans)))
+          ((characterp y) (cons env (cons (list 'char= x y) ans)))
+          ((stringp y) (cons env (cons (list 'string= x y) ans)))
           ((and (variablep y) (not (member y env)))
-           (progn (eval `(setq ,y ,x)) env))
-          ((and (symbolp x) (symbolp y) (eq x y)) env)
-          ((and (consp x) (consp y))
-           (let ((env1 (pattern-match (car x) (car y) env)))
-                    (if (eq env1 'no)
-                        'no
-                        (pattern-match (cdr x) (cdr y) env1))))
-          (t 'no)))
+           (cons (cons y env) (list 'setq y x)))
+          ((and (variablep y) (member y env))
+           (cons env (cons (list 'equal x y) ans)))
+          ((symbolp y) (cons env (list 'eq x y)))
+          ((consp y)
+           (let ((res (expand-match (list 'car x) (car y) env ans)))
+                    (expand-match (list 'cdr x) (cdr y) (car res) (cdr res))))))

@@ -67,6 +67,8 @@
           ((numberp y) (cons env (cons (list '= x y) ans)))
           ((characterp y) (cons env (cons (list 'char= x y) ans)))
           ((stringp y) (cons env (cons (list 'string= x y) ans)))
+          ((general-vector-p y) (cons env (cons (list 'equal x y) ans)))
+          ((general-array*-p y) (cons env (cons (list 'equal x y) ans)))
           ((and (variablep y) (not (member y env)))
            (cons (cons y env) (cons (list 'setq y x) ans)))
           ((and (variablep y) (member y env))

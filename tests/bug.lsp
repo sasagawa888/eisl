@@ -12,3 +12,8 @@
 
 (test (extract-variables '(((+ _a _b)(* _a 1)) ((* _b 2)(l _b))) nil nil) ((_a nil)(_b nil)))
 
+
+(defun foo (x)
+    (match x
+        ((+ _a _b) (+ _a 2))
+        ((- _a _a) (* _a 2))))

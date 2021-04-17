@@ -14,7 +14,6 @@
 (defmacro match (x :rest body)
     (let ((vars (extract-variables body nil nil))
           (body1 (expand-body x body)))
-          (print body1)
         `(let ,vars ,body1)))
 
 
@@ -58,7 +57,7 @@
            (cons (cons y env) (cons (list 'setq y x) ans)))
           ((and (variablep y) (member y env))
            (cons env (cons (list 'equal x y) ans)))
-          ((symbolp y) (cons env (cons (list 'eq x y) ans)))
+          ((symbolp y) (cons env (cons (list 'eq x (list 'quote y)) ans)))
           ((consp y)
            (let ((res (expand-match (list 'car x) (car y) env ans)))
                     (expand-match (list 'cdr x) (cdr y) (car res) (cdr res))))))

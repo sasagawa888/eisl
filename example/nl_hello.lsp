@@ -20,7 +20,7 @@
 
 (defun main ()
    (let ((locname (safe-setlocale))
-         (catd (catopen "i18n_ga.cat")))
+         (catd (catopen "i18n.cat")))
 	(init-locale locname)
         (format (standard-output) "~A~%" (str-ltou (catgets catd 1 1 "Hello world")))
         (format (standard-output) "~A~%" (str-ltou (catgets catd 1 2 "The four seasons are spring, summer, autumn and winter.")))

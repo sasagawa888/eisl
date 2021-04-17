@@ -92,8 +92,8 @@
 
 ;; Keep some globals here for convenience,
 ;; keeping the thin layer closer to UNIX.
-(defglobal *latin-to-utf8* (iconv-open "latin-9" "utf8"))
-(defglobal *utf8-to-latin* (iconv-open "utf8" "latin-9"))
+(defglobal *latin-to-utf8* (iconv-open "ISO-8859-15" "UTF-8"))
+(defglobal *utf8-to-latin* (iconv-open "UTF-8" "ISO-8859-15"))
 (defglobal *latin-loc* (duplocale))
 
 ;; I could (import "unix")

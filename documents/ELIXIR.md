@@ -1,4 +1,4 @@
-# Pipe
+# Elixir
 Elixir like syntax extension 
 
 # Usage

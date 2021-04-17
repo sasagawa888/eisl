@@ -36,3 +36,7 @@
 (test (foo '(^ 3 3)) 27)
 (test (foo '(asdf 2 3)) (3 2))
 (test (foo '(e 1 2 3)) ((2 3)))
+
+(defpattern uoo
+    ((a _a) (pipe _a |> (cos) |> (sin)))
+    ((b _b) (pipe _b |> (tan) |> (abs))))

@@ -58,6 +58,8 @@
           ((and (variablep y) (member y env))
            (cons env (cons (list 'equal x y) ans)))
           ((symbolp y) (cons env (cons (list 'eq x (list 'quote y)) ans)))
+          ((and (consp y) (eq (car y) ':rest))
+            (cons env (cons 'and (reverse (cons (list 'setq (car (cdr y)) x) ans)))))
           ((consp y)
            (let ((res (expand-match (list 'car x) (car y) env ans)))
                     (expand-match (list 'cdr x) (cdr y) (car res) (cdr res))))))

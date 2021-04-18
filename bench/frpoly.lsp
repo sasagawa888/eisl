@@ -37,6 +37,7 @@
 
 (defmacro pfloor (x y) `(div ,x ,y))
 
+
 (defun pcoefadd (e c x) 
    (if (pzerop c)
        x
@@ -189,7 +190,7 @@
                   (setq u (cdr (cdr u)))
                   (go c)))
             (go b)
-         r
+         r  
             ;; return nil
             )))
 

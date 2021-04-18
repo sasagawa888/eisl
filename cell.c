@@ -118,6 +118,7 @@ void initclass(void){
     cparse_error = makeclass("parse-error",cerror);
     cprogram_error = makeclass("program-error",cerror);
     cdomain_error = makeclass("domain-error",cprogram_error);
+    cclass_error = makeclass("class-error",cprogram_error);
     cundefined_entity = makeclass("undefined-entity",cprogram_error);
     cunbound_variable = makeclass("unbound-variable",cundefined_entity);
     cundefined_function = makeclass("undefined-function",cundefined_entity);
@@ -129,10 +130,11 @@ void initclass(void){
     cstandard_class = makeclass("standard-class",cobject);
     cstandard_object = makeclass("standard-object",cobject);
     cstream = makeclass("stream",cobject);
+    cinvalid = makeclass("invalid",cinvalid);
     cfixnum = makeclass("fixnum",cinteger);
     clongnum = makeclass("longnum",cinteger);
     cbignum = makeclass("bignum",cinteger);
-
+    cfloat_array = makeclass("float-array",cbasic_array);
 
     bindclass("<OBJECT>",cobject);
     bindclass("<BASIC-ARRAY>",cbasic_array);
@@ -163,6 +165,7 @@ void initclass(void){
     bindclass("<PARSE-ERROR>",cparse_error);
     bindclass("<PROGRAM-ERROR>",cprogram_error);
     bindclass("<DOMAIN-ERROR>",cdomain_error);
+    bindclass("<CLASS-ERROR>",cclass_error);
     bindclass("<UNDEFINED-ENTITY>",cundefined_entity);
     bindclass("<UNBOUND-VARIABLE>",cunbound_variable);
     bindclass("<UNDEFINED-FUNCTION>",cundefined_function);
@@ -173,9 +176,11 @@ void initclass(void){
     bindclass("<STANDARD-CLASS>",cstandard_class);
     bindclass("<STANDARD-OBJECT>",cstandard_object);
     bindclass("<STREAM>",cstream);
+    bindclass("<INVALID>",cinvalid);
     bindclass("<FIXNUM>",cfixnum);
     bindclass("<LONGNUM>",clongnum);
     bindclass("<BIGNUM>",cbignum);
+    bindclass("<FLOAT-ARRAY>",cfloat_array);
 
     initerrargs(cserious_condition);
     initerrargs(cerror);
@@ -187,6 +192,7 @@ void initclass(void){
     initerrargs(cparse_error);
     initerrargs(cprogram_error);
     initerrargs(cdomain_error);
+    initerrargs(cclass_error);
     initerrargs(cundefined_entity);
     initerrargs(cunbound_variable);
     initerrargs(cundefined_function);
@@ -263,7 +269,7 @@ void setlexenv(int sym, int val){
     int addr;
 
     addr= assq(sym,ep);
-    if(addr == -1)
+    if(addr == FAILSE)
         addlexenv(sym,val);
     else
         SET_CDR(addr,val);
@@ -271,14 +277,19 @@ void setlexenv(int sym, int val){
 
 //bind value to dynamic environment
 int setdynenv(int sym, int val){
-    int addr;
+    int i;
 
-    addr= assq(sym,dp);
-    if(addr == -1)
-        adddynenv(sym,val);
-    else
-        SET_CDR(addr,val);
-    
+    for(i=dp;i>0;i--){
+        if(dynamic[i][0] == sym){
+            dynamic[i][1] = val;
+            return(T);
+        }
+    }
+    dp++;
+    if(dp >= DYNSIZE)
+        error(DYNAMIC_OVERF, "setdynenv", NIL);
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
     return(T);
 }
 
@@ -288,37 +299,41 @@ void addlexenv(int sym, int val){
     ep = cons(cons(sym,val),ep);
 }
 
-
-//addition of lexical variable
+//addition of dynamic variable
 int adddynenv(int sym, int val){
-    dp = cons(cons(sym,val),dp);
+    dp++;
+    if(dp >= DYNSIZE)
+        error(DYNAMIC_OVERF, "adddynenv", NIL);
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
     return(T);
 }
+
 
 //environment is association list
 // env = ((sym1 . val1) (sym2 . val2) ...)
 // find value with assq
-// when not find return -1
+// when not find return FAILSE
 int findenv(int sym){
     int addr;
 
     addr = assq(sym,ep);
 
-    if(addr == -1)
-        return(-1);
+    if(addr == FAILSE)
+        return(FAILSE);
     else
         return(cdr(addr));
 }
+
 //find in dynamic environment
 int finddyn(int sym){
-    int addr;
+    int i;
 
-    addr = assq(sym,dp);
-
-    if(addr == -1)
-        return(-1);
-    else
-        return(cdr(addr));
+    for(i=dp;i>0;i--){
+        if(dynamic[i][0] == sym)
+            return(dynamic[i][1]);
+    }
+    return(FAILSE);
 }
 
 //bind to association list destructively
@@ -326,7 +341,7 @@ void setval(int sym, int val, int ls){
     int addr;
 
     addr= assq(sym,ls);
-    if(addr != -1)
+    if(addr != FAILSE)
         SET_CDR(addr,val);
 }
 
@@ -396,6 +411,7 @@ int hash(const char *name){
 }
 
 //-------for debug------------------
+DEF_GETTER(char, FLAG, flag, NIL)
 void cellprint(int addr){
     switch(GET_FLAG(addr)){
         case FRE:   printf("FRE "); break;
@@ -482,9 +498,11 @@ void heapdump(int start, int end){
 
 
 void store_backtrace(int x){
-    int i,y;
+    int i;
 
     for(i=1;i<BACKSIZE;i++){
+      int y;
+      
         y = backtrace[i];
         backtrace[i-1] = y;
     }
@@ -494,13 +512,16 @@ void store_backtrace(int x){
 //----------------------------------------
 
 int makeint(int intn){
-    int addr;
+    //int addr;
 
-    addr = freshcell();
-    SET_TAG(addr,INTN);
-    SET_INT(addr,intn);
-    SET_AUX(addr,cfixnum); //class fixnum
-    return(addr);
+    //addr = freshcell();
+    //SET_TAG(addr,INTN);
+    //SET_INT(addr,intn);
+    //SET_AUX(addr,cfixnum); //class fixnum
+    if(intn >= 0)
+        return(INT_FLAG | intn);
+    else
+        return(intn);
 }
 
 int makelong(long long int lngnum){
@@ -714,12 +735,14 @@ int makestream(FILE *port, int type){
 
 //--------array-------
 int makearray(int ls, int obj){
-    int size,res,i,n,ls1, *vec;
+    int size,res,i,ls1, *vec;
 
     ls1 = ls;
     if(!nullp(ls)){
         size = 1;
         while(!nullp(ls)){
+          int n;
+          
             n = GET_INT(car(ls));
             if(n==0)
                 n=1;
@@ -759,14 +782,17 @@ int makearray(int ls, int obj){
 }
 
 // for Deep-Learning float type array
+static inline void SET_FVEC(int addr,float *x) { heap[addr].val.car.dyna_fvec = x; }
 int makefarray(int ls, int obj){
-    int size,res,i,n,ls1;
+    int size,res,i,ls1;
     float *vec;
 
     ls1 = ls;
     if(!nullp(ls)){
         size = 1;
         while(!nullp(ls)){
+          int n;
+          
             n = GET_INT(car(ls));
             if(n==0)
                 n=1;
@@ -794,7 +820,7 @@ int makefarray(int ls, int obj){
     }
     SET_TAG(res,FARR);
     SET_CDR(res,ls1);
-    SET_AUX(res,cgeneral_array_star); //class
+    SET_AUX(res,cfloat_array); //class
     SET_OPT(res,size); //for GC 
     ac = ac + size;    //remenber allocate size
     return(res);
@@ -974,9 +1000,9 @@ int initinst1(int inst_vars, int sc){
 }
 
 int initinst2(int inst_vars, int class_vars){
-    int n;
-
     while(!nullp(class_vars)){
+      int n;
+
         if((n=assq(caar(class_vars),inst_vars)))
             SET_CDR(n,copy(cdar(class_vars)));
         class_vars = cdr(class_vars);
@@ -1058,7 +1084,7 @@ int makeintlong(int n){
     return(addr);
 }
 
-int makestrflt(char *str){
+int makestrflt(const char *str){
     return(makeflt(atof(str)));
 }
 
@@ -1066,6 +1092,9 @@ int makedoubleflt(double x){
     return(makeflt(x));
 }
 
+int makestrlong(const char *str){
+    return(makelong(atol(str)));
+}
 
 int nth_cdr(int n, int x){
 	if(n == 0)
@@ -1076,7 +1105,6 @@ int nth_cdr(int n, int x){
 
 
 int convert(int arg1, int arg2){
-    double x;
     char str[STRSIZE];
 
     switch(GET_TAG(arg1)){
@@ -1113,6 +1141,8 @@ int convert(int arg1, int arg2){
                 return(makeint((int)GET_FLT(arg1)));
             }
             else if(GET_AUX(arg2) == cstring){
+              double x;
+              
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
                     sprintf(str, "%0.16g", x);
@@ -1168,7 +1198,10 @@ int adaptp(int x, int y){
         else
         	return(0);
     }
-    if(GET_AUX(x) == GET_AUX(y))
+    if (x >= CELLSIZE) {
+      error(ILLEGAL_ARGS, "adaptp", x);
+      return(0);
+    } else if(GET_AUX(x) == GET_AUX(y))
     	return(1);
     else if(subclassp(GET_AUX(x),GET_AUX(y)))
     	return(1);
@@ -1215,7 +1248,7 @@ int fast_cdr(int x){
 
 
 int set_dynamic(int x, int y){
-	if(finddyn(x) != -1)
+	if(finddyn(x) != FAILSE)
         setdynenv(x,y);
     else
     	error(UNDEF_VAR, "set-dynamic", x);

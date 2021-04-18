@@ -121,7 +121,7 @@
 	$stream-error 
 	$undefined-entity) :target)
 
-#|
+
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -136,7 +136,7 @@
 (test (with-handler #'continue-condition-handler
 	       (cerror "cont" "err")) nil)
 ($error (with-handler #'continue-condition-handler
-		      (error "err")) <error>)
+		      (error "err")) <error>)		  
 ;;;
 ($eval 
  (defun continue-condition-handler-2 (condition)
@@ -155,7 +155,6 @@
 	$simple-error 
 	$stream-error 
 	$undefined-entity) :target)
-|#
 ;;;------------------------------------------------------------
 ;;; [special-operator]
 ;;;
@@ -199,6 +198,7 @@
 ($argc with-handler 1 0 1)
 ($type with-handler ($function $generic) :target)
 
+
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -215,15 +215,18 @@
 	   (cons (arithmetic-error-operation condition)
 		 (arithmetic-error-operands condition)))
      (throw 'c-arithmetic-error data))))
+
 ;;; division-by-zero
 (test (functionp (car 
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0))))) t)
+
 (test (equal (function div) (car 
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0))))) t)
+
 (test (cdr
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
@@ -259,7 +262,6 @@
 ($argc arithmetic-error-operands 1 0 0)
 ($type arithmetic-error-operation ($arithmetic-error) :target)
 ($type arithmetic-error-operands ($arithmetic-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -365,13 +367,16 @@
 				  (condition-continuable 1)))))
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <serious-condition>)) t)
+
 ;;; <arithmetic-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (arithmetic-error-operation 1)))))
+				  
 (test (car data) 1 eql)
 (test (eq (cdr data) (class <arithmetic-error>)) t)
+
 ;;; <domain-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
@@ -413,7 +418,6 @@
 ;;; domain-error
 ($type domain-error-object ($domain-error) :target)
 ($type domain-error-expected-class ($domain-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -443,7 +447,6 @@
 ;;; domain-error
 ($type parse-error-string ($parse-error) :target)
 ($type parse-error-expected-class ($parse-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -476,7 +479,6 @@
 ;;; domain-error
 ($type simple-error-format-string ($simple-error) :target)
 ($type simple-error-format-arguments ($simple-error) :target)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -492,6 +494,7 @@
 		 nil))
      (throw 'c-simple-error data))))
 ;;;
+#|
 ($eval (tp-make-tmp-file))
 ($eval (defglobal str (open-io-file *tp-example-file*)))
 (test (streamp (car
@@ -499,12 +502,11 @@
    (with-handler #'stream-error-handler
 		 (read str))))) t)
 ($eval (close str))
- 
 ;;;
 ($argc stream-error-stream 1 0 0)
 ;;; domain-error
 ($type stream-error-stream ($stream-error) :target)
-
+|#
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;

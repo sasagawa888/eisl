@@ -28,13 +28,17 @@
           
 
 (defmacro $error (form name)
-  `(let ((ans (catch 'c-parse-error
-           (with-handler 
-            (lambda (c) (throw 'c-parse-error c))
-            ,form))))
-      (if (equal (class-of ans) (class ,name))
-          (format (standard-output) "" ',form)
-          (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans)))))
+  `(progn
+      (ignore-toplevel-check t)
+      (let ((ans (catch 'c-parse-error
+              (with-handler 
+                (lambda (c) (throw 'c-parse-error c))
+                ,form))))
+          (if (equal (class-of ans) (class ,name))
+              (format (standard-output) "" ',form)
+              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans))))
+      (ignore-toplevel-check nil)))
+
 
 (defmacro $ap (n name :rest page)
     (if (null page)
@@ -45,4 +49,4 @@
 (defmacro $argc (x1 x2 x3 x4) `nil)
 (defmacro $predicate (x1 x2 :rest x3) `nil)
 (defmacro $type (x1 x2 x3 :rest x4) `nil)
-(defmacro $stype (x1 x2 x3 x4 :rest x5) `nil)
+(defmacro $stype (x1 x2 x3 :rest x4) `nil)

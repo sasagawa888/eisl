@@ -86,18 +86,47 @@ int f_lambda(int arglist){
 }
 
 int f_labels(int arglist){
-    int arg1,arg2,save,sym,val,func,res;
+    int arg1,arg2,save,func,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "labels", arglist);
     if(nullp(arglist))
         error(NOT_EXIST_ARG, "labels", NIL);
     if(!listp(arg1))
-        error(NOT_LIST, "labels" , arg1);
+        error(IMPROPER_ARGS, "labels", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        int temparg1,temparg2;
+
+        temparg1 = car(car(temp));
+        temparg2 = cdr(car(temp));
+        if(length(car(temp)) < 2)
+            error(IMPROPER_ARGS, "labels", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "labels", temparg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "labels", temparg1);
+        if(duplicatelistp(car(temparg2)))
+            error(IMPROPER_ARGS, "labels", car(temparg2));
+        if(improperlistp(car(temparg2)))
+            error(IMPROPER_ARGS, "labels", car(temparg2));
+        if(illegallambdap(car(temparg2)))
+            error(ILLEGAL_ARGS, "labels", car(temparg2));
+        if(!symbollistp(car(temparg2)))
+            error(OUT_OF_DOMAIN, "labels", car(temparg2));
+
+        temp = cdr(temp);
+    }
+    
+
     save = ep;
     func = NIL;
     res = NIL;
     while(arg1 != NIL){
+        int sym,val;
+
         sym = caar(arg1);
         if(!symbolp(sym))
             error(NOT_SYM, "labels", sym);
@@ -120,18 +149,46 @@ int f_labels(int arglist){
 }
 
 int f_flet(int arglist){
-    int arg1,arg2,save,ep1,sym,val,res;
+    int arg1,arg2,save,ep1,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "flet", arglist);
     if(nullp(arglist))
         error(NOT_EXIST_ARG, "flet", NIL);
     if(!listp(arg1))
-        error(NOT_LIST, "flet", arg1);
+        error(IMPROPER_ARGS, "flet", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        int temparg1,temparg2;
+
+        temparg1 = car(car(temp));
+        temparg2 = cdr(car(temp));
+        if(length(car(temp)) < 2)
+            error(IMPROPER_ARGS, "flet", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "flet", temparg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "flet", temparg1);
+        if(duplicatelistp(car(temparg2)))
+            error(IMPROPER_ARGS, "flet", car(temparg2));
+        if(improperlistp(car(temparg2)))
+            error(IMPROPER_ARGS, "flet", car(temparg2));
+        if(illegallambdap(car(temparg2)))
+            error(ILLEGAL_ARGS, "flet", car(temparg2));
+        if(!symbollistp(car(temparg2)))
+            error(OUT_OF_DOMAIN, "flet", car(temparg2));
+
+        temp = cdr(temp);
+    }
+    
     save = ep;
     ep1 = ep;
     res = NIL;
     while(arg1 != NIL){
+        int sym,val;
+
         sym = caar(arg1);
         if(!symbolp(sym))
             error(NOT_SYM, "flet", sym);
@@ -151,16 +208,39 @@ int f_flet(int arglist){
 }
 
 int f_let(int arglist){
-    int arg1,arg2,save,ep1,sym,val,res;
-
+    int arg1,arg2,save,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) == 0)
+        error(WRONG_ARGS, "let", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "let", arg1);
+        error(IMPROPER_ARGS, "let", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        int temparg1;
+
+        temparg1 = car(car(temp));
+        if(improperlistp(car(temp)))
+            error(IMPROPER_ARGS, "let", car(temp));
+        if(length(car(temp)) != 2)
+            error(IMPROPER_ARGS, "let", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "let" ,temparg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "let", arg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "let", arg1);
+        
+        temp = cdr(temp);
+    }
+
     save = ep;
     res = NIL;
     while(arg1 != NIL){
+        int ep1,sym,val;
+
         ep1 = ep;
         ep = save;
         sym = caar(arg1);
@@ -184,15 +264,39 @@ int f_let(int arglist){
 }
 
 int f_letstar(int arglist){
-    int arg1,arg2,save,sym,res;
+    int arg1,arg2,save,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) == 0)
+        error(WRONG_ARGS, "let*", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "let*", arg1);
+        error(IMPROPER_ARGS, "let*", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        int temparg1;
+
+        temparg1 = car(car(temp));
+        if(improperlistp(car(temp)))
+            error(IMPROPER_ARGS, "let*", car(temp));
+        if(length(car(temp)) != 2)
+            error(IMPROPER_ARGS, "let*", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "let*" ,temparg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "let*", arg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "let*", arg1);
+        
+        temp = cdr(temp);
+    }
+
     save = ep;
     res = NIL;
     while(arg1 != NIL){
+        int sym;
+
         sym = caar(arg1);
         if(!symbolp(sym))
             error(NOT_SYM, "let*", sym);
@@ -208,15 +312,39 @@ int f_letstar(int arglist){
 }
 
 int f_dynamic_let(int arglist){
-    int arg1,arg2,save,dp1,sym,val,res;
+    int arg1,arg2,save,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(length(arglist) == 0)
+        error(WRONG_ARGS, "dynamic-let", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "dynamic-let", arg1);
+        error(IMPROPER_ARGS, "dynamic-let", arg1);
+    temp = arg1;
+    while(!nullp(temp)){
+        int temparg1;
+
+        temparg1 = car(car(temp));
+        if(improperlistp(car(temp)))
+            error(IMPROPER_ARGS, "dynamic-let", car(temp));
+        if(length(car(temp)) != 2)
+            error(IMPROPER_ARGS, "dynamic-let", car(temp));
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "dynamic-let" ,temparg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "dynamic-let", arg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "dynamic-let", arg1);
+        
+        temp = cdr(temp);
+    }
+    
     save = dp;
     res = NIL;
     while(arg1 != NIL){
+        int dp1,sym,val;
+
         dp1 = dp;
         dp = save;
         shelterpush(dp1);
@@ -250,6 +378,8 @@ int f_setf(int arglist){
     	error(CANT_MODIFY,"setf",arg1);
     if(listp(arg1) && eqlp(makeint(1),cdr(assoc(makesym("read"),GET_AUX(car(arg1))))))
        error(CANT_MODIFY,"setf",arg1);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "setf", arglist);
 
     if(listp(arg1) && eqp(car(arg1),makesym("AREF"))){
         newform = cons(makesym("SET-AREF"),cons(arg2,cdr(arg1)));
@@ -270,6 +400,10 @@ int f_setf(int arglist){
     	newform = cons(makesym("SET-CDR"),cons(arg2,cdr(arg1)));
     }
     else if(listp(arg1) && eqp(car(arg1),makesym("DYNAMIC"))){
+        if(improperlistp(arg1))
+            error(IMPROPER_ARGS, "dynamic", arg1);
+        if(length(arg1) != 2)
+            error(IMPROPER_ARGS, "dynamic", arg1);
     	newform = cons(makesym("SET-DYNAMIC"),list2(cadr(arg1),arg2));
     }
     else if(listp(arg1) && macrop(car(arg1))){
@@ -290,7 +424,7 @@ int f_setf(int arglist){
     	newform = cons(makesym("SETQ"),list2(arg1,arg2));
     }
     else
-    	error(ILLEGAL_ARGS,"setf",arglist);
+    	error(IMPROPER_ARGS,"setf",arglist);
 
     shelterpush(newform);
     res = eval(newform);
@@ -305,17 +439,23 @@ int f_set_dynamic(int arglist){
 
     arg1 = car(arglist);
     arg2 = eval(cadr(arglist));
+    if(nullp(arglist))
+        error(IMPROPER_ARGS, "set-dynamic", arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "set-dynamic", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "set-dynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "set-dynamic", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "set-dynamic", arg1);
 
-    if(finddyn(arg1) != -1){
+    if(finddyn(arg1) != FAILSE){
         setdynenv(arg1,arg2);
         return(arg2);
     }
     else
-    	error(UNDEF_VAR, "setq", arg1);
+    	error(UNDEF_VAR, "set-dynamic", arg1);
 
     return(arg2);
 }
@@ -325,14 +465,18 @@ int f_setq(int arglist){
     int arg1,arg2;
 
     arg1 = car(arglist);
-    arg2 = eval(cadr(arglist));
+    arg2 = cadr(arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "setq", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "setq", arg1);
     if(GET_OPT(arg1) == CONSTN)
         error(CANT_MODIFY, "setq" ,arg1);
-    if(findenv(arg1) != -1)
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "setq", arglist);
+
+    arg2 = eval(arg2);
+    if(findenv(arg1) != FAILSE)
         setlexenv(arg1,arg2);
     else if(GET_OPT(arg1) == GLOBAL)
         SET_CDR(arg1,arg2);
@@ -347,10 +491,17 @@ int f_defconstant(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "defconstant", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defconstant", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defconstant", arg1);
+    if(arg1 == T || arg1 == NIL || arg1 == makesym("*PI*") || 
+      arg1 == makesym("*MOST-POSITIVE-FLOAT*") || arg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+        error(WRONG_ARGS, "defconstant", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defconstant", arg1);
     if(!top_flag && !ignore_topchk)
         error(NOT_TOP_LEVEL, "defconstant", arglist);
 
@@ -373,8 +524,17 @@ int f_defun(int arglist){
         error(CANT_MODIFY, "defun", arg1);
     if(IS_FSUBR(GET_CAR(arg1)))
         error(CANT_MODIFY, "defun", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defun", arg1);
+    if(duplicatelistp(car(arg2)))
+        error(IMPROPER_ARGS, "defun", car(arg2));
+    if(improperlistp(car(arg2)))
+        error(IMPROPER_ARGS, "defun", car(arg2));
     if(illegallambdap(car(arg2)))
         error(ILLEGAL_ARGS,"defun", car(arg2));
+    if(!symbollistp(car(arg2)))
+        error(OUT_OF_DOMAIN, "defun", car(arg2));
+    
 
     val = makefunc(GET_NAME(arg1),arg2);
     SET_CAR(arg1,val);
@@ -413,14 +573,16 @@ int f_defglobal(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if(nullp(arglist))
-        error(NOT_EXIST_ARG, "defglobal", NIL);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "defglobal", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defglobal", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defglobal", arg1);
     if(GET_OPT(arg1) == CONSTN)
         error(CANT_MODIFY, "defglobal", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defglobal", arg1);
 
     SET_CDR(arg1,eval(arg2));
     SET_OPT(arg1,GLOBAL);
@@ -432,10 +594,15 @@ int f_defdynamic(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if(improperlistp(cdr(arglist)))
+        error(IMPROPER_ARGS, "defdynamic", arglist);
     if(length(arglist) != 2)
         error(WRONG_ARGS, "defdynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "defdynamic", arg1);
+    if(STRING_REF(arg1,0) == ':' || STRING_REF(arg1,0) == '&')
+        error(WRONG_ARGS, "defdynamic", arg1);
+    
 
     setdynenv(arg1,eval(arg2));
     return(arg1);
@@ -445,13 +612,16 @@ int f_dynamic(int arglist){
     int arg1,res;
 
     arg1 = car(arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "dynamic", arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "dynamic", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "dynamic", arg1);
+    
     res = finddyn(arg1);
-    if(res == -1)
-        error(UNDEF_VAR, "dynamic", arg1);
+    if(res == FAILSE)
+        error(UNDEF_DYN, "dynamic", arg1);
 
     return(res);
 }
@@ -485,7 +655,7 @@ int f_or(int arglist){
 }
 
 int f_function(int arglist){
-    int arg1,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -494,6 +664,8 @@ int f_function(int arglist){
         error(ILLEGAL_ARGS, "function", arglist);
 
     if(symbolp(arg1)){
+        int res;
+
         res = findenv(arg1);
         if(IS_FUNC(res))
             return(res);
@@ -511,7 +683,7 @@ int f_function(int arglist){
 //function* diffrence of function is that return nil
 //defclass uses this function*
 int f_function_star(int arglist){
-    int arg1,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -520,6 +692,8 @@ int f_function_star(int arglist){
         error(ILLEGAL_ARGS, "function*", arglist);
 
     if(symbolp(arg1)){
+        int res;
+
         res = findenv(arg1);
         if(IS_FUNC(res))
             return(res);
@@ -536,15 +710,17 @@ int f_function_star(int arglist){
 }
 
 int f_symbol_function(int arglist){
-    int arg1,sym,res;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "symbol-function", arglist);
 
     if(symbolp(arg1)){
+        int sym,res;
+
         sym = findenv(arg1);
-        if(sym == -1 && GET_CDR(arg1) != NIL)
+        if(sym == FAILSE && GET_CDR(arg1) != NIL)
             sym = GET_CDR(arg1);
 
         if(!symbolp(sym))
@@ -580,15 +756,17 @@ int f_class(int arglist){
 }
 
 int f_symbol_class(int arglist){
-    int arg1,sym;
+    int arg1;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "symbol-class", arglist);
 
     if(symbolp(arg1)){
+        int sym;
+
     	sym = findenv(arg1);
-        if(sym == -1 && GET_CDR(arg1) != NIL)
+        if(sym == FAILSE && GET_CDR(arg1) != NIL)
             sym = GET_CDR(arg1);
 
         if(!symbolp(sym))
@@ -616,6 +794,8 @@ int f_if(int arglist){
     arg2 = cadr(arglist);
     if((n=length(arglist)) < 2 || n > 3)
         error(WRONG_ARGS, "if", arglist);
+    if(improperlistp(arglist))
+        error(WRONG_ARGS, "if", arglist);
 
     if(length(arglist) == 3)
         arg3 = car(cdr(cdr(arglist)));
@@ -638,6 +818,11 @@ int f_cond(int arglist){
     arg1 = car(arglist);
     arg2 = car(arg1);
     arg3 = cdr(arg1);
+    if(nullp(arg1))
+        error(IMPROPER_ARGS, "cond", arglist);
+    if(improperlistp(arg1))
+        error(IMPROPER_ARGS, "cond", arg1);
+    
 
     if(length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2)))
         return(arg2);
@@ -659,7 +844,7 @@ int f_while(int arglist){
 }
 
 int f_for(int arglist){
-    int arg1,arg2,arg3,iter,temp,save,res,save1;
+    int arg1,arg2,arg3,iter,temp,save,res,temparg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -667,9 +852,37 @@ int f_for(int arglist){
     if(length(arglist) < 2)
         error(WRONG_ARGS, "for", arglist);
     if(!listp(arg1))
-        error(NOT_LIST, "for", arg1);    
+        error(NOT_LIST, "for", arg1);   
     if(!listp(arg2))
         error(NOT_LIST, "for", arg2);
+    if(nullp(arg2))
+        error(IMPROPER_ARGS, "for", arg2); 
+    
+    temp = arg1;
+    temparg2 = NIL;
+    while(!nullp(temp)){
+        int temp1,temparg1;
+
+        temp1 = car(temp);
+        if(!listp(temp1))
+            error(IMPROPER_ARGS, "for", temp1);
+        temparg1 = car(temp1);
+
+        if(!symbolp(temparg1))
+            error(NOT_SYM, "for", temparg1);
+        if(STRING_REF(temparg1,0) == ':' || STRING_REF(temparg1,0) == '&')
+            error(WRONG_ARGS, "for", arg1);
+        if(temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*") || 
+           temparg1 == makesym("*MOST-POSITIVE-FLOAT*") || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+            error(WRONG_ARGS, "for", temparg1);
+        if(length(temp1) !=2 && length(temp1) != 3)
+            error(IMPROPER_ARGS, "for", temp1);
+        if(member(temparg1,temparg2))
+            error(IMPROPER_ARGS, "for", temparg1);
+
+        temparg2 = cons(temparg1,temparg2);
+        temp = cdr(temp);
+    }
 
     save = ep;
 
@@ -681,6 +894,8 @@ int f_for(int arglist){
     }
     //check condition of end
     while(eval(car(arg2)) == NIL){
+        int save1;
+
         save1 = ep;
         shelterpush(arg3);
         f_progn(arg3);// do body
@@ -713,8 +928,13 @@ int f_block(int arglist){
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(arglist))
+        error(WRONG_ARGS, "block", arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "block", arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "block", arg1);
+    
     tag = arg1;
 
     if(block_pt >= 50)
@@ -732,8 +952,6 @@ int f_block(int arglist){
         return(res);
     }
     else if(ret == 1){
-        ret = 0;
-
         if(unwind_pt > 0){
             unwind_pt--;
             while(unwind_pt >= 0){
@@ -774,9 +992,16 @@ int f_catch(int arglist){
     save = sp;
     arg1 = car(arglist); //tag
     arg2 = cdr(arglist); //body
+    if(nullp(arglist))
+        error(WRONG_ARGS,"catch",arglist);
+    if(arg1 == makesym("catch"))
+        error(WRONG_ARGS,"catch",arglist);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS,"catch",arglist);
     tag = eval(arg1);    //tag symbol
     if(!symbolp(tag))
-    	error(NOT_SYM,"catch",tag);
+    	error(IMPROPER_ARGS,"catch",tag);
+
 
     if(!member(tag,catch_symbols))
         catch_symbols = cons(tag,catch_symbols);
@@ -801,8 +1026,6 @@ int f_catch(int arglist){
         return(res);
     }
     else if(ret == 1){
-        ret = 0;
-
         if(unwind_pt > 0){
             unwind_pt--;
             while(unwind_pt >= 0){
@@ -827,6 +1050,8 @@ int f_throw(int arglist){
     arg2 = cdr(arglist);
     tag = eval(arg1);
 
+    if(!symbolp(tag))
+        error(IMPROPER_ARGS, "throw" , tag);
     if(GET_OPT(tag) == 0) //tag opt has 1~4
     	error(UNDEF_TAG, "throw", tag);
     if(GET_PROP(tag) == 0)
@@ -840,7 +1065,7 @@ int f_throw(int arglist){
 }
 
 int f_tagbody(int arglist){
-    int prog[100],line,end,i;
+    int prog[100],tb_line,end,i;
     
     end = 0;
     while(!nullp(arglist)){
@@ -849,20 +1074,21 @@ int f_tagbody(int arglist){
         end++;
     }
 
-    line = 0;
-    while(line < end){
+    tb_line = 0;
+    while(tb_line < end){
         exit:
-        if(symbolp(prog[line]))
-            line++;
+        if(symbolp(prog[tb_line]))
+            tb_line++;
         else{
             tagbody_tag = NIL;
-            eval(prog[line]);
-            line++;
+            eval(prog[tb_line]);
+            tb_line++;
             //when go was evaled
             if(tagbody_tag != NIL){
                 for(i=0;i<end;i++){
                     if(tagbody_tag == prog[i]){
-                        line = i+1;
+                        tagbody_tag = NIL;
+                        tb_line = i;
                         goto exit;
                     }
                 }
@@ -891,6 +1117,10 @@ int f_unwind_protect(int arglist){
 
     arg1 = car(arglist);
     args = cdr(arglist);
+    if(nullp(arglist))
+        error(WRONG_ARGS, "unwind-protect", arglist);
+    if(improperlistp(arglist))
+        error(WRONG_ARGS, "unwind-protect", arglist);
 
     unwind_buf[unwind_pt] = makefunc("",cons(NIL,args)); //make thunk
     unwind_pt++;
@@ -908,10 +1138,26 @@ int f_unwind_protect(int arglist){
 
 
 int f_case(int arglist){
-    int arg1,arg2,key,res;
+    int arg1,arg2,key,res,temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    if(nullp(car(arg2)))
+        error(IMPROPER_ARGS, "case", arg2);
+    temp = arg2;
+    while(!nullp(temp)){
+        int temparg1;
+
+        temparg1 = car(temp);
+        if(!listp(temparg1))
+            error(WRONG_ARGS, "case", temparg1);
+        if(car(temparg1) == T && length(temp) != 1)
+            error(IMPROPER_ARGS, "case", temparg1);
+        if(atomp(car(temparg1)) && car(temparg1) != T)
+            error(IMPROPER_ARGS, "case", temparg1);
+        temp = cdr(temp);
+    }
+
     res = NIL;
     key = eval(arg1);
     while(arg2 != NIL){
@@ -931,11 +1177,27 @@ int f_case(int arglist){
 }
 
 int f_case_using(int arglist){
-    int arg1,arg2,arg3,key,fun,res;
+    int arg1,arg2,arg3,key,fun,res,temp;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
+     if(nullp(car(arg3)))
+        error(IMPROPER_ARGS, "case-using", arg3);
+    temp = arg3;
+    while(!nullp(temp)){
+        int temparg1;
+
+        temparg1 = car(temp);
+        if(!listp(temparg1))
+            error(WRONG_ARGS, "case-using", temparg1);
+        if(car(temparg1) == T && length(temp) != 1)
+            error(IMPROPER_ARGS, "case-using", temparg1);
+        if(atomp(car(temparg1)) && car(temparg1) != T)
+            error(IMPROPER_ARGS, "case-using", temparg1);
+        temp = cdr(temp);
+    }
+
     res = NIL;
     key = eval(arg2);
     fun = eval(arg1);
@@ -959,6 +1221,8 @@ int f_case_using(int arglist){
 int f_progn(int arglist){
     int res;
 
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "progn", arglist);
     res = NIL;
     while(arglist != NIL){
         res = eval(car(arglist));
@@ -968,8 +1232,8 @@ int f_progn(int arglist){
 }
 
 int f_defclass(int arglist){
-    int arg1,arg2,arg3,arg4,sc,var,val,cl,form,sym,ls,
-        reader,writer,accessor,boundp,initform,initarg,initargs;
+    int arg1,arg2,arg3,arg4,sc,var,val,cl,form,
+        initargs;
 
     arg1 = car(arglist);  //class-name
     arg2 = cadr(arglist); //super-class
@@ -989,9 +1253,9 @@ int f_defclass(int arglist){
     if(!listp(arg2))
         error(NOT_LIST, "defclass", arg2);
     if(hassamep(arg2))
-        error(ILLEGAL_ARGS,"defclass",arg2);
+        error(IMPROPER_ARGS,"defclass",arg2);
     if(hassysclassp(arg2))
-        error(ILLEGAL_ARGS,"defclass",arg2);
+        error(IMPROPER_ARGS,"defclass",arg2);
     if(notexistclassp(arg2))
         error(UNDEF_CLASS,"defclass",arg2);
     if(hascommonp(arg2))
@@ -1009,6 +1273,8 @@ int f_defclass(int arglist){
     val = UNDEF;
     initargs = NIL;
     while(!nullp(arg3)){
+        int sym,ls,reader,writer,accessor,boundp,initform,initarg;
+
         reader = writer = accessor = boundp = initform = initarg = NIL;
         if(!listp(car(arg3)))
             arg3 = list1(arg3); // if form=(a :reader a-read) => ((a :reader a-read))
@@ -1203,12 +1469,14 @@ int f_defmethod(int arglist){
 }
 
 int f_ignore_errors(int arglist){
-    int ret,res;
+    int ret;
 
     ignore_flag = 1;
     ret = setjmp(ignore_buf);
 
     if(ret == 0){
+        int res;
+
         res = f_progn(arglist);
         ignore_flag = 0;
         return(res);
@@ -1232,8 +1500,10 @@ int f_with_open_input_file(int arglist){
     if(!stringp(str))
         error(NOT_STR, "with-open-input-file", str);
     port = fopen(GET_NAME(str),"r");
-    if(port == NULL)
+    if(port == NULL) {
         error(CANT_OPEN, "with-open-input-file", str);
+        return NIL;
+    }
     val = makestream(port,EISL_INPUT);
     ep1 = ep;
     addlexenv(sym,val);
@@ -1256,8 +1526,10 @@ int f_with_open_output_file(int arglist){
     if(!stringp(str))
         error(NOT_STR, "with-open-output-file", str);
     port = fopen(GET_NAME(str),"w");
-    if(port == NULL)
+    if(port == NULL) {
         error(CANT_OPEN, "with-open-output-file", str);
+        return NIL;
+    }
     val = makestream(port,EISL_OUTPUT);
     ep1 = ep;
     addlexenv(sym,val);
@@ -1280,8 +1552,10 @@ int f_with_open_io_file(int arglist){
     if(!stringp(str))
         error(NOT_STR, "with-open-io-file", str);
     port = fopen(GET_NAME(str),"r+");
-    if(port == NULL)
+    if(port == NULL) {
         error(CANT_OPEN, "with-open-io-file", str);
+        return NIL;
+    }
     val = makestream(port,EISL_OPEN);
     ep1 = ep;
     addlexenv(sym,val);
@@ -1620,14 +1894,18 @@ int f_untrace(int arglist){
 }
 
 int f_defmodule(int arglist){
-    int arg1,arg2;
+    int arg1,arg2,sexp,public;
 
     arg1 = car(arglist); //module name
     arg2 = cdr(arglist); //body
+    public = NIL;
 
     while(!nullp(arg2)){
-        //print(substitute(car(arg2),arg1,NIL));
-        eval(substitute(car(arg2),arg1,NIL));
+        sexp = car(arg2);
+        if(symbolp(car(sexp)) && HAS_NAME(car(sexp),"DEFPUBLIC"))
+            public = cons(cadr(sexp),public);
+
+        eval(substitute(car(arg2),arg1,public));
         arg2 = cdr(arg2);
     }
     return(T);
@@ -1654,7 +1932,7 @@ int substitute(int addr, int module, int fname){
     else if(class_symbol_p(addr))
         return(addr);
     else if(symbolp(addr)){
-        if(!eqp(addr,fname) && !eqp(addr,makesym(":REST")) && !eqp(addr,makesym("&REST")))
+        if(!member(addr,fname) && !eqp(addr,makesym(":REST")) && !eqp(addr,makesym("&REST")))
             return(substitute1(addr,module));
         else
             return(addr);
@@ -1676,7 +1954,7 @@ int substitute(int addr, int module, int fname){
         else if(subrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUBLIC")))
-            return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module,cadr(addr)))));
+            return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module,fname))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),":METHOD")))
@@ -1688,7 +1966,8 @@ int substitute(int addr, int module, int fname){
         else if(genericp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else
-            return(cons(substitute(car(addr),module,fname),substitute(cdr(addr),module,fname)));  
+            return(cons(substitute(car(addr),module,fname),substitute(cdr(addr),module,fname)));
+        
     }
     return(T);
 }

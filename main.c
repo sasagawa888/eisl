@@ -10,6 +10,8 @@ written by kenichi sasagawa 2016/4~
 #include <math.h>
 #include <limits.h>
 #include <signal.h>
+#include <unistd.h>
+#include <getopt.h>
 #include "eisl.h"
 
 //------pointer----
@@ -54,6 +56,7 @@ int ccontrol_error;
 int cparse_error;
 int cprogram_error;
 int cdomain_error;
+int cclass_error;
 int cundefined_entity;
 int cunbound_variable;
 int cundefined_function;
@@ -64,9 +67,11 @@ int cstorage_exhausted;
 int cstandard_class;
 int cstandard_object;
 int cstream;
+int cinvalid;
 int cfixnum;
 int clongnum;
 int cbignum;
+int cfloat_array;
 
 
 //stream
@@ -95,6 +100,7 @@ int stack[STACKSIZE];
 int argstk[STACKSIZE];
 int cell_hash_table[HASHTBSIZE];
 int shelter[STACKSIZE];
+int dynamic[DYNSIZE][2];
 
 //object oriented
 int generic_func; //generic function in eval.
@@ -103,6 +109,8 @@ int next_method; //head address of finded method.
 int generic_list = NIL; //symbol list of generic function.
 
 //flag
+int gArgC;
+char **gArgV;
 int gbc_flag = 1; //0=GC not display ,1= do display.
 int genint = 1;   //integer of gensym.
 int simp_flag = 1; //1=simplify, 0=Not for bignum
@@ -113,13 +121,13 @@ int top_flag = 1;   //1=top-level, 0=not-top-level
 int redef_flag = 0; //1=redefine-class, 0=not-redefine
 int start_flag = 1; //1=line-start, 1=not-line-start
 int back_flag = 1;  //for backtrace, 1=on, 0=off
-int init_flag = 1;  //for -c option, 1=initial,0=not-initial
+bool init_flag = true;  //for -c option, 1=initial,0=not-initial
 int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
-int repl_flag = 1;  //for REPL read_line 1=on, 0=off
+bool repl_flag = true;  //for REPL read_line 1=on, 0=off
 int exit_flag = 0;  //1= ctrl+C
 int debug_flag = 0;  //for GC debug
 int greeting_flag = 1; //for (quit)
-int script_flag = 0;   //for -s option
+bool script_flag = false;   //for -s option
 
 //switch
 int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
@@ -144,7 +152,6 @@ int catch_arg; //receive argument of catch
 int tagbody_tag = NIL; //tag address fo tagbody
 int error_handler; //for store first argument of with-handler
 int trace_list = NIL; //function list of trace
-int trace_sym;  //function name in trace.
 int backtrace[BACKSIZE];
 
 //-----debugger-----
@@ -189,7 +196,7 @@ char builtin[200][32] ={
 {"basic-vector-p"},{"call-next-method"},{"car"},{"cdr"},{"ceiling"},
 {"cerror"},{"char-index"},{"char/="},{"char<"},{"char<="},{"char="},
 {"char>"},{"char>="},{"characterp"},{"class-of"},{"close"},
-{"condition-continuable"},{"cons"},{"consp"},{"constinue-condition"},
+{"condition-continuable"},{"cons"},{"consp"},{"continue-condition"},
 {"cos"},{"cosh"},{"create-array"},{"create-list"},{"create-string-input-stream"},
 {"create-string-output-stream"},{"create-string"},{"create-vector"},{"create*"},
 {"div"},{"domain-error-object"},{"domain-error-expected-class"},
@@ -236,10 +243,22 @@ char extended[70][30] = {
 {"gpu-random-select"},{"gpu-nanalizer"},{"gpu-copy"},
 };
 
+static void usage(void)
+{
+    puts("List of options:\n"
+         "-c           -- EISL starts after reading compiler.lsp.\n"
+         "-f           -- EISL starts after reading formatter.lsp.\n"
+         "-h           -- display help.\n"
+         "-l filename  -- EISL starts after reading the file.\n"
+         "-r           -- EISL does not use editable REPL.\n"
+         "-s filename  -- EISL runs the file with script mode.\n"
+         "-v           -- display version number.");
+}
 
 int main(int argc, char *argv[]){
-    int opt;
+    int ch;
     char *home,str[256];
+    char *script_arg;
 
     initcell();
     initclass();
@@ -254,81 +273,60 @@ int main(int argc, char *argv[]){
     input_stream = standard_input;
     output_stream = standard_output;
     error_stream = standard_error;
-    opt = 1;
+    
     int ret = setjmp(buf);
     if(init_flag){
-        init_flag = 0;
+        init_flag = false;
         FILE* fp = fopen("startup.lsp","r");
         if(fp != NULL){
             fclose(fp);
             f_load(list1(makestr("startup.lsp")));
         }
-        while(opt < argc){
-    	    if(strcmp(argv[opt],"-l") == 0){
-        	    opt++;
-                if(opt >= argc){
-                    printf("Illegal option\n");
-        	    return(0);
-                }
-                f_load(list1(makestr(argv[opt])));
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-c") == 0){
+        while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
+            switch (ch) {
+            case 'l':
+                f_load(list1(makestr(optarg)));
+                break;
+            case 'c':
                 home = getenv("HOME");
                 strcpy(str,home);
                 strcat(str,"/eisl/library/compiler.lsp");
                 f_load(list1(makestr(str)));
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-f") == 0){
+                break;
+            case 'f':
                 home = getenv("HOME");
                 strcpy(str,home);
                 strcat(str,"/eisl/library/formatter.lsp");
                 f_load(list1(makestr(str)));
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-s") == 0){
-                opt++;
-                if(opt >= argc){
-                    printf("Illegal option\n");
-        	    return(0);
+                break;
+            case 's':
+                if (access(optarg, R_OK) == -1) {
+                    puts("File doesn't exist.");
+                    exit(EXIT_FAILURE);
                 }
-                FILE* fp = fopen(argv[opt],"r");
-                if(fp != NULL){
-                    fclose(fp);
-                    repl_flag = 0;
-                    script_flag = 1;
-                    f_load(list1(makestr(argv[opt])));
-                    return(0);
-                }
-                else{
-                    printf("File not exists.\n");
-                    return(0);
-                }
-            }
-            else if(strcmp(argv[opt],"-r") == 0){
-                repl_flag = 0;
-                opt++;
-            }
-            else if(strcmp(argv[opt],"-h") == 0){
-                printf("List of options:\n");
-                printf("-c           -- EISL starts after reading compiler.lsp.\n");
-                printf("-f           -- EISL starts after reading formatter.lsp.\n");
-                printf("-h           -- display help.\n");
-                printf("-l filename  -- EISL starts after reading the file.\n");
-                printf("-r           -- EISL does not use editable REPL.\n");
-                printf("-s filename  -- EISL runs the file with script mode.\n");
-                printf("-v           -- dislplay version number.\n");
-                return(0);
-            }
-            else if(strcmp(argv[opt],"-v") == 0){
+                repl_flag = false;
+                script_flag = true;
+                script_arg = optarg;
+                break;
+            case 'r':
+                repl_flag = false;
+                break;
+            case 'v':
                 printf("Easy-ISLisp Ver%1.2f\n", VERSION);
-                return(0);
+                exit(EXIT_SUCCESS);
+            case 'h':
+                usage();
+                exit(EXIT_SUCCESS);
+            default:
+                usage();
+                exit(EXIT_FAILURE);
             }
-            else{
-        	    printf("illegal option\n");
-        	    return(0);
-            }
+        }
+        gArgC = argc - optind;
+        gArgV = argv + optind;
+        if (script_flag) {
+            f_load(list1(makestr(script_arg)));
+            exit(EXIT_SUCCESS);
         }
     }
     if(greeting_flag == 1)
@@ -382,8 +380,7 @@ void initpt(void){
 }
 
 
-void signal_handler_c(int signo){
-   (void)signo;
+void signal_handler_c(int signo __unused){
    exit_flag = 1;
 }
 
@@ -437,7 +434,7 @@ void unreadc(char c){
     else
         column--;
     if(input_stream == standard_input && repl_flag)
-        c = read_line(-1);
+        (void)read_line(-1);
     else if(GET_OPT(input_stream) != EISL_INSTR)
         ungetc(c,GET_PORT(input_stream));
     else
@@ -530,7 +527,7 @@ void gettoken(void){
                         if(c == ' ')
                             goto chskip;
 
-                        while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE) &&
+                        while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE - 1) &&
                                 (c != SPACE) && (c != '(') && (c != ')')){
                             stok.buf[pos++] = c;
                         }
@@ -586,7 +583,7 @@ void gettoken(void){
                    /*FALLTHROUGH*/
         default: {
             pos = 0; stok.buf[pos++] = c;
-            while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE) &&
+            while(((c=readc()) != EOL) && (c != EOF) && (pos < BUFSIZE - 1) &&
                     (c != SPACE) && (c != '(') && (c != ')') &&
                     (c != '`') && (c != ',') && (c != '@'))
                 stok.buf[pos++] = c;
@@ -646,7 +643,6 @@ septoken separater(char buf[], char sep){
     septoken res;
 
     res.sepch = NUL;
-    res.before[0] = NUL;
     res.after[0] = NUL;
 
     res.before[0] = buf[0];
@@ -748,9 +744,10 @@ int inttoken_nsgn(char buf[]){
 
 int flttoken(char buf[]){
     septoken tok;
-    char bufcp[SYMSIZE];
 
     if(buf[0] == '.'){
+        char bufcp[SYMSIZE];
+        
         if(buf[1] == '0')
             return(0);
         strcpy(bufcp,buf);
@@ -1009,10 +1006,10 @@ int sread(void){
         case INTEGER:   return(makeint(atoi(stok.buf)));
         case FLOAT_N:   return(makeflt(atof(stok.buf)));
         case BIGNUM:    return(makebigx(stok.buf));
-        case BINARY:    return(makeint((int)strtol(stok.buf,&e,2)));
-        case OCTAL:     return(makeint((int)strtol(stok.buf,&e,8)));
         case DECNUM:    return(makeint((int)strtol(stok.buf,&e,10)));
-        case HEXNUM:    return(makeint((int)strtol(stok.buf,&e,16)));
+        case BINARY:    return(readbin(stok.buf));
+        case OCTAL:     return(readoct(stok.buf));
+        case HEXNUM:    return(readhex(stok.buf));
         case EXPTNUM:   return(makeflt(atof(stok.buf)));
         case VECTOR:    return(vector(readlist()));
         case ARRAY:     n = atoi(stok.buf);
@@ -1044,27 +1041,100 @@ int sread(void){
 }
 
 int readlist(void){
-    int car,cdr;
+    int rl_car,rl_cdr;
 
     gettoken();
     if(stok.type == RPAREN)
         return(NIL);
     else
     if(stok.type == DOT){
-        cdr = sread();
-        if(cdr == FEND)
+        rl_cdr = sread();
+        if(rl_cdr == FEND)
             error(ILLEGAL_RPAREN,"read",makesym("file end"));
         gettoken();
-        return(cdr);
+        return(rl_cdr);
     }
     else{
         stok.flag = BACK;
-        car = sread();
-        if(car == FEND)
+        rl_car = sread();
+        if(rl_car == FEND)
             error(ILLEGAL_RPAREN,"read",makesym("file end"));
-        cdr = readlist();
-        return(cons(car,cdr));
+        rl_cdr = readlist();
+        return(cons(rl_car,rl_cdr));
     }
+}
+
+int readbin(char* buf){
+    char str[BUFSIZE],*e;
+    int pos,n,res,inc;
+
+    n = strlen(buf);
+    if(n <= 31)
+        return(makeint((int)strtol(buf,&e,2)));
+
+    pos = 0;
+    res = makeint(0);
+    inc = makeint(2);
+
+    while(pos < n){
+        int part;
+        
+        str[0] = buf[pos];
+        str[1] = NUL;
+        pos++;
+        part = makeint((int)strtol(str,&e,2));
+        res = plus(mult(res,inc),part);
+    }
+    return(res);
+}
+
+int readoct(char* buf){
+    char str[BUFSIZE],*e;
+    int pos,n,res,inc;
+
+    n = strlen(buf);
+    if(n <= 10)
+        return(makeint((int)strtol(buf,&e,8)));
+
+    pos = 0;
+    res = makeint(0);
+    inc = makeint(8);
+
+    while(pos < n){
+        int part;
+        
+        str[0] = buf[pos];
+        str[1] = NUL;
+        pos++;
+        part = makeint((int)strtol(str,&e,8));
+        res = plus(mult(res,inc),part);
+    }
+    return(res);
+}
+
+
+int readhex(char* buf){
+    char str[BUFSIZE],*e;
+    int pos,n,res,inc;
+
+    n = strlen(buf);
+    if(n <= 7)
+        return(makeint((int)strtol(buf,&e,16)));
+
+    pos = 0;
+    res = makeint(0);
+    inc = makeint(16);
+
+    while(pos < n){
+        int part;
+        
+        str[0] = buf[pos];
+        str[1] = NUL;
+        pos++;
+        part = makeint((int)strtol(str,&e,16));
+        res = plus(mult(res,inc),part);
+    }
+    return(res);
 }
 
 //-----print------------------
@@ -1244,8 +1314,8 @@ void printarray(int x){
 #define IDX2C(i,j,ld) (((j)*(ld))+(i))
 #define IDX2R(i,j,ld) (((i)*(ld))+(j))
 void printfarray(int x){
-    int i,j,size,st,ls,dim,r,c;
-    float *vec1,*vec2;
+    int i,size,st,ls,dim;
+    float *vec1;
 
     st = ls = GET_CDR(x);
     size = 1;
@@ -1257,6 +1327,9 @@ void printfarray(int x){
     ls = NIL;
     if(length(st) == 2){
         if(size < 100){
+            int j,r,c;
+            float *vec2;
+            
             vec1 = GET_FVEC(x);
             vec2 = (float *)malloc(sizeof(float)*size);
             r = GET_INT(car(st));
@@ -1385,12 +1458,20 @@ void printstream(int addr){
     }
 }
 
+static void clean_stdin(void)
+{
+    int c;
+    do {
+        c = getchar();
+    } while (c != '\n' && c != EOF);
+}
+
 //--------eval---------------
 int eval(int addr){
-    int val,res;
+    int val,res,temp;
     char c;
 
-    checkgbc();
+    (void)checkgbc();
 
     if(IS_NIL(addr) || IS_T(addr))
         return(addr);
@@ -1408,7 +1489,7 @@ int eval(int addr){
         return(addr);
     else if(symbolp(addr)){
         res = findenv(addr);
-        if(res != -1)
+        if(res != FAILSE)
             return(res);
         else{
             if(GET_OPT(addr) == GLOBAL)
@@ -1425,7 +1506,7 @@ int eval(int addr){
             store_backtrace(addr);
         if(stepper_flag){
         	print(addr);printf("\n");fflush(stdout);
-        	fflush(stdin);
+        	clean_stdin();
         	c = getc(stdin);
         	if(c == 'q')
         		debugger();
@@ -1439,15 +1520,21 @@ int eval(int addr){
             else
                 return(cadr(addr));
         }
-        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE")))
-            return(eval(quasi_transfer(cadr(addr),0)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE"))){
+            temp = quasi_transfer(cadr(addr),0);
+            shelterpush(temp);
+            res = eval(temp);
+            shelterpop();
+            return(res);
+        }
         else if(subrp(car(addr)))
             return(apply(caar(addr),evlis(cdr(addr))));
         else if(fsubrp(car(addr)))
             return(apply(caar(addr),cdr(addr)));
         else if((val=functionp(car(addr)))){
+            temp = evlis(cdr(addr));
             examin_sym = car(addr);
-            return(apply(val,evlis(cdr(addr))));
+            return(apply(val,temp));
         }
         else if(macrop(car(addr))){
             examin_sym = car(addr);
@@ -1467,22 +1554,26 @@ int eval(int addr){
     return(0);
 }
 
+DEF_GETTER(char, TR, trace, NIL)
 int apply(int func, int args){
-    int varlist,body,res,macrofunc,method,pexist,aexist,i,n;
+    int varlist,body,res,macrofunc,method,pexist,aexist,i,n,trace;
     res = NIL;
     pexist = 0;
     aexist = 0;
+    trace = 0;
 
     switch(GET_TAG(func)){
         case SUBR:  return((GET_SUBR(func))(args));
         case FSUBR: return((GET_SUBR(func))(args));
-        case FUNC: {if(!nullp(trace_sym)){
+        case FUNC:  if(GET_TR(examin_sym) == 1){
+                        trace = examin_sym;
                         n = GET_TR(func);
                         SET_TR(func,n+1);
                         for(i=0; i<n; i++)
                             printf(" ");
                         printf("ENTERING: ");
-                        print(trace_sym);
+                        print(trace);
+                        printf(" ");
                         print(args);
                         printf("\n");
                     }
@@ -1504,20 +1595,20 @@ int apply(int func, int args){
                         body = cdr(body);
                     }
                     unbind();
-                    if(!nullp(trace_sym)){
+                    if(trace != NIL){
                         n = GET_TR(func);
                         n = n-1;
                         SET_TR(func,n);
                         for(i=0; i<n; i++)
                             printf(" ");
-                        printf("EXITING: ");
-                        print(trace_sym);
+                        printf("EXITING:  ");
+                        print(trace);
                         printf(" ");
                         print(res);
                         printf("\n");
                     }
                     ep = pop();
-                    return(res);}
+                    return(res);
         case MACRO:{if(improperlistp(args))
                         error(IMPROPER_ARGS, "apply", args);
                     macrofunc = GET_CAR(func);
@@ -1553,7 +1644,6 @@ int apply(int func, int args){
                     generic_func = func;
                     generic_vars = args;
                     method = GET_CDR(func);
-                    varlist = NIL;
                     while(!nullp(method)){
                         varlist = car(GET_CAR(car(method)));
                         next_method = method;
@@ -1628,8 +1718,6 @@ void unbind(void){
 
 
 int evlis(int addr){
-    int car_addr,cdr_addr;
-
     argpush(addr);
     top_flag = 0;
     if(IS_NIL(addr)){
@@ -1637,11 +1725,13 @@ int evlis(int addr){
         return(addr);
     }
     else{
+    	int car_addr,cdr_addr;
+
         car_addr = eval(car(addr));
         argpush(car_addr);
         cdr_addr = evlis(cdr(addr));
         car_addr = argpop();
-        addr = argpop();
+        (void)argpop();
         return(cons(car_addr,cdr_addr));
     }
 }
@@ -1738,6 +1828,7 @@ void deffsubr(const char *symname, int(*func)(int)){
 }
 
 
+static inline void SET_SUBR(int addr,subr_t x) { heap[addr].val.car.subr = x; }
 void bindfunc(const char *name, tag tag, int(*func)(int)){
     int sym,val;
 
@@ -1843,8 +1934,17 @@ void debugger(){
     	}
     }
     else if(eqp(x,makesym(":D"))){
+        #ifdef DYN
+        for(i=1;i<=dp;i++){
+            print(dynamic[i][1]);
+            printf(" = ");
+            print(dynamic[1][1]);
+            printf("\n");
+        }
+        #else
     	print(dp);
         printf("\n");
+        #endif
     }
     else if(eqp(x,makesym(":E"))){
     	print(ep);

@@ -2,6 +2,9 @@
 
 The list library was written by M. Hiroi.
 
+# Acknowledgement
+Thank you Mr. Hiroi.
+
 # Usage 
 
 ```lisp

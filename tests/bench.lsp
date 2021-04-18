@@ -1,5 +1,6 @@
+;;test
 (defun tarai (x y z)
-    ;;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
+    (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
         (tarai (tarai (- x 1) y z) (tarai (- y 1) z x) (tarai (- z 1) x y)) ))
@@ -22,7 +23,7 @@
                 (fib* (- n 2.0))))))
 
 (defun ack (m n)
-    ;;(the <fixnum> m)(the <fixnum> n)
+    (the <fixnum> m)(the <fixnum> n)
     (cond ((= m 0) (+ n 1))
           ((= n 0) (ack (- m 1) 1))
           (t (ack (- m 1) (ack m (- n 1)))) ))

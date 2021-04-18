@@ -38,6 +38,7 @@ void initexsubr(void){
     defsubr("HEAPDUMP",f_heapdump);
     defsubr("INSTANCE",f_instance);
     defsubr("SUBSTITUTE",f_substitute);
+    defsubr("LINE-ARGUMENT",f_line_argument);
     
     #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO",f_wiringpi_setup_gpio);
@@ -102,14 +103,12 @@ int f_classp(int arglist){
 }
 
 
-int f_ignore(int arglist){
-    (void)arglist;
+int f_ignore(int arglist __unused){
     return(T);
 }
 
 
-int f_self_introduction(int arglist){
-    (void)arglist;
+int f_self_introduction(int arglist __unused){
 #if __APPLE__
     return(makesym("MACOS"));
 #elif defined(__OpenBSD__)
@@ -131,6 +130,7 @@ int f_ignore_toplevel_check(int arglist){
     return(T);
 }
 
+DEF_PREDICATE(METHOD, METHOD)
 int f_get_method_priority(int arglist){
 	int arg1;
     
@@ -181,8 +181,7 @@ int f_system(int arglist){
 
 
 
-int f_freedll(int arglist){
-    (void)arglist;  
+int f_freedll(int arglist __unused){
     //dlclose(hmod);
     return(T);
 }
@@ -329,7 +328,7 @@ int f_macroexpand_1(int arglist){
 }
 
 int f_backtrace(int arglist){
-    int arg1,i,l;
+    int arg1,l;
     
     if((l=length(arglist)) != 0 && l != 1)
         error(WRONG_ARGS,"backtrace",arglist);
@@ -337,6 +336,8 @@ int f_backtrace(int arglist){
     arg1 = car(arglist);
     
     if(l == 0){ 
+        int i;
+
         for(i=0;i<BACKSIZE;i++){
             print(backtrace[i]);
             printf("\n");
@@ -350,8 +351,7 @@ int f_backtrace(int arglist){
     return(T);
 }
 
-int f_break(int arglist){
-    (void)arglist;
+int f_break(int arglist __unused){
     printf("break\n");
     debugger();
     return(T);
@@ -368,8 +368,7 @@ int f_instance(int arglist){
 
 //----------for Raspberry PI
 #ifdef __arm__
-int f_wiringpi_setup_gpio(int arglist){
-    (void)arglist;
+int f_wiringpi_setup_gpio(int arglist __unused){
     wiringPiSetupGpio();
     return(T);
 } 
@@ -565,13 +564,27 @@ int f_delay_microseconds(int arglist){
 #endif
 
 int f_substitute(int arglist){
-    int arg1,arg2;
+    int arg1,arg2,arg3;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
 
-    return(substitute(arg1,arg2,NIL));
+    return(substitute(arg1,arg2,arg3));
 }
 
-
-
+int f_line_argument(int arglist)
+{
+    int arg1, n;
+    
+    if (length(arglist) != 1) {
+        error(WRONG_ARGS, "line-argument", arglist);
+    }
+    arg1 = car(arglist);
+    n = GET_INT(arg1);
+    if (n < gArgC) {
+        return makestr(gArgV[n]);
+    } else {
+        return NIL;
+    }
+}

@@ -96,7 +96,7 @@
    (let ((a `(,(make-node))))
         (for ((m (- n 1) (- m 1))
               (p a))
-             ((eq m 0)
+             ((= m 0)
               (setq a `(,(setf (cdr p) a)))
               (for ((unused a)
                     (used (traverse-add (traverse-remove 0 a) ()))

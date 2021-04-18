@@ -11,12 +11,12 @@
 ;; call (fib 20)
 
 (defun fib (n)
-   (cond ((eq n 1) 1)
-         ((eq n 2) 1)
+   (cond ((= n 1) 1)
+         ((= n 2) 1)
          (t (+ (fib (- n 1)) (fib (- n 2))))))
 
 (defgeneric gfib (n)
    (:method ((n <integer>))
-      (cond ((eq n 1) 1)
-            ((eq n 2) 1)
+      (cond ((= n 1) 1)
+            ((= n 2) 1)
             (t (+ (gfib (- n 1)) (gfib (- n 2)))))))

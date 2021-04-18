@@ -7,12 +7,13 @@
 
 
 //---------garbage collection-----------
-void gbc(void){
-    int addr;
-
+DEF_PREDICATE(EMPTY, EMP)
+int gbc(void){
     debug_flag = 1;
 
     if(gc_sw == 0){
+        int addr;
+
         if(gbc_flag){
             printf("enter M&S-GC free=%d\n", fc); 
             fflush(stdout);
@@ -47,9 +48,12 @@ void gbc(void){
             fflush(stdout);
         }
     }
+    return 0;
 }
 
 
+static inline void MARK_CELL(int addr) { heap[addr].flag = USE; }
+static inline bool USED_CELL(int addr) { return (heap[addr].flag == USE); }
 void markcell(int addr){
     int i,m,n,x;
 
@@ -160,6 +164,11 @@ void gbcmark(void){
     //mark shelter
     for(i=0;i<lp;i++)
         markcell(shelter[i]);
+    
+    //mark dynamic environment
+    for(i=1;i<=dp;i++)
+        markcell(dynamic[i][1]);
+
 
     //mark generic_list
     markcell(generic_list);
@@ -169,6 +178,7 @@ void gbcmark(void){
 	
 }
 
+static inline void NOMARK_CELL(int addr) { heap[addr].flag = FRE; }
 void gbcsweep(void){
     int addr;
 
@@ -208,21 +218,22 @@ void clrcell(int addr){
 }
 
 //when free cells are less FREESIZE, invoke gbc()
-void checkgbc(void){
+int checkgbc(void){
     if(exit_flag == 1){
 	    exit_flag = 0;
         longjmp(buf,1);
     }
     if(gc_sw == 0 && fc < FREESIZE)
-        gbc();
+      (void)gbc();
     else if(gc_sw == 1 && wp < WORK2 && wp > WORK2 - FREESIZE)
-        gbc();
+      (void)gbc();
     else if(gc_sw == 1 && wp > WORK2 && wp > CELLSIZE - FREESIZE)
-        gbc();
+      (void)gbc();
     else if(ac > FARRMAX){
-        gbc();
+      (void)gbc();
         ac = 0;
     }
+    return 0;
 }
 
 

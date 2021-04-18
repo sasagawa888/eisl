@@ -20,7 +20,7 @@ Copying GC mode
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
-#include "compat_cdefs.h"
+#include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
 
@@ -1059,6 +1059,7 @@ int makeintlong(int n);
 int makestrflt(const char *str);
 int makedoubleflt(double x);
 int makestrlong(const char *str);
+int makefaststrlong(const char *str);
 int nth_cdr(int n, int x);
 int f_macrop(int arglist);
 int f_fixnump(int arglist);

@@ -2,7 +2,8 @@
 ;;; Ported from https://github.com/HiTECNOLOGYs/cl-charms/blob/master/examples/timer.lisp
 
 (import "virtty")
-;; Please compile virtty.lsp in library beforehand.
+(import "i18n")
+;; Please compile virtty.lsp & i18n.lsp in library beforehand.
 
 (defglobal *start* nil)
 (defglobal *stop* nil)
@@ -46,4 +47,5 @@
         (tyflush)
         (if (char= (convert c <character>) #\Space)
             (start-stop-clear)))
-   (tyepilogue))
+   (tyepilogue)
+   (cleanup-i18n))

@@ -52,7 +52,7 @@ EISL_OBJS = main.o \
 	compute.o \
 	edit.o
 
-all: eisl edlis
+all: eisl edlis library/i18n.lsp
 
 eisl:
 ifeq  ($(shell uname -n),raspberrypi)

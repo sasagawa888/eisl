@@ -7,11 +7,11 @@
 ;; gencat $HOME/locale/de_DE.UTF-8/i18n.cat de.msg
 ;; gencat $HOME/locale/en_GB.UTF-8/i18n.cat en.msg
 ;; gencat $HOME/locale/fr_FR.UTF-8/i18n.cat fr.msg
-;; export LC_MESSAGES=de_DE.UTF-8
+;; export LANG=de_DE.UTF-8
 ;; eisl -s example/nl_hello.lsp
-;; export LC_MESSAGES=en_GB.UTF-8
+;; export LANG=en_GB.UTF-8
 ;; eisl -s example/nl_hello.lsp
-;; export LC_MESSAGES=fr_FR.UTF-8
+;; export LANG=fr_FR.UTF-8
 ;; eisl -s example/nl_hello.lsp
 ;; ```
 
@@ -19,9 +19,12 @@
 ;; Please compile i18n.lsp in library beforehand.
 
 (defun main ()
-   (setlocale)
-   (let ((catd (catopen "i18n.cat")))
-        (format (standard-output) "~A~%" (catgets catd 1 1 "Hello world"))
-        (catclose catd)))
+   (let ((locname (safe-setlocale))
+         (catd (catopen "i18n.cat")))
+	(init-locale locname)
+        (format (standard-output) "~A~%" (str-ltou (catgets catd 1 1 "Hello world")))
+        (format (standard-output) "~A~%" (str-ltou (catgets catd 1 2 "The four seasons are spring, summer, autumn and winter.")))
+        (catclose catd))
+   (cleanup-i18n))
 
 (main)

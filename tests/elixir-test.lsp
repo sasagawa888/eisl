@@ -25,6 +25,10 @@
     (nil 0)
     ((_a :rest _b) (+ _a (sum _b))))
 
+(defpattern talk
+    ((I love _a) (list _a 'love 'me))
+    ((hello _a) (list 'good-by _a))
+    (else (list 'I 'do 'not 'know)))
 
 (defpattern foo
     ((a _a) (pipe _a |> (cos) |> (sin)))

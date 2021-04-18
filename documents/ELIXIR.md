@@ -59,6 +59,19 @@ e.g.
 1
 > 
 
+(defpattern talk
+    ((I love _a) (list _a 'love 'me))
+    ((hello _a) (list 'good-by _a))
+    (else (list 'I 'do 'not 'know)))
+
+> (talk '(I love hanako))
+(HANAKO LOVE ME)
+> (talk '(hello world))
+(GOOD-BY WORLD)
+> (talk 10)
+(I DO NOT KNOW)
+> 
+
 (defpattern sum
     (nil 0)
     ((_a :rest _b) (+ _a (sum _b))))
@@ -87,8 +100,17 @@ variable symbol has prifix "_"
 :rest or &rest match rest parameter
 
 else symbol match every argument 
-    
 
+e.g.    
+(defun uoo (x y)
+    (match x
+        (nil y)
+        ((0 :rest _x) (uoo _x (+ y 1)))
+        ((1 :rest _x) (uoo _x (+ y 2)))))
+
+> (uoo '(0 1 0 1 0 0) 0)
+8
+> 
 ```
 
 ## Pipe operator

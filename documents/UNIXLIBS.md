@@ -8,6 +8,10 @@ or an
 I wrapped some I personally found useful in the past for use from Lisp code, an overview follows.
 The code can also be consulted for more detailed questions.
 
+This library is by no means complete.
+For an example of a more-or-less complete wrapper around the UNIX API, see
+[scsh](https://scsh.net/docu/html/man-Z-H-1.html#node_toc_start).
+
 ## Syslog
 
 [Syslog](https://man.openbsd.org/syslog)
@@ -55,6 +59,10 @@ This is just a thin wrapper around the
 [catclose](https://man.openbsd.org/catclose.3)
 calls.
 The man pages have more details.
+
+*NB*: annoyingly, Linux "gencat" has a problem with Latin-9 encoding input.
+This didn't happen on other platforms.
+I guess this is something for future research.
 
 ### Iconv support
 

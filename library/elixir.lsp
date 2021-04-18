@@ -72,22 +72,26 @@
           ((general-vector-p y) (cons env (cons (list 'equal x y) ans)))
           ((general-array*-p y) (cons env (cons (list 'equal x y) ans)))
           ((and (variablep y) (not (member y env)))
-           (cons (cons y env) (cons (list 'setq y x) ans)))
+           (cons (cons y env) (cons (list 'setq* y x) ans)))
           ((and (variablep y) (member y env))
            (cons env (cons (list 'equal x y) ans)))
           ((and (symbolp y) (eq y 'else))
            (cons env (cons t ans)))
           ((symbolp y) (cons env (cons (list 'eq x (list 'quote y)) ans)))
           ((and (consp y) (eq (car y) ':rest))
-            (cons env (cons (list 'setq (car (cdr y)) x) ans)))
+            (cons env (cons (list 'setq* (car (cdr y)) x) ans)))
           ((and (consp y) (eq (car y) '&rest))
-            (cons env (cons (list 'setq (car (cdr y)) x) ans)))  
+            (cons env (cons (list 'setq* (car (cdr y)) x) ans)))  
           ((and (consp y) (consp (car y)))
            (let ((res (expand-match1 (list 'car x) (car y) env ans)))
                     (expand-match1 (list 'cdr x) (cdr y) (car res) (append (cdr res) ans))))
           ((consp y)
            (let ((res (expand-match1 (list 'car x) (car y) env ans)))
                     (expand-match1 (list 'cdr x) (cdr y) (car res) (cdr res))))))
+
+;; anyway return T
+(defmacro setq* (var val)
+    `(progn (setq ,var ,val) t))
 
 ;;;
 ;;; macro for Elixir like pipe operator

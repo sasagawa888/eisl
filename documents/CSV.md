@@ -2,7 +2,7 @@
 
 This library reads
 [CSV format](https://tools.ietf.org/html/rfc4180)
-data from a file and return a list of data.
+data from a file and returns a list of data.
 
 # Usage 
 

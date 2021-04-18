@@ -84,8 +84,8 @@ T
 
 ## Debugger
 
-The break function and errors interrupt execution and launch the debugger.
-When you enter the debugger, the prompt changes to >>.
+The `break` function and errors interrupt execution and launch the debugger.
+When you enter the debugger, the prompt changes to ">>".
 "?" brings up the help screen.
 
 ```

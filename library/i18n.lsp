@@ -10,12 +10,14 @@
 ;;; author's location, Latin-9 is chosen as an encoding here.
 
 (c-include "<limits.h>")
-(c-include "\"compat/locale.h\"")
+(c-include "<locale.h>")
+(c-include "<xlocale.h>" macos)
 (c-include "<nl_types.h>")
 (c-include "<iconv.h>")
 (c-include "<stdlib.h>")
 (c-include "<stdio.h>")
-(c-option "@C_OPTION@")
+(c-option "-liconv" macos)
+(c-option "-I/usr/local/include -L/usr/local/lib -liconv" openbsd)
 (c-define "I18N_STR_MAX" "256")
 
 ;;; Thin UNIX wrapper.

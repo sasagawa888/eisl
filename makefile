@@ -70,17 +70,6 @@ endif
 %.o: %.c eisl.h ffi.h term.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-library/i18n.lsp: library/i18n.tmpl
-ifeq ($(OPSYS),macos)
-	sed -e 's/@C_OPTION@/-liconv/g' < $^ > $@
-else
-ifeq ($(OPSYS),openbsd)
-	sed -e 's&@C_OPTION@&-I/usr/local/include -L/usr/local/lib -liconv&g' < $^ > $@
-else
-	sed -e 's/@C_OPTION@//g' < $^ > $@
-endif
-endif
-
 edlis : edlis.o
 	$(LD) $(LDFLAGS) edlis.o -o edlis
 edlis.o : edlis.c edlis.h term.h

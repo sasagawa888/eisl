@@ -219,5 +219,7 @@
    (the <character> c)
    (tolower-l c *latin-loc*))
 
-(defun cleanup-locale ()
-   (freelocale *latin-loc*))
+(defun cleanup-i18n ()
+   (freelocale *latin-loc*)
+   (iconv-close (car *iconvs*))
+   (iconv-close (cdr *iconvs*)))

@@ -2,7 +2,8 @@
 ;;; Ported from https://github.com/HiTECNOLOGYs/cl-charms/blob/master/examples/paint.lisp
 
 (import "virtty")
-;; Please compile virtty.lsp in library beforehand.
+(import "i18n")
+;; Please compile virtty.lsp & i18n.lsp in library beforehand.
 
 (defun paint ()
    ;; Paint an asterisk at the cursor, or erase the one already painted.
@@ -15,6 +16,7 @@
 
 (defun main ()
    ;; Start the paint program.
+   (setlocale "")
    (typrologue)
    (let ((x 0)
          (y 0))
@@ -29,4 +31,5 @@
              (setq x (mod x (tyxmax)))
              (setq y (mod y (tyymax)))
              (tycursor x y)))
-   (tyepilogue))
+   (tyepilogue)
+   (cleanup-i18n))

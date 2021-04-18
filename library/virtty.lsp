@@ -14,7 +14,6 @@
 
 (defun typrologue ()
    ;; Enter the terminal into a mode for drawing characters.
-   (c-lang "setlocale(LC_ALL, \"\");")  ; TODO: move out of here?
    (c-lang "initscr();")
    (c-lang "start_color();")
    (c-lang "use_default_colors();")

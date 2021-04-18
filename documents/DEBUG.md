@@ -19,7 +19,6 @@ ENTERING: FACT(3)
 EXITING: FACT 6
 6
 > 
-
 ```
 
 When called with no arguments, the name of the function currently being traced is displayed. 
@@ -28,7 +27,6 @@ When called with no arguments, the name of the function currently being traced i
 > (trace)
 (FACT)
 > 
-
 ```
 
 ## untrace
@@ -39,11 +37,11 @@ Cancels the trace state.
 (untrace fact)
 ```
 
-If no arguments are given, all functions in the trace are cleared. 
+If no arguments are given, all functions in the trace state are cleared. 
 
 ## backtrace
 
-Displays the execution status of the built-in function. 
+Display the most recently executed built-in functions, with arguments.
 
 ```
 > (fact 5)
@@ -55,12 +53,11 @@ Displays the execution status of the built-in function.
 (= N 0)
 (BACKTRACE)
 T
-
 ```
 
 ## break
 
-Breaks execution by embedding the break function. 
+The `break` function aborts execution and enters the debugger (see below).
 
 ```
 (defun fact (n)
@@ -71,13 +68,11 @@ Breaks execution by embedding the break function.
 > (fact 3)
 break
 > 
-
-
 ```
 
 ## macroexpand-1
 
-It can be used to see if the macro is well expanded. 
+This can be used to see if a macro expands correctly. 
 
 ```
 > (defmacro when (x y) `(if ,x ,y))
@@ -90,8 +85,8 @@ T
 ## Debugger
 
 The break function and errors interrupt execution and launch the debugger.
-When you enter the debugger, the prompt changes to >>. 
-? Will bring up the help screen. 
+When you enter the debugger, the prompt changes to >>.
+"?" brings up the help screen.
 
 ```
 > (break)

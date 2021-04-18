@@ -1,49 +1,49 @@
 # Edlis
-Edlis is a simple editor for ISLisp 
+Edlis is a simple editor for ISLisp .
 
-## invoke
-(edit filename) in REPL
+## Invocation
+`(edit filename)` in the REPL.
 
-## Command
+## Commands
 
-```
-CTRL+O save file.
-CTRL+X quit editor.
-CTRL+T insert file.
-```
+| Key    | Command     |
+| ------ | ----------- |
+| CTRL+O | Save file   |
+| CTRL+X | Quit editor |
+| CTRL+T | Insert file |
 
 ## Editing
-Key bindings are hybrid of Emacs and nano.
+The key bindings are a hybrid of Emacs and nano.
 
-```
-Enter key insert tab for Lisp automatic
-Insert key switch insert/overwrite
-Tab key insert tab for Lisp
-BackSpace key delete backword char
-Delete key delete forward char
-CTRL+F move to right
-CTRL+B move to left
-CTRL+P move to up
-CTRL+N move to down
-CTRL+J end of line
-CTRL+D delete
-CTRL+H backspace
-CTRL+A begin of line
-CTRL+E end of line
-CTRL+V page up
-ESC V page down
-CTRL+K cut selection
-CTRL+U uncut selection
-CTRL+L goto line
-CTRL+W search word
-CTRL+R replace word
-ESC TAB complete builtin function or syntax
-ESC < goto top page
-ESC > goto end page
-ESC A mark(or unmark) row for selection ESC A mark current row position. After this operation, cursol up or down reverse selected rows. ESC A again, unmark. Similer to nano editor.
-←　→　↑　↓　key is avarable
-Home key display top page
-End key display end page
-PageUp key PageUp
-PageDown PageDown o
-```
+| Key       | Binding                         |
+| --------- | ------------------------------- |
+| Enter     | Automatically indent for Lisp   |
+| Insert    | Switch between insert/overwrite |
+| Tab       | Insert tab for Lisp             |
+| BackSpace | Delete previous char            |
+| Delete    | Delete next char                |
+| CTRL+F    | Move right                      |
+| CTRL+B    | Move left                       |
+| CTRL+P    | Move up                         |
+| CTRL+N    | Move down                       |
+| CTRL+J    | End of line                     |
+| CTRL+D    | Delete                          |
+| CTRL+H    | Backspace                       |
+| CTRL+A    | Beginning of line               |
+| CTRL+E    | End of line                     |
+| CTRL+V    | Page up                         |
+| ESC V     | Page down                       |
+| CTRL+K    | Cut selection                   |
+| CTRL+U    | Uncut selection                 |
+| CTRL+L    | Go to line                      |
+| CTRL+W    | Search for word                 |
+| CTRL+R    | Replace word                    |
+| ESC TAB   | Complete builtin function or syntax |
+| ESC <     | Goto top page                   |
+| ESC >     | Goto end page                   |
+| ESC A     | Mark (or unmark) row for selection. "ESC A" marks the current row, then cursor up or down selects rows. "ESC A" again unmarks. This is similer to nano. |
+| ←　→　↑　↓　| Usual cursor movement          |
+| Home      | Display top page                |
+| End       | Display end page                |
+| PageUp    | Page up                         |
+| PageDown  | Page down                       |

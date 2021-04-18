@@ -1,22 +1,20 @@
 # Functions
-Search system for ISLisp functions
+Online help system for ISLisp functions.
 
 # Acknowledgments
 
-The program was created by Dr. Gomi. And we translated into English with the permission of Dr. Gomi.
-
-Mr. Poldy made a great contribution to the English translation.
-
-Thank you. 
+This program was written by Dr. Gomi, and translated into English with his permission.
+"poldy" contributed to the English translation.
 
 # Usage
 
+```lisp
 (import "functions")
-
+```
 
 ## Search Function 
-List the signatures of the applicable system function, giving a part of the beginning of the function name 
-(search-function function-name [short])
+List the signatures of the applicable system function, given a partial beginning of a function name.
+`(search-function function-name [short])`
 
 ```
     Exp. (search-function 'char) 
@@ -30,12 +28,10 @@ List the signatures of the applicable system function, giving a part of the begi
 ```
 
 ## Say Function
-Give a part of the beginning of the function name to format the description of the corresponding system function
-and display it on the screen.
+Given a partial beginning of a function name, print the description of the corresponding system function
+on the screen.
 
-```
-   (say function-name [output-file]) display functions that begin with function-name
-
-   (say-all [output-file]) display all system functions explanation as formatted
-
-```
+| Function                          | Description                                             |
+| --------------------------------- | --------------------------------------------------------|
+| (say function-name [output-file]) | Display functions that begin with function-name         |
+| (say-all [output-file])           | Display a formatted description of all system functions |

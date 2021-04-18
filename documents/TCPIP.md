@@ -1,11 +1,13 @@
 # TCPIP
 
 This is a library for TCP/IP communication.
-We would like to thank Mr. Poldy for his great contributions.
+Thanks to "poldy" for his contributions.
 
 # Usage
 
+```lisp
 (import "tcpip")
+```
 
 See the following sample code:
 

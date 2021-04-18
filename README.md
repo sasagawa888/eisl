@@ -5,7 +5,7 @@ EISL was written by Kenichi Sasagawa
 https://qiita.com/sym_num/items/793adfe118514668e5b0
 
 See [ISLisp](https://en.wikipedia.org/wiki/ISLISP)
-youtube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw8&t=330s)
+YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw8&t=330s)
 
 # Installation
 
@@ -14,6 +14,7 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 In Linux  type "sudo make install".
 In macOS  type "sudo make install OPSYS=macos".
 In OpenBSD  type "sudo make install OPSYS=openbsd".
+You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 
 After version 1.4 Windows OS is not supported. Please use WSL on Windows.
 
@@ -35,9 +36,9 @@ We confirmed operation in the following environments.
 eisl 
 ```
 
-In the Linux version,the REPL is editable. If you do not desire to use the editable REPL, invoke with -r option.
+In the Linux version,the REPL is editable. If you do not want to use the editable REPL, invoke with the -r option.
 
-```
+```sh
 eisl -r
 ```
 
@@ -64,9 +65,9 @@ List of options:
 
 # Quit
 
-On REPL type (quit) or Esc+Q
+In the REPL type (quit) or Esc+Q.
 
-On not editable REPL type (quit) or CTRL+D
+In the non-editable REPL type (quit) or CTRL+D.
 
 # Editable REPL
 
@@ -96,19 +97,20 @@ EISL aims to be user-friendly.
 # Compiler
 
 EISL has a compiler.
-It generates GCC code and from that object code.
+It generates C code that can be compiled using gcc or clang to object code.
+
+Invoke with the -c option,
+`eisl -c`
+or `(import "compiler")` in the REPL.
+Then you can
+```lisp
+(compile-file "foo.lsp")
+(load "foo.o")
+```
+
+For example:
 
 ```
-Invoke with -c option
-eisl -c
-
-or (import "compiler") in REPL
-
-(compile-file "foo.lsp")
-
-(load "foo.o")
-
-example
 eisl -c
 Easy-ISLisp Ver1.6
 > (compile-file "tests/tarai.lsp")

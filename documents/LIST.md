@@ -3,7 +3,7 @@
 The list library was written by M. Hiroi.
 
 # Acknowledgement
-Thank you Mr. Hiroi.
+Thanks to Mr. Hiroi.
 
 # Usage 
 

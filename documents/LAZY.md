@@ -1,15 +1,18 @@
 # Lazy
-  Lazy evalution 
 
-  written by M.Hiroi
+Lazy evalution,
+written by M.Hiroi.
 
 # Acknowledgement
-Thank you Mr. Hiroi.
+Thanks to Mr. Hiroi.
 
 # Usage 
-  (import "lazy")
 
-# Example1
+```lisp
+(import "lazy")
+```
+
+# Example 1
 
 ```
 > (import "lazy")
@@ -30,16 +33,15 @@ B
 > 
 ```
 
-# Example2
+# Example 2
 
-```
+```lisp
 (import "lazy")
 
 (defun intgen (low high)
   (if (> low high)
       nil
     (stream-cons low (intgen (+ low 1) high))))
-
 ```
 
 ```
@@ -56,5 +58,4 @@ S
 > (setq s (stream-cdr s))
 NIL
 > 
-
 ```

@@ -59,13 +59,13 @@ Install OpenGL on linux and compile *library/opengl.lsp* with Easy-ISLisp.
 (glut::display-func x)
 
 (glut::keyboard-func x)
-callback function can get parameter as following variable.
+callback function can get parameters as the following variables:
 gl::key
 gl::x
 gl::y
 
 (glut::mouse-func x)
-callback function can get parameter as following variable.
+callback function can get parameter as the following variables:
 gl::button
 gl::state
 gl::x
@@ -78,7 +78,7 @@ gl::y
 (gl::color3d r g b)
 
 (gl::begin x)
-  x is one of them
+  x is a symbol, one of
     'gl-line-loop
     'gl-points
     'gl-lines

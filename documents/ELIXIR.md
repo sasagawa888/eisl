@@ -61,13 +61,13 @@ e.g.
 
 (defpattern talk
     ((I love _a) (list _a 'love 'me))
-    ((hello _a) (list 'good-by _a))
+    ((hello _a) (list 'good-bye _a))
     (else (list 'I 'do 'not 'know)))
 
 > (talk '(I love hanako))
 (HANAKO LOVE ME)
 > (talk '(hello world))
-(GOOD-BY WORLD)
+(GOOD-BYE WORLD)
 > (talk 10)
 (I DO NOT KNOW)
 > 

@@ -7,11 +7,11 @@
 ;; gencat $HOME/locale/de_DE.UTF-8/i18n.cat de.msg
 ;; gencat $HOME/locale/en_GB.UTF-8/i18n.cat en.msg
 ;; gencat $HOME/locale/fr_FR.UTF-8/i18n.cat fr.msg
-;; export LC_ALL=de_DE.UTF-8
+;; export LANG=de_DE.UTF-8
 ;; eisl -s example/nl_hello.lsp
-;; export LC_ALL=en_GB.UTF-8
+;; export LANG=en_GB.UTF-8
 ;; eisl -s example/nl_hello.lsp
-;; export LC_ALL=fr_FR.UTF-8
+;; export LANG=fr_FR.UTF-8
 ;; eisl -s example/nl_hello.lsp
 ;; ```
 
@@ -21,8 +21,7 @@
 (defun main ()
    (let ((locname (safe-setlocale))
          (catd (catopen "i18n.cat")))
-	;; (init-locale locname)
-	(init-iconv)
+	(init-locale locname)
         (format (standard-output) "~A~%" (str-ltou (catgets catd 1 1 "Hello world")))
         (format (standard-output) "~A~%" (str-ltou (catgets catd 1 2 "The four seasons are spring, summer, autumn and winter.")))
         (catclose catd))

@@ -98,6 +98,7 @@
 (defun init-iconv ()
    (setf (car *iconvs*) (iconv-open "ISO-8859-15" "UTF-8"))
    (setf (cdr *iconvs*) (iconv-open "UTF-8" "ISO-8859-15")))
+(init-iconv)
 
 ;; I could (import "unix")
 ;; but I prefer some small duplication to dependencies.

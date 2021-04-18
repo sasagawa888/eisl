@@ -23,6 +23,11 @@
         `(defun ,name (,arg) 
             (let ,vars ,body1))))
 
+(defmacro match (x :rest body)
+    (let ((vars (extract-variables body nil nil))
+          (body1 (expand-body x body)))
+        `(let ,vars ,body1)))
+
 (defun expand-body (x body)
     (cons 'cond (expand-body1 x body)))
 

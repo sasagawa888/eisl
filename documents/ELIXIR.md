@@ -58,6 +58,37 @@ e.g.
 > (boo 3)
 1
 > 
+
+(defpattern sum
+    (nil 0)
+    ((_a :rest _b) (+ _a (sum _b))))
+
+> (sum '(1 2 3))
+6
+> 
+```
+
+## Match syntax
+
+```
+(match x
+    case1
+    ...
+    casen)
+
+case
+  (pattern sexp1 sexp2 ... sexpn)
+
+pattern
+
+variable e.g. _a _z 
+variable symbol has prifix "_"
+
+:rest or &rest match rest parameter
+
+else symbol match every argument 
+    
+
 ```
 
 ## Pipe operator

@@ -21,6 +21,18 @@
     ((3 (4 6) :rest _x) (format (standard-output) "~A~%" _x))
     ((_a :rest _b) (find _b)))
 
+(defpattern sum
+    (nil 0)
+    ((_a :rest _b) (+ _a (sum _b))))
+
+
 (defpattern foo
     ((a _a) (pipe _a |> (cos) |> (sin)))
     ((b _b) (pipe _b |> (tan) |> (abs))))
+
+(defun uoo (x y)
+    (match x
+        (nil y)
+        ((0 :rest _x) (uoo _x (+ y 1)))
+        ((1 :rest _x) (uoo _x (+ y 2)))))
+

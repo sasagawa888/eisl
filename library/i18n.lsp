@@ -64,6 +64,10 @@
    (the <longnum> loc)
    (c-lang "res = NIL; freelocale(Fgetlong(LOC));"))
 
+(defun iconv-close (cd)
+  (the <longnum> cd)
+  (c-lang "res = iconv_close(Fgetlong(CD));"))
+
 (defun isspace-l (c locale)
    (the <character> c)(the <longnum> locale)
    (c-lang "res = ((isspace_l(Fgetname(C)[0], Fgetlong(LOCALE)) == 0) ? NIL : T);"))

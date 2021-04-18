@@ -24,28 +24,30 @@ Copying GC mode
 #include "ffi.h"
 #include "term.h"
 
-static const float VERSION = 1.90;
-static const int HEAPSIZE = 20000000;
 #define CELLSIZE 20000000
+#define DYNSIZE 1000
+#define STACKSIZE 400000
+#define BUFSIZE 256
+#define STRSIZE 500000
+#define HASHTBSIZE 107
+#define CTRLSTK 200
+#define BACKSIZE 30
+
+static const float VERSION = 1.92;
+static const int HEAPSIZE = 20000000;
 static const int WORK1 = 6000000;
 static const int WORK2 = 13000000;
 static const int FREESIZE = 900;
 static const int FARRMAX = 100000000;
-#define DYNSIZE 1000
-#define STACKSIZE 400000
 static const int SYMSIZE = 256;
-#define BUFSIZE 256
-#define STRSIZE 500000
 static const int CHARSIZE = 2;   //ascii char. add \0 to tail
 static const int MATSIZE = 256;
 static const int UNDEF = 4;
 static const int FEND = 6;
-#define HASHTBSIZE 107
+
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
 static const double PI = 3.141592653589793;
-#define CTRLSTK 200
-#define BACKSIZE 30
 static const int FARRAYSIZE = 1000;
 
 typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,

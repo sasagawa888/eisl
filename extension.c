@@ -564,12 +564,13 @@ int f_delay_microseconds(int arglist){
 #endif
 
 int f_substitute(int arglist){
-    int arg1,arg2;
+    int arg1,arg2,arg3;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
 
-    return(substitute(arg1,arg2,NIL));
+    return(substitute(arg1,arg2,arg3));
 }
 
 int f_line_argument(int arglist)

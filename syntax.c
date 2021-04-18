@@ -1894,14 +1894,18 @@ int f_untrace(int arglist){
 }
 
 int f_defmodule(int arglist){
-    int arg1,arg2;
+    int arg1,arg2,sexp,public;
 
     arg1 = car(arglist); //module name
     arg2 = cdr(arglist); //body
+    public = NIL;
 
     while(!nullp(arg2)){
-        //print(substitute(car(arg2),arg1,NIL));
-        eval(substitute(car(arg2),arg1,NIL));
+        sexp = car(arg2);
+        if(symbolp(car(sexp)) && HAS_NAME(car(sexp),"DEFPUBLIC"))
+            public = cons(cadr(sexp),public);
+
+        eval(substitute(car(arg2),arg1,public));
         arg2 = cdr(arg2);
     }
     return(T);
@@ -1928,7 +1932,7 @@ int substitute(int addr, int module, int fname){
     else if(class_symbol_p(addr))
         return(addr);
     else if(symbolp(addr)){
-        if(!eqp(addr,fname) && !eqp(addr,makesym(":REST")) && !eqp(addr,makesym("&REST")))
+        if(!member(addr,fname) && !eqp(addr,makesym(":REST")) && !eqp(addr,makesym("&REST")))
             return(substitute1(addr,module));
         else
             return(addr);
@@ -1950,7 +1954,7 @@ int substitute(int addr, int module, int fname){
         else if(subrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUBLIC")))
-            return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module,cadr(addr)))));
+            return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module,fname))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),":METHOD")))
@@ -1962,7 +1966,8 @@ int substitute(int addr, int module, int fname){
         else if(genericp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else
-            return(cons(substitute(car(addr),module,fname),substitute(cdr(addr),module,fname)));  
+            return(cons(substitute(car(addr),module,fname),substitute(cdr(addr),module,fname)));
+        
     }
     return(T);
 }

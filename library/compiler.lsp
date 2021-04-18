@@ -333,6 +333,11 @@ double tarai(double x, double y, double z){
         (cond ((eq (car x) 'defun)
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
                (setq function-arg (cons (cons (elt x 1) (count-args (elt x 2))) function-arg)))
+              ((eq (car x) 'defpattern)
+               (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
+               (setq function-arg (cons (cons (elt x 1) 1) function-arg)))
+              ((eq (car x) 'import)
+               (eval x))
               ((eq (car x) 'defmacro)
                (unless (symbolp (elt x 1)) (error* "defmacro: not symbol" (elt x 1)))
                (unless (listp (elt x 2)) (error* "defmacro: not list" (elt x 2)))
@@ -420,6 +425,7 @@ double tarai(double x, double y, double z){
     
     (defun compile (x)
         (cond ((eq (car x) 'defun) (comp-defun x))
+              ((eq (car x) 'defpattern) (comp-defun (macroexpand-1 x)))
               ((eq (car x) 'defglobal) (comp-defglobal x))
               ((eq (car x) 'defdynamic) (comp-defdynamic x))
               ((eq (car x) 'defconstant) (comp-defconstant x))
@@ -743,11 +749,14 @@ double tarai(double x, double y, double z){
     
     (defun comp-defmodule (x)
         (let ((name (car (cdr x)))
-              (body (cdr (cdr x))) )
+              (body (cdr (cdr x)))
+              (public nil) )
            (for ((s body (cdr s)))
                 ((null s)
                  t )
-                (compile (substitute (car s) name nil)))))
+                (if (and (consp (car s)) (eq (car (car s)) 'defpublic))
+                    (setq public (cons (elt (car s) 1) public)))
+                (compile (substitute (car s) name public)))))
     
     (defun comp-defun0 (x)
         (let* ((name (elt x 1))
@@ -2240,11 +2249,16 @@ double tarai(double x, double y, double z){
     
     ;;add code0 stream #include C code.
     (defun comp-c-include (x)
-        (unless (= (length x) 2) (error* "c-include: illegal form" x))
+        (unless (or (= (length x) 2) (= (length x) 3)) (error* "c-include: illegal form" x))
         (unless (stringp (elt x 1)) (error* "c-include: argument must be string" x))
-        (format code0 "#include ")
-        (format code0 (elt x 1))
-        (format code0 "~%"))
+        (cond ((and (= (length x) 3) (eq (self-introduction) (elt x 2)))
+               (format code0 "#include ")
+               (format code0 (elt x 1))
+               (format code0 "~%"))
+              ((= (length x) 2)
+               (format code0 "#include ")
+               (format code0 (elt x 1))
+               (format code0 "~%"))))
     
     ;;add code2 stream C define
     (defun comp-c-define (x)
@@ -2265,7 +2279,12 @@ double tarai(double x, double y, double z){
     
     ;;add compile option
     (defun comp-c-option (x)
-        (setq c-lang-option (elt x 1)))
+        (unless (or (= (length x) 2) (= (length x) 3)) (error* "c-option: illegal form" x))
+        (unless (stringp (elt x 1)) (error* "c-option: argument must be string" x))
+        (cond ((and (= (length x) 3) (eq (self-introduction) (elt x 2)))
+               (setq c-lang-option (elt x 1)))
+              ((= (length x) 2)
+               (setq c-lang-option (elt x 1)))))
     
     ;;defglobal
     (defun comp-defglobal (x)

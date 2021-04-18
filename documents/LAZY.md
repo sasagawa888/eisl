@@ -3,11 +3,15 @@
 
   written by M.Hiroi
 
+# Acknowledgement
+Thank you Mr. Hiroi.
+
 # Usage 
   (import "lazy")
 
 # Example1
 
+```
 > (import "lazy")
 T
 > (defglobal a (delay (+ 10 20)))
@@ -24,6 +28,7 @@ B
 > (force b)
 30
 > 
+```
 
 # Example2
 

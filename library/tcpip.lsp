@@ -118,10 +118,10 @@
             (error "socket-send" nil)))
   t)
 
-(defun socket-recieve (x)
+(defun socket-receive (x)
   (c-lang "char str[256];")
   (if (not (eq (class-of x)(class socket)))
-      (error "socket-recieve not socket" x))
+      (error "socket-receive not socket" x))
   (let ((d (socket-d x))
         (response nil))
         (c-lang "memset(str, 0, sizeof(str));")

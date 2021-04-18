@@ -1,17 +1,21 @@
 # List
 
-List library written by M.Hiroi
+The list library was written by M. Hiroi.
 
 # Acknowledgement
-Thank you Mr. Hiroi.
+Thanks to Mr. Hiroi.
 
 # Usage 
+
+```lisp
 (import "list")
+```
 
 # Specification
-see following test cases
 
-```
+See the following test cases:
+
+```lisp
 (test (caar '((a b) (c d) (e f))) A)
 (test (cadr '((a b) (c d) (e f))) (C D))
 (test (cdar '((a b) (c d) (e f))) (B))
@@ -44,7 +48,6 @@ see following test cases
 (test (fold-left #'cons nil '(a b c d e f)) ((((((NIL . A) . B) . C) . D) . E) . F))
 (defun xcons (a b)
     (cons b a) )
-
 
 (test (fold-left #'xcons nil '(a b c d e f)) (F E D C B A))
 (test (fold-right #'+ 0 '(1 2 3 4 5 6 7 8 9 10)) 55)
@@ -81,5 +84,4 @@ see following test cases
 (test (difference '(1 2 3 4) '(3 4 5 6)) (1 2))
 (test (subsetp '(1 2) '(1 2 3 4)) T)
 (test (subsetp '(1 2 5) '(1 2 3 4)) NIL)
-
 ```

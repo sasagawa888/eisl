@@ -1,16 +1,16 @@
 # Elixir
-Elixir like syntax extension 
+Elixir-like syntax extension.
 
 # Usage
-Compile the library elixir.lsp before if you need speed. 
+Compile the library elixir.lsp beforehand if you need speed.
 
-```
+```lisp
 (import "elixir")
 ```
 
 # Example
 
-## Pattern match 
+## Pattern matching
 
 ```
 (import "elixir")
@@ -136,13 +136,12 @@ e.g.
 ```
 
 ## Specification
-pipe is described by macro. The above example expands to the following function: 
+pipe is defined by a macro. The above example expands to the following function:
 
 ```
 (pipe x |> (foo 1) |> (bar 2) |> (boo 3)))
 
 (boo (bar (foo x 1) 2) 3)
-
 ```
 
 The first argument receives the result of the previous calculation. 

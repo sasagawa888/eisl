@@ -1,17 +1,20 @@
 # Benchmark
-I applied the benchmark test written by Mr. Jullien to Easy-ISLisp. 
-see bench folder.
-
+I applied the
+[benchmark test](http://christian.jullien.free.fr/benchmarks.html)
+written by
+[Mr. Jullien](http://www.eligis.com)
+to Easy-ISLisp. 
+See the "bench" directory.
 
 # Hardware
 Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz
 
 # EISL Compiler
-before run, please compile with cpbench.lsp
-WSL Ubuntu
-$ eisl -s bench/runbench.lsp
+Before running, please compile with cpbench.lsp.
+Here are some results for WSL Ubuntu:
 
 ```
+$ eisl -s bench/runbench.lsp
 
 Test 01: Fib     -> ok, time =   0.000s.
 Test 02: Tak     -> ok, time =   0.000s.
@@ -37,7 +40,6 @@ Test 21: Tprint  -> ok, time =   0.000s.
 Test 22: Frpoly  -> ok, time =   0.03125s.
 
 Total   2.515625s.
-
 ```
 
 # OpenLisp
@@ -78,5 +80,4 @@ Total 1.487s.
 ;; elapsed time = 1.6486s, (8 gc).
 = t
 ?
-
 ```

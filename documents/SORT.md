@@ -1,33 +1,27 @@
 # Sort
-  sort library 
-  written by M.Hiroi
+Sort library,
+written by M.Hiroi.
 
 # Acknowledgement
-Thank you Mr. Hiroi.
+Thanks to Mr. Hiroi.
 
-# functions
+# Functions
 
-```
+```lisp
 (quick-sort ls)
-
 (insert-sort ls)
-
 (select-sort ls)
-
 ```
 
-# usage
-If you need speed, compile before that.
+# Usage
+If you need speed, compile first.
 
-```
+```lisp
 (import "compiler")
 (compile-file "library/sort.lsp)
-
 ```
 
 ```
-(import "sort")
-
 > (import "sort")
 T
 > (quick-sort '(3 2 3 1 9 0 8 3 4 7))
@@ -37,5 +31,4 @@ T
 > (select-sort '(3 2 3 1 9 0 8 3 4 7))
 (0 1 2 3 3 3 4 7 8 9)
 > 
-
 ```

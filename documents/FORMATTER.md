@@ -1,12 +1,11 @@
 # Formatter
 
-# Usage
+## Usage
 
-(import "formatter") or invoke with -f option(eisl -f)
+`(import "formatter")` or invoke eisl with the -f option (`eisl -f`).
 
+```lisp
 (formatter "filename")
+```
 
-The original file is save as filename.org
-
-
-
+The original file is saved as *filename.org*.

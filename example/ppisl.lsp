@@ -19,7 +19,7 @@
 (defun newline ()
     (format (standard-output) "~%") )
 
-;;in ISLisp when cdr recieve nil, invoke error.
+;;in ISLisp when cdr receive nil, invoke error.
 ;;so, cdr* is compatible with Common Lisp
 (defun cdr* (x)
     (if (null x)

@@ -147,8 +147,8 @@ int catch_symbols = NIL; //to clear tag data
 int block_pt;  //index of block. following are similer
 int catch_pt = 0; //catch counter
 int unwind_pt; //lambda address for unwind-protect
-int block_arg; //recieve argument of block
-int catch_arg; //recieve argument of catch
+int block_arg; //receive argument of block
+int catch_arg; //receive argument of catch
 int tagbody_tag = NIL; //tag address fo tagbody
 int error_handler; //for store first argument of with-handler
 int trace_list = NIL; //function list of trace
@@ -1736,7 +1736,7 @@ int evlis(int addr){
     }
 }
 /*
-check class matching of argument of lambda and recieved argument.
+check class matching of argument of lambda and received argument.
 */
 int matchp(int varlist, int arglist){
 

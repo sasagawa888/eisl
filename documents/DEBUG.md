@@ -3,7 +3,7 @@
 ## trace
 
 Puts the user-defined function in the trace state.
-Once in the trace state, the arguments and their return values will be displayed when the function is executed. 
+Once in the trace state, the arguments and their return values will be displayed when the function is executed.
 
 ```
 > (trace fact)
@@ -19,7 +19,6 @@ ENTERING: FACT(3)
 EXITING: FACT 6
 6
 > 
-
 ```
 
 When called with no arguments, the name of the function currently being traced is displayed. 
@@ -28,21 +27,21 @@ When called with no arguments, the name of the function currently being traced i
 > (trace)
 (FACT)
 > 
-
 ```
 
 ## untrace
+
 Cancels the trace state.
 
-```
+```lisp
 (untrace fact)
 ```
 
-If no arguments are given, all functions in the trace are cleared. 
+If no arguments are given, all functions in the trace state are cleared. 
 
 ## backtrace
 
-Displays the execution status of the built-in function. 
+Display the most recently executed built-in functions, with arguments.
 
 ```
 > (fact 5)
@@ -54,12 +53,11 @@ Displays the execution status of the built-in function.
 (= N 0)
 (BACKTRACE)
 T
-
 ```
 
 ## break
 
-Breaks execution by embedding the break function. 
+The `break` function aborts execution and enters the debugger (see below).
 
 ```
 (defun fact (n)
@@ -70,13 +68,11 @@ Breaks execution by embedding the break function.
 > (fact 3)
 break
 > 
-
-
 ```
 
 ## macroexpand-1
 
-It can be used to see if the macro is well expanded. 
+This can be used to see if a macro expands correctly. 
 
 ```
 > (defmacro when (x y) `(if ,x ,y))
@@ -86,11 +82,11 @@ T
 > 
 ```
 
-## debugger
+## Debugger
 
-The break function or error interrupts launches the debugger.
-When you enter the debugger, the prompt changes to >>. 
-? Will bring up the help screen. 
+The `break` function and errors interrupt execution and launch the debugger.
+When you enter the debugger, the prompt changes to ">>".
+"?" brings up the help screen.
 
 ```
 > (break)
@@ -107,5 +103,4 @@ debug mode ?(help)
 :s stepper ON/OFF
 other S exps eval
 >> 
-
 ```

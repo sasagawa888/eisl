@@ -16,6 +16,11 @@
     (nil nil)
     ((_a :rest _b) (print _a) (bar _b)))
 
+(defpattern find
+    (nil nil)
+    ((3 (4 6) :rest _x) (format (standard-output) "~A~%" _x))
+    ((_a :rest _b) (find _b)))
+
 (defpattern foo
     ((a _a) (pipe _a |> (cos) |> (sin)))
     ((b _b) (pipe _b |> (tan) |> (abs))))

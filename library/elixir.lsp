@@ -83,7 +83,7 @@
           ((and (consp y) (eq (car y) '&rest))
             (cons env (cons (list 'setq* (car (cdr y)) x) ans)))  
           ((and (consp y) (consp (car y)))
-           (let ((res (expand-match1 (list 'car x) (car y) env ans)))
+           (let ((res (expand-match1 (list 'car x) (car y) env (cons (list 'consp (list 'car x)) nil))))
                     (expand-match1 (list 'cdr x) (cdr y) (car res) (append (cdr res) ans))))
           ((consp y)
            (let ((res (expand-match1 (list 'car x) (car y) env ans)))

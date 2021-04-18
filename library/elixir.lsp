@@ -58,9 +58,11 @@
 ;; return (env . ans)
 
 (defun expand-match (x y)
-    (if (consp y)
-        (cons 'and (reverse (cdr (expand-match1 x y nil (cons (list 'consp x) nil)))))
-        (cons 'and (reverse (cdr (expand-match1 x y nil nil))))))
+    (cond ((null y) (list 'null x))
+          ((consp y)
+           (cons 'and (reverse (cdr (expand-match1 x y nil (cons (list 'consp x) nil))))))
+          (t 
+           (cons 'and (reverse (cdr (expand-match1 x y nil nil)))))))
 
 (defun expand-match1 (x y env ans)
     (cond ((null y) (cons env ans))

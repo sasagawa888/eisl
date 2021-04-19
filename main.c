@@ -230,7 +230,7 @@ char builtin[200][32] ={
 //extended function
 char extended[70][30] = {
 {"random-real"},{"random"},{"heapdump"},{"instance"},
-{"nconc"},{"fast-address"},{"macroexpand-1"},{"backtrace"},
+{"nconc"},{"fast-address"},{"macroexpand-1"},{"macroexpand-all"},{"backtrace"},
 {"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
 {"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
 {"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},

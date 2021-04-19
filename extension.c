@@ -14,6 +14,7 @@ void initexsubr(void){
     defsubr("NCONC",f_nconc);
     defsubr("FAST-ADDRESS",f_address);
     defsubr("MACROEXPAND-1",f_macroexpand_1);
+    defsubr("MACROEXPAND-ALL",f_macroexpand_all);
     defsubr("BACKTRACE",f_backtrace);
     defsubr("BREAK",f_break);
     defsubr("EDIT",f_edit);
@@ -293,7 +294,7 @@ int f_address(int arglist){
 }
 
 int f_macroexpand_1(int arglist){
-    int arg1,func,args,body,macrofunc,varlist,save,res;
+    int arg1,args;
     
     arg1 = caar(arglist);
     args = cdar(arglist);
@@ -302,8 +303,13 @@ int f_macroexpand_1(int arglist){
     if(!symbolp(arg1))
         error(NOT_SYM,"macroexpand-1",arg1);
     
-    
-    func = GET_CAR(arg1);
+    return(macroexpand_1(arg1,args));
+}
+
+int macroexpand_1(int macsym, int args){
+    int func,body,macrofunc,varlist,save,res;
+
+    func = GET_CAR(macsym);
     save = ep;
     res = NIL;
     macrofunc = GET_CAR(func);
@@ -325,6 +331,33 @@ int f_macroexpand_1(int arglist){
     unbind();
     ep = save;
     return(res);
+}
+
+int f_macroexpand_all(int arglist){
+    int arg1;
+
+    arg1 = car(arglist);
+    if(length(arglist) != 1)
+        error(WRONG_ARGS,"macroexpand-all",arglist);
+
+    return(macroexpand_all(arg1));
+}
+
+
+int macroexpand_all(int sexp){
+
+    if(nullp(sexp))
+        return(NIL);
+    else if(atomp(sexp))
+        return(sexp);
+    else if(listp(sexp) && macrop(car(sexp)))
+        return(macroexpand_1(car(sexp),cdr(sexp)));
+    else if(listp(sexp) && symbolp(car(sexp)))
+        return(sexp);
+    else if(listp(car(sexp)))
+        return(cons(macroexpand_all(car(sexp)),macroexpand_all(cdr(sexp))));
+    
+    return(NIL);
 }
 
 int f_backtrace(int arglist){

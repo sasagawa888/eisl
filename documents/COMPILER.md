@@ -74,6 +74,8 @@ The following non-standard functions have been implemented for use by the compil
 | (readed-array-list x)     | Convert an array of constants like # 2a((1 2) (3 4)) to a list ((1 2) (3 4)). |
 | (ignore-toplevel-check x) | Passing t as an argument removes top-level checks such as defclass, and passing nil restores and checks. |
 | (self-introduction)       | Returns the symbol depending the kind of OS, because the compiler changes its behavior depending on the type of OS. |
+| (macroexpand-1 x)         | Expand macro once. |
+| (macrexpand-all x)        | Expand macro all. |
 | (get-method x)            | Get all methods of the generic function with name x. |
 | (get-method-body x)       | Get the entity of method x. |
 | (get-method-priority x)   | Gets the priority of method x. This is an integer value and one of AROUND=11, BEFORE=12, PRIORITY=13, AFTER=14. |

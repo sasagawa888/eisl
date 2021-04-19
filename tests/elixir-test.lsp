@@ -20,13 +20,13 @@
     ((a _a) (pipe _a |> (cos) |> (sin)))
     ((b _b) (pipe _b |> (tan) |> (abs))))
 
-#|
+
 (defun uoo (x y)
     (match x
         (nil y)
         ((0 :rest _x) (uoo _x (+ y 1)))
         ((1 :rest _x) (uoo _x (+ y 2)))))
-|#
+
 (defun fib* (n)
     (cond ((= n 0) 1)
           ((= n 1) 1)

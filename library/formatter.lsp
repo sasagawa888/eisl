@@ -164,7 +164,7 @@
                        (newline lm1)
                        (setq s (cdr s)))
                       ((not (null (cdr s))) (newline lm1))))))
-    
+
     ;;syntax defun type
     ;;also defmacro defgeneric
     (defun pp-defun (x lm)
@@ -180,8 +180,7 @@
            (if otomo
                (pp-string ")")
                (pp-string " )"))
-           (if (= lm 0)
-               (newline lm))))
+           (newline 0)))
     
     ;; syntax defun body
     ;; also body of let,let*,for

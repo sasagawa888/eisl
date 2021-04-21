@@ -56,7 +56,7 @@ typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,
 typedef enum {FRE,USE} flag;
 
 
-typedef enum {AROUND,BEFORE,PRIORITY,AFTER,EISL_OPEN,EISL_INPUT,EISL_OUTPUT,EISL_INSTR,EISL_OUTSTR} option;
+enum {AROUND,BEFORE,PRIORITY,AFTER,EISL_OPEN,EISL_INPUT,EISL_OUTPUT,EISL_INSTR,EISL_OUTSTR};
 
 typedef int (*subr_t)(int args);
 typedef struct{
@@ -266,7 +266,7 @@ DEF_PREDICATE(FUNC, FUNC)
 DEF_PREDICATE(MACRO, MACRO)
 DEF_PREDICATE(CLASS, CLASS)
 DEF_PREDICATE(GENERIC, GENERIC)
-static inline bool HAS_NAME(int addr,char *x) { return (strcmp(heap[addr].name,x) == 0); }
+static inline bool HAS_NAME(int addr,const char *x) { return (strcmp(heap[addr].name,x) == 0); }
 static inline bool SAME_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) == 0); }
 static inline char STRING_REF(int addr,int k) { return heap[addr].name[k]; }
 static inline void STRING_SET(int addr,int k,char c) { heap[addr].name[k] = c; }

@@ -1,6 +1,6 @@
 # Easy-ISLisp
 
-Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](minejima.jp/ISLispHyperDraft/islisp-v23.html).
+Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](https://minejima.jp/ISLispHyperDraft/islisp-v23.html).
 EISL was written by Kenichi Sasagawa
 https://qiita.com/sym_num/items/793adfe118514668e5b0
 

@@ -1,3 +1,6 @@
+
+(defmodule foo
+
 (defun opcode (op)
         (case op
            ((+) '+)
@@ -9,3 +12,4 @@
                   op
                   (error "opecode else: " op))) ))
 
+)

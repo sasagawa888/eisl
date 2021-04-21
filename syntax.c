@@ -1959,6 +1959,10 @@ int substitute(int addr, int module, int fname){
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),":METHOD")))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"CASE")))
+            return(cons(car(addr),cons(substitute(cadr(addr),module,fname),substitute_case(cddr(addr),module,fname))));
+        else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"CASE-USING")))
+            return(cons(car(addr),cons(substitute(cadr(addr),module,fname),substitute_case(cddr(addr),module,fname))));
         else if(fsubrp(car(addr)))
             return(cons(car(addr),substitute(cdr(addr),module,fname)));
         else if(macrop(car(addr)))
@@ -1982,3 +1986,20 @@ int substitute1(int x, int module){
     return(makesym(str));
 }
 
+
+int substitute_case(int addr, int module, int fname){
+    int body,bodies,newbody,newbodies;
+
+    bodies = addr;
+    newbodies = NIL;
+
+    while(!nullp(bodies)){
+        body = car(bodies);
+        newbody = cons(car(body),substitute(cdr(body),module,fname));
+        newbodies = cons(newbody,newbodies);
+
+        bodies = cdr(bodies);
+    }
+    newbodies = reverse(newbodies);
+    return(newbodies);
+}

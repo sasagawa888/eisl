@@ -940,6 +940,7 @@ int substr(int x, int s, int e);
 int subvec(int x, int s, int e);
 int substitute(int x, int module, int fname);
 int substitute1(int x, int module);
+int substitute_case(int addr, int module, int fname);
 int symbollistp(int ls);
 int symbolp(int addr);
 int symboltoken(char buf[]);

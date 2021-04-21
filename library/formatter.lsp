@@ -70,7 +70,8 @@
         (cond ((consp x)
                (cond ((vector-p x) (pp-vector x lm))
                      ((array-p x) (pp-array x lm))
-                     ((or (quote-p x) (backquote-p x)) (pp-quote x lm))
+                     ((or (quote-p x) (backquote-p x) (unquote-p x)) (pp-quote x lm))
+                     ((unquote-splicing-p x) (pp-unquote-splicing x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "cond"))
                       (pp-cond x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "case"))
@@ -286,6 +287,10 @@
     (defun pp-quote (x lm)
         (pp1 (car x) lm)
         (pp1 (cdr x) (+ lm 1) t))
+    
+    (defun pp-unquote-splicing (x lm)
+        (pp1 (car x) lm)
+        (pp1 (cdr x) (+ lm 2) t))
     
     ;; syntax block type
     (defun pp-block (x lm)
@@ -517,6 +522,9 @@
                     ((char= char #\`)                                                     ;back quote
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
+                    ((and (char= char #\,) (char= (look) #\@))                             ;unquote-splicing
+                     (setq token (cons (getc) (cons char nil)))
+                     (cons (convert-to-string token) (sexp-read)))
                     ((char= char #\,)                                                     ;unquote
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
@@ -675,6 +683,14 @@
     (defun backquote-p (x)
         (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\`)))
     
+    ;; is it unquote? e.g. ,name
+    (defun unquote-p (x)
+        (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\,)))
+
+    ;; is it unquote-splicing? e.g. ,@name
+    (defun unquote-splicing-p (x)
+        (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\,) (char= (elt (car x) 1) #\@)))
+
     ;; is subr that has long size element? e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
     (defun long-element-p (x)
         (and

@@ -1894,18 +1894,18 @@ int f_untrace(int arglist){
 }
 
 int f_defmodule(int arglist){
-    int arg1,arg2,sexp,public;
+    int arg1,arg2,sexp,exports;
 
     arg1 = car(arglist); //module name
     arg2 = cdr(arglist); //body
-    public = NIL;
+    exports = NIL;
 
     while(!nullp(arg2)){
         sexp = car(arg2);
         if(symbolp(car(sexp)) && HAS_NAME(car(sexp),"DEFPUBLIC"))
-            public = cons(cadr(sexp),public);
+            exports = cons(cadr(sexp),exports);
 
-        eval(substitute(car(arg2),arg1,public));
+        eval(substitute(car(arg2),arg1,exports));
         arg2 = cdr(arg2);
     }
     return(T);

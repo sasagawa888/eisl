@@ -95,7 +95,7 @@
         (cond ((and (null fmla) (null opln)) (car opln))
               ((and
                 (not (null fmla))
-                (or (null? optr) (> (weight (car fmla))
+                (or (null optr) (> (weight (car fmla))
                                     (weight (cadr fmla)))))
                (inf1 (cdr fmla) (cons (car fmla) optr) opln))
               (t (inf2 fmla optr opln))))

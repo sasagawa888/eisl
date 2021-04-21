@@ -517,6 +517,9 @@
                     ((char= char #\`)                                                     ;back quote
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
+                    ((char= char #\,)                                                     ;unquote
+                     (setq token (cons char nil))
+                     (cons (convert-to-string token) (sexp-read)))
                     ((and (char= char #\#) (char= (look) #\|))                           ;long comment #|..|#
                      (setq token (cons (getc) (cons char nil)))
                      (setq token (cons (getc) token))

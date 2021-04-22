@@ -110,6 +110,8 @@ const string extended[] = {
      "c-include", "c-define", "c-lang", "c-option",
 };
 
+static inline void clear_status() { cout << "                                            "; }
+
 int main(int argc __unused, char* argv[])
 {
      int i, j;
@@ -502,7 +504,7 @@ loop:
           case CTRL('T'):
                ESCREV();
                ESCMOVE(ed_footer, 1);
-               cout << "                                            ";
+               clear_status();
                ESCMOVE(ed_footer, 1);
                cout << "filename: ";
                getline(cin, str1);
@@ -511,7 +513,7 @@ loop:
                if (port.fail()) {
                     ESCREV();
                     ESCMOVE(ed_footer, 1);
-                    cout << "                                            ";
+                    clear_status();
                     ESCMOVE(ed_footer, 1);
                     cout << str1 << " doesn't exist";
                     ESCRST();
@@ -607,7 +609,7 @@ loop:
                               case 'c':
                                    ESCREV();
                                    ESCMOVE(ed_footer, 1);
-                                   cout << "                                             ";
+                                   clear_status();
                                    ESCRST();
                                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                                    break;
@@ -621,7 +623,7 @@ loop:
           case CTRL('W'):
                ESCREV();
                ESCMOVE(ed_footer, 1);
-               cout << "                                            ";
+               clear_status();
                ESCMOVE(ed_footer, 1);
                cout << "search: ";
                getline(cin, str1);
@@ -648,12 +650,12 @@ loop:
           case CTRL('R'):
                ESCREV();
                ESCMOVE(ed_footer, 1);
-               cout << "                                            ";
+               clear_status();
                ESCMOVE(ed_footer, 1);
                cout << "search: ";
                getline(cin, str1);
                ESCMOVE(ed_footer, 1);
-               cout << "                                            ";
+               clear_status();
                ESCMOVE(ed_footer, 1);
                cout << "replace: ";
                getline(cin, str2);
@@ -663,7 +665,7 @@ retry1R:
                if (pos.row == -1) {
                     ESCREV();
                     ESCMOVE(ed_footer, 1);
-                    cout << "                      ";
+                    clear_status();
                     ESCMOVE(ed_footer, 1);
                     cout << "can't find " << str1;
                     ESCRST();
@@ -682,7 +684,7 @@ retry1R:
                     ESCREV();
                     cout << str1;
                     ESCMOVE(ed_footer, 1);
-                    cout << "                                            ";
+                    clear_status();
                     ESCMOVE(ed_footer, 1);
 retry2R:
                     cout << "replace? y/n ";
@@ -713,7 +715,7 @@ retry2R:
                do {
                     ESCREV();
                     ESCMOVE(ed_footer, 1);
-                    cout << "          ";
+                    clear_status();
                     ESCMOVE(ed_footer, 1);
                     cout << "line? ";
                     cin >> i;

@@ -3,6 +3,8 @@
 
 #include "term.h"
 
+enum Color { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
+
 static const float VERSION = 1.73;
 #define ROW_SIZE 4000
 #define COL_SIZE 255
@@ -12,13 +14,12 @@ static const float VERSION = 1.73;
 static const int NIL = 0;
 
 
-void signal_handler(int signo);
 void input(char* str);
 void edit_screen(char* fname);
 void display_command(char* fname);
 void display_screen(void);
 void display_line(int line);
-void setcolor(int n);
+void setcolor(enum Color);
 void backspace(void);
 void insertcol(void);
 void insertrow(void);

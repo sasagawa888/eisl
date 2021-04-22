@@ -32,13 +32,12 @@ int ed_clip_end;
 int ed_copy_end;
 string ed_candidate[50];
 int ed_candidate_pt;
-int ed_syntax_color = 1;   //default red
-int ed_builtin_color = 6;  //default cyan
-int ed_extended_color = 5; //default magenta
-int ed_string_color = 3;   //default yellow
-int ed_comment_color = 4;  //default blue
+enum Color ed_syntax_color = RED;
+enum Color ed_builtin_color = CYAN;
+enum Color ed_extended_color = MAGENTA;
+enum Color ed_string_color = YELLOW;
+enum Color ed_comment_color = BLUE;
 int ed_incomment = -1;     // #|...|# comment
-int ctrl = 0;
 bool modify_flag;
 
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
@@ -118,9 +117,9 @@ int main(int argc __unused, char* argv[])
 
      ios::sync_with_stdio(false);
      fname = argv[1];
-     signal(SIGINT, signal_handler);
-     signal(SIGSTOP, signal_handler);
-     signal(SIGTSTP, signal_handler);
+     signal(SIGINT, SIG_IGN);
+     signal(SIGSTOP, SIG_IGN);
+     signal(SIGTSTP, SIG_IGN);
      for (i = 0; i < ROW_SIZE; i++)
           for (j = 0; j < COL_SIZE; j++)
                ed_data[i][j] = NUL;
@@ -170,11 +169,6 @@ int main(int argc __unused, char* argv[])
      display_screen();
      ed_row = ed_col = 0;
      edit_screen(fname);
-}
-
-void signal_handler(int signo)
-{
-     ctrl = signo;
 }
 
 void edit_screen(char* fname)
@@ -1078,17 +1072,17 @@ void display_line(int line)
      ESCRST();
 }
 
-void setcolor(int n)
+void setcolor(enum Color n)
 {
      switch (n) {
-          case 0: ESCFBLACK(); break;
-          case 1: ESCFRED(); break;
-          case 2: ESCFGREEN(); break;
-          case 3: ESCFYELLOW(); break;
-          case 4: ESCFBLUE(); break;
-          case 5: ESCFMAGENTA(); break;
-          case 6: ESCFCYAN(); break;
-          case 7: ESCFWHITE(); break;
+          case BLACK: ESCFBLACK(); break;
+          case RED: ESCFRED(); break;
+          case GREEN: ESCFGREEN(); break;
+          case YELLOW: ESCFYELLOW(); break;
+          case BLUE: ESCFBLUE(); break;
+          case MAGENTA: ESCFMAGENTA(); break;
+          case CYAN: ESCFCYAN(); break;
+          case WHITE: ESCFWHITE(); break;
           default: ESCFWHITE(); break;
      }
 }
@@ -1428,19 +1422,16 @@ void save_data(char* fname)
 
 bool is_special(int row, int col)
 {
-     char str[80];
-     int pos, i;
+     string str;
+     int i;
 
-     pos = 0;
      while (ed_data[row][col] != ' ' &&
             ed_data[row][col] != '(' &&
             ed_data[row][col] >= ' ') {
-          str[pos] = ed_data[row][col];
+          str.push_back(ed_data[row][col]);
           col++;
-          pos++;
      }
-     str[pos] = NUL;
-     if (pos == 0)
+     if (str.empty())
           return false;
      for (i = 0; i < (int)NELEM(special); i++) {
           if (special[i].compare(str) == 0) {
@@ -1562,10 +1553,9 @@ void delete_selection()
 
 int check_token(int row, int col)
 {
-     char str[ed_width];
-     int pos, i;
+     string str;
+     int i;
 
-     pos = 0;
      if (ed_data[row][col] == '"')
           return (3); //string token
      else if (ed_data[row][col] == ';')
@@ -1575,26 +1565,24 @@ int check_token(int row, int col)
             ed_data[row][col] != ')' &&
             ed_data[row][col] != NUL &&
             ed_data[row][col] != EOL) {
-          str[pos] = ed_data[row][col];
+          str.push_back(ed_data[row][col]);
           col++;
-          pos++;
      }
-     str[pos] = NUL;
      if (str[0] == '#' && str[1] == '|')
           return (6); // #|...|#
-     if (pos == 0)
+     if (str.empty())
           return (0);
-     for (i = 0; i < 60; i++) {
+     for (i = 0; i < (int)NELEM(syntax); i++) {
           if (syntax[i].compare(str) == 0) {
                return (1); //syntax token
           }
      }
-     for (i = 0; i < 200; i++) {
+     for (i = 0; i < (int)NELEM(builtin); i++) {
           if (builtin[i].compare(str) == 0) {
                return (2); //builtin token
           }
      }
-     for (i = 0; i < 50; i++) {
+     for (i = 0; i < (int)NELEM(extended); i++) {
           if (extended[i].compare(str) == 0) {
                return (5); //extended token
           }
@@ -1752,8 +1740,7 @@ void replace_word(const string& str1, const string& str2)
                ed_data[ed_row][i + j] = ed_data[ed_row][i];
                i--;
           }
-          ed_data[ed_row][i] = NUL;
-
+          ed_data[ed_row][i] = NUL; 
           for (i = 0; i < len2; i++) {
                ed_data[ed_row][ed_col + i] = *it2;
                it2++;

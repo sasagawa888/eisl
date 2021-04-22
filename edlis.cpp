@@ -145,7 +145,7 @@ int main(int argc __unused, char* argv[])
           char c;
 
           c = port.get();
-          while (port.good()) {
+          while (!port.eof()) {
                ed_data[ed_row][ed_col] = c;
                if (c == EOL) {
                     ed_row++;
@@ -308,25 +308,26 @@ retryX:
                     cout << "save modified buffer? y/n/c ";
                     c = getch();
                     ESCRST();
-                    if (c == 'y') {
+                    switch (c) {
+                    case 'y':
                          save_data(fname);
                          ESCCLS();
                          ESCMOVE(1, 1);
                          return;
-                    }
-                    else if (c == 'n') {
+                         break;
+                    case 'n':
                          ESCCLS();
                          ESCMOVE(1, 1);
                          return;
-                    }
-                    else if (c == 'c') {
+                         break;
+                    case 'c':
                          ESCREV();
                          ESCMOVE(ed_footer, 1);
                          cout << "                                             ";
                          ESCRST();
                          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                    }
-                    else {
+                         break;
+                    default:
                          goto retryX;
                     }
                }
@@ -402,7 +403,8 @@ retry2R:
                     cout << "replace? y/n ";
                     ESCRST();
                     c = getch();
-                    if (c == 'y') {
+                    switch (c) {
+                    case 'y':
                          ed_row = pos.row;
                          ed_col = pos.col;
                          replace_word(str1, str2);
@@ -410,13 +412,13 @@ retry2R:
                          modify_flag = true;
                          ed_col++;
                          goto retry1R;
-                    }
-                    else if (c == 'n') {
+                         break;
+                    case 'n':
                          display_screen();
                          ed_col++;
                          goto retry1R;
-                    }
-                    else {
+                         break;
+                    default:
                          goto retry2R;
                     }
                }
@@ -757,7 +759,7 @@ case DEL:   backspace:
                }
                else if (ed_col >= ed_width) {
                     type = check_token(ed_row, ed_col - 2);
-                    if (type == 6) // #|...
+                    if (type == MULTILINE_COMMENT)
                          ed_incomment = -1;
                     backspace();
                     display_screen();
@@ -768,7 +770,7 @@ case DEL:   backspace:
                }
                else {
                     type = check_token(ed_row, ed_col - 2);
-                    if (type == 6) // #|...
+                    if (type == MULTILINE_COMMENT)
                          ed_incomment = -1;
                     backspace();
                     display_screen();
@@ -963,7 +965,8 @@ void display_line(int line)
           }
           else {
                type = check_token(line, col);
-               if (type == 1) {
+               switch (type) {
+               case SYNTAX:
                     ESCBOLD();
                     setcolor(ed_syntax_color);
                     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
@@ -977,8 +980,8 @@ void display_line(int line)
                     }
                     ESCRST();
                     ESCFORG();
-               }
-               else if (type == 2) {
+                    break;
+               case BUILTIN:
                     ESCBOLD();
                     setcolor(ed_builtin_color);
                     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
@@ -992,8 +995,8 @@ void display_line(int line)
                     }
                     ESCRST();
                     ESCFORG();
-               }
-               else if (type == 3) {
+                    break;
+               case STRING:
                     ESCBOLD();
                     setcolor(ed_string_color);
                     cout << ed_data[line][col];
@@ -1008,9 +1011,8 @@ void display_line(int line)
                     }
                     ESCRST();
                     ESCFORG();
-
-               }
-               else if (type == 4) {
+                    break;
+               case COMMENT:
                     ESCBOLD();
                     setcolor(ed_comment_color);
                     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
@@ -1021,8 +1023,8 @@ void display_line(int line)
                     }
                     ESCRST();
                     ESCFORG();
-               }
-               else if (type == 5) {
+                    break;
+               case EXTENDED:
                     ESCBOLD();
                     setcolor(ed_extended_color);
                     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
@@ -1036,8 +1038,8 @@ void display_line(int line)
                     }
                     ESCRST();
                     ESCFORG();
-               }
-               else if (type == 6) { //comment #|...|#
+                    break;
+               case MULTILINE_COMMENT:
                     ESCBOLD();
                     setcolor(ed_comment_color);
                     ed_incomment = line;
@@ -1054,8 +1056,8 @@ void display_line(int line)
                               break;
                          }
                     }
-               }
-               else {
+                    break;
+               default:
                     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
                            ed_data[line][col] != ' ' &&
                            ed_data[line][col] != '(' &&
@@ -1551,15 +1553,15 @@ void delete_selection()
      ed_data[ed_end][0] = EOL;
 }
 
-int check_token(int row, int col)
+enum Token check_token(int row, int col)
 {
      string str;
      int i;
 
      if (ed_data[row][col] == '"')
-          return (3); //string token
+          return STRING;
      else if (ed_data[row][col] == ';')
-          return (4); //comment token
+          return COMMENT;
      while (ed_data[row][col] != ' ' &&
             ed_data[row][col] != '(' &&
             ed_data[row][col] != ')' &&
@@ -1569,25 +1571,25 @@ int check_token(int row, int col)
           col++;
      }
      if (str[0] == '#' && str[1] == '|')
-          return (6); // #|...|#
+          return MULTILINE_COMMENT; // #|...|#
      if (str.empty())
-          return (0);
+          return NONE;
      for (i = 0; i < (int)NELEM(syntax); i++) {
           if (syntax[i].compare(str) == 0) {
-               return (1); //syntax token
+               return SYNTAX;
           }
      }
      for (i = 0; i < (int)NELEM(builtin); i++) {
           if (builtin[i].compare(str) == 0) {
-               return (2); //builtin token
+               return BUILTIN;
           }
      }
      for (i = 0; i < (int)NELEM(extended); i++) {
           if (extended[i].compare(str) == 0) {
-               return (5); //extended token
+               return EXTENDED;
           }
      }
-     return (0);
+     return NONE;
 }
 
 string get_fragment()
@@ -1620,7 +1622,7 @@ void find_candidate()
 
      str = get_fragment();
      ed_candidate_pt = 0;
-     if (str[0] == NUL)
+     if (str.empty())
           return;
      for (i = 0; i < (int)NELEM(syntax); i++) {
           if (syntax[i].find(str) != string::npos && syntax[i][0] == str[0]) {

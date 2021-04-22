@@ -4,6 +4,7 @@
 #include "term.h"
 
 enum Color { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
+enum Token { NONE, SYNTAX, BUILTIN, STRING, COMMENT, EXTENDED, MULTILINE_COMMENT };
 
 static const float VERSION = 1.73;
 #define ROW_SIZE 4000
@@ -41,7 +42,7 @@ int calc_tabs(void);
 void copy_selection(void);
 void paste_selection(void);
 void delete_selection(void);
-int check_token(int row, int col);
+enum Token check_token(int row, int col);
 string get_fragment(void);
 void find_candidate(void);
 void replace_fragment(const string& newstr);

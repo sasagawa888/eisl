@@ -1616,15 +1616,12 @@ string get_fragment()
      }
      col++;
      pos = 0;
-     string::iterator it = str.begin();
      while (ed_data[ed_row][col] != ' ' &&
             ed_data[ed_row][col] != '(' &&
             ed_data[ed_row][col] >= ' ') {
-          *it = ed_data[ed_row][col];
+          str.push_back(ed_data[ed_row][col]);
           col++;
-          it++;
      }
-     *it = NUL;
      return (str);
 }
 

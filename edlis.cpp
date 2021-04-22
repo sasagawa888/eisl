@@ -9,7 +9,7 @@
 using namespace std;
 
 //-----editor-----
-int ed_hight;
+int ed_height;
 int ed_width;
 int ed_scroll;
 int ed_footer;
@@ -17,7 +17,7 @@ int ed_row;
 int ed_col;
 int ed_start;
 int ed_end;
-int ed_ins = 1;
+bool ed_ins = true;
 int ed_tab = 0;
 int ed_indent = 1;
 int ed_name = NIL;
@@ -30,7 +30,7 @@ int ed_rparen_col;
 int ed_clip_start;
 int ed_clip_end;
 int ed_copy_end;
-char ed_candidate[50][30];
+string ed_candidate[50];
 int ed_candidate_pt;
 int ed_syntax_color = 1;   //default red
 int ed_builtin_color = 6;  //default cyan
@@ -39,76 +39,76 @@ int ed_string_color = 3;   //default yellow
 int ed_comment_color = 4;  //default blue
 int ed_incomment = -1;     // #|...|# comment
 int ctrl = 0;
-int modify_flag = 0;
+bool modify_flag;
 
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
 
 //special form token
 const string special[] = {
-    string("defun"), string("defmacro"), string("defglobal"), string("defdynamic"), string("defconstant"),
-    string("let"), string("let*"), string("case"), string("while"), string("progn"), string("defmodule"), string("defpublic"),
+    "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
+    "let", "let*", "case", "while", "progn", "defmodule", "defpublic",
 };
 //syntax token
-char syntax[60][30] = {
-{"lambda"},{"labels"},{"flet"},{"let"},{"let*"},{"setq"},{"setf"},{"defconstant"},{"defun"},{"defmacro"},{"defglobal"},{"defdynamic"},
-{"dynamic"},{"function"},{"function*"},{"symbol-function"},{"class"},
-{"and"},{"or"},{"if"},{"cond"},{"while"},{"for"},{"block"},{"return-from"},
-{"case"},{"case-using"},{"progn"},{"defclass"},{"defgeneric"},{"defgeneric*"},
-{"defmethod"},{"dynamic-let"},{"ignore-errors"},{"catch"},{"throw"},
-{"tagbody"},{"go"},{"unwind-protect"},{"with-standard-input"},
-{"with-standard-output"},{"with-error-output"},{"with-handler"},
-{"convert"},{"with-open-input-file"},{"with-open-output-file"},
-{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defpublic"},
+const string syntax[] = {
+    "lambda", "labels", "flet", "let", "let*", "setq", "setf", "defconstant", "defun", "defmacro", "defglobal", "defdynamic",
+    "dynamic", "function", "function*", "symbol-function", "class",
+    "and", "or", "if", "cond", "while", "for", "block", "return-from",
+    "case", "case-using", "progn", "defclass", "defgeneric", "defgeneric*",
+    "defmethod", "dynamic-let", "ignore-errors", "catch", "throw",
+    "tagbody", "go", "unwind-protect", "with-standard-input",
+    "with-standard-output", "with-error-output", "with-handler",
+    "convert", "with-open-input-file", "with-open-output-file",
+    "with-open-io-file", "the", "assure", "time", "trace", "untrace", "defmodule", "defpublic",
 };
 //builtin token
-char builtin[200][32] ={
-{"-"},{"*"},{"/="},{"+"},{"<"},{"<="},{"="},{">"},{">="},
-{"abs"},{"append"},{"apply"},{"aref"},{"arithmetic-error-operands"},
-{"arithmetic-error-operation"},{"array-dimensions"},{"assoc"},{"atan"},
-{"atan2"},{"atanh"},{"atom"},{"basic-array-p"},{"basic-array*-p"},
-{"basic-vector-p"},{"call-next-method"},{"car"},{"cdr"},{"ceiling"},
-{"cerror"},{"char-index"},{"char/="},{"char<"},{"char<="},{"char="},
-{"char>"},{"char>="},{"characterp"},{"class-of"},{"close"},
-{"condition-continuable"},{"cons"},{"consp"},{"constinue-condition"},
-{"cos"},{"cosh"},{"create-array"},{"create-list"},{"create-string-input-stream"},
-{"create-string-output-stream"},{"create-string"},{"create-vector"},{"create*"},
-{"div"},{"domain-error-object"},{"domain-error-expected-class"},
-{"dummyp"},{"elt"},{"eq"},{"eql"},{"equal"},{"error-output"},{"error"},
-{"eval"},{"exp"},{"expt"},{"file-length"},{"file-position"},{"finish-output"},
-{"float"},{"floatp"},{"floor"},{"format-char"},{"format-fresh-line"},
-{"format-float"},{"format-integer"},{"format-object"},{"format-tab"},{"format"},
-{"funcall"},{"functionp"},{"garef"},{"gbc"},{"gcd"},{"general-array*-p"},
-{"general-vector-p"},{"generic-function-p"},{"gensym"},{"get-internal-run-time"},
-{"get-internal-real-time"},
-{"get-output-stream-string"},{"get-universal-time"},{"hdmp"},{"identity"},
-{"initialize-object*"},{"input-stream-p"},{"instancep"},{"integerp"},
-{"internal-time-units-per-second"},{"isqrt"},{"lcm"},{"length"},{"list"},
-{"listp"},{"load"},{"log"},{"map-into"},{"mapc"},{"mapcar"},{"mapcan"},
-{"mapcon"},{"mapl"},{"maplist"},{"max"},{"member"},{"min"},{"mod"},
-{"next-method-p"},{"not"},{"nreverse"},{"null"},{"numberp"},
-{"open-input-file"},{"open-io-file"},{"open-output-file"},{"open-stream-p"},
-{"output-stream-p"},{"parse-error-string"},{"parse-error-expected-class"},
-{"parse-number"},{"preview-char"},{"prin1"},{"print"},{"probe-file"},
-{"property"},{"quit"},{"quotient"},{"read-byte"},{"read-char"},{"read-line"},
-{"read"},{"reciprocal"},{"remove-property"},{"reverse"},{"round"},{"set-aref"},
-{"set-car"},{"set-cdr"},{"set-elt"},{"set-file-position"},{"set-garef"},
-{"set-property"},{"signal-condition"},{"simple-error-format-argument"},
-{"simple-error-format-string"},{"sin"},{"sinh"},{"slot-value"},{"sqrt"},
-{"standard-input"},{"standard-output"},{"stream-error-stream"},{"streamp"},
-{"stream-ready-p"},{"string-append"},{"string-index"},{"string/="},{"string<"},{"string<="},{"string="},{"string>"},{"string>="},{"stringp"},{"subclassp"},
-{"subseq"},{"symbolp"},{"tan"},{"tanh"},{"truncate"},{"undefined-entity-name"},
-{"undefined-entity-namespace"},{"vector"},{"write-byte"}
+const string builtin[] = {
+    "-", "*", "/=", "+", "<", "<=", "=", ">", ">=",
+    "abs", "append", "apply", "aref", "arithmetic-error-operands",
+    "arithmetic-error-operation", "array-dimensions", "assoc", "atan",
+    "atan2", "atanh", "atom", "basic-array-p", "basic-array*-p",
+    "basic-vector-p", "call-next-method", "car", "cdr", "ceiling",
+    "cerror", "char-index", "char/=", "char<", "char<=", "char=",
+    "char>", "char>=", "characterp", "class-of", "close",
+    "condition-continuable", "cons", "consp", "constinue-condition",
+    "cos", "cosh", "create-array", "create-list", "create-string-input-stream",
+    "create-string-output-stream", "create-string", "create-vector", "create*",
+    "div", "domain-error-object", "domain-error-expected-class",
+    "dummyp", "elt", "eq", "eql", "equal", "error-output", "error",
+    "eval", "exp", "expt", "file-length", "file-position", "finish-output",
+    "float", "floatp", "floor", "format-char", "format-fresh-line",
+    "format-float", "format-integer", "format-object", "format-tab", "format",
+    "funcall", "functionp", "garef", "gbc", "gcd", "general-array*-p",
+    "general-vector-p", "generic-function-p", "gensym", "get-internal-run-time",
+    "get-internal-real-time",
+    "get-output-stream-string", "get-universal-time", "hdmp", "identity",
+    "initialize-object*", "input-stream-p", "instancep", "integerp",
+    "internal-time-units-per-second", "isqrt", "lcm", "length", "list",
+    "listp", "load", "log", "map-into", "mapc", "mapcar", "mapcan",
+    "mapcon", "mapl", "maplist", "max", "member", "min", "mod",
+    "next-method-p", "not", "nreverse", "null", "numberp",
+    "open-input-file", "open-io-file", "open-output-file", "open-stream-p",
+    "output-stream-p", "parse-error-string", "parse-error-expected-class",
+    "parse-number", "preview-char", "prin1", "print", "probe-file",
+    "property", "quit", "quotient", "read-byte", "read-char", "read-line",
+    "read", "reciprocal", "remove-property", "reverse", "round", "set-aref",
+    "set-car", "set-cdr", "set-elt", "set-file-position", "set-garef",
+    "set-property", "signal-condition", "simple-error-format-argument",
+    "simple-error-format-string", "sin", "sinh", "slot-value", "sqrt",
+    "standard-input", "standard-output", "stream-error-stream", "streamp",
+    "stream-ready-p", "string-append", "string-index", "string/=", "string<", "string<=", "string=", "string>", "string>=", "stringp", "subclassp",
+    "subseq", "symbolp", "tan", "tanh", "truncate", "undefined-entity-name",
+    "undefined-entity-namespace", "vector", "write-byte",
 };
 
 //extended function
-char extended[50][30] = {
-{"random-real"},{"random"},{"mapvec"},{"hadamard"},{"logistic"},
-{"nconc"},{"fast-address"},{"macroexpand-1"},{"backtrace"},
-{"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
-{"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
-{"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
-{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},
-{"c-include"},{"c-define"},{"c-lang"},{"c-option"}
+const string extended[] = {
+    "random-real", "random", "mapvec", "hadamard", "logistic",
+    "nconc", "fast-address", "macroexpand-1", "backtrace",
+    "break", "edit", "set-editor", "wiringpi-setup-gpio", "delay-microseconds",
+    "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",
+    "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
+    "pwm-write", "pull-up-dn-control", "delay", "compile-file",
+    "c-include", "c-define", "c-lang", "c-option",
 };
 
 int main(int argc __unused, char *argv[]){
@@ -128,10 +128,10 @@ int main(int argc __unused, char *argv[]){
     struct winsize w;
     ioctl(0, TIOCGWINSZ, &w);
 
-    ed_hight = w.ws_row;
+    ed_height = w.ws_row;
     ed_width = w.ws_col;
-    ed_scroll = ed_hight - 4;
-    ed_footer = ed_hight - 1;
+    ed_scroll = ed_height - 4;
+    ed_footer = ed_height - 1;
     ed_row = 0;
     ed_col = 0;
     ed_start = 0;
@@ -187,7 +187,7 @@ void edit_screen(char *fname){
     loop:
     c = getch();
     switch(c){
-        case 7:     ESCMOVE(2,1);    //ctrl+G help
+        case CTRL('G'):     ESCMOVE(2,1);    // help
             ESCCLS1();
                     cout << "Edlis help\n"
                         "CTRL+F  move to right          CTRL+W  search word\n"
@@ -209,17 +209,17 @@ void edit_screen(char *fname){
                     c = getch();
                     display_screen();
                     break;
-        case 6:     //ctrl+F
+        case CTRL('F'):
                     goto right;
-        case 2:     //ctrl+B
+        case CTRL('B'):
                     goto left;
-        case 16:    //ctrl+P
+        case CTRL('P'):
                     goto up;
-        case 14:    //ctrl+N
+        case CTRL('N'):
                     goto down;
-        case 8:     //ctrl+H
+        case CTRL('H'):
                     goto backspace;
-    case 20:                    //ctrl+T
+    case CTRL('T'):
             ESCREV();
                     ESCMOVE(ed_footer,1);
                     cout << "                                            ";
@@ -258,48 +258,48 @@ void edit_screen(char *fname){
                     ed_data[ed_end][0] = EOL;
                     port.close();
                     display_screen();
-                    modify_flag = 1;
+                    modify_flag = true;
                     break;
-        case 4:     //ctrl+D
+        case CTRL('D'):
                     goto del;
-        case 1:     //ctrl+A
+        case CTRL('A'):
                     ed_col = 0;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                     break; 
-        case 5:     //ctrl+E
+        case CTRL('E'):
                     for(i=0;i<255;i++){
                        if(ed_data[ed_row][i] == NUL)
                             break; 
                     }
                     ed_col = i - 1;
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
-                    modify_flag = 1;
+                    modify_flag = true;
                     break; 
-        case 15:    save_data(fname); //ctrl+O
+        case CTRL('O'):    save_data(fname);
                     ESCMOVE(ed_footer,1);
                     ESCREV();
                     cout << "saved";
                     ESCRST();
                     ESCMOVE(ed_row+2 - ed_start, ed_col+1);
-                    modify_flag = 0;
+                    modify_flag = false;
                     break; 
-       case 11:     copy_selection(); //ctrl+K
+       case CTRL('K'):     copy_selection();
                     delete_selection();
                     ed_row = ed_clip_start;
                     ed_clip_start = ed_clip_end = -1;
                     restore_paren();
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
-                    modify_flag = 1;
+                    modify_flag = true;
                     break;
-        case 21:    paste_selection(); //ctrl+U
+        case CTRL('U'):    paste_selection();
                     restore_paren();
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
-                    modify_flag = 1;
+                    modify_flag = true;
                     break;
-        case 24:    //ctrl+X
-                    if(modify_flag == 0){
+        case CTRL('X'):
+                    if(!modify_flag){
                         ESCCLS(); 
                         ESCMOVE(1,1);
                         return;
@@ -334,8 +334,8 @@ void edit_screen(char *fname){
                         }
                     }
                     break;
-        case 22:    goto pageup;  //ctrl+V
-        case 23:    //CTRL+W
+        case CTRL('V'):    goto pageup;
+        case CTRL('W'):
             ESCREV();
                     ESCMOVE(ed_footer,1);
                     cout << "                                            ";
@@ -362,7 +362,7 @@ void edit_screen(char *fname){
                     ESCMOVE(ed_row+2-ed_start,ed_col+1);
                     break;
 
-        case 18:    //CTRL+R
+        case CTRL('R'):
             ESCREV();
                     ESCMOVE(ed_footer,1);
                     cout << "                                            ";
@@ -410,7 +410,7 @@ void edit_screen(char *fname){
                             ed_col = pos.col;
                             replace_word(str1,str2);
                             display_screen();
-                            modify_flag = 1;
+                            modify_flag = true;
                             ed_col++;
                             goto retry1R;
                         }
@@ -424,8 +424,8 @@ void edit_screen(char *fname){
                         }
                     }
                     break;
-        case 12:             //CTRL+L
-        case 31:    reinput: //CTRL+_
+        case CTRL('L'):
+        case CTRL('_'):    reinput:
             ESCREV();
                     ESCMOVE(ed_footer,1);
                     cout << "          ";
@@ -576,7 +576,7 @@ void edit_screen(char *fname){
                                     break;
                         case EOL:   ed_row++;
                             cout << c;
-                                    modify_flag = 1;
+                                    modify_flag = true;
                                     break;
                         case DOWN:  down:
                                     if(ed_row == ed_end)
@@ -699,10 +699,7 @@ void edit_screen(char *fname){
                                     break;
                         case INSERT:
                                     c = getch();
-                                    if(ed_ins == 1)
-                                        ed_ins = 0;
-                                    else
-                                        ed_ins = 1;
+                                    ed_ins = !ed_ins;
                                     break;
                         case PAGEUP:
                                     c = getch();
@@ -735,7 +732,7 @@ void edit_screen(char *fname){
                                     backspace();
                                     display_screen();
                                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
-                                    modify_flag = 1;
+                                    modify_flag = true;
                                     break;
                     }
                     break;
@@ -783,7 +780,7 @@ void edit_screen(char *fname){
                         else
                             ESCMOVE(22,ed_col+1);
                     }
-                    modify_flag = 1;
+                    modify_flag = true;
                     break;
         case EOL:   if(ed_indent == 1)
                         i = calc_tabs();
@@ -823,7 +820,7 @@ void edit_screen(char *fname){
                          display_screen();
                          ESCMOVE(ed_row+2 - ed_start, ed_col+1);
                     }
-                    modify_flag = 1;
+                    modify_flag = true;
                     break;
         case TAB:   if(ed_tab == 0){
                         ed_col = 0;
@@ -836,7 +833,7 @@ void edit_screen(char *fname){
                     }
                     display_screen();
                     ESCMOVE(ed_row+2 - ed_start,ed_col+1);
-                    modify_flag = 1;
+                    modify_flag = true;
                     break;
         default:    if(ed_ins){
                         if(ed_col > 159)
@@ -883,7 +880,7 @@ void edit_screen(char *fname){
                             ed_col++;
                         }
                     }
-                    modify_flag = 1;
+                    modify_flag = true;
         }
     goto loop;
 }
@@ -1559,25 +1556,25 @@ int check_token(int row, int col){
     if(pos == 0)
         return(0);
     for(i=0; i<60; i++){
-        if(strcmp(syntax[i],str) == 0){
+        if(syntax[i].compare(str) == 0){
             return(1); //syntax token
         }
     }
     for(i=0; i<200; i++){
-        if(strcmp(builtin[i],str) == 0){
+        if(builtin[i].compare(str) == 0){
             return(2); //builtin token
         }
     }
     for(i=0; i<50; i++){
-        if(strcmp(extended[i],str) == 0){
+        if(extended[i].compare(str) == 0){
             return(5); //extended token
         }
     }
     return(0);
 }
 
-char *get_fragment(){
-    static char str[80];
+string get_fragment(){
+    string str;
     int col,pos;
 
     col = ed_col-1;
@@ -1589,61 +1586,63 @@ char *get_fragment(){
         }
         col++;
         pos = 0;
+    string::iterator it = str.begin();
     while(ed_data[ed_row][col] != ' ' &&
           ed_data[ed_row][col] != '(' &&
           ed_data[ed_row][col] >= ' '){
-        str[pos] = ed_data[ed_row][col];
+        *it = ed_data[ed_row][col];
         col++;
-        pos++;
+        it++;
     }
-    str[pos] = NUL;
+    *it = NUL;
     return(str);
 }
 
 void find_candidate(){
-    char* str;
+    string str;
     int i;
 
     str = get_fragment();
     ed_candidate_pt = 0;
     if(str[0] == NUL)
         return;
-    for(i=0;i<60;i++){
-        if(strstr(syntax[i],str) !=NULL && syntax[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],syntax[i]);
+    for(i=0;i<(int)NELEM(syntax);i++){
+        if(syntax[i].find(str) != string::npos && syntax[i][0] == str[0]){
+            ed_candidate[ed_candidate_pt] = syntax[i];
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<200;i++){
-        if(strstr(builtin[i],str) !=NULL && builtin[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],builtin[i]);
+    for(i=0;i<(int)NELEM(builtin);i++){
+        if(builtin[i].find(str) != string::npos && builtin[i][0] == str[0]){
+            ed_candidate[ed_candidate_pt] = builtin[i];
                         ed_candidate_pt++;
         }
     }
-    for(i=0;i<50;i++){
-        if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],extended[i]);
+    for(i=0;i<(int)NELEM(extended);i++){
+        if(extended[i].find(str) != string::npos && extended[i][0] == str[0]){
+            ed_candidate[ed_candidate_pt] = extended[i];
                         ed_candidate_pt++;
         }
     }
 }
 
-void replace_fragment(char* newstr){
-    char* oldstr;
+void replace_fragment(const string& newstr){
+    string oldstr;
     int m,n;
 
     oldstr = get_fragment();
-    m = strlen(oldstr);
-    n = strlen(newstr);
+    m = oldstr.length();
+    n = newstr.length();
     while(m>0){
         backspace();
         m--;
     }
+    string::const_iterator it = newstr.begin();
     while(n>0){
         insertcol();
-        ed_data[ed_row][ed_col] = *newstr;
+        ed_data[ed_row][ed_col] = *it;
         ed_col++;
-        newstr++;
+        it++;
         n--;
     }
 }

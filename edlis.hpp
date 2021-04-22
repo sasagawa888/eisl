@@ -41,9 +41,9 @@ void copy_selection(void);
 void paste_selection(void);
 void delete_selection(void);
 int check_token(int row, int col);
-char* get_fragment(void);
+string get_fragment(void);
 void find_candidate(void);
-void replace_fragment(char* newstr);
+void replace_fragment(const string& newstr);
 struct position find_word(const string& word);
 void replace_word(const string& str1, const string& str2);
 

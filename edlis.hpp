@@ -22,7 +22,7 @@ void setcolor(int n);
 void backspace(void);
 void insertcol(void);
 void insertrow(void);
-int getch(void);
+char getch(void);
 void deleterow(void);
 int findeol(int row);
 struct position findlparen(int bias);
@@ -33,7 +33,7 @@ void emphasis_lparen(void);
 void emphasis_rparen(void);
 void softtabs(int n);
 void save_data(char *name);
-int is_special(int row, int col);
+bool is_special(int row, int col);
 int findnext(int row, int col);
 void remove_headspace(int row);
 int calc_tabs(void);
@@ -44,7 +44,7 @@ int check_token(int row, int col);
 char* get_fragment(void);
 void find_candidate(void);
 void replace_fragment(char* newstr);
-struct position find_word(char* word);
-void replace_word(char* str1, char* str2);
+struct position find_word(const string& word);
+void replace_word(const string& str1, const string& str2);
 
 #endif

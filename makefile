@@ -16,8 +16,10 @@ ifeq ($(DEBUG),1)
 else
 	CFLAGS += -O3 -flto -DNDEBUG=1
 endif
+CXX := c++
+CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++
 ifeq ($(CC),c++)
-	CFLAGS += -std=c++98 -fno-exceptions -fno-rtti -Weffc++
+	CFLAGS := $(CXXFLAGS)
 else
 	CFLAGS += -std=c17
 endif
@@ -71,9 +73,9 @@ endif
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(LD) $(LDFLAGS) edlis.o -o edlis
-edlis.o : edlis.c edlis.h term.h
-	$(CC) $(CFLAGS) -c edlis.c
+	$(CXX) $(LDFLAGS) edlis.o -o edlis
+edlis.o : edlis.cpp edlis.hpp term.h
+	$(CXX) $(CXXFLAGS) -c edlis.cpp
 
 
 install: $(EISL) $(EDLIS)

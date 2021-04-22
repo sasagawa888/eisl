@@ -173,241 +173,280 @@ int main(int argc __unused, char* argv[])
 
 void right()
 {
-    if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
-        return;
-    ed_col++;
-    if (ed_col < ed_width - 1) {
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    }
-    else {
-        if (ed_col == ed_width) {
-            reset_paren();
-            ESCCLSLA();
-            ESCMOVE(ed_row + 2 - ed_start, 0);
-            display_line(ed_row);
-        }
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-    }
+     if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
+          return;
+     ed_col++;
+     if (ed_col < ed_width - 1) {
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     }
+     else {
+          if (ed_col == ed_width) {
+               reset_paren();
+               ESCCLSLA();
+               ESCMOVE(ed_row + 2 - ed_start, 0);
+               display_line(ed_row);
+          }
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+     }
 }
 
 void left()
 {
-    if (ed_col == 0)
-        return;
-    ed_col--;
-    if (ed_col <= ed_width - 1) {
-        if (ed_col == ed_width - 1) {
-            reset_paren();
-            ESCCLSLA();
-            ESCMOVE(ed_row + 2 - ed_start, 0);
-            display_line(ed_row);
-        }
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    }
-    else if (ed_col >= ed_width) {
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-    }
+     if (ed_col == 0)
+          return;
+     ed_col--;
+     if (ed_col <= ed_width - 1) {
+          if (ed_col == ed_width - 1) {
+               reset_paren();
+               ESCCLSLA();
+               ESCMOVE(ed_row + 2 - ed_start, 0);
+               display_line(ed_row);
+          }
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     }
+     else if (ed_col >= ed_width) {
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+     }
 }
 
 void up()
 {
-    int i;
-    
-    if (ed_row == 0)
-        return;
-    else if (ed_clip_start != -1 &&
-             ed_row == ed_start) {
-        if (ed_row == ed_clip_start)
-            ed_clip_start--;
-        else
-            ed_clip_end--;
-        ed_row--;
-        ed_start--;
-        display_screen();
-        ESCMOVE(ed_row + 2 - ed_start, 1);
-    }
-    else if (ed_row == ed_start) {
-        ed_row = ed_row - 10;
-        ed_start = ed_start - 10;
-        if (ed_row < 0)
-            ed_row = ed_start = 0;
-        i = findeol(ed_row);
-        if (ed_col >= i)
-            ed_col = i;
-        display_screen();
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(2, ed_col + 1);
-    }
-    else if (ed_clip_start != -1) {
-        if (ed_row == ed_clip_start)
-            ed_clip_start--;
-        else
-            ed_clip_end--;
-        ed_row--;
-        i = findeol(ed_row);
-        if (ed_col >= i)
-            ed_col = i;
-        display_screen();
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    }
-    else {
-        if (ed_col >= ed_width) {
-            ed_col = ed_width - 1;
-            ESCCLSLA();
-            ESCMOVE(ed_row + 2 - ed_start, 0);
-            display_line(ed_row);
-        }
-        ed_row--;
-        i = findeol(ed_row);
-        if (ed_col >= i)
-            ed_col = i;
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    }
+     int i;
+
+     if (ed_row == 0)
+          return;
+     else if (ed_clip_start != -1 &&
+              ed_row == ed_start) {
+          if (ed_row == ed_clip_start)
+               ed_clip_start--;
+          else
+               ed_clip_end--;
+          ed_row--;
+          ed_start--;
+          display_screen();
+          ESCMOVE(ed_row + 2 - ed_start, 1);
+     }
+     else if (ed_row == ed_start) {
+          ed_row = ed_row - 10;
+          ed_start = ed_start - 10;
+          if (ed_row < 0)
+               ed_row = ed_start = 0;
+          i = findeol(ed_row);
+          if (ed_col >= i)
+               ed_col = i;
+          display_screen();
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(2, ed_col + 1);
+     }
+     else if (ed_clip_start != -1) {
+          if (ed_row == ed_clip_start)
+               ed_clip_start--;
+          else
+               ed_clip_end--;
+          ed_row--;
+          i = findeol(ed_row);
+          if (ed_col >= i)
+               ed_col = i;
+          display_screen();
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     }
+     else {
+          if (ed_col >= ed_width) {
+               ed_col = ed_width - 1;
+               ESCCLSLA();
+               ESCMOVE(ed_row + 2 - ed_start, 0);
+               display_line(ed_row);
+          }
+          ed_row--;
+          i = findeol(ed_row);
+          if (ed_col >= i)
+               ed_col = i;
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     }
 }
 
 void down()
 {
-    int i;
-    
-    if (ed_row == ed_end)
-        return;
-    else if (ed_clip_start != -1 &&
-             ed_row == ed_start + ed_scroll) {
-        if (ed_row == ed_clip_end)
-            ed_clip_end++;
-        else
-            ed_clip_start++;
-        ed_row++;
-        ed_start++;
-        display_screen();
-        ESCMOVE(ed_row + 2 - ed_start, 1);
-    }
-    else if (ed_row == ed_start + ed_scroll) {
-        ed_row = ed_row + 10;
-        ed_start = ed_start + 10;
-        if (ed_row > ed_end)
-            ed_row = ed_start = ed_end - ed_scroll;
-        display_screen();
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        i = findeol(ed_row);
-        if (ed_col >= i)
-            ed_col = i;
-        ESCMOVE(22, ed_col + 1);
-    }
-    else if (ed_clip_start != -1) {
-        if (ed_row == ed_clip_end)
-            ed_clip_end++;
-        else
-            ed_clip_start++;
-        ed_row++;
-        i = findeol(ed_row);
-        if (ed_col >= i)
-            ed_col = i;
-        display_screen();
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    }
-    else {
-        if (ed_col >= ed_width) {
-            ed_col = ed_width - 1;
-            ESCCLSLA();
-            ESCMOVE(ed_row + 2 - ed_start, 0);
-            display_line(ed_row);
-        }
-        ed_row++;
-        i = findeol(ed_row);
-        if (ed_col >= i)
-            ed_col = i;
-        restore_paren();
-        emphasis_lparen();
-        emphasis_rparen();
-        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    }
+     int i;
+
+     if (ed_row == ed_end)
+          return;
+     else if (ed_clip_start != -1 &&
+              ed_row == ed_start + ed_scroll) {
+          if (ed_row == ed_clip_end)
+               ed_clip_end++;
+          else
+               ed_clip_start++;
+          ed_row++;
+          ed_start++;
+          display_screen();
+          ESCMOVE(ed_row + 2 - ed_start, 1);
+     }
+     else if (ed_row == ed_start + ed_scroll) {
+          ed_row = ed_row + 10;
+          ed_start = ed_start + 10;
+          if (ed_row > ed_end)
+               ed_row = ed_start = ed_end - ed_scroll;
+          display_screen();
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          i = findeol(ed_row);
+          if (ed_col >= i)
+               ed_col = i;
+          ESCMOVE(22, ed_col + 1);
+     }
+     else if (ed_clip_start != -1) {
+          if (ed_row == ed_clip_end)
+               ed_clip_end++;
+          else
+               ed_clip_start++;
+          ed_row++;
+          i = findeol(ed_row);
+          if (ed_col >= i)
+               ed_col = i;
+          display_screen();
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     }
+     else {
+          if (ed_col >= ed_width) {
+               ed_col = ed_width - 1;
+               ESCCLSLA();
+               ESCMOVE(ed_row + 2 - ed_start, 0);
+               display_line(ed_row);
+          }
+          ed_row++;
+          i = findeol(ed_row);
+          if (ed_col >= i)
+               ed_col = i;
+          restore_paren();
+          emphasis_lparen();
+          emphasis_rparen();
+          ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     }
 }
 
 void backspace_key()
 {
-    enum Token type;
-    
-    if (ed_row == 0 && ed_col == 0)
-        return;
-    else if (ed_col == 0) {
-        restore_paren();
-        deleterow();
-        if (ed_row < ed_start)
-            ed_start = ed_row;
-        display_screen();
-        if (ed_row < ed_start + ed_scroll) {
-            if (ed_col <= ed_width - 1)
-                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-            else
-                ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-        }
-        else {
-            if (ed_col <= ed_width - 1)
-                ESCMOVE(21, ed_col + 1);
-            else
-                ESCMOVE(21, ed_col - ed_width + 1);
-        }
-    }
-    else if (ed_col >= ed_width) {
-        type = check_token(ed_row, ed_col - 2);
-        if (type == MULTILINE_COMMENT)
-            ed_incomment = -1;
-        backspace();
-        display_screen();
-        if (ed_row < ed_start + ed_scroll)
-            ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-        else
-            ESCMOVE(22, ed_col - ed_width + 1);
-    }
-    else {
-        type = check_token(ed_row, ed_col - 2);
-        if (type == MULTILINE_COMMENT)
-            ed_incomment = -1;
-        backspace();
-        display_screen();
-        if (ed_row < ed_start + ed_scroll)
-            ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-        else
-            ESCMOVE(22, ed_col + 1);
-    }
-    modify_flag = true;
+     enum Token type;
+
+     if (ed_row == 0 && ed_col == 0)
+          return;
+     else if (ed_col == 0) {
+          restore_paren();
+          deleterow();
+          if (ed_row < ed_start)
+               ed_start = ed_row;
+          display_screen();
+          if (ed_row < ed_start + ed_scroll) {
+               if (ed_col <= ed_width - 1)
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+               else
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+          }
+          else {
+               if (ed_col <= ed_width - 1)
+                    ESCMOVE(21, ed_col + 1);
+               else
+                    ESCMOVE(21, ed_col - ed_width + 1);
+          }
+     }
+     else if (ed_col >= ed_width) {
+          type = check_token(ed_row, ed_col - 2);
+          if (type == MULTILINE_COMMENT)
+               ed_incomment = -1;
+          backspace();
+          display_screen();
+          if (ed_row < ed_start + ed_scroll)
+               ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+          else
+               ESCMOVE(22, ed_col - ed_width + 1);
+     }
+     else {
+          type = check_token(ed_row, ed_col - 2);
+          if (type == MULTILINE_COMMENT)
+               ed_incomment = -1;
+          backspace();
+          display_screen();
+          if (ed_row < ed_start + ed_scroll)
+               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+          else
+               ESCMOVE(22, ed_col + 1);
+     }
+     modify_flag = true;
 }
 
 void del()
 {
-    if (ed_data[ed_row][ed_col] == EOL)
-        return;
-    ed_col++;
-    backspace();
-    display_screen();
-    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    modify_flag = true;
+     if (ed_data[ed_row][ed_col] == EOL)
+          return;
+     ed_col++;
+     backspace();
+     display_screen();
+     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     modify_flag = true;
+}
+
+void pageup()
+{
+     ed_start = ed_start - ed_scroll;
+     if (ed_start < 0)
+          ed_start = 0;
+     ed_row = ed_start;
+     display_screen();
+     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+}
+
+void home()
+{
+     ed_row = 0;
+     ed_start = 0;
+     display_screen();
+     ESCMOVE(2, ed_col + 1);
+}
+
+void end()
+{
+     ed_row = ed_end;
+     if (ed_end > ed_scroll)
+          ed_start = ed_row - 10;
+     display_screen();
+     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+}
+
+void pagedn()
+{
+     if (ed_end < ed_start + ed_scroll)
+          return;
+     ed_start = ed_start + ed_scroll;
+     if (ed_start > ed_end)
+          ed_start = ed_end - ed_scroll;
+     ed_row = ed_start;
+     display_screen();
+     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
 void edit_screen(char* fname)
@@ -547,37 +586,38 @@ loop:
                     return;
                }
                else {
-retryX:
-                    ESCREV();
-                    ESCMOVE(ed_footer, 1);
-                    cout << "save modified buffer? y/n/c ";
-                    c = getch();
-                    ESCRST();
-                    switch (c) {
-                    case 'y':
-                         save_data(fname);
-                         ESCCLS();
-                         ESCMOVE(1, 1);
-                         return;
-                         break;
-                    case 'n':
-                         ESCCLS();
-                         ESCMOVE(1, 1);
-                         return;
-                         break;
-                    case 'c':
+                    do {
                          ESCREV();
                          ESCMOVE(ed_footer, 1);
-                         cout << "                                             ";
+                         cout << "save modified buffer? y/n/c ";
+                         c = getch();
                          ESCRST();
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         break;
-                    default:
-                         goto retryX;
-                    }
+                         switch (c) {
+                              case 'y':
+                                   save_data(fname);
+                                   ESCCLS();
+                                   ESCMOVE(1, 1);
+                                   return;
+                                   break;
+                              case 'n':
+                                   ESCCLS();
+                                   ESCMOVE(1, 1);
+                                   return;
+                                   break;
+                              case 'c':
+                                   ESCREV();
+                                   ESCMOVE(ed_footer, 1);
+                                   cout << "                                             ";
+                                   ESCRST();
+                                   ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                                   break;
+                         }
+                    } while (c != 'c');
                }
                break;
-          case CTRL('V'):    goto pageup;
+          case CTRL('V'):
+               pageup();
+               break;
           case CTRL('W'):
                ESCREV();
                ESCMOVE(ed_footer, 1);
@@ -649,37 +689,37 @@ retry2R:
                     ESCRST();
                     c = getch();
                     switch (c) {
-                    case 'y':
-                         ed_row = pos.row;
-                         ed_col = pos.col;
-                         replace_word(str1, str2);
-                         display_screen();
-                         modify_flag = true;
-                         ed_col++;
-                         goto retry1R;
-                         break;
-                    case 'n':
-                         display_screen();
-                         ed_col++;
-                         goto retry1R;
-                         break;
-                    default:
-                         goto retry2R;
+                         case 'y':
+                              ed_row = pos.row;
+                              ed_col = pos.col;
+                              replace_word(str1, str2);
+                              display_screen();
+                              modify_flag = true;
+                              ed_col++;
+                              goto retry1R;
+                              break;
+                         case 'n':
+                              display_screen();
+                              ed_col++;
+                              goto retry1R;
+                              break;
+                         default:
+                              goto retry2R;
                     }
                }
                break;
           case CTRL('L'):
-case CTRL('_'):    reinput:
-               ESCREV();
-               ESCMOVE(ed_footer, 1);
-               cout << "          ";
-               ESCMOVE(ed_footer, 1);
-               cout << "line? ";
-               cin >> i;
-               c = getch();
-               ESCRST();
-               if (i < 0 || i > ed_end)
-                    goto reinput;
+          case CTRL('_'):
+               do {
+                    ESCREV();
+                    ESCMOVE(ed_footer, 1);
+                    cout << "          ";
+                    ESCMOVE(ed_footer, 1);
+                    cout << "line? ";
+                    cin >> i;
+                    c = getch();
+                    ESCRST();
+               } while (i < 0 || i > ed_end);
                ed_row = i - 1;
                ed_col = 0;
                ed_start = ed_row - ed_scroll / 2;
@@ -691,9 +731,15 @@ case CTRL('_'):    reinput:
                break;
           case ESC:   c = getch();
                switch (c) {
-                    case '<': goto home;
-                    case '>': goto end;
-                    case 'v': goto pagedn;
+                    case '<':
+                         home();
+                         break;
+                    case '>':
+                         end();
+                         break;
+                    case 'v':
+                         pagedn();
+                         break;
                     case 'a': if (ed_clip_start == -1) {
                               ed_clip_start = ed_clip_end = ed_row;
                               ESCMOVE(ed_footer, 1);
@@ -774,18 +820,11 @@ escape:
                     case RIGHT:
                          right();
                          break;
-case HOME:  home:
-                         ed_row = 0;
-                         ed_start = 0;
-                         display_screen();
-                         ESCMOVE(2, ed_col + 1);
+                    case HOME:
+                         home();
                          break;
-case END:   end:
-                         ed_row = ed_end;
-                         if (ed_end > ed_scroll)
-                              ed_start = ed_row - 10;
-                         display_screen();
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                    case END:
+                         end();
                          break;
                     case INSERT:
                          c = getch();
@@ -793,25 +832,11 @@ case END:   end:
                          break;
                     case PAGEUP:
                          c = getch();
-pageup:
-                         ed_start = ed_start - ed_scroll;
-                         if (ed_start < 0)
-                              ed_start = 0;
-                         ed_row = ed_start;
-                         display_screen();
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                         pageup();
                          break;
                     case PAGEDN:
                          c = getch();
-pagedn:
-                         if (ed_end < ed_start + ed_scroll)
-                              break;
-                         ed_start = ed_start + ed_scroll;
-                         if (ed_start > ed_end)
-                              ed_start = ed_end - ed_scroll;
-                         ed_row = ed_start;
-                         display_screen();
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                         pagedn();
                          break;
                     case DELETE:
                          c = getch();
@@ -1008,107 +1033,107 @@ void display_line(int line)
           else {
                type = check_token(line, col);
                switch (type) {
-               case SYNTAX:
-                    ESCBOLD();
-                    setcolor(ed_syntax_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != ' ' &&
-                           ed_data[line][col] != '(' &&
-                           ed_data[line][col] != ')' &&
-                           ed_data[line][col] != NUL &&
-                           ed_data[line][col] != EOL) {
-                         cout << ed_data[line][col];
-                         col++;
-                    }
-                    ESCRST();
-                    ESCFORG();
-                    break;
-               case BUILTIN:
-                    ESCBOLD();
-                    setcolor(ed_builtin_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != ' ' &&
-                           ed_data[line][col] != '(' &&
-                           ed_data[line][col] != ')' &&
-                           ed_data[line][col] != NUL &&
-                           ed_data[line][col] != EOL) {
-                         cout << ed_data[line][col];
-                         col++;
-                    }
-                    ESCRST();
-                    ESCFORG();
-                    break;
-               case STRING:
-                    ESCBOLD();
-                    setcolor(ed_string_color);
-                    cout << ed_data[line][col];
-                    col++;
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != NUL &&
-                           ed_data[line][col] != EOL) {
-                         cout << ed_data[line][col];
-                         col++;
-                         if (ed_data[line][col - 1] == '"')
-                              break;
-                    }
-                    ESCRST();
-                    ESCFORG();
-                    break;
-               case COMMENT:
-                    ESCBOLD();
-                    setcolor(ed_comment_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != NUL &&
-                           ed_data[line][col] != EOL) {
-                         cout << ed_data[line][col];
-                         col++;
-                    }
-                    ESCRST();
-                    ESCFORG();
-                    break;
-               case EXTENDED:
-                    ESCBOLD();
-                    setcolor(ed_extended_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != ' ' &&
-                           ed_data[line][col] != '(' &&
-                           ed_data[line][col] != ')' &&
-                           ed_data[line][col] != NUL &&
-                           ed_data[line][col] != EOL) {
-                         cout << ed_data[line][col];
-                         col++;
-                    }
-                    ESCRST();
-                    ESCFORG();
-                    break;
-               case MULTILINE_COMMENT:
-                    ESCBOLD();
-                    setcolor(ed_comment_color);
-                    ed_incomment = line;
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != EOL &&
-                           ed_data[line][col] != NUL) {
-                         cout << ed_data[line][col];
-                         col++;
-                         if (ed_data[line][col - 2] == '|' &&
-                             ed_data[line][col - 1] == '#') {
-                              ed_incomment = -1;
-                              ESCRST();
-                              ESCFORG();
-                              break;
+                    case SYNTAX:
+                         ESCBOLD();
+                         setcolor(ed_syntax_color);
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != ' ' &&
+                                ed_data[line][col] != '(' &&
+                                ed_data[line][col] != ')' &&
+                                ed_data[line][col] != NUL &&
+                                ed_data[line][col] != EOL) {
+                              cout << ed_data[line][col];
+                              col++;
                          }
-                    }
-                    break;
-               default:
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
-                           ed_data[line][col] != ' ' &&
-                           ed_data[line][col] != '(' &&
-                           ed_data[line][col] != ')' &&
-                           ed_data[line][col] != NUL &&
-                           ed_data[line][col] != EOL) {
+                         ESCRST();
+                         ESCFORG();
+                         break;
+                    case BUILTIN:
+                         ESCBOLD();
+                         setcolor(ed_builtin_color);
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != ' ' &&
+                                ed_data[line][col] != '(' &&
+                                ed_data[line][col] != ')' &&
+                                ed_data[line][col] != NUL &&
+                                ed_data[line][col] != EOL) {
+                              cout << ed_data[line][col];
+                              col++;
+                         }
+                         ESCRST();
+                         ESCFORG();
+                         break;
+                    case STRING:
+                         ESCBOLD();
+                         setcolor(ed_string_color);
                          cout << ed_data[line][col];
                          col++;
-                    }
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != NUL &&
+                                ed_data[line][col] != EOL) {
+                              cout << ed_data[line][col];
+                              col++;
+                              if (ed_data[line][col - 1] == '"')
+                                   break;
+                         }
+                         ESCRST();
+                         ESCFORG();
+                         break;
+                    case COMMENT:
+                         ESCBOLD();
+                         setcolor(ed_comment_color);
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != NUL &&
+                                ed_data[line][col] != EOL) {
+                              cout << ed_data[line][col];
+                              col++;
+                         }
+                         ESCRST();
+                         ESCFORG();
+                         break;
+                    case EXTENDED:
+                         ESCBOLD();
+                         setcolor(ed_extended_color);
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != ' ' &&
+                                ed_data[line][col] != '(' &&
+                                ed_data[line][col] != ')' &&
+                                ed_data[line][col] != NUL &&
+                                ed_data[line][col] != EOL) {
+                              cout << ed_data[line][col];
+                              col++;
+                         }
+                         ESCRST();
+                         ESCFORG();
+                         break;
+                    case MULTILINE_COMMENT:
+                         ESCBOLD();
+                         setcolor(ed_comment_color);
+                         ed_incomment = line;
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != EOL &&
+                                ed_data[line][col] != NUL) {
+                              cout << ed_data[line][col];
+                              col++;
+                              if (ed_data[line][col - 2] == '|' &&
+                                  ed_data[line][col - 1] == '#') {
+                                   ed_incomment = -1;
+                                   ESCRST();
+                                   ESCFORG();
+                                   break;
+                              }
+                         }
+                         break;
+                    default:
+                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                                ed_data[line][col] != ' ' &&
+                                ed_data[line][col] != '(' &&
+                                ed_data[line][col] != ')' &&
+                                ed_data[line][col] != NUL &&
+                                ed_data[line][col] != EOL) {
+                              cout << ed_data[line][col];
+                              col++;
+                         }
                }
           }
      }
@@ -1783,7 +1808,7 @@ void replace_word(const string& str1, const string& str2)
                ed_data[ed_row][i + j] = ed_data[ed_row][i];
                i--;
           }
-          ed_data[ed_row][i] = NUL; 
+          ed_data[ed_row][i] = NUL;
           for (i = 0; i < len2; i++) {
                ed_data[ed_row][ed_col + i] = *it2;
                ++it2;

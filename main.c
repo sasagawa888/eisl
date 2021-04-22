@@ -1626,13 +1626,13 @@ int apply(int func, int args){
                     while(!(IS_NIL(body))){
                         shelterpush(body);
                         res = eval(car(body));
-                        shelterpush(res);
-                        res = eval(res);
-                        shelterpop();
                         shelterpop();
                         body = cdr(body);
                     }
                     unbind();
+                    shelterpush(res);
+                    res = eval(res);
+                    shelterpop();
                     return(res);
                     }
 

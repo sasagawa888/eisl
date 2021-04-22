@@ -44,7 +44,7 @@
 ;;; functions for macros
 
 (defmodule elixir
-    (defun expand-body (x body)
+    (defpublic expand-body (x body)
         (cons 'cond (expand-body1 x body)) )
 
     (defun expand-body1 (x body)
@@ -56,7 +56,7 @@
         (and (symbolp x) (char= (car (convert (convert x <string>) <list>)) #\_)) )
 
     ;; (((+ _a 2)...) ((* _b 3)...)) return ((_a nil)(_b nil))
-    (defun extract-variables (body var ans)
+    (defpublic extract-variables (body var ans)
         (cond ((and (null body) (null var)) (reverse ans))
               ((null var) (extract-variables (cdr body) (extract-variable (car (car body))) ans))
               ((not (member (car var) ans))
@@ -110,7 +110,7 @@
                   (expand-match1 (list 'cdr x) (cdr y) (car res) (cdr res))))))
 
     ;;for pipe macro
-    (defun pipe-macro (pipe func)
+    (defpublic pipe-macro (pipe func)
         (cond ((null pipe) func)
               ((eq (car pipe) '|>) (pipe-macro (cdr pipe) func))
               (t (pipe-macro (cdr pipe) (pipe-macro1 (car pipe) func)))))

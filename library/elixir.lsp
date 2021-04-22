@@ -19,18 +19,18 @@
 (defmacro defpattern (name :rest body)
     (let* ((arg (gensym))
            (vars (extract-variables body nil nil))
-           (body1 (expand-body arg body)))
-        `(defun ,name (,arg) 
-            (let ,vars ,body1))))
+           (body1 (expand-body arg body)) )
+        `(defun ,name (,arg) (let ,vars
+                                  ,body1))))
 
 (defmacro match (x :rest body)
     (let ((vars (extract-variables body nil nil))
-          (body1 (expand-body x body)))
-        `(let ,vars ,body1)))
-        
+          (body1 (expand-body x body)) )
+       `(let ,vars ,body1)))
+       
 ;; anyway return T
 (defmacro setq* (var val)
-    `(progn (setq ,var ,val) t))
+    `(progn (setq ,var ,val) t) )
 
 ;;;
 ;;; macro for Elixir like pipe operator

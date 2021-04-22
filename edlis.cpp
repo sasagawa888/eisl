@@ -171,10 +171,249 @@ int main(int argc __unused, char* argv[])
      edit_screen(fname);
 }
 
+void right()
+{
+    if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
+        return;
+    ed_col++;
+    if (ed_col < ed_width - 1) {
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    }
+    else {
+        if (ed_col == ed_width) {
+            reset_paren();
+            ESCCLSLA();
+            ESCMOVE(ed_row + 2 - ed_start, 0);
+            display_line(ed_row);
+        }
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+    }
+}
+
+void left()
+{
+    if (ed_col == 0)
+        return;
+    ed_col--;
+    if (ed_col <= ed_width - 1) {
+        if (ed_col == ed_width - 1) {
+            reset_paren();
+            ESCCLSLA();
+            ESCMOVE(ed_row + 2 - ed_start, 0);
+            display_line(ed_row);
+        }
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    }
+    else if (ed_col >= ed_width) {
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+    }
+}
+
+void up()
+{
+    int i;
+    
+    if (ed_row == 0)
+        return;
+    else if (ed_clip_start != -1 &&
+             ed_row == ed_start) {
+        if (ed_row == ed_clip_start)
+            ed_clip_start--;
+        else
+            ed_clip_end--;
+        ed_row--;
+        ed_start--;
+        display_screen();
+        ESCMOVE(ed_row + 2 - ed_start, 1);
+    }
+    else if (ed_row == ed_start) {
+        ed_row = ed_row - 10;
+        ed_start = ed_start - 10;
+        if (ed_row < 0)
+            ed_row = ed_start = 0;
+        i = findeol(ed_row);
+        if (ed_col >= i)
+            ed_col = i;
+        display_screen();
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(2, ed_col + 1);
+    }
+    else if (ed_clip_start != -1) {
+        if (ed_row == ed_clip_start)
+            ed_clip_start--;
+        else
+            ed_clip_end--;
+        ed_row--;
+        i = findeol(ed_row);
+        if (ed_col >= i)
+            ed_col = i;
+        display_screen();
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    }
+    else {
+        if (ed_col >= ed_width) {
+            ed_col = ed_width - 1;
+            ESCCLSLA();
+            ESCMOVE(ed_row + 2 - ed_start, 0);
+            display_line(ed_row);
+        }
+        ed_row--;
+        i = findeol(ed_row);
+        if (ed_col >= i)
+            ed_col = i;
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    }
+}
+
+void down()
+{
+    int i;
+    
+    if (ed_row == ed_end)
+        return;
+    else if (ed_clip_start != -1 &&
+             ed_row == ed_start + ed_scroll) {
+        if (ed_row == ed_clip_end)
+            ed_clip_end++;
+        else
+            ed_clip_start++;
+        ed_row++;
+        ed_start++;
+        display_screen();
+        ESCMOVE(ed_row + 2 - ed_start, 1);
+    }
+    else if (ed_row == ed_start + ed_scroll) {
+        ed_row = ed_row + 10;
+        ed_start = ed_start + 10;
+        if (ed_row > ed_end)
+            ed_row = ed_start = ed_end - ed_scroll;
+        display_screen();
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        i = findeol(ed_row);
+        if (ed_col >= i)
+            ed_col = i;
+        ESCMOVE(22, ed_col + 1);
+    }
+    else if (ed_clip_start != -1) {
+        if (ed_row == ed_clip_end)
+            ed_clip_end++;
+        else
+            ed_clip_start++;
+        ed_row++;
+        i = findeol(ed_row);
+        if (ed_col >= i)
+            ed_col = i;
+        display_screen();
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    }
+    else {
+        if (ed_col >= ed_width) {
+            ed_col = ed_width - 1;
+            ESCCLSLA();
+            ESCMOVE(ed_row + 2 - ed_start, 0);
+            display_line(ed_row);
+        }
+        ed_row++;
+        i = findeol(ed_row);
+        if (ed_col >= i)
+            ed_col = i;
+        restore_paren();
+        emphasis_lparen();
+        emphasis_rparen();
+        ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    }
+}
+
+void backspace_key()
+{
+    enum Token type;
+    
+    if (ed_row == 0 && ed_col == 0)
+        return;
+    else if (ed_col == 0) {
+        restore_paren();
+        deleterow();
+        if (ed_row < ed_start)
+            ed_start = ed_row;
+        display_screen();
+        if (ed_row < ed_start + ed_scroll) {
+            if (ed_col <= ed_width - 1)
+                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+            else
+                ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+        }
+        else {
+            if (ed_col <= ed_width - 1)
+                ESCMOVE(21, ed_col + 1);
+            else
+                ESCMOVE(21, ed_col - ed_width + 1);
+        }
+    }
+    else if (ed_col >= ed_width) {
+        type = check_token(ed_row, ed_col - 2);
+        if (type == MULTILINE_COMMENT)
+            ed_incomment = -1;
+        backspace();
+        display_screen();
+        if (ed_row < ed_start + ed_scroll)
+            ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+        else
+            ESCMOVE(22, ed_col - ed_width + 1);
+    }
+    else {
+        type = check_token(ed_row, ed_col - 2);
+        if (type == MULTILINE_COMMENT)
+            ed_incomment = -1;
+        backspace();
+        display_screen();
+        if (ed_row < ed_start + ed_scroll)
+            ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+        else
+            ESCMOVE(22, ed_col + 1);
+    }
+    modify_flag = true;
+}
+
+void del()
+{
+    if (ed_data[ed_row][ed_col] == EOL)
+        return;
+    ed_col++;
+    backspace();
+    display_screen();
+    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+    modify_flag = true;
+}
+
 void edit_screen(char* fname)
 {
      char c;
-     int i, k, type;
+     int i, k;
      string str1, str2;
      struct position pos;
      ifstream port;
@@ -207,15 +446,20 @@ loop:
                display_screen();
                break;
           case CTRL('F'):
-               goto right;
+               right();
+               break;
           case CTRL('B'):
-               goto left;
+               left();
+               break;
           case CTRL('P'):
-               goto up;
+               up();
+               break;
           case CTRL('N'):
-               goto down;
+               down();
+               break;
           case CTRL('H'):
-               goto backspace;
+               backspace_key();
+               break;
           case CTRL('T'):
                ESCREV();
                ESCMOVE(ed_footer, 1);
@@ -258,7 +502,8 @@ loop:
                modify_flag = true;
                break;
           case CTRL('D'):
-               goto del;
+               del();
+               break;
           case CTRL('A'):
                ed_col = 0;
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
@@ -513,175 +758,21 @@ escape:
                }
                c = getch();
                switch (c) {
-case UP:    up:
-                         if (ed_row == 0)
-                              break;
-                         else if (ed_clip_start != -1 &&
-                                  ed_row == ed_start) {
-                              if (ed_row == ed_clip_start)
-                                   ed_clip_start--;
-                              else
-                                   ed_clip_end--;
-                              ed_row--;
-                              ed_start--;
-                              display_screen();
-                              ESCMOVE(ed_row + 2 - ed_start, 1);
-                         }
-                         else if (ed_row == ed_start) {
-                              ed_row = ed_row - 10;
-                              ed_start = ed_start - 10;
-                              if (ed_row < 0)
-                                   ed_row = ed_start = 0;
-                              i = findeol(ed_row);
-                              if (ed_col >= i)
-                                   ed_col = i;
-                              display_screen();
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(2, ed_col + 1);
-                         }
-                         else if (ed_clip_start != -1) {
-                              if (ed_row == ed_clip_start)
-                                   ed_clip_start--;
-                              else
-                                   ed_clip_end--;
-                              ed_row--;
-                              i = findeol(ed_row);
-                              if (ed_col >= i)
-                                   ed_col = i;
-                              display_screen();
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         }
-                         else {
-                              if (ed_col >= ed_width) {
-                                   ed_col = ed_width - 1;
-                                   ESCCLSLA();
-                                   ESCMOVE(ed_row + 2 - ed_start, 0);
-                                   display_line(ed_row);
-                              }
-                              ed_row--;
-                              i = findeol(ed_row);
-                              if (ed_col >= i)
-                                   ed_col = i;
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         }
+                    case UP:
+                         up();
                          break;
                     case EOL:   ed_row++;
                          cout << c;
                          modify_flag = true;
                          break;
-case DOWN:  down:
-                         if (ed_row == ed_end)
-                              break;
-                         else if (ed_clip_start != -1 &&
-                                  ed_row == ed_start + ed_scroll) {
-                              if (ed_row == ed_clip_end)
-                                   ed_clip_end++;
-                              else
-                                   ed_clip_start++;
-                              ed_row++;
-                              ed_start++;
-                              display_screen();
-                              ESCMOVE(ed_row + 2 - ed_start, 1);
-                         }
-                         else if (ed_row == ed_start + ed_scroll) {
-                              ed_row = ed_row + 10;
-                              ed_start = ed_start + 10;
-                              if (ed_row > ed_end)
-                                   ed_row = ed_start = ed_end - ed_scroll;
-                              display_screen();
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              i = findeol(ed_row);
-                              if (ed_col >= i)
-                                   ed_col = i;
-                              ESCMOVE(22, ed_col + 1);
-                         }
-                         else if (ed_clip_start != -1) {
-                              if (ed_row == ed_clip_end)
-                                   ed_clip_end++;
-                              else
-                                   ed_clip_start++;
-                              ed_row++;
-                              i = findeol(ed_row);
-                              if (ed_col >= i)
-                                   ed_col = i;
-                              display_screen();
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         }
-                         else {
-                              if (ed_col >= ed_width) {
-                                   ed_col = ed_width - 1;
-                                   ESCCLSLA();
-                                   ESCMOVE(ed_row + 2 - ed_start, 0);
-                                   display_line(ed_row);
-                              }
-                              ed_row++;
-                              i = findeol(ed_row);
-                              if (ed_col >= i)
-                                   ed_col = i;
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         }
+                    case DOWN:
+                         down();
                          break;
-case LEFT:  left:
-                         if (ed_col == 0)
-                              break;
-                         ed_col--;
-                         if (ed_col <= ed_width - 1) {
-                              if (ed_col == ed_width - 1) {
-                                   reset_paren();
-                                   ESCCLSLA();
-                                   ESCMOVE(ed_row + 2 - ed_start, 0);
-                                   display_line(ed_row);
-                              }
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         }
-                         else if (ed_col >= ed_width) {
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-                         }
+                    case LEFT:
+                         left();
                          break;
-case RIGHT: right:
-                         if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
-                              break;
-                         ed_col++;
-                         if (ed_col < ed_width - 1) {
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         }
-                         else {
-                              if (ed_col == ed_width) {
-                                   reset_paren();
-                                   ESCCLSLA();
-                                   ESCMOVE(ed_row + 2 - ed_start, 0);
-                                   display_line(ed_row);
-                              }
-                              restore_paren();
-                              emphasis_lparen();
-                              emphasis_rparen();
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-                         }
+                    case RIGHT:
+                         right();
                          break;
 case HOME:  home:
                          ed_row = 0;
@@ -724,62 +815,12 @@ pagedn:
                          break;
                     case DELETE:
                          c = getch();
-del:
-                         if (ed_data[ed_row][ed_col] == EOL)
-                              break;
-                         ed_col++;
-                         backspace();
-                         display_screen();
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         modify_flag = true;
+                         del();
                          break;
                }
                break;
-case DEL:   backspace:
-               if (ed_row == 0 && ed_col == 0)
-                    break;
-               else if (ed_col == 0) {
-                    restore_paren();
-                    deleterow();
-                    if (ed_row < ed_start)
-                         ed_start = ed_row;
-                    display_screen();
-                    if (ed_row < ed_start + ed_scroll) {
-                         if (ed_col <= ed_width - 1)
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                         else
-                              ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-                    }
-                    else {
-                         if (ed_col <= ed_width - 1)
-                              ESCMOVE(21, ed_col + 1);
-                         else
-                              ESCMOVE(21, ed_col - ed_width + 1);
-                    }
-               }
-               else if (ed_col >= ed_width) {
-                    type = check_token(ed_row, ed_col - 2);
-                    if (type == MULTILINE_COMMENT)
-                         ed_incomment = -1;
-                    backspace();
-                    display_screen();
-                    if (ed_row < ed_start + ed_scroll)
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
-                    else
-                         ESCMOVE(22, ed_col - ed_width + 1);
-               }
-               else {
-                    type = check_token(ed_row, ed_col - 2);
-                    if (type == MULTILINE_COMMENT)
-                         ed_incomment = -1;
-                    backspace();
-                    display_screen();
-                    if (ed_row < ed_start + ed_scroll)
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                    else
-                         ESCMOVE(22, ed_col + 1);
-               }
-               modify_flag = true;
+          case DEL:
+               backspace_key();
                break;
           case EOL:   if (ed_indent == 1)
                     i = calc_tabs();
@@ -921,7 +962,8 @@ void display_screen()
 
 void display_line(int line)
 {
-     int col, type;
+     int col;
+     enum Token type;
 
      if (ed_row != line)
           col = 0;

@@ -264,7 +264,7 @@ loop:
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
           case CTRL('E'):
-               for (i = 0; i < 255; i++) {
+               for (i = 0; i < COL_SIZE; i++) {
                     if (ed_data[ed_row][i] == NUL)
                          break;
                }
@@ -661,7 +661,7 @@ case LEFT:  left:
                          }
                          break;
 case RIGHT: right:
-                         if (ed_col == findeol(ed_row) || ed_col >= 159)
+                         if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
                               break;
                          ed_col++;
                          if (ed_col < ed_width - 1) {
@@ -835,7 +835,7 @@ case DEL:   backspace:
                modify_flag = true;
                break;
           default:    if (ed_ins) {
-                    if (ed_col > 159)
+                    if (ed_col >= COL_SIZE)
                          break;
                     else if (ed_col >= ed_width) {
                          ESCCLSLA();
@@ -862,7 +862,7 @@ case DEL:   backspace:
                     }
                }
                else {
-                    if (ed_col > 159)
+                    if (ed_col >= COL_SIZE)
                          break;
                     else if (ed_col >= ed_width) {
                          if (ed_col == ed_width)
@@ -930,7 +930,7 @@ void display_line(int line)
      else
           col = ed_width;
 
-     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
             ed_data[line][col] != EOL &&
             ed_data[line][col] != NUL) {
           if (line >= ed_clip_start && line <= ed_clip_end)
@@ -941,7 +941,7 @@ void display_line(int line)
           if (ed_incomment != -1 && line >= ed_incomment) { //comment #|...|#
                ESCBOLD();
                setcolor(ed_comment_color);
-               while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+               while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                       ed_data[line][col] != EOL &&
                       ed_data[line][col] != NUL) {
                     cout << ed_data[line][col];
@@ -969,7 +969,7 @@ void display_line(int line)
                case SYNTAX:
                     ESCBOLD();
                     setcolor(ed_syntax_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != ' ' &&
                            ed_data[line][col] != '(' &&
                            ed_data[line][col] != ')' &&
@@ -984,7 +984,7 @@ void display_line(int line)
                case BUILTIN:
                     ESCBOLD();
                     setcolor(ed_builtin_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != ' ' &&
                            ed_data[line][col] != '(' &&
                            ed_data[line][col] != ')' &&
@@ -1001,7 +1001,7 @@ void display_line(int line)
                     setcolor(ed_string_color);
                     cout << ed_data[line][col];
                     col++;
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != NUL &&
                            ed_data[line][col] != EOL) {
                          cout << ed_data[line][col];
@@ -1015,7 +1015,7 @@ void display_line(int line)
                case COMMENT:
                     ESCBOLD();
                     setcolor(ed_comment_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != NUL &&
                            ed_data[line][col] != EOL) {
                          cout << ed_data[line][col];
@@ -1027,7 +1027,7 @@ void display_line(int line)
                case EXTENDED:
                     ESCBOLD();
                     setcolor(ed_extended_color);
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != ' ' &&
                            ed_data[line][col] != '(' &&
                            ed_data[line][col] != ')' &&
@@ -1043,7 +1043,7 @@ void display_line(int line)
                     ESCBOLD();
                     setcolor(ed_comment_color);
                     ed_incomment = line;
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != EOL &&
                            ed_data[line][col] != NUL) {
                          cout << ed_data[line][col];
@@ -1058,7 +1058,7 @@ void display_line(int line)
                     }
                     break;
                default:
-                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col <= 159)) &&
+                    while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
                            ed_data[line][col] != ' ' &&
                            ed_data[line][col] != '(' &&
                            ed_data[line][col] != ')' &&
@@ -1414,7 +1414,7 @@ void save_data(char* fname)
 
      ofstream port(fname);
      for (row = 0; row <= ed_end; row++)
-          for (col = 0; col < 100; col++) {
+          for (col = 0; col < COL_SIZE; col++) {
                port << ed_data[row][col];
                if (ed_data[row][col] == EOL)
                     break;
@@ -1521,7 +1521,7 @@ void paste_selection()
           return;
 
      for (i = ed_end; i >= ed_row; i--) {
-          for (j = 0; j < 100; j++) {
+          for (j = 0; j < COL_SIZE; j++) {
                ed_data[i + ed_copy_end][j] = ed_data[i][j];
           }
      }
@@ -1530,7 +1530,7 @@ void paste_selection()
 
      k = ed_row;
      for (i = 0; i < ed_copy_end; i++) {
-          for (j = 0; j < 100; j++) {
+          for (j = 0; j < COL_SIZE; j++) {
                ed_data[k][j] = ed_copy[i][j];
           }
           k++;
@@ -1545,7 +1545,7 @@ void delete_selection()
           return;
      k = ed_clip_end - ed_clip_start + 1;
      for (i = ed_clip_start; i <= ed_end; i++) {
-          for (j = 0; j < 100; j++) {
+          for (j = 0; j < COL_SIZE; j++) {
                ed_data[i][j] = ed_data[i + k][j];
           }
      }

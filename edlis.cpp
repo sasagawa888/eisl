@@ -241,7 +241,7 @@ loop:
                     if (c == EOL) {
                          ed_row++;
                          ed_col = 0;
-                         if (ed_row >= ROW_SIZE)
+                         if (ed_row >= ROW_SIZE - 1)
                               cout << "row " << ed_row << " over max-row";
                     }
                     else {
@@ -1570,10 +1570,10 @@ enum Token check_token(int row, int col)
           str.push_back(ed_data[row][col]);
           col++;
      }
-     if (str[0] == '#' && str[1] == '|')
-          return MULTILINE_COMMENT; // #|...|#
      if (str.empty())
           return NONE;
+     else if (str[0] == '#' && str[1] == '|')
+          return MULTILINE_COMMENT; // #|...|#
      for (i = 0; i < (int)NELEM(syntax); i++) {
           if (syntax[i].compare(str) == 0) {
                return SYNTAX;
@@ -1595,7 +1595,7 @@ enum Token check_token(int row, int col)
 string get_fragment()
 {
      string str;
-     int col, pos;
+     int col;
 
      col = ed_col - 1;
      while (col >= 0 &&
@@ -1605,7 +1605,6 @@ string get_fragment()
           col--;
      }
      col++;
-     pos = 0;
      while (ed_data[ed_row][col] != ' ' &&
             ed_data[ed_row][col] != '(' &&
             ed_data[ed_row][col] >= ' ') {
@@ -1661,7 +1660,7 @@ void replace_fragment(const string& newstr)
           insertcol();
           ed_data[ed_row][ed_col] = *it;
           ed_col++;
-          it++;
+          ++it;
           n--;
      }
 }
@@ -1684,7 +1683,7 @@ struct position find_word(const string& word)
                     if (ed_data[i][k] != *it) {
                          goto next2;
                     }
-                    it++;
+                    ++it;
                     k++;
                }
                pos.row = i;
@@ -1718,7 +1717,7 @@ void replace_word(const string& str1, const string& str2)
           for (i = 0; i < len1; i++) {
                ed_data[ed_row][ed_col] = *it2;
                ed_col++;
-               it2++;
+               ++it2;
           }
      }
      else if (len1 > len2) {
@@ -1732,7 +1731,7 @@ void replace_word(const string& str1, const string& str2)
 
           for (i = 0; i < len2; i++) {
                ed_data[ed_row][ed_col + i] = *it2;
-               it2++;
+               ++it2;
           }
      }
      else { //len1 < len2
@@ -1745,7 +1744,7 @@ void replace_word(const string& str1, const string& str2)
           ed_data[ed_row][i] = NUL; 
           for (i = 0; i < len2; i++) {
                ed_data[ed_row][ed_col + i] = *it2;
-               it2++;
+               ++it2;
           }
      }
 }

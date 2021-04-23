@@ -8,6 +8,8 @@
 #include "edlis.hpp"
 using namespace std;
 
+bool edit_loop(char *fname);
+
 //-----editor-----
 int ed_height;
 int ed_width;
@@ -453,15 +455,21 @@ void pagedn()
 
 void edit_screen(char* fname)
 {
+     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+     bool quit = edit_loop(fname);
+     while (!quit) {
+         quit = edit_loop(fname);
+     }
+}
+
+bool edit_loop(char *fname)
+{
      char c;
      int i, k;
      string str1, str2;
      struct position pos;
      ifstream port;
 
-     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-     i = 0;
-loop:
      c = getch();
      switch (c) {
           case CTRL('G'):     ESCMOVE(2, 1);   // help
@@ -585,7 +593,7 @@ loop:
                if (!modify_flag) {
                     ESCCLS();
                     ESCMOVE(1, 1);
-                    return;
+                    return true;
                }
                else {
                     do {
@@ -599,12 +607,12 @@ loop:
                                    save_data(fname);
                                    ESCCLS();
                                    ESCMOVE(1, 1);
-                                   return;
+                                   return true;
                                    break;
                               case 'n':
                                    ESCCLS();
                                    ESCMOVE(1, 1);
-                                   return;
+                                   return true;
                                    break;
                               case 'c':
                                    ESCREV();
@@ -748,7 +756,7 @@ retry2R:
                               ESCREV();
                               cout << "marked";
                               ESCRST();
-                              goto loop;
+                              return false;
                          }
                          else {
                               ed_clip_start = ed_clip_end = -1;
@@ -757,7 +765,7 @@ retry2R:
                               ESCREV();
                               cout << "unmark";
                               ESCRST();
-                              goto loop;
+                              return false;
                          }
                     case TAB:   find_candidate(); //completion
                          if (ed_candidate_pt == 0)
@@ -802,7 +810,7 @@ escape:
                               display_screen();
                               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                          }
-                         goto loop;
+                         return false;
                }
                c = getch();
                switch (c) {
@@ -949,7 +957,7 @@ escape:
                }
                modify_flag = true;
      }
-     goto loop;
+     return false;
 }
 
 void display_command(char* fname)

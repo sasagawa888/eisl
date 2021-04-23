@@ -1,5 +1,5 @@
-#ifndef EDLIS_H
-#define EDLIS_H
+#ifndef EDLIS_HPP
+#define EDLIS_HPP
 
 #include "term.h"
 

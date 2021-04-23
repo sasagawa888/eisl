@@ -112,7 +112,13 @@ const string extended[] = {
      "c-include", "c-define", "c-lang", "c-option",
 };
 
-static inline void clear_status() { cout << "                                            "; }
+void clear_status()
+{
+     ESCREV();
+     ESCMOVE(ed_footer, 1);
+     cout << "                                            ";
+     ESCMOVE(ed_footer, 1);
+}
 
 int main(int argc __unused, char* argv[])
 {
@@ -510,19 +516,13 @@ bool edit_loop(char *fname)
                backspace_key();
                break;
           case CTRL('T'):
-               ESCREV();
-               ESCMOVE(ed_footer, 1);
                clear_status();
-               ESCMOVE(ed_footer, 1);
                cout << "filename: ";
                getline(cin, str1);
                ESCRST();
                port.open(str1);
                if (port.fail()) {
-                    ESCREV();
-                    ESCMOVE(ed_footer, 1);
                     clear_status();
-                    ESCMOVE(ed_footer, 1);
                     cout << str1 << " doesn't exist";
                     ESCRST();
                     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
@@ -615,8 +615,6 @@ bool edit_loop(char *fname)
                                    return true;
                                    break;
                               case 'c':
-                                   ESCREV();
-                                   ESCMOVE(ed_footer, 1);
                                    clear_status();
                                    ESCRST();
                                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
@@ -629,10 +627,7 @@ bool edit_loop(char *fname)
                pageup();
                break;
           case CTRL('W'):
-               ESCREV();
-               ESCMOVE(ed_footer, 1);
                clear_status();
-               ESCMOVE(ed_footer, 1);
                cout << "search: ";
                getline(cin, str1);
                ESCRST();
@@ -656,75 +651,53 @@ bool edit_loop(char *fname)
                break;
 
           case CTRL('R'):
-               ESCREV();
-               ESCMOVE(ed_footer, 1);
                clear_status();
-               ESCMOVE(ed_footer, 1);
                cout << "search: ";
                getline(cin, str1);
-               ESCMOVE(ed_footer, 1);
                clear_status();
-               ESCMOVE(ed_footer, 1);
                cout << "replace: ";
                getline(cin, str2);
                ESCRST();
-retry1R:
                pos = find_word(str1);
-               if (pos.row == -1) {
-                    ESCREV();
-                    ESCMOVE(ed_footer, 1);
-                    clear_status();
-                    ESCMOVE(ed_footer, 1);
-                    cout << "can't find " << str1;
-                    ESCRST();
-                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                    break;
+               while (pos.row != -1) {
+                   ed_row = pos.row;
+                   ed_col = pos.col;
+                   ed_start = ed_row - ed_scroll / 2;
+                   if (ed_start < 0) {
+                       ed_start = 0;
+                   }
+                   display_screen();
+                   ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                   ESCREV();
+                   cout << str1;
+                   clear_status();
+                   do {
+                       cout << "replace? y/n ";
+                       ESCRST();
+                       c = getch();
+                   } while (c != 'y' && c != 'n');
+                   if (c == 'y') {
+                       ed_row = pos.row;
+                       ed_col = pos.col;
+                       replace_word(str1, str2);
+                       display_screen();
+                       modify_flag = true;
+                       ed_col++;
+                   } else {
+                       display_screen();
+                       ed_col++;
+                   }
+                   pos = find_word(str1);
                }
-               else {
-                    ed_row = pos.row;
-                    ed_col = pos.col;
-                    ed_start = ed_row - ed_scroll / 2;
-                    if (ed_start < 0) {
-                         ed_start = 0;
-                    }
-                    display_screen();
-                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                    ESCREV();
-                    cout << str1;
-                    ESCMOVE(ed_footer, 1);
-                    clear_status();
-                    ESCMOVE(ed_footer, 1);
-retry2R:
-                    cout << "replace? y/n ";
-                    ESCRST();
-                    c = getch();
-                    switch (c) {
-                         case 'y':
-                              ed_row = pos.row;
-                              ed_col = pos.col;
-                              replace_word(str1, str2);
-                              display_screen();
-                              modify_flag = true;
-                              ed_col++;
-                              goto retry1R;
-                              break;
-                         case 'n':
-                              display_screen();
-                              ed_col++;
-                              goto retry1R;
-                              break;
-                         default:
-                              goto retry2R;
-                    }
-               }
+               clear_status();
+               cout << "can't find " << str1;
+               ESCRST();
+               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
           case CTRL('L'):
           case CTRL('_'):
                do {
-                    ESCREV();
-                    ESCMOVE(ed_footer, 1);
                     clear_status();
-                    ESCMOVE(ed_footer, 1);
                     cout << "line? ";
                     cin >> i;
                     c = getch();
@@ -777,36 +750,41 @@ retry2R:
                               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                          }
                          else {
-#define CANDIDATE 3
+                             const int CANDIDATE = 3;
                               k = 0;
                               ESCMOVE(ed_footer, 1);
-next:
-                              ESCREV();
-                              for (i = 0; i < CANDIDATE; i++) {
-                                   if (i + k >= ed_candidate_pt)
-                                        break;
-                                   cout << i + 1 << ':' << ed_candidate[i + k] << ' ';
-                              }
-                              if (ed_candidate_pt > k + CANDIDATE)
-                                   cout << "4:more";
-                              ESCRST();
-retry:
-                              c = getch();
-                              if (c == ESC)
-                                   goto escape;
-                              i = c - '1';
-                              if (ed_candidate_pt > k + CANDIDATE && i == CANDIDATE) {
-                                   k = k + CANDIDATE;
-                                   ESCMVLEFT(1);
-                                   ESCCLSL();
-                                   goto next;
-                              }
-                              if (i + k > ed_candidate_pt || i < 0)
-                                   goto retry;
-                              if (c == EOL)
-                                   goto retry;
-                              replace_fragment(ed_candidate[i + k]);
-escape:
+                              bool more_candidates_selected;
+                              do {
+                                  more_candidates_selected = false;
+                                  ESCREV();
+                                  for (i = 0; i < CANDIDATE; i++) {
+                                      if (i + k >= ed_candidate_pt)
+                                          break;
+                                      cout << i + 1 << ':' << ed_candidate[i + k] << ' ';
+                                  }
+                                  if (ed_candidate_pt > k + CANDIDATE)
+                                      cout << "4:more";
+                                  ESCRST();
+                                  bool bad_candidate_selected;
+                                  do {
+                                      bad_candidate_selected = false;
+                                      c = getch();
+                                      if (c != ESC) {
+                                          i = c - '1';
+                                          more_candidates_selected = ed_candidate_pt > k + CANDIDATE && i == CANDIDATE;
+                                          if (more_candidates_selected) {
+                                              k = k + CANDIDATE;
+                                              ESCMVLEFT(1);
+                                              ESCCLSL();
+                                              break;
+                                          }
+                                          bad_candidate_selected = i + k > ed_candidate_pt || i < 0 ||
+                                              c == EOL;
+                                      }
+                                  } while (bad_candidate_selected);
+                              } while (more_candidates_selected);
+                              if (c != ESC)
+                                  replace_fragment(ed_candidate[i + k]);
                               display_screen();
                               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                          }
@@ -1752,26 +1730,21 @@ struct position find_word(const string& word)
      len = word.length();
      string::const_iterator it = word.begin();
      while (i <= ed_end + 1) {
-          while (j < COL_SIZE) {
-               if (ed_data[i][j] == NUL)
-                    goto next1;
+          while (j < COL_SIZE && ed_data[i][j] != NUL) {
                k = j;
-               while (k < j + len) {
-                    if (ed_data[i][k] != *it) {
-                         goto next2;
-                    }
-                    ++it;
-                    k++;
+               while (k < j + len &&
+                      ed_data[i][k] == *it) {
+                   ++it;
+                   k++;
                }
-               pos.row = i;
-               pos.col = j;
-               return (pos);
-
-next2:
+               if (k >= j + len) {
+                   pos.row = i;
+                   pos.col = j;
+                   return (pos);
+               }
                j++;
                it = word.begin();
           }
-next1:
           i++;
           j = 0;
      }

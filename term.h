@@ -5,12 +5,13 @@
 
 #ifdef __cplusplus
 #include <iostream>
+#include <curses.h>
 using namespace std;
 #endif
 
-struct position{
-    int row;
-    int col;
+struct position {
+     int row;
+     int col;
 };
 
 //special charactor
@@ -24,7 +25,7 @@ static const char BEL = '\a';
 static const char BS = '\b';
 static const char DEL = 127;
 
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+#ifndef __cplusplus
 static const char LEFT = 'D';
 static const char UP = 'A';
 static const char RIGHT = 'C';
@@ -38,35 +39,56 @@ static const char END = 'F';
 #endif
 
 #ifdef __cplusplus
-static inline void ESCHOME(void) { cout << "\33[1;1H"; }
-static inline void ESCTOP(void) { cout << "\33[2;1H"; }
-static inline void ESCCLS(void) { cout << "\33[2J"; }
-static inline void ESCCLS1(void) { cout << "\33[0J"; }
-static inline void ESCCLSL(void) { cout << "\33[0K"; }
-static inline void ESCCLSLA(void) { cout << "\33[2K"; }
-static inline void ESCMVLEFT(int x) { cout << "\33[" << x << 'G'; }
-static inline void ESCMVR(void) { cout << "\33[C"; }
-static inline void ESCMVL(void) { cout << "\33[D"; }
-static inline void ESCMVU(void) { cout << "\33[A"; }
-static inline void ESCMVD(void) { cout << "\33[B"; }
-static inline void ESCSCR(void) { cout << "\33[S"; }
-static inline void ESCMVLN(int x) { cout << "\33[" << x << 'D'; }
-static inline void ESCMOVE(int x,int y) { cout << "\33[" << x << ';' << y << 'f'; }
-static inline void ESCFBLACK(void) { cout << "\33[30m"; }
-static inline void ESCFRED(void) { cout << "\33[31m"; }
-static inline void ESCFGREEN(void) { cout << "\33[32m"; }
-static inline void ESCFYELLOW(void) { cout << "\33[33m"; }
-static inline void ESCFBLUE(void) { cout << "\33[34m"; }
-static inline void ESCFMAGENTA(void) { cout << "\33[35m"; }
-static inline void ESCFCYAN(void) { cout << "\33[36m"; }
-static inline void ESCFWHITE(void) { cout << "\33[37m"; }
-static inline void ESCFORG(void) { cout << "\33[39m"; }
+// Coincidentally, this code is only used in edlis
 
-static inline void ESCBCYAN(void) { cout << "\33[46m"; }
-static inline void ESCBORG(void) { cout << "\33[49m"; }
-static inline void ESCREV(void) { cout << "\33[7m"; }
-static inline void ESCRST(void) { cout << "\33[0m"; }
-static inline void ESCBOLD(void) { cout << "\33[1m"; }
+__dead void errw(const char* msg);
+#define CHECK(fn, ...) { \
+        if ((fn)(__VA_ARGS__) == ERR) { \
+                errw(#fn); \
+        } \
+}
+
+// ESCMVR, ESCMVL, ESCMVU, ESCMVD, ESCSCR, ESCMVLN, ESCF<color> removed
+static inline void ESCHOME(void) { CHECK(move, 0, 0); }
+static inline void ESCTOP(void) { CHECK(move, 1, 0); }
+static inline void ESCCLS(void) { CHECK(clear); }
+static inline void ESCCLS1(void) { CHECK(clrtobot); }
+static inline void ESCCLSL(void) { CHECK(clrtoeol); }
+static inline void ESCMVLEFT(int x)
+{
+     int dummy, cur_y;
+
+     getyx(stdscr, cur_y, dummy);
+     CHECK(move, cur_y, x - 1);
+}
+static inline void ESCCLSLA(void)
+{
+     ESCMVLEFT(1);
+     CHECK(clrtoeol);
+}
+static inline void ESCMOVE(int y, int x) { CHECK(move, y - 1, x - 1); }
+static inline void ESCFORG(void)
+{
+     if (has_colors()) {
+          CHECK(color_set, 0, NULL);
+     }
+}
+
+enum Color { RED_ON_DFL = 1, YELLOW_ON_DFL, BLUE_ON_DFL, MAGENTA_ON_DFL, CYAN_ON_DFL, DFL_ON_CYAN, };
+static inline void ESCBCYAN(void)
+{
+     if (has_colors()) {
+          CHECK(color_set, DFL_ON_CYAN, NULL);
+     }
+}
+static inline void ESCBORG(void) {
+    if (has_colors()) {
+        CHECK(color_set, 0, NULL);
+    }
+}
+static inline void ESCREV(void) { CHECK(attron, A_REVERSE); }
+static inline void ESCRST(void) { CHECK(attrset, A_NORMAL); }
+static inline void ESCBOLD(void) { CHECK(attron, A_BOLD); }
 #else
 static inline void ESCHOME(void) { printf("\33[1;1H"); }
 static inline void ESCTOP(void) { printf("\33[2;1H"); }
@@ -81,7 +103,7 @@ static inline void ESCMVU(void) { printf("\33[A"); }
 static inline void ESCMVD(void) { printf("\33[B"); }
 static inline void ESCSCR(void) { printf("\33[S"); }
 static inline void ESCMVLN(int x) { printf("\33[%dD", x); }
-static inline void ESCMOVE(int x,int y) { printf("\33[%d;%df", x,y); }
+static inline void ESCMOVE(int y, int x) { printf("\33[%d;%df", y, x); }
 static inline void ESCFBLACK(void) { printf("\33[30m"); }
 static inline void ESCFRED(void) { printf("\33[31m"); }
 static inline void ESCFGREEN(void) { printf("\33[32m"); }

@@ -73,7 +73,7 @@ endif
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(CXX) $(LDFLAGS) edlis.o -o edlis
+	$(CXX) $(LDFLAGS) edlis.o -o edlis -lncurses
 edlis.o : edlis.cpp edlis.hpp term.h
 	$(CXX) $(CXXFLAGS) -c edlis.cpp
 

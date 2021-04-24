@@ -3,8 +3,7 @@
 
 #include "term.h"
 
-enum Color { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
-enum Token { NONE, SYNTAX, BUILTIN, STRING, COMMENT, EXTENDED, MULTILINE_COMMENT };
+enum Token { NONE, SYNTAX, BUILTIN, STRING, COMMENT, EXTENDED, MULTILINE_COMMENT, };
 
 static const float VERSION = 1.73;
 #define ROW_SIZE 4000
@@ -24,7 +23,6 @@ void setcolor(enum Color);
 void backspace(void);
 void insertcol(void);
 void insertrow(void);
-char getch(void);
 void deleterow(void);
 int findeol(int row);
 struct position findlparen(int bias);

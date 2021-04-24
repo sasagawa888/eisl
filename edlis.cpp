@@ -4,15 +4,20 @@
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#define NCURSES_OPAQUE 1
+#include <curses.h>
+#include <clocale>
+#include <sstream>
 #include "compat/cdefs.h"
 #include "edlis.hpp"
 using namespace std;
 
-bool edit_loop(char *fname);
+const int NUM_STR_MAX = 5;
+const int SHORT_STR_MAX = 20;
+
+bool edit_loop(char* fname);
 
 //-----editor-----
-int ed_height;
-int ed_width;
 int ed_scroll;
 int ed_footer;
 int ed_row;
@@ -34,11 +39,11 @@ int ed_clip_end;
 int ed_copy_end;
 string ed_candidate[50];
 int ed_candidate_pt;
-enum Color ed_syntax_color = RED;
-enum Color ed_builtin_color = CYAN;
-enum Color ed_extended_color = MAGENTA;
-enum Color ed_string_color = YELLOW;
-enum Color ed_comment_color = BLUE;
+const enum Color ed_syntax_color = RED_ON_DFL;
+const enum Color ed_builtin_color = CYAN_ON_DFL;
+const enum Color ed_extended_color = MAGENTA_ON_DFL;
+const enum Color ed_string_color = YELLOW_ON_DFL;
+const enum Color ed_comment_color = BLUE_ON_DFL;
 int ed_incomment = -1;     // #|...|# comment
 bool modify_flag;
 
@@ -112,12 +117,54 @@ const string extended[] = {
      "c-include", "c-define", "c-lang", "c-option",
 };
 
+__dead void errw(const char* msg)
+{
+     endwin();
+     cerr << msg << '\n';
+     exit(EXIT_FAILURE);
+}
+
 void clear_status()
 {
      ESCREV();
      ESCMOVE(ed_footer, 1);
-     cout << "                                            ";
+     CHECK(addstr, "                                            ");
      ESCMOVE(ed_footer, 1);
+}
+
+void init_ncurses()
+{
+     if (initscr() == NULL) {
+          cerr << "initscr\n";
+          exit(EXIT_FAILURE);
+     }
+     if (has_colors()) {
+          CHECK(start_color);
+#ifdef NCURSES_VERSION
+          CHECK(use_default_colors);
+#endif
+     }
+     CHECK(scrollok, stdscr, TRUE);
+     CHECK(idlok, stdscr, TRUE);
+     CHECK(noecho);
+     CHECK(keypad, stdscr, TRUE);
+     CHECK(cbreak);
+     CHECK(nonl);
+     CHECK(intrflush, NULL, FALSE);
+     curs_set(1);
+#ifdef NCURSES_VERSION
+     set_tabsize(8);
+#endif
+
+     if (has_colors()) {
+          // Colors
+          CHECK(init_pair, RED_ON_DFL, COLOR_RED, -1);
+          CHECK(init_pair, YELLOW_ON_DFL, COLOR_YELLOW, -1);
+          CHECK(init_pair, BLUE_ON_DFL, COLOR_BLUE, -1);
+          CHECK(init_pair, MAGENTA_ON_DFL, COLOR_MAGENTA, -1);
+          CHECK(init_pair, CYAN_ON_DFL, COLOR_CYAN, -1);
+          CHECK(init_pair, DFL_ON_CYAN, -1, COLOR_CYAN);
+     }
 }
 
 int main(int argc __unused, char* argv[])
@@ -126,6 +173,7 @@ int main(int argc __unused, char* argv[])
      char* fname;
 
      ios::sync_with_stdio(false);
+     setlocale(LC_ALL, "");
      fname = argv[1];
      signal(SIGINT, SIG_IGN);
      signal(SIGSTOP, SIG_IGN);
@@ -135,13 +183,6 @@ int main(int argc __unused, char* argv[])
                ed_data[i][j] = NUL;
      ifstream port(fname);
 
-     struct winsize w;
-     ioctl(0, TIOCGWINSZ, &w);
-
-     ed_height = w.ws_row;
-     ed_width = w.ws_col;
-     ed_scroll = ed_height - 4;
-     ed_footer = ed_height - 1;
      ed_row = 0;
      ed_col = 0;
      ed_start = 0;
@@ -174,11 +215,15 @@ int main(int argc __unused, char* argv[])
           ed_data[ed_end][0] = EOL;
           port.close();
      }
+     init_ncurses();
+     ed_scroll = LINES - 4;
+     ed_footer = LINES - 1;
      ESCCLS();
      display_command(fname);
      display_screen();
      ed_row = ed_col = 0;
      edit_screen(fname);
+     CHECK(endwin);
 }
 
 void right()
@@ -186,14 +231,14 @@ void right()
      if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
           return;
      ed_col++;
-     if (ed_col < ed_width - 1) {
+     if (ed_col < COLS - 1) {
           restore_paren();
           emphasis_lparen();
           emphasis_rparen();
           ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      }
      else {
-          if (ed_col == ed_width) {
+          if (ed_col == COLS) {
                reset_paren();
                ESCCLSLA();
                ESCMOVE(ed_row + 2 - ed_start, 0);
@@ -202,7 +247,7 @@ void right()
           restore_paren();
           emphasis_lparen();
           emphasis_rparen();
-          ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+          ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
      }
 }
 
@@ -211,8 +256,8 @@ void left()
      if (ed_col == 0)
           return;
      ed_col--;
-     if (ed_col <= ed_width - 1) {
-          if (ed_col == ed_width - 1) {
+     if (ed_col <= COLS - 1) {
+          if (ed_col == COLS - 1) {
                reset_paren();
                ESCCLSLA();
                ESCMOVE(ed_row + 2 - ed_start, 0);
@@ -223,11 +268,11 @@ void left()
           emphasis_rparen();
           ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      }
-     else if (ed_col >= ed_width) {
+     else if (ed_col >= COLS) {
           restore_paren();
           emphasis_lparen();
           emphasis_rparen();
-          ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+          ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
      }
 }
 
@@ -278,8 +323,8 @@ void up()
           ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      }
      else {
-          if (ed_col >= ed_width) {
-               ed_col = ed_width - 1;
+          if (ed_col >= COLS) {
+               ed_col = COLS - 1;
                ESCCLSLA();
                ESCMOVE(ed_row + 2 - ed_start, 0);
                display_line(ed_row);
@@ -342,8 +387,8 @@ void down()
           ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      }
      else {
-          if (ed_col >= ed_width) {
-               ed_col = ed_width - 1;
+          if (ed_col >= COLS) {
+               ed_col = COLS - 1;
                ESCCLSLA();
                ESCMOVE(ed_row + 2 - ed_start, 0);
                display_line(ed_row);
@@ -372,28 +417,28 @@ void backspace_key()
                ed_start = ed_row;
           display_screen();
           if (ed_row < ed_start + ed_scroll) {
-               if (ed_col <= ed_width - 1)
+               if (ed_col <= COLS - 1)
                     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                else
-                    ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
           }
           else {
-               if (ed_col <= ed_width - 1)
+               if (ed_col <= COLS - 1)
                     ESCMOVE(21, ed_col + 1);
                else
-                    ESCMOVE(21, ed_col - ed_width + 1);
+                    ESCMOVE(21, ed_col - COLS + 1);
           }
      }
-     else if (ed_col >= ed_width) {
+     else if (ed_col >= COLS) {
           type = check_token(ed_row, ed_col - 2);
           if (type == MULTILINE_COMMENT)
                ed_incomment = -1;
           backspace();
           display_screen();
           if (ed_row < ed_start + ed_scroll)
-               ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+               ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
           else
-               ESCMOVE(22, ed_col - ed_width + 1);
+               ESCMOVE(22, ed_col - COLS + 1);
      }
      else {
           type = check_token(ed_row, ed_col - 2);
@@ -464,40 +509,45 @@ void edit_screen(char* fname)
      ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      bool quit = edit_loop(fname);
      while (!quit) {
-         quit = edit_loop(fname);
+          quit = edit_loop(fname);
      }
 }
 
-bool edit_loop(char *fname)
+bool edit_loop(char* fname)
 {
-     char c;
+     int c;
      int i, k;
-     string str1, str2;
+     char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
      struct position pos;
      ifstream port;
 
+     CHECK(refresh);
      c = getch();
+     if (c == ERR) {
+          errw("getch");
+     }
      switch (c) {
           case CTRL('G'):     ESCMOVE(2, 1);   // help
                ESCCLS1();
-               cout << "Edlis help\n"
-                    "CTRL+F  move to right          CTRL+W  search word\n"
-                    "CTRL+B  move to left           CTRL+R  replace word\n"
-                    "CTRL+P  move to up             ESC TAB   complete name\n"
-                    "CTRL+N  move to down           ESC <   goto top page\n"
-                    "CTRL+J  end of line            ESC >   goto end page\n"
-                    "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
-                    "CTRL+E  end of line            CTRL+D  delete one char\n"
-                    "CTRL+V  page up\n"
-                    "ESC V   page down\n"
-                    "CTRL+O  save file\n"
-                    "CTRL+T  insert file\n"
-                    "CTRL+X  quit from editor\n"
-                    "CTRL+K  cut selection\n"
-                    "CTRL+U  uncut selection\n"
-                    "CTRL+_ (or CTRL+L) goto line\n"
-                    "\n  enter any key to exit help\n";
-               c = getch();
+               CHECK(addstr, "Edlis help\n"
+                      "CTRL+F  move to right          CTRL+W  search word\n"
+                      "CTRL+B  move to left           CTRL+R  replace word\n"
+                      "CTRL+P  move to up             ESC TAB   complete name\n"
+                      "CTRL+N  move to down           ESC <   goto top page\n"
+                      "CTRL+J  end of line            ESC >   goto end page\n"
+                      "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
+                      "CTRL+E  end of line            CTRL+D  delete one char\n"
+                      "CTRL+V  page up\n"
+                      "ESC V   page down\n"
+                      "CTRL+O  save file\n"
+                      "CTRL+T  insert file\n"
+                      "CTRL+X  quit from editor\n"
+                      "CTRL+K  cut selection\n"
+                      "CTRL+U  uncut selection\n"
+                      "CTRL+_ (or CTRL+L) goto line\n"
+                      "\n  enter any key to exit help\n");
+               CHECK(refresh);
+               CHECK(getch);
                display_screen();
                break;
           case CTRL('F'):
@@ -517,13 +567,14 @@ bool edit_loop(char *fname)
                break;
           case CTRL('T'):
                clear_status();
-               cout << "filename: ";
-               getline(cin, str1);
+               CHECK(addstr, "filename: ");
+               CHECK(refresh);
+               CHECK(getnstr, str1, SHORT_STR_MAX);
                ESCRST();
                port.open(str1);
                if (port.fail()) {
                     clear_status();
-                    cout << str1 << " doesn't exist";
+                    CHECK(addstr, str1); CHECK(addstr, " doesn't exist");
                     ESCRST();
                     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                     break;
@@ -534,13 +585,19 @@ bool edit_loop(char *fname)
                     if (c == EOL) {
                          ed_row++;
                          ed_col = 0;
-                         if (ed_row >= ROW_SIZE - 1)
-                              cout << "row " << ed_row << " over max-row";
+                         if (ed_row >= ROW_SIZE - 1) {
+                              ostringstream msg;
+                              msg << "row " << ed_row << " over max-row";
+                              CHECK(addstr, msg.str().c_str());
+                         }
                     }
                     else {
                          ed_col++;
-                         if (ed_col >= COL_SIZE)
-                              cout << "column " << ed_col << " over max-column";
+                         if (ed_col >= COL_SIZE) {
+                              ostringstream msg;
+                              msg << "column " << ed_col << " over max-column";
+                              CHECK(addstr, msg.str().c_str());
+                         }
                     }
                     port >> c;
                }
@@ -569,7 +626,7 @@ bool edit_loop(char *fname)
           case CTRL('O'):    save_data(fname);
                ESCMOVE(ed_footer, 1);
                ESCREV();
-               cout << "saved";
+               CHECK(addstr, "saved");
                ESCRST();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                modify_flag = false;
@@ -599,8 +656,12 @@ bool edit_loop(char *fname)
                     do {
                          ESCREV();
                          ESCMOVE(ed_footer, 1);
-                         cout << "save modified buffer? y/n/c ";
+                         CHECK(addstr, "save modified buffer? y/n/c ");
+                         CHECK(refresh);
                          c = getch();
+                         if (c == ERR) {
+                              errw("getch");
+                         }
                          ESCRST();
                          switch (c) {
                               case 'y':
@@ -628,14 +689,15 @@ bool edit_loop(char *fname)
                break;
           case CTRL('W'):
                clear_status();
-               cout << "search: ";
-               getline(cin, str1);
+               CHECK(addstr, "search: ");
+               CHECK(refresh);
+               CHECK(getnstr, str1, SHORT_STR_MAX);
                ESCRST();
                pos = find_word(str1);
                if (pos.row == -1) {
                     ESCREV();
                     ESCMOVE(ed_footer, 1);
-                    cout << "can't find " << str1;
+                    CHECK(addstr, "can't find "); CHECK(addstr, str1);
                     ESCRST();
                     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                     break;
@@ -652,45 +714,52 @@ bool edit_loop(char *fname)
 
           case CTRL('R'):
                clear_status();
-               cout << "search: ";
-               getline(cin, str1);
+               CHECK(addstr, "search: ");
+               CHECK(refresh);
+               CHECK(getnstr, str1, SHORT_STR_MAX);
                clear_status();
-               cout << "replace: ";
-               getline(cin, str2);
+               CHECK(addstr, "replace: ");
+               CHECK(refresh);
+               CHECK(getnstr, str2, SHORT_STR_MAX);
                ESCRST();
                pos = find_word(str1);
                while (pos.row != -1) {
-                   ed_row = pos.row;
-                   ed_col = pos.col;
-                   ed_start = ed_row - ed_scroll / 2;
-                   if (ed_start < 0) {
-                       ed_start = 0;
-                   }
-                   display_screen();
-                   ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                   ESCREV();
-                   cout << str1;
-                   clear_status();
-                   do {
-                       cout << "replace? y/n ";
-                       ESCRST();
-                       c = getch();
-                   } while (c != 'y' && c != 'n');
-                   if (c == 'y') {
-                       ed_row = pos.row;
-                       ed_col = pos.col;
-                       replace_word(str1, str2);
-                       display_screen();
-                       modify_flag = true;
-                       ed_col++;
-                   } else {
-                       display_screen();
-                       ed_col++;
-                   }
-                   pos = find_word(str1);
+                    ed_row = pos.row;
+                    ed_col = pos.col;
+                    ed_start = ed_row - ed_scroll / 2;
+                    if (ed_start < 0) {
+                         ed_start = 0;
+                    }
+                    display_screen();
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                    ESCREV();
+                    CHECK(addstr, str1);
+                    clear_status();
+                    do {
+                         CHECK(addstr, "replace? y/n ");
+                         ESCRST();
+                         CHECK(refresh);
+                         c = getch();
+                         if (c == ERR) {
+                              errw("getch");
+                         }
+                    } while (c != 'y' && c != 'n');
+                    if (c == 'y') {
+                         ed_row = pos.row;
+                         ed_col = pos.col;
+                         replace_word(str1, str2);
+                         display_screen();
+                         modify_flag = true;
+                         ed_col++;
+                    }
+                    else {
+                         display_screen();
+                         ed_col++;
+                    }
+                    pos = find_word(str1);
                }
                clear_status();
-               cout << "can't find " << str1;
+               CHECK(addstr, "can't find "); CHECK(addstr, str1);
                ESCRST();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
@@ -698,9 +767,11 @@ bool edit_loop(char *fname)
           case CTRL('_'):
                do {
                     clear_status();
-                    cout << "line? ";
-                    cin >> i;
-                    c = getch();
+                    CHECK(addstr, "line? ");
+                    CHECK(refresh);
+                    char i_str[NUM_STR_MAX];
+                    CHECK(getnstr, i_str, NUM_STR_MAX);
+                    i = atoi(i_str);
                     ESCRST();
                } while (i < 0 || i > ed_end);
                ed_row = i - 1;
@@ -712,7 +783,11 @@ bool edit_loop(char *fname)
                display_screen();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
-          case ESC:   c = getch();
+          case ESC:   CHECK(refresh);
+               c = getch();
+               if (c == ERR) {
+                    errw("getch");
+               }
                switch (c) {
                     case '<':
                          home();
@@ -727,7 +802,7 @@ bool edit_loop(char *fname)
                               ed_clip_start = ed_clip_end = ed_row;
                               ESCMOVE(ed_footer, 1);
                               ESCREV();
-                              cout << "marked";
+                              CHECK(addstr, "marked");
                               ESCRST();
                               return false;
                          }
@@ -736,7 +811,7 @@ bool edit_loop(char *fname)
                               display_screen();
                               ESCMOVE(ed_footer, 1);
                               ESCREV();
-                              cout << "unmark";
+                              CHECK(addstr, "unmark");
                               ESCRST();
                               return false;
                          }
@@ -750,92 +825,88 @@ bool edit_loop(char *fname)
                               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                          }
                          else {
-                             const int CANDIDATE = 3;
+                              const int CANDIDATE = 3;
                               k = 0;
                               ESCMOVE(ed_footer, 1);
                               bool more_candidates_selected;
                               do {
-                                  more_candidates_selected = false;
-                                  ESCREV();
-                                  for (i = 0; i < CANDIDATE; i++) {
-                                      if (i + k >= ed_candidate_pt)
-                                          break;
-                                      cout << i + 1 << ':' << ed_candidate[i + k] << ' ';
-                                  }
-                                  if (ed_candidate_pt > k + CANDIDATE)
-                                      cout << "4:more";
-                                  ESCRST();
-                                  bool bad_candidate_selected;
-                                  do {
-                                      bad_candidate_selected = false;
-                                      c = getch();
-                                      if (c != ESC) {
-                                          i = c - '1';
-                                          more_candidates_selected = ed_candidate_pt > k + CANDIDATE && i == CANDIDATE;
-                                          if (more_candidates_selected) {
-                                              k = k + CANDIDATE;
-                                              ESCMVLEFT(1);
-                                              ESCCLSL();
-                                              break;
-                                          }
-                                          bad_candidate_selected = i + k > ed_candidate_pt || i < 0 ||
-                                              c == EOL;
-                                      }
-                                  } while (bad_candidate_selected);
+                                   more_candidates_selected = false;
+                                   ESCREV();
+                                   for (i = 0; i < CANDIDATE; i++) {
+                                        if (i + k >= ed_candidate_pt)
+                                             break;
+                                        ostringstream msg;
+                                        msg << i + 1 << ':' << ed_candidate[i + k] << ' ';
+                                        CHECK(addstr, msg.str().c_str());
+                                   }
+                                   if (ed_candidate_pt > k + CANDIDATE)
+                                        CHECK(addstr, "4:more");
+                                   ESCRST();
+                                   bool bad_candidate_selected;
+                                   do {
+                                        bad_candidate_selected = false;
+                                        CHECK(refresh);
+                                        c = getch();
+                                        if (c == ERR) {
+                                             errw("getch");
+                                        }
+                                        if (c != ESC) {
+                                             i = c - '1';
+                                             more_candidates_selected = ed_candidate_pt > k + CANDIDATE && i == CANDIDATE;
+                                             if (more_candidates_selected) {
+                                                  k = k + CANDIDATE;
+                                                  ESCMVLEFT(1);
+                                                  ESCCLSL();
+                                                  break;
+                                             }
+                                             bad_candidate_selected = i + k > ed_candidate_pt || i < 0 ||
+                                                                      c == RET;
+                                        }
+                                   } while (bad_candidate_selected);
                               } while (more_candidates_selected);
                               if (c != ESC)
-                                  replace_fragment(ed_candidate[i + k]);
+                                   replace_fragment(ed_candidate[i + k]);
                               display_screen();
                               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                          }
                          return false;
                }
-               c = getch();
-               switch (c) {
-                    case UP:
-                         up();
-                         break;
-                    case EOL:   ed_row++;
-                         cout << c;
-                         modify_flag = true;
-                         break;
-                    case DOWN:
-                         down();
-                         break;
-                    case LEFT:
-                         left();
-                         break;
-                    case RIGHT:
-                         right();
-                         break;
-                    case HOME:
-                         home();
-                         break;
-                    case END:
-                         end();
-                         break;
-                    case INSERT:
-                         c = getch();
-                         ed_ins = !ed_ins;
-                         break;
-                    case PAGEUP:
-                         c = getch();
-                         pageup();
-                         break;
-                    case PAGEDN:
-                         c = getch();
-                         pagedn();
-                         break;
-                    case DELETE:
-                         c = getch();
-                         del();
-                         break;
-               }
                break;
+          case KEY_UP:
+               up();
+               break;
+          case KEY_DOWN:
+               down();
+               break;
+          case KEY_LEFT:
+               left();
+               break;
+          case KEY_RIGHT:
+               right();
+               break;
+          case KEY_HOME:
+               home();
+               break;
+          case KEY_END:
+               end();
+               break;
+          case KEY_IC:
+               ed_ins = !ed_ins;
+               break;
+          case KEY_PPAGE:
+               pageup();
+               break;
+          case KEY_NPAGE:
+               pagedn();
+               break;
+          case KEY_DC:
+               del();
+               break;
+          case KEY_BACKSPACE:
           case DEL:
                backspace_key();
                break;
-          case EOL:   if (ed_indent == 1)
+          case RET:   if (ed_indent == 1)
                     i = calc_tabs();
                if (ed_row == ed_start + ed_scroll) {
                     restore_paren();
@@ -847,7 +918,7 @@ bool edit_loop(char *fname)
                     display_screen();
                     ESCMOVE(22, 1);
                }
-               else if (ed_col >= ed_width) {
+               else if (ed_col >= COLS) {
                     restore_paren();
                     insertrow();
                     ed_start++;
@@ -891,7 +962,7 @@ bool edit_loop(char *fname)
           default:    if (ed_ins) {
                     if (ed_col >= COL_SIZE)
                          break;
-                    else if (ed_col >= ed_width) {
+                    else if (ed_col >= COLS) {
                          ESCCLSLA();
                          restore_paren();
                          insertcol();
@@ -901,7 +972,7 @@ bool edit_loop(char *fname)
                          emphasis_lparen();
                          emphasis_rparen();
                          ed_col++;
-                         ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+                         ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
                     }
                     else {
                          restore_paren();
@@ -918,17 +989,17 @@ bool edit_loop(char *fname)
                else {
                     if (ed_col >= COL_SIZE)
                          break;
-                    else if (ed_col >= ed_width) {
-                         if (ed_col == ed_width)
+                    else if (ed_col >= COLS) {
+                         if (ed_col == COLS)
                               ESCCLSLA();
                          ed_data[ed_row][ed_col] = c;
-                         cout << c;
+                         CHECK(addch, c);
                          emphasis_lparen();
                          ed_col++;
                     }
                     else {
                          ed_data[ed_row][ed_col] = c;
-                         cout << c;
+                         CHECK(addch, c);
                          emphasis_lparen();
                          ed_col++;
                     }
@@ -943,10 +1014,11 @@ void display_command(char* fname)
      int i;
      ESCHOME();
      ESCREV();
-     ostream fcout(cout.rdbuf());
-     fcout << "Edlis " << setw(1) << setprecision(2) << VERSION << "        File: " << fname << "    ";
-     for (i = 31; i < ed_width; i++)
-          cout << ' ';
+     ostringstream fout;
+     fout << "Edlis " << setw(1) << setprecision(2) << VERSION << "        File: " << fname << "    ";
+     CHECK(addstr, fout.str().c_str());
+     for (i = 31; i < COLS; i++)
+          CHECK(addch, ' ');
      ESCRST();
 }
 
@@ -967,9 +1039,9 @@ void display_screen()
      }
      ESCMOVE(ed_footer, 1);
      ESCREV();
-     for (i = 0; i < ed_width - 35; i++)
-          cout << ' ';
-     cout << "^G(help) ^X(quit) ^O(save) ^L(goto)";
+     for (i = 0; i < COLS - 35; i++)
+          CHECK(addch, ' ');
+     CHECK(addstr, "^G(help) ^X(quit) ^O(save) ^L(goto)");
      ESCRST();
 }
 
@@ -980,12 +1052,12 @@ void display_line(int line)
 
      if (ed_row != line)
           col = 0;
-     else if (ed_row == line && ed_col <= ed_width - 1)
+     else if (ed_row == line && ed_col <= COLS - 1)
           col = 0;
      else
-          col = ed_width;
+          col = COLS;
 
-     while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+     while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
             ed_data[line][col] != EOL &&
             ed_data[line][col] != NUL) {
           if (line >= ed_clip_start && line <= ed_clip_end)
@@ -996,10 +1068,10 @@ void display_line(int line)
           if (ed_incomment != -1 && line >= ed_incomment) { //comment #|...|#
                ESCBOLD();
                setcolor(ed_comment_color);
-               while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+               while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                       ed_data[line][col] != EOL &&
                       ed_data[line][col] != NUL) {
-                    cout << ed_data[line][col];
+                    CHECK(addch, ed_data[line][col]);
                     col++;
                     if (ed_data[line][col - 2] == '|' &&
                         ed_data[line][col - 1] == '#') {
@@ -1015,7 +1087,7 @@ void display_line(int line)
           else if (ed_data[line][col] == ' ' ||
                    ed_data[line][col] == '(' ||
                    ed_data[line][col] == ')') {
-               cout << ed_data[line][col];
+               CHECK(addch, ed_data[line][col]);
                col++;
           }
           else {
@@ -1024,13 +1096,13 @@ void display_line(int line)
                     case SYNTAX:
                          ESCBOLD();
                          setcolor(ed_syntax_color);
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != ' ' &&
                                 ed_data[line][col] != '(' &&
                                 ed_data[line][col] != ')' &&
                                 ed_data[line][col] != NUL &&
                                 ed_data[line][col] != EOL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                          }
                          ESCRST();
@@ -1039,13 +1111,13 @@ void display_line(int line)
                     case BUILTIN:
                          ESCBOLD();
                          setcolor(ed_builtin_color);
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != ' ' &&
                                 ed_data[line][col] != '(' &&
                                 ed_data[line][col] != ')' &&
                                 ed_data[line][col] != NUL &&
                                 ed_data[line][col] != EOL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                          }
                          ESCRST();
@@ -1054,12 +1126,12 @@ void display_line(int line)
                     case STRING:
                          ESCBOLD();
                          setcolor(ed_string_color);
-                         cout << ed_data[line][col];
+                         CHECK(addch, ed_data[line][col]);
                          col++;
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != NUL &&
                                 ed_data[line][col] != EOL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                               if (ed_data[line][col - 1] == '"')
                                    break;
@@ -1070,10 +1142,10 @@ void display_line(int line)
                     case COMMENT:
                          ESCBOLD();
                          setcolor(ed_comment_color);
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != NUL &&
                                 ed_data[line][col] != EOL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                          }
                          ESCRST();
@@ -1082,13 +1154,13 @@ void display_line(int line)
                     case EXTENDED:
                          ESCBOLD();
                          setcolor(ed_extended_color);
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != ' ' &&
                                 ed_data[line][col] != '(' &&
                                 ed_data[line][col] != ')' &&
                                 ed_data[line][col] != NUL &&
                                 ed_data[line][col] != EOL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                          }
                          ESCRST();
@@ -1098,10 +1170,10 @@ void display_line(int line)
                          ESCBOLD();
                          setcolor(ed_comment_color);
                          ed_incomment = line;
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != EOL &&
                                 ed_data[line][col] != NUL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                               if (ed_data[line][col - 2] == '|' &&
                                   ed_data[line][col - 1] == '#') {
@@ -1113,49 +1185,27 @@ void display_line(int line)
                          }
                          break;
                     default:
-                         while (((ed_col <= ed_width - 1 && col <= ed_width - 1) || (ed_col >= ed_width && col < COL_SIZE)) &&
+                         while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
                                 ed_data[line][col] != ' ' &&
                                 ed_data[line][col] != '(' &&
                                 ed_data[line][col] != ')' &&
                                 ed_data[line][col] != NUL &&
                                 ed_data[line][col] != EOL) {
-                              cout << ed_data[line][col];
+                              CHECK(addch, ed_data[line][col]);
                               col++;
                          }
                }
           }
      }
-     cout << EOL;
+     CHECK(addch, EOL);
      ESCRST();
 }
 
 void setcolor(enum Color n)
 {
-     switch (n) {
-          case BLACK: ESCFBLACK(); break;
-          case RED: ESCFRED(); break;
-          case GREEN: ESCFGREEN(); break;
-          case YELLOW: ESCFYELLOW(); break;
-          case BLUE: ESCFBLUE(); break;
-          case MAGENTA: ESCFMAGENTA(); break;
-          case CYAN: ESCFCYAN(); break;
-          case WHITE: ESCFWHITE(); break;
-          default: ESCFWHITE(); break;
+     if (has_colors()) {
+          CHECK(color_set, n, NULL);
      }
-}
-
-char getch()
-{
-     struct termios oldt,
-                 newt;
-     char ch;
-     tcgetattr(STDIN_FILENO, &oldt);
-     newt = oldt;
-     newt.c_lflag &= ~(ICANON | ECHO);
-     tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-     cin >> noskipws >> ch;
-     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-     return ch;
 }
 
 void backspace()
@@ -1336,21 +1386,21 @@ void restore_paren()
 {
 
      if (ed_lparen_row != -1 && ed_lparen_row >= ed_start && ed_lparen_row <= ed_start + ed_scroll) {
-          if (ed_lparen_col <= ed_width - 1)
+          if (ed_lparen_col <= COLS - 1)
                ESCMOVE(ed_lparen_row + 2 - ed_start, ed_lparen_col + 1);
           else
-               ESCMOVE(ed_lparen_row + 2 - ed_start, ed_lparen_col - ed_width + 1);
+               ESCMOVE(ed_lparen_row + 2 - ed_start, ed_lparen_col - COLS + 1);
           ESCBORG();
-          cout << '(';
+          CHECK(addch, '(');
           ed_lparen_row = -1;
      }
      if (ed_rparen_row != -1 && ed_rparen_row >= ed_start && ed_rparen_row <= ed_start + ed_scroll) {
-          if (ed_rparen_col <= ed_width - 1)
+          if (ed_rparen_col <= COLS - 1)
                ESCMOVE(ed_rparen_row + 2 - ed_start, ed_rparen_col + 1);
           else
-               ESCMOVE(ed_rparen_row + 2 - ed_start, ed_rparen_col - ed_width + 1);
+               ESCMOVE(ed_rparen_row + 2 - ed_start, ed_rparen_col - COLS + 1);
           ESCBORG();
-          cout << ')';
+          CHECK(addch, ')');
           ed_rparen_row = -1;
      }
 }
@@ -1363,16 +1413,16 @@ void emphasis_lparen()
           return;
 
      pos = findlparen(1);
-     if (ed_col <= ed_width - 1 && pos.col <= ed_width - 1) {
+     if (ed_col <= COLS - 1 && pos.col <= COLS - 1) {
           if (pos.row != -1) {
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                ESCBCYAN();
-               cout << ')';
+               CHECK(addch, ')');
                ESCBORG();
                if (pos.row >= ed_start) {
                     ESCMOVE(pos.row + 2 - ed_start, pos.col + 1);
                     ESCBCYAN();
-                    cout << '(';
+                    CHECK(addch, '(');
                }
                ed_lparen_row = pos.row;
                ed_lparen_col = pos.col;
@@ -1382,16 +1432,16 @@ void emphasis_lparen()
           }
           ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      }
-     else if (ed_col >= ed_width && pos.col >= ed_width) {
+     else if (ed_col >= COLS && pos.col >= COLS) {
           if (pos.row != -1) {
-               ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+               ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
                ESCBCYAN();
-               cout << ')';
+               CHECK(addch, ')');
                ESCBORG();
                if (pos.row >= ed_start) {
-                    ESCMOVE(pos.row + 2 - ed_start, pos.col - ed_width + 1);
+                    ESCMOVE(pos.row + 2 - ed_start, pos.col - COLS + 1);
                     ESCBCYAN();
-                    cout << '(';
+                    CHECK(addch, '(');
                }
                ed_lparen_row = pos.row;
                ed_lparen_col = pos.col;
@@ -1399,7 +1449,7 @@ void emphasis_lparen()
                ed_rparen_col = ed_col;
                ESCBORG();
           }
-          ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+          ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
      }
 }
 
@@ -1411,16 +1461,16 @@ void emphasis_rparen()
           return;
 
      pos = findrparen(1);
-     if (ed_col <= ed_width - 1 && pos.col <= ed_width - 1) {
+     if (ed_col <= COLS - 1 && pos.col <= COLS - 1) {
           if (pos.row != -1) {
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                ESCBCYAN();
-               cout << '(';
+               CHECK(addch, '(');
                ESCBORG();
                if (pos.row <= ed_start + ed_scroll) {
                     ESCMOVE(pos.row + 2 - ed_start, pos.col + 1);
                     ESCBCYAN();
-                    cout << ')';
+                    CHECK(addch, ')');
                }
                ed_rparen_row = pos.row;
                ed_rparen_col = pos.col;
@@ -1430,16 +1480,16 @@ void emphasis_rparen()
           }
           ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
      }
-     else if (ed_col >= ed_width && pos.col >= ed_width) {
+     else if (ed_col >= COLS && pos.col >= COLS) {
           if (pos.row != -1) {
-               ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+               ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
                ESCBCYAN();
-               cout << '(';
+               CHECK(addch, '(');
                ESCBORG();
                if (pos.row <= ed_start + ed_scroll) {
-                    ESCMOVE(pos.row + 2 - ed_start, pos.col - ed_width + 1);
+                    ESCMOVE(pos.row + 2 - ed_start, pos.col - COLS + 1);
                     ESCBCYAN();
-                    cout << ')';
+                    CHECK(addch, ')');
                }
                ed_rparen_row = pos.row;
                ed_rparen_col = pos.col;
@@ -1447,7 +1497,7 @@ void emphasis_rparen()
                ed_lparen_col = ed_col;
                ESCBORG();
           }
-          ESCMOVE(ed_row + 2 - ed_start, ed_col - ed_width + 1);
+          ESCMOVE(ed_row + 2 - ed_start, ed_col - COLS + 1);
      }
 }
 
@@ -1559,7 +1609,7 @@ void copy_selection()
 
      j = 0;
      for (i = ed_clip_start; i <= ed_clip_end; i++) {
-          for (k = 0; k < ed_width; k++)
+          for (k = 0; k < COLS; k++)
                ed_copy[j][k] = ed_data[i][k];
           j++;
      }
@@ -1734,13 +1784,13 @@ struct position find_word(const string& word)
                k = j;
                while (k < j + len &&
                       ed_data[i][k] == *it) {
-                   ++it;
-                   k++;
+                    ++it;
+                    k++;
                }
                if (k >= j + len) {
-                   pos.row = i;
-                   pos.col = j;
-                   return (pos);
+                    pos.row = i;
+                    pos.col = j;
+                    return (pos);
                }
                j++;
                it = word.begin();

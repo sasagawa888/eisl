@@ -81,10 +81,11 @@ static inline void ESCBCYAN(void)
           CHECK(color_set, DFL_ON_CYAN, NULL);
      }
 }
-static inline void ESCBORG(void) {
-    if (has_colors()) {
-        CHECK(color_set, 0, NULL);
-    }
+static inline void ESCBORG(void)
+{
+     if (has_colors()) {
+          CHECK(color_set, 0, NULL);
+     }
 }
 static inline void ESCREV(void) { CHECK(attron, A_REVERSE); }
 static inline void ESCRST(void) { CHECK(attrset, A_NORMAL); }

@@ -530,22 +530,22 @@ bool edit_loop(char* fname)
           case CTRL('G'):     ESCMOVE(2, 1);   // help
                ESCCLS1();
                CHECK(addstr, "Edlis help\n"
-                      "CTRL+F  move to right          CTRL+W  search word\n"
-                      "CTRL+B  move to left           CTRL+R  replace word\n"
-                      "CTRL+P  move to up             ESC TAB   complete name\n"
-                      "CTRL+N  move to down           ESC <   goto top page\n"
-                      "CTRL+J  end of line            ESC >   goto end page\n"
-                      "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
-                      "CTRL+E  end of line            CTRL+D  delete one char\n"
-                      "CTRL+V  page up\n"
-                      "ESC V   page down\n"
-                      "CTRL+O  save file\n"
-                      "CTRL+T  insert file\n"
-                      "CTRL+X  quit from editor\n"
-                      "CTRL+K  cut selection\n"
-                      "CTRL+U  uncut selection\n"
-                      "CTRL+_ (or CTRL+L) goto line\n"
-                      "\n  enter any key to exit help\n");
+                     "CTRL+F  move to right          CTRL+W  search word\n"
+                     "CTRL+B  move to left           CTRL+R  replace word\n"
+                     "CTRL+P  move to up             ESC TAB   complete name\n"
+                     "CTRL+N  move to down           ESC <   goto top page\n"
+                     "CTRL+J  end of line            ESC >   goto end page\n"
+                     "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
+                     "CTRL+E  end of line            CTRL+D  delete one char\n"
+                     "CTRL+V  page up\n"
+                     "ESC V   page down\n"
+                     "CTRL+O  save file\n"
+                     "CTRL+T  insert file\n"
+                     "CTRL+X  quit from editor\n"
+                     "CTRL+K  cut selection\n"
+                     "CTRL+U  uncut selection\n"
+                     "CTRL+_ (or CTRL+L) goto line\n"
+                     "\n  enter any key to exit help\n");
                CHECK(refresh);
                CHECK(getch);
                display_screen();

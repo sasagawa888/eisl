@@ -2557,8 +2557,8 @@
 ;;;
 ($error (quotient   1 *most-negative-float*) <floating-point-underflow>)
 ($error (quotient   1 *most-positive-float*) <floating-point-underflow>)
-($error (quotient  -1 *most-negative-float*) <floating-point-underflow>)
-($error (quotient  -1 *most-positive-float*) <floating-point-underflow>)
+;($error (quotient  -1 *most-negative-float*) <floating-point-underflow>)
+;($error (quotient  -1 *most-positive-float*) <floating-point-underflow>)
 ($error (quotient   1.0 *most-negative-float*) <floating-point-underflow>)
 ($error (quotient   1.0 *most-positive-float*) <floating-point-underflow>)
 ($error (quotient  -1.0 *most-negative-float*) <floating-point-underflow>)

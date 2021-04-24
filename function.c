@@ -523,10 +523,10 @@ int f_quotient(int arglist){
         if(zerop(arg))
             error(DIV_ZERO, "quotient", arg);
         
-        if(fabs(GET_FLT(res)) >= DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0 )
-            error(FLT_OVERF, "quotient" , arg);
-        if((val=fabs(GET_FLT(res))) != 0.0 && val < DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX )
-            error(FLT_UNDERF, "quotient" , arg);
+        if(fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0 )
+            error(FLT_OVERF, "quotient" , list2(arg,res));
+        if((val=fabs(GET_FLT(exact_to_inexact(res)))) != 0.0 && val <= 1.0 && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX )
+            error(FLT_UNDERF, "quotient" , list2(arg,res));
 
         arglist = cdr(arglist);
         res = quotient(res,arg);

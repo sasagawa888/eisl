@@ -516,7 +516,7 @@ void edit_screen(char* fname)
 bool edit_loop(char* fname)
 {
      int c;
-     int i, k;
+     int i;
      char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
      struct position pos;
      ifstream port;
@@ -826,7 +826,7 @@ bool edit_loop(char* fname)
                          }
                          else {
                               const int CANDIDATE = 3;
-                              k = 0;
+                              int k = 0;
                               ESCMOVE(ed_footer, 1);
                               bool more_candidates_selected;
                               do {

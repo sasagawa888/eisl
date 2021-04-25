@@ -2774,22 +2774,27 @@ int f_string_index(int arglist){
         error(NOT_STR,"string-index",arg1);
     if(!stringp(arg2))
         error(NOT_STR,"string-index",arg2);
-    if(n==3 && !integerp(arg3))
-        error(NOT_INT, "string-index",arg3);
-    if(n == 3 && GET_INT(arg3) < 0)
+    if(n == 3 && negativep(arg3))
         error(NOT_POSITIVE, "string-index", arg3);
+    if(n==3 && !integerp(arg3))
+        error(WRONG_ARGS, "string-index",arg3);
     if(n == 3 && GET_INT(arg3) >= string_length(arg2))
         error(ILLEGAL_ARGS, "string-index", arg3);
+
+    if(string_length(arg1) == 0 && string_length(arg2) == 0) // (string-index "" "")
+        return(makeint(0));
 
     if(string_length(arg2) == 0)
         return(NIL);
 
-    len1=strlen(GET_NAME(arg1));
-    len2=strlen(GET_NAME(arg2));
+    len1 = strlen(GET_NAME(arg1));
+    len2 = strlen(GET_NAME(arg2));
     if(n==3)
         j = GET_INT(arg3);
     else
         j = 0;
+
+    
 
     for(i=j;i<len2;i++)
         for(k=0;k<len1+1;k++)

@@ -56,7 +56,7 @@ void error(int errnum, const char *fun, int arg){
                                          makesym("function"),makesym(fun1),
                                          makesym("name"),makesym("UNDEF-DYNAMIC-VAR"),
                                          makesym("namespace"),makesym("DYNAMIC-VARIABLE"));
-                        signal_condition(makeinstance(cundefined_function,initargs),NIL);
+                        signal_condition(makeinstance(cunbound_variable,initargs),NIL);
                         break;
         case UNDEF_CLASS:
                         initargs = list6(makesym("format-string"),makestr("Unbound class at "),

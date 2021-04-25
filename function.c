@@ -2486,12 +2486,13 @@ int f_char_index(int arglist){
         error(NOT_CHAR, "char-index", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "char-index", arg2);
-    if(n == 3 && !integerp(arg3))
-        error(NOT_INT, "char-index", arg3);
-    if(n == 3 && GET_INT(arg3) < 0)
+    if(n == 3 && negativep(arg3))
         error(NOT_POSITIVE, "char-index", arg3);
+    if(n == 3 && !integerp(arg3))
+        error(WRONG_ARGS, "char-index", arg3);
     if(n == 3 && GET_INT(arg3) >= string_length(arg2))
-        error(ILLEGAL_ARGS, "char-index", arg3);
+        error(WRONG_ARGS, "char-index", arg3);
+    
 
     if(string_length(arg2) == 0)
         return(NIL);

@@ -12,7 +12,7 @@
 ;; before run compile with cpbench.lsp
 ;(load "bench/cpbench.lsp")
 
-(defglobal *extension*  (or (ignore-errors *cpext*) ".lsp")) ;; .ibc, .lap ...
+(defglobal *extension*  (or (ignore-errors *cpext*) ".o")) ;; .ibc, .lap ...
 (defglobal *result*     nil)
 (defglobal *total-time* 0.0)
 (defglobal *largeint*   (parse-number "#x7fffffffffffffffffff"))

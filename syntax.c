@@ -1069,6 +1069,9 @@ int f_throw(int arglist){
 int f_tagbody(int arglist){
     int prog[100],tb_line,end,i;
     
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "tagbody", arglist);
+
     end = 0;
     while(!nullp(arglist)){
         prog[end] = car(arglist);
@@ -1108,6 +1111,10 @@ int f_go(int arglist){
     arg1 = car(arglist);
     if(!symbolp(arg1))
         error(NOT_SYM, "go", arg1);
+    if(improperlistp(arglist))
+        error(IMPROPER_ARGS, "go", arglist);
+    if(length(arglist) != 1)
+        error(WRONG_ARGS, "go", arglist);
 
     tagbody_tag = arg1;
     return(T);

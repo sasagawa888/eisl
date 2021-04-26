@@ -930,6 +930,8 @@ int f_block(int arglist){
     arg2 = cdr(arglist);
     if(nullp(arglist))
         error(WRONG_ARGS, "block", arglist);
+    if(improperlistp(arglist) && nullp(arg1))
+        error(WRONG_ARGS, "block", arglist);
     if(improperlistp(arglist))
         error(IMPROPER_ARGS, "block", arglist);
     if(!symbolp(arg1))

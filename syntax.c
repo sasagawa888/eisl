@@ -996,6 +996,8 @@ int f_catch(int arglist){
         error(WRONG_ARGS,"catch",arglist);
     if(arg1 == makesym("catch"))
         error(WRONG_ARGS,"catch",arglist);
+    if(nullp(arg1))
+        error(WRONG_ARGS,"catch",arglist);
     if(improperlistp(arglist))
         error(IMPROPER_ARGS,"catch",arglist);
     tag = eval(arg1);    //tag symbol

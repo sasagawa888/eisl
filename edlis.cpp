@@ -1,9 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cstdlib>
+#include <csignal>
 #include <termios.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
 #define NCURSES_OPAQUE 1
 #include <curses.h>
 #include <clocale>

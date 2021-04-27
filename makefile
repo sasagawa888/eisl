@@ -17,7 +17,7 @@ else
 	CFLAGS += -O3 -flto -DNDEBUG=1
 endif
 CXX := c++
-CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++
+CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(shell ncurses5.4-config --cflags)
 ifeq ($(CC),c++)
 	CFLAGS := $(CXXFLAGS)
 else
@@ -73,7 +73,7 @@ endif
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(CXX) $(LDFLAGS) edlis.o -o edlis -lncurses
+	$(CXX) $(LDFLAGS) edlis.o -o edlis $(shell ncurses5.4-config --libs)
 edlis.o : edlis.cpp edlis.hpp term.h
 	$(CXX) $(CXXFLAGS) -c edlis.cpp
 
@@ -96,4 +96,5 @@ clean:
 
 .PHONY: check
 check:
-	cppcheck --enable=all --std=c11 --library=posix .
+	# cppcheck --enable=all --std=c11 --library=posix .
+	cppcheck --enable=all --language=c++ --std=c++03 --library=posix -D__cplusplus edlis.cpp edlis.hpp term.h

@@ -5,6 +5,7 @@
 #include <csignal>
 #include <termios.h>
 #define NCURSES_OPAQUE 1
+#define _XOPEN_SOURCE_EXTENDED 1
 #include <curses.h>
 #include <clocale>
 #include <sstream>
@@ -167,13 +168,17 @@ void init_ncurses()
      }
 }
 
-int main(int argc __unused, char* argv[])
+int main(int argc, char* argv[])
 {
      int i, j;
      char* fname;
 
      ios::sync_with_stdio(false);
      setlocale(LC_ALL, "");
+     if (argc <= 1) {
+         cerr << "usage: edlis <filename>\n";
+         exit(EXIT_FAILURE);
+     }
      fname = argv[1];
      signal(SIGINT, SIG_IGN);
      signal(SIGSTOP, SIG_IGN);

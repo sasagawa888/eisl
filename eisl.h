@@ -33,7 +33,7 @@ Copying GC mode
 #define CTRLSTK 200
 #define BACKSIZE 30
 
-static const float VERSION = 1.93;
+static const float VERSION = 1.95;
 static const int HEAPSIZE = 20000000;
 static const int WORK1 = 6000000;
 static const int WORK2 = 13000000;

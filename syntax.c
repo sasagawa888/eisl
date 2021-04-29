@@ -415,7 +415,7 @@ int f_setf(int arglist){
     	newform = cons(makesym("SET-SLOT-VALUE"),cons(arg2,cdr(arg1)));
     }
     //e.g. (setf (access-foo-a x) 100) 
-    else if(listp(arg1) && length(arg1) == 2 && IS_FUNC(car(arg1))){
+    else if(listp(arg1) && length(arg1) == 2 && IS_GENERIC(car(arg1))){
         //a method returns it's variable name 
         var = eval(list2(car(arg1),NIL));
     	newform = cons(makesym("SET-SLOT-VALUE"),cons(arg2,list2(cadr(arg1),list2(makesym("QUOTE"),var))));

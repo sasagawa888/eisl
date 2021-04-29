@@ -1,17 +1,20 @@
+(import "macro")
 
-(defun foo ()
-(let ((t1 (get-internal-real-time))
-       (dummy (tak 24 12 6))
-       (t2 (get-internal-real-time)))
-       (print t1)
-       (print t2)
-   (< t1 t2))
-)
+(defun rpn (xs)
+  (let ((zs nil))
+    (dolist (x xs (if (and (consp zs) (null (cdr zs)))  ; (singlep zs) を使ってもよい
+                      (car zs)
+                    "invalid expression"))
+      (if (numberp x)
+          (push x zs)
+        (let ((b (pop zs)) (a (pop zs)))
+          (if (or (null b) (null a))
+              (return "stack underflow"))
+          (case
+           x
+           ((+) (push (+ a b) zs))
+           ((-) (push (- a b) zs))
+           ((*) (push (* a b) zs))
+           ((/) (push (quotient a b) zs))
+           (t (return "invalid operation"))))))))
 
-
-(defun tak (x y z)
-         (if (not (< y x))
-             z
-             (tak (tak (- x 1) y z)
-                  (tak (- y 1) z x)
-                  (tak (- z 1) x y))))

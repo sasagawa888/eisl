@@ -316,7 +316,7 @@ double tarai(double x, double y, double z){
         (let ((sexp nil))
            (while (setq sexp (read instream nil nil))
               (cond ((and (consp sexp) (eq (car sexp) 'defmodule)) (module-check sexp))
-                    (t (check-args-count sexp) (find-catch-block-tag sexp))))
+                    (t (check-args-count sexp) (find-catch-block-tag (macroexpand-all sexp)))))
            (close instream)
            (setq instream nil)))
     
@@ -327,7 +327,7 @@ double tarai(double x, double y, double z){
               t )
              (let ((sexp (substitute (car body) name nil)))
                 (check-args-count sexp)
-                (find-catch-block-tag sexp))))
+                (find-catch-block-tag (macroexpand-all sexp)))))
 
     (defun check-args-count (x)
         (cond ((eq (car x) 'defun)

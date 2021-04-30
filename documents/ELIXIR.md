@@ -15,6 +15,10 @@ Compile the library elixir.lsp beforehand if you need speed.
 ```
 (import "elixir")
 
+(defpattern deriv
+    (((^ _x _n) _x) `(* ,_x ,(- _n 1))))
+
+
 (defpattern fib
     (0 1)
     (1 1)
@@ -48,20 +52,10 @@ else symbol match every argument
 
 e.g. 
 
-(defpattern boo
-    ((* (* _a _b) _c) (list _a _b _c))
-    ((e 1 :rest _a) (list _a))
-    (else 1))
-
-> (boo '(e 1 2 3))
-((2 3))
-> (boo 3)
-1
-> 
 
 (defpattern talk
-    ((I love _a) (list _a 'love 'me))
-    ((hello _a) (list 'good-bye _a))
+    (((I love _a)) (list _a 'love 'me))
+    (((hello _a)) (list 'good-bye _a))
     (else (list 'I 'do 'not 'know)))
 
 > (talk '(I love hanako))
@@ -72,13 +66,6 @@ e.g.
 (I DO NOT KNOW)
 > 
 
-(defpattern sum
-    (nil 0)
-    ((_a :rest _b) (+ _a (sum _b))))
-
-> (sum '(1 2 3))
-6
-> 
 ```
 
 ## Match syntax

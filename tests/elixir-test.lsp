@@ -2,23 +2,26 @@
 
 (import "elixir")
 
+(defpattern deriv
+    (((^ _x _n) _x) `(* ,_x ,(- _n 1))))
+
 (defpattern fib
-    (0 1)
-    (1 1)
-    (_n (+ (fib (- _n 1)) (fib (- _n 2)))))
+    ((0) 1)
+    ((1) 1)
+    ((_n) (+ (fib (- _n 1)) (fib (- _n 2)))))
 
 (defpattern sum
-    (nil 0)
-    ((_a :rest _b) (+ _a (sum _b))))
+    ((nil) 0)
+    (((_a :rest _b)) (+ _a (sum _b))))
 
 (defpattern talk
-    ((I love _a) (list _a 'love 'me))
-    ((hello _a) (list 'good-by _a))
+    (((I love _a)) (list _a 'love 'me))
+    (((hello _a)) (list 'good-by _a))
     (else (list 'I 'do 'not 'know)))
 
 (defpattern foo
-    ((a _a) (pipe _a |> (cos) |> (sin)))
-    ((b _b) (pipe _b |> (tan) |> (abs))))
+    (((a _a)) (pipe _a |> (cos) |> (sin)))
+    (((b _b)) (pipe _b |> (tan) |> (abs))))
 
 
 (defun uoo (x y)
@@ -32,14 +35,11 @@
           ((= n 1) 1)
           (t (+ (fib* (- n 1)) (fib* (- n 2))))))
 
-(defpattern bar
-    (nil nil)
-    ((_a :rest _b) (print _a) (bar _b)))
 
 (defpattern find
-    (nil nil)
-    ((3 (4 6) :rest _x) (format (standard-output) "~A~%" _x))
-    ((_a :rest _b) (find _b)))
+    ((nil) nil)
+    (((3 (4 6) :rest _x)) (format (standard-output) "~A~%" _x))
+    (((_a :rest _b)) (find _b)))
 
 
 

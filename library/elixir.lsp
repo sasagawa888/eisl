@@ -20,7 +20,7 @@
     (let* ((arg (gensym))
            (vars (extract-variables body nil nil))
            (body1 (expand-body arg body)) )
-        `(defun ,name (,arg) (let ,vars
+        `(defun ,name (:rest ,arg) (let ,vars
                                   ,body1))))
 
 (defmacro match (x :rest body)
@@ -36,9 +36,6 @@
 ;;; macro for Elixir like pipe operator
 ;;;
 
-
-(defmacro pipe (:rest expr)
-    (pipe-macro (cdr expr) (car expr)) )
 
 
 ;;; functions for macros
@@ -110,12 +107,18 @@
                   (expand-match1 (list 'cdr x) (cdr y) (car res) (cdr res))))))
 
     ;;for pipe macro
-    (defpublic pipe-macro (pipe func)
-        (cond ((null pipe) func)
-              ((eq (car pipe) '|>) (pipe-macro (cdr pipe) func))
-              (t (pipe-macro (cdr pipe) (pipe-macro1 (car pipe) func)))))
+    (defpublic pipe-macro (pipe1 func)
+        (cond ((null pipe1) func)
+              ((eq (car pipe1) '|>) (pipe-macro (cdr pipe1) func))
+              (t (pipe-macro (cdr pipe1) (pipe-macro1 (car pipe1) func)))))
 
     (defun pipe-macro1 (fun funcs)
         (cons (car fun) (cons funcs (cdr fun))))
 
 )
+
+;; pipe macro depend on function pipe-macro
+;; so, pipe-macro must be defined befor pip macro
+(defmacro pipe (:rest expr)
+    (pipe-macro (cdr expr) (car expr)) )
+

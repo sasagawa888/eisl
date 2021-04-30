@@ -352,6 +352,8 @@ int macroexpand_all(int sexp){
         return(NIL);
     else if(atomp(sexp))
         return(sexp);
+    else if(listp(sexp) && car(sexp) == makesym("QUOTE"))
+        return(sexp);
     else if(listp(sexp) && macrop(car(sexp)))
         return(macroexpand_all(macroexpand_1(car(sexp),cdr(sexp))));
     else if(listp(sexp))

@@ -327,7 +327,8 @@ double tarai(double x, double y, double z){
               t )
              (let ((sexp (substitute (car body) name nil)))
                 (check-args-count sexp)
-                (find-catch-block-tag (macroexpand-all sexp)))))
+                (find-catch-block-tag (macroexpand-all sexp))))
+        (eval x))
 
     (defun check-args-count (x)
         (cond ((eq (car x) 'defun)

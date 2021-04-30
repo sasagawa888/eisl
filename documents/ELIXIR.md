@@ -18,11 +18,14 @@ Compile the library elixir.lsp beforehand if you need speed.
 (defpattern deriv
     (((^ _x _n) _x) `(* ,_x ,(- _n 1))))
 
+> (deriv '(^ x 3) 'x)
+(* X 2)
+> 
 
 (defpattern fib
-    (0 1)
-    (1 1)
-    (_n (+ (fib (- _n 1)) (fib (- _n 2)))))
+    ((0) 1)
+    ((1) 1)
+    ((_n) (+ (fib (- _n 1)) (fib (- _n 2)))))
 
 > (fib 20)
 10946

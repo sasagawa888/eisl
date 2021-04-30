@@ -80,7 +80,7 @@
 
     (defun expand-match1 (x y env ans)
         (cond ((null y) (cons env ans))
-              ((numberp y) (cons env (cons (list '= x y) ans)))
+              ((numberp y) (cons env (cons (list '= x y) (cons (list 'numberp x) ans))))
               ((characterp y) (cons env (cons (list 'char= x y) ans)))
               ((stringp y) (cons env (cons (list 'string= x y) ans)))
               ((general-vector-p y) (cons env (cons (list 'equal x y) ans)))

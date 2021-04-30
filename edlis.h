@@ -1,5 +1,5 @@
-#ifndef EDLIS_HPP
-#define EDLIS_HPP
+#ifndef EDLIS_H
+#define EDLIS_H
 
 #define FULLSCREEN
 #include "term.h"

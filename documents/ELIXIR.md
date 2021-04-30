@@ -30,6 +30,14 @@ Compile the library elixir.lsp beforehand if you need speed.
 > (fib 20)
 10946
 > 
+
+(defpattern sum
+    ((empty) 0)
+    (((_a :rest _b)) (+ _a (sum _b))))
+
+> (sum '(1 2 3))
+6
+
 ```
 
 ## Specification
@@ -45,13 +53,16 @@ case
   (pattern sexp1 sexp2 ... sexpn)
 
 pattern
+(arg1 arg2 ... argn)
 
+argument
 variable e.g. _a _z 
 variable symbol has prifix "_"
 
 :rest or &rest match rest parameter
 
 else symbol match every argument 
+empty symbol match '() (empty-list) 
 
 e.g. 
 

@@ -89,6 +89,7 @@
                (cons (cons y env) (cons (list 'setq* y x) ans)))
               ((and (variablep y) (member y env)) (cons env (cons (list 'equal x y) ans)))
               ((and (symbolp y) (eq y 'else)) (cons env (cons t ans)))
+              ((and (symbolp y) (eq y 'empty)) (cons env (cons (list 'null x) ans)))
               ((symbolp y) (cons env (cons (list 'eq x (list 'quote y)) ans)))
               ((and (consp y) (eq (car y) ':rest))
                (cons env (cons (list 'setq* (car (cdr y)) x) ans)))

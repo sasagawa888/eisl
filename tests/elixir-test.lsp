@@ -32,11 +32,10 @@
           ((= n 1) 1)
           (t (+ (fib* (- n 1)) (fib* (- n 2))))))
 
+(defpattern sum
+    ((empty) 0)
+    (((_a :rest _b)) (+ _a (sum _b))))
 
-(defpattern find
-    ((nil) nil)
-    (((3 (4 6) :rest _x)) (format (standard-output) "~A~%" _x))
-    (((_a :rest _b)) (find _b)))
 
 
 

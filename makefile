@@ -1,4 +1,4 @@
-OPSYS ?= openbsd
+OPSYS ?= linux
 CC ?= cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)

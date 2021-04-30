@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
      ed_clip_end = -1;
      ed_data[0][0] = EOL;
      if (port != NULL) {
-          char c;
+          int c;
 
           c = fgetc(port);
           while (c != EOF) {

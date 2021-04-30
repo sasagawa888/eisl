@@ -1,6 +1,7 @@
 #ifndef EDLIS_HPP
 #define EDLIS_HPP
 
+#define FULLSCREEN
 #include "term.h"
 
 enum Token { NONE, SYNTAX, BUILTIN, STRING, COMMENT, EXTENDED, MULTILINE_COMMENT, };
@@ -41,10 +42,10 @@ void copy_selection(void);
 void paste_selection(void);
 void delete_selection(void);
 enum Token check_token(int row, int col);
-string get_fragment(void);
+char *get_fragment(void);
 void find_candidate(void);
-void replace_fragment(const string& newstr);
-struct position find_word(const string& word);
-void replace_word(const string& str1, const string& str2);
+void replace_fragment(const char *newstr);
+struct position find_word(const char *word);
+void replace_word(const char *str1, const char *str2);
 
 #endif

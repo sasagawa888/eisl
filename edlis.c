@@ -1,20 +1,19 @@
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <cstdlib>
-#include <csignal>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
 #include <termios.h>
 #define NCURSES_OPAQUE 1
 #define _XOPEN_SOURCE_EXTENDED 1
 #include <curses.h>
-#include <clocale>
-#include <sstream>
+#include <locale.h>
+#include <stdbool.h>
+#include <string.h>
 #include "compat/cdefs.h"
-#include "edlis.hpp"
-using namespace std;
+#include "edlis.h"
 
 const int NUM_STR_MAX = 5;
 const int SHORT_STR_MAX = 20;
+const int TOKEN_MAX = 80;
 
 bool edit_loop(char* fname);
 
@@ -38,7 +37,7 @@ int ed_rparen_col;
 int ed_clip_start;
 int ed_clip_end;
 int ed_copy_end;
-string ed_candidate[50];
+const char *ed_candidate[50];
 int ed_candidate_pt;
 const enum Color ed_syntax_color = RED_ON_DFL;
 const enum Color ed_builtin_color = CYAN_ON_DFL;
@@ -51,12 +50,12 @@ bool modify_flag;
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
 
 //special form token
-const string special[] = {
+const char *special[] = {
      "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
      "let", "let*", "case", "while", "progn", "defmodule", "defpublic",
 };
 //syntax token
-const string syntax[] = {
+const char *syntax[] = {
      "lambda", "labels", "flet", "let", "let*", "setq", "setf", "defconstant", "defun", "defmacro", "defglobal", "defdynamic",
      "dynamic", "function", "function*", "symbol-function", "class",
      "and", "or", "if", "cond", "while", "for", "block", "return-from",
@@ -68,7 +67,7 @@ const string syntax[] = {
      "with-open-io-file", "the", "assure", "time", "trace", "untrace", "defmodule", "defpublic",
 };
 //builtin token
-const string builtin[] = {
+const char *builtin[] = {
      "-", "*", "/=", "+", "<", "<=", "=", ">", ">=",
      "abs", "append", "apply", "aref", "arithmetic-error-operands",
      "arithmetic-error-operation", "array-dimensions", "assoc", "atan",
@@ -108,7 +107,7 @@ const string builtin[] = {
 };
 
 //extended function
-const string extended[] = {
+const char *extended[] = {
      "random-real", "random", "mapvec", "hadamard", "logistic",
      "nconc", "fast-address", "macroexpand-1", "backtrace",
      "break", "edit", "set-editor", "wiringpi-setup-gpio", "delay-microseconds",
@@ -121,7 +120,7 @@ const string extended[] = {
 __dead void errw(const char* msg)
 {
      endwin();
-     cerr << msg << '\n';
+     fprintf(stderr, "%s\n", msg);
      exit(EXIT_FAILURE);
 }
 
@@ -136,7 +135,7 @@ void clear_status()
 void init_ncurses()
 {
      if (initscr() == NULL) {
-          cerr << "initscr\n";
+          fputs("initscr\n", stderr);
           exit(EXIT_FAILURE);
      }
      if (has_colors()) {
@@ -173,10 +172,9 @@ int main(int argc, char* argv[])
      int i, j;
      char* fname;
 
-     ios::sync_with_stdio(false);
      setlocale(LC_ALL, "");
      if (argc <= 1) {
-         cerr << "usage: edlis <filename>\n";
+         fputs("usage: edlis <filename>\n", stderr);
          exit(EXIT_FAILURE);
      }
      fname = argv[1];
@@ -186,7 +184,7 @@ int main(int argc, char* argv[])
      for (i = 0; i < ROW_SIZE; i++)
           for (j = 0; j < COL_SIZE; j++)
                ed_data[i][j] = NUL;
-     ifstream port(fname);
+     FILE *port = fopen(fname, "r");
 
      ed_row = 0;
      ed_col = 0;
@@ -197,28 +195,28 @@ int main(int argc, char* argv[])
      ed_clip_start = -1;
      ed_clip_end = -1;
      ed_data[0][0] = EOL;
-     if (port.good()) {
+     if (port != NULL) {
           char c;
 
-          c = port.get();
-          while (!port.eof()) {
+          c = fgetc(port);
+          while (c != EOF) {
                ed_data[ed_row][ed_col] = c;
                if (c == EOL) {
                     ed_row++;
                     ed_col = 0;
                     if (ed_row >= ROW_SIZE)
-                         cout << "row " << ed_row << " over max-row";
+                         printf("row %d over max-row", ed_row);
                }
                else {
                     ed_col++;
                     if (ed_col >= COL_SIZE)
-                         cout << "column " << ed_col << " over max-column";
+                         printf("column %d over max-column", ed_col);
                }
-               c = port.get();
+               c = fgetc(port);
           }
           ed_end = ed_row;
           ed_data[ed_end][0] = EOL;
-          port.close();
+          fclose(port);
      }
      init_ncurses();
      ed_scroll = LINES - 4;
@@ -524,7 +522,7 @@ bool edit_loop(char* fname)
      int i;
      char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
      struct position pos;
-     ifstream port;
+     FILE *port;
 
      CHECK(refresh);
      c = getch();
@@ -576,39 +574,35 @@ bool edit_loop(char* fname)
                CHECK(refresh);
                CHECK(getnstr, str1, SHORT_STR_MAX);
                ESCRST();
-               port.open(str1);
-               if (port.fail()) {
+               port = fopen(str1, "r");
+               if (port == NULL) {
                     clear_status();
                     CHECK(addstr, str1); CHECK(addstr, " doesn't exist");
                     ESCRST();
                     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                     break;
                }
-               port >> c;
-               while (!port.eof()) {
+               c = fgetc(port);
+               while (c != EOF) {
                     ed_data[ed_row][ed_col] = c;
                     if (c == EOL) {
                          ed_row++;
                          ed_col = 0;
                          if (ed_row >= ROW_SIZE - 1) {
-                              ostringstream msg;
-                              msg << "row " << ed_row << " over max-row";
-                              CHECK(addstr, msg.str().c_str());
+                              CHECK(printw, "row %d over max-row", ed_row);
                          }
                     }
                     else {
                          ed_col++;
                          if (ed_col >= COL_SIZE) {
-                              ostringstream msg;
-                              msg << "column " << ed_col << " over max-column";
-                              CHECK(addstr, msg.str().c_str());
+                              CHECK(printw, "column %d over max-column", ed_col);
                          }
                     }
-                    port >> c;
+                    c = fgetc(port);
                }
                ed_end = ed_row;
                ed_data[ed_end][0] = EOL;
-               port.close();
+               fclose(port);
                display_screen();
                modify_flag = true;
                break;
@@ -840,9 +834,7 @@ bool edit_loop(char* fname)
                                    for (i = 0; i < CANDIDATE; i++) {
                                         if (i + k >= ed_candidate_pt)
                                              break;
-                                        ostringstream msg;
-                                        msg << i + 1 << ':' << ed_candidate[i + k] << ' ';
-                                        CHECK(addstr, msg.str().c_str());
+                                        CHECK(printw, "%d:%s ", i + 1, ed_candidate[i + k]);
                                    }
                                    if (ed_candidate_pt > k + CANDIDATE)
                                         CHECK(addstr, "4:more");
@@ -1019,9 +1011,7 @@ void display_command(char* fname)
      int i;
      ESCHOME();
      ESCREV();
-     ostringstream fout;
-     fout << "Edlis " << setw(1) << setprecision(2) << VERSION << "        File: " << fname << "    ";
-     CHECK(addstr, fout.str().c_str());
+     CHECK(printw, "Edlis %1.2f        File: %s    ", VERSION, fname);
      for (i = 31; i < COLS; i++)
           CHECK(addch, ' ');
      ESCRST();
@@ -1389,7 +1379,6 @@ void reset_paren()
 
 void restore_paren()
 {
-
      if (ed_lparen_row != -1 && ed_lparen_row >= ed_start && ed_lparen_row <= ed_start + ed_scroll) {
           if (ed_lparen_col <= COLS - 1)
                ESCMOVE(ed_lparen_row + 2 - ed_start, ed_lparen_col + 1);
@@ -1522,31 +1511,34 @@ void save_data(char* fname)
 {
      int row, col;
 
-     ofstream port(fname);
+     FILE *port = fopen(fname, "w");
      for (row = 0; row <= ed_end; row++)
           for (col = 0; col < COL_SIZE; col++) {
-               port << ed_data[row][col];
+               fputc(ed_data[row][col], port);
                if (ed_data[row][col] == EOL)
                     break;
           }
-     port.close();
+     fclose(port);
 }
 
 bool is_special(int row, int col)
 {
-     string str;
-     int i;
+     char str[TOKEN_MAX];
+     int pos, i;
 
+     pos = 0;
      while (ed_data[row][col] != ' ' &&
             ed_data[row][col] != '(' &&
             ed_data[row][col] >= ' ') {
-          str.push_back(ed_data[row][col]);
+          str[pos] = ed_data[row][col];
           col++;
+          pos++;
      }
-     if (str.empty())
+     str[pos] = NUL;
+     if (pos == 0)
           return false;
      for (i = 0; i < (int)NELEM(special); i++) {
-          if (special[i].compare(str) == 0) {
+          if (strcmp(special[i], str) == 0) {
                return true;
           }
      }
@@ -1665,9 +1657,10 @@ void delete_selection()
 
 enum Token check_token(int row, int col)
 {
-     string str;
-     int i;
+     char str[COLS];
+     int pos, i;
 
+     pos = 0;
      if (ed_data[row][col] == '"')
           return STRING;
      else if (ed_data[row][col] == ';')
@@ -1677,35 +1670,37 @@ enum Token check_token(int row, int col)
             ed_data[row][col] != ')' &&
             ed_data[row][col] != NUL &&
             ed_data[row][col] != EOL) {
-          str.push_back(ed_data[row][col]);
+          str[pos] = ed_data[row][col];
           col++;
+          pos++;
      }
-     if (str.empty())
+     str[pos] = NUL;
+     if (pos == 0)
           return NONE;
      else if (str[0] == '#' && str[1] == '|')
           return MULTILINE_COMMENT; // #|...|#
      for (i = 0; i < (int)NELEM(syntax); i++) {
-          if (syntax[i].compare(str) == 0) {
+          if (strcmp(syntax[i], str) == 0) {
                return SYNTAX;
           }
      }
      for (i = 0; i < (int)NELEM(builtin); i++) {
-          if (builtin[i].compare(str) == 0) {
+          if (strcmp(builtin[i], str) == 0) {
                return BUILTIN;
           }
      }
      for (i = 0; i < (int)NELEM(extended); i++) {
-          if (extended[i].compare(str) == 0) {
+          if (strcmp(extended[i], str) == 0) {
                return EXTENDED;
           }
      }
      return NONE;
 }
 
-string get_fragment()
+char *get_fragment()
 {
-     string str;
-     int col;
+     static char str[TOKEN_MAX];
+     int col, pos;
 
      col = ed_col - 1;
      while (col >= 0 &&
@@ -1715,81 +1710,84 @@ string get_fragment()
           col--;
      }
      col++;
+     pos = 0;
      while (ed_data[ed_row][col] != ' ' &&
             ed_data[ed_row][col] != '(' &&
             ed_data[ed_row][col] >= ' ') {
-          str.push_back(ed_data[ed_row][col]);
+          str[pos] = ed_data[ed_row][col];
           col++;
+          pos++;
      }
+     str[pos] = NUL;
      return (str);
 }
 
 void find_candidate()
 {
-     string str;
+     char *str;
      int i;
 
      str = get_fragment();
      ed_candidate_pt = 0;
-     if (str.empty())
+     if (str[0] == NUL)
           return;
      for (i = 0; i < (int)NELEM(syntax); i++) {
-          if (syntax[i].find(str) != string::npos && syntax[i][0] == str[0]) {
+          if (strstr(syntax[i], str) != NULL && syntax[i][0] == str[0]) {
                ed_candidate[ed_candidate_pt] = syntax[i];
                ed_candidate_pt++;
           }
      }
      for (i = 0; i < (int)NELEM(builtin); i++) {
-          if (builtin[i].find(str) != string::npos && builtin[i][0] == str[0]) {
+          if (strstr(builtin[i], str) != NULL && builtin[i][0] == str[0]) {
                ed_candidate[ed_candidate_pt] = builtin[i];
                ed_candidate_pt++;
           }
      }
      for (i = 0; i < (int)NELEM(extended); i++) {
-          if (extended[i].find(str) != string::npos && extended[i][0] == str[0]) {
+          if (strstr(extended[i], str) != NULL && extended[i][0] == str[0]) {
                ed_candidate[ed_candidate_pt] = extended[i];
                ed_candidate_pt++;
           }
      }
 }
 
-void replace_fragment(const string& newstr)
+void replace_fragment(const char *newstr)
 {
-     string oldstr;
+     char *oldstr;
      int m, n;
 
      oldstr = get_fragment();
-     m = oldstr.length();
-     n = newstr.length();
+     m = strlen(oldstr);
+     n = strlen(newstr);
      while (m > 0) {
           backspace();
           m--;
      }
-     string::const_iterator it = newstr.begin();
      while (n > 0) {
           insertcol();
-          ed_data[ed_row][ed_col] = *it;
+          ed_data[ed_row][ed_col] = *newstr;
           ed_col++;
-          ++it;
+          newstr++;
           n--;
      }
 }
 
-struct position find_word(const string& word)
+struct position find_word(const char *word)
 {
      int i, j, k, len;
      struct position pos;
+     const char *word1;
 
      i = ed_row;
      j = ed_col;
-     len = word.length();
-     string::const_iterator it = word.begin();
+     word1 = word;
+     len = strlen(word);
      while (i <= ed_end + 1) {
           while (j < COL_SIZE && ed_data[i][j] != NUL) {
                k = j;
                while (k < j + len &&
-                      ed_data[i][k] == *it) {
-                    ++it;
+                      ed_data[i][k] == *word) {
+                    word++;
                     k++;
                }
                if (k >= j + len) {
@@ -1798,7 +1796,7 @@ struct position find_word(const string& word)
                     return (pos);
                }
                j++;
-               it = word.begin();
+               word = word1;
           }
           i++;
           j = 0;
@@ -1810,19 +1808,18 @@ struct position find_word(const string& word)
 }
 
 
-void replace_word(const string& str1, const string& str2)
+void replace_word(const char *str1, const char *str2)
 {
      int len1, len2, i, j;
 
-     len1 = str1.length();
-     len2 = str2.length();
+     len1 = strlen(str1);
+     len2 = strlen(str2);
 
-     string::const_iterator it2 = str2.begin();
      if (len1 == len2) {
           for (i = 0; i < len1; i++) {
-               ed_data[ed_row][ed_col] = *it2;
+               ed_data[ed_row][ed_col] = *str2;
                ed_col++;
-               ++it2;
+               str2++;
           }
      }
      else if (len1 > len2) {
@@ -1835,8 +1832,8 @@ void replace_word(const string& str1, const string& str2)
           ed_data[ed_row][i] = NUL;
 
           for (i = 0; i < len2; i++) {
-               ed_data[ed_row][ed_col + i] = *it2;
-               ++it2;
+               ed_data[ed_row][ed_col + i] = *str2;
+               str2++;
           }
      }
      else { //len1 < len2
@@ -1848,8 +1845,8 @@ void replace_word(const string& str1, const string& str2)
           }
           ed_data[ed_row][i] = NUL;
           for (i = 0; i < len2; i++) {
-               ed_data[ed_row][ed_col + i] = *it2;
-               ++it2;
+               ed_data[ed_row][ed_col + i] = *str2;
+               str2++;
           }
      }
 }

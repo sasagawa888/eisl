@@ -3,10 +3,8 @@
 #ifndef TERM_H
 #define TERM_H
 
-#ifdef __cplusplus
-#include <iostream>
+#ifdef FULLSCREEN
 #include <curses.h>
-using namespace std;
 #endif
 
 struct position {
@@ -25,7 +23,7 @@ static const char BEL = '\a';
 static const char BS = '\b';
 static const char DEL = 127;
 
-#ifndef __cplusplus
+#ifndef FULLSCREEN
 static const char LEFT = 'D';
 static const char UP = 'A';
 static const char RIGHT = 'C';
@@ -38,8 +36,8 @@ static const char HOME = 'H';
 static const char END = 'F';
 #endif
 
-#ifdef __cplusplus
-// Coincidentally, this code is only used in edlis
+#ifdef FULLSCREEN
+// This code is only used in edlis
 
 __dead void errw(const char* msg);
 #define CHECK(fn, ...) { \

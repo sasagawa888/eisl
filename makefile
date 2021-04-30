@@ -1,4 +1,4 @@
-OPSYS ?= linux
+OPSYS ?= openbsd
 CC ?= cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
@@ -84,9 +84,9 @@ endif
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(CXX) $(LDFLAGS) edlis.o -o edlis $(CURSES_LIBS)
-edlis.o : edlis.cpp edlis.hpp term.h
-	$(CXX) $(CXXFLAGS) -c edlis.cpp
+	$(CC) $(LDFLAGS) edlis.o -o edlis $(CURSES_LIBS)
+edlis.o : edlis.c edlis.h term.h
+	$(CC) $(CFLAGS) -c edlis.c
 
 
 install: $(EISL) $(EDLIS)

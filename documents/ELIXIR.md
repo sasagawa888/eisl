@@ -16,10 +16,10 @@ Compile the library elixir.lsp beforehand if you need speed.
 (import "elixir")
 
 (defpattern deriv
-    (((^ _x _n) _x) `(* ,_x ,(- _n 1))))
+    (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1)))))
 
 > (deriv '(^ x 3) 'x)
-(* X 2)
+(* 3 (^ X 2))
 > 
 
 (defpattern fib

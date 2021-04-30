@@ -3,16 +3,13 @@
 (import "elixir")
 
 (defpattern deriv
-    (((^ _x _n) _x) `(* ,_x ,(- _n 1))))
+    (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1)))))
 
 (defpattern fib
     ((0) 1)
     ((1) 1)
     ((_n) (+ (fib (- _n 1)) (fib (- _n 2)))))
 
-(defpattern sum
-    ((nil) 0)
-    (((_a :rest _b)) (+ _a (sum _b))))
 
 (defpattern talk
     (((I love _a)) (list _a 'love 'me))

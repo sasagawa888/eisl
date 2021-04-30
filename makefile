@@ -107,5 +107,4 @@ clean:
 
 .PHONY: check
 check:
-	# cppcheck --enable=all --std=c11 --library=posix .
-	cppcheck --enable=all --language=c++ --std=c++03 --library=posix -D__cplusplus edlis.cpp edlis.hpp term.h
+	cppcheck --enable=all --std=c11 --library=posix .

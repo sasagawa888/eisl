@@ -4,7 +4,7 @@
 (defpattern derive
     (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
     (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
-    (((sqrt(_x) _x) `(/ 1 (* 2 sqrt(,_x)))))
+    (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))
     (((sin _x) _x)  `(cos ,_x))
     (((cos _x) _x)  `(- (sin ,_x)))
     (((tan _x) _x)  `(/ 1 (^ (cos ,_x) 2)))

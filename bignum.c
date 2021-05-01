@@ -12,6 +12,9 @@ number of data is absolute.
 cells = lsb -> ... msb -> NIL
 aux = cbignum class information
 */
+
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>

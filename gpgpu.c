@@ -3,7 +3,6 @@ Easter project GPGPU of Easy-ISLisp
 
 */
 
-
 #include <cublas.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,3 +1,6 @@
+(import "elixir")
+
+
 (defun cadr (x)
   (cdr (car x)))
 
@@ -21,15 +24,7 @@
 
 (defun read* ()
   (format (standard-output) "~%L> ")
-  (parse (convert (read-line) <list>)))
-
-
-(defun parse (x)
-  (let ((1st (elt x 0))
-        (2nd (elt x 1))
-        (3rd (elt x 2)))
-      (cond ((and (char= 1st #\^) (char= 3rd #\.))) 
-      
+  (parse (convert (read-line) <list>) nil))
 
 (defun print* (x)
   (format (standard-output) "^")
@@ -37,156 +32,44 @@
   (format (standard-output) ".")
   (print* (cadr x)))
 
+
+  ;; for test
+  (defun test (x)
+    (pipe (parse x nil) |> (combinator) |> (reduce)))
+ 
 #|
-I will port Lambda interpreter from Elixir
+parse 
+ ^x.x -> (^ x x)
+ (^x.x)(^y.y) -> ((^ x x)(^ y y))
 
-defmodule Lambda do
-  @moduledoc """
-  This code is Lambda interpreter
-  """
+input char-list  respons
+return (body . rest-list)
+|#
 
-  @doc """
-  Invoke interpreter
+(defpattern parse
+  ((empty _res) _res)
+  (((#\e #\n #\d) _res) _res)
+  (((#\^ _arg #\. :rest ls)) (let* ((arg1 (convert _arg <symbol>))
+                                    (dt (parse1 ls nil)
+                                    (body (car dt)))
+                                    (ls1 (cdr dt)))
+                                  (parse ls1 (cons '^ (cons arg1 body)))))
+  ;; e.g. ^xyz.z shorthand
+  (((#\^ _arg :rest ls) _) (let* ((arg1 (convert _arg <symbol>)))
+                               (cons '^ (cons arg1 (parse (cons #\^ ls) nil)))))
+  ;; ( )
+  (((#\( :rest ls) _res) (let* ((dt (parse (cons #\( ls) nil))
+                                (exp (car dt))
+                                (ls1 (cdr dt)))
+                            (cond ((null _res) (parse ls1 exp))
+                                  (t (parse ls1 (append (list _res) (list exp)))))))
+  ;; space skip
+  (((#\space :rest ls) _res) (parse ls res))
+  (else (throw 'exit "syntax error")))
 
-  ## Examples
-
-      #iex> Lambda.repl()
-      #for halt >end
-
-  """
-  def lambda() do
-    IO.puts("Lambda calculus interpreter")
-    IO.puts("To quit enter 'end'")
-    repl()
-  end
-
-  def repl() do
-    try do
-      read() |> combinator |> reduce |> print
-      repl()
-    catch
-      x ->
-        IO.write(x)
-
-        if x != "end" do
-          repl()
-        end
-    end
-  end
-
-  def read() do
-    IO.gets("\n>") |> String.to_charlist() |> parse([])
-  end
-
-  # for test
-  def test(x) do
-    parse(x, []) |> combinator |> reduce
-  end
-
-  # terminal
-  def parse('\n', res) do
-    res
-  end
-
-  def parse('end\n', _) do
-    :end
-  end
-
-  # ^ arg .
-  def parse([94, arg, 46 | ls], _) do
-    arg1 = String.to_atom(<<arg>>)
-    {body, ls1} = parse1(ls, [])
-    parse(ls1, {arg1, body})
-  end
-
-  # e.g. ^xyz.z shorthand
-  def parse([94, arg | ls], _) do
-    arg1 = String.to_atom(<<arg>>)
-    {arg1, parse([94 | ls], [])}
-  end
-
-  def parse([l | ls], res) when l >= 65 and l <= 122 do
-    # IO.inspect binding()
-    cond do
-      res == [] -> parse(ls, String.to_atom(<<l>>))
-      true -> parse(ls, [res] ++ [String.to_atom(<<l>>)])
-    end
-  end
-
-  # ( )
-  def parse([40 | ls], res) do
-    # IO.inspect binding()
-    {exp, ls1} = parse1([40 | ls], [])
-
-    cond do
-      res == [] -> parse(ls1, exp)
-      true -> parse(ls1, [res] ++ [exp])
-    end
-  end
-
-  # space skip
-  def parse([32 | ls], res) do
-    parse(ls, res)
-  end
-
-  def parse(_, _) do
-    # IO.inspect binding()
-    throw("syntax error")
-  end
-
-  # e.g. ^x.y
-  def parse1([94, arg, 46 | ls], res) do
-    # IO.inspect binding()
-    arg1 = String.to_atom(<<arg>>)
-    {body, ls1} = parse1(ls, res)
-    {{arg1, body}, ls1}
-  end
-
-  # e.g. ^xyz.z shorthand
-  def parse1([94, arg | ls], _) do
-    # IO.inspect binding()
-    arg1 = String.to_atom(<<arg>>)
-    {body, ls1} = parse1([94 | ls], [])
-    {{arg1, body}, ls1}
-  end
-
-  def parse1([l | ls], res) when l >= 65 and l <= 122 do
-    # IO.inspect binding()
-    cond do
-      res == [] -> parse1(ls, String.to_atom(<<l>>))
-      true -> parse1(ls, [res] ++ [String.to_atom(<<l>>)])
-    end
-  end
-
-  def parse1([40 | ls], res) do
-    # IO.inspect binding()
-    {exp, [41 | ls1]} = parse1(ls, [])
-
-    cond do
-      res == [] -> parse1(ls1, exp)
-      true -> parse1(ls1, [res] ++ [exp])
-    end
-  end
-
-  def parse1([41 | ls], res) do
-    # IO.inspect binding()
-    {res, [41 | ls]}
-  end
-
-  # space skip
-  def parse1([32 | ls], res) do
-    parse1(ls, res)
-  end
-
-  def parse1('\n', res) do
-    # IO.inspect binding()
-    {res, '\n'}
-  end
-
-  def parse1(_, _) do
-    # IO.inspect binding()
-    throw("syntax error1")
-  end
+#|
+ 
+  
 
   def print(x) when is_atom(x) do
     IO.write(x)

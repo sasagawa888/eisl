@@ -16,8 +16,21 @@ ifeq ($(DEBUG),1)
 else
 	CFLAGS += -O3 -flto -DNDEBUG=1
 endif
+ifeq ($(OPSYS),macos)
+	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
+	CURSES_LIBS := $(shell ncurses5.4-config --libs)
+else
+	ifeq ($(OPSYS),openbsd)
+		CURSES_LIBS := -lncurses
+	else
+		CURSES_CFLAGS := $(shell ncurses6-config --cflags)
+		CURSES_LIBS := $(shell ncurses6-config --libs)
+	endif
+endif
+CXX := c++
+CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
 ifeq ($(CC),c++)
-	CFLAGS += -std=c++98 -fno-exceptions -fno-rtti -Weffc++
+	CFLAGS := $(CXXFLAGS)
 else
 	CFLAGS += -std=c17
 endif
@@ -71,7 +84,7 @@ endif
 	$(CC) $(CFLAGS) -c $< -o $@
 
 edlis : edlis.o
-	$(LD) $(LDFLAGS) edlis.o -o edlis
+	$(CC) $(LDFLAGS) edlis.o -o edlis $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 

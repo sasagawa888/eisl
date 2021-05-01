@@ -98,9 +98,12 @@ pattern
 variable e.g. _a _z 
 variable symbol has prifix "_"
 
+anoymous e.g. _
+anoymous matches every argument.
+
 :rest or &rest match rest parameter
 
-else symbol match every argument 
+else symbol matches every argument 
 
 e.g.    
 (defun uoo (x y)

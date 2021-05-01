@@ -50,7 +50,11 @@
 
     ;; e.g. _a _x  return T
     (defun variablep (x)
-        (and (symbolp x) (char= (car (convert (convert x <string>) <list>)) #\_)) )
+        (and (symbolp x) (not (anoymous x)) (char= (car (convert (convert x <string>) <list>)) #\_)) )
+
+    ;; e.g. _ return T 
+    (defun anoymous (x)
+        (eq x '_))
 
     ;; (((+ _a 2)...) ((* _b 3)...)) return ((_a nil)(_b nil))
     (defpublic extract-variables (body var ans)
@@ -81,10 +85,11 @@
     (defun expand-match1 (x y env ans)
         (cond ((null y) (cons env ans))
               ((numberp y) (cons env (cons (list '= x y) (cons (list 'numberp x) ans))))
-              ((characterp y) (cons env (cons (list 'char= x y) ans)))
-              ((stringp y) (cons env (cons (list 'string= x y) ans)))
+              ((characterp y) (cons env (cons (list 'char= x y) (cons (characterp x) ans))))
+              ((stringp y) (cons env (cons (list 'string= x y) (cons (stringp x) ans))))
               ((general-vector-p y) (cons env (cons (list 'equal x y) ans)))
               ((general-array*-p y) (cons env (cons (list 'equal x y) ans)))
+              ((anoymous y) (cons env (cons t ans)))
               ((and (variablep y) (not (member y env)))
                (cons (cons y env) (cons (list 'setq* y x) ans)))
               ((and (variablep y) (member y env)) (cons env (cons (list 'equal x y) ans)))

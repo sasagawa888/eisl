@@ -3,7 +3,6 @@
 #include <signal.h>
 #include <termios.h>
 #define NCURSES_OPAQUE 1
-#define _XOPEN_SOURCE_EXTENDED 1
 #include <curses.h>
 #include <locale.h>
 #include <stdbool.h>
@@ -11,9 +10,14 @@
 #include "compat/cdefs.h"
 #include "edlis.h"
 
+#ifndef CTRL
+#define CTRL(X) ((X) & 0x1F)
+#endif
+
+#define TOKEN_MAX 80
+
 const int NUM_STR_MAX = 5;
 const int SHORT_STR_MAX = 20;
-const int TOKEN_MAX = 80;
 
 bool edit_loop(char* fname);
 

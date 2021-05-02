@@ -2124,7 +2124,7 @@ int f_load(int arglist){
         input_stream = save1;
         error(CANT_OPEN, "load", arg1);
     }
-    open_flag = 1;
+    open_flag = true;
     line = 1;
     column = 0;
     while(1){
@@ -2133,10 +2133,10 @@ int f_load(int arglist){
         sexp = sread();
         if(sexp == FEND)
             break;
-        top_flag = 1;
+        top_flag = true;
         eval(sexp);
     }
-    open_flag = 0;
+    open_flag = false;
     fclose(GET_PORT(input_stream));
     input_stream = save1;
     repl_flag = save2;
@@ -3215,7 +3215,7 @@ int f_format(int arglist){
                     sprintf(stream_str,"\n");
                     strcat(GET_NAME(output_stream),stream_str);
                 }
-                start_flag = 0;
+                start_flag = false;
                 charcnt = 0;
             }
             else if(c == '&'){
@@ -3228,7 +3228,7 @@ int f_format(int arglist){
                     sprintf(stream_str,"~");
                     strcat(GET_NAME(output_stream),stream_str);
                 }
-                start_flag = 0;
+                start_flag = false;
                 charcnt++;
             }
             i++;
@@ -3286,7 +3286,7 @@ int f_format(int arglist){
                 strcat(GET_NAME(output_stream),stream_str);
             }
             i++;
-            start_flag = 0;
+            start_flag = false;
             charcnt++;
         }
         c = str[i];
@@ -3469,7 +3469,7 @@ int f_format_char(int arglist){
         strcat(GET_NAME(arg1),stream_str);
         charcnt = charcnt + strlen(GET_NAME(arg2));
     }
-    start_flag = 0;
+    start_flag = false;
     return(NIL);
 }
 
@@ -3493,7 +3493,7 @@ int f_format_fresh_line(int arglist){
             sprintf(stream_str,"\n");
             strcat(GET_NAME(output_stream),stream_str);
         }
-        start_flag = 0;
+        start_flag = false;
         charcnt = 0;
         output_stream = save;
     }
@@ -3516,7 +3516,7 @@ int f_format_float(int arglist){
     output_stream = arg1;
     flt = exact_to_inexact(arg2);
     print(flt);
-    start_flag = 0;
+    start_flag = false;
     //count character
     output_stream = save;
     charcnt = charcnt + strlen(stream_str);
@@ -3559,7 +3559,7 @@ int f_format_integer(int arglist){
         charcnt = charcnt + strlen(stream_str);
    }
     output_stream = save;
-    start_flag = 0;
+    start_flag = false;
     return(NIL);
 }
 
@@ -3624,7 +3624,7 @@ int f_format_object(int arglist){
         charcnt = charcnt + strlen(stream_str);
     }
     output_stream = save;
-    start_flag = 0;
+    start_flag = false;
     return(NIL);
 }
 
@@ -3653,7 +3653,7 @@ int f_format_tab(int arglist){
         n--;
         charcnt++;
     }
-    start_flag = 0;
+    start_flag = false;
     return(NIL);
 }
 
@@ -3725,7 +3725,7 @@ int f_close(int arglist){
     if(GET_OPT(arg1) != EISL_INSTR && GET_OPT(arg1) != EISL_OUTSTR)
         fclose(GET_PORT(arg1));
     
-    start_flag = 1;
+    start_flag = true;
     return(UNDEF);
 }
 
@@ -4128,7 +4128,7 @@ __dead int f_quit(int arglist __unused){
     if (!script_flag) {
       puts("- good bye -");
     }
-    greeting_flag = 0;
+    greeting_flag = false;
     longjmp(buf,2);
 }
 
@@ -4151,9 +4151,9 @@ int f_gbc(int arglist){
     if(nullp(arglist))
       (void)gbc();
     else if(car(arglist) == T)
-        gbc_flag= 1;
+        gbc_flag= true;
     else if(car(arglist) == NIL)
-        gbc_flag = 0;
+        gbc_flag = false;
     else if(car(arglist) == makesym("M&S")){
         // re initialize heap area
         for(addr=WORK1; addr < HEAPSIZE; addr++){

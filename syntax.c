@@ -1280,7 +1280,7 @@ int f_defclass(int arglist){
 
     sc = arg2;
     if(subclassp(GET_AUX(arg1),cobject))
-        redef_flag = 1; //flag for check redefinition of class
+        redef_flag = true; //flag for check redefinition of class
 
     var = NIL;
     val = UNDEF;
@@ -1484,18 +1484,18 @@ int f_defmethod(int arglist){
 int f_ignore_errors(int arglist){
     int ret;
 
-    ignore_flag = 1;
+    ignore_flag = true;
     ret = setjmp(ignore_buf);
 
     if(ret == 0){
         int res;
 
         res = f_progn(arglist);
-        ignore_flag = 0;
+        ignore_flag = false;
         return(res);
     }
     else{
-        ignore_flag = 0;
+        ignore_flag = false;
         return(NIL);
     }
 }

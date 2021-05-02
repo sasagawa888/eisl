@@ -616,7 +616,7 @@ int read_line(int flag){
                                     goto loop;
                         case 113:   //Esc+q
                                     putchar('\n');
-                                    greeting_flag = 0;
+                                    greeting_flag = false;
                                     longjmp(buf,2);
                       }
                       c = eisl_getch();

@@ -126,9 +126,9 @@ int f_ignore_toplevel_check(int arglist){
     
     arg1 = car(arglist);
     if(arg1 == T)
-        ignore_topchk = 1;
+        ignore_topchk = true;
     else
-    	ignore_topchk = 0;
+    	ignore_topchk = false;
     return(T);
 }
 
@@ -380,9 +380,9 @@ int f_backtrace(int arglist){
         }
     }
     else if(arg1 == T)
-        back_flag = 1;
+        back_flag = true;
     else if(arg1 == NIL)
-        back_flag = 0;
+        back_flag = false;
     
     return(T);
 }

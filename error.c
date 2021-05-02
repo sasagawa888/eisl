@@ -493,7 +493,7 @@ int signal_condition(int x, int y){
         longjmp(ignore_buf,1);
     if(open_flag && error_handler==NIL){
         fclose(GET_PORT(input_stream));
-        open_flag = 0;  
+        open_flag = false;
         printf("around here line=%d column=%d\n", line, column); 
     } 
     if(error_handler != NIL){

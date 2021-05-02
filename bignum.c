@@ -810,7 +810,7 @@ int bigx_div1(int arg1, int arg2){
 
     //following code, calcuration is required in bignum
     //so, stop simlification.
-    simp_flag = 0;
+    simp_flag = false;
 
     res = gen_big();
     //if divisor is smaller, become bigger to hold theolem
@@ -908,7 +908,7 @@ int bigx_div1(int arg1, int arg2){
         bigx_gbc(arg2);
 
     //restore flag
-    simp_flag = 1;
+    simp_flag = true;
     SET_TAG(res,BIGX);
     set_sign(res,1);
     cut_zero(res);

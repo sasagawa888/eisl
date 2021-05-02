@@ -1348,7 +1348,7 @@ void redef_generic(void){
         resort_method(GET_CAR(car(ls)));
         ls = cdr(ls);
     }
-    redef_flag = 0;
+    redef_flag = false;
     return;
 }
 

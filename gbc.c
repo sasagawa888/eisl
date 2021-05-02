@@ -11,7 +11,7 @@
 //---------garbage collection-----------
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void){
-    debug_flag = 1;
+    debug_flag = true;
 
     if(gc_sw == 0){
         int addr;
@@ -215,7 +215,7 @@ void clrcell(int addr){
 
 //when free cells are less FREESIZE, invoke gbc()
 int checkgbc(void){
-    if(exit_flag == 1){
+    if(exit_flag){
 	    exit_flag = 0;
         longjmp(buf,1);
     }

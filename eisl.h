@@ -291,21 +291,20 @@ extern int generic_list;
 //flag
 extern int gArgC;
 extern char **gArgV;
-extern int gbc_flag;
+extern bool gbc_flag;
 extern int genint;
-extern int simp_flag;
-extern int ignore_flag;
-extern int open_flag;
-extern int str_flag;
-extern int top_flag;
-extern int redef_flag;
-extern int start_flag;
-extern int back_flag;
-extern int ignore_topchk;
+extern bool simp_flag;
+extern bool ignore_flag;
+extern bool open_flag;
+extern bool top_flag;
+extern bool redef_flag;
+extern bool start_flag;
+extern bool back_flag;
+extern bool ignore_topchk;
 extern bool repl_flag;
-extern int exit_flag;
-extern int debug_flag;
-extern int greeting_flag;
+extern volatile sig_atomic_t exit_flag;
+extern bool debug_flag;
+extern bool greeting_flag;
 extern bool script_flag;
 
 //switch

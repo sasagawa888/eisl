@@ -115,22 +115,21 @@ int generic_list = NIL; //symbol list of generic function.
 //flag
 int gArgC;
 char **gArgV;
-int gbc_flag = 1; //0=GC not display ,1= do display.
+bool gbc_flag = true; //false=GC not display ,true= do display.
 int genint = 1;   //integer of gensym.
-int simp_flag = 1; //1=simplify, 0=Not for bignum
-int ignore_flag = 0; //0=normal,1=ignore error
-int open_flag = 0;  //0=normal,1=now loading
-int str_flag = 0;   //0=stdio or FILE, 1=string
-int top_flag = 1;   //1=top-level, 0=not-top-level
-int redef_flag = 0; //1=redefine-class, 0=not-redefine
-int start_flag = 1; //1=line-start, 1=not-line-start
-int back_flag = 1;  //for backtrace, 1=on, 0=off
+bool simp_flag = true; //true=simplify, false=Not for bignum
+bool ignore_flag = false; //false=normal,true=ignore error
+bool open_flag = false;  //false=normal,true=now loading
+bool top_flag = true;   //true=top-level, false=not-top-level
+bool redef_flag = false; //true=redefine-class, false=not-redefine
+bool start_flag = true; //true=line-start, false=not-line-start
+bool back_flag = true;  //for backtrace, true=on, false=off
 bool init_flag = true;  //for -c option, 1=initial,0=not-initial
-int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
+bool ignore_topchk = false; //for FAST compiler true=ignore,false=normal
 bool repl_flag = true;  //for REPL read_line 1=on, 0=off
-int exit_flag = 0;  //1= ctrl+C
-int debug_flag = 0;  //for GC debug
-int greeting_flag = 1; //for (quit)
+volatile sig_atomic_t exit_flag = 0;  //true= ctrl+C
+bool debug_flag = false;  //for GC debug
+bool greeting_flag = true; //for (quit)
 bool script_flag = false;   //for -s option
 
 //switch
@@ -334,7 +333,7 @@ int main(int argc, char *argv[]){
             exit(EXIT_SUCCESS);
         }
     }
-    if(greeting_flag == 1)
+    if(greeting_flag)
         printf("Easy-ISLisp Ver%1.2f\n", VERSION);
     repl:
     if(ret == 0)
@@ -373,8 +372,8 @@ void initpt(void){
     catch_pt = 0;
     unwind_pt = 0;
     error_handler = NIL;
-    top_flag = 1;
-    start_flag = 1;
+    top_flag = true;
+    start_flag = true;
     charcnt = 0;
     //clear nest level of tracing function.
     ls = trace_list;
@@ -402,7 +401,7 @@ int readc(void){
         //ctrl+D
         //if not script-mode quit system
         if(!script_flag && input_stream == standard_input && c == EOF){
-            greeting_flag = 0;
+            greeting_flag = false;
             putchar('\n');
             longjmp(buf,2);
         }
@@ -1725,7 +1724,7 @@ void unbind(void){
 
 int evlis(int addr){
     argpush(addr);
-    top_flag = 0;
+    top_flag = false;
     if(IS_NIL(addr)){
         argpop();
         return(addr);

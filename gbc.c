@@ -18,7 +18,6 @@ int gbc(void){
 
         if(gbc_flag){
             printf("enter M&S-GC free=%d\n", fc); 
-            fflush(stdout);
         }
         gbcmark();
         gbcsweep();
@@ -28,7 +27,6 @@ int gbc(void){
                 fc++;
         if(gbc_flag){
             printf("exit  M&S-GC free=%d\n", fc);
-            fflush(stdout);
         }
     }
     else{
@@ -37,8 +35,6 @@ int gbc(void){
                 printf("enter COPY-GC free=%d\n", WORK2 - wp); 
             else    
                 printf("enter COPY-GC free=%d\n", CELLSIZE - wp);
-
-            fflush(stdout);
         }
         copygbc();
         if(gbc_flag){
@@ -46,8 +42,6 @@ int gbc(void){
                 printf("exit  COPY-GC free=%d\n", WORK2 - wp); 
             else    
                 printf("exit  COPY-GC free=%d\n", CELLSIZE - wp);
-    
-            fflush(stdout);
         }
     }
     return 0;

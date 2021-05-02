@@ -340,9 +340,9 @@ int main(int argc, char *argv[]){
     if(ret == 0)
         while(1){
             initpt();
-            fputs("> ", stdout); fflush(stdout);
+            fputs("> ", stdout);
             print(eval(sread ()));
-            putchar('\n'); fflush(stdout);
+            putchar('\n');
             if(redef_flag)
                 redef_generic();
         }
@@ -1507,7 +1507,7 @@ int eval(int addr){
         if(back_flag)
             store_backtrace(addr);
         if(stepper_flag){
-        	print(addr);putchar('\n');fflush(stdout);
+        	print(addr);putchar('\n');
         	clean_stdin();
         	c = getc(stdin);
         	if(c == 'q')
@@ -1916,7 +1916,7 @@ void debugger(){
 
     puts("debug mode ?(help)");
     loop:
-    fputs(">>", stdout);fflush(stdout);
+    fputs(">>", stdout);
     x = sread();
 	if(eqp(x,makesym("?"))){
     	puts("?  help\n"

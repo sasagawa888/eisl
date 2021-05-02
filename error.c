@@ -513,7 +513,6 @@ int signal_condition(int x, int y){
     fputc(' ', stderr);
     print(args);
     fputc('\n', stderr);
-    fflush(stderr);
     ESCERRFORG();
     input_stream = standard_input;
     output_stream = standard_output;

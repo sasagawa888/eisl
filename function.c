@@ -3291,8 +3291,6 @@ int f_format(int arglist){
         }
         c = str[i];
     }
-    if(GET_OPT(output_stream) != EISL_INSTR)
-        fflush(GET_PORT(output_stream));
     output_stream = save;
     return(NIL);
 }

@@ -18,7 +18,7 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 Edlisのコンパイルでcurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
 
 ```
-sudo pat install libncurses-dev
+sudo apt install libncurses-dev
 ```
 
 ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。

@@ -20,7 +20,7 @@ You may get an error that the curses.h file cannot be found when compiling Edlis
 In this case, enter the following from the terminal
 
 ```
-sudo pat install libncurses-dev
+sudo apt install libncurses-dev
 ```
 
 After version 1.4 Windows OS is not supported. Please use WSL on Windows.

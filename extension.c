@@ -374,7 +374,7 @@ int f_backtrace(int arglist){
 
         for(i=0;i<BACKSIZE;i++){
             print(backtrace[i]);
-            printf("\n");
+            putchar('\n');
         }
     }
     else if(arg1 == T)
@@ -386,7 +386,7 @@ int f_backtrace(int arglist){
 }
 
 int f_break(int arglist __unused){
-    printf("break\n");
+    puts("break");
     debugger();
     return(T);
 }

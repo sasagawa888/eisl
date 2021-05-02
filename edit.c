@@ -24,22 +24,11 @@ int f_edit(int arglist){
 	return(T);
 }
 
-void setcolor(int n){
-        switch(n){
-        case 0: ESCFBLACK(); break;
-        case 1: ESCFRED(); break;
-        case 2: ESCFGREEN(); break;
-        case 3: ESCFYELLOW(); break;
-        case 4: ESCFBLUE(); break;
-        case 5: ESCFMAGENTA(); break;
-        case 6: ESCFCYAN(); break;
-        case 7: ESCFWHITE(); break;
-        default: ESCFWHITE(); break;
-        }
-        return;
+void setcolor(short n){
+    putp(tparm(set_a_foreground, n));
 }
 
-int getch(){
+int eisl_getch(){
     struct termios oldt,
     newt;
     int ch;
@@ -68,7 +57,7 @@ void display_buffer(){
              setcolor(ed_comment_color);
              while(buffer[col][0] != EOL &&
                    buffer[col][0] != NUL){
-                       printf("%c", buffer[col][0]);
+                       putchar(buffer[col][0]);
                        col++;
                        if(buffer[col-2][0] == '|' &&
                           buffer[col-1][0] == '#'){
@@ -84,7 +73,7 @@ void display_buffer(){
          else if(buffer[col][0] == ' ' ||
                  buffer[col][0] == '(' ||
                  buffer[col][0] == ')' ){
-            printf("%c", buffer[col][0]);
+            putchar(buffer[col][0]);
             col++;
          }
          else{
@@ -97,7 +86,7 @@ void display_buffer(){
                       buffer[col][0] != ')' &&
                       buffer[col][0] != NUL &&
                       buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                 }
                 ESCRST();
@@ -111,7 +100,7 @@ void display_buffer(){
                           buffer[col][0] != ')' &&
                           buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                         }
                     ESCRST();
@@ -120,11 +109,11 @@ void display_buffer(){
                 else if(type == 3){
                     ESCBOLD();
                     setcolor(ed_string_color);
-                    printf("%c", buffer[col][0]);
+                    putchar(buffer[col][0]);
                     col++;
                     while(buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                         if(buffer[col-1][0] == '"')
                             break;
@@ -138,7 +127,7 @@ void display_buffer(){
                    setcolor(ed_comment_color);
                    while(buffer[col][0] != NUL &&
                          buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                    }
                    ESCRST();
@@ -152,7 +141,7 @@ void display_buffer(){
                           buffer[col][0] != ')' &&
                           buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                    }
                    ESCRST();
@@ -164,7 +153,7 @@ void display_buffer(){
                    ed_incomment = line;
                    while(buffer[col][0] != EOL &&
                          buffer[col][0] != NUL){
-                             printf("%c", buffer[col][0]);
+                             putchar(buffer[col][0]);
                              col++;
                              if(buffer[col-2][0] == '|' &&
                                 buffer[col-1][0] == '#'){
@@ -181,7 +170,7 @@ void display_buffer(){
                           buffer[col][0] != ')' &&
                           buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                       printf("%c", buffer[col][0]);
+                       putchar(buffer[col][0]);
                        col++;
                     }
                }
@@ -288,11 +277,11 @@ void emphasis_rparen_buffer(int col){
 
     ESCMVLEFT(col+3);
     ESCBCYAN();
-    printf("(");
+    putchar('(');
     ESCBORG();
     ESCMVLEFT(pos+3);
     ESCBCYAN();
-    printf(")");
+    putchar(')');
     ESCBORG();
     ed_rparen_col = pos;
     ed_lparen_col = col;
@@ -312,11 +301,11 @@ void emphasis_lparen_buffer(int col){
 
     ESCMVLEFT(col+3);
     ESCBCYAN();
-    printf(")");
+    putchar(')');
     ESCBORG();
     ESCMVLEFT(pos+3);
     ESCBCYAN();
-    printf("(");
+    putchar('(');
     ESCBORG();
     ed_rparen_col = col;
     ed_lparen_col = pos;
@@ -334,13 +323,13 @@ void restore_paren_buffer(int col){
     if(ed_lparen_col != -1){
         ESCMVLEFT(ed_lparen_col+3);
         ESCBORG();
-        printf("(");
+        putchar('(');
         ed_lparen_col = -1;
     }
     if(ed_rparen_col != -1){
         ESCMVLEFT(ed_rparen_col+3);
         ESCBORG();
-        printf(")");
+        putchar(')');
         ed_rparen_col = -1;
     }
     ESCMVLEFT(col+3);
@@ -465,7 +454,7 @@ int read_line(int flag){
         ed_lparen_col = -1;
         ed_rparen_col = -1;
         j = 0;
-        c = getch();
+        c = eisl_getch();
         loop:
         switch(c){
             case 13:  //ctrl+M
@@ -475,7 +464,7 @@ int read_line(int flag){
                               break;
                           }
                       restore_paren_buffer(j);
-                      printf("%c",c);
+                      putchar(c);
                       pos = 0;
                       goto exit;
             case 8:   //ctrl+H  
@@ -574,7 +563,7 @@ int read_line(int flag){
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
-            case ESC: c = getch();
+            case ESC: c = eisl_getch();
                     switch(c){
                         case TAB: find_candidate_buffer(j); //completion
                                     if(ed_candidate_pt == 0)
@@ -600,7 +589,7 @@ int read_line(int flag){
                                             printf("4:more");
                                         ESCRST();
                                         retry:
-                                        c = getch();
+                                        c = eisl_getch();
                                         if(c == ESC)
                                              goto escape;
                                         i = c - '1';
@@ -623,14 +612,14 @@ int read_line(int flag){
                                         display_buffer();
                                         ESCMVLEFT(j+3);
                                     }
-                                    c = getch();
+                                    c = eisl_getch();
                                     goto loop;
                         case 113:   //Esc+q
-                                    printf("\n");
+                                    putchar('\n');
                                     greeting_flag = 0;
                                     longjmp(buf,2);
                       }
-                      c = getch();
+                      c = eisl_getch();
                       switch(c){
                           case UP: goto up;
                           case DOWN: goto down;
@@ -677,7 +666,7 @@ int read_line(int flag){
                       ESCMVLEFT(j+3);
 
         }
-        c = getch();
+        c = eisl_getch();
         goto loop;
     }
    exit:

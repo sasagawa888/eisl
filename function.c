@@ -2188,7 +2188,7 @@ int f_print(int arglist){
     if(length(arglist) != 1)
         error(WRONG_ARGS, "print", arglist);
     print(arg1);
-    printf("\n");
+    putchar('\n');
     return(NIL);
 }
 
@@ -3204,7 +3204,7 @@ int f_format(int arglist){
             }
             else if(c == '%'){
                 if(GET_OPT(output_stream) != EISL_OUTSTR)
-                    fprintf(GET_PORT(output_stream),"\n");
+                    fputc('\n', GET_PORT(output_stream));
                 else{
                     sprintf(stream_str,"\n");
                     strcat(GET_NAME(output_stream),stream_str);
@@ -3217,7 +3217,7 @@ int f_format(int arglist){
             }
             else if(c == '~'){
                 if(GET_OPT(output_stream) != EISL_OUTSTR)
-                    fprintf(GET_PORT(output_stream),"~");
+                    fputc('~', GET_PORT(output_stream));
                 else{
                     sprintf(stream_str,"~");
                     strcat(GET_NAME(output_stream),stream_str);
@@ -3229,7 +3229,7 @@ int f_format(int arglist){
         }
         else if(c == '\\' && str[i+1] == '\\' && quote_flag == 0){
             if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), "%c", c);
+                fputc(c, GET_PORT(output_stream));
             else{
                 sprintf(stream_str, "%c", c);
                 strcat(GET_NAME(output_stream),stream_str);
@@ -3238,7 +3238,7 @@ int f_format(int arglist){
             i++;
             c = str[i];
             if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), "%c", c);
+                fputc(c, GET_PORT(output_stream));
             else{
                 sprintf(stream_str, "%c", c);
                 strcat(GET_NAME(output_stream),stream_str);
@@ -3249,7 +3249,7 @@ int f_format(int arglist){
             i++;
         else if(c == '\\' && quote_flag == 1){
         	if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), "%c", c);
+                fputc(c, GET_PORT(output_stream));
             else{
                 sprintf(stream_str, "%c", c);
                 strcat(GET_NAME(output_stream),stream_str);
@@ -3257,7 +3257,7 @@ int f_format(int arglist){
             i++;
             c = str[i];
             if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), "%c", c);
+                fputc(c, GET_PORT(output_stream));
             else{
                 sprintf(stream_str, "%c", c);
                 strcat(GET_NAME(output_stream),stream_str);
@@ -3274,7 +3274,7 @@ int f_format(int arglist){
                 i++;
             }
             if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), "%c", c);
+                fputc(c, GET_PORT(output_stream));
             else{
                 sprintf(stream_str, "%c", c);
                 strcat(GET_NAME(output_stream),stream_str);
@@ -3355,11 +3355,11 @@ int fprintr(FILE *p, int r, int n){
     exit:
     len = strlen(b);
     if(sign == -1){
-        fprintf(p, "%c", '-');
+        fputc('-', p);
         len++;
     }
     while(i >= 0){
-        fprintf(p, "%c", b[i]);
+        fputc(b[i], p);
         i--;
     }
     return(len);
@@ -3457,7 +3457,7 @@ int f_format_char(int arglist){
         error(NOT_CHAR, "format-char", arg2);
 
     if(GET_OPT(arg1) != EISL_OUTSTR){
-        fprintf(GET_PORT(arg1), "%s", GET_NAME(arg2));
+        fputs(GET_NAME(arg2), GET_PORT(arg1));
         charcnt++;
     }
     else{
@@ -3484,7 +3484,7 @@ int f_format_fresh_line(int arglist){
         save = output_stream;
         output_stream = arg1;
         if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream),"\n");
+            fputc('\n', GET_PORT(output_stream));
         else{
             sprintf(stream_str,"\n");
             strcat(GET_NAME(output_stream),stream_str);
@@ -3576,7 +3576,7 @@ int f_format_object(int arglist){
     if(stringp(arg2)){
         if(nullp(arg3))
             if(GET_OPT(arg1) != EISL_OUTSTR){
-                fprintf(GET_PORT(arg1),"%s",GET_NAME(arg2));
+                fputs(GET_NAME(arg2), GET_PORT(arg1));
                 charcnt = charcnt + strlen(GET_NAME(arg2));
             }
             else{
@@ -3598,7 +3598,7 @@ int f_format_object(int arglist){
     else if(charp(arg2)){
         if(nullp(arg3)){
             if(GET_OPT(arg1) != EISL_OUTSTR)
-                fprintf(GET_PORT(arg1),"%s",GET_NAME(arg2));
+                fputs(GET_NAME(arg2), GET_PORT(arg1));
             else{
                 sprintf(stream_str,"%s",GET_NAME(arg2));
                 strcat(GET_NAME(arg1),stream_str);
@@ -3641,7 +3641,7 @@ int f_format_tab(int arglist){
         n = 1;
     while(n>0){
         if(GET_OPT(arg1) != EISL_OUTSTR)
-            fprintf(GET_PORT(arg1)," ");
+            fputc(' ', GET_PORT(arg1));
         else{
             sprintf(stream_str,"%s"," ");
             strcat(GET_NAME(arg1),stream_str);
@@ -3834,7 +3834,7 @@ int f_write_byte(int arglist){
     if(!(streamp(arg2) && GET_OPT(arg2)))
         error(NOT_OUT_STREAM, "write-byte", arg2);
 
-    fprintf(GET_PORT(arg2), "%c", (char)GET_INT(arg1));
+    fputc((char)GET_INT(arg1), GET_PORT(arg2));
     return(arg1);
 }
 
@@ -4122,7 +4122,7 @@ int f_initialize_object_star(int arglist){
 //controle
 __dead int f_quit(int arglist __unused){
     if (!script_flag) {
-      printf("- good bye -\n");
+      puts("- good bye -");
     }
     greeting_flag = 0;
     longjmp(buf,2);

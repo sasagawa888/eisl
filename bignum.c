@@ -94,7 +94,7 @@ void print_bigx(int x){
 
     if(get_sign(x) == -1){
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
-        	fprintf(GET_PORT(output_stream),"-");
+        	fputc('-', GET_PORT(output_stream));
             sprintf(stream_str1,"-");
         }
         else{
@@ -824,8 +824,8 @@ int bigx_div1(int arg1, int arg2){
     }
 
     #ifdef TEST
-    printf("arg1=");print(arg1);printf("\n");
-    printf("arg2=");print(arg2);printf("\n");
+    fputs("arg1=", stdout);print(arg1);putchar('\n');
+    fputs("arg2=", stdout);print(arg2);putchar('\n');
     #endif
 
     do{ dig1 = bigx_length(arg1);
@@ -852,8 +852,8 @@ int bigx_div1(int arg1, int arg2){
         p = bigx_shift(arg2,s);
         #ifdef TEST
         printf("q= %I64d (u=%I64d/ v=%I64d)\n", q,u,v);
-        printf("ds=");print(ds);printf("\n");
-        printf("p=");print(p);printf("\n");
+        fputs("ds=", stdout);print(ds);putchar('\n');
+        fputs("p=", stdout);print(p);putchar('\n');
         printf("s=%d\n", s);
         #endif
         t = bigx_minus(arg1,ds);
@@ -871,7 +871,7 @@ int bigx_div1(int arg1, int arg2){
             q--;
         }
         #ifdef TEST
-        printf("after arg1=");print(arg1);printf("\n");
+        fputs("after arg1=", stdout);print(arg1);putchar('\n');
         #endif
 
         bigx_gbc(ds);//garbage collection

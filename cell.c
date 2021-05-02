@@ -417,82 +417,47 @@ int hash(const char *name){
 DEF_GETTER(char, FLAG, flag, NIL)
 void cellprint(int addr){
     switch(GET_FLAG(addr)){
-        case FRE:   printf("FRE "); break;
-        case USE:   printf("USE "); break;
+    case FRE:   fputs("FRE ", stdout); break;
+    case USE:   fputs("USE ", stdout); break;
     }
     switch(GET_TAG(addr)){
-        case EMP:   printf("EMP    ");
-        			break;
-        case INTN:  printf("INTN   ");
-        			printf("%d" , GET_INT(addr));
-         			break;
-        case FLTN:  printf("FLTN   ");
-        			printf("%f" , GET_FLT(addr));
-         			break;
-        case LONGN: printf("LONGN  ");
-        			printf("%lld" , GET_LONG(addr));
-                    break;
-        case BIGX:  printf("BIGX   ");
-        			printf("%d", GET_CAR(addr));
-         			break;
-        case SYM:   printf("SYM    ");
-                    printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-    				printf("%s", GET_NAME(addr));
-        			break;
-        case STR:   printf("STR    ");
-                    printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-    				printf("%s", GET_NAME(addr));
-        			break;
-        case LIS:   printf("LIS    ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case SUBR:  printf("SUBR   ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case FSUBR: printf("FSUBR  ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case FUNC:  printf("FUNC   ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case MACRO: printf("MACRO  ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case CLASS: printf("CLASS  ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-                                printf("%s", GET_NAME(addr));
-         			break;
-        case GENERIC:
-        			printf("GENE   ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
+    case EMP:   puts("EMP");
+        break;
+    case INTN:  printf("INTN   %d\n" , GET_INT(addr));
+        break;
+    case FLTN:  printf("FLTN   %f\n", GET_FLT(addr));
+        break;
+    case LONGN: printf("LONGN  %lld\n", GET_LONG(addr));
+        break;
+    case BIGX:  printf("BIGX   %d\n", GET_CAR(addr));
+        break;
+    case SYM:   printf("SYM    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+        break;
+    case STR:   printf("STR    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+        break;
+    case LIS:   printf("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case SUBR:  printf("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case FSUBR: printf("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case FUNC:  printf("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case MACRO: printf("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case CLASS: printf("CLASS  %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+        break;
+    case GENERIC:
+        printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
     }
-    printf("\n");
 }
 
 //heap dump
 void heapdump(int start, int end){
     int i;
 
-    printf("addr    F   TAG    CAR     CDR     AUX     NAME\n");
+    puts("addr    F   TAG    CAR     CDR     AUX     NAME");
     for(i=start; i<= end; i++){
         printf("%07d ", i);
         cellprint(i);

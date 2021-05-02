@@ -14,6 +14,8 @@ written by kenichi sasagawa 2016/4~
 #include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <curses.h>
+#include <term.h>
 #include "eisl.h"
 
 //------pointer----
@@ -165,11 +167,11 @@ int ed_lparen_col;
 int ed_rparen_col;
 char ed_candidate[50][30];
 int ed_candidate_pt;
-int ed_syntax_color = 1;   //default red
-int ed_builtin_color = 6;  //default cyan
-int ed_extended_color = 5; //default magenta
-int ed_string_color = 3;   //default yellow
-int ed_comment_color = 4;  //default blue
+short ed_syntax_color = COLOR_RED;
+short ed_builtin_color = COLOR_CYAN;
+short ed_extended_color = COLOR_MAGENTA;
+short ed_string_color = COLOR_YELLOW;
+short ed_comment_color = COLOR_BLUE;
 int ed_incomment = -1;     // #|...|# comment
 
 //special form token
@@ -275,7 +277,8 @@ int main(int argc, char *argv[]){
     input_stream = standard_input;
     output_stream = standard_output;
     error_stream = standard_error;
-    
+
+    setupterm((char *)0, 1, (int *)0);
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = false;
@@ -337,9 +340,9 @@ int main(int argc, char *argv[]){
     if(ret == 0)
         while(1){
             initpt();
-            printf("> "); fflush(stdout);
+            fputs("> ", stdout); fflush(stdout);
             print(eval(sread ()));
-            printf("\n"); fflush(stdout);
+            putchar('\n'); fflush(stdout);
             if(redef_flag)
                 redef_generic();
         }
@@ -400,7 +403,7 @@ int readc(void){
         //if not script-mode quit system
         if(!script_flag && input_stream == standard_input && c == EOF){
             greeting_flag = 0;
-            printf("\n");
+            putchar('\n');
             longjmp(buf,2);
         }
         else // if script-mode return(EOF)
@@ -1036,8 +1039,7 @@ int sread(void){
         case RPAREN:    error(ILLEGAL_RPAREN,"read",NIL);
         default:        break;
     }
-    fprintf(GET_PORT(error_stream),"%d", (int)stok.type);
-    fprintf(GET_PORT(error_stream),"%s", stok.buf);
+    fprintf(GET_PORT(error_stream),"%d%s", (int)stok.type, stok.buf);
     error(ILLEGAL_INPUT,"read",NIL);
     return(0);
 }
@@ -1166,7 +1168,7 @@ void print(int addr){
         case INSTANCE:
                     printobj("<instance>"); break;
         case LIS:   if(GET_OPT(output_stream) != EISL_OUTSTR)
-                        fprintf(GET_PORT(output_stream),"(");
+                        fputc('(', GET_PORT(output_stream));
                     else{
                         sprintf(stream_str,"(");
                         strcat(GET_NAME(output_stream),stream_str);
@@ -1221,7 +1223,7 @@ void printlong(int addr){
 void printlist(int addr){
     if(IS_NIL(addr)){
         if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream),")");
+            fputc(')', GET_PORT(output_stream));
         else{
             sprintf(stream_str,")");
             strcat(GET_NAME(output_stream),stream_str);
@@ -1230,14 +1232,14 @@ void printlist(int addr){
     else if((!(listp(cdr(addr)))) && (! (nullp(cdr(addr))))){
         print(car(addr));
         if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream)," . ");
+            fputs(" . ", GET_PORT(output_stream));
         else{
             sprintf(stream_str," . ");
             strcat(GET_NAME(output_stream),stream_str);
         }
         print(cdr(addr));
         if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream),")");
+            fputc(')', GET_PORT(output_stream));
         else{
             sprintf(stream_str,")");
             strcat(GET_NAME(output_stream),stream_str);
@@ -1247,7 +1249,7 @@ void printlist(int addr){
         print(GET_CAR(addr));
         if(!(IS_NIL(GET_CDR(addr)))){
             if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream)," ");
+                fputc(' ', GET_PORT(output_stream));
             else{
                 sprintf(stream_str," ");
                 strcat(GET_NAME(output_stream),stream_str);
@@ -1261,7 +1263,7 @@ void printvec(int x){
     int len,i;
 
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "#(");
+        fputs("#(", GET_PORT(output_stream));
     else{
         sprintf(stream_str, "#(");
         strcat(GET_NAME(output_stream),stream_str);
@@ -1272,7 +1274,7 @@ void printvec(int x){
         print(GET_VEC_ELT(x,i));
         if(i != len-1){
             if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), " ");
+                fputc(' ', GET_PORT(output_stream));
             else{
                 sprintf(stream_str, " ");
                 strcat(GET_NAME(output_stream),stream_str);
@@ -1280,7 +1282,7 @@ void printvec(int x){
         }
     }
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), ")");
+        fputc(')', GET_PORT(output_stream));
     else{
         sprintf(stream_str, " ");
         strcat(GET_NAME(output_stream),stream_str);
@@ -1373,9 +1375,7 @@ void printfarray(int x){
 
 void printstr(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"\"");
-        fprintf(GET_PORT(output_stream),"%s", GET_NAME(addr));
-        fprintf(GET_PORT(output_stream),"\"");
+        fprintf(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
     }
     else{
         sprintf(stream_str,"\"");
@@ -1392,14 +1392,14 @@ void printchar(int addr){
     char c;
 
     if(GET_PORT(input_stream)){
-        fprintf(GET_PORT(output_stream),"%c%c", '#', '\\');
+        fputs("#\\", GET_PORT(output_stream));
         c = GET_CHAR(addr);
         if(c == SPACE)
-            fprintf(GET_PORT(output_stream),"space");
+            fputs("space", GET_PORT(output_stream));
         else if(c == EOL)
-            fprintf(GET_PORT(output_stream),"newline");
+            fputs("newline", GET_PORT(output_stream));
         else
-            fprintf(GET_PORT(output_stream),"%s", GET_NAME(addr));
+            fputs(GET_NAME(addr), GET_PORT(output_stream));
     }
     else{
         sprintf(GET_NAME(output_stream),"%c%c", '#', '\\');
@@ -1425,7 +1425,7 @@ void printchar(int addr){
 void printsym(int addr){
 
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream), "%s", GET_NAME(addr));
+        fputs(GET_NAME(addr), GET_PORT(output_stream));
     }
     else{
         sprintf(stream_str, "%s", GET_NAME(addr));
@@ -1435,7 +1435,7 @@ void printsym(int addr){
 
 void printobj(const char *str){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "%s", str);
+        fputs(str, GET_PORT(output_stream));
     else{
         sprintf(stream_str, "%s", str);
         strcat(GET_NAME(output_stream),stream_str);
@@ -1507,7 +1507,7 @@ int eval(int addr){
         if(back_flag)
             store_backtrace(addr);
         if(stepper_flag){
-        	print(addr);printf("\n");fflush(stdout);
+        	print(addr);putchar('\n');fflush(stdout);
         	clean_stdin();
         	c = getc(stdin);
         	if(c == 'q')
@@ -1572,12 +1572,12 @@ int apply(int func, int args){
                         n = GET_TR(func);
                         SET_TR(func,n+1);
                         for(i=0; i<n; i++)
-                            printf(" ");
-                        printf("ENTERING: ");
+                            putchar(' ');
+                        fputs("ENTERING: ", stdout);
                         print(trace);
-                        printf(" ");
+                        putchar(' ');
                         print(args);
-                        printf("\n");
+                        putchar('\n');
                     }
                     push(ep);
                     ep = GET_CDR(func);
@@ -1602,12 +1602,12 @@ int apply(int func, int args){
                         n = n-1;
                         SET_TR(func,n);
                         for(i=0; i<n; i++)
-                            printf(" ");
-                        printf("EXITING:  ");
+                            putchar(' ');
+                        fputs("EXITING:  ", stdout);
                         print(trace);
-                        printf(" ");
+                        putchar(' ');
                         print(res);
-                        printf("\n");
+                        putchar('\n');
                     }
                     ep = pop();
                     return(res);
@@ -1876,7 +1876,7 @@ void bindconst(const char *name, int obj){
 
 //--------qusi quote---------------
 int quasi_transfer(int x, int n){
-    //printf("%d",n); print(x);printf("\n");
+    //printf("%d",n); print(x);putchar('\n');
 
     if(nullp(x))
         return(NIL);
@@ -1910,21 +1910,21 @@ int quasi_transfer(int x, int n){
 void debugger(){
 	int i,x;
 
-    printf("debug mode ?(help)\n");
+    puts("debug mode ?(help)");
     loop:
-    printf(">>");fflush(stdout);
+    fputs(">>", stdout);fflush(stdout);
     x = sread();
 	if(eqp(x,makesym("?"))){
-    	printf("?  help\n");
-        printf(":a abort\n");
-        printf(":b backtrace\n");
-        printf(":d dynamic environment\n");
-        printf(":e environment\n");
-        printf(":i identify examining symbol\n");
-        printf(":q quit\n");
-        printf(":r room\n");
-        printf(":s stepper ON/OFF\n");
-        printf("other S exps eval\n");
+    	puts("?  help\n"
+             ":a abort\n"
+             ":b backtrace\n"
+             ":d dynamic environment\n"
+             ":e environment\n"
+             ":i identify examining symbol\n"
+             ":q quit\n"
+             ":r room\n"
+             ":s stepper ON/OFF\n"
+             "other S exps eval");
     }
     else if(eqp(x,makesym(":A"))){
         longjmp(buf,1); 
@@ -1932,58 +1932,59 @@ void debugger(){
     else if(eqp(x,makesym(":B"))){
     	for(i=0;i<BACKSIZE;i++){
             print(backtrace[i]);
-            printf("\n");
+            putchar('\n');
     	}
     }
     else if(eqp(x,makesym(":D"))){
         #ifdef DYN
         for(i=1;i<=dp;i++){
             print(dynamic[i][1]);
-            printf(" = ");
+            fputs(" = ", stdout);
             print(dynamic[1][1]);
-            printf("\n");
+            putchar('\n');
         }
         #else
     	print(dp);
-        printf("\n");
+        putchar('\n');
         #endif
     }
     else if(eqp(x,makesym(":E"))){
     	print(ep);
-        printf("\n");
+        putchar('\n');
     }
     else if(eqp(x,makesym(":I"))){
     	print(examin_sym);
-        printf("\n");
+        putchar('\n');
     }
     else if(eqp(x,makesym(":Q"))){
     	return;
     }
     else if(eqp(x,makesym(":R"))){
-        printf("EP = %d (environment pointer)\n", ep);
-    	printf("DP = %d (dynamic pointer)\n", dp);
-        printf("HP = %d (heap pointer)\n", hp);
-        printf("SP = %d (stack pointer)\n", sp);
-        printf("FC = %d (free counter)\n", fc);
-        printf("AP = %d (arglist pointer)\n", ap);
-        printf("LP = %d (shelter pointer)\n", lp);
-        printf("GC = %d (GC switch 0=m&sGC 1=copyGC)\n", gc_sw);
-        printf("WP = %d (work area pointer)\n", wp);
-        printf("SW = %d (current work area 1or2)\n", area_sw);
+        printf("EP = %d (environment pointer)\n"
+               "DP = %d (dynamic pointer)\n"
+               "HP = %d (heap pointer)\n"
+               "SP = %d (stack pointer)\n"
+               "FC = %d (free counter)\n"
+               "AP = %d (arglist pointer)\n"
+               "LP = %d (shelter pointer)\n"
+               "GC = %d (GC switch 0=m&sGC 1=copyGC)\n"
+               "WP = %d (work area pointer)\n"
+               "SW = %d (current work area 1or2)\n",
+               ep, dp, hp, sp, fc, ap, lp, gc_sw, wp, area_sw);
     }
     else if(eqp(x,makesym(":S"))){
     	if(stepper_flag == 0){
-        	printf("stepper ON. enter 'q' to quit stepper\n");
+        	puts("stepper ON. enter 'q' to quit stepper");
             stepper_flag = 1;
         }
         else{
-        	printf("stepper OFF\n");
+        	puts("stepper OFF");
             stepper_flag = 0;
         }
     }
     else{
     	print(eval(x));
-        printf("\n");
+        putchar('\n');
     }
     goto loop;
 }

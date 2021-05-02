@@ -10,12 +10,6 @@ ifneq ($(OPSYS),macos)
 endif
 LIBSRASPI = -lm -ldl -lwiringPi
 INCS =  
-CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2
-ifeq ($(DEBUG),1)
-	CFLAGS += -O0 -g
-else
-	CFLAGS += -O3 -flto -DNDEBUG=1
-endif
 ifeq ($(OPSYS),macos)
 	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
 	CURSES_LIBS := $(shell ncurses5.4-config --libs)
@@ -26,6 +20,12 @@ else
 		CURSES_CFLAGS := $(shell ncurses6-config --cflags)
 		CURSES_LIBS := $(shell ncurses6-config --libs)
 	endif
+endif
+CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS)
+ifeq ($(DEBUG),1)
+	CFLAGS += -O0 -g
+else
+	CFLAGS += -O3 -flto -DNDEBUG=1
 endif
 CXX := c++
 CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
@@ -75,7 +75,7 @@ $(EISL): $(EISL_OBJS)
 else
 eisl2: $(EISL_OBJS) $(EISL)
 $(EISL): $(EISL_OBJS)
-	$(LD) $(LDFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) 
+	$(LD) $(LDFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) $(CURSES_LIBS)
 endif
 
 

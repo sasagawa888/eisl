@@ -333,17 +333,17 @@ extern int error_handler;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 
-__dead static inline void DEBUG(void) { printf("debug\n"); longjmp(buf,2); }
+__dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
 extern char ed_candidate[50][30];
 extern int ed_candidate_pt;
-extern int ed_syntax_color;
-extern int ed_builtin_color;
-extern int ed_extended_color;
-extern int ed_string_color;
-extern int ed_comment_color;
+extern short ed_syntax_color;
+extern short ed_builtin_color;
+extern short ed_extended_color;
+extern short ed_string_color;
+extern short ed_comment_color;
 extern int ed_incomment;
 extern char special[40][12];
 extern char syntax[60][30];
@@ -1020,8 +1020,8 @@ int f_backtrace(int arglist);
 int f_symbol_function(int arglist);
 int f_symbol_class(int arglist);
 
-void setcolor(int n);
-int getch(void);
+void setcolor(short n);
+int eisl_getch(void);
 int f_edit(int arglist);
 #ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist);

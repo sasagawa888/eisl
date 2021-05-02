@@ -14,14 +14,21 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 
 1. Gitでクローンした，又は単にダウンロードしたEasy-ISLispのディレクトリに移動する。
 1. GNU/Linuxをお使いの場合: 端末上で`sudo make install`と入力する。
-注意　ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。
+注意
+Edlisのコンパイルでcurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
+
+```
+sudo pat install libncurses-dev
+```
+
+ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。
 注：WindowsバージョンのVS-CODEをWSLで使用する場合
 
 ターミナルを起動すると、HOME以外の独自のディレクトリから起動します。
 EISLがライブラリを見つけることができない場合があります。
 この場合、コンパイラを起動するときに（import "compiler"）を使用します。 
-　　　
 
+　　　
 動作確認している環境は次の通りです。
 - Ubuntu 16.04 GCC 5.4
 - Ubuntu 18.04 GCC 7.3

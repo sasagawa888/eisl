@@ -16,6 +16,13 @@ In macOS  type "sudo make install OPSYS=macos".
 In OpenBSD  type "sudo make install OPSYS=openbsd".
 You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 
+You may get an error that the curses.h file cannot be found when compiling Edlis. 
+In this case, enter the following from the terminal
+
+```
+sudo pat install libncurses-dev
+```
+
 After version 1.4 Windows OS is not supported. Please use WSL on Windows.
 Note: When using the Windows version of VS-CODE with WSL
 When you start the terminal, it starts in its own directory other than HOME. EISL may not be able to find the library. In this case, use (import "compiler") when starting the compiler. 

@@ -63,7 +63,8 @@ EISL_OBJS = main.o \
 	error.o \
 	bignum.o \
 	compute.o \
-	edit.o
+	edit.o \
+    syn_highlight.o
 
 all: eisl edlis library/i18n.lsp
 
@@ -83,8 +84,8 @@ endif
 %.o: %.c eisl.h ffi.h term.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-edlis : edlis.o
-	$(CC) $(LDFLAGS) edlis.o -o edlis $(CURSES_LIBS)
+edlis : edlis.o syn_highlight.o
+	$(CC) $(LDFLAGS) $^ -o edlis $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 

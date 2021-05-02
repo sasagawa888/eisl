@@ -336,18 +336,14 @@ __dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
-extern char ed_candidate[50][30];
+extern const char *ed_candidate[50];
 extern int ed_candidate_pt;
-extern short ed_syntax_color;
-extern short ed_builtin_color;
-extern short ed_extended_color;
-extern short ed_string_color;
-extern short ed_comment_color;
+extern const short ed_syntax_color;
+extern const short ed_builtin_color;
+extern const short ed_extended_color;
+extern const short ed_string_color;
+extern const short ed_comment_color;
 extern int ed_incomment;
-extern char special[40][12];
-extern char syntax[60][30];
-extern char builtin[200][32];
-extern char extended[70][30];
 
 //-------error code---
 enum {
@@ -657,7 +653,6 @@ int f_list(int addr);
 int f_listp(int addr);
 int f_load(int arglist);
 int f_log(int x);
-int f_logistic(int arglist);
 int f_macroexpand_1(int arglist);
 int f_macroexpand_all(int arglist);
 int f_map_into(int arglist);
@@ -667,7 +662,6 @@ int f_mapcar(int addr);
 int f_mapcon(int x);
 int f_mapl(int x);
 int f_maplist(int addr);
-int f_mapvec(int arglist);
 int f_max(int x);
 int f_member(int addr);
 int f_min(int x);
@@ -1094,7 +1088,7 @@ double get_flt(int x);
 
 
 void display_buffer(void);
-int check_token_buffer(int col);
+enum HighlightToken check_token_buffer(int col);
 int findlparen_buffer(int col);
 int findrparen_buffer(int col);
 void emphasis_lparen_buffer(int col);
@@ -1103,7 +1097,7 @@ void reset_paren_buffer();
 void restore_paren_buffer(int col);
 char *get_fragment_buffer(int col);
 void find_candidate_buffer(int col);
-int replace_fragment_buffer(char* newstr, int col);
+int replace_fragment_buffer(const char* newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);

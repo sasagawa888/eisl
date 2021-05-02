@@ -53,76 +53,6 @@ const enum Color ed_comment_color = BLUE_ON_DFL;
 int ed_incomment = -1;     // #|...|# comment
 bool modify_flag;
 
-#define NELEM(X) (sizeof(X) / sizeof((X)[0]))
-
-//special form token
-const char *special[] = {
-     "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
-     "let", "let*", "case", "while", "progn", "defmodule", "defpublic",
-};
-//syntax token
-const char *syntax[] = {
-     "lambda", "labels", "flet", "let", "let*", "setq", "setf", "defconstant", "defun", "defmacro", "defglobal", "defdynamic",
-     "dynamic", "function", "function*", "symbol-function", "class",
-     "and", "or", "if", "cond", "while", "for", "block", "return-from",
-     "case", "case-using", "progn", "defclass", "defgeneric", "defgeneric*",
-     "defmethod", "dynamic-let", "ignore-errors", "catch", "throw",
-     "tagbody", "go", "unwind-protect", "with-standard-input",
-     "with-standard-output", "with-error-output", "with-handler",
-     "convert", "with-open-input-file", "with-open-output-file",
-     "with-open-io-file", "the", "assure", "time", "trace", "untrace", "defmodule", "defpublic",
-};
-//builtin token
-const char *builtin[] = {
-     "-", "*", "/=", "+", "<", "<=", "=", ">", ">=",
-     "abs", "append", "apply", "aref", "arithmetic-error-operands",
-     "arithmetic-error-operation", "array-dimensions", "assoc", "atan",
-     "atan2", "atanh", "atom", "basic-array-p", "basic-array*-p",
-     "basic-vector-p", "call-next-method", "car", "cdr", "ceiling",
-     "cerror", "char-index", "char/=", "char<", "char<=", "char=",
-     "char>", "char>=", "characterp", "class-of", "close",
-     "condition-continuable", "cons", "consp", "constinue-condition",
-     "cos", "cosh", "create-array", "create-list", "create-string-input-stream",
-     "create-string-output-stream", "create-string", "create-vector", "create*",
-     "div", "domain-error-object", "domain-error-expected-class",
-     "dummyp", "elt", "eq", "eql", "equal", "error-output", "error",
-     "eval", "exp", "expt", "file-length", "file-position", "finish-output",
-     "float", "floatp", "floor", "format-char", "format-fresh-line",
-     "format-float", "format-integer", "format-object", "format-tab", "format",
-     "funcall", "functionp", "garef", "gbc", "gcd", "general-array*-p",
-     "general-vector-p", "generic-function-p", "gensym", "get-internal-run-time",
-     "get-internal-real-time",
-     "get-output-stream-string", "get-universal-time", "hdmp", "identity",
-     "initialize-object*", "input-stream-p", "instancep", "integerp",
-     "internal-time-units-per-second", "isqrt", "lcm", "length", "list",
-     "listp", "load", "log", "map-into", "mapc", "mapcar", "mapcan",
-     "mapcon", "mapl", "maplist", "max", "member", "min", "mod",
-     "next-method-p", "not", "nreverse", "null", "numberp",
-     "open-input-file", "open-io-file", "open-output-file", "open-stream-p",
-     "output-stream-p", "parse-error-string", "parse-error-expected-class",
-     "parse-number", "preview-char", "prin1", "print", "probe-file",
-     "property", "quit", "quotient", "read-byte", "read-char", "read-line",
-     "read", "reciprocal", "remove-property", "reverse", "round", "set-aref",
-     "set-car", "set-cdr", "set-elt", "set-file-position", "set-garef",
-     "set-property", "signal-condition", "simple-error-format-argument",
-     "simple-error-format-string", "sin", "sinh", "slot-value", "sqrt",
-     "standard-input", "standard-output", "stream-error-stream", "streamp",
-     "stream-ready-p", "string-append", "string-index", "string/=", "string<", "string<=", "string=", "string>", "string>=", "stringp", "subclassp",
-     "subseq", "symbolp", "tan", "tanh", "truncate", "undefined-entity-name",
-     "undefined-entity-namespace", "vector", "write-byte",
-};
-
-//extended function
-const char *extended[] = {
-     "random-real", "random", "mapvec", "hadamard", "logistic",
-     "nconc", "fast-address", "macroexpand-1", "backtrace",
-     "break", "edit", "set-editor", "wiringpi-setup-gpio", "delay-microseconds",
-     "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",
-     "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
-     "pwm-write", "pull-up-dn-control", "delay", "compile-file",
-     "c-include", "c-define", "c-lang", "c-option",
-};
-
 __dead void errw(const char* msg)
 {
      endwin();
@@ -415,7 +345,7 @@ void down()
 
 void backspace_key()
 {
-     enum Token type;
+     enum HighlightToken type;
 
      if (ed_row == 0 && ed_col == 0)
           return;
@@ -440,7 +370,7 @@ void backspace_key()
      }
      else if (ed_col >= COLS) {
           type = check_token(ed_row, ed_col - 2);
-          if (type == MULTILINE_COMMENT)
+          if (type == HIGHLIGHT_MULTILINE_COMMENT)
                ed_incomment = -1;
           backspace();
           display_screen();
@@ -451,7 +381,7 @@ void backspace_key()
      }
      else {
           type = check_token(ed_row, ed_col - 2);
-          if (type == MULTILINE_COMMENT)
+          if (type == HIGHLIGHT_MULTILINE_COMMENT)
                ed_incomment = -1;
           backspace();
           display_screen();
@@ -1049,7 +979,6 @@ void display_screen()
 void display_line(int line)
 {
      int col;
-     enum Token type;
 
      if (ed_row != line ||
          (ed_row == line && ed_col <= COLS - 1))
@@ -1091,9 +1020,8 @@ void display_line(int line)
                col++;
           }
           else {
-               type = check_token(line, col);
-               switch (type) {
-                    case SYNTAX:
+              switch(check_token(line, col)) {
+                    case HIGHLIGHT_SYNTAX:
                          ESCBOLD();
                          setcolor(ed_syntax_color);
                          while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
@@ -1108,7 +1036,7 @@ void display_line(int line)
                          ESCRST();
                          ESCFORG();
                          break;
-                    case BUILTIN:
+                    case HIGHLIGHT_BUILTIN:
                          ESCBOLD();
                          setcolor(ed_builtin_color);
                          while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
@@ -1123,7 +1051,7 @@ void display_line(int line)
                          ESCRST();
                          ESCFORG();
                          break;
-                    case STRING:
+                    case HIGHLIGHT_STRING:
                          ESCBOLD();
                          setcolor(ed_string_color);
                          CHECK(addch, ed_data[line][col]);
@@ -1139,7 +1067,7 @@ void display_line(int line)
                          ESCRST();
                          ESCFORG();
                          break;
-                    case COMMENT:
+                    case HIGHLIGHT_COMMENT:
                          ESCBOLD();
                          setcolor(ed_comment_color);
                          while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
@@ -1151,7 +1079,7 @@ void display_line(int line)
                          ESCRST();
                          ESCFORG();
                          break;
-                    case EXTENDED:
+                    case HIGHLIGHT_EXTENDED:
                          ESCBOLD();
                          setcolor(ed_extended_color);
                          while (((ed_col <= COLS - 1 && col <= COLS - 1) || (ed_col >= COLS && col < COL_SIZE)) &&
@@ -1166,7 +1094,7 @@ void display_line(int line)
                          ESCRST();
                          ESCFORG();
                          break;
-                    case MULTILINE_COMMENT:
+                    case HIGHLIGHT_MULTILINE_COMMENT:
                          ESCBOLD();
                          setcolor(ed_comment_color);
                          ed_incomment = line;
@@ -1529,7 +1457,7 @@ void save_data(char* fname)
 bool is_special(int row, int col)
 {
      char str[TOKEN_MAX];
-     int pos, i;
+     int pos;
 
      pos = 0;
      while (ed_data[row][col] != ' ' &&
@@ -1542,12 +1470,7 @@ bool is_special(int row, int col)
      str[pos] = NUL;
      if (pos == 0)
           return false;
-     for (i = 0; i < (int)NELEM(special); i++) {
-          if (strcmp(special[i], str) == 0) {
-               return true;
-          }
-     }
-     return false;
+     return in_special_table(str);
 }
 
 int findnext(int row, int col)
@@ -1660,16 +1583,16 @@ void delete_selection()
      ed_data[ed_end][0] = EOL;
 }
 
-enum Token check_token(int row, int col)
+enum HighlightToken check_token(int row, int col)
 {
      char str[COLS];
-     int pos, i;
+     int pos;
 
      pos = 0;
      if (ed_data[row][col] == '"')
-          return STRING;
+          return HIGHLIGHT_STRING;
      else if (ed_data[row][col] == ';')
-          return COMMENT;
+          return HIGHLIGHT_COMMENT;
      while (ed_data[row][col] != ' ' &&
             ed_data[row][col] != '(' &&
             ed_data[row][col] != ')' &&
@@ -1681,25 +1604,10 @@ enum Token check_token(int row, int col)
      }
      str[pos] = NUL;
      if (pos == 0)
-          return NONE;
+          return HIGHLIGHT_NONE;
      else if (str[0] == '#' && str[1] == '|')
-          return MULTILINE_COMMENT; // #|...|#
-     for (i = 0; i < (int)NELEM(syntax); i++) {
-          if (strcmp(syntax[i], str) == 0) {
-               return SYNTAX;
-          }
-     }
-     for (i = 0; i < (int)NELEM(builtin); i++) {
-          if (strcmp(builtin[i], str) == 0) {
-               return BUILTIN;
-          }
-     }
-     for (i = 0; i < (int)NELEM(extended); i++) {
-          if (strcmp(extended[i], str) == 0) {
-               return EXTENDED;
-          }
-     }
-     return NONE;
+          return HIGHLIGHT_MULTILINE_COMMENT; // #|...|#
+     return maybe_match(str);
 }
 
 char *get_fragment()
@@ -1730,30 +1638,11 @@ char *get_fragment()
 void find_candidate()
 {
      char *str;
-     int i;
 
      str = get_fragment();
      ed_candidate_pt = 0;
-     if (str[0] == NUL)
-          return;
-     for (i = 0; i < (int)NELEM(syntax); i++) {
-          if (strstr(syntax[i], str) != NULL && syntax[i][0] == str[0]) {
-               ed_candidate[ed_candidate_pt] = syntax[i];
-               ed_candidate_pt++;
-          }
-     }
-     for (i = 0; i < (int)NELEM(builtin); i++) {
-          if (strstr(builtin[i], str) != NULL && builtin[i][0] == str[0]) {
-               ed_candidate[ed_candidate_pt] = builtin[i];
-               ed_candidate_pt++;
-          }
-     }
-     for (i = 0; i < (int)NELEM(extended); i++) {
-          if (strstr(extended[i], str) != NULL && extended[i][0] == str[0]) {
-               ed_candidate[ed_candidate_pt] = extended[i];
-               ed_candidate_pt++;
-          }
-     }
+     if (str[0] != NUL)
+         gather_fuzzy_matches(str, ed_candidate, &ed_candidate_pt);
 }
 
 void replace_fragment(const char *newstr)

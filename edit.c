@@ -8,7 +8,6 @@
 #include <setjmp.h>
 #include "eisl.h"
 
-
 int f_edit(int arglist){
     int arg1;
     char str[STRSIZE];
@@ -43,7 +42,7 @@ int eisl_getch(){
 
 //------------REPL read-line-----------------
 void display_buffer(){
-    int col,type;
+    int col;
 
     ESCMVLEFT(3);
     ESCCLSL();
@@ -77,8 +76,8 @@ void display_buffer(){
             col++;
          }
          else{
-            type = check_token_buffer(col);
-            if(type == 1){
+             switch (check_token_buffer(col)) {
+             case HIGHLIGHT_SYNTAX:
                 ESCBOLD();
                 setcolor(ed_syntax_color);
                 while(buffer[col][0] != ' ' &&
@@ -91,8 +90,8 @@ void display_buffer(){
                 }
                 ESCRST();
                 ESCFORG();
-                }
-                else if(type == 2){
+                break;
+             case HIGHLIGHT_BUILTIN:
                     ESCBOLD();
                     setcolor(ed_builtin_color);
                     while(buffer[col][0] != ' ' &&
@@ -105,8 +104,8 @@ void display_buffer(){
                         }
                     ESCRST();
                     ESCFORG();
-                }
-                else if(type == 3){
+                    break;
+             case HIGHLIGHT_STRING:
                     ESCBOLD();
                     setcolor(ed_string_color);
                     putchar(buffer[col][0]);
@@ -120,9 +119,8 @@ void display_buffer(){
                    }
                     ESCRST();
                     ESCFORG();
-
-               }
-               else if(type == 4){
+                    break;
+             case HIGHLIGHT_COMMENT:
                    ESCBOLD();
                    setcolor(ed_comment_color);
                    while(buffer[col][0] != NUL &&
@@ -132,8 +130,8 @@ void display_buffer(){
                    }
                    ESCRST();
                    ESCFORG();
-               }
-               else if(type == 5){
+                   break;
+             case HIGHLIGHT_EXTENDED:
                    ESCBOLD();
                    setcolor(ed_extended_color);
                    while(buffer[col][0] != ' ' &&
@@ -146,8 +144,8 @@ void display_buffer(){
                    }
                    ESCRST();
                    ESCFORG();
-               }
-               else if(type == 6){ //comment #|...|#
+                   break;
+             case HIGHLIGHT_MULTILINE_COMMENT:
                    ESCBOLD();
                    setcolor(ed_comment_color);
                    ed_incomment = line;
@@ -163,8 +161,8 @@ void display_buffer(){
                                  break;
                              }
                    }
-               }
-               else{
+                   break;
+             default:
                     while(buffer[col][0] != ' ' &&
                           buffer[col][0] != '(' &&
                           buffer[col][0] != ')' &&
@@ -173,23 +171,23 @@ void display_buffer(){
                        putchar(buffer[col][0]);
                        col++;
                     }
-               }
-                }
-        }
+             }
+         }
+    }
     ESCRST();
     return;
 }
 
 
-int check_token_buffer(int col){
+enum HighlightToken check_token_buffer(int col){
     char str[80];
-    int pos,i;
+    int pos;
 
     pos = 0;
     if(buffer[col][0] == '"')
-        return(3); //string token
+        return HIGHLIGHT_STRING;
     else if(buffer[col][0] == ';')
-       return(4); //comment token
+       return HIGHLIGHT_COMMENT;
     while(buffer[col][0] != ' ' &&
           buffer[col][0] != '(' &&
           buffer[col][0] != ')' &&
@@ -201,25 +199,10 @@ int check_token_buffer(int col){
         }
     str[pos] = NUL;
     if(str[0] == '#' && str[1] == '|')
-        return(6); // #|...|#
+        return HIGHLIGHT_MULTILINE_COMMENT; // #|...|#
     if(pos == 0)
-        return(0);
-    for(i=0; i<60; i++){
-        if(strcmp(syntax[i],str) == 0){
-            return(1); //syntax token
-        }
-    }
-    for(i=0; i<200; i++){
-        if(strcmp(builtin[i],str) == 0){
-            return(2); //builtin token
-        }
-    }
-    for(i=0; i<60; i++){
-        if(strcmp(extended[i],str) == 0){
-            return(5); //extended token
-        }
-    }
-    return(0);
+        return HIGHLIGHT_NONE;
+    return maybe_match(str);
 }
 
 
@@ -362,34 +345,14 @@ char *get_fragment_buffer(int col){
 
 void find_candidate_buffer(int col){
     char* str;
-    int i;
 
     str = get_fragment_buffer(col);
     ed_candidate_pt = 0;
-    if(str[0] == NUL)
-        return;
-    for(i=0;i<60;i++){
-        if(strstr(syntax[i],str) !=NULL && syntax[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],syntax[i]);
-                        ed_candidate_pt++;
-        }
-    }
-    for(i=0;i<200;i++){
-        if(strstr(builtin[i],str) !=NULL && builtin[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],builtin[i]);
-                        ed_candidate_pt++;
-        }
-    }
-    for(i=0;i<60;i++){
-        if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],extended[i]);
-                        ed_candidate_pt++;
-        }
-    }
-    return;
+    if(str[0] != NUL)
+        gather_fuzzy_matches(str, ed_candidate, &ed_candidate_pt);
 }
 
-int replace_fragment_buffer(char* newstr, int col){
+int replace_fragment_buffer(const char* newstr, int col){
     char* oldstr;
     int m,n;
 

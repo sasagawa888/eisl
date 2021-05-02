@@ -164,87 +164,14 @@ int stepper_flag = 0;
 
 int ed_lparen_col;
 int ed_rparen_col;
-char ed_candidate[50][30];
+const char *ed_candidate[50];
 int ed_candidate_pt;
-short ed_syntax_color = COLOR_RED;
-short ed_builtin_color = COLOR_CYAN;
-short ed_extended_color = COLOR_MAGENTA;
-short ed_string_color = COLOR_YELLOW;
-short ed_comment_color = COLOR_BLUE;
+const short ed_syntax_color = COLOR_RED;
+const short ed_builtin_color = COLOR_CYAN;
+const short ed_extended_color = COLOR_MAGENTA;
+const short ed_string_color = COLOR_YELLOW;
+const short ed_comment_color = COLOR_BLUE;
 int ed_incomment = -1;     // #|...|# comment
-
-//special form token
-char special[40][12] = {
-{"defun"},{"defmacro"},{"defglobal"},{"defdynamic"},{"defconstant"},
-{"let"},{"let*"},{"case"},{"while"},{"progn"}
-};
-//syntax token
-char syntax[60][30] = {
-{"lambda"},{"labels"},{"flet"},{"let"},{"let*"},{"setq"},{"setf"},{"defconstant"},{"defun"},{"defmacro"},{"defglobal"},{"defdynamic"},
-{"dynamic"},{"function"},{"function*"},{"symbol-function"},{"class"},
-{"and"},{"or"},{"if"},{"cond"},{"while"},{"for"},{"block"},{"return-from"},
-{"case"},{"case-using"},{"progn"},{"defclass"},{"defgeneric"},{"defgeneric*"},
-{"defmethod"},{"dynamic-let"},{"ignore-errors"},{"catch"},{"throw"},
-{"tagbody"},{"go"},{"unwind-protect"},{"with-standard-input"},
-{"with-standard-output"},{"with-error-output"},{"with-handler"},
-{"convert"},{"with-open-input-file"},{"with-open-output-file"},
-{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defpublic"},{"substitute"}
-};
-//builtin token
-char builtin[200][32] ={
-{"-"},{"*"},{"/="},{"+"},{"<"},{"<="},{"="},{">"},{">="},
-{"abs"},{"append"},{"apply"},{"aref"},{"arithmetic-error-operands"},
-{"arithmetic-error-operation"},{"array-dimensions"},{"assoc"},{"atan"},
-{"atan2"},{"atanh"},{"atom"},{"basic-array-p"},{"basic-array*-p"},
-{"basic-vector-p"},{"call-next-method"},{"car"},{"cdr"},{"ceiling"},
-{"cerror"},{"char-index"},{"char/="},{"char<"},{"char<="},{"char="},
-{"char>"},{"char>="},{"characterp"},{"class-of"},{"close"},
-{"condition-continuable"},{"cons"},{"consp"},{"continue-condition"},
-{"cos"},{"cosh"},{"create-array"},{"create-list"},{"create-string-input-stream"},
-{"create-string-output-stream"},{"create-string"},{"create-vector"},{"create*"},
-{"div"},{"domain-error-object"},{"domain-error-expected-class"},
-{"dummyp"},{"elt"},{"eq"},{"eql"},{"equal"},{"error-output"},{"error"},
-{"eval"},{"exp"},{"expt"},{"file-length"},{"file-position"},{"finish-output"},
-{"float"},{"floatp"},{"floor"},{"format-char"},{"format-fresh-line"},
-{"format-float"},{"format-integer"},{"format-object"},{"format-tab"},{"format"},
-{"funcall"},{"functionp"},{"garef"},{"gbc"},{"gcd"},{"general-array*-p"},
-{"general-vector-p"},{"generic-function-p"},{"gensym"},{"get-internal-real-time"},
-{"get-internal-run-time"},
-{"get-output-stream-string"},{"get-universal-time"},{"hdmp"},{"identity"},
-{"initialize-object*"},{"input-stream-p"},{"instancep"},{"integerp"},
-{"internal-time-units-per-second"},{"isqrt"},{"lcm"},{"length"},{"list"},
-{"listp"},{"load"},{"log"},{"map-into"},{"mapc"},{"mapcar"},{"mapcan"},
-{"mapcon"},{"mapl"},{"maplist"},{"max"},{"member"},{"min"},{"mod"},
-{"next-method-p"},{"not"},{"nreverse"},{"null"},{"numberp"},
-{"open-input-file"},{"open-io-file"},{"open-output-file"},{"open-stream-p"},
-{"output-stream-p"},{"parse-error-string"},{"parse-error-expected-class"},
-{"parse-number"},{"preview-char"},{"prin1"},{"print"},{"probe-file"},
-{"property"},{"quit"},{"quotient"},{"read-byte"},{"read-char"},{"read-line"},
-{"read"},{"reciprocal"},{"remove-property"},{"reverse"},{"round"},{"set-aref"},
-{"set-car"},{"set-cdr"},{"set-elt"},{"set-file-position"},{"set-garef"},
-{"set-property"},{"signal-condition"},{"simple-error-format-argument"},
-{"simple-error-format-string"},{"sin"},{"sinh"},{"slot-value"},{"sqrt"},
-{"standard-input"},{"standard-output"},{"stream-error-stream"},{"streamp"},
-{"stream-ready-p"},{"string-append"},{"string-index"},{"string/="},{"string<"},{"string<="},{"string="},{"string>"},{"string>="},{"stringp"},{"subclassp"},
-{"subseq"},{"symbolp"},{"tan"},{"tanh"},{"truncate"},{"undefined-entity-name"},
-{"undefined-entity-namespace"},{"vector"},{"write-byte"},{"import"}
-};
-
-//extended function
-char extended[70][30] = {
-{"random-real"},{"random"},{"heapdump"},{"instance"},
-{"nconc"},{"fast-address"},{"macroexpand-1"},{"macroexpand-all"},{"backtrace"},
-{"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
-{"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
-{"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
-{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},{"formatter"},
-{"c-include"},{"c-define"},{"c-lang"},{"c-option"},
-{"gpu-mult"},{"gpu-add"},{"gpu-sub"},{"gpu-smult"},{"gpu-emult"},{"gpu-convolute"},{"gpu-deconvolute"},{"gpu-transpose"},
-{"gpu-ident"},{"gpu-full"},{"gpu-unfull"},{"gpu-accuracy"},{"gpu-correct"},{"gpu-activate"},{"gpu-trace"},
-{"gpu-loss"},{"gpu-average"},{"gpu-sum"},{"gpu-diff"},{"gpu-dropout"},{"gpu-gradfilter"},   
-{"gpu-sgd"},{"gpu-momentum"},{"gpu-adagrad"},{"gpu-rms"},{"gpu-adam"},{"gpu-pooling"},{"gpu-unpooling"},
-{"gpu-random-select"},{"gpu-nanalizer"},{"gpu-copy"},
-};
 
 static void usage(void)
 {

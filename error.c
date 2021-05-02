@@ -7,8 +7,11 @@
 #include <setjmp.h>
 #include "eisl.h"
 
-#define ESCERRFRED  fprintf(stderr,"\33[31m")
-#define ESCERRFORG  fprintf(stderr,"\33[39m")
+static int outc(int c) {
+    return fputc(c, stderr);
+}
+static inline void ESCERRFRED() { tputs(tparm(set_a_foreground, COLOR_RED), 1, outc); }
+static inline void ESCERRFORG() { tputs(exit_attribute_mode, 1, outc); }
 
 //-------error------
 void error(int errnum, const char *fun, int arg){
@@ -504,14 +507,14 @@ int signal_condition(int x, int y){
     args = cdr(assoc(makesym("b"),GET_CDR(x)));
     fun = cdr(assoc(makesym("c"),GET_CDR(x)));
     output_stream = error_stream;
-    ESCERRFRED;
-    fprintf(stderr,"%s",GET_NAME(str)); 
+    ESCERRFRED();
+    fputs(GET_NAME(str), stderr); 
     print(fun);
-    fprintf(stderr,"%s"," ");
+    fputc(' ', stderr);
     print(args);
-    fprintf(stderr,"\n");
+    fputc('\n', stderr);
     fflush(stderr);
-    ESCERRFORG;
+    ESCERRFORG();
     input_stream = standard_input;
     output_stream = standard_output;
     debugger();

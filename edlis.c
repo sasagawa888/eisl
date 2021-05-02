@@ -1051,9 +1051,8 @@ void display_line(int line)
      int col;
      enum Token type;
 
-     if (ed_row != line)
-          col = 0;
-     else if (ed_row == line && ed_col <= COLS - 1)
+     if (ed_row != line ||
+         (ed_row == line && ed_col <= COLS - 1))
           col = 0;
      else
           col = COLS;

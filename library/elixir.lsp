@@ -19,32 +19,29 @@
 (defmacro defpattern (name :rest body)
     (let* ((arg (gensym))
            (vars (extract-variables body nil nil))
-           (body1 (expand-body arg body)))
-        `(defun ,name (,arg) 
-            (let ,vars ,body1))))
+           (body1 (expand-body arg body)) )
+        `(defun ,name (:rest ,arg) (let ,vars
+                                  ,body1))))
 
 (defmacro match (x :rest body)
     (let ((vars (extract-variables body nil nil))
-          (body1 (expand-body x body)))
-        `(let ,vars ,body1)))
-        
+          (body1 (expand-body x body)) )
+       `(let ,vars ,body1)))
+       
 ;; anyway return T
 (defmacro setq* (var val)
-    `(progn (setq ,var ,val) t))
+    `(progn (setq ,var ,val) t) )
 
 ;;;
 ;;; macro for Elixir like pipe operator
 ;;;
 
 
-(defmacro pipe (:rest expr)
-    (pipe-macro (cdr expr) (car expr)) )
-
 
 ;;; functions for macros
 
 (defmodule elixir
-    (defun expand-body (x body)
+    (defpublic expand-body (x body)
         (cons 'cond (expand-body1 x body)) )
 
     (defun expand-body1 (x body)
@@ -53,10 +50,14 @@
 
     ;; e.g. _a _x  return T
     (defun variablep (x)
-        (and (symbolp x) (char= (car (convert (convert x <string>) <list>)) #\_)) )
+        (and (symbolp x) (not (anoymous x)) (char= (car (convert (convert x <string>) <list>)) #\_)) )
+
+    ;; e.g. _ return T 
+    (defun anoymous (x)
+        (eq x '_))
 
     ;; (((+ _a 2)...) ((* _b 3)...)) return ((_a nil)(_b nil))
-    (defun extract-variables (body var ans)
+    (defpublic extract-variables (body var ans)
         (cond ((and (null body) (null var)) (reverse ans))
               ((null var) (extract-variables (cdr body) (extract-variable (car (car body))) ans))
               ((not (member (car var) ans))
@@ -83,15 +84,17 @@
 
     (defun expand-match1 (x y env ans)
         (cond ((null y) (cons env ans))
-              ((numberp y) (cons env (cons (list '= x y) ans)))
-              ((characterp y) (cons env (cons (list 'char= x y) ans)))
-              ((stringp y) (cons env (cons (list 'string= x y) ans)))
+              ((numberp y) (cons env (cons (list '= x y) (cons (list 'numberp x) ans))))
+              ((characterp y) (cons env (cons (list 'char= x y) (cons (list 'characterp x) ans))))
+              ((stringp y) (cons env (cons (list 'string= x y) (cons (list 'stringp x) ans))))
               ((general-vector-p y) (cons env (cons (list 'equal x y) ans)))
               ((general-array*-p y) (cons env (cons (list 'equal x y) ans)))
+              ((anoymous y) (cons env (cons t ans)))
               ((and (variablep y) (not (member y env)))
                (cons (cons y env) (cons (list 'setq* y x) ans)))
               ((and (variablep y) (member y env)) (cons env (cons (list 'equal x y) ans)))
               ((and (symbolp y) (eq y 'else)) (cons env (cons t ans)))
+              ((and (symbolp y) (eq y 'empty)) (cons env (cons (list 'null x) ans)))
               ((symbolp y) (cons env (cons (list 'eq x (list 'quote y)) ans)))
               ((and (consp y) (eq (car y) ':rest))
                (cons env (cons (list 'setq* (car (cdr y)) x) ans)))
@@ -110,12 +113,18 @@
                   (expand-match1 (list 'cdr x) (cdr y) (car res) (cdr res))))))
 
     ;;for pipe macro
-    (defun pipe-macro (pipe func)
-        (cond ((null pipe) func)
-              ((eq (car pipe) '|>) (pipe-macro (cdr pipe) func))
-              (t (pipe-macro (cdr pipe) (pipe-macro1 (car pipe) func)))))
+    (defpublic pipe-macro (pipe1 func)
+        (cond ((null pipe1) func)
+              ((eq (car pipe1) '|>) (pipe-macro (cdr pipe1) func))
+              (t (pipe-macro (cdr pipe1) (pipe-macro1 (car pipe1) func)))))
 
     (defun pipe-macro1 (fun funcs)
         (cons (car fun) (cons funcs (cdr fun))))
 
 )
+
+;; pipe macro depend on function pipe-macro
+;; so, pipe-macro must be defined befor pip macro
+(defmacro pipe (:rest expr)
+    (pipe-macro (cdr expr) (car expr)) )
+

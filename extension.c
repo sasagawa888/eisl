@@ -340,8 +340,10 @@ int f_macroexpand_all(int arglist){
     arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS,"macroexpand-all",arglist);
-
-    return(macroexpand_all(arg1));
+    if(listp(arg1) && car(arg1) == makesym("DEFMACRO"))
+        return(arg1);
+    else
+        return(macroexpand_all(arg1));
 }
 
 
@@ -351,11 +353,11 @@ int macroexpand_all(int sexp){
         return(NIL);
     else if(atomp(sexp))
         return(sexp);
-    else if(listp(sexp) && macrop(car(sexp)))
-        return(macroexpand_1(car(sexp),cdr(sexp)));
-    else if(listp(sexp) && symbolp(car(sexp)))
+    else if(listp(sexp) && car(sexp) == makesym("QUOTE"))
         return(sexp);
-    else if(listp(car(sexp)))
+    else if(listp(sexp) && macrop(car(sexp)))
+        return(macroexpand_all(macroexpand_1(car(sexp),cdr(sexp))));
+    else if(listp(sexp))
         return(cons(macroexpand_all(car(sexp)),macroexpand_all(cdr(sexp))));
     
     return(NIL);

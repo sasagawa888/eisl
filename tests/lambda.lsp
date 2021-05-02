@@ -1,8 +1,14 @@
+(import "elixir")
+
+
 (defun cadr (x)
   (cdr (car x)))
 
 (defun caar (x) 
   (car (car x)))
+
+(defun caddr (x)
+  (car (cdr (cdr x))))
 
 (defun repl ()
   (format "Lambda calculus interpreter")
@@ -21,355 +27,98 @@
 
 (defun read* ()
   (format (standard-output) "~%L> ")
-  (parse (convert (read-line) <list>)))
-
-
-(defun parse (x)
-  (let ((1st (elt x 0))
-        (2nd (elt x 1))
-        (3rd (elt x 2)))
-      (cond ((and (char= 1st #\^) (char= 3rd #\.))) 
-      
+  (parse (convert (read-line) <list>) nil))
 
 (defun print* (x)
+  (if (eq (car x) '^)
+      (print1* x)
+      (print2* x)))
+
+(defun print1* (x)
   (format (standard-output) "^")
-  (format-object (standard-output) (car x))
+  (format-object (standard-output) (cadr x))
   (format (standard-output) ".")
-  (print* (cadr x)))
+  (print* (caddr x)))
 
+(defun print2* (x)
+  (print1* (car x))
+  (print1* (cadr x)))
+
+
+  ;; for test
+  (defun test (x)
+    (pipe (parse x nil) |> (combinator) |> (reduce)))
+ 
 #|
-I will port Lambda interpreter from Elixir
-
-defmodule Lambda do
-  @moduledoc """
-  This code is Lambda interpreter
-  """
-
-  @doc """
-  Invoke interpreter
-
-  ## Examples
-
-      #iex> Lambda.repl()
-      #for halt >end
-
-  """
-  def lambda() do
-    IO.puts("Lambda calculus interpreter")
-    IO.puts("To quit enter 'end'")
-    repl()
-  end
-
-  def repl() do
-    try do
-      read() |> combinator |> reduce |> print
-      repl()
-    catch
-      x ->
-        IO.write(x)
-
-        if x != "end" do
-          repl()
-        end
-    end
-  end
-
-  def read() do
-    IO.gets("\n>") |> String.to_charlist() |> parse([])
-  end
-
-  # for test
-  def test(x) do
-    parse(x, []) |> combinator |> reduce
-  end
-
-  # terminal
-  def parse('\n', res) do
-    res
-  end
-
-  def parse('end\n', _) do
-    :end
-  end
-
-  # ^ arg .
-  def parse([94, arg, 46 | ls], _) do
-    arg1 = String.to_atom(<<arg>>)
-    {body, ls1} = parse1(ls, [])
-    parse(ls1, {arg1, body})
-  end
-
-  # e.g. ^xyz.z shorthand
-  def parse([94, arg | ls], _) do
-    arg1 = String.to_atom(<<arg>>)
-    {arg1, parse([94 | ls], [])}
-  end
-
-  def parse([l | ls], res) when l >= 65 and l <= 122 do
-    # IO.inspect binding()
-    cond do
-      res == [] -> parse(ls, String.to_atom(<<l>>))
-      true -> parse(ls, [res] ++ [String.to_atom(<<l>>)])
-    end
-  end
-
-  # ( )
-  def parse([40 | ls], res) do
-    # IO.inspect binding()
-    {exp, ls1} = parse1([40 | ls], [])
-
-    cond do
-      res == [] -> parse(ls1, exp)
-      true -> parse(ls1, [res] ++ [exp])
-    end
-  end
-
-  # space skip
-  def parse([32 | ls], res) do
-    parse(ls, res)
-  end
-
-  def parse(_, _) do
-    # IO.inspect binding()
-    throw("syntax error")
-  end
-
-  # e.g. ^x.y
-  def parse1([94, arg, 46 | ls], res) do
-    # IO.inspect binding()
-    arg1 = String.to_atom(<<arg>>)
-    {body, ls1} = parse1(ls, res)
-    {{arg1, body}, ls1}
-  end
-
-  # e.g. ^xyz.z shorthand
-  def parse1([94, arg | ls], _) do
-    # IO.inspect binding()
-    arg1 = String.to_atom(<<arg>>)
-    {body, ls1} = parse1([94 | ls], [])
-    {{arg1, body}, ls1}
-  end
-
-  def parse1([l | ls], res) when l >= 65 and l <= 122 do
-    # IO.inspect binding()
-    cond do
-      res == [] -> parse1(ls, String.to_atom(<<l>>))
-      true -> parse1(ls, [res] ++ [String.to_atom(<<l>>)])
-    end
-  end
-
-  def parse1([40 | ls], res) do
-    # IO.inspect binding()
-    {exp, [41 | ls1]} = parse1(ls, [])
-
-    cond do
-      res == [] -> parse1(ls1, exp)
-      true -> parse1(ls1, [res] ++ [exp])
-    end
-  end
-
-  def parse1([41 | ls], res) do
-    # IO.inspect binding()
-    {res, [41 | ls]}
-  end
-
-  # space skip
-  def parse1([32 | ls], res) do
-    parse1(ls, res)
-  end
-
-  def parse1('\n', res) do
-    # IO.inspect binding()
-    {res, '\n'}
-  end
-
-  def parse1(_, _) do
-    # IO.inspect binding()
-    throw("syntax error1")
-  end
-
-  def print(x) when is_atom(x) do
-    IO.write(x)
-  end
-
-  def print([x, y]) when is_tuple(x) and is_tuple(y) do
-    # IO.inspect binding()
-    IO.write("(")
-    print1(x)
-    print1(y)
-    IO.write(")")
-  end
-
-  def print({x, y}) do
-    IO.write("^")
-    IO.write(x)
-    IO.write(".")
-    print1(y)
-  end
-
-  def print([x, y]) do
-    # IO.inspect binding()
-    print(x)
-    print1(y)
-  end
-
-  def print(e) do
-    IO.write(e)
-  end
-
-  def print1({x, y}) do
-    # IO.inspect binding()
-    IO.write("(^")
-    IO.write(x)
-    IO.write(".")
-    print1(y)
-    IO.write(")")
-  end
-
-  def print1([x, y]) when is_tuple(x) and is_tuple(y) do
-    # IO.inspect binding()
-    IO.write("(")
-    print1(x)
-    print1(y)
-    IO.write(")")
-  end
-
-  def print1([x, y]) do
-    IO.write("(")
-    print(x)
-    print1(y)
-    IO.write(")")
-  end
-
-  def print1(e) do
-    # IO.inspect binding()
-    IO.write(e)
-  end
-
-  def newline() do
-    IO.write('\n')
-  end
-
-  def is_lambda({_, _}) do
-    true
-  end
-
-  def is_lambda(_) do
-    false
-  end
-
-  def combinator(:I) do
-    {:x, :x}
-  end
-
-  def combinator(:K) do
-    {:x, {:y, :x}}
-  end
-
-  def combinator(:S) do
-    {:x, {:y, {:z, [[:x, :z], [:y, :z]]}}}
-  end
-
-  def combinator(:Y) do
-    {:y, [{:x, [:y, [:x, :x]]}, {:x, [:y, [:x, :x]]}]}
-  end
-
-  def combinator([x, y]) do
-    [combinator(x)] ++ [combinator(y)]
-  end
-
-  def combinator(x) do
-    x
-  end
-
-  def reduce(:end) do
-    throw("end")
-  end
-
-  def reduce(x) when is_atom(x) do
-    x
-  end
-
-  def reduce([x, y]) when is_atom(x) do
-    [x, y]
-  end
-
-  def reduce([x, y]) when is_tuple(x) do
-    print([x, y])
-    newline()
-    reduce(beta(x, y))
-  end
-
-  def reduce([x, y]) when is_list(x) do
-    print([x, y])
-    newline()
-
-    if cant_reduce(x) do
-      [x, y]
-    else
-      reduce([reduce(x), y])
-    end
-  end
-
-  def reduce({a, body}) do
-    print({a, body})
-    newline()
-    exp = reduce(body)
-    {a, exp}
-  end
-
-  def cant_reduce(x) when is_atom(x) do
-    true
-  end
-
-  def cant_reduce([x, _]) when is_atom(x) do
-    true
-  end
-
-  def cant_reduce(_) do
-    false
-  end
-
-  def beta({arg, body}, y) do
-    # IO.inspect binding()
-    reduce(replace(arg, body, y))
-  end
-
-  def replace(x, x, z) do
-    z
-  end
-
-  def replace(x, [x, ys], z) do
-    [z, replace(x, ys, z)]
-  end
-
-  def replace(x, [x, ys], z) when is_atom(x) do
-    [x, replace(x, ys, z)]
-  end
-
-  def replace(x, [y, ys], z) when is_atom(y) do
-    [y, replace(x, ys, z)]
-  end
-
-  def replace(x, [y, ys], z) when is_list(y) do
-    [replace(x, y, z), replace(x, ys, z)]
-  end
-
-  def replace(x, [y, ys], z) when is_tuple(y) do
-    [replace(x, y, z), replace(x, ys, z)]
-  end
-
-  def replace(_, [y, ys], _) do
-    reduce([y, ys])
-  end
-
-  def replace(x, {arg, body}, z) do
-    {arg, replace(x, body, z)}
-  end
-
-  def replace(_, y, _) do
-    y
-  end
-end
-
+parse 
+ ^x.x -> (^ x x)
+ (^x.x)(^y.y) -> ((^ x x)(^ y y))
+
+input char-list  respons
+return (body . rest-list)
 |#
+
+(defpattern parse
+  ((empty _res) _res)
+  (((#\e #\n #\d) _res) 'end)
+  (((#\^ _arg #\. :rest _ls)) (let* ((arg1 (convert _arg <symbol>))
+                                     (dt (parse _ls nil))
+                                     (body (car dt))
+                                     (ls1 (cdr dt)))
+                                  (parse ls1 (cons '^ (list arg1 body)))))
+  ;; e.g. ^xyz.z shorthand
+  (((#\^ _arg :rest _ls) _) (let* ((arg1 (convert _arg <symbol>)))
+                               (cons '^ (list arg1 (parse (cons #\^ _ls) nil)))))
+  ;; ( )
+  (((#\( :rest ls) _res) (let* ((dt (parse (cons #\( ls) nil))
+                                (exp (car dt))
+                                (ls1 (cdr dt)))
+                            (cond ((null _res) (parse ls1 exp))
+                                  (t (parse ls1 (append (list _res) (list exp)))))))
+  ;; space skip
+  (((#\space :rest ls) _res) (parse ls res))
+  (((_body :rest _ls)) (cons (convert _body <symbol>) _ls))
+  (else (throw 'exit "syntax error")))
+
+
+(defun newline ()
+  (format (standard-output) "~%"))
+
+(defun is-lambda (x)
+  (and (consp x) (eq (car) '^)))
+
+(defpattern combinator
+  ((I) `(^ x x))
+  ((K) '(^ x (^ y x)))
+  ((S) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
+  ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
+  (((_x _y))  (append (combinator _x) (combinator _y)))
+  ((_x) _x))
+
+
+(defun reduce (x)
+    (cond ((eq x 'end) (throw 'exit "end"))
+          ((atom x) x)
+          ((and (consp x) (is_lambda (car x)))
+           (print* x) (newline) (reduce (beta x)))
+          ((and (consp x) (consp (car x)))
+           (print* x) (newline) (if (cant-reduce x) x (reduce (list (reduce (car x)) (cadr x)))))
+          ((is_lambda x) (newline) 
+                         (list '^ (car x) (reduce (cadr x))))))
+
+
+(defun cant-reduce (x)
+  (cond ((atom x) t)
+        ((and (consp x) (atomp (car x))) t)
+        (t nil)))
+
+
+(defpattern replace 
+    ((_x (_x _ys) _z) (list _z (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (cond ((atom _x) (list _x (replace _x _ys _z)))
+                            ((atom _y) (list _y (replace _x _ys _z)))
+                            ((is-lambda _y) (list (replace _x _y _z) (replace _x _ys _z)))
+                            ((consp y) (list (replace _x _y _z (replace _x _ys _z))))
+                            (t (reduce (list _y _ys)))))
+    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z)))
+    ((_ _y _) y))

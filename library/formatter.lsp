@@ -112,6 +112,16 @@
               ((short-comment-p x) (pp-string x) (newline lm))
               ((long-comment-p x) (pp-string x) (newline 0))
               (t (pp-string x))))
+
+    ;; write each syntax but 
+    ;; if it is quote,backquote,untuote,unquote-splicing 
+    ;; pp-quote or pp-unquote-splicing
+    (defun pp-special (x fun lm)
+        (cond ((quote-p x) (pp-quote x lm))
+              ((backquote-p x) (pp-quote x lm))
+              ((unquote-p x) (pp-quote x lm))
+              ((unquote-splicing-p x) (pp-quote x lm))
+              (t (funcall fun x lm))))
     
     ;; write symbol number string object
     (defun pp-string (x)
@@ -120,7 +130,7 @@
     ;; syntax cond
     (defun pp-cond (x lm)
         (pp-string "(cond ")
-        (pp-cond1 (cdr x) (+ lm 6))
+        (pp-special (cdr x) #'pp-cond1 (+ lm 6))
         (cond (otomo (pp-string ")"))
               (t (setq otomo t) (pp-string " )"))))
     
@@ -236,7 +246,7 @@
            (pp-string "(")
            (pp1 (elt x 0) lm1)
            (pp-string " ")
-           (pp-let1 (elt x 1) lm1)
+           (pp-special (elt x 1) #'pp-let1 lm1)
            (newline lm2)
            (pp-body (cdr (cdr x)) lm2)
            (cond (otomo (pp-string ")"))
@@ -249,7 +259,7 @@
            (pp-string "(")
            (pp1 (elt x 0) lm1)
            (pp-string " ")
-           (pp-let1 (elt x 1) lm1)
+           (pp-special (elt x 1) #'pp-let1 lm1)
            (newline lm2)
            (pp-body (cdr (cdr x)) lm2)
            (cond (otomo (pp-string ")"))

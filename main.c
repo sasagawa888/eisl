@@ -1626,11 +1626,15 @@ int apply(int func, int args){
                     body = cdr(GET_CAR(macrofunc));
                     bindarg(varlist,args);
                     while(!(IS_NIL(body))){
+                        shelterpush(body);
                         res = eval(car(body));
+                        shelterpop();
                         body = cdr(body);
                     }
                     unbind();
+                    shelterpush(res);
                     res = eval(res);
+                    shelterpop();
                     return(res);
                     }
 

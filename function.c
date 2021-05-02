@@ -524,10 +524,10 @@ int f_quotient(int arglist){
         if(zerop(arg))
             error(DIV_ZERO, "quotient", arg);
         
-        if(fabs(GET_FLT(res)) >= DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0 )
-            error(FLT_OVERF, "quotient" , arg);
-        if((val=fabs(GET_FLT(res))) != 0.0 && val < DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX )
-            error(FLT_UNDERF, "quotient" , arg);
+        if(fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0 )
+            error(FLT_OVERF, "quotient" , list2(arg,res));
+        if((val=fabs(GET_FLT(exact_to_inexact(res)))) != 0.0 && val <= 1.0 && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX )
+            error(FLT_UNDERF, "quotient" , list2(arg,res));
 
         arglist = cdr(arglist);
         res = quotient(res,arg);
@@ -2487,12 +2487,13 @@ int f_char_index(int arglist){
         error(NOT_CHAR, "char-index", arg1);
     if(!stringp(arg2))
         error(NOT_STR, "char-index", arg2);
-    if(n == 3 && !integerp(arg3))
-        error(NOT_INT, "char-index", arg3);
-    if(n == 3 && GET_INT(arg3) < 0)
+    if(n == 3 && negativep(arg3))
         error(NOT_POSITIVE, "char-index", arg3);
+    if(n == 3 && !integerp(arg3))
+        error(WRONG_ARGS, "char-index", arg3);
     if(n == 3 && GET_INT(arg3) >= string_length(arg2))
-        error(ILLEGAL_ARGS, "char-index", arg3);
+        error(WRONG_ARGS, "char-index", arg3);
+    
 
     if(string_length(arg2) == 0)
         return(NIL);
@@ -2774,22 +2775,27 @@ int f_string_index(int arglist){
         error(NOT_STR,"string-index",arg1);
     if(!stringp(arg2))
         error(NOT_STR,"string-index",arg2);
-    if(n==3 && !integerp(arg3))
-        error(NOT_INT, "string-index",arg3);
-    if(n == 3 && GET_INT(arg3) < 0)
+    if(n == 3 && negativep(arg3))
         error(NOT_POSITIVE, "string-index", arg3);
+    if(n==3 && !integerp(arg3))
+        error(WRONG_ARGS, "string-index",arg3);
     if(n == 3 && GET_INT(arg3) >= string_length(arg2))
         error(ILLEGAL_ARGS, "string-index", arg3);
+
+    if(string_length(arg1) == 0 && string_length(arg2) == 0) // (string-index "" "")
+        return(makeint(0));
 
     if(string_length(arg2) == 0)
         return(NIL);
 
-    len1=strlen(GET_NAME(arg1));
-    len2=strlen(GET_NAME(arg2));
+    len1 = strlen(GET_NAME(arg1));
+    len2 = strlen(GET_NAME(arg2));
     if(n==3)
         j = GET_INT(arg3);
     else
         j = 0;
+
+    
 
     for(i=j;i<len2;i++)
         for(k=0;k<len1+1;k++)

@@ -25,16 +25,11 @@ static const char BS = '\b';
 static const char DEL = 127;
 
 #ifndef FULLSCREEN
-static const char LEFT = 'D';
-static const char UP = 'A';
-static const char RIGHT = 'C';
-static const char DOWN = 'B';
-static const char INSERT = '2';
-static const char DELETE = '3';
-static const char PAGEUP = '5';
-static const char PAGEDN = '6';
-static const char HOME = 'H';
-static const char END = 'F';
+static const char ARROW_PREFIX = '[';
+extern char ed_key_down;
+extern char ed_key_left;
+extern char ed_key_right;
+extern char ed_key_up;
 #endif
 
 #ifdef FULLSCREEN

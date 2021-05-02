@@ -576,17 +576,18 @@ int read_line(int flag){
                                         ESCMVLEFT(j+3);
                                     }
                                     c = eisl_getch();
-                                    goto loop;
+                                     goto loop;
                         case 113:   //Esc+q
                                     putchar('\n');
                                     greeting_flag = false;
                                     longjmp(buf,2);
-                      }
-                      c = eisl_getch();
-                      switch(c){
-                          case UP: goto up;
-                          case DOWN: goto down;
-                          case LEFT:
+                    case ARROW_PREFIX:
+                            c = eisl_getch();
+                            if (c == ed_key_up) {
+                                goto up;
+                            } else if (c == ed_key_down) {
+                                goto down;
+                            } else if (c == ed_key_left) {
                                 left:
                                 if(j <= 0)
                                      break;
@@ -595,9 +596,7 @@ int read_line(int flag){
                                  emphasis_lparen_buffer(j);
                                  emphasis_rparen_buffer(j);
                                  ESCMVLEFT(j+3);
-                                 break;
-
-                          case RIGHT:
+                            } else if (c == ed_key_right) {
                                  right:
                                  if(buffer[j][0] == 0)
                                     break;
@@ -606,9 +605,8 @@ int read_line(int flag){
                                  emphasis_lparen_buffer(j);
                                  emphasis_rparen_buffer(j);
                                  ESCMVLEFT(j+3);
-                                 break;
-
-                      }
+                            }
+                    }
                       break;
 
             default:  for(k=255;k>j;k--)

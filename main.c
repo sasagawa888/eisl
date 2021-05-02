@@ -172,6 +172,10 @@ const short ed_extended_color = COLOR_MAGENTA;
 const short ed_string_color = COLOR_YELLOW;
 const short ed_comment_color = COLOR_BLUE;
 int ed_incomment = -1;     // #|...|# comment
+char ed_key_down;
+char ed_key_left;
+char ed_key_right;
+char ed_key_up;
 
 static void usage(void)
 {
@@ -205,6 +209,10 @@ int main(int argc, char *argv[]){
     error_stream = standard_error;
 
     setupterm((char *)0, 1, (int *)0);
+    ed_key_down = key_down[2];
+    ed_key_left = key_left[2];
+    ed_key_right = key_right[2];
+    ed_key_up = key_up[2];
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = false;

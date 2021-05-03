@@ -1,5 +1,5 @@
 (import "elixir")
-
+(import "test")
 
 (defun cadr (x)
   (cdr (car x)))
@@ -45,9 +45,17 @@
   (print1* (cadr x)))
 
 
+(defun to-upper (x)
+  (mapcar (lambda (y)
+                (let ((code (convert y <integer>)))
+                    (if (and (>= code 97) (<= code 122))
+                        (convert (- code 32) <character>)
+                        y)))
+          x))
+
   ;; for test
-  (defun test (x)
-    (pipe (parse x nil) |> (combinator) |> (reduce)))
+  (defun parse* (x)
+    (pipe x |> (convert <list>) |> (to-upper) |> (parse nil) ))
  
 #|
 parse 
@@ -60,6 +68,8 @@ return (body . rest-list)
 
 (defpattern parse
   ((empty _res) _res)
+  ;; space skip
+  (((#\space :rest _ls) _res) (parse _ls _res))
   (((#\e #\n #\d) _res) 'end)
   (((#\^ _arg #\. :rest _ls)) (let* ((arg1 (convert _arg <symbol>))
                                      (dt (parse _ls nil))
@@ -75,8 +85,7 @@ return (body . rest-list)
                                 (ls1 (cdr dt)))
                             (cond ((null _res) (parse ls1 exp))
                                   (t (parse ls1 (append (list _res) (list exp)))))))
-  ;; space skip
-  (((#\space :rest _ls) _res) (parse _ls _res))
+
   (((_body :rest _ls)) (cons (convert _body <symbol>) _ls))
   (else (throw 'exit "syntax error")))
 
@@ -120,3 +129,9 @@ return (body . rest-list)
     ((_x (_y _ys) _z)  (reduce (list _y _ys)))
     ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z))) 
     ((_ _y _) y))
+
+;;--------------tests------------------------
+
+
+(test (parse* "^x.x") (^ x x))
+(test (parse* "^x. x") (^ x x))

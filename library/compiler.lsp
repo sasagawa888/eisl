@@ -426,7 +426,7 @@ double tarai(double x, double y, double z){
     
     (defun compile (x)
         (cond ((eq (car x) 'defun) (comp-defun x))
-              ((eq (car x) 'defpattern) (comp-defun (macroexpand-1 x)))
+              ((eq (car x) 'defpattern) (comp-defun (macroexpand-all x)))
               ((eq (car x) 'defglobal) (comp-defglobal x))
               ((eq (car x) 'defdynamic) (comp-defdynamic x))
               ((eq (car x) 'defconstant) (comp-defconstant x))
@@ -1302,7 +1302,7 @@ double tarai(double x, double y, double z){
            (format stream "res = ")
            (format-object stream (conv-name (car x)) nil)
            (format stream "(")
-           (comp-funcall-clang-left-to-right1 stream 1 n)
+           (comp-funcall-clang-left-to-right1 stream 1 n (length (cdr x)))
            (format stream ");~%")
            (cond ((not (null (cdr x)))
                   (for ((ls (cdr x) (cdr ls))
@@ -1315,7 +1315,7 @@ double tarai(double x, double y, double z){
            (format stream ";res;})"))
     )
 
-    (defun comp-funcall-clang-left-to-right1 (stream m n)
+    (defun comp-funcall-clang-left-to-right1 (stream m n o)
         (cond ((>= n 0)
                (cond ((> m n) )
                      ((= m n)
@@ -1328,7 +1328,7 @@ double tarai(double x, double y, double z){
                       (comp-funcall-clang-left-to-right1 stream (+ m 1) n))))
               (t 
                (cond ((>= m (abs n))
-                      (comp-funcall-clang-left-to-right2 stream m (abs n)))
+                      (comp-funcall-clang-left-to-right2 stream m o))
                      (t 
                        (format stream "arg")
                        (format-integer stream m 10)
@@ -1337,13 +1337,13 @@ double tarai(double x, double y, double z){
     
     (defun comp-funcall-clang-left-to-right2 (stream m n)
         (cond ((> m n) 
-               (format stream "NIL")
+               (format stream "NIL"))
               (t 
                (format stream "Fcons(arg")
                (format-integer stream m 10)
                (format stream ",")
                (comp-funcall-clang-left-to-right2 stream (+ m 1) n)
-               (format stream ")")))))
+               (format stream ")"))))
 
 
 

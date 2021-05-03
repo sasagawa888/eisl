@@ -13,11 +13,14 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 ## 導入方法
 
 1. Gitでクローンした，又は単にダウンロードしたEasy-ISLispのディレクトリに移動する。
-1. GNU/Linuxをお使いの場合: 端末上で`sudo make install`と入力する。
+- GNU/Linuxをお使いの場合: 端末上で`sudo make install`と入力する。
+- macOSをお使いの場合： 端末上で `sudo make install OPSYS=macos`と入力する。
+- OpenBSDをお使いの場合：  端末上で `sudo make install OPSYS=openbsd`と入力する。
+- お望みなら "PREFIX=$HOME" (or wherever) という引数を与えることもできます。
 注意
 Edlisのコンパイルでcurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
 
-```
+```sh
 sudo apt install libncurses-dev
 ```
 

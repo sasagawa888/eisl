@@ -11,15 +11,15 @@ YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw
 
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
-In Linux  type "sudo make install".
-In macOS  type "sudo make install OPSYS=macos".
-In OpenBSD  type "sudo make install OPSYS=openbsd".
-You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
+- In Linux  type "sudo make install".
+- In macOS  type "sudo make install OPSYS=macos".
+- In OpenBSD  type "sudo make install OPSYS=openbsd".
+- You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 
 You may get an error that the curses.h file cannot be found when compiling Edlis. 
 In this case, enter the following from the terminal
 
-```
+```sh
 sudo apt install libncurses-dev
 ```
 

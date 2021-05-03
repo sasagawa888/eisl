@@ -1325,7 +1325,7 @@ double tarai(double x, double y, double z){
                       (format stream "arg")
                       (format-integer stream m 10)
                       (format stream ",")
-                      (comp-funcall-clang-left-to-right1 stream (+ m 1) n))))
+                      (comp-funcall-clang-left-to-right1 stream (+ m 1) n o))))
               (t 
                (cond ((>= m (abs n))
                       (comp-funcall-clang-left-to-right2 stream m o))
@@ -1333,7 +1333,7 @@ double tarai(double x, double y, double z){
                        (format stream "arg")
                        (format-integer stream m 10)
                        (format stream ",")
-                       (comp-funcall-clang-left-to-right1 stream (+ m 1) n))))))
+                       (comp-funcall-clang-left-to-right1 stream (+ m 1) n o))))))
     
     (defun comp-funcall-clang-left-to-right2 (stream m n)
         (cond ((> m n) 
@@ -1344,7 +1344,6 @@ double tarai(double x, double y, double z){
                (format stream ",")
                (comp-funcall-clang-left-to-right2 stream (+ m 1) n)
                (format stream ")"))))
-
 
 
     (defun comp-funcall-clang (stream x env args tail name global test clos)

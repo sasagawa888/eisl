@@ -13,7 +13,7 @@
     (((log _x) _x)  `(/ 1 ,_x))
     (((log _a _x) _x)   `(/ 1 (* ,_x (log ,_a))))
     (((* _k (_f _x)) _x)(when (numberp _k)) (let ((d (derive `(,_f ,_x) `,_x)))
-                            `(* ,_k ,d)))
+                                              `(* ,_k ,d)))
     (((+ (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
                                  `(+ ,d1 ,d2)))

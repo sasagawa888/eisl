@@ -46,7 +46,10 @@
 
     (defun expand-body1 (x body)
         (mapcar (lambda (y) 
-                   (cons (expand-match x (car y)) (cdr y))) body) )
+                    (if (eq (car (elt y 1)) 'when)
+                        (cons (expand-match x (car y) (cdr (car (cdr y)))) (cdr (cdr y)))
+                        (cons (expand-match x (car y) nil) (cdr y))))
+                         body)) 
 
     ;; e.g. _a _x  return T
     (defun variablep (x)
@@ -73,15 +76,16 @@
               ((variablep (car x)) (cons (list (car x) nil) (extract-variable (cdr x))))
               (t (extract-variable (cdr x)))))
 
+    ;; x and y are argument of patten match, z is when syntax
+    (defun expand-match (x y z)
+        (cond ((null y) (list 'null x))
+              ((consp y)
+               (cons 'and (append (reverse (cdr (expand-match1 x y nil (cons (list 'consp x) nil)))) z)))
+              (t (cons 'and (append (reverse (cdr (expand-match1 x y nil nil))) z)))))
+
     ;; e.g. x and (+ _a _b)  ans = (and (eq (car x) '+) (setq _a (car (cdr x)) (setq _b (car (cdr (cdr x))))
     ;; env = (_a _b)
     ;; return (env . ans)
-    (defun expand-match (x y)
-        (cond ((null y) (list 'null x))
-              ((consp y)
-               (cons 'and (reverse (cdr (expand-match1 x y nil (cons (list 'consp x) nil))))))
-              (t (cons 'and (reverse (cdr (expand-match1 x y nil nil)))))))
-
     (defun expand-match1 (x y env ans)
         (cond ((null y) (cons env ans))
               ((numberp y) (cons env (cons (list '= x y) (cons (list 'numberp x) ans))))

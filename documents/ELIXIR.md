@@ -110,7 +110,7 @@ else symbol matches every argument
 when
 Add constraints for each element.
 e.g. _k must be an integer 
-(((+ 1 _k)) (when (integerp _k)) ...)
+(((+ 1 _k _l)) (when (integerp _k)(floatp _l)) ...)
 see example/derive.lsp
 
 e.g.    

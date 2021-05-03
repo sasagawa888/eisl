@@ -59,7 +59,7 @@ return (body . rest-list)
 |#
 
 (defpattern parse
-  ;((empty _res) _res)
+  ((empty _res) _res)
   (((#\e #\n #\d) _res) 'end)
   (((#\^ _arg #\. :rest _ls)) (let* ((arg1 (convert _arg <symbol>))
                                      (dt (parse _ls nil))
@@ -92,8 +92,8 @@ return (body . rest-list)
   ((K) '(^ x (^ y x)))
   ((S) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
   ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
-  (((_x _y))  (append (combinator _x) (combinator _y))) )
-  ;((_x) _x))
+  (((_x _y))  (append (combinator _x) (combinator _y))) 
+  ((_x) _x))
 
 
 (defpattern reduce
@@ -107,8 +107,8 @@ return (body . rest-list)
      
 (defpattern cant-reduce
     ((_x) (when _x) t)
-    (((_x _)) (when (atom _x)) t))
-    ;(else t))
+    (((_x _)) (when (atom _x)) t)
+    (else t))
   
 
 (defpattern replace 
@@ -118,5 +118,5 @@ return (body . rest-list)
     ((_x (_y _ys) _z) (when (is_lambda _y)) (list (replace _x _y _z) (replace _x _ys _z)))
     ((_x (_y _ys) _z) (when (consp _y)) (list (replace _x _y _z (replace _x _ys _z))))
     ((_x (_y _ys) _z)  (reduce (list _y _ys)))
-    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z))) )
-    ;((_ _y _) y))
+    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z))) 
+    ((_ _y _) y))

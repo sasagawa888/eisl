@@ -46,7 +46,7 @@
 
     (defun expand-body1 (x body)
         (mapcar (lambda (y) 
-                    (if (eq (car (elt y 1)) 'when)
+                    (if (and (>= (length y) 2) (consp (elt y 1)) (eq (car (elt y 1)) 'when))
                         (cons (expand-match x (car y) (cdr (car (cdr y)))) (cdr (cdr y)))
                         (cons (expand-match x (car y) nil) (cdr y))))
                          body)) 

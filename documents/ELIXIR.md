@@ -92,6 +92,8 @@ e.g.
 
 case
   (pattern sexp1 sexp2 ... sexpn)
+  or
+  (parren when sexp1 sexp3 ... sexpn)
 
 pattern
 
@@ -104,6 +106,12 @@ anoymous matches every argument.
 :rest or &rest match rest parameter
 
 else symbol matches every argument 
+
+when
+Add constraints for each element.
+e.g. _k must be an integer 
+(((+ 1 _k)) (when (integerp _k)) ...)
+see example/derive.lsp
 
 e.g.    
 (defun uoo (x y)

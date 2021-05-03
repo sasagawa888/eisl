@@ -59,7 +59,7 @@ return (body . rest-list)
 |#
 
 (defpattern parse
-  ((empty _res) _res)
+  ;((empty _res) _res)
   (((#\e #\n #\d) _res) 'end)
   (((#\^ _arg #\. :rest _ls)) (let* ((arg1 (convert _arg <symbol>))
                                      (dt (parse _ls nil))
@@ -70,13 +70,13 @@ return (body . rest-list)
   (((#\^ _arg :rest _ls) _) (let* ((arg1 (convert _arg <symbol>)))
                                (cons '^ (list arg1 (parse (cons #\^ _ls) nil)))))
   ;; ( )
-  (((#\( :rest ls) _res) (let* ((dt (parse (cons #\( ls) nil))
+  (((#\( :rest _ls) _res) (let* ((dt (parse (cons #\( _ls) nil))
                                 (exp (car dt))
                                 (ls1 (cdr dt)))
                             (cond ((null _res) (parse ls1 exp))
                                   (t (parse ls1 (append (list _res) (list exp)))))))
   ;; space skip
-  (((#\space :rest ls) _res) (parse ls res))
+  (((#\space :rest _ls) _res) (parse _ls _res))
   (((_body :rest _ls)) (cons (convert _body <symbol>) _ls))
   (else (throw 'exit "syntax error")))
 
@@ -92,33 +92,31 @@ return (body . rest-list)
   ((K) '(^ x (^ y x)))
   ((S) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
   ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
-  (((_x _y))  (append (combinator _x) (combinator _y)))
-  ((_x) _x))
+  (((_x _y))  (append (combinator _x) (combinator _y))) )
+  ;((_x) _x))
 
 
-(defun reduce (x)
-    (cond ((eq x 'end) (throw 'exit "end"))
-          ((atom x) x)
-          ((and (consp x) (is_lambda (car x)))
-           (print* x) (newline) (reduce (beta x)))
-          ((and (consp x) (consp (car x)))
-           (print* x) (newline) (if (cant-reduce x) x (reduce (list (reduce (car x)) (cadr x)))))
-          ((is_lambda x) (newline) 
-                         (list '^ (car x) (reduce (cadr x))))))
-
-
-(defun cant-reduce (x)
-  (cond ((atom x) t)
-        ((and (consp x) (atomp (car x))) t)
-        (t nil)))
-
+(defpattern reduce
+    ((end) (throw 'exit "end"))
+    ((_x) (when _x) _x)
+    (((_x _y)) (when (is_lambda _x)) (print `(,_x ,_y)) (newline) (reduce (beta `(,_x ,_y))))
+    (((_x _y)) (when (consp _x)(cant-reduce `(,_x ,_y))) (print `(,_x ,_y)) `(,_x ,_y))
+    (((_x _y)) (reduce (list (reduce _x) (reduce _y))))
+    (((_x _y)) (when (is_lambda ``(,_x ,_y))) (newline) (list '^ _x (reduce _y))))
+    
+     
+(defpattern cant-reduce
+    ((_x) (when _x) t)
+    (((_x _)) (when (atom _x)) t))
+    ;(else t))
+  
 
 (defpattern replace 
     ((_x (_x _ys) _z) (list _z (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (cond ((atom _x) (list _x (replace _x _ys _z)))
-                            ((atom _y) (list _y (replace _x _ys _z)))
-                            ((is-lambda _y) (list (replace _x _y _z) (replace _x _ys _z)))
-                            ((consp y) (list (replace _x _y _z (replace _x _ys _z))))
-                            (t (reduce (list _y _ys)))))
-    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z)))
-    ((_ _y _) y))
+    ((_x (_y _ys) _z) (when (atom _x)) (list _x (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (when (atom _x)) (list _y (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (when (is_lambda _y)) (list (replace _x _y _z) (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (when (consp _y)) (list (replace _x _y _z (replace _x _ys _z))))
+    ((_x (_y _ys) _z)  (reduce (list _y _ys)))
+    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z))) )
+    ;((_ _y _) y))

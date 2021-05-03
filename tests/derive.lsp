@@ -11,7 +11,7 @@
     (((exp _x) _x)  `(exp ,_x))
     (((^ _a _x) _x) `(* (^ ,_a ,_x) (log ,_a)))
     (((log _x) _x)  `(/ 1 ,_x))
-    (((log _a _x)   `(/ 1 (* ,_x (log ,_a)))))
+    (((log _a _x) _x)   `(/ 1 (* ,_x (log ,_a))))
     (((+ (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
                                  `(+ ,d1 ,d2)))

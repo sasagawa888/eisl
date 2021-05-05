@@ -15,7 +15,7 @@ static inline void ESCERRFORG() { tputs(exit_attribute_mode, 1, outc); }
 
 //-------error------
 void error(int errnum, const char *fun, int arg){
-    int initargs,c,i;
+    int initargs,i;
     char fun1[SYMSIZE];
 
     //resolve unwind-protect
@@ -29,12 +29,10 @@ void error(int errnum, const char *fun, int arg){
     }
 
     //fold to upper letter.
-    strcpy(fun1,fun);
-    i = 0;
-    while((c=fun1[i]) != NUL){
-        fun1[i] = toupper(c);
-        i++;
+    for (i = 0; i < (int)strlen(fun); i++) {
+        fun1[i] = toupper(fun[i]);
     }
+    fun1[i] = '\0';
 
     switch(errnum){ 
         case DIV_ZERO:  initargs = list6(makesym("format-string"),makestr("division by zero at "),
@@ -477,17 +475,14 @@ y = continuable string/NIL
 */
 int signal_condition(int x, int y){
     int str,args,fun;
-    char *pname;
     
     if(y == NIL)
         SET_OPT(x,NOTCONT);
     else{
         SET_OPT(x,CONTINUABLE);
-        pname = (char *)malloc(strlen(GET_NAME(y)+1));
-        if(pname == NULL)
+        heap[x].name = strdup(GET_NAME(y));
+        if(heap[x].name == NULL)
             error(MALLOC_OVERF,"signal-condition",NIL);
-        heap[x].name = pname;
-        strcpy(heap[x].name,GET_NAME(y));
     }
     if(ignore_flag)
         longjmp(ignore_buf,1);

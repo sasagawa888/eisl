@@ -11,6 +11,8 @@
 #include <dlfcn.h>
 #include "eisl.h"
 
+#define DYLIB_MAX 256
+
 static void* hmod;
 
 void initsubr(void){
@@ -221,7 +223,7 @@ typedef int (*initfunc7)(int, fn7);
 typedef int (*initfunc8)(int, fn8);
 
 void dynamic_link(int x){
-    char str[256] = {"./"};
+    char str[DYLIB_MAX] = {"./"};
     initfunc0 init_f0;
     initfunc1 init_f1;
     initfunc2 init_f2;
@@ -234,10 +236,12 @@ void dynamic_link(int x){
     initdeftfunc_t init_deftfunc;
     voidfunc_t init_tfunctions, init_declare;
 
-    if(strstr(GET_NAME(x),"/"))
-        strcpy(str,GET_NAME(x));
-    else
-        strcat(str,GET_NAME(x));
+    if(strstr(GET_NAME(x),"/")) {
+        strncpy(str, GET_NAME(x), DYLIB_MAX - 1);
+    } else {
+        strncat(str, GET_NAME(x), DYLIB_MAX - 3);
+    }
+    str[DYLIB_MAX - 1] = '\0';
 
     hmod = dlopen(str, RTLD_LAZY);
 
@@ -1743,13 +1747,11 @@ int remove_prop(int x,int lis){
 
 int f_gensym(int arglist __unused){
     int res;
-    char str1[SYMSIZE],str2[10];
+    char str[SYMSIZE];
 
-    strcpy(str1,"#:G");
-    snprintf(str2, 10, "%d",genint);
+    snprintf(str, SYMSIZE, "#:G%d",genint);
     genint++;
-    strcat(str1,str2);
-    res = makesym(str1);
+    res = makesym(str);
     return(res);
 }
 
@@ -2109,7 +2111,8 @@ int f_load(int arglist){
 
     //object file ex "foo.o"
     n = strlen(GET_NAME(arg1));
-    strcpy(str,GET_NAME(arg1));
+    strncpy(str, GET_NAME(arg1), STRSIZE - 1);
+    str[STRSIZE - 1] = '\0';
     if(str[n-1] == 'o' && str[n-2] == '.'){
         dynamic_link(arg1);
         return(T);
@@ -2154,10 +2157,7 @@ int f_import(int arglist){
     if(!stringp(arg1))
         error(NOT_SYM,"import",arg1);
 
-    str[0] = NUL;
-    strcpy(str,"library/");
-    strcat(str,GET_NAME(arg1));
-    strcat(str,".o");
+    snprintf(str, SYMSIZE, "library/%s.o", GET_NAME(arg1));
 
     fp = fopen(str,"r");
     if(fp != NULL){
@@ -2165,10 +2165,7 @@ int f_import(int arglist){
         f_load(list1(makestr(str)));
         return(T);
     }
-    str[0] = NUL;
-    strcpy(str,"library/");
-    strcat(str,GET_NAME(arg1));
-    strcat(str,".lsp");
+    snprintf(str, SYMSIZE, "library/%s.lsp", GET_NAME(arg1));
 
     fp = fopen(str,"r");
     if(fp != NULL){
@@ -2744,9 +2741,9 @@ int f_string_append(int arglist){
     arglist = cdr(arglist);
     if(nullp(arglist))
         return(arg1);
-    str1[0] = NUL;
     str2[0] = NUL;
-    strcpy(str1,GET_NAME(arg1));
+    strncpy(str1, GET_NAME(arg1), STRSIZE - 1);
+    str1[STRSIZE - 1] = '\0';
     while(!nullp(arglist)){
         int arg2;
         
@@ -2755,9 +2752,12 @@ int f_string_append(int arglist){
             error(NOT_STR, "string-append", arg2);
         arglist = cdr(arglist);
 
-        strcpy(str2,GET_NAME(arg2));
-        strcat(str1,str2);
-        strcpy(str2,str1);
+        strncpy(str2, GET_NAME(arg2), STRSIZE - 1);
+        str2[STRSIZE - 1] = '\0';
+        strncat(str1, str2, STRSIZE - strlen(str1) - 1);
+        str1[STRSIZE - 1] = '\0';
+        strncpy(str2, str1, STRSIZE - 1);
+        str2[STRSIZE - 1] = '\0';
     }
     return(makestr(str2));
 }
@@ -3150,7 +3150,8 @@ int f_format(int arglist){
 
     save = output_stream;
     output_stream = arg1;
-    strcpy(str,GET_NAME(arg2));
+    strncpy(str, GET_NAME(arg2), STRSIZE - 1);
+    str[STRSIZE - 1] = '\0';
     i = 0;
     c = str[i];
     while(c != 0){
@@ -3214,7 +3215,9 @@ int f_format(int arglist){
                 else{
                     stream_str[0] = '\n';
                     stream_str[1] = '\0';
-                    strcat(GET_NAME(output_stream),stream_str);
+                    char *str = GET_NAME(output_stream);
+                    strncat(str, stream_str, STRSIZE - strlen(str) - 1);
+                    str[STRSIZE - 1] = '\0';
                 }
                 start_flag = false;
                 charcnt = 0;
@@ -3228,7 +3231,9 @@ int f_format(int arglist){
                 else{
                     stream_str[0] = '~';
                     stream_str[1] = '\0';
-                    strcat(GET_NAME(output_stream),stream_str);
+                    char *str = GET_NAME(output_stream);
+                    strncat(str, stream_str, STRSIZE - strlen(str) - 1);
+                    str[STRSIZE - 1] = '\0';
                 }
                 start_flag = false;
                 charcnt++;
@@ -3241,7 +3246,9 @@ int f_format(int arglist){
             else{
                 stream_str[0] = c;
                 stream_str[1] = '\0';
-                strcat(GET_NAME(output_stream),stream_str);
+                char *str = GET_NAME(output_stream);
+                strncat(str, stream_str, STRSIZE - strlen(str) - 1);
+                str[STRSIZE - 1] = '\0';
             }
             i++;
             i++;
@@ -3944,7 +3951,8 @@ int f_parse_number(int arglist){
     if(strcmp(GET_NAME(arg1),"") == 0)
         error(CANT_PARSE,"parse-number",arg1);
 
-    strcpy(stok.buf,GET_NAME(arg1));
+    strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
+    stok.buf[BUFSIZE - 1] = '\0';
 
     if(bignumtoken(stok.buf))
             return(makebigx(stok.buf));
@@ -3974,7 +3982,6 @@ int f_parse_number(int arglist){
 
 int f_create_string_input_stream(int arglist){
     int arg1,res;
-    char *str;
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -3983,11 +3990,9 @@ int f_create_string_input_stream(int arglist){
         error(NOT_STR, "create-string-input-stream", arg1);
 
     res = makestream(stdin,EISL_INSTR);
-    str = (char *)malloc(strlen(GET_NAME(arg1))+1);
-    if(str == NULL)
+    heap[res].name = strdup(GET_NAME(arg1));
+    if(heap[res].name == NULL)
         error(MALLOC_OVERF,"create-string-input-stream",NIL);
-    heap[res].name = str;
-    strcpy(heap[res].name,GET_NAME(arg1));
     return(res);
 }
 
@@ -4003,7 +4008,7 @@ int f_create_string_output_stream(int arglist){
     if(str == NULL)
         error(MALLOC_OVERF,"create-string-output-stream",NIL);
     heap[res].name = str;
-    strcpy(heap[res].name,"");
+    heap[res].name[0] = '\0';
     return(res);
 }
 

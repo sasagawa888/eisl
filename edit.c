@@ -21,8 +21,7 @@ int f_edit(int arglist){
 	arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "edit", arglist);
-    strcpy(str,"./edlis ");
-    strcat(str,GET_NAME(arg1));
+    snprintf(str, STRSIZE, "./edlis %s", GET_NAME(arg1));
 	if(system(str) == -1)
 		error(SYSTEM_ERR, "edit", arg1);
     f_load(arglist);
@@ -235,7 +234,7 @@ int findrparen_buffer(int col){
 
     col++;
     nest = 0;
-    for(limit=0;limit<256;limit++)
+    for(limit=0;limit<=COL_SIZE;limit++)
         if(buffer[limit][0] == 0)
             break;
 
@@ -386,15 +385,15 @@ int replace_fragment_buffer(const char* newstr, int col){
 void backspace_buffer(int col){
     int i;
 
-    for(i=col;i<255;i++)
+    for(i=col;i<COL_SIZE;i++)
         buffer[i][0] = buffer[i+1][0];
-    buffer[255][0] = 0;
+    buffer[COL_SIZE][0] = 0;
 }
 
 void insertcol_buffer(int col){
     int i;
 
-    for(i=255;i>col;i--)
+    for(i=COL_SIZE;i>col;i--)
         buffer[i][0] = buffer[i-1][0];
 }
 
@@ -431,14 +430,14 @@ int read_line(int flag){
 
     if(buffer[pos][0] == 0){
         for(i=9;i>0;i--)
-            for(j=0;j<256;j++)
+            for(j=0;j<=COL_SIZE;j++)
                 buffer[j][i] = buffer[j][i-1];
 
         limit++;
         if(limit >= 10)
             limit = 9;
 
-       for(j=0;j<256;j++)
+       for(j=0;j<=COL_SIZE;j++)
             buffer[j][0] = 0;
 
         rl_line = 0;
@@ -449,7 +448,7 @@ int read_line(int flag){
         loop:
         switch(c){
         case CTRL('M'):
-            case EOL: for(j=0;j<256;j++)
+            case EOL: for(j=0;j<=COL_SIZE;j++)
                           if(buffer[j][0] == 0) {
                               buffer[j][0] = c;
                               break;
@@ -462,7 +461,7 @@ int read_line(int flag){
             case DEL: if(j <= 0)
                           break;
                       j--;
-                      for(k=j;k<255;k++)
+                      for(k=j;k<COL_SIZE;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
                       ESCMVLEFT(j+3);
@@ -472,7 +471,7 @@ int read_line(int flag){
                           ed_lparen_col--;
                       break;
         case CTRL('D'):
-                      for(k=j;k<255;k++)
+                      for(k=j;k<COL_SIZE;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
                       ESCMVLEFT(j+3);
@@ -482,8 +481,8 @@ int read_line(int flag){
                           ed_lparen_col--;
                       break;
         case CTRL('K'):
-                      memset(buffer1,NUL,255);
-                      for(k=j;k<255;k++){
+                      memset(buffer1,NUL,COL_SIZE);
+                      for(k=j;k<COL_SIZE;k++){
                           buffer1[k-j] = buffer[k][0];
                           buffer[k][0] = NUL;
                       }
@@ -491,10 +490,10 @@ int read_line(int flag){
                       ESCMVLEFT(j+3);
                       break;
         case CTRL('Y'):
-                      for(k=0;k<255;k++)
+                      for(k=0;k<COL_SIZE;k++)
                           buffer[k][0] = buffer1[k];
                       
-                      for(k=0;k<255;k++){
+                      for(k=0;k<COL_SIZE;k++){
                           if(buffer[k][0] == NUL) 
                             break;
                       }
@@ -508,7 +507,7 @@ int read_line(int flag){
                       ESCMVLEFT(j+3);
                       break;
         case CTRL('E'):
-                      for(k=0;k<255;k++){
+                      for(k=0;k<COL_SIZE;k++){
                           if(buffer[k][0] == NUL) 
                             break;
                       }
@@ -529,10 +528,10 @@ int read_line(int flag){
                          break;
                       if(rl_line >= limit-1)
                          rl_line = limit-2;
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           buffer[j][0] = buffer[j][rl_line+1];
 
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           if(buffer[j][0] == EOL)
                               break;
                       rl_line++;
@@ -545,9 +544,9 @@ int read_line(int flag){
                       down:
                       if(rl_line <= 1)
                          rl_line = 1;
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           buffer[j][0] = buffer[j][rl_line-1];
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           if(buffer[j][0] == EOL)
                               break;
                       rl_line--;
@@ -625,7 +624,7 @@ int read_line(int flag){
                     }
                       break;
 
-            default:  for(k=255;k>j;k--)
+            default:  for(k=COL_SIZE;k>j;k--)
                           buffer[k][0] = buffer[k-1][0];
                       buffer[j++][0] = c;
                       display_buffer();

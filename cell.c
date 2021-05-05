@@ -1104,7 +1104,7 @@ int convert(int arg1, int arg2){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                sprintf(str,"%d",GET_INT(arg1));
+                snprintf(str, STRSIZE, "%d",GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1131,9 +1131,9 @@ int convert(int arg1, int arg2){
               
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    sprintf(str, "%0.16g", x);
+                    snprintf(str, STRSIZE, "%0.16g", x);
                 else
-                    sprintf(str, "%0.1f", x);
+                    snprintf(str, STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;

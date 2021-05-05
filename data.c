@@ -1322,22 +1322,24 @@ void resort_method(int func){
     while(!nullp(methods)){
         x = car(methods);
         temp = NIL;
+        bool high_priority_found = false;
         while(!nullp(res)){
             if(high_priority_p(x,car(res))){
                 res = happend(hreverse(temp),hcons(x,res));
-                goto exit;
+                high_priority_found = true;
+                break;
             }
             else{
                 temp = hcons(car(res),temp);
                 res = cdr(res);
             }
         }
-        res = hreverse(cons(x,temp));   
-        exit:
+        if (!high_priority_found) {
+            res = hreverse(cons(x,temp));
+        }
         methods = cdr(methods);
     }
     SET_CDR(func,res);
-    return;
 }
 
 void redef_generic(void){

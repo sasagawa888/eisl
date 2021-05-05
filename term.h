@@ -1,4 +1,13 @@
-/* Terminal-handling definitions common to the interpreter and edlis */
+/*
+ * Terminal-handling definitions common to the interpreter and edlis.
+ * This also includes some presentation-related functions, e.g. syntax highlighting.
+ *
+ * There are two relevant library layers here:
+ * 1. Curses is high-level, but only appropriate for fullscreen programs
+ * 2. Terminfo is lower-level (curses is built on it)
+ * 
+ * I only considered standardized libraries (e.g. X/Open).
+ */
 
 #ifndef TERM_H
 #define TERM_H
@@ -33,8 +42,7 @@ extern char ed_key_up;
 #endif
 
 #ifdef FULLSCREEN
-/* This code is only used in edlis.
- * It uses the higher-level curses interface. */
+/* Edlis uses the higher-level curses interface */
 
 __dead void errw(const char* msg);
 #define CHECK(fn, ...) { \
@@ -43,7 +51,6 @@ __dead void errw(const char* msg);
         } \
 }
 
-// ESCMVR, ESCMVL, ESCMVU, ESCMVD, ESCSCR, ESCMVLN, ESCF<color> removed
 static inline void ESCHOME(void) { CHECK(move, 0, 0); }
 static inline void ESCTOP(void) { CHECK(move, 1, 0); }
 static inline void ESCCLS(void) { CHECK(clear); }
@@ -86,7 +93,7 @@ static inline void ESCREV(void) { CHECK(attron, A_REVERSE); }
 static inline void ESCRST(void) { CHECK(attrset, A_NORMAL); }
 static inline void ESCBOLD(void) { CHECK(attron, A_BOLD); }
 #else
-/* This uses the lower-level terminfo interface because we don't want to clear the screen */
+/* The REPL uses the lower-level terminfo interface because we don't want to clear the screen */
 
 static inline void ESCCLSL(void) { putp(clr_eol); }
 static inline void ESCMVLEFT(int x) { putp(tparm(column_address, x - 1)); }

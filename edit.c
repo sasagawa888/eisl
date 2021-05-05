@@ -8,6 +8,12 @@
 #include <setjmp.h>
 #include "eisl.h"
 
+#ifndef CTRL
+#define CTRL(X) ((X) & 0x1F)
+#endif
+
+static const int COL_SIZE = 255;
+
 int f_edit(int arglist){
     int arg1;
     char str[STRSIZE];
@@ -392,6 +398,28 @@ void insertcol_buffer(int col){
         buffer[i][0] = buffer[i-1][0];
 }
 
+static void right(int *j)
+{
+    if(buffer[*j][0] == 0)
+        return;
+    (*j) = (*j) + 1;
+    restore_paren_buffer(*j);
+    emphasis_lparen_buffer(*j);
+    emphasis_rparen_buffer(*j);
+    ESCMVLEFT((*j)+3);
+}
+
+static void left(int *j)
+{
+    if((*j) <= 0)
+        return;
+    (*j) = (*j) - 1;
+    restore_paren_buffer(*j);
+    emphasis_lparen_buffer(*j);
+    emphasis_rparen_buffer(*j);
+    ESCMVLEFT((*j)+3);
+}
+
 int read_line(int flag){
     int c,i,j,k,rl_line;
     static int pos=0,limit=0;
@@ -420,7 +448,7 @@ int read_line(int flag){
         c = eisl_getch();
         loop:
         switch(c){
-            case 13:  //ctrl+M
+        case CTRL('M'):
             case EOL: for(j=0;j<256;j++)
                           if(buffer[j][0] == 0) {
                               buffer[j][0] = c;
@@ -430,7 +458,7 @@ int read_line(int flag){
                       putchar(c);
                       pos = 0;
                       goto exit;
-            case 8:   //ctrl+H  
+        case CTRL('H'):
             case DEL: if(j <= 0)
                           break;
                       j--;
@@ -443,7 +471,7 @@ int read_line(int flag){
                       if(ed_lparen_col > i)
                           ed_lparen_col--;
                       break;
-            case 4:   //ctrl+D  
+        case CTRL('D'):
                       for(k=j;k<255;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
@@ -453,7 +481,7 @@ int read_line(int flag){
                       if(ed_lparen_col > i)
                           ed_lparen_col--;
                       break;
-            case 11:   //ctrl+K  
+        case CTRL('K'):
                       memset(buffer1,NUL,255);
                       for(k=j;k<255;k++){
                           buffer1[k-j] = buffer[k][0];
@@ -462,7 +490,7 @@ int read_line(int flag){
                       display_buffer();
                       ESCMVLEFT(j+3);
                       break;
-            case 25:   //ctrl+Y  
+        case CTRL('Y'):
                       for(k=0;k<255;k++)
                           buffer[k][0] = buffer1[k];
                       
@@ -475,11 +503,11 @@ int read_line(int flag){
                       j = k;
                       ESCMVLEFT(k+3);
                       break;
-            case 1:   //ctrl+A  
+        case CTRL('A'):
                       j = 0;
                       ESCMVLEFT(j+3);
                       break;
-            case 5:   //ctrl+E 
+        case CTRL('E'):
                       for(k=0;k<255;k++){
                           if(buffer[k][0] == NUL) 
                             break;
@@ -489,11 +517,13 @@ int read_line(int flag){
                       j = k;
                       ESCMVLEFT(k+3);
                       break;
-            case 6:   //ctrl+F
-                      goto right;
-            case 2:   //ctrl+B
-                      goto left;
-            case 16:  //ctrl+P
+        case CTRL('F'):
+            right(&j);
+            break;
+        case CTRL('B'):
+            left(&j);
+            break;
+        case CTRL('P'):
                       up:
                       if(limit <= 1)
                          break;
@@ -511,7 +541,7 @@ int read_line(int flag){
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
-            case 14:  //ctrl+N
+        case CTRL('N'):
                       down:
                       if(rl_line <= 1)
                          rl_line = 1;
@@ -577,7 +607,7 @@ int read_line(int flag){
                                     }
                                     c = eisl_getch();
                                      goto loop;
-                        case 113:   //Esc+q
+                        case 'q':   //Esc+q
                                     putchar('\n');
                                     greeting_flag = false;
                                     longjmp(buf,2);
@@ -588,23 +618,9 @@ int read_line(int flag){
                             } else if (c == ed_key_down) {
                                 goto down;
                             } else if (c == ed_key_left) {
-                                left:
-                                if(j <= 0)
-                                     break;
-                                 j--;
-                                 restore_paren_buffer(j);
-                                 emphasis_lparen_buffer(j);
-                                 emphasis_rparen_buffer(j);
-                                 ESCMVLEFT(j+3);
+                                left(&j);
                             } else if (c == ed_key_right) {
-                                 right:
-                                 if(buffer[j][0] == 0)
-                                    break;
-                                 j++;
-                                 restore_paren_buffer(j);
-                                 emphasis_lparen_buffer(j);
-                                 emphasis_rparen_buffer(j);
-                                 ESCMVLEFT(j+3);
+                                right(&j);
                             }
                     }
                       break;

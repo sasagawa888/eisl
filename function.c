@@ -1746,7 +1746,7 @@ int f_gensym(int arglist __unused){
     char str1[SYMSIZE],str2[10];
 
     strcpy(str1,"#:G");
-    sprintf(str2, "%d",genint);
+    snprintf(str2, 10, "%d",genint);
     genint++;
     strcat(str1,str2);
     res = makesym(str1);
@@ -3212,7 +3212,8 @@ int f_format(int arglist){
                 if(GET_OPT(output_stream) != EISL_OUTSTR)
                     fputc('\n', GET_PORT(output_stream));
                 else{
-                    sprintf(stream_str,"\n");
+                    stream_str[0] = '\n';
+                    stream_str[1] = '\0';
                     strcat(GET_NAME(output_stream),stream_str);
                 }
                 start_flag = false;
@@ -3225,7 +3226,8 @@ int f_format(int arglist){
                 if(GET_OPT(output_stream) != EISL_OUTSTR)
                     fputc('~', GET_PORT(output_stream));
                 else{
-                    sprintf(stream_str,"~");
+                    stream_str[0] = '~';
+                    stream_str[1] = '\0';
                     strcat(GET_NAME(output_stream),stream_str);
                 }
                 start_flag = false;
@@ -3237,7 +3239,8 @@ int f_format(int arglist){
             if(GET_OPT(output_stream) != EISL_OUTSTR)
                 fputc(c, GET_PORT(output_stream));
             else{
-                sprintf(stream_str, "%c", c);
+                stream_str[0] = c;
+                stream_str[1] = '\0';
                 strcat(GET_NAME(output_stream),stream_str);
             }
             i++;

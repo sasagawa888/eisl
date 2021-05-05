@@ -39,7 +39,7 @@ Here are some miscellaneous recommendations, I'm sure I've missed lots:
 
 You can get a lot done in just ISO C, but use of standard UNIX libraries is ok, e.g. defined by standards like
 [UNIX V7](https://en.wikipedia.org/wiki/Single_UNIX_Specification),
-X-Open and IETF RFCs.
+X/Open and IETF RFCs.
 Please don't write Linux-specific code.
 
 If at some point it seems that a C++ feature would be really useful, it may actually be available as a C library.

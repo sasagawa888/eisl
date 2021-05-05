@@ -95,21 +95,24 @@ void print_bigx(int x){
     if(get_sign(x) == -1){
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	fputc('-', GET_PORT(output_stream));
-            sprintf(stream_str1,"-");
+            stream_str1[0] = '-';
+            stream_str1[1] = '\0';
         }
         else{
-        	sprintf(stream_str1,"-");
-            strcat(stream_str,stream_str1);
+            stream_str1[0] = '-';
+            stream_str1[1] = '\0';
+            strncat(stream_str,stream_str1, STRSIZE - strlen(stream_str) - 1);
+            stream_str[STRSIZE - 1] = '\0';
         }
     }
     y = get_msb(x);
     if(GET_OPT(output_stream) != EISL_OUTSTR){
     	fprintf(GET_PORT(output_stream),"%d",GET_CAR(y));
-        sprintf(stream_str1,"%d",GET_CAR(y));
+        snprintf(stream_str1, STRSIZE, "%d",GET_CAR(y));
         strcat(stream_str,stream_str1);
     }
     else{
-    	sprintf(stream_str1,"%d",GET_CAR(y));
+    	snprintf(stream_str1, STRSIZE, "%d",GET_CAR(y));
         strcat(stream_str,stream_str1);
     }
     y = prev(y);
@@ -117,11 +120,11 @@ void print_bigx(int x){
     do{
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	fprintf(GET_PORT(output_stream),"%09d", GET_CAR(y));
-            sprintf(stream_str1,"%09d",GET_CAR(y));
+            snprintf(stream_str1, STRSIZE, "%09d",GET_CAR(y));
             strcat(stream_str,stream_str1);
         }
         else{
-        	sprintf(stream_str1,"%09d",GET_CAR(y));
+        	snprintf(stream_str1, STRSIZE, "%09d",GET_CAR(y));
             strcat(stream_str,stream_str1);
         }
         y = prev(y);

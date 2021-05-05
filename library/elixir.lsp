@@ -17,6 +17,7 @@
 ;;;            (- _a 3)))))
 
 (defmacro defpattern (name :rest body)
+    (if (syntax-error body) (error "defpattern syntax error" name))
     (let* ((arg (gensym))
            (vars (extract-variables body nil nil))
            (body1 (expand-body arg body)) )
@@ -35,6 +36,7 @@
 ;;;
 ;;; macro for Elixir like pipe operator
 ;;;
+
 
 
 
@@ -115,6 +117,18 @@
               ((consp y)
                (let ((res (expand-match1 (list 'car x) (car y) env ans)))
                   (expand-match1 (list 'cdr x) (cdr y) (car res) (cdr res))))))
+    
+    ;;syntax check. eash pattern has same length
+    (defpublic syntax-error (x)
+        (cond ((null x) t)
+              ((null (cdr x)) nil)
+              ((and (>= (length x) 2) (eq (car (car (cdr x))) 'else))
+               nil)
+              ((= (length (car (car x)))
+                  (length (car (car (cdr x)))))
+               (syntax-error (cdr x)))
+              (t (format (standard-output) "~A ~%~A ~%" (car x) (car (cdr x))) t)))
+            
 
     ;;for pipe macro
     (defpublic pipe-macro (pipe1 func)

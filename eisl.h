@@ -33,6 +33,7 @@ Copying GC mode
 #define HASHTBSIZE 107
 #define CTRLSTK 200
 #define BACKSIZE 30
+#define EISL_PATH_MAX 256
 
 static const float VERSION = 1.96;
 static const int HEAPSIZE = 20000000;
@@ -281,6 +282,30 @@ static inline float *GET_FVEC(int addr) { return heap[addr].val.car.dyna_fvec; }
 
 static inline int IDX2C(int i,int j,int ld) { return (j * ld + i); }
 static inline int IDX2R(int i,int j,int ld) { return (i * ld + j); }
+static inline void append_str(int output_stream, const char *from)
+{
+    char *to = GET_NAME(output_stream);
+    strncat(to, from, STRSIZE - strlen(to) - 1);
+    to[STRSIZE - 1] = '\0';
+}
+static inline void output_str(int output_stream, const char *from)
+{
+    if (GET_OPT(output_stream) != EISL_OUTSTR) {
+        fputs(from, GET_PORT(output_stream));
+    } else {
+        append_str(output_stream, from);
+    }
+}
+static inline void output_char(int output_stream, char c)
+{
+    stream_str[0] = c;
+    stream_str[1] = '\0';
+    if (GET_OPT(output_stream) != EISL_OUTSTR) {
+        fputc(c, GET_PORT(output_stream));
+    } else {
+        append_str(output_stream, stream_str);
+    }
+}
 
 //object oriented
 extern int generic_func;

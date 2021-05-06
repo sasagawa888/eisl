@@ -1671,7 +1671,7 @@ int f_convert(int arglist){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                sprintf(str,"%d",GET_INT(arg1));
+                snprintf(str, STRSIZE, "%d", GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1684,7 +1684,7 @@ int f_convert(int arglist){
             }
             else if(GET_AUX(arg2) == cstring){
                 #if __linux || __APPLE__ || defined(__OpenBSD__)
-                sprintf(str,"%lld",GET_LONG(arg1));
+                snprintf(str, STRSIZE, "%lld", GET_LONG(arg1));
                 #endif
                 #if _WIN32
                 sprintf(str,"%I64d",GET_LONG(arg1));
@@ -1721,9 +1721,9 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == cstring){
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    sprintf(str, "%0.16g", x);
+                    snprintf(str, STRSIZE, "%0.16g", x);
                 else
-                    sprintf(str, "%0.1f", x);
+                    snprintf(str, STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;
@@ -1746,7 +1746,8 @@ int f_convert(int arglist){
                 return(arg1);
             }
             else if(GET_AUX(arg2) == cinteger){
-                strcpy(stok.buf,GET_NAME(arg1));
+                strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
+                stok.buf[BUFSIZE - 1] = '\0';
 
                 if(bignumtoken(stok.buf)){
                     return(makebigx(stok.buf));
@@ -1992,10 +1993,7 @@ int substitute(int addr, int module, int fname){
 int substitute1(int x, int module){
     char str[SYMSIZE];
 
-    str[0] = NUL;
-    strcpy(str,GET_NAME(module));
-    strcat(str,"::");
-    strcat(str,GET_NAME(x));
+    snprintf(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
     return(makesym(str));
 }
 

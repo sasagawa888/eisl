@@ -191,7 +191,7 @@ static void usage(void)
 
 int main(int argc, char *argv[]){
     int ch;
-    char *home,str[256];
+    char *home, str[EISL_PATH_MAX];
     char *script_arg;
 
     initcell();
@@ -228,14 +228,18 @@ int main(int argc, char *argv[]){
                 break;
             case 'c':
                 home = getenv("HOME");
-                strcpy(str,home);
-                strcat(str,"/eisl/library/compiler.lsp");
+                strncpy(str, home, EISL_PATH_MAX - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
+                strncat(str, "/eisl/library/compiler.lsp", EISL_PATH_MAX - strlen(str) - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
                 f_load(list1(makestr(str)));
                 break;
             case 'f':
                 home = getenv("HOME");
-                strcpy(str,home);
-                strcat(str,"/eisl/library/formatter.lsp");
+                strncpy(str, home, EISL_PATH_MAX - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
+                strncat(str, "/eisl/library/formatter.lsp", EISL_PATH_MAX - strlen(str) - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
                 f_load(list1(makestr(str)));
                 break;
             case 's':
@@ -689,7 +693,8 @@ int flttoken(char buf[]){
         
         if(buf[1] == '0')
             return(0);
-        strcpy(bufcp,buf);
+        strncpy(bufcp, buf, SYMSIZE - 1);
+        bufcp[SYMSIZE - 1] = '\0';
         insertstr('0',bufcp);
         if(flttoken(bufcp))
             return(1);
@@ -877,7 +882,8 @@ int expttoken(char buf[]){
     if(buf[0] == '.') // e.g. ".2E3"
         return(0);
 
-    strcpy(buf1,buf);
+    strncpy(buf1, buf, BUFSIZE - 1);
+    buf1[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'e');
     if(tok.sepch == NUL)
         goto exit;
@@ -889,7 +895,8 @@ int expttoken(char buf[]){
     }
 
     exit:
-    strcpy(buf,buf1);
+    strncpy(buf, buf1, BUFSIZE - 1);
+    buf[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'E');
     if(tok.sepch == NUL)
         return(0);
@@ -1101,12 +1108,7 @@ void print(int addr){
                     printobj("<method>"); break;
         case INSTANCE:
                     printobj("<instance>"); break;
-        case LIS:   if(GET_OPT(output_stream) != EISL_OUTSTR)
-                        fputc('(', GET_PORT(output_stream));
-                    else{
-                        sprintf(stream_str,"(");
-                        strcat(GET_NAME(output_stream),stream_str);
-                    }
+    case LIS:   output_char(output_stream, '(');
                     printlist(addr); break;
         case DUMMY: printobj("<undef*>"); break;
         default:    printobj("<undef>"); break;
@@ -1117,8 +1119,8 @@ void printint(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream),"%d", GET_INT(addr));
     else{
-        sprintf(stream_str,"%d", GET_INT(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "%d", GET_INT(addr));
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -1131,12 +1133,12 @@ void printflt(double x){
     }
     else{
         if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX){
-            sprintf(stream_str, "%0.16g", x);
-            strcat(GET_NAME(output_stream),stream_str);
+            snprintf(stream_str, STRSIZE, "%0.16g", x);
+            append_str(output_stream, stream_str);
         }
         else{
-            sprintf(stream_str, "%0.1f", x);
-            strcat(GET_NAME(output_stream),stream_str);
+            snprintf(stream_str, STRSIZE, "%0.1f", x);
+            append_str(output_stream, stream_str);
         }
     }
 }
@@ -1145,49 +1147,29 @@ void printflt(double x){
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
         fprintf(GET_PORT(output_stream),"%lld", GET_LONG(addr));
-        sprintf(stream_str,"%lld",GET_LONG(addr));
+        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
     }
     else{
-	sprintf(stream_str,"%lld", GET_LONG(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        append_str(output_stream, stream_str);
 	}
 }
 
 
 void printlist(int addr){
     if(IS_NIL(addr)){
-        if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fputc(')', GET_PORT(output_stream));
-        else{
-            sprintf(stream_str,")");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+        output_char(output_stream, ')');
     }
     else if((!(listp(cdr(addr)))) && (! (nullp(cdr(addr))))){
         print(car(addr));
-        if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fputs(" . ", GET_PORT(output_stream));
-        else{
-            sprintf(stream_str," . ");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+        output_str(output_stream, " . ");
         print(cdr(addr));
-        if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fputc(')', GET_PORT(output_stream));
-        else{
-            sprintf(stream_str,")");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+        output_char(output_stream, ')');
     }
     else{
         print(GET_CAR(addr));
         if(!(IS_NIL(GET_CDR(addr)))){
-            if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fputc(' ', GET_PORT(output_stream));
-            else{
-                sprintf(stream_str," ");
-                strcat(GET_NAME(output_stream),stream_str);
-            }
+            output_char(output_stream, ' ');
         }
         printlist(GET_CDR(addr));
     }
@@ -1196,31 +1178,16 @@ void printlist(int addr){
 void printvec(int x){
     int len,i;
 
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fputs("#(", GET_PORT(output_stream));
-    else{
-        sprintf(stream_str, "#(");
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_str(output_stream, "#(");
     len = cdr(x);
 
     for(i=0; i<len; i++){
         print(GET_VEC_ELT(x,i));
         if(i != len-1){
-            if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fputc(' ', GET_PORT(output_stream));
-            else{
-                sprintf(stream_str, " ");
-                strcat(GET_NAME(output_stream),stream_str);
-            }
+            output_char(output_stream, ' ');
         }
     }
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fputc(')', GET_PORT(output_stream));
-    else{
-        sprintf(stream_str, " ");
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_char(output_stream, ')');
 }
 
 void printarray(int x){
@@ -1240,8 +1207,8 @@ void printarray(int x){
     if(GET_OPT(output_stream) != EISL_INSTR)
         fprintf(GET_PORT(output_stream),"#%da",dim);
     else{
-        sprintf(stream_str,"#%da",dim);
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "#%da", dim);
+        append_str(output_stream, stream_str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1296,8 +1263,8 @@ void printfarray(int x){
     if(GET_OPT(output_stream) != EISL_INSTR)
         fprintf(GET_PORT(output_stream),"#%df",dim);
     else{
-        sprintf(stream_str,"#%df",dim);
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "#%df", dim);
+        append_str(output_stream, stream_str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1312,76 +1279,39 @@ void printstr(int addr){
         fprintf(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
     }
     else{
-        sprintf(stream_str,"\"");
-        strcat(GET_NAME(output_stream),stream_str);
-        sprintf(stream_str,"%s", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
-        sprintf(stream_str,"\"");
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
+        append_str(output_stream, stream_str);
     }
 }
-
 
 void printchar(int addr){
-    char c;
-
-    if(GET_PORT(input_stream)){
-        fputs("#\\", GET_PORT(output_stream));
-        c = GET_CHAR(addr);
-        if(c == SPACE)
-            fputs("space", GET_PORT(output_stream));
-        else if(c == EOL)
-            fputs("newline", GET_PORT(output_stream));
-        else
-            fputs(GET_NAME(addr), GET_PORT(output_stream));
-    }
-    else{
-        sprintf(GET_NAME(output_stream),"%c%c", '#', '\\');
-        c = GET_CHAR(addr);
-        if(c == SPACE){
-            sprintf(stream_str,"space");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-        else if(c == EOL){
-            sprintf(stream_str,"newline");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-        else{
-            sprintf(stream_str,"%s", GET_NAME(addr));
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+    output_str(output_stream, "#\\");
+    switch (GET_CHAR(addr)) {
+    case SPACE:
+        output_str(output_stream, "space");
+        break;
+    case EOL:
+        output_str(output_stream, "newline");
+        break;
+    default:
+        output_str(output_stream, GET_NAME(addr));
     }
 }
 
-
-
-
 void printsym(int addr){
-
-    if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fputs(GET_NAME(addr), GET_PORT(output_stream));
-    }
-    else{
-        sprintf(stream_str, "%s", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_str(output_stream, GET_NAME(addr));
 }
 
 void printobj(const char *str){
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fputs(str, GET_PORT(output_stream));
-    else{
-        sprintf(stream_str, "%s", str);
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_str(output_stream, str);
 }
 
 void printclass(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
     else{
-        sprintf(stream_str, "<class %s>", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -1389,8 +1319,8 @@ void printstream(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
     else{
-        sprintf(GET_NAME(output_stream), "<stream %s>", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(GET_NAME(output_stream), STRSIZE, "<stream %s>", GET_NAME(addr));
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -1783,7 +1713,6 @@ void bindfunc(const char *name, tag tag, int(*func)(int)){
 
 void bindmacro(char *name, int addr){
     int sym,val1,val2;
-    char *str;
 
     sym = makesym(name);
     val1 = freshcell();
@@ -1792,11 +1721,9 @@ void bindmacro(char *name, int addr){
     SET_CDR(val1,0);
     val2 = freshcell();
     SET_TAG(val2,MACRO);
-    str = (char *)malloc(strlen(name)+1);
-    if(str == NULL)
+    heap[val2].name = strdup(name);
+    if(heap[val2].name == NULL)
         error(MALLOC_OVERF,"makemacro",NIL);
-    heap[val2].name = str;
-    strcpy(heap[val2].name,name);
     SET_CAR(val2,val1);
     SET_CDR(val2,0);
     SET_AUX(val2,cfunction); //class

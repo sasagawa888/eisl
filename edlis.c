@@ -980,8 +980,7 @@ void display_line(int line)
 {
      int col;
 
-     if (ed_row != line ||
-         (ed_row == line && ed_col <= COLS - 1))
+     if (ed_row != line || ed_col <= COLS - 1)
           col = 0;
      else
           col = COLS;

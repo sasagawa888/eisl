@@ -1311,7 +1311,7 @@ void insert_method(int x, int func){
 }
 
 void resort_method(int func){
-    int methods,res,temp,x;
+    int methods,res;
 
     methods = GET_CDR(func);
     if(nullp(methods))
@@ -1320,6 +1320,8 @@ void resort_method(int func){
     res = hcons(car(methods),NIL);
     methods = cdr(methods);
     while(!nullp(methods)){
+        int temp, x;
+        
         x = car(methods);
         temp = NIL;
         bool high_priority_found = false;

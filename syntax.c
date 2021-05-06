@@ -1908,13 +1908,15 @@ int f_untrace(int arglist){
 }
 
 int f_defmodule(int arglist){
-    int arg1,arg2,sexp,exports;
+    int arg1,arg2,exports;
 
     arg1 = car(arglist); //module name
     arg2 = cdr(arglist); //body
     exports = NIL;
 
     while(!nullp(arg2)){
+        int sexp;
+        
         sexp = car(arg2);
         if(symbolp(car(sexp)) && HAS_NAME(car(sexp),"DEFPUBLIC"))
             exports = cons(cadr(sexp),exports);
@@ -1999,12 +2001,14 @@ int substitute1(int x, int module){
 
 
 int substitute_case(int addr, int module, int fname){
-    int body,bodies,newbody,newbodies;
+    int bodies,newbodies;
 
     bodies = addr;
     newbodies = NIL;
 
     while(!nullp(bodies)){
+        int body, newbody;
+        
         body = car(bodies);
         newbody = cons(car(body),substitute(cdr(body),module,fname));
         newbodies = cons(newbody,newbodies);

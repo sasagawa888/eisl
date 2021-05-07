@@ -217,7 +217,9 @@ int functionp(int addr){
 
 int macrop(int addr){
     
-    if(IS_MACRO(GET_CAR(addr)))
+    if(!CELLRANGE(GET_CAR(addr)))
+        return(0);
+    else if(IS_MACRO(GET_CAR(addr)))
         return(1);
     else
         return(0);

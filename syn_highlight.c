@@ -1,0 +1,166 @@
+#define _XOPEN_SOURCE 700
+
+#include <string.h>
+#include <stdbool.h>
+#include "term.h"
+
+#define NELEM(X) (sizeof(X) / sizeof((X)[0]))
+
+//special form token
+static const char *special[] = {
+    "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
+    "let", "let*", "case", "while", "progn",
+};
+//syntax token
+static const char *syntax[] = {
+    "lambda", "labels", "flet", "let", "let*", "setq", "setf", "defconstant", "defun", "defmacro", "defglobal", "defdynamic",
+    "dynamic", "function", "function*", "symbol-function", "class",
+    "and", "or", "if", "cond", "while", "for", "block", "return-from",
+    "case", "case-using", "progn", "defclass", "defgeneric", "defgeneric*",
+    "defmethod", "dynamic-let", "ignore-errors", "catch", "throw",
+    "tagbody", "go", "unwind-protect", "with-standard-input",
+    "with-standard-output", "with-error-output", "with-handler",
+    "convert", "with-open-input-file", "with-open-output-file",
+    "with-open-io-file", "the", "assure", "time", "trace", "untrace", "defmodule", "defpublic", "substitute",
+};
+//builtin token
+static const char *builtin[] ={
+    "-", "*", "/=", "+", "<", "<=", "=", ">", ">=",
+    "abs", "append", "apply", "aref", "arithmetic-error-operands",
+    "arithmetic-error-operation", "array-dimensions", "assoc", "atan",
+    "atan2", "atanh", "atom", "basic-array-p", "basic-array*-p",
+    "basic-vector-p", "call-next-method", "car", "cdr", "ceiling",
+    "cerror", "char-index", "char/=", "char<", "char<=", "char=",
+    "char>", "char>=", "characterp", "class-of", "close",
+    "condition-continuable", "cons", "consp", "continue-condition",
+    "cos", "cosh", "create-array", "create-list", "create-string-input-stream",
+    "create-string-output-stream", "create-string", "create-vector", "create*",
+    "div", "domain-error-object", "domain-error-expected-class",
+    "dummyp", "elt", "eq", "eql", "equal", "error-output", "error",
+    "eval", "exp", "expt", "file-length", "file-position", "finish-output",
+    "float", "floatp", "floor", "format-char", "format-fresh-line",
+    "format-float", "format-integer", "format-object", "format-tab", "format",
+    "funcall", "functionp", "garef", "gbc", "gcd", "general-array*-p",
+    "general-vector-p", "generic-function-p", "gensym", "get-internal-real-time",
+    "get-internal-run-time",
+    "get-output-stream-string", "get-universal-time", "hdmp", "identity",
+    "initialize-object*", "input-stream-p", "instancep", "integerp",
+    "internal-time-units-per-second", "isqrt", "lcm", "length", "list",
+    "listp", "load", "log", "map-into", "mapc", "mapcar", "mapcan",
+    "mapcon", "mapl", "maplist", "max", "member", "min", "mod",
+    "next-method-p", "not", "nreverse", "null", "numberp",
+    "open-input-file", "open-io-file", "open-output-file", "open-stream-p",
+    "output-stream-p", "parse-error-string", "parse-error-expected-class",
+    "parse-number", "preview-char", "prin1", "print", "probe-file",
+    "property", "quit", "quotient", "read-byte", "read-char", "read-line",
+    "read", "reciprocal", "remove-property", "reverse", "round", "set-aref",
+    "set-car", "set-cdr", "set-elt", "set-file-position", "set-garef",
+    "set-property", "signal-condition", "simple-error-format-argument",
+    "simple-error-format-string", "sin", "sinh", "slot-value", "sqrt",
+    "standard-input", "standard-output", "stream-error-stream", "streamp",
+    "stream-ready-p", "string-append", "string-index", "string/=", "string<", "string<=", "string=", "string>", "string>=", "stringp", "subclassp",
+    "subseq", "symbolp", "tan", "tanh", "truncate", "undefined-entity-name",
+    "undefined-entity-namespace", "vector", "write-byte", "import",
+};
+
+//extended function
+static const char *extended[] = {
+    "random-real", "random", "heapdump", "instance",
+    "nconc", "fast-address", "macroexpand-1", "macroexpand-all", "backtrace",
+    "break", "edit", "set-editor", "wiringpi-setup-gpio", "delay-microseconds",
+    "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",
+    "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
+    "pwm-write", "pull-up-dn-control", "delay", "compile-file", "compile-cuda", "formatter",
+    "c-include", "c-define", "c-lang", "c-option",
+    "gpu-mult", "gpu-add", "gpu-sub", "gpu-smult", "gpu-emult", "gpu-convolute", "gpu-deconvolute", "gpu-transpose",
+    "gpu-ident", "gpu-full", "gpu-unfull", "gpu-accuracy", "gpu-correct", "gpu-activate", "gpu-trace",
+    "gpu-loss", "gpu-average", "gpu-sum", "gpu-diff", "gpu-dropout", "gpu-gradfilter",
+    "gpu-sgd", "gpu-momentum", "gpu-adagrad", "gpu-rms", "gpu-adam", "gpu-pooling", "gpu-unpooling",
+    "gpu-random-select", "gpu-nanalizer", "gpu-copy",
+};
+
+static bool in_syntax_table(const char *str)
+{
+    int i;
+    
+    for(i=0; i<(int)NELEM(syntax); i++){
+        if(strcmp(syntax[i],str) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool in_builtin_table(const char *str)
+{
+    int i;
+    
+    for(i=0; i<(int)NELEM(builtin); i++){
+        if(strcmp(builtin[i],str) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool in_extended_table(const char *str)
+{
+    int i;
+    
+    for(i=0; i<(int)NELEM(extended); i++){
+        if(strcmp(extended[i],str) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool in_special_table(const char *str)
+{
+    int i;
+    
+    for(i=0; i<(int)NELEM(special); i++){
+        if(strcmp(special[i],str) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+enum HighlightToken maybe_match(const char *str)
+{
+    if (in_syntax_table(str)) {
+        return HIGHLIGHT_SYNTAX;
+    }
+    if (in_builtin_table(str)) {
+        return HIGHLIGHT_BUILTIN;
+    }
+    if (in_extended_table(str)) {
+        return HIGHLIGHT_EXTENDED;
+    }
+    return HIGHLIGHT_NONE;
+}
+
+void gather_fuzzy_matches(const char *str, const char *candidates[], int *candidate_pt)
+{
+    int i;
+    
+    for(i=0;i<(int)NELEM(syntax);i++){
+        if(strstr(syntax[i],str) !=NULL && syntax[i][0] == str[0]){
+            candidates[*candidate_pt] = syntax[i];
+            *candidate_pt = (*candidate_pt) + 1;
+        }
+    }
+    for(i=0;i<(int)NELEM(builtin);i++){
+        if(strstr(builtin[i],str) !=NULL && builtin[i][0] == str[0]){
+            candidates[*candidate_pt] = builtin[i];
+            *candidate_pt = (*candidate_pt) + 1;
+        }
+    }
+    for(i=0;i<(int)NELEM(extended);i++){
+        if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
+            candidates[*candidate_pt] = extended[i];
+            *candidate_pt = (*candidate_pt) + 1;
+        }
+    }
+}

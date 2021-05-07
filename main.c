@@ -2,6 +2,8 @@
 written by kenichi sasagawa 2016/4~
 */
 
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -12,6 +14,8 @@ written by kenichi sasagawa 2016/4~
 #include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <curses.h>
+#include <term.h>
 #include "eisl.h"
 
 //------pointer----
@@ -111,22 +115,21 @@ int generic_list = NIL; //symbol list of generic function.
 //flag
 int gArgC;
 char **gArgV;
-int gbc_flag = 1; //0=GC not display ,1= do display.
+bool gbc_flag = true; //false=GC not display ,true= do display.
 int genint = 1;   //integer of gensym.
-int simp_flag = 1; //1=simplify, 0=Not for bignum
-int ignore_flag = 0; //0=normal,1=ignore error
-int open_flag = 0;  //0=normal,1=now loading
-int str_flag = 0;   //0=stdio or FILE, 1=string
-int top_flag = 1;   //1=top-level, 0=not-top-level
-int redef_flag = 0; //1=redefine-class, 0=not-redefine
-int start_flag = 1; //1=line-start, 1=not-line-start
-int back_flag = 1;  //for backtrace, 1=on, 0=off
+bool simp_flag = true; //true=simplify, false=Not for bignum
+bool ignore_flag = false; //false=normal,true=ignore error
+bool open_flag = false;  //false=normal,true=now loading
+bool top_flag = true;   //true=top-level, false=not-top-level
+bool redef_flag = false; //true=redefine-class, false=not-redefine
+bool start_flag = true; //true=line-start, false=not-line-start
+bool back_flag = true;  //for backtrace, true=on, false=off
 bool init_flag = true;  //for -c option, 1=initial,0=not-initial
-int ignore_topchk = 0; //for FAST compiler 1=ignore,0=normal
+bool ignore_topchk = false; //for FAST compiler true=ignore,false=normal
 bool repl_flag = true;  //for REPL read_line 1=on, 0=off
-int exit_flag = 0;  //1= ctrl+C
-int debug_flag = 0;  //for GC debug
-int greeting_flag = 1; //for (quit)
+volatile sig_atomic_t exit_flag = 0;  //true= ctrl+C
+bool debug_flag = false;  //for GC debug
+bool greeting_flag = true; //for (quit)
 bool script_flag = false;   //for -s option
 
 //switch
@@ -161,87 +164,18 @@ int stepper_flag = 0;
 
 int ed_lparen_col;
 int ed_rparen_col;
-char ed_candidate[50][30];
+const char *ed_candidate[50];
 int ed_candidate_pt;
-int ed_syntax_color = 1;   //default red
-int ed_builtin_color = 6;  //default cyan
-int ed_extended_color = 5; //default magenta
-int ed_string_color = 3;   //default yellow
-int ed_comment_color = 4;  //default blue
+const short ed_syntax_color = COLOR_RED;
+const short ed_builtin_color = COLOR_CYAN;
+const short ed_extended_color = COLOR_MAGENTA;
+const short ed_string_color = COLOR_YELLOW;
+const short ed_comment_color = COLOR_BLUE;
 int ed_incomment = -1;     // #|...|# comment
-
-//special form token
-char special[40][12] = {
-{"defun"},{"defmacro"},{"defglobal"},{"defdynamic"},{"defconstant"},
-{"let"},{"let*"},{"case"},{"while"},{"progn"}
-};
-//syntax token
-char syntax[60][30] = {
-{"lambda"},{"labels"},{"flet"},{"let"},{"let*"},{"setq"},{"setf"},{"defconstant"},{"defun"},{"defmacro"},{"defglobal"},{"defdynamic"},
-{"dynamic"},{"function"},{"function*"},{"symbol-function"},{"class"},
-{"and"},{"or"},{"if"},{"cond"},{"while"},{"for"},{"block"},{"return-from"},
-{"case"},{"case-using"},{"progn"},{"defclass"},{"defgeneric"},{"defgeneric*"},
-{"defmethod"},{"dynamic-let"},{"ignore-errors"},{"catch"},{"throw"},
-{"tagbody"},{"go"},{"unwind-protect"},{"with-standard-input"},
-{"with-standard-output"},{"with-error-output"},{"with-handler"},
-{"convert"},{"with-open-input-file"},{"with-open-output-file"},
-{"with-open-io-file"},{"the"},{"assure"},{"time"},{"trace"},{"untrace"},{"defmodule"},{"defpublic"},{"substitute"}
-};
-//builtin token
-char builtin[200][32] ={
-{"-"},{"*"},{"/="},{"+"},{"<"},{"<="},{"="},{">"},{">="},
-{"abs"},{"append"},{"apply"},{"aref"},{"arithmetic-error-operands"},
-{"arithmetic-error-operation"},{"array-dimensions"},{"assoc"},{"atan"},
-{"atan2"},{"atanh"},{"atom"},{"basic-array-p"},{"basic-array*-p"},
-{"basic-vector-p"},{"call-next-method"},{"car"},{"cdr"},{"ceiling"},
-{"cerror"},{"char-index"},{"char/="},{"char<"},{"char<="},{"char="},
-{"char>"},{"char>="},{"characterp"},{"class-of"},{"close"},
-{"condition-continuable"},{"cons"},{"consp"},{"continue-condition"},
-{"cos"},{"cosh"},{"create-array"},{"create-list"},{"create-string-input-stream"},
-{"create-string-output-stream"},{"create-string"},{"create-vector"},{"create*"},
-{"div"},{"domain-error-object"},{"domain-error-expected-class"},
-{"dummyp"},{"elt"},{"eq"},{"eql"},{"equal"},{"error-output"},{"error"},
-{"eval"},{"exp"},{"expt"},{"file-length"},{"file-position"},{"finish-output"},
-{"float"},{"floatp"},{"floor"},{"format-char"},{"format-fresh-line"},
-{"format-float"},{"format-integer"},{"format-object"},{"format-tab"},{"format"},
-{"funcall"},{"functionp"},{"garef"},{"gbc"},{"gcd"},{"general-array*-p"},
-{"general-vector-p"},{"generic-function-p"},{"gensym"},{"get-internal-real-time"},
-{"get-internal-run-time"},
-{"get-output-stream-string"},{"get-universal-time"},{"hdmp"},{"identity"},
-{"initialize-object*"},{"input-stream-p"},{"instancep"},{"integerp"},
-{"internal-time-units-per-second"},{"isqrt"},{"lcm"},{"length"},{"list"},
-{"listp"},{"load"},{"log"},{"map-into"},{"mapc"},{"mapcar"},{"mapcan"},
-{"mapcon"},{"mapl"},{"maplist"},{"max"},{"member"},{"min"},{"mod"},
-{"next-method-p"},{"not"},{"nreverse"},{"null"},{"numberp"},
-{"open-input-file"},{"open-io-file"},{"open-output-file"},{"open-stream-p"},
-{"output-stream-p"},{"parse-error-string"},{"parse-error-expected-class"},
-{"parse-number"},{"preview-char"},{"prin1"},{"print"},{"probe-file"},
-{"property"},{"quit"},{"quotient"},{"read-byte"},{"read-char"},{"read-line"},
-{"read"},{"reciprocal"},{"remove-property"},{"reverse"},{"round"},{"set-aref"},
-{"set-car"},{"set-cdr"},{"set-elt"},{"set-file-position"},{"set-garef"},
-{"set-property"},{"signal-condition"},{"simple-error-format-argument"},
-{"simple-error-format-string"},{"sin"},{"sinh"},{"slot-value"},{"sqrt"},
-{"standard-input"},{"standard-output"},{"stream-error-stream"},{"streamp"},
-{"stream-ready-p"},{"string-append"},{"string-index"},{"string/="},{"string<"},{"string<="},{"string="},{"string>"},{"string>="},{"stringp"},{"subclassp"},
-{"subseq"},{"symbolp"},{"tan"},{"tanh"},{"truncate"},{"undefined-entity-name"},
-{"undefined-entity-namespace"},{"vector"},{"write-byte"},{"import"}
-};
-
-//extended function
-char extended[70][30] = {
-{"random-real"},{"random"},{"heapdump"},{"instance"},
-{"nconc"},{"fast-address"},{"macroexpand-1"},{"macroexpand-all"},{"backtrace"},
-{"break"},{"edit"},{"set-editor"},{"wiringpi-setup-gpio"},{"delay-microseconds"},
-{"wiringpi-spi-setup-ch-speed"},{"pwm-set-mode"},{"pwm-set-range"},
-{"pwm-set-clock"},{"pin-mode"},{"digital-write"},{"digital-read"},
-{"pwm-write"},{"pull-up-dn-control"},{"delay"},{"compile-file"},{"compile-cuda"},{"formatter"},
-{"c-include"},{"c-define"},{"c-lang"},{"c-option"},
-{"gpu-mult"},{"gpu-add"},{"gpu-sub"},{"gpu-smult"},{"gpu-emult"},{"gpu-convolute"},{"gpu-deconvolute"},{"gpu-transpose"},
-{"gpu-ident"},{"gpu-full"},{"gpu-unfull"},{"gpu-accuracy"},{"gpu-correct"},{"gpu-activate"},{"gpu-trace"},
-{"gpu-loss"},{"gpu-average"},{"gpu-sum"},{"gpu-diff"},{"gpu-dropout"},{"gpu-gradfilter"},   
-{"gpu-sgd"},{"gpu-momentum"},{"gpu-adagrad"},{"gpu-rms"},{"gpu-adam"},{"gpu-pooling"},{"gpu-unpooling"},
-{"gpu-random-select"},{"gpu-nanalizer"},{"gpu-copy"},
-};
+char ed_key_down;
+char ed_key_left;
+char ed_key_right;
+char ed_key_up;
 
 static void usage(void)
 {
@@ -257,7 +191,7 @@ static void usage(void)
 
 int main(int argc, char *argv[]){
     int ch;
-    char *home,str[256];
+    char *home, str[EISL_PATH_MAX];
     char *script_arg;
 
     initcell();
@@ -273,7 +207,12 @@ int main(int argc, char *argv[]){
     input_stream = standard_input;
     output_stream = standard_output;
     error_stream = standard_error;
-    
+
+    setupterm((char *)0, 1, (int *)0);
+    ed_key_down = key_down[2];
+    ed_key_left = key_left[2];
+    ed_key_right = key_right[2];
+    ed_key_up = key_up[2];
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = false;
@@ -289,14 +228,18 @@ int main(int argc, char *argv[]){
                 break;
             case 'c':
                 home = getenv("HOME");
-                strcpy(str,home);
-                strcat(str,"/eisl/library/compiler.lsp");
+                strncpy(str, home, EISL_PATH_MAX - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
+                strncat(str, "/eisl/library/compiler.lsp", EISL_PATH_MAX - strlen(str) - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
                 f_load(list1(makestr(str)));
                 break;
             case 'f':
                 home = getenv("HOME");
-                strcpy(str,home);
-                strcat(str,"/eisl/library/formatter.lsp");
+                strncpy(str, home, EISL_PATH_MAX - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
+                strncat(str, "/eisl/library/formatter.lsp", EISL_PATH_MAX - strlen(str) - 1);
+                str[EISL_PATH_MAX - 1] = '\0';
                 f_load(list1(makestr(str)));
                 break;
             case 's':
@@ -329,15 +272,15 @@ int main(int argc, char *argv[]){
             exit(EXIT_SUCCESS);
         }
     }
-    if(greeting_flag == 1)
+    if(greeting_flag)
         printf("Easy-ISLisp Ver%1.2f\n", VERSION);
     repl:
     if(ret == 0)
         while(1){
             initpt();
-            printf("> "); fflush(stdout);
+            fputs("> ", stdout);
             print(eval(sread ()));
-            printf("\n"); fflush(stdout);
+            putchar('\n');
             if(redef_flag)
                 redef_generic();
         }
@@ -368,8 +311,8 @@ void initpt(void){
     catch_pt = 0;
     unwind_pt = 0;
     error_handler = NIL;
-    top_flag = 1;
-    start_flag = 1;
+    top_flag = true;
+    start_flag = true;
     charcnt = 0;
     //clear nest level of tracing function.
     ls = trace_list;
@@ -397,8 +340,8 @@ int readc(void){
         //ctrl+D
         //if not script-mode quit system
         if(!script_flag && input_stream == standard_input && c == EOF){
-            greeting_flag = 0;
-            printf("\n");
+            greeting_flag = false;
+            putchar('\n');
             longjmp(buf,2);
         }
         else // if script-mode return(EOF)
@@ -750,7 +693,8 @@ int flttoken(char buf[]){
         
         if(buf[1] == '0')
             return(0);
-        strcpy(bufcp,buf);
+        strncpy(bufcp, buf, SYMSIZE - 1);
+        bufcp[SYMSIZE - 1] = '\0';
         insertstr('0',bufcp);
         if(flttoken(bufcp))
             return(1);
@@ -938,7 +882,8 @@ int expttoken(char buf[]){
     if(buf[0] == '.') // e.g. ".2E3"
         return(0);
 
-    strcpy(buf1,buf);
+    strncpy(buf1, buf, BUFSIZE - 1);
+    buf1[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'e');
     if(tok.sepch == NUL)
         goto exit;
@@ -950,7 +895,8 @@ int expttoken(char buf[]){
     }
 
     exit:
-    strcpy(buf,buf1);
+    strncpy(buf, buf1, BUFSIZE - 1);
+    buf[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'E');
     if(tok.sepch == NUL)
         return(0);
@@ -1034,8 +980,7 @@ int sread(void){
         case RPAREN:    error(ILLEGAL_RPAREN,"read",NIL);
         default:        break;
     }
-    fprintf(GET_PORT(error_stream),"%d", (int)stok.type);
-    fprintf(GET_PORT(error_stream),"%s", stok.buf);
+    fprintf(GET_PORT(error_stream),"%d%s", (int)stok.type, stok.buf);
     error(ILLEGAL_INPUT,"read",NIL);
     return(0);
 }
@@ -1163,12 +1108,7 @@ void print(int addr){
                     printobj("<method>"); break;
         case INSTANCE:
                     printobj("<instance>"); break;
-        case LIS:   if(GET_OPT(output_stream) != EISL_OUTSTR)
-                        fprintf(GET_PORT(output_stream),"(");
-                    else{
-                        sprintf(stream_str,"(");
-                        strcat(GET_NAME(output_stream),stream_str);
-                    }
+    case LIS:   output_char(output_stream, '(');
                     printlist(addr); break;
         case DUMMY: printobj("<undef*>"); break;
         default:    printobj("<undef>"); break;
@@ -1179,8 +1119,8 @@ void printint(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream),"%d", GET_INT(addr));
     else{
-        sprintf(stream_str,"%d", GET_INT(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "%d", GET_INT(addr));
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -1193,12 +1133,12 @@ void printflt(double x){
     }
     else{
         if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX){
-            sprintf(stream_str, "%0.16g", x);
-            strcat(GET_NAME(output_stream),stream_str);
+            snprintf(stream_str, STRSIZE, "%0.16g", x);
+            append_str(output_stream, stream_str);
         }
         else{
-            sprintf(stream_str, "%0.1f", x);
-            strcat(GET_NAME(output_stream),stream_str);
+            snprintf(stream_str, STRSIZE, "%0.1f", x);
+            append_str(output_stream, stream_str);
         }
     }
 }
@@ -1207,49 +1147,29 @@ void printflt(double x){
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
         fprintf(GET_PORT(output_stream),"%lld", GET_LONG(addr));
-        sprintf(stream_str,"%lld",GET_LONG(addr));
+        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
     }
     else{
-	sprintf(stream_str,"%lld", GET_LONG(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        append_str(output_stream, stream_str);
 	}
 }
 
 
 void printlist(int addr){
     if(IS_NIL(addr)){
-        if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream),")");
-        else{
-            sprintf(stream_str,")");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+        output_char(output_stream, ')');
     }
     else if((!(listp(cdr(addr)))) && (! (nullp(cdr(addr))))){
         print(car(addr));
-        if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream)," . ");
-        else{
-            sprintf(stream_str," . ");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+        output_str(output_stream, " . ");
         print(cdr(addr));
-        if(GET_OPT(output_stream) != EISL_OUTSTR)
-            fprintf(GET_PORT(output_stream),")");
-        else{
-            sprintf(stream_str,")");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+        output_char(output_stream, ')');
     }
     else{
         print(GET_CAR(addr));
         if(!(IS_NIL(GET_CDR(addr)))){
-            if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream)," ");
-            else{
-                sprintf(stream_str," ");
-                strcat(GET_NAME(output_stream),stream_str);
-            }
+            output_char(output_stream, ' ');
         }
         printlist(GET_CDR(addr));
     }
@@ -1258,31 +1178,16 @@ void printlist(int addr){
 void printvec(int x){
     int len,i;
 
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "#(");
-    else{
-        sprintf(stream_str, "#(");
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_str(output_stream, "#(");
     len = cdr(x);
 
     for(i=0; i<len; i++){
         print(GET_VEC_ELT(x,i));
         if(i != len-1){
-            if(GET_OPT(output_stream) != EISL_OUTSTR)
-                fprintf(GET_PORT(output_stream), " ");
-            else{
-                sprintf(stream_str, " ");
-                strcat(GET_NAME(output_stream),stream_str);
-            }
+            output_char(output_stream, ' ');
         }
     }
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), ")");
-    else{
-        sprintf(stream_str, " ");
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_char(output_stream, ')');
 }
 
 void printarray(int x){
@@ -1302,8 +1207,8 @@ void printarray(int x){
     if(GET_OPT(output_stream) != EISL_INSTR)
         fprintf(GET_PORT(output_stream),"#%da",dim);
     else{
-        sprintf(stream_str,"#%da",dim);
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "#%da", dim);
+        append_str(output_stream, stream_str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1358,8 +1263,8 @@ void printfarray(int x){
     if(GET_OPT(output_stream) != EISL_INSTR)
         fprintf(GET_PORT(output_stream),"#%df",dim);
     else{
-        sprintf(stream_str,"#%df",dim);
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "#%df", dim);
+        append_str(output_stream, stream_str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1371,81 +1276,42 @@ void printfarray(int x){
 
 void printstr(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"\"");
-        fprintf(GET_PORT(output_stream),"%s", GET_NAME(addr));
-        fprintf(GET_PORT(output_stream),"\"");
+        fprintf(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
     }
     else{
-        sprintf(stream_str,"\"");
-        strcat(GET_NAME(output_stream),stream_str);
-        sprintf(stream_str,"%s", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
-        sprintf(stream_str,"\"");
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
+        append_str(output_stream, stream_str);
     }
 }
-
 
 void printchar(int addr){
-    char c;
-
-    if(GET_PORT(input_stream)){
-        fprintf(GET_PORT(output_stream),"%c%c", '#', '\\');
-        c = GET_CHAR(addr);
-        if(c == SPACE)
-            fprintf(GET_PORT(output_stream),"space");
-        else if(c == EOL)
-            fprintf(GET_PORT(output_stream),"newline");
-        else
-            fprintf(GET_PORT(output_stream),"%s", GET_NAME(addr));
-    }
-    else{
-        sprintf(GET_NAME(output_stream),"%c%c", '#', '\\');
-        c = GET_CHAR(addr);
-        if(c == SPACE){
-            sprintf(stream_str,"space");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-        else if(c == EOL){
-            sprintf(stream_str,"newline");
-            strcat(GET_NAME(output_stream),stream_str);
-        }
-        else{
-            sprintf(stream_str,"%s", GET_NAME(addr));
-            strcat(GET_NAME(output_stream),stream_str);
-        }
+    output_str(output_stream, "#\\");
+    switch (GET_CHAR(addr)) {
+    case SPACE:
+        output_str(output_stream, "space");
+        break;
+    case EOL:
+        output_str(output_stream, "newline");
+        break;
+    default:
+        output_str(output_stream, GET_NAME(addr));
     }
 }
 
-
-
-
 void printsym(int addr){
-
-    if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream), "%s", GET_NAME(addr));
-    }
-    else{
-        sprintf(stream_str, "%s", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_str(output_stream, GET_NAME(addr));
 }
 
 void printobj(const char *str){
-    if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "%s", str);
-    else{
-        sprintf(stream_str, "%s", str);
-        strcat(GET_NAME(output_stream),stream_str);
-    }
+    output_str(output_stream, str);
 }
 
 void printclass(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
     else{
-        sprintf(stream_str, "<class %s>", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -1453,8 +1319,8 @@ void printstream(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         fprintf(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
     else{
-        sprintf(GET_NAME(output_stream), "<stream %s>", GET_NAME(addr));
-        strcat(GET_NAME(output_stream),stream_str);
+        snprintf(GET_NAME(output_stream), STRSIZE, "<stream %s>", GET_NAME(addr));
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -1505,7 +1371,7 @@ int eval(int addr){
         if(back_flag)
             store_backtrace(addr);
         if(stepper_flag){
-        	print(addr);printf("\n");fflush(stdout);
+        	print(addr);putchar('\n');
         	clean_stdin();
         	c = getc(stdin);
         	if(c == 'q')
@@ -1570,12 +1436,12 @@ int apply(int func, int args){
                         n = GET_TR(func);
                         SET_TR(func,n+1);
                         for(i=0; i<n; i++)
-                            printf(" ");
-                        printf("ENTERING: ");
+                            putchar(' ');
+                        fputs("ENTERING: ", stdout);
                         print(trace);
-                        printf(" ");
+                        putchar(' ');
                         print(args);
-                        printf("\n");
+                        putchar('\n');
                     }
                     push(ep);
                     ep = GET_CDR(func);
@@ -1600,12 +1466,12 @@ int apply(int func, int args){
                         n = n-1;
                         SET_TR(func,n);
                         for(i=0; i<n; i++)
-                            printf(" ");
-                        printf("EXITING:  ");
+                            putchar(' ');
+                        fputs("EXITING:  ", stdout);
                         print(trace);
-                        printf(" ");
+                        putchar(' ');
                         print(res);
-                        printf("\n");
+                        putchar('\n');
                     }
                     ep = pop();
                     return(res);
@@ -1723,7 +1589,7 @@ void unbind(void){
 
 int evlis(int addr){
     argpush(addr);
-    top_flag = 0;
+    top_flag = false;
     if(IS_NIL(addr)){
         argpop();
         return(addr);
@@ -1847,7 +1713,6 @@ void bindfunc(const char *name, tag tag, int(*func)(int)){
 
 void bindmacro(char *name, int addr){
     int sym,val1,val2;
-    char *str;
 
     sym = makesym(name);
     val1 = freshcell();
@@ -1856,11 +1721,9 @@ void bindmacro(char *name, int addr){
     SET_CDR(val1,0);
     val2 = freshcell();
     SET_TAG(val2,MACRO);
-    str = (char *)malloc(strlen(name)+1);
-    if(str == NULL)
+    heap[val2].name = strdup(name);
+    if(heap[val2].name == NULL)
         error(MALLOC_OVERF,"makemacro",NIL);
-    heap[val2].name = str;
-    strcpy(heap[val2].name,name);
     SET_CAR(val2,val1);
     SET_CDR(val2,0);
     SET_AUX(val2,cfunction); //class
@@ -1878,7 +1741,7 @@ void bindconst(const char *name, int obj){
 
 //--------qusi quote---------------
 int quasi_transfer(int x, int n){
-    //printf("%d",n); print(x);printf("\n");
+    //printf("%d",n); print(x);putchar('\n');
 
     if(nullp(x))
         return(NIL);
@@ -1912,21 +1775,21 @@ int quasi_transfer(int x, int n){
 void debugger(){
 	int i,x;
 
-    printf("debug mode ?(help)\n");
+    puts("debug mode ?(help)");
     loop:
-    printf(">>");fflush(stdout);
+    fputs(">>", stdout);
     x = sread();
 	if(eqp(x,makesym("?"))){
-    	printf("?  help\n");
-        printf(":a abort\n");
-        printf(":b backtrace\n");
-        printf(":d dynamic environment\n");
-        printf(":e environment\n");
-        printf(":i identify examining symbol\n");
-        printf(":q quit\n");
-        printf(":r room\n");
-        printf(":s stepper ON/OFF\n");
-        printf("other S exps eval\n");
+    	puts("?  help\n"
+             ":a abort\n"
+             ":b backtrace\n"
+             ":d dynamic environment\n"
+             ":e environment\n"
+             ":i identify examining symbol\n"
+             ":q quit\n"
+             ":r room\n"
+             ":s stepper ON/OFF\n"
+             "other S exps eval");
     }
     else if(eqp(x,makesym(":A"))){
         longjmp(buf,1); 
@@ -1934,58 +1797,59 @@ void debugger(){
     else if(eqp(x,makesym(":B"))){
     	for(i=0;i<BACKSIZE;i++){
             print(backtrace[i]);
-            printf("\n");
+            putchar('\n');
     	}
     }
     else if(eqp(x,makesym(":D"))){
         #ifdef DYN
         for(i=1;i<=dp;i++){
             print(dynamic[i][1]);
-            printf(" = ");
+            fputs(" = ", stdout);
             print(dynamic[1][1]);
-            printf("\n");
+            putchar('\n');
         }
         #else
     	print(dp);
-        printf("\n");
+        putchar('\n');
         #endif
     }
     else if(eqp(x,makesym(":E"))){
     	print(ep);
-        printf("\n");
+        putchar('\n');
     }
     else if(eqp(x,makesym(":I"))){
     	print(examin_sym);
-        printf("\n");
+        putchar('\n');
     }
     else if(eqp(x,makesym(":Q"))){
     	return;
     }
     else if(eqp(x,makesym(":R"))){
-        printf("EP = %d (environment pointer)\n", ep);
-    	printf("DP = %d (dynamic pointer)\n", dp);
-        printf("HP = %d (heap pointer)\n", hp);
-        printf("SP = %d (stack pointer)\n", sp);
-        printf("FC = %d (free counter)\n", fc);
-        printf("AP = %d (arglist pointer)\n", ap);
-        printf("LP = %d (shelter pointer)\n", lp);
-        printf("GC = %d (GC switch 0=m&sGC 1=copyGC)\n", gc_sw);
-        printf("WP = %d (work area pointer)\n", wp);
-        printf("SW = %d (current work area 1or2)\n", area_sw);
+        printf("EP = %d (environment pointer)\n"
+               "DP = %d (dynamic pointer)\n"
+               "HP = %d (heap pointer)\n"
+               "SP = %d (stack pointer)\n"
+               "FC = %d (free counter)\n"
+               "AP = %d (arglist pointer)\n"
+               "LP = %d (shelter pointer)\n"
+               "GC = %d (GC switch 0=m&sGC 1=copyGC)\n"
+               "WP = %d (work area pointer)\n"
+               "SW = %d (current work area 1or2)\n",
+               ep, dp, hp, sp, fc, ap, lp, gc_sw, wp, area_sw);
     }
     else if(eqp(x,makesym(":S"))){
     	if(stepper_flag == 0){
-        	printf("stepper ON. enter 'q' to quit stepper\n");
+        	puts("stepper ON. enter 'q' to quit stepper");
             stepper_flag = 1;
         }
         else{
-        	printf("stepper OFF\n");
+        	puts("stepper OFF");
             stepper_flag = 0;
         }
     }
     else{
     	print(eval(x));
-        printf("\n");
+        putchar('\n');
     }
     goto loop;
 }

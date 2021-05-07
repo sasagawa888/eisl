@@ -20,6 +20,7 @@ Copying GC mode
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
+#include <signal.h>
 #include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
@@ -32,6 +33,7 @@ Copying GC mode
 #define HASHTBSIZE 107
 #define CTRLSTK 200
 #define BACKSIZE 30
+#define EISL_PATH_MAX 256
 
 static const float VERSION = 1.96;
 static const int HEAPSIZE = 20000000;
@@ -280,6 +282,30 @@ static inline float *GET_FVEC(int addr) { return heap[addr].val.car.dyna_fvec; }
 
 static inline int IDX2C(int i,int j,int ld) { return (j * ld + i); }
 static inline int IDX2R(int i,int j,int ld) { return (i * ld + j); }
+static inline void append_str(int output_stream, const char *from)
+{
+    char *to = GET_NAME(output_stream);
+    strncat(to, from, STRSIZE - strlen(to) - 1);
+    to[STRSIZE - 1] = '\0';
+}
+static inline void output_str(int output_stream, const char *from)
+{
+    if (GET_OPT(output_stream) != EISL_OUTSTR) {
+        fputs(from, GET_PORT(output_stream));
+    } else {
+        append_str(output_stream, from);
+    }
+}
+static inline void output_char(int output_stream, char c)
+{
+    stream_str[0] = c;
+    stream_str[1] = '\0';
+    if (GET_OPT(output_stream) != EISL_OUTSTR) {
+        fputc(c, GET_PORT(output_stream));
+    } else {
+        append_str(output_stream, stream_str);
+    }
+}
 
 //object oriented
 extern int generic_func;
@@ -291,21 +317,20 @@ extern int generic_list;
 //flag
 extern int gArgC;
 extern char **gArgV;
-extern int gbc_flag;
+extern bool gbc_flag;
 extern int genint;
-extern int simp_flag;
-extern int ignore_flag;
-extern int open_flag;
-extern int str_flag;
-extern int top_flag;
-extern int redef_flag;
-extern int start_flag;
-extern int back_flag;
-extern int ignore_topchk;
+extern bool simp_flag;
+extern bool ignore_flag;
+extern bool open_flag;
+extern bool top_flag;
+extern bool redef_flag;
+extern bool start_flag;
+extern bool back_flag;
+extern bool ignore_topchk;
 extern bool repl_flag;
-extern int exit_flag;
-extern int debug_flag;
-extern int greeting_flag;
+extern volatile sig_atomic_t exit_flag;
+extern bool debug_flag;
+extern bool greeting_flag;
 extern bool script_flag;
 
 //switch
@@ -333,22 +358,18 @@ extern int error_handler;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 
-__dead static inline void DEBUG(void) { printf("debug\n"); longjmp(buf,2); }
+__dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
-extern char ed_candidate[50][30];
+extern const char *ed_candidate[50];
 extern int ed_candidate_pt;
-extern int ed_syntax_color;
-extern int ed_builtin_color;
-extern int ed_extended_color;
-extern int ed_string_color;
-extern int ed_comment_color;
+extern const short ed_syntax_color;
+extern const short ed_builtin_color;
+extern const short ed_extended_color;
+extern const short ed_string_color;
+extern const short ed_comment_color;
 extern int ed_incomment;
-extern char special[40][12];
-extern char syntax[60][30];
-extern char builtin[200][32];
-extern char extended[70][30];
 
 //-------error code---
 enum {
@@ -658,7 +679,6 @@ int f_list(int addr);
 int f_listp(int addr);
 int f_load(int arglist);
 int f_log(int x);
-int f_logistic(int arglist);
 int f_macroexpand_1(int arglist);
 int f_macroexpand_all(int arglist);
 int f_map_into(int arglist);
@@ -668,7 +688,6 @@ int f_mapcar(int addr);
 int f_mapcon(int x);
 int f_mapl(int x);
 int f_maplist(int addr);
-int f_mapvec(int arglist);
 int f_max(int x);
 int f_member(int addr);
 int f_min(int x);
@@ -1020,8 +1039,8 @@ int f_backtrace(int arglist);
 int f_symbol_function(int arglist);
 int f_symbol_class(int arglist);
 
-void setcolor(int n);
-int getch(void);
+void setcolor(short n);
+int eisl_getch(void);
 int f_edit(int arglist);
 #ifdef __arm__
 int f_wiringpi_setup_gpio(int arglist);
@@ -1095,7 +1114,7 @@ double get_flt(int x);
 
 
 void display_buffer(void);
-int check_token_buffer(int col);
+enum HighlightToken check_token_buffer(int col);
 int findlparen_buffer(int col);
 int findrparen_buffer(int col);
 void emphasis_lparen_buffer(int col);
@@ -1104,7 +1123,7 @@ void reset_paren_buffer();
 void restore_paren_buffer(int col);
 char *get_fragment_buffer(int col);
 void find_candidate_buffer(int col);
-int replace_fragment_buffer(char* newstr, int col);
+int replace_fragment_buffer(const char* newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);

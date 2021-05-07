@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -1278,7 +1280,7 @@ int f_defclass(int arglist){
 
     sc = arg2;
     if(subclassp(GET_AUX(arg1),cobject))
-        redef_flag = 1; //flag for check redefinition of class
+        redef_flag = true; //flag for check redefinition of class
 
     var = NIL;
     val = UNDEF;
@@ -1482,18 +1484,18 @@ int f_defmethod(int arglist){
 int f_ignore_errors(int arglist){
     int ret;
 
-    ignore_flag = 1;
+    ignore_flag = true;
     ret = setjmp(ignore_buf);
 
     if(ret == 0){
         int res;
 
         res = f_progn(arglist);
-        ignore_flag = 0;
+        ignore_flag = false;
         return(res);
     }
     else{
-        ignore_flag = 0;
+        ignore_flag = false;
         return(NIL);
     }
 }
@@ -1669,7 +1671,7 @@ int f_convert(int arglist){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                sprintf(str,"%d",GET_INT(arg1));
+                snprintf(str, STRSIZE, "%d", GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1682,7 +1684,7 @@ int f_convert(int arglist){
             }
             else if(GET_AUX(arg2) == cstring){
                 #if __linux || __APPLE__ || defined(__OpenBSD__)
-                sprintf(str,"%lld",GET_LONG(arg1));
+                snprintf(str, STRSIZE, "%lld", GET_LONG(arg1));
                 #endif
                 #if _WIN32
                 sprintf(str,"%I64d",GET_LONG(arg1));
@@ -1719,9 +1721,9 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == cstring){
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    sprintf(str, "%0.16g", x);
+                    snprintf(str, STRSIZE, "%0.16g", x);
                 else
-                    sprintf(str, "%0.1f", x);
+                    snprintf(str, STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;
@@ -1744,7 +1746,8 @@ int f_convert(int arglist){
                 return(arg1);
             }
             else if(GET_AUX(arg2) == cinteger){
-                strcpy(stok.buf,GET_NAME(arg1));
+                strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
+                stok.buf[BUFSIZE - 1] = '\0';
 
                 if(bignumtoken(stok.buf)){
                     return(makebigx(stok.buf));
@@ -1905,13 +1908,15 @@ int f_untrace(int arglist){
 }
 
 int f_defmodule(int arglist){
-    int arg1,arg2,sexp,exports;
+    int arg1,arg2,exports;
 
     arg1 = car(arglist); //module name
     arg2 = cdr(arglist); //body
     exports = NIL;
 
     while(!nullp(arg2)){
+        int sexp;
+        
         sexp = car(arg2);
         if(symbolp(car(sexp)) && HAS_NAME(car(sexp),"DEFPUBLIC"))
             exports = cons(cadr(sexp),exports);
@@ -1990,21 +1995,20 @@ int substitute(int addr, int module, int fname){
 int substitute1(int x, int module){
     char str[SYMSIZE];
 
-    str[0] = NUL;
-    strcpy(str,GET_NAME(module));
-    strcat(str,"::");
-    strcat(str,GET_NAME(x));
+    snprintf(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
     return(makesym(str));
 }
 
 
 int substitute_case(int addr, int module, int fname){
-    int body,bodies,newbody,newbodies;
+    int bodies,newbodies;
 
     bodies = addr;
     newbodies = NIL;
 
     while(!nullp(bodies)){
+        int body, newbody;
+        
         body = car(bodies);
         newbody = cons(car(body),substitute(cdr(body),module,fname));
         newbodies = cons(newbody,newbodies);

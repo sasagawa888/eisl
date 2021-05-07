@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -1309,7 +1311,7 @@ void insert_method(int x, int func){
 }
 
 void resort_method(int func){
-    int methods,res,temp,x;
+    int methods,res;
 
     methods = GET_CDR(func);
     if(nullp(methods))
@@ -1318,24 +1320,28 @@ void resort_method(int func){
     res = hcons(car(methods),NIL);
     methods = cdr(methods);
     while(!nullp(methods)){
+        int temp, x;
+        
         x = car(methods);
         temp = NIL;
+        bool high_priority_found = false;
         while(!nullp(res)){
             if(high_priority_p(x,car(res))){
                 res = happend(hreverse(temp),hcons(x,res));
-                goto exit;
+                high_priority_found = true;
+                break;
             }
             else{
                 temp = hcons(car(res),temp);
                 res = cdr(res);
             }
         }
-        res = hreverse(cons(x,temp));   
-        exit:
+        if (!high_priority_found) {
+            res = hreverse(cons(x,temp));
+        }
         methods = cdr(methods);
     }
     SET_CDR(func,res);
-    return;
 }
 
 void redef_generic(void){
@@ -1346,7 +1352,7 @@ void redef_generic(void){
         resort_method(GET_CAR(car(ls)));
         ls = cdr(ls);
     }
-    redef_flag = 0;
+    redef_flag = false;
     return;
 }
 

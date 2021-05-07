@@ -12,6 +12,9 @@ number of data is absolute.
 cells = lsb -> ... msb -> NIL
 aux = cbignum class information
 */
+
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -91,41 +94,38 @@ void print_bigx(int x){
 
     if(get_sign(x) == -1){
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
-        	fprintf(GET_PORT(output_stream),"-");
-            sprintf(stream_str1,"-");
+        	fputc('-', GET_PORT(output_stream));
+            stream_str1[0] = '-';
+            stream_str1[1] = '\0';
         }
         else{
-        	sprintf(stream_str1,"-");
-            strcat(stream_str,stream_str1);
+            stream_str[0] = '-';
         }
     }
     y = get_msb(x);
-    if(GET_OPT(output_stream) != EISL_OUTSTR){
+    if(GET_OPT(output_stream) != EISL_OUTSTR) {
     	fprintf(GET_PORT(output_stream),"%d",GET_CAR(y));
-        sprintf(stream_str1,"%d",GET_CAR(y));
-        strcat(stream_str,stream_str1);
     }
-    else{
-    	sprintf(stream_str1,"%d",GET_CAR(y));
-        strcat(stream_str,stream_str1);
-    }
+    snprintf(stream_str1, STRSIZE, "%d",GET_CAR(y));
+    strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
+    stream_str[STRSIZE - 1] = '\0';
     y = prev(y);
 
     do{
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	fprintf(GET_PORT(output_stream),"%09d", GET_CAR(y));
-            sprintf(stream_str1,"%09d",GET_CAR(y));
-            strcat(stream_str,stream_str1);
         }
-        else{
-        	sprintf(stream_str1,"%09d",GET_CAR(y));
-            strcat(stream_str,stream_str1);
-        }
+        snprintf(stream_str1, STRSIZE, "%09d",GET_CAR(y));
+        strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
+        stream_str[STRSIZE - 1] = '\0';
         y = prev(y);
     }while(!nullp(y));
 
-    if(GET_OPT(output_stream) == EISL_OUTSTR)
-    	strcat(GET_NAME(output_stream),stream_str);
+    if(GET_OPT(output_stream) == EISL_OUTSTR) {
+        char *str = GET_NAME(output_stream);
+    	strncat(str, stream_str, STRSIZE - strlen(str) - 1);
+        str[STRSIZE - 1] = '\0';
+    }
 }
 
 
@@ -807,7 +807,7 @@ int bigx_div1(int arg1, int arg2){
 
     //following code, calcuration is required in bignum
     //so, stop simlification.
-    simp_flag = 0;
+    simp_flag = false;
 
     res = gen_big();
     //if divisor is smaller, become bigger to hold theolem
@@ -821,8 +821,8 @@ int bigx_div1(int arg1, int arg2){
     }
 
     #ifdef TEST
-    printf("arg1=");print(arg1);printf("\n");
-    printf("arg2=");print(arg2);printf("\n");
+    fputs("arg1=", stdout);print(arg1);putchar('\n');
+    fputs("arg2=", stdout);print(arg2);putchar('\n');
     #endif
 
     do{ dig1 = bigx_length(arg1);
@@ -849,8 +849,8 @@ int bigx_div1(int arg1, int arg2){
         p = bigx_shift(arg2,s);
         #ifdef TEST
         printf("q= %I64d (u=%I64d/ v=%I64d)\n", q,u,v);
-        printf("ds=");print(ds);printf("\n");
-        printf("p=");print(p);printf("\n");
+        fputs("ds=", stdout);print(ds);putchar('\n');
+        fputs("p=", stdout);print(p);putchar('\n');
         printf("s=%d\n", s);
         #endif
         t = bigx_minus(arg1,ds);
@@ -868,7 +868,7 @@ int bigx_div1(int arg1, int arg2){
             q--;
         }
         #ifdef TEST
-        printf("after arg1=");print(arg1);printf("\n");
+        fputs("after arg1=", stdout);print(arg1);putchar('\n');
         #endif
 
         bigx_gbc(ds);//garbage collection
@@ -905,7 +905,7 @@ int bigx_div1(int arg1, int arg2){
         bigx_gbc(arg2);
 
     //restore flag
-    simp_flag = 1;
+    simp_flag = true;
     SET_TAG(res,BIGX);
     set_sign(res,1);
     cut_zero(res);

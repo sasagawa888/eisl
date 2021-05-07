@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -5,12 +7,15 @@
 #include <setjmp.h>
 #include "eisl.h"
 
-#define ESCERRFRED  fprintf(stderr,"\33[31m")
-#define ESCERRFORG  fprintf(stderr,"\33[39m")
+static int outc(int c) {
+    return fputc(c, stderr);
+}
+static inline void ESCERRFRED() { tputs(tparm(set_a_foreground, COLOR_RED), 1, outc); }
+static inline void ESCERRFORG() { tputs(exit_attribute_mode, 1, outc); }
 
 //-------error------
 void error(int errnum, const char *fun, int arg){
-    int initargs,c,i;
+    int initargs,i;
     char fun1[SYMSIZE];
 
     //resolve unwind-protect
@@ -24,12 +29,10 @@ void error(int errnum, const char *fun, int arg){
     }
 
     //fold to upper letter.
-    strcpy(fun1,fun);
-    i = 0;
-    while((c=fun1[i]) != NUL){
-        fun1[i] = toupper(c);
-        i++;
+    for (i = 0; i < (int)strlen(fun); i++) {
+        fun1[i] = toupper(fun[i]);
     }
+    fun1[i] = '\0';
 
     switch(errnum){ 
         case DIV_ZERO:  initargs = list6(makesym("format-string"),makestr("division by zero at "),
@@ -472,23 +475,20 @@ y = continuable string/NIL
 */
 int signal_condition(int x, int y){
     int str,args,fun;
-    char *pname;
     
     if(y == NIL)
         SET_OPT(x,NOTCONT);
     else{
         SET_OPT(x,CONTINUABLE);
-        pname = (char *)malloc(strlen(GET_NAME(y)+1));
-        if(pname == NULL)
+        heap[x].name = strdup(GET_NAME(y));
+        if(heap[x].name == NULL)
             error(MALLOC_OVERF,"signal-condition",NIL);
-        heap[x].name = pname;
-        strcpy(heap[x].name,GET_NAME(y));
     }
     if(ignore_flag)
         longjmp(ignore_buf,1);
     if(open_flag && error_handler==NIL){
         fclose(GET_PORT(input_stream));
-        open_flag = 0;  
+        open_flag = false;
         printf("around here line=%d column=%d\n", line, column); 
     } 
     if(error_handler != NIL){
@@ -502,14 +502,13 @@ int signal_condition(int x, int y){
     args = cdr(assoc(makesym("b"),GET_CDR(x)));
     fun = cdr(assoc(makesym("c"),GET_CDR(x)));
     output_stream = error_stream;
-    ESCERRFRED;
-    fprintf(stderr,"%s",GET_NAME(str)); 
+    ESCERRFRED();
+    fputs(GET_NAME(str), stderr); 
     print(fun);
-    fprintf(stderr,"%s"," ");
+    fputc(' ', stderr);
     print(args);
-    fprintf(stderr,"\n");
-    fflush(stderr);
-    ESCERRFORG;
+    fputc('\n', stderr);
+    ESCERRFORG();
     input_stream = standard_input;
     output_stream = standard_output;
     debugger();

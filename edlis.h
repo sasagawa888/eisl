@@ -4,8 +4,6 @@
 #define FULLSCREEN
 #include "term.h"
 
-enum Token { NONE, SYNTAX, BUILTIN, STRING, COMMENT, EXTENDED, MULTILINE_COMMENT, };
-
 static const float VERSION = 1.73;
 #define ROW_SIZE 4000
 #define COL_SIZE 255
@@ -41,7 +39,7 @@ int calc_tabs(void);
 void copy_selection(void);
 void paste_selection(void);
 void delete_selection(void);
-enum Token check_token(int row, int col);
+enum HighlightToken check_token(int row, int col);
 char *get_fragment(void);
 void find_candidate(void);
 void replace_fragment(const char *newstr);

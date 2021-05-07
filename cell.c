@@ -4,6 +4,8 @@ lisp-2  symbol-address car=function-addr, cdr=global-val
 closure function-address car=arg+body, cdr=environment
 */
 
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -382,15 +384,12 @@ option = CONSTN(constant )
 */
 int makesym1(const char *pname){
     int addr;
-    char *str;
 
     addr = hfreshcell();
     SET_TAG(addr,SYM);
-    str = (char *)malloc(strlen(pname)+1);
-    if(str == NULL)
+    heap[addr].name = strdup(pname);
+    if(heap[addr].name == NULL)
         error(MALLOC_OVERF,"makesym",NIL);
-    heap[addr].name = str;
-    strcpy(heap[addr].name,pname);
     SET_CAR(addr,NIL);
     SET_CDR(addr,NIL);
     SET_AUX(addr,csymbol); //class symbol
@@ -415,82 +414,47 @@ int hash(const char *name){
 DEF_GETTER(char, FLAG, flag, NIL)
 void cellprint(int addr){
     switch(GET_FLAG(addr)){
-        case FRE:   printf("FRE "); break;
-        case USE:   printf("USE "); break;
+    case FRE:   fputs("FRE ", stdout); break;
+    case USE:   fputs("USE ", stdout); break;
     }
     switch(GET_TAG(addr)){
-        case EMP:   printf("EMP    ");
-        			break;
-        case INTN:  printf("INTN   ");
-        			printf("%d" , GET_INT(addr));
-         			break;
-        case FLTN:  printf("FLTN   ");
-        			printf("%f" , GET_FLT(addr));
-         			break;
-        case LONGN: printf("LONGN  ");
-        			printf("%lld" , GET_LONG(addr));
-                    break;
-        case BIGX:  printf("BIGX   ");
-        			printf("%d", GET_CAR(addr));
-         			break;
-        case SYM:   printf("SYM    ");
-                    printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-    				printf("%s", GET_NAME(addr));
-        			break;
-        case STR:   printf("STR    ");
-                    printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-    				printf("%s", GET_NAME(addr));
-        			break;
-        case LIS:   printf("LIS    ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case SUBR:  printf("SUBR   ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case FSUBR: printf("FSUBR  ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case FUNC:  printf("FUNC   ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case MACRO: printf("MACRO  ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
-        case CLASS: printf("CLASS  ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-                                printf("%s", GET_NAME(addr));
-         			break;
-        case GENERIC:
-        			printf("GENE   ");
-        			printf("%07d ", GET_CAR(addr));
-    				printf("%07d ", GET_CDR(addr));
-    				printf("%07d ", GET_AUX(addr));
-         			break;
+    case EMP:   puts("EMP");
+        break;
+    case INTN:  printf("INTN   %d\n" , GET_INT(addr));
+        break;
+    case FLTN:  printf("FLTN   %f\n", GET_FLT(addr));
+        break;
+    case LONGN: printf("LONGN  %lld\n", GET_LONG(addr));
+        break;
+    case BIGX:  printf("BIGX   %d\n", GET_CAR(addr));
+        break;
+    case SYM:   printf("SYM    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+        break;
+    case STR:   printf("STR    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+        break;
+    case LIS:   printf("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case SUBR:  printf("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case FSUBR: printf("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case FUNC:  printf("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case MACRO: printf("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
+    case CLASS: printf("CLASS  %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+        break;
+    case GENERIC:
+        printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        break;
     }
-    printf("\n");
 }
 
 //heap dump
 void heapdump(int start, int end){
     int i;
 
-    printf("addr    F   TAG    CAR     CDR     AUX     NAME\n");
+    puts("addr    F   TAG    CAR     CDR     AUX     NAME");
     for(i=start; i<= end; i++){
         printf("%07d ", i);
         cellprint(i);
@@ -569,15 +533,12 @@ func object is generated in heap area.
 */
 int makefunc(const char *pname, int addr){
     int val;
-    char *str;
 
     val = hfreshcell();
     SET_TAG(val,FUNC);
-    str = (char *)malloc(strlen(pname)+1);
-    if(str == NULL)
+    heap[val].name = strdup(pname);
+    if(heap[val].name == NULL)
         error(MALLOC_OVERF,"makefunc",NIL);
-    heap[val].name = str;
-    strcpy(heap[val].name,pname);
     SET_CAR(val,copy_heap(addr));
     SET_CDR(val,ep);
     SET_AUX(val,cfunction); //class function
@@ -643,15 +604,12 @@ aux = class
 */
 int makegeneric(char *pname, int lamlist,int body){
     int val;
-    char *str;
 
     val = hfreshcell();
     SET_TAG(val,GENERIC);
-    str = (char *)malloc(strlen(pname)+1);
-    if(str == NULL)
+    heap[val].name = strdup(pname);
+    if(heap[val].name == NULL)
         error(MALLOC_OVERF,"makegeneric",NIL);
-    heap[val].name = str;
-    strcpy(heap[val].name,pname);
     SET_CAR(val,copy_heap(lamlist));
     SET_OPT(val,count_args(lamlist)); //amount of argument
     SET_CDR(val,NIL);
@@ -830,22 +788,19 @@ int makefarray(int ls, int obj){
 
 int makestr(const char *string){
     int addr;
-    char *str;
 
     addr = freshcell();
     SET_TAG(addr,STR);
-    str = (char *)malloc(strlen(string)+1);
-    if(str == NULL)
+    heap[addr].name = strdup(string);
+    if(heap[addr].name == NULL)
         error(MALLOC_OVERF,"makestr",NIL);
-    heap[addr].name = str;
-    strcpy(heap[addr].name,string);
     SET_AUX(addr,cstring); //class string
     return(addr);
 }
 
 int makechar(const char *pname){
     int addr,pos;
-    char low_name[SYMSIZE],char_entity[SYMSIZE],*str;
+    char low_name[SYMSIZE],char_entity;
 
     
     pos = 0;
@@ -854,52 +809,43 @@ int makechar(const char *pname){
         pos++;
     }
     low_name[pos] = NUL;
-    strcpy(char_entity,pname);
+    char_entity = pname[0];
     
     if(strcmp(low_name,"alarm") == 0){
-        char_entity[0] = BEL;
-        char_entity[1] = NUL;
+        char_entity = BEL;
     }
     else if(strcmp(low_name,"backspace") == 0){
-        char_entity[0] = BS;
-        char_entity[1] = NUL;
+        char_entity = BS;
     }
     else if(strcmp(low_name,"delete") == 0){
-        char_entity[0] = DEL;
-        char_entity[1] = NUL;
+        char_entity = DEL;
     }
     else if(strcmp(low_name,"escape") == 0){
-        char_entity[0] = ESC;
-        char_entity[1] = NUL;
+        char_entity = ESC;
     }
     else if(strcmp(low_name,"return") == 0){
-        char_entity[0] = RET;
-        char_entity[1] = NUL;
+        char_entity = RET;
     }
     else if(strcmp(low_name,"newline") == 0){
-        char_entity[0] = EOL;
-        char_entity[1] = NUL;
+        char_entity = EOL;
     }
     else if(strcmp(low_name,"null") == 0){
-        char_entity[0] = NUL;
-        char_entity[1] = NUL;
+        char_entity = NUL;
     }
     else if(strcmp(low_name,"space") == 0){
-        char_entity[0] = SPACE;
-        char_entity[1] = NUL;
+        char_entity = SPACE;
     }
     else if(strcmp(low_name,"tab") == 0){
-        char_entity[0] = TAB;
-        char_entity[1] = NUL;
+        char_entity = TAB;
     }
 
     addr = freshcell();
     SET_TAG(addr,CHR);
-    str = (char *)malloc(CHARSIZE);
-    if(str == NULL)
+    heap[addr].name = (char *)malloc(CHARSIZE);
+    if(heap[addr].name == NULL)
         error(MALLOC_OVERF,"makechar",NIL);
-    heap[addr].name = str;
-    strcpy(heap[addr].name,char_entity);
+    heap[addr].name[0] = char_entity;
+    heap[addr].name[1] = NUL;
     SET_AUX(addr,ccharacter);
     return(addr);
 }
@@ -912,15 +858,13 @@ aux = method
 name = class name
 */
 int makeclass(const char *pname, int superclass){
-    int addr,len;
-    char *str;
+    int addr;
 
     addr = freshcell();
     SET_TAG(addr,CLASS);
-    len = strlen(pname);
-    str = (char *)malloc(len+1);
-    heap[addr].name = str;
-    strcpy(heap[addr].name,pname);
+    heap[addr].name = strdup(pname);
+    if(heap[addr].name == NULL)
+        error(MALLOC_OVERF,"makeclass",NIL);
     SET_CAR(addr,superclass);
     SET_CDR(addr,NIL);
     SET_AUX(addr,NIL);
@@ -1137,7 +1081,7 @@ int convert(int arg1, int arg2){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                sprintf(str,"%d",GET_INT(arg1));
+                snprintf(str, STRSIZE, "%d",GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1164,9 +1108,9 @@ int convert(int arg1, int arg2){
               
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    sprintf(str, "%0.16g", x);
+                    snprintf(str, STRSIZE, "%0.16g", x);
                 else
-                    sprintf(str, "%0.1f", x);
+                    snprintf(str, STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;

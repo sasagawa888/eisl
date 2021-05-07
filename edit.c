@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 700
+
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
@@ -6,6 +8,11 @@
 #include <setjmp.h>
 #include "eisl.h"
 
+#ifndef CTRL
+#define CTRL(X) ((X) & 0x1F)
+#endif
+
+static const int COL_SIZE = 255;
 
 int f_edit(int arglist){
     int arg1;
@@ -14,30 +21,18 @@ int f_edit(int arglist){
 	arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "edit", arglist);
-    strcpy(str,"./edlis ");
-    strcat(str,GET_NAME(arg1));
+    snprintf(str, STRSIZE, "./edlis %s", GET_NAME(arg1));
 	if(system(str) == -1)
 		error(SYSTEM_ERR, "edit", arg1);
     f_load(arglist);
 	return(T);
 }
 
-void setcolor(int n){
-        switch(n){
-        case 0: ESCFBLACK(); break;
-        case 1: ESCFRED(); break;
-        case 2: ESCFGREEN(); break;
-        case 3: ESCFYELLOW(); break;
-        case 4: ESCFBLUE(); break;
-        case 5: ESCFMAGENTA(); break;
-        case 6: ESCFCYAN(); break;
-        case 7: ESCFWHITE(); break;
-        default: ESCFWHITE(); break;
-        }
-        return;
+void setcolor(short n){
+    putp(tparm(set_a_foreground, n));
 }
 
-int getch(){
+int eisl_getch(){
     struct termios oldt,
     newt;
     int ch;
@@ -52,7 +47,7 @@ int getch(){
 
 //------------REPL read-line-----------------
 void display_buffer(){
-    int col,type;
+    int col;
 
     ESCMVLEFT(3);
     ESCCLSL();
@@ -66,7 +61,7 @@ void display_buffer(){
              setcolor(ed_comment_color);
              while(buffer[col][0] != EOL &&
                    buffer[col][0] != NUL){
-                       printf("%c", buffer[col][0]);
+                       putchar(buffer[col][0]);
                        col++;
                        if(buffer[col-2][0] == '|' &&
                           buffer[col-1][0] == '#'){
@@ -82,12 +77,12 @@ void display_buffer(){
          else if(buffer[col][0] == ' ' ||
                  buffer[col][0] == '(' ||
                  buffer[col][0] == ')' ){
-            printf("%c", buffer[col][0]);
+            putchar(buffer[col][0]);
             col++;
          }
          else{
-            type = check_token_buffer(col);
-            if(type == 1){
+             switch (check_token_buffer(col)) {
+             case HIGHLIGHT_SYNTAX:
                 ESCBOLD();
                 setcolor(ed_syntax_color);
                 while(buffer[col][0] != ' ' &&
@@ -95,13 +90,13 @@ void display_buffer(){
                       buffer[col][0] != ')' &&
                       buffer[col][0] != NUL &&
                       buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                 }
                 ESCRST();
                 ESCFORG();
-                }
-                else if(type == 2){
+                break;
+             case HIGHLIGHT_BUILTIN:
                     ESCBOLD();
                     setcolor(ed_builtin_color);
                     while(buffer[col][0] != ' ' &&
@@ -109,40 +104,39 @@ void display_buffer(){
                           buffer[col][0] != ')' &&
                           buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                         }
                     ESCRST();
                     ESCFORG();
-                }
-                else if(type == 3){
+                    break;
+             case HIGHLIGHT_STRING:
                     ESCBOLD();
                     setcolor(ed_string_color);
-                    printf("%c", buffer[col][0]);
+                    putchar(buffer[col][0]);
                     col++;
                     while(buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                         if(buffer[col-1][0] == '"')
                             break;
                    }
                     ESCRST();
                     ESCFORG();
-
-               }
-               else if(type == 4){
+                    break;
+             case HIGHLIGHT_COMMENT:
                    ESCBOLD();
                    setcolor(ed_comment_color);
                    while(buffer[col][0] != NUL &&
                          buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                    }
                    ESCRST();
                    ESCFORG();
-               }
-               else if(type == 5){
+                   break;
+             case HIGHLIGHT_EXTENDED:
                    ESCBOLD();
                    setcolor(ed_extended_color);
                    while(buffer[col][0] != ' ' &&
@@ -150,19 +144,19 @@ void display_buffer(){
                           buffer[col][0] != ')' &&
                           buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                        printf("%c", buffer[col][0]);
+                        putchar(buffer[col][0]);
                         col++;
                    }
                    ESCRST();
                    ESCFORG();
-               }
-               else if(type == 6){ //comment #|...|#
+                   break;
+             case HIGHLIGHT_MULTILINE_COMMENT:
                    ESCBOLD();
                    setcolor(ed_comment_color);
                    ed_incomment = line;
                    while(buffer[col][0] != EOL &&
                          buffer[col][0] != NUL){
-                             printf("%c", buffer[col][0]);
+                             putchar(buffer[col][0]);
                              col++;
                              if(buffer[col-2][0] == '|' &&
                                 buffer[col-1][0] == '#'){
@@ -172,33 +166,33 @@ void display_buffer(){
                                  break;
                              }
                    }
-               }
-               else{
+                   break;
+             default:
                     while(buffer[col][0] != ' ' &&
                           buffer[col][0] != '(' &&
                           buffer[col][0] != ')' &&
                           buffer[col][0] != NUL &&
                           buffer[col][0] != EOL){
-                       printf("%c", buffer[col][0]);
+                       putchar(buffer[col][0]);
                        col++;
                     }
-               }
-                }
-        }
+             }
+         }
+    }
     ESCRST();
     return;
 }
 
 
-int check_token_buffer(int col){
+enum HighlightToken check_token_buffer(int col){
     char str[80];
-    int pos,i;
+    int pos;
 
     pos = 0;
     if(buffer[col][0] == '"')
-        return(3); //string token
+        return HIGHLIGHT_STRING;
     else if(buffer[col][0] == ';')
-       return(4); //comment token
+       return HIGHLIGHT_COMMENT;
     while(buffer[col][0] != ' ' &&
           buffer[col][0] != '(' &&
           buffer[col][0] != ')' &&
@@ -210,25 +204,10 @@ int check_token_buffer(int col){
         }
     str[pos] = NUL;
     if(str[0] == '#' && str[1] == '|')
-        return(6); // #|...|#
+        return HIGHLIGHT_MULTILINE_COMMENT; // #|...|#
     if(pos == 0)
-        return(0);
-    for(i=0; i<60; i++){
-        if(strcmp(syntax[i],str) == 0){
-            return(1); //syntax token
-        }
-    }
-    for(i=0; i<200; i++){
-        if(strcmp(builtin[i],str) == 0){
-            return(2); //builtin token
-        }
-    }
-    for(i=0; i<60; i++){
-        if(strcmp(extended[i],str) == 0){
-            return(5); //extended token
-        }
-    }
-    return(0);
+        return HIGHLIGHT_NONE;
+    return maybe_match(str);
 }
 
 
@@ -255,7 +234,7 @@ int findrparen_buffer(int col){
 
     col++;
     nest = 0;
-    for(limit=0;limit<256;limit++)
+    for(limit=0;limit<=COL_SIZE;limit++)
         if(buffer[limit][0] == 0)
             break;
 
@@ -286,11 +265,11 @@ void emphasis_rparen_buffer(int col){
 
     ESCMVLEFT(col+3);
     ESCBCYAN();
-    printf("(");
+    putchar('(');
     ESCBORG();
     ESCMVLEFT(pos+3);
     ESCBCYAN();
-    printf(")");
+    putchar(')');
     ESCBORG();
     ed_rparen_col = pos;
     ed_lparen_col = col;
@@ -310,11 +289,11 @@ void emphasis_lparen_buffer(int col){
 
     ESCMVLEFT(col+3);
     ESCBCYAN();
-    printf(")");
+    putchar(')');
     ESCBORG();
     ESCMVLEFT(pos+3);
     ESCBCYAN();
-    printf("(");
+    putchar('(');
     ESCBORG();
     ed_rparen_col = col;
     ed_lparen_col = pos;
@@ -332,13 +311,13 @@ void restore_paren_buffer(int col){
     if(ed_lparen_col != -1){
         ESCMVLEFT(ed_lparen_col+3);
         ESCBORG();
-        printf("(");
+        putchar('(');
         ed_lparen_col = -1;
     }
     if(ed_rparen_col != -1){
         ESCMVLEFT(ed_rparen_col+3);
         ESCBORG();
-        printf(")");
+        putchar(')');
         ed_rparen_col = -1;
     }
     ESCMVLEFT(col+3);
@@ -371,34 +350,14 @@ char *get_fragment_buffer(int col){
 
 void find_candidate_buffer(int col){
     char* str;
-    int i;
 
     str = get_fragment_buffer(col);
     ed_candidate_pt = 0;
-    if(str[0] == NUL)
-        return;
-    for(i=0;i<60;i++){
-        if(strstr(syntax[i],str) !=NULL && syntax[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],syntax[i]);
-                        ed_candidate_pt++;
-        }
-    }
-    for(i=0;i<200;i++){
-        if(strstr(builtin[i],str) !=NULL && builtin[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],builtin[i]);
-                        ed_candidate_pt++;
-        }
-    }
-    for(i=0;i<60;i++){
-        if(strstr(extended[i],str) !=NULL && extended[i][0] == str[0]){
-            strcpy(ed_candidate[ed_candidate_pt],extended[i]);
-                        ed_candidate_pt++;
-        }
-    }
-    return;
+    if(str[0] != NUL)
+        gather_fuzzy_matches(str, ed_candidate, &ed_candidate_pt);
 }
 
-int replace_fragment_buffer(char* newstr, int col){
+int replace_fragment_buffer(const char* newstr, int col){
     char* oldstr;
     int m,n;
 
@@ -426,16 +385,38 @@ int replace_fragment_buffer(char* newstr, int col){
 void backspace_buffer(int col){
     int i;
 
-    for(i=col;i<255;i++)
+    for(i=col;i<COL_SIZE;i++)
         buffer[i][0] = buffer[i+1][0];
-    buffer[255][0] = 0;
+    buffer[COL_SIZE][0] = 0;
 }
 
 void insertcol_buffer(int col){
     int i;
 
-    for(i=255;i>col;i--)
+    for(i=COL_SIZE;i>col;i--)
         buffer[i][0] = buffer[i-1][0];
+}
+
+static void right(int *j)
+{
+    if(buffer[*j][0] == 0)
+        return;
+    (*j) = (*j) + 1;
+    restore_paren_buffer(*j);
+    emphasis_lparen_buffer(*j);
+    emphasis_rparen_buffer(*j);
+    ESCMVLEFT((*j)+3);
+}
+
+static void left(int *j)
+{
+    if((*j) <= 0)
+        return;
+    (*j) = (*j) - 1;
+    restore_paren_buffer(*j);
+    emphasis_lparen_buffer(*j);
+    emphasis_rparen_buffer(*j);
+    ESCMVLEFT((*j)+3);
 }
 
 int read_line(int flag){
@@ -449,38 +430,38 @@ int read_line(int flag){
 
     if(buffer[pos][0] == 0){
         for(i=9;i>0;i--)
-            for(j=0;j<256;j++)
+            for(j=0;j<=COL_SIZE;j++)
                 buffer[j][i] = buffer[j][i-1];
 
         limit++;
         if(limit >= 10)
             limit = 9;
 
-       for(j=0;j<256;j++)
+       for(j=0;j<=COL_SIZE;j++)
             buffer[j][0] = 0;
 
         rl_line = 0;
         ed_lparen_col = -1;
         ed_rparen_col = -1;
         j = 0;
-        c = getch();
+        c = eisl_getch();
         loop:
         switch(c){
-            case 13:  //ctrl+M
-            case EOL: for(j=0;j<256;j++)
+        case CTRL('M'):
+            case EOL: for(j=0;j<=COL_SIZE;j++)
                           if(buffer[j][0] == 0) {
                               buffer[j][0] = c;
                               break;
                           }
                       restore_paren_buffer(j);
-                      printf("%c",c);
+                      putchar(c);
                       pos = 0;
                       goto exit;
-            case 8:   //ctrl+H  
+        case CTRL('H'):
             case DEL: if(j <= 0)
                           break;
                       j--;
-                      for(k=j;k<255;k++)
+                      for(k=j;k<COL_SIZE;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
                       ESCMVLEFT(j+3);
@@ -489,8 +470,8 @@ int read_line(int flag){
                       if(ed_lparen_col > i)
                           ed_lparen_col--;
                       break;
-            case 4:   //ctrl+D  
-                      for(k=j;k<255;k++)
+        case CTRL('D'):
+                      for(k=j;k<COL_SIZE;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
                       ESCMVLEFT(j+3);
@@ -499,20 +480,20 @@ int read_line(int flag){
                       if(ed_lparen_col > i)
                           ed_lparen_col--;
                       break;
-            case 11:   //ctrl+K  
-                      memset(buffer1,NUL,255);
-                      for(k=j;k<255;k++){
+        case CTRL('K'):
+                      memset(buffer1,NUL,COL_SIZE);
+                      for(k=j;k<COL_SIZE;k++){
                           buffer1[k-j] = buffer[k][0];
                           buffer[k][0] = NUL;
                       }
                       display_buffer();
                       ESCMVLEFT(j+3);
                       break;
-            case 25:   //ctrl+Y  
-                      for(k=0;k<255;k++)
+        case CTRL('Y'):
+                      for(k=0;k<COL_SIZE;k++)
                           buffer[k][0] = buffer1[k];
                       
-                      for(k=0;k<255;k++){
+                      for(k=0;k<COL_SIZE;k++){
                           if(buffer[k][0] == NUL) 
                             break;
                       }
@@ -521,12 +502,12 @@ int read_line(int flag){
                       j = k;
                       ESCMVLEFT(k+3);
                       break;
-            case 1:   //ctrl+A  
+        case CTRL('A'):
                       j = 0;
                       ESCMVLEFT(j+3);
                       break;
-            case 5:   //ctrl+E 
-                      for(k=0;k<255;k++){
+        case CTRL('E'):
+                      for(k=0;k<COL_SIZE;k++){
                           if(buffer[k][0] == NUL) 
                             break;
                       }
@@ -535,20 +516,22 @@ int read_line(int flag){
                       j = k;
                       ESCMVLEFT(k+3);
                       break;
-            case 6:   //ctrl+F
-                      goto right;
-            case 2:   //ctrl+B
-                      goto left;
-            case 16:  //ctrl+P
+        case CTRL('F'):
+            right(&j);
+            break;
+        case CTRL('B'):
+            left(&j);
+            break;
+        case CTRL('P'):
                       up:
                       if(limit <= 1)
                          break;
                       if(rl_line >= limit-1)
                          rl_line = limit-2;
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           buffer[j][0] = buffer[j][rl_line+1];
 
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           if(buffer[j][0] == EOL)
                               break;
                       rl_line++;
@@ -557,13 +540,13 @@ int read_line(int flag){
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
-            case 14:  //ctrl+N
+        case CTRL('N'):
                       down:
                       if(rl_line <= 1)
                          rl_line = 1;
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           buffer[j][0] = buffer[j][rl_line-1];
-                      for(j=0;j<256;j++)
+                      for(j=0;j<=COL_SIZE;j++)
                           if(buffer[j][0] == EOL)
                               break;
                       rl_line--;
@@ -572,7 +555,7 @@ int read_line(int flag){
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
-            case ESC: c = getch();
+            case ESC: c = eisl_getch();
                     switch(c){
                         case TAB: find_candidate_buffer(j); //completion
                                     if(ed_candidate_pt == 0)
@@ -598,7 +581,7 @@ int read_line(int flag){
                                             printf("4:more");
                                         ESCRST();
                                         retry:
-                                        c = getch();
+                                        c = eisl_getch();
                                         if(c == ESC)
                                              goto escape;
                                         i = c - '1';
@@ -621,43 +604,27 @@ int read_line(int flag){
                                         display_buffer();
                                         ESCMVLEFT(j+3);
                                     }
-                                    c = getch();
-                                    goto loop;
-                        case 113:   //Esc+q
-                                    printf("\n");
-                                    greeting_flag = 0;
+                                    c = eisl_getch();
+                                     goto loop;
+                        case 'q':   //Esc+q
+                                    putchar('\n');
+                                    greeting_flag = false;
                                     longjmp(buf,2);
-                      }
-                      c = getch();
-                      switch(c){
-                          case UP: goto up;
-                          case DOWN: goto down;
-                          case LEFT:
-                                left:
-                                if(j <= 0)
-                                     break;
-                                 j--;
-                                 restore_paren_buffer(j);
-                                 emphasis_lparen_buffer(j);
-                                 emphasis_rparen_buffer(j);
-                                 ESCMVLEFT(j+3);
-                                 break;
-
-                          case RIGHT:
-                                 right:
-                                 if(buffer[j][0] == 0)
-                                    break;
-                                 j++;
-                                 restore_paren_buffer(j);
-                                 emphasis_lparen_buffer(j);
-                                 emphasis_rparen_buffer(j);
-                                 ESCMVLEFT(j+3);
-                                 break;
-
-                      }
+                    case ARROW_PREFIX:
+                            c = eisl_getch();
+                            if (c == ed_key_up) {
+                                goto up;
+                            } else if (c == ed_key_down) {
+                                goto down;
+                            } else if (c == ed_key_left) {
+                                left(&j);
+                            } else if (c == ed_key_right) {
+                                right(&j);
+                            }
+                    }
                       break;
 
-            default:  for(k=255;k>j;k--)
+            default:  for(k=COL_SIZE;k>j;k--)
                           buffer[k][0] = buffer[k-1][0];
                       buffer[j++][0] = c;
                       display_buffer();
@@ -675,7 +642,7 @@ int read_line(int flag){
                       ESCMVLEFT(j+3);
 
         }
-        c = getch();
+        c = eisl_getch();
         goto loop;
     }
    exit:

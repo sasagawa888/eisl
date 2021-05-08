@@ -35,7 +35,7 @@ Copying GC mode
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
 
-static const float VERSION = 1.96;
+static const float VERSION = 1.97;
 static const int HEAPSIZE = 20000000;
 static const int WORK1 = 6000000;
 static const int WORK2 = 13000000;

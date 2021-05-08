@@ -8,7 +8,7 @@ ifneq ($(OPSYS),macos)
 		LIBS = -lm -ldl
 	endif
 endif
-LIBSRASPI = -lm -ldl -lwiringPi
+LIBSRASPI = -lm -ldl -lwiringPi -lncurses
 INCS =  
 ifeq ($(OPSYS),macos)
 	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)

@@ -1085,7 +1085,6 @@ int f_tagbody(int arglist){
 
     tb_line = 0;
     while(tb_line < end){
-        exit:
         if(symbolp(prog[tb_line]))
             tb_line++;
         else{
@@ -1098,10 +1097,14 @@ int f_tagbody(int arglist){
                     if(tagbody_tag == prog[i]){
                         tagbody_tag = NIL;
                         tb_line = i;
-                        goto exit;
+                        break;
                     }
                 }
-                error(UNDEF_TAG,"tagbody",tagbody_tag);
+                if (tagbody_tag != NIL) {
+                    error(UNDEF_TAG,"tagbody",tagbody_tag);
+                } else {
+                    continue;
+                }
             }
         }
     }

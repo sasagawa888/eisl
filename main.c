@@ -194,6 +194,12 @@ int main(int argc, char *argv[]){
     char *home, str[EISL_PATH_MAX];
     char *script_arg;
 
+    setupterm((char *)0, 1, (int *)0);
+    ed_key_down = key_down[2];
+    ed_key_left = key_left[2];
+    ed_key_right = key_right[2];
+    ed_key_up = key_up[2];
+
     initcell();
     initclass();
     initstream();
@@ -208,11 +214,6 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
 
-    setupterm((char *)0, 1, (int *)0);
-    ed_key_down = key_down[2];
-    ed_key_left = key_left[2];
-    ed_key_right = key_right[2];
-    ed_key_up = key_up[2];
     int ret = setjmp(buf);
     if(init_flag){
         init_flag = false;
@@ -885,16 +886,12 @@ int expttoken(char buf[]){
     strncpy(buf1, buf, BUFSIZE - 1);
     buf1[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'e');
-    if(tok.sepch == NUL)
-        goto exit;
-
-    if((inttoken(tok.before)  || flttoken(tok.before)) &&
-        inttoken(tok.after)){
-
-        return(1);
+    if(tok.sepch != NUL &&
+       (inttoken(tok.before)  || flttoken(tok.before)) &&
+       inttoken(tok.after)) {
+        return 1;
     }
 
-    exit:
     strncpy(buf, buf1, BUFSIZE - 1);
     buf[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'E');
@@ -1533,7 +1530,7 @@ int apply(int func, int args){
                         }
                         if(GET_OPT(car(next_method)) == AROUND){
                             if(aexist==1)
-                                goto exit;
+                                break;
                             else
                                 method = cdr(method);
                         }
@@ -1547,10 +1544,9 @@ int apply(int func, int args){
                             method = cdr(next_method);
 
                     }
-                    if(pexist==0)
+                    if(aexist == 0 && pexist==0)
                         error(NOT_EXIST_METHOD, "apply", args);
 
-                    exit:
                     generic_func = NIL;
                     generic_vars = NIL;
                     return(res);
@@ -1776,7 +1772,7 @@ void debugger(){
 	int i,x;
 
     puts("debug mode ?(help)");
-    loop:
+    while (1) {
     fputs(">>", stdout);
     x = sread();
 	if(eqp(x,makesym("?"))){
@@ -1851,5 +1847,5 @@ void debugger(){
     	print(eval(x));
         putchar('\n');
     }
-    goto loop;
+    }
 }

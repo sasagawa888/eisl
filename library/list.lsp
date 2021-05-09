@@ -1,188 +1,266 @@
-;;
-;; list.l : ISLisp 用リスト操作関数
-;;
-;;          Copyright (C) 2016 Makoto Hiroi
-;;
+;;;
+;;; list.lsp : ISLisp 用リスト操作関数
+;;;
+;;;            Copyright (C) 2016-2021 Makoto Hiroi
+;;;
+(import "macro")
 
-;; 参照
-(defun caar (xs) (car (car xs)))
-(defun cadr (xs) (car (cdr xs)))
-(defun cdar (xs) (cdr (car xs)))
-(defun cddr (xs) (cdr (cdr xs)))
-
-(defun first  (xs) (car xs))
-(defun second (xs) (cadr xs))
-(defun third  (xs) (elt xs 2))  ; (elt xs n) は列関数
-(defun fourth (xs) (elt xs 3))
-(defun fifth  (xs) (elt xs 4))
-
-;; 末尾のセル
+;;; 末尾のセル
 (defun last-pair (xs)
   (for ((xs xs (cdr xs)))
        ((null (cdr xs)) xs)))
 
-;; 末尾の要素
+;;; 末尾の要素
 (defun last (xs) (car (last-pair xs)))
 
-;; 先頭から n 個の要素を取り出す
+;;; 先頭から n 個の要素を取り出す
 (defun take (xs n)
-  (for ((n n (- n 1))
-        (a nil (cons (car xs) a))
-        (xs xs (cdr xs)))
-       ((or (<= n 0) (null xs)) (nreverse a))))
+  (for ((xs xs (cdr xs))
+	(n n (- n 1))
+	(a nil (cons (car xs) a)))
+       ((= n 0) (nreverse a))))
 
-;; 先頭から n 個の要素を取り除く
+;;; 先頭から n 個の要素を取り除く
 (defun drop (xs n)
-  (for ((n n (- n 1))
-        (xs xs (cdr xs)))
-       ((or (<= n 0) (null xs)) xs)))
+  (for ((xs xs (cdr xs))
+	(n n (- n 1)))
+       ((= n 0) xs)))
 
-;; xs を反転して ys と連結する
-(defun append-reverse (xs ys)
-  (for ((xs xs (cdr xs)))
-       ((null xs) ys)
-       (setq ys (cons (car xs) ys))))
+;;;
+;;; 連結 : ISLisp には append と nconc がある
+;;;
 
-;;
-;; リストの生成
-;;
+;;; xs を反転して ys と連結する
+(defun revappend (xs ys)
+  (dolist (x xs ys) (push x ys)))
+
+;;;
+;;; コピーと置換
+;;;
+(defun copy-tree (tree)
+  (cond
+   ((consp tree)
+    (cons (copy-tree (car tree))
+	  (copy-tree (cdr tree))))
+   (t tree)))
+
+(defun copy-list (xs)
+  (let ((zs nil))
+    (dolist (x xs (nreverse zs))
+      (push x zs))))
+
+(defun copy-alist (xs)
+  (let ((zs nil))
+    (dolist (x xs (nreverse zs))
+      (push (cons (car x) (cdr x)) zs))))
+
+(defun subst-if (new pred tree)
+  (cond
+   ((funcall pred tree) new)
+   ((consp tree)
+    (cons (subst-if new pred (car tree))
+	  (subst-if new pred (cdr tree))))
+   (t tree)))
+
+(defun subst (new old tree)
+  (subst-if new (lambda (x) (eql x old)) tree))
+
+(defun subst-if-not (new pred tree)
+  (subst-if new (lambda (x) (not (funcall pred x))) tree))
+
+;;;
+;;; リストの生成: ISLisp には create-list がある
+;;;
 (defun iota (n m)
   (for ((m m (- m 1))
-        (a nil))
+	(a nil))
        ((> n m) a)
-       (setq a (cons m a))))
-;;
-;; 削除
-;;
+       (push m a)))
 
-;; 重複要素を削除する
-(defun remove-duplicate (xs)
-  (for ((xs xs (cdr xs))
-        (ys nil))
-       ((null xs) (nreverse ys))
-       (if (not (member (car xs) ys))
-           (setq ys (cons (car xs) ys)))))
+(defun tabulate (f n m)
+  (for ((m m (- m 1))
+	(a nil))
+       ((> n m) a)
+       (push (funcall f m) a)))
 
-;; フィルター
-(defun remove-if (f xs)
-  (for ((xs xs (cdr xs))
-        (a nil))
-       ((null xs) (nreverse a))
-       (if (not (funcall f (car xs)))
-           (setq a (cons (car xs) a)))))
+;;; 解きほぐし (末尾再帰ではない)
+(defun unfold (p f g seed)
+  (if (funcall p seed)
+      nil
+    (cons (funcall f seed) (unfold p f g (funcall g seed)))))
 
-(defun remove (x xs)
-  (remove-if (lambda (y) (eql x y)) xs))
+;;;
+;;; 畳み込み
+;;;
 
-;;
-;; 畳み込み
-;;
-(defun fold-left (f a xs)
-  (for ((ys xs (cdr ys))
-        (acc a (funcall f acc (car ys))))
-       ((null ys) acc)))
+;;; 先頭から
+(defun fold-left-1 (f a xs)
+  (dolist (x xs a) (setq a (funcall f a x))))
 
-(defun fold-right (f a xs)
-  (for ((ys (reverse xs) (cdr ys))
-        (acc a (funcall f (car ys) acc)))
-       ((null ys) acc)))
+(defun fold-left (f a xs &rest args)
+  (if (null args)
+      (fold-left-1 f a xs)
+    (for ((ys (cons xs args) (mapcar #'cdr ys))
+	  (a a (apply f a (mapcar #'car ys))))
+	 ((member nil ys) a))))
 
-;;
-;; 巡回
-;;
-(defun for-each (f xs)
-  (for ((ys xs (cdr ys)))
-       ((null ys))
-       (funcall f (car ys))))
+;;; 末尾から (末尾再帰ではない)
+(defun fold-right-1 (f a xs)
+  (if (null xs)
+      a
+    (funcall f (fold-right-1 f a (cdr xs)) (car xs))))
 
-;;
-;; 分割
-;;
+(defun fold-right-n (f a xss)
+  (if (member nil xss)
+      a
+    (apply f (fold-right-n f a (mapcar #'cdr xss)) (mapcar #'car xss))))
+
+(defun fold-right (f a xs &rest args)
+  (if (null args)
+      (fold-right-1 f a xs)
+    (fold-right-n f a (cons xs args))))
+
+;;;
+;;; 巡回
+;;;
+(defun for-each (f xs &rest args)
+  (if (null args)
+      (dolist (x xs) (funcall f x))
+    (for ((ys (cons xs args) (mapcar #'cdr ys)))
+	 ((member nil ys))
+	 (apply f (mapcar #'car ys)))))
+
+;;;
+;;; 分割
+;;;
 (defun partition (pred xs)
-  (for ((xs xs (cdr xs))
-        (ys nil)
-        (zs nil))
-       ((null xs) (cons (nreverse ys) (nreverse zs)))
-       (if (funcall pred (car xs))
-           (setq ys (cons (car xs) ys))
-         (setq zs (cons (car xs) zs)))))
+  (let ((ys nil) (zs nil))
+    (dolist (x xs (list (nreverse ys) (nreverse zs)))
+      (if (funcall pred x)
+	  (push x ys)
+	(push x zs)))))
 
-;;
-;; 検索
-;;
-(defun find-if (pred xs)
-  (block exit
+;;;
+;;; 述語 (リスト専用)
+;;;
+(defun any-1 (pred xs)
+  (dolist (x xs)
+    (if (funcall pred x) (return t))))
+
+(defun any-n (pred xss)
+  (block
+      exit
+    (for ((xss xss (mapcar #'cdr xss)))
+	 ((member nil xss))
+	 (when
+	     (apply pred (mapcar #'car xss))
+	   (return-from exit t)))))
+
+(defun any (pred xs &rest args)
+  (if (null args)
+      (any-1 pred xs)
+    (any-n pred (cons xs args))))
+
+(defun all-1 (pred xs)
+  (dolist (x xs t)
+    (unless (funcall pred x) (return))))
+
+(defun all-n (pred xss)
+  (block
+      exit
+    (for ((xss xss (mapcar #'cdr xss)))
+	 ((member nil xss) t)
+	 (unless
+	     (apply pred (mapcar #'car xss))
+	   (return-from exit nil)))))
+
+(defun all (pred xs &rest args)
+  (if (null args)
+      (all-1 pred xs)
+    (all-n pred (cons xs args))))
+
+;;;
+;;; 集合演算
+;;;
+
+;;;
+;;; 検査 : member は ISLisp にある
+;;;
+(defun member-if (pred xs)
+  (block
+      exit
     (for ((xs xs (cdr xs)))
-         ((null xs))
-         (if (funcall pred (car xs))
-             (return-from exit (car xs))))))
+	 ((null xs))
+	 (when
+	     (funcall pred (car xs))
+	   (return-from exit xs)))))
 
-(defun find (a xs)
-  (find-if (lambda (x) (eql x a)) xs))
+(defun member-if-not (pred xs)
+  (member-if (lambda (x) (not (funcall pred x))) xs))
 
-(defun position-if (pred xs)
-  (block exit
-    (for ((i 0 (+ i 1))
-          (xs xs (cdr xs)))
-         ((null xs) -1)
-         (if (funcall pred (car xs))
-             (return-from exit i)))))
+;;; 重複要素を削除する
+(defun remove-duplicates (xs)
+  (let ((ys nil))
+    (dolist (x xs (nreverse ys))
+      (unless
+	  (member x ys)
+	(push x ys)))))
 
-(defun position (a xs)
-  (position-if (lambda (x) (eql x a)) xs))
-
-(defun count-if (pred xs)
-  (for ((c 0)
-        (xs xs (cdr xs)))
-       ((null xs) c)
-       (if (funcall pred (car xs)) (setq c (+ c 1)))))
-
-(defun count (a xs)
-  (count-if (lambda (x) (eql x a)) xs))
-
-(defun any (pred &rest xs)
-  (block exit
-    (for ((xs xs (mapcar #'cdr xs)))
-         ((member nil xs))
-         (let ((ys (mapcar #'car xs)))
-           (if (apply pred ys)
-               (return-from exit t))))))
-
-(defun every (pred &rest xs)
-  (block exit
-    (for ((xs xs (mapcar #'cdr xs)))
-         ((member nil xs) t)
-         (let ((ys (mapcar #'car xs)))
-           (if (not (apply pred ys))
-               (return-from exit nil))))))
-
-;;
-;; 集合演算
-;;
+;;; 和集合
 (defun union (xs ys)
-  (for ((xs xs (cdr xs))
-        (zs nil))
-       ((null xs) (append-reverse zs ys))
-       (if (not (member (car xs) ys))
-           (setq zs (cons (car xs) zs)))))
+  (let ((zs nil))
+    (dolist (x xs (revappend zs ys))
+      (unless
+	  (member x ys)
+	(push x zs)))))
 
+;;; 積集合
 (defun intersection (xs ys)
-  (for ((xs xs (cdr xs))
-        (zs nil))
-       ((null xs) (nreverse zs))
-       (if (member (car xs) ys)
-           (setq zs (cons (car xs) zs)))))
+  (let ((zs nil))
+    (dolist (x xs (nreverse zs))
+      (when
+	  (member x ys)
+	(push x zs)))))
 
+;;; 差集合
 (defun difference (xs ys)
-  (for ((xs xs (cdr xs))
-        (zs nil))
-       ((null xs) (nreverse zs))
-       (if (not (member (car xs) ys))
-           (setq zs (cons (car xs) zs)))))
+  (let ((zs nil))
+    (dolist (x xs (nreverse zs))
+      (unless
+	  (member x ys)
+	(push x zs)))))
 
+;;; 部分集合
 (defun subsetp (xs ys)
-  (block exit
-    (for ((xs xs (cdr xs)))
-         ((null xs) t)
-         (if (not (member (car xs) ys))
-             (return-from exit nil)))))
+  (dolist (x xs t)
+    (unless
+	(member x ys)
+      (return nil))))
+
+;;;
+;;; 連想リスト : ISLisp には assoc がある
+;;;
+(defun acons (k v alist)
+  (cons (cons k v) alist))
+
+(defun pairlis (ks vs alist)
+  (fold-right (lambda (a k v) (acons k v a)) alist ks vs))
+
+(defun assoc-if (pred xs)
+  (dolist (x xs)
+    (if (funcall pred (car x)) (return x))))
+
+(defun assoc-if-not (pred xs)
+  (assoc-if (lambda (x) (not (funcall pred x))) xs))
+
+(defun rassoc-if (pred xs)
+  (dolist (x xs)
+    (if (funcall pred (cdr x)) (return x))))
+
+(defun rassoc (v xs)
+  (rassoc-if (lambda (x) (eql x v)) xs))
+
+(defun rassoc-if-not (pred xs)
+  (rassoc-if (lambda (x) (not (funcall pred x))) xs))
+
+;;; end-of-file

@@ -3,6 +3,7 @@
 (import "test")
 (import "list")
 (import "cxr")
+(import "seq")
 
 (test (caar '((a b) (c d) (e f))) A)
 (test (cadr '((a b) (c d) (e f))) (C D))
@@ -68,5 +69,19 @@
 (test (difference '(1 2 3 4) '(3 4 5 6)) (1 2))
 (test (subsetp '(1 2) '(1 2 3 4)) T)
 (test (subsetp '(1 2 5) '(1 2 3 4)) NIL)
+
+;;;seq
+
+(test (remove 'a '(a b a b c a b c d)) (B B C B C D))
+(test (remove 'a #(a b a b c a b c d)) #(B B C B C D))
+(test (remove #\a "ababcabcd") "bbcbcd")
+(test (remove-if #'evenp '(1 2 3 4 5 6 7 8 9)) (1 3 5 7 9))
+(test (remove-if-not #'evenp #(1 2 3 4 5 6 7 8 9)) #(2 4 6 8))
+(test (substitute 'z 'a '(a b a b c a b c d)) (Z B Z B C Z B C D))
+(test (substitute 'z 'a #(a b a b c a b c d)) #(Z B Z B C Z B C D))
+(test (substitute #\z #\a "ababcabcd") "zbzbczbcd")
+(test (substitute-if 0 #'evenp '(1 2 3 4 5 6 7 8 9)) (1 0 3 0 5 0 7 0 9))
+(test (substitute-if-not 0 #'evenp #(1 2 3 4 5 6 7 8 9)) #(0 2 0 4 0 6 0 8 0))
+
 
 (format (standard-output) "ALl tests are done!~%")

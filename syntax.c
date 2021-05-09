@@ -1921,14 +1921,14 @@ int f_defmodule(int arglist){
         if(symbolp(car(sexp)) && HAS_NAME(car(sexp),"DEFPUBLIC"))
             exports = cons(cadr(sexp),exports);
 
-        eval(substitute(car(arg2),arg1,exports));
+        eval(modulesubst(car(arg2),arg1,exports));
         arg2 = cdr(arg2);
     }
     return(T);
 }
 
 
-int substitute(int addr, int module, int fname){
+int modulesubst(int addr, int module, int fname){
     int temp;
 
     if(IS_NIL(addr) || IS_T(addr))
@@ -1949,7 +1949,7 @@ int substitute(int addr, int module, int fname){
         return(addr);
     else if(symbolp(addr)){
         if(!member(addr,fname) && !eqp(addr,makesym(":REST")) && !eqp(addr,makesym("&REST")))
-            return(substitute1(addr,module));
+            return(modulesubst1(addr,module));
         else
             return(addr);
     }
@@ -1957,42 +1957,42 @@ int substitute(int addr, int module, int fname){
         if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUOTE"))){
             temp = cadr(addr);
             if(listp(temp) && symbolp(car(temp)) &&(HAS_NAME(car(temp),"UNQUOTE")))
-                return(cons(car(addr),substitute(cdr(addr),module,fname)));
+                return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
             else
                 return(addr);
         }
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"QUASI-QUOTE")))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"UNQUOTE")))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"UNQUOTE-SPLICING")))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));    
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));    
         else if(subrp(car(addr)))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFPUBLIC")))
-            return(cons(makesym("DEFUN"),cons(cadr(addr),substitute(cddr(addr),module,fname))));
+            return(cons(makesym("DEFUN"),cons(cadr(addr),modulesubst(cddr(addr),module,fname))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"DEFUN")))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),":METHOD")))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"CASE")))
-            return(cons(car(addr),cons(substitute(cadr(addr),module,fname),substitute_case(cddr(addr),module,fname))));
+            return(cons(car(addr),cons(modulesubst(cadr(addr),module,fname),modulesubst_case(cddr(addr),module,fname))));
         else if((symbolp(car(addr))) &&(HAS_NAME(car(addr),"CASE-USING")))
-            return(cons(car(addr),cons(substitute(cadr(addr),module,fname),substitute_case(cddr(addr),module,fname))));
+            return(cons(car(addr),cons(modulesubst(cadr(addr),module,fname),modulesubst_case(cddr(addr),module,fname))));
         else if(fsubrp(car(addr)))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if(macrop(car(addr)))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else if(genericp(car(addr)))
-            return(cons(car(addr),substitute(cdr(addr),module,fname)));
+            return(cons(car(addr),modulesubst(cdr(addr),module,fname)));
         else
-            return(cons(substitute(car(addr),module,fname),substitute(cdr(addr),module,fname)));
+            return(cons(modulesubst(car(addr),module,fname),modulesubst(cdr(addr),module,fname)));
         
     }
     return(T);
 }
 
-int substitute1(int x, int module){
+int modulesubst1(int x, int module){
     char str[SYMSIZE];
 
     snprintf(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
@@ -2000,7 +2000,7 @@ int substitute1(int x, int module){
 }
 
 
-int substitute_case(int addr, int module, int fname){
+int modulesubst_case(int addr, int module, int fname){
     int bodies,newbodies;
 
     bodies = addr;
@@ -2010,7 +2010,7 @@ int substitute_case(int addr, int module, int fname){
         int body, newbody;
         
         body = car(bodies);
-        newbody = cons(car(body),substitute(cdr(body),module,fname));
+        newbody = cons(car(body),modulesubst(cdr(body),module,fname));
         newbodies = cons(newbody,newbodies);
 
         bodies = cdr(bodies);

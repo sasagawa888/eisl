@@ -325,7 +325,7 @@ double tarai(double x, double y, double z){
               (body (cdr (cdr x)) (cdr body)) )
              ((null body)
               t )
-             (let ((sexp (substitute (car body) name nil)))
+             (let ((sexp (modulesubst (car body) name nil)))
                 (check-args-count sexp)
                 (find-catch-block-tag (macroexpand-all sexp))))
         (eval x))
@@ -757,7 +757,7 @@ double tarai(double x, double y, double z){
                  t )
                 (if (and (consp (car s)) (eq (car (car s)) 'defpublic))
                     (setq public (cons (elt (car s) 1) public)))
-                (compile (substitute (car s) name public)))))
+                (compile (modulesubst (car s) name public)))))
     
     (defun comp-defun0 (x)
         (let* ((name (elt x 1))
@@ -2874,7 +2874,7 @@ double tarai(double x, double y, double z){
               (body (cdr (cdr x)) (cdr body)) )
              ((null body)
               t )
-             (let ((sexp (substitute (car body) name nil)))
+             (let ((sexp (modulesubst (car body) name nil)))
                 (if (and (consp sexp) (eq (car sexp) 'defun))
                     (inference-defun sexp)))))
 
@@ -3542,6 +3542,6 @@ double tarai(double x, double y, double z){
     (assert quotient (class <float>) (class <number>) (class <number>))
     (assert subrp (class <object>) (class <object>))
     (assert c-lang (class <null>) (class <string>))
-    (assert substitute (class <object>) (class <object>) (class <symbol>) (class <symbol>))
+    (assert modulesubst (class <object>) (class <object>) (class <symbol>) (class <symbol>))
 
 )

@@ -166,15 +166,26 @@ int eqlp(int addr1, int addr2){
 }
 
 int equalp(int addr1, int addr2){
-    
-    if(atomp(addr1) && atomp(addr2))
+    int n,i;
+
+    if(vectorp(addr1) && vectorp(addr2)){
+        if(vector_length(addr1) == vector_length(addr2)){
+            n = vector_length(addr1);
+            for(i=0;i<n;i++){
+                if(!equalp(GET_VEC_ELT(addr1,i),GET_VEC_ELT(addr2,i)))
+                    return(0);
+            }
+            return(1);
+        }
+        else
+            return(0);  
+    }
+    else if(atomp(addr1) && atomp(addr2))
         return(eqlp(addr1,addr2));
     else if(atomp(addr1) && !atomp(addr2))
         return(0);
     else if(!atomp(addr1) && atomp(addr2))
         return(0);
-    else if(vectorp(addr1) && vectorp(addr2))
-        return(eqlp(addr1,addr2));
     else if(equalp(car(addr1),car(addr2)) && 
             equalp(cdr(addr1),cdr(addr2)))
         return(1);

@@ -11,6 +11,8 @@
 #include <dlfcn.h>
 #include "eisl.h"
 
+#define BININT_LEN 64
+
 static void* hmod;
 
 void initsubr(void){
@@ -3260,7 +3262,7 @@ int f_format(int arglist){
 
 int fprintr(FILE *p, int r, int n){
     int i,sign,len;
-    char b[1024];
+    char b[BININT_LEN + 1];
 
     sign = 1;
     if(n == 0){
@@ -3334,7 +3336,7 @@ int fprintr(FILE *p, int r, int n){
 
 int sprintr(char *str, int r, int n){
     int i,j,sign,len;
-    char b[1024];
+    char b[BININT_LEN + 1];
 
     sign = 1;
     if(n == 0){

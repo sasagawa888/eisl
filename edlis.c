@@ -43,7 +43,7 @@ int ed_rparen_col;
 int ed_clip_start;
 int ed_clip_end;
 int ed_copy_end;
-const char *ed_candidate[50];
+const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
 int ed_candidate_pt;
 const enum Color ed_syntax_color = RED_ON_DFL;
 const enum Color ed_builtin_color = CYAN_ON_DFL;

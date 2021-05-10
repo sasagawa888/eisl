@@ -112,5 +112,6 @@ enum HighlightToken { HIGHLIGHT_NONE, HIGHLIGHT_SYNTAX, HIGHLIGHT_BUILTIN, HIGHL
 enum HighlightToken maybe_match(const char *str);
 bool in_special_table(const char *str);
 void gather_fuzzy_matches(const char *str, const char *candidates[], int *candidate_pt);
+#define COMPLETION_CANDIDATES_MAX 50
 
 #endif

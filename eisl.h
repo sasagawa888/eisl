@@ -34,6 +34,8 @@ Copying GC mode
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
+#define COL_SIZE 255
+#define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 1.97;
 static const int HEAPSIZE = 20000000;
@@ -339,8 +341,8 @@ extern int area_sw;
 
 //longjmp control and etc
 extern jmp_buf buf;
-extern jmp_buf block_buf[50];
-extern int block_env[50][2];
+extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
+extern int block_env[NESTED_BLOCKS_MAX][2];
 extern jmp_buf catch_buf[10][50];
 extern int catch_env[10][50];
 extern jmp_buf ignore_buf; //jump address for ignore-error

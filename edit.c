@@ -8,11 +8,12 @@
 #include <setjmp.h>
 #include "eisl.h"
 
+#define TOKEN_MAX 80
+#define FRAGMENT_MAX 80
+
 #ifndef CTRL
 #define CTRL(X) ((X) & 0x1F)
 #endif
-
-static const int COL_SIZE = 255;
 
 int f_edit(int arglist){
     int arg1;
@@ -185,7 +186,7 @@ void display_buffer(){
 
 
 enum HighlightToken check_token_buffer(int col){
-    char str[80];
+    char str[TOKEN_MAX];
     int pos;
 
     pos = 0;
@@ -325,7 +326,7 @@ void restore_paren_buffer(int col){
 
 
 char *get_fragment_buffer(int col){
-    static char str[80];
+    static char str[FRAGMENT_MAX];
     int pos;
 
     while(col >= 0 &&

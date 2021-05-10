@@ -18,6 +18,8 @@ written by kenichi sasagawa 2016/4~
 #include <term.h>
 #include "eisl.h"
 
+#define NUM_HISTORY 10
+
 //------pointer----
 int ep; //environment pointer
 int dp; //dynamic pointer
@@ -94,8 +96,8 @@ int charcnt; //for format-tab. store number of chars up to now.
 token stok = {'\0',GO,OTHER,{'\0'}};
 int line;
 int column;
-int buffer[256][10];
-int buffer1[256];
+int buffer[COL_SIZE + 1][NUM_HISTORY];
+int buffer1[COL_SIZE + 1];
 
 
 //heap and stack
@@ -164,7 +166,7 @@ int stepper_flag = 0;
 
 int ed_lparen_col;
 int ed_rparen_col;
-const char *ed_candidate[50];
+const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
 int ed_candidate_pt;
 const short ed_syntax_color = COLOR_RED;
 const short ed_builtin_color = COLOR_CYAN;

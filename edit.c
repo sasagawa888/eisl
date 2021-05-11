@@ -15,6 +15,8 @@
 #define CTRL(X) ((X) & 0x1F)
 #endif
 
+bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line);
+
 int f_edit(int arglist){
     int arg1;
     char str[STRSIZE];
@@ -421,7 +423,7 @@ static void left(int *j)
 }
 
 int read_line(int flag){
-    int c,i,j,k,rl_line;
+    int c,i,j,rl_line;
     static int pos=0,limit=0;
 
     if(flag == -1){
@@ -446,49 +448,59 @@ int read_line(int flag){
         ed_rparen_col = -1;
         j = 0;
         c = eisl_getch();
-        loop:
+        while (!read_line_loop(c, &j, &pos, limit, &rl_line)) {
+            c = eisl_getch();
+        }
+    }
+    return(buffer[pos++][0]);
+}
+
+bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
+{
+    int i, k;
+    
         switch(c){
         case CTRL('M'):
-            case EOL: for(j=0;j<=COL_SIZE;j++)
-                          if(buffer[j][0] == 0) {
-                              buffer[j][0] = c;
+        case EOL: for(*j=0;*j<=COL_SIZE;(*j)++)
+                          if(buffer[*j][0] == 0) {
+                              buffer[*j][0] = c;
                               break;
                           }
-                      restore_paren_buffer(j);
+                      restore_paren_buffer(*j);
                       putchar(c);
-                      pos = 0;
-                      goto exit;
+                      *pos = 0;
+                      return true;
         case CTRL('H'):
-            case DEL: if(j <= 0)
+            case DEL: if(*j <= 0)
                           break;
-                      j--;
-                      for(k=j;k<COL_SIZE;k++)
+                (*j)--;
+                      for(k=*j;k<COL_SIZE;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
-                      ESCMVLEFT(j+3);
-                      if(ed_rparen_col > i)
+                      ESCMVLEFT(*j+3);
+                      if(ed_rparen_col > *j)
                           ed_rparen_col--;
-                      if(ed_lparen_col > i)
+                      if(ed_lparen_col > *j)
                           ed_lparen_col--;
                       break;
         case CTRL('D'):
-                      for(k=j;k<COL_SIZE;k++)
+                      for(k=*j;k<COL_SIZE;k++)
                           buffer[k][0] = buffer[k+1][0];
                       display_buffer();
-                      ESCMVLEFT(j+3);
-                      if(ed_rparen_col > i)
+                      ESCMVLEFT(*j+3);
+                      if(ed_rparen_col > *j)
                           ed_rparen_col--;
-                      if(ed_lparen_col > i)
+                      if(ed_lparen_col > *j)
                           ed_lparen_col--;
                       break;
         case CTRL('K'):
                       memset(buffer1,NUL,COL_SIZE);
-                      for(k=j;k<COL_SIZE;k++){
-                          buffer1[k-j] = buffer[k][0];
+                      for(k=*j;k<COL_SIZE;k++){
+                          buffer1[k-*j] = buffer[k][0];
                           buffer[k][0] = NUL;
                       }
                       display_buffer();
-                      ESCMVLEFT(j+3);
+                      ESCMVLEFT(*j+3);
                       break;
         case CTRL('Y'):
                       for(k=0;k<COL_SIZE;k++)
@@ -500,12 +512,12 @@ int read_line(int flag){
                       }
 
                       display_buffer();
-                      j = k;
+                      *j = k;
                       ESCMVLEFT(k+3);
                       break;
         case CTRL('A'):
-                      j = 0;
-                      ESCMVLEFT(j+3);
+                      *j = 0;
+                      ESCMVLEFT(*j+3);
                       break;
         case CTRL('E'):
                       for(k=0;k<COL_SIZE;k++){
@@ -514,57 +526,57 @@ int read_line(int flag){
                       }
 
                       display_buffer();
-                      j = k;
+                      *j = k;
                       ESCMVLEFT(k+3);
                       break;
         case CTRL('F'):
-            right(&j);
+            right(j);
             break;
         case CTRL('B'):
-            left(&j);
+            left(j);
             break;
         case CTRL('P'):
                       up:
                       if(limit <= 1)
                          break;
-                      if(rl_line >= limit-1)
-                         rl_line = limit-2;
-                      for(j=0;j<=COL_SIZE;j++)
-                          buffer[j][0] = buffer[j][rl_line+1];
+                      if(*rl_line >= limit-1)
+                         *rl_line = limit-2;
+                      for(*j=0;*j<=COL_SIZE;(*j)++)
+                          buffer[*j][0] = buffer[*j][*rl_line+1];
 
-                      for(j=0;j<=COL_SIZE;j++)
-                          if(buffer[j][0] == EOL)
+                      for(*j=0;*j<=COL_SIZE;(*j)++)
+                          if(buffer[*j][0] == EOL)
                               break;
-                      rl_line++;
-                      pos = 0;
+                      (*rl_line)++;
+                      *pos = 0;
                       ed_rparen_col = -1;
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
         case CTRL('N'):
                       down:
-                      if(rl_line <= 1)
-                         rl_line = 1;
-                      for(j=0;j<=COL_SIZE;j++)
-                          buffer[j][0] = buffer[j][rl_line-1];
-                      for(j=0;j<=COL_SIZE;j++)
-                          if(buffer[j][0] == EOL)
+                      if(*rl_line <= 1)
+                         *rl_line = 1;
+                      for(*j=0;*j<=COL_SIZE;(*j)++)
+                          buffer[*j][0] = buffer[*j][*rl_line-1];
+                      for(*j=0;*j<=COL_SIZE;(*j)++)
+                          if(buffer[*j][0] == EOL)
                               break;
-                      rl_line--;
-                      pos = 0;
+                      (*rl_line)--;
+                      *pos = 0;
                       ed_rparen_col = -1;
                       ed_lparen_col = -1;
                       display_buffer();
                       break;
             case ESC: c = eisl_getch();
                     switch(c){
-                        case TAB: find_candidate_buffer(j); //completion
+                        case TAB: find_candidate_buffer(*j); //completion
                                     if(ed_candidate_pt == 0)
                                         break;
                                     else if(ed_candidate_pt == 1){
-                                        j = replace_fragment_buffer(ed_candidate[0],j);
+                                        *j = replace_fragment_buffer(ed_candidate[0],*j);
                                         display_buffer();
-                                        ESCMVLEFT(j+3);
+                                        ESCMVLEFT(*j+3);
                                     }
                                     else{
                                         #define CANDIDATE 3
@@ -596,17 +608,16 @@ int read_line(int flag){
                                             goto retry;
                                         if(c == EOL)
                                             goto retry;
-                                        j = replace_fragment_buffer(ed_candidate[i+k],j);
+                                        *j = replace_fragment_buffer(ed_candidate[i+k],*j);
                                         escape:
                                         ESCMVLEFT(1);
                                         ESCCLSL();
                                         ESCMVU();
                                         ESCMVLEFT(3);
                                         display_buffer();
-                                        ESCMVLEFT(j+3);
+                                        ESCMVLEFT(*j+3);
                                     }
-                                    c = eisl_getch();
-                                     goto loop;
+                                    return false;
                         case 'q':   //Esc+q
                                     putchar('\n');
                                     greeting_flag = false;
@@ -618,34 +629,30 @@ int read_line(int flag){
                             } else if (c == ed_key_down) {
                                 goto down;
                             } else if (c == ed_key_left) {
-                                left(&j);
+                                left(j);
                             } else if (c == ed_key_right) {
-                                right(&j);
+                                right(j);
                             }
                     }
                       break;
 
-            default:  for(k=COL_SIZE;k>j;k--)
+            default:  for(k=COL_SIZE;k>*j;k--)
                           buffer[k][0] = buffer[k-1][0];
-                      buffer[j++][0] = c;
+                buffer[(*j)++][0] = c;
                       display_buffer();
                       reset_paren_buffer();
                       if(c == '(' || c == ')'){
-                          emphasis_lparen_buffer(j-1);
-                          emphasis_rparen_buffer(j-1);
+                          emphasis_lparen_buffer(*j-1);
+                          emphasis_rparen_buffer(*j-1);
                       }
                       else{
-                          if(ed_rparen_col >= j-1)
+                          if(ed_rparen_col >= *j-1)
                               ed_rparen_col++;
-                          if(ed_lparen_col >= j-1)
+                          if(ed_lparen_col >= *j-1)
                               ed_lparen_col++;
                       }
-                      ESCMVLEFT(j+3);
+                      ESCMVLEFT(*j+3);
 
         }
-        c = eisl_getch();
-        goto loop;
-    }
-   exit:
-   return(buffer[pos++][0]);
+        return false;
 }

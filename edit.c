@@ -404,22 +404,22 @@ static void right(int *j)
 {
     if(buffer[*j][0] == 0)
         return;
-    (*j) = (*j) + 1;
+    (*j)++;
     restore_paren_buffer(*j);
     emphasis_lparen_buffer(*j);
     emphasis_rparen_buffer(*j);
-    ESCMVLEFT((*j)+3);
+    ESCMVLEFT(*j+3);
 }
 
 static void left(int *j)
 {
-    if((*j) <= 0)
+    if(*j <= 0)
         return;
-    (*j) = (*j) - 1;
+    (*j)--;
     restore_paren_buffer(*j);
     emphasis_lparen_buffer(*j);
     emphasis_rparen_buffer(*j);
-    ESCMVLEFT((*j)+3);
+    ESCMVLEFT(*j+3);
 }
 
 int read_line(int flag){
@@ -587,11 +587,13 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                                         ESCMVLEFT(*j+3);
                                     }
                                     else{
-                                        #define CANDIDATE 3
+                                        const int CANDIDATE = 3;
                                         k = 0;
                                         ESCSCR();
                                         ESCMVLEFT(1);
-                                        next:
+                                        bool more_candidates_selected;
+                                        do {
+                                            more_candidates_selected = false;
                                         ESCREV();
                                         for(i=0; i<CANDIDATE; i++){
                                             if(i+k >= ed_candidate_pt)
@@ -601,23 +603,26 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                                         if(ed_candidate_pt > k+CANDIDATE)
                                             printf("4:more");
                                         ESCRST();
-                                        retry:
+                                        bool bad_candidate_selected;
+                                        do {
+                                            bad_candidate_selected = false;
                                         c = eisl_getch();
-                                        if(c == ESC)
-                                             goto escape;
+                                        if(c != ESC) {
                                         i = c - '1';
-                                        if(ed_candidate_pt > k+CANDIDATE && i == CANDIDATE){
+                                        more_candidates_selected = ed_candidate_pt > k+CANDIDATE && i == CANDIDATE;
+                                        if (more_candidates_selected) {
                                             k = k+CANDIDATE;
                                             ESCMVLEFT(1);
                                             ESCCLSL();
-                                            goto next;
+                                            break;
                                         }
-                                        if(i+k >= ed_candidate_pt || i < 0)
-                                            goto retry;
-                                        if(c == EOL)
-                                            goto retry;
-                                        *j = replace_fragment_buffer(ed_candidate[i+k],*j);
-                                        escape:
+                                        bad_candidate_selected = i+k >= ed_candidate_pt || i < 0 ||
+                                            c == EOL;
+                                        }
+                                        } while (bad_candidate_selected);
+                                        } while (more_candidates_selected);
+                                        if (c != ESC)
+                                            *j = replace_fragment_buffer(ed_candidate[i+k],*j);
                                         ESCMVLEFT(1);
                                         ESCCLSL();
                                         ESCMVU();

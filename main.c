@@ -277,8 +277,9 @@ int main(int argc, char *argv[]){
     }
     if(greeting_flag)
         printf("Easy-ISLisp Ver%1.2f\n", VERSION);
-    repl:
-    if(ret == 0)
+    while (1) {
+    switch (ret) {
+    case 0:
         while(1){
             initpt();
             fputs("> ", stdout);
@@ -287,13 +288,14 @@ int main(int argc, char *argv[]){
             if(redef_flag)
                 redef_generic();
         }
-    else
-        if(ret == 1){
+        break;
+    case 1:
             ret = 0;
-            goto repl;
-        }
-        else
+            break;
+    default:
             return 0;
+    }
+    }
 }
 
 void initpt(void){

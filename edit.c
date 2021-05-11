@@ -455,6 +455,41 @@ int read_line(int flag){
     return(buffer[pos++][0]);
 }
 
+void up(int limit, int *rl_line, int *j, int *pos)
+{
+    if(limit <= 1)
+        return;
+    if(*rl_line >= limit-1)
+        *rl_line = limit-2;
+    for(*j=0;*j<=COL_SIZE;(*j)++)
+        buffer[*j][0] = buffer[*j][*rl_line+1];
+
+    for(*j=0;*j<=COL_SIZE;(*j)++)
+        if(buffer[*j][0] == EOL)
+            break;
+    (*rl_line)++;
+    *pos = 0;
+    ed_rparen_col = -1;
+    ed_lparen_col = -1;
+    display_buffer();
+}
+
+void down(int *rl_line, int *j, int *pos)
+{
+    if(*rl_line <= 1)
+        *rl_line = 1;
+    for(*j=0;*j<=COL_SIZE;(*j)++)
+        buffer[*j][0] = buffer[*j][*rl_line-1];
+    for(*j=0;*j<=COL_SIZE;(*j)++)
+        if(buffer[*j][0] == EOL)
+            break;
+    (*rl_line)--;
+    *pos = 0;
+    ed_rparen_col = -1;
+    ed_lparen_col = -1;
+    display_buffer();
+}
+
 bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 {
     int i, k;
@@ -536,37 +571,10 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
             left(j);
             break;
         case CTRL('P'):
-                      up:
-                      if(limit <= 1)
-                         break;
-                      if(*rl_line >= limit-1)
-                         *rl_line = limit-2;
-                      for(*j=0;*j<=COL_SIZE;(*j)++)
-                          buffer[*j][0] = buffer[*j][*rl_line+1];
-
-                      for(*j=0;*j<=COL_SIZE;(*j)++)
-                          if(buffer[*j][0] == EOL)
-                              break;
-                      (*rl_line)++;
-                      *pos = 0;
-                      ed_rparen_col = -1;
-                      ed_lparen_col = -1;
-                      display_buffer();
+            up(limit, rl_line, j, pos);
                       break;
         case CTRL('N'):
-                      down:
-                      if(*rl_line <= 1)
-                         *rl_line = 1;
-                      for(*j=0;*j<=COL_SIZE;(*j)++)
-                          buffer[*j][0] = buffer[*j][*rl_line-1];
-                      for(*j=0;*j<=COL_SIZE;(*j)++)
-                          if(buffer[*j][0] == EOL)
-                              break;
-                      (*rl_line)--;
-                      *pos = 0;
-                      ed_rparen_col = -1;
-                      ed_lparen_col = -1;
-                      display_buffer();
+            down(rl_line, j, pos);
                       break;
             case ESC: c = eisl_getch();
                     switch(c){
@@ -625,9 +633,9 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                     case ARROW_PREFIX:
                             c = eisl_getch();
                             if (c == ed_key_up) {
-                                goto up;
+                                up(limit, rl_line, j, pos);
                             } else if (c == ed_key_down) {
-                                goto down;
+                                down(rl_line, j, pos);
                             } else if (c == ed_key_left) {
                                 left(j);
                             } else if (c == ed_key_right) {

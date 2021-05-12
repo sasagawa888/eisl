@@ -332,7 +332,6 @@ extern bool back_flag;
 extern bool ignore_topchk;
 extern bool repl_flag;
 extern volatile sig_atomic_t exit_flag;
-extern bool debug_flag;
 extern bool greeting_flag;
 extern bool script_flag;
 

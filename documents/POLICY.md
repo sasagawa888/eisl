@@ -43,11 +43,9 @@ X/Open and IETF RFCs.
 Please don't write Linux-specific code.
 
 If at some point it seems that a C++ feature would be really useful, it may actually be available as a C library.
-Two libraries I'd recommend for this are
-[cii](https://github.com/drh/cii)
-and
-[Nana](https://github.com/pjmaker/nana),
-but we probably don't want to go there quite yet.
+An interesting library is
+[cii](https://github.com/drh/cii),
+but we probably don't want to use it quite yet.
 Even though we decided not to use C++, writing
 [Object-Oriented C](https://www.cs.rit.edu/~ats/)
 looks potentially interesting but would have to be evaluated properly.

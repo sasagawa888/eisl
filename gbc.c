@@ -6,42 +6,36 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #include "eisl.h"
+#include "compat/nana.h"
 
+#define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
 
 //---------garbage collection-----------
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void){
-    debug_flag = true;
-
     if(gc_sw == 0){
         int addr;
 
-        if(gbc_flag){
-            printf("enter M&S-GC free=%d\n", fc); 
-        }
+        DBG_PRINTF("enter M&S-GC free=%d\n", fc); 
         gbcmark();
         gbcsweep();
         fc = 0;
         for(addr=0; addr < HEAPSIZE; addr++)
             if(IS_EMPTY(addr))
                 fc++;
-        if(gbc_flag){
-            printf("exit  M&S-GC free=%d\n", fc);
-        }
+        DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
     }
     else{
-        if(gbc_flag){
-            if(area_sw == 1)
-                printf("enter COPY-GC free=%d\n", WORK2 - wp); 
-            else    
-                printf("enter COPY-GC free=%d\n", CELLSIZE - wp);
+        if(area_sw == 1) {
+            DBG_PRINTF("enter COPY-GC free=%d\n", WORK2 - wp); 
+        } else {
+            DBG_PRINTF("enter COPY-GC free=%d\n", CELLSIZE - wp);
         }
         copygbc();
-        if(gbc_flag){
-            if(area_sw == 1)
-                printf("exit  COPY-GC free=%d\n", WORK2 - wp); 
-            else    
-                printf("exit  COPY-GC free=%d\n", CELLSIZE - wp);
+        if (area_sw == 1) {
+            DBG_PRINTF("exit  COPY-GC free=%d\n", WORK2 - wp); 
+        } else {
+            DBG_PRINTF("exit  COPY-GC free=%d\n", CELLSIZE - wp);
         }
     }
     return 0;

@@ -44,3 +44,14 @@
         (((^ _a 0)) 1)
         (((^ _a 1)) _a)
         ((_x) _x)) 
+
+
+(defpattern integra
+    ((_c _x) (when (numberp _c)) `(* _c _x))
+    ((_x _x) `(/ (^ ,_x 2) 2))
+    (((log x) _x) `(- (* ,_x (log ,_x)) ,_x))
+    (((sin _x) _x) `(- (cos ,_x)))
+    (((cos _x) _x) `(sin ,_x))
+    (((tan _x) _x) `(- (log (cos ,_x))))
+    (((cot _x) _x) `(log (sin ,_x))))
+    

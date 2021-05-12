@@ -115,7 +115,8 @@ void markcell(int addr){
         case SUBR:
         case FSUBR: markcell(GET_AUX(addr));
                     return;
-
+    default:
+        IP(false, "markcell tag switch default action");
     }
 }
 

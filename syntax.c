@@ -9,6 +9,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include "eisl.h"
+#include "compat/nana.h"
 
 #define TAGBODY_LEN_MAX 100
 
@@ -1250,7 +1251,7 @@ int f_progn(int arglist){
 
 int f_defclass(int arglist){
     int arg1,arg2,arg3,arg4,sc,var,val,cl,form,
-        initargs;
+        initargs,abstractp;
 
     arg1 = car(arglist);  //class-name
     arg2 = cadr(arglist); //super-class
@@ -1406,11 +1407,26 @@ int f_defclass(int arglist){
         arg3 = cdr(arg3);
     }
 
+    abstractp = NIL;
     while(!nullp(arg4)){
-
+        int ls;
+    
+        if(!listp(car(arg4)))
+            error(ILLEGAL_FORM, "defclass", arg4);
+        ls = car(arg4);
+        if (eqp(car(ls), makesym(":ABSTRACTP"))) {
+            abstractp = eval(cadr(ls));
+        } else {
+            error(ILLEGAL_FORM, "defclass", ls);
+        }
+        arg4 = cdr(arg4);
     }
     cl = makeclass(GET_NAME(arg1),sc);
-    SET_OPT(cl,USER); //standard-class;
+    if (abstractp == T) {
+        SET_OPT(cl,ABSTRACT);   //abstract-class;
+    } else {
+        SET_OPT(cl,USER); //standard-class;
+    }
     SET_CDR(cl,var);
     SET_AUX(cl,initargs);
     SET_AUX(arg1,cl);
@@ -1803,6 +1819,8 @@ int f_convert(int arglist){
                 return(vector_to_list(arg1));
             }
             break;
+    default:
+        IP(false, "f_convert tag switch default action");
     }
     error(OUT_OF_DOMAIN,"convert",arg1);
     return(UNDEF);

@@ -11,8 +11,7 @@ static const int INT_FLAG = 1073741824; //#b1000000000000000000000000000000
 static const int INT_MASK = 1073741823; //#b0111111111111111111111111111111
 static inline bool CELLRANGE(int x) { return (x < INT_FLAG && x >= 0); }
 
-//option
-enum {
+enum Option {
         CONSTN = 1,
         IMMUTABLE,
         SYSTEM,      //class of provided by system
@@ -20,6 +19,10 @@ enum {
         GLOBAL,      //global variable
         CONTINUABLE, //continuable condition
         NOTCONT,     //no continuable condition
+        ABSTRACT,    //abstract class
+
+        // *** WARNING: THE FOLLOWING ARE INTERNAL VALUES THAT CLIENTS SHOULD NOT USE ***
+        AROUND, BEFORE, PRIORITY, AFTER, EISL_OPEN, EISL_INPUT, EISL_OUTPUT, EISL_INSTR, EISL_OUTSTR,
 };
 
 typedef int (*fn0)(void);

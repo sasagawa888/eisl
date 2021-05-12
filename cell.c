@@ -411,7 +411,7 @@ int hash(const char *name){
 }
 
 //-------for debug------------------
-DEF_GETTER(char, FLAG, flag, NIL)
+DEF_GETTER(flag, FLAG, flag, NIL)
 void cellprint(int addr){
     switch(GET_FLAG(addr)){
     case FRE:   fputs("FRE ", stdout); break;
@@ -447,6 +447,8 @@ void cellprint(int addr){
     case GENERIC:
         printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
+    default:
+        IP(false, "cellprint tag switch default action");
     }
 }
 
@@ -1146,6 +1148,8 @@ int convert(int arg1, int arg2){
                 return(vector_to_list(arg1));
             }
             break;
+    default:
+        IP(false, "convert tag switch default action");
     }
     error(ILLEGAL_ARGS,"convert",arg1);
     return(UNDEF);

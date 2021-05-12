@@ -1,3 +1,6 @@
+#pragma GCC system_header
+#define _XOPEN_SOURCE 700
+
 #ifndef EDLIS_H
 #define EDLIS_H
 

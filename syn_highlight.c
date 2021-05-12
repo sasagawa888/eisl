@@ -1,5 +1,3 @@
-#define _XOPEN_SOURCE 700
-
 #include <string.h>
 #include <stdbool.h>
 #include "term.h"

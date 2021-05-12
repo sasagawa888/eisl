@@ -12,6 +12,8 @@ Copying GC mode
  6000000 -  12999999  Work1 area
 12999999 -  19999999  Wrok2 area
 */
+#pragma GCC system_header
+#define _XOPEN_SOURCE 700
 
 #ifndef EISL_H
 #define EISL_H

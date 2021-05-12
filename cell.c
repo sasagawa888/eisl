@@ -4,7 +4,6 @@ lisp-2  symbol-address car=function-addr, cdr=global-val
 closure function-address car=arg+body, cdr=environment
 */
 
-#define _XOPEN_SOURCE 700
 
 #include <stdio.h>
 #include <string.h>

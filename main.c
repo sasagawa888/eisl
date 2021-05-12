@@ -2,8 +2,6 @@
 written by kenichi sasagawa 2016/4~
 */
 
-#define _XOPEN_SOURCE 700
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>

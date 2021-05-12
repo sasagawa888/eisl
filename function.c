@@ -1,5 +1,3 @@
-#define _XOPEN_SOURCE 700
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -3538,7 +3536,7 @@ int f_format_object(int arglist){
         if(nullp(arg3)) {
             output_str(arg1, GET_NAME(arg2));
             charcnt = charcnt + strlen(GET_NAME(arg2));
-        } else
+        } else {
             if(GET_OPT(arg1) != EISL_OUTSTR){
                 fprintf(GET_PORT(arg1),"\\\"%s\\\"",GET_NAME(arg2));
             }
@@ -3548,6 +3546,7 @@ int f_format_object(int arglist){
             }
             charcnt = charcnt + 4 + strlen(GET_NAME(arg2));
         }
+    }
     else if(charp(arg2)){
         if(nullp(arg3)){
             output_str(arg1, GET_NAME(arg2));

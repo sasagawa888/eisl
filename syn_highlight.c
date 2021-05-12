@@ -21,7 +21,7 @@ static const char *syntax[] = {
     "tagbody", "go", "unwind-protect", "with-standard-input",
     "with-standard-output", "with-error-output", "with-handler",
     "convert", "with-open-input-file", "with-open-output-file",
-    "with-open-io-file", "the", "assure", "time", "trace", "untrace", "defmodule", "defpublic", "substitute",
+    "with-open-io-file", "the", "assure", "time", "trace", "untrace", "defmodule", "defpublic", "modulesubst",
 };
 //builtin token
 static const char *builtin[] ={

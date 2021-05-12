@@ -4,6 +4,25 @@
 ;;;             Copyright (C) 2021 Makoto Hiroi
 ;;;
 
+;;; when test body ...
+(defmacro when (test &rest args)
+  `(if ,test (progn ,@args)))
+
+;;; unless test body ...
+(defmacro unless (test &rest args)
+  `(if ,test nil (progn ,@args)))
+
+;;; prog1 expr body ...
+(defmacro prog1 (expr &rest args)
+  (let ((x (gensym)))
+    `(let ((,x ,expr))
+       (progn ,@args)
+       ,x)))
+
+;;; prog2 expr1 expr2 body ...
+(defmacro prog2 (expr1 expr2 &rest args)
+  `(progn ,expr1 (prog1 ,expr2 ,@args)))
+
 ;;; incf place [value]
 (defmacro incf (place &rest args)
   (let ((delta (if args (car args) 1)))
@@ -20,10 +39,7 @@
 
 ;;; pop place
 (defmacro pop (place)
-  (let ((x (gensym)))
-    `(let ((,x (car ,place)))
-       (setf ,place (cdr ,place))
-       ,x)))
+  `(prog1 (car ,place) (setf ,place (cdr ,place))))
 
 ;;; loop body ...
 (defmacro loop (&rest body)
@@ -53,9 +69,9 @@
         (result (if (cdr (cdr var-list)) (car (cdr (cdr var-list))))))
     `(block
       nil
-      (let ((,var nil) (,ys ,xs))
-        (while ,ys
-          (setq ,var (car ,ys))
-          ,@body
-          (setq ,ys (cdr ,ys)))
-        ,result))))
+      (for ((,var nil)
+            (,ys ,xs (cdr ,ys)))
+           ((null ,ys) ,result)
+           (setq ,var (car ,ys))
+           ,@body))))
+

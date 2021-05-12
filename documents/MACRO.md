@@ -8,6 +8,10 @@ Thanks to Mr. Hiroi.
 # Macros
 
 ```lisp
+(when test body)
+(unless test body)
+(prog1 body)
+(prog2 body)
 (incf place [delta])
 (decf place [delta])
 (push item place)
@@ -29,6 +33,26 @@ If you need speed, compile first.
 ```
 > (import "macro")
 T
+
+>(when (< 1 2) 1 2 3 4 5)
+5
+>(when (> 1 2) 1 2 3 4 5)
+NIL
+>(unless (< 1 2) 1 2 3 4 5)
+NIL
+>(unless (> 1 2) 1 2 3 4 5)
+5
+>(prog1 1 2 3 4 5)
+1
+>(prog2 1 2 3 4 5)
+2
+>(defglobal a '(1 2 3 4 5))
+A
+>(prog1 (car a) (setq a (cdr a)))
+1
+>a
+(2 3 4 5)
+
 >(defglobal a 10)
 A
 >(incf a)

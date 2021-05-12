@@ -400,7 +400,7 @@ static int fast_mod(){
         res = -1*((-1*x) % (-1*y));
         return(res);
     }
-    else if((x >= 0 && x <INT_FLAG && Flongnump(x)) && (y >= INT_FLAG || y < 0)){
+    else if((CELLRANGE(x) && Flongnump(x)) && !CELLRANGE(y)){
         longx = Fgetlong(x);
         if(y >= INT_FLAG)
     	    inty = (y & INT_MASK);

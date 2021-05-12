@@ -1153,7 +1153,7 @@ int convert(int arg1, int arg2){
 
 int adaptp(int x, int y){
 
-    if(x < 0 || x >= INT_FLAG){
+    if(!CELLRANGE(x)){
     	if(32 == GET_AUX(y))  // 32is address of <class integer>
         	return(1);
         else if(subclassp(32,GET_AUX(y)))

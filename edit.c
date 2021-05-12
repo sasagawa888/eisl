@@ -423,8 +423,8 @@ static void left(int *j)
 }
 
 int read_line(int flag){
-    int c,i,j,rl_line;
-    static int pos=0,limit=0;
+    int j,rl_line;
+    static int pos=0;
 
     if(flag == -1){
        pos--;
@@ -432,6 +432,9 @@ int read_line(int flag){
     }
 
     if(buffer[pos][0] == 0){
+        int c, i;
+        static int limit = 0;
+        
         for(i=9;i>0;i--)
             for(j=0;j<=COL_SIZE;j++)
                 buffer[j][i] = buffer[j][i-1];
@@ -492,7 +495,7 @@ void down(int *rl_line, int *j, int *pos)
 
 bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 {
-    int i, k;
+    int k;
     
         switch(c){
         case CTRL('M'):
@@ -588,6 +591,8 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                                     }
                                     else{
                                         const int CANDIDATE = 3;
+                                        int i;
+                                        
                                         k = 0;
                                         ESCSCR();
                                         ESCMVLEFT(1);

@@ -190,9 +190,6 @@ static void usage(void)
 }
 
 int main(int argc, char *argv[]){
-    int ch;
-    char *home, str[EISL_PATH_MAX];
-    char *script_arg;
 
     setupterm((char *)0, 1, (int *)0);
     ed_key_down = key_down[2];
@@ -216,6 +213,9 @@ int main(int argc, char *argv[]){
 
     int ret = setjmp(buf);
     if(init_flag){
+        int ch;
+        char *script_arg;
+        
         init_flag = false;
         FILE* fp = fopen("startup.lsp","r");
         if(fp != NULL){
@@ -223,6 +223,8 @@ int main(int argc, char *argv[]){
             f_load(list1(makestr("startup.lsp")));
         }
         while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
+            char *home, str[EISL_PATH_MAX];
+            
             switch (ch) {
             case 'l':
                 f_load(list1(makestr(optarg)));
@@ -1421,7 +1423,7 @@ int eval(int addr){
 
 DEF_GETTER(char, TR, trace, NIL)
 int apply(int func, int args){
-    int varlist,body,res,macrofunc,method,pexist,aexist,i,n,trace;
+    int varlist,body,res,pexist,aexist,i,n,trace;
     res = NIL;
     pexist = 0;
     aexist = 0;
@@ -1474,7 +1476,9 @@ int apply(int func, int args){
                     }
                     ep = pop();
                     return(res);
-        case MACRO:{if(improperlistp(args))
+    case MACRO:{int macrofunc;
+
+                        if(improperlistp(args))
                         error(IMPROPER_ARGS, "apply", args);
                     macrofunc = GET_CAR(func);
                     varlist = car(GET_CAR(macrofunc));
@@ -1502,6 +1506,8 @@ int apply(int func, int args){
                     }
 
         case GENERIC:{
+            int method;
+            
                     if(GET_OPT(func) >= 0){
                         if(length(args) != (int)GET_OPT(func))
                             error(WRONG_ARGS,GET_NAME(func),args);

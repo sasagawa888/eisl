@@ -166,10 +166,10 @@ int eqlp(int addr1, int addr2){
 }
 
 int equalp(int addr1, int addr2){
-    int n,i;
-
     if(vectorp(addr1) && vectorp(addr2)){
         if(vector_length(addr1) == vector_length(addr2)){
+            int i, n;
+            
             n = vector_length(addr1);
             for(i=0;i<n;i++){
                 if(!equalp(GET_VEC_ELT(addr1,i),GET_VEC_ELT(addr2,i)))

@@ -34,6 +34,9 @@ Copying GC mode
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
+#define COL_SIZE 255
+#define NUM_HISTORY 10
+#define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 1.97;
 static const int HEAPSIZE = 20000000;
@@ -180,12 +183,12 @@ extern char stream_str1[STRSIZE];
 extern int charcnt;
 
 
-//read scaner
+//read scanner
 extern token stok;
 extern int line;
 extern int column;
-extern int buffer[256][10];
-extern int buffer1[256];
+extern int buffer[COL_SIZE + 1][NUM_HISTORY];
+extern int buffer1[COL_SIZE + 1];
 
 
 //heap and stack
@@ -339,8 +342,8 @@ extern int area_sw;
 
 //longjmp control and etc
 extern jmp_buf buf;
-extern jmp_buf block_buf[50];
-extern int block_env[50][2];
+extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
+extern int block_env[NESTED_BLOCKS_MAX][2];
 extern jmp_buf catch_buf[10][50];
 extern int catch_env[10][50];
 extern jmp_buf ignore_buf; //jump address for ignore-error
@@ -362,7 +365,7 @@ __dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
-extern const char *ed_candidate[50];
+extern const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
 extern int ed_candidate_pt;
 extern const short ed_syntax_color;
 extern const short ed_builtin_color;

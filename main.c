@@ -94,8 +94,8 @@ int charcnt; //for format-tab. store number of chars up to now.
 token stok = {'\0',GO,OTHER,{'\0'}};
 int line;
 int column;
-int buffer[256][10];
-int buffer1[256];
+int buffer[COL_SIZE + 1][NUM_HISTORY];
+int buffer1[COL_SIZE + 1];
 
 
 //heap and stack
@@ -138,8 +138,8 @@ int area_sw = 1;     //1= lower area 2=higher area
 
 //longjmp control and etc
 jmp_buf buf;
-jmp_buf block_buf[50];
-int block_env[50][2];
+jmp_buf block_buf[NESTED_BLOCKS_MAX];
+int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
 int catch_env[10][50];
 jmp_buf ignore_buf; //jump address of ignore-error
@@ -164,7 +164,7 @@ int stepper_flag = 0;
 
 int ed_lparen_col;
 int ed_rparen_col;
-const char *ed_candidate[50];
+const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
 int ed_candidate_pt;
 const short ed_syntax_color = COLOR_RED;
 const short ed_builtin_color = COLOR_CYAN;
@@ -190,9 +190,12 @@ static void usage(void)
 }
 
 int main(int argc, char *argv[]){
-    int ch;
-    char *home, str[EISL_PATH_MAX];
-    char *script_arg;
+
+    setupterm((char *)0, 1, (int *)0);
+    ed_key_down = key_down[2];
+    ed_key_left = key_left[2];
+    ed_key_right = key_right[2];
+    ed_key_up = key_up[2];
 
     initcell();
     initclass();
@@ -208,13 +211,11 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
 
-    setupterm((char *)0, 1, (int *)0);
-    ed_key_down = key_down[2];
-    ed_key_left = key_left[2];
-    ed_key_right = key_right[2];
-    ed_key_up = key_up[2];
     int ret = setjmp(buf);
     if(init_flag){
+        int ch;
+        char *script_arg;
+        
         init_flag = false;
         FILE* fp = fopen("startup.lsp","r");
         if(fp != NULL){
@@ -222,6 +223,8 @@ int main(int argc, char *argv[]){
             f_load(list1(makestr("startup.lsp")));
         }
         while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
+            char *home, str[EISL_PATH_MAX];
+            
             switch (ch) {
             case 'l':
                 f_load(list1(makestr(optarg)));
@@ -274,8 +277,9 @@ int main(int argc, char *argv[]){
     }
     if(greeting_flag)
         printf("Easy-ISLisp Ver%1.2f\n", VERSION);
-    repl:
-    if(ret == 0)
+    while (1) {
+    switch (ret) {
+    case 0:
         while(1){
             initpt();
             fputs("> ", stdout);
@@ -284,13 +288,14 @@ int main(int argc, char *argv[]){
             if(redef_flag)
                 redef_generic();
         }
-    else
-        if(ret == 1){
+        break;
+    case 1:
             ret = 0;
-            goto repl;
-        }
-        else
+            break;
+    default:
             return 0;
+    }
+    }
 }
 
 void initpt(void){
@@ -885,16 +890,12 @@ int expttoken(char buf[]){
     strncpy(buf1, buf, BUFSIZE - 1);
     buf1[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'e');
-    if(tok.sepch == NUL)
-        goto exit;
-
-    if((inttoken(tok.before)  || flttoken(tok.before)) &&
-        inttoken(tok.after)){
-
-        return(1);
+    if(tok.sepch != NUL &&
+       (inttoken(tok.before)  || flttoken(tok.before)) &&
+       inttoken(tok.after)) {
+        return 1;
     }
 
-    exit:
     strncpy(buf, buf1, BUFSIZE - 1);
     buf[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'E');
@@ -1422,7 +1423,7 @@ int eval(int addr){
 
 DEF_GETTER(char, TR, trace, NIL)
 int apply(int func, int args){
-    int varlist,body,res,macrofunc,method,pexist,aexist,i,n,trace;
+    int varlist,body,res,pexist,aexist,i,n,trace;
     res = NIL;
     pexist = 0;
     aexist = 0;
@@ -1475,7 +1476,9 @@ int apply(int func, int args){
                     }
                     ep = pop();
                     return(res);
-        case MACRO:{if(improperlistp(args))
+    case MACRO:{int macrofunc;
+
+                        if(improperlistp(args))
                         error(IMPROPER_ARGS, "apply", args);
                     macrofunc = GET_CAR(func);
                     varlist = car(GET_CAR(macrofunc));
@@ -1503,6 +1506,8 @@ int apply(int func, int args){
                     }
 
         case GENERIC:{
+            int method;
+            
                     if(GET_OPT(func) >= 0){
                         if(length(args) != (int)GET_OPT(func))
                             error(WRONG_ARGS,GET_NAME(func),args);
@@ -1533,7 +1538,7 @@ int apply(int func, int args){
                         }
                         if(GET_OPT(car(next_method)) == AROUND){
                             if(aexist==1)
-                                goto exit;
+                                break;
                             else
                                 method = cdr(method);
                         }
@@ -1547,10 +1552,9 @@ int apply(int func, int args){
                             method = cdr(next_method);
 
                     }
-                    if(pexist==0)
+                    if(aexist == 0 && pexist==0)
                         error(NOT_EXIST_METHOD, "apply", args);
 
-                    exit:
                     generic_func = NIL;
                     generic_vars = NIL;
                     return(res);
@@ -1776,7 +1780,7 @@ void debugger(){
 	int i,x;
 
     puts("debug mode ?(help)");
-    loop:
+    while (1) {
     fputs(">>", stdout);
     x = sread();
 	if(eqp(x,makesym("?"))){
@@ -1851,5 +1855,5 @@ void debugger(){
     	print(eval(x));
         putchar('\n');
     }
-    goto loop;
+    }
 }

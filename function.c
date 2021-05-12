@@ -11,6 +11,8 @@
 #include <dlfcn.h>
 #include "eisl.h"
 
+#define BININT_LEN 64
+
 static void* hmod;
 
 void initsubr(void){
@@ -3260,14 +3262,13 @@ int f_format(int arglist){
 
 int fprintr(FILE *p, int r, int n){
     int i,sign,len;
-    char b[1024];
+    char b[BININT_LEN + 1];
 
     sign = 1;
     if(n == 0){
         b[0] = '0';
         i = 0;
-        goto exit;
-    }
+    } else {
     if(n >= 0)
         sign = 1;
     else{
@@ -3319,7 +3320,7 @@ int fprintr(FILE *p, int r, int n){
         i++;
     }
     i--;
-    exit:
+    }
     len = strlen(b);
     if(sign == -1){
         fputc('-', p);
@@ -3335,14 +3336,13 @@ int fprintr(FILE *p, int r, int n){
 
 int sprintr(char *str, int r, int n){
     int i,j,sign,len;
-    char b[1024];
+    char b[BININT_LEN + 1];
 
     sign = 1;
     if(n == 0){
         b[0] = '0';
         i = 0;
-        goto exit;
-    }
+    } else {
     if(n >= 0)
         sign = 1;
     else{
@@ -3394,7 +3394,7 @@ int sprintr(char *str, int r, int n){
         i++;
     }
     i--;
-    exit:
+    }
     len = strlen(b);
     j = 0;
     if(sign == -1){
@@ -3541,13 +3541,12 @@ int f_format_object(int arglist){
         } else
             if(GET_OPT(arg1) != EISL_OUTSTR){
                 fprintf(GET_PORT(arg1),"\\\"%s\\\"",GET_NAME(arg2));
-                charcnt = charcnt + 4 + strlen(GET_NAME(arg2));
             }
             else{
                 snprintf(stream_str, STRSIZE, "\\\"%s\\\"", GET_NAME(arg2));
                 append_str(arg1, stream_str);
-                charcnt = charcnt + 4 + strlen(GET_NAME(arg2));
             }
+            charcnt = charcnt + 4 + strlen(GET_NAME(arg2));
         }
     else if(charp(arg2)){
         if(nullp(arg3)){
@@ -4230,6 +4229,7 @@ int f_next_method_p(int arglist){
 
 int f_call_next_method(int arglist){
     int method,varlist,body,res;
+    bool method_found = false;
 
     if(length(arglist) != 0)
         error(WRONG_ARGS,"call-next-method",arglist);
@@ -4241,13 +4241,16 @@ int f_call_next_method(int arglist){
     method = cdr(next_method);
     while(!nullp(method)){
         varlist = car(GET_CAR(car(method)));
-        if(matchp(varlist,generic_vars))
-            goto exit;
+        if(matchp(varlist,generic_vars)) {
+            method_found = true;
+            break;
+        }
         method = cdr(method);
     }
-    error(NOT_EXIST_METHOD,"call-next-method",NIL);
+    if (!method_found) {
+        error(NOT_EXIST_METHOD,"call-next-method",NIL);
+    }
 
-    exit:
     next_method = method;
     varlist = genlamlis_to_lamlis(varlist);
     body = cdr(GET_CAR(car(method)));

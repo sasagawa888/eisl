@@ -48,6 +48,10 @@ Two libraries I'd recommend for this are
 and
 [Nana](https://github.com/pjmaker/nana),
 but we probably don't want to go there quite yet.
+Even though we decided not to use C++, writing
+[Object-Oriented C](https://www.cs.rit.edu/~ats/)
+looks potentially interesting but would have to be evaluated properly.
+It's best to think of everything in this paragraph as a research project that may not or may not be ready for production.
 
 As regards tools, the compiler warnings are all switched on.
 And there is a rule to run cppcheck in the top-level makefile.

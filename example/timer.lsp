@@ -38,6 +38,7 @@
 
 (defun main ()
    ;; Start the timer program.
+   (setlocale "")
    (typrologue)
    (nodelay)
    (for ((c (tyi) (tyi)))

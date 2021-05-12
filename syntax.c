@@ -10,6 +10,7 @@
 #include <sys/time.h>
 #include "eisl.h"
 
+#define TAGBODY_LEN_MAX 100
 
 void initsyntax(void){
     deffsubr("LAMBDA",f_lambda);
@@ -1071,7 +1072,7 @@ int f_throw(int arglist){
 }
 
 int f_tagbody(int arglist){
-    int prog[100],tb_line,end,i;
+    int prog[TAGBODY_LEN_MAX],tb_line,end,i;
     
     if(improperlistp(arglist))
         error(IMPROPER_ARGS, "tagbody", arglist);
@@ -1085,7 +1086,6 @@ int f_tagbody(int arglist){
 
     tb_line = 0;
     while(tb_line < end){
-        exit:
         if(symbolp(prog[tb_line]))
             tb_line++;
         else{
@@ -1098,10 +1098,14 @@ int f_tagbody(int arglist){
                     if(tagbody_tag == prog[i]){
                         tagbody_tag = NIL;
                         tb_line = i;
-                        goto exit;
+                        break;
                     }
                 }
-                error(UNDEF_TAG,"tagbody",tagbody_tag);
+                if (tagbody_tag != NIL) {
+                    error(UNDEF_TAG,"tagbody",tagbody_tag);
+                } else {
+                    continue;
+                }
             }
         }
     }

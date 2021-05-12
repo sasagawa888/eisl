@@ -14,7 +14,7 @@ closure function-address car=arg+body, cdr=environment
 #include <math.h>
 #include <stdint.h>
 #include "eisl.h"
-
+#include "compat/nana.h"
 
 void initcell(void){
     int addr,x;

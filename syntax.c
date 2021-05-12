@@ -10,6 +10,7 @@
 #include <sys/time.h>
 #include "eisl.h"
 
+#define TAGBODY_LEN_MAX 100
 
 void initsyntax(void){
     deffsubr("LAMBDA",f_lambda);
@@ -1071,7 +1072,7 @@ int f_throw(int arglist){
 }
 
 int f_tagbody(int arglist){
-    int prog[100],tb_line,end,i;
+    int prog[TAGBODY_LEN_MAX],tb_line,end,i;
     
     if(improperlistp(arglist))
         error(IMPROPER_ARGS, "tagbody", arglist);

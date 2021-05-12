@@ -35,6 +35,7 @@ Copying GC mode
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
 #define COL_SIZE 255
+#define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 1.97;
@@ -182,12 +183,12 @@ extern char stream_str1[STRSIZE];
 extern int charcnt;
 
 
-//read scaner
+//read scanner
 extern token stok;
 extern int line;
 extern int column;
-extern int buffer[256][10];
-extern int buffer1[256];
+extern int buffer[COL_SIZE + 1][NUM_HISTORY];
+extern int buffer1[COL_SIZE + 1];
 
 
 //heap and stack
@@ -364,7 +365,7 @@ __dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
-extern const char *ed_candidate[50];
+extern const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
 extern int ed_candidate_pt;
 extern const short ed_syntax_color;
 extern const short ed_builtin_color;

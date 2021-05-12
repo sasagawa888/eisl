@@ -18,8 +18,6 @@ written by kenichi sasagawa 2016/4~
 #include <term.h>
 #include "eisl.h"
 
-#define NUM_HISTORY 10
-
 //------pointer----
 int ep; //environment pointer
 int dp; //dynamic pointer
@@ -140,8 +138,8 @@ int area_sw = 1;     //1= lower area 2=higher area
 
 //longjmp control and etc
 jmp_buf buf;
-jmp_buf block_buf[50];
-int block_env[50][2];
+jmp_buf block_buf[NESTED_BLOCKS_MAX];
+int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
 int catch_env[10][50];
 jmp_buf ignore_buf; //jump address of ignore-error

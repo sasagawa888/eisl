@@ -83,7 +83,7 @@ typedef struct{
     char    *name;
     tag    tag;
     flag    flag;
-    enum Option    option;
+    signed char    option;
     char    trace;
 } cell;
 
@@ -218,7 +218,7 @@ DEF_GETTER(long long int, LONG, val.lngnum, NIL)
 static inline char *GET_NAME(int addr) { return heap[addr].name; }
 static inline char GET_CHAR(int addr) { return heap[addr].name[0]; }
 DEF_GETTER(tag, TAG, tag, INTN)
-DEF_GETTER(enum Option, OPT, option, 0)
+DEF_GETTER(signed char, OPT, option, 0)
 static inline void SET_TAG(int addr,tag x) { heap[addr].tag = x; }
 static inline void SET_CAR(int addr,int x) { heap[addr].val.car.intnum = x; }
 static inline void SET_CDR(int addr,int x) { heap[addr].val.cdr.intnum = x; }

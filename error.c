@@ -318,7 +318,7 @@ void error(int errnum, const char *fun, int arg){
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break; 
         case CANT_CREATE:
-                        initargs = list6(makesym("format-string"),makestr("Can't create instance for system defined class at "),
+                        initargs = list6(makesym("format-string"),makestr("Can't create instance for system defined or abstract class at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun1));
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);

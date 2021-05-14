@@ -64,9 +64,6 @@ typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,
               STREAM} tag;
 typedef enum {FRE,USE} flag;
 
-
-enum {AROUND,BEFORE,PRIORITY,AFTER,EISL_OPEN,EISL_INPUT,EISL_OUTPUT,EISL_INSTR,EISL_OUTSTR};
-
 typedef int (*subr_t)(int args);
 typedef struct{
     union{
@@ -88,8 +85,8 @@ typedef struct{
     int     aux;
     int     prop;
     char    *name;
-    char    tag;
-    char    flag;
+    tag    tag;
+    flag    flag;
     signed char    option;
     char    trace;
 } cell;
@@ -224,9 +221,9 @@ DEF_GETTER(double, FLT, val.fltnum, NIL)
 DEF_GETTER(long long int, LONG, val.lngnum, NIL)
 static inline char *GET_NAME(int addr) { return heap[addr].name; }
 static inline char GET_CHAR(int addr) { return heap[addr].name[0]; }
-DEF_GETTER(char, TAG, tag, INTN)
-DEF_GETTER(signed char, OPT, option, INTN)
-static inline void SET_TAG(int addr,char x) { heap[addr].tag = x; }
+DEF_GETTER(tag, TAG, tag, INTN)
+DEF_GETTER(signed char, OPT, option, 0)
+static inline void SET_TAG(int addr,tag x) { heap[addr].tag = x; }
 static inline void SET_CAR(int addr,int x) { heap[addr].val.car.intnum = x; }
 static inline void SET_CDR(int addr,int x) { heap[addr].val.cdr.intnum = x; }
 static inline void SET_AUX(int addr,int x) { heap[addr].aux = x; }
@@ -336,7 +333,6 @@ extern bool back_flag;
 extern bool ignore_topchk;
 extern bool repl_flag;
 extern volatile sig_atomic_t exit_flag;
-extern bool debug_flag;
 extern bool greeting_flag;
 extern bool script_flag;
 

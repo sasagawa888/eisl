@@ -3085,7 +3085,7 @@ int f_create_star(int arglist){
         error(WRONG_ARGS,"create",arglist);
     if(!(IS_CLASS(arg1)))
         error(NOT_CLASS, "create", arg1);
-    if(GET_OPT(arg1) == SYSTEM)
+    if(GET_OPT(arg1) == SYSTEM || GET_OPT(arg1) == ABSTRACT)
         error(CANT_CREATE, "create", arg1);
 
     return(makeinstance(arg1,arg2));
@@ -4078,7 +4078,7 @@ int f_heapdump(int arglist){
     return(T);
 }
 
-static inline void SET_FLAG(int addr,char x) { heap[addr].flag = x; }
+static inline void SET_FLAG(int addr,flag x) { heap[addr].flag = x; }
 int f_gbc(int arglist){
     int n,addr;
 

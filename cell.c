@@ -13,7 +13,7 @@ closure function-address car=arg+body, cdr=environment
 #include <math.h>
 #include <stdint.h>
 #include "eisl.h"
-
+#include "compat/nana.h"
 
 void initcell(void){
     int addr,x;
@@ -410,7 +410,7 @@ int hash(const char *name){
 }
 
 //-------for debug------------------
-DEF_GETTER(char, FLAG, flag, NIL)
+DEF_GETTER(flag, FLAG, flag, NIL)
 void cellprint(int addr){
     switch(GET_FLAG(addr)){
     case FRE:   fputs("FRE ", stdout); break;
@@ -446,6 +446,8 @@ void cellprint(int addr){
     case GENERIC:
         printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
+    default:
+        IP(false, "cellprint tag switch default action");
     }
 }
 
@@ -945,10 +947,13 @@ int initinst1(int inst_vars, int sc){
 
 int initinst2(int inst_vars, int class_vars){
     while(!nullp(class_vars)){
-      int n;
+        int n;
 
-        if((n=assq(caar(class_vars),inst_vars)))
-            SET_CDR(n,copy(cdar(class_vars)));
+        if((n=assq(caar(class_vars),inst_vars))) {
+            if (n != FAILSE) {
+                SET_CDR(n,copy(cdar(class_vars)));
+            }
+        }
         class_vars = cdr(class_vars);
     }
     return(inst_vars);
@@ -1145,6 +1150,8 @@ int convert(int arg1, int arg2){
                 return(vector_to_list(arg1));
             }
             break;
+    default:
+        IP(false, "convert tag switch default action");
     }
     error(ILLEGAL_ARGS,"convert",arg1);
     return(UNDEF);
@@ -1152,7 +1159,7 @@ int convert(int arg1, int arg2){
 
 int adaptp(int x, int y){
 
-    if(x < 0 || x >= INT_FLAG){
+    if(!CELLRANGE(x)){
     	if(32 == GET_AUX(y))  // 32is address of <class integer>
         	return(1);
         else if(subclassp(32,GET_AUX(y)))

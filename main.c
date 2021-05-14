@@ -126,7 +126,6 @@ bool init_flag = true;  //for -c option, 1=initial,0=not-initial
 bool ignore_topchk = false; //for FAST compiler true=ignore,false=normal
 bool repl_flag = true;  //for REPL read_line 1=on, 0=off
 volatile sig_atomic_t exit_flag = 0;  //true= ctrl+C
-bool debug_flag = false;  //for GC debug
 bool greeting_flag = true; //for (quit)
 bool script_flag = false;   //for -s option
 

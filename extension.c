@@ -314,11 +314,11 @@ int macroexpand_1(int macsym, int args){
     macrofunc = GET_CAR(func);
     varlist = car(GET_CAR(macrofunc));
     if(GET_OPT(func) >= 0){
-        if(length(args) != GET_OPT(func))
+        if(length(args) != (int)GET_OPT(func))
             error(WRONG_ARGS,"macroexpand-1",args);
     }
     else{
-        if(length(args) < (-1 * GET_OPT(func) - 2))
+        if(length(args) < (-1 * (int)GET_OPT(func) - 2))
             error(WRONG_ARGS,"macroexpand-1",args);
     }    
     body = cdr(GET_CAR(macrofunc));

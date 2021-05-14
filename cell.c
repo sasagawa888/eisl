@@ -948,10 +948,13 @@ int initinst1(int inst_vars, int sc){
 
 int initinst2(int inst_vars, int class_vars){
     while(!nullp(class_vars)){
-      int n;
+        int n;
 
-        if((n=assq(caar(class_vars),inst_vars)))
-            SET_CDR(n,copy(cdar(class_vars)));
+        if((n=assq(caar(class_vars),inst_vars))) {
+            if (n != FAILSE) {
+                SET_CDR(n,copy(cdar(class_vars)));
+            }
+        }
         class_vars = cdr(class_vars);
     }
     return(inst_vars);

@@ -24,10 +24,16 @@
         (t (cons (alpha-conv-method (car x) y)
                  (alpha-conv-method (cdr x) y)))))
 
+;; if x is alpha-conv variable substitute 
+;; else return nil
+;; x ((x . a)) -> a
+;; y ((x . a)) -> nil
 (defun alpha-var (x y)
   (cond ((null y) nil)
         ((eq x (car (car y))) (cdr (car y)))
         (t (alpha-var x (cdr y)))))
 
+(test (alpha-conv-varlis '((x <integer>) (y <integer>)) '(a b)) ((a <integer>) (b <integer>)))
+(test (method-varlis-to-substlist '((x <integer>) (y <integer>)) '(a b)) ((x . a) (y . b)))
 (test (alpha-conv-method '((COND ((= N 1) 1) ((= N 2) 1) (T (+ (GFIB (- N 1)) (GFIB (- N 2)))))) '((n . a)))
                            ((COND ((= a 1) 1) ((= a 2) 1) (T (+ (GFIB (- a 1)) (GFIB (- a 2)))))))

@@ -941,7 +941,7 @@ double tarai(double x, double y, double z){
             (format code2 "int res;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
-            (comp-defgeneric-body method nil)
+            (comp-defgeneric-body method nil args)
             (gen-shelterpop code2 (reverse args))
             (format code2 "return(res);}~%")))
     
@@ -955,12 +955,12 @@ double tarai(double x, double y, double z){
               (t (error* "defgeneric" x))))
     
     ;;method priority :around=11 :before=12 :priority=13 :after=14
-    (defun comp-defgeneric-body (x after)
+    (defun comp-defgeneric-body (x after args)
         (cond ((null x) t)
               ((null (cdr x))
                (let* ((varbody (get-method-body (car x)))
-                      (varlis (car varbody))
-                      (body (cdr varbody))
+                      (varlis (alpha-conv-varlis (car varbody) args))
+                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
                       (priority (get-method-priority (car x))) )
                    (if (and (= priority 14) (not priority))
                        (format code2 "after:~%"))
@@ -973,8 +973,8 @@ double tarai(double x, double y, double z){
                    (format code2 "}~%")))
               (t
                (let* ((varbody (get-method-body (car x)))
-                      (varlis (car varbody))
-                      (body (cdr varbody))
+                      (varlis (alpha-conv-varlis (car varbody) args))
+                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
                       (priority (get-method-priority (car x))) )
                    (if (and (= priority 14) (not after))
                        (format code2 "after:~%"))
@@ -989,7 +989,40 @@ double tarai(double x, double y, double z){
                    (format code2 "}~%")
                    (comp-defgeneric-body (cdr x) (if (= priority 14)
                                                      t
-                                                     after))))))
+                                                     after) args)))))
+    
+    ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))
+    (defun alpha-conv-varlis (x y)
+        (if (null x)
+        nil 
+        (cons (list (car y) (elt (car x) 1))
+              (alpha-conv-varlis (cdr x) (cdr y)))))
+
+
+    ;; ((x <integer>) (y <integer>)) (a b) -> ((x . a) (y . b))
+    (defun method-varlis-to-substlist (x y)
+        (if (null x)
+            nil 
+            (cons (cons (car (car x)) (car y))
+                  (method-varlis-to-substlist (cdr x) (cdr y)))))
+
+    ;; (COND ((= N 1) 1) ((= N 2) 1) (T (+ (GFIB (- N 1)) (GFIB (- N 2)))))) ((n . a)) -> 
+    ;; (COND ((= a 1) 1) ((= a 2) 1) (T (+ (GFIB (- a 1)) (GFIB (- a 2))))))
+    (defun alpha-conv-method (x y)
+        (cond ((null x) nil)
+              ((and (symbolp x) (alpha-var x y)) (alpha-var x y))
+              ((atom x) x)
+              (t (cons (alpha-conv-method (car x) y)
+                       (alpha-conv-method (cdr x) y)))))
+
+    ;; if x is alpha-conv variable substitute 
+    ;; else return nil
+    ;; x ((x . a)) -> a
+    ;; y ((x . a)) -> nil
+    (defun alpha-var (x y)
+        (cond ((null y) nil)
+              ((eq x (car (car y))) (cdr (car y)))
+              (t (alpha-var x (cdr y)))))
     
     (defun method-need-return-p (x)
         (cond ((null (cdr x)) t)
@@ -2417,24 +2450,8 @@ double tarai(double x, double y, double z){
                               (elt x 2)
                               (elt x 3)))
                       (res (assoc name generic-name-arg)) )
-                   (when (null res) (error* "not exist defgeneric " name))
-                   (unless
-                    (has-same-varlis-p arg (cdr res))
-                    (error* "args variable name must be same" (list arg (cdr res))))))))
-    
-    (defun has-same-varlis-p (x y)
-        (cond ((and (null x) (null y)) t)
-              ((and (null x) (not (null y))) nil)
-              ((and (not (null x)) (null y)) nil)
-              ((and (symbolp (car x)) (symbolp (car y)) (eq (car x) (car y)))
-               (has-same-varlis-p (cdr x) (cdr y)))
-              ((and (consp (car x)) (consp (car y)) (eq (elt (car x) 0) (elt (car y) 0)))
-               (has-same-varlis-p (cdr x) (cdr y)))
-              ((and (consp (car x)) (symbolp (car y)) (eq (elt (car x) 0) (car y)))
-               (has-same-varlis-p (cdr x) (cdr y)))
-              ((and (symbolp (car x)) (consp (car y)) (eq (car x) (elt (car y) 0)))
-               (has-same-varlis-p (cdr x) (cdr y)))
-              (t nil)))
+                   (when (null res) (error* "not exist defgeneric " name))))))
+
     
     ;;ex prime-factors -> prime_factors
     (defun conv-name (sym)

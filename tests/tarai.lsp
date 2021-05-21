@@ -1,7 +1,6 @@
 ;;sample code for type inference
 ;;benchmark test
 
-
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)

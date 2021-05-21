@@ -161,7 +161,8 @@ Therefore, in such a case, please write without using labels as shown below.
         (cdr (assoc (car path) adjacent)))))
 ```
 
-# Constraints on generic functions
+# Constraint on generic functions
+### This constraint has been removed from ver2.0. 
 
 Below is the quoted code from M. Hiroi's page.
 This is correct code that conforms to the ISLisp specification. 

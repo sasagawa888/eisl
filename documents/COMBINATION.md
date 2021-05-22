@@ -14,8 +14,28 @@ Thanks to Mr. Hiroi.
 ```
 
 # Specification
+- selects xs => list
+    Select element, store selected element in CAR, store remaining elements in CDR, store it in list and return
+- permutation fn n xs => nil
+    Generate a permutation that selects n elements from the list xs
+- permutations n xs => list
+    Generate a permutation that selects n elements from the list xs
+- permutation-with-repetition fn n xs => nil
+    Generate a permutations with n elements from the list xs
+- permutations-with-repetition n xs => list
+    Generate a permutations with n elements from the list xs
+- combination-number n r
+    Find the number of combinations nCr
+- combination fn n xs => nil
+    Generate a combination that selects n elements from the list xs
+- combinations n xs => list
+    Generate a combination that selects n elements from the list xs
+- combination-with-repetition fn n xs => nil
+    Generate duplicate combinations that select n elements from the list xs
+- combinations-with-repetition n xs => list
+    Generate duplicate combinations that select n elements from the list xs 
 
-See the following test cases:
+# Test cases
 
 ```lisp
 (test (selects '(1 2 3)) ((1 2 3) (2 1 3) (3 1 2)))

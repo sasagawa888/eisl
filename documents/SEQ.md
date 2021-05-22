@@ -14,8 +14,22 @@ Thanks to Mr. Hiroi.
 ```
 
 # Specification
+- list-> vector xs
+    Convert list xs to vector
+- list-> string xs
+    Convert list xs to a string (list elements must be characters)
+- vector-> list xs
+    Convert vector xs to string
+- vector-> string xs
+    Convert vector xs to a string (vector elements must be characters)
+- string-> list xs
+    Convert a string to a list
+- string-> vector xs
+    Convert a string to a list 
 
-See the following test cases:
+
+# Test cases
+
 
 ```lisp
 (test (remove 'a '(a b a b c a b c d)) (B B C B C D))

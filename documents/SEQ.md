@@ -26,7 +26,58 @@ Thanks to Mr. Hiroi.
     Convert a string to a list
 - string-> vector xs
     Convert a string to a list 
-
+- find item xs
+    Find the element equal to item (eql) in column xs
+- find-if pred xs
+    Find the element in column xs for which the predicate pred returns true
+- find-if-not pred xs
+    Column xs predicate pred looks for false element
+- position item xs
+    Returns the position of the element equal to item from column xs
+- position-if pred xs
+    Returns the position of the element from column xs where the predicate pred returns true
+- position-if-not pred xs
+    Returns the position of the element from column xs where the predicate pred returns false
+- count item xs
+    Returns the number of (eql) elements equal to item from column xs
+- count-if pred xs
+    Returns the number of elements for which the predicate pred returns true from column xs
+- count-if-not pred xs
+    Column xs Predicate pred returns false and number of elements 
+- fill xs item
+    Destructively rewrite the element of column xs to item
+- remove item xs
+    Returns a new column with the (eql) element equal to item removed
+- remove-if pred xs
+    Returns a new column with the element whose predicate pred returns true
+- remove-if-not pred xs
+    Predicate pred returns false Returns a new column with the element removed
+- substitute new old xs
+    Returns a new column with an element equal to old (eql) replaced by new
+- substitute-if new pred xs
+    Returns a new column with the element for which the predicate pred returns true replaced by new
+- substitute-if-not new pred xs
+    Predicate pred returns false Returns a new column with new elements replaced
+- nsubstitute new old xs
+    Equal to old (eql) Replace element with new (destructive)
+- nsubstitute-if new pred xs
+    Replace the element for which the predicate pred returns true with new (destructive)
+- nsubstitute-if-not new pred xs
+    Replace elements where the predicate pred returns false with new (destructive) 
+- concatenate result-type [xs1 ...]
+    Create a new column (type is result-type) that concatenates the argument columns
+- map result-type fn xs1 [xs2 ...]
+    Apply the function fn to the elements of the argument column and return a new column (type is result-type) containing the result
+- reduce fn init xs1 [xs2 ...]
+    Convolve the argument sequence from the beginning
+    Cumulative values are passed as the first argument of the function fn, and column elements are passed as the remaining arguments.
+- reduce-right fn init xs1 [xs2 ...]
+    Convolve the argument sequence from the end
+    Cumulative values are passed as the first argument of the function fn, and column elements are passed as the remaining arguments.
+- some pred xs1 [xs2 ...]
+    Apply the predicate pred to the elements of a column and return T if any element returns true.
+- every pred xs1 [xs2 ...]
+    Apply the predicate pred to an element of a column and return NIL if any element returns false. 
 
 # Test cases
 

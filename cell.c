@@ -918,7 +918,8 @@ int initinst(int x, int initls){
         class_vars = cdr(class_vars);
     }
     while(!nullp(initls)){
-        if((n=assq(car(initls),inst_vars)))
+        n=assq(car(initls),inst_vars);
+        if(n != 0 && n != FAILSE)
             SET_CDR(n,cadr(initls));
         initls = cddr(initls);
     }
@@ -949,10 +950,9 @@ int initinst2(int inst_vars, int class_vars){
     while(!nullp(class_vars)){
         int n;
 
-        if((n=assq(caar(class_vars),inst_vars))) {
-            if (n != FAILSE) {
+        n=assq(caar(class_vars),inst_vars);
+        if(n != 0 && n != FAILSE) {
                 SET_CDR(n,copy(cdar(class_vars)));
-            }
         }
         class_vars = cdr(class_vars);
     }

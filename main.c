@@ -169,10 +169,12 @@ const short ed_extended_color = COLOR_MAGENTA;
 const short ed_string_color = COLOR_YELLOW;
 const short ed_comment_color = COLOR_BLUE;
 int ed_incomment = -1;     // #|...|# comment
-char ed_key_down;
-char ed_key_left;
-char ed_key_right;
-char ed_key_up;
+
+// Defaults, should be filled in later
+char ed_key_up = 'A';
+char ed_key_down = 'B';
+char ed_key_right = 'C';
+char ed_key_left = 'D';
 
 static void usage(void)
 {
@@ -187,12 +189,18 @@ static void usage(void)
 }
 
 int main(int argc, char *argv[]){
+    int errret;
 
-    setupterm((char *)0, 1, (int *)0);
-    ed_key_down = key_down[2];
-    ed_key_left = key_left[2];
-    ed_key_right = key_right[2];
-    ed_key_up = key_up[2];
+    if (setupterm((char *)0, 1, &errret) == ERR ||
+        key_up == NULL || key_down == NULL ||
+        key_right == NULL || key_left == NULL) {
+        repl_flag = false;
+    } else {
+        ed_key_down = key_down[2];
+        ed_key_left = key_left[2];
+        ed_key_right = key_right[2];
+        ed_key_up = key_up[2];
+    }
 
     initcell();
     initclass();
@@ -859,9 +867,7 @@ int hextoken(char buf[]){
         i = 2;
 
     while((c=buf[i]) != NUL)
-        if(isdigit(c) ||
-         c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' || c == 'F' ||
-         c == 'a' || c == 'b' || c == 'c' || c == 'd' || c == 'e' || c == 'f')
+        if(isxdigit(c))
             i++;
         else
             return(0);

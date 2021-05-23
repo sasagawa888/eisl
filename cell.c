@@ -447,7 +447,7 @@ void cellprint(int addr){
         printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
     default:
-        IP(false, "cellprint tag switch default action");
+        printf("cellprint(%d) tag switch default action\n", addr);
     }
 }
 
@@ -907,20 +907,25 @@ int slotvars(int x){
 
 //initialize instance
 int initinst(int x, int initls){
-    int cl,class_vars,inst_vars,n;
+    int cl,class_vars,inst_vars,initargs,n;
 
     cl = GET_AUX(x);
     class_vars = GET_CDR(cl);
     inst_vars = GET_CDR(x);
+    initargs = GET_AUX(cl);
     while(!nullp(class_vars)){
         if((n=assq(caar(class_vars),inst_vars)))
             SET_CDR(n,copy(cdar(class_vars)));
         class_vars = cdr(class_vars);
     }
     while(!nullp(initls)){
-        n=assq(car(initls),inst_vars);
-        if(n != 0 && n != FAILSE)
-            SET_CDR(n,cadr(initls));
+        n=assq(car(initls),initargs);
+        if(n != 0 && n != FAILSE) {
+            int n2 = assq(GET_CDR(n),inst_vars);
+            if (n2 != 0 && n2 != FAILSE) {
+                SET_CDR(n2,cadr(initls));
+            }
+        }
         initls = cddr(initls);
     }
     SET_CDR(x,initinst1(inst_vars,GET_CAR(cl)));

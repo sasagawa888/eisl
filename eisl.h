@@ -16,10 +16,6 @@ Copying GC mode
 #ifndef EISL_H
 #define EISL_H
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 700
-#endif
-
 #include <setjmp.h>
 #include <stdbool.h>
 #include <assert.h>

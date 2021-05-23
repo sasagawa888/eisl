@@ -1,10 +1,6 @@
 #ifndef EDLIS_H
 #define EDLIS_H
 
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 700
-#endif
-
 #define FULLSCREEN
 #include "term.h"
 

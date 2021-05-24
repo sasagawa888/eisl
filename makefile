@@ -21,7 +21,7 @@ else
 		CURSES_LIBS := $(shell ncurses6-config --libs)
 	endif
 endif
-CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -D_XOPEN_SOURCE=700
+CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g
 else

@@ -14,6 +14,7 @@ closure function-address car=arg+body, cdr=environment
 #include <stdint.h>
 #include "eisl.h"
 #include "compat/nana.h"
+#include "mem.h"
 
 void initcell(void){
     int addr,x;
@@ -228,11 +229,11 @@ int freshcell(void){
     else{
         res = wp;
         if(IS_VECTOR(res) || IS_ARRAY(res)){
-            free(heap[res].val.car.dyna_vec);
+            FREE(heap[res].val.car.dyna_vec);
             heap[res].val.car.dyna_vec = NULL;
         }
         else if(IS_STRING(res)){
-            free(heap[res].name);
+            FREE(heap[res].name);
             heap[res].name = NULL;
         }
         SET_TAG(res,EMP);
@@ -567,7 +568,7 @@ int makevec(int n, int obj){
     int res,i, *vec;
 
     res = freshcell();
-    vec = (int *)malloc(sizeof(int)*n);
+    vec = (int *)ALLOC(sizeof(int) * n);
     if(vec == NULL)
         error(MALLOC_OVERF, "make_vector", NIL);
     else
@@ -715,7 +716,7 @@ int makearray(int ls, int obj){
         size = 1;
 
     res = freshcell();
-    vec = (int *)malloc(sizeof(int)*size);
+    vec = (int *)ALLOC(sizeof(int) * size);
     if(vec == NULL)
         error(MALLOC_OVERF, "array",  NIL);
 
@@ -765,7 +766,7 @@ int makefarray(int ls, int obj){
         size = 1;
 
     res = freshcell();
-    vec = (float *)malloc(sizeof(float)*size);
+    vec = (float *)ALLOC(sizeof(float) * size);
     if(vec == NULL)
         error(MALLOC_OVERF, "float array",  NIL);
 
@@ -842,7 +843,7 @@ int makechar(const char *pname){
 
     addr = freshcell();
     SET_TAG(addr,CHR);
-    heap[addr].name = (char *)malloc(CHARSIZE);
+    heap[addr].name = (char *)ALLOC(CHARSIZE);
     if(heap[addr].name == NULL)
         error(MALLOC_OVERF,"makechar",NIL);
     heap[addr].name[0] = char_entity;

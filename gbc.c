@@ -5,6 +5,7 @@
 #include <setjmp.h>
 #include "eisl.h"
 #include "compat/nana.h"
+#include "mem.h"
 
 #define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
 
@@ -186,17 +187,17 @@ void gbcsweep(void){
 
 void clrcell(int addr){
     if(IS_VECTOR(addr) || IS_ARRAY(addr))
-        free(heap[addr].val.car.dyna_vec);
+        FREE(heap[addr].val.car.dyna_vec);
     
     
     if(IS_FARRAY(addr)){
-        free(heap[addr].val.car.dyna_vec);
+        FREE(heap[addr].val.car.dyna_vec);
         ac = ac - GET_OPT(addr);
     }
     
 
     SET_TAG(addr,EMP);
-    free(heap[addr].name);
+    FREE(heap[addr].name);
     heap[addr].name = NULL;
     SET_CAR(addr,0);
     SET_CDR(addr,0);

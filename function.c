@@ -8,6 +8,7 @@
 #include <time.h>
 #include <dlfcn.h>
 #include "eisl.h"
+#include "mem.h"
 
 #define BININT_LEN 64
 
@@ -3932,7 +3933,7 @@ int f_create_string_output_stream(int arglist){
         error(WRONG_ARGS, "create-string-output-stream", arglist);
 
     res = makestream(stdout,EISL_OUTSTR);
-    str = (char *)malloc(STRSIZE);
+    str = (char *)ALLOC(STRSIZE);
     if(str == NULL)
         error(MALLOC_OVERF,"create-string-output-stream",NIL);
     heap[res].name = str;

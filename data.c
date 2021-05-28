@@ -5,6 +5,7 @@
 #include <setjmp.h>
 #include <float.h>
 #include "eisl.h"
+#include "mem.h"
 
 int get_int(int addr){
     return(GET_INT(addr));
@@ -1097,7 +1098,7 @@ int farray(int n, int ls){
         float *vec2;
 
         size = length(ls1);
-        vec1 = (float *)malloc(sizeof(float)*size);
+        vec1 = (float *)ALLOC(sizeof(float) * size);
         i = 0;
         while(!nullp(ls1)){
             if(floatp(car(ls1)))
@@ -1113,7 +1114,7 @@ int farray(int n, int ls){
         for(i=0;i<r;i++)
             for(j=0;j<c;j++)
                 vec2[IDX2C(i,j,r)] = vec1[IDX2R(i,j,c)];
-        free(vec1);
+        FREE(vec1);
     }
     else{
         i = 0;

@@ -15,6 +15,7 @@ written by kenichi sasagawa 2016/4~
 #include <curses.h>
 #include <term.h>
 #include "eisl.h"
+#include "mem.h"
 
 //------pointer----
 int ep; //environment pointer
@@ -1240,7 +1241,7 @@ void printfarray(int x){
             float *vec2;
             
             vec1 = GET_FVEC(x);
-            vec2 = (float *)malloc(sizeof(float)*size);
+            vec2 = (float *)ALLOC(sizeof(float) * size);
             r = GET_INT(car(st));
             c = GET_INT(cadr(st));
             for(i=0;i<r;i++)
@@ -1248,7 +1249,7 @@ void printfarray(int x){
                     vec2[IDX2R(i,j,c)] = vec1[IDX2C(i,j,r)];
             for(i=0;i<size;i++)
                 ls = cons(makeflt(vec2[i]),ls);
-            free(vec2);
+            FREE(vec2);
         }
         else{
             ls = cons(makesym("float-elements"),ls);

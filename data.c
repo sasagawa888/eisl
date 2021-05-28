@@ -6,6 +6,7 @@
 #include <float.h>
 #include "eisl.h"
 #include "mem.h"
+#include "fmt.h"
 
 int get_int(int addr){
     return(GET_INT(addr));
@@ -1401,7 +1402,7 @@ int copy_work(int x){
         case LIS:   return(cons(copy_work(car(x)),copy_work(cdr(x))));
         case DUMMY: return(x);
         default:    
-                    printf("error addr=%d  ",x);
+                    Fmt_print("error addr=%d  ",x);
                     return(x);
     }
 

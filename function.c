@@ -9,6 +9,7 @@
 #include <dlfcn.h>
 #include "eisl.h"
 #include "mem.h"
+#include "fmt.h"
 
 #define BININT_LEN 64
 
@@ -1748,7 +1749,7 @@ int f_gensym(int arglist __unused){
     int res;
     char str[SYMSIZE];
 
-    snprintf(str, SYMSIZE, "#:G%d",genint);
+    Fmt_sfmt(str, SYMSIZE, "#:G%d",genint);
     genint++;
     res = makesym(str);
     return(res);
@@ -2156,7 +2157,7 @@ int f_import(int arglist){
     if(!stringp(arg1))
         error(NOT_SYM,"import",arg1);
 
-    snprintf(str, SYMSIZE, "library/%s.o", GET_NAME(arg1));
+    Fmt_sfmt(str, SYMSIZE, "library/%s.o", GET_NAME(arg1));
 
     fp = fopen(str,"r");
     if(fp != NULL){
@@ -2164,7 +2165,7 @@ int f_import(int arglist){
         f_load(list1(makestr(str)));
         return(T);
     }
-    snprintf(str, SYMSIZE, "library/%s.lsp", GET_NAME(arg1));
+    Fmt_sfmt(str, SYMSIZE, "library/%s.lsp", GET_NAME(arg1));
 
     fp = fopen(str,"r");
     if(fp != NULL){
@@ -3539,10 +3540,10 @@ int f_format_object(int arglist){
             charcnt = charcnt + strlen(GET_NAME(arg2));
         } else {
             if(GET_OPT(arg1) != EISL_OUTSTR){
-                fprintf(GET_PORT(arg1),"\\\"%s\\\"",GET_NAME(arg2));
+                Fmt_fprint(GET_PORT(arg1),"\\\"%s\\\"",GET_NAME(arg2));
             }
             else{
-                snprintf(stream_str, STRSIZE, "\\\"%s\\\"", GET_NAME(arg2));
+                Fmt_sfmt(stream_str, STRSIZE, "\\\"%s\\\"", GET_NAME(arg2));
                 append_str(arg1, stream_str);
             }
             charcnt = charcnt + 4 + strlen(GET_NAME(arg2));
@@ -3555,9 +3556,9 @@ int f_format_object(int arglist){
         }
         else{
             if(GET_OPT(arg1) != EISL_OUTSTR)
-                fprintf(GET_PORT(arg1),"#\\\\%s",GET_NAME(arg2));
+                Fmt_fprint(GET_PORT(arg1),"#\\\\%s",GET_NAME(arg2));
             else{
-                snprintf(stream_str, STRSIZE, "#\\\\%s", GET_NAME(arg2));
+                Fmt_sfmt(stream_str, STRSIZE, "#\\\\%s", GET_NAME(arg2));
                 append_str(arg1, stream_str);
             }
             charcnt = charcnt + 3 + strlen(GET_NAME(arg2));

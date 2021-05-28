@@ -15,6 +15,7 @@ closure function-address car=arg+body, cdr=environment
 #include "eisl.h"
 #include "compat/nana.h"
 #include "mem.h"
+#include "fmt.h"
 
 void initcell(void){
     int addr,x;
@@ -420,35 +421,35 @@ void cellprint(int addr){
     switch(GET_TAG(addr)){
     case EMP:   puts("EMP");
         break;
-    case INTN:  printf("INTN   %d\n" , GET_INT(addr));
+    case INTN:  Fmt_print("INTN   %d\n" , GET_INT(addr));
         break;
-    case FLTN:  printf("FLTN   %f\n", GET_FLT(addr));
+    case FLTN:  Fmt_print("FLTN   %f\n", GET_FLT(addr));
         break;
-    case LONGN: printf("LONGN  %lld\n", GET_LONG(addr));
+    case LONGN: Fmt_print("LONGN  %lld\n", GET_LONG(addr));
         break;
-    case BIGX:  printf("BIGX   %d\n", GET_CAR(addr));
+    case BIGX:  Fmt_print("BIGX   %d\n", GET_CAR(addr));
         break;
-    case SYM:   printf("SYM    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+    case SYM:   Fmt_print("SYM    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
         break;
-    case STR:   printf("STR    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+    case STR:   Fmt_print("STR    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
         break;
-    case LIS:   printf("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case LIS:   Fmt_print("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case SUBR:  printf("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case SUBR:  Fmt_print("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case FSUBR: printf("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case FSUBR: Fmt_print("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case FUNC:  printf("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case FUNC:  Fmt_print("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case MACRO: printf("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case MACRO: Fmt_print("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case CLASS: printf("CLASS  %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+    case CLASS: Fmt_print("CLASS  %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
         break;
     case GENERIC:
-        printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        Fmt_print("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
     default:
-        printf("cellprint(%d) tag switch default action\n", addr);
+        Fmt_print("cellprint(%d) tag switch default action\n", addr);
     }
 }
 
@@ -458,7 +459,7 @@ void heapdump(int start, int end){
 
     puts("addr    F   TAG    CAR     CDR     AUX     NAME");
     for(i=start; i<= end; i++){
-        printf("%07d ", i);
+        Fmt_print("%07d ", i);
         cellprint(i);
     }
 }
@@ -1091,7 +1092,7 @@ int convert(int arg1, int arg2){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                snprintf(str, STRSIZE, "%d",GET_INT(arg1));
+                Fmt_sfmt(str, STRSIZE, "%d",GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1118,9 +1119,9 @@ int convert(int arg1, int arg2){
               
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    snprintf(str, STRSIZE, "%0.16g", x);
+                    Fmt_sfmt(str, STRSIZE, "%0.16g", x);
                 else
-                    snprintf(str, STRSIZE, "%0.1f", x);
+                    Fmt_sfmt(str, STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;

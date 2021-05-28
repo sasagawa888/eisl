@@ -16,6 +16,7 @@ written by kenichi sasagawa 2016/4~
 #include <term.h>
 #include "eisl.h"
 #include "mem.h"
+#include "fmt.h"
 
 //------pointer----
 int ep; //environment pointer
@@ -264,7 +265,7 @@ int main(int argc, char *argv[]){
                 repl_flag = false;
                 break;
             case 'v':
-                printf("Easy-ISLisp Ver%1.2f\n", VERSION);
+                Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
                 exit(EXIT_SUCCESS);
             case 'h':
                 usage();
@@ -282,7 +283,7 @@ int main(int argc, char *argv[]){
         }
     }
     if(greeting_flag)
-        printf("Easy-ISLisp Ver%1.2f\n", VERSION);
+        Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
     while (1) {
     switch (ret) {
     case 0:
@@ -985,7 +986,7 @@ int sread(void){
         case RPAREN:    error(ILLEGAL_RPAREN,"read",NIL);
         default:        break;
     }
-    fprintf(GET_PORT(error_stream),"%d%s", (int)stok.type, stok.buf);
+    Fmt_fprint(GET_PORT(error_stream),"%d%s", (int)stok.type, stok.buf);
     error(ILLEGAL_INPUT,"read",NIL);
     return(0);
 }
@@ -1122,9 +1123,9 @@ void print(int addr){
 
 void printint(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream),"%d", GET_INT(addr));
+        Fmt_fprint(GET_PORT(output_stream),"%d", GET_INT(addr));
     else{
-        snprintf(stream_str, STRSIZE, "%d", GET_INT(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "%d", GET_INT(addr));
         append_str(output_stream, stream_str);
     }
 }
@@ -1132,17 +1133,17 @@ void printint(int addr){
 void printflt(double x){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
         if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-            fprintf(GET_PORT(output_stream), "%0.16g", x);
+            Fmt_fprint(GET_PORT(output_stream), "%0.16g", x);
         else
-            fprintf(GET_PORT(output_stream), "%0.1f", x);
+            Fmt_fprint(GET_PORT(output_stream), "%0.1f", x);
     }
     else{
         if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX){
-            snprintf(stream_str, STRSIZE, "%0.16g", x);
+            Fmt_sfmt(stream_str, STRSIZE, "%0.16g", x);
             append_str(output_stream, stream_str);
         }
         else{
-            snprintf(stream_str, STRSIZE, "%0.1f", x);
+            Fmt_sfmt(stream_str, STRSIZE, "%0.1f", x);
             append_str(output_stream, stream_str);
         }
     }
@@ -1151,11 +1152,11 @@ void printflt(double x){
 
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"%lld", GET_LONG(addr));
-        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        Fmt_fprint(GET_PORT(output_stream),"%lld", GET_LONG(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "%lld", GET_LONG(addr));
     }
     else{
-        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "%lld", GET_LONG(addr));
         append_str(output_stream, stream_str);
 	}
 }
@@ -1210,9 +1211,9 @@ void printarray(int x){
         ls = cons(GET_VEC_ELT(x,i),ls);
     ls = reverse(ls);
     if(GET_OPT(output_stream) != EISL_INSTR)
-        fprintf(GET_PORT(output_stream),"#%da",dim);
+        Fmt_fprint(GET_PORT(output_stream),"#%da",dim);
     else{
-        snprintf(stream_str, STRSIZE, "#%da", dim);
+        Fmt_sfmt(stream_str, STRSIZE, "#%da", dim);
         append_str(output_stream, stream_str);
     }
     if(dim == 0)
@@ -1266,9 +1267,9 @@ void printfarray(int x){
     }
     ls = reverse(ls);
     if(GET_OPT(output_stream) != EISL_INSTR)
-        fprintf(GET_PORT(output_stream),"#%df",dim);
+        Fmt_fprint(GET_PORT(output_stream),"#%df",dim);
     else{
-        snprintf(stream_str, STRSIZE, "#%df", dim);
+        Fmt_sfmt(stream_str, STRSIZE, "#%df", dim);
         append_str(output_stream, stream_str);
     }
     if(dim == 0)
@@ -1281,10 +1282,10 @@ void printfarray(int x){
 
 void printstr(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
+        Fmt_fprint(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
     }
     else{
-        snprintf(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
         append_str(output_stream, stream_str);
     }
 }
@@ -1313,18 +1314,18 @@ void printobj(const char *str){
 
 void printclass(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
+        Fmt_fprint(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
     else{
-        snprintf(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
         append_str(output_stream, stream_str);
     }
 }
 
 void printstream(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
+        Fmt_fprint(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
     else{
-        snprintf(GET_NAME(output_stream), STRSIZE, "<stream %s>", GET_NAME(addr));
+        Fmt_sfmt(GET_NAME(output_stream), STRSIZE, "<stream %s>", GET_NAME(addr));
         append_str(output_stream, stream_str);
     }
 }
@@ -1833,7 +1834,7 @@ void debugger(){
     	return;
     }
     else if(eqp(x,makesym(":R"))){
-        printf("EP = %d (environment pointer)\n"
+        Fmt_print("EP = %d (environment pointer)\n"
                "DP = %d (dynamic pointer)\n"
                "HP = %d (heap pointer)\n"
                "SP = %d (stack pointer)\n"

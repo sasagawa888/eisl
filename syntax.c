@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include "eisl.h"
 #include "compat/nana.h"
+#include "fmt.h"
 
 #define TAGBODY_LEN_MAX 100
 
@@ -1689,7 +1690,7 @@ int f_convert(int arglist){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                snprintf(str, STRSIZE, "%d", GET_INT(arg1));
+                Fmt_sfmt(str, STRSIZE, "%d", GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1702,7 +1703,7 @@ int f_convert(int arglist){
             }
             else if(GET_AUX(arg2) == cstring){
                 #if __linux || __APPLE__ || defined(__OpenBSD__)
-                snprintf(str, STRSIZE, "%lld", GET_LONG(arg1));
+                Fmt_sfmt(str, STRSIZE, "%lld", GET_LONG(arg1));
                 #endif
                 #if _WIN32
                 sprintf(str,"%I64d",GET_LONG(arg1));
@@ -1739,9 +1740,9 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == cstring){
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    snprintf(str, STRSIZE, "%0.16g", x);
+                    Fmt_sfmt(str, STRSIZE, "%0.16g", x);
                 else
-                    snprintf(str, STRSIZE, "%0.1f", x);
+                    Fmt_sfmt(str, STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;
@@ -1882,7 +1883,7 @@ int f_time(int arglist){
     st = getETime();
     eval(arg1);
     en = getETime();
-    printf("Elapsed Time(second)=%.6f\n",en-st);
+    Fmt_print("Elapsed Time(second)=%.6f\n",en-st);
     return(UNDEF);
 }
 
@@ -2015,7 +2016,7 @@ int modulesubst(int addr, int module, int fname){
 int modulesubst1(int x, int module){
     char str[SYMSIZE];
 
-    snprintf(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
+    Fmt_sfmt(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
     return(makesym(str));
 }
 

@@ -1,7 +1,7 @@
 .POSIX:
 .DELETE_ON_ERROR:
 
-OPSYS ?= linux
+OPSYS ?= macos
 CC ?= cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
@@ -25,8 +25,8 @@ else
 	endif
 endif
 CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
-SOURCES_CII := cii/src/except.c
-OBJ_CII := cii/src/except.o
+SOURCES_CII := cii/src/except.c cii/src/fmt.c
+OBJ_CII := cii/src/except.o cii/src/fmt.o
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -fsanitize=undefined
 	LDFLAGS := -fsanitize=undefined
@@ -83,7 +83,7 @@ endif
 %.o: %.c eisl.h ffi.h term.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-edlis : edlis.o syn_highlight.o
+edlis : edlis.o syn_highlight.o $(OBJ_CII)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c

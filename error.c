@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #include "eisl.h"
+#include "fmt.h"
 
 static int outc(int c) {
     return fputc(c, stderr);
@@ -487,7 +488,7 @@ int signal_condition(int x, int y){
     if(open_flag && error_handler==NIL){
         fclose(GET_PORT(input_stream));
         open_flag = false;
-        printf("around here line=%d column=%d\n", line, column); 
+        Fmt_print("around here line=%d column=%d\n", line, column); 
     } 
     if(error_handler != NIL){
         int handler;

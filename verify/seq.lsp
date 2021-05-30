@@ -285,7 +285,7 @@
 ($error (subseq '(a b c) 1234567890 0) <program-error>)
 (test (subseq (create-list 1000 'a) 999 1000) (a) equal)
 
-#|
+
 ;;;
 ;;; function (MAP-INTO destination function seq*) --> sequence
 ;;;
@@ -295,16 +295,20 @@
    (list (map-into a #'+ a b) a b))
  ((11 12 13 14) (11 12 13 14) (10 10 10 10))
  equal)
+
 (test (let ((a '(11 12 13 14))
        (k '(one two three)))
    (map-into a #'cons k a))
  ((one . 11) (two . 12) (three . 13) 14)
  equal)
+
+#|
 (test (let ((x 0)
        (a '((one . 11) (two . 12) (three . 13) 14)))
    (list (map-into a (lambda () (setq x (+ x 2)))) a))
  ((2 4 6 8) (2 4 6 8))
  equal)
+ |#
 ;;;
 ($argc map-into 2 0 1)
 ($type map-into ($string $vector $cons $null) :target (function list))
@@ -315,6 +319,7 @@
 (test (let ((a "")) (list (map-into a #'list) a)) ("" "") equal)
 (test (let ((a "a")) (list (map-into a (lambda () #\A)) a)) ("A" "A") equal)
 (test (let ((a "abc")) (list (map-into a (lambda () #\A)) a)) ("AAA" "AAA") equal)
+#|
 ;;; String (1 ����)
 (test (let ((a "") (b "")) (list (map-into a #'list b) a b)) ("" "" "") equal)
 (test (let ((a "") (b "abc")) (list (map-into a #'list b) a b)) ("" "" "abc") equal)

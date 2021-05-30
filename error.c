@@ -5,6 +5,7 @@
 #include <setjmp.h>
 #include "eisl.h"
 #include "fmt.h"
+#include "except.h"
 
 static int outc(int c) {
     return fputc(c, stderr);
@@ -511,8 +512,8 @@ int signal_condition(int x, int y){
     input_stream = standard_input;
     output_stream = standard_output;
     debugger();
-    longjmp(buf,1);
-    
+    RAISE(Restart_Repl);
+    return 0;
 } 
 
 int makeusercond(int cl, int str, int arg){

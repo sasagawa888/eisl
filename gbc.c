@@ -6,6 +6,7 @@
 #include "eisl.h"
 #include "compat/nana.h"
 #include "mem.h"
+#include "except.h"
 
 #define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
 
@@ -211,7 +212,7 @@ void clrcell(int addr){
 int checkgbc(void){
     if(exit_flag){
 	    exit_flag = 0;
-        longjmp(buf,1);
+        RAISE(Restart_Repl);
     }
     if(gc_sw == 0 && fc < FREESIZE)
       (void)gbc();

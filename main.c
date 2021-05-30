@@ -17,6 +17,7 @@ written by kenichi sasagawa 2016/4~
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
+#include "except.h"
 
 //------pointer----
 int ep; //environment pointer
@@ -124,7 +125,6 @@ bool top_flag = true;   //true=top-level, false=not-top-level
 bool redef_flag = false; //true=redefine-class, false=not-redefine
 bool start_flag = true; //true=line-start, false=not-line-start
 bool back_flag = true;  //for backtrace, true=on, false=off
-bool init_flag = true;  //for -c option, 1=initial,0=not-initial
 bool ignore_topchk = false; //for FAST compiler true=ignore,false=normal
 bool repl_flag = true;  //for REPL read_line 1=on, 0=off
 volatile sig_atomic_t exit_flag = 0;  //true= ctrl+C
@@ -136,7 +136,7 @@ int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
 int area_sw = 1;     //1= lower area 2=higher area
 
 //longjmp control and etc
-jmp_buf buf;
+Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp = { "Exit interpreter" };
 jmp_buf block_buf[NESTED_BLOCKS_MAX];
 int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
@@ -190,6 +190,12 @@ static void usage(void)
          "-v           -- display version number.");
 }
 
+static inline void maybe_greet(void)
+{
+    if(greeting_flag)
+        Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
+}
+
 int main(int argc, char *argv[]){
     int errret;
 
@@ -218,12 +224,9 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
 
-    int ret = setjmp(buf);
-    if(init_flag){
         int ch;
         char *script_arg;
         
-        init_flag = false;
         FILE* fp = fopen("startup.lsp","r");
         if(fp != NULL){
             fclose(fp);
@@ -281,12 +284,10 @@ int main(int argc, char *argv[]){
             f_load(list1(makestr(script_arg)));
             exit(EXIT_SUCCESS);
         }
-    }
-    if(greeting_flag)
-        Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
-    while (1) {
-    switch (ret) {
-    case 0:
+    volatile bool quit = false;
+    do {
+        maybe_greet();
+    TRY
         while(1){
             initpt();
             fputs("> ", stdout);
@@ -295,14 +296,12 @@ int main(int argc, char *argv[]){
             if(redef_flag)
                 redef_generic();
         }
-        break;
-    case 1:
-            ret = 0;
-            break;
-    default:
-            return 0;
-    }
-    }
+    EXCEPT(Restart_Repl)
+        ;
+    EXCEPT(Exit_Interp)
+        quit = true;
+    END_TRY;
+    } while (!quit);
 }
 
 void initpt(void){
@@ -354,7 +353,7 @@ int readc(void){
         if(!script_flag && input_stream == standard_input && c == EOF){
             greeting_flag = false;
             putchar('\n');
-            longjmp(buf,2);
+            RAISE(Exit_Interp);
         }
         else // if script-mode return(EOF)
             return(c);
@@ -1801,7 +1800,7 @@ void debugger(){
              "other S exps eval");
     }
     else if(eqp(x,makesym(":A"))){
-        longjmp(buf,1); 
+        RAISE(Restart_Repl);
     }
     else if(eqp(x,makesym(":B"))){
     	for(i=0;i<BACKSIZE;i++){

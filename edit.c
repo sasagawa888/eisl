@@ -6,6 +6,7 @@
 #include <setjmp.h>
 #include "eisl.h"
 #include "fmt.h"
+#include "except.h"
 
 #define TOKEN_MAX 80
 #define FRAGMENT_MAX 80
@@ -638,7 +639,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                         case 'q':   //Esc+q
                                     putchar('\n');
                                     greeting_flag = false;
-                                    longjmp(buf,2);
+                                    RAISE(Exit_Interp);
                     case ARROW_PREFIX:
                             c = eisl_getch();
                             if (c == ed_key_up) {

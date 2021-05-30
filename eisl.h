@@ -24,6 +24,7 @@ Copying GC mode
 #include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
+#include "except.h"
 
 #define CELLSIZE 20000000
 #define DYNSIZE 1000
@@ -337,7 +338,7 @@ extern int gc_sw;
 extern int area_sw;
 
 //longjmp control and etc
-extern jmp_buf buf;
+extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
 extern int block_env[NESTED_BLOCKS_MAX][2];
 extern jmp_buf catch_buf[10][50];
@@ -357,7 +358,7 @@ extern int error_handler;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 
-__dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
+__dead static inline void DEBUG(void) { puts("debug"); RAISE(Exit_Interp); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;

@@ -10,6 +10,7 @@
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
+#include "except.h"
 
 #define BININT_LEN 64
 
@@ -4067,7 +4068,8 @@ __dead int f_quit(int arglist __unused){
       puts("- good bye -");
     }
     greeting_flag = false;
-    longjmp(buf,2);
+    RAISE(Exit_Interp);
+    return 0;
 }
 
 //extension

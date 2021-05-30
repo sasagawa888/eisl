@@ -17,6 +17,7 @@ written by kenichi sasagawa 2016/4~
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"
+#include "str.h"
 
 //------pointer----
 int ep; //environment pointer
@@ -1728,9 +1729,11 @@ void bindmacro(char *name, int addr){
     SET_CDR(val1,0);
     val2 = freshcell();
     SET_TAG(val2,MACRO);
-    heap[val2].name = strdup(name);
-    if(heap[val2].name == NULL)
+    TRY
+        heap[val2].name = Str_dup(name, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makemacro",NIL);
+    END_TRY;
     SET_CAR(val2,val1);
     SET_CDR(val2,0);
     SET_AUX(val2,cfunction); //class

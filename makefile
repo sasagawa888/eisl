@@ -25,16 +25,13 @@ else
 	endif
 endif
 CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
-SOURCES_CII := cii/src/except.c cii/src/fmt.c
-OBJ_CII := cii/src/except.o cii/src/fmt.o
+OBJ_CII := cii/src/except.o cii/src/fmt.o cii/src/str.o
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -fsanitize=undefined
 	LDFLAGS := -fsanitize=undefined
-	SOURCES_CII += cii/src/memchk.c cii/src/assert.c
 	OBJ_CII += cii/src/memchk.o cii/src/assert.o
 else
 	CFLAGS += -O3 -flto -DNDEBUG=1
-	SOURCES_CII += cii/src/mem.c
 	OBJ_CII += cii/src/mem.o
 endif
 CXX := c++

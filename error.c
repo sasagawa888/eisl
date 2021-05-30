@@ -5,6 +5,8 @@
 #include "eisl.h"
 #include "fmt.h"
 #include "except.h"
+#include "str.h"
+#include "mem.h"
 
 static int outc(int c) {
     return fputc(c, stderr);
@@ -479,9 +481,11 @@ int signal_condition(int x, int y){
         SET_OPT(x,NOTCONT);
     else{
         SET_OPT(x,CONTINUABLE);
-        heap[x].name = strdup(GET_NAME(y));
-        if(heap[x].name == NULL)
+        TRY
+            heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
+        EXCEPT(Mem_Failed)
             error(MALLOC_OVERF,"signal-condition",NIL);
+        END_TRY;
     }
     if(ignore_flag)
         RAISE(Ignored_Error);

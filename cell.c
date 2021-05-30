@@ -15,6 +15,8 @@ closure function-address car=arg+body, cdr=environment
 #include "compat/nana.h"
 #include "mem.h"
 #include "fmt.h"
+#include "except.h"
+#include "str.h"
 
 void initcell(void){
     int addr,x;
@@ -387,9 +389,11 @@ int makesym1(const char *pname){
 
     addr = hfreshcell();
     SET_TAG(addr,SYM);
-    heap[addr].name = strdup(pname);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makesym",NIL);
+    END_TRY;
     SET_CAR(addr,NIL);
     SET_CDR(addr,NIL);
     SET_AUX(addr,csymbol); //class symbol
@@ -538,9 +542,11 @@ int makefunc(const char *pname, int addr){
 
     val = hfreshcell();
     SET_TAG(val,FUNC);
-    heap[val].name = strdup(pname);
-    if(heap[val].name == NULL)
+    TRY
+        heap[val].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makefunc",NIL);
+    END_TRY;
     SET_CAR(val,copy_heap(addr));
     SET_CDR(val,ep);
     SET_AUX(val,cfunction); //class function
@@ -610,9 +616,11 @@ int makegeneric(char *pname, int lamlist,int body){
 
     val = hfreshcell();
     SET_TAG(val,GENERIC);
-    heap[val].name = strdup(pname);
-    if(heap[val].name == NULL)
+    TRY
+        heap[val].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makegeneric",NIL);
+    END_TRY;
     SET_CAR(val,copy_heap(lamlist));
     SET_OPT(val,count_args(lamlist)); //amount of argument
     SET_CDR(val,NIL);
@@ -796,9 +804,11 @@ int makestr(const char *string){
 
     addr = freshcell();
     SET_TAG(addr,STR);
-    heap[addr].name = strdup(string);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = Str_dup(string, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makestr",NIL);
+    END_TRY;
     SET_AUX(addr,cstring); //class string
     return(addr);
 }
@@ -869,9 +879,11 @@ int makeclass(const char *pname, int superclass){
 
     addr = freshcell();
     SET_TAG(addr,CLASS);
-    heap[addr].name = strdup(pname);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makeclass",NIL);
+    END_TRY;
     SET_CAR(addr,superclass);
     SET_CDR(addr,NIL);
     SET_AUX(addr,NIL);

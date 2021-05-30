@@ -10,6 +10,7 @@
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"
+#include "str.h"
 
 #define BININT_LEN 64
 
@@ -3920,9 +3921,11 @@ int f_create_string_input_stream(int arglist){
         error(NOT_STR, "create-string-input-stream", arg1);
 
     res = makestream(stdin,EISL_INSTR);
-    heap[res].name = strdup(GET_NAME(arg1));
-    if(heap[res].name == NULL)
+    TRY
+        heap[res].name = Str_dup(GET_NAME(arg1), 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"create-string-input-stream",NIL);
+    END_TRY;
     return(res);
 }
 

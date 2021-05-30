@@ -568,11 +568,12 @@ int makevec(int n, int obj){
     int res,i, *vec;
 
     res = freshcell();
-    vec = (int *)ALLOC(sizeof(int) * n);
-    if(vec == NULL)
+    TRY
+        vec = (int *)ALLOC(sizeof(int) * n);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF, "make_vector", NIL);
-    else
-        SET_VEC(res,vec);
+    END_TRY;
+    SET_VEC(res,vec);
     for(i=0; i<n; i++)
         SET_VEC_ELT(res,i,copy(obj));
     SET_TAG(res,VEC);
@@ -716,10 +717,11 @@ int makearray(int ls, int obj){
         size = 1;
 
     res = freshcell();
-    vec = (int *)ALLOC(sizeof(int) * size);
-    if(vec == NULL)
+    TRY
+        vec = (int *)ALLOC(sizeof(int) * size);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF, "array",  NIL);
-
+    END_TRY;
     SET_VEC(res,vec);
     for(i=0; i<size; i++)
         SET_VEC_ELT(res,i,copy(obj));
@@ -766,10 +768,11 @@ int makefarray(int ls, int obj){
         size = 1;
 
     res = freshcell();
-    vec = (float *)ALLOC(sizeof(float) * size);
-    if(vec == NULL)
+    TRY
+        vec = (float *)ALLOC(sizeof(float) * size);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF, "float array",  NIL);
-
+    END_TRY;
     SET_FVEC(res,vec);
     if(eqp(obj,makesym("RAND"))){
         for(i=0; i<size; i++)
@@ -843,9 +846,11 @@ int makechar(const char *pname){
 
     addr = freshcell();
     SET_TAG(addr,CHR);
-    heap[addr].name = (char *)ALLOC(CHARSIZE);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = (char *)ALLOC(CHARSIZE);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makechar",NIL);
+    END_TRY;
     heap[addr].name[0] = char_entity;
     heap[addr].name[1] = NUL;
     SET_AUX(addr,ccharacter);

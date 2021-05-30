@@ -3934,9 +3934,11 @@ int f_create_string_output_stream(int arglist){
         error(WRONG_ARGS, "create-string-output-stream", arglist);
 
     res = makestream(stdout,EISL_OUTSTR);
-    str = (char *)ALLOC(STRSIZE);
-    if(str == NULL)
+    TRY
+        str = (char *)ALLOC(STRSIZE);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"create-string-output-stream",NIL);
+    END_TRY;
     heap[res].name = str;
     heap[res].name[0] = '\0';
     return(res);

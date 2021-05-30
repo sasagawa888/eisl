@@ -17,7 +17,6 @@ aux = cbignum class information
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <math.h>
 #include "eisl.h"
 #include "fmt.h"

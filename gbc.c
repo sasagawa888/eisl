@@ -2,7 +2,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include "eisl.h"
 #include "compat/nana.h"
 #include "mem.h"

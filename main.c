@@ -6,7 +6,6 @@ written by kenichi sasagawa 2016/4~
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <math.h>
 #include <limits.h>
 #include <signal.h>

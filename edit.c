@@ -3,7 +3,6 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include "eisl.h"
 #include "fmt.h"
 #include "except.h"

@@ -2,7 +2,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <math.h>
 #include <float.h>
 #include <time.h>

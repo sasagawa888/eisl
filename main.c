@@ -18,6 +18,7 @@ written by kenichi sasagawa 2016/4~
 #include "fmt.h"
 #include "except.h"
 #include "str.h"
+#include "long.h"
 
 //------pointer----
 int ep; //environment pointer
@@ -199,6 +200,7 @@ static inline void maybe_greet(void)
 int main(int argc, char *argv[]){
     int errret;
 
+    Fmt_register('D', cvt_D);
     if (setupterm((char *)0, 1, &errret) == ERR ||
         key_up == NULL || key_down == NULL ||
         key_right == NULL || key_left == NULL) {
@@ -1151,11 +1153,11 @@ void printflt(double x){
 
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        Fmt_fprint(GET_PORT(output_stream),"%lld", GET_LONG(addr));
-        Fmt_sfmt(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        Fmt_fprint(GET_PORT(output_stream),"%D", GET_LONG(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "%D", GET_LONG(addr));
     }
     else{
-        Fmt_sfmt(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "%D", GET_LONG(addr));
         append_str(output_stream, stream_str);
 	}
 }

@@ -428,7 +428,7 @@ void cellprint(int addr){
         break;
     case FLTN:  Fmt_print("FLTN   %f\n", GET_FLT(addr));
         break;
-    case LONGN: Fmt_print("LONGN  %lld\n", GET_LONG(addr));
+    case LONGN: Fmt_print("LONGN  %D\n", GET_LONG(addr));
         break;
     case BIGX:  Fmt_print("BIGX   %d\n", GET_CAR(addr));
         break;

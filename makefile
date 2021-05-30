@@ -66,7 +66,8 @@ EISL_OBJS := main.o \
 	bignum.o \
 	compute.o \
 	edit.o \
-    syn_highlight.o
+    syn_highlight.o \
+	long.o
 
 all: eisl edlis
 

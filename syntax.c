@@ -1697,7 +1697,7 @@ int f_convert(int arglist){
             }
             else if(GET_AUX(arg2) == cstring){
                 #if __linux || __APPLE__ || defined(__OpenBSD__)
-                Fmt_sfmt(str, STRSIZE, "%lld", GET_LONG(arg1));
+                Fmt_sfmt(str, STRSIZE, "%D", GET_LONG(arg1));
                 #endif
                 #if _WIN32
                 sprintf(str,"%I64d",GET_LONG(arg1));

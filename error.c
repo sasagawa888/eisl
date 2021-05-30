@@ -485,7 +485,7 @@ int signal_condition(int x, int y){
             error(MALLOC_OVERF,"signal-condition",NIL);
     }
     if(ignore_flag)
-        longjmp(ignore_buf,1);
+        RAISE(Ignored_Error);
     if(open_flag && error_handler==NIL){
         fclose(GET_PORT(input_stream));
         open_flag = false;

@@ -1501,22 +1501,16 @@ int f_defmethod(int arglist){
 }
 
 int f_ignore_errors(int arglist){
-    int ret;
-
+    volatile int res;
+    
     ignore_flag = true;
-    ret = setjmp(ignore_buf);
-
-    if(ret == 0){
-        int res;
-
+    TRY
         res = f_progn(arglist);
-        ignore_flag = false;
-        return(res);
-    }
-    else{
-        ignore_flag = false;
-        return(NIL);
-    }
+    ELSE
+        res = NIL;
+    END_TRY;
+    ignore_flag = false;
+    return res;
 }
 
 int f_with_open_input_file(int arglist){

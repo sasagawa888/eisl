@@ -141,7 +141,7 @@ jmp_buf block_buf[NESTED_BLOCKS_MAX];
 int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
 int catch_env[10][50];
-jmp_buf ignore_buf; //jump address of ignore-error
+Except_T Ignored_Error = { "Ignored error" }; //for ignore-errors
 int block_tag[CTRLSTK]; //array of tag
 int catch_tag[CTRLSTK];
 int unwind_buf[CTRLSTK];

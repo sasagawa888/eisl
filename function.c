@@ -4103,7 +4103,7 @@ int f_gbc(int arglist){
         gbc_flag = false;
     else if(car(arglist) == makesym("M&S")){
         // re initialize heap area
-        for(addr=WORK1; addr < HEAPSIZE; addr++){
+        for(addr=WORK1; addr < CELLSIZE; addr++){
             SET_FLAG(addr,FRE);
             SET_CAR(addr,0);
             SET_AUX(addr,0);

@@ -41,7 +41,6 @@ Copying GC mode
 #define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 2.00;
-static const int HEAPSIZE = 20000000;
 static const int WORK1 = 6000000;
 static const int WORK2 = 13000000;
 static const int FREESIZE = 900;
@@ -201,7 +200,7 @@ extern int dynamic[DYNSIZE][2];
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
     {                                                  \
         if (CELLRANGE(addr)) {                         \
-            assert(addr < HEAPSIZE);                   \
+            assert(addr < CELLSIZE);                   \
             return heap[addr].MEMBER;                  \
         } else {                                       \
             return DEFAULT;                            \
@@ -227,7 +226,7 @@ static inline void SET_AUX(int addr,int x) { heap[addr].aux = x; }
 static inline int SET_PROP(int addr,int x)
 {
     if (CELLRANGE(addr)) {
-        assert(addr < HEAPSIZE);
+        assert(addr < CELLSIZE);
         return (heap[addr].prop = x);
     } else {
         return NIL;
@@ -243,7 +242,7 @@ static inline void SET(int addr,int x) { heap[addr] = heap[x]; }
     static inline bool IS_ ## NAME (int addr)   \
     {                                           \
         if (CELLRANGE(addr)) {                  \
-            assert(addr < HEAPSIZE);            \
+            assert(addr < CELLSIZE);            \
             return (heap[addr].tag == TAG);     \
         } else {                                \
             return NIL;                         \

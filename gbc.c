@@ -19,7 +19,7 @@ int gbc(void){
         gbcmark();
         gbcsweep();
         fc = 0;
-        for(addr=0; addr < HEAPSIZE; addr++)
+        for(addr=0; addr < CELLSIZE; addr++)
             if(IS_EMPTY(addr))
                 fc++;
         DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
@@ -46,7 +46,7 @@ static inline bool USED_CELL(int addr) { return (heap[addr].flag == USE); }
 void markcell(int addr){
     int i,m,n,x;
 
-    if(addr < 0 || addr >= HEAPSIZE)
+    if(addr < 0 || addr >= CELLSIZE)
 		return;
 
     if(USED_CELL(addr))
@@ -173,7 +173,7 @@ void gbcsweep(void){
     int addr;
 
     addr = 0;
-    while(addr < HEAPSIZE){
+    while(addr < CELLSIZE){
         if(USED_CELL(addr))
             NOMARK_CELL(addr);
         else{

@@ -22,14 +22,14 @@ void initcell(void){
     int addr,x;
 
     // initialize heap area
-    for(addr=0; addr < HEAPSIZE; addr++){
+    for(addr=0; addr < CELLSIZE; addr++){
         /* heap[addr].flag = FRE;  FRE == 0 */
         heap[addr].val.cdr.intnum = addr+1;
         /* heap[addr].aux = 0;
         heap[addr].option = 0; */
     }
     hp = 0;
-    fc = HEAPSIZE;
+    fc = CELLSIZE;
     
     for(x=0; x<HASHTBSIZE; x++)
         cell_hash_table[x] = NIL;
@@ -246,10 +246,10 @@ int freshcell(void){
         SET_OPT(res,0);
         SET_TR(res,0);
         wp++;
-        if(wp < HEAPSIZE && wp > HEAPSIZE - 50)
-            error(RESOURCE_ERR,"copying fleshcell",NIL);
-        else if(wp > HEAPSIZE && wp > CELLSIZE - 50)
-            error(RESOURCE_ERR,"copying fleshcell",NIL);
+        if(wp < CELLSIZE && wp > CELLSIZE - 50)
+            error(RESOURCE_ERR,"copying freshcell",NIL);
+        else if(wp > CELLSIZE && wp > CELLSIZE - 50)
+            error(RESOURCE_ERR,"copying freshcell",NIL);
         
         return(res);
     }

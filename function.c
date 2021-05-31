@@ -6,11 +6,13 @@
 #include <float.h>
 #include <time.h>
 #include <dlfcn.h>
+#include <limits.h>
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"
 #include "str.h"
+#include "text.h"
 
 #define BININT_LEN 64
 
@@ -2021,7 +2023,7 @@ int f_preview_char(int arglist){
 
 int f_read_line(int arglist){
     int arg1,arg2,arg3,n,pos,save,res,c;
-    char rl_buf[STRSIZE];
+    char rl_buf[LINE_MAX];
     #if __linux || __APPLE__ || defined(__OpenBSD__)
     int save1;
     #endif
@@ -2102,7 +2104,7 @@ int f_read_line(int arglist){
 
 int f_load(int arglist){
     int arg1,save1,save2,n;
-    char str[STRSIZE];
+    char str[PATH_MAX];
 
     arg1 = car(arglist);
     if(length(arglist) != 1)
@@ -2112,8 +2114,8 @@ int f_load(int arglist){
 
     //object file ex "foo.o"
     n = strlen(GET_NAME(arg1));
-    strncpy(str, GET_NAME(arg1), STRSIZE - 1);
-    str[STRSIZE - 1] = '\0';
+    strncpy(str, GET_NAME(arg1), PATH_MAX - 1);
+    str[PATH_MAX - 1] = '\0';
     if(str[n-1] == 'o' && str[n-2] == '.'){
         dynamic_link(arg1);
         return(T);
@@ -2731,7 +2733,6 @@ int f_string_eqsmallerp(int arglist){
 
 int f_string_append(int arglist){
     int arg1;
-    char str1[STRSIZE],str2[STRSIZE];
 
     if(nullp(arglist))
         return(makestr(""));
@@ -2742,9 +2743,8 @@ int f_string_append(int arglist){
     arglist = cdr(arglist);
     if(nullp(arglist))
         return(arg1);
-    str2[0] = NUL;
-    strncpy(str1, GET_NAME(arg1), STRSIZE - 1);
-    str1[STRSIZE - 1] = '\0';
+    Text_save_T save = Text_save();
+    Text_T txt1 = Text_put(GET_NAME(arg1));
     while(!nullp(arglist)){
         int arg2;
         
@@ -2753,14 +2753,14 @@ int f_string_append(int arglist){
             error(NOT_STR, "string-append", arg2);
         arglist = cdr(arglist);
 
-        strncpy(str2, GET_NAME(arg2), STRSIZE - 1);
-        str2[STRSIZE - 1] = '\0';
-        strncat(str1, str2, STRSIZE - strlen(str1) - 1);
-        str1[STRSIZE - 1] = '\0';
-        strncpy(str2, str1, STRSIZE - 1);
-        str2[STRSIZE - 1] = '\0';
+        Text_T txt2 = Text_put(GET_NAME(arg2));
+        txt1 = Text_cat(txt1, txt2);
     }
-    return(makestr(str2));
+    char *str = Text_get(NULL, 0, txt1);
+    int res = makestr(str);
+    FREE(str);
+    Text_restore(&save);
+    return res;
 }
 
 

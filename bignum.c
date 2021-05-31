@@ -20,6 +20,7 @@ aux = cbignum class information
 #include <math.h>
 #include "eisl.h"
 #include "fmt.h"
+#include "text.h"
 
 int makebigx(char *bignum){
     char integer[15];
@@ -86,24 +87,29 @@ int makebigx(char *bignum){
 
 void print_bigx(int x){
     int y;
+    Text_save_T save;
+    Text_T txt1 = { 0, NULL }, txt2;
+    char str[SHORT_STRSIZE];
 
-    stream_str[0] = '\0';
+    if(GET_OPT(output_stream) == EISL_OUTSTR) {
+        save = Text_save();
+    }
 
     if(get_sign(x) == -1){
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	fputc('-', GET_PORT(output_stream));
         }
         else{
-            stream_str[0] = '-';
+            txt1 = Text_put("-");
         }
     }
     y = get_msb(x);
     if(GET_OPT(output_stream) != EISL_OUTSTR) {
     	Fmt_fprint(GET_PORT(output_stream),"%d",GET_CAR(y));
     } else {
-        Fmt_sfmt(stream_str1, STRSIZE, "%d",GET_CAR(y));
-        strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
-        stream_str[STRSIZE - 1] = '\0';
+        Fmt_sfmt(str, SHORT_STRSIZE, "%d",GET_CAR(y));
+        txt2 = Text_put(str);
+        txt1 = Text_cat(txt1, txt2);
     }
     y = prev(y);
 
@@ -111,17 +117,17 @@ void print_bigx(int x){
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	Fmt_fprint(GET_PORT(output_stream),"%09d", GET_CAR(y));
         } else {
-            Fmt_sfmt(stream_str1, STRSIZE, "%09d",GET_CAR(y));
-            strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
-            stream_str[STRSIZE - 1] = '\0';
+            Fmt_sfmt(str, SHORT_STRSIZE, "%09d",GET_CAR(y));
+            txt2 = Text_put(str);
+            txt1 = Text_cat(txt1, txt2);
         }
         y = prev(y);
     }while(!nullp(y));
 
     if(GET_OPT(output_stream) == EISL_OUTSTR) {
-        char *str = GET_NAME(output_stream);
-    	strncat(str, stream_str, STRSIZE - strlen(str) - 1);
-        str[STRSIZE - 1] = '\0';
+        char *out_str = GET_NAME(output_stream);
+        Text_get(out_str, STRSIZE - strlen(out_str), txt1);
+        Text_restore(&save);
     }
 }
 

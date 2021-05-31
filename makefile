@@ -25,7 +25,7 @@ else
 	endif
 endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
-OBJ_CII := cii/src/except.o cii/src/fmt.o cii/src/str.o
+OBJ_CII := cii/src/except.o cii/src/fmt.o cii/src/str.o cii/src/text.o
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -fsanitize=undefined
 	LDFLAGS := -fsanitize=undefined

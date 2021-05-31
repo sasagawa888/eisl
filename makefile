@@ -1,8 +1,8 @@
 .POSIX:
 .DELETE_ON_ERROR:
 
-OPSYS ?= macos
-CC ?= cc
+OPSYS ?= linux
+CC := cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
 	ifeq ($(OPSYS),openbsd)
@@ -24,7 +24,7 @@ else
 		CURSES_LIBS := $(shell ncurses6-config --libs)
 	endif
 endif
-CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
+CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
 OBJ_CII := cii/src/except.o cii/src/fmt.o cii/src/str.o
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -fsanitize=undefined

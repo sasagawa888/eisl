@@ -126,7 +126,8 @@ void print_bigx(int x){
 
     if(GET_OPT(output_stream) == EISL_OUTSTR) {
         char *out_str = GET_NAME(output_stream);
-        Text_get(out_str, STRSIZE - strlen(out_str), txt1);
+        size_t l = strlen(out_str);
+        Text_get(out_str + l, STRSIZE - l, txt1);
         Text_restore(&save);
     }
 }

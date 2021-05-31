@@ -3868,7 +3868,7 @@ int f_create_string(int arglist){
     str = ALLOC(n + 1);
     memset(str, c, n);
     str[n] = NUL;
-    res = makestr(str);
+    int res = makestr(str);
     FREE(str);
     return res;
 }

@@ -1151,7 +1151,6 @@ void printflt(double x){
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
         Fmt_fprint(GET_PORT(output_stream),"%D", GET_LONG(addr));
-        Fmt_sfmt(stream_str, STRSIZE, "%D", GET_LONG(addr));
     }
     else{
         char str[SHORT_STRSIZE];

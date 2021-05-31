@@ -23,10 +23,10 @@ void initcell(void){
 
     // initialize heap area
     for(addr=0; addr < HEAPSIZE; addr++){
-        heap[addr].flag = FRE;
+        /* heap[addr].flag = FRE;  FRE == 0 */
         heap[addr].val.cdr.intnum = addr+1;
-        heap[addr].aux = 0;
-        heap[addr].option = 0;
+        /* heap[addr].aux = 0;
+        heap[addr].option = 0; */
     }
     hp = 0;
     fc = HEAPSIZE;

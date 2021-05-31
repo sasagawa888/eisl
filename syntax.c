@@ -1656,7 +1656,7 @@ int f_with_handler(int arglist){
 int f_convert(int arglist){
     int arg1,arg2;
     double x;
-    char str[STRSIZE],*e;
+    char str[SHORT_STRSIZE],*e;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1684,7 +1684,7 @@ int f_convert(int arglist){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                Fmt_sfmt(str, STRSIZE, "%d", GET_INT(arg1));
+                Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(arg1));
                 return(makestr(str));
             }
             break;
@@ -1697,7 +1697,7 @@ int f_convert(int arglist){
             }
             else if(GET_AUX(arg2) == cstring){
                 #if __linux || __APPLE__ || defined(__OpenBSD__)
-                Fmt_sfmt(str, STRSIZE, "%D", GET_LONG(arg1));
+                Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
                 #endif
                 #if _WIN32
                 sprintf(str,"%I64d",GET_LONG(arg1));
@@ -1734,9 +1734,9 @@ int f_convert(int arglist){
             else if(GET_AUX(arg2) == cstring){
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    Fmt_sfmt(str, STRSIZE, "%0.16g", x);
+                    Fmt_sfmt(str, SHORT_STRSIZE, "%0.16g", x);
                 else
-                    Fmt_sfmt(str, STRSIZE, "%0.1f", x);
+                    Fmt_sfmt(str, SHORT_STRSIZE, "%0.1f", x);
                 return(makestr(str));
             }
             break;

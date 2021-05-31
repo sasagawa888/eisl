@@ -3137,7 +3137,7 @@ int f_set_slot_value(int arglist){
 
 int f_format(int arglist){
     int arg1,arg2,args,i,save,n,quote_flag;
-    char str[STRSIZE],c;
+    char *str, c;
 
     arg1 = car(arglist);  //output-stream
     arg2 = cadr(arglist); //format-string
@@ -3150,8 +3150,7 @@ int f_format(int arglist){
 
     save = output_stream;
     output_stream = arg1;
-    strncpy(str, GET_NAME(arg2), STRSIZE - 1);
-    str[STRSIZE - 1] = '\0';
+    str = Str_dup(GET_NAME(arg2), 1, 0, 1);
     i = 0;
     c = str[i];
     while(c != 0){
@@ -3258,6 +3257,7 @@ int f_format(int arglist){
         c = str[i];
     }
     output_stream = save;
+    FREE(str);
     return(NIL);
 }
 
@@ -3846,8 +3846,8 @@ int check_dimension(int ls){
 }
 
 int f_create_string(int arglist){
-    int arg1,arg2,n,i;
-    char str[STRSIZE],c;
+    int arg1,arg2,n;
+    char *str, c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -3865,10 +3865,12 @@ int f_create_string(int arglist){
     else
         c = GET_CHAR(arg2);
 
-    for(i=0;i<n;i++)
-        str[i] = c;
-    str[i] = NUL;
-    return(makestr(str));
+    str = ALLOC(n + 1);
+    memset(str, c, n);
+    str[n] = NUL;
+    res = makestr(str);
+    FREE(str);
+    return res;
 }
 
 int f_parse_number(int arglist){

@@ -178,7 +178,6 @@ extern int input_stream;
 extern int output_stream;
 extern int error_stream;
 extern char stream_str[STRSIZE];
-extern char stream_str1[STRSIZE];
 extern int charcnt;
 
 

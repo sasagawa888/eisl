@@ -88,7 +88,6 @@ int input_stream;
 int output_stream;
 int error_stream;
 char stream_str[STRSIZE];
-char stream_str1[STRSIZE];
 int charcnt; //for format-tab. store number of chars up to now.
 
 
@@ -1122,8 +1121,9 @@ void printint(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
         Fmt_fprint(GET_PORT(output_stream),"%d", GET_INT(addr));
     else{
-        Fmt_sfmt(stream_str, STRSIZE, "%d", GET_INT(addr));
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(addr));
+        append_str(output_stream, str);
     }
 }
 
@@ -1135,13 +1135,14 @@ void printflt(double x){
             Fmt_fprint(GET_PORT(output_stream), "%0.1f", x);
     }
     else{
+        char str[SHORT_STRSIZE];
         if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX){
-            Fmt_sfmt(stream_str, STRSIZE, "%0.16g", x);
-            append_str(output_stream, stream_str);
+            Fmt_sfmt(str, SHORT_STRSIZE, "%0.16g", x);
+            append_str(output_stream, str);
         }
         else{
-            Fmt_sfmt(stream_str, STRSIZE, "%0.1f", x);
-            append_str(output_stream, stream_str);
+            Fmt_sfmt(str, SHORT_STRSIZE, "%0.1f", x);
+            append_str(output_stream, str);
         }
     }
 }
@@ -1153,8 +1154,9 @@ void printlong(int addr){
         Fmt_sfmt(stream_str, STRSIZE, "%D", GET_LONG(addr));
     }
     else{
-        Fmt_sfmt(stream_str, STRSIZE, "%D", GET_LONG(addr));
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(addr));
+        append_str(output_stream, str);
 	}
 }
 
@@ -1210,8 +1212,9 @@ void printarray(int x){
     if(GET_OPT(output_stream) != EISL_INSTR)
         Fmt_fprint(GET_PORT(output_stream),"#%da",dim);
     else{
-        Fmt_sfmt(stream_str, STRSIZE, "#%da", dim);
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "#%da", dim);
+        append_str(output_stream, str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1266,8 +1269,9 @@ void printfarray(int x){
     if(GET_OPT(output_stream) != EISL_INSTR)
         Fmt_fprint(GET_PORT(output_stream),"#%df",dim);
     else{
-        Fmt_sfmt(stream_str, STRSIZE, "#%df", dim);
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "#%df", dim);
+        append_str(output_stream, str);
     }
     if(dim == 0)
         print(car(ls));

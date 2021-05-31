@@ -1185,15 +1185,18 @@ int string_to_list(int x){
 
 int substr(int x, int s, int e){
     int i,j;
-    char str[STRSIZE];
-    
-    j=0;   
+    char *str;
+
+    str = ALLOC((e - s) + 1);
+    j=0;
     for(i=s;i<e;i++){
         str[j] = STRING_REF(x,i);
         j++;
     }
     str[j] = NUL;
-    return(makestr(str));    
+    int res = makestr(str);
+    FREE(str);
+    return res;
 }
 
 int string_length(int x){

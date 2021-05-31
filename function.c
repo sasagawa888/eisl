@@ -224,7 +224,7 @@ typedef int (*initfunc7)(int, fn7);
 typedef int (*initfunc8)(int, fn8);
 
 void dynamic_link(int x){
-    char str[EISL_PATH_MAX] = {"./"};
+    char *str;
     initfunc0 init_f0;
     initfunc1 init_f1;
     initfunc2 init_f2;
@@ -237,15 +237,15 @@ void dynamic_link(int x){
     initdeftfunc_t init_deftfunc;
     voidfunc_t init_tfunctions, init_declare;
 
-    if(strstr(GET_NAME(x),"/")) {
-        strncpy(str, GET_NAME(x), EISL_PATH_MAX - 1);
+    if(Str_chr(GET_NAME(x), 1, 0, '/') != 0) {
+        str = Str_dup(GET_NAME(x), 1, 0, 1);
     } else {
-        strncat(str, GET_NAME(x), EISL_PATH_MAX - 3);
+        str = Str_cat("./", 1, 0, GET_NAME(x), 1, 0);
     }
-    str[EISL_PATH_MAX - 1] = '\0';
 
     hmod = dlopen(str, RTLD_LAZY);
 
+    FREE(str);
     if(hmod == NULL)
         error(ILLEGAL_ARGS, "load", x);
 
@@ -3559,8 +3559,9 @@ int f_format_object(int arglist){
             if(GET_OPT(arg1) != EISL_OUTSTR)
                 Fmt_fprint(GET_PORT(arg1),"#\\\\%s",GET_NAME(arg2));
             else{
-                Fmt_sfmt(stream_str, STRSIZE, "#\\\\%s", GET_NAME(arg2));
-                append_str(arg1, stream_str);
+                char *str = Str_cat("#\\\\", 1, 0, GET_NAME(arg2), 1, 0);
+                append_str(arg1, str);
+                FREE(str);
             }
             charcnt = charcnt + 3 + strlen(GET_NAME(arg2));
         }

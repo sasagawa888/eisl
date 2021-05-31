@@ -235,7 +235,7 @@ int main(int argc, char *argv[]){
             f_load(list1(makestr("startup.lsp")));
         }
         while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
-            char *home, str[EISL_PATH_MAX];
+            char *home, *str;
             
             switch (ch) {
             case 'l':
@@ -243,19 +243,15 @@ int main(int argc, char *argv[]){
                 break;
             case 'c':
                 home = getenv("HOME");
-                strncpy(str, home, EISL_PATH_MAX - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
-                strncat(str, "/eisl/library/compiler.lsp", EISL_PATH_MAX - strlen(str) - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
+                str = Str_cat(home, 1, 0, "/eisl/library/compiler.lsp", 1, 0);
                 f_load(list1(makestr(str)));
+                FREE(str);
                 break;
             case 'f':
                 home = getenv("HOME");
-                strncpy(str, home, EISL_PATH_MAX - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
-                strncat(str, "/eisl/library/formatter.lsp", EISL_PATH_MAX - strlen(str) - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
+                str = Str_cat(home, 1, 0, "/eisl/library/formatter.lsp", 1, 0);
                 f_load(list1(makestr(str)));
+                FREE(str);
                 break;
             case 's':
                 if (access(optarg, R_OK) == -1) {

@@ -87,13 +87,11 @@ int makebigx(char *bignum){
 void print_bigx(int x){
     int y;
 
-    memset(stream_str,0,STRSIZE);
+    stream_str[0] = '\0';
 
     if(get_sign(x) == -1){
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	fputc('-', GET_PORT(output_stream));
-            stream_str1[0] = '-';
-            stream_str1[1] = '\0';
         }
         else{
             stream_str[0] = '-';
@@ -102,19 +100,21 @@ void print_bigx(int x){
     y = get_msb(x);
     if(GET_OPT(output_stream) != EISL_OUTSTR) {
     	Fmt_fprint(GET_PORT(output_stream),"%d",GET_CAR(y));
+    } else {
+        Fmt_sfmt(stream_str1, STRSIZE, "%d",GET_CAR(y));
+        strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
+        stream_str[STRSIZE - 1] = '\0';
     }
-    Fmt_sfmt(stream_str1, STRSIZE, "%d",GET_CAR(y));
-    strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
-    stream_str[STRSIZE - 1] = '\0';
     y = prev(y);
 
     do{
     	if(GET_OPT(output_stream) != EISL_OUTSTR){
         	Fmt_fprint(GET_PORT(output_stream),"%09d", GET_CAR(y));
+        } else {
+            Fmt_sfmt(stream_str1, STRSIZE, "%09d",GET_CAR(y));
+            strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
+            stream_str[STRSIZE - 1] = '\0';
         }
-        Fmt_sfmt(stream_str1, STRSIZE, "%09d",GET_CAR(y));
-        strncat(stream_str, stream_str1, STRSIZE - strlen(stream_str) - 1);
-        stream_str[STRSIZE - 1] = '\0';
         y = prev(y);
     }while(!nullp(y));
 

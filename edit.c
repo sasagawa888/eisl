@@ -6,6 +6,8 @@
 #include "eisl.h"
 #include "fmt.h"
 #include "except.h"
+#include "str.h"
+#include "mem.h"
 
 #define TOKEN_MAX 80
 #define FRAGMENT_MAX 80
@@ -17,14 +19,15 @@
 bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line);
 
 int f_edit(int arglist){
-    int arg1;
-    char str[STRSIZE];
+    int arg1, res;
 
 	arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "edit", arglist);
-    Fmt_sfmt(str, STRSIZE, "./edlis %s", GET_NAME(arg1));
-	if(system(str) == -1)
+    char *str = Str_cat("./edlis ", 1, 0, GET_NAME(arg1), 1, 0);
+	res = system(str);
+        FREE(str);
+	if(res == -1)
 		error(SYSTEM_ERR, "edit", arg1);
     f_load(arglist);
 	return(T);
@@ -531,7 +534,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                           ed_lparen_col--;
                       break;
         case CTRL('K'):
-                      memset(buffer1,NUL,COL_SIZE);
+                      buffer1[0] = '\0';
                       for(k=*j;k<COL_SIZE;k++){
                           buffer1[k-*j] = buffer[k][0];
                           buffer[k][0] = NUL;

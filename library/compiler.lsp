@@ -992,19 +992,25 @@ double tarai(double x, double y, double z){
                                                      after) args)))))
     
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))
+    ;; ((x <integer>) y) (a b) -> ((a <integer>) b)
     (defun alpha-conv-varlis (x y)
-        (if (null x)
-        nil 
-        (cons (list (car y) (elt (car x) 1))
-              (alpha-conv-varlis (cdr x) (cdr y)))))
+        (cond ((null x) nil)
+              ((symbolp (car x))
+               (cons (car y) (alpha-conv-varlis (cdr x) (cdr y))))
+              (t  
+               (cons (list (car y) (elt (car x) 1)) (alpha-conv-varlis (cdr x) (cdr y))))))
 
 
     ;; ((x <integer>) (y <integer>)) (a b) -> ((x . a) (y . b))
+    ;; ((x <integer>) y) (a b) -> ((x . a) (y . b))
     (defun method-varlis-to-substlist (x y)
-        (if (null x)
-            nil 
-            (cons (cons (car (car x)) (car y))
-                  (method-varlis-to-substlist (cdr x) (cdr y)))))
+        (cond ((null x) nil)
+              ((symbolp (car x))
+               (cons (cons (car x) (car y))
+                     (method-varlis-to-substlist (cdr x) (cdr y))))
+              (t
+               (cons (cons (car (car x)) (car y))
+                     (method-varlis-to-substlist (cdr x) (cdr y))))))
 
     ;; (COND ((= N 1) 1) ((= N 2) 1) (T (+ (GFIB (- N 1)) (GFIB (- N 2)))))) ((n . a)) -> 
     ;; (COND ((= a 1) 1) ((= a 2) 1) (T (+ (GFIB (- a 1)) (GFIB (- a 2))))))

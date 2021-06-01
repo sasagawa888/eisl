@@ -1095,11 +1095,14 @@ int nth_cdr(int n, int x){
 
 
 int convert(int arg1, int arg2){
-    char str[SHORT_STRSIZE];
+    char str[SHORT_STRSIZE], *e;
 
     switch(GET_TAG(arg1)){
         case INTN:
-            if(GET_AUX(arg2) == ccharacter){
+            if (GET_AUX(arg2) == cinteger){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == ccharacter){
                 str[0] = GET_INT(arg1);
                 str[1] = NUL;
                 return(makechar(str));
@@ -1110,6 +1113,31 @@ int convert(int arg1, int arg2){
             else if(GET_AUX(arg2) == cstring){
                 Fmt_sfmt(str, SHORT_STRSIZE, "%d",GET_INT(arg1));
                 return(makestr(str));
+            }
+            break;
+        case LONGN:
+            if(GET_AUX(arg2) == cinteger){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cfloat){
+                return(exact_to_inexact(arg1));
+            }
+            else if(GET_AUX(arg2) == cstring){
+                #if __linux || __APPLE__ || defined(__OpenBSD__)
+                Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
+                #endif
+                #if _WIN32
+                sprintf(str,"%I64d",GET_LONG(arg1));
+                #endif 
+                return(makestr(str));
+            }
+            break;
+        case BIGX:
+            if(GET_AUX(arg2) == cinteger){
+                return(arg2);
+            }
+            else if(GET_AUX(arg2) == cfloat){
+                return(exact_to_inexact(arg1));
             }
             break;
         case CHR:
@@ -1127,11 +1155,11 @@ int convert(int arg1, int arg2){
             }
             break;
         case FLTN:
-            if(GET_AUX(arg2) == cinteger){
-                return(makeint((int)GET_FLT(arg1)));
+            if(GET_AUX(arg2) == cfloat){
+                return(arg1);
             }
             else if(GET_AUX(arg2) == cstring){
-              double x;
+                double x;
               
                 x = GET_FLT(arg1);
                 if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
@@ -1142,16 +1170,50 @@ int convert(int arg1, int arg2){
             }
             break;
         case SYM:
-            if(GET_AUX(arg2) == cstring){
+            if(GET_AUX(arg2) == csymbol){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cstring){
                 return(makestr(GET_NAME(arg1)));
+            }
+            else if(nullp(arg1) && GET_AUX(arg2) == cgeneral_vector){
+                return(vector(arg1));
+            }
+            else if(nullp(arg1) && GET_AUX(arg2) == clist){
+                return(arg1);
             }
             break;
         case STR:
-            if(GET_AUX(arg2) == cinteger){
-                return(makeint(atoi(GET_NAME(arg1))));
+            if(GET_AUX(arg2) == cstring){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cinteger){
+                strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
+                stok.buf[BUFSIZE - 1] = '\0';
+
+                if(bignumtoken(stok.buf)){
+                    return(makebigx(stok.buf));
+                }
+                else if(inttoken(stok.buf)){
+                    return(makeint(strtol(stok.buf,&e,10)));
+                }
+                else if(bintoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,2)));
+                }
+                else if(octtoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,8)));
+                }
+                else if(dectoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,10)));
+                }
+                else if(hextoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,16)));
+                }
+                break;
             }
             else if(GET_AUX(arg2) == cfloat){
-                return(makeflt(atof(GET_NAME(arg1))));
+                if(flttoken(GET_NAME(arg1)))
+                    return(makeflt(atof(GET_NAME(arg1))));
             }
             else if(GET_AUX(arg2) == csymbol){
                 return(makesym(GET_NAME(arg1)));
@@ -1164,19 +1226,25 @@ int convert(int arg1, int arg2){
             }
             break;
         case LIS:
-            if(GET_AUX(arg2) == cgeneral_vector){
+            if(GET_AUX(arg2) == clist){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cgeneral_vector){
                 return(vector(arg1));
             }
             break;
         case VEC:
-            if(GET_AUX(arg2) == clist){
+            if(GET_AUX(arg2) == cgeneral_vector){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == clist){
                 return(vector_to_list(arg1));
             }
             break;
     default:
         IP(false, "convert tag switch default action");
     }
-    error(ILLEGAL_ARGS,"convert",arg1);
+    error(OUT_OF_DOMAIN,"convert",arg1);
     return(UNDEF);
 }
 

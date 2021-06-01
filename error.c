@@ -298,7 +298,7 @@ void error(int errnum, const char *fun, int arg){
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;  
         case OUT_OF_DOMAIN:
-                        initargs = list6(makesym("format-string"),makestr("Out of range at "),
+                        initargs = list6(makesym("format-string"),makestr("Out of domain at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun1));
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);

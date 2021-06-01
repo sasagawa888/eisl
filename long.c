@@ -13,7 +13,7 @@ cvt_D(int code __unused, va_list_box * box,
     char            buf[43];
     char           *p = buf + sizeof buf;
     if (val == LONG_MIN)
-        m = LONG_MAX + 1U;
+        m = LONG_MAX + 1UL;
     else if (val < 0)
         m = -val;
     else

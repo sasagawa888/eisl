@@ -11,8 +11,7 @@ YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw
 
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
-- Type "git submodule init".
-- Type "git submodule update".
+- Type "git submodule init; git submodule update" (if you forget the makefile should do this automatically).
 - In Linux  type "sudo make install".
 - In macOS  type "sudo make install OPSYS=macos".
 - In OpenBSD  type "sudo make install OPSYS=openbsd".

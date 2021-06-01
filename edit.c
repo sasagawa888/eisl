@@ -642,6 +642,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                                     putchar('\n');
                                     greeting_flag = false;
                                     RAISE(Exit_Interp);
+                                    break;
                     case ARROW_PREFIX:
                             c = eisl_getch();
                             if (c == ed_key_up) {

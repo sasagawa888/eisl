@@ -4076,7 +4076,6 @@ __dead int f_quit(int arglist __unused){
     }
     greeting_flag = false;
     RAISE(Exit_Interp);
-    return 0;
 }
 
 //extension

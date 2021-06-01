@@ -25,15 +25,16 @@ else
 	endif
 endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
-OBJ_CII := cii/src/except.o cii/src/fmt.o cii/src/str.o cii/src/text.o
+SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -fsanitize=undefined
 	LDFLAGS := -fsanitize=undefined
-	OBJ_CII += cii/src/memchk.o cii/src/assert.o
+	SRC_CII += cii/src/memchk.c cii/src/assert.c
 else
 	CFLAGS += -O3 -flto -DNDEBUG=1
-	OBJ_CII += cii/src/mem.o
+	SRC_CII += cii/src/mem.c
 endif
+OBJ_CII := $(SRC_CII:.c=.o)
 CXX := c++
 CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
 ifeq ($(CC),c++)
@@ -78,8 +79,12 @@ else
 	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
 endif
 
-%.o: %.c eisl.h ffi.h term.h
+%.o: %.c eisl.h ffi.h term.h cii/include/except.h
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(SRC_CII) cii/include/except.h:
+	git submodule init
+	git submodule update
 
 edlis : edlis.o syn_highlight.o $(OBJ_CII)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)

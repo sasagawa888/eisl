@@ -27,9 +27,12 @@ endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 ifeq ($(DEBUG),1)
-	CFLAGS += -O0 -g -fsanitize=undefined
-	LDFLAGS := -fsanitize=undefined
-	SRC_CII += cii/src/memchk.c cii/src/assert.c
+	CFLAGS += -O0 -g
+	SRC_CII += cii/src/memchk.o cii/src/assert.o
+	ifneq ($(OPSYS),openbsd)
+		CFLAGS += -fsanitize=undefined
+		LDFLAGS := -fsanitize=undefined
+	endif
 else
 	CFLAGS += -O3 -flto -DNDEBUG=1
 	SRC_CII += cii/src/mem.c

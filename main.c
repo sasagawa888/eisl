@@ -1129,21 +1129,12 @@ void printint(int addr){
 
 void printflt(double x){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-            Fmt_fprint(GET_PORT(output_stream), "%0.16g", x);
-        else
-            Fmt_fprint(GET_PORT(output_stream), "%0.1f", x);
+        fprintf(GET_PORT(output_stream), "%g", x);
     }
     else{
         char str[SHORT_STRSIZE];
-        if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX){
-            Fmt_sfmt(str, SHORT_STRSIZE, "%0.16g", x);
-            append_str(output_stream, str);
-        }
-        else{
-            Fmt_sfmt(str, SHORT_STRSIZE, "%0.1f", x);
-            append_str(output_stream, str);
-        }
+        snprintf(str, SHORT_STRSIZE, "%g", x);
+        append_str(output_stream, str);
     }
 }
 

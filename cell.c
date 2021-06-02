@@ -1162,10 +1162,7 @@ int convert(int arg1, int arg2){
                 double x;
               
                 x = GET_FLT(arg1);
-                if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    Fmt_sfmt(str, SHORT_STRSIZE, "%0.16g", x);
-                else
-                    Fmt_sfmt(str, SHORT_STRSIZE, "%0.1f", x);
+                snprintf(str, SHORT_STRSIZE, "%g", x);
                 return(makestr(str));
             }
             break;

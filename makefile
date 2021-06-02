@@ -28,7 +28,7 @@ CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SO
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g
-	SRC_CII += cii/src/memchk.o cii/src/assert.o
+	SRC_CII += cii/src/memchk.c cii/src/assert.c
 	ifneq ($(OPSYS),openbsd)
 		CFLAGS += -fsanitize=undefined
 		LDFLAGS := -fsanitize=undefined

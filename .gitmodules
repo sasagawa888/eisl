@@ -1,0 +1,3 @@
+[submodule "cii"]
+	path = cii
+	url = https://github.com/drh/cii.git

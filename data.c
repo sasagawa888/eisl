@@ -2,9 +2,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <float.h>
 #include "eisl.h"
+#include "mem.h"
+#include "fmt.h"
 
 int get_int(int addr){
     return(GET_INT(addr));
@@ -1097,7 +1098,7 @@ int farray(int n, int ls){
         float *vec2;
 
         size = length(ls1);
-        vec1 = (float *)malloc(sizeof(float)*size);
+        vec1 = (float *)ALLOC(sizeof(float) * size);
         i = 0;
         while(!nullp(ls1)){
             if(floatp(car(ls1)))
@@ -1113,7 +1114,7 @@ int farray(int n, int ls){
         for(i=0;i<r;i++)
             for(j=0;j<c;j++)
                 vec2[IDX2C(i,j,r)] = vec1[IDX2R(i,j,c)];
-        free(vec1);
+        FREE(vec1);
     }
     else{
         i = 0;
@@ -1184,15 +1185,18 @@ int string_to_list(int x){
 
 int substr(int x, int s, int e){
     int i,j;
-    char str[STRSIZE];
-    
-    j=0;   
+    char *str;
+
+    str = ALLOC((e - s) + 1);
+    j=0;
     for(i=s;i<e;i++){
         str[j] = STRING_REF(x,i);
         j++;
     }
     str[j] = NUL;
-    return(makestr(str));    
+    int res = makestr(str);
+    FREE(str);
+    return res;
 }
 
 int string_length(int x){
@@ -1400,7 +1404,7 @@ int copy_work(int x){
         case LIS:   return(cons(copy_work(car(x)),copy_work(cdr(x))));
         case DUMMY: return(x);
         default:    
-                    printf("error addr=%d  ",x);
+                    Fmt_print("error addr=%d  ",x);
                     return(x);
     }
 

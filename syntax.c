@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include "eisl.h"
 #include "compat/nana.h"
+#include "fmt.h"
 
 #define TAGBODY_LEN_MAX 100
 
@@ -948,7 +949,7 @@ int f_block(int arglist){
 	block_env[block_pt][1] = tag; //save tag symbol
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
-
+    
 
     if(ret == 0){
         res = f_progn(arg2);
@@ -1500,22 +1501,16 @@ int f_defmethod(int arglist){
 }
 
 int f_ignore_errors(int arglist){
-    int ret;
-
+    volatile int res;
+    
     ignore_flag = true;
-    ret = setjmp(ignore_buf);
-
-    if(ret == 0){
-        int res;
-
+    TRY
         res = f_progn(arglist);
-        ignore_flag = false;
-        return(res);
-    }
-    else{
-        ignore_flag = false;
-        return(NIL);
-    }
+    ELSE
+        res = NIL;
+    END_TRY;
+    ignore_flag = false;
+    return res;
 }
 
 int f_with_open_input_file(int arglist){
@@ -1660,8 +1655,6 @@ int f_with_handler(int arglist){
 
 int f_convert(int arglist){
     int arg1,arg2;
-    double x;
-    char str[STRSIZE],*e;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1675,153 +1668,7 @@ int f_convert(int arglist){
         error(NOT_CLASS, "convert", arg2);
 
     arg1 = eval(arg1);
-    switch(GET_TAG(arg1)){
-        case INTN:
-            if (GET_AUX(arg2) == cinteger){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == ccharacter){
-                str[0] = GET_INT(arg1);
-                str[1] = NUL;
-                return(makechar(str));
-            }
-            else if(GET_AUX(arg2) == cfloat){
-                return(exact_to_inexact(arg1));
-            }
-            else if(GET_AUX(arg2) == cstring){
-                snprintf(str, STRSIZE, "%d", GET_INT(arg1));
-                return(makestr(str));
-            }
-            break;
-        case LONGN:
-            if(GET_AUX(arg2) == cinteger){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == cfloat){
-                return(exact_to_inexact(arg1));
-            }
-            else if(GET_AUX(arg2) == cstring){
-                #if __linux || __APPLE__ || defined(__OpenBSD__)
-                snprintf(str, STRSIZE, "%lld", GET_LONG(arg1));
-                #endif
-                #if _WIN32
-                sprintf(str,"%I64d",GET_LONG(arg1));
-                #endif 
-                return(makestr(str));
-            }
-            break;
-        case BIGX:
-            if(GET_AUX(arg2) == cinteger){
-                return(arg2);
-            }
-            else if(GET_AUX(arg2) == cfloat){
-                return(exact_to_inexact(arg1));
-            }
-            break;
-        case CHR:
-            if(GET_AUX(arg2) == cinteger){
-                return(makeint(STRING_REF(arg1,0)));
-            }
-            else if(GET_AUX(arg2) == csymbol){
-                return(makesym(GET_NAME(arg1)));
-            }
-            else if(GET_AUX(arg2) == ccharacter){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == cstring){
-                return(makestr(GET_NAME(arg1)));
-            }
-            break;
-        case FLTN:
-            if(GET_AUX(arg2) == cfloat){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == cstring){
-                x = GET_FLT(arg1);
-                if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    snprintf(str, STRSIZE, "%0.16g", x);
-                else
-                    snprintf(str, STRSIZE, "%0.1f", x);
-                return(makestr(str));
-            }
-            break;
-        case SYM:
-            if(GET_AUX(arg2) == csymbol){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == cstring){
-                return(makestr(GET_NAME(arg1)));
-            }
-            else if(nullp(arg1) && GET_AUX(arg2) == cgeneral_vector){
-                return(vector(arg1));
-            }
-            else if(nullp(arg1) && GET_AUX(arg2) == clist){
-                return(arg1);
-            }
-            break;
-        case STR:
-            if(GET_AUX(arg2) == cstring){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == cinteger){
-                strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
-                stok.buf[BUFSIZE - 1] = '\0';
-
-                if(bignumtoken(stok.buf)){
-                    return(makebigx(stok.buf));
-                }
-                else if(inttoken(stok.buf)){
-                    return(makeint(strtol(stok.buf,&e,10)));
-                }
-                else if(bintoken(stok.buf)){
-                    return(makeint((int)strtol(stok.buf,&e,2)));
-                }
-                else if(octtoken(stok.buf)){
-                    return(makeint((int)strtol(stok.buf,&e,8)));
-                }
-                else if(dectoken(stok.buf)){
-                    return(makeint((int)strtol(stok.buf,&e,10)));
-                }
-                else if(hextoken(stok.buf)){
-                    return(makeint((int)strtol(stok.buf,&e,16)));
-                }
-                break;
-            }
-            else if(GET_AUX(arg2) == cfloat){
-                if(flttoken(GET_NAME(arg1)))
-                    return(makeflt(atof(GET_NAME(arg1))));
-            }
-            else if(GET_AUX(arg2) == csymbol){
-                return(makesym(GET_NAME(arg1)));
-            }
-            else if(GET_AUX(arg2) == cgeneral_vector){
-                return(string_to_vector(arg1));
-            }
-            else if(GET_AUX(arg2) == clist){
-                return(string_to_list(arg1));
-            }
-            break;
-        case LIS:
-            if(GET_AUX(arg2) == clist){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == cgeneral_vector){
-                return(vector(arg1));
-            }
-            break;
-        case VEC:
-            if(GET_AUX(arg2) == cgeneral_vector){
-                return(arg1);
-            }
-            else if(GET_AUX(arg2) == clist){
-                return(vector_to_list(arg1));
-            }
-            break;
-    default:
-        IP(false, "f_convert tag switch default action");
-    }
-    error(OUT_OF_DOMAIN,"convert",arg1);
-    return(UNDEF);
+    return convert(arg1, arg2);
 }
 
 int f_the(int arglist){
@@ -1882,7 +1729,7 @@ int f_time(int arglist){
     st = getETime();
     eval(arg1);
     en = getETime();
-    printf("Elapsed Time(second)=%.6f\n",en-st);
+    Fmt_print("Elapsed Time(second)=%.6f\n",en-st);
     return(UNDEF);
 }
 
@@ -2015,7 +1862,7 @@ int modulesubst(int addr, int module, int fname){
 int modulesubst1(int x, int module){
     char str[SYMSIZE];
 
-    snprintf(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
+    Fmt_sfmt(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
     return(makesym(str));
 }
 

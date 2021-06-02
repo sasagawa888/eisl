@@ -3,8 +3,11 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include "eisl.h"
+#include "fmt.h"
+#include "except.h"
+#include "str.h"
+#include "mem.h"
 
 #define TOKEN_MAX 80
 #define FRAGMENT_MAX 80
@@ -16,14 +19,15 @@
 bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line);
 
 int f_edit(int arglist){
-    int arg1;
-    char str[STRSIZE];
+    int arg1, res;
 
 	arg1 = car(arglist);
     if(length(arglist) != 1)
         error(WRONG_ARGS, "edit", arglist);
-    snprintf(str, STRSIZE, "./edlis %s", GET_NAME(arg1));
-	if(system(str) == -1)
+    char *str = Str_cat("./edlis ", 1, 0, GET_NAME(arg1), 1, 0);
+	res = system(str);
+        FREE(str);
+	if(res == -1)
 		error(SYSTEM_ERR, "edit", arg1);
     f_load(arglist);
 	return(T);
@@ -530,7 +534,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                           ed_lparen_col--;
                       break;
         case CTRL('K'):
-                      memset(buffer1,NUL,COL_SIZE);
+                      buffer1[0] = '\0';
                       for(k=*j;k<COL_SIZE;k++){
                           buffer1[k-*j] = buffer[k][0];
                           buffer[k][0] = NUL;
@@ -601,10 +605,10 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                                         for(i=0; i<CANDIDATE; i++){
                                             if(i+k >= ed_candidate_pt)
                                                  break;
-                                             printf("%d:%s ", i+1, ed_candidate[i+k]);
+                                             Fmt_print("%d:%s ", i+1, ed_candidate[i+k]);
                                         }
                                         if(ed_candidate_pt > k+CANDIDATE)
-                                            printf("4:more");
+                                            Fmt_print("4:more");
                                         ESCRST();
                                         bool bad_candidate_selected;
                                         do {
@@ -637,7 +641,8 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
                         case 'q':   //Esc+q
                                     putchar('\n');
                                     greeting_flag = false;
-                                    longjmp(buf,2);
+                                    RAISE(Exit_Interp);
+                                    break;
                     case ARROW_PREFIX:
                             c = eisl_getch();
                             if (c == ed_key_up) {

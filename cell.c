@@ -9,24 +9,27 @@ closure function-address car=arg+body, cdr=environment
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <math.h>
 #include <stdint.h>
 #include "eisl.h"
 #include "compat/nana.h"
+#include "mem.h"
+#include "fmt.h"
+#include "except.h"
+#include "str.h"
 
 void initcell(void){
     int addr,x;
 
     // initialize heap area
-    for(addr=0; addr < HEAPSIZE; addr++){
-        heap[addr].flag = FRE;
+    for(addr=0; addr < CELLSIZE; addr++){
+        /* heap[addr].flag = FRE;  FRE == 0 */
         heap[addr].val.cdr.intnum = addr+1;
-        heap[addr].aux = 0;
-        heap[addr].option = 0;
+        /* heap[addr].aux = 0;
+        heap[addr].option = 0; */
     }
     hp = 0;
-    fc = HEAPSIZE;
+    fc = CELLSIZE;
     
     for(x=0; x<HASHTBSIZE; x++)
         cell_hash_table[x] = NIL;
@@ -228,11 +231,11 @@ int freshcell(void){
     else{
         res = wp;
         if(IS_VECTOR(res) || IS_ARRAY(res)){
-            free(heap[res].val.car.dyna_vec);
+            FREE(heap[res].val.car.dyna_vec);
             heap[res].val.car.dyna_vec = NULL;
         }
         else if(IS_STRING(res)){
-            free(heap[res].name);
+            FREE(heap[res].name);
             heap[res].name = NULL;
         }
         SET_TAG(res,EMP);
@@ -243,10 +246,10 @@ int freshcell(void){
         SET_OPT(res,0);
         SET_TR(res,0);
         wp++;
-        if(wp < HEAPSIZE && wp > HEAPSIZE - 50)
-            error(RESOURCE_ERR,"copying fleshcell",NIL);
-        else if(wp > HEAPSIZE && wp > CELLSIZE - 50)
-            error(RESOURCE_ERR,"copying fleshcell",NIL);
+        if(wp < CELLSIZE && wp > CELLSIZE - 50)
+            error(RESOURCE_ERR,"copying freshcell",NIL);
+        else if(wp > CELLSIZE && wp > CELLSIZE - 50)
+            error(RESOURCE_ERR,"copying freshcell",NIL);
         
         return(res);
     }
@@ -386,9 +389,11 @@ int makesym1(const char *pname){
 
     addr = hfreshcell();
     SET_TAG(addr,SYM);
-    heap[addr].name = strdup(pname);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makesym",NIL);
+    END_TRY;
     SET_CAR(addr,NIL);
     SET_CDR(addr,NIL);
     SET_AUX(addr,csymbol); //class symbol
@@ -419,35 +424,35 @@ void cellprint(int addr){
     switch(GET_TAG(addr)){
     case EMP:   puts("EMP");
         break;
-    case INTN:  printf("INTN   %d\n" , GET_INT(addr));
+    case INTN:  Fmt_print("INTN   %d\n" , GET_INT(addr));
         break;
-    case FLTN:  printf("FLTN   %f\n", GET_FLT(addr));
+    case FLTN:  Fmt_print("FLTN   %f\n", GET_FLT(addr));
         break;
-    case LONGN: printf("LONGN  %lld\n", GET_LONG(addr));
+    case LONGN: Fmt_print("LONGN  %D\n", GET_LONG(addr));
         break;
-    case BIGX:  printf("BIGX   %d\n", GET_CAR(addr));
+    case BIGX:  Fmt_print("BIGX   %d\n", GET_CAR(addr));
         break;
-    case SYM:   printf("SYM    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+    case SYM:   Fmt_print("SYM    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
         break;
-    case STR:   printf("STR    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+    case STR:   Fmt_print("STR    %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
         break;
-    case LIS:   printf("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case LIS:   Fmt_print("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case SUBR:  printf("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case SUBR:  Fmt_print("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case FSUBR: printf("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case FSUBR: Fmt_print("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case FUNC:  printf("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case FUNC:  Fmt_print("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case MACRO: printf("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+    case MACRO: Fmt_print("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
-    case CLASS: printf("CLASS  %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+    case CLASS: Fmt_print("CLASS  %07d %07d %07d %s\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
         break;
     case GENERIC:
-        printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
+        Fmt_print("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr), GET_AUX(addr));
         break;
     default:
-        printf("cellprint(%d) tag switch default action\n", addr);
+        Fmt_print("cellprint(%d) tag switch default action\n", addr);
     }
 }
 
@@ -457,7 +462,7 @@ void heapdump(int start, int end){
 
     puts("addr    F   TAG    CAR     CDR     AUX     NAME");
     for(i=start; i<= end; i++){
-        printf("%07d ", i);
+        Fmt_print("%07d ", i);
         cellprint(i);
     }
 }
@@ -537,9 +542,11 @@ int makefunc(const char *pname, int addr){
 
     val = hfreshcell();
     SET_TAG(val,FUNC);
-    heap[val].name = strdup(pname);
-    if(heap[val].name == NULL)
+    TRY
+        heap[val].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makefunc",NIL);
+    END_TRY;
     SET_CAR(val,copy_heap(addr));
     SET_CDR(val,ep);
     SET_AUX(val,cfunction); //class function
@@ -567,11 +574,12 @@ int makevec(int n, int obj){
     int res,i, *vec;
 
     res = freshcell();
-    vec = (int *)malloc(sizeof(int)*n);
-    if(vec == NULL)
+    TRY
+        vec = (int *)ALLOC(sizeof(int) * n);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF, "make_vector", NIL);
-    else
-        SET_VEC(res,vec);
+    END_TRY;
+    SET_VEC(res,vec);
     for(i=0; i<n; i++)
         SET_VEC_ELT(res,i,copy(obj));
     SET_TAG(res,VEC);
@@ -608,9 +616,11 @@ int makegeneric(char *pname, int lamlist,int body){
 
     val = hfreshcell();
     SET_TAG(val,GENERIC);
-    heap[val].name = strdup(pname);
-    if(heap[val].name == NULL)
+    TRY
+        heap[val].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makegeneric",NIL);
+    END_TRY;
     SET_CAR(val,copy_heap(lamlist));
     SET_OPT(val,count_args(lamlist)); //amount of argument
     SET_CDR(val,NIL);
@@ -715,10 +725,11 @@ int makearray(int ls, int obj){
         size = 1;
 
     res = freshcell();
-    vec = (int *)malloc(sizeof(int)*size);
-    if(vec == NULL)
+    TRY
+        vec = (int *)ALLOC(sizeof(int) * size);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF, "array",  NIL);
-
+    END_TRY;
     SET_VEC(res,vec);
     for(i=0; i<size; i++)
         SET_VEC_ELT(res,i,copy(obj));
@@ -765,10 +776,11 @@ int makefarray(int ls, int obj){
         size = 1;
 
     res = freshcell();
-    vec = (float *)malloc(sizeof(float)*size);
-    if(vec == NULL)
+    TRY
+        vec = (float *)ALLOC(sizeof(float) * size);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF, "float array",  NIL);
-
+    END_TRY;
     SET_FVEC(res,vec);
     if(eqp(obj,makesym("RAND"))){
         for(i=0; i<size; i++)
@@ -792,9 +804,11 @@ int makestr(const char *string){
 
     addr = freshcell();
     SET_TAG(addr,STR);
-    heap[addr].name = strdup(string);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = Str_dup(string, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makestr",NIL);
+    END_TRY;
     SET_AUX(addr,cstring); //class string
     return(addr);
 }
@@ -842,9 +856,11 @@ int makechar(const char *pname){
 
     addr = freshcell();
     SET_TAG(addr,CHR);
-    heap[addr].name = (char *)malloc(CHARSIZE);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = (char *)ALLOC(CHARSIZE);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makechar",NIL);
+    END_TRY;
     heap[addr].name[0] = char_entity;
     heap[addr].name[1] = NUL;
     SET_AUX(addr,ccharacter);
@@ -863,9 +879,11 @@ int makeclass(const char *pname, int superclass){
 
     addr = freshcell();
     SET_TAG(addr,CLASS);
-    heap[addr].name = strdup(pname);
-    if(heap[addr].name == NULL)
+    TRY
+        heap[addr].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makeclass",NIL);
+    END_TRY;
     SET_CAR(addr,superclass);
     SET_CDR(addr,NIL);
     SET_AUX(addr,NIL);
@@ -1077,11 +1095,14 @@ int nth_cdr(int n, int x){
 
 
 int convert(int arg1, int arg2){
-    char str[STRSIZE];
+    char str[SHORT_STRSIZE], *e;
 
     switch(GET_TAG(arg1)){
         case INTN:
-            if(GET_AUX(arg2) == ccharacter){
+            if (GET_AUX(arg2) == cinteger){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == ccharacter){
                 str[0] = GET_INT(arg1);
                 str[1] = NUL;
                 return(makechar(str));
@@ -1090,8 +1111,33 @@ int convert(int arg1, int arg2){
                 return(exact_to_inexact(arg1));
             }
             else if(GET_AUX(arg2) == cstring){
-                snprintf(str, STRSIZE, "%d",GET_INT(arg1));
+                Fmt_sfmt(str, SHORT_STRSIZE, "%d",GET_INT(arg1));
                 return(makestr(str));
+            }
+            break;
+        case LONGN:
+            if(GET_AUX(arg2) == cinteger){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cfloat){
+                return(exact_to_inexact(arg1));
+            }
+            else if(GET_AUX(arg2) == cstring){
+                #if __linux || __APPLE__ || defined(__OpenBSD__)
+                Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
+                #endif
+                #if _WIN32
+                sprintf(str,"%I64d",GET_LONG(arg1));
+                #endif 
+                return(makestr(str));
+            }
+            break;
+        case BIGX:
+            if(GET_AUX(arg2) == cinteger){
+                return(arg2);
+            }
+            else if(GET_AUX(arg2) == cfloat){
+                return(exact_to_inexact(arg1));
             }
             break;
         case CHR:
@@ -1109,31 +1155,62 @@ int convert(int arg1, int arg2){
             }
             break;
         case FLTN:
-            if(GET_AUX(arg2) == cinteger){
-                return(makeint((int)GET_FLT(arg1)));
+            if(GET_AUX(arg2) == cfloat){
+                return(arg1);
             }
             else if(GET_AUX(arg2) == cstring){
-              double x;
+                double x;
               
                 x = GET_FLT(arg1);
-                if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-                    snprintf(str, STRSIZE, "%0.16g", x);
-                else
-                    snprintf(str, STRSIZE, "%0.1f", x);
+                snprintf(str, SHORT_STRSIZE, "%g", x);
                 return(makestr(str));
             }
             break;
         case SYM:
-            if(GET_AUX(arg2) == cstring){
+            if(GET_AUX(arg2) == csymbol){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cstring){
                 return(makestr(GET_NAME(arg1)));
+            }
+            else if(nullp(arg1) && GET_AUX(arg2) == cgeneral_vector){
+                return(vector(arg1));
+            }
+            else if(nullp(arg1) && GET_AUX(arg2) == clist){
+                return(arg1);
             }
             break;
         case STR:
-            if(GET_AUX(arg2) == cinteger){
-                return(makeint(atoi(GET_NAME(arg1))));
+            if(GET_AUX(arg2) == cstring){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cinteger){
+                strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
+                stok.buf[BUFSIZE - 1] = '\0';
+
+                if(bignumtoken(stok.buf)){
+                    return(makebigx(stok.buf));
+                }
+                else if(inttoken(stok.buf)){
+                    return(makeint(strtol(stok.buf,&e,10)));
+                }
+                else if(bintoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,2)));
+                }
+                else if(octtoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,8)));
+                }
+                else if(dectoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,10)));
+                }
+                else if(hextoken(stok.buf)){
+                    return(makeint((int)strtol(stok.buf,&e,16)));
+                }
+                break;
             }
             else if(GET_AUX(arg2) == cfloat){
-                return(makeflt(atof(GET_NAME(arg1))));
+                if(flttoken(GET_NAME(arg1)))
+                    return(makeflt(atof(GET_NAME(arg1))));
             }
             else if(GET_AUX(arg2) == csymbol){
                 return(makesym(GET_NAME(arg1)));
@@ -1146,19 +1223,25 @@ int convert(int arg1, int arg2){
             }
             break;
         case LIS:
-            if(GET_AUX(arg2) == cgeneral_vector){
+            if(GET_AUX(arg2) == clist){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == cgeneral_vector){
                 return(vector(arg1));
             }
             break;
         case VEC:
-            if(GET_AUX(arg2) == clist){
+            if(GET_AUX(arg2) == cgeneral_vector){
+                return(arg1);
+            }
+            else if(GET_AUX(arg2) == clist){
                 return(vector_to_list(arg1));
             }
             break;
     default:
         IP(false, "convert tag switch default action");
     }
-    error(ILLEGAL_ARGS,"convert",arg1);
+    error(OUT_OF_DOMAIN,"convert",arg1);
     return(UNDEF);
 }
 

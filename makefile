@@ -1,15 +1,18 @@
+.POSIX:
+.DELETE_ON_ERROR:
+
 OPSYS ?= linux
-CC ?= cc
+CC := cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
 	ifeq ($(OPSYS),openbsd)
-		LIBS = -lm
+		LIBS := -lm
 	else
-		LIBS = -lm -ldl
+		LIBS := -lm -ldl
 	endif
 endif
-LIBSRASPI = -lm -ldl -lwiringPi -lncurses
-INCS =  
+LIBSRASPI := -lm -ldl -lwiringPi -lncurses
+INCS := -Icii/include
 ifeq ($(OPSYS),macos)
 	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
 	CURSES_LIBS := $(shell ncurses5.4-config --libs)
@@ -21,12 +24,20 @@ else
 		CURSES_LIBS := $(shell ncurses6-config --libs)
 	endif
 endif
-CFLAGS ?= $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
+CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
+SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g
+	SRC_CII += cii/src/memchk.c cii/src/assert.c
+	ifneq ($(OPSYS),openbsd)
+		CFLAGS += -fsanitize=undefined
+		LDFLAGS := -fsanitize=undefined
+	endif
 else
 	CFLAGS += -O3 -flto -DNDEBUG=1
+	SRC_CII += cii/src/mem.c
 endif
+OBJ_CII := $(SRC_CII:.c=.o)
 CXX := c++
 CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
 ifeq ($(CC),c++)
@@ -35,25 +46,20 @@ else
 	CFLAGS += -std=c17
 endif
 ifneq ($(DEBUG),1)
-	LDFLAGS := -flto
+	LDFLAGS += -flto
 	ifeq ($(OPSYS),macos)
 		LDFLAGS += -Wl,-S,-x
 	else
 		LDFLAGS += -s
 	endif
 endif
-PREFIX = /usr/local
-bindir = $(PREFIX)/bin
-DESTDIR = 
-INSTALL = install
-INSTALL_PROGRAM = $(INSTALL) -m755
+PREFIX := /usr/local
+bindir := $(PREFIX)/bin
+DESTDIR := 
+INSTALL := install
+INSTALL_PROGRAM := $(INSTALL) -m755
 
-EISL = eisl
-EDLIS = edlis
-
-FILES = library
-
-EISL_OBJS = main.o \
+EISL_OBJS := main.o \
 	function.o \
 	extension.o \
 	syntax.o \
@@ -64,47 +70,43 @@ EISL_OBJS = main.o \
 	bignum.o \
 	compute.o \
 	edit.o \
-    syn_highlight.o
+    syn_highlight.o \
+	long.o
 
-all: eisl edlis library/i18n.lsp
+all: eisl edlis
 
-eisl:
+eisl: $(EISL_OBJS) $(OBJ_CII)
 ifeq  ($(shell uname -n),raspberrypi)
-eisl1: $(EISL_OBJS) $(EISL)
-$(EISL): $(EISL_OBJS)
-	$(CC) $(CFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBSRASPI) 
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
 else
-eisl2: $(EISL_OBJS) $(EISL)
-$(EISL): $(EISL_OBJS)
-	$(LD) $(LDFLAGS) $(EISL_OBJS) -o $(EISL) $(LIBS) $(CURSES_LIBS)
+	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
 endif
 
-
-
-%.o: %.c eisl.h ffi.h term.h
+%.o: %.c eisl.h ffi.h term.h cii/include/except.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-edlis : edlis.o syn_highlight.o
-	$(CC) $(LDFLAGS) $^ -o edlis $(CURSES_LIBS)
+$(SRC_CII) cii/include/except.h:
+	git submodule init
+	git submodule update
+
+edlis : edlis.o syn_highlight.o $(OBJ_CII)
+	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 
+.PHONY: install
+install: eisl edlis
+	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
+	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
 
-install: $(EISL) $(EDLIS)
-	$(INSTALL_PROGRAM) $(EISL) $(DESTDIR)$(bindir)/$(EISL)
-	$(INSTALL_PROGRAM) $(EDLIS) $(DESTDIR)$(bindir)/$(EDLIS)
-
+.PHONY: uninstall
 uninstall:
-	rm $(DESTDIR)$(bindir)/$(EISL)
-	rm $(DESTDIR)$(bindir)/$(EDLIS)
-
-
+	$(RM) $(DESTDIR)$(bindir)/eisl
+	$(RM) $(DESTDIR)$(bindir)/edlis
 
 .PHONY: clean
 clean:
-	rm -f *.o
-	rm eisl
-	rm edlis
+	$(RM) *.o $(OBJ_CII) eisl edlis
 
 .PHONY: check
 check:

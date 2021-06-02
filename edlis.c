@@ -9,6 +9,7 @@
 #include <string.h>
 #include "compat/cdefs.h"
 #include "edlis.h"
+#include "fmt.h"
 
 #ifndef CTRL
 #define CTRL(X) ((X) & 0x1F)
@@ -54,7 +55,7 @@ bool modify_flag;
 __dead void errw(const char* msg)
 {
      endwin();
-     fprintf(stderr, "%s\n", msg);
+     Fmt_fprint(stderr, "%s\n", msg);
      exit(EXIT_FAILURE);
 }
 
@@ -139,12 +140,12 @@ int main(int argc, char* argv[])
                     ed_row++;
                     ed_col = 0;
                     if (ed_row >= ROW_SIZE)
-                         printf("row %d over max-row", ed_row);
+                         Fmt_print("row %d over max-row", ed_row);
                }
                else {
                     ed_col++;
                     if (ed_col >= COL_SIZE)
-                         printf("column %d over max-column", ed_col);
+                         Fmt_print("column %d over max-column", ed_col);
                }
                c = fgetc(port);
           }

@@ -2,9 +2,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include "eisl.h"
 #include "compat/nana.h"
+#include "mem.h"
+#include "except.h"
 
 #define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
 
@@ -18,7 +19,7 @@ int gbc(void){
         gbcmark();
         gbcsweep();
         fc = 0;
-        for(addr=0; addr < HEAPSIZE; addr++)
+        for(addr=0; addr < CELLSIZE; addr++)
             if(IS_EMPTY(addr))
                 fc++;
         DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
@@ -45,7 +46,7 @@ static inline bool USED_CELL(int addr) { return (heap[addr].flag == USE); }
 void markcell(int addr){
     int i,m,n,x;
 
-    if(addr < 0 || addr >= HEAPSIZE)
+    if(addr < 0 || addr >= CELLSIZE)
 		return;
 
     if(USED_CELL(addr))
@@ -172,7 +173,7 @@ void gbcsweep(void){
     int addr;
 
     addr = 0;
-    while(addr < HEAPSIZE){
+    while(addr < CELLSIZE){
         if(USED_CELL(addr))
             NOMARK_CELL(addr);
         else{
@@ -186,17 +187,17 @@ void gbcsweep(void){
 
 void clrcell(int addr){
     if(IS_VECTOR(addr) || IS_ARRAY(addr))
-        free(heap[addr].val.car.dyna_vec);
+        FREE(heap[addr].val.car.dyna_vec);
     
     
     if(IS_FARRAY(addr)){
-        free(heap[addr].val.car.dyna_vec);
+        FREE(heap[addr].val.car.dyna_vec);
         ac = ac - GET_OPT(addr);
     }
     
 
     SET_TAG(addr,EMP);
-    free(heap[addr].name);
+    FREE(heap[addr].name);
     heap[addr].name = NULL;
     SET_CAR(addr,0);
     SET_CDR(addr,0);
@@ -210,7 +211,7 @@ void clrcell(int addr){
 int checkgbc(void){
     if(exit_flag){
 	    exit_flag = 0;
-        longjmp(buf,1);
+        RAISE(Restart_Repl);
     }
     if(gc_sw == 0 && fc < FREESIZE)
       (void)gbc();

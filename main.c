@@ -6,7 +6,6 @@ written by kenichi sasagawa 2016/4~
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <math.h>
 #include <limits.h>
 #include <signal.h>
@@ -15,6 +14,11 @@ written by kenichi sasagawa 2016/4~
 #include <curses.h>
 #include <term.h>
 #include "eisl.h"
+#include "mem.h"
+#include "fmt.h"
+#include "except.h"
+#include "str.h"
+#include "long.h"
 
 //------pointer----
 int ep; //environment pointer
@@ -84,7 +88,6 @@ int input_stream;
 int output_stream;
 int error_stream;
 char stream_str[STRSIZE];
-char stream_str1[STRSIZE];
 int charcnt; //for format-tab. store number of chars up to now.
 
 
@@ -122,7 +125,6 @@ bool top_flag = true;   //true=top-level, false=not-top-level
 bool redef_flag = false; //true=redefine-class, false=not-redefine
 bool start_flag = true; //true=line-start, false=not-line-start
 bool back_flag = true;  //for backtrace, true=on, false=off
-bool init_flag = true;  //for -c option, 1=initial,0=not-initial
 bool ignore_topchk = false; //for FAST compiler true=ignore,false=normal
 bool repl_flag = true;  //for REPL read_line 1=on, 0=off
 volatile sig_atomic_t exit_flag = 0;  //true= ctrl+C
@@ -134,12 +136,12 @@ int gc_sw = 0;     //0= mark-and-sweep-GC  1= copy-GC
 int area_sw = 1;     //1= lower area 2=higher area
 
 //longjmp control and etc
-jmp_buf buf;
+Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp = { "Exit interpreter" };
 jmp_buf block_buf[NESTED_BLOCKS_MAX];
 int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
 int catch_env[10][50];
-jmp_buf ignore_buf; //jump address of ignore-error
+Except_T Ignored_Error = { "Ignored error" }; //for ignore-errors
 int block_tag[CTRLSTK]; //array of tag
 int catch_tag[CTRLSTK];
 int unwind_buf[CTRLSTK];
@@ -188,9 +190,16 @@ static void usage(void)
          "-v           -- display version number.");
 }
 
+static inline void maybe_greet(void)
+{
+    if(greeting_flag)
+        Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
+}
+
 int main(int argc, char *argv[]){
     int errret;
 
+    Fmt_register('D', cvt_D);
     if (setupterm((char *)0, 1, &errret) == ERR ||
         key_up == NULL || key_down == NULL ||
         key_right == NULL || key_left == NULL) {
@@ -216,19 +225,16 @@ int main(int argc, char *argv[]){
     output_stream = standard_output;
     error_stream = standard_error;
 
-    int ret = setjmp(buf);
-    if(init_flag){
         int ch;
         char *script_arg;
         
-        init_flag = false;
         FILE* fp = fopen("startup.lsp","r");
         if(fp != NULL){
             fclose(fp);
             f_load(list1(makestr("startup.lsp")));
         }
         while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
-            char *home, str[EISL_PATH_MAX];
+            char *home, *str;
             
             switch (ch) {
             case 'l':
@@ -236,19 +242,15 @@ int main(int argc, char *argv[]){
                 break;
             case 'c':
                 home = getenv("HOME");
-                strncpy(str, home, EISL_PATH_MAX - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
-                strncat(str, "/eisl/library/compiler.lsp", EISL_PATH_MAX - strlen(str) - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
+                str = Str_cat(home, 1, 0, "/eisl/library/compiler.lsp", 1, 0);
                 f_load(list1(makestr(str)));
+                FREE(str);
                 break;
             case 'f':
                 home = getenv("HOME");
-                strncpy(str, home, EISL_PATH_MAX - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
-                strncat(str, "/eisl/library/formatter.lsp", EISL_PATH_MAX - strlen(str) - 1);
-                str[EISL_PATH_MAX - 1] = '\0';
+                str = Str_cat(home, 1, 0, "/eisl/library/formatter.lsp", 1, 0);
                 f_load(list1(makestr(str)));
+                FREE(str);
                 break;
             case 's':
                 if (access(optarg, R_OK) == -1) {
@@ -263,7 +265,7 @@ int main(int argc, char *argv[]){
                 repl_flag = false;
                 break;
             case 'v':
-                printf("Easy-ISLisp Ver%1.2f\n", VERSION);
+                Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
                 exit(EXIT_SUCCESS);
             case 'h':
                 usage();
@@ -279,12 +281,10 @@ int main(int argc, char *argv[]){
             f_load(list1(makestr(script_arg)));
             exit(EXIT_SUCCESS);
         }
-    }
-    if(greeting_flag)
-        printf("Easy-ISLisp Ver%1.2f\n", VERSION);
-    while (1) {
-    switch (ret) {
-    case 0:
+    volatile bool quit = false;
+    do {
+        maybe_greet();
+    TRY
         while(1){
             initpt();
             fputs("> ", stdout);
@@ -293,14 +293,12 @@ int main(int argc, char *argv[]){
             if(redef_flag)
                 redef_generic();
         }
-        break;
-    case 1:
-            ret = 0;
-            break;
-    default:
-            return 0;
-    }
-    }
+    EXCEPT(Restart_Repl)
+        ;
+    EXCEPT(Exit_Interp)
+        quit = true;
+    END_TRY;
+    } while (!quit);
 }
 
 void initpt(void){
@@ -352,7 +350,7 @@ int readc(void){
         if(!script_flag && input_stream == standard_input && c == EOF){
             greeting_flag = false;
             putchar('\n');
-            longjmp(buf,2);
+            RAISE(Exit_Interp);
         }
         else // if script-mode return(EOF)
             return(c);
@@ -984,7 +982,7 @@ int sread(void){
         case RPAREN:    error(ILLEGAL_RPAREN,"read",NIL);
         default:        break;
     }
-    fprintf(GET_PORT(error_stream),"%d%s", (int)stok.type, stok.buf);
+    Fmt_fprint(GET_PORT(error_stream),"%d%s", (int)stok.type, stok.buf);
     error(ILLEGAL_INPUT,"read",NIL);
     return(0);
 }
@@ -1121,41 +1119,34 @@ void print(int addr){
 
 void printint(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream),"%d", GET_INT(addr));
+        Fmt_fprint(GET_PORT(output_stream),"%d", GET_INT(addr));
     else{
-        snprintf(stream_str, STRSIZE, "%d", GET_INT(addr));
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(addr));
+        append_str(output_stream, str);
     }
 }
 
 void printflt(double x){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX)
-            fprintf(GET_PORT(output_stream), "%0.16g", x);
-        else
-            fprintf(GET_PORT(output_stream), "%0.1f", x);
+        fprintf(GET_PORT(output_stream), "%g", x);
     }
     else{
-        if(x - ceil(x) != 0 ||  x >= SMALL_INT_MAX){
-            snprintf(stream_str, STRSIZE, "%0.16g", x);
-            append_str(output_stream, stream_str);
-        }
-        else{
-            snprintf(stream_str, STRSIZE, "%0.1f", x);
-            append_str(output_stream, stream_str);
-        }
+        char str[SHORT_STRSIZE];
+        snprintf(str, SHORT_STRSIZE, "%g", x);
+        append_str(output_stream, str);
     }
 }
 
 
 void printlong(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"%lld", GET_LONG(addr));
-        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
+        Fmt_fprint(GET_PORT(output_stream),"%D", GET_LONG(addr));
     }
     else{
-        snprintf(stream_str, STRSIZE, "%lld", GET_LONG(addr));
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(addr));
+        append_str(output_stream, str);
 	}
 }
 
@@ -1209,10 +1200,11 @@ void printarray(int x){
         ls = cons(GET_VEC_ELT(x,i),ls);
     ls = reverse(ls);
     if(GET_OPT(output_stream) != EISL_INSTR)
-        fprintf(GET_PORT(output_stream),"#%da",dim);
+        Fmt_fprint(GET_PORT(output_stream),"#%da",dim);
     else{
-        snprintf(stream_str, STRSIZE, "#%da", dim);
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "#%da", dim);
+        append_str(output_stream, str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1240,7 +1232,7 @@ void printfarray(int x){
             float *vec2;
             
             vec1 = GET_FVEC(x);
-            vec2 = (float *)malloc(sizeof(float)*size);
+            vec2 = (float *)ALLOC(sizeof(float) * size);
             r = GET_INT(car(st));
             c = GET_INT(cadr(st));
             for(i=0;i<r;i++)
@@ -1248,7 +1240,7 @@ void printfarray(int x){
                     vec2[IDX2R(i,j,c)] = vec1[IDX2C(i,j,r)];
             for(i=0;i<size;i++)
                 ls = cons(makeflt(vec2[i]),ls);
-            free(vec2);
+            FREE(vec2);
         }
         else{
             ls = cons(makesym("float-elements"),ls);
@@ -1265,10 +1257,11 @@ void printfarray(int x){
     }
     ls = reverse(ls);
     if(GET_OPT(output_stream) != EISL_INSTR)
-        fprintf(GET_PORT(output_stream),"#%df",dim);
+        Fmt_fprint(GET_PORT(output_stream),"#%df",dim);
     else{
-        snprintf(stream_str, STRSIZE, "#%df", dim);
-        append_str(output_stream, stream_str);
+        char str[SHORT_STRSIZE];
+        Fmt_sfmt(str, SHORT_STRSIZE, "#%df", dim);
+        append_str(output_stream, str);
     }
     if(dim == 0)
         print(car(ls));
@@ -1280,10 +1273,10 @@ void printfarray(int x){
 
 void printstr(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR){
-        fprintf(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
+        Fmt_fprint(GET_PORT(output_stream),"\"%s\"", GET_NAME(addr));
     }
     else{
-        snprintf(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
         append_str(output_stream, stream_str);
     }
 }
@@ -1312,18 +1305,18 @@ void printobj(const char *str){
 
 void printclass(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
+        Fmt_fprint(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
     else{
-        snprintf(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
+        Fmt_sfmt(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
         append_str(output_stream, stream_str);
     }
 }
 
 void printstream(int addr){
     if(GET_OPT(output_stream) != EISL_OUTSTR)
-        fprintf(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
+        Fmt_fprint(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
     else{
-        snprintf(GET_NAME(output_stream), STRSIZE, "<stream %s>", GET_NAME(addr));
+        Fmt_sfmt(GET_NAME(output_stream), STRSIZE, "<stream %s>", GET_NAME(addr));
         append_str(output_stream, stream_str);
     }
 }
@@ -1728,9 +1721,11 @@ void bindmacro(char *name, int addr){
     SET_CDR(val1,0);
     val2 = freshcell();
     SET_TAG(val2,MACRO);
-    heap[val2].name = strdup(name);
-    if(heap[val2].name == NULL)
+    TRY
+        heap[val2].name = Str_dup(name, 1, 0, 1);
+    EXCEPT(Mem_Failed)
         error(MALLOC_OVERF,"makemacro",NIL);
+    END_TRY;
     SET_CAR(val2,val1);
     SET_CDR(val2,0);
     SET_AUX(val2,cfunction); //class
@@ -1799,7 +1794,7 @@ void debugger(){
              "other S exps eval");
     }
     else if(eqp(x,makesym(":A"))){
-        longjmp(buf,1); 
+        RAISE(Restart_Repl);
     }
     else if(eqp(x,makesym(":B"))){
     	for(i=0;i<BACKSIZE;i++){
@@ -1832,7 +1827,7 @@ void debugger(){
     	return;
     }
     else if(eqp(x,makesym(":R"))){
-        printf("EP = %d (environment pointer)\n"
+        Fmt_print("EP = %d (environment pointer)\n"
                "DP = %d (dynamic pointer)\n"
                "HP = %d (heap pointer)\n"
                "SP = %d (stack pointer)\n"

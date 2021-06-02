@@ -24,12 +24,14 @@ Copying GC mode
 #include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
+#include "except.h"
 
 #define CELLSIZE 20000000
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define BUFSIZE 256
 #define STRSIZE 500000
+#define SHORT_STRSIZE 32
 #define HASHTBSIZE 107
 #define CTRLSTK 200
 #define BACKSIZE 30
@@ -39,7 +41,6 @@ Copying GC mode
 #define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 2.00;
-static const int HEAPSIZE = 20000000;
 static const int WORK1 = 6000000;
 static const int WORK2 = 13000000;
 static const int FREESIZE = 900;
@@ -176,7 +177,6 @@ extern int input_stream;
 extern int output_stream;
 extern int error_stream;
 extern char stream_str[STRSIZE];
-extern char stream_str1[STRSIZE];
 extern int charcnt;
 
 
@@ -200,7 +200,7 @@ extern int dynamic[DYNSIZE][2];
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
     {                                                  \
         if (CELLRANGE(addr)) {                         \
-            assert(addr < HEAPSIZE);                   \
+            assert(addr < CELLSIZE);                   \
             return heap[addr].MEMBER;                  \
         } else {                                       \
             return DEFAULT;                            \
@@ -226,7 +226,7 @@ static inline void SET_AUX(int addr,int x) { heap[addr].aux = x; }
 static inline int SET_PROP(int addr,int x)
 {
     if (CELLRANGE(addr)) {
-        assert(addr < HEAPSIZE);
+        assert(addr < CELLSIZE);
         return (heap[addr].prop = x);
     } else {
         return NIL;
@@ -242,7 +242,7 @@ static inline void SET(int addr,int x) { heap[addr] = heap[x]; }
     static inline bool IS_ ## NAME (int addr)   \
     {                                           \
         if (CELLRANGE(addr)) {                  \
-            assert(addr < HEAPSIZE);            \
+            assert(addr < CELLSIZE);            \
             return (heap[addr].tag == TAG);     \
         } else {                                \
             return NIL;                         \
@@ -337,12 +337,12 @@ extern int gc_sw;
 extern int area_sw;
 
 //longjmp control and etc
-extern jmp_buf buf;
+extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
 extern int block_env[NESTED_BLOCKS_MAX][2];
 extern jmp_buf catch_buf[10][50];
 extern int catch_env[10][50];
-extern jmp_buf ignore_buf; //jump address for ignore-error
+extern Except_T Ignored_Error; //for ignore-errors
 extern int block_tag[CTRLSTK]; //array to sotre tag address
 extern int catch_tag[CTRLSTK];
 extern int unwind_buf[CTRLSTK];
@@ -357,7 +357,7 @@ extern int error_handler;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 
-__dead static inline void DEBUG(void) { puts("debug"); longjmp(buf,2); }
+__dead static inline void DEBUG(void) { puts("debug"); RAISE(Exit_Interp); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;

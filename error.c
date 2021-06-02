@@ -2,8 +2,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include "eisl.h"
+#include "fmt.h"
+#include "except.h"
+#include "str.h"
+#include "mem.h"
 
 static int outc(int c) {
     return fputc(c, stderr);
@@ -295,7 +298,7 @@ void error(int errnum, const char *fun, int arg){
                         signal_condition(makeinstance(cprogram_error,initargs),NIL);
                         break;  
         case OUT_OF_DOMAIN:
-                        initargs = list6(makesym("format-string"),makestr("Out of range at "),
+                        initargs = list6(makesym("format-string"),makestr("Out of domain at "),
                                          makesym("format-arguments"),arg,
                                          makesym("function"),makesym(fun1));
                         signal_condition(makeinstance(cdomain_error,initargs),NIL);
@@ -478,16 +481,18 @@ int signal_condition(int x, int y){
         SET_OPT(x,NOTCONT);
     else{
         SET_OPT(x,CONTINUABLE);
-        heap[x].name = strdup(GET_NAME(y));
-        if(heap[x].name == NULL)
+        TRY
+            heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
+        EXCEPT(Mem_Failed)
             error(MALLOC_OVERF,"signal-condition",NIL);
+        END_TRY;
     }
     if(ignore_flag)
-        longjmp(ignore_buf,1);
+        RAISE(Ignored_Error);
     if(open_flag && error_handler==NIL){
         fclose(GET_PORT(input_stream));
         open_flag = false;
-        printf("around here line=%d column=%d\n", line, column); 
+        Fmt_print("around here line=%d column=%d\n", line, column); 
     } 
     if(error_handler != NIL){
         int handler;
@@ -510,8 +515,8 @@ int signal_condition(int x, int y){
     input_stream = standard_input;
     output_stream = standard_output;
     debugger();
-    longjmp(buf,1);
-    
+    RAISE(Restart_Repl);
+    return 0;
 } 
 
 int makeusercond(int cl, int str, int arg){

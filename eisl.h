@@ -30,7 +30,7 @@ Copying GC mode
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define BUFSIZE 256
-#define STRSIZE 500000
+#define STRSIZE 100000
 #define SHORT_STRSIZE 32
 #define HASHTBSIZE 107
 #define CTRLSTK 200

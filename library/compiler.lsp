@@ -229,23 +229,24 @@ double tarai(double x, double y, double z){
         t)
     
     (defun compile-file1 (x)
-        (let ((option
-              (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
-                    ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
-              (fname (filename x)) )
+        (let* ((option
+               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
+               (fname (filename x))
+               (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
-           (initialize)
+           (initialize fname ".c")
            (format (standard-output) "pass1~%")
            (pass1 x)
            (format (standard-output) "pass2~%")
            (pass2 x)
            (ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
-           (finalize x ".c")
+           (finalize fname ".c")
            (format (standard-output) "invoke CC~%")
-           (system (string-append option fname ".o " fname ".c " c-lang-option))
-           (system (string-append "rm " fname ".c"))))
+           (system (string-append option fname ".o " fname "0.c " c-lang-option))
+           (system (string-append "rm " infnames))))
     
     ;;for debug compile and not remove C code
     (defpublic compile-file* (x)
@@ -268,16 +269,16 @@ double tarai(double x, double y, double z){
               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
-           (initialize)
+           (initialize fname ".c")
            (format (standard-output) "pass1~%")
            (pass1 x)
            (format (standard-output) "pass2~%")
            (pass2 x)
            (ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
-           (finalize x ".c")
+           (finalize fname ".c")
            (format (standard-output) "invoke CC~%")
-           (system (string-append option fname ".o " fname ".c " c-lang-option))))
+           (system (string-append option fname ".o " fname "0.c " c-lang-option))))
     
     ;;compile cuda code
     (defpublic compile-cuda (x)
@@ -463,42 +464,17 @@ double tarai(double x, double y, double z){
                (format-integer stream x 10)
                (format stream "\")"))
               ((stringp x)
-               (format stream "Fmakestr(")
-               (format-char stream (convert 39 <character>))                               ;'
-               (format-char stream (convert 39 <character>))                               ;'
-               (format-object stream x nil)
-               (format-char stream (convert 39 <character>))                               ;'
-               (format-char stream (convert 39 <character>))                               ;'
-               (format stream ")"))
+               (format stream "Fmakestr(''~A'')" x))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
                        (char= x (convert 34 <character>))                                  ;"
                        (char= x (convert 39 <character>)));'
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream #\\)
-                      (format-char stream x)
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
+                      (format stream "Fmakechar(''\\~C'')" x))
                      ((special-char-p x)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (print-special-char x stream)
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
+                      (format stream "Fmakechar(''~A'')" (print-special-char x)))
                      (t
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream x)
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))))
+                      (format stream "Fmakechar(''~C'')" x))))
               ((general-vector-p x)
                (format stream "Fvector(")
                (list-to-c1 stream (convert x <list>))
@@ -643,32 +619,33 @@ double tarai(double x, double y, double z){
          x
          '(#\alarm #\backspace #\delete #\escape #\return #\newline #\null #\space #\tab)))
 
-    (defun print-special-char (x stream)
-        (cond ((char= x #\alarm) (format stream "ALARM"))
-              ((char= x #\backspace) (format stream "BACKSPACE"))
-              ((char= x #\delete) (format stream "DELETE"))
-              ((char= x #\escape) (format stream "ESCAPE"))
-              ((char= x #\return) (format stream "RETURN"))
-              ((char= x #\newline) (format stream "NEWLINE"))
-              ((char= x #\null) (format stream "NULL"))
-              ((char= x #\space) (format stream "SPACE"))
-              ((char= x #\tab) (format stream "TAB"))))
+    (defun print-special-char (x)
+        (cond ((char= x #\alarm) "ALARM")
+              ((char= x #\backspace) "BACKSPACE")
+              ((char= x #\delete) "DELETE")
+              ((char= x #\escape) "ESCAPE")
+              ((char= x #\return) "RETURN")
+              ((char= x #\newline) "NEWLINE")
+              ((char= x #\null) "NULL")
+              ((char= x #\space) "SPACE")
+              ((char= x #\tab) "TAB")))
 
-    (defun initialize ()
+    (defun initialize (fname ext)
         (setq global-variable nil)
         (setq global-dynamic nil)
         (setq function-arg nil)
         (setq generic-name-arg nil)
         (setq catch-block-tag nil)
         (setq c-lang-option "")
-        (setq code0 (create-string-output-stream))
-        (setq code1 (create-string-output-stream))
-        (setq code2 (create-string-output-stream))
-        (setq code3 (create-string-output-stream))
-        (setq code4 (create-string-output-stream))
-        (setq code5 (create-string-output-stream))
-        (setq code6 (create-string-output-stream))
-        (setq code7 (create-string-output-stream))
+        (setq code0 (open-output-file (string-append fname "0" ext)))
+        (setq code1 (open-output-file (string-append fname "1" ext)))
+        (setq code2 (open-output-file (string-append fname "2" ext)))
+        (setq code3 (open-output-file (string-append fname "3" ext)))
+        (setq code4 (open-output-file (string-append fname "4" ext)))
+        (setq code5 (open-output-file (string-append fname "5" ext)))
+        (setq code6 (open-output-file (string-append fname "6" ext)))
+        (setq code7 (open-output-file (string-append fname "7" ext)))
+        (format code0 "#include \"fast.h\"~%")
         (format code3 "void init_tfunctions(void){~%")
         (format code4 "void init_declare(void){~%"))
     
@@ -683,20 +660,24 @@ double tarai(double x, double y, double z){
              (format-object code0 (conv-name (car tag)) nil)
              (format code0 "[50];~%")))
     
-    (defun finalize (x ext)
+    (defun finalize (fname ext)
+        (format code0 "#include \"~A\"~%" (string-append fname "1" ext))
+        (format code0 "#include \"~A\"~%" (string-append fname "5" ext))
+        (format code0 "#include \"~A\"~%" (string-append fname "6" ext))
+        (format code0 "#include \"~A\"~%" (string-append fname "7" ext))
+        (format code0 "#include \"~A\"~%" (string-append fname "2" ext))
+        (format code0 "#include \"~A\"~%" (string-append fname "3" ext))
+        (format code0 "#include \"~A\"~%" (string-append fname "4" ext))
         (format code3 "}")
         (format code4 "}")
-        (let ((outstream (open-output-file (string-append (filename x) ext))))
-           (format outstream "#include \"fast.h\"~%")
-           (format outstream (get-output-stream-string code0))
-           (format outstream (get-output-stream-string code1))
-           (format outstream (get-output-stream-string code5))
-           (format outstream (get-output-stream-string code6))
-           (format outstream (get-output-stream-string code7))
-           (format outstream (get-output-stream-string code2))
-           (format outstream (get-output-stream-string code3))
-           (format outstream (get-output-stream-string code4))
-           (close outstream)))
+        (close code0)
+        (close code1)
+        (close code2)
+        (close code3)
+        (close code4)
+        (close code5)
+        (close code6)
+        (close code7))
     
     (defun comp-defun (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
@@ -2520,17 +2501,7 @@ double tarai(double x, double y, double z){
                (format-integer stream x 10)
                (format stream "\")"))
               ((stringp x)
-               (format stream "Fmakestr(")
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-object stream x nil)
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format stream ")"))
+               (format stream "Fmakestr(''~A'')" x))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
@@ -2538,30 +2509,9 @@ double tarai(double x, double y, double z){
                        ;;"
                        (char= x (convert 39 <character>)))
                       ;;'
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream #\\)
-                      (format-char stream x)
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format stream ")"))
+                      (format stream "Fmakechar(''\\~C'')" x))
                      (t
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream x)
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format stream ")"))))
+                      (format stream "Fmakechar(''~C'')" x))))
               ((general-vector-p x)
                (format stream "Fvector(")
                (list-to-c1 stream (convert x <list>))
@@ -2606,17 +2556,7 @@ double tarai(double x, double y, double z){
                (format-integer stream x 10)
                (format stream "\")"))
               ((stringp x)
-               (format stream "Fmakestr(")
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-object stream x nil)
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format-char stream (convert 39 <character>))
-               ;;'
-               (format stream ")"))
+               (format stream "Fmakestr(''~A'')" x))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
@@ -2624,38 +2564,11 @@ double tarai(double x, double y, double z){
                        ;;"
                        (char= x (convert 39 <character>)))
                       ;;'
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream #\\)
-                      (format-char stream x)
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format stream ")"))
+                      (format stream "Fmakechar(''\\~C'')" x))
                      ((special-char-p x)
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (print-special-char x stream)
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format-char stream (convert 39 <character>))                        ;'
-                      (format stream ")"))
+                      (format stream "Fmakechar(''~A'')" (print-special-char x)))
                      (t
-                      (format stream "Fmakechar(")
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream x)
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format-char stream (convert 39 <character>))
-                      ;;'
-                      (format stream ")"))))
+                      (format stream "Fmakechar(''~C'')" x))))
               ((general-vector-p x)
                (format stream "Fvector(")
                (list-to-c1 stream (convert x <list>))

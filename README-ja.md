@@ -26,10 +26,7 @@ sudo apt install libncurses-dev
 
 ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。
 注：WindowsバージョンのVS-CODEをWSLで使用する場合
-
-ターミナルを起動すると、HOME以外の独自のディレクトリから起動します。
-EISLがライブラリを見つけることができない場合があります。
-この場合、コンパイラを起動するときに（import "compiler"）を使用します。 
+参照　[Windows Subsystem for Linux で Visual Studio Code の使用を開始する](https://docs.microsoft.com/ja-jp/windows/wsl/tutorials/wsl-vscode)
 
 　　　
 動作確認している環境は次の通りです。

@@ -25,8 +25,8 @@ sudo apt install libncurses-dev
 ```
 
 After version 1.4 Windows OS is not supported. Please use WSL on Windows.
-Note: When using the Windows version of VS-CODE with WSL
-When you start the terminal, it starts in its own directory other than HOME. EISL may not be able to find the library. In this case, use (import "compiler") when starting the compiler. 
+see [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+
 
 We confirmed operation in the following environments.
 - Ubuntu 16.04 GCC 5.4

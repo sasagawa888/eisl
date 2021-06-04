@@ -40,7 +40,7 @@ Copying GC mode
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 
-static const float VERSION = 2.00;
+static const float VERSION = 2.01;
 static const int WORK1 = 6000000;
 static const int WORK2 = 13000000;
 static const int FREESIZE = 900;

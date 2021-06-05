@@ -158,27 +158,6 @@ Elapsed Time(second)=3.728262
 Raspberry Pi 3では，主記憶領域不足のせいで`compiler.o`ファイルが利用できません。
 `compiler.lsp`を使って下さい。
 
-## CUDAでEISLをコンパイルする
-GCCの代わりにnvcc（CUDA)でEISLをコンパイルすることもできます。
-端末から　`make -f cudamake`  さらに　`sudo make install` とタイプしてください。
-
-現在、CUDAを利用した関数を整備しています。
-
-参照 tests/gpu.lsp
-フロート専用の配列型を拡張しました。
-```
-(defglobal a #2f((1.0 2.0)(3.0 4.0)))
-(defglobal b #2f((1.0 2.0)(3.0 4.0)))
-(gpu-mult a b)
-(gpu-add a b)
-```
-
-create-array 組み込み関数を拡張しました。
-それはフロート専用の配列を生成することができます。
-例
-```
-(create-array '(3000 3000) 'rand 'float)
-```
 
 ## エディタを起動する
 

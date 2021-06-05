@@ -1659,8 +1659,9 @@ void bindarg(int varlist, int arglist)
 
     push(ep);
     while (!(IS_NIL(varlist))) {
-	if (cddr(varlist) == NIL && (car(varlist) == makesym(":REST")
-				     || car(varlist) == makesym("&REST"))) {
+	if (cddr(varlist) == NIL &&
+	    (car(varlist) == makesym(":REST")
+	     || car(varlist) == makesym("&REST"))) {
 	    arg1 = cadr(varlist);
 	    arg2 = arglist;
 	    addlexenv(arg1, arg2);

@@ -46,7 +46,7 @@ static const int WORK2 = 13000000;
 static const int FREESIZE = 900;
 static const int FARRMAX = 100000000;
 static const int SYMSIZE = 256;
-static const int CHARSIZE = 2;	//ascii char. add \0 to tail
+static const int CHARSIZE = 2;   //ascii char. add \0 to tail
 static const int MATSIZE = 256;
 static const int UNDEF = 4;
 static const int FEND = 6;
@@ -56,56 +56,52 @@ static const int FAILSE = -1000000000;
 static const double PI = 3.141592653589793;
 static const int FARRAYSIZE = 1000;
 
-typedef enum { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, FARR, CHR, STR, SYM,
-	LIS, DUMMY,
-    SUBR, FSUBR, FUNC, MACRO, CLASS, INSTANCE, GENERIC, METHOD,
-    STREAM
-} tag;
-typedef enum { FRE, USE } flag;
+typedef enum {EMP,INTN,FLTN,LONGN,BIGX,VEC,ARR,FARR,CHR,STR,SYM,LIS,DUMMY,
+              SUBR,FSUBR,FUNC,MACRO,CLASS,INSTANCE,GENERIC,METHOD,
+              STREAM} tag;
+typedef enum {FRE,USE} flag;
 
 typedef int (*subr_t)(int args);
-typedef struct {
-    union {
-	double fltnum;
-	long long int lngnum;
-	struct {
-	    union {
-		int intnum;
-		subr_t subr;
-		FILE *port;
-		int *dyna_vec;
-		float *dyna_fvec;
-	    } car;
-	    union {
-		int intnum;
-	    } cdr;
-	};
+typedef struct{
+    union{
+        double fltnum;
+        long long int lngnum;
+        struct {
+            union{
+                int intnum;
+                subr_t subr;
+                FILE    *port;
+                int     *dyna_vec;
+                float   *dyna_fvec;
+            } car;
+            union{
+                int intnum;
+            } cdr;
+        };
     } val;
-    int aux;
-    int prop;
-    char *name;
-    tag tag;
-    flag flag;
-    signed char option;
-    char trace;
+    int     aux;
+    int     prop;
+    char    *name;
+    tag    tag;
+    flag    flag;
+    signed char    option;
+    char    trace;
 } cell;
 
 
-typedef enum { LPAREN, RPAREN, QUOTE, DOT, BACKQUOTE, COMMA, ATMARK,
-	STRING, SYMBOL,
-    FUNCTION, INTEGER, FLOAT_N, BIGNUM, VECTOR, ARRAY, CHARACTER,
-    BINARY, OCTAL, DECNUM, HEXNUM, EXPTNUM, FILEEND, OTHER
-} toktype;
-typedef enum { GO, BACK } backtrack;
+typedef enum {LPAREN,RPAREN,QUOTE,DOT,BACKQUOTE,COMMA,ATMARK,STRING,SYMBOL,
+              FUNCTION,INTEGER,FLOAT_N,BIGNUM,VECTOR,ARRAY,CHARACTER,
+              BINARY,OCTAL,DECNUM,HEXNUM,EXPTNUM,FILEEND,OTHER} toktype;
+typedef enum {GO,BACK} backtrack;
 
-typedef struct {
+typedef struct{
     char ch;
     backtrack flag;
     toktype type;
     char buf[BUFSIZE];
 } token;
 
-typedef struct {
+typedef struct{
     char sepch;
     char before[BUFSIZE];
     char after[BUFSIZE];
@@ -113,15 +109,15 @@ typedef struct {
 
 
 //------pointer----
-extern int ep;			//environment pointer
-extern int dp;			//dynamic pointer
-extern int hp;			//heap pointer
-extern int sp;			//stack pointer
-extern int fc;			//free counter
-extern int ap;			//arglist pointer
-extern int lp;			//shelter pointer
-extern int wp;			//working pointer
-extern int ac;			//allocate counter
+extern int ep; //environment pointer
+extern int dp; //dynamic pointer
+extern int hp; //heap pointer
+extern int sp; //stack pointer
+extern int fc; //free counter
+extern int ap; //arglist pointer
+extern int lp; //shelter pointer
+extern int wp; //working pointer
+extern int ac; //allocate counter
 
 //------class-----
 extern int cobject;
@@ -215,90 +211,33 @@ DEF_GETTER(int, CDR, val.cdr.intnum, NIL)
 DEF_GETTER(int, AUX, aux, cfixnum)
 DEF_GETTER(int, PROP, prop, NIL)
 DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
-static inline FILE *GET_PORT(int addr)
-{
-    return heap[addr].val.car.port;
-}
-
-static inline int GET_INT(int addr)
-{
-    return ((addr > 0) ? (INT_MASK & addr) : addr);
-}
-
+static inline FILE *GET_PORT(int addr) { return heap[addr].val.car.port; }
+static inline int GET_INT(int addr) { return ((addr > 0) ? (INT_MASK & addr) : addr); }
 DEF_GETTER(double, FLT, val.fltnum, NIL)
 DEF_GETTER(long long int, LONG, val.lngnum, NIL)
-static inline char *GET_NAME(int addr)
-{
-    return heap[addr].name;
-}
-
-static inline char GET_CHAR(int addr)
-{
-    return heap[addr].name[0];
-}
-
+static inline char *GET_NAME(int addr) { return heap[addr].name; }
+static inline char GET_CHAR(int addr) { return heap[addr].name[0]; }
 DEF_GETTER(tag, TAG, tag, INTN)
-    DEF_GETTER(signed char, OPT, option, 0)
-static inline void SET_TAG(int addr, tag x)
-{
-    heap[addr].tag = x;
-}
-
-static inline void SET_CAR(int addr, int x)
-{
-    heap[addr].val.car.intnum = x;
-}
-
-static inline void SET_CDR(int addr, int x)
-{
-    heap[addr].val.cdr.intnum = x;
-}
-
-static inline void SET_AUX(int addr, int x)
-{
-    heap[addr].aux = x;
-}
-
-static inline int SET_PROP(int addr, int x)
+DEF_GETTER(signed char, OPT, option, 0)
+static inline void SET_TAG(int addr,tag x) { heap[addr].tag = x; }
+static inline void SET_CAR(int addr,int x) { heap[addr].val.car.intnum = x; }
+static inline void SET_CDR(int addr,int x) { heap[addr].val.cdr.intnum = x; }
+static inline void SET_AUX(int addr,int x) { heap[addr].aux = x; }
+static inline int SET_PROP(int addr,int x)
 {
     if (CELLRANGE(addr)) {
-	assert(addr < CELLSIZE);
-	return (heap[addr].prop = x);
+        assert(addr < CELLSIZE);
+        return (heap[addr].prop = x);
     } else {
-	return NIL;
+        return NIL;
     }
 }
-
-static inline void SET_FLT(int addr, double x)
-{
-    heap[addr].val.fltnum = x;
-}
-
-static inline void SET_LONG(int addr, long long int x)
-{
-    heap[addr].val.lngnum = x;
-}
-
-static inline void SET_PORT(int addr, FILE * x)
-{
-    heap[addr].val.car.port = x;
-}
-
-static inline void SET_OPT(int addr, signed char x)
-{
-    heap[addr].option = x;
-}
-
-static inline void SET_TR(int addr, char x)
-{
-    heap[addr].trace = x;
-}
-
-static inline void SET(int addr, int x)
-{
-    heap[addr] = heap[x];
-}
-
+static inline void SET_FLT(int addr,double x) { heap[addr].val.fltnum = x; }
+static inline void SET_LONG(int addr,long long int x) { heap[addr].val.lngnum = x; }
+static inline void SET_PORT(int addr,FILE *x) { heap[addr].val.car.port = x; }
+static inline void SET_OPT(int addr,signed char x) { heap[addr].option = x; }
+static inline void SET_TR(int addr,char x) { heap[addr].trace = x; }
+static inline void SET(int addr,int x) { heap[addr] = heap[x]; }
 #define DEF_PREDICATE(NAME, TAG)                \
     static inline bool IS_ ## NAME (int addr)   \
     {                                           \
@@ -313,115 +252,58 @@ static inline bool IS_INTEGER(int addr)
 {
     return !CELLRANGE(addr);
 }
-
 DEF_PREDICATE(BIGXNUM, BIGX)
-    DEF_PREDICATE(LONGNUM, LONGN)
-    DEF_PREDICATE(FLOAT, FLTN)
-    DEF_PREDICATE(LIST, LIS)
-    DEF_PREDICATE(STRING, STR)
-static inline bool IS_NIL(int addr)
-{
-    return (addr == NIL);
-}
-
-static inline bool IS_T(int addr)
-{
-    return (addr == T);
-}
-
+DEF_PREDICATE(LONGNUM, LONGN)
+DEF_PREDICATE(FLOAT, FLTN)
+DEF_PREDICATE(LIST, LIS)
+DEF_PREDICATE(STRING, STR)
+static inline bool IS_NIL(int addr) { return (addr == NIL); }
+static inline bool IS_T(int addr) { return (addr == T); }
 DEF_PREDICATE(VECTOR, VEC)
-    DEF_PREDICATE(ARRAY, ARR)
-    DEF_PREDICATE(FARRAY, FARR)
-    DEF_PREDICATE(SUBR, SUBR)
-    DEF_PREDICATE(FSUBR, FSUBR)
-    DEF_PREDICATE(FUNC, FUNC)
-    DEF_PREDICATE(MACRO, MACRO)
-    DEF_PREDICATE(CLASS, CLASS)
-    DEF_PREDICATE(GENERIC, GENERIC)
-static inline bool HAS_NAME(int addr, const char *x)
-{
-    return (strcmp(heap[addr].name, x) == 0);
-}
+DEF_PREDICATE(ARRAY, ARR)
+DEF_PREDICATE(FARRAY, FARR)
+DEF_PREDICATE(SUBR, SUBR)
+DEF_PREDICATE(FSUBR, FSUBR)
+DEF_PREDICATE(FUNC, FUNC)
+DEF_PREDICATE(MACRO, MACRO)
+DEF_PREDICATE(CLASS, CLASS)
+DEF_PREDICATE(GENERIC, GENERIC)
+static inline bool HAS_NAME(int addr,const char *x) { return (strcmp(heap[addr].name,x) == 0); }
+static inline bool SAME_NAME(int addr1,int addr2) { return (strcmp(heap[addr1].name, heap[addr2].name) == 0); }
+static inline char STRING_REF(int addr,int k) { return heap[addr].name[k]; }
+static inline void STRING_SET(int addr,int k,char c) { heap[addr].name[k] = c; }
 
-static inline bool SAME_NAME(int addr1, int addr2)
-{
-    return (strcmp(heap[addr1].name, heap[addr2].name) == 0);
-}
+static inline int GET_VEC_ELT(int addr,int i) { return heap[addr].val.car.dyna_vec[i]; }
+static inline void SET_VEC_ELT(int addr,int i,int x) { heap[addr].val.car.dyna_vec[i] = x; }
+static inline void SET_VEC(int addr,int *x) { heap[addr].val.car.dyna_vec = x; }
+static inline float GET_FVEC_ELT(int addr,int i) { return heap[addr].val.car.dyna_fvec[i]; }
+static inline void SET_FVEC_ELT(int addr,int i,float x) { heap[addr].val.car.dyna_fvec[i] = x; }
+static inline float *GET_FVEC(int addr) { return heap[addr].val.car.dyna_fvec; }
 
-static inline char STRING_REF(int addr, int k)
-{
-    return heap[addr].name[k];
-}
-
-static inline void STRING_SET(int addr, int k, char c)
-{
-    heap[addr].name[k] = c;
-}
-
-static inline int GET_VEC_ELT(int addr, int i)
-{
-    return heap[addr].val.car.dyna_vec[i];
-}
-
-static inline void SET_VEC_ELT(int addr, int i, int x)
-{
-    heap[addr].val.car.dyna_vec[i] = x;
-}
-
-static inline void SET_VEC(int addr, int *x)
-{
-    heap[addr].val.car.dyna_vec = x;
-}
-
-static inline float GET_FVEC_ELT(int addr, int i)
-{
-    return heap[addr].val.car.dyna_fvec[i];
-}
-
-static inline void SET_FVEC_ELT(int addr, int i, float x)
-{
-    heap[addr].val.car.dyna_fvec[i] = x;
-}
-
-static inline float *GET_FVEC(int addr)
-{
-    return heap[addr].val.car.dyna_fvec;
-}
-
-static inline int IDX2C(int i, int j, int ld)
-{
-    return (j * ld + i);
-}
-
-static inline int IDX2R(int i, int j, int ld)
-{
-    return (i * ld + j);
-}
-
+static inline int IDX2C(int i,int j,int ld) { return (j * ld + i); }
+static inline int IDX2R(int i,int j,int ld) { return (i * ld + j); }
 static inline void append_str(int output_stream, const char *from)
 {
     char *to = GET_NAME(output_stream);
     strncat(to, from, STRSIZE - strlen(to) - 1);
     to[STRSIZE - 1] = '\0';
 }
-
 static inline void output_str(int output_stream, const char *from)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	fputs(from, GET_PORT(output_stream));
+        fputs(from, GET_PORT(output_stream));
     } else {
-	append_str(output_stream, from);
+        append_str(output_stream, from);
     }
 }
-
 static inline void output_char(int output_stream, char c)
 {
     stream_str[0] = c;
     stream_str[1] = '\0';
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	fputc(c, GET_PORT(output_stream));
+        fputc(c, GET_PORT(output_stream));
     } else {
-	append_str(output_stream, stream_str);
+        append_str(output_stream, stream_str);
     }
 }
 
@@ -460,26 +342,22 @@ extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
 extern int block_env[NESTED_BLOCKS_MAX][2];
 extern jmp_buf catch_buf[10][50];
 extern int catch_env[10][50];
-extern Except_T Ignored_Error;	//for ignore-errors
-extern int block_tag[CTRLSTK];	//array to sotre tag address
+extern Except_T Ignored_Error; //for ignore-errors
+extern int block_tag[CTRLSTK]; //array to sotre tag address
 extern int catch_tag[CTRLSTK];
 extern int unwind_buf[CTRLSTK];
 extern int catch_symbols;
-extern int block_pt;		//pointer for block
-extern int catch_pt;		//catch counter
-extern int unwind_pt;		//lambda address for unwind-protect
-extern int block_arg;		//argument that block will recieve
-extern int catch_arg;		//argument that catch will recieve
-extern int tagbody_tag;		//tag symbol address in tagbody
+extern int block_pt;  //pointer for block
+extern int catch_pt;  //catch counter
+extern int unwind_pt; //lambda address for unwind-protect
+extern int block_arg; //argument that block will recieve
+extern int catch_arg; //argument that catch will recieve
+extern int tagbody_tag; //tag symbol address in tagbody
 extern int error_handler;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 
-__dead static inline void DEBUG(void)
-{
-    puts("debug");
-    RAISE(Exit_Interp);
-}
+__dead static inline void DEBUG(void) { puts("debug"); RAISE(Exit_Interp); }
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;
@@ -573,7 +451,7 @@ int apply(int func, int arg);
 int argpush(int addr);
 int argpop(void);
 int array(int n, int ls);
-int array_dim(int n, int ls);
+int array_dim(int n,int ls);
 int array_length(int obj);
 int array_ref(int obj, int ls);
 int array_set(int obj, int ls, int val);
@@ -919,7 +797,7 @@ int findenv(int sym);
 int flatten(int n, int ls);
 int floatp(int x);
 int flttoken(char buf[]);
-int fprintr(FILE * p, int r, int n);
+int fprintr(FILE *p, int r ,int n);
 int freshcell(void);
 int fsubrp(int addr);
 int functionp(int addr);
@@ -972,15 +850,13 @@ int list(int addr);
 int list_drop(int ls, int n);
 int list_take(int ls, int n);
 int list1(int x);
-int list10(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8,
-	   int x9, int x10);
-int list11(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8,
-	   int x9, int x10, int x11);
+int list10(int x1, int x2, int x3, int x4, int x5,int x6, int x7, int x8 ,int x9 ,int x10);
+int list11(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8 ,int x9 ,int x10, int x11);
 int list2(int x, int y);
 int list3(int x, int y, int z);
 int list4(int x1, int x2, int x3, int x4);
 int list6(int x1, int x2, int x3, int x4, int x5, int x6);
-int list8(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8);
+int list8(int x1, int x2, int x3, int x4, int x5,int x6, int x7, int x8);
 int listcopy(int x);
 int listp(int addr);
 int listref(int lis, int n);
@@ -1003,14 +879,14 @@ int makedoubleflt(double x);
 int makeflt(double floatn);
 int makefunc(const char *pname, int addr);
 int makegeneric(char *pname, int lamlist, int body);
-int makegeneric_star(int lamlist, int body);
+int makegeneric_star(int lamlist,int body);
 int makeinstance(int cl, int ls);
 int makeint(int intn);
 int makelong(long long int x);
 int makemethod(int x);
 int makenum(int num);
 int makestr(const char *string);
-int makestream(FILE * port, int type);
+int makestream(FILE *port, int type);
 int makesym(const char *pname);
 int makesym1(const char *pname);
 int makeusercond(int cl, int str, int arg);
@@ -1055,11 +931,11 @@ int quotient(int x, int y);
 int signal_condition(int x, int y);
 int sread(void);
 int readlist(void);
-int readbin(char *buf);
-int readoct(char *buf);
-int readhex(char *buf);
+int readbin(char* buf);
+int readoct(char* buf);
+int readhex(char* buf);
 int remove_list(int x, int y);
-int remove_prop(int x, int lis);
+int remove_prop(int x,int lis);
 int reverse(int x);
 int setdynenv(int sym, int val);
 int shelterpop(void);
@@ -1103,7 +979,7 @@ void bigx_plus2(int arg, int c, int msb);
 void bindarg(int lambda, int arglist);
 void bindclass(const char *name, int cl);
 void bindconst(const char *name, int obj);
-void bindfunc(const char *name, tag tag, int (*func)(int));
+void bindfunc(const char *name, tag tag, int(*func)(int));
 void bindmacro(char *name, int addr);
 void cellprint(int addr);
 int checkgbc(void);
@@ -1111,8 +987,8 @@ void clrcell(int addr);
 void copygbc(void);
 void copy_hash(int x);
 void cut_zero(int x);
-void deffsubr(const char *symname, int (*func)(int));
-void defsubr(const char *symname, int (*func)(int));
+void deffsubr(const char *symname, int(*func)(int));
+void defsubr(const char *symname, int(*func)(int));
 void dropchar(char buf[]);
 void error(int errnum, const char *fun, int arg);
 int gbc(void);
@@ -1232,7 +1108,7 @@ int set_dynpt(int x);
 int set_catch_symbols(int x);
 int f_ignore(int arglist);
 int f_classp(int arglist);
-char *get_name(int x);
+char* get_name(int x);
 double get_flt(int x);
 
 
@@ -1246,7 +1122,7 @@ void reset_paren_buffer();
 void restore_paren_buffer(int col);
 char *get_fragment_buffer(int col);
 void find_candidate_buffer(int col);
-int replace_fragment_buffer(const char *newstr, int col);
+int replace_fragment_buffer(const char* newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
@@ -1284,33 +1160,23 @@ int f_gpu_random_select(int arglist);
 int f_gpu_analizer(int arglist);
 int f_gpu_copy(int arglist);
 void cuda_add(float *a, float *b, float *c, int n);
-void cuda_emult(int n, float *a, float *b, float *c);
+void cuda_emult(int n, float *a, float *b,float *c);
 void cuda_sub(float *a, float *b, float *c, int n);
 void cuda_smult(float s, int n, float *a, float *b);
-void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a,
-		  float *b, float *c, int st_h, int st_w);
-void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a,
-		    float *b, float *c, int st_h, int st_w);
-void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n,
-		    int filt_c, int filt_h, int filt_w, float *a, float *b,
-		    float *c, int st_h, int st_w, int pad);
-void cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n,
-		       int filt_c, int filt_h, int filt_w, float *a,
-		       float *b, float *c, int st_h, int st_w, int pad);
-void cuda_deconvolute2(int in_n, int in_c, int in_h, int in_w, int filt_n,
-		       int filt_c, int filt_h, int filt_w, float *a,
-		       float *b, float *c, int st_h, int st_w, int pad);
-void cuda_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n,
-		      int filt_c, int filt_h, int filt_w, int loss_c,
-		      int loss_h, int loss_w, float *a, float *b, float *d,
-		      int st_h, int st_w, int pad);
-void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n,
-		      int filt_c, int filt_h, int filt_w, int loss_c,
-		      int loss_h, int loss_w, float *a, float *b, float *d,
-		      int st_h, int st_w, int pad);
+void cuda_pooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
+void cuda_unpooling(int in_n, int in_c, int in_h, int in_w, float *a, float *b, float *c, int st_h, int st_w);
+void cuda_convolute(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, float *a, float *b, float *c,
+	int st_h, int st_w, int pad);
+void cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+    float *a, float *b, float *c, int st_h, int st_w, int pad);
+void cuda_deconvolute2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w,
+    float *a, float *b, float *c, int st_h, int st_w, int pad);
+void cuda_gradfilter1(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+                 int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
+void cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w, int filt_n, int filt_c, int filt_h, int filt_w, 
+                 int loss_c, int loss_h, int loss_w, float *a, float *b, float *d, int st_h, int st_w, int pad);
 void cuda_full(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
-void cuda_unfull(int in_n, int in_c, int in_h, int in_w, float *a,
-		 float *b);
+void cuda_unfull(int in_n, int in_c, int in_h, int in_w, float *a, float *b);
 void cuda_activate_sigmoid(int n, float *a, float *b);
 void cuda_activate_tanh(int n, float *a, float *b);
 void cuda_activate_relu(int n, float *a, float *b);
@@ -1320,14 +1186,10 @@ void cuda_differ_tanh(int n, float *a, float *b, float *c);
 void cuda_differ_relu(int n, float *a, float *b, float *c);
 void cuda_dropout(int n, float dropout_rate, float *a);
 void cuda_sgd(int n, float *a, float *b, float *c, float lr);
-void cuda_momentum(int n, float *a, float *b, float *c, float *d, float *e,
-		   float lr);
-void cuda_adagrad(int n, float *a, float *b, float *c, float *d, float *e,
-		  float lr);
-void cuda_rms(int n, float *a, float *b, float *c, float *d, float *e,
-	      float lr);
-void cuda_adam(int n, float *a, float *b, float *c, float *d, float *e,
-	       float *f, float *g, float lr);
+void cuda_momentum(int n, float *a, float *b, float *c, float *d, float *e, float lr);
+void cuda_adagrad(int n, float *a, float *b, float *c, float *d, float *e, float lr);
+void cuda_rms(int n, float *a, float *b, float *c, float *d, float *e, float  lr);
+void cuda_adam(int n, float *a, float *b, float *c, float *d, float *e, float *f, float *g, float lr);
 #endif
 
 #endif

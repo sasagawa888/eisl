@@ -3,3 +3,6 @@
 eisl
 edlis
 ex/
+*.c~
+*.h~
+

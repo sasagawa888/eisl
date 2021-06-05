@@ -9,7 +9,6 @@ YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw
 
 # Installation
 
-
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
 - Type "git submodule init; git submodule update" (if you forget the makefile should do this automatically).

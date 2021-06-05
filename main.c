@@ -1,6 +1,6 @@
-/* Easy-ISLisp (ISLisp)
-written by kenichi sasagawa 2016/4~
-*/
+/*
+ * Easy-ISLisp (ISLisp) written by kenichi sasagawa 2016/4~ 
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -20,168 +20,180 @@ written by kenichi sasagawa 2016/4~
 #include "str.h"
 #include "long.h"
 
-//------pointer----
-int ep;				//environment pointer
-int dp;				//dynamic pointer
-int hp;				//heap pointer  for mark and sweep
-int sp;				//stack pointer
-int fc;				//free counter
-int ap;				//arglist pointer
-int lp;				//shelter pointer
-int wp;				//working pointer for copy GC
-int ac;				//allocate counter
+// ------pointer----
+int             ep;		// environment pointer
+int             dp;		// dynamic pointer
+int             hp;		// heap pointer for mark and sweep
+int             sp;		// stack pointer
+int             fc;		// free counter
+int             ap;		// arglist pointer
+int             lp;		// shelter pointer
+int             wp;		// working pointer for copy GC
+int             ac;		// allocate counter
 
 
-//------class-----
-int cobject;
-int cbasic_array;
-int cbasic_array_star;
-int cgeneral_array_star;
-int cbasic_vector;
-int cgeneral_vector;
-int cstring;
-int cbuilt_in_class;
-int ccharacter;
-int cfunction;
-int cgeneric_function;
-int cstandard_generic_function;
-int clist;
-int ccons;
-int cnull;
-int csymbol;
-int cnumber;
-int cfloat;
-int cinteger;
-int cserious_condition;
-int cerror;
-int carithmetic_error;
-int cdivision_by_zero;
-int cfloating_point_overflow;
-int cfloating_point_underflow;
-int ccontrol_error;
-int cparse_error;
-int cprogram_error;
-int cdomain_error;
-int cclass_error;
-int cundefined_entity;
-int cunbound_variable;
-int cundefined_function;
-int csimple_error;
-int cstream_error;
-int cend_of_stream;
-int cstorage_exhausted;
-int cstandard_class;
-int cstandard_object;
-int cstream;
-int cinvalid;
-int cfixnum;
-int clongnum;
-int cbignum;
-int cfloat_array;
+// ------class-----
+int             cobject;
+int             cbasic_array;
+int             cbasic_array_star;
+int             cgeneral_array_star;
+int             cbasic_vector;
+int             cgeneral_vector;
+int             cstring;
+int             cbuilt_in_class;
+int             ccharacter;
+int             cfunction;
+int             cgeneric_function;
+int             cstandard_generic_function;
+int             clist;
+int             ccons;
+int             cnull;
+int             csymbol;
+int             cnumber;
+int             cfloat;
+int             cinteger;
+int             cserious_condition;
+int             cerror;
+int             carithmetic_error;
+int             cdivision_by_zero;
+int             cfloating_point_overflow;
+int             cfloating_point_underflow;
+int             ccontrol_error;
+int             cparse_error;
+int             cprogram_error;
+int             cdomain_error;
+int             cclass_error;
+int             cundefined_entity;
+int             cunbound_variable;
+int             cundefined_function;
+int             csimple_error;
+int             cstream_error;
+int             cend_of_stream;
+int             cstorage_exhausted;
+int             cstandard_class;
+int             cstandard_object;
+int             cstream;
+int             cinvalid;
+int             cfixnum;
+int             clongnum;
+int             cbignum;
+int             cfloat_array;
 
 
-//stream
-int standard_input;
-int standard_output;
-int standard_error;
-int input_stream;
-int output_stream;
-int error_stream;
-char stream_str[STRSIZE];
-int charcnt;			//for format-tab. store number of chars up to now.
+// stream
+int             standard_input;
+int             standard_output;
+int             standard_error;
+int             input_stream;
+int             output_stream;
+int             error_stream;
+char            stream_str[STRSIZE];
+int             charcnt;	// for format-tab. store number of chars
+				// up to now.
 
 
-//read scaner
-token stok = { '\0', GO, OTHER, { '\0' } };
+// read scaner
+token           stok = { '\0', GO, OTHER, {'\0'} };
 
-int line;
-int column;
-int buffer[COL_SIZE + 1][NUM_HISTORY];
-int buffer1[COL_SIZE + 1];
+int             line;
+int             column;
+int             buffer[COL_SIZE + 1][NUM_HISTORY];
+int             buffer1[COL_SIZE + 1];
 
 
-//heap and stack
-cell heap[CELLSIZE];
-int stack[STACKSIZE];
-int argstk[STACKSIZE];
-int cell_hash_table[HASHTBSIZE];
-int shelter[STACKSIZE];
-int dynamic[DYNSIZE][2];
+// heap and stack
+cell            heap[CELLSIZE];
+int             stack[STACKSIZE];
+int             argstk[STACKSIZE];
+int             cell_hash_table[HASHTBSIZE];
+int             shelter[STACKSIZE];
+int             dynamic[DYNSIZE][2];
 
-//object oriented
-int generic_func;		//generic function in eval.
-int generic_vars;		//args list of generic function in eval.
-int next_method;		//head address of finded method.
-int generic_list = NIL;		//symbol list of generic function.
+// object oriented
+int             generic_func;	// generic function in eval.
+int             generic_vars;	// args list of generic function in eval.
+int             next_method;	// head address of finded method.
+int             generic_list = NIL;	// symbol list of generic
+					// function.
 
-//flag
-int gArgC;
-char **gArgV;
-bool gbc_flag = true;		//false=GC not display ,true= do display.
-int genint = 1;			//integer of gensym.
-bool simp_flag = true;		//true=simplify, false=Not for bignum
-bool ignore_flag = false;	//false=normal,true=ignore error
-bool open_flag = false;		//false=normal,true=now loading
-bool top_flag = true;		//true=top-level, false=not-top-level
-bool redef_flag = false;	//true=redefine-class, false=not-redefine
-bool start_flag = true;		//true=line-start, false=not-line-start
-bool back_flag = true;		//for backtrace, true=on, false=off
-bool ignore_topchk = false;	//for FAST compiler true=ignore,false=normal
-bool repl_flag = true;		//for REPL read_line 1=on, 0=off
-volatile sig_atomic_t exit_flag = 0;	//true= ctrl+C
-bool greeting_flag = true;	//for (quit)
-bool script_flag = false;	//for -s option
+// flag
+int             gArgC;
+char          **gArgV;
+bool            gbc_flag = true;	// false=GC not display ,true= do
+					// display.
+int             genint = 1;	// integer of gensym.
+bool            simp_flag = true;	// true=simplify, false=Not for
+					// bignum
+bool            ignore_flag = false;	// false=normal,true=ignore error
+bool            open_flag = false;	// false=normal,true=now loading
+bool            top_flag = true;	// true=top-level,
+					// false=not-top-level
+bool            redef_flag = false;	// true=redefine-class,
+					// false=not-redefine
+bool            start_flag = true;	// true=line-start,
+					// false=not-line-start
+bool            back_flag = true;	// for backtrace, true=on,
+					// false=off
+bool            ignore_topchk = false;	// for FAST compiler
+					// true=ignore,false=normal
+bool            repl_flag = true;	// for REPL read_line 1=on, 0=off
+volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
+bool            greeting_flag = true;	// for (quit)
+bool            script_flag = false;	// for -s option
 
-//switch
-int gc_sw = 0;			//0= mark-and-sweep-GC  1= copy-GC
-int area_sw = 1;		//1= lower area 2=higher area
+// switch
+int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC
+int             area_sw = 1;	// 1= lower area 2=higher area
 
-//longjmp control and etc
-Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
+// longjmp control and etc
+Except_T        Restart_Repl = { "Restart REPL" }, Exit_Interp =
     { "Exit interpreter" };
-jmp_buf block_buf[NESTED_BLOCKS_MAX];
-int block_env[NESTED_BLOCKS_MAX][2];
-jmp_buf catch_buf[10][50];
-int catch_env[10][50];
-Except_T Ignored_Error = { "Ignored error" };	//for ignore-errors
+jmp_buf         block_buf[NESTED_BLOCKS_MAX];
+int             block_env[NESTED_BLOCKS_MAX][2];
+jmp_buf         catch_buf[10][50];
+int             catch_env[10][50];
+Except_T        Ignored_Error = { "Ignored error" };	// for
+							// ignore-errors
 
-int block_tag[CTRLSTK];		//array of tag
-int catch_tag[CTRLSTK];
-int unwind_buf[CTRLSTK];
-int catch_symbols = NIL;	//to clear tag data
-int block_pt;			//index of block. following are similer
-int catch_pt = 0;		//catch counter
-int unwind_pt;			//lambda address for unwind-protect
-int block_arg;			//receive argument of block
-int catch_arg;			//receive argument of catch
-int tagbody_tag = NIL;		//tag address fo tagbody
-int error_handler;		//for store first argument of with-handler
-int trace_list = NIL;		//function list of trace
-int backtrace[BACKSIZE];
+int             block_tag[CTRLSTK];	// array of tag
+int             catch_tag[CTRLSTK];
+int             unwind_buf[CTRLSTK];
+int             catch_symbols = NIL;	// to clear tag data
+int             block_pt;	// index of block. following are similer
+int             catch_pt = 0;	// catch counter
+int             unwind_pt;	// lambda address for unwind-protect
+int             block_arg;	// receive argument of block
+int             catch_arg;	// receive argument of catch
+int             tagbody_tag = NIL;	// tag address fo tagbody
+int             error_handler;	// for store first argument of
+				// with-handler
+int             trace_list = NIL;	// function list of trace
+int             backtrace[BACKSIZE];
 
-//-----debugger-----
-int examin_sym;
-int stepper_flag = 0;
+// -----debugger-----
+int             examin_sym;
+int             stepper_flag = 0;
 
 
-int ed_lparen_col;
-int ed_rparen_col;
-const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
-int ed_candidate_pt;
-const short ed_syntax_color = COLOR_RED;
-const short ed_builtin_color = COLOR_CYAN;
-const short ed_extended_color = COLOR_MAGENTA;
-const short ed_string_color = COLOR_YELLOW;
-const short ed_comment_color = COLOR_BLUE;
-int ed_incomment = -1;		// #|...|# comment
+int             ed_lparen_col;
+int             ed_rparen_col;
+const char     *ed_candidate[COMPLETION_CANDIDATES_MAX];
+int             ed_candidate_pt;
+const short     ed_syntax_color = COLOR_RED;
+const short     ed_builtin_color = COLOR_CYAN;
+const short     ed_extended_color = COLOR_MAGENTA;
+const short     ed_string_color = COLOR_YELLOW;
+const short     ed_comment_color = COLOR_BLUE;
+int             ed_incomment = -1;	// #|...|# comment
 
 // Defaults, should be filled in later
-char ed_key_up = 'A';
-char ed_key_down = 'B';
-char ed_key_right = 'C';
-char ed_key_left = 'D';
+char            ed_key_up = 'A';
+char            ed_key_down = 'B';
+char            ed_key_right = 'C';
+char            ed_key_left = 'D';
 
-static void usage(void)
+static void
+usage(void)
 {
     puts("List of options:\n"
 	 "-c           -- EISL starts after reading compiler.lsp.\n"
@@ -193,15 +205,17 @@ static void usage(void)
 	 "-v           -- display version number.");
 }
 
-static inline void maybe_greet(void)
+static inline void
+maybe_greet(void)
 {
     if (greeting_flag)
 	Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int errret;
+    int             errret;
 
     Fmt_register('D', cvt_D);
     if (setupterm((char *) 0, 1, &errret) == ERR ||
@@ -229,16 +243,17 @@ int main(int argc, char *argv[])
     output_stream = standard_output;
     error_stream = standard_error;
 
-    int ch;
-    char *script_arg;
+    int             ch;
+    char           *script_arg;
 
-    FILE *fp = fopen("startup.lsp", "r");
+    FILE           *fp = fopen("startup.lsp", "r");
     if (fp != NULL) {
 	fclose(fp);
 	f_load(list1(makestr("startup.lsp")));
     }
     while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
-	char *home, *str;
+	char           *home,
+	               *str;
 
 	switch (ch) {
 	case 'l':
@@ -285,10 +300,10 @@ int main(int argc, char *argv[])
 	f_load(list1(makestr(script_arg)));
 	exit(EXIT_SUCCESS);
     }
-    volatile bool quit = false;
+    volatile bool   quit = false;
     do {
 	maybe_greet();
-	TRY while (1) {
+	TRY while       (1) {
 	    initpt();
 	    fputs("> ", stdout);
 	    print(eval(sread()));
@@ -303,9 +318,10 @@ int main(int argc, char *argv[])
     } while (!quit);
 }
 
-void initpt(void)
+void
+initpt(void)
 {
-    int ls;
+    int             ls;
 
     ep = 0;
     sp = 0;
@@ -325,7 +341,7 @@ void initpt(void)
     top_flag = true;
     start_flag = true;
     charcnt = 0;
-    //clear nest level of tracing function.
+    // clear nest level of tracing function.
     ls = trace_list;
     while (!nullp(ls)) {
 	SET_TR(GET_CAR(car(ls)), 0);
@@ -334,7 +350,8 @@ void initpt(void)
 }
 
 
-void signal_handler_c(int signo __unused)
+void
+signal_handler_c(int signo __unused)
 {
     exit_flag = 1;
 }
@@ -342,16 +359,17 @@ void signal_handler_c(int signo __unused)
 
 
 
-//-------read()--------
-int readc(void)
+// -------read()--------
+int
+readc(void)
 {
-    int c;
+    int             c;
     if (input_stream == standard_input && repl_flag)
 	c = read_line(1);
     else if (GET_OPT(input_stream) != EISL_INSTR) {
 	c = getc(GET_PORT(input_stream));
-	//ctrl+D
-	//if not script-mode quit system
+	// ctrl+D
+	// if not script-mode quit system
 	if (!script_flag && input_stream == standard_input && c == EOF) {
 	    greeting_flag = false;
 	    putchar('\n');
@@ -380,7 +398,8 @@ int readc(void)
     return (c);
 }
 
-void unreadc(char c)
+void
+unreadc(char c)
 {
     if (c == EOL)
 	line--;
@@ -396,10 +415,11 @@ void unreadc(char c)
 
 
 
-void gettoken(void)
+void
+gettoken(void)
 {
-    int c;
-    int pos;
+    int             c;
+    int             pos;
 
     if (stok.flag == BACK) {
 	stok.flag = GO;
@@ -424,8 +444,8 @@ void gettoken(void)
     while (c == SPACE || c == EOL || c == TAB || c == RET)
 	c = readc();
 
-    //skip comment line
-    //if find EOF at end of line, return FILEEND.
+    // skip comment line
+    // if find EOF at end of line, return FILEEND.
     if (c == ';') {
 	while (!(c == EOL)) {
 	    c = readc();
@@ -436,7 +456,7 @@ void gettoken(void)
 	}
 	goto skip;
     }
-    //if end of file,return FILEEND.
+    // if end of file,return FILEEND.
     if (c == EOF) {
 	stok.type = FILEEND;
 	return;
@@ -559,7 +579,8 @@ void gettoken(void)
 		stok.type = FLOAT_N;
 		break;
 	    }
-	    //first step,check bignum. inttoken() ignores number of digits.
+	    // first step,check bignum. inttoken() ignores number of
+	    // digits.
 	    if (bignumtoken(stok.buf)) {
 		stok.type = BIGNUM;
 		break;
@@ -601,11 +622,13 @@ void gettoken(void)
     }
 }
 
-septoken separater(char buf[], char sep)
+septoken
+separater(char buf[], char sep)
 {
-    int i, j;
-    char c;
-    septoken res;
+    int             i,
+                    j;
+    char            c;
+    septoken        res;
 
     res.sepch = NUL;
     res.after[0] = NUL;
@@ -633,9 +656,10 @@ septoken separater(char buf[], char sep)
     return (res);
 }
 
-void insertstr(char ch, char buf[])
+void
+insertstr(char ch, char buf[])
 {
-    int i;
+    int             i;
 
     i = laststr(buf) + 1;
     while (i >= 0) {
@@ -645,9 +669,10 @@ void insertstr(char ch, char buf[])
     buf[0] = ch;
 }
 
-int laststr(char buf[])
+int
+laststr(char buf[])
 {
-    int i;
+    int             i;
 
     i = 0;
     while (buf[i] != NUL)
@@ -656,10 +681,12 @@ int laststr(char buf[])
 }
 
 
-//remove #\ from char, for example #\a -> a.
-void dropchar(char buf[])
+// remove #\ from char, for example #\a -> a.
+void
+dropchar(char buf[])
 {
-    int i, j;
+    int             i,
+                    j;
 
     j = laststr(buf);
     for (i = 2; i <= j; i++)
@@ -668,11 +695,12 @@ void dropchar(char buf[])
 }
 
 
-//integer of sign. ignore number of digits.
-int inttoken(char buf[])
+// integer of sign. ignore number of digits.
+int
+inttoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     if (buf[0] == NUL)		// null string
 	return (0);
@@ -697,11 +725,12 @@ int inttoken(char buf[])
     return (1);
 }
 
-//integer without sign
-int inttoken_nsgn(char buf[])
+// integer without sign
+int
+inttoken_nsgn(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     i = 0;
     while ((c = buf[i]) != NUL) {
@@ -713,12 +742,13 @@ int inttoken_nsgn(char buf[])
     return (1);
 }
 
-int flttoken(char buf[])
+int
+flttoken(char buf[])
 {
-    septoken tok;
+    septoken        tok;
 
     if (buf[0] == '.') {
-	char bufcp[SYMSIZE];
+	char            bufcp[SYMSIZE];
 
 	if (buf[1] == '0')
 	    return (0);
@@ -743,10 +773,11 @@ int flttoken(char buf[])
 	return (0);
 }
 
-int bignumtoken(char buf[])
+int
+bignumtoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     if (((buf[0] == '+') || (buf[0] == '-'))) {
 	if (buf[1] == NUL)
@@ -758,7 +789,7 @@ int bignumtoken(char buf[])
 	    else
 		return (0);
 	if (strlen(buf) <= 10)
-	    return (0);		//case not bignum
+	    return (0);		// case not bignum
     } else {
 	i = 0;			// {1234...}
 	while ((c = buf[i]) != NUL)
@@ -767,16 +798,17 @@ int bignumtoken(char buf[])
 	    else
 		return (0);
 	if (strlen(buf) <= 9)
-	    return (0);		//case not bignum
+	    return (0);		// case not bignum
     }
-    return (1);			//bignum
+    return (1);			// bignum
 }
 
 
-int symboltoken(char buf[])
+int
+symboltoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     i = 0;
     while ((c = buf[i]) != NUL)
@@ -785,7 +817,7 @@ int symboltoken(char buf[])
 	else
 	    return (0);
 
-    //fold to upper letter.
+    // fold to upper letter.
     i = 0;
     while ((c = buf[i]) != NUL) {
 	buf[i] = toupper(c);
@@ -794,10 +826,11 @@ int symboltoken(char buf[])
     return (1);
 }
 
-int bintoken(char buf[])
+int
+bintoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     if (!(buf[0] == '#' && (buf[1] == 'b' || buf[1] == 'B')))
 	return (0);
@@ -822,10 +855,11 @@ int bintoken(char buf[])
 	return (0);
 }
 
-int octtoken(char buf[])
+int
+octtoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     if (!(buf[0] == '#' && (buf[1] == 'o' || buf[1] == 'O')))
 	return (0);
@@ -850,10 +884,11 @@ int octtoken(char buf[])
 	return (0);
 }
 
-int dectoken(char buf[])
+int
+dectoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     if (!(buf[0] == '#' && (buf[1] == 'd' || buf[1] == 'D')))
 	return (0);
@@ -875,10 +910,11 @@ int dectoken(char buf[])
 	return (0);
 }
 
-int hextoken(char buf[])
+int
+hextoken(char buf[])
 {
-    int i;
-    char c;
+    int             i;
+    char            c;
 
     if (!(buf[0] == '#' && (buf[1] == 'x' || buf[1] == 'X')))
 	return (0);
@@ -903,10 +939,11 @@ int hextoken(char buf[])
 }
 
 
-int expttoken(char buf[])
+int
+expttoken(char buf[])
 {
-    septoken tok;
-    char buf1[BUFSIZE];
+    septoken        tok;
+    char            buf1[BUFSIZE];
 
     if (buf[0] == '.')		// e.g. ".2E3"
 	return (0);
@@ -934,7 +971,8 @@ int expttoken(char buf[])
 }
 
 
-int issymch(char c)
+int
+issymch(char c)
 {
     switch (c) {
     case '!':
@@ -969,10 +1007,11 @@ int issymch(char c)
 }
 
 
-int sread(void)
+int
+sread(void)
 {
-    int n;
-    char *e;
+    int             n;
+    char           *e;
 
     gettoken();
     switch (stok.type) {
@@ -1033,9 +1072,11 @@ int sread(void)
     return (0);
 }
 
-int readlist(void)
+int
+readlist(void)
 {
-    int rl_car, rl_cdr;
+    int             rl_car,
+                    rl_cdr;
 
     gettoken();
     if (stok.type == RPAREN)
@@ -1056,10 +1097,15 @@ int readlist(void)
     }
 }
 
-int readbin(char *buf)
+int
+readbin(char *buf)
 {
-    char str[BUFSIZE], *e;
-    int pos, n, res, inc;
+    char            str[BUFSIZE],
+                   *e;
+    int             pos,
+                    n,
+                    res,
+                    inc;
 
     n = strlen(buf);
     if (n <= 31)
@@ -1070,7 +1116,7 @@ int readbin(char *buf)
     inc = makeint(2);
 
     while (pos < n) {
-	int part;
+	int             part;
 
 	str[0] = buf[pos];
 	str[1] = NUL;
@@ -1081,10 +1127,15 @@ int readbin(char *buf)
     return (res);
 }
 
-int readoct(char *buf)
+int
+readoct(char *buf)
 {
-    char str[BUFSIZE], *e;
-    int pos, n, res, inc;
+    char            str[BUFSIZE],
+                   *e;
+    int             pos,
+                    n,
+                    res,
+                    inc;
 
     n = strlen(buf);
     if (n <= 10)
@@ -1095,7 +1146,7 @@ int readoct(char *buf)
     inc = makeint(8);
 
     while (pos < n) {
-	int part;
+	int             part;
 
 	str[0] = buf[pos];
 	str[1] = NUL;
@@ -1107,10 +1158,15 @@ int readoct(char *buf)
 }
 
 
-int readhex(char *buf)
+int
+readhex(char *buf)
 {
-    char str[BUFSIZE], *e;
-    int pos, n, res, inc;
+    char            str[BUFSIZE],
+                   *e;
+    int             pos,
+                    n,
+                    res,
+                    inc;
 
     n = strlen(buf);
     if (n <= 7)
@@ -1121,7 +1177,7 @@ int readhex(char *buf)
     inc = makeint(16);
 
     while (pos < n) {
-	int part;
+	int             part;
 
 	str[0] = buf[pos];
 	str[1] = NUL;
@@ -1132,8 +1188,9 @@ int readhex(char *buf)
     return (res);
 }
 
-//-----print------------------
-void print(int addr)
+// -----print------------------
+void
+print(int addr)
 {
     switch (GET_TAG(addr)) {
     case INTN:
@@ -1206,42 +1263,46 @@ void print(int addr)
     }
 }
 
-void printint(int addr)
+void
+printint(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
 	Fmt_fprint(GET_PORT(output_stream), "%d", GET_INT(addr));
     else {
-	char str[SHORT_STRSIZE];
+	char            str[SHORT_STRSIZE];
 	Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(addr));
 	append_str(output_stream, str);
     }
 }
 
-void printflt(double x)
+void
+printflt(double x)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	fprintf(GET_PORT(output_stream), "%g", x);
     } else {
-	char str[SHORT_STRSIZE];
+	char            str[SHORT_STRSIZE];
 	snprintf(str, SHORT_STRSIZE, "%g", x);
 	append_str(output_stream, str);
     }
 }
 
 
-void printlong(int addr)
+void
+printlong(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	Fmt_fprint(GET_PORT(output_stream), "%D", GET_LONG(addr));
     } else {
-	char str[SHORT_STRSIZE];
+	char            str[SHORT_STRSIZE];
 	Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(addr));
 	append_str(output_stream, str);
     }
 }
 
 
-void printlist(int addr)
+void
+printlist(int addr)
 {
     if (IS_NIL(addr)) {
 	output_char(output_stream, ')');
@@ -1259,9 +1320,11 @@ void printlist(int addr)
     }
 }
 
-void printvec(int x)
+void
+printvec(int x)
 {
-    int len, i;
+    int             len,
+                    i;
 
     output_str(output_stream, "#(");
     len = cdr(x);
@@ -1275,9 +1338,14 @@ void printvec(int x)
     output_char(output_stream, ')');
 }
 
-void printarray(int x)
+void
+printarray(int x)
 {
-    int i, size, st, ls, dim;
+    int             i,
+                    size,
+                    st,
+                    ls,
+                    dim;
 
     st = ls = GET_CDR(x);
     size = 1;
@@ -1293,7 +1361,7 @@ void printarray(int x)
     if (GET_OPT(output_stream) != EISL_INSTR)
 	Fmt_fprint(GET_PORT(output_stream), "#%da", dim);
     else {
-	char str[SHORT_STRSIZE];
+	char            str[SHORT_STRSIZE];
 	Fmt_sfmt(str, SHORT_STRSIZE, "#%da", dim);
 	append_str(output_stream, str);
     }
@@ -1305,10 +1373,15 @@ void printarray(int x)
 
 #define IDX2C(i,j,ld) (((j)*(ld))+(i))
 #define IDX2R(i,j,ld) (((i)*(ld))+(j))
-void printfarray(int x)
+void
+printfarray(int x)
 {
-    int i, size, st, ls, dim;
-    float *vec1;
+    int             i,
+                    size,
+                    st,
+                    ls,
+                    dim;
+    float          *vec1;
 
     st = ls = GET_CDR(x);
     size = 1;
@@ -1320,8 +1393,10 @@ void printfarray(int x)
     ls = NIL;
     if (length(st) == 2) {
 	if (size < 100) {
-	    int j, r, c;
-	    float *vec2;
+	    int             j,
+	                    r,
+	                    c;
+	    float          *vec2;
 
 	    vec1 = GET_FVEC(x);
 	    vec2 = (float *) ALLOC(sizeof(float) * size);
@@ -1348,7 +1423,7 @@ void printfarray(int x)
     if (GET_OPT(output_stream) != EISL_INSTR)
 	Fmt_fprint(GET_PORT(output_stream), "#%df", dim);
     else {
-	char str[SHORT_STRSIZE];
+	char            str[SHORT_STRSIZE];
 	Fmt_sfmt(str, SHORT_STRSIZE, "#%df", dim);
 	append_str(output_stream, str);
     }
@@ -1360,7 +1435,8 @@ void printfarray(int x)
 	print(ls);
 }
 
-void printstr(int addr)
+void
+printstr(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	Fmt_fprint(GET_PORT(output_stream), "\"%s\"", GET_NAME(addr));
@@ -1370,7 +1446,8 @@ void printstr(int addr)
     }
 }
 
-void printchar(int addr)
+void
+printchar(int addr)
 {
     output_str(output_stream, "#\\");
     switch (GET_CHAR(addr)) {
@@ -1385,17 +1462,20 @@ void printchar(int addr)
     }
 }
 
-void printsym(int addr)
+void
+printsym(int addr)
 {
     output_str(output_stream, GET_NAME(addr));
 }
 
-void printobj(const char *str)
+void
+printobj(const char *str)
 {
     output_str(output_stream, str);
 }
 
-void printclass(int addr)
+void
+printclass(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
 	Fmt_fprint(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
@@ -1405,7 +1485,8 @@ void printclass(int addr)
     }
 }
 
-void printstream(int addr)
+void
+printstream(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
 	Fmt_fprint(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
@@ -1416,19 +1497,23 @@ void printstream(int addr)
     }
 }
 
-static void clean_stdin(void)
+static void
+clean_stdin(void)
 {
-    int c;
+    int             c;
     do {
 	c = getchar();
     } while (c != '\n' && c != EOF);
 }
 
-//--------eval---------------
-int eval(int addr)
+// --------eval---------------
+int
+eval(int addr)
 {
-    int val, res, temp;
-    char c;
+    int             val,
+                    res,
+                    temp;
+    char            c;
 
     (void) checkgbc();
 
@@ -1510,9 +1595,16 @@ int eval(int addr)
 }
 
 DEF_GETTER(char, TR, trace, NIL)
-int apply(int func, int args)
+     int             apply(int func, int args)
 {
-    int varlist, body, res, pexist, aexist, i, n, trace;
+    int             varlist,
+                    body,
+                    res,
+                    pexist,
+                    aexist,
+                    i,
+                    n,
+                    trace;
     res = NIL;
     pexist = 0;
     aexist = 0;
@@ -1568,7 +1660,7 @@ int apply(int func, int args)
 	ep = pop();
 	return (res);
     case MACRO:{
-	    int macrofunc;
+	    int             macrofunc;
 
 	    if (improperlistp(args))
 		error(IMPROPER_ARGS, "apply", args);
@@ -1597,7 +1689,7 @@ int apply(int func, int args)
 	}
 
     case GENERIC:{
-	    int method;
+	    int             method;
 
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
@@ -1653,9 +1745,11 @@ int apply(int func, int args)
     return (0);
 }
 
-void bindarg(int varlist, int arglist)
+void
+bindarg(int varlist, int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     push(ep);
     while (!(IS_NIL(varlist))) {
@@ -1675,13 +1769,15 @@ void bindarg(int varlist, int arglist)
     }
 }
 
-void unbind(void)
+void
+unbind(void)
 {
     ep = pop();
 }
 
 
-int evlis(int addr)
+int
+evlis(int addr)
 {
     argpush(addr);
     top_flag = false;
@@ -1689,7 +1785,8 @@ int evlis(int addr)
 	argpop();
 	return (addr);
     } else {
-	int car_addr, cdr_addr;
+	int             car_addr,
+	                cdr_addr;
 
 	car_addr = eval(car(addr));
 	argpush(car_addr);
@@ -1701,9 +1798,10 @@ int evlis(int addr)
 }
 
 /*
-check class matching of argument of lambda and received argument.
-*/
-int matchp(int varlist, int arglist)
+ * check class matching of argument of lambda and received argument. 
+ */
+int
+matchp(int varlist, int arglist)
 {
 
     if (nullp(varlist) && nullp(arglist))
@@ -1714,21 +1812,23 @@ int matchp(int varlist, int arglist)
 	return (1);
     else if (eqp(makesym("&rest"), car(varlist)))
 	return (1);
-    else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	//match class
+    else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
+								// class
 	return (matchp(cdr(varlist), cdr(arglist)));
-    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	//subclass
+    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
 	return (matchp(cdr(varlist), cdr(arglist)));
     else
 	return (0);
 }
 
 /*
-change lambda list of function to normal argument.
-ex ((x <number>)(y <list>)) -> (x y)
-*/
-int genlamlis_to_lamlis(int varlist)
+ * change lambda list of function to normal argument. ex ((x <number>)(y
+ * <list>)) -> (x y) 
+ */
+int
+genlamlis_to_lamlis(int varlist)
 {
-    int res;
+    int             res;
 
     res = NIL;
     while (!nullp(varlist)) {
@@ -1743,8 +1843,9 @@ int genlamlis_to_lamlis(int varlist)
 }
 
 
-//for stack to store ep(environment)
-int push(int pt)
+// for stack to store ep(environment)
+int
+push(int pt)
 {
     if (sp >= STACKSIZE)
 	error(STACK_OVERF, "push", NIL);
@@ -1753,28 +1854,32 @@ int push(int pt)
     return (T);
 }
 
-int pop(void)
+int
+pop(void)
 {
     if (sp <= 0)
 	error(STACK_UNDERF, "pop", NIL);
     return (stack[--sp]);
 }
 
-//push/pop of arglist
-int argpush(int addr)
+// push/pop of arglist
+int
+argpush(int addr)
 {
     argstk[ap++] = addr;
 
     return (T);
 }
 
-int argpop(void)
+int
+argpop(void)
 {
     return (argstk[--ap]);
 }
 
-//shelter push/pop
-int shelterpush(int addr)
+// shelter push/pop
+int
+shelterpush(int addr)
 {
     if (lp >= STACKSIZE)
 	error(SHELTER_OVERF, "shelterpush", NIL);
@@ -1783,48 +1888,57 @@ int shelterpush(int addr)
     return (T);
 }
 
-int shelterpop(void)
+int
+shelterpop(void)
 {
     if (lp <= 0)
 	error(SHELTER_UNDERF, "shelterpop", NIL);
     return (shelter[--lp]);
 }
 
-//--------system function
-//regist subr to environment.
-void defsubr(const char *symname, int (*func)(int))
+// --------system function
+// regist subr to environment.
+void
+defsubr(const char *symname, int (*func)(int))
 {
     bindfunc(symname, SUBR, func);
 }
 
-//regist fsubr(not eval argument)
-void deffsubr(const char *symname, int (*func)(int))
+// regist fsubr(not eval argument)
+void
+deffsubr(const char *symname, int (*func)(int))
 {
     bindfunc(symname, FSUBR, func);
 }
 
 
-static inline void SET_SUBR(int addr, subr_t x)
+static inline void
+SET_SUBR(int addr, subr_t x)
 {
     heap[addr].val.car.subr = x;
 }
 
-void bindfunc(const char *name, tag tag, int (*func)(int))
+void
+bindfunc(const char *name, tag tag, int (*func)(int))
 {
-    int sym, val;
+    int             sym,
+                    val;
 
     sym = makesym(name);
     val = freshcell();
     SET_TAG(val, tag);
     SET_SUBR(val, func);
     SET_CDR(val, 0);
-    SET_AUX(val, cfunction);	//class function
+    SET_AUX(val, cfunction);	// class function
     SET_CAR(sym, val);
 }
 
-void bindmacro(char *name, int addr)
+void
+bindmacro(char *name, int addr)
 {
-    int sym, val1, val2;
+    int             sym,
+                    val1,
+                    val2;
 
     sym = makesym(name);
     val1 = freshcell();
@@ -1833,30 +1947,32 @@ void bindmacro(char *name, int addr)
     SET_CDR(val1, 0);
     val2 = freshcell();
     SET_TAG(val2, MACRO);
-    TRY heap[val2].name = Str_dup(name, 1, 0, 1);
+    TRY             heap[val2].name = Str_dup(name, 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makemacro", NIL);
     END_TRY;
     SET_CAR(val2, val1);
     SET_CDR(val2, 0);
-    SET_AUX(val2, cfunction);	//class
-    SET_OPT(val2, (signed char) count_args(car(addr)));	//count of args
+    SET_AUX(val2, cfunction);	// class
+    SET_OPT(val2, (signed char) count_args(car(addr)));	// count of args
     SET_CAR(sym, val2);
 }
 
-void bindconst(const char *name, int obj)
+void
+bindconst(const char *name, int obj)
 {
-    int sym;
+    int             sym;
 
     sym = makesym(name);
     SET_CDR(sym, obj);
     SET_OPT(sym, CONSTN);
 }
 
-//--------qusi quote---------------
-int quasi_transfer(int x, int n)
+// --------qusi quote---------------
+int
+quasi_transfer(int x, int n)
 {
-    //printf("%d",n); print(x);putchar('\n');
+    // printf("%d",n); print(x);putchar('\n');
 
     if (nullp(x))
 	return (NIL);
@@ -1897,10 +2013,12 @@ int quasi_transfer(int x, int n)
 		 quasi_transfer(cdr(x), n)));
 }
 
-//--------debug---------------
-void debugger()
+// --------debug---------------
+void
+debugger()
 {
-    int i, x;
+    int             i,
+                    x;
 
     puts("debug mode ?(help)");
     while (1) {

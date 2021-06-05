@@ -7,17 +7,20 @@
 #include "mem.h"
 #include "fmt.h"
 
-int get_int(int addr)
+int
+get_int(int addr)
 {
     return (GET_INT(addr));
 }
 
-long long int get_long(int addr)
+long long int
+get_long(int addr)
 {
     return (GET_LONG(addr));
 }
 
-int atomp(int addr)
+int
+atomp(int addr)
 {
     if (!(IS_LIST(addr)))
 	return (1);
@@ -25,7 +28,8 @@ int atomp(int addr)
 	return (0);
 }
 
-int numberp(int addr)
+int
+numberp(int addr)
 {
     if (IS_INTEGER(addr) || IS_FLOAT(addr) || IS_LONGNUM(addr)
 	|| IS_BIGXNUM(addr))
@@ -34,7 +38,8 @@ int numberp(int addr)
 	return (0);
 }
 
-int integerp(int x)
+int
+integerp(int x)
 {
     if (IS_INTEGER(x))
 	return (1);
@@ -42,7 +47,8 @@ int integerp(int x)
 	return (0);
 }
 
-int bignump(int x)
+int
+bignump(int x)
 {
     if (IS_BIGXNUM(x))
 	return (1);
@@ -50,7 +56,8 @@ int bignump(int x)
 	return (0);
 }
 
-int longnump(int x)
+int
+longnump(int x)
 {
     if (IS_LONGNUM(x))
 	return (1);
@@ -58,7 +65,8 @@ int longnump(int x)
 	return (0);
 }
 
-int floatp(int x)
+int
+floatp(int x)
 {
     if (IS_FLOAT(x))
 	return (1);
@@ -66,7 +74,8 @@ int floatp(int x)
 	return (0);
 }
 
-int math_integerp(int addr)
+int
+math_integerp(int addr)
 {
     if (IS_INTEGER(addr) || IS_LONGNUM(addr) || IS_BIGXNUM(addr))
 	return (1);
@@ -76,7 +85,7 @@ int math_integerp(int addr)
 
 
 DEF_PREDICATE(SYMBOL, SYM)
-int symbolp(int addr)
+     int             symbolp(int addr)
 {
     if (IS_SYMBOL(addr))
 	return (1);
@@ -84,7 +93,8 @@ int symbolp(int addr)
 	return (0);
 }
 
-int listp(int addr)
+int
+listp(int addr)
 {
     if (IS_LIST(addr) || IS_NIL(addr))
 	return (1);
@@ -92,7 +102,8 @@ int listp(int addr)
 	return (0);
 }
 
-int nullp(int addr)
+int
+nullp(int addr)
 {
     if (IS_NIL(addr))
 	return (1);
@@ -100,7 +111,8 @@ int nullp(int addr)
 	return (0);
 }
 
-int eqp(int addr1, int addr2)
+int
+eqp(int addr1, int addr2)
 {
     if (addr1 == addr2)
 	return (1);
@@ -108,9 +120,12 @@ int eqp(int addr1, int addr2)
 	return (0);
 }
 
-int eqlp(int addr1, int addr2)
+int
+eqlp(int addr1, int addr2)
 {
-    int i, n, ls;
+    int             i,
+                    n,
+                    ls;
 
     if (addr1 == addr2)
 	return (1);
@@ -183,11 +198,13 @@ int eqlp(int addr1, int addr2)
 	return (0);
 }
 
-int equalp(int addr1, int addr2)
+int
+equalp(int addr1, int addr2)
 {
     if (vectorp(addr1) && vectorp(addr2)) {
 	if (vector_length(addr1) == vector_length(addr2)) {
-	    int i, n;
+	    int             i,
+	                    n;
 
 	    n = vector_length(addr1);
 	    for (i = 0; i < n; i++) {
@@ -211,7 +228,8 @@ int equalp(int addr1, int addr2)
 
 }
 
-int subrp(int addr)
+int
+subrp(int addr)
 {
 
     if (IS_SUBR(GET_CAR(addr)))
@@ -220,7 +238,8 @@ int subrp(int addr)
 	return (0);
 }
 
-int fsubrp(int addr)
+int
+fsubrp(int addr)
 {
 
     if (IS_FSUBR(GET_CAR(addr)))
@@ -229,9 +248,10 @@ int fsubrp(int addr)
 	return (0);
 }
 
-int functionp(int addr)
+int
+functionp(int addr)
 {
-    int val;
+    int             val;
 
     val = finddyn(addr);
     if ((val != -1) && IS_FUNC(val))
@@ -246,7 +266,8 @@ int functionp(int addr)
 	return (0);
 }
 
-int macrop(int addr)
+int
+macrop(int addr)
 {
     if (!CELLRANGE(addr))
 	return (0);
@@ -258,7 +279,8 @@ int macrop(int addr)
 	return (0);
 }
 
-int genericp(int addr)
+int
+genericp(int addr)
 {
 
     if (IS_GENERIC(GET_CAR(addr)))
@@ -268,7 +290,8 @@ int genericp(int addr)
 
 }
 
-int stringp(int x)
+int
+stringp(int x)
 {
     if (IS_STRING(x))
 	return (1);
@@ -278,7 +301,7 @@ int stringp(int x)
 
 
 DEF_PREDICATE(CHARACTER, CHR)
-int charp(int x)
+     int             charp(int x)
 {
     if (IS_CHARACTER(x))
 	return (1);
@@ -286,7 +309,8 @@ int charp(int x)
 	return (0);
 }
 
-int vectorp(int x)
+int
+vectorp(int x)
 {
     if (IS_VECTOR(x))
 	return (1);
@@ -294,7 +318,8 @@ int vectorp(int x)
 	return (0);
 }
 
-int arrayp(int x)
+int
+arrayp(int x)
 {
     if (IS_ARRAY(x))
 	return (1);
@@ -302,7 +327,8 @@ int arrayp(int x)
 	return (0);
 }
 
-int farrayp(int x)
+int
+farrayp(int x)
 {
     if (IS_FARRAY(x))
 	return (1);
@@ -311,7 +337,7 @@ int farrayp(int x)
 }
 
 DEF_PREDICATE(STREAM, STREAM)
-int streamp(int x)
+     int             streamp(int x)
 {
     if (IS_STREAM(x))
 	return (1);
@@ -319,7 +345,8 @@ int streamp(int x)
 	return (0);
 }
 
-int input_stream_p(int x)
+int
+input_stream_p(int x)
 {
     if (streamp(x)
 	&& (GET_OPT(x) == EISL_INPUT || GET_OPT(x) == EISL_INSTR))
@@ -328,7 +355,8 @@ int input_stream_p(int x)
 	return (0);
 }
 
-int output_stream_p(int x)
+int
+output_stream_p(int x)
 {
     if (streamp(x)
 	&& (GET_OPT(x) == EISL_OUTPUT || GET_OPT(x) == EISL_OUTSTR))
@@ -337,7 +365,8 @@ int output_stream_p(int x)
 	return (0);
 }
 
-int class_symbol_p(int x)
+int
+class_symbol_p(int x)
 {
     if (IS_SYMBOL(x) && GET_OPT(x) == SYSTEM)
 	return (1);
@@ -345,7 +374,8 @@ int class_symbol_p(int x)
 	return (0);
 }
 
-int classp(int x)
+int
+classp(int x)
 {
     if (IS_CLASS(x))
 	return (1);
@@ -353,7 +383,8 @@ int classp(int x)
 	return (0);
 }
 
-int subclassp(int x, int y)
+int
+subclassp(int x, int y)
 {
     if (x == y)
 	return (0);
@@ -363,7 +394,8 @@ int subclassp(int x, int y)
 	return (subclassp1(x, y));
 }
 
-int subclassp1(int x, int y)
+int
+subclassp1(int x, int y)
 {
     if (nullp(x))
 	return (0);
@@ -389,7 +421,8 @@ int subclassp1(int x, int y)
     }
 }
 
-int hascommonp(int ls)
+int
+hascommonp(int ls)
 {
     if (length(ls) < 2)
 	return (0);
@@ -403,7 +436,8 @@ int hascommonp(int ls)
     return (0);
 }
 
-int hascommonp1(int x, int y)
+int
+hascommonp1(int x, int y)
 {
     if (includep(GET_CAR(GET_AUX(x)), GET_CAR(GET_AUX(y))))
 	return (1);
@@ -411,7 +445,8 @@ int hascommonp1(int x, int y)
 	return (0);
 }
 
-int includep(int x, int y)
+int
+includep(int x, int y)
 {
     while (!nullp(x)) {
 	if (member(car(x), y))
@@ -422,7 +457,8 @@ int includep(int x, int y)
     return (0);
 }
 
-int hassamep(int ls)
+int
+hassamep(int ls)
 {
     while (!nullp(ls)) {
 	if (member(car(ls), cdr(ls)))
@@ -433,7 +469,8 @@ int hassamep(int ls)
     return (0);
 }
 
-int hassysclassp(int ls)
+int
+hassysclassp(int ls)
 {
     while (!nullp(ls)) {
 	if (GET_OPT(car(ls)) == SYSTEM)
@@ -444,7 +481,8 @@ int hassysclassp(int ls)
     return (0);
 }
 
-int notexistclassp(int ls)
+int
+notexistclassp(int ls)
 {
     while (!nullp(ls)) {
 	if (GET_AUX(car(ls)) == csymbol)
@@ -455,7 +493,8 @@ int notexistclassp(int ls)
     return (0);
 }
 
-int illegallambdap(int ls)
+int
+illegallambdap(int ls)
 {
     if (!listp(ls) && !nullp(ls))
 	return (1);
@@ -494,7 +533,8 @@ int illegallambdap(int ls)
 
 }
 
-int improperlistp(int ls)
+int
+improperlistp(int ls)
 {
     if (nullp(ls))
 	return (0);
@@ -504,7 +544,8 @@ int improperlistp(int ls)
 	return (improperlistp(cdr(ls)));
 }
 
-int duplicatelistp(int ls)
+int
+duplicatelistp(int ls)
 {
     if (nullp(ls))
 	return (0);
@@ -527,7 +568,8 @@ int duplicatelistp(int ls)
 	return (duplicatelistp(cdr(ls)));
 }
 
-int symbollistp(int ls)
+int
+symbollistp(int ls)
 {
     if (nullp(ls))
 	return (1);
@@ -541,64 +583,76 @@ int symbollistp(int ls)
 	return (symbollistp(cdr(ls)));
 }
 
-//--------------list operation---------------------
+// --------------list operation---------------------
 
-int car(int addr)
+int
+car(int addr)
 {
     return (GET_CAR(addr));
 }
 
-int caar(int addr)
+int
+caar(int addr)
 {
     return (car(car(addr)));
 }
 
-int cdar(int addr)
+int
+cdar(int addr)
 {
     return (cdr(car(addr)));
 }
 
-int cdr(int addr)
+int
+cdr(int addr)
 {
     return (GET_CDR(addr));
 }
 
-int cadr(int addr)
+int
+cadr(int addr)
 {
     return (car(cdr(addr)));
 }
 
-int cddr(int addr)
+int
+cddr(int addr)
 {
     return (cdr(cdr(addr)));
 }
 
-int caddr(int addr)
+int
+caddr(int addr)
 {
     return (car(cdr(cdr(addr))));
 }
 
-int cadar(int addr)
+int
+cadar(int addr)
 {
     return (car(cdr(car(addr))));
 }
 
-int cdddr(int addr)
+int
+cdddr(int addr)
 {
     return (cdr(cdr(cdr(addr))));
 }
 
-int caddar(int addr)
+int
+caddar(int addr)
 {
     return (car(cdr(cdr(car(addr)))));
 }
 
-int cadddr(int addr)
+int
+cadddr(int addr)
 {
     return (car(cdr((cdr(cdr(addr))))));
 }
 
-int nth(int n, int addr)
+int
+nth(int n, int addr)
 {
     while (n > 0) {
 	addr = cdr(addr);
@@ -607,34 +661,37 @@ int nth(int n, int addr)
     return (car(addr));
 }
 
-int cons(int car, int cdr)
+int
+cons(int car, int cdr)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);
     SET_CDR(addr, cdr);
-    SET_AUX(addr, ccons);	//cons class
+    SET_AUX(addr, ccons);	// cons class
     return (addr);
 }
 
-int hcons(int car, int cdr)
+int
+hcons(int car, int cdr)
 {
-    int addr;
+    int             addr;
 
     addr = hfreshcell();
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);
     SET_CDR(addr, cdr);
-    SET_AUX(addr, ccons);	//cons class
+    SET_AUX(addr, ccons);	// cons class
     return (addr);
 }
 
 
-int length(int addr)
+int
+length(int addr)
 {
-    int len = 0;
+    int             len = 0;
 
     while (!nullp(addr) && !atomp(addr)) {
 	len++;
@@ -643,7 +700,8 @@ int length(int addr)
     return (len);
 }
 
-int list(int arglist)
+int
+list(int arglist)
 {
     if (nullp(arglist))
 	return (NIL);
@@ -651,7 +709,8 @@ int list(int arglist)
 	return (cons(car(arglist), list(cdr(arglist))));
 }
 
-int assoc(int x, int y)
+int
+assoc(int x, int y)
 {
     if (nullp(y))
 	return (0);
@@ -661,7 +720,8 @@ int assoc(int x, int y)
 	return (assoc(x, cdr(y)));
 }
 
-int assq(int x, int y)
+int
+assq(int x, int y)
 {
     if (nullp(y))
 	return (FAILSE);
@@ -671,7 +731,8 @@ int assq(int x, int y)
 	return (assq(x, cdr(y)));
 }
 
-int assoclistp(int ls)
+int
+assoclistp(int ls)
 {
     while (!nullp(ls)) {
 	if (!listp(car(ls)))
@@ -682,7 +743,8 @@ int assoclistp(int ls)
     return (1);
 }
 
-int member(int x, int y)
+int
+member(int x, int y)
 {
     if (nullp(y))
 	return (NIL);
@@ -692,7 +754,8 @@ int member(int x, int y)
 	return (member(x, cdr(y)));
 }
 
-int member1(int x, int y, int z)
+int
+member1(int x, int y, int z)
 {
     if (nullp(y))
 	return (NIL);
@@ -702,7 +765,8 @@ int member1(int x, int y, int z)
 	return (member1(x, cdr(y), z));
 }
 
-int mapcar(int x, int y)
+int
+mapcar(int x, int y)
 {
     if (member(NIL, y))
 	return (NIL);
@@ -710,7 +774,8 @@ int mapcar(int x, int y)
 	return (cons(apply(x, each_car(y)), mapcar(x, each_cdr(y))));
 }
 
-int each_car(int x)
+int
+each_car(int x)
 {
     if (nullp(x))
 	return (NIL);
@@ -718,7 +783,8 @@ int each_car(int x)
 	return (cons(caar(x), each_car(cdr(x))));
 }
 
-int each_cdr(int x)
+int
+each_cdr(int x)
 {
     if (nullp(x))
 	return (NIL);
@@ -727,9 +793,10 @@ int each_cdr(int x)
 }
 
 
-int mapc(int x, int y)
+int
+mapc(int x, int y)
 {
-    int ls;
+    int             ls;
 
     ls = y;
     while (!member(NIL, ls)) {
@@ -739,7 +806,8 @@ int mapc(int x, int y)
     return (car(y));
 }
 
-int maplist(int x, int y)
+int
+maplist(int x, int y)
 {
     if (member(NIL, y))
 	return (NIL);
@@ -747,9 +815,10 @@ int maplist(int x, int y)
 	return (cons(apply(x, y), maplist(x, maplist1(y))));
 }
 
-int maplist1(int y)
+int
+maplist1(int y)
 {
-    int res;
+    int             res;
 
     res = NIL;
     while (y != NIL) {
@@ -761,9 +830,10 @@ int maplist1(int y)
     return (reverse(res));
 }
 
-int mapl(int x, int y)
+int
+mapl(int x, int y)
 {
-    int res;
+    int             res;
 
     res = y;
     while (!member(NIL, y)) {
@@ -773,9 +843,10 @@ int mapl(int x, int y)
     return (car(res));
 }
 
-int mapcon(int x, int y)
+int
+mapcon(int x, int y)
 {
-    int res;
+    int             res;
 
     if (member(NIL, y))
 	return (NIL);
@@ -789,9 +860,10 @@ int mapcon(int x, int y)
 }
 
 
-int mapcan(int x, int y)
+int
+mapcan(int x, int y)
 {
-    int res;
+    int             res;
 
     if (member(NIL, y))
 	return (NIL);
@@ -805,39 +877,46 @@ int mapcan(int x, int y)
 }
 
 
-//extension
-int list1(int x)
+// extension
+int
+list1(int x)
 {
     return (cons(x, NIL));
 }
 
-int hlist1(int x)
+int
+hlist1(int x)
 {
     return (hcons(x, NIL));
 }
 
-int list2(int x, int y)
+int
+list2(int x, int y)
 {
     return (cons(x, cons(y, NIL)));
 }
 
-int list3(int x, int y, int z)
+int
+list3(int x, int y, int z)
 {
     return (cons(x, cons(y, cons(z, NIL))));
 }
 
-int list4(int x1, int x2, int x3, int x4)
+int
+list4(int x1, int x2, int x3, int x4)
 {
     return (cons(x1, cons(x2, cons(x3, cons(x4, NIL)))));
 }
 
-int list6(int x1, int x2, int x3, int x4, int x5, int x6)
+int
+list6(int x1, int x2, int x3, int x4, int x5, int x6)
 {
     return (cons
 	    (x1, cons(x2, cons(x3, cons(x4, cons(x5, cons(x6, NIL)))))));
 }
 
-int list8(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8)
+int
+list8(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8)
 {
     return (cons(x1, cons(x2, cons(x3, cons(x4, cons(x5,
 						     cons(x6,
@@ -846,8 +925,9 @@ int list8(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8)
 								    NIL)))))))));
 }
 
-int list10(int x1, int x2, int x3, int x4, int x5,
-	   int x6, int x7, int x8, int x9, int x10)
+int
+list10(int x1, int x2, int x3, int x4, int x5,
+       int x6, int x7, int x8, int x9, int x10)
 {
     return (cons(x1, cons(x2, cons(x3, cons(x4, cons(x5,
 						     cons(x6,
@@ -861,8 +941,9 @@ int list10(int x1, int x2, int x3, int x4, int x5,
 }
 
 
-int list11(int x1, int x2, int x3, int x4, int x5,
-	   int x6, int x7, int x8, int x9, int x10, int x11)
+int
+list11(int x1, int x2, int x3, int x4, int x5,
+       int x6, int x7, int x8, int x9, int x10, int x11)
 {
     return (cons(x1, cons(x2, cons(x3, cons(x4, cons(x5,
 						     cons(x6,
@@ -878,9 +959,10 @@ int list11(int x1, int x2, int x3, int x4, int x5,
 }
 
 
-int reverse(int x)
+int
+reverse(int x)
 {
-    int res;
+    int             res;
 
     res = NIL;
     while (!nullp(x) && !atomp(x)) {
@@ -890,9 +972,10 @@ int reverse(int x)
     return (res);
 }
 
-int hreverse(int x)
+int
+hreverse(int x)
 {
-    int res;
+    int             res;
 
     res = NIL;
     while (!nullp(x) && !atomp(x)) {
@@ -902,13 +985,14 @@ int hreverse(int x)
     return (res);
 }
 
-int nreverse(int x)
+int
+nreverse(int x)
 {
-    int res;
+    int             res;
 
     res = NIL;
     while (!nullp(x) && !atomp(x)) {
-	int y;
+	int             y;
 
 	y = cdr(x);
 	SET_CDR(x, res);
@@ -918,12 +1002,14 @@ int nreverse(int x)
     return (res);
 }
 
-int last(int x)
+int
+last(int x)
 {
     return (car(reverse(x)));
 }
 
-int append(int x, int y)
+int
+append(int x, int y)
 {
     if (nullp(x))
 	return (y);
@@ -931,7 +1017,8 @@ int append(int x, int y)
 	return (cons(car(x), append(cdr(x), y)));
 }
 
-int happend(int x, int y)
+int
+happend(int x, int y)
 {
     if (nullp(x))
 	return (y);
@@ -940,9 +1027,10 @@ int happend(int x, int y)
 }
 
 
-int nconc(int x, int y)
+int
+nconc(int x, int y)
 {
-    int ls;
+    int             ls;
 
     if (nullp(x))
 	return (y);
@@ -955,7 +1043,8 @@ int nconc(int x, int y)
     return (x);
 }
 
-int create_list(int x, int y)
+int
+create_list(int x, int y)
 {
     if (x == 0)
 	return (NIL);
@@ -963,7 +1052,8 @@ int create_list(int x, int y)
 	return (cons(copy(y), create_list(x - 1, y)));
 }
 
-int copy(int x)
+int
+copy(int x)
 {
     if (nullp(x))
 	return (NIL);
@@ -984,7 +1074,8 @@ int copy(int x)
 }
 
 
-int listref(int lis, int n)
+int
+listref(int lis, int n)
 {
     while (!(nullp(lis))) {
 	if (n == 0) {
@@ -997,7 +1088,8 @@ int listref(int lis, int n)
     return (NIL);
 }
 
-int listref1(int lis, int n)
+int
+listref1(int lis, int n)
 {
     while (!(nullp(lis))) {
 	if (n == 0) {
@@ -1011,7 +1103,8 @@ int listref1(int lis, int n)
 }
 
 
-int listcopy(int lis)
+int
+listcopy(int lis)
 {
     if (nullp(lis))
 	return (NIL);
@@ -1021,7 +1114,8 @@ int listcopy(int lis)
 	return (cons(car(lis), listcopy(cdr(lis))));
 }
 
-int remove_list(int x, int y)
+int
+remove_list(int x, int y)
 {
 
     if (nullp(x))
@@ -1032,7 +1126,8 @@ int remove_list(int x, int y)
 	return (cons(car(x), remove_list(cdr(x), y)));
 }
 
-void vector_set(int v, int n, int obj)
+void
+vector_set(int v, int n, int obj)
 {
     if (IS_FARRAY(v))
 	SET_FVEC_ELT(v, n, GET_FLT(obj));
@@ -1040,7 +1135,8 @@ void vector_set(int v, int n, int obj)
 	SET_VEC_ELT(v, n, obj);
 }
 
-int vector_ref(int v, int n)
+int
+vector_ref(int v, int n)
 {
     if (IS_FARRAY(v))
 	return (makeflt(GET_FVEC_ELT(v, n)));
@@ -1048,12 +1144,14 @@ int vector_ref(int v, int n)
 	return (GET_VEC_ELT(v, n));
 }
 
-int vector_length(int v)
+int
+vector_length(int v)
 {
     return (GET_CDR(v));
 }
 
-int array_length(int obj)
+int
+array_length(int obj)
 {
     return (GET_CDR(obj));
 }
@@ -1061,14 +1159,17 @@ int array_length(int obj)
 
 // obj is array or vector
 // ls is index. e.g. (0 1 1)
-int array_ref(int obj, int ls)
+int
+array_ref(int obj, int ls)
 {
-    int size, index;
+    int             size,
+                    index;
 
     if (vectorp(obj))
 	size = list1(vector_length(obj));
     else
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
+	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
+					// (1 2 3)
 
     if (IS_FARRAY(obj) && length(size) == 2) {
 	index =
@@ -1082,8 +1183,9 @@ int array_ref(int obj, int ls)
 		index = index + GET_INT(car(ls));
 	    else if (GET_INT(car(ls)) != 0)
 		index = index + GET_INT(car(size)) * GET_INT(car(ls));
-	    /* else if(GET_INT(car(ls)) == 0)
-	       index = index; */
+	    /*
+	     * else if(GET_INT(car(ls)) == 0) index = index; 
+	     */
 
 	    size = cdr(size);
 	    ls = cdr(ls);
@@ -1092,14 +1194,17 @@ int array_ref(int obj, int ls)
     }
 }
 
-int array_set(int obj, int ls, int val)
+int
+array_set(int obj, int ls, int val)
 {
-    int size, index;
+    int             size,
+                    index;
 
     if (vectorp(obj))
 	size = list1(vector_length(obj));
     else
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
+	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
+					// (1 2 3)
 
     if (IS_FARRAY(obj) && length(size) == 2) {
 	index =
@@ -1113,8 +1218,9 @@ int array_set(int obj, int ls, int val)
 		index = index + GET_INT(car(ls));
 	    else if (GET_INT(car(ls)) != 0)
 		index = index + GET_INT(car(size)) * GET_INT(car(ls));
-	    /* else if(GET_INT(car(ls)) == 0)
-	       index = index; */
+	    /*
+	     * else if(GET_INT(car(ls)) == 0) index = index; 
+	     */
 
 	    size = cdr(size);
 	    ls = cdr(ls);
@@ -1124,9 +1230,10 @@ int array_set(int obj, int ls, int val)
     return (obj);
 }
 
-//calculation of array's dimension
-//e.g. ((1 2)(3 4)(5 6)) -> (3 2)
-int array_dim(int n, int ls)
+// calculation of array's dimension
+// e.g. ((1 2)(3 4)(5 6)) -> (3 2)
+int
+array_dim(int n, int ls)
 {
     if (!nullp(ls) && atomp(ls) && n > 0)
 	error(ILLEGAL_ARGS, "array", NIL);
@@ -1139,7 +1246,8 @@ int array_dim(int n, int ls)
 }
 
 // n=0 ex ((1 2) 3 (4 5)) -> (1 2 3 4 5)
-int flatten(int n, int ls)
+int
+flatten(int n, int ls)
 {
     if (nullp(ls))
 	return (ls);
@@ -1154,12 +1262,14 @@ int flatten(int n, int ls)
 
 
 // ex(1 2 3 4) -> ((1 2)(3 4))
-int structured(int ls, int st)
+int
+structured(int ls, int st)
 {
     return (structured1(ls, reverse(st)));
 }
 
-int structured1(int ls, int st)
+int
+structured1(int ls, int st)
 {
     if (nullp(cdr(st)))
 	return (ls);
@@ -1167,7 +1277,8 @@ int structured1(int ls, int st)
 	return (structured1(structured2(ls, GET_INT(car(st))), cdr(st)));
 }
 
-int structured2(int ls, int n)
+int
+structured2(int ls, int n)
 {
     if (nullp(ls))
 	return (NIL);
@@ -1175,7 +1286,8 @@ int structured2(int ls, int n)
 	return (cons(list_take(ls, n), structured2(list_drop(ls, n), n)));
 }
 
-int list_take(int ls, int n)
+int
+list_take(int ls, int n)
 {
     if (n == 0)
 	return (NIL);
@@ -1183,7 +1295,8 @@ int list_take(int ls, int n)
 	return (cons(car(ls), list_take(cdr(ls), n - 1)));
 }
 
-int list_drop(int ls, int n)
+int
+list_drop(int ls, int n)
 {
     if (n == 0)
 	return (ls);
@@ -1192,10 +1305,14 @@ int list_drop(int ls, int n)
 
 }
 
-//generate array from list. ex #na(ls) ls=((1 2)(3 4))
-int array(int n, int ls)
+// generate array from list. ex #na(ls) ls=((1 2)(3 4))
+int
+array(int n, int ls)
 {
-    int dim, res, ls1, i;
+    int             dim,
+                    res,
+                    ls1,
+                    i;
 
     dim = array_dim(n, ls);
     if (n == 0) {
@@ -1213,15 +1330,19 @@ int array(int n, int ls)
 	i++;
 	ls1 = cdr(ls1);
     }
-    SET_PROP(res, ls);		//for FAST compiler regist original list
+    SET_PROP(res, ls);		// for FAST compiler regist original list
     return (res);
 }
 
-//generate float type array from list. ex #na(ls) ls=((1.1 2.0)(3.6 4.5))
-int farray(int n, int ls)
+// generate float type array from list. ex #na(ls) ls=((1.1 2.0)(3.6 4.5))
+int
+farray(int n, int ls)
 {
-    int dim, res, ls1, i;
-    float *vec1;
+    int             dim,
+                    res,
+                    ls1,
+                    i;
+    float          *vec1;
 
     dim = array_dim(n, ls);
     if (n == 0)
@@ -1233,8 +1354,11 @@ int farray(int n, int ls)
     ls1 = flatten(n, ls);
 
     if (length(dim) == 2) {
-	int j, r, c, size;
-	float *vec2;
+	int             j,
+	                r,
+	                c,
+	                size;
+	float          *vec2;
 
 	size = length(ls1);
 	vec1 = (float *) ALLOC(sizeof(float) * size);
@@ -1267,13 +1391,15 @@ int farray(int n, int ls)
     }
 
 
-    SET_PROP(res, ls);		//for FAST compiler regist original list
+    SET_PROP(res, ls);		// for FAST compiler regist original list
     return (res);
 }
 
-int vector_to_list(int x)
+int
+vector_to_list(int x)
 {
-    int res, i;
+    int             res,
+                    i;
 
     i = vector_length(x) - 1;
     res = NIL;
@@ -1284,15 +1410,20 @@ int vector_to_list(int x)
     return (res);
 }
 
-static inline void SET_CHAR(int addr, char x)
+static inline void
+SET_CHAR(int addr, char x)
 {
     heap[addr].name[0] = x;
 }
 
-int string_to_vector(int x)
+int
+string_to_vector(int x)
 {
-    int res, len, i, ref;
-    char c;
+    int             res,
+                    len,
+                    i,
+                    ref;
+    char            c;
 
     len = strlen(GET_NAME(x));
     res = makevec(len, UNDEF);
@@ -1300,7 +1431,7 @@ int string_to_vector(int x)
     i = 0;
     c = STRING_REF(x, i++);
     while (c != NUL) {
-	int chr;
+	int             chr;
 
 	chr = makechar("?");
 	SET_CHAR(chr, c);
@@ -1310,15 +1441,18 @@ int string_to_vector(int x)
     return (res);
 }
 
-int string_to_list(int x)
+int
+string_to_list(int x)
 {
-    int i, len, res;
+    int             i,
+                    len,
+                    res;
 
     res = NIL;
     len = strlen(GET_NAME(x));
     for (i = 0; i < len; i++) {
-	int chr;
-	char c;
+	int             chr;
+	char            c;
 
 	chr = makechar("?");
 	c = STRING_REF(x, i);
@@ -1328,10 +1462,12 @@ int string_to_list(int x)
     return (reverse(res));
 }
 
-int substr(int x, int s, int e)
+int
+substr(int x, int s, int e)
 {
-    int i, j;
-    char *str;
+    int             i,
+                    j;
+    char           *str;
 
     str = ALLOC((e - s) + 1);
     j = 0;
@@ -1340,35 +1476,40 @@ int substr(int x, int s, int e)
 	j++;
     }
     str[j] = NUL;
-    int res = makestr(str);
+    int             res = makestr(str);
     FREE(str);
     return res;
 }
 
-int string_length(int x)
+int
+string_length(int x)
 {
     return (strlen(GET_NAME(x)));
 }
 
-int string_ref(int x, int y)
+int
+string_ref(int x, int y)
 {
-    char str[CHARSIZE];
+    char            str[CHARSIZE];
 
     str[0] = STRING_REF(x, GET_INT(y));
     str[1] = NUL;
     return (makechar(str));
 }
 
-int string_set(int x, int y, int z)
+int
+string_set(int x, int y, int z)
 {
 
     STRING_SET(x, GET_INT(y), GET_CHAR(z));
     return (y);
 }
 
-int sublis(int x, int s, int e)
+int
+sublis(int x, int s, int e)
 {
-    int i, res;
+    int             i,
+                    res;
 
     res = NIL;
     i = 0;
@@ -1381,9 +1522,12 @@ int sublis(int x, int s, int e)
     return (reverse(res));
 }
 
-int subvec(int x, int s, int e)
+int
+subvec(int x, int s, int e)
 {
-    int i, j, res;
+    int             i,
+                    j,
+                    res;
 
     res = makevec(e - s, UNDEF);
     j = 0;
@@ -1394,23 +1538,32 @@ int subvec(int x, int s, int e)
     return (res);
 }
 
-//compare priority of argument list of method
-//if x is higher than y, return 1.
-int high_priority_p(int x, int y)
+// compare priority of argument list of method
+// if x is higher than y, return 1.
+int
+high_priority_p(int x, int y)
 {
-    int args1, args2, argx, argy, classx, classy;
+    int             args1,
+                    args2,
+                    argx,
+                    argy,
+                    classx,
+                    classy;
 
     if (GET_OPT(x) > GET_OPT(y))	// :around ... etc
 	return (0);
     else if (GET_OPT(x) < GET_OPT(y))
 	return (1);
-    else if (GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) {	//case :after this is reverse
-	args1 = car(GET_CAR(x));	//lambda-list 
+    else if (GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) {	// case
+								// :after
+								// this is 
+								// reverse
+	args1 = car(GET_CAR(x));	// lambda-list 
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {
 	    argx = car(args1);
 	    argy = car(args2);
-	    if (atomp(argy)) {	//case of no class information
+	    if (atomp(argy)) {	// case of no class information
 		args1 = cdr(args1);
 		args2 = cdr(args2);
 	    } else {
@@ -1428,12 +1581,12 @@ int high_priority_p(int x, int y)
 	}
 	return (0);
     } else {
-	args1 = car(GET_CAR(x));	//lambda-list
+	args1 = car(GET_CAR(x));	// lambda-list
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {
 	    argx = car(args1);
 	    argy = car(args2);
-	    if (atomp(argx)) {	//case of no class information
+	    if (atomp(argx)) {	// case of no class information
 		args1 = cdr(args1);
 		args2 = cdr(args2);
 	    } else {
@@ -1453,9 +1606,11 @@ int high_priority_p(int x, int y)
     }
 }
 
-void insert_method(int x, int func)
+void
+insert_method(int x, int func)
 {
-    int methods, res;
+    int             methods,
+                    res;
 
     methods = GET_CDR(func);
     if (nullp(methods)) {
@@ -1475,9 +1630,11 @@ void insert_method(int x, int func)
     return;
 }
 
-void resort_method(int func)
+void
+resort_method(int func)
 {
-    int methods, res;
+    int             methods,
+                    res;
 
     methods = GET_CDR(func);
     if (nullp(methods))
@@ -1486,11 +1643,12 @@ void resort_method(int func)
     res = hcons(car(methods), NIL);
     methods = cdr(methods);
     while (!nullp(methods)) {
-	int temp, x;
+	int             temp,
+	                x;
 
 	x = car(methods);
 	temp = NIL;
-	bool high_priority_found = false;
+	bool            high_priority_found = false;
 	while (!nullp(res)) {
 	    if (high_priority_p(x, car(res))) {
 		res = happend(hreverse(temp), hcons(x, res));
@@ -1509,9 +1667,10 @@ void resort_method(int func)
     SET_CDR(func, res);
 }
 
-void redef_generic(void)
+void
+redef_generic(void)
 {
-    int ls;
+    int             ls;
 
     ls = generic_list;
     while (!nullp(ls)) {
@@ -1523,8 +1682,9 @@ void redef_generic(void)
 }
 
 
-//------------for copy GC-----------------
-int copy_work(int x)
+// ------------for copy GC-----------------
+int
+copy_work(int x)
 {
     if (x < WORK1)		// nil t ...
 	return (x);
@@ -1565,9 +1725,9 @@ int copy_work(int x)
     case GENERIC:
 	return (copy_generic(x));
     case METHOD:
-	return (x);		//****
+	return (x);		// ****
     case INSTANCE:
-	return (x);		//****
+	return (x);		// ****
     case LIS:
 	return (cons(copy_work(car(x)), copy_work(cdr(x))));
     case DUMMY:
@@ -1581,9 +1741,11 @@ int copy_work(int x)
 }
 
 
-int copy_heap(int x)
+int
+copy_heap(int x)
 {
-    int save, res;
+    int             save,
+                    res;
 
     save = gc_sw;
     gc_sw = 0;
@@ -1592,7 +1754,8 @@ int copy_heap(int x)
     return (res);
 }
 
-int copy_symbol(int x)
+int
+copy_symbol(int x)
 {
 
     SET_CAR(x, copy_work(GET_CAR(x)));
@@ -1602,50 +1765,55 @@ int copy_symbol(int x)
 }
 
 /*
-copy_???  for copying GC 
-*/
-int copy_int(int x)
+ * copy_??? for copying GC 
+ */
+int
+copy_int(int x)
 {
-    //int addr = NIL;
+    // int addr = NIL;
 
-    //addr = freshcell();
-    //SET_TAG(addr,INTN);
-    //SET_INT(addr,GET_INT(x));
-    //SET_AUX(addr,cfixnum); //class fixnum
+    // addr = freshcell();
+    // SET_TAG(addr,INTN);
+    // SET_INT(addr,GET_INT(x));
+    // SET_AUX(addr,cfixnum); //class fixnum
     return (x);
 }
 
-int copy_long(int x)
+int
+copy_long(int x)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, GET_LONG(x));
-    SET_AUX(addr, clongnum);	//class longnum
+    SET_AUX(addr, clongnum);	// class longnum
     return (addr);
 }
 
 
-int copy_flt(int x)
+int
+copy_flt(int x)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
     SET_TAG(addr, FLTN);
     SET_FLT(addr, GET_FLT(x));
-    SET_AUX(addr, cfloat);	//class float
+    SET_AUX(addr, cfloat);	// class float
     return (addr);
 }
 
-static inline int *GET_VEC(int addr)
+static inline int *
+GET_VEC(int addr)
 {
     return heap[addr].val.car.dyna_vec;
 }
 
-int copy_vec(int x)
+int
+copy_vec(int x)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
     SET_VEC(addr, GET_VEC(x));	// vector elements
@@ -1656,34 +1824,37 @@ int copy_vec(int x)
 }
 
 
-int copy_array(int x)
+int
+copy_array(int x)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
-    SET_VEC(addr, GET_VEC(x));	//array or vector
-    SET_TAG(addr, GET_TAG(x));	//tag ARR or VEC or FARR 
-    SET_CDR(addr, GET_CDR(x));	//dimension
-    SET_AUX(addr, GET_AUX(x));	//class
+    SET_VEC(addr, GET_VEC(x));	// array or vector
+    SET_TAG(addr, GET_TAG(x));	// tag ARR or VEC or FARR 
+    SET_CDR(addr, GET_CDR(x));	// dimension
+    SET_AUX(addr, GET_AUX(x));	// class
     return (addr);
 }
 
 
-int copy_str(int x)
+int
+copy_str(int x)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
-    SET_TAG(addr, STR);		//tag  
-    heap[addr].name = heap[x].name;	//string
-    SET_AUX(addr, GET_AUX(x));	//class string
+    SET_TAG(addr, STR);		// tag 
+    heap[addr].name = heap[x].name;	// string
+    SET_AUX(addr, GET_AUX(x));	// class string
     return (addr);
 }
 
 
-int copy_char(int x)
+int
+copy_char(int x)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
     SET_TAG(addr, CHR);
@@ -1692,42 +1863,46 @@ int copy_char(int x)
     return (addr);
 }
 
-static inline void SET_NAME(int addr, char *x)
+static inline void
+SET_NAME(int addr, char *x)
 {
     heap[addr].name = x;
 }
 
-int copy_func(int x)
+int
+copy_func(int x)
 {
-    int val;
+    int             val;
 
     val = freshcell();
     SET_TAG(val, FUNC);
     SET_NAME(val, GET_NAME(x));
     SET_CAR(val, copy_work(GET_CAR(x)));
     SET_CDR(val, copy_work(GET_CDR(x)));
-    SET_AUX(val, GET_AUX(x));	//class function
-    SET_OPT(val, GET_OPT(x));	//amount of argument
+    SET_AUX(val, GET_AUX(x));	// class function
+    SET_OPT(val, GET_OPT(x));	// amount of argument
     return (val);
 }
 
-int copy_generic(int x)
+int
+copy_generic(int x)
 {
-    int val;
+    int             val;
 
     val = freshcell();
     SET_TAG(val, GENERIC);
     SET_NAME(val, GET_NAME(x));
     SET_CAR(val, GET_CAR(x));
-    SET_OPT(val, GET_OPT(x));	//amount of argument
-    SET_CDR(val, copy_work(GET_CDR(x)));	//method 
+    SET_OPT(val, GET_OPT(x));	// amount of argument
+    SET_CDR(val, copy_work(GET_CDR(x)));	// method 
     SET_AUX(val, GET_AUX(x));
     return (val);
 }
 
-int copy_macro(int x)
+int
+copy_macro(int x)
 {
-    int val;
+    int             val;
 
     val = freshcell();
     SET_TAG(val, MACRO);
@@ -1735,22 +1910,24 @@ int copy_macro(int x)
     return (val);
 }
 
-int copy_stream(int x)
+int
+copy_stream(int x)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, STREAM);
     SET_PORT(addr, GET_PORT(x));
-    SET_CDR(addr, GET_CDR(x));	//string-stream-position
-    SET_AUX(addr, GET_AUX(x));	//class
-    SET_OPT(addr, GET_OPT(x));	//input/output/inout
+    SET_CDR(addr, GET_CDR(x));	// string-stream-position
+    SET_AUX(addr, GET_AUX(x));	// class
+    SET_OPT(addr, GET_OPT(x));	// input/output/inout
     return (addr);
 }
 
-int copy_class(int x)
+int
+copy_class(int x)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, CLASS);
@@ -1762,9 +1939,12 @@ int copy_class(int x)
 }
 
 
-int copy_bignum(int x)
+int
+copy_bignum(int x)
 {
-    int addr, msb, sign;
+    int             addr,
+                    msb,
+                    sign;
 
     sign = get_sign(x);
     addr = msb = copy_gen_big();
@@ -1779,12 +1959,13 @@ int copy_bignum(int x)
 }
 
 /*
-x=new y=link
-if it is first cell, store the cell, else chain a new cell.
-*/
-int copy_cons_next(int x, int y)
+ * x=new y=link if it is first cell, store the cell, else chain a new
+ * cell. 
+ */
+int
+copy_cons_next(int x, int y)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     if (GET_PROP(y) == -1) {
 	SET_PROP(y, NIL);
@@ -1802,27 +1983,28 @@ int copy_cons_next(int x, int y)
 
 
 /*
-To check first cell, prop=-1.
-therefor when compute bignum, if it is first cell, store data the cell.
-or else chain cell with cons_next.
-
-*/
-int copy_gen_big(void)
+ * To check first cell, prop=-1. therefor when compute bignum, if it is
+ * first cell, store data the cell. or else chain cell with cons_next.
+ * 
+ */
+int
+copy_gen_big(void)
 {
-    int addr = NIL;
+    int             addr = NIL;
 
     addr = freshcell();
     SET_CDR(addr, NIL);
-    SET_PROP(addr, -1);		//mark of first cell
+    SET_PROP(addr, -1);		// mark of first cell
     return (addr);
 }
 
 
 /*
-copy symbol of hash list 
-*/
+ * copy symbol of hash list 
+ */
 
-void copy_hash(int x)
+void
+copy_hash(int x)
 {
 
     if (nullp(x))

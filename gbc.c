@@ -9,12 +9,12 @@
 
 #define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
 
-//---------garbage collection-----------
+// ---------garbage collection-----------
 DEF_PREDICATE(EMPTY, EMP)
-int gbc(void)
+     int             gbc(void)
 {
     if (gc_sw == 0) {
-	int addr;
+	int             addr;
 
 	DBG_PRINTF("enter M&S-GC free=%d\n", fc);
 	gbcmark();
@@ -41,19 +41,25 @@ int gbc(void)
 }
 
 
-static inline void MARK_CELL(int addr)
+static inline void
+MARK_CELL(int addr)
 {
     heap[addr].flag = USE;
 }
 
-static inline bool USED_CELL(int addr)
+static inline bool
+USED_CELL(int addr)
 {
     return (heap[addr].flag == USE);
 }
 
-void markcell(int addr)
+void
+markcell(int addr)
 {
-    int i, m, n, x;
+    int             i,
+                    m,
+                    n,
+                    x;
 
     if (addr < 0 || addr >= CELLSIZE)
 	return;
@@ -130,38 +136,39 @@ void markcell(int addr)
     }
 }
 
-void gbcmark(void)
+void
+gbcmark(void)
 {
-    int i;
+    int             i;
 
-    //mark nil and t
+    // mark nil and t
     MARK_CELL(NIL);
     MARK_CELL(T);
-    //mark local environment
+    // mark local environment
     markcell(ep);
-    //mark dynamic environment
+    // mark dynamic environment
     markcell(dp);
-    //mark stack
+    // mark stack
     for (i = 0; i < sp; i++)
 	markcell(stack[i]);
-    //mark cell binded by argstack
+    // mark cell binded by argstack
     for (i = 0; i < ap; i++)
 	markcell(argstk[i]);
 
-    //mark cell chained from hash table
+    // mark cell chained from hash table
     for (i = 0; i < HASHTBSIZE; i++)
 	markcell(cell_hash_table[i]);
 
-    //mark tagbody symbol
+    // mark tagbody symbol
     markcell(tagbody_tag);
 
-    //mark thunk for unwind-protect
+    // mark thunk for unwind-protect
     markcell(unwind_pt);
 
-    //mark error_handler
+    // mark error_handler
     markcell(error_handler);
 
-    //mark stream
+    // mark stream
     markcell(standard_input);
     markcell(standard_output);
     markcell(standard_error);
@@ -169,31 +176,33 @@ void gbcmark(void)
     markcell(output_stream);
     markcell(error_stream);
 
-    //mark shelter
+    // mark shelter
     for (i = 0; i < lp; i++)
 	markcell(shelter[i]);
 
-    //mark dynamic environment
+    // mark dynamic environment
     for (i = 1; i <= dp; i++)
 	markcell(dynamic[i][1]);
 
 
-    //mark generic_list
+    // mark generic_list
     markcell(generic_list);
 
-    //mark symbol list for catch
+    // mark symbol list for catch
     markcell(catch_symbols);
 
 }
 
-static inline void NOMARK_CELL(int addr)
+static inline void
+NOMARK_CELL(int addr)
 {
     heap[addr].flag = FRE;
 }
 
-void gbcsweep(void)
+void
+gbcsweep(void)
 {
-    int addr;
+    int             addr;
 
     addr = 0;
     while (addr < CELLSIZE) {
@@ -208,7 +217,8 @@ void gbcsweep(void)
     }
 }
 
-void clrcell(int addr)
+void
+clrcell(int addr)
 {
     if (IS_VECTOR(addr) || IS_ARRAY(addr))
 	FREE(heap[addr].val.car.dyna_vec);
@@ -231,8 +241,9 @@ void clrcell(int addr)
     SET_TR(addr, 0);
 }
 
-//when free cells are less FREESIZE, invoke gbc()
-int checkgbc(void)
+// when free cells are less FREESIZE, invoke gbc()
+int
+checkgbc(void)
 {
     if (exit_flag) {
 	exit_flag = 0;
@@ -253,25 +264,29 @@ int checkgbc(void)
 
 
 
-int freecell(void)
+int
+freecell(void)
 {
     return (fc);
 }
 
-int gbcsw(void)
+int
+gbcsw(void)
 {
     return (gc_sw);
 }
 
-int getwp(void)
+int
+getwp(void)
 {
     return (wp);
 }
 
 
-void copygbc(void)
+void
+copygbc(void)
 {
-    int i;
+    int             i;
 
     if (area_sw == 1) {
 	area_sw = 2;
@@ -281,35 +296,35 @@ void copygbc(void)
 	wp = WORK1;
     }
 
-    //copy local environment
+    // copy local environment
     ep = copy_work(ep);
-    //copy dynamic environment
+    // copy dynamic environment
     dp = copy_work(dp);
-    //copy stack
+    // copy stack
     for (i = 0; i < sp; i++)
 	stack[i] = copy_work(stack[i]);
-    //copy cell binded by argstack
+    // copy cell binded by argstack
     for (i = 0; i < ap; i++)
 	argstk[i] = copy_work(argstk[i]);
 
-    //copy tagbody symbol
+    // copy tagbody symbol
     tagbody_tag = copy_work(tagbody_tag);
 
-    //copy thunk for unwind-protect
+    // copy thunk for unwind-protect
     unwind_pt = copy_work(unwind_pt);
 
 
-    //copy shelter
+    // copy shelter
     for (i = 0; i < lp; i++)
 	shelter[i] = copy_work(shelter[i]);
 
-    //copy generic_list
+    // copy generic_list
     generic_list = copy_work(generic_list);
 
-    //copy symbol list for catch
+    // copy symbol list for catch
     catch_symbols = copy_work(catch_symbols);
 
-    //copy cell chained from hash table
+    // copy cell chained from hash table
     for (i = 0; i < HASHTBSIZE; i++)
 	copy_hash(cell_hash_table[i]);
 

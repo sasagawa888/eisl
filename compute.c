@@ -5,12 +5,14 @@
 #include "eisl.h"
 
 
-//data type transfer
+// data type transfer
 
-int exact_to_inexact(int x)
+int
+exact_to_inexact(int x)
 {
-    int res, tag;
-    double val;
+    int             res,
+                    tag;
+    double          val;
 
     tag = GET_TAG(x);
     switch (tag) {
@@ -37,18 +39,20 @@ int exact_to_inexact(int x)
     return (UNDEF);
 }
 
-int numeqp(int x, int y)
+int
+numeqp(int x, int y)
 {
-    int x1, y1;
+    int             x1,
+                    y1;
 
-    //if integer type and address are same, then true.
+    // if integer type and address are same, then true.
     if (integerp(x) && integerp(y)) {
 	if (GET_INT(x) == GET_INT(y))
 	    return (1);
 	else
 	    return (0);
     }
-    //if long integer data type and the values are same, then true.
+    // if long integer data type and the values are same, then true.
     else if (longnump(x) && longnump(y)) {
 	if (GET_LONG(x) == GET_LONG(y))
 	    return (1);
@@ -62,7 +66,7 @@ int numeqp(int x, int y)
 	else
 	    return (0);
     }
-    //if floating point number, consider EPSILON
+    // if floating point number, consider EPSILON
     else if (floatp(x) && floatp(y)) {
 	if (GET_FLT(x) - DBL_EPSILON <= GET_FLT(y) &&
 	    GET_FLT(x) + DBL_EPSILON >= GET_FLT(y))
@@ -87,7 +91,8 @@ int numeqp(int x, int y)
     }
 }
 
-int smallerp(int x1, int x2)
+int
+smallerp(int x1, int x2)
 {
     if (IS_INTEGER(x1) && IS_INTEGER(x2)) {
 	if (GET_INT(x1) < GET_INT(x2))
@@ -116,7 +121,8 @@ int smallerp(int x1, int x2)
     }
 }
 
-int eqsmallerp(int x1, int x2)
+int
+eqsmallerp(int x1, int x2)
 {
     if (integerp(x1) && integerp(x2)) {
 	if (GET_INT(x1) <= GET_INT(x2))
@@ -145,7 +151,8 @@ int eqsmallerp(int x1, int x2)
     }
 }
 
-int greaterp(int x1, int x2)
+int
+greaterp(int x1, int x2)
 {
     if (smallerp(x2, x1))
 	return (1);
@@ -153,7 +160,8 @@ int greaterp(int x1, int x2)
 	return (0);
 }
 
-int eqgreaterp(int x1, int x2)
+int
+eqgreaterp(int x1, int x2)
 {
     if (eqsmallerp(x2, x1))
 	return (1);
@@ -161,7 +169,8 @@ int eqgreaterp(int x1, int x2)
 	return (0);
 }
 
-int positivep(int x)
+int
+positivep(int x)
 {
 
     if (integerp(x) && GET_INT(x) > 0)
@@ -176,7 +185,8 @@ int positivep(int x)
 	return (0);
 }
 
-int negativep(int x)
+int
+negativep(int x)
 {
 
     if (integerp(x) && GET_INT(x) < 0)
@@ -191,7 +201,8 @@ int negativep(int x)
 	return (0);
 }
 
-int zerop(int x)
+int
+zerop(int x)
 {
     if (integerp(x) && GET_INT(x) == 0)
 	return (1);
@@ -201,7 +212,8 @@ int zerop(int x)
 	return (0);
 }
 
-int positive_zerop(int x)
+int
+positive_zerop(int x)
 {
     if (zerop(x) && floatp(x) && !signbit(GET_FLT(x)))
 	return (1);
@@ -211,7 +223,8 @@ int positive_zerop(int x)
 	return (0);
 }
 
-int negative_zerop(int x)
+int
+negative_zerop(int x)
 {
     if (zerop(x) && floatp(x) && signbit(GET_FLT(x)))
 	return (1);
@@ -220,13 +233,16 @@ int negative_zerop(int x)
 }
 
 
-//-----------------------------------
-//basic operation
+// -----------------------------------
+// basic operation
 
-int plus(int arg1, int arg2)
+int
+plus(int arg1, int arg2)
 {
-    int tag1, tag2;
-    double x1, x2;
+    int             tag1,
+                    tag2;
+    double          x1,
+                    x2;
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
@@ -234,7 +250,7 @@ int plus(int arg1, int arg2)
     case INTN:
 	switch (tag2) {
 	case INTN:{
-		long long int l;
+		long long int   l;
 
 		l = (long long int) GET_INT(arg1) +
 		    (long long int) GET_INT(arg2);
@@ -244,8 +260,8 @@ int plus(int arg1, int arg2)
 		    return (makelong(l));
 	    }
 	case FLTN:{
-		int n;
-		double y1;
+		int             n;
+		double          y1;
 
 		n = GET_INT(arg1);
 		x1 = (double) n;
@@ -288,7 +304,7 @@ int plus(int arg1, int arg2)
     case FLTN:
 	switch (tag2) {
 	case INTN:{
-		int s;
+		int             s;
 
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
@@ -314,10 +330,13 @@ int plus(int arg1, int arg2)
 }
 
 
-int minus(int arg1, int arg2)
+int
+minus(int arg1, int arg2)
 {
-    int tag1, tag2;
-    double x1, x2;
+    int             tag1,
+                    tag2;
+    double          x1,
+                    x2;
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
@@ -325,7 +344,7 @@ int minus(int arg1, int arg2)
     case INTN:
 	switch (tag2) {
 	case INTN:{
-		long long int l;
+		long long int   l;
 
 		l = (long long int) GET_INT(arg1) -
 		    (long long int) GET_INT(arg2);
@@ -336,8 +355,8 @@ int minus(int arg1, int arg2)
 	    }
 
 	case FLTN:{
-		int n;
-		double y1;
+		int             n;
+		double          y1;
 
 		n = GET_INT(arg1);
 		x1 = (double) n;
@@ -382,7 +401,7 @@ int minus(int arg1, int arg2)
     case FLTN:
 	switch (tag2) {
 	case INTN:{
-		int s;
+		int             s;
 
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
@@ -406,10 +425,14 @@ int minus(int arg1, int arg2)
 }
 
 
-int mult(int arg1, int arg2)
+int
+mult(int arg1, int arg2)
 {
-    int tag1, tag2;
-    double x1, y1, x2;
+    int             tag1,
+                    tag2;
+    double          x1,
+                    y1,
+                    x2;
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
@@ -418,7 +441,9 @@ int mult(int arg1, int arg2)
     case INTN:
 	switch (tag2) {
 	case INTN:{
-		long long int l1, l2, l;
+		long long int   l1,
+		                l2,
+		                l;
 
 		l1 = (long long int) GET_INT(arg1);
 		l2 = (long long int) GET_INT(arg2);
@@ -432,7 +457,7 @@ int mult(int arg1, int arg2)
 	    }
 
 	case FLTN:{
-		int n;
+		int             n;
 
 		n = GET_INT(arg1);
 		x1 = (double) n;
@@ -445,7 +470,7 @@ int mult(int arg1, int arg2)
 		return (bigx_mult
 			(bigx_int_to_big(arg1), bigx_long_to_big(arg2)));
 	    else
-		return (arg1);	//int 0
+		return (arg1);	// int 0
 
 	case BIGX:
 	    return (bigx_mult_i(arg2, arg1));
@@ -458,7 +483,7 @@ int mult(int arg1, int arg2)
 		return (bigx_mult
 			(bigx_long_to_big(arg1), bigx_int_to_big(arg2)));
 	    else
-		return (arg2);	//int 0
+		return (arg2);	// int 0
 	case FLTN:
 	    return (mult(exact_to_inexact(arg1), arg2));
 	case LONGN:
@@ -483,7 +508,7 @@ int mult(int arg1, int arg2)
     case FLTN:
 	switch (tag2) {
 	case INTN:{
-		int s;
+		int             s;
 
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
@@ -511,10 +536,16 @@ int mult(int arg1, int arg2)
     return (UNDEF);
 }
 
-int quotient(int arg1, int arg2)
+int
+quotient(int arg1, int arg2)
 {
-    int n, s, tag1, tag2;
-    double x1, y1, x2;
+    int             n,
+                    s,
+                    tag1,
+                    tag2;
+    double          x1,
+                    y1,
+                    x2;
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
@@ -613,7 +644,8 @@ int quotient(int arg1, int arg2)
 }
 
 
-int divide(int x, int y)
+int
+divide(int x, int y)
 {
 
     if (integerp(x) && longnump(y))
@@ -640,9 +672,10 @@ int divide(int x, int y)
     return (UNDEF);
 }
 
-int s_remainder(int x, int y)
+int
+s_remainder(int x, int y)
 {
-    int i;
+    int             i;
 
     if (integerp(x) && integerp(y))
 	return (makeint(GET_INT(x) % GET_INT(y)));
@@ -669,10 +702,13 @@ int s_remainder(int x, int y)
 }
 
 
-//remainder of longnum and int.
-int long_int_remainder(int x, int y)
+// remainder of longnum and int.
+int
+long_int_remainder(int x, int y)
 {
-    long long int m, n, r;
+    long long int   m,
+                    n,
+                    r;
 
 
     m = GET_LONG(x);
@@ -682,10 +718,13 @@ int long_int_remainder(int x, int y)
     return (makeint((int) r));
 }
 
-//remainder of longnum and longnum.
-int long_long_remainder(int x, int y)
+// remainder of longnum and longnum.
+int
+long_long_remainder(int x, int y)
 {
-    long long int m, n, r;
+    long long int   m,
+                    n,
+                    r;
 
 
     m = GET_LONG(x);
@@ -698,10 +737,13 @@ int long_long_remainder(int x, int y)
 	return (makelong(r));
 }
 
-//divide of longnum and int.
-int long_int_div(int x, int y)
+// divide of longnum and int.
+int
+long_int_div(int x, int y)
 {
-    long long int m, n, q;
+    long long int   m,
+                    n,
+                    q;
 
 
     m = GET_LONG(x);
@@ -714,10 +756,13 @@ int long_int_div(int x, int y)
 	return (makelong(q));
 }
 
-//divide of longnum and longnum
-int long_long_div(int x, int y)
+// divide of longnum and longnum
+int
+long_long_div(int x, int y)
 {
-    long long int m, n, q;
+    long long int   m,
+                    n,
+                    q;
 
 
     m = GET_LONG(x);
@@ -730,7 +775,8 @@ int long_long_div(int x, int y)
 	return (makelong(q));
 }
 
-int absolute(int x)
+int
+absolute(int x)
 {
     if (integerp(x))
 	return (makeint(abs(GET_INT(x))));
@@ -745,7 +791,8 @@ int absolute(int x)
     return (UNDEF);
 }
 
-int angle(int y, int x)
+int
+angle(int y, int x)
 {
 
     if (positive_zerop(y) && positivep(x))
@@ -802,14 +849,15 @@ int angle(int y, int x)
     }
 }
 
-//GCD of integer
-int int_gcd(int x, int y)
+// GCD of integer
+int
+int_gcd(int x, int y)
 {
     if (y == 0)
 	return (x);
 
     while (y != 0) {
-	int r;
+	int             r;
 
 	r = x % y;
 	x = y;
@@ -818,8 +866,9 @@ int int_gcd(int x, int y)
     return (x);
 }
 
-//GCD of number(include bignum)
-int gcd(int x, int y)
+// GCD of number(include bignum)
+int
+gcd(int x, int y)
 {
     if (integerp(x) && integerp(y))
 	return (makeint(abs(int_gcd(GET_INT(x), GET_INT(y)))));
@@ -837,7 +886,7 @@ int gcd(int x, int y)
 		((double) abs(int_gcd(GET_FLT(x), (int) GET_FLT(y)))));
 
     while (!zerop(y)) {
-	int r;
+	int             r;
 
 	r = s_remainder(x, y);
 	x = y;
@@ -847,8 +896,9 @@ int gcd(int x, int y)
     return (absolute(x));
 }
 
-//LCM of integer
-int int_lcm(int m, int n)
+// LCM of integer
+int
+int_lcm(int m, int n)
 {
     if (m == 0 || n == 0)
 	return (0);
@@ -856,11 +906,17 @@ int int_lcm(int m, int n)
     return ((m / int_gcd(m, n)) * n);
 }
 
-//LCM of number(include bignum)
-int lcm(int x, int y)
+// LCM of number(include bignum)
+int
+lcm(int x, int y)
 {
-    int g, d, res;
-    if (integerp(x) && integerp(y) && abs(GET_INT(x)) < 10000 && abs(GET_INT(y)) < 10000)	// because x,y < sqrt(BIGNUM_BASE)
+    int             g,
+                    d,
+                    res;
+    if (integerp(x) && integerp(y) && abs(GET_INT(x)) < 10000 && abs(GET_INT(y)) < 10000)	// because 
+												// x,y 
+												// < 
+												// sqrt(BIGNUM_BASE)
 	return (makeint(abs(int_lcm(GET_INT(x), GET_INT(y)))));
 
     else if (floatp(x) && integerp(y))
@@ -883,7 +939,8 @@ int lcm(int x, int y)
     }
 }
 
-int isqrt(int x)
+int
+isqrt(int x)
 {
     if (integerp(x))
 	return (makeint(floor(sqrt(GET_INT(x)))));
@@ -893,7 +950,8 @@ int isqrt(int x)
 	return (isqrt1(makeint(1), makeint(1), x));
 }
 
-int isqrt1(int s, int s2, int x)
+int
+isqrt1(int s, int s2, int x)
 {
     if (eqsmallerp(mult(s, s), x) && eqsmallerp(x, mult(s2, s2)))
 	return (s);
@@ -902,153 +960,90 @@ int isqrt1(int s, int s2, int x)
 }
 
 /*
-try and error for OPEN-MP
-int mat_mult(int x, int y){
-    int i,j,k,m,n,o,p,m1,n1,o1,p1,res;
-    double A[MATSIZE][MATSIZE],B[MATSIZE][MATSIZE],C[MATSIZE][MATSIZE];
-
-    if(!(length(array_length(x)) == 2 && length(array_length(y)) == 2))
-        error(ILLEGAL_ARGS, "*", list2(x,y));
-    if(GET_INT(cadr(array_length(x))) != GET_INT(car(array_length(y))))
-        error(ILLEGAL_ARGS, "*", list2(x,y));
-
-    m1 = car(array_length(x));
-    n1 = cadr(array_length(x));
-    o1 = car(array_length(y));
-    p1 = cadr(array_length(y));
-
-    m = GET_INT(m1);
-    n = GET_INT(n1);
-    o = GET_INT(o1);
-    p = GET_INT(p1);
-    if(m>MATSIZE || n>MATSIZE || o>MATSIZE || p>MATSIZE)
-        error(OUT_OF_RANGE,"*",NIL);
-    if(m*p+FREESIZE > fc){
-        shelterpush(x);
-        shelterpush(y);
-        gbc();
-        shelterpop();
-        shelterpop();
-    }
-    res = makearray(list2(m1,p1),UNDEF);
-    #pragma omp parallel for private(i,j)
-    for(i=0; i<m; i++)
-        for(j=0; j<n; j++)
-            A[i][j] = GET_FLT(matrix_ref(x,n,i,j));
-    #pragma omp parallel for private(i,j)
-    for(i=0; i<o; i++)
-        for(j=0; j<p; j++)
-            B[i][j] = GET_FLT(matrix_ref(y,p,i,j));
-    #pragma omp parallel for private(i,j)
-    for(i=0; i<m; i++)
-        for(j=0; j<p; j++)
-            C[i][j] = 0.0;
-    #pragma omp parallel for private(i,j,k)
-    for(i=0; i<m; i++)
-        for(j=0; j<p; j++)
-            for(k=0; k<n; k++)
-                C[i][j] = C[i][j] + A[i][k] * B[k][j];
-
-
-    for(i=0; i<m; i++)
-        for(j=0; j<p; j++)
-            matrix_set(res,p,i,j,makeflt(C[i][j]));
-
-    return(NIL);
-}
-
-int mat_vec_mult(int x, int y){
-    int i,j,m,n,res;
-    float A[MATSIZE][MATSIZE],B[MATSIZE],C[MATSIZE];
-
-    if(length(array_length(x)) != 2)
-        error(ILLEGAL_ARGS, "*", x);
-    if(GET_INT(cadr(array_length(x))) != vector_length(y))
-        error(ILLEGAL_ARGS, "*", list2(x,y));
-
-    m = GET_INT(car(array_length(x)));
-    n = GET_INT(cadr(array_length(x)));
-    if(m>MATSIZE || n>MATSIZE)
-        error(OUT_OF_RANGE,"*",NIL);
-    if(m+FREESIZE > fc)
-        gbc();
-    res = makevec(m,UNDEF);
-    #pragma omp parallel for private(i,j)
-    for(i=0; i<m; i++)
-        for(j=0; j<n; j++)
-            A[i][j] = GET_FLT(matrix_ref(x,n,i,j));
-    #pragma omp parallel for private(i)
-    for(i=0; i<m; i++)
-        B[i] = GET_FLT(vector_ref(y,i));
-    #pragma omp parallel for private(i)
-    for(i=0; i<m; i++)
-        C[i] = 0.0;
-    #pragma omp parallel for private(i,j)
-    for(i=0; i<m; i++)
-        for(j=0; j<n; j++)
-            C[i] = C[i] + A[i][j] * B[j];
-
-    for(i=0; i<m; i++)
-        vector_set(res,i,makeflt(C[i]));
-
-    return(res);
-}
-
-int vec_plus(int x, int y){
-    int i,size,res;
-    double A[MATSIZE],B[MATSIZE],C[MATSIZE];
-
-    if(vector_length(x) != vector_length(y))
-        error(ILLEGAL_ARGS,"+", list2(x,y));
-
-    size = vector_length(x);
-    res = makevec(size,UNDEF);
-
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        A[i] = GET_FLT(vector_ref(x,i));
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        B[i] = GET_FLT(vector_ref(y,i));
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        C[i] = 0.0;
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        C[i] = A[i] + B[i];
-
-    for(i=0; i<size; i++)
-        vector_set(res,i,makeflt(C[i]));
-
-    return(res);
-}
-
-int vec_minus(int x, int y){
-    int i,size,res;
-    double A[MATSIZE],B[MATSIZE],C[MATSIZE];
-
-    if(vector_length(x) != vector_length(y))
-        error(ILLEGAL_ARGS,"-", list2(x,y));
-
-    size = vector_length(x);
-    res = makevec(size,UNDEF);
-
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        A[i] = GET_FLT(vector_ref(x,i));
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        B[i] = GET_FLT(vector_ref(y,i));
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        C[i] = 0.0;
-    #pragma omp parallel for private(i)
-    for(i=0; i<size; i++)
-        C[i] = A[i] - B[i];
-
-    for(i=0; i<size; i++)
-        vector_set(res,i,makeflt(C[i]));
-
-    return(res);
-}
-*/
+ * try and error for OPEN-MP int mat_mult(int x, int y){ int
+ * i,j,k,m,n,o,p,m1,n1,o1,p1,res; double
+ * A[MATSIZE][MATSIZE],B[MATSIZE][MATSIZE],C[MATSIZE][MATSIZE];
+ * 
+ * if(!(length(array_length(x)) == 2 && length(array_length(y)) == 2))
+ * error(ILLEGAL_ARGS, "*", list2(x,y)); if(GET_INT(cadr(array_length(x))) 
+ * != GET_INT(car(array_length(y)))) error(ILLEGAL_ARGS, "*", list2(x,y));
+ * 
+ * m1 = car(array_length(x)); n1 = cadr(array_length(x)); o1 =
+ * car(array_length(y)); p1 = cadr(array_length(y));
+ * 
+ * m = GET_INT(m1); n = GET_INT(n1); o = GET_INT(o1); p = GET_INT(p1);
+ * if(m>MATSIZE || n>MATSIZE || o>MATSIZE || p>MATSIZE)
+ * error(OUT_OF_RANGE,"*",NIL); if(m*p+FREESIZE > fc){ shelterpush(x);
+ * shelterpush(y); gbc(); shelterpop(); shelterpop(); } res =
+ * makearray(list2(m1,p1),UNDEF); #pragma omp parallel for private(i,j)
+ * for(i=0; i<m; i++) for(j=0; j<n; j++) A[i][j] =
+ * GET_FLT(matrix_ref(x,n,i,j)); #pragma omp parallel for private(i,j)
+ * for(i=0; i<o; i++) for(j=0; j<p; j++) B[i][j] =
+ * GET_FLT(matrix_ref(y,p,i,j)); #pragma omp parallel for private(i,j)
+ * for(i=0; i<m; i++) for(j=0; j<p; j++) C[i][j] = 0.0; #pragma omp
+ * parallel for private(i,j,k) for(i=0; i<m; i++) for(j=0; j<p; j++)
+ * for(k=0; k<n; k++) C[i][j] = C[i][j] + A[i][k] * B[k][j];
+ * 
+ * 
+ * for(i=0; i<m; i++) for(j=0; j<p; j++)
+ * matrix_set(res,p,i,j,makeflt(C[i][j]));
+ * 
+ * return(NIL); }
+ * 
+ * int mat_vec_mult(int x, int y){ int i,j,m,n,res; float
+ * A[MATSIZE][MATSIZE],B[MATSIZE],C[MATSIZE];
+ * 
+ * if(length(array_length(x)) != 2) error(ILLEGAL_ARGS, "*", x);
+ * if(GET_INT(cadr(array_length(x))) != vector_length(y))
+ * error(ILLEGAL_ARGS, "*", list2(x,y));
+ * 
+ * m = GET_INT(car(array_length(x))); n = GET_INT(cadr(array_length(x)));
+ * if(m>MATSIZE || n>MATSIZE) error(OUT_OF_RANGE,"*",NIL); if(m+FREESIZE > 
+ * fc) gbc(); res = makevec(m,UNDEF); #pragma omp parallel for
+ * private(i,j) for(i=0; i<m; i++) for(j=0; j<n; j++) A[i][j] =
+ * GET_FLT(matrix_ref(x,n,i,j)); #pragma omp parallel for private(i)
+ * for(i=0; i<m; i++) B[i] = GET_FLT(vector_ref(y,i)); #pragma omp
+ * parallel for private(i) for(i=0; i<m; i++) C[i] = 0.0; #pragma omp
+ * parallel for private(i,j) for(i=0; i<m; i++) for(j=0; j<n; j++) C[i] =
+ * C[i] + A[i][j] * B[j];
+ * 
+ * for(i=0; i<m; i++) vector_set(res,i,makeflt(C[i]));
+ * 
+ * return(res); }
+ * 
+ * int vec_plus(int x, int y){ int i,size,res; double
+ * A[MATSIZE],B[MATSIZE],C[MATSIZE];
+ * 
+ * if(vector_length(x) != vector_length(y)) error(ILLEGAL_ARGS,"+",
+ * list2(x,y));
+ * 
+ * size = vector_length(x); res = makevec(size,UNDEF);
+ * 
+ * #pragma omp parallel for private(i) for(i=0; i<size; i++) A[i] =
+ * GET_FLT(vector_ref(x,i)); #pragma omp parallel for private(i) for(i=0;
+ * i<size; i++) B[i] = GET_FLT(vector_ref(y,i)); #pragma omp parallel for
+ * private(i) for(i=0; i<size; i++) C[i] = 0.0; #pragma omp parallel for
+ * private(i) for(i=0; i<size; i++) C[i] = A[i] + B[i];
+ * 
+ * for(i=0; i<size; i++) vector_set(res,i,makeflt(C[i]));
+ * 
+ * return(res); }
+ * 
+ * int vec_minus(int x, int y){ int i,size,res; double
+ * A[MATSIZE],B[MATSIZE],C[MATSIZE];
+ * 
+ * if(vector_length(x) != vector_length(y)) error(ILLEGAL_ARGS,"-",
+ * list2(x,y));
+ * 
+ * size = vector_length(x); res = makevec(size,UNDEF);
+ * 
+ * #pragma omp parallel for private(i) for(i=0; i<size; i++) A[i] =
+ * GET_FLT(vector_ref(x,i)); #pragma omp parallel for private(i) for(i=0;
+ * i<size; i++) B[i] = GET_FLT(vector_ref(y,i)); #pragma omp parallel for
+ * private(i) for(i=0; i<size; i++) C[i] = 0.0; #pragma omp parallel for
+ * private(i) for(i=0; i<size; i++) C[i] = A[i] - B[i];
+ * 
+ * for(i=0; i<size; i++) vector_set(res,i,makeflt(C[i]));
+ * 
+ * return(res); } 
+ */

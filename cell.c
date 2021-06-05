@@ -1,8 +1,7 @@
 /*
-memo
-lisp-2  symbol-address car=function-addr, cdr=global-val
-closure function-address car=arg+body, cdr=environment
-*/
+ * memo lisp-2 symbol-address car=function-addr, cdr=global-val closure
+ * function-address car=arg+body, cdr=environment 
+ */
 
 
 #include <stdio.h>
@@ -18,16 +17,21 @@ closure function-address car=arg+body, cdr=environment
 #include "except.h"
 #include "str.h"
 
-void initcell(void)
+void
+initcell(void)
 {
-    int addr, x;
+    int             addr,
+                    x;
 
     // initialize heap area
     for (addr = 0; addr < CELLSIZE; addr++) {
-	/* heap[addr].flag = FRE;  FRE == 0 */
+	/*
+	 * heap[addr].flag = FRE; FRE == 0 
+	 */
 	heap[addr].val.cdr.intnum = addr + 1;
-	/* heap[addr].aux = 0;
-	   heap[addr].option = 0; */
+	/*
+	 * heap[addr].aux = 0; heap[addr].option = 0; 
+	 */
     }
     hp = 0;
     fc = CELLSIZE;
@@ -36,49 +40,53 @@ void initcell(void)
 	cell_hash_table[x] = NIL;
 
 
-    //0th address is for NIL, set initial environment
-    makesym("NIL");		//0th address NIL
-    SET_AUX(0, 28);		//class of nil is null
+    // 0th address is for NIL, set initial environment
+    makesym("NIL");		// 0th address NIL
+    SET_AUX(0, 28);		// class of nil is null
     SET_OPT(0, CONSTN);
-    makesym("T");		//2nd address is T
-    SET_AUX(2, 29);		//class of t is symbol
+    makesym("T");		// 2nd address is T
+    SET_AUX(2, 29);		// class of t is symbol
     SET_OPT(2, CONSTN);
-    makesym("<undef>");		//4th address is UNDEF
-    SET_AUX(4, 29);		//class of <undef> is symbol
-    makesym("<file-end>");	//6the address is FEND
-    SET_AUX(6, 29);		//class of <end-of-file> is symbol
+    makesym("<undef>");		// 4th address is UNDEF
+    SET_AUX(4, 29);		// class of <undef> is symbol
+    makesym("<file-end>");	// 6the address is FEND
+    SET_AUX(6, 29);		// class of <end-of-file> is symbol
     ep = 0;
     dp = 0;
     sp = 0;
     ap = 0;
 }
 
-void bindclass(const char *name, int cl)
+void
+bindclass(const char *name, int cl)
 {
-    int sym;
+    int             sym;
 
     sym = makesym(name);
     SET_AUX(sym, cl);
-    SET_OPT(cl, SYSTEM);	//built-in-class
-    SET_OPT(sym, SYSTEM);	//symbol formated by <***>  are built-in-classes
+    SET_OPT(cl, SYSTEM);	// built-in-class
+    SET_OPT(sym, SYSTEM);	// symbol formated by <***> are
+				// built-in-classes
 }
 
-//class aux = ((format-string . error-msg)(format-arguments . args))
-void initerrargs(int cl)
+// class aux = ((format-string . error-msg)(format-arguments . args))
+void
+initerrargs(int cl)
 {
-    int vars, args;
+    int             vars,
+                    args;
 
-    vars = list11(cons(makesym("a"), UNDEF),	//format-string
-		  cons(makesym("b"), UNDEF),	//format-arguments
-		  cons(makesym("c"), UNDEF),	//function
-		  cons(makesym("d"), UNDEF),	//operation
-		  cons(makesym("e"), UNDEF),	//operands
-		  cons(makesym("f"), UNDEF),	//object
-		  cons(makesym("g"), UNDEF),	//expected-class
-		  cons(makesym("h"), UNDEF),	//string
-		  cons(makesym("i"), UNDEF),	//stream
-		  cons(makesym("j"), UNDEF),	//name
-		  cons(makesym("k"), UNDEF));	//namespace
+    vars = list11(cons(makesym("a"), UNDEF),	// format-string
+		  cons(makesym("b"), UNDEF),	// format-arguments
+		  cons(makesym("c"), UNDEF),	// function
+		  cons(makesym("d"), UNDEF),	// operation
+		  cons(makesym("e"), UNDEF),	// operands
+		  cons(makesym("f"), UNDEF),	// object
+		  cons(makesym("g"), UNDEF),	// expected-class
+		  cons(makesym("h"), UNDEF),	// string
+		  cons(makesym("i"), UNDEF),	// stream
+		  cons(makesym("j"), UNDEF),	// name
+		  cons(makesym("k"), UNDEF));	// namespace
 
     SET_CDR(cl, vars);
     args = list11(cons(makesym("format-string"), makesym("a")),
@@ -96,7 +104,8 @@ void initerrargs(int cl)
 
 }
 
-void initclass(void)
+void
+initclass(void)
 {
     cobject = makeclass("object", NIL);
     cbasic_array = makeclass("basic-array", cobject);
@@ -218,16 +227,18 @@ void initclass(void)
 
 }
 
-void initstream(void)
+void
+initstream(void)
 {
     standard_input = makestream(stdin, EISL_INPUT);
     standard_output = makestream(stdout, EISL_OUTPUT);
     standard_error = makestream(stderr, EISL_OUTPUT);
 }
 
-int freshcell(void)
+int
+freshcell(void)
 {
-    int res;
+    int             res;
 
     if (gc_sw == 0) {
 	res = hp;
@@ -265,9 +276,10 @@ int freshcell(void)
 }
 
 
-int hfreshcell(void)
+int
+hfreshcell(void)
 {
-    int res;
+    int             res;
 
     res = hp;
     hp = heap[hp].val.cdr.intnum;
@@ -278,11 +290,12 @@ int hfreshcell(void)
     return (res);
 }
 
-//set value to environment by destructive
-//by deep-bind
-void setlexenv(int sym, int val)
+// set value to environment by destructive
+// by deep-bind
+void
+setlexenv(int sym, int val)
 {
-    int addr;
+    int             addr;
 
     addr = assq(sym, ep);
     if (addr == FAILSE)
@@ -291,10 +304,11 @@ void setlexenv(int sym, int val)
 	SET_CDR(addr, val);
 }
 
-//bind value to dynamic environment
-int setdynenv(int sym, int val)
+// bind value to dynamic environment
+int
+setdynenv(int sym, int val)
 {
-    int i;
+    int             i;
 
     for (i = dp; i > 0; i--) {
 	if (dynamic[i][0] == sym) {
@@ -311,14 +325,16 @@ int setdynenv(int sym, int val)
 }
 
 
-//additinal of lexical variable
-void addlexenv(int sym, int val)
+// additinal of lexical variable
+void
+addlexenv(int sym, int val)
 {
     ep = cons(cons(sym, val), ep);
 }
 
-//addition of dynamic variable
-int adddynenv(int sym, int val)
+// addition of dynamic variable
+int
+adddynenv(int sym, int val)
 {
     dp++;
     if (dp >= DYNSIZE)
@@ -329,13 +345,14 @@ int adddynenv(int sym, int val)
 }
 
 
-//environment is association list
+// environment is association list
 // env = ((sym1 . val1) (sym2 . val2) ...)
 // find value with assq
 // when not find return FAILSE
-int findenv(int sym)
+int
+findenv(int sym)
 {
-    int addr;
+    int             addr;
 
     addr = assq(sym, ep);
 
@@ -345,10 +362,11 @@ int findenv(int sym)
 	return (cdr(addr));
 }
 
-//find in dynamic environment
-int finddyn(int sym)
+// find in dynamic environment
+int
+finddyn(int sym)
 {
-    int i;
+    int             i;
 
     for (i = dp; i > 0; i--) {
 	if (dynamic[i][0] == sym)
@@ -357,10 +375,11 @@ int finddyn(int sym)
     return (FAILSE);
 }
 
-//bind to association list destructively
-void setval(int sym, int val, int ls)
+// bind to association list destructively
+void
+setval(int sym, int val, int ls)
 {
-    int addr;
+    int             addr;
 
     addr = assq(sym, ls);
     if (addr != FAILSE)
@@ -368,10 +387,11 @@ void setval(int sym, int val, int ls)
 }
 
 
-//for uniqueness of symbol
-int getsym(const char *name, int index)
+// for uniqueness of symbol
+int
+getsym(const char *name, int index)
 {
-    int addr;
+    int             addr;
 
     addr = cell_hash_table[index];
 
@@ -385,11 +405,13 @@ int getsym(const char *name, int index)
 }
 
 /*
-link list is generated in hheap area allways
-*/
-int addsym(const char *name, int index)
+ * link list is generated in hheap area allways 
+ */
+int
+addsym(const char *name, int index)
 {
-    int addr, res;
+    int             addr,
+                    res;
 
     addr = cell_hash_table[index];
     addr = hcons(res = makesym1(name), addr);
@@ -398,34 +420,33 @@ int addsym(const char *name, int index)
 }
 
 /*
-symbol
-car = function addr
-cdr = global value
-aux = class symbol
-option = CONSTN(constant )
-*/
-int makesym1(const char *pname)
+ * symbol car = function addr cdr = global value aux = class symbol option 
+ * = CONSTN(constant ) 
+ */
+int
+makesym1(const char *pname)
 {
-    int addr;
+    int             addr;
 
     addr = hfreshcell();
     SET_TAG(addr, SYM);
-    TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
+    TRY             heap[addr].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makesym", NIL);
     END_TRY;
     SET_CAR(addr, NIL);
     SET_CDR(addr, NIL);
-    SET_AUX(addr, csymbol);	//class symbol
+    SET_AUX(addr, csymbol);	// class symbol
     return (addr);
 }
 
-//calculate hash number
-//modulo sum of each charactor's ASCII code with
-//HASHTBSIZE(107)
-int hash(const char *name)
+// calculate hash number
+// modulo sum of each charactor's ASCII code with
+// HASHTBSIZE(107)
+int
+hash(const char *name)
 {
-    int res;
+    int             res;
 
     res = 0;
     while (*name != NUL) {
@@ -435,9 +456,9 @@ int hash(const char *name)
     return (res % HASHTBSIZE);
 }
 
-//-------for debug------------------
+// -------for debug------------------
 DEF_GETTER(flag, FLAG, flag, NIL)
-void cellprint(int addr)
+     void            cellprint(int addr)
 {
     switch (GET_FLAG(addr)) {
     case FRE:
@@ -504,10 +525,11 @@ void cellprint(int addr)
     }
 }
 
-//heap dump
-void heapdump(int start, int end)
+// heap dump
+void
+heapdump(int start, int end)
 {
-    int i;
+    int             i;
 
     puts("addr    F   TAG    CAR     CDR     AUX     NAME");
     for (i = start; i <= end; i++) {
@@ -517,12 +539,13 @@ void heapdump(int start, int end)
 }
 
 
-void store_backtrace(int x)
+void
+store_backtrace(int x)
 {
-    int i;
+    int             i;
 
     for (i = 1; i < BACKSIZE; i++) {
-	int y;
+	int             y;
 
 	y = backtrace[i];
 	backtrace[i - 1] = y;
@@ -530,53 +553,55 @@ void store_backtrace(int x)
     backtrace[BACKSIZE - 1] = x;
 }
 
-//----------------------------------------
+// ----------------------------------------
 
-int makeint(int intn)
+int
+makeint(int intn)
 {
-    //int addr;
+    // int addr;
 
-    //addr = freshcell();
-    //SET_TAG(addr,INTN);
-    //SET_INT(addr,intn);
-    //SET_AUX(addr,cfixnum); //class fixnum
+    // addr = freshcell();
+    // SET_TAG(addr,INTN);
+    // SET_INT(addr,intn);
+    // SET_AUX(addr,cfixnum); //class fixnum
     if (intn >= 0)
 	return (INT_FLAG | intn);
     else
 	return (intn);
 }
 
-int makelong(long long int lngnum)
+int
+makelong(long long int lngnum)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, lngnum);
-    SET_AUX(addr, clongnum);	//class longnum
+    SET_AUX(addr, clongnum);	// class longnum
     return (addr);
 }
 
-int makeflt(double floatn)
+int
+makeflt(double floatn)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, FLTN);
     SET_FLT(addr, floatn);
-    SET_AUX(addr, cfloat);	//class float
+    SET_AUX(addr, cfloat);	// class float
     return (addr);
 }
 
 /*
-symbol
-car = function
-cdr = global value
-aux = class
-*/
-int makesym(const char *pname)
+ * symbol car = function cdr = global value aux = class 
+ */
+int
+makesym(const char *pname)
 {
-    int index, res;
+    int             index,
+                    res;
 
     index = hash(pname);
     if ((res = getsym(pname, index)) != -1)
@@ -586,33 +611,34 @@ int makesym(const char *pname)
 }
 
 /*
-function
-car = args&body
-cdr = environment
-aux = null
-func object is generated in heap area.
-*/
-int makefunc(const char *pname, int addr)
+ * function car = args&body cdr = environment aux = null func object is
+ * generated in heap area. 
+ */
+int
+makefunc(const char *pname, int addr)
 {
-    int val;
+    int             val;
 
     val = hfreshcell();
     SET_TAG(val, FUNC);
-    TRY heap[val].name = Str_dup(pname, 1, 0, 1);
+    TRY             heap[val].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makefunc", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(addr));
     SET_CDR(val, ep);
-    SET_AUX(val, cfunction);	//class function
-    SET_OPT(val, count_args(car(addr)));	//amount of argument
+    SET_AUX(val, cfunction);	// class function
+    SET_OPT(val, count_args(car(addr)));	// amount of argument
     return (val);
 }
 
-//amount of argument. if it has :rest or &rest, it is minus number
-int count_args(int ls)
+// amount of argument. if it has :rest or &rest, it is minus number
+int
+count_args(int ls)
 {
-    int ls1, n, res;
+    int             ls1,
+                    n,
+                    res;
 
     ls1 = reverse(ls);
     n = length(ls);
@@ -626,12 +652,15 @@ int count_args(int ls)
     return (res);
 }
 
-int makevec(int n, int obj)
+int
+makevec(int n, int obj)
 {
-    int res, i, *vec;
+    int             res,
+                    i,
+                   *vec;
 
     res = freshcell();
-    TRY vec = (int *) ALLOC(sizeof(int) * n);
+    TRY             vec = (int *) ALLOC(sizeof(int) * n);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "make_vector", NIL);
     END_TRY;
@@ -646,9 +675,12 @@ int makevec(int n, int obj)
 
 
 
-int vector(int lis)
+int
+vector(int lis)
 {
-    int len, i, res;
+    int             len,
+                    i,
+                    res;
 
     len = length(lis);
     i = 0;
@@ -663,23 +695,21 @@ int vector(int lis)
 }
 
 /*
-generic
-car = args
-cdr = method
-aux = class
-*/
-int makegeneric(char *pname, int lamlist, int body)
+ * generic car = args cdr = method aux = class 
+ */
+int
+makegeneric(char *pname, int lamlist, int body)
 {
-    int val;
+    int             val;
 
     val = hfreshcell();
     SET_TAG(val, GENERIC);
-    TRY heap[val].name = Str_dup(pname, 1, 0, 1);
+    TRY             heap[val].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makegeneric", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(lamlist));
-    SET_OPT(val, count_args(lamlist));	//amount of argument
+    SET_OPT(val, count_args(lamlist));	// amount of argument
     SET_CDR(val, NIL);
     SET_AUX(val, cstandard_generic_function);
     while (!nullp(body)) {
@@ -692,17 +722,17 @@ int makegeneric(char *pname, int lamlist, int body)
 }
 
 /*
-diffrence is class. th class is  generic-function
-use in defgeneric*
-*/
-int makegeneric_star(int lamlist, int body)
+ * diffrence is class. th class is generic-function use in defgeneric* 
+ */
+int
+makegeneric_star(int lamlist, int body)
 {
-    int val;
+    int             val;
 
     val = hfreshcell();
     SET_TAG(val, GENERIC);
     SET_CAR(val, copy_heap(lamlist));
-    SET_OPT(val, count_args(lamlist));	//amount of argument
+    SET_OPT(val, count_args(lamlist));	// amount of argument
     SET_CDR(val, NIL);
     SET_AUX(val, cgeneric_function);	// difference. only this.
     while (!nullp(body)) {
@@ -717,15 +747,12 @@ int makegeneric_star(int lamlist, int body)
 
 
 /*
-method
-car = args&body
-cdr = environment
-aux = null
-opt = priority
-*/
-int makemethod(int addr)
+ * method car = args&body cdr = environment aux = null opt = priority 
+ */
+int
+makemethod(int addr)
 {
-    int val;
+    int             val;
 
     val = hfreshcell();
     SET_TAG(val, METHOD);
@@ -748,29 +775,35 @@ int makemethod(int addr)
 }
 
 
-int makestream(FILE * port, int type)
+int
+makestream(FILE * port, int type)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, STREAM);
     SET_PORT(addr, port);
-    SET_CDR(addr, 0);		//string-stream-position
-    SET_AUX(addr, cstream);	//class
-    SET_OPT(addr, type);	//input/output/inout
+    SET_CDR(addr, 0);		// string-stream-position
+    SET_AUX(addr, cstream);	// class
+    SET_OPT(addr, type);	// input/output/inout
     return (addr);
 }
 
-//--------array-------
-int makearray(int ls, int obj)
+// --------array-------
+int
+makearray(int ls, int obj)
 {
-    int size, res, i, ls1, *vec;
+    int             size,
+                    res,
+                    i,
+                    ls1,
+                   *vec;
 
     ls1 = ls;
     if (!nullp(ls)) {
 	size = 1;
 	while (!nullp(ls)) {
-	    int n;
+	    int             n;
 
 	    n = GET_INT(car(ls));
 	    if (n == 0)
@@ -783,7 +816,7 @@ int makearray(int ls, int obj)
 	size = 1;
 
     res = freshcell();
-    TRY vec = (int *) ALLOC(sizeof(int) * size);
+    TRY             vec = (int *) ALLOC(sizeof(int) * size);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "array", NIL);
     END_TRY;
@@ -793,7 +826,7 @@ int makearray(int ls, int obj)
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
-	SET_AUX(res, cgeneral_array_star);	//class
+	SET_AUX(res, cgeneral_array_star);	// class
     } else if (length(ls1) == 1) {
 	SET_TAG(res, VEC);
 	SET_CDR(res, GET_INT(car(ls1)));
@@ -801,31 +834,35 @@ int makearray(int ls, int obj)
     } else {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
-	SET_AUX(res, cgeneral_array_star);	//class
+	SET_AUX(res, cgeneral_array_star);	// class
     }
 
     return (res);
 }
 
 
-int makestr(const char *string)
+int
+makestr(const char *string)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, STR);
-    TRY heap[addr].name = Str_dup(string, 1, 0, 1);
+    TRY             heap[addr].name = Str_dup(string, 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makestr", NIL);
     END_TRY;
-    SET_AUX(addr, cstring);	//class string
+    SET_AUX(addr, cstring);	// class string
     return (addr);
 }
 
-int makechar(const char *pname)
+int
+makechar(const char *pname)
 {
-    int addr, pos;
-    char low_name[SYMSIZE], char_entity;
+    int             addr,
+                    pos;
+    char            low_name[SYMSIZE],
+                    char_entity;
 
 
     pos = 0;
@@ -858,7 +895,7 @@ int makechar(const char *pname)
 
     addr = freshcell();
     SET_TAG(addr, CHR);
-    TRY heap[addr].name = (char *) ALLOC(CHARSIZE);
+    TRY             heap[addr].name = (char *) ALLOC(CHARSIZE);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makechar", NIL);
     END_TRY;
@@ -869,19 +906,17 @@ int makechar(const char *pname)
 }
 
 /*
-class obj
-car = super class
-cdr = class variable
-aux = method
-name = class name
-*/
-int makeclass(const char *pname, int superclass)
+ * class obj car = super class cdr = class variable aux = method name =
+ * class name 
+ */
+int
+makeclass(const char *pname, int superclass)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, CLASS);
-    TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
+    TRY             heap[addr].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makeclass", NIL);
     END_TRY;
@@ -892,17 +927,18 @@ int makeclass(const char *pname, int superclass)
 }
 
 /*
-initls ((format-string a)(format-argments b))...(initarg var) )
-*/
-int makeinstance(int cl, int initls)
+ * initls ((format-string a)(format-argments b))...(initarg var) ) 
+ */
+int
+makeinstance(int cl, int initls)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, INSTANCE);
-    SET_CAR(addr, GET_CAR(cl));	//super class
-    SET_CDR(addr, slotvars(cl));	//slot vars with super class
-    SET_AUX(addr, cl);		//class of instance
+    SET_CAR(addr, GET_CAR(cl));	// super class
+    SET_CDR(addr, slotvars(cl));	// slot vars with super class
+    SET_AUX(addr, cl);		// class of instance
     while (!nullp(initls)) {
 	setval(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
 	       GET_CDR(addr));
@@ -911,7 +947,8 @@ int makeinstance(int cl, int initls)
     return (addr);
 }
 
-int slotvars(int x)
+int
+slotvars(int x)
 {
     if (nullp(x))
 	return (NIL);
@@ -927,10 +964,15 @@ int slotvars(int x)
 
 
 
-//initialize instance
-int initinst(int x, int initls)
+// initialize instance
+int
+initinst(int x, int initls)
 {
-    int cl, class_vars, inst_vars, initargs, n;
+    int             cl,
+                    class_vars,
+                    inst_vars,
+                    initargs,
+                    n;
 
     cl = GET_AUX(x);
     class_vars = GET_CDR(cl);
@@ -944,7 +986,7 @@ int initinst(int x, int initls)
     while (!nullp(initls)) {
 	n = assq(car(initls), initargs);
 	if (n != 0 && n != FAILSE) {
-	    int n2 = assq(GET_CDR(n), inst_vars);
+	    int             n2 = assq(GET_CDR(n), inst_vars);
 	    if (n2 != 0 && n2 != FAILSE) {
 		SET_CDR(n2, cadr(initls));
 	    }
@@ -955,10 +997,11 @@ int initinst(int x, int initls)
     return (x);
 }
 
-//initialize variables of super class of instance
-int initinst1(int inst_vars, int sc)
+// initialize variables of super class of instance
+int
+initinst1(int inst_vars, int sc)
 {
-    int class_vars;
+    int             class_vars;
 
     if (nullp(sc))
 	return (inst_vars);
@@ -974,10 +1017,11 @@ int initinst1(int inst_vars, int sc)
     }
 }
 
-int initinst2(int inst_vars, int class_vars)
+int
+initinst2(int inst_vars, int class_vars)
 {
     while (!nullp(class_vars)) {
-	int n;
+	int             n;
 
 	n = assq(caar(class_vars), inst_vars);
 	if (n != 0 && n != FAILSE) {
@@ -988,9 +1032,10 @@ int initinst2(int inst_vars, int class_vars)
     return (inst_vars);
 }
 
-int makedummy(void)
+int
+makedummy(void)
 {
-    int res;
+    int             res;
 
     res = freshcell();
     SET_TAG(res, DUMMY);
@@ -998,99 +1043,115 @@ int makedummy(void)
     return (res);
 }
 
-//-----for FAST compiler------
-int get_aux(int x)
+// -----for FAST compiler------
+int
+get_aux(int x)
 {
     return (GET_AUX(x));
 }
 
 
-int set_car(int x, int y)
+int
+set_car(int x, int y)
 {
     SET_CAR(x, y);
     return (y);
 }
 
-int set_cdr(int x, int y)
+int
+set_cdr(int x, int y)
 {
     SET_CDR(x, y);
     return (y);
 }
 
-int set_aux(int x, int y)
+int
+set_aux(int x, int y)
 {
     SET_AUX(x, y);
     return (y);
 }
 
-int set_opt(int x, int y)
+int
+set_opt(int x, int y)
 {
     SET_OPT(x, y);
     return (x);
 }
 
-int set_prop(int x, int y)
+int
+set_prop(int x, int y)
 {
     SET_PROP(x, y);
     return (y);
 }
 
-int set_dynpt(int x)
+int
+set_dynpt(int x)
 {
     dp = x;
     return (x);
 }
 
 
-int get_opt(int x)
+int
+get_opt(int x)
 {
     return (GET_OPT(x));
 }
 
 
-int get_prop(int x)
+int
+get_prop(int x)
 {
     return (GET_PROP(x));
 }
 
-int get_dynpt(void)
+int
+get_dynpt(void)
 {
     return (dp);
 }
 
 
-int callsubr(int func, int arglist)
+int
+callsubr(int func, int arglist)
 {
     return ((GET_SUBR(func)) (arglist));
 }
 
-int makeintlong(int n)
+int
+makeintlong(int n)
 {
-    int addr;
+    int             addr;
 
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, (long long int) n);
-    SET_AUX(addr, cinteger);	//class integer
+    SET_AUX(addr, cinteger);	// class integer
     return (addr);
 }
 
-int makestrflt(const char *str)
+int
+makestrflt(const char *str)
 {
     return (makeflt(atof(str)));
 }
 
-int makedoubleflt(double x)
+int
+makedoubleflt(double x)
 {
     return (makeflt(x));
 }
 
-int makestrlong(const char *str)
+int
+makestrlong(const char *str)
 {
     return (makelong(atol(str)));
 }
 
-static inline int HexDigitToNybble(char c)
+static inline int
+HexDigitToNybble(char c)
 {
     if (!isdigit(c)) {
 	static const int codesToSkip = 'A' - '9' - 1;
@@ -1099,19 +1160,21 @@ static inline int HexDigitToNybble(char c)
     return c - '0';
 }
 
-int makefaststrlong(const char *str)
+int
+makefaststrlong(const char *str)
 {
-    uint64_t u = 0;
+    uint64_t        u = 0;
     for (int i = 0; i < 8; i++) {
-	uint8_t hi_nybble = HexDigitToNybble(str[14 - (i << 1)]);
-	uint8_t lo_nybble = HexDigitToNybble(str[15 - (i << 1)]);
-	uint64_t byte = (hi_nybble << 4) | lo_nybble;
+	uint8_t         hi_nybble = HexDigitToNybble(str[14 - (i << 1)]);
+	uint8_t         lo_nybble = HexDigitToNybble(str[15 - (i << 1)]);
+	uint64_t        byte = (hi_nybble << 4) | lo_nybble;
 	u |= (byte << (i << 3));
     }
     return makelong(u);
 }
 
-int nth_cdr(int n, int x)
+int
+nth_cdr(int n, int x)
 {
     if (n == 0)
 	return (x);
@@ -1120,9 +1183,11 @@ int nth_cdr(int n, int x)
 }
 
 
-int convert(int arg1, int arg2)
+int
+convert(int arg1, int arg2)
 {
-    char str[SHORT_STRSIZE], *e;
+    char            str[SHORT_STRSIZE],
+                   *e;
 
     switch (GET_TAG(arg1)) {
     case INTN:
@@ -1176,7 +1241,7 @@ int convert(int arg1, int arg2)
 	if (GET_AUX(arg2) == cfloat) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cstring) {
-	    double x;
+	    double          x;
 
 	    x = GET_FLT(arg1);
 	    snprintf(str, SHORT_STRSIZE, "%g", x);
@@ -1247,7 +1312,8 @@ int convert(int arg1, int arg2)
     return (UNDEF);
 }
 
-int adaptp(int x, int y)
+int
+adaptp(int x, int y)
 {
 
     if (!CELLRANGE(x)) {
@@ -1269,9 +1335,10 @@ int adaptp(int x, int y)
 	return (0);
 }
 
-int fast_length(int x)
+int
+fast_length(int x)
 {
-    int res;
+    int             res;
 
     if (!listp(x) && !vectorp(x) && !stringp(x)) {
 	error(ILLEGAL_ARGS, "length", x);
@@ -1288,7 +1355,8 @@ int fast_length(int x)
 }
 
 
-int fast_car(int x)
+int
+fast_car(int x)
 {
     if (!(IS_LIST(x)))
 	error(NOT_LIST, "car", x);
@@ -1299,7 +1367,8 @@ int fast_car(int x)
 }
 
 
-int fast_cdr(int x)
+int
+fast_cdr(int x)
 {
     if (!(IS_LIST(x)))
 	error(NOT_LIST, "cdr", x);
@@ -1310,7 +1379,8 @@ int fast_cdr(int x)
 }
 
 
-int set_dynamic(int x, int y)
+int
+set_dynamic(int x, int y)
 {
     if (finddyn(x) != FAILSE)
 	setdynenv(x, y);
@@ -1320,19 +1390,22 @@ int set_dynamic(int x, int y)
     return (y);
 }
 
-int set_catch_symbols(int x)
+int
+set_catch_symbols(int x)
 {
     catch_symbols = x;
     return (x);
 }
 
 
-char *get_name(int x)
+char           *
+get_name(int x)
 {
     return (GET_NAME(x));
 }
 
-double get_flt(int x)
+double
+get_flt(int x)
 {
     return (GET_FLT(x));
 }

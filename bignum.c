@@ -1,17 +1,11 @@
 /*
-ported from Normal-Scheme
-data type  BIGX
-two way list. to become easy to access from LSB and MSB.
-car=int data of number
-cdr  next pointer to MSB
-prop  prev pointer to LSB
-prop of MSB store NIL.
-opt has sign data. plus=1,minus=-1,zero=0.
-number of data is absolute.
-
-cells = lsb -> ... msb -> NIL
-aux = cbignum class information
-*/
+ * ported from Normal-Scheme data type BIGX two way list. to become easy
+ * to access from LSB and MSB. car=int data of number cdr next pointer to
+ * MSB prop prev pointer to LSB prop of MSB store NIL. opt has sign data.
+ * plus=1,minus=-1,zero=0. number of data is absolute.
+ * 
+ * cells = lsb -> ... msb -> NIL aux = cbignum class information 
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -22,17 +16,23 @@ aux = cbignum class information
 #include "fmt.h"
 #include "text.h"
 
-int makebigx(char *bignum)
+int
+makebigx(char *bignum)
 {
-    char integer[15];
-    int i, j, res, sign, len, msb;
+    char            integer[15];
+    int             i,
+                    j,
+                    res,
+                    sign,
+                    len,
+                    msb;
 
-    //check sign
+    // check sign
     if (bignum[0] == '-')
 	sign = -1;
     else
 	sign = 1;
-    //remove sign
+    // remove sign
     if (bignum[0] == '-' || bignum[0] == '+') {
 	i = laststr(bignum);
 	for (j = 0; j < i; j++)
@@ -40,9 +40,9 @@ int makebigx(char *bignum)
 
 	bignum[j] = NUL;
     }
-    //length to check long data type
+    // length to check long data type
     len = 0;
-    //generate orijginal bignum data
+    // generate orijginal bignum data
     msb = res = gen_big();
 
     i = laststr(bignum);
@@ -67,7 +67,8 @@ int makebigx(char *bignum)
     }
 
     if (len == 2) {
-	long long int l, m;
+	long long int   l,
+	                m;
 
 	l = (long long int) GET_CAR(next(res)) * BIGNUM_BASE;
 	m = (long long int) GET_CAR(res);
@@ -84,12 +85,13 @@ int makebigx(char *bignum)
     }
 }
 
-void print_bigx(int x)
+void
+print_bigx(int x)
 {
-    int y;
-    Text_save_T save;
-    Text_T txt1 = { 0, NULL }, txt2;
-    char str[SHORT_STRSIZE];
+    int             y;
+    Text_save_T     save;
+    Text_T          txt1 = { 0, NULL }, txt2;
+    char            str[SHORT_STRSIZE];
 
     if (GET_OPT(output_stream) == EISL_OUTSTR) {
 	save = Text_save();
@@ -124,8 +126,8 @@ void print_bigx(int x)
     } while (!nullp(y));
 
     if (GET_OPT(output_stream) == EISL_OUTSTR) {
-	char *out_str = GET_NAME(output_stream);
-	size_t l = strlen(out_str);
+	char           *out_str = GET_NAME(output_stream);
+	size_t          l = strlen(out_str);
 	Text_get(out_str + l, STRSIZE - l, txt1);
 	Text_restore(&save);
     }
@@ -133,13 +135,13 @@ void print_bigx(int x)
 
 
 /*
-x=new y=link
-if it is first cell, store the cell, else chain a new cell.
-last msb cell, it's cdr is NIL
-*/
-int cons_next(int x, int y)
+ * x=new y=link if it is first cell, store the cell, else chain a new
+ * cell. last msb cell, it's cdr is NIL 
+ */
+int
+cons_next(int x, int y)
 {
-    int res;
+    int             res;
 
     if (GET_PROP(y) == -1) {
 	SET_PROP(y, NIL);
@@ -155,10 +157,11 @@ int cons_next(int x, int y)
     return (res);
 }
 
-//x=link y=new
-int cons_prev(int x, int y)
+// x=link y=new
+int
+cons_prev(int x, int y)
 {
-    int res;
+    int             res;
 
     if (GET_AUX(x) == -1) {
 	SET_PROP(x, NIL);
@@ -175,14 +178,14 @@ int cons_prev(int x, int y)
 }
 
 /*
-To check first cell, prop=-1.
-therefor when compute bignum, if it is first cell, store data the cell.
-or else chain cell with cons_next.
-
-*/
-int gen_big(void)
+ * To check first cell, prop=-1. therefor when compute bignum, if it is
+ * first cell, store data the cell. or else chain cell with cons_next.
+ * 
+ */
+int
+gen_big(void)
 {
-    int res;
+    int             res;
 
     res = freshcell();
     SET_CDR(res, NIL);
@@ -190,31 +193,36 @@ int gen_big(void)
     return (res);
 }
 
-//get address of upper digit
-int next(int x)
+// get address of upper digit
+int
+next(int x)
 {
     return (GET_CDR(x));
 }
 
-//get address of lower digit
-int prev(int x)
+// get address of lower digit
+int
+prev(int x)
 {
     return (GET_PROP(x));
 }
 
-//set sign
-void set_sign(int x, int y)
+// set sign
+void
+set_sign(int x, int y)
 {
     SET_OPT(x, y);
 }
 
-//get sign
-int get_sign(int x)
+// get sign
+int
+get_sign(int x)
 {
     return (GET_OPT(x));
 }
 
-int bigx_positivep(int x)
+int
+bigx_positivep(int x)
 {
     if (get_sign(x) == 1)
 	return (1);
@@ -222,7 +230,8 @@ int bigx_positivep(int x)
 	return (0);
 }
 
-int bigx_negativep(int x)
+int
+bigx_negativep(int x)
 {
     if (get_sign(x) == -1)
 	return (1);
@@ -231,14 +240,15 @@ int bigx_negativep(int x)
 }
 
 /*
-count number of bignum cell.
-if value is zero, count is zero.
-It is reason for matching to division
-
-*/
-int bigx_length(int x)
+ * count number of bignum cell. if value is zero, count is zero. It is
+ * reason for matching to division
+ * 
+ */
+int
+bigx_length(int x)
 {
-    int len, y;
+    int             len,
+                    y;
 
     len = 0;
     y = x;
@@ -252,8 +262,9 @@ int bigx_length(int x)
 	return (len);
 }
 
-//get address of MSB
-int get_msb(int x)
+// get address of MSB
+int
+get_msb(int x)
 {
     while (!nullp(next(x)))
 	x = next(x);
@@ -261,14 +272,15 @@ int get_msb(int x)
     return (x);
 }
 
-//garbage collection of unnecessary bignum cell.
-void bigx_gbc(int x)
+// garbage collection of unnecessary bignum cell.
+void
+bigx_gbc(int x)
 {
-    int addr;
+    int             addr;
 
     addr = x;
     do {
-	int addr1;
+	int             addr1;
 
 	addr1 = next(addr);
 	clrcell(addr);
@@ -280,7 +292,8 @@ void bigx_gbc(int x)
 }
 
 
-int bigx_eqp(int x, int y)
+int
+bigx_eqp(int x, int y)
 {
     do {
 	if (GET_CAR(x) != GET_CAR(y))
@@ -295,9 +308,13 @@ int bigx_eqp(int x, int y)
 	return (0);
 }
 
-int bigx_abs_smallerp(int arg1, int arg2)
+int
+bigx_abs_smallerp(int arg1, int arg2)
 {
-    int l1, l2, a1, a2;
+    int             l1,
+                    l2,
+                    a1,
+                    a2;
 
     l1 = bigx_length(arg1);
     l2 = bigx_length(arg2);
@@ -325,9 +342,13 @@ int bigx_abs_smallerp(int arg1, int arg2)
 }
 
 
-int bigx_smallerp(int arg1, int arg2)
+int
+bigx_smallerp(int arg1, int arg2)
 {
-    int l1, l2, a1, a2;
+    int             l1,
+                    l2,
+                    a1,
+                    a2;
 
     if (bigx_positivep(arg1) && bigx_negativep(arg2))
 	return (0);
@@ -381,10 +402,12 @@ int bigx_smallerp(int arg1, int arg2)
     return (0);
 }
 
-//find nth cell address
-int get_nth(int x, int n)
+// find nth cell address
+int
+get_nth(int x, int n)
 {
-    int m, msb;
+    int             m,
+                    msb;
 
 
     m = 1;
@@ -397,10 +420,13 @@ int get_nth(int x, int n)
 }
 
 
-//generate bignum data of n-cells
-int gen_n(int n)
+// generate bignum data of n-cells
+int
+gen_n(int n)
 {
-    int i, msb, res;
+    int             i,
+                    msb,
+                    res;
 
     msb = res = gen_big();
     SET_TAG(res, BIGX);
@@ -414,13 +440,15 @@ int gen_n(int n)
 
 
 /*
-cut of head zero cell.
-at least keep one cell, because possibility of all-zero.
-
-*/
-void cut_zero(int x)
+ * cut of head zero cell. at least keep one cell, because possibility of
+ * all-zero.
+ * 
+ */
+void
+cut_zero(int x)
 {
-    int msb, dig;
+    int             msb,
+                    dig;
 
     dig = bigx_length(x);
     msb = get_msb(x);
@@ -431,9 +459,11 @@ void cut_zero(int x)
     SET_CDR(msb, NIL);
 }
 
-int bigx_int_to_big(int x)
+int
+bigx_int_to_big(int x)
 {
-    int res, y;
+    int             res,
+                    y;
 
     y = GET_INT(x);
     res = gen_big();
@@ -446,10 +476,13 @@ int bigx_int_to_big(int x)
     return (res);
 }
 
-int bigx_long_to_big(int x)
+int
+bigx_long_to_big(int x)
 {
-    int res, i2, i1;
-    long long int l;
+    int             res,
+                    i2,
+                    i1;
+    long long int   l;
 
     l = GET_LONG(x);
     i2 = llabs(l) % BIGNUM_BASE;
@@ -464,10 +497,13 @@ int bigx_long_to_big(int x)
     return (res);
 }
 
-int bigx_simplify(int x)
+int
+bigx_simplify(int x)
 {
-    int i1;
-    long long int l, l1, l2;
+    int             i1;
+    long long int   l,
+                    l1,
+                    l2;
 
     if (bigx_length(x) == 0) {
 	return (makeint(0));
@@ -487,10 +523,12 @@ int bigx_simplify(int x)
 
 }
 
-//add n-zero-cells to x
-int bigx_shift(int x, int n)
+// add n-zero-cells to x
+int
+bigx_shift(int x, int n)
 {
-    int res, msb;
+    int             res,
+                    msb;
 
     msb = res = gen_big();
     SET_TAG(res, BIGX);
@@ -508,15 +546,17 @@ int bigx_shift(int x, int n)
 }
 
 
-int bigx_abs(int x)
+int
+bigx_abs(int x)
 {
-    int res, msb;
+    int             res,
+                    msb;
 
     msb = res = gen_big();
     SET_TAG(res, BIGX);
     set_sign(res, 1);
     do {
-	int y;
+	int             y;
 
 	y = GET_CAR(x);
 	msb = cons_next(y, msb);
@@ -527,9 +567,10 @@ int bigx_abs(int x)
 }
 
 
-int bigx_plus(int arg1, int arg2)
+int
+bigx_plus(int arg1, int arg2)
 {
-    int res;
+    int             res;
 
     res = UNDEF;
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
@@ -562,16 +603,22 @@ int bigx_plus(int arg1, int arg2)
     return (res);
 }
 
-int bigx_plus1(int arg1, int arg2)
+int
+bigx_plus1(int arg1, int arg2)
 {
-    int c, res, msb;
+    int             c,
+                    res,
+                    msb;
 
     msb = res = gen_big();
     SET_TAG(res, BIGX);
     set_sign(res, 1);
     c = 0;
     do {
-	int x, y, z, q;
+	int             x,
+	                y,
+	                z,
+	                q;
 
 	x = GET_CAR(arg1);
 	y = GET_CAR(arg2);
@@ -590,11 +637,12 @@ int bigx_plus1(int arg1, int arg2)
     return (res);
 }
 
-void bigx_plus2(int arg, int c, int msb)
+void
+bigx_plus2(int arg, int c, int msb)
 {
     do {
-	int q;
-	long long int l;
+	int             q;
+	long long int   l;
 
 	l = GET_CAR(arg) + c;
 	c = l / BIGNUM_BASE;
@@ -606,9 +654,10 @@ void bigx_plus2(int arg, int c, int msb)
 	(void) cons_next(c, msb);
 }
 
-int bigx_minus(int arg1, int arg2)
+int
+bigx_minus(int arg1, int arg2)
 {
-    int res;
+    int             res;
 
     res = UNDEF;
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
@@ -641,16 +690,21 @@ int bigx_minus(int arg1, int arg2)
 }
 
 // arg1 > arg2
-int bigx_minus1(int arg1, int arg2)
+int
+bigx_minus1(int arg1, int arg2)
 {
-    int z, c, res, msb;
+    int             z,
+                    c,
+                    res,
+                    msb;
 
     msb = res = gen_big();
     SET_TAG(res, BIGX);
     set_sign(res, 1);
     c = 0;
     do {
-	int x, y;
+	int             x,
+	                y;
 
 	x = GET_CAR(arg1);
 	y = GET_CAR(arg2);
@@ -674,12 +728,13 @@ int bigx_minus1(int arg1, int arg2)
     return (res);
 }
 
-void bigx_minus2(int arg, int c, int msb)
+void
+bigx_minus2(int arg, int c, int msb)
 {
-    int q;
+    int             q;
 
     while (!nullp(arg)) {
-	int x;
+	int             x;
 
 	x = GET_CAR(arg);
 	if (x + c < 0) {
@@ -695,9 +750,10 @@ void bigx_minus2(int arg, int c, int msb)
 }
 
 
-int bigx_mult(int arg1, int arg2)
+int
+bigx_mult(int arg1, int arg2)
 {
-    int res;
+    int             res;
 
     res = UNDEF;
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
@@ -719,17 +775,26 @@ int bigx_mult(int arg1, int arg2)
     return (res);
 }
 
-int bigx_mult1(int arg1, int arg2)
+int
+bigx_mult1(int arg1, int arg2)
 {
-    int res, dig2, n;
-    long long int x, y, z, l1, l2, c;
+    int             res,
+                    dig2,
+                    n;
+    long long int   x,
+                    y,
+                    z,
+                    l1,
+                    l2,
+                    c;
 
     res = gen_n(bigx_length(arg1) + bigx_length(arg2));
     set_sign(res, 1);
     dig2 = arg2;
     n = 0;
     do {
-	int dig1, msb;
+	int             dig1,
+	                msb;
 
 	dig1 = arg1;
 	msb = get_nth(res, n);
@@ -761,12 +826,15 @@ int bigx_mult1(int arg1, int arg2)
 
 
 
-int bigx_div(int arg1, int arg2)
+int
+bigx_div(int arg1, int arg2)
 {
-    int res, x, y;
+    int             res,
+                    x,
+                    y;
 
     res = UNDEF;
-    //if devidend is smaller than divisor,return 0
+    // if devidend is smaller than divisor,return 0
     if (bigx_abs_smallerp(arg1, arg2))
 	return (makeint(0));
 
@@ -797,37 +865,52 @@ int bigx_div(int arg1, int arg2)
 }
 
 /*
-Knuth TAOCP fourth. see p88
-s=sift is for match digits, ds is divisor, p=plus adding again,
-bv= if u/v > BIGNUM_BASE, cell of MSB.
-*/
+ * Knuth TAOCP fourth. see p88 s=sift is for match digits, ds is divisor,
+ * p=plus adding again, bv= if u/v > BIGNUM_BASE, cell of MSB. 
+ */
 
-//#define TEST
+// #define TEST
 
-int bigx_div1(int arg1, int arg2)
+int
+bigx_div1(int arg1, int arg2)
 {
-    int s, ss, ds, p, t, res, flag1, flag2, i, dig1, dig2;
-    long long int d, u, v, q, l1, l2;
+    int             s,
+                    ss,
+                    ds,
+                    p,
+                    t,
+                    res,
+                    flag1,
+                    flag2,
+                    i,
+                    dig1,
+                    dig2;
+    long long int   d,
+                    u,
+                    v,
+                    q,
+                    l1,
+                    l2;
 #ifdef TEST
-    int c;
+    int             c;
     c = 10;
 #endif
 
     flag1 = 0;
     flag2 = 0;
     ss = 0;
-    //devidend is smaller than 2 times divisor, return 1
-    //if quotient is 1, theorem is not hold
+    // devidend is smaller than 2 times divisor, return 1
+    // if quotient is 1, theorem is not hold
     s = bigx_mult1(arg2, bigx_int_to_big(makeint(2)));
     if (bigx_abs_smallerp(arg1, s))
 	return (makeint(1));
 
-    //following code, calcuration is required in bignum
-    //so, stop simlification.
+    // following code, calcuration is required in bignum
+    // so, stop simlification.
     simp_flag = false;
 
     res = gen_big();
-    //if divisor is smaller, become bigger to hold theolem
+    // if divisor is smaller, become bigger to hold theolem
     v = (long long int) GET_CAR(get_msb(arg2));
     if (v < (BIGNUM_BASE / 2)) {
 	d = BIGNUM_BASE / (v + 1);
@@ -897,7 +980,7 @@ int bigx_div1(int arg1, int arg2)
 	putchar('\n');
 #endif
 
-	bigx_gbc(ds);		//garbage collection
+	bigx_gbc(ds);		// garbage collection
 	bigx_gbc(p);
 
 	if ((ss - s) > 1) {
@@ -907,7 +990,7 @@ int bigx_div1(int arg1, int arg2)
 		i--;
 	    }
 	}
-	//if q is bigger than BIGNUM_BASE, number span two cells.
+	// if q is bigger than BIGNUM_BASE, number span two cells.
 	if (q < BIGNUM_BASE) {
 	    res = cons_prev(res, (int) q);
 	} else {
@@ -928,7 +1011,7 @@ int bigx_div1(int arg1, int arg2)
     if (flag2)
 	bigx_gbc(arg2);
 
-    //restore flag
+    // restore flag
     simp_flag = true;
     SET_TAG(res, BIGX);
     set_sign(res, 1);
@@ -937,16 +1020,18 @@ int bigx_div1(int arg1, int arg2)
 }
 
 
-int bigx_big_to_flt(int x)
+int
+bigx_big_to_flt(int x)
 {
-    double val;
-    int msb, res;
+    double          val;
+    int             msb,
+                    res;
 
     res = freshcell();
     val = 0.0;
     msb = get_msb(x);
     do {
-	int i;
+	int             i;
 
 	i = GET_CAR(msb);
 	val = val * (double) BIGNUM_BASE + (double) i;
@@ -958,11 +1043,15 @@ int bigx_big_to_flt(int x)
     return (res);
 }
 
-//bignum remainder of bignum and int
-int bigx_remainder_i(int x, int y)
+// bignum remainder of bignum and int
+int
+bigx_remainder_i(int x, int y)
 {
-    int msb, sign1, sign2;
-    long long int j, r;
+    int             msb,
+                    sign1,
+                    sign2;
+    long long int   j,
+                    r;
 
 
     msb = get_msb(bigx_abs(x));
@@ -979,7 +1068,7 @@ int bigx_remainder_i(int x, int y)
     r = 0;
 
     do {
-	long long int i;
+	long long int   i;
 
 	i = GET_CAR(msb);
 	i = i + r * BIGNUM_BASE;
@@ -992,11 +1081,17 @@ int bigx_remainder_i(int x, int y)
     return (makeint((int) r * sign1 * sign2));
 }
 
-//bignum divide of bignum and int
-int bigx_div_i(int x, int y)
+// bignum divide of bignum and int
+int
+bigx_div_i(int x, int y)
 {
-    int res, msb, sign1, sign2;
-    long long int j, r, q;
+    int             res,
+                    msb,
+                    sign1,
+                    sign2;
+    long long int   j,
+                    r,
+                    q;
 
 
     res = gen_big();
@@ -1014,7 +1109,7 @@ int bigx_div_i(int x, int y)
     r = 0;
 
     do {
-	long long int i;
+	long long int   i;
 
 	i = GET_CAR(msb);
 	i = i + r * BIGNUM_BASE;
@@ -1035,11 +1130,16 @@ int bigx_div_i(int x, int y)
     return (res);
 }
 
-//multple of bignum and int
-int bigx_mult_i(int x, int y)
+// multple of bignum and int
+int
+bigx_mult_i(int x, int y)
 {
-    int res, msb, sign1, sign2;
-    long long int j, c;
+    int             res,
+                    msb,
+                    sign1,
+                    sign2;
+    long long int   j,
+                    c;
 
 
     msb = res = gen_big();
@@ -1056,7 +1156,8 @@ int bigx_mult_i(int x, int y)
     c = 0;
 
     do {
-	long long int i, z;
+	long long int   i,
+	                z;
 
 	i = GET_CAR(x);
 	z = i * j + c;

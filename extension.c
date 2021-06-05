@@ -7,7 +7,8 @@
 #endif
 #include "eisl.h"
 
-void initexsubr(void)
+void
+initexsubr(void)
 {
     defsubr("RANDOM-REAL", f_random_real);
     defsubr("RANDOM", f_random);
@@ -89,10 +90,11 @@ void initexsubr(void)
 #endif
 }
 
-//Fast Project
-int f_classp(int arglist)
+// Fast Project
+int
+f_classp(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -105,13 +107,15 @@ int f_classp(int arglist)
 }
 
 
-int f_ignore(int arglist __unused)
+int
+f_ignore(int arglist __unused)
 {
     return (T);
 }
 
 
-int f_self_introduction(int arglist __unused)
+int
+f_self_introduction(int arglist __unused)
 {
 #if __APPLE__
     return (makesym("MACOS"));
@@ -123,9 +127,10 @@ int f_self_introduction(int arglist __unused)
 }
 
 
-int f_ignore_toplevel_check(int arglist)
+int
+f_ignore_toplevel_check(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (arg1 == T)
@@ -136,9 +141,9 @@ int f_ignore_toplevel_check(int arglist)
 }
 
 DEF_PREDICATE(METHOD, METHOD)
-int f_get_method_priority(int arglist)
+     int             f_get_method_priority(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (!(IS_METHOD(arg1)))
@@ -148,9 +153,10 @@ int f_get_method_priority(int arglist)
 }
 
 
-int f_get_method_body(int arglist)
+int
+f_get_method_body(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (!(IS_METHOD(arg1)))
@@ -159,9 +165,10 @@ int f_get_method_body(int arglist)
     return (GET_CAR(arg1));
 }
 
-int f_get_method(int arglist)
+int
+f_get_method(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (!genericp(arg1))
@@ -170,18 +177,20 @@ int f_get_method(int arglist)
 }
 
 
-int f_readed_array_list(int arglist)
+int
+f_readed_array_list(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     return (GET_PROP(arg1));
 }
 
 
-int f_system(int arglist)
+int
+f_system(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (system(GET_NAME(arg1)) == -1)
@@ -191,17 +200,19 @@ int f_system(int arglist)
 
 
 
-int f_freedll(int arglist __unused)
+int
+f_freedll(int arglist __unused)
 {
-    //dlclose(hmod);
+    // dlclose(hmod);
     return (T);
 }
 
 
 
-int f_macrop(int arglist)
+int
+f_macrop(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -212,9 +223,10 @@ int f_macrop(int arglist)
 	return (NIL);
 }
 
-int f_fixnump(int arglist)
+int
+f_fixnump(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -225,9 +237,10 @@ int f_fixnump(int arglist)
 	return (NIL);
 }
 
-int f_longnump(int arglist)
+int
+f_longnump(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -238,9 +251,10 @@ int f_longnump(int arglist)
 	return (NIL);
 }
 
-int f_bignump(int arglist)
+int
+f_bignump(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -252,9 +266,10 @@ int f_bignump(int arglist)
 }
 
 
-int f_subrp(int arglist)
+int
+f_subrp(int arglist)
 {
-    int arg;
+    int             arg;
 
     arg = car(arglist);
     if (length(arglist) != 1)
@@ -265,9 +280,10 @@ int f_subrp(int arglist)
 	return (NIL);
 }
 
-int f_random_real(int arglist)
+int
+f_random_real(int arglist)
 {
-    double d;
+    double          d;
 
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "random-real", arglist);
@@ -276,9 +292,11 @@ int f_random_real(int arglist)
     return (makeflt(d));
 }
 
-int f_random(int arglist)
+int
+f_random(int arglist)
 {
-    int arg1, n;
+    int             arg1,
+                    n;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "random", arglist);
@@ -289,9 +307,11 @@ int f_random(int arglist)
     return (makeint(rand() % n));
 }
 
-int f_nconc(int arglist)
+int
+f_nconc(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -301,9 +321,10 @@ int f_nconc(int arglist)
     return (nconc(arg1, arg2));
 }
 
-int f_address(int arglist)
+int
+f_address(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -312,9 +333,11 @@ int f_address(int arglist)
     return (makeint(arg1));
 }
 
-int f_macroexpand_1(int arglist)
+int
+f_macroexpand_1(int arglist)
 {
-    int arg1, args;
+    int             arg1,
+                    args;
 
     arg1 = caar(arglist);
     args = cdar(arglist);
@@ -326,9 +349,15 @@ int f_macroexpand_1(int arglist)
     return (macroexpand_1(arg1, args));
 }
 
-int macroexpand_1(int macsym, int args)
+int
+macroexpand_1(int macsym, int args)
 {
-    int func, body, macrofunc, varlist, save, res;
+    int             func,
+                    body,
+                    macrofunc,
+                    varlist,
+                    save,
+                    res;
 
     func = GET_CAR(macsym);
     save = ep;
@@ -353,9 +382,10 @@ int macroexpand_1(int macsym, int args)
     return (res);
 }
 
-int f_macroexpand_all(int arglist)
+int
+f_macroexpand_all(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -367,7 +397,8 @@ int f_macroexpand_all(int arglist)
 }
 
 
-int macroexpand_all(int sexp)
+int
+macroexpand_all(int sexp)
 {
 
     if (nullp(sexp))
@@ -385,9 +416,11 @@ int macroexpand_all(int sexp)
     return (NIL);
 }
 
-int f_backtrace(int arglist)
+int
+f_backtrace(int arglist)
 {
-    int arg1, l;
+    int             arg1,
+                    l;
 
     if ((l = length(arglist)) != 0 && l != 1)
 	error(WRONG_ARGS, "backtrace", arglist);
@@ -395,7 +428,7 @@ int f_backtrace(int arglist)
     arg1 = car(arglist);
 
     if (l == 0) {
-	int i;
+	int             i;
 
 	for (i = 0; i < BACKSIZE; i++) {
 	    print(backtrace[i]);
@@ -409,16 +442,19 @@ int f_backtrace(int arglist)
     return (T);
 }
 
-int f_break(int arglist __unused)
+int
+f_break(int arglist __unused)
 {
     puts("break");
     debugger();
     return (T);
 }
 
-int f_instance(int arglist)
+int
+f_instance(int arglist)
 {
-    int arg1, addr;
+    int             arg1,
+                    addr;
 
     arg1 = car(arglist);
     addr = get_int(arg1);
@@ -426,17 +462,22 @@ int f_instance(int arglist)
     return (T);
 }
 
-//----------for Raspberry PI
+// ----------for Raspberry PI
 #ifdef __arm__
-int f_wiringpi_setup_gpio(int arglist __unused)
+int
+f_wiringpi_setup_gpio(int arglist __unused)
 {
     wiringPiSetupGpio();
     return (T);
 }
 
-int f_wiringpi_spi_setup_ch_speed(int arglist)
+int
+f_wiringpi_spi_setup_ch_speed(int arglist)
 {
-    int arg1, arg2, x, y;
+    int             arg1,
+                    arg2,
+                    x,
+                    y;
 
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "wiringpi-spi-setup-ch-speed", arglist);
@@ -454,9 +495,10 @@ int f_wiringpi_spi_setup_ch_speed(int arglist)
     return (T);
 }
 
-int f_pwm_set_mode(int arglist)
+int
+f_pwm_set_mode(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "pwm-set-mode", arglist);
@@ -473,9 +515,11 @@ int f_pwm_set_mode(int arglist)
     return (T);
 }
 
-int f_pwm_set_range(int arglist)
+int
+f_pwm_set_range(int arglist)
 {
-    int arg1, x;
+    int             arg1,
+                    x;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "pwm-set-range", arglist);
@@ -489,9 +533,11 @@ int f_pwm_set_range(int arglist)
     return (T);
 }
 
-int f_pwm_set_clock(int arglist)
+int
+f_pwm_set_clock(int arglist)
 {
-    int arg1, x;
+    int             arg1,
+                    x;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "pwm-set-clock", arglist);
@@ -505,9 +551,12 @@ int f_pwm_set_clock(int arglist)
     return (T);
 }
 
-int f_pin_mode(int arglist)
+int
+f_pin_mode(int arglist)
 {
-    int arg1, arg2, x;
+    int             arg1,
+                    arg2,
+                    x;
 
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "pin-mode", arglist);
@@ -530,9 +579,13 @@ int f_pin_mode(int arglist)
     return (T);
 }
 
-int f_digital_write(int arglist)
+int
+f_digital_write(int arglist)
 {
-    int arg1, arg2, x, y;
+    int             arg1,
+                    arg2,
+                    x,
+                    y;
 
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "digital-write", arglist);
@@ -550,9 +603,11 @@ int f_digital_write(int arglist)
     return (T);
 }
 
-int f_digital_write_byte(int arglist)
+int
+f_digital_write_byte(int arglist)
 {
-    int arg1, x;
+    int             arg1,
+                    x;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "digital-write-byte", arglist);
@@ -566,9 +621,13 @@ int f_digital_write_byte(int arglist)
     return (T);
 }
 
-int f_pull_up_dn_control(int arglist)
+int
+f_pull_up_dn_control(int arglist)
 {
-    int arg1, arg2, x, y;
+    int             arg1,
+                    arg2,
+                    x,
+                    y;
 
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "pull-up-dn-control", arglist);
@@ -586,9 +645,12 @@ int f_pull_up_dn_control(int arglist)
     return (T);
 }
 
-int f_digital_read(int arglist)
+int
+f_digital_read(int arglist)
 {
-    int arg1, x, res;
+    int             arg1,
+                    x,
+                    res;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "digital-read", arglist);
@@ -602,9 +664,11 @@ int f_digital_read(int arglist)
     return (makeint(res));
 }
 
-int f_delay(int arglist)
+int
+f_delay(int arglist)
 {
-    int arg1, x;
+    int             arg1,
+                    x;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "delay", arglist);
@@ -618,9 +682,11 @@ int f_delay(int arglist)
     return (T);
 }
 
-int f_delay_microseconds(int arglist)
+int
+f_delay_microseconds(int arglist)
 {
-    int arg1, x;
+    int             arg1,
+                    x;
 
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "delay-microseconds", arglist);
@@ -635,9 +701,12 @@ int f_delay_microseconds(int arglist)
 }
 #endif
 
-int f_modulesubst(int arglist)
+int
+f_modulesubst(int arglist)
 {
-    int arg1, arg2, arg3;
+    int             arg1,
+                    arg2,
+                    arg3;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -646,9 +715,11 @@ int f_modulesubst(int arglist)
     return (modulesubst(arg1, arg2, arg3));
 }
 
-int f_line_argument(int arglist)
+int
+f_line_argument(int arglist)
 {
-    int arg1, n;
+    int             arg1,
+                    n;
 
     if (length(arglist) != 1) {
 	error(WRONG_ARGS, "line-argument", arglist);

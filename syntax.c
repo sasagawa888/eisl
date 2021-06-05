@@ -12,7 +12,8 @@
 
 #define TAGBODY_LEN_MAX 100
 
-void initsyntax(void)
+void
+initsyntax(void)
 {
     deffsubr("LAMBDA", f_lambda);
     deffsubr("LABELS", f_labels);
@@ -72,7 +73,8 @@ void initsyntax(void)
 }
 
 // --FSUBR-----------
-int f_lambda(int arglist)
+int
+f_lambda(int arglist)
 {
 
     if (nullp(arglist))
@@ -90,9 +92,15 @@ int f_lambda(int arglist)
     return (makefunc("", arglist));
 }
 
-int f_labels(int arglist)
+int
+f_labels(int arglist)
 {
-    int arg1, arg2, save, func, res, temp;
+    int             arg1,
+                    arg2,
+                    save,
+                    func,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -104,7 +112,8 @@ int f_labels(int arglist)
 	error(IMPROPER_ARGS, "labels", arg1);
     temp = arg1;
     while (!nullp(temp)) {
-	int temparg1, temparg2;
+	int             temparg1,
+	                temparg2;
 
 	temparg1 = car(car(temp));
 	temparg2 = cdr(car(temp));
@@ -132,7 +141,8 @@ int f_labels(int arglist)
     func = NIL;
     res = NIL;
     while (arg1 != NIL) {
-	int sym, val;
+	int             sym,
+	                val;
 
 	sym = caar(arg1);
 	if (!symbolp(sym))
@@ -155,9 +165,15 @@ int f_labels(int arglist)
     return (res);
 }
 
-int f_flet(int arglist)
+int
+f_flet(int arglist)
 {
-    int arg1, arg2, save, ep1, res, temp;
+    int             arg1,
+                    arg2,
+                    save,
+                    ep1,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -169,7 +185,8 @@ int f_flet(int arglist)
 	error(IMPROPER_ARGS, "flet", arg1);
     temp = arg1;
     while (!nullp(temp)) {
-	int temparg1, temparg2;
+	int             temparg1,
+	                temparg2;
 
 	temparg1 = car(car(temp));
 	temparg2 = cdr(car(temp));
@@ -196,7 +213,8 @@ int f_flet(int arglist)
     ep1 = ep;
     res = NIL;
     while (arg1 != NIL) {
-	int sym, val;
+	int             sym,
+	                val;
 
 	sym = caar(arg1);
 	if (!symbolp(sym))
@@ -216,9 +234,14 @@ int f_flet(int arglist)
     return (res);
 }
 
-int f_let(int arglist)
+int
+f_let(int arglist)
 {
-    int arg1, arg2, save, res, temp;
+    int             arg1,
+                    arg2,
+                    save,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -228,7 +251,7 @@ int f_let(int arglist)
 	error(IMPROPER_ARGS, "let", arg1);
     temp = arg1;
     while (!nullp(temp)) {
-	int temparg1;
+	int             temparg1;
 
 	temparg1 = car(car(temp));
 	if (improperlistp(car(temp)))
@@ -251,7 +274,9 @@ int f_let(int arglist)
     save = ep;
     res = NIL;
     while (arg1 != NIL) {
-	int ep1, sym, val;
+	int             ep1,
+	                sym,
+	                val;
 
 	ep1 = ep;
 	ep = save;
@@ -275,9 +300,14 @@ int f_let(int arglist)
     return (res);
 }
 
-int f_letstar(int arglist)
+int
+f_letstar(int arglist)
 {
-    int arg1, arg2, save, res, temp;
+    int             arg1,
+                    arg2,
+                    save,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -287,7 +317,7 @@ int f_letstar(int arglist)
 	error(IMPROPER_ARGS, "let*", arg1);
     temp = arg1;
     while (!nullp(temp)) {
-	int temparg1;
+	int             temparg1;
 
 	temparg1 = car(car(temp));
 	if (improperlistp(car(temp)))
@@ -310,7 +340,7 @@ int f_letstar(int arglist)
     save = ep;
     res = NIL;
     while (arg1 != NIL) {
-	int sym;
+	int             sym;
 
 	sym = caar(arg1);
 	if (!symbolp(sym))
@@ -326,9 +356,14 @@ int f_letstar(int arglist)
     return (res);
 }
 
-int f_dynamic_let(int arglist)
+int
+f_dynamic_let(int arglist)
 {
-    int arg1, arg2, save, res, temp;
+    int             arg1,
+                    arg2,
+                    save,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -338,7 +373,7 @@ int f_dynamic_let(int arglist)
 	error(IMPROPER_ARGS, "dynamic-let", arg1);
     temp = arg1;
     while (!nullp(temp)) {
-	int temparg1;
+	int             temparg1;
 
 	temparg1 = car(car(temp));
 	if (improperlistp(car(temp)))
@@ -361,7 +396,9 @@ int f_dynamic_let(int arglist)
     save = dp;
     res = NIL;
     while (arg1 != NIL) {
-	int dp1, sym, val;
+	int             dp1,
+	                sym,
+	                val;
 
 	dp1 = dp;
 	dp = save;
@@ -384,9 +421,14 @@ int f_dynamic_let(int arglist)
 }
 
 
-int f_setf(int arglist)
+int
+f_setf(int arglist)
 {
-    int arg1, arg2, newform, var, res;
+    int             arg1,
+                    arg2,
+                    newform,
+                    var,
+                    res;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -449,9 +491,11 @@ int f_setf(int arglist)
 
 
 
-int f_set_dynamic(int arglist)
+int
+f_set_dynamic(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = eval(cadr(arglist));
@@ -476,9 +520,11 @@ int f_set_dynamic(int arglist)
 }
 
 
-int f_setq(int arglist)
+int
+f_setq(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -502,9 +548,11 @@ int f_setq(int arglist)
     return (arg2);
 }
 
-int f_defconstant(int arglist)
+int
+f_defconstant(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -529,9 +577,12 @@ int f_defconstant(int arglist)
 
 }
 
-int f_defun(int arglist)
+int
+f_defun(int arglist)
 {
-    int arg1, arg2, val;
+    int             arg1,
+                    arg2,
+                    val;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -560,9 +611,11 @@ int f_defun(int arglist)
     return (arg1);
 }
 
-int f_defmacro(int arglist)
+int
+f_defmacro(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -588,9 +641,11 @@ int f_defmacro(int arglist)
     return (arg1);
 }
 
-int f_defglobal(int arglist)
+int
+f_defglobal(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -610,9 +665,11 @@ int f_defglobal(int arglist)
     return (arg1);
 }
 
-int f_defdynamic(int arglist)
+int
+f_defdynamic(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -630,9 +687,11 @@ int f_defdynamic(int arglist)
     return (arg1);
 }
 
-int f_dynamic(int arglist)
+int
+f_dynamic(int arglist)
 {
-    int arg1, res;
+    int             arg1,
+                    res;
 
     arg1 = car(arglist);
     if (improperlistp(arglist))
@@ -649,7 +708,8 @@ int f_dynamic(int arglist)
     return (res);
 }
 
-int f_and(int arglist)
+int
+f_and(int arglist)
 {
 
     if (nullp(arglist))
@@ -663,9 +723,10 @@ int f_and(int arglist)
 
 }
 
-int f_or(int arglist)
+int
+f_or(int arglist)
 {
-    int temp;
+    int             temp;
 
     if (nullp(arglist))
 	return (NIL);
@@ -679,9 +740,10 @@ int f_or(int arglist)
     return (UNDEF);
 }
 
-int f_function(int arglist)
+int
+f_function(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -690,7 +752,7 @@ int f_function(int arglist)
 	error(ILLEGAL_ARGS, "function", arglist);
 
     if (symbolp(arg1)) {
-	int res;
+	int             res;
 
 	res = findenv(arg1);
 	if (IS_FUNC(res))
@@ -708,9 +770,10 @@ int f_function(int arglist)
 
 // function* diffrence of function is that return nil
 // defclass uses this function*
-int f_function_star(int arglist)
+int
+f_function_star(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -719,7 +782,7 @@ int f_function_star(int arglist)
 	error(ILLEGAL_ARGS, "function*", arglist);
 
     if (symbolp(arg1)) {
-	int res;
+	int             res;
 
 	res = findenv(arg1);
 	if (IS_FUNC(res))
@@ -735,16 +798,18 @@ int f_function_star(int arglist)
     return (UNDEF);
 }
 
-int f_symbol_function(int arglist)
+int
+f_symbol_function(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "symbol-function", arglist);
 
     if (symbolp(arg1)) {
-	int sym, res;
+	int             sym,
+	                res;
 
 	sym = findenv(arg1);
 	if (sym == FAILSE && GET_CDR(arg1) != NIL)
@@ -765,9 +830,10 @@ int f_symbol_function(int arglist)
     return (UNDEF);
 }
 
-int f_class(int arglist)
+int
+f_class(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -782,16 +848,17 @@ int f_class(int arglist)
     return (GET_AUX(arg1));
 }
 
-int f_symbol_class(int arglist)
+int
+f_symbol_class(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "symbol-class", arglist);
 
     if (symbolp(arg1)) {
-	int sym;
+	int             sym;
 
 	sym = findenv(arg1);
 	if (sym == FAILSE && GET_CDR(arg1) != NIL)
@@ -814,9 +881,13 @@ int f_symbol_class(int arglist)
 
 
 
-int f_if(int arglist)
+int
+f_if(int arglist)
 {
-    int arg1, arg2, arg3, n;
+    int             arg1,
+                    arg2,
+                    arg3,
+                    n;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -837,9 +908,12 @@ int f_if(int arglist)
     }
 }
 
-int f_cond(int arglist)
+int
+f_cond(int arglist)
 {
-    int arg1, arg2, arg3;
+    int             arg1,
+                    arg2,
+                    arg3;
 
     if (nullp(arglist))
 	return (NIL);
@@ -861,9 +935,11 @@ int f_cond(int arglist)
 	return (f_cond(cdr(arglist)));
 }
 
-int f_while(int arglist)
+int
+f_while(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -873,9 +949,17 @@ int f_while(int arglist)
     return (NIL);
 }
 
-int f_for(int arglist)
+int
+f_for(int arglist)
 {
-    int arg1, arg2, arg3, iter, temp, save, res, temparg2;
+    int             arg1,
+                    arg2,
+                    arg3,
+                    iter,
+                    temp,
+                    save,
+                    res,
+                    temparg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -892,7 +976,8 @@ int f_for(int arglist)
     temp = arg1;
     temparg2 = NIL;
     while (!nullp(temp)) {
-	int temp1, temparg1;
+	int             temp1,
+	                temparg1;
 
 	temp1 = car(temp);
 	if (!listp(temp1))
@@ -927,7 +1012,7 @@ int f_for(int arglist)
     }
     // check condition of end
     while (eval(car(arg2)) == NIL) {
-	int save1;
+	int             save1;
 
 	save1 = ep;
 	shelterpush(arg3);
@@ -956,9 +1041,14 @@ int f_for(int arglist)
     return (res);
 }
 
-int f_block(int arglist)
+int
+f_block(int arglist)
 {
-    int arg1, arg2, tag, ret, res;
+    int             arg1,
+                    arg2,
+                    tag,
+                    ret,
+                    res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1001,9 +1091,12 @@ int f_block(int arglist)
     return (UNDEF);
 }
 
-int f_return_from(int arglist)
+int
+f_return_from(int arglist)
 {
-    int arg1, arg2, tag;
+    int             arg1,
+                    arg2,
+                    tag;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1022,9 +1115,16 @@ int f_return_from(int arglist)
 
 
 
-int f_catch(int arglist)
+int
+f_catch(int arglist)
 {
-    int arg1, arg2, i, tag, ret, res, save;
+    int             arg1,
+                    arg2,
+                    i,
+                    tag,
+                    ret,
+                    res,
+                    save;
 
     save = sp;
     arg1 = car(arglist);	// tag
@@ -1075,6 +1175,7 @@ int f_catch(int arglist)
 	res = catch_arg;
 	catch_arg = NIL;
 	sp = save;		// restore stack pointer. longjump destroy 
+				// 
 	// sp
 	return (res);
     }
@@ -1082,9 +1183,13 @@ int f_catch(int arglist)
 }
 
 
-int f_throw(int arglist)
+int
+f_throw(int arglist)
 {
-    int arg1, arg2, tag, i;
+    int             arg1,
+                    arg2,
+                    tag,
+                    i;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1104,9 +1209,13 @@ int f_throw(int arglist)
     longjmp(catch_buf[GET_OPT(tag) - 1][i - 1], 1);
 }
 
-int f_tagbody(int arglist)
+int
+f_tagbody(int arglist)
 {
-    int prog[TAGBODY_LEN_MAX], tb_line, end, i;
+    int             prog[TAGBODY_LEN_MAX],
+                    tb_line,
+                    end,
+                    i;
 
     if (improperlistp(arglist))
 	error(IMPROPER_ARGS, "tagbody", arglist);
@@ -1147,9 +1256,10 @@ int f_tagbody(int arglist)
     return (NIL);
 }
 
-int f_go(int arglist)
+int
+f_go(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (!symbolp(arg1))
@@ -1164,9 +1274,12 @@ int f_go(int arglist)
 }
 
 
-int f_unwind_protect(int arglist)
+int
+f_unwind_protect(int arglist)
 {
-    int arg1, args, res;
+    int             arg1,
+                    args,
+                    res;
 
     arg1 = car(arglist);
     args = cdr(arglist);
@@ -1191,9 +1304,14 @@ int f_unwind_protect(int arglist)
 }
 
 
-int f_case(int arglist)
+int
+f_case(int arglist)
 {
-    int arg1, arg2, key, res, temp;
+    int             arg1,
+                    arg2,
+                    key,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1201,7 +1319,7 @@ int f_case(int arglist)
 	error(IMPROPER_ARGS, "case", arg2);
     temp = arg2;
     while (!nullp(temp)) {
-	int temparg1;
+	int             temparg1;
 
 	temparg1 = car(temp);
 	if (!listp(temparg1))
@@ -1229,9 +1347,16 @@ int f_case(int arglist)
     return (res);
 }
 
-int f_case_using(int arglist)
+int
+f_case_using(int arglist)
 {
-    int arg1, arg2, arg3, key, fun, res, temp;
+    int             arg1,
+                    arg2,
+                    arg3,
+                    key,
+                    fun,
+                    res,
+                    temp;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1240,7 +1365,7 @@ int f_case_using(int arglist)
 	error(IMPROPER_ARGS, "case-using", arg3);
     temp = arg3;
     while (!nullp(temp)) {
-	int temparg1;
+	int             temparg1;
 
 	temparg1 = car(temp);
 	if (!listp(temparg1))
@@ -1270,9 +1395,10 @@ int f_case_using(int arglist)
 }
 
 
-int f_progn(int arglist)
+int
+f_progn(int arglist)
 {
-    int res;
+    int             res;
 
     if (improperlistp(arglist))
 	error(IMPROPER_ARGS, "progn", arglist);
@@ -1284,10 +1410,20 @@ int f_progn(int arglist)
     return (res);
 }
 
-int f_defclass(int arglist)
+int
+f_defclass(int arglist)
 {
-    int arg1, arg2, arg3, arg4, sc, var, val, cl, form, initargs,
-	abstractp;
+    int             arg1,
+                    arg2,
+                    arg3,
+                    arg4,
+                    sc,
+                    var,
+                    val,
+                    cl,
+                    form,
+                    initargs,
+                    abstractp;
 
     arg1 = car(arglist);	// class-name
     arg2 = cadr(arglist);	// super-class
@@ -1327,7 +1463,14 @@ int f_defclass(int arglist)
     val = UNDEF;
     initargs = NIL;
     while (!nullp(arg3)) {
-	int sym, ls, reader, writer, accessor, boundp, initform, initarg;
+	int             sym,
+	                ls,
+	                reader,
+	                writer,
+	                accessor,
+	                boundp,
+	                initform,
+	                initarg;
 
 	reader = writer = accessor = boundp = initform = initarg = NIL;
 	if (!listp(car(arg3)))
@@ -1472,7 +1615,7 @@ int f_defclass(int arglist)
 
     abstractp = NIL;
     while (!nullp(arg4)) {
-	int ls;
+	int             ls;
 
 	if (!listp(car(arg4)))
 	    error(ILLEGAL_FORM, "defclass", arg4);
@@ -1497,9 +1640,13 @@ int f_defclass(int arglist)
 }
 
 
-int f_defgeneric(int arglist)
+int
+f_defgeneric(int arglist)
 {
-    int arg1, arg2, arg3, val;
+    int             arg1,
+                    arg2,
+                    arg3,
+                    val;
 
     arg1 = car(arglist);	// func-name
     arg2 = cadr(arglist);	// lambda-list
@@ -1524,9 +1671,13 @@ int f_defgeneric(int arglist)
     return (arg1);
 }
 
-int f_defgeneric_star(int arglist)
+int
+f_defgeneric_star(int arglist)
 {
-    int arg1, arg2, arg3, val;
+    int             arg1,
+                    arg2,
+                    arg3,
+                    val;
 
     arg1 = car(arglist);	// func-name
     arg2 = cadr(arglist);	// lambda-list
@@ -1553,9 +1704,12 @@ int f_defgeneric_star(int arglist)
 /*
  * if Generic function, set CDR area method object with insert sorting. 
  */
-int f_defmethod(int arglist)
+int
+f_defmethod(int arglist)
 {
-    int arg1, arg2, gen;
+    int             arg1,
+                    arg2,
+                    gen;
 
     arg1 = car(arglist);	// method-name
     arg2 = cdr(arglist);	// parameter-profile
@@ -1567,22 +1721,30 @@ int f_defmethod(int arglist)
     return (arg1);
 }
 
-int f_ignore_errors(int arglist)
+int
+f_ignore_errors(int arglist)
 {
-    volatile int res;
+    volatile int    res;
 
     ignore_flag = true;
-    TRY res = f_progn(arglist);
-    ELSE res = NIL;
+    TRY             res = f_progn(arglist);
+    ELSE            res = NIL;
     END_TRY;
     ignore_flag = false;
     return res;
 }
 
-int f_with_open_input_file(int arglist)
+int
+f_with_open_input_file(int arglist)
 {
-    int arg1, arg2, sym, str, val, ep1, res;
-    FILE *port;
+    int             arg1,
+                    arg2,
+                    sym,
+                    str,
+                    val,
+                    ep1,
+                    res;
+    FILE           *port;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1606,10 +1768,17 @@ int f_with_open_input_file(int arglist)
     return (res);
 }
 
-int f_with_open_output_file(int arglist)
+int
+f_with_open_output_file(int arglist)
 {
-    int arg1, arg2, sym, str, val, ep1, res;
-    FILE *port;
+    int             arg1,
+                    arg2,
+                    sym,
+                    str,
+                    val,
+                    ep1,
+                    res;
+    FILE           *port;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1633,10 +1802,17 @@ int f_with_open_output_file(int arglist)
     return (res);
 }
 
-int f_with_open_io_file(int arglist)
+int
+f_with_open_io_file(int arglist)
 {
-    int arg1, arg2, sym, str, val, ep1, res;
-    FILE *port;
+    int             arg1,
+                    arg2,
+                    sym,
+                    str,
+                    val,
+                    ep1,
+                    res;
+    FILE           *port;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1660,9 +1836,14 @@ int f_with_open_io_file(int arglist)
     return (res);
 }
 
-int f_with_standard_input(int arglist)
+int
+f_with_standard_input(int arglist)
 {
-    int arg1, arg2, stream, save, res;
+    int             arg1,
+                    arg2,
+                    stream,
+                    save,
+                    res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1678,9 +1859,14 @@ int f_with_standard_input(int arglist)
     return (res);
 }
 
-int f_with_standard_output(int arglist)
+int
+f_with_standard_output(int arglist)
 {
-    int arg1, arg2, stream, save, res;
+    int             arg1,
+                    arg2,
+                    stream,
+                    save,
+                    res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1696,9 +1882,14 @@ int f_with_standard_output(int arglist)
     return (res);
 }
 
-int f_with_error_output(int arglist)
+int
+f_with_error_output(int arglist)
 {
-    int arg1, arg2, stream, save, res;
+    int             arg1,
+                    arg2,
+                    stream,
+                    save,
+                    res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1714,9 +1905,12 @@ int f_with_error_output(int arglist)
     return (res);
 }
 
-int f_with_handler(int arglist)
+int
+f_with_handler(int arglist)
 {
-    int arg1, arg2, res;
+    int             arg1,
+                    arg2,
+                    res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1726,9 +1920,11 @@ int f_with_handler(int arglist)
     return (res);
 }
 
-int f_convert(int arglist)
+int
+f_convert(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1745,9 +1941,11 @@ int f_convert(int arglist)
     return convert(arg1, arg2);
 }
 
-int f_the(int arglist)
+int
+f_the(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1764,9 +1962,11 @@ int f_the(int arglist)
     return (UNDEF);
 }
 
-int f_assure(int arglist)
+int
+f_assure(int arglist)
 {
-    int arg1, arg2;
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1786,19 +1986,22 @@ int f_assure(int arglist)
     return (UNDEF);
 }
 
-double getETime()
+double
+getETime()
 {
-    struct timeval tv;
+    struct timeval  tv;
     gettimeofday(&tv, NULL);
     return tv.tv_sec + (double) tv.tv_usec * 1e-6;
 }
 
 
 
-int f_time(int arglist)
+int
+f_time(int arglist)
 {
-    int arg1;
-    double st, en;
+    int             arg1;
+    double          st,
+                    en;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -1811,7 +2014,8 @@ int f_time(int arglist)
     return (UNDEF);
 }
 
-int f_trace(int arglist)
+int
+f_trace(int arglist)
 {
 
     if (nullp(arglist)) {
@@ -1830,7 +2034,8 @@ int f_trace(int arglist)
     }
 }
 
-int f_untrace(int arglist)
+int
+f_untrace(int arglist)
 {
 
     if (nullp(arglist)) {
@@ -1853,16 +2058,19 @@ int f_untrace(int arglist)
     return (T);
 }
 
-int f_defmodule(int arglist)
+int
+f_defmodule(int arglist)
 {
-    int arg1, arg2, exports;
+    int             arg1,
+                    arg2,
+                    exports;
 
     arg1 = car(arglist);	// module name
     arg2 = cdr(arglist);	// body
     exports = NIL;
 
     while (!nullp(arg2)) {
-	int sexp;
+	int             sexp;
 
 	sexp = car(arg2);
 	if (symbolp(car(sexp)) && HAS_NAME(car(sexp), "DEFPUBLIC"))
@@ -1875,9 +2083,10 @@ int f_defmodule(int arglist)
 }
 
 
-int modulesubst(int addr, int module, int fname)
+int
+modulesubst(int addr, int module, int fname)
 {
-    int temp;
+    int             temp;
 
     if (IS_NIL(addr) || IS_T(addr))
 	return (addr);
@@ -1966,24 +2175,28 @@ int modulesubst(int addr, int module, int fname)
     return (T);
 }
 
-int modulesubst1(int x, int module)
+int
+modulesubst1(int x, int module)
 {
-    char str[SYMSIZE];
+    char            str[SYMSIZE];
 
     Fmt_sfmt(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
     return (makesym(str));
 }
 
 
-int modulesubst_case(int addr, int module, int fname)
+int
+modulesubst_case(int addr, int module, int fname)
 {
-    int bodies, newbodies;
+    int             bodies,
+                    newbodies;
 
     bodies = addr;
     newbodies = NIL;
 
     while (!nullp(bodies)) {
-	int body, newbody;
+	int             body,
+	                newbody;
 
 	body = car(bodies);
 	newbody = cons(car(body), modulesubst(cdr(body), module, fname));

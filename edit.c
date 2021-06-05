@@ -16,16 +16,19 @@
 #define CTRL(X) ((X) & 0x1F)
 #endif
 
-bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line);
+bool            read_line_loop(int c, int *j, int *pos, int limit,
+			       int *rl_line);
 
-int f_edit(int arglist)
+int
+f_edit(int arglist)
 {
-    int arg1, res;
+    int             arg1,
+                    res;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "edit", arglist);
-    char *str = Str_cat("./edlis ", 1, 0, GET_NAME(arg1), 1, 0);
+    char           *str = Str_cat("./edlis ", 1, 0, GET_NAME(arg1), 1, 0);
     res = system(str);
     FREE(str);
     if (res == -1)
@@ -34,15 +37,18 @@ int f_edit(int arglist)
     return (T);
 }
 
-void setcolor(short n)
+void
+setcolor(short n)
 {
     putp(tparm(set_a_foreground, n));
 }
 
-int eisl_getch()
+int
+eisl_getch()
 {
-    struct termios oldt, newt;
-    int ch;
+    struct termios  oldt,
+                    newt;
+    int             ch;
     tcgetattr(STDIN_FILENO, &oldt);
     newt = oldt;
     newt.c_lflag &= ~(ICANON | ECHO);
@@ -52,10 +58,11 @@ int eisl_getch()
     return ch;
 }
 
-//------------REPL read-line-----------------
-void display_buffer()
+// ------------REPL read-line-----------------
+void
+display_buffer()
 {
-    int col;
+    int             col;
 
     ESCMVLEFT(3);
     ESCCLSL();
@@ -63,7 +70,9 @@ void display_buffer()
 
     while (buffer[col][0] != EOL && buffer[col][0] != NUL) {
 
-	if (ed_incomment != -1 && line >= ed_incomment) {	//comment #|...|#
+	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
+								// 
+	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
 	    while (buffer[col][0] != EOL && buffer[col][0] != NUL) {
@@ -154,8 +163,8 @@ void display_buffer()
 		while (buffer[col][0] != EOL && buffer[col][0] != NUL) {
 		    putchar(buffer[col][0]);
 		    col++;
-		    if (buffer[col - 2][0] == '|' &&
-			buffer[col - 1][0] == '#') {
+		    if (buffer[col - 2][0] == '|'
+			&& buffer[col - 1][0] == '#') {
 			ed_incomment = -1;
 			ESCRST();
 			ESCFORG();
@@ -179,10 +188,11 @@ void display_buffer()
 }
 
 
-enum HighlightToken check_token_buffer(int col)
+enum HighlightToken
+check_token_buffer(int col)
 {
-    char str[TOKEN_MAX];
-    int pos;
+    char            str[TOKEN_MAX];
+    int             pos;
 
     pos = 0;
     if (buffer[col][0] == '"')
@@ -206,9 +216,10 @@ enum HighlightToken check_token_buffer(int col)
 }
 
 
-int findlparen_buffer(int col)
+int
+findlparen_buffer(int col)
 {
-    int nest;
+    int             nest;
 
     col--;
     nest = 0;
@@ -225,9 +236,11 @@ int findlparen_buffer(int col)
     return (col);
 }
 
-int findrparen_buffer(int col)
+int
+findrparen_buffer(int col)
 {
-    int nest, limit;
+    int             nest,
+                    limit;
 
     col++;
     nest = 0;
@@ -251,9 +264,10 @@ int findrparen_buffer(int col)
 	return (col);
 }
 
-void emphasis_rparen_buffer(int col)
+void
+emphasis_rparen_buffer(int col)
 {
-    int pos;
+    int             pos;
 
     if (buffer[col][0] != '(')
 	return;
@@ -275,9 +289,10 @@ void emphasis_rparen_buffer(int col)
 }
 
 
-void emphasis_lparen_buffer(int col)
+void
+emphasis_lparen_buffer(int col)
 {
-    int pos;
+    int             pos;
 
     if (buffer[col][0] != ')')
 	return;
@@ -300,13 +315,15 @@ void emphasis_lparen_buffer(int col)
 }
 
 
-void reset_paren_buffer()
+void
+reset_paren_buffer()
 {
     ed_lparen_col = -1;
     ed_rparen_col = -1;
 }
 
-void restore_paren_buffer(int col)
+void
+restore_paren_buffer(int col)
 {
 
     if (ed_lparen_col != -1) {
@@ -325,10 +342,11 @@ void restore_paren_buffer(int col)
 }
 
 
-char *get_fragment_buffer(int col)
+char           *
+get_fragment_buffer(int col)
 {
-    static char str[FRAGMENT_MAX];
-    int pos;
+    static char     str[FRAGMENT_MAX];
+    int             pos;
 
     while (col >= 0 &&
 	   buffer[col][0] != ' ' &&
@@ -348,9 +366,10 @@ char *get_fragment_buffer(int col)
 }
 
 
-void find_candidate_buffer(int col)
+void
+find_candidate_buffer(int col)
 {
-    char *str;
+    char           *str;
 
     str = get_fragment_buffer(col);
     ed_candidate_pt = 0;
@@ -358,10 +377,12 @@ void find_candidate_buffer(int col)
 	gather_fuzzy_matches(str, ed_candidate, &ed_candidate_pt);
 }
 
-int replace_fragment_buffer(const char *newstr, int col)
+int
+replace_fragment_buffer(const char *newstr, int col)
 {
-    char *oldstr;
-    int m, n;
+    char           *oldstr;
+    int             m,
+                    n;
 
     oldstr = get_fragment_buffer(col);
     m = strlen(oldstr);
@@ -384,24 +405,27 @@ int replace_fragment_buffer(const char *newstr, int col)
     return (col);
 }
 
-void backspace_buffer(int col)
+void
+backspace_buffer(int col)
 {
-    int i;
+    int             i;
 
     for (i = col; i < COL_SIZE; i++)
 	buffer[i][0] = buffer[i + 1][0];
     buffer[COL_SIZE][0] = 0;
 }
 
-void insertcol_buffer(int col)
+void
+insertcol_buffer(int col)
 {
-    int i;
+    int             i;
 
     for (i = COL_SIZE; i > col; i--)
 	buffer[i][0] = buffer[i - 1][0];
 }
 
-static void right(int *j)
+static void
+right(int *j)
 {
     if (buffer[*j][0] == 0)
 	return;
@@ -412,7 +436,8 @@ static void right(int *j)
     ESCMVLEFT(*j + 3);
 }
 
-static void left(int *j)
+static void
+left(int *j)
 {
     if (*j <= 0)
 	return;
@@ -423,10 +448,12 @@ static void left(int *j)
     ESCMVLEFT(*j + 3);
 }
 
-int read_line(int flag)
+int
+read_line(int flag)
 {
-    int j, rl_line;
-    static int pos = 0;
+    int             j,
+                    rl_line;
+    static int      pos = 0;
 
     if (flag == -1) {
 	pos--;
@@ -434,8 +461,9 @@ int read_line(int flag)
     }
 
     if (buffer[pos][0] == 0) {
-	int c, i;
-	static int limit = 0;
+	int             c,
+	                i;
+	static int      limit = 0;
 
 	for (i = 9; i > 0; i--)
 	    for (j = 0; j <= COL_SIZE; j++)
@@ -460,7 +488,8 @@ int read_line(int flag)
     return (buffer[pos++][0]);
 }
 
-void up(int limit, int *rl_line, int *j, int *pos)
+void
+up(int limit, int *rl_line, int *j, int *pos)
 {
     if (limit <= 1)
 	return;
@@ -479,7 +508,8 @@ void up(int limit, int *rl_line, int *j, int *pos)
     display_buffer();
 }
 
-void down(int *rl_line, int *j, int *pos)
+void
+down(int *rl_line, int *j, int *pos)
 {
     if (*rl_line <= 1)
 	*rl_line = 1;
@@ -495,9 +525,10 @@ void down(int *rl_line, int *j, int *pos)
     display_buffer();
 }
 
-bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
+bool
+read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 {
-    int k;
+    int             k;
 
     switch (c) {
     case CTRL('M'):
@@ -587,7 +618,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 	c = eisl_getch();
 	switch (c) {
 	case TAB:
-	    find_candidate_buffer(*j);	//completion
+	    find_candidate_buffer(*j);	// completion
 	    if (ed_candidate_pt == 0)
 		break;
 	    else if (ed_candidate_pt == 1) {
@@ -595,13 +626,13 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 		display_buffer();
 		ESCMVLEFT(*j + 3);
 	    } else {
-		const int CANDIDATE = 3;
-		int i;
+		const int       CANDIDATE = 3;
+		int             i;
 
 		k = 0;
 		ESCSCR();
 		ESCMVLEFT(1);
-		bool more_candidates_selected;
+		bool            more_candidates_selected;
 		do {
 		    more_candidates_selected = false;
 		    ESCREV();
@@ -613,7 +644,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 		    if (ed_candidate_pt > k + CANDIDATE)
 			Fmt_print("4:more");
 		    ESCRST();
-		    bool bad_candidate_selected;
+		    bool            bad_candidate_selected;
 		    do {
 			bad_candidate_selected = false;
 			c = eisl_getch();
@@ -632,8 +663,10 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 				i + k >= ed_candidate_pt || i < 0
 				|| c == EOL;
 			}
-		    } while (bad_candidate_selected);
-		} while (more_candidates_selected);
+		    }
+		    while (bad_candidate_selected);
+		}
+		while (more_candidates_selected);
 		if (c != ESC)
 		    *j = replace_fragment_buffer(ed_candidate[i + k], *j);
 		ESCMVLEFT(1);
@@ -644,7 +677,7 @@ bool read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 		ESCMVLEFT(*j + 3);
 	    }
 	    return false;
-	case 'q':		//Esc+q
+	case 'q':		// Esc+q
 	    putchar('\n');
 	    greeting_flag = false;
 	    RAISE(Exit_Interp);

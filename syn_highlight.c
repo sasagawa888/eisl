@@ -4,13 +4,13 @@
 
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
 
-//special form token
+// special form token
 static const char *special[] = {
     "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
     "let", "let*", "case", "while", "progn",
 };
 
-//syntax token
+// syntax token
 static const char *syntax[] = {
     "lambda", "labels", "flet", "let", "let*", "setq", "setf",
     "defconstant", "defun", "defmacro", "defglobal", "defdynamic",
@@ -25,7 +25,7 @@ static const char *syntax[] = {
     "defmodule", "defpublic", "modulesubst",
 };
 
-//builtin token
+// builtin token
 static const char *builtin[] = {
     "-", "*", "/=", "+", "<", "<=", "=", ">", ">=",
     "abs", "append", "apply", "aref", "arithmetic-error-operands",
@@ -73,7 +73,7 @@ static const char *builtin[] = {
     "undefined-entity-namespace", "vector", "write-byte", "import",
 };
 
-//extended function
+// extended function
 static const char *extended[] = {
     "random-real", "random", "heapdump", "instance",
     "nconc", "fast-address", "macroexpand-1", "macroexpand-all",
@@ -96,9 +96,10 @@ static const char *extended[] = {
     "gpu-random-select", "gpu-nanalizer", "gpu-copy",
 };
 
-static bool in_syntax_table(const char *str)
+static bool
+in_syntax_table(const char *str)
 {
-    int i;
+    int             i;
 
     for (i = 0; i < (int) NELEM(syntax); i++) {
 	if (strcmp(syntax[i], str) == 0) {
@@ -108,9 +109,10 @@ static bool in_syntax_table(const char *str)
     return false;
 }
 
-static bool in_builtin_table(const char *str)
+static bool
+in_builtin_table(const char *str)
 {
-    int i;
+    int             i;
 
     for (i = 0; i < (int) NELEM(builtin); i++) {
 	if (strcmp(builtin[i], str) == 0) {
@@ -120,9 +122,10 @@ static bool in_builtin_table(const char *str)
     return false;
 }
 
-static bool in_extended_table(const char *str)
+static bool
+in_extended_table(const char *str)
 {
-    int i;
+    int             i;
 
     for (i = 0; i < (int) NELEM(extended); i++) {
 	if (strcmp(extended[i], str) == 0) {
@@ -132,9 +135,10 @@ static bool in_extended_table(const char *str)
     return false;
 }
 
-bool in_special_table(const char *str)
+bool
+in_special_table(const char *str)
 {
-    int i;
+    int             i;
 
     for (i = 0; i < (int) NELEM(special); i++) {
 	if (strcmp(special[i], str) == 0) {
@@ -144,7 +148,8 @@ bool in_special_table(const char *str)
     return false;
 }
 
-enum HighlightToken maybe_match(const char *str)
+enum HighlightToken
+maybe_match(const char *str)
 {
     if (in_syntax_table(str)) {
 	return HIGHLIGHT_SYNTAX;
@@ -158,10 +163,11 @@ enum HighlightToken maybe_match(const char *str)
     return HIGHLIGHT_NONE;
 }
 
-void gather_fuzzy_matches(const char *str, const char *candidates[],
-			  int *candidate_pt)
+void
+gather_fuzzy_matches(const char *str, const char *candidates[],
+		     int *candidate_pt)
 {
-    int i;
+    int             i;
 
     for (i = 0; i < (int) NELEM(syntax); i++) {
 	if (strstr(syntax[i], str) != NULL && syntax[i][0] == str[0]) {

@@ -1,4 +1,6 @@
-/* Common definitions for the interpreter and compiler */
+/*
+ * Common definitions for the interpreter and compiler 
+ */
 
 #ifndef FFI_H
 #define FFI_H
@@ -7,9 +9,10 @@ static const int NIL = 0;
 static const int T = 2;
 static const int SMALL_INT_MAX = 1000000000;
 static const int SMALL_INT_MIN = -1000000000;
-static const int INT_FLAG = 1073741824;	//#b01000000_00000000_00000000_00000000
-static const int INT_MASK = 1073741823;	//#b00111111_11111111_11111111_11111111
-static inline bool CELLRANGE(int x)
+static const int INT_FLAG = 1073741824;	// #b01000000_00000000_00000000_00000000
+static const int INT_MASK = 1073741823;	// #b00111111_11111111_11111111_11111111
+static inline bool
+CELLRANGE(int x)
 {
     return (x < INT_FLAG && x >= 0);
 }
@@ -17,28 +20,29 @@ static inline bool CELLRANGE(int x)
 enum Option {
     CONSTN = 1,
     IMMUTABLE,
-    SYSTEM,			//class of provided by system
-    USER,			//class of user' definition
-    GLOBAL,			//global variable
-    CONTINUABLE,		//continuable condition
-    NOTCONT,			//no continuable condition
-    ABSTRACT,			//abstract class
+    SYSTEM,			// class of provided by system
+    USER,			// class of user' definition
+    GLOBAL,			// global variable
+    CONTINUABLE,		// continuable condition
+    NOTCONT,			// no continuable condition
+    ABSTRACT,			// abstract class
 
-    // *** WARNING: THE FOLLOWING ARE INTERNAL VALUES THAT CLIENTS SHOULD NOT USE ***
+    // *** WARNING: THE FOLLOWING ARE INTERNAL VALUES THAT CLIENTS SHOULD
+    // NOT USE ***
     AROUND, BEFORE, PRIORITY, AFTER, EISL_OPEN, EISL_INPUT, EISL_OUTPUT,
-	EISL_INSTR, EISL_OUTSTR,
+    EISL_INSTR, EISL_OUTSTR,
 };
 
-typedef int (*fn0)(void);
-typedef int (*fn1)(int);
-typedef int (*fn2)(int, int);
-typedef int (*fn3)(char *);
+typedef int     (*fn0)(void);
+typedef int     (*fn1)(int);
+typedef int     (*fn2)(int, int);
+typedef int     (*fn3)(char *);
 typedef long long int (*fn4)(int);
-typedef int (*fn5)(int, int, int);
-typedef char *(*fn6)(int);
-typedef double (*fn7)(int);
-typedef int (*fn8)(double);
-typedef void (*tfunc)(const char *, int (*func)(int));
+typedef int     (*fn5)(int, int, int);
+typedef char   *(*fn6)(int);
+typedef double  (*fn7)(int);
+typedef int     (*fn8)(double);
+typedef void    (*tfunc)(const char *, int(*func)(int));
 
 enum { CHECKGBC_IDX, GBC_IDX, FRESHCELL_IDX, FREECELL_IDX,
     GBCSW_IDX, GETWP_IDX, ARGPOP_IDX, SHELTERPOP_IDX,

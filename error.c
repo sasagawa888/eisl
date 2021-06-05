@@ -8,28 +8,33 @@
 #include "str.h"
 #include "mem.h"
 
-static int outc(int c)
+static int
+outc(int c)
 {
     return fputc(c, stderr);
 }
 
-static inline void ESCERRFRED()
+static inline void
+ESCERRFRED()
 {
     tputs(tparm(set_a_foreground, COLOR_RED), 1, outc);
 }
 
-static inline void ESCERRFORG()
+static inline void
+ESCERRFORG()
 {
     tputs(exit_attribute_mode, 1, outc);
 }
 
-//-------error------
-void error(int errnum, const char *fun, int arg)
+// -------error------
+void
+error(int errnum, const char *fun, int arg)
 {
-    int initargs, i;
-    char fun1[SYMSIZE];
+    int             initargs,
+                    i;
+    char            fun1[SYMSIZE];
 
-    //resolve unwind-protect
+    // resolve unwind-protect
     if (unwind_pt > 0) {
 	unwind_pt--;
 	while (unwind_pt >= 0) {
@@ -38,7 +43,7 @@ void error(int errnum, const char *fun, int arg)
 	}
 	unwind_pt = 0;
     }
-    //fold to upper letter.
+    // fold to upper letter.
     for (i = 0; i < (int) strlen(fun); i++) {
 	fun1[i] = toupper(fun[i]);
     }
@@ -574,18 +579,20 @@ void error(int errnum, const char *fun, int arg)
 }
 
 /*
-x = class
-y = continuable string/NIL
-*/
-int signal_condition(int x, int y)
+ * x = class y = continuable string/NIL 
+ */
+int
+signal_condition(int x, int y)
 {
-    int str, args, fun;
+    int             str,
+                    args,
+                    fun;
 
     if (y == NIL)
 	SET_OPT(x, NOTCONT);
     else {
 	SET_OPT(x, CONTINUABLE);
-	TRY heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
+	TRY             heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
 	EXCEPT(Mem_Failed)
 	    error(MALLOC_OVERF, "signal-condition", NIL);
 	END_TRY;
@@ -598,7 +605,7 @@ int signal_condition(int x, int y)
 	Fmt_print("around here line=%d column=%d\n", line, column);
     }
     if (error_handler != NIL) {
-	int handler;
+	int             handler;
 
 	handler = car(error_handler);
 	error_handler = cdr(error_handler);
@@ -622,9 +629,10 @@ int signal_condition(int x, int y)
     return 0;
 }
 
-int makeusercond(int cl, int str, int arg)
+int
+makeusercond(int cl, int str, int arg)
 {
-    int initarg;
+    int             initarg;
 
     initarg = list6(makesym("format-string"), str,
 		    makesym("format-arguments"), arg,

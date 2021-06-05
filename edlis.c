@@ -17,49 +17,51 @@
 
 #define TOKEN_MAX 80
 
-const int NUM_STR_MAX = 5;
-const int SHORT_STR_MAX = 20;
+const int       NUM_STR_MAX = 5;
+const int       SHORT_STR_MAX = 20;
 
-bool edit_loop(char *fname);
+bool            edit_loop(char *fname);
 
-//-----editor-----
-int ed_scroll;
-int ed_footer;
-int ed_row;
-int ed_col;
-int ed_start;
-int ed_end;
-bool ed_ins = true;
-int ed_tab = 0;
-int ed_indent = 1;
-int ed_name = NIL;
-char ed_data[ROW_SIZE][COL_SIZE];
-char ed_copy[COPY_SIZE][COL_SIZE];
-int ed_lparen_row;
-int ed_lparen_col;
-int ed_rparen_row;
-int ed_rparen_col;
-int ed_clip_start;
-int ed_clip_end;
-int ed_copy_end;
-const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
-int ed_candidate_pt;
+// -----editor-----
+int             ed_scroll;
+int             ed_footer;
+int             ed_row;
+int             ed_col;
+int             ed_start;
+int             ed_end;
+bool            ed_ins = true;
+int             ed_tab = 0;
+int             ed_indent = 1;
+int             ed_name = NIL;
+char            ed_data[ROW_SIZE][COL_SIZE];
+char            ed_copy[COPY_SIZE][COL_SIZE];
+int             ed_lparen_row;
+int             ed_lparen_col;
+int             ed_rparen_row;
+int             ed_rparen_col;
+int             ed_clip_start;
+int             ed_clip_end;
+int             ed_copy_end;
+const char     *ed_candidate[COMPLETION_CANDIDATES_MAX];
+int             ed_candidate_pt;
 const enum Color ed_syntax_color = RED_ON_DFL;
 const enum Color ed_builtin_color = CYAN_ON_DFL;
 const enum Color ed_extended_color = MAGENTA_ON_DFL;
 const enum Color ed_string_color = YELLOW_ON_DFL;
 const enum Color ed_comment_color = BLUE_ON_DFL;
-int ed_incomment = -1;		// #|...|# comment
-bool modify_flag;
+int             ed_incomment = -1;	// #|...|# comment
+bool            modify_flag;
 
-__dead void errw(const char *msg)
+__dead void
+errw(const char *msg)
 {
     endwin();
     Fmt_fprint(stderr, "%s\n", msg);
     exit(EXIT_FAILURE);
 }
 
-void clear_status()
+void
+clear_status()
 {
     ESCREV();
     ESCMOVE(ed_footer, 1);
@@ -67,7 +69,8 @@ void clear_status()
     ESCMOVE(ed_footer, 1);
 }
 
-void init_ncurses()
+void
+init_ncurses()
 {
     if (initscr() == NULL) {
 	fputs("initscr\n", stderr);
@@ -102,10 +105,12 @@ void init_ncurses()
     }
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
-    int i, j;
-    char *fname;
+    int             i,
+                    j;
+    char           *fname;
 
     setlocale(LC_ALL, "");
     if (argc <= 1) {
@@ -119,7 +124,7 @@ int main(int argc, char *argv[])
     for (i = 0; i < ROW_SIZE; i++)
 	for (j = 0; j < COL_SIZE; j++)
 	    ed_data[i][j] = NUL;
-    FILE *port = fopen(fname, "r");
+    FILE           *port = fopen(fname, "r");
 
     ed_row = 0;
     ed_col = 0;
@@ -131,7 +136,7 @@ int main(int argc, char *argv[])
     ed_clip_end = -1;
     ed_data[0][0] = EOL;
     if (port != NULL) {
-	int c;
+	int             c;
 
 	c = fgetc(port);
 	while (c != EOF) {
@@ -163,7 +168,8 @@ int main(int argc, char *argv[])
     CHECK(endwin);
 }
 
-void right()
+void
+right()
 {
     if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
 	return;
@@ -187,7 +193,8 @@ void right()
     }
 }
 
-void left()
+void
+left()
 {
     if (ed_col == 0)
 	return;
@@ -211,9 +218,10 @@ void left()
     }
 }
 
-void up()
+void
+up()
 {
-    int i;
+    int             i;
 
     if (ed_row == 0)
 	return;
@@ -271,9 +279,10 @@ void up()
     }
 }
 
-void down()
+void
+down()
 {
-    int i;
+    int             i;
 
     if (ed_row == ed_end)
 	return;
@@ -331,7 +340,8 @@ void down()
     }
 }
 
-void backspace_key()
+void
+backspace_key()
 {
     enum HighlightToken type;
 
@@ -378,7 +388,8 @@ void backspace_key()
     modify_flag = true;
 }
 
-void del()
+void
+del()
 {
     if (ed_data[ed_row][ed_col] == EOL)
 	return;
@@ -389,7 +400,8 @@ void del()
     modify_flag = true;
 }
 
-void pageup()
+void
+pageup()
 {
     ed_start = ed_start - ed_scroll;
     if (ed_start < 0)
@@ -399,7 +411,8 @@ void pageup()
     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
-void home()
+void
+home()
 {
     ed_row = 0;
     ed_start = 0;
@@ -407,7 +420,8 @@ void home()
     ESCMOVE(2, ed_col + 1);
 }
 
-void end()
+void
+end()
 {
     ed_row = ed_end;
     if (ed_end > ed_scroll)
@@ -416,7 +430,8 @@ void end()
     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
-void pagedn()
+void
+pagedn()
 {
     if (ed_end < ed_start + ed_scroll)
 	return;
@@ -428,22 +443,25 @@ void pagedn()
     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
-void edit_screen(char *fname)
+void
+edit_screen(char *fname)
 {
     ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-    bool quit = edit_loop(fname);
+    bool            quit = edit_loop(fname);
     while (!quit) {
 	quit = edit_loop(fname);
     }
 }
 
-bool edit_loop(char *fname)
+bool
+edit_loop(char *fname)
 {
-    int c;
-    int i;
-    char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
+    int             c;
+    int             i;
+    char            str1[SHORT_STR_MAX],
+                    str2[SHORT_STR_MAX];
     struct position pos;
-    FILE *port;
+    FILE           *port;
 
     CHECK(refresh);
     c = getch();
@@ -693,7 +711,7 @@ bool edit_loop(char *fname)
 	    clear_status();
 	    CHECK(addstr, "line? ");
 	    CHECK(refresh);
-	    char i_str[NUM_STR_MAX];
+	    char            i_str[NUM_STR_MAX];
 	    CHECK(getnstr, i_str, NUM_STR_MAX);
 	    i = atoi(i_str);
 	    ESCRST();
@@ -741,7 +759,7 @@ bool edit_loop(char *fname)
 		return false;
 	    }
 	case TAB:
-	    find_candidate();	//completion
+	    find_candidate();	// completion
 	    if (ed_candidate_pt == 0)
 		break;
 	    else if (ed_candidate_pt == 1) {
@@ -750,10 +768,10 @@ bool edit_loop(char *fname)
 		display_line(ed_row);
 		ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 	    } else {
-		const int CANDIDATE = 3;
-		int k = 0;
+		const int       CANDIDATE = 3;
+		int             k = 0;
 		ESCMOVE(ed_footer, 1);
-		bool more_candidates_selected;
+		bool            more_candidates_selected;
 		do {
 		    more_candidates_selected = false;
 		    ESCREV();
@@ -766,7 +784,7 @@ bool edit_loop(char *fname)
 		    if (ed_candidate_pt > k + CANDIDATE)
 			CHECK(addstr, "4:more");
 		    ESCRST();
-		    bool bad_candidate_selected;
+		    bool            bad_candidate_selected;
 		    do {
 			bad_candidate_selected = false;
 			CHECK(refresh);
@@ -933,9 +951,10 @@ bool edit_loop(char *fname)
     return false;
 }
 
-void display_command(char *fname)
+void
+display_command(char *fname)
 {
-    int i;
+    int             i;
     ESCHOME();
     ESCREV();
     CHECK(printw, "Edlis %1.2f        File: %s    ", VERSION, fname);
@@ -944,9 +963,12 @@ void display_command(char *fname)
     ESCRST();
 }
 
-void display_screen()
+void
+display_screen()
 {
-    int line1, line2, i;
+    int             line1,
+                    line2,
+                    i;
 
     ESCTOP();
     ESCCLS1();
@@ -967,9 +989,10 @@ void display_screen()
     ESCRST();
 }
 
-void display_line(int line)
+void
+display_line(int line)
 {
-    int col;
+    int             col;
 
     if (ed_row != line || ed_col <= COLS - 1)
 	col = 0;
@@ -984,7 +1007,8 @@ void display_line(int line)
 	else
 	    ESCRST();
 
-	if (ed_incomment != -1 && line >= ed_incomment) {	//comment #|...|#
+	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
+								// #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
 	    while (((ed_col <= COLS - 1 && col <= COLS - 1)
@@ -1125,16 +1149,18 @@ void display_line(int line)
     ESCRST();
 }
 
-void setcolor(enum Color n)
+void
+setcolor(enum Color n)
 {
     if (has_colors()) {
 	CHECK(color_set, n, NULL);
     }
 }
 
-void backspace()
+void
+backspace()
 {
-    int i;
+    int             i;
 
     if (ed_data[ed_row][ed_col - 1] == ')') {
 	ed_lparen_row = -1;
@@ -1148,9 +1174,10 @@ void backspace()
     ed_col--;
 }
 
-void insertcol()
+void
+insertcol()
 {
-    int i;
+    int             i;
 
     i = findeol(ed_row);
     while (i >= ed_col) {
@@ -1159,9 +1186,12 @@ void insertcol()
     }
 }
 
-void insertrow()
+void
+insertrow()
 {
-    int i, j, k;
+    int             i,
+                    j,
+                    k;
 
     for (i = ed_end; i >= ed_row; i--) {
 	for (j = 0; j < COL_SIZE; j++) {
@@ -1176,9 +1206,13 @@ void insertrow()
     ed_data[ed_row][ed_col] = EOL;
 }
 
-void deleterow()
+void
+deleterow()
 {
-    int i, j, k, l;
+    int             i,
+                    j,
+                    k,
+                    l;
 
     k = l = findeol(ed_row - 1);
     for (j = 0; j < COL_SIZE; j++) {
@@ -1200,9 +1234,10 @@ void deleterow()
 
 
 
-int findeol(int row)
+int
+findeol(int row)
 {
-    int i;
+    int             i;
 
     for (i = 0; i < COL_SIZE; i++) {
 	if (ed_data[row][i] == EOL)
@@ -1211,9 +1246,13 @@ int findeol(int row)
     return (-1);
 }
 
-struct position findlparen(int bias)
+struct position
+findlparen(int bias)
 {
-    int nest, row, col, limit;
+    int             nest,
+                    row,
+                    col,
+                    limit;
     struct position pos;
 
     row = ed_row;
@@ -1258,9 +1297,13 @@ struct position findlparen(int bias)
     return (pos);
 }
 
-struct position findrparen(int bias)
+struct position
+findrparen(int bias)
 {
-    int nest, row, col, limit;
+    int             nest,
+                    row,
+                    col,
+                    limit;
     struct position pos;
 
     row = ed_row;
@@ -1296,13 +1339,15 @@ struct position findrparen(int bias)
     return (pos);
 }
 
-void reset_paren()
+void
+reset_paren()
 {
     ed_lparen_row = -1;
     ed_rparen_row = -1;
 }
 
-void restore_paren()
+void
+restore_paren()
 {
     if (ed_lparen_row != -1 && ed_lparen_row >= ed_start
 	&& ed_lparen_row <= ed_start + ed_scroll) {
@@ -1328,7 +1373,8 @@ void restore_paren()
     }
 }
 
-void emphasis_lparen()
+void
+emphasis_lparen()
 {
     struct position pos;
 
@@ -1375,7 +1421,8 @@ void emphasis_lparen()
     }
 }
 
-void emphasis_rparen()
+void
+emphasis_rparen()
 {
     struct position pos;
 
@@ -1423,7 +1470,8 @@ void emphasis_rparen()
 }
 
 
-void softtabs(int n)
+void
+softtabs(int n)
 {
     while (n > 0) {
 	insertcol();
@@ -1434,11 +1482,13 @@ void softtabs(int n)
 }
 
 
-void save_data(char *fname)
+void
+save_data(char *fname)
 {
-    int row, col;
+    int             row,
+                    col;
 
-    FILE *port = fopen(fname, "w");
+    FILE           *port = fopen(fname, "w");
     for (row = 0; row <= ed_end; row++)
 	for (col = 0; col < COL_SIZE; col++) {
 	    fputc(ed_data[row][col], port);
@@ -1448,10 +1498,11 @@ void save_data(char *fname)
     fclose(port);
 }
 
-bool is_special(int row, int col)
+bool
+is_special(int row, int col)
 {
-    char str[TOKEN_MAX];
-    int pos;
+    char            str[TOKEN_MAX];
+    int             pos;
 
     pos = 0;
     while (ed_data[row][col] != ' ' &&
@@ -1466,7 +1517,8 @@ bool is_special(int row, int col)
     return in_special_table(str);
 }
 
-int findnext(int row, int col)
+int
+findnext(int row, int col)
 {
     if (ed_data[row][col] == '(')
 	return (col);
@@ -1481,9 +1533,13 @@ int findnext(int row, int col)
 }
 
 
-void remove_headspace(int row __unused)
+void
+remove_headspace(int row __unused)
 {
-    int col, i, j, k;
+    int             col,
+                    i,
+                    j,
+                    k;
 
     col = 0;
     while (ed_data[ed_row][col] == ' ')
@@ -1498,7 +1554,8 @@ void remove_headspace(int row __unused)
     }
 }
 
-int calc_tabs()
+int
+calc_tabs()
 {
     struct position pos;
 
@@ -1508,19 +1565,22 @@ int calc_tabs()
 	return (0);
 
     if (pos.row == -1)
-	return (0);		//can't find left paren
+	return (0);		// can't find left paren
 
     if (is_special(pos.row, pos.col + 1))
 	return (pos.col + 4);
     else
 	return (findnext(pos.row, pos.col + 1));
 
-    return (0);			//dummy
+    return (0);			// dummy
 }
 
-void copy_selection()
+void
+copy_selection()
 {
-    int i, j, k;
+    int             i,
+                    j,
+                    k;
 
     if (ed_clip_end - ed_clip_start > COPY_SIZE)
 	return;
@@ -1534,9 +1594,12 @@ void copy_selection()
     ed_copy_end = j;
 }
 
-void paste_selection()
+void
+paste_selection()
 {
-    int i, j, k;
+    int             i,
+                    j,
+                    k;
 
     if (ed_copy_end == 0)
 	return;
@@ -1560,9 +1623,12 @@ void paste_selection()
     }
 }
 
-void delete_selection()
+void
+delete_selection()
 {
-    int i, j, k;
+    int             i,
+                    j,
+                    k;
 
     if (ed_clip_start == -1)
 	return;
@@ -1576,10 +1642,11 @@ void delete_selection()
     ed_data[ed_end][0] = EOL;
 }
 
-enum HighlightToken check_token(int row, int col)
+enum HighlightToken
+check_token(int row, int col)
 {
-    char str[COLS];
-    int pos;
+    char            str[COLS];
+    int             pos;
 
     pos = 0;
     if (ed_data[row][col] == '"')
@@ -1602,10 +1669,12 @@ enum HighlightToken check_token(int row, int col)
     return maybe_match(str);
 }
 
-char *get_fragment()
+char           *
+get_fragment()
 {
-    static char str[TOKEN_MAX];
-    int col, pos;
+    static char     str[TOKEN_MAX];
+    int             col,
+                    pos;
 
     col = ed_col - 1;
     while (col >= 0 &&
@@ -1625,9 +1694,10 @@ char *get_fragment()
     return (str);
 }
 
-void find_candidate()
+void
+find_candidate()
 {
-    char *str;
+    char           *str;
 
     str = get_fragment();
     ed_candidate_pt = 0;
@@ -1635,10 +1705,12 @@ void find_candidate()
 	gather_fuzzy_matches(str, ed_candidate, &ed_candidate_pt);
 }
 
-void replace_fragment(const char *newstr)
+void
+replace_fragment(const char *newstr)
 {
-    char *oldstr;
-    int m, n;
+    char           *oldstr;
+    int             m,
+                    n;
 
     oldstr = get_fragment();
     m = strlen(oldstr);
@@ -1656,11 +1728,15 @@ void replace_fragment(const char *newstr)
     }
 }
 
-struct position find_word(const char *word)
+struct position
+find_word(const char *word)
 {
-    int i, j, k, len;
+    int             i,
+                    j,
+                    k,
+                    len;
     struct position pos;
-    const char *word1;
+    const char     *word1;
 
     i = ed_row;
     j = ed_col;
@@ -1684,16 +1760,20 @@ struct position find_word(const char *word)
 	i++;
 	j = 0;
     }
-    //can't find word
+    // can't find word
     pos.row = -1;
     pos.col = 0;
     return (pos);
 }
 
 
-void replace_word(const char *str1, const char *str2)
+void
+replace_word(const char *str1, const char *str2)
 {
-    int len1, len2, i, j;
+    int             len1,
+                    len2,
+                    i,
+                    j;
 
     len1 = strlen(str1);
     len2 = strlen(str2);
@@ -1717,7 +1797,7 @@ void replace_word(const char *str1, const char *str2)
 	    ed_data[ed_row][ed_col + i] = *str2;
 	    str2++;
 	}
-    } else {			//len1 < len2
+    } else {			// len1 < len2
 	i = findeol(ed_row);
 	j = len2 - len1;
 	while (i >= ed_col + len1) {

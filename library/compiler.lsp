@@ -149,28 +149,6 @@ double tarai(double x, double y, double z){
             (car x)
             (nth (cdr x) (- n 1))))
     
-    (defglobal comp-global-var
-               '(compiler::instream
-                 compiler::not-need-res
-                 compiler::not-need-colon
-                 compiler::global-variable
-                 compiler::global-dynamic
-                 compiler::function-arg
-                 compiler::generic-name-arg
-                 compiler::catch-block-tag
-                 compiler::unwind-thunk
-                 compiler::file-name-and-ext
-                 compiler::lambda-count
-                 compiler::lambda-nest
-                 compiler::c-lang-option
-                 compiler::code0
-                 compiler::code1
-                 compiler::code2
-                 compiler::code3
-                 compiler::code4
-                 compiler::code5
-                 compiler::code6
-                 compiler::code7))
     
     (defglobal instream nil)
     (defglobal not-need-res
@@ -351,19 +329,19 @@ double tarai(double x, double y, double z){
                (unless (= (length x) 3) (error* "defglobal: illegal form" x))
                (unless (symbolp (elt x 1)) (error: "defglobal: not symbol" (elt x 1)))
                (setq global-variable (cons (elt x 1) global-variable))
-               (if (and (not (member (elt x 1) comp-global-var)) (atom (elt x 2)))
+               (if (atom (elt x 2))
                    (eval x)))
               ((eq (car x) 'defdynamic)
                (unless (= (length x) 3) (error* "defdynamic: illegal form" x))
                (unless (symbolp (elt x 1)) (error: "defdynamic: not symbol" (elt x 1)))
                (setq global-dynamic (cons (elt x 1) global-variable))
-               (if (and (not (member (elt x 1) comp-global-var)) (atom (elt x 2)))
+               (if (atom (elt x 2))
                    (eval x)))
               ((eq (car x) 'defconstant)
                (unless (= (length x) 3) (error* "defconstant: illegal form" x))
                (unless (symbolp (elt x 1)) (error: "defconstant: not symbol" (elt x 1)))
                (setq global-variable (cons (elt x 1) global-variable))
-               (if (and (not (member (elt x 1) comp-global-var)) (atom (elt x 2)))
+               (if (atom (elt x 2))
                    (eval x)))
               ((eq (car x) 'defclass)
                (unless (symbolp (elt x 1)) (error* "defclass: not symbol" (elt x 1)))

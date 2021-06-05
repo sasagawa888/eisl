@@ -504,10 +504,6 @@ void gettoken(void){
                             stok.type = ARRAY;
                             break;
                         }
-                        if(c == 'f' || c =='F'){
-                            stok.type = FARRAY;
-                            break;
-                        }
                         else{
                             stok.type = OTHER;
                             return;
@@ -962,8 +958,6 @@ int sread(void){
         case VECTOR:    return(vector(readlist()));
         case ARRAY:     n = atoi(stok.buf);
                         return(array(n,sread()));
-        case FARRAY:     n = atoi(stok.buf);
-                        return(farray(n,sread()));
         case STRING:    return(makestr(stok.buf));
         case CHARACTER: return(makechar(stok.buf));
         case SYMBOL:    return(makesym(stok.buf));

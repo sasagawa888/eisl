@@ -3813,7 +3813,6 @@ int f_create_array(int arglist){
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    arg3 = caddr(arglist);
 
     temp = 0;
     if(length(arglist) != 1 && length(arglist) != 2 && length(arglist) != 3)
@@ -3826,13 +3825,9 @@ int f_create_array(int arglist){
         error(EXHAUSTED_ERR,"create-array",arg1);
     if(length(arglist) == 1)
         arg2 = UNDEF;
-    if(arg3 != NIL && arg3 != makesym("FLOAT"))
-        error(WRONG_ARGS,"create-array", arglist);
-
-    if(nullp(arg3))
-        return(makearray(arg1,arg2));
-    else
-        return(makefarray(arg1,arg2));
+    
+    return(makearray(arg1,arg2));
+   
 }
 
 // when dimension is domain-error return 1.

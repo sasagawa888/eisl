@@ -139,7 +139,6 @@ void initclass(void){
     cfixnum = makeclass("fixnum",cinteger);
     clongnum = makeclass("longnum",cinteger);
     cbignum = makeclass("bignum",cinteger);
-    cfloat_array = makeclass("float-array",cbasic_array);
 
     bindclass("<OBJECT>",cobject);
     bindclass("<BASIC-ARRAY>",cbasic_array);
@@ -749,52 +748,6 @@ int makearray(int ls, int obj){
         SET_AUX(res,cgeneral_array_star); //class
     }
 
-    return(res);
-}
-
-// for Deep-Learning float type array
-static inline void SET_FVEC(int addr,float *x) { heap[addr].val.car.dyna_fvec = x; }
-int makefarray(int ls, int obj){
-    int size,res,i,ls1;
-    float *vec;
-
-    ls1 = ls;
-    if(!nullp(ls)){
-        size = 1;
-        while(!nullp(ls)){
-          int n;
-          
-            n = GET_INT(car(ls));
-            if(n==0)
-                n=1;
-            size = n * size;
-            ls = cdr(ls);
-        }
-        size++;
-    }
-    else
-        size = 1;
-
-    res = freshcell();
-    TRY
-        vec = (float *)ALLOC(sizeof(float) * size);
-    EXCEPT(Mem_Failed)
-        error(MALLOC_OVERF, "float array",  NIL);
-    END_TRY;
-    SET_FVEC(res,vec);
-    if(eqp(obj,makesym("RAND"))){
-        for(i=0; i<size; i++)
-            SET_FVEC_ELT(res,i,(float)rand()/RAND_MAX);
-    }
-    else{
-        for(i=0; i<size; i++)
-            SET_FVEC_ELT(res,i,GET_FLT(obj));
-    }
-    SET_TAG(res,FARR);
-    SET_CDR(res,ls1);
-    SET_AUX(res,cfloat_array); //class
-    SET_OPT(res,size); //for GC 
-    ac = ac + size;    //remenber allocate size
     return(res);
 }
 

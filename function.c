@@ -2160,16 +2160,22 @@ int f_import(int arglist){
     if(!stringp(arg1))
         error(NOT_SYM,"import",arg1);
 
-    Fmt_sfmt(str, SYMSIZE, "library/%s.o", GET_NAME(arg1));
 
+    strcpy(str, getenv("HOME"));
+    strcat(str, "/eisl/library/");
+    strcat(str, GET_NAME(arg1));
+    strcat(str, ".o");
     fp = fopen(str,"r");
     if(fp != NULL){
         fclose(fp);
         f_load(list1(makestr(str)));
         return(T);
     }
-    Fmt_sfmt(str, SYMSIZE, "library/%s.lsp", GET_NAME(arg1));
 
+    strcpy(str, getenv("HOME"));
+    strcat(str, "/eisl/library/");
+    strcat(str, GET_NAME(arg1));
+    strcat(str, ".lsp");
     fp = fopen(str,"r");
     if(fp != NULL){
         fclose(fp);

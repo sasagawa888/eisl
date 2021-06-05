@@ -3384,6 +3384,7 @@ double tarai(double x, double y, double z){
     (assert property (class <object>) (class <symbol>) (class <symbol>))
     (assert set-property (class <object>) (class <object>) (class <symbol>) (class <symbol>))
     (assert read (class <object>))
+    (assertz read (class <object>) (class <object>))
     (assertz read (class <object>) (class <object>) (class <object>))
     (assert eval (class <object>) (class <object>))
     (assert append (class <list>) (class <list>) (class <list>) 'repeat)

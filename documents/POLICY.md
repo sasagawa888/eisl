@@ -58,3 +58,5 @@ We could use an indent tool at some time in the future (e.g.
 [GNU Indent](https://www.gnu.org/software/indent/) or
 [Artistic Style](http://astyle.sourceforge.net/)),
 but for now just try to fit in with the existing code (this applies to naming conventions too).
+
+The source code is formatted with GNU indent. Barkley style with -orig option. 

@@ -1207,9 +1207,6 @@ int             f_delay(int arglist);
 int             f_delay_microseconds(int arglist);
 #endif
 
-#ifdef __NVCC__
-int             f_dp_mult(int arglist);
-#endif
 void            debugger(void);
 
 // Fast project
@@ -1277,91 +1274,5 @@ void            insertcol_buffer(int col);
 void            backspace_buffer(int col);
 int             read_line(int flag);
 
-#ifdef __NVCC__
-int             f_gpu_mult(int araglist);
-int             f_gpu_add(int arglist);
-int             f_gpu_sub(int arglist);
-int             f_gpu_smult(int arglist);
-int             f_gpu_pooling(int arglist);
-int             f_gpu_unpooling(int arglist);
-int             f_gpu_accuracy(int arglist);
-int             f_gpu_correct(int arglist);
-int             f_gpu_convolute(int arglist);
-int             f_gpu_deconvolute(int arglist);
-int             f_gpu_gradfilter(int arglist);
-int             f_gpu_emult(int arglist);
-int             f_gpu_full(int arglist);
-int             f_gpu_unfull(int arglist);
-int             f_gpu_transpose(int arglist);
-int             f_gpu_ident(int arglist);
-int             f_gpu_activate(int arglist);
-int             f_gpu_trace(int arglist);
-int             f_gpu_loss(int arglist);
-int             f_gpu_average(int arglist);
-int             f_gpu_sum(int arglist);
-int             f_gpu_diff(int arglist);
-int             f_gpu_dropout(int arglist);
-int             f_gpu_sgd(int arglist);
-int             f_gpu_momentum(int arglist);
-int             f_gpu_adagrad(int arglist);
-int             f_gpu_rms(int arglist);
-int             f_gpu_adam(int arglist);
-int             f_gpu_random_select(int arglist);
-int             f_gpu_analizer(int arglist);
-int             f_gpu_copy(int arglist);
-void            cuda_add(float *a, float *b, float *c, int n);
-void            cuda_emult(int n, float *a, float *b, float *c);
-void            cuda_sub(float *a, float *b, float *c, int n);
-void            cuda_smult(float s, int n, float *a, float *b);
-void            cuda_pooling(int in_n, int in_c, int in_h, int in_w,
-			     float *a, float *b, float *c, int st_h,
-			     int st_w);
-void            cuda_unpooling(int in_n, int in_c, int in_h, int in_w,
-			       float *a, float *b, float *c, int st_h,
-			       int st_w);
-void            cuda_convolute(int in_n, int in_c, int in_h, int in_w,
-			       int filt_n, int filt_c, int filt_h,
-			       int filt_w, float *a, float *b, float *c,
-			       int st_h, int st_w, int pad);
-void            cuda_deconvolute1(int in_n, int in_c, int in_h, int in_w,
-				  int filt_n, int filt_c, int filt_h,
-				  int filt_w, float *a, float *b, float *c,
-				  int st_h, int st_w, int pad);
-void            cuda_deconvolute2(int in_n, int in_c, int in_h, int in_w,
-				  int filt_n, int filt_c, int filt_h,
-				  int filt_w, float *a, float *b, float *c,
-				  int st_h, int st_w, int pad);
-void            cuda_gradfilter1(int in_n, int in_c, int in_h, int in_w,
-				 int filt_n, int filt_c, int filt_h,
-				 int filt_w, int loss_c, int loss_h,
-				 int loss_w, float *a, float *b, float *d,
-				 int st_h, int st_w, int pad);
-void            cuda_gradfilter2(int in_n, int in_c, int in_h, int in_w,
-				 int filt_n, int filt_c, int filt_h,
-				 int filt_w, int loss_c, int loss_h,
-				 int loss_w, float *a, float *b, float *d,
-				 int st_h, int st_w, int pad);
-void            cuda_full(int in_n, int in_c, int in_h, int in_w, float *a,
-			  float *b);
-void            cuda_unfull(int in_n, int in_c, int in_h, int in_w,
-			    float *a, float *b);
-void            cuda_activate_sigmoid(int n, float *a, float *b);
-void            cuda_activate_tanh(int n, float *a, float *b);
-void            cuda_activate_relu(int n, float *a, float *b);
-void            cuda_activate_softmax(int r1, int c1, float *a, float *b);
-void            cuda_differ_sigmoid(int n, float *a, float *b, float *c);
-void            cuda_differ_tanh(int n, float *a, float *b, float *c);
-void            cuda_differ_relu(int n, float *a, float *b, float *c);
-void            cuda_dropout(int n, float dropout_rate, float *a);
-void            cuda_sgd(int n, float *a, float *b, float *c, float lr);
-void            cuda_momentum(int n, float *a, float *b, float *c,
-			      float *d, float *e, float lr);
-void            cuda_adagrad(int n, float *a, float *b, float *c, float *d,
-			     float *e, float lr);
-void            cuda_rms(int n, float *a, float *b, float *c, float *d,
-			 float *e, float lr);
-void            cuda_adam(int n, float *a, float *b, float *c, float *d,
-			  float *e, float *f, float *g, float lr);
-#endif
 
 #endif

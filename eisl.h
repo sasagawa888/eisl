@@ -51,19 +51,19 @@ static const int FAILSE = -1000000000;
 static const double PI = 3.141592653589793;
 static const int FARRAYSIZE = 1000;
 
-typedef enum { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, FARR, CHR, STR, SYM,
+typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, FARR, CHR, STR, SYM,
     LIS, DUMMY,
     SUBR, FSUBR, FUNC, MACRO, CLASS, INSTANCE, GENERIC, METHOD,
     STREAM
 } tag;
-typedef enum { FRE, USE } flag;
+typedef enum __packed { FRE, USE } flag;
 
 typedef int     (*subr_t)(int args);
-typedef struct {
-    union {
+typedef struct __packed {
+    union __packed {
 	double          fltnum;
 	long long int   lngnum;
-	struct {
+	struct __packed {
 	    union {
 		int             intnum;
 		subr_t          subr;

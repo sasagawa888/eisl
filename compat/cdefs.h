@@ -15,4 +15,9 @@
         __attribute__((unused))
 #endif
 
+#ifndef __packed
+#define __packed \
+        __attribute__((packed))
+#endif
+
 #endif

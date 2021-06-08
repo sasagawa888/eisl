@@ -4428,7 +4428,6 @@ f_create_array(int arglist)
 {
     int             arg1,
                     arg2,
-                    arg3,
                     temp;
 
     arg1 = car(arglist);

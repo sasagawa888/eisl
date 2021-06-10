@@ -21,7 +21,6 @@
 #include "term.h"
 #include "except.h"
 
-#define CELLSIZE 20000000
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define BUFSIZE 256

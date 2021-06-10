@@ -637,7 +637,6 @@ int             caar(int addr);
 int             cadar(int addr);
 int             caddar(int addr);
 int             caddr(int addr);
-int             cadddr(int addr);
 int             cadr(int addr);
 int             car(int addr);
 int             cdar(int addr);

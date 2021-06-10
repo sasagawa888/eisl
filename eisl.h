@@ -35,8 +35,8 @@
 #define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 2.01;
-static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
-static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
+static const int WORK1 = ((int)((CELLSIZE) / 3));
+static const int WORK2 = ((int)((CELLSIZE) / 3 * 2));
 static const int FREESIZE = 900;
 static const int FARRMAX = 100000000;
 static const int SYMSIZE = 256;

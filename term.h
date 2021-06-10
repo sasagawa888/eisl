@@ -23,18 +23,18 @@ struct position {
 };
 
 // special charactor
-static const char EOL = '\n';
-static const char RET = '\r';
-static const char TAB = '\t';
-static const char SPACE = ' ';
-static const char ESC = 27;
+#define EOL '\n'
+#define RET '\r'
+#define TAB '\t'
+#define SPACE ' '
+#define ESC 27
 static const char NUL = '\0';
 static const char BEL = '\a';
 static const char BS = '\b';
-static const char DEL = 127;
+#define DEL 127
 
 #ifndef FULLSCREEN
-static const char ARROW_PREFIX = '[';
+#define ARROW_PREFIX '['
 extern char     ed_key_down;
 extern char     ed_key_left;
 extern char     ed_key_right;

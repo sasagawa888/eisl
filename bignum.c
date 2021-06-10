@@ -1002,7 +1002,8 @@ bigx_div1(int arg1, int arg2)
 #ifdef TEST
 	c--;
 	if (c == 0) {
-	DEBUG}
+	    DEBUG();
+        }
 #endif
     } while (!bigx_abs_smallerp(arg1, arg2));
 

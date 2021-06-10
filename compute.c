@@ -805,23 +805,23 @@ angle(int y, int x)
 		 (GET_FLT(exact_to_inexact(y)) /
 		  GET_FLT(exact_to_inexact(x)))));
     else if (positivep(y) && zerop(x))
-	return (makeflt(PI / 2));
+	return (makeflt(M_PI_2));
     else if (positivep(y) && negativep(x))
 	return (makeflt
-		(PI +
+		(M_PI +
 		 atan(GET_FLT(exact_to_inexact(y)) /
 		      GET_FLT(exact_to_inexact(x)))));
     else if (positive_zerop(y) && negativep(x))
-	return (makeflt(PI));
+	return (makeflt(M_PI));
     else if (negative_zerop(y) && negativep(x))
-	return (makeflt(-PI));
+	return (makeflt(-M_PI));
     else if (negativep(y) && negativep(x))
 	return (makeflt
-		(-PI +
+		(-M_PI +
 		 atan(GET_FLT(exact_to_inexact(y)) /
 		      GET_FLT(exact_to_inexact(x)))));
     else if (negativep(y) && zerop(x))
-	return (makeflt(-(PI / 2)));
+	return (makeflt(-M_PI_2));
     else if (negativep(y) && positivep(x))
 	return (makeflt
 		(atan
@@ -830,19 +830,19 @@ angle(int y, int x)
     else if (zerop(y) && positivep(x))
 	return (makeflt(0.0));
     else if (zerop(y) && negativep(x))
-	return (makeflt(PI));
+	return (makeflt(M_PI));
     else if (positive_zerop(y) && positive_zerop(x))
 	return (makeflt(+0.0));
     else if (negative_zerop(y) && positive_zerop(x))
 	return (makeflt(-0.0));
     else if (positive_zerop(y) && negative_zerop(x))
-	return (makeflt(PI));
+	return (makeflt(M_PI));
     else if (negative_zerop(y) && negative_zerop(x))
-	return (makeflt(-PI));
+	return (makeflt(-M_PI));
     else if (positive_zerop(y) && zerop(x))
-	return (makeflt(PI / 2));
+	return (makeflt(M_PI_2));
     else if (negative_zerop(y) && zerop(x))
-	return (makeflt(-(PI / 2)));
+	return (makeflt(-M_PI_2));
     else {
 	error(ILLEGAL_ARGS, "angle", list2(x, y));
 	return (UNDEF);

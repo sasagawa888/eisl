@@ -89,6 +89,11 @@ $(SRC_CII) cii/include/except.h:
 	git submodule init
 	git submodule update
 
+cii/src/text.o: cii/patched
+
+cii/patched:
+	cd cii; patch -p1 < ../patch-cii.diff
+
 edlis : edlis.o syn_highlight.o $(OBJ_CII)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h

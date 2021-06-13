@@ -5,7 +5,7 @@
 #ifndef FFI_H
 #define FFI_H
 
-#define CELLSIZE 16777216
+#define CELLSIZE 20000000
 static const int NIL = 0;
 static const int T = 2;
 static const int SMALL_INT_MAX = 1000000000;

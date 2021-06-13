@@ -29,7 +29,6 @@ int             fc;		// free counter
 int             ap;		// arglist pointer
 int             lp;		// shelter pointer
 int             wp;		// working pointer for copy GC
-int             ac;		// allocate counter
 
 
 // ------class-----
@@ -327,7 +326,6 @@ initpt(void)
     sp = 0;
     ap = 0;
     lp = 0;
-    ac = 0;
     ls = catch_symbols;
     while (!nullp(ls)) {
 	SET_PROP(car(ls), 0);

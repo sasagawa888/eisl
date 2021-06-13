@@ -224,12 +224,6 @@ clrcell(int addr)
 	FREE(heap[addr].val.car.dyna_vec);
 
 
-    if (IS_FARRAY(addr)) {
-	FREE(heap[addr].val.car.dyna_vec);
-	ac = ac - GET_OPT(addr);
-    }
-
-
     SET_TAG(addr, EMP);
     FREE(heap[addr].name);
     heap[addr].name = NULL;
@@ -255,10 +249,6 @@ checkgbc(void)
 	(void) gbc();
     else if (gc_sw == 1 && wp > WORK2 && wp > CELLSIZE - FREESIZE)
 	(void) gbc();
-    else if (ac > FARRMAX) {
-	(void) gbc();
-	ac = 0;
-    }
     return 0;
 }
 

@@ -2017,13 +2017,12 @@ quasi_transfer(int x, int n)
 void
 debugger()
 {
-    int             i,
-                    x;
+    int             i;
 
     puts("debug mode ?(help)");
     while (1) {
 	fputs(">>", stdout);
-	x = sread();
+	int x = sread();
 	if (eqp(x, makesym("?"))) {
 	    puts("?  help\n"
 		 ":a abort\n"

@@ -876,19 +876,12 @@ bigx_div1(int arg1, int arg2)
 {
     int             s,
                     ss,
-                    ds,
-                    p,
-                    t,
                     res,
                     flag1,
                     flag2,
-                    i,
-                    dig1,
-                    dig2;
-    long long int   d,
-                    u,
+                    i;
+    long long int   u,
                     v,
-                    q,
                     l1,
                     l2;
 #ifdef TEST
@@ -913,7 +906,7 @@ bigx_div1(int arg1, int arg2)
     // if divisor is smaller, become bigger to hold theolem
     v = (long long int) GET_CAR(get_msb(arg2));
     if (v < (BIGNUM_BASE / 2)) {
-	d = BIGNUM_BASE / (v + 1);
+	long long int d = BIGNUM_BASE / (v + 1);
 	arg1 = bigx_mult1(arg1, bigx_long_to_big(makelong(d)));
 	arg2 = bigx_mult1(arg2, bigx_long_to_big(makelong(d)));
 	flag1 = 1;
@@ -929,8 +922,8 @@ bigx_div1(int arg1, int arg2)
 #endif
 
     do {
-	dig1 = bigx_length(arg1);
-	dig2 = bigx_length(arg2);
+	int dig1 = bigx_length(arg1);
+	int dig2 = bigx_length(arg2);
 	if (dig1 > dig2) {
 	    l1 = (long long int) GET_CAR(get_msb(arg1));
 	    l2 = (long long int) GET_CAR(prev(get_msb(arg1)));
@@ -941,15 +934,15 @@ bigx_div1(int arg1, int arg2)
 	    v = (long long int) GET_CAR(get_msb(arg2));
 	}
 
-	q = u / v;
+	long long int q = u / v;
 	if (q == 1 && dig1 != dig2)
 	    q = 10;
-	ds = bigx_mult1(arg2, bigx_long_to_big(makelong(q)));
+	int ds = bigx_mult1(arg2, bigx_long_to_big(makelong(q)));
 
 
 	s = bigx_length(arg1) - bigx_length(ds);
 	ds = bigx_shift(ds, s);
-	p = bigx_shift(arg2, s);
+	int p = bigx_shift(arg2, s);
 #ifdef TEST
 	printf("q= %I64d (u=%I64d/ v=%I64d)\n", q, u, v);
 	fputs("ds=", stdout);
@@ -960,7 +953,7 @@ bigx_div1(int arg1, int arg2)
 	putchar('\n');
 	printf("s=%d\n", s);
 #endif
-	t = bigx_minus(arg1, ds);
+	int t = bigx_minus(arg1, ds);
 	if (flag1)
 	    bigx_gbc(arg1);	// garbage collection
 	arg1 = t;
@@ -1002,7 +995,8 @@ bigx_div1(int arg1, int arg2)
 #ifdef TEST
 	c--;
 	if (c == 0) {
-	DEBUG}
+	    DEBUG();
+        }
 #endif
     } while (!bigx_abs_smallerp(arg1, arg2));
 

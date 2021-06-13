@@ -5,6 +5,7 @@
 #ifndef FFI_H
 #define FFI_H
 
+#define CELLSIZE 20000000
 static const int NIL = 0;
 static const int T = 2;
 static const int SMALL_INT_MAX = 1000000000;
@@ -14,7 +15,7 @@ static const int INT_MASK = 1073741823;	// #b00111111_11111111_11111111_11111111
 static inline bool
 CELLRANGE(int x)
 {
-    return (x < INT_FLAG && x >= 0);
+    return (x < CELLSIZE && x >= 0);
 }
 
 enum Option {

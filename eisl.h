@@ -21,7 +21,6 @@
 #include "term.h"
 #include "except.h"
 
-#define CELLSIZE 20000000
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define BUFSIZE 256
@@ -36,8 +35,8 @@
 #define NESTED_BLOCKS_MAX 50
 
 static const float VERSION = 2.10;
-static const int WORK1 = 6000000;
-static const int WORK2 = 13000000;
+static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
+static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
 static const int FARRMAX = 100000000;
 static const int SYMSIZE = 256;
@@ -48,7 +47,6 @@ static const int FEND = 6;
 
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
-static const double PI = 3.141592653589793;
 static const int FARRAYSIZE = 1000;
 
 typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, FARR, CHR, STR, SYM,
@@ -638,7 +636,6 @@ int             caar(int addr);
 int             cadar(int addr);
 int             caddar(int addr);
 int             caddr(int addr);
-int             cadddr(int addr);
 int             cadr(int addr);
 int             car(int addr);
 int             cdar(int addr);
@@ -937,7 +934,6 @@ int             f_with_standard_input(int x);
 int             f_with_standard_output(int x);
 int             f_write_byte(int arglist);
 int             f_line_argument(int arglist);
-int             farray(int n, int ls);
 int             farrayp(int x);
 int             finddyn(int sym);
 int             findenv(int sym);
@@ -1020,7 +1016,6 @@ int             macroexpand_1(int macsym, int args);
 int             macroexpand_all(int sexp);
 int             macrop(int addr);
 int             makearray(int lis, int obj);
-int             makefarray(int ls, int obj);
 int             makebigx(char *bignum);
 int             makechar(const char *pname);
 int             makeclass(const char *pname, int superclass);

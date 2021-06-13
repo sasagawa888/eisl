@@ -646,12 +646,6 @@ caddar(int addr)
 }
 
 int
-cadddr(int addr)
-{
-    return (car(cdr((cdr(cdr(addr))))));
-}
-
-int
 nth(int n, int addr)
 {
     while (n > 0) {
@@ -1330,67 +1324,6 @@ array(int n, int ls)
 	i++;
 	ls1 = cdr(ls1);
     }
-    SET_PROP(res, ls);		// for FAST compiler regist original list
-    return (res);
-}
-
-// generate float type array from list. ex #na(ls) ls=((1.1 2.0)(3.6 4.5))
-int
-farray(int n, int ls)
-{
-    int             dim,
-                    res,
-                    ls1,
-                    i;
-    float          *vec1;
-
-    dim = array_dim(n, ls);
-    if (n == 0)
-	error(NOT_ARR, "float array", n);
-    else if (n == 1)
-	error(NOT_ARR, "float array", n);
-
-    res = makefarray(dim, 0.0);
-    ls1 = flatten(n, ls);
-
-    if (length(dim) == 2) {
-	int             j,
-	                r,
-	                c,
-	                size;
-	float          *vec2;
-
-	size = length(ls1);
-	vec1 = (float *) ALLOC(sizeof(float) * size);
-	i = 0;
-	while (!nullp(ls1)) {
-	    if (floatp(car(ls1)))
-		vec1[i] = GET_FLT(car(ls1));
-	    else if (integerp(car(ls1)))
-		vec1[i] = (float) GET_INT(car(ls1));
-	    i++;
-	    ls1 = cdr(ls1);
-	}
-	r = GET_INT(car(dim));
-	c = GET_INT(cadr(dim));
-	vec2 = GET_FVEC(res);
-	for (i = 0; i < r; i++)
-	    for (j = 0; j < c; j++)
-		vec2[IDX2C(i, j, r)] = vec1[IDX2R(i, j, c)];
-	FREE(vec1);
-    } else {
-	i = 0;
-	while (!nullp(ls1)) {
-	    if (floatp(car(ls1)))
-		SET_FVEC_ELT(res, i, GET_FLT(car(ls1)));
-	    else if (integerp(car(ls1)))
-		SET_FVEC_ELT(res, i, (float) GET_INT(car(ls1)));
-	    i++;
-	    ls1 = cdr(ls1);
-	}
-    }
-
-
     SET_PROP(res, ls);		// for FAST compiler regist original list
     return (res);
 }

@@ -22,7 +22,7 @@ void
 initsubr(void)
 {
     // constant
-    bindconst("*PI*", makeflt(3.141592653589793));
+    bindconst("*PI*", makeflt(M_PI));
     bindconst("*MOST-POSITIVE-FLOAT*", makeflt(DBL_MAX));
     bindconst("*MOST-NEGATIVE-FLOAT*", makeflt(-DBL_MAX));
 

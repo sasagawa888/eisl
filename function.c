@@ -3468,15 +3468,12 @@ f_array_dimensions(int arglist)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "array-dimensions", arglist);
-    if (!vectorp(arg1) && !arrayp(arg1) && !farrayp(arg1)
-	&& !stringp(arg1))
+    if (!vectorp(arg1) && !arrayp(arg1) && !stringp(arg1))
 	error(NOT_ARR, "array-dimensions", arg1);
 
     if (vectorp(arg1))
 	return (list1(makeint(GET_CDR(arg1))));
     else if (arrayp(arg1))
-	return (GET_CDR(arg1));
-    else if (farrayp(arg1))
 	return (GET_CDR(arg1));
     else
 	return (list1(makeint(strlen(GET_NAME(arg1)))));

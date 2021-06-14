@@ -167,34 +167,7 @@ eqlp(int addr1, int addr2)
 	    return (1);
 	} else
 	    return (0);
-    } else if (farrayp(addr1) && farrayp(addr2)) {
-	if (equalp(array_length(addr1), array_length(addr2))) {
-	    ls = array_length(addr1);
-	    n = 1;
-	    while (!nullp(ls)) {
-		n = n * GET_INT(car(ls));
-		ls = cdr(ls);
-	    }
-	    for (i = 0; i < n; i++)
-		if (!
-		    (GET_FVEC_ELT(addr1, i) - DBL_EPSILON <=
-		     GET_FVEC_ELT(addr2, i)
-		     && GET_FVEC_ELT(addr1,
-				     i) + DBL_EPSILON >=
-		     GET_FVEC_ELT(addr2, i)))
-		    return (0);
-		else if (!
-			 (GET_FVEC_ELT(addr1, i) >=
-			  GET_FVEC_ELT(addr2, i) - DBL_EPSILON
-			  && GET_FVEC_ELT(addr1, i) <= GET_FVEC_ELT(addr2,
-								    i) +
-			  DBL_EPSILON))
-		    return (0);
-
-	    return (1);
-	} else
-	    return (0);
-    } else
+    }
 	return (0);
 }
 

@@ -1626,6 +1626,8 @@ DEF_GETTER(char, TR, trace, NIL)
 	    print(args);
 	    putchar('\n');
 	}
+	shelterpush(func);
+	shelterpush(args);
 	push(ep);
 	ep = GET_CDR(func);
 	varlist = car(GET_CAR(func));
@@ -1655,6 +1657,8 @@ DEF_GETTER(char, TR, trace, NIL)
 	    print(res);
 	    putchar('\n');
 	}
+	shelterpop();
+	shelterpop();
 	ep = pop();
 	return (res);
     case MACRO:{

@@ -1738,6 +1738,7 @@ f_mapcar(int arglist)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+    
     if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
 	error(NOT_FUNC, "mapcar", arg1);
     return (mapcar(arg1, arg2));

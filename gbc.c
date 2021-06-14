@@ -163,7 +163,8 @@ gbcmark(void)
     markcell(tagbody_tag);
 
     // mark thunk for unwind-protect
-    markcell(unwind_pt);
+    for (i = 0; i < unwind_pt; i++)
+    markcell(unwind_buf[i]);
 
     // mark error_handler
     markcell(error_handler);

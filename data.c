@@ -793,10 +793,14 @@ mapc(int x, int y)
     int             ls;
 
     ls = y;
+    shelterpush(y);
     while (!member(NIL, ls)) {
+    shelterpush(ls);
 	apply(x, each_car(ls));
+    shelterpop();
 	ls = each_cdr(ls);
     }
+    shelterpop();
     return (car(y));
 }
 

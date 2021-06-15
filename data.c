@@ -1100,18 +1100,12 @@ remove_list(int x, int y)
 void
 vector_set(int v, int n, int obj)
 {
-    if (IS_FARRAY(v))
-	SET_FVEC_ELT(v, n, GET_FLT(obj));
-    else
 	SET_VEC_ELT(v, n, obj);
 }
 
 int
 vector_ref(int v, int n)
 {
-    if (IS_FARRAY(v))
-	return (makeflt(GET_FVEC_ELT(v, n)));
-    else
 	return (GET_VEC_ELT(v, n));
 }
 
@@ -1136,17 +1130,13 @@ array_ref(int obj, int ls)
     int             size,
                     index;
 
-    if (vectorp(obj))
+    if (vectorp(obj)){
 	size = list1(vector_length(obj));
-    else
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
-					// (1 2 3)
-
-    if (IS_FARRAY(obj) && length(size) == 2) {
-	index =
-	    IDX2C(GET_INT(car(ls)), GET_INT(cadr(ls)), GET_INT(car(size)));
-	return (vector_ref(obj, index));
-    } else {
+    }
+    else{
+	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
+    }
+    
 	index = 0;
 	size = cdr(size);
 	while (!nullp(ls)) {
@@ -1162,7 +1152,6 @@ array_ref(int obj, int ls)
 	    ls = cdr(ls);
 	}
 	return (vector_ref(obj, index));
-    }
 }
 
 int
@@ -1171,17 +1160,12 @@ array_set(int obj, int ls, int val)
     int             size,
                     index;
 
-    if (vectorp(obj))
+    if (vectorp(obj)){
 	size = list1(vector_length(obj));
-    else
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
-					// (1 2 3)
-
-    if (IS_FARRAY(obj) && length(size) == 2) {
-	index =
-	    IDX2C(GET_INT(car(ls)), GET_INT(cadr(ls)), GET_INT(car(size)));
-	vector_set(obj, index, val);
-    } else {
+    }
+    else{
+	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
+    }
 	index = 0;
 	size = cdr(size);
 	while (!nullp(ls)) {
@@ -1197,7 +1181,6 @@ array_set(int obj, int ls, int val)
 	    ls = cdr(ls);
 	}
 	vector_set(obj, index, val);
-    }
     return (obj);
 }
 
@@ -1612,8 +1595,6 @@ copy_work(int x)
 	return (copy_vec(x));
     case ARR:
 	return (copy_array(x));
-    case FARR:
-	return (copy_array(x));
     case STR:
 	return (copy_str(x));
     case CHR:
@@ -1741,7 +1722,7 @@ copy_array(int x)
 
     addr = freshcell();
     SET_VEC(addr, GET_VEC(x));	// array or vector
-    SET_TAG(addr, GET_TAG(x));	// tag ARR or VEC or FARR 
+    SET_TAG(addr, GET_TAG(x));	// tag ARR or VEC 
     SET_CDR(addr, GET_CDR(x));	// dimension
     SET_AUX(addr, GET_AUX(x));	// class
     return (addr);

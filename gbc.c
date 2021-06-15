@@ -106,10 +106,6 @@ markcell(int addr)
 	markcell(cdr(addr));	// dimension
 	return;
 
-    case FARR:
-	markcell(cdr(addr));	// dimension
-	return;
-
     case SYM:
 	markcell(car(addr));
 	markcell(cdr(addr));

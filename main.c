@@ -1209,9 +1209,6 @@ print(int addr)
     case ARR:
 	printarray(addr);
 	break;
-    case FARR:
-	printfarray(addr);
-	break;
     case STR:
 	printstr(addr);
 	break;
@@ -1369,69 +1366,6 @@ printarray(int x)
 	print(structured(ls, st));
 }
 
-#define IDX2C(i,j,ld) (((j)*(ld))+(i))
-#define IDX2R(i,j,ld) (((i)*(ld))+(j))
-void
-printfarray(int x)
-{
-    int             i,
-                    size,
-                    st,
-                    ls,
-                    dim;
-    float          *vec1;
-
-    st = ls = GET_CDR(x);
-    size = 1;
-    dim = length(ls);
-    while (!nullp(ls)) {
-	size = GET_INT(car(ls)) * size;
-	ls = cdr(ls);
-    }
-    ls = NIL;
-    if (length(st) == 2) {
-	if (size < 100) {
-	    int             j,
-	                    r,
-	                    c;
-	    float          *vec2;
-
-	    vec1 = GET_FVEC(x);
-	    vec2 = (float *) ALLOC(sizeof(float) * size);
-	    r = GET_INT(car(st));
-	    c = GET_INT(cadr(st));
-	    for (i = 0; i < r; i++)
-		for (j = 0; j < c; j++)
-		    vec2[IDX2R(i, j, c)] = vec1[IDX2C(i, j, r)];
-	    for (i = 0; i < size; i++)
-		ls = cons(makeflt(vec2[i]), ls);
-	    FREE(vec2);
-	} else {
-	    ls = cons(makesym("float-elements"), ls);
-	}
-    } else {
-	if (size < 100) {
-	    for (i = 0; i < size; i++)
-		ls = cons(makeflt(GET_FVEC_ELT(x, i)), ls);
-	} else {
-	    ls = cons(makesym("float-element"), ls);
-	}
-    }
-    ls = reverse(ls);
-    if (GET_OPT(output_stream) != EISL_INSTR)
-	Fmt_fprint(GET_PORT(output_stream), "#%df", dim);
-    else {
-	char            str[SHORT_STRSIZE];
-	Fmt_sfmt(str, SHORT_STRSIZE, "#%df", dim);
-	append_str(output_stream, str);
-    }
-    if (dim == 0)
-	print(car(ls));
-    else if (size < 100)
-	print(structured(ls, st));
-    else
-	print(ls);
-}
 
 void
 printstr(int addr)
@@ -1522,8 +1456,6 @@ eval(int addr)
     else if (vectorp(addr))
 	return (addr);
     else if (arrayp(addr))
-	return (addr);
-    else if (farrayp(addr))
 	return (addr);
     else if (stringp(addr))
 	return (addr);

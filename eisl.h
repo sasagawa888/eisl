@@ -1156,7 +1156,6 @@ void            markcell(int addr);
 void            print(int addr);
 void            print_bigx(int x);
 void            printarray(int x);
-void            printfarray(int x);
 void            printchar(int addr);
 void            printclass(int x);
 void            printflt(double x);

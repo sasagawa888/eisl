@@ -237,15 +237,6 @@ error(int errnum, const char *fun, int arg)
 		   makesym("expected-class"), cbasic_array);
 	signal_condition(makeinstance(cdomain_error, initargs), NIL);
 	break;
-    case NOT_FARR:
-	initargs =
-	    list10(makesym("format-string"),
-		   makestr("Not an float-array at "),
-		   makesym("format-arguments"), arg, makesym("function"),
-		   makesym(fun1), makesym("object"), arg,
-		   makesym("expected-class"), cbasic_array);
-	signal_condition(makeinstance(cdomain_error, initargs), NIL);
-	break;
     case NOT_SYM:
 	initargs =
 	    list10(makesym("format-string"), makestr("Not a symbol at "),

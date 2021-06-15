@@ -38,7 +38,6 @@ static const float VERSION = 2.10;
 static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
-static const int FARRMAX = 100000000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 2;	// ascii char. add \0 to tail
 static const int MATSIZE = 256;
@@ -47,9 +46,8 @@ static const int FEND = 6;
 
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
-static const int FARRAYSIZE = 1000;
 
-typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, FARR, CHR, STR, SYM,
+typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR, SYM,
     LIS, DUMMY,
     SUBR, FSUBR, FUNC, MACRO, CLASS, INSTANCE, GENERIC, METHOD,
     STREAM
@@ -338,7 +336,6 @@ IS_T(int addr)
 
 DEF_PREDICATE(VECTOR, VEC)
     DEF_PREDICATE(ARRAY, ARR)
-    DEF_PREDICATE(FARRAY, FARR)
     DEF_PREDICATE(SUBR, SUBR)
     DEF_PREDICATE(FSUBR, FSUBR)
     DEF_PREDICATE(FUNC, FUNC)
@@ -568,7 +565,6 @@ enum {
     SHELTER_UNDERF,
     SYSTEM_ERR,
     RESOURCE_ERR,
-    NOT_FARR,
     NOT_EXIST_ARG,
     IMPROPER_ARGS,
     OUT_OF_DOMAIN,
@@ -934,7 +930,6 @@ int             f_with_standard_input(int x);
 int             f_with_standard_output(int x);
 int             f_write_byte(int arglist);
 int             f_line_argument(int arglist);
-int             farrayp(int x);
 int             finddyn(int sym);
 int             findenv(int sym);
 int             flatten(int n, int ls);

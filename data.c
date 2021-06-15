@@ -300,14 +300,6 @@ arrayp(int x)
 	return (0);
 }
 
-int
-farrayp(int x)
-{
-    if (IS_FARRAY(x))
-	return (1);
-    else
-	return (0);
-}
 
 DEF_PREDICATE(STREAM, STREAM)
      int             streamp(int x)

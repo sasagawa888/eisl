@@ -168,7 +168,7 @@ eqlp(int addr1, int addr2)
 	} else
 	    return (0);
     }
-	return (0);
+    return (0);
 }
 
 int
@@ -768,9 +768,9 @@ mapc(int x, int y)
     ls = y;
     shelterpush(y);
     while (!member(NIL, ls)) {
-    shelterpush(ls);
+	shelterpush(ls);
 	apply(x, each_car(ls));
-    shelterpop();
+	shelterpop();
 	ls = each_cdr(ls);
     }
     shelterpop();
@@ -1100,13 +1100,13 @@ remove_list(int x, int y)
 void
 vector_set(int v, int n, int obj)
 {
-	SET_VEC_ELT(v, n, obj);
+    SET_VEC_ELT(v, n, obj);
 }
 
 int
 vector_ref(int v, int n)
 {
-	return (GET_VEC_ELT(v, n));
+    return (GET_VEC_ELT(v, n));
 }
 
 int
@@ -1130,28 +1130,28 @@ array_ref(int obj, int ls)
     int             size,
                     index;
 
-    if (vectorp(obj)){
+    if (vectorp(obj)) {
 	size = list1(vector_length(obj));
+    } else {
+	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
+					// (1 2 3)
     }
-    else{
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
-    }
-    
-	index = 0;
-	size = cdr(size);
-	while (!nullp(ls)) {
-	    if (nullp(cdr(ls)))
-		index = index + GET_INT(car(ls));
-	    else if (GET_INT(car(ls)) != 0)
-		index = index + GET_INT(car(size)) * GET_INT(car(ls));
-	    /*
-	     * else if(GET_INT(car(ls)) == 0) index = index; 
-	     */
 
-	    size = cdr(size);
-	    ls = cdr(ls);
-	}
-	return (vector_ref(obj, index));
+    index = 0;
+    size = cdr(size);
+    while (!nullp(ls)) {
+	if (nullp(cdr(ls)))
+	    index = index + GET_INT(car(ls));
+	else if (GET_INT(car(ls)) != 0)
+	    index = index + GET_INT(car(size)) * GET_INT(car(ls));
+	/*
+	 * else if(GET_INT(car(ls)) == 0) index = index; 
+	 */
+
+	size = cdr(size);
+	ls = cdr(ls);
+    }
+    return (vector_ref(obj, index));
 }
 
 int
@@ -1160,27 +1160,27 @@ array_set(int obj, int ls, int val)
     int             size,
                     index;
 
-    if (vectorp(obj)){
+    if (vectorp(obj)) {
 	size = list1(vector_length(obj));
+    } else {
+	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
+					// (1 2 3)
     }
-    else{
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3)
-    }
-	index = 0;
-	size = cdr(size);
-	while (!nullp(ls)) {
-	    if (nullp(cdr(ls)))
-		index = index + GET_INT(car(ls));
-	    else if (GET_INT(car(ls)) != 0)
-		index = index + GET_INT(car(size)) * GET_INT(car(ls));
-	    /*
-	     * else if(GET_INT(car(ls)) == 0) index = index; 
-	     */
+    index = 0;
+    size = cdr(size);
+    while (!nullp(ls)) {
+	if (nullp(cdr(ls)))
+	    index = index + GET_INT(car(ls));
+	else if (GET_INT(car(ls)) != 0)
+	    index = index + GET_INT(car(size)) * GET_INT(car(ls));
+	/*
+	 * else if(GET_INT(car(ls)) == 0) index = index; 
+	 */
 
-	    size = cdr(size);
-	    ls = cdr(ls);
-	}
-	vector_set(obj, index, val);
+	size = cdr(size);
+	ls = cdr(ls);
+    }
+    vector_set(obj, index, val);
     return (obj);
 }
 
@@ -1448,9 +1448,9 @@ high_priority_p(int x, int y)
     else if (GET_OPT(x) < GET_OPT(y))
 	return (1);
     else if (GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) {	// case
-								// :after
-								// this is 
-								// reverse
+	// :after
+	// this is 
+	// reverse
 	args1 = car(GET_CAR(x));	// lambda-list 
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {

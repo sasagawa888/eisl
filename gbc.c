@@ -3,11 +3,11 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "eisl.h"
-#include "compat/nana.h"
+#include "nana.h"
 #include "mem.h"
 #include "except.h"
 
-#define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
+#define DBG_PRINTF(...) VLG((gbc_flag, __VA_ARGS__))
 
 // ---------garbage collection-----------
 DEF_PREDICATE(EMPTY, EMP)

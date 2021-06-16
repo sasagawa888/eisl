@@ -511,7 +511,7 @@ error(int errnum, const char *fun, int arg)
 	break;
     case RESOURCE_ERR:
 	initargs =
-	    list6(makesym("format-string"), makestr("resouce error "),
+	    list6(makesym("format-string"), makestr("resource error "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
 	signal_condition(makeinstance(cprogram_error, initargs), NIL);

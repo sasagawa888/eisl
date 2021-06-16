@@ -11,7 +11,7 @@
 #include <math.h>
 #include <stdint.h>
 #include "eisl.h"
-#include "compat/nana.h"
+#include "nana.h"
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"
@@ -1306,7 +1306,7 @@ convert(int arg1, int arg2)
 	}
 	break;
     default:
-	IP(false, "convert tag switch default action");
+	VL(("convert tag switch default action"));
     }
     error(OUT_OF_DOMAIN, "convert", arg1);
     return (UNDEF);

@@ -19,6 +19,7 @@
 #include "except.h"
 #include "str.h"
 #include "long.h"
+#include "eiffel.h"
 
 // ------pointer----
 int             ep;		// environment pointer
@@ -1535,6 +1536,8 @@ DEF_GETTER(char, TR, trace, NIL)
                     i,
                     n,
                     trace;
+    REQUIRE((heap[func].tag == FSUBR || heap[func].tag == SUBR || heap[func].tag == FUNC || heap[func].tag == MACRO) &&
+        (heap[args].tag == LIS || heap[args].tag == SYM));
     res = NIL;
     pexist = 0;
     aexist = 0;

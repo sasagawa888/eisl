@@ -1,7 +1,7 @@
 .POSIX:
 .DELETE_ON_ERROR:
 
-OPSYS ?= macos
+OPSYS ?= linux
 CC := cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)

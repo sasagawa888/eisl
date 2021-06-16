@@ -728,10 +728,17 @@ member1(int x, int y, int z)
 int
 mapcar(int x, int y)
 {
-    if (member(NIL, y))
-	return (NIL);
-    else
-	return (cons(apply(x, each_car(y)), mapcar(x, each_cdr(y))));
+    int ls, res;
+
+    ls = y;
+    shelterpush(y);
+    if (member(NIL, ls)) {
+	res = NIL;
+    } else {
+	res = cons(apply(x, each_car(y)), mapcar(x, each_cdr(y)));
+    }
+    shelterpop();
+    return res;
 }
 
 int

@@ -242,21 +242,20 @@ freshcell(void)
 
     if (gc_sw == 0) {
 	res = hp;
-	hp = heap[hp].val.cdr.intnum;
+	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	fc--;
-	if (fc <= 50)
-	    error(RESOURCE_ERR, "M&S fleshcell", NIL);
-
+	if (fc <= 50 && !handling_resource_err) {
+	    handling_resource_err = true;
+	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	}
 	return (res);
     } else {
 	res = wp;
 	if (IS_VECTOR(res) || IS_ARRAY(res)) {
 	    FREE(heap[res].val.car.dyna_vec);
-	    heap[res].val.car.dyna_vec = NULL;
 	} else if (IS_STRING(res)) {
 	    FREE(heap[res].name);
-	    heap[res].name = NULL;
 	}
 	SET_TAG(res, EMP);
 	SET_CAR(res, 0);
@@ -266,11 +265,13 @@ freshcell(void)
 	SET_OPT(res, 0);
 	SET_TR(res, 0);
 	wp++;
-	if (wp < CELLSIZE && wp > CELLSIZE - 50)
+	if (wp < CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
+	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "copying freshcell", NIL);
-	else if (wp > CELLSIZE && wp > CELLSIZE - 50)
+	} else if (wp > CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
+	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "copying freshcell", NIL);
-
+	}
 	return (res);
     }
 }
@@ -285,8 +286,10 @@ hfreshcell(void)
     hp = heap[hp].val.cdr.intnum;
     SET_CDR(res, 0);
     fc--;
-    if (fc <= 50)
-	error(RESOURCE_ERR, "hfleshcell", NIL);
+    if (fc <= 50 && !handling_resource_err) {
+	handling_resource_err = true;
+	error(RESOURCE_ERR, "hfreshcell", NIL);
+    }
     return (res);
 }
 

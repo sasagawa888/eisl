@@ -744,7 +744,7 @@ mapcar(int x, int y)
 int
 each_car(int x)
 {
-    REQUIRE(heap[x].tag == LIS || heap[x].tag == SYM);
+    REQUIRE(GET_TAG(x) == LIS || GET_TAG(x) == SYM);
     if (nullp(x))
 	return (NIL);
     else
@@ -754,7 +754,7 @@ each_car(int x)
 int
 each_cdr(int x)
 {
-    REQUIRE(heap[x].tag == LIS || heap[x].tag == SYM);
+    REQUIRE(GET_TAG(x) == LIS || GET_TAG(x) == SYM);
     if (nullp(x))
 	return (NIL);
     else

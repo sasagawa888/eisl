@@ -588,8 +588,10 @@ signal_condition(int x, int y)
 	    error(MALLOC_OVERF, "signal-condition", NIL);
 	END_TRY;
     }
-    if (ignore_flag)
+    if (ignore_flag) {
+	handling_resource_err = false;
 	RAISE(Ignored_Error);
+    }
     if (open_flag && error_handler == NIL) {
 	fclose(GET_PORT(input_stream));
 	open_flag = false;
@@ -615,6 +617,7 @@ signal_condition(int x, int y)
     ESCERRFORG();
     input_stream = standard_input;
     output_stream = standard_output;
+    handling_resource_err = false;
     debugger();
     RAISE(Restart_Repl);
     return 0;

@@ -140,6 +140,7 @@ bool            repl_flag = true;	// for REPL read_line 1=on, 0=off
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option
+bool            handling_resource_err = false;  // stop infinite recursion
 
 // switch
 int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC
@@ -1536,8 +1537,8 @@ DEF_GETTER(char, TR, trace, NIL)
                     i,
                     n,
                     trace;
-    REQUIRE((heap[func].tag == FSUBR || heap[func].tag == SUBR || heap[func].tag == FUNC || heap[func].tag == MACRO) &&
-        (heap[args].tag == LIS || heap[args].tag == SYM));
+    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO) &&
+        (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
     res = NIL;
     pexist = 0;
     aexist = 0;

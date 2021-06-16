@@ -223,7 +223,6 @@ clrcell(int addr)
 
     SET_TAG(addr, EMP);
     FREE(heap[addr].name);
-    heap[addr].name = NULL;
     SET_CAR(addr, 0);
     SET_CDR(addr, 0);
     SET_AUX(addr, 0);

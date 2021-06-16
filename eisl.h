@@ -467,6 +467,7 @@ extern bool     repl_flag;
 extern volatile sig_atomic_t exit_flag;
 extern bool     greeting_flag;
 extern bool     script_flag;
+extern bool     handling_resource_err;
 
 // switch
 extern int      gc_sw;

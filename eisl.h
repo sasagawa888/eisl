@@ -207,10 +207,15 @@ DEF_GETTER(int, CDR, val.cdr.intnum, NIL)
 DEF_GETTER(int, AUX, aux, cfixnum)
 DEF_GETTER(int, PROP, prop, NIL)
 DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
-     static inline FILE *GET_PORT(int addr)
+DEF_GETTER(tag, TAG, tag, INTN)
+
+static inline FILE *GET_PORT(int addr)
 {
-    REQUIRE(CELLRANGE(addr));
-    return heap[addr].val.car.port;
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == STREAM);
+    FILE *res = heap[addr].val.car.port;
+    ENSURE(res != NULL);
+    return res;
 }
 
 static inline int
@@ -221,22 +226,27 @@ GET_INT(int addr)
 
 DEF_GETTER(double, FLT, val.fltnum, NIL)
 DEF_GETTER(long long int, LONG, val.lngnum, NIL)
-     static inline char *GET_NAME(int addr)
+
+static inline char *GET_NAME(int addr)
 {
     REQUIRE(CELLRANGE(addr));
-    return heap[addr].name;
+    char *res = heap[addr].name;
+    ENSURE(res != NULL);
+    return res;
 }
 
 static inline char
 GET_CHAR(int addr)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == CHR &&
+        heap[addr].name != NULL);
     return heap[addr].name[0];
 }
 
-DEF_GETTER(tag, TAG, tag, INTN)
-    DEF_GETTER(signed char, OPT, option, 0)
-     static inline void SET_TAG(int addr, tag x)
+DEF_GETTER(signed char, OPT, option, 0)
+
+static inline void SET_TAG(int addr, tag x)
 {
     REQUIRE(CELLRANGE(addr));
     heap[addr].tag = x;
@@ -276,21 +286,24 @@ SET_PROP(int addr, int x)
 static inline void
 SET_FLT(int addr, double x)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == FLTN);
     heap[addr].val.fltnum = x;
 }
 
 static inline void
 SET_LONG(int addr, long long int x)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == LONGN);
     heap[addr].val.lngnum = x;
 }
 
 static inline void
 SET_PORT(int addr, FILE * x)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == STREAM);
     heap[addr].val.car.port = x;
 }
 
@@ -331,11 +344,12 @@ IS_INTEGER(int addr)
 }
 
 DEF_PREDICATE(BIGXNUM, BIGX)
-    DEF_PREDICATE(LONGNUM, LONGN)
-    DEF_PREDICATE(FLOAT, FLTN)
-    DEF_PREDICATE(LIST, LIS)
-    DEF_PREDICATE(STRING, STR)
-     static inline bool IS_NIL(int addr)
+DEF_PREDICATE(LONGNUM, LONGN)
+DEF_PREDICATE(FLOAT, FLTN)
+DEF_PREDICATE(LIST, LIS)
+DEF_PREDICATE(STRING, STR)
+
+static inline bool IS_NIL(int addr)
 {
     return (addr == NIL);
 }
@@ -347,55 +361,68 @@ IS_T(int addr)
 }
 
 DEF_PREDICATE(VECTOR, VEC)
-    DEF_PREDICATE(ARRAY, ARR)
-    DEF_PREDICATE(SUBR, SUBR)
-    DEF_PREDICATE(FSUBR, FSUBR)
-    DEF_PREDICATE(FUNC, FUNC)
-    DEF_PREDICATE(MACRO, MACRO)
-    DEF_PREDICATE(CLASS, CLASS)
-    DEF_PREDICATE(GENERIC, GENERIC)
-     static inline bool HAS_NAME(int addr, const char *x)
+DEF_PREDICATE(ARRAY, ARR)
+DEF_PREDICATE(SUBR, SUBR)
+DEF_PREDICATE(FSUBR, FSUBR)
+DEF_PREDICATE(FUNC, FUNC)
+DEF_PREDICATE(MACRO, MACRO)
+DEF_PREDICATE(CLASS, CLASS)
+DEF_PREDICATE(GENERIC, GENERIC)
+
+static inline bool HAS_NAME(int addr, const char *x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        heap[addr].name != NULL);
     return (strcmp(heap[addr].name, x) == 0);
 }
 
 static inline bool
 SAME_NAME(int addr1, int addr2)
 {
+    REQUIRE(CELLRANGE(addr1) && CELLRANGE(addr2) &&
+        heap[addr1].name != NULL && heap[addr2].name != NULL);
     return (strcmp(heap[addr1].name, heap[addr2].name) == 0);
 }
 
 static inline char
 STRING_REF(int addr, int k)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        (GET_TAG(addr) == STR || GET_TAG(addr) == SYM) &&
+        heap[addr].name != NULL);
     return heap[addr].name[k];
 }
 
 static inline void
 STRING_SET(int addr, int k, char c)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == STR &&
+        heap[addr].name != NULL);
     heap[addr].name[k] = c;
 }
 
 static inline int
 GET_VEC_ELT(int addr, int i)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == VEC);
     return heap[addr].val.car.dyna_vec[i];
 }
 
 static inline void
 SET_VEC_ELT(int addr, int i, int x)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == VEC);
     heap[addr].val.car.dyna_vec[i] = x;
 }
 
 static inline void
 SET_VEC(int addr, int *x)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == VEC);
     heap[addr].val.car.dyna_vec = x;
 }
 

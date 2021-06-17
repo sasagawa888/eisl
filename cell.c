@@ -668,10 +668,10 @@ makevec(int n, int obj)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "make_vector", NIL);
     END_TRY;
+    SET_TAG(res, VEC);
     SET_VEC(res, vec);
     for (i = 0; i < n; i++)
 	SET_VEC_ELT(res, i, copy(obj));
-    SET_TAG(res, VEC);
     SET_CDR(res, n);
     SET_AUX(res, cgeneral_vector);	// class general-vector
     return (res);

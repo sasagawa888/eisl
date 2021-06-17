@@ -1308,6 +1308,7 @@ vector_to_list(int x)
 static inline void
 SET_CHAR(int addr, char x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].name[0] = x;
 }
 
@@ -1759,6 +1760,7 @@ copy_char(int x)
 static inline void
 SET_NAME(int addr, char *x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].name = x;
 }
 

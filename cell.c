@@ -42,15 +42,15 @@ initcell(void)
 
     // 0th address is for NIL, set initial environment
     makesym("NIL");		// 0th address NIL
-    SET_AUX(0, 28);		// class of nil is null
+    SET_AUX(0, CLASS_NULL);		// class of nil is null
     SET_OPT(0, CONSTN);
     makesym("T");		// 2nd address is T
-    SET_AUX(2, 29);		// class of t is symbol
+    SET_AUX(2, CLASS_SYMBOL);		// class of t is symbol
     SET_OPT(2, CONSTN);
     makesym("<undef>");		// 4th address is UNDEF
-    SET_AUX(4, 29);		// class of <undef> is symbol
+    SET_AUX(4, CLASS_SYMBOL);		// class of <undef> is symbol
     makesym("<file-end>");	// 6the address is FEND
-    SET_AUX(6, 29);		// class of <end-of-file> is symbol
+    SET_AUX(6, CLASS_SYMBOL);		// class of <end-of-file> is symbol
     ep = 0;
     dp = 0;
     sp = 0;
@@ -224,7 +224,8 @@ initclass(void)
     initerrargs(cend_of_stream);
     initerrargs(cstorage_exhausted);
 
-
+    ENSURE(cnull == CLASS_NULL &&
+        csymbol == CLASS_SYMBOL);
 }
 
 void

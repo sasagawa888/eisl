@@ -27,7 +27,7 @@ endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -Inana/src
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 ifeq ($(DEBUG),1)
-	CFLAGS += -O0 -g -DEIFFEL_DOEND
+	CFLAGS += -O0 -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
 	SRC_NANA := nana/src/I.c
 	ifneq ($(OPSYS),openbsd)
@@ -115,7 +115,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	$(RM) *.o $(OBJ_CII) eisl edlis
+	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) eisl edlis
 
 .PHONY: check
 check:

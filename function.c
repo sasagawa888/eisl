@@ -4744,6 +4744,7 @@ f_heapdump(int arglist)
 static inline void
 SET_FLAG(int addr, flag x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].flag = x;
 }
 

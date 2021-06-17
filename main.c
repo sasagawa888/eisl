@@ -1853,6 +1853,7 @@ deffsubr(const char *symname, int (*func)(int))
 static inline void
 SET_SUBR(int addr, subr_t x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].val.car.subr = x;
 }
 

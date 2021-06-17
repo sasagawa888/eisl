@@ -20,6 +20,7 @@
 #include "ffi.h"
 #include "term.h"
 #include "except.h"
+#include "eiffel.h"
 
 #define DYNSIZE 1000
 #define STACKSIZE 400000
@@ -195,7 +196,6 @@ extern int      dynamic[DYNSIZE][2];
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
     {                                                  \
         if (CELLRANGE(addr)) {                         \
-            assert(addr < CELLSIZE);                   \
             return heap[addr].MEMBER;                  \
         } else {                                       \
             return DEFAULT;                            \
@@ -240,12 +240,14 @@ DEF_GETTER(tag, TAG, tag, INTN)
 static inline void
 SET_CAR(int addr, int x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].val.car.intnum = x;
 }
 
 static inline void
 SET_CDR(int addr, int x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].val.cdr.intnum = x;
 }
 
@@ -306,7 +308,6 @@ SET(int addr, int x)
     static inline bool IS_ ## NAME (int addr)   \
     {                                           \
         if (CELLRANGE(addr)) {                  \
-            assert(addr < CELLSIZE);            \
             return (heap[addr].tag == TAG);     \
         } else {                                \
             return NIL;                         \

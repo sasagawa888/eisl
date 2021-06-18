@@ -3680,7 +3680,7 @@ printr_h(int r, int n, char *b, int *sign)
     int i;
     static const char *digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    REQUIRE(r >= 2 && r < 36);
+    REQUIRE(r >= 2 && r <= 36);
     *sign = 1;
     if (n == 0) {
 	b[0] = '0';

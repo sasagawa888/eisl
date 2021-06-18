@@ -406,7 +406,8 @@ static inline int
 GET_VEC_ELT(int addr, int i)
 {
     REQUIRE(CELLRANGE(addr) &&
-        GET_TAG(addr) == VEC);
+        GET_TAG(addr) == VEC &&
+        heap[addr].val.car.dyna_vec != NULL);
     return heap[addr].val.car.dyna_vec[i];
 }
 
@@ -414,7 +415,8 @@ static inline void
 SET_VEC_ELT(int addr, int i, int x)
 {
     REQUIRE(CELLRANGE(addr) &&
-        GET_TAG(addr) == VEC);
+        GET_TAG(addr) == VEC &&
+        heap[addr].val.car.dyna_vec != NULL);
     heap[addr].val.car.dyna_vec[i] = x;
 }
 
@@ -429,22 +431,29 @@ SET_VEC(int addr, int *x)
 static inline float
 GET_FVEC_ELT(int addr, int i)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == VEC &&
+        heap[addr].val.car.dyna_fvec != NULL);
     return heap[addr].val.car.dyna_fvec[i];
 }
 
 static inline void
 SET_FVEC_ELT(int addr, int i, float x)
 {
-    REQUIRE(CELLRANGE(addr));
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == VEC &&
+        heap[addr].val.car.dyna_fvec != NULL);
     heap[addr].val.car.dyna_fvec[i] = x;
 }
 
 static inline float *
 GET_FVEC(int addr)
 {
-    REQUIRE(CELLRANGE(addr));
-    return heap[addr].val.car.dyna_fvec;
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == VEC);
+    float *res = heap[addr].val.car.dyna_fvec;
+    ENSURE(res != NULL);
+    return res;
 }
 
 static inline int

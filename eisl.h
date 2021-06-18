@@ -428,34 +428,6 @@ SET_VEC(int addr, int *x)
     heap[addr].val.car.dyna_vec = x;
 }
 
-static inline float
-GET_FVEC_ELT(int addr, int i)
-{
-    REQUIRE(CELLRANGE(addr) &&
-        GET_TAG(addr) == VEC &&
-        heap[addr].val.car.dyna_fvec != NULL);
-    return heap[addr].val.car.dyna_fvec[i];
-}
-
-static inline void
-SET_FVEC_ELT(int addr, int i, float x)
-{
-    REQUIRE(CELLRANGE(addr) &&
-        GET_TAG(addr) == VEC &&
-        heap[addr].val.car.dyna_fvec != NULL);
-    heap[addr].val.car.dyna_fvec[i] = x;
-}
-
-static inline float *
-GET_FVEC(int addr)
-{
-    REQUIRE(CELLRANGE(addr) &&
-        GET_TAG(addr) == VEC);
-    float *res = heap[addr].val.car.dyna_fvec;
-    ENSURE(res != NULL);
-    return res;
-}
-
 static inline int
 IDX2C(int i, int j, int ld)
 {

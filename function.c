@@ -1846,13 +1846,12 @@ f_map_into(int arglist)
     arg4 = map_into_string(arg3);
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
-    
+
     if(IS_FUNC(arg2) && GET_OPT(arg2) == 0) // when arg2 is thunk (lambda () ...)
     val = reverse(map_into_thunk(arg2,arg4));
     else
 	val = mapcar(arg2, arg4);
-
-
+    
     res = arg1;
     if (listp(arg1)) {
 	while (!nullp(val)) {
@@ -1868,8 +1867,12 @@ f_map_into(int arglist)
         val = cdr(val);
         }
     } else if (stringp(arg1)) {
+        if(nullp(val)) //when val is null return arg1
+        return(arg1);
         i = 0;
         while(!nullp(val)){
+        if(!charp(car(val))) //when val is not char list return arg1
+        return(arg1);
         STRING_SET(res, i , GET_CHAR(car(val)));
         i++;
         val = cdr(val);

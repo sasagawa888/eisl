@@ -4484,8 +4484,10 @@ f_create_vector(int arglist)
 
     if (length(arglist) != 1 && length(arglist) != 2)
 	error(WRONG_ARGS, "create-vector", arglist);
-    if (!integerp(arg1) || negativep(arg1))
-	error(NOT_INT, "create-vector", arg1);
+    if (negativep(arg1))
+	error(NOT_POSITIVE, "create-vector", arg1);
+    if (!integerp(arg1))
+    error(EXHAUSTED_ERR, "create-vector", arg1);
     if (length(arglist) == 1)
 	arg2 = UNDEF;
 

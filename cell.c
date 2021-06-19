@@ -824,9 +824,6 @@ makearray(int ls, int obj)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "array", NIL);
     END_TRY;
-    SET_VEC(res, vec);
-    for (i = 0; i < size; i++)
-	SET_VEC_ELT(res, i, copy(obj));
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
@@ -840,6 +837,9 @@ makearray(int ls, int obj)
 	SET_CDR(res, ls1);
 	SET_AUX(res, cgeneral_array_star);	// class
     }
+    SET_VEC(res, vec);
+    for (i = 0; i < size; i++)
+	SET_VEC_ELT(res, i, copy(obj));
 
     return (res);
 }

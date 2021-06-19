@@ -732,7 +732,7 @@ mapcar(int x, int y)
 
     ls = y;
     shelterpush(y);
-    if (member(NIL, ls)) {
+    if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
 	res = cons(apply(x, each_car(y)), mapcar(x, each_cdr(y)));

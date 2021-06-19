@@ -1,4 +1,5 @@
 (import "test")
 
-(test (let ((a "abc") (b "")) (list (map-into a #'list b) a b)) ("abc" "abc" "") equal)
-
+(test (let ((a #()) (b #()) (c #(a b c))) (list (map-into a #'list b c) a b c))
+ (#() #() #() #(a b c))
+ equal)

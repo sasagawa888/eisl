@@ -328,7 +328,7 @@
 ;;; String (2 ����)
 (test (let ((a "") (b "") (c "")) (list (map-into a #'list b c) a b c)) ("" "" "" "") equal)
 (test (let ((a "") (b "") (c "abc")) (list (map-into a #'list b c) a b c)) ("" "" "" "abc") equal)
-;(test (let ((a "abc") (b "") (c "")) (list (map-into a #'list b c) a b c)) ("abc" "abc" "" "") equal)
+(test (let ((a "abc") (b "") (c "")) (list (map-into a #'list b c) a b c)) ("abc" "abc" "" "") equal)
 (test (let ((a "abc") (b "def") (c "ghi")) (list (map-into a (lambda (x y) #\A) b c) a b c))
  ("AAA" "AAA" "def" "ghi")
  equal)
@@ -349,8 +349,7 @@
  equal)
 (test (let ((a #(a b c))) (list (map-into a (lambda (x) 'z) a) a)) (#(z z z) #(z z z)) equal)
 ;;; Vector (2 ����)
-#|
-((let ((a #()) (b #()) (c #())) (list (map-into a #'list b c) a b c))
+(test (let ((a #()) (b #()) (c #())) (list (map-into a #'list b c) a b c))
  (#() #() #() #())
  equal)
 (test (let ((a #()) (b #()) (c #(a b c))) (list (map-into a #'list b c) a b c))
@@ -364,7 +363,6 @@
 (test (let ((a #(a b c)) (b #(d)) (c #(g h i))) (list (map-into a (lambda (x y) 'z) b c) a b c))
  (#(z b c) #(z b c) #(d) #(g h i))
  equal)
-|#
 ;;; List (0 ����)
 (test (let ((a ())) (list (map-into a #'list) a)) (() ()) equal)
 (test (let ((a '(a))) (list (map-into a (lambda () 'z)) a)) ((z) (z)) equal)
@@ -378,7 +376,6 @@
  ((d e f) (d e f) (d e f))
  equal)
 (test (let ((a '(a b c))) (list (map-into a (lambda (x) 'z) a) a)) ((z z z) (z z z)) equal)
-#|
 ;;; List (2 ����)
 (test (let ((a ()) (b ()) (c ())) (list (map-into a #'list b c) a b c))
  (() () () ())
@@ -394,10 +391,8 @@
 (test (let ((a '(a b c)) (b '(d)) (c '(g h i))) (list (map-into a (lambda (x y) 'z) b c) a b c))
  ((z b c) (z b c) (d) (g h i))
  equal)
- |#
 
 ;;; ����
-#|
 (test (let ((a "abc") (b #(d e f)) (c '(g h i)) (d #(nil nil nil)))
    (list (map-into d #'list a b c) a b c d))
  (#((#\a d g) (#\b e h) (#\c f i))
@@ -414,5 +409,5 @@
   (g h i)
   ((#\a d g) (#\b e h) (#\c f i)))
  equal)
-|#
+
 

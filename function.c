@@ -1835,15 +1835,15 @@ f_map_into(int arglist)
     if (listp(arg1) && nullp(arg3))
 	arg4 = arg1;
     else if(listp(arg1))
-    arg4 = arg3;
+    arg4 = map_into_to_list(arg3);
     else if (vectorp(arg1) && nullp(arg3))
 	arg4 = vector_to_list(arg1);
     else if (vectorp(arg1))
-	arg4 = map_into_vector(arg3);
+	arg4 = map_into_to_list(arg3);
     else if (stringp(arg1) && nullp(arg3))
 	arg4 = string_to_list(arg1);
     else if(stringp(arg1))
-    arg4 = map_into_string(arg3);
+    arg4 = map_into_to_list(arg3);
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
@@ -1860,6 +1860,8 @@ f_map_into(int arglist)
 	    val = cdr(val);
 	}
     } else if (vectorp(arg1)) {
+        if(nullp(val)) // when val is null return arg1
+        return(arg1);
         i = 0;
         while(!nullp(val)){
         SET_VEC_ELT(res, i, car(val));
@@ -1894,22 +1896,18 @@ map_into_thunk(int x, int y){
 }
 
 int
-map_into_vector(int x)
+map_into_to_list(int x)
 {
     if (nullp(x))
 	return (NIL);
-    else
-	return (cons(vector_to_list(car(x)), map_into_vector(cdr(x))));
+    else if(listp(car(x)))
+    return (cons(car(x), map_into_to_list(cdr(x))));
+    else if(vectorp(car(x)))
+	return (cons(vector_to_list(car(x)), map_into_to_list(cdr(x))));
+    else if(stringp(car(x)))
+    return (cons(string_to_list(car(x)), map_into_to_list(cdr(x))));
 }
 
-int
-map_into_string(int x)
-{
-    if (nullp(x))
-	return (NIL);
-    else
-	return (cons(string_to_list(car(x)), map_into_string(cdr(x))));
-}
 
 int
 f_reverse(int arglist)

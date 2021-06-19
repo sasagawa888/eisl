@@ -1738,7 +1738,7 @@ f_mapcar(int arglist)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    
+
     if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
 	error(NOT_FUNC, "mapcar", arg1);
     return (mapcar(arg1, arg2));
@@ -1823,23 +1823,90 @@ f_map_into(int arglist)
     int             arg1,
                     arg2,
                     arg3,
+                    arg4,
                     val,
+                    i,
                     res;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
 
-    val = mapcar(arg2, arg3);
+    if (listp(arg1) && nullp(arg3))
+	arg4 = arg1;
+    else if(listp(arg1))
+    arg4 = arg3;
+    else if (vectorp(arg1) && nullp(arg3))
+	arg4 = vector_to_list(arg1);
+    else if (vectorp(arg1))
+	arg4 = map_into_vector(arg3);
+    else if (stringp(arg1) && nullp(arg3))
+	arg4 = string_to_list(arg1);
+    else if(stringp(arg1))
+    arg4 = map_into_string(arg3);
+    else
+	error(ILLEGAL_ARGS, "map-into", arg1);
+    
+    if(IS_FUNC(arg2) && GET_OPT(arg2) == 0) // when arg2 is thunk (lambda () ...)
+    val = reverse(map_into_thunk(arg2,arg4));
+    else
+	val = mapcar(arg2, arg4);
+
+
     res = arg1;
-    while (!nullp(val)) {
-	SET_CAR(arg1, GET_CAR(val));
-	arg1 = cdr(arg1);
-	val = cdr(val);
+    if (listp(arg1)) {
+	while (!nullp(val)) {
+	    SET_CAR(res, car(val));
+	    res = cdr(res);
+	    val = cdr(val);
+	}
+    } else if (vectorp(arg1)) {
+        i = 0;
+        while(!nullp(val)){
+        SET_VEC_ELT(res, i, car(val));
+        i++;
+        val = cdr(val);
+        }
+    } else if (stringp(arg1)) {
+        i = 0;
+        while(!nullp(val)){
+        STRING_SET(res, i , GET_CHAR(car(val)));
+        i++;
+        val = cdr(val);
+        }
     }
-    return (res);
+    if (findenv(arg1) != FAILSE)
+	setlexenv(arg1, res);
+    else if (GET_OPT(arg1) == GLOBAL)
+	SET_CDR(arg1, res);
+    return (arg1);
 }
 
+int 
+map_into_thunk(int x, int y){
+    if(nullp(y))
+    return(NIL);
+    else
+    return(cons(apply(x,NIL),map_into_thunk(x,cdr(y))));
+}
+
+int
+map_into_vector(int x)
+{
+    if (nullp(x))
+	return (NIL);
+    else
+	return (cons(vector_to_list(car(x)), map_into_vector(cdr(x))));
+}
+
+int
+map_into_string(int x)
+{
+    if (nullp(x))
+	return (NIL);
+    else
+	return (cons(string_to_list(car(x)), map_into_string(cdr(x))));
+}
 
 int
 f_reverse(int arglist)
@@ -3169,7 +3236,10 @@ f_string_index(int arglist)
 	error(ILLEGAL_ARGS, "string-index", arg3);
 
     if (string_length(arg1) == 0 && string_length(arg2) == 0)	// (string-index 
-								// "" "")
+								// 
+	// 
+	// 
+	// "" "")
 	return (makeint(0));
 
     if (string_length(arg2) == 0)

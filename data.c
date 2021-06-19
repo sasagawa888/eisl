@@ -727,7 +727,9 @@ member1(int x, int y, int z)
 int
 mapcar(int x, int y)
 {
-    if (member(NIL, y))
+    if(nullp(y))
+    return(NIL);
+    else if (member(NIL, y))
 	return (NIL);
     else
 	return (cons(apply(x, each_car(y)), mapcar(x, each_cdr(y))));

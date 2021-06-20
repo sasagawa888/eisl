@@ -7,7 +7,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include "eisl.h"
-#include "compat/nana.h"
+#include "nana.h"
 #include "fmt.h"
 
 #define TAGBODY_LEN_MAX 100

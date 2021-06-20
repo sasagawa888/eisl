@@ -11,7 +11,7 @@
 #include <math.h>
 #include <stdint.h>
 #include "eisl.h"
-#include "compat/nana.h"
+#include "nana.h"
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"
@@ -42,15 +42,15 @@ initcell(void)
 
     // 0th address is for NIL, set initial environment
     makesym("NIL");		// 0th address NIL
-    SET_AUX(0, 28);		// class of nil is null
+    SET_AUX(0, CLASS_NULL);		// class of nil is null
     SET_OPT(0, CONSTN);
     makesym("T");		// 2nd address is T
-    SET_AUX(2, 29);		// class of t is symbol
+    SET_AUX(2, CLASS_SYMBOL);		// class of t is symbol
     SET_OPT(2, CONSTN);
     makesym("<undef>");		// 4th address is UNDEF
-    SET_AUX(4, 29);		// class of <undef> is symbol
+    SET_AUX(4, CLASS_SYMBOL);		// class of <undef> is symbol
     makesym("<file-end>");	// 6the address is FEND
-    SET_AUX(6, 29);		// class of <end-of-file> is symbol
+    SET_AUX(6, CLASS_SYMBOL);		// class of <end-of-file> is symbol
     ep = 0;
     dp = 0;
     sp = 0;
@@ -224,7 +224,8 @@ initclass(void)
     initerrargs(cend_of_stream);
     initerrargs(cstorage_exhausted);
 
-
+    ENSURE(cnull == CLASS_NULL &&
+        csymbol == CLASS_SYMBOL);
 }
 
 void
@@ -242,21 +243,20 @@ freshcell(void)
 
     if (gc_sw == 0) {
 	res = hp;
-	hp = heap[hp].val.cdr.intnum;
+	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	fc--;
-	if (fc <= 50)
-	    error(RESOURCE_ERR, "M&S fleshcell", NIL);
-
+	if (fc <= 50 && !handling_resource_err) {
+	    handling_resource_err = true;
+	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	}
 	return (res);
     } else {
 	res = wp;
 	if (IS_VECTOR(res) || IS_ARRAY(res)) {
 	    FREE(heap[res].val.car.dyna_vec);
-	    heap[res].val.car.dyna_vec = NULL;
 	} else if (IS_STRING(res)) {
 	    FREE(heap[res].name);
-	    heap[res].name = NULL;
 	}
 	SET_TAG(res, EMP);
 	SET_CAR(res, 0);
@@ -266,11 +266,13 @@ freshcell(void)
 	SET_OPT(res, 0);
 	SET_TR(res, 0);
 	wp++;
-	if (wp < CELLSIZE && wp > CELLSIZE - 50)
+	if (wp < CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
+	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "copying freshcell", NIL);
-	else if (wp > CELLSIZE && wp > CELLSIZE - 50)
+	} else if (wp > CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
+	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "copying freshcell", NIL);
-
+	}
 	return (res);
     }
 }
@@ -285,8 +287,10 @@ hfreshcell(void)
     hp = heap[hp].val.cdr.intnum;
     SET_CDR(res, 0);
     fc--;
-    if (fc <= 50)
-	error(RESOURCE_ERR, "hfleshcell", NIL);
+    if (fc <= 50 && !handling_resource_err) {
+	handling_resource_err = true;
+	error(RESOURCE_ERR, "hfreshcell", NIL);
+    }
     return (res);
 }
 
@@ -664,10 +668,10 @@ makevec(int n, int obj)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "make_vector", NIL);
     END_TRY;
+    SET_TAG(res, VEC);
     SET_VEC(res, vec);
     for (i = 0; i < n; i++)
 	SET_VEC_ELT(res, i, copy(obj));
-    SET_TAG(res, VEC);
     SET_CDR(res, n);
     SET_AUX(res, cgeneral_vector);	// class general-vector
     return (res);
@@ -820,9 +824,6 @@ makearray(int ls, int obj)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "array", NIL);
     END_TRY;
-    SET_VEC(res, vec);
-    for (i = 0; i < size; i++)
-	SET_VEC_ELT(res, i, copy(obj));
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
@@ -836,6 +837,9 @@ makearray(int ls, int obj)
 	SET_CDR(res, ls1);
 	SET_AUX(res, cgeneral_array_star);	// class
     }
+    SET_VEC(res, vec);
+    for (i = 0; i < size; i++)
+	SET_VEC_ELT(res, i, copy(obj));
 
     return (res);
 }
@@ -1306,7 +1310,7 @@ convert(int arg1, int arg2)
 	}
 	break;
     default:
-	IP(false, "convert tag switch default action");
+	VL(("convert tag switch default action"));
     }
     error(OUT_OF_DOMAIN, "convert", arg1);
     return (UNDEF);

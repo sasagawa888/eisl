@@ -20,6 +20,7 @@
 #include "ffi.h"
 #include "term.h"
 #include "except.h"
+#include "eiffel.h"
 
 #define DYNSIZE 1000
 #define STACKSIZE 400000
@@ -161,7 +162,8 @@ extern int      clongnum;
 extern int      cbignum;
 extern int      cfloat_array;
 
-static const int CLASS_SYMBOL = 1;
+static const int CLASS_NULL = 28;
+static const int CLASS_SYMBOL = 29;
 
 
 // stream
@@ -195,7 +197,6 @@ extern int      dynamic[DYNSIZE][2];
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
     {                                                  \
         if (CELLRANGE(addr)) {                         \
-            assert(addr < CELLSIZE);                   \
             return heap[addr].MEMBER;                  \
         } else {                                       \
             return DEFAULT;                            \
@@ -206,9 +207,15 @@ DEF_GETTER(int, CDR, val.cdr.intnum, NIL)
 DEF_GETTER(int, AUX, aux, cfixnum)
 DEF_GETTER(int, PROP, prop, NIL)
 DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
-     static inline FILE *GET_PORT(int addr)
+DEF_GETTER(tag, TAG, tag, INTN)
+
+static inline FILE *GET_PORT(int addr)
 {
-    return heap[addr].val.car.port;
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == STREAM);
+    FILE *res = heap[addr].val.car.port;
+    ENSURE(res != NULL);
+    return res;
 }
 
 static inline int
@@ -219,39 +226,50 @@ GET_INT(int addr)
 
 DEF_GETTER(double, FLT, val.fltnum, NIL)
 DEF_GETTER(long long int, LONG, val.lngnum, NIL)
-     static inline char *GET_NAME(int addr)
+
+static inline char *GET_NAME(int addr)
 {
-    return heap[addr].name;
+    REQUIRE(CELLRANGE(addr));
+    char *res = heap[addr].name;
+    ENSURE(res != NULL);
+    return res;
 }
 
 static inline char
 GET_CHAR(int addr)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == CHR &&
+        heap[addr].name != NULL);
     return heap[addr].name[0];
 }
 
-DEF_GETTER(tag, TAG, tag, INTN)
-    DEF_GETTER(signed char, OPT, option, 0)
-     static inline void SET_TAG(int addr, tag x)
+DEF_GETTER(signed char, OPT, option, 0)
+
+static inline void SET_TAG(int addr, tag x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].tag = x;
 }
 
 static inline void
 SET_CAR(int addr, int x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].val.car.intnum = x;
 }
 
 static inline void
 SET_CDR(int addr, int x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].val.cdr.intnum = x;
 }
 
 static inline void
 SET_AUX(int addr, int x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].aux = x;
 }
 
@@ -259,7 +277,6 @@ static inline int
 SET_PROP(int addr, int x)
 {
     if (CELLRANGE(addr)) {
-	assert(addr < CELLSIZE);
 	return (heap[addr].prop = x);
     } else {
 	return NIL;
@@ -269,36 +286,45 @@ SET_PROP(int addr, int x)
 static inline void
 SET_FLT(int addr, double x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == FLTN);
     heap[addr].val.fltnum = x;
 }
 
 static inline void
 SET_LONG(int addr, long long int x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == LONGN);
     heap[addr].val.lngnum = x;
 }
 
 static inline void
 SET_PORT(int addr, FILE * x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == STREAM);
     heap[addr].val.car.port = x;
 }
 
 static inline void
 SET_OPT(int addr, signed char x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].option = x;
 }
 
 static inline void
 SET_TR(int addr, char x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].trace = x;
 }
 
 static inline void
 SET(int addr, int x)
 {
+    REQUIRE(CELLRANGE(addr) && CELLRANGE(x));
     heap[addr] = heap[x];
 }
 
@@ -306,7 +332,6 @@ SET(int addr, int x)
     static inline bool IS_ ## NAME (int addr)   \
     {                                           \
         if (CELLRANGE(addr)) {                  \
-            assert(addr < CELLSIZE);            \
             return (heap[addr].tag == TAG);     \
         } else {                                \
             return NIL;                         \
@@ -319,11 +344,12 @@ IS_INTEGER(int addr)
 }
 
 DEF_PREDICATE(BIGXNUM, BIGX)
-    DEF_PREDICATE(LONGNUM, LONGN)
-    DEF_PREDICATE(FLOAT, FLTN)
-    DEF_PREDICATE(LIST, LIS)
-    DEF_PREDICATE(STRING, STR)
-     static inline bool IS_NIL(int addr)
+DEF_PREDICATE(LONGNUM, LONGN)
+DEF_PREDICATE(FLOAT, FLTN)
+DEF_PREDICATE(LIST, LIS)
+DEF_PREDICATE(STRING, STR)
+
+static inline bool IS_NIL(int addr)
 {
     return (addr == NIL);
 }
@@ -335,70 +361,71 @@ IS_T(int addr)
 }
 
 DEF_PREDICATE(VECTOR, VEC)
-    DEF_PREDICATE(ARRAY, ARR)
-    DEF_PREDICATE(SUBR, SUBR)
-    DEF_PREDICATE(FSUBR, FSUBR)
-    DEF_PREDICATE(FUNC, FUNC)
-    DEF_PREDICATE(MACRO, MACRO)
-    DEF_PREDICATE(CLASS, CLASS)
-    DEF_PREDICATE(GENERIC, GENERIC)
-     static inline bool HAS_NAME(int addr, const char *x)
+DEF_PREDICATE(ARRAY, ARR)
+DEF_PREDICATE(SUBR, SUBR)
+DEF_PREDICATE(FSUBR, FSUBR)
+DEF_PREDICATE(FUNC, FUNC)
+DEF_PREDICATE(MACRO, MACRO)
+DEF_PREDICATE(CLASS, CLASS)
+DEF_PREDICATE(GENERIC, GENERIC)
+
+static inline bool HAS_NAME(int addr, const char *x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        heap[addr].name != NULL);
     return (strcmp(heap[addr].name, x) == 0);
 }
 
 static inline bool
 SAME_NAME(int addr1, int addr2)
 {
+    REQUIRE(CELLRANGE(addr1) && CELLRANGE(addr2) &&
+        heap[addr1].name != NULL && heap[addr2].name != NULL);
     return (strcmp(heap[addr1].name, heap[addr2].name) == 0);
 }
 
 static inline char
 STRING_REF(int addr, int k)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        (GET_TAG(addr) == STR || GET_TAG(addr) == SYM) &&
+        heap[addr].name != NULL);
     return heap[addr].name[k];
 }
 
 static inline void
 STRING_SET(int addr, int k, char c)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == STR &&
+        heap[addr].name != NULL);
     heap[addr].name[k] = c;
 }
 
 static inline int
 GET_VEC_ELT(int addr, int i)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        (GET_TAG(addr) == VEC || GET_TAG(addr) == ARR) &&
+        heap[addr].val.car.dyna_vec != NULL);
     return heap[addr].val.car.dyna_vec[i];
 }
 
 static inline void
 SET_VEC_ELT(int addr, int i, int x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        (GET_TAG(addr) == VEC || GET_TAG(addr) == ARR) &&
+        heap[addr].val.car.dyna_vec != NULL);
     heap[addr].val.car.dyna_vec[i] = x;
 }
 
 static inline void
 SET_VEC(int addr, int *x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        (GET_TAG(addr) == VEC || GET_TAG(addr) == ARR));
     heap[addr].val.car.dyna_vec = x;
-}
-
-static inline float
-GET_FVEC_ELT(int addr, int i)
-{
-    return heap[addr].val.car.dyna_fvec[i];
-}
-
-static inline void
-SET_FVEC_ELT(int addr, int i, float x)
-{
-    heap[addr].val.car.dyna_fvec[i] = x;
-}
-
-static inline float *
-GET_FVEC(int addr)
-{
-    return heap[addr].val.car.dyna_fvec;
 }
 
 static inline int
@@ -434,11 +461,11 @@ output_str(int output_stream, const char *from)
 static inline void
 output_char(int output_stream, char c)
 {
-    stream_str[0] = c;
-    stream_str[1] = '\0';
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	fputc(c, GET_PORT(output_stream));
     } else {
+	stream_str[0] = c;
+	stream_str[1] = '\0';
 	append_str(output_stream, stream_str);
     }
 }
@@ -467,6 +494,7 @@ extern bool     repl_flag;
 extern volatile sig_atomic_t exit_flag;
 extern bool     greeting_flag;
 extern bool     script_flag;
+extern bool     handling_resource_err;
 
 // switch
 extern int      gc_sw;

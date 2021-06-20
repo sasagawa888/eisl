@@ -6,6 +6,7 @@
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
+#include "eiffel.h"
 
 int
 get_int(int addr)
@@ -727,17 +728,23 @@ member1(int x, int y, int z)
 int
 mapcar(int x, int y)
 {
-    if(nullp(y))
-    return(NIL);
-    else if (member(NIL, y))
-	return (NIL);
-    else
-	return (cons(apply(x, each_car(y)), mapcar(x, each_cdr(y))));
+    int ls, res;
+
+    ls = y;
+    shelterpush(y);
+    if (nullp(ls) || member(NIL, ls)) {
+	res = NIL;
+    } else {
+	res = cons(apply(x, each_car(y)), mapcar(x, each_cdr(y)));
+    }
+    shelterpop();
+    return res;
 }
 
 int
 each_car(int x)
 {
+    REQUIRE(GET_TAG(x) == LIS || GET_TAG(x) == SYM);
     if (nullp(x))
 	return (NIL);
     else
@@ -747,6 +754,7 @@ each_car(int x)
 int
 each_cdr(int x)
 {
+    REQUIRE(GET_TAG(x) == LIS || GET_TAG(x) == SYM);
     if (nullp(x))
 	return (NIL);
     else
@@ -1300,6 +1308,8 @@ vector_to_list(int x)
 static inline void
 SET_CHAR(int addr, char x)
 {
+    REQUIRE(CELLRANGE(addr) &&
+        GET_TAG(addr) == CHR);
     heap[addr].name[0] = x;
 }
 
@@ -1751,6 +1761,7 @@ copy_char(int x)
 static inline void
 SET_NAME(int addr, char *x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].name = x;
 }
 

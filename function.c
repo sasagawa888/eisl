@@ -3746,6 +3746,37 @@ f_format(int arglist)
 }
 
 int
+printr_h(int r, int n, char *b, int *sign)
+{
+    int i;
+    static const char *digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    REQUIRE(r >= 2 && r <= 36);
+    *sign = 1;
+    if (n == 0) {
+	b[0] = '0';
+	i = 0;
+    } else {
+	if (n >= 0)
+	    *sign = 1;
+	else {
+	    *sign = -1;
+	    n = abs(n);
+	}
+	i = 0;
+	while (n > 0) {
+            b[i] = digits[n % r];
+
+	    n = n / r;
+	    i++;
+	}
+	i--;
+    }
+    b[i + 1] = '\0';
+    return (i + 1);
+}
+
+int
 fprintr(FILE * p, int r, int n)
 {
     int             i,
@@ -3753,136 +3784,8 @@ fprintr(FILE * p, int r, int n)
                     len;
     char            b[BININT_LEN + 1];
 
-    sign = 1;
-    if (n == 0) {
-	b[0] = '0';
-	i = 0;
-    } else {
-	if (n >= 0)
-	    sign = 1;
-	else {
-	    sign = -1;
-	    n = abs(n);
-	}
-	i = 0;
-	while (n > 0) {
-	    switch (n % r) {
-	    case 0:
-		b[i] = '0';
-		break;
-	    case 1:
-		b[i] = '1';
-		break;
-	    case 2:
-		b[i] = '2';
-		break;
-	    case 3:
-		b[i] = '3';
-		break;
-	    case 4:
-		b[i] = '4';
-		break;
-	    case 5:
-		b[i] = '5';
-		break;
-	    case 6:
-		b[i] = '6';
-		break;
-	    case 7:
-		b[i] = '7';
-		break;
-	    case 8:
-		b[i] = '8';
-		break;
-	    case 9:
-		b[i] = '9';
-		break;
-	    case 10:
-		b[i] = 'A';
-		break;
-	    case 11:
-		b[i] = 'B';
-		break;
-	    case 12:
-		b[i] = 'C';
-		break;
-	    case 13:
-		b[i] = 'D';
-		break;
-	    case 14:
-		b[i] = 'E';
-		break;
-	    case 15:
-		b[i] = 'F';
-		break;
-	    case 16:
-		b[i] = 'G';
-		break;
-	    case 17:
-		b[i] = 'H';
-		break;
-	    case 18:
-		b[i] = 'I';
-		break;
-	    case 19:
-		b[i] = 'J';
-		break;
-	    case 20:
-		b[i] = 'K';
-		break;
-	    case 21:
-		b[i] = 'L';
-		break;
-	    case 22:
-		b[i] = 'M';
-		break;
-	    case 23:
-		b[i] = 'N';
-		break;
-	    case 24:
-		b[i] = 'O';
-		break;
-	    case 25:
-		b[i] = 'P';
-		break;
-	    case 26:
-		b[i] = 'Q';
-		break;
-	    case 27:
-		b[i] = 'R';
-		break;
-	    case 28:
-		b[i] = 'S';
-		break;
-	    case 29:
-		b[i] = 'T';
-		break;
-	    case 30:
-		b[i] = 'U';
-		break;
-	    case 31:
-		b[i] = 'V';
-		break;
-	    case 32:
-		b[i] = 'W';
-		break;
-	    case 33:
-		b[i] = 'X';
-		break;
-	    case 34:
-		b[i] = 'Y';
-		break;
-	    case 35:
-		b[i] = 'Z';
-		break;
-	    }
-
-	    n = n / r;
-	    i++;
-	}
-	i--;
-    }
-    len = strlen(b);
+    len = printr_h(r, n, b, &sign);
+    i = len - 1;
     if (sign == -1) {
 	fputc('-', p);
 	len++;
@@ -3894,7 +3797,6 @@ fprintr(FILE * p, int r, int n)
     return (len);
 }
 
-
 int
 sprintr(char *str, int r, int n)
 {
@@ -3904,136 +3806,8 @@ sprintr(char *str, int r, int n)
                     len;
     char            b[BININT_LEN + 1];
 
-    sign = 1;
-    if (n == 0) {
-	b[0] = '0';
-	i = 0;
-    } else {
-	if (n >= 0)
-	    sign = 1;
-	else {
-	    sign = -1;
-	    n = abs(n);
-	}
-	i = 0;
-	while (n > 0) {
-	    switch (n % r) {
-	    case 0:
-		b[i] = '0';
-		break;
-	    case 1:
-		b[i] = '1';
-		break;
-	    case 2:
-		b[i] = '2';
-		break;
-	    case 3:
-		b[i] = '3';
-		break;
-	    case 4:
-		b[i] = '4';
-		break;
-	    case 5:
-		b[i] = '5';
-		break;
-	    case 6:
-		b[i] = '6';
-		break;
-	    case 7:
-		b[i] = '7';
-		break;
-	    case 8:
-		b[i] = '8';
-		break;
-	    case 9:
-		b[i] = '9';
-		break;
-	    case 10:
-		b[i] = 'A';
-		break;
-	    case 11:
-		b[i] = 'B';
-		break;
-	    case 12:
-		b[i] = 'C';
-		break;
-	    case 13:
-		b[i] = 'D';
-		break;
-	    case 14:
-		b[i] = 'E';
-		break;
-	    case 15:
-		b[i] = 'F';
-		break;
-	    case 16:
-		b[i] = 'G';
-		break;
-	    case 17:
-		b[i] = 'H';
-		break;
-	    case 18:
-		b[i] = 'I';
-		break;
-	    case 19:
-		b[i] = 'J';
-		break;
-	    case 20:
-		b[i] = 'K';
-		break;
-	    case 21:
-		b[i] = 'L';
-		break;
-	    case 22:
-		b[i] = 'M';
-		break;
-	    case 23:
-		b[i] = 'N';
-		break;
-	    case 24:
-		b[i] = 'O';
-		break;
-	    case 25:
-		b[i] = 'P';
-		break;
-	    case 26:
-		b[i] = 'Q';
-		break;
-	    case 27:
-		b[i] = 'R';
-		break;
-	    case 28:
-		b[i] = 'S';
-		break;
-	    case 29:
-		b[i] = 'T';
-		break;
-	    case 30:
-		b[i] = 'U';
-		break;
-	    case 31:
-		b[i] = 'V';
-		break;
-	    case 32:
-		b[i] = 'W';
-		break;
-	    case 33:
-		b[i] = 'X';
-		break;
-	    case 34:
-		b[i] = 'Y';
-		break;
-	    case 35:
-		b[i] = 'Z';
-		break;
-	    }
-
-	    n = n / r;
-	    i++;
-	}
-	i--;
-    }
-    len = strlen(b);
+    len = printr_h(r, n, b, &sign);
+    i = len - 1;
     j = 0;
     if (sign == -1) {
 	str[j] = '-';
@@ -4817,6 +4591,7 @@ f_heapdump(int arglist)
 static inline void
 SET_FLAG(int addr, flag x)
 {
+    REQUIRE(CELLRANGE(addr));
     heap[addr].flag = x;
 }
 

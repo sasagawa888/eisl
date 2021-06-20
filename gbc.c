@@ -3,11 +3,11 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "eisl.h"
-#include "compat/nana.h"
+#include "nana.h"
 #include "mem.h"
 #include "except.h"
 
-#define DBG_PRINTF(...) VLG(gbc_flag, __VA_ARGS__)
+#define DBG_PRINTF(...) VLG((gbc_flag, __VA_ARGS__))
 
 // ---------garbage collection-----------
 DEF_PREDICATE(EMPTY, EMP)
@@ -223,7 +223,6 @@ clrcell(int addr)
 
     SET_TAG(addr, EMP);
     FREE(heap[addr].name);
-    heap[addr].name = NULL;
     SET_CAR(addr, 0);
     SET_CDR(addr, 0);
     SET_AUX(addr, 0);

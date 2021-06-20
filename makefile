@@ -24,20 +24,22 @@ else
 		CURSES_LIBS := $(shell ncurses6-config --libs)
 	endif
 endif
-CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700
+CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -Inana/src
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 ifeq ($(DEBUG),1)
-	CFLAGS += -O0 -g
+	CFLAGS += -O0 -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
+	SRC_NANA := nana/src/I.c
 	ifneq ($(OPSYS),openbsd)
 		CFLAGS += -fsanitize=undefined
 		LDFLAGS := -fsanitize=undefined
 	endif
 else
-	CFLAGS += -O3 -flto -DNDEBUG=1
+	CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
 	SRC_CII += cii/src/mem.c
 endif
 OBJ_CII := $(SRC_CII:.c=.o)
+OBJ_NANA := $(SRC_NANA:.c=.o)
 CXX := c++
 CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
 ifeq ($(CC),c++)
@@ -70,22 +72,23 @@ EISL_OBJS := main.o \
 	bignum.o \
 	compute.o \
 	edit.o \
-    syn_highlight.o \
+	syn_highlight.o \
 	long.o
 
 all: eisl edlis
 
-eisl: $(EISL_OBJS) $(OBJ_CII)
+eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
 else
 	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
 endif
 
-%.o: %.c eisl.h ffi.h term.h cii/include/except.h
+%.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(SRC_CII) cii/include/except.h:
+$(SRC_CII) cii/include/except.h \
+$(SRC_NANA) nana/src/eiffel.h:
 	git submodule init
 	git submodule update
 
@@ -112,7 +115,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	$(RM) *.o $(OBJ_CII) eisl edlis
+	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) eisl edlis
 
 .PHONY: check
 check:

@@ -13,7 +13,6 @@
 
 #include <setjmp.h>
 #include <stdbool.h>
-#include <assert.h>
 #include <string.h>
 #include <signal.h>
 #include "compat/cdefs.h"
@@ -495,6 +494,7 @@ extern volatile sig_atomic_t exit_flag;
 extern bool     greeting_flag;
 extern bool     script_flag;
 extern bool     handling_resource_err;
+extern bool     looking_for_shebang;
 
 // switch
 extern int      gc_sw;
@@ -823,6 +823,7 @@ int             f_get_internal_run_time(int arglist);
 int             f_get_output_stream_string(int x);
 int             f_get_universal_time(int arglist);
 int             f_go(int x);
+int             f_getenv(int arglist);
 int             f_greater(int addr);
 int             f_heapdump(int addr);
 int             f_identity(int arglist);
@@ -1012,6 +1013,7 @@ int             last(int x);
 int             laststr(char buf[]);
 int             lcm(int x, int y);
 int             length(int addr);
+char           *library_file(const char *basename);
 int             list(int addr);
 int             list_drop(int ls, int n);
 int             list_take(int ls, int n);

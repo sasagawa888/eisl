@@ -17,7 +17,7 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 - In OpenBSD  type "sudo make install OPSYS=openbsd".
 - You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 
-You may get an error that the curses.h file cannot be found when compiling Edlis. 
+You may get an error that the curses.h file cannot be found when compiling EISL & Edlis. 
 In this case, enter the following from the terminal
 
 ```sh
@@ -39,6 +39,9 @@ We confirmed operation in the following environments.
 - Linux Mint GCC ver9.3.0
 - macOS 11.1 clang 12.0.0 
 - OpenBSD
+
+If you cloned the repo anyplace but *$HOME/eisl*,
+you should set the `EASY_ISLISP` enviroment variable to point to it.
 
 # Invoke
 
@@ -71,6 +74,13 @@ List of options:
 -r           -- EISL does not use editable REPL.
 -s filename  -- EISL runs the file with script mode.
 -v           -- dislplay version number.
+```
+
+You can also write ISLisp scripts,
+following the usual UNIX convention of pointing to the interpreter with the first line, e.g.
+```lisp
+#!/Users/me/bin/eisl -s
+(format (standard-output) "Hello world~%")
 ```
 
 # Quit
@@ -156,9 +166,10 @@ Elapsed Time(second)=3.728262
 
 # Invoke editor
 
-The `edit` function invokes the
+By default the `edit` function invokes the
 [Edlis](https://github.com/sasagawa888/Edlis)
 editor.
+But note that it respects the UNIX convention of the `VISUAL` and `EDITOR` environment variables, so if either of those is defined it will be used instead.
 
 (edit file-name-string) example (edit "foo.lsp")
 

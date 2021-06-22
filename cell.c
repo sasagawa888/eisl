@@ -42,15 +42,15 @@ initcell(void)
 
     // 0th address is for NIL, set initial environment
     makesym("NIL");		// 0th address NIL
-    SET_AUX(0, CLASS_NULL);		// class of nil is null
-    SET_OPT(0, CONSTN);
+    SET_AUX(NIL, CLASS_NULL);		// class of nil is null
+    SET_OPT(NIL, CONSTN);
     makesym("T");		// 2nd address is T
-    SET_AUX(2, CLASS_SYMBOL);		// class of t is symbol
-    SET_OPT(2, CONSTN);
+    SET_AUX(T, CLASS_SYMBOL);		// class of t is symbol
+    SET_OPT(T, CONSTN);
     makesym("<undef>");		// 4th address is UNDEF
-    SET_AUX(4, CLASS_SYMBOL);		// class of <undef> is symbol
+    SET_AUX(UNDEF, CLASS_SYMBOL);		// class of <undef> is symbol
     makesym("<file-end>");	// 6the address is FEND
-    SET_AUX(6, CLASS_SYMBOL);		// class of <end-of-file> is symbol
+    SET_AUX(FEND, CLASS_SYMBOL);		// class of <end-of-file> is symbol
     ep = 0;
     dp = 0;
     sp = 0;

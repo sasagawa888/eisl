@@ -7,6 +7,7 @@
 #include <time.h>
 #include <dlfcn.h>
 #include <limits.h>
+#include <unistd.h>
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
@@ -2461,6 +2462,29 @@ f_load(int arglist)
     open_flag = true;
     line = 1;
     column = 0;
+    if (looking_for_shebang) {
+	FILE           *infile = GET_PORT(input_stream);
+	int ch = fgetc(infile);
+	switch (ch) {
+	case EOF:
+	    goto cleanup;
+	case '#':
+	    ch = fgetc(infile);
+	    if (ch != '!' || ch == EOF) {
+		goto cleanup;
+	    }
+	    while (ch != '\n' && ch != EOF) {
+		ch = fgetc(infile);
+	    }
+	    if (ch == EOF) {
+		goto cleanup;
+	    }
+	    break;
+	default:
+	    ungetc(ch, infile);
+	}
+	looking_for_shebang = false;
+    }
     while (1) {
 	int             sexp;
 
@@ -2470,6 +2494,7 @@ f_load(int arglist)
 	top_flag = true;
 	eval(sexp);
     }
+  cleanup:
     open_flag = false;
     fclose(GET_PORT(input_stream));
     input_stream = save1;
@@ -2482,38 +2507,32 @@ f_load(int arglist)
 int
 f_import(int arglist)
 {
-    int             arg1;
-    char            str[SYMSIZE];
-    FILE           *fp;
-
-    arg1 = car(arglist);
+    int             arg1 = car(arglist);
     if (!stringp(arg1))
 	error(NOT_SYM, "import", arg1);
 
-
-    strcpy(str, getenv("HOME"));
-    strcat(str, "/eisl/library/");
-    strcat(str, GET_NAME(arg1));
-    strcat(str, ".o");
-    fp = fopen(str, "r");
-    if (fp != NULL) {
-	fclose(fp);
-	f_load(list1(makestr(str)));
-	return (T);
+    char           *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
+    char           *fname = library_file(str);
+    if (access(fname, R_OK) != -1) {
+	f_load(list1(makestr(fname)));
+	goto cleanup;
     }
 
-    strcpy(str, getenv("HOME"));
-    strcat(str, "/eisl/library/");
-    strcat(str, GET_NAME(arg1));
-    strcat(str, ".lsp");
-    fp = fopen(str, "r");
-    if (fp != NULL) {
-	fclose(fp);
-	f_load(list1(makestr(str)));
-	return (T);
+    FREE(str);
+    str = Str_cat(GET_NAME(arg1), 1, 0, ".lsp", 1, 0);
+    FREE(fname);
+    fname = library_file(str);
+    if (access(fname, R_OK) != -1) {
+	f_load(list1(makestr(fname)));
+	goto cleanup;
     }
+    FREE(str);
+    FREE(fname);
     error(CANT_OPEN, "import", arg1);
 
+  cleanup:
+    FREE(str);
+    FREE(fname);
     return (T);
 }
 
@@ -3745,10 +3764,10 @@ f_format(int arglist)
     return (NIL);
 }
 
-int
+static int
 printr_h(int r, int n, char *b, int *sign)
 {
-    int i;
+    int             i;
     static const char *digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     REQUIRE(r >= 2 && r <= 36);

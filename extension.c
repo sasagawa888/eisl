@@ -41,6 +41,7 @@ initexsubr(void)
     defsubr("INSTANCE", f_instance);
     defsubr("MODULESUBST", f_modulesubst);
     defsubr("LINE-ARGUMENT", f_line_argument);
+    defsubr("GETENV", f_getenv);
 
 #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -732,3 +733,21 @@ f_line_argument(int arglist)
 	return NIL;
     }
 }
+
+int
+f_getenv(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1) {
+        error(WRONG_ARGS, "getenv", arglist);
+    }
+    char *val = getenv(GET_NAME(arg1));
+    if (val == NULL) {
+        return NIL;
+    } else {
+        return makestr(val);
+    }
+}
+

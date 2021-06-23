@@ -46,7 +46,12 @@
          (setq *oblist* (cons (car (car data)) *oblist*))
          (setq *functions* (cons data *functions*)) )))
 
-(read-functions "library/functions-data.lsp")
+(flet ((library-file (basename)
+          (let ((prefix (getenv "EASY_ISLISP")))
+               (if (null prefix)
+                   (string-append (getenv "HOME") "/eisl/library/" basename)
+                   (string-append prefix "/library/" basename)))))
+   (read-functions (library-file "functions-data.lsp")))
 
 ;;;
 ;;; search function from *functions*

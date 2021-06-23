@@ -28,7 +28,13 @@ f_edit(int arglist)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "edit", arglist);
-    char           *str = Str_cat("./edlis ", 1, 0, GET_NAME(arg1), 1, 0);
+    char *ed;
+    if ((ed = getenv("VISUAL")) == NULL) {
+        if ((ed = getenv("EDITOR")) == NULL) {
+            ed = "./edlis";
+        }
+    }
+    char           *str = Str_catv(ed, 1, 0, " ", 1, 0, GET_NAME(arg1), 1, 0, NULL);
     res = system(str);
     FREE(str);
     if (res == -1)

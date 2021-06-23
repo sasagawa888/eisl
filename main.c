@@ -141,6 +141,7 @@ volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option
 bool            handling_resource_err = false;  // stop infinite recursion
+bool            looking_for_shebang = false;    // skip over #!
 
 // switch
 int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC
@@ -253,22 +254,19 @@ main(int argc, char *argv[])
 	f_load(list1(makestr("startup.lsp")));
     }
     while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
-	char           *home,
-	               *str;
+	char           *str;
 
 	switch (ch) {
 	case 'l':
 	    f_load(list1(makestr(optarg)));
 	    break;
 	case 'c':
-	    home = getenv("HOME");
-	    str = Str_cat(home, 1, 0, "/eisl/library/compiler.lsp", 1, 0);
+	    str = library_file("compiler.lsp");
 	    f_load(list1(makestr(str)));
 	    FREE(str);
 	    break;
 	case 'f':
-	    home = getenv("HOME");
-	    str = Str_cat(home, 1, 0, "/eisl/library/formatter.lsp", 1, 0);
+	    str = library_file("formatter.lsp");
 	    f_load(list1(makestr(str)));
 	    FREE(str);
 	    break;
@@ -279,6 +277,7 @@ main(int argc, char *argv[])
 	    }
 	    repl_flag = false;
 	    script_flag = true;
+	    looking_for_shebang = true;
 	    script_arg = optarg;
 	    break;
 	case 'r':
@@ -317,6 +316,17 @@ main(int argc, char *argv[])
 	    quit = true;
 	END_TRY;
     } while (!quit);
+}
+
+char *
+library_file(const char *basename)
+{
+    char *prefix;
+
+    if ((prefix = getenv("EASY_ISLISP")) != NULL) {
+	return Str_catv(prefix, 1, 0, "/library/", 1, 0, basename, 1, 0, NULL);
+    }
+    return Str_catv(getenv("HOME"), 1, 0, "/eisl/library/", 1, 0, basename, 1, 0, NULL);
 }
 
 void

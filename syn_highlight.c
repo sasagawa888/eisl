@@ -14,7 +14,7 @@ static const char *special[] = {
 static const char *syntax[] = {
     "lambda", "labels", "flet", "let", "let*", "setq", "setf",
     "defconstant", "defun", "defmacro", "defglobal", "defdynamic",
-    "dynamic", "function", "function*", "symbol-function", "class",
+    "dynamic", "set-dynamic", "function", "function*", "symbol-function", "class",
     "and", "or", "if", "cond", "while", "for", "block", "return-from",
     "case", "case-using", "progn", "defclass", "defgeneric", "defgeneric*",
     "defmethod", "dynamic-let", "ignore-errors", "catch", "throw",

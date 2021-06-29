@@ -54,4 +54,9 @@
     (((cos _x) _x) `(sin ,_x))
     (((tan _x) _x) `(- (log (cos ,_x))))
     (((cot _x) _x) `(log (sin ,_x))))
+
+
+(defpattern limit
+    (((/ (log (+ 1 _x)) _x) _x 0) 1)
+    (((/ (sin _x) _x) _X 0) 1))
     

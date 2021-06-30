@@ -208,7 +208,7 @@ double tarai(double x, double y, double z){
     
     (defun compile-file1 (x)
         (let* ((option
-               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -I. -o ")
                      ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
                (fname (filename x))
                (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
@@ -242,7 +242,7 @@ double tarai(double x, double y, double z){
     
     (defun compile-file1* (x)
         (let ((option
-              (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -o ")
+              (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -I. -o ")
                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
               (fname (filename x)) )
            (ignore-toplevel-check t)

@@ -207,9 +207,14 @@ double tarai(double x, double y, double z){
         t)
     
     (defun compile-file1 (x)
-        (let* ((option
-               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -I. -o ")
-                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
+        (let* ((include
+                 (let ((prefix (getenv "EASY_ISLISP")))
+                   (if (null prefix)
+                     "-I$HOME/eisl "
+                     "-I$EASY_ISLISP ")))
+               (option
+               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -fPIC -s -o ")
+                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
                (fname (filename x))
                (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
            (ignore-toplevel-check t)
@@ -223,7 +228,7 @@ double tarai(double x, double y, double z){
            (format (standard-output) "finalize~%")
            (finalize fname ".c")
            (format (standard-output) "invoke CC~%")
-           (system (string-append option fname ".o " fname "0.c " c-lang-option))
+           (system (string-append option fname ".o " include fname "0.c " c-lang-option))
            (system (string-append "rm " infnames))))
     
     ;;for debug compile and not remove C code
@@ -241,10 +246,15 @@ double tarai(double x, double y, double z){
         t)
     
     (defun compile-file1* (x)
-        (let ((option
-              (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -I$HOME/eisl -fPIC -s -I. -o ")
-                    ((eq (self-introduction) 'macos) "cc -O3 -w -shared -I$HOME/eisl -fPIC -Wl,-S,-x -o ")))
-              (fname (filename x)) )
+        (let* ((include
+                 (let ((prefix (getenv "EASY_ISLISP")))
+                   (if (null prefix)
+                     "-I$HOME/eisl "
+                     "-I$EASY_ISLISP ")))
+               (option
+               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -fPIC -s -o ")
+                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
+               (fname (filename x)) )
            (ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
            (initialize fname ".c")
@@ -256,7 +266,7 @@ double tarai(double x, double y, double z){
            (format (standard-output) "finalize~%")
            (finalize fname ".c")
            (format (standard-output) "invoke CC~%")
-           (system (string-append option fname ".o " fname "0.c " c-lang-option))))
+           (system (string-append option fname ".o " include fname "0.c " c-lang-option))))
     
     
     (defun pass1 (x)

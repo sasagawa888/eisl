@@ -421,17 +421,17 @@ double tarai(double x, double y, double z){
                (format-integer stream x 10)
                (format stream "\")"))
               ((stringp x)
-               (format stream "Fmakestr(''~A'')" x))
+               (format stream "Fmakestr(\"~A\")" x))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
                        (char= x (convert 34 <character>))                                  ;"
                        (char= x (convert 39 <character>)));'
-                      (format stream "Fmakechar(''\\~C'')" x))
+                      (format stream "Fmakechar(\"\\~C\")" x))
                      ((special-char-p x)
-                      (format stream "Fmakechar(''~A'')" (print-special-char x)))
+                      (format stream "Fmakechar(\"~A\")" (print-special-char x)))
                      (t
-                      (format stream "Fmakechar(''~C'')" x))))
+                      (format stream "Fmakechar(\"~C\")" x))))
               ((general-vector-p x)
                (format stream "Fvector(")
                (list-to-c1 stream (convert x <list>))
@@ -2458,7 +2458,7 @@ double tarai(double x, double y, double z){
                (format-integer stream x 10)
                (format stream "\")"))
               ((stringp x)
-               (format stream "Fmakestr(''~A'')" x))
+               (format stream "Fmakestr(\"~A\")" x))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
@@ -2466,9 +2466,9 @@ double tarai(double x, double y, double z){
                        ;;"
                        (char= x (convert 39 <character>)))
                       ;;'
-                      (format stream "Fmakechar(''\\~C'')" x))
+                      (format stream "Fmakechar(\"\\~C\")" x))
                      (t
-                      (format stream "Fmakechar(''~C'')" x))))
+                      (format stream "Fmakechar(\"~C\")" x))))
               ((general-vector-p x)
                (format stream "Fvector(")
                (list-to-c1 stream (convert x <list>))
@@ -2513,7 +2513,7 @@ double tarai(double x, double y, double z){
                (format-integer stream x 10)
                (format stream "\")"))
               ((stringp x)
-               (format stream "Fmakestr(''~A'')" x))
+               (format stream "Fmakestr(\"~A\")" x))
               ((characterp x)
                (cond ((or
                        (char= x #\\)
@@ -2521,11 +2521,11 @@ double tarai(double x, double y, double z){
                        ;;"
                        (char= x (convert 39 <character>)))
                       ;;'
-                      (format stream "Fmakechar(''\\~C'')" x))
+                      (format stream "Fmakechar(\"\\~C\")" x))
                      ((special-char-p x)
-                      (format stream "Fmakechar(''~A'')" (print-special-char x)))
+                      (format stream "Fmakechar(\"~A\")" (print-special-char x)))
                      (t
-                      (format stream "Fmakechar(''~C'')" x))))
+                      (format stream "Fmakechar(\"~C\")" x))))
               ((general-vector-p x)
                (format stream "Fvector(")
                (list-to-c1 stream (convert x <list>))
@@ -3390,6 +3390,7 @@ double tarai(double x, double y, double z){
     (assert close (class <null>) (class <object>))
     (assert standard-input (class <stream>))
     (assert standard-output (class <stream>))
+    (assert error-output (class <stream>))
     (assert create-string-input-stream (class <stream>))
     (assert create-string-output-stream (class <stream>))
     (assert get-output-stream-string (class <string>) (class <object>))

@@ -149,7 +149,8 @@
 (defun tyinstring ()
    ;; Read a line from the keyboard
    (c-lang "static char str[133];")
-   (c-lang "res = Fmakestr(getnstr(str, 132));")) ; Fmakestr copies its argument
+   (c-lang "getnstr(str, 132);")
+   (c-lang "res = Fmakestr(str);")) ; Fmakestr copies its argument
 
 (defun tynewline ()
    ;; Send an end-of-line marker to the screen.
@@ -241,6 +242,44 @@
 (defun nodelay ()
    ;; Cause tyi to be a non-blocking call.
    (c-lang "res = nodelay(stdscr, TRUE) | INT_FLAG;"))
+
+;; Historic version of UNIX curses had extensions for forms and menus.
+;; These weren't standardised, but some minimal feature like this is useful.
+;; TODO: port to virtty functions
+
+(defun select (prompt choices)
+   (the <string> prompt)(the <list> choices)
+   (if (null choices)
+       -1
+       (progn (tycls)
+              (tyattrib t)
+              (tyco 4 0 prompt)
+              (tyattrib nil)
+              (for ((n 0 (+ n 1))
+                    (c choices (cdr c)))
+                   ((null c))
+                   (let ((str (create-string-output-stream)))
+                        (format str "~D) ~A" n (car c))
+                        (tyco 2 (+ n 2) (get-output-stream-string str))))
+              (let ((res (- (tyi) 48)))
+                   (while (or (< res 0) (>= res (length choices)))
+                          (setq res (- (tyi) 48)))
+                   res))))
+
+(defun form (title fields)
+   (the <string> title>)(the <list> fields)
+   (if (null fields)
+       nil
+       (progn (tycls)
+              (tyattrib t)
+              (tyco 4 0 title)
+              (tyattrib nil)
+              (for ((n 0 (+ n 1))
+                    (f fields (cdr f))
+                    (res nil))
+                   ((null f) (reverse res))
+                   (tyco 2 (+ n 2) (string-append (car f) ": "))
+                   (setq res (cons (tyinstring) res))))))
 
 ;; From here on is test code
 

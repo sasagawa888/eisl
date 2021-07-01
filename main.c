@@ -1547,8 +1547,8 @@ DEF_GETTER(char, TR, trace, NIL)
                     i,
                     n,
                     trace;
-    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO) &&
-        (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
+    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO || GET_TAG(func) == GENERIC) &&
+            (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
     res = NIL;
     pexist = 0;
     aexist = 0;

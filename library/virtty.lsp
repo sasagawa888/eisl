@@ -281,6 +281,19 @@
                    (tyco 2 (+ n 2) (string-append (car f) ": "))
                    (setq res (cons (tyinstring) res))))))
 
+
+(defun print-form (title keys vals)
+   (the <string> title)(the <list> keys)(the <list> vals)
+   (tycls)
+   (tyattrib t)
+   (tyco 4 0 title)
+   (tyattrib nil)
+   (for ((n 0 (+ n 1))
+         (rest-keys keys (cdr rest-keys))
+         (rest-vals vals (cdr rest-vals)))
+        ((or (null rest-keys) (null rest-vals)))
+        (tyco 2 (+ n 2) (string-append (car rest-keys) ": " (car rest-vals)))))
+
 ;; From here on is test code
 
 #|

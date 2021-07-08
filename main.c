@@ -248,9 +248,7 @@ main(int argc, char *argv[])
     int             ch;
     char           *script_arg;
 
-    FILE           *fp = fopen("startup.lsp", "r");
-    if (fp != NULL) {
-	fclose(fp);
+    if (access("startup.lsp", R_OK) == 0) {
 	f_load(list1(makestr("startup.lsp")));
     }
     while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {

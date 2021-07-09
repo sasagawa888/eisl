@@ -245,11 +245,9 @@
 
 ;; Historic version of UNIX curses had extensions for forms and menus.
 ;; These weren't standardised, but some minimal feature like this is useful.
-;; TODO: port to virtty functions
 
 ;; First, menus.
 ;; This is a fairly straightforward port of the Rosetta Code task.
-
 
 (defun virtty--get-digit (num-choices)
    (the <fixnum> num-choices)
@@ -269,7 +267,7 @@
    (the <string> prompt)(the <list> choices)
    (if (null choices)
        -1
-       (progn (virtty-head prompt)
+       (progn (virtty--head prompt)
               (for ((n 0 (+ n 1))
                     (c choices (cdr c)))
                    ((null c))
@@ -280,55 +278,52 @@
 
 ;;; Forms are more involved.
 ;;; We need to support a few modes depending on C/R/U.
-;;; I'll try using ILOS for this.
-
-(defclass <form> () ((title :reader title :initarg t)
-                     (keys :reader keys :initarg k)
-                     (vals :accessor vals :initarg v)))
+;;; I tried using ILOS, but that really doesn't work well from compiled code.
+;;; A functional interface is just as good anyway.
 
 ;; Create
-;; TODO: rename to (form-create)?
-(defmethod initialize-object :after ((self <form>) initargs)
-   ;; (the <string> title>)(the <list> fields)
-   (if (and (not (null (fields self)))
-            (null (vals self)))
-       (progn (virtty-head (title self))
+(defun form (title keys)
+   (the <string> title>)(the <list> keys)
+   (if (not (null keys))
+       (progn (virtty--head title)
               (for ((n 0 (+ n 1))
-                    (f (fields self) (cdr f))
+                    (f keys (cdr f))
                     (res nil))
-                   ((null f) (setf (vals self) reverse res))
+                   ((null f) (reverse res))
                    (tyco 2 (+ n 2) (string-append (car f) ": "))
                    (setq res (cons (tyinstring) res))))))
 
-(defgeneric form-retrieve (self))
-(defmethod form-retrieve ((self <form>))
-   ;; (the <string> title)(the <list> keys)(the <list> vals)
-   (virtty-head (title self))
+;; Retrieve
+(defun print-form (title keys vals)
+   (the <string> title)(the <list> keys)(the <list> vals)
+   (virtty--head title)
    (for ((n 0 (+ n 1))
-         (rest-keys (fields self) (cdr rest-keys))
-         (rest-vals (vals self) (cdr rest-vals)))
+         (rest-keys keys (cdr rest-keys))
+         (rest-vals vals (cdr rest-vals)))
         ((or (null rest-keys) (null rest-vals)))
         (tyco 2 (+ n 2) (string-append (car rest-keys) ": " (car rest-vals)))))
 
 (defun virtty--edit-field (choice key-len old-val)
+   (the <fixnum> choice)(the <fixnum> key-len)(the <string> old-val)
    (tyco (+ 4 key-len) (+ choice 2) (string-append "(" old-val ") "))
    (tyinstring))
 
-(defgeneric form-update (self))
-(defmethod form-update ((self <form>))
-   (virtty--head (title self))
+;; Update
+(defun edit-form (title keys vals)
+   (the <string> title)(the <list> keys)(the <list> vals)
+   (virtty--head title)
    (for ((n 0 (+ n 1))
-         (rest-keys (keys self) (cdr rest-keys))
-         (rest-vals (vals self) (cdr rest-vals)))
+         (rest-keys keys (cdr rest-keys))
+         (rest-vals vals (cdr rest-vals)))
         ((or (null rest-keys) (null rest-vals)))
         (let ((str (create-string-output-stream)))
              (format str "~D) ~A: ~A" n (car rest-keys) (car rest-vals))
              (tyco 2 (+ n 2) (get-output-stream-string str))))
-   (let ((choice (virtty--get-digit (length (keys self)))))
-        (setf (elt (vals self) choice)
+   (let ((choice (virtty--get-digit (length keys))))
+        (setf (elt vals choice)
               (virtty--edit-field choice
-                                  (length (elt (keys self) choice))
-                                  (elt (vals self) choice)))))
+                                  (length (elt keys choice))
+                                  (elt vals choice)))))
 
 ;; From here on is test code
 

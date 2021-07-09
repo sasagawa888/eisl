@@ -247,52 +247,88 @@
 ;; These weren't standardised, but some minimal feature like this is useful.
 ;; TODO: port to virtty functions
 
+;; First, menus.
+;; This is a fairly straightforward port of the Rosetta Code task.
+
+
+(defun virtty--get-digit (num-choices)
+   (the <fixnum> num-choices)
+   (let ((res (- (tyi) 48)))
+        (while (or (< res 0) (>= res num-choices))
+               (setq res (- (tyi) 48)))
+        res))
+
+(defun virtty--head (title)
+   (the <string> title)
+   (tycls)
+   (tyattrib t)
+   (tyco 4 0 title)
+   (tyattrib nil))
+
 (defun select (prompt choices)
    (the <string> prompt)(the <list> choices)
    (if (null choices)
        -1
-       (progn (tycls)
-              (tyattrib t)
-              (tyco 4 0 prompt)
-              (tyattrib nil)
+       (progn (virtty-head prompt)
               (for ((n 0 (+ n 1))
                     (c choices (cdr c)))
                    ((null c))
                    (let ((str (create-string-output-stream)))
                         (format str "~D) ~A" n (car c))
                         (tyco 2 (+ n 2) (get-output-stream-string str))))
-              (let ((res (- (tyi) 48)))
-                   (while (or (< res 0) (>= res (length choices)))
-                          (setq res (- (tyi) 48)))
-                   res))))
+              (virtty--get-digit (length choices)))))
 
-(defun form (title fields)
-   (the <string> title>)(the <list> fields)
-   (if (null fields)
-       nil
-       (progn (tycls)
-              (tyattrib t)
-              (tyco 4 0 title)
-              (tyattrib nil)
+;;; Forms are more involved.
+;;; We need to support a few modes depending on C/R/U.
+;;; I'll try using ILOS for this.
+
+(defclass <form> () ((title :reader title :initarg t)
+                     (keys :reader keys :initarg k)
+                     (vals :accessor vals :initarg v)))
+
+;; Create
+;; TODO: rename to (form-create)?
+(defmethod initialize-object :after ((self <form>) initargs)
+   ;; (the <string> title>)(the <list> fields)
+   (if (and (not (null (fields self)))
+            (null (vals self)))
+       (progn (virtty-head (title self))
               (for ((n 0 (+ n 1))
-                    (f fields (cdr f))
+                    (f (fields self) (cdr f))
                     (res nil))
-                   ((null f) (reverse res))
+                   ((null f) (setf (vals self) reverse res))
                    (tyco 2 (+ n 2) (string-append (car f) ": "))
                    (setq res (cons (tyinstring) res))))))
 
-
-(defun print-form (title keys vals)
-   (the <string> title)(the <list> keys)(the <list> vals)
-   (tycls)
-   (tyattrib t)
-   (tyco 4 0 title)
-   (tyattrib nil)
+(defgeneric form-retrieve (self))
+(defmethod form-retrieve ((self <form>))
+   ;; (the <string> title)(the <list> keys)(the <list> vals)
+   (virtty-head (title self))
    (for ((n 0 (+ n 1))
-         (rest-keys keys (cdr rest-keys))
-         (rest-vals vals (cdr rest-vals)))
+         (rest-keys (fields self) (cdr rest-keys))
+         (rest-vals (vals self) (cdr rest-vals)))
         ((or (null rest-keys) (null rest-vals)))
         (tyco 2 (+ n 2) (string-append (car rest-keys) ": " (car rest-vals)))))
+
+(defun virtty--edit-field (choice key-len old-val)
+   (tyco (+ 4 key-len) (+ choice 2) (string-append "(" old-val ") "))
+   (tyinstring))
+
+(defgeneric form-update (self))
+(defmethod form-update ((self <form>))
+   (virtty--head (title self))
+   (for ((n 0 (+ n 1))
+         (rest-keys (keys self) (cdr rest-keys))
+         (rest-vals (vals self) (cdr rest-vals)))
+        ((or (null rest-keys) (null rest-vals)))
+        (let ((str (create-string-output-stream)))
+             (format str "~D) ~A: ~A" n (car rest-keys) (car rest-vals))
+             (tyco 2 (+ n 2) (get-output-stream-string str))))
+   (let ((choice (virtty--get-digit (length (keys self)))))
+        (setf (elt (vals self) choice)
+              (virtty--edit-field choice
+                                  (length (elt (keys self) choice))
+                                  (elt (vals self) choice)))))
 
 ;; From here on is test code
 

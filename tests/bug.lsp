@@ -1,5 +1,4 @@
-(import "test")
 
-(test (let ((a #()) (b #()) (c #(a b c))) (list (map-into a #'list b c) a b c))
- (#() #() #() #(a b c))
- equal)
+(defclass <parent> () ((slot :accessor slot :initarg s)))
+(defclass <child> (<parent>) ((slot2 :accessor slot2 :initarg s2)))
+(defglobal *x* (create (class <child>) 's 'foo 's2 'bar))

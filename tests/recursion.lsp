@@ -23,3 +23,21 @@
                 (setf (elt str i) (elt str (- len i 1)))
                 (setf (elt str (- len i 1)) temp)
                 (str-recur1 str (+ i 1) n len)))))
+
+
+(defun twocomplement (str)
+    (list-to-string (complement1 (convert str <list>))))
+
+(defun twocomplement1 (ls)
+    (cond ((null ls) nil)
+          ((char= (car ls) #\0)
+           (cons #\1 (twocomplement1 (cdr ls))))
+          ((char= (car ls) #\1)
+           (cons #\0 (twocomplement1 (cdr ls))))))
+
+(defun list-to-string (ls)
+    (if (null ls)
+        ""
+        (string-append (convert (car ls) <string>) 
+                       (list-to-string (cdr ls)))))
+        

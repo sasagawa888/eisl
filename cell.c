@@ -982,9 +982,9 @@ initinst(int x, int initls)
                     temp;
 
     cl = GET_AUX(x); //class of x
-    class_vars = GET_CDR(cl);
-    inst_vars = GET_CDR(x);
-    initargs = GET_AUX(cl);
+    class_vars = GET_CDR(cl); //class variable list. This is assoc list ((initarg1 . accessor1)(initarg2 . accesor2)...)
+    inst_vars = GET_CDR(x);   //instance variable list. This is assoc list ((accessor1 . val1)(accessor2 . val2) ...)
+    initargs = GET_AUX(cl);   //list to set (initarg1 val1 initarg2 val2 ...)
     while (!nullp(class_vars)) {
 	if ((n = assq(caar(class_vars), inst_vars)) != FAILSE)
 	    SET_CDR(n, copy(cdar(class_vars)));
@@ -1023,7 +1023,7 @@ initinst1(int inst_vars, int sc, int initls)
 	class_vars = GET_AUX(GET_AUX(sc));
 	return (initinst1
 		(initinst2(inst_vars, class_vars, initls), GET_AUX(GET_CAR(sc)), initls));
-    } else {
+    } else { 
 	return (initinst1(initinst1(inst_vars, car(sc), initls), cdr(sc), initls));
     }
 }

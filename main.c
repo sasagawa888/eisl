@@ -248,9 +248,7 @@ main(int argc, char *argv[])
     int             ch;
     char           *script_arg;
 
-    FILE           *fp = fopen("startup.lsp", "r");
-    if (fp != NULL) {
-	fclose(fp);
+    if (access("startup.lsp", R_OK) == 0) {
 	f_load(list1(makestr("startup.lsp")));
     }
     while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
@@ -1547,8 +1545,8 @@ DEF_GETTER(char, TR, trace, NIL)
                     i,
                     n,
                     trace;
-    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO) &&
-        (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
+    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO || GET_TAG(func) == GENERIC) &&
+            (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
     res = NIL;
     pexist = 0;
     aexist = 0;

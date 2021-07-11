@@ -149,7 +149,10 @@
 (defun tyinstring ()
    ;; Read a line from the keyboard
    (c-lang "static char str[133];")
-   (c-lang "res = Fmakestr(getnstr(str, 132));")) ; Fmakestr copies its argument
+   (c-lang "echo();")
+   (c-lang "getnstr(str, 132);")
+   (c-lang "noecho();")
+   (c-lang "res = Fmakestr(str);")) ; Fmakestr copies its argument
 
 (defun tynewline ()
    ;; Send an end-of-line marker to the screen.
@@ -241,6 +244,91 @@
 (defun nodelay ()
    ;; Cause tyi to be a non-blocking call.
    (c-lang "res = nodelay(stdscr, TRUE) | INT_FLAG;"))
+
+;; Historic version of UNIX curses had extensions for forms and menus.
+;; These weren't standardised, but some minimal feature like this is useful.
+
+;; First, menus.
+;; This is a fairly straightforward port of the Rosetta Code task.
+
+(defun virtty--get-digit (num-choices)
+   (the <fixnum> num-choices)
+   (let ((res (- (tyi) 48)))
+        (while (or (< res 0) (>= res num-choices))
+               (setq res (- (tyi) 48)))
+        res))
+
+(defun virtty--head (title)
+   (the <string> title)
+   (tycls)
+   (tyattrib t)
+   (tyco 4 0 title)
+   (tyattrib nil))
+
+(defun select (prompt choices)
+   (the <string> prompt)(the <list> choices)
+   (if (null choices)
+       -1
+       (progn (virtty--head prompt)
+              (for ((n 0 (+ n 1))
+                    (c choices (cdr c)))
+                   ((null c))
+                   (let ((str (create-string-output-stream)))
+                        (format str "~D) ~A" n (car c))
+                        (tyco 2 (+ n 2) (get-output-stream-string str))))
+              (virtty--get-digit (length choices)))))
+
+;;; Forms are more involved.
+;;; We need to support a few modes depending on C/R/U.
+;;; I tried using ILOS, but that really doesn't work well from compiled code.
+;;; A functional interface is just as good anyway.
+
+;; Create
+(defun form (title keys)
+   (the <string> title>)(the <list> keys)
+   (if (not (null keys))
+       (progn (virtty--head title)
+              (for ((n 0 (+ n 1))
+                    (f keys (cdr f))
+                    (res nil))
+                   ((null f) (reverse res))
+                   (tyco 2 (+ n 2) (string-append (car f) ": "))
+                   (setq res (cons (tyinstring) res))))))
+
+;; Retrieve
+(defun print-form (title keys vals)
+   (the <string> title)(the <list> keys)(the <list> vals)
+   (virtty--head title)
+   (for ((n 0 (+ n 1))
+         (rest-keys keys (cdr rest-keys))
+         (rest-vals vals (cdr rest-vals)))
+        ((or (null rest-keys) (null rest-vals)))
+        (tyco 2 (+ n 2) (string-append (car rest-keys) ": " (car rest-vals)))))
+
+(defun virtty--edit-field (choice key-len old-val)
+   (the <fixnum> choice)(the <fixnum> key-len)(the <string> old-val)
+   (tyco (+ 7 key-len) (+ choice 2) (string-append "(" old-val ") "))
+   (tyflush)
+   (tyinstring))
+
+;; Update
+(defun edit-form (title keys vals)
+   (the <string> title)(the <list> keys)(the <list> vals)
+   (virtty--head title)
+   (for ((n 0 (+ n 1))
+         (rest-keys keys (cdr rest-keys))
+         (rest-vals vals (cdr rest-vals)))
+        ((or (null rest-keys) (null rest-vals)))
+        (let ((str (create-string-output-stream)))
+             (format str "~D) ~A: ~A" n (car rest-keys) (car rest-vals))
+             (tyco 2 (+ n 2) (get-output-stream-string str))))
+   (tyflush)
+   (let ((choice (virtty--get-digit (length keys))))
+        (setf (elt vals choice)
+              (virtty--edit-field choice
+                                  (length (elt keys choice))
+                                  (elt vals choice)))
+        vals))
 
 ;; From here on is test code
 

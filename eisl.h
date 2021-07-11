@@ -387,7 +387,8 @@ static inline char
 STRING_REF(int addr, int k)
 {
     REQUIRE(CELLRANGE(addr) &&
-        (GET_TAG(addr) == STR || GET_TAG(addr) == SYM) &&
+        (GET_TAG(addr) == STR || GET_TAG(addr) == SYM ||
+         (GET_TAG(addr) == CHR && k == 0)) &&
         heap[addr].name != NULL);
     return heap[addr].name[k];
 }

@@ -12,12 +12,12 @@
 
 #ifndef __unused
 #define __unused \
-        __attribute__((unused))
+        __attribute__((__unused__))
 #endif
 
 #ifndef __packed
 #define __packed \
-        __attribute__((packed))
+        __attribute__((__packed__))
 #endif
 
 #endif

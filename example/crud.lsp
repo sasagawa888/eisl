@@ -63,6 +63,6 @@
             (ndbm-close (dynamic *db*)))
    (tyepilogue))
 
-;; (defglobal *x* (create (class <address>) 'n "Bane" 'p "061-469399"))
+;; (defglobal *x* (create (class <address>) 'n "Bane" 'p "12345"))
 ;; (insert-dao *x*)
 ;; (defglobal *y* (get-dao (class <address>) "Bane"))

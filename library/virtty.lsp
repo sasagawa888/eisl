@@ -149,7 +149,9 @@
 (defun tyinstring ()
    ;; Read a line from the keyboard
    (c-lang "static char str[133];")
+   (c-lang "echo();")
    (c-lang "getnstr(str, 132);")
+   (c-lang "noecho();")
    (c-lang "res = Fmakestr(str);")) ; Fmakestr copies its argument
 
 (defun tynewline ()
@@ -305,7 +307,8 @@
 
 (defun virtty--edit-field (choice key-len old-val)
    (the <fixnum> choice)(the <fixnum> key-len)(the <string> old-val)
-   (tyco (+ 4 key-len) (+ choice 2) (string-append "(" old-val ") "))
+   (tyco (+ 7 key-len) (+ choice 2) (string-append "(" old-val ") "))
+   (tyflush)
    (tyinstring))
 
 ;; Update
@@ -319,11 +322,13 @@
         (let ((str (create-string-output-stream)))
              (format str "~D) ~A: ~A" n (car rest-keys) (car rest-vals))
              (tyco 2 (+ n 2) (get-output-stream-string str))))
+   (tyflush)
    (let ((choice (virtty--get-digit (length keys))))
         (setf (elt vals choice)
               (virtty--edit-field choice
                                   (length (elt keys choice))
-                                  (elt vals choice)))))
+                                  (elt vals choice)))
+        vals))
 
 ;; From here on is test code
 

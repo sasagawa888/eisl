@@ -24,22 +24,22 @@
 (defun ndbm-store (db key content store-mode)
    (the <longnum> db)(the <string> key)(the <string> content)(the <fixnum> store-mode)
    (c-lang "datum key, content;");
-   (c-lang "key.dptr = Fgetname(KEY); key.dsize = strlen(key.dptr);")
+   (c-lang "key.dptr = Fgetname(KEY); key.dsize = strlen(key.dptr) + 1;")
    (c-lang "content.dptr = Fgetname(CONTENT); content.dsize = strlen(content.dptr) + 1;")
-   (c-lang "res = dbm_store(Fgetlong(DB), key, content, STORE_MODE & INT_MASK);"))
+   (c-lang "res = dbm_store(Fgetlong(DB), key, content, STORE_MODE & INT_MASK) | INT_FLAG;"))
 
 (defun ndbm-fetch (db key)
    (the <longnum> db)(the <string> key)
    (c-lang "datum key, content;")
-   (c-lang "key.dptr = Fgetname(KEY); key.dsize = strlen(key.dptr);")
+   (c-lang "key.dptr = Fgetname(KEY); key.dsize = strlen(key.dptr) + 1;")
    (c-lang "content = dbm_fetch(Fgetlong(DB), key);")
-   (c-lang "res = Fmakestr(content.dptr);"))
+   (c-lang "res = (content.dptr == NULL) ? NIL : Fmakestr(content.dptr);"))
 
 (defun ndbm-delete (db key)
    (the <longnum> db)(the <string> key)
    (c-lang "datum key;")
-   (c-lang "key.dptr = Fgetname(KEY); key.dsize = strlen(key.dptr);")
-   (c-lang "res = dbm_delete(Fgetlong(DB), key);"))
+   (c-lang "key.dptr = Fgetname(KEY); key.dsize = strlen(key.dptr) + 1;")
+   (c-lang "res = dbm_delete(Fgetlong(DB), key) | INT_FLAG;"))
 
 (defun ndbm-close (db)
    (the <longnum> db)

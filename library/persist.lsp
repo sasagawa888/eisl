@@ -25,6 +25,9 @@
    (persist--write-dao obj (ndbm-replace)))
 
 (defun get-dao (klass key)
-   (let* ((res-str (ndbm-fetch (dynamic *db*) key))
-          (res-l (read res-str)))
-         (create klass 'c res-l)))
+   (let ((maybe-res-str (ndbm-fetch (dynamic *db*) key)))
+        (if (null maybe-res-str)
+            nil
+            (let* ((strm (create-string-input-stream maybe-res-str))
+                   (res-l (read strm)))
+                  (create klass 'c res-l)))))

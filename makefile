@@ -91,7 +91,7 @@ $(SRC_CII) cii/include/except.h \
 $(SRC_NANA) nana/src/eiffel.h:
 	git submodule init
 	git submodule update
-	cd nana; $(MAKE) distclean
+	-cd nana; $(MAKE) distclean
 
 cii/src/text.o: cii/patched
 
@@ -100,7 +100,7 @@ main.o: nana/src/nana-config.h
 endif
 
 nana/src/nana-config.h:
-	cd nana; autoreconf -fi; ./configure
+	-cd nana; autoreconf -fi; ./configure
 
 cii/patched:
 	cd cii; patch -p1 < ../patch-cii.diff

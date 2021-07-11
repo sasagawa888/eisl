@@ -1014,16 +1014,21 @@ initinst1(int inst_vars, int sc, int initls)
 {
     int             class_vars;
 
+
     if (nullp(sc))
 	return (inst_vars);
-    else if (atomp(sc) && nullp(GET_CAR(sc))) { //when not exist super-class of super-class
+    else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) { //when not exist super-class of super-class
 	class_vars = GET_AUX(GET_AUX(sc));
 	return (initinst2(inst_vars, class_vars, initls));
-    } else if (atomp(sc) && atomp(GET_CAR(sc))) {
-	class_vars = GET_AUX(GET_AUX(sc));
-	return (initinst1
-		(initinst2(inst_vars, class_vars, initls), GET_AUX(GET_CAR(sc)), initls));
-    } else { 
+    }
+    else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) { //when exists super-class of superclass
+    class_vars = GET_AUX(GET_AUX(sc));
+	int temp1; temp1 = initinst2(inst_vars, class_vars, initls);
+    int sc1; sc1 = GET_CAR(GET_AUX(sc));
+    int temp2;  temp2 = initinst1(initinst1(temp1, car(sc1), initls), cdr(sc1), initls);
+    return (initinst1(temp2, cdr(sc), initls));
+    }
+    else { 
 	return (initinst1(initinst1(inst_vars, car(sc), initls), cdr(sc), initls));
     }
 }

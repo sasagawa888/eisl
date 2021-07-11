@@ -969,6 +969,8 @@ slotvars(int x)
 
 
 // initialize instance
+// x is class-instance
+// initls is list for initialize value
 int
 initinst(int x, int initls)
 {
@@ -976,17 +978,19 @@ initinst(int x, int initls)
                     class_vars,
                     inst_vars,
                     initargs,
-                    n;
+                    n,
+                    temp;
 
-    cl = GET_AUX(x);
-    class_vars = GET_CDR(cl);
-    inst_vars = GET_CDR(x);
-    initargs = GET_AUX(cl);
+    cl = GET_AUX(x); //class of x
+    class_vars = GET_CDR(cl); //class variable list. This is assoc list ((initarg1 . accessor1)(initarg2 . accesor2)...)
+    inst_vars = GET_CDR(x);   //instance variable list. This is assoc list ((accessor1 . val1)(accessor2 . val2) ...)
+    initargs = GET_AUX(cl);   //list to set (initarg1 val1 initarg2 val2 ...)
     while (!nullp(class_vars)) {
-	if ((n = assq(caar(class_vars), inst_vars)))
+	if ((n = assq(caar(class_vars), inst_vars)) != FAILSE)
 	    SET_CDR(n, copy(cdar(class_vars)));
 	class_vars = cdr(class_vars);
     }
+    temp = initls;
     while (!nullp(initls)) {
 	n = assq(car(initls), initargs);
 	if (n != 0 && n != FAILSE) {
@@ -997,41 +1001,52 @@ initinst(int x, int initls)
 	}
 	initls = cddr(initls);
     }
-    SET_CDR(x, initinst1(inst_vars, GET_CAR(cl)));
+
+    SET_CDR(x, initinst1(inst_vars, GET_CAR(cl),temp)); 
+    //GET_CAR(cl) is super-class of cl
+    //temp is initls;
     return (x);
 }
 
 // initialize variables of super class of instance
 int
-initinst1(int inst_vars, int sc)
+initinst1(int inst_vars, int sc, int initls)
 {
     int             class_vars;
 
+
     if (nullp(sc))
 	return (inst_vars);
-    else if (atomp(sc) && nullp(GET_CAR(sc))) {
-	class_vars = GET_AUX(sc);
-	return (initinst2(inst_vars, class_vars));
-    } else if (atomp(sc) && atomp(GET_CAR(sc))) {
-	class_vars = GET_AUX(sc);
-	return (initinst1
-		(initinst2(inst_vars, class_vars), GET_AUX(GET_CAR(sc))));
-    } else {
-	return (initinst1(initinst1(inst_vars, car(sc)), cdr(sc)));
+    else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) { //when not exist super-class of super-class
+	class_vars = GET_AUX(GET_AUX(sc));
+	return (initinst2(inst_vars, class_vars, initls));
+    }
+    else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) { //when exists super-class of superclass
+    class_vars = GET_AUX(GET_AUX(sc));
+	int temp1; temp1 = initinst2(inst_vars, class_vars, initls);
+    int sc1; sc1 = GET_CAR(GET_AUX(sc));
+    int temp2;  temp2 = initinst1(initinst1(temp1, car(sc1), initls), cdr(sc1), initls);
+    return (initinst1(temp2, cdr(sc), initls));
+    }
+    else { 
+	return (initinst1(initinst1(inst_vars, car(sc), initls), cdr(sc), initls));
     }
 }
 
 int
-initinst2(int inst_vars, int class_vars)
+initinst2(int inst_vars, int class_vars, int initls)
 {
-    while (!nullp(class_vars)) {
 	int             n;
 
-	n = assq(caar(class_vars), inst_vars);
+    while (!nullp(initls)) {
+	n = assq(car(initls), class_vars);
 	if (n != 0 && n != FAILSE) {
-	    SET_CDR(n, copy(cdar(class_vars)));
+	    int             n2 = assq(GET_CDR(n), inst_vars);
+	    if (n2 != 0 && n2 != FAILSE) {
+		SET_CDR(n2, cadr(initls));
+	    }
 	}
-	class_vars = cdr(class_vars);
+	initls = cddr(initls);
     }
     return (inst_vars);
 }

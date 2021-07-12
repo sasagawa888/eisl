@@ -44,6 +44,10 @@ library, but I adopted an interface that is probably due to Le-Lisp.
 At least, the best description of the interface is a chapter in the
 [Le-Lisp manual](https://github.com/c-jullien/lelisp/blob/master/manual/lelisp.pdf).
 
+A local extension is some support for menus and forms.
+I don't claim to have great aesthetic taste, so feel free to rework screen layouts, interactions, etc. to be friendlier.
+An example of use is in *example/crud.lsp*.
+
 ## Internationalisation
 
 The support I implemented here is limited to Western European languages
@@ -92,10 +96,14 @@ How things are *supposed to* work is something like
 At the very least calling `setlocale` is required at the start of curses programs, i.e. virtty programs for eisl.
 This is cleaner as a separate call not coupled to virtty.
 
-## Miscellaneous
+## Database
 
-It may not be ideal, but I put calls that didn't belong in an obvious category in the "unix" module.
-For now, only the `getenv` function and `perror` are defined here (but I'm not sure if perror is that useful to call from Lisp, perhaps it should really be called from C code).
+It's not as full-featured as an SQL database, but there is a facility for indexed files in the UNIX standards.
+*ndbm.lsp* is a thin wrapper around this library.
+*persist.lsp* is an attempt at something higher level, something like transparent object persistence but it could probably do some work.
+*crud.lsp* is an example of using this feature.
+
+Note that for Linux you'll need to install whatever is the equivalent of the `libgdbm-dev` and `libgdm-compat-dev` Ubuntu packages for your distro.
 
 ## Others
 

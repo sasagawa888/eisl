@@ -100,7 +100,7 @@ This is cleaner as a separate call not coupled to virtty.
 
 It's not as full-featured as an SQL database, but there is a facility for indexed files in the UNIX standards.
 *ndbm.lsp* is a thin wrapper around this library.
-*persist.lsp* is an attempt at something higher level, something like transparent object persistence but it could probably do some work.
+*persist.lsp* is an attempt at something higher level, like semi-transparent object persistence, but it could probably do with some more work.
 *crud.lsp* is an example of using this feature.
 
 Note that for Linux you'll need to install whatever is the equivalent of the `libgdbm-dev` and `libgdm-compat-dev` Ubuntu packages for your distro.

@@ -38,7 +38,7 @@ static const char *builtin[] = {
     "cos", "cosh", "create-array", "create-list",
     "create-string-input-stream",
     "create-string-output-stream", "create-string", "create-vector",
-    "create*",
+    "create",
     "div", "domain-error-object", "domain-error-expected-class",
     "dummyp", "elt", "eq", "eql", "equal", "error-output", "error",
     "eval", "exp", "expt", "file-length", "file-position", "finish-output",

@@ -283,8 +283,8 @@
 ;;; I tried using ILOS, but that really doesn't work well from compiled code.
 ;;; A functional interface is just as good anyway.
 
-;; Create
 (defun form (title keys)
+   ;; Display a form to "create" a record
    (the <string> title>)(the <list> keys)
    (if (not (null keys))
        (progn (virtty--head title)
@@ -295,8 +295,8 @@
                    (tyco 2 (+ n 2) (string-append (car f) ": "))
                    (setq res (cons (tyinstring) res))))))
 
-;; Retrieve
 (defun print-form (title keys vals)
+   ;; Display a record's contents after it has been retrieved
    (the <string> title)(the <list> keys)(the <list> vals)
    (virtty--head title)
    (for ((n 0 (+ n 1))
@@ -311,8 +311,8 @@
    (tyflush)
    (tyinstring))
 
-;; Update
 (defun edit-form (title keys vals)
+   ;; Display a retrieved record's contents, and allow editing of one field
    (the <string> title)(the <list> keys)(the <list> vals)
    (virtty--head title)
    (for ((n 0 (+ n 1))

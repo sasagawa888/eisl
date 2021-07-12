@@ -92,6 +92,7 @@ $(SRC_NANA) nana/src/eiffel.h:
 	git submodule init
 	git submodule update
 	-cd nana; $(MAKE) distclean
+	-$(RM) $(OBJ_NANA)
 
 cii/src/text.o: cii/patched
 

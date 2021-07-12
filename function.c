@@ -4683,7 +4683,9 @@ f_class_of(int arglist)
     arg = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "class-of", arglist);
-    if (GET_OPT(arg) == SYSTEM)
+    if(nullp(arg))
+    return (GET_AUX(arg));
+    else if (GET_OPT(arg) == SYSTEM)
 	return (cbuilt_in_class);
     else if (GET_OPT(arg) == USER)
 	return (cstandard_class);

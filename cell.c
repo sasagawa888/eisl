@@ -65,8 +65,7 @@ bindclass(const char *name, int cl)
     sym = makesym(name);
     SET_AUX(sym, cl);
     SET_OPT(cl, SYSTEM);	// built-in-class
-    SET_OPT(sym, SYSTEM);	// symbol formated by <***> are
-				// built-in-classes
+    SET_OPT(sym, SYSTEM);	// symbol formated by <***> are built-in-classes
 }
 
 // class aux = ((format-string . error-msg)(format-arguments . args))

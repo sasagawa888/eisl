@@ -1,5 +1,6 @@
 (c-include "<ndbm.h>")
 (c-include "<fcntl.h>")
+(c-option "-lgdbm_compat -lgdbm" linux)
 
 (defun ndbm-rdonly ()
    (c-lang "res = O_RDONLY | INT_FLAG;"))

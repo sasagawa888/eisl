@@ -193,6 +193,17 @@ I think it can be done by α conversion, but I decided to take a short-cut. It s
 
 ```
 
+# Some More Limitations
+
+There are a few tickets that were logged for compiler limitations, but the outcome was that it was better to have such a limitation and a simpler system.
+In particular:
+
+* Issue #121. Memory consumption is significant, but modern computers can afford it. This was trying to figure out what the lower limit was. From cursory testing, a heap size of 5M (rather than the default 20M) cells was enough to run the benchmark suite at least. This is configured by `CELLSIZE` in *ffi.h*. However, reducing this could lead to weird failures. Using the "DEBUG=1" build might help debug these quicker.
+* Issue #123. The compiler is not able to handle some of subtleties of generic functions. It may be simpler to rely on functional interfaces to compiled code and have a Lispier interface in an interpreted file (e.g. the split between *ndbm.lsp* and *persist.lsp*).
+
+None of this should take away from the compiler's usefulness.
+For some applications, it may even be more useful to gain access to C libraries rather than any speed-up.
+
 # Calling C from Lisp
 
 This is only possible in compiled code.

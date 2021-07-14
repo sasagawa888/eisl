@@ -27,7 +27,7 @@ logxor returns the bit-by-bit exclusive OR for the two arguments.
 6
 ```
 
-###lognot
+### lognot
 lognot returns a bit-by-bit logical negation of the argument. 
 
 ```
@@ -43,7 +43,7 @@ lognot returns a bit-by-bit logical negation of the argument.
 0
 ```
 
-###logtest
+### logtest
 logtest returns NIL if the result of logand is 0, T otherwise. 
 
 ```
@@ -61,7 +61,7 @@ NIL
 
 ```
 
-###logbitp
+### logbitp
 logbitp returns T if the bit of the integer at the position of the subscript index is 1.
 Conversely, if it is 0, NIL is returned. Bit positions are counted from 0, as in arrays. 
 

@@ -44,5 +44,9 @@
 (defun ash (n m)
   (if (>= m 0)
       (c-lang "res = INT_FLAG | ((INT_MASK & N) << (INT_MASK & M));")
-      (let ((m1 (- m)))
-        (c-lang "res = INT_FLAG | ((INT_MASK & N) >> (INT_MASK & M1));"))))
+      (if (>= n 0)
+          (let ((m1 (- m)))
+            (c-lang "res = INT_FLAG | ((INT_MASK & N) >> (INT_MASK & M1));"))
+          (let ((m1 (- m)))
+            (c-lang "res = INT_FLAG | (N >> (INT_MASK & M1));")))))
+          

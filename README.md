@@ -55,7 +55,7 @@ In the Linux version,the REPL is editable. If you do not want to use the editabl
 eisl -r
 ```
 
-### Emacs 
+### Emacs support
 ISLisp-mode of Emacs is developed by Mr. sasanidas.
 Watch the video to see how to use it.
 https://gitlab.com/sasanidas/islisp-mode

@@ -41,3 +41,9 @@
         (string-append (convert (car ls) <string>) 
                        (list-to-string (cdr ls)))))
         
+    
+(defun pow (m n)
+    (cond ((= n 0) 1)
+          ((= n 1) m)
+          ((= (mod n 2) 2) (pow (* m m) (div n 2)))
+          (t (* m (pow m (- n 1))))))

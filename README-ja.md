@@ -51,6 +51,12 @@ Linux版では，対話状態で編集ができます。
 $ eisl -r
 ```
 
+### Emacs サポート
+sasanidasさんによってISLisp-modeが開発、公開されています。ビデオをご覧ください。
+https://gitlab.com/sasanidas/islisp-mode
+https://vimeo.com/614514131
+
+
 他の起動オプショオンについては下記を参照してください。
 
 ```

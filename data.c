@@ -1758,13 +1758,6 @@ copy_char(int x)
     return (addr);
 }
 
-static inline void
-SET_NAME(int addr, char *x)
-{
-    REQUIRE(CELLRANGE(addr));
-    heap[addr].name = x;
-}
-
 int
 copy_func(int x)
 {

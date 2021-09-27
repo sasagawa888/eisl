@@ -1430,11 +1430,20 @@ printclass(int addr)
 void
 printstream(int addr)
 {
+    const char *name;
+    
+    REQUIRE(GET_TAG(addr) == STREAM);
+    const signed char opt = GET_OPT(addr);
+    if (opt == EISL_OUTSTR || opt == EISL_INSTR) {
+        name = "<string>";
+    } else {
+        name = GET_NAME(addr);
+    }
     if (GET_OPT(output_stream) != EISL_OUTSTR)
-	Fmt_fprint(GET_PORT(output_stream), "<stream %s>", GET_NAME(addr));
+	Fmt_fprint(GET_PORT(output_stream), "<stream %s>", name);
     else {
 	Fmt_sfmt(GET_NAME(output_stream), STRSIZE, "<stream %s>",
-		 GET_NAME(addr));
+		 name);
 	append_str(output_stream, stream_str);
     }
 }

@@ -226,6 +226,12 @@ GET_INT(int addr)
 DEF_GETTER(double, FLT, val.fltnum, NIL)
 DEF_GETTER(long long int, LONG, val.lngnum, NIL)
 
+static inline void
+SET_NAME(int addr, const char *x)
+{
+    REQUIRE(CELLRANGE(addr));
+    heap[addr].name = (char *)x;
+}
 static inline char *GET_NAME(int addr)
 {
     REQUIRE(CELLRANGE(addr));
@@ -1057,7 +1063,7 @@ int             makelong(long long int x);
 int             makemethod(int x);
 int             makenum(int num);
 int             makestr(const char *string);
-int             makestream(FILE * port, int type);
+int             makestream(FILE * port, int type, const char *name);
 int             makesym(const char *pname);
 int             makesym1(const char *pname);
 int             makeusercond(int cl, int str, int arg);

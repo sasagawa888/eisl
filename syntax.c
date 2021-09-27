@@ -9,6 +9,7 @@
 #include "eisl.h"
 #include "nana.h"
 #include "fmt.h"
+#include "str.h"
 
 #define TAGBODY_LEN_MAX 100
 
@@ -1754,12 +1755,13 @@ f_with_open_input_file(int arglist)
 	error(NOT_SYM, "with-open-input-file", sym);
     if (!stringp(str))
 	error(NOT_STR, "with-open-input-file", str);
-    port = fopen(GET_NAME(str), "r");
+    const char *fname = GET_NAME(str);
+    port = fopen(fname, "r");
     if (port == NULL) {
 	error(CANT_OPEN, "with-open-input-file", str);
 	return NIL;
     }
-    val = makestream(port, EISL_INPUT);
+    val = makestream(port, EISL_INPUT, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
     addlexenv(sym, val);
     res = f_progn(arg2);
@@ -1788,12 +1790,13 @@ f_with_open_output_file(int arglist)
 	error(NOT_SYM, "with-open-output-file", sym);
     if (!stringp(str))
 	error(NOT_STR, "with-open-output-file", str);
-    port = fopen(GET_NAME(str), "w");
+    const char *fname = GET_NAME(str);
+    port = fopen(fname, "w");
     if (port == NULL) {
 	error(CANT_OPEN, "with-open-output-file", str);
 	return NIL;
     }
-    val = makestream(port, EISL_OUTPUT);
+    val = makestream(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
     addlexenv(sym, val);
     res = f_progn(arg2);
@@ -1822,12 +1825,13 @@ f_with_open_io_file(int arglist)
 	error(NOT_SYM, "with-open-io-file", sym);
     if (!stringp(str))
 	error(NOT_STR, "with-open-io-file", str);
-    port = fopen(GET_NAME(str), "r+");
+    const char *fname = GET_NAME(str);
+    port = fopen(fname, "r+");
     if (port == NULL) {
 	error(CANT_OPEN, "with-open-io-file", str);
 	return NIL;
     }
-    val = makestream(port, EISL_OPEN);
+    val = makestream(port, EISL_OPEN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
     addlexenv(sym, val);
     res = f_progn(arg2);

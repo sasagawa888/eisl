@@ -45,6 +45,7 @@ initsyntax(void)
     deffsubr("RETURN-FROM", f_return_from);
     deffsubr("CASE", f_case);
     deffsubr("CASE-USING", f_case_using);
+    deffsubr("CONVERT", f_convert);
     deffsubr("PROGN", f_progn);
     deffsubr("DEFCLASS", f_defclass);
     deffsubr("DEFGENERIC", f_defgeneric);
@@ -61,7 +62,6 @@ initsyntax(void)
     deffsubr("WITH-STANDARD-OUTPUT", f_with_standard_output);
     deffsubr("WITH-ERROR-OUTPUT", f_with_error_output);
     deffsubr("WITH-HANDLER", f_with_handler);
-    deffsubr("CONVERT", f_convert);
     deffsubr("WITH-OPEN-INPUT-FILE", f_with_open_input_file);
     deffsubr("WITH-OPEN-OUTPUT-FILE", f_with_open_output_file);
     deffsubr("WITH-OPEN-IO-FILE", f_with_open_io_file);

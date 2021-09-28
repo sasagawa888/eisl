@@ -2630,7 +2630,7 @@ f_input_stream_p(int arglist)
     arg = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "input-stream-p", arglist);
-    if (streamp(arg) && GET_CDR(arg) == EISL_INPUT)
+    if (streamp(arg) && GET_OPT(arg) == EISL_INPUT)
 	return (T);
     else
 	return (NIL);
@@ -2644,7 +2644,7 @@ f_output_stream_p(int arglist)
     arg = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "output-stream-p", arglist);
-    if (streamp(arg) && GET_CDR(arg) == EISL_OUTPUT)
+    if (streamp(arg) && GET_OPT(arg) == EISL_OUTPUT)
 	return (T);
     else
 	return (NIL);

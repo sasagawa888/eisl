@@ -1751,6 +1751,8 @@ f_with_open_input_file(int arglist)
     arg2 = cdr(arglist);
     sym = car(arg1);		// stream-name;
     str = eval(cadr(arg1));	// file-name;
+    if (nullp(arglist))
+    error(NOT_EXIST_ARG, "with-open-input-file", NIL);
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-input-file", sym);
     if (!stringp(str))
@@ -1786,6 +1788,8 @@ f_with_open_output_file(int arglist)
     arg2 = cdr(arglist);
     sym = car(arg1);		// stream-name;
     str = eval(cadr(arg1));	// file-name;
+    if (nullp(arglist))
+    error(NOT_EXIST_ARG, "with-open-output-file", NIL);
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-output-file", sym);
     if (!stringp(str))
@@ -1821,6 +1825,8 @@ f_with_open_io_file(int arglist)
     arg2 = cdr(arglist);
     sym = car(arg1);		// stream-name;
     str = eval(cadr(arg1));	// file-name;
+    if (nullp(arglist))
+    error(NOT_EXIST_ARG, "with-open-io-file", NIL);
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-io-file", sym);
     if (!stringp(str))

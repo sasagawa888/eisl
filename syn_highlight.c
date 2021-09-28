@@ -83,17 +83,8 @@ static const char *extended[] = {
     "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",
     "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
     "pwm-write", "pull-up-dn-control", "delay", "compile-file",
-    "compile-cuda", "formatter",
+    "formatter",
     "c-include", "c-define", "c-lang", "c-option",
-    "gpu-mult", "gpu-add", "gpu-sub", "gpu-smult", "gpu-emult",
-    "gpu-convolute", "gpu-deconvolute", "gpu-transpose",
-    "gpu-ident", "gpu-full", "gpu-unfull", "gpu-accuracy", "gpu-correct",
-    "gpu-activate", "gpu-trace",
-    "gpu-loss", "gpu-average", "gpu-sum", "gpu-diff", "gpu-dropout",
-    "gpu-gradfilter",
-    "gpu-sgd", "gpu-momentum", "gpu-adagrad", "gpu-rms", "gpu-adam",
-    "gpu-pooling", "gpu-unpooling",
-    "gpu-random-select", "gpu-nanalizer", "gpu-copy",
 };
 
 static bool

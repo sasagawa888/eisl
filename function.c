@@ -1836,7 +1836,7 @@ f_map_into(int arglist)
     if (listp(arg1) && nullp(arg3))
 	arg4 = arg1;
     else if(listp(arg1))
-    arg4 = map_into_to_list(arg3);
+        arg4 = map_into_to_list(arg3);
     else if (vectorp(arg1) && nullp(arg3))
 	arg4 = vector_to_list(arg1);
     else if (vectorp(arg1))
@@ -1844,12 +1844,12 @@ f_map_into(int arglist)
     else if (stringp(arg1) && nullp(arg3))
 	arg4 = string_to_list(arg1);
     else if(stringp(arg1))
-    arg4 = map_into_to_list(arg3);
+        arg4 = map_into_to_list(arg3);
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
     if(IS_FUNC(arg2) && GET_OPT(arg2) == 0) // when arg2 is thunk (lambda () ...)
-    val = reverse(map_into_thunk(arg2,arg4));
+        val = reverse(map_into_thunk(arg2,arg4));
     else
 	val = mapcar(arg2, arg4);
     
@@ -1862,23 +1862,23 @@ f_map_into(int arglist)
 	}
     } else if (vectorp(arg1)) {
         if(nullp(val)) // when val is null return arg1
-        return(arg1);
+            return(arg1);
         i = 0;
         while(!nullp(val)){
-        SET_VEC_ELT(res, i, car(val));
-        i++;
-        val = cdr(val);
+            SET_VEC_ELT(res, i, car(val));
+            i++;
+            val = cdr(val);
         }
     } else if (stringp(arg1)) {
         if(nullp(val)) //when val is null return arg1
-        return(arg1);
+            return(arg1);
         i = 0;
         while(!nullp(val)){
-        if(!charp(car(val))) //when val is not char list return arg1
-        return(arg1);
-        STRING_SET(res, i , GET_CHAR(car(val)));
-        i++;
-        val = cdr(val);
+            if(!charp(car(val))) //when val is not char list return arg1
+                return(arg1);
+            STRING_SET(res, i , GET_CHAR(car(val)));
+            i++;
+            val = cdr(val);
         }
     }
     if (findenv(arg1) != FAILSE)
@@ -1891,9 +1891,9 @@ f_map_into(int arglist)
 int 
 map_into_thunk(int x, int y){
     if(nullp(y))
-    return(NIL);
+        return(NIL);
     else
-    return(cons(apply(x,NIL),map_into_thunk(x,cdr(y))));
+        return(cons(apply(x,NIL),map_into_thunk(x,cdr(y))));
 }
 
 int
@@ -1902,11 +1902,15 @@ map_into_to_list(int x)
     if (nullp(x))
 	return (NIL);
     else if(listp(car(x)))
-    return (cons(car(x), map_into_to_list(cdr(x))));
+        return (cons(car(x), map_into_to_list(cdr(x))));
     else if(vectorp(car(x)))
 	return (cons(vector_to_list(car(x)), map_into_to_list(cdr(x))));
     else if(stringp(car(x)))
-    return (cons(string_to_list(car(x)), map_into_to_list(cdr(x))));
+        return (cons(string_to_list(car(x)), map_into_to_list(cdr(x))));
+    else {
+	error(ILLEGAL_ARGS, "map-into", x);
+        return (NIL);
+    }
 }
 
 
@@ -2453,7 +2457,8 @@ f_load(int arglist)
     // text file
     save1 = input_stream;
     save2 = repl_flag;
-    input_stream = makestream(fopen(GET_NAME(arg1), "r"), EISL_INPUT);
+    const char *fname = GET_NAME(arg1);
+    input_stream = makestream(fopen(fname, "r"), EISL_INPUT, Str_dup(fname, 1, 0, 1));
 
     if (GET_PORT(input_stream) == NULL) {
 	input_stream = save1;
@@ -4064,15 +4069,16 @@ f_open_input_file(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "open-input-file", arg1);
 
+    const char *fname = GET_NAME(arg1);
     if (n == 1)
-	port = fopen(GET_NAME(arg1), "r");
+	port = fopen(fname, "r");
     else
-	port = fopen(GET_NAME(arg1), "rb");
+	port = fopen(fname, "rb");
 
     if (port == NULL)
 	error(CANT_OPEN, "open-input-file", arg1);
 
-    return (makestream(port, EISL_INPUT));
+    return (makestream(port, EISL_INPUT, Str_dup(fname, 1, 0, 1)));
 }
 
 int
@@ -4088,11 +4094,12 @@ f_open_output_file(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "open-output-file", arg1);
 
-    port = fopen(GET_NAME(arg1), "w");
+    const char *fname = GET_NAME(arg1);
+    port = fopen(fname, "w");
     if (port == NULL)
 	error(CANT_OPEN, "open-output-file", arg1);
 
-    return (makestream(port, EISL_OUTPUT));
+    return (makestream(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1)));
 }
 
 int
@@ -4108,11 +4115,12 @@ f_open_io_file(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "open-io-file", arg1);
 
-    port = fopen(GET_NAME(arg1), "r+");
+    const char *fname = GET_NAME(arg1);
+    port = fopen(fname, "r+");
     if (port == NULL)
 	error(CANT_OPEN, "open-io-file", arg1);
 
-    return (makestream(port, EISL_OPEN));
+    return (makestream(port, EISL_OPEN, Str_dup(fname, 1, 0, 1)));
 }
 
 int
@@ -4420,7 +4428,7 @@ f_create_string_input_stream(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "create-string-input-stream", arg1);
 
-    res = makestream(stdin, EISL_INSTR);
+    res = makestream(stdin, EISL_INSTR, NULL);
     TRY             heap[res].name = Str_dup(GET_NAME(arg1), 1, 0, 1);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "create-string-input-stream", NIL);
@@ -4437,7 +4445,7 @@ f_create_string_output_stream(int arglist)
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "create-string-output-stream", arglist);
 
-    res = makestream(stdout, EISL_OUTSTR);
+    res = makestream(stdout, EISL_OUTSTR, NULL);
     TRY             str = (char *) ALLOC(STRSIZE);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "create-string-output-stream", NIL);

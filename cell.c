@@ -230,9 +230,9 @@ initclass(void)
 void
 initstream(void)
 {
-    standard_input = makestream(stdin, EISL_INPUT);
-    standard_output = makestream(stdout, EISL_OUTPUT);
-    standard_error = makestream(stderr, EISL_OUTPUT);
+    standard_input = makestream(stdin, EISL_INPUT, "standard-input");
+    standard_output = makestream(stdout, EISL_OUTPUT, "standard-output");
+    standard_error = makestream(stderr, EISL_OUTPUT, "error-output");
 }
 
 int
@@ -779,7 +779,7 @@ makemethod(int addr)
 
 
 int
-makestream(FILE * port, int type)
+makestream(FILE * port, int type, const char *name)
 {
     int             addr;
 
@@ -789,6 +789,7 @@ makestream(FILE * port, int type)
     SET_CDR(addr, 0);		// string-stream-position
     SET_AUX(addr, cstream);	// class
     SET_OPT(addr, type);	// input/output/inout
+    SET_NAME(addr, name);
     return (addr);
 }
 

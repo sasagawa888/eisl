@@ -149,7 +149,7 @@ initclass(void)
     cend_of_stream = makeclass("end-of-stream", cstream_error);
     cstorage_exhausted =
 	makeclass("storage-exhausted", cserious_condition);
-
+    
     cstandard_class = makeclass("standard-class", cobject);
     cstandard_object = makeclass("standard-object", cobject);
     cstream = makeclass("stream", cobject);
@@ -157,7 +157,7 @@ initclass(void)
     cfixnum = makeclass("fixnum", cinteger);
     clongnum = makeclass("longnum", cinteger);
     cbignum = makeclass("bignum", cinteger);
-
+    
     bindclass("<OBJECT>", cobject);
     bindclass("<BASIC-ARRAY>", cbasic_array);
     bindclass("<GENERAL-ARRAY*>", cgeneral_array_star);
@@ -202,8 +202,7 @@ initclass(void)
     bindclass("<FIXNUM>", cfixnum);
     bindclass("<LONGNUM>", clongnum);
     bindclass("<BIGNUM>", cbignum);
-    bindclass("<FLOAT-ARRAY>", cfloat_array);
-
+    
     initerrargs(cserious_condition);
     initerrargs(cerror);
     initerrargs(carithmetic_error);

@@ -77,7 +77,6 @@ int             cinvalid;
 int             cfixnum;
 int             clongnum;
 int             cbignum;
-int             cfloat_array;
 
 
 // stream
@@ -239,7 +238,6 @@ main(int argc, char *argv[])
     initsyntax();
     initgeneric();
     signal(SIGINT, signal_handler_c);
-
 
     input_stream = standard_input;
     output_stream = standard_output;

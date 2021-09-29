@@ -2189,8 +2189,11 @@ f_read_char(int arglist)
     arg3 = caddr(arglist);
     if ((n = length(arglist)) > 3)
 	error(WRONG_ARGS, "read-char", arglist);
+    if (GET_OPT(arg1) == EISL_CLOSESTR)
+    error(CANT_OPEN, "read-char", arg1);
     if (n > 0 && !input_stream_p(arg1))
 	error(NOT_IN_STREAM, "read-char", arg1);
+    
 
     save1 = repl_flag;
     repl_flag = 0;
@@ -4136,6 +4139,8 @@ f_close(int arglist)
 
     if (GET_OPT(arg1) != EISL_INSTR && GET_OPT(arg1) != EISL_OUTSTR)
 	fclose(GET_PORT(arg1));
+    else
+    SET_OPT(arg1,EISL_CLOSESTR);
 
     start_flag = true;
     return (UNDEF);

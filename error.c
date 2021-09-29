@@ -385,7 +385,7 @@ error(int errnum, const char *fun, int arg)
 		  makestr("Can't open a file at "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
-	signal_condition(makeinstance(cprogram_error, initargs), NIL);
+	signal_condition(makeinstance(cstream_error, initargs), NIL);
 	break;
     case CANT_CREATE:
 	initargs =

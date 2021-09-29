@@ -2316,14 +2316,14 @@ f_preview_char(int arglist)
     if (n == 0) {
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-	unreadc(arg1);
+	unreadc(pc_buf[0]);
 	res = makechar((char *) pc_buf);
     } else if (n == 1) {
 	save = input_stream;
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-	unreadc(arg1);
+    unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF){
         input_stream = save;
 	    error(END_STREAM, "preview-char", NIL);
@@ -2335,17 +2335,17 @@ f_preview_char(int arglist)
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
+    unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF) {
-	    if (nullp(arg2) && n == 2) {
-		input_stream = save;
+        input_stream = save;
+	    if (nullp(arg2) && n == 2)
 		return (arg2);
-	    } else if (nullp(arg2) && n == 3) {
-		input_stream = save;
+	    else if (nullp(arg2) && n == 3) 
 		return (arg3);
-	    } else
+	    else 
 		error(END_STREAM, "preview-char", NIL);
+        
 	}
-	unreadc(arg1);
 	input_stream = save;
 	res = makechar((char *) pc_buf);
 	if (res == FEND && arg2 == NIL)

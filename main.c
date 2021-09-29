@@ -415,7 +415,7 @@ unreadc(char c)
 	(void) read_line(-1);
     else if (GET_OPT(input_stream) != EISL_INSTR)
 	ungetc(c, GET_PORT(input_stream));
-    else
+    else if (c != EOF)
 	SET_CDR(input_stream, GET_CDR(input_stream) - 1);
 }
 

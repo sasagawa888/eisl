@@ -2208,6 +2208,7 @@ f_read_char(int arglist)
 	rc_buf[1] = NUL;
 	if (rc_buf[0] == EOF) {
 	    repl_flag = save1;
+        input_stream = save;
 	    error(END_STREAM, "read-char", NIL);
 	}
 	input_stream = save;
@@ -2220,6 +2221,7 @@ f_read_char(int arglist)
 	input_stream = save;
 	if (rc_buf[0] == EOF) {
 	    repl_flag = save1;
+        input_stream = save;
 	    if (nullp(arg2) && n == 2)
 		return (arg2);
 	    else if (nullp(arg2) && n == 3)
@@ -2266,6 +2268,7 @@ f_read_byte(int arglist)
 	res = readc();
 	if (res == EOF) {
 	    repl_flag = save1;
+        input_stream = save;
 	    error(END_STREAM, "read-byte", NIL);
 	}
 	input_stream = save;
@@ -2276,6 +2279,7 @@ f_read_byte(int arglist)
 	input_stream = save;
 	if (res == EOF) {
 	    repl_flag = save1;
+        input_stream = save;
 	    if (nullp(arg2) && n == 2)
 		return (arg2);
 	    else if (nullp(arg2) && n == 3)
@@ -2320,8 +2324,10 @@ f_preview_char(int arglist)
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
 	unreadc(arg1);
-	if (pc_buf[0] == EOF)
+	if (pc_buf[0] == EOF){
+        input_stream = save;
 	    error(END_STREAM, "preview-char", NIL);
+    }
 	input_stream = save;
 	res = makechar((char *) pc_buf);
     } else {

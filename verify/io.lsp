@@ -49,8 +49,8 @@
 (test (read-char str) #\h equal)
 (test (read-char str) #\i equal)
 ;; following two case segmentation error
-;($error (read-char str) <end-of-stream>)
-;($error (read-char str t) <end-of-stream>)
+($error (read-char str) <end-of-stream>)
+($error (read-char str t) <end-of-stream>)
 (test (read-char str nil) nil)
 (test (read-char str nil "the end") "the end" equal)
 ;;; #\space
@@ -98,8 +98,8 @@ c")))
 (test (read-char str) #\2 equal)
 (test (preview-char str) #\3 equal)
 (test (read-char str) #\3 equal)
-;;($error (preview-char str) <end-of-stream>)
-;;($error (preview-char str t) <end-of-stream>)
+($error (preview-char str) <end-of-stream>)
+($error (preview-char str t) <end-of-stream>)
 (test (preview-char str nil) nil)
 (test (preview-char str nil "the end") "the end" equal)
 ;;;

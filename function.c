@@ -4090,7 +4090,9 @@ f_format_tab(int arglist)
     if (!output_stream_p(arg1))
 	error(NOT_OUT_STREAM, "format-tab", arg1);
     if (!integerp(arg2))
-	error(NOT_INT, "format-tab", arg2);
+	error(IMPROPER_ARGS, "format-tab", arg2);
+    if (negativep(arg2))
+	error(IMPROPER_ARGS, "format-tab", arg2);
 
     n = GET_INT(arg2) - charcnt;
     if (n < 0)

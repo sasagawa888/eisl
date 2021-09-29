@@ -3691,27 +3691,59 @@ f_format(int arglist)
 	    i++;
 	    c = str[i];
 	    if (c == 'A') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_object(list3(arg1, car(args), NIL));
 		args = cdr(args);
 	    } else if (c == 'B') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_integer(list3(arg1, car(args), makeint(2)));
 		args = cdr(args);
 	    } else if (c == 'C') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_char(list2(arg1, car(args)));
 		args = cdr(args);
 	    } else if (c == 'D') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_integer(list3(arg1, car(args), makeint(10)));
 		args = cdr(args);
 	    } else if (c == 'G') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_float(list2(arg1, car(args)));
 		args = cdr(args);
 	    } else if (c == 'O') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_integer(list3(arg1, car(args), makeint(8)));
 		args = cdr(args);
 	    } else if (c == 'S') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_object(list3(arg1, car(args), T));
 		args = cdr(args);
 	    } else if (c == 'X') {
+        if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+        }
 		f_format_integer(list3(arg1, car(args), makeint(16)));
 		args = cdr(args);
 	    } else if (isdigit(c)) {
@@ -3722,9 +3754,17 @@ f_format(int arglist)
 		    c = str[i];
 		}
 		if (c == 'R') {
+            if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+            }
 		    f_format_integer(list3(arg1, car(args), makeint(n)));
 		    args = cdr(args);
 		} else if (c == 'T') {
+            if (nullp(args)){
+            output_stream = save;
+            error(IMPROPER_ARGS, "format ", arg2);
+            }
 		    f_format_tab(list2(arg1, makeint(n)));
 		} else
 		    error(ILLEGAL_ARGS, "format ~n?", NIL);
@@ -3956,7 +3996,7 @@ f_format_integer(int arglist)
     if (!integerp(arg3))
 	error(NOT_INT, "format-integer", arg3);
     if ((n = GET_INT(arg3)) < 2 || n > 36)
-	error(OUT_OF_RANGE, "format-integer", arg3);
+	error(IMPROPER_ARGS, "format-integer", arg3);
 
     save = output_stream;
     output_stream = arg1;

@@ -4473,6 +4473,7 @@ f_get_output_stream_string(int arglist)
 	error(NOT_STR, "get-output-stream-string", arg1);
 
     res = makestr(GET_NAME(arg1));
+    heap[arg1].name[0] = '\0';
     return (res);
 }
 

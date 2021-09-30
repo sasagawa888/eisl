@@ -787,8 +787,9 @@ makestream(FILE * port, int type, const char *name)
     SET_PORT(addr, port);
     SET_CDR(addr, 0);		// string-stream-position
     SET_AUX(addr, cstream);	// class
-    SET_OPT(addr, type);	// input/output/inout
+    SET_OPT(addr, type);	// input/output/inout/EISL_INSTR/EISL_OUTSTR
     SET_NAME(addr, name);
+    SET_PROP(addr, 0);      // output-string-stream  charcount from left
     return (addr);
 }
 

@@ -452,6 +452,7 @@ append_str(int output_stream, const char *from)
     char           *to = GET_NAME(output_stream);
     strncat(to, from, STRSIZE - strlen(to) - 1);
     to[STRSIZE - 1] = '\0';
+    SET_PROP(output_stream,GET_PROP(output_stream)+strlen(from));
 }
 
 static inline void

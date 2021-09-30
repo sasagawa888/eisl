@@ -3945,6 +3945,11 @@ f_format_fresh_line(int arglist)
 	output_char(output_stream, '\n');
 	start_flag = false;
 	charcnt = 0;
+    // if output_stream is string-stream, set charcnt 0.
+    if (GET_OPT(output_stream) == EISL_OUTSTR){
+        SET_PROP(output_stream,0);
+    }
+
     skip:
 	output_stream = save;
     }
@@ -4086,7 +4091,8 @@ f_format_tab(int arglist)
 {
     int             arg1,
                     arg2,
-                    n;
+                    n,
+                    save;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -4099,10 +4105,13 @@ f_format_tab(int arglist)
     if (negativep(arg2))
 	error(IMPROPER_ARGS, "format-tab", arg2);
 
+    save = output_stream;
+    output_stream = arg1;
+
     if (GET_OPT(output_stream) != EISL_OUTSTR)
         n = GET_INT(arg2) - charcnt;
     else
-        n = GET_INT(arg2) - strlen(GET_NAME(output_stream));
+        n = GET_INT(arg2) - GET_PROP(output_stream);
 
     if (n < 0)
 	n = 1;
@@ -4112,6 +4121,7 @@ f_format_tab(int arglist)
 	charcnt++;
     }
     start_flag = false;
+    output_stream = save;
     return (NIL);
 }
 

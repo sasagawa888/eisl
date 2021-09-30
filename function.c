@@ -3938,9 +3938,14 @@ f_format_fresh_line(int arglist)
 
 	save = output_stream;
 	output_stream = arg1;
+    //output newline char if it cannot be determinned that the output stream is at the begining of a fresh line
+    if (GET_OPT(output_stream) == EISL_OUTSTR && strlen(GET_NAME(output_stream)) == 0){
+        goto skip;
+    }
 	output_char(output_stream, '\n');
 	start_flag = false;
 	charcnt = 0;
+    skip:
 	output_stream = save;
     }
     return (NIL);
@@ -4094,7 +4099,11 @@ f_format_tab(int arglist)
     if (negativep(arg2))
 	error(IMPROPER_ARGS, "format-tab", arg2);
 
-    n = GET_INT(arg2) - charcnt;
+    if (GET_OPT(output_stream) != EISL_OUTSTR)
+        n = GET_INT(arg2) - charcnt;
+    else
+        n = GET_INT(arg2) - strlen(GET_NAME(output_stream));
+
     if (n < 0)
 	n = 1;
     while (n > 0) {

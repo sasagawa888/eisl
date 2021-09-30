@@ -1008,7 +1008,8 @@ display_line(int line)
 	    ESCRST();
 
 	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
-								// #|...|#
+								// 
+	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
 	    while (((ed_col <= COLS - 1 && col <= COLS - 1)

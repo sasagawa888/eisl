@@ -7,7 +7,7 @@
 #include "mem.h"
 #include "except.h"
 
-#define DBG_PRINTF(...) VLG((gbc_flag, __VA_ARGS__))
+#define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 
 // ---------garbage collection-----------
 DEF_PREDICATE(EMPTY, EMP)
@@ -160,7 +160,7 @@ gbcmark(void)
 
     // mark thunk for unwind-protect
     for (i = 0; i < unwind_pt; i++)
-    markcell(unwind_buf[i]);
+	markcell(unwind_buf[i]);
 
     // mark error_handler
     markcell(error_handler);

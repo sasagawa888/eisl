@@ -42,15 +42,16 @@ initcell(void)
 
     // 0th address is for NIL, set initial environment
     makesym("NIL");		// 0th address NIL
-    SET_AUX(NIL, CLASS_NULL);		// class of nil is null
+    SET_AUX(NIL, CLASS_NULL);	// class of nil is null
     SET_OPT(NIL, CONSTN);
     makesym("T");		// 2nd address is T
-    SET_AUX(T, CLASS_SYMBOL);		// class of t is symbol
+    SET_AUX(T, CLASS_SYMBOL);	// class of t is symbol
     SET_OPT(T, CONSTN);
     makesym("<undef>");		// 4th address is UNDEF
-    SET_AUX(UNDEF, CLASS_SYMBOL);		// class of <undef> is symbol
+    SET_AUX(UNDEF, CLASS_SYMBOL);	// class of <undef> is symbol
     makesym("<file-end>");	// 6the address is FEND
-    SET_AUX(FEND, CLASS_SYMBOL);		// class of <end-of-file> is symbol
+    SET_AUX(FEND, CLASS_SYMBOL);	// class of <end-of-file> is
+					// symbol
     ep = 0;
     dp = 0;
     sp = 0;
@@ -65,7 +66,8 @@ bindclass(const char *name, int cl)
     sym = makesym(name);
     SET_AUX(sym, cl);
     SET_OPT(cl, SYSTEM);	// built-in-class
-    SET_OPT(sym, SYSTEM);	// symbol formated by <***> are built-in-classes
+    SET_OPT(sym, SYSTEM);	// symbol formated by <***> are
+				// built-in-classes
 }
 
 // class aux = ((format-string . error-msg)(format-arguments . args))
@@ -149,7 +151,7 @@ initclass(void)
     cend_of_stream = makeclass("end-of-stream", cstream_error);
     cstorage_exhausted =
 	makeclass("storage-exhausted", cserious_condition);
-    
+
     cstandard_class = makeclass("standard-class", cobject);
     cstandard_object = makeclass("standard-object", cobject);
     cstream = makeclass("stream", cobject);
@@ -157,7 +159,7 @@ initclass(void)
     cfixnum = makeclass("fixnum", cinteger);
     clongnum = makeclass("longnum", cinteger);
     cbignum = makeclass("bignum", cinteger);
-    
+
     bindclass("<OBJECT>", cobject);
     bindclass("<BASIC-ARRAY>", cbasic_array);
     bindclass("<GENERAL-ARRAY*>", cgeneral_array_star);
@@ -202,7 +204,7 @@ initclass(void)
     bindclass("<FIXNUM>", cfixnum);
     bindclass("<LONGNUM>", clongnum);
     bindclass("<BIGNUM>", cbignum);
-    
+
     initerrargs(cserious_condition);
     initerrargs(cerror);
     initerrargs(carithmetic_error);
@@ -222,8 +224,7 @@ initclass(void)
     initerrargs(cend_of_stream);
     initerrargs(cstorage_exhausted);
 
-    ENSURE(cnull == CLASS_NULL &&
-        csymbol == CLASS_SYMBOL);
+    ENSURE(cnull == CLASS_NULL && csymbol == CLASS_SYMBOL);
 }
 
 void
@@ -267,7 +268,8 @@ freshcell(void)
 	if (wp < CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "copying freshcell", NIL);
-	} else if (wp > CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
+	} else if (wp > CELLSIZE && wp > CELLSIZE - 50
+		   && !handling_resource_err) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "copying freshcell", NIL);
 	}
@@ -789,7 +791,8 @@ makestream(FILE * port, int type, const char *name)
     SET_AUX(addr, cstream);	// class
     SET_OPT(addr, type);	// input/output/inout/EISL_INSTR/EISL_OUTSTR
     SET_NAME(addr, name);
-    SET_PROP(addr, 0);      // output-string-stream  charcount from left
+    SET_PROP(addr, 0);		// output-string-stream charcount from
+				// left
     return (addr);
 }
 
@@ -981,10 +984,15 @@ initinst(int x, int initls)
                     n,
                     temp;
 
-    cl = GET_AUX(x); //class of x
-    class_vars = GET_CDR(cl); //class variable list. This is assoc list ((initarg1 . accessor1)(initarg2 . accesor2)...)
-    inst_vars = GET_CDR(x);   //instance variable list. This is assoc list ((accessor1 . val1)(accessor2 . val2) ...)
-    initargs = GET_AUX(cl);   //list to set (initarg1 val1 initarg2 val2 ...)
+    cl = GET_AUX(x);		// class of x
+    class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
+				// ((initarg1 . accessor1)(initarg2 .
+				// accesor2)...)
+    inst_vars = GET_CDR(x);	// instance variable list. This is assoc
+				// list ((accessor1 . val1)(accessor2 .
+				// val2) ...)
+    initargs = GET_AUX(cl);	// list to set (initarg1 val1 initarg2
+				// val2 ...)
     while (!nullp(class_vars)) {
 	if ((n = assq(caar(class_vars), inst_vars)) != FAILSE)
 	    SET_CDR(n, copy(cdar(class_vars)));
@@ -1002,9 +1010,9 @@ initinst(int x, int initls)
 	initls = cddr(initls);
     }
 
-    SET_CDR(x, initinst1(inst_vars, GET_CAR(cl),temp)); 
-    //GET_CAR(cl) is super-class of cl
-    //temp is initls;
+    SET_CDR(x, initinst1(inst_vars, GET_CAR(cl), temp));
+    // GET_CAR(cl) is super-class of cl
+    // temp is initls;
     return (x);
 }
 
@@ -1017,26 +1025,39 @@ initinst1(int inst_vars, int sc, int initls)
 
     if (nullp(sc))
 	return (inst_vars);
-    else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) { //when not exist super-class of super-class
+    else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) {	// when
+								// not
+								// exist
+								// super-class 
+								// of
+								// super-class
 	class_vars = GET_AUX(GET_AUX(sc));
 	return (initinst2(inst_vars, class_vars, initls));
-    }
-    else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) { //when exists super-class of superclass
-    class_vars = GET_AUX(GET_AUX(sc));
-	int temp1; temp1 = initinst2(inst_vars, class_vars, initls);
-    int sc1; sc1 = GET_CAR(GET_AUX(sc));
-    int temp2;  temp2 = initinst1(initinst1(temp1, car(sc1), initls), cdr(sc1), initls);
-    return (initinst1(temp2, cdr(sc), initls));
-    }
-    else { 
-	return (initinst1(initinst1(inst_vars, car(sc), initls), cdr(sc), initls));
+    } else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) {	// when
+								// exists
+								// super-class 
+								// of
+								// superclass
+	class_vars = GET_AUX(GET_AUX(sc));
+	int             temp1;
+	temp1 = initinst2(inst_vars, class_vars, initls);
+	int             sc1;
+	sc1 = GET_CAR(GET_AUX(sc));
+	int             temp2;
+	temp2 =
+	    initinst1(initinst1(temp1, car(sc1), initls), cdr(sc1),
+		      initls);
+	return (initinst1(temp2, cdr(sc), initls));
+    } else {
+	return (initinst1
+		(initinst1(inst_vars, car(sc), initls), cdr(sc), initls));
     }
 }
 
 int
 initinst2(int inst_vars, int class_vars, int initls)
 {
-	int             n;
+    int             n;
 
     while (!nullp(initls)) {
 	n = assq(car(initls), class_vars);

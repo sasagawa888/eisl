@@ -1835,24 +1835,25 @@ f_map_into(int arglist)
 
     if (listp(arg1) && nullp(arg3))
 	arg4 = arg1;
-    else if(listp(arg1))
-        arg4 = map_into_to_list(arg3);
+    else if (listp(arg1))
+	arg4 = map_into_to_list(arg3);
     else if (vectorp(arg1) && nullp(arg3))
 	arg4 = vector_to_list(arg1);
     else if (vectorp(arg1))
 	arg4 = map_into_to_list(arg3);
     else if (stringp(arg1) && nullp(arg3))
 	arg4 = string_to_list(arg1);
-    else if(stringp(arg1))
-        arg4 = map_into_to_list(arg3);
+    else if (stringp(arg1))
+	arg4 = map_into_to_list(arg3);
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
-    if(IS_FUNC(arg2) && GET_OPT(arg2) == 0) // when arg2 is thunk (lambda () ...)
-        val = reverse(map_into_thunk(arg2,arg4));
+    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	// when arg2 is thunk
+						// (lambda () ...)
+	val = reverse(map_into_thunk(arg2, arg4));
     else
 	val = mapcar(arg2, arg4);
-    
+
     res = arg1;
     if (listp(arg1)) {
 	while (!nullp(val)) {
@@ -1861,25 +1862,26 @@ f_map_into(int arglist)
 	    val = cdr(val);
 	}
     } else if (vectorp(arg1)) {
-        if(nullp(val)) // when val is null return arg1
-            return(arg1);
-        i = 0;
-        while(!nullp(val)){
-            SET_VEC_ELT(res, i, car(val));
-            i++;
-            val = cdr(val);
-        }
+	if (nullp(val))		// when val is null return arg1
+	    return (arg1);
+	i = 0;
+	while (!nullp(val)) {
+	    SET_VEC_ELT(res, i, car(val));
+	    i++;
+	    val = cdr(val);
+	}
     } else if (stringp(arg1)) {
-        if(nullp(val)) //when val is null return arg1
-            return(arg1);
-        i = 0;
-        while(!nullp(val)){
-            if(!charp(car(val))) //when val is not char list return arg1
-                return(arg1);
-            STRING_SET(res, i , GET_CHAR(car(val)));
-            i++;
-            val = cdr(val);
-        }
+	if (nullp(val))		// when val is null return arg1
+	    return (arg1);
+	i = 0;
+	while (!nullp(val)) {
+	    if (!charp(car(val)))	// when val is not char list
+					// return arg1
+		return (arg1);
+	    STRING_SET(res, i, GET_CHAR(car(val)));
+	    i++;
+	    val = cdr(val);
+	}
     }
     if (findenv(arg1) != FAILSE)
 	setlexenv(arg1, res);
@@ -1888,12 +1890,13 @@ f_map_into(int arglist)
     return (arg1);
 }
 
-int 
-map_into_thunk(int x, int y){
-    if(nullp(y))
-        return(NIL);
+int
+map_into_thunk(int x, int y)
+{
+    if (nullp(y))
+	return (NIL);
     else
-        return(cons(apply(x,NIL),map_into_thunk(x,cdr(y))));
+	return (cons(apply(x, NIL), map_into_thunk(x, cdr(y))));
 }
 
 int
@@ -1901,15 +1904,15 @@ map_into_to_list(int x)
 {
     if (nullp(x))
 	return (NIL);
-    else if(listp(car(x)))
-        return (cons(car(x), map_into_to_list(cdr(x))));
-    else if(vectorp(car(x)))
+    else if (listp(car(x)))
+	return (cons(car(x), map_into_to_list(cdr(x))));
+    else if (vectorp(car(x)))
 	return (cons(vector_to_list(car(x)), map_into_to_list(cdr(x))));
-    else if(stringp(car(x)))
-        return (cons(string_to_list(car(x)), map_into_to_list(cdr(x))));
+    else if (stringp(car(x)))
+	return (cons(string_to_list(car(x)), map_into_to_list(cdr(x))));
     else {
 	error(ILLEGAL_ARGS, "map-into", x);
-        return (NIL);
+	return (NIL);
     }
 }
 
@@ -2190,10 +2193,10 @@ f_read_char(int arglist)
     if ((n = length(arglist)) > 3)
 	error(WRONG_ARGS, "read-char", arglist);
     if (GET_OPT(arg1) == EISL_CLOSESTR)
-    error(CANT_OPEN, "read-char", arg1);
+	error(CANT_OPEN, "read-char", arg1);
     if (n > 0 && !input_stream_p(arg1))
 	error(NOT_IN_STREAM, "read-char", arg1);
-    
+
 
     save1 = repl_flag;
     repl_flag = 0;
@@ -2208,7 +2211,7 @@ f_read_char(int arglist)
 	rc_buf[1] = NUL;
 	if (rc_buf[0] == EOF) {
 	    repl_flag = save1;
-        input_stream = save;
+	    input_stream = save;
 	    error(END_STREAM, "read-char", NIL);
 	}
 	input_stream = save;
@@ -2221,7 +2224,7 @@ f_read_char(int arglist)
 	input_stream = save;
 	if (rc_buf[0] == EOF) {
 	    repl_flag = save1;
-        input_stream = save;
+	    input_stream = save;
 	    if (nullp(arg2) && n == 2)
 		return (arg2);
 	    else if (nullp(arg2) && n == 3)
@@ -2268,7 +2271,7 @@ f_read_byte(int arglist)
 	res = readc();
 	if (res == EOF) {
 	    repl_flag = save1;
-        input_stream = save;
+	    input_stream = save;
 	    error(END_STREAM, "read-byte", NIL);
 	}
 	input_stream = save;
@@ -2279,7 +2282,7 @@ f_read_byte(int arglist)
 	input_stream = save;
 	if (res == EOF) {
 	    repl_flag = save1;
-        input_stream = save;
+	    input_stream = save;
 	    if (nullp(arg2) && n == 2)
 		return (arg2);
 	    else if (nullp(arg2) && n == 3)
@@ -2323,11 +2326,11 @@ f_preview_char(int arglist)
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-    unreadc(pc_buf[0]);
-	if (pc_buf[0] == EOF){
-        input_stream = save;
+	unreadc(pc_buf[0]);
+	if (pc_buf[0] == EOF) {
+	    input_stream = save;
 	    error(END_STREAM, "preview-char", NIL);
-    }
+	}
 	input_stream = save;
 	res = makechar((char *) pc_buf);
     } else {
@@ -2335,16 +2338,16 @@ f_preview_char(int arglist)
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-    unreadc(pc_buf[0]);
+	unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF) {
-        input_stream = save;
+	    input_stream = save;
 	    if (nullp(arg2) && n == 2)
 		return (arg2);
-	    else if (nullp(arg2) && n == 3) 
+	    else if (nullp(arg2) && n == 3)
 		return (arg3);
-	    else 
+	    else
 		error(END_STREAM, "preview-char", NIL);
-        
+
 	}
 	input_stream = save;
 	res = makechar((char *) pc_buf);
@@ -2466,8 +2469,9 @@ f_load(int arglist)
     // text file
     save1 = input_stream;
     save2 = repl_flag;
-    const char *fname = GET_NAME(arg1);
-    input_stream = makestream(fopen(fname, "r"), EISL_INPUT, Str_dup(fname, 1, 0, 1));
+    const char     *fname = GET_NAME(arg1);
+    input_stream =
+	makestream(fopen(fname, "r"), EISL_INPUT, Str_dup(fname, 1, 0, 1));
 
     if (GET_PORT(input_stream) == NULL) {
 	input_stream = save1;
@@ -2478,7 +2482,7 @@ f_load(int arglist)
     column = 0;
     if (looking_for_shebang) {
 	FILE           *infile = GET_PORT(input_stream);
-	int ch = fgetc(infile);
+	int             ch = fgetc(infile);
 	switch (ch) {
 	case EOF:
 	    goto cleanup;
@@ -3273,6 +3277,7 @@ f_string_index(int arglist)
 								// 
 	// 
 	// 
+	// 
 	// "" "")
 	return (makeint(0));
 
@@ -3691,59 +3696,59 @@ f_format(int arglist)
 	    i++;
 	    c = str[i];
 	    if (c == 'A') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_object(list3(arg1, car(args), NIL));
 		args = cdr(args);
 	    } else if (c == 'B') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_integer(list3(arg1, car(args), makeint(2)));
 		args = cdr(args);
 	    } else if (c == 'C') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_char(list2(arg1, car(args)));
 		args = cdr(args);
 	    } else if (c == 'D') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_integer(list3(arg1, car(args), makeint(10)));
 		args = cdr(args);
 	    } else if (c == 'G') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_float(list2(arg1, car(args)));
 		args = cdr(args);
 	    } else if (c == 'O') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_integer(list3(arg1, car(args), makeint(8)));
 		args = cdr(args);
 	    } else if (c == 'S') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_object(list3(arg1, car(args), T));
 		args = cdr(args);
 	    } else if (c == 'X') {
-        if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-        }
+		if (nullp(args)) {
+		    output_stream = save;
+		    error(IMPROPER_ARGS, "format ", arg2);
+		}
 		f_format_integer(list3(arg1, car(args), makeint(16)));
 		args = cdr(args);
 	    } else if (isdigit(c)) {
@@ -3754,17 +3759,17 @@ f_format(int arglist)
 		    c = str[i];
 		}
 		if (c == 'R') {
-            if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-            }
+		    if (nullp(args)) {
+			output_stream = save;
+			error(IMPROPER_ARGS, "format ", arg2);
+		    }
 		    f_format_integer(list3(arg1, car(args), makeint(n)));
 		    args = cdr(args);
 		} else if (c == 'T') {
-            if (nullp(args)){
-            output_stream = save;
-            error(IMPROPER_ARGS, "format ", arg2);
-            }
+		    if (nullp(args)) {
+			output_stream = save;
+			error(IMPROPER_ARGS, "format ", arg2);
+		    }
 		    f_format_tab(list2(arg1, makeint(n)));
 		} else
 		    error(ILLEGAL_ARGS, "format ~n?", NIL);
@@ -3838,7 +3843,7 @@ printr_h(int r, int n, char *b, int *sign)
 	}
 	i = 0;
 	while (n > 0) {
-            b[i] = digits[n % r];
+	    b[i] = digits[n % r];
 
 	    n = n / r;
 	    i++;
@@ -3938,19 +3943,21 @@ f_format_fresh_line(int arglist)
 
 	save = output_stream;
 	output_stream = arg1;
-    //output newline char if it cannot be determinned that the output stream is at the begining of a fresh line
-    if (GET_OPT(output_stream) == EISL_OUTSTR && strlen(GET_NAME(output_stream)) == 0){
-        goto skip;
-    }
+	// output newline char if it cannot be determinned that the output 
+	// stream is at the begining of a fresh line
+	if (GET_OPT(output_stream) == EISL_OUTSTR
+	    && strlen(GET_NAME(output_stream)) == 0) {
+	    goto skip;
+	}
 	output_char(output_stream, '\n');
 	start_flag = false;
 	charcnt = 0;
-    // if output_stream is string-stream, set charcnt 0.
-    if (GET_OPT(output_stream) == EISL_OUTSTR){
-        SET_PROP(output_stream,0);
-    }
+	// if output_stream is string-stream, set charcnt 0.
+	if (GET_OPT(output_stream) == EISL_OUTSTR) {
+	    SET_PROP(output_stream, 0);
+	}
 
-    skip:
+      skip:
 	output_stream = save;
     }
     return (NIL);
@@ -4109,9 +4116,9 @@ f_format_tab(int arglist)
     output_stream = arg1;
 
     if (GET_OPT(output_stream) != EISL_OUTSTR)
-        n = GET_INT(arg2) - charcnt;
+	n = GET_INT(arg2) - charcnt;
     else
-        n = GET_INT(arg2) - GET_PROP(output_stream);
+	n = GET_INT(arg2) - GET_PROP(output_stream);
 
     if (n < 0)
 	n = 1;
@@ -4139,7 +4146,7 @@ f_open_input_file(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "open-input-file", arg1);
 
-    const char *fname = GET_NAME(arg1);
+    const char     *fname = GET_NAME(arg1);
     if (n == 1)
 	port = fopen(fname, "r");
     else
@@ -4164,7 +4171,7 @@ f_open_output_file(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "open-output-file", arg1);
 
-    const char *fname = GET_NAME(arg1);
+    const char     *fname = GET_NAME(arg1);
     port = fopen(fname, "w");
     if (port == NULL)
 	error(CANT_OPEN, "open-output-file", arg1);
@@ -4185,7 +4192,7 @@ f_open_io_file(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "open-io-file", arg1);
 
-    const char *fname = GET_NAME(arg1);
+    const char     *fname = GET_NAME(arg1);
     port = fopen(fname, "r+");
     if (port == NULL)
 	error(CANT_OPEN, "open-io-file", arg1);
@@ -4207,7 +4214,7 @@ f_close(int arglist)
     if (GET_OPT(arg1) != EISL_INSTR && GET_OPT(arg1) != EISL_OUTSTR)
 	fclose(GET_PORT(arg1));
     else
-    SET_OPT(arg1,EISL_CLOSESTR);
+	SET_OPT(arg1, EISL_CLOSESTR);
 
     start_flag = true;
     return (UNDEF);
@@ -4360,7 +4367,7 @@ f_create_vector(int arglist)
     if (negativep(arg1))
 	error(NOT_POSITIVE, "create-vector", arg1);
     if (!integerp(arg1))
-    error(EXHAUSTED_ERR, "create-vector", arg1);
+	error(EXHAUSTED_ERR, "create-vector", arg1);
     if (length(arglist) == 1)
 	arg2 = UNDEF;
 
@@ -4448,7 +4455,8 @@ f_create_string(int arglist)
 int
 f_parse_number(int arglist)
 {
-    int             arg1,res;
+    int             arg1,
+                    res;
     char           *e;
 
     arg1 = car(arglist);
@@ -4472,18 +4480,17 @@ f_parse_number(int arglist)
 	return (makeint(strtol(stok.buf, &e, 10)));
 
     if (flttoken(stok.buf))
-    return (makeflt(atof(stok.buf)));
+	return (makeflt(atof(stok.buf)));
 
-    if ((res=expttoken(stok.buf))){
-    if (res == 2)
-		error(FLT_OVERF, "number-parse", arg1); 
-    else 
-    if (res == 3)
-        error(FLT_UNDERF, "number-parse", arg1); 
-	else 
-    return (makeflt(atof(stok.buf)));
+    if ((res = expttoken(stok.buf))) {
+	if (res == 2)
+	    error(FLT_OVERF, "number-parse", arg1);
+	else if (res == 3)
+	    error(FLT_UNDERF, "number-parse", arg1);
+	else
+	    return (makeflt(atof(stok.buf)));
     }
-    
+
     if (bintoken(stok.buf))
 	return (readbin(stok.buf));
 
@@ -4774,8 +4781,8 @@ f_class_of(int arglist)
     arg = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "class-of", arglist);
-    if(nullp(arg))
-    return (GET_AUX(arg));
+    if (nullp(arg))
+	return (GET_AUX(arg));
     else if (GET_OPT(arg) == SYSTEM)
 	return (cbuilt_in_class);
     else if (GET_OPT(arg) == USER)

@@ -728,7 +728,8 @@ member1(int x, int y, int z)
 int
 mapcar(int x, int y)
 {
-    int ls, res;
+    int             ls,
+                    res;
 
     ls = y;
     shelterpush(y);
@@ -1136,7 +1137,7 @@ array_ref(int obj, int ls)
 	size = list1(vector_length(obj));
     } else {
 	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
-					// (1 2 3)
+	// (1 2 3)
     }
 
     index = 0;
@@ -1166,7 +1167,7 @@ array_set(int obj, int ls, int val)
 	size = list1(vector_length(obj));
     } else {
 	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
-					// (1 2 3)
+	// (1 2 3)
     }
     index = 0;
     size = cdr(size);
@@ -1308,8 +1309,7 @@ vector_to_list(int x)
 static inline void
 SET_CHAR(int addr, char x)
 {
-    REQUIRE(CELLRANGE(addr) &&
-        GET_TAG(addr) == CHR);
+    REQUIRE(CELLRANGE(addr) && GET_TAG(addr) == CHR);
     heap[addr].name[0] = x;
 }
 

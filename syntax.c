@@ -1177,6 +1177,7 @@ f_catch(int arglist)
 	catch_arg = NIL;
 	sp = save;		// restore stack pointer. longjump destroy 
 				// 
+	// 
 	// sp
 	return (res);
     }
@@ -1752,14 +1753,14 @@ f_with_open_input_file(int arglist)
     sym = car(arg1);		// stream-name;
     str = eval(cadr(arg1));	// file-name;
     if (nullp(arglist) || atomp(arglist))
-    error(NOT_EXIST_ARG, "with-open-input-file", NIL);
+	error(NOT_EXIST_ARG, "with-open-input-file", NIL);
     if (length(arglist) != 2)
-    error(IMPROPER_ARGS, "with-open-input-file", arglist);
+	error(IMPROPER_ARGS, "with-open-input-file", arglist);
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-input-file", sym);
     if (!stringp(str))
 	error(NOT_STR, "with-open-input-file", str);
-    const char *fname = GET_NAME(str);
+    const char     *fname = GET_NAME(str);
     port = fopen(fname, "r");
     if (port == NULL) {
 	error(CANT_OPEN, "with-open-input-file", str);
@@ -1791,14 +1792,14 @@ f_with_open_output_file(int arglist)
     sym = car(arg1);		// stream-name;
     str = eval(cadr(arg1));	// file-name;
     if (nullp(arglist) || atomp(arglist))
-    error(NOT_EXIST_ARG, "with-open-output-file", NIL);
+	error(NOT_EXIST_ARG, "with-open-output-file", NIL);
     if (length(arglist) != 2)
-    error(IMPROPER_ARGS, "with-open-output-file", arglist);
+	error(IMPROPER_ARGS, "with-open-output-file", arglist);
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-output-file", sym);
     if (!stringp(str))
 	error(NOT_STR, "with-open-output-file", str);
-    const char *fname = GET_NAME(str);
+    const char     *fname = GET_NAME(str);
     port = fopen(fname, "w");
     if (port == NULL) {
 	error(CANT_OPEN, "with-open-output-file", str);
@@ -1830,14 +1831,14 @@ f_with_open_io_file(int arglist)
     sym = car(arg1);		// stream-name;
     str = eval(cadr(arg1));	// file-name;
     if (nullp(arglist) || atomp(arglist))
-    error(NOT_EXIST_ARG, "with-open-io-file", NIL);
+	error(NOT_EXIST_ARG, "with-open-io-file", NIL);
     if (length(arglist) != 2)
-    error(IMPROPER_ARGS, "with-open-io-file", arglist);
+	error(IMPROPER_ARGS, "with-open-io-file", arglist);
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-io-file", sym);
     if (!stringp(str))
 	error(NOT_STR, "with-open-io-file", str);
-    const char *fname = GET_NAME(str);
+    const char     *fname = GET_NAME(str);
     port = fopen(fname, "r+");
     if (port == NULL) {
 	error(CANT_OPEN, "with-open-io-file", str);

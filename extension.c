@@ -737,17 +737,16 @@ f_line_argument(int arglist)
 int
 f_getenv(int arglist)
 {
-    int arg1;
+    int             arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1) {
-        error(WRONG_ARGS, "getenv", arglist);
+	error(WRONG_ARGS, "getenv", arglist);
     }
-    char *val = getenv(GET_NAME(arg1));
+    char           *val = getenv(GET_NAME(arg1));
     if (val == NULL) {
-        return NIL;
+	return NIL;
     } else {
-        return makestr(val);
+	return makestr(val);
     }
 }
-

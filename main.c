@@ -118,29 +118,26 @@ int             generic_list = NIL;	// symbol list of generic
 // flag
 int             gArgC;
 char          **gArgV;
-bool            gbc_flag = true;	// false=GC not display ,true= do
+bool            gbc_flag = false;	// false=GC not display ,true= do
 					// display.
 int             genint = 1;	// integer of gensym.
 bool            simp_flag = true;	// true=simplify, false=Not for
 					// bignum
 bool            ignore_flag = false;	// false=normal,true=ignore error
 bool            open_flag = false;	// false=normal,true=now loading
-bool            top_flag = true;	// true=top-level,
-					// false=not-top-level
-bool            redef_flag = false;	// true=redefine-class,
-					// false=not-redefine
-bool            start_flag = true;	// true=line-start,
-					// false=not-line-start
-bool            back_flag = true;	// for backtrace, true=on,
-					// false=off
-bool            ignore_topchk = false;	// for FAST compiler
-					// true=ignore,false=normal
+bool            top_flag = true;	// true=top-level,false=not-top-level
+bool            redef_flag = false;	// true=redefine-class,false=not-redefine
+bool            start_flag = true;	// true=line-start,false=not-line-start
+bool            back_flag = true;	// for backtrace,
+					// true=on,false=off
+bool            ignore_topchk = false;	// for FAST
+					// compilertrue=ignore,false=normal
 bool            repl_flag = true;	// for REPL read_line 1=on, 0=off
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option
-bool            handling_resource_err = false;  // stop infinite recursion
-bool            looking_for_shebang = false;    // skip over #!
+bool            handling_resource_err = false;	// stop infinite recursion
+bool            looking_for_shebang = false;	// skip over #!
 
 // switch
 int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC
@@ -314,15 +311,17 @@ main(int argc, char *argv[])
     } while (!quit);
 }
 
-char *
+char           *
 library_file(const char *basename)
 {
-    char *prefix;
+    char           *prefix;
 
     if ((prefix = getenv("EASY_ISLISP")) != NULL) {
-	return Str_catv(prefix, 1, 0, "/library/", 1, 0, basename, 1, 0, NULL);
+	return Str_catv(prefix, 1, 0, "/library/", 1, 0, basename, 1, 0,
+			NULL);
     }
-    return Str_catv(getenv("HOME"), 1, 0, "/eisl/library/", 1, 0, basename, 1, 0, NULL);
+    return Str_catv(getenv("HOME"), 1, 0, "/eisl/library/", 1, 0, basename,
+		    1, 0, NULL);
 }
 
 void
@@ -426,7 +425,7 @@ gettoken(void)
 {
     int             c;
     int             pos;
-	int 			res;
+    int             res;
 
     if (stok.flag == BACK) {
 	stok.flag = GO;
@@ -616,14 +615,13 @@ gettoken(void)
 		stok.type = HEXNUM;
 		break;
 	    }
-	    if ((res=expttoken(stok.buf))) {
+	    if ((res = expttoken(stok.buf))) {
 		if (res == 2)
-		stok.type = EXPTOVERF;
+		    stok.type = EXPTOVERF;
+		else if (res == 3)
+		    stok.type = EXPTUNDERF;
 		else
-		if (res == 3)
-		stok.type = EXPTUNDERF;
-		else
-		stok.type = EXPTNUM;
+		    stok.type = EXPTNUM;
 		break;
 	    }
 	    if (symboltoken(stok.buf)) {
@@ -968,12 +966,11 @@ expttoken(char buf[])
 	(inttoken(tok.before) || flttoken(tok.before)) &&
 	inttoken(tok.after)) {
 	if (atoi(tok.after) > 999)
-		return(2); //overflow
-	else 
-	if (atoi(tok.after) < -999)
-		return(3); //underflow
-	else 
-		return(1); //regular
+	    return (2);		// overflow
+	else if (atoi(tok.after) < -999)
+	    return (3);		// underflow
+	else
+	    return (1);		// regular
     }
 
     strncpy(buf, buf1, BUFSIZE - 1);
@@ -984,12 +981,11 @@ expttoken(char buf[])
     if ((inttoken(tok.before) || flttoken(tok.before)) &&
 	inttoken(tok.after)) {
 	if (atoi(tok.after) > 999)
-		return(2); //overflow
-	else 
-	if (atoi(tok.after) < -999)
-		return(3); //underflow
-	else 
-		return(1); //regular
+	    return (2);		// overflow
+	else if (atoi(tok.after) < -999)
+	    return (3);		// underflow
+	else
+	    return (1);		// regular
     } else
 	return (0);
 }
@@ -1057,11 +1053,11 @@ sread(void)
 	return (readhex(stok.buf));
     case EXPTNUM:
 	return (makeflt(atof(stok.buf)));
-	case EXPTOVERF:
-	error(FLT_OVERF,"read",NIL);
+    case EXPTOVERF:
+	error(FLT_OVERF, "read", NIL);
 	break;
-	case EXPTUNDERF:
-	error(FLT_UNDERF,"read",NIL);
+    case EXPTUNDERF:
+	error(FLT_UNDERF, "read", NIL);
 	break;
     case VECTOR:
 	return (vector(readlist()));
@@ -1307,14 +1303,14 @@ printflt(double x)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	fprintf(GET_PORT(output_stream), "%g", x);
-	if ((x - (int)x) == 0.0 )
-	fprintf(GET_PORT(output_stream), ".0");	
+	if ((x - (int) x) == 0.0)
+	    fprintf(GET_PORT(output_stream), ".0");
     } else {
 	char            str[SHORT_STRSIZE];
 	snprintf(str, SHORT_STRSIZE, "%g", x);
 	append_str(output_stream, str);
-	if ((x - (int)x) == 0.0 )
-	append_str(output_stream, ".0");
+	if ((x - (int) x) == 0.0)
+	    append_str(output_stream, ".0");
     }
 }
 
@@ -1456,20 +1452,19 @@ printclass(int addr)
 void
 printstream(int addr)
 {
-    const char *name;
-    
+    const char     *name;
+
     REQUIRE(GET_TAG(addr) == STREAM);
     const signed char opt = GET_OPT(addr);
     if (opt == EISL_OUTSTR || opt == EISL_INSTR) {
-        name = "<string>";
+	name = "<string>";
     } else {
-        name = GET_NAME(addr);
+	name = GET_NAME(addr);
     }
     if (GET_OPT(output_stream) != EISL_OUTSTR)
 	Fmt_fprint(GET_PORT(output_stream), "<stream %s>", name);
     else {
-	Fmt_sfmt(GET_NAME(output_stream), STRSIZE, "<stream %s>",
-		 name);
+	Fmt_sfmt(GET_NAME(output_stream), STRSIZE, "<stream %s>", name);
 	append_str(output_stream, stream_str);
     }
 }
@@ -1580,8 +1575,10 @@ DEF_GETTER(char, TR, trace, NIL)
                     i,
                     n,
                     trace;
-    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO || GET_TAG(func) == GENERIC) &&
-            (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
+    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR
+	     || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO
+	     || GET_TAG(func) == GENERIC) && (GET_TAG(args) == LIS
+					      || GET_TAG(args) == SYM));
     res = NIL;
     pexist = 0;
     aexist = 0;
@@ -1794,7 +1791,7 @@ matchp(int varlist, int arglist)
     else if (eqp(makesym("&rest"), car(varlist)))
 	return (1);
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
-								// class
+	// class
 	return (matchp(cdr(varlist), cdr(arglist)));
     else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
 	return (matchp(cdr(varlist), cdr(arglist)));
@@ -1897,7 +1894,7 @@ static inline void
 SET_SUBR(int addr, subr_t x)
 {
     REQUIRE(CELLRANGE(addr) &&
-        (GET_TAG(addr) == SUBR || GET_TAG(addr) == FSUBR));
+	    (GET_TAG(addr) == SUBR || GET_TAG(addr) == FSUBR));
     heap[addr].val.car.subr = x;
 }
 
@@ -2005,7 +2002,7 @@ debugger()
     puts("debug mode ?(help)");
     while (1) {
 	fputs(">>", stdout);
-	int x = sread();
+	int             x = sread();
 	if (eqp(x, makesym("?"))) {
 	    puts("?  help\n"
 		 ":a abort\n"

@@ -159,7 +159,6 @@ extern int      cinvalid;
 extern int      cfixnum;
 extern int      clongnum;
 extern int      cbignum;
-extern int      cfloat_array;
 
 static const int CLASS_NULL = 28;
 static const int CLASS_SYMBOL = 29;

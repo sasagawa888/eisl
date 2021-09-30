@@ -914,9 +914,10 @@ lcm(int x, int y)
                     d,
                     res;
     if (integerp(x) && integerp(y) && abs(GET_INT(x)) < 10000 && abs(GET_INT(y)) < 10000)	// because 
-												// x,y 
-												// < 
-												// sqrt(BIGNUM_BASE)
+												// 
+	// x,y 
+	// < 
+	// sqrt(BIGNUM_BASE)
 	return (makeint(abs(int_lcm(GET_INT(x), GET_INT(y)))));
 
     else if (floatp(x) && integerp(y))

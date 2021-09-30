@@ -1307,10 +1307,14 @@ printflt(double x)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	fprintf(GET_PORT(output_stream), "%g", x);
+	if ((x - (int)x) == 0.0 )
+	fprintf(GET_PORT(output_stream), ".0");	
     } else {
 	char            str[SHORT_STRSIZE];
 	snprintf(str, SHORT_STRSIZE, "%g", x);
 	append_str(output_stream, str);
+	if ((x - (int)x) == 0.0 )
+	append_str(output_stream, ".0");
     }
 }
 

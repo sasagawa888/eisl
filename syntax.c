@@ -474,11 +474,12 @@ f_setf(int arglist)
     // e.g. (setf (access-foo-a x) 100) 
     else if (listp(arg1) && length(arg1) == 2) {
 	// a method returns it's variable name 
-    if(functionp(car(arg1))){
+    //comment out fix code. it causes error veirfy/object.lsp
+    //if(functionp(car(arg1))){
 	var = eval(list2(car(arg1), NIL));
-    }
-    else
-    error (IMPROPER_ARGS,"setf",arg1);
+    //}
+    //else
+    //error (IMPROPER_ARGS,"setf",arg1);
 
 	newform =
 	    cons(makesym("SET-SLOT-VALUE"),

@@ -960,7 +960,13 @@ expttoken(char buf[])
     if (tok.sepch != NUL &&
 	(inttoken(tok.before) || flttoken(tok.before)) &&
 	inttoken(tok.after)) {
-	return 1;
+	if (atoi(tok.after) > 99)
+		return(2); //overflow
+	else 
+	if (atoi(tok.after) < -99)
+		return(3); //underflow
+	else 
+		return(1); //regular
     }
 
     strncpy(buf, buf1, BUFSIZE - 1);
@@ -970,8 +976,13 @@ expttoken(char buf[])
 	return (0);
     if ((inttoken(tok.before) || flttoken(tok.before)) &&
 	inttoken(tok.after)) {
-
-	return (1);
+	if (atoi(tok.after) > 99)
+		return(2); //overflow
+	else 
+	if (atoi(tok.after) < -99)
+		return(3); //underflow
+	else 
+		return(1); //regular
     } else
 	return (0);
 }

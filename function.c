@@ -4429,7 +4429,7 @@ f_create_string(int arglist)
 int
 f_parse_number(int arglist)
 {
-    int             arg1;
+    int             arg1,res;
     char           *e;
 
     arg1 = car(arglist);
@@ -4452,9 +4452,19 @@ f_parse_number(int arglist)
     if (inttoken(stok.buf))
 	return (makeint(strtol(stok.buf, &e, 10)));
 
-    if (flttoken(stok.buf) || expttoken(stok.buf))
-	return (makeflt(atof(stok.buf)));
+    if (flttoken(stok.buf))
+    return (makeflt(atof(stok.buf)));
 
+    if ((res=expttoken(stok.buf))){
+    if (res == 2)
+		error(FLT_OVERF, "number-parse", arg1); 
+    else 
+    if (res == 3)
+        error(FLT_UNDERF, "number-parse", arg1); 
+	else 
+    return (makeflt(atof(stok.buf)));
+    }
+    
     if (bintoken(stok.buf))
 	return (readbin(stok.buf));
 

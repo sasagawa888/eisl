@@ -1113,7 +1113,7 @@ f_return_from(int arglist)
     tag = arg1;
     block_pt--;
     if (block_env[block_pt][1] != tag)
-	error(ILLEGAL_ARGS, "return-from tag not exist", tag);
+	error(UNDEF_TAG, "return-from tag not exist", tag);
     block_arg = f_progn(arg2);
     ep = block_env[block_pt][0];	// restore environment
     longjmp(block_buf[block_pt], 1);

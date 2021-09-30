@@ -426,6 +426,7 @@ gettoken(void)
 {
     int             c;
     int             pos;
+	int 			res;
 
     if (stok.flag == BACK) {
 	stok.flag = GO;
@@ -615,7 +616,13 @@ gettoken(void)
 		stok.type = HEXNUM;
 		break;
 	    }
-	    if (expttoken(stok.buf)) {
+	    if ((res=expttoken(stok.buf))) {
+		if (res == 2)
+		stok.type = EXPTOVERF;
+		else
+		if (res == 3)
+		stok.type = EXPTUNDERF;
+		else
 		stok.type = EXPTNUM;
 		break;
 	    }
@@ -960,10 +967,10 @@ expttoken(char buf[])
     if (tok.sepch != NUL &&
 	(inttoken(tok.before) || flttoken(tok.before)) &&
 	inttoken(tok.after)) {
-	if (atoi(tok.after) > 99)
+	if (atoi(tok.after) > 999)
 		return(2); //overflow
 	else 
-	if (atoi(tok.after) < -99)
+	if (atoi(tok.after) < -999)
 		return(3); //underflow
 	else 
 		return(1); //regular
@@ -976,10 +983,10 @@ expttoken(char buf[])
 	return (0);
     if ((inttoken(tok.before) || flttoken(tok.before)) &&
 	inttoken(tok.after)) {
-	if (atoi(tok.after) > 99)
+	if (atoi(tok.after) > 999)
 		return(2); //overflow
 	else 
-	if (atoi(tok.after) < -99)
+	if (atoi(tok.after) < -999)
 		return(3); //underflow
 	else 
 		return(1); //regular
@@ -1050,6 +1057,12 @@ sread(void)
 	return (readhex(stok.buf));
     case EXPTNUM:
 	return (makeflt(atof(stok.buf)));
+	case EXPTOVERF:
+	error(FLT_OVERF,"read",NIL);
+	break;
+	case EXPTUNDERF:
+	error(FLT_UNDERF,"read",NIL);
+	break;
     case VECTOR:
 	return (vector(readlist()));
     case ARRAY:

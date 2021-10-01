@@ -441,7 +441,7 @@ error(int errnum, const char *fun, int arg)
 		  makestr("Not exist matched method at "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
-	signal_condition(makeinstance(cprogram_error, initargs), NIL);
+	signal_condition(makeinstance(cerror, initargs), NIL);
 	break;
     case HAS_COMMON_CLASS:
 	initargs =

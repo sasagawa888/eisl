@@ -58,37 +58,6 @@ initexsubr(void)
     defsubr("DELAY-MICROSECONDS", f_delay_microseconds);
 #endif
 
-#ifdef __NVCC__
-    defsubr("GPU-ACCURACY", f_gpu_accuracy);
-    defsubr("GPU-ACTIVATE", f_gpu_activate);
-    defsubr("GPU-ADAGRAD", f_gpu_adagrad);
-    defsubr("GPU-ADAM", f_gpu_adam);
-    defsubr("GPU-ADD", f_gpu_add);
-    defsubr("GPU-ANALIZER", f_gpu_analizer);
-    defsubr("GPU-AVERAGE", f_gpu_average);
-    defsubr("GPU-COPY", f_gpu_copy);
-    defsubr("GPU-CONVOLUTE", f_gpu_convolute);
-    defsubr("GPU-CORRECT", f_gpu_correct);
-    defsubr("GPU-DECONVOLUTE", f_gpu_deconvolute);
-    defsubr("GPU-DIFF", f_gpu_diff);
-    defsubr("GPU-DROPOUT", f_gpu_dropout);
-    defsubr("GPU-EMULT", f_gpu_emult);
-    defsubr("GPU-FULL", f_gpu_full);
-    defsubr("GPU-GRADFILTER", f_gpu_gradfilter);
-    defsubr("GPU-IDENT", f_gpu_ident);
-    defsubr("GPU-LOSS", f_gpu_loss);
-    defsubr("GPU-MULT", f_gpu_mult);
-    defsubr("GPU-POOLING", f_gpu_pooling);
-    defsubr("GPU-RANDOM-SELECT", f_gpu_random_select);
-    defsubr("GPU-SGD", f_gpu_sgd);
-    defsubr("GPU-SUB", f_gpu_sub);
-    defsubr("GPU-SUM", f_gpu_sum);
-    defsubr("GPU-SMULT", f_gpu_smult);
-    defsubr("GPU-TRACE", f_gpu_trace);
-    defsubr("GPU-TRANSPOSE", f_gpu_transpose);
-    defsubr("GPU-UNFULL", f_gpu_unfull);
-    defsubr("GPU-UNPOOLING", f_gpu_unpooling);
-#endif
 }
 
 // Fast Project

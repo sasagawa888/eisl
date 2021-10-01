@@ -4787,6 +4787,8 @@ f_class_of(int arglist)
 	return (cbuilt_in_class);
     else if (GET_OPT(arg) == USER)
 	return (cstandard_class);
+    else if (symbolp(arg))
+    return (csymbol);
     else
 	return (GET_AUX(arg));
 }
@@ -4804,7 +4806,12 @@ f_instancep(int arglist)
     if (!classp(arg2))
 	error(NOT_CLASS, "instancep", arg2);
 
-    if (GET_AUX(arg1) == arg2)
+    if (symbolp(arg1) && arg1 != NIL && arg1 != T){
+        if (arg2 == csymbol) return(T);
+        else if (subclassp(csymbol,arg2)) return(T);
+        else return(NIL);
+    }
+    else if (GET_AUX(arg1) == arg2)
 	return (T);
     else if (subclassp(GET_AUX(arg1), arg2))
 	return (T);

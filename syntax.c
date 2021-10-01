@@ -611,6 +611,9 @@ f_defun(int arglist)
     if (!symbollistp(car(arg2)))
 	error(OUT_OF_DOMAIN, "defun", car(arg2));
 
+    // when arg1 is nil or t, defun does not affect.
+    if (arg1 == NIL || arg2 == T)
+    return (arg1);
 
     val = makefunc(GET_NAME(arg1), arg2);
     SET_CAR(arg1, val);

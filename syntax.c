@@ -1675,6 +1675,9 @@ f_defclass(int arglist)
     }
 
     abstractp = metaclass = NIL;
+    int         abstractp_flag;
+    abstractp_flag = UNDEF;
+
     while (!nullp(arg4)) {
 	int             ls;
 
@@ -1682,13 +1685,18 @@ f_defclass(int arglist)
 	    error(ILLEGAL_FORM, "defclass", arg4);
 	ls = car(arg4);
 	if (eqp(car(ls), makesym(":ABSTRACTP"))) {
-	    abstractp = eval(cadr(ls));
+	    abstractp = cadr(ls);
+        if(length(ls) != 2)
+            error(ILLEGAL_FORM,"defclass",arg4);
+        if(abstractp != NIL && abstractp != T)
+            error(ILLEGAL_FORM,"defclass",arg4);
+        if(abstractp_flag != UNDEF && abstractp != abstractp_flag)
+            error(ILLEGAL_FORM,"defclass",arg4);
+        abstractp_flag = abstractp;
 	}
     else if (eqp(car(ls),makesym(":METACLASS"))){
         metaclass = cadr(ls);
-        if(nullp(metaclass))
-            error(ILLEGAL_FORM,"defclass",arg4);
-        if(length(ls) > 2)
+        if(length(ls) != 2)
             error(ILLEGAL_FORM,"defclass",arg4);
         if(!eqp(metaclass,makesym("<STANDARD-CLASS>")))
             error(ILLEGAL_FORM,"defclass",arg4);

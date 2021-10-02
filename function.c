@@ -4947,7 +4947,7 @@ f_error(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "error", arg1);
 
-    return (signal_condition(makeusercond(cerror, arg1, arg2), NIL));
+    return (signal_condition(makeusercond(csimple_error, arg1, arg2), NIL));
 }
 
 int

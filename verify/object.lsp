@@ -84,19 +84,19 @@
 ;;; 
 ($error (defclass foo () () (:foo foo)) <error>)
 ;;; :metaclass 
-;($error (defclass foo () () (:metaclass)) <error>)
-;($error (defclass foo () () 
-;	  (:metaclass <standard-class> <standard-class>)) <error>)
+($error (defclass foo () () (:metaclass)) <error>)
+($error (defclass foo () () 
+	  (:metaclass <standard-class> <standard-class>)) <error>)
 ;;; :metaclass 
-;(test (defclass foo-1 () () (:metaclass <standard-class>)) foo-1)
-;($error (defclass foo () () (:metaclass (<standard-class>))) 
-;	<error>)
-;($error (defclass foo () () (:metaclass <object>)) <error>)
-;($error (defclass foo () () (:metaclass foo)) <error>)
+(test (defclass foo-1 () () (:metaclass <standard-class>)) foo-1)
+($error (defclass foo () () (:metaclass (<standard-class>))) 
+	<error>)
+($error (defclass foo () () (:metaclass <object>)) <error>)
+($error (defclass foo () () (:metaclass foo)) <error>)
 ;;; :metaclass
-;($error (defclass foo () () 
-;	  (:metaclass <standard-class>) (:metaclass <stnadard-class>))
-;	<error>)
+($error (defclass foo () () 
+	  (:metaclass <standard-class>) (:metaclass <stnadard-class>))
+	<error>)
 ;;; :abstractp
 (test (defclass foo-2 () () (:abstractp nil)) foo-2)
 (test (defclass bar () () (:abstractp t)) bar)

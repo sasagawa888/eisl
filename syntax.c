@@ -1686,6 +1686,12 @@ f_defclass(int arglist)
 	}
     else if (eqp(car(ls),makesym(":METACLASS"))){
         metaclass = cadr(ls);
+        if(nullp(metaclass))
+            error(ILLEGAL_FORM,"defclass",arg4);
+        if(length(ls) > 2)
+            error(ILLEGAL_FORM,"defclass",arg4);
+        if(!eqp(metaclass,makesym("<STANDARD-CLASS>")))
+            error(ILLEGAL_FORM,"defclass",arg4);
     }
      else {
 	    error(ILLEGAL_FORM, "defclass", ls);

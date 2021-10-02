@@ -1000,29 +1000,30 @@
 ;($eval (defmethod foo-41 ((a <number>) &rest r)
 ;	 (car r)))
 ;(test (foo-41 1 2) 2 eql)
+|#
 ;;;------------------------------------------------------------
 ;;; [generic function]
 ;;;
 ;;;  (create class {initarg initval}*) --> <object>
 ;;;------------------------------------------------------------
-;($eval (defclass foo () ((a :initarg a))))
+($eval (defclass foo () ((a :initarg a))))
 ;;
-;($error (create) <program-error>)
+($error (create) <program-error>)
 ;($error (create (class foo) 'a) <program-error>)
 ;($error (create (class foo) 'a 10 'b) <program-error>)
 ;;
-;($error (create (class <object>)) <error>)
-;($error (create (class <basic-array>)) <error>)
-;($error (create (class <basic-array*>)) <error>)
-;($error (create (class <general-array*>)) <error>)
-;($error (create (class <basic-vector>)) <error>)
-;($error (create (class <general-vector>)) <error>)
-;($error (create (class <string>)) <error>)
-;($error (create (class <built-in-class>)) <error>)
-;($error (create (class <character>)) <error>)
-;($error (create (class <function>)) <error>)
-;($error (create (class <generic-function>)) <error>)
-;($error (create (class <standard-generic-function>)) <error>)
+($error (create (class <object>)) <error>)
+($error (create (class <basic-array>)) <error>)
+($error (create (class <basic-array*>)) <error>)
+($error (create (class <general-array*>)) <error>)
+($error (create (class <basic-vector>)) <error>)
+($error (create (class <general-vector>)) <error>)
+($error (create (class <string>)) <error>)
+($error (create (class <built-in-class>)) <error>)
+($error (create (class <character>)) <error>)
+($error (create (class <function>)) <error>)
+($error (create (class <generic-function>)) <error>)
+($error (create (class <standard-generic-function>)) <error>)
 ;($error (create (class <list>)) <error>)
 ;($error (create (class <cons>)) <error>)
 ;($error (create (class <null>)) <error>)
@@ -1062,10 +1063,10 @@
 ($argc initialize-object 2 0 0)
 ;;($type initialize-object ($instance) :target nil)
 ;;
-;(test (defclass c0 ()
-;   ((x :initform 0 :accessor c0-x :initarg x)
-;    (y :initform 1 :accessor c0-y :initarg y)))
-; c0)
+(test (defclass c0 ()
+   ((x :initform 0 :accessor c0-x :initarg x)
+    (y :initform 1 :accessor c0-y :initarg y)))
+ c0)
 (test (defmethod initialize-object ((instance c0) init-list)
    (if (next-method-p)
        (call-next-method))
@@ -1092,7 +1093,7 @@
 (test (eq (class-of (create-string 3 #\a)) (class <string>)) t)
 (test (eq (class-of "foo") (class <string>)) t)
 
-|#
+
 ;; <built-in-class>
 (test (eq (class-of (class <object>)) (class <built-in-class>)) t)
 (test (eq (class-of (class <basic-array>)) (class <built-in-class>)) t)

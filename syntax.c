@@ -1613,7 +1613,7 @@ f_defclass(int arglist)
 	    } else if (eqp(car(ls), makesym(":INITARG"))) {
 		initarg = cadr(ls);
 	    } else
-		error(ILLEGAL_FORM, "defclass2", ls);
+		error(ILLEGAL_FORM, "defclass", ls);
 
 	    ls = cddr(ls);
 	}

@@ -56,23 +56,23 @@
 ($error (defclass foo () (test (a :accessor a-a a-b))) <error>)
 ($error (defclass foo () (test (a :accessor :a))) <program-error>)
 ;;; :boundp
-;($error (defclass foo () (test (a :boundp))) <error>)
-;($error (defclass foo () (test (a :boundp a-a a-b))) <error>)
-;($error (defclass foo () (test (a :boundp :a))) <program-error>)
+($error (defclass foo () (test (a :boundp))) <error>)
+($error (defclass foo () (test (a :boundp a-a a-b))) <error>)
+($error (defclass foo () (test (a :boundp :a))) <program-error>)
 ;;; :initarg
-;($error (defclass foo () (test (a :initarg))) <error>)
-;($error (defclass foo () (test (a :initarg a b))) <error>)
-;($error (defclass foo () (test (a :initarg :a))) <program-error>)
+($error (defclass foo () (test (a :initarg))) <error>)
+($error (defclass foo () (test (a :initarg a b))) <error>)
+($error (defclass foo () (test (a :initarg :a))) <program-error>)
 ;;; :initarg
-;($error (defclass foo () (test (a :initarg a :initarg aa))) <error>)
+($error (defclass foo () (test (a :initarg a :initarg aa))) <error>)
 ;;; :initform
-;($error (defclass foo () (test (a :initform))) <error>)
-;($error (defclass foo () (test (a :initform 1 2))) <error>)
+($error (defclass foo () (test (a :initform))) <error>)
+($error (defclass foo () (test (a :initform 1 2))) <error>)
 ;;; :initform
-;($error (defclass foo () (test (a :initform 1 :initform 2))) <error>)
+($error (defclass foo () (test (a :initform 1 :initform 2))) <error>)
 ;;; 
-;($error (defclass foo () (test (a 1 2))) <error>)
-;($error (defclass foo () (test (a :foo foo))) <error>)
+($error (defclass foo () (test (a 1 2))) <error>)
+($error (defclass foo () (test (a :foo foo))) <error>)
 
 ;;;----------  ----------
 ;;; 

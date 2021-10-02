@@ -267,7 +267,7 @@
 ;	<undefined-entity>)
 ;;
 ;;
-#|
+
 ($eval (defgeneric foo-g-4 (x)))
 ($eval (defmethod foo-g-4 (x) 'object-1))
 ($eval (defmethod foo-g-4 :around (x) 'around-object-1))
@@ -289,6 +289,7 @@
 ;($error (defmethod car (x)) <program-error>)
 ;;
 ;($error (defmethod undef (x)) <undefined-function>)
+#|
 ;;
 ;;
 ($eval (defgeneric foo-g-6 (x)))
@@ -956,7 +957,6 @@
   (test (default "foo" "bar") "foobar"))
  equal)
 ;;
-
 ($eval (defglobal f nil))
 ($eval (defgeneric foo-38 (x y)))
 ($eval (defmethod foo-38 (x y) (list x y)))
@@ -1009,8 +1009,8 @@
 ($eval (defclass foo () ((a :initarg a))))
 ;;
 ($error (create) <program-error>)
-;($error (create (class foo) 'a) <program-error>)
-;($error (create (class foo) 'a 10 'b) <program-error>)
+($error (create (class foo) 'a) <program-error>)
+($error (create (class foo) 'a 10 'b) <program-error>)
 ;;
 ($error (create (class <object>)) <error>)
 ($error (create (class <basic-array>)) <error>)
@@ -1024,37 +1024,37 @@
 ($error (create (class <function>)) <error>)
 ($error (create (class <generic-function>)) <error>)
 ($error (create (class <standard-generic-function>)) <error>)
-;($error (create (class <list>)) <error>)
-;($error (create (class <cons>)) <error>)
-;($error (create (class <null>)) <error>)
-;($error (create (class <symbol>)) <error>)
-;($error (create (class <number>)) <error>)
-;($error (create (class <float>)) <error>)
-;($error (create (class <integer>)) <error>)
-;($error (create (class <serious-condition>)) <error>)
-;($error (create (class <error>)) <error>)
-;($error (create (class <arithmetic-error>)) <error>)
-;($error (create (class <division-by-zero>)) <error>)
-;($error (create (class <floating-point-overflow>)) <error>)
-;($error (create (class <floating-point-underflow>)) <error>)
-;($error (create (class <control-error>)) <error>)
-;($error (create (class <parse-error>)) <error>)
-;($error (create (class <program-error>)) <error>)
-;($error (create (class <domain-error>)) <error>)
-;($error (create (class <undefined-entity>)) <error>)
-;($error (create (class <unbound-variable>)) <error>)
-;($error (create (class <undefined-function>)) <error>)
-;($error (create (class <simple-error>)) <error>)
-;($error (create (class <stream-error>)) <error>)
-;($error (create (class <end-of-stream>)) <error>)
-;($error (create (class <storage-exhausted>)) <error>)
-;($error (create (class <standard-class>)) <error>)
-;($error (create (class <standard-object>)) <error>)
-;($error (create (class <stream>)) <error>)
-;($error (create (class <invalid>)) <error>)
+($error (create (class <list>)) <error>)
+($error (create (class <cons>)) <error>)
+($error (create (class <null>)) <error>)
+($error (create (class <symbol>)) <error>)
+($error (create (class <number>)) <error>)
+($error (create (class <float>)) <error>)
+($error (create (class <integer>)) <error>)
+($error (create (class <serious-condition>)) <error>)
+($error (create (class <error>)) <error>)
+($error (create (class <arithmetic-error>)) <error>)
+($error (create (class <division-by-zero>)) <error>)
+($error (create (class <floating-point-overflow>)) <error>)
+($error (create (class <floating-point-underflow>)) <error>)
+($error (create (class <control-error>)) <error>)
+($error (create (class <parse-error>)) <error>)
+($error (create (class <program-error>)) <error>)
+($error (create (class <domain-error>)) <error>)
+($error (create (class <undefined-entity>)) <error>)
+($error (create (class <unbound-variable>)) <error>)
+($error (create (class <undefined-function>)) <error>)
+($error (create (class <simple-error>)) <error>)
+($error (create (class <stream-error>)) <error>)
+($error (create (class <end-of-stream>)) <error>)
+($error (create (class <storage-exhausted>)) <error>)
+($error (create (class <standard-class>)) <error>)
+($error (create (class <standard-object>)) <error>)
+($error (create (class <stream>)) <error>)
+($error (create (class <invalid>)) <error>)
 ;;
-;($eval (defclass foo () () (:abstractp t)))
-;($error (create (class foo)) <error>)
+($eval (defclass foo () () (:abstractp t)))
+($error (create (class foo)) <error>)
 ;;;------------------------------------------------------------
 ;;; [generic function]
 ;;;
@@ -4224,6 +4224,6 @@
 ($argc class 1 0 0)
 ($stype class ($symbol $null) :target)
 ;;
-;($error (class undef) <undefined-entity>)
+($error (class undef) <undefined-entity>)
 
 

@@ -4820,6 +4820,9 @@ f_instancep(int arglist)
         else
             return(NIL);
     }
+    else if (GET_OPT(arg1) == USER && arg2 == cstandard_class)
+        // user defined class instance is standard-class
+    return (T);
     else if (GET_AUX(arg1) == arg2)
 	return (T);
     else if (subclassp(GET_AUX(arg1), arg2))

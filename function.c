@@ -405,7 +405,7 @@ initgeneric(void)
 			   list3(makesym("CREATE*"), makesym("x"), NIL))),
 		    list3(makesym("INITIALIZE-OBJECT"), makesym("obj"),
 			  makesym("y")), makesym("obj")));
-    eval(list4(makesym("DEFGENERIC*"), makesym("CREATE"), lamlis, body));
+    eval(list4(makesym("DEFGENERIC"), makesym("CREATE"), lamlis, body));
     /*
      * (defgeneric create(x :rest y) (:method (x y) (let ((obj (create* x
      * '()))) (initialize-object obj y) obj)))

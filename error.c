@@ -333,7 +333,7 @@ error(int errnum, const char *fun, int arg)
 	    list6(makesym("format-string"), makestr("Illegal form at "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
-	signal_condition(makeinstance(cprogram_error, initargs), NIL);
+	signal_condition(makeinstance(cerror, initargs), NIL);
 	break;
     case ILLEGAL_ARGS:
 	initargs =

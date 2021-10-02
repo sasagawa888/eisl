@@ -38,23 +38,23 @@
 
 ;;;----------  ----------
 ;;;
-;($error (defclass foo () (:a)) <program-error>)
-;($error (defclass foo () (&a)) <program-error>)
+($error (defclass foo () (:a)) <program-error>)
+($error (defclass foo () (&a)) <program-error>)
 ;;;
-;($error (defclass foo () (a a)) <error>)
-;($error (defclass foo () (a (a :initarg a))) <error>)
+($error (defclass foo () (a a)) <error>)
+($error (defclass foo () (a (a :initarg a))) <error>)
 ;;; :reader
-;($error (defclass foo () (test (a :reader))) <error>)
-;($error (defclass foo () (test (a :reader a-a a-b))) <error>)
-;($error (defclass foo () (test (a :reader :a))) <program-error>)
+($error (defclass foo () (test (a :reader))) <error>)
+($error (defclass foo () (test (a :reader a-a a-b))) <error>)
+($error (defclass foo () (test (a :reader :a))) <program-error>)
 ;;; :writer
-;($error (defclass foo () (test (a :writer))) <error>)
-;($error (defclass foo () (test (a :writer a-a a-b))) <error>)
-;($error (defclass foo () (test (a :writer :a))) <program-error>)
+($error (defclass foo () (test (a :writer))) <error>)
+($error (defclass foo () (test (a :writer a-a a-b))) <error>)
+($error (defclass foo () (test (a :writer :a))) <program-error>)
 ;;; :accessor
-;($error (defclass foo () (test (a :accessor))) <error>)
-;($error (defclass foo () (test (a :accessor a-a a-b))) <error>)
-;($error (defclass foo () (test (a :accessor :a))) <program-error>)
+($error (defclass foo () (test (a :accessor))) <error>)
+($error (defclass foo () (test (a :accessor a-a a-b))) <error>)
+($error (defclass foo () (test (a :accessor :a))) <program-error>)
 ;;; :boundp
 ;($error (defclass foo () (test (a :boundp))) <error>)
 ;($error (defclass foo () (test (a :boundp a-a a-b))) <error>)

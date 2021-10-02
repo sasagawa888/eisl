@@ -1488,11 +1488,20 @@ f_defclass(int arglist)
 	// :reader a-read))
 	sym = caar(arg3);
 	if ((STRING_REF(sym, 0) == '&') || (STRING_REF(sym, 0) == ':'))
-	    error(ILLEGAL_FORM, "defclass", sym);
+	    error(IMPROPER_FORM, "defclass", sym);
 	ls = cdar(arg3);
 	if (!listp(car(arg3)))
 	    error(ILLEGAL_FORM, "defclass", arg3);
+    
 	while (!nullp(ls)) {
+        if (listp(car(ls)) && length(car(ls))==3)
+        {
+            error(IMPROPER_FORM,"defclass",arg3);
+        }
+        if (!atomp(car(ls)))
+        {
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
 	    if (eqp(car(ls), makesym(":READER"))) {
 		reader = cadr(ls);
 		// (if (not (generic-function-p (function* name)))

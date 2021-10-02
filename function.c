@@ -4806,10 +4806,19 @@ f_instancep(int arglist)
     if (!classp(arg2))
 	error(NOT_CLASS, "instancep", arg2);
 
+
+    
     if (symbolp(arg1) && arg1 != NIL && arg1 != T){
         if (arg2 == csymbol) return(T);
         else if (subclassp(csymbol,arg2)) return(T);
         else return(NIL);
+    }
+    else if (IS_GENERIC(arg1) && strcmp(GET_NAME(arg1),"CREATE")==0) {
+        // (instancep #'create (class <standard-generic-function>)) => NIL)
+        if (subclassp(GET_AUX(arg1),arg2))
+            return(T);
+        else
+            return(NIL);
     }
     else if (GET_AUX(arg1) == arg2)
 	return (T);

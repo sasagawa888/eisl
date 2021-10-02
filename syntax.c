@@ -1480,9 +1480,12 @@ f_defclass(int arglist)
 	                accessor,
 	                boundp,
 	                initform,
-	                initarg;
+	                initarg,
+                    initform_flag,
+                    initarg_flag;
 
 	reader = writer = accessor = boundp = initform = initarg = NIL;
+    initform_flag = initarg_flag = 0;
 	if (!listp(car(arg3)))
 	    arg3 = list1(arg3);	// if form=(a :reader a-read) => ((a
 	// :reader a-read))
@@ -1494,16 +1497,15 @@ f_defclass(int arglist)
 	    error(ILLEGAL_FORM, "defclass", arg3);
     
 	while (!nullp(ls)) {
-        if (listp(car(ls)) && length(car(ls))==3)
-        {
-            error(IMPROPER_FORM,"defclass",arg3);
-        }
-        if (!atomp(car(ls)))
-        {
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
+       
 	    if (eqp(car(ls), makesym(":READER"))) {
 		reader = cadr(ls);
+        if (nullp(reader)){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        if (symbolp(reader) && STRING_REF(reader, 0) == ':'){
+	        error(IMPROPER_FORM, "defclass", arg3);
+        }
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
@@ -1537,6 +1539,12 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":WRITER"))) {
 		writer = cadr(ls);
+        if (nullp(writer)){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        if (symbolp(writer) && STRING_REF(writer, 0) == ':'){
+	        error(IMPROPER_FORM, "defclass", arg3);
+        }
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x y)))
 		// (defmethod name (x (y arg1))
@@ -1567,6 +1575,12 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":ACCESSOR"))) {
 		accessor = cadr(ls);
+        if (nullp(accessor)){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        if (symbolp(accessor) && STRING_REF(accessor, 0) == ':'){
+	        error(IMPROPER_FORM, "defclass", arg3);
+        }
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
@@ -1594,6 +1608,12 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":BOUNDP"))) {
 		boundp = cadr(ls);
+        if (nullp(boundp)){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        if (symbolp(boundp) && STRING_REF(boundp, 0) == ':'){
+	        error(IMPROPER_FORM, "defclass", arg3);
+        }
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
@@ -1617,10 +1637,31 @@ f_defclass(int arglist)
 						  sym)))));
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":INITFORM"))) {
-		initform = eval(cadr(ls));
+        initform = cadr(ls);
+        if (nullp(initform)){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        if (symbolp(initform) && STRING_REF(initform, 0) == ':'){
+	        error(IMPROPER_FORM, "defclass", arg3);
+        }
+        if (initform_flag){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+		initform = eval(initform);
 		val = initform;
+        initform_flag = 1;
 	    } else if (eqp(car(ls), makesym(":INITARG"))) {
 		initarg = cadr(ls);
+        if (nullp(initarg)){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        if (symbolp(initarg) && STRING_REF(initarg, 0) == ':'){
+	        error(IMPROPER_FORM, "defclass", arg3);
+        }
+        if (initarg_flag){
+            error(ILLEGAL_FORM,"defclass",arg3);
+        }
+        initarg_flag = 1;
 	    } else
 		error(ILLEGAL_FORM, "defclass", ls);
 

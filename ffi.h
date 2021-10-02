@@ -27,6 +27,7 @@ enum Option {
     CONTINUABLE,		// continuable condition
     NOTCONT,			// no continuable condition
     ABSTRACT,			// abstract class
+    METACLASS,          // meta class
 
     // *** WARNING: THE FOLLOWING ARE INTERNAL VALUES THAT CLIENTS SHOULD
     // NOT USE ***

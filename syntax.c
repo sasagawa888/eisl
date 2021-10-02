@@ -1433,7 +1433,8 @@ f_defclass(int arglist)
                     cl,
                     form,
                     initargs,
-                    abstractp;
+                    abstractp,
+                    metaclass;
 
     arg1 = car(arglist);	// class-name
     arg2 = cadr(arglist);	// super-class
@@ -1673,7 +1674,7 @@ f_defclass(int arglist)
 	arg3 = cdr(arg3);
     }
 
-    abstractp = NIL;
+    abstractp = metaclass = NIL;
     while (!nullp(arg4)) {
 	int             ls;
 
@@ -1682,7 +1683,11 @@ f_defclass(int arglist)
 	ls = car(arg4);
 	if (eqp(car(ls), makesym(":ABSTRACTP"))) {
 	    abstractp = eval(cadr(ls));
-	} else {
+	}
+    else if (eqp(car(ls),makesym(":METACLASS"))){
+        metaclass = cadr(ls);
+    }
+     else {
 	    error(ILLEGAL_FORM, "defclass", ls);
 	}
 	arg4 = cdr(arg4);
@@ -1690,7 +1695,11 @@ f_defclass(int arglist)
     cl = makeclass(GET_NAME(arg1), sc);
     if (abstractp == T) {
 	SET_OPT(cl, ABSTRACT);	// abstract-class;
-    } else {
+    }
+    else if (metaclass == T){
+    SET_OPT(cl,METACLASS); // meta-class;
+    }
+     else {
 	SET_OPT(cl, USER);	// standard-class;
     }
     SET_CDR(cl, var);

@@ -335,7 +335,7 @@ error(int errnum, const char *fun, int arg)
 		  makesym(fun1));
 	signal_condition(makeinstance(cerror, initargs), NIL);
 	break;
-	case IMPROPER_FORM:
+    case IMPROPER_FORM:
 	initargs =
 	    list6(makesym("format-string"), makestr("Illegal form at "),
 		  makesym("format-arguments"), arg, makesym("function"),

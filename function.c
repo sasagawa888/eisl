@@ -1849,7 +1849,7 @@ f_map_into(int arglist)
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
     if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	// when arg2 is thunk
-						// (lambda () ...)
+	// (lambda () ...)
 	val = reverse(map_into_thunk(arg2, arg4));
     else
 	val = mapcar(arg2, arg4);
@@ -1876,7 +1876,7 @@ f_map_into(int arglist)
 	i = 0;
 	while (!nullp(val)) {
 	    if (!charp(car(val)))	// when val is not char list
-					// return arg1
+		// return arg1
 		return (arg1);
 	    STRING_SET(res, i, GET_CHAR(car(val)));
 	    i++;
@@ -3278,6 +3278,7 @@ f_string_index(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// "" "")
 	return (makeint(0));
 
@@ -3944,6 +3945,7 @@ f_format_fresh_line(int arglist)
 	save = output_stream;
 	output_stream = arg1;
 	// output newline char if it cannot be determinned that the output 
+	// 
 	// stream is at the begining of a fresh line
 	if (GET_OPT(output_stream) == EISL_OUTSTR
 	    && strlen(GET_NAME(output_stream)) == 0) {
@@ -4788,7 +4790,7 @@ f_class_of(int arglist)
     else if (GET_OPT(arg) == USER)
 	return (cstandard_class);
     else if (symbolp(arg))
-    return (csymbol);
+	return (csymbol);
     else
 	return (GET_AUX(arg));
 }
@@ -4807,22 +4809,24 @@ f_instancep(int arglist)
 	error(NOT_CLASS, "instancep", arg2);
 
 
-    
-    if (symbolp(arg1) && arg1 != NIL && arg1 != T){
-        if (arg2 == csymbol) return(T);
-        else if (subclassp(csymbol,arg2)) return(T);
-        else return(NIL);
-    }
-    else if (IS_GENERIC(arg1) && strcmp(GET_NAME(arg1),"CREATE")==0) {
-        // (instancep #'create (class <standard-generic-function>)) => NIL)
-        if (subclassp(GET_AUX(arg1),arg2))
-            return(T);
-        else
-            return(NIL);
-    }
-    else if (GET_OPT(arg1) == USER && arg2 == cstandard_class)
-        // user defined class instance is standard-class
-    return (T);
+
+    if (symbolp(arg1) && arg1 != NIL && arg1 != T) {
+	if (arg2 == csymbol)
+	    return (T);
+	else if (subclassp(csymbol, arg2))
+	    return (T);
+	else
+	    return (NIL);
+    } else if (IS_GENERIC(arg1) && strcmp(GET_NAME(arg1), "CREATE") == 0) {
+	// (instancep #'create (class <standard-generic-function>)) =>
+	// NIL)
+	if (subclassp(GET_AUX(arg1), arg2))
+	    return (T);
+	else
+	    return (NIL);
+    } else if (GET_OPT(arg1) == USER && arg2 == cstandard_class)
+	// user defined class instance is standard-class
+	return (T);
     else if (GET_AUX(arg1) == arg2)
 	return (T);
     else if (subclassp(GET_AUX(arg1), arg2))
@@ -4950,7 +4954,8 @@ f_error(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "error", arg1);
 
-    return (signal_condition(makeusercond(csimple_error, arg1, arg2), NIL));
+    return (signal_condition
+	    (makeusercond(csimple_error, arg1, arg2), NIL));
 }
 
 int

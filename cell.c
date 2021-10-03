@@ -51,7 +51,7 @@ initcell(void)
     SET_AUX(UNDEF, CLASS_SYMBOL);	// class of <undef> is symbol
     makesym("<file-end>");	// 6the address is FEND
     SET_AUX(FEND, CLASS_SYMBOL);	// class of <end-of-file> is
-					// symbol
+    // symbol
     ep = 0;
     dp = 0;
     sp = 0;
@@ -67,7 +67,7 @@ bindclass(const char *name, int cl)
     SET_AUX(sym, cl);
     SET_OPT(cl, SYSTEM);	// built-in-class
     SET_OPT(sym, SYSTEM);	// symbol formated by <***> are
-				// built-in-classes
+    // built-in-classes
 }
 
 // class aux = ((format-string . error-msg)(format-arguments . args))
@@ -715,24 +715,22 @@ makegeneric(char *pname, int lamlist, int body)
     SET_CAR(val, copy_heap(lamlist));
     SET_OPT(val, count_args(lamlist));	// amount of argument
     SET_CDR(val, NIL);
-    SET_PROP(val,T);  // method-combination default is T
+    SET_PROP(val, T);		// method-combination default is T
     SET_AUX(val, cstandard_generic_function);
     while (!nullp(body)) {
-	if (eqp(caar(body), makesym(":METHOD"))){
-        if(method_qualifier_p(caddar(body)) && GET_PROP(val)==NIL){
-            error(ILLEGAL_FORM,"defgeneric",body);
-        }
+	if (eqp(caar(body), makesym(":METHOD"))) {
+	    if (method_qualifier_p(caddar(body)) && GET_PROP(val) == NIL) {
+		error(ILLEGAL_FORM, "defgeneric", body);
+	    }
 	    insert_method(makemethod(cdar(body)), val);
-    }
-    else if (eqp(caar(body), makesym(":METHOD-COMBINATION"))){
-        if (cadar(body) == NIL || cadar(body) == T)
-            SET_PROP(val,cadar(body));
-        else
-            error(ILLEGAL_FORM,"defgeneric",body);
-    }
-    else{
-        error(ILLEGAL_FORM,"defgeneric",body);
-    }
+	} else if (eqp(caar(body), makesym(":METHOD-COMBINATION"))) {
+	    if (cadar(body) == NIL || cadar(body) == T)
+		SET_PROP(val, cadar(body));
+	    else
+		error(ILLEGAL_FORM, "defgeneric", body);
+	} else {
+	    error(ILLEGAL_FORM, "defgeneric", body);
+	}
 	body = cdr(body);
     }
     return (val);
@@ -805,7 +803,7 @@ makestream(FILE * port, int type, const char *name)
     SET_OPT(addr, type);	// input/output/inout/EISL_INSTR/EISL_OUTSTR
     SET_NAME(addr, name);
     SET_PROP(addr, 0);		// output-string-stream charcount from
-				// left
+    // left
     return (addr);
 }
 
@@ -999,13 +997,14 @@ initinst(int x, int initls)
 
     cl = GET_AUX(x);		// class of x
     class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
-				// ((initarg1 . accessor1)(initarg2 .
-				// accesor2)...)
+				// 
+    // ((initarg1 . accessor1)(initarg2 .
+    // accesor2)...)
     inst_vars = GET_CDR(x);	// instance variable list. This is assoc
-				// list ((accessor1 . val1)(accessor2 .
-				// val2) ...)
+    // list ((accessor1 . val1)(accessor2 .
+    // val2) ...)
     initargs = GET_AUX(cl);	// list to set (initarg1 val1 initarg2
-				// val2 ...)
+    // val2 ...)
     while (!nullp(class_vars)) {
 	if ((n = assq(caar(class_vars), inst_vars)) != FAILSE)
 	    SET_CDR(n, copy(cdar(class_vars)));
@@ -1039,18 +1038,18 @@ initinst1(int inst_vars, int sc, int initls)
     if (nullp(sc))
 	return (inst_vars);
     else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) {	// when
-								// not
-								// exist
-								// super-class 
-								// of
-								// super-class
+	// not
+	// exist
+	// super-class 
+	// of
+	// super-class
 	class_vars = GET_AUX(GET_AUX(sc));
 	return (initinst2(inst_vars, class_vars, initls));
     } else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) {	// when
-								// exists
-								// super-class 
-								// of
-								// superclass
+	// exists
+	// super-class 
+	// of
+	// superclass
 	class_vars = GET_AUX(GET_AUX(sc));
 	int             temp1;
 	temp1 = initinst2(inst_vars, class_vars, initls);

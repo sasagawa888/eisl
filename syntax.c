@@ -474,11 +474,10 @@ f_setf(int arglist)
     // e.g. (setf (access-foo-a x) 100) 
     else if (listp(arg1) && length(arg1) == 2) {
 	// a method returns it's variable name 
-    if(functionp(car(arg1)) || genericp(car(arg1))){
-	var = eval(list2(car(arg1), NIL));
-    }
-    else
-    error (IMPROPER_ARGS,"setf",arg1);
+	if (functionp(car(arg1)) || genericp(car(arg1))) {
+	    var = eval(list2(car(arg1), NIL));
+	} else
+	    error(IMPROPER_ARGS, "setf", arg1);
 
 	newform =
 	    cons(makesym("SET-SLOT-VALUE"),
@@ -613,7 +612,7 @@ f_defun(int arglist)
 
     // when arg1 is nil or t, defun does not affect.
     if (arg1 == NIL || arg2 == T)
-    return (arg1);
+	return (arg1);
 
     val = makefunc(GET_NAME(arg1), arg2);
     SET_CAR(arg1, val);
@@ -1186,6 +1185,7 @@ f_catch(int arglist)
 	sp = save;		// restore stack pointer. longjump destroy 
 				// 
 	// 
+	// 
 	// sp
 	return (res);
     }
@@ -1482,11 +1482,11 @@ f_defclass(int arglist)
 	                boundp,
 	                initform,
 	                initarg,
-                    initform_flag,
-                    initarg_flag;
+	                initform_flag,
+	                initarg_flag;
 
 	reader = writer = accessor = boundp = initform = initarg = NIL;
-    initform_flag = initarg_flag = 0;
+	initform_flag = initarg_flag = 0;
 	if (!listp(car(arg3)))
 	    arg3 = list1(arg3);	// if form=(a :reader a-read) => ((a
 	// :reader a-read))
@@ -1496,17 +1496,17 @@ f_defclass(int arglist)
 	ls = cdar(arg3);
 	if (!listp(car(arg3)))
 	    error(ILLEGAL_FORM, "defclass", arg3);
-    
+
 	while (!nullp(ls)) {
-       
+
 	    if (eqp(car(ls), makesym(":READER"))) {
 		reader = cadr(ls);
-        if (nullp(reader)){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        if (symbolp(reader) && STRING_REF(reader, 0) == ':'){
-	        error(IMPROPER_FORM, "defclass", arg3);
-        }
+		if (nullp(reader)) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		if (symbolp(reader) && STRING_REF(reader, 0) == ':') {
+		    error(IMPROPER_FORM, "defclass", arg3);
+		}
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
@@ -1540,12 +1540,12 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":WRITER"))) {
 		writer = cadr(ls);
-        if (nullp(writer)){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        if (symbolp(writer) && STRING_REF(writer, 0) == ':'){
-	        error(IMPROPER_FORM, "defclass", arg3);
-        }
+		if (nullp(writer)) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		if (symbolp(writer) && STRING_REF(writer, 0) == ':') {
+		    error(IMPROPER_FORM, "defclass", arg3);
+		}
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x y)))
 		// (defmethod name (x (y arg1))
@@ -1576,12 +1576,12 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":ACCESSOR"))) {
 		accessor = cadr(ls);
-        if (nullp(accessor)){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        if (symbolp(accessor) && STRING_REF(accessor, 0) == ':'){
-	        error(IMPROPER_FORM, "defclass", arg3);
-        }
+		if (nullp(accessor)) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		if (symbolp(accessor) && STRING_REF(accessor, 0) == ':') {
+		    error(IMPROPER_FORM, "defclass", arg3);
+		}
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
@@ -1609,12 +1609,12 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":BOUNDP"))) {
 		boundp = cadr(ls);
-        if (nullp(boundp)){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        if (symbolp(boundp) && STRING_REF(boundp, 0) == ':'){
-	        error(IMPROPER_FORM, "defclass", arg3);
-        }
+		if (nullp(boundp)) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		if (symbolp(boundp) && STRING_REF(boundp, 0) == ':') {
+		    error(IMPROPER_FORM, "defclass", arg3);
+		}
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
@@ -1638,31 +1638,31 @@ f_defclass(int arglist)
 						  sym)))));
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":INITFORM"))) {
-        initform = cadr(ls);
-        if (nullp(initform)){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        if (symbolp(initform) && STRING_REF(initform, 0) == ':'){
-	        error(IMPROPER_FORM, "defclass", arg3);
-        }
-        if (initform_flag){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
+		initform = cadr(ls);
+		if (nullp(initform)) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		if (symbolp(initform) && STRING_REF(initform, 0) == ':') {
+		    error(IMPROPER_FORM, "defclass", arg3);
+		}
+		if (initform_flag) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
 		initform = eval(initform);
 		val = initform;
-        initform_flag = 1;
+		initform_flag = 1;
 	    } else if (eqp(car(ls), makesym(":INITARG"))) {
 		initarg = cadr(ls);
-        if (nullp(initarg)){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        if (symbolp(initarg) && STRING_REF(initarg, 0) == ':'){
-	        error(IMPROPER_FORM, "defclass", arg3);
-        }
-        if (initarg_flag){
-            error(ILLEGAL_FORM,"defclass",arg3);
-        }
-        initarg_flag = 1;
+		if (nullp(initarg)) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		if (symbolp(initarg) && STRING_REF(initarg, 0) == ':') {
+		    error(IMPROPER_FORM, "defclass", arg3);
+		}
+		if (initarg_flag) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
+		initarg_flag = 1;
 	    } else
 		error(ILLEGAL_FORM, "defclass", ls);
 
@@ -1675,7 +1675,7 @@ f_defclass(int arglist)
     }
 
     abstractp = metaclass = NIL;
-    int         abstractp_flag;
+    int             abstractp_flag;
     abstractp_flag = UNDEF;
 
     while (!nullp(arg4)) {
@@ -1686,22 +1686,20 @@ f_defclass(int arglist)
 	ls = car(arg4);
 	if (eqp(car(ls), makesym(":ABSTRACTP"))) {
 	    abstractp = cadr(ls);
-        if(length(ls) != 2)
-            error(ILLEGAL_FORM,"defclass",arg4);
-        if(abstractp != NIL && abstractp != T)
-            error(ILLEGAL_FORM,"defclass",arg4);
-        if(abstractp_flag != UNDEF && abstractp != abstractp_flag)
-            error(ILLEGAL_FORM,"defclass",arg4);
-        abstractp_flag = abstractp;
-	}
-    else if (eqp(car(ls),makesym(":METACLASS"))){
-        metaclass = cadr(ls);
-        if(length(ls) != 2)
-            error(ILLEGAL_FORM,"defclass",arg4);
-        if(!eqp(metaclass,makesym("<STANDARD-CLASS>")))
-            error(ILLEGAL_FORM,"defclass",arg4);
-    }
-     else {
+	    if (length(ls) != 2)
+		error(ILLEGAL_FORM, "defclass", arg4);
+	    if (abstractp != NIL && abstractp != T)
+		error(ILLEGAL_FORM, "defclass", arg4);
+	    if (abstractp_flag != UNDEF && abstractp != abstractp_flag)
+		error(ILLEGAL_FORM, "defclass", arg4);
+	    abstractp_flag = abstractp;
+	} else if (eqp(car(ls), makesym(":METACLASS"))) {
+	    metaclass = cadr(ls);
+	    if (length(ls) != 2)
+		error(ILLEGAL_FORM, "defclass", arg4);
+	    if (!eqp(metaclass, makesym("<STANDARD-CLASS>")))
+		error(ILLEGAL_FORM, "defclass", arg4);
+	} else {
 	    error(ILLEGAL_FORM, "defclass", ls);
 	}
 	arg4 = cdr(arg4);
@@ -1709,11 +1707,9 @@ f_defclass(int arglist)
     cl = makeclass(GET_NAME(arg1), sc);
     if (abstractp == T) {
 	SET_OPT(cl, ABSTRACT);	// abstract-class;
-    }
-    else if (metaclass == T){
-    SET_OPT(cl,METACLASS); // meta-class;
-    }
-     else {
+    } else if (metaclass == T) {
+	SET_OPT(cl, METACLASS);	// meta-class;
+    } else {
 	SET_OPT(cl, USER);	// standard-class;
     }
     SET_CDR(cl, var);
@@ -1798,15 +1794,17 @@ f_defmethod(int arglist)
     arg1 = car(arglist);	// method-name
     arg2 = cdr(arglist);	// parameter-profile
 
-    if (subrp(arg1) || fsubrp(arg2))
-    error(CANT_MODIFY, "defmethod", arg1);
+    if (subrp(arg1) || fsubrp(arg1))
+	error(CANT_MODIFY, "defmethod", arg1);
     if (!genericp(arg1))
-    error(UNDEF_FUN , "defmethod", arg1);
-    // if method-qualifier and method-combination of generic-function is NIL -> error
-    if (symbolp(car(arg2)) && method_qualifier_p(car(arg2)) && GET_PROP(GET_CAR(arg1))==NIL)
-    error(IMPROPER_ARGS, "defmethod", arg2);
+	error(UNDEF_FUN, "defmethod", arg1);
+    // if method-qualifier and method-combination of generic-function is
+    // NIL -> error
+    if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
+	&& GET_PROP(GET_CAR(arg1)) == NIL)
+	error(IMPROPER_ARGS, "defmethod", arg2);
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2)))
-    error(IMPROPER_ARGS, "defmethod", arg2);
+	error(IMPROPER_ARGS, "defmethod", arg2);
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defmethod", arglist);
 

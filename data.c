@@ -1578,13 +1578,14 @@ redef_generic(void)
     return;
 }
 
-int method_qualifier_p(int x){
-    if(eqp(x,makesym(":BEFORE")) ||
-       eqp(x,makesym(":AFTER")) ||
-       eqp(x,makesym(":AROUND")))
-       return(1);
+int
+method_qualifier_p(int x)
+{
+    if (eqp(x, makesym(":BEFORE")) ||
+	eqp(x, makesym(":AFTER")) || eqp(x, makesym(":AROUND")))
+	return (1);
     else
-        return(0);
+	return (0);
 }
 
 // ------------for copy GC-----------------

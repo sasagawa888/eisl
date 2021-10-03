@@ -43,6 +43,13 @@ We confirmed operation in the following environments.
 If you cloned the repo anyplace but *$HOME/eisl*,
 you should set the `EASY_ISLISP` enviroment variable to point to it.
 
+### GNU Emacs support
+ISLisp-mode of Emacs is developed by Mr. sasanidas.
+Watch the video to see how to use it. https://vimeo.com/614514131
+
+Repository URL:  https://gitlab.com/sasanidas/islisp-mode
+
+
 # Invoke
 
 ```sh
@@ -55,11 +62,6 @@ In the Linux version,the REPL is editable. If you do not want to use the editabl
 eisl -r
 ```
 
-### Emacs support
-ISLisp-mode of Emacs is developed by Mr. sasanidas.
-Watch the video to see how to use it.
-https://gitlab.com/sasanidas/islisp-mode
-https://vimeo.com/614514131
 
 If you want to start after reading a file, use the -l command-line option.
 e.g.

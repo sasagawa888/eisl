@@ -1805,6 +1805,8 @@ f_defmethod(int arglist)
     // if method-qualifier and method-combination of generic-function is NIL -> error
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2)) && GET_PROP(GET_CAR(arg1))==NIL)
     error(IMPROPER_ARGS, "defmethod", arg2);
+    if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2)))
+    error(IMPROPER_ARGS, "defmethod", arg2);
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defmethod", arglist);
 

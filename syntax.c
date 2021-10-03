@@ -1797,8 +1797,10 @@ f_defmethod(int arglist)
 
     arg1 = car(arglist);	// method-name
     arg2 = cdr(arglist);	// parameter-profile
-    if (!(IS_GENERIC(GET_CAR(arg1))))
-	error(NOT_FUNC, "defmethod", arg1);
+    //if (!(IS_GENERIC(GET_CAR(arg1))))
+	//error(NOT_FUNC, "defmethod", arg1);
+    if (!genericp(arg1))
+    error(UNDEF_FUN , "defmethod", arg1);
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defmethod", arglist);
 

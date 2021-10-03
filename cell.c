@@ -718,8 +718,12 @@ makegeneric(char *pname, int lamlist, int body)
     SET_PROP(val,T);  // method-combination default is T
     SET_AUX(val, cstandard_generic_function);
     while (!nullp(body)) {
-	if (eqp(caar(body), makesym(":METHOD")))
+	if (eqp(caar(body), makesym(":METHOD"))){
+        if(method_qualifier_p(caddar(body)) && GET_PROP(val)==NIL){
+            error(ILLEGAL_FORM,"defgeneric",body);
+        }
 	    insert_method(makemethod(cdar(body)), val);
+    }
     else if (eqp(caar(body), makesym(":METHOD-COMBINATION"))){
         if (cadar(body) == NIL || cadar(body) == T)
             SET_PROP(val,cadar(body));

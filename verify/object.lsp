@@ -16,7 +16,7 @@
 ;;($stype defclass ($cons $null) foo () :target)
 ;;
 ;;;
-;;($error (+ (defclass foo () ())) <error>)
+($error1 (+ (defclass foo () ())) <error>)
 
 ;;;----------  ----------
 ;;; special operator
@@ -207,7 +207,7 @@
 ($stype defgeneric ($symbol $null) :target (x))
 ;;($stype defgeneric ($cons $null) foo :target)
 ;;;
-($error (+ (defgeneric foo ())) <error>)
+($error1 (+ (defgeneric foo ())) <error>)
 ;; :method-combination 
 ;($error (defgeneric foo () (:method-combination undef)) 
 ;	<error>)
@@ -238,7 +238,7 @@
 ;;($stype defmethod ($cons $null) $ERR_IllegalBind foo :before :target)
 ;;;
 ($eval (defgeneric foo-g-2 ()))
-($error (+ (defmethod foo-g-2 ())) <error>)
+($error1 (+ (defmethod foo-g-2 ())) <error>)
 ;; 
 ($error (defmethod foo-g-2 :foo ()) <error>)
 ($error (defgeneric foo-g-2 ()

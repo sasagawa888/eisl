@@ -1744,7 +1744,8 @@ f_defgeneric(int arglist)
 	error(CANT_MODIFY, "defgeneric", arg1);
     if (!listp(arg2))
 	error(NOT_LIST, "defgeneric", arg2);
-
+    if (!top_flag && !ignore_topchk)
+	error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
@@ -1798,6 +1799,8 @@ f_defmethod(int arglist)
     arg2 = cdr(arglist);	// parameter-profile
     if (!(IS_GENERIC(GET_CAR(arg1))))
 	error(NOT_FUNC, "defmethod", arg1);
+    if (!top_flag && !ignore_topchk)
+	error(NOT_TOP_LEVEL, "defmethod", arglist);
 
     gen = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);

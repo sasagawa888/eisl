@@ -33,6 +33,12 @@ Evaluate form. Ignore top level check.
 ```
 Error check. Error class of form is error-class?
 
+```lisp
+($error1 form error-class)
+```
+Error check. Error class of form is error-class? Not ignore top-level check.
+
+
 # Code
 
 See following macro code
@@ -74,6 +80,18 @@ See following macro code
               (format (standard-output) "" ',form)
               (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans))))
       (ignore-toplevel-check nil)))
+
+
+(defmacro $error1 (form name)
+  `(progn
+      (let ((ans (catch 'c-parse-error
+              (with-handler 
+                (lambda (c) (throw 'c-parse-error c))
+                ,form))))
+          (if (equal (class-of ans) (class ,name))
+              (format (standard-output) "" ',form)
+              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans))))))
+
 
 (defmacro $ap (n name :rest page)
     (if (null page)

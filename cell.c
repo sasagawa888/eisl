@@ -725,7 +725,7 @@ makegeneric(char *pname, int lamlist, int body)
 	    if (method_qualifier_p(caddar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
-        if (illegallambdap(cadar(body))){
+        if (illegalparameterp(cadar(body))){
         error(ILLEGAL_FORM, "defgeneric", body);
         }
         if (nullp(cadar(body))){

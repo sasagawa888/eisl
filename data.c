@@ -499,6 +499,26 @@ illegallambdap(int ls)
 
 }
 
+int illegalparameterp(int ls){
+
+    if(nullp(ls))
+        return(0);
+    else if(symbolp(car(ls)))
+        return(illegalparameterp(cdr(ls)));
+    else if(listp(car(ls))){
+        if (length(car(ls)) != 2)
+            return(1);
+        else if (!(symbolp(caar(ls)) && 
+                 (GET_OPT(cadar(ls))==SYSTEM || GET_OPT(ls)==USER)))
+            return(1);
+        else 
+            return(illegalparameterp(cdr(ls)));
+    }
+    else
+        return(1);        
+}
+
+
 int
 improperlistp(int ls)
 {

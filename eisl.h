@@ -1082,6 +1082,7 @@ int             matchp(int varlist, int arglist);
 int             math_integerp(int x);
 int             member(int x, int y);
 int             member1(int x, int y, int z);
+int             method_qualifier_p(int x);
 int             minus(int arg1, int arg2);
 int             modulesubst(int x, int module, int fname);
 int             modulesubst1(int x, int module);

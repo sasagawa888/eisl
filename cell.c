@@ -715,7 +715,7 @@ makegeneric(char *pname, int lamlist, int body)
     SET_CAR(val, copy_heap(lamlist));
     SET_OPT(val, count_args(lamlist));	// amount of argument
     SET_CDR(val, NIL);
-    SET_PROP(val,T);  // method-conbination default is T
+    SET_PROP(val,T);  // method-combination default is T
     SET_AUX(val, cstandard_generic_function);
     while (!nullp(body)) {
 	if (eqp(caar(body), makesym(":METHOD")))

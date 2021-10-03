@@ -717,11 +717,20 @@ makegeneric(char *pname, int lamlist, int body)
     SET_CDR(val, NIL);
     SET_PROP(val, T);		// method-combination default is T
     SET_AUX(val, cstandard_generic_function);
+    if (illegallambdap(lamlist))
+        error(ILLEGAL_ARGS,"makegeneric",lamlist);
+
     while (!nullp(body)) {
 	if (eqp(caar(body), makesym(":METHOD"))) {
 	    if (method_qualifier_p(caddar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
+        if (illegallambdap(cadar(body))){
+        error(ILLEGAL_FORM, "defgeneric", body);
+        }
+        if (nullp(cadar(body))){
+        error(ILLEGAL_FORM, "defgeneric",body);
+        }
 	    insert_method(makemethod(cdar(body)), val);
 	} else if (eqp(caar(body), makesym(":METHOD-COMBINATION"))) {
 	    if (cadar(body) == NIL || cadar(body) == T)
@@ -780,7 +789,8 @@ makemethod(int addr)
     } else if (eqp(car(addr), makesym(":AFTER"))) {
 	SET_CAR(val, copy_heap(cdr(addr)));
 	SET_OPT(val, AFTER);
-    } else {
+    } 
+    else {
 	SET_CAR(val, copy_heap(addr));
 	SET_OPT(val, PRIORITY);
     }

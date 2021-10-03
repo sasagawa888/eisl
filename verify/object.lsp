@@ -261,9 +261,9 @@
 ($error (defmethod undef (x)) <undefined-function>)
 ;;
 ($eval (defgeneric foo-g-3 (x)))
-($error (defmethod foo-g-3 (test (x undef))) <undefined-entity>)
+($error (defmethod foo-g-3 ((x undef))) <undefined-entity>)
 ($error (defgeneric foo-g-3 (x)
-	  (:method (test (x undef))))
+	  (:method ((x undef))))
 	<undefined-entity>)
 ;;
 ;;
@@ -276,10 +276,10 @@
 ;; 
 ($eval (defclass aa () ()))
 ($eval (defgeneric foo-g-5 (x)))
-($eval (defmethod foo-g-5 (test (x aa)) 'aa-1))
-($eval (defmethod foo-g-5 :around (test (x aa)) 'around-aa-1))
-($eval (defmethod foo-g-5 :before (test (x aa)) 'before-aa-1))
-($eval (defmethod foo-g-5 :after (test (x aa)) 'after-aa-1))
+($eval (defmethod foo-g-5 ((x aa)) 'aa-1))
+($eval (defmethod foo-g-5 :around ((x aa)) 'around-aa-1))
+($eval (defmethod foo-g-5 :before ((x aa)) 'before-aa-1))
+($eval (defmethod foo-g-5 :after ((x aa)) 'after-aa-1))
 ;;
 ($eval (defun foo-10 (x)))
 ($error (defmethod foo-10 (x)) <error>)

@@ -1740,8 +1740,8 @@ f_defgeneric(int arglist)
 	error(CANT_MODIFY, "defgeneric", arg1);
     if (!listp(arg2))
 	error(NOT_LIST, "defgeneric", arg2);
-    if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defgeneric", arglist);
+    //if (!top_flag && !ignore_topchk)
+	//error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
@@ -1805,8 +1805,8 @@ f_defmethod(int arglist)
 	error(IMPROPER_ARGS, "defmethod", arg2);
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2)))
 	error(IMPROPER_ARGS, "defmethod", arg2);
-    if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defmethod", arglist);
+    //if (!top_flag && !ignore_topchk)
+	//error(NOT_TOP_LEVEL, "defmethod", arglist);
 
     gen = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);

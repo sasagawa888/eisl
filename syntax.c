@@ -1801,6 +1801,8 @@ f_defmethod(int arglist)
 	//error(NOT_FUNC, "defmethod", arg1);
     if (!genericp(arg1))
     error(UNDEF_FUN , "defmethod", arg1);
+    if (subrp(arg1) || fsubrp(arg2))
+    error(CANT_MODIFY, "defmethod", arg1);
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defmethod", arglist);
 

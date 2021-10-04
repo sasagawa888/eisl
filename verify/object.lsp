@@ -283,7 +283,7 @@
 ;;
 ($eval (defun foo-10 (x)))
 ($error (defmethod foo-10 (x)) <error>)
-;($eval (defmacro m-foo-1 (x)))
+($eval (defmacro m-foo-1 (x)))
 ($error (defmethod m-foo-1 (x)) <error>)
 ($error (defmethod if (x)) <program-error>)
 ($error (defmethod car (x)) <program-error>)

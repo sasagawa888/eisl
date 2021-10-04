@@ -494,8 +494,6 @@ illegallambdap(int ls)
 	     && (STRING_REF(car(ls), 0) == ':'
 		 || STRING_REF(car(ls), 0) == '&'))
 	return (1);
-    else if (!symbolp(car(ls)))
-    return (1);
     else
 	return (illegallambdap(cdr(ls)));
 

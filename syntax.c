@@ -1740,7 +1740,6 @@ f_defgeneric(int arglist)
 	error(CANT_MODIFY, "defgeneric", arg1);
     if (!listp(arg2))
 	error(NOT_LIST, "defgeneric", arg2);
-	//error(ILLEGAL_ARGS,"defgeneric",arg2);
     //if (!top_flag && !ignore_topchk)
 	//error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
@@ -1798,7 +1797,7 @@ f_defmethod(int arglist)
     if (subrp(arg1) || fsubrp(arg1))
 	error(CANT_MODIFY, "defmethod", arg1);
     if (!genericp(arg1)){
-	error(UNDEF_FUN, "defmethod", arg1);}
+	error(IMPROPER_ARGS, "defmethod", arg1);}
 	if (listp(car(arg2)) && illegallambdap(car(arg2)))
 	error(ILLEGAL_ARGS,"defmethod",arg2);
     // if method-qualifier and method-combination of generic-function is

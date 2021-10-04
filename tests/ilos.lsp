@@ -32,3 +32,14 @@
         (p4 (create (class <point3d>) 'x 100.0 'y 100.0 'z 100.0)))
     (format (standard-output) "~G~%" (distance p1 p2))
     (format (standard-output) "~G~%" (distance p3 p4))))
+
+
+  ;;--------- original test code-----------------
+
+  (defgeneric plus (x y))
+
+  (defmethod plus ((x <integer>)(y <integer>))
+      (+ x y))
+
+  (defmethod plus ((x <float>)(y <float>))
+      (+ x y))

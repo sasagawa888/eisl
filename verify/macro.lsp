@@ -37,7 +37,7 @@
 ;;;
 ($error (defmacro foo 2 . 3) <error>)
 ;;; toplevel 
-($error (+ (defmacro foo (x))) <error>)
+($error1 (+ (defmacro foo (x))) <error>)
 ;;; macro-name 
 ($error (defmacro #2a((a b) (c d)) ()) <domain-error>)
 ($error (defmacro #\a ()) <domain-error>)

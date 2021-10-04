@@ -640,10 +640,10 @@ f_defmacro(int arglist)
 	error(IMPROPER_ARGS, "defmacro", arg2);
     if (length(arglist) < 2)
 	error(WRONG_ARGS, "defmacro", arglist);
-    if (length(arglist) < 3)
-	error(IMPROPER_ARGS, "defmacro", arglist);
-    if (illegallambdap(car(arg2)))
-	error(ILLEGAL_ARGS, "defmacro", car(arg2));
+    if (illegallambdap(car(arg2))){
+	error(ILLEGAL_ARGS, "defmacro", car(arg2));}
+	if (!top_flag && !ignore_topchk)
+	error(NOT_TOP_LEVEL, "defconstant", arglist);
 
     bindmacro(GET_NAME(arg1), arg2);
     return (arg1);

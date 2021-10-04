@@ -209,8 +209,8 @@
 ;;;
 ($error1 (+ (defgeneric foo ())) <error>)
 ;; :method-combination 
-;($error (defgeneric foo () (:method-combination undef)) 
-;	<error>)
+($error (defgeneric foo () (:method-combination undef)) 
+	<error>)
 ;; :generic-function-class
 ;($error (defgeneric foo () (:generic-function-class undef))
 ;	<error>)

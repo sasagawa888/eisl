@@ -1804,7 +1804,7 @@ f_defmethod(int arglist)
     if (subrp(arg1) || fsubrp(arg1))
 	error(CANT_MODIFY, "defmethod", arg1);
     if (!genericp(arg1)){
-	error(IMPROPER_ARGS, "defmethod", arg1);}
+	error(UNDEF_FUN, "defmethod", arg1);}
 	if (listp(car(arg2)) && illegallambdap(car(arg2)))
 	error(ILLEGAL_ARGS,"defmethod",arg2);
     // if method-qualifier and method-combination of generic-function is

@@ -628,6 +628,8 @@ f_defmacro(int arglist)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
+	if (length(arglist) < 2)
+	error(WRONG_ARGS, "defmacro", arglist);
     if (!symbolp(arg1))
 	error(NOT_SYM, "defmacro", arg1);
     if (GET_OPT(arg1) == CONSTN)
@@ -636,14 +638,18 @@ f_defmacro(int arglist)
 	error(CANT_MODIFY, "defmacro", arg1);
     if (IS_FSUBR(GET_CAR(arg1)))
 	error(CANT_MODIFY, "defmacro", arg1);
-    if (improperlistp(arg2))
-	error(IMPROPER_ARGS, "defmacro", arg2);
-    if (length(arglist) < 2)
-	error(WRONG_ARGS, "defmacro", arglist);
+    if (improperlistp(arg2)){
+	error(IMPROPER_ARGS, "defmacro", arg2);}
+	if (duplicatelistp(car(arg2)))
+	error(IMPROPER_ARGS, "defmacro", car(arg2));
+    if (improperlistp(car(arg2))){
+	error(IMPROPER_ARGS, "defmacro", car(arg2));}
     if (illegallambdap(car(arg2))){
 	error(ILLEGAL_ARGS, "defmacro", car(arg2));}
+    if (!symbollistp(car(arg2))){
+	error(OUT_OF_DOMAIN, "defmacro", car(arg2));}
 	if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defconstant", arglist);
+	error(NOT_TOP_LEVEL, "defmacro", arglist);
 
 
     bindmacro(GET_NAME(arg1), arg2);

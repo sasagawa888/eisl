@@ -645,6 +645,7 @@ f_defmacro(int arglist)
 	if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defconstant", arglist);
 
+
     bindmacro(GET_NAME(arg1), arg2);
     return (arg1);
 }

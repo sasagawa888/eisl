@@ -723,9 +723,6 @@ makegeneric(char *pname, int lamlist, int body)
     while (!nullp(body)) {
     // (:method method-qualifier* parameter-profile form*)
 	if (eqp(caar(body), makesym(":METHOD"))) {
-        if (listp(cadar(body)) && illegal_parameter_p(cadar(body))){
-        error(ILLEGAL_FORM, "defgeneric", body);
-        }
 	    if (method_qualifier_p(cadar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
@@ -734,6 +731,9 @@ makegeneric(char *pname, int lamlist, int body)
         }
         if (listp(cadar(body)) && undef_parameter_p(cadar(body))){
         error(UNDEF_ENTITY, "defgeneric", body);
+        }
+        if (listp(cadar(body)) && illegal_parameter_p(cadar(body))){
+        error(ILLEGAL_FORM, "defgeneric", body);
         }
         if (nullp(cadar(body))){
         error(ILLEGAL_FORM, "defgeneric",body);

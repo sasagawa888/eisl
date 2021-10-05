@@ -1811,9 +1811,6 @@ f_defmethod(int arglist)
 	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS,"defmethod",arg2);
 	}
-	//if (listp(car(arg2)) && undef_parameter_p(car(arg2))){
-	//error(UNDEF_ENTITY,"defmethod",arg2);
-	//}
 	if (listp(car(arg2)) && illegal_parameter_p(car(arg2))){
     error(ILLEGAL_FORM, "defmethod", arg2);
     }

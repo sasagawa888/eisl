@@ -1747,8 +1747,14 @@ f_defgeneric(int arglist)
 	error(CANT_MODIFY, "defgeneric", arg1);
     if (IS_SUBR(GET_CAR(arg1)))
 	error(CANT_MODIFY, "defgeneric", arg1);
-    if (!listp(arg2))
-	error(NOT_LIST, "defgeneric", arg2);
+    if (!listp(arg2)){
+	error(NOT_LIST, "defgeneric", arg2);}
+	if (duplicatelistp(arg2)){
+	error(IMPROPER_ARGS, "defgeneric", arg2);}
+    if (improperlistp(arg2)){
+	error(IMPROPER_ARGS, "defgeneric", arg2);}
+    if (illegal_lambda_p(arg2)){
+	error(ILLEGAL_ARGS, "defgeneric", arg2);}
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
@@ -1811,9 +1817,9 @@ f_defmethod(int arglist)
 	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS,"defmethod",arg2);
 	}
-	if (listp(car(arg2)) && illegal_parameter_p(car(arg2))){
-    error(ILLEGAL_FORM, "defmethod", arg2);
-    }
+	//if (listp(car(arg2)) && !unified_parameter_p(GET_CAR(GET_CAR(arg1)),car(arg2))){
+	//error(ILLEGAL_FORM, "defmethod", arg2);
+    //}
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))

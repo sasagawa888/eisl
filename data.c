@@ -518,10 +518,25 @@ int undef_parameter_p(int ls){
         return(1);        
 }
 
-int illegal_parameter_p(int ls){
-
-    return(0);
+int unified_parameter_p(int lamlis, int ls){
     
+    if(nullp(lamlis) && nullp(ls))
+        return(1);
+    else if(nullp(lamlis) && !nullp(ls))
+        return(0);
+    else if(!nullp(lamlis) && nullp(ls))
+        return(0);
+    else if((eqp(car(lamlis),makesym(":REST")) || eqp(car(lamlis),makesym("&REST"))) &&
+            (eqp(car(ls),makesym(":REST")) || eqp(car(ls),makesym("&REST"))))
+        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
+    else if(symbolp(car(lamlis)) && symbolp(car(ls)))
+        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
+    else if(symbolp(car(lamlis)) && (listp(car(ls) && length(car(ls)==2))))
+        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
+    else if((listp(car(lamlis)) && length(car(lamlis))==2) && (listp(car(ls) && length(car(ls)==2))))
+        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
+    else 
+        return(0);
     /*
     ラムダリストとメソッドパラメータの合同をチェックする必要がある。
     :REST　&RESTそれ自体を使うことは問題ない。

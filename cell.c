@@ -732,7 +732,7 @@ makegeneric(char *pname, int lamlist, int body)
         if (listp(cadar(body)) && undef_parameter_p(cadar(body))){
         error(UNDEF_ENTITY, "defgeneric", body);
         }
-        if (listp(cadar(body)) && illegal_parameter_p(cadar(body))){
+        if (listp(cadar(body)) && !unified_parameter_p(lamlist,cadar(body))){
         error(ILLEGAL_FORM, "defgeneric", body);
         }
         if (nullp(cadar(body))){

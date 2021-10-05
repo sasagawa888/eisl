@@ -117,7 +117,6 @@
 ($eval (defclass a-1 () ()))
 ($eval (defclass b-1 (a-1) ()))
 ($error (defclass c-1 (b-1 a-1) ()) <error>)
-
 ;; 
 ($eval 
  (defclass foo-5 () 
@@ -183,7 +182,6 @@
 (test (boundp-foo-a x) t)
 (test (read-foo-a x) 10 eql)
 (test (access-foo-a x) 10 eql)
-
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -196,7 +194,6 @@
 (test (generic-function-p #'foo-g-1) t)
 ($eval (defun foo-9 (x)))
 (test (generic-function-p #'foo-9) nil)
-
 ;;;------------------------------------------------------------
 ;;; [defining oparator]
 ;;;
@@ -309,6 +306,7 @@
 ($error (defgeneric foo-g-10 (x)
 	  (:method (x y)))
 	<error>)
+
 #|
 ;;
 ($eval (defgeneric foo-g-11 (x &rest r)))

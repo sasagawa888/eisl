@@ -721,11 +721,15 @@ makegeneric(char *pname, int lamlist, int body)
         error(ILLEGAL_ARGS,"makegeneric",lamlist);
 
     while (!nullp(body)) {
+    // (:method method-qualifier* parameter-profile form*)
 	if (eqp(caar(body), makesym(":METHOD"))) {
-	    if (method_qualifier_p(caddar(body)) && GET_PROP(val) == NIL) {
+	    if (method_qualifier_p(cadar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
-        if (illegalparameterp(cadar(body))){
+        if (symbolp(cadar(body)) && !method_qualifier_p(cadar(body))){
+        error(ILLEGAL_FORM, "defgeneric", body);
+        }
+        if (listp(cadar(body)) && illegalparameterp(cadar(body))){
         error(ILLEGAL_FORM, "defgeneric", body);
         }
         if (nullp(cadar(body))){

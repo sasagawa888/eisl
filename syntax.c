@@ -673,7 +673,7 @@ f_defglobal(int arglist)
     if (GET_OPT(arg1) == CONSTN)
 	error(CANT_MODIFY, "defglobal", arg1);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(WRONG_ARGS, "defglobal", arg1);
+	error(ILLEGAL_ARGS, "defglobal", arg1);
 
     SET_CDR(arg1, eval(arg2));
     SET_OPT(arg1, GLOBAL);

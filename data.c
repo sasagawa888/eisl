@@ -518,6 +518,24 @@ int undef_parameter_p(int ls){
         return(1);        
 }
 
+int illegal_parameter_p(int ls){
+
+    return(0);
+
+    if (!listp(ls) && !nullp(ls))
+        return(1);
+
+
+    if(nullp(ls))
+        return(0);
+    else if (eqp(car(ls),makesym(":REST")))
+        return(1);
+    else if (eqp(car(ls),makesym("&REST")))
+        return(1);
+    else
+        return(illegal_parameter_p(cdr(ls)));
+
+}
 
 int
 improperlistp(int ls)

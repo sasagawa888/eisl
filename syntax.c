@@ -1803,12 +1803,20 @@ f_defmethod(int arglist)
     arg1 = car(arglist);	// method-name
     arg2 = cdr(arglist);	// parameter-profile
 
-    if (subrp(arg1) || fsubrp(arg1))
+    if (subrp(arg1) || fsubrp(arg1)){
 	error(CANT_MODIFY, "defmethod", arg1);
+	}
     if (!genericp(arg1)){
 	error(UNDEF_FUN, "defmethod", arg1);}
-	if (listp(car(arg2)) && illegal_lambda_p(car(arg2)))
+	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS,"defmethod",arg2);
+	}
+	//if (listp(car(arg2)) && undef_parameter_p(car(arg2))){
+	//error(UNDEF_ENTITY,"defmethod",arg2);
+	//}
+	if (listp(car(arg2)) && illegal_parameter_p(car(arg2))){
+    error(ILLEGAL_FORM, "defmethod", arg2);
+    }
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))

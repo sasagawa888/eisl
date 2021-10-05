@@ -1001,6 +1001,7 @@ int             hextoken(char buf[]);
 int             hfreshcell(void);
 int             high_priority_p(int x, int y);
 int             illegal_lambda_p(int ls);
+int             illegal_parameter_p(int ls);
 int             improperlistp(int ls);
 int             includep(int x, int y);
 int             initinst(int x, int initls);

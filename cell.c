@@ -717,7 +717,7 @@ makegeneric(char *pname, int lamlist, int body)
     SET_CDR(val, NIL);
     SET_PROP(val, T);		// method-combination default is T
     SET_AUX(val, cstandard_generic_function);
-    if (illegallambdap(lamlist))
+    if (illegal_lambda_p(lamlist))
         error(ILLEGAL_ARGS,"makegeneric",lamlist);
 
     while (!nullp(body)) {
@@ -729,7 +729,10 @@ makegeneric(char *pname, int lamlist, int body)
         if (symbolp(cadar(body)) && !method_qualifier_p(cadar(body))){
         error(ILLEGAL_FORM, "defgeneric", body);
         }
-        if (listp(cadar(body)) && illegalparameterp(cadar(body))){
+        if (listp(cadar(body)) && undef_parameter_p(cadar(body))){
+        error(UNDEF_ENTITY, "defgeneric", body);
+        }
+        if (listp(cadar(body)) && illegal_lambda_p(cadar(body))){
         error(ILLEGAL_FORM, "defgeneric", body);
         }
         if (nullp(cadar(body))){

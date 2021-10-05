@@ -460,7 +460,7 @@ notexistclassp(int ls)
 }
 
 int
-illegallambdap(int ls)
+illegal_lambda_p(int ls)
 {
     if (!listp(ls) && !nullp(ls))
 	return (1);
@@ -495,16 +495,16 @@ illegallambdap(int ls)
 		 || STRING_REF(car(ls), 0) == '&'))
 	return (1);
     else
-	return (illegallambdap(cdr(ls)));
+	return (illegal_lambda_p(cdr(ls)));
 
 }
 
-int illegalparameterp(int ls){
+int undef_parameter_p(int ls){
 
     if(nullp(ls))
         return(0);
     else if(symbolp(car(ls)))
-        return(illegalparameterp(cdr(ls)));
+        return(undef_parameter_p(cdr(ls)));
     else if(listp(car(ls))){
         if (length(car(ls)) != 2)
             return(1);
@@ -512,7 +512,7 @@ int illegalparameterp(int ls){
                  (GET_OPT(cadar(ls))==SYSTEM || GET_OPT(ls)==USER)))
             return(1);
         else 
-            return(illegalparameterp(cdr(ls)));
+            return(undef_parameter_p(cdr(ls)));
     }
     else
         return(1);        

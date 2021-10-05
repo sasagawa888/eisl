@@ -84,7 +84,7 @@ f_lambda(int arglist)
 	error(IMPROPER_ARGS, "lambda", car(arglist));
     if (improperlistp(car(arglist)))
 	error(IMPROPER_ARGS, "lambda", car(arglist));
-    if (illegallambdap(car(arglist)))
+    if (illegal_lambda_p(car(arglist)))
 	error(ILLEGAL_ARGS, "lambda", car(arglist));
     if (!symbollistp(car(arglist)))
 	error(OUT_OF_DOMAIN, "lambda", car(arglist));
@@ -129,7 +129,7 @@ f_labels(int arglist)
 	    error(IMPROPER_ARGS, "labels", car(temparg2));
 	if (improperlistp(car(temparg2)))
 	    error(IMPROPER_ARGS, "labels", car(temparg2));
-	if (illegallambdap(car(temparg2)))
+	if (illegal_lambda_p(car(temparg2)))
 	    error(ILLEGAL_ARGS, "labels", car(temparg2));
 	if (!symbollistp(car(temparg2)))
 	    error(OUT_OF_DOMAIN, "labels", car(temparg2));
@@ -202,7 +202,7 @@ f_flet(int arglist)
 	    error(IMPROPER_ARGS, "flet", car(temparg2));
 	if (improperlistp(car(temparg2)))
 	    error(IMPROPER_ARGS, "flet", car(temparg2));
-	if (illegallambdap(car(temparg2)))
+	if (illegal_lambda_p(car(temparg2)))
 	    error(ILLEGAL_ARGS, "flet", car(temparg2));
 	if (!symbollistp(car(temparg2)))
 	    error(OUT_OF_DOMAIN, "flet", car(temparg2));
@@ -605,7 +605,7 @@ f_defun(int arglist)
 	error(IMPROPER_ARGS, "defun", car(arg2));
     if (improperlistp(car(arg2)))
 	error(IMPROPER_ARGS, "defun", car(arg2));
-    if (illegallambdap(car(arg2)))
+    if (illegal_lambda_p(car(arg2)))
 	error(ILLEGAL_ARGS, "defun", car(arg2));
     if (!symbollistp(car(arg2)))
 	error(OUT_OF_DOMAIN, "defun", car(arg2));
@@ -644,7 +644,7 @@ f_defmacro(int arglist)
 	error(IMPROPER_ARGS, "defmacro", car(arg2));
     if (improperlistp(car(arg2))){
 	error(IMPROPER_ARGS, "defmacro", car(arg2));}
-    if (illegallambdap(car(arg2))){
+    if (illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS, "defmacro", car(arg2));}
     if (!symbollistp(car(arg2))){
 	error(OUT_OF_DOMAIN, "defmacro", car(arg2));}
@@ -1807,7 +1807,7 @@ f_defmethod(int arglist)
 	error(CANT_MODIFY, "defmethod", arg1);
     if (!genericp(arg1)){
 	error(UNDEF_FUN, "defmethod", arg1);}
-	if (listp(car(arg2)) && illegallambdap(car(arg2)))
+	if (listp(car(arg2)) && illegal_lambda_p(car(arg2)))
 	error(ILLEGAL_ARGS,"defmethod",arg2);
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error

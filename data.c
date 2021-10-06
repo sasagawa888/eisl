@@ -538,8 +538,11 @@ int unified_parameter_p(int lamlis, int ls){
     else 
         return(0);
     /*
-    ラムダリストとメソッドパラメータの合同をチェックする必要がある。
-    :REST　&RESTそれ自体を使うことは問題ない。
+    check unification lambda-list of generic-function and method-parameter
+    e.g.
+    lambda-list=(x y :rest z)
+    parameter=  ((x <integer>)(y <float>) :rest (z <array))
+
     */
 
 }

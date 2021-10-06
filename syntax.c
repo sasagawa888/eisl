@@ -1519,8 +1519,6 @@ f_defclass(int arglist)
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
 		// (slot-value x 'var))
-		// (defmethod name ((x <null>)) for setf syntax
-		// 'var)
 		// (set-property 1 'reader 'read))
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
@@ -1535,11 +1533,6 @@ f_defclass(int arglist)
 			  list1(list2(makesym("x"), arg1)),
 			  list3(makesym("SLOT-VALUE"), makesym("x"),
 				list2(makesym("QUOTE"), sym)));
-		eval(form);
-		form =
-		    list4(makesym("DEFMETHOD"), reader,
-			  list1(list2(makesym("x"), makesym("<NULL>"))),
-			  list2(makesym("QUOTE"), sym));
 		eval(form);
 		form = list4(makesym("SET-PROPERTY"),
 			     makeint(1),
@@ -1558,8 +1551,6 @@ f_defclass(int arglist)
 		// (defgeneric name (x y)))
 		// (defmethod name (x (y arg1))
 		// (setf (slot-value y 'var) x))
-		// (defmethod name ((x <null>)) for setf syntax
-		// 'var)
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1577,11 +1568,6 @@ f_defclass(int arglist)
 				      list2(makesym("QUOTE"), sym)),
 				makesym("x")));
 		eval(form);
-		form =
-		    list4(makesym("DEFMETHOD"), writer,
-			  list1(list2(makesym("x"), makesym("<NULL>"))),
-			  list2(makesym("QUOTE"), sym));
-		eval(form);
 	    } else if (eqp(car(ls), makesym(":ACCESSOR"))) {
 		accessor = cadr(ls);
 		if (nullp(accessor)) {
@@ -1594,8 +1580,8 @@ f_defclass(int arglist)
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
 		// (slot-value x 'var))
-		// (defmethod name ((x <null>)) for setf syntax
-		// 'var)
+		//? (defmethod name ((x <null>)) for setf syntax
+		//? 'var)
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1817,9 +1803,9 @@ f_defmethod(int arglist)
 	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS,"defmethod",arg2);
 	}
-	//if (listp(car(arg2)) && !unified_parameter_p(GET_CAR(GET_CAR(arg1)),car(arg2))){
-	//error(ILLEGAL_FORM, "defmethod", arg2);
-    //}
+	if (genericp(arg1) && listp(car(arg2)) && !unified_parameter_p(GET_CAR(GET_CAR(arg1)),car(arg2))){
+	error(ILLEGAL_FORM, "defmethod", arg2);
+    }
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))

@@ -628,7 +628,7 @@ f_defmacro(int arglist)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-	if (length(arglist) < 2)
+    if (length(arglist) < 2)
 	error(WRONG_ARGS, "defmacro", arglist);
     if (!symbolp(arg1))
 	error(NOT_SYM, "defmacro", arg1);
@@ -638,18 +638,22 @@ f_defmacro(int arglist)
 	error(CANT_MODIFY, "defmacro", arg1);
     if (IS_FSUBR(GET_CAR(arg1)))
 	error(CANT_MODIFY, "defmacro", arg1);
-    if (improperlistp(arg2)){
-	error(IMPROPER_ARGS, "defmacro", arg2);}
-	if (duplicatelistp(car(arg2)))
+    if (improperlistp(arg2)) {
+	error(IMPROPER_ARGS, "defmacro", arg2);
+    }
+    if (duplicatelistp(car(arg2)))
 	error(IMPROPER_ARGS, "defmacro", car(arg2));
-    if (improperlistp(car(arg2))){
-	error(IMPROPER_ARGS, "defmacro", car(arg2));}
-    if (illegal_lambda_p(car(arg2))){
-	error(ILLEGAL_ARGS, "defmacro", car(arg2));}
-    if (!symbollistp(car(arg2))){
-	error(OUT_OF_DOMAIN, "defmacro", car(arg2));}
-	//if (!top_flag && !ignore_topchk)
-	//error(NOT_TOP_LEVEL, "defmacro", arglist);
+    if (improperlistp(car(arg2))) {
+	error(IMPROPER_ARGS, "defmacro", car(arg2));
+    }
+    if (illegal_lambda_p(car(arg2))) {
+	error(ILLEGAL_ARGS, "defmacro", car(arg2));
+    }
+    if (!symbollistp(car(arg2))) {
+	error(OUT_OF_DOMAIN, "defmacro", car(arg2));
+    }
+    // if (!top_flag && !ignore_topchk)
+    // error(NOT_TOP_LEVEL, "defmacro", arglist);
 
 
     bindmacro(GET_NAME(arg1), arg2);
@@ -1193,6 +1197,7 @@ f_catch(int arglist)
 				// 
 	// 
 	// 
+	// 
 	// sp
 	return (res);
     }
@@ -1480,9 +1485,11 @@ f_defclass(int arglist)
     var = NIL;
     val = UNDEF;
     initargs = NIL;
-	ignore_topchk = 1; // ignore toplevel check for defgeneric defmethod
-	SET_AUX(arg1,USER); //  temporary set USER to avoid undef entity error of defmethod 
-	                    //  finaly set-aux formal class  
+    ignore_topchk = 1;		// ignore toplevel check for defgeneric
+				// defmethod
+    SET_AUX(arg1, USER);	// temporary set USER to avoid undef
+				// entity error of defmethod 
+    // finaly set-aux formal class 
     while (!nullp(arg3)) {
 	int             sym,
 	                ls,
@@ -1582,8 +1589,8 @@ f_defclass(int arglist)
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
 		// (slot-value x 'var))
-		//? (defmethod name ((x <null>)) for setf syntax
-		//? 'var)
+		// ? (defmethod name ((x <null>)) for setf syntax
+		// ? 'var)
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1711,7 +1718,7 @@ f_defclass(int arglist)
     SET_CDR(cl, var);
     SET_AUX(cl, initargs);
     SET_AUX(arg1, cl);
-	ignore_topchk = 0;  // restore toplevel check;
+    ignore_topchk = 0;		// restore toplevel check;
     return (arg1);
 }
 
@@ -1727,24 +1734,32 @@ f_defgeneric(int arglist)
     arg1 = car(arglist);	// func-name
     arg2 = cadr(arglist);	// lambda-list
     arg3 = cddr(arglist);	// body
-    if (!symbolp(arg1)){
-	error(NOT_SYM, "defgeneric", arg1);}
-    if (GET_OPT(arg1) == CONSTN){
-	error(CANT_MODIFY, "defgeneric", arg1);}
-	if (functionp(arg1) || subrp(arg1) || fsubrp(arg1)){
-	error(CANT_MODIFY, "defgeneric", arg1);}
-	if (genericp(arg1) && eqp(arg1,makesym("CREATE"))){
-	error(CANT_MODIFY, "defgeneric", arg1);}
-	if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
+    if (!symbolp(arg1)) {
+	error(NOT_SYM, "defgeneric", arg1);
+    }
+    if (GET_OPT(arg1) == CONSTN) {
+	error(CANT_MODIFY, "defgeneric", arg1);
+    }
+    if (functionp(arg1) || subrp(arg1) || fsubrp(arg1)) {
+	error(CANT_MODIFY, "defgeneric", arg1);
+    }
+    if (genericp(arg1) && eqp(arg1, makesym("CREATE"))) {
+	error(CANT_MODIFY, "defgeneric", arg1);
+    }
+    if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(WRONG_ARGS, "defgeneric", arg1);
-    if (!listp(arg2)){
-	error(NOT_LIST, "defgeneric", arg2);}
-	if (duplicatelistp(arg2)){
-	error(IMPROPER_ARGS, "defgeneric", arg2);}
-    if (improperlistp(arg2)){
-	error(IMPROPER_ARGS, "defgeneric", arg2);}
-    if (illegal_lambda_p(arg2)){
-	error(ILLEGAL_ARGS, "defgeneric", arg2);}
+    if (!listp(arg2)) {
+	error(NOT_LIST, "defgeneric", arg2);
+    }
+    if (duplicatelistp(arg2)) {
+	error(IMPROPER_ARGS, "defgeneric", arg2);
+    }
+    if (improperlistp(arg2)) {
+	error(IMPROPER_ARGS, "defgeneric", arg2);
+    }
+    if (illegal_lambda_p(arg2)) {
+	error(ILLEGAL_ARGS, "defgeneric", arg2);
+    }
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
@@ -1799,30 +1814,33 @@ f_defmethod(int arglist)
     arg1 = car(arglist);	// method-name
     arg2 = cdr(arglist);	// parameter-profile
 
-	if (subrp(arg1) || fsubrp(arg1)){
+    if (subrp(arg1) || fsubrp(arg1)) {
 	error(CANT_MODIFY, "defmethod", arg1);
-	}
-	if (functionp(arg1) || macrop(arg1)){
-	error(ILLEGAL_FORM, "defmethod", arg1);}
-	if (GET_CAR(arg1)==NIL && !member(arg1,generic_list)){
-	error(UNDEF_FUN,"defmethod",arg1);}
-	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
-	error(ILLEGAL_ARGS,"defmethod",arg2);
-	}
-	if (listp(car(arg2)) && !unified_parameter_p(GET_CAR(GET_CAR(arg1)),car(arg2))){
+    }
+    if (functionp(arg1) || macrop(arg1)) {
+	error(ILLEGAL_FORM, "defmethod", arg1);
+    }
+    if (GET_CAR(arg1) == NIL && !member(arg1, generic_list)) {
+	error(UNDEF_FUN, "defmethod", arg1);
+    }
+    if (listp(car(arg2)) && illegal_lambda_p(car(arg2))) {
+	error(ILLEGAL_ARGS, "defmethod", arg2);
+    }
+    if (listp(car(arg2))
+	&& !unified_parameter_p(GET_CAR(GET_CAR(arg1)), car(arg2))) {
 	error(ILLEGAL_FORM, "defmethod", arg2);
     }
-	if (listp(car(arg2)) && undef_parameter_p(car(arg2))){
-	error(UNDEF_CLASS,"defmethod",arg2);
-	}
+    if (listp(car(arg2)) && undef_parameter_p(car(arg2))) {
+	error(UNDEF_CLASS, "defmethod", arg2);
+    }
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
 	&& GET_PROP(GET_CAR(arg1)) == NIL)
 	error(IMPROPER_ARGS, "defmethod", arg2);
-    if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))){
+    if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
-	}
+    }
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defmethod", arglist);
 

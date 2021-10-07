@@ -499,49 +499,56 @@ illegal_lambda_p(int ls)
 
 }
 
-int undef_parameter_p(int ls){
-    
-    if(nullp(ls))
-        return(0);
-    else if(symbolp(car(ls)))
-        return(undef_parameter_p(cdr(ls)));
-    else if(listp(car(ls))){
-        // e.g. ((x undef))  undef is only symbol and it's class is (class <symbol>)
-        if (symbolp(cadar(ls)) && GET_AUX(cadar(ls)) == csymbol)
-            return(1);
-        else 
-            return(undef_parameter_p(cdr(ls)));
-    }
-    else
-        return(1);        
+int
+undef_parameter_p(int ls)
+{
+
+    if (nullp(ls))
+	return (0);
+    else if (symbolp(car(ls)))
+	return (undef_parameter_p(cdr(ls)));
+    else if (listp(car(ls))) {
+	// e.g. ((x undef)) undef is only symbol and it's class is (class
+	// <symbol>)
+	if (symbolp(cadar(ls)) && GET_AUX(cadar(ls)) == csymbol)
+	    return (1);
+	else
+	    return (undef_parameter_p(cdr(ls)));
+    } else
+	return (1);
 }
 
-int unified_parameter_p(int lamlis, int ls){
-    
-    if(nullp(lamlis) && nullp(ls))
-        return(1);
-    else if(nullp(lamlis) && !nullp(ls))
-        return(0);
-    else if(!nullp(lamlis) && nullp(ls))
-        return(0);
-    else if((eqp(car(lamlis),makesym(":REST")) || eqp(car(lamlis),makesym("&REST"))) &&
-            (eqp(car(ls),makesym(":REST")) || eqp(car(ls),makesym("&REST"))))
-        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
-    else if(symbolp(car(lamlis)) && symbolp(car(ls)))
-        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
-    else if(symbolp(car(lamlis)) && (listp(car(ls) && length(car(ls)==2))))
-        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
-    else if((listp(car(lamlis)) && length(car(lamlis))==2) && (listp(car(ls) && length(car(ls)==2))))
-        return(unified_parameter_p(cdr(lamlis),cdr(ls)));
-    else 
-        return(0);
-    /*
-    check unification lambda-list of generic-function and method-parameter
-    e.g.
-    lambda-list=(x y :rest z)
-    parameter=  ((x <integer>)(y <float>) :rest (z <array))
+int
+unified_parameter_p(int lamlis, int ls)
+{
 
-    */
+    if (nullp(lamlis) && nullp(ls))
+	return (1);
+    else if (nullp(lamlis) && !nullp(ls))
+	return (0);
+    else if (!nullp(lamlis) && nullp(ls))
+	return (0);
+    else if ((eqp(car(lamlis), makesym(":REST"))
+	      || eqp(car(lamlis), makesym("&REST")))
+	     && (eqp(car(ls), makesym(":REST"))
+		 || eqp(car(ls), makesym("&REST"))))
+	return (unified_parameter_p(cdr(lamlis), cdr(ls)));
+    else if (symbolp(car(lamlis)) && symbolp(car(ls)))
+	return (unified_parameter_p(cdr(lamlis), cdr(ls)));
+    else if (symbolp(car(lamlis))
+	     && (listp(car(ls) && length(car(ls) == 2))))
+	return (unified_parameter_p(cdr(lamlis), cdr(ls)));
+    else if ((listp(car(lamlis)) && length(car(lamlis)) == 2)
+	     && (listp(car(ls) && length(car(ls) == 2))))
+	return (unified_parameter_p(cdr(lamlis), cdr(ls)));
+    else
+	return (0);
+    /*
+     * check unification lambda-list of generic-function and
+     * method-parameter e.g. lambda-list=(x y :rest z) parameter= ((x
+     * <integer>)(y <float>) :rest (z <array))
+     * 
+     */
 
 }
 

@@ -718,39 +718,41 @@ makegeneric(char *pname, int lamlist, int body)
     SET_PROP(val, T);		// method-combination default is T
     SET_AUX(val, cstandard_generic_function);
     if (illegal_lambda_p(lamlist))
-        error(ILLEGAL_ARGS,"makegeneric",lamlist);
+	error(ILLEGAL_ARGS, "makegeneric", lamlist);
 
     while (!nullp(body)) {
-    // (:method method-qualifier* parameter-profile form*)
+	// (:method method-qualifier* parameter-profile form*)
 	if (eqp(caar(body), makesym(":METHOD"))) {
 	    if (method_qualifier_p(cadar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
-        if (symbolp(cadar(body)) && !method_qualifier_p(cadar(body))){
-        error(ILLEGAL_FORM, "defgeneric", body);
-        }
-        if (listp(cadar(body)) && undef_parameter_p(cadar(body))){
-        error(UNDEF_ENTITY, "defgeneric", body);
-        }
-        if (listp(cadar(body)) && !unified_parameter_p(lamlist,cadar(body))){
-        error(ILLEGAL_FORM, "defgeneric", body);
-        }
-        if (nullp(cadar(body))){
-        error(ILLEGAL_FORM, "defgeneric",body);
-        }
+	    if (symbolp(cadar(body)) && !method_qualifier_p(cadar(body))) {
+		error(ILLEGAL_FORM, "defgeneric", body);
+	    }
+	    if (listp(cadar(body)) && undef_parameter_p(cadar(body))) {
+		error(UNDEF_ENTITY, "defgeneric", body);
+	    }
+	    if (listp(cadar(body))
+		&& !unified_parameter_p(lamlist, cadar(body))) {
+		error(ILLEGAL_FORM, "defgeneric", body);
+	    }
+	    if (nullp(cadar(body))) {
+		error(ILLEGAL_FORM, "defgeneric", body);
+	    }
 	    insert_method(makemethod(cdar(body)), val);
 	} else if (eqp(caar(body), makesym(":METHOD-COMBINATION"))) {
 	    if (cadar(body) == NIL || cadar(body) == T)
 		SET_PROP(val, cadar(body));
 	    else
 		error(ILLEGAL_FORM, "defgeneric", body);
-	} else if (eqp(caar(body),makesym(":GENERIC-FUNCTION-CLASS"))){
-        if (!(listp(cadar(body)) && eqp(car(cadar(body)),makesym("CLASS")))){
-        error(ILLEGAL_FORM, "defgeneric", body);
-        }
-        SET_AUX(val,eval(cadar(body)));
-    }
-      else {
+	} else if (eqp(caar(body), makesym(":GENERIC-FUNCTION-CLASS"))) {
+	    if (!
+		(listp(cadar(body))
+		 && eqp(car(cadar(body)), makesym("CLASS")))) {
+		error(ILLEGAL_FORM, "defgeneric", body);
+	    }
+	    SET_AUX(val, eval(cadar(body)));
+	} else {
 	    error(ILLEGAL_FORM, "defgeneric", body);
 	}
 	body = cdr(body);
@@ -802,8 +804,7 @@ makemethod(int addr)
     } else if (eqp(car(addr), makesym(":AFTER"))) {
 	SET_CAR(val, copy_heap(cdr(addr)));
 	SET_OPT(val, AFTER);
-    } 
-    else {
+    } else {
 	SET_CAR(val, copy_heap(addr));
 	SET_OPT(val, PRIORITY);
     }
@@ -1021,6 +1022,7 @@ initinst(int x, int initls)
     cl = GET_AUX(x);		// class of x
     class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
 				// 
+    // 
     // ((initarg1 . accessor1)(initarg2 .
     // accesor2)...)
     inst_vars = GET_CDR(x);	// instance variable list. This is assoc

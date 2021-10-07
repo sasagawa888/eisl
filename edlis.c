@@ -1010,6 +1010,7 @@ display_line(int line)
 	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
 								// 
 	    // 
+	    // 
 	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);

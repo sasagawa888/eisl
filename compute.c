@@ -916,6 +916,7 @@ lcm(int x, int y)
     if (integerp(x) && integerp(y) && abs(GET_INT(x)) < 10000 && abs(GET_INT(y)) < 10000)	// because 
 												// 
 	// 
+	// 
 	// x,y 
 	// < 
 	// sqrt(BIGNUM_BASE)

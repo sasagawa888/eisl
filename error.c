@@ -103,7 +103,7 @@ error(int errnum, const char *fun, int arg)
     case WRONG_ARGS:
 	initargs =
 	    list6(makesym("format-string"),
-		  makestr("Wrong number of arguments at "),
+		  makestr("Wrong arguments at "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
 	signal_condition(makeinstance(cprogram_error, initargs), NIL);

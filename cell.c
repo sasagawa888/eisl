@@ -744,7 +744,13 @@ makegeneric(char *pname, int lamlist, int body)
 		SET_PROP(val, cadar(body));
 	    else
 		error(ILLEGAL_FORM, "defgeneric", body);
-	} else {
+	} else if (eqp(caar(body),makesym(":GENERIC-FUNCTION-CLASS"))){
+        if (!(listp(cadar(body)) && eqp(car(cadar(body)),makesym("CLASS")))){
+        error(ILLEGAL_FORM, "defgeneric", body);
+        }
+        SET_AUX(val,eval(cadar(body)));
+    }
+      else {
 	    error(ILLEGAL_FORM, "defgeneric", body);
 	}
 	body = cdr(body);

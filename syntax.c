@@ -1727,14 +1727,16 @@ f_defgeneric(int arglist)
     arg1 = car(arglist);	// func-name
     arg2 = cadr(arglist);	// lambda-list
     arg3 = cddr(arglist);	// body
-    if (!symbolp(arg1))
-	error(NOT_SYM, "defgeneric", arg1);
-    if (GET_OPT(arg1) == CONSTN)
-	error(CANT_MODIFY, "defgeneric", arg1);
-    if (IS_FUNC(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defgeneric", arg1);
-    if (IS_SUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defgeneric", arg1);
+    if (!symbolp(arg1)){
+	error(NOT_SYM, "defgeneric", arg1);}
+    if (GET_OPT(arg1) == CONSTN){
+	error(CANT_MODIFY, "defgeneric", arg1);}
+	if (functionp(arg1) || subrp(arg1) || fsubrp(arg1)){
+	error(CANT_MODIFY, "defgeneric", arg1);}
+	if (genericp(arg1) && eqp(arg1,makesym("CREATE"))){
+	error(CANT_MODIFY, "defgeneric", arg1);}
+	if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
+	error(WRONG_ARGS, "defgeneric", arg1);
     if (!listp(arg2)){
 	error(NOT_LIST, "defgeneric", arg2);}
 	if (duplicatelistp(arg2)){

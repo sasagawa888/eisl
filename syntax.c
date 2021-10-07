@@ -1481,6 +1481,8 @@ f_defclass(int arglist)
     val = UNDEF;
     initargs = NIL;
 	ignore_topchk = 1; // ignore toplevel check for defgeneric defmethod
+	SET_AUX(arg1,USER); //  temporary set USER to avoid undef entity error of defmethod 
+	                    //  finaly set-aux formal class  
     while (!nullp(arg3)) {
 	int             sym,
 	                ls,
@@ -1803,9 +1805,12 @@ f_defmethod(int arglist)
 	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS,"defmethod",arg2);
 	}
-	if (genericp(arg1) && listp(car(arg2)) && !unified_parameter_p(GET_CAR(GET_CAR(arg1)),car(arg2))){
+	if (listp(car(arg2)) && !unified_parameter_p(GET_CAR(GET_CAR(arg1)),car(arg2))){
 	error(ILLEGAL_FORM, "defmethod", arg2);
     }
+	if (listp(car(arg2)) && undef_parameter_p(car(arg2))){
+	error(UNDEF_CLASS,"defmethod",arg2);
+	}
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))

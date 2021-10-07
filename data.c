@@ -500,16 +500,14 @@ illegal_lambda_p(int ls)
 }
 
 int undef_parameter_p(int ls){
-
+    
     if(nullp(ls))
         return(0);
     else if(symbolp(car(ls)))
         return(undef_parameter_p(cdr(ls)));
     else if(listp(car(ls))){
-        if (length(car(ls)) != 2)
-            return(1);
-        else if (!(symbolp(caar(ls)) && 
-                 (GET_OPT(cadar(ls))==SYSTEM || GET_OPT(ls)==USER)))
+        // e.g. ((x undef))  undef is only symbol and it's class is (class <symbol>)
+        if (symbolp(cadar(ls)) && GET_AUX(cadar(ls)) == csymbol)
             return(1);
         else 
             return(undef_parameter_p(cdr(ls)));
@@ -546,6 +544,7 @@ int unified_parameter_p(int lamlis, int ls){
     */
 
 }
+
 
 int
 improperlistp(int ls)

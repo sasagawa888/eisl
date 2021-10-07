@@ -453,13 +453,13 @@
 (test (foo-g-30 c4 c3) (<object> c3) equal)
 (test (foo-g-30 c4 c4) (<object> <object>) equal)
 ;; 
-#|
+
 ($eval (defglobal *call-tree* nil))
 ($eval 
  (defun add-call-tree (x)
    (setq *call-tree* (cons x *call-tree*))))
 ($eval (defgeneric foo-sub-1 (x)))
-($eval (defmethod foo-sub-1 (test (x <integer>)) 
+($eval (defmethod foo-sub-1 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
 ($eval
  (defun foo-11 (x)
@@ -467,11 +467,11 @@
    (foo-sub-1 x)
    (reverse *call-tree*)))
 (test (foo-11 3) (primary-<integer>) equal)
-;($error (foo-11 3.3) <error>)
+($error (foo-11 3.3) <error>)
 ;;
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-2 (x) (:method-combination nil)))
-($eval (defmethod foo-sub-2 (test (x <integer>)) 
+($eval (defmethod foo-sub-2 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
 ($eval
  (defun foo-12 (x)
@@ -483,13 +483,13 @@
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-3 (x)))
-($eval (defmethod foo-sub-3 (test (x <integer>)) 
+($eval (defmethod foo-sub-3 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
-($eval (defmethod foo-sub-3 :around (test (x <integer>)) 
+($eval (defmethod foo-sub-3 :around ((x <integer>)) 
 	 (add-call-tree 'around-<integer>)))
-($eval (defmethod foo-sub-3 :before (test (x <integer>)) 
+($eval (defmethod foo-sub-3 :before ((x <integer>)) 
 	 (add-call-tree 'before-<integer>)))
-($eval (defmethod foo-sub-3 :after (test (x <integer>)) 
+($eval (defmethod foo-sub-3 :after ((x <integer>)) 
 	 (add-call-tree 'after-<integer>)))
 ($eval
  (defun foo-13 (x)
@@ -497,13 +497,13 @@
    (foo-sub-3 x)
    (reverse *call-tree*)))
 (test (foo-13 3) (around-<integer>) equal)
-;($error (foo-13 3.3) <error>)
+($error (foo-13 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-4 (x)))
-($eval (defmethod foo-sub-4 (test (x <integer>)) 
+($eval (defmethod foo-sub-4 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
-($eval (defmethod foo-sub-4 :before (test (x <integer>)) 
+($eval (defmethod foo-sub-4 :before ((x <integer>)) 
 	 (add-call-tree 'before-<integer>)))
 ($eval
  (defun foo-14 (x)
@@ -513,13 +513,13 @@
 (test (foo-14 3) (before-<integer>
 	  primary-<integer>) 
  equal)
-;($error (foo-14 3.3) <error>)
+($error (foo-14 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-5 (x)))
-($eval (defmethod foo-sub-5 (test (x <integer>)) 
+($eval (defmethod foo-sub-5 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
-($eval (defmethod foo-sub-5 :after (test (x <integer>)) 
+($eval (defmethod foo-sub-5 :after ((x <integer>)) 
 	 (add-call-tree 'after-<integer>)))
 ($eval
  (defun foo-15 (x)
@@ -529,15 +529,15 @@
 (test (foo-15 3) (primary-<integer>
 	  after-<integer>)
  equal)
-;($error (foo-15 3.3) <error>)
+($error (foo-15 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-6 (x)))
-($eval (defmethod foo-sub-6 (test (x <integer>)) 
+($eval (defmethod foo-sub-6 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
-($eval (defmethod foo-sub-6 :before (test (x <integer>)) 
+($eval (defmethod foo-sub-6 :before ((x <integer>)) 
 	 (add-call-tree 'before-<integer>)))
-($eval (defmethod foo-sub-6 :after (test (x <integer>)) 
+($eval (defmethod foo-sub-6 :after ((x <integer>)) 
 	 (add-call-tree 'after-<integer>)))
 ($eval
  (defun foo-16 (x)
@@ -548,19 +548,19 @@
 	  primary-<integer>
 	  after-<integer>) 
  equal)
-;($error (foo-16 3.3) <error>)
+($error (foo-16 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-7 (x)))
-($eval (defmethod foo-sub-7 (test (x <integer>)) 
+($eval (defmethod foo-sub-7 ((x <integer>)) 
 	 (add-call-tree 'primary-<integer>)))
 ($eval (defmethod foo-sub-7 (x)
 	 (add-call-tree 'primary-<object>)))
-($eval (defmethod foo-sub-7 :before (test (x <integer>)) 
+($eval (defmethod foo-sub-7 :before ((x <integer>)) 
 	 (add-call-tree 'before-<integer>)))
 ($eval (defmethod foo-sub-7 :before (x)
 	 (add-call-tree 'before-<object>)))
-($eval (defmethod foo-sub-7 :after (test (x <integer>)) 
+($eval (defmethod foo-sub-7 :after ((x <integer>)) 
 	 (add-call-tree 'after-<integer>)))
 ($eval (defmethod foo-sub-7 :after (x)
 	 (add-call-tree 'after-<object>)))
@@ -580,16 +580,16 @@
 	    after-<object>)
  equal)
 ;; 
-($eval (defgeneric (setf foo-18) (x y z)))
-($eval (defmethod (setf foo-18) (x y z) (list x y z)))
-(test (setf (foo-18 1 2) 3) (3 1 2) equal)
+;($eval (defgeneric (setf foo-18) (x y z)))
+;($eval (defmethod (setf foo-18) (x y z) (list x y z)))
+;(test (setf (foo-18 1 2) 3) (3 1 2) equal)
 ;($error (setf (foo-18 1) 2) <program-error>)
 ;($error (setf (foo-18 1 2 3) 4) <program-error>)
 ;($error (setf (bar 1 2) 3) <error>)
 ;;
-($eval (defgeneric (setf nil) (x y z)))
-($eval (defmethod (setf nil) (x y z) (list x y z)))
-(test (setf (nil 1 2) 3) (3 1 2) equal)
+;($eval (defgeneric (setf nil) (x y z)))
+;($eval (defmethod (setf nil) (x y z) (list x y z)))
+;(test (setf (nil 1 2) 3) (3 1 2) equal)
 ;($error (setf (nil 1) 2) <program-error>)
 ;($error (setf (nil 1 2 3) 4) <program-error>)
 ;;;------------------------------------------------------------
@@ -597,12 +597,14 @@
 ;;;
 ;;;  (call-next-method) --> <object>
 ;;;------------------------------------------------------------
-;;($argc call-next-method 0 0 0)
+($argc call-next-method 0 0 0)
 ;;
-;($error (call-next-method) <undefined-function>)
-;($error (call-next-method 1) <undefined-function>)
+($error (call-next-method) <undefined-function>)
+($error (call-next-method 1) <undefined-function>)
+
 ($eval (defun foo-19 () (call-next-method)))
 ;($error (foo-19) <undefined-function>)
+#|
 ($eval (defun foo-20 () (call-next-method 1)))
 ;($error (foo-20) <undefined-function>)
 ;; 
@@ -813,7 +815,7 @@
 ;;
 ($eval 
  (defgeneric foo-31 (x)
-   (:method (test (x <integer>))
+   (:method ((x <integer>))
 	    (lambda (y) (* y (call-next-method))))
    (:method (test (x <number>))
 	    (* x x))))
@@ -846,14 +848,14 @@
 	    (add-call-tree 'i-primary-2)
 	    (setq *gf2* (lambda (y) (list 'i-primary-2 (call-next-method) y)))
 	    'i-primary-2)
-   (:method :around (test (x <integer>))
+   (:method :around ((x <integer>))
 	    (add-call-tree 'i-around-1)
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'i-around-2))
    (:method :before (test (x <integer>))
 	    (add-call-tree 'i-before))
-   (:method :after (test (x <integer>))
+   (:method :after ((x <integer>))
 	    (add-call-tree 'i-after))
    ;;
    (:method (test (x <number>))
@@ -862,14 +864,14 @@
 	    (call-next-method)
 	    (setq *gf4* (lambda (y) (list 'n-primary-2 (call-next-method) y)))
 	    (add-call-tree 'n-primary-2))
-   (:method :around (test (x <number>))
+   (:method :around ((x <number>))
 	    (add-call-tree 'n-around-1)
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'n-around-2))
-   (:method :before (test (x <number>))
+   (:method :before ((x <number>))
 	    (add-call-tree 'n-before))
-   (:method :after (test (x <number>))
+   (:method :after ((x <number>))
 	    (add-call-tree 'n-after))
    ;;
    (:method (x)
@@ -914,12 +916,12 @@
  (defgeneric foo-36 (a b &rest c)
    (:method (a b &rest c)
 	    (list 'default a b))
-   (:method (test (a <string>) (b <string>) &rest c)
+   (:method ((a <string>) (b <string>) &rest c)
 	    (list (call-next-method) (string-append a b)))
    (:method (test (a <integer>) (b <number>) &rest c)
 	    (list (call-next-method) (list 'number a b)))
-   (:method (test (a <integer>) (b <integer>) &rest c)
-	    (let (test (x (list (foo-36 "foo" "bar" "yab"))))
+   (:method ((a <integer>) (b <integer>) &rest c)
+	    (let ((x (list (foo-36 "foo" "bar" "yab"))))
 	      ;;
 	      (setq a (* a 10))
 	      (setq b (* b 10))
@@ -938,12 +940,12 @@
  (defgeneric foo-37 (a b c)
    (:method (a b c)
 	    (list 'default a b))
-   (:method (test (a <string>) (b <string>) c)
+   (:method ((a <string>) (b <string>) c)
 	    (list (call-next-method) (string-append a b)))
-   (:method (test (a <integer>) (b <number>) c)
+   (:method ((a <integer>) (b <number>) c)
 	    (list (call-next-method) (list 'number a b)))
-   (:method (test (a <integer>) (b <integer>) c)
-	    (let (test (x (list (foo-37 "foo" "bar" "yab"))))
+   (:method ((a <integer>) (b <integer>) c)
+	    (let ((x (list (foo-37 "foo" "bar" "yab"))))
 	      ;;
 	      (setq a (* a 10))
 	      (setq b (* b 10))

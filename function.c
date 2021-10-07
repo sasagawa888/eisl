@@ -4909,9 +4909,9 @@ f_call_next_method(int arglist)
     bool            method_found = false;
 
     if (length(arglist) != 0)
-	error(WRONG_ARGS, "call-next-method", arglist);
+	error(UNDEF_FUN, "call-next-method", arglist);
     if (generic_func == NIL)
-	error(OUT_OF_RANGE, "call-next-method", NIL);
+	error(UNDEF_FUN, "call-next-method", NIL);
 
     res = NIL;
     varlist = NIL;

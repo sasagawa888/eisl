@@ -603,38 +603,36 @@
 ($error (call-next-method 1) <undefined-function>)
 
 ($eval (defun foo-19 () (call-next-method)))
-;($error (foo-19) <undefined-function>)
-#|
+($error (foo-19) <undefined-function>)
 ($eval (defun foo-20 () (call-next-method 1)))
 ;($error (foo-20) <undefined-function>)
 ;; 
 ($eval (defgeneric foo-21 (x)))
-($eval (defmethod foo-21 (test (x <integer>)) 'integer))
-($eval (defmethod foo-21 :before (test (x <integer>)) (call-next-method)))
-;($error (foo-21 3) <error>)
+($eval (defmethod foo-21 ((x <integer>)) 'integer))
+($eval (defmethod foo-21 :before ((x <integer>)) (call-next-method)))
+($error (foo-21 3) <error>)
 ;; 
 ($eval (defgeneric foo-22 (x)))
-($eval (defmethod foo-22 (test (x <integer>)) 'integer))
-($eval (defmethod foo-22 :after (test (x <integer>)) (call-next-method)))
-;($error (foo-22 3) <error>)
+($eval (defmethod foo-22 ((x <integer>)) 'integer))
+($eval (defmethod foo-22 :after ((x <integer>)) (call-next-method)))
+($error (foo-22 3) <error>)
 ;;
 ($eval (defgeneric foo-23 (x)))
-($eval (defmethod foo-23 (test (x <integer>)) (call-next-method)))
-;($error (foo-23 3) <error>)
+($eval (defmethod foo-23 ((x <integer>)) (call-next-method)))
+($error (foo-23 3) <error>)
 ;;
 ($eval (defgeneric foo-24 (x)))
 ($eval (defmethod foo-24 (x) '<object>))
-($eval (defmethod foo-24 (test (x <integer>)) 
+($eval (defmethod foo-24 ((x <integer>)) 
 	 (call-next-method) ;; 
 	 ))
 (test (foo-24 3) <object>)
 ($eval (defgeneric foo-25 (x)))
 ($eval (defmethod foo-25 (x) '<object>))
-($eval (defmethod foo-25 (test (x <integer>)) 
+($eval (defmethod foo-25 ((x <integer>)) 
 	 (call-next-method 1) ;;
 	 ))
-;($error (foo-25 3) <program-error>)
-
+($error (foo-25 3) <program-error>)
 ;;;------------------------------------------------------------
 ;;; [local function]
 ;;;
@@ -645,23 +643,22 @@
 ;($error (next-method-p) <undefined-function>)
 ;($error (next-method-p 1) <undefined-function>)
 ($eval (defun foo-26 () (next-method-p)))
-;($error (foo-26) <undefined-function>)
+($error (foo-26) <undefined-function>)
 ($eval (defun foo-27 () (next-method-p 1)))
-;($error (foo-27) <undefined-function>)
+($error (foo-27) <undefined-function>)
 ;;
 ($eval (defgeneric foo-28 (x)))
 ($eval (defmethod foo-28 (x) '<object>))
-($eval (defmethod foo-28 (test (x <integer>)) 
+($eval (defmethod foo-28 ((x <integer>)) 
 	 (if (next-method-p) ;;
 	     (call-next-method))))
 (test (foo-28 3) <object>)
 ($eval (defgeneric foo-29 (x)))
 ($eval (defmethod foo-29 (x) '<object>))
-($eval (defmethod foo-29 (test (x <integer>)) 
+($eval (defmethod foo-29 ((x <integer>)) 
 	 (if (next-method-p 1)  ;;
 	     (call-next-method))))
-;($error (foo-29 3) <program-error>)
-
+($error (foo-29 3) <program-error>)
 ($eval (defglobal *call-tree* nil))
 ;;
 (test (defclass c00 () ()) c00)
@@ -674,68 +671,70 @@
 ($eval (defglobal c22 (create (class c22))))
 ($eval (defglobal c33 (create (class c33))))
 ;;
+#|
 ($eval 
  (defgeneric foo-sub-30 (x)
    ;; <object>
    (:method (x) 
 	    (add-call-tree 'primary-<object>))
    ;; <standard-object>
-   (:method (test (x <standard-object>))
+   (:method ((x <standard-object>))
 	    (add-call-tree 'primary-<standard-object>-begin)
 	    (call-next-method)
 	    (add-call-tree 'primary-<standard-object>-end))
-   (:method :around (test (x <standard-object>))
+   (:method :around ((x <standard-object>))
 	    (add-call-tree 'around-<standard-object>-begin)
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'around-<standard-object>-end))
-   (:method :before (test (x <standard-object>))
+   (:method :before ((x <standard-object>))
 	    (add-call-tree 'before-<standard-object>))
-   (:method :after (test (x <standard-object>))
+   (:method :after ((x <standard-object>))
 	    (add-call-tree 'after-<standard-object>))
    ;; c11
-   (:method (test (x c11))
+   (:method ((x c11))
 	    (add-call-tree 'primary-c1-begin)
 	    (call-next-method)
 	    (add-call-tree 'primary-c1-end))
-   (:method :around (test (x c11))
+   (:method :around ((x c11))
 	    (add-call-tree 'around-c1-begin)
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'around-c1-end))
-   (:method :before (test (x c11))
+   (:method :before ((x c11))
 	    (add-call-tree 'before-c1))
-   (:method :after (test (x c11))
+   (:method :after ((x c11))
 	    (add-call-tree 'after-c1))
    ;; c22
    (:method (test (x c22))
 	    (add-call-tree 'primary-c2-begin)
 	    (call-next-method)
 	    (add-call-tree 'primary-c2-end))
-   (:method :around (test (x c22))
+   (:method :around ((x c22))
 	    (add-call-tree 'around-c2-begin)
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'around-c2-end))
-   (:method :before (test (x c22))
+   (:method :before ((x c22))
 	    (add-call-tree 'before-c2))
-   (:method :after (test (x c22))
+   (:method :after ((x c22))
 	    (add-call-tree 'after-c2))
    ;; c33
-   (:method (test (x c33))
+   (:method ((x c33))
 	    (add-call-tree 'primary-c3-begin)
 	    (call-next-method)
 	    (add-call-tree 'primary-c3-end))
-   (:method :around (test (x c33))
+   (:method :around ((x c33))
 	    (add-call-tree 'around-c3-begin)
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'around-c3-end))
-   (:method :before (test (x c33))
+   (:method :before ((x c33))
 	    (add-call-tree 'before-c3))
-   (:method :after (test (x c33))
+   (:method :after ((x c33))
 	    (add-call-tree 'after-c3))
    ))
+|#
 ;;
 ($eval
  (defun foo-30 (x)
@@ -743,29 +742,30 @@
    (foo-sub-30 x)
    (reverse *call-tree*)))
 ;;
-(test (foo-30 1) (primary-<object>) equal)
-(test (foo-30 c00) (around-<standard-object>-begin
-	      before-<standard-object>
-	      primary-<standard-object>-begin
-	      primary-<object>
-	      primary-<standard-object>-end
-	      after-<standard-object>
-	      around-<standard-object>-end)
- equal)
-(test (foo-30 c11) (around-c1-begin
-	      around-<standard-object>-begin
-	      before-c1
-	      before-<standard-object>
-	      primary-c1-begin
-	      primary-<standard-object>-begin
-	      primary-<object>
-	      primary-<standard-object>-end
-	      primary-c1-end
-	      after-<standard-object>
-	      after-c1
-	      around-<standard-object>-end
-	      around-c1-end) 
- equal)
+;(test (foo-30 1) (primary-<object>) equal)
+;(test (foo-30 c00) (around-<standard-object>-begin
+;	      before-<standard-object>
+;	      primary-<standard-object>-begin
+;	      primary-<object>
+;	      primary-<standard-object>-end
+;	      after-<standard-object>
+;	      around-<standard-object>-end)
+; equal)
+;(test (foo-30 c11) (around-c1-begin
+;	      around-<standard-object>-begin
+;	      before-c1
+;	      before-<standard-object>
+;	      primary-c1-begin
+;	      primary-<standard-object>-begin
+;	      primary-<object>
+;	      primary-<standard-object>-end
+;	      primary-c1-end
+;	      after-<standard-object>
+;	      after-c1
+;	      around-<standard-object>-end
+;	      around-c1-end) 
+; equal)
+ #|
 (test (foo-30 c22) (around-c2-begin
 	      around-c1-begin
 	      around-<standard-object>-begin
@@ -812,22 +812,23 @@
 	      around-c2-end 
 	      around-c3-end) 
  equal)
+|#
 ;;
 ($eval 
  (defgeneric foo-31 (x)
    (:method ((x <integer>))
 	    (lambda (y) (* y (call-next-method))))
-   (:method (test (x <number>))
+   (:method ((x <number>))
 	    (* x x))))
 ($eval (defglobal x (foo-31 3)))
-(test (funcall x 5) 45 eql)
-(test (funcall x 5) 45 eql)
+;(test (funcall x 5) 45 eql)
+;(test (funcall x 5) 45 eql)
 ;;
 ($eval
  (defgeneric foo-32 (x)
-   (:method (test (x <integer>))
+   (:method ((x <integer>))
 	    (list x (call-next-method) (call-next-method)))
-   (:method (test (x <number>))
+   (:method ((x <number>))
 	    (* x x))
    (:method (x)
 	    'never-called)))
@@ -841,7 +842,7 @@
 ($eval 
  (defgeneric foo-33 (x)
    ;;
-   (:method (test (x <integer>))
+   (:method ((x <integer>))
 	    (add-call-tree 'i-primary-1)
 	    (setq *gf1* (lambda (y) (list 'i-primary-1 x y)))
 	    (call-next-method)
@@ -853,12 +854,12 @@
 	    (if (next-method-p)
 		(call-next-method))
 	    (add-call-tree 'i-around-2))
-   (:method :before (test (x <integer>))
+   (:method :before ((x <integer>))
 	    (add-call-tree 'i-before))
    (:method :after ((x <integer>))
 	    (add-call-tree 'i-after))
    ;;
-   (:method (test (x <number>))
+   (:method ((x <number>))
 	    (add-call-tree 'n-primary-1)
 	    (setq *gf3* (lambda (y) (list 'n-primary-1 x y)))
 	    (call-next-method)
@@ -894,10 +895,10 @@
    (setq *call-tree* '())
    (funcall *gf4* 100)))
 ($eval (foo-33 1))
-(test (cf1) (i-primary-1 1 100) equal)
-(test (cf2) (i-primary-2 (n-primary-2 innermost n-primary-1) 100) equal)
-(test (cf3) (n-primary-1 1 100) equal)
-(test (cf4) (n-primary-2 (innermost) 100) equal)
+;(test (cf1) (i-primary-1 1 100) equal)
+;(test (cf2) (i-primary-2 (n-primary-2 innermost n-primary-1) 100) equal)
+;(test (cf3) (n-primary-1 1 100) equal)
+;(test (cf4) (n-primary-2 (innermost) 100) equal)
 ;;
 ($eval 
  (defgeneric foo-34 (x)
@@ -907,7 +908,7 @@
 ($eval
  (defgeneric foo-35 (x)
    (:method :around (x) (call-next-method))
-   (:method (test (x <integer>)) 'primary-<integer>)))
+   (:method ((x <integer>)) 'primary-<integer>)))
 (test (foo-35 3) primary-<integer>)
 ;($error (foo-35 3.3) <error>)
 ;;
@@ -918,7 +919,7 @@
 	    (list 'default a b))
    (:method ((a <string>) (b <string>) &rest c)
 	    (list (call-next-method) (string-append a b)))
-   (:method (test (a <integer>) (b <number>) &rest c)
+   (:method ((a <integer>) (b <number>) &rest c)
 	    (list (call-next-method) (list 'number a b)))
    (:method ((a <integer>) (b <integer>) &rest c)
 	    (let ((x (list (foo-36 "foo" "bar" "yab"))))
@@ -930,11 +931,12 @@
 	      (setq x (cons (list a b c) x))
 	      x)))
  )
-(test (foo-36 4 5 6 7 8)
- (test (40 50 (6 7 8))
-  (test (default 4 5) (number 4 5))
-  (test (default "foo" "bar") "foobar"))
- equal)
+
+;(test (foo-36 4 5 6 7 8)
+; ((40 50 (6 7 8))
+;  ((default 4 5) (number 4 5))
+;  ((default "foo" "bar") "foobar"))
+; equal)
 ;;
 ($eval
  (defgeneric foo-37 (a b c)
@@ -954,11 +956,12 @@
 	      (setq x (cons (list a b c) x))
 	      x)))
  )
-(test (foo-37 4 5 6)
- (test (40 50 6)
-  (test (default 4 5) (number 4 5))
-  (test (default "foo" "bar") "foobar"))
- equal)
+
+;(test (foo-37 4 5 6)
+; (test (40 50 6)
+;  (test (default 4 5) (number 4 5))
+;  (test (default "foo" "bar") "foobar"))
+; equal)
 ;;
 ($eval (defglobal f nil))
 ($eval (defgeneric foo-38 (x y)))
@@ -968,31 +971,33 @@
 	 (setq y (* y 10))
 	 (setq f (lambda () (if (next-method-p) (call-next-method))))
 	 (list x y)))
-(test (foo-38 2 3) (20 30) equal)
-(test (funcall f) (2 3) equal)
+
+;(test (foo-38 2 3) (20 30) equal)
+;(test (funcall f) (2 3) equal)
 ;;
-;($eval (defglobal f nil))
-;($eval (defgeneric foo-39 (x y)))
-;($eval (defmethod foo-39 (x y) (list x y)))
-;($eval (defmethod foo-39 (test (x <integer>) (y <integer>))
-;	 (setq x (* x 10))
-;	 (setq y (* y 10))
-;	 (setq f (lambda () 
-;		   (if (next-method-p) (list x y (call-next-method)))))
-;	 (list x y)))
+($eval (defglobal f nil))
+($eval (defgeneric foo-39 (x y)))
+($eval (defmethod foo-39 (x y) (list x y)))
+($eval (defmethod foo-39 ((x <integer>) (y <integer>))
+	 (setq x (* x 10))
+	 (setq y (* y 10))
+	 (setq f (lambda () 
+		   (if (next-method-p) (list x y (call-next-method)))))
+	 (list x y)))
+
 ;(test (foo-39 2 3) (20 30) equal)
 ;(test (funcall f) (20 30 (2 3)) equal)
 ;;
 ;($eval (defglobal f nil))
 ;($eval (defgeneric foo-40 (x y)))
 ;($eval (defmethod foo-40 (x y) (list x y)))
-($eval (defmethod foo-40 ((x <integer>) (y <integer>))
-	 (setq x (* x 10))
-	 (setq y (* y 10))
-	 (let ((x 5) (y 6))
-	   (setq f (lambda () 
-		     (if (next-method-p) (list x y (call-next-method))))))
-	 (list x y)))
+;($eval (defmethod foo-40 ((x <integer>) (y <integer>))
+;	 (setq x (* x 10))
+;	 (setq y (* y 10))
+;	 (let ((x 5) (y 6))
+;	   (setq f (lambda () 
+;		     (if (next-method-p) (list x y (call-next-method))))))
+;	 (list x y)))
 ;(test (foo-40 2 3) (20 30) equal)
 ;(test (funcall f) (5 6 (2 3)) equal)
 ;;
@@ -1003,7 +1008,6 @@
 ;($eval (defmethod foo-41 ((a <number>) &rest r)
 ;	 (car r)))
 ;(test (foo-41 1 2) 2 eql)
-|#
 ;;;------------------------------------------------------------
 ;;; [generic function]
 ;;;

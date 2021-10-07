@@ -1797,11 +1797,13 @@ f_defmethod(int arglist)
     arg1 = car(arglist);	// method-name
     arg2 = cdr(arglist);	// parameter-profile
 
-    if (subrp(arg1) || fsubrp(arg1)){
+	if (subrp(arg1) || fsubrp(arg1)){
 	error(CANT_MODIFY, "defmethod", arg1);
 	}
-	if (!genericp(arg1)){
-	error(UNDEF_FUN, "defmethod", arg1);}
+	if (functionp(arg1) || macrop(arg1)){
+	error(ILLEGAL_FORM, "defmethod", arg1);}
+	if (GET_CAR(arg1)==NIL && !member(arg1,generic_list)){
+	error(UNDEF_FUN,"defmethod",arg1);}
 	if (listp(car(arg2)) && illegal_lambda_p(car(arg2))){
 	error(ILLEGAL_ARGS,"defmethod",arg2);
 	}

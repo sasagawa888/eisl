@@ -81,3 +81,5 @@
 (defglobal b (create (class foo-b)))
 (defglobal c (create (class foo-c)))
 (defglobal d (create (class foo-d)))
+
+

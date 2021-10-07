@@ -1642,9 +1642,10 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":INITFORM"))) {
 		initform = cadr(ls);
-		if (nullp(initform)) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
-		}
+        // ilos2.lsp invoke error comment out
+        //if (nullp(initform)) {
+		//    error(ILLEGAL_FORM, "defclass", arg3);
+		//}
 		if (symbolp(initform) && STRING_REF(initform, 0) == ':') {
 		    error(IMPROPER_FORM, "defclass", arg3);
 		}
@@ -1835,9 +1836,11 @@ f_defmethod(int arglist)
     }
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
-    if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
-	&& GET_PROP(GET_CAR(arg1)) == NIL)
-	error(IMPROPER_ARGS, "defmethod", arg2);
+
+    // ilos2.lsp invoke error comment out
+    //if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
+	//&& GET_PROP(GET_CAR(arg1)) == NIL)
+	//error(IMPROPER_ARGS, "defmethod", arg2);
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }

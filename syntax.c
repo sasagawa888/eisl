@@ -1446,7 +1446,8 @@ f_defclass(int arglist)
                     form,
                     initargs,
                     abstractp,
-                    metaclass;
+                    metaclass,
+                    save;
 
     arg1 = car(arglist);	// class-name
     arg2 = cadr(arglist);	// super-class
@@ -1475,9 +1476,8 @@ f_defclass(int arglist)
 	error(HAS_COMMON_CLASS, "defclass", arg2);
     if (!listp(arg3))
 	error(NOT_LIST, "defclass", arg3);
-    // comment out for compiler. require improvement of compiler
-    //if (!top_flag && !ignore_topchk)
-	//error(NOT_TOP_LEVEL, "defclass", arglist);
+    if (!top_flag && !ignore_topchk)
+	error(NOT_TOP_LEVEL, "defclass", arglist);
 
     sc = arg2;
     if (subclassp(GET_AUX(arg1), cobject))
@@ -1486,6 +1486,7 @@ f_defclass(int arglist)
     var = NIL;
     val = UNDEF;
     initargs = NIL;
+    save = ignore_topchk;
     ignore_topchk = 1;		// ignore toplevel check for defgeneric
 				// defmethod
     SET_AUX(arg1, USER);	// temporary set USER to avoid undef
@@ -1720,7 +1721,7 @@ f_defclass(int arglist)
     SET_CDR(cl, var);
     SET_AUX(cl, initargs);
     SET_AUX(arg1, cl);
-    ignore_topchk = 0;		// restore toplevel check;
+    ignore_topchk = save;		// restore toplevel check;
     return (arg1);
 }
 
@@ -1762,9 +1763,8 @@ f_defgeneric(int arglist)
     if (illegal_lambda_p(arg2)) {
 	error(ILLEGAL_ARGS, "defgeneric", arg2);
     }
-    // comment out for compiler. require improvement of compiler
-    //if (!top_flag && !ignore_topchk)
-	//error(NOT_TOP_LEVEL, "defgeneric", arglist);
+    if (!top_flag && !ignore_topchk)
+	error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
@@ -1846,9 +1846,8 @@ f_defmethod(int arglist)
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }
-    // comment out for compiler. require improvement of compiler
-    //if (!top_flag && !ignore_topchk)
-	//error(NOT_TOP_LEVEL, "defmethod", arglist);
+    if (!top_flag && !ignore_topchk){
+	error(NOT_TOP_LEVEL, "defmethod", arglist);}
 
     gen = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);

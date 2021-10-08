@@ -1475,8 +1475,9 @@ f_defclass(int arglist)
 	error(HAS_COMMON_CLASS, "defclass", arg2);
     if (!listp(arg3))
 	error(NOT_LIST, "defclass", arg3);
-    if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defclass", arglist);
+    // comment out for compiler. require improvement of compiler
+    //if (!top_flag && !ignore_topchk)
+	//error(NOT_TOP_LEVEL, "defclass", arglist);
 
     sc = arg2;
     if (subclassp(GET_AUX(arg1), cobject))
@@ -1761,8 +1762,9 @@ f_defgeneric(int arglist)
     if (illegal_lambda_p(arg2)) {
 	error(ILLEGAL_ARGS, "defgeneric", arg2);
     }
-    if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defgeneric", arglist);
+    // comment out for compiler. require improvement of compiler
+    //if (!top_flag && !ignore_topchk)
+	//error(NOT_TOP_LEVEL, "defgeneric", arglist);
 
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
@@ -1844,8 +1846,9 @@ f_defmethod(int arglist)
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }
-    if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defmethod", arglist);
+    // comment out for compiler. require improvement of compiler
+    //if (!top_flag && !ignore_topchk)
+	//error(NOT_TOP_LEVEL, "defmethod", arglist);
 
     gen = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);

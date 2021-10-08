@@ -318,6 +318,7 @@ dynamic_link(int x)
     init_f1(GETPROP_IDX, get_prop);
     init_f1(SETDYNPT_IDX, set_dynpt);
     init_f1(SETCATCHSYMBOLS_IDX, set_catch_symbols);
+    init_f1(ILOSERR_IDX, ILOSerror);
 
     // argument-2 type
     init_f2(CONS_IDX, cons);
@@ -351,6 +352,7 @@ dynamic_link(int x)
     init_f2(SETDYNAMIC_IDX, set_dynamic);
     init_f2(SETPROP_IDX, set_prop);
     init_f2(ADAPTP_IDX, adaptp);
+    
 
 
     // argument-1 string type

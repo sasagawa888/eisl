@@ -1017,6 +1017,7 @@ int             inttoken_nsgn(char buf[]);
 int             isqrt(int x);
 int             isqrt1(int s, int s2, int x);
 int             issymch(char c);
+int             ILOSerror(int fun);
 int             last(int x);
 int             laststr(char buf[]);
 int             lcm(int x, int y);

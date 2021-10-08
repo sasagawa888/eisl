@@ -27,6 +27,13 @@ ESCERRFORG()
 }
 
 // -------error------
+// for compiler 
+int ILOSerror(int fun){
+	error (NOT_EXIST_METHOD,GET_NAME(fun),NIL);
+	return(NIL);
+}
+
+
 void
 error(int errnum, const char *fun, int arg)
 {

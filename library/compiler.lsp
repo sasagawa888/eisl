@@ -876,11 +876,12 @@ double tarai(double x, double y, double z){
             (format code2 (convert (conv-name name) <string>))
             (gen-arg2 code2 args)
             (format code2 "{~%")
-            (format code2 "int res;~%")
+            (format code2 "int res=-1;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
             (comp-defgeneric-body method nil args)
             (gen-shelterpop code2 (reverse args))
+            (format code2 "if(res==-1) FILOSerror(Fmakesym(\"~A\"));~%" name)
             (format code2 "return(res);}~%")))
     
     ;;ex ((x <list>)y :rest z) -> (x y z)

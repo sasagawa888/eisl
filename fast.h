@@ -325,6 +325,13 @@ Fsetcatchsymbols(int x)
 }
 
 static inline int
+FILOSerror(int x)
+{
+    return f1[ILOSERR_IDX] (x);
+}
+
+
+static inline int
 Fcons(int x, int y)
 {
     return f2[CONS_IDX] (x, y);
@@ -509,6 +516,7 @@ Fadaptp(int x, int y)
 {
     return f2[ADAPTP_IDX] (x, y);
 }
+
 
 static inline int
 Fmakestr(const char *x)

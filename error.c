@@ -28,8 +28,8 @@ ESCERRFORG()
 
 // -------error------
 // for compiler 
-int ILOSerror(int fun){
-	error (NOT_EXIST_METHOD,GET_NAME(fun),NIL);
+int ILOSerror(int fun, int arg){
+	error (NOT_EXIST_METHOD,GET_NAME(fun),arg);
 	return(NIL);
 }
 

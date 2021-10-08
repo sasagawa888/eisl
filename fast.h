@@ -324,12 +324,6 @@ Fsetcatchsymbols(int x)
     return f1[SETCATCHSYMBOLS_IDX] (x);
 }
 
-static inline int
-FILOSerror(int x)
-{
-    return f1[ILOSERR_IDX] (x);
-}
-
 
 static inline int
 Fcons(int x, int y)
@@ -515,6 +509,12 @@ static inline int
 Fadaptp(int x, int y)
 {
     return f2[ADAPTP_IDX] (x, y);
+}
+
+static inline int
+FILOSerror(int x, int y)
+{
+    return f2[ILOSERR_IDX] (x, y);
 }
 
 

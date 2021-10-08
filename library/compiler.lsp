@@ -883,16 +883,17 @@ double tarai(double x, double y, double z){
             (gen-shelterpop code2 (reverse args))
             (format code2 "if(res==-1) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
-            (format code2 "));~%")
+            (format code2 ");~%")
             (format code2 "return(res);}~%")))
     
     ;;geberate ILOSerror arguments list
     (defun gen-error-argument (args)
         (cond ((null args)
-               (format code2 "NIL)"))
+               (format code2 "NIL"))
               (t
                 (format code2 "Fcons(~A," (car args))
-                (gen-error-argument (cdr args)))))
+                (gen-error-argument (cdr args))
+                (format code2 ")"))))
     
     ;;ex ((x <list>)y :rest z) -> (x y z)
     (defun varlis-to-lambda-args (x)

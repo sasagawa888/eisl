@@ -1683,7 +1683,7 @@ DEF_GETTER(char, TR, trace, NIL)
 		varlist = car(GET_CAR(car(method)));
 		next_method = method;
 		if (matchp(varlist, args)) {
-		    if (GET_OPT(car(method)) == PRIORITY)
+		    if (GET_OPT(car(method)) == PRIMARY)
 			pexist = 1;
 		    if (GET_OPT(car(method)) == AROUND)
 			aexist = 1;
@@ -1701,9 +1701,9 @@ DEF_GETTER(char, TR, trace, NIL)
 			break;
 		    else
 			method = cdr(method);
-		} else if (GET_OPT(car(method)) == PRIORITY && pexist == 1) {
+		} else if (GET_OPT(car(method)) == PRIMARY && pexist == 1) {
 		    method = next_method;
-		    while (GET_OPT(car(method)) == PRIORITY) {
+		    while (GET_OPT(car(method)) == PRIMARY) {
 			method = cdr(method);
 		    }
 		} else

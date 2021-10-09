@@ -4899,8 +4899,9 @@ f_next_method_p(int arglist)
 	int             varlist;
 
 	varlist = car(GET_CAR(car(method)));
-	if (matchp(varlist, generic_vars))
-	    return (T);
+	if (matchp(varlist, generic_vars)){
+        return (T);
+    }
 	method = cdr(method);
     }
     return (NIL);

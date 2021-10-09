@@ -143,6 +143,7 @@ f_get_method(int arglist)
     arg1 = car(arglist);
     if (!genericp(arg1))
 	error(ILLEGAL_ARGS, "get-method", arg1);
+    
     return (GET_CDR(GET_CAR(arg1)));
 }
 

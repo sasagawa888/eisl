@@ -806,7 +806,7 @@ makemethod(int addr)
 	SET_OPT(val, AFTER);
     } else {
 	SET_CAR(val, copy_heap(addr));
-	SET_OPT(val, PRIORITY);
+	SET_OPT(val, PRIMARY);
     }
     SET_CDR(val, copy_heap(ep));
     SET_AUX(val, NIL);

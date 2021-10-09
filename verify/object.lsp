@@ -373,15 +373,15 @@
 
 ;;
 ;($eval (defclass nil () ()))
-;($eval (defgeneric foo-g-27 (x)))
-;($eval (defmethod foo-g-27 ((x nil)) 'primary-nil))
+($eval (defgeneric foo-g-27 (x)))
+($eval (defmethod foo-g-27 ((x nil)) 'primary-nil))
 ;(test (foo-g-27 (create (class nil))) primary-nil)
-;($eval (defgeneric foo-g-28 (x)
-;	 (:method (test (x nil)) 'primary-nil)))
+($eval (defgeneric foo-g-28 (x)
+	 (:method ((x nil)) 'primary-nil)))
 ;(test (foo-g-28 (create (class nil))) primary-nil)
 ;;
-;($eval (defgeneric foo-g-29 (x)))
-;($error (foo-g-29 3) <error>)
+($eval (defgeneric foo-g-29 (x)))
+($error (foo-g-29 3) <error>)
 ;;
 ($eval (defclass c1 () ()))
 ($eval (defclass c2 (c1) ()))
@@ -479,7 +479,7 @@
    (foo-sub-2 x)
    (reverse *call-tree*)))
 (test (foo-12 3) (primary-<integer>) equal)
-;($error (foo-12 3.3) <error>)
+($error (foo-12 3.3) <error>)
 ;; 
 ($eval (defglobal *call-tree* nil))
 ($eval (defgeneric foo-sub-3 (x)))
@@ -671,7 +671,6 @@
 ($eval (defglobal c22 (create (class c22))))
 ($eval (defglobal c33 (create (class c33))))
 ;;
-#|
 ($eval 
  (defgeneric foo-sub-30 (x)
    ;; <object>
@@ -706,7 +705,7 @@
    (:method :after ((x c11))
 	    (add-call-tree 'after-c1))
    ;; c22
-   (:method (test (x c22))
+   (:method ((x c22))
 	    (add-call-tree 'primary-c2-begin)
 	    (call-next-method)
 	    (add-call-tree 'primary-c2-end))
@@ -734,7 +733,7 @@
    (:method :after ((x c33))
 	    (add-call-tree 'after-c3))
    ))
-|#
+
 ;;
 ($eval
  (defun foo-30 (x)
@@ -742,30 +741,30 @@
    (foo-sub-30 x)
    (reverse *call-tree*)))
 ;;
-;(test (foo-30 1) (primary-<object>) equal)
-;(test (foo-30 c00) (around-<standard-object>-begin
-;	      before-<standard-object>
-;	      primary-<standard-object>-begin
-;	      primary-<object>
-;	      primary-<standard-object>-end
-;	      after-<standard-object>
-;	      around-<standard-object>-end)
-; equal)
-;(test (foo-30 c11) (around-c1-begin
-;	      around-<standard-object>-begin
-;	      before-c1
-;	      before-<standard-object>
-;	      primary-c1-begin
-;	      primary-<standard-object>-begin
-;	      primary-<object>
-;	      primary-<standard-object>-end
-;	      primary-c1-end
-;	      after-<standard-object>
-;	      after-c1
-;	      around-<standard-object>-end
-;	      around-c1-end) 
-; equal)
- #|
+(test (foo-30 1) (primary-<object>) equal)
+(test (foo-30 c00) (around-<standard-object>-begin
+	      before-<standard-object>
+	      primary-<standard-object>-begin
+	      primary-<object>
+	      primary-<standard-object>-end
+	      after-<standard-object>
+	      around-<standard-object>-end)
+ equal)
+(test (foo-30 c11) (around-c1-begin
+	      around-<standard-object>-begin
+	      before-c1
+	      before-<standard-object>
+	      primary-c1-begin
+	      primary-<standard-object>-begin
+	      primary-<object>
+	      primary-<standard-object>-end
+	      primary-c1-end
+	      after-<standard-object>
+	      after-c1
+	      around-<standard-object>-end
+	      around-c1-end) 
+ equal)
+
 (test (foo-30 c22) (around-c2-begin
 	      around-c1-begin
 	      around-<standard-object>-begin
@@ -812,7 +811,6 @@
 	      around-c2-end 
 	      around-c3-end) 
  equal)
-|#
 ;;
 ($eval 
  (defgeneric foo-31 (x)
@@ -958,9 +956,9 @@
  )
 
 ;(test (foo-37 4 5 6)
-; (test (40 50 6)
-;  (test (default 4 5) (number 4 5))
-;  (test (default "foo" "bar") "foobar"))
+; ((40 50 6)
+;  ((default 4 5) (number 4 5))
+;  ((default "foo" "bar") "foobar"))
 ; equal)
 ;;
 ($eval (defglobal f nil))

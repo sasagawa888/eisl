@@ -605,7 +605,7 @@
 ($eval (defun foo-19 () (call-next-method)))
 ($error (foo-19) <undefined-function>)
 ($eval (defun foo-20 () (call-next-method 1)))
-;($error (foo-20) <undefined-function>)
+($error (foo-20) <undefined-function>)
 ;; 
 ($eval (defgeneric foo-21 (x)))
 ($eval (defmethod foo-21 ((x <integer>)) 'integer))
@@ -640,8 +640,8 @@
 ;;;------------------------------------------------------------
 ;;($argc next-method-p 0 0 0)
 ;;
-;($error (next-method-p) <undefined-function>)
-;($error (next-method-p 1) <undefined-function>)
+($error (next-method-p) <undefined-function>)
+($error (next-method-p 1) <undefined-function>)
 ($eval (defun foo-26 () (next-method-p)))
 ($error (foo-26) <undefined-function>)
 ($eval (defun foo-27 () (next-method-p 1)))
@@ -901,14 +901,14 @@
 ($eval 
  (defgeneric foo-34 (x)
    (:method :around (x) (call-next-method))))
-;($error (foo-34 3) <error>)
+($error (foo-34 3) <error>)
 ;;
 ($eval
  (defgeneric foo-35 (x)
    (:method :around (x) (call-next-method))
    (:method ((x <integer>)) 'primary-<integer>)))
 (test (foo-35 3) primary-<integer>)
-;($error (foo-35 3.3) <error>)
+($error (foo-35 3.3) <error>)
 ;;
 ;;
 ($eval

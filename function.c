@@ -409,7 +409,7 @@ initgeneric(void)
 			  makesym("y")), makesym("obj")));
     eval(list4(makesym("DEFGENERIC"), makesym("CREATE"), lamlis, body));
     /*
-     * (defgeneric create(x :rest y) (:method (x y) (let ((obj (create* x
+     * (defgeneric create(x :rest y) (:method (x :rest y) (let ((obj (create* x
      * '()))) (initialize-object obj y) obj)))
      * 
      */
@@ -4678,6 +4678,7 @@ f_initialize_object_star(int arglist)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    //print(arg1);print(arg2);printf("\n");
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "initialize-object*", arglist);
     if (!(IS_INSTANCE(arg1)))

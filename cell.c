@@ -1038,6 +1038,9 @@ initinst(int x, int initls)
     }
     temp = initls;
     while (!nullp(initls)) {
+    if(length(initls) < 2){
+        error(WRONG_ARGS,"initinst",initls);
+    }
 	n = assq(car(initls), initargs);
 	if (n != 0 && n != FAILSE) {
 	    int             n2 = assq(GET_CDR(n), inst_vars);

@@ -318,7 +318,7 @@ dynamic_link(int x)
     init_f1(GETPROP_IDX, get_prop);
     init_f1(SETDYNPT_IDX, set_dynpt);
     init_f1(SETCATCHSYMBOLS_IDX, set_catch_symbols);
-    
+
     // argument-2 type
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
@@ -3282,6 +3282,7 @@ f_string_index(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// "" "")
 	return (makeint(0));
 
@@ -3948,6 +3949,7 @@ f_format_fresh_line(int arglist)
 	save = output_stream;
 	output_stream = arg1;
 	// output newline char if it cannot be determinned that the output 
+	// 
 	// 
 	// 
 	// stream is at the begining of a fresh line
@@ -4678,7 +4680,7 @@ f_initialize_object_star(int arglist)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    //print(arg1);print(arg2);printf("\n");
+    // print(arg1);print(arg2);printf("\n");
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "initialize-object*", arglist);
     if (!(IS_INSTANCE(arg1)))

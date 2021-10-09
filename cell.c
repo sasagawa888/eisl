@@ -746,9 +746,8 @@ makegeneric(char *pname, int lamlist, int body)
 	    else
 		error(ILLEGAL_FORM, "defgeneric", body);
 	} else if (eqp(caar(body), makesym(":GENERIC-FUNCTION-CLASS"))) {
-	    if (!
-		(listp(cadar(body))
-		 && eqp(car(cadar(body)), makesym("CLASS")))) {
+	    if (!(listp(cadar(body))
+		  && eqp(car(cadar(body)), makesym("CLASS")))) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
 	    SET_AUX(val, eval(cadar(body)));
@@ -1024,6 +1023,7 @@ initinst(int x, int initls)
     class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
 				// 
     // 
+    // 
     // ((initarg1 . accessor1)(initarg2 .
     // accesor2)...)
     inst_vars = GET_CDR(x);	// instance variable list. This is assoc
@@ -1038,9 +1038,9 @@ initinst(int x, int initls)
     }
     temp = initls;
     while (!nullp(initls)) {
-    if(length(initls) < 2){
-        error(WRONG_ARGS,"initinst",initls);
-    }
+	if (length(initls) < 2) {
+	    error(WRONG_ARGS, "initinst", initls);
+	}
 	n = assq(car(initls), initargs);
 	if (n != 0 && n != FAILSE) {
 	    int             n2 = assq(GET_CDR(n), inst_vars);

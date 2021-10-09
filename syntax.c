@@ -652,9 +652,9 @@ f_defmacro(int arglist)
     if (!symbollistp(car(arg2))) {
 	error(OUT_OF_DOMAIN, "defmacro", car(arg2));
     }
-    //comment out. in benck/takl.lsp error
-    //if (!top_flag && !ignore_topchk)
-    //error(NOT_TOP_LEVEL, "defmacro", arglist);
+    // comment out. in benck/takl.lsp error
+    // if (!top_flag && !ignore_topchk)
+    // error(NOT_TOP_LEVEL, "defmacro", arglist);
 
 
     bindmacro(GET_NAME(arg1), arg2);
@@ -1199,6 +1199,7 @@ f_catch(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// sp
 	return (res);
     }
@@ -1489,9 +1490,9 @@ f_defclass(int arglist)
     initargs = NIL;
     save = ignore_topchk;
     ignore_topchk = 1;		// ignore toplevel check for defgeneric
-				// defmethod
+    // defmethod
     SET_AUX(arg1, USER);	// temporary set USER to avoid undef
-				// entity error of defmethod 
+    // entity error of defmethod 
     // finaly set-aux formal class 
     while (!nullp(arg3)) {
 	int             sym,
@@ -1645,7 +1646,7 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":INITFORM"))) {
 		initform = cadr(ls);
-        if (length(ls) < 2) {
+		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
 		}
 		if (symbolp(initform) && STRING_REF(initform, 0) == ':') {
@@ -1721,7 +1722,7 @@ f_defclass(int arglist)
     SET_CDR(cl, var);
     SET_AUX(cl, initargs);
     SET_AUX(arg1, cl);
-    ignore_topchk = save;		// restore toplevel check;
+    ignore_topchk = save;	// restore toplevel check;
     return (arg1);
 }
 
@@ -1844,8 +1845,9 @@ f_defmethod(int arglist)
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }
-    if (!top_flag && !ignore_topchk){
-	error(NOT_TOP_LEVEL, "defmethod", arglist);}
+    if (!top_flag && !ignore_topchk) {
+	error(NOT_TOP_LEVEL, "defmethod", arglist);
+    }
 
     gen = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);

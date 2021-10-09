@@ -1,6 +1,6 @@
 #|
 bikkuri common lisp 
-from masahito kurihara' book
+from masahito kurihara's book
 |#
 
 
@@ -15,16 +15,22 @@ from masahito kurihara' book
 (defclass !list (!object) ())
 (defclass !number (!atom)
     ((number :accessor number! :initarg number)))
+(defclass !string (!atom)
+    ((string :accessor string! :initarg string)))
 
 (defun eq! (!x !y) (= (id! !x) (id! !y)))
 
 (defgeneric !cl (x))
 (defmethod !cl ((num <number>))
     (create (class !number) 'number num))
+(defmethod !cl ((str <string>))
+    (create (class !string) 'string str))
 
 (defgeneric cl! (x))
-(defmethod cl! ((num !number))
-    (number! num))
+(defmethod cl! ((!num !number))
+    (number! !num))
+(defmethod cl! ((!str !string))
+    (string! !str))
 
 (defun !lisp ()
     (for ()
@@ -32,12 +38,12 @@ from masahito kurihara' book
          (print-prompt)
          (!print! (!eval!(!read!)))))
 
-(defun print-prompt () (format (standard-output) "~%!CL>"))
+(defun print-prompt () (format (standard-output) "%!CL>"))
 
 (defun !read! () (!cl (read)))
 
 (defun !print! (!obj)
-    (format (standard-output) "~A" (cl! !obj)))
+    (print (cl! !obj)))
 
 (defgeneric !eval! (x))
 (defmethod !eval! ((!obj !object)) !obj)

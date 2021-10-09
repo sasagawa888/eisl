@@ -1838,8 +1838,6 @@ f_defmethod(int arglist)
     }
     // if method-qualifier and method-combination of generic-function is
     // NIL -> error
-
-    // ilos2.lsp invoke error comment out
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
 	&& GET_PROP(GET_CAR(arg1)) == NIL)
 	error(IMPROPER_ARGS, "defmethod", arg2);

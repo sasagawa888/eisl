@@ -422,7 +422,7 @@ initgeneric(void)
 	 (makesym("DEFGENERIC*"), makesym("INITIALIZE-OBJECT"), lamlis,
 	  body));
     /*
-     * (defgeneric initialize-object(x y) (:method (x y)
+     * (defgeneric* initialize-object(x y) (:method (x y)
      * (initialize-object* x y))) 
      */
 

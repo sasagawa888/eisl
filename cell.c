@@ -761,7 +761,7 @@ makegeneric(char *pname, int lamlist, int body)
 }
 
 /*
- * diffrence is class. th class is generic-function use in defgeneric* 
+ * diffrence is class. the class is generic-function use in defgeneric* 
  */
 int
 makegeneric_star(int lamlist, int body)
@@ -773,6 +773,7 @@ makegeneric_star(int lamlist, int body)
     SET_CAR(val, copy_heap(lamlist));
     SET_OPT(val, count_args(lamlist));	// amount of argument
     SET_CDR(val, NIL);
+    SET_PROP(val, T);		// method-combination default is T
     SET_AUX(val, cgeneric_function);	// difference. only this.
     while (!nullp(body)) {
 	if (eqp(caar(body), makesym(":METHOD")))

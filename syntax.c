@@ -1840,8 +1840,9 @@ f_defmethod(int arglist)
     // NIL -> error
 
     // ilos2.lsp invoke error comment out
-    //if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
-	//&& GET_PROP(GET_CAR(arg1)) == NIL)
+    if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
+	&& GET_PROP(GET_CAR(arg1)) == NIL)
+    print(arg1);
 	//error(IMPROPER_ARGS, "defmethod", arg2);
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);

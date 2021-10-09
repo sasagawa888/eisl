@@ -1521,7 +1521,7 @@ f_defclass(int arglist)
 
 	    if (eqp(car(ls), makesym(":READER"))) {
 		reader = cadr(ls);
-		if (nullp(reader)) {
+		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
 		}
 		if (symbolp(reader) && STRING_REF(reader, 0) == ':') {
@@ -1553,7 +1553,7 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":WRITER"))) {
 		writer = cadr(ls);
-		if (nullp(writer)) {
+		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
 		}
 		if (symbolp(writer) && STRING_REF(writer, 0) == ':') {
@@ -1582,7 +1582,7 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":ACCESSOR"))) {
 		accessor = cadr(ls);
-		if (nullp(accessor)) {
+		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
 		}
 		if (symbolp(accessor) && STRING_REF(accessor, 0) == ':') {
@@ -1645,10 +1645,9 @@ f_defclass(int arglist)
 		eval(form);
 	    } else if (eqp(car(ls), makesym(":INITFORM"))) {
 		initform = cadr(ls);
-        // ilos2.lsp invoke error comment out
-        //if (nullp(initform)) {
-		//    error(ILLEGAL_FORM, "defclass", arg3);
-		//}
+        if (length(ls) < 2) {
+		    error(ILLEGAL_FORM, "defclass", arg3);
+		}
 		if (symbolp(initform) && STRING_REF(initform, 0) == ':') {
 		    error(IMPROPER_FORM, "defclass", arg3);
 		}

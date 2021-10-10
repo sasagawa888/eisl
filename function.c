@@ -4917,9 +4917,12 @@ f_call_next_method(int arglist)
                     qexist;
 
     if (length(arglist) != 0)
-	error(UNDEF_FUN, "call-next-method", arglist);
-    if (next_method == NIL)
-	error(UNDEF_FUN, "call-next-method", NIL);
+	error(WRONG_ARGS, "call-next-method", arglist);
+    if (nullp(cdr(next_method)))
+	error(IMPROPER_ARGS, "call-next-method",GET_CAR(car(next_method)));
+    if (GET_OPT(car(next_method)) != AROUND && GET_OPT(car(next_method)) != PRIMARY){
+        error(IMPROPER_ARGS,"call-next-method",GET_CAR(car(next_method))) ;
+    }
 
     res = NIL;
     varlist = NIL;
@@ -4964,6 +4967,7 @@ f_call_next_method(int arglist)
 
 	    return (res);
     }
+    return(NIL);
 }
 
 

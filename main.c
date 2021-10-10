@@ -1682,13 +1682,14 @@ DEF_GETTER(char, TR, trace, NIL)
 		varlist = car(GET_CAR(car(next_method)));
 		//match(x,y) if sameclass or subclass return 1 else 0;
 		if (matchp(varlist, args)) {
-		    if (GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER){
-			qexist = 1;}
-			if (GET_OPT(car(next_method)) == PRIMARY && sameclassp(varlist, args)){
-			pexist = 1;}
 			// if only qualifier or sameclass-primary, eval method;
 			if ((GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER) ||
-			    (GET_OPT(car(next_method)) == PRIMARY && sameclassp(varlist, args))) {
+			    (GET_OPT(car(next_method)) == PRIMARY && sameclassp(varlist, args) && pexist == 0)) {
+			
+			if (GET_OPT(car(next_method)) == PRIMARY){
+			pexist = 1;}
+			else{
+			qexist = 1;}
 		    varlist = genlamlis_to_lamlis(varlist);
 		    body = cdr(GET_CAR(car(next_method)));
 		    bindarg(varlist, args);
@@ -1701,8 +1702,8 @@ DEF_GETTER(char, TR, trace, NIL)
 		}
 		next_method = cdr(next_method);
 		// if only primary method without qualifiler, then stop 
-		if (pexist==1 && qexist==0)
-		break;
+		//if (pexist==1 && qexist==0)
+		//break;
 		}
 	    if (pexist == 0 && qexist == 0)
 		error(NOT_EXIST_METHOD, "apply", args);

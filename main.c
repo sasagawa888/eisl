@@ -1700,6 +1700,9 @@ DEF_GETTER(char, TR, trace, NIL)
 			}
 		}
 		next_method = cdr(next_method);
+		// if only primary method without qualifiler, then stop 
+		if (pexist==1 && qexist==0)
+		break;
 		}
 	    if (pexist == 0 && qexist == 0)
 		error(NOT_EXIST_METHOD, "apply", args);

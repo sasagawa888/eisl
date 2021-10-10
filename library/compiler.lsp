@@ -904,7 +904,24 @@ double tarai(double x, double y, double z){
               ((consp (car x)) (cons (car (car x)) (varlis-to-lambda-args (cdr x))))
               (t (error* "defgeneric" x))))
     
-    ;;method priority :around=11 :before=12 :priority=13 :after=14
+    ;;method priority :around=11 :before=12 :primary=13 :after=14
+    #|
+    idea memo
+    I will rewrite ILOS compile code.
+    basic idea is follwoing
+
+    super_flag = 0;
+    if(Fadapt(...) && Fadapt(...) && ...) qualifier-method body compile code
+    if(!super_flag && (Fadapt(...) && Fadapt(...) && ...) ||
+       (super_flag && Fsame(...) && Fsame(...) && ...)) primariy-method compile code 
+
+    (call-next-method) -> when :around-mthod super_flag=1 and continue
+                       -> when primary-method next-method compile code 
+
+    (next-method-p)  -> compiler can know rest method, so generate simple code.
+
+    Probably code will be more simple.
+    |#
     (defun comp-defgeneric-body (x after args)
         (cond ((null x) t)
               ((null (cdr x))

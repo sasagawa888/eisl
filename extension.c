@@ -119,7 +119,10 @@ DEF_PREDICATE(METHOD, METHOD)
     if (!(IS_METHOD(arg1)))
 	error(ILLEGAL_ARGS, "get-method-priority", arg1);
 
-    return (makeint(GET_OPT(arg1)));
+    return (makeint(GET_OPT(arg1)+1));
+    /*
+    * 11=:around  12=:befor 13=:primary 14=:arter
+    */
 }
 
 

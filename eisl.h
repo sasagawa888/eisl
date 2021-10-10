@@ -1117,6 +1117,7 @@ int             readhex(char *buf);
 int             remove_list(int x, int y);
 int             remove_prop(int x, int lis);
 int             reverse(int x);
+int             sameclassp(int varlist, int arglist);
 int             setdynenv(int sym, int val);
 int             shelterpop(void);
 int             s_remainder(int x, int y);

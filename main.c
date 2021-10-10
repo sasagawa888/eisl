@@ -1570,10 +1570,10 @@ DEF_GETTER(char, TR, trace, NIL)
     int             varlist,
                     body,
                     res,
-                    pexist,
-                    aexist,
                     i,
                     n,
+					pexist,
+					qexist,
                     trace;
     REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR
 	     || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO
@@ -1581,7 +1581,7 @@ DEF_GETTER(char, TR, trace, NIL)
 					      || GET_TAG(args) == SYM));
     res = NIL;
     pexist = 0;
-    aexist = 0;
+    qexist = 0;
     trace = 0;
 
     switch (GET_TAG(func)) {
@@ -1667,7 +1667,6 @@ DEF_GETTER(char, TR, trace, NIL)
 	}
 
     case GENERIC:{
-	    int             method;
 
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
@@ -1678,39 +1677,31 @@ DEF_GETTER(char, TR, trace, NIL)
 	    }
 	    generic_func = func;
 	    generic_vars = args;
-	    method = GET_CDR(func);
-	    while (!nullp(method)) {
-		varlist = car(GET_CAR(car(method)));
-		next_method = method;
+	    next_method = GET_CDR(func);
+	    while (!nullp(next_method)) {
+		varlist = car(GET_CAR(car(next_method)));
+		//match(x,y) if sameclass or subclass return 1 else 0;
 		if (matchp(varlist, args)) {
-		    if (GET_OPT(car(method)) == PRIMARY)
-			pexist = 1;
-		    if (GET_OPT(car(method)) == AROUND)
-			aexist = 1;
+		    if (GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER){
+			qexist = 1;}
+			if (GET_OPT(car(next_method)) == PRIMARY && sameclassp(varlist, args)){
+			pexist = 1;}
+			// if only qualifier or sameclass-primary, eval method;
+			if ((GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER) ||
+			    (GET_OPT(car(next_method)) == PRIMARY && sameclassp(varlist, args))) {
 		    varlist = genlamlis_to_lamlis(varlist);
-		    body = cdr(GET_CAR(car(method)));
+		    body = cdr(GET_CAR(car(next_method)));
 		    bindarg(varlist, args);
 		    while (!nullp(body)) {
 			res = eval(car(body));
 			body = cdr(body);
 		    }
 		    unbind();
+			}
 		}
-		if (GET_OPT(car(next_method)) == AROUND) {
-		    if (aexist == 1)
-			break;
-		    else
-			method = cdr(method);
-		} else if (GET_OPT(car(method)) == PRIMARY && pexist == 1) {
-		    method = next_method;
-		    while (GET_OPT(car(method)) == PRIMARY) {
-			method = cdr(method);
-		    }
-		} else
-		    method = cdr(next_method);
-
-	    }
-	    if (aexist == 0 && pexist == 0)
+		next_method = cdr(next_method);
+		}
+	    if (pexist == 0 && qexist == 0)
 		error(NOT_EXIST_METHOD, "apply", args);
 
 	    generic_func = NIL;
@@ -1795,6 +1786,34 @@ matchp(int varlist, int arglist)
 	return (matchp(cdr(varlist), cdr(arglist)));
     else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
 	return (matchp(cdr(varlist), cdr(arglist)));
+    else
+	return (0);
+}
+
+
+/*
+ * check class matching of argument of lambda and received argument. 
+ * only if same class return 1 else return 0
+ */
+int
+sameclassp(int varlist, int arglist)
+{
+
+    if (nullp(varlist) && nullp(arglist))
+	return (1);
+    else if (symbolp(car(varlist)))
+	return (sameclassp(cdr(varlist), cdr(arglist)));
+    else if (eqp(makesym(":rest"), car(varlist)))
+	return (1);
+    else if (eqp(makesym("&rest"), car(varlist)))
+	return (1);
+    else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
+	// class
+	return (sameclassp(cdr(varlist), cdr(arglist)));
+	// EISL expand integer-class, So fixnum bignum longnum is same-class in ILOS
+	else if (GET_AUX(cadar(varlist)) == cinteger &&
+	         (GET_AUX(car(arglist)) == cfixnum || GET_AUX(car(arglist)) == cbignum ||  GET_AUX(car(arglist)) == clongnum))
+	return (sameclassp(cdr(varlist), cdr(arglist)));
     else
 	return (0);
 }

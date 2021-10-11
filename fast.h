@@ -512,6 +512,13 @@ Fadaptp(int x, int y)
 }
 
 static inline int
+Feqclassp(int x, int y)
+{
+    return f2[EQCLASSP_IDX] (x, y);
+}
+
+
+static inline int
 FILOSerror(int x, int y)
 {
     return f2[ILOSERR_IDX] (x, y);

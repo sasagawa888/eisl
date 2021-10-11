@@ -1416,6 +1416,28 @@ adaptp(int x, int y)
 	return (0);
 }
 
+
+int
+eqclassp(int x, int y)
+{
+
+    if (!CELLRANGE(x)) {
+	if (cinteger == GET_AUX(y))	// when x is out of cell range, x is integer 
+	    return (1);
+	else
+	    return (0);
+    }
+    if (x >= CELLSIZE) {
+	error(ILLEGAL_ARGS, "eqclassp", x);
+	return (0);
+    } else if (GET_AUX(x) == GET_AUX(y))
+	return (1);
+    else
+	return (0);
+}
+
+
+
 int
 fast_length(int x)
 {

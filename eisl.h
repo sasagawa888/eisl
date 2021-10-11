@@ -709,6 +709,7 @@ int             divide(int arg1, int arg2);
 int             duplicatelistp(int ls);
 int             each_car(int x);
 int             each_cdr(int x);
+int             eqclassp(int x, int y);
 int             eqgreaterp(int x, int y);
 int             eqlp(int addr1, int addr2);
 int             eqp(int addr1, int addr2);

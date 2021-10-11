@@ -394,15 +394,15 @@
         (comp-defgeneric-primary-cond1 x)
         (format code2 ")")
 
-    ;;generate Fsameclassp(P1) && Fsameclassp(P2) ... && Fsameclassp(Pn)
-    ;; Fsameclassp check has equal same class.
+    ;;generate Feqlassp(P1) && Feqclassp(P2) ... && Feqclassp(Pn)
+    ;; Feqlassp check has equal same class.
     (defun comp-defgeneric-primary-cond1 (x)
         (cond ((null x) t)
               ((eq (car x) ':rest) t)
               ((eq (car x) '%rest) t)
               ((symbolp (car x)) (comp-defgeneric-primary-cond1 (cdr x)))
               ((consp (car x))
-               (format code2 "Fsameclassp(")
+               (format code2 "Feqclassp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
                (format code2 ",Fmakesym(\"")
                (format-object code2 (elt (car x) 1) nil)
@@ -416,7 +416,7 @@
               ((eq (car x) '%rest) t)
               ((symbolp (car x)) (comp-defgeneric-primary-cond2 (cdr x)))
               ((consp (car x))
-               (format code2 " && Fsameclassp(")
+               (format code2 " && Feqclassp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
                (format code2 ",Fmakesym(\"")
                (format-object code2 (elt (car x) 1) nil)

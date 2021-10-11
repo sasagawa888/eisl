@@ -392,7 +392,7 @@
         (format code2 ") || ")
         (format code2 "(super_flag==0 && ")
         (comp-defgeneric-primary-cond1 x)
-        (format code2 ")")
+        (format code2 ")"))
 
     ;;generate Feqlassp(P1) && Feqclassp(P2) ... && Feqclassp(Pn)
     ;; Feqlassp check has equal same class.

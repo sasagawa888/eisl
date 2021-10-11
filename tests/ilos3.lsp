@@ -21,7 +21,7 @@ from masahito kurihara's book
 (defun eq! (!x !y) (= (id! !x) (id! !y)))
 
 (defgeneric !cl (x))
-(defmethod !cl ((num <number>))
+(defmethod !cl ((num <integer>))
     (create (class !number) 'number num))
 (defmethod !cl ((str <string>))
     (create (class !string) 'string str))
@@ -47,3 +47,5 @@ from masahito kurihara's book
 
 (defgeneric !eval! (x))
 (defmethod !eval! ((!obj !object)) !obj)
+(defmethod !eval! ((!obj !number)) !Obj)
+(defmethod !eval! ((!obj !string)) !obj)

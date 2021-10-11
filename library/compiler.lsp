@@ -679,6 +679,8 @@ double tarai(double x, double y, double z){
            (setq lambda-count (+ lambda-count 1))
            name))
     
+
+    ;;start modify area--------------------------------------------------------------
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
         (comp-defgeneric0 x)
@@ -759,6 +761,7 @@ double tarai(double x, double y, double z){
             (gen-assign n)
             (gen-call (conv-name name) (abs n))
             (format code1 "}~%")))
+    
     
     (defun comp-defgeneric1 (x)
         (let* ((name (elt x 1))
@@ -1043,6 +1046,8 @@ double tarai(double x, double y, double z){
                (comp-defgeneric-cond1 (cdr x)))
               (t (error* "defgeneric" x))))
     
+    ;;end modify area--------------------------------------------------------------------
+
     ;;generate define code
     (defun comp-defun3 (x)
         (let ((name (elt x 1)))

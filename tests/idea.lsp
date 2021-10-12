@@ -273,6 +273,11 @@
     Probably code will be more simple.
     |#
 
+    (defun butlast (x)
+        (cond ((null x) nil)
+              ((null (cdr x)) nil)
+              (t (cons (car x) (butlast (cdr x))))))
+
     (defglobal next-method-p nil)
     
     (defun comp-defgeneric-body (x has_qualifier args)

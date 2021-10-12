@@ -53,6 +53,38 @@ double tarai(double x, double y, double z){
                tarai(y-1,z,x),
                tarai(z-1,x,y)));
 }
+
+(defgeneric XXX (arg))
+defgeneric compile
+    idea memo
+    ILOS compile code.
+    basic idea is follwoing
+
+    super_flag = 0;
+    <<parameter>>
+    if(Fadapt(...) && Fadapt(...) && ...) qualifier-method body compile code
+    if(!super_flag && (Fadapt(...) && Fadapt(...) && ...) ||
+       (super_flag && Fsame(...) && Fsame(...) && ...)) primariy-method compile code 
+
+   <<body>>
+    1.There is no qualifier method and it is primary method and it has no (call-next-method)
+    comp(body) return(res);
+    2.There is no qualifier method and it is primary method and it has tail (call-next-method)
+    comp(butlast(body)) comp(next-method-body);
+    3.At least a qualifier method exist and all kind of method and it has not (call-next-method)
+    comp(body)
+    4.At least a qualifier method exist and :around method and it has tail (call-next-method)
+    comp(butlast(body)) super_flag=1;
+
+    Other case interpreter occurs an error. Compiler does not consider.
+
+    (call-next-method) -> when :around-mthod super_flag=1 and continue
+                       -> when primary-method next-method compile code 
+
+    (next-method-p)  -> compiler can know rest method, so generate simple code.
+                        set global-variable next-method-p T or nil and compiler generate T or NIL for (next-method-p)
+
+
 |#
 (defmodule compiler
     (defmacro when (test :rest body)
@@ -86,6 +118,12 @@ double tarai(double x, double y, double z){
     
     (defun second-last (ls)
         (elt (reverse ls) 1))
+    
+    (defun butlast (x)
+        (cond ((null x) nil)
+              ((null (cdr x)) nil)
+              (t (cons (car x) (butlast (cdr x))))))
+
     
     (defun remove (x ls)
         (cond ((null ls) nil)
@@ -679,8 +717,7 @@ double tarai(double x, double y, double z){
            (setq lambda-count (+ lambda-count 1))
            name))
     
-
-    ;;start modify area--------------------------------------------------------------
+    
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
         (comp-defgeneric0 x)
@@ -871,6 +908,7 @@ double tarai(double x, double y, double z){
                (free-variable-list stream (cdr x))
                (format stream ")"))))
     
+    ;;modify for ILOS
     (defun comp-defgeneric2 (x)
         (let* ((name (elt x 1))
                (args (varlis-to-lambda-args (elt x 2)))
@@ -880,14 +918,26 @@ double tarai(double x, double y, double z){
             (gen-arg2 code2 args)
             (format code2 "{~%")
             (format code2 "int res=-1;~%")
+            (format code2 "int super_flag=0;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
-            (comp-defgeneric-body method nil args)
+            (comp-defgeneric-body method (has-qualifier-p method) args)
             (gen-shelterpop code2 (reverse args))
             (format code2 "if(res==-1) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
             (format code2 ");~%")
             (format code2 "return(res);}~%")))
+    
+    (defconstant around 11)
+    (defconstant befor 12)
+    (defconstant primary 13)
+    (defconstant after 14)
+    ;;if methods has qualifier(:around :befor :after) return t else nil
+    (defun has-qualifier-p (method)
+        (cond ((null method) nil)
+              ((= (get-method-priority (car method)) primary)
+               (has-qualifier-p (cdr method)))
+              (t t)))
     
     ;;geberate ILOSerror arguments list
     (defun gen-error-argument (args)
@@ -907,59 +957,46 @@ double tarai(double x, double y, double z){
               ((consp (car x)) (cons (car (car x)) (varlis-to-lambda-args (cdr x))))
               (t (error* "defgeneric" x))))
     
-    ;;method priority :around=11 :before=12 :primary=13 :after=14
-    #|
-    idea memo
-    I will rewrite ILOS compile code.
-    basic idea is follwoing
-
-    super_flag = 0;
-    if(Fadapt(...) && Fadapt(...) && ...) qualifier-method body compile code
-    if(!super_flag && (Fadapt(...) && Fadapt(...) && ...) ||
-       (super_flag && Fsame(...) && Fsame(...) && ...)) primariy-method compile code 
-
-    (call-next-method) -> when :around-mthod super_flag=1 and continue
-                       -> when primary-method next-method compile code 
-
-    (next-method-p)  -> compiler can know rest method, so generate simple code.
-
-    Probably code will be more simple.
-    |#
-    (defun comp-defgeneric-body (x after args)
+    ;; flag for (next-method-p)
+    (defglobal next-method-p nil)
+    
+    (defun comp-defgeneric-body (x has-qualifier args)
         (cond ((null x) t)
-              ((null (cdr x))
-               (let* ((varbody (get-method-body (car x)))
-                      (varlis (alpha-conv-varlis (car varbody) args))
-                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
-                      (priority (get-method-priority (car x))) )
-                   (if (and (= priority 14) (not priority))
-                       (format code2 "after:~%"))
-                   (format code2 "if(")
-                   (comp-defgeneric-cond varlis)
-                   (format code2 ")~%{")
-                   (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                   (if (and (method-need-return-p x) (not (equal (last body) '(call-next-method))))
-                       (format code2 "return(res);"))
-                   (format code2 "}~%")))
               (t
                (let* ((varbody (get-method-body (car x)))
                       (varlis (alpha-conv-varlis (car varbody) args))
                       (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
                       (priority (get-method-priority (car x))) )
-                   (if (and (= priority 14) (not after))
-                       (format code2 "after:~%"))
                    (format code2 "if(")
-                   (comp-defgeneric-cond varlis)
+                   (if (= priority primary)
+                       (comp-defgeneric-primary-cond varlis)
+                       (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
-                   (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                   (if (and (method-need-return-p x) (not (equal (last body) '(call-next-method))))
-                       (format code2 "return(res);"))
-                   (if (and (= priority 13) (method-need-return-p1 (cdr x)))
-                       (format code2 "goto after;"))
-                   (format code2 "}~%")
-                   (comp-defgeneric-body (cdr x) (if (= priority 14)
-                                                     t
-                                                     after) args)))))
+                   ;;to compile (next-method-p) set flag 
+                   (if (null (cdr x))
+                       (setq next-method-p nil)
+                       (setq next-method-p t))
+                   (cond ((and (not has-qualifier) (not (equal (last body) '(call-next-method))) (= priority primary))
+                          (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
+                          (format code2 "return(res);"))
+                         ((and (not has-qualifier) (equal (last body) '(call-next-method)) (= priority primary))
+                          (cond ((null (cdr x)) (format code2 "return(res);"))
+                                (t
+                                 (let* ((next-varbody (get-method-body (car (cdr x))))
+                                       (next-varlis (alpha-conv-varlis (car next-varbody) args))
+                                       (next-body (alpha-conv-method (cdr next-varbody) (method-varlis-to-substlist (car next-varbody) args))))
+                                   (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
+                                   (comp-progn1 code2 next-body (varlis-to-lambda-args next-varlis) nil nil nil nil nil nil)
+                                   (format code2 "return(res);")))))
+                         ((and has-qualifier (not (equal (last body) '(call-next-method))))
+                          (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil))
+                         ((and has-qualifier (equal (last body) '(call-next-method)))
+                          (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
+                          (format code2 "super_flag=1;")))
+                   (format code2 "}~%"))
+                   (comp-defgeneric-body (cdr x) has-qualifier args))))
+              
+                   
     
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))
     ;; ((x <integer>) y) (a b) -> ((a <integer>) b)
@@ -1000,54 +1037,81 @@ double tarai(double x, double y, double z){
               ((eq x (car (car y))) (cdr (car y)))
               (t (alpha-var x (cdr y)))))
     
-    (defun method-need-return-p (x)
-        (cond ((null (cdr x)) t)
-              ((= (get-method-priority (car x)) 11) t)
-              ((= (get-method-priority (car x)) 12) nil)
-              ((and (= (get-method-priority (car x)) 13) (null (cdr x))) nil)
-              ((and (= (get-method-priority (car x)) 13) (method-need-return-p1 (cdr x))) nil)
-              ((and (= (get-method-priority (car x)) 14) (= (get-method-priority (elt x 1)) 14))
-               nil)
-              (t t)))
-    
-    (defun method-need-return-p1 (x)
-        (cond ((null x) nil)
-              ((= (get-method-priority (car x)) 11) nil)
-              ((= (get-method-priority (car x)) 12) nil)
-              ((= (get-method-priority (car x)) 14) t)
-              (t (method-need-return-p1 (cdr x)))))
     
     ;;varlis -> C condition
-    (defun comp-defgeneric-cond (x)
+    (defun comp-defgeneric-qualifier-cond (x)
         (cond ((null x) t)
               ((eq (car x) ':rest) t)
               ((eq (car x) '%rest) t)
-              ((symbolp (car x)) (comp-defgeneric-cond (cdr x)))
+              ((symbolp (car x)) (comp-defgeneric-qualifier-cond (cdr x)))
               ((consp (car x))
                (format code2 "Fadaptp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
                (format code2 ",Fmakesym(\"")
                (format-object code2 (elt (car x) 1) nil)
                (format code2 "\"))")
-               (comp-defgeneric-cond1 (cdr x)))
+               (comp-defgeneric-qualifier-cond1 (cdr x)))
               (t (error* "defgeneric" x))))
     
-    (defun comp-defgeneric-cond1 (x)
+    ;; generate Fadapt(P1) && Fadapt(P2) ... && Fadapt(Pn)  P is each parameter
+    ;; Fadaptp check sameclass or superclass.
+    (defun comp-defgeneric-qualifier-cond1 (x)
         (cond ((null x) t)
               ((eq (car x) ':rest) t)
               ((eq (car x) '%rest) t)
-              ((symbolp (car x)) (comp-defgeneric-cond1 (cdr x)))
+              ((symbolp (car x)) (comp-defgeneric-qualifier-cond1 (cdr x)))
               ((consp (car x))
                (format code2 " && Fadaptp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
                (format code2 ",Fmakesym(\"")
                (format-object code2 (elt (car x) 1) nil)
                (format code2 "\"))")
-               (comp-defgeneric-cond1 (cdr x)))
+               (comp-defgeneric-qualifier-cond1 (cdr x)))
+              (t (error* "defgeneric" x))))
+
+    ;;varlis -> C condition
+    ;;for primary method. if((super_flag==1 && && ) || (super_flag==0 && && ))
+    ;;(call-next-method) set supar_flag=1 then super-class primary method is execute.
+    ;;not exist (call-next-method) super_flag is default 0. Only same class primary method is executes
+    (defun comp-defgeneric-primary-cond (x)
+        (format code2 "(super_flag==1 && ")
+        (comp-defgeneric-qualifier-cond x)
+        (format code2 ") || ")
+        (format code2 "(super_flag==0 && ")
+        (comp-defgeneric-primary-cond1 x)
+        (format code2 ")"))
+
+    ;;generate Feqlassp(P1) && Feqclassp(P2) ... && Feqclassp(Pn)
+    ;; Feqlassp check has equal same class.
+    (defun comp-defgeneric-primary-cond1 (x)
+        (cond ((null x) t)
+              ((eq (car x) ':rest) t)
+              ((eq (car x) '%rest) t)
+              ((symbolp (car x)) (comp-defgeneric-primary-cond1 (cdr x)))
+              ((consp (car x))
+               (format code2 "Feqclassp(")
+               (format-object code2 (conv-name (elt (car x) 0)) nil)
+               (format code2 ",Fmakesym(\"")
+               (format-object code2 (elt (car x) 1) nil)
+               (format code2 "\"))")
+               (comp-defgeneric-primary-cond2 (cdr x)))
               (t (error* "defgeneric" x))))
     
-    ;;end modify area--------------------------------------------------------------------
-
+    (defun comp-defgeneric-primary-cond2 (x)
+        (cond ((null x) t)
+              ((eq (car x) ':rest) t)
+              ((eq (car x) '%rest) t)
+              ((symbolp (car x)) (comp-defgeneric-primary-cond2 (cdr x)))
+              ((consp (car x))
+               (format code2 " && Feqclassp(")
+               (format-object code2 (conv-name (elt (car x) 0)) nil)
+               (format code2 ",Fmakesym(\"")
+               (format-object code2 (elt (car x) 1) nil)
+               (format code2 "\"))")
+               (comp-defgeneric-primary-cond2 (cdr x)))
+              (t (error* "defgeneric" x))))
+    
+    
     ;;generate define code
     (defun comp-defun3 (x)
         (let ((name (elt x 1)))

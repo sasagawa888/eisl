@@ -204,7 +204,7 @@
             (format code2 "int super_flag=0;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
-            (comp-defgeneric-body method (has_qualifier_p method) args)
+            (comp-defgeneric-body method (has-qualifier-p method) args)
             (gen-shelterpop code2 (reverse args))
             (format code2 "if(res==-1) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
@@ -216,10 +216,10 @@
     (defconstant primary 13)
     (defconstant after 14)
     ;;if methods has qualifier(:around :befor :after) return t else nil
-    (defun has_qualifier_p (method)
+    (defun has-qualifier-p (method)
         (cond ((null method) nil)
               ((= (get-method-priority (car method)) primary)
-               (has_qualifier_p (cdr method)))
+               (has-qualifier-p (cdr method)))
               (t t)))
     
     ;;geberate ILOSerror arguments list
@@ -297,7 +297,7 @@
                          ((and (not has_qualifier) (equal (last body) '(call-next-method)) (= priority primary))
                           (let* ((next-varbody (get-method-body (cadr x)))
                                  (next-varlis (alpha-conv-varlis (car next-varbody) args))
-                                 (next body (alpha-conv-method (cdr next-varbody) (method-varlis-to-substlist (car next-varbody) args))))
+                                 (next-body (alpha-conv-method (cdr next-varbody) (method-varlis-to-substlist (car next-varbody) args))))
                               (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
                               (comp-progn1 code2 next-body (varlis-to-lambda-args next-varlis) nil nil nil nil nil nil)
                               (format code2 "return(res);")))

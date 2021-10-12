@@ -83,6 +83,11 @@ defgeneric compile
 
     (next-method-p)  -> compiler can know rest method, so generate simple code.
                         set global-variable next-method-p T or nil and compiler generate T or NIL for (next-method-p)
+    
+    idea memo
+    when call-next-method is called at last iin body, it it OK. But not in last compile code is incorrect.
+    I will replace comp-progn1 to comp-method-body. comp-method-body recognize next-method-p and call-next-method.
+    and comp-method-body generate super-class method call. I will delete next-method-p from comp function.
 
 
 |#

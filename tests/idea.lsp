@@ -277,7 +277,7 @@
     
     (defun comp-defgeneric-body (x has_qualifier args)
         (cond ((null x) t)
-              ((null (cdr x))
+              (t
                (let* ((varbody (get-method-body (car x)))
                       (varlis (alpha-conv-varlis (car varbody) args))
                       (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))

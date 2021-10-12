@@ -290,7 +290,7 @@
                    (format code2 "if(")
                    (if (= priority primary)
                        (comp-defgeneric-primary-cond varlis)
-                       (comp-defgeneric-qualifier-cond varls))
+                       (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
                    ;;to compile (next-method-p) set flag 
                    (if (null (cdr x))

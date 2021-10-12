@@ -4681,7 +4681,7 @@ f_initialize_object_star(int arglist)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    // print(arg1);print(arg2);printf("\n");
+
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "initialize-object*", arglist);
     if (!(IS_INSTANCE(arg1)))
@@ -4689,7 +4689,7 @@ f_initialize_object_star(int arglist)
     if (!listp(arg2))
 	error(NOT_LIST, "initialize-object*", arg2);
 
-    return (initinst(arg1, arg2));
+    return(initinst(arg1, arg2));
 }
 
 // controle

@@ -1845,8 +1845,9 @@ f_defmethod(int arglist)
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }
+    //tests/ilos2.o error comment out
     //if (!top_flag && !ignore_topchk) {
-	//error(NOT_TOP_LEVEL, "defmethod", arglist);
+    //error(NOT_TOP_LEVEL, "defmethod", arglist);
     //}
 
     gen = GET_CAR(arg1);

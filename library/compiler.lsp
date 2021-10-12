@@ -585,10 +585,9 @@ defgeneric compile
                (comp-set-dynamic stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'dynamic-let))
                (comp-dynamic-let stream x env args tail name global test clos))
-              ((and (consp x) (eq (car x) 'call-next-method)) t)
-              ;; ignore call-next-method
+              ((and (consp x) (eq (car x) 'next-method-p))
+               (if next-method-p (format stream "T") (format stream "NIL")))
               ((and (consp x) (eq (car x) 'the)) t)
-              ;; ignore call-next-method
               ((and (consp x) (eq (car x) 'not))
                (comp-not stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'car))
@@ -908,7 +907,6 @@ defgeneric compile
                (free-variable-list stream (cdr x))
                (format stream ")"))))
     
-    ;;modify for ILOS
     (defun comp-defgeneric2 (x)
         (let* ((name (elt x 1))
                (args (varlis-to-lambda-args (elt x 2)))
@@ -1043,7 +1041,10 @@ defgeneric compile
         (cond ((null x) t)
               ((eq (car x) ':rest) t)
               ((eq (car x) '%rest) t)
-              ((symbolp (car x)) (comp-defgeneric-qualifier-cond (cdr x)))
+              ;;when method has only one symbol argument, require "1"
+              ((symbolp (car x))
+               (format code2 "1") 
+               (comp-defgeneric-qualifier-cond (cdr x)))
               ((consp (car x))
                (format code2 "Fadaptp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
@@ -1087,7 +1088,10 @@ defgeneric compile
         (cond ((null x) t)
               ((eq (car x) ':rest) t)
               ((eq (car x) '%rest) t)
-              ((symbolp (car x)) (comp-defgeneric-primary-cond1 (cdr x)))
+              ;;when method has only one symbol argument, require "1"
+              ((symbolp (car x))
+               (format code2 "1") 
+               (comp-defgeneric-primary-cond1 (cdr x)))
               ((consp (car x))
                (format code2 "Feqclassp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)

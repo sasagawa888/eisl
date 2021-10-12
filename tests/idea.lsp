@@ -280,7 +280,7 @@
 
     (defglobal next-method-p nil)
     
-    (defun comp-defgeneric-body (x has_qualifier args)
+    (defun comp-defgeneric-body (x has-qualifier args)
         (cond ((null x) t)
               (t
                (let* ((varbody (get-method-body (car x)))
@@ -296,10 +296,10 @@
                    (if (null (cdr x))
                        (setq next-method-p nil)
                        (setq next-method-p t))
-                   (cond ((and (not has_qualifier) (not (equal (last body) '(call-next-method))) (= priority primary))
+                   (cond ((and (not has-qualifier) (not (equal (last body) '(call-next-method))) (= priority primary))
                           (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
                           (format code2 "return(res);"))
-                         ((and (not has_qualifier) (equal (last body) '(call-next-method)) (= priority primary))
+                         ((and (not has-qualifier) (equal (last body) '(call-next-method)) (= priority primary))
                           (cond ((null (cdr x)) (format code2 "return(res);"))
                                 (t
                                  (let* ((next-varbody (get-method-body (car (cdr x))))
@@ -308,13 +308,13 @@
                                    (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
                                    (comp-progn1 code2 next-body (varlis-to-lambda-args next-varlis) nil nil nil nil nil nil)
                                    (format code2 "return(res);")))))
-                         ((and (not (equal (last body) '(call-next-method))) (not (= priority primary)))
+                         ((and has-qualifier (not (equal (last body) '(call-next-method))))
                           (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil))
-                         ((and (equal (last body) '(call-next-method)) (not (= priority primary)))
+                         ((and has-qualifier (equal (last body) '(call-next-method)))
                           (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
                           (format code2 "super_flag=1;")))
                    (format code2 "}~%"))
-                   (comp-defgeneric-body (cdr x) has_qualifier args))))
+                   (comp-defgeneric-body (cdr x) has-qualifier args))))
               
                    
     

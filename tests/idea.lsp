@@ -295,7 +295,7 @@
                           (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
                           (format code2 "return(res);"))
                          ((and (not has_qualifier) (equal (last body) '(call-next-method)) (= priority primary))
-                          (let* ((next-varbody (get-method-body (cadr x)))
+                          (let* ((next-varbody (get-method-body (car (cdr x))))
                                  (next-varlis (alpha-conv-varlis (car next-varbody) args))
                                  (next-body (alpha-conv-method (cdr next-varbody) (method-varlis-to-substlist (car next-varbody) args))))
                               (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)

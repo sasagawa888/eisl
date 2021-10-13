@@ -32,21 +32,12 @@ case there is some qualifier
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
                    (cond 
-                         ((and (not has-qualifier) (equal (last body) '(call-next-method)))
-                          (cond ((null (cdr x)) (format code2 "return(res);"))
-                                (t
-                                 (let* ((next-varbody (get-method-body (car (cdr x))))
-                                       (next-varlis (alpha-conv-varlis (car next-varbody) args))
-                                       (next-body (alpha-conv-method (cdr next-varbody) (method-varlis-to-substlist (car next-varbody) args))))
-                                   (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                                   (comp-progn1 code2 next-body (varlis-to-lambda-args next-varlis) nil nil nil nil nil nil)
-                                   (format code2 "return(res);")))))
-                         ((and has-qualifier (equal (last body) '(call-next-method)))
-                          (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                          (format code2 "super_flag=1;"))
-                         ((and (not (equal (last body) '(call-next-method))))
+                         ((not has-qualifier)
                           (comp-generic-body1 code2 body x (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                          (format code2 "return(res);")))
+                          (format code2 "return(res);"))
+                         (t
+                          ;; when there is at least one qualifier, eash method has no return
+                          (comp-generic-body1 code2 body x (varlis-to-lambda-args varlis) nil nil nil nil nil nil)))
                    (format code2 "}~%"))
                    (comp-defgeneric-body (cdr x) has-qualifier args))))
 
@@ -60,16 +51,18 @@ case there is some qualifier
                (if (not (not-need-colon-p (car x)))
                    (format stream ";")))
               ((equal (car x) '(call-next-method))
-               (format stream "{")
+               ;; generate rest methods and rest body S-exp
+               (format stream "{super_flag = 1;")
                (comp-generic-body stream (cdr methods) env args tail name global test clos)
                (comp-generic-body stream (cdr x) env args tail name global test clos)
-               (format stream "}"))
+               (format stream "return(res);}"))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
-               (cond ((null (cdr methods)) t)
-                     (t (format stream "{")
-                        (comp-generic-body stream (cdr methods) env args tail name global test clos)
-                        (comp-generic-body stream (cdr x) env args tail name global test clos)
-                        (format stream "}"))))
+               ;; generate rest methods and rest body S-exp
+               (format stream "{super_flag = 1;")
+               ;; when ther is no rest method, generate only rest body S-exp 
+               (comp-generic-body stream (cdr methods) env args tail name global test clos)
+               (comp-generic-body stream (cdr x) env args tail name global test clos)
+               (format stream "return(res);}"))      
               (t
                (comp stream (car x) env args nil name global test clos)
                (if (not (not-need-colon-p (car x)))

@@ -595,8 +595,6 @@ defgeneric compile
                (comp-set-dynamic stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'dynamic-let))
                (comp-dynamic-let stream x env args tail name global test clos))
-              ((and (consp x) (eq (car x) 'next-method-p))
-               (if next-method-p (format stream "T") (format stream "NIL")))
               ((and (consp x) (eq (car x) 'the)) t)
               ((and (consp x) (eq (car x) 'not))
                (comp-not stream x env args tail name global test clos))

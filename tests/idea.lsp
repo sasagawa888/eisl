@@ -1,11 +1,19 @@
 #|
 Idea memo ILOS compile
-1. 1. If no qualifiers exist.
-next is the basic method and is a simple case. Compile the following basic method and return.
-2. If the modifier exists and ends with next
-If it is the end, allow the superclass and execute after that. Do not return.
-3. 3. If the modifier exists and is next except at the end
-Compile all subsequent methods while allowing superclasses, compile after next and return 
+P is primariy method
+Q is qualifier method
+super is flag default is OFF
+=call measn it's method's body has (call-next-method)
+
+case there is no qualifier
+1.P1,P2,P3     each method has return
+1-1 P1,P2=call,P3  P2,{P3}return
+
+case there is some qualifier
+2. Q1,Q2,Q3,P1,P2,P3,Q4,Q5,Q6 each has no return
+2-1 Q1,Q2,Q3,P1=call,P2,P3,Q4,Q5,Q6  P1={superON,P2,P3,Q4,Q5,Q6} return
+2-2  Q1,Q2=call,Q3,P1,P2,P3,Q4,Q5,Q6  Q2={superON,Q3,P1,P2,P3,Q4,Q5,Q6} return
+
 |#
 
     ;; flag for (next-method-p)
@@ -24,7 +32,7 @@ Compile all subsequent methods while allowing superclasses, compile after next a
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
                    (cond 
-                         ((and (not has-qualifier) (equal (last body) '(call-next-method)) (= priority primary))
+                         ((and (not has-qualifier) (equal (last body) '(call-next-method)))
                           (cond ((null (cdr x)) (format code2 "return(res);"))
                                 (t
                                  (let* ((next-varbody (get-method-body (car (cdr x))))

@@ -969,22 +969,29 @@ defgeneric compile
                ;; generate rest methods and rest body S-exp
                (format code2 "res=({super_flag = 1;")
                ;; if the method is primary generate only a next method else generate all rest methods
+               (setq priority (next-method-priority methods))
+               (when (null priority) (error* "defgeneric not exist next method" methods))
                (if (= priority primary)
                    (comp-defgeneric-body (a-next-method methods) args)
                    (comp-defgeneric-body (cdr methods) args))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
-               (format code2 "});~%"))
+               (format code2 "});~%")
+               (if (not (= priority primary))
+                   (format code2 "return(res);~%")))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
                ;; generate rest methods and rest body S-exp
                (format code2 "res=({super_flag = 1;")
+               (setq priority (next-method-priority methods))
                ;; when ther is no rest method, generate only rest body S-exp 
                (if (= priority primary)
                    (comp-defgeneric-body (a-next-method methods) args)
                    (comp-defgeneric-body (cdr methods) args))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
-               (format code2 "});~%"))      
+               (format code2 "});~%")
+               (if (not (= priority primary))
+                   (format code2 "return(res);~%")))    
               (t
                (format code2 "res = ")
                (comp code2 (car x) env args nil nil nil nil nil)
@@ -996,6 +1003,11 @@ defgeneric compile
         (cond ((null x) nil)
               ((null (cdr x)) nil)
               (t (list (car (cdr x))))))    
+
+    (defun next-method-priority (x)
+        (cond ((null x) nil)
+              ((null (cdr x)) nil)
+              (t (get-method-priority (car (cdr x))))))  
     ;;------------------new---------------------------------------------               
 
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))

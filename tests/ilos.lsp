@@ -52,7 +52,7 @@
 (defglobal *x* (create (class <child>) 's 'foo 's2 'bar 's3 'boo 's1 'uoo))
 
 
-
+#|
 ;;-------------- from M.Hiroi page-------------
 ;;; クラスの定義
 (defclass foo-a () ())
@@ -82,4 +82,4 @@
 (defglobal c (create (class foo-c)))
 (defglobal d (create (class foo-d)))
 
-
+|#

@@ -970,10 +970,10 @@ defgeneric compile
                (format code2 "res=({super_flag = 1;")
                ;; if the method is primary generate only a next method else generate all rest methods
                (setq priority (next-method-priority methods))
-               (when (null priority) (error* "defgeneric not exist next method" methods))
+               (when (null priority) (error* "defgeneric not exist next method" (get-method-body (car methods))))
                (if (= priority primary)
-                   (comp-defgeneric-body (a-next-method methods) args)
-                   (comp-defgeneric-body (cdr methods) args))
+                   (comp-defgeneric-body2 (a-next-method methods) args)
+                   (comp-defgeneric-body2 (cdr methods) args))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
                (format code2 "});~%")
@@ -985,8 +985,8 @@ defgeneric compile
                (setq priority (next-method-priority methods))
                ;; when ther is no rest method, generate only rest body S-exp 
                (if (= priority primary)
-                   (comp-defgeneric-body (a-next-method methods) args)
-                   (comp-defgeneric-body (cdr methods) args))
+                   (comp-defgeneric-body2 (a-next-method methods) args)
+                   (comp-defgeneric-body2 (cdr methods) args))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
                (format code2 "});~%")
@@ -1018,7 +1018,9 @@ defgeneric compile
 
     ;; for (call-next-method)
     (defun comp-defgeneric-body3 (priority x methods env args)
-        (cond ((null x) t)  
+        (cond ((null x) t)
+              ((equal (car x) '(call-next-method)) t)
+              ((equal (car x) '(if (next-method-p)(call-next-method))) t)
               (t
                (format code2 "res = ")
                (comp code2 (car x) env args nil nil nil nil nil)

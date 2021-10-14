@@ -83,3 +83,5 @@
 (defglobal d (create (class foo-d)))
 
 
+(defun disp (x)
+    (mapcar #'get-method-body (get-method x)))

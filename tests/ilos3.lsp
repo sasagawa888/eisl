@@ -9,7 +9,7 @@ from masahito kurihara's book
 (defun new-id () (setq *new-id* (+ *new-id* 1)))
 
 (defclass !object ()
-    ((id :accessor id! :initform (new-id))))
+    ((id :accessor id! :initform *new-id*)))
 
 (defclass !atom (!object) ())
 (defclass !list (!object) ())

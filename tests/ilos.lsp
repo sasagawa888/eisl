@@ -52,7 +52,7 @@
 (defglobal *x* (create (class <child>) 's 'foo 's2 'bar 's3 'boo 's1 'uoo))
 
 
-#|
+
 ;;-------------- from M.Hiroi page-------------
 ;;; クラスの定義
 (defclass foo-a () ())
@@ -70,11 +70,11 @@
 (defmethod method-3 ((x foo-a))
   (print "foo-a method"))
 (defmethod method-3 ((x foo-b))
-  (print "foo-b method") (call-next-method))
+  (print "foo-b method"))
 (defmethod method-3 ((x foo-c))
  (print "foo-c method") (call-next-method))
 (defmethod method-3 ((x foo-d))
- (print "foo-d method") (call-next-method))
+ (print "foo-d method") )
 
 
 (defglobal a (create (class foo-a)))
@@ -82,4 +82,4 @@
 (defglobal c (create (class foo-c)))
 (defglobal d (create (class foo-d)))
 
-|#
+

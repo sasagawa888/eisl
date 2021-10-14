@@ -997,7 +997,35 @@ defgeneric compile
                (comp code2 (car x) env args nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
-               (comp-defgeneric-body1 priority (cdr x) methods env args))))  
+               (comp-defgeneric-body1 priority (cdr x) methods env args)))) 
+
+    ;; for (call-next-method)
+    (defun comp-defgeneric-body2 (x args)
+        (cond ((null x) t)
+              (t
+               (let* ((varbody (get-method-body (car x)))
+                      (varlis (alpha-conv-varlis (car varbody) args))
+                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
+                      (priority (get-method-priority (car x))) )
+                   (format code2 "if(")
+                   (if (= priority primary)
+                       (comp-defgeneric-primary-cond varlis)
+                       (comp-defgeneric-qualifier-cond varlis))
+                   (format code2 ")~%{")
+                   (comp-defgeneric-body3 priority body x (varlis-to-lambda-args varlis) args)
+                   (format code2 "}~%"))
+                   (comp-defgeneric-body2 (cdr x) args))))
+
+    ;; for (call-next-method)
+    (defun comp-defgeneric-body3 (priority x methods env args)
+        (cond ((null x) t)  
+              (t
+               (format code2 "res = ")
+               (comp code2 (car x) env args nil nil nil nil nil)
+               (if (not (not-need-colon-p (car x)))
+                   (format code2 ";~%"))
+               (comp-defgeneric-body3 priority (cdr x) methods env args)))) 
+
 
     (defun a-next-method (x)
         (cond ((null x) nil)

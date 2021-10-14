@@ -5,11 +5,9 @@ Q is qualifier method
 super is flag default is OFF
 =call measn it's method's body has (call-next-method)
 
-case there is no qualifier
-1.P1,P2,P3     each method has return
-1-1 P1,P2=call,P3  P2,{P3}return
 
-case there is some qualifier
+1.P1,P2,P3     each method has no return
+1-1 P1,P2=call,P3  P2,{P3,return}
 2. Q1,Q2,Q3,P1,P2,P3,Q4,Q5,Q6 each has no return
 2-1 Q1,Q2,Q3,P1=call,P2,P3,Q4,Q5,Q6  P1={superON,P2,P3,Q4,Q5,Q6,return}
 2-2  Q1,Q2=call,Q3,P1,P2,P3,Q4,Q5,Q6  Q2={superON,Q3,P1,P2,P3,Q4,Q5,Q6,return} 
@@ -33,7 +31,7 @@ case there is some qualifier
                    (format code2 ")~%{")
                    (comp-defgeneric-body1 priority body x (varlis-to-lambda-args varlis) arg)
                    (format code2 "}~%"))
-                   (comp-defgeneric-body (cdr x) has-qualifier args))))
+                   (comp-defgeneric-body (cdr x) args))))
 
     ;;x is the method bodies
     (defun comp-defgeneric-body1 (priority x methods env arg)
@@ -45,8 +43,9 @@ case there is some qualifier
                (if (= priority primariy)
                    (comp-defgeneric-body (car (cdr methods) env arg))
                    (comp-defgeneric-body (cdr methods) env arg))
+               (format code2 "super_flag = 0;")
                (comp-defgeneric-body1 priority (cdr x) env arg)
-               (format code2 "super_flag = 0;}"))
+               (format code2 "}~%"))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
                ;; generate rest methods and rest body S-exp
                (format code2 "{super_flag = 1;")
@@ -54,8 +53,9 @@ case there is some qualifier
                (if (= priority primariy)
                    (comp-defgeneric-body (car (cdr methods) env arg))
                    (comp-defgeneric-body (cdr methods) env arg))
+               (format code2 "super_flag = 0;")
                (comp-defgeneric-body1 priority (cdr x) env arg)
-               (format code2 "super_flag = 0;}"))      
+               (format code2 "}~%"))      
               (t
                (comp stream (car x) env nil nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))

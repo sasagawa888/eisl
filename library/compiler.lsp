@@ -66,34 +66,22 @@ defgeneric compile
     if(!super_flag && (Fadapt(...) && Fadapt(...) && ...) ||
        (super_flag && Fsame(...) && Fsame(...) && ...)) primariy-method compile code 
 
+
+
    <<body>>
-    1.There is no qualifier method and it is primary method and it has no (call-next-method)
-    comp(body) return(res);
-    2.There is no qualifier method and it is primary method and it has tail (call-next-method)
-    comp(butlast(body)) comp(next-method-body);
-    3.At least a qualifier method exist and all kind of method and it has not (call-next-method)
-    comp(body)
-    4.At least a qualifier method exist and :around method and it has tail (call-next-method)
-    comp(butlast(body)) super_flag=1;
+    Idea memo ILOS compile
+    P is primariy method
+    Q is qualifier method
+    super is flag default is OFF
+    =call measn it's method's body has (call-next-method)
 
-    Other case interpreter occurs an error. Compiler does not consider.
-
-    (call-next-method) -> when :around-mthod super_flag=1 and continue
-                       -> when primary-method next-method compile code 
-
-    (next-method-p)  -> compiler can know rest method, so generate simple code.
-                        set global-variable next-method-p T or nil and compiler generate T or NIL for (next-method-p)
-    
-    idea memo
-    when call-next-method is called at last in body, it it OK. But not in last, compile code is incorrect.
-    I will replace comp-progn1 to comp-method-body. comp-method-body recognize next-method-p and call-next-method.
-    and comp-method-body generate super-class method call. I will delete next-method-p from comp function.
     e.g.
-    (if (next-method-p) (call-next-method)) (format (standard-output) "end")
-    super_flag = 1;
-    compile rest methods
-    compile (format (standard-output) "end")
-    return(res);
+    1.P1,P2,P3     each method has no return
+    1-1 P1,P2=call,P3  P2,{P3,return}
+    2. Q1,Q2,Q3,P1,P2,P3,Q4,Q5,Q6 each has no return
+    2-1 Q1,Q2,Q3,P1=call,P2,P3,Q4,Q5,Q6  P1={superON,P2,P3,Q4,Q5,Q6,return}
+    2-2  Q1,Q2=call,Q3,P1,P2,P3,Q4,Q5,Q6  Q2={superON,Q3,P1,P2,P3,Q4,Q5,Q6,return} 
+
 
 |#
 (defmodule compiler

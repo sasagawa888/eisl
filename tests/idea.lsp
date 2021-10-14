@@ -19,7 +19,7 @@ case there is some qualifier
     ;; flag for (next-method-p)
     ;; delete(defglobal next-method-p nil)
     
-    (defun comp-defgeneric-body (x has-qualifier args)
+    (defun comp-defgeneric-body (x args)
         (cond ((null x) t)
               (t
                (let* ((varbody (get-method-body (car x)))
@@ -31,43 +31,36 @@ case there is some qualifier
                        (comp-defgeneric-primary-cond varlis)
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
-                   (cond 
-                         ((not has-qualifier)
-                          (comp-generic-body1 code2 body x (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                          (format code2 "return(res);"))
-                         (t
-                          ;; when there is at least one qualifier, eash method has no return
-                          (comp-generic-body1 code2 body x (varlis-to-lambda-args varlis) nil nil nil nil nil nil)))
+                   (comp-defgeneric-body1 priority body x (varlis-to-lambda-args varlis) arg)
                    (format code2 "}~%"))
                    (comp-defgeneric-body (cdr x) has-qualifier args))))
 
-    ;;adapt to (next-method-p) (call-next-method) in not last body
-    (defun comp-generic-body1 (stream x methods env args tail name global test clos)
+    ;;x is the method bodies
+    (defun comp-defgeneric-body1 (priority x methods env arg)
         (cond ((null x) t)
-              ((null (cdr x))
-               (if (and (not (not-need-res-p (car x))) (not (tailcallp (car x) tail name)))
-                   (format stream "res = "))
-               (comp stream (car x) env args tail name global test clos)
-               (if (not (not-need-colon-p (car x)))
-                   (format stream ";")))
               ((equal (car x) '(call-next-method))
                ;; generate rest methods and rest body S-exp
-               (format stream "{super_flag = 1;")
-               (comp-generic-body stream (cdr methods) env args tail name global test clos)
-               (comp-generic-body stream (cdr x) env args tail name global test clos)
-               (format stream "return(res);}"))
+               (format code2 "{super_flag = 1;")
+               ;; if the method is primary generate only a next method else generate all rest methods
+               (if (= priority primariy)
+                   (comp-defgeneric-body (car (cdr methods) env arg))
+                   (comp-defgeneric-body (cdr methods) env arg))
+               (comp-defgeneric-body1 priority (cdr x) env arg)
+               (format code2 "super_flag = 0;}"))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
                ;; generate rest methods and rest body S-exp
-               (format stream "{super_flag = 1;")
+               (format code2 "{super_flag = 1;")
                ;; when ther is no rest method, generate only rest body S-exp 
-               (comp-generic-body stream (cdr methods) env args tail name global test clos)
-               (comp-generic-body stream (cdr x) env args tail name global test clos)
-               (format stream "return(res);}"))      
+               (if (= priority primariy)
+                   (comp-defgeneric-body (car (cdr methods) env arg))
+                   (comp-defgeneric-body (cdr methods) env arg))
+               (comp-defgeneric-body1 priority (cdr x) env arg)
+               (format code2 "super_flag = 0;}"))      
               (t
-               (comp stream (car x) env args nil name global test clos)
+               (comp stream (car x) env nil nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))
                    (format stream ";~%"))
-               (comp-generic-body1 stream (cdr x) methods env args tail name global test clos))))       
+               (comp-defgeneric-body1 priority (cdr x) methods env arg))))      
                    
 
    

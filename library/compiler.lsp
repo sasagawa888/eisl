@@ -69,18 +69,17 @@ defgeneric compile
 
 
    <<body>>
-    Idea memo ILOS compile
     P is primariy method
     Q is qualifier method
-    super is flag default is OFF
+    super_flag is flag default is 0
     =call measn it's method's body has (call-next-method)
 
     e.g.
     1.P1,P2,P3     each method has no return
-    1-1 P1,P2=call,P3  P2,{P3,return}
+    1-1 P1,P2=call,P3  P2,{super=1,P3,super_flag=0,return}
     2. Q1,Q2,Q3,P1,P2,P3,Q4,Q5,Q6 each has no return
-    2-1 Q1,Q2,Q3,P1=call,P2,P3,Q4,Q5,Q6  P1={superON,P2,P3,Q4,Q5,Q6,return}
-    2-2  Q1,Q2=call,Q3,P1,P2,P3,Q4,Q5,Q6  Q2={superON,Q3,P1,P2,P3,Q4,Q5,Q6,return} 
+    2-1 Q1,Q2,Q3,P1=call,P2,P3,Q4,Q5,Q6  P1={super_flag=1,P2,P3,Q4,Q5,Q6,super_flag=0,return}
+    2-2  Q1,Q2=call,Q3,P1,P2,P3,Q4,Q5,Q6  Q2={super_flag=1,Q3,P1,P2,P3,Q4,Q5,Q6,super_flag=0,return} 
 
 
 |#

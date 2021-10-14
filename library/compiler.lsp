@@ -927,7 +927,8 @@ defgeneric compile
             (format code2 "int super_flag=0;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
-            (comp-defgeneric-body method (has-qualifier-p method) args)
+            (comp-defgeneric-body method args)
+            ;;(comp-defgeneric-body method (has-qualifier-p method) args)
             (gen-shelterpop code2 (reverse args))
             (format code2 "if(res==-1) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
@@ -963,10 +964,9 @@ defgeneric compile
               ((consp (car x)) (cons (car (car x)) (varlis-to-lambda-args (cdr x))))
               (t (error* "defgeneric" x))))
     
-    ;; flag for (next-method-p)
-    (defglobal next-method-p nil)
     
-    (defun comp-defgeneric-body (x has-qualifier args)
+    ;;--------------new----------------
+    (defun comp-defgeneric-body (x args)
         (cond ((null x) t)
               (t
                (let* ((varbody (get-method-body (car x)))
@@ -978,32 +978,51 @@ defgeneric compile
                        (comp-defgeneric-primary-cond varlis)
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
-                   ;;to compile (next-method-p) set flag 
-                   (if (null (cdr x))
-                       (setq next-method-p nil)
-                       (setq next-method-p t))
-                   (cond ((and (not has-qualifier) (not (equal (last body) '(call-next-method))) (= priority primary))
-                          (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                          (format code2 "return(res);"))
-                         ((and (not has-qualifier) (equal (last body) '(call-next-method)) (= priority primary))
-                          (cond ((null (cdr x)) (format code2 "return(res);"))
-                                (t
-                                 (let* ((next-varbody (get-method-body (car (cdr x))))
-                                       (next-varlis (alpha-conv-varlis (car next-varbody) args))
-                                       (next-body (alpha-conv-method (cdr next-varbody) (method-varlis-to-substlist (car next-varbody) args))))
-                                   (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                                   (comp-progn1 code2 next-body (varlis-to-lambda-args next-varlis) nil nil nil nil nil nil)
-                                   (format code2 "return(res);")))))
-                         ((and has-qualifier (not (equal (last body) '(call-next-method))))
-                          (comp-progn1 code2 body (varlis-to-lambda-args varlis) nil nil nil nil nil nil))
-                         ((and has-qualifier (equal (last body) '(call-next-method)))
-                          (comp-progn1 code2 (butlast body) (varlis-to-lambda-args varlis) nil nil nil nil nil nil)
-                          (format code2 "super_flag=1;")))
+                   (comp-defgeneric-body1 priority body x (varlis-to-lambda-args varlis) args)
                    (format code2 "}~%"))
-                   (comp-defgeneric-body (cdr x) has-qualifier args))))
-              
-                   
-    
+                   (comp-defgeneric-body (cdr x) args))))
+
+    ;;x is the method bodies
+    (defun comp-defgeneric-body1 (priority x methods env args)
+        (cond ((null x) t)
+              ((null (cdr x))
+               (if (and (not (not-need-res-p (car x))) (not (tailcallp (car x) nil nil)))
+                   (format code2 "res = "))
+               (comp code2 (car x) env args nil nil nil nil nil)
+               (if (not (not-need-colon-p (car x)))
+                   (format code2 ";")))
+              ((equal (car x) '(call-next-method))
+               ;; generate rest methods and rest body S-exp
+               (format code2 "{super_flag = 1;")
+               ;; if the method is primary generate only a next method else generate all rest methods
+               (if (= priority primary)
+                   (comp-defgeneric-body (a-next-method methods) args)
+                   (comp-defgeneric-body (cdr methods) args))
+               (format code2 "super_flag = 0;")
+               (comp-defgeneric-body1 priority (cdr x) methods env args)
+               (format code2 "}~%"))
+              ((equal (car x) '(if (next-method-p)(call-next-method)))
+               ;; generate rest methods and rest body S-exp
+               (format code2 "{super_flag = 1;")
+               ;; when ther is no rest method, generate only rest body S-exp 
+               (if (= priority primary)
+                   (comp-defgeneric-body (a-next-method methods) args)
+                   (comp-defgeneric-body (cdr methods) args))
+               (format code2 "super_flag = 0;")
+               (comp-defgeneric-body1 priority (cdr x) methods env args)
+               (format code2 "}~%"))      
+              (t
+               (comp code2 (car x) env args nil nil nil nil nil)
+               (if (not (not-need-colon-p (car x)))
+                   (format code2 ";~%"))
+               (comp-defgeneric-body1 priority (cdr x) methods env args))))  
+
+    (defun a-next-method (x)
+        (cond ((null x) nil)
+              ((null (cdr x)) nil)
+              (t (list (car (cdr x))))))    
+    ;;------------------new---------------------------------------------               
+
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))
     ;; ((x <integer>) y) (a b) -> ((a <integer>) b)
     (defun alpha-conv-varlis (x y)

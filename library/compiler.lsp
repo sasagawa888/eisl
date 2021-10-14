@@ -915,7 +915,6 @@ defgeneric compile
             (gen-shelterpush code2 args)
             (gen-checkgc)
             (comp-defgeneric-body method args)
-            ;;(comp-defgeneric-body method (has-qualifier-p method) args)
             (gen-shelterpop code2 (reverse args))
             (format code2 "if(res==-1) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
@@ -926,13 +925,7 @@ defgeneric compile
     (defconstant befor 12)
     (defconstant primary 13)
     (defconstant after 14)
-    ;;if methods has qualifier(:around :befor :after) return t else nil
-    (defun has-qualifier-p (method)
-        (cond ((null method) nil)
-              ((= (get-method-priority (car method)) primary)
-               (has-qualifier-p (cdr method)))
-              (t t)))
-    
+   
     ;;geberate ILOSerror arguments list
     (defun gen-error-argument (args)
         (cond ((null args)

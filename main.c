@@ -1701,12 +1701,9 @@ DEF_GETTER(char, TR, trace, NIL)
 			}
 		}
 		next_method = cdr(next_method);
-		// if only primary method without qualifiler, then stop 
-		//if (pexist==1 && qexist==0)
-		//break;
 		}
 	    if (pexist == 0 && qexist == 0)
-		error(NOT_EXIST_METHOD, "apply", args);
+		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
 
 	    generic_func = NIL;
 	    generic_vars = NIL;
@@ -1813,6 +1810,8 @@ sameclassp(int varlist, int arglist)
 	return (1);
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
 	// class
+	return (sameclassp(cdr(varlist), cdr(arglist)));
+	else if (GET_OPT(cadar(varlist)) == SYSTEM && subclassp(GET_AUX(car(arglist)),GET_AUX(cadar(varlist))))
 	return (sameclassp(cdr(varlist), cdr(arglist)));
 	// EISL expand integer-class, So fixnum bignum longnum is same-class in ILOS
 	else if (GET_AUX(cadar(varlist)) == cinteger &&

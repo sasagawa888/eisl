@@ -107,3 +107,14 @@
 	      around-c1-end) 
  equal)
 |#
+
+
+;;; 比較関数
+(defgeneric compare (x y))
+
+;;; 数値用
+(defmethod compare ((x <number>) (y <number>))
+  (cond ((= x y) 0)
+	((< x y) -1)
+	(t 1)))
+

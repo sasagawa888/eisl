@@ -1811,11 +1811,8 @@ sameclassp(int varlist, int arglist)
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
 	// class
 	return (sameclassp(cdr(varlist), cdr(arglist)));
+	// when built-in class, subclass is also eqclass.
 	else if (GET_OPT(cadar(varlist)) == SYSTEM && subclassp(GET_AUX(car(arglist)),GET_AUX(cadar(varlist))))
-	return (sameclassp(cdr(varlist), cdr(arglist)));
-	// EISL expand integer-class, So fixnum bignum longnum is same-class in ILOS
-	else if (GET_AUX(cadar(varlist)) == cinteger &&
-	         (GET_AUX(car(arglist)) == cfixnum || GET_AUX(car(arglist)) == cbignum ||  GET_AUX(car(arglist)) == clongnum))
 	return (sameclassp(cdr(varlist), cdr(arglist)));
     else
 	return (0);

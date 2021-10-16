@@ -1013,8 +1013,10 @@ defgeneric compile
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
                    (comp-defgeneric-body3 mode priority  body x (varlis-to-lambda-args varlis) args)
-                   (format code2 "}~%"))
-                   (comp-defgeneric-body2 mode (cdr x) args))))
+                   (format code2 "}~%")
+                   (if (and (= mode around) (= priority primary) (not (null (cdr x))))
+                       (comp-defgeneric-body2 mode (cdr (cdr x)) args)
+                       (comp-defgeneric-body2 mode (cdr x) args))))))
 
     ;; for (call-next-method)
     ;; mode has original next method priority.

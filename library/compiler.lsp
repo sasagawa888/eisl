@@ -984,7 +984,7 @@ defgeneric compile
                (format code2 "res=({super_flag = 1;")
                (setq priority (next-method-priority methods))
                ;; when ther is no rest method, generate only rest body S-exp 
-               (if (and (not prioroty) (= priority primary))
+               (if (and (not priority) (= priority primary))
                    (comp-defgeneric-body2 priority (a-next-method methods) args)
                    (comp-defgeneric-body2 priority (cdr methods) args))
                (format code2 "super_flag = 0;res;")
@@ -1012,23 +1012,24 @@ defgeneric compile
                        (comp-defgeneric-primary-cond varlis)
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
-                   (comp-defgeneric-body3 mode body x (varlis-to-lambda-args varlis) args)
+                   (comp-defgeneric-body3 mode priority  body x (varlis-to-lambda-args varlis) args)
                    (format code2 "}~%"))
                    (comp-defgeneric-body2 mode (cdr x) args))))
 
     ;; for (call-next-method)
-    (defun comp-defgeneric-body3 (mode x methods env args)
+    ;; mode has original next method priority.
+    (defun comp-defgeneric-body3 (mode priority x methods env args)
         (cond ((null x) t)
               ((equal (car x) '(call-next-method))
-               (comp-defgeneric-body3 priority (cdr x) methods env args))
+               (comp-defgeneric-body3 mode priority (cdr x) methods env args))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
-               (comp-defgeneric-body3 priority (cdr x) methods env args))
+               (comp-defgeneric-body3 mode priority (cdr x) methods env args))
               (t
                (format code2 "res = ")
                (comp code2 (car x) env args nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
-               (comp-defgeneric-body3 mode (cdr x) methods env args)))) 
+               (comp-defgeneric-body3 mode priority (cdr x) methods env args)))) 
 
 
     (defun a-next-method (x)

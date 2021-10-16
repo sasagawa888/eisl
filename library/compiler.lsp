@@ -972,8 +972,8 @@ defgeneric compile
                (setq priority (next-method-priority methods))
                (when (null priority) (error* "defgeneric not exist next method" (get-method-body (car methods))))
                (if (= priority primary)
-                   (comp-defgeneric-body2 (a-next-method methods) args)
-                   (comp-defgeneric-body2 (cdr methods) args))
+                   (comp-defgeneric-body2 priority (a-next-method methods) args)
+                   (comp-defgeneric-body2 priority (cdr methods) args))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
                (format code2 "});~%")
@@ -985,8 +985,8 @@ defgeneric compile
                (setq priority (next-method-priority methods))
                ;; when ther is no rest method, generate only rest body S-exp 
                (if (and (not prioroty) (= priority primary))
-                   (comp-defgeneric-body2 (a-next-method methods) args)
-                   (comp-defgeneric-body2 (cdr methods) args))
+                   (comp-defgeneric-body2 priority (a-next-method methods) args)
+                   (comp-defgeneric-body2 priority (cdr methods) args))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
                (format code2 "});~%")
@@ -1000,7 +1000,7 @@ defgeneric compile
                (comp-defgeneric-body1 priority (cdr x) methods env args)))) 
 
     ;; for (call-next-method)
-    (defun comp-defgeneric-body2 (x args)
+    (defun comp-defgeneric-body2 (mode x args)
         (cond ((null x) t)
               (t
                (let* ((varbody (get-method-body (car x)))
@@ -1012,12 +1012,12 @@ defgeneric compile
                        (comp-defgeneric-primary-cond varlis)
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
-                   (comp-defgeneric-body3 priority body x (varlis-to-lambda-args varlis) args)
+                   (comp-defgeneric-body3 mode body x (varlis-to-lambda-args varlis) args)
                    (format code2 "}~%"))
-                   (comp-defgeneric-body2 (cdr x) args))))
+                   (comp-defgeneric-body2 mode (cdr x) args))))
 
     ;; for (call-next-method)
-    (defun comp-defgeneric-body3 (priority x methods env args)
+    (defun comp-defgeneric-body3 (mode x methods env args)
         (cond ((null x) t)
               ((equal (car x) '(call-next-method))
                (comp-defgeneric-body3 priority (cdr x) methods env args))
@@ -1028,7 +1028,7 @@ defgeneric compile
                (comp code2 (car x) env args nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
-               (comp-defgeneric-body3 priority (cdr x) methods env args)))) 
+               (comp-defgeneric-body3 mode (cdr x) methods env args)))) 
 
 
     (defun a-next-method (x)

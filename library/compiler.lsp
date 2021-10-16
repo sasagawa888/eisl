@@ -1014,15 +1014,21 @@ defgeneric compile
                    (format code2 ")~%{")
                    (comp-defgeneric-body3 mode priority  body x (varlis-to-lambda-args varlis) args)
                    (format code2 "}~%")
-                   (if (and (= mode around) (= priority primary) (not (null (cdr x))))
+                   ;;if (comp-defgeneric-body3) compiles (call-next-method), skip next method
+                   (if (and (not (= mode primary)) (= priority primary) (not (null (cdr x))))
                        (comp-defgeneric-body2 mode (cdr (cdr x)) args)
                        (comp-defgeneric-body2 mode (cdr x) args))))))
 
     ;; for (call-next-method)
     ;; mode has original next method priority.
+    ;; priority has just before method priority
+    ;; if mode is not primary and priority is primary, require compiler (call-next-method)
     (defun comp-defgeneric-body3 (mode priority x methods env args)
         (cond ((null x) t)
               ((equal (car x) '(call-next-method))
+               ;(print mode) (print priority)
+               ;(if (not (null (cdr methods)))
+               ;    (print (get-method-body (car (cdr methods)))))
                (comp-defgeneric-body3 mode priority (cdr x) methods env args))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
                (comp-defgeneric-body3 mode priority (cdr x) methods env args))

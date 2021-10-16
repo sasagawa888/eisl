@@ -1571,7 +1571,7 @@ insert_method(int x, int func)
     res = NIL;
     while (!nullp(methods)) {
 	if (high_priority_p(x, car(methods))) {
-	    SET_CDR(func, happend(reverse(res), hcons(x, methods)));
+	    SET_CDR(func, happend(hreverse(res), hcons(x, methods)));
 	    return;
 	}
 	res = hcons(car(methods), res);

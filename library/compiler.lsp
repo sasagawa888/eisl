@@ -972,8 +972,8 @@ defgeneric compile
                (setq priority (next-method-priority methods))
                (when (null priority) (error* "defgeneric not exist next method" (get-method-body (car methods))))
                (if (= priority primary)
-                   (comp-defgeneric-body2 priority (a-next-method methods) args)
-                   (comp-defgeneric-body2 priority (cdr methods) args))
+                   (comp-defgeneric-body2 priority (cdr methods) args 1)
+                   (comp-defgeneric-body2 priority (cdr methods) args (length (cdr methods))))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
                (format code2 "});~%")
@@ -985,8 +985,8 @@ defgeneric compile
                (setq priority (next-method-priority methods))
                ;; when ther is no rest method, generate only rest body S-exp 
                (if (and (not priority) (= priority primary))
-                   (comp-defgeneric-body2 priority (a-next-method methods) args)
-                   (comp-defgeneric-body2 priority (cdr methods) args))
+                   (comp-defgeneric-body2 priority (cdr methods) args 1)
+                   (comp-defgeneric-body2 priority (cdr methods) args (length (cdr methods))))
                (format code2 "super_flag = 0;res;")
                (comp-defgeneric-body1 priority (cdr x) methods env args)
                (format code2 "});~%")
@@ -999,9 +999,9 @@ defgeneric compile
                    (format code2 ";~%"))
                (comp-defgeneric-body1 priority (cdr x) methods env args)))) 
 
-    ;; for (call-next-method)
-    (defun comp-defgeneric-body2 (mode x args)
-        (cond ((null x) t)
+    ;; for (call-next-method) x is methods
+    (defun comp-defgeneric-body2 (mode x args n)
+        (cond ((= n 0) t)
               (t
                (let* ((varbody (get-method-body (car x)))
                       (varlis (alpha-conv-varlis (car varbody) args))
@@ -1012,25 +1012,23 @@ defgeneric compile
                        (comp-defgeneric-primary-cond varlis)
                        (comp-defgeneric-qualifier-cond varlis))
                    (format code2 ")~%{")
-                   (comp-defgeneric-body3 mode priority  body x (varlis-to-lambda-args varlis) args)
+                   (comp-defgeneric-body3 mode priority body x (varlis-to-lambda-args varlis) args)
                    (format code2 "}~%")
-                   ;;if (comp-defgeneric-body3) compiles (call-next-method), skip next method
-                   (if (and (not (= mode primary)) (= priority primary) (not (null (cdr x))))
-                       (comp-defgeneric-body2 mode (cdr (cdr x)) args)
-                       (comp-defgeneric-body2 mode (cdr x) args))))))
+                   (comp-defgeneric-body2 mode (cdr x) args (- n 1))))))
 
     ;; for (call-next-method)
     ;; mode has original next method priority.
     ;; priority has just before method priority
-    ;; if mode is not primary and priority is primary, require compiler (call-next-method)
+    ;; if mode is not primary and priority is primary, require compile (call-next-method)
     (defun comp-defgeneric-body3 (mode priority x methods env args)
         (cond ((null x) t)
               ((equal (car x) '(call-next-method))
-               ;(print mode) (print priority)
-               ;(if (not (null (cdr methods)))
-               ;    (print (get-method-body (car (cdr methods)))))
+               (if (and (not (= mode primary)) (= priority primary))
+                   (comp-defgeneric-body2 mode (cdr methods) args 1))
                (comp-defgeneric-body3 mode priority (cdr x) methods env args))
               ((equal (car x) '(if (next-method-p)(call-next-method)))
+               ;(if (and (not (= mode primary)) (= priority primary) (not (null (cdr methods))))
+               ;    (comp-defgeneric-body2 mode (cdr methods) args 1))
                (comp-defgeneric-body3 mode priority (cdr x) methods env args))
               (t
                (format code2 "res = ")

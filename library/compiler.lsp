@@ -56,30 +56,16 @@ double tarai(double x, double y, double z){
 
 (defgeneric XXX (arg))
 defgeneric compile
-    idea memo
     ILOS compile code.
     basic idea is follwoing
 
-    super_flag = 0;
     <<parameter>>
     if(Fadapt(...) && Fadapt(...) && ...) qualifier-method body compile code
-    if(!super_flag && (Fadapt(...) && Fadapt(...) && ...) ||
-       (super_flag && Fsame(...) && Fsame(...) && ...)) primariy-method compile code 
-
-
+    if(Feqclassp(...) && Feqclassp(...) && ...)) primariy-method compile code 
 
    <<body>>
-    P is primariy method
-    Q is qualifier method
-    super_flag is flag default is 0
-    =call measn it's method's body has (call-next-method)
+    (call-next-method)
 
-    e.g.
-    1.P1,P2,P3     each method has no return
-    1-1 P1,P2=call,P3  P2,{super=1,P3,super_flag=0,return}
-    2. Q1,Q2,Q3,P1,P2,P3,Q4,Q5,Q6 each has no return
-    2-1 Q1,Q2,Q3,P1=call,P2,P3,Q4,Q5,Q6  P1={super_flag=1,P2,P3,Q4,Q5,Q6,super_flag=0,return}
-    2-2  Q1,Q2=call,Q3,P1,P2,P3,Q4,Q5,Q6  Q2={super_flag=1,Q3,P1,P2,P3,Q4,Q5,Q6,super_flag=0,return} 
 
 
 |#
@@ -952,11 +938,15 @@ defgeneric compile
                (let* ((varbody (get-method-body (car x)))
                       (varlis (alpha-conv-varlis (car varbody) args))
                       (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
+                      (nextcall (has-call-next-method body))
                       (priority (get-method-priority (car x))) )
                    (format code2 "if(")
-                   (if (= priority primary)
-                       (comp-defgeneric-primary-cond varlis)
-                       (comp-defgeneric-qualifier-cond varlis))
+                   (cond ((= priority primary)
+                          (comp-defgeneric-primary-cond varlis))
+                         (nextcall
+                          (comp-defgeneric-primary-cond varlis))
+                         (t
+                          (comp-defgeneric-qualifier-cond varlis)))
                    (format code2 ")~%{")
                    (comp-defgeneric-body1 body x (varlis-to-lambda-args varlis) args)
                    (format code2 "}~%"))
@@ -970,7 +960,7 @@ defgeneric compile
                (setq rest-method (cdr methods))
                (comp-call-next-method (get-method-priority (car rest-method)) args)
                (comp-defgeneric-body1 (cdr x) methods env args)
-               (if (not (= (next-method-priority methods) primary))
+               (if (not (= (get-method-priority (car methods)) primary))
                    (format code2 "return(res);~%")))
               ;; (if (next-method-p)(call-next-method)))     
               ((equal (car x) '(if (next-method-p)(call-next-method)))
@@ -978,7 +968,7 @@ defgeneric compile
                    (progn (setq rest-method (cdr methods))
                           (comp-call-next-method (get-method-priority (car rest-method)) args)))
                (comp-defgeneric-body1 (cdr x) methods env args)
-               (if (not (= (next-method-priority methods) primary))
+               (if (not (= (get-method-priority (car methods)) primary))
                    (format code2 "return(res);~%")))   
               (t
                (format code2 "res = ")
@@ -1026,13 +1016,12 @@ defgeneric compile
                (comp-call-next-method1 (cdr body) env args)))) 
    
 
-    (defun next-method-priority (x)
-        (cond ((null x) nil)
-              ((null (cdr x)) nil)
-              (t (get-method-priority (car (cdr x))))))
-
-    (defun method-list (x)
-        (mapcar #'get-method-body x))  
+    (defun has-call-next-method (body)
+        (cond ((null body) nil)
+              ((equal body '(call-next-method)) t)
+              ((atom body) nil)
+              (t (or (has-call-next-method (car body))
+                     (has-call-next-method (cdr body))))))
     ;;------------------new---------------------------------------------               
 
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))

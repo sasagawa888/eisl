@@ -1505,8 +1505,7 @@ high_priority_p(int x, int y)
 	return (0);
     else if (GET_OPT(x) < GET_OPT(y))
 	return (1);
-    else if ((GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) ||
-             (chang_primary_property && GET_OPT(x) == PRIMARY && GET_OPT(y) == PRIMARY)) {	
+    else if (GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) {	
     /*
      case :after this is reverse
      case primary when compiling, compiler chenge order. use (change-priority-for-compiler t)

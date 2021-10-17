@@ -138,7 +138,6 @@ bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option
 bool            handling_resource_err = false;	// stop infinite recursion
 bool            looking_for_shebang = false;	// skip over #!
-bool		    chang_primary_property = false; // for compile generic-function 
 
 // switch
 int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC

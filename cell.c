@@ -1024,6 +1024,7 @@ initinst(int x, int initls)
 				// 
     // 
     // 
+    // 
     // ((initarg1 . accessor1)(initarg2 .
     // accesor2)...)
     inst_vars = GET_CDR(x);	// instance variable list. This is assoc
@@ -1420,13 +1421,13 @@ adaptp(int x, int y)
 int
 eqclassp(int x, int y)
 {
-   
+
     if (!CELLRANGE(x)) {
-        // when x is out of cell range, x is integer
-    if (cinteger == GET_AUX(y))
-        return (1);
-	else if (GET_OPT(y) == SYSTEM && subclassp(cinteger,GET_AUX(y)))	
-        // when built-in class, subclass is also eqclass. 
+	// when x is out of cell range, x is integer
+	if (cinteger == GET_AUX(y))
+	    return (1);
+	else if (GET_OPT(y) == SYSTEM && subclassp(cinteger, GET_AUX(y)))
+	    // when built-in class, subclass is also eqclass. 
 	    return (1);
 	else
 	    return (0);
@@ -1436,8 +1437,8 @@ eqclassp(int x, int y)
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
 	return (1);
-    else if (GET_OPT(y) == SYSTEM && subclassp(GET_AUX(x),GET_AUX(y)))
-    return (1);
+    else if (GET_OPT(y) == SYSTEM && subclassp(GET_AUX(x), GET_AUX(y)))
+	return (1);
     else
 	return (0);
 }

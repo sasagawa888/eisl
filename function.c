@@ -3284,6 +3284,7 @@ f_string_index(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// "" "")
 	return (makeint(0));
 
@@ -3950,6 +3951,7 @@ f_format_fresh_line(int arglist)
 	save = output_stream;
 	output_stream = arg1;
 	// output newline char if it cannot be determinned that the output 
+	// 
 	// 
 	// 
 	// 
@@ -4689,7 +4691,7 @@ f_initialize_object_star(int arglist)
     if (!listp(arg2))
 	error(NOT_LIST, "initialize-object*", arg2);
 
-    return(initinst(arg1, arg2));
+    return (initinst(arg1, arg2));
 }
 
 // controle
@@ -4900,9 +4902,9 @@ f_next_method_p(int arglist)
 	int             varlist;
 
 	varlist = car(GET_CAR(car(method)));
-	if (matchp(varlist, generic_vars)){
-        return (T);
-    }
+	if (matchp(varlist, generic_vars)) {
+	    return (T);
+	}
 	method = cdr(method);
     }
     return (NIL);
@@ -4920,37 +4922,45 @@ f_call_next_method(int arglist)
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "call-next-method", arglist);
     if (nullp(cdr(next_method)))
-	error(IMPROPER_ARGS, "call-next-method",GET_CAR(car(next_method)));
-    if (GET_OPT(car(next_method)) != AROUND && GET_OPT(car(next_method)) != PRIMARY){
-        error(IMPROPER_ARGS,"call-next-method",GET_CAR(car(next_method))) ;
+	error(IMPROPER_ARGS, "call-next-method",
+	      GET_CAR(car(next_method)));
+    if (GET_OPT(car(next_method)) != AROUND
+	&& GET_OPT(car(next_method)) != PRIMARY) {
+	error(IMPROPER_ARGS, "call-next-method",
+	      GET_CAR(car(next_method)));
     }
 
     res = NIL;
     varlist = NIL;
     next_method = cdr(next_method);
-    if (GET_OPT(car(next_method)) == PRIMARY){
-        varlist = genlamlis_to_lamlis(varlist);
-		body = cdr(GET_CAR(car(next_method)));
-		bindarg(varlist, generic_vars);
-		while (!nullp(body)) {
-		res = eval(car(body));
-		body = cdr(body);
+    if (GET_OPT(car(next_method)) == PRIMARY) {
+	varlist = genlamlis_to_lamlis(varlist);
+	body = cdr(GET_CAR(car(next_method)));
+	bindarg(varlist, generic_vars);
+	while (!nullp(body)) {
+	    res = eval(car(body));
+	    body = cdr(body);
+	}
+	unbind();
+	return (res);
+    } else {
+	while (!nullp(next_method)) {
+	    varlist = car(GET_CAR(car(next_method)));
+	    // match(x,y) if sameclass or subclass return 1 else 0;
+	    if (matchp(varlist, generic_vars)) {
+		if (GET_OPT(car(next_method)) == AROUND
+		    || GET_OPT(car(next_method)) == BEFORE
+		    || GET_OPT(car(next_method)) == AFTER) {
+		    qexist = 1;
 		}
-		unbind();
-        return(res);
-    }
-    else {
-    while (!nullp(next_method)) {
-		varlist = car(GET_CAR(car(next_method)));
-		//match(x,y) if sameclass or subclass return 1 else 0;
-		if (matchp(varlist, generic_vars)) {
-		    if (GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER){
-			qexist = 1;}
-			if (GET_OPT(car(next_method)) == PRIMARY){
-			pexist = 1;}
-			// if only qualifier or sameclass-primary, eval method;
-			if ((GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER) ||
-			    GET_OPT(car(next_method)) == PRIMARY) {
+		if (GET_OPT(car(next_method)) == PRIMARY) {
+		    pexist = 1;
+		}
+		// if only qualifier or sameclass-primary, eval method;
+		if ((GET_OPT(car(next_method)) == AROUND
+		     || GET_OPT(car(next_method)) == BEFORE
+		     || GET_OPT(car(next_method)) == AFTER)
+		    || GET_OPT(car(next_method)) == PRIMARY) {
 		    varlist = genlamlis_to_lamlis(varlist);
 		    body = cdr(GET_CAR(car(next_method)));
 		    bindarg(varlist, generic_vars);
@@ -4959,16 +4969,16 @@ f_call_next_method(int arglist)
 			body = cdr(body);
 		    }
 		    unbind();
-			}
 		}
-		next_method = cdr(next_method);
-		}
-	    if (pexist == 0 && qexist == 0)
-		error(NOT_EXIST_METHOD, "call-next-method", generic_vars);
+	    }
+	    next_method = cdr(next_method);
+	}
+	if (pexist == 0 && qexist == 0)
+	    error(NOT_EXIST_METHOD, "call-next-method", generic_vars);
 
-	    return (res);
+	return (res);
     }
-    return(NIL);
+    return (NIL);
 }
 
 

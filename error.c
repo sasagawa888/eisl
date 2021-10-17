@@ -467,10 +467,11 @@ error(int errnum, const char *fun, int arg)
 		  makesym(fun1));
 	signal_condition(makeinstance(cclass_error, initargs), NIL);
 	break;
-	case ILLEGAL_CLASS:
+    case ILLEGAL_CLASS:
 	initargs =
 	    list6(makesym("format-string"),
-		  makestr("Next method allows only primary and :around method at "),
+		  makestr
+		  ("Next method allows only primary and :around method at "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
 	signal_condition(makeinstance(cclass_error, initargs), NIL);

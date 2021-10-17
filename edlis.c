@@ -1012,6 +1012,7 @@ display_line(int line)
 	    // 
 	    // 
 	    // 
+	    // 
 	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);

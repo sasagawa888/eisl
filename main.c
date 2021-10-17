@@ -1572,8 +1572,8 @@ DEF_GETTER(char, TR, trace, NIL)
                     res,
                     i,
                     n,
-					pexist,
-					qexist,
+                    pexist,
+                    qexist,
                     trace;
     REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR
 	     || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO
@@ -1680,28 +1680,33 @@ DEF_GETTER(char, TR, trace, NIL)
 	    next_method = GET_CDR(func);
 	    while (!nullp(next_method)) {
 		varlist = car(GET_CAR(car(next_method)));
-		//match(x,y) if sameclass or subclass return 1 else 0;
+		// match(x,y) if sameclass or subclass return 1 else 0;
 		if (matchp(varlist, args)) {
-			// if only qualifier or sameclass-primary, eval method;
-			if ((GET_OPT(car(next_method)) == AROUND || GET_OPT(car(next_method)) == BEFORE || GET_OPT(car(next_method)) == AFTER) ||
-			    (GET_OPT(car(next_method)) == PRIMARY && sameclassp(varlist, args) && pexist == 0)) {
-			
-			if (GET_OPT(car(next_method)) == PRIMARY){
-			pexist = 1;}
-			else{
-			qexist = 1;}
-		    varlist = genlamlis_to_lamlis(varlist);
-		    body = cdr(GET_CAR(car(next_method)));
-		    bindarg(varlist, args);
-		    while (!nullp(body)) {
-			res = eval(car(body));
-			body = cdr(body);
-		    }
-		    unbind();
+		    // if only qualifier or sameclass-primary, eval
+		    // method;
+		    if ((GET_OPT(car(next_method)) == AROUND
+			 || GET_OPT(car(next_method)) == BEFORE
+			 || GET_OPT(car(next_method)) == AFTER)
+			|| (GET_OPT(car(next_method)) == PRIMARY
+			    && sameclassp(varlist, args) && pexist == 0)) {
+
+			if (GET_OPT(car(next_method)) == PRIMARY) {
+			    pexist = 1;
+			} else {
+			    qexist = 1;
 			}
+			varlist = genlamlis_to_lamlis(varlist);
+			body = cdr(GET_CAR(car(next_method)));
+			bindarg(varlist, args);
+			while (!nullp(body)) {
+			    res = eval(car(body));
+			    body = cdr(body);
+			}
+			unbind();
+		    }
 		}
 		next_method = cdr(next_method);
-		}
+	    }
 	    if (pexist == 0 && qexist == 0)
 		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
 
@@ -1811,8 +1816,9 @@ sameclassp(int varlist, int arglist)
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
 	// class
 	return (sameclassp(cdr(varlist), cdr(arglist)));
-	// when built-in class, subclass is also eqclass.
-	else if (GET_OPT(cadar(varlist)) == SYSTEM && subclassp(GET_AUX(car(arglist)),GET_AUX(cadar(varlist))))
+    // when built-in class, subclass is also eqclass.
+    else if (GET_OPT(cadar(varlist)) == SYSTEM
+	     && subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))
 	return (sameclassp(cdr(varlist), cdr(arglist)));
     else
 	return (0);

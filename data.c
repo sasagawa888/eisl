@@ -1505,11 +1505,11 @@ high_priority_p(int x, int y)
 	return (0);
     else if (GET_OPT(x) < GET_OPT(y))
 	return (1);
-    else if (GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) {	
-    /*
-     case :after this is reverse
-     case primary when compiling, compiler chenge order. use (change-priority-for-compiler t)
-    */
+    else if (GET_OPT(x) == AFTER && GET_OPT(y) == AFTER) {
+	/*
+	 * case :after this is reverse case primary when compiling,
+	 * compiler chenge order. use (change-priority-for-compiler t) 
+	 */
 	args1 = car(GET_CAR(x));	// lambda-list 
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {

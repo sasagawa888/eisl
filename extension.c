@@ -120,10 +120,10 @@ DEF_PREDICATE(METHOD, METHOD)
     if (!(IS_METHOD(arg1)))
 	error(ILLEGAL_ARGS, "get-method-priority", arg1);
 
-    return (makeint(GET_OPT(arg1)+1));
+    return (makeint(GET_OPT(arg1) + 1));
     /*
-    * 11=:around  12=:befor 13=:primary 14=:arter
-    */
+     * 11=:around  12=:befor 13=:primary 14=:arter
+     */
 }
 
 
@@ -147,7 +147,7 @@ f_get_method(int arglist)
     arg1 = car(arglist);
     if (!genericp(arg1))
 	error(ILLEGAL_ARGS, "get-method", arg1);
-    
+
     return (GET_CDR(GET_CAR(arg1)));
 }
 
@@ -726,8 +726,11 @@ f_getenv(int arglist)
 }
 
 
-int f_sameclass_for_compiler(int arglist){
-    int arg1,arg2;
+int
+f_sameclass_for_compiler(int arglist)
+{
+    int             arg1,
+                    arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -736,5 +739,5 @@ int f_sameclass_for_compiler(int arglist){
 	error(WRONG_ARGS, "sameclass-for-compiler", arglist);
     }
 
-    return(sameclassp(arg1,arg2));
+    return (sameclassp(arg1, arg2));
 }

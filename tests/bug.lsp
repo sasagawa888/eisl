@@ -47,7 +47,7 @@
 	    (add-call-tree 'before-c1))
    (:method :after ((x c11))
 	    (add-call-tree 'after-c1)))
-#|
+		#|
    ;; c22
    (:method ((x c22))
 	    (add-call-tree 'primary-c2-begin)
@@ -77,7 +77,7 @@
    (:method :after ((x c33))
 	    (add-call-tree 'after-c3))
    )
-|#
+   |#
 ;;
  (defun foo-30 (x)
    (setq *call-tree* nil)
@@ -109,7 +109,6 @@
 	      around-c1-end) 
  equal)
 |#
-
 
 ;;; 比較関数
 (defgeneric compare (x y))

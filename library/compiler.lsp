@@ -61,11 +61,15 @@ defgeneric compile
 
     <<parameter>>
     if(Fadapt(...) && Fadapt(...) && ...) qualifier-method body compile code
-    if(Feqclassp(...) && Feqclassp(...) && ...)) primariy-method compile code 
+    if(Feqclassp(...) && Feqclassp(...) && ...)) primariy-method compile code or qualifier-method that has (call-next-method)
 
    <<body>>
-    (call-next-method)
-
+    if compiler (call-next-method) 
+    1. next-method is primary-method, generate one next method.
+    2. next-method is qualifier-method, generate all next methods. 
+       in this case if(...) is Fadapt(...) for super class   
+    
+    compiler changes priority of primary-method temporarly. because for special call-next-method case.
 
 
 |#
@@ -239,6 +243,7 @@ defgeneric compile
                (fname (filename x))
                (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
            (ignore-toplevel-check t)
+           (change-priority-for-compiler t)
            (format (standard-output) "initialize~%")
            (initialize fname ".c")
            (format (standard-output) "pass1~%")
@@ -246,6 +251,7 @@ defgeneric compile
            (format (standard-output) "pass2~%")
            (pass2 x)
            (ignore-toplevel-check nil)
+           (change-priority-for-compiler nil)
            (format (standard-output) "finalize~%")
            (finalize fname ".c")
            (format (standard-output) "invoke CC~%")
@@ -263,7 +269,8 @@ defgeneric compile
           (compile-file1* x)
           (if instream
               (close instream))
-          (ignore-toplevel-check nil)))
+          (ignore-toplevel-check nil)
+          (change-priority-for-compiler nil)))
         t)
     
     (defun compile-file1* (x)

@@ -42,6 +42,7 @@ initexsubr(void)
     defsubr("MODULESUBST", f_modulesubst);
     defsubr("LINE-ARGUMENT", f_line_argument);
     defsubr("GETENV", f_getenv);
+    defsubr("CHANGE-PRIORITY-FOR-COMPILER", f_change_priority_for_compiler);
 
 #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -722,4 +723,21 @@ f_getenv(int arglist)
     } else {
 	return makestr(val);
     }
+}
+
+
+int f_change_priority_for_compiler(int arglist){
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1) {
+	error(WRONG_ARGS, "getenv", arglist);
+    }
+
+    if(arg1 == T)
+        chang_primary_property = true;
+    else if(arg1 == NIL)
+        chang_primary_property = false;
+    
+    return(arg1);
 }

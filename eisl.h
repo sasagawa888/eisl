@@ -502,6 +502,7 @@ extern bool     greeting_flag;
 extern bool     script_flag;
 extern bool     handling_resource_err;
 extern bool     looking_for_shebang;
+extern bool		chang_primary_property;
 
 // switch
 extern int      gc_sw;
@@ -749,6 +750,7 @@ int             f_catch(int x);
 int             f_cdr(int addr);
 int             f_ceiling(int x);
 int             f_cerror(int x);
+int             f_change_priority_for_compiler(int arglist);
 int             f_char_eqgreaterp(int x);
 int             f_char_eqp(int x);
 int             f_char_eqsmallerp(int x);

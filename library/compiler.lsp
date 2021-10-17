@@ -974,7 +974,7 @@ defgeneric compile
                    (format code2 "return(res);~%")))
               ;; (if (next-method-p)(call-next-method)))     
               ((equal (car x) '(if (next-method-p)(call-next-method)))
-               (if (not (null rest-method))
+               (if (not (null methods))
                    (progn (setq rest-method (cdr methods))
                           (comp-call-next-method (get-method-priority (car rest-method)) args)))
                (comp-defgeneric-body1 (cdr x) methods env args)
@@ -989,22 +989,24 @@ defgeneric compile
 
     (defglobal rest-method nil)
     (defun comp-call-next-method (priority args)
-        (let* ((varbody (get-method-body (car rest-method)))
-               (varlis (alpha-conv-varlis (car varbody) args))
-               (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args))))
-            (format code2 "if(")
-            (comp-defgeneric-qualifier-cond varlis)
-            (format code2 ")~%{")
-            (comp-call-next-method1 priority body (varlis-to-lambda-args varlis) args)
-            (format code2 "}~%")
-            ;; if next-method is primary then end, else generate rest-methods
-            (if (not (= priority primary))
-                (progn (setq rest-method (cdr rest-method))
-                       (comp-call-next-method priority args)))))
+      (cond ((null rest-method) t)
+            ((= (get-method-priority (car rest-method)) after) t)
+            (t
+              (let* ((varbody (get-method-body (car rest-method)))
+                     (varlis (alpha-conv-varlis (car varbody) args))
+                     (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args))))
+                 (format code2 "if(")
+                 (comp-defgeneric-qualifier-cond varlis)
+                 (format code2 ")~%{")
+                 (comp-call-next-method1 priority body (varlis-to-lambda-args varlis) args)
+                 (format code2 "}~%")
+                 ;; if next-method is primary then end, else generate rest-methods
+                 (if (and (not (= priority primary)) (not (null rest-method)))
+                     (progn (setq rest-method (cdr rest-method))
+                            (comp-call-next-method priority args)))))))
 
     (defun comp-call-next-method1 (priority body env args)
-        (cond ((null rest-method) t)
-              ((null body) t)
+        (cond ((null body) t)
               ;; (call-next-method)
               ((equal (car body) '(call-next-method))
                ;; if next-method is primary, ignore
@@ -1030,7 +1032,10 @@ defgeneric compile
     (defun next-method-priority (x)
         (cond ((null x) nil)
               ((null (cdr x)) nil)
-              (t (get-method-priority (car (cdr x))))))  
+              (t (get-method-priority (car (cdr x))))))
+
+    (defun method-list (x)
+        (mapcar #'get-method-body x))  
     ;;------------------new---------------------------------------------               
 
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))

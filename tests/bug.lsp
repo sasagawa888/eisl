@@ -32,6 +32,7 @@
 	    (add-call-tree 'before-<standard-object>))
    (:method :after ((x <standard-object>))
 	    (add-call-tree 'after-<standard-object>))
+
    ;; c11
    (:method ((x c11))
 	    (add-call-tree 'primary-c1-begin)
@@ -45,7 +46,8 @@
    (:method :before ((x c11))
 	    (add-call-tree 'before-c1))
    (:method :after ((x c11))
-	    (add-call-tree 'after-c1))
+	    (add-call-tree 'after-c1)))
+#|
    ;; c22
    (:method ((x c22))
 	    (add-call-tree 'primary-c2-begin)
@@ -75,7 +77,7 @@
    (:method :after ((x c33))
 	    (add-call-tree 'after-c3))
    )
-
+|#
 ;;
  (defun foo-30 (x)
    (setq *call-tree* nil)

@@ -70,7 +70,7 @@ defgeneric compile
        in this case if(...) is Fadapt(...) for super class   
     
     compiler changes priority of primary-method temporarly. because for special call-next-method case.
-
+    but, this trick causes imcorrect in normal code. deleted and I will retry.
 
 |#
 (defmodule compiler
@@ -243,7 +243,6 @@ defgeneric compile
                (fname (filename x))
                (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
            (ignore-toplevel-check t)
-           (change-priority-for-compiler t)
            (format (standard-output) "initialize~%")
            (initialize fname ".c")
            (format (standard-output) "pass1~%")
@@ -251,7 +250,6 @@ defgeneric compile
            (format (standard-output) "pass2~%")
            (pass2 x)
            (ignore-toplevel-check nil)
-           (change-priority-for-compiler nil)
            (format (standard-output) "finalize~%")
            (finalize fname ".c")
            (format (standard-output) "invoke CC~%")
@@ -269,8 +267,7 @@ defgeneric compile
           (compile-file1* x)
           (if instream
               (close instream))
-          (ignore-toplevel-check nil)
-          (change-priority-for-compiler nil)))
+          (ignore-toplevel-check nil)))
         t)
     
     (defun compile-file1* (x)
@@ -938,7 +935,7 @@ defgeneric compile
               (t (error* "defgeneric" x))))
     
     
-    ;;--------------new----------------
+    
     (defun comp-defgeneric-body (x args)
         (cond ((null x) t)
               (t
@@ -1029,7 +1026,7 @@ defgeneric compile
               ((atom body) nil)
               (t (or (has-call-next-method (car body))
                      (has-call-next-method (cdr body))))))
-    ;;------------------new---------------------------------------------               
+                  
 
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))
     ;; ((x <integer>) y) (a b) -> ((a <integer>) b)

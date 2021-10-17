@@ -1,4 +1,4 @@
-# List and cxr
+# Complex
 
 The list library and complex-number library was written by M. Hiroi.
 

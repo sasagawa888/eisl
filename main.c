@@ -1680,15 +1680,15 @@ DEF_GETTER(char, TR, trace, NIL)
 	    next_method = GET_CDR(func);
 	    while (!nullp(next_method)) {
 		varlist = car(GET_CAR(car(next_method)));
-		// match(x,y) if sameclass or subclass return 1 else 0;
-		if (matchp(varlist, args)) {
+		// adaptp(x,y) if sameclass or y is super-classs return 1 else 0;
+		if (adaptp(varlist, args)) {
 		    // if only qualifier or sameclass-primary, eval
 		    // method;
 		    if ((GET_OPT(car(next_method)) == AROUND
 			 || GET_OPT(car(next_method)) == BEFORE
 			 || GET_OPT(car(next_method)) == AFTER)
 			|| (GET_OPT(car(next_method)) == PRIMARY
-			    && sameclassp(varlist, args) && pexist == 0)) {
+			    && matchp(varlist, args) && pexist == 0)) {
 
 			if (GET_OPT(car(next_method)) == PRIMARY) {
 			    pexist = 1;
@@ -1774,6 +1774,34 @@ evlis(int addr)
 
 /*
  * check class matching of argument of lambda and received argument. 
+ * if sameclass or varlist is super-class of arglist return 1, else return 0. 
+ */
+int
+adaptp(int varlist, int arglist)
+{
+
+    if (nullp(varlist) && nullp(arglist))
+	return (1);
+    else if (symbolp(car(varlist)))
+	return (adaptp(cdr(varlist), cdr(arglist)));
+    else if (eqp(makesym(":rest"), car(varlist)))
+	return (1);
+    else if (eqp(makesym("&rest"), car(varlist)))
+	return (1);
+    else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// equal
+	// class
+	return (adaptp(cdr(varlist), cdr(arglist)));
+    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
+	return (adaptp(cdr(varlist), cdr(arglist)));
+    else
+	return (0);
+}
+
+
+/*
+ * check class matching of argument of lambda and received argument. 
+ * only if same class return 1 else return 0.
+ * built-in class, if varlist is subclass of arglist return 1. 
  */
 int
 matchp(int varlist, int arglist)
@@ -1790,36 +1818,10 @@ matchp(int varlist, int arglist)
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
 	// class
 	return (matchp(cdr(varlist), cdr(arglist)));
-    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
-	return (matchp(cdr(varlist), cdr(arglist)));
-    else
-	return (0);
-}
-
-
-/*
- * check class matching of argument of lambda and received argument. 
- * only if same class return 1 else return 0
- */
-int
-sameclassp(int varlist, int arglist)
-{
-
-    if (nullp(varlist) && nullp(arglist))
-	return (1);
-    else if (symbolp(car(varlist)))
-	return (sameclassp(cdr(varlist), cdr(arglist)));
-    else if (eqp(makesym(":rest"), car(varlist)))
-	return (1);
-    else if (eqp(makesym("&rest"), car(varlist)))
-	return (1);
-    else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// match
-	// class
-	return (sameclassp(cdr(varlist), cdr(arglist)));
     // when built-in class, subclass is also eqclass.
     else if (GET_OPT(cadar(varlist)) == SYSTEM
 	     && subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))
-	return (sameclassp(cdr(varlist), cdr(arglist)));
+	return (matchp(cdr(varlist), cdr(arglist)));
     else
 	return (0);
 }

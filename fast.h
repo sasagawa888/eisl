@@ -512,9 +512,9 @@ Fadaptp(int x, int y)
 }
 
 static inline int
-Feqclassp(int x, int y)
+Fmatchp(int x, int y)
 {
-    return f2[EQCLASSP_IDX] (x, y);
+    return f2[MATCHP_IDX] (x, y);
 }
 
 

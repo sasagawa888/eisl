@@ -1395,7 +1395,7 @@ convert(int arg1, int arg2)
 }
 
 int
-adaptp(int x, int y)
+a_adaptp(int x, int y)
 {
 
     if (!CELLRANGE(x)) {
@@ -1407,7 +1407,7 @@ adaptp(int x, int y)
 	    return (0);
     }
     if (x >= CELLSIZE) {
-	error(ILLEGAL_ARGS, "adaptp", x);
+	error(ILLEGAL_ARGS, "a_adaptp", x);
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
 	return (1);
@@ -1419,7 +1419,7 @@ adaptp(int x, int y)
 
 
 int
-eqclassp(int x, int y)
+a_matchp(int x, int y)
 {
 
     if (!CELLRANGE(x)) {
@@ -1433,7 +1433,7 @@ eqclassp(int x, int y)
 	    return (0);
     }
     if (x >= CELLSIZE) {
-	error(ILLEGAL_ARGS, "eqclassp", x);
+	error(ILLEGAL_ARGS, "a-matchp", x);
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
 	return (1);

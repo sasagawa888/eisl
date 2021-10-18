@@ -350,8 +350,8 @@ dynamic_link(int x)
     init_f2(ADDDYNENV_IDX, adddynenv);
     init_f2(SETDYNAMIC_IDX, set_dynamic);
     init_f2(SETPROP_IDX, set_prop);
-    init_f2(ADAPTP_IDX, adaptp);
-    init_f2(EQCLASSP_IDX, eqclassp);
+    init_f2(ADAPTP_IDX, a_adaptp);
+    init_f2(MATCHP_IDX, a_matchp);
     init_f2(ILOSERR_IDX, ILOSerror);
 
 

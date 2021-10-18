@@ -61,7 +61,7 @@ defgeneric compile
 
     <<parameter>>
     if(Fadapt(...) && Fadapt(...) && ...) qualifier-method body compile code
-    if(Feqclassp(...) && Feqclassp(...) && ...)) primariy-method compile code or qualifier-method that has (call-next-method)
+    if(Fmatchp(...) && Fmatchp(...) && ...)) primariy-method compile code or qualifier-method that has (call-next-method)
 
    <<body>>
     if compiler (call-next-method) 
@@ -1103,7 +1103,7 @@ defgeneric compile
               (t (error* "defgeneric" x))))
 
     
-    ;;generate Feqlassp(P1) && Feqclassp(P2) ... && Feqclassp(Pn)
+    ;;generate Feqlassp(P1) && Fmatchp(P2) ... && Fmatchp(Pn)
     ;; Feqlassp check has equal same class.
     (defun comp-defgeneric-primary-cond (x)
         (cond ((null x) t)
@@ -1114,7 +1114,7 @@ defgeneric compile
                (format code2 "1") 
                (comp-defgeneric-primary-cond (cdr x)))
               ((consp (car x))
-               (format code2 "Feqclassp(")
+               (format code2 "Fmatchp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
                (format code2 ",Fmakesym(\"")
                (format-object code2 (elt (car x) 1) nil)
@@ -1128,7 +1128,7 @@ defgeneric compile
               ((eq (car x) '%rest) t)
               ((symbolp (car x)) (comp-defgeneric-primary-cond1 (cdr x)))
               ((consp (car x))
-               (format code2 " && Feqclassp(")
+               (format code2 " && Fmatchp(")
                (format-object code2 (conv-name (elt (car x) 0)) nil)
                (format code2 ",Fmakesym(\"")
                (format-object code2 (elt (car x) 1) nil)

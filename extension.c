@@ -42,7 +42,7 @@ initexsubr(void)
     defsubr("MODULESUBST", f_modulesubst);
     defsubr("LINE-ARGUMENT", f_line_argument);
     defsubr("GETENV", f_getenv);
-    defsubr("SAMECLASS-FOR-COMPILER", f_sameclass_for_compiler);
+    defsubr("SUPERP-FOR-COMPILER", f_superp_for_compiler);
 
 #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -725,9 +725,16 @@ f_getenv(int arglist)
     }
 }
 
+/*
+* f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 
+* for generate (call-next-method) 
+* compare entry-parameter and next-method-parameter.
+* when entry-parameter is super-call than next-method-patarmeter, compiler must not generate next-method
+* see verify/object.lsp test-case foo-30
+*/
 
 int
-f_sameclass_for_compiler(int arglist)
+f_superp_for_compiler(int arglist)
 {
     int             arg1,
                     arg2;
@@ -736,8 +743,26 @@ f_sameclass_for_compiler(int arglist)
     arg2 = cadr(arglist);
 
     if (length(arglist) != 2) {
-	error(WRONG_ARGS, "sameclass-for-compiler", arglist);
+	error(WRONG_ARGS, "adaptp-for-compiler", arglist);
     }
 
-    return (sameclassp(arg1, arg2));
+    if (superp(arg1,arg2))
+        return (T);
+    else 
+        return (NIL);
 }
+
+int
+superp(int entry, int next)
+{
+
+    if (nullp(entry) && nullp(next))
+	return (1);
+    else if (symbolp(car(entry)))
+	return (superp(cdr(entry), cdr(next)));
+    else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// subclass
+	return (superp(cdr(entry), cdr(next)));
+    else
+	return (0);
+}
+

@@ -944,6 +944,7 @@ defgeneric compile
                       (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
                       (nextcall (has-call-next-method body))
                       (priority (get-method-priority (car x))) )
+                   (setq entry-parameter varlis)
                    (format code2 "if(")
                    (cond ((= priority primary)
                           (comp-defgeneric-primary-cond varlis))
@@ -982,12 +983,18 @@ defgeneric compile
                (comp-defgeneric-body1 (cdr x) methods env args)))) 
 
     (defglobal rest-method nil)
+    (defglobal entry-parameter nil)
     (defun comp-call-next-method (next-priority args)
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (get-method-body (car rest-method)))
                      (varlis (alpha-conv-varlis (car varbody) args))
                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args))))
+                 ;; if parameter of next-method is subclass of entry-parameter, ignore this next-method 
+                 (if (superp-for-compiler entry-parameter varlis)
+                     (progn (if (not (null rest-method))
+                                (setq rest-method (cdr rest-method)))
+                            (comp-call-next-method next-priority args)))
                  (format code2 "if(")
                  (comp-defgeneric-qualifier-cond varlis)
                  (format code2 ")~%{")
@@ -1000,6 +1007,7 @@ defgeneric compile
 
     (defun comp-call-next-method1 (body env args)
         (cond ((null body) t)
+              ((and (equal (car body) '(call-next-method)) (null rest-method)) t)
               ;; (call-next-method)
               ((equal (car body) '(call-next-method))
                (setq rest-method (cdr rest-method))

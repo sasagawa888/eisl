@@ -1402,7 +1402,7 @@ a_adaptp(int x, int y)
     // fixnum is immediate. so fixnum data is out of cellrange
 	if (cfixnum == GET_AUX(y))	// cfixnum is <class fixnum>
 	    return (1);
-	else if (subclassp(32, GET_AUX(y)))
+	else if (subclassp(cfixnum, GET_AUX(y)))
 	    return (1);
 	else
 	    return (0);
@@ -1427,7 +1427,7 @@ a_matchp(int x, int y)
 	// when x is out of cell range, x is fixnum
 	if (cfixnum == GET_AUX(y))
 	    return (1);
-	else if (GET_OPT(y) == SYSTEM && subclassp(cinteger, GET_AUX(y)))
+	else if (GET_OPT(y) == SYSTEM && subclassp(cfixnum, GET_AUX(y)))
 	    // when built-in class, subclass is also eqclass. 
 	    return (1);
 	else

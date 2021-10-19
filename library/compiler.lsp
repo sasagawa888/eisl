@@ -68,9 +68,9 @@ defgeneric compile
     1. next-method is primary-method, generate one next method.
     2. next-method is qualifier-method, generate all next methods. 
        in this case if(...) is Fadapt(...) for super class   
+    3. when (call-next-method) after that, compiler compaire entry-parameter and next-method-parameter.
+       if entry-parameter is superclass than next-method-parameter, compiler ignore next-method. 
     
-    compiler changes priority of primary-method temporarly. because for special call-next-method case.
-    but, this trick causes imcorrect in normal code. deleted and I will retry.
 
 |#
 (defmodule compiler

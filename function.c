@@ -4947,7 +4947,7 @@ f_call_next_method(int arglist)
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
 	    // match(x,y) if sameclass or subclass return 1 else 0;
-	    if (matchp(varlist, generic_vars)) {
+	    if (adaptp(varlist, generic_vars)) {
 		if (GET_OPT(car(next_method)) == AROUND
 		    || GET_OPT(car(next_method)) == BEFORE
 		    || GET_OPT(car(next_method)) == AFTER) {

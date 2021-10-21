@@ -4997,7 +4997,7 @@ f_error(int arglist)
 	error(NOT_STR, "error", arg1);
 
     return (signal_condition
-	    (makeusercond(csimple_error, arg1, arg2), NIL));
+	    (makeusercond(cerror, arg1, arg2), NIL));
 }
 
 int
@@ -5016,7 +5016,7 @@ f_cerror(int arglist)
 	error(NOT_STR, "error", arg2);
 
     return (signal_condition
-	    (makeusercond(csimple_error, arg2, arg3), arg1));
+	    (makeusercond(cerror, arg2, arg3), arg1));
 }
 
 int

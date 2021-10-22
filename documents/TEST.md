@@ -10,7 +10,7 @@ Simple macro for unit testing.
 # Specification
 
 ```lisp
-(test test-S-expression result-S-Expression)
+($test test-S-expression result-S-Expression)
 ```
 
 If eval of test-S-expression is same as result-S-expression, print nothing.
@@ -18,7 +18,7 @@ If eval of test-S-expression is not same as result-S-expression, print a message
 The `equal` function is used for comparison.
 
 ```lisp
-(test test-S-expression result-S-Expression pred-function)
+($test test-S-expression result-S-Expression pred-function)
 ```
 
 `pred-function` is used for comparison, e.g. eq, =, eql, ...
@@ -44,7 +44,7 @@ Error check. Error class of form is error-class? Not ignore top-level check.
 See following macro code
 
 ```lisp
-(defmacro test (form1 form2 :rest pred)
+(defmacro $test (form1 form2 :rest pred)
   (if (null pred)
       `(progn
           (ignore-toplevel-check t)

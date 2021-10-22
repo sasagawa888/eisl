@@ -1,6 +1,6 @@
 ;; macro for test
 
-(defmacro test (form1 form2 :rest pred)
+(defmacro $test (form1 form2 :rest pred)
   (if (null pred)
       `(progn
           (ignore-toplevel-check t)

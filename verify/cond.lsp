@@ -21,12 +21,12 @@
 		 (simple-error-format-arguments condition)))
      (throw 'c data))))
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler #'simple-error-handler
 		 (error "foo")))
  ("foo") equal)
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler #'simple-error-handler
 		 (error "~A" 123)))
  ("~A" 123) equal)
@@ -58,7 +58,7 @@
  (defun condition-continuable-handler (condition)
    (throw 'c (condition-continuable condition))))
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler #'condition-continuable-handler
 		 (signal-condition 
 		  (catch 'cc (with-handler
@@ -82,16 +82,16 @@
 ;;;------------------------------------------------------------
 ($ap 2 "ignore-errors" P.115)
 ;;;
-(test (ignore-errors) nil)
-(test (ignore-errors 1) 1 eql)
-(test (ignore-errors 1 2) 2 eql)
+($test (ignore-errors) nil)
+($test (ignore-errors 1) 1 eql)
+($test (ignore-errors 1 2) 2 eql)
 ($eval (defglobal x ()))
-(test (ignore-errors
+($test (ignore-errors
   (setq x (cons 1 x))
   (undef-func)
   (setq x (cons 2 x))
   99) nil equal)
-(test x (1) equal)
+($test x (1) equal)
 ;;;
 ($argc ignore-errors 0 0 1)
 
@@ -102,12 +102,12 @@
 ;;;------------------------------------------------------------
 ($ap 2 "condition-continuable" P.116)
 ;;; continuable
-(test (catch 'c
+($test (catch 'c
    (with-handler #'condition-continuable-handler
 		 (cerror "cont" "err")))
  "cont" equal)
 ;;; not continuable
-(test (catch 'c
+($test (catch 'c
    (with-handler #'condition-continuable-handler
 		 (error "err")))
  nil)
@@ -133,7 +133,7 @@
  (defun continue-condition-handler (condition)
    (continue-condition condition)))
 ;;;
-(test (with-handler #'continue-condition-handler
+($test (with-handler #'continue-condition-handler
 	       (cerror "cont" "err")) nil)
 ($error (with-handler #'continue-condition-handler
 		      (error "err")) <error>)		  
@@ -142,7 +142,7 @@
  (defun continue-condition-handler-2 (condition)
    (continue-condition condition 999)))
 ;;;
-(test (with-handler #'continue-condition-handler-2
+($test (with-handler #'continue-condition-handler-2
 	       (cerror "cont" "err")) 999 equal)
 ($error (with-handler #'continue-condition-handler-2
 		      (error "err")) <error>)
@@ -166,29 +166,29 @@
  (defun handler-99 (condition)
    (throw 'c 99)))
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler #'handler-99
 		 (car 3)))
  99 eql)
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler #'handler-99
 		 (error "intentional error")))
  99 eql)
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler #'handler-99
 		 (cerror "continuable" "intentional error")))
  99 eql)
 ;;; lambda-function
-(test (catch 'c
+($test (catch 'c
    (with-handler 
     (lambda (condition)
       (throw 'c 999))
     (car 3)))
  999 eql)
 ;;;
-(test (catch 'c
+($test (catch 'c
    (with-handler 
     (lambda (condition)
       (throw 'c 999))
@@ -217,43 +217,43 @@
      (throw 'c-arithmetic-error data))))
 
 ;;; division-by-zero
-(test (functionp (car 
+($test (functionp (car 
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0))))) t)
 
-(test (equal (function div) (car 
+($test (equal (function div) (car 
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0))))) t)
 
-(test (cdr
+($test (cdr
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(div 3 0)))) (3 0) equal)
 ;;; floating-point-overflow
-(test (functionp (car
+($test (functionp (car
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(* 1e308 1e1))))) t)
-(test (equal (function *) (car
+($test (equal (function *) (car
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(* 1e308 1e1))))) t)
-(test (cdr
+($test (cdr
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(* 1e308 1e1)))) (1e308 1e1) equal)
 ;;; floating-point-underflow
-(test (functionp (car
+($test (functionp (car
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(* 1e-307 1e-10))))) t)
-(test (equal (function *) (car
+($test (equal (function *) (car
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(* 1e-307 1e-10))))) t)
-(test (cdr
+($test (cdr
  (catch 'c-arithmetic-error
   (with-handler #'arithmetic-error-handler
 		(* 1e-307 1e-10)))) (1e-307 1e-10) equal)
@@ -284,16 +284,16 @@
 	     (catch 'c-domain-error
 	       (with-handler #'domain-error-handler
 			     (aref 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <basic-array>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <basic-array>)) t)
 
 ;;; <general-array*>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (garef 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <general-array*>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <general-array*>)) t)
 ;;; <basic-vector>
 ;;; <vector>
 ;;; <string>
@@ -301,72 +301,72 @@
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (string-append 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <string>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <string>)) t)
 ;;; <character>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (char= 1 2)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <character>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <character>)) t)
 ;;; <function>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (apply "123" 1 2 3 '(4 5))))))
-(test (car data) "123" equal)
-(test (eq (cdr data) (class <function>)) t)
+($test (car data) "123" equal)
+($test (eq (cdr data) (class <function>)) t)
 ;;; <list>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (reverse 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data)  (class <list>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data)  (class <list>)) t)
 ;;; <cons>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (car 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <cons>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <cons>)) t)
 ;;; <number>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (max "a")))))
-(test (car data) "a" equal)
-(test (eq (cdr data) (class <number>)) t)
+($test (car data) "a" equal)
+($test (eq (cdr data) (class <number>)) t)
 ;;; <float>
 ;;; <integer>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (div "a" "b")))))
-(test (car data) "a" equal)
-(test (eq (cdr data) (class <integer>)) t)
+($test (car data) "a" equal)
+($test (eq (cdr data) (class <integer>)) t)
 ;;; <stream>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (read 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <stream>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <stream>)) t)
 ;;; <symbol>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (property 1 2)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <symbol>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <symbol>)) t)
 ;;; <serious-condition>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (condition-continuable 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <serious-condition>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <serious-condition>)) t)
 
 ;;; <arithmetic-error>
 ($eval (defglobal data nil))
@@ -374,44 +374,44 @@
 		    (with-handler #'domain-error-handler
 				  (arithmetic-error-operation 1)))))
 				  
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <arithmetic-error>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <arithmetic-error>)) t)
 
 ;;; <domain-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (domain-error-object 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <domain-error>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <domain-error>)) t)
 ;;; <parse-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (parse-error-string 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <parse-error>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <parse-error>)) t)
 ;;; <simple-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (simple-error-format-string 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <simple-error>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <simple-error>)) t)
 ;;; <stream-error>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (stream-error-stream 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <stream-error>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <stream-error>)) t)
 ;;; <undefined-entity>
 ($eval (defglobal data nil))
 ($eval (setq data (catch 'c-domain-error
 		    (with-handler #'domain-error-handler
 				  (undefined-entity-name 1)))))
-(test (car data) 1 eql)
-(test (eq (cdr data) (class <undefined-entity>)) t)
+($test (car data) 1 eql)
+($test (eq (cdr data) (class <undefined-entity>)) t)
 ;;;
 ($argc domain-error-object 1 0 0)
 ($argc domain-error-expected-class 1 0 0)
@@ -439,8 +439,8 @@
 ($eval (setq data (catch 'c-parse-error 
 		    (with-handler #'parse-error-handler
 				  (parse-number "abc")))))
-(test (car data) "abc" equal)
-(test (eq (cdr data) (class <number>)) t)
+($test (car data) "abc" equal)
+($test (eq (cdr data) (class <number>)) t)
 ;;;
 ($argc parse-error-string 1 0 0)
 ($argc parse-error-expected-class 1 0 0)
@@ -464,12 +464,12 @@
 		 (simple-error-format-arguments condition)))
      (throw 'c-simple-error data))))
 ;;;
-(test (catch 'c-simple-error
+($test (catch 'c-simple-error
    (with-handler #'simple-error-handler
 		 (error "err: ~S" 123)))
  ("err: ~S" 123) equal)
 ;;;
-(test (catch 'c-simple-error
+($test (catch 'c-simple-error
    (with-handler #'simple-error-handler
 		 (cerror "cont: ~S" "err: ~S" 456)))
  ("err: ~S" 456) equal)
@@ -497,7 +497,7 @@
 #|
 ($eval (tp-make-tmp-file))
 ($eval (defglobal str (open-io-file *tp-example-file*)))
-(test (streamp (car
+($test (streamp (car
   (catch 'c-simple-error
    (with-handler #'stream-error-handler
 		 (read str))))) t)
@@ -524,18 +524,18 @@
 		 (undefined-entity-namespace condition)))
      (throw 'c-undefined-entity data))))
 ;;; variable
-(test (catch 'c-undefined-entity
+($test (catch 'c-undefined-entity
    (with-handler #'undefined-entity-handler
 		 undef-var))
  (undef-var . variable) equal)
 ;;; dynamic-variable
-(test (catch 'c-undefined-entity
+($test (catch 'c-undefined-entity
    (with-handler #'undefined-entity-handler
 		 (dynamic undef-dynamic-var)))
  (undef-dynamic-var . dynamic-variable) equal)
 
 ;;; function
-(test (catch 'c-undefined-entity
+($test (catch 'c-undefined-entity
    (with-handler #'undefined-entity-handler
 		 (undef-func)))
  (undef-func . function) equal)

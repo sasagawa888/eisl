@@ -13,33 +13,33 @@
 
 ;;;------------------------------------------------------------
 ;;; (a) literal
-(test #2a((a b) (c d)) #2a((a b) (c d)) equal)
-(test #(a b c) #(a b c) equal)
-(test 123 123 equal)
-(test 1.23 1.23 equal)
-(test #\a #\a equal)
-(test "foo" "foo" equal)
+($test #2a((a b) (c d)) #2a((a b) (c d)) equal)
+($test #(a b c) #(a b c) equal)
+($test 123 123 equal)
+($test 1.23 1.23 equal)
+($test #\a #\a equal)
+($test "foo" "foo" equal)
 
 ;;; (b) identifier
-(test t t)
-(test nil nil)
+($test t t)
+($test nil nil)
 ($eval (defglobal x 1))
-(test x 1 equal)
+($test x 1 equal)
 ($error unbound-var <unbound-variable>)
 
 ;;; (c) compound form: (operator argument*)
 ;;;   (c-1) operator: special operator
-(test (if 1 2 3) 2 equal)
+($test (if 1 2 3) 2 equal)
 
 ;;;   (c-2) operator: defining operator
-(test (defglobal x 2) x equal)
-(test x 2 equal)
+($test (defglobal x 2) x equal)
+($test x 2 equal)
 
 ;;;   (c-3) operator: lambda form
-(test ((lambda (x) (+ x x)) 4) 8 equal)
+($test ((lambda (x) (+ x x)) 4) 8 equal)
 
 ;;;   (c-4) operator: otherwise --> function application form
-(test (+ 1 2) 3 equal)
+($test (+ 1 2) 3 equal)
 ($error (undef-func) <undefined-function>)
 
 ;;; (d) otherwise --> undefined-function
@@ -59,14 +59,14 @@
 ;;; 
 ($predicate functionp $function $generic)
 ;;;
-(test (functionp (function car)) t)
-(test (functionp #'car) t)
+($test (functionp (function car)) t)
+($test (functionp #'car) t)
 ;;;
 ($eval (defun foo-func ()))
-(test (functionp (function foo-func)) t)
-(test (functionp #'foo-func) t)
+($test (functionp (function foo-func)) t)
+($test (functionp #'foo-func) t)
 ;;;
-(test (functionp 1) nil)
+($test (functionp 1) nil)
 
 ;;;------------------------------------------------------------
 ;;; [special operator] 
@@ -77,10 +77,10 @@
 ;;;
 ($argc function 1 0 0)
 ;;;
-(test (funcall (function -) 3) -3 equal)
-(test (funcall #'- 3) -3 equal)
-(test (apply (function -) '(4 3)) 1 equal)
-(test (apply #'- '(4 3)) 1 equal)
+($test (funcall (function -) 3) -3 equal)
+($test (funcall #'- 3) -3 equal)
+($test (apply (function -) '(4 3)) 1 equal)
+($test (apply #'- '(4 3)) 1 equal)
 ;;; dot-list
 ;($error (function + . 1) <error>)
 ;;; function-name 
@@ -108,13 +108,13 @@
 ;;;------------------------------------------------------------
 ($ap 2 "lambda" P.21)
 ;;;
-(test ((lambda (x y) (+ (* x x) (* y y))) 3 4) 25 equal)
-(test ((lambda (x y &rest z) z) 3 4 5 6) (5 6) equal)
-(test ((lambda (x y :rest z) z) 3 4 5 6) (5 6) equal)
-(test (funcall (lambda (x y) (- y (* x y))) 7 3) -18 equal)
+($test ((lambda (x y) (+ (* x x) (* y y))) 3 4) 25 equal)
+($test ((lambda (x y &rest z) z) 3 4 5 6) (5 6) equal)
+($test ((lambda (x y :rest z) z) 3 4 5 6) (5 6) equal)
+($test (funcall (lambda (x y) (- y (* x y))) 7 3) -18 equal)
 ;;;
 ($eval (defconstant *const-e* 3))
-(test ((lambda (*const-e*) *const-e*) 4) 4 equal)
+($test ((lambda (*const-e*) *const-e*) 4) 4 equal)
 ;;; lambda-list not exist
 ($error (lambda) <program-error>)
 ;;; lambda-list improper list
@@ -182,7 +182,7 @@
 ($error ((lambda (x &rest y) z) 1) <unbound-variable>)
 ($error ((lambda (x :rest y) z) 1) <unbound-variable>)
 ;;;
-(test (let ((x 1))
+($test (let ((x 1))
    (lambda () 1)
    (lambda () 2)
    x) 1 equal)
@@ -194,10 +194,10 @@
 ;;;------------------------------------------------------------
 ($ap 2 "labels" P.22)
 ;;;
-(test (labels ()) nil)
-(test (labels () 1) 1 equal)
-(test (labels () 1 2) 2 equal)
-(test (labels ((evenp (n)
+($test (labels ()) nil)
+($test (labels () 1) 1 equal)
+($test (labels () 1 2) 2 equal)
+($test (labels ((evenp (n)
 		 (if (= n 0)
 		     t
 		   (oddp (- n 1))))
@@ -208,7 +208,7 @@
 	 (evenp 88))
  t)
 ;;;
-(test (functionp (labels ((foo ())) #'foo)) t)
+($test (functionp (labels ((foo ())) #'foo)) t)
 ;;; 
 ($error (labels) <program-error>)
 ;;; 
@@ -240,24 +240,24 @@
 ;;;------------------------------------------------------------
 ($ap 2 "flet" P.22)
 ;;;
-(test (flet ()) nil)
-(test (flet () 1) 1 equal)
-(test (flet () 1 2) 2 equal)
-(test (flet ((f (x) (+ x 3)))
+($test (flet ()) nil)
+($test (flet () 1) 1 equal)
+($test (flet () 1 2) 2 equal)
+($test (flet ((f (x) (+ x 3)))
        (flet ((f (x) (+ x (f x))))
 	     (f 7)))
  17
  equal)
 ;;;
-(test (functionp (flet ((foo ())) #'foo)) t)
+($test (functionp (flet ((foo ())) #'foo)) t)
 ;;;
 ($eval (defglobal x nil))
 ($eval (flet ((f () 2)) (setq x (lambda () (f)))))
-(test (funcall x) 2)
+($test (funcall x) 2)
 ;;;
 ($eval (defglobal x nil))
 ($eval (flet ((f () 2)) (setq x (lambda () (f)))))
-(test (apply x ()) 2)
+($test (apply x ()) 2)
 ;;;
 ($error (flet) <program-error>)
 ;;;
@@ -287,7 +287,7 @@
 ($error (flet ((f (x) x)) (f 1) . 2) <error>)
 ;;;
 ($eval (defun foo-5 () 1))
-(test (flet ((foo-5 () (foo-5))) (foo-5)) 1)
+($test (flet ((foo-5 () (foo-5))) (foo-5)) 1)
 
 ;;;------------------------------------------------------------
 ;;; [function] 
@@ -296,15 +296,15 @@
 ;;;------------------------------------------------------------
 ($ap 2 "apply" P.23)
 ;;;
-(test (apply #'+ '(1 2)) 3 equal)
-(test (apply #'+ 3 '(1 2)) 6 equal)
-(test (apply #'+ 3 4 '(1 2)) 10 equal)
-(test (apply (if (< 1 2) (function max) (function min))
+($test (apply #'+ '(1 2)) 3 equal)
+($test (apply #'+ 3 '(1 2)) 6 equal)
+($test (apply #'+ 3 4 '(1 2)) 10 equal)
+($test (apply (if (< 1 2) (function max) (function min))
 	1 2 (list 3 4)) 4 equal)
 ($eval (defun compose (f g)
 	 (lambda (:rest args)
 	   (funcall f (apply g args)))))
-(test (funcall (compose (function sqrt) (function *)) 12 75) 30 equal)
+($test (funcall (compose (function sqrt) (function *)) 12 75) 30 equal)
 ;;;
 ($argc apply 2 0 1)
 ;;; function (domain-error)
@@ -314,9 +314,9 @@
 ;($error (apply #'list 1 '(2 . 3)) <program-error>)
 ;($error (apply #'list 1 2 '(3 . 4)) <program-error>)
 ;;;
-(test (apply #'list '(1 2)) (1 2) equal)
-(test (apply #'list 1 '(2 3)) (1 2 3) equal)
-(test (apply #'list 1 2 '(3 4)) (1 2 3 4) equal)
+($test (apply #'list '(1 2)) (1 2) equal)
+($test (apply #'list 1 '(2 3)) (1 2 3) equal)
+($test (apply #'list 1 2 '(3 4)) (1 2 3 4) equal)
 
 ;;;------------------------------------------------------------
 ;;; [function] 
@@ -325,10 +325,10 @@
 ;;;------------------------------------------------------------
 ($ap 2 "funcall" P.23)
 ;;;
-(test (funcall #'+) 0 equal)
-(test (funcall #'+ 1) 1 equal)
-(test (funcall #'+ 1 2) 3 equal)
-(test (let ((x '(1 2 3)))
+($test (funcall #'+) 0 equal)
+($test (funcall #'+ 1) 1 equal)
+($test (funcall #'+ 1 2) 3 equal)
+($test (let ((x '(1 2 3)))
    (funcall (cond ((listp x) (function car))
 		  (t (lambda (x) (cons x 1)))) x)) 1 equal)
 ;;;
@@ -346,11 +346,11 @@
 ($ap 2 "defconstant")
 ;;;
 
-(test (defconstant *const-1* 1) *const-1* equal)
-(test (defconstant *const-e* 2.718) *const-e* equal)
-(test *const-e* 2.718 equal)
+($test (defconstant *const-1* 1) *const-1* equal)
+($test (defconstant *const-e* 2.718) *const-e* equal)
+($test *const-e* 2.718 equal)
 ($eval (defun f () *const-e*))
-(test (f) 2.718 equal)
+($test (f) 2.718 equal)
 
 ;;; 
 ($error (defconstant) <program-error>)
@@ -386,14 +386,14 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defglobal")
 ;;;
-(test (defglobal *global-1* 1) *global-1* equal)
-(test *global-1* 1 equal)
-(test (defglobal *global-today* 'wednesday) *global-today* equal)
-(test *global-today* wednesday equal)
+($test (defglobal *global-1* 1) *global-1* equal)
+($test *global-1* 1 equal)
+($test (defglobal *global-today* 'wednesday) *global-today* equal)
+($test *global-today* wednesday equal)
 ($eval (defun what-is-today () *global-today*))
-(test (what-is-today) wednesday equal)
-(test (let ((what-is-today 'thursday)) (what-is-today)) wednesday equal)
-(test (let ((*global-today* 'thursday)) (what-is-today)) wednesday equal)
+($test (what-is-today) wednesday equal)
+($test (let ((what-is-today 'thursday)) (what-is-today)) wednesday equal)
+($test (let ((*global-today* 'thursday)) (what-is-today)) wednesday equal)
 ;;;
 ($error (defglobal) <program-error>)
 ($error (defglobal *global-2*) <program-error>)
@@ -431,14 +431,14 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defdynamic")
 ;;;
-(test (defdynamic *dynamic-color* 'red) *dynamic-color* equal)
-(test (dynamic *dynamic-color*) red equal)
+($test (defdynamic *dynamic-color* 'red) *dynamic-color* equal)
+($test (dynamic *dynamic-color*) red equal)
 ($eval (defun what-color () (dynamic *dynamic-color*)))
-(test (what-color) red equal)
-(test (dynamic-let ((*dynamic-color* 'green)) (what-color)) green equal)
+($test (what-color) red equal)
+($test (dynamic-let ((*dynamic-color* 'green)) (what-color)) green equal)
 ;;; nil
-(test (defdynamic nil 3) nil equal)
-(test (dynamic nil) 3 equal)
+($test (defdynamic nil 3) nil equal)
+($test (dynamic nil) 3 equal)
 ;;; 
 ($error (defdynamic) <program-error>)
 ($error (defdynamic *dynamic-2*) <program-error>)
@@ -446,7 +446,7 @@
 ;;; 
 ($error (defdynamic *dynamic-2* 2 . 3) <error>)
 ;;; 
-;;; ??? I think result of following test is  <domain-error> 
+;;; ??? I think result of following $test is  <domain-error> 
 ;;; Becuase defdynamic return symbol and symbol is not number
 ($error (+ (defdynamic *dynamic-2* 2)) <domain-error>)
 ;($error (+ (defdynamic *dynamic-2* 2)) <error>)
@@ -468,8 +468,8 @@
 ;;;------------------------------------------------------------
 ($ap 2 "defun")
 ;;;
-(test (defun my-f-caar (x) (car (car x))) my-f-caar equal)
-(test (my-f-caar '((1 2))) 1 equal)
+($test (defun my-f-caar (x) (car (car x))) my-f-caar equal)
+($test (my-f-caar '((1 2))) 1 equal)
 ;;; 
 ($error (defun) <program-error>)
 ($error (defun foo) <program-error>)
@@ -492,11 +492,11 @@
 ($error (defun foo (x &rest x) nil) <error>)
 ($error (defun foo (x :rest x) nil) <error>)
 ;;; 
-(test (defun nil ()) nil equal)
-(test (defun t ()) t equal)
-(test (defun *pi* ()) *pi* equal)
-(test (defun *most-positive-float* ()) *most-positive-float*)
-(test (defun *most-negative-float* ()) *most-negative-float*)
+($test (defun nil ()) nil equal)
+($test (defun t ()) t equal)
+($test (defun *pi* ()) *pi* equal)
+($test (defun *most-positive-float* ()) *most-positive-float*)
+($test (defun *most-negative-float* ()) *most-negative-float*)
 ;;; special operator 
 ($error (defun if ()) <program-error>)
 ;;; lambda-list
@@ -504,13 +504,13 @@
 ($error (foo-6 1) <unbound-variable>)
 ;;;
 ($eval (defun foo-7 (x) x))
-(test (foo-7 1) 1 equal)
+($test (foo-7 1) 1 equal)
 ($argc foo-7 1 0 0)
 ;;;
 ($eval (defun foo-8 (x &rest y) (cons x y)))
-(test (foo-8 1) (1) equal)
-(test (foo-8 1 2) (1 2) equal)
-(test (foo-8 1 2 3) (1 2 3) equal)
+($test (foo-8 1) (1) equal)
+($test (foo-8 1 2) (1 2) equal)
+($test (foo-8 1 2 3) (1 2 3) equal)
 ($argc foo-8 1 0 1)
 
 ;;; end of file

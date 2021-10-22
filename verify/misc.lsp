@@ -15,12 +15,12 @@
 ;;; (IDENTITY obj) --> <object>
 ;;;
 ($ap 2 "identity" P.120)
-(test (let ((x '(a b c))) (eql (identity x) x)) t)
+($test (let ((x '(a b c))) (eql (identity x) x)) t)
 ;;;
 ($argc identity 1 0 0)
 ;;;
-(test (let ((x "abc")) (eql (identity x) x)) t)
-(test (let ((x #(a b c))) (eql (identity x) x)) t)
+($test (let ((x "abc")) (eql (identity x) x)) t)
+($test (let ((x #(a b c))) (eql (identity x) x)) t)
 
 ;;;
 ;;; (GET-UNIVERSAL-TIME) --> <integer>
@@ -29,8 +29,8 @@
 ;;;
 ($argc get-universal-time 0 0 0)
 ;;;
-(test (let ((time (get-universal-time))) (and (integerp time) (< 0 time))) t)
-(test (let ((t1 (get-universal-time))
+($test (let ((time (get-universal-time))) (and (integerp time) (< 0 time))) t)
+($test (let ((t1 (get-universal-time))
        (dummy1 (tak 21 14 7))
        (dummy2 (tak 21 14 7))
        (dummy3 (tak 21 14 7))
@@ -45,8 +45,8 @@
 ;;;
 ($argc get-internal-run-time 0 0 0)
 ;;;
-(test (let ((time (get-internal-run-time))) (and (integerp time) (< 0 time))) t)
-(test (let ((t1 (get-internal-run-time))
+($test (let ((time (get-internal-run-time))) (and (integerp time) (< 0 time))) t)
+($test (let ((t1 (get-internal-run-time))
        (dummy (tak 18 12 6))  
        (t2 (get-internal-run-time)))
    (< t1 t2))
@@ -59,8 +59,8 @@
 ;;;
 ($argc get-internal-real-time 0 0 0)
 ;;;
-(test (let ((time (get-internal-real-time))) (and (integerp time) (< 0 time))) t)
-(test (let ((t1 (get-internal-real-time))
+($test (let ((time (get-internal-real-time))) (and (integerp time) (< 0 time))) t)
+($test (let ((t1 (get-internal-real-time))
        (dummy (tak 16 8 0)) ;modify from (tak 18 12 6)  current machine is high speed
        (t2 (get-internal-real-time)))
    (< t1 t2))
@@ -73,4 +73,4 @@
 ;;;
 ($argc internal-time-units-per-second 0 0 0)
 ;;;
-(test (< 0 (internal-time-units-per-second)) t)
+($test (< 0 (internal-time-units-per-second)) t)

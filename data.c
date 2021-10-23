@@ -388,13 +388,13 @@ subclassp1(int x, int y)
 }
 
 int
-hascommonp(int ls)
+has_common_p(int ls)
 {
     if (length(ls) < 2)
 	return (0);
 
     while (!nullp(cdr(ls))) {
-	if (hascommonp1(car(ls), cadr(ls)))
+	if (has_common_p1(car(ls), cadr(ls)))
 	    return (1);
 	else
 	    ls = cdr(ls);
@@ -403,10 +403,14 @@ hascommonp(int ls)
 }
 
 int
-hascommonp1(int x, int y)
+has_common_p1(int x, int y)
 {
     if (includep(GET_CAR(GET_AUX(x)), GET_CAR(GET_AUX(y))))
 	return (1);
+    else if (y != cobject && y != cstandard_class && subclassp(x,y))
+    return (1);
+    else if (x != cobject && x != cstandard_class && subclassp(y,x))
+    return (1);
     else
 	return (0);
 }

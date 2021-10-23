@@ -465,7 +465,7 @@ error(int errnum, const char *fun, int arg)
 		  makestr("Super class has common parents at "),
 		  makesym("format-arguments"), arg, makesym("function"),
 		  makesym(fun1));
-	signal_condition(makeinstance(cclass_error, initargs), NIL);
+	signal_condition(makeinstance(cerror, initargs), NIL);
 	break;
     case ILLEGAL_CLASS:
 	initargs =

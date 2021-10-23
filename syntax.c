@@ -1475,7 +1475,7 @@ f_defclass(int arglist)
 	error(IMPROPER_ARGS, "defclass", arg2);
     if (notexistclassp(arg2))
 	error(UNDEF_CLASS, "defclass", arg2);
-    if (hascommonp(arg2))
+    if (has_common_p(arg2))
 	error(HAS_COMMON_CLASS, "defclass", arg2);
     if (!listp(arg3))
 	error(NOT_LIST, "defclass", arg3);

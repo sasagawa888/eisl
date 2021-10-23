@@ -428,7 +428,7 @@ includep(int x, int y)
 }
 
 int
-hassamep(int ls)
+has_same_p(int ls)
 {
     while (!nullp(ls)) {
 	if (member(car(ls), cdr(ls)))
@@ -440,7 +440,7 @@ hassamep(int ls)
 }
 
 int
-hassysclassp(int ls)
+has_sys_class_p(int ls)
 {
     while (!nullp(ls)) {
 	if (GET_OPT(car(ls)) == SYSTEM)
@@ -452,7 +452,7 @@ hassysclassp(int ls)
 }
 
 int
-notexistclassp(int ls)
+not_exist_class_p(int ls)
 {
     while (!nullp(ls)) {
 	if (GET_AUX(car(ls)) == csymbol)

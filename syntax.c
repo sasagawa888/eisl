@@ -1469,11 +1469,11 @@ f_defclass(int arglist)
 	error(CANT_MODIFY, "defclass", arg1);
     if (!listp(arg2))
 	error(NOT_LIST, "defclass", arg2);
-    if (hassamep(arg2))
+    if (has_same_p(arg2))
 	error(IMPROPER_ARGS, "defclass", arg2);
-    if (hassysclassp(arg2))
+    if (has_sys_class_p(arg2))
 	error(IMPROPER_ARGS, "defclass", arg2);
-    if (notexistclassp(arg2))
+    if (not_exist_class_p(arg2))
 	error(UNDEF_CLASS, "defclass", arg2);
     if (has_common_p(arg2))
 	error(HAS_COMMON_CLASS, "defclass", arg2);

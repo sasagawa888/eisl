@@ -970,8 +970,8 @@
 	 (setq f (lambda () (if (next-method-p) (call-next-method))))
 	 (list x y)))
 
-;($test (foo-38 2 3) (20 30) equal)
-;($test (funcall f) (2 3) equal)
+($test (foo-38 2 3) (20 30) equal)
+($test (funcall f) (2 3) equal)
 ;;
 ($eval (defglobal f nil))
 ($eval (defgeneric foo-39 (x y)))

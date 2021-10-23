@@ -610,10 +610,6 @@ f_defun(int arglist)
     if (!symbollistp(car(arg2)))
 	error(OUT_OF_DOMAIN, "defun", car(arg2));
 
-    // when arg1 is nil or t, defun does not affect.
-    if (arg1 == NIL || arg2 == T)
-	return (arg1);
-
     val = makefunc(GET_NAME(arg1), arg2);
     SET_CAR(arg1, val);
     return (arg1);
@@ -1887,14 +1883,14 @@ f_with_open_input_file(int arglist)
                     res;
     FILE           *port;
 
-    arg1 = car(arglist);
-    arg2 = cdr(arglist);
-    sym = car(arg1);		// stream-name;
-    str = eval(cadr(arg1));	// file-name;
     if (nullp(arglist) || atomp(arglist))
 	error(NOT_EXIST_ARG, "with-open-input-file", NIL);
     if (length(arglist) != 2)
 	error(IMPROPER_ARGS, "with-open-input-file", arglist);
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    sym = car(arg1);		// stream-name;
+    str = eval(cadr(arg1));	// file-name;
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-input-file", sym);
     if (!stringp(str))
@@ -1926,14 +1922,14 @@ f_with_open_output_file(int arglist)
                     res;
     FILE           *port;
 
-    arg1 = car(arglist);
-    arg2 = cdr(arglist);
-    sym = car(arg1);		// stream-name;
-    str = eval(cadr(arg1));	// file-name;
     if (nullp(arglist) || atomp(arglist))
 	error(NOT_EXIST_ARG, "with-open-output-file", NIL);
     if (length(arglist) != 2)
 	error(IMPROPER_ARGS, "with-open-output-file", arglist);
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    sym = car(arg1);		// stream-name;
+    str = eval(cadr(arg1));	// file-name;
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-output-file", sym);
     if (!stringp(str))
@@ -1965,14 +1961,14 @@ f_with_open_io_file(int arglist)
                     res;
     FILE           *port;
 
-    arg1 = car(arglist);
-    arg2 = cdr(arglist);
-    sym = car(arg1);		// stream-name;
-    str = eval(cadr(arg1));	// file-name;
     if (nullp(arglist) || atomp(arglist))
 	error(NOT_EXIST_ARG, "with-open-io-file", NIL);
     if (length(arglist) != 2)
 	error(IMPROPER_ARGS, "with-open-io-file", arglist);
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    sym = car(arg1);		// stream-name;
+    str = eval(cadr(arg1));	// file-name;
     if (!symbolp(sym))
 	error(NOT_SYM, "with-open-io-file", sym);
     if (!stringp(str))

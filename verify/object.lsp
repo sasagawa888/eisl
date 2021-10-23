@@ -983,8 +983,8 @@
 		   (if (next-method-p) (list x y (call-next-method)))))
 	 (list x y)))
 
-;($test (foo-39 2 3) (20 30) equal)
-;($test (funcall f) (20 30 (2 3)) equal)
+($test (foo-39 2 3) (20 30) equal)
+($test (funcall f) (20 30 (2 3)) equal)
 ;;
 ;($eval (defglobal f nil))
 ;($eval (defgeneric foo-40 (x y)))

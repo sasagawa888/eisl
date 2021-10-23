@@ -680,7 +680,12 @@ f_defglobal(int arglist)
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(ILLEGAL_ARGS, "defglobal", arg1);
 
-    SET_CDR(arg1, eval(arg2));
+    arg2 = eval(arg2);
+    if (IS_FUNC(arg2))
+        SET_CAR(arg1,arg2);
+    else
+        SET_CDR(arg1, arg2);
+        
     SET_OPT(arg1, GLOBAL);
     return (arg1);
 }

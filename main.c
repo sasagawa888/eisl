@@ -1705,6 +1705,7 @@ DEF_GETTER(char, TR, trace, NIL)
 			unbind();
 		    }
 		}
+		next:
 		next_method = cdr(next_method);
 	    }
 	    if (pexist == 0 && qexist == 0)
@@ -1791,7 +1792,7 @@ adaptp(int varlist, int arglist)
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// equal
 	// class
 	return (adaptp(cdr(varlist), cdr(arglist)));
-    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
+    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))  // subclass
 	return (adaptp(cdr(varlist), cdr(arglist)));
     else
 	return (0);

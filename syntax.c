@@ -1856,8 +1856,9 @@ f_defmethod(int arglist)
     // error(NOT_TOP_LEVEL, "defmethod", arglist);
     // }
 
-    gen = GET_CAR(arg1);
+    gen = generic_func = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);
+    generic_func = NIL;
     return (arg1);
 }
 

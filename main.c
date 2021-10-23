@@ -1606,6 +1606,14 @@ DEF_GETTER(char, TR, trace, NIL)
 	shelterpush(args);
 	push(ep);
 	ep = GET_CDR(func);
+
+	// if lambda is generated during eval method, lambda saved method and argument
+	// restore the method and argument.
+	if (GET_PROP(func) != NIL){
+		next_method = car(GET_PROP(func));
+		generic_vars = cdr(GET_PROP(func));
+	}
+	
 	varlist = car(GET_CAR(func));
 	if (GET_OPT(func) >= 0) {
 	    if (length(args) != (int) GET_OPT(func))
@@ -1705,7 +1713,6 @@ DEF_GETTER(char, TR, trace, NIL)
 			unbind();
 		    }
 		}
-		next:
 		next_method = cdr(next_method);
 	    }
 	    if (pexist == 0 && qexist == 0)

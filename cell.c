@@ -630,8 +630,11 @@ makefunc(const char *pname, int addr)
 	error(MALLOC_OVERF, "makefunc", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(addr));
-    SET_CDR(val, ep);
+    SET_CDR(val, ep); // local environment
     SET_AUX(val, cfunction);	// class function
+    // if lambda is generated in method, save the method and given argument 
+    if (generic_func != NIL)
+        SET_PROP(val, cons(GET_CDR(generic_func),generic_vars));  // method of generic-function and argument 
     SET_OPT(val, count_args(car(addr)));	// amount of argument
     return (val);
 }

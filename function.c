@@ -4894,8 +4894,8 @@ f_next_method_p(int arglist)
 
     if (length(arglist) != 0)
 	error(UNDEF_FUN, "next-method-p", arglist);
-    if (generic_func == NIL)
-	error(UNDEF_FUN, "next-method-p", NIL);
+    //if (generic_func == NIL)
+	//error(UNDEF_FUN, "next-method-p", NIL);
 
     method = cdr(next_method);
     while (!nullp(method)) {
@@ -4934,6 +4934,7 @@ f_call_next_method(int arglist)
     varlist = NIL;
     next_method = cdr(next_method);
     if (GET_OPT(car(next_method)) == PRIMARY) {
+    varlist = car(GET_CAR(car(next_method)));
 	varlist = genlamlis_to_lamlis(varlist);
 	body = cdr(GET_CAR(car(next_method)));
 	bindarg(varlist, generic_vars);

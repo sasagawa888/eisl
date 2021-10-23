@@ -984,7 +984,7 @@
 	 (list x y)))
 
 ($test (foo-39 2 3) (20 30) equal)
-;($test (funcall f) (20 30 (2 3)) equal)
+($test (funcall f) (20 30 (2 3)) equal)
 ;;
 ($eval (defglobal f nil))
 ($eval (defgeneric foo-40 (x y)))
@@ -997,7 +997,7 @@
 		     (if (next-method-p) (list x y (call-next-method))))))
 	 (list x y)))
 ($test (foo-40 2 3) (20 30) equal)
-;($test (funcall f) (5 6 (2 3)) equal)
+($test (funcall f) (5 6 (2 3)) equal)
 ;;
 ;($eval (defgeneric foo-41 (a &rest r)))
 ;($eval (defmethod foo-41 ((a <integer>) &rest r)

@@ -648,9 +648,8 @@ f_defmacro(int arglist)
     if (!symbollistp(car(arg2))) {
 	error(OUT_OF_DOMAIN, "defmacro", car(arg2));
     }
-    // comment out. in benck/takl.lsp error
-    // if (!top_flag && !ignore_topchk)
-    // error(NOT_TOP_LEVEL, "defmacro", arglist);
+     if (!top_flag && !ignore_topchk)
+     error(NOT_TOP_LEVEL, "defmacro", arglist);
 
 
     bindmacro(GET_NAME(arg1), arg2);

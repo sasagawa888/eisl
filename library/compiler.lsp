@@ -2498,11 +2498,14 @@ defgeneric compile
            (format stream ")")))
     
     ;;defmacro
+    ;;ignore
+    (defun comp-defmacro (x) t)
+    #|
     (defun comp-defmacro (x)
         (format code4 "Feval(")
         (list-to-c1 code4 x)
         (format code4 ");~%"))
-
+    |#
     ;;defclass
     (defun comp-defclass (x)
         (comp code4 '(ignore-toplevel-check t) nil nil nil nil nil nil nil)

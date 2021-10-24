@@ -4919,6 +4919,8 @@ f_call_next_method(int arglist)
                     pexist,
                     qexist;
 
+    if(generic_func == NIL)
+    error(UNDEF_FUN,"call-next-method",NIL);
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "call-next-method", arglist);
     if (nullp(cdr(next_method)))

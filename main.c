@@ -1612,6 +1612,7 @@ DEF_GETTER(char, TR, trace, NIL)
 	if (GET_PROP(func) != NIL){
 		next_method = car(GET_PROP(func));
 		generic_vars = cdr(GET_PROP(func));
+		generic_func = T; // to avoid error check in (call-next-method)
 	}
 	
 	varlist = car(GET_CAR(func));

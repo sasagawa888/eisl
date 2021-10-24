@@ -643,6 +643,8 @@ signal_condition(int x, int y)
     input_stream = standard_input;
     output_stream = standard_output;
     handling_resource_err = false;
+	generic_func = NIL;
+	generic_vars = NIL;
     debugger();
     RAISE(Restart_Repl);
     return 0;

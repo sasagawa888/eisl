@@ -4894,8 +4894,8 @@ f_next_method_p(int arglist)
 
     if (length(arglist) != 0)
 	error(UNDEF_FUN, "next-method-p", arglist);
-    //if (generic_func == NIL)
-	//error(UNDEF_FUN, "next-method-p", NIL);
+    if (generic_func == NIL)
+	error(UNDEF_FUN, "next-method-p", NIL);
 
     method = cdr(next_method);
     while (!nullp(method)) {

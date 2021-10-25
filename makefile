@@ -94,18 +94,12 @@ $(SRC_NANA) nana/src/eiffel.h:
 	-cd nana; $(MAKE) distclean
 	-$(RM) $(OBJ_NANA)
 
-cii/src/text.o: cii/patched
-
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h
 endif
 
 nana/src/nana-config.h:
 	-cd nana; autoreconf -fi; ./configure
-
-cii/patched:
-	cd cii; patch -p1 < ../patch-cii.diff
-	touch $@
 
 edlis : edlis.o syn_highlight.o $(OBJ_CII)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)

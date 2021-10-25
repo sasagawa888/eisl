@@ -87,25 +87,12 @@ endif
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(SRC_CII) cii/include/except.h \
-$(SRC_NANA) nana/src/eiffel.h:
-	git submodule init
-	git submodule update
-	-cd nana; $(MAKE) distclean
-	-$(RM) $(OBJ_NANA)
-
-cii/src/text.o: cii/patched
-
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h
 endif
 
 nana/src/nana-config.h:
 	-cd nana; autoreconf -fi; ./configure
-
-cii/patched:
-	cd cii; patch -p1 < ../patch-cii.diff
-	touch $@
 
 edlis : edlis.o syn_highlight.o $(OBJ_CII)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)

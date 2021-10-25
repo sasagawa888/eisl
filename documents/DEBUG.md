@@ -104,3 +104,26 @@ debug mode ?(help)
 other S exps eval
 >> 
 ```
+
+## Debugging C Code
+
+This is a very different task to the above. Most users should never need to do it, but the procedure is written down here just in case.
+
+An important tool here is the special "DEBUG" build of the interpreter. But this requires some setup. First, you need to get the full version of the Nana library instead of the trivial stubs that are checked in:
+
+```sh
+cd eisl
+rm -r nana
+git clone https://github.com/pjmaker/nana.git
+cd nana
+make distclean
+```
+
+Now you should be able to create a debug build. Note that this will run `autoreconf`, so you must have the automake and autoconf packages installed for your OS.
+
+```sh
+make clean
+make 'DEBUG=1'
+```
+
+*NB*: Be careful not to check in changes that would require ordinary users to install Nana.

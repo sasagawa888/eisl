@@ -1,6 +1,0 @@
-[submodule "cii"]
-	path = cii
-	url = https://github.com/drh/cii.git
-[submodule "nana"]
-	path = nana
-	url = https://github.com/pjmaker/nana.git

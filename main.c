@@ -1545,6 +1545,8 @@ eval(int addr)
 	else if (fsubrp(car(addr)))
 	    return (apply(caar(addr), cdr(addr)));
 	else if ((val = functionp(car(addr)))) {
+		if (GET_CDR(car(addr)) != NIL)
+			error(UNDEF_FUN,"eval",addr);
 	    temp = evlis(cdr(addr));
 	    examin_sym = car(addr);
 	    return (apply(val, temp));

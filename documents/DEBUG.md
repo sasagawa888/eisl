@@ -104,3 +104,89 @@ debug mode ?(help)
 other S exps eval
 >> 
 ```
+
+## Debugging C Code
+
+This is a very different task to the above. Most users should never need to do it, but the procedure is written down here just in case.
+
+An important tool here is the special "DEBUG" build of the interpreter. But this requires some setup. First, you need to get the full version of the Nana library instead of the trivial stubs that are checked in:
+
+```sh
+cd eisl
+rm -r nana
+git clone https://github.com/pjmaker/nana.git
+cd nana
+make distclean
+```
+
+*NB*: Be careful not to check in changes that would require ordinary users to install Nana.
+
+Now you should be able to create a debug build. Note that this will run `autoreconf`, so you must have the automake and autoconf packages installed for your OS.
+
+```sh
+make clean
+make 'DEBUG=1'
+```
+
+(You can supply `OPSYS=` if necessary too.)
+
+### Sample Debugger Usage
+
+This is taken from 
+[issue #131](https://github.com/sasagawa888/eisl/issues/131).
+
+```
+$ lldb ./eisl
+(lldb) break set --name abort
+(lldb) run
+...
+Easy-ISLisp Ver2.12
+> (standard-input)
+./eisl.h:233: I(res != ((void*)0)) failed; dumping core
+Process 25048 stopped
+...
+(lldb) bt
+* thread #1, queue = 'com.apple.main-thread', stop reason = breakpoint 1.1
+  * frame #0: 0x0000000180a8f3d8 libsystem_c.dylib`abort
+    frame #1: 0x0000000100079c3c eisl`_I_default_handler(exprn="I(res != ((void*)0))", file="./eisl.h", line=233) at I.c:51:6
+    frame #2: 0x00000001000045f4 eisl`GET_NAME(addr=980) at eisl.h:233:5
+    frame #3: 0x000000010000ab20 eisl`printstream(addr=980) at main.c:1436:53
+    frame #4: 0x0000000100002e24 eisl`print(addr=980) at main.c:1249:2
+    frame #5: 0x0000000100002794 eisl`main(argc=1, argv=0x000000016fdff730) at main.c:307:6
+    frame #6: 0x0000000180b65430 libdyld.dylib`start + 4
+(lldb) 
+```
+
+The conclusion is that, at least for this function, the problem is trying to print the result. Previous testing often called `(standard-output)`, but always as an argument to `(format)`, not printing to the REPL. What it is trying to print is cell 980 in the heap, which can be nicely printed as follows:
+
+```
+(lldb) print heap[980]
+(cell) $0 = {
+  val = {
+    fltnum = 4.0780135404262676E-314
+    lngnum = 8253991296
+     = {
+      car = {
+        intnum = -335943296
+        subr = 0x00000001ebf9e980 (__sF)
+        port = 0x00000001ebf9e980
+        dyna_vec = 0x00000001ebf9e980
+        dyna_fvec = 0x00000001ebf9e980
+      }
+      cdr = (intnum = 0)
+    }
+  }
+  aux = 53
+  prop = 0
+  name = 0x0000000000000000
+  tag = STREAM
+  flag = FRE
+  option = '\x0e'
+  trace = '\0'
+}
+(lldb)
+```
+
+Now it's clear. It's an intentional crash (actually, a call to `abort()`) in the DEBUG build. The reason is that a postcondition (i.e `ENSURE` assertion) is violated, `GET_NAME()` should return a non-NULL string. However, some streams like `(standard-input)` have a NULL name in the heap. Now is a good time to jump into "solution space".
+
+You can substitute gdb for lldb above, but you'll need to change the [command syntax](https://kapeli.com/cheat_sheets/LLDB_to_GDB_Command_Map.docset/Contents/Resources/Documents/index) slightly.

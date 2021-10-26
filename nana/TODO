@@ -1,0 +1,32 @@
+Thu Jun 25 13:47:42 1998  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Fix up the test system, it has still got a few furphies
+	  in it.
+
+Sun Nov  2 12:19:07 1997  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* See the nana.texi file at the end for some more projects.
+
+Sun Oct 26 11:10:46 1997  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Ideally we need to tell gcc, etc that we would like
+	like all variables brought uptodate for checking/printing.
+	What are the rules for asm(...) in gcc with various
+	levels of optimisation.
+
+Thu May 15 09:36:05 1997  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Add a binary (instead of ascii text) interface to L_buffer.c
+	[This would require the user the user to provide a decode function]
+
+	* Add support for FORTRAN, Ada, etc back in to the system.
+
+Wed Jun  5 22:12:09 1996  Phil Maker  <pjm@morinda.cs.ntu.edu.au>
+
+	* Maybe add a circular buffer using mmap to keep a file up to
+	date with the old information from L_buffer
+
+
+
+
+

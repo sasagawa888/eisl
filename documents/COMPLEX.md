@@ -32,3 +32,7 @@ Thanks to Mr. Hiroi.
 - ccosh   hyperbolic cos of complex
 - ctanh   hyperbolic tan of complex
 - csqrt   square root of complex
+- asinh   inverse hyperbolic sin
+- scosh   inverse hyperbolic cos
+- atanh   inverse hyperbolic tan
+

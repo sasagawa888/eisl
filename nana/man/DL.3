@@ -1,0 +1,46 @@
+.TH DL 3
+.SH NAME 
+DL - generate logging messages in C and C++ using a debugger
+.SH SYNOPSIS
+
+#include <DL.h>
+
+DL(format,...)
+
+DLG(guard,format,...)
+
+DLH(handler,format,...)
+
+DLP(param,format,...)
+
+DLGH(guard,handler,format,...)
+
+DLHP(handler,param,format,...)
+
+DLGHP(guard,handler,param,format,...)
+
+.SH DESCRIPTION
+
+The DL macro is used to print logging or debugging messages using
+a debugger. The nana(1) command generates a set of debugger commands
+which are then sourced into gdb(1) to implement the logging. If you
+don't run the executable under gdb(1) then no tracing will occur. 
+The arguments are:
+
+format,... - a printf(3) style argument list containing the message
+
+guard - print only if the guard is true.
+
+handler - the code that does the printing, e.g. support is provided for
+sending log messages to a circular buffer.
+
+param - a parameter to be passed off to the handler, e.g. a file descriptor.
+
+See nana.info for details on configuring the behaviour.
+
+.SH SEE ALSO
+nana-clg(1), nana(1), nana(3), I(3), DI(3), L(3), DL(3), Q(3) and nana.info.
+
+The nana.info file is the primary documentation for this library.
+.SH AUTHOR
+Phil Maker <pjm@gnu.org>

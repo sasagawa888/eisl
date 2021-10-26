@@ -1,0 +1,548 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=latex 2014.5.30)  29 DEC 2014 07:01
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**perf.tex
+(./perf.tex
+LaTeX2e <2011/06/27>
+Babel <3.9h> and hyphenation patterns for 78 languages loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (./perf.aux)
+\openout1 = `perf.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
+LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 34.
+LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 34.
+LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 34.
+LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 34.
+LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
+LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 37.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 37.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 37.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 43.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 43.
+ (./uname.mtex)
+(./bogomips.mtex) (./summary.mtex
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 1.
+) [1
+
+]
+Overfull \hbox (3.86063pt too wide) in paragraph at lines 103--106
+[]\OT1/cmr/m/n/10 The vari-ables and code frag-ments used de-fined in []\OT1/cm
+tt/m/n/10 prelude.c \OT1/cmr/m/n/10 and []\OT1/cmtt/m/n/10 postlude.c\OT1/cmr/m
+/n/10 .
+ []
+
+(./assert.mtex) [2] (./quantifiers.mtex)
+Overfull \hbox (151.96921pt too wide) in paragraph at lines 1--126
+[]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1--126
+
+ []
+
+(./log.mtex) [3] (./nop.mtex) (./c_ops.mtex) [4] (./dcache.mtex)
+Overfull \hbox (47.22041pt too wide) in paragraph at lines 1--141
+[][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1--141
+
+ []
+
+(./code.mtex [5] [6] [7]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 150--150
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 1*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[8]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 188--188
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 2*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[9]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 226--226
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 4*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 264--264
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 8*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[10]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 302--302
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 16*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[11]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 340--340
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 32*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[12]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 378--378
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 64*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[13]
+Overfull \hbox (13.63625pt too wide) in paragraph at lines 416--416
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 128*1024, i++, za[i] == 0)); \OT1/cmr/m/n
+/10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[14] [15] [16] [17] [18] [19] [20] [21] [22] [23]
+Overfull \hbox (18.8862pt too wide) in paragraph at lines 987--987
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\0', p++, islower(*p))); \OT1/cm
+r/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O0
+ []
+
+[24]
+Overfull \hbox (18.8862pt too wide) in paragraph at lines 1034--1034
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\0', p++, islower(*p))); \OT1/cm
+r/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O1
+ []
+
+
+Overfull \hbox (18.8862pt too wide) in paragraph at lines 1064--1064
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\0', p++, islower(*p))); \OT1/cm
+r/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O3
+ []
+
+[25]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 1104--1104
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[26]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 1164--1164
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[27]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 1213--1213
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[28] [29] [30] [31] [32] [33] [34]
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 1574--1574
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworldn"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O0 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+[35]
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 1586--1586
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworldn"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O1 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 1598--1598
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworldn"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O3 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (0.24724pt too wide) in paragraph at lines 1638--1638
+ []        \OT1/cmtt/m/n/10 .file 3 "/usr/include/x86_64-linux-gnu/bits/syslog.
+h"[] 
+ []
+
+[36] [37] [38] [39]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 1805--1805
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 1*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 1843--1843
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 2*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[40]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 1881--1881
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 4*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[41]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 1919--1919
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 8*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[42]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 1957--1957
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 16*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[43]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 1995--1995
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 32*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 2033--2033
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 64*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[44]
+Overfull \hbox (13.63625pt too wide) in paragraph at lines 2071--2071
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 128*1024, i++, za[i] == 0)); \OT1/cmr/m/n
+/10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[45] [46] [47] [48] [49] [50] [51] [52] [53] [54] [55]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 2642--2642
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O0
+ []
+
+
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 2686--2686
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O1
+ []
+
+[56]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 2718--2718
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O3
+ []
+
+[57]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 2749--2749
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[58] [59] [60] [61]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 2956--2956
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 1*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 2994--2994
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 2*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[62]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 3032--3032
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 4*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[63]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 3070--3070
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 8*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[64]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 3108--3108
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 16*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[65]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 3146--3146
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 32*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 3184--3184
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 64*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[66]
+Overfull \hbox (13.63625pt too wide) in paragraph at lines 3222--3222
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 128*1024, i++, za[i] == 0)); \OT1/cmr/m/n
+/10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 3924--3924
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 1*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[80]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 3962--3962
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 2*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[81]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 4000--4000
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 4*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 4038--4038
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 8*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[82]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 4076--4076
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 16*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[83]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 4114--4114
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 32*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[84]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 4152--4152
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 64*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[85]
+Overfull \hbox (13.63625pt too wide) in paragraph at lines 4190--4190
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 128*1024, i++, za[i] == 0)); \OT1/cmr/m/n
+/10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[86] [87] [88] [89] [90] [91] [92] [93] [94] [95]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 4761--4761
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O0
+ []
+
+[96]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 4805--4805
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O1
+ []
+
+[97] [98] [99] [100] [101] [102] [103] [104] [105] [106]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 5370--5370
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O0
+ []
+
+[107] [108]
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 5479--5479
+[][]\OT1/cmtt/m/n/10 gi = ~0; LG(gi & 0x10, "helloworld\n"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O1 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+[109]
+Overfull \hbox (10.08118pt too wide) in paragraph at lines 5521--5521
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworld\n"); \OT1/cmr/m/n/10 w
+ith []\OT1/cmtt/m/n/10 gcc -g -O1 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (0.24724pt too wide) in paragraph at lines 5550--5550
+ []        \OT1/cmtt/m/n/10 .file 3 "/usr/include/x86_64-linux-gnu/bits/syslog.
+h"[] 
+ []
+
+[110] [111] [112]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 5699--5699
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 1*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[113]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 5737--5737
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 2*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[114]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 5775--5775
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 4*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[115]
+Overfull \hbox (3.13634pt too wide) in paragraph at lines 5813--5813
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 8*1024, i++, za[i] == 0)); \OT1/cmr/m/n/1
+0 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 5851--5851
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 16*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[116]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 5889--5889
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 32*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[117]
+Overfull \hbox (8.38629pt too wide) in paragraph at lines 5927--5927
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 64*1024, i++, za[i] == 0)); \OT1/cmr/m/n/
+10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[118]
+Overfull \hbox (13.63625pt too wide) in paragraph at lines 5965--5965
+[][]\OT1/cmtt/m/n/10 I(A(int i=0, i < 128*1024, i++, za[i] == 0)); \OT1/cmr/m/n
+/10 with []\OT1/cmtt/m/n/10 gcc -g -DNT=16
+ []
+
+[119] [120] [121] [122] [123] [124] [125] [126] [127] [128]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 6536--6536
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O0
+ []
+
+[129]
+Overfull \hbox (24.13615pt too wide) in paragraph at lines 6580--6580
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\\0', p++, islower(*p))); \OT1/c
+mr/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O1
+ []
+
+[130] [131] [132] [133] [134] [135] [136] [137] [138] [139]
+Overfull \hbox (18.8862pt too wide) in paragraph at lines 7145--7145
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\0', p++, islower(*p))); \OT1/cm
+r/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O0
+ []
+
+[140]
+Overfull \hbox (18.8862pt too wide) in paragraph at lines 7192--7192
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\0', p++, islower(*p))); \OT1/cm
+r/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O1
+ []
+
+[141]
+Overfull \hbox (18.8862pt too wide) in paragraph at lines 7222--7222
+[][]\OT1/cmtt/m/n/10 I(A(char *p = str, *p != '\0', p++, islower(*p))); \OT1/cm
+r/m/n/10 with []\OT1/cmtt/m/n/10 gcc -g -O3
+ []
+
+[142]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 7262--7262
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[143]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 7322--7322
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[144]
+Overfull \hbox (52.74678pt too wide) in paragraph at lines 7371--7371
+[][]\OT1/cmtt/m/n/10 I(A(int i = 0, i < 10, i++, E1(int j = 0, j < 10, j++, a[i
+] == a[j])));
+ []
+
+[145] [146] [147] [148] [149]
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 7622--7622
+[][]\OT1/cmtt/m/n/10 gi = ~0; LG(gi & 0x10, "helloworld\n"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O0 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 7642--7642
+[][]\OT1/cmtt/m/n/10 gi = ~0; LG(gi & 0x10, "helloworld\n"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O1 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (4.83122pt too wide) in paragraph at lines 7666--7666
+[][]\OT1/cmtt/m/n/10 gi = ~0; LG(gi & 0x10, "helloworld\n"); \OT1/cmr/m/n/10 wi
+th []\OT1/cmtt/m/n/10 gcc -g -O3 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+[150] [151]
+Overfull \hbox (10.08118pt too wide) in paragraph at lines 7727--7727
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworld\n"); \OT1/cmr/m/n/10 w
+ith []\OT1/cmtt/m/n/10 gcc -g -O0 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (10.08118pt too wide) in paragraph at lines 7739--7739
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworld\n"); \OT1/cmr/m/n/10 w
+ith []\OT1/cmtt/m/n/10 gcc -g -O1 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+
+Overfull \hbox (10.08118pt too wide) in paragraph at lines 7751--7751
+[][]\OT1/cmtt/m/n/10 LHP(L_buffer_printf,buf,"helloworld\n"); \OT1/cmr/m/n/10 w
+ith []\OT1/cmtt/m/n/10 gcc -g -O3 \OT1/cmr/m/n/10 pro-duces: 
+ []
+
+[152]
+Overfull \hbox (0.24724pt too wide) in paragraph at lines 7791--7791
+ []        \OT1/cmtt/m/n/10 .file 3 "/usr/include/x86_64-linux-gnu/bits/syslog.
+h"[] 
+ []
+
+) [153] (./perf.aux) ) 
+Here is how much of TeX's memory you used:
+ 279 strings out of 493305
+ 3062 string characters out of 6139897
+ 72877 words of memory out of 5000000
+ 3781 multiletter control sequences out of 15000+600000
+ 7755 words of font info for 28 fonts, out of 8000000 for 9000
+ 957 hyphenation exceptions out of 8191
+ 23i,7n,19p,166b,308s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on perf.dvi (153 pages, 216752 bytes).

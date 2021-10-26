@@ -1,0 +1,106 @@
+* GNU Nana - improved support for assertions and logging in C and C++.
+
+Nana provides improved support for assertion checking and logging in GNU C
+and C++. It provides:
+
+	o Operations can be implemented directly in C or by generating 
+	  debugger commands which do the checking and logging only if the 
+	  application is run under the debugger. The debugger based calls
+	  require are very space efficient (0 or 1 bytes per call). 
+
+
+	o Support for assertion (invariant checking) including:
+		
+		+ Space and time efficient (at least versus <assert.h>)
+		  For example: assert(i>=0) uses 53 bytes on a i386 vs 
+		  an optimised nana call which uses 10 bytes per call.
+		+ Checking can be turned on or off at compile or run time.
+		+ The action taken when an error is detected can be modified 
+		  on a global and per/call basis.
+
+	o Support for logging (printf style debugging) including:
+
+		+ Logging can be turned on and off at compile or run time.
+		+ Logging to files, processes or circular buffers in memory
+		  with optional time stamping.
+
+	o Support for the quantifiers of predicate calculus (forall, exists).
+
+	o Measurement of space/time overheads for code fragments (see perf/)
+
+	o A shortform/HTML code overview generator (see shortform/).
+          [A shortform consists of the function headers together with
+	   their pre/post conditions]
+
+* Installation.
+Nana uses the standard GNU installation method, e.g.
+
+	% gzcat nana-2.2.tar.gz | tar xvf -
+	% cd nana-2.2
+	% ./configure
+	% make
+	% make install
+	% make check 
+	% make check-mail			[Please do this step!]
+	% make subscribe
+
+	Notes: 
+
+	* the make check follows the install.
+	* make uninstall is supported.
+	* if you want to install it in your own account use something
+	  like: ./configure --prefix=~/local and remember to add
+	  ~/local/bin to your path.
+	* the check-mail posts off the results of the testing to nana-bug
+	using mail. N.B. Some mails don't support the subject field, some
+	O/S don't have a command called mail, etc, etc. If so try it 
+	by hand using something like:
+
+		% make MAILER=elm check-mail
+	
+	* the make subscribe is used to subscribe you to the
+	nana mailing list.
+	      
+
+* But make check failed with errors.
+
+A fail in make check normally (:-)) means that part of nana is not
+working correctly. As usual don't panic, have a cup of tea. 
+The following problems are common:
+
+	o The debugger based macros fail with gcc -O2 or gcc -O3
+  	  because your compiler and debugger get upset with each other
+	  at higher levels of optimisation.
+	
+	o Qstl.h doesn't work, have you (or your compiler writer) 
+	  installed the STL library?
+
+* Information in the distribution.
+
+	./INSTALL		-- a general guide to the configure
+	./doc/nana.texi		-- texinfo source for documentation
+	./doc/nana.info		-- system documentation (includes installation)
+	./doc/nana.ps 		-- postscript version of documentation
+	./man/*			-- man pages (not very good)
+
+* Information on the net.
+	
+<http://www.cs.ntu.edu.au/homepages/pjm/nana-home> -- nana homepage
+<ftp://cs.ntu.edu.au/pub/nana> -- ftp archive
+
+<mailto:nana-bug@cs.ntu.edu.au> -- bug reports
+
+<mailto:nana@it.ntu.edu.au> -- nana mailing list (new versions, suggestions,
+				etc). Uses majordomo.  To subscribe send
+				"subscribe nana <address>" to
+				<mailto:nana-request@it.ntu.edu.au>
+<http://www.cs.ntu.edu.au/hypermail/nana-archive> -- archive of
+				mailing list.
+
+* N.B.: Nana is part of the GNU project and has been released
+under the aegis (a shield given by Zeus to Minerva) of GNU.
+See the COPYRIGHT for more details.
+
+Good Luck
+P.J.Maker <pjm@gnu.org>
+	

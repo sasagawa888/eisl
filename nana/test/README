@@ -1,0 +1,32 @@
+README for nana/test
+
+* Running tests.
+use "make check" to run the checkall program which runs the real tests by
+using the checkall program.
+
+individual tests can be run as "nana-clg DI.c | check.awk"
+
+* Method.
+The test programs include "check.h" which provides a set of macros 
+which generate output in the form:
+
+output from code@expected output@message\n
+
+This can then be verified by check.awk
+
+* Known Problems.
+With -O3 the local variables used in the test are optimised away so 
+we can't use DI(i>=0) etc. Adding a volatile to the declaration solves
+this problem. If you want to see it, add a "-O3 -Dvolatile=" line into
+checkall in the list of optimisation options
+
+* Why so many tests (or so few). 
+A lot of the tests are aimed at testing the compiler rather than the
+library. A fair bit of bash testing is needed to find the limitations
+of debuggers and compilers, e.g. a debugger that can only set less
+than 10,000 breakpoints.
+
+
+
+
+

@@ -46,7 +46,7 @@ static struct chunk {
 } head = { NULL, NULL, NULL }, *current = &head;
 static char *alloc(int len) {
 	assert(len >= 0);
-	if (current->avail + len > current->limit) {
+	if (current->avail == NULL || current->avail + len > current->limit) {
 		current = current->link = 
 			ALLOC(sizeof (*current) + 10*1024 + len);
 		current->avail = (char *)(current + 1);

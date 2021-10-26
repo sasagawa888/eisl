@@ -1,0 +1,27 @@
+\begin{tabular}{|l|l|l|l|}
+\hline
+Code & Size & Time & Options \\
+\hline
+\verb@i = 4;@&7&0ns&-O0\\
+\verb@i = 4;@&8&0ns&-O1\\
+\verb@i = 4;@&8&0ns&-O3\\
+\verb@gi = 11;@&10&0ns&-O0\\
+\verb@gi = 11;@&10&0ns&-O1\\
+\verb@gi = 11;@&10&0ns&-O3\\
+\verb@f = 12.0;@&9&0ns&-O0\\
+\verb@f = 12.0;@&14&0ns&-O1\\
+\verb@f = 12.0;@&8&0ns&-O3\\
+\verb@gf = 12.0;@&12&0ns&-O0\\
+\verb@gf = 12.0;@&16&0ns&-O1\\
+\verb@gf = 12.0;@&10&0ns&-O3\\
+\verb@i++;@&9&2ns&-O0\\
+\verb@i++;@&11&2ns&-O1\\
+\verb@i++;@&11&3ns&-O3\\
+\verb@gi++;@&15&2ns&-O0\\
+\verb@gi++;@&15&2ns&-O1\\
+\verb@gi++;@&15&2ns&-O3\\
+\verb@j = a[i];@&15&0ns&-O0\\
+\verb@j = a[i];@&17&1ns&-O1\\
+\verb@j = a[i];@&16&0ns&-O3\\
+\hline
+\end{tabular}

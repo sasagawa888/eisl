@@ -1,0 +1,565 @@
+#! /bin/sh
+#
+# nana-gammon - a small automated testing program.
+# 
+# Copyright (C) 1999, Phil Maker, <pjm@gnu.org>, Quoll Systems.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+# $Id: gammon.in,v 1.1.1.1 1999/09/12 03:26:50 pjm Exp $
+#
+
+## ./configure sets up some variables for use in the test scripts
+
+SHELL="/bin/bash"
+CFLAGS="-g -O2"
+CPPFLAGS=""
+CXXFLAGS="-g -O2"
+FFLAGS="@FFLAGS@"
+DEFS="-DPACKAGE_NAME=\"nana\" -DPACKAGE_TARNAME=\"nana\" -DPACKAGE_VERSION=\"3.0\" -DPACKAGE_STRING=\"nana\ 3.0\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"nana\" -DVERSION=\"3.0\" -DHAVE_VSPRINTF=1 -DHAVE_VSNPRINTF=1 -DHAVE_GETTIMEOFDAY=1"
+LDFLAGS=""
+LIBS=""
+exec_prefix="${prefix}"
+prefix="/usr/local"
+program_transform_name="s,x,x,"
+bindir="${exec_prefix}/bin"
+sbindir="${exec_prefix}/sbin"
+libexecdir="${exec_prefix}/libexec"
+datadir="${prefix}/share"
+sysconfdir="${prefix}/etc"
+sharedstatedir="${prefix}/com"
+localstatedir="${prefix}/var"
+libdir="${exec_prefix}/lib"
+includedir="${prefix}/include"
+oldincludedir="/usr/include"
+infodir="${prefix}/share/info"
+mandir="${prefix}/share/man"
+host="x86_64-pc-linux-gnu"
+host_alias=""
+host_cpu="x86_64"
+host_vendor="pc"
+host_os="linux-gnu"
+target="x86_64-pc-linux-gnu"
+target_alias=""
+target_cpu="x86_64"
+target_vendor="pc"
+target_os="linux-gnu"
+build="x86_64-pc-linux-gnu"
+build_alias=""
+build_cpu="x86_64"
+build_vendor="pc"
+build_os="linux-gnu"
+INSTALL_PROGRAM="${INSTALL}"
+INSTALL_SCRIPT="${INSTALL}"
+INSTALL_DATA="${INSTALL} -m 644"
+PACKAGE="nana"
+VERSION="3.0"
+ACLOCAL="aclocal-1.14"
+AUTOCONF="autoconf"
+AUTOMAKE="automake-1.14"
+AUTOHEADER="autoheader"
+MAKEINFO="makeinfo"
+TAR="tar"
+AMTARFLAGS="@AMTARFLAGS@"
+SET_MAKE=""
+CC="gcc"
+AWK="gawk"
+F77="@F77@"
+CPP="gcc -E"
+CXX="g++"
+CXXCPP="g++ -E"
+RANLIB="ranlib"
+
+src_dir=.
+top_srcdir=..
+export src_dir
+export top_srcdir
+
+export SHELL
+export CFLAGS
+export CPPFLAGS
+export CXXFLAGS
+export FFLAGS
+export DEFS
+export LDFLAGS
+export LIBS
+export exec_prefix
+export prefix
+export program_transform_name
+export bindir
+export sbindir
+export libexecdir
+export datadir
+export sysconfdir
+export sharedstatedir
+export localstatedir
+export libdir
+export includedir
+export oldincludedir
+export infodir
+export mandir
+export host
+export host_alias
+export host_cpu
+export host_vendor
+export host_os
+export target
+export target_alias
+export target_cpu
+export target_vendor
+export target_os
+export build
+export build_alias
+export build_cpu
+export build_vendor
+export build_os
+export INSTALL_PROGRAM
+export INSTALL_SCRIPT
+export INSTALL_DATA
+export PACKAGE
+export VERSION
+export ACLOCAL
+export AUTOCONF
+export AUTOMAKE
+export AUTOHEADER
+export MAKEINFO
+export TAR
+export AMTARFLAGS
+export SET_MAKE
+export CC
+export AWK
+export F77
+export CPP
+export CXX
+export CXXCPP
+export RANLIB
+
+## initialise files for this set of tests
+
+rm -f [0-9]*
+rm -f *.var
+cat /dev/null >passed-tests
+cat /dev/null >failed-run
+cat /dev/null >failed-compile
+
+## clean - used to remove all the test result files
+clean () {
+    rm -f [0-9]*
+    rm -f *.var
+    rm -f passed-tests
+    rm -f failed-run
+    rm -f failed-compile
+    exit 0
+}
+
+## option setting commands 
+
+#
+# only run these particular tests
+# 
+# usage: only [testnumber ...]
+# example: only 1 3 19 20
+#          causes only tests 1 3 19 20 to be run
+#   
+runonly=false
+only () {
+    runonly=true
+    rm -f only-tests
+    for t in $*
+    do
+	echo $t >> only-tests
+    done
+}
+
+#
+# show or hide messages about each of the following tests.
+#     hide with no arguments hides everything whilst
+#     show with no arguments shows everything. 
+# 
+# usage: show [option ...]
+#        hide [option ...]
+#
+# example: 
+# hide
+#  
+showsource=true			# show the source code for this test
+showinput=true			# show the input for this test
+showoutput=true			# show the output from the program
+showexpect=true			# show the expected (correct) output
+showerror=true			# show the error output
+showexit=true			# show the exit code from the program
+showblank=true			# put a blank line between each test
+showtitle=true			# show the title for each test
+showresult=true			# show the result (pass/fail) for each test
+showcompile=true                # show the compile command used for this test
+
+show () {
+    case $#
+    in
+	0)
+	    for f in source input output expect \
+		    error exit tests blank title result compile
+	    do
+		eval show${f}=true
+	    done
+	    ;;
+	*)
+	    for f in $*
+	    do
+		eval show${f}=true
+	    done
+	    ;;
+    esac
+}
+
+hide () {
+    case $#
+    in
+	0)
+	    for f in source input output expect \
+		error exit tests blank title result compile
+	    do
+		eval show${f}=false
+	    done
+	    ;;
+	*)
+	    for f in $*
+	    do
+		eval show${f}=false
+	    done
+	    ;;
+    esac
+}
+
+# if keepclean then tests that pass are removed as we go, otherwise
+#    we keep all the source code etc around.
+keepclean=true
+
+keepall () {
+    keepclean=false
+}
+
+keepnone () {
+    keepclean=true
+}
+
+## 
+## Test setup functions - each of the following functions is used to
+##   set up part of each test. In particular for the function expect
+##   a file called expect.var which is then used as the expected
+##   output from the program. This file is then copied to 1-expect,
+##   2-expect, etc as the testing progresses. 
+##
+##   Note that the source function also runs the test.
+##
+## Usage: 
+##    
+##    source "exit(0);"
+## 
+##    or 
+##
+##    source <<EOF
+##    line1
+##    line2
+##    ...
+##    EOF
+##
+
+# source code for this test + run the test.
+source () {
+    case $#
+    in
+	0) cat >source.var ;;
+	*) echo "$*" >source.var ;;
+    esac
+    runtest
+}
+echo >source.var
+
+# the header for this and subsequent tests
+# this is the code that goes at the top of each test program
+header () {
+    case $#
+    in
+	0) cat >header.var ;;
+	*) echo "$*" >header.var ;;
+    esac
+}
+echo >header.var
+
+# the footer for this and subsequent tests
+# this code goes at the bottom of each test program
+footer () {
+    case $#
+    in
+	0) cat >footer.var ;;
+	*) echo "$*" >footer.var ;;
+    esac
+}
+echo >footer.var
+
+# the compile script for this and subsequent tests
+#   it is passed the test number as argument 1 and should set things
+#   up for the run script.
+compile () {
+    case $#
+    in
+	0) cat >compile.var ;;
+	*) echo "$*" >compile.var ;;
+    esac
+}
+echo >compile.var
+
+# the run script that executes the test program
+run () {
+    case $#
+    in
+	0) cat >run.var ;;
+	*) echo "$*" >run.var ;;
+    esac
+}
+echo "./\$1.out" >run.var
+
+# the input for this and subsequent tests
+input () {
+    case $#
+    in
+	0) cat >input.var ;;
+	*) echo "$*" >input.var ;;
+    esac
+}
+echo >input.var
+
+# the expected (correct) output from this program
+expect () {
+    case $#
+    in
+	0) cat >expect.var ;;
+	*) echo "$*" >expect.var ;;
+    esac
+}
+echo >expect.var
+
+# the program that checks the output for correctness
+check () {
+    case $#
+    in
+	0) cat >check.var ;;
+	*) echo "$*" >check.var ;;
+    esac
+}
+echo "exec cmp -s \$1-output \$1-expect" >check.var
+
+# the topic for this and subsequent tests (e.g. topic Q.h)
+topic () {
+    case $#
+    in
+	0) cat >topic.var ;;
+	*) echo "$*" >topic.var ;;
+    esac
+}
+echo >topic.var
+
+# the title for this particular test 
+title () {
+    case $#
+    in
+	0) cat >title.var ;;
+	*) echo "$*" >title.var ;;
+    esac
+}
+echo >title.var
+
+#
+# manysource generates one source call per line of its arguments
+#  and is used to generate a large number of tests from a code system.
+#
+# example:
+#
+# manysource "Q.c" <<EOF
+# test 1
+# test 2
+# test 3
+# EOF
+#
+manysource () {
+    case $# 
+    in
+	0) ;;
+	*) topic $* ;; 
+    esac
+
+    while read line 
+    do
+	title $line
+	source $line
+    done
+}
+
+#
+# runtest - used to run an individual test which will already be
+#   setup by the previous commands such as expect, etc.
+#   This is called automatically by the source command and should
+#   NOT normally be called by the user.
+#
+ 
+n=0
+passes=0
+runtime_failures=0
+compile_failures=0
+
+runtest () {
+    # increase the test number
+    n=`expr $n + 1`
+ 
+    # runonly is used to only run particular tests based on number.   
+    if $runonly
+    then
+	if grep -q ^$n\$ only-tests
+	then
+	    true
+	else
+	    return
+	fi
+    else
+	true
+    fi
+    
+    # generate the files for this particular test
+    for f in source header footer compile run input expect check topic title
+    do
+	cp $f.var $n-$f
+    done
+
+    # print the log message
+    $showtitle && echo "$n. `cat $n-topic` `cat $n-title`"
+
+    # display the source code if appropriate
+    $showsource && sed -e 's/^/    source:  /' $n-source
+
+    # compile the program (this may be a nop)
+    sh -x $n-compile $n >$n-compile.out 2>$n-compile.err
+    $showcompile && sed -e 's/^+ /    compile:  /' $n-compile.err
+
+    case $?
+    in
+	0) 
+	    ;;
+	*)
+	    $showresult && echo "    * compilation failed"
+	    $showblank && echo
+	    echo "$n" >> failed-compile
+	    compile_failures=`expr $compile_failures + 1`
+	    return 
+	    ;;
+    esac
+
+    # run the program 
+    sh $n-run $n <$n-input >$n-output 2>$n-error 
+    echo $? >$n-exit
+
+    # print the details for this test
+    $showinput  && sed -e 's/^/    input:   /' $n-input
+    $showoutput && sed -e 's/^/    output:  /' $n-output
+    $showexpect && sed -e 's/^/    expect:  /' $n-expect
+    $showerror  && sed -e 's/^/    error:   /' $n-error
+    $showexit   && sed -e 's/^/    exit:    /' $n-exit
+
+    # check the output
+    sh $n-check $n
+    case $?
+    in
+	0)
+	    $showresult && echo "    * passed"
+	    echo "$n" >> passed-tests
+	    passes=`expr $passes + 1`
+	    # keepclean causes us to remove successful test files
+	    $keepclean && rm -f $n-* $n.out
+	    ;;
+	*)
+	    $showresult && echo "    * failed"
+	    echo "$n" >> failed-run
+	    runtime_failures=`expr $runtime_failures + 1`
+	    ;;
+    esac
+
+
+    # separate each test by a line
+    $showblank && echo
+}
+
+summary () {
+    TOTAL_TESTS=`expr $passes + $runtime_failures + $compile_failures`
+    echo "* Result Summary: $passes passes out of $TOTAL_TESTS tests"
+    
+    echo
+    echo "  $passes passes:"
+    fmt passed-tests | sed -e 's/^/    /'
+    echo
+
+    echo "  $runtime_failures run time failures:"
+    fmt failed-run | sed -e 's/^/    /'
+    echo
+
+    echo "  $compile_failures compile failures:"
+    fmt failed-compile | sed -e 's/^/    /'
+    echo
+
+
+}
+
+#
+# And finally run all the tests specified in the command line
+# 
+# examples: 
+#    gammon
+#
+#    gammon a.gam
+#
+#    gammon "only 14 18 21" "show" all.gam 
+#
+
+case $#
+in 
+    0) 
+	. $src_dir/all.gam
+	;;
+    *)
+	for a in "$@"
+	do 
+	    case "$a"
+	    in 
+		*.gam)
+		    echo "Running tests from $a"
+		    . "$a"
+		;;
+		*)
+		    echo "Evaling from $a"
+		    eval "$a"
+		;;
+	    esac
+	done
+esac
+
+summary
+
+if test -s failed-run || test -s failed-compile
+then 
+    exit 1
+else
+    exit 0
+fi
+
+    

@@ -1,0 +1,22 @@
+README for nana/src 
+
+nana.h			#includes the other library headers
+
+DI.h			debugger based invariant checking
+DL.h			debugger based logging
+
+I.h			invariant (assertion) checking 
+I.c			the default error handling code
+
+L.h			logging (printf debugging) 
+L.c			support for logging
+
+L_buffer.h		support for logging into a circular buffer
+L_buffer.c
+
+nanafilter.c		the filter that extracts the debugger commands
+
+nana.in			generates the shell scripts the user runs (i.e. nana)
+nana-run.in
+nana-clg.in
+

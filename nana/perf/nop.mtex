@@ -1,0 +1,24 @@
+\begin{tabular}{|l|l|l|l|}
+\hline
+Code & Size & Time & Options \\
+\hline
+\verb@asm("");@&0&0ns&-O0\\
+\verb@asm("");@&0&0ns&-O1\\
+\verb@asm("");@&0&0ns&-O3\\
+\verb@asm("nop");@&1&0ns&-O0\\
+\verb@asm("nop");@&1&0ns&-O1\\
+\verb@asm("nop");@&1&0ns&-O3\\
+\verb@asm("nop;nop;");@&2&0ns&-O0\\
+\verb@asm("nop;nop;");@&2&0ns&-O1\\
+\verb@asm("nop;nop;");@&2&0ns&-O3\\
+\verb@asm("nop;nop;nop;");@&3&0ns&-O0\\
+\verb@asm("nop;nop;nop;");@&3&0ns&-O1\\
+\verb@asm("nop;nop;nop;");@&3&0ns&-O3\\
+\verb@asm("nop;nop;nop;nop;");@&4&0ns&-O0\\
+\verb@asm("nop;nop;nop;nop;");@&4&0ns&-O1\\
+\verb@asm("nop;nop;nop;nop;");@&4&0ns&-O3\\
+\verb@asm("nop;nop;nop;nop;nop;");@&5&0ns&-O0\\
+\verb@asm("nop;nop;nop;nop;nop;");@&5&0ns&-O1\\
+\verb@asm("nop;nop;nop;nop;nop;");@&5&0ns&-O3\\
+\hline
+\end{tabular}

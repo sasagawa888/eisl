@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+#include <Q.h>
+
+int z = 0;
+int o = 1;
+
+#define N 5
+
+int v[N] = { 0, 1, 2, 3, 4 };
+
+float fv[N] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+
+float fvsum = 1.0+2.0+3.0+4.0+5.0;
+
+float fvprod = 1.0*2.0*3.0*4.0*5.0;
+
+int m[N][N] = { 
+    { 1, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 0 },
+    { 0, 0, 1, 0, 0 },
+    { 0, 0, 0, 1, 0 },
+    { 0, 0, 0, 0, 1 }
+};
+
+#define T E(int i = 0, i < N, i++, v[i] == 1)
+#define F A(int i = 0, i < N, i++, v[i] > i)
+
+int main() {
+    printf("%d\n",

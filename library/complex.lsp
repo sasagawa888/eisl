@@ -111,3 +111,36 @@
          (b (sqrt (quotient (- a x) 2))))
     (complex (sqrt (quotient (+ a x) 2))
              (if (>= (imagpart z) 0) b (- b)))))
+
+;;; 逆三角関数 (atan と atan2 は ISLisp で定義されている)
+(defun asin (x) (atan2 x (sqrt (- 1 (* x x)))))
+(defun acos (x) (atan2 (sqrt (- 1 (* x x))) x))
+
+;;; 定数
+(defconstant iunit  (complex 0 1))
+(defconstant iunit- (complex 0 -1))
+(defconstant cone   (complex 1 0))
+(defconstant ctwo   (complex 2 0))
+(defconstant cpi2   (complex (quotient *pi* 2) 0))
+
+;;; 複素数の逆三角関数 (定義式通り)
+(defun casin (z)
+  (let ((z1 (csqrt (cadd cone z)))
+        (z2 (csqrt (csub cone z))))
+    (cmul iunit- (clog (cadd (cmul iunit z) (cmul z1 z2))))))
+
+(defun cacos (z) (csub cpi2 (casin z)))
+
+(defun catan (z)
+  (let ((z1 (cmul iunit z)))
+    (cdiv (cmul iunit
+                (csub (clog (csub cone z1)) (clog (cadd cone z1))))
+          ctwo)))
+
+;;; 逆双曲線関数 (atanh は ISLisp に定義されている)
+(defun asinh (x) (atanh (quotient x (sqrt (+ 1 (* x x))))))
+
+(defun acosh (x)
+  (let ((a (sqrt (+ x 1.0)))
+        (b (sqrt (- x 1.0))))
+    (atanh (quotient (* a b) x))))

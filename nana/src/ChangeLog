@@ -1,0 +1,32 @@
+Fri Feb 27 18:14:01 1998  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Added -lnana to nana-clg.in at the suggestion of Li Bin Lu
+
+Sun Jan 18 07:38:16 1998  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Removed some inline definitions from the library which seem
+	to be confusing Solaris.
+
+	* Replaced _cplusplus with __cplusplus in some
+	of the headers.
+
+Wed Nov 12 17:23:11 1997  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Added V* functions to L.h, DL.h
+
+Sun Apr 27 07:18:16 1997  Phil Maker  <pjm@chingiz.cs.ntu.edu.au>
+
+	* Added nana-eiffel-commands and nana-print-classes to
+	support the eiffel.h work. 
+
+	* Added eiffel.h which attempts to build an assertion mechanism
+	similar to the Eiffel programming language using nana.
+
+Wed Jun 19 23:17:57 1996  Phil Maker  <pjm@morinda.cs.ntu.edu.au>
+
+	* Added an nana-run-init.gdb script which gets called before
+	all the the user gdb scripts in nana-run. Without this the
+	debugger can set waiting for a newline since it turns on
+	pagination by default. This file just turns pagination and
+	questioning off before the breakpoints are loaded.
+

@@ -1,0 +1,201 @@
+#!/bin/sh
+#
+# nana-sfg.in - the nana shortform generator (aka nana science fiction 
+#    generator). 
+#
+#    A shortform is the program minus the implementation
+#    (code, variables) but includes REQUIRE and ENSURE calls which 
+#    are the function pre/postconditions. See below for the translation
+#    rules.
+#
+# Usage: 
+#    
+#   % nana-sfg <a.c >sf.c
+#   % nana-sfg a.c >sf.c     
+#   % nana-sfg *.[ch] >system.sf
+#
+# Options:
+#
+#   Like all good programs this one has no options, obviously different
+#   projects will have different requirements. It is suggested that each
+#   of your projects (or groups) keep a version of this file and modify
+#   it for local taste. For example some people might want to preserve
+#   comments starting in the right hand column. 
+# 
+# Copyright (c) 1998 Phil Maker <pjm@gnu.org>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+# $Id: nana-sfg.in,v 1.1.1.1 1999/09/12 03:26:49 pjm Exp $
+#
+
+gawk '
+		
+# keep track of previous line for function headers
+{ prev = cur; cur = $0; } 
+
+# ignore C/C++ labels even though they occur at column 1 
+/[a-zA-Z]*:/     { next }
+
+# various C preprocessor directives
+/^#[ \t]*include/ { emit(); } 
+/^#[ \t]*define/  { emit(); }
+/^#[ \t]*/        { next }
+
+# various balanced lists of the form X { ... { ... } ...}
+/^typedef[ \t]+struct/ ||     
+/^typedef[ \t]+union/  ||     
+/^typedef[ \t]+enum/   ||
+/^class/               ||
+/^struct/ ||
+/^union/ ||
+/^enum/  ||
+/^class/ { balanced("{","}"); }
+
+# simple typedef such "typedef int word;" (note: complicated ones are handled
+#   in the previous rule)
+/^typedef/       { till(";"); }
+
+# any function definition like object starting in column 1
+/^[a-zA-Z].*\(/  { 
+		   printprevif("^[a-zA-Z]"); # return type in some styles
+		   till("\{"); # 
+                 }
+
+# closing } in column one (end of function/class/typedef/enum/
+/^\}[ \t]*$/             { emit(); }
+
+# REQUIRE/ENSURE clauses
+/^[ \t]*REQUIRE/  ||
+/^[ \t]*ENSURE/   { till("\)[ \t]*;"); }
+
+# PRE/POST clauses
+/^[ \t]*PRE/  ||
+/^[ \t]*POST/   { till("\)[ \t]*;"); }
+
+# ignore blank lines 
+/^[ \t]*$/       { next }
+
+# finally all text to be removed is printed out with a 
+# leading "@@@" for the next pass to compress into "...". 
+#
+#  Alternatively you could use a few state variables in here to 
+#  get this to work but the only good state variable is a dead one.
+#
+{ print "@@@" $0 }
+
+#### end of rules ####
+
+# mustgetline - getline with a fatal error on EOF
+function mustgetline() {
+    if(getline <= 0) {
+	print "Fatal error: unexpected eof"
+	exit(1)
+    }
+}
+
+# emit - just print this line and start looking at the next one
+function emit() {  
+    print 
+    next
+}
+
+# till - print the current line and advance until we match regexp re
+function till(re) {
+    print 
+    while(!match($0,re) && (getline > 0)) 
+	print $0
+    next
+}
+
+# printprevif - print the previous line iff current line matches re
+function printprevif(re) {
+    if(match(prev,re)) 
+        print prev
+}
+
+# balanced - print a balanced list of lines, in particular:
+#   0. print lines until we get the opening
+#   1. until we reach the end of balanced list print them
+#
+#   Note: multiple open/closes on one line are NOT detected
+#
+function balanced(opening,closing,  cnt) {
+    if(match($0,opening)) {
+        cnt = 1;
+        while(cnt > 0) {
+	    print 
+	    mustgetline()
+	    if(match($0,opening)) { 
+		cnt++;
+	    }
+	    if(match($0,closing)) {
+	        cnt--;
+	    }
+        }
+	print
+	mustgetline()
+    } else {
+        print 
+	mustgetline()
+	if(match($0,opening)) {
+	    balanced(opening,closing)
+	    return
+	} else {
+	    puts "expected " $opening ": not found"
+        }
+    }
+}
+	
+    
+' $* |
+gawk '
+
+# print adjacent deleted text as ... starting at the column of the
+# first non-white space character in the first line.  
+
+/^@@@/ {
+    sub(/^@@@/,"",$0) 
+    print indent($0) "..."  
+    while(getline > 0) {
+	if(!match($0,/^@@@/)) { 
+	    print 
+	    break 
+	} 
+    } 
+    next 
+}
+
+{ print }
+
+# indent - returns the indentation (first bit of white space)
+function indent(s, i) {
+    i = s
+    gsub(/[^ \t].*/,"", i)
+    return i
+}
+    
+'
+
+
+

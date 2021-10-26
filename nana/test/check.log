@@ -1,0 +1,77 @@
+* testing C libraries using gcc and various optimisation flags
+** selftest.c using gcc 
+** selftest.c using gcc -O
+** selftest.c using gcc -O2
+** selftest.c using gcc -O3
+** Q.c using gcc 
+** Q.c using gcc -O
+** Q.c using gcc -O2
+** Q.c using gcc -O3
+** I.c using gcc 
+** I.c using gcc -O
+** I.c using gcc -O2
+** I.c using gcc -O3
+** L.c using gcc 
+** L.c using gcc -O
+** L.c using gcc -O2
+** L.c using gcc -O3
+** DI.c using gcc 
+** DI.c using gcc -O
+** DI.c using gcc -O2
+** DI.c using gcc -O3
+** DL.c using gcc 
+** DL.c using gcc -O
+** DL.c using gcc -O2
+** DL.c using gcc -O3
+** DS.c using gcc 
+** DS.c using gcc -O
+** DS.c using gcc -O2
+** DS.c using gcc -O3
+* testing C++ libraries using g++ and various optimisation flags
+** selftest.c using g++ 
+** selftest.c using g++ -O
+** selftest.c using g++ -O2
+** selftest.c using g++ -O3
+** eiffel.cc using g++ 
+** eiffel.cc using g++ -O
+** eiffel.cc using g++ -O2
+** eiffel.cc using g++ -O3
+** Qstl.cc using g++ 
+** Qstl.cc using g++ -O
+** Qstl.cc using g++ -O2
+** Qstl.cc using g++ -O3
+** Q.c using g++ 
+** Q.c using g++ -O
+** Q.c using g++ -O2
+** Q.c using g++ -O3
+** I.c using g++ 
+** I.c using g++ -O
+** I.c using g++ -O2
+** I.c using g++ -O3
+** L.c using g++ 
+** L.c using g++ -O
+** L.c using g++ -O2
+** L.c using g++ -O3
+** DI.c using g++ 
+** DI.c using g++ -O
+** DI.c using g++ -O2
+** DI.c using g++ -O3
+** DL.c using g++ 
+** DL.c using g++ -O
+** DL.c using g++ -O2
+** DL.c using g++ -O3
+** DS.c using g++ 
+** DS.c using g++ -O
+** DS.c using g++ -O2
+** DS.c using g++ -O3
+* manyDL.c - bash testing for many (1024) DL messages
+Passed 1024 tests completed successfully
+* manyDI.c - bash testing for many (1024) DI checks
+* now.c - timing measurements
+* End of tests
+* Final summary of results
+** Passes
+Passed 1024 tests completed successfully
+Total Passes: 1024
+** Failures
+**** checkall: passed ****

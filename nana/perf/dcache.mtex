@@ -1,0 +1,14 @@
+\begin{tabular}{|l|l|l|l|}
+\hline
+Code & Size & Time & Options \\
+\hline
+\verb@I(A(int i=0, i < 1*1024, i++, za[i] == 0));@&102&3.3us&-DNT=16\\
+\verb@I(A(int i=0, i < 2*1024, i++, za[i] == 0));@&102&5.0us&-DNT=16\\
+\verb@I(A(int i=0, i < 4*1024, i++, za[i] == 0));@&102&9.8us&-DNT=16\\
+\verb@I(A(int i=0, i < 8*1024, i++, za[i] == 0));@&102&20.4us&-DNT=16\\
+\verb@I(A(int i=0, i < 16*1024, i++, za[i] == 0));@&102&39.4us&-DNT=16\\
+\verb@I(A(int i=0, i < 32*1024, i++, za[i] == 0));@&102&77.4us&-DNT=16\\
+\verb@I(A(int i=0, i < 64*1024, i++, za[i] == 0));@&102&155.0us&-DNT=16\\
+\verb@I(A(int i=0, i < 128*1024, i++, za[i] == 0));@&102&311.5us&-DNT=16\\
+\hline
+\end{tabular}

@@ -1,0 +1,41 @@
+nana/emacs - some very early prototypes for a log mode in emacs.
+
+The fess.el mode is intended as a tool for analysing the debugging
+output of a program. The current prototype provides the ability to
+show and hide lines by regular expressions in emacs.
+
+The basic usage is:
+
+C-C C-h hide lines by regexp
+C-C C-s show lines by regexp
+C-C *   show all lines
+
+*Warning*: this code is mainly to inspire someone else to do it 
+	properly. I know it breaks coding guidelines, has 	
+	a few minor bugs and sometimes kills people.
+	I had a look at some of the other modes to see
+	if I could get the same effect and failed.
+
+* What to add?
+
+A proper version would include the ability to use another program
+to select line visibility, e.g.
+
+(fess-show "awk '$3 > 100 {print NR}'")
+
+Where column 3 represents nuclear reactor temperature.
+
+(fess-show <lisp-predicate>) - using a boolean elisp function?
+		we'd probably also need some awk like functions
+		in elisp (e.g. (field 3)).
+
+The indirect buffers in emacs-20 would allow us to maintain
+multiple views of the same data set.
+
+Notes for a production version:
+
+	0. Might also be useful for looking at syslog output.
+	1. Perhaps put in time limitations for time stamped messsages.
+	   messages from t..u only allowed.
+
+ 

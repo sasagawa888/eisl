@@ -1,0 +1,8 @@
+* Manual pages.
+
+The manual pages are very brief and have been formatted without using 
+any of the smarter man macros such as .Fn; once I understand the portability
+of the various man macro's I may rewrite them. Of course you should really
+be looking at the info pages, example code and the source.
+
+ 

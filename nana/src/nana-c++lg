@@ -1,0 +1,62 @@
+#! /bin/sh
+#
+# nana-c++lg.in - does a compile, link and go all in command using g++
+#	It is used in the test system and is sometimes of use for doing
+#	quick tests or for first year students. 
+#
+# usage: 
+# 
+#	% nana-c++lg main.c
+#	% nana-c++lg -O3 main.c -lm 
+#	% nana-c++lg -O3 main.c lib.c -lm 
+#
+# Copyright (c) 1997 Phil Maker
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+case $1 
+in
+    --version)
+	  echo "nana-c++lg 3.0"
+	  echo "Copyright (C) 1997 Phil Maker"
+	  echo "Nana comes with NO WARRANTY, to the extent permitted by law."
+	  echo "You may redistribute copies of nana without charge."
+	  echo "See the file COPYING for more details."
+	  exit 0 
+          ;;
+    --help)
+	  echo "usage: nana-c++lg [g++ arguments ...]"
+	  echo ""
+	  echo "nana-c++lg compiles your program using g++,"
+	  echo "  generates gdb commands and finally runs your program"
+	  echo "  inside gdb. This script is intended for the quick testing"
+	  echo "  of small programs."
+	  exit 0 
+	  ;;
+esac
+
+
+NANACC=g++ ${NANABIN-${exec_prefix}/bin}/nana-clg $*
+
+

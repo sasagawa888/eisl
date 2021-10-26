@@ -1,0 +1,83 @@
+#!/bin/sh
+#
+# nana-libtrace.in - generates a GDB script for tracing a library
+#   or object file. If no file arguments are supplied it reads a
+#   list of function names from the input and traces these functions.
+#
+# Copyright (c) 1995,1996,1997 Phil Maker
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+
+TMPA=/tmp/$$.a
+TMPB=/tmp/$$.b
+
+trap "rm -f $TMPA $TMPB" 2
+
+case $# in
+0)
+	echo "usage: $0 a.out [lib ..]"
+	exit 1
+	;;
+*)
+	AOUT=$1
+	shift
+	;;
+esac
+    
+nm -o $AOUT | awk '$2 == "T" { print $3 }' | sort >$TMPA
+
+case $# in
+0) 
+	awk '{ print "_" $0 }'
+	;;
+*)
+	for f in $*
+	do
+		# nm(1) changes a bit on UNIX so this may need modifications
+		nm -o $f |
+		awk '$2 == "T" { print $3 }' 
+	done
+	;;
+esac | 
+sort >$TMPB 
+
+comm -12 $TMPA $TMPB |
+@AWK@ '
+# ignore some of the more dubious labels in text....
+/^___do/ || /^___main/ { next }
+
+{
+    gsub(/^_/,"",$0)
+    print "break", $0 
+    print "command $bpnum"
+    print "silent"
+    print "where 1"
+    print "cont"
+    print "end"
+}'
+
+rm -f $TMPA 
+rm -f $TMPB
+
+exit 0

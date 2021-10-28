@@ -893,9 +893,9 @@
    (setq *call-tree* '())
    (funcall *gf4* 100)))
 ($eval (foo-33 1))
-;($test (cf1) (i-primary-1 1 100) equal)
-;($test (cf2) (i-primary-2 (n-primary-2 innermost n-primary-1) 100) equal)
-;($test (cf3) (n-primary-1 1 100) equal)
+($test (cf1) (i-primary-1 1 100) equal)
+($test (cf2) (i-primary-2 (n-primary-2 innermost n-primary-1) 100) equal)
+($test (cf3) (n-primary-1 1 100) equal)
 ;($test (cf4) (n-primary-2 (innermost) 100) equal)
 ;;
 ($eval 
@@ -999,13 +999,13 @@
 ($test (foo-40 2 3) (20 30) equal)
 ($test (funcall f) (5 6 (2 3)) equal)
 ;;
-;($eval (defgeneric foo-41 (a &rest r)))
-;($eval (defmethod foo-41 ((a <integer>) &rest r)
-;	 (setf (car r) 9)
-;	 (call-next-method)))
-;($eval (defmethod foo-41 ((a <number>) &rest r)
-;	 (car r)))
-;($test (foo-41 1 2) 2 eql)
+($eval (defgeneric foo-41 (a &rest r)))
+($eval (defmethod foo-41 ((a <integer>) &rest r)
+	 (setf (car r) 9)
+	 (call-next-method)))
+($eval (defmethod foo-41 ((a <number>) &rest r)
+	 (car r)))
+($test (foo-41 1 2) 2 eql)
 ;;;------------------------------------------------------------
 ;;; [generic function]
 ;;;

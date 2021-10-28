@@ -5000,7 +5000,7 @@ f_error(int arglist)
 	error(NOT_STR, "error", arg1);
 
     return (signal_condition
-	    (makeusercond(cerror, arg1, arg2), NIL));
+	    (makeusercond(csimple_error, arg1, arg2), NIL));
 }
 
 int

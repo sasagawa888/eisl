@@ -511,6 +511,7 @@ extern int      area_sw;
 extern Except_T Restart_Repl,
                 Exit_Interp;
 extern jmp_buf  block_buf[NESTED_BLOCKS_MAX];
+extern int		block_tag_check[NESTED_BLOCKS_MAX];
 extern int      block_env[NESTED_BLOCKS_MAX][2];
 extern jmp_buf  catch_buf[10][50];
 extern int      catch_env[10][50];
@@ -969,6 +970,7 @@ int             f_with_standard_input(int x);
 int             f_with_standard_output(int x);
 int             f_write_byte(int arglist);
 int             f_line_argument(int arglist);
+int             find_return_from_p(int x);
 int             finddyn(int sym);
 int             findenv(int sym);
 int             flatten(int n, int ls);

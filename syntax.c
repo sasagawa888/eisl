@@ -1083,8 +1083,10 @@ f_block(int arglist)
     if (block_pt >= 50)
 	error(CTRL_OVERF, "block buffer over fllow", NIL);
 
+
     block_env[block_pt][0] = ep;	// save environment
     block_env[block_pt][1] = tag;	// save tag symbol
+    block_tag_check[block_pt] = find_return_from_p(arg2); // save flag. if exist return-from 1 else 0
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
 
@@ -1108,6 +1110,20 @@ f_block(int arglist)
     return (UNDEF);
 }
 
+int find_return_from_p(int x){
+    if (nullp(x))
+        return(0);
+    else if (symbolp(x) && eqp(x,makesym("RETURN-FROM")))
+        return(1);
+    else if (atomp(x))
+        return(0);
+    else if (find_return_from_p(car(x)) || find_return_from_p(cdr(x)))
+        return(1);
+    else 
+        return (0); 
+
+}
+
 int
 f_return_from(int arglist)
 {
@@ -1125,6 +1141,8 @@ f_return_from(int arglist)
     block_pt--;
     if (block_env[block_pt][1] != tag)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
+    if (block_tag_check[block_pt] == 0)
+    error(UNDEF_TAG, "return-from tag not exist", tag);
     block_arg = f_progn(arg2);
     ep = block_env[block_pt][0];	// restore environment
     longjmp(block_buf[block_pt], 1);

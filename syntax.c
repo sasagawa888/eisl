@@ -1547,7 +1547,7 @@ f_defclass(int arglist)
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
-		// (slot-value x 'var))
+		//    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y))
 		// (set-property 1 'reader 'read))
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
@@ -1560,8 +1560,13 @@ f_defclass(int arglist)
 		form =
 		    list4(makesym("DEFMETHOD"), reader,
 			  list1(list2(makesym("x"), arg1)),
-			  list3(makesym("SLOT-VALUE"), makesym("x"),
-				list2(makesym("QUOTE"), sym)));
+              list4(makesym("LET"),
+                    list1(list2(makesym("y"),list3(makesym("SLOT-VALUE"), makesym("x"),
+				                             list2(makesym("QUOTE"), sym)))),
+                    list3(makesym("IF"),list2(makesym("DUMMYP"),makesym("y")),
+                                        list3(makesym("CERROR"),makestr("undefined"),makestr("reader"))),
+                    makesym("y")));
+                    
 		eval(form);
 		form = list4(makesym("SET-PROPERTY"),
 			     makeint(1),
@@ -1608,9 +1613,9 @@ f_defclass(int arglist)
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
-		// (slot-value x 'var))
-		// ? (defmethod name ((x <null>)) for setf syntax
-		// ? 'var)
+		//   (let ((y (slot-value x 'var))) (if (dummyp y) (error "undefined" "accessor") y)))
+		// (defmethod name ((x <null>)) for setf syntax
+		// 'var)
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1622,8 +1627,13 @@ f_defclass(int arglist)
 		form =
 		    list4(makesym("DEFMETHOD"), accessor,
 			  list1(list2(makesym("x"), arg1)),
-			  list3(makesym("SLOT-VALUE"), makesym("x"),
-				list2(makesym("QUOTE"), sym)));
+              list4(makesym("LET"),
+                    list1(list2(makesym("y"),list3(makesym("SLOT-VALUE"), makesym("x"),
+				                             list2(makesym("QUOTE"), sym)))),
+                    list3(makesym("IF"),list2(makesym("DUMMYP"),makesym("y")),
+                                        list3(makesym("CERROR"),makestr("undefined"),makestr("accessor"))),
+                    makesym("y")));
+                    
 		eval(form);
 		form =
 		    list4(makesym("DEFMETHOD"), accessor,

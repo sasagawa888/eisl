@@ -3641,6 +3641,7 @@ DEF_PREDICATE(INSTANCE, INSTANCE)
     val = assoc(arg2, GET_CDR(arg1));
     if (nullp(val))
 	error(UNDEF_VAR, "slot-value", arg2);
+    
 
     return (cdr(val));
 }

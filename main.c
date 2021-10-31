@@ -1690,6 +1690,18 @@ DEF_GETTER(char, TR, trace, NIL)
 	    generic_func = func;
 	    generic_vars = args;
 	    next_method = GET_CDR(func);
+		if (GET_TR(examin_sym) == 1) {
+	    	trace = examin_sym;
+	    	n = GET_TR(func);
+	    	SET_TR(func, n + 1);
+	    	for (i = 0; i < n; i++)
+			putchar(' ');
+	    	fputs("ENTERING: ", stdout);
+	    	print(trace);
+	    	putchar(' ');
+	    	print(args);
+	    	putchar('\n');
+		}
 	    while (!nullp(next_method)) {
 		varlist = car(GET_CAR(car(next_method)));
 		// adaptp(x,y) if sameclass or y is super-classs return 1 else 0;

@@ -4893,11 +4893,11 @@ f_next_method_p(int arglist)
 {
     int             method;
 
-    if (length(arglist) != 0)
-	error(UNDEF_FUN, "next-method-p", arglist);
     if (generic_func == NIL)
 	error(UNDEF_FUN, "next-method-p", NIL);
-
+    if (length(arglist) != 0)
+	error(WRONG_ARGS, "next-method-p", arglist);
+    
     method = cdr(next_method);
     while (!nullp(method)) {
 	int             varlist;

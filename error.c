@@ -58,6 +58,10 @@ error(int errnum, const char *fun, int arg)
     }
     fun1[i] = '\0';
 
+	// clear generic-function data.
+	generic_func = NIL;
+	generic_vars = NIL;
+
     switch (errnum) {
     case DIV_ZERO:
 	initargs =
@@ -643,8 +647,6 @@ signal_condition(int x, int y)
     input_stream = standard_input;
     output_stream = standard_output;
     handling_resource_err = false;
-	generic_func = NIL;
-	generic_vars = NIL;
     debugger();
     RAISE(Restart_Repl);
     return 0;

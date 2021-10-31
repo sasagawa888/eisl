@@ -1226,7 +1226,7 @@
 ($eval (catch-condition (error "err")))
 ($test (eq (class-of cc) (class <simple-error>)) t)
 ;; <end-of-stream>
-($eval (catch-condition (let ($test (str (create-string-input-stream "hi")))
+($eval (catch-condition (let ((str (create-string-input-stream "hi")))
 	      (read-char str)
 	      (read-char str)
 	      (read-char str))))
@@ -1752,7 +1752,7 @@
 ($test (instancep cc (class <stream>)) nil)
 ($test (instancep cc (class <invalid>)) nil)
 ;; <end-of-stream>
-($eval (catch-condition (let ($test (str (create-string-input-stream "hi")))
+($eval (catch-condition (let ((str (create-string-input-stream "hi")))
 	      (read-char str)
 	      (read-char str)
 	      (read-char str))))

@@ -1,8 +1,14 @@
+(defglobal cc nil)
 
-(defclass foo-6 ()
-   ((a :reader read-foo-a
-       :writer write-foo-a
-       :accessor access-foo-a
-       :boundp boundp-foo-a)))
+(defmacro catch-condition (&rest form)
+	 `(catch 'c
+	    (with-handler 
+	     (lambda (c) 
+	       (setq cc c) 
+	       (throw 'c cc))
+	     ,@form)))
 
-(defglobal x (create (class foo-6)))
+(setq cc (catch-condition (let ($test (str (create-string-input-stream "hi")))
+	      (read-char str)
+	      (read-char str)
+	      (read-char str))))

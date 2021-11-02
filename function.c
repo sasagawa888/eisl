@@ -83,7 +83,6 @@ initsubr(void)
     defsubr("DIV", f_div);
     defsubr("DOMAIN-ERROR-OBJECT", f_domain_error_object);
     defsubr("DOMAIN-ERROR-EXPECTED-CLASS", f_domain_error_expected_class);
-    defsubr("DUMMYP", f_dummyp);
     defsubr("ELT", f_elt);
     defsubr("EQ", f_eq);
     defsubr("EQL", f_eql);
@@ -214,6 +213,9 @@ initsubr(void)
     defsubr("UNDEFINED-ENTITY-NAMESPACE", f_undefined_entity_namespace);
     defsubr("VECTOR", f_vector);
     defsubr("WRITE-BYTE", f_write_byte);
+
+    //inner extended functions
+    defsubr("EISL-DUMMYP", f_dummyp);
 }
 
 

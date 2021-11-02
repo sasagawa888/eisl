@@ -1563,7 +1563,7 @@ f_defclass(int arglist)
               list4(makesym("LET"),
                     list1(list2(makesym("y"),list3(makesym("SLOT-VALUE"), makesym("x"),
 				                             list2(makesym("QUOTE"), sym)))),
-                    list3(makesym("IF"),list2(makesym("DUMMYP"),makesym("y")),
+                    list3(makesym("IF"),list2(makesym("EISL-DUMMYP"),makesym("y")),
                                         list3(makesym("CERROR"),makestr("undefined"),makestr("reader"))),
                     makesym("y")));
                     
@@ -1630,7 +1630,7 @@ f_defclass(int arglist)
               list4(makesym("LET"),
                     list1(list2(makesym("y"),list3(makesym("SLOT-VALUE"), makesym("x"),
 				                             list2(makesym("QUOTE"), sym)))),
-                    list3(makesym("IF"),list2(makesym("DUMMYP"),makesym("y")),
+                    list3(makesym("IF"),list2(makesym("EISL-DUMMYP"),makesym("y")),
                                         list3(makesym("CERROR"),makestr("undefined"),makestr("accessor"))),
                     makesym("y")));
                     
@@ -1664,7 +1664,7 @@ f_defclass(int arglist)
 		    list4(makesym("DEFMETHOD"), boundp,
 			  list1(list2(makesym("x"), arg1)),
 			  list2(makesym("NOT"),
-				list2(makesym("DUMMYP"),
+				list2(makesym("EISL-DUMMYP"),
 				      list3(makesym("SLOT-VALUE"),
 					    makesym("x"),
 					    list2(makesym("QUOTE"),

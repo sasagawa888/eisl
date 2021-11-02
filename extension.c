@@ -26,11 +26,6 @@ initexsubr(void)
     defsubr("FIXNUMP", f_fixnump);
     defsubr("LONGNUMP", f_longnump);
     defsubr("BIGNUMP", f_bignump);
-    defsubr("READED-ARRAY-LIST", f_readed_array_list);
-    defsubr("GET-METHOD", f_get_method);
-    defsubr("GET-METHOD-BODY", f_get_method_body);
-    defsubr("GET-METHOD-PRIORITY", f_get_method_priority);
-    defsubr("IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
     defsubr("SELF-INTRODUCTION", f_self_introduction);
     defsubr("CLASSP", f_classp);
     defsubr("C-INCLUDE", f_ignore);
@@ -43,6 +38,11 @@ initexsubr(void)
     defsubr("LINE-ARGUMENT", f_line_argument);
     defsubr("GETENV", f_getenv);
     defsubr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
+    defsubr("EISL-READED-ARRAY-LIST", f_readed_array_list);
+    defsubr("GET-METHOD", f_get_method);
+    defsubr("GET-METHOD-BODY", f_get_method_body);
+    defsubr("GET-METHOD-PRIORITY", f_get_method_priority);
+    defsubr("IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
 
 #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);

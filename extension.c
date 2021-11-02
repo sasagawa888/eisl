@@ -42,7 +42,7 @@ initexsubr(void)
     defsubr("MODULESUBST", f_modulesubst);
     defsubr("LINE-ARGUMENT", f_line_argument);
     defsubr("GETENV", f_getenv);
-    defsubr("SUPERP-FOR-COMPILER", f_superp_for_compiler);
+    defsubr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
 
 #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);

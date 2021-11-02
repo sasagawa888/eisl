@@ -991,7 +991,7 @@ defgeneric compile
                      (varlis (alpha-conv-varlis (car varbody) args))
                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args))))
                  ;; if parameter of next-method is subclass of entry-parameter, ignore this next-method 
-                 (if (superp-for-compiler entry-parameter varlis)
+                 (if (eisl-superp-for-compiler entry-parameter varlis)
                      (progn (if (not (null rest-method))
                                 (setq rest-method (cdr rest-method)))
                             (comp-call-next-method next-priority args)))

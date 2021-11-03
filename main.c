@@ -1687,6 +1687,8 @@ DEF_GETTER(char, TR, trace, NIL)
 		if (length(args) < (-1 * (int) GET_OPT(func) - 2))
 		    error(WRONG_ARGS, GET_NAME(func), args);
 	    }
+		push(generic_func);
+		push(generic_vars);
 	    generic_func = func;
 	    generic_vars = args;
 	    next_method = GET_CDR(func);
@@ -1734,8 +1736,8 @@ DEF_GETTER(char, TR, trace, NIL)
 	    if (pexist == 0 && qexist == 0)
 		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
 
-	    generic_func = NIL;
-	    generic_vars = NIL;
+	    generic_func = pop();
+	    generic_vars = pop();
 	    return (res);
 	}
     default:

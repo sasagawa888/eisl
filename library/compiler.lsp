@@ -921,7 +921,7 @@ defgeneric compile
         (cond ((null args)
                (format code2 "NIL"))
               (t
-                (format code2 "Fcons(~A," (car args))
+                (format code2 "Fcons(~A," (conv-name (car args)))
                 (gen-error-argument (cdr args))
                 (format code2 ")"))))
     

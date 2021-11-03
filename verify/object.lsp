@@ -930,11 +930,11 @@
 	      x)))
  )
 
-;($test (foo-36 4 5 6 7 8)
-; ((40 50 (6 7 8))
-;  ((default 4 5) (number 4 5))
-;  ((default "foo" "bar") "foobar"))
-; equal)
+($test (foo-36 4 5 6 7 8)
+ ((40 50 (6 7 8))
+  ((default 4 5) (number 4 5))
+  ((default "foo" "bar") "foobar"))
+ equal)
 ;;
 ($eval
  (defgeneric foo-37 (a b c)
@@ -955,11 +955,11 @@
 	      x)))
  )
 
-;($test (foo-37 4 5 6)
-; ((40 50 6)
-;  ((default 4 5) (number 4 5))
-;  ((default "foo" "bar") "foobar"))
-; equal)
+($test (foo-37 4 5 6)
+ ((40 50 6)
+  ((default 4 5) (number 4 5))
+  ((default "foo" "bar") "foobar"))
+ equal)
 ;;
 ($eval (defglobal f nil))
 ($eval (defgeneric foo-38 (x y)))

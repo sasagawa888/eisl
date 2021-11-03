@@ -39,9 +39,9 @@ initexsubr(void)
     defsubr("GETENV", f_getenv);
     defsubr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
     defsubr("EISL-READED-ARRAY-LIST", f_readed_array_list);
-    defsubr("GET-METHOD", f_get_method);
-    defsubr("GET-METHOD-BODY", f_get_method_body);
-    defsubr("GET-METHOD-PRIORITY", f_get_method_priority);
+    defsubr("EISL-GET-METHOD", f_get_method);
+    defsubr("EISL-GET-METHOD-BODY", f_get_method_body);
+    defsubr("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
     defsubr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
 
 #ifdef __arm__
@@ -118,7 +118,7 @@ DEF_PREDICATE(METHOD, METHOD)
 
     arg1 = car(arglist);
     if (!(IS_METHOD(arg1)))
-	error(ILLEGAL_ARGS, "get-method-priority", arg1);
+	error(ILLEGAL_ARGS, "eisl-get-method-priority", arg1);
 
     return (makeint(GET_OPT(arg1) + 1));
     /*

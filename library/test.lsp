@@ -3,33 +3,33 @@
 (defmacro $test (form1 form2 :rest pred)
   (if (null pred)
       `(progn
-          (ignore-toplevel-check t)
+          (eisl-ignore-toplevel-check t)
           (let ((ans ,form1))
             (if (equal ans ',form2)
               (format (standard-output) "" ',form1)
               (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1 ',form2 ans)))
-          (ignore-toplevel-check nil)
+          (eisl-ignore-toplevel-check nil)
       )
       `(progn
-          (ignore-toplevel-check t)
+          (eisl-ignore-toplevel-check t)
           (let ((ans ,form1))
             (if (,@pred ans ',form2)
               (format (standard-output) "" ',form1)
               (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1, ',form2 ans)))
-          (ignore-toplevel-check nil)
+          (eisl-ignore-toplevel-check nil)
       )))
           
 
 (defmacro $eval (form)
   `(progn 
-        (ignore-toplevel-check t)
+        (eisl-ignore-toplevel-check t)
         (eval ',form)
-        (ignore-toplevel-check nil)))
+        (eisl-ignore-toplevel-check nil)))
           
 
 (defmacro $error (form name)
   `(progn
-      (ignore-toplevel-check t)
+      (eisl-ignore-toplevel-check t)
       (let ((ans (catch 'c-parse-error
               (with-handler 
                 (lambda (c) (throw 'c-parse-error c))
@@ -37,7 +37,7 @@
           (if (equal (class-of ans) (class ,name))
               (format (standard-output) "" ',form)
               (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans))))
-      (ignore-toplevel-check nil)))
+      (eisl-ignore-toplevel-check nil)))
 
 (defmacro $error1 (form name)
   `(progn

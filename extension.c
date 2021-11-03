@@ -42,7 +42,7 @@ initexsubr(void)
     defsubr("GET-METHOD", f_get_method);
     defsubr("GET-METHOD-BODY", f_get_method_body);
     defsubr("GET-METHOD-PRIORITY", f_get_method_priority);
-    defsubr("IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
+    defsubr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
 
 #ifdef __arm__
     defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);

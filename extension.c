@@ -34,9 +34,9 @@ initexsubr(void)
     defsubr("C-OPTION", f_ignore);
     defsubr("HEAPDUMP", f_heapdump);
     defsubr("INSTANCE", f_instance);
-    defsubr("MODULESUBST", f_modulesubst);
     defsubr("LINE-ARGUMENT", f_line_argument);
     defsubr("GETENV", f_getenv);
+    defsubr("EISL-MODULESUBST", f_modulesubst);
     defsubr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
     defsubr("EISL-READED-ARRAY-LIST", f_readed_array_list);
     defsubr("EISL-GET-METHOD", f_get_method);

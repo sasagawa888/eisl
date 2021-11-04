@@ -34,7 +34,7 @@
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 
-static const float VERSION = 2.24;
+static const float VERSION = 2.25;
 static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;

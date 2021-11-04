@@ -407,10 +407,10 @@ has_common_p1(int x, int y)
 {
     if (includep(GET_CAR(GET_AUX(x)), GET_CAR(GET_AUX(y))))
 	return (1);
-    else if (y != cobject && y != cstandard_class && subclassp(x,y))
-    return (1);
-    else if (x != cobject && x != cstandard_class && subclassp(y,x))
-    return (1);
+    else if (y != cobject && y != cstandard_class && subclassp(x, y))
+	return (1);
+    else if (x != cobject && x != cstandard_class && subclassp(y, x))
+	return (1);
     else
 	return (0);
 }
@@ -1575,14 +1575,13 @@ insert_method(int x, int func)
     }
     res = NIL;
     while (!nullp(methods)) {
-	if (high_priority_p(car(methods),x)) {
-	    res = hcons(car(methods),res);
-        methods = cdr(methods);
-	}
-    else
-        break;
+	if (high_priority_p(car(methods), x)) {
+	    res = hcons(car(methods), res);
+	    methods = cdr(methods);
+	} else
+	    break;
     }
-	res = happend(hreverse(hcons(x,res)),methods);
+    res = happend(hreverse(hcons(x, res)), methods);
     SET_CDR(func, res);
     return;
 }

@@ -58,9 +58,9 @@ error(int errnum, const char *fun, int arg)
     }
     fun1[i] = '\0';
 
-	// clear generic-function data.
-	generic_func = NIL;
-	generic_vars = NIL;
+    // clear generic-function data.
+    generic_func = NIL;
+    generic_vars = NIL;
 
     switch (errnum) {
     case DIV_ZERO:

@@ -726,12 +726,12 @@ f_getenv(int arglist)
 }
 
 /*
-* f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 
-* for generate (call-next-method) 
-* compare entry-parameter and next-method-parameter.
-* when entry-parameter is super-call than next-method-patarmeter, compiler must not generate next-method
-* see verify/object.lsp test-case foo-30
-*/
+ * f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 
+ * for generate (call-next-method) 
+ * compare entry-parameter and next-method-parameter.
+ * when entry-parameter is super-call than next-method-patarmeter, compiler must not generate next-method
+ * see verify/object.lsp test-case foo-30
+ */
 
 int
 f_superp_for_compiler(int arglist)
@@ -746,10 +746,10 @@ f_superp_for_compiler(int arglist)
 	error(WRONG_ARGS, "adaptp-for-compiler", arglist);
     }
 
-    if (superp(arg1,arg2))
-        return (T);
-    else 
-        return (NIL);
+    if (superp(arg1, arg2))
+	return (T);
+    else
+	return (NIL);
 }
 
 int
@@ -765,4 +765,3 @@ superp(int entry, int next)
     else
 	return (0);
 }
-

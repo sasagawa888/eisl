@@ -630,11 +630,17 @@ makefunc(const char *pname, int addr)
 	error(MALLOC_OVERF, "makefunc", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(addr));
-    SET_CDR(val, ep); // local environment
+    SET_CDR(val, ep);		// local environment
     SET_AUX(val, cfunction);	// class function
-    // if lambda is generated in method, save the method and given argument 
+    // if lambda is generated in method, save the method and given
+    // argument 
     if (generic_func != NIL)
-        SET_PROP(val, cons(GET_CDR(generic_func),generic_vars));  // method of generic-function and argument 
+	SET_PROP(val, cons(GET_CDR(generic_func), generic_vars));	// method 
+									// of 
+									// generic-function 
+									// and 
+									// argument 
+									// 
     SET_OPT(val, count_args(car(addr)));	// amount of argument
     return (val);
 }
@@ -1028,6 +1034,7 @@ initinst(int x, int initls)
     // 
     // 
     // 
+    // 
     // ((initarg1 . accessor1)(initarg2 .
     // accesor2)...)
     inst_vars = GET_CDR(x);	// instance variable list. This is assoc
@@ -1402,7 +1409,7 @@ a_adaptp(int x, int y)
 {
 
     if (!CELLRANGE(x)) {
-    // fixnum is immediate. so fixnum data is out of cellrange
+	// fixnum is immediate. so fixnum data is out of cellrange
 	if (cfixnum == GET_AUX(y))	// cfixnum is <class fixnum>
 	    return (1);
 	else if (subclassp(cfixnum, GET_AUX(y)))

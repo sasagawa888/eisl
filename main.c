@@ -147,7 +147,7 @@ int             area_sw = 1;	// 1= lower area 2=higher area
 Except_T        Restart_Repl = { "Restart REPL" }, Exit_Interp =
     { "Exit interpreter" };
 jmp_buf         block_buf[NESTED_BLOCKS_MAX];
-int				block_tag_check[NESTED_BLOCKS_MAX];
+int             block_tag_check[NESTED_BLOCKS_MAX];
 int             block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf         catch_buf[10][50];
 int             catch_env[10][50];
@@ -347,8 +347,8 @@ initpt(void)
     top_flag = true;
     start_flag = true;
     charcnt = 0;
-	generic_func = NIL;
-	generic_vars = NIL;
+    generic_func = NIL;
+    generic_vars = NIL;
     // clear nest level of tracing function.
     ls = trace_list;
     while (!nullp(ls)) {
@@ -1548,8 +1548,8 @@ eval(int addr)
 	else if (fsubrp(car(addr)))
 	    return (apply(caar(addr), cdr(addr)));
 	else if ((val = functionp(car(addr)))) {
-		if (GET_CDR(car(addr)) != NIL)
-			error(UNDEF_FUN,"eval",addr);
+	    if (GET_CDR(car(addr)) != NIL)
+		error(UNDEF_FUN, "eval", addr);
 	    temp = evlis(cdr(addr));
 	    examin_sym = car(addr);
 	    return (apply(val, temp));
@@ -1612,14 +1612,16 @@ DEF_GETTER(char, TR, trace, NIL)
 	push(ep);
 	ep = GET_CDR(func);
 
-	// if lambda is generated during eval method, lambda saved method and argument
+	// if lambda is generated during eval method, lambda saved method
+	// and argument
 	// restore the method and argument.
-	if (GET_PROP(func) != NIL){
-		next_method = car(GET_PROP(func));
-		generic_vars = cdr(GET_PROP(func));
-		generic_func = T; // to avoid error check in (call-next-method)
+	if (GET_PROP(func) != NIL) {
+	    next_method = car(GET_PROP(func));
+	    generic_vars = cdr(GET_PROP(func));
+	    generic_func = T;	// to avoid error check in
+				// (call-next-method)
 	}
-	
+
 	varlist = car(GET_CAR(func));
 	if (GET_OPT(func) >= 0) {
 	    if (length(args) != (int) GET_OPT(func))
@@ -1681,7 +1683,9 @@ DEF_GETTER(char, TR, trace, NIL)
 	}
 
     case GENERIC:{
-		int save1,save2,save3;
+	    int             save1,
+	                    save2,
+	                    save3;
 
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
@@ -1690,27 +1694,28 @@ DEF_GETTER(char, TR, trace, NIL)
 		if (length(args) < (-1 * (int) GET_OPT(func) - 2))
 		    error(WRONG_ARGS, GET_NAME(func), args);
 	    }
-		save1 = generic_func;
-		save2 = generic_vars;
-		save3 = next_method;
+	    save1 = generic_func;
+	    save2 = generic_vars;
+	    save3 = next_method;
 	    generic_func = func;
 	    generic_vars = args;
 	    next_method = GET_CDR(func);
-		if (GET_TR(examin_sym) == 1) {
-	    	trace = examin_sym;
-	    	n = GET_TR(func);
-	    	SET_TR(func, n + 1);
-	    	for (i = 0; i < n; i++)
-			putchar(' ');
-	    	fputs("ENTERING: ", stdout);
-	    	print(trace);
-	    	putchar(' ');
-	    	print(args);
-	    	putchar('\n');
-		}
+	    if (GET_TR(examin_sym) == 1) {
+		trace = examin_sym;
+		n = GET_TR(func);
+		SET_TR(func, n + 1);
+		for (i = 0; i < n; i++)
+		    putchar(' ');
+		fputs("ENTERING: ", stdout);
+		print(trace);
+		putchar(' ');
+		print(args);
+		putchar('\n');
+	    }
 	    while (!nullp(next_method)) {
 		varlist = car(GET_CAR(car(next_method)));
-		// adaptp(x,y) if sameclass or y is super-classs return 1 else 0;
+		// adaptp(x,y) if sameclass or y is super-classs return 1
+		// else 0;
 		if (adaptp(varlist, args)) {
 		    // if only qualifier or sameclass-primary, eval
 		    // method;
@@ -1742,7 +1747,7 @@ DEF_GETTER(char, TR, trace, NIL)
 
 	    generic_func = save1;
 	    generic_vars = save2;
-		next_method = save3;
+	    next_method = save3;
 	    return (res);
 	}
     default:
@@ -1822,7 +1827,7 @@ adaptp(int varlist, int arglist)
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	// equal
 	// class
 	return (adaptp(cdr(varlist), cdr(arglist)));
-    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))  // subclass
+    else if (subclassp(GET_AUX(car(arglist)), GET_AUX(cadar(varlist))))	// subclass
 	return (adaptp(cdr(varlist), cdr(arglist)));
     else
 	return (0);

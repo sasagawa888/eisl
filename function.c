@@ -214,7 +214,7 @@ initsubr(void)
     defsubr("VECTOR", f_vector);
     defsubr("WRITE-BYTE", f_write_byte);
 
-    //inner extended functions
+    // inner extended functions
     defsubr("EISL-DUMMYP", f_dummyp);
 }
 
@@ -3287,6 +3287,7 @@ f_string_index(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// "" "")
 	return (makeint(0));
 
@@ -3643,7 +3644,7 @@ DEF_PREDICATE(INSTANCE, INSTANCE)
     val = assoc(arg2, GET_CDR(arg1));
     if (nullp(val))
 	error(UNDEF_VAR, "slot-value", arg2);
-    
+
 
     return (cdr(val));
 }
@@ -3954,6 +3955,7 @@ f_format_fresh_line(int arglist)
 	save = output_stream;
 	output_stream = arg1;
 	// output newline char if it cannot be determinned that the output 
+	// 
 	// 
 	// 
 	// 
@@ -4899,7 +4901,7 @@ f_next_method_p(int arglist)
 	error(UNDEF_FUN, "next-method-p", NIL);
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "next-method-p", arglist);
-    
+
     method = cdr(next_method);
     while (!nullp(method)) {
 	int             varlist;
@@ -4922,8 +4924,8 @@ f_call_next_method(int arglist)
                     pexist,
                     qexist;
 
-    if(generic_func == NIL)
-    error(UNDEF_FUN,"call-next-method",NIL);
+    if (generic_func == NIL)
+	error(UNDEF_FUN, "call-next-method", NIL);
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "call-next-method", arglist);
     if (nullp(cdr(next_method)))
@@ -4939,22 +4941,22 @@ f_call_next_method(int arglist)
     varlist = NIL;
     next_method = cdr(next_method);
     if (GET_OPT(car(next_method)) == PRIMARY) {
-        while (!nullp(next_method)){
-        varlist = car(GET_CAR(car(next_method)));
+	while (!nullp(next_method)) {
+	    varlist = car(GET_CAR(car(next_method)));
 	    // match(x,y) if sameclass or subclass return 1 else 0;
 	    if (adaptp(varlist, generic_vars)) {
-	        varlist = genlamlis_to_lamlis(varlist);
-	        body = cdr(GET_CAR(car(next_method)));
-	        bindarg(varlist, generic_vars);
-	        while (!nullp(body)) {
-	            res = eval(car(body));
-	            body = cdr(body);
-	        }
-	        unbind();
-	        return (res);
-        }
-        next_method = cdr(next_method);
-        }
+		varlist = genlamlis_to_lamlis(varlist);
+		body = cdr(GET_CAR(car(next_method)));
+		bindarg(varlist, generic_vars);
+		while (!nullp(body)) {
+		    res = eval(car(body));
+		    body = cdr(body);
+		}
+		unbind();
+		return (res);
+	    }
+	    next_method = cdr(next_method);
+	}
     } else {
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
@@ -5027,8 +5029,7 @@ f_cerror(int arglist)
     if (!stringp(arg2))
 	error(NOT_STR, "error", arg2);
 
-    return (signal_condition
-	    (makeusercond(cerror, arg2, arg3), arg1));
+    return (signal_condition(makeusercond(cerror, arg2, arg3), arg1));
 }
 
 int

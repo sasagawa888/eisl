@@ -113,11 +113,11 @@ markcell(int addr)
 	markcell(GET_PROP(addr));
 	return;
     case FUNC:
-    markcell(car(addr));
+	markcell(car(addr));
 	markcell(cdr(addr));
 	markcell(GET_AUX(addr));
-    markcell(GET_PROP(addr));
-    return;
+	markcell(GET_PROP(addr));
+	return;
     case MACRO:
     case GENERIC:
     case METHOD:

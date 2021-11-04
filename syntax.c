@@ -648,8 +648,8 @@ f_defmacro(int arglist)
     if (!symbollistp(car(arg2))) {
 	error(OUT_OF_DOMAIN, "defmacro", car(arg2));
     }
-     if (!top_flag && !ignore_topchk)
-     error(NOT_TOP_LEVEL, "defmacro", arglist);
+    if (!top_flag && !ignore_topchk)
+	error(NOT_TOP_LEVEL, "defmacro", arglist);
 
 
     bindmacro(GET_NAME(arg1), arg2);
@@ -1086,7 +1086,13 @@ f_block(int arglist)
 
     block_env[block_pt][0] = ep;	// save environment
     block_env[block_pt][1] = tag;	// save tag symbol
-    block_tag_check[block_pt] = find_return_from_p(arg2); // save flag. if exist return-from 1 else 0
+    block_tag_check[block_pt] = find_return_from_p(arg2);	// save
+								// flag.
+								// if
+								// exist
+								// return-from 
+								// 1 else
+								// 0
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
 
@@ -1110,17 +1116,19 @@ f_block(int arglist)
     return (UNDEF);
 }
 
-int find_return_from_p(int x){
+int
+find_return_from_p(int x)
+{
     if (nullp(x))
-        return(0);
-    else if (symbolp(x) && eqp(x,makesym("RETURN-FROM")))
-        return(1);
+	return (0);
+    else if (symbolp(x) && eqp(x, makesym("RETURN-FROM")))
+	return (1);
     else if (atomp(x))
-        return(0);
+	return (0);
     else if (find_return_from_p(car(x)) || find_return_from_p(cdr(x)))
-        return(1);
-    else 
-        return (0); 
+	return (1);
+    else
+	return (0);
 
 }
 
@@ -1142,7 +1150,7 @@ f_return_from(int arglist)
     if (block_env[block_pt][1] != tag)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
     if (block_tag_check[block_pt] == 0)
-    error(UNDEF_TAG, "return-from tag not exist", tag);
+	error(UNDEF_TAG, "return-from tag not exist", tag);
     block_arg = f_progn(arg2);
     ep = block_env[block_pt][0];	// restore environment
     longjmp(block_buf[block_pt], 1);
@@ -1211,6 +1219,7 @@ f_catch(int arglist)
 	catch_arg = NIL;
 	sp = save;		// restore stack pointer. longjump destroy 
 				// 
+	// 
 	// 
 	// 
 	// 
@@ -1547,7 +1556,8 @@ f_defclass(int arglist)
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
-		//    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y))
+		// (let ((y (slot-value x 'var))) (if (dummyp y) (cerror
+		// "undefined" "reader")) y))
 		// (set-property 1 'reader 'read))
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
@@ -1560,13 +1570,21 @@ f_defclass(int arglist)
 		form =
 		    list4(makesym("DEFMETHOD"), reader,
 			  list1(list2(makesym("x"), arg1)),
-              list4(makesym("LET"),
-                    list1(list2(makesym("y"),list3(makesym("SLOT-VALUE"), makesym("x"),
-				                             list2(makesym("QUOTE"), sym)))),
-                    list3(makesym("IF"),list2(makesym("EISL-DUMMYP"),makesym("y")),
-                                        list3(makesym("CERROR"),makestr("undefined"),makestr("reader"))),
-                    makesym("y")));
-                    
+			  list4(makesym("LET"),
+				list1(list2
+				      (makesym("y"),
+				       list3(makesym("SLOT-VALUE"),
+					     makesym("x"),
+					     list2(makesym("QUOTE"),
+						   sym)))),
+				list3(makesym("IF"),
+				      list2(makesym("EISL-DUMMYP"),
+					    makesym("y")),
+				      list3(makesym("CERROR"),
+					    makestr("undefined"),
+					    makestr("reader"))),
+				makesym("y")));
+
 		eval(form);
 		form = list4(makesym("SET-PROPERTY"),
 			     makeint(1),
@@ -1613,7 +1631,8 @@ f_defclass(int arglist)
 		// (if (not (generic-function-p (function* name)))
 		// (defgeneric name (x)))
 		// (defmethod name ((x arg1))
-		//   (let ((y (slot-value x 'var))) (if (dummyp y) (error "undefined" "accessor") y)))
+		// (let ((y (slot-value x 'var))) (if (dummyp y) (error
+		// "undefined" "accessor") y)))
 		// (defmethod name ((x <null>)) for setf syntax
 		// 'var)
 		form = list3(makesym("IF"),
@@ -1627,13 +1646,21 @@ f_defclass(int arglist)
 		form =
 		    list4(makesym("DEFMETHOD"), accessor,
 			  list1(list2(makesym("x"), arg1)),
-              list4(makesym("LET"),
-                    list1(list2(makesym("y"),list3(makesym("SLOT-VALUE"), makesym("x"),
-				                             list2(makesym("QUOTE"), sym)))),
-                    list3(makesym("IF"),list2(makesym("EISL-DUMMYP"),makesym("y")),
-                                        list3(makesym("CERROR"),makestr("undefined"),makestr("accessor"))),
-                    makesym("y")));
-                    
+			  list4(makesym("LET"),
+				list1(list2
+				      (makesym("y"),
+				       list3(makesym("SLOT-VALUE"),
+					     makesym("x"),
+					     list2(makesym("QUOTE"),
+						   sym)))),
+				list3(makesym("IF"),
+				      list2(makesym("EISL-DUMMYP"),
+					    makesym("y")),
+				      list3(makesym("CERROR"),
+					    makestr("undefined"),
+					    makestr("accessor"))),
+				makesym("y")));
+
 		eval(form);
 		form =
 		    list4(makesym("DEFMETHOD"), accessor,

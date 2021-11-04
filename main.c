@@ -347,6 +347,8 @@ initpt(void)
     top_flag = true;
     start_flag = true;
     charcnt = 0;
+	generic_func = NIL;
+	generic_vars = NIL;
     // clear nest level of tracing function.
     ls = trace_list;
     while (!nullp(ls)) {
@@ -1679,6 +1681,7 @@ DEF_GETTER(char, TR, trace, NIL)
 	}
 
     case GENERIC:{
+		int save1,save2;
 
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
@@ -1687,8 +1690,9 @@ DEF_GETTER(char, TR, trace, NIL)
 		if (length(args) < (-1 * (int) GET_OPT(func) - 2))
 		    error(WRONG_ARGS, GET_NAME(func), args);
 	    }
-		push(generic_func);
-		push(generic_vars);
+		save1 = generic_func;
+		save2 = generic_vars;
+		//save3 = next_method;
 	    generic_func = func;
 	    generic_vars = args;
 	    next_method = GET_CDR(func);
@@ -1736,8 +1740,9 @@ DEF_GETTER(char, TR, trace, NIL)
 	    if (pexist == 0 && qexist == 0)
 		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
 
-	    generic_func = pop();
-	    generic_vars = pop();
+	    generic_func = save1;
+	    generic_vars = save2;
+		//next_method = save3;
 	    return (res);
 	}
     default:

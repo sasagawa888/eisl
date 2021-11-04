@@ -4939,16 +4939,22 @@ f_call_next_method(int arglist)
     varlist = NIL;
     next_method = cdr(next_method);
     if (GET_OPT(car(next_method)) == PRIMARY) {
-    varlist = car(GET_CAR(car(next_method)));
-	varlist = genlamlis_to_lamlis(varlist);
-	body = cdr(GET_CAR(car(next_method)));
-	bindarg(varlist, generic_vars);
-	while (!nullp(body)) {
-	    res = eval(car(body));
-	    body = cdr(body);
-	}
-	unbind();
-	return (res);
+        while (!nullp(next_method)){
+        varlist = car(GET_CAR(car(next_method)));
+	    // match(x,y) if sameclass or subclass return 1 else 0;
+	    if (adaptp(varlist, generic_vars)) {
+	        varlist = genlamlis_to_lamlis(varlist);
+	        body = cdr(GET_CAR(car(next_method)));
+	        bindarg(varlist, generic_vars);
+	        while (!nullp(body)) {
+	            res = eval(car(body));
+	            body = cdr(body);
+	        }
+	        unbind();
+	        return (res);
+        }
+        next_method = cdr(next_method);
+        }
     } else {
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));

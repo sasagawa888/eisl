@@ -1681,7 +1681,7 @@ DEF_GETTER(char, TR, trace, NIL)
 	}
 
     case GENERIC:{
-		int save1,save2;
+		int save1,save2,save3;
 
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
@@ -1692,7 +1692,7 @@ DEF_GETTER(char, TR, trace, NIL)
 	    }
 		save1 = generic_func;
 		save2 = generic_vars;
-		//save3 = next_method;
+		save3 = next_method;
 	    generic_func = func;
 	    generic_vars = args;
 	    next_method = GET_CDR(func);
@@ -1742,7 +1742,7 @@ DEF_GETTER(char, TR, trace, NIL)
 
 	    generic_func = save1;
 	    generic_vars = save2;
-		//next_method = save3;
+		next_method = save3;
 	    return (res);
 	}
     default:

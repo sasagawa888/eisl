@@ -28,7 +28,7 @@ enum Option {
     NOTCONT,			// no continuable condition
     ABSTRACT,			// abstract class
     METACLASS,          // meta class
-
+    
     // *** WARNING: THE FOLLOWING ARE INTERNAL VALUES THAT CLIENTS SHOULD
     // NOT USE ***
     AROUND, BEFORE, PRIMARY, AFTER, EISL_OPEN, EISL_INPUT, EISL_OUTPUT,

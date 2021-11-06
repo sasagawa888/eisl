@@ -580,12 +580,12 @@
 	    after-<object>)
  equal)
 ;; 
-;($eval (defgeneric (setf foo-18) (x y z)))
-;($eval (defmethod (setf foo-18) (x y z) (list x y z)))
-;($test (setf (foo-18 1 2) 3) (3 1 2) equal)
-;($error (setf (foo-18 1) 2) <program-error>)
-;($error (setf (foo-18 1 2 3) 4) <program-error>)
-;($error (setf (bar 1 2) 3) <error>)
+($eval (defgeneric (setf foo-18) (x y z)))
+($eval (defmethod (setf foo-18) (x y z) (list x y z)))
+($test (setf (foo-18 1 2) 3) (3 1 2) equal)
+($error (setf (foo-18 1) 2) <program-error>)
+($error (setf (foo-18 1 2 3) 4) <program-error>)
+($error (setf (bar 1 2) 3) <error>)
 ;;
 ;($eval (defgeneric (setf nil) (x y z)))
 ;($eval (defmethod (setf nil) (x y z) (list x y z)))
@@ -819,8 +819,8 @@
    (:method ((x <number>))
 	    (* x x))))
 ($eval (defglobal x (foo-31 3)))
-;($test (funcall x 5) 45 eql)
-;($test (funcall x 5) 45 eql)
+($test (funcall x 5) 45 eql)
+($test (funcall x 5) 45 eql)
 ;;
 ($eval
  (defgeneric foo-32 (x)

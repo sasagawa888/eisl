@@ -1739,12 +1739,16 @@ DEF_GETTER(char, TR, trace, NIL)
 			}
 			unbind();
 		    }
+		if (GET_OPT(car(next_method)) == AROUND){
+			goto exit;
+		}
 		}
 		next_method = cdr(next_method);
 	    }
-	    if (pexist == 0 && qexist == 0)
+	    if (pexist == 0 && qexist == 0){
 		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
-
+		}
+		exit:
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;

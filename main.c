@@ -1619,7 +1619,7 @@ DEF_GETTER(char, TR, trace, NIL)
 	    next_method = car(GET_PROP(func));
 	    generic_vars = cdr(GET_PROP(func));
 	    generic_func = T;	// to avoid error check in
-				// (call-next-method)
+	    // (call-next-method)
 	}
 
 	varlist = car(GET_CAR(func));
@@ -1739,16 +1739,16 @@ DEF_GETTER(char, TR, trace, NIL)
 			}
 			unbind();
 		    }
-		if (GET_OPT(car(next_method)) == AROUND){
+		    if (GET_OPT(car(next_method)) == AROUND) {
 			goto exit;
-		}
+		    }
 		}
 		next_method = cdr(next_method);
 	    }
-	    if (pexist == 0 && qexist == 0){
+	    if (pexist == 0 && qexist == 0) {
 		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
-		}
-		exit:
+	    }
+	  exit:
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;

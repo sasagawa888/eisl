@@ -636,11 +636,12 @@ makefunc(const char *pname, int addr)
     // argument 
     if (generic_func != NIL)
 	SET_PROP(val, cons(GET_CDR(generic_func), generic_vars));	// method 
-									// of 
-									// generic-function 
-									// and 
-									// argument 
 									// 
+    // of 
+    // generic-function 
+    // and 
+    // argument 
+    // 
     SET_OPT(val, count_args(car(addr)));	// amount of argument
     return (val);
 }
@@ -1031,6 +1032,7 @@ initinst(int x, int initls)
     cl = GET_AUX(x);		// class of x
     class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
 				// 
+    // 
     // 
     // 
     // 

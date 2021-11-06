@@ -1087,12 +1087,12 @@ f_block(int arglist)
     block_env[block_pt][0] = ep;	// save environment
     block_env[block_pt][1] = tag;	// save tag symbol
     block_tag_check[block_pt] = find_return_from_p(arg2);	// save
-								// flag.
-								// if
-								// exist
-								// return-from 
-								// 1 else
-								// 0
+    // flag.
+    // if
+    // exist
+    // return-from 
+    // 1 else
+    // 0
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
 
@@ -1219,6 +1219,7 @@ f_catch(int arglist)
 	catch_arg = NIL;
 	sp = save;		// restore stack pointer. longjump destroy 
 				// 
+	// 
 	// 
 	// 
 	// 

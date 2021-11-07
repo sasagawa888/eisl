@@ -80,13 +80,13 @@ f_lambda(int arglist)
 
     if (nullp(arglist))
 	error(NOT_EXIST_ARG, "lambda", NIL);
-    if (duplicatelistp(car(arglist)))
+    if (duplicate_list_p(car(arglist)))
 	error(IMPROPER_ARGS, "lambda", car(arglist));
-    if (improperlistp(car(arglist)))
+    if (improper_list_p(car(arglist)))
 	error(IMPROPER_ARGS, "lambda", car(arglist));
     if (illegal_lambda_p(car(arglist)))
 	error(ILLEGAL_ARGS, "lambda", car(arglist));
-    if (!symbollistp(car(arglist)))
+    if (!symbol_list_p(car(arglist)))
 	error(OUT_OF_DOMAIN, "lambda", car(arglist));
 
 
@@ -105,7 +105,7 @@ f_labels(int arglist)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "labels", arglist);
     if (nullp(arglist))
 	error(NOT_EXIST_ARG, "labels", NIL);
@@ -125,13 +125,13 @@ f_labels(int arglist)
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "labels", temparg1);
-	if (duplicatelistp(car(temparg2)))
+	if (duplicate_list_p(car(temparg2)))
 	    error(IMPROPER_ARGS, "labels", car(temparg2));
-	if (improperlistp(car(temparg2)))
+	if (improper_list_p(car(temparg2)))
 	    error(IMPROPER_ARGS, "labels", car(temparg2));
 	if (illegal_lambda_p(car(temparg2)))
 	    error(ILLEGAL_ARGS, "labels", car(temparg2));
-	if (!symbollistp(car(temparg2)))
+	if (!symbol_list_p(car(temparg2)))
 	    error(OUT_OF_DOMAIN, "labels", car(temparg2));
 
 	temp = cdr(temp);
@@ -178,7 +178,7 @@ f_flet(int arglist)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "flet", arglist);
     if (nullp(arglist))
 	error(NOT_EXIST_ARG, "flet", NIL);
@@ -198,13 +198,13 @@ f_flet(int arglist)
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "flet", temparg1);
-	if (duplicatelistp(car(temparg2)))
+	if (duplicate_list_p(car(temparg2)))
 	    error(IMPROPER_ARGS, "flet", car(temparg2));
-	if (improperlistp(car(temparg2)))
+	if (improper_list_p(car(temparg2)))
 	    error(IMPROPER_ARGS, "flet", car(temparg2));
 	if (illegal_lambda_p(car(temparg2)))
 	    error(ILLEGAL_ARGS, "flet", car(temparg2));
-	if (!symbollistp(car(temparg2)))
+	if (!symbol_list_p(car(temparg2)))
 	    error(OUT_OF_DOMAIN, "flet", car(temparg2));
 
 	temp = cdr(temp);
@@ -255,7 +255,7 @@ f_let(int arglist)
 	int             temparg1;
 
 	temparg1 = car(car(temp));
-	if (improperlistp(car(temp)))
+	if (improper_list_p(car(temp)))
 	    error(IMPROPER_ARGS, "let", car(temp));
 	if (length(car(temp)) != 2)
 	    error(IMPROPER_ARGS, "let", car(temp));
@@ -321,7 +321,7 @@ f_letstar(int arglist)
 	int             temparg1;
 
 	temparg1 = car(car(temp));
-	if (improperlistp(car(temp)))
+	if (improper_list_p(car(temp)))
 	    error(IMPROPER_ARGS, "let*", car(temp));
 	if (length(car(temp)) != 2)
 	    error(IMPROPER_ARGS, "let*", car(temp));
@@ -377,7 +377,7 @@ f_dynamic_let(int arglist)
 	int             temparg1;
 
 	temparg1 = car(car(temp));
-	if (improperlistp(car(temp)))
+	if (improper_list_p(car(temp)))
 	    error(IMPROPER_ARGS, "dynamic-let", car(temp));
 	if (length(car(temp)) != 2)
 	    error(IMPROPER_ARGS, "dynamic-let", car(temp));
@@ -442,7 +442,7 @@ f_setf(int arglist)
 	&& eqlp(makeint(1),
 		cdr(assoc(makesym("read"), GET_AUX(car(arg1))))))
 	error(CANT_MODIFY, "setf", arg1);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "setf", arglist);
 
     if (listp(arg1) && eqp(car(arg1), makesym("AREF"))) {
@@ -458,7 +458,7 @@ f_setf(int arglist)
     } else if (listp(arg1) && eqp(car(arg1), makesym("CDR"))) {
 	newform = cons(makesym("SET-CDR"), cons(arg2, cdr(arg1)));
     } else if (listp(arg1) && eqp(car(arg1), makesym("DYNAMIC"))) {
-	if (improperlistp(arg1))
+	if (improper_list_p(arg1))
 	    error(IMPROPER_ARGS, "dynamic", arg1);
 	if (length(arg1) != 2)
 	    error(IMPROPER_ARGS, "dynamic", arg1);
@@ -514,7 +514,7 @@ f_set_dynamic(int arglist)
     arg2 = eval(cadr(arglist));
     if (nullp(arglist))
 	error(IMPROPER_ARGS, "set-dynamic", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "set-dynamic", arglist);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "set-dynamic", arglist);
@@ -547,7 +547,7 @@ f_setq(int arglist)
 	error(NOT_SYM, "setq", arg1);
     if (GET_OPT(arg1) == CONSTN)
 	error(CANT_MODIFY, "setq", arg1);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "setq", arglist);
 
     arg2 = eval(arg2);
@@ -569,7 +569,7 @@ f_defconstant(int arglist)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "defconstant", arglist);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "defconstant", arglist);
@@ -609,13 +609,13 @@ f_defun(int arglist)
 	error(CANT_MODIFY, "defun", arg1);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(WRONG_ARGS, "defun", arg1);
-    if (duplicatelistp(car(arg2)))
+    if (duplicate_list_p(car(arg2)))
 	error(IMPROPER_ARGS, "defun", car(arg2));
-    if (improperlistp(car(arg2)))
+    if (improper_list_p(car(arg2)))
 	error(IMPROPER_ARGS, "defun", car(arg2));
     if (illegal_lambda_p(car(arg2)))
 	error(ILLEGAL_ARGS, "defun", car(arg2));
-    if (!symbollistp(car(arg2)))
+    if (!symbol_list_p(car(arg2)))
 	error(OUT_OF_DOMAIN, "defun", car(arg2));
 
     val = makefunc(GET_NAME(arg1), arg2);
@@ -642,18 +642,18 @@ f_defmacro(int arglist)
 	error(CANT_MODIFY, "defmacro", arg1);
     if (IS_FSUBR(GET_CAR(arg1)))
 	error(CANT_MODIFY, "defmacro", arg1);
-    if (improperlistp(arg2)) {
+    if (improper_list_p(arg2)) {
 	error(IMPROPER_ARGS, "defmacro", arg2);
     }
-    if (duplicatelistp(car(arg2)))
+    if (duplicate_list_p(car(arg2)))
 	error(IMPROPER_ARGS, "defmacro", car(arg2));
-    if (improperlistp(car(arg2))) {
+    if (improper_list_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmacro", car(arg2));
     }
     if (illegal_lambda_p(car(arg2))) {
 	error(ILLEGAL_ARGS, "defmacro", car(arg2));
     }
-    if (!symbollistp(car(arg2))) {
+    if (!symbol_list_p(car(arg2))) {
 	error(OUT_OF_DOMAIN, "defmacro", car(arg2));
     }
     if (!top_flag && !ignore_topchk)
@@ -672,7 +672,7 @@ f_defglobal(int arglist)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "defglobal", arglist);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "defglobal", arglist);
@@ -698,7 +698,7 @@ f_defdynamic(int arglist)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if (improperlistp(cdr(arglist)))
+    if (improper_list_p(cdr(arglist)))
 	error(IMPROPER_ARGS, "defdynamic", arglist);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "defdynamic", arglist);
@@ -719,7 +719,7 @@ f_dynamic(int arglist)
                     res;
 
     arg1 = car(arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "dynamic", arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "dynamic", arglist);
@@ -773,7 +773,7 @@ f_function(int arglist)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "function", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(ILLEGAL_ARGS, "function", arglist);
 
     if (symbolp(arg1)) {
@@ -803,7 +803,7 @@ f_function_star(int arglist)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "function*", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(ILLEGAL_ARGS, "function*", arglist);
 
     if (symbolp(arg1)) {
@@ -918,7 +918,7 @@ f_if(int arglist)
     arg2 = cadr(arglist);
     if ((n = length(arglist)) < 2 || n > 3)
 	error(WRONG_ARGS, "if", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(WRONG_ARGS, "if", arglist);
 
     if (length(arglist) == 3)
@@ -948,7 +948,7 @@ f_cond(int arglist)
     arg3 = cdr(arg1);
     if (nullp(arg1))
 	error(IMPROPER_ARGS, "cond", arglist);
-    if (improperlistp(arg1))
+    if (improper_list_p(arg1))
 	error(IMPROPER_ARGS, "cond", arg1);
 
 
@@ -1079,9 +1079,9 @@ f_block(int arglist)
     arg2 = cdr(arglist);
     if (nullp(arglist))
 	error(WRONG_ARGS, "block", arglist);
-    if (improperlistp(arglist) && nullp(arg1))
+    if (improper_list_p(arglist) && nullp(arg1))
 	error(WRONG_ARGS, "block", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "block", arglist);
     if (!symbolp(arg1))
 	error(NOT_SYM, "block", arg1);
@@ -1186,7 +1186,7 @@ f_catch(int arglist)
 	error(WRONG_ARGS, "catch", arglist);
     if (nullp(arg1))
 	error(WRONG_ARGS, "catch", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "catch", arglist);
     tag = eval(arg1);		// tag symbol
     if (!symbolp(tag))
@@ -1275,7 +1275,7 @@ f_tagbody(int arglist)
                     end,
                     i;
 
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "tagbody", arglist);
 
     end = 0;
@@ -1322,7 +1322,7 @@ f_go(int arglist)
     arg1 = car(arglist);
     if (!symbolp(arg1))
 	error(NOT_SYM, "go", arg1);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "go", arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "go", arglist);
@@ -1343,7 +1343,7 @@ f_unwind_protect(int arglist)
     args = cdr(arglist);
     if (nullp(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
 
     unwind_buf[unwind_pt] = makefunc("", cons(NIL, args));	// make
@@ -1458,7 +1458,7 @@ f_progn(int arglist)
 {
     int             res;
 
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "progn", arglist);
     res = NIL;
     while (arglist != NIL) {
@@ -1818,10 +1818,10 @@ f_defgeneric(int arglist)
     if (!listp(arg2)) {
 	error(NOT_LIST, "defgeneric", arg2);
     }
-    if (duplicatelistp(arg2)) {
+    if (duplicate_list_p(arg2)) {
 	error(IMPROPER_ARGS, "defgeneric", arg2);
     }
-    if (improperlistp(arg2)) {
+    if (improper_list_p(arg2)) {
 	error(IMPROPER_ARGS, "defgeneric", arg2);
     }
     if (illegal_lambda_p(arg2)) {
@@ -2159,7 +2159,7 @@ f_convert(int arglist)
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
 	error(IMPROPER_ARGS, "convert", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "convert", arglist);
     if (!symbolp(arg2))
 	error(NOT_SYM, "convert", arg2);
@@ -2180,7 +2180,7 @@ f_the(int arglist)
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
 	error(IMPROPER_ARGS, "the", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "the", arglist);
 
     if (GET_AUX(arg1) != NIL)
@@ -2201,7 +2201,7 @@ f_assure(int arglist)
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
 	error(IMPROPER_ARGS, "assure", arglist);
-    if (improperlistp(arglist))
+    if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "assure", arglist);
 
     arg2 = eval(arg2);

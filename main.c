@@ -1531,7 +1531,7 @@ eval(int addr)
 	}
 
 	if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "QUOTE"))) {
-	    if (improperlistp(cdr(addr)))
+	    if (improper_list_p(cdr(addr)))
 		error(ILLEGAL_ARGS, "quote", cdr(addr));
 	    else if (length(cdr(addr)) != 1)
 		error(ILLEGAL_ARGS, "quote", cdr(addr));
@@ -1657,7 +1657,7 @@ DEF_GETTER(char, TR, trace, NIL)
     case MACRO:{
 	    int             macrofunc;
 
-	    if (improperlistp(args))
+	    if (improper_list_p(args))
 		error(IMPROPER_ARGS, "apply", args);
 	    macrofunc = GET_CAR(func);
 	    varlist = car(GET_CAR(macrofunc));

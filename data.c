@@ -558,18 +558,18 @@ unified_parameter_p(int lamlis, int ls)
 
 
 int
-improperlistp(int ls)
+improper_list_p(int ls)
 {
     if (nullp(ls))
 	return (0);
     else if (atomp(ls))
 	return (1);
     else
-	return (improperlistp(cdr(ls)));
+	return (improper_list_p(cdr(ls)));
 }
 
 int
-duplicatelistp(int ls)
+duplicate_list_p(int ls)
 {
     if (nullp(ls))
 	return (0);
@@ -587,13 +587,13 @@ duplicatelistp(int ls)
 	return (1);
     else if (eqp(car(ls), makesym("&REST"))
 	     || eqp(car(ls), makesym(":REST")))
-	return (duplicatelistp(cddr(ls)));
+	return (duplicate_list_p(cddr(ls)));
     else
-	return (duplicatelistp(cdr(ls)));
+	return (duplicate_list_p(cdr(ls)));
 }
 
 int
-symbollistp(int ls)
+symbol_list_p(int ls)
 {
     if (nullp(ls))
 	return (1);
@@ -604,7 +604,7 @@ symbollistp(int ls)
     else if (eqp(car(ls), makesym(":REST")) && !symbolp(cadr(ls)))
 	return (0);
     else
-	return (symbollistp(cdr(ls)));
+	return (symbol_list_p(cdr(ls)));
 }
 
 int has_multiple_call_next_method_p(int x){

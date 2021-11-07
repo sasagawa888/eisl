@@ -1726,6 +1726,10 @@ DEF_GETTER(char, TR, trace, NIL)
 			    && matchp(varlist, args) && pexist == 0)) {
 
 			if (GET_OPT(car(next_method)) == PRIMARY) {
+				// primary method must executes only once.
+				if(pexist == 1){
+					goto exit;
+				}
 			    pexist = 1;
 			} else {
 			    qexist = 1;

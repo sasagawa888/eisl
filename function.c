@@ -4924,7 +4924,8 @@ f_call_next_method(int arglist)
                     body,
                     res,
                     pexist,
-                    qexist;
+                    qexist,
+                    caller;
 
     if (generic_func == NIL)
 	error(UNDEF_FUN, "call-next-method", NIL);
@@ -4941,8 +4942,9 @@ f_call_next_method(int arglist)
 
     res = NIL;
     varlist = NIL;
+    caller = car(next_method);
     next_method = cdr(next_method);
-    if (GET_OPT(car(next_method)) == PRIMARY) {
+    if (GET_OPT(caller) == PRIMARY) {
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
 	    // match(x,y) if sameclass or subclass return 1 else 0;
@@ -4986,9 +4988,13 @@ f_call_next_method(int arglist)
 		    }
 		    unbind();
 		}
+        if (GET_OPT(car(next_method)) == AROUND){
+            goto exit;
+        }
 	    }
 	    next_method = cdr(next_method);
 	}
+    exit:
 	if (pexist == 0 && qexist == 0)
 	    error(NOT_EXIST_METHOD, "call-next-method", generic_vars);
 

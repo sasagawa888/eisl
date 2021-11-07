@@ -635,7 +635,7 @@ makefunc(const char *pname, int addr)
     // if lambda is generated in method, save the method and given
     // argument 
     if (generic_func != NIL)
-	SET_PROP(val, cons(GET_CDR(generic_func), generic_vars));	// method 
+	SET_PROP(val, cons(next_method, generic_vars));	// method 
 									// 
     // of 
     // generic-function 

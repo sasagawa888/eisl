@@ -616,6 +616,8 @@ int has_multiple_call_next_method_p(int x){
     while(!nullp(ls)){
         if(has_multiple_call_next_method_p1(car(ls)))
             count++;
+        if(has_multiple_call_next_method_p2(car(ls)))
+            return(1);
         
         ls = cdr(ls);
     }
@@ -639,7 +641,23 @@ int has_multiple_call_next_method_p1(int x){
 
 }
 
+// e.g. (list (call-next-method) (call-next-method))
+int has_multiple_call_next_method_p2(int x){
+    int count,ls;
 
+    count = 0;
+    ls = x;
+    while(!nullp(ls)){
+        if(has_multiple_call_next_method_p1(car(ls)))
+            count++;
+        
+        ls = cdr(ls);
+    }
+    if(count >= 2)
+        return(1);
+    else
+        return(0);
+}
 
 // --------------list operation---------------------
 

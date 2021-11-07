@@ -998,6 +998,7 @@ int             has_common_p1(int x, int y);
 int             hash(const char *name);
 int             has_multiple_call_next_method_p(int x);
 int             has_multiple_call_next_method_p1(int x);
+int             has_multiple_call_next_method_p2(int x);
 int             has_same_p(int ls);
 int             has_sys_class_p(int ls);
 int             hcons(int x, int y);

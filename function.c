@@ -4925,7 +4925,9 @@ f_call_next_method(int arglist)
                     res,
                     pexist,
                     qexist,
-                    caller;
+                    caller,
+                    save1,
+                    save2;
 
     if (generic_func == NIL)
 	error(UNDEF_FUN, "call-next-method", NIL);
@@ -4942,6 +4944,7 @@ f_call_next_method(int arglist)
 
     res = NIL;
     varlist = NIL;
+    save1 = next_method;
     caller = car(next_method);
     next_method = cdr(next_method);
     if (GET_OPT(caller) == PRIMARY) {
@@ -4957,7 +4960,7 @@ f_call_next_method(int arglist)
 		    body = cdr(body);
 		}
 		unbind();
-		return (res);
+		goto exit;
 	    }
 	    next_method = cdr(next_method);
 	}
@@ -4981,11 +4984,14 @@ f_call_next_method(int arglist)
 		    || GET_OPT(car(next_method)) == PRIMARY) {
 		    varlist = genlamlis_to_lamlis(varlist);
 		    body = cdr(GET_CAR(car(next_method)));
+            save2 = multiple_call_next_method;
+            multiple_call_next_method = has_multiple_call_next_method_p(body);
 		    bindarg(varlist, generic_vars);
 		    while (!nullp(body)) {
 			res = eval(car(body));
 			body = cdr(body);
 		    }
+            multiple_call_next_method = save2;
 		    unbind();
 		}
         if (GET_OPT(car(next_method)) == AROUND){
@@ -4997,6 +5003,11 @@ f_call_next_method(int arglist)
     exit:
 	if (pexist == 0 && qexist == 0)
 	    error(NOT_EXIST_METHOD, "call-next-method", generic_vars);
+
+    if(multiple_call_next_method){
+        next_method = save1;
+    }
+
 
 	return (res);
     }

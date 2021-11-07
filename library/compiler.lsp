@@ -991,7 +991,7 @@ defgeneric compile
 
     (defun comp-call-next-method-subr (stream x env args tail name global test clos)
         (format stream "({int res;")
-        ;;(comp-call-next-method (eisl-get-method-priority (car rest-method)) generic-args)
+        (comp-call-next-method (eisl-get-method-priority (car rest-method)) generic-args)
         (format stream "res;})~%"))
 
     (defglobal rest-method nil)

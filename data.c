@@ -619,7 +619,7 @@ int has_multiple_call_next_method_p(int x){
         
         ls = cdr(ls);
     }
-    if(count > 0)
+    if(count >= 2)
         return(1);
     else 
         return(0);

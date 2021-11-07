@@ -954,6 +954,8 @@ defgeneric compile
                           (comp-defgeneric-qualifier-cond varlis)))
                    (format code2 ")~%{")
                    (comp-defgeneric-body1 body x (varlis-to-lambda-args varlis) args)
+                   (if (= priority around)
+                       (format code2 "return(res);"))
                    (format code2 "}~%"))
                    (comp-defgeneric-body (cdr x) args))))
 

@@ -705,13 +705,11 @@ defgeneric compile
     
     
     (defun comp-defgeneric (x)
-        (let ((save rest-method))
-            (format (standard-output) "compiling ~A ~%" (elt x 1))
-            (comp-defgeneric0 x)
-            (comp-defgeneric1 x)
-            (comp-defgeneric2 x)
-            (comp-defgeneric3 x)
-            (setq rest-method save)))
+        (format (standard-output) "compiling ~A ~%" (elt x 1))
+        (comp-defgeneric0 x)
+        (comp-defgeneric1 x)
+        (comp-defgeneric2 x)
+        (comp-defgeneric3 x))
     
     (defun comp-defmodule (x)
         (let ((name (car (cdr x)))

@@ -589,6 +589,8 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'c-option)) (comp-c-option x))
               ((and (consp x) (= (length x) 3) (member (car x) '(= < <= > >= + - * mod eq)))
                (comp-numeric stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'call-next-method))
+               (comp-call-next-method-subr stream x env args tail name global test clos))
               ((and (consp x) (subrp (car x)))
                (comp-subrcall stream x env args tail name global test clos))
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
@@ -703,11 +705,13 @@ defgeneric compile
     
     
     (defun comp-defgeneric (x)
-        (format (standard-output) "compiling ~A ~%" (elt x 1))
-        (comp-defgeneric0 x)
-        (comp-defgeneric1 x)
-        (comp-defgeneric2 x)
-        (comp-defgeneric3 x))
+        (let ((save rest-method))
+            (format (standard-output) "compiling ~A ~%" (elt x 1))
+            (comp-defgeneric0 x)
+            (comp-defgeneric1 x)
+            (comp-defgeneric2 x)
+            (comp-defgeneric3 x)
+            (setq rest-method save)))
     
     (defun comp-defmodule (x)
         (let ((name (car (cdr x)))
@@ -896,6 +900,7 @@ defgeneric compile
         (let* ((name (elt x 1))
                (args (varlis-to-lambda-args (elt x 2)))
                (method (eisl-get-method name)) )
+            (setq generic-args args)
             (format code2 "static int ")
             (format code2 (convert (conv-name name) <string>))
             (gen-arg2 code2 args)
@@ -978,14 +983,22 @@ defgeneric compile
                (if (not (= (eisl-get-method-priority (car methods)) primary))
                    (format code2 "return(res);~%")))   
               (t
+               (setq rest-method (cdr methods))
                (format code2 "res = ")
                (comp code2 (car x) env args nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
                (comp-defgeneric-body1 (cdr x) methods env args)))) 
 
+
+    (defun comp-call-next-method-subr (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        ;;(comp-call-next-method (eisl-get-method-priority (car rest-method)) generic-args)
+        (format stream "res;})~%"))
+
     (defglobal rest-method nil)
     (defglobal entry-parameter nil)
+    (defglobal generic-args nil)
     (defun comp-call-next-method (next-priority args)
       (cond ((null rest-method) t)
             (t

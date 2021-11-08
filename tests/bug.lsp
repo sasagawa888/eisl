@@ -105,7 +105,7 @@
    (:method ((a <string>) (b <string>) c)
 	    (list (call-next-method) (string-append a b))))
 
-		#|
+	#|	
    (:method ((a <integer>) (b <number>) c)
 	    (list (call-next-method) (list 'number a b)))
    (:method ((a <integer>) (b <integer>) c)

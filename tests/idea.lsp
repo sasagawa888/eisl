@@ -4,6 +4,7 @@
                (args (varlis-to-lambda-args (elt x 2)))
                (method (eisl-get-method name)) )
             (setq generic-args args)
+            (setq rest-method method)
             (format code2 "static int ")
             (format code2 (convert (conv-name name) <string>))
             (gen-arg2 code2 args)
@@ -12,7 +13,7 @@
             (format code2 "int super_flag=0;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
-            (comp-defgeneric-body method args)
+            (comp-defgeneric-body method)
             (gen-shelterpop code2 (reverse args))
             (format code2 "if(res==20000000) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
@@ -43,12 +44,12 @@
               (t (error* "defgeneric" x))))
     
     ;; x is methods 
-    (defun comp-defgeneric-body (x args)
+    (defun comp-defgeneric-body (x)
         (cond ((null x) t)
               (t
                (let* ((varbody (eisl-get-method-body (car x)))
-                      (varlis (alpha-conv-varlis (car varbody) args))
-                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
+                      (varlis (alpha-conv-varlis (car varbody) generic-args))
+                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) generic-args)))
                       (priority (eisl-get-method-priority (car x))) )
                    (setq method-args varlis)
                    (setq caller-priotity priority)
@@ -60,22 +61,22 @@
                          (t
                           (comp-defgeneric-qualifier-cond varlis)))
                    (format code2 ")~%{")
-                   (comp-defgeneric-body1 body x (varlis-to-lambda-args varlis) args)
+                   (comp-defgeneric-body1 body x (varlis-to-lambda-args varlis))
                    (if (= priority around)
                        (format code2 "return(res);"))
                    (format code2 "}~%"))
                    (comp-defgeneric-body (cdr x) args))))
 
     ;;x is the method bodies
-    (defun comp-defgeneric-body1 (x methods env args)
+    (defun comp-defgeneric-body1 (x methods env)
         (cond ((null x) t) 
               (t
                (setq rest-method (cdr methods))
                (format code2 "res = ")
-               (comp code2 (car x) env args nil nil nil nil nil)
+               (comp code2 (car x) env generic-args nil nil nil nil nil)
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
-               (comp-defgeneric-body1 (cdr x) methods env args))))
+               (comp-defgeneric-body1 (cdr x) methods env))))
 
 
     (defun comp-call-next-method ()

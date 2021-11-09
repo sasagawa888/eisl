@@ -68,8 +68,8 @@ defgeneric compile
     1. next-method is primary-method, generate one next method.
     2. next-method is qualifier-method, generate all next methods. 
        in this case if(...) is Fadapt(...) for super class   
-    3. when (call-next-method) after that, compiler compaire entry-parameter and next-method-parameter.
-       if entry-parameter is superclass than next-method-parameter, compiler ignore next-method. 
+    3. when (call-next-method) after that, compiler compaire method-args and next-method-parameter.
+       if method-args is superclass than next-method-parameter, compiler ignore next-method. 
     
 
 |#
@@ -947,7 +947,7 @@ defgeneric compile
                       (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args)))
                       (nextcall (has-call-next-method body))
                       (priority (eisl-get-method-priority (car x))) )
-                   (setq entry-parameter varlis)
+                   (setq method-args varlis)
                    (format code2 "if(")
                    (cond ((= priority primary)
                           (comp-defgeneric-primary-cond varlis))
@@ -996,16 +996,17 @@ defgeneric compile
         (format stream "res;})~%"))
 
     (defglobal rest-method nil)
-    (defglobal entry-parameter nil)
+    (defglobal method-args nil)
     (defglobal generic-args nil)
+    (defglobal caller-priority nil)
     (defun comp-call-next-method (next-priority args)
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (eisl-get-method-body (car rest-method)))
                      (varlis (alpha-conv-varlis (car varbody) args))
                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) args))))
-                 ;; if parameter of next-method is subclass of entry-parameter, ignore this next-method 
-                 (if (eisl-superp-for-compiler entry-parameter varlis)
+                 ;; if parameter of next-method is subclass of method-args, ignore this next-method 
+                 (if (eisl-superp-for-compiler method-args varlis)
                      (progn (if (not (null rest-method))
                                 (setq rest-method (cdr rest-method)))
                             (comp-call-next-method next-priority args)))

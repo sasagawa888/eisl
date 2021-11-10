@@ -953,8 +953,6 @@ defgeneric compile
                    (format code2 "if(")
                    (cond ((= priority primary)
                           (comp-defgeneric-primary-cond varlis))
-                         ;(nextcall
-                         ; (comp-defgeneric-primary-cond varlis))
                          (t
                           (comp-defgeneric-qualifier-cond varlis)))
                    (format code2 ")~%{")

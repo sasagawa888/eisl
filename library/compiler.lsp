@@ -591,6 +591,8 @@ defgeneric compile
                (comp-numeric stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'call-next-method))
                (comp-call-next-method))
+              ((and (consp x) (eq (car x) 'next-method-p))
+               (comp-next-method-p))
               ((and (consp x) (subrp (car x)))
                (comp-subrcall stream x env args tail name global test clos))
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
@@ -1013,10 +1015,31 @@ defgeneric compile
                    (format code2 ";~%"))
                (comp-call-next-method2 (cdr body) env)))) 
 
-    ;; comp-next-method-p is allways true in compiler
-    (defun comp-next-method-p (stream)
-        (format stream "1"))
 
+    (defun comp-next-method-p ()
+        (format code2 "({int res;")
+        (comp-next-method-p1)
+        (format code2 "NIL;})"))
+
+    (defun comp-next-method-p1 ()
+        (cond ((null rest-method) t)
+              (t
+               (let* ((varbody (eisl-get-method-body (car rest-method)))
+                      (varlis (alpha-conv-varlis (car varbody) generic-args))
+                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) generic-args))))
+                    ;; if parameter of next-method is subclass of method-args, ignore this next-method 
+                    (if (eisl-superp-for-compiler method-args varlis)
+                        (progn (setq rest-method (cdr rest-method))
+                               (comp-next-method-p1)))
+                    (format code2 "if(")
+                    (comp-defgeneric-qualifier-cond varlis)
+                    (format code2 ")return(T);~%")
+                    ;; if next-method is primary then end, else generate rest-methods
+                    (if (and (= caller-priority around) (not (null rest-method)))
+                        (progn (setq rest-method (cdr rest-method))
+                               (comp-next-method-p1)))))))
+
+    
 #| old code
     (defun comp-defgeneric2 (x)
         (let* ((name (elt x 1))

@@ -25,6 +25,8 @@
 (defclass c22 (c11) ())
 (defclass c33 (c22) ())
 ;;
+
+
 (defglobal c00 (create (class c00)))
 (defglobal c11 (create (class c11)))
 (defglobal c22 (create (class c22)))

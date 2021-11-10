@@ -11,7 +11,7 @@
 ;;; 基本メソッド
 (defmethod bar ((x foo1)) (format (standard-output) "foo1 bar~%"))
 (defmethod bar ((x foo2)) (format (standard-output) "foo2 bar~%") (call-next-method))
-(defmethod bar ((x foo3)) (format (standard-output) "foo3 bar~%") (call-next-method))
+(defmethod bar ((x foo3)) (format (standard-output) "foo3 bar~%"))
 
 ;;; :after メソッド
 (defmethod bar :after ((x foo1)) (format (standard-output) "foo1 bar after~%"))

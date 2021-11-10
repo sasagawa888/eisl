@@ -899,7 +899,6 @@ defgeneric compile
                (args (varlis-to-lambda-args (elt x 2)))
                (method (eisl-get-method name)) )
             (setq generic-args args)
-            (setq rest-method method)
             (format code2 "static int ")
             (format code2 (convert (conv-name name) <string>))
             (gen-arg2 code2 args)
@@ -914,10 +913,12 @@ defgeneric compile
             (gen-error-argument args)
             (format code2 ");~%")
             (format code2 "return(res);}~%")))
+
     (defconstant around 11)
     (defconstant befor 12)
     (defconstant primary 13)
     (defconstant after 14)
+
     ;;geberate ILOSerror arguments list
     (defun gen-error-argument (args)
         (cond ((null args)
@@ -926,6 +927,7 @@ defgeneric compile
                 (format code2 "Fcons(~A," (conv-name (car args)))
                 (gen-error-argument (cdr args))
                 (format code2 ")"))))
+
     ;;ex ((x <list>)y :rest z) -> (x y z)
     (defun varlis-to-lambda-args (x)
         (cond ((null x) nil)
@@ -934,6 +936,7 @@ defgeneric compile
               ((symbolp (car x)) (cons (car x) (varlis-to-lambda-args (cdr x))))
               ((consp (car x)) (cons (car (car x)) (varlis-to-lambda-args (cdr x))))
               (t (error* "defgeneric" x))))
+
     ;; x is methods 
     (defun comp-defgeneric-body (x)
         (cond ((null x) t)
@@ -958,6 +961,7 @@ defgeneric compile
                        (format code2 "return(res);"))
                    (format code2 "}~%"))
                    (comp-defgeneric-body (cdr x)))))
+
     ;;x is the method bodies
     (defun comp-defgeneric-body1 (x env)
         (cond ((null x) t) 
@@ -967,31 +971,39 @@ defgeneric compile
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
                (comp-defgeneric-body1 (cdr x) env))))
+
     (defun comp-call-next-method ()
         (format code2 "({int res;")
-        (comp-call-next-method1 (cdr rest-method))
+        (if (not (null rest-method))
+            (setq rest-method (cdr rest-method)))
+        (comp-call-next-method1)
         (format code2 "res;})~%"))
+
     (defglobal rest-method nil)
     (defglobal method-args nil)
     (defglobal generic-args nil)
     (defglobal caller-priority nil)
-    (defun comp-call-next-method1 (next-method)
-      (cond ((null next-method) t)
+
+    (defun comp-call-next-method1 ()
+      (cond ((null rest-method) t)
             (t
-              (let* ((varbody (eisl-get-method-body (car next-method)))
+              (let* ((varbody (eisl-get-method-body (car rest-method)))
                      (varlis (alpha-conv-varlis (car varbody) generic-args))
                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) generic-args))))
                  ;; if parameter of next-method is subclass of method-args, ignore this next-method 
                  (if (eisl-superp-for-compiler method-args varlis)
-                     (comp-call-next-method1 (cdr next-method)))
+                     (progn (setq rest-method (cdr rest-method))
+                            (comp-call-next-method1)))
                  (format code2 "if(")
                  (comp-defgeneric-qualifier-cond varlis)
                  (format code2 ")~%{")
                  (comp-call-next-method2 body (varlis-to-lambda-args varlis))
                  (format code2 "}~%")
                  ;; if next-method is primary then end, else generate rest-methods
-                 (if (and (= caller-priority around) (not (null next-method)))
-                     (comp-call-next-method1 (cdr next-method)))))))
+                 (if (and (= caller-priority around) (not (null rest-method)))
+                     (progn (setq rest-method (cdr rest-method))
+                            (comp-call-next-method1)))))))
+
     (defun comp-call-next-method2 (body env)
         (cond ((null body) t)
               (t
@@ -1000,6 +1012,7 @@ defgeneric compile
                (if (not (not-need-colon-p (car body)))
                    (format code2 ";~%"))
                (comp-call-next-method2 (cdr body) env)))) 
+
     ;; comp-next-method-p is allways true in compiler
     (defun comp-next-method-p (stream)
         (format stream "1"))

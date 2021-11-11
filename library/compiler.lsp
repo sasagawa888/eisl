@@ -1015,14 +1015,18 @@ defgeneric compile
                    (format code2 ";~%"))
                (comp-call-next-method2 (cdr body) env)))) 
 
-
+    (defun comp-next-method-p ()
+        (if (not (null rest-method))
+            (format code2 "T")
+            (format code2 "NIL")))
+    #|
     (defun comp-next-method-p ()
         (let ((save rest-method))
             (format code2 "({")
             (comp-next-method-p1)
             (format code2 "NIL;})")
             (setq rest-method save)))
-
+    |#
     (defun comp-next-method-p1 ()
         (cond ((null rest-method) t)
               (t

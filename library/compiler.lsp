@@ -1026,12 +1026,13 @@ defgeneric compile
             (format code2 "T")
             (format code2 "NIL")))
     
+    
     (defun comp-next-method-p1 (next-method)
         (cond ((null next-method) nil)
               (t
                (let* ((varbody (eisl-get-method-body (car next-method)))
                       (varlis (alpha-conv-varlis (car varbody) generic-args)))
-                    (if (eisl-superp-for-compiler method-args varlis)
+                    (if (eisl-superp-for-compiler varlis method-args)
                         t
                         (comp-next-method-p1 (cdr next-method)))))))
 

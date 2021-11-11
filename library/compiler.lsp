@@ -974,12 +974,16 @@ defgeneric compile
 
     (defun comp-call-next-method ()
         (format code2 "({int res;")
-        (let ((save rest-method))
+        (let ((save1 rest-method)
+              (save2 method-args)
+              (save3 caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
             (comp-call-next-method1)
             (format code2 "res;})~%")
-            (setq rest-method save)))
+            (setq rest-method save1)
+            (setq method-args save2)
+            (setq caller-priority save3)))
 
     (defglobal rest-method nil)
     (defglobal method-args nil)
@@ -1016,33 +1020,18 @@ defgeneric compile
                (comp-call-next-method2 (cdr body) env)))) 
 
     (defun comp-next-method-p ()
-        (if (not (null rest-method))
+        (if (comp-next-method-p1 rest-method)
             (format code2 "T")
             (format code2 "NIL")))
-    #|
-    (defun comp-next-method-p ()
-        (let ((save rest-method))
-            (format code2 "({")
-            (comp-next-method-p1)
-            (format code2 "NIL;})")
-            (setq rest-method save)))
-    |#
-    (defun comp-next-method-p1 ()
-        (cond ((null rest-method) t)
+    
+    (defun comp-next-method-p1 (next-method)
+        (cond ((null next-method) nil)
               (t
-               (let* ((varbody (eisl-get-method-body (car rest-method)))
-                      (varlis (alpha-conv-varlis (car varbody) generic-args))
-                      (body (alpha-conv-method (cdr varbody) (method-varlis-to-substlist (car varbody) generic-args))))
-                    ;; if parameter of next-method is subclass of method-args, ignore this next-method 
+               (let* ((varbody (eisl-get-method-body (car next-method)))
+                      (varlis (alpha-conv-varlis (car varbody) generic-args)))
                     (if (eisl-superp-for-compiler method-args varlis)
-                        (progn (setq rest-method (cdr rest-method))
-                               (comp-next-method-p1)))
-                    (format code2 "if(")
-                    (comp-defgeneric-qualifier-cond varlis)
-                    (format code2 "){return(T);}~%")
-                    (if (not (null rest-method))
-                        (progn (setq rest-method (cdr rest-method))
-                               (comp-next-method-p1)))))))
+                        t
+                        (comp-next-method-p1 (cdr next-method)))))))
 
 
     ;; ((x <integer>) (y <integer>)) (a b) -> ((a <integer>) (b <integer>))

@@ -974,10 +974,12 @@ defgeneric compile
 
     (defun comp-call-next-method ()
         (format code2 "({int res;")
-        (if (not (null rest-method))
-            (setq rest-method (cdr rest-method)))
-        (comp-call-next-method1)
-        (format code2 "res;})~%"))
+        (let ((save rest-method))
+            (if (not (null rest-method))
+                (setq rest-method (cdr rest-method)))
+            (comp-call-next-method1)
+            (format code2 "res;})~%")
+            (setq rest-method save)))
 
     (defglobal rest-method nil)
     (defglobal method-args nil)
@@ -1015,9 +1017,11 @@ defgeneric compile
 
 
     (defun comp-next-method-p ()
-        (format code2 "({int res;")
-        (comp-next-method-p1)
-        (format code2 "NIL;})"))
+        (let ((save rest-method))
+            (format code2 "({")
+            (comp-next-method-p1)
+            (format code2 "NIL;})")
+            (setq rest-method save)))
 
     (defun comp-next-method-p1 ()
         (cond ((null rest-method) t)
@@ -1031,9 +1035,8 @@ defgeneric compile
                                (comp-next-method-p1)))
                     (format code2 "if(")
                     (comp-defgeneric-qualifier-cond varlis)
-                    (format code2 ")return(T);~%")
-                    ;; if next-method is primary then end, else generate rest-methods
-                    (if (and (= caller-priority around) (not (null rest-method)))
+                    (format code2 "){return(T);}~%")
+                    (if (not (null rest-method))
                         (progn (setq rest-method (cdr rest-method))
                                (comp-next-method-p1)))))))
 

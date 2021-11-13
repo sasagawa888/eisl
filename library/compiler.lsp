@@ -991,7 +991,7 @@ defgeneric compile
                 (setq rest-method (cdr rest-method)))
             (comp-call-next-method1)
             (format code2 "res;})~%")
-            (setq method-args save1)
+            ;(setq method-args save1)
             (setq caller-priority save2)))
 
     (defglobal rest-method nil)
@@ -1000,6 +1000,7 @@ defgeneric compile
     (defglobal caller-priority nil)
 
     (defun comp-call-next-method1 ()
+      ;(print method-args) (print (disp rest-method)) 
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (eisl-get-method-body (car rest-method)))
@@ -1008,20 +1009,24 @@ defgeneric compile
                      (priority (eisl-get-method-priority (car rest-method)))
                      (save caller-priority) )
                  ;; if parameter of next-method is subclass of method-args, ignore this next-method 
-                 (if (eisl-superp-for-compiler method-args varlis)
-                     (progn (setq rest-method (cdr rest-method))
-                            (comp-call-next-method1)))
-                 (setq caller-priority priority)
-                 (format code2 "if(")
-                 (comp-defgeneric-qualifier-cond varlis)
-                 (format code2 ")~%{")
-                 (comp-call-next-method2 body (varlis-to-lambda-args varlis))
-                 (format code2 "};~%")
-                 (setq caller-priority save)
-                 ;; if next-method is primary then end, else generate rest-methods
-                 (if (and (= caller-priority around) (not (null rest-method)))
-                     (progn (setq rest-method (cdr rest-method))
-                            (comp-call-next-method1)))))))
+                 (cond ((not (eisl-superp-for-compiler varlis method-args))
+                        (setq rest-method (cdr rest-method))
+                        (comp-call-next-method1))
+                       (t (setq caller-priority priority)
+                          (format code2 "if(")
+                          (comp-defgeneric-qualifier-cond varlis)
+                          (format code2 ")~%{")
+                          (comp-call-next-method2 body (varlis-to-lambda-args varlis))
+                          (format code2 "};~%")
+                          (setq caller-priority save)
+                          ;; if next-method is primary then end, else generate rest-methods
+                          (if (and (= caller-priority around) (not (null rest-method)))
+                              (progn (setq rest-method (cdr rest-method))
+                                     (comp-call-next-method1)))))))))
+
+    (defun disp (x)
+    (mapcar #'eisl-get-method-body x))
+
 
     (defun comp-call-next-method2 (body env)
         (cond ((null body) t)

@@ -1012,11 +1012,11 @@ defgeneric compile
                      (progn (setq rest-method (cdr rest-method))
                             (comp-call-next-method1)))
                  (setq caller-priority priority)
-                 (format code2 "if(")
+                 (format code2 "({int res;if(")
                  (comp-defgeneric-qualifier-cond varlis)
                  (format code2 ")~%{")
                  (comp-call-next-method2 body (varlis-to-lambda-args varlis))
-                 (format code2 "}~%")
+                 (format code2 "};res;});~%")
                  (setq caller-priority save)
                  ;; if next-method is primary then end, else generate rest-methods
                  (if (and (= caller-priority around) (not (null rest-method)))

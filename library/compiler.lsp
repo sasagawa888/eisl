@@ -941,7 +941,7 @@ defgeneric compile
 
     ;; x is methods 
     (defun comp-defgeneric-body (x)
-        (cond ((null x) t)
+        (cond ((null x) nil)
               (t
                (let* ((varbody (eisl-get-method-body (car x)))
                       (varlis (alpha-conv-varlis (car varbody) generic-args))
@@ -959,6 +959,8 @@ defgeneric compile
                    (comp-defgeneric-body1 body (varlis-to-lambda-args varlis))
                    (if (= priority around)
                        (format code2 "return(res);"))
+                   (if (and (= priority primary) (not (has-after-qualifier-p (cdr x))))
+                       (format code2 "return(res);"))
                    (format code2 "}~%"))
                    (comp-defgeneric-body (cdr x)))))
 
@@ -971,6 +973,15 @@ defgeneric compile
                (if (not (not-need-colon-p (car x)))
                    (format code2 ";~%"))
                (comp-defgeneric-body1 (cdr x) env))))
+
+    ;;has after-qualifier?
+     (defun has-after-qualifier-p (next-method)
+        (cond ((null next-method) nil)
+              (t
+               (let* ((priority (eisl-get-method-priority (car next-method))) )
+                    (if (or (= priority befor) (= priority after))
+                        t
+                        (has-after-qualifier-p (cdr next-method)))))))
 
     (defun comp-call-next-method ()
         (format code2 "({int res;")
@@ -1001,11 +1012,11 @@ defgeneric compile
                      (progn (setq rest-method (cdr rest-method))
                             (comp-call-next-method1)))
                  (setq caller-priority priority)
-                 (format code2 "({int res;if(")
+                 (format code2 "if(")
                  (comp-defgeneric-qualifier-cond varlis)
                  (format code2 ")~%{")
                  (comp-call-next-method2 body (varlis-to-lambda-args varlis))
-                 (format code2 "};res;});~%")
+                 (format code2 "}~%")
                  (setq caller-priority save)
                  ;; if next-method is primary then end, else generate rest-methods
                  (if (and (= caller-priority around) (not (null rest-method)))

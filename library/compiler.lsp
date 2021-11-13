@@ -906,7 +906,6 @@ defgeneric compile
             (gen-arg2 code2 args)
             (format code2 "{~%")
             (format code2 "int res=20000000;~%")
-            (format code2 "int super_flag=0;~%")
             (gen-shelterpush code2 args)
             (gen-checkgc)
             (comp-defgeneric-body method)

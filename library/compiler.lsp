@@ -984,31 +984,38 @@ defgeneric compile
 
     
     (defun comp-call-next-method ()
-        (format code2 "({int res,temp;")
+        (format code2 "({int res;")
         (let ((save caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
-            (comp-call-next-method-swap-argument)
+            (comp-call-next-method-set-original-argument)
             (comp-call-next-method1)
-            (comp-call-next-method-swap-argument)
+            (comp-call-next-method-restore-argument)
             (format code2 "res;})~%")
             (setq caller-priority save)))
 
     ;;when (call-next-method) call, argument must be original parameter
-    (defun comp-call-next-method-swap-argument ()
+    (defun comp-call-next-method-set-original-argument ()
         (for ((ls1 (remove '&rest (remove ':rest generic-args)) (cdr ls1)))
              ((null ls1) t)
-             (format code2 "temp = ")
+             (format code2 "Fargpush(")
              (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 ";~%")
+             (format code2 ");~%")
              (format-object code2 (conv-name (car ls1)) nil)
              (format code2 " = ")
              (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 "copy;~%")
-             (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 "copy = temp;~%")))
+             (format code2 "copy;~%")))
 
-    
+    (defun comp-call-next-method-restore-argument ()
+        (for ((ls1 (reverse (remove '&rest (remove ':rest generic-args))) (cdr ls1)))
+             ((null ls1) t)
+             (format-object code2 (conv-name (car ls1)) nil)
+             (format code2 " = ")
+             (format code2 "Fargpop();~%")))
+             
+
+
+
     (defglobal rest-method nil)
     (defglobal method-args nil)
     (defglobal generic-args nil)

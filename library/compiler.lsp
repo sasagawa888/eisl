@@ -1014,15 +1014,16 @@ defgeneric compile
 
     ;;e.g. (list (call-next-method) (call-next-method))
     (defun has-multiple-call-next-method-p2 (x)
-        (let ((count 0)
-              (ls x))
-            (while (not (null ls))
-                (if (has-multiple-call-next-method-p1 (car ls))
-                    (setq count (+ count 1)))
-                (setq ls (cdr ls)))
-            (if (>= count 2)
-                t 
-                nil)))
+        (cond ((atom x) nil)
+              (t (let ((count 0)
+                      (ls x))
+                    (while (not (null ls))
+                        (if (has-multiple-call-next-method-p1 (car ls))
+                            (setq count (+ count 1)))
+                        (setq ls (cdr ls)))
+                    (if (>= count 2)
+                        t 
+                        nil)))))
 
 
     

@@ -2,6 +2,10 @@
 (defun add-call-tree (x)
    (setq *call-tree* (cons x *call-tree*)))
 
+
+(defgeneric (setf foo-18) (x y z))
+(defmethod (setf foo-18) (x y z) (list x y z))
+
 (defgeneric foo-32 (x)
    (:method ((x <integer>))
 	    (list x (call-next-method) (call-next-method)))
@@ -9,7 +13,7 @@
 	    (* x x))
    (:method (x)
 	    'never-called))
-		
+
 ;($test (foo-32 3) (3 9 9) equal)
 
 (defgeneric foo-36 (a b &rest c)

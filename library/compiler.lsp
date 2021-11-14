@@ -351,14 +351,15 @@ defgeneric compile
                (unless (listp (elt x 2)) (error* "defclass: not list" (elt x 2)))
                (eval x))
               ((eq (car x) 'defgeneric)
-               (unless (symbolp (elt x 1)) (error* "defgeneric: not symbol " (elt x 1)))
+               (unless (or (symbolp (elt x 1)) (listp (elt x 1)))  (error* "defgeneric: not symbol " (elt x 1)))
                (unless (listp (elt x 2)) (error* "defgeneric: not list " (elt x 2)))
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
                (setq function-arg (cons (cons (elt x 1) (count-args (elt x 2))) function-arg))
-               (setq generic-name-arg (cons (cons (elt x 1) (elt x 2)) generic-name-arg))
+               (let ((fname (if (listp (elt x 1)) (elt (elt x 1) 1) (elt x 1))))
+                 (setq generic-name-arg (cons (cons fname (elt x 2)) generic-name-arg)))
                (eval x))
               ((eq (car x) 'defmethod)
-               (unless (symbolp (elt x 1)) (error* "defmethod: not symbol" (elt x 1)))
+               (unless (or (symbolp (elt x 1)) (listp (elt x 1))) (error* "defmethod: not symbol" (elt x 1)))
                (unless
                 (or (listp (elt x 2)) (symbolp (elt x 2)))
                 (error* "defmethod: not list" (elt x 2)))
@@ -749,7 +750,8 @@ defgeneric compile
             (format code0 ";~%")))
     
     (defun comp-defgeneric0 (x)
-        (let* ((name (elt x 1))
+        (let* ((name0 (elt x 1))
+               (name (if (listp name0) (elt name0 1) name0)) ; e.g. (setf foo)
                (args (elt x 2))
                (n (length args)) )
             (format code0 "static int f_")
@@ -788,7 +790,8 @@ defgeneric compile
     
     
     (defun comp-defgeneric1 (x)
-        (let* ((name (elt x 1))
+        (let* ((name0 (elt x 1))
+               (name (if (listp name0) (elt name0 1) name0)) ; e.g. (setf foo)
                (args (elt x 2))
                (n (count-args args)) )
             (format code1 "static int f_")
@@ -896,7 +899,8 @@ defgeneric compile
                (format stream ")"))))
     
     (defun comp-defgeneric2 (x)
-        (let* ((name (elt x 1))
+        (let* ((name0 (elt x 1))
+               (name (if (listp name0) (elt name0 1) name0)) ;e.g. (setf foo)
                (args (varlis-to-lambda-args (elt x 2)))
                (method (eisl-get-method name)) )
             (setq generic-args args)
@@ -1243,7 +1247,8 @@ defgeneric compile
         (format code3 ");~%"))
     
     (defun comp-defgeneric3 (x)
-        (let ((name (elt x 1)))
+        (let* ((name0 (elt x 1))
+               (name (if (listp name0) (elt name0 1) name0)))
            (format code3 "(deftfunc)(\"")
            (format-object code3 name nil)
            (format code3 "\" , f_")
@@ -2616,7 +2621,8 @@ defgeneric compile
                (list-to-c1 code4 x)
                (format code4 ");~%"))
               (t
-               (let* ((name (elt x 1))
+               (let* ((name0 (elt x 1))
+                      (name (if (listp name0) (elt name0 1) name0))
                       (arg (if (listp (elt x 2))
                               (elt x 2)
                               (elt x 3)))

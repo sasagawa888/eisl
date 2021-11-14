@@ -2435,6 +2435,11 @@ defgeneric compile
                          (elt form 1)
                          (list 'quote (eval (list (elt form 0) nil))))))
                      (comp stream newform env args tail name global test clos)))
+                 ((and
+                   (consp form))
+                  (let ((newform
+                        (cons (car form) (cons val (cdr form)))))
+                     (comp stream newform env args tail name global test clos)))
                  ((symbolp form)
                   (comp-setq stream (list 'setq form val) env args tail name global test clos))
                  (t (error* "setf: illegal form" x)))))

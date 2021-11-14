@@ -6,6 +6,9 @@
 (defgeneric (setf foo-18) (x y z))
 (defmethod (setf foo-18) (x y z) (list x y z))
 
+(defun foo-18* ()
+	(setf (foo-18 1 2) 3))
+
 (defgeneric foo-32 (x)
    (:method ((x <integer>))
 	    (list x (call-next-method) (call-next-method)))

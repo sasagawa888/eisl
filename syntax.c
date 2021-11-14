@@ -484,14 +484,14 @@ f_setf(int arglist)
 		 cons(arg2,
 		      list2(cadr(arg1), list2(makesym("QUOTE"), var))));
     }
-	// e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z))
-	else if (listp(arg1)){
-	// e.g. above case  (foo 3 1 2)
-	newform = cons(car(arg1),cons(arg2,cdr(arg1)));
-	if(!genericp(car(arg1)))
-	error(ILLEGAL_FORM,"setf",arg1);
-	}
-	 else if (symbolp(arg1)) {
+    // e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf
+    // foo) (x y z))
+    else if (listp(arg1)) {
+	// e.g. above case (foo 3 1 2)
+	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
+	if (!genericp(car(arg1)))
+	    error(ILLEGAL_FORM, "setf", arg1);
+    } else if (symbolp(arg1)) {
 	newform = cons(makesym("SETQ"), list2(arg1, arg2));
     } else
 	error(IMPROPER_ARGS, "setf", arglist);
@@ -1234,6 +1234,7 @@ f_catch(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// sp
 	return (res);
     }
@@ -1796,7 +1797,7 @@ f_defgeneric(int arglist)
                     arg2,
                     arg3,
                     val;
-	
+
     arg1 = car(arglist);	// func-name
     arg2 = cadr(arglist);	// lambda-list
     arg3 = cddr(arglist);	// body
@@ -1809,12 +1810,16 @@ f_defgeneric(int arglist)
     if (symbolp(arg1) && (genericp(arg1) && eqp(arg1, makesym("CREATE")))) {
 	error(CANT_MODIFY, "defgeneric", arg1);
     }
-    if (symbolp(arg1) && (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')){
+    if (symbolp(arg1)
+	&& (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')) {
 	error(WRONG_ARGS, "defgeneric", arg1);
-	}
-	if (!symbolp(arg1) && (listp(arg1) && !(length(arg1) == 2 && eqp(car(arg1),makesym("SETF")) && symbolp(cadr(arg1))))){
-    error(ILLEGAL_FORM, "defgeneric", arg1);
-	}
+    }
+    if (!symbolp(arg1)
+	&& (listp(arg1)
+	    && !(length(arg1) == 2 && eqp(car(arg1), makesym("SETF"))
+		 && symbolp(cadr(arg1))))) {
+	error(ILLEGAL_FORM, "defgeneric", arg1);
+    }
     if (!listp(arg2)) {
 	error(NOT_LIST, "defgeneric", arg2);
     }
@@ -1827,15 +1832,14 @@ f_defgeneric(int arglist)
     if (illegal_lambda_p(arg2)) {
 	error(ILLEGAL_ARGS, "defgeneric", arg2);
     }
-    if (!top_flag && !ignore_topchk){
+    if (!top_flag && !ignore_topchk) {
 	error(NOT_TOP_LEVEL, "defgeneric", arglist);
-	}
+    }
+    // when (defgeneric (set foo) ...)
+    if (listp(arg1)) {
+	arg1 = cadr(arg1);
+    }
 
-	//when (defgeneric (set foo) ...)
-	if (listp(arg1)){
-		arg1 = cadr(arg1);
-	}
-	
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
 
@@ -1893,17 +1897,20 @@ f_defmethod(int arglist)
     if (symbolp(arg1) && (functionp(arg1) || macrop(arg1))) {
 	error(ILLEGAL_FORM, "defmethod", arg1);
     }
-    if (symbolp(arg1) && (GET_CAR(arg1) == NIL && !member(arg1, generic_list))) {
+    if (symbolp(arg1)
+	&& (GET_CAR(arg1) == NIL && !member(arg1, generic_list))) {
 	error(UNDEF_FUN, "defmethod", arg1);
     }
-	if (!symbolp(arg1) && (listp(arg1) && !(length(arg1) == 2 && eqp(car(arg1),makesym("SETF")) && symbolp(cadr(arg1))))){
-    error(ILLEGAL_FORM, "defmethod", arg1);
-	}
-
-	// when (defmethod (set foo) ...)
-	if(listp(arg1)){
-		arg1 = cadr(arg1);
-	}
+    if (!symbolp(arg1)
+	&& (listp(arg1)
+	    && !(length(arg1) == 2 && eqp(car(arg1), makesym("SETF"))
+		 && symbolp(cadr(arg1))))) {
+	error(ILLEGAL_FORM, "defmethod", arg1);
+    }
+    // when (defmethod (set foo) ...)
+    if (listp(arg1)) {
+	arg1 = cadr(arg1);
+    }
 
     if (listp(car(arg2)) && illegal_lambda_p(car(arg2))) {
 	error(ILLEGAL_ARGS, "defmethod", arg2);
@@ -1927,8 +1934,8 @@ f_defmethod(int arglist)
     // if (!top_flag && !ignore_topchk) {
     // error(NOT_TOP_LEVEL, "defmethod", arglist);
     // }
-	
-	
+
+
     gen = generic_func = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);
     generic_func = NIL;

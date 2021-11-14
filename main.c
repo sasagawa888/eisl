@@ -138,7 +138,9 @@ bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option
 bool            handling_resource_err = false;	// stop infinite recursion
 bool            looking_for_shebang = false;	// skip over #!
-bool			multiple_call_next_method;      // method body has multiple (call-next-method)
+bool            multiple_call_next_method;	// method body has
+						// multiple
+						// (call-next-method)
 
 // switch
 int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC
@@ -1727,17 +1729,18 @@ DEF_GETTER(char, TR, trace, NIL)
 			    && matchp(varlist, args) && pexist == 0)) {
 
 			if (GET_OPT(car(next_method)) == PRIMARY) {
-				// primary method must executes only once.
-				if(pexist == 1){
-					goto exit;
-				}
+			    // primary method must executes only once.
+			    if (pexist == 1) {
+				goto exit;
+			    }
 			    pexist = 1;
 			} else {
 			    qexist = 1;
 			}
 			varlist = genlamlis_to_lamlis(varlist);
 			body = cdr(GET_CAR(car(next_method)));
-			multiple_call_next_method = has_multiple_call_next_method_p(body);
+			multiple_call_next_method =
+			    has_multiple_call_next_method_p(body);
 			bindarg(varlist, args);
 			while (!nullp(body)) {
 			    res = eval(car(body));

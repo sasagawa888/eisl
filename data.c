@@ -607,56 +607,65 @@ symbol_list_p(int ls)
 	return (symbol_list_p(cdr(ls)));
 }
 
-int has_multiple_call_next_method_p(int x){
-    int count,ls;
+int
+has_multiple_call_next_method_p(int x)
+{
+    int             count,
+                    ls;
 
     count = 0;
     ls = x;
 
-    while(!nullp(ls)){
-        if(has_multiple_call_next_method_p1(car(ls)))
-            count++;
-        if(has_multiple_call_next_method_p2(car(ls)))
-            return(1);
-        
-        ls = cdr(ls);
+    while (!nullp(ls)) {
+	if (has_multiple_call_next_method_p1(car(ls)))
+	    count++;
+	if (has_multiple_call_next_method_p2(car(ls)))
+	    return (1);
+
+	ls = cdr(ls);
     }
-    if(count >= 2)
-        return(1);
-    else 
-        return(0);
+    if (count >= 2)
+	return (1);
+    else
+	return (0);
 }
 
-int has_multiple_call_next_method_p1(int x){
-    if(nullp(x))
-        return(0);
-    else if(symbolp(x) && eqp(x,makesym("CALL-NEXT-METHOD")))
-        return(1);
+int
+has_multiple_call_next_method_p1(int x)
+{
+    if (nullp(x))
+	return (0);
+    else if (symbolp(x) && eqp(x, makesym("CALL-NEXT-METHOD")))
+	return (1);
     else if (atomp(x))
-        return(0);
-    else if(has_multiple_call_next_method_p1(car(x)) || has_multiple_call_next_method_p1(cdr(x)))
-        return(1);
+	return (0);
+    else if (has_multiple_call_next_method_p1(car(x))
+	     || has_multiple_call_next_method_p1(cdr(x)))
+	return (1);
     else
-        return(0);
+	return (0);
 
 }
 
 // e.g. (list (call-next-method) (call-next-method))
-int has_multiple_call_next_method_p2(int x){
-    int count,ls;
+int
+has_multiple_call_next_method_p2(int x)
+{
+    int             count,
+                    ls;
 
     count = 0;
     ls = x;
-    while(!nullp(ls)){
-        if(has_multiple_call_next_method_p1(car(ls)))
-            count++;
-        
-        ls = cdr(ls);
+    while (!nullp(ls)) {
+	if (has_multiple_call_next_method_p1(car(ls)))
+	    count++;
+
+	ls = cdr(ls);
     }
-    if(count >= 2)
-        return(1);
+    if (count >= 2)
+	return (1);
     else
-        return(0);
+	return (0);
 }
 
 // --------------list operation---------------------

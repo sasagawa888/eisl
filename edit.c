@@ -86,6 +86,7 @@ display_buffer()
 	    // 
 	    // 
 	    // 
+	    // 
 	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);

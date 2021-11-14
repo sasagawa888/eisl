@@ -183,7 +183,6 @@ defgeneric compile
                  go
                  tagbody
                  while
-                 call-next-method
                  the
                  c-lang
                  c-define
@@ -907,6 +906,7 @@ defgeneric compile
             (format code2 "{~%")
             (format code2 "int res=20000000;~%")
             (gen-shelterpush code2 args)
+            (gen-arg2-copy code2 args)
             (gen-checkgc)
             (comp-defgeneric-body method)
             (gen-shelterpop code2 (reverse args))
@@ -983,16 +983,30 @@ defgeneric compile
                         (has-after-qualifier-p (cdr next-method)))))))
 
     (defun comp-call-next-method ()
-        (format code2 "({int res;")
-        (let ((save1 method-args)
-              (save2 caller-priority))
+        (format code2 "({int res,temp;")
+        (let ((save caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
+            (comp-call-next-method-swap-argument)
             (comp-call-next-method1)
+            (comp-call-next-method-swap-argument)
             (format code2 "res;})~%")
-            ;(setq method-args save1)
-            (setq caller-priority save2)))
+            (setq caller-priority save)))
 
+    (defun comp-call-next-method-swap-argument ()
+        (for ((ls1 (remove '&rest (remove ':rest generic-args)) (cdr ls1)))
+             ((null ls1) t)
+             (format code2 "temp = ")
+             (format-object code2 (conv-name (car ls1)) nil)
+             (format code2 ";~%")
+             (format-object code2 (conv-name (car ls1)) nil)
+             (format code2 " = ")
+             (format-object code2 (conv-name (car ls1)) nil)
+             (format code2 "copy;~%")
+             (format-object code2 (conv-name (car ls1)) nil)
+             (format code2 "copy = temp;~%")))
+
+    
     (defglobal rest-method nil)
     (defglobal method-args nil)
     (defglobal generic-args nil)
@@ -1214,6 +1228,18 @@ defgeneric compile
                  (format stream "int ")
                  (format-object stream (conv-name (car ls1)) nil)
                  (format stream ","))))
+
+    ;;for generic-function (call-next-method)
+    ;;make copy original arguments. (call-next-method) uses this copy 
+    (defun gen-arg2-copy (stream ls)
+        (for ((ls1 (remove '&rest (remove ':rest ls)) (cdr ls1)))
+             ((null ls1) t)
+             (format stream "int ")
+             (format-object stream (conv-name (car ls1)) nil)
+             (format stream "copy = ")
+             (format-object stream (conv-name (car ls1)) nil)
+             (format stream ";~%")))
+
     
     ;; int temp1,temp2...tempn;
     (defun gen-arg3 (n)

@@ -3,6 +3,38 @@
    (setq *call-tree* (cons x *call-tree*)))
 
 
+(defgeneric foo-sub-7 (x))
+(defmethod foo-sub-7 ((x <integer>)) 
+	 (add-call-tree 'primary-<integer>))
+(defmethod foo-sub-7 (x)
+	 (add-call-tree 'primary-<object>))
+(defmethod foo-sub-7 :before ((x <integer>)) 
+	 (add-call-tree 'before-<integer>))
+(defmethod foo-sub-7 :before (x)
+	 (add-call-tree 'before-<object>))
+(defmethod foo-sub-7 :after ((x <integer>)) 
+	 (add-call-tree 'after-<integer>))
+(defmethod foo-sub-7 :after (x)
+	 (add-call-tree 'after-<object>))
+
+(defun foo-17 (x)
+   (setq *call-tree* nil)
+   (foo-sub-7 x)
+   (reverse *call-tree*))
+
+#|
+($test (foo-17 3) (before-<integer>
+	  before-<object>
+	  primary-<integer>
+	  after-<object>
+	  after-<integer>) 
+ equal)
+($test (foo-17 3.3) (before-<object>
+	    primary-<object>
+	    after-<object>)
+ equal)
+|#
+
 (defgeneric (setf foo-18) (x y z))
 (defmethod (setf foo-18) (x y z) (list x y z))
 

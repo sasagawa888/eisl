@@ -924,6 +924,8 @@ defgeneric compile
     (defun gen-error-argument (args)
         (cond ((null args)
                (format code2 "NIL"))
+              ((or (eq (car args) '&rest) (eq (car args) ':rest))
+               (gen-error-argument (cdr args)))
               (t
                 (format code2 "Fcons(~A," (conv-name (car args)))
                 (gen-error-argument (cdr args))

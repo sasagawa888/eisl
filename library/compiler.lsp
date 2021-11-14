@@ -942,7 +942,7 @@ defgeneric compile
 
     ;; x is methods 
     (defun comp-defgeneric-body (x)
-        (cond ((null x) nil)
+        (cond ((null x) (setq multiple-call-next-method nil))
               (t
                (let* ((varbody (eisl-get-method-body (car x)))
                       (varlis (alpha-conv-varlis (car varbody) generic-args))
@@ -951,6 +951,7 @@ defgeneric compile
                    (setq method-args varlis)
                    (setq rest-method x)
                    (setq caller-priority priority)
+                   (setq multiple-call-next-method (has-multiple-call-next-method-p body))
                    (format code2 "if(")
                    (cond ((= priority primary)
                           (comp-defgeneric-primary-cond varlis))
@@ -984,17 +985,55 @@ defgeneric compile
                         t
                         (has-after-qualifier-p (cdr next-method)))))))
 
+    (defun has-multiple-call-next-method-p (x)
+        (let ((count 0)
+              (ls x))
+            (block call
+                (while (not (null ls))
+                    (if (has-multiple-call-next-method-p1 (car ls))
+                        (setq count (+ count 1)))
+                    (if (has-multiple-call-next-method-p2 (car ls))
+                        (return-from call t))
+                    (setq ls (cdr ls)))
+                (if (>= count 2)
+                    t 
+                    nil))))
+
+    (defun has-multiple-call-next-method-p1 (x)
+        (cond ((null x) nil)
+              ((and (symbolp x) (eq x 'call-next-method)) t)
+              ((atom x) nil)
+              ((or (has-multiple-call-next-method-p1 (car x))
+                   (has-multiple-call-next-method-p1 (cdr x))) t)
+              (t nil)))
+
+    ;;e.g. (list (call-next-method) (call-next-method))
+    (defun has-multiple-call-next-method-p2 (x)
+        (let ((count 0)
+              (ls x))
+            (while (not (null ls))
+                (if (has-multiple-call-next-method-p1 (car ls))
+                    (setq count (+ count 1)))
+                (setq ls (cdr ls)))
+            (if (>= count 2)
+                t 
+                nil)))
+
+
     
     (defun comp-call-next-method ()
         (format code2 "({int res;")
-        (let ((save caller-priority))
+        (let ((save1 rest-method)
+              (save2 caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
             (comp-call-next-method-set-original-argument)
             (comp-call-next-method1)
             (comp-call-next-method-restore-argument)
             (format code2 "res;})~%")
-            (setq caller-priority save)))
+            (if multiple-call-next-method
+                (setq rest-method save1))
+            (setq caller-priority save2)))
 
     ;;when (call-next-method) call, argument must be original parameter
     (defun comp-call-next-method-set-original-argument ()
@@ -1022,6 +1061,7 @@ defgeneric compile
     (defglobal method-args nil)
     (defglobal generic-args nil)
     (defglobal caller-priority nil)
+    (defglobal multiple-call-next-method nil)
 
     (defun comp-call-next-method1 ()
       (cond ((null rest-method) t)

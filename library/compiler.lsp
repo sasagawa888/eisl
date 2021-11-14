@@ -982,6 +982,7 @@ defgeneric compile
                         t
                         (has-after-qualifier-p (cdr next-method)))))))
 
+    
     (defun comp-call-next-method ()
         (format code2 "({int res,temp;")
         (let ((save caller-priority))
@@ -993,6 +994,7 @@ defgeneric compile
             (format code2 "res;})~%")
             (setq caller-priority save)))
 
+    ;;when (call-next-method) call, argument must be original parameter
     (defun comp-call-next-method-swap-argument ()
         (for ((ls1 (remove '&rest (remove ':rest generic-args)) (cdr ls1)))
              ((null ls1) t)
@@ -1013,7 +1015,6 @@ defgeneric compile
     (defglobal caller-priority nil)
 
     (defun comp-call-next-method1 ()
-      ;(print method-args) (print (disp rest-method)) 
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (eisl-get-method-body (car rest-method)))
@@ -1037,6 +1038,7 @@ defgeneric compile
                               (progn (setq rest-method (cdr rest-method))
                                      (comp-call-next-method1)))))))))
 
+    ;; for debug
     (defun disp (x)
     (mapcar #'eisl-get-method-body x))
 

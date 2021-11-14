@@ -28,7 +28,7 @@
 ; equal)
 ;;
 |#
-
+#|
 (defclass c00 () ())
 (defclass c11 () ())
 (defclass c22 (c11) ())
@@ -109,3 +109,4 @@
    (reverse *call-tree*))
 ;;
 
+|#

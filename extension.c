@@ -743,7 +743,7 @@ f_superp_for_compiler(int arglist)
     arg2 = cadr(arglist);
 
     if (length(arglist) != 2) {
-	error(WRONG_ARGS, "adaptp-for-compiler", arglist);
+	error(WRONG_ARGS, "eisl-superp-for-compiler", arglist);
     }
 
     if (superp(arg1, arg2))
@@ -762,6 +762,8 @@ superp(int entry, int next)
 	return (superp(cdr(entry), cdr(next)));
     else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// subclass
 	return (superp(cdr(entry), cdr(next)));
+    else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))          // same class
+    return (superp(cdr(entry), cdr(next)));
     else
 	return (0);
 }

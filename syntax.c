@@ -1133,7 +1133,7 @@ find_return_from_p(int x)
 	return (1);
     else if (atomp(x))
 	return (-1);
-    else if (find_return_from_p(car(x)) || find_return_from_p(cdr(x)))
+    else if (find_return_from_p(car(x))==1 || find_return_from_p(cdr(x))==1)
 	return (1);
     else
 	return (-1);

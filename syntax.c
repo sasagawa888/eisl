@@ -1100,7 +1100,7 @@ f_block(int arglist)
     // exist
     // return-from 
     // 1 else
-    // 0
+    // -1
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
 

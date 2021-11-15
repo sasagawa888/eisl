@@ -52,6 +52,10 @@ error(int errnum, const char *fun, int arg)
 	}
 	unwind_pt = 0;
     }
+
+	// initialize block-pointer
+	block_pt = 0;
+
     // fold to upper letter.
     for (i = 0; i < (int) strlen(fun); i++) {
 	fun1[i] = toupper(fun[i]);
@@ -61,6 +65,8 @@ error(int errnum, const char *fun, int arg)
     // clear generic-function data.
     generic_func = NIL;
     generic_vars = NIL;
+
+	
 
     switch (errnum) {
     case DIV_ZERO:

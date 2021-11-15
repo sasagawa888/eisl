@@ -1128,15 +1128,15 @@ int
 find_return_from_p(int x)
 {
     if (nullp(x))
-	return (0);
+	return (-1);
     else if (symbolp(x) && eqp(x, makesym("RETURN-FROM")))
 	return (1);
     else if (atomp(x))
-	return (0);
+	return (-1);
     else if (find_return_from_p(car(x)) || find_return_from_p(cdr(x)))
 	return (1);
     else
-	return (0);
+	return (-1);
 
 }
 
@@ -1157,7 +1157,7 @@ f_return_from(int arglist)
     block_pt--;
     if (block_env[block_pt][1] != tag)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
-    if (block_tag_check[block_pt] == 0)
+    if (block_tag_check[block_pt] == -1)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
     block_arg = f_progn(arg2);
     ep = block_env[block_pt][0];	// restore environment

@@ -1094,7 +1094,7 @@ f_block(int arglist)
 
     block_env[block_pt][0] = ep;	// save environment
     block_env[block_pt][1] = tag;	// save tag symbol
-    block_tag_check[block_pt] = find_return_from_p(arg2);	// save
+    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));	// save
     // flag.
     // if
     // exist

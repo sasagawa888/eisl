@@ -1085,7 +1085,7 @@ defgeneric compile
                           (format code2 "if(")
                           (comp-defgeneric-qualifier-cond varlis)
                           (format code2 ")~%{")
-                          (comp-call-next-method2 body (varlis-to-lambda-args varlis))
+                          (comp-call-next-method2 body (varlis-to-lambda-args varlis) env args clos)
                           (format code2 "};~%")
                           (setq caller-priority save)
                           ;; if next-method is primary then end, else generate rest-methods
@@ -1093,19 +1093,15 @@ defgeneric compile
                               (progn (setq rest-method (cdr rest-method))
                                      (comp-call-next-method1 env args clos)))))))))
 
-    ;; for debug
-    (defun disp (x)
-    (mapcar #'eisl-get-method-body x))
-
-
-    (defun comp-call-next-method2 (body env)
+    
+    (defun comp-call-next-method2 (body para env args clos)
         (cond ((null body) t)
               (t
                (format code2 "res = ")
                (comp code2 (car body) env generic-args nil nil nil nil nil)
                (if (not (not-need-colon-p (car body)))
                    (format code2 ";~%"))
-               (comp-call-next-method2 (cdr body) env)))) 
+               (comp-call-next-method2 (cdr body) para env args clos)))) 
 
     (defun comp-next-method-p ()
         (if (comp-next-method-p1 rest-method)

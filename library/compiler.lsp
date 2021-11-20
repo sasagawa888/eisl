@@ -591,7 +591,7 @@ defgeneric compile
               ((and (consp x) (= (length x) 3) (member (car x) '(= < <= > >= + - * mod eq)))
                (comp-numeric stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'call-next-method))
-               (comp-call-next-method env args clos))
+               (comp-call-next-method clos))
               ((and (consp x) (eq (car x) 'next-method-p))
                (comp-next-method-p))
               ((and (consp x) (subrp (car x)))
@@ -918,7 +918,13 @@ defgeneric compile
             (format code2 "if(res==20000000) FILOSerror(Fmakesym(\"~A\")," name)
             (gen-error-argument args)
             (format code2 ");~%")
-            (format code2 "return(res);}~%")))
+            (format code2 "return(res);}~%"))
+        (setq rest-method nil)
+        (setq method-args nil)
+        (setq generic-args nil)
+        (setq caller-priority nil)
+        (setq multiple-call-next-method nil))
+
 
     (defconstant around 11)
     (defconstant befor 12)
@@ -1027,14 +1033,14 @@ defgeneric compile
 
 
     
-    (defun comp-call-next-method (env args clos)
+    (defun comp-call-next-method (clos)
         (format code2 "({int res;")
         (let ((save1 rest-method)
               (save2 caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
             (comp-call-next-method-set-original-argument)
-            (comp-call-next-method1 env args clos)
+            (comp-call-next-method1 clos)
             (comp-call-next-method-restore-argument)
             (format code2 "res;})~%")
             (if multiple-call-next-method
@@ -1069,7 +1075,7 @@ defgeneric compile
     (defglobal caller-priority nil)
     (defglobal multiple-call-next-method nil)
 
-    (defun comp-call-next-method1 (env args clos)
+    (defun comp-call-next-method1 (clos)
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (eisl-get-method-body (car rest-method)))
@@ -1080,28 +1086,28 @@ defgeneric compile
                  ;; if parameter of next-method is subclass of method-args, ignore this next-method 
                  (cond ((not (eisl-superp-for-compiler varlis method-args))
                         (setq rest-method (cdr rest-method))
-                        (comp-call-next-method1 env args clos))
+                        (comp-call-next-method1 clos))
                        (t (setq caller-priority priority)
                           (format code2 "if(")
                           (comp-defgeneric-qualifier-cond varlis)
                           (format code2 ")~%{")
-                          (comp-call-next-method2 body (varlis-to-lambda-args varlis) env args clos)
+                          (comp-call-next-method2 body (varlis-to-lambda-args varlis) clos)
                           (format code2 "};~%")
                           (setq caller-priority save)
                           ;; if next-method is primary then end, else generate rest-methods
                           (if (and (= caller-priority around) (not (null rest-method)))
                               (progn (setq rest-method (cdr rest-method))
-                                     (comp-call-next-method1 env args clos)))))))))
+                                     (comp-call-next-method1 clos)))))))))
 
     
-    (defun comp-call-next-method2 (body para env args clos)
+    (defun comp-call-next-method2 (body para clos)
         (cond ((null body) t)
               (t
                (format code2 "res = ")
-               (comp code2 (car body) env generic-args nil nil nil nil nil)
+               (comp code2 (car body) para generic-args nil nil nil nil nil)
                (if (not (not-need-colon-p (car body)))
                    (format code2 ";~%"))
-               (comp-call-next-method2 (cdr body) para env args clos)))) 
+               (comp-call-next-method2 (cdr body) para clos)))) 
 
     (defun comp-next-method-p ()
         (if (comp-next-method-p1 rest-method)

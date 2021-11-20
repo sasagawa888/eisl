@@ -591,7 +591,7 @@ defgeneric compile
               ((and (consp x) (= (length x) 3) (member (car x) '(= < <= > >= + - * mod eq)))
                (comp-numeric stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'call-next-method))
-               (comp-call-next-method))
+               (comp-call-next-method env args clos))
               ((and (consp x) (eq (car x) 'next-method-p))
                (comp-next-method-p))
               ((and (consp x) (subrp (car x)))
@@ -1027,14 +1027,14 @@ defgeneric compile
 
 
     
-    (defun comp-call-next-method ()
+    (defun comp-call-next-method (env args clos)
         (format code2 "({int res;")
         (let ((save1 rest-method)
               (save2 caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
             (comp-call-next-method-set-original-argument)
-            (comp-call-next-method1)
+            (comp-call-next-method1 env args clos)
             (comp-call-next-method-restore-argument)
             (format code2 "res;})~%")
             (if multiple-call-next-method
@@ -1069,7 +1069,7 @@ defgeneric compile
     (defglobal caller-priority nil)
     (defglobal multiple-call-next-method nil)
 
-    (defun comp-call-next-method1 ()
+    (defun comp-call-next-method1 (env args clos)
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (eisl-get-method-body (car rest-method)))
@@ -1080,7 +1080,7 @@ defgeneric compile
                  ;; if parameter of next-method is subclass of method-args, ignore this next-method 
                  (cond ((not (eisl-superp-for-compiler varlis method-args))
                         (setq rest-method (cdr rest-method))
-                        (comp-call-next-method1))
+                        (comp-call-next-method1 env args clos))
                        (t (setq caller-priority priority)
                           (format code2 "if(")
                           (comp-defgeneric-qualifier-cond varlis)
@@ -1091,7 +1091,7 @@ defgeneric compile
                           ;; if next-method is primary then end, else generate rest-methods
                           (if (and (= caller-priority around) (not (null rest-method)))
                               (progn (setq rest-method (cdr rest-method))
-                                     (comp-call-next-method1)))))))))
+                                     (comp-call-next-method1 env args clos)))))))))
 
     ;; for debug
     (defun disp (x)

@@ -1034,37 +1034,37 @@ defgeneric compile
 
     
     (defun comp-call-next-method (stream env args tail name global test clos)
-        (format code2 "({int res;")
+        (format stream "({int res;")
         (let ((save1 rest-method)
               (save2 caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
-            (comp-call-next-method-set-original-argument)
+            (comp-call-next-method-set-original-argument stream env args tail name global test clos)
             (comp-call-next-method1 stream env args tail name global test clos)
-            (comp-call-next-method-restore-argument)
-            (format code2 "res;})~%")
+            (comp-call-next-method-restore-argument stream env args tail name global test clos)
+            (format stream "res;})~%")
             (if multiple-call-next-method
                 (setq rest-method save1))
             (setq caller-priority save2)))
 
     ;;when (call-next-method) call, argument must be original parameter
-    (defun comp-call-next-method-set-original-argument ()
+    (defun comp-call-next-method-set-original-argument (stream env args tail name global test clos)
         (for ((ls1 (remove '&rest (remove ':rest generic-args)) (cdr ls1)))
              ((null ls1) t)
-             (format code2 "Fargpush(")
+             (format stream "Fargpush(")
              (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 ");~%")
+             (format stream ");~%")
              (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 " = ")
+             (format stream " = ")
              (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 "copy;~%")))
+             (format stream "copy;~%")))
 
-    (defun comp-call-next-method-restore-argument ()
+    (defun comp-call-next-method-restore-argument (stream env args tail name global test clos)
         (for ((ls1 (reverse (remove '&rest (remove ':rest generic-args))) (cdr ls1)))
              ((null ls1) t)
              (format-object code2 (conv-name (car ls1)) nil)
-             (format code2 " = ")
-             (format code2 "Fargpop();~%")))
+             (format stream " = ")
+             (format stream "Fargpop();~%")))
              
 
 

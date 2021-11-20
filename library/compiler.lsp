@@ -591,9 +591,9 @@ defgeneric compile
               ((and (consp x) (= (length x) 3) (member (car x) '(= < <= > >= + - * mod eq)))
                (comp-numeric stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'call-next-method))
-               (comp-call-next-method clos))
+               (comp-call-next-method stream env args tail name global test clos))
               ((and (consp x) (eq (car x) 'next-method-p))
-               (comp-next-method-p))
+               (comp-next-method-p stream env args tail name global test clos))
               ((and (consp x) (subrp (car x)))
                (comp-subrcall stream x env args tail name global test clos))
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
@@ -1033,14 +1033,14 @@ defgeneric compile
 
 
     
-    (defun comp-call-next-method (clos)
+    (defun comp-call-next-method (stream env args tail name global test clos)
         (format code2 "({int res;")
         (let ((save1 rest-method)
               (save2 caller-priority))
             (if (not (null rest-method))
                 (setq rest-method (cdr rest-method)))
             (comp-call-next-method-set-original-argument)
-            (comp-call-next-method1 clos)
+            (comp-call-next-method1 stream env args tail name global test clos)
             (comp-call-next-method-restore-argument)
             (format code2 "res;})~%")
             (if multiple-call-next-method
@@ -1075,7 +1075,7 @@ defgeneric compile
     (defglobal caller-priority nil)
     (defglobal multiple-call-next-method nil)
 
-    (defun comp-call-next-method1 (clos)
+    (defun comp-call-next-method1 (stream env args tail name global test clos)
       (cond ((null rest-method) t)
             (t
               (let* ((varbody (eisl-get-method-body (car rest-method)))
@@ -1086,33 +1086,33 @@ defgeneric compile
                  ;; if parameter of next-method is subclass of method-args, ignore this next-method 
                  (cond ((not (eisl-superp-for-compiler varlis method-args))
                         (setq rest-method (cdr rest-method))
-                        (comp-call-next-method1 clos))
+                        (comp-call-next-method1 stream env args tail name global test clos))
                        (t (setq caller-priority priority)
-                          (format code2 "if(")
+                          (format stream "if(")
                           (comp-defgeneric-qualifier-cond varlis)
-                          (format code2 ")~%{")
-                          (comp-call-next-method2 body (varlis-to-lambda-args varlis) clos)
-                          (format code2 "};~%")
+                          (format stream ")~%{")
+                          (comp-call-next-method2 body (varlis-to-lambda-args varlis) stream env args tail name global test clos)
+                          (format stream "};~%")
                           (setq caller-priority save)
                           ;; if next-method is primary then end, else generate rest-methods
                           (if (and (= caller-priority around) (not (null rest-method)))
                               (progn (setq rest-method (cdr rest-method))
-                                     (comp-call-next-method1 clos)))))))))
+                                     (comp-call-next-method1 stream env args tail name global test clos)))))))))
 
     
-    (defun comp-call-next-method2 (body para clos)
+    (defun comp-call-next-method2 (body para stream env args tail name global test clos)
         (cond ((null body) t)
               (t
-               (format code2 "res = ")
-               (comp code2 (car body) para generic-args nil nil nil nil nil)
+               (format stream "res = ")
+               (comp stream (car body) para generic-args nil nil nil nil nil)
                (if (not (not-need-colon-p (car body)))
-                   (format code2 ";~%"))
-               (comp-call-next-method2 (cdr body) para clos)))) 
+                   (format stream ";~%"))
+               (comp-call-next-method2 (cdr body) para stream env args tail name global test clos)))) 
 
-    (defun comp-next-method-p ()
+    (defun comp-next-method-p (stream env args tail name global test clos)
         (if (comp-next-method-p1 rest-method)
-            (format code2 "T")
-            (format code2 "NIL")))
+            (format stream "T")
+            (format stream "NIL")))
     
     
     (defun comp-next-method-p1 (next-method)

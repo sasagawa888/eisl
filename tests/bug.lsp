@@ -1,3 +1,9 @@
+(defun foo ()
+	(let ((x 1))
+		(lambda (y) (+ x y))))
+
+(defglobal boo (foo))
+
 (defglobal *call-tree* nil)
 (defun add-call-tree (x)
    (setq *call-tree* (cons x *call-tree*)))

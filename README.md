@@ -243,16 +243,21 @@ EISL <==================================> C
 
 # Extended functions
 
-| Function              | Description                              |
-| --------------------- | ---------------------------------------- |
-| (random n)            | random-integer from 0 to n               |
-| (random-real)         | random-float-number from 0 to 1          |
-| (gbc)                 | invoke garbage collection.               |
-| (gbc t)               | display message when invoke GC.          |
-| (gbc nil)             | not display message when invoke GC.      |
-| (gbc 'copy)           | change GC method to copying-GC           | 
-| (gbc 'm&s)            | change GC method to mark & sweep         |
-| (heapdump n)          | display cell dump list from nth address  |
-| (instance n)          | display instance of nth address          |
-| (defmodule name body) | see tests/module.lsp                     |
-| (import x)            | import library. e.g. (import "compiler") |
+| Function              | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| (random n)            | random-integer from 0 to n                     |
+| (random-real)         | random-float-number from 0 to 1                |
+| (gbc)                 | invoke garbage collection.                     |
+| (gbc t)               | display message when invoke GC.                |
+| (gbc nil)             | not display message when invoke GC.            |
+| (gbc 'copy)           | change GC method to copying-GC                 | 
+| (gbc 'm&s)            | change GC method to mark & sweep               |
+| (heapdump n)          | display cell dump list from nth address        |
+| (instance n)          | display instance of nth address                |
+| (defmodule name body) | see tests/module.lsp                           |
+| (import x)            | import library. e.g. (import "compiler")       |
+| (quit)                | quit from interpreter                          |
+| (load filename)       | load code from file e.g. (load "foo.lsp")      |
+| (getenv var)          | get environment-var e.g. (getenv "EASY_ISLISP")|
+| (line-argument n)     | get nth argument from OS. n is zero base       |
+

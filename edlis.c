@@ -70,6 +70,13 @@ clear_status()
 }
 
 void
+handle_resize(void)
+{
+    ed_scroll = LINES - 4;
+    ed_footer = LINES - 1;
+}
+
+void
 init_ncurses()
 {
     if (initscr() == NULL) {
@@ -158,8 +165,7 @@ main(int argc, char *argv[])
 	fclose(port);
     }
     init_ncurses();
-    ed_scroll = LINES - 4;
-    ed_footer = LINES - 1;
+    handle_resize();
     ESCCLS();
     display_command(fname);
     display_screen();
@@ -465,10 +471,13 @@ edit_loop(char *fname)
 
     CHECK(refresh);
     c = getch();
-    if (c == ERR) {
-	errw("getch");
-    }
     switch (c) {
+    case ERR:
+	errw("getch");
+	break;
+    case KEY_RESIZE:
+	handle_resize();
+	break;
     case CTRL('G'):
 	ESCMOVE(2, 1);		// help
 	ESCCLS1();
@@ -600,11 +609,14 @@ edit_loop(char *fname)
 		CHECK(addstr, "save modified buffer? y/n/c ");
 		CHECK(refresh);
 		c = getch();
-		if (c == ERR) {
-		    errw("getch");
-		}
 		ESCRST();
 		switch (c) {
+		case ERR:
+		    errw("getch");
+		    break;
+		case KEY_RESIZE:
+		    handle_resize();
+		    break;
 		case 'y':
 		    save_data(fname);
 		    ESCCLS();
@@ -684,6 +696,8 @@ edit_loop(char *fname)
 		c = getch();
 		if (c == ERR) {
 		    errw("getch");
+		} else if (c == KEY_RESIZE) {
+		    handle_resize();
 		}
 	    } while (c != 'y' && c != 'n');
 	    if (c == 'y') {
@@ -728,10 +742,13 @@ edit_loop(char *fname)
     case ESC:
 	CHECK(refresh);
 	c = getch();
-	if (c == ERR) {
-	    errw("getch");
-	}
 	switch (c) {
+	case ERR:
+	    errw("getch");
+	    break;
+	case KEY_RESIZE:
+	    handle_resize();
+	    break;
 	case '<':
 	    home();
 	    break;
@@ -791,8 +808,9 @@ edit_loop(char *fname)
 			c = getch();
 			if (c == ERR) {
 			    errw("getch");
-			}
-			if (c != ESC) {
+			} else if (c == KEY_RESIZE) {
+			    handle_resize();
+			} else if (c != ESC) {
 			    i = c - '1';
 			    more_candidates_selected =
 				ed_candidate_pt > k + CANDIDATE
@@ -1007,16 +1025,8 @@ display_line(int line)
 	else
 	    ESCRST();
 
-	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
-								// 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // #|...|#
+	if (ed_incomment != -1 && line >= ed_incomment) {
+	    // comment #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
 	    while (((ed_col <= COLS - 1 && col <= COLS - 1)

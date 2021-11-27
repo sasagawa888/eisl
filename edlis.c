@@ -70,10 +70,14 @@ clear_status()
 }
 
 void
-handle_resize(void)
+handle_resize(char *fname)
 {
     ed_scroll = LINES - 4;
     ed_footer = LINES - 1;
+    ESCCLS();
+    display_command(fname);
+    display_screen();
+    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
 void
@@ -165,11 +169,8 @@ main(int argc, char *argv[])
 	fclose(port);
     }
     init_ncurses();
-    handle_resize();
-    ESCCLS();
-    display_command(fname);
-    display_screen();
     ed_row = ed_col = 0;
+    handle_resize(fname);
     edit_screen(fname);
     CHECK(endwin);
 }
@@ -452,7 +453,6 @@ pagedn()
 void
 edit_screen(char *fname)
 {
-    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
     bool            quit = edit_loop(fname);
     while (!quit) {
 	quit = edit_loop(fname);
@@ -476,7 +476,7 @@ edit_loop(char *fname)
 	errw("getch");
 	break;
     case KEY_RESIZE:
-	handle_resize();
+	handle_resize(fname);
 	break;
     case CTRL('G'):
 	ESCMOVE(2, 1);		// help
@@ -615,7 +615,7 @@ edit_loop(char *fname)
 		    errw("getch");
 		    break;
 		case KEY_RESIZE:
-		    handle_resize();
+		    handle_resize(fname);
 		    break;
 		case 'y':
 		    save_data(fname);
@@ -697,7 +697,7 @@ edit_loop(char *fname)
 		if (c == ERR) {
 		    errw("getch");
 		} else if (c == KEY_RESIZE) {
-		    handle_resize();
+		    handle_resize(fname);
 		}
 	    } while (c != 'y' && c != 'n');
 	    if (c == 'y') {
@@ -747,7 +747,7 @@ edit_loop(char *fname)
 	    errw("getch");
 	    break;
 	case KEY_RESIZE:
-	    handle_resize();
+	    handle_resize(fname);
 	    break;
 	case '<':
 	    home();
@@ -809,7 +809,7 @@ edit_loop(char *fname)
 			if (c == ERR) {
 			    errw("getch");
 			} else if (c == KEY_RESIZE) {
-			    handle_resize();
+			    handle_resize(fname);
 			} else if (c != ESC) {
 			    i = c - '1';
 			    more_candidates_selected =

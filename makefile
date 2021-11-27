@@ -101,7 +101,7 @@ nana/src/nana-config.h:
 edlis : edlis.o syn_highlight.o $(OBJ_CII)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h
-	$(CC) $(CFLAGS) -D_DARWIN_C_SOURCE -c edlis.c
+	$(CC) $(CFLAGS) -D_DARWIN_C_SOURCE -D_BSD_SOURCE -c edlis.c
 
 .PHONY: install
 install: eisl edlis

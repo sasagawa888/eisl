@@ -7,12 +7,23 @@
 #include <locale.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sys/ioctl.h>
 #include "compat/cdefs.h"
 #include "edlis.h"
 #include "fmt.h"
 
 #ifndef CTRL
 #define CTRL(X) ((X) & 0x1F)
+#endif
+
+#if NCURSES_VERSION_MAJOR < 6
+#define WORKAROUND_KEY_RESIZE() \
+    if (winch_flag) { \
+        handle_resize(fname); \
+        winch_flag = 0; \
+    }
+#else
+#define WORKAROUND_KEY_RESIZE()
 #endif
 
 #define TOKEN_MAX 80
@@ -51,6 +62,7 @@ const enum Color ed_string_color = YELLOW_ON_DFL;
 const enum Color ed_comment_color = BLUE_ON_DFL;
 int             ed_incomment = -1;	// #|...|# comment
 bool            modify_flag;
+volatile sig_atomic_t winch_flag = 0;
 
 __dead void
 errw(const char *msg)
@@ -116,6 +128,18 @@ init_ncurses()
     }
 }
 
+#if NCURSES_VERSION_MAJOR < 6
+void
+signal_handler_winch(int signo __unused)
+{
+    struct winsize w;
+    ioctl(0, TIOCGWINSZ, &w);
+    resizeterm(w.ws_row, w.ws_col);
+    winch_flag = 1;
+    ungetch(KEY_RESIZE);
+}
+#endif
+
 int
 main(int argc, char *argv[])
 {
@@ -132,6 +156,9 @@ main(int argc, char *argv[])
     signal(SIGINT, SIG_IGN);
     signal(SIGSTOP, SIG_IGN);
     signal(SIGTSTP, SIG_IGN);
+#if NCURSES_VERSION_MAJOR < 6
+    signal(SIGWINCH, signal_handler_winch);
+#endif
     for (i = 0; i < ROW_SIZE; i++)
 	for (j = 0; j < COL_SIZE; j++)
 	    ed_data[i][j] = NUL;
@@ -471,6 +498,7 @@ edit_loop(char *fname)
 
     CHECK(refresh);
     c = getch();
+    WORKAROUND_KEY_RESIZE();
     switch (c) {
     case ERR:
 	errw("getch");
@@ -609,6 +637,7 @@ edit_loop(char *fname)
 		CHECK(addstr, "save modified buffer? y/n/c ");
 		CHECK(refresh);
 		c = getch();
+                WORKAROUND_KEY_RESIZE();
 		ESCRST();
 		switch (c) {
 		case ERR:
@@ -694,6 +723,7 @@ edit_loop(char *fname)
 		ESCRST();
 		CHECK(refresh);
 		c = getch();
+                WORKAROUND_KEY_RESIZE();
 		if (c == ERR) {
 		    errw("getch");
 		} else if (c == KEY_RESIZE) {
@@ -742,6 +772,7 @@ edit_loop(char *fname)
     case ESC:
 	CHECK(refresh);
 	c = getch();
+        WORKAROUND_KEY_RESIZE();
 	switch (c) {
 	case ERR:
 	    errw("getch");
@@ -806,6 +837,7 @@ edit_loop(char *fname)
 			bad_candidate_selected = false;
 			CHECK(refresh);
 			c = getch();
+                        WORKAROUND_KEY_RESIZE();
 			if (c == ERR) {
 			    errw("getch");
 			} else if (c == KEY_RESIZE) {
@@ -1829,3 +1861,5 @@ replace_word(const char *str1, const char *str2)
 	}
     }
 }
+
+

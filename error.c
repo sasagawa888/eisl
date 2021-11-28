@@ -643,12 +643,14 @@ signal_condition(int x, int y)
     args = cdr(assoc(makesym("b"), GET_CDR(x)));
     fun = cdr(assoc(makesym("c"), GET_CDR(x)));
     output_stream = error_stream;
+	if (repl_flag)
     ESCERRFRED();
     fputs(GET_NAME(str), stderr);
     print(fun);
     fputc(' ', stderr);
     print(args);
     fputc('\n', stderr);
+	if (repl_flag)
     ESCERRFORG();
     input_stream = standard_input;
     output_stream = standard_output;

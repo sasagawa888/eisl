@@ -61,7 +61,7 @@ complete_getch(void)
     do {
         result = getch();
         i++;
-    } while (result == ERR && i < 4);
+    } while (result == ERR && i < 16);
     return result;
 }
 

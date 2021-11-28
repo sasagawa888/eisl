@@ -2,6 +2,7 @@
 .DELETE_ON_ERROR:
 
 OPSYS ?= linux
+# DEBUG := 1
 CC := cc
 LD := $(CC)
 ifneq ($(OPSYS),macos)
@@ -16,6 +17,9 @@ INCS := -Icii/include
 ifeq ($(OPSYS),macos)
 	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
 	CURSES_LIBS := $(shell ncurses5.4-config --libs)
+	# NCURSES_PREFIX := $(shell brew --prefix ncurses)
+	# CURSES_CFLAGS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --cflags)
+	# CURSES_LIBS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --libs)
 else
 	ifeq ($(OPSYS),openbsd)
 		CURSES_LIBS := -lncurses

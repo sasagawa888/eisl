@@ -52,6 +52,19 @@ const enum Color ed_comment_color = BLUE_ON_DFL;
 int             ed_incomment = -1;	// #|...|# comment
 bool            modify_flag;
 
+static inline int
+complete_getch(void)
+{
+    int result;
+    int i = 0;
+
+    do {
+        result = getch();
+        i++;
+    } while (result == ERR && i < 16);
+    return result;
+}
+
 __dead void
 errw(const char *msg)
 {
@@ -67,6 +80,17 @@ clear_status()
     ESCMOVE(ed_footer, 1);
     CHECK(addstr, "                                            ");
     ESCMOVE(ed_footer, 1);
+}
+
+void
+handle_resize(char *fname)
+{
+    ed_scroll = LINES - 4;
+    ed_footer = LINES - 1;
+    ESCCLS();
+    display_command(fname);
+    display_screen();
+    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
 void
@@ -158,12 +182,8 @@ main(int argc, char *argv[])
 	fclose(port);
     }
     init_ncurses();
-    ed_scroll = LINES - 4;
-    ed_footer = LINES - 1;
-    ESCCLS();
-    display_command(fname);
-    display_screen();
     ed_row = ed_col = 0;
+    handle_resize(fname);
     edit_screen(fname);
     CHECK(endwin);
 }
@@ -446,7 +466,6 @@ pagedn()
 void
 edit_screen(char *fname)
 {
-    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
     bool            quit = edit_loop(fname);
     while (!quit) {
 	quit = edit_loop(fname);
@@ -464,11 +483,14 @@ edit_loop(char *fname)
     FILE           *port;
 
     CHECK(refresh);
-    c = getch();
-    if (c == ERR) {
-	errw("getch");
-    }
+    c = complete_getch();
     switch (c) {
+    case ERR:
+	errw("getch");
+	break;
+    case KEY_RESIZE:
+	handle_resize(fname);
+	break;
     case CTRL('G'):
 	ESCMOVE(2, 1);		// help
 	ESCCLS1();
@@ -599,12 +621,15 @@ edit_loop(char *fname)
 		ESCMOVE(ed_footer, 1);
 		CHECK(addstr, "save modified buffer? y/n/c ");
 		CHECK(refresh);
-		c = getch();
-		if (c == ERR) {
-		    errw("getch");
-		}
+		c = complete_getch();
 		ESCRST();
 		switch (c) {
+		case ERR:
+		    errw("getch");
+		    break;
+		case KEY_RESIZE:
+		    handle_resize(fname);
+		    break;
 		case 'y':
 		    save_data(fname);
 		    ESCCLS();
@@ -681,9 +706,11 @@ edit_loop(char *fname)
 		CHECK(addstr, "replace? y/n ");
 		ESCRST();
 		CHECK(refresh);
-		c = getch();
+		c = complete_getch();
 		if (c == ERR) {
 		    errw("getch");
+		} else if (c == KEY_RESIZE) {
+		    handle_resize(fname);
 		}
 	    } while (c != 'y' && c != 'n');
 	    if (c == 'y') {
@@ -727,11 +754,14 @@ edit_loop(char *fname)
 	break;
     case ESC:
 	CHECK(refresh);
-	c = getch();
-	if (c == ERR) {
-	    errw("getch");
-	}
+	c = complete_getch();
 	switch (c) {
+	case ERR:
+	    errw("getch");
+	    break;
+	case KEY_RESIZE:
+	    handle_resize(fname);
+	    break;
 	case '<':
 	    home();
 	    break;
@@ -788,11 +818,12 @@ edit_loop(char *fname)
 		    do {
 			bad_candidate_selected = false;
 			CHECK(refresh);
-			c = getch();
+			c = complete_getch();
 			if (c == ERR) {
 			    errw("getch");
-			}
-			if (c != ESC) {
+			} else if (c == KEY_RESIZE) {
+			    handle_resize(fname);
+			} else if (c != ESC) {
 			    i = c - '1';
 			    more_candidates_selected =
 				ed_candidate_pt > k + CANDIDATE
@@ -1007,16 +1038,8 @@ display_line(int line)
 	else
 	    ESCRST();
 
-	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
-								// 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // #|...|#
+	if (ed_incomment != -1 && line >= ed_incomment) {
+	    // comment #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
 	    while (((ed_col <= COLS - 1 && col <= COLS - 1)
@@ -1819,3 +1842,5 @@ replace_word(const char *str1, const char *str2)
 	}
     }
 }
+
+

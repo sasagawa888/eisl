@@ -7,7 +7,6 @@
 #include <locale.h>
 #include <stdbool.h>
 #include <string.h>
-#include <sys/ioctl.h>
 #include "compat/cdefs.h"
 #include "edlis.h"
 #include "fmt.h"
@@ -52,7 +51,6 @@ const enum Color ed_string_color = YELLOW_ON_DFL;
 const enum Color ed_comment_color = BLUE_ON_DFL;
 int             ed_incomment = -1;	// #|...|# comment
 bool            modify_flag;
-volatile sig_atomic_t winch_flag = 0;
 
 static inline int
 complete_getch(void)

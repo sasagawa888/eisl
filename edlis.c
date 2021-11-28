@@ -7,9 +7,13 @@
 #include <locale.h>
 #include <stdbool.h>
 #include <string.h>
+#if !defined(NDEBUG) && __APPLE__
+#include <execinfo.h>
+#endif
 #include "compat/cdefs.h"
 #include "edlis.h"
 #include "fmt.h"
+#include "nana.h"
 
 #ifndef CTRL
 #define CTRL(X) ((X) & 0x1F)
@@ -395,9 +399,11 @@ backspace_key()
 	else
 	    ESCMOVE(22, ed_col - COLS + 1);
     } else {
-	type = check_token(ed_row, ed_col - 2);
-	if (type == HIGHLIGHT_MULTILINE_COMMENT)
-	    ed_incomment = -1;
+        if (ed_col >= 2) {
+	    type = check_token(ed_row, ed_col - 2);
+	    if (type == HIGHLIGHT_MULTILINE_COMMENT)
+	        ed_incomment = -1;
+        }
 	backspace();
 	display_screen();
 	if (ed_row < ed_start + ed_scroll)
@@ -1263,7 +1269,19 @@ deleterow()
     ed_col = l;
 }
 
-
+#if !defined(NDEBUG) && __APPLE__
+void
+print_backtrace(void)
+{
+    void *callstack[128];
+    int i, frames = backtrace(callstack, 128);
+    char **strs = backtrace_symbols(callstack, frames);
+    for (i = 0; i < frames; ++i) {
+        printf("%s\n", strs[i]);
+    }
+    free(strs);
+}
+#endif
 
 int
 findeol(int row)
@@ -1271,10 +1289,26 @@ findeol(int row)
     int             i;
 
     for (i = 0; i < COL_SIZE; i++) {
+#if !defined(NDEBUG) && __APPLE__
+        if (row < 0) {
+            print_backtrace();
+        }
+#endif
+        I(row >= 0);
 	if (ed_data[row][i] == EOL)
 	    return (i);
     }
     return (-1);
+}
+
+static inline void
+safe_dec(int *px)
+{
+    int x = *px;
+
+    if (x > 0) {
+        *px = x - 1;
+    }
 }
 
 struct position
@@ -1287,10 +1321,12 @@ findlparen(int bias)
     struct position pos;
 
     row = ed_row;
+    I(row >= 0);
     if (ed_col != 0)
 	col = ed_col - bias;
     else {
-	row--;
+        safe_dec(&row);
+        I(row >= 0);
 	if (row < 0) {
 	    pos.col = 0;
 	}
@@ -1312,7 +1348,8 @@ findlparen(int bias)
 
 
 	if (col == 0) {
-	    row--;
+            safe_dec(&row);
+            I(row >= 0);
 	    col = findeol(row);
 	} else {
 	    col--;
@@ -1679,6 +1716,12 @@ check_token(int row, int col)
     char            str[COLS];
     int             pos;
 
+#if !defined(NDEBUG) && __APPLE__
+    if (row < 0 || col < 0) {
+        print_backtrace();
+    }
+#endif
+    I(row >= 0 && col >= 0);
     pos = 0;
     if (ed_data[row][col] == '"')
 	return HIGHLIGHT_STRING;

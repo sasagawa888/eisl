@@ -260,4 +260,5 @@ EISL <==================================> C
 | (load filename)       | load code from file e.g. (load "foo.lsp")      |
 | (getenv var)          | get environment-var e.g. (getenv "EASY_ISLISP")|
 | (line-argument n)     | get nth argument from OS. n is zero base       |
+| (print obj)           | print obj to standard-stream                   |
 

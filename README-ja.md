@@ -264,3 +264,4 @@ EISL <==================================> C
 - `(quit)` インタプリタを終了する。
 - `(getenv var)`  OSから環境変数を取得する　例　(getenv "EASY_ISLISP)
 - `(line-argument n)` OSからｎ番目の起動オプションを取得する。ゼロスタート
+- `(print obj)` objを標準ストリームに出力する。

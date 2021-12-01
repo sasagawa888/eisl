@@ -98,7 +98,7 @@ endif
 nana/src/nana-config.h:
 	-cd nana; autoreconf -fi; ./configure
 
-edlis : edlis.o syn_highlight.o $(OBJ_CII)
+edlis : edlis.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
 edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c

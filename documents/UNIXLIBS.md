@@ -133,4 +133,6 @@ This has the effect of using a D implementation of the "getenv" extension instea
 
 If you want to add other functions implemented in D you will probably need to use more of the functions in *eisl.h*. Because the syntax is similar, for a first pass just copy/paste the declarations you need from *eisl.h* to *disl.d* which is it's D equivalent (a module of declarations only, no definitions).
 
+If anyone does continue this work, the D *core.std* libraries might be better replaced by something like [libmir](https://www.libmir.org/).
+
 As I said, this is all just an experiment but I thought it was interesting. Maybe someone else will too.

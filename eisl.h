@@ -51,7 +51,7 @@ typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR, SYM,
     LIS, DUMMY,
     SUBR, FSUBR, FUNC, MACRO, CLASS, INSTANCE, GENERIC, METHOD,
     STREAM
-} tag;
+} tag_t;
 typedef enum __packed { FRE, USE } flag;
 
 typedef int     (*subr_t)(int args);
@@ -75,7 +75,7 @@ typedef struct __packed {
     int             aux;
     int             prop;
     char           *name;
-    tag             tag;
+    tag_t             tag;
     flag            flag;
     signed char     option;
     char            trace;
@@ -205,7 +205,7 @@ DEF_GETTER(int, CDR, val.cdr.intnum, NIL)
 DEF_GETTER(int, AUX, aux, cfixnum)
 DEF_GETTER(int, PROP, prop, NIL)
 DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
-DEF_GETTER(tag, TAG, tag, INTN)
+DEF_GETTER(tag_t, TAG, tag, INTN)
 
 static inline FILE *GET_PORT(int addr)
 {
@@ -250,7 +250,7 @@ GET_CHAR(int addr)
 
 DEF_GETTER(signed char, OPT, option, 0)
 
-static inline void SET_TAG(int addr, tag x)
+static inline void SET_TAG(int addr, tag_t x)
 {
     REQUIRE(CELLRANGE(addr));
     heap[addr].tag = x;
@@ -1170,7 +1170,7 @@ void            bigx_plus2(int arg, int c, int msb);
 void            bindarg(int lambda, int arglist);
 void            bindclass(const char *name, int cl);
 void            bindconst(const char *name, int obj);
-void            bindfunc(const char *name, tag tag, int (*func)(int));
+void            bindfunc(const char *name, tag_t tag, int (*func)(int));
 void            bindmacro(char *name, int addr);
 void            cellprint(int addr);
 int             checkgbc(void);

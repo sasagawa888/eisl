@@ -1977,7 +1977,7 @@ SET_SUBR(int addr, subr_t x)
 }
 
 void
-bindfunc(const char *name, tag tag, int (*func)(int))
+bindfunc(const char *name, tag_t tag, int (*func)(int))
 {
     int             sym,
                     val;

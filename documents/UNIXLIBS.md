@@ -120,10 +120,10 @@ As an experiment, I did some investigation into extending the Easy-ISLisp interp
 I find a few characteristics of D interesting:
 
 * Compilers nowadays have a command-line option "[--betterC](https://dlang.org/spec/betterc.html)" which selects a language subset with no runtime requirements. This is suitable for linking into a larger C-based project without imposing awkward requirements on the rest of the code. At the same time, you keep any D improvements that don't have a cost. I really enjoyed [this](https://dlang.org/blog/2018/06/11/dasbetterc-converting-make-c-to-d/) blog post, but certainly am not suggesting performing a similar rewrite of Easy-ISLisp :-)
-* You can annotate funcations as being [@safe](https://dlang.org/articles/safed.html)
+* You can annotate functions as being [@safe](https://dlang.org/articles/safed.html)
 * The syntax is close enough that you can often copy/paste from a C header and it is legal D with minimal changes
 
-Everything in this sections is disabled in normal builds. If you want to reproduce the results do the following:
+Everything in this section is disabled in normal builds. If you want to reproduce the results do the following:
 
 1. Install a D compiler. I used [ldc](https://wiki.dlang.org/LDC), if you use dmd or gdc instead you'll have to change the makefile accordingly.
 2. Remove the definition of f_getenv() in extension.c
@@ -131,6 +131,6 @@ Everything in this sections is disabled in normal builds. If you want to reprodu
 
 This has the effect of using a D implementation of the "getenv" extension instead of the C one. Encouragingly, the binary size is very similar because "-betterC" doesn't add much overhead over C.
 
-If you wanted to add other functions implemented in D, you will probably need to use more of the functions in *eisl.h*. Because the syntax is similar for a first pass, just copy/paste the declarations you need from *eisl.h* to *disl.d* which is it's D equivalent (a module of declarations only, no definitions).
+If you want to add other functions implemented in D you will probably need to use more of the functions in *eisl.h*. Because the syntax is similar, for a first pass just copy/paste the declarations you need from *eisl.h* to *disl.d* which is it's D equivalent (a module of declarations only, no definitions).
 
 As I said, this is all just an experiment but I thought it was interesting. Maybe someone else will too.

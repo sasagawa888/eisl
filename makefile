@@ -4,6 +4,7 @@
 OPSYS ?= linux
 # DEBUG := 1
 CC := cc
+DC := ldc2
 LD := $(CC)
 ifneq ($(OPSYS),macos)
 	ifeq ($(OPSYS),openbsd)
@@ -29,7 +30,9 @@ else
 	endif
 endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -Inana/src
+DFLAGS := --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
+SRC_D := dextension.d disl.d
 ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
@@ -44,6 +47,7 @@ else
 endif
 OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_NANA := $(SRC_NANA:.c=.o)
+OBJ_D := $(SRC_D:.d=.o)
 CXX := c++
 CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
 ifeq ($(CC),c++)
@@ -91,6 +95,9 @@ endif
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
+%.o: %.d disl.d
+	$(DC) $(DFLAGS) -c $<
+
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h
 endif
@@ -115,7 +122,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) eisl edlis
+	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) $(OBJ_D) eisl edlis
 
 .PHONY: check
 check:

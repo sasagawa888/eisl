@@ -2331,6 +2331,8 @@ defgeneric compile
     
     (defun comp-throw (stream x env args tail name global test clos)
         (let ((tag (elt (elt x 1) 1)))
+           (when (not (member tag catch-block-tag))
+                 (error* "throw: tag not exist " tag)) 
            (format stream "({int res,i;~%")
            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
            (format stream "catch_arg=res;~% ")

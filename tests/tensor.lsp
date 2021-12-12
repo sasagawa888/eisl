@@ -25,6 +25,23 @@
 (defun create-tensor (dimension)
     (create-array dimension 0))
 
+(defun symmetricp (tensor)
+    (block exit
+        (for ((i 0 (+ i 1)))
+             ((> i 3) t)
+             (for ((j 0 (+ j 1)))
+                  ((> j 3) t)
+                  (if (not (= (aref tensor i j)
+                              (aref tensor j i)))
+                      (progn
+                      (print i)
+                      (print j)        
+                      (return-from exit nil)))))))
+
+(defglobal a (make-vector 1 2 2 1))
+(defglobal b (make-vector 2 1 1 2))
+(defglobal c (make-metric a a))
+
 #|
 (defun rank (x)
     (length (array-dimensions x)))

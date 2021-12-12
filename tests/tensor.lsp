@@ -32,11 +32,8 @@
              (for ((j 0 (+ j 1)))
                   ((> j 3) t)
                   (if (not (= (aref tensor i j)
-                              (aref tensor j i)))
-                      (progn
-                      (print i)
-                      (print j)        
-                      (return-from exit nil)))))))
+                              (aref tensor j i)))     
+                      (return-from exit nil))))))
 
 (defglobal a (make-vector 1 2 2 1))
 (defglobal b (make-vector 2 1 1 2))

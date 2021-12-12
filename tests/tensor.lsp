@@ -3,9 +3,29 @@
 ;;;  since 2021/5
 ;;;
 
-(defun create-tensor (dimension)
-    (create-array dimension 0.0))
 
+;; make 4D vector
+(defun make-vector (x1 x2 x3 x4)
+    (let ((vector (create-vector 4 0)))
+        (setf (elt vector 0) x1)
+        (setf (elt vector 1) x2)
+        (setf (elt vector 2) x3)
+        (setf (elt vector 3) x4)
+        vector))
+
+(defun make-metric (v1 v2)
+    (let ((tensor (create-tensor '(4 4))))
+        (for ((i 0 (+ i 1)))
+             ((> i 3) tensor)
+             (for ((j 0 (+ j 1)))
+                  ((> j 3) t)
+                  (setf (aref tensor i j) (* (elt v1 i) (elt v2 j)))))
+        tensor))
+
+(defun create-tensor (dimension)
+    (create-array dimension 0))
+
+#|
 (defun rank (x)
     (length (array-dimensions x)))
 
@@ -36,3 +56,6 @@
               ((= (length dim1) 4) (sum3 x y dim1)))))
 
 (defmacro sum4 (x y dim))
+
+|#
+

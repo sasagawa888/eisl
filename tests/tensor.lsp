@@ -39,6 +39,15 @@
 (defglobal b (make-vector 2 1 1 2))
 (defglobal c (make-metric a a))
 
+
+(defun ds2 (g dx)
+    (for ((i 0 (+ i 1))
+          (s 0))
+         ((> i 3) s)
+         (for ((j 0 (+ j 1)))
+              ((> j 3) t)
+              (setq s (* (aref g i j) (elt dx i) (elt dx j))))))
+
 #|
 (defun rank (x)
     (length (array-dimensions x)))

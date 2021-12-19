@@ -49,9 +49,9 @@
 (defun analize-sexp (x fun)
     (cond ((null x) t)
           ((and (atom x) (assoc x globalvars))
-           (add-global-ref fun x) (add-fun-ref x fun))
+           (add-global-ref fun x))
           ((and (atom x) (assoc x dynamicvars)) 
-           (add-dynamic-ref fun x) (add-fun-ref x fun))
+           (add-dynamic-ref fun x))
           ((atom x) t)
           ((subrp (car x)) (analize-args (cdr x) fun))
           ((eq (car x) 'if) (analize-if (cdr x) fun))
@@ -75,6 +75,7 @@
           ((eq (car x) 'flet) t)
           ((eq (car x) 'setf) (analize-sexp (elt x 2) fun))
           ((eq (car x) 'convert) t)
+          ((eq (car x) 'dynamic) (add-dynamic-ref x fun))
           ((eq (car x) 'import) t)
           ((macrop (car x)) (analize-sexp (macroexpand-all x) fun))
           (t (add-fun-ref (car x) fun) (analize-args (cdr x) fun))))
@@ -144,6 +145,6 @@
 
 
 (defun add-dynamic-ref (x var)
-    (let ((dt (assoc var globalvars)))
+    (let ((dt (assoc var dynamicvars)))
         (cond ((member x dt) t)
               (t (add-ref dt x)))))

@@ -6,29 +6,34 @@
 (defglobal dynamicvars nil)
 
 (defun cross (fn)
-    (let ((instream (open-input-file x))
+    (let ((instream (open-input-file fn))
           (sexp nil))
         (while (setq sexp (read instream nil nil))
             (analize sexp))
-        (close instream)))
+        (close instream))
+        t)
 
 
 (defun analize (x)
-    (cond ((eq (car x) 'defun) (reg-fun (elt x 1)) (analize-defun (cdr (cdr (x)))))
-          ((eq (car x) 'defglobal (reg-fun (elt x 1))))
-          ((eq (car x) 'defdynamic) (reg-fun (elt x 1)))))
+    (cond ((eq (car x) 'defun) (reg-fun (elt x 1)) (analize-defun (cdr (cdr (cdr x))) (elt x 1)))
+          ((eq (car x) 'defglobal (reg-global (elt x 1))))
+          ((eq (car x) 'defdynamic) (reg-dynamic (elt x 1)))))
 
 
 (defun analize-defun (x fun)
     (cond ((null x) t)
-          (t (analize-sexp (car x)) (analize-defun (cdr x fun)))))
+          (t (analize-sexp (car x) fun) (analize-defun (cdr x) fun))))
 
 
 (defun analize-sexp (x fun)
     (cond ((null x) t)
           ((atom x) t)
-          ((subrp (car x)) (analize-args (cdr x)))
-          (t (add-ref (car x) fun) (analize-args (cdr x)))))
+          ((subrp (car x)) (analize-args (cdr x) fun))
+          (t (add-ref (car x) fun) (analize-args (cdr x) fun))))
+
+(defun analize-args (x fun)
+    (cond ((null x) t)
+          (t (analize-sexp (car x) fun) (analize-args (cdr x) fun))))
 
 (defun reg-fun (x)
     (if (member x functions)

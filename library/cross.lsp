@@ -75,7 +75,7 @@
           ((eq (car x) 'flet) t)
           ((eq (car x) 'setf) (analize-sexp (elt x 2) fun))
           ((eq (car x) 'convert) t)
-          ((eq (car x) 'dynamic) (add-dynamic-ref x fun))
+          ((eq (car x) 'dynamic) (add-dynamic-ref (elt x 1) fun))
           ((eq (car x) 'import) t)
           ((macrop (car x)) (analize-sexp (macroexpand-all x) fun))
           (t (add-fun-ref (car x) fun) (analize-args (cdr x) fun))))

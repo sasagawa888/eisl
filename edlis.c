@@ -639,8 +639,23 @@ bool edit_loop(char* fname)
                     ESCMOVE(1, 1);
                     return true;
                }
+               timeout(10);
+               c = getch();
+               timeout(-1);
+               if (c == CTRL('S')){
+                    save_data(fname);
+                    ESCMOVE(ed_footer, 1);
+                    ESCREV();
+                    CHECK(addstr, "saved");
+                    ESCRST();
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                    modify_flag = false;
+                    break;
+               }
                }
                break;
+          case CTRL('S'):
+               return true;
           case CTRL('V'):
                pageup();
                break;

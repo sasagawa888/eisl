@@ -496,12 +496,12 @@ bool edit_loop(char* fname)
                      "CTRL+J  end of line            ESC >   goto end page\n"
                      "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
                      "CTRL+E  end of line            CTRL+D  delete one char\n"
-                     "CTRL+V  page up                CTRL+O  return\n"
-                     "ESC V   page down\n"
-                     "CTRL+T  insert file\n"
+                     "CTRL+V  page down              CTRL+O  return\n"
+                     "ESC V   page up\n"
                      "CTRL+X CTRL+C quit from editor without save\n"
                      "CTRL+X CTRL+Z quit from editor with save\n"
                      "CTRL+X CTRL+S save file\n"
+                     "CTRL+X CTRL+I insert file\n"
                      "CTRL+K  cut selection\n"
                      "CTRL+U  uncut selection\n"
                      "CTRL+_ (or CTRL+L) goto line\n"
@@ -524,44 +524,6 @@ bool edit_loop(char* fname)
                break;
           case CTRL('H'):
                backspace_key();
-               break;
-          case CTRL('T'):
-               clear_status();
-               CHECK(addstr, "filename: ");
-               CHECK(refresh);
-               CHECK(getnstr, str1, SHORT_STR_MAX);
-               ESCRST();
-               port = fopen(str1, "r");
-               if (port == NULL) {
-                    clear_status();
-                    CHECK(addstr, str1); CHECK(addstr, " doesn't exist");
-                    ESCRST();
-                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-                    break;
-               }
-               c = fgetc(port);
-               while (c != EOF) {
-                    ed_data[ed_row][ed_col] = c;
-                    if (c == EOL) {
-                         ed_row++;
-                         ed_col = 0;
-                         if (ed_row >= ROW_SIZE - 1) {
-                              CHECK(printw, "row %d over max-row", ed_row);
-                         }
-                    }
-                    else {
-                         ed_col++;
-                         if (ed_col >= COL_SIZE) {
-                              CHECK(printw, "column %d over max-column", ed_col);
-                         }
-                    }
-                    c = fgetc(port);
-               }
-               ed_end = ed_row;
-               ed_data[ed_end][0] = EOL;
-               fclose(port);
-               display_screen();
-               modify_flag = true;
                break;
           case CTRL('D'):
                del();
@@ -597,7 +559,7 @@ bool edit_loop(char* fname)
           case CTRL('X'):
                ESCMOVE(ed_footer, 1);
                ESCREV();
-               CHECK(addstr, "      ");
+               clear_status();
                ESCMOVE(ed_footer, 1);
                CHECK(addstr, "^X");
                ESCRST();
@@ -658,12 +620,49 @@ bool edit_loop(char* fname)
                     modify_flag = false;
                     break;
                }
+               else if (c == CTRL('I')){
+                    clear_status();
+                    CHECK(addstr, "filename: ");
+                    CHECK(refresh);
+                    CHECK(getnstr, str1, SHORT_STR_MAX);
+                    ESCRST();
+                    port = fopen(str1, "r");
+                    if (port == NULL) {
+                         clear_status();
+                         CHECK(addstr, str1); CHECK(addstr, " doesn't exist");
+                         ESCRST();
+                         ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                         break;
+                    }
+                    c = fgetc(port);
+                    while (c != EOF) {
+                         ed_data[ed_row][ed_col] = c;
+                         if (c == EOL) {
+                              ed_row++;
+                              ed_col = 0;
+                              if (ed_row >= ROW_SIZE - 1) {
+                                   CHECK(printw, "row %d over max-row", ed_row);
+                              }
+                         }
+                         else {
+                              ed_col++;
+                              if (ed_col >= COL_SIZE) {
+                                   CHECK(printw, "column %d over max-column", ed_col);
+                              }
+                         }
+                         c = fgetc(port);
+                    }
+                    ed_end = ed_row;
+                    ed_data[ed_end][0] = EOL;
+                    fclose(port);
+                    display_screen();
+                    modify_flag = true;
+                    break;
+               }
                }
                break;
-          case CTRL('S'):
-               return true;
           case CTRL('V'):
-               pageup();
+               pagedn();
                break;
           case CTRL('W'):
                clear_status();
@@ -774,7 +773,7 @@ bool edit_loop(char* fname)
                          end();
                          break;
                     case 'v':
-                         pagedn();
+                         pageup();
                          break;
                     case 'a': if (ed_clip_start == -1) {
                               ed_clip_start = ed_clip_end = ed_row;

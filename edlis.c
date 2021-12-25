@@ -20,6 +20,8 @@ const int NUM_STR_MAX = 5;
 const int SHORT_STR_MAX = 20;
 
 bool edit_loop(char* fname);
+int ctrl_c = 0;
+int ctrl_z = 0;
 
 //-----editor-----
 int ed_scroll;
@@ -101,6 +103,18 @@ void init_ncurses()
      }
 }
 
+void
+signal_handler_c(int signo __unused)
+{
+    ctrl_c = 1;
+}
+
+void
+signal_handler_z(int signo __unused)
+{
+    ctrl_z = 1;
+}
+
 int main(int argc, char* argv[])
 {
      int i, j;
@@ -112,9 +126,9 @@ int main(int argc, char* argv[])
          exit(EXIT_FAILURE);
      }
      fname = argv[1];
-     signal(SIGINT, SIG_IGN);
-     signal(SIGSTOP, SIG_IGN);
-     signal(SIGTSTP, SIG_IGN);
+     signal(SIGINT, signal_handler_c);
+     signal(SIGSTOP, signal_handler_z);
+     signal(SIGTSTP, signal_handler_z);
      for (i = 0; i < ROW_SIZE; i++)
           for (j = 0; j < COL_SIZE; j++)
                ed_data[i][j] = NUL;
@@ -478,7 +492,8 @@ bool edit_loop(char* fname)
                      "ESC V   page down\n"
                      "CTRL+O  save file\n"
                      "CTRL+T  insert file\n"
-                     "CTRL+X  quit from editor\n"
+                     "CTRL+X CTRL+C quit from editor without save\n"
+                     "CTRL+X CTRL+Z quit from editor with save\n"
                      "CTRL+K  cut selection\n"
                      "CTRL+U  uncut selection\n"
                      "CTRL+_ (or CTRL+L) goto line\n"
@@ -580,6 +595,8 @@ bool edit_loop(char* fname)
                modify_flag = true;
                break;
           case CTRL('X'):
+               while(1){
+               if(ctrl_z == 1){
                if (!modify_flag) {
                     ESCCLS();
                     ESCMOVE(1, 1);
@@ -615,6 +632,13 @@ bool edit_loop(char* fname)
                                    break;
                          }
                     } while (c != 'c');
+               }
+               }
+               if(ctrl_c == 1){
+                    ESCCLS();
+                    ESCMOVE(1, 1);
+                    return true;
+               }
                }
                break;
           case CTRL('V'):
@@ -968,9 +992,9 @@ void display_screen()
      }
      ESCMOVE(ed_footer, 1);
      ESCREV();
-     for (i = 0; i < COLS - 35; i++)
+     for (i = 0; i < COLS - 28; i++)
           CHECK(addch, ' ');
-     CHECK(addstr, "^G(help) ^X(quit) ^O(save) ^L(goto)");
+     CHECK(addstr, "^G(help) ^X^Z(quit) ^O(save)");
      ESCRST();
 }
 

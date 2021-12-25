@@ -120,6 +120,11 @@ int main(int argc, char* argv[])
      int i, j;
      char* fname;
 
+     if(system("stty -ixon") == -1){
+          printf("terminal error\n");
+          return(0);
+     }
+
      setlocale(LC_ALL, "");
      if (argc <= 1) {
          fputs("usage: edlis <filename>\n", stderr);
@@ -175,6 +180,9 @@ int main(int argc, char* argv[])
      ed_row = ed_col = 0;
      edit_screen(fname);
      CHECK(endwin);
+     if(system("stty ixon") == -1){
+          printf("terminal error\n");
+     }
 }
 
 void right()
@@ -488,12 +496,12 @@ bool edit_loop(char* fname)
                      "CTRL+J  end of line            ESC >   goto end page\n"
                      "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
                      "CTRL+E  end of line            CTRL+D  delete one char\n"
-                     "CTRL+V  page up\n"
+                     "CTRL+V  page up                CTRL+O  return\n"
                      "ESC V   page down\n"
-                     "CTRL+O  save file\n"
                      "CTRL+T  insert file\n"
                      "CTRL+X CTRL+C quit from editor without save\n"
                      "CTRL+X CTRL+Z quit from editor with save\n"
+                     "CTRL+X CTRL+S save file\n"
                      "CTRL+K  cut selection\n"
                      "CTRL+U  uncut selection\n"
                      "CTRL+_ (or CTRL+L) goto line\n"
@@ -571,14 +579,6 @@ bool edit_loop(char* fname)
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                modify_flag = true;
                break;
-          case CTRL('O'):    save_data(fname);
-               ESCMOVE(ed_footer, 1);
-               ESCREV();
-               CHECK(addstr, "saved");
-               ESCRST();
-               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-               modify_flag = false;
-               break;
           case CTRL('K'):     copy_selection();
                delete_selection();
                ed_row = ed_clip_start;
@@ -595,6 +595,12 @@ bool edit_loop(char* fname)
                modify_flag = true;
                break;
           case CTRL('X'):
+               ESCMOVE(ed_footer, 1);
+               ESCREV();
+               CHECK(addstr, "      ");
+               ESCMOVE(ed_footer, 1);
+               CHECK(addstr, "^X");
+               ESCRST();
                while(1){
                if(ctrl_z == 1){
                if (!modify_flag) {
@@ -876,7 +882,9 @@ bool edit_loop(char* fname)
           case DEL:
                backspace_key();
                break;
-          case RET:   if (ed_indent == 1)
+          case RET:
+          case CTRL('O'):
+               if (ed_indent == 1)
                     i = calc_tabs();
                if (ed_row == ed_start + ed_scroll) {
                     restore_paren();

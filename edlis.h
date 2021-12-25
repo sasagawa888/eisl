@@ -48,6 +48,7 @@ char *get_fragment(void);
 void find_candidate(void);
 void replace_fragment(const char *newstr);
 struct position find_word(const char *word);
+struct position find_word_back(const char *word);
 void replace_word(const char *str1, const char *str2);
 
 #endif

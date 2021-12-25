@@ -489,15 +489,15 @@ bool edit_loop(char* fname)
           case CTRL('G'):     ESCMOVE(2, 1);   // help
                ESCCLS1();
                CHECK(addstr, "Edlis help\n"
-                     "CTRL+F  move to right          CTRL+W  search word\n"
-                     "CTRL+B  move to left           CTRL+R  replace word\n"
+                     "CTRL+F  move to right          CTRL+S  forward search word\n"
+                     "CTRL+B  move to left           CTRL+R  backward search word\n"
                      "CTRL+P  move to up             ESC TAB   complete name\n"
                      "CTRL+N  move to down           ESC <   goto top page\n"
                      "CTRL+J  end of line            ESC >   goto end page\n"
                      "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
                      "CTRL+E  end of line            CTRL+D  delete one char\n"
                      "CTRL+V  page down              CTRL+O  return\n"
-                     "ESC V   page up\n"
+                     "ESC V   page up                CTRL+T  replace word\n"
                      "CTRL+X CTRL+C quit from editor without save\n"
                      "CTRL+X CTRL+Z quit from editor with save\n"
                      "CTRL+X CTRL+S save file\n"
@@ -664,7 +664,7 @@ bool edit_loop(char* fname)
           case CTRL('V'):
                pagedn();
                break;
-          case CTRL('W'):
+          case CTRL('S'):
                clear_status();
                CHECK(addstr, "search: ");
                CHECK(refresh);
@@ -688,8 +688,32 @@ bool edit_loop(char* fname)
                display_screen();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
-
           case CTRL('R'):
+               clear_status();
+               CHECK(addstr, "search: ");
+               CHECK(refresh);
+               CHECK(getnstr, str1, SHORT_STR_MAX);
+               ESCRST();
+               pos = find_word_back(str1);
+               if (pos.row == -1) {
+                    ESCREV();
+                    ESCMOVE(ed_footer, 1);
+                    CHECK(addstr, "can't find "); CHECK(addstr, str1);
+                    ESCRST();
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                    break;
+               }
+               ed_row = pos.row;
+               ed_col = pos.col;
+               ed_start = ed_row - ed_scroll / 2;
+               if (ed_start < 0) {
+                    ed_start = 0;
+               }
+               display_screen();
+               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+               break;
+
+          case CTRL('T'):
                clear_status();
                CHECK(addstr, "search: ");
                CHECK(refresh);
@@ -1736,6 +1760,41 @@ struct position find_word(const char *word)
                word = word1;
           }
           i++;
+          j = 0;
+     }
+     //can't find word
+     pos.row = -1;
+     pos.col = 0;
+     return (pos);
+}
+
+struct position find_word_back(const char *word)
+{
+     int i, j, k, len;
+     struct position pos;
+     const char *word1;
+
+     i = ed_row;
+     j = ed_col;
+     word1 = word;
+     len = strlen(word);
+     while (i >= 0) {
+          while (j < COL_SIZE && ed_data[i][j] != NUL) {
+               k = j;
+               while (k < j + len &&
+                      ed_data[i][k] == *word) {
+                    word++;
+                    k++;
+               }
+               if (k >= j + len) {
+                    pos.row = i;
+                    pos.col = j;
+                    return (pos);
+               }
+               j++;
+               word = word1;
+          }
+          i--;
           j = 0;
      }
      //can't find word

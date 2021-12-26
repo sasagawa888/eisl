@@ -491,10 +491,10 @@ bool edit_loop(char* fname)
                CHECK(addstr, "Edlis help\n"
                      "CTRL+F  move to right          CTRL+S  forward search word\n"
                      "CTRL+B  move to left           CTRL+R  backward search word\n"
-                     "CTRL+P  move to up             ESC TAB   complete name\n"
+                     "CTRL+P  move to up             ESC TAB complete name\n"
                      "CTRL+N  move to down           ESC <   goto top page\n"
                      "CTRL+J  end of line            ESC >   goto end page\n"
-                     "CTRL+A  begin of line          ESC A   mark(or unmark) row for selection\n"
+                     "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
                      "CTRL+E  end of line            CTRL+D  delete one char\n"
                      "CTRL+V  page down              CTRL+O  return\n"
                      "ESC V   page up                CTRL+T  replace word\n"
@@ -811,7 +811,7 @@ bool edit_loop(char* fname)
                     case 'v':
                          pageup();
                          break;
-                    case 'a': if (ed_clip_start == -1) {
+                    case '^': if (ed_clip_start == -1) {
                               ed_clip_start = ed_clip_end = ed_row;
                               ESCMOVE(ed_footer, 1);
                               ESCREV();

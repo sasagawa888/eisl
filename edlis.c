@@ -545,7 +545,6 @@ bool edit_loop(char* fname)
                      "CTRL+K  cut one line\n"
                      "CTRL+W  cut selection\n"
                      "CTRL+Y  uncut selection\n"
-                     "CTRL+_ (or CTRL+L) goto line\n"
                      "CTRL+G cancel command\n"
                      "\n  enter any key to exit help\n");
                CHECK(refresh);

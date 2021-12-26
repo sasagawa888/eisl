@@ -1133,7 +1133,8 @@ find_return_from_p(int x)
 	return (1);
     else if (atomp(x))
 	return (-1);
-    else if (find_return_from_p(car(x))==1 || find_return_from_p(cdr(x))==1)
+    else if (find_return_from_p(car(x)) == 1
+	     || find_return_from_p(cdr(x)) == 1)
 	return (1);
     else
 	return (-1);
@@ -1227,6 +1228,7 @@ f_catch(int arglist)
 	catch_arg = NIL;
 	sp = save;		// restore stack pointer. longjump destroy 
 				// 
+	// 
 	// 
 	// 
 	// 

@@ -3290,6 +3290,7 @@ f_string_index(int arglist)
 	// 
 	// 
 	// 
+	// 
 	// "" "")
 	return (makeint(0));
 
@@ -3957,6 +3958,7 @@ f_format_fresh_line(int arglist)
 	save = output_stream;
 	output_stream = arg1;
 	// output newline char if it cannot be determinned that the output 
+	// 
 	// 
 	// 
 	// 

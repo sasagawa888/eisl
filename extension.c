@@ -763,7 +763,7 @@ superp(int entry, int next)
     else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// subclass
 	return (superp(cdr(entry), cdr(next)));
     else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// same
-								// class
+	// class
 	return (superp(cdr(entry), cdr(next)));
     else
 	return (0);

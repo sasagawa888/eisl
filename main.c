@@ -239,8 +239,8 @@ main(int argc, char *argv[])
     initsyntax();
     initgeneric();
     signal(SIGINT, signal_handler_c);
-	signal(SIGTSTP, SIG_IGN);
-	signal(SIGSTOP, SIG_IGN);
+    signal(SIGTSTP, SIG_IGN);
+    signal(SIGSTOP, SIG_IGN);
 
     input_stream = standard_input;
     output_stream = standard_output;

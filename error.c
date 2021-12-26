@@ -52,9 +52,8 @@ error(int errnum, const char *fun, int arg)
 	}
 	unwind_pt = 0;
     }
-
-	// initialize block-pointer
-	block_pt = 0;
+    // initialize block-pointer
+    block_pt = 0;
 
     // fold to upper letter.
     for (i = 0; i < (int) strlen(fun); i++) {
@@ -66,7 +65,7 @@ error(int errnum, const char *fun, int arg)
     generic_func = NIL;
     generic_vars = NIL;
 
-	
+
 
     switch (errnum) {
     case DIV_ZERO:
@@ -643,15 +642,15 @@ signal_condition(int x, int y)
     args = cdr(assoc(makesym("b"), GET_CDR(x)));
     fun = cdr(assoc(makesym("c"), GET_CDR(x)));
     output_stream = error_stream;
-	if (repl_flag)
-    ESCERRFRED();
+    if (repl_flag)
+	ESCERRFRED();
     fputs(GET_NAME(str), stderr);
     print(fun);
     fputc(' ', stderr);
     print(args);
     fputc('\n', stderr);
-	if (repl_flag)
-    ESCERRFORG();
+    if (repl_flag)
+	ESCERRFORG();
     input_stream = standard_input;
     output_stream = standard_output;
     handling_resource_err = false;

@@ -1038,6 +1038,7 @@ initinst(int x, int initls)
     // 
     // 
     // 
+    // 
     // ((initarg1 . accessor1)(initarg2 .
     // accesor2)...)
     inst_vars = GET_CDR(x);	// instance variable list. This is assoc

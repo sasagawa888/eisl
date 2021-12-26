@@ -502,8 +502,9 @@ bool edit_loop(char* fname)
                      "CTRL+X CTRL+Z quit from editor with save\n"
                      "CTRL+X CTRL+S save file\n"
                      "CTRL+X CTRL+I insert file\n"
-                     "CTRL+K  cut selection\n"
-                     "CTRL+U  uncut selection\n"
+                     "CTRL+K  cut one line\n"
+                     "CTRL+W  cut selection\n"
+                     "CTRL+Y  uncut selection\n"
                      "CTRL+_ (or CTRL+L) goto line\n"
                      "CTRL+G cancel command\n"
                      "\n  enter any key to exit help\n");
@@ -539,7 +540,9 @@ bool edit_loop(char* fname)
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                modify_flag = true;
                break;
-          case CTRL('K'):     copy_selection();
+          case CTRL('K'):
+               ed_clip_start = ed_clip_end = ed_row;
+               copy_selection();
                delete_selection();
                ed_row = ed_clip_start;
                ed_clip_start = ed_clip_end = -1;
@@ -548,7 +551,16 @@ bool edit_loop(char* fname)
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                modify_flag = true;
                break;
-          case CTRL('U'):    paste_selection();
+          case CTRL('W'):     copy_selection();
+               delete_selection();
+               ed_row = ed_clip_start;
+               ed_clip_start = ed_clip_end = -1;
+               restore_paren();
+               display_screen();
+               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+               modify_flag = true;
+               break;
+          case CTRL('Y'):    paste_selection();
                restore_paren();
                display_screen();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
@@ -767,26 +779,6 @@ bool edit_loop(char* fname)
                clear_status();
                CHECK(addstr, "can't find "); CHECK(addstr, str1);
                ESCRST();
-               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
-               break;
-          case CTRL('L'):
-          case CTRL('_'):
-               do {
-                    clear_status();
-                    CHECK(addstr, "line? ");
-                    CHECK(refresh);
-                    char i_str[NUM_STR_MAX];
-                    CHECK(getnstr, i_str, NUM_STR_MAX);
-                    i = atoi(i_str);
-                    ESCRST();
-               } while (i < 0 || i > ed_end);
-               ed_row = i - 1;
-               ed_col = 0;
-               ed_start = ed_row - ed_scroll / 2;
-               if (ed_start < 0) {
-                    ed_start = 0;
-               }
-               display_screen();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
           case ESC:   

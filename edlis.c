@@ -463,6 +463,45 @@ void pagedn()
      ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
 }
 
+
+char* getname(){
+     int c,pos;
+     static char buf[20];
+     pos = 0;
+     buf[0] = 0;
+
+     while(1){
+          CHECK(refresh);
+          c = getch();
+          if (c == ERR) {
+               errw("getch");
+          }
+          switch(c){
+               case RET:
+                    return(buf);
+               case KEY_BACKSPACE:
+               case DEL:
+                    buf[pos] = 0;
+                    if(pos > 0)
+                         pos--;
+                    break;
+               default:
+                    if(pos > 20)
+                         break;
+                    buf[pos] = c;
+                    pos++;
+                    break;
+          }
+          ESCMOVE(ed_footer, 12);
+          ESCREV();
+          CHECK(addstr, "                    ");
+          ESCMOVE(ed_footer, 12);
+          CHECK(addstr, buf);
+          ESCRST();
+     }
+
+}
+
 void edit_screen(char* fname)
 {
      ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
@@ -501,7 +540,8 @@ bool edit_loop(char* fname)
                      "CTRL+X CTRL+C quit from editor without save\n"
                      "CTRL+X CTRL+Z quit from editor with save\n"
                      "CTRL+X CTRL+S save file\n"
-                     "CTRL+X CTRL+I insert file\n"
+                     "CTRL+X CTRL+I insert buffer from file\n"
+                     "CTRL+X CTRL+W write buffer to file\n"
                      "CTRL+K  cut one line\n"
                      "CTRL+W  cut selection\n"
                      "CTRL+Y  uncut selection\n"
@@ -630,11 +670,25 @@ bool edit_loop(char* fname)
                     modify_flag = false;
                     break;
                }
+               else if (c == CTRL('W')){
+                    ESCMOVE(ed_footer, 1);
+                    clear_status();
+                    CHECK(addstr, "filename:  ");
+                    strcpy(str1,getname());
+                    save_data(str1);
+                    ESCMOVE(ed_footer, 1);
+                    ESCREV();
+                    CHECK(addstr, "saved ");
+                    CHECK(addstr, str1);
+                    ESCRST();
+                    ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
+                    modify_flag = false;
+                    break;
+               }
                else if (c == CTRL('I')){
                     clear_status();
-                    CHECK(addstr, "filename: ");
-                    CHECK(refresh);
-                    CHECK(getnstr, str1, SHORT_STR_MAX);
+                    CHECK(addstr, "filename:  ");
+                    strcpy(str1,getname());
                     ESCRST();
                     port = fopen(str1, "r");
                     if (port == NULL) {
@@ -683,9 +737,8 @@ bool edit_loop(char* fname)
                break;
           case CTRL('S'):
                clear_status();
-               CHECK(addstr, "search: ");
-               CHECK(refresh);
-               CHECK(getnstr, str1, SHORT_STR_MAX);
+               CHECK(addstr, "search:    ");
+               strcpy(str1,getname());
                ESCRST();
                pos = find_word(str1);
                if (pos.row == -1) {
@@ -707,9 +760,8 @@ bool edit_loop(char* fname)
                break;
           case CTRL('R'):
                clear_status();
-               CHECK(addstr, "search: ");
-               CHECK(refresh);
-               CHECK(getnstr, str1, SHORT_STR_MAX);
+               CHECK(addstr, "search:    ");
+               strcpy(str1,getname());
                ESCRST();
                pos = find_word_back(str1);
                if (pos.row == -1) {

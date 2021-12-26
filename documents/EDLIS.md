@@ -1,16 +1,17 @@
 # Edlis
-Edlis is a simple editor for ISLisp .
+Edlis is a simple editor for ISLisp. Edlis is compatible with Edwin.
 
 ## Invocation
 `(edit filename)` in the REPL.
 
 ## Commands
 
-| Key    | Command     |
-| ------ | ----------- |
-| CTRL+O | Save file   |
-| CTRL+X | Quit editor |
-| CTRL+T | Insert file |
+| Key           | Command               |
+| ------------- | --------------------- |
+| CTRL+X CTRL+S | Save file             |
+| CTRL+X CTRL+C | Quit editor           |
+| CTRL+X CTRL+Z | Quit editor with save |
+| CTRL+X CTRL+I | Insert file           |
 
 ## Editing
 The key bindings are a hybrid of Emacs and nano.
@@ -31,13 +32,14 @@ The key bindings are a hybrid of Emacs and nano.
 | CTRL+H    | Backspace                       |
 | CTRL+A    | Beginning of line               |
 | CTRL+E    | End of line                     |
-| CTRL+V    | Page up                         |
-| ESC V     | Page down                       |
+| CTRL+V    | Page down                       |
+| ESC V     | Page up                         |
 | CTRL+K    | Cut selection                   |
 | CTRL+U    | Uncut selection                 |
 | CTRL+L    | Go to line                      |
-| CTRL+W    | Search for word                 |
-| CTRL+R    | Replace word                    |
+| CTRL+S    | Search for word foward          |
+| CTRL+R    | Search for word backward        |
+| CTRL+T    | Replace word                    |
 | ESC TAB   | Complete builtin function or syntax |
 | ESC <     | Goto top page                   |
 | ESC >     | Goto end page                   |

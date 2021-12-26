@@ -43,7 +43,7 @@ The key bindings are a hybrid of Emacs and nano.
 | ESC TAB   | Complete builtin function or syntax |
 | ESC <     | Goto top page                   |
 | ESC >     | Goto end page                   |
-| ESC ^     | Mark (or unmark) row for selection. "ESC ^" marks the current row, then cursor up or down selects rows. "ESC A" again unmarks. This is similer to nano. |
+| ESC ^     | Mark (or unmark) row for selection. "ESC ^" marks the current row, then cursor up or down selects rows. "ESC ^" again unmarks.|
 | ←　→　↑　↓　| Usual cursor movement          |
 | Home      | Display top page                |
 | End       | Display end page                |

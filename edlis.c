@@ -505,6 +505,7 @@ bool edit_loop(char* fname)
                      "CTRL+K  cut selection\n"
                      "CTRL+U  uncut selection\n"
                      "CTRL+_ (or CTRL+L) goto line\n"
+                     "CTRL+G cancel command\n"
                      "\n  enter any key to exit help\n");
                CHECK(refresh);
                CHECK(getch);
@@ -656,6 +657,13 @@ bool edit_loop(char* fname)
                     modify_flag = true;
                     break;
                }
+               else if(c == CTRL('G')){
+                    ESCMOVE(ed_footer, 1);
+                    ESCREV();
+                    clear_status();
+                    ESCRST();
+                    break;
+               }
                }
                break;
           case CTRL('V'):
@@ -781,7 +789,14 @@ bool edit_loop(char* fname)
                display_screen();
                ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                break;
-          case ESC:   CHECK(refresh);
+          case ESC:   
+               ESCMOVE(ed_footer, 1);
+               ESCREV();
+               clear_status();
+               ESCMOVE(ed_footer, 1);
+               CHECK(addstr, "^meta");
+               ESCRST();
+               CHECK(refresh);
                c = getch();
                if (c == ERR) {
                     errw("getch");
@@ -866,6 +881,12 @@ bool edit_loop(char* fname)
                               ESCMOVE(ed_row + 2 - ed_start, ed_col + 1);
                          }
                          return false;
+                    case CTRL('G'):
+                         ESCMOVE(ed_footer, 1);
+                         ESCREV();
+                         clear_status();
+                         ESCRST();
+                         break;     
                }
                break;
           case KEY_UP:
@@ -944,7 +965,8 @@ bool edit_loop(char* fname)
                }
                modify_flag = true;
                break;
-          case TAB:   if (ed_tab == 0) {
+          case TAB:   
+               if (ed_tab == 0) {
                     ed_col = 0;
                     i = calc_tabs();
                     remove_headspace(ed_row);

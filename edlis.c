@@ -861,7 +861,7 @@ bool edit_loop(char* fname)
                                         if (c == ERR) {
                                              errw("getch");
                                         }
-                                        if (c != ESC) {
+                                        if (c != CTRL('G')) {
                                              i = c - '1';
                                              more_candidates_selected = ed_candidate_pt > k + CANDIDATE && i == CANDIDATE;
                                              if (more_candidates_selected) {
@@ -872,6 +872,13 @@ bool edit_loop(char* fname)
                                              }
                                              bad_candidate_selected = i + k > ed_candidate_pt || i < 0 ||
                                                                       c == RET;
+                                        }
+                                        else{
+                                             ESCMOVE(ed_footer, 1);
+                                             ESCREV();
+                                             clear_status();
+                                             ESCRST();
+                                             return false;
                                         }
                                    } while (bad_candidate_selected);
                               } while (more_candidates_selected);

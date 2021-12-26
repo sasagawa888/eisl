@@ -486,7 +486,7 @@ bool edit_loop(char* fname)
           errw("getch");
      }
      switch (c) {
-          case CTRL('G'):     ESCMOVE(2, 1);   // help
+          case CTRL('H'):     ESCMOVE(2, 1);   // help
                ESCCLS1();
                CHECK(addstr, "Edlis help\n"
                      "CTRL+F  move to right          CTRL+S  forward search word\n"
@@ -521,9 +521,6 @@ bool edit_loop(char* fname)
                break;
           case CTRL('N'):
                down();
-               break;
-          case CTRL('H'):
-               backspace_key();
                break;
           case CTRL('D'):
                del();
@@ -1038,9 +1035,9 @@ void display_screen()
      }
      ESCMOVE(ed_footer, 1);
      ESCREV();
-     for (i = 0; i < COLS - 28; i++)
+     for (i = 0; i < COLS - 31; i++)
           CHECK(addch, ' ');
-     CHECK(addstr, "^G(help) ^X^Z(quit) ^O(save)");
+     CHECK(addstr, "^H(help) ^X^C(quit) ^X^S(save)");
      ESCRST();
 }
 

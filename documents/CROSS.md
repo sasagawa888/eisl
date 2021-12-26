@@ -1,7 +1,6 @@
 # Cross
 Cross-reference tool
 
-Now under construction.
 
 # Usage 
 

@@ -485,12 +485,14 @@ getname()
 	    return (buf);
 	case KEY_BACKSPACE:
 	case DEL:
-	    buf[pos] = 0;
-	    if (pos > 0)
+		if (pos > 0)
 		pos--;
+	    buf[pos] = 0;
 	    break;
 	default:
 	    if (pos > 20)
+		break;
+		else if (c < 20)
 		break;
 	    buf[pos] = c;
 	    pos++;

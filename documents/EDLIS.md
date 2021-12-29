@@ -1,5 +1,5 @@
 # Edlis
-Edlis is a simple editor for ISLisp. Edlis is almost compatible with Edwin.
+Edlis is a simple editor for ISLisp. Edlis is subset Edwin.
 
 ## Invocation
 `(edit filename)` in the REPL.

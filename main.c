@@ -132,7 +132,7 @@ bool            back_flag = true;	// for backtrace,
 					// true=on,false=off
 bool            ignore_topchk = false;	// for FAST
 					// compilertrue=ignore,false=normal
-bool            repl_flag = true;	// for REPL read_line 1=on, 0=off
+bool            repl_flag = true;	// for REPL read_line true=on, false=off
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option

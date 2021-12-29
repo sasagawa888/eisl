@@ -2187,10 +2187,10 @@ f_read_char(int arglist)
                     arg2,
                     arg3,
                     save,
-                    save1,
                     n,
                     res;
     int             rc_buf[CHARSIZE];
+    bool            save1;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -2204,7 +2204,7 @@ f_read_char(int arglist)
 
 
     save1 = repl_flag;
-    repl_flag = 0;
+    repl_flag = false;
     if (n == 0) {
 	rc_buf[0] = readc();
 	rc_buf[1] = NUL;
@@ -2254,9 +2254,9 @@ f_read_byte(int arglist)
                     arg2,
                     arg3,
                     save,
-                    save1,
                     n,
                     res;
+    bool            save1;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -2267,7 +2267,7 @@ f_read_byte(int arglist)
 	error(NOT_IN_STREAM, "read-byte", arg1);
 
     save1 = repl_flag;
-    repl_flag = 0;
+    repl_flag = false;
     if (n == 0) {
 	res = readc();
     } else if (n == 1) {
@@ -2374,9 +2374,8 @@ f_read_line(int arglist)
                     res,
                     c;
     char            rl_buf[LINE_MAX];
-#if __linux || __APPLE__ || defined(__OpenBSD__)
-    int             save1;
-#endif
+    bool            save1;
+
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -2388,7 +2387,7 @@ f_read_line(int arglist)
 
 
     save1 = repl_flag;
-    repl_flag = 0;
+    repl_flag = false;
     if (n == 0) {
 	pos = 0;
 	c = readc();

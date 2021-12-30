@@ -5,6 +5,7 @@ depend on implementation. defined on EISL is following.
 # code and expression
 
 |num(10)| expression|
+|-------|-----------|
 | 0     | null|
 | 1     | ^A  |
 | 2     | ^B  |

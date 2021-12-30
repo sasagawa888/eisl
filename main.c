@@ -1423,11 +1423,95 @@ printchar(int addr)
 {
     output_str(output_stream, "#\\");
     switch (GET_CHAR(addr)) {
+	case BEL:
+	output_str(output_stream, "alarm");
+	break;
+	case BS:
+	output_str(output_stream, "backspace");
+	break;
+	case DEL:
+	output_str(output_stream, "delete");
+	break;
+	case ESC:
+	output_str(output_stream, "escape");
+	break;
+	case RET:
+	output_str(output_stream, "return");
+	break;
     case SPACE:
 	output_str(output_stream, "space");
 	break;
     case EOL:
 	output_str(output_stream, "newline");
+	break;
+	case NUL:
+	output_str(output_stream, "null");
+	break;
+	case TAB:
+	output_str(output_stream, "tab");
+	break;
+	case 1:
+	output_str(output_stream, "^A");
+	break;
+	case 2:
+	output_str(output_stream, "^B");
+	break;
+	case 3:
+	output_str(output_stream, "^C");
+	break;
+	case 4:
+	output_str(output_stream, "^D");
+	break;
+	case 5:
+	output_str(output_stream, "^E");
+	break;
+	case 6:
+	output_str(output_stream, "^F");
+	break;
+	case 11:
+	output_str(output_stream, "^K");
+	break;
+	case 12:
+	output_str(output_stream, "^L");
+	break;
+	case 14:
+	output_str(output_stream, "^N");
+	break;
+	case 15:
+	output_str(output_stream, "^O");
+	break;
+	case 16:
+	output_str(output_stream, "^P");
+	break;
+	case 17:
+	output_str(output_stream, "^Q");
+	break;
+	case 18:
+	output_str(output_stream, "^R");
+	break;
+	case 19:
+	output_str(output_stream, "^S");
+	break;
+	case 20:
+	output_str(output_stream, "^T");
+	break;
+	case 21:
+	output_str(output_stream, "^U");
+	break;
+	case 22:
+	output_str(output_stream, "^V");
+	break;
+	case 23:
+	output_str(output_stream, "^W");
+	break;
+	case 24:
+	output_str(output_stream, "^X");
+	break;
+	case 25:
+	output_str(output_stream, "^Y");
+	break;
+	case 26:
+	output_str(output_stream, "^Z");
 	break;
     default:
 	output_str(output_stream, GET_NAME(addr));

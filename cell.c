@@ -943,7 +943,51 @@ makechar(const char *pname)
 	char_entity = SPACE;
     } else if (strcmp(low_name, "tab") == 0) {
 	char_entity = TAB;
-    }
+    } else if (strcmp(low_name, "^A") == 0) {
+    char_entity = 1;
+    } else if (strcmp(low_name, "^B") == 0) {
+    char_entity = 2;
+    } else if (strcmp(low_name, "^C") == 0) {
+    char_entity = 3;
+    } else if (strcmp(low_name, "^D") == 0) {
+    char_entity = 4;
+    } else if (strcmp(low_name, "^E") == 0) {
+    char_entity = 5;
+    } else if (strcmp(low_name, "^F") == 0) {
+    char_entity = 6;
+    } else if (strcmp(low_name, "^K") == 0) {
+    char_entity = 5;
+    } else if (strcmp(low_name, "^L") == 0) {
+    char_entity = 6;
+    } else if (strcmp(low_name, "^N") == 0) {
+    char_entity = 14;
+    } else if (strcmp(low_name, "^O") == 0) {
+    char_entity = 15;
+    } else if (strcmp(low_name, "^P") == 0) {
+    char_entity = 16;
+    } else if (strcmp(low_name, "^Q") == 0) {
+    char_entity = 17; 
+    } else if (strcmp(low_name, "^R") == 0) {
+    char_entity = 18;
+    } else if (strcmp(low_name, "^S") == 0) {
+    char_entity = 19;
+    } else if (strcmp(low_name, "^T") == 0) {
+    char_entity = 20;
+    } else if (strcmp(low_name, "^U") == 0) {
+    char_entity = 21;
+    } else if (strcmp(low_name, "^V") == 0) {
+    char_entity = 22;
+    } else if (strcmp(low_name, "^W") == 0) {
+    char_entity = 23;
+    } else if (strcmp(low_name, "^X") == 0) {
+    char_entity = 24;
+    } else if (strcmp(low_name, "^Y") == 0) {
+    char_entity = 25;
+    } else if (strcmp(low_name, "^Z") == 0) {
+    char_entity = 26;
+    } 
+
+
 
     addr = freshcell();
     SET_TAG(addr, CHR);

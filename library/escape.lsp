@@ -21,7 +21,7 @@
     (c-lang  "printf(\"\\33[0K\");")
     (c-lang "res = T;"))
 
-(defun escclsla ()
+(defun escclsa ()
     (c-lang  "printf(\"\\33[2K\");")
     (c-lang "res = T;"))
 

@@ -1,3 +1,5 @@
+(import "escape")
+
 (defconstant rows 40)
 (defconstant cols 10)
 
@@ -33,6 +35,8 @@
 (defun display-header (fname) )
 
 (defun display-screen ()
+    (esctop)
+    (esccls1)
     (for ((r ed-start (+ r 1)))
          ((> r ed-end) t)
          (display-line r)))
@@ -57,6 +61,7 @@
                     ((#\^Z) (return-from loop t))
                     (t (set-aref c ed-data ed-row ed-col)
                        (setq ed-col (+ ed-col 1))
+                       (escclsa)
                        (display-line ed-row)))))))
     
 

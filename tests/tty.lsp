@@ -5,23 +5,3 @@
          (print (read-char)))
     (system "stty -raw echo"))
 
-
-(defglobal *key* nil)
-(defglobal *pos* (cons 0 0))
-
-(defun my-test ()
-   (typrologue)
-   (tycls)
-   (tycursor 10 5)
-   (tyattrib t)
-   (tyo "Hello world")
-   (tyattrib nil)
-   (tycursor 10 10)
-   (let ((str (create-string-output-stream)))
-        (format str "~A" (tyxmax))
-        (tyo (get-output-stream-string str)))
-   (tyflush)
-   (tybeep)
-   (setq *key* (tyi))
-   (getyx *pos*)
-   (tyepilogue))

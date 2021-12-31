@@ -2550,7 +2550,7 @@ defgeneric compile
     (defun comp-c-lang (x)
         (unless (= (length x) 2) (error* "c-lang: illegal form" x))
         (unless (stringp (elt x 1)) (error* "c-lang: argument must be string" x))
-        (format-object code2 (elt x 1) nil)
+        (format code2 (elt x 1) nil)
         (format code2 "~%"))
     
     ;;add compile option

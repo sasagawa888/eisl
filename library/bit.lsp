@@ -11,8 +11,10 @@
 (defun logxor (x y)
     (c-lang "res = INT_FLAG | ((INT_MASK & X) ^ (INT_MASK & Y));"))
 
+
 (defun lognot (x)
-    (c-lang "res = INT_FLAG | ~(INT_MASK & X);"))
+    (c-lang "res = INT_FLAG | ~~(INT_MASK & X);"))
+
 
 (defun logtest (x y)
     (c-lang "int z; z = ((INT_MASK & X) & (INT_MASK & Y));")

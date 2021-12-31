@@ -159,7 +159,6 @@ initsubr(void)
     defsubr("PARSE-ERROR-EXPECTED-CLASS", f_parse_error_expected_class);
     defsubr("PARSE-NUMBER", f_parse_number);
     defsubr("PREVIEW-CHAR", f_preview_char);
-    defsubr("PRIN1", f_prin1);
     defsubr("PRINT", f_print);
     defsubr("PROBE-FILE", f_probe_file);
     defsubr("PROPERTY", f_property);
@@ -2571,17 +2570,6 @@ f_print(int arglist)
     return (NIL);
 }
 
-int
-f_prin1(int arglist)
-{
-    int             arg1;
-
-    arg1 = car(arglist);
-    if (length(arglist) != 1)
-	error(WRONG_ARGS, "prin1", arglist);
-    print(arg1);
-    return (T);
-}
 
 
 int

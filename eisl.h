@@ -893,7 +893,6 @@ int             f_parse_error_string(int arglist);
 int             f_parse_number(int arglist);
 int             f_plus(int addr);
 int             f_preview_char(int x);
-int             f_prin1(int addr);
 int             f_print(int addr);
 int             f_probe_file(int arglist);
 int             f_progn(int x);

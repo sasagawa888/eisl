@@ -1,5 +1,5 @@
-(defconstant rows 4000)
-(defconstant cols 80)
+(defconstant rows 40)
+(defconstant cols 10)
 
 
 (defglobal ed-scroll nil)
@@ -12,10 +12,10 @@
 (defglobal ed-tab 0)
 (defglobal ed-indent t)
 (defglobal ed-name nil)
-(defglobal ed-data (create-array `(,rows ,cols) #\null))
+(defglobal ed-data (create-array `(,rows ,cols) 0))
 
 
-(defun editor (fname)
+(defun ed (fname)
     (system "stty raw -echo")
     (setq ed-row 0)
     (setq ed-col 0)
@@ -39,7 +39,7 @@
 
 (defun display-line (r)
     (for ((c 0 (+ c 1)))
-         ((or (char= (aref ed-data r c) #\null) (c > cols)) t)
+         ((or (and (numberp (aref ed-data r c))(= (aref ed-data r c) 0)) (> c cols)) t)
          (format-char (standard-output) (aref ed-data r c))))
 
 (defun edit-screen (fname)
@@ -48,7 +48,17 @@
             (setq quit (edit-loop fname)))))
 
 
-(defun edit-loop (fname) )
+(defun edit-loop (fname)
+    (block loop
+        (let ((c nil))
+            (while t
+                (setq c (read-char))
+                (case c
+                    ((#\^Z) (return-from loop t))
+                    (t (set-aref c ed-data ed-row ed-col)
+                       (setq ed-col (+ ed-col 1))
+                       (display-line ed-row)))))))
+    
 
 
 
@@ -59,10 +69,15 @@
         (format-integer (standard-output) r 10)
         (format-char (standard-output) #\;)
         (format-integer (standard-output) c 10)
-        (format-char (standard-output) #\newline)))
+        (format-char (standard-output) #\backspace)))
 
 
-(defun esc-cls () )
+(defun esc-cls ()
+    (progn 
+        (format-char (standard-output) #\escape)
+        (format-char (standard-output) #\[)
+        (format-integer (standard-output) 2 10)
+        (format-char (standard-output) #\return)))
 
 (defun esc-clear-line () )
 

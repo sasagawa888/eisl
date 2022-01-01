@@ -1,15 +1,15 @@
 (import "escape")
 
-(defconstant rows 40)
-(defconstant cols 10)
-
+(defconstant rows 4000)
+(defconstant cols 80)
+(defconstant ed-start 2)
+(defconstant ed-end 24)
+(defconstant ed-footer 25)
+(defconstant version 0.1)
 
 (defglobal ed-scroll nil)
-(defglobal ed-footer nil)
 (defglobal ed-row nil)
 (defglobal ed-col nil)
-(defglobal ed-start nil)
-(defglobal ed-end nil)
 (defglobal ed-ins t)
 (defglobal ed-tab 0)
 (defglobal ed-indent t)
@@ -21,25 +21,33 @@
     (system "stty raw -echo")
     (setq ed-row 0)
     (setq ed-col 0)
-    (setq ed-start 0)
-    (setq ed-end 24)
-    (setq ed-scroll 21)
-    (setq ed-footer 24)
-    (esc-cls)
+    (esc-clear-screen)
     (display-header fname)
     (display-screen)
     (edit-screen fname)
     (system "stty -raw echo"))
 
 
-(defun display-header (fname) )
+(defun display-header (fname)
+    (esc-move-home)
+    (esc-reverse)
+    (format (standard-output) "editor for learning ver~A       ~A                               " version fname)
+    (esc-reset))
 
 (defun display-screen ()
-    (esctop)
-    (esccls1)
+    (esc-move-top)
+    (esc-clear-screen-after)
     (for ((r ed-start (+ r 1)))
          ((> r ed-end) t)
-         (display-line r)))
+         (display-line r))
+    (display-footer)
+    (esc-move (+ ed-row 2) (+ ed-col 1)))
+
+(defun display-footer ()
+    (esc-move ed-footer 1)
+    (esc-reverse)
+    (format (standard-output) "                                                               ^Z(quit)")
+    (esc-reset))
 
 (defun display-line (r)
     (for ((c 0 (+ c 1)))
@@ -61,28 +69,9 @@
                     ((#\^Z) (return-from loop t))
                     (t (set-aref c ed-data ed-row ed-col)
                        (setq ed-col (+ ed-col 1))
-                       (escclsa)
-                       (display-line ed-row)))))))
+                       (esc-clear-line)
+                       (esc-move-left-margin 0)
+                       (display-line ed-row)
+                       (esc-move (+ ed-row 2) (+ ed-col 1))))))))
     
-
-
-
-(defun esc-move (r c)
-    (progn 
-        (format-char (standard-output) #\escape)
-        (format-char (standard-output) #\[)
-        (format-integer (standard-output) r 10)
-        (format-char (standard-output) #\;)
-        (format-integer (standard-output) c 10)
-        (format-char (standard-output) #\backspace)))
-
-
-(defun esc-cls ()
-    (progn 
-        (format-char (standard-output) #\escape)
-        (format-char (standard-output) #\[)
-        (format-integer (standard-output) 2 10)
-        (format-char (standard-output) #\return)))
-
-(defun esc-clear-line () )
 

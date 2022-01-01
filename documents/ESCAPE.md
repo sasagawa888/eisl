@@ -18,8 +18,8 @@ eisl -c
 
 |name                     | explanation               |
 |-------------------------|---------------------------|
-|(esc-move-home)          | move to raw=1 col=1       |
-|(esc-move-top)           | move to raw=2 col=1       |
+|(esc-move-home)          | move to row=1 col=1       |
+|(esc-move-top)           | move to row=2 col=1       |
 |(esc-clear-screen-after) | clear screen after cursol |
 |(esc-clear-screen-before)| clear screen before cursol|
 |(esc-clear-screen)       | clear screen all          |

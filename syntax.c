@@ -2155,7 +2155,7 @@ f_with_handler(int arglist)
 
     error_handler = cons(eval(arg1), error_handler);
     res = f_progn(arg2);
-	error_handler = NIL;
+	error_handler = cdr(error_handler);
     return (res);
 }
 

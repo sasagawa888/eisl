@@ -18,7 +18,8 @@
 
 
 (defun ed (fname)
-    (system "stty raw -echo")
+    ;(system "stty raw -echo")
+    (file-load fname)
     (setq ed-row 0)
     (setq ed-col 0)
     (esc-clear-screen)
@@ -75,3 +76,20 @@
                        (esc-move (+ ed-row 2) (+ ed-col 1))))))))
     
 
+
+(defun file-load (fname)
+    (block file-load
+        (let* ((instream nil)
+               (ans (catch 'c-error
+                      (with-handler 
+                        (lambda (c) (throw 'c-error c))
+                        (setq instream (open-input-file fname))))))
+         (if (equal (class-of ans) (class <stream-error>))
+             (return-from file-load nil))
+         (for ((row 0 (+ row 1))
+               (c nil))
+              ((char= c #\^Z) t)
+              (for ((col 0 (+ col 1)))
+                   ((or (char= c #\newline) (char= c #^Z)) t)
+                   (setq c (read-char instrem))
+                   (set-arref c ed-data row col)))))) 

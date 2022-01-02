@@ -2237,10 +2237,6 @@ f_read_char(int arglist)
 		error(END_STREAM, "read-char", NIL);
 	}
 	res = makechar((char *) rc_buf);
-	if (res == FEND && arg2 == NIL)
-	    res = arg3;
-	else
-	    res = NIL;
     }
     repl_flag = save1;
     return (res);
@@ -2355,8 +2351,6 @@ f_preview_char(int arglist)
 	}
 	input_stream = save;
 	res = makechar((char *) pc_buf);
-	if (res == FEND && arg2 == NIL)
-	    res = arg3;
     }
     return (res);
 }

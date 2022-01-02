@@ -1,19 +1,14 @@
 (import "escape")
 
-(defconstant rows 40)
+(defconstant rows 4000)
 (defconstant cols 80)
 (defconstant ed-footer 25)
 (defconstant version 0.2)
 
-(defglobal ed-scroll nil)
 (defglobal ed-row nil)
 (defglobal ed-col nil)
 (defglobal ed-start nil)
 (defglobal ed-end nil)
-(defglobal ed-ins t)
-(defglobal ed-tab 0)
-(defglobal ed-indent t)
-(defglobal ed-name nil)
 (defglobal ed-data (create-array `(,rows ,cols) 0))
 
 

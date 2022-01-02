@@ -1,15 +1,15 @@
 (import "escape")
 
-(defconstant rows 4000)
+(defconstant rows 40)
 (defconstant cols 80)
-(defconstant ed-start 2)
-(defconstant ed-end 24)
 (defconstant ed-footer 25)
-(defconstant version 0.1)
+(defconstant version 0.2)
 
 (defglobal ed-scroll nil)
 (defglobal ed-row nil)
 (defglobal ed-col nil)
+(defglobal ed-start nil)
+(defglobal ed-end nil)
 (defglobal ed-ins t)
 (defglobal ed-tab 0)
 (defglobal ed-indent t)
@@ -18,10 +18,12 @@
 
 
 (defun ed (fname)
-    ;(system "stty raw -echo")
+    (system "stty raw -echo")
     (file-load fname)
     (setq ed-row 0)
     (setq ed-col 0)
+    (setq ed-start 0)
+    (setq ed-end 24)
     (esc-clear-screen)
     (display-header fname)
     (display-screen)
@@ -38,9 +40,9 @@
 (defun display-screen ()
     (esc-move-top)
     (esc-clear-screen-after)
-    (for ((r ed-start (+ r 1)))
-         ((> r ed-end) t)
-         (display-line r))
+    (for ((row ed-start (+ row 1)))
+         ((> row ed-end) t)
+         (display-line row))
     (display-footer)
     (esc-move (+ ed-row 2) (+ ed-col 1)))
 
@@ -50,10 +52,13 @@
     (format (standard-output) "                                                               ^Z(quit)")
     (esc-reset))
 
-(defun display-line (r)
-    (for ((c 0 (+ c 1)))
-         ((or (and (numberp (aref ed-data r c))(= (aref ed-data r c) 0)) (> c cols)) t)
-         (format-char (standard-output) (aref ed-data r c))))
+(defun display-line (row)
+    (if (characterp (aref ed-data row 0))
+        (for ((col 0 (+ col 1)))
+             ((and (numberp (aref ed-data row col))
+                   (= (aref ed-data row col) 0) )
+              (format-char (standard-output) #\return))
+             (format-char (standard-output) (aref ed-data row col)))))
 
 (defun edit-screen (fname)
     (let ((quit nil))
@@ -67,7 +72,7 @@
             (while t
                 (setq c (read-char))
                 (case c
-                    ((#\^Z) (return-from loop t))
+                    ((#\^Z) (esc-clear-screen) (return-from loop t))
                     (t (set-aref c ed-data ed-row ed-col)
                        (setq ed-col (+ ed-col 1))
                        (esc-clear-line)
@@ -78,18 +83,13 @@
 
 
 (defun file-load (fname)
-    (block file-load
-        (let* ((instream nil)
-               (ans (catch 'c-error
-                      (with-handler 
-                        (lambda (c) (throw 'c-error c))
-                        (setq instream (open-input-file fname))))))
-         (if (equal (class-of ans) (class <stream-error>))
-             (return-from file-load nil))
-         (for ((row 0 (+ row 1))
-               (c #\^A))
-              ((char= c #\^Z) t)
-              (for ((col 0 (+ col 1)))
-                   ((or (char= c #\newline) (char= c #\^Z)) t)
-                   (setq c (read-char instream nil #\^Z))
-                   (set-aref c ed-data row col)))))) 
+    (if (not (probe-file fname))
+        (progn (set-aref #\^Z ed-data 0 0) nil)
+        (let ((instream (open-input-file fname))
+              (c #\^A))
+            (for ((row 0 (+ row 1)))
+                 ((char= c #\^Z) (progn (set-aref #\^Z ed-data row 0) t))
+                 (for ((col 0 (+ col 1)))
+                      ((char= c #\newline) (setq c (read-char instream nil #\^Z)))
+                      (setq c (read-char instream nil #\^Z))
+                      (set-aref c ed-data row col))))))

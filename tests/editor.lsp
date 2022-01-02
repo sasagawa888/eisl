@@ -3,7 +3,7 @@
 (defconstant rows 4000)
 (defconstant cols 100)
 (defconstant ed-footer 25)
-(defconstant version 0.2)
+(defconstant version 0.3)
 
 (defglobal ed-row nil)
 (defglobal ed-col nil)

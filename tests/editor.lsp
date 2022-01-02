@@ -68,6 +68,14 @@
             (while t
                 (setq c (read-char))
                 (case c
+                    ((#\^B) (cond ((> ed-col 0) (esc-move-left) (setq ed-col (- ed-col 1)) )))
+                    ((#\^F) (cond ((not (char= (aref ed-data ed-row ed-col) #\newline)) (esc-move-right) (setq ed-col (+ ed-col 1))))) 
+                    ((#\^D) (cond ((char= (aref ed-data ed-row 0) #\^Z) t)
+                                  ((< ed-row (- ed-end 1)) (esc-move-down) (setq ed-row (+ ed-row 1)))
+                                  (t (setq ed-start ed-end) (setq ed-end (+ ed-start 23)) (setq ed-row (+ ed-row 1)) (display-screen) (move-current-position))))
+                    ((#\^U) (cond ((= ed-row 0) t)
+                                  ((> ed-row ed-start) (esc-move-up) (setq ed-row (- ed-row 1)))
+                                  (t (setq ed-start (- ed-start 23)) (setq ed-end (+ ed-start 23)) (setq ed-row (- ed-row 1)) (display-screen) (move-current-position))))
                     ((#\^Z) (esc-clear-screen) (return-from loop t))
                     (t (set-aref c ed-data ed-row ed-col)
                        (setq ed-col (+ ed-col 1))
@@ -75,7 +83,10 @@
                        (esc-move-left-margin 0)
                        (display-line ed-row)
                        (esc-move (+ ed-row 2) (+ ed-col 1))))))))
-    
+
+
+(defun move-current-position ()
+    (esc-move (+ (- ed-row ed-start) 2) (+ ed-col 1)))
 
 
 (defun file-load (fname)

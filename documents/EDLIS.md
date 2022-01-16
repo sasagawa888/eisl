@@ -9,8 +9,7 @@ Edlis is a simple editor for ISLisp. Edlis is subset Edwin.
 | Key           | Command               |
 | ------------- | --------------------- |
 | CTRL+X CTRL+S | Save file             |
-| CTRL+X CTRL+C | Quit editor           |
-| CTRL+X CTRL+Z | Quit editor with save |
+| CTRL+X CTRL+C | Quit editor with save |
 | CTRL+X CTRL+I | Insert file           |
 
 ## Editing

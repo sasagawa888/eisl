@@ -625,7 +625,7 @@ edit_loop(char *fname)
 	CHECK(addstr, "^X");
 	ESCRST();
 	while (1) {
-	    if (ctrl_z == 1) {
+	    if (ctrl_c == 1) {
 		if (!modify_flag) {
 		    ESCCLS();
 		    ESCMOVE(1, 1);
@@ -661,11 +661,6 @@ edit_loop(char *fname)
 			}
 		    } while (c != 'c');
 		}
-	    }
-	    if (ctrl_c == 1) {
-		ESCCLS();
-		ESCMOVE(1, 1);
-		return true;
 	    }
 	    timeout(10);
 	    c = getch();

@@ -547,6 +547,7 @@ edit_loop(char *fname)
 	      "CTRL+E  end of line            CTRL+D  delete one char\n"
 	      "CTRL+V  page down              CTRL+O  return\n"
 	      "ESC V   page up                CTRL+T  replace word\n"
+		  "TAB     insert spaces according to lisp indent rule\n"
 	      "CTRL+X CTRL+C quit from editor with save\n"
 	      "CTRL+X CTRL+S save file\n"
 	      "CTRL+X CTRL+I insert buffer from file\n"

@@ -85,9 +85,119 @@ return (body . rest-list)
                                  (ls1 (cdr dt)))
                             (cond ((null _res) (parse ls1 exp))
                                   (t (parse ls1 (append (list _res) (list exp)))))))
-  (((#\) :rest _ls) _res) (parse _ls nil))
+  (((#\) :rest _ls) _res) _res)
   (((_body :rest _ls) _) (cons (convert _body <symbol>) _ls))
   (else (throw 'exit "syntax error")))
+
+
+#|
+# terminal
+  def parse('\n', res) do
+    res
+  end
+
+  def parse('end\n', _) do
+    :end
+  end
+
+  # ^ arg .
+  def parse([94, arg, 46 | ls], _) do
+    arg1 = String.to_atom(<<arg>>)
+    {body, ls1} = parse1(ls, [])
+    parse(ls1, {arg1, body})
+  end
+
+  # e.g. ^xyz.z shorthand
+  def parse([94, arg | ls], _) do
+    arg1 = String.to_atom(<<arg>>)
+    {arg1, parse([94 | ls], [])}
+  end
+
+  def parse([l | ls], res) when l >= 65 and l <= 122 do
+    # IO.inspect binding()
+    cond do
+      res == [] -> parse(ls, String.to_atom(<<l>>))
+      true -> parse(ls, [res] ++ [String.to_atom(<<l>>)])
+    end
+  end
+
+  # ( )
+  def parse([40 | ls], res) do
+    # IO.inspect binding()
+    {exp, ls1} = parse1([40 | ls], [])
+
+    cond do
+      res == [] -> parse(ls1, exp)
+      true -> parse(ls1, [res] ++ [exp])
+    end
+  end
+
+  # space skip
+  def parse([32 | ls], res) do
+    parse(ls, res)
+  end
+
+  def parse(_, _) do
+    # IO.inspect binding()
+    throw("syntax error")
+  end
+
+  # e.g. ^x.y
+  def parse1([94, arg, 46 | ls], res) do
+    # IO.inspect binding()
+    arg1 = String.to_atom(<<arg>>)
+    {body, ls1} = parse1(ls, res)
+    {{arg1, body}, ls1}
+  end
+
+  # e.g. ^xyz.z shorthand
+  def parse1([94, arg | ls], _) do
+    # IO.inspect binding()
+    arg1 = String.to_atom(<<arg>>)
+    {body, ls1} = parse1([94 | ls], [])
+    {{arg1, body}, ls1}
+  end
+
+  def parse1([l | ls], res) when l >= 65 and l <= 122 do
+    # IO.inspect binding()
+    cond do
+      res == [] -> parse1(ls, String.to_atom(<<l>>))
+      true -> parse1(ls, [res] ++ [String.to_atom(<<l>>)])
+    end
+  end
+
+  def parse1([40 | ls], res) do
+    # IO.inspect binding()
+    {exp, [41 | ls1]} = parse1(ls, [])
+
+    cond do
+      res == [] -> parse1(ls1, exp)
+      true -> parse1(ls1, [res] ++ [exp])
+    end
+  end
+
+  def parse1([41 | ls], res) do
+    # IO.inspect binding()
+    {res, [41 | ls]}
+  end
+
+  # space skip
+  def parse1([32 | ls], res) do
+    parse1(ls, res)
+  end
+
+  def parse1('\n', res) do
+    # IO.inspect binding()
+    {res, '\n'}
+  end
+
+  def parse1(_, _) do
+    # IO.inspect binding()
+    throw("syntax error1")
+  end
+
+
+|#
 
 
 (defun newline ()
@@ -133,6 +243,6 @@ return (body . rest-list)
 ;;--------------tests------------------------
 
 
-(test (parse* "^x.x") (^ x x))
-(test (parse* "^x. x") (^ x x))
-;(test (parse* "^x.(^x.x)") (^ x (^ x x)))
+($test (parse* "^x.x") (^ x x))
+($test (parse* "^x. x") (^ x x))
+($test (parse* "^x.(^x.x)") (^ x (^ x x)))

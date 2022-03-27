@@ -91,7 +91,7 @@ parse
   (format (standard-output) "~%"))
 
 (defun is-lambda (x)
-  (and (consp x) (eq (car) '^)))
+  (and (consp x) (eq (car x) '^)))
 
 (defpattern combinator
   ((I) `(^ x x))
@@ -104,11 +104,14 @@ parse
 
 (defpattern reduce
     ((end) (throw 'exit "end"))
-    ((_x) (when _x) _x)
-    (((_x _y)) (when (is_lambda _x)) (print `(,_x ,_y)) (newline) (reduce (beta `(,_x ,_y))))
+    ((_x) (when (atom _x)) _x)
+    (((_x _y)) (when (is-lambda _x))(print `(,_x ,_y)) (newline)) ;(reduce (beta `(,_x ,_y))))
     (((_x _y)) (when (consp _x)(cant-reduce `(,_x ,_y))) (print `(,_x ,_y)) `(,_x ,_y))
-    (((_x _y)) (reduce (list (reduce _x) (reduce _y))))
-    (((_x _y)) (when (is_lambda ``(,_x ,_y))) (newline) (list '^ _x (reduce _y))))
+    ;(((_x _y)) (reduce (list (reduce _x) (reduce _y))))
+    (((_x _y)) (when (is-lambda ``(,_x ,_y))) (newline) (list '^ _x (reduce _y))) 
+)
+    
+
     
      
 (defpattern cant-reduce
@@ -132,6 +135,92 @@ parse
 
 ($test (parse* "^x.x") (^ x x))
 ($test (parse* "^x. x") (^ x x))
-($test (parse* "^x.(^x.x)") (^ x (^ x x)))
+($test (parse* "^x.^x.x") (^ x (^ x x)))
 ($test (parse* "end") end)
 ($test (parse* "(^x.x)(^y.y)") ((^ x x)(^ y y)))
+($test (parse* "^xy.z") (^ x (^ y z)))
+($test (parse* "^xyz.z") (^ X (^ Y (^ Z Z))))
+
+($test (reduce 'y) y)
+;($test (reduce '(x y)) (x y))
+;($test (reduce '((^ x x) y) ) y)
+
+#|
+  test "total test" do
+    assert Lambda.test('y\n') == :y
+    assert Lambda.test('Iy\n') == :y
+    assert Lambda.test('Is\n') == :s
+    assert Lambda.test('Ks\n') == {:y, :s}
+    assert Lambda.test('SKKa\n') == :a
+    assert Lambda.test('(^y.y((^z.xz)(^z.z)))(^a.a)\n') == [:x, {:z, :z}]
+  end
+
+  test "reduce test" do
+    assert Lambda.reduce(:y) == :y
+    assert Lambda.reduce([:x, :y]) == [:x, :y]
+    assert Lambda.reduce([{:x, :x}, :y]) == :y
+    assert Lambda.reduce([{:x, :a}, :y]) == :a
+  end
+
+  test "parse test" do
+    assert Lambda.parse('xy\n', []) == [:x, :y]
+    assert Lambda.parse('(xy)\n', []) == [:x, :y]
+    assert Lambda.parse('^x.y\n', []) == {:x, :y}
+    assert Lambda.parse('^x.(^y.y)\n', []) == {:x, {:y, :y}}
+    assert Lambda.parse('(^x.x)(^y.y)\n', []) == [{:x, :x}, {:y, :y}]
+    assert Lambda.parse('^x.xy\n', []) == {:x, [:x, :y]}
+    assert Lambda.parse('^xy.z\n', []) == {:x, {:y, :z}}
+    assert Lambda.parse('^xyz.z\n', []) == {:x, {:y, {:z, :z}}}
+    assert Lambda.parse('^x.(^y.(^z.z))\n', []) == {:x, {:y, {:z, :z}}}
+    assert Lambda.parse('xyz\n', []) == [[:x, :y], :z]
+    assert Lambda.parse('abcd\n', []) == [[[:a, :b], :c], :d]
+    assert Lambda.parse('(^x.y)\n', []) == {:x, :y}
+    assert Lambda.parse('(^xy.x)\n', []) == {:x, {:y, :x}}
+    assert Lambda.parse('(^xyz.x)\n', []) == {:x, {:y, {:z, :x}}}
+    assert Lambda.parse('(xy)z\n', []) == [[:x, :y], :z]
+    assert Lambda.parse('x(yz)\n', []) == [:x, [:y, :z]]
+    assert Lambda.parse('a(b(cd))\n', []) == [:a, [:b, [:c, :d]]]
+  end
+
+
+ def beta({arg, body}, y) do
+    # IO.inspect binding()
+    reduce(replace(arg, body, y))
+  end
+
+  def replace(x, x, z) do
+    z
+  end
+
+  def replace(x, [x, ys], z) do
+    [z, replace(x, ys, z)]
+  end
+
+  def replace(x, [x, ys], z) when is_atom(x) do
+    [x, replace(x, ys, z)]
+  end
+
+  def replace(x, [y, ys], z) when is_atom(y) do
+    [y, replace(x, ys, z)]
+  end
+
+  def replace(x, [y, ys], z) when is_list(y) do
+    [replace(x, y, z), replace(x, ys, z)]
+  end
+
+  def replace(x, [y, ys], z) when is_tuple(y) do
+    [replace(x, y, z), replace(x, ys, z)]
+  end
+
+  def replace(_, [y, ys], _) do
+    reduce([y, ys])
+  end
+
+  def replace(x, {arg, body}, z) do
+    {arg, replace(x, body, z)}
+  end
+
+  def replace(_, y, _) do
+    y
+  end
+  |#

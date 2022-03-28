@@ -2,7 +2,7 @@
 (import "test")
 
 (defun cadr (x)
-  (cdr (car x)))
+  (car (cdr x)))
 
 (defun caar (x) 
   (car (car x)))
@@ -53,8 +53,8 @@
                         y)))
           x))
 
-  ;; for test
-  (defun parse* (x)
+;; for test
+(defun parse* (x)
     (pipe x |> (convert <list>) |> (to-upper) |> (parse nil) ))
  
 #|
@@ -82,16 +82,19 @@ parse
   (((#\) :rest _ls) _res)
       (setq *rest-list* _ls)
       _res)
-  (((_body :rest _ls) _) (when (and (char>= _body #\A) (char<= _body #\Z)))
-      (setq *rest-list* _ls)
-      (convert _body <symbol>))
+  (((_body :rest _ls) _res) (when (variable-p _body))
+             (setq *rest-list* _ls)
+             (convert _body <symbol>))
   (else (throw 'exit "syntax error")))
 
 (defun newline ()
   (format (standard-output) "~%"))
 
-(defun is-lambda (x)
+(defun lambda-p (x)
   (and (consp x) (eq (car x) '^)))
+
+(defun variable-p (x)
+  (and (characterp x) (char>= x #\A) (char<= x #\Z)))
 
 (defpattern combinator
   ((I) `(^ x x))
@@ -105,10 +108,10 @@ parse
 (defpattern reduce
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
-    (((_x _y)) (when (is-lambda _x))(print `(,_x ,_y)) (newline)) ;(reduce (beta `(,_x ,_y))))
-    (((_x _y)) (when (consp _x)(cant-reduce `(,_x ,_y))) (print `(,_x ,_y)) `(,_x ,_y))
-    ;(((_x _y)) (reduce (list (reduce _x) (reduce _y))))
-    (((_x _y)) (when (is-lambda ``(,_x ,_y))) (newline) (list '^ _x (reduce _y))) 
+    ((_x) (when (lambda-p _x)) _x)
+    (((_x _y)) (when (lambda-p _x))(print `(,_x ,_y)) (reduce (beta _x _y)))
+    (((_x _y)) (when (and (atom _x)(atom _y))) `(,_x ,_y))
+    (else (print "can't reduce") nil)
 )
     
 
@@ -118,17 +121,20 @@ parse
     ((_x) (when _x) t)
     (((_x _)) (when (atom _x)) t)
     (else t))
-  
 
-(defpattern replace 
-    ((_x (_x _ys) _z) (list _z (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (atom _x)) (list _x (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (atom _x)) (list _y (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (is_lambda _y)) (list (replace _x _y _z) (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (consp _y)) (list (replace _x _y _z (replace _x _ys _z))))
-    ((_x (_y _ys) _z)  (reduce (list _y _ys)))
-    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z))) 
-    ((_ _y _) y))
+
+(defun beta (x y)
+    (let ((arg (cadr x))
+          (body (caddr x)))
+        (replace body arg y)))
+
+(defun replace (body arg y)
+    (cond ((null body) nil)
+          ((and (atom body) (eq body arg)) y)
+          ((atom body) body)
+          (t (cons (replace (car body) arg y)
+                   (replace (cdr body) arg y)))))
+
 
 ;;--------------tests------------------------
 
@@ -142,8 +148,8 @@ parse
 ($test (parse* "^xyz.z") (^ X (^ Y (^ Z Z))))
 
 ($test (reduce 'y) y)
-;($test (reduce '(x y)) (x y))
-;($test (reduce '((^ x x) y) ) y)
+($test (reduce '(x y)) (x y))
+($test (reduce '((^ x x) y) ) y)
 
 #|
   test "total test" do
@@ -183,44 +189,4 @@ parse
   end
 
 
- def beta({arg, body}, y) do
-    # IO.inspect binding()
-    reduce(replace(arg, body, y))
-  end
-
-  def replace(x, x, z) do
-    z
-  end
-
-  def replace(x, [x, ys], z) do
-    [z, replace(x, ys, z)]
-  end
-
-  def replace(x, [x, ys], z) when is_atom(x) do
-    [x, replace(x, ys, z)]
-  end
-
-  def replace(x, [y, ys], z) when is_atom(y) do
-    [y, replace(x, ys, z)]
-  end
-
-  def replace(x, [y, ys], z) when is_list(y) do
-    [replace(x, y, z), replace(x, ys, z)]
-  end
-
-  def replace(x, [y, ys], z) when is_tuple(y) do
-    [replace(x, y, z), replace(x, ys, z)]
-  end
-
-  def replace(_, [y, ys], _) do
-    reduce([y, ys])
-  end
-
-  def replace(x, {arg, body}, z) do
-    {arg, replace(x, body, z)}
-  end
-
-  def replace(_, y, _) do
-    y
-  end
   |#

@@ -21,7 +21,7 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print (reduce (combinator s))))) t)
+                  (print* (reduce (combinator s))))) t)
           (t (prompt)(repl1)))))
 
 (defun read* ()
@@ -114,79 +114,32 @@ parse
 (defpattern reduce
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
-    (((_x _y)) (when (atom _x)) `(,_x ,_y))
-    (((_x _y)) (when (lambda-p _x)) (print* `(,_x ,_y)) (reduce (beta _x _y)))
-    (((_x _y)) (when (consp _x)) (print* `(,_x ,_y)) (reduce (reduce _x) _y))
-    (else (print "can't reduce") nil)
+    (((^ _arg _body)) (when (atom _body)) (list '^ _arg _body))
+    (((_x _y)) (when (atom _x)) (list _x _y))
+    (((_x _y)) (when (lambda-p _x)) (print* (list _x _y)) (reduce (beta _x _y)))
+    (((_x _y)) (when (consp _x)) (print* (list _x _y)) (reduce (reduce _x) _y))
+    (else (print "reduce error") 'error)
 )
     
-
-#|
-def cant_reduce(x) when is_atom(x) do
-    true
-  end
-
-  def cant_reduce([x, _]) when is_atom(x) do
-    true
-  end
-
-  def cant_reduce(_) do
-    false
-  end
-
-
- def reduce(:end) do
-    throw("end")
-  end
-
-  def reduce(x) when is_atom(x) do
-    x
-  end
-
-  def reduce([x, y]) when is_atom(x) do
-    [x, y]
-  end
-
-  def reduce([x, y]) when is_tuple(x) do
-    print([x, y])
-    newline()
-    reduce(beta(x, y))
-  end
-
-  def reduce([x, y]) when is_list(x) do
-    print([x, y])
-    newline()
-
-    if cant_reduce(x) do
-      [x, y]
-    else
-      reduce([reduce(x), y])
-    end
-  end
-
-  def reduce({a, body}) do
-    print({a, body})
-    newline()
-    exp = reduce(body)
-    {a, exp}
-  end
-
-
-|#
 
 
 (defun beta (x y)
     (let ((arg (cadr x))
           (body (caddr x)))
-        (replace body arg y)))
+        (replace arg body y)))
 
-(defun replace (body arg y)
-    (cond ((null body) nil)
-          ((and (atom body) (eq body arg)) y)
-          ((atom body) body)
-          (t (cons (replace (car body) arg y)
-                   (replace (cdr body) arg y)))))
-
+(defpattern replace
+    ((_x _x _z) (print _z) _z)
+    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z)))
+    ((_x (_x _ys) _z) (list _z (replace _x _ys _z)))
+    ((_x (_x _ys) _z) (when (atom _x)) (list _x (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (when (atom _y)) (list _y (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (when (consp _y)) (list (replace _x _y _z) (replace _x _ys _z)))
+    ((_x (_y _ys) _z) (when (lambda-p _y)) (list (replace _x _y _z) (replace _x _ys _z)))
+    ((_ (_y _ys) _) (reduce _y _ys))
+    ((_ _y _) _y))
+  
+  
 
 ;;--------------tests------------------------
 
@@ -225,25 +178,28 @@ def cant_reduce(x) when is_atom(x) do
     assert Lambda.reduce([{:x, :a}, :y]) == :a
   end
 
-  test "parse test" do
-    assert Lambda.parse('xy\n', []) == [:x, :y]
-    assert Lambda.parse('(xy)\n', []) == [:x, :y]
-    assert Lambda.parse('^x.y\n', []) == {:x, :y}
-    assert Lambda.parse('^x.(^y.y)\n', []) == {:x, {:y, :y}}
-    assert Lambda.parse('(^x.x)(^y.y)\n', []) == [{:x, :x}, {:y, :y}]
-    assert Lambda.parse('^x.xy\n', []) == {:x, [:x, :y]}
-    assert Lambda.parse('^xy.z\n', []) == {:x, {:y, :z}}
-    assert Lambda.parse('^xyz.z\n', []) == {:x, {:y, {:z, :z}}}
-    assert Lambda.parse('^x.(^y.(^z.z))\n', []) == {:x, {:y, {:z, :z}}}
-    assert Lambda.parse('xyz\n', []) == [[:x, :y], :z]
-    assert Lambda.parse('abcd\n', []) == [[[:a, :b], :c], :d]
-    assert Lambda.parse('(^x.y)\n', []) == {:x, :y}
-    assert Lambda.parse('(^xy.x)\n', []) == {:x, {:y, :x}}
-    assert Lambda.parse('(^xyz.x)\n', []) == {:x, {:y, {:z, :x}}}
-    assert Lambda.parse('(xy)z\n', []) == [[:x, :y], :z]
-    assert Lambda.parse('x(yz)\n', []) == [:x, [:y, :z]]
-    assert Lambda.parse('a(b(cd))\n', []) == [:a, [:b, [:c, :d]]]
-  end
-
-
+>SS
+((^x.(^y.(^z.(xz(yz)))))(^x.(^y.(^z.(xz(yz))))))
+^y.(^z.(^x.(^y.(^z.(xz(yz))))z(yz)))
+^z.(^x.(^y.(^z.(xz(yz))))z(yz))
+^x.(^y.(^z.(xz(yz))))z(yz)
+^x.(^y.(^z.(xz(yz))))z
+^y.(^z.(zz(yz)))
+^z.(zz(yz))
+zz(yz)
+^y.(^z.(zz(yz)))
+^z.(zz(yz))
+zz(yz)
+^y.(^z.(zz(yz)))(yz)
+^z.(zz(yzz))
+zz(yzz)
+^z.(zz(yzz))
+zz(yzz)
+^y.(^z.(^z.(zz(yzz))))
+^z.(^z.(zz(yzz)))
+^z.(zz(yzz))
+zz(yzz)
+^y.(^z.(^z.(zz(yzz))))
+>
+  
   |#

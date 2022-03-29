@@ -46,10 +46,14 @@
   (princ* (caddr x)))
 
 (defun print2* (x)
-  (cond ((lambda-p (car x))
-         (format (standard-output) "(") (princ* (car x)) (format (standard-output) ")"))
-        (t (princ* (car x))))
-  (princ* (cadr x)))
+  (cond ((null x) t)
+        ((lambda-p (car x))
+         (format (standard-output) "(") (princ* (car x)) (format (standard-output) ")")
+         (print2* (cdr x)))
+        ((consp (car x))
+         (format (standard-output) "(") (princ* (car x)) (format (standard-output) ")")
+         (print2* (cdr x)))
+        (t (princ* (car x)) (print2* (cdr  x)))))
 
 
 (defun to-upper (x)
@@ -122,6 +126,8 @@ parse
     ((_x) (when (lambda-p _x)) _x)
     (((_x _y)) (when (lambda-p _x))(print* `(,_x ,_y))() (reduce (beta _x _y)))
     (((_x _y)) (when (and (atom _x)(atom _y))) `(,_x ,_y))
+    (((_x _y)) (when (consp _x)) (reduce (reduce _x) _y))
+    (((_x _y)) (when (consp _y)) (reduce _x (reduce _y)))
     (else (print "can't reduce") nil)
 )
     

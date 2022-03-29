@@ -11,38 +11,43 @@
   (car (cdr (cdr x))))
 
 (defun repl ()
-  (format "Lambda calculus interpreter")
-  (format "To quit enter 'end'")
-  (repl))
+  (format (standard-output) "Lambda calculus interpreter")
+  (format (standard-output) "To quit enter 'end'~%")
+  (repl1))
 
 
-(defun repl ()
+(defun repl1 ()
   (block repl
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print* (reduce (combinator s)))
-                  (prompt))) t)
-          (t (prompt)(repl)))))
+                  (print* (reduce (combinator s))))) t)
+          (t (prompt)(repl1)))))
 
 (defun read* ()
-  (format (standard-output) "~%L> ")
-  (parse (convert (read-line) <list>) nil))
+  (format (standard-output) "L> ")
+  (parse* (read-line)))
+
 
 (defun print* (x)
-  (if (eq (car x) '^)
-      (print1* x)
-      (print2* x)))
+  (princ* x)
+  (format (standard-output) "~%"))
+
+(defun princ* (x)
+  (cond ((lambda-p x) (print1* x))
+        ((atom x) (format (standard-output) "~A" x))
+        (t (print2* x))))
+  
 
 (defun print1* (x)
   (format (standard-output) "^")
-  (format-object (standard-output) (cadr x))
+  (format (standard-output) "~A" (cadr x))
   (format (standard-output) ".")
-  (print* (caddr x)))
+  (princ* (caddr x)))
 
 (defun print2* (x)
-  (print1* (car x))
-  (print1* (cadr x)))
+  (princ* (car x))
+  (princ* (cadr x)))
 
 
 (defun to-upper (x)
@@ -90,10 +95,7 @@ parse
   (((_body :rest _ls) _res) (when (variable-p _body))
              (setq *rest-list* _ls)
              (parse *rest-list* (cons _res (list (convert _body <symbol>)))))
-  (else (throw 'exit "syntax error")))
-
-(defun newline ()
-  (format (standard-output) "~%"))
+  (else (print "syntax error")))
 
 (defun lambda-p (x)
   (and (consp x) (eq (car x) '^)))
@@ -102,11 +104,13 @@ parse
   (and (characterp x) (char>= x #\A) (char<= x #\Z)))
 
 (defpattern combinator
-  ((I) `(^ x x))
-  ((K) '(^ x (^ y x)))
-  ((S) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
-  ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
-  (((_x _y))  (append (combinator _x) (combinator _y))) 
+  ((empty) nil)
+  ((_x) (when (lambda-p _x)) _x)
+  ((CI) '(^ x x))
+  ((CK) '(^ x (^ y x)))
+  ((CS) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
+  ((CY) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
+  (((_x _y))  (cons (combinator _x) (list (combinator _y))))
   ((_x) _x))
 
 
@@ -114,19 +118,11 @@ parse
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
     ((_x) (when (lambda-p _x)) _x)
-    (((_x _y)) (when (lambda-p _x))(print `(,_x ,_y)) (reduce (beta _x _y)))
+    (((_x _y)) (when (lambda-p _x))(print* `(,_x ,_y))() (reduce (beta _x _y)))
     (((_x _y)) (when (and (atom _x)(atom _y))) `(,_x ,_y))
     (else (print "can't reduce") nil)
 )
     
-
-    
-     
-(defpattern cant-reduce
-    ((_x) (when _x) t)
-    (((_x _)) (when (atom _x)) t)
-    (else t))
-
 
 (defun beta (x y)
     (let ((arg (cadr x))
@@ -146,15 +142,20 @@ parse
 
 ($test (parse* "^x.x") (^ x x))
 ($test (parse* "^x. x") (^ x x))
-($test (parse* "^x.^x.x") (^ x (^ x x)))
+($test (parse* "^x.(^x.x)") (^ x (^ x x)))
 ($test (parse* "end") end)
 ($test (parse* "(^x.x)(^y.y)") ((^ x x)(^ y y)))
 ($test (parse* "^xy.z") (^ x (^ y z)))
 ($test (parse* "^xyz.z") (^ X (^ Y (^ Z Z))))
+($test (parse* "(xy)z") ((x y) z))
+($test (parse* "x(yz)") (x (y z)))
+($test (parse* "abcd") (((a b) c) d))
+($test (parse* "a(b(c(d)))") (a (b (c d))))
 
 ($test (reduce 'y) y)
 ($test (reduce '(x y)) (x y))
 ($test (reduce '((^ x x) y) ) y)
+($test (reduce '((^ x a) y) ) a)
 
 #|
   test "total test" do

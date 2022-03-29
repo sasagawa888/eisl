@@ -21,7 +21,7 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print* (reduce (combinator s))))) t)
+                  (print (reduce (combinator s))))) t)
           (t (prompt)(repl1)))))
 
 (defun read* ()
@@ -56,15 +56,6 @@
         (t (princ* (car x)) (print2* (cdr  x)))))
 
 
-(defun to-upper (x)
-  (mapcar (lambda (y)
-                (let ((code (convert y <integer>)))
-                    (if (and (>= code 97) (<= code 122))
-                        (convert (- code 32) <character>)
-                        y)))
-          x))
-
-;; for test
 (defun parse* (x)
     (pipe x |> (convert <list>) |> (parse nil) ))
  
@@ -116,21 +107,73 @@ parse
   ((K) '(^ x (^ y x)))
   ((S) '(^ x (^ y (^ z ((x z) (y z))))))
   ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
-  (((_x _y))  (cons (combinator _x) (list (combinator _y))))
+  (((_x :rest _xs)) (cons (combinator _x) (combinator _xs)))
   ((_x) _x))
 
 
 (defpattern reduce
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
-    ((_x) (when (lambda-p _x)) _x)
-    (((_x _y)) (when (lambda-p _x))(print* `(,_x ,_y))() (reduce (beta _x _y)))
-    (((_x _y)) (when (and (atom _x)(atom _y))) `(,_x ,_y))
-    (((_x _y)) (when (consp _x)) (reduce (reduce _x) _y))
-    (((_x _y)) (when (consp _y)) (reduce _x (reduce _y)))
+    (((_x _y)) (when (atom _x)) `(,_x ,_y))
+    (((_x _y)) (when (lambda-p _x)) (print* `(,_x ,_y)) (reduce (beta _x _y)))
+    (((_x _y)) (when (consp _x)) (print* `(,_x ,_y)) (reduce (reduce _x) _y))
     (else (print "can't reduce") nil)
 )
     
+
+#|
+def cant_reduce(x) when is_atom(x) do
+    true
+  end
+
+  def cant_reduce([x, _]) when is_atom(x) do
+    true
+  end
+
+  def cant_reduce(_) do
+    false
+  end
+
+
+ def reduce(:end) do
+    throw("end")
+  end
+
+  def reduce(x) when is_atom(x) do
+    x
+  end
+
+  def reduce([x, y]) when is_atom(x) do
+    [x, y]
+  end
+
+  def reduce([x, y]) when is_tuple(x) do
+    print([x, y])
+    newline()
+    reduce(beta(x, y))
+  end
+
+  def reduce([x, y]) when is_list(x) do
+    print([x, y])
+    newline()
+
+    if cant_reduce(x) do
+      [x, y]
+    else
+      reduce([reduce(x), y])
+    end
+  end
+
+  def reduce({a, body}) do
+    print({a, body})
+    newline()
+    exp = reduce(body)
+    {a, exp}
+  end
+
+
+|#
+
 
 (defun beta (x y)
     (let ((arg (cadr x))

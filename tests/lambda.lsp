@@ -60,7 +60,7 @@
 
 ;; for test
 (defun parse* (x)
-    (pipe x |> (convert <list>) |> (to-upper) |> (parse nil) ))
+    (pipe x |> (convert <list>) |> (parse nil) ))
  
 #|
 parse 
@@ -74,7 +74,7 @@ parse
   ((empty _res) _res)
   ;; space skip
   (((#\space :rest _ls) _res) (parse _ls _res))
-  (((#\E #\N #\D) _res) 'end)
+  (((#\e #\n #\d) _res) 'end)
   (((#\^ _arg #\. :rest _ls) _) (let* ((arg1 (convert _arg <symbol>))
                                        (body (parse _ls nil)))
                                   (parse *rest-list* (list '^ arg1 body))))
@@ -101,15 +101,15 @@ parse
   (and (consp x) (eq (car x) '^)))
 
 (defun variable-p (x)
-  (and (characterp x) (char>= x #\A) (char<= x #\Z)))
+  (and (characterp x) (char>= x #\A) (char<= x #\z)))
 
 (defpattern combinator
   ((empty) nil)
   ((_x) (when (lambda-p _x)) _x)
-  ((CI) '(^ x x))
-  ((CK) '(^ x (^ y x)))
-  ((CS) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
-  ((CY) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
+  ((I) '(^ x x))
+  ((K) '(^ x (^ y x)))
+  ((S) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
+  ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
   (((_x _y))  (cons (combinator _x) (list (combinator _y))))
   ((_x) _x))
 
@@ -140,17 +140,17 @@ parse
 ;;--------------tests------------------------
 
 
-($test (parse* "^x.x") (^ x x))
-($test (parse* "^x. x") (^ x x))
-($test (parse* "^x.(^x.x)") (^ x (^ x x)))
+($test (parse* "^X.X") (^ x x))
+($test (parse* "^X. X") (^ x x))
+($test (parse* "^X.(^X.X)") (^ x (^ x x)))
 ($test (parse* "end") end)
-($test (parse* "(^x.x)(^y.y)") ((^ x x)(^ y y)))
-($test (parse* "^xy.z") (^ x (^ y z)))
-($test (parse* "^xyz.z") (^ X (^ Y (^ Z Z))))
-($test (parse* "(xy)z") ((x y) z))
-($test (parse* "x(yz)") (x (y z)))
-($test (parse* "abcd") (((a b) c) d))
-($test (parse* "a(b(c(d)))") (a (b (c d))))
+($test (parse* "(^X.X)(^Y.Y)") ((^ x x)(^ y y)))
+($test (parse* "^XY.Z") (^ x (^ y z)))
+($test (parse* "^XYZ.Z") (^ X (^ Y (^ Z Z))))
+($test (parse* "(XY)Z") ((x y) z))
+($test (parse* "X(YZ)") (x (y z)))
+($test (parse* "ABCD") (((a b) c) d))
+($test (parse* "A(B(C(D)))") (a (b (c d))))
 
 ($test (reduce 'y) y)
 ($test (reduce '(x y)) (x y))

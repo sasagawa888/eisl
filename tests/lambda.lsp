@@ -46,7 +46,9 @@
   (princ* (caddr x)))
 
 (defun print2* (x)
-  (princ* (car x))
+  (cond ((lambda-p (car x))
+         (format (standard-output) "(") (princ* (car x)) (format (standard-output) ")"))
+        (t (princ* (car x))))
   (princ* (cadr x)))
 
 
@@ -108,7 +110,7 @@ parse
   ((_x) (when (lambda-p _x)) _x)
   ((I) '(^ x x))
   ((K) '(^ x (^ y x)))
-  ((S) '(^ x (^ y (^ z ((^ x z), (^ y z))))))
+  ((S) '(^ x (^ y (^ z ((x z) (y z))))))
   ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
   (((_x _y))  (cons (combinator _x) (list (combinator _y))))
   ((_x) _x))

@@ -105,7 +105,7 @@ parse
   ((_x) (when (lambda-p _x)) _x)
   ((I) '(^ x x))
   ((K) '(^ x (^ y x)))
-  ((S) '(^ x (^ y (^ z ((x z) (y z))))))
+  ((S) '(^ x (^ y (^ z (x z (y z))))))
   ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
   (((_x :rest _xs)) (cons (combinator _x) (combinator _xs)))
   ((_x) _x))

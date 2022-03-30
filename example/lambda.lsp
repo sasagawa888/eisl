@@ -1,3 +1,26 @@
+;; Lambda calculus interpreter 
+;; Usage   
+;; (load "examples/lambda.lsp")
+;; > (repl)
+;; L>
+;; To quit enter end
+;; L> end
+
+;; inner data structure 
+;; ^x.x -> (^ x x)
+;; ^x.^y.y -> (^ x (^ y y))
+
+;; Combinator 
+;; I = ^x.x
+;; K = ^x.^y.x
+;; S = ^x.^y.^z.xz(yz)
+
+;; Shorthand
+;; ^xyz.z -> ^x.^y.^z.z
+
+;; Test case
+;; see lambda-test.lsp
+
 (import "elixir")
 (import "test")
 
@@ -14,7 +37,7 @@
   (car (cdr (cdr x))))
 
 (defun repl ()
-  (format (standard-output) "Lambda calculus interpreter")
+  (format (standard-output) "Lambda calculus interpreter ~%")
   (format (standard-output) "To quit enter 'end'~%")
   (repl1))
 
@@ -24,7 +47,7 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print (reduce (combinator s))))) t)
+                  (print* (reduce (combinator s))))) t)
           (t (prompt)(repl1)))))
 
 (defun read* ()
@@ -53,9 +76,13 @@
         ((lambda-p (car x))
          (format (standard-output) "(") (princ* (car x)) (format (standard-output) ")")
          (print2* (cdr x)))
+        (t (princ* (car x)) (print3* (cdr  x)))))
+
+(defun print3* (x)
+  (cond ((null x) t)
         ((consp (car x))
          (format (standard-output) "(") (princ* (car x)) (format (standard-output) ")")
-         (print2* (cdr x)))
+         (print3* (cdr x)))
         (t (princ* (car x)) (print2* (cdr  x)))))
 
 
@@ -108,7 +135,7 @@ parse
   ((_x) (when (lambda-p _x)) _x)
   ((I) '(^ x x))
   ((K) '(^ x (^ y x)))
-  ((S) '(^ x (^ y (^ z (x z (y z))))))
+  ((S) '(^ x (^ y (^ z ((x z) (y z))))))
   ((Y) '(^ y ((^ x (^ y (^ x x))) (^ x (^ y (^ x x))))))
   (((_x :rest _xs)) (cons (combinator _x) (combinator _xs)))
   ((_x) _x))
@@ -117,15 +144,13 @@ parse
 (defpattern reduce
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
-    (((^ _arg _body)) (list '^ _arg body))
+    (((^ _arg _body)) (list '^ _arg (reduce _body)))
     (((_x _y)) (when (atom _x)) (list _x _y))
-    (((_x _y)) (when (lambda-p _x)) (princ "reduce1") (print (list _x _y)) (beta _x _y))
-    (((_x _y)) (when (consp _x)) (princ "reduce2") (print (list _x _y)) (beta (reduce _x) _y))
+    (((_x _y)) (when (lambda-p _x)) (print* (list _x _y)) (reduce (beta _x _y)))
+    (((_x _y)) (when (consp _x)) (print* (list _x _y)) (beta (reduce _x) _y))
     (else (print "reduce error") 'error)
 )
     
-(defun princ (x)
-    (format (standard-output) "~A" x))
 
 (defun beta (x y)
     (let ((arg (cadr x))
@@ -141,66 +166,3 @@ parse
                    (replace arg (cdr body) y)))))
 
   
-
-;;--------------tests------------------------
-
-
-($test (parse* "^X.X") (^ x x))
-($test (parse* "^X. X") (^ x x))
-($test (parse* "^X.(^X.X)") (^ x (^ x x)))
-($test (parse* "end") end)
-($test (parse* "(^X.X)(^Y.Y)") ((^ x x)(^ y y)))
-($test (parse* "^XY.Z") (^ x (^ y z)))
-($test (parse* "^XYZ.Z") (^ X (^ Y (^ Z Z))))
-($test (parse* "(XY)Z") ((x y) z))
-($test (parse* "X(YZ)") (x (y z)))
-($test (parse* "ABCD") (((a b) c) d))
-($test (parse* "A(B(C(D)))") (a (b (c d))))
-
-($test (reduce 'y) y)
-($test (reduce '(x y)) (x y))
-($test (reduce '((^ x x) y) ) y)
-($test (reduce '((^ x a) y) ) a)
-
-#|
-  test "total test" do
-    assert Lambda.test('y\n') == :y
-    assert Lambda.test('Iy\n') == :y
-    assert Lambda.test('Is\n') == :s
-    assert Lambda.test('Ks\n') == {:y, :s}
-    assert Lambda.test('SKKa\n') == :a
-    assert Lambda.test('(^y.y((^z.xz)(^z.z)))(^a.a)\n') == [:x, {:z, :z}]
-  end
-
-  test "reduce test" do
-    assert Lambda.reduce(:y) == :y
-    assert Lambda.reduce([:x, :y]) == [:x, :y]
-    assert Lambda.reduce([{:x, :x}, :y]) == :y
-    assert Lambda.reduce([{:x, :a}, :y]) == :a
-  end
-
->SS
-((^x.(^y.(^z.(xz(yz)))))(^x.(^y.(^z.(xz(yz))))))
-^y.(^z.(^x.(^y.(^z.(xz(yz))))z(yz)))
-^z.(^x.(^y.(^z.(xz(yz))))z(yz))
-^x.(^y.(^z.(xz(yz))))z(yz)
-^x.(^y.(^z.(xz(yz))))z
-^y.(^z.(zz(yz)))
-^z.(zz(yz))
-zz(yz)
-^y.(^z.(zz(yz)))
-^z.(zz(yz))
-zz(yz)
-^y.(^z.(zz(yz)))(yz)
-^z.(zz(yzz))
-zz(yzz)
-^z.(zz(yzz))
-zz(yzz)
-^y.(^z.(^z.(zz(yzz))))
-^z.(^z.(zz(yzz)))
-^z.(zz(yzz))
-zz(yzz)
-^y.(^z.(^z.(zz(yzz))))
->
-  
-  |#

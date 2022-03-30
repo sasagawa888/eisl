@@ -7,6 +7,9 @@
 (defun caar (x) 
   (car (car x)))
 
+(defun cddr (x)
+  (cdr (cdr x)))
+
 (defun caddr (x)
   (car (cdr (cdr x))))
 
@@ -21,7 +24,7 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print* (reduce (combinator s))))) t)
+                  (print (reduce (combinator s))))) t)
           (t (prompt)(repl1)))))
 
 (defun read* ()
@@ -114,31 +117,29 @@ parse
 (defpattern reduce
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
-    (((^ _arg _body)) (when (atom _body)) (list '^ _arg _body))
+    (((^ _arg _body)) (list '^ _arg body))
     (((_x _y)) (when (atom _x)) (list _x _y))
-    (((_x _y)) (when (lambda-p _x)) (print* (list _x _y)) (reduce (beta _x _y)))
-    (((_x _y)) (when (consp _x)) (print* (list _x _y)) (reduce (reduce _x) _y))
+    (((_x _y)) (when (lambda-p _x)) (princ "reduce1") (print (list _x _y)) (beta _x _y))
+    (((_x _y)) (when (consp _x)) (princ "reduce2") (print (list _x _y)) (beta (reduce _x) _y))
     (else (print "reduce error") 'error)
 )
     
-
+(defun princ (x)
+    (format (standard-output) "~A" x))
 
 (defun beta (x y)
     (let ((arg (cadr x))
           (body (caddr x)))
         (replace arg body y)))
 
-(defpattern replace
-    ((_x _x _z) (print _z) _z)
-    ((_x (^ _arg _body) _z) (list '^ _arg (replace _x _body _z)))
-    ((_x (_x _ys) _z) (list _z (replace _x _ys _z)))
-    ((_x (_x _ys) _z) (when (atom _x)) (list _x (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (atom _y)) (list _y (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (consp _y)) (list (replace _x _y _z) (replace _x _ys _z)))
-    ((_x (_y _ys) _z) (when (lambda-p _y)) (list (replace _x _y _z) (replace _x _ys _z)))
-    ((_ (_y _ys) _) (reduce _y _ys))
-    ((_ _y _) _y))
-  
+(defun replace (arg body y)
+    (cond ((null body) nil)
+          ((and (atom body) (eq arg body)) y)
+          ((atom body) body)
+          ((lambda-p body) (list '^ (cadr body) (replace arg (caddr body) y)))
+          (t (cons (replace arg (car body) y)
+                   (replace arg (cdr body) y)))))
+
   
 
 ;;--------------tests------------------------

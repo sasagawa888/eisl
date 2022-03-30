@@ -153,15 +153,16 @@ parse
     
 
 (defun beta (x y)
-    (let ((arg (cadr x))
-          (body (caddr x)))
-        (replace arg body y)))
+    (if (lambda-p x)
+        (let ((arg (cadr x))
+              (body (caddr x)))
+          (replace arg body y))
+        x))
 
 (defun replace (arg body y)
     (cond ((null body) nil)
           ((and (atom body) (eq arg body)) y)
           ((atom body) body)
-          ((lambda-p body) (list '^ (cadr body) (replace arg (caddr body) y)))
           (t (cons (replace arg (car body) y)
                    (replace arg (cdr body) y)))))
 

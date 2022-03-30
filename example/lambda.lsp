@@ -157,7 +157,7 @@ parse
         (let ((arg (cadr x))
               (body (caddr x)))
           (replace arg body y))
-        x))
+        (list x y)))
 
 (defun replace (arg body y)
     (cond ((null body) nil)

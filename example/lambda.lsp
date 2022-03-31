@@ -144,8 +144,8 @@ parse
 (defpattern reduce
     ((end) (throw 'exit "end"))
     ((_x) (when (atom _x)) _x)
-    (((^ _arg _body)) (list '^ _arg (reduce _body)))
-    (((_x _y)) (when (atom _x)) (list _x _y))
+    (((^ _arg _body)) (print* (list '^ _arg _body)) (list '^ _arg (reduce _body)))
+    (((_x _y)) (when (atom _x)) (print* (list _x _y)) (list _x _y))
     (((_x _y)) (when (lambda-p _x)) (print* (list _x _y)) (reduce (beta _x _y)))
     (((_x _y)) (when (consp _x)) (print* (list _x _y)) (beta (reduce _x) _y))
     (else (print "reduce error") 'error)

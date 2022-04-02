@@ -8,6 +8,9 @@
 (defmacro formula (:rest x)
     (infix->prefix x) )
 
+(defmacro formulas (x)
+    (infix->prefix (string->infix x)) )
+
 
 (defmodule formula
     ;;formula from simoji sadao's book  
@@ -96,7 +99,7 @@
               ((and
                 (not (null fmla))
                 (or (null optr) (> (weight (car fmla))
-                                    (weight (cadr fmla)))))
+                                   (weight (cadr fmla)))))
                (inf1 (cdr fmla) (cons (car fmla) optr) opln))
               (t (inf2 fmla optr opln))))
 
@@ -127,5 +130,66 @@
 
     (defun pret2 (f wf)
         (append (pret1 (arg1 f) wf) (list (op f)) (pret1 (arg2 f) wf)))
+
+    
+    ;;
+    ;; translater from string to sexp written by Kenichi Sasagawa
+    ;; e.g. "1+2" -> (1 + 2)   "a+(b+x)" -> (a (b + c))
+    
+    (defun delimiter-p (x)
+        (or (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/)))
+
+    (defglobal *rest-list* nil)
+    
+    (defun symbol-token-p (x)
+        (and (char>= (car x) #\A) (char<= (car x) #\z)))
+
+    (defun integer-token-p (x)
+        (and (char>= (car x) #\0) (char<= (car x) #\9) (not (member #\. x))))
+
+    (defun float-token-p (x)
+        (and (char>= (car x) #\0) (char<= (car x) #\9) (member #\. x)))
+
+    
+    (defun to-upper (x)
+        (mapcar
+         (lambda (x) 
+            (if (and (char>= x #\a) (char<= x #\z))
+                (convert (- (convert x <integer>) 32) <character>)
+                x))
+         x))
+
+    (defun convert-token (x)
+        (let ((y (reverse x)))
+           (cond ((null x) nil)
+                 ((symbol-token-p y) (convert (convert-token1 (to-upper y)) <symbol>))
+                 ((integer-token-p y) (convert (convert-token1 y) <integer>))
+                 ((float-token-p y) (convert (convert-token1 y) <float>))
+                 (t (format (standard-output) "syntax error")))))
+
+    (defun convert-token1 (x)
+        (cond ((null x) "")
+              (t (string-append (convert (car x) <string>) (convert-token1 (cdr x))))))
+
+    (defpublic string->infix (x)
+        (parse x))
+
+    (defun parse (x)
+        (parse1 (convert x <list>) nil))
+
+    (defun parse1 (x token)
+        (cond ((and (null x) (null token)) nil)
+              ((null x) (list (convert-token token)))
+              ((char= (car x) #\space) (parse1 (cdr x) token))
+              ((delimiter-p (car x))
+               (cons (convert-token token) (cons (convert (car x) <symbol>) (parse1 (cdr x) nil))))
+              ((char= (car x) #\()
+               (if (null token)
+                   (cons (parse1 (cdr x) nil) (parse1 *rest-list* nil))
+                   (cons (convert-token token) (parse1 (cdr x) nil) (parse1 *rest-list* nil))))
+              ((char= (car x) #\))
+               (cond ((null token) nil)
+                     (t (setq *rest-list* (cdr x)) (list (convert-token token)))))
+              (t (parse1 (cdr x) (cons (car x) token)))))
 
 )

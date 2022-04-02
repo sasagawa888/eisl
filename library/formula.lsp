@@ -79,9 +79,9 @@
             (inf1 fmla '() '())))
 
     (defun inf1 (fmla optr opln)
-        (if (or (< (weight (op fmla)) 5) (> (weight (op fmla)) 7))
-            (inf2 (cdr fmla) optr (cons (infip (car fmla)) opln))
-            (inf3 (cddr fmla) optr (cons (list (op fmla) (infip (arg1 fmla))) opln))))
+        (cond ((or (< (weight (op fmla)) 5) (> (weight (op fmla)) 7))
+               (inf2 (cdr fmla) optr (cons (infip (car fmla)) opln)))
+              (t (inf3 nil optr (cons (cons (op fmla) (mapcar #'infip (cdr fmla))) opln)))))
 
     (defun inf2 (fmla optr opln)
         (cond ((and (null fmla) (null optr)) (car opln))

@@ -137,7 +137,7 @@
     ;; e.g. "1+2" -> (1 + 2)   "a+(b+x)" -> (a (b + c))
     
     (defun operator-p (x)
-        (or (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/)))
+        (or (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/) (char= x #\^)))
 
     (defglobal *rest-list* nil)
     
@@ -172,7 +172,10 @@
               (t (string-append (convert (car x) <string>) (convert-token1 (cdr x))))))
 
     (defpublic string->infix (x)
-        (parse x))
+        (let ((s (parse x)))
+                (if (= (length s) 1)
+                    (car s)
+                    s)))
 
     (defun parse (x)
         (parse1 (convert x <list>) nil))
@@ -191,9 +194,9 @@
                       (cons (parse1 (cdr x) nil) (parse1 *rest-list* nil)))
                      (t (cons (cons (convert-token token) (parse1 (cdr x) nil)) (parse1 *rest-list* nil)))))
               ((char= (car x) #\))
-               (cond ((not (null token))
-                      (setq *rest-list* (cdr x)) (list (convert-token token)))
-                     (t (setq *rest-list* (cdr x)) nil)))
+               (cond ((null token)
+                      (setq *rest-list* (cdr x)) nil)
+                     (t (setq *rest-list* (cdr x)) (list (convert-token token)))))
               (t (parse1 (cdr x) (cons (car x) token)))))
 
 )

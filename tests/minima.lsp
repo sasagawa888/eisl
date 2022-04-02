@@ -1,8 +1,26 @@
 (import "elixir")
+(import "formula")
 
+(defun repl ()
+  (format (standard-output) "Mathematics ~%")
+  (format (standard-output) "To quit enter 'end'~%")
+  (repl1))
+
+
+(defun repl1 ()
+  (block repl
+    (cond ((catch 'exit
+             (for ((s (read*) (read*)))
+                  ((equal s 'end) (return-from repl t))
+                  (print (eval s)))))
+          (t (repl1)))))
+
+(defun read* ()
+    (format (standard-output) "M> ")
+    (string->infix (read-line)))
 
 (defpattern derive
-    (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
+    (((expt _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
     (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
     (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))
     (((sin _x) _x)  `(cos ,_x))

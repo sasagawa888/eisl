@@ -46,4 +46,6 @@ T
 ((EXPT 2 3) + (SIN 0))
 > (infix->prefix (string->infix  "expt(2,3)+sin(0)"))
 (+ (EXPT 2 3) (SIN 0))
+> (let ((a 2)) (formulas "a^3"))
+8
 ```

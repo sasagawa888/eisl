@@ -23,6 +23,9 @@
               ((null (cdr ls)) nil)
               (t (cdr (cdr ls))) ))
 
+    (defun caar (ls)
+        (car (car ls)))
+
     (defun arg1 (f)
         (elt f 1))
 
@@ -55,7 +58,7 @@
            ((/) 'quotient)
            ((*) '*)
            ((^) 'expt)
-           (t (if (subrp op)
+           (t (if (or (subrp op) (macrop op))
                   op
                   (error "opecode else: " op))) ))
 
@@ -66,7 +69,7 @@
            ((/) 2)
            ((*) 3)
            ((^) 4)
-           (t (if (subrp op)
+           (t (if (or (subrp op) (macrop op))
                   6
                   9)) ))
 
@@ -132,7 +135,6 @@
         (append (pret1 (arg1 f) wf) (list (op f)) (pret1 (arg2 f) wf)))
 
     
-    ;;
     ;; translater from string to sexp written by Kenichi Sasagawa
     ;; e.g. "1+2" -> (1 + 2)   "a+(b+x)" -> (a (b + c))
     
@@ -173,30 +175,46 @@
 
     (defpublic string->infix (x)
         (let ((s (parse x)))
-                (if (= (length s) 1)
-                    (car s)
-                    s)))
+            (if (and (consp (car s)) (subrp (caar s)) (= (length s) 1))
+                (car s)
+                s)))
 
     (defun parse (x)
-        (parse1 (convert x <list>) nil))
+        (setq *rest-list* nil)
+        (parse1 (convert x <list>) nil nil))
 
-    (defun parse1 (x token)
+    (defun parse1 (x token stack)
         (cond ((null x)
-               (cond ((null token) nil)
-                     (t (list (convert-token token)))))
-              ((char= (car x) #\space) (parse1 (cdr x) token))
+               (cond ((null token) (reverse stack))
+                     (t (reverse (cons (convert-token token) stack)))))
+              ((char= (car x) #\space) (parse1 (cdr x) token stack))
               ((operator-p (car x))
                (cond ((null token)
-                      (cons (convert (car x) <symbol>) (parse1 (cdr x) nil)))
-                     (t (cons (convert-token token) (cons (convert (car x) <symbol>) (parse1 (cdr x) nil))))))
+                      (parse1 (cdr x) nil (cons (convert (car x) <symbol>) stack)))
+                     (t (parse1 (cdr x) nil (cons (convert (car x) <symbol>) (cons (convert-token token) stack))))))
               ((char= (car x) #\()
                (cond ((null token)
-                      (cons (parse1 (cdr x) nil) (parse1 *rest-list* nil)))
-                     (t (cons (cons (convert-token token) (parse1 (cdr x) nil)) (parse1 *rest-list* nil)))))
+                      (let ((s (parse1 (cdr x) nil nil)))
+                        (parse1 (cdr *rest-list*) nil (cons s stack))))
+                     ;; function e.g. foo(boo(x),bar(y))
+                     (t 
+                       (setq *rest-list* x)
+                       (for ((s nil (cons (parse2 (reverse (parse1 (cdr *rest-list*) nil nil))) s)))
+                            ((char= (car *rest-list*) #\))
+                             (parse1 (cdr *rest-list*) nil (cons (cons (convert-token token) (reverse s)) stack)))))))
               ((char= (car x) #\))
-               (cond ((null token)
-                      (setq *rest-list* (cdr x)) nil)
-                     (t (setq *rest-list* (cdr x)) (list (convert-token token)))))
-              (t (parse1 (cdr x) (cons (car x) token)))))
+               (setq *rest-list* x)
+               (cond ((null token) stack)
+                     (t (cons (convert-token token) stack) )))
+              ((char= (car x) #\,)
+               (setq *rest-list* x) 
+               (cond ((null token) stack)
+                     (t (cons (convert-token token) stack) )))
+              (t (parse1 (cdr x) (cons (car x) token) stack))))
+
+    (defun parse2 (x)
+        (if (null (cdr x))
+            (car x)
+            x))
 
 )

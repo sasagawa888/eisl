@@ -40,6 +40,8 @@ T
 21
 > (string->infix  "2^3+3*4+1")
 (2 ^ 3 + 3 * 4 + 1)
+> (infix->prefix (string->infix  "2^3+3*4+1"))
+(+ (+ (EXPT 2 3) (* 3 4)) 1)
 > (string->infix  "expt(2,3)+sin(0)")
 ((EXPT 2 3) + (SIN 0))
 > (infix->prefix (string->infix  "expt(2,3)+sin(0)"))

@@ -262,4 +262,13 @@ EISL <==================================> C
 | (line-argument n)     | get nth argument from OS. n is zero base       |
 | (print obj)           | print obj to standard-stream                   |
 | (system cmd)          | send bash command e.g. (system "ls")           |
+| (funcp x)             | is x user-defined-function? return T or NIL    |
+| (subrp x)             | is x subr? return T or NIL                     |
+| (macrop x)            | is x macros? return T or NIL                   |
+| (fixnump x)           | is x fixnum? return T or NIL                   |
+| (bignump x)           | is x bignum? return T or NIL                   |
+| (macroexpand-1 x)     | macroexpand x only once                        |
+| (macroexpand x)       | macroexpand x completely                       |
+
+
 

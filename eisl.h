@@ -823,6 +823,7 @@ int             f_funcall(int addr);
 int             f_function(int addr);
 int             f_function_star(int addr);
 int             f_functionp(int addr);
+int             f_funcp(int addr);
 int             f_garef(int arglist);
 int             f_gbc(int addr);
 int             f_gcd(int x);

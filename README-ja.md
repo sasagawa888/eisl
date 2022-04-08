@@ -266,3 +266,12 @@ EISL <==================================> C
 - `(line-argument n)` OSからｎ番目の起動オプションを取得する。ゼロスタート
 - `(print obj)` objを標準ストリームに出力する。
 - `(system cmd)` コマンド(cmd)をbashに送る　例 (system "ls")
+- `(funcp x)` xがユーザー定義関数名ならばTをそうでなければNILを返す。
+- `(subrp x)` xが組込関数ならばTをそうでなければNILを返す。
+- `(macrop x)` xがマクロならばTをそうでなければNILを返す。
+- `(fixnump x)` xが小整数ならばTをそうでなければNILを返す。
+- `(bignump x)` xが巨大整数ならばTをそうでなければNILを返す。
+- `(macroexpand-1 x)` S式であるｘを１度だけマクロ展開する。
+- `(macroexpand-all x)` S式であるｘを完全にマクロ展開する。
+
+

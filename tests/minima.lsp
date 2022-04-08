@@ -17,7 +17,11 @@
 
 (defun read* ()
     (format (standard-output) "M> ")
-    (string->infix (read-line)))
+    (infix->prefix (string->infix (read-line))))
+
+
+(defun d (x y)
+  (derive x y))
 
 (defpattern derive
     (((expt _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))

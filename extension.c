@@ -23,6 +23,7 @@ initexsubr(void)
     defsubr("SYSTEM", f_system);
     defsubr("SUBRP", f_subrp);
     defsubr("MACROP", f_macrop);
+    defsubr("FUNCP", f_funcp);
     defsubr("FIXNUMP", f_fixnump);
     defsubr("LONGNUMP", f_longnump);
     defsubr("BIGNUMP", f_bignump);
@@ -197,6 +198,22 @@ f_macrop(int arglist)
     else
 	return (NIL);
 }
+
+
+int
+f_funcp(int arglist)
+{
+    int             arg;
+
+    arg = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "funcp", arglist);
+    if (IS_FUNC(GET_CAR(arg)))
+	return (T);
+    else
+	return (NIL);
+}
+
 
 int
 f_fixnump(int arglist)

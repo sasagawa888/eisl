@@ -58,7 +58,7 @@
            ((/) 'quotient)
            ((*) '*)
            ((^) 'expt)
-           (t (if (or (subrp op) (macrop op))
+           (t (if (or (subrp op) (macrop op) (funcp op))
                   op
                   (error "opecode else: " op))) ))
 
@@ -69,7 +69,7 @@
            ((/) 2)
            ((*) 3)
            ((^) 4)
-           (t (if (or (subrp op) (macrop op))
+           (t (if (or (subrp op) (macrop op) (funcp op))
                   6
                   9)) ))
 
@@ -137,6 +137,12 @@
     
     ;; translater from string to sexp written by Kenichi Sasagawa
     ;; e.g. "1+2" -> (1 + 2)   "a+(b+x)" -> (a (b + c))
+
+    (defpublic string->infix (x)
+        (let ((s (parse x)))
+            (if (and (consp (car s)) (subrp (caar s)) (= (length s) 1))
+                (car s)
+                s)))
     
     (defun operator-p (x)
         (or (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/) (char= x #\^)))
@@ -173,11 +179,7 @@
         (cond ((null x) "")
               (t (string-append (convert (car x) <string>) (convert-token1 (cdr x))))))
 
-    (defpublic string->infix (x)
-        (let ((s (parse x)))
-            (if (and (consp (car s)) (subrp (caar s)) (= (length s) 1))
-                (car s)
-                s)))
+    
 
     (defun parse (x)
         (setq *rest-list* nil)
@@ -216,5 +218,9 @@
         (if (null (cdr x))
             (car x)
             x))
+
+    ;;; translate from infix-Sexpression to string
+    
+     
 
 )

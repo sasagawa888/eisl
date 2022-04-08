@@ -20,18 +20,18 @@
     (infix->prefix (string->infix (read-line))))
 
 
-(defun d (x y)
-  (derive x y))
+(defmacro d (x y)
+  `(derive ',x ',y))
 
 (defpattern derive
     (((expt _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
-    (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
+    (((quotient 1 _x) _x)  `(/ -1 (^ ,_x 2)))
     (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))
     (((sin _x) _x)  `(cos ,_x))
     (((cos _x) _x)  `(- (sin ,_x)))
     (((tan _x) _x)  `(/ 1 (^ (cos ,_x) 2)))
     (((exp _x) _x)  `(exp ,_x))
-    (((^ _a _x) _x) `(* (^ ,_a ,_x) (log ,_a)))
+    (((expt _a _x) _x) `(* (^ ,_a ,_x) (log ,_a)))
     (((log _x) _x)  `(/ 1 ,_x))
     (((log _a _x) _x)   `(/ 1 (* ,_x (log ,_a))))
     (((* _k (_f _x)) _x)(when (numberp _k))

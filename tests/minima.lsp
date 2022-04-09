@@ -1,13 +1,22 @@
+;;; Minima simple synbolic formula manipulation
+;; usage 
+;; invoke (minima)
+
+;; derive
+;; d(formula,var)
+;; integra
+;; int(formula,var)
+
 (import "elixir")
 (import "formula")
 
 (defun minima ()
   (format (standard-output) "Minima Mathematics ~%")
   (format (standard-output) "To quit enter 'end'~%")
-  (repl1))
+  (repl))
 
 
-(defun repl1 ()
+(defun repl ()
   (block repl
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
@@ -25,6 +34,9 @@
 
 (defmacro d (x y)
   `(derive ',x ',y))
+
+(defmacro int (x y)
+  `(integra ',x ',y))
 
 (defpattern derive
     (((expt _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
@@ -68,6 +80,10 @@
         (((/ _a _a)) 1)
         (((^ _a 0)) 1)
         (((^ _a 1)) _a)
+        (((+ _a _b)) (list '+ (simple _a) (simple _b)))
+        (((- _a _b)) (list '- (simple _a) (simple _b)))
+        (((* _a _b)) (list '* (simple _a) (simple _b)))
+        (((/ _a _b)) (list '* (simple _a) (simple _b)))
         ((_x) _x)) 
 
 

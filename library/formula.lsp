@@ -223,14 +223,17 @@
 
     ;;; translate from infix-Sexpression to string
     (defpublic infix->string (x)
-        (let ((str (create-string-output-stream)))
-            (expand str x)))
+        (expand "" x))
 
     (defun expand (str x)
-        (cond ((null x) (get-output-stream-string str))
-              ((atom x) (format str "~A" x))
-              (t (expand str (car x))
-                 (expand str (cdr x)))))
+        (cond ((null x) str)
+              ((atom x) (convert x <string>))
+              ((= (weight (car x)) 6) (string-append (convert (car x) <string>)
+                                                     "("
+                                                     (expand str (cdr x))
+                                                     ")"))
+              (t (string-append (expand str (car x))
+                                (expand str (cdr x))))))
     
 
      

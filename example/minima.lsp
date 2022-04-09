@@ -1,4 +1,4 @@
-;;; Minima simple synbolic formula manipulation
+;;; Minima simple symbolic formula manipulation
 ;; usage 
 ;; invoke (minima)
 
@@ -11,7 +11,7 @@
 (import "formula")
 
 (defun minima ()
-  (format (standard-output) "Simple synbolic formula manipulation~%")
+  (format (standard-output) "Simple symbolic formula manipulation~%")
   (format (standard-output) "To quit enter 'end'~%")
   (repl))
 

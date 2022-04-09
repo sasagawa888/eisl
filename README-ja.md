@@ -269,7 +269,8 @@ EISL <==================================> C
 - `(funcp x)` xがユーザー定義関数名ならばTをそうでなければNILを返す。
 - `(subrp x)` xが組込関数ならばTをそうでなければNILを返す。
 - `(macrop x)` xがマクロならばTをそうでなければNILを返す。
-- `(fixnump x)` xが小整数ならばTをそうでなければNILを返す。
+- `(fixnump x)` xが32bit小整数ならばTを、そうでなければNILを返す。
+- `(longnump x)` xが64bit小整数ならばTを、そうでなければNILを返す。
 - `(bignump x)` xが巨大整数ならばTをそうでなければNILを返す。
 - `(macroexpand-1 x)` S式であるｘを１度だけマクロ展開する。
 - `(macroexpand-all x)` S式であるｘを完全にマクロ展開する。

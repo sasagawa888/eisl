@@ -265,7 +265,8 @@ EISL <==================================> C
 | (funcp x)             | is x user-defined-function? return T or NIL    |
 | (subrp x)             | is x subr? return T or NIL                     |
 | (macrop x)            | is x macros? return T or NIL                   |
-| (fixnump x)           | is x fixnum? return T or NIL                   |
+| (fixnump x)           | is x fixnum?(32bit) return T or NIL            |       |
+| (longnump x)          | is x longnum?(64bit) return T or NIL           |
 | (bignump x)           | is x bignum? return T or NIL                   |
 | (macroexpand-1 x)     | macroexpand x only once                        |
 | (macroexpand x)       | macroexpand x completely                       |

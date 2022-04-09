@@ -78,7 +78,7 @@ static const char *builtin[] = {
 static const char *extended[] = {
     "random-real", "random", "heapdump", "instance",
     "nconc", "fast-address", "macroexpand-1", "macroexpand-all",
-    "backtrace",
+    "backtrace", "subrp", "funcp" , "macrop" , "fixnump" , "longnump" , "bignump" ,
     "break", "edit", "set-editor", "wiringpi-setup-gpio",
     "delay-microseconds",
     "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",

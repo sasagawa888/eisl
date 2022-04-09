@@ -83,12 +83,12 @@
         (((+ _a _b)) (list '+ (simple _a) (simple _b)))
         (((- _a _b)) (list '- (simple _a) (simple _b)))
         (((* _a _b)) (list '* (simple _a) (simple _b)))
-        (((/ _a _b)) (list '* (simple _a) (simple _b)))
+        (((/ _a _b)) (list '/ (simple _a) (simple _b)))
         ((_x) _x)) 
 
 
 (defpattern integra
-    ((_c _x) (when (numberp _c)) `(* _c _x))
+    ((_c _x) (when (numberp _c)) `(* ,_c ,_x))
     ((_x _x) `(/ (^ ,_x 2) 2))
     (((log x) _x) `(- (* ,_x (log ,_x)) ,_x))
     (((sin _x) _x) `(- (cos ,_x)))

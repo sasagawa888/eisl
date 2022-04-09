@@ -117,10 +117,12 @@
         (if (= (weight (op f)) 6)
             (let ((arg (pret1 (arg1 f) -1)))
                ;
-               (if (atom arg)
-                   (cons (op f) arg)
-                   (list (op f) (pret1 (arg1 f) -1))))
+               (cond ((atom arg) (cons (op f) arg))
+                     ((null (cdr arg)) (cons (op f) arg))
+                     (t (list (op f) (pret1 (arg1 f) -1)))))
             (pret1 f -1)))
+
+    
 
     (defun pret1 (f win)
         (cond ((null f) f)

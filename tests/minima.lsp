@@ -1,8 +1,8 @@
 (import "elixir")
 (import "formula")
 
-(defun repl ()
-  (format (standard-output) "Mathematics ~%")
+(defun minima ()
+  (format (standard-output) "Minima Mathematics ~%")
   (format (standard-output) "To quit enter 'end'~%")
   (repl1))
 
@@ -12,12 +12,15 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print (eval s)))))
+                  (print* (simple (eval s))))))
           (t (repl1)))))
 
 (defun read* ()
     (format (standard-output) "M> ")
     (infix->prefix (string->infix (read-line))))
+
+(defun print* (x)
+  (format (standard-output) "~A~%" (infix->string (prefix->infix x))))
 
 
 (defmacro d (x y)
@@ -43,9 +46,9 @@
     (((* (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
                                   `(+ (* ,d1 (,_g ,_x)) (* (,_f ,_x) ,d2))))
-    (((/ (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
+    (((quotient (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
-                                  `(/ (+ (* ,d1 (,_g ,_x)) (* (,_f ,_x) ,d2 (^ (,_g ,_x) 2))))))
+                                  `(quotient (+ (* ,d1 (,_g ,_x)) (* (,_f ,_x) ,d2 (expt (,_g ,_x) 2))))))
     (((_f (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                               (d2 (derive `(,_g ,_x) `,_x)))
                             `(* ,d2 (,(car d1) (,_g ,_x)))))
@@ -79,6 +82,6 @@
 
 
 (defpattern limit
-    (((/ (log (+ 1 _x)) _x) _x 0) 1)
-    (((/ (sin _x) _x) _X 0) 1))
+    (((quotient (log (+ 1 _x)) _x) _x 0) 1)
+    (((quotient (sin _x) _x) _X 0) 1))
     

@@ -220,7 +220,17 @@
             x))
 
     ;;; translate from infix-Sexpression to string
+    (defpublic infix->string (x)
+        (let ((str (create-string-output-stream)))
+            (expand str x)))
+
+    (defun expand (str x)
+        (cond ((null x) (get-output-stream-string str))
+              ((atom x) (format str "~A" x))
+              (t (expand str (car x))
+                 (expand str (cdr x)))))
     
+
      
 
 )

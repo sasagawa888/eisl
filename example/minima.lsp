@@ -11,7 +11,7 @@
 (import "formula")
 
 (defun minima ()
-  (format (standard-output) "Minima Mathematics ~%")
+  (format (standard-output) "Simple synbolic formula manipulation~%")
   (format (standard-output) "To quit enter 'end'~%")
   (repl))
 

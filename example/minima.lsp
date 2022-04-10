@@ -39,6 +39,7 @@
   `(integra ',x ',y))
 
 (defpattern derive
+    ((_c _x) 0)
     (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
     (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
     (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))

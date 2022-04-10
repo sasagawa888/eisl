@@ -55,9 +55,9 @@
         (case op
            ((+) '+)
            ((-) '-)
-           ((/) 'quotient)
+           ((/) '/)
            ((*) '*)
-           ((^) 'expt)
+           ((^) '^)
            (t (if (or (subrp op) (macrop op) (funcp op))
                   op
                   (error "opecode else: " op))) ))
@@ -72,6 +72,13 @@
            (t (if (or (subrp op) (macrop op) (funcp op))
                   6
                   9)) ))
+
+    (defpublic / (x y)
+        (quotient x y))
+
+    
+    (defpublic ^ (x y)
+        (expt x y))
 
     (defpublic infix->prefix (fmla)
         (infip fmla))

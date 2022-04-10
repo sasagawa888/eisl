@@ -24,6 +24,9 @@ Thank you Dr. Shimoji.
 | (formulas x)                      | Translate infix-notation-string to prefix-notation and eval it |
 | (string->infix x)                 | Translate infix-notation-strin to infix-notation s-expression  |
 | (infix->string x)                 | Translate infix-notation-S-expression to infix-notation-string   |
+| (/ x y)                           | (quotient x y)                                          |
+| (^ x y)                           | (expt x y)                                              |
+
 
 
 

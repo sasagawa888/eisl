@@ -39,8 +39,8 @@
   `(integra ',x ',y))
 
 (defpattern derive
-    (((expt _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
-    (((quotient 1 _x) _x)  `(/ -1 (^ ,_x 2)))
+    (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
+    (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
     (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))
     (((sin _x) _x)  `(cos ,_x))
     (((cos _x) _x)  `(- (sin ,_x)))
@@ -58,7 +58,7 @@
     (((* (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
                                   `(+ (* ,d1 (,_g ,_x)) (* (,_f ,_x) ,d2))))
-    (((quotient (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
+    (((/ (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
                                   `(quotient (+ (* ,d1 (,_g ,_x)) (* (,_f ,_x) ,d2 (expt (,_g ,_x) 2))))))
     (((_f (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
@@ -98,6 +98,6 @@
 
 
 (defpattern limit
-    (((quotient (log (+ 1 _x)) _x) _x 0) 1)
-    (((quotient (sin _x) _x) _X 0) 1))
+    (((/ (log (+ 1 _x)) _x) _x 0) 1)
+    (((/ (sin _x) _x) _X 0) 1))
     

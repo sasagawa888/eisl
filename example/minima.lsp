@@ -21,8 +21,8 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print* (simple (eval s))))))
-          (t (repl1)))))
+                  (print* (simple (eval s))))) t)
+          (t (repl)))))
 
 (defun read* ()
     (format (standard-output) "M> ")
@@ -39,7 +39,6 @@
   `(integra ',x ',y))
 
 (defpattern derive
-    ((_c _x) 0)
     (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
     (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
     (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))
@@ -50,9 +49,9 @@
     (((expt _a _x) _x) `(* (^ ,_a ,_x) (log ,_a)))
     (((log _x) _x)  `(/ 1 ,_x))
     (((log _a _x) _x)   `(/ 1 (* ,_x (log ,_a))))
-    (((* _k (_f _x)) _x)(when (numberp _k))
-                               (let ((d (derive `(,_f ,_x) `,_x)))
-                                              `(* ,_k ,d)))
+    ;(((* _k (_f _x)) _x)(when (numberp _k))
+    ;                           (let ((d (derive `(,_f ,_x) `,_x)))
+    ;                                         `(* ,_k ,d)))
     (((+ (_f _x) (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                                      (d2 (derive `(,_g ,_x) `,_x)))
                                  `(+ ,d1 ,d2)))
@@ -65,6 +64,7 @@
     (((_f (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                               (d2 (derive `(,_g ,_x) `,_x)))
                             `(* ,d2 (,(car d1) (,_g ,_x)))))
+    ((_c _x) 0)
     (else (format (standard-output) "error")))
     
 

@@ -39,6 +39,7 @@
   `(integra ',x ',y))
 
 (defpattern derive
+    ((_c _x) (when (numberp _c)) 0)
     (((^ _x _n) _x) `(* ,_n (^ ,_x ,(- _n 1))))
     (((/ 1 _x) _x)  `(/ -1 (^ ,_x 2)))
     (((sqrt _x) _x) `(/ 1 (* 2 sqrt(,_x))))
@@ -49,6 +50,7 @@
     (((expt _a _x) _x) `(* (^ ,_a ,_x) (log ,_a)))
     (((log _x) _x)  `(/ 1 ,_x))
     (((log _a _x) _x)   `(/ 1 (* ,_x (log ,_a))))
+    ; comment out  error when compile
     ;(((* _k (_f _x)) _x)(when (numberp _k))
     ;                           (let ((d (derive `(,_f ,_x) `,_x)))
     ;                                         `(* ,_k ,d)))
@@ -64,7 +66,6 @@
     (((_f (_g _x)) _x)  (let ((d1 (derive `(,_f ,_x) `,_x))
                               (d2 (derive `(,_g ,_x) `,_x)))
                             `(* ,d2 (,(car d1) (,_g ,_x)))))
-    ((_c _x) 0)
     (else (format (standard-output) "error")))
     
 

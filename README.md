@@ -269,7 +269,7 @@ EISL <==================================> C
 | (longnump x)          | is x longnum?(64bit) return T or NIL           |
 | (bignump x)           | is x bignum? return T or NIL                   |
 | (macroexpand-1 x)     | macroexpand x only once                        |
-| (macroexpand x)       | macroexpand x completely                       |
+| (macroexpand-all x)   | macroexpand x completely                       |
 
 
 

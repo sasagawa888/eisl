@@ -316,6 +316,8 @@ defgeneric compile
         (cond ((eq (car x) 'defun)
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
                (setq function-arg (cons (cons (elt x 1) (count-args (elt x 2))) function-arg)))
+               ;; for formula library, let compiler recognize user defined function. so eval it
+               ;(eval x))
               ((eq (car x) 'defpattern)
                (when (assoc (elt x 1) function-arg) (error* "duplicate definition" (elt x 1)))
                (setq function-arg (cons (cons (elt x 1) -1) function-arg)))
@@ -2615,7 +2617,13 @@ defgeneric compile
     ;;defmacro
     (defun comp-defmacro (x)
         (format code4 "Feval(")
+        (list-to-c1 code4 '(eisl-ignore-toplevel-check t))
+        (format code4 ");~%")
+        (format code4 "Feval(")
         (list-to-c1 code4 x)
+        (format code4 ");~%")
+        (format code4 "Feval(")
+        (list-to-c1 code4 '(eisl-ignore-toplevel-check nil))
         (format code4 ");~%"))
     
     ;;defclass

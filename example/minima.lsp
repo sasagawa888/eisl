@@ -20,17 +20,16 @@
 (defun repl ()
   (block repl
     (cond ((catch 'error
-             (for ((s (read*) (read*)))
-                  ((equal s 'end) (return-from repl t))
-                  (print* (simple (eval* s))))) (repl))
+             (with-handler (lambda (x) (format (standard-output) "Minima error~%") (throw 'error t))
+                (for ((s (read*) (read*)))
+                     ((equal s 'end) (return-from repl t))
+                     (print* (simple (eval s)))))) (repl))
           (t (repl)))))
 
 (defun read* ()
     (format (standard-output) "M> ")
     (infix->prefix (string->infix (read-line))))
 
-(defun eval* (x)
-    (with-handler (lambda (c) (throw 'error t)) (eval x)))
 
 (defun print* (x)
   (format (standard-output) "~A~%" (infix->string (prefix->infix x))))

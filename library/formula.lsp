@@ -85,8 +85,8 @@
     ;; e.g. 
     ;; > (infix->prefix '(1 + 2))
     ;;(+ 1 2)
-    ;;> (infix->prefix '((sin (1 + 2) + (cos (3 + 4)))))
-    ;;(SIN (+ 1 2) + (COS (+ 3 4)))
+    ;;> (infix->prefix '((sin (1 + 2)) + (cos (3 + 4))))
+    ;;(+ (SIN (+ 1 2)) (COS (+ 3 4)))
 
     (defun infip (fmla)
         (if (atom fmla)

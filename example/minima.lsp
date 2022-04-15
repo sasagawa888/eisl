@@ -9,6 +9,7 @@
 
 (import "elixir")
 (import "formula")
+(import "math")
 
 (defun minima ()
   (format (standard-output) "Simple symbolic formula manipulation~%")
@@ -18,15 +19,18 @@
 
 (defun repl ()
   (block repl
-    (cond ((catch 'exit
+    (cond ((catch 'error
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print* (simple (eval s))))) t)
+                  (print* (simple (eval* s))))) (repl))
           (t (repl)))))
 
 (defun read* ()
     (format (standard-output) "M> ")
     (infix->prefix (string->infix (read-line))))
+
+(defun eval* (x)
+    (with-handler (lambda (c) (throw 'error t)) (eval x)))
 
 (defun print* (x)
   (format (standard-output) "~A~%" (infix->string (prefix->infix x))))
@@ -103,3 +107,21 @@
     (((/ (log (+ 1 _x)) _x) _x 0) 1)
     (((/ (sin _x) _x) _X 0) 1))
     
+  
+(defun factori (n)
+    (factor->prefix (factorize n)))
+
+(defun butlast (ls)
+    (reverse (cdr (reverse ls)))) 
+
+(defun last (ls)
+    (car (reverse ls)))
+
+(defun factor->prefix (ls)
+    (cond ((null ls) nil)
+          ((= (length ls) 2) 
+           (list '+ (make-power (elt ls 0)) (make-power (elt ls 1))))
+          (t (list '+ (factor->prefix (butlast ls)) (make-power (last ls))))))
+
+(defun make-power (ls)
+    (list '^ (elt ls 0) (elt ls 1)))

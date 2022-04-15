@@ -121,8 +121,8 @@
 (defun factor->prefix (ls)
     (cond ((null ls) nil)
           ((= (length ls) 2) 
-           (list '+ (make-power (elt ls 0)) (make-power (elt ls 1))))
-          (t (list '+ (factor->prefix (butlast ls)) (make-power (last ls))))))
+           (list '* (make-power (elt ls 0)) (make-power (elt ls 1))))
+          (t (list '* (factor->prefix (butlast ls)) (make-power (last ls))))))
 
 (defun make-power (ls)
     (list '^ (elt ls 0) (elt ls 1)))

@@ -32,7 +32,9 @@
 
 
 (defun print* (x)
-  (format (standard-output) "~A~%" (infix->string (prefix->infix x))))
+    (cond ((null x) (format (standard-output) "false~%"))
+          ((eq x t) (format (standard-output) "true~%"))
+          (t (format (standard-output) "~A~%" (infix->string (prefix->infix x))))))
 
 
 (defmacro d (x y)

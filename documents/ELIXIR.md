@@ -59,6 +59,9 @@ argument
 variable e.g. _a _z 
 variable symbol has prifix "_"
 
+anonymous
+_ means anonymous variable. It matches any element.
+
 :rest or &rest match rest parameter
 
 else symbol match every argument 

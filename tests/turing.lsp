@@ -10,7 +10,7 @@ this calculates 2+3=5
 (defpattern tm
     ((q0 _p _t) (when (= (nth _p _t) 1)) (state 'q0 _p _t) (tm 'q0 (+ _p 1) _t))
     ((q0 _p _t) (when (= (nth _p _t) 0)) (state 'q0 _p _t) (tm 'q1 _p (set _p _t 1)))
-    ((q1 _p _t) (when (= (nth _p _t) 1)) (state 'q1 _p _t) (tm 'q2 (- _p 1) _t))
+    ((q1 _p _t) (when (= (nth _p _t) 1)) (state 'q1 _p _t) (tm 'q1 (- _p 1) _t))
     ((q1 _p _t) (when (= (nth _p _t) 0)) (state 'q1 _p _t) (tm 'q2 (+ _p 1) _t))
     ((q2 _p _t) (when (= (nth _p _t) 1)) (state 'q2 _p _t) (tm 'q3 _p (set _p _t 0)))
     ((q3 _p _t) (when (= (nth _p _t) 0)) (state 'q3 _p _t) (tm 'q4 (+ _p 1) _t))

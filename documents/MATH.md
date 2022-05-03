@@ -66,6 +66,9 @@ Primality test. If n is less than 10 ^ 11, the definitive judgment algorithm is 
 ### (deterministic-prime-p n)
 Returns whether n is a prime number in a definitive way.
 
+### (prime n)
+Returns nth prime number (N <= 1229)
+
 ### (primepi n)
 π (n) Returns a number of prime numbers less than or equal to n.
    

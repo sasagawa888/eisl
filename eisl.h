@@ -34,7 +34,46 @@
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 
-static const float VERSION = 2.39;
+//following are for unicode<=>UTF-8 transform
+#define UNI2ADD1    192        //#b11000000
+#define UNI3ADD1    224        //#b11100000
+#define UNI4ADD1    240        //#b11110000
+#define UNIOADDO    128        //#b10000000
+#define UNI2MSK1    1984       //#b0000011111000000
+#define UNI2MSK2    63         //#b0000000000111111
+#define UNI3MSK1    61440      //#b1111000000000000
+#define UNI3MSK2    4032       //#b0000111111000000
+#define UNI3MSK3    63         //#b0000000000111111
+#define UNI4MSK1    1835008    //#b00000000000111000000000000000000
+#define UNI4MSK2    258048     //#b00000000000000111111000000000000
+#define UNI4MSK3    4032       //#b00000000000000000000111111000000
+#define UNI4MSK4    63         //#b00000000000000000000000000111111
+#define UTF2MSK1    63         //#b00111111
+#define UTF3MSK1    31         //#b00011111
+#define UTF4MSK1    15         //#b00001111
+#define UTFOMSKO    127        //#b01111111
+
+#define isUni1(c)   ((unsigned char)(c) <= 0x7f)
+
+#define isUni2(c)   (((unsigned char)(c) >= 0xc2) && \
+                     ((unsigned char)(c) <= 0xdf))
+
+#define isUni3(c)   (((unsigned char)(c) >= 0xe0) && \
+                     ((unsigned char)(c) <= 0xef))
+
+#define isUni4(c)   (((unsigned char)(c) >= 0xf0) && \
+                     ((unsigned char)(c) <= 0xf7))
+
+#define isUni5(c)   (((unsigned char)(c) >= 0xf8) && \
+                     ((unsigned char)(c) <= 0xfb))
+
+#define isUni6(c)   (((unsigned char)(c) >= 0xfc) && \
+                     ((unsigned char)(c) <= 0xfd))
+
+
+
+
+static const float VERSION = 2.40;
 static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
@@ -46,6 +85,7 @@ static const int FEND = 6;
 
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
+
 
 typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR, SYM,
     LIS, DUMMY,

@@ -1194,6 +1194,7 @@ int             symnamep(int addr, char *name);
 int             superp(int x, int y);
 int             undef_parameter_p(int ls);
 int             unified_parameter_p(int lamlis, int ls);
+int             utf8_to_ucs4(char *p);
 int             vec_minus(int x, int y);
 int             vec_plus(int x, int y);
 int             vector(int lis);
@@ -1261,6 +1262,7 @@ void            setval(int sym, int val, int ls);
 void            signal_handler_c(int signo);
 void            unbind(void);
 void            unreadc(char c);
+void            ucs4_to_utf8(int n, char *p);
 void            vector_set(int v, int n, int obj);
 void            store_backtrace(int x);
 

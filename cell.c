@@ -1344,8 +1344,7 @@ convert(int arg1, int arg2)
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == ccharacter) {
-	    str[0] = GET_INT(arg1);
-	    str[1] = NUL;
+        ucs4_to_utf8(GET_INT(arg1),str);
 	    return (makechar(str));
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
@@ -1360,12 +1359,12 @@ convert(int arg1, int arg2)
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+//#if __linux || __APPLE__ || defined(__OpenBSD__)
 	    Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
-#endif
-#if _WIN32
-	    sprintf(str, "%I64d", GET_LONG(arg1));
-#endif
+//#endif
+//#if _WIN32
+//	    sprintf(str, "%I64d", GET_LONG(arg1));
+//#endif
 	    return (makestr(str));
 	}
 	break;
@@ -1378,7 +1377,7 @@ convert(int arg1, int arg2)
 	break;
     case CHR:
 	if (GET_AUX(arg2) == cinteger) {
-	    return (makeint(STRING_REF(arg1, 0)));
+        return(makeint(utf8_to_ucs4(GET_NAME(arg1))));
 	} else if (GET_AUX(arg2) == csymbol) {
 	    return (makesym(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == cstring) {

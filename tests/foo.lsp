@@ -18,6 +18,9 @@
 
 (defglobal a "こんにちは")
 
+(defun foo ()
+    (set-aref #\か a 0))
+
 
 
 

@@ -1497,13 +1497,44 @@ substr(int x, int s, int e)
     return res;
 }
 
-/*
-int
-string_length(int x)
-{
-    return (strlen(GET_NAME(x)));
+int string_length(int addr){
+    char str[STRSIZE],c;
+    int pos,n;
+
+    strcpy(str,GET_NAME(addr));
+    pos = 0;
+    n = 0;
+    c = str[pos];
+    while(c != NUL){
+        if(isUni2(c)){
+            n++;
+            pos = pos + 2;
+        }
+        else if(isUni3(c)){
+            n++;
+            pos = pos + 3;
+        }
+        else if(isUni4(c)){
+            n++;
+            pos = pos + 4;
+        }
+        else if(isUni5(c)){
+            n++;
+            pos = pos + 5;
+        }
+        else if(isUni6(c)){
+            n++;
+            pos = pos + 6;
+        }
+        else{
+            n++;
+            pos++;
+        }
+        c = str[pos];
+    }
+    return(n);
 }
-*/
+
 
 int
 string_ref(int x, int y)
@@ -1581,59 +1612,76 @@ string_ref(int x, int y)
     return(NIL);
 }
 
+int string_set(int x, int y, int z){
+    char            str[CHARSIZE];
+    int             pos,y1;
+
+    pos = 0;
+    y1 = 0;
+    strcpy(str,GET_NAME(z));
+    while(STRING_REF(x,pos) != NUL){
+        if(GET_INT(y) == y1){
+            if(isUni2(str[0])){
+                STRING_SET(x,pos,str[0]);
+                STRING_SET(x,pos+1,str[1]);
+            }
+            else if(isUni3(str[0])){
+                STRING_SET(x,pos,str[0]);
+                STRING_SET(x,pos+1,str[1]);
+                STRING_SET(x,pos+2,str[2]);
+            }
+            else if(isUni4(str[0])){
+                STRING_SET(x,pos,str[0]);
+                STRING_SET(x,pos+1,str[1]);
+                STRING_SET(x,pos+2,str[2]);
+                STRING_SET(x,pos+3,str[3]);
+            }
+            else if(isUni5(str[0])){
+                STRING_SET(x,pos,str[0]);
+                STRING_SET(x,pos+1,str[1]);
+                STRING_SET(x,pos+2,str[2]);
+                STRING_SET(x,pos+3,str[3]);
+                STRING_SET(x,pos+4,str[4]);
+            }
+            else if(isUni6(str[0])){
+                STRING_SET(x,pos,str[0]);
+                STRING_SET(x,pos+1,str[1]);
+                STRING_SET(x,pos+2,str[2]);
+                STRING_SET(x,pos+3,str[3]);
+                STRING_SET(x,pos+4,str[4]);
+                STRING_SET(x,pos+5,str[5]);
+            }
+            else{
+                STRING_SET(x,pos,str[0]);
+            }
+            return (makechar(str));
+        }
+        if(isUni2(STRING_REF(x,pos))){
+            pos = pos+2;
+            y1++;
+        }
+        else if(isUni3(STRING_REF(x,pos))){
+            pos = pos+3;
+            y1++;
+        }
+        else if(isUni4(STRING_REF(x,pos))){
+            pos = pos+4;
+            y1++;
+        }
+        else if(isUni5(STRING_REF(x,pos))){
+            pos = pos+5;
+            y1++;
+        }
+        else if(isUni6(STRING_REF(x,pos))){
+            pos = pos+6;
+            y1++;
+        }
+
+    }
+    return(NIL);
+}
 
 /*
-    if(isUni2(GET_NAME_ELT(arg1, GET_INT(arg2)))){
-        str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-        str[1] = GET_NAME_ELT(arg1, GET_INT(arg2)+1);
-        str[2] = NUL;
-    }
-    else if(isUni3(GET_NAME_ELT(arg1, GET_INT(arg2)))){
-        str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-        str[1] = GET_NAME_ELT(arg1, GET_INT(arg2)+1);
-        str[2] = GET_NAME_ELT(arg1, GET_INT(arg2)+2);
-        str[3] = NUL;
-    }
-    else if(isUni4(GET_NAME_ELT(arg1, GET_INT(arg2)))){
-        str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-        str[1] = GET_NAME_ELT(arg1, GET_INT(arg2)+1);
-        str[2] = GET_NAME_ELT(arg1, GET_INT(arg2)+2);
-        str[3] = GET_NAME_ELT(arg1, GET_INT(arg2)+3);
-        str[4] = NUL;
-    }
-    else if(isUni4(GET_NAME_ELT(arg1, GET_INT(arg2)))){
-        str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-        str[1] = GET_NAME_ELT(arg1, GET_INT(arg2)+1);
-        str[2] = GET_NAME_ELT(arg1, GET_INT(arg2)+2);
-        str[3] = GET_NAME_ELT(arg1, GET_INT(arg2)+3);
-        str[4] = GET_NAME_ELT(arg1, GET_INT(arg2)+4);
-        str[5] = NUL;
-    }
-    else if(isUni5(GET_NAME_ELT(arg1, GET_INT(arg2)))){
-        str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-        str[1] = GET_NAME_ELT(arg1, GET_INT(arg2)+1);
-        str[2] = GET_NAME_ELT(arg1, GET_INT(arg2)+2);
-        str[3] = GET_NAME_ELT(arg1, GET_INT(arg2)+3);
-        str[4] = GET_NAME_ELT(arg1, GET_INT(arg2)+4);
-        str[5] = GET_NAME_ELT(arg1, GET_INT(arg2)+5);
-        str[6] = NUL;
-    }
-    else if(isUni6(GET_NAME_ELT(arg1, GET_INT(arg2)))){
-        str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-        str[1] = GET_NAME_ELT(arg1, GET_INT(arg2)+1);
-        str[2] = GET_NAME_ELT(arg1, GET_INT(arg2)+2);
-        str[3] = GET_NAME_ELT(arg1, GET_INT(arg2)+3);
-        str[4] = GET_NAME_ELT(arg1, GET_INT(arg2)+4);
-        str[5] = GET_NAME_ELT(arg1, GET_INT(arg2)+5);
-        str[6] = GET_NAME_ELT(arg1, GET_INT(arg2)+6);
-        str[7] = NUL;
-    }
-    else {// ASCII code
-	    str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-	    str[1] = NUL;
-    }
-    */
-
 int
 string_set(int x, int y, int z)
 {
@@ -1641,6 +1689,7 @@ string_set(int x, int y, int z)
     STRING_SET(x, GET_INT(y), GET_CHAR(z));
     return (y);
 }
+*/
 
 int
 sublis(int x, int s, int e)
@@ -2270,40 +2319,3 @@ void ucs4_to_utf8(int n, char *p){
     *p = NUL;
 }
 
-int string_length(int addr){
-    char str[STRSIZE],c;
-    int pos,n;
-
-    strcpy(str,GET_NAME(addr));
-    pos = 0;
-    n = 0;
-    c = str[pos];
-    while(c != NUL){
-        if(isUni2(c)){
-            n++;
-            pos = pos + 2;
-        }
-        else if(isUni3(c)){
-            n++;
-            pos = pos + 3;
-        }
-        else if(isUni4(c)){
-            n++;
-            pos = pos + 4;
-        }
-        else if(isUni5(c)){
-            n++;
-            pos = pos + 5;
-        }
-        else if(isUni6(c)){
-            n++;
-            pos = pos + 6;
-        }
-        else{
-            n++;
-            pos++;
-        }
-        c = str[pos];
-    }
-    return(n);
-}

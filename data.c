@@ -1465,14 +1465,11 @@ string_to_list(int x)
                     res;
 
     res = NIL;
-    len = strlen(GET_NAME(x));
+    len = string_length(x);
     for (i = 0; i < len; i++) {
 	int             chr;
-	char            c;
 
-	chr = makechar("?");
-	c = STRING_REF(x, i);
-	SET_CHAR(chr, c);
+	chr = string_ref(x, i);
 	res = cons(chr, res);
     }
     return (reverse(res));
@@ -1605,6 +1602,10 @@ string_ref(int x, int y)
         }
         else if(isUni6(STRING_REF(x,pos))){
             pos = pos+6;
+            y1++;
+        }
+        else {
+            pos = pos+1;
             y1++;
         }
 

@@ -995,7 +995,7 @@ makechar(const char *pname)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makechar", NIL);
     END_TRY;
-    if(pname[1] == NUL){
+    if(!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0]) && !isUni5(pname[0]) && !isUni6(pname[0])  ){
         heap[addr].name[0] = char_entity;
         heap[addr].name[1] = NUL;
     }

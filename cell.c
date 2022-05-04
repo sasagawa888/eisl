@@ -1359,12 +1359,7 @@ convert(int arg1, int arg2)
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
-//#if __linux || __APPLE__ || defined(__OpenBSD__)
 	    Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
-//#endif
-//#if _WIN32
-//	    sprintf(str, "%I64d", GET_LONG(arg1));
-//#endif
 	    return (makestr(str));
 	}
 	break;

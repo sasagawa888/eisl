@@ -1613,9 +1613,15 @@ string_ref(int x, int y)
     return(NIL);
 }
 
+/*
+string_set()
+It is assumed that the characters to be replaced and the characters to be replaced are the same size.
+It's incomplete, but it shouldn't be a problem in practice. 
+If you try to do it completely, it will be complicated.
+*/
 int string_set(int x, int y, int z){
     char            str[CHARSIZE];
-    int             pos,y1;
+    int             pos,y1,i;
 
     pos = 0;
     y1 = 0;

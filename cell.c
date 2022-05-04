@@ -995,8 +995,18 @@ makechar(const char *pname)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makechar", NIL);
     END_TRY;
-    heap[addr].name[0] = char_entity;
-    heap[addr].name[1] = NUL;
+    if(pname[1] == NUL){
+        heap[addr].name[0] = char_entity;
+        heap[addr].name[1] = NUL;
+    }
+    else{
+        pos = 0;
+        while (pname[pos] != NUL) {
+            heap[addr].name[pos] = pname[pos];
+	        pos++;
+        }
+        heap[addr].name[pos] = NUL;
+    }
     SET_AUX(addr, ccharacter);
     return (addr);
 }

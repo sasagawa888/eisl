@@ -3049,12 +3049,12 @@ f_elt(int arglist)
 	if (longnump(arg2)
 	    && (long long int) strlen(GET_NAME(arg1)) <= GET_LONG(arg2))
 	    error(OUT_OF_RANGE, "elt", arg2);
-	str[0] = GET_NAME_ELT(arg1, GET_INT(arg2));
-	str[1] = NUL;
-	return (makechar(str));
+
+	return (string_ref(arg1,arg2));
     }
     return (NIL);
 }
+
 
 
 int

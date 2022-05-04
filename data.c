@@ -1509,10 +1509,76 @@ int
 string_ref(int x, int y)
 {
     char            str[CHARSIZE];
+    int             pos,y1;
 
-    str[0] = STRING_REF(x, GET_INT(y));
-    str[1] = NUL;
-    return (makechar(str));
+    pos = 0;
+    y1 = 0;
+    while(STRING_REF(x,pos) != NUL){
+        if(GET_INT(y) == y1){
+            if(isUni2(STRING_REF(x,pos))){
+                str[0] = STRING_REF(x, pos);
+                str[1] = STRING_REF(x, pos+1);
+                str[2] = NUL;
+            }
+            else if(isUni3(STRING_REF(x,pos))){
+                str[0] = STRING_REF(x, pos);
+                str[1] = STRING_REF(x, pos+1);
+                str[2] = STRING_REF(x, pos+2);
+                str[3] = NUL;
+            }
+            else if(isUni4(STRING_REF(x,pos))){
+                str[0] = STRING_REF(x, pos);
+                str[1] = STRING_REF(x, pos+1);
+                str[2] = STRING_REF(x, pos+2);
+                str[3] = STRING_REF(x, pos+3);
+                str[4] = NUL;
+            }
+            else if(isUni5(STRING_REF(x,pos))){
+                str[0] = STRING_REF(x, pos);
+                str[1] = STRING_REF(x, pos+1);
+                str[2] = STRING_REF(x, pos+2);
+                str[3] = STRING_REF(x, pos+3);
+                str[4] = STRING_REF(x, pos+4);
+                str[5] = NUL;
+            }
+            else if(isUni6(STRING_REF(x,pos))){
+                str[0] = STRING_REF(x, pos);
+                str[1] = STRING_REF(x, pos+1);
+                str[2] = STRING_REF(x, pos+2);
+                str[3] = STRING_REF(x, pos+3);
+                str[4] = STRING_REF(x, pos+4);
+                str[5] = STRING_REF(x, pos+5);
+                str[6] = NUL;
+            }
+            else{
+                str[0] = STRING_REF(x, pos);
+                str[7] = NUL;
+            }
+            return (makechar(str));
+        }
+        if(isUni2(STRING_REF(x,pos))){
+            pos = pos+2;
+            y1++;
+        }
+        else if(isUni3(STRING_REF(x,pos))){
+            pos = pos+3;
+            y1++;
+        }
+        else if(isUni4(STRING_REF(x,pos))){
+            pos = pos+4;
+            y1++;
+        }
+        else if(isUni5(STRING_REF(x,pos))){
+            pos = pos+5;
+            y1++;
+        }
+        else if(isUni6(STRING_REF(x,pos))){
+            pos = pos+6;
+            y1++;
+        }
+
+    }
+    return(NIL);
 }
 
 

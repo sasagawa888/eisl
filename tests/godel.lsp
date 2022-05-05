@@ -7,7 +7,7 @@ godel number (test unicode)
 
 (defglobal dt "∃xy〜(x)∧(y)")
 
-(defglobal code-list
+(defglobal codelist
     '((1 #\〜)
       (2 #\∧)
       (3 #\))
@@ -28,7 +28,7 @@ godel number (test unicode)
         (rev-assoc key (cdr list))))
 
 (defun char->integer (ls)
-    (mapcar (lambda (x) (rev-assoc x code-list)) ls))
+    (mapcar (lambda (x) (rev-assoc x codelist)) ls))
 
 (defun string->integer (str)
     (char->integer (convert str <list>)))
@@ -50,6 +50,6 @@ godel number (test unicode)
 (defun decode1 (ls)
     (if (null ls)
         ""
-        (string-append (convert (cadr (assoc (cadar ls) code-list))  <string>)
+        (string-append (convert (cadr (assoc (cadar ls) codelist))  <string>)
                        (decode1 (cdr ls)))))
          

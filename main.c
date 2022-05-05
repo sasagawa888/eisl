@@ -132,7 +132,8 @@ bool            back_flag = true;	// for backtrace,
 					// true=on,false=off
 bool            ignore_topchk = false;	// for FAST
 					// compilertrue=ignore,false=normal
-bool            repl_flag = true;	// for REPL read_line true=on, false=off
+bool            repl_flag = true;	// for REPL read_line true=on,
+					// false=off
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool            greeting_flag = true;	// for (quit)
 bool            script_flag = false;	// for -s option
@@ -1422,19 +1423,19 @@ printchar(int addr)
 {
     output_str(output_stream, "#\\");
     switch (GET_CHAR(addr)) {
-	case BEL:
+    case BEL:
 	output_str(output_stream, "alarm");
 	break;
-	case BS:
+    case BS:
 	output_str(output_stream, "backspace");
 	break;
-	case DEL:
+    case DEL:
 	output_str(output_stream, "delete");
 	break;
-	case ESC:
+    case ESC:
 	output_str(output_stream, "escape");
 	break;
-	case RET:
+    case RET:
 	output_str(output_stream, "return");
 	break;
     case SPACE:
@@ -1443,73 +1444,73 @@ printchar(int addr)
     case EOL:
 	output_str(output_stream, "newline");
 	break;
-	case NUL:
+    case NUL:
 	output_str(output_stream, "null");
 	break;
-	case TAB:
+    case TAB:
 	output_str(output_stream, "tab");
 	break;
-	case 1:
+    case 1:
 	output_str(output_stream, "^A");
 	break;
-	case 2:
+    case 2:
 	output_str(output_stream, "^B");
 	break;
-	case 3:
+    case 3:
 	output_str(output_stream, "^C");
 	break;
-	case 4:
+    case 4:
 	output_str(output_stream, "^D");
 	break;
-	case 5:
+    case 5:
 	output_str(output_stream, "^E");
 	break;
-	case 6:
+    case 6:
 	output_str(output_stream, "^F");
 	break;
-	case 11:
+    case 11:
 	output_str(output_stream, "^K");
 	break;
-	case 12:
+    case 12:
 	output_str(output_stream, "^L");
 	break;
-	case 14:
+    case 14:
 	output_str(output_stream, "^N");
 	break;
-	case 15:
+    case 15:
 	output_str(output_stream, "^O");
 	break;
-	case 16:
+    case 16:
 	output_str(output_stream, "^P");
 	break;
-	case 17:
+    case 17:
 	output_str(output_stream, "^Q");
 	break;
-	case 18:
+    case 18:
 	output_str(output_stream, "^R");
 	break;
-	case 19:
+    case 19:
 	output_str(output_stream, "^S");
 	break;
-	case 20:
+    case 20:
 	output_str(output_stream, "^T");
 	break;
-	case 21:
+    case 21:
 	output_str(output_stream, "^U");
 	break;
-	case 22:
+    case 22:
 	output_str(output_stream, "^V");
 	break;
-	case 23:
+    case 23:
 	output_str(output_stream, "^W");
 	break;
-	case 24:
+    case 24:
 	output_str(output_stream, "^X");
 	break;
-	case 25:
+    case 25:
 	output_str(output_stream, "^Y");
 	break;
-	case 26:
+    case 26:
 	output_str(output_stream, "^Z");
 	break;
     default:

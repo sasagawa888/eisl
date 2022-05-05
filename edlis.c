@@ -485,14 +485,14 @@ getname()
 	    return (buf);
 	case KEY_BACKSPACE:
 	case DEL:
-		if (pos > 0)
+	    if (pos > 0)
 		pos--;
 	    buf[pos] = 0;
 	    break;
 	default:
 	    if (pos > 20)
 		break;
-		else if (c < 20)
+	    else if (c < 20)
 		break;
 	    buf[pos] = c;
 	    pos++;
@@ -547,7 +547,7 @@ edit_loop(char *fname)
 	      "CTRL+E  end of line            CTRL+D  delete one char\n"
 	      "CTRL+V  page down              CTRL+O  return\n"
 	      "ESC V   page up                CTRL+T  replace word\n"
-		  "TAB     insert spaces according to lisp indent rule\n"
+	      "TAB     insert spaces according to lisp indent rule\n"
 	      "CTRL+X CTRL+C quit from editor with save\n"
 	      "CTRL+X CTRL+S save file\n"
 	      "CTRL+X CTRL+I insert buffer from file\n"
@@ -1140,7 +1140,8 @@ display_line(int line)
 	    ESCRST();
 
 	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
-								// #|...|#
+								// 
+	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
 	    while (((ed_col <= COLS - 1 && col <= COLS - 1)

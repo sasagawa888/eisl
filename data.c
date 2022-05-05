@@ -1494,42 +1494,41 @@ substr(int x, int s, int e)
     return res;
 }
 
-int string_length(int addr){
-    char str[STRSIZE],c;
-    int pos,n;
+int
+string_length(int addr)
+{
+    char            str[STRSIZE],
+                    c;
+    int             pos,
+                    n;
 
-    strcpy(str,GET_NAME(addr));
+    strcpy(str, GET_NAME(addr));
     pos = 0;
     n = 0;
     c = str[pos];
-    while(c != NUL){
-        if(isUni2(c)){
-            n++;
-            pos = pos + 2;
-        }
-        else if(isUni3(c)){
-            n++;
-            pos = pos + 3;
-        }
-        else if(isUni4(c)){
-            n++;
-            pos = pos + 4;
-        }
-        else if(isUni5(c)){
-            n++;
-            pos = pos + 5;
-        }
-        else if(isUni6(c)){
-            n++;
-            pos = pos + 6;
-        }
-        else{
-            n++;
-            pos++;
-        }
-        c = str[pos];
+    while (c != NUL) {
+	if (isUni2(c)) {
+	    n++;
+	    pos = pos + 2;
+	} else if (isUni3(c)) {
+	    n++;
+	    pos = pos + 3;
+	} else if (isUni4(c)) {
+	    n++;
+	    pos = pos + 4;
+	} else if (isUni5(c)) {
+	    n++;
+	    pos = pos + 5;
+	} else if (isUni6(c)) {
+	    n++;
+	    pos = pos + 6;
+	} else {
+	    n++;
+	    pos++;
+	}
+	c = str[pos];
     }
-    return(n);
+    return (n);
 }
 
 
@@ -1537,173 +1536,147 @@ int
 string_ref(int x, int y)
 {
     char            str[CHARSIZE];
-    int             pos,y1;
+    int             pos,
+                    y1;
 
     pos = 0;
     y1 = 0;
-    while(STRING_REF(x,pos) != NUL){
-        if(GET_INT(y) == y1){
-            if(isUni2(STRING_REF(x,pos))){
-                str[0] = STRING_REF(x, pos);
-                str[1] = STRING_REF(x, pos+1);
-                str[2] = NUL;
-            }
-            else if(isUni3(STRING_REF(x,pos))){
-                str[0] = STRING_REF(x, pos);
-                str[1] = STRING_REF(x, pos+1);
-                str[2] = STRING_REF(x, pos+2);
-                str[3] = NUL;
-            }
-            else if(isUni4(STRING_REF(x,pos))){
-                str[0] = STRING_REF(x, pos);
-                str[1] = STRING_REF(x, pos+1);
-                str[2] = STRING_REF(x, pos+2);
-                str[3] = STRING_REF(x, pos+3);
-                str[4] = NUL;
-            }
-            else if(isUni5(STRING_REF(x,pos))){
-                str[0] = STRING_REF(x, pos);
-                str[1] = STRING_REF(x, pos+1);
-                str[2] = STRING_REF(x, pos+2);
-                str[3] = STRING_REF(x, pos+3);
-                str[4] = STRING_REF(x, pos+4);
-                str[5] = NUL;
-            }
-            else if(isUni6(STRING_REF(x,pos))){
-                str[0] = STRING_REF(x, pos);
-                str[1] = STRING_REF(x, pos+1);
-                str[2] = STRING_REF(x, pos+2);
-                str[3] = STRING_REF(x, pos+3);
-                str[4] = STRING_REF(x, pos+4);
-                str[5] = STRING_REF(x, pos+5);
-                str[6] = NUL;
-            }
-            else{
-                str[0] = STRING_REF(x, pos);
-                str[7] = NUL;
-            }
-            return (makechar(str));
-        }
-        if(isUni2(STRING_REF(x,pos))){
-            pos = pos+2;
-            y1++;
-        }
-        else if(isUni3(STRING_REF(x,pos))){
-            pos = pos+3;
-            y1++;
-        }
-        else if(isUni4(STRING_REF(x,pos))){
-            pos = pos+4;
-            y1++;
-        }
-        else if(isUni5(STRING_REF(x,pos))){
-            pos = pos+5;
-            y1++;
-        }
-        else if(isUni6(STRING_REF(x,pos))){
-            pos = pos+6;
-            y1++;
-        }
-        else {
-            pos = pos+1;
-            y1++;
-        }
+    while (STRING_REF(x, pos) != NUL) {
+	if (GET_INT(y) == y1) {
+	    if (isUni2(STRING_REF(x, pos))) {
+		str[0] = STRING_REF(x, pos);
+		str[1] = STRING_REF(x, pos + 1);
+		str[2] = NUL;
+	    } else if (isUni3(STRING_REF(x, pos))) {
+		str[0] = STRING_REF(x, pos);
+		str[1] = STRING_REF(x, pos + 1);
+		str[2] = STRING_REF(x, pos + 2);
+		str[3] = NUL;
+	    } else if (isUni4(STRING_REF(x, pos))) {
+		str[0] = STRING_REF(x, pos);
+		str[1] = STRING_REF(x, pos + 1);
+		str[2] = STRING_REF(x, pos + 2);
+		str[3] = STRING_REF(x, pos + 3);
+		str[4] = NUL;
+	    } else if (isUni5(STRING_REF(x, pos))) {
+		str[0] = STRING_REF(x, pos);
+		str[1] = STRING_REF(x, pos + 1);
+		str[2] = STRING_REF(x, pos + 2);
+		str[3] = STRING_REF(x, pos + 3);
+		str[4] = STRING_REF(x, pos + 4);
+		str[5] = NUL;
+	    } else if (isUni6(STRING_REF(x, pos))) {
+		str[0] = STRING_REF(x, pos);
+		str[1] = STRING_REF(x, pos + 1);
+		str[2] = STRING_REF(x, pos + 2);
+		str[3] = STRING_REF(x, pos + 3);
+		str[4] = STRING_REF(x, pos + 4);
+		str[5] = STRING_REF(x, pos + 5);
+		str[6] = NUL;
+	    } else {
+		str[0] = STRING_REF(x, pos);
+		str[7] = NUL;
+	    }
+	    return (makechar(str));
+	}
+	if (isUni2(STRING_REF(x, pos))) {
+	    pos = pos + 2;
+	    y1++;
+	} else if (isUni3(STRING_REF(x, pos))) {
+	    pos = pos + 3;
+	    y1++;
+	} else if (isUni4(STRING_REF(x, pos))) {
+	    pos = pos + 4;
+	    y1++;
+	} else if (isUni5(STRING_REF(x, pos))) {
+	    pos = pos + 5;
+	    y1++;
+	} else if (isUni6(STRING_REF(x, pos))) {
+	    pos = pos + 6;
+	    y1++;
+	} else {
+	    pos = pos + 1;
+	    y1++;
+	}
 
     }
-    return(NIL);
+    return (NIL);
 }
 
 
 
 /*
-string_set()
-It is assumed that the characters to be replaced and the characters to be replaced are the same size.
-It's incomplete, but it shouldn't be a problem in practice. 
-If you try to do it completely, it will be complicated.
-*/
-int string_set(int x, int y, int z){
-    char            str[STRSIZE];
-    int             pos,y1;
-
-    pos = 0;
-    y1 = 0;
-    strcpy(str,GET_NAME(z));
-    while(STRING_REF(x,pos) && pos < STRSIZE){
-        if(GET_INT(y) == y1){
-            if(isUni2(str[0])){
-                STRING_SET(x,pos,str[0]);
-                STRING_SET(x,pos+1,str[1]);
-            }
-            else if(isUni3(str[0])){
-                STRING_SET(x,pos,str[0]);
-                STRING_SET(x,pos+1,str[1]);
-                STRING_SET(x,pos+2,str[2]);
-            }
-            else if(isUni4(str[0])){
-                STRING_SET(x,pos,str[0]);
-                STRING_SET(x,pos+1,str[1]);
-                STRING_SET(x,pos+2,str[2]);
-                STRING_SET(x,pos+3,str[3]);
-            }
-            else if(isUni5(str[0])){
-                STRING_SET(x,pos,str[0]);
-                STRING_SET(x,pos+1,str[1]);
-                STRING_SET(x,pos+2,str[2]);
-                STRING_SET(x,pos+3,str[3]);
-                STRING_SET(x,pos+4,str[4]);
-            }
-            else if(isUni6(str[0])){
-                STRING_SET(x,pos,str[0]);
-                STRING_SET(x,pos+1,str[1]);
-                STRING_SET(x,pos+2,str[2]);
-                STRING_SET(x,pos+3,str[3]);
-                STRING_SET(x,pos+4,str[4]);
-                STRING_SET(x,pos+5,str[5]);
-            }
-            else{
-                STRING_SET(x,pos,str[0]);
-            }
-            return (makechar(str));
-        }
-        if(isUni2(STRING_REF(x,pos))){
-            pos = pos+2;
-            y1++;
-        }
-        else if(isUni3(STRING_REF(x,pos))){
-            pos = pos+3;
-            y1++;
-        }
-        else if(isUni4(STRING_REF(x,pos))){
-            pos = pos+4;
-            y1++;
-        }
-        else if(isUni5(STRING_REF(x,pos))){
-            pos = pos+5;
-            y1++;
-        }
-        else if(isUni6(STRING_REF(x,pos))){
-            pos = pos+6;
-            y1++;
-        }
-        else{ 
-            pos++;
-            y1++;
-        }
-
-    }
-    return(NIL);
-}
-
-
-/*
+ * string_set() It is assumed that the characters to be replaced and the
+ * characters to be replaced are the same size. It's incomplete, but it
+ * shouldn't be a problem in practice. If you try to do it completely, it 
+ * will be complicated. 
+ */
 int
 string_set(int x, int y, int z)
 {
+    char            str[STRSIZE];
+    int             pos,
+                    y1;
 
-    STRING_SET(x, GET_INT(y), GET_CHAR(z));
-    return (y);
+    pos = 0;
+    y1 = 0;
+    strcpy(str, GET_NAME(z));
+    while (STRING_REF(x, pos) && pos < STRSIZE) {
+	if (GET_INT(y) == y1) {
+	    if (isUni2(str[0])) {
+		STRING_SET(x, pos, str[0]);
+		STRING_SET(x, pos + 1, str[1]);
+	    } else if (isUni3(str[0])) {
+		STRING_SET(x, pos, str[0]);
+		STRING_SET(x, pos + 1, str[1]);
+		STRING_SET(x, pos + 2, str[2]);
+	    } else if (isUni4(str[0])) {
+		STRING_SET(x, pos, str[0]);
+		STRING_SET(x, pos + 1, str[1]);
+		STRING_SET(x, pos + 2, str[2]);
+		STRING_SET(x, pos + 3, str[3]);
+	    } else if (isUni5(str[0])) {
+		STRING_SET(x, pos, str[0]);
+		STRING_SET(x, pos + 1, str[1]);
+		STRING_SET(x, pos + 2, str[2]);
+		STRING_SET(x, pos + 3, str[3]);
+		STRING_SET(x, pos + 4, str[4]);
+	    } else if (isUni6(str[0])) {
+		STRING_SET(x, pos, str[0]);
+		STRING_SET(x, pos + 1, str[1]);
+		STRING_SET(x, pos + 2, str[2]);
+		STRING_SET(x, pos + 3, str[3]);
+		STRING_SET(x, pos + 4, str[4]);
+		STRING_SET(x, pos + 5, str[5]);
+	    } else {
+		STRING_SET(x, pos, str[0]);
+	    }
+	    return (makechar(str));
+	}
+	if (isUni2(STRING_REF(x, pos))) {
+	    pos = pos + 2;
+	    y1++;
+	} else if (isUni3(STRING_REF(x, pos))) {
+	    pos = pos + 3;
+	    y1++;
+	} else if (isUni4(STRING_REF(x, pos))) {
+	    pos = pos + 4;
+	    y1++;
+	} else if (isUni5(STRING_REF(x, pos))) {
+	    pos = pos + 5;
+	    y1++;
+	} else if (isUni6(STRING_REF(x, pos))) {
+	    pos = pos + 6;
+	    y1++;
+	} else {
+	    pos++;
+	    y1++;
+	}
+
+    }
+    return (NIL);
 }
-*/
+
 
 int
 sublis(int x, int s, int e)
@@ -2218,118 +2191,120 @@ copy_hash(int x)
 }
 
 
-//----------unicode------------------
-//transform from UTF-8 to unicode
-int utf8_to_ucs4(char *p){
-    int x,x1,x2,x3,res;
-    unsigned char uc;
+// ----------unicode------------------
+// transform from UTF-8 to unicode
+int
+utf8_to_ucs4(char *p)
+{
+    int             x,
+                    x1,
+                    x2,
+                    x3,
+                    res;
+    unsigned char   uc;
 
-    uc = (unsigned char)*p;
-    if(uc <= 0x7f){
-        x = (int)uc;
-        return(x);
-    }
-    else if(uc >= 0xc0 && uc <= 0xdf){
-        x = (int)(UTF2MSK1 & uc);
-        x = x<<6;
-        p++;
-        uc = (unsigned char)*p;
-        x1 = (int)(UTFOMSKO & uc);
-        res = x | x1;
-        return(res);
-    }
-    else if(uc >= 0xe0 && uc <= 0xef){
-        x = (int)(UTF3MSK1 & uc);
-        x = x<<12;
-        p++;
-        uc = (unsigned char)*p;
-        x1 = (int)(UTFOMSKO & uc);
-        x1 = x1<<6;
-        p++;
-        uc = (unsigned char)*p;
-        x2 = (int)(UTFOMSKO & uc);
-        res = x | x1 | x2;
-        return(res);
-    }
-    else if(uc >= 0xf0 && uc <= 0xf7){
-        x = (int)(UTF4MSK1 & uc);
-        x = x<<18;
-        p++;
-        uc = (unsigned char)*p;
-        x1 = (int)(UTFOMSKO & uc);
-        x1 = x1<<12;
-        p++;
-        uc = (unsigned char)*p;
-        x2 = (int)(UTFOMSKO & uc);
-        x2 = x2<<6;
-        p++;
-        uc = (unsigned char)*p;
-        x3 = (int)(UTFOMSKO & uc);
-        res = x | x1 | x2 | x3;
-        return(res);
-    }
-    else
-        return(-1);
+    uc = (unsigned char) *p;
+    if (uc <= 0x7f) {
+	x = (int) uc;
+	return (x);
+    } else if (uc >= 0xc0 && uc <= 0xdf) {
+	x = (int) (UTF2MSK1 & uc);
+	x = x << 6;
+	p++;
+	uc = (unsigned char) *p;
+	x1 = (int) (UTFOMSKO & uc);
+	res = x | x1;
+	return (res);
+    } else if (uc >= 0xe0 && uc <= 0xef) {
+	x = (int) (UTF3MSK1 & uc);
+	x = x << 12;
+	p++;
+	uc = (unsigned char) *p;
+	x1 = (int) (UTFOMSKO & uc);
+	x1 = x1 << 6;
+	p++;
+	uc = (unsigned char) *p;
+	x2 = (int) (UTFOMSKO & uc);
+	res = x | x1 | x2;
+	return (res);
+    } else if (uc >= 0xf0 && uc <= 0xf7) {
+	x = (int) (UTF4MSK1 & uc);
+	x = x << 18;
+	p++;
+	uc = (unsigned char) *p;
+	x1 = (int) (UTFOMSKO & uc);
+	x1 = x1 << 12;
+	p++;
+	uc = (unsigned char) *p;
+	x2 = (int) (UTFOMSKO & uc);
+	x2 = x2 << 6;
+	p++;
+	uc = (unsigned char) *p;
+	x3 = (int) (UTFOMSKO & uc);
+	res = x | x1 | x2 | x3;
+	return (res);
+    } else
+	return (-1);
 }
 
 
 
-//transform from Unicode to UTF-8
-void ucs4_to_utf8(int n, char *p){
-    int w,x,y,z;
+// transform from Unicode to UTF-8
+void
+ucs4_to_utf8(int n, char *p)
+{
+    int             w,
+                    x,
+                    y,
+                    z;
 
-    if(n <= 0x7f){
-        *p = (char)n;
-    }
-    else if(n <= 0x07ff){
-        x = UNI2MSK1 & n;
-        x = x>>6;
-        x = UNI2ADD1 | x;
-        y = UNI2MSK2 & n;
-        y = UNIOADDO | y;
-        *p = (char)x;
-        p++;
-        *p = (char)y;
-    }
-    else if(n <= 0xffff){
-        x = UNI3MSK1 & n;
-        x = x>>12;
-        x = UNI3ADD1 | x;
-        y = UNI3MSK2 & n;
-        y = y>>6;
-        y = UNIOADDO | y;
-        z = UNI3MSK3 & n;
-        z = UNIOADDO | z;
-        *p = (char)x;
-        p++;
-        *p = (char)y;
-        p++;
-        *p = (char)z;
-    }
-    else if(n < 0x1fffff){
-        w = UNI4MSK1 & n;
-        w = w>>18;
-        w = UNI4ADD1 | w;
-        x = UNI4MSK2 & n;
-        x = x>>12;
-        x = UNIOADDO | x;
-        y = UNI4MSK3 & n;
-        y = y>>6;
-        y = UNIOADDO | y;
-        z = UNI4MSK4 & n;
-        z = UNIOADDO | z;
-        *p = (char)w;
-        p++;
-        *p = (char)x;
-        p++;
-        *p = (char)y;
-        p++;
-        *p = (char)z;
-    }
-    else{
-        error(OUT_OF_RANGE, "Unicode->UTF-8", NIL);
+    if (n <= 0x7f) {
+	*p = (char) n;
+    } else if (n <= 0x07ff) {
+	x = UNI2MSK1 & n;
+	x = x >> 6;
+	x = UNI2ADD1 | x;
+	y = UNI2MSK2 & n;
+	y = UNIOADDO | y;
+	*p = (char) x;
+	p++;
+	*p = (char) y;
+    } else if (n <= 0xffff) {
+	x = UNI3MSK1 & n;
+	x = x >> 12;
+	x = UNI3ADD1 | x;
+	y = UNI3MSK2 & n;
+	y = y >> 6;
+	y = UNIOADDO | y;
+	z = UNI3MSK3 & n;
+	z = UNIOADDO | z;
+	*p = (char) x;
+	p++;
+	*p = (char) y;
+	p++;
+	*p = (char) z;
+    } else if (n < 0x1fffff) {
+	w = UNI4MSK1 & n;
+	w = w >> 18;
+	w = UNI4ADD1 | w;
+	x = UNI4MSK2 & n;
+	x = x >> 12;
+	x = UNIOADDO | x;
+	y = UNI4MSK3 & n;
+	y = y >> 6;
+	y = UNIOADDO | y;
+	z = UNI4MSK4 & n;
+	z = UNIOADDO | z;
+	*p = (char) w;
+	p++;
+	*p = (char) x;
+	p++;
+	*p = (char) y;
+	p++;
+	*p = (char) z;
+    } else {
+	error(OUT_OF_RANGE, "Unicode->UTF-8", NIL);
     }
     p++;
     *p = NUL;
 }
-

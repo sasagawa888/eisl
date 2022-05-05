@@ -3050,7 +3050,7 @@ f_elt(int arglist)
 	    && (long long int) strlen(GET_NAME(arg1)) <= GET_LONG(arg2))
 	    error(OUT_OF_RANGE, "elt", arg2);
 
-	return (string_ref(arg1,arg2));
+	return (string_ref(arg1, arg2));
     }
     return (NIL);
 }
@@ -3261,6 +3261,7 @@ f_string_index(int arglist)
 
     if (string_length(arg1) == 0 && string_length(arg2) == 0)	// (string-index 
 								// 
+	// 
 	// 
 	// 
 	// 
@@ -3939,6 +3940,7 @@ f_format_fresh_line(int arglist)
 	save = output_stream;
 	output_stream = arg1;
 	// output newline char if it cannot be determinned that the output 
+	// 
 	// 
 	// 
 	// 

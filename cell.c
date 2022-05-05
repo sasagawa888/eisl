@@ -944,48 +944,48 @@ makechar(const char *pname)
     } else if (strcmp(low_name, "tab") == 0) {
 	char_entity = TAB;
     } else if (strcmp(low_name, "^a") == 0) {
-    char_entity = 1;
+	char_entity = 1;
     } else if (strcmp(low_name, "^b") == 0) {
-    char_entity = 2;
+	char_entity = 2;
     } else if (strcmp(low_name, "^c") == 0) {
-    char_entity = 3;
+	char_entity = 3;
     } else if (strcmp(low_name, "^d") == 0) {
-    char_entity = 4;
+	char_entity = 4;
     } else if (strcmp(low_name, "^e") == 0) {
-    char_entity = 5;
+	char_entity = 5;
     } else if (strcmp(low_name, "^f") == 0) {
-    char_entity = 6;
+	char_entity = 6;
     } else if (strcmp(low_name, "^k") == 0) {
-    char_entity = 11;
+	char_entity = 11;
     } else if (strcmp(low_name, "^l") == 0) {
-    char_entity = 12;
+	char_entity = 12;
     } else if (strcmp(low_name, "^n") == 0) {
-    char_entity = 14;
+	char_entity = 14;
     } else if (strcmp(low_name, "^o") == 0) {
-    char_entity = 15;
+	char_entity = 15;
     } else if (strcmp(low_name, "^p") == 0) {
-    char_entity = 16;
+	char_entity = 16;
     } else if (strcmp(low_name, "^q") == 0) {
-    char_entity = 17; 
+	char_entity = 17;
     } else if (strcmp(low_name, "^r") == 0) {
-    char_entity = 18;
+	char_entity = 18;
     } else if (strcmp(low_name, "^s") == 0) {
-    char_entity = 19;
+	char_entity = 19;
     } else if (strcmp(low_name, "^t") == 0) {
-    char_entity = 20;
+	char_entity = 20;
     } else if (strcmp(low_name, "^u") == 0) {
-    char_entity = 21;
+	char_entity = 21;
     } else if (strcmp(low_name, "^v") == 0) {
-    char_entity = 22;
+	char_entity = 22;
     } else if (strcmp(low_name, "^w") == 0) {
-    char_entity = 23;
+	char_entity = 23;
     } else if (strcmp(low_name, "^x") == 0) {
-    char_entity = 24;
+	char_entity = 24;
     } else if (strcmp(low_name, "^y") == 0) {
-    char_entity = 25;
+	char_entity = 25;
     } else if (strcmp(low_name, "^z") == 0) {
-    char_entity = 26;
-    } 
+	char_entity = 26;
+    }
 
 
 
@@ -995,17 +995,17 @@ makechar(const char *pname)
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "makechar", NIL);
     END_TRY;
-    if(!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0]) && !isUni5(pname[0]) && !isUni6(pname[0])  ){
-        heap[addr].name[0] = char_entity;
-        heap[addr].name[1] = NUL;
-    }
-    else{
-        pos = 0;
-        while (pname[pos] != NUL) {
-            heap[addr].name[pos] = pname[pos];
-	        pos++;
-        }
-        heap[addr].name[pos] = NUL;
+    if (!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0])
+	&& !isUni5(pname[0]) && !isUni6(pname[0])) {
+	heap[addr].name[0] = char_entity;
+	heap[addr].name[1] = NUL;
+    } else {
+	pos = 0;
+	while (pname[pos] != NUL) {
+	    heap[addr].name[pos] = pname[pos];
+	    pos++;
+	}
+	heap[addr].name[pos] = NUL;
     }
     SET_AUX(addr, ccharacter);
     return (addr);
@@ -1086,6 +1086,7 @@ initinst(int x, int initls)
     cl = GET_AUX(x);		// class of x
     class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
 				// 
+    // 
     // 
     // 
     // 
@@ -1344,7 +1345,7 @@ convert(int arg1, int arg2)
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == ccharacter) {
-        ucs4_to_utf8(GET_INT(arg1),str);
+	    ucs4_to_utf8(GET_INT(arg1), str);
 	    return (makechar(str));
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
@@ -1372,7 +1373,7 @@ convert(int arg1, int arg2)
 	break;
     case CHR:
 	if (GET_AUX(arg2) == cinteger) {
-        return(makeint(utf8_to_ucs4(GET_NAME(arg1))));
+	    return (makeint(utf8_to_ucs4(GET_NAME(arg1))));
 	} else if (GET_AUX(arg2) == csymbol) {
 	    return (makesym(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == cstring) {

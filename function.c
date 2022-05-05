@@ -3101,7 +3101,7 @@ f_set_elt(int arglist)
 	if (longnump(arg3)
 	    && (long long int) strlen(GET_NAME(arg2)) <= GET_LONG(arg3))
 	    error(OUT_OF_RANGE, "set-elt", arg2);
-	STRING_SET(arg2, GET_INT(arg3), GET_CHAR(arg1));
+	string_set(arg2, arg3, arg1);
     }
     return (arg1);
 }

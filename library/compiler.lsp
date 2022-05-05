@@ -479,7 +479,7 @@ defgeneric compile
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t
                       (format stream "Fcdr(Fmakesym(\"")
-                      (format stream (convert (conv-name x) <string>))
+                      (format stream (convert x <string>))
                       (format stream "\"))"))))
               ((and (symbolp x) (not clos))
                ;;not in lambda

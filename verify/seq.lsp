@@ -70,7 +70,6 @@
 ($error (elt '(a b c) 3) <program-error>)
 ($error (elt '(a b c) 1234567890) <program-error>)
 ($test (elt (create-list 1000 'a) 999) a)
-
 ($test (let ((string (create-string 5 #\x)))
    (set-elt #\O string 2)
    string)
@@ -114,6 +113,7 @@
 ($test (let ((x (create-string 1000 #\a))) (list (set-elt #\z x 999) (elt x 999)))
  (#\z #\z)
  equal)
+ 
 ;;; Vector
 ($error (setf (elt #() 0) 'a) <program-error>)
 ($error (setf (elt #() -1) 'a) <domain-error>)
@@ -156,7 +156,6 @@
 ($error (set-elt 'a '(a b c) 1234567890) <program-error>)
 ($test (let ((x (create-list 1000 'a))) (list (setf (elt x 999) 'z) (elt x 999))) (z z) equal)
 ($test (let ((x (create-list 1000 'a))) (list (set-elt 'z x 999) (elt x 999))) (z z) equal)
-
 ;;;
 ;;; function (SUBSEQ sequence z1 z2) --> sequence
 ;;;
@@ -391,7 +390,6 @@
 ($test (let ((a '(a b c)) (b '(d)) (c '(g h i))) (list (map-into a (lambda (x y) 'z) b c) a b c))
  ((z b c) (z b c) (d) (g h i))
  equal)
-
 ;;; ����
 ($test (let ((a "abc") (b #(d e f)) (c '(g h i)) (d #(nil nil nil)))
    (list (map-into d #'list a b c) a b c d))

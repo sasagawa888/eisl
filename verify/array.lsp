@@ -534,3 +534,4 @@
 ($test (array-dimensions (create-array '(1000 1000))) (1000 1000) equal)
 ($test (array-dimensions array3) (1 2 3) equal)
 ($test (array-dimensions (create-array '(100 100 100))) (100 100 100) equal)
+

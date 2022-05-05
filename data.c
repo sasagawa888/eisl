@@ -1613,6 +1613,8 @@ string_ref(int x, int y)
     return(NIL);
 }
 
+
+
 /*
 string_set()
 It is assumed that the characters to be replaced and the characters to be replaced are the same size.
@@ -1620,13 +1622,13 @@ It's incomplete, but it shouldn't be a problem in practice.
 If you try to do it completely, it will be complicated.
 */
 int string_set(int x, int y, int z){
-    char            str[CHARSIZE];
-    int             pos,y1,i;
+    char            str[STRSIZE];
+    int             pos,y1;
 
     pos = 0;
     y1 = 0;
     strcpy(str,GET_NAME(z));
-    while(STRING_REF(x,pos) != NUL){
+    while(STRING_REF(x,pos) && pos < STRSIZE){
         if(GET_INT(y) == y1){
             if(isUni2(str[0])){
                 STRING_SET(x,pos,str[0]);
@@ -1683,10 +1685,15 @@ int string_set(int x, int y, int z){
             pos = pos+6;
             y1++;
         }
+        else{ 
+            pos++;
+            y1++;
+        }
 
     }
     return(NIL);
 }
+
 
 /*
 int

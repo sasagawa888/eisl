@@ -70,6 +70,8 @@
 #define isUni6(c)   (((unsigned char)(c) >= 0xfc) && \
                      ((unsigned char)(c) <= 0xfd))
 
+#define isUniRest(c) (((unsigned char)(c) >= 0x80) && \
+                     ((unsigned char)(c) <= 0xbf))
 
 
 

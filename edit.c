@@ -16,7 +16,7 @@
 #define CTRL(X) ((X) & 0x1F)
 #endif
 
-bool            read_line_loop(int c, int *j, int *pos, int limit,
+bool            read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 			       int *rl_line);
 
 int
@@ -77,18 +77,8 @@ display_buffer()
 
     while (buffer[col][0] != EOL && buffer[col][0] != NUL) {
 
-	if (ed_incomment != -1 && line >= ed_incomment) {	// comment 
-								// 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
-	    // 
+	if (ed_incomment != -1 && line >= ed_incomment) {	
+		// comment 					 
 	    // #|...|#
 	    ESCBOLD();
 	    setcolor(ed_comment_color);
@@ -468,8 +458,10 @@ left(int *j)
 int
 read_line(int flag)
 {
-    int             j,
+    int             j,     // colums position of buffer 
+					uni_j, // column position of display
                     rl_line;
+		
     static int      pos = 0;
 
     if (flag == -1) {
@@ -497,8 +489,9 @@ read_line(int flag)
 	ed_lparen_col = -1;
 	ed_rparen_col = -1;
 	j = 0;
+	uni_j = 0;
 	c = eisl_getch();
-	while (!read_line_loop(c, &j, &pos, limit, &rl_line)) {
+	while (!read_line_loop(c, &j, &uni_j, &pos, limit, &rl_line)) {
 	    c = eisl_getch();
 	}
     }
@@ -543,7 +536,7 @@ down(int *rl_line, int *j, int *pos)
 }
 
 bool
-read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
+read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 {
     int             k;
 
@@ -564,10 +557,19 @@ read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 	if (*j <= 0)
 	    break;
 	(*j)--;
+
+	if(isUni1(buffer[(*j)][0])){
+		   (*uni_j)--;
+	}
+	else if(isUni2(buffer[(*j)][0]) || isUni3(buffer[(*j)][0]) ||
+	        isUni4(buffer[(*j)][0]) || isUni5(buffer[(*j)][0]) || isUni6(buffer[(*j)][0])){
+		   (*uni_j)--;
+		   (*uni_j)--;
+	}
 	for (k = *j; k < COL_SIZE; k++)
 	    buffer[k][0] = buffer[k + 1][0];
 	display_buffer();
-	ESCMVLEFT(*j + 3);
+	ESCMVLEFT(*uni_j + 3);
 	if (ed_rparen_col > *j)
 	    ed_rparen_col--;
 	if (ed_lparen_col > *j)
@@ -728,7 +730,14 @@ read_line_loop(int c, int *j, int *pos, int limit, int *rl_line)
 	    if (ed_lparen_col >= *j - 1)
 		ed_lparen_col++;
 	}
-	ESCMVLEFT(*j + 3);
+	if(isUni1(c)){
+		(*uni_j)++;
+	}
+	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
+		(*uni_j)++;
+		(*uni_j)++;
+	}
+	ESCMVLEFT(*uni_j + 3);
 
     }
     return false;

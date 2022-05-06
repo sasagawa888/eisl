@@ -294,25 +294,25 @@ findrparen_buffer(int col)
 void
 emphasis_rparen_buffer(int col, int uni_col)
 {
-    int             pos;
+    int             uni_pos;
 
     if (buffer[col][0] != '(')
 	return;
-    pos = findrparen_buffer(col);
-    if (pos < 0)
+    uni_pos = findrparen_buffer(col);
+    if (uni_pos < 0)
 	return;
 
-    ESCMVLEFT(col + 3);
+    ESCMVLEFT(uni_col + 3);
     ESCBCYAN();
     putchar('(');
     ESCBORG();
-    ESCMVLEFT(pos + 3);
+    ESCMVLEFT(uni_pos + 3);
     ESCBCYAN();
     putchar(')');
     ESCBORG();
-    ed_rparen_col = pos;
-    ed_lparen_col = col;
-    ESCMVLEFT(col + 3);
+    ed_rparen_col = uni_pos;
+    ed_lparen_col = uni_col;
+    ESCMVLEFT(uni_col + 3);
 }
 
 
@@ -483,11 +483,11 @@ left(int *j, int *uni_j)
     (*j)--;
 	c = buffer[*j][0];
 	if(isUni1(c)){
-		(*uni_j)++;
+		(*uni_j)--;
 	}
 	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
-		(*uni_j)++;
-		(*uni_j)++;
+		(*uni_j)--;
+		(*uni_j)--;
 	}
     restore_paren_buffer(*uni_j);
     emphasis_lparen_buffer(*j,*uni_j);

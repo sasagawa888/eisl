@@ -61,6 +61,3 @@ A
 
 ```
 
-
-### Note
-Currently, when using Unicode in REPL edit mode, the display is strange. Please start with the -r option.

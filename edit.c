@@ -569,7 +569,7 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	for (k = *j; k < COL_SIZE; k++)
 	    buffer[k][0] = buffer[k + 1][0];
 	display_buffer();
-	ESCMVLEFT(*uni_j + 3);
+	ESCMVLEFT(*j + 3);
 	if (ed_rparen_col > *j)
 	    ed_rparen_col--;
 	if (ed_lparen_col > *j)
@@ -737,7 +737,7 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 		(*uni_j)++;
 		(*uni_j)++;
 	}
-	ESCMVLEFT(*uni_j + 3);
+	ESCMVLEFT(*j + 3);
 
     }
     return false;

@@ -499,7 +499,7 @@ read_line(int flag)
 }
 
 void
-up(int limit, int *rl_line, int *j, int *pos)
+up(int limit, int *rl_line, int *j, int *uni_j, int *pos)
 {
     if (limit <= 1)
 	return;
@@ -508,9 +508,18 @@ up(int limit, int *rl_line, int *j, int *pos)
     for (*j = 0; *j <= COL_SIZE; (*j)++)
 	buffer[*j][0] = buffer[*j][*rl_line + 1];
 
-    for (*j = 0; *j <= COL_SIZE; (*j)++)
+    for (*j = 0; *j <= COL_SIZE; (*j)++){
 	if (buffer[*j][0] == EOL)
 	    break;
+	if(isUni1(buffer[*j][0]))
+		(*uni_j)++;
+	else if(isUni2(buffer[*j][0]) || isUni3(buffer[*j][0]) || isUni4(buffer[*j][0]) ||
+	        isUni5(buffer[*j][0]) || isUni6(buffer[*j][0])){
+		(*uni_j)++;
+		(*uni_j)++;
+	}
+	}
+	
     (*rl_line)++;
     *pos = 0;
     ed_rparen_col = -1;
@@ -519,15 +528,24 @@ up(int limit, int *rl_line, int *j, int *pos)
 }
 
 void
-down(int *rl_line, int *j, int *pos)
+down(int *rl_line, int *j, int *uni_j, int *pos)
 {
     if (*rl_line <= 1)
 	*rl_line = 1;
     for (*j = 0; *j <= COL_SIZE; (*j)++)
 	buffer[*j][0] = buffer[*j][*rl_line - 1];
-    for (*j = 0; *j <= COL_SIZE; (*j)++)
+    for (*j = 0; *j <= COL_SIZE; (*j)++){
 	if (buffer[*j][0] == EOL)
 	    break;
+	if(isUni1(buffer[*j][0]))
+		(*uni_j)++;
+	else if(isUni2(buffer[*j][0]) || isUni3(buffer[*j][0]) || isUni4(buffer[*j][0]) ||
+	        isUni5(buffer[*j][0]) || isUni6(buffer[*j][0])){
+		(*uni_j)++;
+		(*uni_j)++;
+	}
+	}
+
     (*rl_line)--;
     *pos = 0;
     ed_rparen_col = -1;
@@ -569,7 +587,7 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	for (k = *j; k < COL_SIZE; k++)
 	    buffer[k][0] = buffer[k + 1][0];
 	display_buffer();
-	ESCMVLEFT(*j + 3);
+	ESCMVLEFT(*uni_j + 3);
 	if (ed_rparen_col > *j)
 	    ed_rparen_col--;
 	if (ed_lparen_col > *j)
@@ -628,10 +646,10 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	left(j);
 	break;
     case CTRL('P'):
-	up(limit, rl_line, j, pos);
+	up(limit, rl_line, j, uni_j ,pos);
 	break;
     case CTRL('N'):
-	down(rl_line, j, pos);
+	down(rl_line, j, uni_j, pos);
 	break;
     case ESC:
 	c = eisl_getch();
@@ -704,9 +722,9 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	case ARROW_PREFIX:
 	    c = eisl_getch();
 	    if (c == ed_key_up) {
-		up(limit, rl_line, j, pos);
+		up(limit, rl_line, j, uni_j, pos);
 	    } else if (c == ed_key_down) {
-		down(rl_line, j, pos);
+		down(rl_line, j, uni_j, pos);
 	    } else if (c == ed_key_left) {
 		left(j);
 	    } else if (c == ed_key_right) {
@@ -719,17 +737,6 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	for (k = COL_SIZE; k > *j; k--)
 	    buffer[k][0] = buffer[k - 1][0];
 	buffer[(*j)++][0] = c;
-	display_buffer();
-	reset_paren_buffer();
-	if (c == '(' || c == ')') {
-	    emphasis_lparen_buffer(*j - 1);
-	    emphasis_rparen_buffer(*j - 1);
-	} else {
-	    if (ed_rparen_col >= *j - 1)
-		ed_rparen_col++;
-	    if (ed_lparen_col >= *j - 1)
-		ed_lparen_col++;
-	}
 	if(isUni1(c)){
 		(*uni_j)++;
 	}
@@ -737,7 +744,18 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 		(*uni_j)++;
 		(*uni_j)++;
 	}
-	ESCMVLEFT(*j + 3);
+	display_buffer();
+	reset_paren_buffer();
+	if (c == '(' || c == ')') {
+	    emphasis_lparen_buffer(*uni_j - 1);
+	    emphasis_rparen_buffer(*uni_j - 1);
+	} else {
+	    if (ed_rparen_col >= *j - 1)
+		ed_rparen_col++;
+	    if (ed_lparen_col >= *j - 1)
+		ed_lparen_col++;
+	}
+	ESCMVLEFT(*uni_j + 3);
 
     }
     return false;

@@ -226,7 +226,7 @@ check_token_buffer(int col)
 int
 findlparen_buffer(int col)
 {
-    int             nest;
+    int             nest,uni_col,i;
 
     col--;
     nest = 0;
@@ -240,14 +240,24 @@ findlparen_buffer(int col)
 
 	col--;
     }
-    return (col);
+	uni_col = 0;
+	for(i=0;i<col;i++){
+		if(isUni1(buffer[i][0]))
+			uni_col++;
+		else if(isUni2(buffer[i][0]) || isUni3(buffer[i][0]) || isUni4(buffer[i][0]) ||
+		        isUni5(buffer[i][0]) || isUni6(buffer[i][0])){
+			uni_col++;
+			uni_col++;
+		}
+	}
+    return (uni_col);
 }
 
 int
 findrparen_buffer(int col)
 {
     int             nest,
-                    limit;
+                    limit,uni_col,i;
 
     col++;
     nest = 0;
@@ -265,14 +275,24 @@ findrparen_buffer(int col)
 
 	col++;
     }
+	uni_col = 0;
+	for(i=0;i<col;i++){
+		if(isUni1(buffer[i][0]))
+			uni_col++;
+		else if(isUni2(buffer[i][0]) || isUni3(buffer[i][0]) || isUni4(buffer[i][0]) ||
+		        isUni5(buffer[i][0]) || isUni6(buffer[i][0])){
+			uni_col++;
+			uni_col++;
+		}
+	}
     if (col > limit)
 	return (-1);
     else
-	return (col);
+	return (uni_col);
 }
 
 void
-emphasis_rparen_buffer(int col)
+emphasis_rparen_buffer(int col, int uni_col)
 {
     int             pos;
 
@@ -297,28 +317,28 @@ emphasis_rparen_buffer(int col)
 
 
 void
-emphasis_lparen_buffer(int col)
+emphasis_lparen_buffer(int col, int uni_col)
 {
-    int             pos;
+    int             uni_pos;
 
     if (buffer[col][0] != ')')
 	return;
 
-    pos = findlparen_buffer(col);
-    if (pos < 0)
+    uni_pos = findlparen_buffer(col);
+    if (uni_pos < 0)
 	return;
 
-    ESCMVLEFT(col + 3);
+    ESCMVLEFT(uni_col + 3);
     ESCBCYAN();
     putchar(')');
     ESCBORG();
-    ESCMVLEFT(pos + 3);
+    ESCMVLEFT(uni_pos + 3);
     ESCBCYAN();
     putchar('(');
     ESCBORG();
-    ed_rparen_col = col;
-    ed_lparen_col = pos;
-    ESCMVLEFT(col + 3);
+    ed_rparen_col = uni_col;
+    ed_lparen_col = uni_pos;
+    ESCMVLEFT(uni_col + 3);
 }
 
 
@@ -432,27 +452,47 @@ insertcol_buffer(int col)
 }
 
 static void
-right(int *j)
+right(int *j, int *uni_j)
 {
+	int c;
+
     if (buffer[*j][0] == 0)
 	return;
     (*j)++;
-    restore_paren_buffer(*j);
-    emphasis_lparen_buffer(*j);
-    emphasis_rparen_buffer(*j);
-    ESCMVLEFT(*j + 3);
+	c = buffer[*j][0];
+	if(isUni1(c)){
+		(*uni_j)++;
+	}
+	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
+		(*uni_j)++;
+		(*uni_j)++;
+	}
+    restore_paren_buffer(*uni_j);
+    emphasis_lparen_buffer(*j,*uni_j);
+    emphasis_rparen_buffer(*j,*uni_j);
+    ESCMVLEFT(*uni_j + 3);
 }
 
 static void
-left(int *j)
+left(int *j, int *uni_j)
 {
+	int c;
+
     if (*j <= 0)
 	return;
     (*j)--;
-    restore_paren_buffer(*j);
-    emphasis_lparen_buffer(*j);
-    emphasis_rparen_buffer(*j);
-    ESCMVLEFT(*j + 3);
+	c = buffer[*j][0];
+	if(isUni1(c)){
+		(*uni_j)++;
+	}
+	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
+		(*uni_j)++;
+		(*uni_j)++;
+	}
+    restore_paren_buffer(*uni_j);
+    emphasis_lparen_buffer(*j,*uni_j);
+    emphasis_rparen_buffer(*j,*uni_j);
+    ESCMVLEFT(*uni_j + 3);
 }
 
 int
@@ -640,10 +680,10 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	ESCMVLEFT(k + 3);
 	break;
     case CTRL('F'):
-	right(j);
+	right(j,uni_j);
 	break;
     case CTRL('B'):
-	left(j);
+	left(j,uni_j);
 	break;
     case CTRL('P'):
 	up(limit, rl_line, j, uni_j ,pos);
@@ -726,9 +766,9 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	    } else if (c == ed_key_down) {
 		down(rl_line, j, uni_j, pos);
 	    } else if (c == ed_key_left) {
-		left(j);
+		left(j,uni_j);
 	    } else if (c == ed_key_right) {
-		right(j);
+		right(j,uni_j);
 	    }
 	}
 	break;
@@ -747,8 +787,8 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	display_buffer();
 	reset_paren_buffer();
 	if (c == '(' || c == ')') {
-	    emphasis_lparen_buffer(*uni_j - 1);
-	    emphasis_rparen_buffer(*uni_j - 1);
+	    emphasis_lparen_buffer((*j - 1),(*uni_j - 1));
+	    emphasis_rparen_buffer((*j - 1),(*uni_j - 1));
 	} else {
 	    if (ed_rparen_col >= *j - 1)
 		ed_rparen_col++;

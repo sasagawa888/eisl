@@ -459,7 +459,7 @@ right(int *j, int *uni_j)
     if (buffer[*j][0] == 0){
 	return;
 	}
-	
+
 	c = buffer[*j][0];
 	if(isUni1(c)){
 		(*j)++;
@@ -631,14 +631,39 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 
 	if(isUni1(buffer[(*j)][0])){
 		   (*uni_j)--;
+		   for (k = *j; k < COL_SIZE; k++)
+	    		buffer[k][0] = buffer[k + 1][0];
 	}
-	else if(isUni2(buffer[(*j)][0]) || isUni3(buffer[(*j)][0]) ||
-	        isUni4(buffer[(*j)][0]) || isUni5(buffer[(*j)][0]) || isUni6(buffer[(*j)][0])){
-		   (*uni_j)--;
-		   (*uni_j)--;
+	else{
+		(*uni_j)--;
+		(*uni_j)--;
+		c = buffer[(*j)][0];
+		while(isUniRest(c)){
+			(*j)--;
+			c = buffer[(*j)][0];
+		}
+		if(isUni2(c)){
+			for (k = *j; k < COL_SIZE; k++)
+	    		buffer[k][0] = buffer[k + 2][0];
+		}
+		else if(isUni3(c)){
+			for (k = *j; k < COL_SIZE; k++)
+	    		buffer[k][0] = buffer[k + 3][0];
+		}
+		else if(isUni4(c)){
+			for (k = *j; k < COL_SIZE; k++)
+	    		buffer[k][0] = buffer[k + 4][0];
+		}
+		else if(isUni5(c)){
+			for (k = *j; k < COL_SIZE; k++)
+	    		buffer[k][0] = buffer[k + 5][0];
+		}
+		else if(isUni6(c)){
+			for (k = *j; k < COL_SIZE; k++)
+	    		buffer[k][0] = buffer[k + 6][0];
+		}
 	}
-	for (k = *j; k < COL_SIZE; k++)
-	    buffer[k][0] = buffer[k + 1][0];
+
 	display_buffer();
 	ESCMVLEFT(*uni_j + 3);
 	if (ed_rparen_col > *j)

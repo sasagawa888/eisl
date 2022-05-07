@@ -14,3 +14,5 @@ Unicode extention tests
 ($test (elt "笹川賢一" 0) #\笹)
 ($test (elt "笹川賢一" 1) #\川)
 ($test (subseq "笹川賢一" 0 2) "笹川")
+($test (length "こんにちは世界") 7)
+($test (aref "こんにちは世界" 1) #\ん)

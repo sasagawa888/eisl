@@ -244,9 +244,12 @@ findlparen_buffer(int col)
 	for(i=0;i<col;i++){
 		if(isUni1(buffer[i][0]))
 			uni_col++;
-		else if(isUni2(buffer[i][0]) || isUni3(buffer[i][0]) || isUni4(buffer[i][0]) ||
-		        isUni5(buffer[i][0]) || isUni6(buffer[i][0])){
+		else if(isUni3(buffer[i][0])){
 			uni_col++;
+			uni_col++;
+		}
+		else if(isUni2(buffer[i][0]) || isUni4(buffer[i][0]) ||
+		        isUni5(buffer[i][0]) || isUni6(buffer[i][0])){
 			uni_col++;
 		}
 	}
@@ -279,9 +282,12 @@ findrparen_buffer(int col)
 	for(i=0;i<col;i++){
 		if(isUni1(buffer[i][0]))
 			uni_col++;
+		else if(isUni3(buffer[i][0])){
+			uni_col++;
+			uni_col++;
+		}
 		else if(isUni2(buffer[i][0]) || isUni3(buffer[i][0]) || isUni4(buffer[i][0]) ||
 		        isUni5(buffer[i][0]) || isUni6(buffer[i][0])){
-			uni_col++;
 			uni_col++;
 		}
 	}
@@ -624,6 +630,7 @@ down(int *rl_line, int *j, int *uni_j, int *pos)
     ed_lparen_col = -1;
     display_buffer();
 }
+
 
 int unipos(int *j){
 	int k,uni_pos;

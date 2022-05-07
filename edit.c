@@ -472,8 +472,13 @@ right(int *j, int *uni_j)
 			(*j)++;
 			c = buffer[*j][0];
 		}
-		(*uni_j)++;
-		(*uni_j)++;
+		if(isUni3(c)){
+			(*uni_j)++;
+			(*uni_j)++;
+		}
+		else {
+			(*uni_j)++;
+		}
 	}
     restore_paren_buffer(*uni_j);
     emphasis_lparen_buffer(*j,*uni_j);
@@ -498,8 +503,13 @@ left(int *j, int *uni_j)
 			(*j)--;
 			c = buffer[*j][0];
 		}
-		(*uni_j)--;
-		(*uni_j)--;
+		if(isUni3(c)){
+			(*uni_j)--;
+			(*uni_j)--;
+		}
+		else{
+			(*uni_j)--;
+		}
 	}
 	
     restore_paren_buffer(*uni_j);
@@ -558,17 +568,21 @@ up(int limit, int *rl_line, int *j, int *uni_j, int *pos)
 	return;
     if (*rl_line >= limit - 1)
 	*rl_line = limit - 2;
-    for (*j = 0; *j <= COL_SIZE; (*j)++)
+    for (*j = 0; *j <= COL_SIZE; (*j)++){
 	buffer[*j][0] = buffer[*j][*rl_line + 1];
-
+	}
+	*uni_j = 0;
     for (*j = 0; *j <= COL_SIZE; (*j)++){
 	if (buffer[*j][0] == EOL)
 	    break;
 	if(isUni1(buffer[*j][0]))
 		(*uni_j)++;
-	else if(isUni2(buffer[*j][0]) || isUni3(buffer[*j][0]) || isUni4(buffer[*j][0]) ||
-	        isUni5(buffer[*j][0]) || isUni6(buffer[*j][0])){
+	else if(isUni3(buffer[*j][0])){
 		(*uni_j)++;
+		(*uni_j)++;
+	}
+	else if(isUni2(buffer[*j][0]) || isUni4(buffer[*j][0]) ||
+	        isUni5(buffer[*j][0]) || isUni6(buffer[*j][0])){
 		(*uni_j)++;
 	}
 	}
@@ -585,16 +599,21 @@ down(int *rl_line, int *j, int *uni_j, int *pos)
 {
     if (*rl_line <= 1)
 	*rl_line = 1;
-    for (*j = 0; *j <= COL_SIZE; (*j)++)
+    for (*j = 0; *j <= COL_SIZE; (*j)++){
 	buffer[*j][0] = buffer[*j][*rl_line - 1];
+	}
+	*uni_j = 0;
     for (*j = 0; *j <= COL_SIZE; (*j)++){
 	if (buffer[*j][0] == EOL)
 	    break;
 	if(isUni1(buffer[*j][0]))
 		(*uni_j)++;
-	else if(isUni2(buffer[*j][0]) || isUni3(buffer[*j][0]) || isUni4(buffer[*j][0]) ||
-	        isUni5(buffer[*j][0]) || isUni6(buffer[*j][0])){
+	else if(isUni3(buffer[*j][0])){
 		(*uni_j)++;
+		(*uni_j)++;
+	}
+	else if(isUni2(buffer[*j][0]) || isUni4(buffer[*j][0]) ||
+	        isUni5(buffer[*j][0]) || isUni6(buffer[*j][0])){
 		(*uni_j)++;
 	}
 	}
@@ -614,9 +633,12 @@ int unipos(int *j){
 		if(isUni1(buffer[k][0])){
 			uni_pos++;
 		}
-		else if(isUni2(buffer[k][0]) || isUni3(buffer[k][0]) || isUni4(buffer[k][0]) ||
-	        isUni5(buffer[k][0]) || isUni6(buffer[k][0])){
+		else if(isUni3(buffer[k][0])){
 			uni_pos++;
+			uni_pos++;
+		}
+		else if(isUni2(buffer[k][0]) || isUni4(buffer[k][0]) ||
+	        isUni5(buffer[k][0]) || isUni6(buffer[k][0])){
 			uni_pos++;
 		}
 	}
@@ -652,30 +674,34 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	    		buffer[k][0] = buffer[k + 1][0];
 	}
 	else{
-		(*uni_j)--;
-		(*uni_j)--;
 		c = buffer[(*j)][0];
 		while(isUniRest(c)){
 			(*j)--;
 			c = buffer[(*j)][0];
 		}
 		if(isUni2(c)){
+			(*uni_j)--;
 			for (k = *j; k < COL_SIZE; k++)
 	    		buffer[k][0] = buffer[k + 2][0];
 		}
 		else if(isUni3(c)){
+			(*uni_j)--;
+			(*uni_j)--;
 			for (k = *j; k < COL_SIZE; k++)
 	    		buffer[k][0] = buffer[k + 3][0];
 		}
 		else if(isUni4(c)){
+			(*uni_j)--;
 			for (k = *j; k < COL_SIZE; k++)
 	    		buffer[k][0] = buffer[k + 4][0];
 		}
 		else if(isUni5(c)){
+			(*uni_j)--;
 			for (k = *j; k < COL_SIZE; k++)
 	    		buffer[k][0] = buffer[k + 5][0];
 		}
 		else if(isUni6(c)){
+			(*uni_j)--;
 			for (k = *j; k < COL_SIZE; k++)
 	    		buffer[k][0] = buffer[k + 6][0];
 		}
@@ -756,9 +782,12 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 		if(isUni1(buffer[k][0])){
 			(*uni_j)++;
 		}
-		else if(isUni2(buffer[k][0]) || isUni3(buffer[k][0]) || isUni4(buffer[k][0]) || 
-		        isUni5(buffer[k][0]) || isUni6(buffer[k][0])){
+		else if(isUni3(buffer[k][0])){
 			(*uni_j)++;
+			(*uni_j)++;
+		}
+		else if(isUni2(buffer[k][0]) || isUni4(buffer[k][0]) || 
+		        isUni5(buffer[k][0]) || isUni6(buffer[k][0])){
 			(*uni_j)++;
 		}
 	}
@@ -868,10 +897,10 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	for (k = COL_SIZE; k > *j; k--)
 	    buffer[k][0] = buffer[k - 1][0];
 	buffer[(*j)++][0] = c;
-	if(isUni1(c)){
+	if(isUni1(c) || isUni2(c) || isUni4(c) || isUni5(c) || isUni6(c)){
 		(*uni_j)++;
 	}
-	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
+	else if(isUni3(c)){
 		(*uni_j)++;
 		(*uni_j)++;
 	}

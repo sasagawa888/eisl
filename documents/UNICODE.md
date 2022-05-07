@@ -1,5 +1,5 @@
 # Unicode support
-The ISLisp standard does not define Unicode. Extended independently with Easy-ISLisp. Unicode is only available for strings and characters.
+The ISLisp standard does not define Unicode. Extended independently in Easy-ISLisp. Unicode is only available for strings and characters.
 
 # Extended functions
 
@@ -31,7 +31,7 @@ The length function can run for a string that include unicode character.
 
 e.g.
 ```
-> (length "山川") )
+> (length "山川") 
 2
 > 
 ```

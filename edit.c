@@ -606,6 +606,23 @@ down(int *rl_line, int *j, int *uni_j, int *pos)
     display_buffer();
 }
 
+int unipos(int *j){
+	int k,uni_pos;
+
+	uni_pos = 0;
+	for(k=0;k<(*j);k++){
+		if(isUni1(buffer[k][0])){
+			uni_pos++;
+		}
+		else if(isUni2(buffer[k][0]) || isUni3(buffer[k][0]) || isUni4(buffer[k][0]) ||
+	        isUni5(buffer[k][0]) || isUni6(buffer[k][0])){
+			uni_pos++;
+			uni_pos++;
+		}
+	}
+	return(uni_pos);
+}
+
 bool
 read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 {
@@ -771,8 +788,9 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 		break;
 	    else if (ed_candidate_pt == 1) {
 		*j = replace_fragment_buffer(ed_candidate[0], *j);
+		*uni_j = unipos(j);
 		display_buffer();
-		ESCMVLEFT(*j + 3);
+		ESCMVLEFT(*uni_j + 3);
 	    } else {
 		const int       CANDIDATE = 3;
 		int             i;
@@ -815,14 +833,16 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 		    while (bad_candidate_selected);
 		}
 		while (more_candidates_selected);
-		if (c != ESC)
+		if (c != ESC){
 		    *j = replace_fragment_buffer(ed_candidate[i + k], *j);
+			*uni_j = unipos(j);
+		}
 		ESCMVLEFT(1);
 		ESCCLSL();
 		ESCMVU();
 		ESCMVLEFT(3);
 		display_buffer();
-		ESCMVLEFT(*j + 3);
+		ESCMVLEFT(*uni_j + 3);
 	    }
 	    return false;
 	case 'q':		// Esc+q

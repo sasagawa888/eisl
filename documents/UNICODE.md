@@ -61,3 +61,13 @@ A
 
 ```
 
+### subseq
+The subseq function can run for a string that include unicode character.
+
+e.g.
+```
+> (subseq "あいうえお" 2 4)
+"うえ"
+> 
+```
+

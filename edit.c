@@ -456,14 +456,22 @@ right(int *j, int *uni_j)
 {
 	int c;
 
-    if (buffer[*j][0] == 0)
+    if (buffer[*j][0] == 0){
 	return;
-    (*j)++;
+	}
+	
 	c = buffer[*j][0];
 	if(isUni1(c)){
+		(*j)++;
 		(*uni_j)++;
 	}
-	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
+	else{
+		(*j)++;
+		c = buffer[*j][0];
+		while(isUniRest(c)){
+			(*j)++;
+			c = buffer[*j][0];
+		}
 		(*uni_j)++;
 		(*uni_j)++;
 	}

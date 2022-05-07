@@ -485,10 +485,15 @@ left(int *j, int *uni_j)
 	if(isUni1(c)){
 		(*uni_j)--;
 	}
-	else if(isUni2(c) || isUni3(c) || isUni4(c) || isUni5(c) || isUni6(c)){
+	else{
+		while(isUniRest(c)){
+			(*j)--;
+			c = buffer[*j][0];
+		}
 		(*uni_j)--;
 		(*uni_j)--;
 	}
+	
     restore_paren_buffer(*uni_j);
     emphasis_lparen_buffer(*j,*uni_j);
     emphasis_rparen_buffer(*j,*uni_j);

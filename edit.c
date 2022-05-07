@@ -731,14 +731,24 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	ESCMVLEFT(*uni_j + 3);
 	break;
     case CTRL('E'):
+	*uni_j = 0;
 	for (k = 0; k < COL_SIZE; k++) {
-	    if (buffer[k][0] == NUL)
+	    if (buffer[k][0] == NUL){
 		break;
+		}
+		if(isUni1(buffer[k][0])){
+			(*uni_j)++;
+		}
+		else if(isUni2(buffer[k][0]) || isUni3(buffer[k][0]) || isUni4(buffer[k][0]) || 
+		        isUni5(buffer[k][0]) || isUni6(buffer[k][0])){
+			(*uni_j)++;
+			(*uni_j)++;
+		}
 	}
 
 	display_buffer();
 	*j = k;
-	ESCMVLEFT(k + 3);
+	ESCMVLEFT(*uni_j + 3);
 	break;
     case CTRL('F'):
 	right(j,uni_j);

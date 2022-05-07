@@ -1,6 +1,9 @@
 # Edlis
 Edlis is a simple editor for ISLisp. Edlis is subset Edwin.
 
+## Note
+Edlis does not support Unicode.
+
 ## Invocation
 `(edit filename)` in the REPL.
 

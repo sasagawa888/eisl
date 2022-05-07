@@ -1479,15 +1479,87 @@ int
 substr(int x, int s, int e)
 {
     int             i,
-                    j;
+                    j,
+					pos,c;
     char           *str;
 
-    str = ALLOC((e - s) + 1);
+    str = ALLOC(((e - s) + 1)*6); // for unicode allocate 6 byte for 1 char 
+	// skip to start position
+	i = 0;
+	pos = 0;
+	while(i < s){
+		c = STRING_REF(x,pos);
+		if(isUni1(c)){
+			pos++;
+			i++;
+		}
+		else if(isUni2(c)){
+			pos = pos + 2;
+			i++;
+		}
+		else if(isUni3(c)){
+			pos = pos + 3;
+			i++;
+		}
+		else if(isUni4(c)){
+			pos = pos + 4;
+			i++;
+		}
+		else if(isUni5(c)){
+			pos = pos + 5;
+			i++;
+		}
+		else if(isUni6(c)){
+			pos = pos + 6;
+			i++;
+		}
+	}
+
+
     j = 0;
-    for (i = s; i < e; i++) {
-	str[j] = STRING_REF(x, i);
-	j++;
-    }
+	while(i < e){
+		c = STRING_REF(x,pos);
+		if(isUni1(c)){
+			str[j++] = STRING_REF(x,pos++);
+			i++;
+		}
+		else if(isUni2(c)){
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			i++;
+		}
+		else if(isUni3(c)){
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			i++;
+		}
+		else if(isUni4(c)){
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			i++;
+		}
+		else if(isUni5(c)){
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			i++;
+		}
+		else if(isUni6(c)){
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			str[j++] = STRING_REF(x,pos++);
+			i++;
+		}
+
+	}
     str[j] = NUL;
     int             res = makestr(str);
     FREE(str);

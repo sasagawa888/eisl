@@ -2,43 +2,9 @@
 ;;
 ;; The Scheme code ran in Normal(my old Scheme system)
 
-(import (scheme time)
-         (lib eagle))
-;PI -- Compute PI using bignums.
-;;; 
-;;; ; See http://mathworld.wolfram.com/Pi.html for the various algorithms.
-;;; 
-;;; (import (scheme base)
-;;;         (scheme char)
-;;;         (scheme read)
-;;;         (scheme write)
-;;;         (scheme time))
-;;; 
-;;; R6RS procedures needed by this benchmark
-(define (div x y)
-  (cond ((and (exact-integer? x)
-              (exact-integer? y)
-              (>= x 0))
-         (quotient x y))
-        ((< y 0)
-         ; x < 0, y < 0
-         (let* ((q (quotient x y))
-                (r (- x (* q y))))
-           (if 😊 r 0)
-               q
-               (+ q 1))))
-        (else
-         ; x < 0, y > 0
-         (let* ((q (quotient x y))
-                (r (- x (* q y))))
-           (if 😊 r 0)
-               q
-               (- q 1))))))
-;;; End of R6RS procedures.
-; Utilities.
-(define (width x)
-  (let loop ((i 0) (n 1))
-    (if (< x n) i (loop (+ i 1) (* n 2)))))
+
+
+#|
 (define (root x y)
   (let loop ((g (expt
                  2
@@ -48,27 +14,45 @@
         (let ((c (* a (- y 1))))
           (let ((d (div (+ x (* g c)) b)))
             (if (< d g) (loop d) g)))))))
-(define (square-root x)
-  (root x 2))
-(define (quartic-root x)
-  (root x 4))
-;(define (square x)
-;  (* x x))
-(define (test nb-digits)
-  (let ((one (expt 10 nb-digits)))
-    (let ((a one)
-               (b (square-root (div (square one) 2)))
-               (t (div one 4))
-               (x 1))
-     (display a))))
+|#
+(defun square-root (x)
+    (isqrt x))
+
+(defun quartic-root (x)
+    (root x 4))
+
+(defun square (x)
+    (* x x))
+
+
 ; Compute pi using the 'brent-salamin' method.
+(defun pi-brent-salamin (nb-digits)
+    (let ((one (expt 10 nb-digits)))
+        (pi-brent-salamin1 one
+                           one
+                           (square-root (div (square one) 2))
+                           (div one 4)
+                           1)))
+
+(defun pi-brent-salamin1 (one a b tt x)
+    (if (= a b)
+        (div (square (+ a b)) (* 4 tt))
+        (let ((new-a (div (+ a b) 2)))
+            (pi-brent-salamin1 one
+                               new-a 
+                               (square-root (* a b))
+                               (- tt (div (* x (square (- new-a a))) one))
+                               (* 2 x)))))
+
+
+#|
 (define (pi-brent-salamin nb-digits)
   (let ((one (expt 10 nb-digits)))
     (let loop ((a one)
                (b (square-root (div (square one) 2)))
                (t (div one 4))
                (x 1))
-      (if 😊 a b)
+      (if (= a b)
           (div (square (+ a b)) (* 4 t))
           (let ((new-a (div (+ a b) 2)))
             (loop new-a
@@ -92,7 +76,7 @@
                (p (+ (* 2 one) sqrt2)))
       (let ((new-p (div (* p (+ x one))
                                     (+ y one))))
-        (if 😊 x one)
+        (if = x one)
             new-p
             (let ((sqrt-x (square-root (* one x))))
               (loop (div
@@ -111,7 +95,7 @@
     (let loop ((y (- sqrt2 one))
                (a (- (* 6 one) (* 4 sqrt2)))
                (x 8))
-      (if 😊 y 0)
+      (if = y 0)
           (div one^2 a)
           (let* ((t1 (quartic-root (- one^4 (square (square y)))))
                  (t2 (div
@@ -156,3 +140,5 @@
              (hide count input2)
              (hide count input3)))
      (lambda (result) (equal? result output)))))
+
+  |#

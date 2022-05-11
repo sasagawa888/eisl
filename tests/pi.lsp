@@ -2,8 +2,6 @@
 ;;
 ;; The Scheme code ran in Normal(my old Scheme system)
 
-
-
 #|
 (define (root x y)
   (let loop ((g (expt
@@ -24,6 +22,12 @@
 (defun square (x)
     (* x x))
 
+
+#|
+For Common-Lisp
+(defun div (x y)
+    (floor x y))
+|#
 
 ; Compute pi using the 'brent-salamin' method.
 (defun pi-brent-salamin (nb-digits)

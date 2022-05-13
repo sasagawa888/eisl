@@ -209,7 +209,7 @@ check_token_buffer(int col)
     while (buffer[col][0] != ' ' &&
 	   buffer[col][0] != '(' &&
 	   buffer[col][0] != ')' &&
-	   buffer[col][0] != NUL && buffer[col][0] != EOL) {
+	   buffer[col][0] != NUL && buffer[col][0] != EOL && pos < TOKEN_MAX) {
 	str[pos] = buffer[col][0];
 	col++;
 	pos++;

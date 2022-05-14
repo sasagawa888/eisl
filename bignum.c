@@ -1,4 +1,4 @@
-//#define NEWBIG 
+#define NEWBIG 
 
 /* New bignum
 * I am designing a new bignum data structure.
@@ -33,6 +33,26 @@
 #include "eisl.h"
 #include "fmt.h"
 #include "text.h"
+
+#ifdef  NEWBIG
+
+int get_length(int x){
+	return(GET_CDR(x));
+}
+
+void set_length(int x, int y){
+	SET_CDR(x,y);
+}
+
+int get_pointer(int x){
+	return(GET_CAR(x));
+}
+
+void set_pointer(int x, int y){
+	SET_CAR(x,y);
+}
+
+#endif
 
 
 #ifdef NEWBIG
@@ -100,20 +120,12 @@ makebigx(char *bignum)
 	return (res);
     } else {
 	SET_TAG(res, BIGX);
-	SET_CAR(res, big_pt0-1);
-	SET_CDR(res, len);
+	set_pointer(res, big_pt0-1);
+	set_length(res, len);
 	set_sign(res, sign);
 	SET_AUX(res, cbignum);
 	return (res);
     }
-}
-
-int get_length(int x){
-	return(GET_CDR(x));
-}
-
-int get_pointer(int x){
-	return(GET_CAR(x));
 }
 
 #else
@@ -569,7 +581,28 @@ bigx_abs_smallerp(int arg1, int arg2)
 }
 #endif
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_smallerp(int x, int y)
+{
+    
+    if (bigx_positivep(x) && bigx_negativep(x))
+	return (0);
+    else if (bigx_negativep(x) && bigx_positivep(y))
+	return (1);
+	else if (bigx_positivep(x) && bigx_positivep(y)) 
+		return(bigx_abs_smallerp(x,y));
+	else if (bigx_negativep(x) && bigx_negativep(y))
+		return(bigx_abs_smallerp(y,x));
+	else 
+	return (0);
 
+    return (0);
+}
+
+#else
+//old bignum
 int
 bigx_smallerp(int arg1, int arg2)
 {
@@ -630,6 +663,9 @@ bigx_smallerp(int arg1, int arg2)
     return (0);
 }
 
+#endif
+
+
 // find nth cell address
 int
 get_nth(int x, int n)
@@ -687,6 +723,29 @@ cut_zero(int x)
     SET_CDR(msb, NIL);
 }
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_int_to_big(int x)
+{
+    int             res,
+                    y;
+
+    y = GET_INT(x);
+	bigcell[big_pt0++] = y;
+    res = gen_big();
+    SET_TAG(res, BIGX);
+	set_pointer(res,big_pt0);
+	set_length(res,1);
+    if (y >= 0)
+	set_sign(res, 1);
+    else
+	set_sign(res, -1);
+    return (res);
+}
+
+#else
+//old bignum
 int
 bigx_int_to_big(int x)
 {
@@ -703,6 +762,8 @@ bigx_int_to_big(int x)
 	set_sign(res, -1);
     return (res);
 }
+
+#endif
 
 int
 bigx_long_to_big(int x)

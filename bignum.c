@@ -223,8 +223,8 @@ print_bigx(int x)
 	    txt1 = Text_put("-");
 	}
     }
-    y = GET_CAR(x); //get pointer of bigcell
-	len = GET_PROP(x); //get length of bignum;
+    y = get_pointer(x); //get pointer of bigcell
+	len = get_length(x); //get length of bignum;
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	Fmt_fprint(GET_PORT(output_stream), "%d", bigcell[y]);
     } else {
@@ -735,7 +735,7 @@ bigx_int_to_big(int x)
 	bigcell[big_pt0++] = y;
     res = gen_big();
     SET_TAG(res, BIGX);
-	set_pointer(res,big_pt0);
+	set_pointer(res,big_pt0-1);
 	set_length(res,1);
     if (y >= 0)
 	set_sign(res, 1);
@@ -766,6 +766,29 @@ bigx_int_to_big(int x)
 #endif
 
 #ifdef NEWBIG
+//new bignum
+int
+bigx_long_to_big(int x)
+{
+    int             res,
+                    i2,
+                    i1;
+    long long int   l;
+
+    l = GET_LONG(x);
+    i2 = llabs(l) % BIGNUM_BASE;
+    i1 = llabs(l) / BIGNUM_BASE;
+	bigcell[big_pt0++] = i1;
+	bigcell[big_pt0++] = i2;
+    res = gen_big();
+    SET_TAG(res, BIGX);
+	set_pointer(res,big_pt0-1);
+    if (l >= 0)
+	set_sign(res, 1);
+    else
+	set_sign(res, -1);
+    return (res);
+}
 
 #else
 //old bignum
@@ -792,6 +815,34 @@ bigx_long_to_big(int x)
 
 #endif
 
+
+#ifdef NEWBIG
+//new bignum
+int
+bigx_simplify(int x)
+{
+    int             i1;
+    long long int   l,
+                    l1,
+                    l2;
+
+    if (get_length(x) == 0) {
+	return (makeint(0));
+    } else if (get_length(x) == 1) {
+	i1 = bigcell[get_pointer(x)];
+	i1 = i1 * get_sign(x);
+	return (makeint(i1));
+    } else if (get_length(x) == 2) {
+	l1 = bigcell[get_pointer(x)];
+	l2 = bigcell[get_pointer(x)+1];
+	l = (l1 * BIGNUM_BASE + l2) * get_sign(x);
+	return (makelong(l));
+    } else
+	return (x);
+}
+
+#else
+//old bignum
 int
 bigx_simplify(int x)
 {
@@ -818,6 +869,8 @@ bigx_simplify(int x)
 
 }
 
+#endif
+
 // add n-zero-cells to x
 int
 bigx_shift(int x, int n)
@@ -840,7 +893,22 @@ bigx_shift(int x, int n)
     return (res);
 }
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_abs(int x)
+{
+    int             res;
 
+    res = gen_big();
+    SET_TAG(res, BIGX);
+    set_sign(res, 1);
+	set_pointer(res,get_pointer(x));
+	set_length(res,get_length(x));
+    return (res);
+}
+#else
+//old bignum
 int
 bigx_abs(int x)
 {
@@ -860,7 +928,7 @@ bigx_abs(int x)
 
     return (res);
 }
-
+#endif
 
 int
 bigx_plus(int arg1, int arg2)
@@ -898,6 +966,60 @@ bigx_plus(int arg1, int arg2)
     return (res);
 }
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_plus1(int arg1, int arg2)
+{
+    int             len1,len2,pointerx,pointery,
+					c,len,
+                    res;
+
+	len1 = get_length(arg1);
+	len2 = get_length(arg2);
+	pointerx = get_pointer(arg1)-len1+1; //LSB
+	pointery = get_pointer(arg2)-len2+1; //LSB
+    res = gen_big();
+    SET_TAG(res, BIGX);
+    set_sign(res, 1);
+    c = 0;
+	len = 0;
+    do {
+	int             x,
+	                y,
+	                z,
+	                q;
+
+	if(len1 > 0)
+		x = bigcell[pointerx];
+	else
+		x = 0;
+	
+	if(len2 > 0)
+		y = bigcell[pointery];
+	else
+		y = 0;
+
+	z = x + y + c;
+	c = z / BIGNUM_BASE;
+	q = z % BIGNUM_BASE;
+	bigcell[big_pt0++] = q;
+	pointerx++;
+	pointery++;
+	len1--;
+	len2--;
+	len++;
+    } while (len1 > 0 || len2 > 0);
+    if (c != 0)
+		bigcell[big_pt0++] = c;
+	
+	set_pointer(res,big_pt0-1);
+	set_length(res,len);
+    return (res);
+}
+
+#else
+//old bignum
 int
 bigx_plus1(int arg1, int arg2)
 {
@@ -931,6 +1053,7 @@ bigx_plus1(int arg1, int arg2)
     cut_zero(res);
     return (res);
 }
+#endif
 
 void
 bigx_plus2(int arg, int c, int msb)

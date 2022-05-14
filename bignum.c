@@ -1,11 +1,11 @@
-/*
+/* New bignum
 * I am designing a new bignum data structure.
 *  bigcell[BIGISZE]  array of 32bit integer.
 *  big_pt0  pointer of temporaly bignum. 
 *  big_pt1  pointer of parmanent bignum.
-*  each bignum   MSB(1,000,000,000+length) element0 element1 ... elementn
+*  each bignum   element0 element1 ... elementn ... element1,element0
 *  The sign is held by each element.
-*  The cell address adds a bias of 50,000,000 to the pointer.
+*  The cell has the pointer of MSB.
 */
 
 
@@ -70,7 +70,7 @@ makebigx(char *bignum)
 		i--;
 	    }
 	    integer[9] = NUL;
-		bigcell[big_pt0--] = atoi(integer) * sign;
+		bigcell[big_pt0++] = atoi(integer) * sign;
 	    len++;
 	} else {
 	    integer[i + 1] = NUL;
@@ -78,19 +78,18 @@ makebigx(char *bignum)
 		integer[i] = bignum[i];
 		i--;
 	    }
-		bigcell[big_pt0--] = atoi(integer) * sign;
+		bigcell[big_pt0++] = atoi(integer) * sign;
 	    len++;
 	}
     }
-	bigcell[big_pt0--] = BIGNUM_BASE + len;
 
     if (len == 2) {
 	long long int   l,
 	                m;
 
-	big_pt0 = big_pt0 + 3;
-	l = (long long int) bigcell[big_pt0-1] * BIGNUM_BASE;
-	m = (long long int) bigcell[big_pt0];
+	big_pt0 = big_pt0 - 2;
+	l = (long long int) bigcell[big_pt0] * BIGNUM_BASE;
+	m = (long long int) bigcell[big_pt0+1];
 	m = (l + m) * sign;
 	SET_TAG(res, LONGN);
 	SET_LONG(res, m);
@@ -99,6 +98,7 @@ makebigx(char *bignum)
     } else {
 	SET_TAG(res, BIGX);
 	set_sign(res, sign);
+	SET_PROP(res,len);
 	SET_AUX(res, cbignum);
 	return (res);
     }

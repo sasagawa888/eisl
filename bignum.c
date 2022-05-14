@@ -3,9 +3,10 @@
 *  bigcell[BIGISZE]  array of 32bit integer.
 *  big_pt0  pointer of temporaly bignum. 
 *  big_pt1  pointer of parmanent bignum.
-*  each bignum   element0 element1 ... elementn ... element1,element0
-*  The sign is held by each element.
-*  The cell has the pointer of MSB.
+*  each bignum   elementn ... element1,element0
+*  Car-part of the cell has the pointer of MSB.
+*  Cdr-part of then cell has the length
+*  
 */
 
 
@@ -34,6 +35,7 @@
 //#define NEWBIG 
 
 #ifdef NEWBIG
+//new bignum
 int
 makebigx(char *bignum)
 {
@@ -70,7 +72,7 @@ makebigx(char *bignum)
 		i--;
 	    }
 	    integer[9] = NUL;
-		bigcell[big_pt0++] = atoi(integer) * sign;
+		bigcell[big_pt0++] = atoi(integer);
 	    len++;
 	} else {
 	    integer[i + 1] = NUL;
@@ -78,7 +80,7 @@ makebigx(char *bignum)
 		integer[i] = bignum[i];
 		i--;
 	    }
-		bigcell[big_pt0++] = atoi(integer) * sign;
+		bigcell[big_pt0++] = atoi(integer);
 	    len++;
 	}
     }
@@ -97,15 +99,24 @@ makebigx(char *bignum)
 	return (res);
     } else {
 	SET_TAG(res, BIGX);
+	SET_CAR(res, big_pt0-1);
+	SET_CDR(res, len);
 	set_sign(res, sign);
-	SET_PROP(res,len);
 	SET_AUX(res, cbignum);
 	return (res);
     }
 }
 
-#else
+int get_length(int x){
+	return(GET_CDR(x));
+}
 
+int get_pointer(int x){
+	return(GET_CAR(x));
+}
+
+#else
+//old bignum
 int
 makebigx(char *bignum)
 {
@@ -175,9 +186,63 @@ makebigx(char *bignum)
     }
 }
 
-#endif
+#endif 
 
 
+#ifdef NEWBIG
+//new bignum
+void
+print_bigx(int x)
+{
+    int             y,len;
+    Text_save_T     save;
+    Text_T          txt1 = { 0, NULL }, txt2;
+    char            str[SHORT_STRSIZE];
+
+    if (GET_OPT(output_stream) == EISL_OUTSTR) {
+	save = Text_save();
+    }
+
+    if (get_sign(x) == -1) {
+	if (GET_OPT(output_stream) != EISL_OUTSTR) {
+	    fputc('-', GET_PORT(output_stream));
+	} else {
+	    txt1 = Text_put("-");
+	}
+    }
+    y = GET_CAR(x); //get pointer of bigcell
+	len = GET_PROP(x); //get length of bignum;
+    if (GET_OPT(output_stream) != EISL_OUTSTR) {
+	Fmt_fprint(GET_PORT(output_stream), "%d", bigcell[y]);
+    } else {
+	Fmt_sfmt(str, SHORT_STRSIZE, "%d", bigcell[y]);
+	txt2 = Text_put(str);
+	txt1 = Text_cat(txt1, txt2);
+    }
+    y--;
+	len--;
+
+    do {
+	if (GET_OPT(output_stream) != EISL_OUTSTR) {
+	    Fmt_fprint(GET_PORT(output_stream), "%09d", bigcell[y]);
+	} else {
+	    Fmt_sfmt(str, SHORT_STRSIZE, "%09d", bigcell[y]);
+	    txt2 = Text_put(str);
+	    txt1 = Text_cat(txt1, txt2);
+	}
+	y--;
+	len--;
+    } while (len > 0);
+
+    if (GET_OPT(output_stream) == EISL_OUTSTR) {
+	char           *out_str = GET_NAME(output_stream);
+	size_t          l = strlen(out_str);
+	Text_get(out_str + l, STRSIZE - l, txt1);
+	Text_restore(&save);
+    }
+}
+#else
+//old bignum 
 void
 print_bigx(int x)
 {
@@ -225,7 +290,7 @@ print_bigx(int x)
 	Text_restore(&save);
     }
 }
-
+#endif
 
 /*
  * x=new y=link if it is first cell, store the cell, else chain a new
@@ -385,6 +450,36 @@ bigx_gbc(int x)
 }
 
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_eqp(int x, int y)
+{
+	int len,pointerx,pointery;
+
+	if(get_sign(x) != get_sign(y))
+		return(0);
+	else if(get_length(x) != get_length(y))
+		return(0);
+
+	len = get_length(x);
+	pointerx = get_pointer(x);
+	pointery = get_pointer(y);
+    do {
+	if (pointerx != pointery)
+	    return (0);
+
+	x--;
+	y--;
+	len--;
+    } while (len > 0);
+    if (nullp(x) && nullp(y))
+	return (1);
+    else
+	return (0);
+}
+#else
+//old bignum
 int
 bigx_eqp(int x, int y)
 {
@@ -400,6 +495,8 @@ bigx_eqp(int x, int y)
     else
 	return (0);
 }
+#endif
+
 
 int
 bigx_abs_smallerp(int arg1, int arg2)

@@ -1,4 +1,4 @@
-#define NEWBIG 
+//#define NEWBIG 
 
 /* New bignum
 * I am designing a new bignum data structure.
@@ -765,6 +765,10 @@ bigx_int_to_big(int x)
 
 #endif
 
+#ifdef NEWBIG
+
+#else
+//old bignum
 int
 bigx_long_to_big(int x)
 {
@@ -785,6 +789,8 @@ bigx_long_to_big(int x)
     cons_next(i1, cons_next(i2, res));
     return (res);
 }
+
+#endif
 
 int
 bigx_simplify(int x)

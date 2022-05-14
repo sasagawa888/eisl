@@ -1,4 +1,17 @@
 /*
+* I am designing a new bignum data structure.
+*  bignum[BIGISZE]  array of 32bit integer.
+*  big_pt0  pointer of temporaly bignum
+*  big_pt1  pointer of parmanent bignum
+*  each bignum   MSB(1,000,000,000+length) element0 element1 ... elementn
+*  The sign is held by each element.
+*  The cell address adds a bias of 50,000,000 to the pointer.
+*/
+
+
+
+
+/*
  * ported from Normal-Scheme data type BIGX two way list. to become easy
  * to access from LSB and MSB. car=int data of number cdr next pointer to
  * MSB prop prev pointer to LSB prop of MSB store NIL. opt has sign data.

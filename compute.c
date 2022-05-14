@@ -949,16 +949,6 @@ lcm(int x, int y)
     }
 }
 
-int
-isqrt(int x)
-{
-    if (integerp(x))
-	return (makeint(floor(sqrt(GET_INT(x)))));
-    else if (floatp(x))
-	return (makeint(floor(sqrt(GET_FLT(x)))));
-    else
-	return (isqrt1(makeint(1), makeint(1), x));
-}
 
 int
 isqrt1(int s, int s2, int x)
@@ -968,6 +958,35 @@ isqrt1(int s, int s2, int x)
     else
 	return (isqrt1(divide(plus(divide(x, s), s), makeint(2)), s, x));
 }
+
+/*
+//newton method
+int 
+isqrt1(int n){
+	int x,y;
+
+	x = makeint(999999999);
+	y = minus(x,divide(minus(mult(x,x),n),mult(makeint(2),x)));
+
+	while(!numeqp(x,y)){
+		x = y;
+		y = minus(x,divide(minus(mult(x,x),n),mult(makeint(2),x)));
+	}
+	return(minus(y,makeint(1)));
+}
+*/
+
+int
+isqrt(int x)
+{
+    if (integerp(x))
+	return (makeint(floor(sqrt(GET_INT(x)))));
+    else if (floatp(x))
+	return (makeint(floor(sqrt(GET_FLT(x)))));
+    else
+	return (isqrt1(makeint(1),makeint(1),x));
+}
+
 
 /*
  * try and error for OPEN-MP int mat_mult(int x, int y){ int

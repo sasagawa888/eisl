@@ -33,6 +33,7 @@
 #define COL_SIZE 255
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
+#define BIGSIZE 10000000
 
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000
@@ -232,6 +233,7 @@ extern int      argstk[STACKSIZE];
 extern int      cell_hash_table[HASHTBSIZE];
 extern int      shelter[STACKSIZE];
 extern int      dynamic[DYNSIZE][2];
+extern int      bignum[BIGSIZE];
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
@@ -1065,7 +1067,6 @@ int             intlcm(int x, int y);
 int             inttoken(char buf[]);
 int             inttoken_nsgn(char buf[]);
 int             isqrt(int x);
-int             isqrt1(int s, int s2, int x);
 int             issymch(char c);
 int             ILOSerror(int fun, int arg);
 int             last(int x);

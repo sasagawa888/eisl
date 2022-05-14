@@ -107,6 +107,7 @@ int             argstk[STACKSIZE];
 int             cell_hash_table[HASHTBSIZE];
 int             shelter[STACKSIZE];
 int             dynamic[DYNSIZE][2];
+int				bignum[BIGSIZE];
 
 // object oriented
 int             generic_func;	// generic function in eval.

@@ -24,7 +24,7 @@
 
 
 #|
-For Common-Lisp
+;;For Common-Lisp
 (defun div (x y)
     (floor x y))
 |#

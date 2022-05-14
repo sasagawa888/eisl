@@ -1,3 +1,5 @@
+//#define NEWBIG 
+
 /* New bignum
 * I am designing a new bignum data structure.
 *  bigcell[BIGISZE]  array of 32bit integer.
@@ -32,7 +34,6 @@
 #include "fmt.h"
 #include "text.h"
 
-//#define NEWBIG 
 
 #ifdef NEWBIG
 //new bignum
@@ -497,7 +498,43 @@ bigx_eqp(int x, int y)
 }
 #endif
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_abs_smallerp(int x, int y)
+{
+    int             len1,
+                    len2,
+                    pointerx,
+                    pointery;
 
+    len1 = get_length(x);
+    len2 = get_length(y);
+
+
+    if (len1 < len2)
+	return (1);
+    else if (len1 > len2)
+	return (0);
+    else {
+	pointerx = get_pointer(x);
+	pointery = get_pointer(y);
+	do {
+	    if (bigcell[pointerx] < bigcell[pointery])
+		return (1);
+	    if (bigcell[pointerx] > bigcell[pointery])
+		return (0);
+
+	    pointerx--;
+	    pointery--;
+		len1--;
+	} while (len1 > 0);
+	return (0);
+    }
+
+}
+#else
+//old bignum
 int
 bigx_abs_smallerp(int arg1, int arg2)
 {
@@ -530,6 +567,7 @@ bigx_abs_smallerp(int arg1, int arg2)
     }
 
 }
+#endif
 
 
 int

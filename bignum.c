@@ -1107,6 +1107,63 @@ bigx_minus(int arg1, int arg2)
     return (res);
 }
 
+#ifdef NEWBIG
+// new bignum
+// arg1 > arg2
+int
+bigx_minus1(int arg1, int arg2)
+{
+    int             len1,len2,pointerx,pointery,len,
+	                z,
+                    c,
+                    res;
+
+	len1 = get_length(arg1);
+	len2 = get_length(arg2);
+	pointerx = get_pointer(arg1)-len1+1; // LSB
+	pointery = get_pointer(arg2)-len2+1; // LSB
+    res = gen_big();
+    SET_TAG(res, BIGX);
+    set_sign(res, 1);
+    c = 0;
+	len = 0;
+    do {
+	int             x,
+	                y;
+
+	if(len1 > 0)
+		x = bigcell[pointerx];
+	else 
+		x = 0;
+
+	if(len2 > 0)
+		y = bigcell[pointery];
+	else 
+		y = 0;
+
+
+	if ((x + c - y) < 0) {
+	    z = (x + BIGNUM_BASE + c) - y;
+	    c = -1;
+	} else {
+	    z = (x + c) - y;
+	    c = 0;
+	}
+	bigcell[big_pt0++] = z;
+	pointerx++;
+	pointery++;
+	len1--;
+	len2--;
+	len++;
+    } while (len1 > 0 || len2 > 0);
+
+    set_pointer(res,big_pt0-1);
+	set_length(res,len);
+    return (res);
+}
+
+#else
+// old bignum
 // arg1 > arg2
 int
 bigx_minus1(int arg1, int arg2)
@@ -1145,6 +1202,9 @@ bigx_minus1(int arg1, int arg2)
     cut_zero(res);
     return (res);
 }
+
+#endif
+
 
 void
 bigx_minus2(int arg, int c, int msb)

@@ -100,14 +100,14 @@ int             buffer[COL_SIZE + 1][NUM_HISTORY];
 int             buffer1[COL_SIZE + 1];
 
 
-// heap and stack
+// heap ,stack and bignum
 cell            heap[CELLSIZE];
 int             stack[STACKSIZE];
 int             argstk[STACKSIZE];
 int             cell_hash_table[HASHTBSIZE];
 int             shelter[STACKSIZE];
 int             dynamic[DYNSIZE][2];
-int				bignum[BIGSIZE];
+int				bigcell[BIGSIZE];
 
 // object oriented
 int             generic_func;	// generic function in eval.
@@ -147,6 +147,10 @@ bool            multiple_call_next_method;	// method body has
 // switch
 int             gc_sw = 0;	// 0= mark-and-sweep-GC 1= copy-GC
 int             area_sw = 1;	// 1= lower area 2=higher area
+
+// bignum pointer
+int				big_pt0 = BIGSIZE - BIGSIZE/10 - 1; // pointer of temporaly bignum. set end of position
+int 			big_pt1 = BIGSIZE - 1;           // pointer of parmanent bignum. set end of position
 
 // longjmp control and etc
 Except_T        Restart_Repl = { "Restart REPL" }, Exit_Interp =
@@ -355,6 +359,7 @@ initpt(void)
     charcnt = 0;
     generic_func = NIL;
     generic_vars = NIL;
+	big_pt0 = BIGSIZE - BIGSIZE/10 - 1;
     // clear nest level of tracing function.
     ls = trace_list;
     while (!nullp(ls)) {

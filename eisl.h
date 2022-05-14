@@ -233,7 +233,11 @@ extern int      argstk[STACKSIZE];
 extern int      cell_hash_table[HASHTBSIZE];
 extern int      shelter[STACKSIZE];
 extern int      dynamic[DYNSIZE][2];
-extern int      bignum[BIGSIZE];
+extern int      bigcell[BIGSIZE];
+
+// bignum pointer
+extern int big_pt0;
+extern int big_pt1;
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \

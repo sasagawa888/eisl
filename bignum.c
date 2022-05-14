@@ -1,8 +1,8 @@
 /*
 * I am designing a new bignum data structure.
-*  bignum[BIGISZE]  array of 32bit integer.
-*  big_pt0  pointer of temporaly bignum
-*  big_pt1  pointer of parmanent bignum
+*  bigcell[BIGISZE]  array of 32bit integer.
+*  big_pt0  pointer of temporaly bignum. 
+*  big_pt1  pointer of parmanent bignum.
 *  each bignum   MSB(1,000,000,000+length) element0 element1 ... elementn
 *  The sign is held by each element.
 *  The cell address adds a bias of 50,000,000 to the pointer.
@@ -20,6 +20,8 @@
  * cells = lsb -> ... msb -> NIL aux = cbignum class information 
  */
 
+
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -28,6 +30,81 @@
 #include "eisl.h"
 #include "fmt.h"
 #include "text.h"
+
+//#define NEWBIG 
+
+#ifdef NEWBIG
+int
+makebigx(char *bignum)
+{
+    char            integer[15];
+    int             i,
+                    j,
+                    res,
+                    sign,
+                    len;
+
+    // check sign
+    if (bignum[0] == '-')
+	sign = -1;
+    else
+	sign = 1;
+    // remove sign
+    if (bignum[0] == '-' || bignum[0] == '+') {
+	i = laststr(bignum);
+	for (j = 0; j < i; j++)
+	    bignum[j] = bignum[j + 1];
+
+	bignum[j] = NUL;
+    }
+    // length to check long data type
+    len = 0;
+    // generate bignum data cell
+    res = gen_big();
+
+    i = laststr(bignum);
+    while (i >= 0) {
+	if (i > 8) {
+	    for (j = 8; j >= 0; j--) {
+		integer[j] = bignum[i];
+		i--;
+	    }
+	    integer[9] = NUL;
+		bigcell[big_pt0--] = atoi(integer) * sign;
+	    len++;
+	} else {
+	    integer[i + 1] = NUL;
+	    while (i >= 0) {
+		integer[i] = bignum[i];
+		i--;
+	    }
+		bigcell[big_pt0--] = atoi(integer) * sign;
+	    len++;
+	}
+    }
+	bigcell[big_pt0--] = BIGNUM_BASE + len;
+
+    if (len == 2) {
+	long long int   l,
+	                m;
+
+	big_pt0 = big_pt0 + 3;
+	l = (long long int) bigcell[big_pt0-1] * BIGNUM_BASE;
+	m = (long long int) bigcell[big_pt0];
+	m = (l + m) * sign;
+	SET_TAG(res, LONGN);
+	SET_LONG(res, m);
+	SET_AUX(res, clongnum);
+	return (res);
+    } else {
+	SET_TAG(res, BIGX);
+	set_sign(res, sign);
+	SET_AUX(res, cbignum);
+	return (res);
+    }
+}
+
+#else
 
 int
 makebigx(char *bignum)
@@ -97,6 +174,9 @@ makebigx(char *bignum)
 	return (res);
     }
 }
+
+#endif
+
 
 void
 print_bigx(int x)

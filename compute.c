@@ -468,7 +468,7 @@ mult(int arg1, int arg2)
 	case LONGN:
 	    if (GET_INT(arg1) != 0)
 		return (bigx_mult
-			(bigx_int_to_big(arg1), bigx_long_to_big(arg2)));
+			(bigx_long_to_big(arg2),bigx_int_to_big(arg1)));
 	    else
 		return (arg1);	// int 0
 

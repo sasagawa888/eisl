@@ -376,7 +376,7 @@ bigx_simplify(int x)
 	return (makeint(i1));
     } else if (get_length(x) == 2) {
 	l1 = bigcell[get_pointer(x)];
-	l2 = bigcell[get_pointer(x)+1];
+	l2 = bigcell[get_pointer(x)-1];
 	l = (l1 * BIGNUM_BASE + l2) * get_sign(x);
 	return (makelong(l));
     } else
@@ -701,7 +701,8 @@ bigx_mult1(int arg1, int arg2)
 	}
 	
 	big_pt0 = big_pt0 + len;
-	while(bigcell[big_pt0] == 0){
+	
+	while(bigcell[big_pt0] == 0 && len > 1){
 		big_pt0--;
 		len--;
 	}

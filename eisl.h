@@ -88,7 +88,7 @@ static const int FEND = 6;
 
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
-
+static const int BIGNUM_WORK = BIGSIZE * 8 / 10; // from 80% to 90% bigcell area is working area.
 
 typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR, SYM,
     LIS, DUMMY,

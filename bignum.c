@@ -5,6 +5,9 @@
 *  bigcell[BIGISZE]  array of 32bit integer.
 *  big_pt0  pointer of temporaly bignum. 
 *  big_pt1  pointer of parmanent bignum.
+*  90% of bigcell is temporaly area and rest 10% is parmanent area.
+*  in temporaly area rear 10% is working area for divide function.
+*  bigcell = [[temporaly80%,temporalyworking10%],parmanent10%]
 *  each bignum   elementn ... element1,element0
 *  Car-part of the cell has the pointer of MSB.
 *  Cdr-part of then cell has the length
@@ -523,7 +526,6 @@ bigx_abs_smallerp(int x, int y)
     len1 = get_length(x);
     len2 = get_length(y);
 
-
     if (len1 < len2)
 	return (1);
     else if (len1 > len2)
@@ -783,10 +785,11 @@ bigx_long_to_big(int x)
     res = gen_big();
     SET_TAG(res, BIGX);
 	set_pointer(res,big_pt0-1);
-    if (l >= 0)
-	set_sign(res, 1);
-    else
-	set_sign(res, -1);
+    if (l >= 0){
+	set_sign(res, 1);}
+    else{
+	set_sign(res, -1);}
+	set_length(res,2);
     return (res);
 }
 
@@ -871,6 +874,35 @@ bigx_simplify(int x)
 
 #endif
 
+#ifdef NEWBIG
+// new bignum
+// add n-zero-cells to x
+int
+bigx_shift(int x, int n)
+{
+    int             res,
+                    len,pointer;
+
+	len = get_length(x);
+	pointer = get_pointer(x)-len+1; // LSB
+    res = gen_big();
+    SET_TAG(res, BIGX);
+    set_sign(res, get_sign(x));
+
+	int i;
+	for(i=0;i<n;i++){
+		bigcell[big_pt0++] = 0;
+	}
+    for(i=0;i<len;i++){
+		bigcell[big_pt0++] = bigcell[pointer+i];
+	}
+
+    set_pointer(res,big_pt0-1);
+	set_length(res,len+n);
+    return (res);
+}
+#else
+// oldbignum
 // add n-zero-cells to x
 int
 bigx_shift(int x, int n)
@@ -892,6 +924,7 @@ bigx_shift(int x, int n)
     } while (!nullp(x));
     return (res);
 }
+#endif
 
 #ifdef NEWBIG
 //new bignum
@@ -1247,12 +1280,72 @@ bigx_mult(int arg1, int arg2)
 	res = bigx_mult1(arg1, arg2);
 	set_sign(res, 1);
     }
-    if (simp_flag)
-	res = bigx_simplify(res);
+    if (simp_flag){
+	res = bigx_simplify(res);}
 
     return (res);
 }
 
+#ifdef NEWBIG
+//new bignum
+int
+bigx_mult1(int arg1, int arg2)
+{
+    int             res,len1,len2,pointerx,pointery,len;
+    long long int   x,
+                    y,
+                    z,
+                    l1,
+                    l2,
+                    c;
+	res = gen_big();
+	SET_TAG(res,BIGX);
+	len1 = get_length(arg1);
+	len2 = get_length(arg2);
+    len = len1+len2;
+    set_sign(res, 1);
+	printf("asdf%d %d ", len1, len2);
+	return(makeint(3));
+
+	// clear area of calculate
+	int i,j;
+	for(i=0;i<len;i++)
+		bigcell[i+big_pt0] = 0;
+
+    pointery = get_pointer(arg2)-len2+1; //LSB
+	for(j=0;j<len2;j++){
+		pointerx = get_pointer(arg1)-len1+1; //LSB
+		for(i=0;i<len1;i++){
+			x = (long long int) bigcell[pointerx+i];
+	    	y = (long long int) bigcell[pointery+j];
+	    	z = x * y;
+	    	l2 = z % BIGNUM_BASE;
+	    	l1 = z / BIGNUM_BASE;
+	    	l2 = l2 + (long long int) bigcell[big_pt0+j+i];
+	    	if (l2 >= BIGNUM_BASE) {
+			c = l2 / BIGNUM_BASE;
+			l2 = l2 % BIGNUM_BASE;
+	    	} else {
+			c = 0;
+	    	}
+	    	l1 = l1 + c + (long long int) bigcell[big_pt0+j+i+1];
+			bigcell[big_pt0+j+i] = (int)l2;
+	    	bigcell[big_pt0+j+i+1] = (int)l1;
+		}
+	}
+	
+	big_pt0 = big_pt0 + len;
+	while(bigcell[big_pt0] == 0){
+		big_pt0--;
+		len--;
+	}
+	big_pt0++;
+	set_pointer(res,big_pt0-1);
+	set_length(res,len+1);
+    return (res);
+}
+#else
+//old bignum
 int
 bigx_mult1(int arg1, int arg2)
 {
@@ -1302,8 +1395,43 @@ bigx_mult1(int arg1, int arg2)
     return (res);
 }
 
+#endif
 
+#ifdef NEWBIG
+// new bignum
+int bigx_div(int arg1, int arg2)
+{
+    int             res,
+                    x,
+                    y;
 
+    res = UNDEF;
+    // if devidend is smaller than divisor,return 0
+    if (bigx_abs_smallerp(arg1, arg2))
+	return (makeint(0));
+
+    if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
+	res = bigx_div1(arg1, arg2);
+    } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {
+	y = bigx_abs(arg2);
+	res = bigx_div1(arg1, y);
+	set_sign(res, -1);
+    } else if (bigx_negativep(arg1) && bigx_positivep(arg2)) {
+	x = bigx_abs(arg1);
+	res = bigx_div1(x, arg2);
+	set_sign(res, -1);
+    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {
+	x = bigx_abs(arg1);
+	y = bigx_abs(arg2);
+	res = bigx_div1(x, y);
+	set_sign(res, 1);
+    }
+
+    if (simp_flag)
+	res = bigx_simplify(res);
+    return (res);
+}
+#else
 int
 bigx_div(int arg1, int arg2)
 {
@@ -1341,6 +1469,7 @@ bigx_div(int arg1, int arg2)
 	res = bigx_simplify(res);
     return (res);
 }
+#endif
 
 /*
  * Knuth TAOCP fourth. see p88 s=sift is for match digits, ds is divisor,
@@ -1348,7 +1477,144 @@ bigx_div(int arg1, int arg2)
  */
 
 // #define TEST
+#ifdef NEWBIG
+//new bignum
+int
+bigx_div1(int arg1, int arg2)
+{
+    int             s,
+                    ss,
+                    res,len,
+					pointerx,pointery,pointer,save0,save1,
+                    i;
+    long long int   u,
+                    v,
+                    l1,
+                    l2;
 
+	
+
+    ss = 0;
+    // devidend is smaller than 2 times divisor, return 1
+    // if quotient is 1, theorem is not hold
+    s = bigx_mult1(arg2, bigx_int_to_big(makeint(2)));
+    if (bigx_abs_smallerp(arg1, s))
+	return (makeint(1));
+
+	
+    // following code, calcuration is required in bignum
+    // so, stop simplification.
+    simp_flag = false;
+
+
+    res = gen_big();
+	SET_TAG(res, BIGX);
+    set_sign(res, 1);
+	len = get_length(arg1);
+	big_pt0 = big_pt0 + len;  // prepare area of answer. 
+	set_pointer(res,big_pt0);
+	pointerx = get_pointer(arg1); // MSB
+	pointery = get_pointer(arg2); //MSB
+	save0 = big_pt0;
+	big_pt0 = BIGNUM_WORK; // chainge to working area
+    // if divisor is smaller, become bigger to hold theolem
+    v = (long long int) bigcell[pointery];
+    if (v < (BIGNUM_BASE / 2)) {
+	long long int   d = BIGNUM_BASE / (v + 1);
+	arg1 = bigx_mult1(arg1, bigx_long_to_big(makelong(d)));
+	arg2 = bigx_mult1(arg2, bigx_long_to_big(makelong(d)));
+    }
+
+    do {
+	int             dig1 = get_length(arg1);
+	int             dig2 = get_length(arg2);
+	if (dig1 > dig2) {
+	    l1 = (long long int) bigcell[pointerx];
+	    l2 = (long long int) bigcell[pointerx-1];
+	    u = l1 * BIGNUM_BASE + l2;
+	    v = (long long int) bigcell[pointery];
+	} else {
+	    u = (long long int) bigcell[pointerx];
+	    v = (long long int) bigcell[pointery];
+	}
+	
+	long long int   q = u / v;
+	if (q == 1 && dig1 != dig2)
+	    q = 10;
+	int             ds =
+	    bigx_mult1(arg2, bigx_long_to_big(makelong(q)));
+
+	return(makeint(3));
+	s = get_length(arg1) - get_length(ds);
+	ds = bigx_shift(ds, s);
+	int             p = bigx_shift(arg2, s);
+
+	int             t = bigx_minus(arg1, ds);
+
+	arg1 = t;
+
+	print(arg1);
+		
+		printf("asdf%d %d" , s, ss);
+	while (bigx_negativep(arg1)) {
+	
+	    t = bigx_plus(arg1, p);
+	    arg1 = t;
+	    q--;
+	}
+	
+	
+
+	save1 = big_pt0;  //save working area pointer
+	big_pt0 = save0;  //restore temporarly area pointer
+	if ((ss - s) > 1) {
+	    i = ss - s;
+	    while (i > 1) {
+		bigcell[big_pt0--] = 0;
+		i--;
+	    }
+	}
+	
+	// if q is bigger than BIGNUM_BASE, number span two cells.
+	if (q < BIGNUM_BASE) {
+		bigcell[big_pt0--] = (int)q;
+	} else {
+	    l2 = q % BIGNUM_BASE;
+	    l1 = q / BIGNUM_BASE;
+		bigcell[big_pt0--] = (int)l1;
+		bigcell[big_pt0--] = (int)l2;
+	}
+	ss = s; // s means shift number
+
+	save0 = big_pt0; //save temporarly area pointer
+	big_pt0 = save1; //chainge to working area
+
+
+    } while (!bigx_abs_smallerp(arg1, arg2));
+
+	big_pt0 = save0; //restore temporarly area
+	// shift s th
+	for(i=0;i<s;i++){
+		bigcell[big_pt0--] = 0;
+	}
+    
+
+    // restore flag
+    simp_flag = true;
+
+	//cut zero
+	pointer = get_pointer(res);
+	while(bigcell[pointer] == 0){
+		pointer--;
+		len--;
+	}
+	big_pt0 = pointer + 1;
+	set_pointer(res,pointer);
+	set_length(res,len);
+    return (res);
+}
+#else 
+// old bignum
 int
 bigx_div1(int arg1, int arg2)
 {
@@ -1491,6 +1757,7 @@ bigx_div1(int arg1, int arg2)
     cut_zero(res);
     return (res);
 }
+#endif
 
 
 int

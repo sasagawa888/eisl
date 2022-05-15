@@ -473,7 +473,7 @@ mult(int arg1, int arg2)
 		return (arg1);	// int 0
 
 	case BIGX:
-	    return (bigx_mult(arg2, arg1));
+	    return (bigx_mult(arg2,bigx_int_to_big(arg1)));
 	}
 	break;
     case LONGN:

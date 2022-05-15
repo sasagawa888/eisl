@@ -346,8 +346,8 @@ bigx_long_to_big(int x)
     l = GET_LONG(x);
     i2 = llabs(l) % BIGNUM_BASE;
     i1 = llabs(l) / BIGNUM_BASE;
-	bigcell[big_pt0++] = i1;
 	bigcell[big_pt0++] = i2;
+	bigcell[big_pt0++] = i1;
     res = gen_big();
     SET_TAG(res, BIGX);
 	set_pointer(res,big_pt0-1);
@@ -708,6 +708,7 @@ bigx_mult1(int arg1, int arg2)
 	big_pt0++;
 	set_pointer(res,big_pt0-1);
 	set_length(res,len+1);
+	bigx_simplify(res);
     return (res);
 }
 

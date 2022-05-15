@@ -1055,7 +1055,7 @@ f_div(int arglist)
 	error(DIV_ZERO, "div", arglist);
 
     q = divide(arg1, arg2);
-    r = s_remainder(arg1, arg2);
+    r = minus(arg1, mult(arg2,q));
     if (zerop(r))
 	return (q);
     else if (positivep(arg1) && negativep(arg2))

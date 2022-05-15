@@ -784,11 +784,11 @@ bigx_long_to_big(int x)
     res = gen_big();
     SET_TAG(res, BIGX);
 	set_pointer(res,big_pt0-1);
-    if (l >= 0){
-	set_sign(res, 1);}
-    else{
-	set_sign(res, -1);}
 	set_length(res,2);
+    if (l >= 0)
+	set_sign(res, 1);
+    else
+	set_sign(res, -1);
     return (res);
 }
 
@@ -1487,20 +1487,20 @@ bigx_div(int arg1, int arg2)
 int
 bigx_div1(int arg1, int arg2)
 {
-    int             sift,
+    int             shift,
                     res,len,q,dividend,subtract,
 					pointerx,pointery,save0,save1,
                     msb1,msb2;
     long long int   lmsb1;
 
+
 	// arg1 > arg2 -> 0
-	if(bigx_abs_smallerp(arg1,arg2))
+	if(smallerp(arg1,arg2))
 		return(makeint(0));
 
     // following code, calcuration is required in bignum
     // so, stop simplification.
     simp_flag = false;
-
     res = gen_big();
 	SET_TAG(res, BIGX);
     set_sign(res, 1);
@@ -1515,41 +1515,36 @@ bigx_div1(int arg1, int arg2)
 	do {
 	save0 = big_pt0;
 	big_pt0 = save1;
-	sift = get_length(dividend) - get_length(arg2);
+	shift = get_length(dividend) - get_length(arg2);
 	pointerx = get_pointer(dividend); // MSB
 	msb1 = bigcell[pointerx];
-	if(msb1 >= msb2)
+	if(msb1 >= msb2){
 		q = msb1 / msb2;
+		
+	}
 	else{
 		lmsb1 = (long long int)bigcell[pointerx]*BIGNUM_BASE + (long long int)bigcell[pointerx-1];
-		q = (int) (lmsb1 / (long long int) msb2);
-		sift--;
+		q = (int)(lmsb1 / (long long int) msb2);
+		shift--;
 	}
-	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),sift);
-	dividend = bigx_minus1(dividend,subtract);
+	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
+	dividend = bigx_minus(dividend,subtract);
+	
 
 	save1 = big_pt0;
 	big_pt0 = save0;
 	bigcell[big_pt0-len] = q;
 	len++;
 
-	goto exit;
-	//print(dividend);printf("\n");
-	//print(arg2);printf("\n");
-	//if(bigx_abs_smallerp(dividend,arg2)){printf("small");}
-	} while(!bigx_abs_smallerp(dividend,arg2));
+	} while(!bigx_smallerp(dividend,arg2));
 
-	exit:
-	print(dividend);printf("\n");
-	print(arg2);printf("\n");
-	print(subtract);printf("\n");
-	if(bigx_abs_smallerp(dividend,arg2)){printf("small");}
 	// restore flag
     simp_flag = true;
 
 	big_pt0++;
 	set_pointer(res,big_pt0-1);
 	set_length(res,len);
+	bigx_simplify(res);
 	return(res);
 }
 #else 
@@ -1760,6 +1755,66 @@ bigx_remainder_i(int x, int y)
     return (makeint((int) r * sign1 * sign2));
 }
 
+#ifdef NEWBIG
+int
+bigx_div_i(int x, int y)
+{
+    int             res,pointer,
+                    msb,len,n,
+                    sign1,
+                    sign2;
+    long long int   j,
+                    r,
+                    q;
+
+
+    res = gen_big();
+	len = n = get_length(x);
+    msb = get_pointer(bigx_abs(x));
+    sign1 = get_sign(x);
+
+    j = GET_INT(y);
+    if (j < 0) {
+	j = llabs(j);
+	sign2 = -1;
+    } else {
+	sign2 = 1;
+    }
+
+    r = 0;
+
+	big_pt0 = big_pt0 + len;
+	pointer = big_pt0;
+    do {
+	long long int   i;
+
+	i = bigcell[msb];
+	i = i + r * BIGNUM_BASE;
+	if (i >= j) {
+	    r = i % j;
+	    q = i / j;
+		bigcell[pointer--] = (int) q;
+	} else {
+	    r = i + r;
+		bigcell[pointer--] = 0;
+	}
+	msb--;
+	n--;
+    } while (n > 0);
+    SET_TAG(res, BIGX);
+    while(bigcell[big_pt0] == 0 && len > 1){
+		big_pt0--;
+		len--;
+	}
+	big_pt0++;
+	set_pointer(res,big_pt0-1);
+	set_length(res,len);
+    set_sign(res, sign1 * sign2);
+    res = bigx_simplify(res);
+    return (res);
+}
+
+#else
 // bignum divide of bignum and int
 int
 bigx_div_i(int x, int y)
@@ -1808,6 +1863,9 @@ bigx_div_i(int x, int y)
     res = bigx_simplify(res);
     return (res);
 }
+
+#endif
+
 
 // multple of bignum and int
 int

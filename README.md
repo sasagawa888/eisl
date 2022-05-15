@@ -1,3 +1,7 @@
+# Note
+
+We are currently making significant changes to the bignum data structure. The operation will be unstable for a while. Please use the release version.
+
 # Easy-ISLisp
 
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](https://minejima.jp/ISLispHyperDraft/islisp-v23.html).

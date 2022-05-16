@@ -591,7 +591,6 @@ bigx_minus1(int arg1, int arg2)
 	big_pt0++;
     set_pointer(res,big_pt0-1);
 	set_length(res,len);
-	bigx_simplify(res);
     return (res);
 }
 
@@ -676,7 +675,6 @@ bigx_mult1(int arg1, int arg2)
 	big_pt0++;
 	set_pointer(res,big_pt0-1);
 	set_length(res,len+1);
-	bigx_simplify(res);
     return (res);
 }
 
@@ -773,7 +771,6 @@ bigx_div1(int arg1, int arg2)
 	big_pt0++;
 	set_pointer(res,big_pt0-1);
 	set_length(res,len);
-	bigx_simplify(res);
 	return(res);
 }
 
@@ -897,24 +894,27 @@ bigx_div_i(int x, int y)
 	set_pointer(res,big_pt0-1);
 	set_length(res,len);
     set_sign(res, sign1 * sign2);
+	if(simp_flag)
     res = bigx_simplify(res);
     return (res);
 }
 
-/*
+
 // multple of bignum and int
 int
 bigx_mult_i(int x, int y)
 {
     int             res,
-                    msb,
+                    len,pointer,n,
                     sign1,
                     sign2;
     long long int   j,
                     c;
 
 
-    msb = res = gen_big();
+    res = gen_big();
+	len = n = get_length(x);
+	pointer = get_pointer(x)-len+1; //LSB
     sign1 = get_sign(x);
 
     j = GET_INT(y);
@@ -931,24 +931,33 @@ bigx_mult_i(int x, int y)
 	long long int   i,
 	                z;
 
-	i = GET_CAR(x);
+	i = bigcell[pointer];
 	z = i * j + c;
 	if (z >= BIGNUM_BASE) {
 	    c = z / BIGNUM_BASE;
 	    z = z % BIGNUM_BASE;
-	    msb = cons_next((int) z, msb);
+
+		bigcell[big_pt0++] = (int)z;
 	} else {
 	    c = 0;
-	    msb = cons_next((int) z, msb);
+		bigcell[big_pt0++] = (int)z;
 	}
-	x = next(x);
-    } while (!nullp(x));
-    if (c != 0)
-	(void) cons_next((int) c, msb);
+	pointer++;
+	len--;
+    } while (len > 0);
+
+	bigcell[big_pt0] = (int)c;
+	len = n + 1;
+	while(bigcell[big_pt0] == 0 && len > 1){
+		big_pt0--;
+		len--;
+	}
+	big_pt0++;
+
     SET_TAG(res, BIGX);
-    cut_zero(res);
+    set_pointer(res,big_pt0-1);
+	set_length(res,len);
     set_sign(res, sign1 * sign2);
     res = bigx_simplify(res);
     return (res);
 }
-*/

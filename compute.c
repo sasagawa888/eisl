@@ -496,7 +496,7 @@ mult(int arg1, int arg2)
     case BIGX:
 	switch (tag2) {
 	case INTN:
-	    return (bigx_mult(arg1, bigx_int_to_big(arg2)));
+	    return (bigx_mult_i(arg1, arg2));
 	case FLTN:
 	    return (mult(exact_to_inexact(arg1), arg2));
 	case LONGN:

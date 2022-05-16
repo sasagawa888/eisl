@@ -737,7 +737,7 @@ bigx_div1(int arg1, int arg2)
 	pointery = get_pointer(arg2); //MSB pointer
 	msb2 = bigcell[pointery];  // value of MSB
 	dividend = arg1;
-	save1 = BIGNUM_WORK; // chainge to working area
+	save1 = BIGNUM_WORK; // change to working area
     
 	do {
 	save0 = big_pt0;

@@ -311,7 +311,7 @@ bigx_int_to_big(int x)
                     y;
 
     y = GET_INT(x);
-	bigcell[big_pt0++] = y;
+	bigcell[big_pt0++] = abs(y);
     res = gen_big();
     SET_TAG(res, BIGX);
 	set_pointer(res,big_pt0-1);
@@ -419,7 +419,7 @@ bigx_plus(int arg1, int arg2)
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
 	res = bigx_plus1(arg1, arg2);
 	set_sign(res, 1);
-    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {
+    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {	
 	res = bigx_plus1(arg1, arg2);
 	set_sign(res, -1);
     } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {

@@ -92,9 +92,8 @@ makebigx(char *bignum)
 	long long int   l,
 	                m;
 
-	big_pt0 = big_pt0 - 2;
-	l = (long long int) bigcell[big_pt0] * BIGNUM_BASE;
-	m = (long long int) bigcell[big_pt0+1];
+	l = (long long int) bigcell[big_pt0-1] * BIGNUM_BASE;
+	m = (long long int) bigcell[big_pt0-2];
 	m = (l + m) * sign;
 	SET_TAG(res, LONGN);
 	SET_LONG(res, m);
@@ -777,7 +776,7 @@ bigx_div1(int arg1, int arg2)
 	bigx_simplify(res);
 	return(res);
 }
-// old bignum
+
 int
 bigx_big_to_flt(int x)
 {
@@ -795,6 +794,7 @@ bigx_big_to_flt(int x)
 	i = bigcell[pointer];
 	val = val * (double) BIGNUM_BASE + (double) i;
 	pointer--;
+	len--;
     } while (len > 0);
     val = val * get_sign(x);
     SET_TAG(res, FLTN);

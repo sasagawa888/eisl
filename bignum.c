@@ -222,17 +222,6 @@ bigx_negativep(int x)
 	return (0);
 }
 
-// old bignum
-// get address of MSB
-int
-get_msb(int x)
-{
-    while (!nullp(next(x)))
-	x = next(x);
-
-    return (x);
-}
-
 
 
 int
@@ -608,27 +597,6 @@ bigx_minus1(int arg1, int arg2)
 }
 
 
-void
-bigx_minus2(int arg, int c, int msb)
-{
-    int             q;
-
-    while (!nullp(arg)) {
-	int             x;
-
-	x = GET_CAR(arg);
-	if (x + c < 0) {
-	    q = x + BIGNUM_BASE + c;
-	    c = -1;
-	} else {
-	    q = x + c;
-	    c = 0;
-	}
-	msb = cons_next(q, msb);
-	arg = next(arg);
-    }
-}
-
 
 int
 bigx_mult(int arg1, int arg2)
@@ -814,38 +782,40 @@ int
 bigx_big_to_flt(int x)
 {
     double          val;
-    int             msb,
+    int             pointer,len,
                     res;
 
     res = freshcell();
     val = 0.0;
-    msb = get_msb(x);
+    pointer = get_pointer(x);
+	len = get_length(x);
     do {
 	int             i;
 
-	i = GET_CAR(msb);
+	i = bigcell[pointer];
 	val = val * (double) BIGNUM_BASE + (double) i;
-	msb = prev(msb);
-    } while (!nullp(msb));
+	pointer--;
+    } while (len > 0);
     val = val * get_sign(x);
     SET_TAG(res, FLTN);
     SET_FLT(res, val);
     return (res);
 }
 
-// old bignum
+
 // bignum remainder of bignum and int
 int
 bigx_remainder_i(int x, int y)
 {
-    int             msb,
+    int             abs,pointer,len,
                     sign1,
                     sign2;
     long long int   j,
                     r;
 
-
-    msb = get_msb(bigx_abs(x));
+	abs = bigx_abs(x);
+    pointer = get_pointer(abs);
+	len = get_length(abs);
     sign1 = get_sign(x);
 
     j = GET_INT(y);
@@ -861,14 +831,15 @@ bigx_remainder_i(int x, int y)
     do {
 	long long int   i;
 
-	i = GET_CAR(msb);
+	i = bigcell[pointer];
 	i = i + r * BIGNUM_BASE;
 	if (i >= j)
 	    r = i % j;
 	else
 	    r = i + r;
-	msb = prev(msb);
-    } while (!nullp(msb));
+	pointer--;
+	len--;
+    } while (len > 0);
     return (makeint((int) r * sign1 * sign2));
 }
 

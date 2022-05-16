@@ -710,6 +710,7 @@ int             bigx_positivep(int x);
 int             bigx_div(int arg1, int arg2);
 int             bigx_div_i(int x, int y);
 int             bigx_div1(int arg1, int arg2);
+int             bigx_remainder(int x, int y);
 int             bigx_remainder_i(int x, int y);
 int             bigx_shift(int x, int n);
 int             bigx_simplify(int x);

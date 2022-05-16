@@ -695,7 +695,7 @@ s_remainder(int x, int y)
 	i = bigx_long_to_big(y);
 	return (minus(x, mult(divide(x, i), i)));
     } else if (bignump(x) && bignump(y))
-	return (minus(x, mult(divide(x, y), y)));
+	return(bigx_remainder(x,y));
 
     error(ILLEGAL_ARGS, "remainder", NIL);
     return (UNDEF);

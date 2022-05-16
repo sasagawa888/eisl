@@ -774,6 +774,71 @@ bigx_div1(int arg1, int arg2)
 	return(res);
 }
 
+
+int
+bigx_remainder(int arg1, int arg2)
+{
+    int             shift,
+                    res,len,q,dividend,subtract,
+					pointerx,pointery,save0,pointer,
+                    msb1,msb2;
+    long long int   lmsb1;
+
+
+	// arg1 > arg2 -> 0
+	if(smallerp(arg1,arg2))
+		return(makeint(0));
+
+    // following code, calcuration is required in bignum
+    // so, stop simplification.
+    simp_flag = false;
+    res = gen_big();
+	SET_TAG(res, BIGX);
+    set_sign(res, 1);
+	big_pt0 = big_pt0 + get_length(arg1);  // prepare area of answer. 
+	set_pointer(res,big_pt0);
+	pointery = get_pointer(arg2); //MSB pointer
+	msb2 = bigcell[pointery];  // value of MSB
+	dividend = arg1;
+	save0 = big_pt0;
+	big_pt0 = BIGNUM_WORK; // change to working area
+    
+	do {
+	shift = get_length(dividend) - get_length(arg2);
+	pointerx = get_pointer(dividend); // MSB
+	msb1 = bigcell[pointerx];
+	if(msb1 >= msb2){
+		q = msb1 / msb2;
+		
+	}
+	else{
+		lmsb1 = (long long int)bigcell[pointerx]*BIGNUM_BASE + (long long int)bigcell[pointerx-1];
+		q = (int)(lmsb1 / (long long int) msb2);
+		shift--;
+	}
+	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
+	dividend = bigx_minus(dividend,subtract);
+
+	} while(!bigx_smallerp(dividend,arg2));
+
+	// restore flag
+    simp_flag = true;
+
+	big_pt0 = save0; //restore pointer
+	// copy dividend to big_pt0 temporarly area
+
+	len = get_length(dividend);
+	pointer = get_pointer(dividend)-len+1; //LSB
+	int i;
+	for(i=0;i<len;i++){
+		bigcell[big_pt0++] = bigcell[pointer++];
+	}
+	set_pointer(res,big_pt0-1);
+	set_length(res,len);
+	return(res);
+}
+
+
 int
 bigx_big_to_flt(int x)
 {

@@ -1,5 +1,7 @@
 ;; test formula library for compiler
 
+(defun bar ()
+    (QUOTIENT -300000000000000000000 -30000000000))
 
 (import "formula")
 

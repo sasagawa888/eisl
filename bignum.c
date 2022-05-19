@@ -376,14 +376,14 @@ bigx_simplify(int x)
 
 // add n-zero-cells to x
 int
-bigx_shift(int x, int n, int res)
+bigx_shift(int x, int n)
 {
     int             res,
                     len,pointer;
 
 	len = get_length(x);
 	pointer = get_pointer(x)-len+1; // LSB
-    //res = gen_big();
+    res = gen_big();
     SET_TAG(res, BIGX);
     set_sign(res, get_sign(x));
 
@@ -752,12 +752,12 @@ bigx_div1(int arg1, int arg2)
 		shift--;
 	}
 
-	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift,subtruct);
+	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
 	dividend = bigx_minus(dividend,subtract);
 	
 	// e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
 	while(negativep(dividend)){
-		dividend = plus(dividend,bigx_shift(arg2,shift,dividend));
+		dividend = plus(dividend,bigx_shift(arg2,shift));
 		q--;
 	}
 
@@ -821,12 +821,12 @@ bigx_remainder(int arg1, int arg2)
 		q = (int)(lmsb1 / (long long int) msb2);
 		shift--;
 	}
-	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift,subtract);
+	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
 	dividend = bigx_minus(dividend,subtract);
 
 	// e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
 	while(negativep(dividend)){
-		dividend = plus(dividend,bigx_shift(arg2,shift,dividend));
+		dividend = plus(dividend,bigx_shift(arg2,shift));
 		q--;
 	}
 

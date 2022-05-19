@@ -997,7 +997,7 @@ isqrt(int x)
 		for(i=0;i<len;i++){
 			bigcell[big_pt0++] = 0;
 		} 
-		bigcell[big_pt0++] = (int)sqrt(lmsb);
+		bigcell[big_pt0++] = (int)sqrt(lmsb)+1;
 		SET_TAG(init,BIGX);
 		set_sign(init,1);
 		set_pointer(init,big_pt0-1);
@@ -1010,7 +1010,7 @@ isqrt(int x)
 		for(i=0;i<len;i++){
 			bigcell[big_pt0++] = 0;
 		} 
-		bigcell[big_pt0++] = (int)sqrt(msb);
+		bigcell[big_pt0++] = (int)sqrt(msb)+1;
 		SET_TAG(init,BIGX);
 		set_sign(init,1);
 		set_pointer(init,big_pt0-1);

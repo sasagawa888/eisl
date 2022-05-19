@@ -953,8 +953,7 @@ lcm(int x, int y)
 int
 isqrt1(int s, int s2, int x)
 {
-	//print(s); printf(" s \n");
-	//print(s2); printf(" ss \n");
+
     if (eqsmallerp(mult(s, s), x) && eqsmallerp(x, mult(s2, s2)))
 	return (s);
     else

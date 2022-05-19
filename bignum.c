@@ -725,9 +725,6 @@ bigx_div1(int arg1, int arg2)
 	if(smallerp(arg1,arg2))
 		return(makeint(0));
 
-    // following code, calcuration is required in bignum
-    // so, stop simplification.
-    simp_flag = false;
     res = gen_big();
 	SET_TAG(res, BIGX);
     set_sign(res, 1);
@@ -754,16 +751,22 @@ bigx_div1(int arg1, int arg2)
 		q = (int)(lmsb1 / (long long int) msb2);
 		shift--;
 	}
+
 	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
 	dividend = bigx_minus(dividend,subtract);
 	
+	// e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
+	while(negativep(dividend)){
+		dividend = plus(dividend,bigx_shift(arg2,shift));
+		q--;
+	}
 
 	save1 = big_pt0;
 	big_pt0 = save0;
 	bigcell[big_pt0-len] = q;
 	len++;
 
-	} while(!bigx_smallerp(dividend,arg2));
+	} while(!smallerp(dividend,arg2));
 
 	// when divident is 0(rest is 0) insert 0 element 
 	//e.q.  div(3000000000000000000,30000000000)
@@ -774,9 +777,6 @@ bigx_div1(int arg1, int arg2)
 			len++;
 		}
 	}
-
-	// restore flag
-    simp_flag = true;
 
 	big_pt0++;
 	set_pointer(res,big_pt0-1);
@@ -799,9 +799,6 @@ bigx_remainder(int arg1, int arg2)
 	if(smallerp(arg1,arg2))
 		return(makeint(0));
 
-    // following code, calcuration is required in bignum
-    // so, stop simplification.
-    simp_flag = false;
     res = gen_big();
 	SET_TAG(res, BIGX);
     set_sign(res, 1);
@@ -829,10 +826,13 @@ bigx_remainder(int arg1, int arg2)
 	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
 	dividend = bigx_minus(dividend,subtract);
 
-	} while(!bigx_smallerp(dividend,arg2));
+	// e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
+	while(negativep(dividend)){
+		dividend = plus(dividend,bigx_shift(arg2,shift));
+		q--;
+	}
 
-	// restore flag
-    simp_flag = true;
+	} while(!smallerp(dividend,arg2));
 
 	big_pt0 = save0; //restore pointer
 	// copy dividend to big_pt0 temporarly area

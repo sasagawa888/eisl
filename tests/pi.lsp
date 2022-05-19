@@ -28,7 +28,6 @@
 (defun div (x y)
     (floor x y))
 |#
-
 ; Compute pi using the 'brent-salamin' method.
 (defun pi-brent-salamin (nb-digits)
     (let ((one (expt 10 nb-digits)))

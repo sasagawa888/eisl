@@ -951,22 +951,21 @@ lcm(int x, int y)
 
 
 int
-isqrt1(int s, int s2, int x)
+isqrt0(int s, int s2, int x)
 {
 
-    if (eqsmallerp(mult(s, s), x) && eqsmallerp(x, mult(s2, s2)))
+    if (eqsmallerp(mult(s,s),x) && eqsmallerp(x,mult(s2,s2)))
 	return (s);
     else
-	return (isqrt1(divide(plus(divide(x, s), s), makeint(2)), s, x));
+	return (isqrt0(divide(plus(divide(x, s), s), makeint(2)), s, x));
 }
 
-/*
 //newton method
 int 
-isqrt1(int n){
+isqrt1(int n, int init){
 	int x,y;
 
-	x = makeint(999999999);
+	x = init;
 	y = minus(x,divide(minus(mult(x,x),n),mult(makeint(2),x)));
 
 	while(!numeqp(x,y)){
@@ -975,7 +974,7 @@ isqrt1(int n){
 	}
 	return(minus(y,makeint(1)));
 }
-*/
+
 
 int
 isqrt(int x)
@@ -984,8 +983,41 @@ isqrt(int x)
 	return (makeint(floor(sqrt(GET_INT(x)))));
     else if (floatp(x))
 	return (makeint(floor(sqrt(GET_FLT(x)))));
-    else
-	return (isqrt1(makeint(1),makeint(1),x));
+	else if(longnump(x))
+	return (isqrt0(makeint(1),makeint(1),x));
+    else{
+	int len,msb,pointer,init,i;
+	long long int lmsb;
+	len = get_length(x);
+	pointer = get_pointer(x);
+	if(len % 2 == 0){
+		lmsb = (long long int)bigcell[pointer]*BIGNUM_BASE + (long long int)bigcell[pointer-1];
+		init = gen_big();
+		len = (len - 2) / 2;
+		for(i=0;i<len;i++){
+			bigcell[big_pt0++] = 0;
+		} 
+		bigcell[big_pt0++] = (int)sqrt(lmsb);
+		SET_TAG(init,BIGX);
+		set_sign(init,1);
+		set_pointer(init,big_pt0-1);
+		set_length(init,len+1);
+	}
+	else{
+		msb = bigcell[pointer];
+		init = gen_big();
+		len = (len - 1) / 2;
+		for(i=0;i<len;i++){
+			bigcell[big_pt0++] = 0;
+		} 
+		bigcell[big_pt0++] = (int)sqrt(msb);
+		SET_TAG(init,BIGX);
+		set_sign(init,1);
+		set_pointer(init,big_pt0-1);
+		set_length(init,len+1);
+	}
+	return (isqrt1(x,init));
+	}
 }
 
 

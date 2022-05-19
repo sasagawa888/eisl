@@ -716,7 +716,7 @@ bigx_div1(int arg1, int arg2)
 {
     int             shift,shift0,
                     res,len,q,dividend,subtract,
-					pointerx,pointery,save0,save1,
+					pointerx,pointery,
                     msb1,msb2;
     long long int   lmsb1;
 
@@ -734,11 +734,8 @@ bigx_div1(int arg1, int arg2)
 	pointery = get_pointer(arg2); //MSB pointer
 	msb2 = bigcell[pointery];  // value of MSB
 	dividend = arg1;
-	save1 = BIGNUM_WORK; // change to working area
     
 	do {
-	save0 = big_pt0;
-	big_pt0 = save1;
 	shift = shift0 = get_length(dividend) - get_length(arg2);
 	pointerx = get_pointer(dividend); // MSB
 	msb1 = bigcell[pointerx];
@@ -761,8 +758,6 @@ bigx_div1(int arg1, int arg2)
 		q--;
 	}
 
-	save1 = big_pt0;
-	big_pt0 = save0;
 	bigcell[big_pt0-len] = q;
 	len++;
 

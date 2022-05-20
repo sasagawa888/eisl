@@ -5,7 +5,7 @@
 *  big_pt1  pointer of parmanent bignum.
 *  90% of bigcell is temporaly area and rest 10% is parmanent area.
 *  in temporaly area rear 10% is working area for divide function.
-*  bigcell = [[temporaly80%,temporalyworking10%],parmanent10%]
+*  bigcell = [[temporaly50%,temporalyworking40%],parmanent10%]
 *  each bignum   elementn ... element1,element0
 *  Car-part of the cell has the pointer of MSB.
 *  Cdr-part of then cell has the length

@@ -714,18 +714,6 @@ int bigx_div(int arg1, int arg2)
     return (res);
 }
 
-int bigx_bigzerop(int x){
-	int len,pointer;
-
-	pointer = get_pointer(x);
-	len = get_length(x);
-	while(len > 0){
-		if(bigcell[pointer--] != 0)
-			return(0);
-		len--;
-	}
-	return(1);
-}
 
 
 int

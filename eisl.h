@@ -8,6 +8,9 @@
  * 12999999 - 19999999 Wrok2 area 
  */
 
+//switch of postmortem debugger
+//#define POSTMORTEM 
+
 #ifndef EISL_H
 #define EISL_H
 

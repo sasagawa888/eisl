@@ -359,6 +359,7 @@ initpt(void)
     charcnt = 0;
     generic_func = NIL;
     generic_vars = NIL;
+	//printf("bit_pt0=%d\n",big_pt0);
 	big_pt0 = 0;
     // clear nest level of tracing function.
     ls = trace_list;

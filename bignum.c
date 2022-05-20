@@ -25,6 +25,9 @@
 #include "fmt.h"
 #include "text.h"
 
+
+#define CHECKBIG(x) if(big_pt0<0 || big_pt0>=BIGSIZE){printf("point%d ",x);error(RESOURCE_ERR,"bigcell",big_pt0);}
+
 int get_length(int x){
 	return(GET_CDR(x));
 }
@@ -78,6 +81,7 @@ makebigx(char *bignum)
 		i--;
 	    }
 	    integer[9] = NUL;
+		CHECKBIG(1)
 		bigcell[big_pt0++] = atoi(integer);
 	    len++;
 	} else {
@@ -86,6 +90,7 @@ makebigx(char *bignum)
 		integer[i] = bignum[i];
 		i--;
 	    }
+		CHECKBIG(2)
 		bigcell[big_pt0++] = atoi(integer);
 	    len++;
 	}
@@ -95,6 +100,7 @@ makebigx(char *bignum)
 	long long int   l,
 	                m;
 
+	CHECKBIG(3)
 	l = (long long int) bigcell[big_pt0-1] * BIGNUM_BASE;
 	m = (long long int) bigcell[big_pt0-2];
 	m = (l + m) * sign;
@@ -314,6 +320,7 @@ bigx_int_to_big(int x)
                     y;
 
     y = GET_INT(x);
+	CHECKBIG(4)
 	bigcell[big_pt0++] = abs(y);
     res = gen_big();
     SET_TAG(res, BIGX);
@@ -337,7 +344,9 @@ bigx_long_to_big(int x)
     l = GET_LONG(x);
     i2 = llabs(l) % BIGNUM_BASE;
     i1 = llabs(l) / BIGNUM_BASE;
+	CHECKBIG(5)
 	bigcell[big_pt0++] = i2;
+	CHECKBIG(6)
 	bigcell[big_pt0++] = i1;
     res = gen_big();
     SET_TAG(res, BIGX);
@@ -389,9 +398,11 @@ bigx_shift(int x, int n)
 
 	int i;
 	for(i=0;i<n;i++){
+		CHECKBIG(7)
 		bigcell[big_pt0++] = 0;
 	}
     for(i=0;i<len;i++){
+		CHECKBIG(8)
 		bigcell[big_pt0++] = bigcell[pointer+i];
 	}
 
@@ -485,6 +496,7 @@ bigx_plus1(int arg1, int arg2)
 	z = x + y + c;
 	c = z / BIGNUM_BASE;
 	q = z % BIGNUM_BASE;
+	CHECKBIG(9)
 	bigcell[big_pt0++] = q;
 	pointerx++;
 	pointery++;
@@ -492,9 +504,10 @@ bigx_plus1(int arg1, int arg2)
 	len2--;
 	len++;
     } while (len1 > 0 || len2 > 0);
-    if (c != 0)
+    if (c != 0){
+		CHECKBIG(10)
 		bigcell[big_pt0++] = c;
-	
+	}
 	set_pointer(res,big_pt0-1);
 	set_length(res,len);
     return (res);
@@ -577,6 +590,7 @@ bigx_minus1(int arg1, int arg2)
 	    z = (x + c) - y;
 	    c = 0;
 	}
+	CHECKBIG(11)
 	bigcell[big_pt0++] = z;
 	pointerx++;
 	pointery++;
@@ -644,9 +658,10 @@ bigx_mult1(int arg1, int arg2)
 
 	// clear area of calculate
 	int i,j;
-	for(i=0;i<=len;i++)
+	for(i=0;i<=len;i++){
+		CHECKBIG(12)
 		bigcell[i+big_pt0] = 0;
-
+	}
     pointery = get_pointer(arg2)-len2+1; //LSB
 	for(j=0;j<len2;j++){
 		pointerx = get_pointer(arg1)-len1+1; //LSB
@@ -664,6 +679,7 @@ bigx_mult1(int arg1, int arg2)
 			c = 0;
 	    	}
 	    	l1 = l1 + c + (long long int) bigcell[big_pt0+j+i+1];
+			CHECKBIG(13)
 			bigcell[big_pt0+j+i] = (int)l2;
 	    	bigcell[big_pt0+j+i+1] = (int)l1;
 		}
@@ -770,6 +786,7 @@ bigx_div1(int arg1, int arg2)
 
 	save1 = big_pt0;
 	big_pt0 = save0;
+	CHECKBIG(14)
 	bigcell[big_pt0-len] = q;
 	len++;
 
@@ -778,6 +795,7 @@ bigx_div1(int arg1, int arg2)
 	// when divident is smaller than divisior and shift > 0 insert zero
 	//e.q.  div(3000000000000000000,30000000000)
     while(shift > 0){
+			CHECKBIG(15)
 			bigcell[big_pt0-len] = 0;
 			shift--;
 			len++;
@@ -847,6 +865,7 @@ bigx_remainder(int arg1, int arg2)
 	pointer = get_pointer(dividend)-len+1; //LSB
 	int i;
 	for(i=0;i<len;i++){
+		CHECKBIG(16)
 		bigcell[big_pt0++] = bigcell[pointer++];
 	}
 	set_pointer(res,big_pt0-1);
@@ -1018,15 +1037,18 @@ bigx_mult_i(int x, int y)
 	    c = z / BIGNUM_BASE;
 	    z = z % BIGNUM_BASE;
 
+		CHECKBIG(17)
 		bigcell[big_pt0++] = (int)z;
 	} else {
 	    c = 0;
+		CHECKBIG(18)
 		bigcell[big_pt0++] = (int)z;
 	}
 	pointer++;
 	len--;
     } while (len > 0);
 
+	CHECKBIG(19)
 	bigcell[big_pt0] = (int)c;
 	len = n + 1;
 	while(bigcell[big_pt0] == 0 && len > 1){

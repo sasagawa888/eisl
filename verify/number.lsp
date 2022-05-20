@@ -4656,7 +4656,7 @@
 ($ap 2 "isqrt" P.81)
 ($test (isqrt 49) 7 eql)
 ($test (isqrt 63) 7 eql)
-;($test (isqrt 1000000000000002000000000000000) 1000000000000000 eql)
+($test (isqrt 1000000000000002000000000000000) 1000000000000000 eql)
 ;;;
 ($argc isqrt 1 0 0)
 ($type isqrt ($integer) :target)

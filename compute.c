@@ -949,30 +949,31 @@ lcm(int x, int y)
     }
 }
 
-
-int
-isqrt0(int s, int s2, int x)
+//newton method for longnum
+long long int
+isqrt1(long long int n, long long int init)
 {
+	long long int s;
 
-    if (eqsmallerp(mult(s,s),x) && eqsmallerp(x,mult(s2,s2)))
+	s = init;
+
+    while(s*s > n){
+		s = (s + n/s)/2; 
+	}
 	return (s);
-    else
-	return (isqrt0(divide(plus(divide(x, s), s), makeint(2)), s, x));
 }
 
-//newton method
+//newton method for bignum
 int 
-isqrt1(int n, int init){
-	int x,y;
+isqrt2(int n, int init){
+	int s;
 
-	x = init;
-	y = minus(x,divide(minus(mult(x,x),n),mult(makeint(2),x)));
+	s = init;
 
-	while(!numeqp(x,y)){
-		x = y;
-		y = minus(x,divide(minus(mult(x,x),n),mult(makeint(2),x)));
+	while(greaterp(mult(s,s),n)){
+		s = divide(plus(s,divide(n,s)),makeint(2));
 	}
-	return(minus(y,makeint(1)));
+	return(s);
 }
 
 
@@ -983,8 +984,12 @@ isqrt(int x)
 	return (makeint(floor(sqrt(GET_INT(x)))));
     else if (floatp(x))
 	return (makeint(floor(sqrt(GET_FLT(x)))));
-	else if(longnump(x))
-	return (isqrt0(makeint(1),makeint(1),x));
+	else if(longnump(x)){
+	long long int n, init;
+	n = GET_LONG(x);
+	init = (long long int) sqrt(n)+1;
+	return (makeint((int)isqrt1(n,init)));
+	}
     else{
 	int len,msb,pointer,init,i;
 	long long int lmsb;
@@ -1016,7 +1021,8 @@ isqrt(int x)
 		set_pointer(init,big_pt0-1);
 		set_length(init,len+1);
 	}
-	return (isqrt1(x,init));
+
+	return (isqrt2(x,init));
 	}
 }
 

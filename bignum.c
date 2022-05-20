@@ -714,10 +714,24 @@ int bigx_div(int arg1, int arg2)
     return (res);
 }
 
+int bigx_bigzerop(int x){
+	int len,pointer;
+
+	pointer = get_pointer(x);
+	len = get_length(x);
+	while(len > 0){
+		if(bigcell[pointer--] != 0)
+			return(0);
+		len--;
+	}
+	return(1);
+}
+
+
 int
 bigx_div1(int arg1, int arg2)
 {
-    int             shift,shift0,
+    int             shift,save0,save1,
                     res,len,q,dividend,subtract,
 					pointerx,pointery,
                     msb1,msb2;
@@ -737,9 +751,14 @@ bigx_div1(int arg1, int arg2)
 	pointery = get_pointer(arg2); //MSB pointer
 	msb2 = bigcell[pointery];  // value of MSB
 	dividend = arg1;
+	simp_flag = false;
+	save1 = BIGNUM_WORK;
+
     
 	do {
-	shift = shift0 = get_length(dividend) - get_length(arg2);
+	save0 = big_pt0;
+	big_pt0 = save1;
+	shift = get_length(dividend) - get_length(arg2);
 	pointerx = get_pointer(dividend); // MSB
 	msb1 = bigcell[pointerx];
 	if(msb1 >= msb2){
@@ -761,6 +780,8 @@ bigx_div1(int arg1, int arg2)
 		q--;
 	}
 
+	save1 = big_pt0;
+	big_pt0 = save0;
 	bigcell[big_pt0-len] = q;
 	len++;
 
@@ -768,14 +789,15 @@ bigx_div1(int arg1, int arg2)
 
 	// when divident is 0(rest is 0) insert 0 element 
 	//e.q.  div(3000000000000000000,30000000000)
-	if(numeqp(dividend,makeint(0))){
-		while(shift0 > 0){
+	if(bigx_bigzerop(dividend)){
+		while(shift > 0){
 			bigcell[big_pt0-len] = 0;
-			shift0--;
+			shift--;
 			len++;
 		}
 	}
-
+	
+	simp_flag = true;
 	big_pt0++;
 	set_pointer(res,big_pt0-1);
 	set_length(res,len);

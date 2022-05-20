@@ -787,14 +787,12 @@ bigx_div1(int arg1, int arg2)
 
 	} while(!smallerp(dividend,arg2));
 
-	// when divident is 0(rest is 0) insert 0 element 
+	// when divident is smaller than divisior and shift > 0 insert zero
 	//e.q.  div(3000000000000000000,30000000000)
-	if(bigx_bigzerop(dividend)){
-		while(shift > 0){
+    while(shift > 0){
 			bigcell[big_pt0-len] = 0;
 			shift--;
 			len++;
-		}
 	}
 	
 	simp_flag = true;

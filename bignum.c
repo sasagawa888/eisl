@@ -808,7 +808,7 @@ int bigx_div(int arg1, int arg2)
 int
 bigx_div1(int arg1, int arg2)
 {
-    int             shift,save0,save1,
+    int             shift,save0,save1,d,
                     res,len,q,dividend,subtract,
 					pointerx,pointery,
                     msb1,msb2;
@@ -821,10 +821,17 @@ bigx_div1(int arg1, int arg2)
 	oparg1 = arg1;
 	oparg2 = arg2;
 	#endif
-	// arg1 > arg2 -> 0
+	// arg1 < arg2 -> 0
 	if(smallerp(arg1,arg2))
 		return(makeint(0));
 
+	pointery = get_pointer(arg2); //MSB pointer
+	// Knuth The art of computer programing D-algorithm
+	if(bigcell[pointery] < BIGNUM_BASE/2){
+		d = BIGNUM_BASE/(1+bigcell[pointery]);
+		arg1 = mult(arg1,makeint(d));
+		arg2 = mult(arg2,makeint(d));
+	}
     res = gen_big();
 	SET_TAG(res, BIGX);
     set_sign(res, 1);

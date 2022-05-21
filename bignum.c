@@ -58,6 +58,12 @@ void dispmortem(){
 
 #define CHECKBIG(x) {recmortem(x);if(big_pt0<0 || big_pt0>=BIGSIZE){dispmortem();printf("point=%d ",x);error(RESOURCE_ERR,"bigcell",big_pt0);}}
 
+
+#define DEBUG			error(RESOURCE_ERR,"debug",NIL);
+
+
+
+
 int get_length(int x){
 	return(GET_CDR(x));
 }
@@ -454,6 +460,19 @@ bigx_abs(int x)
     return (res);
 }
 
+int bigx_zerop(int x){
+	int len,pointer;
+
+	len = get_length(x);
+	pointer = get_pointer(x);
+	while(len > 0){
+		if(bigcell[pointer--] != 0)
+			return(0);
+		len--;
+	}
+	return(1);
+}
+
 int
 bigx_plus(int arg1, int arg2)
 {
@@ -770,6 +789,7 @@ int bigx_div(int arg1, int arg2)
                     x,
                     y;
 
+	
 	#ifdef POSTMORTEM
 	optype = 4;
 	recopmortem(optype);
@@ -780,7 +800,7 @@ int bigx_div(int arg1, int arg2)
     // if devidend is smaller than divisor,return 0
     if (bigx_abs_smallerp(arg1, arg2))
 	return (makeint(0));
-
+	
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
 	res = bigx_div1(arg1, arg2);
     } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {
@@ -825,13 +845,16 @@ bigx_div1(int arg1, int arg2)
 	if(smallerp(arg1,arg2))
 		return(makeint(0));
 
+	simp_flag = false;
 	pointery = get_pointer(arg2); //MSB pointer
+	
 	// Knuth The art of computer programing D-algorithm
 	if(bigcell[pointery] < BIGNUM_BASE/2){
 		d = BIGNUM_BASE/(1+bigcell[pointery]);
-		arg1 = mult(arg1,makeint(d));
-		arg2 = mult(arg2,makeint(d));
+		arg1 = bigx_mult1(arg1,bigx_int_to_big(makeint(d)));
+		arg2 = bigx_mult1(arg2,bigx_int_to_big(makeint(d)));
 	}
+
     res = gen_big();
 	SET_TAG(res, BIGX);
     set_sign(res, 1);
@@ -841,9 +864,7 @@ bigx_div1(int arg1, int arg2)
 	pointery = get_pointer(arg2); //MSB pointer
 	msb2 = bigcell[pointery];  // value of MSB
 	dividend = arg1;
-	simp_flag = false;
 	save1 = BIGNUM_WORK;
-
     
 	do {
 	save0 = big_pt0;
@@ -861,6 +882,7 @@ bigx_div1(int arg1, int arg2)
 		shift--;
 	}
 
+
 	subtract = bigx_shift(bigx_mult1(arg2,bigx_int_to_big(makeint(q))),shift);
 	dividend = bigx_minus(dividend,subtract);
 	
@@ -869,14 +891,14 @@ bigx_div1(int arg1, int arg2)
 		dividend = plus(dividend,bigx_shift(arg2,shift));
 		q--;
 	}
-
+	
 	save1 = big_pt0;
 	big_pt0 = save0;
 	CHECKBIG(14)
 	bigcell[big_pt0-len] = q;
 	len++;
 
-	} while(!smallerp(dividend,arg2));
+	} while(!bigx_zerop(dividend) && !smallerp(dividend,arg2));
 
 	// when divident is smaller than divisior and shift > 0 insert zero
 	//e.q.  div(3000000000000000000,30000000000)

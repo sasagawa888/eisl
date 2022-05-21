@@ -582,12 +582,6 @@ extern int      error_handler;
 extern int      trace_list;
 extern int      backtrace[BACKSIZE];
 
-__dead static inline void
-DEBUG(void)
-{
-    puts("debug");
-    RAISE(Exit_Interp);
-}
 
 extern int      ed_lparen_col;
 extern int      ed_rparen_col;

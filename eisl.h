@@ -9,7 +9,7 @@
  */
 
 //switch of postmortem debugger
-#define POSTMORTEM 
+//#define POSTMORTEM 
 
 #ifndef EISL_H
 #define EISL_H

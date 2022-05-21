@@ -971,7 +971,7 @@ isqrt2(int n, int init){
 	s = init;
 
 	while(greaterp(mult(s,s),n)){
-		//print(s);printf("\n");
+		 //print(s);printf("\n");
 		s = divide(plus(s,divide(n,s)),makeint(2));
 	}
 	return(s);

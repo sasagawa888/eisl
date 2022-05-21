@@ -9,7 +9,7 @@
  */
 
 //switch of postmortem debugger
-//#define POSTMORTEM 
+#define POSTMORTEM 
 
 #ifndef EISL_H
 #define EISL_H
@@ -36,7 +36,7 @@
 #define COL_SIZE 255
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
-#define BIGSIZE 100000000
+#define BIGSIZE 10000000
 
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000

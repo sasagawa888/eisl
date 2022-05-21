@@ -8,9 +8,6 @@
  * 12999999 - 19999999 Wrok2 area 
  */
 
-//switch of postmortem debugger
-//#define POSTMORTEM 
-
 #ifndef EISL_H
 #define EISL_H
 
@@ -91,7 +88,8 @@ static const int FEND = 6;
 
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
-static const int BIGNUM_WORK = BIGSIZE * 5 / 10; // from 50% to 90% bigcell area is working area.
+static const int BIGNUM_WORK = BIGSIZE * 5 / 10; // from 50% to 90% of bigcell area is working area.
+static const int BIGNUM_PARMA = BIGSIZE * 9 / 10; //from 90% to 100% of bigcell area is parmanent area
 
 typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR, SYM,
     LIS, DUMMY,

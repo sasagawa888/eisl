@@ -150,7 +150,7 @@ int             area_sw = 1;	// 1= lower area 2=higher area
 
 // bignum pointer
 int				big_pt0 = 0; // pointer of temporaly bignum
-int 			big_pt1 = BIGSIZE - BIGSIZE/10; // pointer of parmanent bignum
+int 			big_pt1 = BIGNUM_PARMA; // pointer of parmanent bignum
 
 // longjmp control and etc
 Except_T        Restart_Repl = { "Restart REPL" }, Exit_Interp =
@@ -359,9 +359,6 @@ initpt(void)
     charcnt = 0;
     generic_func = NIL;
     generic_vars = NIL;
-	#ifdef POSTMORTEM
-	printf("bit_pt0=%d\n",big_pt0);
-	#endif
 	big_pt0 = 0;
     // clear nest level of tracing function.
     ls = trace_list;

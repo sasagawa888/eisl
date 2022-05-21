@@ -10,6 +10,16 @@
 *  Car-part of the cell has the pointer of MSB.
 *  Cdr-part of then cell has the length
 *  
+   bigcell[int]                  heap[cell structure]
+   |(temporarly)|               |          |
+   |LSB  ^      |      |-------<|BIGX(car) |
+   |     |      |      |        |          |
+   |MSB         |<------        |          |
+   |(working)   | big_pt0       |          |
+   |            |               |          |
+   |(parmanent) | big_pt1       |          |
+
+
 */
 
 
@@ -22,44 +32,11 @@
 #include "fmt.h"
 #include "text.h"
 
-int postmortem[10];
-int opmortem[50];
-int optype,oparg1,oparg2;
 
-void recmortem(int x){
-	int i;
-	for(i=0;i<9;i++)
-		postmortem[i] = postmortem[i+1];
-	
-	postmortem[9] = x;
-}
-
-void recopmortem(int x){
-	int i;
-	for(i=0;i<49;i++)
-		opmortem[i] = opmortem[i+1];
-	
-	opmortem[49] = x;
-}
+#define CHECKBIG(x) if(big_pt0<0 || big_pt0>=BIGNUM_PARMA){;printf("point=%d ",x);error(RESOURCE_ERR,"bigcell",big_pt0);}
 
 
-void dispmortem(){
-	int i;
-	for(i=0;i<10;i++){
-		printf("->%d->",postmortem[i]);
-	}
-	for(i=0;i<50;i++){
-		printf("~%d~",opmortem[i]);
-	}
-	printf("optype=%d\n",optype);
-	printf("arg1=");print(oparg1);printf("\n");
-	printf("arg2= ");print(oparg2);printf("\n");
-}
-
-#define CHECKBIG(x) {recmortem(x);if(big_pt0<0 || big_pt0>=BIGSIZE){dispmortem();printf("point=%d ",x);error(RESOURCE_ERR,"bigcell",big_pt0);}}
-
-
-#define DEBUG			error(RESOURCE_ERR,"debug",NIL);
+#define DEBUG error(RESOURCE_ERR,"debug",NIL);
 
 
 
@@ -478,12 +455,6 @@ bigx_plus(int arg1, int arg2)
 {
     int             res;
 
-	#ifdef POSTMORTEM
-	optype = 1;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
     res = UNDEF;
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
 	res = bigx_plus1(arg1, arg2);
@@ -523,12 +494,6 @@ bigx_plus1(int arg1, int arg2)
 					c,len,
                     res;
 
-	#ifdef POSTMORTEM
-	optype = 11;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
 	len1 = get_length(arg1);
 	len2 = get_length(arg2);
 	pointerx = get_pointer(arg1)-len1+1; //LSB
@@ -580,12 +545,6 @@ bigx_minus(int arg1, int arg2)
 {
     int             res;
 
-	#ifdef POSTMORTEM
-	optype = 2;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
     res = UNDEF;
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
 	if (bigx_smallerp(arg1, arg2)) {
@@ -626,12 +585,7 @@ bigx_minus1(int arg1, int arg2)
                     c,
                     res;
 
-	#ifdef POSTMORTEM
-	optype = 21;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
+	
 	len1 = get_length(arg1);
 	len2 = get_length(arg2);
 	pointerx = get_pointer(arg1)-len1+1; // LSB
@@ -691,12 +645,7 @@ bigx_mult(int arg1, int arg2)
 {
     int             res;
 
-	#ifdef POSTMORTEM
-	optype = 3;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
+	
     res = UNDEF;
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
 	res = bigx_mult1(arg1, arg2);
@@ -729,12 +678,7 @@ bigx_mult1(int arg1, int arg2)
                     l2,
                     c;
 
-	#ifdef POSTMORTEM
-	optype = 31;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
+	
 	res = gen_big();
 	SET_TAG(res,BIGX);
 	len1 = get_length(arg1);
@@ -790,12 +734,6 @@ int bigx_div(int arg1, int arg2)
                     y;
 
 	
-	#ifdef POSTMORTEM
-	optype = 4;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
     res = UNDEF;
     // if devidend is smaller than divisor,return 0
     if (bigx_abs_smallerp(arg1, arg2))
@@ -835,12 +773,6 @@ bigx_div1(int arg1, int arg2)
     long long int   lmsb1;
 
 
-	#ifdef POSTMORTEM
-	optype = 41;
-	recopmortem(optype);
-	oparg1 = arg1;
-	oparg2 = arg2;
-	#endif
 	// arg1 < arg2 -> 0
 	if(smallerp(arg1,arg2))
 		return(makeint(0));

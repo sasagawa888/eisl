@@ -76,13 +76,7 @@ markcell(int addr)
     case CHR:
     case STR:
     case STREAM:
-	return;
     case BIGX:
-	x = addr;
-	do {
-	    MARK_CELL(x);
-	    x = next(x);
-	} while (!nullp(x));
 	return;
     case VEC:
 	n = vector_length(addr);

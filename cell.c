@@ -630,6 +630,7 @@ makesym (const char *pname)
 /*
  * function car = args&body cdr = environment aux = null func object is
  * generated in heap area. 
+ * note, if ep(environment) has bignum, convert to parmanent)
  */
 int
 makefunc (const char *pname, int addr)

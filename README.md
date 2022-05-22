@@ -1,3 +1,8 @@
+# Note
+Changed bignum data structure. This may not compile for Raspberry Pi due to lack of memory. In this case eisl.h
+Reduce BIG SIZE.
+
+
 # Easy-ISLisp
 
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](https://minejima.jp/ISLispHyperDraft/islisp-v23.html).

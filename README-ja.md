@@ -1,3 +1,7 @@
+# ご注意
+bignumデータ構造を変更しました。これはラズパイに対してメモリ不足でコンパイルできないかもしれません。この場合にはeisl.h の
+BIGSIZEを小さくしてください。
+
 # Easy-ISLisp
 
 Easy-ISLisp (EISL) はISLisp標準の解釈実行器及び翻訳系です。

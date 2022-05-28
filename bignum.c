@@ -1259,6 +1259,9 @@ void fft1(int n, int pos){
         temp[i] = fftx[pos+i] + fftx[pos+half+i];
         temp[half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
       }
+      for(i=0;i<n;i++){
+        fftx[i] = temp[i];
+      }
       //recursion
       fft1(half,pos);
       fft1(half,pos+half);

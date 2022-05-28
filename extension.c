@@ -44,6 +44,7 @@ initexsubr (void)
   defsubr ("EISL-GET-METHOD-BODY", f_get_method_body);
   defsubr ("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
   defsubr ("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
+  defsubr ("EISL-TEST", f_eisl_test);
 
 #ifdef __arm__
   defsubr ("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -725,6 +726,21 @@ f_getenv (int arglist)
       return makestr (val);
     }
 }
+
+/*
+* f_eisl_test is test function for new code.
+* for example FFT IFFT.
+* This function is for development testing code.
+*/
+int f_eisl_test(int arglist){
+    int arg1,arg2;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+
+    return(bigx_fft_mult(arg1,arg2));
+}
+
 
 /*
  * f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 

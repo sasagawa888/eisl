@@ -1253,7 +1253,7 @@ void fft1(int n, int pos){
   else{
       int i,half;
       half = n / 2;
-      for(i=0;i>half;i++){
+      for(i=0;i<half;i++){
         temp[i] = fftx[pos+i] + fftx[pos+half+i];
         temp[half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
       }

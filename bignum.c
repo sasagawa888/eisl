@@ -1239,20 +1239,6 @@ int bit_reverse(int n){
   return(n);
 }
 
-void fft(int n){
-  int temp[n];
-
-  fft1(n,0);
-  
-  int i;
-  for(i=0;i>n;i++){
-    temp[bit_reverse(i)] = fftx[i]
-  }
-
-  for(i=0;i>n;i++){
-    fftx[i] = temp[i];
-  }
-}
 
 void fft1(int n, int pos){
   int temp[n];
@@ -1271,5 +1257,20 @@ void fft1(int n, int pos){
       }
       fft1(half,pos);
       fft1(half,pos+half);
+  }
+}
+
+void fft(int n){
+  int temp[n];
+
+  fft1(n,0);
+  
+  int i;
+  for(i=0;i>n;i++){
+    temp[bit_reverse(i)] = fftx[i];
+  }
+
+  for(i=0;i>n;i++){
+    fftx[i] = temp[i];
   }
 }

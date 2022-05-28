@@ -1216,12 +1216,12 @@ bigx_mult_i (int x, int y)
 complex w_factor(int n, int i){
   complex z;
 
-  z = sin(2*M_PI/(float)n) - cos(2*M_PI/(float)n) * I;
+  z = sin(2*M_PI/(double)n) - cos(2*M_PI/(double)n) * I;
   return(expt(z,i));
 }
 
 int bit_reverse(int n){
-  int binary[12],pos;
+  int binary[12],pos,end;
 
 
   pos = 0;
@@ -1230,10 +1230,12 @@ int bit_reverse(int n){
     n = n / 2;
   }
   binary[pos] = n % 2;
+  end = pos;
 
   n = 0;
-  while(pos >= 0){
-    n = binary[pos--] + n*2;
+  pos = 0;
+  while(pos <= end){
+    n = binary[pos++] + n*2;
   }
 
   return(n);

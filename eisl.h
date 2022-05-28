@@ -20,6 +20,7 @@
 #include "term.h"
 #include "except.h"
 #include "eiffel.h"
+#include "complex.h"
 
 #define DYNSIZE 1000
 #define STACKSIZE 400000
@@ -239,7 +240,7 @@ extern int      bigcell[BIGSIZE];
 // bignum pointer, FFT_input_vector
 extern int big_pt0;
 extern int big_pt1;
-extern int fftx[2048];
+extern complex fftx[2048];
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \

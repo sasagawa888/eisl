@@ -20,6 +20,7 @@
 #include "str.h"
 #include "long.h"
 #include "eiffel.h"
+#include "complex.h"
 
 // ------pointer----
 int ep;				// environment pointer
@@ -151,7 +152,7 @@ int area_sw = 1;		// 1= lower area 2=higher area
 // bignum pointer
 int big_pt0 = 0;		// pointer of temporaly bignum
 int big_pt1 = BIGNUM_PARMA;	// pointer of parmanent bignum
-int fftx[2048];     // FFT input vector
+complex fftx[2048];     // FFT input vector
 
 // longjmp control and etc
 Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =

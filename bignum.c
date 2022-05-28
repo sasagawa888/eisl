@@ -1241,7 +1241,9 @@ int bit_reverse(int n){
 
 
 void fft1(int n, int pos){
-  int temp[n];
+  complex temp[n];
+
+  
   if(n==2){
       temp[0] = fftx[pos] + fftx[pos+1];
       temp[1] = fftx[pos] - fftx[pos+1];
@@ -1255,16 +1257,18 @@ void fft1(int n, int pos){
         temp[i] = fftx[pos+i] + fftx[pos+half+i];
         temp[half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
       }
+      //recursion
       fft1(half,pos);
       fft1(half,pos+half);
   }
 }
 
 void fft(int n){
-  int temp[n];
+  complex temp[n];
 
   fft1(n,0);
   
+  // change index of fftx with bit_reverse
   int i;
   for(i=0;i>n;i++){
     temp[bit_reverse(i)] = fftx[i];
@@ -1274,3 +1278,78 @@ void fft(int n){
     fftx[i] = temp[i];
   }
 }
+
+int bigx_fft_mult(int x, int y){
+  int pointer,len,max_len,i,n,res;
+  complex vecx[2048],vecy[2048];
+  long long int  longx,longy,carry;
+
+  if(get_length(x) >= get_length(y)){
+    max_len = get_length(x);
+  }
+  else{
+    max_len = get_length(y);
+  }
+
+  n = 0;
+  for(i=10;i>0;i--){
+    if(max_len > expt(2,i)){
+        n = i+1;
+    }
+  }
+
+  //------fft(x)-----
+  for(i=0;i<2048;i++){
+    fftx[i] = 0;
+  }
+  pointer = get_pointer(x);
+  len = get_length(x);
+  for(i=0;i<len;i++){
+    fftx[i] = (complex)bigcell[pointer+i];
+  }
+  
+  fft(n);
+  
+  for(i=0;i<n;i++){
+    vecx[i] = fftx[i];
+  }
+
+  //-----fft(y)--------
+  for(i=0;i<2048;i++){
+    fftx[i] = 0;
+  }
+  pointer = get_pointer(y);
+  len = get_length(y);
+  for(i=0;i<len;i++){
+    fftx[i] = (complex)bigcell[pointer+i];
+  }
+  
+  fft(n);
+
+  for(i=0;i<n;i++){
+    vecy[i] = fftx[i];
+  }
+
+  //-----mult---------
+  res = gen_big();
+  set_sign(res,get_sign(x)*get_sign(y));
+
+  carry = 0;
+  for(i=0;i<n;i++){
+      longx = (long long int)creal(vecx[i]);
+      longy = (long long int)creal(vecy[i]);
+      bigcell[big_pt0++] = (int)((longx * longy + carry) % BIGNUM_BASE);
+      carry = (longx * longy + carry) / BIGNUM_BASE;
+  }
+
+  while(bigcell[big_pt0] == 0 && max_len > 0){
+      big_pt0--;
+      max_len--;
+  }
+
+  big_pt0++;
+  set_pointer(res,big_pt0-1);
+  set_length(res,max_len);
+  return(res);
+}
+

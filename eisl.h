@@ -236,9 +236,10 @@ extern int      shelter[STACKSIZE];
 extern int      dynamic[DYNSIZE][2];
 extern int      bigcell[BIGSIZE];
 
-// bignum pointer
+// bignum pointer, FFT_input_vector
 extern int big_pt0;
 extern int big_pt1;
+extern int fftx[2048];
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \

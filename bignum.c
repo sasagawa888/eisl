@@ -31,6 +31,7 @@
 #include "eisl.h"
 #include "fmt.h"
 #include "text.h"
+#include "complex.h"
 
 
 #define CHECKBIG0 if(big_pt0<0 || big_pt0>=BIGNUM_PARMA){error(RESOURCE_ERR,"bigcell pt0",big_pt0);}
@@ -1207,4 +1208,68 @@ bigx_mult_i (int x, int y)
   set_sign (res, sign1 * sign2);
   res = bigx_simplify (res);
   return (res);
+}
+
+
+//----------------FFT multiply--------------------------
+
+complex w_factor(int n, int i){
+  complex z;
+
+  z = sin(M_PI/(float)n) - cos(M_PI/(float)n) * I;
+  return(expt(z,i));
+}
+
+int bit_reverse(int n){
+  int binary[12],pos;
+
+
+  pos = 0;
+  while(n >= 2){
+    binary[pos++] = n % 2;
+    n = n / 2;
+  }
+  binary[pos] = n % 2;
+
+  n = 0;
+  while(pos >= 0){
+    n = binary[pos--] + n*2;
+  }
+
+  return(n);
+}
+
+void fft(int n){
+  int temp[n];
+
+  fft1(n,0);
+  
+  int i;
+  for(i=0;i>n;i++){
+    temp[bit_reverse(i)] = fftx[i]
+  }
+
+  for(i=0;i>n;i++){
+    fftx[i] = temp[i];
+  }
+}
+
+void fft1(int n, int pos){
+  int temp[n];
+  if(n==2){
+      temp[0] = fftx[pos] + fftx[pos+1];
+      temp[1] = fftx[pos] - fftx[pos+1];
+      fftx[pos] = temp[0];
+      fftx[pos+1] = temp[1];
+  }
+  else{
+      int i,half;
+      half = n / 2;
+      for(i=0;i>half;i++){
+        temp[i] = fftx[pos+i] + fftx[pos+half+i];
+        temp[half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
+      }
+      fft1(half,pos);
+      fft1(half,pos+half);
+  }
 }

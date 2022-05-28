@@ -35,6 +35,7 @@
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 #define BIGSIZE 20000000
+#define FFTSIZE 2048
 
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000

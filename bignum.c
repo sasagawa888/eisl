@@ -1216,7 +1216,7 @@ bigx_mult_i (int x, int y)
 complex w_factor(int n, int i){
   complex z;
 
-  z = sin(M_PI/(float)n) - cos(M_PI/(float)n) * I;
+  z = sin(2*M_PI/(float)n) - cos(2*M_PI/(float)n) * I;
   return(expt(z,i));
 }
 
@@ -1279,9 +1279,10 @@ void fft(int n){
   }
 }
 
+//-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
   int pointer,len,max_len,i,n,res;
-  complex vecx[2048],vecy[2048];
+  complex vecx[FFTSIZE],vecy[FFTSIZE];
   long long int  longx,longy,carry;
 
   if(get_length(x) >= get_length(y)){
@@ -1299,13 +1300,13 @@ int bigx_fft_mult(int x, int y){
   }
 
   //------fft(x)-----
-  for(i=0;i<2048;i++){
+  for(i=0;i<FFTSIZE;i++){
     fftx[i] = 0;
   }
   pointer = get_pointer(x);
   len = get_length(x);
   for(i=0;i<len;i++){
-    fftx[i] = (complex)bigcell[pointer+i];
+    fftx[i] = (complex)bigcell[pointer-i];
   }
   
   fft(n);
@@ -1321,7 +1322,7 @@ int bigx_fft_mult(int x, int y){
   pointer = get_pointer(y);
   len = get_length(y);
   for(i=0;i<len;i++){
-    fftx[i] = (complex)bigcell[pointer+i];
+    fftx[i] = (complex)bigcell[pointer-i];
   }
   
   fft(n);
@@ -1333,23 +1334,26 @@ int bigx_fft_mult(int x, int y){
   //-----mult---------
   res = gen_big();
   set_sign(res,get_sign(x)*get_sign(y));
+  for(i=0;i<max_len;i++){
+    bigcell[big_pt0+i] = 0;
+  }
 
   carry = 0;
   for(i=0;i<n;i++){
       longx = (long long int)creal(vecx[i]);
       longy = (long long int)creal(vecy[i]);
-      bigcell[big_pt0++] = (int)((longx * longy + carry) % BIGNUM_BASE);
+      bigcell[big_pt0+i] = (int)((longx * longy + carry) % BIGNUM_BASE);
       carry = (longx * longy + carry) / BIGNUM_BASE;
   }
 
-  while(bigcell[big_pt0] == 0 && max_len > 0){
+  while(bigcell[big_pt0] == 0 && n > 0){
       big_pt0--;
-      max_len--;
+      n--;
   }
 
   big_pt0++;
   set_pointer(res,big_pt0-1);
-  set_length(res,max_len);
+  set_length(res,n);
   return(res);
 }
 

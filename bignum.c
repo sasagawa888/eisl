@@ -1220,6 +1220,14 @@ complex w_factor(int n, int i){
   return(expt(z,i));
 }
 
+// for inverse FFT
+complex iw_factor(int n, int i){
+  complex z;
+
+  z = sin(2*M_PI/(double)n) + cos(2*M_PI/(double)n) * I;
+  return(expt(z,i));
+}
+
 int bit_reverse(int n){
   int binary[12],pos,end;
 
@@ -1284,9 +1292,49 @@ void fft(int n){
   }
 }
 
-void idft(int n){
+//inverse FFT
+void ifft1(int n, int pos){
+  complex temp[n];
 
+  
+  if(n==2){
+      temp[0] = fftx[pos] + fftx[pos+1];
+      temp[1] = fftx[pos] - fftx[pos+1];
+      fftx[pos] = temp[0];
+      fftx[pos+1] = temp[1];
+  }
+  else{
+      int i,half;
+      half = n / 2;
+      for(i=0;i<half;i++){
+        temp[i] = fftx[pos+i] + fftx[pos+half+i];
+        temp[half+i] = iw_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
+      }
+      for(i=0;i<n;i++){
+        fftx[i] = temp[i];
+      }
+      //recursion
+      ifft1(half,pos);
+      ifft1(half,pos+half);
+  }
 }
+
+void ifft(int n){
+  complex temp[n];
+
+  ifft1(n,0);
+  
+  // change index of fftx with bit_reverse
+  int i;
+  for(i=0;i>n;i++){
+    temp[bit_reverse(i)] = fftx[i];
+  }
+
+  for(i=0;i>n;i++){
+    fftx[i] = temp[i];
+  }
+}
+
 
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
@@ -1351,7 +1399,7 @@ int bigx_fft_mult(int x, int y){
   }
 
   //inverse FFT
-  idft(n);
+  ifft(n);
 
   for(i=n;i>=0;i--){
       bigcell[big_pt0++] = fftx[i];

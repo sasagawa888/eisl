@@ -1284,11 +1284,14 @@ void fft(int n){
   }
 }
 
+void idft(int n){
+
+}
+
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
   int pointer,len,max_len,i,n,res;
   complex vecx[FFTSIZE],vecy[FFTSIZE];
-  long long int  longx,longy,carry;
 
   if(get_length(x) >= get_length(y)){
     max_len = get_length(x);
@@ -1343,14 +1346,17 @@ int bigx_fft_mult(int x, int y){
     bigcell[big_pt0+i] = 0;
   }
 
-  carry = 0;
   for(i=0;i<n;i++){
-      longx = (long long int)creal(vecx[i]);
-      longy = (long long int)creal(vecy[i]);
-      bigcell[big_pt0+i] = (int)((longx * longy + carry) % BIGNUM_BASE);
-      carry = (longx * longy + carry) / BIGNUM_BASE;
+      fftx[i] = vecx[i] * vecy[i];
   }
 
+  //inverse FFT
+  idft(n);
+
+  for(i=n;i>=0;i--){
+      bigcell[big_pt0++] = fftx[i];
+  }
+  big_pt0--;
   while(bigcell[big_pt0] == 0 && n > 0){
       big_pt0--;
       n--;

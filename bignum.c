@@ -1372,10 +1372,10 @@ int bigx_fft_test(){
     fftx[7] = 31;
   */
   
-    fftx[0] = 93;
-    fftx[1] = 97;
-    fftx[2] = 58;
-    fftx[3] = 53;
+    fftx[0] = 935;
+    fftx[1] = 359;
+    fftx[2] = 0;
+    fftx[3] = 0;
     fftx[4] = 0;
     fftx[5] = 0;
     fftx[6] = 0;
@@ -1401,10 +1401,10 @@ int bigx_fft_test(){
   */  
 
   
-    fftx[0] = 95;
-    fftx[1] = 27;
-    fftx[2] = 83;
-    fftx[3] = 33;
+    fftx[0] = 195;
+    fftx[1] = 727;
+    fftx[2] = 0;
+    fftx[3] = 0;
     fftx[4] = 0;
     fftx[5] = 0;
     fftx[6] = 0;

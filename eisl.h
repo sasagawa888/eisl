@@ -241,7 +241,7 @@ extern int      bigcell[BIGSIZE];
 // bignum pointer, FFT_input_vector
 extern int big_pt0;
 extern int big_pt1;
-extern complex fftx[2048];
+extern complex fftx[FFTSIZE];
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
@@ -692,6 +692,8 @@ int             bignumtoken(char buf[]);
 int             bigx_abs(int x);
 int             bigx_big_to_flt(int x);
 int             bigx_eqp(int x, int y);
+int             bigx_fft(int x);
+int             bigx_fft_test();
 int             bigx_fft_mult(int x, int y);
 int             bigx_flt_to_big(int x);
 int             bigx_int_to_big(int x);

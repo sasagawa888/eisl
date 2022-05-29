@@ -1227,7 +1227,7 @@ int get_bit(int n){
 complex w_factor(int n, int i){
   complex z;
 
-  z = sin(2.0*M_PI/(double)n) - cos(2.0*M_PI/(double)n) * I;
+  z = cos(2.0*M_PI/(double)n) - sin(2.0*M_PI/(double)n) * I;
   return(cpow(z,i));
 }
 
@@ -1235,7 +1235,7 @@ complex w_factor(int n, int i){
 complex iw_factor(int n, int i){
   complex z;
 
-  z = sin(2.0*M_PI/(double)n) + cos(2.0*M_PI/(double)n) * I;
+  z = cos(2.0*M_PI/(double)n) + sin(2.0*M_PI/(double)n) * I;
   return(cpow(z,i));
 }
 
@@ -1258,24 +1258,27 @@ int bit_reverse(int n, int bit){
 
 
 void fft1(int n, int pos){
-  complex temp[FFTSIZE];
-
+  complex temp;
   
   if(n==2){
-      temp[0] = fftx[pos] + fftx[pos+1];
-      temp[1] = fftx[pos] - fftx[pos+1];
-      fftx[pos] = temp[0];
-      fftx[pos+1] = temp[1];
+      temp = fftx[pos] + fftx[pos+1];
+      fftx[pos+1] = fftx[pos] - fftx[pos+1];
+      fftx[pos] = temp;
+      printf("fft n=%d\n",n);
+      CPRINT(fftx[pos]);
+      CPRINT(fftx[pos+1]);
   }
   else{
       int i,half;
       half = n / 2;
       for(i=0;i<half;i++){
-        temp[i] = fftx[pos+i] + fftx[pos+half+i];
-        temp[half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
+        temp = fftx[pos+i] + fftx[pos+half+i];
+        fftx[pos+half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
+        fftx[pos+i] = temp;
       }
+      printf("fft n=%d\n",n);
       for(i=0;i<n;i++){
-        fftx[i] = temp[i];
+        CPRINT(fftx[pos+i]);
       }
       //recursion
       fft1(half,pos);
@@ -1285,57 +1288,92 @@ void fft1(int n, int pos){
 
 void fft(int n){
   int i,bit;
-  complex temp[FFTSIZE];
+  complex temp;
 
   fft1(n,0);
   
+  CPRINT(fftx[0]);
   // change index of fftx with bit_reverse
   bit = get_bit(n);
-  for(i=0;i>n;i++){
-    temp[bit_reverse(i,bit)] = fftx[i];
+  for(i=0;i<n;i++){
+    temp = fftx[bit_reverse(i,bit)];
+    fftx[bit_reverse(i,bit)] = fftx[i];
+    fftx[i] = temp;
   }
 
-  for(i=0;i>n;i++){
-    fftx[i] = temp[i];
-  }
 }
 
 //inverse FFT
 void ifft1(int n, int pos){
-  complex temp[FFTSIZE];
-
+  complex temp;
   
   if(n==2){
-      temp[0] = fftx[pos] + fftx[pos+1];
-      temp[1] = fftx[pos] - fftx[pos+1];
-      fftx[pos] = temp[0];
-      fftx[pos+1] = temp[1];
+      temp = fftx[pos] + fftx[pos+1];
+      fftx[pos+1] = fftx[pos] - fftx[pos+1];
+      fftx[pos] = temp;
   }
   else{
       int i,half;
       half = n / 2;
       for(i=0;i<half;i++){
-        temp[i] = fftx[pos+i] + fftx[pos+half+i];
-        temp[half+i] = iw_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
-      }
-      for(i=0;i<n;i++){
-        fftx[i] = temp[i];
+        temp = fftx[pos+i] + fftx[pos+half+i];
+        fftx[pos+half+i] = iw_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
+        fftx[pos+i] = temp;
       }
       //recursion
+      printf("ifft n=%d\n",n);
+      for(i=0;i<n;i++){
+        CPRINT(fftx[pos+i]);
+      }
       ifft1(half,pos);
       ifft1(half,pos+half);
   }
 }
 
 void ifft(int n){
+  int bit;
+  complex temp;
 
   ifft1(n,0);
   int i;
   for(i=0;i<n;i++){
     fftx[i] = fftx[i]/(complex)n;
   }
+  // change index of fftx with bit_reverse
+  bit = get_bit(n);
+  for(i=0;i<n;i++){
+    temp = fftx[bit_reverse(i,bit)];
+    fftx[bit_reverse(i,bit)] = fftx[i];
+    fftx[i] = temp;
+  }
 
 }
+
+int bigx_fft_test(){
+
+    CPRINT(w_factor(4,0));
+    CPRINT(w_factor(4,1));
+    CPRINT(w_factor(4,2));
+    CPRINT(w_factor(4,3));
+
+    fftx[0] = 93;
+    fftx[1] = 97;
+    fftx[2] = 58;
+    fftx[3] = 53;
+    fftx[4] = 26;
+    fftx[5] = 59;
+    fftx[6] = 41;
+    fftx[7] = 31;
+
+    fft(8);
+    printf("fft \n");
+    int i;
+    for(i=0;i<8;i++){
+    CPRINT(fftx[i]);
+  }
+  return(T);
+}
+
 
 int bigx_fft(int x){
   int pointer,len,i,n;

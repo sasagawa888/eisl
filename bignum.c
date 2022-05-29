@@ -38,7 +38,7 @@
 #define CHECKBIG1 if(big_pt1<0 || big_pt1>=BIGSIZE){error(RESOURCE_ERR,"bigcell pt1",big_pt1);}
 
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
-
+#define CPRINT(x) printf("%f+%f\n", creal(x), cimag(x));
 
 int
 get_length (int x)
@@ -1335,6 +1335,37 @@ void ifft(int n){
   }
 }
 
+int bigx_fft(int x){
+  int pointer,len,max_len,i,n,res;
+  complex vecx[FFTSIZE],vecy[FFTSIZE];
+
+  len = get_length(x);
+  
+  n = 0;
+  for(i=10;i>0;i--){
+    if(len > pow(2,i)){
+        n = i+1;
+    }
+  }
+
+  //------fft(x)-----
+  for(i=0;i<FFTSIZE;i++){
+    fftx[i] = 0;
+  }
+  pointer = get_pointer(x);
+  for(i=0;i<len;i++){
+    fftx[i] = (complex)bigcell[pointer-i];
+    CPRINT(fftx[i]);
+  }
+  
+
+  fft(n);
+  for(i=0;i<n;i++){
+    CPRINT(fftx[i]);
+  }
+  DEBUG
+  
+}
 
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
@@ -1350,7 +1381,7 @@ int bigx_fft_mult(int x, int y){
 
   n = 0;
   for(i=10;i>0;i--){
-    if(max_len > expt(2,i)){
+    if(max_len > pow(2,i)){
         n = i+1;
     }
   }
@@ -1365,7 +1396,11 @@ int bigx_fft_mult(int x, int y){
     fftx[i] = (complex)bigcell[pointer-i];
   }
   
+
   fft(n);
+  for(i=0;i<n;i++){
+    CPRINT(fftx[i]);
+  }
   
   for(i=0;i<n;i++){
     vecx[i] = fftx[i];
@@ -1389,6 +1424,7 @@ int bigx_fft_mult(int x, int y){
 
   //-----mult---------
   res = gen_big();
+  SET_TAG(res,BIGX);
   set_sign(res,get_sign(x)*get_sign(y));
   for(i=0;i<max_len;i++){
     bigcell[big_pt0+i] = 0;

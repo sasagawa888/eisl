@@ -1288,19 +1288,18 @@ void fft1(int n, int pos){
 
 void fft(int n){
   int i,bit;
-  complex temp;
+  complex temp[FFTSIZE];
 
   fft1(n,0);
-  
-  CPRINT(fftx[0]);
+
   // change index of fftx with bit_reverse
   bit = get_bit(n);
   for(i=0;i<n;i++){
-    temp = fftx[bit_reverse(i,bit)];
-    fftx[bit_reverse(i,bit)] = fftx[i];
-    fftx[i] = temp;
+    temp[i] = fftx[bit_reverse(i,bit)];
   }
-
+  for(i=0;i<n;i++){
+    fftx[i] = temp[i];
+  }
 }
 
 //inverse FFT
@@ -1332,7 +1331,7 @@ void ifft1(int n, int pos){
 
 void ifft(int n){
   int bit;
-  complex temp;
+  complex temp[FFTSIZE];
 
   ifft1(n,0);
   int i;
@@ -1342,19 +1341,15 @@ void ifft(int n){
   // change index of fftx with bit_reverse
   bit = get_bit(n);
   for(i=0;i<n;i++){
-    temp = fftx[bit_reverse(i,bit)];
-    fftx[bit_reverse(i,bit)] = fftx[i];
-    fftx[i] = temp;
+    temp[i] = fftx[bit_reverse(i,bit)];
+  }
+  for(i=0;i<n;i++){
+    fftx[i] = temp[i];
   }
 
 }
 
 int bigx_fft_test(){
-
-    CPRINT(w_factor(4,0));
-    CPRINT(w_factor(4,1));
-    CPRINT(w_factor(4,2));
-    CPRINT(w_factor(4,3));
 
     fftx[0] = 93;
     fftx[1] = 97;
@@ -1370,13 +1365,18 @@ int bigx_fft_test(){
     int i;
     for(i=0;i<8;i++){
     CPRINT(fftx[i]);
+    }
+    ifft(8);
+    printf("ifft \n");
+     for(i=0;i<8;i++){
+    CPRINT(fftx[i]);
   }
   return(T);
 }
 
 
 int bigx_fft(int x){
-  int pointer,len,i,n;
+  int pointer,len,i,n,res;
 
   len = get_length(x);
   
@@ -1393,9 +1393,9 @@ int bigx_fft(int x){
   for(i=0;i<FFTSIZE;i++){
     fftx[i] = 0;
   }
-  pointer = get_pointer(x);
+  pointer = get_pointer(x) - len + 1; //LSB
   for(i=0;i<len;i++){
-    fftx[i] = (complex)bigcell[pointer-i];
+    fftx[i] = (complex)bigcell[pointer+i];
     CPRINT(fftx[i]);
   }
   
@@ -1413,7 +1413,22 @@ int bigx_fft(int x){
     CPRINT(fftx[i]);
   }
   
-  return(T);
+  res = gen_big();
+  SET_TAG(res,BIGX);
+  set_sign(res,get_sign(x));
+  
+  for(i=0;i<len;i++){
+      bigcell[big_pt0++] = creal(fftx[i]);
+  }
+  big_pt0--;
+  while(bigcell[big_pt0] == 0 && len > 1){
+    big_pt0--;
+    len--;
+  }
+  big_pt0++;
+  set_pointer(res,big_pt0-1);
+  set_length(res,len);
+  return(res);
 }
 
 //-------mult with FFT-------

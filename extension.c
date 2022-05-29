@@ -740,7 +740,7 @@ int f_eisl_test(int arglist){
 
     //return(bigx_fft_test());
     return(bigx_fft(arg1));
-    return(bigx_fft_mult(arg1,arg2));
+    //return(bigx_fft_mult(arg1,arg2));
 }
 
 

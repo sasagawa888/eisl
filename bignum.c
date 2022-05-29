@@ -38,7 +38,7 @@
 #define CHECKBIG1 if(big_pt1<0 || big_pt1>=BIGSIZE){error(RESOURCE_ERR,"bigcell pt1",big_pt1);}
 
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
-#define CPRINT(x) printf("%f+%f\n", creal(x), cimag(x));
+#define CPRINT(x) printf("%f+%fi\n", creal(x), cimag(x));
 
 int
 get_length (int x)
@@ -1216,16 +1216,16 @@ bigx_mult_i (int x, int y)
 complex w_factor(int n, int i){
   complex z;
 
-  z = sin(2*M_PI/(double)n) - cos(2*M_PI/(double)n) * I;
-  return(expt(z,i));
+  z = sin(2.0*M_PI/(double)n) - cos(2.0*M_PI/(double)n) * I;
+  return(cpow(z,i));
 }
 
 // for inverse FFT
 complex iw_factor(int n, int i){
   complex z;
 
-  z = sin(2*M_PI/(double)n) + cos(2*M_PI/(double)n) * I;
-  return(expt(z,i));
+  z = sin(2.0*M_PI/(double)n) + cos(2.0*M_PI/(double)n) * I;
+  return(cpow(z,i));
 }
 
 int bit_reverse(int n){
@@ -1323,31 +1323,35 @@ void ifft(int n){
   complex temp[n];
 
   ifft1(n,0);
+  int i;
+  for(i=0;i<n;i++){
+    fftx[i] = fftx[i]/(complex)n;
+  }
   
   // change index of fftx with bit_reverse
-  int i;
-  for(i=0;i>n;i++){
+  for(i=0;i<n;i++){
     temp[bit_reverse(i)] = fftx[i];
   }
 
-  for(i=0;i>n;i++){
+  for(i=0;i<n;i++){
     fftx[i] = temp[i];
   }
 }
 
 int bigx_fft(int x){
-  int pointer,len,max_len,i,n,res;
-  complex vecx[FFTSIZE],vecy[FFTSIZE];
+  int pointer,len,i,n;
 
   len = get_length(x);
   
   n = 0;
   for(i=10;i>0;i--){
     if(len > pow(2,i)){
-        n = i+1;
+        n = pow(2,i+1);
+        break;
     }
   }
-
+ 
+  printf("len=%d  n=%d \n", len, n);
   //------fft(x)-----
   for(i=0;i<FFTSIZE;i++){
     fftx[i] = 0;
@@ -1360,11 +1364,18 @@ int bigx_fft(int x){
   
 
   fft(n);
+  printf("fft %d\n", n);
   for(i=0;i<n;i++){
     CPRINT(fftx[i]);
   }
-  DEBUG
+
+  ifft(n);
+  printf("ifft %d\n", n);
+  for(i=0;i<n;i++){
+    CPRINT(fftx[i]);
+  }
   
+  return(T);
 }
 
 //-------mult with FFT-------
@@ -1398,9 +1409,6 @@ int bigx_fft_mult(int x, int y){
   
 
   fft(n);
-  for(i=0;i<n;i++){
-    CPRINT(fftx[i]);
-  }
   
   for(i=0;i<n;i++){
     vecx[i] = fftx[i];

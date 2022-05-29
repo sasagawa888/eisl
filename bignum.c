@@ -1212,6 +1212,9 @@ bigx_mult_i (int x, int y)
 
 
 //----------------FFT multiply--------------------------
+//#define FFTDB 
+
+
 int get_bit(int n){
   int bit;
 
@@ -1264,9 +1267,11 @@ void fft1(int n, int pos){
       temp = fftx[pos] + fftx[pos+1];
       fftx[pos+1] = fftx[pos] - fftx[pos+1];
       fftx[pos] = temp;
+      #ifdef FFTDB
       printf("fft n=%d\n",n);
       CPRINT(fftx[pos]);
       CPRINT(fftx[pos+1]);
+      #endif
   }
   else{
       int i,half;
@@ -1276,10 +1281,12 @@ void fft1(int n, int pos){
         fftx[pos+half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
         fftx[pos+i] = temp;
       }
+      #ifdef FFTDB
       printf("fft n=%d\n",n);
       for(i=0;i<n;i++){
         CPRINT(fftx[pos+i]);
       }
+      #endif 
       //recursion
       fft1(half,pos);
       fft1(half,pos+half);
@@ -1319,11 +1326,13 @@ void ifft1(int n, int pos){
         fftx[pos+half+i] = iw_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
         fftx[pos+i] = temp;
       }
-      //recursion
+      #ifdef FFTDB
       printf("ifft n=%d\n",n);
       for(i=0;i<n;i++){
         CPRINT(fftx[pos+i]);
       }
+      #endif
+      //recursion
       ifft1(half,pos);
       ifft1(half,pos+half);
   }

@@ -1212,6 +1212,17 @@ bigx_mult_i (int x, int y)
 
 
 //----------------FFT multiply--------------------------
+int get_bit(int n){
+  int bit;
+
+  bit = 0;
+  while(n >= 2){
+      n = n / 2;
+      bit++;
+  }
+  return(bit);
+}
+
 
 complex w_factor(int n, int i){
   complex z;
@@ -1228,22 +1239,18 @@ complex iw_factor(int n, int i){
   return(cpow(z,i));
 }
 
-int bit_reverse(int n){
-  int binary[12],pos,end;
+int bit_reverse(int n, int bit){
+  int binary[12],i;
 
 
-  pos = 0;
-  while(n >= 2){
-    binary[pos++] = n % 2;
+  for(i=0;i<bit;i++){
+    binary[i] = n % 2;
     n = n / 2;
   }
-  binary[pos] = n % 2;
-  end = pos;
 
   n = 0;
-  pos = 0;
-  while(pos <= end){
-    n = binary[pos++] + n*2;
+  for(i=0;i<bit;i++){
+    n = binary[i] + n*2;
   }
 
   return(n);
@@ -1251,7 +1258,7 @@ int bit_reverse(int n){
 
 
 void fft1(int n, int pos){
-  complex temp[n];
+  complex temp[FFTSIZE];
 
   
   if(n==2){
@@ -1277,14 +1284,15 @@ void fft1(int n, int pos){
 }
 
 void fft(int n){
-  complex temp[n];
+  int i,bit;
+  complex temp[FFTSIZE];
 
   fft1(n,0);
   
   // change index of fftx with bit_reverse
-  int i;
+  bit = get_bit(n);
   for(i=0;i>n;i++){
-    temp[bit_reverse(i)] = fftx[i];
+    temp[bit_reverse(i,bit)] = fftx[i];
   }
 
   for(i=0;i>n;i++){
@@ -1294,7 +1302,7 @@ void fft(int n){
 
 //inverse FFT
 void ifft1(int n, int pos){
-  complex temp[n];
+  complex temp[FFTSIZE];
 
   
   if(n==2){
@@ -1320,22 +1328,13 @@ void ifft1(int n, int pos){
 }
 
 void ifft(int n){
-  complex temp[n];
 
   ifft1(n,0);
   int i;
   for(i=0;i<n;i++){
     fftx[i] = fftx[i]/(complex)n;
   }
-  
-  // change index of fftx with bit_reverse
-  for(i=0;i<n;i++){
-    temp[bit_reverse(i)] = fftx[i];
-  }
 
-  for(i=0;i<n;i++){
-    fftx[i] = temp[i];
-  }
 }
 
 int bigx_fft(int x){
@@ -1350,7 +1349,7 @@ int bigx_fft(int x){
         break;
     }
   }
- 
+  
   printf("len=%d  n=%d \n", len, n);
   //------fft(x)-----
   for(i=0;i<FFTSIZE;i++){
@@ -1368,6 +1367,7 @@ int bigx_fft(int x){
   for(i=0;i<n;i++){
     CPRINT(fftx[i]);
   }
+
 
   ifft(n);
   printf("ifft %d\n", n);
@@ -1393,7 +1393,8 @@ int bigx_fft_mult(int x, int y){
   n = 0;
   for(i=10;i>0;i--){
     if(max_len > pow(2,i)){
-        n = i+1;
+        n = pow(2,i+1);
+        break;
     }
   }
 
@@ -1415,7 +1416,7 @@ int bigx_fft_mult(int x, int y){
   }
 
   //-----fft(y)--------
-  for(i=0;i<2048;i++){
+  for(i=0;i<FFTSIZE;i++){
     fftx[i] = 0;
   }
   pointer = get_pointer(y);

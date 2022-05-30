@@ -1567,15 +1567,15 @@ int bigx_fft_mult(int x, int y){
   int pool,carry;
   carry = 0;
   for(i=0;i<ans_len;i++){
-      pool = (((int)ceil(creal(fftx[3*i])) + carry) % FFTBASE);
+      pool = (((int)round(creal(fftx[3*i])) + carry) % FFTBASE);
       //printf("-%d-",pool);
-      carry = (int)ceil(creal(fftx[3*i])) / FFTBASE;
-      pool = pool + ((((int)ceil(creal(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
+      carry = (int)round(creal(fftx[3*i])) / FFTBASE;
+      pool = pool + ((((int)round(creal(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
       //printf("-%d-",pool);
-      carry = (int)ceil(creal(fftx[3*i+1])) / FFTBASE;
-      pool = pool + ((((int)ceil(creal(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
+      carry = (int)round(creal(fftx[3*i+1])) / FFTBASE;
+      pool = pool + ((((int)round(creal(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
       //printf("-%d-",pool);
-      carry = (int)ceil(creal(fftx[3*i+2])) / FFTBASE;
+      carry = (int)round(creal(fftx[3*i+2])) / FFTBASE;
       bigcell[big_pt0++] = pool;
   }
   

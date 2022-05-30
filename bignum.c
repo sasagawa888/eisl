@@ -1227,10 +1227,10 @@ int get_bit(int n){
 }
 
 
-long double complex w_factor(int n, int i){
-  long double complex z;
+double complex w_factor(int n, int i){
+  double complex z;
 
-  z = cos(2.0*M_PI/(double)n) - sin(2.0*M_PI/(double)n) * I;
+  z = cos(2.0*M_PI/(long double)n) - sin(2.0*M_PI/(long double)n) * I;
   return(cpow(z,i));
 }
 
@@ -1238,7 +1238,7 @@ long double complex w_factor(int n, int i){
 long double complex iw_factor(int n, int i){
   long double complex z;
 
-  z = cos(2.0*M_PI/(double)n) + sin(2.0*M_PI/(double)n) * I;
+  z = cos(2.0*M_PI/(long double)n) + sin(2.0*M_PI/(long double)n) * I;
   return(cpow(z,i));
 }
 
@@ -1552,8 +1552,10 @@ int bigx_fft_mult(int x, int y){
   ifft(n);
   //debug
   /*
-  for(i=0;i<n;i++)
+  for(i=0;i<n;i++){
     CPRINT(fftx[i]);
+    printf("%10Lfl\n",creall(fftx[i]));
+  }
   */
   /*
   CPRINT(fftx[0]);
@@ -1572,15 +1574,15 @@ int bigx_fft_mult(int x, int y){
   int pool,carry;
   carry = 0;
   for(i=0;i<ans_len;i++){
-      pool = (((int)ceil(creall(fftx[3*i])) + carry) % FFTBASE);
+      pool = (((int)ceill(creall(fftx[3*i])) + carry) % FFTBASE);
       //printf("-%d-",pool);
-      carry = ((int)ceil(creall(fftx[3*i])) + carry) / FFTBASE;
-      pool = pool + ((((int)ceil(creall(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
+      carry = ((int)ceill(creall(fftx[3*i])) + carry) / FFTBASE;
+      pool = pool + ((((int)ceill(creall(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
       //printf("-%d-",pool);
-      carry = ((int)ceil(creall(fftx[3*i+1])) + carry) / FFTBASE;
-      pool = pool + ((((int)ceil(creall(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
+      carry = ((int)ceill(creall(fftx[3*i+1])) + carry) / FFTBASE;
+      pool = pool + ((((int)ceill(creall(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
       //printf("-%d-",pool);
-      carry = ((int)ceil(creall(fftx[3*i+2])) + carry) / FFTBASE;
+      carry = ((int)ceill(creall(fftx[3*i+2])) + carry) / FFTBASE;
       bigcell[big_pt0++] = pool;
   }
   

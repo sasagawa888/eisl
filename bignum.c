@@ -1227,16 +1227,16 @@ int get_bit(int n){
 }
 
 
-complex w_factor(int n, int i){
-  complex z;
+double complex w_factor(int n, int i){
+  double complex z;
 
   z = cos(2.0*M_PI/(double)n) - sin(2.0*M_PI/(double)n) * I;
   return(cpow(z,i));
 }
 
 // for inverse FFT
-complex iw_factor(int n, int i){
-  complex z;
+double complex iw_factor(int n, int i){
+  double complex z;
 
   z = cos(2.0*M_PI/(double)n) + sin(2.0*M_PI/(double)n) * I;
   return(cpow(z,i));
@@ -1261,7 +1261,7 @@ int bit_reverse(int n, int bit){
 
 
 void fft1(int n, int pos){
-  complex temp;
+  double complex temp;
   
   if(n==2){
       temp = fftx[pos] + fftx[pos+1];
@@ -1295,7 +1295,7 @@ void fft1(int n, int pos){
 
 void fft(int n){
   int i,bit;
-  complex temp[FFTSIZE];
+  double complex temp[FFTSIZE];
 
   fft1(n,0);
 
@@ -1311,7 +1311,7 @@ void fft(int n){
 
 //inverse FFT
 void ifft1(int n, int pos){
-  complex temp;
+  double complex temp;
   
   if(n==2){
       temp = fftx[pos] + fftx[pos+1];
@@ -1340,12 +1340,12 @@ void ifft1(int n, int pos){
 
 void ifft(int n){
   int bit;
-  complex temp[FFTSIZE];
+  double complex temp[FFTSIZE];
 
   ifft1(n,0);
   int i;
   for(i=0;i<n;i++){
-    fftx[i] = fftx[i]/(complex)n;
+    fftx[i] = fftx[i]/(double complex)n;
   }
   // change index of fftx with bit_reverse
   bit = get_bit(n);
@@ -1359,7 +1359,7 @@ void ifft(int n){
 }
 
 int bigx_fft_test(){
-    complex vecx[10],vecy[10];
+    double complex vecx[10],vecy[10];
 
   /*
     fftx[0] = 93;
@@ -1449,7 +1449,7 @@ int bigx_fft(int x){
   }
   pointer = get_pointer(x) - len + 1; //LSB
   for(i=0;i<len;i++){
-    fftx[i] = (complex)bigcell[pointer+i];
+    fftx[i] = (double complex)bigcell[pointer+i];
     CPRINT(fftx[i]);
   }
   
@@ -1487,9 +1487,8 @@ int bigx_fft(int x){
 
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
-  int pointer,len,max_len,i,n,res;
-  complex vecx[FFTSIZE],vecy[FFTSIZE];
-  long long int carry,long1,long2;
+  int pointer,len,max_len,ans_len,i,n,res;
+  double complex temp[FFTSIZE];
 
   if(get_length(x) >= get_length(y)){
     max_len = get_length(x);
@@ -1498,9 +1497,13 @@ int bigx_fft_mult(int x, int y){
     max_len = get_length(y);
   }
 
+  ans_len = get_length(x) + get_length(y);
+
   n = 0;
   for(i=10;i>0;i--){
-    if((max_len*3) > pow(2,i)){
+    //prepare FFT data. datasize is twice of max_len
+    //Each one bigcell needs 3 FFT data. 
+    if((max_len*2*3) > pow(2,i)){
         n = pow(2,i+1);
         break;
     }
@@ -1514,18 +1517,16 @@ int bigx_fft_mult(int x, int y){
   pointer = get_pointer(x) - len + 1; //LSB
   
   for(i=0;i<len;i++){
-    fftx[3*i] = (complex)(bigcell[pointer+i] % FFTBASE0);
-    fftx[3*i+1] = (complex)((bigcell[pointer+i] / FFTBASE0) % FFTBASE0);
-    fftx[3*i+2] = (complex)(bigcell[pointer+i] / FFTBASE1);
+    //one bigcell separate to three FFT data.
+    fftx[3*i] = (double complex)(bigcell[pointer+i] % FFTBASE);
+    fftx[3*i+1] = (double complex)((bigcell[pointer+i] / FFTBASE) % FFTBASE);
+    fftx[3*i+2] = (double complex)(bigcell[pointer+i] / (FFTBASE*FFTBASE));
   }
-  for(i=0;i<len*3;i++){
-    CPRINT(fftx[i]);
-  }
-
-  fft(n*2);
+  
+  fft(n);
   
   for(i=0;i<n;i++){
-    vecx[i] = fftx[i];
+    temp[i] = fftx[i];
   }
 
   //-----fft(y)--------
@@ -1535,55 +1536,59 @@ int bigx_fft_mult(int x, int y){
   len = get_length(y);
   pointer = get_pointer(y) - len + 1; //LSB
   for(i=0;i<len;i++){
-    fftx[3*i] = (complex)(bigcell[pointer+i] % FFTBASE0);
-    fftx[3*i+1] = (complex)((bigcell[pointer+i] / FFTBASE0) % FFTBASE0);
-    fftx[3*i+2] = (complex)(bigcell[pointer+i] / FFTBASE1);
+    fftx[3*i] = (double complex)(bigcell[pointer+i] % FFTBASE);
+    fftx[3*i+1] = (double complex)((bigcell[pointer+i] / FFTBASE) % FFTBASE);
+    fftx[3*i+2] = (double complex)(bigcell[pointer+i] / (FFTBASE*FFTBASE));
   }
-  for(i=0;i<len*3;i++){
+  
+  fft(n);
+
+  //----mult---------
+  for(i=0;i<n;i++){
+    fftx[i] = temp[i] * fftx[i];
+  }
+
+  //---inverse FFT---
+  ifft(n);
+  //debug
+  /*
+  for(i=0;i<n;i++)
     CPRINT(fftx[i]);
-  }
-
-  fft(n*2);
-
-  for(i=0;i<n*2;i++){
-    vecy[i] = fftx[i];
-  }
-
-  //-----mult---------
+  */
+  //---generate-answer
   res = gen_big();
   SET_TAG(res,BIGX);
   set_sign(res,get_sign(x)*get_sign(y));
-  for(i=0;i<max_len;i++){
+  for(i=0;i<ans_len;i++){
     bigcell[big_pt0+i] = 0;
   }
 
-  
-  for(i=0;i<n*2;i++){
-      CPRINT(vecx[i]);
-      CPRINT(vecy[i]);
-      fftx[i] = vecx[i] * vecy[i];
+  // normalize
+  int pool,carry;
+  carry = 0;
+  for(i=0;i<ans_len;i++){
+      pool = (((int)ceil(creal(fftx[3*i])) + carry) % FFTBASE);
+      //printf("-%d-",pool);
+      carry = (int)ceil(creal(fftx[3*i])) / FFTBASE;
+      pool = pool + ((((int)ceil(creal(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
+      //printf("-%d-",pool);
+      carry = (int)ceil(creal(fftx[3*i+1])) / FFTBASE;
+      pool = pool + ((((int)ceil(creal(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
+      //printf("-%d-",pool);
+      carry = (int)ceil(creal(fftx[3*i+2])) / FFTBASE;
+      bigcell[big_pt0++] = pool;
   }
   
-  //inverse FFT
-  ifft(n*2);
-
-  
-  for(i=0;i<n*2;i++){
-    CPRINT(fftx[i]);
-  }
-
-  for(i=0;i<n;i++){
-      bigcell[big_pt0++] = fftx[i];
-  }
+  //zero cut
   big_pt0--;
-  while(bigcell[big_pt0] == 0 && n > 0){
+  while(bigcell[big_pt0] == 0 && ans_len > 0){
       big_pt0--;
-      n--;
+      ans_len--;
   }
 
   big_pt0++;
   set_pointer(res,big_pt0-1);
-  set_length(res,n);
-  return(T);
+  set_length(res,ans_len);
+  return(res);
 }
 

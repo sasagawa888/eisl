@@ -36,8 +36,7 @@
 #define NESTED_BLOCKS_MAX 50
 #define BIGSIZE 20000000
 #define FFTSIZE 2048
-#define FFTBASE0 1000
-#define FFTBASE1 1000000
+#define FFTBASE 1000
 
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000
@@ -243,7 +242,7 @@ extern int      bigcell[BIGSIZE];
 // bignum pointer, FFT_input_vector
 extern int big_pt0;
 extern int big_pt1;
-extern complex fftx[FFTSIZE];
+extern double complex fftx[FFTSIZE];
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \
@@ -858,6 +857,7 @@ int             f_error_output(int x);
 int             f_eval(int addr);
 int             f_exp(int x);
 int             f_expt(int x);
+int             f_fft_mult(int arglist);
 int             f_file_length(int arglist);
 int             f_file_position(int arglist);
 int             f_finish_output(int x);

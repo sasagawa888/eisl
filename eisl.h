@@ -242,7 +242,7 @@ extern int      bigcell[BIGSIZE];
 // bignum pointer, FFT_input_vector
 extern int big_pt0;
 extern int big_pt1;
-extern double complex fftx[FFTSIZE];
+extern long double complex fftx[FFTSIZE];
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \
     static inline RETURN_TYPE GET_ ## NAME (int addr)  \

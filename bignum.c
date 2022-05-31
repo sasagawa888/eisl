@@ -1267,11 +1267,6 @@ void fft1(int n, int pos){
       temp = fftx[pos] + fftx[pos+1];
       fftx[pos+1] = fftx[pos] - fftx[pos+1];
       fftx[pos] = temp;
-      #ifdef FFTDB
-      printf("fft n=%d\n",n);
-      CPRINT(fftx[pos]);
-      CPRINT(fftx[pos+1]);
-      #endif
   }
   else{
       int i,half;
@@ -1281,12 +1276,6 @@ void fft1(int n, int pos){
         fftx[pos+half+i] = w_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
         fftx[pos+i] = temp;
       }
-      #ifdef FFTDB
-      printf("fft n=%d\n",n);
-      for(i=0;i<n;i++){
-        CPRINT(fftx[pos+i]);
-      }
-      #endif 
       //recursion
       fft1(half,pos);
       fft1(half,pos+half);
@@ -1326,12 +1315,6 @@ void ifft1(int n, int pos){
         fftx[pos+half+i] = iw_factor(n,i) * (fftx[pos+i] - fftx[pos+half+i]);
         fftx[pos+i] = temp;
       }
-      #ifdef FFTDB
-      printf("ifft n=%d\n",n);
-      for(i=0;i<n;i++){
-        CPRINT(fftx[pos+i]);
-      }
-      #endif
       //recursion
       ifft1(half,pos);
       ifft1(half,pos+half);
@@ -1356,76 +1339,6 @@ void ifft(int n){
     fftx[i] = temp[i];
   }
 
-}
-
-int bigx_fft_test(){
-    double complex vecx[10],vecy[10];
-
-  /*
-    fftx[0] = 93;
-    fftx[1] = 97;
-    fftx[2] = 58;
-    fftx[3] = 53;
-    fftx[4] = 26;
-    fftx[5] = 59;
-    fftx[6] = 41;
-    fftx[7] = 31;
-  */
-  
-    fftx[0] = 935;
-    fftx[1] = 359;
-    fftx[2] = 0;
-    fftx[3] = 0;
-    fftx[4] = 0;
-    fftx[5] = 0;
-    fftx[6] = 0;
-    fftx[7] = 0;
-  
-    fft(8);
-    printf("fft \n");
-    int i;
-    for(i=0;i<8;i++){
-    vecx[i] = fftx[i];
-    CPRINT(fftx[i]);
-    }
-
-/*
-    fftx[0] = 95;
-    fftx[1] = 27;
-    fftx[2] = 83;
-    fftx[3] = 33;
-    fftx[4] = 64;
-    fftx[5] = 62;
-    fftx[6] = 84;
-    fftx[7] = 23;
-  */  
-
-  
-    fftx[0] = 195;
-    fftx[1] = 727;
-    fftx[2] = 0;
-    fftx[3] = 0;
-    fftx[4] = 0;
-    fftx[5] = 0;
-    fftx[6] = 0;
-    fftx[7] = 0;
-  
-    fft(8);
-    for(i=0;i<8;i++){
-    vecy[i] = fftx[i];
-    CPRINT(fftx[i]);
-    }
-
-    for(i=0;i<8;i++){
-      fftx[i] = vecx[i] * vecy[i];
-    }
-
-    ifft(8);
-    printf("ifft \n");
-     for(i=0;i<8;i++){
-    CPRINT(fftx[i]);
-  }
-  return(T);
 }
 
 
@@ -1500,7 +1413,7 @@ int bigx_fft_mult(int x, int y){
   ans_len = get_length(x) + get_length(y);
 
   n = 0;
-  for(i=10;i>0;i--){
+  for(i=14;i>0;i--){
     //prepare FFT data. datasize is twice of max_len
     //Each one bigcell needs 3 FFT data. 
     if((max_len*2*3) > pow(2,i)){
@@ -1550,18 +1463,7 @@ int bigx_fft_mult(int x, int y){
 
   //---inverse FFT---
   ifft(n);
-  //debug
-  /*
-  for(i=0;i<n;i++){
-    CPRINT(fftx[i]);
-    printf("%10Lfl\n",creal(fftx[i]));
-  }
-  */
-  /*
-  CPRINT(fftx[0]);
-  printf("%10Lfl\n",creal(fftx[0]));
-  printf("%di\n",(int)(ceil(creawl(fftx[0]))));
-  */
+  
   //---generate-answer
   res = gen_big();
   SET_TAG(res,BIGX);
@@ -1575,13 +1477,10 @@ int bigx_fft_mult(int x, int y){
   carry = 0;
   for(i=0;i<ans_len;i++){
       pool = (((int)round(creal(fftx[3*i])) + carry) % FFTBASE);
-      //printf("-%d-",pool);
       carry = ((int)round(creal(fftx[3*i])) + carry) / FFTBASE;
       pool = pool + ((((int)round(creal(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
-      //printf("-%d-",pool);
       carry = ((int)round(creal(fftx[3*i+1])) + carry) / FFTBASE;
       pool = pool + ((((int)round(creal(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
-      //printf("-%d-",pool);
       carry = ((int)round(creal(fftx[3*i+2])) + carry) / FFTBASE;
       bigcell[big_pt0++] = pool;
   }

@@ -1258,6 +1258,14 @@ int bit_reverse(int n, int bit){
   return(n);
 }
 
+void set_bit_reverse(int n){
+  int i,bit;
+
+  bit  = get_bit(n);
+  for(i=0;i<n;i++){
+    ffti[i] = bit_reverse(i,bit);
+  }
+}
 
 void fft1(int n, int pos){
   double complex temp;
@@ -1282,18 +1290,9 @@ void fft1(int n, int pos){
 }
 
 void fft(int n){
-  int i,bit;
 
   fft1(n,0);
 
-  // change index of fftx with bit_reverse
-  bit = get_bit(n);
-  for(i=0;i<n;i++){
-    ffty[i] = fftx[bit_reverse(i,bit)];
-  }
-  for(i=0;i<n;i++){
-    fftx[i] = ffty[i];
-  }
 }
 
 //inverse FFT
@@ -1320,21 +1319,13 @@ void ifft1(int n, int pos){
 }
 
 void ifft(int n){
-  int bit;
 
   ifft1(n,0);
   int i;
   for(i=0;i<n;i++){
     fftx[i] = fftx[i]/(double complex)n;
   }
-  // change index of fftx with bit_reverse
-  bit = get_bit(n);
-  for(i=0;i<n;i++){
-    ffty[i] = fftx[bit_reverse(i,bit)];
-  }
-  for(i=0;i<n;i++){
-    fftx[i] = ffty[i];
-  }
+  
 
 }
 
@@ -1398,7 +1389,6 @@ int bigx_fft(int x){
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
   int pointer,lenx,leny,max_len,ans_len,i,n,res;
-  double complex temp[FFTSIZE];
 
   lenx = get_length(x);
   leny = get_length(y);
@@ -1422,6 +1412,7 @@ int bigx_fft_mult(int x, int y){
         break;
     }
   }
+  set_bit_reverse(n);
 
   //------fft(x)-----
   for(i=0;i<FFTSIZE;i++){
@@ -1438,10 +1429,11 @@ int bigx_fft_mult(int x, int y){
   }
   
   fft(n);
-  
+  // change index of fftx with bit_reverse
   for(i=0;i<n;i++){
-    temp[i] = fftx[i];
+    ffty[ffti[i]] = fftx[i];
   }
+
 
   //-----fft(y)--------
   for(i=0;i<FFTSIZE;i++){
@@ -1456,14 +1448,24 @@ int bigx_fft_mult(int x, int y){
   }
   
   fft(n);
+  // change index of fftx with bit_reverse
+  for(i=0;i<n;i++){
+    fftz[ffti[i]] = fftx[i];
+  }
+
 
   //----mult---------
   for(i=0;i<n;i++){
-    fftx[i] = temp[i] * fftx[i];
+    fftx[i] = ffty[i] * fftz[i];
   }
 
   //---inverse FFT---
   ifft(n);
+  //bit reverse
+  for(i=0;i<n;i++){
+    ffty[ffti[i]] = fftx[i];
+  }
+  
   
   //---generate-answer
   res = gen_big();
@@ -1477,12 +1479,12 @@ int bigx_fft_mult(int x, int y){
   int pool,carry;
   carry = 0;
   for(i=0;i<ans_len;i++){
-      pool = (((int)round(creal(fftx[3*i])) + carry) % FFTBASE);
-      carry = ((int)round(creal(fftx[3*i])) + carry) / FFTBASE;
-      pool = pool + ((((int)round(creal(fftx[3*i+1])) + carry) % FFTBASE) * FFTBASE);
-      carry = ((int)round(creal(fftx[3*i+1])) + carry) / FFTBASE;
-      pool = pool + ((((int)round(creal(fftx[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
-      carry = ((int)round(creal(fftx[3*i+2])) + carry) / FFTBASE;
+      pool = (((int)round(creal(ffty[3*i])) + carry) % FFTBASE);
+      carry = ((int)round(creal(ffty[3*i])) + carry) / FFTBASE;
+      pool = pool + ((((int)round(creal(ffty[3*i+1])) + carry) % FFTBASE) * FFTBASE);
+      carry = ((int)round(creal(ffty[3*i+1])) + carry) / FFTBASE;
+      pool = pool + ((((int)round(creal(ffty[3*i+2])) + carry) % FFTBASE) * (FFTBASE * FFTBASE));
+      carry = ((int)round(creal(ffty[3*i+2])) + carry) / FFTBASE;
       bigcell[big_pt0++] = pool;
   }
   

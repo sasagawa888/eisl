@@ -1400,17 +1400,19 @@ int bigx_fft(int x){
 
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
-  int pointer,len,max_len,ans_len,i,n,res;
+  int pointer,lenx,leny,max_len,ans_len,i,n,res;
   double complex temp[FFTSIZE];
 
-  if(get_length(x) >= get_length(y)){
-    max_len = get_length(x);
+  lenx = get_length(x);
+  leny = get_length(y);
+  if(lenx >= leny){
+    max_len = lenx;
   }
   else{
-    max_len = get_length(y);
+    max_len = leny;
   }
 
-  ans_len = get_length(x) + get_length(y);
+  ans_len = lenx + leny;
 
   n = 0;
   for(i=14;i>0;i--){
@@ -1426,10 +1428,10 @@ int bigx_fft_mult(int x, int y){
   for(i=0;i<FFTSIZE;i++){
     fftx[i] = 0;
   }
-  len = get_length(x);
-  pointer = get_pointer(x) - len + 1; //LSB
+
+  pointer = get_pointer(x) - lenx + 1; //LSB
   
-  for(i=0;i<len;i++){
+  for(i=0;i<lenx;i++){
     //one bigcell separate to three FFT data.
     fftx[3*i] = (double complex)(bigcell[pointer+i] % FFTBASE);
     fftx[3*i+1] = (double complex)((bigcell[pointer+i] / FFTBASE) % FFTBASE);
@@ -1446,9 +1448,9 @@ int bigx_fft_mult(int x, int y){
   for(i=0;i<FFTSIZE;i++){
     fftx[i] = 0;
   }
-  len = get_length(y);
-  pointer = get_pointer(y) - len + 1; //LSB
-  for(i=0;i<len;i++){
+  
+  pointer = get_pointer(y) - leny + 1; //LSB
+  for(i=0;i<leny;i++){
     fftx[3*i] = (double complex)(bigcell[pointer+i] % FFTBASE);
     fftx[3*i+1] = (double complex)((bigcell[pointer+i] / FFTBASE) % FFTBASE);
     fftx[3*i+2] = (double complex)(bigcell[pointer+i] / (FFTBASE*FFTBASE));

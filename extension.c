@@ -736,9 +736,9 @@ f_getenv (int arglist)
 int f_eisl_test(int arglist){
     int arg1;
 
-    arg1 = car(arglist);
+    //arg1 = car(arglist);
   
-    return(bigx_fft(arg1));
+    return(T);
 }
 
 int f_fft_mult(int arglist){

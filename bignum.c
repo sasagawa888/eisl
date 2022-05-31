@@ -1330,61 +1330,6 @@ void ifft(int n){
 }
 
 
-int bigx_fft(int x){
-  int pointer,len,i,n,res;
-
-  len = get_length(x);
-  
-  n = 0;
-  for(i=10;i>0;i--){
-    if(len > pow(2,i)){
-        n = pow(2,i+1);
-        break;
-    }
-  }
-  
-  printf("len=%d  n=%d \n", len, n);
-  //------fft(x)-----
-  for(i=0;i<FFTSIZE;i++){
-    fftx[i] = 0;
-  }
-  pointer = get_pointer(x) - len + 1; //LSB
-  for(i=0;i<len;i++){
-    fftx[i] = (double complex)bigcell[pointer+i];
-    CPRINT(fftx[i]);
-  }
-  
-
-  fft(n);
-  printf("fft %d\n", n);
-  for(i=0;i<n;i++){
-    CPRINT(fftx[i]);
-  }
-
-
-  ifft(n);
-  printf("ifft %d\n", n);
-  for(i=0;i<n;i++){
-    CPRINT(fftx[i]);
-  }
-  
-  res = gen_big();
-  SET_TAG(res,BIGX);
-  set_sign(res,get_sign(x));
-  
-  for(i=0;i<len;i++){
-      bigcell[big_pt0++] = creal(fftx[i]);
-  }
-  big_pt0--;
-  while(bigcell[big_pt0] == 0 && len > 1){
-    big_pt0--;
-    len--;
-  }
-  big_pt0++;
-  set_pointer(res,big_pt0-1);
-  set_length(res,len);
-  return(res);
-}
 
 //-------mult with FFT-------
 int bigx_fft_mult(int x, int y){
@@ -1401,10 +1346,11 @@ int bigx_fft_mult(int x, int y){
 
   ans_len = lenx + leny;
   if(ans_len*2*3 > FFTSIZE)
-    error(RESOURCE_ERR,"fft-mult",NIL);
+    error(RESOURCE_ERR,"fft-mult",makeint(ans_len));
 
   n = 0;
-  for(i=14;i>0;i--){
+  // FFTSIZE = 2^16 
+  for(i=16;i>0;i--){
     //prepare FFT data. datasize is twice of max_len
     //Each one bigcell needs 3 FFT data. 
     if((max_len*2*3) > pow(2,i)){
@@ -1457,8 +1403,9 @@ int bigx_fft_mult(int x, int y){
   //----mult---------
   for(i=0;i<n;i++){
     fftx[i] = ffty[i] * fftz[i];
+    //CPRINT(fftx[i]);
   }
-
+  
   //---inverse FFT---
   ifft(n);
   //bit reverse

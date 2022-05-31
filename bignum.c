@@ -1212,7 +1212,6 @@ bigx_mult_i (int x, int y)
 
 
 //----------------FFT multiply--------------------------
-//#define FFTDB 
 
 
 int get_bit(int n){
@@ -1413,6 +1412,8 @@ int bigx_fft_mult(int x, int y){
   }
 
   ans_len = lenx + leny;
+  if(ans_len*2*3 > FFTSIZE)
+    error(RESOURCE_ERR,"fft-mult",NIL);
 
   n = 0;
   for(i=14;i>0;i--){

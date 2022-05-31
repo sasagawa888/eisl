@@ -22,5 +22,15 @@
 
 ;($test (convert 2837912874982137192837192837287312947728 <float>) 2.83791e+39 =)
 
-;;for FFT test
-(eisl-test 123456789223456789323456789)
+(defglobal a (expt 8 9999))
+(defglobal b (expt 9 9999))
+
+(defun bigtest1 (n)
+    (if (= n 0)
+        t
+        (progn (fft* a b) (bigtest1 (- n 1)))))
+
+(defun bigtest2 (n)
+    (if (= n 0)
+        t
+        (progn (* a b) (bigtest2 (- n 1)))))

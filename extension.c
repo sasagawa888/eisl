@@ -734,7 +734,7 @@ f_getenv (int arglist)
 * This function is for development testing code.
 */
 int f_eisl_test(int arglist){
-    int arg1,arg2;
+    int arg1;
 
     arg1 = car(arglist);
   

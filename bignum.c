@@ -1283,17 +1283,16 @@ void fft1(int n, int pos){
 
 void fft(int n){
   int i,bit;
-  double complex temp[FFTSIZE];
 
   fft1(n,0);
 
   // change index of fftx with bit_reverse
   bit = get_bit(n);
   for(i=0;i<n;i++){
-    temp[i] = fftx[bit_reverse(i,bit)];
+    ffty[i] = fftx[bit_reverse(i,bit)];
   }
   for(i=0;i<n;i++){
-    fftx[i] = temp[i];
+    fftx[i] = ffty[i];
   }
 }
 
@@ -1322,7 +1321,6 @@ void ifft1(int n, int pos){
 
 void ifft(int n){
   int bit;
-  double complex temp[FFTSIZE];
 
   ifft1(n,0);
   int i;
@@ -1332,10 +1330,10 @@ void ifft(int n){
   // change index of fftx with bit_reverse
   bit = get_bit(n);
   for(i=0;i<n;i++){
-    temp[i] = fftx[bit_reverse(i,bit)];
+    ffty[i] = fftx[bit_reverse(i,bit)];
   }
   for(i=0;i<n;i++){
-    fftx[i] = temp[i];
+    fftx[i] = ffty[i];
   }
 
 }

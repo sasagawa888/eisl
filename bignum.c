@@ -20,6 +20,12 @@
    |(parmanent) | big_pt1       |          |
 
 
+* FFT-Multiply
+* bigcell 32bit integer -> radix 10^3 complex
+* bignum-x bignum-y     IFFT(FFT(x)*FFT(y)) -> bigcell 32bit integer(normalize) 
+* complex data type uses double complex. 
+* It will be calculated correctly by multiplying by about 6000 digits.
+* But beyond that, a complex overflow will occur. The calculation is inaccurate.
 */
 
 

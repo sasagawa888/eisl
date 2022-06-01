@@ -273,6 +273,7 @@ EISL <==================================> C
 | (fixnump x)           | is x fixnum?(32bit) return T or NIL            |       |
 | (longnump x)          | is x longnum?(64bit) return T or NIL           |
 | (bignump x)           | is x bignum? return T or NIL                   |
+| (fft* x y)            | calculate Multiple X and Y with FFT            |
 | (macroexpand-1 x)     | macroexpand x only once                        |
 | (macroexpand-all x)   | macroexpand x completely                       |
 

@@ -736,7 +736,7 @@ f_getenv (int arglist)
 int f_eisl_test(int arglist){
     int arg1;
 
-    //arg1 = car(arglist);
+    arg1 = car(arglist);
   
     return(T);
 }
@@ -747,12 +747,15 @@ int f_fft_mult(int arglist){
     arg1 = car(arglist);
     arg2 = cadr(arglist);
 
-    if(!bignump(arg1))
-      error(NOT_INT,"fft*",arg1);
-    if(!bignump(arg2))
-      error(NOT_INT,"fft*",arg2);
+    if(!numberp(arg1))
+      error(NOT_NUM,"fft*",arg1);
+    if(!numberp(arg2))
+      error(NOT_NUM,"fft*",arg2);
 
-    return(bigx_fft_mult(arg1,arg2));
+    if(bignump(arg1) && bignump(arg2))
+      return(bigx_fft_mult(arg1,arg2));
+    else
+      return(mult(arg1,arg2));
 }
 
 

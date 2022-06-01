@@ -22,6 +22,13 @@
 
 ;($test (convert 2837912874982137192837192837287312947728 <float>) 2.83791e+39 =)
 
+($test (= (fft* (expt 8 5999) (expt 9 5999)) (* (expt 8 5999) (expt 9 5999))) t)
+($test (= (fft* (expt 2 5999) (expt 3 5999)) (* (expt 3 5999) (expt 2 5999))) t)
+($test (= (fft* (expt 2 599) (expt 3 5999)) (* (expt 3 5999) (expt 2 599))) t)
+($test (= (fft* (expt 2 59) (expt 3 5999)) (* (expt 3 5999) (expt 2 59))) t)
+($test (= (fft* (expt 3 10999) (expt 2 10999)) (* (expt 3 10999) (expt 2 10999))) t)
+($test (= (fft* (expt 3 10999) (expt 3 10929)) (* (expt 3 10999) (expt 3 10929))) t)
+
 (defglobal a (expt 8 5999))
 (defglobal b (expt 9 5999))
 
@@ -29,8 +36,6 @@
     (if (= n 0)
         t
         (progn (fft* a b) (bigtest1 (- n 1)))))
-
-
 
 (defun bigtest2 (n)
     (if (= n 0)

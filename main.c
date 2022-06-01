@@ -152,10 +152,10 @@ int area_sw = 1;		// 1= lower area 2=higher area
 // bignum pointer
 int big_pt0 = 0;		// pointer of temporaly bignum
 int big_pt1 = BIGNUM_PARMA;	// pointer of parmanent bignum
-double complex fftx[FFTSIZE];     // FFT main input&output vector
-double complex ffty[FFTSIZE];     // FFT sub vector1 for bit reverse
-double complex fftz[FFTSIZE];     // FFT sub vector2 for bit reverse
-int ffti[FFTSIZE];  // FFT index for bit_reverse
+double complex fftx[FFTSIZE];	// FFT main input&output vector
+double complex ffty[FFTSIZE];	// FFT sub vector1 for bit reverse
+double complex fftz[FFTSIZE];	// FFT sub vector2 for bit reverse
+int ffti[FFTSIZE];		// FFT index for bit_reverse
 
 // longjmp control and etc
 Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =

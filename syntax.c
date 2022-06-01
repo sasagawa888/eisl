@@ -683,8 +683,8 @@ f_defglobal (int arglist)
     error (ILLEGAL_ARGS, "defglobal", arg1);
 
   arg2 = eval (arg2);
-  if(bignump(arg2))
-  arg2 = bigx_to_parmanent(arg2);
+  if (bignump (arg2))
+    arg2 = bigx_to_parmanent (arg2);
   SET_CDR (arg1, arg2);
   SET_OPT (arg1, GLOBAL);
 

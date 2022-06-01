@@ -733,29 +733,33 @@ f_getenv (int arglist)
 * for example FFT IFFT.
 * This function is for development testing code.
 */
-int f_eisl_test(int arglist){
-    int arg1;
+int
+f_eisl_test (int arglist)
+{
+  int arg1;
 
-    arg1 = car(arglist);
-  
-    return(T);
+  arg1 = car (arglist);
+
+  return (T);
 }
 
-int f_fft_mult(int arglist){
-    int arg1,arg2;
+int
+f_fft_mult (int arglist)
+{
+  int arg1, arg2;
 
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
+  arg1 = car (arglist);
+  arg2 = cadr (arglist);
 
-    if(!numberp(arg1))
-      error(NOT_NUM,"fft*",arg1);
-    if(!numberp(arg2))
-      error(NOT_NUM,"fft*",arg2);
+  if (!numberp (arg1))
+    error (NOT_NUM, "fft*", arg1);
+  if (!numberp (arg2))
+    error (NOT_NUM, "fft*", arg2);
 
-    if(bignump(arg1) && bignump(arg2))
-      return(bigx_fft_mult(arg1,arg2));
-    else
-      return(mult(arg1,arg2));
+  if (bignump (arg1) && bignump (arg2))
+    return (bigx_fft_mult (arg1, arg2));
+  else
+    return (mult (arg1, arg2));
 }
 
 

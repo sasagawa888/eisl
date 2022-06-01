@@ -1225,12 +1225,37 @@ int get_bit(int n){
   return(bit);
 }
 
+double complex
+cexpt (double complex x, int y)
+{
+  double complex res, p;
+
+  res = 1.0 + 0*I;
+  p = x;
+  while (y > 0)
+    {
+      if ((y % 2) == 0)
+	{
+	  p = p * p;
+	  y = y / 2;
+	}
+      else
+	{
+	  res = res * p;
+	  y = y - 1;
+	}
+    }
+  return (res);
+}
+
+
+
 
 double complex w_factor(int n, int i){
   double complex z;
 
   z = cos(2.0*M_PI/(double)n) - sin(2.0*M_PI/(double)n) * I;
-  return(cpow(z,i));
+  return(cexpt(z,i));
 }
 
 // for inverse FFT
@@ -1238,7 +1263,7 @@ double complex iw_factor(int n, int i){
   double complex z;
 
   z = cos(2.0*M_PI/(double)n) + sin(2.0*M_PI/(double)n) * I;
-  return(cpow(z,i));
+  return(cexpt(z,i));
 }
 
 int bit_reverse(int n, int bit){

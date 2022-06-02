@@ -1410,7 +1410,7 @@ bigx_fft_mult (int x, int y)
       max_len = leny;
     }
 
-  ans_len = lenx + leny;
+  ans_len = lenx + leny + 1;
   if (ans_len * 2 * 3 > FFTSIZE)
     error (RESOURCE_ERR, "fft-mult", makeint (ans_len));
 
@@ -1481,7 +1481,7 @@ bigx_fft_mult (int x, int y)
   //----mult---------
   for (i = 0; i < n; i++)
     {
-      fftx[i] = ffty[i] * fftz[i];
+      fftx[i] = (ffty[i]/1000) * (fftz[i]/1000);
       //CPRINT(fftx[i]);
     }
 
@@ -1490,7 +1490,7 @@ bigx_fft_mult (int x, int y)
   //bit reverse
   for (i = 0; i < n; i++)
     {
-      ffty[ffti[i]] = fftx[i];
+      ffty[ffti[i]] = fftx[i]*1000000;
     }
 
 

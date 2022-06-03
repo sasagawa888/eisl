@@ -1356,8 +1356,8 @@ ifft1 (int n, int pos)
 
   if (n == 2)
     {
-      temp = fftx[pos] + fftx[pos + 1];
-      fftx[pos + 1] = fftx[pos] - fftx[pos + 1];
+      temp = (fftx[pos] + fftx[pos + 1]) / 2;
+      fftx[pos + 1] = (fftx[pos] - fftx[pos + 1]) / 2;
       fftx[pos] = temp;
     }
   else
@@ -1366,9 +1366,9 @@ ifft1 (int n, int pos)
       half = n / 2;
       for (i = 0; i < half; i++)
 	{
-	  temp = fftx[pos + i] + fftx[pos + half + i];
+	  temp = (fftx[pos + i] + fftx[pos + half + i]) / 2;
 	  fftx[pos + half + i] =
-	    iw_factor (n, i) * (fftx[pos + i] - fftx[pos + half + i]);
+	    (iw_factor (n, i) * (fftx[pos + i] - fftx[pos + half + i])) / 2;
 	  fftx[pos + i] = temp;
 	}
       //recursion
@@ -1382,12 +1382,6 @@ ifft (int n)
 {
 
   ifft1 (n, 0);
-  int i;
-  for (i = 0; i < n; i++)
-    {
-      fftx[i] = fftx[i] / (double complex) n;
-    }
-
 
 }
 

@@ -1475,7 +1475,7 @@ bigx_fft_mult (int x, int y)
   //----mult---------
   for (i = 0; i < n; i++)
     {
-      fftx[i] = (ffty[i]/1000) * (fftz[i]/1000);
+      fftx[i] = ffty[i] * fftz[i];
       //CPRINT(fftx[i]);
     }
 
@@ -1484,7 +1484,7 @@ bigx_fft_mult (int x, int y)
   //bit reverse
   for (i = 0; i < n; i++)
     {
-      ffty[ffti[i]] = fftx[i]*1000000;
+      ffty[ffti[i]] = fftx[i];
     }
 
 

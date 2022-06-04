@@ -1530,3 +1530,176 @@ bigx_fft_mult (int x, int y)
   set_length (res, ans_len);
   return (res);
 }
+
+//---------------NTT----------------------
+
+int ring[16];
+int nttx[16],ntty[16],nttz[16];
+
+#define P 65537
+
+int
+iexpt (int x, int y)
+{
+  int res, p;
+
+  res = 1;
+  p = x;
+  while (y > 0)
+    {
+      if ((y % 2) == 0)
+	{
+	  p = p * p;
+	  y = y / 2;
+	}
+      else
+	{
+	  res = res * p;
+	  y = y - 1;
+	}
+    }
+  return (res);
+}
+
+void set_factor(){
+  int i;
+  for(i=0;i<8;i++){
+    ring[i] = iexpt(4,i) % P;
+    ring[i+8] = ring[i] + -1;
+  }
+}
+
+int i_factor(int n){
+  return(ring[n]);
+}
+
+int ii_factor(int n){
+  return(ring[15-n]);
+}
+
+
+
+void
+ntt1 (int n, int pos)
+{
+  int temp;
+
+  if (n == 2)
+    {
+      temp = fftx[pos] + fftx[pos + 1];
+      fftx[pos + 1] = fftx[pos] - fftx[pos + 1];
+      fftx[pos] = temp;
+    }
+  else
+    {
+      int i, half;
+      half = n / 2;
+      for (i = 0; i < half; i++)
+	{
+	  temp = fftx[pos + i] + fftx[pos + half + i];
+	  fftx[pos + half + i] =
+	    i_factor (i) * (fftx[pos + i] - fftx[pos + half + i]);
+	  fftx[pos + i] = temp;
+	}
+      //recursion
+      ntt1 (half, pos);
+      ntt1 (half, pos + half);
+    }
+}
+
+void
+ntt (int n)
+{
+
+  ntt1 (n, 0);
+
+}
+
+//inverse NTT
+void
+intt1 (int n, int pos)
+{
+  int temp;
+
+  if (n == 2)
+    {
+      temp = (fftx[pos] + fftx[pos + 1]) / 2;
+      fftx[pos + 1] = (fftx[pos] - fftx[pos + 1]) / 2;
+      fftx[pos] = temp;
+    }
+  else
+    {
+      int i, half;
+      half = n / 2;
+      for (i = 0; i < half; i++)
+	{
+	  temp = (fftx[pos + i] + fftx[pos + half + i]) / 2;
+	  fftx[pos + half + i] =
+	    (ii_factor (i) * (fftx[pos + i] - fftx[pos + half + i])) / 2;
+	  fftx[pos + i] = temp;
+	}
+      //recursion
+      ifft1 (half, pos);
+      ifft1 (half, pos + half);
+    }
+}
+
+void
+intt (int n)
+{
+
+  intt1 (n, 0);
+
+}
+
+void ntt_test(){
+  int n = 16;
+  set_factor();
+  set_bit_reverse(n);
+
+  nttx[0] = 8;
+  nttx[1] = 7;
+  nttx[2] = 6;
+  nttx[3] = 5;
+  nttx[4] = 4;
+  nttx[5] = 3;
+  nttx[6] = 2;
+  nttx[7] = 1;
+  nttx[8] = 0;
+  nttx[9] = 0;
+  nttx[10] = 0;
+  nttx[11] = 0;
+  nttx[12] = 0;
+  nttx[13] = 0;
+  nttx[14] = 0;
+  nttx[15] = 0;
+
+  ntt(n);
+  int i;
+  // change index of fftx with bit_reverse
+  for (i = 0; i < n; i++)
+    {
+      ntty[ffti[i]] = nttx[i];
+    }
+
+  for(i = 0 ;i < n; i++){
+    nttx[i] = ntty[i];
+  }
+
+  intt(n);
+
+  // change index of fftx with bit_reverse
+  for (i = 0; i < n; i++)
+    {
+      ntty[ffti[i]] = nttx[i];
+    }
+
+  for(i=0;i<n;i++){
+    printf("%d\n", ntty[i]);
+  }
+
+
+}
+
+
+

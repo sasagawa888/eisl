@@ -740,6 +740,7 @@ f_eisl_test (int arglist)
 
   arg1 = car (arglist);
 
+  ntt_test();
   return (T);
 }
 

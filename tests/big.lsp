@@ -41,3 +41,10 @@
     (if (= n 0)
         t
         (progn (* a b) (bigtest2 (- n 1)))))
+
+
+(defglobal p 1541406721)
+
+(defglobal omega 103)
+
+(import "math")

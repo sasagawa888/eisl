@@ -1535,7 +1535,8 @@ bigx_fft_mult (int x, int y)
 #define NTTSIZE 262144 // 2^18
 #define P 1541406721 //prime-number
 #define OMEGA 103  //primitive-root (mod P)
-int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE],ntti[NTTSIZE];
+long long int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE];
+int ntti[NTTSIZE];
 
 void
 ntt_set_bit_reverse (int n)
@@ -1550,10 +1551,10 @@ ntt_set_bit_reverse (int n)
 }
 
 
-int
-expmod (int x, int y, int z)
+long long int
+expmod (long long int x, int y, long long int z)
 {
-  int res, p;
+  long long int res, p;
 
   res = 1;
   p = x;
@@ -1573,13 +1574,22 @@ expmod (int x, int y, int z)
   return (res);
 }
 
+long long int
+modplus(long long int x, long long int y){
+  return((x + y) % P);
+}
+
+long long int
+modmult(long long int x, long long int y){
+  return((x * y) % P);
+}
 
 
 void
-ntt1 (int n, int pos, int base)
+ntt1 (int n, int pos, long long int base)
 {
 
-  int i, half,sqrt,omega_k,temp;
+  long long int i, half,sqrt,omega_k,temp;
   if (n == 1)
     {
       return;
@@ -1591,65 +1601,41 @@ ntt1 (int n, int pos, int base)
       omega_k = 1;
       for (i = 0; i < half; i++)
 	{
-	  temp = nttx[pos + i] + (omega_k*nttx[pos + half + i]) % P;
+	  temp = modplus(nttx[pos + i],modmult(omega_k,nttx[pos + half + i]));
 	  nttx[pos + half + i] =
-	    (omega_k*(sqrt*nttx[pos + i]) % P) % P + nttx[pos + half + i];
+	    modplus((modmult(modmult(omega_k,sqrt),nttx[pos + i])),nttx[pos + half + i]);
 	  nttx[pos + i] = temp;
-    omega_k = (omega_k*base) % P;
-    printf("%d ",temp);
+    omega_k = modmult(omega_k,base);
 	}
       //recursion
-      ntt1 (half, pos, (2*base)%P);
-      ntt1 (half, pos + half, (2*base)%P);
+      ntt1 (half, pos, modmult(base,base));
+      ntt1 (half, pos + half, modmult(base,base));
     }
 }
 
 void
-ntt ()
+ntt (int n)
 {
+  long long int base;
 
-  ntt1 (NTTSIZE, 0, OMEGA);
+  base = expmod(OMEGA,NTTSIZE/n,P);
+  ntt1 (n, 0, base);
 
 }
 
-//inverse NTT
-void
-intt1 (int n, int pos, int base)
-{
-  int i, half,sqrt,omega_k,temp;
-  if (n == 1)
-    {
-      return;
-    }
-  else
-    {
-      half = n / 2;
-      sqrt = expmod(base,half,P);
-      omega_k = 1;
-      for (i = 0; i < half; i++)
-	{
-	  temp = nttx[pos + i] + (omega_k*nttx[pos + half + i]) % P;
-	  nttx[pos + half + i] =
-	    (omega_k*(sqrt*nttx[pos + i]) % P) % P + nttx[pos + half + i];
-	  nttx[pos + i] = temp;
-    omega_k = (omega_k*base) % P;
-
-	}
-      //recursion
-      intt1 (half, pos, (2*base)%P);
-      intt1 (half, pos + half, (2*base)%P);
-    }
-}
 
 void
-intt ()
+intt (int n)
 {
-  int inverse,i;
+  long long int n_inv,base;
 
-  ntt1 (NTTSIZE, 0, OMEGA);
-  inverse = expmod(OMEGA,P-2,P);
-  for(i=0;i<NTTSIZE;i++){
-    nttx[i] = (nttx[i]*inverse) % P;
+  base = expmod(OMEGA,NTTSIZE/n,P);
+  base = expmod(base,P-2,P);
+  ntt1 (n, 0, base);
+  n_inv = expmod(n,P-2,P);
+  int i;
+  for(i=0;i<n;i++){
+    nttx[i] = (nttx[i]*n_inv) % P;
   }
 }
 
@@ -1657,12 +1643,9 @@ intt ()
 void ntt_test(){
   int n,i;
 
-  n = NTTSIZE;
+  n = 8;
   ntt_set_bit_reverse(n);
 
-  for(i=0;i<n;i++){
-    nttx[i] = 0;
-  }
   nttx[0] = 8;
   nttx[1] = 7;
   nttx[2] = 6;
@@ -1673,7 +1656,7 @@ void ntt_test(){
   nttx[7] = 1;
 
 
-  ntt();
+  ntt(n);
 
   // change index of ntttx with bit_reverse
   for (i = 0; i < n; i++)
@@ -1685,7 +1668,7 @@ void ntt_test(){
     nttx[i] = ntty[i];
   }
 
-  intt();
+  intt(n);
 
   // change index of nttx with bit_reverse
   for (i = 0; i < n; i++)
@@ -1693,8 +1676,8 @@ void ntt_test(){
       ntty[ntti[i]] = nttx[i];
     }
 
-  for(i=0;i<16;i++){
-    printf("%d\n", ntty[i]);
+  for(i=0;i<n;i++){
+    printf("%d\n", (int)ntty[i]);
   }
 
 

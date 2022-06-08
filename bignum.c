@@ -1575,13 +1575,18 @@ expmod (long long int x, int y, long long int z)
 }
 
 long long int
-modplus(long long int x, long long int y){
+plusmod(long long int x, long long int y){
   return((x + y) % P);
 }
 
 long long int
-modmult(long long int x, long long int y){
+multmod(long long int x, long long int y){
   return((x * y) % P);
+}
+
+long long int
+minusmod(long long int x, long long int y){
+  return((x - y + P) % P);
 }
 
 
@@ -1601,15 +1606,15 @@ ntt1 (int n, int pos, long long int base)
       omega_k = 1;
       for (i = 0; i < half; i++)
 	{
-	  temp = modplus(nttx[pos + i],modmult(omega_k,nttx[pos + half + i]));
+	  temp = plusmod(nttx[pos + i],multmod(omega_k,nttx[pos + half + i]));
 	  nttx[pos + half + i] =
-	    modplus((modmult(modmult(omega_k,sqrt),nttx[pos + i])),nttx[pos + half + i]);
+	    plusmod(nttx[pos + i],multmod(multmod(omega_k,sqrt),nttx[pos + half + i]));
 	  nttx[pos + i] = temp;
-    omega_k = modmult(omega_k,base);
+    omega_k = multmod(omega_k,base);
 	}
       //recursion
-      ntt1 (half, pos, modmult(base,base));
-      ntt1 (half, pos + half, modmult(base,base));
+      ntt1 (half, pos, multmod(base,base));
+      ntt1 (half, pos + half, multmod(base,base));
     }
 }
 
@@ -1643,17 +1648,17 @@ intt (int n)
 void ntt_test(){
   int n,i;
 
-  n = 8;
+  n = 4;
   ntt_set_bit_reverse(n);
 
-  nttx[0] = 8;
-  nttx[1] = 7;
-  nttx[2] = 6;
-  nttx[3] = 5;
-  nttx[4] = 4;
-  nttx[5] = 3;
-  nttx[6] = 2;
-  nttx[7] = 1;
+  nttx[0] = 1;
+  nttx[1] = 2;
+  nttx[2] = 3;
+  nttx[3] = 4;
+  nttx[4] = 5;
+  nttx[5] = 6;
+  nttx[6] = 7;
+  nttx[7] = 8;
 
 
   ntt(n);
@@ -1671,13 +1676,14 @@ void ntt_test(){
   intt(n);
 
   // change index of nttx with bit_reverse
+  
   for (i = 0; i < n; i++)
     {
       ntty[ntti[i]] = nttx[i];
     }
 
   for(i=0;i<n;i++){
-    printf("%d\n", (int)ntty[i]);
+    printf("^^%d\n", (int)ntty[i]);
   }
 
 

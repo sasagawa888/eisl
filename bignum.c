@@ -1591,37 +1591,45 @@ minusmod(long long int x, long long int y){
 
 
 void
-ntt1 (int n, int pos, long long int base)
+ntt1 (int n, int h, int pos, long long int base)
 {
 
-  long long int i, half,temp;
-  if (n == 1)
+  long long int temp;
+  if (h == 0)
     {
       return;
     }
   else
     {
-      half = n / 2;
-      for (i = 0; i < half; i++)
-	{
-	  temp = plusmod(nttx[pos + i],multmod(expmod(base,i,P),nttx[pos + half + i]));
-	  nttx[pos + half + i] =
-	    plusmod(nttx[pos + i],multmod(expmod(base,i+half,P),nttx[pos + half + i]));
-	  nttx[pos + i] = temp;
-	}
       //recursion
-      ntt1 (half, pos, multmod(base,base));
-      ntt1 (half, pos + half, multmod(base,base));
+      ntt1 (n, h/2, pos, base);
+      ntt1 (n, h/2, pos + h, base);
     }
+      int i,d;
+      d = (n/2)/h;
+      for (i = 0; i < h; i++)
+	{
+	  temp = plusmod(ntty[pos + i],multmod(expmod(base,i*d,P),ntty[pos + h + i]));
+	  ntty[pos + h + i] =
+	    plusmod(ntty[pos + i],multmod(expmod(base,(i+h)*d,P),ntty[pos + h + i]));
+	  ntty[pos + i] = temp;
+	}
+   
 }
 
 void
 ntt (int n)
 {
   long long int base;
-
+  
+  ntt_set_bit_reverse(n);
+  int i;
+  for (i = 0; i < n; i++)
+    {
+      ntty[ntti[i]] = nttx[i];
+    }
   base = expmod(OMEGA,NTTSIZE/n,P);
-  ntt1 (n, 0, base);
+  ntt1 (n, n/2, 0, base);
 
 }
 
@@ -1631,13 +1639,18 @@ intt (int n)
 {
   long long int n_inv,base;
 
+  ntt_set_bit_reverse(n);
+  int i;
+  for (i = 0; i < n; i++)
+    {
+      ntty[ntti[i]] = nttx[i];
+    }
   base = expmod(OMEGA,NTTSIZE/n,P);
   base = expmod(base,P-2,P);
-  ntt1 (n, 0, base);
+  ntt1 (n, n/2, 0, base);
   n_inv = expmod(n,P-2,P);
-  int i;
   for(i=0;i<n;i++){
-    nttx[i] = (nttx[i]*n_inv) % P;
+    ntty[i] = (ntty[i]*n_inv) % P;
   }
 }
 
@@ -1645,8 +1658,7 @@ intt (int n)
 void ntt_test(){
   int n,i;
 
-  n = 4;
-  ntt_set_bit_reverse(n);
+  n = 8;
 
   nttx[0] = 1;
   nttx[1] = 2;
@@ -1660,26 +1672,13 @@ void ntt_test(){
 
   ntt(n);
 
-  // change index of ntttx with bit_reverse
-  for (i = 0; i < n; i++)
-    {
-      ntty[ntti[i]] = nttx[i];
-    }
-
-  /*
   for(i = 0 ;i < n; i++){
     nttx[i] = ntty[i];
   }
 
   intt(n);
 
-  // change index of nttx with bit_reverse
-  
-  for (i = 0; i < n; i++)
-    {
-      ntty[ntti[i]] = nttx[i];
-    }
-  */
+
   for(i=0;i<n;i++){
     printf("^^%d\n", (int)ntty[i]);
   }

@@ -7,19 +7,17 @@
 (defglobal n 256)
 
 
-(defglobal base (expmod omega (div n 8) p))
+(defglobal a #(1 2 0 0 0 0 0 0))
+(defglobal b #(0 0 0 0 0 0 0 0))
+
+
+(defglobal base (expmod omega (div n (length a)) p))
 
 (defun inv-n (n)
     (expmod n (- p 2) p))
 
-
-(defglobal a #(1 2 3 4 5 6 7 8))
-(defglobal b #(0 0 0 0 0 0 0 0))
-
-
-(defun w-factor (k m)
-    (let ((base (expmod omega (div n m) p)))
-        (expmod base k p)))
+(defun w-factor (k)
+    (expmod base k p))
 
 (defun plusmod (x y)
     (mod (+ x y) p))
@@ -33,33 +31,33 @@
 (defun invmod (x)
     (expmod x (- p 2) p))
 
-(defun ntt ()
-    (let* ((m (length a))
-           (base (expmod omega (div n m) p)))
-        (ntt1 m base 0)
-        (set-reverse)))
 
-(defun ntt1 (n base pos)
-    (cond ((= n 1) t)
-          (t (let ((half (div n 2))
-                   (temp nil))
+
+(defun ntt ()
+    (let* ((h (div (length a) 2)))
+        (set-reverse)
+        (ntt1 h 0)))
+
+(defun ntt1 (h pos)
+    (cond ((= h 0) t)
+          (t (ntt1 (div h 2) pos)
+             (ntt1 (div h 2) (+ pos h))
+             (let ((temp nil))
                 (for ((i 0 (+ i 1)))
-                     ((>= i half))
-                     (setq temp (plusmod (aref a (+ pos i)) (multmod (w-factor i n) (aref a (+ pos i half)))))
-                     (set-aref (plusmod (aref a (+ pos i)) (multmod (w-factor(+ i half) n) (aref a (+ pos i half)))) a (+ pos i half))
-                     (set-aref temp a  (+ pos i half)))
-                (print a)
-                (ntt1 (div n 2) (multmod base base) pos)
-                (ntt1 (div n 2) (multmod base base) (+ pos half))))))
+                     ((>= i h) t)
+                     (setq temp (plusmod (aref a (+ pos i)) (multmod (w-factor i) (aref a (+ pos i h)))))
+                     (set-aref (plusmod (aref a (+ pos i)) (multmod (w-factor (+ i h)) (aref a (+ pos i h)))) a (+ pos i h))
+                     (set-aref temp a  (+ pos i))
+                     (print a))))))
 
 
 (defun intt ()
-    (let* ((m (length a))
-           (base (expmod omega (div n m) p))
+    (let* ((h (div (length a) 2))
            (invbase (invmod base))
-           (invm (invmod m)))
-        (ntt1 m invbase 0)
+           (invm (invmod (length a))))
         (set-reverse)
+        (setq base invbase)
+        (ntt1 h 0)
         (for ((i 0 (+ i 1)))
              ((>= i 8) t)
              (set-aref (multmod (aref a i) invm) a i))))

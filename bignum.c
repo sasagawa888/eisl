@@ -1594,7 +1594,7 @@ void
 ntt1 (int n, int pos, long long int base)
 {
 
-  long long int i, half,sqrt,omega_k,temp;
+  long long int i, half,temp;
   if (n == 1)
     {
       return;
@@ -1602,15 +1602,12 @@ ntt1 (int n, int pos, long long int base)
   else
     {
       half = n / 2;
-      sqrt = expmod(base,half,P);
-      omega_k = 1;
       for (i = 0; i < half; i++)
 	{
-	  temp = plusmod(nttx[pos + i],multmod(omega_k,nttx[pos + half + i]));
+	  temp = plusmod(nttx[pos + i],multmod(expmod(base,i,P),nttx[pos + half + i]));
 	  nttx[pos + half + i] =
-	    plusmod(nttx[pos + i],multmod(multmod(omega_k,sqrt),nttx[pos + half + i]));
+	    plusmod(nttx[pos + i],multmod(expmod(base,i+half,P),nttx[pos + half + i]));
 	  nttx[pos + i] = temp;
-    omega_k = multmod(omega_k,base);
 	}
       //recursion
       ntt1 (half, pos, multmod(base,base));

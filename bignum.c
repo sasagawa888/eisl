@@ -1666,6 +1666,7 @@ void ntt_test(){
       ntty[ntti[i]] = nttx[i];
     }
 
+  /*
   for(i = 0 ;i < n; i++){
     nttx[i] = ntty[i];
   }
@@ -1678,7 +1679,7 @@ void ntt_test(){
     {
       ntty[ntti[i]] = nttx[i];
     }
-
+  */
   for(i=0;i<n;i++){
     printf("^^%d\n", (int)ntty[i]);
   }

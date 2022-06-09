@@ -1605,13 +1605,13 @@ ntt1 (int n, int h, int pos, long long int base)
       ntt1 (n, h/2, pos, base);
       ntt1 (n, h/2, pos + h, base);
     }
-      int i,d;
-      d = (n/2)/h;
+      int i,r;
+      r = (n/2)/h; //Adjustment ratio with the original
       for (i = 0; i < h; i++)
 	{
-	  temp = plusmod(ntty[pos + i],multmod(expmod(base,i*d,P),ntty[pos + h + i]));
+	  temp = plusmod(ntty[pos + i],multmod(expmod(base,i*r,P),ntty[pos + h + i]));
 	  ntty[pos + h + i] =
-	    plusmod(ntty[pos + i],multmod(expmod(base,(i+h)*d,P),ntty[pos + h + i]));
+	    plusmod(ntty[pos + i],multmod(expmod(base,(i+h)*r,P),ntty[pos + h + i]));
 	  ntty[pos + i] = temp;
 	}
    
@@ -1637,7 +1637,7 @@ ntt (int n)
 void
 intt (int n)
 {
-  long long int n_inv,base;
+  long long int n_inv,base,base_inv;
 
   ntt_set_bit_reverse(n);
   int i;
@@ -1646,8 +1646,8 @@ intt (int n)
       ntty[ntti[i]] = nttx[i];
     }
   base = expmod(OMEGA,NTTSIZE/n,P);
-  base = expmod(base,P-2,P);
-  ntt1 (n, n/2, 0, base);
+  base_inv = expmod(base,P-2,P);
+  ntt1 (n, n/2, 0, base_inv);
   n_inv = expmod(n,P-2,P);
   for(i=0;i<n;i++){
     ntty[i] = (ntty[i]*n_inv) % P;
@@ -1660,27 +1660,28 @@ void ntt_test(){
 
   n = 8;
 
-  nttx[0] = 1;
-  nttx[1] = 2;
-  nttx[2] = 3;
-  nttx[3] = 4;
-  nttx[4] = 5;
-  nttx[5] = 6;
-  nttx[6] = 7;
-  nttx[7] = 8;
+  nttx[0] = 0;
+  nttx[1] = 0;
+  nttx[2] = 0;
+  nttx[3] = 0;
+  nttx[4] = 1;
+  nttx[5] = 2;
+  nttx[6] = 3;
+  nttx[7] = 4;
 
 
   ntt(n);
 
   for(i = 0 ;i < n; i++){
-    nttx[i] = ntty[i];
+    nttx[i] = multmod(ntty[i],ntty[i]);
   }
 
+  
   intt(n);
 
 
   for(i=0;i<n;i++){
-    printf("^^%d\n", (int)ntty[i]);
+    printf("%d\n", (int)ntty[i]);
   }
 
 

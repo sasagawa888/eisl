@@ -1535,7 +1535,7 @@ bigx_fft_mult (int x, int y)
 #define NTTSIZE 262144 // 2^18
 #define P 1541406721 //prime-number
 #define OMEGA 103  //primitive-root (mod P)
-long long int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE];
+long long int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE],ntt_factor[NTTSIZE];
 int ntti[NTTSIZE];
 
 void
@@ -1549,7 +1549,6 @@ ntt_set_bit_reverse (int n)
       ntti[i] = bit_reverse (i, bit);
     }
 }
-
 
 long long int
 expmod (long long int x, int y, long long int z)
@@ -1587,6 +1586,16 @@ multmod(long long int x, long long int y){
 long long int
 minusmod(long long int x, long long int y){
   return((x - y + P) % P);
+}
+
+void
+set_w_factor(){
+  int i;
+  ntt_factor[0] = 1;
+  for(i=1;i<NTTSIZE;i++){
+    ntt_factor[i] = multmod(ntt_factor[i-1],OMEGA);
+  }
+
 }
 
 
@@ -1652,6 +1661,136 @@ intt (int n)
   for(i=0;i<n;i++){
     ntty[i] = (ntty[i]*n_inv) % P;
   }
+}
+
+
+//-------mult with NTT-------
+int
+bigx_ntt_mult (int x, int y)
+{
+  int pointer, lenx, leny, max_len, ans_len, i, n, res;
+
+  lenx = get_length (x);
+  leny = get_length (y);
+  if (lenx >= leny)
+    {
+      max_len = lenx;
+    }
+  else
+    {
+      max_len = leny;
+    }
+
+  ans_len = lenx + leny + 1;
+  if (ans_len * 2 * 3 > NTTSIZE)
+    error (RESOURCE_ERR, "ntt-mult", makeint (ans_len));
+
+  n = 0;
+  // NTTSIZE = 2^18 
+  for (i = 18; i > 0; i--)
+    {
+      //prepare NTT data. datasize is twice of max_len
+      //Each one bigcell needs 3 NTT data. 
+      if ((max_len * 2 * 3) > pow (2, i))
+	{
+	  n = pow (2, i + 1);
+	  break;
+	}
+    }
+  ntt_set_bit_reverse (n);
+
+  //------ntt(x)-----
+  for (i = 0; i < NTTSIZE; i++)
+    {
+      nttx[i] = 0;
+    }
+
+  pointer = get_pointer (x) - lenx + 1;	//LSB
+
+  for (i = 0; i < lenx; i++)
+    {
+      //one bigcell separate to three NTTT data.
+      nttx[n-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[n-(3 * i + 1)] =
+	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
+      nttx[n-(3 * i + 2)] =
+	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
+    }
+
+  ntt (n);
+  // save to nttz[]
+  for (i = 0; i < n; i++)
+    {
+      nttz[i] = ntty[i];
+    }
+
+
+  //-----ntt(y)--------
+  for (i = 0; i < NTTSIZE; i++)
+    {
+      nttx[i] = 0;
+    }
+
+  pointer = get_pointer (y) - leny + 1;	//LSB
+  for (i = 0; i < leny; i++)
+    {
+      nttx[n-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[n-(3 * i + 1)] =
+	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
+      nttx[n-(3 * i + 2)] =
+	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
+    }
+
+  ntt (n);
+
+  //----mult---------
+  for (i = 0; i < n; i++)
+    {
+      nttx[i] = multmod(ntty[i],nttz[i]);
+    }
+
+  //---inverse NTT---
+  intt (n);
+  
+  //---generate-answer
+  res = gen_big ();
+  SET_TAG (res, BIGX);
+  set_sign (res, get_sign (x) * get_sign (y));
+  for (i = 0; i < ans_len; i++)
+    {
+      bigcell[big_pt0 + i] = 0;
+    }
+
+  // normalize
+  int pool, carry;
+  carry = 0;
+  for (i = 0; i < ans_len; i++)
+    {
+      pool = ((int)ntty[n-(3 * i)] + carry) % FFTBASE;
+      carry = ((int)ntty[n-(3 * i)] + carry) / FFTBASE;
+      pool =
+	pool +
+	(((int)ntty[n-(3 * i + 1)] + carry) % FFTBASE) * FFTBASE;
+      carry = ((int)ntty[n-(3 * i + 1)] + carry) / FFTBASE;
+      pool =
+	pool +
+	(((int)ntty[n-(3 * i + 2)] + carry) % FFTBASE) * (FFTBASE * FFTBASE);
+      carry = ((int)ntty[n-(3 * i + 2)] + carry) / FFTBASE;
+      bigcell[big_pt0++] = pool;
+    }
+
+  //zero cut
+  big_pt0--;
+  while (bigcell[big_pt0] == 0 && ans_len > 0)
+    {
+      big_pt0--;
+      ans_len--;
+    }
+
+  big_pt0++;
+  set_pointer (res, big_pt0 - 1);
+  set_length (res, ans_len);
+  return (res);
 }
 
 

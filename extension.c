@@ -45,7 +45,7 @@ initexsubr (void)
   defsubr ("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
   defsubr ("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
   defsubr ("EISL-TEST", f_eisl_test);
-  defsubr ("FFT*", f_fft_mult);
+  defsubr ("NTT*", f_fft_mult);
 
 #ifdef __arm__
   defsubr ("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -758,7 +758,7 @@ f_fft_mult (int arglist)
     error (NOT_NUM, "fft*", arg2);
 
   if (bignump (arg1) && bignump (arg2))
-    return (bigx_fft_mult (arg1, arg2));
+    return (bigx_ntt_mult (arg1, arg2));
   else
     return (mult (arg1, arg2));
 }

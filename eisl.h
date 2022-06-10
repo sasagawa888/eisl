@@ -35,8 +35,7 @@
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 #define BIGSIZE 20000000
-#define FFTSIZE 65536
-#define FFTBASE 1000
+#define NTTBASE 1000
 
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000
@@ -693,7 +692,6 @@ int             bignumtoken(char buf[]);
 int             bigx_abs(int x);
 int             bigx_big_to_flt(int x);
 int             bigx_eqp(int x, int y);
-int             bigx_fft_mult(int x, int y);
 int             bigx_flt_to_big(int x);
 int             bigx_int_to_big(int x);
 int             bigx_length(int x);
@@ -856,7 +854,6 @@ int             f_error_output(int x);
 int             f_eval(int addr);
 int             f_exp(int x);
 int             f_expt(int x);
-int             f_fft_mult(int arglist);
 int             f_file_length(int arglist);
 int             f_file_position(int arglist);
 int             f_finish_output(int x);
@@ -933,6 +930,7 @@ int             f_next_method_p(int arglist);
 int             f_not(int addr);
 int             f_notnumeqp(int x);
 int             f_nreverse(int addr);
+int             f_ntt_mult(int arglist);
 int             f_nullp(int addr);
 int             f_numberp(int addr);
 int             f_numeqp(int addr);

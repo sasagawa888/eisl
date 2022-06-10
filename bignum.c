@@ -1436,12 +1436,12 @@ bigx_ntt_mult (int x, int y)
 
   for (i = 0; i < lenx; i++)
     {
-      //one bigcell separate to three NTTT data.
-      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      //one bigcell separate to three NTT data.
+      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % NTTBASE);
       nttx[half-(3 * i + 1)] =
-	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
+	(double complex) ((bigcell[pointer + i] / NTTBASE) % NTTBASE);
       nttx[half-(3 * i + 2)] =
-	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
+	(double complex) (bigcell[pointer + i] / (NTTBASE * NTTBASE));
     }
 
   ntt (n);
@@ -1461,11 +1461,11 @@ bigx_ntt_mult (int x, int y)
   pointer = get_pointer (y) - leny + 1;	//LSB
   for (i = 0; i < leny; i++)
     {
-      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % NTTBASE);
       nttx[half-(3 * i + 1)] =
-	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
+	(double complex) ((bigcell[pointer + i] / NTTBASE) % NTTBASE);
       nttx[half-(3 * i + 2)] =
-	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
+	(double complex) (bigcell[pointer + i] / (NTTBASE * NTTBASE));
     }
 
   ntt (n);
@@ -1494,16 +1494,16 @@ bigx_ntt_mult (int x, int y)
   carry = 0;
   for (i = 0; i < ans_len; i++)
     {
-      pool = ((int)ntty[n-(3 * i)] + carry) % FFTBASE;
-      carry = ((int)ntty[n-(3 * i)] + carry) / FFTBASE;
+      pool = ((int)ntty[n-(3 * i)] + carry) % NTTBASE;
+      carry = ((int)ntty[n-(3 * i)] + carry) / NTTBASE;
       pool =
 	pool +
-	(((int)ntty[n-(3 * i + 1)] + carry) % FFTBASE) * FFTBASE;
-      carry = ((int)ntty[n-(3 * i + 1)] + carry) / FFTBASE;
+	(((int)ntty[n-(3 * i + 1)] + carry) % NTTBASE) * NTTBASE;
+      carry = ((int)ntty[n-(3 * i + 1)] + carry) / NTTBASE;
       pool =
 	pool +
-	(((int)ntty[n-(3 * i + 2)] + carry) % FFTBASE) * (FFTBASE * FFTBASE);
-      carry = ((int)ntty[n-(3 * i + 2)] + carry) / FFTBASE;
+	(((int)ntty[n-(3 * i + 2)] + carry) % NTTBASE) * (NTTBASE * NTTBASE);
+      carry = ((int)ntty[n-(3 * i + 2)] + carry) / NTTBASE;
       bigcell[big_pt0++] = pool;
     }
 
@@ -1555,7 +1555,7 @@ void ntt_test(){
 }
 
 
-/*
+/* old code
 //----------------FFT multiply--------------------------
 double complex fftx[FFTSIZE];	// FFT main input&output vector
 double complex ffty[FFTSIZE];	// FFT sub vector1 for bit reverse

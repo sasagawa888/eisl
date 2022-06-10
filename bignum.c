@@ -1710,10 +1710,10 @@ bigx_ntt_mult (int x, int y)
   for (i = 0; i < lenx; i++)
     {
       //one bigcell separate to three NTTT data.
-      nttx[n-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
-      nttx[n-(3 * i + 1)] =
+      nttx[n-1-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[n-1-(3 * i + 1)] =
 	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
-      nttx[n-(3 * i + 2)] =
+      nttx[n-1-(3 * i + 2)] =
 	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
     }
 
@@ -1734,10 +1734,10 @@ bigx_ntt_mult (int x, int y)
   pointer = get_pointer (y) - leny + 1;	//LSB
   for (i = 0; i < leny; i++)
     {
-      nttx[n-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
-      nttx[n-(3 * i + 1)] =
+      nttx[n-1-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[n-1-(3 * i + 1)] =
 	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
-      nttx[n-(3 * i + 2)] =
+      nttx[n-1-(3 * i + 2)] =
 	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
     }
 
@@ -1751,7 +1751,7 @@ bigx_ntt_mult (int x, int y)
 
   //---inverse NTT---
   intt (n);
-  
+
   //---generate-answer
   res = gen_big ();
   SET_TAG (res, BIGX);
@@ -1763,6 +1763,7 @@ bigx_ntt_mult (int x, int y)
 
   // normalize
   int pool, carry;
+  n = n - 2;
   carry = 0;
   for (i = 0; i < ans_len; i++)
     {
@@ -1803,10 +1804,10 @@ void ntt_test(){
   nttx[1] = 0;
   nttx[2] = 0;
   nttx[3] = 0;
-  nttx[4] = 1;
-  nttx[5] = 2;
-  nttx[6] = 3;
-  nttx[7] = 4;
+  nttx[4] = 123;
+  nttx[5] = 456;
+  nttx[6] = 789;
+  nttx[7] = 000;
 
 
   ntt(n);

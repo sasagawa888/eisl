@@ -79,7 +79,7 @@
 
 
 
-static const float VERSION = 2.44;
+static const float VERSION = 2.47;
 static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;

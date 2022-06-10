@@ -1390,7 +1390,7 @@ intt (int n)
 int
 bigx_ntt_mult (int x, int y)
 {
-  int pointer, lenx, leny, max_len, ans_len, i, n, res;
+  int pointer, lenx, leny, max_len, ans_len, i, n, half, res;
 
   lenx = get_length (x);
   leny = get_length (y);
@@ -1428,14 +1428,15 @@ bigx_ntt_mult (int x, int y)
     }
 
   pointer = get_pointer (x) - lenx + 1;	//LSB
+  half = n / 2 - 1;
 
   for (i = 0; i < lenx; i++)
     {
       //one bigcell separate to three NTTT data.
-      nttx[n-1-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
-      nttx[n-1-(3 * i + 1)] =
+      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[half-(3 * i + 1)] =
 	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
-      nttx[n-1-(3 * i + 2)] =
+      nttx[half-(3 * i + 2)] =
 	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
     }
 
@@ -1456,10 +1457,10 @@ bigx_ntt_mult (int x, int y)
   pointer = get_pointer (y) - leny + 1;	//LSB
   for (i = 0; i < leny; i++)
     {
-      nttx[n-1-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
-      nttx[n-1-(3 * i + 1)] =
+      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % FFTBASE);
+      nttx[half-(3 * i + 1)] =
 	(double complex) ((bigcell[pointer + i] / FFTBASE) % FFTBASE);
-      nttx[n-1-(3 * i + 2)] =
+      nttx[half-(3 * i + 2)] =
 	(double complex) (bigcell[pointer + i] / (FFTBASE * FFTBASE));
     }
 
@@ -1522,14 +1523,14 @@ void ntt_test(){
 
   n = 8;
 
-  nttx[0] = 0;
-  nttx[1] = 0;
-  nttx[2] = 0;
-  nttx[3] = 0;
-  nttx[4] = 123;
-  nttx[5] = 456;
-  nttx[6] = 789;
-  nttx[7] = 000;
+  nttx[0] = 123;
+  nttx[1] = 456;
+  nttx[2] = 789;
+  nttx[3] = 112;
+  nttx[4] = 0;
+  nttx[5] = 0;
+  nttx[6] = 0;
+  nttx[7] = 0;
 
 
   ntt(n);

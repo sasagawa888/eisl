@@ -1265,10 +1265,10 @@ get_bit (int n)
 }
 
 //return reversed bit number. e.g.  6=110 -> 011=3
-long long int
+int
 bit_reverse (long long int n, int bit)
 {
-  int binary[64], i;
+  int binary[32], i;
 
 
   for (i = 0; i < bit; i++)

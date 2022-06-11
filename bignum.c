@@ -1239,10 +1239,10 @@ get_bit (int n)
   return (bit);
 }
 
-int
-bit_reverse (int n, int bit)
+long long int
+bit_reverse (long long int n, int bit)
 {
-  int binary[12], i;
+  int binary[64], i;
 
 
   for (i = 0; i < bit; i++)
@@ -1261,7 +1261,7 @@ bit_reverse (int n, int bit)
 }
 
 void
-ntt_set_bit_reverse (int n)
+ntt_set_bit_reverse (long long int n)
 {
   int i, bit;
 
@@ -1511,91 +1511,43 @@ bigx_ntt_mult (int x, int y)
   return (res);
 }
 
-//--------NTT test------------------
-
-int
-ntt_test (int x)
-{
-  int pointer, lenx, ans_len, i, n, half, res;
-
-  lenx = get_length (x);
-  ans_len = lenx*2;
-  if (lenx * 2 * 3 > NTTSIZE)
-    error (RESOURCE_ERR, "ntt-test", makeint (lenx));
-
-  n = 1;
-  while(lenx * 3 > n){
-      //prepare NTT data. datasize is twice of max_len
-      //Each one bigcell needs 3 NTT data. 
-      n = 2 * n;
-  }
-  ntt_set_bit_reverse (n);
-  set_w_factor(n);
-
-  //------ntt(x)-----
-  for (i = 0; i < NTTSIZE; i++)
-    {
-      nttx[i] = 0;
-    }
-
-  pointer = get_pointer (x);	//MSB
-
-  for (i = 0; i < lenx; i++)
-    {
-      //one bigcell separate to three NTT data.
-      nttx[3 * i] = bigcell[pointer - i] % NTTBASE;
-      nttx[3 * i + 1] = (bigcell[pointer - i] / NTTBASE) % NTTBASE;
-      nttx[3 * i + 2] = bigcell[pointer - i] / (NTTBASE * NTTBASE);
-    }
-
-  printf("\n------input------\n");
-  for(i=0;i<n;i++){
-    printf("%lld-", nttx[i]);
-  }
-
-  ntt (n);
-  
-  for (i = 0; i < n; i++)
-    {
-      nttx[i] = multmod(ntty[i],ntty[i]);
-    }
-
-  printf("\n------ntt------\n");
-  for(i=0;i<n;i++){
-    printf("%lld-", nttx[i]);
-  }
-  //---inverse NTT---
-  intt (n);
-  printf("\n------inverse------\n");
-  for(i=0;i<n;i++){
-    printf("%lld-", ntty[i]);
-  }
-
-  
-  return (T);
-}
 
 //-----------simple test------------
 
-void ntt_test1(){
+int ntt_test(int x){
   int n,i;
 
   n = 8;
 
-  nttx[0] = 123;
-  nttx[1] = 456;
-  nttx[2] = 789;
-  nttx[3] = 112;
+  nttx[0] = 0;
+  nttx[1] = 0;
+  nttx[2] = 0;
+  nttx[3] = 4;
+  nttx[4] = 0;
+  nttx[5] = 0;
+  nttx[6] = 0;
+  nttx[7] = 0;
+  ntt_set_bit_reverse(n);
+  set_w_factor(n);
+
+  ntt(n);
+  for(i = 0 ;i < n; i++){
+    nttz[i] = ntty[i];
+  }
+
+  nttx[0] = 0;
+  nttx[1] = 0;
+  nttx[2] = 0;
+  nttx[3] = 5;
   nttx[4] = 0;
   nttx[5] = 0;
   nttx[6] = 0;
   nttx[7] = 0;
 
-
   ntt(n);
 
   for(i = 0 ;i < n; i++){
-    nttx[i] = multmod(ntty[i],ntty[i]);
+    nttx[i] = multmod(nttz[i],ntty[i]);
   }
 
   

@@ -29,8 +29,8 @@
 ($test (= (ntt* (expt 3 10999) (expt 2 10999)) (* (expt 3 10999) (expt 2 10999))) t)
 ($test (= (ntt* (expt 3 10999) (expt 3 10929)) (* (expt 3 10999) (expt 3 10929))) t)
 
-(defglobal a (expt 8 5999))
-(defglobal b (expt 9 5999))
+(defglobal a (expt 8 70000))
+(defglobal b (expt 9 70000))
 
 (defun bigtest1 (n)
     (if (= n 0)

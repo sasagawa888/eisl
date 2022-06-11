@@ -1410,18 +1410,12 @@ bigx_ntt_mult (int x, int y)
   if (ans_len * 2 * 3 > NTTSIZE)
     error (RESOURCE_ERR, "ntt-mult", makeint (ans_len));
 
-  n = 0;
-  // NTTSIZE = 2^18 
-  for (i = 18; i > 0; i--)
-    {
+  n = 1;
+  while((max_len * 2 * 3) > n){
       //prepare NTT data. datasize is twice of max_len
       //Each one bigcell needs 3 NTT data. 
-      if ((max_len * 2 * 3) > pow (2, i))
-	{
-	  n = pow (2, i + 1);
-	  break;
-	}
-    }
+      n = 2 * n;
+  }
   ntt_set_bit_reverse (n);
   set_w_factor(n);
 
@@ -1437,11 +1431,9 @@ bigx_ntt_mult (int x, int y)
   for (i = 0; i < lenx; i++)
     {
       //one bigcell separate to three NTT data.
-      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % NTTBASE);
-      nttx[half-(3 * i + 1)] =
-	(double complex) ((bigcell[pointer + i] / NTTBASE) % NTTBASE);
-      nttx[half-(3 * i + 2)] =
-	(double complex) (bigcell[pointer + i] / (NTTBASE * NTTBASE));
+      nttx[half-(3 * i)] = bigcell[pointer + i] % NTTBASE;
+      nttx[half-(3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
+      nttx[half-(3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
     }
 
   ntt (n);
@@ -1461,11 +1453,9 @@ bigx_ntt_mult (int x, int y)
   pointer = get_pointer (y) - leny + 1;	//LSB
   for (i = 0; i < leny; i++)
     {
-      nttx[half-(3 * i)] = (double complex) (bigcell[pointer + i] % NTTBASE);
-      nttx[half-(3 * i + 1)] =
-	(double complex) ((bigcell[pointer + i] / NTTBASE) % NTTBASE);
-      nttx[half-(3 * i + 2)] =
-	(double complex) (bigcell[pointer + i] / (NTTBASE * NTTBASE));
+      nttx[half-(3 * i)] = bigcell[pointer + i] % NTTBASE;
+      nttx[half-(3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
+      nttx[half-(3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
     }
 
   ntt (n);

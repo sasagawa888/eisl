@@ -1305,7 +1305,7 @@ int             f_delay_microseconds(int arglist);
 
 void            debugger(void);
 
-void            ntt_test();
+int             ntt_test(int x);
 
 // Fast project
 int             a_adaptp(int x, int y);

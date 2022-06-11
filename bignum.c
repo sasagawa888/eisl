@@ -1216,15 +1216,40 @@ bigx_mult_i (int x, int y)
   return (res);
 }
 
+/*
+* ---------------FFT/NTT----------------------
+* FFT with number theory transformation(NTT) for fast multiplication.
+* One big cell is decomposed into 3 NTT data.
+* Multipliers and multipliers are stored as follows.
 
-//---------------NTT----------------------
+  nttx[0]     0  
+  nttx[1]     123
+  ...         456
+  nttx[n/2-1] 789
+  nttx[n/2]   0
+  ...         0
+  nttx[n-1]   0 
+
+* Number data is stored in the first half. The remaining area is filled with 0.
+* rest half of the area is filled with 0 to avoid cyclic calculation.
+
+* One NTT DATA is 3 digits in decimal notation.
+* It contains 0 ~ 999 data. The data is the remainder of the prime number P.
+* It can be stored in 32bit itself, but it is stored in 64bit because it is necessary to calculate the remainder by multiplication.
+* At maximum, 999 * 2 ^ 18 (261881856) can be stored in one NTT cell as a remainder of the prime number P.
+* NTT is a forward calculation. INTT is the inverse map. 
+* Each calculates nttx [] as a vector and returns a value with ntty [] as a vector.
+* ntt_set_w_factor calculates the rotation factor in advance and saves it in ntt_factor[][].
+* Save the forward rotation factor in ntt_factor [i][0]. Save the rotation factor for inverse mapping in ntt_factor [i][1].
+*/
 #define NTTSIZE 262144 // 2^18
-#define P 1541406721 //prime-number
+#define P 1541406721 //prime-number 5880*2^18+1
 #define OMEGA 103  //primitive-root (mod P)
-long long int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE],ntt_factor[NTTSIZE][2];
-int ntti[NTTSIZE];
+long long int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE]; // data area ntty=ntt(nttx),ntty=intt(nttx), nttz is to save data.
+long long int ntt_factor[NTTSIZE][2];
+int ntti[NTTSIZE]; // index of bit-reversal
 
-
+// return size of binary. e.g. 7=111 3bit
 int
 get_bit (int n)
 {
@@ -1239,6 +1264,7 @@ get_bit (int n)
   return (bit);
 }
 
+//return reversed bit number. e.g.  6=110 -> 011=3
 long long int
 bit_reverse (long long int n, int bit)
 {
@@ -1260,6 +1286,7 @@ bit_reverse (long long int n, int bit)
   return (n);
 }
 
+// save index of bit-reverse
 void
 ntt_set_bit_reverse (long long int n)
 {
@@ -1272,6 +1299,7 @@ ntt_set_bit_reverse (long long int n)
     }
 }
 
+// exponentation x^y (mod z). see SICP
 long long int
 expmod (long long int x, int y, long long int z)
 {
@@ -1295,23 +1323,26 @@ expmod (long long int x, int y, long long int z)
   return (res);
 }
 
+// x+y (mod P)
 long long int
 plusmod(long long int x, long long int y){
   return((x + y) % P);
 }
 
+// x*y (mod P)
 long long int
 multmod(long long int x, long long int y){
   return((x * y) % P);
 }
 
+// x-y (mod P)
 long long int
 minusmod(long long int x, long long int y){
   return((x - y + P) % P);
 }
 
 void
-set_w_factor(int n){
+ntt_set_w_factor(int n){
   int i,base,base_inv;
 
   base = expmod(OMEGA,NTTSIZE/n,P);
@@ -1327,7 +1358,7 @@ set_w_factor(int n){
 
 
 void
-ntt1 (int n, int h, int pos, long long int base, int index)
+ntt1 (int n, int h, int pos, int index)
 {
 
   long long int temp;
@@ -1338,8 +1369,8 @@ ntt1 (int n, int h, int pos, long long int base, int index)
   else
     {
       //recursion
-      ntt1 (n, h/2, pos, base, index);
-      ntt1 (n, h/2, pos + h, base, index);
+      ntt1 (n, h/2, pos, index);
+      ntt1 (n, h/2, pos + h, index);
     }
       int i,r;
       r = (n/2)/h; //Adjustment ratio with the original
@@ -1356,15 +1387,12 @@ ntt1 (int n, int h, int pos, long long int base, int index)
 void
 ntt (int n)
 {
-  long long int base;
-  
   int i;
   for (i = 0; i < n; i++)
     {
       ntty[ntti[i]] = nttx[i];
     }
-  base = expmod(OMEGA,NTTSIZE/n,P);
-  ntt1 (n, n/2, 0, base, 0);
+  ntt1 (n, n/2, 0, 0); // n,n/1,0=start-position of vector,0=base-index for forward
 
 }
 
@@ -1372,19 +1400,17 @@ ntt (int n)
 void
 intt (int n)
 {
-  long long int n_inv,base,base_inv;
+  long long int n_inv;
 
   int i;
   for (i = 0; i < n; i++)
     {
       ntty[ntti[i]] = nttx[i];
     }
-  base = expmod(OMEGA,NTTSIZE/n,P);
-  base_inv = expmod(base,P-2,P);
-  ntt1 (n, n/2, 0, base_inv, 1);
-  n_inv = expmod(n,P-2,P);
+  ntt1 (n, n/2, 0, 1); // n,n/1,0=start-position of vector,1=base-index for inverse
+  n_inv = expmod(n,P-2,P); // n_env is 1/n (mod P). inverse is 1/nΣ...
   for(i=0;i<n;i++){
-    ntty[i] = (ntty[i]*n_inv) % P;
+    ntty[i] = (ntty[i]*n_inv) % P; 
   }
 }
 
@@ -1410,14 +1436,14 @@ bigx_ntt_mult (int x, int y)
   if (ans_len * 2 * 3 > NTTSIZE)
     error (RESOURCE_ERR, "ntt-mult", makeint (ans_len));
 
+  //prepare NTT data. datasize is twice of max_len
+  //Each one bigcell needs 3 NTT data.  n= 2^x >= max_len*2*3
   n = 1;
   while((max_len * 2 * 3) > n){
-      //prepare NTT data. datasize is twice of max_len
-      //Each one bigcell needs 3 NTT data. 
       n = 2 * n;
   }
   ntt_set_bit_reverse (n);
-  set_w_factor(n);
+  ntt_set_w_factor(n);
 
   //------ntt(x)-----
   for (i = 0; i < NTTSIZE; i++)
@@ -1430,7 +1456,7 @@ bigx_ntt_mult (int x, int y)
 
   for (i = 0; i < lenx; i++)
     {
-      //one bigcell separate to three NTT data.
+      //one bigcell separate to three NTT data. NTTBASE is 1000
       nttx[half-(3 * i)] = bigcell[pointer + i] % NTTBASE;
       nttx[half-(3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
       nttx[half-(3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
@@ -1514,7 +1540,7 @@ bigx_ntt_mult (int x, int y)
 
 //-----------simple test------------
 
-int ntt_test(int x){
+void ntt_test(){
   int n,i;
 
   n = 8;
@@ -1528,7 +1554,7 @@ int ntt_test(int x){
   nttx[6] = 0;
   nttx[7] = 0;
   ntt_set_bit_reverse(n);
-  set_w_factor(n);
+  ntt_set_w_factor(n);
 
   ntt(n);
   for(i = 0 ;i < n; i++){
@@ -1562,7 +1588,7 @@ int ntt_test(int x){
 }
 
 
-/* old code
+/* old code uses complex number
 //----------------FFT multiply--------------------------
 double complex fftx[FFTSIZE];	// FFT main input&output vector
 double complex ffty[FFTSIZE];	// FFT sub vector1 for bit reverse

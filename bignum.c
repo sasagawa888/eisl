@@ -720,8 +720,8 @@ bigx_mult (int arg1, int arg2)
 {
   int res;
 
-  if(get_length(arg1)+get_length(arg2) > 100)
-    return(bigx_ntt_mult(arg1,arg2));
+  if (get_length (arg1) + get_length (arg2) > 100)
+    return (bigx_ntt_mult (arg1, arg2));
 
   res = UNDEF;
   if (bigx_positivep (arg1) && bigx_positivep (arg2))
@@ -1244,12 +1244,12 @@ bigx_mult_i (int x, int y)
 * ntt_set_w_factor calculates the rotation factor in advance and saves it in ntt_factor[][].
 * Save the forward rotation factor in ntt_factor [i][0]. Save the rotation factor for inverse mapping in ntt_factor [i][1].
 */
-#define NTTSIZE 262144 // 2^18
-#define P 1541406721 //prime-number 5880*2^18+1
-#define OMEGA 103  //primitive-root (mod P)
-long long int nttx[NTTSIZE],ntty[NTTSIZE],nttz[NTTSIZE]; // data area ntty=ntt(nttx),ntty=intt(nttx), nttz is to save data.
+#define NTTSIZE 262144		// 2^18
+#define P 1541406721		//prime-number 5880*2^18+1
+#define OMEGA 103		//primitive-root (mod P)
+long long int nttx[NTTSIZE], ntty[NTTSIZE], nttz[NTTSIZE];	// data area ntty=ntt(nttx),ntty=intt(nttx), nttz is to save data.
 long long int ntt_factor[NTTSIZE][2];
-int ntti[NTTSIZE]; // index of bit-reversal
+int ntti[NTTSIZE];		// index of bit-reversal
 
 // return size of binary. e.g. 7=111 3bit
 int
@@ -1327,34 +1327,39 @@ expmod (long long int x, int y, long long int z)
 
 // x+y (mod P)
 long long int
-plusmod(long long int x, long long int y){
-  return((x + y) % P);
+plusmod (long long int x, long long int y)
+{
+  return ((x + y) % P);
 }
 
 // x*y (mod P)
 long long int
-multmod(long long int x, long long int y){
-  return((x * y) % P);
+multmod (long long int x, long long int y)
+{
+  return ((x * y) % P);
 }
 
 // x-y (mod P)
 long long int
-minusmod(long long int x, long long int y){
-  return((x - y + P) % P);
+minusmod (long long int x, long long int y)
+{
+  return ((x - y + P) % P);
 }
 
 void
-ntt_set_w_factor(int n){
-  int i,base,base_inv;
+ntt_set_w_factor (int n)
+{
+  int i, base, base_inv;
 
-  base = expmod(OMEGA,NTTSIZE/n,P);
-  base_inv = expmod(base,P-2,P);
+  base = expmod (OMEGA, NTTSIZE / n, P);
+  base_inv = expmod (base, P - 2, P);
   ntt_factor[0][0] = 1;
   ntt_factor[0][1] = 1;
-  for(i=1;i<n;i++){
-    ntt_factor[i][0] = multmod(ntt_factor[i-1][0],base);
-    ntt_factor[i][1] = multmod(ntt_factor[i-1][1],base_inv);
-  }
+  for (i = 1; i < n; i++)
+    {
+      ntt_factor[i][0] = multmod (ntt_factor[i - 1][0], base);
+      ntt_factor[i][1] = multmod (ntt_factor[i - 1][1], base_inv);
+    }
 
 }
 
@@ -1371,19 +1376,22 @@ ntt1 (int n, int h, int pos, int index)
   else
     {
       //recursion
-      ntt1 (n, h/2, pos, index);
-      ntt1 (n, h/2, pos + h, index);
+      ntt1 (n, h / 2, pos, index);
+      ntt1 (n, h / 2, pos + h, index);
     }
-      int i,r;
-      r = (n/2)/h; //Adjustment ratio with the original
-      for (i = 0; i < h; i++)
-	{
-	  temp = plusmod(ntty[pos + i],multmod(ntt_factor[i*r][index],ntty[pos + h + i]));
-	  ntty[pos + h + i] =
-	    plusmod(ntty[pos + i],multmod(ntt_factor[(i+h)*r][index],ntty[pos + h + i]));
-	  ntty[pos + i] = temp;
-	}
-   
+  int i, r;
+  r = (n / 2) / h;		//Adjustment ratio with the original
+  for (i = 0; i < h; i++)
+    {
+      temp =
+	plusmod (ntty[pos + i],
+		 multmod (ntt_factor[i * r][index], ntty[pos + h + i]));
+      ntty[pos + h + i] =
+	plusmod (ntty[pos + i],
+		 multmod (ntt_factor[(i + h) * r][index], ntty[pos + h + i]));
+      ntty[pos + i] = temp;
+    }
+
 }
 
 void
@@ -1394,7 +1402,7 @@ ntt (int n)
     {
       ntty[ntti[i]] = nttx[i];
     }
-  ntt1 (n, n/2, 0, 0); // n,n/1,0=start-position of vector,0=base-index for forward
+  ntt1 (n, n / 2, 0, 0);	// n,n/1,0=start-position of vector,0=base-index for forward
 
 }
 
@@ -1409,11 +1417,12 @@ intt (int n)
     {
       ntty[ntti[i]] = nttx[i];
     }
-  ntt1 (n, n/2, 0, 1); // n,n/1,0=start-position of vector,1=base-index for inverse
-  n_inv = expmod(n,P-2,P); // n_env is 1/n (mod P). inverse is 1/nΣ...
-  for(i=0;i<n;i++){
-    ntty[i] = (ntty[i]*n_inv) % P; 
-  }
+  ntt1 (n, n / 2, 0, 1);	// n,n/1,0=start-position of vector,1=base-index for inverse
+  n_inv = expmod (n, P - 2, P);	// n_env is 1/n (mod P). inverse is 1/nΣ...
+  for (i = 0; i < n; i++)
+    {
+      ntty[i] = (ntty[i] * n_inv) % P;
+    }
 }
 
 
@@ -1441,11 +1450,12 @@ bigx_ntt_mult (int x, int y)
   //prepare NTT data. datasize is twice of max_len
   //Each one bigcell needs 3 NTT data.  n= 2^x >= max_len*2*3
   n = 1;
-  while((max_len * 2 * 3) > n){
+  while ((max_len * 2 * 3) > n)
+    {
       n = 2 * n;
-  }
+    }
   ntt_set_bit_reverse (n);
-  ntt_set_w_factor(n);
+  ntt_set_w_factor (n);
 
   //------ntt(x)-----
   for (i = 0; i < NTTSIZE; i++)
@@ -1459,9 +1469,9 @@ bigx_ntt_mult (int x, int y)
   for (i = 0; i < lenx; i++)
     {
       //one bigcell separate to three NTT data. NTTBASE is 1000
-      nttx[half-(3 * i)] = bigcell[pointer + i] % NTTBASE;
-      nttx[half-(3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
-      nttx[half-(3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
+      nttx[half - (3 * i)] = bigcell[pointer + i] % NTTBASE;
+      nttx[half - (3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
+      nttx[half - (3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
     }
 
   ntt (n);
@@ -1481,9 +1491,9 @@ bigx_ntt_mult (int x, int y)
   pointer = get_pointer (y) - leny + 1;	//LSB
   for (i = 0; i < leny; i++)
     {
-      nttx[half-(3 * i)] = bigcell[pointer + i] % NTTBASE;
-      nttx[half-(3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
-      nttx[half-(3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
+      nttx[half - (3 * i)] = bigcell[pointer + i] % NTTBASE;
+      nttx[half - (3 * i + 1)] = (bigcell[pointer + i] / NTTBASE) % NTTBASE;
+      nttx[half - (3 * i + 2)] = bigcell[pointer + i] / (NTTBASE * NTTBASE);
     }
 
   ntt (n);
@@ -1491,7 +1501,7 @@ bigx_ntt_mult (int x, int y)
   //----mult---------
   for (i = 0; i < n; i++)
     {
-      nttx[i] = multmod(ntty[i],nttz[i]);
+      nttx[i] = multmod (ntty[i], nttz[i]);
     }
 
   //---inverse NTT---
@@ -1512,16 +1522,16 @@ bigx_ntt_mult (int x, int y)
   carry = 0;
   for (i = 0; i < ans_len; i++)
     {
-      pool = ((int)ntty[n-(3 * i)] + carry) % NTTBASE;
-      carry = ((int)ntty[n-(3 * i)] + carry) / NTTBASE;
+      pool = ((int) ntty[n - (3 * i)] + carry) % NTTBASE;
+      carry = ((int) ntty[n - (3 * i)] + carry) / NTTBASE;
+      pool =
+	pool + (((int) ntty[n - (3 * i + 1)] + carry) % NTTBASE) * NTTBASE;
+      carry = ((int) ntty[n - (3 * i + 1)] + carry) / NTTBASE;
       pool =
 	pool +
-	(((int)ntty[n-(3 * i + 1)] + carry) % NTTBASE) * NTTBASE;
-      carry = ((int)ntty[n-(3 * i + 1)] + carry) / NTTBASE;
-      pool =
-	pool +
-	(((int)ntty[n-(3 * i + 2)] + carry) % NTTBASE) * (NTTBASE * NTTBASE);
-      carry = ((int)ntty[n-(3 * i + 2)] + carry) / NTTBASE;
+	(((int) ntty[n - (3 * i + 2)] +
+	  carry) % NTTBASE) * (NTTBASE * NTTBASE);
+      carry = ((int) ntty[n - (3 * i + 2)] + carry) / NTTBASE;
       bigcell[big_pt0++] = pool;
     }
 
@@ -1542,8 +1552,10 @@ bigx_ntt_mult (int x, int y)
 
 //-----------simple test------------
 
-void ntt_test(){
-  int n,i;
+void
+ntt_test ()
+{
+  int n, i;
 
   n = 8;
 
@@ -1555,13 +1567,14 @@ void ntt_test(){
   nttx[5] = 0;
   nttx[6] = 0;
   nttx[7] = 0;
-  ntt_set_bit_reverse(n);
-  ntt_set_w_factor(n);
+  ntt_set_bit_reverse (n);
+  ntt_set_w_factor (n);
 
-  ntt(n);
-  for(i = 0 ;i < n; i++){
-    nttz[i] = ntty[i];
-  }
+  ntt (n);
+  for (i = 0; i < n; i++)
+    {
+      nttz[i] = ntty[i];
+    }
 
   nttx[0] = 0;
   nttx[1] = 0;
@@ -1572,19 +1585,21 @@ void ntt_test(){
   nttx[6] = 0;
   nttx[7] = 0;
 
-  ntt(n);
+  ntt (n);
 
-  for(i = 0 ;i < n; i++){
-    nttx[i] = multmod(nttz[i],ntty[i]);
-  }
-
-  
-  intt(n);
+  for (i = 0; i < n; i++)
+    {
+      nttx[i] = multmod (nttz[i], ntty[i]);
+    }
 
 
-  for(i=0;i<n;i++){
-    printf("%d\n", (int)ntty[i]);
-  }
+  intt (n);
+
+
+  for (i = 0; i < n; i++)
+    {
+      printf ("%d\n", (int) ntty[i]);
+    }
 
 
 }

@@ -720,6 +720,8 @@ bigx_mult (int arg1, int arg2)
 {
   int res;
 
+  if(get_length(arg1)+get_length(arg2) > 100)
+    return(bigx_ntt_mult(arg1,arg2));
 
   res = UNDEF;
   if (bigx_positivep (arg1) && bigx_positivep (arg2))

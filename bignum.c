@@ -20,12 +20,12 @@
    |(parmanent) | big_pt1       |          |
 
 
-* FFT-Multiply
-* bigcell 32bit integer -> radix 10^3 complex
+* NTT-Multiply
+* bigcell 32bit integer -> radix 10^3 32bit integer
 * bignum-x bignum-y     IFFT(FFT(x)*FFT(y)) -> bigcell 32bit integer(normalize) 
-* complex data type uses double complex. 
-* It will be calculated correctly by multiplying by about 6000 digits.
-* But beyond that, a complex overflow will occur. The calculation is inaccurate.
+* integer data type uses 64bit integer. Because to avoid overflow in 32bit.
+* It will be calculated correctly by multiplying by about 300000 digits.
+* if comment out #define NTT, bigx_mult does not use NTT.
 */
 
 #define NTT

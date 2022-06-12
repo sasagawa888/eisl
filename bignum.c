@@ -28,6 +28,7 @@
 * But beyond that, a complex overflow will occur. The calculation is inaccurate.
 */
 
+#define NTT
 
 #include <stdio.h>
 #include <string.h>
@@ -720,8 +721,10 @@ bigx_mult (int arg1, int arg2)
 {
   int res;
 
+  #ifdef NTT
   if (get_length (arg1) + get_length (arg2) > 100)
     return (bigx_ntt_mult (arg1, arg2));
+  #endif
 
   res = UNDEF;
   if (bigx_positivep (arg1) && bigx_positivep (arg2))

@@ -22,25 +22,20 @@
 
 ;($test (convert 2837912874982137192837192837287312947728 <float>) 2.83791e+39 =)
 
-($test (= (ntt* (expt 8 5999) (expt 9 5999)) (* (expt 8 5999) (expt 9 5999))) t)
-($test (= (ntt* (expt 2 5999) (expt 3 5999)) (* (expt 3 5999) (expt 2 5999))) t)
-($test (= (ntt* (expt 2 599) (expt 3 5999)) (* (expt 3 5999) (expt 2 599))) t)
-($test (= (ntt* (expt 2 59) (expt 3 5999)) (* (expt 3 5999) (expt 2 59))) t)
-($test (= (ntt* (expt 3 10999) (expt 2 10999)) (* (expt 3 10999) (expt 2 10999))) t)
-($test (= (ntt* (expt 3 10999) (expt 3 10929)) (* (expt 3 10999) (expt 3 10929))) t)
+($test (= (* (expt 8 5999) (expt 9 5999)) (* (expt 8 5999) (expt 9 5999))) t)
+($test (= (* (expt 2 5999) (expt 3 5999)) (* (expt 3 5999) (expt 2 5999))) t)
+($test (= (* (expt 2 599) (expt 3 5999)) (* (expt 3 5999) (expt 2 599))) t)
+($test (= (* (expt 2 59) (expt 3 5999)) (* (expt 3 5999) (expt 2 59))) t)
+($test (= (* (expt 3 10999) (expt 2 10999)) (* (expt 3 10999) (expt 2 10999))) t)
+($test (= (* (expt 3 10999) (expt 3 10929)) (* (expt 3 10999) (expt 3 10929))) t)
 
 (defglobal a (expt 8 70000))
 (defglobal b (expt 9 70000))
 
-(defun bigtest1 (n)
+(defun bigtest (n)
     (if (= n 0)
         t
-        (progn (ntt* a b) (bigtest1 (- n 1)))))
-
-(defun bigtest2 (n)
-    (if (= n 0)
-        t
-        (progn (* a b) (bigtest2 (- n 1)))))
+        (progn (* a b) (bigtest (- n 1)))))
 
 
 

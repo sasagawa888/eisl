@@ -78,7 +78,7 @@
 
 
 
-static const float VERSION = 2.49;
+static const float VERSION = 2.50;
 static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
@@ -930,7 +930,6 @@ int             f_next_method_p(int arglist);
 int             f_not(int addr);
 int             f_notnumeqp(int x);
 int             f_nreverse(int addr);
-int             f_ntt_mult(int arglist);
 int             f_nullp(int addr);
 int             f_numberp(int addr);
 int             f_numeqp(int addr);

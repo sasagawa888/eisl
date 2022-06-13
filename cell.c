@@ -632,6 +632,18 @@ makesym (const char *pname)
  * generated in heap area. 
  * note, if ep(environment) has bignum, convert to parmanent)
  */
+
+int env_to_parmanent(int x);
+int env_to_parmanent(int x){
+  if(nullp(x))
+    return(NIL);
+  else if(bignump(cadr(x)))
+    return(cons(caar(x),bigx_to_parmanent(cadr(x))));
+  else
+    return(cons(car(x),env_to_parmanent(cdr(x))));
+}
+
+
 int
 makefunc (const char *pname, int addr)
 {
@@ -643,7 +655,7 @@ makefunc (const char *pname, int addr)
   EXCEPT (Mem_Failed) error (MALLOC_OVERF, "makefunc", NIL);
   END_TRY;
   SET_CAR (val, copy_heap (addr));
-  SET_CDR (val, ep);		// local environment
+  SET_CDR (val, env_to_parmanent(ep));		// local environment, if it include bignum, change to parmanent bignum.
   SET_AUX (val, cfunction);	// class function
   // if lambda is generated in method, save the method and given
   // argument 

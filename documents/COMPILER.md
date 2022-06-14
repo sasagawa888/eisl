@@ -193,6 +193,19 @@ I think it can be done by α conversion, but I decided to take a short-cut. It s
 
 ```
 
+# Constraint on tag of catch
+The catch tag is supposed to be evaluated dynamically. The interpreter evaluates dynamically. However, it is difficult for the compiler to dynamically evaluate tags. In the compiler, it is limited to symbols with quotes.
+
+# Constraint on defglobal with BIGNUM
+The global variable c in the following example works fine in the interpreter. However, it can be corrupted by the compiler. It is a trade-off with the efficiency of BIGNUM calculation.
+
+```
+(defglobal a 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111)
+(defglobal b 22222222222222222222222222222222222222222222222222222222222222222222222222222222222222)
+(defglobal c (* a b))
+```
+
+
 # Some More Limitations
 
 There are a few tickets that were logged for compiler limitations, but the outcome was that it was better to have such a limitation and a simpler system.

@@ -9,7 +9,7 @@
 #include "str.h"
 #include "mem.h"
 
-#define TOKEN_MAX 20
+#define TOKEN_MAX 80
 #define FRAGMENT_MAX 20
 
 #ifndef CTRL

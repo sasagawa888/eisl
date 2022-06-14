@@ -454,6 +454,28 @@ bigx_shift (int x, int n)
 }
 
 int
+bigx_to_parmanent (int x)
+{
+  int len, pointer;
+
+  pointer = get_pointer (x);
+  len = get_length (x);
+  pointer = get_pointer (x);
+
+  big_pt1 = big_pt1 + len;
+  CHECKBIG1 int i;
+  for (i = 0; i < len; i++)
+    {
+      bigcell[big_pt1 - i] = bigcell[pointer - i];
+    }
+
+  big_pt1++;
+  set_pointer (x, big_pt1 - 1);
+  return (x);
+}
+
+
+int
 bigx_abs (int x)
 {
   int res;

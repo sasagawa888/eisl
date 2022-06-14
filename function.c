@@ -363,7 +363,7 @@ dynamic_link (int x)
   init_f3 (MAKESYM_IDX, (fn3) makesym);
   init_f3 (MAKECHAR_IDX, (fn3) makechar);
   init_f3 (MAKESTRFLT_IDX, (fn3) makestrflt);
-  init_f3 (MAKEBIG_IDX, makebigx);
+  init_f3 (MAKEBIG_IDX, makebigx_parmanent);
   init_f3 (MAKESTRLONG_IDX, (fn3) makestrlong);
   init_f3 (MAKEFASTSTRLONG_IDX, (fn3) makefaststrlong);
 

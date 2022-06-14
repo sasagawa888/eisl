@@ -1762,3 +1762,14 @@ get_flt (int x)
 {
   return (GET_FLT (x));
 }
+
+
+// for BIGNUM data
+// if it is BIGNUM copy to parmanent area
+int
+copy_bignum_to_paramanent(int x){
+  if(bignump(x))
+      return(bigx_to_parmanent(x));
+  else
+      return(x);
+}

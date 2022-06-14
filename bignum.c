@@ -147,6 +147,10 @@ makebigx (char *bignum)
     }
 }
 
+int makebigx_parmanent(char *bignum)
+{
+  return(bigx_to_parmanent(makebigx(bignum)));
+}
 
 void
 print_bigx (int x)

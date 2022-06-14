@@ -1110,6 +1110,7 @@ int             macroexpand_all(int sexp);
 int             macrop(int addr);
 int             makearray(int lis, int obj);
 int             makebigx(char *bignum);
+int             makebigx_parmanent(char *bignum);
 int             makechar(const char *pname);
 int             makeclass(const char *pname, int superclass);
 int             makedummy(void);

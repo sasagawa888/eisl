@@ -324,6 +324,12 @@ Fsetcatchsymbols(int x)
     return f1[SETCATCHSYMBOLS_IDX] (x);
 }
 
+static inline int
+Fbigxtoparmanent(int x)
+{
+    return f1[BIGXTOPARMANENT_IDX] (x);
+}
+
 
 static inline int
 Fcons(int x, int y)

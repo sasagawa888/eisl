@@ -320,6 +320,7 @@ dynamic_link (int x)
   init_f1 (GETPROP_IDX, get_prop);
   init_f1 (SETDYNPT_IDX, set_dynpt);
   init_f1 (SETCATCHSYMBOLS_IDX, set_catch_symbols);
+  init_f1 (BIGXTOPARMANENT_IDX, bigx_to_parmanent);
 
   // argument-2 type
   init_f2 (CONS_IDX, cons);

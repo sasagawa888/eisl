@@ -458,7 +458,9 @@ bigx_to_parmanent (int x)
 {
   int len, pointer;
 
-  pointer = get_pointer (x);
+  if(!bignump(x))
+      return(x);
+
   len = get_length (x);
   pointer = get_pointer (x);
 

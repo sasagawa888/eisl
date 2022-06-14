@@ -108,7 +108,7 @@ makebigx (char *bignum)
 	      i--;
 	    }
 	  integer[9] = NUL;
-	  CHECKBIG0 bigcell[big_pt0++] = atoi (integer);
+	  CHECKBIG0 bigcell[big_pt1++] = atoi (integer);
 	  len++;
 	}
       else
@@ -119,7 +119,7 @@ makebigx (char *bignum)
 	      integer[i] = bignum[i];
 	      i--;
 	    }
-	  CHECKBIG0 bigcell[big_pt0++] = atoi (integer);
+	  CHECKBIG0 bigcell[big_pt1++] = atoi (integer);
 	  len++;
 	}
     }
@@ -128,8 +128,8 @@ makebigx (char *bignum)
     {
       long long int l, m;
 
-      CHECKBIG0 l = (long long int) bigcell[big_pt0 - 1] * BIGNUM_BASE;
-      m = (long long int) bigcell[big_pt0 - 2];
+      CHECKBIG0 l = (long long int) bigcell[big_pt1 - 1] * BIGNUM_BASE;
+      m = (long long int) bigcell[big_pt1 - 2];
       m = (l + m) * sign;
       SET_TAG (res, LONGN);
       SET_LONG (res, m);
@@ -139,7 +139,7 @@ makebigx (char *bignum)
   else
     {
       SET_TAG (res, BIGX);
-      set_pointer (res, big_pt0 - 1);
+      set_pointer (res, big_pt1 - 1);
       set_length (res, len);
       set_sign (res, sign);
       SET_AUX (res, cbignum);
@@ -147,10 +147,6 @@ makebigx (char *bignum)
     }
 }
 
-int makebigx_parmanent(char *bignum)
-{
-  return(bigx_to_parmanent(makebigx(bignum)));
-}
 
 void
 print_bigx (int x)
@@ -455,27 +451,6 @@ bigx_shift (int x, int n)
   set_pointer (res, big_pt0 - 1);
   set_length (res, len + n);
   return (res);
-}
-
-int
-bigx_to_parmanent (int x)
-{
-  int len, pointer;
-
-  pointer = get_pointer (x);
-  len = get_length (x);
-  pointer = get_pointer (x);
-
-  big_pt1 = big_pt1 + len;
-  CHECKBIG1 int i;
-  for (i = 0; i < len; i++)
-    {
-      bigcell[big_pt1 - i] = bigcell[pointer - i];
-    }
-
-  big_pt1++;
-  set_pointer (x, big_pt1 - 1);
-  return (x);
 }
 
 int

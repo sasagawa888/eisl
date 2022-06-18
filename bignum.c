@@ -1158,6 +1158,51 @@ bigx_div_i (int x, int y)
 }
 
 
+// half of bignum for ISQRT
+int
+bigx_half (int x)
+{
+  int res, pointer, msb, len, n, sign;
+  int r, q;
+
+  res = gen_big ();
+  len = n = get_length (x);
+  msb = get_pointer (bigx_abs (x));
+  sign = get_sign (x);
+
+  r = 0;
+
+  big_pt0 = big_pt0 + len;
+  pointer = big_pt0;
+  do
+    {
+      int i;
+
+      i = bigcell[msb];
+      i = i + r * BIGNUM_BASE;
+	    r = i % 2;
+	    q = i / 2;
+	    bigcell[pointer--] = q;
+      msb--;
+      n--;
+    }
+  while (n > 0);
+  SET_TAG (res, BIGX);
+  while (bigcell[big_pt0] == 0 && len > 1)
+    {
+      big_pt0--;
+      len--;
+    }
+  big_pt0++;
+  set_pointer (res, big_pt0 - 1);
+  set_length (res, len);
+  set_sign (res, sign);
+  if (simp_flag)
+    res = bigx_simplify (res);
+  return (res);
+}
+
+
 // multple of bignum and int
 int
 bigx_mult_i (int x, int y)
@@ -1223,6 +1268,8 @@ bigx_mult_i (int x, int y)
   res = bigx_simplify (res);
   return (res);
 }
+
+
 
 /*
 * ---------------FFT/NTT----------------------

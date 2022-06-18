@@ -713,6 +713,25 @@ divide (int x, int y)
   return (UNDEF);
 }
 
+
+int
+half(int x){
+  long long int l;
+  if(integerp(x))
+    return(makeint(GET_INT(x)/2));
+  else if(longnump(x)){
+    l = GET_LONG(x);
+    l = l / 2;
+    if(l < BIGNUM_BASE)
+      return(makeint((int)l));
+    else
+      return(makelong(l));
+  }
+  else
+    return(bigx_half(x));
+}
+
+
 int
 s_remainder (int x, int y)
 {
@@ -952,20 +971,8 @@ int
 lcm (int x, int y)
 {
   int g, d, res;
-  if (integerp (x) && integerp (y) && abs (GET_INT (x)) < 10000 && abs (GET_INT (y)) < 10000)	// because 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // x,y 
-    // < 
-    // sqrt(BIGNUM_BASE)
+  if (integerp (x) && integerp (y) && abs (GET_INT (x)) < 10000 && abs (GET_INT (y)) < 10000)	
+    // because  x,y < sqrt(BIGNUM_BASE)
     return (makeint (abs (int_lcm (GET_INT (x), GET_INT (y)))));
 
   else if (floatp (x) && integerp (y))
@@ -1014,8 +1021,8 @@ isqrt2 (int n, int init)
 
   while (greaterp (mult (s, s), n))
     {
-      //print(s);printf("\n");
-      s = divide (plus (s, divide (n, s)), makeint (2));
+      //printf("a\n");
+      s = half (plus (s, divide (n, s)));
     }
   return (s);
 }

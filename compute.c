@@ -1021,8 +1021,7 @@ isqrt2 (int n, int init)
 
   while (greaterp (mult (s, s), n))
     {
-      //printf("a\n");
-      s = half (plus (s, divide (n, s)));
+      s = divide (plus (s, divide (n, s)),makeint(2));
     }
   return (s);
 }

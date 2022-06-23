@@ -220,8 +220,8 @@ gen_big (void)
   int res;
 
   res = freshcell ();
-  SET_CDR (res, NIL);
-  SET_PROP (res, -1);
+  SET_TAG(res,BIGX);
+  SET_AUX(res,cbignum);
   return (res);
 }
 
@@ -232,7 +232,6 @@ next (int x)
 {
   return (GET_CDR (x));
 }
-
 // old bignum
 // get address of lower digit
 int
@@ -366,7 +365,6 @@ bigx_int_to_big (int x)
   y = GET_INT (x);
   CHECKBIG0 bigcell[big_pt0++] = abs (y);
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_pointer (res, big_pt0 - 1);
   set_length (res, 1);
   if (y >= 0)
@@ -388,7 +386,6 @@ bigx_long_to_big (int x)
   CHECKBIG0 bigcell[big_pt0++] = i2;
   CHECKBIG0 bigcell[big_pt0++] = i1;
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_pointer (res, big_pt0 - 1);
   set_length (res, 2);
   if (l >= 0)
@@ -426,16 +423,28 @@ bigx_simplify (int x)
     return (x);
 }
 
+// subtract n-cells 
+int bigx_shift_left(int x, int n){
+  int res;
+
+  res = gen_big();
+  set_pointer(res,get_pointer(x));
+  set_length(res,get_length(x)-n);
+  set_sign (res, get_sign (x));
+
+  return(res);
+
+}
+
 // add n-zero-cells to x
 int
-bigx_shift (int x, int n)
+bigx_shift_right (int x, int n)
 {
   int res, len, pointer;
 
   len = get_length (x);
   pointer = get_pointer (x) - len + 1;	// LSB
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, get_sign (x));
 
   int i;
@@ -483,7 +492,6 @@ bigx_abs (int x)
   int res;
 
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, 1);
   set_pointer (res, get_pointer (x));
   set_length (res, get_length (x));
@@ -566,7 +574,6 @@ bigx_plus1 (int arg1, int arg2)
   pointerx = get_pointer (arg1) - len1 + 1;	//LSB
   pointery = get_pointer (arg2) - len2 + 1;	//LSB
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, 1);
   c = 0;
   len = 0;
@@ -666,7 +673,6 @@ bigx_minus1 (int arg1, int arg2)
   pointerx = get_pointer (arg1) - len1 + 1;	// LSB
   pointery = get_pointer (arg2) - len2 + 1;	// LSB
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, 1);
   c = 0;
   len = 0;
@@ -767,7 +773,6 @@ bigx_mult1 (int arg1, int arg2)
 
 
   res = gen_big ();
-  SET_TAG (res, BIGX);
   len1 = get_length (arg1);
   len2 = get_length (arg2);
   len = len1 + len2;
@@ -885,7 +890,6 @@ bigx_div1 (int arg1, int arg2)
     }
 
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, 1);
   len = 0;
   big_pt0 = big_pt0 + get_length (arg1);	// prepare area of answer. 
@@ -918,13 +922,13 @@ bigx_div1 (int arg1, int arg2)
 
 
       subtract =
-	bigx_shift (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))), shift);
+	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))), shift);
       dividend = bigx_minus (dividend, subtract);
 
       // e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
       while (negativep (dividend))
 	{
-	  dividend = plus (dividend, bigx_shift (arg2, shift));
+	  dividend = plus (dividend, bigx_shift_right (arg2, shift));
 	  q--;
 	}
 
@@ -967,7 +971,6 @@ bigx_remainder (int arg1, int arg2)
     return (makeint (0));
 
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, 1);
   big_pt0 = big_pt0 + get_length (arg1);	// prepare area of answer. 
   set_pointer (res, big_pt0);
@@ -996,13 +999,13 @@ bigx_remainder (int arg1, int arg2)
 	  shift--;
 	}
       subtract =
-	bigx_shift (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))), shift);
+	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))), shift);
       dividend = bigx_minus (dividend, subtract);
 
       // e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
       while (negativep (dividend))
 	{
-	  dividend = plus (dividend, bigx_shift (arg2, shift));
+	  dividend = plus (dividend, bigx_shift_right (arg2, shift));
 	  q--;
 	}
 
@@ -1142,7 +1145,6 @@ bigx_div_i (int x, int y)
       n--;
     }
   while (n > 0);
-  SET_TAG (res, BIGX);
   while (bigcell[big_pt0] == 0 && len > 1)
     {
       big_pt0--;
@@ -1187,7 +1189,6 @@ bigx_half (int x)
       n--;
     }
   while (n > 0);
-  SET_TAG (res, BIGX);
   while (bigcell[big_pt0] == 0 && len > 1)
     {
       big_pt0--;
@@ -1261,7 +1262,6 @@ bigx_mult_i (int x, int y)
     }
   big_pt0++;
 
-  SET_TAG (res, BIGX);
   set_pointer (res, big_pt0 - 1);
   set_length (res, len);
   set_sign (res, sign1 * sign2);
@@ -1562,7 +1562,6 @@ bigx_ntt_mult (int x, int y)
 
   //---generate-answer
   res = gen_big ();
-  SET_TAG (res, BIGX);
   set_sign (res, get_sign (x) * get_sign (y));
   for (i = 0; i < ans_len; i++)
     {

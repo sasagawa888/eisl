@@ -1024,6 +1024,7 @@ isqrt2 (int n, int init)
 
   while (greaterp (mult (s, s), n))
     {
+      //print(s);printf("\n");
       s = divide (plus (s, divide (n, s)), makeint (2));
     }
   return (s);
@@ -1074,6 +1075,40 @@ isqrt3 (int x)
 
 }
 
+int 
+ipow(int x, int y){
+  int n;
+
+  n = 1;
+  while(y>0){
+    n = x*n;
+    y--;
+  }
+  return(n);
+}
+
+int 
+isqrt4(int x){
+  int len,n,init;
+
+  len = get_length(x);
+
+  n = 1;
+  while((len - ipow(2,n)) > len/8){
+    n++;
+  }
+
+  init = bigx_shift_left(x,ipow(2,n));
+  init = plus(isqrt3(init),makeint(1));
+  init = bigx_shift_right(x,ipow(2,n-1));
+  
+  print(minus(mult(init,init),x));
+  error(RESOURCE_ERR,"asdf",NIL);
+  return(isqrt2(x,init));
+
+
+}
+
 int
 isqrt (int x)
 {
@@ -1090,7 +1125,10 @@ isqrt (int x)
     }
   else
     {
-      return (isqrt3 (x));
+      if(get_length(x) < 100)
+        return (isqrt3 (x));
+      else
+        return(isqrt3(x));
     }
 }
 

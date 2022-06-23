@@ -2364,7 +2364,7 @@ copy_gen_big (void)
 
   addr = freshcell ();
   SET_TAG (addr, BIGX);
-  SET_AUX(addr,cbignum);
+  SET_AUX (addr, cbignum);
   return (addr);
 }
 

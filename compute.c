@@ -715,20 +715,22 @@ divide (int x, int y)
 
 
 int
-half(int x){
+half (int x)
+{
   long long int l;
-  if(integerp(x))
-    return(makeint(GET_INT(x)/2));
-  else if(longnump(x)){
-    l = GET_LONG(x);
-    l = l / 2;
-    if(l < BIGNUM_BASE)
-      return(makeint((int)l));
-    else
-      return(makelong(l));
-  }
+  if (integerp (x))
+    return (makeint (GET_INT (x) / 2));
+  else if (longnump (x))
+    {
+      l = GET_LONG (x);
+      l = l / 2;
+      if (l < BIGNUM_BASE)
+	return (makeint ((int) l));
+      else
+	return (makelong (l));
+    }
   else
-    return(bigx_half(x));
+    return (bigx_half (x));
 }
 
 
@@ -971,7 +973,8 @@ int
 lcm (int x, int y)
 {
   int g, d, res;
-  if (integerp (x) && integerp (y) && abs (GET_INT (x)) < 10000 && abs (GET_INT (y)) < 10000)	
+  if (integerp (x) && integerp (y) && abs (GET_INT (x)) < 10000
+      && abs (GET_INT (y)) < 10000)
     // because  x,y < sqrt(BIGNUM_BASE)
     return (makeint (abs (int_lcm (GET_INT (x), GET_INT (y)))));
 
@@ -1021,11 +1024,55 @@ isqrt2 (int n, int init)
 
   while (greaterp (mult (s, s), n))
     {
-      s = divide (plus (s, divide (n, s)),makeint(2));
+      s = divide (plus (s, divide (n, s)), makeint (2));
     }
   return (s);
 }
 
+// basic isqrt (for small bignum)
+int
+isqrt3 (int x)
+{
+  int len, msb, pointer, init, i;
+  long long int lmsb;
+  len = get_length (x);
+  pointer = get_pointer (x);
+  if (len % 2 == 0)
+    {
+      lmsb =
+	(long long int) bigcell[pointer] * BIGNUM_BASE +
+	(long long int) bigcell[pointer - 1];
+      init = gen_big ();
+      len = (len - 2) / 2;
+      for (i = 0; i < len; i++)
+	{
+	  bigcell[big_pt0++] = 0;
+	}
+      bigcell[big_pt0++] = (int) sqrt (lmsb) + 1;
+      SET_TAG (init, BIGX);
+      set_sign (init, 1);
+      set_pointer (init, big_pt0 - 1);
+      set_length (init, len + 1);
+    }
+  else
+    {
+      msb = bigcell[pointer];
+      init = gen_big ();
+      len = (len - 1) / 2;
+      for (i = 0; i < len; i++)
+	{
+	  bigcell[big_pt0++] = 0;
+	}
+      bigcell[big_pt0++] = (int) sqrt (msb) + 1;
+      SET_TAG (init, BIGX);
+      set_sign (init, 1);
+      set_pointer (init, big_pt0 - 1);
+      set_length (init, len + 1);
+    }
+
+  return (isqrt2 (x, init));
+
+}
 
 int
 isqrt (int x)
@@ -1043,44 +1090,7 @@ isqrt (int x)
     }
   else
     {
-      int len, msb, pointer, init, i;
-      long long int lmsb;
-      len = get_length (x);
-      pointer = get_pointer (x);
-      if (len % 2 == 0)
-	{
-	  lmsb =
-	    (long long int) bigcell[pointer] * BIGNUM_BASE +
-	    (long long int) bigcell[pointer - 1];
-	  init = gen_big ();
-	  len = (len - 2) / 2;
-	  for (i = 0; i < len; i++)
-	    {
-	      bigcell[big_pt0++] = 0;
-	    }
-	  bigcell[big_pt0++] = (int) sqrt (lmsb) + 1;
-	  SET_TAG (init, BIGX);
-	  set_sign (init, 1);
-	  set_pointer (init, big_pt0 - 1);
-	  set_length (init, len + 1);
-	}
-      else
-	{
-	  msb = bigcell[pointer];
-	  init = gen_big ();
-	  len = (len - 1) / 2;
-	  for (i = 0; i < len; i++)
-	    {
-	      bigcell[big_pt0++] = 0;
-	    }
-	  bigcell[big_pt0++] = (int) sqrt (msb) + 1;
-	  SET_TAG (init, BIGX);
-	  set_sign (init, 1);
-	  set_pointer (init, big_pt0 - 1);
-	  set_length (init, len + 1);
-	}
-
-      return (isqrt2 (x, init));
+      return (isqrt3 (x));
     }
 }
 

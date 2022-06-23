@@ -220,8 +220,8 @@ gen_big (void)
   int res;
 
   res = freshcell ();
-  SET_TAG(res,BIGX);
-  SET_AUX(res,cbignum);
+  SET_TAG (res, BIGX);
+  SET_AUX (res, cbignum);
   return (res);
 }
 
@@ -409,15 +409,17 @@ bigx_simplify (int x)
 }
 
 // subtract n-cells 
-int bigx_shift_left(int x, int n){
+int
+bigx_shift_left (int x, int n)
+{
   int res;
 
-  res = gen_big();
-  set_pointer(res,get_pointer(x));
-  set_length(res,get_length(x)-n);
+  res = gen_big ();
+  set_pointer (res, get_pointer (x));
+  set_length (res, get_length (x) - n);
   set_sign (res, get_sign (x));
 
-  return(res);
+  return (res);
 
 }
 
@@ -452,8 +454,8 @@ bigx_to_parmanent (int x)
 {
   int len, pointer;
 
-  if(!bignump(x))
-      return(x);
+  if (!bignump (x))
+    return (x);
 
   len = get_length (x);
   pointer = get_pointer (x);
@@ -715,10 +717,10 @@ bigx_mult (int arg1, int arg2)
 {
   int res;
 
-  #ifdef NTT
+#ifdef NTT
   if (get_length (arg1) + get_length (arg2) > 100)
     return (bigx_ntt_mult (arg1, arg2));
-  #endif
+#endif
 
   res = UNDEF;
   if (bigx_positivep (arg1) && bigx_positivep (arg2))
@@ -907,7 +909,8 @@ bigx_div1 (int arg1, int arg2)
 
 
       subtract =
-	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))), shift);
+	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))),
+			  shift);
       dividend = bigx_minus (dividend, subtract);
 
       // e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
@@ -984,7 +987,8 @@ bigx_remainder (int arg1, int arg2)
 	  shift--;
 	}
       subtract =
-	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))), shift);
+	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))),
+			  shift);
       dividend = bigx_minus (dividend, subtract);
 
       // e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
@@ -1167,9 +1171,9 @@ bigx_half (int x)
 
       i = bigcell[msb];
       i = i + r * BIGNUM_BASE;
-	    r = i % 2;
-	    q = i / 2;
-	    bigcell[pointer--] = q;
+      r = i % 2;
+      q = i / 2;
+      bigcell[pointer--] = q;
       msb--;
       n--;
     }

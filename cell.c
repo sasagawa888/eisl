@@ -1751,4 +1751,3 @@ get_flt (int x)
 {
   return (GET_FLT (x));
 }
-

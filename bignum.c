@@ -225,21 +225,6 @@ gen_big (void)
   return (res);
 }
 
-// old bignum
-// get address of upper digit
-int
-next (int x)
-{
-  return (GET_CDR (x));
-}
-// old bignum
-// get address of lower digit
-int
-prev (int x)
-{
-  return (GET_PROP (x));
-}
-
 // set sign
 void
 set_sign (int x, int y)

@@ -2315,15 +2315,10 @@ copy_class (int x)
 int
 copy_bignum (int x)
 {
-  int addr, msb, sign;
+  int addr, sign;
 
   sign = get_sign (x);
-  addr = msb = copy_gen_big ();
-  while (!nullp (next (x)))
-    {
-      msb = copy_cons_next (GET_CAR (x), msb);
-      x = next (x);
-    }
+  addr = copy_gen_big ();
   SET_TAG (addr, BIGX);
   set_sign (addr, sign);
   SET_AUX (addr, cbignum);
@@ -2365,11 +2360,11 @@ copy_cons_next (int x, int y)
 int
 copy_gen_big (void)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
-  SET_CDR (addr, NIL);
-  SET_PROP (addr, -1);		// mark of first cell
+  SET_TAG (addr, BIGX);
+  SET_AUX(addr,cbignum);
   return (addr);
 }
 

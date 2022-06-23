@@ -1094,16 +1094,14 @@ isqrt4(int x){
   len = get_length(x);
 
   n = 1;
-  while((len - ipow(2,n)) > len/8){
+  while((len - ipow(2,n)) > len/4){
     n++;
   }
 
   init = bigx_shift_left(x,ipow(2,n));
   init = plus(isqrt3(init),makeint(1));
-  init = bigx_shift_right(x,ipow(2,n-1));
+  init = bigx_shift_right(init,ipow(2,n-1));
   
-  print(minus(mult(init,init),x));
-  error(RESOURCE_ERR,"asdf",NIL);
   return(isqrt2(x,init));
 
 
@@ -1128,7 +1126,7 @@ isqrt (int x)
       if(get_length(x) < 100)
         return (isqrt3 (x));
       else
-        return(isqrt3(x));
+        return(isqrt4(x));
     }
 }
 

@@ -1049,7 +1049,6 @@ isqrt3 (int x)
 	  bigcell[big_pt0++] = 0;
 	}
       bigcell[big_pt0++] = (int) sqrt (lmsb) + 1;
-      SET_TAG (init, BIGX);
       set_sign (init, 1);
       set_pointer (init, big_pt0 - 1);
       set_length (init, len + 1);
@@ -1064,7 +1063,6 @@ isqrt3 (int x)
 	  bigcell[big_pt0++] = 0;
 	}
       bigcell[big_pt0++] = (int) sqrt (msb) + 1;
-      SET_TAG (init, BIGX);
       set_sign (init, 1);
       set_pointer (init, big_pt0 - 1);
       set_length (init, len + 1);

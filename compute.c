@@ -1073,31 +1073,21 @@ isqrt3 (int x)
 }
 
 int 
-ipow(int x, int y){
-  int n;
-
-  n = 1;
-  while(y>0){
-    n = x*n;
-    y--;
-  }
-  return(n);
-}
-
-int 
 isqrt4(int x){
-  int len,n,init;
+  int len,n,p,init;
 
   len = get_length(x);
 
   n = 1;
-  while((len - ipow(2,n)) > len/4){
+  p = 2;
+  while((len - p) > len/4){
     n++;
+    p = 2*p;
   }
 
-  init = bigx_shift_left(x,ipow(2,n));
+  init = bigx_shift_left(x,p);
   init = plus(isqrt3(init),makeint(1));
-  init = bigx_shift_right(init,ipow(2,n-1));
+  init = bigx_shift_right(init,p/2);
   
   return(isqrt2(x,init));
 

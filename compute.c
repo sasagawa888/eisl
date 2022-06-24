@@ -1018,17 +1018,15 @@ isqrt1 (long long int n, long long int init)
 int
 isqrt2 (int n, int init)
 {
-  int s0,s1;
+  int s;
 
-  s0 = n;
-  s1 = init;
-  while (smallerp (s1,s0))
+  s = init;
+  while (greaterp (mult(s,s),n))
     {
       //print(s);printf("\n");
-      s0 = s1;
-      s1 = divide (plus (s0, divide (n, s0)), makeint (2));
+      s = divide (plus (s, divide (n, s)), makeint (2));
     }
-  return (s1);
+  return (s);
 }
 
 // basic isqrt (for small bignum)

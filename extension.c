@@ -37,6 +37,7 @@ initexsubr (void)
   defsubr ("INSTANCE", f_instance);
   defsubr ("LINE-ARGUMENT", f_line_argument);
   defsubr ("GETENV", f_getenv);
+  defsubr ("PROF" , f_prof);
   defsubr ("EISL-MODULESUBST", f_modulesubst);
   defsubr ("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
   defsubr ("EISL-READED-ARRAY-LIST", f_readed_array_list);
@@ -726,6 +727,32 @@ f_getenv (int arglist)
     {
       return makestr (val);
     }
+}
+
+int 
+f_prof(int arglist){
+  int arg1;
+
+  arg1 = car(arglist);
+  if(!symbolp(arg1))
+    error(NOT_SYM,"prof",arg1);
+
+  if(arg1 == NIL){
+    profiler_set(0);
+    profiler_clear();
+  }
+  else if(eqp(arg1,makesym("CL")))
+    profiler_clear();
+  else if(eqp(arg1,makesym("SYS")))
+    profiler_set(1);
+  else if(eqp(arg1,makesym("USER")))
+    profiler_set(2);
+  else if(eqp(arg1,makesym("PR")))
+    profiler_print();
+  else
+    error(WRONG_ARGS,"prof",arg1);
+
+  return(T);
 }
 
 /*

@@ -186,6 +186,14 @@ int examin_sym;
 int stepper_flag = 0;
 
 
+// -----profiler-----
+int prof_sw=0;  //0= not profiler, 1=system-function 2=user-function
+int prof_sym[PROFSIZE];
+int prof_pt=1;
+double prof_dt0[PROFSIZE];
+int prof_dt1[PROFSIZE];
+
+// -----editor-------
 int ed_lparen_col;
 int ed_rparen_col;
 const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
@@ -1690,6 +1698,7 @@ eval (int addr)
 {
   int val, res, temp;
   char c;
+  double st,en;
 
   (void) checkgbc ();
 
@@ -1753,27 +1762,54 @@ eval (int addr)
 	  shelterpop ();
 	  return (res);
 	}
-      else if (subrp (car (addr)))
-	return (apply (caar (addr), evlis (cdr (addr))));
-      else if (fsubrp (car (addr)))
-	return (apply (caar (addr), cdr (addr)));
+      else if (subrp (car (addr))){
+        st = getETime ();
+	      res = apply (caar (addr), evlis (cdr (addr)));
+        en = getETime ();
+        if(prof_sw == 1)
+            profiler(car(addr),en-st);
+        return(res);
+      }
+      else if (fsubrp (car (addr))){
+        st = getETime ();
+	      res = apply (caar (addr), cdr (addr));
+        en = getETime();
+        if(prof_sw == 1)
+            profiler(car(addr),en-st);
+        return(res);
+      }
       else if ((val = functionp (car (addr))))
 	{
 	  if (GET_CDR (car (addr)) != NIL)
 	    error (UNDEF_FUN, "eval", addr);
 	  temp = evlis (cdr (addr));
 	  examin_sym = car (addr);
-	  return (apply (val, temp));
+    st = getETime ();
+	  res = apply (val, temp);
+    en = getETime ();
+    if(prof_sw == 2)
+      profiler(car(addr),en-st);
+    return(res);
 	}
       else if (macrop (car (addr)))
 	{
 	  examin_sym = car (addr);
-	  return (apply (caar (addr), cdr (addr)));
+    st = getETime ();
+	  res = apply (caar (addr), cdr (addr));
+    en = getETime ();
+    if(prof_sw == 2)
+      profiler(car(addr),en-st);
+    return(res);
 	}
       else if (genericp (car (addr)))
 	{
 	  examin_sym = car (addr);
-	  return (apply (caar (addr), evlis (cdr (addr))));
+    st = getETime ();
+	  res = apply (caar (addr), evlis (cdr (addr)));
+    en = getETime ();
+    if(prof_sw == 2)
+      profiler(car(addr),en-st);
+    return(res);
 	}
       else if (listp (car (addr)))
 	return (apply (eval (car (addr)), evlis (cdr (addr))));
@@ -2413,24 +2449,20 @@ debugger ()
  *  eval count elapsed time and send to profiler the elapsed time data. profiler save elapsed time to prof_dt.
  *  (prof nil) clear prof part of symbols and reset prof_pt.   
 */
-#define PROFSIZE 1024
-int prof_sw=0;  //0= not profiler, 1=system-function 2=user-function
-int prof_sym[PROFSIZE];
-int prof_pt;
-double prof_dt0[PROFSIZE];
-int prof_dt1[PROFSIZE];
 
 void 
 profiler (int sym, double time){
   int i;
 
   i = GET_PROF(sym);
-  if(i == NIL)
+  if(i == NIL){
+    SET_PROF(sym,prof_pt);
     prof_sym[prof_pt++] = sym;
-
+  }
   prof_dt0[i] = prof_dt0[i] + time;
   prof_dt1[i]++;
 }
+
 
 void
 profiler_clear(){
@@ -2438,6 +2470,8 @@ profiler_clear(){
 
   for(i=1;i<prof_pt;i++){
     SET_PROF(prof_sym[i],NIL);
+    prof_dt0[i] = 0;
+    prof_dt1[i] = 0;
   }
 
   prof_pt = 1;
@@ -2452,9 +2486,9 @@ void
 profiler_print(){
   int i;
 
-  printf("function   elapsed-time  executions");
+  printf("function   elapsed-time  executions\n");
   for(i=1;i<prof_pt;i++){
     print(prof_sym[i]);
-    printf("%f         %d\n", prof_dt0[i], prof_dt1[i]);
+    printf("\t      %f         %d\n", prof_dt0[i], prof_dt1[i]);
   }  
 }

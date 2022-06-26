@@ -36,6 +36,7 @@
 #define NESTED_BLOCKS_MAX 50
 #define BIGSIZE 20000000
 #define NTTBASE 1000
+#define PROFSIZE 1024
 
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000
@@ -960,6 +961,7 @@ int             f_plus(int addr);
 int             f_preview_char(int x);
 int             f_print(int addr);
 int             f_probe_file(int arglist);
+int             f_prof(int arglist);
 int             f_progn(int x);
 int             f_property(int addr);
 __dead int      f_quit(int addr);
@@ -1280,6 +1282,10 @@ void            printstr(int addr);
 void            printstream(int x);
 void            printsym(int x);
 void            printvec(int addr);
+void            profiler(int sym, double time);
+void            profiler_clear();
+void            profiler_set(int sw);
+void            profiler_print();
 void            redef_generic(void);
 void            resort_method(int func);
 void            set_sign(int x, int y);

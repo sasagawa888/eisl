@@ -24,6 +24,10 @@
           (t (+ (fib* (- n 1.0))
                 (fib* (- n 2.0))))))
 
+(defun fib** (n)
+    (cond ((< n 2) 1)
+          (t (+ (fib** (- n 1)) (fib** (- n 2)))) ))
+
 (defun ack (m n)
     (the <fixnum> m)(the <fixnum> n)
     (cond ((= m 0) (+ n 1))

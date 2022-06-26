@@ -2408,15 +2408,17 @@ debugger ()
  * (prof nil) stop profiling. prof_sw = 0;
  * (prof 'sys) start profiling for built-in function. prof_sw = 2;
  * (prof 'user) start profiling for unser-defined function. prof_sw = 1;
+ * (prof 'print) print profile data
  *  when start profiler set prof_dt index to prof part of symbol. and save symbol address to prof_sym.
- *  eval count elapsed time and send to profiler.profiler save elapsed time to prof_dt.
+ *  eval count elapsed time and send to profiler the elapsed time data. profiler save elapsed time to prof_dt.
  *  (prof nil) clear prof part of symbols and reset prof_pt.   
 */
-int prof_sw=0;  //0= not profiler, 1=user-function 2=system-function
-int prof_sym[1024];
+#define PROFSIZE 1024
+int prof_sw=0;  //0= not profiler, 1=system-function 2=user-function
+int prof_sym[PROFSIZE];
 int prof_pt;
-double prof_dt[1024];
-
+double prof_dt0[PROFSIZE];
+int prof_dt1[PROFSIZE];
 
 void 
 profiler (int sym, double time){
@@ -2426,6 +2428,33 @@ profiler (int sym, double time){
   if(i == NIL)
     prof_sym[prof_pt++] = sym;
 
-  prof_dt[i] = prof_dt[i] + time;
+  prof_dt0[i] = prof_dt0[i] + time;
+  prof_dt1[i]++;
+}
 
+void
+profiler_clear(){
+  int i;
+
+  for(i=1;i<prof_pt;i++){
+    SET_PROF(prof_sym[i],NIL);
+  }
+
+  prof_pt = 1;
+}
+
+void 
+profiler_set(int sw){
+  prof_sw = sw;
+}
+
+void
+profiler_print(){
+  int i;
+
+  printf("function   elapsed-time  executions");
+  for(i=1;i<prof_pt;i++){
+    print(prof_sym[i]);
+    printf("%f         %d\n", prof_dt0[i], prof_dt1[i]);
+  }  
 }

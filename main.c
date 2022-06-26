@@ -2400,3 +2400,32 @@ debugger ()
 	}
     }
 }
+
+/*
+ * profiler
+ * To improve builtin function or user-defined function
+ * (prof x) extended function
+ * (prof nil) stop profiling. prof_sw = 0;
+ * (prof 'sys) start profiling for built-in function. prof_sw = 2;
+ * (prof 'user) start profiling for unser-defined function. prof_sw = 1;
+ *  when start profiler set prof_dt index to prof part of symbol. and save symbol address to prof_sym.
+ *  eval count elapsed time and send to profiler.profiler save elapsed time to prof_dt.
+ *  (prof nil) clear prof part of symbols and reset prof_pt.   
+*/
+int prof_sw=0;  //0= not profiler, 1=user-function 2=system-function
+int prof_sym[1024];
+int prof_pt;
+double prof_dt[1024];
+
+
+void 
+profiler (int sym, double time){
+  int i;
+
+  i = GET_PROF(sym);
+  if(i == NIL)
+    prof_sym[prof_pt++] = sym;
+
+  prof_dt[i] = prof_dt[i] + time;
+
+}

@@ -125,6 +125,7 @@ typedef struct __packed {
     flag            flag;
     signed char     option;
     char            trace;
+    int             prof;
 } cell;
 
 
@@ -258,6 +259,7 @@ DEF_GETTER(int, AUX, aux, cfixnum)
 DEF_GETTER(int, PROP, prop, NIL)
 DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
 DEF_GETTER(tag_t, TAG, tag, INTN)
+DEF_GETTER(int, PROF, prof, NIL)
 
 static inline FILE *GET_PORT(int addr)
 {
@@ -334,6 +336,16 @@ SET_PROP(int addr, int x)
 {
     if (CELLRANGE(addr)) {
 	return (heap[addr].prop = x);
+    } else {
+	return NIL;
+    }
+}
+
+static inline int
+SET_PROF(int addr, int x)
+{
+    if (CELLRANGE(addr)) {
+	return (heap[addr].prof = x);
     } else {
 	return NIL;
     }

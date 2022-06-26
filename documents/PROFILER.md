@@ -21,6 +21,7 @@ Give the prof function 'cl arguments. The profile data will be cleared.
 Give the prof function 'pr arguments. The profile data will be printed.
 
 ```
+Easy-ISLisp Ver2.52
 > (load "bench/triang.lsp")
 T
 > (prof 'sys)
@@ -28,32 +29,18 @@ T
 > (gogogo 22)
 NIL
 > (prof 'pr)
-function-name             elapsed-time  executions
-TARAI                  381.765326           12604859
-NIL                      0.000000                  0
+function-name           elapsed-time      executions
 PROF                     0.000000                  0
-=                        3.034068           19608148
-ELT                      2.000991           16623530
-AND                      3.406498            5801796
-SET-ELT                  0.201269            1133551
-SETF                     0.457731            1134327
-+                        0.363931            5973031
-COND                   104.652676            5802571
-OR                      97.439175            5973806
-FOR                     99.043868             162710
-IF                       0.000509               1549
-DYNAMIC                  0.000068               1550
-MEMBER                   0.000154                774
-NOT                      0.000247                774
-CONS                     0.000402                775
-SET-DYNAMIC              0.000511                775
-LET                      0.006949                774
-CONVERT                  0.000114                774
-CDR                      0.000203                774
-DYNAMIC-LET              0.000000                  0
+=                        2.856079           19608148
+ELT                      1.888676           16623530
+SET-ELT                  0.192065            1133551
++                        0.348184            5973031
+MEMBER                   0.000110                774
+NOT                      0.000212                774
+CONS                     0.000308                775
+CDR                      0.000159                774
 T
 > 
-
 ```
 ## stop profiler
 Give the prof function nil arguments. The profiler stops.

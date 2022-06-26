@@ -17,7 +17,7 @@ Give the prof function 'cl arguments. The profile data will be cleared.
 (prof 'cl)
 ```
 
-## print prifile data
+## print profile data
 Give the prof function 'pr arguments. The profile data will be printed.
 
 ```

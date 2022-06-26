@@ -2483,12 +2483,21 @@ profiler_set(int sw){
 }
 
 void
+print_space(int x){
+  int len,i;
+
+  len = strlen(GET_NAME(x));
+  for(i=len;i<21;i++)
+    printf(" ");
+}
+
+void
 profiler_print(){
   int i;
 
-  printf("function   elapsed-time  executions\n");
+  printf("function-name             elapsed-time  executions\n");
   for(i=1;i<prof_pt;i++){
-    print(prof_sym[i]);
-    printf("\t      %f         %d\n", prof_dt0[i], prof_dt1[i]);
+    print(prof_sym[i]);print_space(prof_sym[i]);
+    printf("%12f\t%12d\n", prof_dt0[i], prof_dt1[i]);
   }  
 }

@@ -1773,12 +1773,8 @@ eval (int addr)
 	}
       else if (fsubrp (car (addr)))
 	{
-	  st = getETime ();
-	  res = apply (caar (addr), cdr (addr));
+	  return( apply (caar (addr), cdr (addr)));
 	  en = getETime ();
-	  if (prof_sw == 1)
-	    profiler (car (addr), en - st);
-	  return (res);
 	}
       else if ((val = functionp (car (addr))))
 	{
@@ -1796,12 +1792,7 @@ eval (int addr)
       else if (macrop (car (addr)))
 	{
 	  examin_sym = car (addr);
-	  st = getETime ();
-	  res = apply (caar (addr), cdr (addr));
-	  en = getETime ();
-	  if (prof_sw == 2)
-	    profiler (car (addr), en - st);
-	  return (res);
+	  return( apply (caar (addr), cdr (addr)));
 	}
       else if (genericp (car (addr)))
 	{
@@ -2504,7 +2495,7 @@ profiler_print ()
 {
   int i;
 
-  printf ("function-name             elapsed-time  executions\n");
+  printf ("function-name           elapsed-time      executions\n");
   for (i = 1; i < prof_pt; i++)
     {
       print (prof_sym[i]);

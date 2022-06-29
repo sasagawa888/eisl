@@ -1,8 +1,8 @@
 (c-include "<tcl/tcl.h>")
-(c-option "-ltcl")
+(c-option "-ltcl -ltk")
 (c-define "BUFF_SIZE" "1024")
 
-(defun foo (arg1)
+(defun foo ()
   (c-lang "char buff[BUFF_SIZE];")
   (c-lang "Tcl_Interp *ip = Tcl_CreateInterp();")
 
@@ -18,4 +18,22 @@
 
   (c-lang "Tcl_DeleteInterp(ip);")
   (c-lang "return (T);")
+)
+
+(defun bar ()
+  (c-lang "Tcl_Interp *interp;        
+
+  interp = Tcl_CreateInterp();
+  Tcl_Init(interp);               
+  Tk_Init(interp); 
+
+  Tcl_Eval(
+    interp,
+    \"label .hello -text {Hello World} -width 22 -height 5\n\"
+    \"pack .hello\n\"
+  );
+
+  Tk_MainLoop();
+  return 0;")
+
 )

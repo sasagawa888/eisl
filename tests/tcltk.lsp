@@ -29,8 +29,8 @@
 
   Tcl_Eval(
     interp,
-    \"label .hello -text {Hello World} -width 22 -height 5\n\"
-    \"pack .hello\n\"
+    ''label .hello -text {Hello World} -width 22 -height 5\n''
+    ''pack .hello\n''
   );
 
   Tk_MainLoop();

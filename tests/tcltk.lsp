@@ -1,22 +1,27 @@
 (c-include "<tcl/tcl.h>")
-(c-option "-ltcl -ltk")
-(c-lang "Tcl_Interp *interp;")    
+(c-option "-ltcl -ltk")    
+(c-define "BUFFSIZE" "1024")
+(c-lang "Tcl_Interp *interp;
+         char buff[BUFFSIZE];")
 
-(defun init ()
+(defun tk::init ()
  (c-lang 
  "interp = Tcl_CreateInterp();
   Tcl_Init(interp);               
   Tk_Init(interp); 
   "))
 
-(defun foo ()
+(defun tk::label (l s w h)
   (c-lang 
-  "Tcl_Eval(
-    interp,
-    ''label .hello -text {Hello World} -width 22 -height 5\n''
-    );"))
+  "strcpy(buff,''label .'');
+   strcat(buff,''hello'');
+   strcat(buff,'' -text {Hello World}'');
+   strcat(buff,'' -width 22 -height 5\n'');
+   Tcl_Eval(interp,buff);"))
 
-(defun bar ()
+;''label .hello -text {Hello World} -width 22 -height 5\n''
+
+(defun tk::pack (l)
   (c-lang 
   "Tcl_Eval(
     interp,
@@ -24,9 +29,9 @@
   );"))
 
 (defun main ()
-  (init)
-  (foo)
-  (bar)
+  (tk::init)
+  (tk::label 'hello "hello world" 22 5)
+  (tk::pack 'hello)
   (tk::mainloop)
   T
 )

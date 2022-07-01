@@ -23,10 +23,13 @@
 
 (defun tk::pack (l)
   (c-lang 
-  "Tcl_Eval(
-    interp,
-    ''pack .hello\n''
-  );"))
+  "strcpy(buff,''pack .'');
+   strcat(buff,str_to_lower(Fgetname(L)));
+   strcat(buff,''\n'');
+   Tcl_Eval(
+    interp,buff);"))
+
+;''pack .hello\n''
 
 (defun main ()
   (tk::init)

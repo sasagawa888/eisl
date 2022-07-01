@@ -5,6 +5,7 @@
 #include <setjmp.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <ctype.h>
 #include "ffi.h"
 const int       INT_PSQRT = 1073773446;	// INT_FLAG+sqrt(999999999)
 const int       INT_MSQRT = -31622;	// - sqrt(999999999)
@@ -946,3 +947,15 @@ mouse_callback(int button, int state, int x, int y)
     Feval(mousefunc);
 }
 #endif				/* */
+
+
+//----------tcl/tk
+static char   *
+str_to_lower(char *s)
+{
+    char *p;                   
+
+    for (p = s; *p; p++) 
+        *p = tolower(*p);        
+    return (s);                 
+}

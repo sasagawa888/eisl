@@ -14,8 +14,10 @@
 (defun tk::label (l s w h)
   (c-lang 
   "strcpy(buff,''label .'');
-   strcat(buff,''hello'');
-   strcat(buff,'' -text {Hello World}'');
+   strcat(buff,str_to_lower(Fgetname(L)));
+   strcat(buff,'' -text {'');
+   strcat(buff,Fgetname(S));
+   strcat(buff,''}'');
    strcat(buff,'' -width 22 -height 5\n'');
    Tcl_Eval(interp,buff);"))
 

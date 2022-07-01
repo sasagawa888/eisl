@@ -13,13 +13,22 @@
 
 (defun tk::label (l s w h)
   (c-lang 
-  "strcpy(buff,''label .'');
+  "char number[32];
+   strcpy(buff,''label .'');
    strcat(buff,str_to_lower(Fgetname(L)));
    strcat(buff,'' -text {'');
    strcat(buff,Fgetname(S));
-   strcat(buff,''}'');
-   strcat(buff,'' -width 22 -height 5\n'');
-   Tcl_Eval(interp,buff);"))
+   strcat(buff,''}'');")
+  (c-lang 
+  "sprintf(number,''%d'',Fgetint(W));
+   strcat(buff,'' -width '');
+   strcat(buff,number);
+   sprintf(number,''%d'',Fgetint(H));
+   strcat(buff,'' -height '');
+   strcat(buff,number);
+   strcat(buff,''\n'');")
+  (c-lang 
+   "Tcl_Eval(interp,buff);"))
 
 ;''label .hello -text {Hello World} -width 22 -height 5\n''
 

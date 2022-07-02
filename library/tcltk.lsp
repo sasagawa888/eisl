@@ -59,7 +59,7 @@
                                                (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-width) (string-append (string-append " -width " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))
-          ((eq (car ls) '-hight) (string-append (string-append " -height " (convert (car (cdr ls)) <string>))
+          ((eq (car ls) '-height) (string-append (string-append " -height " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))
           ((eq (car ls) 'command) (string-append (string-append " -command " (car (cdr ls)))
                                                  (tk::option (cdr (cdr ls)))))))

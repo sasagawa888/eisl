@@ -46,7 +46,13 @@ eisl -c
 
 
 ### RGB
+
 -fg #(R G B)   R G B is integer 
+
+### font
+
+e.g.
+-font '((ＭＳ ゴシック) 16 underline)
 
 
 # Example

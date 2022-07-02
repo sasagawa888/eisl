@@ -41,6 +41,14 @@ eisl -c
 
 (tk::pack object1 object2 ... objectN)
 
+
+## option
+
+
+### RGB
+-fg #(R G B)   R G B is integer 
+
+
 # Example
 
 ```lisp

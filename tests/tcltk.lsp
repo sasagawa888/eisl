@@ -11,24 +11,15 @@
   Tk_Init(interp); 
   "))
 
-(defun tk::label (l s w h)
-  (c-lang 
-  "char number[32];
-   strcpy(buff,''label .'');
-   strcat(buff,str_to_lower(Fgetname(L)));
-   strcat(buff,'' -text {'');
-   strcat(buff,Fgetname(S));
-   strcat(buff,''}'');")
-  (c-lang 
-  "sprintf(number,''%d'',Fgetint(W));
-   strcat(buff,'' -width '');
-   strcat(buff,number);
-   sprintf(number,''%d'',Fgetint(H));
-   strcat(buff,'' -height '');
-   strcat(buff,number);
-   strcat(buff,''\n'');")
-  (c-lang 
-   "Tcl_Eval(interp,buff);"))
+(defun tk::label (obj :rest l)
+  (let ((option (label-option l)))
+    (c-lang 
+      "strcpy(buff,''label .'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,Fgetname(OPTION));
+       strcat(buff,''\n'');
+       printf(''%s'',buff);
+       Tcl_Eval(interp,buff);")))
 
 (defun tk::pack (:rest l)
   (let ((obj (packs l)))
@@ -39,11 +30,10 @@
    Tcl_Eval(
     interp,buff);")))
 
-;''pack .hello\n''
 
 (defun main ()
   (tk::init)
-  (tk::label 'hello "hello world" 22 5)
+  (tk::label 'hello '-text "hello world" '-width 22 '-hight 5)
   (tk::pack 'hello)
   (tk::mainloop)
   T
@@ -59,3 +49,15 @@
           (t (string-append (string-append " ." (convert (car ls) <string>))
                             (packs (cdr ls))))))
                             
+
+(defun cadr (x) (car (cdr x)))
+(defun cddr (x) (cdr (cdr x)))
+
+(defun label-option (ls)
+    (cond ((null ls) "")
+          ((eq (car ls) '-text) (string-append (string-append " -text {" (cadr ls) "}")
+                                               (label-option (cddr ls))))
+          ((eq (car ls) '-width) (string-append (string-append " -width " (convert (cadr ls) <string>))
+                                                (label-option (cddr ls))))
+          ((eq (car ls) '-hight) (string-append (string-append " -height " (convert (cadr ls) <string>))
+                                                (label-option (cddr ls))))))

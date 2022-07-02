@@ -31,6 +31,11 @@ eisl -c
 
 (tk::label object option)
 
+
+## button
+(tk::button object option)
+
+
 ## pack
 
 (tk::pack object1 object2 ... objectN)

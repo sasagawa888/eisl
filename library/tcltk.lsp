@@ -51,8 +51,6 @@
                             (tk::packs (cdr ls))))))
                             
 
-(defun cadr (x) (car (cdr x)))
-(defun cddr (x) (cdr (cdr x)))
 
 (defun tk::option (ls)
     (cond ((null ls) "")

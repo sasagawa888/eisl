@@ -30,15 +30,14 @@
   (c-lang 
    "Tcl_Eval(interp,buff);"))
 
-;''label .hello -text {Hello World} -width 22 -height 5\n''
-
-(defun tk::pack (l)
+(defun tk::pack (:rest l)
+  (let ((obj (packs l)))
   (c-lang 
-  "strcpy(buff,''pack .'');
-   strcat(buff,str_to_lower(Fgetname(L)));
+  "strcpy(buff,''pack '');
+   strcat(buff,str_to_lower(Fgetname(OBJ)));
    strcat(buff,''\n'');
    Tcl_Eval(
-    interp,buff);"))
+    interp,buff);")))
 
 ;''pack .hello\n''
 
@@ -53,3 +52,10 @@
 
 (defun tk::mainloop ()
     (c-lang "Tk_MainLoop();"))
+
+
+(defun packs (ls)    
+    (cond ((null ls) "")
+          (t (string-append (string-append " ." (convert (car ls) <string>))
+                            (packs (cdr ls))))))
+                            

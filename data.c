@@ -1726,7 +1726,7 @@ string_ref (int x, int y)
 	  else
 	    {
 	      str[0] = STRING_REF (x, pos);
-	      str[7] = NUL;
+	      str[1] = NUL;
 	    }
 	  return (makechar (str));
 	}

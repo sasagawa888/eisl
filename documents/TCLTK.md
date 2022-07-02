@@ -1,39 +1,49 @@
-# tcl/tk
-library to use GUI of tk.
+# Tcl/Tk
 
-under construction
+Library to use the Tk GUI.
 
-# usage
-install tcl/tk   sudo apt install tcl-dev tk-dev
+Under construction.
 
-compile       eisl -c (compile-file "library/tcltk.lsp")
+# Usage
 
-import       (import "tcltk")
+## Install Tcl/Tk
 
-# function
+*Linux*: `sudo apt install tcl-dev tk-dev`
 
-### label 
-(tk::label object option)
+*macOS*: `brew install tcl-tk`
 
-### pack
-(tk::pack object1 object2 ... objectN)
-
-
-
-# example
-
+## Compile
 
 ```
-(import "tcltk")
+eisl -c
+(compile-file "library/tcltk.lsp")
+```
 
+## Import
+
+```lisp
+(import "tcltk")
+```
+
+# Functions
+
+## label
+
+(tk::label object option)
+
+## pack
+
+(tk::pack object1 object2 ... objectN)
+
+# Example
+
+```lisp
+(import "tcltk")
 
 (defun main ()
   (tk::init)
   (tk::label 'hello '-text "hello world" '-width 22 '-height 5)
   (tk::pack 'hello)
   (tk::mainloop)
-  T
-)
-
-
+  T)
 ```

@@ -1,5 +1,6 @@
 (c-include "<tcl/tcl.h>")
-(c-option "-ltcl -ltk")    
+(c-option "-ltcl -ltk" linux)
+(c-option "-I/opt/homebrew/opt/tcl-tk/include -L/opt/homebrew/opt/tcl-tk/lib -ltk8.6 -ltkstub8.6 -ltcl8.6 -ltclstub8.6" macos)
 (c-define "BUFFSIZE" "1024")
 (c-lang "Tcl_Interp *interp;
          char buff[BUFFSIZE];")

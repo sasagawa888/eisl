@@ -1628,10 +1628,12 @@ ntt_test ()
 
 /*
  * multiplication with karatuba method
- *
- *    z2 := x1 * y1
- *    z0 := x0 * y0
- *    z1 := z2 + z0 − (x1 − x0)*(y1 − y0) 
+ *    X = x1*b + x0
+ *    Y = y1*b + y0
+ *    z2 = x1 * y1
+ *    z0 = x0 * y0
+ *    z1 = z2 + z0 − (x1 − x0)*(y1 − y0)
+ *    Z = z2*b^2 + z1*b + z0  
 */
 
 
@@ -1670,28 +1672,31 @@ bigx_second_half(int x)
 int 
 bigx_karatuba_mult1(int x, int y)
 {
-  int len,x0,y0,x1,y1,z0,z1,z2;
+  int len,x0,y0,x1,y1,z0,z1,z2,z;
 
   len = get_length(x);
   if(len < 10)
     return(bigx_mult(x,y));
   else{
+    // memo x0,y1 has zero ,so need to cut zero
     x0 = bigx_first_half(x);
     x1 = bigx_second_half(x);
     y0 = bigx_first_half(y);
     y1 = bigx_second_half(y);
-    z2 = bigx_karatuba_mult(x1,y1);
-    z0 = bigx_karatuba_mult(x0,y0);
+    z2 = bigx_karatuba_mult1(x1,y1); print(z2);printf("\n");
+    z0 = bigx_karatuba_mult1(x0,y0); print(z0);printf("\n");
     //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
-    z1 = bigx_minus(bigx_plus(z2,z0),bigx_karatuba_mult(bigx_minus(x1,x0),bigx_minus(y1,y0)));
-    return(z1);
+    z1 = bigx_minus(bigx_plus(z2,z0),bigx_mult(bigx_minus(x1,x0),bigx_minus(y1,y0))); print(z1);printf("\n");
+    //Z = z2*b^2 + z1*b + z0  
+    z = bigx_plus(bigx_plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);  print(z);printf("\n");
+    return(z);
   }
 }
 
 int
 bigx_karatuba_mult(int x, int y)
 {
-  int lenx, leny, max_len, ans_len, n, x1, y1, res;
+  int lenx, leny, max_len, n, x1, y1, res;
 
   lenx = get_length (x);
   leny = get_length (y);
@@ -1709,25 +1714,12 @@ bigx_karatuba_mult(int x, int y)
     {
       n = 2 * n;
     }
-  ans_len = 2 * n;
+  
   x1 = bigx_zero_supress(x,n-lenx);
   y1 = bigx_zero_supress(y,n-leny);
-
+  
   // karatuba recursion
-  bigx_karatuba_mult1(x1,y1);
-
-  //zero cut
-  big_pt0--;
-  while (bigcell[big_pt0] == 0 && ans_len > 0)
-    {
-      big_pt0--;
-      ans_len--;
-    }
-
-  big_pt0++;
-  res = gen_big();
-  set_pointer (res, big_pt0 - 1);
-  set_length (res, ans_len);
+  res = bigx_karatuba_mult1(x1,y1);
   return (res);
 }
 

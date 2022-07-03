@@ -40,6 +40,16 @@
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);")))
 
+
+(defun tk::canvas (obj :rest l)
+  (let ((opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''canvas .'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))       
+
 (defun tk::pack (:rest l)
   (let ((obj (tk::packs l)))
   (c-lang 
@@ -100,6 +110,27 @@
                                    ((vectorp (car (cdr ls)))
                                     (string-append (strinf-append " -bg " (tk::rgb (car (cdr ls))))
                                                    (tk::option (cdr (cdr ls)))))))
+          ((eq (car ls) '-activeforeground) 
+                                   (cond ((atom (car (cdr ls))) 
+                                    (string-append (strinf-append " -activeforeground " (convert (car (cdr ls)) <string>))
+                                                   (tk::option (cdr (cdr ls)))))
+                                   ((vectorp (car (cdr ls)))
+                                    (string-append (strinf-append " -activeforeground " (tk::rgb (car (cdr ls))))
+                                                   (tk::option (cdr (cdr ls)))))))
+          ((eq (car ls) '-activebackground) 
+                                   (cond ((atom (car (cdr ls))) 
+                                    (string-append (strinf-append " -activebackground " (convert (car (cdr ls)) <string>))
+                                                   (tk::option (cdr (cdr ls)))))
+                                   ((vectorp (car (cdr ls)))
+                                    (string-append (strinf-append " -activebackground " (tk::rgb (car (cdr ls))))
+                                                   (tk::option (cdr (cdr ls)))))))
+          ((eq (car ls) '-disabledforeground) 
+                                   (cond ((atom (car (cdr ls))) 
+                                    (string-append (strinf-append " -disabledforeground " (convert (car (cdr ls)) <string>))
+                                                   (tk::option (cdr (cdr ls)))))
+                                   ((vectorp (car (cdr ls)))
+                                    (string-append (strinf-append " -disabledforeground " (tk::rgb (car (cdr ls))))
+                                                   (tk::option (cdr (cdr ls)))))))                                                       
           ((eq (car ls) '-anchor) (string-append (string-append " -anchor " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-font) (string-append (string-append " -font " (tk::list (car (cdr ls))))

@@ -1173,51 +1173,6 @@ bigx_div_i (int x, int y)
   return (res);
 }
 
-
-// half of bignum for ISQRT
-int
-bigx_half (int x)
-{
-  int res, pointer, msb, len, n, sign;
-  int r, q;
-
-  res = gen_big ();
-  len = n = get_length (x);
-  msb = get_pointer (bigx_abs (x));
-  sign = get_sign (x);
-
-  r = 0;
-
-  big_pt0 = big_pt0 + len;
-  pointer = big_pt0;
-  do
-    {
-      int i;
-
-      i = bigcell[msb];
-      i = i + r * BIGNUM_BASE;
-      r = i % 2;
-      q = i / 2;
-      bigcell[pointer--] = q;
-      msb--;
-      n--;
-    }
-  while (n > 0);
-  while (bigcell[big_pt0] == 0 && len > 1)
-    {
-      big_pt0--;
-      len--;
-    }
-  big_pt0++;
-  set_pointer (res, big_pt0 - 1);
-  set_length (res, len);
-  set_sign (res, sign);
-  if (simp_flag)
-    res = bigx_simplify (res);
-  return (res);
-}
-
-
 // multple of bignum and int
 int
 bigx_mult_i (int x, int y)
@@ -1674,19 +1629,62 @@ ntt_test ()
 /*
  * multiplication with karatuba method
  *
- *
+ *    z2 := x1 * y1
+ *    z0 := x0 * y0
+ *    z1 := z2 + z0 − (x1 − x0)*(y1 − y0) 
 */
+
+
+int 
+bigx_first_half(int x)
+{
+  int pointer,len,res;
+
+  pointer = get_pointer(x);
+  len = get_length(x);
+
+  len = len / 2;
+  res = gen_big();
+  set_pointer(res,pointer);
+  set_length(res,len);
+  return(res);
+}
+
+int 
+bigx_second_half(int x)
+{
+  int pointer,len,res;
+
+  pointer = get_pointer(x);
+  len = get_length(x);
+
+  len = len / 2;
+  pointer = pointer - len;
+  res = gen_big();
+  set_pointer(res,pointer);
+  set_length(res,len);
+  return(res);
+}
+
 
 int 
 bigx_karatuba_mult1(int x, int y)
 {
-  int len;
+  int len,x0,y0,x1,y1,z0,z1,z2;
 
   len = get_length(x);
   if(len < 10)
     return(bigx_mult(x,y));
   else{
-
+    x0 = bigx_first_half(x);
+    x1 = bigx_second_half(x);
+    y0 = bigx_first_half(y);
+    y1 = bigx_second_half(y);
+    z2 = bigx_karatuba_mult(x1,y1);
+    z0 = bigx_karatuba_mult(x0,y0);
+    //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
+    z1 = bigx_minus(bigx_plus(z2,z0),bigx_karatuba_mult(bigx_minus(x1,x0),bigx_minus(y1,y0)));
+    return(z1);
   }
 }
 

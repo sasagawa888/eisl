@@ -765,11 +765,12 @@ f_prof (int arglist)
 int
 f_eisl_test (int arglist)
 {
-  int arg1;
+  int arg1,arg2;
 
   arg1 = car (arglist);
-  ntt_test ();
-  return (T);
+  arg2 = cadr(arglist);
+  
+  return (bigx_karatuba_mult(arg1,arg2));
 }
 
 /*

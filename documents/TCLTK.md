@@ -36,6 +36,9 @@ eisl -c
 
 (tk::button object option)
 
+## radiobutton
+
+(tk:: radiobutton object option)
 
 ## pack
 

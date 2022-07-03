@@ -449,6 +449,31 @@ bigx_shift_right (int x, int n)
   return (res);
 }
 
+int 
+bigx_zero_supress(int x, int n)
+{
+  int res, len, pointer;
+
+  len = get_length (x);
+  pointer = get_pointer (x) - len + 1;	// LSB
+  res = gen_big ();
+  set_sign (res, get_sign (x));
+
+  int i;
+  for (i = 0; i < len; i++)
+    {
+      CHECKBIG0 bigcell[big_pt0++] = bigcell[pointer + i];
+    }
+  for (i = 0; i < n; i++)
+    {
+      CHECKBIG0 bigcell[big_pt0++] = 0;
+    }
+  
+  set_pointer (res, big_pt0 - 1);
+  set_length (res, len + n);
+  return (res);
+}
+
 int
 bigx_to_parmanent (int x)
 {
@@ -1643,6 +1668,69 @@ ntt_test ()
     }
 
 
+}
+
+
+/*
+ * multiplication with karatuba method
+ *
+ *
+*/
+
+int 
+bigx_karatuba_mult1(int x, int y)
+{
+  int len;
+
+  len = get_length(x);
+  if(len < 10)
+    return(bigx_mult(x,y));
+  else{
+
+  }
+}
+
+int
+bigx_karatuba_mult(int x, int y)
+{
+  int lenx, leny, max_len, ans_len, n, x1, y1, res;
+
+  lenx = get_length (x);
+  leny = get_length (y);
+  if (lenx >= leny)
+    {
+      max_len = lenx;
+    }
+  else
+    {
+      max_len = leny;
+    }
+
+  n = 1;
+  while (max_len > n)
+    {
+      n = 2 * n;
+    }
+  ans_len = 2 * n;
+  x1 = bigx_zero_supress(x,n-lenx);
+  y1 = bigx_zero_supress(y,n-leny);
+
+  // karatuba recursion
+  bigx_karatuba_mult1(x1,y1);
+
+  //zero cut
+  big_pt0--;
+  while (bigcell[big_pt0] == 0 && ans_len > 0)
+    {
+      big_pt0--;
+      ans_len--;
+    }
+
+  big_pt0++;
+  res = gen_big();
+  set_pointer (res, big_pt0 - 1);
+  set_length (res, ans_len);
+  return (res);
 }
 
 

@@ -730,6 +730,7 @@ int             bigx_shift_right(int x, int n);
 int             bigx_simplify(int x);
 int             bigx_smallerp(int arg1, int arg2);
 int             bigx_to_parmanent(int x);
+int             bigx_zero_supress(int x, int n);
 int             bind_args(int x);
 int             bintoken(char buf[]);
 int             caar(int addr);

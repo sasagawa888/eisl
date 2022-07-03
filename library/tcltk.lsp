@@ -82,6 +82,12 @@
           ((listp (car ls)) (string-append (tk::list (car ls))
                                            (tk::list (cdr ls))))))
 
+(defun tk::widgets (ls)
+    (if (not (listp ls)) (error "tk::menu incorrect widdet" ls))
+    (cond ((null ls) "")
+          (t (string-append (convert (car ls) <string>)
+                            (tk::widgets (cdr ls))))))
+
 (defun tk::option (ls)
     (cond ((null ls) "")
           ((eq (car ls) '-text) (cond ((stringp (car (cdr ls)))

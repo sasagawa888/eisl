@@ -1649,6 +1649,7 @@ bigx_first_half(int x)
   res = gen_big();
   set_pointer(res,pointer);
   set_length(res,len);
+  set_sign(res,get_sign(x));
   return(res);
 }
 
@@ -1665,6 +1666,7 @@ bigx_second_half(int x)
   res = gen_big();
   set_pointer(res,pointer);
   set_length(res,len);
+  set_sign(res,get_sign(x));
   return(res);
 }
 
@@ -1678,17 +1680,16 @@ bigx_karatuba_mult1(int x, int y)
   if(len < 10)
     return(bigx_mult(x,y));
   else{
-    // memo x0,y1 has zero ,so need to cut zero
-    x0 = bigx_first_half(x);print(x0);printf(" x0\n");
-    x1 = bigx_second_half(x);print(x1);printf(" x1\n");
-    y0 = bigx_first_half(y);print(y0);printf(" y0\n");
-    y1 = bigx_second_half(y);print(y1);printf(" y1\n");
-    z2 = bigx_karatuba_mult1(x1,y1); print(z2);printf(" z2\n");
-    z0 = bigx_karatuba_mult1(x0,y0); print(z0);printf(" z0\n");
+    x1 = bigx_first_half(x);
+    x0 = bigx_second_half(x);
+    y1 = bigx_first_half(y);
+    y0 = bigx_second_half(y);
+    z2 = bigx_karatuba_mult1(x1,y1);
+    z0 = bigx_karatuba_mult1(x0,y0);
     //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
-    z1 = bigx_minus(bigx_plus(z2,z0),bigx_mult(bigx_minus(x1,x0),bigx_minus(y1,y0))); print(z1);printf(" z1\n");
+    z1 = bigx_minus(bigx_plus(z2,z0),bigx_mult(bigx_minus(x1,x0),bigx_minus(y1,y0)));
     //Z = z2*b^2 + z1*b + z0  
-    z = bigx_plus(bigx_plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);  print(z);printf(" z\n");
+    z = bigx_plus(bigx_plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);
     return(z);
   }
 }

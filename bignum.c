@@ -414,6 +414,8 @@ bigx_shift_left (int x, int n)
 {
   int res;
 
+  if(zerop(x))
+    return(x);
   res = gen_big ();
   set_pointer (res, get_pointer (x));
   set_length (res, get_length (x) - n);
@@ -429,6 +431,8 @@ bigx_shift_right (int x, int n)
 {
   int res, len, pointer;
 
+  if(zerop(x))
+    return(x);
   len = get_length (x);
   pointer = get_pointer (x) - len + 1;	// LSB
   res = gen_big ();
@@ -1687,9 +1691,9 @@ bigx_karatuba_mult1(int x, int y)
     z2 = bigx_karatuba_mult1(x1,y1);
     z0 = bigx_karatuba_mult1(x0,y0);
     //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
-    z1 = bigx_minus(bigx_plus(z2,z0),bigx_mult(bigx_minus(x1,x0),bigx_minus(y1,y0)));
+    z1 = minus(plus(z2,z0),mult(minus(x1,x0),minus(y1,y0)));
     //Z = z2*b^2 + z1*b + z0  
-    z = bigx_plus(bigx_plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);
+    z = plus(plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);
     return(z);
   }
 }

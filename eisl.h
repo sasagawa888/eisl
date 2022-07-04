@@ -79,7 +79,7 @@
 
 
 
-static const float VERSION = 2.52;
+static const float VERSION = 2.53;
 static const int WORK1 = ((int)((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int)((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
@@ -708,8 +708,8 @@ int             bigx_eqp(int x, int y);
 int             bigx_first_half(int x);
 int             bigx_flt_to_big(int x);
 int             bigx_int_to_big(int x);
-int             bigx_karatuba_mult(int x, int y);
-int             bigx_karatuba_mult1(int x, int y);
+int             bigx_karatsuba_mult(int x, int y);
+int             bigx_karatsuba_mult1(int x, int y);
 int             bigx_length(int x);
 int             bigx_long_to_big(int x);
 int             bigx_minus(int arg1, int arg2);

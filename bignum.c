@@ -27,7 +27,7 @@
 * It will be calculated correctly by multiplying by about 300000 digits.
 * if comment out #define NTT, bigx_mult does not use NTT.
 * 
-* KARATUBA-Multiply 
+* KARATSUBA-Multiply 
 *    X = x1*b + x0
 *    Y = y1*b + y0
 *    z2 = x1 * y1
@@ -36,12 +36,12 @@
 *    Z = z2*b^2 + z1*b + z0  
 *
 * length(X)+length(Y) > 100 -> NTT-Multiplication algorithm
-* length(X)+length(Y) > 20  -> KARATUBA-Multiplication algorithm
+* length(X)+length(Y) > 20  -> KARATSUBA-Multiplication algorithm
 * other case                -> Long division multiplication algorithm
 */
 
 #define NTT 100
-#define KARATUBA 20
+#define KARATSUBA 20
 
 #include <stdio.h>
 #include <string.h>
@@ -764,9 +764,9 @@ bigx_mult (int arg1, int arg2)
     return (bigx_ntt_mult (arg1, arg2));
 #endif
 
-#ifdef KARATUBA
-  if (get_length (arg1) + get_length (arg2) > KARATUBA)
-    return (bigx_karatuba_mult (arg1, arg2));
+#ifdef KARATSUBA
+  if (get_length (arg1) + get_length (arg2) > KARATSUBA)
+    return (bigx_karatsuba_mult (arg1, arg2));
 #endif
 
 
@@ -1650,7 +1650,7 @@ ntt_test ()
 
 
 /*
- * multiplication with karatuba method
+ * multiplication with karatsuba method
  *    X = x1*b + x0
  *    Y = y1*b + y0
  *    z2 = x1 * y1
@@ -1695,7 +1695,7 @@ bigx_second_half(int x)
 
 
 int 
-bigx_karatuba_mult1(int x, int y)
+bigx_karatsuba_mult1(int x, int y)
 {
   int len,x0,y0,x1,y1,z0,z1,z2,z;
 
@@ -1707,8 +1707,8 @@ bigx_karatuba_mult1(int x, int y)
     x0 = bigx_second_half(x);
     y1 = bigx_first_half(y);
     y0 = bigx_second_half(y);
-    z2 = bigx_karatuba_mult1(x1,y1);
-    z0 = bigx_karatuba_mult1(x0,y0);
+    z2 = bigx_karatsuba_mult1(x1,y1);
+    z0 = bigx_karatsuba_mult1(x0,y0);
     //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
     z1 = minus(plus(z2,z0),mult(minus(x1,x0),minus(y1,y0)));
     //Z = z2*b^2 + z1*b + z0  
@@ -1718,7 +1718,7 @@ bigx_karatuba_mult1(int x, int y)
 }
 
 int
-bigx_karatuba_mult(int x, int y)
+bigx_karatsuba_mult(int x, int y)
 {
   int lenx, leny, max_len, n, x1, y1, res;
 
@@ -1743,7 +1743,7 @@ bigx_karatuba_mult(int x, int y)
   y1 = bigx_zero_supress(y,n-leny);
   
   // karatuba recursion
-  res = bigx_karatuba_mult1(x1,y1);
+  res = bigx_karatsuba_mult1(x1,y1);
   return (res);
 }
 

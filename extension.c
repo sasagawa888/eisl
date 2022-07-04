@@ -770,7 +770,7 @@ f_eisl_test (int arglist)
   arg1 = car (arglist);
   arg2 = cadr(arglist);
   
-  return (bigx_karatuba_mult(arg1,arg2));
+  return (bigx_karatsuba_mult(arg1,arg2));
 }
 
 

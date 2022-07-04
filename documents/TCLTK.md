@@ -38,7 +38,22 @@ eisl -c
 
 ## radiobutton
 
-(tk:: radiobutton object option)
+(tk::radiobutton object option)
+
+
+## checkbutton
+
+(tk::checkbutton object option)
+
+
+## listbox
+
+(tk::listbox object option)
+
+
+## scrollbar
+
+(tk::scrollbar object option)
 
 ## pack
 

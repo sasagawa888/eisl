@@ -40,6 +40,32 @@
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);")))
 
+(defun tk::checkbutton (obj :rest l)
+  (let ((opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''radiobutton .'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))
+
+(defun tk::listbox (obj :rest l)
+  (let ((opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''listbox .'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))
+
+(defun tk::scrollbar (obj :rest l)
+  (let ((opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''scrollbar .'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))
 
 (defun tk::canvas (obj :rest l)
   (let ((opt (tk::option l)))
@@ -100,8 +126,18 @@
                                                 (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-height) (string-append (string-append " -height " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))
-          ((eq (car ls) 'command) (string-append (string-append " -command " (car (cdr ls)))
+          ((eq (car ls) '-relief) (string-append (string-append " -relief " (convert (car (cdr ls)) <string>))
+                                                (tk::option (cdr (cdr ls)))))                       
+          ((eq (car ls) 'command) (string-append (string-append " -command \"" (car (cdr ls)) "\"")
                                                  (tk::option (cdr (cdr ls)))))
+          ((eq (car ls) '-xscrollcommand) (string-append (string-append " -xscrollcommand \"" (car (cdr ls)) "\"")
+                                                 (tk::option (cdr (cdr ls)))))   	
+          ((eq (car ls) '-yscrollcommand) (string-append (string-append " -yscrollcommand \"" (car (cdr ls)) "\"")
+                                                 (tk::option (cdr (cdr ls)))))
+          ((eq (car ls) '-selectmode)  (string-append (string-append " -selectmode " (car (cdr ls)))
+                                                     (tk::option (cdr (cdr ls))))) 
+          ((eq (car ls) '-orient)  (string-append (string-append " -orient " (car (cdr ls)))
+                                                     (tk::option (cdr (cdr ls))))) 
           ((or (eq (car ls) '-fg) (eq (car ls) '-foreground)) 
                                    (cond ((atom (car (cdr ls))) 
                                     (string-append (strinf-append " -fg " (convert (car (cdr ls)) <string>))
@@ -136,7 +172,14 @@
                                                    (tk::option (cdr (cdr ls)))))
                                    ((vectorp (car (cdr ls)))
                                     (string-append (strinf-append " -disabledforeground " (tk::rgb (car (cdr ls))))
-                                                   (tk::option (cdr (cdr ls)))))))                                                       
+                                                   (tk::option (cdr (cdr ls)))))))                                         
+          ((eq (car ls) '-troughcolor) 
+                                   (cond ((atom (car (cdr ls))) 
+                                    (string-append (strinf-append " -troughcolor " (convert (car (cdr ls)) <string>))
+                                                   (tk::option (cdr (cdr ls)))))
+                                   ((vectorp (car (cdr ls)))
+                                    (string-append (strinf-append " -troughcolor " (tk::rgb (car (cdr ls))))
+                                                   (tk::option (cdr (cdr ls)))))))   
           ((eq (car ls) '-anchor) (string-append (string-append " -anchor " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-font) (string-append (string-append " -font " (tk::list (car (cdr ls))))

@@ -773,6 +773,8 @@ f_eisl_test (int arglist)
   return (bigx_karatuba_mult(arg1,arg2));
 }
 
+
+
 /*
  * f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 
  * for generate (call-next-method) 

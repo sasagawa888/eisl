@@ -1061,7 +1061,6 @@ int             get_length(int x);
 int             get_pointer(int x);
 int             getsym(const char *name, int index);
 int             greaterp(int x, int y);
-int             half(int x);
 int             has_common_p(int ls);
 int             has_common_p1(int x, int y);
 int             hash(const char *name);

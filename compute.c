@@ -713,27 +713,6 @@ divide (int x, int y)
   return (UNDEF);
 }
 
-
-int
-half (int x)
-{
-  long long int l;
-  if (integerp (x))
-    return (makeint (GET_INT (x) / 2));
-  else if (longnump (x))
-    {
-      l = GET_LONG (x);
-      l = l / 2;
-      if (l < BIGNUM_BASE)
-	return (makeint ((int) l));
-      else
-	return (makelong (l));
-    }
-  else
-    return (bigx_half (x));
-}
-
-
 int
 s_remainder (int x, int y)
 {

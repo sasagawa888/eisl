@@ -1697,7 +1697,7 @@ bigx_second_half(int x)
 int 
 bigx_karatsuba_mult1(int x, int y)
 {
-  int len,x0,y0,x1,y1,z0,z1,z2,z;
+  int len,x0,y0,x1,y1,z0,z1,z2,z,save;
 
   len = get_length(x);
   if(len < 10)
@@ -1709,9 +1709,11 @@ bigx_karatsuba_mult1(int x, int y)
     y0 = bigx_second_half(y);
     z2 = bigx_karatsuba_mult1(x1,y1);
     z0 = bigx_karatsuba_mult1(x0,y0);
+    save = big_pt0;
     //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
     z1 = minus(plus(z2,z0),mult(minus(x1,x0),minus(y1,y0)));
     //Z = z2*b^2 + z1*b + z0  
+    big_pt0 = save;
     z = plus(plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);
     return(z);
   }

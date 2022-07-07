@@ -41,7 +41,8 @@
 */
 
 #define NTT 100
-#define KARATSUBA 20
+// KARATUBA function is now still buggy
+//#define KARATSUBA 20
 
 #include <stdio.h>
 #include <string.h>

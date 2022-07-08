@@ -1091,10 +1091,10 @@ isqrt (int x)
     }
   else
     {
-      if (get_length (x) < 100)
+      //if (get_length (x) < 100)
 	return (isqrt3 (x));
-      else
-	return (isqrt4 (x));
+      //else
+	//return (isqrt4 (x));
     }
 }
 

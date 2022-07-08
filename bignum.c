@@ -1704,6 +1704,7 @@ bigx_karatsuba_mult1(int x, int y)
   if(len < 10)
     return(bigx_mult(x,y));
   else{
+    simp_flag = 0;
     x1 = bigx_first_half(x);
     x0 = bigx_second_half(x);
     y1 = bigx_first_half(y);
@@ -1713,6 +1714,7 @@ bigx_karatsuba_mult1(int x, int y)
     //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
     z1 = minus(plus(z2,z0),mult(minus(x1,x0),minus(y1,y0)));
     //Z = z2*b^2 + z1*b + z0  
+    simp_flag = 1;
     z = plus(plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);
     return(z);
   }
@@ -1721,7 +1723,7 @@ bigx_karatsuba_mult1(int x, int y)
 int
 bigx_karatsuba_mult(int x, int y)
 {
-  int lenx, leny, max_len, n, x1, y1, res;
+  int lenx, leny, max_len, n, x1, y1, ans_len, res;
 
   lenx = get_length (x);
   leny = get_length (y);
@@ -1745,7 +1747,21 @@ bigx_karatsuba_mult(int x, int y)
   
   // karatuba recursion
   res = bigx_karatsuba_mult1(x1,y1);
+  ans_len = get_length(res);
+
+  //zero cut
+  big_pt0--;
+  while (bigcell[big_pt0] == 0 && ans_len > 0)
+    {
+      big_pt0--;
+      ans_len--;
+    }
+
+  big_pt0++;
+  set_pointer (res, big_pt0 - 1);
+  set_length (res, ans_len);
   return (res);
+
 }
 
 

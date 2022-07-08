@@ -59,6 +59,21 @@ eisl -c
 
 (tk::pack object1 object2 ... objectN)
 
+## command
+
+(tk::command str)
+
+```
+> (tk::init)
+NIL
+> (tk::command "expr 2*3")
+expr 2*3
+6
+T
+> 
+```
+
+
 
 ## option
 

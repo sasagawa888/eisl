@@ -90,6 +90,16 @@
     (c-lang "Tk_MainLoop();"))
 
 
+(defun tk::command (cmd)
+    (c-lang 
+      "strcpy(buff,Fgetname(CMD));
+       strcat(buff,''\n'');
+       printf(''%s'',buff);
+       Tcl_Eval(interp,buff);
+       printf(''%s\n'', Tcl_GetStringResult(interp));")
+    t)
+
+
 (defun tk::packs (ls)    
     (cond ((null ls) "")
           (t (string-append (string-append " ." (convert (car ls) <string>))

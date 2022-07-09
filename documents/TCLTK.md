@@ -55,6 +55,13 @@ eisl -c
 
 (tk::scrollbar object option)
 
+## canvas
+
+(tk:canvas object option)
+
+#### create
+(tk::create object option)
+
 ## pack
 
 (tk::pack object1 object2 ... objectN)

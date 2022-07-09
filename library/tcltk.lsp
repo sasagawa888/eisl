@@ -76,6 +76,15 @@
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);")))       
 
+(defun tk::create (obj :rest l)
+  (let ((opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''.'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))       
+
 (defun tk::pack (:rest l)
   (let ((obj (tk::packs l)))
   (c-lang 
@@ -189,7 +198,23 @@
                                                    (tk::option (cdr (cdr ls)))))
                                    ((vectorp (car (cdr ls)))
                                     (string-append (strinf-append " -troughcolor " (tk::rgb (car (cdr ls))))
-                                                   (tk::option (cdr (cdr ls)))))))   
+                                                   (tk::option (cdr (cdr ls)))))))
+          ((eq (car ls) '-fill) 
+                                   (cond ((atom (car (cdr ls))) 
+                                    (string-append (strinf-append " -fill " (convert (car (cdr ls)) <string>))
+                                                   (tk::option (cdr (cdr ls)))))
+                                   ((vectorp (car (cdr ls)))
+                                    (string-append (strinf-append " -fill " (tk::rgb (car (cdr ls))))
+                                                   (tk::option (cdr (cdr ls)))))))
+          ((eq (car ls) '-outline) 
+                                   (cond ((atom (car (cdr ls))) 
+                                    (string-append (strinf-append " -outline " (convert (car (cdr ls)) <string>))
+                                                   (tk::option (cdr (cdr ls)))))
+                                   ((vectorp (car (cdr ls)))
+                                    (string-append (strinf-append " -outline " (tk::rgb (car (cdr ls))))
+                                                   (tk::option (cdr (cdr ls)))))))
+          ((eq (car ls) '-stipple) (string-append (string-append " -stipple " (convert (car (cdr ls)) <string>))
+                                                (tk::option (cdr (cdr ls)))))                                          
           ((eq (car ls) '-anchor) (string-append (string-append " -anchor " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-font) (string-append (string-append " -font " (tk::list (car (cdr ls))))

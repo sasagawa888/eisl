@@ -60,7 +60,21 @@ eisl -c
 (tk:canvas object option)
 
 #### create
-(tk::create object option)
+(tk::create object class)
+
+class
+
+```
+line 
+oval
+arc
+rectangle
+polygon 
+image 
+bitmap
+text
+window 
+```
 
 ## pack
 

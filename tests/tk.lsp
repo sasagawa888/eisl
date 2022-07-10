@@ -13,3 +13,11 @@
   (tk::pack 'hello 'bt1 'bt2 'rbt1 'rbt2)
   (tk::mainloop)
   T)
+
+
+(defun canvas ()
+  (tk::init)
+  (tk::canvas 'c0)
+  (tk::create 'c0 'oval 10 10 100 100)
+  (tk::pack 'c0)
+  (tk::mainloop))

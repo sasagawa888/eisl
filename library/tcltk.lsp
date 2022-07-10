@@ -76,13 +76,15 @@
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);")))       
 
-(defun tk::create (obj :rest l)
-  (let ((opt (tk::class l)))
+(defun tk::create (obj class :rest l)
+  (let ((opt (tk::class-option l)))
     (c-lang 
       "strcpy(buff,''.'');
        strcat(buff,str_to_lower(Fgetname(OBJ)));
-       strcat(buff,'' create'');
-       strcat(buff,Fgetname(OPT));
+       strcat(buff,'' create '');
+       strcat(buff,str_to_lower(Fgetname(CLASS)));")
+    (c-lang   
+      "strcat(buff,Fgetname(OPT));
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);
        res = Fmakeint(atoi(Tcl_GetStringResult(interp)));")))       
@@ -223,11 +225,7 @@
                                                 (tk::option (cdr (cdr ls)))))))
           
 
-(defun tk::class (ls)
+(defun tk::class-option (ls)
     (cond ((null ls) "")
-          ((eq (car ls) 'oval) (string-append (string-append " oval "
-                                                             (convert (car (cdr ls)) <string>) " "
-                                                             (convert (car (cdr (cdr ls))) <string>) " "
-                                                             (convert (car (cdr (cdr (cdr ls)))) <string>) " "
-                                                             (convert (car (cdr (cdr (cdr (cdr ls))))) <string>) " ")
-                                              (tk::class (cdr (cdr (cdr (cdr (cdr ls))))))))))
+          (t (string-append (string-append " " (convert (car ls) <string>))
+                            (tk::class-option (cdr ls))))))

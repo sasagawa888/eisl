@@ -60,7 +60,7 @@ eisl -c
 (tk:canvas object option)
 
 #### create
-(tk::create object class)
+(tk::create object class option)
 
 class
 

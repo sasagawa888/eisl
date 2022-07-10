@@ -77,7 +77,7 @@
        Tcl_Eval(interp,buff);")))       
 
 (defun tk::create (obj class :rest l)
-  (let ((opt (tk::class-option l)))
+  (let ((opt (tk::option l)))
     (c-lang 
       "strcpy(buff,''.'');
        strcat(buff,str_to_lower(Fgetname(OBJ)));
@@ -224,6 +224,22 @@
           ((eq (car ls) '-font) (string-append (string-append " -font " (tk::list (car (cdr ls))))
                                                 (tk::option (cdr (cdr ls)))))))
           
+
+(defun line (:rest l)
+    (string-append " line" (tk::class-option l)))
+
+(defun oval (:rest l)
+    (string-append " oval" (tk::class-option l)))
+
+(defun rectangle (:rest l)
+    (string-append " rectangle" (tk::class-option l)))
+
+(defun arc (:rest l)
+    (string-append " arc" (tk::class-option l)))
+
+(defun polygon (:rest l)
+    (string-append " polygon" (tk::class-option l)))
+
 
 (defun tk::class-option (ls)
     (cond ((null ls) "")

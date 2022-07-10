@@ -65,15 +65,11 @@ eisl -c
 class
 
 ```
-line 
-oval
-arc
-rectangle
-polygon 
-image 
-bitmap
-text
-window 
+(line parameter)  
+(oval parameter)
+(arc parameter)
+(rectangle parameter)
+(polygon parameter) 
 ```
 
 ## pack

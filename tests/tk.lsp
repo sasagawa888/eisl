@@ -45,3 +45,12 @@
                   (tk::create 'c0 (rectangle (* 3 i) (* 3 j) (+ (* 3 i) 3) (+ (* 3 j) 3)) '-fill 'red))))
     (tk::pack 'c0)
     (tk::mainloop))
+
+(defun flag ()
+    (tk::init)
+    (tk::canvas 'c0)
+    (tk::create 'c0 (rectangle 0 0 300 100) '-fill 'blue)
+    (tk::create 'c0 (rectangle 0 100 300 200) '-fill 'yellow)
+    (tk::create 'c0 (text 20 210) '-text "Love and Peace!" '-anchor 'nw)
+    (tk::pack 'c0)
+    (tk::mainloop))

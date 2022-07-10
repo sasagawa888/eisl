@@ -1,6 +1,5 @@
 ;; test tcltk library
 
-(compile-file "library/tcltk.lsp") ;; re compile
 (import "tcltk")
 
 (defun main ()
@@ -20,6 +19,29 @@
   (tk::canvas 'c0)
   (for ((i 10 (+ i 10)))
        ((> i 200) t)
-       (tk::create 'c0 (rectangle i i (+ i 10) (+ i 10) '-fill 'red)))
+       (tk::create 'c0 (rectangle i i (+ i 10) (+ i 10)) '-fill 'red))
   (tk::pack 'c0)
   (tk::mainloop))
+
+
+(defglobal area (create-array '(100 100) 0))
+
+(defun init-area ()
+    (for ((i 0 (+ i 1)))
+         ((> i 500) t)
+         (set-aref 1 area (random 100) (random 100))))
+
+
+
+(defun life ()
+    (init-area)
+    (tk::init)
+    (tk::canvas 'c0)
+    (for ((i 0 (+ i 1)))
+         ((>= i 100) t)
+         (for ((j 0 (+ j 1)))
+              ((>= j 100) t)
+              (if (= (aref area i j) 1)
+                  (tk::create 'c0 (rectangle (* 3 i) (* 3 j) (+ (* 3 i) 3) (+ (* 3 j) 3)) '-fill 'red))))
+    (tk::pack 'c0)
+    (tk::mainloop))

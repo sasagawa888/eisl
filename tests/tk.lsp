@@ -9,7 +9,10 @@
   (tk::button 'bt2 '-text "button2")
   (tk::radiobutton 'rbt1 '-text '(one 1))
   (tk::radiobutton 'rbt2 '-text '(two 2))
-  (tk::pack 'hello 'bt1 'bt2 'rbt1 'rbt2)
+  (tk::scrollbar 's)
+  (tk::command "set first last")
+  (tk::listbox 'lb1 '-xscrollcommand ".s set")
+  (tk::pack 'hello 'bt1 'bt2 'rbt1 'rbt2 'lb1 's)
   (tk::mainloop)
   T)
 
@@ -54,3 +57,38 @@
     (tk::create 'c0 (text 20 210) '-text "Love and Peace!" '-anchor 'nw)
     (tk::pack 'c0)
     (tk::mainloop))
+
+(defun recur ()
+    (tk::init)
+    (tk::canvas 'c0 '-width 600 '-height 600)
+    (gasket #(300 0) #(0 600) #(600 600) 10)
+    (tk::pack 'c0)
+    (tk::mainloop))
+
+(defun midpoint (a b)
+   (let ((a0 (elt a 0))
+         (a1 (elt a 1))
+         (b0 (elt b 0))
+         (b1 (elt b 1)))
+      (vector (+ (min a0 b0) (abs (quotient (- a0 b0) 2)))
+              (+ (min a1 b1) (abs (quotient (- a1 b1) 2))))))
+      
+
+(defun draw-triang (a b c)
+   (let ((a0 (elt a 0))
+         (a1 (elt a 1))
+         (b0 (elt b 0))
+         (b1 (elt b 1))
+         (c0 (elt c 0))
+         (c1 (elt c 1)))
+      (tk::create 'c0 (line a0 a1 b0 b1 c0 c1 a0 a1) '-fill 'green)))
+
+(defun gasket (a b c n)
+    (cond ((= n 0) t)
+          (t
+            (draw-triang a b c)
+            (draw-triang (midpoint a b) (midpoint b c) (midpoint c a))
+            (gasket a (midpoint a b) (midpoint a c) (- n 1))
+            (gasket (midpoint a b) b (midpoint b c) (- n 1))
+            (gasket (midpoint a c) (midpoint b c) c (- n 1)) )))
+

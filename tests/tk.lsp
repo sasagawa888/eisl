@@ -2,6 +2,12 @@
 
 (import "tcltk")
 
+(defun hello ()
+  (tk::init)
+  (tk::label 'hello '-text "hello world" '-width 50 '-height 15)
+  (tk::pack 'hello)  
+  (tk::mainloop))
+
 (defun main ()
   (tk::init)
   (tk::label 'hello '-text "hello world" '-width 50 '-height 15)

@@ -136,9 +136,9 @@
                                            (tk::list (cdr ls))))))
 
 (defun tk::widgets (ls)
-    (if (not (listp ls)) (error "tk::menu incorrect widdet" ls))
+    (if (not (listp ls)) (error "tk::menu incorrect widgets" ls))
     (cond ((null ls) "")
-          (t (string-append (convert (car ls) <string>)
+          (t (string-append (tk::str-to-lower (convert (car ls) <string>))
                             (tk::widgets (cdr ls))))))
 
 (defun tk::option (ls)

@@ -18,6 +18,7 @@
   (tk::scrollbar 's)
   (tk::command "set first last")
   (tk::listbox 'lb1 '-xscrollcommand ".s set")
+  (tk::menu '(m m1) '-tearoff 'no)
   (tk::pack 'hello 'bt1 'bt2 'rbt1 'rbt2 'lb1 's)
   (tk::mainloop)
   T)

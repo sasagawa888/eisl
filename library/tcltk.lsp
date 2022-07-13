@@ -245,16 +245,12 @@
                                                    (tk::option (cdr (cdr ls)))))))
           ((eq (car ls) '-stipple) (string-append (string-append " -stipple " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))                                          
-          ((eq (car ls) '-anchor) (string-append " -anchor " (cond ((eq (car (cdr ls)) 'nw) "nw")
-                                                                   ((eq (car (cdr ls)) 'sw) "sw")
-                                                                   ((eq (car (cdr ls)) 'ne) "ne")
-                                                                   ((eq (car (cdr ls)) 'se) "se")
-                                                                   ((eq (car (cdr ls)) 'e) "e")
-                                                                   ((eq (car (cdr ls)) 'w) "w")
-                                                                   ((eq (car (cdr ls)) 's) "s")
-                                                                   ((eq (car (cdr ls)) 'e) "n")
-                                                                   ((eq (car (cdr ls)) 'c) "c"))
+          ((eq (car ls) '-anchor) (string-append (string-append " -anchor "
+                                                                 (tk::str-to-lower (convert (car (cdr ls)) <string>)))
                                                 (tk::option (cdr (cdr ls)))))
+          ((eq (car ls) '-tearoff) (string-append (string-append " -tearoff " 
+                                                                 (tk::str-to-lower (convert (car (cdr ls)) <string>)))
+                                                  (tk::option (cdr (cdr ls)))))                                    
           ((eq (car ls) '-font) (string-append (string-append " -font " (tk::list (car (cdr ls))))
                                                 (tk::option (cdr (cdr ls)))))))
           

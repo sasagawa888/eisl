@@ -50,6 +50,28 @@ eisl -c
 
 (tk::listbox object option)
 
+## menu
+
+(tk::menu objects option)
+
+objects e.g. .m.m1 (in tcl) -> '(m m1)   m is parent obj, m1 is child obj
+
+#### add 
+add menu-object menu.
+
+(tk::add objects class option)
+
+objects e.g. .m.m1 (in tcl) -> '(m m1)  m is parent obj, m1 is child obj
+
+class
+
+```
+cascade
+checkbutton
+command
+radiobutton
+separator
+```
 
 ## scrollbar
 

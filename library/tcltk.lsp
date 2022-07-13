@@ -67,6 +67,27 @@
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);")))
 
+(defun tk::menu (obj :rest l)
+  (let ((objects (tk::objects obj))
+        (opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''menu .'');
+       strcat(buff,Fgetname(OBJECTS));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))
+
+
+(defun add (obj x :rest l)
+  (let ((objects (tk::objects obj))
+        (opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''add .'');
+       strcat(buff,Fgetname(OBJECTS));
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);"))) 
+
 (defun tk::canvas (obj :rest l)
   (let ((opt (tk::option l)))
     (c-lang 
@@ -135,11 +156,12 @@
           ((listp (car ls)) (string-append (tk::list (car ls))
                                            (tk::list (cdr ls))))))
 
-(defun tk::widgets (ls)
-    (if (not (listp ls)) (error "tk::menu incorrect widgets" ls))
+;; e.g. menu '(m m1)
+(defun tk::objects (ls)
+    (if (not (listp ls)) (error "tk::object incorrect widgets" ls))
     (cond ((null ls) "")
           (t (string-append (tk::str-to-lower (convert (car ls) <string>))
-                            (tk::widgets (cdr ls))))))
+                            (tk::objects (cdr ls))))))
 
 (defun tk::option (ls)
     (cond ((null ls) "")
@@ -254,6 +276,8 @@
 
 (defun text (:rest l)
     (string-append " text" (tk::class-option l)))
+
+
 
 (defun tk::class-option (ls)
     (cond ((null ls) "")

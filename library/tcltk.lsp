@@ -117,6 +117,10 @@
     (cond ((null ls) "")
           (t (string-append (string-append " ." (convert (car ls) <string>))
                             (tk::packs (cdr ls))))))
+
+(defun tk::str-to-lower (x)
+    (c-lang
+      "res = Fmakestr(str_to_lower(Fgetname(X)));"))
                             
 
 (defun tk::rgb (v)

@@ -1,5 +1,20 @@
  
-(import "formula")
+#|
+idea memo
+parse   e.g. sin[x]+cos[x]
+step1
+operator ()
+operand  ((sin x))
+step2
+operator (+)
+operand  ((sin x))
+step3
+operator (+)
+operand ((sin x)(cos x))
+
+terminal
+when parse get null buffer, stop parsing
+|#
 
 (defun cadr (x)
     (car (cdr x)))
@@ -45,28 +60,32 @@
   (setq input-stream (standard-input))
   (throw 'exit nil))
 
+(defglobal operator '(("+" '+)("-" '-)("*" '*)("/" 'quotient)))
+
+(defun operator-p (x)
+    (assoc x operator))
+
+(defun parse (buffer stream operator operand)
+    (cond ((null buffer) (cond ((eq stream 'stdin) (parse (tokenize (read-line)) stream))
+                               ((eq stream 'filein) t)))
+          (t t)))
+
 
 (defun mread (buffer stream)
     (cond ((null buffer) (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
                                ((eq stream 'filein) t)))
+          ((float-str-p (car buffer)) (cons (convert (car buffer) <float>) buffer))
+          ((integer-str-p (car buffer)) (cons (convert (car buffer) <integer>) buffer))
           ;; list [1;2;3]                    
           ((string= (car buffer) "[") (mread-bracket (cdr buffer) stream))
-          ;; function e.g. sin[x] or difinition e.g. foo[x] = x
+          ;; function e.g. sin[x]
           ((and (> (length buffer) 1) (string= (cadr buffer) "["))
            (let* ((result0 (mread-bracket (cdr (cdr buffer)) stream nil))
                   (fn (make-symbol (car buffer)))
                   (arg (val result0))
                   (buffer* (rest result0)))
-                    (cond ((and (> (length buffer*) 1) (string= (car buffer*) "="))
-                          ;; difinition e.g. foo[x]=x
-                           (let* ((result1 (mread (cdr buffer*) stream))
-                                  (exp (val result1))
-                                  (buffer** (rest result1)))
-                              (cons (cons 'defun (list fn arg exp)) buffer**)))  
-                          ;; function s.g. sin[x]
-                          (t (cons (cons fn arg) buffer*)))))
-          ;; formula 
-          (t (cons (infix->prefix (string->infix (car buffer))) (cdr buffer)))))
+              (cons (cons fn arg) buffer*)))
+          (t (error* "mread" (car buffer)))))
 
 
 

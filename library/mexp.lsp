@@ -19,7 +19,6 @@
     (cond ((catch 'exit
              (for ((s (val (parse nil 'stdin)) (val (parse nil 'stdin))))
                   ((equal s '(quit)) (return-from repl t))
-                  (print (eval s))
                   (if (and (consp s)(eq (elt s 0) 'load))
                       (format (standard-output) "~A~%" (ignore-errors (load* (elt s 1))))
                       (format (standard-output) "~A~%" (ignore-errors (eval s))))

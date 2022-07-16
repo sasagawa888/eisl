@@ -17,7 +17,7 @@
 (defun repl ()
   (block repl
     (cond ((catch 'exit
-             (for ((s (val (parse nil 'stdin)) (val (parse nil 'stdin))))
+             (for ((s (val (mread nil 'stdin)) (val (mread nil 'stdin))))
                   ((equal s '(quit)) (return-from repl t))
                   (print (eval s))
                   (if (and (consp s)(eq (elt s 0) 'load))
@@ -46,20 +46,20 @@
   (throw 'exit nil))
 
 
-(defun parse (buffer stream)
-    (cond ((null buffer) (cond ((eq stream 'stdin) (parse (tokenize (read-line)) stream))
+(defun mread (buffer stream)
+    (cond ((null buffer) (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
                                ((eq stream 'filein) t)))
           ;; list [1;2;3]                    
-          ((string= (car buffer) "[") (parse-bracket (cdr buffer) stream))
+          ((string= (car buffer) "[") (mread-bracket (cdr buffer) stream))
           ;; function e.g. sin[x] or difinition e.g. foo[x] = x
           ((and (> (length buffer) 1) (string= (cadr buffer) "["))
-           (let* ((result0 (parse-bracket (cdr (cdr buffer)) stream nil))
+           (let* ((result0 (mread-bracket (cdr (cdr buffer)) stream nil))
                   (fn (make-symbol (car buffer)))
                   (arg (val result0))
                   (buffer* (rest result0)))
                     (cond ((and (> (length buffer*) 1) (string= (car buffer*) "="))
                           ;; difinition e.g. foo[x]=x
-                           (let* ((result1 (parse (cdr buffer*) stream))
+                           (let* ((result1 (mread (cdr buffer*) stream))
                                   (exp (val result1))
                                   (buffer** (rest result1)))
                               (cons (cons 'defun (list fn arg exp)) buffer**)))  
@@ -70,13 +70,13 @@
 
 
 
-(defun parse-bracket (buffer stream res)
-    (cond ((null buffer) (cond ((eq stream 'stdin) (parse (tokenize (read-line)) stream))
+(defun mread-bracket (buffer stream res)
+    (cond ((null buffer) (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
                                ((eq stream 'filein) t)))
           ((string= (car buffer) "]") (cons (reverse res) (cdr buffer)))
-          ((string= (car buffer) ";") (parse-bracket (cdr buffer) stream res))
-          (t (let ((result (parse buffer stream)))
-                (parse-bracket (rest result) stream (cons (val result) res))))))
+          ((string= (car buffer) ";") (mread-bracket (cdr buffer) stream res))
+          (t (let ((result (mread buffer stream)))
+                (mread-bracket (rest result) stream (cons (val result) res))))))
 
 
 (defun make-symbol (str)
@@ -122,5 +122,28 @@
         (char= x #\=)
         (char= x #\,)
         (char= x #\;)))
+
+
+;;is token string-type?
+(defun string-str-p (x)
+  (and (char= (elt x 0) #\")
+       (char= (car (reverse (convert x <string>))) #\")))
+
+;;is token integer-type?
+(defun integer-str-p (x)
+  (cond ((and (char= (elt x 0) #\+) (number-char-p (elt x 1))) t)
+        ((and (char= (elt x 0) #\-) (number-char-p (elt x 1))) t)
+        ((number-char-p (elt x 0)) t)
+        (t nil)))
+
+(defun number-char-p (x)
+  (and (char>= x #\0)
+       (char<= x #\9)))
+
+;;is token float-type?
+(defun float-str-p (x)
+  (cond ((and (integer-str-p x) (string-index "." x)) t)
+        ((and (integer-str-p x) (string-index "e" x)) t)
+        (t nil)))
 
 

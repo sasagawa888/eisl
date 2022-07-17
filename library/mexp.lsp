@@ -43,7 +43,7 @@ from John allen book and Masakazu Nakanishi book
 
     
     (defun initialize ()
-        (format (standard-output) "Meta expression translater~%")
+        (format (standard-output) "Meta expression translator~%")
         (prompt))
 
     

@@ -120,7 +120,6 @@ initsubr (void)
   defsubr ("GET-UNIVERSAL-TIME", f_get_universal_time);
   defsubr ("HDMP", f_heapdump);
   defsubr ("IDENTITY", f_identity);
-  defsubr ("IMPORT", f_import);
   defsubr ("INITIALIZE-OBJECT*", f_initialize_object_star);
   defsubr ("INPUT-STREAM-P", f_input_stream_p);
   defsubr ("INSTANCEP", f_instancep);
@@ -2542,40 +2541,6 @@ cleanup:
   repl_flag = save2;
   if (redef_flag)
     redef_generic ();
-  return (T);
-}
-
-int
-f_import (int arglist)
-{
-  int arg1 = car (arglist);
-  if (!stringp (arg1))
-    error (NOT_SYM, "import", arg1);
-
-  char *str = Str_cat (GET_NAME (arg1), 1, 0, ".o", 1, 0);
-  char *fname = library_file (str);
-  if (access (fname, R_OK) != -1)
-    {
-      f_load (list1 (makestr (fname)));
-      goto cleanup;
-    }
-
-  FREE (str);
-  str = Str_cat (GET_NAME (arg1), 1, 0, ".lsp", 1, 0);
-  FREE (fname);
-  fname = library_file (str);
-  if (access (fname, R_OK) != -1)
-    {
-      f_load (list1 (makestr (fname)));
-      goto cleanup;
-    }
-  FREE (str);
-  FREE (fname);
-  error (CANT_OPEN, "import", arg1);
-
-cleanup:
-  FREE (str);
-  FREE (fname);
   return (T);
 }
 

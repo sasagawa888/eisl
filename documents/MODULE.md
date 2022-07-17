@@ -19,10 +19,24 @@ For example, if you define a function called bar in a module called foo, the fun
 
 ## import
 
-`(import library-name)`
+`(import library-name fn1 fn2 ... fnN)`
 The library name is given as a character string.
 Save the library defined using `defmodule` in the library folder beforehand.
 If there is a compiled version, this will be read in preference.
+
+if using import in module, require fn1 fn2 ... fnN.  they are imported function name.
+
+e.g. 
+
+```
+(defmodule foo
+   (import "formula" infix->prefix)
+
+   (defpublic bar (x)
+       (infix-prefix x))
+)
+
+```
 
 ## defpublic
 Only functions defined using defpublic can be referenced from outside the module, e.g.:

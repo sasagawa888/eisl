@@ -6,10 +6,13 @@
 #include <math.h>
 #include <time.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include "eisl.h"
 #include "nana.h"
 #include "fmt.h"
 #include "str.h"
+#include "mem.h"
+
 
 #define TAGBODY_LEN_MAX 100
 
@@ -53,6 +56,7 @@ initsyntax (void)
   deffsubr ("DEFMETHOD", f_defmethod);
   deffsubr ("DYNAMIC-LET", f_dynamic_let);
   deffsubr ("IGNORE-ERRORS", f_ignore_errors);
+  deffsubr ("IMPORT", f_import);
   deffsubr ("CATCH", f_catch);
   deffsubr ("THROW", f_throw);
   deffsubr ("TAGBODY", f_tagbody);
@@ -2316,6 +2320,43 @@ f_untrace (int arglist)
   return (T);
 }
 
+
+
+int
+f_import (int arglist)
+{
+  int arg1 = car (arglist);
+  if (!stringp (arg1))
+    error (NOT_SYM, "import", arg1);
+
+  char *str = Str_cat (GET_NAME (arg1), 1, 0, ".o", 1, 0);
+  char *fname = library_file (str);
+  if (access (fname, R_OK) != -1)
+    {
+      f_load (list1 (makestr (fname)));
+      goto cleanup;
+    }
+
+  FREE (str);
+  str = Str_cat (GET_NAME (arg1), 1, 0, ".lsp", 1, 0);
+  FREE (fname);
+  fname = library_file (str);
+  if (access (fname, R_OK) != -1)
+    {
+      f_load (list1 (makestr (fname)));
+      goto cleanup;
+    }
+  FREE (str);
+  FREE (fname);
+  error (CANT_OPEN, "import", arg1);
+
+cleanup:
+  FREE (str);
+  FREE (fname);
+  return (T);
+}
+
+
 int
 f_defmodule (int arglist)
 {
@@ -2332,6 +2373,8 @@ f_defmodule (int arglist)
       sexp = car (arg2);
       if (symbolp (car (sexp)) && HAS_NAME (car (sexp), "DEFPUBLIC"))
 	exports = cons (cadr (sexp), exports);
+      else if (symbolp (car (sexp)) && HAS_NAME (car (sexp), "IMPORT"))
+	exports = append (cddr (sexp), exports);
 
       eval (modulesubst (car (arg2), arg1, exports));
       arg2 = cdr (arg2);

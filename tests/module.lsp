@@ -1,6 +1,11 @@
 ;; test defmodule syntax
 
 (defmodule foo
+    (import "formula" infix->prefix)
+
+    (defpublic woo (x)
+        (infix->prefix x))
+
     (defglobal a 3)
     (defpublic bar (x)
         (+ (boo x) a (gfib x)) )

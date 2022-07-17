@@ -23,7 +23,7 @@ from John allen book and Masakazu Nakanishi book
     (defun rest (x)
         (cdr x) )
 
-    (defun mexp ()
+    (defpublic mexp ()
         (initialize)
         (repl) )
 

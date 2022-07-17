@@ -61,6 +61,16 @@ from John allen book
                                ((eq stream 'filein) t)))
           ;; cond clause [x->x1;y->y1;z->z1]                    
           ((string= (car buffer) "[") (mread-cond (cdr buffer) stream))
+          ;; difinition e.g. foo[x] = x+1
+          ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "=" buffer))
+           (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
+                  (fn (make-symbol (car buffer)))
+                  (arg (val result0))
+                  (buffer* (rest result0))
+                  (result1 (mread (cdr buffer*) stream))
+                  (body (val result1))
+                  (buffer** (rest result1)))
+              (cons (list 'defun fn arg body) buffer**)))
           ;; function e.g. sin[x]
           ((and (> (length buffer) 1) (string= (cadr buffer) "["))
            (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
@@ -107,6 +117,13 @@ from John allen book
                          (reverse res)
                          (reverse (cons token res))))
           ((char= (car ls) #\space) (tokenize1 (cdr ls) token res))
+          ((char= (car ls) #\() (if (string= token "")
+                                    (tokenize2 (cdr ls)
+                                               ""
+                                               (cons (convert (car ls) <string>) res))
+                                    (tokenize2 (cdr ls)
+                                               ""
+                                               (cons (convert (car ls) <string>) (cons token res)))))
           ((delimiter-p (car ls)) (if (string= token "")
                                       (tokenize1 (cdr ls)
                                                  ""
@@ -121,8 +138,6 @@ from John allen book
 (defun delimiter-p (x)
     (or (char= x #\[)
         (char= x #\])
-        (char= x #\()
-        (char= x #\))
         (char= x #\=)
         (char= x #\,)
         (char= x #\;)))

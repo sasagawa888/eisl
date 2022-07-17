@@ -15,6 +15,9 @@ from John allen book
 (defun cadr (x)
     (car (cdr x)))
 
+(defun cddr (x)
+    (cdr (cdr x)))
+
 (defun val (x)
     (car x))
 
@@ -60,7 +63,7 @@ from John allen book
     (cond ((null buffer) (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
                                ((eq stream 'filein) t)))
           ;; cond clause [x->x1;y->y1;z->z1]                    
-          ((string= (car buffer) "[") (mread-cond (cdr buffer) stream))
+          ((string= (car buffer) "[") (mread-cond (cdr buffer) stream nil))
           ;; S-expression
           ((string= (car buffer) "(") (sread (cdr buffer) stream nil))
           ;; difinition e.g. foo[x] = x+1
@@ -81,6 +84,21 @@ from John allen book
                   (buffer* (rest result0)))
               (cons (cons fn arg) buffer*)))
           (t (cons (infix->prefix (string->infix (car buffer))) (cdr buffer)))))
+
+
+(defun mread-cond (buffer stream res)
+    (cond ((null buffer) (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
+                               ((eq stream 'filein) t)))
+          ((string= (car buffer) "]") (cons (cons 'cond (reverse res)) (cdr buffer)))
+          ((string= (car buffer) "->") (mread (cdr buffer) stream))
+          ((string= (car buffer) ";") (mread-cond (cdr buffer) stream res))
+          (t (let* ((result0 (mread buffer stream))
+                    (exp0 (val result0))
+                    (buffer* (rest result0))
+                    (result1 (mread-cond buffer* stream nil))
+                    (exp1 (val result1))
+                    (buffer** (rest result1)))
+               (mread-cond buffer** stream (cons (list exp0 exp1) res))))))
 
 
 
@@ -144,6 +162,10 @@ from John allen book
                                       (tokenize1 (cdr ls)
                                                  ""
                                                  (cons (convert (car ls) <string>) (cons token res)))))
+          ((and (> (length ls) 1) (char= (car ls) #\-) (char= (cadr ls) #\>))
+                                  (if (string= token "")
+                                      (tokenize1 (cddr ls) "" (cons "->" res))
+                                      (tokenize1 (cddr ls) "" (cons "->" (cons token res)))))
           (t (tokenize1 (cdr ls) (string-append token (convert (car ls) <string>)) res))))
 
 

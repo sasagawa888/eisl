@@ -7,6 +7,9 @@ from John allen book and Masakazu Nakanishi book
 * cond clause e.g. [odd[x]->t;t->nil]
 * data structure 
 * each function return list (value . rest-buffer)
+* 
+* tokenize e.g. "sin[x]" -> "sin" "[" "x" "]"
+*               "( a b c)" -> "(" "a" "b" "c" ")"
 |#
 
 (defmodule "mexp"
@@ -31,7 +34,7 @@ from John allen book and Masakazu Nakanishi book
         (block repl
            (cond ((catch
                    'exit
-                   (for ((s (val (mread nil 'stdin)) (val (mread nil 'stdin))))
+                   (for ((s (val (mread nil (standard-input))) (val (mread nil (standard-input)))))
                         ((equal s '(quit))
                          (return-from repl t) )
                         (if (and (consp s) (eq (elt s 0) 'load))
@@ -63,8 +66,7 @@ from John allen book and Masakazu Nakanishi book
     
     (defun mread (buffer stream)
         (cond ((null buffer)
-               (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
-                     ((eq stream 'filein) t)))
+               (mread (tokenize (read-line stream)) stream))
               ;; string
               ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    
@@ -92,9 +94,7 @@ from John allen book and Masakazu Nakanishi book
 
     
     (defun mread-cond (buffer stream res)
-        (cond ((null buffer)
-               (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
-                     ((eq stream 'filein) t)))
+        (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
               ((string= (car buffer) "]") (cons (cons 'cond (reverse res)) (cdr buffer)))
               ((string= (car buffer) "->") (mread (cdr buffer) stream))
               ((string= (car buffer) ";") (mread-cond (cdr buffer) stream res))
@@ -109,9 +109,7 @@ from John allen book and Masakazu Nakanishi book
 
     
     (defun mread-argument (buffer stream res)
-        (cond ((null buffer)
-               (cond ((eq stream 'stdin) (mread (tokenize (read-line)) stream))
-                     ((eq stream 'filein) t)))
+        (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
               ((string= (car buffer) "]") (cons (reverse res) (cdr buffer)))
               ((string= (car buffer) ";") (mread-argument (cdr buffer) stream res))
               (t

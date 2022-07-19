@@ -44,16 +44,13 @@ from John allen book and Masakazu Nakanishi book
                   t)
                  (t (prompt) (repl)))))
 
-    
     (defun initialize ()
         (format (standard-output) "Meta expression translator~%")
         (prompt))
 
-    
     (defun prompt ()
         (format (standard-output) "M> "))
 
-    
     (defun error* (msg arg)
         (format (standard-output) msg)
         (format (standard-output) "~A" arg)
@@ -63,16 +60,18 @@ from John allen book and Masakazu Nakanishi book
         (setq input-stream (standard-input))
         (throw 'exit nil))
 
-    
     (defun mread (buffer stream)
-        (cond ((null buffer)
-               (mread (tokenize (read-line stream)) stream))
+        (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
               ;; string
               ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    
               ((string= (car buffer) "[") (mread-cond (cdr buffer) stream nil))
               ;; S-expression
-              ((string= (car buffer) "(") (sread (cdr buffer) stream nil))
+              ((string= (car buffer) "(")
+               (let* ((result (sread (cdr buffer) stream nil))
+                      (sexp (val result))
+                      (buffer* (rest result)))
+                 (cons (list 'quote sexp) buffer*)))
               ;; difinition e.g. foo[x] = x+1
               ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
@@ -92,7 +91,6 @@ from John allen book and Masakazu Nakanishi book
                    (cons (cons fn arg) buffer*)))
               (t (cons (infix->prefix (string->infix (car buffer))) (cdr buffer)))))
 
-    
     (defun mread-cond (buffer stream res)
         (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
               ((string= (car buffer) "]") (cons (cons 'cond (reverse res)) (cdr buffer)))
@@ -107,7 +105,6 @@ from John allen book and Masakazu Nakanishi book
                       (buffer** (rest result1)) )
                    (mread-cond buffer** stream (cons (list exp0 exp1) res))))))
 
-    
     (defun mread-argument (buffer stream res)
         (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
               ((string= (car buffer) "]") (cons (reverse res) (cdr buffer)))
@@ -116,17 +113,19 @@ from John allen book and Masakazu Nakanishi book
                (let ((result (mread buffer stream)))
                   (mread-argument (rest result) stream (cons (val result) res))))))
 
-    
     (defun sread (buffer stream res)
-        (cond ((string= (car buffer) ")") (cons (list 'quote (reverse res)) (cdr buffer)))
-              ((string= (car buffer) "."))
+        (cond ((string= (car buffer) ")") (cons (reverse res) (cdr buffer)))
+              ((string= (car buffer) ".")
+               (let* ((result (sread (cdr buffer) stream nil))
+                      (sexp (val result))
+                      (buffer* (rest result)))     
+                  (cons (cons (car res) (car sexp)) buffer*)))
               ((float-str-p (car buffer))
                (sread (cdr buffer) stream (cons (convert (car buffer) <float>) res)))
               ((integer-str-p (car buffer))
                (sread (cdr buffer) stream (cons (convert (car buffer) <integer>) res)))
               (t (sread (cdr buffer) stream (cons (make-symbol (car buffer)) res)))))
 
-    
     (defun make-symbol (str)
         (convert (to-upper-string (convert str <list>)) <symbol>))
 
@@ -137,20 +136,17 @@ from John allen book and Masakazu Nakanishi book
         (cond ((null ls) "")
               (t (string-append (convert (car ls) <string>) (make-string1 (cdr ls))))))
 
-    
     (defun to-upper-string (ls)
         (if (null ls)
             ""
             (string-append (convert (to-upper (car ls)) <string>) (to-upper-string (cdr ls)))))
 
-    
     (defun to-upper (x)
         (let ((ascii (convert x <integer>)))
            (if (and (>= ascii 97) (<= ascii 122))
                (convert (- ascii 32) <character>)
                x)))
 
-    
     (defun tokenize (x)
         (tokenize1 (convert x <list>) "" nil))
 
@@ -174,7 +170,6 @@ from John allen book and Masakazu Nakanishi book
                    (tokenize1 (cddr ls) "" (cons "->" (cons token res)))))
               (t (tokenize1 (cdr ls) (string-append token (convert (car ls) <string>)) res))))
 
-    
     (defun delimiter-p (x)
         (or (char= x #\[) (char= x #\]) (char= x #\=) (char= x #\;)))
 
@@ -200,23 +195,46 @@ from John allen book and Masakazu Nakanishi book
                (if (string= token "")
                    (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) res))
                    (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) (cons token res)))))
-              ((s-delimiter-p (car ls))
+              ((char= (car ls) #\space)
                (if (string= token "")
-                   (tokenize2 (cdr ls) "" (cons (convert (car ls) <string>) res) nest)
+                   (tokenize2 (cdr ls) "" res nest)
                    (tokenize2
                     (cdr ls)
                     ""
-                    (cons (convert (car ls) <string>) (cons token res))
+                    (cons token res)
+                    nest)))
+              ((and (> (length ls) 1) (char= (car ls) #\space) (char= (cadr ls) #\.))
+               (if (string= token "")
+                   (tokenize2 (cdr ls) "" (cons (convert (cadr ls) <string>) res) nest)
+                   (tokenize2
+                    (cdr ls)
+                    ""
+                    (cons (convert (cadr ls) <string>) (cons token res))
                     nest)))
               (t (tokenize2 (cdr ls) (string-append token (convert (car ls) <string>)) res nest))))
 
-    
     (defun s-delimiter-p (x)
         (or (char= x #\space) (char= x #\.)))
 
-
+    
     (defun string-str-p (x)
-        (and (char= (elt x 0) #\")
-             (char= (elt x (- (length x) 1)) #\")))
+        (and (char= (elt x 0) #\") (char= (elt x (- (length x) 1)) #\")))
+
+    
+    ;;is token integer-type?
+    (defun integer-str-p (x)
+        (cond ((and (char= (elt x 0) #\+) (number-char-p (elt x 1))) t)
+              ((and (char= (elt x 0) #\-) (number-char-p (elt x 1))) t)
+              ((number-char-p (elt x 0)) t)
+              (t nil)))
+
+    (defun number-char-p (x)
+        (and (char>= x #\0) (char<= x #\9)))
+
+    ;;is token float-type?
+    (defun float-str-p (x)
+        (cond ((and (integer-str-p x) (string-index "." x)) t)
+              ((and (integer-str-p x) (string-index "e" x)) t)
+              (t nil)))
 
 )

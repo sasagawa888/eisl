@@ -941,7 +941,7 @@ bigx_div1 (int arg1, int arg2)
       shift = get_length (dividend) - get_length (arg2);
       pointerx = get_pointer (dividend);	// MSB
       msb1 = bigcell[pointerx];
-      if (msb1 >= msb2)
+      if (msb1 > msb2)
 	{
 	  q = msb1 / msb2;
 
@@ -1021,7 +1021,7 @@ bigx_remainder (int arg1, int arg2)
       shift = get_length (dividend) - get_length (arg2);
       pointerx = get_pointer (dividend);	// MSB
       msb1 = bigcell[pointerx];
-      if (msb1 >= msb2)
+      if (msb1 > msb2)
 	{
 	  q = msb1 / msb2;
 

@@ -1050,23 +1050,27 @@ isqrt3 (int x)
   return (isqrt2 (x, init));
 
 }
-
+/*
+ * fast isqrt
+ * Calculate the initial value of Newton's method by Newton's method.
+ * The value of ISQRT (X) is half the number of digits in X. 
+ * Find a value that is close to the true value with half the number of digits, 
+ * and use that as the initial value.
+*/
 int
 isqrt4 (int x)
 {
-  int len, n, p, init;
+  int len, p, init;
 
   len = get_length (x);
 
-  n = 1;
   p = 2;
   while ((len - p) > len / 4)
     {
-      n++;
       p = 2 * p;
     }
   p = p / 2;
-  n--;
+  
   init = bigx_shift_left (x, p);
   init = plus (isqrt3 (init), makeint (1));
   init = bigx_shift_right (init, p / 2);

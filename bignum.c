@@ -953,6 +953,11 @@ bigx_div1 (int arg1, int arg2)
 	    (long long int) bigcell[pointerx - 1];
 	  q = (int) (lmsb1 / (long long int) msb2);
 	  shift--;
+    // exception if q >= 10^10 , q = q/BIGNUMBASE. q must be smaller than BIGNUM_BASE
+    if(q >= BIGNUM_BASE){
+        q = q / BIGNUM_BASE;
+        shift++;
+    }
 	}
 
 

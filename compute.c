@@ -1065,7 +1065,8 @@ isqrt4 (int x)
       n++;
       p = 2 * p;
     }
-
+  p = p / 2;
+  n--;
   init = bigx_shift_left (x, p);
   init = plus (isqrt3 (init), makeint (1));
   init = bigx_shift_right (init, p / 2);
@@ -1091,10 +1092,10 @@ isqrt (int x)
     }
   else
     {
-      //if (get_length (x) < 100)
+      if (get_length (x) < 100)
 	return (isqrt3 (x));
-      //else
-	//return (isqrt4 (x));
+      else
+	return (isqrt4 (x));
     }
 }
 

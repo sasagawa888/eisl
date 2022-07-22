@@ -634,6 +634,7 @@ bigx_plus1 (int arg1, int arg2)
   if (c != 0)
     {
       CHECKBIG0 bigcell[big_pt0++] = c;
+      len++;
     }
   set_pointer (res, big_pt0 - 1);
   set_length (res, len);

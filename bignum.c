@@ -56,6 +56,7 @@
 
 #define CHECKBIG0 if(big_pt0<0 || big_pt0>=BIGNUM_PARMA){error(RESOURCE_ERR,"bigcell pt0",big_pt0);}
 #define CHECKBIG1 if(big_pt1<0 || big_pt1>=BIGSIZE){error(RESOURCE_ERR,"bigcell pt1",big_pt1);}
+#define CHECKBIG2(n) if(big_pt0+n>=BIGNUM_PARMA){error(RESOURCE_ERR,"bigcell pt1",big_pt0);}
 
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
 #define CPRINT(x) printf("%f+%fi\n", creal(x), cimag(x));
@@ -593,6 +594,14 @@ bigx_plus (int arg1, int arg2)
 }
 
 
+int bigx_max(int x, int y)
+{
+  if(x>y)
+    return(x);
+  else
+    return(y);
+}
+
 int
 bigx_plus1 (int arg1, int arg2)
 {
@@ -600,6 +609,7 @@ bigx_plus1 (int arg1, int arg2)
 
   len1 = get_length (arg1);
   len2 = get_length (arg2);
+  CHECKBIG2(bigx_max(len1,len2));
   pointerx = get_pointer (arg1) - len1 + 1;	//LSB
   pointery = get_pointer (arg2) - len2 + 1;	//LSB
   res = gen_big ();
@@ -700,6 +710,7 @@ bigx_minus1 (int arg1, int arg2)
 
   len1 = get_length (arg1);
   len2 = get_length (arg2);
+  CHECKBIG2(len1);
   pointerx = get_pointer (arg1) - len1 + 1;	// LSB
   pointery = get_pointer (arg2) - len2 + 1;	// LSB
   res = gen_big ();
@@ -813,6 +824,7 @@ bigx_mult1 (int arg1, int arg2)
   len2 = get_length (arg2);
   len = len1 + len2;
   set_sign (res, 1);
+  CHECKBIG2(len);
 
   // clear area of calculate
   int i, j;
@@ -913,6 +925,8 @@ bigx_div1 (int arg1, int arg2)
   // arg1 < arg2 -> 0
   if (smallerp (arg1, arg2))
     return (makeint (0));
+  CHECKBIG2(get_length(arg1)-get_length(arg2));
+
 
   simp_flag = false;
   pointery = get_pointer (arg2);	//MSB pointer
@@ -1011,6 +1025,7 @@ bigx_remainder (int arg1, int arg2)
   // arg1 > arg2 -> 0
   if (smallerp (arg1, arg2))
     return (makeint (0));
+  CHECKBIG2(get_length(arg2));
 
   res = gen_big ();
   set_sign (res, 1);
@@ -1151,6 +1166,7 @@ bigx_div_i (int x, int y)
   len = n = get_length (x);
   msb = get_pointer (bigx_abs (x));
   sign1 = get_sign (x);
+  CHECKBIG2(len);
 
   j = GET_INT (y);
   if (j < 0)
@@ -1214,6 +1230,7 @@ bigx_mult_i (int x, int y)
   len = n = get_length (x);
   pointer = get_pointer (x) - len + 1;	//LSB
   sign1 = get_sign (x);
+  CHECKBIG2(len+1);
 
   j = GET_INT (y);
   if (j < 0)

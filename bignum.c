@@ -428,8 +428,8 @@ bigx_shift_left (int x, int n)
 {
   int res;
 
-  if(zerop(x))
-    return(x);
+  if (zerop (x))
+    return (x);
   res = gen_big ();
   set_pointer (res, get_pointer (x));
   set_length (res, get_length (x) - n);
@@ -445,8 +445,8 @@ bigx_shift_right (int x, int n)
 {
   int res, len, pointer;
 
-  if(zerop(x))
-    return(x);
+  if (zerop (x))
+    return (x);
   len = get_length (x);
   pointer = get_pointer (x) - len + 1;	// LSB
   res = gen_big ();
@@ -467,8 +467,8 @@ bigx_shift_right (int x, int n)
   return (res);
 }
 
-int 
-bigx_zero_supress(int x, int n)
+int
+bigx_zero_supress (int x, int n)
 {
   int res, len, pointer;
 
@@ -486,7 +486,7 @@ bigx_zero_supress(int x, int n)
     {
       CHECKBIG0 bigcell[big_pt0++] = 0;
     }
-  
+
   set_pointer (res, big_pt0 - 1);
   set_length (res, len + n);
   return (res);
@@ -594,12 +594,13 @@ bigx_plus (int arg1, int arg2)
 }
 
 
-int bigx_max(int x, int y)
+int
+bigx_max (int x, int y)
 {
-  if(x>y)
-    return(x);
+  if (x > y)
+    return (x);
   else
-    return(y);
+    return (y);
 }
 
 int
@@ -609,7 +610,7 @@ bigx_plus1 (int arg1, int arg2)
 
   len1 = get_length (arg1);
   len2 = get_length (arg2);
-  CHECKBIG2(bigx_max(len1,len2));
+  CHECKBIG2 (bigx_max (len1, len2));
   pointerx = get_pointer (arg1) - len1 + 1;	//LSB
   pointery = get_pointer (arg2) - len2 + 1;	//LSB
   res = gen_big ();
@@ -710,7 +711,7 @@ bigx_minus1 (int arg1, int arg2)
 
   len1 = get_length (arg1);
   len2 = get_length (arg2);
-  CHECKBIG2(len1);
+  CHECKBIG2 (len1);
   pointerx = get_pointer (arg1) - len1 + 1;	// LSB
   pointery = get_pointer (arg2) - len2 + 1;	// LSB
   res = gen_big ();
@@ -824,7 +825,7 @@ bigx_mult1 (int arg1, int arg2)
   len2 = get_length (arg2);
   len = len1 + len2;
   set_sign (res, 1);
-  CHECKBIG2(len);
+  CHECKBIG2 (len);
 
   // clear area of calculate
   int i, j;
@@ -925,7 +926,7 @@ bigx_div1 (int arg1, int arg2)
   // arg1 < arg2 -> 0
   if (smallerp (arg1, arg2))
     return (makeint (0));
-  CHECKBIG2(get_length(arg1)-get_length(arg2));
+  CHECKBIG2 (get_length (arg1) - get_length (arg2));
 
 
   simp_flag = false;
@@ -968,11 +969,12 @@ bigx_div1 (int arg1, int arg2)
 	    (long long int) bigcell[pointerx - 1];
 	  q = (int) (lmsb1 / (long long int) msb2);
 	  shift--;
-    // exception if q >= 10^10 , q = q/BIGNUMBASE. q must be smaller than BIGNUM_BASE
-    if(q >= BIGNUM_BASE){
-        q = q / BIGNUM_BASE;
-        shift++;
-    }
+	  // exception if q >= 10^10 , q = q/BIGNUMBASE. q must be smaller than BIGNUM_BASE
+	  if (q >= BIGNUM_BASE)
+	    {
+	      q = q / BIGNUM_BASE;
+	      shift++;
+	    }
 	}
 
 
@@ -1025,7 +1027,7 @@ bigx_remainder (int arg1, int arg2)
   // arg1 > arg2 -> 0
   if (smallerp (arg1, arg2))
     return (makeint (0));
-  CHECKBIG2(get_length(arg2));
+  CHECKBIG2 (get_length (arg2));
 
   res = gen_big ();
   set_sign (res, 1);
@@ -1166,7 +1168,7 @@ bigx_div_i (int x, int y)
   len = n = get_length (x);
   msb = get_pointer (bigx_abs (x));
   sign1 = get_sign (x);
-  CHECKBIG2(len);
+  CHECKBIG2 (len);
 
   j = GET_INT (y);
   if (j < 0)
@@ -1230,7 +1232,7 @@ bigx_mult_i (int x, int y)
   len = n = get_length (x);
   pointer = get_pointer (x) - len + 1;	//LSB
   sign1 = get_sign (x);
-  CHECKBIG2(len+1);
+  CHECKBIG2 (len + 1);
 
   j = GET_INT (y);
   if (j < 0)
@@ -1683,67 +1685,71 @@ ntt_test ()
 */
 
 
-int 
-bigx_first_half(int x)
+int
+bigx_first_half (int x)
 {
-  int pointer,len,res;
+  int pointer, len, res;
 
-  pointer = get_pointer(x);
-  len = get_length(x);
+  pointer = get_pointer (x);
+  len = get_length (x);
 
   len = len / 2;
-  res = gen_big();
-  set_pointer(res,pointer);
-  set_length(res,len);
-  set_sign(res,get_sign(x));
-  return(res);
-}
-
-int 
-bigx_second_half(int x)
-{
-  int pointer,len,res;
-
-  pointer = get_pointer(x);
-  len = get_length(x);
-
-  len = len / 2;
-  pointer = pointer - len;
-  res = gen_big();
-  set_pointer(res,pointer);
-  set_length(res,len);
-  set_sign(res,get_sign(x));
-  return(res);
-}
-
-
-int 
-bigx_karatsuba_mult1(int x, int y)
-{
-  int len,x0,y0,x1,y1,z0,z1,z2,z;
-
-  len = get_length(x);
-  if(len < 10)
-    return(bigx_mult(x,y));
-  else{
-    simp_flag = 0;
-    x1 = bigx_first_half(x);
-    x0 = bigx_second_half(x);
-    y1 = bigx_first_half(y);
-    y0 = bigx_second_half(y);
-    z2 = bigx_karatsuba_mult1(x1,y1);
-    z0 = bigx_karatsuba_mult1(x0,y0);
-    //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
-    z1 = minus(plus(z2,z0),mult(minus(x1,x0),minus(y1,y0)));
-    //Z = z2*b^2 + z1*b + z0  
-    simp_flag = 1;
-    z = plus(plus(bigx_shift_right(z2,len),bigx_shift_right(z1,len/2)),z0);
-    return(z);
-  }
+  res = gen_big ();
+  set_pointer (res, pointer);
+  set_length (res, len);
+  set_sign (res, get_sign (x));
+  return (res);
 }
 
 int
-bigx_karatsuba_mult(int x, int y)
+bigx_second_half (int x)
+{
+  int pointer, len, res;
+
+  pointer = get_pointer (x);
+  len = get_length (x);
+
+  len = len / 2;
+  pointer = pointer - len;
+  res = gen_big ();
+  set_pointer (res, pointer);
+  set_length (res, len);
+  set_sign (res, get_sign (x));
+  return (res);
+}
+
+
+int
+bigx_karatsuba_mult1 (int x, int y)
+{
+  int len, x0, y0, x1, y1, z0, z1, z2, z;
+
+  len = get_length (x);
+  if (len < 10)
+    return (bigx_mult (x, y));
+  else
+    {
+      simp_flag = 0;
+      x1 = bigx_first_half (x);
+      x0 = bigx_second_half (x);
+      y1 = bigx_first_half (y);
+      y0 = bigx_second_half (y);
+      z2 = bigx_karatsuba_mult1 (x1, y1);
+      z0 = bigx_karatsuba_mult1 (x0, y0);
+      //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
+      z1 = minus (plus (z2, z0), mult (minus (x1, x0), minus (y1, y0)));
+      //Z = z2*b^2 + z1*b + z0  
+      simp_flag = 1;
+      z =
+	plus (plus
+	      (bigx_shift_right (z2, len), bigx_shift_right (z1, len / 2)),
+	      z0);
+      return (z);
+    }
+}
+
+int
+bigx_karatsuba_mult (int x, int y)
 {
   int lenx, leny, max_len, n, x1, y1, ans_len, res;
 
@@ -1763,13 +1769,13 @@ bigx_karatsuba_mult(int x, int y)
     {
       n = 2 * n;
     }
-  
-  x1 = bigx_zero_supress(x,n-lenx);
-  y1 = bigx_zero_supress(y,n-leny);
-  
+
+  x1 = bigx_zero_supress (x, n - lenx);
+  y1 = bigx_zero_supress (y, n - leny);
+
   // karatuba recursion
-  res = bigx_karatsuba_mult1(x1,y1);
-  ans_len = get_length(res);
+  res = bigx_karatsuba_mult1 (x1, y1);
+  ans_len = get_length (res);
 
   //zero cut
   big_pt0--;

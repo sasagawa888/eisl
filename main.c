@@ -1773,7 +1773,7 @@ eval (int addr)
 	}
       else if (fsubrp (car (addr)))
 	{
-	  return( apply (caar (addr), cdr (addr)));
+	  return (apply (caar (addr), cdr (addr)));
 	  en = getETime ();
 	}
       else if ((val = functionp (car (addr))))
@@ -1792,7 +1792,7 @@ eval (int addr)
       else if (macrop (car (addr)))
 	{
 	  examin_sym = car (addr);
-	  return( apply (caar (addr), cdr (addr)));
+	  return (apply (caar (addr), cdr (addr)));
 	}
       else if (genericp (car (addr)))
 	{

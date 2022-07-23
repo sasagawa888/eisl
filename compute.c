@@ -1050,6 +1050,7 @@ isqrt3 (int x)
   return (isqrt2 (x, init));
 
 }
+
 /*
  * fast isqrt
  * Calculate the initial value of Newton's method by Newton's method.
@@ -1070,7 +1071,7 @@ isqrt4 (int x)
       p = 2 * p;
     }
   p = p / 2;
-  
+
   init = bigx_shift_left (x, p);
   init = plus (isqrt3 (init), makeint (1));
   init = bigx_shift_right (init, p / 2);

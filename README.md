@@ -1,7 +1,4 @@
-# Note
-Changed bignum data structure. This may not compile for Raspberry Pi due to lack of memory. In this case eisl.h
-Reduce BIG SIZE.
-
+# Have fun with Lisp
 
 # Easy-ISLisp
 

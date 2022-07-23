@@ -623,7 +623,7 @@ bigx_plus1 (int arg1, int arg2)
       z = x + y + c;
       c = z / BIGNUM_BASE;
       q = z % BIGNUM_BASE;
-      CHECKBIG0 bigcell[big_pt0++] = q;
+      bigcell[big_pt0++] = q;
       pointerx++;
       pointery++;
       len1--;
@@ -633,7 +633,7 @@ bigx_plus1 (int arg1, int arg2)
   while (len1 > 0 || len2 > 0);
   if (c != 0)
     {
-      CHECKBIG0 bigcell[big_pt0++] = c;
+      bigcell[big_pt0++] = c;
       len++;
     }
   set_pointer (res, big_pt0 - 1);
@@ -731,7 +731,7 @@ bigx_minus1 (int arg1, int arg2)
 	  z = (x + c) - y;
 	  c = 0;
 	}
-      CHECKBIG0 bigcell[big_pt0++] = z;
+      bigcell[big_pt0++] = z;
       pointerx++;
       pointery++;
       len1--;
@@ -818,7 +818,7 @@ bigx_mult1 (int arg1, int arg2)
   int i, j;
   for (i = 0; i <= len; i++)
     {
-      CHECKBIG0 bigcell[i + big_pt0] = 0;
+      bigcell[i + big_pt0] = 0;
     }
   pointery = get_pointer (arg2) - len2 + 1;	//LSB
   for (j = 0; j < len2; j++)
@@ -842,7 +842,7 @@ bigx_mult1 (int arg1, int arg2)
 	      c = 0;
 	    }
 	  l1 = l1 + c + (long long int) bigcell[big_pt0 + j + i + 1];
-	  CHECKBIG0 bigcell[big_pt0 + j + i] = (int) l2;
+	  bigcell[big_pt0 + j + i] = (int) l2;
 	  bigcell[big_pt0 + j + i + 1] = (int) l1;
 	}
     }
@@ -976,7 +976,7 @@ bigx_div1 (int arg1, int arg2)
 
       save1 = big_pt0;
       big_pt0 = save0;
-      CHECKBIG0 bigcell[big_pt0 - len] = q;
+      bigcell[big_pt0 - len] = q;
       len++;
 
     }
@@ -986,7 +986,7 @@ bigx_div1 (int arg1, int arg2)
   //e.q.  div(3000000000000000000,30000000000)
   while (shift > 0)
     {
-      CHECKBIG0 bigcell[big_pt0 - len] = 0;
+      bigcell[big_pt0 - len] = 0;
       shift--;
       len++;
     }
@@ -1063,7 +1063,7 @@ bigx_remainder (int arg1, int arg2)
   int i;
   for (i = 0; i < len; i++)
     {
-      CHECKBIG0 bigcell[big_pt0++] = bigcell[pointer++];
+      bigcell[big_pt0++] = bigcell[pointer++];
     }
   set_pointer (res, big_pt0 - 1);
   set_length (res, len);
@@ -1239,19 +1239,19 @@ bigx_mult_i (int x, int y)
 	  c = z / BIGNUM_BASE;
 	  z = z % BIGNUM_BASE;
 
-	  CHECKBIG0 bigcell[big_pt0++] = (int) z;
+	  bigcell[big_pt0++] = (int) z;
 	}
       else
 	{
 	  c = 0;
-	  CHECKBIG0 bigcell[big_pt0++] = (int) z;
+	  bigcell[big_pt0++] = (int) z;
 	}
       pointer++;
       len--;
     }
   while (len > 0);
 
-  CHECKBIG0 bigcell[big_pt0] = (int) c;
+  bigcell[big_pt0] = (int) c;
   len = n + 1;
   while (bigcell[big_pt0] == 0 && len > 1)
     {

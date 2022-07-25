@@ -16,7 +16,7 @@
 #endif
 
 #define TOKEN_MAX   80
-#define LEFT_MARGIN 1
+#define LEFT_MARGIN 7
 #define TOP_MARGIN  2
 #define BOTTOM      22
 #define MIDDLE      10
@@ -1243,6 +1243,10 @@ void
 display_line (int line)
 {
   int col;
+  char linestr[10];
+
+  sprintf(linestr,"% 5d ",line);
+  CHECK(addstr,linestr);
 
   if (ed_row != line || ed_col <= COLS - 1)
     col = 0;

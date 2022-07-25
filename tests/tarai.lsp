@@ -1,6 +1,8 @@
 ;;sample code for type inference
 ;;benchmark test
 
+(defun foo (x) (+ x 1))
+
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
@@ -77,6 +79,7 @@
            (catch 'ctak-aux (ctak-aux (- x 1) y z))
            (catch 'ctak-aux (ctak-aux (- y 1) z x))
            (catch 'ctak-aux (ctak-aux (- z 1) x y)))))
+
 
 
 

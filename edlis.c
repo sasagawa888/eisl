@@ -16,7 +16,7 @@
 #endif
 
 #define TOKEN_MAX   80
-#define LEFT_MARGIN 7
+#define LEFT_MARGIN 6
 #define TOP_MARGIN  2
 #define BOTTOM      22
 #define MIDDLE      10
@@ -211,7 +211,7 @@ right ()
   if (ed_col == findeol (ed_row) || ed_col >= COL_SIZE)
     return;
   ed_col++;
-  if (ed_col < COLS - 1)
+  if (ed_col < COLS - 1 - LEFT_MARGIN)
     {
       restore_paren ();
       emphasis_lparen ();
@@ -240,9 +240,9 @@ left ()
   if (ed_col == 0)
     return;
   ed_col--;
-  if (ed_col <= COLS - 1)
+  if (ed_col <= COLS - 1 - LEFT_MARGIN)
     {
-      if (ed_col == COLS - 1)
+      if (ed_col == COLS - 1 - LEFT_MARGIN)
 	{
 	  reset_paren ();
 	  ESCCLSLA ();
@@ -316,7 +316,7 @@ up ()
     {
       if (ed_col >= COLS)
 	{
-	  ed_col = COLS - 1;
+	  ed_col = COLS - 1 - LEFT_MARGIN;
 	  ESCCLSLA ();
 	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
 	  display_line (ed_row);
@@ -385,7 +385,7 @@ down ()
     {
       if (ed_col >= COLS)
 	{
-	  ed_col = COLS - 1;
+	  ed_col = COLS - 1 - LEFT_MARGIN;
 	  ESCCLSLA ();
 	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
 	  display_line (ed_row);
@@ -417,14 +417,14 @@ backspace_key ()
       display_screen ();
       if (ed_row < ed_start + ed_scroll)
 	{
-	  if (ed_col <= COLS - 1)
+	  if (ed_col <= COLS - 1 - LEFT_MARGIN)
 	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
 	  else
 	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
 	}
       else
 	{
-	  if (ed_col <= COLS - 1)
+	  if (ed_col <= COLS - 1 - LEFT_MARGIN)
 	    ESCMOVE (21, ed_col + LEFT_MARGIN);
 	  else
 	    ESCMOVE (21, ed_col - COLS + LEFT_MARGIN);
@@ -1245,15 +1245,15 @@ display_line (int line)
   int col;
   char linestr[10];
 
-  sprintf(linestr,"% 5d ",line);
+  sprintf(linestr,"% 4d ",line);
   CHECK(addstr,linestr);
 
-  if (ed_row != line || ed_col <= COLS - 1)
+  if (ed_row != line || ed_col <= COLS - 1 - LEFT_MARGIN)
     col = 0;
   else
     col = COLS;
 
-  while (((ed_col <= COLS - 1 && col <= COLS - 1)
+  while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 	  || (ed_col >= COLS && col < COL_SIZE))
 	 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
     {
@@ -1268,7 +1268,7 @@ display_line (int line)
 	  // #|...|#
 	  ESCBOLD ();
 	  setcolor (ed_comment_color);
-	  while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	  while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		  || (ed_col >= COLS && col < COL_SIZE))
 		 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
 	    {
@@ -1299,7 +1299,7 @@ display_line (int line)
 	    case HIGHLIGHT_SYNTAX:
 	      ESCBOLD ();
 	      setcolor (ed_syntax_color);
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
@@ -1316,7 +1316,7 @@ display_line (int line)
 	    case HIGHLIGHT_BUILTIN:
 	      ESCBOLD ();
 	      setcolor (ed_builtin_color);
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
@@ -1335,7 +1335,7 @@ display_line (int line)
 	      setcolor (ed_string_color);
 	      CHECK (addch, ed_data[line][col]);
 	      col++;
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
@@ -1351,7 +1351,7 @@ display_line (int line)
 	    case HIGHLIGHT_COMMENT:
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
@@ -1365,7 +1365,7 @@ display_line (int line)
 	    case HIGHLIGHT_EXTENDED:
 	      ESCBOLD ();
 	      setcolor (ed_extended_color);
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
@@ -1383,7 +1383,7 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
 	      ed_incomment = line;
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != EOL
 		     && ed_data[line][col] != NUL)
@@ -1401,7 +1401,7 @@ display_line (int line)
 		}
 	      break;
 	    default:
-	      while (((ed_col <= COLS - 1 && col <= COLS - 1)
+	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
 		      || (ed_col >= COLS && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
@@ -1638,7 +1638,7 @@ restore_paren ()
   if (ed_lparen_row != -1 && ed_lparen_row >= ed_start
       && ed_lparen_row <= ed_start + ed_scroll)
     {
-      if (ed_lparen_col <= COLS - 1)
+      if (ed_lparen_col <= COLS - 1 - LEFT_MARGIN)
 	ESCMOVE (ed_lparen_row + TOP_MARGIN - ed_start, ed_lparen_col + LEFT_MARGIN);
       else
 	ESCMOVE (ed_lparen_row + TOP_MARGIN - ed_start, ed_lparen_col - COLS + LEFT_MARGIN);
@@ -1649,7 +1649,7 @@ restore_paren ()
   if (ed_rparen_row != -1 && ed_rparen_row >= ed_start
       && ed_rparen_row <= ed_start + ed_scroll)
     {
-      if (ed_rparen_col <= COLS - 1)
+      if (ed_rparen_col <= COLS - 1 - LEFT_MARGIN)
 	ESCMOVE (ed_rparen_row + TOP_MARGIN - ed_start, ed_rparen_col + LEFT_MARGIN);
       else
 	ESCMOVE (ed_rparen_row + TOP_MARGIN - ed_start, ed_rparen_col - COLS + LEFT_MARGIN);
@@ -1668,7 +1668,7 @@ emphasis_lparen ()
     return;
 
   pos = findlparen (1);
-  if (ed_col <= COLS - 1 && pos.col <= COLS - 1)
+  if (ed_col <= COLS - 1 - LEFT_MARGIN && pos.col <= COLS - 1 - LEFT_MARGIN)
     {
       if (pos.row != -1)
 	{
@@ -1723,7 +1723,7 @@ emphasis_rparen ()
     return;
 
   pos = findrparen (1);
-  if (ed_col <= COLS - 1 && pos.col <= COLS - 1)
+  if (ed_col <= COLS - 1 - LEFT_MARGIN && pos.col <= COLS - 1 - LEFT_MARGIN)
     {
       if (pos.row != -1)
 	{

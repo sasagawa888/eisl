@@ -219,18 +219,18 @@ right ()
       ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
     }
   else
-    {
-      if (ed_col == COLS)
+    { 
+      if (ed_col == COLS - LEFT_MARGIN - 1)
 	{
 	  reset_paren ();
 	  ESCCLSLA ();
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
 	  display_line (ed_row);
 	}
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + 2*LEFT_MARGIN + 1);   
     }
 }
 
@@ -252,14 +252,14 @@ left ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - LEFT_MARGIN);
     }
-  else if (ed_col >= COLS)
+  else if (ed_col >= COLS - LEFT_MARGIN)
     {
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS - LEFT_MARGIN);
     }
 }
 
@@ -1250,13 +1250,14 @@ display_line (int line)
   sprintf(linestr,"% 5d ",line);
   CHECK(addstr,linestr);
 
-  if (ed_row != line || ed_col <= COLS - 1 - LEFT_MARGIN)
+  printf("%d ",ed_col);
+  if (ed_col < COLS - 1 - LEFT_MARGIN)
     col = 0;
   else
-    col = COLS;
-
+    col = COLS - LEFT_MARGIN - 1;
+    
   while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-	  || (ed_col >= COLS && col < COL_SIZE))
+	  || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 	 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
     {
       if (line >= ed_clip_start && line <= ed_clip_end)
@@ -1271,7 +1272,7 @@ display_line (int line)
 	  ESCBOLD ();
 	  setcolor (ed_comment_color);
 	  while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		  || (ed_col >= COLS && col < COL_SIZE))
+		  || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
 	    {
 	      CHECK (addch, ed_data[line][col]);
@@ -1302,7 +1303,7 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_syntax_color);
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1319,7 +1320,7 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_builtin_color);
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1338,7 +1339,7 @@ display_line (int line)
 	      CHECK (addch, ed_data[line][col]);
 	      col++;
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
@@ -1354,7 +1355,7 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
@@ -1368,7 +1369,7 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_extended_color);
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1386,7 +1387,7 @@ display_line (int line)
 	      setcolor (ed_comment_color);
 	      ed_incomment = line;
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != EOL
 		     && ed_data[line][col] != NUL)
 		{
@@ -1404,7 +1405,7 @@ display_line (int line)
 	      break;
 	    default:
 	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS && col < COL_SIZE))
+		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'

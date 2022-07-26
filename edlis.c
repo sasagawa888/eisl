@@ -1250,7 +1250,6 @@ display_line (int line)
   sprintf(linestr,"% 5d ",line);
   CHECK(addstr,linestr);
 
-  printf("%d ",ed_col);
   if (ed_col < COLS - 1 - LEFT_MARGIN)
     col = 0;
   else

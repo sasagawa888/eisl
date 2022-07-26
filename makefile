@@ -87,7 +87,7 @@ all: eisl edlis
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
+	$(CC) -D __rpi__ $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
 else
 	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
 endif

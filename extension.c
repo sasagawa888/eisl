@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#ifdef __arm__
+#ifdef __rpi__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #endif
@@ -48,7 +48,7 @@ initexsubr (void)
   defsubr ("EISL-TEST", f_eisl_test);
 
 
-#ifdef __arm__
+#ifdef __rpi__
   defsubr ("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
   defsubr ("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
   defsubr ("PWM-SET-MODE", f_pwm_set_mode);
@@ -455,7 +455,7 @@ f_instance (int arglist)
 }
 
 // ----------for Raspberry PI
-#ifdef __arm__
+#ifdef __rpi__
 int
 f_wiringpi_setup_gpio (int arglist __unused)
 {

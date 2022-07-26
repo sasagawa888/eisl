@@ -1,4 +1,5 @@
 # Have fun with Lisp
+I want to convey the fun of Lisp to boys and girls around the world. It's fun to create. Peace is wonderful. Let's end the war.
 
 # Easy-ISLisp
 
@@ -35,6 +36,7 @@ We confirmed operation in the following environments.
 - Ubuntu 18.04 GCC 7.3
 - Raspberry Pi3 Raspbian GCC 6.3
 - Raspberry Pi3 Raspbian GCC 8.3.0
+- Paspberry Pi400
 - openSUSE Leap 42.3 GCC 4.8.5
 - Debian GNU/Linux GCC 6.3 GCC 7.3
 - Linux Mint GCC ver 5.4

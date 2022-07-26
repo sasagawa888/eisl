@@ -55,6 +55,9 @@ ifeq ($(CC),c++)
 else
 	CFLAGS += -std=c17
 endif
+ifeq  ($(shell uname -n),raspberrypi)
+	CFLAGS += -D__rpi__
+endif
 ifneq ($(DEBUG),1)
 	LDFLAGS += -flto
 	ifeq ($(OPSYS),macos)
@@ -87,7 +90,7 @@ all: eisl edlis
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
-	$(CC) -D __rpi__ $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
 else
 	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
 endif

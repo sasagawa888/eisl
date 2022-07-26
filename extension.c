@@ -92,8 +92,12 @@ f_self_introduction(int arglist __unused)
     return (makesym("MACOS"));
 #elif defined(__OpenBSD__)
     return (makesym("OPENBSD"));
-#else
+#elif defined(__FreeBSD__)
+    return (makesym("FREEBSD"));
+#elif defined(__linux__)
     return (makesym("LINUX"));
+#else
+#    error "Unknown system"
 #endif
 }
 

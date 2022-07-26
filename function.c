@@ -2126,7 +2126,7 @@ f_read(int arglist)
                     save,
                     n,
                     res;
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
     int             save1;
 #endif
 
@@ -2138,7 +2138,7 @@ f_read(int arglist)
     if (n > 0 && !input_stream_p(arg1))
 	error(NOT_IN_STREAM, "read", arg1);
 
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
     save1 = repl_flag;
     repl_flag = 0;
 #endif
@@ -2150,7 +2150,7 @@ f_read(int arglist)
 	res = sread();
 	input_stream = save;
 	if (res == FEND) {
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
 	    repl_flag = save1;
 #endif
 	    error(END_STREAM, "read", NIL);
@@ -2162,7 +2162,7 @@ f_read(int arglist)
 	res = sread();
 	input_stream = save;
 	if (res == FEND) {
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
 	    repl_flag = save1;
 #endif
 	    if (nullp(arg2) && n == 2)
@@ -2173,7 +2173,7 @@ f_read(int arglist)
 		error(END_STREAM, "read", NIL);
 	}
     }
-#if __linux || __APPLE__ || defined(__OpenBSD__)
+#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
     repl_flag = save1;
 #endif
     return (res);

@@ -25,8 +25,12 @@ else
 	ifeq ($(OPSYS),openbsd)
 		CURSES_LIBS := -lncurses
 	else
-		CURSES_CFLAGS := $(shell ncurses6-config --cflags)
-		CURSES_LIBS := $(shell ncurses6-config --libs)
+		ifeq ($(OPSYS),freebsd)
+			CURSES_LIBS := -lncurses
+		else
+			CURSES_CFLAGS := $(shell ncurses6-config --cflags)
+			CURSES_LIBS := $(shell ncurses6-config --libs)
+		endif
 	endif
 endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -Inana/src

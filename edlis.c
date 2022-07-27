@@ -208,10 +208,12 @@ main (int argc, char *argv[])
 void
 right ()
 {
+  int turn;
+  turn = COLS - LEFT_MARGIN;
   if (ed_col == findeol (ed_row) || ed_col >= COL_SIZE)
     return;
   ed_col++;
-  if (ed_col < COLS - 1 - LEFT_MARGIN)
+  if (ed_col < turn)
     {
       restore_paren ();
       emphasis_lparen ();
@@ -220,7 +222,7 @@ right ()
     }
   else
     { 
-      if (ed_col == COLS - LEFT_MARGIN - 1)
+      if (ed_col == turn)
 	{
 	  reset_paren ();
 	  ESCCLSLA ();
@@ -230,36 +232,38 @@ right ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + 2*LEFT_MARGIN + 1);   
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - turn + LEFT_MARGIN);   
     }
 }
 
 void
 left ()
 {
+  int turn;
+  turn = COLS - LEFT_MARGIN;
   if (ed_col == 0)
     return;
   ed_col--;
-  if (ed_col <= COLS - 1 - LEFT_MARGIN)
+  if (ed_col < turn)
     {
-      if (ed_col == COLS - 1 - LEFT_MARGIN)
-	{
-	  reset_paren ();
-	  ESCCLSLA ();
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
-	  display_line (ed_row);
-	}
+      if (ed_col == turn - 1)
+	    {
+	      reset_paren ();
+	      ESCCLSLA ();
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
+	      display_line (ed_row);
+	    }
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
     }
-  else if (ed_col >= COLS - LEFT_MARGIN)
+  else if (ed_col >= turn)
     {
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS - LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - turn + LEFT_MARGIN);
     }
 }
 
@@ -1241,22 +1245,38 @@ display_screen ()
   ESCRST ();
 }
 
+/*                                     COL_SIZE
+ * buffer [0].........................[255]
+ * ed_col = position of buffer
+ * LEFT_MARGIN area of line numver 7
+ * COLS = size of terminal
+ *
+ * if terminal col size is 80.
+ * 1----6|7--------80|
+ * line   buffer[ 0]-[72]
+ *        buffer[73]-[145]
+ *        ommit 146~
+ * turnaround point is 73 (80-7)
+ * col is display point 0~, 73~ 
+*/
+
 void
 display_line (int line)
 {
-  int col;
+  int col,turn;
   char linestr[10];
 
+  turn = COLS - LEFT_MARGIN;
   sprintf(linestr,"% 5d ",line);
   CHECK(addstr,linestr);
 
-  if (ed_col < COLS - 1 - LEFT_MARGIN)
+  if (ed_col < turn)
     col = 0;
   else
-    col = COLS - LEFT_MARGIN - 1;
+    col = turn;
     
-  while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-	  || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+  while (((ed_col < turn && col < turn)
+	  || (ed_col >= turn && col < COL_SIZE))
 	 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
     {
       if (line >= ed_clip_start && line <= ed_clip_end)
@@ -1270,8 +1290,8 @@ display_line (int line)
 	  // #|...|#
 	  ESCBOLD ();
 	  setcolor (ed_comment_color);
-	  while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		  || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	  while (((ed_col < turn && col < turn)
+		  || (ed_col >= turn && col < COL_SIZE))
 		 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
 	    {
 	      CHECK (addch, ed_data[line][col]);
@@ -1301,8 +1321,8 @@ display_line (int line)
 	    case HIGHLIGHT_SYNTAX:
 	      ESCBOLD ();
 	      setcolor (ed_syntax_color);
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn  && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1318,8 +1338,8 @@ display_line (int line)
 	    case HIGHLIGHT_BUILTIN:
 	      ESCBOLD ();
 	      setcolor (ed_builtin_color);
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1337,8 +1357,8 @@ display_line (int line)
 	      setcolor (ed_string_color);
 	      CHECK (addch, ed_data[line][col]);
 	      col++;
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
@@ -1353,8 +1373,8 @@ display_line (int line)
 	    case HIGHLIGHT_COMMENT:
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
@@ -1367,8 +1387,8 @@ display_line (int line)
 	    case HIGHLIGHT_EXTENDED:
 	      ESCBOLD ();
 	      setcolor (ed_extended_color);
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1385,8 +1405,8 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
 	      ed_incomment = line;
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != EOL
 		     && ed_data[line][col] != NUL)
 		{
@@ -1403,8 +1423,8 @@ display_line (int line)
 		}
 	      break;
 	    default:
-	      while (((ed_col <= COLS - 1 - LEFT_MARGIN && col <= COLS - 1 - LEFT_MARGIN)
-		      || (ed_col >= COLS - LEFT_MARGIN && col < COL_SIZE))
+	      while (((ed_col < turn && col < turn)
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'

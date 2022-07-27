@@ -15,13 +15,6 @@
 #define CTRL(X) ((X) & 0x1F)
 #endif
 
-#define TOKEN_MAX   80
-#define LEFT_MARGIN 7
-#define TOP_MARGIN  2
-#define BOTTOM      22
-#define MIDDLE      10
-
-
 const int NUM_STR_MAX = 5;
 const int SHORT_STR_MAX = 20;
 

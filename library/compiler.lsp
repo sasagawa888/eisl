@@ -237,8 +237,9 @@ defgeneric compile
                      "-I$HOME/eisl "
                      "-I$EASY_ISLISP ")))
                (option
-               (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -fPIC -s -o ")
-                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
+                (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -fPIC -s -o ")
+                      ((eq (self-introduction) 'freebsd) "cc -O3 -w -shared -fPIC -s -o ")
+                      ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
                (fname (filename x))
                (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
            (eisl-ignore-toplevel-check t)

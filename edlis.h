@@ -8,10 +8,16 @@
 #define FULLSCREEN
 #include "term.h"
 
-static const float VERSION = 2.55;
+static const float VERSION = 2.56;
 #define ROW_SIZE 4000
 #define COL_SIZE 255
 #define COPY_SIZE 500
+#define TOKEN_MAX   80
+#define LEFT_MARGIN 7
+#define TOP_MARGIN  2
+#define BOTTOM      22
+#define MIDDLE      10
+
 
 
 static const int NIL = 0;

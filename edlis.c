@@ -603,6 +603,7 @@ edit_loop (char *fname)
 	     "CTRL+X CTRL+W write buffer to file\n"
 	     "CTRL+K  cut one line\n"
 	     "CTRL+W  cut selection\n"
+       "ESC W   save selection\n"
 	     "CTRL+Y  uncut selection\n"
 	     "CTRL+G  cancel command\n" "\n  enter any key to exit help\n");
       CHECK (refresh);
@@ -938,6 +939,15 @@ edit_loop (char *fname)
 	}
       switch (c)
 	{
+  case 'w':
+    copy_selection ();
+    ed_row = ed_clip_start;
+    ed_clip_start = ed_clip_end = -1;
+    restore_paren ();
+    display_screen ();
+    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+    modify_flag = true;
+    break;
 	case '<':
 	  home ();
 	  break;

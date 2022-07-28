@@ -689,7 +689,7 @@ edit_loop (char *fname)
 		    {
 		      ESCREV ();
 		      ESCMOVE (ed_footer, 1);
-		      CHECK (addstr, "save modified buffer? Yes/No/Cancel ");
+		      CHECK (addstr, "save modified buffer? Yes/No ");
 		      CHECK (refresh);
 		      c = getch ();
 		      if (c == ERR)
@@ -710,16 +710,16 @@ edit_loop (char *fname)
 			  ESCMOVE (1, 1);
 			  return true;
 			  break;
-			case 'c':
+			case CTRL('G'):
 			  clear_status ();
 			  ESCRST ();
 			  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
-        c = 0;
+        ctrl_c = 0;
         return false;
 			  break;
 			}
 		    }
-		  while (c != 'y' && c != 'n' && c != 'c' );
+		  while (c != 'y' && c != 'n');
 		}
 	    }
 	  timeout (10);

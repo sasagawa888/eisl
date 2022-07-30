@@ -1573,12 +1573,18 @@ findlparen (int bias)
 
   while (row >= limit)
     {
-      if (ed_data[row][col] == '(' && nest == 0)
+      if (ed_data[row][col] == '(' && !(col > 0 && ed_data[row][col-1] == '\\') && nest == 0)
 	break;
-      else if (ed_data[row][col] == ')')
+      else if (ed_data[row][col] == ')' && !(col > 0 && ed_data[row][col-1] == '\\'))
 	nest++;
-      else if (ed_data[row][col] == '(')
+      else if (ed_data[row][col] == '(' && !(col > 0 && ed_data[row][col-1] == '\\'))
 	nest--;
+      else if (ed_data[row][col] == '"'){
+        col--;
+        while (ed_data[row][col] != '"' && col > 0){
+          col--;
+        }
+      }
 
 
       if (col == 0)
@@ -1619,12 +1625,18 @@ findrparen (int bias)
 
   while (row < limit)
     {
-      if (ed_data[row][col] == ')' && nest == 0)
+      if (ed_data[row][col] == ')' && !(col > 0 && ed_data[row][col-1] == '\\') && nest == 0)
 	break;
-      else if (ed_data[row][col] == '(')
+      else if (ed_data[row][col] == '(' && !(col > 0 && ed_data[row][col-1] == '\\'))
 	nest++;
-      else if (ed_data[row][col] == ')')
+      else if (ed_data[row][col] == ')' && !(col > 0 && ed_data[row][col-1] == '\\'))
 	nest--;
+      else if (ed_data[row][col] == '"'){
+        col++;
+        while(ed_data[row][col] != '"' && ed_data[row][col] != EOL && ed_data[row][col] != 0){
+          col++;
+        }
+      }
 
 
       if (col == findeol (row))

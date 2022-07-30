@@ -7,7 +7,7 @@
 // special form token
 static const char *special[] = {
   "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
-  "let", "let*", "case", "while", "progn",
+  "let", "let*", "case", "while", "progn", "defmodule",
 };
 
 // syntax token

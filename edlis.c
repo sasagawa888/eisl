@@ -1263,84 +1263,13 @@ display_screen ()
  * col is display point 0~, 73~ 
 */
 
-// transform from UTF-8 in buffer to unicode
-
-int
-generate_unicode (int row, int col)
-{
-int x, x1, x2, x3, res;
-  unsigned char uc;
-
-  uc = (unsigned char) ed_data[row][col];
-  if (uc <= 0x7f)
-    {
-      x = (int) uc;
-      return (x);
-    }
-  else if (uc >= 0xc0 && uc <= 0xdf)
-    {
-      x = (int) (UTF2MSK1 & uc);
-      x = x << 6;
-      uc = (unsigned char) ed_data[row][col+1];
-      x1 = (int) (UTFOMSKO & uc);
-      res = x | x1;
-      return (res);
-    }
-  else if (uc >= 0xe0 && uc <= 0xef)
-    {
-      x = (int) (UTF3MSK1 & uc);
-      x = x << 12;
-      uc = (unsigned char) ed_data[row][col+1];
-      x1 = (int) (UTFOMSKO & uc);
-      x1 = x1 << 6;
-      uc = (unsigned char) ed_data[row][col+2];
-      x2 = (int) (UTFOMSKO & uc);
-      res = x | x1 | x2;
-      return (res);
-    }
-  else if (uc >= 0xf0 && uc <= 0xf7)
-    {
-      x = (int) (UTF4MSK1 & uc);
-      x = x << 18;
-      uc = (unsigned char) ed_data[row][col];
-      x1 = (int) (UTFOMSKO & uc);
-      x1 = x1 << 12;
-      uc = (unsigned char) ed_data[row][col];
-      x2 = (int) (UTFOMSKO & uc);
-      x2 = x2 << 6;
-      uc = (unsigned char) ed_data[row][col];
-      x3 = (int) (UTFOMSKO & uc);
-      res = x | x1 | x2 | x3;
-      return (res);
-    }
-  else
-    return (-1);
-}
-
-
- // calculate position to increase according to UTF8 unicode
-
-int 
-increase_pos (int row, int col){
-  int uc;
-
-  uc = ed_data[row][col];
-  if(isUni1(uc))
-    return(1);
-  else if(isUni2(uc))
-    return(2);
-  else if(isUni3(uc))
-    return(3);
-  else if(isUni4(uc))
-    return(4);
-  else if(isUni5(uc))
-    return(5);
-  else if(isUni6(uc))
-    return(6);
-  else
-    return(-1);
-}
-
+/*
+ * unicode for Edlis
+ * Now many OS adapted UTF8. unicode in ed_data is utf8 
+ * e.g.  Japanese あ  0xe3 0x81 0x82
+ * curses require wchar_t wide-charactor. so transform from multibyte-utf8 to wide-charactor.
+ * and use addwstr thus display unicode
+*/
 void
 display_unicode(int line, int col)
 {  
@@ -1388,6 +1317,28 @@ display_unicode(int line, int col)
 
   mbstowcs( wch, mb, 10 );
   addwstr(wch);
+}
+
+// calculate position to increase according to UTF8 unicode
+int 
+increase_pos (int row, int col){
+  int uc;
+
+  uc = ed_data[row][col];
+  if(isUni1(uc))
+    return(1);
+  else if(isUni2(uc))
+    return(2);
+  else if(isUni3(uc))
+    return(3);
+  else if(isUni4(uc))
+    return(4);
+  else if(isUni5(uc))
+    return(5);
+  else if(isUni6(uc))
+    return(6);
+  else
+    return(-1);
 }
 
 

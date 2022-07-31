@@ -28,8 +28,8 @@ else
 		ifeq ($(OPSYS),freebsd)
 			CURSES_LIBS := -lncurses
 		else
-			CURSES_CFLAGS := $(shell ncurses6-config --cflags)
-			CURSES_LIBS := $(shell ncurses6-config --libs)
+			CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
+			CURSES_LIBS := $(shell ncursesw6-config --libs)
 		endif
 	endif
 endif

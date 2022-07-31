@@ -1263,7 +1263,6 @@ display_screen ()
  * col is display point 0~, 73~ 
 */
 
-/*
 // transform from UTF-8 in buffer to unicode
 
 int
@@ -1341,7 +1340,7 @@ increase_pos (int row, int col){
   else
     return(-1);
 }
-*/
+
 
 void
 display_line (int line)
@@ -1445,8 +1444,20 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-		  CHECK (addch, ed_data[line][col]);
-		  col++;
+      if(isUni1(ed_data[line][col])){
+		    CHECK (addch, ed_data[line][col]);
+      }
+      else if(isUni2(ed_data[line][col])){
+        CHECK (addstr, "/u");
+      }
+      else if(isUni3(ed_data[line][col])){
+        CHECK (addstr, "/u_");
+      }
+      else if(isUni4(ed_data[line][col])){
+        CHECK (addstr, "/u__");
+      }
+      col = col + increase_pos(line,col);
+      
       
 		  if (ed_data[line][col - 1] == '"')
 		    break;

@@ -1264,8 +1264,8 @@ display_screen ()
 */
 
 /*
- * transform from UTF-8 in buffer to unicode
-*/
+// transform from UTF-8 in buffer to unicode
+
 int
 generate_unicode (int row, int col)
 {
@@ -1317,11 +1317,10 @@ int x, x1, x2, x3, res;
   else
     return (-1);
 }
-  
-/*
- * calculate position to increase according to UTF8 unicode
- *
-*/
+
+
+ // calculate position to increase according to UTF8 unicode
+
 int 
 increase_pos (int row, int col){
   int uc;
@@ -1342,12 +1341,13 @@ increase_pos (int row, int col){
   else
     return(-1);
 }
+*/
 
 void
 display_line (int line)
 {
   int col,turn;
-  char linestr[10],unicode[10];
+  char linestr[10];
 
   turn = COLS - LEFT_MARGIN;
   sprintf(linestr,"% 5d ",line);
@@ -1445,15 +1445,9 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-      if(isUni1(ed_data[line][col])){
-		    CHECK (addch, ed_data[line][col]);
-		    col++;
-      }
-      else{ //unicode 
-        sprintf(unicode,"\\u%x",generate_unicode(line,col));
-        CHECK (addstr, unicode);
-        col = col + increase_pos(line,col);
-      }
+		  CHECK (addch, ed_data[line][col]);
+		  col++;
+      
 		  if (ed_data[line][col - 1] == '"')
 		    break;
 		}

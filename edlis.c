@@ -1341,6 +1341,56 @@ increase_pos (int row, int col){
     return(-1);
 }
 
+void
+display_unicode(int line, int col)
+{  
+  char mb[10];
+  wchar_t wch[10];
+  if(isUni1(ed_data[line][col])){
+    mb[0] = ed_data[line][col];
+    mb[1] = 0;
+  }
+  else if(isUni2(ed_data[line][col])){
+    mb[0] = ed_data[line][col];
+    mb[1] = ed_data[line][col+1];
+    mb[2] = 0;
+  }
+  else if(isUni3(ed_data[line][col])){
+    mb[0] = ed_data[line][col];
+    mb[1] = ed_data[line][col+1];
+    mb[2] = ed_data[line][col+2];
+    mb[3] = 0;
+  }
+  else if(isUni4(ed_data[line][col])){
+    mb[0] = ed_data[line][col];
+    mb[1] = ed_data[line][col+1];
+    mb[2] = ed_data[line][col+2];
+    mb[3] = ed_data[line][col+3];
+    mb[4] = 0;
+  }
+  else if(isUni5(ed_data[line][col])){
+    mb[0] = ed_data[line][col];
+    mb[1] = ed_data[line][col+1];
+    mb[2] = ed_data[line][col+2];
+    mb[3] = ed_data[line][col+3];
+    mb[4] = ed_data[line][col+4];
+    mb[5] = 0;
+  }
+  else if(isUni6(ed_data[line][col])){
+    mb[0] = ed_data[line][col];
+    mb[1] = ed_data[line][col+1];
+    mb[2] = ed_data[line][col+2];
+    mb[3] = ed_data[line][col+3];
+    mb[4] = ed_data[line][col+4];
+    mb[5] = ed_data[line][col+5];
+    mb[6] = 0;
+  }
+
+  mbstowcs( wch, mb, 10 );
+  addwstr(wch);
+}
+
+
 
 void
 display_line (int line)
@@ -1352,6 +1402,7 @@ display_line (int line)
   sprintf(linestr,"% 5d ",line);
   CHECK(addstr,linestr);
 
+  
   if (ed_col < turn)
     col = 0;
   else
@@ -1447,14 +1498,8 @@ display_line (int line)
       if(isUni1(ed_data[line][col])){
 		    CHECK (addch, ed_data[line][col]);
       }
-      else if(isUni2(ed_data[line][col])){
-        CHECK (addstr, "/u");
-      }
-      else if(isUni3(ed_data[line][col])){
-        CHECK (addstr, "/u_");
-      }
-      else if(isUni4(ed_data[line][col])){
-        CHECK (addstr, "/u__");
+      else{
+        display_unicode(line,col);
       }
       col = col + increase_pos(line,col);
       

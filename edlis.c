@@ -1804,9 +1804,6 @@ findrparen (int bias)
             col = col + increase_pos(row,col);
           }
         }
-        // skip second double quote
-        col++;
-        col1++;
       }
 
 

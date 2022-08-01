@@ -1342,6 +1342,27 @@ increase_pos (int row, int col){
 }
 
 
+// calculate position to decrease according to UTF8 unicode
+int 
+decrease_pos (int row, int col){
+  
+  if(isUni1(ed_data[row][col]))
+    return(0);
+  else if(isUni2(ed_data[row][col-1]))
+    return(1);
+  else if(isUni3(ed_data[row][col-2]))
+    return(2);
+  else if(isUni4(ed_data[row][col-3]))
+    return(3);
+  else if(isUni5(ed_data[row][col-4]))
+    return(4);
+  else if(isUni6(ed_data[row][col-5]))
+    return(5);
+  else
+    return(-1);
+}
+
+
 
 void
 display_line (int line)
@@ -1620,8 +1641,9 @@ deleterow ()
   ed_col = l;
 }
 
-
-
+/*
+ * findeol find position of eol in buffer
+*/
 int
 findeol (int row)
 {
@@ -1635,15 +1657,43 @@ findeol (int row)
   return (-1);
 }
 
+/*
+* findeol1 find position of eol on display terminal
+*/
+int
+findeol1 (int row)
+{
+  int col, col1; // col1 is position of display terminal
+  col = col1 = 0;
+  while (col < COL_SIZE){
+    if (ed_data[row][col] == EOL)
+	    return (col1);
+    else if(isUni1(ed_data[row][col])){
+      col++;
+      col1++;
+    }
+    else{
+      if(isUni3(ed_data[row][col]))
+        col1 = col1 + 2;
+      else
+        col1++;
+
+      col = col + increase_pos(row,col);
+    }
+  }
+
+  return (-1);
+}
+
 struct position
 findlparen (int bias)
 {
-  int nest, row, col, limit;
+  int nest, row, col, col1, limit; //col is position of buffer, col1 is position of display
   struct position pos;
 
   row = ed_row;
   if (ed_col != 0)
-    col = ed_col - bias;
+    col = col1 = ed_col - bias;
   else
     {
       row--;
@@ -1652,6 +1702,7 @@ findlparen (int bias)
 	  pos.col = 0;
 	}
       col = findeol (row);
+      col1 = findeol1 (row);
     }
 
   nest = 0;
@@ -1670,8 +1721,23 @@ findlparen (int bias)
       else if (ed_data[row][col] == '"'){
         col--;
         while (ed_data[row][col] != '"' && col > 0){
-          col--;
+          if(isUni1(ed_data[row][col])){
+	          col--;
+            col1--;
+          }
+          else{
+            // 3byte unicode is 2width in many case. e.g. kanji
+            if(isUni3(ed_data[row][col-2]))
+              col1 = col1 - 2;
+            else
+              col1--;
+
+            col = col + decrease_pos(row,col);
+          }
         }
+        // skip second double quote
+        col--;
+        col1--;
       }
 
 
@@ -1679,16 +1745,18 @@ findlparen (int bias)
 	{
 	  row--;
 	  col = findeol (row);
+    col1 = findeol1 (row);
 	}
       else
 	{
 	  col--;
+    col1--;
 	}
     }
   if (row >= limit)
     {
       pos.row = row;
-      pos.col = col;
+      pos.col = col1;
     }
   else
     {

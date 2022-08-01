@@ -1720,6 +1720,7 @@ findlparen (int bias)
 	nest--;
       else if (ed_data[row][col] == '"'){
         col--;
+        col1--;
         while (ed_data[row][col] != '"' && col > 0){
           if(isUni1(ed_data[row][col])){
 	          col--;
@@ -1732,12 +1733,9 @@ findlparen (int bias)
             else
               col1--;
 
-            col = col + decrease_pos(row,col);
+            col = col - decrease_pos(row,col);
           }
         }
-        // skip second double quote
-        col--;
-        col1--;
       }
 
 
@@ -1789,6 +1787,7 @@ findrparen (int bias)
 	nest--;
       else if (ed_data[row][col] == '"'){
         col++;
+        col1++;
         while(ed_data[row][col] != '"' && ed_data[row][col] != EOL && ed_data[row][col] != 0){
           if(isUni1(ed_data[row][col])){
 	          col++;

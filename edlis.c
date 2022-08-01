@@ -26,7 +26,8 @@ int ctrl_z = 0;
 int ed_scroll;
 int ed_footer;
 int ed_row;
-int ed_col;
+int ed_col;  //position of buffer
+int ed_col1; //position of terminal when include unicode ed_col1 is different from ed_col
 int ed_start;
 int ed_end;
 bool ed_ins = true;
@@ -149,6 +150,7 @@ main (int argc, char *argv[])
 
   ed_row = 0;
   ed_col = 0;
+  ed_col1 = 0;
   ed_start = 0;
   ed_end = 0;
   ed_lparen_row = -1;
@@ -1722,9 +1724,10 @@ findlparen (int bias)
         col--;
         col1--;
         while (ed_data[row][col] != '"' && col > 0){
-          if(isUni1(ed_data[row][col])){
+          //if(isUni1(ed_data[row][col])){
 	          col--;
             col1--;
+          /*
           }
           else{
             // 3byte unicode is 2width in many case. e.g. kanji
@@ -1735,9 +1738,10 @@ findlparen (int bias)
 
             col = col - decrease_pos(row,col);
           }
+        */
         }
       }
-
+      
 
       if (col == 0)
 	{

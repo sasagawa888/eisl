@@ -1701,11 +1701,11 @@ findlparen (int bias)
 struct position
 findrparen (int bias)
 {
-  int nest, row, col, limit;
+  int nest, row, col, col1, limit; //col is position of buffer, col1 is position of display
   struct position pos;
 
   row = ed_row;
-  col = ed_col + bias;
+  col = col1 = ed_col + bias;
   nest = 0;
   limit = ed_row + ed_scroll;
   if (limit > ed_end)
@@ -1722,25 +1722,52 @@ findrparen (int bias)
       else if (ed_data[row][col] == '"'){
         col++;
         while(ed_data[row][col] != '"' && ed_data[row][col] != EOL && ed_data[row][col] != 0){
-          col++;
+          if(isUni1(ed_data[row][col])){
+	          col++;
+            col1++;
+          }
+          else{
+            // 3byte unicode is 2width in many case. e.g. kanji
+            if(isUni3(ed_data[row][col]))
+              col1 = col1 + 2;
+            else
+              col1++;
+
+            col = col + increase_pos(row,col);
+          }
         }
+        // skip second double quote
+        col++;
+        col1++;
       }
 
 
       if (col == findeol (row))
 	{
 	  row++;
-	  col = 0;
+	  col = col1 = 0;
 	}
       else
 	{
-	  col++;
+    if(isUni1(ed_data[row][col])){
+	    col++;
+      col1++;
+    }
+    else{
+      // 3byte unicode is 2width in many case. e.g. kanji
+      if(isUni3(ed_data[row][col]))
+        col1 = col1 + 2;
+      else
+        col1++;
+
+      col = col + increase_pos(row,col);
+    }
 	}
     }
   if (row < limit)
     {
       pos.row = row;
-      pos.col = col;
+      pos.col = col1;
     }
   else
     {

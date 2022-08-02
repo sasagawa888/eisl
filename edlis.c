@@ -169,7 +169,7 @@ main (int argc, char *argv[])
 	  if (c == EOL)
 	    {
 	      ed_row++;
-	      ed_col = 0;
+	      ed_col = ed_col1 = 0;
 	      if (ed_row >= ROW_SIZE)
 		printf ("row %d over max-row", ed_row);
 	    }
@@ -191,7 +191,7 @@ main (int argc, char *argv[])
   ESCCLS ();
   display_command (fname);
   display_screen ();
-  ed_row = ed_col = 0;
+  ed_row = ed_col = ed_col1 = 0;
   edit_screen (fname);
   CHECK (endwin);
   if (system ("stty ixon") == -1)
@@ -403,7 +403,7 @@ up ()
     {
       if (ed_col >= COLS)
 	{
-	  ed_col = COLS - 1 - LEFT_MARGIN;
+	  ed_col = ed_col1 = COLS - 1 - LEFT_MARGIN;
 	  ESCCLSLA ();
 	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
 	  display_line (ed_row);
@@ -465,7 +465,7 @@ down ()
     {
       if (ed_col >= COLS)
 	{
-	  ed_col = COLS - 1 - LEFT_MARGIN;
+	  ed_col = ed_col1 = COLS - 1 - LEFT_MARGIN;
 	  ESCCLSLA ();
 	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
 	  display_line (ed_row);
@@ -708,7 +708,7 @@ edit_loop (char *fname)
       del ();
       break;
     case CTRL ('A'):
-      ed_col = 0;
+      ed_col = ed_col1 = 0;
       ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
       break;
     case CTRL ('E'):
@@ -717,7 +717,7 @@ edit_loop (char *fname)
 	  if (ed_data[ed_row][i] == NUL)
 	    break;
 	}
-      ed_col = i - 1;
+      ed_col = ed_col1 = i - 1;
       ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
       modify_flag = true;
       break;
@@ -858,7 +858,7 @@ edit_loop (char *fname)
 		  if (c == EOL)
 		    {
 		      ed_row++;
-		      ed_col = 0;
+		      ed_col = ed_col1 = 0;
 		      if (ed_row >= ROW_SIZE - 1)
 			{
 			  CHECK (printw, "row %d over max-row", ed_row);
@@ -1186,8 +1186,7 @@ edit_loop (char *fname)
 	  ed_start++;
 	  ed_row++;
 	  ed_end++;
-	  ed_col = 0;
-    ed_col1 = 0;
+	  ed_col = ed_col1 = 0;
 	  display_screen ();
 	  ESCMOVE (BOTTOM, LEFT_MARGIN);
 	}
@@ -1198,7 +1197,7 @@ edit_loop (char *fname)
 	  ed_start++;
 	  ed_row++;
 	  ed_end++;
-	  ed_col = 0;
+	  ed_col = ed_col1 = 0;
 	  display_screen ();
 	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
 	}
@@ -1208,13 +1207,13 @@ edit_loop (char *fname)
 	  insertrow ();
 	  ed_row++;
 	  ed_end++;
-	  ed_col = 0;
+	  ed_col = ed_col1 = 0;
 	  display_screen ();
 	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
 	}
       if (ed_indent == 1)
 	{
-	  ed_col = 0;
+	  ed_col = ed_col1 = 0;
 	  remove_headspace (ed_row);
 	  softtabs (i);
 	  display_screen ();
@@ -1225,7 +1224,7 @@ edit_loop (char *fname)
     case TAB:
       if (ed_tab == 0)
 	{
-	  ed_col = 0;
+	  ed_col = ed_col1 = 0;
 	  i = calc_tabs ();
 	  remove_headspace (ed_row);
 	  softtabs (i);
@@ -2116,6 +2115,7 @@ softtabs (int n)
       insertcol ();
       ed_data[ed_row][ed_col] = ' ';
       ed_col++;
+      ed_col1++;
       n--;
     }
 }

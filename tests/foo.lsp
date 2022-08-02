@@ -1,5 +1,10 @@
 ;; Edlis unicode test
 
-(defun foo (x) (char= x #\())
-(defun bar (x) (string= "Mr.Poldy ありがとう"))
+(defun bar (x) 
+    (cond ((string= x "thank you") 'english)
+          ((string= x "ありがとう") 'japan)
+          ((string= x "Дякую") 'ukraine)
+          ((string= x "رەھمەت سىزگە") 'wiggle)))
+
+
 

@@ -261,6 +261,30 @@ decrease_terminal(int row, int col){
     return(1);
 }
 
+// re calculate buffer position and terminal position at row
+void
+recalculate_col(int row, int oldcol1){
+  int newcol,newcol1;
+
+  newcol = 0;
+  newcol1 = 0;
+  while(newcol < COL_SIZE){
+    if(newcol1 == oldcol1){
+      break;
+    }
+    else if(ed_data[row][newcol] == EOL){
+      break;
+    }
+    else if(ed_data[row][newcol] == 0){
+      break;
+    }
+    newcol1 = newcol1 + increase_terminal(row,newcol);
+    newcol = newcol + increase_buffer(row,newcol);
+  }
+  ed_col = newcol;
+  ed_col1 = newcol1;
+} 
+
 
 void
 right ()
@@ -355,14 +379,12 @@ up ()
       ed_start = ed_start - MIDDLE;
       if (ed_row < 0)
 	ed_row = ed_start = 0;
-      i = findeol (ed_row);
-      if (ed_col >= i)
-	ed_col = i;
+      recalculate_col(ed_row,ed_col1);
       display_screen ();
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (2, ed_col + LEFT_MARGIN);
+      ESCMOVE (2, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_clip_start != -1)
     {
@@ -371,14 +393,12 @@ up ()
       else
 	ed_clip_end--;
       ed_row--;
-      i = findeol (ed_row);
-      if (ed_col >= i)
-	ed_col = i;
+      recalculate_col(ed_row,ed_col1);
       display_screen ();
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else
     {
@@ -390,13 +410,11 @@ up ()
 	  display_line (ed_row);
 	}
       ed_row--;
-      i = findeol (ed_row);
-      if (ed_col >= i)
-	ed_col = i;
+      recalculate_col(ed_row,ed_col1);
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
 }
 
@@ -428,10 +446,8 @@ down ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      i = findeol (ed_row);
-      if (ed_col >= i)
-	ed_col = i;
-      ESCMOVE (BOTTOM, ed_col + LEFT_MARGIN);
+      recalculate_col(ed_row,ed_col1);
+      ESCMOVE (BOTTOM, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_clip_start != -1)
     {
@@ -440,14 +456,12 @@ down ()
       else
 	ed_clip_start++;
       ed_row++;
-      i = findeol (ed_row);
-      if (ed_col >= i)
-	ed_col = i;
+      recalculate_col(ed_row,ed_col1);
       display_screen ();
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else
     {
@@ -459,13 +473,11 @@ down ()
 	  display_line (ed_row);
 	}
       ed_row++;
-      i = findeol (ed_row);
-      if (ed_col >= i)
-	ed_col = i;
+      recalculate_col(ed_row,ed_col1);
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
 }
 

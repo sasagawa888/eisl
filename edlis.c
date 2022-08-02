@@ -1178,6 +1178,7 @@ edit_loop (char *fname)
     case CTRL ('O'):
       if (ed_indent == 1)
 	i = calc_tabs ();
+    
       if (ed_row == ed_start + ed_scroll)
 	{
 	  restore_paren ();
@@ -1186,6 +1187,7 @@ edit_loop (char *fname)
 	  ed_row++;
 	  ed_end++;
 	  ed_col = 0;
+    ed_col1 = 0;
 	  display_screen ();
 	  ESCMOVE (BOTTOM, LEFT_MARGIN);
 	}
@@ -1766,9 +1768,10 @@ insertrow ()
 void
 deleterow ()
 {
-  int i, j, k, l;
+  int i, j, k, l, l1;
 
   k = l = findeol (ed_row - 1);
+  l1 = findeol1(ed_row - 1);
   for (j = 0; j < COL_SIZE; j++)
     {
       ed_data[ed_row - 1][k] = ed_data[ed_row][j];
@@ -1787,6 +1790,7 @@ deleterow ()
   ed_row--;
   ed_end--;
   ed_col = l;
+  ed_col1 = l1;
 }
 
 /*

@@ -34,6 +34,7 @@ void insertcol(void);
 void insertrow(void);
 void deleterow(void);
 int findeol(int row);
+int findeol1(int row);
 struct position findlparen(int bias);
 struct position findrparen(int bias);
 void reset_paren(void);

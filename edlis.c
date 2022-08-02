@@ -563,8 +563,9 @@ home ()
 {
   ed_row = 0;
   ed_start = 0;
+  recalculate_col(ed_row,ed_col);
   display_screen ();
-  ESCMOVE (2, ed_col + LEFT_MARGIN);
+  ESCMOVE (2, ed_col1 + LEFT_MARGIN);
 }
 
 void
@@ -573,8 +574,9 @@ end ()
   ed_row = ed_end;
   if (ed_end > ed_scroll)
     ed_start = ed_row - MIDDLE;
+  recalculate_col(ed_row,ed_col);
   display_screen ();
-  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 void
@@ -586,8 +588,9 @@ pagedn ()
   if (ed_start > ed_end)
     ed_start = ed_end - ed_scroll;
   ed_row = ed_start;
+  recalculate_col(ed_row,ed_col);
   display_screen ();
-  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 

@@ -1864,7 +1864,7 @@ findlparen (int bias)
   nest = 0;
   limit = ed_row - ed_scroll;
   if (limit < 0)
-    limit = 1;
+    limit = 0;
 
   while (row >= limit)
     {
@@ -1887,8 +1887,11 @@ findlparen (int bias)
       if (col == 0)
 	{
 	  row--;
-	  col = findeol (row);
-    col1 = findeol1 (row);
+    if(row > 0){
+	    col = findeol (row);
+      col1 = findeol1 (row);
+    }
+
 	}
       else
 	{

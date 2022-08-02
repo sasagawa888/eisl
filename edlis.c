@@ -1321,9 +1321,9 @@ display_unicode(int line, int col)
   addwstr(wch);
 }
 
-// calculate position to increase according to UTF8 unicode
+// calculate buffer position to increase according to UTF8 unicode
 int 
-increase_pos (int row, int col){
+increase_buffer (int row, int col){
   int uc;
 
   uc = ed_data[row][col];
@@ -1343,25 +1343,42 @@ increase_pos (int row, int col){
     return(-1);
 }
 
+// calculate terminal position to increase according to UTF8 unicode
+int
+increase_terminal(int row, int col){
+  if(isUni3(ed_data[row][col]))
+    return(2);
+  else
+    return(1);
+}
 
-// calculate position to decrease according to UTF8 unicode
+// calculate buffer position to decrease according to UTF8 unicode
 int 
-decrease_pos (int row, int col){
+decrease_buffer (int row, int col){
   
   if(isUni1(ed_data[row][col]))
-    return(0);
-  else if(isUni2(ed_data[row][col-1]))
     return(1);
-  else if(isUni3(ed_data[row][col-2]))
+  else if(isUni2(ed_data[row][col-1]))
     return(2);
-  else if(isUni4(ed_data[row][col-3]))
+  else if(isUni3(ed_data[row][col-2]))
     return(3);
-  else if(isUni5(ed_data[row][col-4]))
+  else if(isUni4(ed_data[row][col-3]))
     return(4);
-  else if(isUni6(ed_data[row][col-5]))
+  else if(isUni5(ed_data[row][col-4]))
     return(5);
+  else if(isUni6(ed_data[row][col-5]))
+    return(6);
   else
     return(-1);
+}
+
+// calculate terminal position to decrease according to UTF8 unicode
+int 
+decrease_terminal(int row, int col){
+  if(isUni3(ed_data[row][col-2]))
+    return(2);
+  else
+    return(1);
 }
 
 
@@ -1475,7 +1492,7 @@ display_line (int line)
       else{
         display_unicode(line,col);
       }
-      col = col + increase_pos(line,col);
+      col = col + increase_buffer(line,col);
       
       
 		  if (ed_data[line][col - 1] == '"')
@@ -1680,7 +1697,7 @@ findeol1 (int row)
       else
         col1++;
 
-      col = col + increase_pos(row,col);
+      col = col + increase_buffer(row,col);
     }
   }
 
@@ -1724,21 +1741,8 @@ findlparen (int bias)
         col--;
         col1--;
         while (ed_data[row][col] != '"' && col > 0){
-          //if(isUni1(ed_data[row][col])){
-	          col--;
-            col1--;
-          /*
-          }
-          else{
-            // 3byte unicode is 2width in many case. e.g. kanji
-            if(isUni3(ed_data[row][col-2]))
-              col1 = col1 - 2;
-            else
-              col1--;
-
-            col = col - decrease_pos(row,col);
-          }
-        */
+            col1 = col1 - decrease_terminal(row,col);
+            col = col - decrease_buffer(row,col);
         }
       }
       
@@ -1751,8 +1755,8 @@ findlparen (int bias)
 	}
       else
 	{
-	  col--;
-    col1--;
+	   col1 = col1 - decrease_terminal(row,col);
+     col = col - decrease_buffer(row,col);
 	}
     }
   if (row >= limit)
@@ -1793,43 +1797,21 @@ findrparen (int bias)
         col++;
         col1++;
         while(ed_data[row][col] != '"' && ed_data[row][col] != EOL && ed_data[row][col] != 0){
-          if(isUni1(ed_data[row][col])){
-	          col++;
-            col1++;
-          }
-          else{
-            // 3byte unicode is 2width in many case. e.g. kanji
-            if(isUni3(ed_data[row][col]))
-              col1 = col1 + 2;
-            else
-              col1++;
-
-            col = col + increase_pos(row,col);
-          }
+            col1 = col1 + increase_terminal(row,col);
+            col = col + increase_buffer(row,col);
         }
       }
 
 
-      if (col == findeol (row))
+      if (ed_data[row][col] == EOL)
 	{
 	  row++;
 	  col = col1 = 0;
 	}
       else
 	{
-    if(isUni1(ed_data[row][col])){
-	    col++;
-      col1++;
-    }
-    else{
-      // 3byte unicode is 2width in many case. e.g. kanji
-      if(isUni3(ed_data[row][col]))
-        col1 = col1 + 2;
-      else
-        col1++;
-
-      col = col + increase_pos(row,col);
-    }
+      col1 = col1 + increase_terminal(row,col);
+      col = col + increase_buffer(row,col);
 	}
     }
   if (row < limit)

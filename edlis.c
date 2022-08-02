@@ -498,9 +498,9 @@ backspace_key ()
       if (ed_row < ed_start + ed_scroll)
 	{
 	  if (ed_col <= COLS - 1 - LEFT_MARGIN)
-	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  else
-	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
 	}
       else
 	{
@@ -518,9 +518,9 @@ backspace_key ()
       backspace ();
       display_screen ();
       if (ed_row < ed_start + ed_scroll)
-	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
       else
-	ESCMOVE (BOTTOM, ed_col - COLS + LEFT_MARGIN);
+	ESCMOVE (BOTTOM, ed_col1 - COLS + LEFT_MARGIN);
     }
   else
     {
@@ -530,7 +530,7 @@ backspace_key ()
       backspace ();
       display_screen ();
       if (ed_row < ed_start + ed_scroll)
-	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       else
 	ESCMOVE (BOTTOM, ed_col + LEFT_MARGIN);
     }
@@ -545,7 +545,7 @@ del ()
   ed_col++;
   backspace ();
   display_screen ();
-  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
   modify_flag = true;
 }
 
@@ -657,6 +657,7 @@ edit_loop (char *fname)
   char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
   struct position pos;
   FILE *port;
+  static int skip = 0;
 
   CHECK (refresh);
   c = getch ();
@@ -1253,7 +1254,34 @@ edit_loop (char *fname)
 	      emphasis_lparen ();
 	      emphasis_rparen ();
 	      ed_col++;
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+        if(isUni1(c) && skip == 0){
+          ed_col1++;
+          skip = 0;
+        }
+        else if(isUni2(c) && skip == 0){
+          ed_col1++;
+          skip = 1;
+        }
+        else if(isUni4(c) && skip == 0){
+          ed_col1++;
+          skip = 3;
+        }
+        else if(isUni5(c) && skip == 0){
+          ed_col1++;
+          skip = 4;
+        }
+        else if(isUni6(c) && skip == 0){
+          ed_col1++;
+          skip = 5;
+        }
+        else if(isUni3(c) && skip == 0){
+          ed_col1 = ed_col1 + 2;
+          skip = 2;
+        }
+
+        if(skip > 0)
+          skip--;
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
 	    }
 	  else
 	    {
@@ -1265,6 +1293,33 @@ edit_loop (char *fname)
 	      emphasis_lparen ();
 	      emphasis_rparen ();
 	      ed_col++;
+        if(isUni1(c) && skip == 0){
+          ed_col1++;
+          skip = 0;
+        }
+        else if(isUni2(c) && skip == 0){
+          ed_col1++;
+          skip = 1;
+        }
+        else if(isUni4(c) && skip == 0){
+          ed_col1++;
+          skip = 3;
+        }
+        else if(isUni5(c) && skip == 0){
+          ed_col1++;
+          skip = 4;
+        }
+        else if(isUni6(c) && skip == 0){
+          ed_col1++;
+          skip = 5;
+        }
+        else if(isUni3(c) && skip == 0){
+          ed_col1 = ed_col1 + 2;
+          skip = 2;
+        }
+
+        if(skip > 0)
+          skip--;
 	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
 	    }
 	}
@@ -1280,6 +1335,33 @@ edit_loop (char *fname)
 	      CHECK (addch, c);
 	      emphasis_lparen ();
 	      ed_col++;
+        if(isUni1(c) && skip == 0){
+          ed_col1++;
+          skip = 0;
+        }
+        else if(isUni2(c) && skip == 0){
+          ed_col1++;
+          skip = 1;
+        }
+        else if(isUni4(c) && skip == 0){
+          ed_col1++;
+          skip = 3;
+        }
+        else if(isUni5(c) && skip == 0){
+          ed_col1++;
+          skip = 4;
+        }
+        else if(isUni6(c) && skip == 0){
+          ed_col1++;
+          skip = 5;
+        }
+        else if(isUni3(c) && skip == 0){
+          ed_col1 = ed_col1 + 2;
+          skip = 2;
+        }
+
+        if(skip > 0)
+          skip--;
 	    }
 	  else
 	    {
@@ -1287,6 +1369,33 @@ edit_loop (char *fname)
 	      CHECK (addch, c);
 	      emphasis_lparen ();
 	      ed_col++;
+        if(isUni1(c) && skip == 0){
+          ed_col1++;
+          skip = 0;
+        }
+        else if(isUni2(c) && skip == 0){
+          ed_col1++;
+          skip = 1;
+        }
+        else if(isUni4(c) && skip == 0){
+          ed_col1++;
+          skip = 3;
+        }
+        else if(isUni5(c) && skip == 0){
+          ed_col1++;
+          skip = 4;
+        }
+        else if(isUni6(c) && skip == 0){
+          ed_col1++;
+          skip = 5;
+        }
+        else if(isUni3(c) && skip == 0){
+          ed_col1 = ed_col1 + 2;
+          skip = 2;
+        }
+
+        if(skip > 0)
+          skip--;
 	    }
 	}
       modify_flag = true;
@@ -1604,7 +1713,7 @@ setcolor (enum Color n)
 void
 backspace ()
 {
-  int i;
+  int i,size;
 
   if (ed_data[ed_row][ed_col - 1] == ')')
     {
@@ -1612,12 +1721,14 @@ backspace ()
       ed_rparen_row = -1;
     }
   i = ed_col;
+  size = decrease_buffer(ed_row,ed_col-1);
+  ed_col1 = ed_col1 - decrease_terminal(ed_row,ed_col-1);
+  ed_col = ed_col - decrease_buffer(ed_row,ed_col-1);
   while (i < COL_SIZE)
     {
-      ed_data[ed_row][i - 1] = ed_data[ed_row][i];
+      ed_data[ed_row][i - size] = ed_data[ed_row][i];
       i++;
     }
-  ed_col--;
 }
 
 void

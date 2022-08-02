@@ -358,7 +358,6 @@ left ()
 void
 up ()
 {
-  int i;
 
   if (ed_row == 0)
     return;
@@ -421,7 +420,6 @@ up ()
 void
 down ()
 {
-  int i;
 
   if (ed_row == ed_end)
     return;

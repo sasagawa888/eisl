@@ -1719,8 +1719,10 @@ findlparen (int bias)
   struct position pos;
 
   row = ed_row;
-  if (ed_col != 0)
-    col = col1 = ed_col - bias;
+  if (ed_col != 0){
+    col = ed_col - bias;
+    col1 = ed_col1 - bias;
+  }
   else
     {
       row--;
@@ -1787,7 +1789,8 @@ findrparen (int bias)
   struct position pos;
 
   row = ed_row;
-  col = col1 = ed_col + bias;
+  col = ed_col + bias;
+  col1 = ed_col1 + bias;
   nest = 0;
   limit = ed_row + ed_scroll;
   if (limit > ed_end)
@@ -1882,7 +1885,7 @@ emphasis_lparen ()
     {
       if (pos.row != -1)
 	{
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  ESCBCYAN ();
 	  CHECK (addch, ')');
 	  ESCBORG ();
@@ -1895,16 +1898,16 @@ emphasis_lparen ()
 	  ed_lparen_row = pos.row;
 	  ed_lparen_col = pos.col;
 	  ed_rparen_row = ed_row;
-	  ed_rparen_col = ed_col;
+	  ed_rparen_col = ed_col1;
 	  ESCBORG ();
 	}
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_col >= COLS && pos.col >= COLS)
     {
       if (pos.row != -1)
 	{
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
 	  ESCBCYAN ();
 	  CHECK (addch, ')');
 	  ESCBORG ();
@@ -1917,10 +1920,10 @@ emphasis_lparen ()
 	  ed_lparen_row = pos.row;
 	  ed_lparen_col = pos.col;
 	  ed_rparen_row = ed_row;
-	  ed_rparen_col = ed_col;
+	  ed_rparen_col = ed_col1;
 	  ESCBORG ();
 	}
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
     }
 }
 
@@ -1937,7 +1940,7 @@ emphasis_rparen ()
     {
       if (pos.row != -1)
 	{
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  ESCBCYAN ();
 	  CHECK (addch, '(');
 	  ESCBORG ();
@@ -1950,16 +1953,16 @@ emphasis_rparen ()
 	  ed_rparen_row = pos.row;
 	  ed_rparen_col = pos.col;
 	  ed_lparen_row = ed_row;
-	  ed_lparen_col = ed_col;
+	  ed_lparen_col = ed_col1;
 	  ESCBORG ();
 	}
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_col >= COLS && pos.col >= COLS)
     {
       if (pos.row != -1)
 	{
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
 	  ESCBCYAN ();
 	  CHECK (addch, '(');
 	  ESCBORG ();
@@ -1972,10 +1975,10 @@ emphasis_rparen ()
 	  ed_rparen_row = pos.row;
 	  ed_rparen_col = pos.col;
 	  ed_lparen_row = ed_row;
-	  ed_lparen_col = ed_col;
+	  ed_lparen_col = ed_col1;
 	  ESCBORG ();
 	}
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - COLS + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
     }
 }
 

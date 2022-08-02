@@ -249,7 +249,7 @@ decrease_buffer (int row, int col){
   else if(isUni6(ed_data[row][col-5]))
     return(6);
   else
-    return(-1);
+    return(1);
 }
 
 // calculate terminal position to decrease according to UTF8 unicode
@@ -1217,7 +1217,7 @@ edit_loop (char *fname)
 	  remove_headspace (ed_row);
 	  softtabs (i);
 	  display_screen ();
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	}
       modify_flag = true;
       break;
@@ -1234,7 +1234,7 @@ edit_loop (char *fname)
 	  softtabs (ed_tab);
 	}
       display_screen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       modify_flag = true;
       break;
     default:
@@ -1319,7 +1319,7 @@ edit_loop (char *fname)
 
         if(skip > 0)
           skip--;
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    }
 	}
       else

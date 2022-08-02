@@ -2204,6 +2204,9 @@ calc_tabs ()
 {
   struct position pos;
 
+  if(ed_row == 0 && ed_col == 0)
+    return(0);
+
   pos = findlparen (0);
 
   if (ed_data[ed_row][ed_col] == '(')

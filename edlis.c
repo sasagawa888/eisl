@@ -200,6 +200,68 @@ main (int argc, char *argv[])
     }
 }
 
+
+// calculate buffer position to increase according to UTF8 unicode
+int 
+increase_buffer (int row, int col){
+  int uc;
+
+  uc = ed_data[row][col];
+  if(isUni1(uc))
+    return(1);
+  else if(isUni2(uc))
+    return(2);
+  else if(isUni3(uc))
+    return(3);
+  else if(isUni4(uc))
+    return(4);
+  else if(isUni5(uc))
+    return(5);
+  else if(isUni6(uc))
+    return(6);
+  else
+    return(-1);
+}
+
+// calculate terminal position to increase according to UTF8 unicode
+int
+increase_terminal(int row, int col){
+  if(isUni3(ed_data[row][col]))
+    return(2);
+  else
+    return(1);
+}
+
+// calculate buffer position to decrease according to UTF8 unicode
+int 
+decrease_buffer (int row, int col){
+  
+  if(isUni1(ed_data[row][col]))
+    return(1);
+  else if(isUni2(ed_data[row][col-1]))
+    return(2);
+  else if(isUni3(ed_data[row][col-2]))
+    return(3);
+  else if(isUni4(ed_data[row][col-3]))
+    return(4);
+  else if(isUni5(ed_data[row][col-4]))
+    return(5);
+  else if(isUni6(ed_data[row][col-5]))
+    return(6);
+  else
+    return(-1);
+}
+
+// calculate terminal position to decrease according to UTF8 unicode
+int 
+decrease_terminal(int row, int col){
+  if(isUni3(ed_data[row][col-2]))
+    return(2);
+  else
+    return(1);
+}
+
+
 void
 right ()
 {
@@ -207,13 +269,16 @@ right ()
   turn = COLS - LEFT_MARGIN;
   if (ed_col == findeol (ed_row) || ed_col >= COL_SIZE)
     return;
-  ed_col++;
+
+  ed_col1 = ed_col1 + increase_terminal(ed_row,ed_col);
+  ed_col = ed_col + increase_buffer(ed_row,ed_col);  
+
   if (ed_col < turn)
     {
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else
     { 
@@ -227,9 +292,10 @@ right ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - turn + LEFT_MARGIN);   
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - turn + LEFT_MARGIN);   
     }
 }
+
 
 void
 left ()
@@ -238,7 +304,10 @@ left ()
   turn = COLS - LEFT_MARGIN;
   if (ed_col == 0)
     return;
-  ed_col--;
+
+  ed_col1 = ed_col1 - decrease_terminal(ed_row,ed_col-1);
+  ed_col = ed_col - decrease_buffer(ed_row,ed_col-1);
+
   if (ed_col < turn)
     {
       if (ed_col == turn - 1)
@@ -251,14 +320,14 @@ left ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_col >= turn)
     {
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col - turn + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - turn + LEFT_MARGIN);
     }
 }
 
@@ -1320,67 +1389,6 @@ display_unicode(int line, int col)
   mbstowcs( wch, mb, 10 );
   addwstr(wch);
 }
-
-// calculate buffer position to increase according to UTF8 unicode
-int 
-increase_buffer (int row, int col){
-  int uc;
-
-  uc = ed_data[row][col];
-  if(isUni1(uc))
-    return(1);
-  else if(isUni2(uc))
-    return(2);
-  else if(isUni3(uc))
-    return(3);
-  else if(isUni4(uc))
-    return(4);
-  else if(isUni5(uc))
-    return(5);
-  else if(isUni6(uc))
-    return(6);
-  else
-    return(-1);
-}
-
-// calculate terminal position to increase according to UTF8 unicode
-int
-increase_terminal(int row, int col){
-  if(isUni3(ed_data[row][col]))
-    return(2);
-  else
-    return(1);
-}
-
-// calculate buffer position to decrease according to UTF8 unicode
-int 
-decrease_buffer (int row, int col){
-  
-  if(isUni1(ed_data[row][col]))
-    return(1);
-  else if(isUni2(ed_data[row][col-1]))
-    return(2);
-  else if(isUni3(ed_data[row][col-2]))
-    return(3);
-  else if(isUni4(ed_data[row][col-3]))
-    return(4);
-  else if(isUni5(ed_data[row][col-4]))
-    return(5);
-  else if(isUni6(ed_data[row][col-5]))
-    return(6);
-  else
-    return(-1);
-}
-
-// calculate terminal position to decrease according to UTF8 unicode
-int 
-decrease_terminal(int row, int col){
-  if(isUni3(ed_data[row][col-2]))
-    return(2);
-  else
-    return(1);
-}
-
 
 
 void

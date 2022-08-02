@@ -1861,7 +1861,7 @@ findlparen (int bias)
   nest = 0;
   limit = ed_row - ed_scroll;
   if (limit < 0)
-    limit = 0;
+    limit = 1;
 
   while (row >= limit)
     {

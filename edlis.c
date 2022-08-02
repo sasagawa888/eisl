@@ -642,7 +642,7 @@ getname ()
 void
 edit_screen (char *fname)
 {
-  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
   bool quit = edit_loop (fname);
   while (!quit)
     {
@@ -712,7 +712,7 @@ edit_loop (char *fname)
       break;
     case CTRL ('A'):
       ed_col = ed_col1 = 0;
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       break;
     case CTRL ('E'):
       for (i = 0; i < COL_SIZE; i++)
@@ -721,7 +721,7 @@ edit_loop (char *fname)
 	    break;
 	}
       ed_col = ed_col1 = i - 1;
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       modify_flag = true;
       break;
     case CTRL ('K'):
@@ -732,7 +732,7 @@ edit_loop (char *fname)
       ed_clip_start = ed_clip_end = -1;
       restore_paren ();
       display_screen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       modify_flag = true;
       break;
     case CTRL ('W'):
@@ -749,7 +749,7 @@ edit_loop (char *fname)
       paste_selection ();
       restore_paren ();
       display_screen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       modify_flag = true;
       break;
     case CTRL ('X'):
@@ -799,7 +799,7 @@ edit_loop (char *fname)
 			case CTRL('G'):
 			  clear_status ();
 			  ESCRST ();
-			  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+			  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
         ctrl_c = 0;
         return false;
 			  break;
@@ -818,7 +818,7 @@ edit_loop (char *fname)
 	      ESCREV ();
 	      CHECK (addstr, "saved");
 	      ESCRST ();
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	      modify_flag = false;
 	      break;
 	    }
@@ -834,7 +834,7 @@ edit_loop (char *fname)
 	      CHECK (addstr, "saved ");
 	      CHECK (addstr, str1);
 	      ESCRST ();
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	      modify_flag = false;
 	      break;
 	    }
@@ -851,7 +851,7 @@ edit_loop (char *fname)
 		  CHECK (addstr, str1);
 		  CHECK (addstr, " doesn't exist");
 		  ESCRST ();
-		  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+		  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 		  break;
 		}
 	      c = fgetc (port);
@@ -910,7 +910,7 @@ edit_loop (char *fname)
 	  CHECK (addstr, "can't find ");
 	  CHECK (addstr, str1);
 	  ESCRST ();
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  break;
 	}
       ed_row = pos.row;
@@ -921,7 +921,7 @@ edit_loop (char *fname)
 	  ed_start = 0;
 	}
       display_screen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       break;
     case CTRL ('R'):
       clear_status ();
@@ -936,7 +936,7 @@ edit_loop (char *fname)
 	  CHECK (addstr, "can't find ");
 	  CHECK (addstr, str1);
 	  ESCRST ();
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  break;
 	}
       ed_row = pos.row;
@@ -947,7 +947,7 @@ edit_loop (char *fname)
 	  ed_start = 0;
 	}
       display_screen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       break;
 
     case CTRL ('T'):
@@ -971,7 +971,7 @@ edit_loop (char *fname)
 	      ed_start = 0;
 	    }
 	  display_screen ();
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  ESCREV ();
 	  CHECK (addstr, str1);
 	  clear_status ();
@@ -1007,7 +1007,7 @@ edit_loop (char *fname)
       CHECK (addstr, "can't find ");
       CHECK (addstr, str1);
       ESCRST ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       break;
     case ESC:
       ESCMOVE (ed_footer, 1);
@@ -1030,7 +1030,7 @@ edit_loop (char *fname)
     ed_clip_start = ed_clip_end = -1;
     restore_paren ();
     display_screen ();
-    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     modify_flag = true;
     break;
 	case '<':
@@ -1069,9 +1069,9 @@ edit_loop (char *fname)
 	  else if (ed_candidate_pt == 1)
 	    {
 	      replace_fragment (ed_candidate[0]);
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, 0);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
 	      display_line (ed_row);
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    }
 	  else
 	    {
@@ -1132,7 +1132,7 @@ edit_loop (char *fname)
 	      if (c != ESC)
 		replace_fragment (ed_candidate[i + k]);
 	      display_screen ();
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    }
 	  return false;
 	case CTRL ('G'):

@@ -201,6 +201,61 @@ main (int argc, char *argv[])
 }
 
 
+// transform from UTF-8 to unicode
+int
+utf8_to_ucs4 (int row, int col)
+{
+  int x, x1, x2, x3, res;
+  unsigned char uc;
+
+  uc = (unsigned char) ed_data[row][col];
+  if (uc <= 0x7f)
+    {
+      x = (int) uc;
+      return (x);
+    }
+  else if (uc >= 0xc0 && uc <= 0xdf)
+    {
+      x = (int) (UTF2MSK1 & uc);
+      x = x << 6;
+      uc = (unsigned char) ed_data[row][col-1];
+      x1 = (int) (UTFOMSKO & uc);
+      res = x | x1;
+      return (res);
+    }
+  else if (uc >= 0xe0 && uc <= 0xef)
+    {
+      x = (int) (UTF3MSK1 & uc);
+      x = x << 12;
+      uc = (unsigned char) ed_data[row][col-1];
+      x1 = (int) (UTFOMSKO & uc);
+      x1 = x1 << 6;
+      uc = (unsigned char) ed_data[row][col-1];
+      x2 = (int) (UTFOMSKO & uc);
+      res = x | x1 | x2;
+      return (res);
+    }
+  else if (uc >= 0xf0 && uc <= 0xf7)
+    {
+      x = (int) (UTF4MSK1 & uc);
+      x = x << 18;
+      uc = (unsigned char) ed_data[row][col-1];
+      x1 = (int) (UTFOMSKO & uc);
+      x1 = x1 << 12;
+      uc = (unsigned char) ed_data[row][col-2];
+      x2 = (int) (UTFOMSKO & uc);
+      x2 = x2 << 6;
+      uc = (unsigned char) ed_data[row][col-3];
+      x3 = (int) (UTFOMSKO & uc);
+      res = x | x1 | x2 | x3;
+      return (res);
+    }
+  else
+    return (-1);
+}
+
+
+
 // calculate buffer position to increase according to UTF8 unicode
 int 
 increase_buffer (int row, int col){
@@ -226,8 +281,16 @@ increase_buffer (int row, int col){
 // calculate terminal position to increase according to UTF8 unicode
 int
 increase_terminal(int row, int col){
-  if(isUni3(ed_data[row][col]))
-    return(2);
+  int unicode;
+
+  if(isUni3(ed_data[row][col])){
+    unicode = utf8_to_ucs4(row,col);
+    // tai
+    if(unicode >= 0x0e00 && unicode <= 0x0e7f)
+      return(1);
+    else
+      return(2);
+  }
   else
     return(1);
 }
@@ -255,8 +318,16 @@ decrease_buffer (int row, int col){
 // calculate terminal position to decrease according to UTF8 unicode
 int 
 decrease_terminal(int row, int col){
-  if(isUni3(ed_data[row][col-2]))
-    return(2);
+  int unicode;
+
+  if(isUni3(ed_data[row][col-2])){
+    unicode = utf8_to_ucs4(row,col);
+    //tai
+    if(unicode >= 0x0e00 && unicode <= 0x0e7f)
+      return(1);
+    else
+      return(2);
+  }
   else
     return(1);
 }

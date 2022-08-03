@@ -1,5 +1,3 @@
-"ขอขอบคุณ"
-
 ;; Edlis unicode test
 ;; error -tai -arabian -vietnam -hindy -tamil -nepal
 

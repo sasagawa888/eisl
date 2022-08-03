@@ -218,7 +218,7 @@ utf8_to_ucs4 (int row, int col)
     {
       x = (int) (UTF2MSK1 & uc);
       x = x << 6;
-      uc = (unsigned char) ed_data[row][col-1];
+      uc = (unsigned char) ed_data[row][col+1];
       x1 = (int) (UTFOMSKO & uc);
       res = x | x1;
       return (res);
@@ -227,10 +227,10 @@ utf8_to_ucs4 (int row, int col)
     {
       x = (int) (UTF3MSK1 & uc);
       x = x << 12;
-      uc = (unsigned char) ed_data[row][col-1];
+      uc = (unsigned char) ed_data[row][col+1];
       x1 = (int) (UTFOMSKO & uc);
       x1 = x1 << 6;
-      uc = (unsigned char) ed_data[row][col-2];
+      uc = (unsigned char) ed_data[row][col+2];
       x2 = (int) (UTFOMSKO & uc);
       res = x | x1 | x2;
       return (res);
@@ -239,13 +239,13 @@ utf8_to_ucs4 (int row, int col)
     {
       x = (int) (UTF4MSK1 & uc);
       x = x << 18;
-      uc = (unsigned char) ed_data[row][col-1];
+      uc = (unsigned char) ed_data[row][col+1];
       x1 = (int) (UTFOMSKO & uc);
       x1 = x1 << 12;
-      uc = (unsigned char) ed_data[row][col-2];
+      uc = (unsigned char) ed_data[row][col+2];
       x2 = (int) (UTFOMSKO & uc);
       x2 = x2 << 6;
-      uc = (unsigned char) ed_data[row][col-3];
+      uc = (unsigned char) ed_data[row][col+3];
       x3 = (int) (UTFOMSKO & uc);
       res = x | x1 | x2 | x3;
       return (res);
@@ -282,10 +282,10 @@ increase_buffer (int row, int col){
 int
 increase_terminal(int row, int col){
   int unicode;
-
+ 
   if(isUni3(ed_data[row][col])){
-    unicode = utf8_to_ucs4(row,col);
-    //printf("%x ", unicode);
+     unicode = utf8_to_ucs4(row,col);
+     //printf("%x ", unicode);
     // tai
     if(unicode >= 0x0e00 && unicode <= 0x0e7f)
       return(1);

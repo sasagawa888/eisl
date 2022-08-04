@@ -285,9 +285,11 @@ increase_terminal(int row, int col){
  
   if(isUni3(ed_data[row][col])){
      unicode = utf8_to_ucs4(row,col);
-     //printf("%x ", unicode);
     // tai
     if(unicode >= 0x0e00 && unicode <= 0x0e7f)
+      return(1);
+    // arabian
+    else if(unicode >= 0x0600 && unicode <= 0x06ff)
       return(1);
     else
       return(2);
@@ -325,6 +327,9 @@ decrease_terminal(int row, int col){
     unicode = utf8_to_ucs4(row,col-2);
     //tai
     if(unicode >= 0x0e00 && unicode <= 0x0e7f)
+      return(1);
+    // arabian
+    else if(unicode >= 0x0600 && unicode <= 0x06ff)
       return(1);
     else
       return(2);

@@ -15,7 +15,8 @@
           ((string= x "Ευχαριστώ") 'greece)
           ((string= x "Děkuji") 'czechoslovak)
           ((string= x "Ačiū") 'lithuania)
-          ((string= x "ขอขอบคุณ") 1)
+          ((string= x "ขอขอบคุณ")'tai)
+          ((string= x "شكرًا لك") 'arabian)
           ((string= x "Баярлалаа") 'mongolia)
           ((string= x "Благодаря ти") 'bulgaria)))
 
@@ -24,6 +25,7 @@
           
           
      
+
 
 
 

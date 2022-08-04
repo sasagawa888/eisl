@@ -24,6 +24,7 @@
           ((string= x "Ačiū") 'lithuania)
           ((string= x "ขอขอบคุณ")'tai)
           ((string= x "شكرًا لك") 'arabian)
+          ((string= x "நன்றி") 'tamil)
           ((string= x "Баярлалаа") 'mongolia)
           ((string= x "Благодаря ти") 'bulgaria)))
 

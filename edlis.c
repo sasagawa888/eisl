@@ -270,10 +270,6 @@ increase_buffer (int row, int col){
     return(3);
   else if(isUni4(uc))
     return(4);
-  else if(isUni5(uc))
-    return(5);
-  else if(isUni6(uc))
-    return(6);
   else
     return(-1);
 }
@@ -310,10 +306,6 @@ decrease_buffer (int row, int col){
     return(3);
   else if(isUni4(ed_data[row][col-3]))
     return(4);
-  else if(isUni5(ed_data[row][col-4]))
-    return(5);
-  else if(isUni6(ed_data[row][col-5]))
-    return(6);
   else
     return(1);
 }
@@ -1345,14 +1337,6 @@ edit_loop (char *fname)
           ed_col1++;
           skip = 3;
         }
-        else if(isUni5(c) && skip == 0){
-          ed_col1++;
-          skip = 4;
-        }
-        else if(isUni6(c) && skip == 0){
-          ed_col1++;
-          skip = 5;
-        }
         else if(isUni3(c) && skip == 0){
           ed_col1 = ed_col1 + 2;
           skip = 2;
@@ -1383,14 +1367,6 @@ edit_loop (char *fname)
         else if(isUni4(c) && skip == 0){
           ed_col1++;
           skip = 3;
-        }
-        else if(isUni5(c) && skip == 0){
-          ed_col1++;
-          skip = 4;
-        }
-        else if(isUni6(c) && skip == 0){
-          ed_col1++;
-          skip = 5;
         }
         else if(isUni3(c) && skip == 0){
           ed_col1 = ed_col1 + 2;
@@ -1426,14 +1402,6 @@ edit_loop (char *fname)
           ed_col1++;
           skip = 3;
         }
-        else if(isUni5(c) && skip == 0){
-          ed_col1++;
-          skip = 4;
-        }
-        else if(isUni6(c) && skip == 0){
-          ed_col1++;
-          skip = 5;
-        }
         else if(isUni3(c) && skip == 0){
           ed_col1 = ed_col1 + 2;
           skip = 2;
@@ -1459,14 +1427,6 @@ edit_loop (char *fname)
         else if(isUni4(c) && skip == 0){
           ed_col1++;
           skip = 3;
-        }
-        else if(isUni5(c) && skip == 0){
-          ed_col1++;
-          skip = 4;
-        }
-        else if(isUni6(c) && skip == 0){
-          ed_col1++;
-          skip = 5;
         }
         else if(isUni3(c) && skip == 0){
           ed_col1 = ed_col1 + 2;
@@ -1568,24 +1528,7 @@ display_unicode(int line, int col)
     mb[3] = ed_data[line][col+3];
     mb[4] = 0;
   }
-  else if(isUni5(ed_data[line][col])){
-    mb[0] = ed_data[line][col];
-    mb[1] = ed_data[line][col+1];
-    mb[2] = ed_data[line][col+2];
-    mb[3] = ed_data[line][col+3];
-    mb[4] = ed_data[line][col+4];
-    mb[5] = 0;
-  }
-  else if(isUni6(ed_data[line][col])){
-    mb[0] = ed_data[line][col];
-    mb[1] = ed_data[line][col+1];
-    mb[2] = ed_data[line][col+2];
-    mb[3] = ed_data[line][col+3];
-    mb[4] = ed_data[line][col+4];
-    mb[5] = ed_data[line][col+5];
-    mb[6] = 0;
-  }
-
+  
   mbstowcs( wch, mb, 10 );
   addwstr(wch);
 }
@@ -1626,8 +1569,14 @@ display_line (int line)
 		  || (ed_col >= turn && col < COL_SIZE))
 		 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
 	    {
-	      CHECK (addch, ed_data[line][col]);
-	      col++;
+        if(isUni1(ed_data[line][col])){
+		      CHECK (addch, ed_data[line][col]);
+        }
+        else{
+          display_unicode(line,col);
+        }
+        col = col + increase_buffer(line,col);
+      
 	      if (ed_data[line][col - 2] == '|' &&
 		  ed_data[line][col - 1] == '#')
 		{
@@ -1717,8 +1666,14 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-		  CHECK (addch, ed_data[line][col]);
-		  col++;
+      if(isUni1(ed_data[line][col])){
+		    CHECK (addch, ed_data[line][col]);
+      }
+      else{
+        display_unicode(line,col);
+      }
+      col = col + increase_buffer(line,col);
+		 
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1770,8 +1725,14 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-		  CHECK (addch, ed_data[line][col]);
-		  col++;
+      if(isUni1(ed_data[line][col])){
+		    CHECK (addch, ed_data[line][col]);
+      }
+      else{
+        display_unicode(line,col);
+      }
+      col = col + increase_buffer(line,col);
+      
 		}
 	    }
 	}

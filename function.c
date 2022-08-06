@@ -17,6 +17,10 @@
 
 #define BININT_LEN 64
 
+#ifndef LINE_MAX
+#define LINE_MAX 2048
+#endif
+
 static void *hmod;
 
 void

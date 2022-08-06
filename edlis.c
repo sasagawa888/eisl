@@ -27,8 +27,8 @@ int ed_scroll;
 int ed_footer;
 int ed_middle;
 int ed_row;
-int ed_col;  //position of buffer
-int ed_col1; //position of terminal when include unicode ed_col1 is different from ed_col
+int ed_col;			//position of buffer
+int ed_col1;			//position of terminal when include unicode ed_col1 is different from ed_col
 int ed_start;
 int ed_end;
 bool ed_ins = true;
@@ -220,7 +220,7 @@ utf8_to_ucs4 (int row, int col)
     {
       x = (int) (UTF2MSK1 & uc);
       x = x << 6;
-      uc = (unsigned char) ed_data[row][col+1];
+      uc = (unsigned char) ed_data[row][col + 1];
       x1 = (int) (UTFOMSKO & uc);
       res = x | x1;
       return (res);
@@ -229,10 +229,10 @@ utf8_to_ucs4 (int row, int col)
     {
       x = (int) (UTF3MSK1 & uc);
       x = x << 12;
-      uc = (unsigned char) ed_data[row][col+1];
+      uc = (unsigned char) ed_data[row][col + 1];
       x1 = (int) (UTFOMSKO & uc);
       x1 = x1 << 6;
-      uc = (unsigned char) ed_data[row][col+2];
+      uc = (unsigned char) ed_data[row][col + 2];
       x2 = (int) (UTFOMSKO & uc);
       res = x | x1 | x2;
       return (res);
@@ -241,13 +241,13 @@ utf8_to_ucs4 (int row, int col)
     {
       x = (int) (UTF4MSK1 & uc);
       x = x << 18;
-      uc = (unsigned char) ed_data[row][col+1];
+      uc = (unsigned char) ed_data[row][col + 1];
       x1 = (int) (UTFOMSKO & uc);
       x1 = x1 << 12;
-      uc = (unsigned char) ed_data[row][col+2];
+      uc = (unsigned char) ed_data[row][col + 2];
       x2 = (int) (UTFOMSKO & uc);
       x2 = x2 << 6;
-      uc = (unsigned char) ed_data[row][col+3];
+      uc = (unsigned char) ed_data[row][col + 3];
       x3 = (int) (UTFOMSKO & uc);
       res = x | x1 | x2 | x3;
       return (res);
@@ -259,108 +259,119 @@ utf8_to_ucs4 (int row, int col)
 
 
 // calculate buffer position to increase according to UTF8 unicode
-int 
-increase_buffer (int row, int col){
+int
+increase_buffer (int row, int col)
+{
   int uc;
 
   uc = ed_data[row][col];
-  if(isUni1(uc))
-    return(1);
-  else if(isUni2(uc))
-    return(2);
-  else if(isUni3(uc))
-    return(3);
-  else if(isUni4(uc))
-    return(4);
+  if (isUni1 (uc))
+    return (1);
+  else if (isUni2 (uc))
+    return (2);
+  else if (isUni3 (uc))
+    return (3);
+  else if (isUni4 (uc))
+    return (4);
   else
-    return(-1);
+    return (-1);
 }
 
 // calculate terminal position to increase according to UTF8 unicode
 int
-increase_terminal(int row, int col){
+increase_terminal (int row, int col)
+{
   int unicode;
- 
-  if(isUni3(ed_data[row][col])){
-     unicode = utf8_to_ucs4(row,col);
-    // tai
-    if(unicode >= 0x0e00 && unicode <= 0x0e7f)
-      return(1);
-    // arabian
-    else if(unicode >= 0x0600 && unicode <= 0x06ff)
-      return(1);
-    // tamil
-    else if(unicode >= 0xb80 && unicode <= 0xbff)
-      return(1);
-    else
-      return(2);
-  }
+
+  if (isUni3 (ed_data[row][col]))
+    {
+      unicode = utf8_to_ucs4 (row, col);
+      // tai
+      if (unicode >= 0x0e00 && unicode <= 0x0e7f)
+	return (1);
+      // arabian
+      else if (unicode >= 0x0600 && unicode <= 0x06ff)
+	return (1);
+      // tamil
+      else if (unicode >= 0xb80 && unicode <= 0xbff)
+	return (1);
+      else
+	return (2);
+    }
   else
-    return(1);
+    return (1);
 }
 
 // calculate buffer position to decrease according to UTF8 unicode
-int 
-decrease_buffer (int row, int col){
-  
-  if(isUni1(ed_data[row][col]))
-    return(1);
-  else if(isUni2(ed_data[row][col-1]))
-    return(2);
-  else if(isUni3(ed_data[row][col-2]))
-    return(3);
-  else if(isUni4(ed_data[row][col-3]))
-    return(4);
+int
+decrease_buffer (int row, int col)
+{
+
+  if (isUni1 (ed_data[row][col]))
+    return (1);
+  else if (isUni2 (ed_data[row][col - 1]))
+    return (2);
+  else if (isUni3 (ed_data[row][col - 2]))
+    return (3);
+  else if (isUni4 (ed_data[row][col - 3]))
+    return (4);
   else
-    return(1);
+    return (1);
 }
 
 // calculate terminal position to decrease according to UTF8 unicode
-int 
-decrease_terminal(int row, int col){
+int
+decrease_terminal (int row, int col)
+{
   int unicode;
 
-  if(isUni3(ed_data[row][col-2])){
-    unicode = utf8_to_ucs4(row,col-2);
-    //tai
-    if(unicode >= 0x0e00 && unicode <= 0x0e7f)
-      return(1);
-    // arabian
-    else if(unicode >= 0x0600 && unicode <= 0x06ff)
-      return(1);
-    // tamil
-    else if(unicode >= 0xb80 && unicode <= 0xbff)
-      return(1);
-    else
-      return(2);
-  }
+  if (isUni3 (ed_data[row][col - 2]))
+    {
+      unicode = utf8_to_ucs4 (row, col - 2);
+      //tai
+      if (unicode >= 0x0e00 && unicode <= 0x0e7f)
+	return (1);
+      // arabian
+      else if (unicode >= 0x0600 && unicode <= 0x06ff)
+	return (1);
+      // tamil
+      else if (unicode >= 0xb80 && unicode <= 0xbff)
+	return (1);
+      else
+	return (2);
+    }
   else
-    return(1);
+    return (1);
 }
 
 // re calculate buffer position and terminal position at row
 void
-recalculate_col(int row, int oldcol1){
-  int newcol,newcol1;
+recalculate_col (int row, int oldcol1)
+{
+  int newcol, newcol1;
 
   newcol = 0;
   newcol1 = 0;
-  while(newcol < COL_SIZE){
-    if(newcol1 == oldcol1){
-      break;
+  while (newcol < COL_SIZE)
+    {
+      if (newcol1 == oldcol1)
+	{
+	  break;
+	}
+      else if (ed_data[row][newcol] == EOL)
+	{
+	  break;
+	}
+      else if (ed_data[row][newcol] == 0)
+	{
+	  break;
+	}
+      newcol1 = newcol1 + increase_terminal (row, newcol);
+      newcol = newcol + increase_buffer (row, newcol);
     }
-    else if(ed_data[row][newcol] == EOL){
-      break;
-    }
-    else if(ed_data[row][newcol] == 0){
-      break;
-    }
-    newcol1 = newcol1 + increase_terminal(row,newcol);
-    newcol = newcol + increase_buffer(row,newcol);
-  }
   ed_col = newcol;
   ed_col1 = newcol1;
-} 
+}
 
 
 void
@@ -371,8 +382,8 @@ right ()
   if (ed_col == findeol (ed_row) || ed_col >= COL_SIZE)
     return;
 
-  ed_col1 = ed_col1 + increase_terminal(ed_row,ed_col);
-  ed_col = ed_col + increase_buffer(ed_row,ed_col);  
+  ed_col1 = ed_col1 + increase_terminal (ed_row, ed_col);
+  ed_col = ed_col + increase_buffer (ed_row, ed_col);
 
   if (ed_col < turn)
     {
@@ -382,7 +393,7 @@ right ()
       ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else
-    { 
+    {
       if (ed_col == turn)
 	{
 	  reset_paren ();
@@ -393,7 +404,7 @@ right ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - turn + LEFT_MARGIN);   
+      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - turn + LEFT_MARGIN);
     }
 }
 
@@ -406,18 +417,18 @@ left ()
   if (ed_col == 0)
     return;
 
-  ed_col1 = ed_col1 - decrease_terminal(ed_row,ed_col-1);
-  ed_col = ed_col - decrease_buffer(ed_row,ed_col-1);
+  ed_col1 = ed_col1 - decrease_terminal (ed_row, ed_col - 1);
+  ed_col = ed_col - decrease_buffer (ed_row, ed_col - 1);
 
   if (ed_col < turn)
     {
       if (ed_col == turn - 1)
-	    {
-	      reset_paren ();
-	      ESCCLSLA ();
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
-	      display_line (ed_row);
-	    }
+	{
+	  reset_paren ();
+	  ESCCLSLA ();
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, 1);
+	  display_line (ed_row);
+	}
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
@@ -455,7 +466,7 @@ up ()
       ed_start = ed_start - ed_middle;
       if (ed_row < 0)
 	ed_row = ed_start = 0;
-      recalculate_col(ed_row,ed_col1);
+      recalculate_col (ed_row, ed_col1);
       display_screen ();
       restore_paren ();
       emphasis_lparen ();
@@ -469,7 +480,7 @@ up ()
       else
 	ed_clip_end--;
       ed_row--;
-      recalculate_col(ed_row,ed_col1);
+      recalculate_col (ed_row, ed_col1);
       display_screen ();
       restore_paren ();
       emphasis_lparen ();
@@ -486,7 +497,7 @@ up ()
 	  display_line (ed_row);
 	}
       ed_row--;
-      recalculate_col(ed_row,ed_col1);
+      recalculate_col (ed_row, ed_col1);
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
@@ -521,7 +532,7 @@ down ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
-      recalculate_col(ed_row,ed_col1);
+      recalculate_col (ed_row, ed_col1);
       ESCMOVE (ed_footer, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_clip_start != -1)
@@ -531,7 +542,7 @@ down ()
       else
 	ed_clip_start++;
       ed_row++;
-      recalculate_col(ed_row,ed_col1);
+      recalculate_col (ed_row, ed_col1);
       display_screen ();
       restore_paren ();
       emphasis_lparen ();
@@ -548,7 +559,7 @@ down ()
 	  display_line (ed_row);
 	}
       ed_row++;
-      recalculate_col(ed_row,ed_col1);
+      recalculate_col (ed_row, ed_col1);
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
@@ -575,7 +586,8 @@ backspace_key ()
 	  if (ed_col <= COLS - 1 - LEFT_MARGIN)
 	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	  else
-	    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
+	    ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+		     ed_col1 - COLS + LEFT_MARGIN);
 	}
       else
 	{
@@ -593,7 +605,8 @@ backspace_key ()
       backspace ();
       display_screen ();
       if (ed_row < ed_start + ed_scroll)
-	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
+	ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+		 ed_col1 - COLS + LEFT_MARGIN);
       else
 	ESCMOVE (ed_footer, ed_col1 - COLS + LEFT_MARGIN);
     }
@@ -640,7 +653,7 @@ home ()
 {
   ed_row = 0;
   ed_start = 0;
-  recalculate_col(ed_row,ed_col);
+  recalculate_col (ed_row, ed_col);
   display_screen ();
   ESCMOVE (2, ed_col1 + LEFT_MARGIN);
 }
@@ -651,7 +664,7 @@ end ()
   ed_row = ed_end;
   if (ed_end > ed_scroll)
     ed_start = ed_row - ed_middle;
-  recalculate_col(ed_row,ed_col);
+  recalculate_col (ed_row, ed_col);
   display_screen ();
   ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
@@ -665,7 +678,7 @@ pagedn ()
   if (ed_start > ed_end)
     ed_start = ed_end - ed_scroll;
   ed_row = ed_start;
-  recalculate_col(ed_row,ed_col);
+  recalculate_col (ed_row, ed_col);
   display_screen ();
   ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
@@ -766,7 +779,7 @@ edit_loop (char *fname)
 	     "CTRL+X CTRL+W write buffer to file\n"
 	     "CTRL+K  cut one line\n"
 	     "CTRL+W  cut selection\n"
-       "ESC W   save selection\n"
+	     "ESC W   save selection\n"
 	     "CTRL+Y  uncut selection\n"
 	     "CTRL+G  cancel command\n" "\n  enter any key to exit help\n");
       CHECK (refresh);
@@ -874,12 +887,13 @@ edit_loop (char *fname)
 			  ESCMOVE (1, 1);
 			  return true;
 			  break;
-			case CTRL('G'):
+			case CTRL ('G'):
 			  clear_status ();
 			  ESCRST ();
-			  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-        ctrl_c = 0;
-        return false;
+			  ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+				   ed_col1 + LEFT_MARGIN);
+			  ctrl_c = 0;
+			  return false;
 			  break;
 			}
 		    }
@@ -929,7 +943,8 @@ edit_loop (char *fname)
 		  CHECK (addstr, str1);
 		  CHECK (addstr, " doesn't exist");
 		  ESCRST ();
-		  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+		  ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+			   ed_col1 + LEFT_MARGIN);
 		  break;
 		}
 	      c = fgetc (port);
@@ -1102,15 +1117,15 @@ edit_loop (char *fname)
 	}
       switch (c)
 	{
-  case 'w':
-    copy_selection ();
-    ed_row = ed_clip_start;
-    ed_clip_start = ed_clip_end = -1;
-    restore_paren ();
-    display_screen ();
-    ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    modify_flag = true;
-    break;
+	case 'w':
+	  copy_selection ();
+	  ed_row = ed_clip_start;
+	  ed_clip_start = ed_clip_end = -1;
+	  restore_paren ();
+	  display_screen ();
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	  modify_flag = true;
+	  break;
 	case '<':
 	  home ();
 	  break;
@@ -1259,7 +1274,7 @@ edit_loop (char *fname)
     case CTRL ('O'):
       if (ed_indent == 1)
 	i = calc_tabs ();
-    
+
       if (ed_row == ed_start + ed_scroll)
 	{
 	  restore_paren ();
@@ -1334,34 +1349,39 @@ edit_loop (char *fname)
 	      emphasis_lparen ();
 	      emphasis_rparen ();
 	      ed_col++;
-        if(isUni1(c) && skip == 0){
-          ed_col1++;
-          skip = 0;
-        }
-        else if(isUni2(c) && skip == 0){
-          ed_col1++;
-          skip = 1;
-        }
-        else if(isUni4(c) && skip == 0){
-          ed_col1++;
-          skip = 3;
-        }
-        else if(isUni3(c) && skip == 0){
-          uni3 = true;
-          skip = 2;
-        }
+	      if (isUni1 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 0;
+		}
+	      else if (isUni2 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 1;
+		}
+	      else if (isUni4 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 3;
+		}
+	      else if (isUni3 (c) && skip == 0)
+		{
+		  uni3 = true;
+		  skip = 2;
+		}
 
-        if(skip > 0)
-          skip--;
+	      if (skip > 0)
+		skip--;
 
-        // groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
-        if(uni3 == true && skip == 0)
-        {
-          ed_col1 = ed_col1 + increase_terminal(ed_row,ed_col-2);
-          uni3 = false;
-        }
+	      // groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+	      if (uni3 == true && skip == 0)
+		{
+		  ed_col1 = ed_col1 + increase_terminal (ed_row, ed_col - 2);
+		  uni3 = false;
+		}
 
-	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
+	      ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+		       ed_col1 - COLS + LEFT_MARGIN);
 	    }
 	  else
 	    {
@@ -1373,31 +1393,35 @@ edit_loop (char *fname)
 	      emphasis_lparen ();
 	      emphasis_rparen ();
 	      ed_col++;
-        if(isUni1(c) && skip == 0){
-          ed_col1++;
-          skip = 0;
-        }
-        else if(isUni2(c) && skip == 0){
-          ed_col1++;
-          skip = 1;
-        }
-        else if(isUni4(c) && skip == 0){
-          ed_col1++;
-          skip = 3;
-        }
-        else if(isUni3(c) && skip == 0){
-          uni3 = true;
-          skip = 2;
-        }
+	      if (isUni1 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 0;
+		}
+	      else if (isUni2 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 1;
+		}
+	      else if (isUni4 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 3;
+		}
+	      else if (isUni3 (c) && skip == 0)
+		{
+		  uni3 = true;
+		  skip = 2;
+		}
 
-        if(skip > 0)
-          skip--;
-        // groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
-        if(uni3 == true && skip == 0)
-        {
-          ed_col1 = ed_col1 + increase_terminal(ed_row,ed_col-2);
-          uni3 = false;
-        }  
+	      if (skip > 0)
+		skip--;
+	      // groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+	      if (uni3 == true && skip == 0)
+		{
+		  ed_col1 = ed_col1 + increase_terminal (ed_row, ed_col - 2);
+		  uni3 = false;
+		}
 	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    }
 	}
@@ -1413,25 +1437,29 @@ edit_loop (char *fname)
 	      CHECK (addch, c);
 	      emphasis_lparen ();
 	      ed_col++;
-        if(isUni1(c) && skip == 0){
-          ed_col1++;
-          skip = 0;
-        }
-        else if(isUni2(c) && skip == 0){
-          ed_col1++;
-          skip = 1;
-        }
-        else if(isUni4(c) && skip == 0){
-          ed_col1++;
-          skip = 3;
-        }
-        else if(isUni3(c) && skip == 0){
-          ed_col1 = ed_col1 + 2;
-          skip = 2;
-        }
+	      if (isUni1 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 0;
+		}
+	      else if (isUni2 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 1;
+		}
+	      else if (isUni4 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 3;
+		}
+	      else if (isUni3 (c) && skip == 0)
+		{
+		  ed_col1 = ed_col1 + 2;
+		  skip = 2;
+		}
 
-        if(skip > 0)
-          skip--;
+	      if (skip > 0)
+		skip--;
 	    }
 	  else
 	    {
@@ -1439,25 +1467,29 @@ edit_loop (char *fname)
 	      CHECK (addch, c);
 	      emphasis_lparen ();
 	      ed_col++;
-        if(isUni1(c) && skip == 0){
-          ed_col1++;
-          skip = 0;
-        }
-        else if(isUni2(c) && skip == 0){
-          ed_col1++;
-          skip = 1;
-        }
-        else if(isUni4(c) && skip == 0){
-          ed_col1++;
-          skip = 3;
-        }
-        else if(isUni3(c) && skip == 0){
-          ed_col1 = ed_col1 + 2;
-          skip = 2;
-        }
+	      if (isUni1 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 0;
+		}
+	      else if (isUni2 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 1;
+		}
+	      else if (isUni4 (c) && skip == 0)
+		{
+		  ed_col1++;
+		  skip = 3;
+		}
+	      else if (isUni3 (c) && skip == 0)
+		{
+		  ed_col1 = ed_col1 + 2;
+		  skip = 2;
+		}
 
-        if(skip > 0)
-          skip--;
+	      if (skip > 0)
+		skip--;
 	    }
 	}
       modify_flag = true;
@@ -1525,54 +1557,58 @@ display_screen ()
  * and use addwstr thus display unicode
 */
 void
-display_unicode(int line, int col)
-{  
+display_unicode (int line, int col)
+{
   char mb[10];
   wchar_t wch[10];
-  if(isUni1(ed_data[line][col])){
-    mb[0] = ed_data[line][col];
-    mb[1] = 0;
-  }
-  else if(isUni2(ed_data[line][col])){
-    mb[0] = ed_data[line][col];
-    mb[1] = ed_data[line][col+1];
-    mb[2] = 0;
-  }
-  else if(isUni3(ed_data[line][col])){
-    mb[0] = ed_data[line][col];
-    mb[1] = ed_data[line][col+1];
-    mb[2] = ed_data[line][col+2];
-    mb[3] = 0;
-  }
-  else if(isUni4(ed_data[line][col])){
-    mb[0] = ed_data[line][col];
-    mb[1] = ed_data[line][col+1];
-    mb[2] = ed_data[line][col+2];
-    mb[3] = ed_data[line][col+3];
-    mb[4] = 0;
-  }
-  
-  mbstowcs( wch, mb, 10 );
-  addwstr(wch);
+  if (isUni1 (ed_data[line][col]))
+    {
+      mb[0] = ed_data[line][col];
+      mb[1] = 0;
+    }
+  else if (isUni2 (ed_data[line][col]))
+    {
+      mb[0] = ed_data[line][col];
+      mb[1] = ed_data[line][col + 1];
+      mb[2] = 0;
+    }
+  else if (isUni3 (ed_data[line][col]))
+    {
+      mb[0] = ed_data[line][col];
+      mb[1] = ed_data[line][col + 1];
+      mb[2] = ed_data[line][col + 2];
+      mb[3] = 0;
+    }
+  else if (isUni4 (ed_data[line][col]))
+    {
+      mb[0] = ed_data[line][col];
+      mb[1] = ed_data[line][col + 1];
+      mb[2] = ed_data[line][col + 2];
+      mb[3] = ed_data[line][col + 3];
+      mb[4] = 0;
+    }
+
+  mbstowcs (wch, mb, 10);
+  addwstr (wch);
 }
 
 
 void
 display_line (int line)
 {
-  int col,turn;
+  int col, turn;
   char linestr[10];
 
   turn = COLS - LEFT_MARGIN;
-  sprintf(linestr,"% 5d ",line);
-  CHECK(addstr,linestr);
+  sprintf (linestr, "% 5d ", line);
+  CHECK (addstr, linestr);
 
-  
+
   if (ed_col < turn)
     col = 0;
   else
     col = turn;
-    
+
   while (((ed_col < turn && col < turn)
 	  || (ed_col >= turn && col < COL_SIZE))
 	 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
@@ -1592,14 +1628,16 @@ display_line (int line)
 		  || (ed_col >= turn && col < COL_SIZE))
 		 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
 	    {
-        if(isUni1(ed_data[line][col])){
-		      CHECK (addch, ed_data[line][col]);
-        }
-        else{
-          display_unicode(line,col);
-        }
-        col = col + increase_buffer(line,col);
-      
+	      if (isUni1 (ed_data[line][col]))
+		{
+		  CHECK (addch, ed_data[line][col]);
+		}
+	      else
+		{
+		  display_unicode (line, col);
+		}
+	      col = col + increase_buffer (line, col);
+
 	      if (ed_data[line][col - 2] == '|' &&
 		  ed_data[line][col - 1] == '#')
 		{
@@ -1626,7 +1664,7 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_syntax_color);
 	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn  && col < COL_SIZE))
+		      || (ed_col >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1666,15 +1704,17 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-      if(isUni1(ed_data[line][col])){
-		    CHECK (addch, ed_data[line][col]);
-      }
-      else{
-        display_unicode(line,col);
-      }
-      col = col + increase_buffer(line,col);
-      
-      
+		  if (isUni1 (ed_data[line][col]))
+		    {
+		      CHECK (addch, ed_data[line][col]);
+		    }
+		  else
+		    {
+		      display_unicode (line, col);
+		    }
+		  col = col + increase_buffer (line, col);
+
+
 		  if (ed_data[line][col - 1] == '"')
 		    break;
 		}
@@ -1689,14 +1729,16 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-      if(isUni1(ed_data[line][col])){
-		    CHECK (addch, ed_data[line][col]);
-      }
-      else{
-        display_unicode(line,col);
-      }
-      col = col + increase_buffer(line,col);
-		 
+		  if (isUni1 (ed_data[line][col]))
+		    {
+		      CHECK (addch, ed_data[line][col]);
+		    }
+		  else
+		    {
+		      display_unicode (line, col);
+		    }
+		  col = col + increase_buffer (line, col);
+
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1748,14 +1790,16 @@ display_line (int line)
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
-      if(isUni1(ed_data[line][col])){
-		    CHECK (addch, ed_data[line][col]);
-      }
-      else{
-        display_unicode(line,col);
-      }
-      col = col + increase_buffer(line,col);
-      
+		  if (isUni1 (ed_data[line][col]))
+		    {
+		      CHECK (addch, ed_data[line][col]);
+		    }
+		  else
+		    {
+		      display_unicode (line, col);
+		    }
+		  col = col + increase_buffer (line, col);
+
 		}
 	    }
 	}
@@ -1776,7 +1820,7 @@ setcolor (enum Color n)
 void
 backspace ()
 {
-  int i,size;
+  int i, size;
 
   if (ed_data[ed_row][ed_col - 1] == ')')
     {
@@ -1784,9 +1828,9 @@ backspace ()
       ed_rparen_row = -1;
     }
   i = ed_col;
-  size = decrease_buffer(ed_row,ed_col-1);
-  ed_col1 = ed_col1 - decrease_terminal(ed_row,ed_col-1);
-  ed_col = ed_col - decrease_buffer(ed_row,ed_col-1);
+  size = decrease_buffer (ed_row, ed_col - 1);
+  ed_col1 = ed_col1 - decrease_terminal (ed_row, ed_col - 1);
+  ed_col = ed_col - decrease_buffer (ed_row, ed_col - 1);
   while (i < COL_SIZE)
     {
       ed_data[ed_row][i - size] = ed_data[ed_row][i];
@@ -1834,7 +1878,7 @@ deleterow ()
   int i, j, k, l, l1;
 
   k = l = findeol (ed_row - 1);
-  l1 = findeol1(ed_row - 1);
+  l1 = findeol1 (ed_row - 1);
   for (j = 0; j < COL_SIZE; j++)
     {
       ed_data[ed_row - 1][k] = ed_data[ed_row][j];
@@ -1878,24 +1922,27 @@ findeol (int row)
 int
 findeol1 (int row)
 {
-  int col, col1; // col1 is position of display terminal
+  int col, col1;		// col1 is position of display terminal
   col = col1 = 0;
-  while (col < COL_SIZE){
-    if (ed_data[row][col] == EOL)
-	    return (col1);
-    else if(isUni1(ed_data[row][col])){
-      col++;
-      col1++;
-    }
-    else{
-      if(isUni3(ed_data[row][col]))
-        col1 = col1 + 2;
+  while (col < COL_SIZE)
+    {
+      if (ed_data[row][col] == EOL)
+	return (col1);
+      else if (isUni1 (ed_data[row][col]))
+	{
+	  col++;
+	  col1++;
+	}
       else
-        col1++;
+	{
+	  if (isUni3 (ed_data[row][col]))
+	    col1 = col1 + 2;
+	  else
+	    col1++;
 
-      col = col + increase_buffer(row,col);
+	  col = col + increase_buffer (row, col);
+	}
     }
-  }
 
   return (-1);
 }
@@ -1903,14 +1950,15 @@ findeol1 (int row)
 struct position
 findlparen (int bias)
 {
-  int nest, row, col, col1, limit; //col is position of buffer, col1 is position of display
+  int nest, row, col, col1, limit;	//col is position of buffer, col1 is position of display
   struct position pos;
 
   row = ed_row;
-  if (ed_col != 0){
-    col = ed_col - bias;
-    col1 = ed_col1 - bias;
-  }
+  if (ed_col != 0)
+    {
+      col = ed_col - bias;
+      col1 = ed_col1 - bias;
+    }
   else
     {
       row--;
@@ -1929,35 +1977,41 @@ findlparen (int bias)
 
   while (row >= limit)
     {
-      if (ed_data[row][col] == '(' && !(col > 0 && ed_data[row][col-1] == '\\') && nest == 0)
+      if (ed_data[row][col] == '('
+	  && !(col > 0 && ed_data[row][col - 1] == '\\') && nest == 0)
 	break;
-      else if (ed_data[row][col] == ')' && !(col > 0 && ed_data[row][col-1] == '\\'))
+      else if (ed_data[row][col] == ')'
+	       && !(col > 0 && ed_data[row][col - 1] == '\\'))
 	nest++;
-      else if (ed_data[row][col] == '(' && !(col > 0 && ed_data[row][col-1] == '\\'))
+      else if (ed_data[row][col] == '('
+	       && !(col > 0 && ed_data[row][col - 1] == '\\'))
 	nest--;
-      else if (ed_data[row][col] == '"'){
-        col--;
-        col1--;
-        while (ed_data[row][col] != '"' && col > 0){
-            col1 = col1 - decrease_terminal(row,col);
-            col = col - decrease_buffer(row,col);
-        }
-      }
-      
+      else if (ed_data[row][col] == '"')
+	{
+	  col--;
+	  col1--;
+	  while (ed_data[row][col] != '"' && col > 0)
+	    {
+	      col1 = col1 - decrease_terminal (row, col);
+	      col = col - decrease_buffer (row, col);
+	    }
+	}
+
 
       if (col == 0)
 	{
 	  row--;
-    if(row > 0){
-	    col = findeol (row);
-      col1 = findeol1 (row);
-    }
+	  if (row > 0)
+	    {
+	      col = findeol (row);
+	      col1 = findeol1 (row);
+	    }
 
 	}
       else
 	{
-	   col1 = col1 - decrease_terminal(row,col);
-     col = col - decrease_buffer(row,col);
+	  col1 = col1 - decrease_terminal (row, col);
+	  col = col - decrease_buffer (row, col);
 	}
     }
   if (row >= limit)
@@ -1976,7 +2030,7 @@ findlparen (int bias)
 struct position
 findrparen (int bias)
 {
-  int nest, row, col, col1, limit; //col is position of buffer, col1 is position of display
+  int nest, row, col, col1, limit;	//col is position of buffer, col1 is position of display
   struct position pos;
 
   row = ed_row;
@@ -1989,20 +2043,26 @@ findrparen (int bias)
 
   while (row < limit)
     {
-      if (ed_data[row][col] == ')' && !(col > 0 && ed_data[row][col-1] == '\\') && nest == 0)
+      if (ed_data[row][col] == ')'
+	  && !(col > 0 && ed_data[row][col - 1] == '\\') && nest == 0)
 	break;
-      else if (ed_data[row][col] == '(' && !(col > 0 && ed_data[row][col-1] == '\\'))
+      else if (ed_data[row][col] == '('
+	       && !(col > 0 && ed_data[row][col - 1] == '\\'))
 	nest++;
-      else if (ed_data[row][col] == ')' && !(col > 0 && ed_data[row][col-1] == '\\'))
+      else if (ed_data[row][col] == ')'
+	       && !(col > 0 && ed_data[row][col - 1] == '\\'))
 	nest--;
-      else if (ed_data[row][col] == '"'){
-        col++;
-        col1++;
-        while(ed_data[row][col] != '"' && ed_data[row][col] != EOL && ed_data[row][col] != 0){
-            col1 = col1 + increase_terminal(row,col);
-            col = col + increase_buffer(row,col);
-        }
-      }
+      else if (ed_data[row][col] == '"')
+	{
+	  col++;
+	  col1++;
+	  while (ed_data[row][col] != '"' && ed_data[row][col] != EOL
+		 && ed_data[row][col] != 0)
+	    {
+	      col1 = col1 + increase_terminal (row, col);
+	      col = col + increase_buffer (row, col);
+	    }
+	}
 
 
       if (ed_data[row][col] == EOL)
@@ -2012,8 +2072,8 @@ findrparen (int bias)
 	}
       else
 	{
-      col1 = col1 + increase_terminal(row,col);
-      col = col + increase_buffer(row,col);
+	  col1 = col1 + increase_terminal (row, col);
+	  col = col + increase_buffer (row, col);
 	}
     }
   if (row < limit)
@@ -2043,9 +2103,11 @@ restore_paren ()
       && ed_lparen_row <= ed_start + ed_scroll)
     {
       if (ed_lparen_col <= COLS - 1 - LEFT_MARGIN)
-	ESCMOVE (ed_lparen_row + TOP_MARGIN - ed_start, ed_lparen_col + LEFT_MARGIN);
+	ESCMOVE (ed_lparen_row + TOP_MARGIN - ed_start,
+		 ed_lparen_col + LEFT_MARGIN);
       else
-	ESCMOVE (ed_lparen_row + TOP_MARGIN - ed_start, ed_lparen_col - COLS + LEFT_MARGIN);
+	ESCMOVE (ed_lparen_row + TOP_MARGIN - ed_start,
+		 ed_lparen_col - COLS + LEFT_MARGIN);
       ESCBORG ();
       CHECK (addch, '(');
       ed_lparen_row = -1;
@@ -2054,9 +2116,11 @@ restore_paren ()
       && ed_rparen_row <= ed_start + ed_scroll)
     {
       if (ed_rparen_col <= COLS - 1 - LEFT_MARGIN)
-	ESCMOVE (ed_rparen_row + TOP_MARGIN - ed_start, ed_rparen_col + LEFT_MARGIN);
+	ESCMOVE (ed_rparen_row + TOP_MARGIN - ed_start,
+		 ed_rparen_col + LEFT_MARGIN);
       else
-	ESCMOVE (ed_rparen_row + TOP_MARGIN - ed_start, ed_rparen_col - COLS + LEFT_MARGIN);
+	ESCMOVE (ed_rparen_row + TOP_MARGIN - ed_start,
+		 ed_rparen_col - COLS + LEFT_MARGIN);
       ESCBORG ();
       CHECK (addch, ')');
       ed_rparen_row = -1;
@@ -2082,7 +2146,8 @@ emphasis_lparen ()
 	  ESCBORG ();
 	  if (pos.row >= ed_start)
 	    {
-	      ESCMOVE (pos.row + TOP_MARGIN - ed_start, pos.col + LEFT_MARGIN);
+	      ESCMOVE (pos.row + TOP_MARGIN - ed_start,
+		       pos.col + LEFT_MARGIN);
 	      ESCBCYAN ();
 	      CHECK (addch, '(');
 	    }
@@ -2098,13 +2163,15 @@ emphasis_lparen ()
     {
       if (pos.row != -1)
 	{
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+		   ed_col1 - COLS + LEFT_MARGIN);
 	  ESCBCYAN ();
 	  CHECK (addch, ')');
 	  ESCBORG ();
 	  if (pos.row >= ed_start)
 	    {
-	      ESCMOVE (pos.row + TOP_MARGIN - ed_start, pos.col - COLS + LEFT_MARGIN);
+	      ESCMOVE (pos.row + TOP_MARGIN - ed_start,
+		       pos.col - COLS + LEFT_MARGIN);
 	      ESCBCYAN ();
 	      CHECK (addch, '(');
 	    }
@@ -2137,7 +2204,8 @@ emphasis_rparen ()
 	  ESCBORG ();
 	  if (pos.row <= ed_start + ed_scroll)
 	    {
-	      ESCMOVE (pos.row + TOP_MARGIN - ed_start, pos.col + LEFT_MARGIN);
+	      ESCMOVE (pos.row + TOP_MARGIN - ed_start,
+		       pos.col + LEFT_MARGIN);
 	      ESCBCYAN ();
 	      CHECK (addch, ')');
 	    }
@@ -2153,13 +2221,15 @@ emphasis_rparen ()
     {
       if (pos.row != -1)
 	{
-	  ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
+	  ESCMOVE (ed_row + TOP_MARGIN - ed_start,
+		   ed_col1 - COLS + LEFT_MARGIN);
 	  ESCBCYAN ();
 	  CHECK (addch, '(');
 	  ESCBORG ();
 	  if (pos.row <= ed_start + ed_scroll)
 	    {
-	      ESCMOVE (pos.row + TOP_MARGIN - ed_start, pos.col - COLS + LEFT_MARGIN);
+	      ESCMOVE (pos.row + TOP_MARGIN - ed_start,
+		       pos.col - COLS + LEFT_MARGIN);
 	      ESCBCYAN ();
 	      CHECK (addch, ')');
 	    }
@@ -2265,8 +2335,8 @@ calc_tabs ()
 {
   struct position pos;
 
-  if(ed_row == 0 && ed_col == 0)
-    return(0);
+  if (ed_row == 0 && ed_col == 0)
+    return (0);
 
   pos = findlparen (0);
 

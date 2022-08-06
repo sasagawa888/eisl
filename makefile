@@ -75,6 +75,7 @@ bindir := $(PREFIX)/bin
 DESTDIR := 
 INSTALL := install
 INSTALL_PROGRAM := $(INSTALL) -m755
+MKDIR_PROGRAM := mkdir -m 755
 
 EISL_OBJS := main.o \
 	function.o \
@@ -119,6 +120,7 @@ edlis.o : edlis.c edlis.h term.h
 
 .PHONY: install
 install: eisl edlis
+	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
 

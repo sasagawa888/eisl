@@ -736,6 +736,7 @@ edit_loop (char *fname)
   struct position pos;
   FILE *port;
   static int skip = 0;
+  static bool uni3 = false;
 
   CHECK (refresh);
   c = getch ();
@@ -1346,12 +1347,20 @@ edit_loop (char *fname)
           skip = 3;
         }
         else if(isUni3(c) && skip == 0){
-          ed_col1 = ed_col1 + 2;
+          uni3 = true;
           skip = 2;
         }
 
         if(skip > 0)
           skip--;
+
+        // groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+        if(uni3 == true && skip == 0)
+        {
+          ed_col1 = ed_col1 + increase_terminal(ed_row,ed_col-2);
+          uni3 = false;
+        }
+
 	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
 	    }
 	  else
@@ -1377,12 +1386,18 @@ edit_loop (char *fname)
           skip = 3;
         }
         else if(isUni3(c) && skip == 0){
-          ed_col1 = ed_col1 + 2;
+          uni3 = true;
           skip = 2;
         }
 
         if(skip > 0)
           skip--;
+        // groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+        if(uni3 == true && skip == 0)
+        {
+          ed_col1 = ed_col1 + increase_terminal(ed_row,ed_col-2);
+          uni3 = false;
+        }  
 	      ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    }
 	}

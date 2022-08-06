@@ -15,13 +15,8 @@ static const float VERSION = 2.57;
 #define TOKEN_MAX   80
 #define LEFT_MARGIN 7
 #define TOP_MARGIN  2
-#define BOTTOM      22
-#define MIDDLE      10
-
-
 
 static const int NIL = 0;
-
 
 void input(char* str);
 void edit_screen(char* fname);
@@ -88,16 +83,6 @@ void replace_word(const char *str1, const char *str2);
 
 #define isUni4(c)   (((unsigned char)(c) >= 0xf0) && \
                      ((unsigned char)(c) <= 0xf7))
-
-#define isUni5(c)   (((unsigned char)(c) >= 0xf8) && \
-                     ((unsigned char)(c) <= 0xfb))
-
-#define isUni6(c)   (((unsigned char)(c) >= 0xfc) && \
-                     ((unsigned char)(c) <= 0xfd))
-
-#define isUniRest(c) (((unsigned char)(c) >= 0x80) && \
-                     ((unsigned char)(c) <= 0xbf))
-
 
 
 #endif

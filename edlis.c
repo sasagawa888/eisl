@@ -25,6 +25,7 @@ int ctrl_z = 0;
 // -----editor-----
 int ed_scroll;
 int ed_footer;
+int ed_middle;
 int ed_row;
 int ed_col;  //position of buffer
 int ed_col1; //position of terminal when include unicode ed_col1 is different from ed_col
@@ -188,6 +189,7 @@ main (int argc, char *argv[])
   init_ncurses ();
   ed_scroll = LINES - 4;
   ed_footer = LINES - 1;
+  ed_middle = LINES / 2;
   ESCCLS ();
   display_command (fname);
   display_screen ();
@@ -449,8 +451,8 @@ up ()
     }
   else if (ed_row == ed_start)
     {
-      ed_row = ed_row - MIDDLE;
-      ed_start = ed_start - MIDDLE;
+      ed_row = ed_row - ed_middle;
+      ed_start = ed_start - ed_middle;
       if (ed_row < 0)
 	ed_row = ed_start = 0;
       recalculate_col(ed_row,ed_col1);
@@ -511,8 +513,8 @@ down ()
     }
   else if (ed_row == ed_start + ed_scroll)
     {
-      ed_row = ed_row + MIDDLE;
-      ed_start = ed_start + MIDDLE;
+      ed_row = ed_row + ed_middle;
+      ed_start = ed_start + ed_middle;
       if (ed_row > ed_end)
 	ed_row = ed_start = ed_end - ed_scroll;
       display_screen ();
@@ -520,7 +522,7 @@ down ()
       emphasis_lparen ();
       emphasis_rparen ();
       recalculate_col(ed_row,ed_col1);
-      ESCMOVE (BOTTOM, ed_col1 + LEFT_MARGIN);
+      ESCMOVE (ed_footer, ed_col1 + LEFT_MARGIN);
     }
   else if (ed_clip_start != -1)
     {
@@ -593,7 +595,7 @@ backspace_key ()
       if (ed_row < ed_start + ed_scroll)
 	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 - COLS + LEFT_MARGIN);
       else
-	ESCMOVE (BOTTOM, ed_col1 - COLS + LEFT_MARGIN);
+	ESCMOVE (ed_footer, ed_col1 - COLS + LEFT_MARGIN);
     }
   else
     {
@@ -605,7 +607,7 @@ backspace_key ()
       if (ed_row < ed_start + ed_scroll)
 	ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
       else
-	ESCMOVE (BOTTOM, ed_col + LEFT_MARGIN);
+	ESCMOVE (ed_footer, ed_col + LEFT_MARGIN);
     }
   modify_flag = true;
 }
@@ -648,7 +650,7 @@ end ()
 {
   ed_row = ed_end;
   if (ed_end > ed_scroll)
-    ed_start = ed_row - MIDDLE;
+    ed_start = ed_row - ed_middle;
   recalculate_col(ed_row,ed_col);
   display_screen ();
   ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
@@ -1266,7 +1268,7 @@ edit_loop (char *fname)
 	  ed_end++;
 	  ed_col = ed_col1 = 0;
 	  display_screen ();
-	  ESCMOVE (BOTTOM, LEFT_MARGIN);
+	  ESCMOVE (ed_footer, LEFT_MARGIN);
 	}
       else if (ed_col >= COLS)
 	{

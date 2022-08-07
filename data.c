@@ -2329,6 +2329,7 @@ copy_bignum (int x)
  * x=new y=link if it is first cell, store the cell, else chain a new
  * cell. 
  */
+/*
 int
 copy_cons_next (int x, int y)
 {
@@ -2350,7 +2351,7 @@ copy_cons_next (int x, int y)
     }
   return (addr);
 }
-
+*/
 
 /*
  * To check first cell, prop=-1. therefor when compute bignum, if it is

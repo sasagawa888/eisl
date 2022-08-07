@@ -2325,33 +2325,6 @@ copy_bignum (int x)
   return (addr);
 }
 
-/*
- * x=new y=link if it is first cell, store the cell, else chain a new
- * cell. 
- */
-/*
-int
-copy_cons_next (int x, int y)
-{
-  int addr = NIL;
-
-  if (GET_PROP (y) == -1)
-    {
-      SET_PROP (y, NIL);
-      SET_CAR (y, x);
-      addr = y;
-    }
-  else
-    {
-      addr = freshcell ();
-      SET_CAR (addr, x);
-      SET_CDR (y, addr);
-      SET_PROP (addr, y);
-      SET_CDR (addr, NIL);
-    }
-  return (addr);
-}
-*/
 
 /*
  * To check first cell, prop=-1. therefor when compute bignum, if it is

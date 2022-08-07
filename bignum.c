@@ -1416,6 +1416,7 @@ minusmod (long long int x, long long int y)
   return ((x - y + P) % P);
 }
 
+
 void
 ntt_set_w_factor (int n)
 {
@@ -1618,60 +1619,6 @@ bigx_ntt_mult (int x, int y)
   return (res);
 }
 
-
-//-----------simple test------------
-
-void
-ntt_test ()
-{
-  int n, i;
-
-  n = 8;
-
-  nttx[0] = 0;
-  nttx[1] = 0;
-  nttx[2] = 0;
-  nttx[3] = 4;
-  nttx[4] = 0;
-  nttx[5] = 0;
-  nttx[6] = 0;
-  nttx[7] = 0;
-  ntt_set_bit_reverse (n);
-  ntt_set_w_factor (n);
-
-  ntt (n);
-  for (i = 0; i < n; i++)
-    {
-      nttz[i] = ntty[i];
-    }
-
-  nttx[0] = 0;
-  nttx[1] = 0;
-  nttx[2] = 0;
-  nttx[3] = 5;
-  nttx[4] = 0;
-  nttx[5] = 0;
-  nttx[6] = 0;
-  nttx[7] = 0;
-
-  ntt (n);
-
-  for (i = 0; i < n; i++)
-    {
-      nttx[i] = multmod (nttz[i], ntty[i]);
-    }
-
-
-  intt (n);
-
-
-  for (i = 0; i < n; i++)
-    {
-      printf ("%d\n", (int) ntty[i]);
-    }
-
-
-}
 
 
 /*

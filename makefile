@@ -1,13 +1,11 @@
 .POSIX:
 .DELETE_ON_ERROR:
 
-OPSYS ?= linux
-# DEBUG := 1
 CC := cc
 DC := ldc2
 LD := $(CC)
-ifneq ($(OPSYS),macos)
-	ifeq ($(OPSYS),openbsd)
+ifneq  ($(shell uname),Darwin)
+	ifeq  ($(shell uname),OpenBSD)
 		LIBS := -lm
 	else
 		LIBS := -lm -ldl
@@ -15,17 +13,17 @@ ifneq ($(OPSYS),macos)
 endif
 LIBSRASPI := -lm -ldl -lwiringPi -lncurses
 INCS := -Icii/include
-ifeq ($(OPSYS),macos)
+ifeq  ($(shell uname),Darwin)
 	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
 	CURSES_LIBS := $(shell ncurses5.4-config --libs)
 	# NCURSES_PREFIX := $(shell brew --prefix ncurses)
 	# CURSES_CFLAGS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --cflags)
 	# CURSES_LIBS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --libs)
 else
-	ifeq ($(OPSYS),openbsd)
+	ifeq  ($(shell uname),OpenBSD)
 		CURSES_LIBS := -lncurses
 	else
-		ifeq ($(OPSYS),freebsd)
+		ifeq  ($(shell uname),FreeBSD)
 			CURSES_LIBS := -lncurses
 		else
 			CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
@@ -41,7 +39,7 @@ ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
 	SRC_NANA := nana/src/I.c
-	ifneq ($(OPSYS),openbsd)
+	ifeq  ($(shell uname),OpenBSD)
 		CFLAGS += -fsanitize=undefined
 		LDFLAGS := -fsanitize=undefined
 	endif
@@ -64,7 +62,7 @@ ifeq  ($(shell uname -n),raspberrypi)
 endif
 ifneq ($(DEBUG),1)
 	LDFLAGS += -flto
-	ifeq ($(OPSYS),macos)
+	ifneq  ($(shell uname),Darwin)
 		LDFLAGS += -Wl,-S,-x
 	else
 		LDFLAGS += -s

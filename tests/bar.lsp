@@ -1,6 +1,8 @@
-(defun foo (x)
-    (if (= x 0)
-        1
-        (* x (foo (- x 1)))))
-
-
+(defun bar (x)
+    (bar (* asldj 2)
+         asldkfj
+         asdfasasdfasdfasdfsdf
+         asdfasd
+         asdfasdf
+         asdfasdfa
+         asdf))

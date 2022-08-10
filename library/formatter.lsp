@@ -11,6 +11,7 @@
     (defglobal input-stream (standard-input))
     (defglobal output-stream (standard-output))
     (defglobal otomo nil)
+    (defglobal user-function nil)
     
     ;; write formated code to **.tmp file
     (defpublic formatter (file)
@@ -19,6 +20,7 @@
               (original (string-append (filename file) ".org")) )
            (setq input-stream (open-input-file file))
            (setq output-stream (open-output-file temp))
+           (setq user-function nil)
            (setq exp (sexp-read))
            (while (not (end-of-file-p exp))
               (setq otomo nil)
@@ -82,12 +84,16 @@
                       (pp-let* x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "for")) (pp-for x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defun"))
+                      (setq user-function (cons (car (cdr x)) user-function))
                       (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defpublic"))
+                      (setq user-function (cons (car (cdr x)) user-function))
                       (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defgeneric"))
+                      (setq user-function (cons (car (cdr x)) user-function))
                       (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defmacro"))
+                      (setq user-function (cons (car (cdr x)) user-function))
                       (pp-defun x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "defmodule"))
                       (pp-defmodule x lm))
@@ -709,19 +715,20 @@
     (defun unquote-splicing-p (x)
         (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\,) (char= (elt (car x) 1) #\@)))
 
-    ;; is subr that has long size element? e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
+    ;; is it function that has long size element? at least one e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
     (defun long-element-p (x)
         (and
          (consp x)
          (stringp (car x))
-         (subrp (convert (car x) <symbol>))
+         (or (subrp (convert (car x) <symbol>))
+             (member (car x) user-function))
          (> (length x) 2)
          (long-element-p1 (cdr x))))
     
     (defun long-element-p1 (x)
-        (cond ((null x) t)
-              ((> (flatsize (car x)) long-element) (long-element-p1 (cdr x)))
-              (t nil)))
+        (cond ((null x) nil)
+              ((> (flatsize (car x)) long-element) t)
+              (t (long-element-p1 (cdr x)))))
     
     ;; is one-liner?
     (defun one-liner-p (x lm)

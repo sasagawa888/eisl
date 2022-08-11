@@ -3362,7 +3362,10 @@ defgeneric compile
                (find-class-numeric x type-env))
               ((and (consp x) (subrp (car x)))
                (let ((type-subr (property (car x) 'inference)))
-                  (car (car type-subr))))
+                  ;;if car x is compiled user function, return nil
+                  (if type-subr
+                      (car (car type-subr))
+                      nil)))
               ((and (consp x) (type-function-p (car x))) (elt (find-function-type (car x)) 0))
               ((and (consp x) (eq (car x) 'labels)) (find-class (last (elt x 2)) type-env))
               ((and (consp x) (eq (car x) 'flet)) (find-class (last (elt x 2)) type-env))

@@ -12,13 +12,13 @@
 - (ARRAY-DIMENSIONS basic-array) `<list>` 配列 basic-array の次元をリストで返す
 
 ## char
-- (CHARACTERP obj) boolean obj が文字であるかをチェックする
-- (CHAR= char1 char2) boolean char1 と char2 の文字が等しいかをチェックする
-- (CHAR/= char1 char2) boolean char1 と char2 の文字が等しくないかをチェックする
-- (CHAR< char1 char2) boolean char1 の文字コードが char2 よりも大きいかをチェックする
-- (CHAR> char1 char2) boolean char1 の文字コードが char2 よりも小さいかをチェックする
-- (CHAR<= char1 char2) boolean char1 の文字コードが char2 よりも大きいかまたは等しいかをチェックする
-- (CHAR>= char1 char2) boolean char1 の文字コードが char2 よりも小さいまたは等しいかをチェックする
+- (CHARACTERP obj) `boolean` obj が文字であるかをチェックする
+- (CHAR= char1 char2) `boolean` char1 と char2 の文字が等しいかをチェックする
+- (CHAR/= char1 char2) `boolean` char1 と char2 の文字が等しくないかをチェックする
+- (CHAR< char1 char2) `boolean` char1 の文字コードが char2 よりも大きいかをチェックする
+- (CHAR> char1 char2) `boolean` char1 の文字コードが char2 よりも小さいかをチェックする
+- (CHAR<= char1 char2) `boolean` char1 の文字コードが char2 よりも大きいかまたは等しいかをチェックする
+- (CHAR>= char1 char2) `boolean` char1 の文字コードが char2 よりも小さいまたは等しいかをチェックする
 
 ## cond
 - (error error-string obj *) `<object>` エラーをシグナルする
@@ -71,13 +71,13 @@
 - (CONVERT obj class-name) `<object>` obj をクラス class-name に変換する(特殊形式)
 
 ## files
-- (probe-file filename) boolean filename のファイルが存在するかをチェックする
+- (probe-file filename) `boolean` filename のファイルが存在するかをチェックする
 - (file-position stream) `<integer>` stream の現在のファイル位置を返す
 - (set-file-position stream z) `<integer>`  stream のファイル位置を z に設定する
 - (file-length filename element-class) `<integer>` filename のファイルを element-class のファイルとしてのサイズを返す
 
 ## formeval
-- (functionp obj) boolean obj が関数であるかをチェックする
+- (functionp obj) `boolean` obj が関数であるかをチェックする
 - (function function-name) `<function>` function-name を名前とする関数を返す(特殊形式)
 - (lambda lambda-list form *) `<function>` ラムダ式を生成する(特殊形式)
 - (labels ((function-name lambda-list form *) *) body-forms *) `<object>`  局所関数の束縛をする、順次束縛（再帰的定義が可能）である点が flet と異なる(特殊形式)
@@ -94,7 +94,7 @@
 - (read-char input-stream + eos-error-p + eos-value +) `<object>` input-stream から1文字読む
 - (preview-char input-stream + eos-error-p + eos-value +) `<object>`  次に読み込む文字を返す（1文字先読み。ファイルポジションは変化しない）
 - (read-line input-stream + eos-error-p + eos-value +) `<object>` 1行を文字列として読む
-- (stream-ready-p input-stream) boolean ストリームが読み込み可能になっているか
+- (stream-ready-p input-stream) `boolean` ストリームが読み込み可能になっているか
 - (format output-stream format-string obj *) `<null>` format-string に従って obj を出力する
 - (format-char output-stream char) `<null>` 1文字出力する
 - (format-float output-stream float) `<null>` 浮動小数点数として出力する
@@ -106,14 +106,14 @@
 - (write-byte z output-stream) `<integer>` バイトとして書く
 
 ## list
-- (CONSP obj) boolean コンスかをチェックする
+- (CONSP obj) `boolean` コンスかをチェックする
 - (CONS obj1 obj2) `<cons>` コンスを生成する
 - (CAR cons) `<object>` コンスの Car 部を取り出す
 - (CDR cons) `<object>` コンスの Cdr 部を取り出す
 - (SET-CAR obj cons) `<object>` コンスの Car 部にセットする
 - (SET-CDR obj cons) `<object>` コンスの Cdr 部にセットする
-- (NULL obj) boolean NULL かチェックする
-- (LISTP obj) boolean リストかチェックする
+- (NULL obj) `boolean` NULL かチェックする
+- (LISTP obj) `boolean` リストかチェックする
 - (CREATE-LIST i initial-element +) `<list>` 長さ i 初期値 initial-element のリストを生成する
 - (LIST obj *) `<list>` obj を要素とするリストを生成する
 - (REVERSE list) `<list>` リストを逆順にする（元のリストは破壊しない）
@@ -139,14 +139,14 @@
 - (internal-time-units-per-second) `<integer>` 1秒当たりのインターナルタイム単位を返す
 
 ## number
-- (NUMBERP obj) boolean obj が数型であるかをチェックする
+- (NUMBERP obj) `boolean` obj が数型であるかをチェックする
 - (PARSE-NUMBER string) `<number>` 文字列 string を解析して数型に変換する
-- (= x1 x2) boolean 数値が等しいかをチェックする
-- (/= x1 x2) boolean 数値が等しくないかをチェックする
-- (>= x1 x2) boolean 数値 x1 が x2 以上であるかをチェックする
-- (<= x1 x2) boolean 数値 x1 が x2 以下であるかをチェックする
-- (> x1 x2) boolean 数値 x1 が x2 より大きいかをチェックする
-- (< x1 x2) boolean 数値 x1 が x2 より小さいかをチェックする
+- (= x1 x2) `boolean` 数値が等しいかをチェックする
+- (/= x1 x2) `boolean` 数値が等しくないかをチェックする
+- (>= x1 x2) `boolean` 数値 x1 が x2 以上であるかをチェックする
+- (<= x1 x2) `boolean` 数値 x1 が x2 以下であるかをチェックする
+- (> x1 x2) `boolean` 数値 x1 が x2 より大きいかをチェックする
+- (< x1 x2) `boolean` 数値 x1 が x2 より小さいかをチェックする
 - (+ x *) `<number>` 数値を加算する
 - (* x *) `<number>` 数値を乗算する
 - (- x y *) `<number>` 数値を減算する
@@ -168,13 +168,13 @@
 - (COSH x) `<number>` 数値の cosh 関数の値を返す
 - (TANH x) `<number>` 数値の tanh 関数の値を返す
 - (ATANH x) `<number>` 数値の atanh 関数の値を返す
-- (FLOATP obj) boolean obj が浮動小数点数であるかをチェックする
+- (FLOATP obj) `boolean` obj が浮動小数点数であるかをチェックする
 - (FLOAT x) `<float>` 数型 x を浮動小数点数に変換する
 - (FLOOR x) `<integer>` 切り下げを行なう
 - (CEILING x) `<integer>` 切り上げを行なう
 - (TRUNCATE x) `<integer>` 0方向に丸める
 - (ROUND x) `<integer>` 四捨五入を行なう
-- (INTEGERP obj) boolean obj が整数であるかをチェックする
+- (INTEGERP obj) `boolean` obj が整数であるかをチェックする
 - (DIV z1 z2) `<integer>` 数値を整数除算する
 - (MOD z1 z2) `<integer>` 数値を剰余計算する
 - (GCD z1 z2) `<integer>` 最大公約数を返す
@@ -183,23 +183,23 @@
 
 ## object
 - (defclass class-name (sc-name *) (slot-spec *) class-opt *) `<symbol>`  クラス定義を行なう(特殊形式)
-- (generic-function-p obj) boolean obj が包括関数であるかをチェックする
+- (generic-function-p obj) `boolean` obj が包括関数であるかをチェックする
 - (defgeneric func-spec lambda-list option * method-desc *) `<symbol>`  包括関数を定義する(特殊形式)
 - (defmethod func-spec method-qualifier * parameter-profile form *) `<symbol>` メソッド関数を定義する(特殊形式)
 - (call-next-method) `<object>` クラス優先順位の次のクラスのメソッドを呼び出す(特殊形式)
-- (next-method-p) boolean 次のメソッドが存在するかをチェックする(特殊形式)
+- (next-method-p) `boolean` 次のメソッドが存在するかをチェックする(特殊形式)
 - (create class initarg * initval *) `<object>` インスタンスオブジェクトを生成する(包括関数)
 - (initialize-object instance initialization-list) `<object>` オブジェクトの初期化を行なう
 - (class-of obj) `<class>` クラスを返す
-- (instancep obj class) boolean インスタンスオブジェクトであるかをチェックする
-- (subclassp class1 class2) boolean サブクラスであるかをチェックする
+- (instancep obj class) `boolean` インスタンスオブジェクトであるかをチェックする
+- (subclassp class1 class2) `boolean` サブクラスであるかをチェックする
 - (class class-name) `<class>` 名前 class-name のクラスを返す(特殊形式)
 
 ## pred
-- (EQ obj1 obj2) boolean obj1 と obj2 が eq であるかをチェックする
-- (EQL obj1 obj2) boolean obj1 と obj2 が eql であるかをチェックする
-- (EQUAL obj1 obj2) boolean obj1 と obj2 が equal であるかをチェックする
-- (NOT obj) boolean obj の否定を返す
+- (EQ obj1 obj2) `boolean` obj1 と obj2 が eq であるかをチェックする
+- (EQL obj1 obj2) `boolean` obj1 と obj2 が eql であるかをチェックする
+- (EQUAL obj1 obj2) `boolean` obj1 と obj2 が equal であるかをチェックする
+- (NOT obj) `boolean` obj の否定を返す
 - (AND form *) `<object>` form の AND をする(特殊形式)
 - (OR form *) `<object>` form の OR をする(特殊形式)
 
@@ -211,10 +211,10 @@
 - (MAP-INTO destination function seq *) sequence  列 sequence の要素に関数 function を適用して、その結果を列 destination に格納する
 
 ## stream
-- (streamp obj) boolean obj がストリームであるかをチェックする
-- (open-stream-p obj) boolean obj がオープンされたストリームであるかをチェックする
-- (input-stream-p obj) boolean obj が入力ストリームであるかをチェックする
-- (output-stream-p obj) boolean obj が出力ストリームであるかをチェックする
+- (streamp obj) `boolean` obj がストリームであるかをチェックする
+- (open-stream-p obj) `boolean` obj がオープンされたストリームであるかをチェックする
+- (input-stream-p obj) `boolean` obj が入力ストリームであるかをチェックする
+- (output-stream-p obj) `boolean` obj が出力ストリームであるかをチェックする
 - (standard-input) `<stream>` 標準入力を返す
 - (standard-output) `<stream>` 標準出力を返す
 - (error-output) `<stream>` エラー出力を返す
@@ -233,7 +233,7 @@
 - (get-output-stream-string stream) `<string>` 出力ストリームに出力された文字列を返す
 
 ## string
-- (STRINGP obj) boolean obj が文字列であるかをチェックする
+- (STRINGP obj) `boolean` obj が文字列であるかをチェックする
 - (CREATE-STRING i initial-element+) `<string>` 長さ i 初期値 initial-element の文字列を生成する
 - (STRING= string1 string2) quasi-boolean 文字列が等しいかをチェックする
 - (STRING/= string1 string2) quasi-boolean 文字列が等しくないかをチェックする
@@ -246,15 +246,15 @@
 - (STRING-APPEND string *) `<string>` 文字列を連結する
 
 ## symbol
-- (SYMBOLP obj) boolean シンボルかチェックする
+- (SYMBOLP obj) `boolean` シンボルかチェックする
 - (PROPERTY symbol property-name obj +) `<object>` シンボルのプロパティを取り出す
 - (SET-PROPERTY obj symbol property-name) `<object>` シンボルにプロパティをセットする
 - (REMOVE-PROPERTY symbol property-name) `<object>` シンボルからプロパティを削除する
 - (GENSYM) `<symbol>` 名前なしシンボルを生成する
 
 ## vector
-- (BASIC-VECTOR-P obj) boolean BASIC ベクタかチェックする
-- (GENERAL-VECTOR-P obj) boolean GENERIC VECTORかチェックする
+- (BASIC-VECTOR-P obj) `boolean` BASIC ベクタかチェックする
+- (GENERAL-VECTOR-P obj) `boolean` GENERIC VECTORかチェックする
 - (CREATE-VECTOR i initial-element +) `<general-vector>`  要素数 i 初期値 initial-element のベクタを生成する
 - (VECTOR obj *) `<general-vector>` obj ... を要素とするベクタを生成する
 
@@ -262,7 +262,7 @@
 - (load file) T ファイル file をロードする（拡張）
 - (time form) `<object>` フォーム form を実行し経過時間を表示する（特殊形式）（拡張）
 - (eval form) `<object>` フォーム form を評価する（拡張）
-- (compile-file file) boolean ファイル file をコンパイルする(拡張)
+- (compile-file file) `boolean` ファイル file をコンパイルする(拡張)
 - (gbc) `<null>` gc を強制的に実行する (拡張)
 - (quit) transfers-control ISLisp処理系を終了する(拡張)
 

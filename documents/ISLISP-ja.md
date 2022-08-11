@@ -1,15 +1,15 @@
 # ISLisp 関数一覧
 
 ## array
-- (BASIC-ARRAY-P obj) boolean "obj が配列または文字列, ベクタ かどうかをチェックする
-- (BASIC-ARRAY*-P obj) boolean "obj が多次元配列であるかをチェックする
-- (GENERAL-ARRAY*-P obj) boolean "obj が多次元配列であるかをチェックする
-- (CREATE-ARRAY dimensions initial-element +) <basic-array> "配列を生成する
-- (AREF basic-array z *) <object> "配列 basic-array の z 番目の要素を取り出す
-- (GAREF general-array z *) <object> "配列 general-array の z 番目の要素を取り出す
-- (SET-AREF obj basic-array z *) <object> "配列 basic-array の z 番目に要素 obj をセットする
-- (SET-GAREF obj general-array z *) <object> "配列 general-array の z 番目に要素 obj をセットする
-- (ARRAY-DIMENSIONS basic-array) <list> "配列 basic-array の次元をリストで返す
+- (BASIC-ARRAY-P obj) `boolean` obj が配列または文字列, ベクタ かどうかをチェックする
+- (BASIC-ARRAY*-P obj) `boolean` obj が多次元配列であるかをチェックする
+- (GENERAL-ARRAY*-P obj) `boolean` obj が多次元配列であるかをチェックする
+- (CREATE-ARRAY dimensions initial-element +) `<basic-array>` 配列を生成する
+- (AREF basic-array z *) `<object>` 配列 basic-array の z 番目の要素を取り出す
+- (GAREF general-array z *) `<object>` 配列 general-array の z 番目の要素を取り出す
+- (SET-AREF obj basic-array z *) `<object>` 配列 basic-array の z 番目に要素 obj をセットする
+- (SET-GAREF obj general-array z *) `<object>` 配列 general-array の z 番目に要素 obj をセットする
+- (ARRAY-DIMENSIONS basic-array) `<list>` 配列 basic-array の次元をリストで返す
 
 ## char
 ((CHARACTERP obj) boolean "obj が文字であるかをチェックする")

@@ -14,14 +14,14 @@
     
     ;; write formated code to **.tmp file
     ;; if given option is 'stdio, input/output is standard stream.
-    (defpublic formatter (file :rest option)
+    (defpublic formatter (file)
         (let ((exp nil)
-              (temp (string-append (filename file) ".tmp"))
-              (original (string-append (filename file) ".org")) )
-           (cond ((null option)    
+              (temp (if (stringp file) (string-append (filename file) ".tmp")))
+              (original (if (stringp file) (string-append (filename file) ".org")) ))
+           (cond ((stringp file)    
                   (setq input-stream (open-input-file file))
                   (setq output-stream (open-output-file temp)))
-                 ((eq (car option) 'stdio) 
+                 ((eq file 'stdio) 
                   (setq input-stream (standard-input))
                   (setq output-stream (standard-output))))
            (setq exp (sexp-read))
@@ -30,7 +30,7 @@
               (pp1 exp 0)
               ;;(print exp)
               (setq exp (sexp-read)))
-           (cond ((null option)
+           (cond ((stringp file)
                   (close input-stream)
                   (close output-stream)
                   (system (string-append "mv " file " " original))

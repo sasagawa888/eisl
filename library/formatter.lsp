@@ -117,7 +117,7 @@
                       (pp-labels x lm))
                      ((and (null ignore) (stringp (car x)) (string= (car x) "flet"))
                       (pp-labels x lm))
-                     ((long-element-p x) (setq otomo t) (pp-long-element x lm))
+                     ((and (null ignore) (long-element-p x)) (setq otomo t) (pp-long-element x lm))
                      ((< (+ (flatsize x) lm) width) (pp-flat x lm))
                      (t (setq otomo t) (pp-indent x lm))))
               ((null x) (pp-string "()"))
@@ -719,9 +719,6 @@
     (defun long-element-p (x)
         (and
          (consp x)
-         (stringp (car x))
-         (or (subrp (convert (car x) <symbol>))
-             (member (car x) user-function))
          (> (length x) 2)
          (long-element-p1 (cdr x))))
     

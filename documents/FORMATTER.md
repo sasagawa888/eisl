@@ -9,3 +9,10 @@
 ```
 
 The original file is saved as *filename.org*.
+
+
+if you give argument symbol `stdio`, formatter read from standard-input and output to standard-output.
+
+```lisp
+(formatter 'stdio)
+```

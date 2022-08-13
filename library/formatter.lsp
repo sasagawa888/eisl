@@ -506,15 +506,7 @@
                       ((not (null (cdr s))) ;not end element
                        (newline lm1))))))
 
-    (defun calc-comment-margin (x lm)
-        (let ((size (flatsize x)))
-           (if (< (+ lm size)
-                  single-comment-margin)
-               (- single-comment-margin
-                  (+ lm size))
-               (- single-comment-margin1
-                  (+ lm size)))))
-
+   
     ;; write cons with indent
     (defun pp-indent (x lm)
         (pp-string "(")

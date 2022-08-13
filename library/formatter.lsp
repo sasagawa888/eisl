@@ -3,6 +3,7 @@
     ;; written by kenichi sasagawa
     (defconstant width 100)
     (defconstant long-element 15)
+    (defconstant long-element-sum 60)
     (defconstant defglobal-long-element 50)
     (defconstant single-comment-margin 30)
     (defglobal buffer nil)
@@ -86,33 +87,61 @@
                      ((and (null asdata) (stringp (car x)) (string= (car x) "let*"))
                       (pp-let* x lm))
                      ((and (null asdata) (stringp (car x)) (string= (car x) "for")) (pp-for x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defun"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defun"))
                       (pp-defun x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defpublic"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defpublic"))
                       (pp-defun x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defgeneric"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defgeneric"))
                       (pp-defun x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defmacro"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defmacro"))
                       (pp-defun x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defmodule"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defmodule"))
                       (pp-defmodule x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defglobal"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defglobal"))
                       (pp-defglobal x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defconstant"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defconstant"))
                       (pp-defglobal x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "defdynamic"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "defdynamic"))
                       (pp-defglobal x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "block"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "block"))
                       (pp-block x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "while"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "while"))
                       (pp-block x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "dotimes"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "dotimes"))
                       (pp-block x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "dolist"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "dolist"))
                       (pp-block x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "lambda"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "lambda"))
                       (pp-lambda x lm))
-                     ((and (null asdata) (stringp (car x)) (string= (car x) "labels"))
+                     ((and (null asdata)
+                           (stringp (car x))
+                           (string= (car x) "labels"))
                       (pp-labels x lm))
                      ((and (null asdata) (stringp (car x)) (string= (car x) "flet"))
                       (pp-labels x lm))
@@ -220,9 +249,8 @@
                     (pp-string (car (cdr s)))
                     (newline lm)
                     (setq s (cdr s)))
-                   ((and
-                     (not (null (cdr s))) ;not end element
-                     (not (and (the-p (car s)) (the-p (car (cdr s)))))) ;not the declare
+                   ((and (not (null (cdr s))) ;not end element
+                         (not (and (the-p (car s)) (the-p (car (cdr s)))))) ;not the declare
                     (newline lm)))))
 
     ;; syntax defmodule
@@ -248,7 +276,9 @@
                   (pp-string " ")
                   (pp1 (elt x 2) -1)
                   (pp-string ")"))
-                 (t (newline (+ lm 11)) (pp1 (elt x 2) (+ lm 11)) (pp-string ")")))
+                 (t (newline (+ lm 11))
+                    (pp1 (elt x 2) (+ lm 11))
+                    (pp-string ")")))
            (if (= lm 0)
                (newline lm))))
 
@@ -456,17 +486,15 @@
         (cond ((null x) 1)
               ((characterp x) 0)
               ((stringp x) (length x))
-              ((and
-                (consp x)
-                (stringp (car x))
-                (not (string= (car x) ""))
-                (char= (elt (car x) 0) #\'))
+              ((and (consp x)
+                    (stringp (car x))
+                    (not (string= (car x) ""))
+                    (char= (elt (car x) 0) #\'))
                (+ (length (car x)) (flatsize (cdr x))))
-              ((and
-                (consp x)
-                (stringp (car x))
-                (not (string= (car x) ""))
-                (char= (elt (car x) 0) #\`))
+              ((and (consp x)
+                    (stringp (car x))
+                    (not (string= (car x) ""))
+                    (char= (elt (car x) 0) #\`))
                (+ (length (car x)) (flatsize (cdr x))))
               ((and (consp x) (stringp (car x))) (+ (length (car x)) 1 (flatsize (cdr x))))
               ((consp x) (+ (flatsize (car x)) 1 (flatsize (cdr x))))))
@@ -495,6 +523,8 @@
     ;;if string return extended string. e.g.""NIL""
     ;;if quote return ("'" elt1 elt2 ...)
     ;;if backquote return ("`" elt1 elt2 ...)
+    ;;if unquote return ("," elt1 elt2 ...)
+    ;;if unquote splicing return (",@" elt1 elt2 ...)
     ;;if vector return ("#" elt1 elt2 ...)
     ;;if array return  ("#2a" (... )(...))
     ;;if hex oct binary number return e.g. "#Xface" "#O0707" "#B01010101"
@@ -582,23 +612,20 @@
                         (setq char (getc)))
                      (ungetc char)
                      (convert-to-string (reverse token)))
-                    (t
-                     (while (not (delimiter-p char))
-                        ;atom
-                        (setq token (cons char token))
-                        (setq char (getc)))
-                     (ungetc char)
-                     (convert-to-string (reverse token)))))))
+                    (t (while (not (delimiter-p char))
+                          ;atom
+                          (setq token (cons char token))
+                          (setq char (getc)))
+                       (ungetc char)
+                       (convert-to-string (reverse token)))))))
 
     ;;when first element of buffer is space tab or newline, skip
     (defun space-skip ()
         ;;space skip
-        (while (and
-            (not (null buffer))
-            (or
-             (char= (car buffer) #\space)
-             (char= (car buffer) #\tab)
-             (char= (car buffer) #\newline)))
+        (while (and (not (null buffer))
+                (or (char= (car buffer) #\space)
+                    (char= (car buffer) #\tab)
+                    (char= (car buffer) #\newline)))
            (setq buffer (cdr buffer))))
 
     ;; convert atom to string
@@ -636,14 +663,17 @@
 
     ;; if delimiter T else NIL. delimiter is space newline ledt-paren right paren
     (defun delimiter-p (c)
-        (and (characterp c) (member c '(#\space #\newline #\( #\)))))
+        (and (characterp c)
+             (member c '(#\space #\newline #\( #\)))))
 
     ;;is it skip able character?
     (defun skip-p (c)
         (and (characterp c) (member c '(#\space #\newline))))
 
     (defun has-single-comment-p (x)
-        (and (not (null x)) (consp (cdr x)) (single-comment-p (car (cdr x)))))
+        (and (not (null x))
+             (consp (cdr x))
+             (single-comment-p (car (cdr x)))))
 
     ;; ; type comment
     ;; short-comment includes single-comment,double-somment,triple comment.
@@ -652,26 +682,27 @@
 
     ;; ; single semicolon comment
     (defun single-comment-p (x)
-        (and (stringp x) (> (length x) 1) (char= (elt x 0) #\;) (not (char= (elt x 1) #\;))))
+        (and (stringp x)
+             (> (length x) 1)
+             (char= (elt x 0) #\;)
+             (not (char= (elt x 1) #\;))))
 
     ;; ;; double semicolon comment
     (defun double-comment-p (x)
-        (and
-         (stringp x)
-         (> (length x) 2)
-         (char= (elt x 0) #\;)
-         (char= (elt x 1) #\;)
-         (not (char= (elt x 2) #\;))))
+        (and (stringp x)
+             (> (length x) 2)
+             (char= (elt x 0) #\;)
+             (char= (elt x 1) #\;)
+             (not (char= (elt x 2) #\;))))
 
     ;; ;;; triple seimicolon comment
     (defun triple-comment-p (x)
-        (and
-         (stringp x)
-         (> (length x) 3)
-         (char= (elt x 0) #\;)
-         (char= (elt x 1) #\;)
-         (char= (elt x 2) #\;)
-         (not (char= (elt x 3) #\;))))
+        (and (stringp x)
+             (> (length x) 3)
+             (char= (elt x 0) #\;)
+             (char= (elt x 1) #\;)
+             (char= (elt x 2) #\;)
+             (not (char= (elt x 3) #\;))))
 
     ;; #|    |# type comment
     (defun long-comment-p (x)
@@ -687,36 +718,47 @@
 
     ;; is it array object?
     (defun array-p (x)
-        (and
-         (consp x)
-         (stringp (elt x 0))
-         (= (length (elt x 0)) 3)
-         (char= (elt (elt x 0) 0) #\#)
-         (or (char= (elt (elt x 0) 2) #\a) (char= (elt (elt x 0) 2) #\f))))
+        (and (consp x)
+             (stringp (elt x 0))
+             (= (length (elt x 0)) 3)
+             (char= (elt (elt x 0) 0) #\#)
+             (or (char= (elt (elt x 0) 2) #\a)
+                 (char= (elt (elt x 0) 2) #\f))))
 
     ;; is it quote? e.g. 'foo
     (defun quote-p (x)
-        (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\')))
+        (and (consp x)
+             (stringp (elt x 0))
+             (char= (elt (car x) 0) #\')))
 
     ;; is it backquote? e.g. `(if a b c)
     (defun backquote-p (x)
-        (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\`)))
+        (and (consp x)
+             (stringp (elt x 0))
+             (char= (elt (car x) 0) #\`)))
 
     ;; is it unquote? e.g. ,name
     (defun unquote-p (x)
-        (and (consp x) (stringp (elt x 0)) (char= (elt (car x) 0) #\,)))
+        (and (consp x)
+             (stringp (elt x 0))
+             (char= (elt (car x) 0) #\,)))
 
     ;; is it unquote-splicing? e.g. ,@name
     (defun unquote-splicing-p (x)
-        (and
-         (consp x)
-         (stringp (elt x 0))
-         (char= (elt (car x) 0) #\,)
-         (char= (elt (car x) 1) #\@)))
+        (and (consp x)
+             (stringp (elt x 0))
+             (char= (elt (car x) 0) #\,)
+             (char= (elt (car x) 1) #\@)))
 
     ;; is it function that has long size element?  e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
+    ;; if all each element size is over long-element, return t.
+    ;; if sum of all element size is over long-element-sum, return t.
     (defun long-element-p (x)
-        (and (consp x) (stringp (car x)) (> (length x) 2) (long-element-p1 (cdr x))))
+        (and (consp x)
+             (stringp (car x))
+             (> (length x) 2)
+             (or (long-element-p1 (cdr x))
+                 (>= (flatsize (cdr x)) long-element-sum))))
 
     (defun long-element-p1 (x)
         (cond ((null x) nil)
@@ -724,6 +766,7 @@
               ((>= (flatsize (car x)) long-element) (long-element-p1 (cdr x)))
               (t nil)))
 
+    
     ;; is one-liner?
     (defun one-liner-p (x lm)
         (< (+ (flatsize x) lm) width))

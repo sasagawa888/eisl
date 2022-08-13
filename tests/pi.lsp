@@ -24,10 +24,9 @@
     (if (= a b)
         (div (square (+ a b)) (* 4 tt))
         (let ((new-a (div (+ a b) 2)))
-           (pi-brent-salamin1
-            one
-            new-a
-            (square-root (* a b))
-            (- tt (div (* x (square (- new-a a))) one))
-            (* 2 x)))))
+           (pi-brent-salamin1 one
+                              new-a
+                              (square-root (* a b))
+                              (- tt (div (* x (square (- new-a a))) one))
+                              (* 2 x)))))
 

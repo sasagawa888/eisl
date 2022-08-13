@@ -1,8 +1,14 @@
 (defun bar (x)
-    (+ (* asldj 2)
-       asldkfj
-       asdfasasdfasdfasdfsdf     ;comment
-       asdfasd
-       asdfasdf
-       asdfasdfa
-       asdf))
+    (cond ((= x 1)                      ;nnnnnnnnn 
+           asdfdfhhhhhhhhhhhhhhhhhhhhhhhh) ;asdf
+          ((= x 2) dfgdfg)              ;vbn
+          ((= x 3) kjdsfds)             ;asdfasd
+          ((= x 4) lkjlklkjl) ))
+;asdfsdd
+
+
+(defun foo (x)
+    (if (= x 1)
+        2                               ;adsfsadlkjhkjh
+        3                               ;kakj;lkj;lkjl
+         ))

@@ -5,7 +5,6 @@
     (defconstant long-element 15)
     (defconstant defglobal-long-element 50)
     (defconstant single-comment-margin 30)
-    (defconstant single-comment-margin1 90)
     (defglobal buffer nil)
     (defglobal input-stream (standard-input))
     (defglobal output-stream (standard-output))
@@ -217,7 +216,8 @@
                  (pp1 (car s) lm))
              (cond ((and (not (null (cdr s)))
                          (single-comment-p (car (cdr s))))
-                    (space (calc-comment-margin (car s) lm))
+                    (format-tab output-stream
+                                single-comment-margin)
                     (pp-string (car (cdr s)))
                     (newline lm)
                     (setq s (cdr s)))
@@ -247,7 +247,8 @@
                     (pp1 (car s) lm1))
                 (cond ((and (not (null (cdr s)))
                             (single-comment-p (car (cdr s))))
-                       (space (calc-comment-margin (car s) lm))
+                       (format-tab output-stream
+                                   single-comment-margin)
                        (pp-string (car (cdr s)))
                        (newline lm1)
                        (setq s (cdr s)))
@@ -281,14 +282,15 @@
                  (pp-string (car s))
                  (pp1 (car s) lm))
              (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s))))            ;single comment
-                    (space (calc-comment-margin (car s) lm))
+                         (single-comment-p (car (cdr s)))) ;single comment
+                    (format-tab output-stream
+                                single-comment-margin)
                     (pp-string (car (cdr s)))
                     (newline lm)
                     (setq s (cdr s)))
-                   ((and (not (null (cdr s)))                                                  ;not end element
+                   ((and (not (null (cdr s))) ;not end element
                          (not (and (the-p (car s))
-                                   (the-p (car (cdr s))))));not the declare
+                                   (the-p (car (cdr s)))))) ;not the declare
                     (newline lm)))))
 
     ;; syntax defmodule
@@ -469,12 +471,13 @@
                  (pp-string (car s))
                  (pp1 (car s) lm1))
              (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s))))            ;single comment
-                    (space (calc-comment-margin (car s) lm))
+                         (single-comment-p (car (cdr s)))) ;single comment
+                    (format-tab output-stream
+                                single-comment-margin)
                     (pp-string (car (cdr s)))
                     (newline (+ lm 1))
                     (setq s (cdr s)))
-                   ((not (null (cdr s)))                                                   ;not end element
+                   ((not (null (cdr s))) ;not end element
                     (pp-string " ")))))
 
     ;; write subr with long element
@@ -494,12 +497,13 @@
                     (pp-string (car s))
                     (pp1 (car s) lm1))
                 (cond ((and (not (null (cdr s)))
-                            (single-comment-p (car (cdr s))))         ;single comment
-                       (space (calc-comment-margin (car s) lm))
+                            (single-comment-p (car (cdr s)))) ;single comment
+                       (format-tab output-stream
+                                   single-comment-margin)
                        (pp-string (car (cdr s)))
                        (newline lm1)
                        (setq s (cdr s)))
-                      ((not (null (cdr s)))                                                ;not end element
+                      ((not (null (cdr s))) ;not end element
                        (newline lm1))))))
 
     (defun calc-comment-margin (x lm)
@@ -526,12 +530,13 @@
                  (pp-string (car s))
                  (pp1 (car s) (+ lm 1)))
              (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s))))            ;single comment
-                    (space (calc-comment-margin (car s) lm))
+                         (single-comment-p (car (cdr s)))) ;single comment
+                    (format-tab output-stream
+                                single-comment-margin)
                     (pp-string (car (cdr s)))
                     (newline (+ lm 1))
                     (setq s (cdr s)))
-                   ((not (null (cdr s)))                                                   ;not end element
+                   ((not (null (cdr s))) ;not end element
                     (newline (+ lm 1))))))
 
     ;; print n of spaces
@@ -611,14 +616,14 @@
            (let ((token nil)
                  (char nil) )
               (setq char (getc))
-              (cond ((skip-p char)                                                         ;newline skip
+              (cond ((skip-p char) ;newline skip
                      (space-skip) (setq char (getc))))
-              (cond ((skip-p char)                                                         ;space skip
+              (cond ((skip-p char) ;space skip
                      (space-skip) (setq char (getc))))
-              (cond ((end-of-file-p char) (return-from exit char))                        ;EOF
-                    ((char= char #\null) "")                                            ;empty line
-                    ((delimiter-p char) char)                                             ;delimiter
-                    ((char= char #\")                                                     ;string e.g. "asdf"
+              (cond ((end-of-file-p char) (return-from exit char)) ;EOF
+                    ((char= char #\null) "") ;empty line
+                    ((delimiter-p char) char) ;delimiter
+                    ((char= char #\") ;string e.g. "asdf"
                      (setq token
                            (cons #\'
                                  (cons #\' token)))
@@ -634,7 +639,7 @@
                                  (cons #\' token)))
                      (convert-to-string (reverse token)))
                     ((and (char= char #\#)
-                          (char= (look) #\\))                           ;character e.g. "#a" double 
+                          (char= (look) #\\)) ;character e.g. "#a" double 
                      (setq token
                            (cons (getc) (cons char nil)))
                      (setq token
@@ -648,26 +653,26 @@
                         (setq char (getc)))
                      (ungetc char)
                      (convert-to-string (reverse token)))
-                    ((char= char #\')                                                     ;quote
+                    ((char= char #\') ;quote
                      (setq token (cons char nil))
                      (cons (convert-to-string token)
                            (sexp-read)))
-                    ((char= char #\`)                                                     ;back quote
+                    ((char= char #\`) ;back quote
                      (setq token (cons char nil))
                      (cons (convert-to-string token)
                            (sexp-read)))
                     ((and (char= char #\,)
-                          (char= (look) #\@))                           ;unquote-splicing
+                          (char= (look) #\@)) ;unquote-splicing
                      (setq token
                            (cons (getc) (cons char nil)))
                      (cons (convert-to-string token)
                            (sexp-read)))
-                    ((char= char #\,)                                                     ;unquote
+                    ((char= char #\,) ;unquote
                      (setq token (cons char nil))
                      (cons (convert-to-string token)
                            (sexp-read)))
                     ((and (char= char #\#)
-                          (char= (look) #\|))                           ;long comment #|..|#
+                          (char= (look) #\|)) ;long comment #|..|#
                      (setq token
                            (cons (getc) (cons char nil)))
                      (setq token
@@ -684,12 +689,12 @@
                            (cons (getc) token))
                      (convert-to-string (reverse token)))
                     ((and (char= char #\#)
-                          (char= (look) #\())                           ;vector
+                          (char= (look) #\()) ;vector
                      (setq token (cons char nil))
                      (cons (convert-to-string token)
                            (sexp-read)))
                     ((and (char= char #\#)
-                          (char= (look) #\'))                           ;e.g. #'foo
+                          (char= (look) #\')) ;e.g. #'foo
                      (setq token
                            (cons (getc) (cons char nil)))
                      (setq char (getc))
@@ -707,13 +712,13 @@
                      (ungetc char)
                      (setq token (reverse token))
                      (cond ((member (elt token 1)
-                                    '(#\X #\B #\O)) (convert-to-string token));hex oct bin integer
+                                    '(#\X #\B #\O)) (convert-to-string token)) ;hex oct bin integer
                            ((or (char= (elt token 2) #\a)
                                 (char= (elt token 2) #\f))
                             (cons (convert-to-string token)
-                                  (sexp-read)));array
-                           (t (convert-to-string token))));other 
-                    ((char= char #\;)                                                     ;comment
+                                  (sexp-read))) ;array
+                           (t (convert-to-string token)))) ;other 
+                    ((char= char #\;) ;comment
                      (setq token
                            (cons char token))
                      (setq char (getc))

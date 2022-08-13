@@ -56,8 +56,8 @@
     (defun filename1 (str)
         (let* ((n (char-index #\. str)))
             (if (null n)
-                (error* "lack of filename ext"
-                        str))
+                (error "lack of filename ext"
+                       str))
             (substring str 0 (- n 1))))
 
     ;; e.g. ./example/test.lsp 
@@ -65,8 +65,8 @@
         (let* ((n (char-index #\.
                              (dropstring str 1))))
             (if (null n)
-                (error* "lack of filename ext"
-                        str))
+                (error "lack of filename ext"
+                       str))
             (substring str 0 n)))
 
     (defun dropstring (str n)

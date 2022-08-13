@@ -649,7 +649,7 @@
                     ((and (char= char #\,)
                           (char= (look) #\@)) ;unquote-splicing
                      (setq token
-                           (cons (getc) (cons char nil)))
+                           (cons char (cons (getc) nil)))
                      (cons (convert-to-string token)
                            (sexp-read)))
                     ((char= char #\,) ;unquote

@@ -1,7 +1,7 @@
 (defun bar (x)
     (+ (* asldj 2)
        asldkfj
-       asdfasasdfasdfasdfsdf
+       asdfasasdfasdfasdfsdf     ;comment
        asdfasd
        asdfasdf
        asdfasdfa

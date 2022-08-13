@@ -1,5 +1,4 @@
 (defmodule format
-    ;; プリティ−プリンタ
     ;; pretty printer for ISLisp
     ;; written by kenichi sasagawa
     (defconstant width 100)
@@ -34,7 +33,6 @@
            (while (not (end-of-file-p exp))
               (setq otomo nil)
               (pp1 exp 0)
-              ;;(print exp)
               (setq exp (sexp-read)))
            (cond ((stringp file)
                   (close input-stream)
@@ -219,7 +217,7 @@
                  (pp1 (car s) lm))
              (cond ((and (not (null (cdr s)))
                          (single-comment-p (car (cdr s))))
-                    (space (calc (car s) lm))
+                    (space (calc-comment-margin (car s) lm))
                     (pp-string (car (cdr s)))
                     (newline lm)
                     (setq s (cdr s)))
@@ -249,7 +247,7 @@
                     (pp1 (car s) lm1))
                 (cond ((and (not (null (cdr s)))
                             (single-comment-p (car (cdr s))))
-                       (space (calc (car s) lm))
+                       (space (calc-comment-margin (car s) lm))
                        (pp-string (car (cdr s)))
                        (newline lm1)
                        (setq s (cdr s)))
@@ -284,12 +282,12 @@
                  (pp1 (car s) lm))
              (cond ((and (not (null (cdr s)))
                          (single-comment-p (car (cdr s))))            ;single comment
-                    (space (calc (car s) lm))
+                    (space (calc-comment-margin (car s) lm))
                     (pp-string (car (cdr s)))
                     (newline lm)
                     (setq s (cdr s)))
                    ((and (not (null (cdr s)))                                                  ;not end element
-                    (not (and (the-p (car s))
+                         (not (and (the-p (car s))
                                    (the-p (car (cdr s))))));not the declare
                     (newline lm)))))
 
@@ -472,7 +470,7 @@
                  (pp1 (car s) lm1))
              (cond ((and (not (null (cdr s)))
                          (single-comment-p (car (cdr s))))            ;single comment
-                    (space (calc (car s) lm))
+                    (space (calc-comment-margin (car s) lm))
                     (pp-string (car (cdr s)))
                     (newline (+ lm 1))
                     (setq s (cdr s)))
@@ -497,14 +495,14 @@
                     (pp1 (car s) lm1))
                 (cond ((and (not (null (cdr s)))
                             (single-comment-p (car (cdr s))))         ;single comment
-                       (space (calc (car s) lm))
+                       (space (calc-comment-margin (car s) lm))
                        (pp-string (car (cdr s)))
-                       (newline lm)
+                       (newline lm1)
                        (setq s (cdr s)))
                       ((not (null (cdr s)))                                                ;not end element
                        (newline lm1))))))
 
-    (defun calc (x lm)
+    (defun calc-comment-margin (x lm)
         (let ((size (flatsize x)))
            (if (< (+ lm size)
                   single-comment-margin)
@@ -529,7 +527,7 @@
                  (pp1 (car s) (+ lm 1)))
              (cond ((and (not (null (cdr s)))
                          (single-comment-p (car (cdr s))))            ;single comment
-                    (space (calc (car s) lm))
+                    (space (calc-comment-margin (car s) lm))
                     (pp-string (car (cdr s)))
                     (newline (+ lm 1))
                     (setq s (cdr s)))
@@ -792,6 +790,7 @@
                      '(#\space #\newline))))
 
     ;; ; type comment
+    ;; short-comment includes single-comment,double-somment,triple comment.
     (defun short-comment-p (x)
         (and (stringp x)
              (not (string= x ""))
@@ -812,7 +811,7 @@
              (char= (elt x 1) #\;)
              (not (char= (elt x 2) #\;))))
 
-    ;; ;;; triple seimicolo comment
+    ;; ;;; triple seimicolon comment
     (defun triple-comment-p (x)
         (and (stringp x)
              (> (length x) 3)

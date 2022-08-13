@@ -214,8 +214,7 @@
              (if (stringp (car s))
                  (pp-string (car s))
                  (pp1 (car s) lm))
-             (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s))))
+             (cond ((has-single-comment-p s)
                     (format-tab output-stream
                                 single-comment-margin)
                     (pp-string (car (cdr s)))
@@ -245,8 +244,7 @@
                 (if (stringp (car s))
                     (pp-string (car s))
                     (pp1 (car s) lm1))
-                (cond ((and (not (null (cdr s)))
-                            (single-comment-p (car (cdr s))))
+                (cond ((has-single-comment-p s)
                        (format-tab output-stream
                                    single-comment-margin)
                        (pp-string (car (cdr s)))
@@ -281,8 +279,7 @@
              (if (stringp (car s))
                  (pp-string (car s))
                  (pp1 (car s) lm))
-             (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s)))) ;single comment
+             (cond ((has-single-comment-p s) ;single comment
                     (format-tab output-stream
                                 single-comment-margin)
                     (pp-string (car (cdr s)))
@@ -470,8 +467,7 @@
              (if (stringp (car s))
                  (pp-string (car s))
                  (pp1 (car s) lm1))
-             (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s)))) ;single comment
+             (cond ((has-single-comment-p s) ;single comment
                     (format-tab output-stream
                                 single-comment-margin)
                     (pp-string (car (cdr s)))
@@ -496,8 +492,7 @@
                 (if (stringp (car s))
                     (pp-string (car s))
                     (pp1 (car s) lm1))
-                (cond ((and (not (null (cdr s)))
-                            (single-comment-p (car (cdr s)))) ;single comment
+                (cond ((has-single-comment-p s) ;single comment
                        (format-tab output-stream
                                    single-comment-margin)
                        (pp-string (car (cdr s)))
@@ -506,7 +501,6 @@
                       ((not (null (cdr s))) ;not end element
                        (newline lm1))))))
 
-   
     ;; write cons with indent
     (defun pp-indent (x lm)
         (pp-string "(")
@@ -521,8 +515,7 @@
              (if (stringp (car s))
                  (pp-string (car s))
                  (pp1 (car s) (+ lm 1)))
-             (cond ((and (not (null (cdr s)))
-                         (single-comment-p (car (cdr s)))) ;single comment
+             (cond ((has-single-comment-p s) ;single comment
                     (format-tab output-stream
                                 single-comment-margin)
                     (pp-string (car (cdr s)))
@@ -785,6 +778,11 @@
         (and (characterp c)
              (member c
                      '(#\space #\newline))))
+
+    (defun has-single-comment-p (x)
+        (and (not (null x))
+             (consp (cdr x))
+             (single-comment-p (car (cdr x)))))
 
     ;; ; type comment
     ;; short-comment includes single-comment,double-somment,triple comment.

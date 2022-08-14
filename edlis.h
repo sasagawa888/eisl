@@ -9,7 +9,7 @@
 #include "term.h"
 
 static const float VERSION = 2.60;
-#define ROW_SIZE 4000
+#define ROW_SIZE 5000
 #define COL_SIZE 255
 #define COPY_SIZE 500
 #define TOKEN_MAX   80

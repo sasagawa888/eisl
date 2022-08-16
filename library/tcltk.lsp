@@ -5,11 +5,26 @@
 (c-lang "Tcl_Interp *interp;
          char buff[BUFFSIZE];")
 
+
+(c-lang "static int proc_eval(ClientData clientData, Tcl_Interp *interp, int argc, Tcl_Obj *const argv[])
+{
+  for (int i = 0; i < argc; i++) {
+    int len;
+    printf(\"%s \", Tcl_GetStringFromObj(argv[i], &len));
+  }")
+(c-lang 
+ "printf(\"n\");
+  Tcl_SetObjResult(interp, Tcl_NewIntObj(argc));
+  return TCL_OK;
+}")
+
+
 (defun tk::init ()
  (c-lang 
  "interp = Tcl_CreateInterp();
   Tcl_Init(interp);               
   Tk_Init(interp); 
+  Tcl_CreateObjCommand(interp, \"eval\", proc_eval, NULL, NULL);
   "))
 
 (defun tk::label (obj :rest l)

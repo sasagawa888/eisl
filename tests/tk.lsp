@@ -2,6 +2,10 @@
 
 (import "tcltk")
 
+(defun foo ()
+  (tk::init)
+  (tk::command "eval 1"))
+
 (defun hello ()
   (tk::init)
   (tk::label 'hello '-text "hello world" '-width 50 '-height 15)

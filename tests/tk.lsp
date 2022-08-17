@@ -35,7 +35,12 @@
        ((> i 200) t)
        (tk::create 'c0 (rectangle i i (+ i 10) (+ i 10)) '-fill 'red))
   (tk::pack 'c0)
+  (tk::bind 'c0 "<Button-1>" `(bar %x %y))
   (tk::mainloop))
+
+
+(defun bar (x y)
+  (error "asdf" (list x y)))
 
 
 (defglobal area (create-array '(100 100) 0))

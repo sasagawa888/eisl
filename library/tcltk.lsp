@@ -22,6 +22,25 @@
   return TCL_OK;
 }")
 
+(defun tk::bind (obj event func)
+  (let ((cmd (tk::function func)))
+    (c-lang 
+      "strcpy(buff,''bind .'');
+       strcat(buff,str_to_lower(Fgetname(OBJ)));
+       strcat(buff,''  '');
+       strcat(buff,Fgetname(EVENT));
+       strcat(buff,''  '');
+       strcat(buff,Fgetname(CMD));
+       strcat(buff,''\n'');
+       Tcl_Eval(interp,buff);")))
+
+(defun tk::function (s)
+  (labels ((iter (x) 
+            (if (null x)
+                "}"
+                (string-append (convert (car x) <string>) " " (iter (cdr x))))))
+          (string-append "{ " (iter s))))
+
 
 (defun tk::init ()
  (c-lang 

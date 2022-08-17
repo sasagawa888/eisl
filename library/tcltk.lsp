@@ -7,14 +7,18 @@
 
 
 (c-lang "static int proc_eval(ClientData clientData, Tcl_Interp *interp, int argc, Tcl_Obj *const argv[])
-{
-  for (int i = 0; i < argc; i++) {
-    int len;
-    printf(\"%s \", Tcl_GetStringFromObj(argv[i], &len));
+{ int func,args;
+  int i,len,intarg;
+  func = Fmakesym(Tcl_GetStringFromObj(argv[1], &len));")
+(c-lang
+ "args = NIL;
+  for (i = argc-1; i > 1; i--) {
+    intarg =Fmakeint(atoi(Tcl_GetStringFromObj(argv[i], &len)));
+    args = Fcons(intarg,args);
   }")
 (c-lang 
- "printf(\"n\");
-  Tcl_SetObjResult(interp, Tcl_NewIntObj(argc));
+ "i = Fgetint(Feval(Fcons(func,args)));
+  Tcl_SetObjResult(interp, Tcl_NewIntObj(i));
   return TCL_OK;
 }")
 

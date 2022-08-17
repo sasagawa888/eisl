@@ -4,7 +4,7 @@
 
 (defun foo ()
   (tk::init)
-  (tk::command "eval 1"))
+  (tk::command "eval + 1 2"))
 
 (defun hello ()
   (tk::init)

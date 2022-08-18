@@ -15,15 +15,16 @@
 (defun main ()
   (tk::init)
   (tk::label 'hello '-text "hello world" '-width 50 '-height 15)
-  (tk::button 'bt1 '-text "button1")
-  (tk::button 'bt2 '-text "button2")
-  (tk::radiobutton 'rbt1 '-text '(one 1))
-  (tk::radiobutton 'rbt2 '-text '(two 2))
-  (tk::scrollbar 's)
-  (tk::command "set first last")
-  (tk::listbox 'lb1 '-xscrollcommand ".s set")
-  (tk::menu '(m m1) '-tearoff 'no)
-  (tk::pack 'hello 'bt1 'bt2 'rbt1 'rbt2 'lb1 's)
+  ;(tk::button 'bt1 '-text "button1")
+  ;(tk::button 'bt2 '-text "button2")
+  ;(tk::radiobutton 'rbt1 '-text '(one 1))
+  ;(tk::radiobutton 'rbt2 '-text '(two 2))
+  ;(tk::scrollbar 's)
+  ;(tk::command "set first last")
+  ;(tk::listbox 'lb1 '-xscrollcommand ".s set")
+  (tk::menu '(m m1) '-tearoff 'no
+    '(add (m m1) "command" -label "Start" -underline 0 -command "start"))
+  (tk::pack 'hello 'm 'm1)
   (tk::mainloop)
   T)
 
@@ -36,6 +37,7 @@
        (tk::create 'c0 (rectangle i i (+ i 10) (+ i 10)) '-fill 'red))
   (tk::pack 'c0)
   (tk::bind 'c0 "<Button-1>" `(bar %x %y))
+  (tk::bind 'c0 "<KeyPress>" `(tk::deleteinterp))
   (tk::mainloop))
 
 

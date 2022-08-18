@@ -98,6 +98,16 @@ class
 
 (tk::pack object1 object2 ... objectN)
 
+
+## bind
+
+(tk::bind object event S-expression)
+
+e.g.
+```
+ (tk::bind 'c0 "<Button-1>" `(bar %x %y))
+```
+
 ## command
 
 (tk::command str)

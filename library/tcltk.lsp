@@ -121,13 +121,12 @@
 
 
 
-(defun tk::configuie (obj :rest l)
+(defun tk::configure (obj :rest l)
   (let ((objects (tk::objects obj))
         (opt (tk::option l)))
     (c-lang 
-      "strcpy(buff,''configuie '');
-       strcat(buff,Fgetname(OBJECTS));
-       strcat(buff,'' '');
+      "strcpy(buff,Fgetname(OBJECTS));
+       strcat(buff,'' configure '');
        strcat(buff,Fgetname(OPT));
        strcat(buff,''\n'');
        printf(''%s'',buff);
@@ -220,7 +219,7 @@
 (defun tk::objects (ls)
     (cond ((null ls) "")
           ((eq ls 'root) ".")
-          ((symbolp ls) (string-append "." (convert ls <string>)))
+          ((symbolp ls) (string-append "." (tk::str-to-lower (convert ls <string>))))
           (t (string-append "." 
                             (tk::str-to-lower (convert (car ls) <string>))
                             (tk::objects (cdr ls))))))
@@ -245,6 +244,8 @@
           ((eq (car ls) '-command) (string-append (string-append " -command \"" (car (cdr ls)) "\"")
                                                  (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-label) (string-append (string-append " -label \"" (car (cdr ls)) "\"")
+                                                 (tk::option (cdr (cdr ls)))))
+          ((eq (car ls) '-type) (string-append (string-append " -type " (car (cdr ls)))
                                                  (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-menu) (string-append (string-append " -menu " (tk::objects (car (cdr ls))))
                                                  (tk::option (cdr (cdr ls)))))                                      

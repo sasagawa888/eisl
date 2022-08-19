@@ -120,10 +120,33 @@
        Tcl_Eval(interp,buff);")))
 
 
-(defun tk::option-add (obj class l)
+
+(defun tk::configuie (obj :rest l)
   (let ((objects (tk::objects obj))
         (opt (tk::option l)))
-    (string-append "\n " objects " add " class  opt))) 
+    (c-lang 
+      "strcpy(buff,''configuie '');
+       strcat(buff,Fgetname(OBJECTS));
+       strcat(buff,'' '');
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       printf(''%s'',buff);
+       Tcl_Eval(interp,buff);")))
+
+
+(defun tk::add (obj class :rest l)
+  (let ((objects (tk::objects obj))
+        (opt (tk::option l)))
+    (c-lang 
+      "strcpy(buff,''add '');
+       strcat(buff,Fgetname(OBJECTS));
+       strcat(buff,'' '');
+       strcat(buff,Fgetname(CLASS));
+       strcat(buff,'' '');
+       strcat(buff,Fgetname(OPT));
+       strcat(buff,''\n'');
+       printf(''%s'',buff);
+       Tcl_Eval(interp,buff);")))
 
 (defun tk::canvas (obj :rest l)
   (let ((opt (tk::option l)))
@@ -193,10 +216,11 @@
           ((listp (car ls)) (string-append (tk::list (car ls))
                                            (tk::list (cdr ls))))))
 
-;; e.g. menu '(m m1)
+;; e.g. menu '(m m1) -> ".m.m1"  menu 'm "."
 (defun tk::objects (ls)
-    (if (not (listp ls)) (error "tk::object incorrect widgets" ls))
     (cond ((null ls) "")
+          ((eq ls 'root) ".")
+          ((symbolp ls) (string-append "." (convert ls <string>)))
           (t (string-append "." 
                             (tk::str-to-lower (convert (car ls) <string>))
                             (tk::objects (cdr ls))))))
@@ -204,7 +228,7 @@
 (defun tk::option (ls)
     (cond ((null ls) "")
           ((and (consp (car ls)) (eq (car (car ls)) 'add))
-           (string-append (tk::option-add (elt (car ls) 1) (elt (car ls) 2) (cdr (cdr (cdr (car ls)))))
+           (string-append (tk::option-add (elt (car ls) 1) (cdr (cdr (car ls))))
                           (tk::option (cdr ls))))
           ((eq (car ls) '-text) (cond ((stringp (car (cdr ls)))
                                        (string-append (string-append " -text \"" (car (cdr ls)) "\"")
@@ -222,6 +246,8 @@
                                                  (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-label) (string-append (string-append " -label \"" (car (cdr ls)) "\"")
                                                  (tk::option (cdr (cdr ls)))))
+          ((eq (car ls) '-menu) (string-append (string-append " -menu " (tk::objects (car (cdr ls))))
+                                                 (tk::option (cdr (cdr ls)))))                                      
           ((eq (car ls) '-underline) (string-append (string-append " -unferline " (convert (car (cdr ls)) <string>) )
                                                  (tk::option (cdr (cdr ls)))))                                                                              
           ((eq (car ls) '-xscrollcommand) (string-append (string-append " -xscrollcommand \"" (car (cdr ls)) "\"")

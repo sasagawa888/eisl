@@ -56,6 +56,10 @@ eisl -c
 
 objects e.g. .m.m1 (in tcl) -> '(m m1)   m is parent obj, m1 is child obj
 
+#### configure
+
+(tk::configure object option)
+
 #### add 
 add menu-object menu.
 
@@ -63,14 +67,14 @@ add menu-object menu.
 
 objects e.g. .m.m1 (in tcl) -> '(m m1)  m is parent obj, m1 is child obj
 
-class
+class is given as string
 
 ```
-cascade
-checkbutton
-command
-radiobutton
-separator
+"cascade"
+"checkbutton"
+"command"
+"radiobutton"
+"separator"
 ```
 
 ## scrollbar
@@ -102,6 +106,8 @@ class
 ## bind
 
 (tk::bind object event S-expression)
+
+event is given as string
 
 e.g.
 ```

@@ -1,8 +1,10 @@
-;; tic-tac-tow
+;; tic-tac-toe
 
 (import "tcltk")
 
 (defglobal board (create-array '(3 3)))
+(defglobal count 0)
+(defglobal init t)
 
 (defun game ()
   (tk::init)
@@ -16,6 +18,11 @@
   (tk::pack 'c0)
   (tk::bind 'c0 "<Button-1>" `(paint %x %y))
   (tk::mainloop)
+)
+
+(defun game-over-p ()
+    (cond ((= count 9) t)
+          (t ))
 )
 
 (defun game-init ()

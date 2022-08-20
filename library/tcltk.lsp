@@ -116,7 +116,6 @@
        strcat(buff,Fgetname(OBJECTS));
        strcat(buff,Fgetname(OPT));
        strcat(buff,''\n'');
-       printf(''%s'',buff);
        Tcl_Eval(interp,buff);")))
 
 
@@ -129,7 +128,6 @@
        strcat(buff,'' configure '');
        strcat(buff,Fgetname(OPT));
        strcat(buff,''\n'');
-       printf(''%s'',buff);
        Tcl_Eval(interp,buff);")))
 
 
@@ -143,7 +141,6 @@
        strcat(buff,'' '');
        strcat(buff,Fgetname(OPT));
        strcat(buff,''\n'');
-       printf(''%s'',buff);
        Tcl_Eval(interp,buff);")))
 
 (defun tk::canvas (obj :rest l)

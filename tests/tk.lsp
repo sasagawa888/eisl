@@ -26,7 +26,7 @@
   (tk::configure 'root '-menu 'm)
   (tk::add 'm "cascade" '-label "Games" '-underline 0 '-menu '(m m1))
   (tk::add 'm "cascade" '-label "Level" '-underline 0 '-menu '(m m2))
-  (tk::pack 'hello 'm 'm1)
+  (tk::pack 'hello)
   (tk::mainloop)
   T)
 

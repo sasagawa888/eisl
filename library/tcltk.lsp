@@ -41,7 +41,7 @@
             (if (null x)
                 "}"
                 (string-append (convert (car x) <string>) " " (iter (cdr x))))))
-          (string-append "{eval " (iter s))))
+          (string-append "{eisl_eval " (iter s))))
 
 (defun tk::deleteinterp ()
   (c-lang "Tcl_DeleteInterp(interp);"))

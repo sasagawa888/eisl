@@ -139,9 +139,8 @@
   (let ((objects (tk::objects obj))
         (opt (tk::option l)))
     (c-lang 
-      "strcpy(buff,''add '');
-       strcat(buff,Fgetname(OBJECTS));
-       strcat(buff,'' '');
+      "strcpy(buff,Fgetname(OBJECTS));
+       strcat(buff,'' add '');
        strcat(buff,Fgetname(CLASS));
        strcat(buff,'' '');
        strcat(buff,Fgetname(OPT));
@@ -251,7 +250,7 @@
                                                  (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-menu) (string-append (string-append " -menu " (tk::objects (car (cdr ls))))
                                                  (tk::option (cdr (cdr ls)))))                                      
-          ((eq (car ls) '-underline) (string-append (string-append " -unferline " (convert (car (cdr ls)) <string>) )
+          ((eq (car ls) '-underline) (string-append (string-append " -underline " (convert (car (cdr ls)) <string>) )
                                                  (tk::option (cdr (cdr ls)))))                                                                              
           ((eq (car ls) '-xscrollcommand) (string-append (string-append " -xscrollcommand \"" (car (cdr ls)) "\"")
                                                  (tk::option (cdr (cdr ls)))))   	

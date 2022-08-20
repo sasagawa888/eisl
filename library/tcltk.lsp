@@ -9,12 +9,10 @@
 (c-lang "static int proc_eval(ClientData clientData, Tcl_Interp *interp, int argc, Tcl_Obj *const argv[])
 { int func,args;
   int i,len,intarg;
-  printf(''fun= %s\n'', Tcl_GetStringFromObj(argv[1], &len));
   func = Fmakesym(Tcl_GetStringFromObj(argv[1], &len));")
 (c-lang
  "args = NIL;
   for (i = argc-1; i > 1; i--) {
-    printf(''arg= %s\n'', Tcl_GetStringFromObj(argv[i], &len));
     intarg =Fmakeint(atoi(Tcl_GetStringFromObj(argv[i], &len)));
     args = Fcons(intarg,args);
   }")

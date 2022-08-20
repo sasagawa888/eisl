@@ -193,6 +193,18 @@
        printf(''%s\n'', Tcl_GetStringResult(interp));")
     t)
 
+(defun tk::winfo (class object)
+   (let ((obj (tk::objects object)))
+     (c-lang     
+       "strcpy(buff,''winfo '');
+        strcat(buff,Fgetname(CLASS));
+        strcat(buff,'' '');
+        strcat(buff,Fgetname(OBJ));
+        strcat(buff,''\n'');")
+     (c-lang    
+       "Tcl_Eval(interp,buff);
+        res = Fmakeint(atoi(Tcl_GetStringResult(interp)));
+        return(res);")))
 
 (defun tk::packs (ls)    
     (cond ((null ls) "")

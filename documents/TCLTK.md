@@ -128,7 +128,14 @@ T
 > 
 ```
 
+## winfo
 
+(tk::winfo class object)
+
+e.g.
+```
+(tk::winfo "rootx" 'root)
+```
 
 ## option
 

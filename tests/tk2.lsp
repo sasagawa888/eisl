@@ -63,12 +63,12 @@
              (rj (elt res 1)))
          (set-aref 2 board ri rj)
          (paint ri rj 'red))
-      (if (win-p 2) (print "computer human"))
+      (if (win-p 2) (print "win computer"))
       (if (game-over-p) (print "game-over"))))
 
 (defun computer (i j)
    (cond (init (computer1 i j))
-         (t (list 2 2))))
+         (t (computer2))))
 
 ;; first step
 (defun computer1 (i j)
@@ -76,13 +76,62 @@
          (t (setq init nil) (list 1 1))))
 
 ;; after first step
-(defun computer2 (i j))
+(defun computer2 ()
+    (block after
+      (let ((res (reach-p 1)))
+        (if res (return-from after res)))
+      (let ((res (reach-p 2)))
+        (if res (return-from after res)))
+      (let ((res (computer-free-corner)))
+        (if res (return-from after res)))
+      (let ((res (computer-free)))
+        (if res (return-from after res)))))
+      
 
-;; if reach of human  disturb win else return nil 
-(defun computer3 (i j))
+;; if reach of human disturb win else return nil 
+(defun reach-p (x)
+    (cond ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
+          ((and (= (aref board 0 0) 0)(= (aref board 1 0) x) (= (aref board 2 0) x)) (list 0 0))
+          ((and (= (aref board 0 0) 0)(= (aref board 1 1) x) (= (aref board 2 2) x)) (list 0 0))
+          ((and (= (aref board 0 1) 0)(= (aref board 0 0) x) (= (aref board 0 2) x)) (list 0 1))
+          ((and (= (aref board 0 1) 0)(= (aref board 1 1) x) (= (aref board 2 1) x)) (list 0 1))
+          ((and (= (aref board 0 2) 0)(= (aref board 0 0) x) (= (aref board 0 1) x)) (list 0 2))
+          ((and (= (aref board 0 2) 0)(= (aref board 0 0) x) (= (aref board 0 1) x)) (list 0 2))
+          ((and (= (aref board 0 2) 0)(= (aref board 1 1) x) (= (aref board 2 0) x)) (list 0 2))
+          ((and (= (aref board 1 0) 0)(= (aref board 1 1) x) (= (aref board 1 2) x)) (list 1 0))
+          ((and (= (aref board 1 0) 0)(= (aref board 0 0) x) (= (aref board 2 0) x)) (list 1 0))
+          ((and (= (aref board 1 1) 0)(= (aref board 0 0) x) (= (aref board 2 2) x)) (list 1 1))
+          ((and (= (aref board 1 1) 0)(= (aref board 0 1) x) (= (aref board 2 1) x)) (list 1 1))
+          ((and (= (aref board 1 1) 0)(= (aref board 0 2) x) (= (aref board 2 0) x)) (list 1 1))
+          ((and (= (aref board 1 1) 0)(= (aref board 1 0) x) (= (aref board 1 2) x)) (list 1 1))
+          ((and (= (aref board 1 2) 0)(= (aref board 1 0) x) (= (aref board 1 1) x)) (list 1 2))
+          ((and (= (aref board 2 0) 0)(= (aref board 0 0) x) (= (aref board 1 0) x)) (list 2 0))
+          ((and (= (aref board 2 0) 0)(= (aref board 2 1) x) (= (aref board 2 2) x)) (list 2 0))
+          ((and (= (aref board 2 0) 0)(= (aref board 1 1) x) (= (aref board 0 2) x)) (list 2 0))
+          ((and (= (aref board 2 1) 0)(= (aref board 2 0) x) (= (aref board 2 2) x)) (list 2 1))
+          ((and (= (aref board 2 1) 0)(= (aref board 0 1) x) (= (aref board 1 1) x)) (list 2 1))
+          ((and (= (aref board 2 2) 0)(= (aref board 2 0) x) (= (aref board 2 1) x)) (list 2 2))
+          ((and (= (aref board 2 2) 0)(= (aref board 2 0) x) (= (aref board 2 1) x)) (list 2 2))
+          ((and (= (aref board 2 2) 0)(= (aref board 1 1) x) (= (aref board 0 0) x)) (list 2 2))
+          (t nil)))
 
-;; if not reach of human occupy free corner
-(defun computer4 (i j))
+
+;; if not reach of human and computer, occupy free corner
+(defun computer-free-corner ()
+  (cond ((= (aref board 0 0) 0) (list 0 0))
+        ((= (aref board 2 0) 0) (list 2 0))
+        ((= (aref board 0 2) 0) (list 0 2))
+        ((= (aref board 2 2) 0) (list 2 2))))
+
+;; if other case return free position
+(defun computer-free ()
+   (block test
+      (for ((i 0 (+ i 1)))
+           ((> i 2) t)
+           (for ((j 0 (+ j 1)))
+                ((> j 2) t)
+                (if (= (aref board i j) 0)
+                    (return-from test (list i j)))))))
 
 
 (defun paint (i j color)

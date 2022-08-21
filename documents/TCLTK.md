@@ -137,6 +137,12 @@ e.g.
 (tk::winfo "rootx" 'root)
 ```
 
+## exit
+exit tcl/tk interpreter
+
+(tk::exit)
+
+
 ## option
 
 

@@ -14,22 +14,14 @@
   (tk::menu 'm)
   (tk::add 'm "cascade" '-label "Game" '-underline 0 '-menu '(m m1))
   (tk::menu '(m m1) '-tearoff 'no)
-  (tk::add '(m m1) "command" '-label "Init" '-underline 0 '-command '(game-init))
-  (tk::add '(m m1) "command" '-label "Exit" '-underline 0 '-command "exit")
+  (tk::add '(m m1) "command" '-label "Restart" '-underline 0 '-command '(game-init))
+  (tk::add '(m m1) "command" '-label "Exit" '-underline 0 '-command '(tk::exit))
   (game-init)
   (tk::pack 'c0)
   (tk::bind 'c0 "<Button-1>" `(human %x %y))
   (tk::mainloop)
 )
 
-(defun game-over-p ()
-    (block test
-      (for ((i 0 (+ i 1)))
-           ((> i 2) t)
-           (for ((j 0 (+ j 1)))
-                ((> j 2) t)
-                (if (= (aref board i j) 0)
-                    (return-from test nil))))))
 
 (defun win-p (x)
     (cond ((and (= (aref board 0 0) x) (= (aref board 1 1) x) (= (aref board 2 2) x)) t)
@@ -64,12 +56,12 @@
          (paint i j 'blue)
          (if (win-p 1) 
              (progn (setq end t)
-                    (tk::create 'c0 (text 240 300) '-text "Win human!" '-anchor 'nw)
+                    (tk::create 'c0 (text 250 300) '-text "Win human!" '-anchor 'nw)
                     (return-from human t)))
          (let ((res (computer i j)))
             (if (null res)
                 (progn (setq end t)
-                       (tk::create 'c0 (text 240 300) '-text "Game over!" '-anchor 'nw)
+                       (tk::create 'c0 (text 250 300) '-text "Game over!" '-anchor 'nw)
                        (return-from human t)))
             (let ((ri (elt res 0))
                   (rj (elt res 1)))
@@ -77,7 +69,7 @@
                     (paint ri rj 'red)))
          (if (win-p 2) 
              (progn (setq end t)
-                    (tk::create 'c0 (text 240 300) '-text "Win computer!" '-anchor 'nw)
+                    (tk::create 'c0 (text 250 300) '-text "Win computer!" '-anchor 'nw)
                     (return-from human t))))))
 
 (defun computer (i j)
@@ -92,9 +84,9 @@
 ;; after first step
 (defun computer2 ()
     (block after
-      (let ((res (reach-p 1)))
+      (let ((res (one-more-p 2)))
         (if res (return-from after res)))
-      (let ((res (reach-p 2)))
+      (let ((res (one-more-p 1)))
         (if res (return-from after res)))
       (let ((res (computer-free-corner)))
         (if res (return-from after res)))
@@ -102,8 +94,8 @@
         (if res (return-from after res)))))
       
 
-;; if reach of human disturb win else return nil 
-(defun reach-p (x)
+;; if one-more of human disturb win else return nil 
+(defun one-more-p (x)
     (cond ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 0) x) (= (aref board 2 0) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 1) x) (= (aref board 2 2) x)) (list 0 0))
@@ -130,7 +122,7 @@
           (t nil)))
 
 
-;; if not reach of human and computer, occupy free corner
+;; if not one-more of human and computer, occupy free corner
 (defun computer-free-corner ()
   (cond ((= (aref board 0 0) 0) (list 0 0))
         ((= (aref board 2 0) 0) (list 2 0))

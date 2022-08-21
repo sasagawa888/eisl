@@ -52,7 +52,6 @@
              (ry (tk::winfo "rooty" 'root))
              (j (div (- x rx) 200))
              (i (div (- y ry) 200)))
-         (print (list i j))
          (set-aref 1 board i j) 
          (paint i j 'blue)
          (if (win-p 1) 
@@ -84,16 +83,15 @@
 
 ;; after first step
 (defun computer2 ()
-   (print board)
     (block after
       (let ((res (one-more-p 2)))
-        (if res (progn (print "red one") (return-from after res))))
+        (if res (return-from after res)))
       (let ((res (one-more-p 1)))
-        (if res (progn (print "blue one") (return-from after res))))
+        (if res (return-from after res)))
       (let ((res (computer-free-corner)))
-        (if res (progn (print "free-corner") (return-from after res))))
+        (if res (return-from after res)))
       (let ((res (computer-free)))
-        (if res (progn (print "free") (return-from after res))))))
+        (if res (return-from after res)))))
       
 
 ;; if one-more of human disturb win else return nil 

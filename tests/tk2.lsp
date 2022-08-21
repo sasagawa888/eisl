@@ -98,7 +98,7 @@
         (if res (return-from after res)))))
       
 
-;; if one-more of human(x=1) or computer(x=2) return position to disturb win, else return nil 
+;; if one-more of human(x=1) or computer(x=2) return position to get win or disturb win, else return nil 
 (defun one-more-p (x)
     (cond ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 0) x) (= (aref board 2 0) x)) (list 0 0))

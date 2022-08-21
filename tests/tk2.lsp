@@ -52,6 +52,7 @@
              (ry (tk::winfo "rooty" 'root))
              (j (div (- x rx) 200))  ;j is col of matrix
              (i (div (- y ry) 200))) ;i is row of matrix
+         (if (> (aref board i j) 0) (return-from human t))
          (set-aref 1 board i j) 
          (paint i j 'blue)
          (if (win-p 1) 

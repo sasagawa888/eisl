@@ -102,7 +102,7 @@
           ((and (= (aref board 0 1) 0)(= (aref board 0 0) x) (= (aref board 0 2) x)) (list 0 1))
           ((and (= (aref board 0 1) 0)(= (aref board 1 1) x) (= (aref board 2 1) x)) (list 0 1))
           ((and (= (aref board 0 2) 0)(= (aref board 0 0) x) (= (aref board 0 1) x)) (list 0 2))
-          ((and (= (aref board 0 2) 0)(= (aref board 0 0) x) (= (aref board 0 1) x)) (list 0 2))
+          ((and (= (aref board 0 2) 0)(= (aref board 2 2) x) (= (aref board 1 2) x)) (list 0 2))
           ((and (= (aref board 0 2) 0)(= (aref board 1 1) x) (= (aref board 2 0) x)) (list 0 2))
           ((and (= (aref board 1 0) 0)(= (aref board 1 1) x) (= (aref board 1 2) x)) (list 1 0))
           ((and (= (aref board 1 0) 0)(= (aref board 0 0) x) (= (aref board 2 0) x)) (list 1 0))

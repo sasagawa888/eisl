@@ -98,8 +98,7 @@
 
 ;; if one-more of human disturb win else return nil 
 (defun one-more-p (x)
-    (cond ((and (= (aref board 2 0) 0)(= (aref board 2 1) x) (= (aref board 2 2) x)) (list 2 0))
-          ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
+    (cond ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 0) x) (= (aref board 2 0) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 1) x) (= (aref board 2 2) x)) (list 0 0))
           ((and (= (aref board 0 1) 0)(= (aref board 0 0) x) (= (aref board 0 2) x)) (list 0 1))
@@ -114,8 +113,10 @@
           ((and (= (aref board 1 1) 0)(= (aref board 0 2) x) (= (aref board 2 0) x)) (list 1 1))
           ((and (= (aref board 1 1) 0)(= (aref board 1 0) x) (= (aref board 1 2) x)) (list 1 1))
           ((and (= (aref board 1 2) 0)(= (aref board 1 0) x) (= (aref board 1 1) x)) (list 1 2))
+          ((and (= (aref board 1 2) 0)(= (aref board 2 2) x) (= (aref board 0 2) x)) (list 1 2))
           ((and (= (aref board 2 0) 0)(= (aref board 0 0) x) (= (aref board 1 0) x)) (list 2 0))
           ((and (= (aref board 2 0) 0)(= (aref board 1 1) x) (= (aref board 0 2) x)) (list 2 0))
+          ((and (= (aref board 2 0) 0)(= (aref board 2 1) x) (= (aref board 2 2) x)) (list 2 0))
           ((and (= (aref board 2 1) 0)(= (aref board 2 0) x) (= (aref board 2 2) x)) (list 2 1))
           ((and (= (aref board 2 1) 0)(= (aref board 0 1) x) (= (aref board 1 1) x)) (list 2 1))
           ((and (= (aref board 2 2) 0)(= (aref board 2 0) x) (= (aref board 2 1) x)) (list 2 2))

@@ -50,9 +50,10 @@
       (if end (return-from human t))
       (let* ((rx (tk::winfo "rootx" 'root))
              (ry (tk::winfo "rooty" 'root))
-             (i (div (- x rx) 200))
-             (j (div (- y ry) 200)))
-         (set-aref 1 board i j)
+             (j (div (- x rx) 200))
+             (i (div (- y ry) 200)))
+         (print (list i j))
+         (set-aref 1 board i j) 
          (paint i j 'blue)
          (if (win-p 1) 
              (progn (setq end t)
@@ -83,20 +84,22 @@
 
 ;; after first step
 (defun computer2 ()
+   (print board)
     (block after
       (let ((res (one-more-p 2)))
-        (if res (return-from after res)))
+        (if res (progn (print "red one") (return-from after res))))
       (let ((res (one-more-p 1)))
-        (if res (return-from after res)))
+        (if res (progn (print "blue one") (return-from after res))))
       (let ((res (computer-free-corner)))
-        (if res (return-from after res)))
+        (if res (progn (print "free-corner") (return-from after res))))
       (let ((res (computer-free)))
-        (if res (return-from after res)))))
+        (if res (progn (print "free") (return-from after res))))))
       
 
 ;; if one-more of human disturb win else return nil 
 (defun one-more-p (x)
-    (cond ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
+    (cond ((and (= (aref board 2 0) 0)(= (aref board 2 1) x) (= (aref board 2 2) x)) (list 2 0))
+          ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 0) x) (= (aref board 2 0) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 1) x) (= (aref board 2 2) x)) (list 0 0))
           ((and (= (aref board 0 1) 0)(= (aref board 0 0) x) (= (aref board 0 2) x)) (list 0 1))
@@ -112,7 +115,6 @@
           ((and (= (aref board 1 1) 0)(= (aref board 1 0) x) (= (aref board 1 2) x)) (list 1 1))
           ((and (= (aref board 1 2) 0)(= (aref board 1 0) x) (= (aref board 1 1) x)) (list 1 2))
           ((and (= (aref board 2 0) 0)(= (aref board 0 0) x) (= (aref board 1 0) x)) (list 2 0))
-          ((and (= (aref board 2 0) 0)(= (aref board 2 1) x) (= (aref board 2 2) x)) (list 2 0))
           ((and (= (aref board 2 0) 0)(= (aref board 1 1) x) (= (aref board 0 2) x)) (list 2 0))
           ((and (= (aref board 2 1) 0)(= (aref board 2 0) x) (= (aref board 2 2) x)) (list 2 1))
           ((and (= (aref board 2 1) 0)(= (aref board 0 1) x) (= (aref board 1 1) x)) (list 2 1))
@@ -141,4 +143,4 @@
 
 
 (defun paint (i j color)
-    (tk::create 'c0 (oval (+ (* 200 i) 20) (+ (* 200 j) 20) (+ (* 200 i) 180) (+ (* 200 j) 180)) '-fill color))
+    (tk::create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill color))

@@ -50,8 +50,8 @@
       (if end (return-from human t))
       (let* ((rx (tk::winfo "rootx" 'root))
              (ry (tk::winfo "rooty" 'root))
-             (j (div (- x rx) 200))
-             (i (div (- y ry) 200)))
+             (j (div (- x rx) 200))  ;j is col of matrix
+             (i (div (- y ry) 200))) ;i is row of matrix
          (set-aref 1 board i j) 
          (paint i j 'blue)
          (if (win-p 1) 
@@ -84,17 +84,21 @@
 ;; after first step
 (defun computer2 ()
     (block after
+      ;; if computer player one-more, get win
       (let ((res (one-more-p 2)))
         (if res (return-from after res)))
+      ;; if human player one-more, disturb win
       (let ((res (one-more-p 1)))
         (if res (return-from after res)))
+      ;; if not one-more, occupy corner
       (let ((res (computer-free-corner)))
         (if res (return-from after res)))
+      ;; other case occupy free position
       (let ((res (computer-free)))
         (if res (return-from after res)))))
       
 
-;; if one-more of human disturb win else return nil 
+;; if one-more of human(x=1) or computer(x=2) return position to disturb win, else return nil 
 (defun one-more-p (x)
     (cond ((and (= (aref board 0 0) 0)(= (aref board 0 1) x) (= (aref board 0 2) x)) (list 0 0))
           ((and (= (aref board 0 0) 0)(= (aref board 1 0) x) (= (aref board 2 0) x)) (list 0 0))

@@ -34,6 +34,11 @@
        strcat(buff,''\n'');
        Tcl_Eval(interp,buff);")))
 
+(defun tk::command-option (x)
+    (if (consp x)
+        (tk::function x) 
+        (string-append "\"" x "\"")))
+
 (defun tk::function (s)
   (labels ((iter (x) 
             (if (null x)
@@ -249,7 +254,7 @@
                                                 (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-relief) (string-append (string-append " -relief " (convert (car (cdr ls)) <string>))
                                                 (tk::option (cdr (cdr ls)))))                       
-          ((eq (car ls) '-command) (string-append (string-append " -command \"" (car (cdr ls)) "\"")
+          ((eq (car ls) '-command) (string-append (string-append " -command " (tk::command-option (car (cdr ls))) )
                                                  (tk::option (cdr (cdr ls)))))
           ((eq (car ls) '-label) (string-append (string-append " -label \"" (car (cdr ls)) "\"")
                                                  (tk::option (cdr (cdr ls)))))

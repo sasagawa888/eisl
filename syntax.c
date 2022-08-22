@@ -1526,7 +1526,7 @@ f_defclass (int arglist)
   val = UNDEF;
   initargs = NIL;
   save = ignore_topchk;
-  ignore_topchk = 1;		// ignore toplevel check for defgeneric
+  ignore_topchk = true;		// ignore toplevel check for defgeneric
   // defmethod
   SET_AUX (arg1, USER);		// temporary set USER to avoid undef
   // entity error of defmethod 
@@ -2365,7 +2365,7 @@ f_defmodule (int arglist)
   arg1 = car (arglist);		// module name
   arg2 = cdr (arglist);		// body
   exports = NIL;
-  ignore_topchk = 1;
+  ignore_topchk = true;
   while (!nullp (arg2))
     {
       int sexp;
@@ -2379,7 +2379,7 @@ f_defmodule (int arglist)
       eval (modulesubst (car (arg2), arg1, exports));
       arg2 = cdr (arg2);
     }
-  ignore_topchk = 0;
+  ignore_topchk = false;
   return (T);
 }
 

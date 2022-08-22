@@ -279,7 +279,15 @@ main (int argc, char *argv[])
       switch (ch)
 	{
 	case 'l':
-	  f_load (list1 (makestr (optarg)));
+    if (f_probe_file(list1 (makestr (optarg))) == T)
+    {
+	    f_load (list1 (makestr (optarg)));
+    }
+    else
+    {
+      puts ("File doesn't exist.");
+	      exit (EXIT_FAILURE);
+    }
 	  break;
 	case 'c':
 	  str = library_file ("compiler.lsp");

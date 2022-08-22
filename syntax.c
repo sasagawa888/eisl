@@ -2406,13 +2406,13 @@ modulesubst (int addr, int module, int fname)
   else if (symbolp (addr))
     {
       if (!member (addr, fname) && !eqp (addr, makesym (":REST"))
-	  && !eqp (addr, makesym ("&REST")) 
-    && !eqp (addr, makesym (":READER"))
-    && !eqp (addr, makesym (":WRITER"))
-    && !eqp (addr, makesym(":ACCESSOR"))
-    && !eqp (addr, makesym(":BOUNDP"))
-    && !eqp (addr, makesym(":INITFORM"))
-    && !eqp (addr , makesym(":INITARG")))
+	  && !eqp (addr, makesym ("&REST"))
+	  && !eqp (addr, makesym (":READER"))
+	  && !eqp (addr, makesym (":WRITER"))
+	  && !eqp (addr, makesym (":ACCESSOR"))
+	  && !eqp (addr, makesym (":BOUNDP"))
+	  && !eqp (addr, makesym (":INITFORM"))
+	  && !eqp (addr, makesym (":INITARG")))
 	return (modulesubst1 (addr, module));
       else
 	return (addr);

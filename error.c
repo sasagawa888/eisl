@@ -654,6 +654,9 @@ signal_condition (int x, int y)
   fputc (' ', stderr);
   print (args);
   fputc ('\n', stderr);
+  if (script_flag){
+    return 0;
+  }
   if (repl_flag)
     ESCERRFORG ();
   input_stream = standard_input;

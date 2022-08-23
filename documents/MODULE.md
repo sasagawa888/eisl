@@ -87,3 +87,28 @@ Easy-ISLisp Ver1.72
 
 Function `boo` is private. The global variable declaration, `(defglobal a 3)`, is private and cannot be referenced from outside the module.
 The same applies to dynamic variables like `(defdynamic x n)`.
+
+
+## object
+
+Be careful when using defclass in modules. Add the module name to the symbol given to :initarg. See code below.
+
+```
+(defmodule util
+
+    (defclass <rect> () ((size :accessor rect-size :initarg size)))
+    
+    (defpublic foo ()
+        (create (class <rect>) 'util::size 999) )  ;; Be careful!
+
+    (defpublic bar (x)
+        (rect-size x) )
+
+)
+
+> (defglobal a (foo))
+A
+> (bar a)
+999
+> 
+```

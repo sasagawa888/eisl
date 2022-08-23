@@ -234,6 +234,7 @@ e.g.
 ![recur](screen3.png)
 
 
-### tic-tac-toe
-
 see example/tic.lsp
+
+![tic-tac-toe](screen4.png)
+

@@ -39,7 +39,7 @@ ifeq ($(DEBUG),1)
 	CFLAGS += -O0 -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
 	SRC_NANA := nana/src/I.c
-	ifeq  ($(shell uname),OpenBSD)
+	ifneq  ($(shell uname),OpenBSD)
 		CFLAGS += -fsanitize=undefined
 		LDFLAGS := -fsanitize=undefined
 	endif
@@ -62,7 +62,7 @@ ifeq  ($(shell uname -n),raspberrypi)
 endif
 ifneq ($(DEBUG),1)
 	LDFLAGS += -flto
-	ifneq  ($(shell uname),Darwin)
+	ifeq  ($(shell uname),Darwin)
 		LDFLAGS += -Wl,-S,-x
 	else
 		LDFLAGS += -s

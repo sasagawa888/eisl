@@ -8,18 +8,18 @@
 (defglobal end nil)
 
 (defun game ()
-  (tk::init)
-  (tk::canvas 'c0 '-width 600 '-height 600)
-  (tk::configure 'root '-menu 'm)
-  (tk::menu 'm)
-  (tk::add 'm "cascade" '-label "Game" '-underline 0 '-menu '(m m1))
-  (tk::menu '(m m1) '-tearoff 'no)
-  (tk::add '(m m1) "command" '-label "Restart" '-underline 0 '-command '(game-init))
-  (tk::add '(m m1) "command" '-label "Exit" '-underline 0 '-command '(tk::exit))
+  (tk:init)
+  (tk:canvas 'c0 '-width 600 '-height 600)
+  (tk:configure 'root '-menu 'm)
+  (tk:menu 'm)
+  (tk:add 'm "cascade" '-label "Game" '-underline 0 '-menu '(m m1))
+  (tk:menu '(m m1) '-tearoff 'no)
+  (tk:add '(m m1) "command" '-label "Restart" '-underline 0 '-command '(game-init))
+  (tk:add '(m m1) "command" '-label "Exit" '-underline 0 '-command '(tk:exit))
   (game-init)
-  (tk::pack 'c0)
-  (tk::bind 'c0 "<Button-1>" `(human %x %y))
-  (tk::mainloop)
+  (tk:pack 'c0)
+  (tk:bind 'c0 "<Button-1>" `(human %x %y))
+  (tk:mainloop)
 )
 
 
@@ -41,15 +41,15 @@
        (for ((j 0 (+ j 1)))
             ((> j 2) t)
             (set-aref 0 board i j) 
-            (tk::create 'c0 (rectangle (* 200 i) (* 200 j) (+ (* 200 i) 200) (+ (* 200 j) 200)) '-fill 'white )))
+            (tk:create 'c0 (rectangle (* 200 i) (* 200 j) (+ (* 200 i) 200) (+ (* 200 j) 200)) '-fill 'white )))
 )
 
 
 (defun human (x y) 
    (block human
       (if end (return-from human t))
-      (let* ((rx (tk::winfo "rootx" 'root))
-             (ry (tk::winfo "rooty" 'root))
+      (let* ((rx (tk:winfo "rootx" 'root))
+             (ry (tk:winfo "rooty" 'root))
              (j (div (- x rx) 200))  ;j is col of matrix
              (i (div (- y ry) 200))) ;i is row of matrix
          (if (> (aref board i j) 0) (return-from human t))
@@ -57,12 +57,12 @@
          (paint i j 'blue)
          (if (win-p 1) 
              (progn (setq end t)
-                    (tk::create 'c0 (text 250 300) '-text "Win human!" '-anchor 'nw)
+                    (tk:create 'c0 (text 250 300) '-text "Win human!" '-anchor 'nw)
                     (return-from human t)))
          (let ((res (computer i j)))
             (if (null res)
                 (progn (setq end t)
-                       (tk::create 'c0 (text 250 300) '-text "Game over!" '-anchor 'nw)
+                       (tk:create 'c0 (text 250 300) '-text "Game over!" '-anchor 'nw)
                        (return-from human t)))
             (let ((ri (elt res 0))
                   (rj (elt res 1)))
@@ -70,7 +70,7 @@
                     (paint ri rj 'red)))
          (if (win-p 2) 
              (progn (setq end t)
-                    (tk::create 'c0 (text 250 300) '-text "Win computer!" '-anchor 'nw)
+                    (tk:create 'c0 (text 250 300) '-text "Win computer!" '-anchor 'nw)
                     (return-from human t))))))
 
 (defun computer (i j)
@@ -147,4 +147,4 @@
 
 
 (defun paint (i j color)
-    (tk::create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill color))
+    (tk:create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill color))

@@ -29,41 +29,41 @@ eisl -c
 
 ## label
 
-(tk::label object option)
+(tk:label object option)
 
 
 ## button
 
-(tk::button object option)
+(tk:button object option)
 
 ## radiobutton
 
-(tk::radiobutton object option)
+(tk:radiobutton object option)
 
 
 ## checkbutton
 
-(tk::checkbutton object option)
+(tk:checkbutton object option)
 
 
 ## listbox
 
-(tk::listbox object option)
+(tk:listbox object option)
 
 ## menu
 
-(tk::menu objects option)
+(tk:menu objects option)
 
 objects e.g. .m.m1 (in tcl) -> '(m m1)   m is parent obj, m1 is child obj
 
 #### configure
 
-(tk::configure object option)
+(tk:configure object option)
 
 #### add 
 add menu-object menu.
 
-(tk::add objects class option)
+(tk:add objects class option)
 
 objects e.g. .m.m1 (in tcl) -> '(m m1)  m is parent obj, m1 is child obj
 
@@ -79,14 +79,14 @@ class is given as string
 
 ## scrollbar
 
-(tk::scrollbar object option)
+(tk:scrollbar object option)
 
 ## canvas
 
 (tk:canvas object option)
 
 #### create
-(tk::create object class option)
+(tk:create object class option)
 
 class
 
@@ -100,28 +100,28 @@ class
 
 ## pack
 
-(tk::pack object1 object2 ... objectN)
+(tk:pack object1 object2 ... objectN)
 
 
 ## bind
 
-(tk::bind object event S-expression)
+(tk:bind object event S-expression)
 
 event is given as string
 
 e.g.
 ```
- (tk::bind 'c0 "<Button-1>" `(bar %x %y))
+ (tk:bind 'c0 "<Button-1>" `(bar %x %y))
 ```
 
 ## command
 
-(tk::command str)
+(tk:command str)
 
 ```
-> (tk::init)
+> (tk:init)
 NIL
-> (tk::command "expr 2*3")
+> (tk:command "expr 2*3")
 expr 2*3
 6
 T
@@ -130,17 +130,17 @@ T
 
 ## winfo
 
-(tk::winfo class object)
+(tk:winfo class object)
 
 e.g.
 ```
-(tk::winfo "rootx" 'root)
+(tk:winfo "rootx" 'root)
 ```
 
 ## exit
 exit tcl/tk interpreter
 
-(tk::exit)
+(tk:exit)
 
 
 ## option
@@ -163,10 +163,10 @@ e.g.
 (import "tcltk")
 
 (defun hello ()
-  (tk::init)
-  (tk::label 'hello '-text "hello world" '-width 50 '-height 15)
-  (tk::pack 'hello)  
-  (tk::mainloop))
+  (tk:init)
+  (tk:label 'hello '-text "hello world" '-width 50 '-height 15)
+  (tk:pack 'hello)  
+  (tk:mainloop))
 
 ```
 
@@ -178,13 +178,13 @@ e.g.
 (import "tcltk")
 
 (defun flag ()
-    (tk::init)
-    (tk::canvas 'c0)
-    (tk::create 'c0 (rectangle 0 0 300 100) '-fill 'blue)
-    (tk::create 'c0 (rectangle 0 100 300 200) '-fill 'yellow)
-    (tk::create 'c0 (text 20 210) '-text "Love and Peace!" '-anchor 'nw)
-    (tk::pack 'c0)
-    (tk::mainloop))
+    (tk:init)
+    (tk:canvas 'c0)
+    (tk:create 'c0 (rectangle 0 0 300 100) '-fill 'blue)
+    (tk:create 'c0 (rectangle 0 100 300 200) '-fill 'yellow)
+    (tk:create 'c0 (text 20 210) '-text "Love and Peace!" '-anchor 'nw)
+    (tk:pack 'c0)
+    (tk:mainloop))
 
 
 ```
@@ -196,11 +196,11 @@ e.g.
 (import "tcltk")
 
 (defun recur ()
-    (tk::init)
-    (tk::canvas 'c0 '-width 600 '-height 600)
+    (tk:init)
+    (tk:canvas 'c0 '-width 600 '-height 600)
     (gasket #(300 0) #(0 600) #(600 600) 10)
-    (tk::pack 'c0)
-    (tk::mainloop))
+    (tk:pack 'c0)
+    (tk:mainloop))
 
 (defun midpoint (a b)
    (let ((a0 (elt a 0))
@@ -218,7 +218,7 @@ e.g.
          (b1 (elt b 1))
          (c0 (elt c 0))
          (c1 (elt c 1)))
-      (tk::create 'c0 (line a0 a1 b0 b1 c0 c1 a0 a1) '-fill 'green)))
+      (tk:create 'c0 (line a0 a1 b0 b1 c0 c1 a0 a1) '-fill 'green)))
 
 (defun gasket (a b c n)
     (cond ((= n 0) t)

@@ -232,3 +232,8 @@ e.g.
 ```
 
 ![recur](screen3.png)
+
+
+### tic-tac-toe
+
+see example/tic.lsp

@@ -1,4 +1,7 @@
 ;; tic-tac-toe
+;; (load "exmaple/tic.lsp")
+;; > (game)
+
 
 (import "tcltk")
 

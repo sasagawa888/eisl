@@ -41,7 +41,7 @@
        (for ((j 0 (+ j 1)))
             ((> j 2) t)
             (set-aref 0 board i j) 
-            (tk:create 'c0 (rectangle (* 200 i) (* 200 j) (+ (* 200 i) 200) (+ (* 200 j) 200)) '-fill 'white )))
+            (tk:create 'c0 (rectangle (* 200 i) (* 200 j) (+ (* 200 i) 200) (+ (* 200 j) 200)) '-fill 'white)))
 )
 
 
@@ -54,7 +54,7 @@
              (i (div (- y ry) 200))) ;i is row of matrix
          (if (> (aref board i j) 0) (return-from human t))
          (set-aref 1 board i j) 
-         (paint i j 'blue)
+         (paint1 i j)
          (if (win-p 1) 
              (progn (setq end t)
                     (tk:create 'c0 (text 250 300) '-text "Win human!" '-anchor 'nw)
@@ -67,7 +67,7 @@
             (let ((ri (elt res 0))
                   (rj (elt res 1)))
                     (set-aref 2 board ri rj)
-                    (paint ri rj 'red)))
+                    (paint2 ri rj)))
          (if (win-p 2) 
              (progn (setq end t)
                     (tk:create 'c0 (text 250 300) '-text "Win computer!" '-anchor 'nw)
@@ -146,5 +146,12 @@
                     (return-from test (list i j)))))))
 
 
-(defun paint (i j color)
-    (tk:create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill color))
+(defun paint1 (i j)
+    (tk:create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill 'blue))
+
+
+(defun paint2 (i j)
+    (tk:create 'c0 (line (+ (* 200 j) 20) (+ (* 200 i) 20) 
+                         (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill 'red '-width 30)
+    (tk:create 'c0 (line (+ (* 200 j) 180) (+ (* 200 i) 20)
+                         (+ (* 200 j) 20) (+ (* 200 i) 180)) '-fill 'red '-width 30))

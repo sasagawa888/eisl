@@ -150,7 +150,8 @@
 
 
 (defun paint1 (i j)
-    (tk:create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill 'blue))
+    (tk:create 'c0 (oval (+ (* 200 j) 20) (+ (* 200 i) 20) (+ (* 200 j) 180) (+ (* 200 i) 180)) '-fill 'blue)
+    (tk:create 'c0 (oval (+ (* 200 j) 50) (+ (* 200 i) 50) (+ (* 200 j) 150) (+ (* 200 i) 150)) '-fill 'white))
 
 
 (defun paint2 (i j)

@@ -38,6 +38,9 @@
 #define NTTBASE 1000
 #define PROFSIZE 1024
 
+#define CPPQUOTE(x) #x
+#define STRQUOTE(x) CPPQUOTE(x)
+
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192        //#b11000000
 #define UNI3ADD1    224        //#b11100000

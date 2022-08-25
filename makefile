@@ -69,9 +69,10 @@ ifneq ($(DEBUG),1)
 	endif
 endif
 PREFIX := /usr/local
-LIBDIR ?= $(PREFIX)/share/eisl/library
-CFLAGS += -DLIBDIR='"$(LIBDIR)"'
+SHAREDIR ?= $(PREFIX)/share/eisl
+CFLAGS += -DSHAREDIR=$(SHAREDIR)
 bindir := $(PREFIX)/bin
+sharedir := $(PREFIX)/share/eisl/library
 DESTDIR := 
 INSTALL := install
 INSTALL_PROGRAM := $(INSTALL) -m755
@@ -123,8 +124,8 @@ install: eisl edlis
 	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
-	$(MKDIR_PROGRAM) $(LIBDIR)
-	$(INSTALL_PROGRAM) library/* $(LIBDIR)
+	$(MKDIR_PROGRAM) $(DESTDIR)$(sharedir)
+	$(INSTALL_PROGRAM) library/* $(DESTDIR)$(sharedir)
 
 .PHONY: uninstall
 uninstall:

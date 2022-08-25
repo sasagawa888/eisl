@@ -360,7 +360,7 @@ library_file (const char *basename)
     {
       return Str_catv (prefix, 1, 0, "/library/", 1, 0, basename, 1, 0, NULL);
     }
-  return Str_cat (LIBDIR "/", 1, 0, basename, 1, 0);
+  return Str_cat (STRQUOTE (SHAREDIR) "/library/", 1, 0, basename, 1, 0);
 }
 
 void

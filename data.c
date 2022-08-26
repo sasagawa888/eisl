@@ -323,7 +323,7 @@ DEF_PREDICATE (STREAM, STREAM)
 int
 input_stream_p (int x)
 {
-  if (streamp (x) && (GET_OPT (x) == EISL_INPUT || GET_OPT (x) == EISL_INSTR))
+  if (streamp (x) && (GET_OPT (x) == EISL_INPUT || GET_OPT(x) == EISL_OPEN || GET_OPT (x) == EISL_INSTR))
     return (1);
   else
     return (0);
@@ -333,7 +333,7 @@ int
 output_stream_p (int x)
 {
   if (streamp (x)
-      && (GET_OPT (x) == EISL_OUTPUT || GET_OPT (x) == EISL_OUTSTR))
+      && (GET_OPT (x) == EISL_OUTPUT || GET_OPT(x) == EISL_OPEN || GET_OPT (x) == EISL_OUTSTR))
     return (1);
   else
     return (0);

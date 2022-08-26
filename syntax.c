@@ -2011,7 +2011,7 @@ f_with_open_input_file (int arglist)
 
   if (nullp (arglist) || atomp (arglist))
     error (NOT_EXIST_ARG, "with-open-input-file", NIL);
-  if (length (arglist) != 2)
+  if (length (arglist) < 2)
     error (IMPROPER_ARGS, "with-open-input-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
@@ -2045,7 +2045,7 @@ f_with_open_output_file (int arglist)
 
   if (nullp (arglist) || atomp (arglist))
     error (NOT_EXIST_ARG, "with-open-output-file", NIL);
-  if (length (arglist) != 2)
+  if (length (arglist) < 2)
     error (IMPROPER_ARGS, "with-open-output-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
@@ -2079,7 +2079,7 @@ f_with_open_io_file (int arglist)
 
   if (nullp (arglist) || atomp (arglist))
     error (NOT_EXIST_ARG, "with-open-io-file", NIL);
-  if (length (arglist) != 2)
+  if (length (arglist) < 2)
     error (IMPROPER_ARGS, "with-open-io-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);

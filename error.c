@@ -654,15 +654,18 @@ signal_condition (int x, int y)
   fputc (' ', stderr);
   print (args);
   fputc ('\n', stderr);
-  if (script_flag){
-    return 0;
-  }
   if (repl_flag)
     ESCERRFORG ();
   input_stream = standard_input;
   output_stream = standard_output;
   handling_resource_err = false;
-  debugger ();
+  if (!option_flag)
+    debugger ();
+  else
+    {
+      puts ("Error occurred while executing the command line options.");
+      option_flag = false;
+    }
   RAISE (Restart_Repl);
   return 0;
 }

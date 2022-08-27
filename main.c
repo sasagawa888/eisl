@@ -136,6 +136,7 @@ bool ignore_topchk = false;	// for FAST
 					// compilertrue=ignore,false=normal
 bool repl_flag = true;		// for REPL read_line true=on,
 					// false=off
+bool option_flag = false;	// while handling command line option it is true, else false
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool greeting_flag = true;	// for (quit)
 bool script_flag = false;	// for -s option
@@ -268,69 +269,79 @@ main (int argc, char *argv[])
   int ch;
   char *script_arg;
 
-  if (access ("startup.lsp", R_OK) == 0)
-    {
-      f_load (list1 (makestr ("startup.lsp")));
-    }
-  while ((ch = getopt (argc, argv, "l:cfs:rhv")) != -1)
-    {
-      char *str;
+  // handle command line options
+  option_flag = true;
+  TRY
+  {
+    if (access ("startup.lsp", R_OK) == 0)
+      {
+	f_load (list1 (makestr ("startup.lsp")));
+      }
+    while ((ch = getopt (argc, argv, "l:cfs:rhv")) != -1)
+      {
+	char *str;
 
-      switch (ch)
-	{
-	case 'l':
-	  if (f_probe_file (list1 (makestr (optarg))) == T)
-	    {
-	      f_load (list1 (makestr (optarg)));
-	    }
-	  else
-	    {
-	      puts ("File doesn't exist.");
-	      exit (EXIT_FAILURE);
-	    }
-	  break;
-	case 'c':
-	  str = library_file ("compiler.lsp");
-	  f_load (list1 (makestr (str)));
-	  FREE (str);
-	  break;
-	case 'f':
-	  str = library_file ("formatter.lsp");
-	  f_load (list1 (makestr (str)));
-	  FREE (str);
-	  break;
-	case 's':
-	  if (access (optarg, R_OK) == -1)
-	    {
-	      puts ("File doesn't exist.");
-	      exit (EXIT_FAILURE);
-	    }
-	  repl_flag = false;
-	  script_flag = true;
-	  looking_for_shebang = true;
-	  script_arg = optarg;
-	  break;
-	case 'r':
-	  repl_flag = false;
-	  break;
-	case 'v':
-	  Fmt_print ("Easy-ISLisp Ver%1.2f\n", VERSION);
-	  exit (EXIT_SUCCESS);
-	case 'h':
-	  usage ();
-	  exit (EXIT_SUCCESS);
-	default:
-	  usage ();
-	  exit (EXIT_FAILURE);
-	}
-    }
-  gArgC = argc - optind;
-  gArgV = argv + optind;
-  if (script_flag)
-    {
-      f_load (list1 (makestr (script_arg)));
-      exit (EXIT_SUCCESS);
-    }
+	switch (ch)
+	  {
+	  case 'l':
+	    if (f_probe_file (list1 (makestr (optarg))) == T)
+	      {
+		f_load (list1 (makestr (optarg)));
+	      }
+	    else
+	      {
+		puts ("File doesn't exist.");
+		exit (EXIT_FAILURE);
+	      }
+	    break;
+	  case 'c':
+	    str = library_file ("compiler.lsp");
+	    f_load (list1 (makestr (str)));
+	    FREE (str);
+	    break;
+	  case 'f':
+	    str = library_file ("formatter.lsp");
+	    f_load (list1 (makestr (str)));
+	    FREE (str);
+	    break;
+	  case 's':
+	    if (access (optarg, R_OK) == -1)
+	      {
+		puts ("File doesn't exist.");
+		exit (EXIT_FAILURE);
+	      }
+	    repl_flag = false;
+	    script_flag = true;
+	    looking_for_shebang = true;
+	    script_arg = optarg;
+	    break;
+	  case 'r':
+	    repl_flag = false;
+	    break;
+	  case 'v':
+	    Fmt_print ("Easy-ISLisp Ver%1.2f\n", VERSION);
+	    exit (EXIT_SUCCESS);
+	  case 'h':
+	    usage ();
+	    exit (EXIT_SUCCESS);
+	  default:
+	    usage ();
+	    exit (EXIT_FAILURE);
+	  }
+      }
+    gArgC = argc - optind;
+    gArgV = argv + optind;
+    if (script_flag)
+      {
+	f_load (list1 (makestr (script_arg)));
+	exit (EXIT_SUCCESS);
+      }
+  }
+  EXCEPT (Restart_Repl) return 0;
+  END_TRY;
+
+
+  // REPL
   volatile bool quit = false;
   do
     {

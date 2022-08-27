@@ -4234,7 +4234,7 @@ f_open_io_file (int arglist)
     error (NOT_STR, "open-io-file", arg1);
 
   const char *fname = GET_NAME (arg1);
-  port = fopen (fname, "r+");
+  port = fopen (fname, "w+");
   if (port == NULL)
     error (CANT_OPEN, "open-io-file", arg1);
 

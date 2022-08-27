@@ -663,7 +663,7 @@ signal_condition (int x, int y)
     debugger ();
   else
     {
-      puts ("Error occurred while executing the command line options.");
+      puts ("Error occurred while executing command line options.");
       option_flag = false;
     }
   RAISE (Restart_Repl);

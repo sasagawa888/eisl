@@ -1923,18 +1923,16 @@ defgeneric compile
 
     (defun comp-with-open-io-file (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "with-open-io-file: not list" (elt x 1)))
+        (unless (symbolp (elt (elt x 1) 0)) (error* "with-open-io-file: illegal file name" x))
         (format stream "({int res;")
-        (comp-with-open-io-file1 stream (elt x 1) env args tail name global test clos)
-        (comp-progn stream (cdr (cdr x)) (cons (elt (elt x 1) 0) env) args tail name global test clos)
-        (format stream ";res;})"))
-        
-    (defun comp-with-open-io-file1 (stream x env args tail name global test clos)
-        (unless (symbolp (elt x 0)) (error* "with-open-io-file: illegal file name" x))
         (format stream "int ")
-        (format stream (convert (conv-name (elt x 0)) <string>))
+        (format stream (convert (conv-name (elt (elt x 1) 0)) <string>))
         (format stream " = ")
-        (comp stream (list 'open-io-file (elt x 1)) env args nil name global test clos)
-        (format stream ";"))
+        (comp stream (list 'open-io-file (elt (elt x 1) 1)) env args nil name global test clos)
+        (format stream ";")
+        (comp-progn stream (append (cdr (cdr x)) (list (list 'close (elt (elt x 1) 0))))  (cons (elt (elt x 1) 0) env) args tail name global test clos)
+        (format stream ";res;})"))
+   
     
     (defun comp-cond (stream x env args tail name global test clos)
         (format stream "({int res=NIL;~%if(")

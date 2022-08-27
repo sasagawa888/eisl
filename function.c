@@ -2379,7 +2379,6 @@ f_read_line (int arglist)
   char rl_buf[LINE_MAX];
   bool save1;
 
-
   arg1 = car (arglist);
   arg2 = cadr (arglist);
   arg3 = caddr (arglist);

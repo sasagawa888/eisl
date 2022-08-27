@@ -1,4 +1,2 @@
-line
-aaaaaaaaaaaaaaaaaaaaaaaaaaathis is a interpreter and compiler compatible with ISLisp standard.
+Hello this is an interpreter and compiler compatible with ISLisp standard.
 Deep Pueple Highway star Burn Fire ball.
-

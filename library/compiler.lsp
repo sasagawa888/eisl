@@ -1930,7 +1930,9 @@ defgeneric compile
         (format stream " = ")
         (comp stream (list 'open-io-file (elt (elt x 1) 1)) env args nil name global test clos)
         (format stream ";")
-        (comp-progn stream (append (cdr (cdr x)) (list (list 'close (elt (elt x 1) 0))))  (cons (elt (elt x 1) 0) env) args tail name global test clos)
+        (comp-progn stream 
+                   (cons 'progn (append (cdr (cdr x)) (list (list 'close (elt (elt x 1) 0)))) )
+                   (cons (elt (elt x 1) 0) env) args tail name global test clos)
         (format stream ";res;})"))
    
     

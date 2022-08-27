@@ -2206,7 +2206,6 @@ defgeneric compile
                (comp-test-or1 stream (cdr x) env args tail name global test clos))))
     
     (defun comp-while (stream x env args tail name global test clos)
-        (when (null (cdr (cdr x))) (error* "while: not exist body" x))
         (format stream "({int res;~%while(")
         (comp stream (elt x 1) env args tail name global t clos)
         (format stream " !=NIL){~%")

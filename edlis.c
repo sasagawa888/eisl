@@ -426,7 +426,7 @@ left ()
 
   if (ed_col1 < turn)
     {
-      if (ed_col1 == turn - 1)
+      if (ed_col1 <= turn - 1)
 	{
 	  reset_paren ();
 	  ESCCLSLA ();

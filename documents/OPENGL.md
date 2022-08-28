@@ -42,7 +42,7 @@ Install OpenGL on linux and compile *library/opengl.lsp* with Easy-ISLisp.
 (main)
 ```
 
-![screen5.png](teapot)
+![teapot](screen5.png)
 
 # Functions
 

@@ -1600,7 +1600,7 @@ display_unicode (int line, int col)
 void
 display_line (int line)
 {
-  int col, turn;
+  int col,col1, turn;
   char linestr[10];
 
   turn = COLS - LEFT_MARGIN;
@@ -1608,13 +1608,15 @@ display_line (int line)
   CHECK (addstr, linestr);
 
 
-  if (ed_col < turn)
-    col = 0;
+  if (ed_col1 < turn)
+    col = col1 = 0;
   else
-    col = turn;
-
-  while (((ed_col < turn && col < turn)
-	  || (ed_col >= turn && col < COL_SIZE))
+  {
+    col = turn; // need recalculation
+    col1 = turn;
+  }
+  while (((ed_col1 < turn && col1 < turn)
+	  || (ed_col1 >= turn && col < COL_SIZE))
 	 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
     {
       if (line >= ed_clip_start && line <= ed_clip_end)
@@ -1628,8 +1630,8 @@ display_line (int line)
 	  // #|...|#
 	  ESCBOLD ();
 	  setcolor (ed_comment_color);
-	  while (((ed_col < turn && col < turn)
-		  || (ed_col >= turn && col < COL_SIZE))
+	  while (((ed_col1 < turn && col1 < turn)
+		  || (ed_col1 >= turn && col < COL_SIZE))
 		 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
 	    {
 	      if (isUni1 (ed_data[line][col]))
@@ -1640,6 +1642,7 @@ display_line (int line)
 		{
 		  display_unicode (line, col);
 		}
+        col1 = col1 + increase_terminal(line,col);
 	      col = col + increase_buffer (line, col);
 
 	      if (ed_data[line][col - 2] == '|' &&
@@ -1659,6 +1662,7 @@ display_line (int line)
 	{
 	  CHECK (addch, ed_data[line][col]);
 	  col++;
+    col1++;
 	}
       else
 	{
@@ -1667,8 +1671,8 @@ display_line (int line)
 	    case HIGHLIGHT_SYNTAX:
 	      ESCBOLD ();
 	      setcolor (ed_syntax_color);
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1677,6 +1681,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
+      col1++;
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1684,8 +1689,8 @@ display_line (int line)
 	    case HIGHLIGHT_BUILTIN:
 	      ESCBOLD ();
 	      setcolor (ed_builtin_color);
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1694,6 +1699,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
+      col1++;
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1703,8 +1709,9 @@ display_line (int line)
 	      setcolor (ed_string_color);
 	      CHECK (addch, ed_data[line][col]);
 	      col++;
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+        col1++;
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
@@ -1716,6 +1723,7 @@ display_line (int line)
 		    {
 		      display_unicode (line, col);
 		    }
+      col1 = col1 + increase_terminal(line,col);
 		  col = col + increase_buffer (line, col);
 
 
@@ -1728,8 +1736,8 @@ display_line (int line)
 	    case HIGHLIGHT_COMMENT:
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
 		     && ed_data[line][col] != EOL)
 		{
@@ -1741,6 +1749,7 @@ display_line (int line)
 		    {
 		      display_unicode (line, col);
 		    }
+      col1 = col1 + increase_terminal(line,col);
 		  col = col + increase_buffer (line, col);
 
 		}
@@ -1750,8 +1759,8 @@ display_line (int line)
 	    case HIGHLIGHT_EXTENDED:
 	      ESCBOLD ();
 	      setcolor (ed_extended_color);
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1760,6 +1769,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
+      col1++;
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1768,13 +1778,14 @@ display_line (int line)
 	      ESCBOLD ();
 	      setcolor (ed_comment_color);
 	      ed_incomment = line;
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != EOL
 		     && ed_data[line][col] != NUL)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
+      col1++;
 		  if (ed_data[line][col - 2] == '|' &&
 		      ed_data[line][col - 1] == '#')
 		    {
@@ -1786,8 +1797,8 @@ display_line (int line)
 		}
 	      break;
 	    default:
-	      while (((ed_col < turn && col < turn)
-		      || (ed_col >= turn && col < COL_SIZE))
+	      while (((ed_col1 < turn && col1 < turn)
+		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != ' '
 		     && ed_data[line][col] != '('
 		     && ed_data[line][col] != ')'
@@ -1802,6 +1813,7 @@ display_line (int line)
 		    {
 		      display_unicode (line, col);
 		    }
+      col1 = col1 + increase_terminal(line,col);
 		  col = col + increase_buffer (line, col);
 
 		}

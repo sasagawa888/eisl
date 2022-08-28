@@ -2090,7 +2090,7 @@ f_with_open_io_file (int arglist)
   if (!stringp (str))
     error (NOT_STR, "with-open-io-file", str);
   const char *fname = GET_NAME (str);
-  port = fopen (fname, "r+");
+  port = fopen (fname, "a+");
   if (port == NULL)
     {
       error (CANT_OPEN, "with-open-io-file", str);

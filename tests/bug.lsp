@@ -1,3 +1,6 @@
+(defun foo ()
+
+
 (with-open-io-file
  (io "ests/test.txt")
   (while (read-line io nil)) ; read fails

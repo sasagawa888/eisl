@@ -337,7 +337,7 @@ main (int argc, char *argv[])
 	exit (EXIT_SUCCESS);
       }
   }
-  EXCEPT (Restart_Repl) return 0;
+  EXCEPT (Restart_Repl) exit (EXIT_FAILURE);
   END_TRY;
 
   option_flag = false;

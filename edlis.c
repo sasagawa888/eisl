@@ -389,7 +389,7 @@ right ()
   ed_col1 = ed_col1 + increase_terminal (ed_row, ed_col);
   ed_col = ed_col + increase_buffer (ed_row, ed_col);
 
-  if (ed_col < turn)
+  if (ed_col1 < turn)
     {
       restore_paren ();
       emphasis_lparen ();
@@ -398,7 +398,7 @@ right ()
     }
   else
     {
-      if (ed_col == turn)
+      if (ed_col1 == turn)
 	{
 	  reset_paren ();
 	  ESCCLSLA ();
@@ -418,15 +418,15 @@ left ()
 {
   int turn;
   turn = COLS - LEFT_MARGIN;
-  if (ed_col == 0)
+  if (ed_col1 == 0)
     return;
 
   ed_col1 = ed_col1 - decrease_terminal (ed_row, ed_col - 1);
   ed_col = ed_col - decrease_buffer (ed_row, ed_col - 1);
 
-  if (ed_col < turn)
+  if (ed_col1 < turn)
     {
-      if (ed_col == turn - 1)
+      if (ed_col1 == turn - 1)
 	{
 	  reset_paren ();
 	  ESCCLSLA ();
@@ -438,7 +438,7 @@ left ()
       emphasis_rparen ();
       ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
-  else if (ed_col >= turn)
+  else if (ed_col1 >= turn)
     {
       restore_paren ();
       emphasis_lparen ();

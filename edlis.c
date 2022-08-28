@@ -1597,6 +1597,20 @@ display_unicode (int line, int col)
 }
 
 
+int 
+find_turn_buffer_position(int line)
+{
+  int col,col1,turn;
+
+  turn = COLS - LEFT_MARGIN;
+  col = col1 = 0;
+  while(col1 < turn){
+    col1 = col1 + increase_terminal(line,col);
+    col = col + increase_buffer(line,col);
+  }
+  return(col);
+}
+
 void
 display_line (int line)
 {
@@ -1612,7 +1626,7 @@ display_line (int line)
     col = col1 = 0;
   else
   {
-    col = turn; // need recalculation
+    col = find_turn_buffer_position(line); // need recalculation
     col1 = turn;
   }
   while (((ed_col1 < turn && col1 < turn)

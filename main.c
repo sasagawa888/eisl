@@ -340,6 +340,7 @@ main (int argc, char *argv[])
   EXCEPT (Restart_Repl) return 0;
   END_TRY;
 
+  option_flag = false;
 
   // REPL
   volatile bool quit = false;

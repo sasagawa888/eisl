@@ -551,6 +551,7 @@ down ()
       restore_paren ();
       emphasis_lparen ();
       emphasis_rparen ();
+      recalculate_col (ed_row, ed_col1);
       ESCMOVE (ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
   else

@@ -410,7 +410,7 @@ f_dynamic_let (int arglist)
 int
 f_setf (int arglist)
 {
-  int arg1, arg2, newform, var, res;
+  int arg1, arg2, newform, var = 0, res;
 
   arg1 = car (arglist);
   arg2 = cadr (arglist);

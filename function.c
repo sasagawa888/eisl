@@ -2983,18 +2983,10 @@ f_string_noteqp (int arglist)
     return (T);
 }
 
-
-static inline char
-GET_NAME_ELT (int addr, int n)
-{
-  return heap[addr].name[n];
-}
-
 int
 f_elt (int arglist)
 {
   int arg1, arg2;
-  char str[CHARSIZE];
 
   arg1 = car (arglist);
   arg2 = cadr (arglist);
@@ -4722,6 +4714,7 @@ f_quit (int arglist __unused)
     }
   greeting_flag = false;
   RAISE (Exit_Interp);
+  return -1;                    /* Shut up warning */
 }
 
 // extension
@@ -4941,7 +4934,7 @@ f_next_method_p (int arglist)
 int
 f_call_next_method (int arglist)
 {
-  int varlist, body, res, pexist, qexist, caller, save1, save2;
+  int varlist, body, res, pexist = 0, qexist, caller, save1, save2;
 
   if (generic_func == NIL)
     error (UNDEF_FUN, "call-next-method", NIL);

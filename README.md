@@ -249,10 +249,11 @@ EISL <==================================> C
 | --------------------- | ---------------------------------------------- |
 | (random n)            | random-integer from 0 to n                     |
 | (random-real)         | random-float-number from 0 to 1                |
+| (set-random n)        | set random seed to non-negative number n       |
 | (gbc)                 | invoke garbage collection.                     |
 | (gbc t)               | display message when invoke GC.                |
 | (gbc nil)             | not display message when invoke GC.            |
-| (gbc 'copy)           | change GC method to copying-GC                 | 
+| (gbc 'copy)           | change GC method to copying-GC                 |
 | (gbc 'm&s)            | change GC method to mark & sweep               |
 | (heapdump n)          | display cell dump list from nth address        |
 | (instance n)          | display instance of nth address                |
@@ -267,7 +268,7 @@ EISL <==================================> C
 | (funcp x)             | is x user-defined-function? return T or NIL    |
 | (subrp x)             | is x subr? return T or NIL                     |
 | (macrop x)            | is x macros? return T or NIL                   |
-| (fixnump x)           | is x fixnum?(32bit) return T or NIL            |       |
+| (fixnump x)           | is x fixnum?(32bit) return T or NIL            |
 | (longnump x)          | is x longnum?(64bit) return T or NIL           |
 | (bignump x)           | is x bignum? return T or NIL                   |
 | (macroexpand-1 x)     | macroexpand x only once                        |

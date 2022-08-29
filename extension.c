@@ -12,6 +12,7 @@ initexsubr (void)
 {
   defsubr ("RANDOM-REAL", f_random_real);
   defsubr ("RANDOM", f_random);
+  defsubr ("SET-RANDOM", f_set_random);
   defsubr ("NCONC", f_nconc);
   defsubr ("FAST-ADDRESS", f_address);
   defsubr ("MACROEXPAND-1", f_macroexpand_1);
@@ -303,6 +304,26 @@ f_random (int arglist)
   n = GET_INT (arg1);
 
   return (makeint (rand () % n));
+}
+
+int
+f_set_random (int arglist)
+{
+  int arg1, n;
+
+  if (length (arglist) != 1)
+    error (WRONG_ARGS, "set-random", arglist);
+
+  arg1 = car (arglist);
+  if (!numberp (arg1))
+    error (NOT_NUM, "set-random", arg1);
+
+  n = GET_INT (arg1);
+  if (n < 0)
+    error (ILLEGAL_ARGS, "set-random", n);
+
+  srand(n);
+  return (arg1);
 }
 
 int

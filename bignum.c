@@ -816,7 +816,7 @@ bigx_mult (int arg1, int arg2)
 int
 bigx_mult1 (int arg1, int arg2)
 {
-  int res, len1, len2, pointerx, pointery, len;
+  int res, len1, len2, pointery, len;
   long long int x, y, z, l1, l2, c;
 
 
@@ -836,7 +836,7 @@ bigx_mult1 (int arg1, int arg2)
   pointery = get_pointer (arg2) - len2 + 1;	//LSB
   for (j = 0; j < len2; j++)
     {
-      pointerx = get_pointer (arg1) - len1 + 1;	//LSB
+      int pointerx = get_pointer (arg1) - len1 + 1;	//LSB
       for (i = 0; i < len1; i++)
 	{
 	  x = (long long int) bigcell[pointerx + i];
@@ -918,8 +918,8 @@ bigx_div (int arg1, int arg2)
 int
 bigx_div1 (int arg1, int arg2)
 {
-  int shift, save0, save1, d,
-    res, len, q, dividend, subtract, pointerx, pointery, msb1, msb2;
+  int shift, save1,
+    res, len, q, dividend, pointery, msb2;
   long long int lmsb1;
 
 
@@ -935,7 +935,7 @@ bigx_div1 (int arg1, int arg2)
   // Knuth The art of computer programing D-algorithm
   if (bigcell[pointery] < BIGNUM_BASE / 2)
     {
-      d = BIGNUM_BASE / (1 + bigcell[pointery]);
+      int d = BIGNUM_BASE / (1 + bigcell[pointery]);
       arg1 = bigx_mult1 (arg1, bigx_int_to_big (makeint (d)));
       arg2 = bigx_mult1 (arg2, bigx_int_to_big (makeint (d)));
     }
@@ -952,11 +952,11 @@ bigx_div1 (int arg1, int arg2)
 
   do
     {
-      save0 = big_pt0;
+      int save0 = big_pt0;
       big_pt0 = save1;
       shift = get_length (dividend) - get_length (arg2);
-      pointerx = get_pointer (dividend);	// MSB
-      msb1 = bigcell[pointerx];
+      int pointerx = get_pointer (dividend);	// MSB
+      int msb1 = bigcell[pointerx];
       if (msb1 > msb2)
 	{
 	  q = msb1 / msb2;
@@ -978,7 +978,7 @@ bigx_div1 (int arg1, int arg2)
 	}
 
 
-      subtract =
+      int subtract =
 	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))),
 			  shift);
       dividend = bigx_minus (dividend, subtract);
@@ -1018,9 +1018,8 @@ bigx_div1 (int arg1, int arg2)
 int
 bigx_remainder (int arg1, int arg2)
 {
-  int shift,
-    res, len, q, dividend, subtract,
-    pointerx, pointery, save0, pointer, msb1, msb2;
+  int res, len, q, dividend,
+    pointery, save0, pointer, msb2;
   long long int lmsb1;
 
 
@@ -1041,9 +1040,9 @@ bigx_remainder (int arg1, int arg2)
 
   do
     {
-      shift = get_length (dividend) - get_length (arg2);
-      pointerx = get_pointer (dividend);	// MSB
-      msb1 = bigcell[pointerx];
+      int shift = get_length (dividend) - get_length (arg2);
+      int pointerx = get_pointer (dividend);	// MSB
+      int msb1 = bigcell[pointerx];
       if (msb1 > msb2)
 	{
 	  q = msb1 / msb2;
@@ -1057,7 +1056,7 @@ bigx_remainder (int arg1, int arg2)
 	  q = (int) (lmsb1 / (long long int) msb2);
 	  shift--;
 	}
-      subtract =
+      int subtract =
 	bigx_shift_right (bigx_mult1 (arg2, bigx_int_to_big (makeint (q))),
 			  shift);
       dividend = bigx_minus (dividend, subtract);
@@ -1438,8 +1437,6 @@ ntt_set_w_factor (int n)
 void
 ntt1 (int n, int h, int pos, int index)
 {
-
-  long long int temp;
   if (h == 0)
     {
       return;
@@ -1454,7 +1451,7 @@ ntt1 (int n, int h, int pos, int index)
   r = (n / 2) / h;		//Adjustment ratio with the original
   for (i = 0; i < h; i++)
     {
-      temp =
+      long long int temp =
 	plusmod (ntty[pos + i],
 		 multmod (ntt_factor[i * r][index], ntty[pos + h + i]));
       ntty[pos + h + i] =
@@ -1587,12 +1584,12 @@ bigx_ntt_mult (int x, int y)
     }
 
   // normalize
-  int pool, carry;
+  int carry;
   n = n - 2;
   carry = 0;
   for (i = 0; i < ans_len; i++)
     {
-      pool = ((int) ntty[n - (3 * i)] + carry) % NTTBASE;
+      int pool = ((int) ntty[n - (3 * i)] + carry) % NTTBASE;
       carry = ((int) ntty[n - (3 * i)] + carry) / NTTBASE;
       pool =
 	pool + (((int) ntty[n - (3 * i + 1)] + carry) % NTTBASE) * NTTBASE;
@@ -1669,7 +1666,7 @@ bigx_second_half (int x)
 int
 bigx_karatsuba_mult1 (int x, int y)
 {
-  int len, x0, y0, x1, y1, z0, z1, z2, z;
+  int len;
 
   len = get_length (x);
   if (len < 10)
@@ -1677,17 +1674,17 @@ bigx_karatsuba_mult1 (int x, int y)
   else
     {
       simp_flag = 0;
-      x1 = bigx_first_half (x);
-      x0 = bigx_second_half (x);
-      y1 = bigx_first_half (y);
-      y0 = bigx_second_half (y);
-      z2 = bigx_karatsuba_mult1 (x1, y1);
-      z0 = bigx_karatsuba_mult1 (x0, y0);
+      int x1 = bigx_first_half (x);
+      int x0 = bigx_second_half (x);
+      int y1 = bigx_first_half (y);
+      int y0 = bigx_second_half (y);
+      int z2 = bigx_karatsuba_mult1 (x1, y1);
+      int z0 = bigx_karatsuba_mult1 (x0, y0);
       //z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
-      z1 = minus (plus (z2, z0), mult (minus (x1, x0), minus (y1, y0)));
+      int z1 = minus (plus (z2, z0), mult (minus (x1, x0), minus (y1, y0)));
       //Z = z2*b^2 + z1*b + z0  
       simp_flag = 1;
-      z =
+      int z =
 	plus (plus
 	      (bigx_shift_right (z2, len), bigx_shift_right (z1, len / 2)),
 	      z0);

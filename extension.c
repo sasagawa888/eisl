@@ -729,7 +729,7 @@ f_line_argument (int arglist)
 
       for (i = 0; i < gArgC; i++)
         {
-          SET_VEC_ELT (res, i, makestr (gArgV[n]));
+          SET_VEC_ELT (res, i, makestr (gArgV[i]));
         }
 
       return res;

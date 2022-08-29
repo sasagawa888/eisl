@@ -23,8 +23,8 @@ const int NUM_STR_MAX = 5;
 const int SHORT_STR_MAX = 20;
 
 bool edit_loop (char *fname);
-int ctrl_c = 0;
-int ctrl_z = 0;
+volatile sig_atomic_t ctrl_c = 0;
+volatile sig_atomic_t ctrl_z = 0;
 
 // -----editor-----
 int ed_scroll;

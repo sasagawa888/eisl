@@ -717,19 +717,35 @@ f_line_argument (int arglist)
 {
   int arg1, n;
 
-  if (length (arglist) != 1)
+  if (length (arglist) >= 2)
     {
       error (WRONG_ARGS, "line-argument", arglist);
     }
-  arg1 = car (arglist);
-  n = GET_INT (arg1);
-  if (n < gArgC)
+
+  if (length (arglist) == 0)
     {
-      return makestr (gArgV[n]);
+      int i, res;
+      res = makevec (gArgC, UNDEF);
+
+      for (i = 0; i < gArgC; i++)
+        {
+          SET_VEC_ELT (res, i, makestr (gArgV[n]));
+        }
+
+      return res;
     }
   else
     {
-      return NIL;
+      arg1 = car (arglist);
+      n = GET_INT (arg1);
+      if (n < gArgC)
+        {
+          return makestr (gArgV[n]);
+        }
+      else
+        {
+          return NIL;
+        }
     }
 }
 

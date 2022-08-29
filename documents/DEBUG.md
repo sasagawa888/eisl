@@ -109,17 +109,12 @@ other S exps eval
 
 This is a very different task to the above. Most users should never need to do it, but the procedure is written down here just in case.
 
-An important tool here is the special "DEBUG" build of the interpreter. But this requires some setup. First, you need to get the full version of the Nana library instead of the trivial stubs that are checked in:
+An important tool here is the special "DEBUG" build of the interpreter. But this requires a little setup. Helpfully, the full version of the Nana library is checked in.
 
 ```sh
-cd eisl
-rm -r nana
-git clone https://github.com/pjmaker/nana.git
-cd nana
+cd eisl/nana
 make distclean
 ```
-
-*NB*: Be careful not to check in changes that would require ordinary users to install Nana.
 
 Now you should be able to create a debug build. Note that this will run `autoreconf`, so you must have the automake and autoconf packages installed for your OS.
 
@@ -127,8 +122,6 @@ Now you should be able to create a debug build. Note that this will run `autorec
 make clean
 make 'DEBUG=1'
 ```
-
-(You can supply `OPSYS=` if necessary too.)
 
 ### Sample Debugger Usage
 
@@ -190,3 +183,5 @@ The conclusion is that, at least for this function, the problem is trying to pri
 Now it's clear. It's an intentional crash (actually, a call to `abort()`) in the DEBUG build. The reason is that a postcondition (i.e `ENSURE` assertion) is violated, `GET_NAME()` should return a non-NULL string. However, some streams like `(standard-input)` have a NULL name in the heap. Now is a good time to jump into "solution space".
 
 You can substitute gdb for lldb above, but you'll need to change the [command syntax](https://kapeli.com/cheat_sheets/LLDB_to_GDB_Command_Map.docset/Contents/Resources/Documents/index) slightly.
+
+There is also a `hdmp` function that may be useful if you are still at the REPL.

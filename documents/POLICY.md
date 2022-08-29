@@ -42,21 +42,17 @@ You can get a lot done in just ISO C, but use of standard UNIX libraries is ok, 
 X/Open and IETF RFCs.
 Please don't write Linux-specific code.
 
-If at some point it seems that a C++ feature would be really useful, it may actually be available as a C library.
-An interesting library is
-[cii](https://github.com/drh/cii),
-but we probably don't want to use it quite yet.
-Even though we decided not to use C++, writing
-[Object-Oriented C](https://www.cs.rit.edu/~ats/)
-looks potentially interesting but would have to be evaluated properly.
-It's best to think of everything in this paragraph as a research project that may not or may not be ready for production.
+There are two third-party libraries that are used.
+They are "vendored" (copied into the project).
+
+1. [cii](https://github.com/drh/cii): Even though we decided not to use C++ because of its complexity, that experiment did show that some features were useful, like string processing. CII is a *C* library to try help with this and other tasks.
+2. [GNU Nana](https://github.com/pjmaker/nana): This implements [design-by-contract](https://en.wikipedia.org/wiki/Design_by_contract) for C. In practice it is used to specify preconditions for *internal* functions using `REQUIRE` and some postconditions using `ENSURE`, in DEBUG builds only. Note that this library isn't appropriate to handle any errors that can be caused by Lisp code, instead if statements and `error` are used there.
 
 As regards tools, the compiler warnings are all switched on.
 And there is a rule to run cppcheck in the top-level makefile.
 There is no need to have zero warnings, but at least the reason for them should be understood.
-We could use an indent tool at some time in the future (e.g.
-[GNU Indent](https://www.gnu.org/software/indent/) or
-[Artistic Style](http://astyle.sourceforge.net/)),
-but for now just try to fit in with the existing code (this applies to naming conventions too).
-
-The source code is formatted with GNU indent. Barkley style with -orig option. 
+We use
+[GNU Indent](https://www.gnu.org/software/indent/)
+to format the code.
+In particular, Berkeley style with the `-orig` option.
+Just try to fit in with the existing code for naming conventions.

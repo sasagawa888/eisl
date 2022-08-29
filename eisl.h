@@ -976,6 +976,7 @@ __dead int      f_quit(int addr);
 int             f_quotient(int addr);
 int             f_random_real(int arglist);
 int             f_random(int arglist);
+int             f_set_random(int arglist);
 int             f_read(int addr);
 int             f_read_byte(int arglist);
 int             f_read_char(int x);

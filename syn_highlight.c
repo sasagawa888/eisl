@@ -76,7 +76,7 @@ static const char *builtin[] = {
 
 // extended function
 static const char *extended[] = {
-  "random-real", "random", "heapdump", "instance",
+  "random-real", "random", "set-random", "heapdump", "instance",
   "nconc", "fast-address", "macroexpand-1", "macroexpand-all",
   "backtrace", "subrp", "funcp", "macrop", "fixnump", "longnump",
   "bignump", "prof",

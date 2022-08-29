@@ -106,7 +106,7 @@ EISL_OBJS := main.o \
 	syn_highlight.o \
 	long.o
 
-all: eisl edlis
+all: eisl edlis $(OBJ_LISP)
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)

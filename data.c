@@ -2164,7 +2164,7 @@ copy_int (int x)
 int
 copy_long (int x)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
   SET_TAG (addr, LONGN);
@@ -2177,7 +2177,7 @@ copy_long (int x)
 int
 copy_flt (int x)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
   SET_TAG (addr, FLTN);
@@ -2195,7 +2195,7 @@ GET_VEC (int addr)
 int
 copy_vec (int x)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
   SET_VEC (addr, GET_VEC (x));	// vector elements
@@ -2209,7 +2209,7 @@ copy_vec (int x)
 int
 copy_array (int x)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
   SET_VEC (addr, GET_VEC (x));	// array or vector
@@ -2223,7 +2223,7 @@ copy_array (int x)
 int
 copy_str (int x)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
   SET_TAG (addr, STR);		// tag 
@@ -2236,7 +2236,7 @@ copy_str (int x)
 int
 copy_char (int x)
 {
-  int addr = NIL;
+  int addr;
 
   addr = freshcell ();
   SET_TAG (addr, CHR);

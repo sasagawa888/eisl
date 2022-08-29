@@ -1539,7 +1539,7 @@ f_defclass (int arglist)
 	writer,
 	accessor, boundp, initform, initarg, initform_flag, initarg_flag;
 
-      reader = writer = accessor = boundp = initform = initarg = NIL;
+      initarg = NIL;
       initform_flag = initarg_flag = 0;
       if (!listp (car (arg3)))
 	arg3 = list1 (arg3);	// if form=(a :reader a-read) => ((a

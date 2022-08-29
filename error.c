@@ -36,7 +36,7 @@ ILOSerror (int fun, int arg)
 }
 
 
-void
+__dead void
 error (int errnum, const char *fun, int arg)
 {
   int initargs, i;

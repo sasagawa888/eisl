@@ -1012,13 +1012,12 @@ isqrt2 (int n, int init)
 int
 isqrt3 (int x)
 {
-  int len, msb, pointer, init, i;
-  long long int lmsb;
+  int len, pointer, init, i;
   len = get_length (x);
   pointer = get_pointer (x);
   if (len % 2 == 0)
     {
-      lmsb =
+      long long int lmsb =
 	(long long int) bigcell[pointer] * BIGNUM_BASE +
 	(long long int) bigcell[pointer - 1];
       init = gen_big ();
@@ -1034,7 +1033,7 @@ isqrt3 (int x)
     }
   else
     {
-      msb = bigcell[pointer];
+      int msb = bigcell[pointer];
       init = gen_big ();
       len = (len - 1) / 2;
       for (i = 0; i < len; i++)

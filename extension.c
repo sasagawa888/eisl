@@ -715,8 +715,6 @@ f_modulesubst (int arglist)
 int
 f_line_argument (int arglist)
 {
-  int arg1, n;
-
   if (length (arglist) >= 2)
     {
       error (WRONG_ARGS, "line-argument", arglist);
@@ -736,8 +734,8 @@ f_line_argument (int arglist)
     }
   else
     {
-      arg1 = car (arglist);
-      n = GET_INT (arg1);
+      int arg1 = car (arglist);
+      int n = GET_INT (arg1);
       if (n < gArgC)
         {
           return makestr (gArgV[n]);

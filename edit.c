@@ -213,7 +213,7 @@ display_buffer ()
 enum HighlightToken
 check_token_buffer (int col)
 {
-  char str[TOKEN_MAX];
+  char str[TOKEN_MAX + 1];
   int pos;
 
   pos = 0;
@@ -244,6 +244,7 @@ findlparen_buffer (int col)
 {
   int nest, uni_col, i;
 
+  REQUIRE(col <= COL_SIZE);
   col--;
   nest = 0;
   while (col >= 0)
@@ -407,6 +408,7 @@ get_fragment_buffer (int col)
   static char str[FRAGMENT_MAX];
   int pos;
 
+  REQUIRE(col <= COL_SIZE);
   while (col >= 0 &&
 	 buffer[col][0] != ' ' &&
 	 buffer[col][0] != '(' && buffer[col][0] != ')')
@@ -681,9 +683,8 @@ down (int *rl_line, int *j, int *uni_j, int *pos)
   display_buffer ();
 }
 
-
-int
-unipos (int *j)
+static int
+unipos (const int *j)
 {
   int k, uni_pos;
 
@@ -750,32 +751,32 @@ read_line_loop (int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	  if (isUni2 (c))
 	    {
 	      (*uni_j)--;
-	      for (k = *j; k < COL_SIZE; k++)
+	      for (k = *j; k < COL_SIZE - 2; k++)
 		buffer[k][0] = buffer[k + 2][0];
 	    }
 	  else if (isUni3 (c))
 	    {
 	      (*uni_j)--;
 	      (*uni_j)--;
-	      for (k = *j; k < COL_SIZE; k++)
+	      for (k = *j; k < COL_SIZE - 3; k++)
 		buffer[k][0] = buffer[k + 3][0];
 	    }
 	  else if (isUni4 (c))
 	    {
 	      (*uni_j)--;
-	      for (k = *j; k < COL_SIZE; k++)
+	      for (k = *j; k < COL_SIZE - 4; k++)
 		buffer[k][0] = buffer[k + 4][0];
 	    }
 	  else if (isUni5 (c))
 	    {
 	      (*uni_j)--;
-	      for (k = *j; k < COL_SIZE; k++)
+	      for (k = *j; k < COL_SIZE - 5; k++)
 		buffer[k][0] = buffer[k + 5][0];
 	    }
 	  else if (isUni6 (c))
 	    {
 	      (*uni_j)--;
-	      for (k = *j; k < COL_SIZE; k++)
+	      for (k = *j; k < COL_SIZE - 6; k++)
 		buffer[k][0] = buffer[k + 6][0];
 	    }
 	}
@@ -795,27 +796,27 @@ read_line_loop (int c, int *j, int *uni_j, int *pos, int limit, int *rl_line)
 	}
       else if (isUni2 (buffer[(*j)][0]))
 	{
-	  for (k = *j; k < COL_SIZE; k++)
+	  for (k = *j; k < COL_SIZE - 2; k++)
 	    buffer[k][0] = buffer[k + 2][0];
 	}
       else if (isUni3 (buffer[(*j)][0]))
 	{
-	  for (k = *j; k < COL_SIZE; k++)
+	  for (k = *j; k < COL_SIZE - 3; k++)
 	    buffer[k][0] = buffer[k + 3][0];
 	}
       else if (isUni4 (buffer[(*j)][0]))
 	{
-	  for (k = *j; k < COL_SIZE; k++)
+	  for (k = *j; k < COL_SIZE - 4; k++)
 	    buffer[k][0] = buffer[k + 4][0];
 	}
       else if (isUni5 (buffer[(*j)][0]))
 	{
-	  for (k = *j; k < COL_SIZE; k++)
+	  for (k = *j; k < COL_SIZE - 5; k++)
 	    buffer[k][0] = buffer[k + 5][0];
 	}
       else if (isUni6 (buffer[(*j)][0]))
 	{
-	  for (k = *j; k < COL_SIZE; k++)
+	  for (k = *j; k < COL_SIZE - 6; k++)
 	    buffer[k][0] = buffer[k + 6][0];
 	}
       display_buffer ();

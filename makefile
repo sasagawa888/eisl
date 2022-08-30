@@ -32,9 +32,22 @@ else
 	endif
 endif
 CFLAGS := $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -Inana/src
-DFLAGS := --O3 --release --betterC
+DFLAGS := --preview=all --de -w --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 SRC_D := dextension.d disl.d
+
+# Files in library/ that need to be compiled
+SRC_LISP := library/bit.lsp \
+	    library/escape.lsp \
+	    library/i18n.lsp \
+	    library/logger.lsp \
+	    library/ndbm.lsp \
+	    library/opengl.lsp \
+	    library/regex.lsp \
+	    library/tcltk.lsp \
+	    library/tcpip.lsp \
+	    library/virtty.lsp
+
 ifeq ($(DEBUG),1)
 	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
@@ -50,6 +63,7 @@ endif
 OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_NANA := $(SRC_NANA:.c=.o)
 OBJ_D := $(SRC_D:.d=.o)
+OBJ_LISP := $(SRC_LISP:.lsp=.o)
 CXX := c++
 CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
 ifeq ($(CC),c++)
@@ -92,7 +106,7 @@ EISL_OBJS := main.o \
 	syn_highlight.o \
 	long.o
 
-all: eisl edlis
+all: eisl edlis $(OBJ_LISP)
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
@@ -107,6 +121,9 @@ endif
 %.o: %.d disl.d
 	$(DC) $(DFLAGS) -c $<
 
+%.o: %.lsp eisl
+	echo '(load "library/compiler.lsp") (compile-file "$<")' | ./eisl -r
+
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h
 endif
@@ -120,7 +137,7 @@ edlis.o : edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 
 .PHONY: install
-install: eisl edlis
+install: eisl edlis $(OBJ_LISP)
 	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
@@ -134,7 +151,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) $(OBJ_D) eisl edlis
+	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) $(OBJ_D) $(OBJ_LISP) eisl edlis
 
 .PHONY: check
 check:

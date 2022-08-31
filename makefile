@@ -92,6 +92,11 @@ INSTALL := install
 INSTALL_PROGRAM := $(INSTALL) -m755
 MKDIR_PROGRAM := mkdir -p -m 755
 
+# Use files from source tree at compile time because
+# sharedir isn't populated yet
+EASY_ISLISP := $(CURDIR)
+export EASY_ISLISP
+
 EISL_OBJS := main.o \
 	function.o \
 	extension.o \
@@ -143,6 +148,7 @@ install: eisl edlis $(OBJ_LISP)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
 	$(MKDIR_PROGRAM) $(DESTDIR)$(sharedir)
 	$(INSTALL_PROGRAM) library/* $(DESTDIR)$(sharedir)
+	$(INSTALL_PROGRAM) fast.h ffi.h $(DESTDIR)/$(PREFIX)/share/eisl
 
 .PHONY: uninstall
 uninstall:

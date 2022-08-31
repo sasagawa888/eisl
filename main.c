@@ -261,6 +261,10 @@ main (int argc, char *argv[])
   initgeneric ();
   signal (SIGINT, signal_handler_c);
   signal (SIGSTOP, SIG_IGN);
+  if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) == -1) {
+    perror("setenv");
+    exit(EXIT_FAILURE);
+  }
 
   input_stream = standard_input;
   output_stream = standard_output;

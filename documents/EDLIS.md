@@ -1,7 +1,7 @@
 # Edlis
 Edlis is a simple editor for ISLisp. Edlis is subset Edwin.
 
-![Edlis](scrrem6.png)
+![Edlis](screen6.png)
 
 ## Note
 Edlis supports Unicode from ver2.57.

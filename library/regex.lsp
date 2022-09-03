@@ -12,12 +12,11 @@
 (defclass <regexp> ()
   ((val :accessor regexp-val :initform 0))) ; Underlying UNIX struct
 
-(defgeneric regexp-p (o))
-(defmethod regexp-p ((o <regexp>))
+(defun regexp-p (o)
    ;; Returns t if object is a computed regular  expression  (of  type  <regexp>), nil otherwise.
    ;;
    ;; Supplying hints like `(the <regexp> o)` to the compiler doesn't work for non-builtin classes
-   (eq (class-of o) (class <regexp>)))
+   (instancep o (class <regexp>)))
 
 (defun regcomp (re)
    ;; Compute regular-expression in an internal  format  and  returns  a  <regexp> object.
@@ -34,8 +33,7 @@
             (progn (c-lang "free(preg);")
                    nil))))
 
-(defgeneric regexe (re str retvect &rest maybe-start))
-(defmethod regexe ((re <regexp>) str retvect &rest maybe-start)
+(defun regexe (re str retvect &rest maybe-start)
    ;; Match string against regexp.
    (the <string> str)
    (c-lang "regmatch_t pmatch[1];")
@@ -58,8 +56,7 @@
         (unwind-protect (apply #'regexe re str2 nil maybe-start)
                 (regfree re))))
 
-(defgeneric regfree (re))
-(defmethod regfree ((re <regexp>))
+(defun regfree (re)
    ;; Free any dynamically allocated storage associated with the <regexp> object.
    ;; You should probably call this from an unwind-protect handler to avoid resource leaks.
    (let ((val (regexp-val re)))

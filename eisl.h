@@ -1258,7 +1258,7 @@ void            cut_zero(int x);
 void            deffsubr(const char *symname, int (*func)(int));
 void            defsubr(const char *symname, int (*func)(int));
 void            dropchar(char buf[]);
-__dead void     error(int errnum, const char *fun, int arg);
+void            error(int errnum, const char *fun, int arg);
 int             gbc(void);
 void            gbcmark(void);
 void            gbcsweep(void);

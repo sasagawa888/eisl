@@ -834,7 +834,7 @@ f_floor (int arglist)
       x = floor (GET_FLT (arg1));
       if (x <= 999999999 && x >= -999999999)
 	return (makeint ((int) x));
-      else if (x <= 999999999999999999 && x >= -999999999999999999)
+      else if ((long long int)x <= 999999999999999999 && (long long int)x >= -999999999999999999)
 	return (makelong ((long long int) x));
       else
 	return (makeflt (x));
@@ -4714,7 +4714,6 @@ f_quit (int arglist __unused)
     }
   greeting_flag = false;
   RAISE (Exit_Interp);
-  return -1;                    /* Shut up warning */
 }
 
 // extension

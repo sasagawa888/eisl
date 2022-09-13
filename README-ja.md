@@ -42,7 +42,6 @@ ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使い
 - macOS 11.1 clang 12.0.0 
 - OpenBSD
 
-
 ## 実行
 
 * GNU/Linuxをお使いの場合: 端末上で`eisl`と入力する。

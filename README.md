@@ -40,6 +40,7 @@ We confirmed operation in the following environments.
 - Linux Mint GCC ver9.3.0
 - macOS 11.1 clang 12.0.0 
 - OpenBSD
+- FreeBSD
 
 If you want to use library files from anyplace other than the `PREFIX` argument
 (default */usr/local*),

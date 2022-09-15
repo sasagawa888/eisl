@@ -144,6 +144,12 @@ defgeneric compile
                 (error* "lack of filename ext" str))
             (substring str 0 n)))
     
+    (defun remove-dir (str)
+         (let* ((n (char-index #\/ str)))
+            (if (null n)
+                str
+                (remove-dir (substring str (+ n 1) (- (length str) 1))))))
+    
     (defun dropstring (str n)
         (substring str n (- (length str) 1)))
     
@@ -251,7 +257,7 @@ defgeneric compile
            (pass2 x)
            (eisl-ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
-           (finalize fname ".c")
+           (finalize (remove-dir fname) ".c")
            (format (standard-output) "invoke CC~%")
            (system (string-append option fname ".o " include fname "0.c " c-lang-option))
            (system (string-append "rm " infnames))))
@@ -289,7 +295,7 @@ defgeneric compile
            (pass2 x)
            (eisl-ignore-toplevel-check nil)
            (format (standard-output) "finalize~%")
-           (finalize fname ".c")
+           (finalize (remove-dir fname) ".c")
            (format (standard-output) "invoke CC~%")
            (system (string-append option fname ".o " include fname "0.c " c-lang-option))))
     

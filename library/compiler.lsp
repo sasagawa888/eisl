@@ -144,6 +144,7 @@ defgeneric compile
                 (error* "lack of filename ext" str))
             (substring str 0 n)))
     
+    ;; e.g. tests/boo/lisp -> lisp
     (defun remove-dir (str)
          (let* ((n (char-index #\/ str)))
             (if (null n)

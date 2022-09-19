@@ -1,3 +1,13 @@
+#|
+CNF for toy prover
+and  ^
+or   v
+not  ~
+imply ->
+CNF (AvB)^(CvD) (in logic) -> ((A B)(C D)) (in lisp)
+|#
+
+
 (import "elixir")
 (import "test")
 
@@ -36,13 +46,6 @@
     ;; recursive negation
     (((~ _a)) (let ((a1 (and-or-not _a))) `(~ ,a1))))
   
-#|
-and  ^
-or   v
-not  ~
-imply ->
-CNF (AvB)^(CvD) (in logic) -> ((A B)(C D)) (in lisp)
-|#
 
 ($test (foo '(-> a (-> b c))) (((~ a) (~ b) c)))
 ($test (foo '(-> a (-> b a))) (((~ a) (~ b) a)))

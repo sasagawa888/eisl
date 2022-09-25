@@ -1,7 +1,7 @@
-# Chitin's omega
+# Chaitin's omega
 The eval function is extended to test the stopping probability (Ω) of Chitin' theory.
 
-see The LIMITS of MATHEMATICS by Gregory J. Chitin.
+see The LIMITS of MATHEMATICS by Gregory J. Chaitin.
 
 # extended eval
 

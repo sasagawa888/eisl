@@ -2705,9 +2705,9 @@ f_eval (int arglist)
     res = eval (arg1);
     try_flag = false;
     if(res != UNDEF)
-      return(list3(makesym("success"),res,try_res));
+      return(list3(makesym("SUCCESS"),res,try_res));
     else
-      return(list3(makesym("failse"),NIL,try_res));
+      return(list3(makesym("FAILSE"),NIL,try_res));
   }
 }
 

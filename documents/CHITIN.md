@@ -1,7 +1,7 @@
 # Chitin's omega
 The eval function is extended to test the stopping probability (Ω) of Chitin' theory.
 
-see Gregory J. Chitin.
+see The LIMITS of MATHEMATICS by Gregory J. Chitin.
 
 # extended eval
 
@@ -25,8 +25,8 @@ Returns a list of the following three values:
 
 ```
 > (eval '(fib 3) 100)
-(success 2 ((1) (2) (3)))
+(SUCCESS 2 ((1) (2) (3)))
 > (eval '(fib 10) 100)
-(failse NIL ((3) (2) (1) (2) (3) (4) (5) (2) (1) (2) (3) (4) (1) (2) (3) (2) (1) (2) (3) (4) (5) (6) (7) (8) (9) (10)))
+(FALSE NIL ((3) (2) (1) (2) (3) (4) (5) (2) (1) (2) (3) (4) (1) (2) (3) (2) (1) (2) (3) (4) (5) (6) (7) (8) (9) (10)))
 
 ```

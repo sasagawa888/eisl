@@ -2684,12 +2684,31 @@ f_stream_ready_p (int arglist)
 int
 f_eval (int arglist)
 {
-  int arg1;
+  int arg1,arg2,len;
 
   arg1 = car (arglist);
-  if (length (arglist) != 1)
+  arg2 = cadr(arglist);
+  len = length(arglist);
+  if (len != 1 && len != 2)
     error (WRONG_ARGS, "eval", arglist);
-  return (eval (arg1));
+
+  if (len == 1)
+    return (eval (arg1));
+  else
+  {
+    if(!integerp(arg2))
+      error (WRONG_ARGS, "eval", arg2);
+    int res;
+    try_timer = getETime () + (double)GET_INT(arg2)*0.000001;
+    try_res = NIL;
+    try_flag = true;
+    res = eval (arg1);
+    try_flag = false;
+    if(res != UNDEF)
+      return(list3(makesym("success"),res,try_res));
+    else
+      return(list3(makesym("failse"),NIL,try_res));
+  }
 }
 
 int

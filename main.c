@@ -142,9 +142,12 @@ bool greeting_flag = true;	// for (quit)
 bool script_flag = false;	// for -s option
 bool handling_resource_err = false;	// stop infinite recursion
 bool looking_for_shebang = false;	// skip over #!
-bool multiple_call_next_method;	// method body has
-						// multiple
-						// (call-next-method)
+bool multiple_call_next_method;	// method body has multiple (call-next-method)
+
+// try function (try time s-exp)
+bool try_flag; // true or false
+double try_timer; // limit timer
+int try_res; // argument list
 
 // switch
 int gc_sw = 0;			// 0= mark-and-sweep-GC 1= copy-GC
@@ -163,9 +166,7 @@ int block_tag_check[NESTED_BLOCKS_MAX];
 int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
 int catch_env[10][50];
-Except_T Ignored_Error = { "Ignored error" };	// for
-
-							// ignore-errors
+Except_T Ignored_Error = { "Ignored error" };	// for ignore-errors
 
 int block_tag[CTRLSTK];		// array of tag
 int catch_tag[CTRLSTK];
@@ -1850,6 +1851,9 @@ DEF_GETTER (char, TR, trace, NIL)
   qexist = 0;
   trace = 0;
 
+  if(try_flag == true && getETime() >= try_timer)
+    return(UNDEF);
+  
   switch (GET_TAG (func))
     {
     case SUBR:
@@ -1857,6 +1861,8 @@ DEF_GETTER (char, TR, trace, NIL)
     case FSUBR:
       return ((GET_SUBR (func)) (args));
     case FUNC:
+      if(try_flag == true)
+        try_res = cons(args,try_res);
       if (GET_TR (examin_sym) == 1)
 	{
 	  trace = examin_sym;

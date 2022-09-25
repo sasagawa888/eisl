@@ -573,6 +573,11 @@ extern bool     handling_resource_err;
 extern bool     looking_for_shebang;
 extern bool		multiple_call_next_method; 
 
+// try function
+extern bool     try_flag;
+extern double   try_timer;
+extern int      try_res;
+
 // switch
 extern int      gc_sw;
 extern int      area_sw;

@@ -61,8 +61,12 @@ from John allen book and Masakazu Nakanishi book
         (throw 'exit nil))
 
     (defun mread (buffer stream)
-        (cond ((and (stringp buffer)(string= buffer "the end")) (cons buffer nil)) ; file end
+        (cond ;; file end
+              ((and (stringp buffer)(string= buffer "the end")) (cons buffer nil)) 
+              ;; buffer empty
               ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
+              ;; comment line
+              ((string= (car buffer) ";") (mread (tokenize (read-line stream nil "the end")) stream))
               ;; string
               ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    

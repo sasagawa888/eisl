@@ -61,7 +61,7 @@ from John allen book and Masakazu Nakanishi book
         (throw 'exit nil))
 
     (defun mread (buffer stream)
-        (cond ((and (stringp buffer)(string= buffer "the end")) buffer) ; file end
+        (cond ((and (stringp buffer)(string= buffer "the end")) (cons buffer nil)) ; file end
               ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ;; string
               ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
@@ -245,9 +245,9 @@ from John allen book and Masakazu Nakanishi book
               (sexp nil))
            (while (not (file-end-p sexp))
               (setq sexp (val (mread nil instream)))
-              (print sexp))
-              ;(eval sexp))
-           (close instream)))
+              (eval sexp))
+           (close instream))
+        t)
 
     (defun file-end-p (x)
         (and (stringp x) (string= x "the end")))

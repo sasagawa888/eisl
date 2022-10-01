@@ -12,7 +12,7 @@ from John allen book and Masakazu Nakanishi book
 *               "( a b c)" -> "(" "a" "b" "c" ")"
 |#
 
-(defmodule "mexp"
+(defmodule meta
     (import "formula" infix->prefix string->infix)
     (defun cadr (x)
         (car (cdr x)) )
@@ -61,7 +61,8 @@ from John allen book and Masakazu Nakanishi book
         (throw 'exit nil))
 
     (defun mread (buffer stream)
-        (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
+        (cond ((and (stringp buffer)(string= buffer "the end")) buffer) ; file end
+              ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ;; string
               ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    
@@ -92,7 +93,7 @@ from John allen book and Masakazu Nakanishi book
               (t (cons (infix->prefix (string->infix (car buffer))) (cdr buffer)))))
 
     (defun mread-cond (buffer stream res)
-        (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
+        (cond ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ((string= (car buffer) "]") (cons (cons 'cond (reverse res)) (cdr buffer)))
               ((string= (car buffer) "->") (mread (cdr buffer) stream))
               ((string= (car buffer) ";") (mread-cond (cdr buffer) stream res))
@@ -106,7 +107,7 @@ from John allen book and Masakazu Nakanishi book
                    (mread-cond buffer** stream (cons (list exp0 exp1) res))))))
 
     (defun mread-argument (buffer stream res)
-        (cond ((null buffer) (mread (tokenize (read-line stream)) stream))
+        (cond ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ((string= (car buffer) "]") (cons (reverse res) (cdr buffer)))
               ((string= (car buffer) ";") (mread-argument (cdr buffer) stream res))
               (t
@@ -148,7 +149,9 @@ from John allen book and Masakazu Nakanishi book
                x)))
 
     (defun tokenize (x)
-        (tokenize1 (convert x <list>) "" nil))
+        (if (string= x "the end")
+            x
+            (tokenize1 (convert x <list>) "" nil)))
 
     ;; tokenize as M-expression
     (defun tokenize1 (ls token res)
@@ -236,5 +239,17 @@ from John allen book and Masakazu Nakanishi book
         (cond ((and (integer-str-p x) (string-index "." x)) t)
               ((and (integer-str-p x) (string-index "e" x)) t)
               (t nil)))
+
+    (defun load* (filename)
+        (let ((instream (open-input-file filename))
+              (sexp nil))
+           (while (not (file-end-p sexp))
+              (setq sexp (val (mread nil instream)))
+              (print sexp))
+              ;(eval sexp))
+           (close instream)))
+
+    (defun file-end-p (x)
+        (and (stringp x) (string= x "the end")))
 
 )

@@ -38,8 +38,8 @@ from John allen book and Masakazu Nakanishi book
                         ((equal s '(quit))
                          (return-from repl t) )
                         (if (and (consp s) (eq (elt s 0) 'load))
-                            (print (ignore-errors (load* (elt s 1))))
-                            (print (ignore-errors (eval s))))
+                            (print (load* (elt s 1)))
+                            (print (eval s)))
                         (prompt)))
                   t)
                  (t (prompt) (repl)))))
@@ -77,7 +77,7 @@ from John allen book and Masakazu Nakanishi book
                       (sexp (val result))
                       (buffer* (rest result)))
                  (cons (list 'quote sexp) buffer*)))
-              ;; difinition e.g. foo[x] = x+1
+              ;; definition e.g. foo[x] = x+1
               ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))

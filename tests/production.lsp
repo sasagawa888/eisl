@@ -1,5 +1,4 @@
-;; idea memo
-;; production system 
+;; Toy production system 
 ;; C + O2  -> CO2
 ;; 2H2 + O2 -> 2H2O
 ;; C + 2H2 -> CH4
@@ -8,6 +7,7 @@
 ;; extend defpattern to handle set 
 (import "elixir")
 
+;; if exchange rule1&rule2  rule3&rule4  you will get same result.
 (defpattern reaction 
     (((element _x C O2)) (print 'rule1) (reaction (modify _x '(- C) '(- O2) '(+ CO2))))
     (((element _x (2 H2) O2)) (print 'rule2) (reaction (modify _x '(- (2 H2))  '(- O2) '(+ (2 H2O)))))

@@ -83,6 +83,33 @@ e.g.
 (I DO NOT KNOW)
 > 
 
+(element var elt1 elt2 ... eltn) 
+when elt1 ... eltn are element , match and bind var the argument.
+
+elt is simple symbol and (n symbol).
+
+e.g.
+
+> (defpattern foo (((element _x a b)) _x) (else 'no))
+FOO
+> (foo '(a b c))
+(A B C)
+> (foo '(a  c))
+NO
+> 
+
+in body part you can use modify function
+(modify var elt1 elt2 ... eltn)
+
+e.g.
+> (modify '(a b c) '(- a))
+(B C)
+> (modify '(a b c) '(+ a))
+(A A B C)
+> (modify '(a b b c) '(- (2 b)))
+(A C)
+> 
+
 ```
 
 ## Match syntax

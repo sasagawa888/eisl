@@ -117,7 +117,7 @@
               ((and (consp y) (eq (car y) '&rest))
                (cons env (cons (list 'setq* (car (cdr y)) x) ans)))
               ((and (consp y) (eq (car y) 'element))
-               (cons env (cons (list 'and (list 'elementp1 x (cons 'quote (list (cdr (cdr y)))))
+               (cons env (cons (list 'and (list 'elementp* x (cons 'quote (list (cdr (cdr y)))))
                                           (list 'setq* (car (cdr y)) x)) ans)))
               ((and (consp y) (consp (car y)))
                (let ((res
@@ -141,17 +141,12 @@
               (t (format (standard-output) "~A ~%~A ~%" (car x) (car (cdr x)))
                  t)))
 
-    (defpublic elementp (x :rest y)
-        (if (not (listp x))
-            (*error))
-        (elementp1 x y))
-
-    (defpublic elementp1 (x y)
+    (defpublic elementp* (x y)
         (cond ((null y) t)
-              ((and (symbolp (car y)) (member (car y) x)) (elementp1 x (cdr y)))
+              ((and (symbolp (car y)) (member (car y) x)) (elementp* x (cdr y)))
               ((and (listp (car y))
                     (membern (elt (car y) 0) (elt (car y) 1) x))
-               (elementp1 x (cdr y)))
+               (elementp* x (cdr y)))
               (t nil)))
 
     (defun membern (n x ls)

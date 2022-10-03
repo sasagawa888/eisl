@@ -17,18 +17,18 @@
 ;;;            (- _a 3)))))
 
 (defmacro defpattern (name :rest body)
-    (if (syntax-error body) (error "defpattern syntax error" name))
+    (if (syntax-error body)
+        (error "defpattern syntax error" name) )
     (let* ((arg (gensym))
            (vars (extract-variables body nil nil))
            (body1 (expand-body arg body)) )
         `(defun ,name (:rest ,arg) (let ,vars
-                                  ,body1))))
+                                        ,body1))))
 
 (defmacro match (x :rest body)
     (let ((vars (extract-variables body nil nil))
           (body1 (expand-body x body)) )
        `(let ,vars ,body1)))
-       
 ;; anyway return T
 (defmacro setq* (var val)
     `(progn (setq ,var ,val) t) )
@@ -48,14 +48,19 @@
 
     (defun expand-body1 (x body)
         (mapcar (lambda (y) 
-                    (if (and (>= (length y) 2) (consp (elt y 1)) (eq (car (elt y 1)) 'when))
-                        (cons (expand-match x (car y) (cdr (car (cdr y)))) (cdr (cdr y)))
-                        (cons (expand-match x (car y) nil) (cdr y))))
-                         body)) 
+                   (if (and (>= (length y) 2)
+                            (consp (elt y 1))
+                            (eq (car (elt y 1)) 'when))
+                       (cons (expand-match x (car y) (cdr (car (cdr y))))
+                             (cdr (cdr y)))
+                       (cons (expand-match x (car y) nil) (cdr y))))
+                body))
 
     ;; e.g. _a _x  return T
     (defun variablep (x)
-        (and (symbolp x) (not (anoymous x)) (char= (car (convert (convert x <string>) <list>)) #\_)) )
+        (and (symbolp x)
+             (not (anoymous x))
+             (char= (car (convert (convert x <string>) <list>)) #\_)))
 
     ;; e.g. _ return T 
     (defun anoymous (x)
@@ -82,8 +87,11 @@
     (defun expand-match (x y z)
         (cond ((null y) (list 'null x))
               ((consp y)
-               (cons 'and (append (reverse (cdr (expand-match1 x y nil (cons (list 'consp x) nil)))) z)))
-              (t (cons 'and (append (reverse (cdr (expand-match1 x y nil nil))) z)))))
+               (cons 'and
+                     (append (reverse (cdr (expand-match1 x y nil (cons (list 'consp x) nil))))
+                             z)))
+              (t (cons 'and
+                       (append (reverse (cdr (expand-match1 x y nil nil))) z)))))
 
     ;; e.g. x and (+ _a _b)  ans = (and (eq (car x) '+) (setq _a (car (cdr x)) (setq _b (car (cdr (cdr x))))
     ;; env = (_a _b)
@@ -91,8 +99,10 @@
     (defun expand-match1 (x y env ans)
         (cond ((null y) (cons env ans))
               ((numberp y) (cons env (cons (list '= x y) (cons (list 'numberp x) ans))))
-              ((characterp y) (cons env (cons (list 'char= x y) (cons (list 'characterp x) ans))))
-              ((stringp y) (cons env (cons (list 'string= x y) (cons (list 'stringp x) ans))))
+              ((characterp y) (cons env
+                                    (cons (list 'char= x y) (cons (list 'characterp x) ans))))
+              ((stringp y) (cons env
+                                 (cons (list 'string= x y) (cons (list 'stringp x) ans))))
               ((general-vector-p y) (cons env (cons (list 'equal x y) ans)))
               ((general-array*-p y) (cons env (cons (list 'equal x y) ans)))
               ((anoymous y) (cons env (cons t ans)))
@@ -106,30 +116,90 @@
                (cons env (cons (list 'setq* (car (cdr y)) x) ans)))
               ((and (consp y) (eq (car y) '&rest))
                (cons env (cons (list 'setq* (car (cdr y)) x) ans)))
+              ((and (consp y) (eq (car y) 'element))
+               (cons env (cons (list 'and (list 'elementp1 x (cons 'quote (list (cdr (cdr y)))))
+                                          (list 'setq* (car (cdr y)) x)) ans)))
               ((and (consp y) (consp (car y)))
                (let ((res
-                     (expand-match1
-                      (list 'car x)
-                      (car y)
-                      env
-                      (cons (list 'consp (list 'car x)) nil))))
+                     (expand-match1 (list 'car x)
+                                    (car y)
+                                    env
+                                    (cons (list 'consp (list 'car x)) nil))))
                   (expand-match1 (list 'cdr x) (cdr y) (car res) (append (cdr res) ans))))
               ((consp y)
                (let ((res (expand-match1 (list 'car x) (car y) env ans)))
                   (expand-match1 (list 'cdr x) (cdr y) (car res) (cdr res))))))
+
     
     ;;syntax check. eash pattern has same length
     (defpublic syntax-error (x)
         (cond ((null x) t)
               ((null (cdr x)) nil)
-              ((and (>= (length x) 2) (eq (car (car (cdr x))) 'else))
-               nil)
-              ((= (length (car (car x)))
-                  (length (car (car (cdr x)))))
-               (syntax-error (cdr x)))
-              (t (format (standard-output) "~A ~%~A ~%" (car x) (car (cdr x))) t)))
-            
+              ((and (>= (length x) 2) (eq (car (car (cdr x))) 'else)) nil)
+              ((and (listp (car (car (car x)))) (eq (car (car (car (car x)))) 'element)) (syntax-error (cdr x)))
+              ((= (length (car (car x))) (length (car (car (cdr x))))) (syntax-error (cdr x)))
+              (t (format (standard-output) "~A ~%~A ~%" (car x) (car (cdr x)))
+                 t)))
 
+    (defpublic elementp (x :rest y)
+        (if (not (listp x))
+            (*error))
+        (elementp1 x y))
+
+    (defpublic elementp1 (x y)
+        (cond ((null y) t)
+              ((and (symbolp (car y)) (member (car y) x)) (elementp1 x (cdr y)))
+              ((and (listp (car y))
+                    (membern (elt (car y) 0) (elt (car y) 1) x))
+               (elementp1 x (cdr y)))
+              (t nil)))
+
+    (defun membern (n x ls)
+        (cond ((= n 0) t)
+              ((member x ls) (membern (- n 1) x (cdr (member x ls))))
+              (t nil)))
+
+    
+    (defpublic modify (x :rest y)
+        (if (not (listp x))
+            (*error))
+        (modify1 x y))
+
+    (defun modify1 (x y)
+        (cond ((null y) x)
+              ((and (listp (car y))
+                    (eq (elt (car y) 0) '+)
+                    (symbolp (elt (car y) 1)))
+               (modify1 (addn 1 x (elt (car y) 1)) (cdr y)))
+              ((and (listp (car y))
+                    (eq (elt (car y) 0) '+)
+                    (listp (elt (car y) 1)))
+               (modify1 (addn (elt (elt (car y) 1) 0) x (elt (elt (car y) 1) 1))
+                        (cdr y)))
+              ((and (listp (car y))
+                    (eq (elt (car y) 0) '-)
+                    (symbolp (elt (car y) 1)))
+               (modify1 (removen 1 x (elt (car y) 1)) (cdr y)))
+              ((and (listp (car y))
+                    (eq (elt (car y) 0) '-)
+                    (listp (elt (car y) 1)))
+               (modify1 (removen (elt (elt (car y) 1) 0) x (elt (elt (car y) 1) 1))
+                        (cdr y)))))
+
+    (defun addn (n x y)
+        (cond ((= n 0) x)
+              (t (addn (- n 1) (cons y x) y))))
+
+    (defun removen (n x y)
+        (cond ((= n 0) x)
+              (t (removen (- n 1) (remove1 x y) y))))
+
+    (defun remove1 (x y)
+        (cond ((null x) nil)
+              ((eq (car x) y) (cdr x))
+              (t (cons (car x) (remove1 (cdr x) y)))))
+
+    
     ;;for pipe macro
     (defpublic pipe-macro (pipe1 func)
         (cond ((null pipe1) func)

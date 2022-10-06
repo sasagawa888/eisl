@@ -24,7 +24,7 @@ John McCarthy published the first paper on Lisp in 1960 while a research fellow 
 |class       |M-expression |S-expression |
 |------------|-------------|-------------|
 |function    |sin[x]       |(sin x)      |
-|definition  |foo[x]=x+1   |(defun foo(x)|
+|definition  |foo[x]<-x+1  |(defun foo(x)|
 |            |             |    (+ x 1)) |
 |variable    |  x          |  x          |
 |integer     |  1          |  1          |

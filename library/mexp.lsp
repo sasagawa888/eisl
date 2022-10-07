@@ -78,7 +78,7 @@ from John allen book and Masakazu Nakanishi book
                       (buffer* (rest result)))
                  (cons (list 'quote sexp) buffer*)))
               ;; definition e.g. foo[x] = x+1
-              ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "<-" buffer))
+              ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "<=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
                       (arg (val result0))
@@ -171,10 +171,10 @@ from John allen book and Masakazu Nakanishi book
                (if (string= token "")
                    (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) res))
                    (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) (cons token res)))))
-              ((and (> (length ls) 1) (char= (car ls) #\<) (char= (cadr ls) #\-))
+              ((and (> (length ls) 1) (char= (car ls) #\<) (char= (cadr ls) #\=))
                (if (string= token "")
-                   (tokenize1 (cddr ls) "" (cons "<-" res))
-                   (tokenize1 (cddr ls) "" (cons "<-" (cons token res)))))
+                   (tokenize1 (cddr ls) "" (cons "<=" res))
+                   (tokenize1 (cddr ls) "" (cons "<=" (cons token res)))))
               ((and (> (length ls) 1) (char= (car ls) #\-) (char= (cadr ls) #\>))
                (if (string= token "")
                    (tokenize1 (cddr ls) "" (cons "->" res))
@@ -261,3 +261,14 @@ from John allen book and Masakazu Nakanishi book
         (and (stringp x) (string= x "the end")))
 
 )
+
+
+;; old fashion 
+(defun plus (x y)
+    (+ x y))
+
+(defun minus (x y)
+    (- x y))
+
+(defun times (x y)
+    (* x y))

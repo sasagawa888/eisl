@@ -13,7 +13,7 @@ variant (% sym n) e.g. ($ _x 1)
 
 builtin predicate (set-property (lambda (x) ...) 'builtin 'bar)
 
-environment ((var0 . val0)(var0 . val0))
+environment ((var0 . val0)(var1 . val1) ... (varn , valn))
 
 builtin predicate
 (assert x)
@@ -26,10 +26,25 @@ builtin predicate
     (prove-all (cons x y) env n))
 
 (defun prove-all (x env n) 
-    (cond ((null x) t)
-          ((predicatep (car x)) )
-          ((builtinp (car x)) )
-    ))
+    (block prove-all
+        (cond ((null x) t)
+              ((predicatep (car x)) 
+               (let ((def) property 'prolog (car x))
+                  (while def
+                      (cond ((predicatep (car def))  
+                             (if (unify x (car def))
+                                 (if (prove-all (cdr x) env n)
+                                     (return-from 'prove-all t))))
+                            ((clausep (car def))
+                             (if (unify x (car (car def)))
+                                 (if (prove-all (alfa-convert (cdr (car def) n)) env (+ n 1))
+                                     (return-from 'prove-all t)))) 
+                      (setq def (cdr def)))      
+                   (return-from prove-all nil))))      
+              ((builtinp (car x)) (if (call-builtin (car x))
+                                      (if (prove-all (cdr x) env n)
+                                          (return-from 'prove-all t)))
+                                  (return-from 'prove-all nil)))))
 
 
 (defun unify (x y env)

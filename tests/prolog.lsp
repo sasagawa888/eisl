@@ -47,20 +47,20 @@ builtin predicate
 (defun prove (x env n)
     (block prove
         (cond ((userp x) 
-               (let ((def (property 'prolog (car x))))
+               (let ((def (property (car x) 'prolog)))
                   (while def
                       (cond ((predicatep (car def))  
-                             (let ((env1 (unify x (car def))))
+                             (let ((env1 (unify x (car def) env)))
                                 (if (successp env1)
                                     (return-from prove 'yes))))
                             ((clausep (car def))
-                             (let ((env1 (unify x (car (car def)))))
+                             (let ((env1 (unify x (car (car def)) env)))
                                 (if (successp env1)
                                   (let ((env2 (prove-all (alfa-convert (cdr (car def) n)) env (+ n 1))
                                      (if (successp env2) 
                                          (return-from prove 'yes))))))))) 
                       (setq def (cdr def)))      
-                   (return-from prove nil)))      
+                   (return-from prove 'no)))      
               ((builtinp x) (call-builtin x env)))))
                                  
 
@@ -87,7 +87,7 @@ builtin predicate
              (if (variablep x1)
                  (cons (cons x1 y) env)
                  (unify x1 y env))))
-          ((and (not (variablep x) (variablep y)))
+          ((and (not (variablep x)) (variablep y))
            (let ((y1 (deref y)))
              (if (variablep y1)
                  (cons (cons y1 x) env)
@@ -99,7 +99,7 @@ builtin predicate
                   (cons (cons x1 y1) env)
                   (unify (deref x) (deref y) env))))
           ((or (anoymousp x) (anoymousp y)) env)
-          ((and (atom x) (atom y) (eq x t)) env)
+          ((and (atom x) (atom y) (eq x y)) env)
           ((and (listp x) (listp y)) 
            (let ((env1 (unify (car x) (car y) env)))
                (if (successp env1)
@@ -133,7 +133,7 @@ builtin predicate
 
 (defun userp (x)
     (and (listp x)
-         (functionp (property (car x) 'prolog))))
+         (not (null (property (car x) 'prolog)))))
 
 (defun builtinp (x)
     (and (listp x)
@@ -165,3 +165,6 @@ builtin predicate
               ((variablep x1) (deref1 x1 env))
               ((variantp x1) (deref1 x1 env))
               (t x1))))
+
+($test (unify 1 1 nil) nil)
+($test (unify 1 2 nil) no)

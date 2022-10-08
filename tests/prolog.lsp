@@ -16,7 +16,7 @@ builtin predicate (set-property (lambda (x) ...) 'builtin 'bar)
 environment ((var0 . val0)(var1 . val1) ... (varn , valn))
 
 
-unify(x,y,env) -> if success return env, else return 'fail
+unify(x,y,env) -> if success return env, else return 'no
 
 builtin predicate
 (assert x)
@@ -25,32 +25,44 @@ builtin predicate
 
 |#
 
-(defun prove (x y env n)
-    (prove-all (cons x y) env n))
-
-(defun prove-all (x env n) 
-    (block prove-all
-        (cond ((null x) t)
-              ((predicatep (car x)) 
+;; x: goal
+;; y: continuation
+;; env: environment assoc list
+;; n: nest level integer 1 ...
+;; if success goal return 'yes else return 'no
+(defun prove (x env n)
+    (block prove
+        (cond ((predicatep x) 
                (let ((def property 'prolog (car x)))
                   (while def
                       (cond ((predicatep (car def))  
                              (let ((env1 (unify x (car def))))
-                                (if env1 (let ((env2 (prove-all (cdr x) env1 n)))
-                                           (if env2
-                                               (return-from 'prove-all t))))))
+                                (if (successp env1)
+                                    (return-from prove 'yes))))
                             ((clausep (car def))
                              (let ((env1 (unify x (car (car def)))))
-                                 (if env1 (let ((env2 (prove-all (alfa-convert (cdr (car def) n)) env (+ n 1))))
-                                        (if env2 
-                                            (return-from 'prove-all t)))))) 
+                                (if (suncessp env1)
+                                  (let ((env2 (prove-all (alfa-convert (cdr (car def) n)) env n)
+                                     (if (successp env2) 
+                                         (return-from prove 'yes))))))))) 
                       (setq def (cdr def)))      
-                   (return-from prove-all nil))))      
-              ((builtinp (car x)) (if (call-builtin (car x))
-                                      (if (prove-all (cdr x) env n)
-                                          (return-from 'prove-all t)))
-                                  (return-from 'prove-all nil)))))
+                   (return-from prove nil)))      
+              ((builtinp x) (call-builtin x )))))
+                                 
 
+
+(defun prove-all (x env n) 
+    (if (null x)
+        'yes
+        (let ((env1 (prove (car x) env) (+ n 1)))
+           (if (successp env1)
+               (prove-all (cdr x) env1 n)
+               'no))))   
+    
+
+
+(defun successp (x)
+    (not (eq x 'no)))
 
 (defun unify (x y env)
     (cond ((and (null x) (null y)) env)
@@ -60,8 +72,8 @@ builtin predicate
            (unify x (deref y) env))
           ((and (listp x) (listp y)) 
            (unify (deref x env) (deref y env)))
-          ((and (null x) (not (null y))) 'fail)
-          ((and (not (null x))) (null y) 'fail)))
+          ((and (null x) (not (null y))) 'no)
+          ((and (not (null x))) (null y) 'no)))
 
 (defun setup ()
     (set-property (lambda (x) (assert x)) 'builtin 'assert))

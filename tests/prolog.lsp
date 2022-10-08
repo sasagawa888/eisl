@@ -59,6 +59,7 @@ builtin predicate
                             ((clausep (car def))
                              (let* ((def1 (alfa-convert (car def) n))
                                     (env1 (unify x (car def1) env)))
+                                    (print def1)
                                 (if (successp env1)
                                   (let ((env2 (prove-all (cdr def1) env1 (+ n 1))))
                                      (if (successp env2) 
@@ -163,11 +164,15 @@ builtin predicate
                 
 ; e.g.  env=((_a . 1)(_b . _a))   (deref1 '_b env)->1             
 (defun deref1 (x env)
-    (let ((x1 (assoc x env)))
+    (let ((x1 (assoc-equal x env)))
         (cond ((null x1) x)
               ((variablep (cdr x1)) (deref1 (cdr x1) env))
               (t (cdr x1)))))
 
+(defun assoc-equal (x env)
+    (cond ((null env) nil)
+          ((equal x (car (car env))) (car env))
+          (t (assoc-equal x (cdr env)))))
 
 (defun alfa-convert (x n)
     (cond ((null x) nil)
@@ -191,6 +196,7 @@ builtin predicate
 ($test (unify '(foo _x) '(foo 1) nil) ((_x . 1)))
 ($test (unify '(foo 1) '(foo _y) nil) ((_y . 1)))
 ($test (unify '(foo _z) '(foo _y) nil) ((_z . _y)))
+($test (unify '(foo (% _x 0)) '(foo 1) '(((% _x 0) . 1))) (((% _x 0) . 1)))
 ($test (deref '_x '((_x . 3))) 3)
 ($test (deref '(foo _x) '((_x . 3))) (foo 3))
 ($test (deref '(foo _x) '((_a . 2)(_x . _a))) (foo 2))

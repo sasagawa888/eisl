@@ -20,22 +20,30 @@ unify(x,y,env) -> if success return env, else return 'no
 builtin predicate
 (assert x)
 (halt)
+(listing)
 (ask x)
 
 |#
 
 (import "test")
 
-(defglobal epilog nil)
+(defglobal epilog nil)  ;halt switch
+(defglobal user nil)    ;user defined predicate and clause name
+(defglobal variable nil) ;variable included in goal
 
 (defun prolog ()
     (setup)
     (for ()
-         (epilog)
+         (epilog (setq epilog nil) 'goodbye)
          (format (standard-output) ":-? ")
-         (display (prove (read) nil 0)))
-    (setq epilog nil))
+         (let ((goal (read)))
+            (setq variable (findvar goal))
+            (display (prove-all (addtail goal '(ask)) nil 0)))))
 
+(defun addtail (x y)
+    (cond ((predicatep x) (list x y))
+          ((null (cdr x)) (list (car x) y))
+          (t (cons (car x) (addtail (cdr x) y)))))
 
 (defun display (x)
     (if (eq x 'no)
@@ -59,7 +67,6 @@ builtin predicate
                             ((clausep (car def))
                              (let* ((def1 (alfa-convert (car def) n))
                                     (env1 (unify x (car def1) env)))
-                                    (print def1)
                                 (if (successp env1)
                                   (let ((env2 (prove-all (cdr def1) env1 (+ n 1))))
                                      (if (successp env2) 
@@ -112,22 +119,60 @@ builtin predicate
                    'no)))
           ((and (null x) (not (null y))) 'no)
           ((and (not (null x))) (null y) 'no)))
+          
 
 (defun call-builtin (x env)
-    (funcall (property (car x) 'builtin) (cdr (deref x env))))
+    (funcall (property (car x) 'builtin) (cdr (deref x env)) env))
 
 (defun setup ()
-    (set-property (lambda (x) (assert x)) 'assert 'builtin)
-    (set-property (lambda (x) (setq epilog t)) 'halt 'builtin)
+    (set-property (lambda (x env) (assert x)) 'assert 'builtin)
+    (set-property (lambda (x env) (setq epilog t)) 'halt 'builtin)
+    (set-property (lambda (x env) (listing x)) 'listing 'builtin)
+    (set-property (lambda (x env) (ask variable env)) 'ask 'builtin)
     t)
 
 (defun assert (x)
     (let ((arg1 (elt x 0)))
       (cond ((predicatep arg1)
+             (if (not (member (car arg1) user)) (setq user (cons (car arg1) user)))
              (set-property (cons arg1 (property (car arg1) 'prolog)) (car arg1) 'prolog)) 
             ((clausep arg1)
+             (if (not (member (car (car arg1) user))) (setq user (cons (car (car arg1)) user)))
              (set-property (cons arg1 (property (car (car arg1)) 'prolog)) (car (car arg1)) 'prolog ))))
     'yes)
+
+(defun listing (x)
+    (print x)
+    (cond ((null x) (mapc (lambda (y) (listing1 y)) user))
+          (t (mapc (lambda (y) (listing1 y)) x))))
+
+(defun listing1 (x)
+    (for ((dt (property x 'prolog) (cdr dt)))
+         ((null dt) t)
+         (print (car dt))))
+
+(defun findvar (x)
+    (cond ((null x) nil)
+          ((variablep (car x)) (cons (car x) (findvar (cdr x))))
+          ((atom (car x)) (findvar (cdr x)))
+          ((listp (car x)) (append (findvar (car x)) (findvar (cdr x))))))
+
+(defun ask (x env)
+    (block ask
+        (if (null x) (return-from ask 'yes))
+        (for ((dt x (cdr x)))
+             ((null dt))
+             (format (standard-output) "~A = ~A~%" (car dt) (deref (car dt) env)))
+        (read-char) ; discard input
+        (let ((key (read-char)))
+           (while (and (not (char= key #\.)) (not (char= key #\;)) (not (char= key #\newline)))
+               (setq key (read-char)))
+           (cond ((char= key #\.) 'yes)
+                 ((char= key #\newline) 'yes)
+                 ((char= key #\;) 'no)))))
+
+      
+
 
 
 (defun predicatep (x)
@@ -201,3 +246,6 @@ builtin predicate
 ($test (deref '(foo _x) '((_x . 3))) (foo 3))
 ($test (deref '(foo _x) '((_a . 2)(_x . _a))) (foo 2))
 ($test (alfa-convert '((foo _x)(bar _x)) 2) ((foo (% _x 2))(bar (% _x 2))))
+($test (findvar '(foo _x _y)) (_x _y))
+($test (addtail '(foo _x) '(ask)) ((foo _x)(ask)))
+($test (addtail '((foo _x)(bar _x)) '(ask)) ((foo _x)(bar _x)(ask)))

@@ -33,16 +33,20 @@ builtin predicate
     (for ()
          (epilog)
          (format (standard-output) ":-? ")
-         (print (prove (read) nil 0)))
+         (display (prove (read) nil 0)))
     (setq epilog nil))
 
 
+(defun display (x)
+    (if (eq x 'no)
+        (print 'no)
+        (print 'yes)))
 
 ;; x: goal
 ;; y: continuation
 ;; env: environment assoc list
 ;; n: nest level integer 1 ...
-;; if success goal return 'yes else return 'no
+;; if success goal return env else return 'no
 (defun prove (x env n)
     (block prove
         (cond ((userp x) 
@@ -51,15 +55,16 @@ builtin predicate
                       (cond ((predicatep (car def))  
                              (let ((env1 (unify x (car def) env)))
                                 (if (successp env1)
-                                    (return-from prove 'yes))))
+                                    (return-from prove env1))))
                             ((clausep (car def))
-                             (let ((env1 (unify x (car (car def)) env)))
+                             (let* ((def1 (alfa-convert (car def) n))
+                                    (env1 (unify x (car def1) env)))
                                 (if (successp env1)
-                                  (let ((env2 (prove-all (alfa-convert (cdr (car def) n)) env (+ n 1))
+                                  (let ((env2 (prove-all (cdr def1) env1 (+ n 1))))
                                      (if (successp env2) 
-                                         (return-from prove 'yes))))))))) 
+                                         (return-from prove env2)))))))
                       (setq def (cdr def)))      
-                   (return-from prove 'no)))      
+                  (return-from prove 'no)))      
               ((builtinp x) (call-builtin x env)))))
                                  
 
@@ -70,7 +75,7 @@ builtin predicate
 (defun prove-all (x env n) 
     (if (null x)
         'yes
-        (let ((env1 (prove (car x) env) n))
+        (let ((env1 (prove (car x) env n)))
            (if (successp env1)
                (prove-all (cdr x) env1 n)
                'no))))   

@@ -15,6 +15,9 @@ builtin predicate (set-property (lambda (x) ...) 'builtin 'bar)
 
 environment ((var0 . val0)(var1 . val1) ... (varn , valn))
 
+
+unify(x,y,env) -> if success return env, else return 'fail
+
 builtin predicate
 (assert x)
 (halt)
@@ -29,16 +32,18 @@ builtin predicate
     (block prove-all
         (cond ((null x) t)
               ((predicatep (car x)) 
-               (let ((def) property 'prolog (car x))
+               (let ((def property 'prolog (car x)))
                   (while def
                       (cond ((predicatep (car def))  
-                             (if (unify x (car def))
-                                 (if (prove-all (cdr x) env n)
-                                     (return-from 'prove-all t))))
+                             (let ((env1 (unify x (car def))))
+                                (if env1 (let ((env2 (prove-all (cdr x) env1 n)))
+                                           (if env2
+                                               (return-from 'prove-all t))))))
                             ((clausep (car def))
-                             (if (unify x (car (car def)))
-                                 (if (prove-all (alfa-convert (cdr (car def) n)) env (+ n 1))
-                                     (return-from 'prove-all t)))) 
+                             (let ((env1 (unify x (car (car def)))))
+                                 (if env1 (let ((env2 (prove-all (alfa-convert (cdr (car def) n)) env (+ n 1))))
+                                        (if env2 
+                                            (return-from 'prove-all t)))))) 
                       (setq def (cdr def)))      
                    (return-from prove-all nil))))      
               ((builtinp (car x)) (if (call-builtin (car x))
@@ -55,8 +60,8 @@ builtin predicate
            (unify x (deref y) env))
           ((and (listp x) (listp y)) 
            (unify (deref x env) (deref y env)))
-          ((and (null x) (not (null y))) nil)
-          ((and (not (null x))) (null y) nil)))
+          ((and (null x) (not (null y))) 'fail)
+          ((and (not (null x))) (null y) 'fail)))
 
 (defun setup ()
     (set-property (lambda (x) (assert x)) 'builtin 'assert))

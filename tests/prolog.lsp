@@ -66,7 +66,8 @@ builtin predicate
                (let ((def (property (car x) 'prolog)))
                   (while def
                       (cond ((predicatep (car def))  
-                             (let ((env1 (unify x (car def) env)))
+                             (let* ((def1 (alfa-convert (car def) n))
+                                    (env1 (unify x (car def) env)))
                                 (if (successp env1)
                                     (prove-all y env1 n))))
                             ((clausep (car def))
@@ -84,7 +85,7 @@ builtin predicate
 ;; SLD resolution
 ;; x: continuation P1,P2,...Pn.
 ;; at fist resolve P1 with prove, and second P2 ... Pn
-;; if success return 'yes else return 'no
+;; if success return env else return 'no
 (defun prove-all (x env n) 
     (if (null x)
         env
@@ -164,13 +165,18 @@ builtin predicate
 
 (defun findvar (x)
     (cond ((eq (car x) 'assert) nil)
-          (t (findvar1 x))))
+          (t (remove-double (findvar1 x)))))
 
 (defun findvar1 (x)
     (cond ((null x) nil)
           ((variablep (car x)) (cons (car x) (findvar1 (cdr x))))
           ((atom (car x)) (findvar1 (cdr x)))
           ((listp (car x)) (append (findvar1 (car x)) (findvar1 (cdr x))))))
+
+(defun remove-double (x)
+    (cond ((null x) nil)
+          ((member (car x) (cdr x)) (remove-double (cdr x)))
+          (t (cons (car x) (remove-double (cdr x))))))
 
 (defun ask (x env)
     (block ask
@@ -292,7 +298,8 @@ builtin predicate
 ($test (unify '(foo 1) '(foo _y) nil) ((_y . 1)))
 ($test (unify '(foo _z) '(foo _y) nil) ((_z . _y)))
 ($test (unify '(foo (% _x 0)) '(foo 1) '(((% _x 0) . 1))) (((% _x 0) . 1)))
-($test (unify '(foo (% _x 0) (% _x 0)) '(foo 1 1) '(((% _x 0) . 1))) (((% _x 0) . 1)))
+($test (unify '(foo (% _x 0) (% _x 0)) '(foo 1 1) nil) (((% _x 0) . 1)))
+($test (unify '(foo 1 1) '(foo (% _x 0) (% _x 0)) nil) (((% _x 0) . 1)))
 ($test (deref '_x '((_x . 3))) 3)
 ($test (deref '(foo _x) '((_x . 3))) (foo 3))
 ($test (deref '(foo _x) '((_a . 2)(_x . _a))) (foo 2))

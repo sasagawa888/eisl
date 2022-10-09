@@ -23,13 +23,8 @@ question  add goal (ask) builtin to display variable
 
 
 builtin predicate
-(assert x)
-(halt)
-(listing) (listing x)
-(is x y)
-(consult x)
-(reconsult x)
-(ask)
+(assert x) (halt) (listing) (listing x) (is x y) (consult x) (reconsult x) (ask)
+(fail) (true) (= x y) (== x y) (\= x y) (> x y) (>= x y) (< x y) (<= x y)
 
 |#
 
@@ -96,7 +91,7 @@ builtin predicate
                               (return-from prove env2)
                               (return-from prove 'no)))
                        (return-from prove 'no))))
-              ((null x) 'yes) ; for consult/reconsult 
+              ((null x) 'yes) ; for consult/reconsult. file end is nil
               (t (error* "Existence error" x)))))
                                  
 
@@ -153,6 +148,15 @@ builtin predicate
     (set-property (lambda (x env) (is x env)) 'is 'builtin)
     (set-property (lambda (x env) (consult x env)) 'consult 'builtin)
     (set-property (lambda (x env) (reconsult x env)) 'reconsult 'builtin)
+    (set-property (lambda (x env) 'no) 'fail 'builtin)
+    (set-property (lambda (x env) env) 'true 'builtin)
+    (set-property (lambda (x env) (unify (elt x 0) (elt x 1) env)) '= 'builtin)
+    (set-property (lambda (x env) (if (= (elt x 0) (elt x 1)) env 'no)) '== 'builtin)
+    (set-property (lambda (x env) (if (not (= (elt x 0) (elt x 1))) env 'no)) '\= 'builtin)
+    (set-property (lambda (x env) (if (> (elt x 0) (elt x 1)) env 'no)) '> 'builtin)
+    (set-property (lambda (x env) (if (>= (elt x 0) (elt x 1)) env 'no)) '>= 'builtin)
+    (set-property (lambda (x env) (if (< (elt x 0) (elt x 1)) env 'no)) '< 'builtin)
+    (set-property (lambda (x env) (if (<= (elt x 0) (elt x 1)) env 'no)) '<= 'builtin)
     t)
 
 (defun assert (x env)

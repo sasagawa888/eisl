@@ -2,16 +2,16 @@
 Prolog interpreter
 
 data type
-variable (% sym num) to avoid lack of memory
+variable _name e.g. _x _y _z
+anoymous _
+variant (% sym n) e.g. (% _x 1)
+variant variable (% sym num) to avoid lack of memory
 
 data base   symbol (set-property '((foo a)) 'prolog 'foo)  predicate
                    (set-property '(((foo _x)(bar _x))) 'prolog 'foo)  clause
 
-variable _name e.g. _x _y _z
-anoymous _
-variant (% sym n) e.g. ($ _x 1)
 
-builtin predicate (set-property (lambda (x) ...) 'builtin 'bar)
+builtin predicate (set-property (lambda (x env) ...) 'builtin 'bar)
 
 environment ((var0 . val0)(var1 . val1) ... (varn , valn))
 
@@ -20,8 +20,9 @@ unify(x,y,env) -> if success return env, else return 'no
 builtin predicate
 (assert x)
 (halt)
-(listing)
-(ask x)
+(listing) 
+(is x y)
+(ask)
 
 |#
 
@@ -40,10 +41,6 @@ builtin predicate
             (setq variable (findvar goal))
             (display (prove-all (addtail goal '(ask)) nil 0)))))
 
-(defun addtail (x y)
-    (cond ((predicatep x) (list x y))
-          ((null (cdr x)) (list (car x) y))
-          (t (cons (car x) (addtail (cdr x) y)))))
 
 (defun display (x)
     (if (eq x 'no)
@@ -82,7 +79,7 @@ builtin predicate
 ;; if success return 'yes else return 'no
 (defun prove-all (x env n) 
     (if (null x)
-        'yes
+        env
         (let ((env1 (prove (car x) env n)))
            (if (successp env1)
                (prove-all (cdr x) env1 n)
@@ -125,26 +122,27 @@ builtin predicate
     (funcall (property (car x) 'builtin) (cdr (deref x env)) env))
 
 (defun setup ()
-    (set-property (lambda (x env) (assert x)) 'assert 'builtin)
+    (set-property (lambda (x env) (assert x env)) 'assert 'builtin)
     (set-property (lambda (x env) (setq epilog t)) 'halt 'builtin)
-    (set-property (lambda (x env) (listing x)) 'listing 'builtin)
+    (set-property (lambda (x env) (listing x env)) 'listing 'builtin)
     (set-property (lambda (x env) (ask variable env)) 'ask 'builtin)
+    (set-property (lambda (x env) (is x env)) 'is 'builtin)
     t)
 
-(defun assert (x)
+(defun assert (x env)
     (let ((arg1 (elt x 0)))
       (cond ((predicatep arg1)
              (if (not (member (car arg1) user)) (setq user (cons (car arg1) user)))
-             (set-property (cons arg1 (property (car arg1) 'prolog)) (car arg1) 'prolog)) 
+             (set-property (addtail (property (car arg1) 'prolog) arg1) (car arg1) 'prolog)) 
             ((clausep arg1)
-             (if (not (member (car (car arg1) user))) (setq user (cons (car (car arg1)) user)))
-             (set-property (cons arg1 (property (car (car arg1)) 'prolog)) (car (car arg1)) 'prolog ))))
-    'yes)
+             (if (not (member (car (car arg1)) user)) (setq user (cons (car (car arg1)) user)))
+             (set-property (addtail (property (car (car arg1)) 'prolog) arg1) (car (car arg1)) 'prolog ))))
+    env)
 
-(defun listing (x)
-    (print x)
+(defun listing (x env)
     (cond ((null x) (mapc (lambda (y) (listing1 y)) user))
-          (t (mapc (lambda (y) (listing1 y)) x))))
+          (t (mapc (lambda (y) (listing1 y)) x)))
+    env)
 
 (defun listing1 (x)
     (for ((dt (property x 'prolog) (cdr dt)))
@@ -152,10 +150,14 @@ builtin predicate
          (print (car dt))))
 
 (defun findvar (x)
+    (cond ((eq (car x) 'assert) nil)
+          (t (findvar1 x))))
+
+(defun findvar1 (x)
     (cond ((null x) nil)
-          ((variablep (car x)) (cons (car x) (findvar (cdr x))))
-          ((atom (car x)) (findvar (cdr x)))
-          ((listp (car x)) (append (findvar (car x)) (findvar (cdr x))))))
+          ((variablep (car x)) (cons (car x) (findvar1 (cdr x))))
+          ((atom (car x)) (findvar1 (cdr x)))
+          ((listp (car x)) (append (findvar1 (car x)) (findvar1 (cdr x))))))
 
 (defun ask (x env)
     (block ask
@@ -172,7 +174,10 @@ builtin predicate
                  ((char= key #\;) 'no)))))
 
       
-
+(defun is (x env)
+    (let ((arg1 (elt x 0))
+          (arg2 (elt x 1)))
+        (unify arg1 (eval arg2) env)))      
 
 
 (defun predicatep (x)
@@ -226,6 +231,12 @@ builtin predicate
           ((atom x) x)
           ((listp x) (cons (alfa-convert (car x) n)
                            (alfa-convert (cdr x) n)))))
+
+(defun addtail (x y)
+    (cond ((predicatep x) (list x y))
+          ((null (cdr x)) (list (car x) y))
+          (t (cons (car x) (addtail (cdr x) y)))))
+
 
 ($test (anoymousp '_) t)
 ($test (variablep '_) t)

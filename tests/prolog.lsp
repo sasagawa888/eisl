@@ -87,7 +87,8 @@ builtin predicate
                        (let ((env2 (prove-all y env1 n)))
                           (if (successp env2)
                               (return-from prove env2)
-                              (return-from prove 'no)))))))))
+                              (return-from prove 'no)))
+                       (return-from prove 'no)))))))
                                  
 
 ;; SLD resolution

@@ -6,6 +6,8 @@ variable _name e.g. _x _y _z
 anoymous _
 variant (% sym n) e.g. (% _x 1)
 variant variable (% sym num) to avoid lack of memory
+predicate e.g. (human taro)
+clause e.g.  ((error _x) (human _x))   head part is car and body part is cdr 
 
 data base   symbol (set-property '((foo a)) 'prolog 'foo)  predicate
                    (set-property '(((foo _x)(bar _x))) 'prolog 'foo)  clause
@@ -17,11 +19,16 @@ environment ((var0 . val0)(var1 . val1) ... (varn , valn))
 
 unify(x,y,env) -> if success return env, else return 'no
 
+question  add goal (ask) builtin to display variable
+
+
 builtin predicate
 (assert x)
 (halt)
-(listing) 
+(listing) (listing x)
 (is x y)
+(consult x)
+(reconsult x)
 (ask)
 
 |#
@@ -39,7 +46,7 @@ builtin predicate
          (format (standard-output) ":-? ")
          (let ((goal (read)))
             (setq variable (findvar goal))
-            (display (prove-all (addtail goal '(ask)) nil 0)))))
+            (display (prove-all (addask goal) nil 0)))))
 
 
 (defun display (x)
@@ -52,7 +59,8 @@ builtin predicate
 ;; env: environment assoc list
 ;; n: nest level integer 1 ...
 ;; if success goal return env else return 'no
-(defun prove (x env n)
+(defun prove (x y env n)
+    ;(format (standard-output) "try ~A~%" x)
     (block prove
         (cond ((userp x) 
                (let ((def (property (car x) 'prolog)))
@@ -60,15 +68,15 @@ builtin predicate
                       (cond ((predicatep (car def))  
                              (let ((env1 (unify x (car def) env)))
                                 (if (successp env1)
-                                    (return-from prove env1))))
+                                    (prove-all y env1 n))))
                             ((clausep (car def))
                              (let* ((def1 (alfa-convert (car def) n))
                                     (env1 (unify x (car def1) env)))
                                 (if (successp env1)
-                                  (let ((env2 (prove-all (cdr def1) env1 (+ n 1))))
-                                     (if (successp env2) 
-                                         (return-from prove env2)))))))
-                      (setq def (cdr def)))      
+                                    (let ((env2 (prove-all (append (cdr def1) y) env1 (+ n 1))))
+                                        (if (successp env2) 
+                                            env2))))))
+                      (setq def (cdr def)))
                   (return-from prove 'no)))      
               ((builtinp x) (call-builtin x env)))))
                                  
@@ -80,10 +88,7 @@ builtin predicate
 (defun prove-all (x env n) 
     (if (null x)
         env
-        (let ((env1 (prove (car x) env n)))
-           (if (successp env1)
-               (prove-all (cdr x) env1 n)
-               'no))))   
+        (prove (car x) (cdr x) env n))) 
     
 (defun successp (x)
     (not (eq x 'no)))
@@ -123,10 +128,12 @@ builtin predicate
 
 (defun setup ()
     (set-property (lambda (x env) (assert x env)) 'assert 'builtin)
-    (set-property (lambda (x env) (setq epilog t)) 'halt 'builtin)
+    (set-property (lambda (x env) (halt x env)) 'halt 'builtin)
     (set-property (lambda (x env) (listing x env)) 'listing 'builtin)
     (set-property (lambda (x env) (ask variable env)) 'ask 'builtin)
     (set-property (lambda (x env) (is x env)) 'is 'builtin)
+    (set-property (lambda (x env) (consult x env)) 'consult 'builtin)
+    (set-property (lambda (x env) (reconsult x env)) 'reconsult 'builtin)
     t)
 
 (defun assert (x env)
@@ -139,8 +146,14 @@ builtin predicate
              (set-property (addtail (property (car (car arg1)) 'prolog) arg1) (car (car arg1)) 'prolog ))))
     env)
 
+(defun halt (x env)
+    (read-char) ;discard input
+    (mapc (lambda (y) (set-property nil y 'prolog)) user)
+    (setq epilog t))
+
+
 (defun listing (x env)
-    (cond ((null x) (mapc (lambda (y) (listing1 y)) user))
+    (cond ((null x) (mapc (lambda (y) (listing1 y)) (reverse user)))
           (t (mapc (lambda (y) (listing1 y)) x)))
     env)
 
@@ -179,19 +192,39 @@ builtin predicate
           (arg2 (elt x 1)))
         (unify arg1 (eval arg2) env)))      
 
+(defun consult (x env)
+    (let* ((arg1 (elt x 0))
+           (instream (open-input-file arg1))
+           (sexp t))
+           (while (not (null sexp))
+              (setq sexp (read instream nil nil))
+              (prove sexp nil nil 0))
+           (close instream))
+    env)
+
+(defun reconsult (x env)
+    (mapc (lambda (y) (set-property nil y 'prolog)) user)
+    (let* ((arg1 (elt x 0))
+           (instream (open-input-file arg1))
+           (sexp t))
+           (while (not (null sexp))
+              (setq sexp (read instream nil nil))
+              (prove sexp nil nil 0))
+           (close instream))
+    env)
 
 (defun predicatep (x)
-    (and (listp x) (symbolp (car x))))
+    (and (consp x) (symbolp (car x))))
 
 (defun clausep (x)
-    (and (listp x) (listp (car x))))
+    (and (consp x) (listp (car x))))
 
 (defun userp (x)
-    (and (listp x)
+    (and (consp x)
          (not (null (property (car x) 'prolog)))))
 
 (defun builtinp (x)
-    (and (listp x)
+    (and (consp x)
          (functionp (property (car x) 'builtin))))
 
 (defun variablep (x)
@@ -232,8 +265,14 @@ builtin predicate
           ((listp x) (cons (alfa-convert (car x) n)
                            (alfa-convert (cdr x) n)))))
 
+(defun addask (x)
+    (cond ((predicatep x) (list x '(ask)))
+          ((null (cdr x)) (list (car x) '(ask)))
+          (t (cons (car x) (addask (cdr x))))))
+
+
 (defun addtail (x y)
-    (cond ((predicatep x) (list x y))
+    (cond ((null x) (list y))
           ((null (cdr x)) (list (car x) y))
           (t (cons (car x) (addtail (cdr x) y)))))
 
@@ -253,10 +292,14 @@ builtin predicate
 ($test (unify '(foo 1) '(foo _y) nil) ((_y . 1)))
 ($test (unify '(foo _z) '(foo _y) nil) ((_z . _y)))
 ($test (unify '(foo (% _x 0)) '(foo 1) '(((% _x 0) . 1))) (((% _x 0) . 1)))
+($test (unify '(foo (% _x 0) (% _x 0)) '(foo 1 1) '(((% _x 0) . 1))) (((% _x 0) . 1)))
 ($test (deref '_x '((_x . 3))) 3)
 ($test (deref '(foo _x) '((_x . 3))) (foo 3))
 ($test (deref '(foo _x) '((_a . 2)(_x . _a))) (foo 2))
 ($test (alfa-convert '((foo _x)(bar _x)) 2) ((foo (% _x 2))(bar (% _x 2))))
 ($test (findvar '(foo _x _y)) (_x _y))
-($test (addtail '(foo _x) '(ask)) ((foo _x)(ask)))
-($test (addtail '((foo _x)(bar _x)) '(ask)) ((foo _x)(bar _x)(ask)))
+($test (addask '(foo _x)) ((foo _x)(ask)))
+($test (addask '((foo _x)(bar _x))) ((foo _x)(bar _x)(ask)))
+($test (addtail '((foo 1)) '(bar 2)) ((foo 1)(bar 2)))
+($test (addtail '((foo 1)((uoo 3)(print 3))) '(bar 2)) ((foo 1)((uoo 3)(print 3))(bar 2)))
+($test (addtail nil '(foo 1)) ((foo 1)))

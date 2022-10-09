@@ -43,7 +43,7 @@ builtin predicate
     (setup)
     (for ()
          (epilog (setq epilog nil) 'goodbye)
-         (format (standard-output) ":-? ")
+         (format (standard-output) "-? ")
          (let ((goal (read)))
             (setq variable (findvar goal))
             (display (prove-all (addask goal) nil 0)))))
@@ -51,8 +51,8 @@ builtin predicate
 
 (defun display (x)
     (if (eq x 'no)
-        (print 'no)
-        (print 'yes)))
+        (format (standard-output) "~A~%" 'no)
+        (format (standard-output) "~A~%" 'yes)))
 
 ;; x: goal
 ;; y: continuation

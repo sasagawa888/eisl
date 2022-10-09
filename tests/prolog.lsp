@@ -46,7 +46,14 @@ builtin predicate
          (format (standard-output) "-? ")
          (let ((goal (read)))
             (setq variable (findvar goal))
-            (display (prove-all (addask goal) nil 0)))))
+            (let ((res (catch 'exit 
+                              (with-handler 
+                                  (lambda (c) (throw 'exit c))
+                                  (prove-all (addask goal) nil 0)))))
+               (cond ((and (not (symbolp res)) (not (listp res)))
+                      (format (standard-output) "System error ~A~%" (class-of res)))
+                     ((not (eq res 'error))
+                      (display res)))))))
 
 
 (defun display (x)
@@ -88,7 +95,9 @@ builtin predicate
                           (if (successp env2)
                               (return-from prove env2)
                               (return-from prove 'no)))
-                       (return-from prove 'no)))))))
+                       (return-from prove 'no))))
+              ((null x) 'yes) ; for consult/reconsult 
+              (t (error* "Existence error" x)))))
                                  
 
 ;; SLD resolution
@@ -228,6 +237,10 @@ builtin predicate
               (prove sexp nil nil 0))
            (close instream))
     env)
+
+(defun error* (msg x)
+    (format (standard-output) "~A ~A~%" msg x)
+    (throw 'exit 'error))
 
 (defun predicatep (x)
     (and (consp x) (symbolp (car x))))

@@ -8,3 +8,4 @@
 (assert (likes robin cats))
 (assert ((likes sandy _x) (likes _x cats)))
 (assert ((likes kim _x) (likes _x lee) (likes _x kim)))
+(assert (likes _x _x))

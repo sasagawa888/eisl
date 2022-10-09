@@ -1,6 +1,4 @@
-(assert ((error _x) (human _x)))
-(assert (human taro))
-
+;; test code from PAIP
 
 (assert (likes kim robin))
 (assert (likes sandy lee))

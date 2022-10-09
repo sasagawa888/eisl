@@ -81,7 +81,13 @@ builtin predicate
                                             (return-from prove env2)))))))
                       (setq def (cdr def)))
                   (return-from prove 'no)))      
-              ((builtinp x) (call-builtin x env)))))
+              ((builtinp x)
+               (let ((env1 (call-builtin x env)))
+                   (if (successp env1)
+                       (let ((env2 (prove-all y env1 n)))
+                          (if (successp env2)
+                              (return-from prove env2)
+                              (return-from prove 'no)))))))))
                                  
 
 ;; SLD resolution
@@ -151,8 +157,8 @@ builtin predicate
 
 (defun halt (x env)
     (read-char) ;discard input
-    (mapc (lambda (y) (set-property nil y 'prolog)) user)
-    (setq epilog t))
+    (mapc (lambda (y) (set-property nil y 'prolog)) user) ;delete prolog code
+    (setq epilog t)) 
 
 
 (defun listing (x env)
@@ -163,7 +169,7 @@ builtin predicate
 (defun listing1 (x)
     (for ((dt (property x 'prolog) (cdr dt)))
          ((null dt) t)
-         (print (car dt))))
+         (format (standard-output) "~A~%" (car dt))))
 
 (defun findvar (x)
     (cond ((eq (car x) 'assert) nil)
@@ -183,9 +189,9 @@ builtin predicate
 (defun ask (x env)
     (block ask
         (if (null x) (return-from ask env))
-        (for ((dt x (cdr x)))
+        (for ((dt x (cdr dt)))
              ((null (cdr dt)) 
-              (format (standard-output) "~A = ~A~" (car dt) (deref (car dt) env)))
+              (format (standard-output) "~A = ~A" (car dt) (deref (car dt) env)))
              (format (standard-output) "~A = ~A~%" (car dt) (deref (car dt) env)))
         (read-char) ; discard input
         (let ((key (read-char)))

@@ -1984,8 +1984,8 @@ defgeneric compile
         (format stream "res = ")
         (comp stream (list 'progn (elt x 2)) env args nil name global test clos)
         (format stream ";")
-        (format stream "Fset_error_handler(Fcdr(Fget_error_handler()))")
-        (format stream ";res;})")
+        (format stream "Fset_error_handler(Fcdr(Fget_error_handler()));")
+        (format stream "res;})")
     )
     
     (defun comp-cond (stream x env args tail name global test clos)

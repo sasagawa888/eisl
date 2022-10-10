@@ -45,7 +45,7 @@ builtin predicate
                               (with-handler 
                                   (lambda (c) (throw 'exit c))
                                   (prove-all (addask goal) nil 0)))))
-               (cond ((and (not (symbolp res)) (not (listp res)))
+               (cond ((instancep res (class <error>))
                       (format (standard-output) "System error ~A~%" (class-of res)))
                      ((not (eq res 'error))
                       (display res)))))))
@@ -186,7 +186,8 @@ builtin predicate
          (format (standard-output) "~A~%" (car dt))))
 
 (defun findvar (x)
-    (cond ((eq (car x) 'assert) nil)
+    (cond ((not (consp x)) nil)
+          ((eq (car x) 'assert) nil)
           (t (remove-double (findvar1 x)))))
 
 (defun findvar1 (x)

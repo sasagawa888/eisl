@@ -537,6 +537,8 @@ defgeneric compile
                (comp-with-open-output-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-io-file))
                (comp-with-open-io-file stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'with-handler))
+               (comp-with-handler stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'and))
                (if test
                    (comp-test-and stream x env args tail name global test clos)
@@ -1973,6 +1975,18 @@ defgeneric compile
                    (cons (elt (elt x 1) 0) env) args tail name global test clos)
         (format stream ";res;})"))
    
+    (defun comp-with-handler (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (format stream "int handler = ")
+        (comp stream (list 'eval (list 'quote (elt x 1))) env args nil name global test clos)
+        (format stream ";")
+        (format stream "Fset_error_handler(Fcons(handler,Fget_error_handler()));")
+        (format stream "res = ")
+        (comp stream (list 'progn (elt x 2)) env args nil name global test clos)
+        (format stream ";")
+        (format stream "Fset_error_handler(Fcdr(Fget_error_handler()))")
+        (format stream ";res;})")
+    )
     
     (defun comp-cond (stream x env args tail name global test clos)
         (format stream "({int res=NIL;~%if(")

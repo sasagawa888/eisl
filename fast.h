@@ -134,6 +134,13 @@ Fgetdynpt(void)
 }
 
 static inline int
+Fget_error_handler(void)
+{
+    return f0[GET_ERROR_HANDLER_IDX] ();
+}
+
+
+static inline int
 Fcar(int x)
 {
     return f1[CAR_IDX] (x);
@@ -331,6 +338,11 @@ Fbigxtoparmanent(int x)
     return f1[BIGXTOPARMANENT_IDX] (x);
 }
 
+static inline int
+Fset_error_handler(int x)
+{
+    return f1[SET_ERROR_HANDLER_IDX] (x);
+}
 
 static inline int
 Fcons(int x, int y)

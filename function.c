@@ -289,6 +289,7 @@ dynamic_link (int x)
   init_f0 (SHELTERPOP_IDX, shelterpop);
   init_f0 (POP_IDX, pop);
   init_f0 (GETDYNPT_IDX, get_dynpt);
+  init_f0 (GET_ERROR_HANDLER_IDX, get_error_handler);
 
   // argument-1 type
   init_f1 (CAR_IDX, car);
@@ -324,6 +325,7 @@ dynamic_link (int x)
   init_f1 (SETDYNPT_IDX, set_dynpt);
   init_f1 (SETCATCHSYMBOLS_IDX, set_catch_symbols);
   init_f1 (BIGXTOPARMANENT_IDX, bigx_to_parmanent);
+  init_f1 (SET_ERROR_HANDLER_IDX, set_error_handler);
 
   // argument-2 type
   init_f2 (CONS_IDX, cons);

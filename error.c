@@ -680,3 +680,16 @@ makeusercond (int cl, int str, int arg)
 		   makesym ("function"), makesym (""));
   return (makeinstance (cl, initarg));
 }
+
+int
+get_error_handler (void)
+{
+  return (error_handler);
+}
+
+int
+set_error_handler (int x)
+{
+  error_handler = x;
+  return(x);
+}

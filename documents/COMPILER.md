@@ -193,9 +193,12 @@ I think it can be done by α conversion, but I decided to take a short-cut. It s
 
 ```
 
-# Constraint on tag of catch
+# Constraint on tag of catch,throw
 The catch tag is supposed to be evaluated dynamically. The interpreter evaluates dynamically. However, it is difficult for the compiler to dynamically evaluate tags. In the compiler, it is limited to symbols with quotes.
 
+
+# Constraint on tag of block,return-from
+The block tag must be different from function name. If use same symbol, compiled code may occur segmentation fault.
 
 # Some More Limitations
 

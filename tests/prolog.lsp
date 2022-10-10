@@ -202,8 +202,8 @@ builtin predicate
           (t (cons (car x) (remove-double (cdr x))))))
 
 (defun ask (x env)
-    (block ask
-        (if (null x) (return-from ask env))
+    (block exit
+        (if (null x) (return-from exit env))
         (for ((dt x (cdr dt)))
              ((null (cdr dt)) 
               (format (standard-output) "~A = ~A" (car dt) (deref (car dt) env)))

@@ -14,6 +14,9 @@ from John allen book and Masakazu Nakanishi book
 
 (defmodule meta
     (import "formula" infix->prefix string->infix)
+    
+    (defglobal epilog nil)
+
     (defun cadr (x)
         (car (cdr x)) )
 
@@ -27,38 +30,28 @@ from John allen book and Masakazu Nakanishi book
         (cdr x) )
 
     (defpublic mexp ()
-        (initialize)
+        (format (standard-output) "Meta expression translator~%")
         (repl) )
 
     (defun repl ()
-        (block repl
-           (cond ((catch
-                   'exit
-                   (for ((s (val (mread nil (standard-input))) (val (mread nil (standard-input)))))
-                        ((equal s '(quit))
-                         (return-from repl t) )
-                        (if (and (consp s) (eq (elt s 0) 'load))
-                            (print (load* (elt s 1)))
-                            (print (eval s)))
-                        (prompt)))
-                  t)
-                 (t (prompt) (repl)))))
-
-    (defun initialize ()
-        (format (standard-output) "Meta expression translator~%")
-        (prompt))
-
-    (defun prompt ()
-        (format (standard-output) "M> "))
+       (for ( )
+            (epilog (setq epilog nil) 'goobye)
+            (format (standard-output) "M> ")
+            (let ((s (val (mread nil (standard-input)))))
+               (let ((res (catch 'exit
+                                 (with-handler 
+                                     (lambda (c) (throw 'exit c))
+                                     (cond ((equal s '(quit)) (setq epilog t))
+                                           ((and (consp s) (eq (elt s 0) 'load)) (load* (elt s 1)))
+                                           (t (eval s)))))))
+                  (cond ((instancep res (class <error>)) 
+                         (format (standard-output) "System error ~A~%" (class-of res)))
+                        ((not (eq res 'error)) (print res)))) )))
+                        
 
     (defun error* (msg arg)
-        (format (standard-output) msg)
-        (format (standard-output) "~A" arg)
-        (format (standard-output) "~%")
-        (if (not (eq input-stream (standard-input)))
-            (close input-stream))
-        (setq input-stream (standard-input))
-        (throw 'exit nil))
+        (format (standard-output) "~A ~A~%" msg arg)
+        (throw 'exit 'error))
 
     (defun mread (buffer stream)
         (cond ;; file end

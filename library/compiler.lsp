@@ -1975,6 +1975,9 @@ defgeneric compile
                    (cons (elt (elt x 1) 0) env) args tail name global test clos)
         (format stream ";res;})"))
    
+    ;;          ____ ____ 
+    ;; handler |_car|_cdr|
+    ;;            \___ set car subr of compiled handler
     (defun comp-with-handler (stream x env args tail name global test clos)
         (format stream "({int res;")
         (format stream "int handler = ")

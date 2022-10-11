@@ -25,7 +25,7 @@ question  add goal (ask) builtin to display variable
 builtin predicate
 (assert x) (halt) (listing) (listing x) (is x y) (consult x) (reconsult x) (ask)
 (fail) (true) (= x y) (== x y) (\= x y) (> x y) (>= x y) (< x y) (<= x y)
-
+(trace) (notrace)
 |#
 
 (import "test")
@@ -33,6 +33,7 @@ builtin predicate
 (defglobal epilog nil)  ;halt switch
 (defglobal user nil)    ;user defined predicate and clause name
 (defglobal variable nil) ;variable included in goal
+(defglobal trace nil)   ;trace switch
 
 (defun prolog ()
     (setup)
@@ -62,7 +63,7 @@ builtin predicate
 ;; n: nest level integer 1 ...
 ;; if success goal return env else return 'no
 (defun prove (x y env n)
-    ;(format (standard-output) "try ~A~%" x)
+    (trace* "call" x n env)
     (block prove
         (cond ((userp x) 
                (let ((def (property (car x) 'prolog)))
@@ -70,19 +71,23 @@ builtin predicate
                       (cond ((predicatep (car def))  
                              (let* ((def1 (alfa-convert (car def) n))
                                     (env1 (unify x def1 env)))
-                                (if (successp env1)
-                                    (let ((env2 (prove-all y env1 n)))
-                                      (if (successp env2)
-                                          (return-from prove env2))))))
+                                (cond ((successp env1)
+                                       (trace* "succ" x n env1)
+                                       (let ((env2 (prove-all y env1 n)))
+                                          (if (successp env2)
+                                              (return-from prove env2)))))))
                             ((clausep (car def))
                              (let* ((def1 (alfa-convert (car def) n))
                                     (env1 (unify x (car def1) env)))
-                                (if (successp env1)
-                                    (let ((env2 (prove-all (append (cdr def1) y) env1 (+ n 1))))
-                                        (if (successp env2) 
-                                            (return-from prove env2)))))))
+                                (cond ((successp env1)
+                                       (trace* "succ" x n env)
+                                       (let ((env2 (prove-all (append (cdr def1) y) env1 (+ n 1))))
+                                           (if (successp env2) 
+                                             (return-from prove env2))))))))
+                      (trace* "redo" x n env)
                       (setq def (cdr def)))
-                  (return-from prove 'no)))      
+                   (trace* "fail" x n env)
+                   (return-from prove 'no)))      
               ((builtinp x)
                (let ((env1 (call-builtin x env)))
                    (if (successp env1)
@@ -157,6 +162,8 @@ builtin predicate
     (set-property (lambda (x env) (if (>= (elt x 0) (elt x 1)) env 'no)) '>= 'builtin)
     (set-property (lambda (x env) (if (< (elt x 0) (elt x 1)) env 'no)) '< 'builtin)
     (set-property (lambda (x env) (if (<= (elt x 0) (elt x 1)) env 'no)) '<= 'builtin)
+    (set-property (lambda (x env) (setq trace t)) 'trace 'builtin)
+    (set-property (lambda (x env) (setq trace nil)) 'notrace 'builtin)
     t)
 
 (defun assert (x env)
@@ -170,7 +177,7 @@ builtin predicate
     env)
 
 (defun halt (x env)
-    (read-char) ;discard input
+    (read-char) ; discard input
     (mapc (lambda (y) (set-property nil y 'prolog)) user) ;delete prolog code
     (setq epilog t)) 
 
@@ -310,6 +317,10 @@ builtin predicate
           ((null (cdr x)) (list (car x) y))
           (t (cons (car x) (addtail (cdr x) y)))))
 
+
+(defun trace* (op x n env)
+    (if trace 
+        (format (standard-output) "(~A) ~A ~A~%" n op (deref x env))))
 
 ($test (anoymousp '_) t)
 ($test (variablep '_) t)

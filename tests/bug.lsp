@@ -1,13 +1,5 @@
 (defun foo (x)
-   (catch 'exit
-      (with-handler 
-          (lambda (c) (throw 'exit c))
-                 (bar x))))
+   (lambda (x) 'no))
 
-
-(defun bar (x)
-    (car x))
-
-
-(defun uoo (x)
-    (eval x))
+(defun foo (x)  
+   (lambda (x) x))

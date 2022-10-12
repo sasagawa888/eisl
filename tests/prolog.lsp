@@ -25,7 +25,7 @@ question  add goal (ask) builtin to display variable
 builtin predicate
 (assert x) (halt) (listing) (listing x) (is x y) (consult x) (reconsult x) (ask)
 (fail) (true) (= x y) (== x y) (\= x y) (> x y) (>= x y) (< x y) (<= x y)
-(trace) (notrace)
+(trace) (notrace) (write) (nl)
 |#
 
 (import "test")
@@ -164,6 +164,8 @@ builtin predicate
     (set-property (lambda (x env) (if (<= (elt x 0) (elt x 1)) env 'no)) '<= 'builtin)
     (set-property (lambda (x env) (setq trace t)) 'trace 'builtin)
     (set-property (lambda (x env) (setq trace nil)) 'notrace 'builtin)
+    (set-property (lambda (x env) (format (standard-output) "~A" x)) 'write 'builtin)
+    (set-property (lambda (x env) (format (standard-output) "~%" x)) 'nl 'builtin)
     t)
 
 (defun assert (x env)
@@ -344,6 +346,7 @@ builtin predicate
 ($test (deref '(foo _x) '((_a . 2)(_x . _a))) (foo 2))
 ($test (alfa-convert '((foo _x)(bar _x)) 2) ((foo (% _x 2))(bar (% _x 2))))
 ($test (findvar '(foo _x _y)) (_x _y))
+($test (findvar '((is _x 1)(write _x))) (_x)) 
 ($test (addask '(foo _x)) ((foo _x)(ask)))
 ($test (addask '((foo _x)(bar _x))) ((foo _x)(bar _x)(ask)))
 ($test (addtail '((foo 1)) '(bar 2)) ((foo 1)(bar 2)))

@@ -1,2 +1,0 @@
-(defun foo (x)
-    (lambda (x) (' 

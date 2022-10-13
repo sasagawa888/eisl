@@ -367,7 +367,8 @@
            (pp-string " ")
            (pp1 (elt x 1) lm1)
            (pp-string " ")
-           (cond ((and (= (length body) 1) (<= (flatsize body) long-element))
+           (cond ((= (length body) 1) (pp1 (car body) lm1)) ; 1 quote or atom e.g. 'no , env 
+                 ((and (= (length body) 1) (<= (flatsize body) long-element))
                   (pp-flat (car body) lm1))
                  (t (newline lm1) (pp-body body lm1)))
            (pp-string ")")))

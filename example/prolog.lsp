@@ -24,7 +24,8 @@ builtin predicate
     (defglobal user nil)      ;user defined predicate and clause name
     (defglobal variable nil)  ;variable included in goal
     (defglobal trace nil)     ;trace switch
-    (defun prolog ()
+    
+    (defpublic prolog ()
         (setup)
         (for ( )
              (epilog
@@ -35,8 +36,7 @@ builtin predicate
                 (setq variable (findvar goal))
                 (let ((res
                       (catch 'exit
-                             (with-handler (lambda (c) 
-                                              (throw 'exit c))
+                             (with-handler (lambda (c) (throw 'exit c))
                                            (prove-all (addask goal) nil 0)))))
                    (cond ((instancep res (class <error>))
                           (format (standard-output) "System error ~A~%" (class-of res)))
@@ -135,70 +135,54 @@ builtin predicate
         (funcall (property (car x) 'builtin) (cdr (deref x env)) env))
 
     (defun setup ()
-        (set-property (lambda (x env) 
-                         (assert x env)) 'assert 'builtin)
+        (set-property (lambda (x env) (assert x env)) 'assert 'builtin)
         (set-property (lambda (x env) (halt x env)) 'halt 'builtin)
-        (set-property (lambda (x env) 
-                         (listing x env)) 'listing 'builtin)
-        (set-property (lambda (x env) 
-                         (ask variable env)) 'ask 'builtin)
+        (set-property (lambda (x env) (listing x env)) 'listing 'builtin)
+        (set-property (lambda (x env) (ask variable env)) 'ask 'builtin)
         (set-property (lambda (x env) (is x env)) 'is 'builtin)
-        (set-property (lambda (x env) 
-                         (consult x env)) 'consult 'builtin)
-        (set-property (lambda (x env) 
-                         (reconsult x env)) 'reconsult 'builtin)
-        ;;;(set-property (lambda (x env) 'no) 'fail 'builtin)
-        ;;;(set-property (lambda (x env) env) 'true 'builtin)
-        (set-property (lambda (x env) 
-                         (unify (elt x 0) (elt x 1) env))
+        (set-property (lambda (x env) (consult x env)) 'consult 'builtin)
+        (set-property (lambda (x env) (reconsult x env)) 'reconsult 'builtin)
+        (set-property (lambda (x env) 'no) 'fail 'builtin)
+        (set-property (lambda (x env) env) 'true 'builtin)
+        (set-property (lambda (x env) (unify (elt x 0) (elt x 1) env))
                       '=
                       'builtin)
-        (set-property (lambda (x env) 
-                         (if (= (elt x 0) (elt x 1))
+        (set-property (lambda (x env) (if (= (elt x 0) (elt x 1))
                              env
                              'no))
                       '==
                       'builtin)
-        (set-property (lambda (x env) 
-                         (if (not (= (elt x 0) (elt x 1)))
+        (set-property (lambda (x env) (if (not (= (elt x 0) (elt x 1)))
                              env
                              'no))
                       '=
                       'builtin)
-        (set-property (lambda (x env) 
-                         (if (> (elt x 0) (elt x 1))
+        (set-property (lambda (x env) (if (> (elt x 0) (elt x 1))
                              env
                              'no))
                       '>
                       'builtin)
-        (set-property (lambda (x env) 
-                         (if (>= (elt x 0) (elt x 1))
+        (set-property (lambda (x env) (if (>= (elt x 0) (elt x 1))
                              env
                              'no))
                       '>=
                       'builtin)
-        (set-property (lambda (x env) 
-                         (if (< (elt x 0) (elt x 1))
+        (set-property (lambda (x env) (if (< (elt x 0) (elt x 1))
                              env
                              'no))
                       '<
                       'builtin)
-        (set-property (lambda (x env) 
-                         (if (<= (elt x 0) (elt x 1))
+        (set-property (lambda (x env) (if (<= (elt x 0) (elt x 1))
                              env
                              'no))
                       '<=
                       'builtin)
-        (set-property (lambda (x env) 
-                         (setq trace t)) 'trace 'builtin)
-        (set-property (lambda (x env) 
-                         (setq trace nil)) 'notrace 'builtin)
-        (set-property (lambda (x env) 
-                         (format (standard-output) "~A" x))
+        (set-property (lambda (x env) (setq trace t)) 'trace 'builtin)
+        (set-property (lambda (x env) (setq trace nil)) 'notrace 'builtin)
+        (set-property (lambda (x env) (format (standard-output) "~A" x))
                       'write
                       'builtin)
-        (set-property (lambda (x env) 
-                         (format (standard-output) "~%" x))
+        (set-property (lambda (x env) (format (standard-output) "~%" x))
                       'nl
                       'builtin)
         t)
@@ -221,8 +205,7 @@ builtin predicate
 
     (defun halt (x env)
         (read-char)           ; discard input
-        (mapc (lambda (y) 
-                 (set-property nil y 'prolog)) user) ;delete prolog code
+        (mapc (lambda (y) (set-property nil y 'prolog)) user) ;delete prolog code
         (setq epilog t))
 
     (defun listing (x env)
@@ -292,8 +275,7 @@ builtin predicate
         env)
 
     (defun reconsult (x env)
-        (mapc (lambda (y) 
-                 (set-property nil y 'prolog)) user)
+        (mapc (lambda (y) (set-property nil y 'prolog)) user)
         (let* ((arg1 (elt x 0))
                (instream (open-input-file arg1))
                (sexp t) )

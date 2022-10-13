@@ -1,5 +1,5 @@
 (defun foo (x)
-   (lambda (x) 'no))
+    (lambda (x) 'no) )
 
-(defun foo (x)  
-   (lambda (x) x))
+(defun foo (x)
+    (lambda (x) x) )

@@ -16,7 +16,7 @@ question  add goal (ask) builtin to display variable
 builtin predicate
 (assert x) (halt) (listing) (listing x) (is x y) (consult x) (reconsult x) (ask)
 (fail) (true) (= x y) (== x y) (= x y) (> x y) (>= x y) (< x y) (<= x y)
-(trace) (notrace) (write) (nl)
+(trace) (notrace) (write) (nl) (system x) (eval x)
 |#
 
 (defmodule peisl
@@ -189,8 +189,11 @@ builtin predicate
         (set-property (lambda (x env) (format (standard-output) "~%" x))
                       'nl
                       'builtin)
-        (set-property (lambda (x env) (system x) env)
+        (set-property (lambda (x env) (system (elt x 0)) env)
                       'system
+                      'builtin)
+        (set-property (lambda (x env) (eval (elt x 0)) env)
+                      'eval
                       'builtin)
         t)
 

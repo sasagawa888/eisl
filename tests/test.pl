@@ -16,8 +16,9 @@
          (fact _n1 _m1)
          (is _m (* _n _m1))))
         
-
 ;; eval
+(assert ((ack _x _y _z)(is _z (ack _x _y))))
+
 (eval 
     (defun ack (m n)
         (cond ((= m 0) (+ n 1))

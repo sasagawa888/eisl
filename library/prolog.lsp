@@ -16,7 +16,7 @@ question  add goal (ask) builtin to display variable
 builtin predicate
 (assert x) (halt) (listing) (listing x) (is x y) (consult x) (reconsult x) (ask)
 (fail) (true) (= x y) (== x y) (= x y) (> x y) (>= x y) (< x y) (<= x y)
-(trace) (notrace) (write) (nl) (system x) (eval x)
+(trace) (notrace) (write) (nl) (system x) (eval x) (save x)
 |#
 
 (defmodule peisl
@@ -24,7 +24,8 @@ builtin predicate
     (defglobal user nil)      ;user defined predicate and clause name
     (defglobal variable nil)  ;variable included in goal
     (defglobal trace nil)     ;trace switch
-    
+    (defglobal find nil)       ;for findall save find value 
+
     (defpublic prolog ()
         (setup)
         (for ( )
@@ -192,9 +193,21 @@ builtin predicate
         (set-property (lambda (x env) (system (elt x 0)) env)
                       'system
                       'builtin)
-        (set-property (lambda (x env) (eval (elt x 0)) env)
-                      'eval
+        (set-property (lambda (x env) (eval (cons 'defun x)) env)
+                      'defun
                       'builtin)
+        (set-property (lambda (x env) (eval (cons 'defgeneric x)) env)
+                      'defgeneric
+                      'builtin)
+        (set-property (lambda (x env) (eval (cons 'defmethod x)) env)
+                      'defmethod
+                      'builtin)
+        (set-property (lambda (x env) (save x))
+                      'save
+                      'builtin)
+        (set-property (lambda (x env) (findall x env))
+                      'findall
+                      'builtin)        
         t)
 
     (defpublic assert (x) 
@@ -299,6 +312,19 @@ builtin predicate
                (prove sexp nil nil 0))
             (close instream))
         env)
+
+    (defun save (x)
+        (let ((arg1 (elt x 0)))
+            (setq find (cons x find))
+            'no))
+
+    (defun findall (x env)
+        (let ((arg1 (elt x 0))
+              (arg2 (elt x 1))
+              (arg3 (elt x 2)))
+            (setq find nil)
+            (let ((env1 (prove-all (cons arg2 (list (list 'save arg1))) env 0)))
+                (unify arg3 find env))))
 
     (defun error* (msg x)
         (format (standard-output) "~A ~A~%" msg x)

@@ -19,8 +19,7 @@
 ;; eval
 (assert ((ack _x _y _z)(is _z (ack _x _y))))
 
-(eval 
-    (defun ack (m n)
-        (cond ((= m 0) (+ n 1))
-              ((= n 0) (ack (- m 1) 1))
-              (t (ack (- m 1) (ack m (- n 1)))) )))
+(defun ack (m n)
+    (cond ((= m 0) (+ n 1))
+          ((= n 0) (ack (- m 1) 1))
+          (t (ack (- m 1) (ack m (- n 1)))) ))

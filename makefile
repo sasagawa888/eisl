@@ -46,7 +46,8 @@ SRC_LISP := library/bit.lsp \
 	    library/regex.lsp \
 	    library/tcltk.lsp \
 	    library/tcpip.lsp \
-	    library/virtty.lsp
+	    library/virtty.lsp \
+		library/prolog.lsp
 
 ifeq ($(DEBUG),1)
 	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE

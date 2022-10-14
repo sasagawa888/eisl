@@ -28,7 +28,10 @@ under construction
 - (write x)
 - (nl)
 - (system x)
-- (eval x)
+- (defun ...)
+- (defgeneric ...)
+- (defmethod ...)
+- (findall x y z)
 
 # usage embeded Prolog in Lisp
 

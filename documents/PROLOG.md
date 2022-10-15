@@ -28,12 +28,15 @@ under construction
 - (write x)
 - (nl)
 - (system x)
+- (trace)
+- (notrace)
 - (defun ...)
 - (defgeneric ...)
 - (defmethod ...)
 - (findall x y z)
 
-# usage embeded Prolog in Lisp
+
+# usage as embedded Prolog in Lisp
 
 ### prove
 

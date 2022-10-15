@@ -24,10 +24,9 @@ builtin predicate
     (defglobal user nil)      ;user defined predicate and clause name
     (defglobal variable nil)  ;variable included in goal
     (defglobal trace nil)     ;trace switch
-    (defglobal find nil)       ;for findall save find value 
+    (defglobal find nil)      ;for findall save find value 
 
     (defpublic prolog ()
-        (setup)
         (for ( )
              (epilog
               (setq epilog nil)

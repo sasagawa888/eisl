@@ -16,7 +16,7 @@
          (fact _n1 _m1)
          (is _m (* _n _m1))))
         
-;; eval
+;; call lisp function
 (assert ((ack _x _y _z)(is _z (ack _x _y))))
 
 (defun ack (m n)

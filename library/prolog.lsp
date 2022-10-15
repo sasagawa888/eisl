@@ -48,6 +48,8 @@ builtin predicate
             (format (standard-output) "~A~%" 'no)
             (format (standard-output) "~A~%" 'yes)))
 
+    (defpublic prolog-setup ()
+        (setup))
     
     (defpublic -? (x)
         (prove x nil nil 0))

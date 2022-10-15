@@ -395,4 +395,6 @@ builtin predicate
         (if trace
             (format (standard-output) "(~A) ~A ~A~%" n op (deref x env))))
 
+    (setup)
+
 )

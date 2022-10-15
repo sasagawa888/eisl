@@ -1,5 +1,4 @@
 ;;embeded prolog test code
-(prolog-setup)
 
 (assert '(likes kim robin))
 (assert '(likes sandy lee))

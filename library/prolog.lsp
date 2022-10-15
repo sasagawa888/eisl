@@ -48,9 +48,6 @@ builtin predicate
             (format (standard-output) "~A~%" 'no)
             (format (standard-output) "~A~%" 'yes)))
 
-    (defpublic prolog-setup ()
-        (setup))
-    
     (defpublic -? (x)
         (prove x nil nil 0))
 
@@ -326,7 +323,7 @@ builtin predicate
               (arg3 (elt x 2)))
             (setq find nil)
             (let ((env1 (prove-all (cons arg2 (list (list 'save arg1))) env 0)))
-                (unify arg3 find env))))
+                (unify arg3 (reverse find) env))))
 
     (defun error* (msg x)
         (format (standard-output) "~A ~A~%" msg x)

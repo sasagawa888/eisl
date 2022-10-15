@@ -1,4 +1,4 @@
-;;embeded prolog test code
+;;embedded prolog test code
 
 (assert '(likes kim robin))
 (assert '(likes sandy lee))

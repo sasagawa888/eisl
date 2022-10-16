@@ -17,8 +17,8 @@
 ;;;            (- _a 3)))))
 
 (defmacro defpattern (name :rest body)
-    (if (syntax-error body)
-        (error "defpattern syntax error" name) )
+    ;(if (syntax-error body)
+    ;    (error "defpattern syntax error" name) )
     (let* ((arg (gensym))
            (vars (extract-variables body nil nil))
            (body1 (expand-body arg body)) )

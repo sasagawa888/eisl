@@ -145,6 +145,7 @@ builtin predicate
         (set-property (lambda (x env) (is x env)) 'is 'builtin)
         (set-property (lambda (x env) (consult x env)) 'consult 'builtin)
         (set-property (lambda (x env) (reconsult x env)) 'reconsult 'builtin)
+        (set-property (lambda (x env) (load (elt x 0)) env) 'load 'builtin)
         (set-property (lambda (x env) 'no) 'fail 'builtin)
         (set-property (lambda (x env) env) 'true 'builtin)
         (set-property (lambda (x env) (unify (elt x 0) (elt x 1) env))

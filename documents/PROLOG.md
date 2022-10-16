@@ -16,6 +16,7 @@ under construction
 - (assert x)
 - (consult filename)
 - (reconsult filename)
+- (load filename) load lisp code
 - (halt)
 - (is x y)
 - (= x y)
@@ -27,7 +28,7 @@ under construction
 - (<= x y)
 - (write x)
 - (nl)
-- (system x)
+- (system x) call bash 
 - (trace)
 - (notrace)
 - (defun ...)
@@ -38,10 +39,10 @@ under construction
 
 # usage as embedded Prolog in Lisp
 
-### prove
-
+### assert
 (assert predicate/clause)
 
+### prove
 (-? predicate)
 
 ### deref

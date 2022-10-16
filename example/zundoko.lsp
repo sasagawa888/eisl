@@ -15,5 +15,7 @@
 
 (defpattern zundoko 
     ((empty-list) nil)
-    ((("ズン" "ズン" "ズン" "ズン" "ドコ" :rest _x))  "キ☆ヨ☆シ！")
-    (((_x :rest _y)) (format (standard-output) "~A " _x) (zundoko _y)))
+    ((("ズン" "ズン" "ズン" "ズン" "ドコ" :rest _x)) 
+     (format (standard-output) "ズン ズン ズン ズン ドコ キ☆ヨ☆シ！"))
+    (((_x :rest _y))
+     (format (standard-output) "~A " _x) (zundoko _y)))

@@ -1,5 +1,5 @@
 # Prolog library
-under construction
+Prolog interpreter in ISLisp
 
 # import
 (import "prolog")
@@ -13,28 +13,30 @@ under construction
 
 ## builtin predicate
 
-- (assert x)
-- (consult filename)
-- (reconsult filename)
-- (load filename) load lisp code
-- (halt)
-- (is x y)
-- (= x y)
-- (== x y)
-- (/= x y)
-- (> x y)
-- (>= x y)
-- (< x y)
-- (<= x y)
-- (write x)
-- (nl)
-- (system x) call bash 
-- (trace)
-- (notrace)
-- (defun ...)
-- (defgeneric ...)
-- (defmethod ...)
-- (findall x y z)
+| Lisp-Prolog                         | Edinburgh-Prolog    |
+|-------------------------------------|---------------------|
+| (assert x)                          | assert(x)           |
+| (consult filename)                  | consult(filename)   |
+| (reconsult filename)                | reconsult(filename) |
+| (load filename) load lisp code      |  -                  |
+| (halt)                              | halt                |
+| (is x y)                            | x is y              |
+| (= x y)                             | x = y               |
+| (== x y)                            | x == y              |
+| (/= x y)                            | x /= y              |
+| (> x y)                             | x > y               |
+| (>= x y)                            | x => y              |
+| (< x y)                             | x < y               |
+| (<= x y)                            | x =< y              |
+| (write x)                           | write(x)            |
+| (nl)                                | nl                  |
+| (system x) call bash                |  -                  |
+| (trace)                             | trace               |
+| (notrace)                           | notrace             |
+| (defun ...)                         |  -                  |
+| (defgeneric ...)                    |  -                  |
+| (defmethod ...)                     |  -                  |
+| (findall x y z)                     | findall(x,y,z)      |
 
 
 # usage as embedded Prolog in Lisp
@@ -42,8 +44,20 @@ under construction
 ### assert
 (assert predicate/clause)
 
+e.g. (assert '(human jhon))
+
 ### prove
 (-? predicate)
 
+e.g. (-? '(human jhon))
+
 ### deref
 (~? variable environment)
+
+e.g. 
+```
+(let ((env (~? '(human _x))))
+   (~? '_x env))
+```
+
+see example/prolog-test.lsp

@@ -1,5 +1,10 @@
 #|
- DNA
+ study of DNA
+
+ base: A T C G U
+ amino acid:
+ e.g. ala = Alanine
+
 |#
 
 (import "elixir")

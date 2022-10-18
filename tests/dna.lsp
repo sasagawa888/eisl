@@ -4,6 +4,7 @@
  base: A T C G U
  amino acid:
  e.g. ala = Alanine
+DNA and RNA data is string each element is base.
 
 |#
 
@@ -12,21 +13,17 @@
 (defglobal test-data1 "AUGCGCAAUGUGUAA")
 (defglobal test-data2 "TTGCGAT")
 
+;; make amino acid list from RNA
 (defun rna->amino (x)
     (pipe (convert x <list>) |> (decode nil)))
 
+;; tracscript DNA to RNA
 (defun dna->rna (x)
-    (pipe (convert x <list>) |> (copy) |> (list->string)))
+    (pipe (convert x <list>) |> (transcript) |> (list->string)))
 
 (defun make-pair-dna (x)
     (pipe (convert x <list>) |> (pair) |> (list->string)))
 
-
-(defun list->string (x)
-    (if (null x)
-        ""
-        (string-append (convert (car x) <string>)
-                       (list->string (cdr x)))))
 
 (defpattern decode 
     ((empty-list) nil)
@@ -96,12 +93,12 @@
     (((#\G #\G #\A :rest _x) _sw) (cons 'gly (decode _x _sw)))
     (((#\G #\G #\G :rest _x) _sw) (cons 'gly (decode _x _sw))))
 
-(defpattern copy
+(defpattern transcript
     ((empty-list) nil)
-    (((#\A :rest _x)) (cons #\U (copy _x)))
-    (((#\T :rest _x)) (cons #\A (copy _x)))
-    (((#\G :rest _x)) (cons #\C (copy _x)))
-    (((#\C :rest _x)) (cons #\G (copy _x))))
+    (((#\A :rest _x)) (cons #\U (transcript _x)))
+    (((#\T :rest _x)) (cons #\A (transcript _x)))
+    (((#\G :rest _x)) (cons #\C (transcript _x)))
+    (((#\C :rest _x)) (cons #\G (transcript _x))))
 
 (defpattern pair
     ((empty-list) nil)
@@ -109,3 +106,11 @@
     (((#\T :rest _x)) (cons #\A (pair _x)))
     (((#\G :rest _x)) (cons #\C (pair _x)))
     (((#\C :rest _x)) (cons #\G (pair _x))))
+
+
+;; (#\a #\b #\c) -> "abc"
+(defun list->string (x)
+    (if (null x)
+        ""
+        (string-append (convert (car x) <string>)
+                       (list->string (cdr x)))))

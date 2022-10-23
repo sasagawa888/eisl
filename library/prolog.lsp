@@ -206,7 +206,13 @@ builtin predicate
                       'builtin)
         (set-property (lambda (x env) (findall x env))
                       'findall
-                      'builtin)        
+                      'builtin)     
+        (set-property (lambda (x env) (length* x env))
+                      'length
+                      'builtin)      
+        (set-property (lambda (x env) (member* x env))
+                      'member
+                      'builtin)    
         t)
 
     (defpublic assert (x) 
@@ -324,6 +330,18 @@ builtin predicate
             (setq find nil)
             (let ((env1 (prove-all (cons arg2 (list (list 'save arg1))) env 0)))
                 (unify arg3 (reverse find) env))))
+
+    (defun length* (x env)
+        (let ((arg1 (elt x 0))
+              (arg2 (elt x 1)))
+           (unify arg2 (length arg1) env)))
+
+    (defun member* (x env)
+        (let ((arg1 (elt x 0))
+              (arg2 (elt x 1)))
+           (if (member arg1 arg2)
+               env
+               'no)))
 
     (defun error* (msg x)
         (format (standard-output) "~A ~A~%" msg x)

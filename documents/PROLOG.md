@@ -37,6 +37,9 @@ Prolog interpreter in ISLisp
 | (defgeneric ...)                    |  -                  |
 | (defmethod ...)                     |  -                  |
 | (findall x y z)                     | findall(x,y,z)      |
+| (length x y)                        | length(x,y)         |
+| (member x y)                        | member(x,y)         |
+
 
 
 # usage as embedded Prolog in Lisp

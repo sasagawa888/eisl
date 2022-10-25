@@ -4,6 +4,7 @@ ATN Argumented Transition Network
 
 s subject
 n noun
+np noun phrase
 det determiner
 v verb
 tv transitive verb 
@@ -25,6 +26,7 @@ S V O C
 ;; dictionary
 (defconstant dictionary 
     '((the det)
+      (a det)
       (dog n)
       (book n)
       (postman n)
@@ -34,26 +36,35 @@ S V O C
       (runs iv)
       (likes tv)))
 
+(defglobal reg nil)
+
 (defun part (x)
     (elt (assoc x dictionary) 1))
 
 
 (defun start (s)
-    (atn t s nil))
+    (atn t s))
 
 (defpattern atn
-    ((t (_x :rest _y) _stack) (when (eq (part _x) 'det))
-     (atn 's/det _y `(det ,_x)))
-    ((s/det (_x :rest _y) _stack) (when (eq (part _x) 'n))
-     (cons `(s ,_stack (n ,_x) ) (atn 's/n _y nil)))
-    ((s/n (_x :rest _y) _stack) (when (eq (part _x) 'tv))
-     (cons `(v (tv ,_x)) (atn 'o _y _stack)))
-    ((o empty _stack) nil) 
-    ((o (_x :rest _y) _stack) (when (eq (part _x) 'n))
-     (cons `(o (n ,_x)) (atn 'o _y _stack)))
-    ((c empty _stack) nil)
-    ((_x _y _stack) (error "syntax-error" (list _x _y))))
+    ((t _x)
+     (let ((succ (atn 'np _x))) (cons `(s ,reg) (atn 's succ))))
+    ((s (_x :rest _y)) (when (eq (part _x) 'tv))
+     (cons `(v (tv ,_x)) (atn 'tv _y)))
+    ((s (_x :rest _y)) (when (eq (part _x) 'iv))
+     (cons `(v (iv ,_x)) (atn 'iv _y)))
+    ((tv _x)
+     (let ((succ (atn 'np _x))) (cons `(o ,reg) (atn 'o succ))))
+    ((iv _x) nil)
+    ((o empty) nil)
+    ((np (_x :rest _y)) (when (eq (part _x) 'det))
+     (setr `(det ,_x)) (atn 'np/det _y))
+    ((np (_x :rest _y)) (when (eq (part _x) 'n))
+     (setr `(n ,_x)) _y)
+    ((np/det (_x :rest _y)) (when (eq (part _x) 'n))
+     (setr `(,reg (n ,_x))) _y)
+    ((_x _y) (error "syntax-error" (list _x _y))))
     
 
-
+(defun setr (x) 
+    (setq reg x))
 

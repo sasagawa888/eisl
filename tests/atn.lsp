@@ -1,6 +1,6 @@
 #|
 ATN Argumented Transition Network
-((subj (det the) (n dog)) (v bytes) (o (n postman)) ) 
+((subj (det the) (n dog)) (v bites) (o (n postman)) ) 
 
 s subject
 n noun
@@ -27,28 +27,32 @@ S V O C
     '((the det)
       (dog n)
       (book n)
+      (postman n)
       (jhon  npr)
       (mary npr)
-      (bytes tv)
+      (bites tv)
       (runs iv)
       (likes tv)))
 
 (defun part (x)
-    (elt (assoc x dictionaly) 1))
+    (elt (assoc x dictionary) 1))
 
 
 (defun start (s)
-    (atn s np/))
+    (atn t s nil))
 
 (defpattern atn
     ((t (_x :rest _y) _stack) (when (eq (part _x) 'det))
-     (atn s/det _y `(det ,_x)))
+     (atn 's/det _y `(det ,_x)))
     ((s/det (_x :rest _y) _stack) (when (eq (part _x) 'n))
-     (cons `(s ,_stack (n ,_x) ) (atn s/n _y )
+     (cons `(s ,_stack (n ,_x) ) (atn 's/n _y nil)))
     ((s/n (_x :rest _y) _stack) (when (eq (part _x) 'tv))
-     (atn o `(o  ))
-    ((o      (_x :rest _y) _stack) t)
-    ((c      (_x :rest _y) _stack) t)))))
+     (cons `(v (tv ,_x)) (atn 'o _y _stack)))
+    ((o empty _stack) nil) 
+    ((o (_x :rest _y) _stack) (when (eq (part _x) 'n))
+     (cons `(o (n ,_x)) (atn 'o _y _stack)))
+    ((c empty _stack) nil)
+    ((_x _y _stack) (error "syntax-error" (list _x _y))))
     
 
 

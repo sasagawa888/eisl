@@ -1,5 +1,6 @@
 #|
-ATN Argumented Transition Network
+study of English grammar (under construction)
+ATN Argumented Transition Network 
 ((subj (det the) (n dog)) (v (vt bites)) (o (n postman)) ) 
 
 s subject
@@ -55,12 +56,13 @@ S V O C
     (atn t s))
 
 (defpattern atn
+    ;; sentence SV SVO SVC SVOO SVOC
     ((t _x)
      (let ((cont (atn 'np/ _x))) (cons `(s ,@reg) (atn 's/ cont))))
     ((s/ _x)
      (let ((cont (atn 'vp/ _x)))
         (cond ((transitivep reg) (cons `(v ,@reg) (atn 'v/ cont)))
-              ((intransitivep reg) `((v ,@reg))))))
+              ((intransitivep reg) (cons `(v ,@reg) nil)))))
     ((v/ _x)
      (let ((cont (atn 'np/ _x))) (cons `(o ,@reg) (atn 'o/ cont))))
     ((o/ empty) nil)

@@ -59,7 +59,6 @@ S V O C
      (let ((cont (atn 'np/ _x))) (cons `(s ,@reg) (atn 's/ cont))))
     ((s/ _x)
      (let ((cont (atn 'vp/ _x)))
-       (print reg)
         (cond ((transitivep reg) (cons `(v ,@reg) (atn 'v/ cont)))
               ((intransitivep reg) `((v ,@reg))))))
     ((v/ _x)

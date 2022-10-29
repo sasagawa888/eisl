@@ -3,7 +3,7 @@ To understand Turing bombe by Alan Turing.
 Enigma machine
 input -> rotor1 -> rotor2 -> rotor3 -> reflection
  -> rotor3 -> rotor2 -> rotor1 -> output
-
+Each rotor connect from a-z to a-z.
 The rotor rotates each time when machine get a character.
 counter vector represents its rotation.
 e.g. counter #(0 0 0) -> #(0 0 1) -> #(0 0 25) -> #(0 1 0) -> #(0 1 1) ...
@@ -135,12 +135,15 @@ run program
       (#\s #\j) (#\t #\v) (#\u #\w) (#\v #\t) (#\w #\u) (#\x #\e)
       (#\y #\q) (#\z #\n)))
 
+;;reflection
 (defun reflect (x)
     (finda x plug))
 
+;; for forward search
 (defun finda (x rotor)
     (elt (assoc x rotor) 1))
 
+;; for backward seach
 (defun findb (x rotor)
     (elt (rassoc x rotor) 0))
 
@@ -150,6 +153,7 @@ run program
           ((char= x (elt (car y) 1)) (car y))
           (t (rassoc x (cdr y)))))
 
+;; e.g. (#\h #\e #\l #\l #\o) "hello"
 (defun charlist->string (ls)
     (cond ((null ls) "")
           (t (string-append (convert (car ls) <string>)

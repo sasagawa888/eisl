@@ -2282,6 +2282,7 @@ defgeneric compile
         (format stream "({int res;~%while(")
         (comp stream (elt x 1) env args tail name global t clos)
         (format stream " !=NIL){~%")
+        (format stream "Fcheckgbc();")
         (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "};res;})~%"))
     

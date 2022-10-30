@@ -24,6 +24,11 @@ run program
 "hello"
 > 
 
+You can set initial position of rotors.
+e.g. (set-init 1 2 3) 
+This combination is 26^3 = 17,576
+
+tb(Turing's Bombe) can find this setting in secons.
 |#
 (import "elixir")
 
@@ -31,9 +36,27 @@ run program
 ;;elt 0 is for rotor3, elt 1 is for rotor2, elt 2 is for rotor1  
 (defglobal counter #(0 0 0))
 
-;; main function
+;;initial rotate position. You can set it with (set-init r3 r2 r1)
+(defglobal initial #(0 0 0))
+
+;; Turing's bombe
+;; (tb "hello" "oqbep") -> #(1 2 3)
+;; (tb "hello" "oikrw") -> #(25 25 25)
+;; The actual bembe was a parallel machine. 12 parallel.
+;; But tb function checks from (0 0 0) to (25 25 25) in sequential processing.
+;; Today computer is fast enough to do this calculation in seconds.
+(defun tb (str1 str2)
+    (block exit
+        (set-init 0 0 0)
+        (while t 
+            (if (string= (enigma str1) str2)
+                (return-from exit initial))
+            (count-up initial))))
+
+
+;; Enigma main function
 (defun enigma (str)
-    (count-clean)
+    (count-init)
     (pipe str |> (convert <list>) |> (enigma1) |> (charlist->string)))
 
 ;; use pipe macros to show transform process easier
@@ -47,7 +70,7 @@ run program
                             |> (iiicb) |> (connectb (elt counter 0))
                             |> (iicb)  |> (connectb (elt counter 1))
                             |> (icb)   |> (connectb (elt counter 2)))))
-                (count-up) ;rotate
+                (count-up counter) ;rotate
                 (cons l (enigma1 (cdr ls)))))))
 
 ;; e.g. connecta(#\a 3) = #\d
@@ -62,20 +85,34 @@ run program
         (convert (+ (mod (- (- (convert x <integer>) base) shift) 26) base)
                  <character>)))
 
-(defun count-up ()
-    (setf (elt counter 2) (+ (elt counter 2) 1))
-    (cond ((< (elt counter 2) 26) t)
-          (t (setf (elt counter 2) 0)
-             (setf (elt counter 1) (+ (elt counter 1) 1))
-             (cond ((< (elt counter 1) 26) t)
-                   (t (setf (elt counter 1) 0)
-                      (setf (elt (counter 0)) (+ (elt counter 0) 1)))))))
+(defun count-up (x)
+    (setf (elt x 2) (+ (elt x 2) 1))
+    (cond ((< (elt x 2) 26) t)
+          (t (setf (elt x 2) 0)
+             (setf (elt x 1) (+ (elt x 1) 1))
+             (cond ((< (elt x 1) 26) t)
+                   (t (setf (elt x 1) 0)
+                      (setf (elt x 0) (+ (elt x 0) 1)))
+                      (cond ((< (elt x 0) 26) t)
+                            (setf (elt x 0) 0)
+                            (setf (elt x 1) 0)
+                            (setf (elt x 2) 0))))))
 
 
-(defun count-clean ()
-    (setf (elt counter 0) 0)
-    (setf (elt counter 1) 0)
-    (setf (elt counter 2) 0))
+(defun set-init (r3 r2 r1)
+    (setf (elt initial 0) r3)
+    (setf (elt initial 1) r2)
+    (setf (elt initial 2) r1))
+
+(defun count-init ()
+    (setf (elt counter 0) (elt initial 0))
+    (setf (elt counter 1) (elt initial 1))
+    (setf (elt counter 2) (elt initial 2)))
+
+(defun count-rand ()
+    (setf (elt counter 0) (random 26))
+    (setf (elt counter 1) (random 26))
+    (setf (elt counter 2) (random 26)))
 
 ;rotor1
 ;ABCDEFGHIJKLMNOPQRSTUVWXYZ

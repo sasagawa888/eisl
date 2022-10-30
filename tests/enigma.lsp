@@ -51,7 +51,9 @@ tb(Turing's Bombe) can find this setting in secons.
         (while t 
             (if (string= (enigma str1) str2)
                 (return-from exit initial))
-            (count-up initial))))
+            (count-up initial)))
+    (gbc); for compile code
+)
 
 
 ;; Enigma main function

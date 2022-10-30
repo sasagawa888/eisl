@@ -50,9 +50,10 @@ tb(Turing's Bombe) can find this setting in secons.
         (set-init 0 0 0)
         (while t 
             (if (string= (enigma str1) str2)
-                (return-from exit initial))
+                (return-from exit t))
             (count-up initial)))
     (gbc); for compile code
+    initial
 )
 
 

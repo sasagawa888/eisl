@@ -861,7 +861,7 @@ fast_mod()
     } else if (x < 0 && y >= INT_FLAG) {
 	intx = x;
 	inty = (y & INT_MASK);
-	res = -1 * (intx % inty);
+	res = inty + (intx % inty);
 	if (res >= 0)
 	    res = res | INT_FLAG;
 	return (res);

@@ -58,6 +58,74 @@ tb(Turing's Bombe) can find this setting in secons.
     initial
 )
 
+;; to understand polish bomba
+;; theorem of Marian Adam Rejewski
+;; (cycle (combination 0 0 0) 
+;; ((#\m #\h) (#\s #\l)
+;;  (#\w #\c #\y #\k) (#\x #\g #\o #\q)
+;;  (#\a #\f #\i #\p #\n #\d #\z) (#\b #\r #\u #\t #\v #\e #\j))
+;; even numver of cycles
+
+;; find cycle 
+(defun cycle (a-list)
+    (for ((n 0 (+ n 1))
+          (result nil))
+         ((= n (length a-list)) (remove-same-cycle result))
+         (let ((ans (cycle1 (elt (elt a-list n) 1) a-list (elt (elt a-list n) 0) (list (elt (elt a-list n) 0)))))
+            (if ans (setq result (cons ans result))))))
+
+(defun cycle1 (char a-list start-char result)
+    (cond ((null (assoc char a-list)) nil)
+          ((char= char start-char) (reverse result))
+          (t (cycle1 (elt (assoc char a-list) 1)
+                     a-list 
+                     start-char 
+                     (cons char result)))))
+
+(defun remove-same-cycle (x)
+    (cond ((null x) x)
+          ((member-same-cycle (car x) (cdr x)) (remove-same-cycle (cdr x)))
+          (t (cons (car x) (remove-same-cycle (cdr x))))))
+
+(defun member-same-cycle (x y)
+    (cond ((null y) nil)
+          ((same-cycle-p x (car y)) t)
+          (t (member-same-cycle x (cdr y)))))
+
+(defun same-cycle-p (ls1 ls2)
+    (cond ((null ls1) t)
+          ((member (car ls1) ls2) (same-cycle-p (cdr ls1) ls2))
+          (t nil)))
+
+;; generate combination 1st and 4th (2nd and 5th, 3rd and 6th) 
+(defglobal dt "abcdefghijklmnopqrstuvwxyz")
+(defun combination (r3 r2 r1)
+    (set-init r3 r2 r1)
+    (let ((ls1 (fix-enigma dt)))
+        (count-up initial)
+        (count-up initial)
+        (count-up initial)
+        (let ((ls2 (fix-enigma dt)))
+            (mapcar (lambda (x y) (list x y)) ls1 ls2))))
+
+
+;;enigma not countup(fixed position)
+(defun fix-enigma (str)
+    (count-init)
+    (pipe str |> (convert <list>) |> (fix-enigma1)))
+
+(defun fix-enigma1 (ls)
+    (cond ((null ls) nil)
+          (t (let ((l (pipe (car ls)
+                            |> (connecta (elt counter 2)) |> (ica)  
+                            |> (connecta (elt counter 1)) |> (iica)
+                            |> (connecta (elt counter 0)) |> (iiica)
+                            |> (reflect) 
+                            |> (iiicb) |> (connectb (elt counter 0)) 
+                            |> (iicb)  |> (connectb (elt counter 1)) 
+                            |> (icb)   |> (connectb (elt counter 2)) )))
+                ;(count-up counter) ;rotate
+                (cons l (foo1 (cdr ls)))))))
 
 ;; Enigma main function
 (defun enigma (str)
@@ -67,14 +135,14 @@ tb(Turing's Bombe) can find this setting in secons.
 ;; use pipe macros to show transform process easier
 (defun enigma1 (ls)
     (cond ((null ls) nil)
-          (t (let ((l (pipe (car ls) |> (check)
-                            |> (connecta (elt counter 2)) |> (check1) |> (ica)  |> (check1)
-                            |> (connecta (elt counter 1)) |> |> (check1) |> (iica) |> (check1)
-                            |> (connecta (elt counter 0)) |> (iiica) |> (check1) |> (check1)
-                            |> (reflect) |> (check1)
-                            |> (iiicb) |> (check1) |> (connectb (elt counter 0)) |> (check1)
-                            |> (iicb)  |> (check1) |> (connectb (elt counter 1)) |> (check1)
-                            |> (icb)   |> (check1) |> (connectb (elt counter 2)) |> (check1))))
+          (t (let ((l (pipe (car ls)
+                            |> (connecta (elt counter 2)) |> (ica)  
+                            |> (connecta (elt counter 1)) |> (iica)
+                            |> (connecta (elt counter 0)) |> (iiica)
+                            |> (reflect) 
+                            |> (iiicb) |> (connectb (elt counter 0)) 
+                            |> (iicb)  |> (connectb (elt counter 1)) 
+                            |> (icb)   |> (connectb (elt counter 2)) )))
                 (count-up counter) ;rotate
                 (cons l (enigma1 (cdr ls)))))))
 

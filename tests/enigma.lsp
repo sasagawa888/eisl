@@ -125,7 +125,7 @@ tb(Turing's Bombe) can find this setting in secons.
                             |> (iicb)  |> (connectb (elt counter 1)) 
                             |> (icb)   |> (connectb (elt counter 2)) )))
                 ;(count-up counter) ;rotate
-                (cons l (foo1 (cdr ls)))))))
+                (cons l (fix-enigma1 (cdr ls)))))))
 
 ;; Enigma main function
 (defun enigma (str)

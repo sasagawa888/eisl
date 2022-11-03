@@ -41,60 +41,6 @@ tb(Turing's Bombe) can find this setting in secons.
 (defglobal initial #(0 0 0))
 
 
-;; cycle
-(defglobal dt "abcdefghijklmnopqrstuvwxyz")
-;;"abcdefghijklmnopqrstuvwxyz"
-;;"bwgtajfdqytveojtgnwsqdlgir"
-;;(cycle (enigma dt)) -> ((#\j #\y #\i #\q #\g #\f) (#\t #\s #\w #\l #\v #\d))
-
-
-(defun pattern (x y z)
-    (set-init x y z)
-    (mapcar (lambda (x) (length x)) (cycle (enigma dt))))
-
-(defun cycle (str)
-    (for ((ls (convert str <list>))
-          (n 0 (+ n 1))
-          (result nil))
-         ((> n 25) result)
-         (let ((ans (cycle1 n ls n 0 nil)))
-            (if ans (setq result (cons ans result))))))
-                  
-
-(defun cycle1 (n ls start count answer)
-    (cond ((> count 25) nil)
-          ((and (> count 0) (= n start)) (reverse answer))
-          (t (let ((ch (elt ls n)))
-                (cycle1 (- (convert ch <integer>) (convert #\a <integer>))
-                        ls     
-                        start 
-                        (+ count 1)
-                        (cons ch answer))))))
-
-(defun remove-equal-cycle (ls)
-    (cond ((null ls) nil)
-          ((member-cycle-p (car ls) (cdr ls)) (remove-equal-cycle (cdr ls)))
-          (t (cons (car ls) (remove-equal-cycle (cdr ls))))))
-
-(defun member-cycle-p (x ls)
-    (cond ((null ls) nil)
-          ((equal-cycle-p x (car ls)) t)
-          (t (member-cycle-p x (cdr ls)))))
-
-(defun equal-cycle-p (ls1 ls2)
-    (cond ((not (= (length ls1) (length ls2))) nil)
-          (t (equal-cycle-p1 ls1 ls2 (length ls1)))))
-
-(defun equal-cycle-p1 (ls1 ls2 count)
-    (cond ((= count 0) nil)
-          ((equal ls1 ls2) t)
-          (t (equal-cycle-p1 (rotatel ls1) ls2 (- count 1)))))
-
-(defun rotatel (ls)
-    (append (cdr ls) (list (car ls))))
-
-($test (equal-cycle-p '(#\d #\t #\s #\w #\l #\v) '(#\s #\w #\l #\v #\d #\t)) t)
-($test (remove-equal-cycle '((#\d #\t #\s #\w #\l #\v) (#\s #\w #\l #\v #\d #\t))) ((#\s #\w #\l #\v #\d #\t)))
 ;; Turing's bombe
 ;; (tb "hello" "oqbep") -> #(1 2 3)
 ;; (tb "hello" "oikrw") -> #(25 25 25)
@@ -121,16 +67,24 @@ tb(Turing's Bombe) can find this setting in secons.
 ;; use pipe macros to show transform process easier
 (defun enigma1 (ls)
     (cond ((null ls) nil)
-          (t (let ((l (pipe (car ls) 
-                            |> (connecta (elt counter 2)) |> (ica) 
-                            |> (connecta (elt counter 1)) |> (iica)
-                            |> (connecta (elt counter 0)) |> (iiica)
-                            |> (reflect)
-                            |> (iiicb) |> (connectb (elt counter 0))
-                            |> (iicb)  |> (connectb (elt counter 1))
-                            |> (icb)   |> (connectb (elt counter 2)))))
+          (t (let ((l (pipe (car ls) |> (check)
+                            |> (connecta (elt counter 2)) |> (check1) |> (ica)  |> (check1)
+                            |> (connecta (elt counter 1)) |> |> (check1) |> (iica) |> (check1)
+                            |> (connecta (elt counter 0)) |> (iiica) |> (check1) |> (check1)
+                            |> (reflect) |> (check1)
+                            |> (iiicb) |> (check1) |> (connectb (elt counter 0)) |> (check1)
+                            |> (iicb)  |> (check1) |> (connectb (elt counter 1)) |> (check1)
+                            |> (icb)   |> (check1) |> (connectb (elt counter 2)) |> (check1))))
                 (count-up counter) ;rotate
                 (cons l (enigma1 (cdr ls)))))))
+
+(defun check (x)
+    (print x)
+    x)  
+
+(defun check1 (x)
+    (format (standard-output) "~A " x)
+    x)
 
 ;; e.g. connecta(#\a 3) = #\d
 (defun connecta (x shift)

@@ -98,42 +98,31 @@ tb(Turing's Bombe) can find this setting in secons.
           (t nil)))
 
 ;; generate combination 1st and 4th (2nd and 5th, 3rd and 6th) 
-(defglobal dt "abcdefghijklmnopqrstuvwxyz")
+;; return assoc-list  ((1st-data 4th-data) ...)
+;; if you need 2nd-5th r1 is plus 1. same 3rd-6th plus 2.
 (defun combination (r3 r2 r1)
-    (set-init r3 r2 r1)
-    (let ((ls1 (fix-enigma dt)))
-        (count-up initial)
-        (count-up initial)
-        (count-up initial)
-        (let ((ls2 (fix-enigma dt)))
-            (mapcar (lambda (x y) (list x y)) ls1 ls2))))
+    (let ((dt "abcdefghijklmnopqrstuvwxyz"))
+        (set-init r3 r2 r1)
+        (let ((ls1 (convert (fixed-enigma dt) <list>)))
+            (count-up initial)
+            (count-up initial)
+            (count-up initial)
+            (let ((ls2 (convert (fixed-enigma dt) <list>)))
+                (mapcar (lambda (x y) (list x y)) ls1 ls2)))))
 
 
 ;;enigma not countup(fixed position)
-(defun fix-enigma (str)
+(defun fixed-enigma (str)
     (count-init)
-    (pipe str |> (convert <list>) |> (fix-enigma1)))
-
-(defun fix-enigma1 (ls)
-    (cond ((null ls) nil)
-          (t (let ((l (pipe (car ls)
-                            |> (connecta (elt counter 2)) |> (ica)  
-                            |> (connecta (elt counter 1)) |> (iica)
-                            |> (connecta (elt counter 0)) |> (iiica)
-                            |> (reflect) 
-                            |> (iiicb) |> (connectb (elt counter 0)) 
-                            |> (iicb)  |> (connectb (elt counter 1)) 
-                            |> (icb)   |> (connectb (elt counter 2)) )))
-                ;(count-up counter) ;rotate
-                (cons l (fix-enigma1 (cdr ls)))))))
+    (pipe str |> (convert <list>) |> (enigma1 nil) |> (charlist->string)))
 
 ;; Enigma main function
 (defun enigma (str)
     (count-init)
-    (pipe str |> (convert <list>) |> (enigma1) |> (charlist->string)))
+    (pipe str |> (convert <list>) |> (enigma1 t) |> (charlist->string)))
 
 ;; use pipe macros to show transform process easier
-(defun enigma1 (ls)
+(defun enigma1 (ls sw)
     (cond ((null ls) nil)
           (t (let ((l (pipe (car ls)
                             |> (connecta (elt counter 2)) |> (ica)  
@@ -143,16 +132,8 @@ tb(Turing's Bombe) can find this setting in secons.
                             |> (iiicb) |> (connectb (elt counter 0)) 
                             |> (iicb)  |> (connectb (elt counter 1)) 
                             |> (icb)   |> (connectb (elt counter 2)) )))
-                (count-up counter) ;rotate
-                (cons l (enigma1 (cdr ls)))))))
-
-(defun check (x)
-    (print x)
-    x)  
-
-(defun check1 (x)
-    (format (standard-output) "~A " x)
-    x)
+                (if sw (count-up counter)) ;rotate
+                (cons l (enigma1 (cdr ls) sw))))))
 
 ;; e.g. connecta(#\a 3) = #\d
 (defun connecta (x shift)

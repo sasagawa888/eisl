@@ -51,7 +51,6 @@
 #include "eisl.h"
 #include "fmt.h"
 #include "text.h"
-#include "complex.h"
 
 
 #define CHECKBIG0 if(big_pt0<0 || big_pt0>=BIGNUM_PARMA){error(RESOURCE_ERR,"bigcell pt0",big_pt0);}

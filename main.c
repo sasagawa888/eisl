@@ -20,7 +20,6 @@
 #include "str.h"
 #include "long.h"
 #include "eiffel.h"
-#include "complex.h"
 
 // ------pointer----
 int ep;				// environment pointer

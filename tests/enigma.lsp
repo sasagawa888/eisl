@@ -60,7 +60,7 @@ tb(Turing's Bombe) can find this setting in secons.
 
 ;; to understand polish bomba
 ;; theorem of Marian Adam Rejewski
-;; (cycle (combination 0 0 0) 
+;; (cycle (combination 0 0 0)) ->
 ;; ((#\m #\h) (#\s #\l)
 ;;  (#\w #\c #\y #\k) (#\x #\g #\o #\q)
 ;;  (#\a #\f #\i #\p #\n #\d #\z) (#\b #\r #\u #\t #\v #\e #\j))

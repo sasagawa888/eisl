@@ -11,7 +11,11 @@
 #include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
+#ifdef __linux__
+#include <ncurses.h>
+#else
 #include <curses.h>
+#endif
 #include <term.h>
 #include "eisl.h"
 #include "mem.h"

@@ -3,7 +3,7 @@
 #include <signal.h>
 #include <termios.h>
 #define NCURSES_OPAQUE 1
-#ifdef __rpi__
+#ifdef __linux__
 #include <ncurses.h>
 #else
 #include <curses.h>

@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include "eisl.h"
-#include "nana.h"
+#include "compat/nana_stubs.h"
 #include "fmt.h"
 #include "str.h"
 #include "mem.h"

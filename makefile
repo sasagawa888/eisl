@@ -50,7 +50,7 @@ SRC_LISP := library/bit.lsp \
 		library/prolog.lsp
 
 ifeq ($(DEBUG),1)
-	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE
+	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE -DWITH_NANA=1
 	SRC_CII += cii/src/memchk.c cii/src/assert.c
 	SRC_NANA := nana/src/I.c
 	ifneq  ($(shell uname),OpenBSD)

@@ -23,7 +23,7 @@
 #include "except.h"
 #include "str.h"
 #include "long.h"
-#include "eiffel.h"
+#include "compat/eiffel_stubs.h"
 
 // ------pointer----
 int ep;				// environment pointer

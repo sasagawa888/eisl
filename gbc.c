@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "eisl.h"
-#include "nana.h"
+#include "compat/nana_stubs.h"
 #include "mem.h"
 #include "except.h"
 

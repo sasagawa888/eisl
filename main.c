@@ -2400,18 +2400,8 @@ debugger ()
 	}
       else if (eqp (x, makesym (":D")))
 	{
-#ifdef DYN
-	  for (i = 1; i <= dp; i++)
-	    {
-	      print (dynamic[i][1]);
-	      fputs (" = ", stdout);
-	      print (dynamic[1][1]);
-	      putchar ('\n');
-	    }
-#else
 	  print (dp);
 	  putchar ('\n');
-#endif
 	}
       else if (eqp (x, makesym (":E")))
 	{

@@ -6,7 +6,7 @@
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
-#include "eiffel.h"
+#include "compat/eiffel_stubs.h"
 
 int
 get_int (int addr)

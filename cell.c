@@ -11,7 +11,7 @@
 #include <math.h>
 #include <stdint.h>
 #include "eisl.h"
-#include "nana.h"
+#include "compat/nana_stubs.h"
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"

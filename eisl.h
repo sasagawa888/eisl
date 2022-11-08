@@ -19,7 +19,7 @@
 #include "ffi.h"
 #include "term.h"
 #include "except.h"
-#include "eiffel.h"
+#include "compat/eiffel_stubs.h"
 #include "complex.h"
 
 #define DYNSIZE 1000

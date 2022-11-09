@@ -11,11 +11,6 @@
 #include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
-#ifdef __linux__
-#include <ncurses.h>
-#else
-#include <curses.h>
-#endif
 #include <term.h>
 #include "eisl.h"
 #include "mem.h"
@@ -24,6 +19,7 @@
 #include "str.h"
 #include "long.h"
 #include "compat/eiffel_stubs.h"
+#include "compat/curses_stubs.h"
 
 // ------pointer----
 int ep;				// environment pointer

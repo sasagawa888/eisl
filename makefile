@@ -11,23 +11,30 @@ ifneq  ($(shell uname),Darwin)
 		LIBS := -lm -ldl
 	endif
 endif
-LIBSRASPI := -lm -ldl -lwiringPi -lncurses
+LIBSRASPI := -lm -ldl -lwiringPi
 INCS := -Icii/include
-ifeq  ($(shell uname),Darwin)
-	CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
-	CURSES_LIBS := $(shell ncurses5.4-config --libs)
-	# NCURSES_PREFIX := $(shell brew --prefix ncurses)
-	# CURSES_CFLAGS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --cflags)
-	# CURSES_LIBS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --libs)
+
+ifeq  ($(WITHOUT_CURSES),1)
+	CURSES_CFLAGS := -DWITHOUT_CURSES=1
+	CURSES_LIBS :=
 else
-	ifeq  ($(shell uname),OpenBSD)
-		CURSES_LIBS := -lncurses
+	LIBSRASPI := $(LIBSRASPI) -lncurses
+	ifeq  ($(shell uname),Darwin)
+		CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
+		CURSES_LIBS := $(shell ncurses5.4-config --libs)
+		# NCURSES_PREFIX := $(shell brew --prefix ncurses)
+		# CURSES_CFLAGS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --cflags)
+		# CURSES_LIBS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --libs)
 	else
-		ifeq  ($(shell uname),FreeBSD)
+		ifeq  ($(shell uname),OpenBSD)
 			CURSES_LIBS := -lncurses
 		else
-			CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
-			CURSES_LIBS := $(shell ncursesw6-config --libs)
+			ifeq  ($(shell uname),FreeBSD)
+				CURSES_LIBS := -lncurses
+			else
+				CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
+				CURSES_LIBS := $(shell ncursesw6-config --libs)
+			endif
 		endif
 	endif
 endif
@@ -88,7 +95,7 @@ SHAREDIR ?= $(PREFIX)/share/eisl
 CFLAGS += -DSHAREDIR=$(SHAREDIR)
 bindir := $(PREFIX)/bin
 sharedir := $(PREFIX)/share/eisl/library
-DESTDIR := 
+DESTDIR :=
 INSTALL := install
 INSTALL_PROGRAM := $(INSTALL) -m755
 MKDIR_PROGRAM := mkdir -p -m 755
@@ -112,11 +119,18 @@ EISL_OBJS := main.o \
 	syn_highlight.o \
 	long.o
 
-all: eisl edlis $(OBJ_LISP)
+ifeq  ($(WITHOUT_CURSES),1)
+	# Without curses support, do not build edlis
+	TARGETS := eisl $(OBJ_LISP)
+else
+	TARGETS := eisl edlis $(OBJ_LISP)
+endif
+
+all: $(TARGETS)
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI)
 else
 	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
 endif
@@ -137,9 +151,10 @@ endif
 nana/src/nana-config.h:
 	-cd nana; autoreconf -fi; ./configure
 
-edlis : edlis.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
+edlis: edlis.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
 	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
-edlis.o : edlis.c edlis.h term.h
+
+edlis.o: edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 
 .PHONY: install

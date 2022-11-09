@@ -18,12 +18,14 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 - You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 - For more advanced hacking on the interpreter itself, you can build a debug-mode executable by supplying a "DEBUG=1" argument to make, but this is unlikely to be needed by someone starting out.
 
-You may get an error that the curses.h file cannot be found when compiling EISL & Edlis. 
+You may get an error that the curses.h file cannot be found when compiling EISL & Edlis.
 In this case, enter the following from the terminal
 
 ```sh
 sudo apt install libncurses-dev
 ```
+
+Otherwise, support for `curses` can be disable with `WITHOUT_CURSES=1` in the `make` command. However, this will limit REPL support and will disable `edlis`.
 
 After version 1.4 Windows OS is not supported. Please use WSL on Windows.
 see [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)

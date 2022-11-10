@@ -20,7 +20,6 @@
 #include "term.h"
 #include "except.h"
 #include "compat/eiffel_stubs.h"
-#include "complex.h"
 
 #define DYNSIZE 1000
 #define STACKSIZE 400000

@@ -2130,13 +2130,29 @@ f_set_cdr (int arglist)
 
 // input and output
 
+static inline bool save_repl_flag(void)
+{
+#if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
+  bool result = repl_flag;
+  repl_flag = false;
+  return result;
+#else
+  return false;
+#endif
+}
+
+static inline void restore_repl_flag(bool save)
+{
+#if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
+  repl_flag = save;
+#endif
+}
+
 int
 f_read (int arglist)
 {
   int arg1, arg2, arg3, save, n, res;
-#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
-  int save1;
-#endif
+  bool save1;
 
   arg1 = car (arglist);
   arg2 = cadr (arglist);
@@ -2146,10 +2162,7 @@ f_read (int arglist)
   if (n > 0 && !input_stream_p (arg1))
     error (NOT_IN_STREAM, "read", arg1);
 
-#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
-  save1 = repl_flag;
-  repl_flag = 0;
-#endif
+  save1 = save_repl_flag();
   if (n == 0)
     res = sread ();
   else if (n == 1)
@@ -2160,9 +2173,7 @@ f_read (int arglist)
       input_stream = save;
       if (res == FEND)
 	{
-#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
-	  repl_flag = save1;
-#endif
+          restore_repl_flag(save1);
 	  error (END_STREAM, "read", NIL);
 	}
 
@@ -2175,9 +2186,7 @@ f_read (int arglist)
       input_stream = save;
       if (res == FEND)
 	{
-#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
-	  repl_flag = save1;
-#endif
+          restore_repl_flag(save1);
 	  if (nullp (arg2) && n == 2)
 	    return (arg2);
 	  else if (nullp (arg2) && n == 3)
@@ -2186,9 +2195,7 @@ f_read (int arglist)
 	    error (END_STREAM, "read", NIL);
 	}
     }
-#if __linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)
-  repl_flag = save1;
-#endif
+  restore_repl_flag(save1);
   return (res);
 }
 
@@ -2209,9 +2216,7 @@ f_read_char (int arglist)
   if (n > 0 && !input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-char", arg1);
 
-
-  save1 = repl_flag;
-  repl_flag = false;
+  save1 = save_repl_flag();
   if (n == 0)
     {
       rc_buf[0] = readc ();
@@ -2226,7 +2231,7 @@ f_read_char (int arglist)
       rc_buf[1] = NUL;
       if (rc_buf[0] == EOF)
 	{
-	  repl_flag = save1;
+          restore_repl_flag(save1);
 	  input_stream = save;
 	  error (END_STREAM, "read-char", NIL);
 	}
@@ -2242,7 +2247,7 @@ f_read_char (int arglist)
       input_stream = save;
       if (rc_buf[0] == EOF)
 	{
-	  repl_flag = save1;
+          restore_repl_flag(save1);
 	  input_stream = save;
 	  if (nullp (arg2) && n == 2)
 	    return (arg2);
@@ -2253,7 +2258,7 @@ f_read_char (int arglist)
 	}
       res = makechar ((char *) rc_buf);
     }
-  repl_flag = save1;
+  restore_repl_flag(save1);
   return (res);
 }
 
@@ -2271,8 +2276,7 @@ f_read_byte (int arglist)
   if (n > 0 && !input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-byte", arg1);
 
-  save1 = repl_flag;
-  repl_flag = false;
+  save1 = save_repl_flag();
   if (n == 0)
     {
       res = readc ();
@@ -2284,7 +2288,7 @@ f_read_byte (int arglist)
       res = readc ();
       if (res == EOF)
 	{
-	  repl_flag = save1;
+          restore_repl_flag(save1);
 	  input_stream = save;
 	  error (END_STREAM, "read-byte", NIL);
 	}
@@ -2298,7 +2302,7 @@ f_read_byte (int arglist)
       input_stream = save;
       if (res == EOF)
 	{
-	  repl_flag = save1;
+          restore_repl_flag(save1);
 	  input_stream = save;
 	  if (nullp (arg2) && n == 2)
 	    return (arg2);
@@ -2308,7 +2312,7 @@ f_read_byte (int arglist)
 	    error (END_STREAM, "read-byte", NIL);
 	}
     }
-  repl_flag = save1;
+  restore_repl_flag(save1);
   return (makeint (res));
 }
 
@@ -2389,9 +2393,7 @@ f_read_line (int arglist)
   if (n > 0 && !input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-line", arg1);
 
-
-  save1 = repl_flag;
-  repl_flag = false;
+  save1 = save_repl_flag();
   if (n == 0)
     {
       pos = 0;
@@ -2413,7 +2415,7 @@ f_read_line (int arglist)
       c = readc ();
       if (c == EOF)
 	{
-	  repl_flag = save1;
+          restore_repl_flag(save1);
 	  error (END_STREAM, "read-line", NIL);
 	}
       while (c != EOL && c != EOF)
@@ -2434,7 +2436,7 @@ f_read_line (int arglist)
       c = readc ();
       if (c == EOF)
 	{
-	  repl_flag = save1;
+          restore_repl_flag(save1);
 	  if (nullp (arg2) && n == 2)
 	    {
 	      input_stream = save;
@@ -2461,14 +2463,15 @@ f_read_line (int arglist)
       if (res == FEND && arg2 == NIL)
 	res = arg3;
     }
-  repl_flag = save1;
+  restore_repl_flag(save1);
   return (res);
 }
 
 int
 f_load (int arglist)
 {
-  int arg1, save1, save2, n;
+  int arg1, save1, n;
+  bool save2;
   char str[PATH_MAX];
 
   arg1 = car (arglist);
@@ -2488,7 +2491,7 @@ f_load (int arglist)
     }
   // text file
   save1 = input_stream;
-  save2 = repl_flag;
+  save2 = save_repl_flag();
   const char *fname = GET_NAME (arg1);
   input_stream =
     makestream (fopen (fname, "r"), EISL_INPUT, Str_dup (fname, 1, 0, 1));
@@ -2543,7 +2546,7 @@ cleanup:
   open_flag = false;
   fclose (GET_PORT (input_stream));
   input_stream = save1;
-  repl_flag = save2;
+  restore_repl_flag(save2);
   if (redef_flag)
     redef_generic ();
   return (T);

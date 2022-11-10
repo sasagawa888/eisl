@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <term.h>
+#include "compat/term_stubs.h"
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
@@ -133,8 +133,10 @@ bool back_flag = true;		// for backtrace,
 					// true=on,false=off
 bool ignore_topchk = false;	// for FAST
 					// compilertrue=ignore,false=normal
+#ifndef WITHOUT_CURSES
 bool repl_flag = true;		// for REPL read_line true=on,
 					// false=off
+#endif
 bool option_flag = false;	// while handling command line option it is true, else false
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
 bool greeting_flag = true;	// for (quit)
@@ -232,6 +234,13 @@ maybe_greet (void)
     Fmt_print ("Easy-ISLisp Ver%1.2f\n", VERSION);
 }
 
+static inline disable_repl_flag(void)
+{
+#ifndef WITHOUT_CURSES
+  repl_flag = false;
+#endif
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -242,7 +251,7 @@ main (int argc, char *argv[])
       key_up == NULL || key_down == NULL ||
       key_right == NULL || key_left == NULL)
     {
-      repl_flag = false;
+      disable_repl_flag();
     }
   else
     {
@@ -314,13 +323,13 @@ main (int argc, char *argv[])
 		puts ("File doesn't exist.");
 		exit (EXIT_FAILURE);
 	      }
-	    repl_flag = false;
+	    disable_repl_flag();
 	    script_flag = true;
 	    looking_for_shebang = true;
 	    script_arg = optarg;
 	    break;
 	  case 'r':
-	    repl_flag = false;
+	    disable_repl_flag();
 	    break;
 	  case 'v':
 	    Fmt_print ("Easy-ISLisp Ver%1.2f\n", VERSION);

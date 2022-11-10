@@ -12,9 +12,9 @@
 #ifndef TERM_H
 #define TERM_H
 
-#include <curses.h>
+#include "compat/curses_stubs.h"
 #ifndef FULLSCREEN
-#include <term.h>
+#include "compat/term_stubs.h"
 #endif
 
 struct position {
@@ -151,6 +151,17 @@ ESCBOLD(void)
 {
     CHECK(attron, A_BOLD);
 }
+#elif defined(WITHOUT_CURSES)
+#define ESCCLSL()
+#define ESCMVLEFT(x)
+#define ESCMVU()
+#define ESCSCR()
+#define ESCFORG()
+#define ESCBCYAN()
+#define ESCBORG()
+#define ESCREV()
+#define ESCRST()
+#define ESCBOLD()
 #else
 /*
  * The REPL uses the lower-level terminfo interface because we don't want

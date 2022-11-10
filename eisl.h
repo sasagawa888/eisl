@@ -564,7 +564,11 @@ extern bool     redef_flag;
 extern bool     start_flag;
 extern bool     back_flag;
 extern bool     ignore_topchk;
+#ifdef WITHOUT_CURSES
+#define repl_flag false
+#else
 extern bool     repl_flag;
+#endif
 extern bool     option_flag;
 extern volatile sig_atomic_t exit_flag;
 extern bool     greeting_flag;

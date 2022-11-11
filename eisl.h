@@ -30,7 +30,12 @@
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
+#if defined(__TINYC__) && defined(__riscv)
+// TCC in RISC-V cannot handle a larger number
+#define COL_SIZE 51
+#else
 #define COL_SIZE 255
+#endif
 #define NUM_HISTORY 10
 #define NESTED_BLOCKS_MAX 50
 #define BIGSIZE 20000000
@@ -94,7 +99,12 @@ static const int FEND = 6;
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;
 static const int BIGNUM_WORK = BIGSIZE * 5 / 10; // from 50% to 90% of bigcell area is working area.
+// TCC does not have support for "static conts" as compile time constant
+#ifdef __TINYC__
+#define BIGNUM_PARMA  (BIGSIZE * 9 / 10)
+#else
 static const int BIGNUM_PARMA = BIGSIZE * 9 / 10; //from 90% to 100% of bigcell area is parmanent area
+#endif
 
 typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR, SYM,
     LIS, DUMMY,

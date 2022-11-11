@@ -4,9 +4,13 @@
 
 #ifndef FFI_H
 #define FFI_H
-
 #define CELLSIZE 20000000
+// TCC does not have support for "static conts" as compile time constant
+#ifdef __TINYC__
+#define NIL 0
+#else
 static const int NIL = 0;
+#endif
 static const int T = 2;
 static const int SMALL_INT_MAX = 1000000000;
 static const int SMALL_INT_MIN = -1000000000;

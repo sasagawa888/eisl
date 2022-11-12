@@ -70,11 +70,12 @@ from John allen book and Masakazu Nakanishi book
                       (sexp (val result))
                       (buffer* (rest result)))
                  (cons (list 'quote sexp) buffer*)))
-              ;; definition e.g. foo[x] = x+1
+              ;; definition e.g. foo[x] <= x+1
               ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "<=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
                       (arg (val result0))
+                      (dummy (eval (list 'defun fn arg))) ;for recursive call
                       (buffer* (rest result0))
                       (result1 (mread (cdr buffer*) stream))
                       (body (val result1))

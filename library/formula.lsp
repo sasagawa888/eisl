@@ -58,12 +58,14 @@
            ((/) '/)
            ((*) '*)
            ((^) '^)
+           ((=) '=)
            (t (if (or (subrp op) (macrop op) (funcp op))
                   op
                   (error "opecode else: " op))) ))
 
     (defun weight (op)
         (case op
+           ((=) 0)
            ((+) 1)
            ((-) 1)
            ((/) 2)
@@ -159,7 +161,7 @@
                 s)))
     
     (defun operator-p (x)
-        (or (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/) (char= x #\^)))
+        (or (char= x #\=) (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/) (char= x #\^)))
 
     (defglobal *rest-list* nil)
     

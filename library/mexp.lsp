@@ -91,7 +91,7 @@ from John allen book and Masakazu Nakanishi book
               (t (cons (infix->prefix (string->infix (car buffer))) (cdr buffer)))))
 
     (defun mread-cond (buffer stream res)
-        (cond ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
+        (cond ((null buffer) (mread-cond (tokenize (read-line stream nil "the end")) stream res))
               ((string= (car buffer) "]") (cons (cons 'cond (reverse res)) (cdr buffer)))
               ((string= (car buffer) "->") (mread (cdr buffer) stream))
               ((string= (car buffer) ";") (mread-cond (cdr buffer) stream res))

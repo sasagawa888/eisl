@@ -43,6 +43,7 @@ from John allen book and Masakazu Nakanishi book
                                      (lambda (c) (throw 'exit c))
                                      (cond ((equal s '(quit)) (setq epilog t))
                                            ((and (consp s) (eq (elt s 0) 'load)) (load* (elt s 1)))
+                                           ((and (consp s) (eq (elt s 0) 'sexp)) (sexp (elt s 1)))
                                            (t (eval s)))))))
                   (cond ((instancep res (class <error>)) 
                          (format (standard-output) "System error ~A~%" (class-of res)))
@@ -81,8 +82,9 @@ from John allen book and Masakazu Nakanishi book
                       (body (val result1))
                       (buffer** (rest result1)) )
                    (cons (list 'defun fn arg body) buffer**)))
-              ;; load["filename"], quit[]
+              ;; load["filename"], sexp["filename"], quit[]
               ((or (and (>= (length buffer) 4) (string= (car buffer) "load"))
+                   (and (>= (length buffer) 4) (string= (car buffer) "sexp"))
                    (and (>= (length buffer) 3) (string= (car buffer) "quit")))
                (let* ((result (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
@@ -280,6 +282,19 @@ from John allen book and Masakazu Nakanishi book
               (setq sexp (val (mread nil instream)))
               (eval sexp))
            (close instream))
+        t)
+
+    (defun sexp (filename)
+        (let* ((filename* (string-append (subseq filename 0 (char-index #\. filename)) ".lsp"))
+               (instream (open-input-file filename))
+               (outstream (open-output-file filename*))
+               (sexp nil))
+           (while (not (file-end-p sexp))
+              (setq sexp (val (mread nil instream)))
+              (if (not (file-end-p sexp))
+                  (format outstream "~A~%" sexp)))
+           (close instream)
+           (close outstream))
         t)
 
     (defun file-end-p (x)

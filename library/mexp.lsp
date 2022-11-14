@@ -85,6 +85,7 @@ from John allen book and Masakazu Nakanishi book
               ;; load["filename"], sexp["filename"], quit[]
               ((or (and (>= (length buffer) 4) (string= (car buffer) "load"))
                    (and (>= (length buffer) 4) (string= (car buffer) "sexp"))
+                   (and (>= (length buffer) 4) (string= (car buffer) "string-append"))
                    (and (>= (length buffer) 3) (string= (car buffer) "quit")))
                (let* ((result (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))

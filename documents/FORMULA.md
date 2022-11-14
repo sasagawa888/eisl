@@ -28,7 +28,18 @@ Thank you Dr. Shimoji.
 | (^ x y)                           | (expt x y)                                              |
 
 
+# Operator
 
+- + plus
+- - sub
+- * multiple
+- / divide
+- ^ exponent
+- = number-equal
+- > greater
+- < smaller
+- >= equal-greater
+- <= equal-smaller
 
 # Example
 

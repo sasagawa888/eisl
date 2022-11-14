@@ -161,7 +161,15 @@
                 s)))
     
     (defun operator-p (x)
-        (or (char= x #\=) (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/) (char= x #\^)))
+        (or (char= x #\=) (char= x #\+) (char= x #\-) (char= x #\*) (char= x #\/) (char= x #\^)
+            (char= x #\>) (char= x #\<)))
+
+    (defun operator2-p (x y)
+        (or (and (char= x #\<) (char= y #\=))
+            (and (char= x #\>) (char= y #\=))))
+
+    (defun char2->symbol (x y)
+        (convert (string-append (convert x <string>) (convert y <string>)) <symbol>))
 
     (defglobal *rest-list* nil)
     
@@ -206,6 +214,10 @@
                (cond ((null token) (reverse stack))
                      (t (reverse (cons (convert-token token) stack)))))
               ((char= (car x) #\space) (parse1 (cdr x) token stack))
+              ((and (>= (length x) 2) (operator2-p (car x) (cadr x)))
+               (cond ((null token)
+                      (parse1 (cddr x) nil (cons (char2->symbol (car x) (cadr x)) stack)))
+                     (t (parse1 (cddr x) nil (cons (char2->symbol (car x) (cadr x)) (cons (convert-token token) stack))))))
               ((operator-p (car x))
                (cond ((null token)
                       (parse1 (cdr x) nil (cons (convert (car x) <symbol>) stack)))

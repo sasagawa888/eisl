@@ -71,7 +71,7 @@ from John allen book and Masakazu Nakanishi book
                       (buffer* (rest result)))
                  (cons (list 'quote sexp) buffer*)))
               ;; definition e.g. foo[x] <= x+1
-              ((and (> (length buffer) 1) (string= (cadr buffer) "[") (member "<=" buffer))
+              ((and (>= (length buffer) 5) (string= (cadr buffer) "[") (member "<=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
                       (arg (val result0))
@@ -81,14 +81,45 @@ from John allen book and Masakazu Nakanishi book
                       (body (val result1))
                       (buffer** (rest result1)) )
                    (cons (list 'defun fn arg body) buffer**)))
-              ;; function e.g. sin[x]
-              ((and (> (length buffer) 1) (string= (cadr buffer) "["))
-               (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
+              ;; load["filename"], quit[]
+              ((or (and (>= (length buffer) 4) (string= (car buffer) "load"))
+                   (and (>= (length buffer) 3) (string= (car buffer) "quit")))
+               (let* ((result (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
-                      (arg (val result0))
-                      (buffer* (rest result0)) )
-                   (cons (cons fn arg) buffer*)))
-              (t (cons (infix->prefix (string->infix (car buffer))) (cdr buffer)))))
+                      (arg (val result))
+                      (buffer* (rest result)))
+                    (cons (cons fn arg) buffer*)))
+              ;; formula e.g. sin[x]+cos[x]
+              (t (let* ((result (mread-formula buffer stream ""))
+                        (formula (val result))
+                        (buffer* (rest result)))
+                    (cons (infix->prefix (string->infix formula)) buffer*)))))
+
+    ;; e.g. ("foo" "[" "2" ";" "4" "]" "+bar" "[" "3" "]" "->") 
+    ;;   -> "foo(2,4)+bar(3)"  rest=("->") 
+    (defun mread-formula (buffer stream res)
+        (cond ((null buffer) (cons res buffer))
+              ((string= (car buffer) "->") (cons res buffer))
+              ((string= (car buffer) ";") (cons res buffer))
+              ((string= (car buffer) "]") (cons res buffer))
+              ((string= (car buffer) "[") (let* ((result (mread-formula1 (cdr buffer) stream "("))
+                                                 (arg (val result))
+                                                 (buffer* (rest result)))
+                                            (mread-formula buffer* stream (string-append res arg))))
+              (t (mread-formula (cdr buffer) stream (string-append res (car buffer))))))
+    
+    ;; e.g. ("2" ";" "4" "]" "+bar" "[" "3" "]" "->")
+    ;;   -> "(2.4)" rest= ("+bar" "[" "3" "]" "->")
+    (defun mread-formula1 (buffer stream res)
+        (cond ((null buffer) (mread-formula1 (tokenize (read-line stream nil "the end")) stream))
+              ((string= (car buffer) "]") (cons (string-append res ")") (cdr buffer)))
+              ((string= (car buffer) ";") (mread-formula1 (cdr buffer) stream (string-append res ",")))
+              ((string= (car buffer) "[") (let* ((result (mread-formula1 (cdr buffer) stream "("))
+                                                 (arg (val result))
+                                                 (buffer* (rest result)))
+                                            (mread-formula1 buffer* stream (string-append res arg))))
+              (t (mread-formula1 (cdr buffer) stream (string-append res (car buffer))))))
+
 
     (defun mread-cond (buffer stream res)
         (cond ((null buffer) (mread-cond (tokenize (read-line stream nil "the end")) stream res))
@@ -256,13 +287,3 @@ from John allen book and Masakazu Nakanishi book
 
 )
 
-
-;; old fashion 
-(defun plus (x y)
-    (+ x y))
-
-(defun minus (x y)
-    (- x y))
-
-(defun times (x y)
-    (* x y))

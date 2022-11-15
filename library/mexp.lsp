@@ -111,8 +111,12 @@ from John allen book and Masakazu Nakanishi book
                  (not (member (car buffer) 
                       '("+" "-" "*" "/" "^" "=" "<" ">" "<=" ">=" "sin" "cos" "tan" "acos" "atan"))))
             (and (= (length buffer) 3)
-                    (string= (cadr buffer) "[")
-                    (string= (car buffer) "quit")))) 
+                 (string= (cadr buffer) "[")
+                 (string= (car buffer) "quit"))
+            (and (= (length buffer) 4)
+                 (string= (cadr buffer) "[")
+                 (string= (car buffer) "sexp"))))
+                
 
     ;; e.g. ("foo" "[" "2" ";" "4" "]" "+bar" "[" "3" "]" "->") 
     ;;   -> "foo(2,4)+bar(3)"  rest=("->") 

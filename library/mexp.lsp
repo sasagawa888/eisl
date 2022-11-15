@@ -61,16 +61,17 @@ from John allen book and Masakazu Nakanishi book
               ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ;; comment line
               ((string= (car buffer) ";") (mread (tokenize (read-line stream nil "the end")) stream))
-              ;; string
-              ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    
               ((string= (car buffer) "[") (mread-cond (cdr buffer) stream nil))
-              ;; S-expression
+              ;; S-expression ()
               ((string= (car buffer) "(")
                (let* ((result (sread (cdr buffer) stream nil))
                       (sexp (val result))
                       (buffer* (rest result)))
                  (cons (list 'quote sexp) buffer*)))
+              ;; S-expression symbol A -> 'A
+              ((sexp-symbol-p (car buffer))
+               (cons (list 'quote (make-symbol (car buffer))) (cdr buffer)))
               ;; definition e.g. foo[x] <= x+1
               ((and (>= (length buffer) 5) (string= (cadr buffer) "[") (member "<=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
@@ -82,11 +83,8 @@ from John allen book and Masakazu Nakanishi book
                       (body (val result1))
                       (buffer** (rest result1)) )
                    (cons (list 'defun fn arg body) buffer**)))
-              ;; load["filename"], sexp["filename"], quit[]
-              ((or (and (>= (length buffer) 4) (string= (car buffer) "load"))
-                   (and (>= (length buffer) 4) (string= (car buffer) "sexp"))
-                   (and (>= (length buffer) 4) (string= (car buffer) "string-append"))
-                   (and (>= (length buffer) 3) (string= (car buffer) "quit")))
+              ;; non formula function e.g. load["filename"], sexp["filename"], quit[]
+              ((non-formula-p buffer)
                (let* ((result (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
                       (arg (val result))
@@ -97,6 +95,21 @@ from John allen book and Masakazu Nakanishi book
                         (formula (val result))
                         (buffer* (rest result)))
                     (cons (infix->prefix (string->infix formula)) buffer*)))))
+
+    (defun sexp-symbol-p (x)
+        (let ((char (elt x 0)))
+            (and (char>= char #\A)
+                 (char<= char #\Z))))
+
+
+    (defun non-formula-p (buffer)
+        (or (and (>= (length buffer) 4)
+                 (string= (cadr buffer) "[")
+                 (not (member (car buffer) 
+                      '("+" "-" "*" "/" "^" "=" "<" ">" "<=" ">=" "sin" "cos" "tan" "asin" "acos" "atan"))))
+            (and (= (length buffer) 3)
+                    (string= (cadr buffer) "[")
+                    (string= (car buffer) "quit")))) 
 
     ;; e.g. ("foo" "[" "2" ";" "4" "]" "+bar" "[" "3" "]" "->") 
     ;;   -> "foo(2,4)+bar(3)"  rest=("->") 

@@ -61,9 +61,11 @@ from John allen book and Masakazu Nakanishi book
               ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ;; comment line
               ((string= (car buffer) ";") (mread (tokenize (read-line stream nil "the end")) stream))
+              ;; string
+              ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    
               ((string= (car buffer) "[") (mread-cond (cdr buffer) stream nil))
-              ;; S-expression ()
+              ;; S-expression
               ((string= (car buffer) "(")
                (let* ((result (sread (cdr buffer) stream nil))
                       (sexp (val result))
@@ -83,7 +85,7 @@ from John allen book and Masakazu Nakanishi book
                       (body (val result1))
                       (buffer** (rest result1)) )
                    (cons (list 'defun fn arg body) buffer**)))
-              ;; non formula function e.g. load["filename"], sexp["filename"], quit[]
+              ;; load["filename"], sexp["filename"], quit[]
               ((non-formula-p buffer)
                (let* ((result (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
@@ -105,8 +107,8 @@ from John allen book and Masakazu Nakanishi book
     (defun non-formula-p (buffer)
         (or (and (>= (length buffer) 4)
                  (string= (cadr buffer) "[")
-                 (not (member (car buffer) 
-                      '("+" "-" "*" "/" "^" "=" "<" ">" "<=" ">=" "sin" "cos" "tan" "asin" "acos" "atan"))))
+                 (member (car buffer) 
+                      '("load" "sexp" "string-append" "cons" "car" "cdr")))
             (and (= (length buffer) 3)
                     (string= (cadr buffer) "[")
                     (string= (car buffer) "quit")))) 
@@ -315,4 +317,3 @@ from John allen book and Masakazu Nakanishi book
         (and (stringp x) (string= x "the end")))
 
 )
-

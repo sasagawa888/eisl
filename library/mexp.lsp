@@ -39,12 +39,12 @@ from John allen book and Masakazu Nakanishi book
             (format (standard-output) "M> ")
             (let ((s (val (mread nil (standard-input)))))
                (let ((res (catch 'exit
-                                 (with-handler 
-                                     (lambda (c) (throw 'exit c))
+                                 ;(with-handler 
+                                 ;    (lambda (c) (throw 'exit c))
                                      (cond ((equal s '(quit)) (setq epilog t))
                                            ((and (consp s) (eq (elt s 0) 'load)) (load* (elt s 1)))
                                            ((and (consp s) (eq (elt s 0) 'sexp)) (sexp (elt s 1)))
-                                           (t (eval s)))))))
+                                           (t (eval s))))))
                   (cond ((instancep res (class <error>)) 
                          (format (standard-output) "System error ~A~%" (class-of res)))
                         ((not (eq res 'error)) (print res)))) )))
@@ -134,7 +134,7 @@ from John allen book and Masakazu Nakanishi book
     ;; e.g. ("2" ";" "4" "]" "+bar" "[" "3" "]" "->")
     ;;   -> "(2.4)" rest= ("+bar" "[" "3" "]" "->")
     (defun mread-formula1 (buffer stream res)
-        (cond ((null buffer) (mread-formula1 (tokenize (read-line stream nil "the end")) stream))
+        (cond ((null buffer) (mread-formula1 (tokenize (read-line stream nil "the end")) stream res))
               ((string= (car buffer) "]") (cons (string-append res ")") (cdr buffer)))
               ((string= (car buffer) ";") (mread-formula1 (cdr buffer) stream (string-append res ",")))
               ((string= (car buffer) "[") (let* ((result (mread-formula1 (cdr buffer) stream "("))

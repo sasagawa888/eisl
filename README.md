@@ -250,6 +250,8 @@ EISL <==================================> C
 
 | Function              | Description                                    |
 | --------------------- | ---------------------------------------------- |
+| (atom x)              | is x not cons? return T or NIL                 |
+| (eval x)              | evaluate s-expression x                        |
 | (random n)            | random-integer from 0 to n                     |
 | (random-real)         | random-float-number from 0 to 1                |
 | (set-random n)        | set random seed to non-negative number n       |

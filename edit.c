@@ -32,7 +32,7 @@ f_edit (int arglist)
     {
       if ((ed = getenv ("EDITOR")) == NULL)
 	{
-	  ed = "./edlis";
+	  ed = "edlis";
 	}
     }
   char *str = Str_catv (ed, 1, 0, " ", 1, 0, GET_NAME (arg1), 1, 0, NULL);

@@ -42,7 +42,7 @@ DNA is pair of a DNA e.g. ("TTGCGAT" "AACGCTA")
 
 ;; generate Amino acid from mRNA
 (defpattern ribosome
-    ((empty-list) nil)
+    ((empty) nil)
     ;;AUG is start-poinrt AUG is also met amino, distinguish them with _sw(nil,t)
     (((#\A #\U #\G :rest _x) nil) (ribosome _x t))
     ;;UAA and UAG are end-point

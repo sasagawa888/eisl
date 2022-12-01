@@ -7,6 +7,11 @@ e.g.
 > (decode "... --- ... ")
 "SOS"
 > 
+> (encode "I love you")
+"..  .-.. --- ...- .  -.-- --- ..- "
+> (decode "..  .-.. --- ...- .  -.-- --- ..- ")
+"I LOVE YOU"
+> 
 |#
 
 
@@ -63,7 +68,8 @@ e.g.
        ((#\9) "----. ")
        ((#\.) ".-.-.- ")
        ((#\,) "--..-- ")
-       ((#\?) "..--.. ") ) )
+       ((#\?) "..--.. ")
+       ((#\space) " " ) ))
 
 
 (defun capitalize (ls)
@@ -81,6 +87,7 @@ e.g.
 
 (defpattern morse->list (x)
        ((empty) nil)
+       (((#\space :rest _y)) (cons #\space (morse->list _y)))
        (((#\. #\-  #\space :rest _y)) (cons #\A (morse->list _y)))
        (((#\- #\. #\. #\.  #\space :rest _y)) (cons #\B (morse->list _y)))
        (((#\- #\. #\- #\.  #\space :rest _y)) (cons #\C (morse->list _y)))

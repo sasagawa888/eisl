@@ -16,6 +16,8 @@
      ((call gcd1)
       (print z))))
 
+(defun compile (x) (parse x nil))
+
 (defpattern parse
     (((program _x :rest _y) _type) `(defmodule ,_x ,@(parse-program _y _type))))
 

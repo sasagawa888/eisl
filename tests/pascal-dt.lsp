@@ -1,12 +1,13 @@
-;; data for pascal instant compiler
-(program gcd
-    ((const (x = 10)(y = 45))
-     (var z)
-     (procedure gcd1
-        ((var a b)
-         (a := x) (b := y)
-         (while (a /= b) do
-            (if (a < b) then (b := (b - a)))
-            (if (b > a) then (a := (a - b))))
-         (z := a)))
-     (call gcd1)))
+(DEFMODULE GCD
+           (DEFCONSTANT X 10)
+           (DEFCONSTANT Y 45)
+           (DEFGLOBAL Z NIL)
+           (DEFUN GCD1
+                  NIL
+                  (LET ((A NIL) (B NIL))
+                       (SETQ A X)
+                       (SETQ B Y)
+                       (WHILE (/= A B) (IF (< A B) (SETQ B (- B A)) (SETQ A (- A B))))
+                       (SETQ Z A)))
+           (GCD1)
+           (FORMAT (STANDARD-OUTPUT) "~A" Z))

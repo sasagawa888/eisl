@@ -19,21 +19,29 @@ factor = ident | number | "(" expression ")".
 
 (import "elixir")
 (import "formula")
+(import "formatter")
 
-(defglobal dt 
- '(program gcd
-     (const (x = 10)(y = 45))
-     (var z)
-     (procedure gcd1 
-        ((var a b)
-         (a := x) (b := y)
-         (while (a /= b) do
-            ((if (a < b) then (b := (b - a)) else (a := (a - b)))))
-         (z := a)))
-     ((call gcd1)
-      (write z))))
+(defun compile-file (filename)
+        (let* ((filename* (string-append (subseq filename 0 (char-index #\. filename)) ".lsp"))
+               (instream (open-input-file filename))
+               (outstream (open-output-file filename*))
+               (sexp nil))
+           (while (not (file-end-p sexp))
+              (setq sexp (compile (read instream nil "the end")))
+              (if (not (file-end-p sexp))
+                  (format outstream "~A~%" sexp)))
+           (close instream)
+           (close outstream)
+           (formatter filename*))
+        t)
 
-(defun compile (x) (comp x))
+(defun file-end-p (x)
+        (and (stringp x) (string= x "the end")))
+
+(defun compile (x) 
+    (if (file-end-p x)
+        x
+        (comp x)))
 
 (defpattern comp
     (((program _x :rest _y)) `(defmodule ,_x ,@(comp-block _y))))
@@ -66,7 +74,7 @@ factor = ident | number | "(" expression ")".
 (defpattern comp-statement
     ((empty) nil)
     ((((_x := _y) :rest _r)) (cons `(setq ,_x ,(infix->prefix _y)) (comp-statement _r)))
-    ((((while _x do _y) :rest _r)) (cons `(while ,(infix->prefix _x) ,@(comp-statement _y))
+    ((((while _x do _y) :rest _r)) (cons `(while ,(infix->prefix _x) ,@(comp-statement (list _y)))
                                                 (comp-statement _r)))
     ((((if _x then _y else _z) :rest _r)) (cons `(if ,(infix->prefix _x) 
                                                            ,@(comp-statement (list _y))

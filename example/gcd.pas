@@ -1,4 +1,4 @@
-;; data for pascal instant compiler
+;; data for PL/0 instant compiler
 (program gcd
      (const (x = 10)(y = 45))
      (var z)

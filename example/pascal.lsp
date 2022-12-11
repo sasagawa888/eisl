@@ -15,6 +15,12 @@ condition = "odd" expression |
 expression = [ "+"|"-"] term { ("+"|"-") term}.
 term = factor {("*"|"/") factor}.
 factor = ident | number | "(" expression ")".
+
+usage 
+e.g.
+(compile-file "example/gcd.pas")
+
+Compiler generates exmaple/gcd.lsp
 |# 
 
 (import "elixir")

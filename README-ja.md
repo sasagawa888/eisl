@@ -77,6 +77,10 @@ List of options:
 
 -rオプションで起動した場合には(quit)あるいはCTRL+Dで処理系が終了します。
 
+# 入門記事
+M HiroiさんがISLispの入門記事を公開なさっています。
+http://www.nct9.ne.jp/m_hiroi/clisp/islisp.html
+
 ## 対話状態での編集機能
 
 キー束縛は次の通りです。

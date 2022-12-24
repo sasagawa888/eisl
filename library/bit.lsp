@@ -23,7 +23,7 @@
 ;;bit test
 (defun logbitp (n m)
   (if (>= n 0)
-      (c-lang "int x; x = (INT_MASK & M) << (INT_MASK & N);
+      (c-lang "int x; x = (INT_MASK & M) >> (INT_MASK & N);
                if(x % 2 == 1) res = T; else res = NIL;")
       (error "logbitp: not positive" n)))
 

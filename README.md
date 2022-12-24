@@ -103,7 +103,7 @@ In the REPL type (quit) or Esc+Q.
 In the non-editable REPL type (quit) or CTRL+D.
 
 # Introductory article
-M Hiroi has published introductory articles about ISLisp. It's written in plain Japanese, so you can easily translate it into your native language with google translator. http://www.nct9.ne.jp/m_hiroi/clisp/islisp.html
+Mr. Hiroi has published introductory articles about ISLisp. It's written in plain Japanese, so you can easily translate it into your native language with google translator. http://www.nct9.ne.jp/m_hiroi/clisp/islisp.html
 
 # Editable REPL
 

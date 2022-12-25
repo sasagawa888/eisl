@@ -2,15 +2,18 @@
 
 # read function
 ## example
+
+```
 (defglobal str (create-string-input-stream "hello #(1 2 3) 123 #\\A"))⇒str
 (read str)⇒hello
 (read str)⇒#(1 2 3)
 (read str)⇒123
 (read str)⇒#\A
 (read str nil "the end")⇒"the end"
-
+```
 
 ## format functions
+```
 (format output-stream format-string obj*)
 (format-char output-stream char)
 (format-float output-stream float)
@@ -18,8 +21,9 @@
 (format-integer output-stream integer radix)
 (format-object output-stream obj escape-p)
 (format-tab output-stream column)
-
+```
 ### obj*
+```
 ~A Aesthetic: 
 ~B Binary:
 ~C Character:
@@ -33,8 +37,10 @@
 ~% newline:
 ~& conditional newline:
 ~~ tilde:
+```
 
 ### Examples
+```
 (format output-stream "No result")⇒nilOutput is:No result
 (format output-stream "The result is ~A and nothing else." "meningitis")⇒nilOutput is:The result is meningitis and nothing else.
 (format output-stream "The result i~C" #\s)⇒nilOutput is:The result is
@@ -46,9 +52,10 @@
 (format output-stream "~A ~10T~D ~20T~D" "Grummy" 23000 7500))⇒nilOutput is:Name      income    taxGrummy    23000     7500
 (format output-stream "This will be split into~%two lines.")⇒nilOutput is:This will be split intotwo lines.
 (format output-stream "This is a tilde: ~~")⇒nilOutput is:This is a tilde: ~
-
+```
 
 # defclass
+```
 (defclassclass-name(sc-name*)(slot-spec*)class-opt*)→<symbol>defining operator
 
 Where:class-name::=identifier
@@ -62,3 +69,4 @@ slot-opt::=:readerreader-function-name|:writerwriter-function-name|
 initarg-nameinitarg-name::=identifierreader-function-name::=identifierwriter-function-name::=identifierboundp-function-name::=identifierclass-opt::=(:metaclassclass-name)|
 (:abstractpabstract-flag)abstract-flag::=t|
 nil
+```

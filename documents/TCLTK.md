@@ -12,11 +12,10 @@ Under construction.
 
 *macOS*: `brew install tcl-tk`
 
-## Compile
+## Install
 
 ```
-eisl -c
-(compile-file "library/tcltk.lsp")
+sudo make install
 ```
 
 ## Import

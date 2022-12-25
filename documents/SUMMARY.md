@@ -1,5 +1,12 @@
 # Summary of ISLisp standard 
 
+# convert function
+
+```
+(convert obj class)
+```
+![convert](summary1.png)
+
 # read function
 ## example
 
@@ -70,3 +77,9 @@ initarg-nameinitarg-name::=identifierreader-function-name::=identifierwriter-fun
 (:abstractpabstract-flag)abstract-flag::=t|
 nil
 ```
+
+# Predefined class
+
+![class](summary2.png)
+
+![hierarchy](summary3.png)

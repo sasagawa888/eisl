@@ -1,5 +1,15 @@
 # Summary of ISLisp standard 
 
+# read function
+## example
+(defglobal str (create-string-input-stream "hello #(1 2 3) 123 #\\A"))⇒str
+(read str)⇒hello
+(read str)⇒#(1 2 3)
+(read str)⇒123
+(read str)⇒#\A
+(read str nil "the end")⇒"the end"
+
+
 ## format functions
 (format output-stream format-string obj*)
 (format-char output-stream char)
@@ -36,3 +46,19 @@
 (format output-stream "~A ~10T~D ~20T~D" "Grummy" 23000 7500))⇒nilOutput is:Name      income    taxGrummy    23000     7500
 (format output-stream "This will be split into~%two lines.")⇒nilOutput is:This will be split intotwo lines.
 (format output-stream "This is a tilde: ~~")⇒nilOutput is:This is a tilde: ~
+
+
+# defclass
+(defclassclass-name(sc-name*)(slot-spec*)class-opt*)→<symbol>defining operator
+
+Where:class-name::=identifier
+sc-name::=identifier
+slot-spec::=slot-name|(slot-name slot-opt*)
+slot-name::=identifier
+slot-opt::=:readerreader-function-name|:writerwriter-function-name|
+:accessorreader-function-name|
+:boundp boundp-function-name|
+:initformform|:initarg
+initarg-nameinitarg-name::=identifierreader-function-name::=identifierwriter-function-name::=identifierboundp-function-name::=identifierclass-opt::=(:metaclassclass-name)|
+(:abstractpabstract-flag)abstract-flag::=t|
+nil

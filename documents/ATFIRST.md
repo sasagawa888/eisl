@@ -42,6 +42,8 @@ If you modify or improve the library, please do the above make again.
 ## Library
 ![bit](BIT.md)
 
+![combination](COMBINATION.md)
+
 ![compiler](COMPILER.md)
 
 ![complex](COMPLEX.md)

@@ -12,7 +12,7 @@
 (read str nil "the end")⇒"the end"
 ```
 
-## format functions
+# format functions
 ```
 (format output-stream format-string obj*)
 (format-char output-stream char)

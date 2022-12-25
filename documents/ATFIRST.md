@@ -40,12 +40,42 @@ If you modify or improve the library, please do the above make again.
 # Documents
 
 ## Library
-![bit](bit.md)
+![bit](BIT.md)
 
-![compiler](compiler.md)
+![compiler](COMPILER.md)
 
-![csv](csv.md)
+![csv](CSV.md)
 
-![formatter](formatter.md)
+![elixir](ELIXIR.md)
 
-![formuta](formula.md)
+![escape](ESCAPE.md)
+
+![formatter](FORMATTER.md)
+
+![formula](FORMULA.md)
+
+![functions](FUNCTIONS.md)
+
+![functionsJ](FUNCTIONSJ.md)
+
+![lazy](LAZY.md)
+
+![list](LIST.md)
+
+![math](MATH.md)
+
+![macro](MACRO.md)
+
+![mexp](MEXP.md)
+
+![opengl](OPENGL.md)
+
+![prolog](PROLOG.md)
+
+![tcltk](TCLTK.md)
+
+![tcpip](TCPIP.md)
+
+![unixlibs](UNIXLIBS.md)
+
+# Debug

@@ -4,13 +4,6 @@ ansi escape sequence library.
 A library for cursor control in the terminal. I made it to make a CUI editor. Since it uses a C wrapper, please compile it. Cursor index (1,1) means at the top left of the screen. 
 
 # usage
-compile 
-
-```
-eisl -c
-
-> compile-file("library/escape.lsp)
-```
 
 (import "escape")
 

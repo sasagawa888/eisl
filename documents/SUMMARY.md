@@ -61,6 +61,26 @@
 (format output-stream "This is a tilde: ~~")⇒nilOutput is:This is a tilde: ~
 ```
 
+
+# setf
+```
+variables var
+dynamic bindings(dynamicvar)
+the components of a basic-array(arefbasic-array z1...zn)
+the components of a general array(garefgeneral-array z1...zn)
+the components of a list(eltlist z)the components of a vector(eltbasic-vector z)
+the left component of a cons(carcons)the right component of a cons(cdrcons)
+a property of a symbol(propertysymbol property)
+a slot of an instance of a class(reader-function-name instance)
+```
+
+# Arguments different from common lisp
+```
+(set-car obj cons)
+(set-cdr obj cons)
+(set-propertyobj symbol property-name)
+```
+
 # defclass
 ```
 (defclassclass-name(sc-name*)(slot-spec*)class-opt*)→<symbol>defining operator

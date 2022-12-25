@@ -41,7 +41,11 @@ If you modify or improve the library, please do the above make again.
 
 ## Library
 ![bit](bit.md)
+
 ![compiler](compiler.md)
+
 ![csv](csv.md)
+
 ![formatter](formatter.md)
+
 ![formuta](formula.md)

@@ -99,6 +99,8 @@ If you modify or improve the library, please do the above make again.
 
 # Extension
 
+![module](MODULE.md)
+
 ![unicode](UNICODE.md)
 
 ![ctrlchar](CTRLCHAR.md)

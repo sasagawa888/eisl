@@ -3692,7 +3692,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~A", arg2);
 		}
 	      f_format_object (list3 (arg1, car (args), NIL));
 	      args = cdr (args);
@@ -3702,7 +3702,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~B", arg2);
 		}
 	      f_format_integer (list3 (arg1, car (args), makeint (2)));
 	      args = cdr (args);
@@ -3712,7 +3712,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~C", arg2);
 		}
 	      f_format_char (list2 (arg1, car (args)));
 	      args = cdr (args);
@@ -3722,7 +3722,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~D", arg2);
 		}
 	      f_format_integer (list3 (arg1, car (args), makeint (10)));
 	      args = cdr (args);
@@ -3732,7 +3732,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~G", arg2);
 		}
 	      f_format_float (list2 (arg1, car (args)));
 	      args = cdr (args);
@@ -3742,7 +3742,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~O", arg2);
 		}
 	      f_format_integer (list3 (arg1, car (args), makeint (8)));
 	      args = cdr (args);
@@ -3752,7 +3752,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~S", arg2);
 		}
 	      f_format_object (list3 (arg1, car (args), T));
 	      args = cdr (args);
@@ -3762,7 +3762,7 @@ f_format (int arglist)
 	      if (nullp (args))
 		{
 		  output_stream = save;
-		  error (IMPROPER_ARGS, "format ", arg2);
+		  error (IMPROPER_ARGS, "format ~X", arg2);
 		}
 	      f_format_integer (list3 (arg1, car (args), makeint (16)));
 	      args = cdr (args);
@@ -3781,18 +3781,13 @@ f_format (int arglist)
 		  if (nullp (args))
 		    {
 		      output_stream = save;
-		      error (IMPROPER_ARGS, "format ", arg2);
+		      error (IMPROPER_ARGS, "format ~nR", arg2);
 		    }
 		  f_format_integer (list3 (arg1, car (args), makeint (n)));
 		  args = cdr (args);
 		}
 	      else if (c == 'T')
 		{
-		  if (nullp (args))
-		    {
-		      output_stream = save;
-		      error (IMPROPER_ARGS, "format ", arg2);
-		    }
 		  f_format_tab (list2 (arg1, makeint (n)));
 		}
 	      else
@@ -3988,15 +3983,6 @@ f_format_fresh_line (int arglist)
       save = output_stream;
       output_stream = arg1;
       // output newline char if it cannot be determinned that the output 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
       // stream is at the begining of a fresh line
       if (GET_OPT (output_stream) == EISL_OUTSTR
 	  && strlen (GET_NAME (output_stream)) == 0)

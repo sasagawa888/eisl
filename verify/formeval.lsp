@@ -95,9 +95,9 @@
 ($error (function undef-func) <undefined-function>)
 ;;; The consequences are undefined if the function-name names 
 ;;; a macro or special form
-;($error (function if) <undefined-function>) ;; special form
+($error (function if) <undefined-function>) ;; special form
 ($eval (defmacro my-macro (x) `(car ,x)))
-;($error (function my-macro) <undefined-function>) ;; macro
+($error (function my-macro) <undefined-function>) ;; macro
 
 
 ;;;------------------------------------------------------------

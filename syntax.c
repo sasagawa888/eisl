@@ -784,6 +784,10 @@ f_function (int arglist)
       res = findenv (arg1);
       if (IS_FUNC (res))
 	return (res);
+      else if (IS_FSUBR (GET_CAR (arg1)))
+  error (UNDEF_FUN, "function", arg1);
+      else if (macrop (arg1))
+  error (UNDEF_FUN, "function", arg1);
       else if (GET_CAR (arg1) != NIL)
 	return (GET_CAR (arg1));
       else

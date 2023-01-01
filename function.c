@@ -2499,6 +2499,7 @@ f_load (int arglist)
   if (GET_PORT (input_stream) == NULL)
     {
       input_stream = save1;
+      restore_repl_flag(save2);
       error (CANT_OPEN, "load", arg1);
     }
   open_flag = true;

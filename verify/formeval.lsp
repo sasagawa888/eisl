@@ -309,9 +309,9 @@
 ;;; function (domain-error)
 ($type apply ($function $generic) :target 1 (quote (2 3)))
 ;;; list (improper-arglist)
-;($error (apply #'list '(1 . 2)) <program-error>)
-;($error (apply #'list 1 '(2 . 3)) <program-error>)
-;($error (apply #'list 1 2 '(3 . 4)) <program-error>)
+($error (apply #'list '(1 . 2)) <program-error>)
+($error (apply #'list 1 '(2 . 3)) <program-error>)
+($error (apply #'list 1 2 '(3 . 4)) <program-error>)
 ;;;
 ($test (apply #'list '(1 2)) (1 2) equal)
 ($test (apply #'list 1 '(2 3)) (1 2 3) equal)

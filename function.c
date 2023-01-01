@@ -2734,8 +2734,11 @@ f_apply (int arglist)
 int
 bind_args (int x)
 {
-  if (nullp (cdr (x)))
+  if (nullp (cdr (x))){
+    if (improper_list_p (car (x)))
+      error(ILLEGAL_ARGS, "apply", car (x));
     return (car (x));
+  }
   else
     return (cons (car (x), bind_args (cdr (x))));
 }

@@ -775,7 +775,7 @@ f_function (int arglist)
   if (length (arglist) != 1)
     error (WRONG_ARGS, "function", arglist);
   if (improper_list_p (arglist))
-    error (ILLEGAL_ARGS, "function", arglist);
+    error (ILLEGAL_FORM, "function", arglist);
 
   if (symbolp (arg1))
     {

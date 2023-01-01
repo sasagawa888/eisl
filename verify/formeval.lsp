@@ -82,7 +82,7 @@
 ($test (apply (function -) '(4 3)) 1 equal)
 ($test (apply #'- '(4 3)) 1 equal)
 ;;; dot-list
-;($error (function + . 1) <error>)
+($error (function + . 1) <error>)
 ;;; function-name 
 ($error (function #2a((a b) (c d))) <domain-error>)
 ($error (function #\a) <domain-error>)
@@ -95,11 +95,10 @@
 ($error (function undef-func) <undefined-function>)
 ;;; The consequences are undefined if the function-name names 
 ;;; a macro or special form
-#|
 ;($error (function if) <undefined-function>) ;; special form
 ($eval (defmacro my-macro (x) `(car ,x)))
 ;($error (function my-macro) <undefined-function>) ;; macro
-|#
+
 
 ;;;------------------------------------------------------------
 ;;; [special operator] 

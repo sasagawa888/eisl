@@ -234,14 +234,14 @@ c")))
    (format s "You ~X ~X" 2989 64206)
    (get-output-stream-string s))
  "You BAD FACE" equal)
-#|
+
 ($test (let ((s (create-string-output-stream)))
    (format s "~&Name ~10Tincome ~20Ttax~&")
    (format s "~A ~10T~D ~20T~D" "Grummy" 23000 7500)
    (get-output-stream-string s))
  "Name      income    tax
 Grummy    23000     7500" equal)
-|#
+
 ($test (let ((s (create-string-output-stream)))
    (format s "This will be split into~%two lines.")
    (get-output-stream-string s))

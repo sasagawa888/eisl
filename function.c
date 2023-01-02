@@ -5274,5 +5274,5 @@ f_continue_condition (int arglist)
   if (GET_OPT (arg1) == CONTINUABLE)
     return (arg2);
   else
-    return (arg1);
+    error (ILLEGAL_FORM, "continue-condition", arg1);
 }

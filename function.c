@@ -2541,7 +2541,9 @@ f_load (int arglist)
       if (sexp == FEND)
 	break;
       top_flag = true;
+      restore_repl_flag(save2);
       eval (sexp);
+      save2 = save_repl_flag();
     }
 cleanup:
   open_flag = false;

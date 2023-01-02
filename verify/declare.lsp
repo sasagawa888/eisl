@@ -160,9 +160,18 @@
 ($error (convert () <integer>) <domain-error>)
 ($error (convert () <float>) <domain-error>)
 ;;; 
-;;; ??? why sasagawa888 error?
-;($error (convert () <symbol>) <domain-error>)
-;($error (convert () <string>) <domain-error>)
+#| 
+??? why sasagawa888 error?
+() is nil in processing system. system can't distinguish () and nil.
+(convert nil <string>)
+(convert () <string>)
+In OKI-ISLisp above two expression return "NIL"
+
+(convert () <symbol>)
+In OKI-ISLisp above expression returns ()
+|#
+;($error (convert () <symbol>) <domain-error>) ???
+;($error (convert () <string>) <domain-error>) ???
 ($test (convert () <symbol>) nil)
 ($test (convert () <string>) "NIL" string=)
 ;;;
@@ -176,3 +185,4 @@
 ($error (convert '(a b c) <string>) <domain-error>)
 ($test (convert '(a b c) <general-vector>) #(a b c) equal)
 ($test (convert '(a b c) <list>) (a b c) equal)
+

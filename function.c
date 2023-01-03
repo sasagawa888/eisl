@@ -2390,7 +2390,7 @@ f_read_line (int arglist)
   arg3 = caddr (arglist);
   if ((n = length (arglist)) > 3)
     error (WRONG_ARGS, "read-line", arglist);
-  if (n > 0 && !input_stream_p (arg1))
+  if (n > 0 && !text_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-line", arg1);
 
   save1 = save_repl_flag();

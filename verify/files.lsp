@@ -43,12 +43,10 @@
 ($eval (close str))
 ;;; byte-stream
 ($eval (tp-make-tmp-file))
-#| 
 ($error 
  (with-open-io-file (byte-stream *tp-example-file* 8)
 		    (write-byte 100 byte-stream)
 		    (read-line byte-stream)) <domain-error>)
-|#
 ($eval (tp-make-tmp-file))
 ($test (with-open-output-file (out *tp-example-file*)
 			(format out "This is an example"))

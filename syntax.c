@@ -2015,13 +2015,13 @@ f_with_open_input_file (int arglist)
 
   if (nullp (arglist) || atomp (arglist))
     error (NOT_EXIST_ARG, "with-open-input-file", NIL);
-  if (length (arglist) < 2)
-    error (IMPROPER_ARGS, "with-open-input-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
   sym = car (arg1);		// stream-name
   str = eval (cadr (arg1));	// file-name
   n = length (arg1); // check element
+  if (!(listp(arg1) && (n == 2 || n == 3)))
+    error (ILLEGAL_FORM, "with-input-file", arg1);
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-input-file", sym);
   if (!stringp (str))
@@ -2056,13 +2056,13 @@ f_with_open_output_file (int arglist)
 
   if (nullp (arglist) || atomp (arglist))
     error (NOT_EXIST_ARG, "with-open-output-file", NIL);
-  if (length (arglist) < 2)
-    error (IMPROPER_ARGS, "with-open-output-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
   sym = car (arg1);		// stream-name
   str = eval (cadr (arg1));	// file-name
   n = length (arg1); // check element
+  if (!(listp(arg1) && (n == 2 || n == 3)))
+    error (ILLEGAL_FORM, "with-open-output-file", arg1);
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-output-file", sym);
   if (!stringp (str))
@@ -2097,13 +2097,13 @@ f_with_open_io_file (int arglist)
 
   if (nullp (arglist) || atomp (arglist))
     error (NOT_EXIST_ARG, "with-open-io-file", NIL);
-  if (length (arglist) < 2)
-    error (IMPROPER_ARGS, "with-open-io-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
   sym = car (arg1);		// stream-name
   str = eval (cadr (arg1));	// file-name
   n = length(arg1); // check element
+  if (!(listp(arg1) && (n == 2 || n == 3)))
+    error (ILLEGAL_FORM, "with-open-io-file", arg1);
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-io-file", sym);
   if (!stringp (str))

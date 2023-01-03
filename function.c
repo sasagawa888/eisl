@@ -2678,7 +2678,7 @@ f_stream_ready_p (int arglist)
       if (c == EOF)
 	{
 	  input_stream = save;
-	  return (NIL);
+	  error (NOT_IN_STREAM, "stream-ready-p", arg1);
 	}
       else
 	{
@@ -2688,7 +2688,7 @@ f_stream_ready_p (int arglist)
 	}
     }
   else
-    return (T);
+    return (NIL);
 }
 
 // evaluation function

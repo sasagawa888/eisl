@@ -4366,7 +4366,7 @@ f_set_file_position (int arglist)
   if (!streamp (arg1))
     error (NOT_STREAM, "set-file-position", arg1);
   if (!integerp (arg2))
-    error (NOT_INT, "set-file-position", arg2);
+    error (IMPROPER_ARGS, "set-file-position", arg2);
   if (negativep (arg2))
     error (NOT_POSITIVE, "set-file-position", arg2);
 

@@ -4271,9 +4271,9 @@ f_open_io_file (int arglist)
     error (CANT_OPEN, "open-io-file", arg1);
 
   if (n == 1)
-    return (makestream (port, EISL_OPEN, Str_dup (fname, 1, 0, 1)));
+    return (makestream (port, EISL_INOUT, Str_dup (fname, 1, 0, 1)));
   else 
-    return (makestream (port, EISL_OPEN_BIN, Str_dup (fname, 1, 0, 1)));
+    return (makestream (port, EISL_INOUT_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
 int

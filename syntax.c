@@ -2119,9 +2119,9 @@ f_with_open_io_file (int arglist)
       return NIL;
     }
   if (n == 2)
-    val = makestream (port, EISL_OPEN, Str_dup (fname, 1, 0, 1));
+    val = makestream (port, EISL_INOUT, Str_dup (fname, 1, 0, 1));
   else 
-    val = makestream (port, EISL_OPEN_BIN, Str_dup (fname, 1, 0, 1));
+    val = makestream (port, EISL_INOUT_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);
   res = f_progn (arg2);

@@ -852,6 +852,22 @@ makemethod (int addr)
   return (val);
 }
 
+/*
+stream data structure
+<OPT part>
+EISL_INPUT input-stream text-mode
+EISL_OUTPUT output-stream text-mode
+EISL_INOUT io-stream text-mode
+EISL_INPUT_BIN input-stream binary-mode
+EISL_OUTPUT_BIN output-stream binary-mode
+EISL_INOUT_BIN io-stream binary-mode
+EISL_INSTR input-stream string-stream
+EISL_OUTSTR output-stream string-stream
+<PROF part>
+EISL_OPEN  stream state is open
+EISL_CLOSE stream state is close
+
+*/
 
 int
 makestream (FILE * port, int type, const char *name)
@@ -860,14 +876,14 @@ makestream (FILE * port, int type, const char *name)
 
   addr = freshcell ();
   SET_TAG (addr, STREAM);
-  SET_PORT (addr, port);
+  SET_PORT (addr, port); // port for file stream
   SET_CDR (addr, 0);		// string-stream-position
   SET_AUX (addr, cstream);	// class
-  SET_OPT (addr, type);		// EISL_INPUT/EISL_OUTPUT/EISL_OPEN/EISL_INSTR/EISL_OUTSTR/
-                          // EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_OPEN_BIN
+  SET_OPT (addr, type);		// EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
+                          // EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN
   SET_NAME (addr, name);
   SET_PROP (addr, 0);		// output-string-stream charcount from
-  SET_PROF (addr, 0);  // EISL_CLOSE
+  SET_PROF (addr, EISL_OPEN);  // EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN
   return (addr);
 }
 

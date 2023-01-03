@@ -1,4 +1,21 @@
 (import "test")
+
+(defconstant *tp-tmp-dir* "verify/")
+
+(defglobal *tp-file-no* 0)
+(defglobal *tp-example-file* nil)
+
+(defun tp-make-tmp-file ()
+  (setq *tp-example-file* 
+	(string-append 
+	 *tp-tmp-dir* 
+	 "islsp" 
+	 (convert (setq *tp-file-no* (+ *tp-file-no* 1)) <string>)
+	 ".dat")))
+(defconstant *tp-tmp-input-file* (tp-make-tmp-file))
+(defconstant *tp-tmp-output-file* (tp-make-tmp-file))
+(defconstant *tp-tmp-error-file* (tp-make-tmp-file))
+
 ;;; -*- lisp -*-
 ;;;
 ;;; Chapter 18 Stream class
@@ -159,7 +176,6 @@
 ;;;------------------------------------------------------------
 ($ap 2 "open-input-file" P.102)
 ;;;
-#|
 ($eval (tp-make-tmp-file))
 ($eval 
  (defglobal outstream (open-output-file *tp-example-file*)))
@@ -170,6 +186,7 @@
 ($test (input-stream-p instream) t)
 ($test (output-stream-p instream) nil)
 ($eval (close instream))
+#|
 ;;; element-class
 ($eval (tp-make-tmp-file))
 ($eval 
@@ -408,6 +425,7 @@
 ;;; stream �`�F�b�N
 ($type get-output-stream-string ($string-output-stream) :target)
 
+(system "rm verify/*.dat")
 ;;; end of file
 
 

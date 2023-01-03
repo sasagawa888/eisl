@@ -2620,10 +2620,8 @@ f_open_stream_p (int arglist)
   arg = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "open-stream-p", arglist);
-  if (arg == standard_input || arg == standard_output
-      || arg == standard_error)
-    return (T);
-  else if (GET_OPT (arg) == EISL_OPEN)
+  
+  if (input_stream_p(arg) || output_stream_p(arg))
     return (T);
   else
     return (NIL);

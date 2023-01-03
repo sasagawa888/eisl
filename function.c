@@ -2449,7 +2449,10 @@ f_read_line (int arglist)
 	      return (arg3);
 	    }
 	  else
-	    error (END_STREAM, "read-line", NIL);
+      {
+        input_stream = save;
+	      error (END_STREAM, "read-line", NIL);
+      }
 	}
 
       while (c != EOL && c != EOF)

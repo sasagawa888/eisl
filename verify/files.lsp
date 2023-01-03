@@ -65,7 +65,7 @@
 ($test (with-open-input-file (in *tp-example-file*)
 		       (stream-ready-p in))
  t)
-;;; closed stream �̓G���[
+;;; closed stream 
 ($eval (defglobal in-stream (open-io-file *tp-example-file*)))
 ($eval (close in-stream))
 ($error (stream-ready-p in-stream) <stream-error>)

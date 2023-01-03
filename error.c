@@ -67,8 +67,6 @@ error (int errnum, const char *fun, int arg)
   generic_func = NIL;
   generic_vars = NIL;
 
-
-
   switch (errnum)
     {
     case DIV_ZERO:

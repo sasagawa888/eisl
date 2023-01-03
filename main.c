@@ -438,8 +438,10 @@ int
 readc (void)
 {
   int c;
+  // REPL-mode and standard-input
   if (input_stream == standard_input && repl_flag)
     c = read_line (1);
+  // not REPL-mode and standard-input 
   else if (GET_OPT (input_stream) != EISL_INSTR)
     {
       c = getc (GET_PORT (input_stream));
@@ -447,6 +449,7 @@ readc (void)
       // if not script-mode quit system
       if (!script_flag && input_stream == standard_input && c == EOF)
 	{
+    // quit from system(not script-mode)
 	  greeting_flag = false;
 	  putchar ('\n');
 	  RAISE (Exit_Interp);
@@ -456,6 +459,7 @@ readc (void)
 
     }
   else
+  // string-stream
     {
       c = GET_NAME (input_stream)[GET_CDR (input_stream)];
       SET_CDR (input_stream, GET_CDR (input_stream) + 1);

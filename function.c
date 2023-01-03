@@ -2415,7 +2415,8 @@ f_read_line (int arglist)
       c = readc ();
       if (c == EOF)
 	{
-          restore_repl_flag(save1);
+    input_stream = save;
+    restore_repl_flag(save1);
 	  error (END_STREAM, "read-line", NIL);
 	}
       while (c != EOL && c != EOF)

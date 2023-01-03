@@ -277,7 +277,7 @@ error (int errnum, const char *fun, int arg)
 	list10 (makesym ("format-string"), makestr ("Not a stream at "),
 		makesym ("format-arguments"), arg, makesym ("function"),
 		makesym (fun1), makesym ("object"), arg,
-		makesym ("expected-class"), cstream_error);
+		makesym ("expected-class"), cstream);
       signal_condition (makeinstance (cdomain_error, initargs), NIL);
       break;
     case NOT_IN_STREAM:

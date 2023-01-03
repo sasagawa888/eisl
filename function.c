@@ -2213,7 +2213,7 @@ f_read_char (int arglist)
     error (WRONG_ARGS, "read-char", arglist);
   if (GET_OPT (arg1) == EISL_CLOSESTR)
     error (CANT_OPEN, "read-char", arg1);
-  if (n > 0 && !input_stream_p (arg1))
+  if (n > 0 && !text_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-char", arg1);
 
   save1 = save_repl_flag();
@@ -2273,7 +2273,7 @@ f_read_byte (int arglist)
   arg3 = caddr (arglist);
   if ((n = length (arglist)) > 3)
     error (WRONG_ARGS, "read-byte", arglist);
-  if (n > 0 && !input_stream_p (arg1))
+  if (n > 0 && !binary_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-byte", arg1);
 
   save1 = save_repl_flag();
@@ -2665,7 +2665,7 @@ f_stream_ready_p (int arglist)
   arg1 = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "stream-ready-p", arglist);
-  if (!streamp (arg1))
+  if (!input_stream_p (arg1))
     error (NOT_STREAM, "stream-ready-p", arg1);
 
   if (input_stream_p (arg1))
@@ -3956,7 +3956,7 @@ f_format_char (int arglist)
   arg2 = cadr (arglist);
   if (length (arglist) != 2)
     error (WRONG_ARGS, "format-char", arglist);
-  if (!output_stream_p (arg1))
+  if (!text_output_stream_p (arg1))
     error (NOT_OUT_STREAM, "format-char", arg1);
   if (!charp (arg2))
     error (NOT_CHAR, "format-char", arg2);
@@ -3983,7 +3983,7 @@ f_format_fresh_line (int arglist)
   arg1 = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "format-fresh-line", arglist);
-  if (!output_stream_p (arg1))
+  if (!text_output_stream_p (arg1))
     error (NOT_STREAM, "format-fresh-line", arg1);
 
   if (!start_flag)
@@ -4024,7 +4024,7 @@ f_format_float (int arglist)
   arg2 = cadr (arglist);
   if (length (arglist) != 2)
     error (WRONG_ARGS, "format-float", arglist);
-  if (!output_stream_p (arg1))
+  if (!text_output_stream_p (arg1))
     error (NOT_OUT_STREAM, "format-float", arg1);
   if (!numberp (arg2))
     error (NOT_FLT, "format-float", arg2);
@@ -4050,7 +4050,7 @@ f_format_integer (int arglist)
   arg3 = caddr (arglist);
   if (length (arglist) != 3)
     error (WRONG_ARGS, "format-integer", arglist);
-  if (!output_stream_p (arg1))
+  if (!text_output_stream_p (arg1))
     error (NOT_OUT_STREAM, "format-integer", arg1);
   if (!integerp (arg2) && !longnump (arg2) && !bignump (arg2))
     error (NOT_INT, "format-integer", arg2);
@@ -4095,7 +4095,7 @@ f_format_object (int arglist)
 
   if (length (arglist) != 3)
     error (WRONG_ARGS, "format-object", arglist);
-  if (!output_stream_p (arg1))
+  if (!text_output_stream_p (arg1))
     error (NOT_OUT_STREAM, "format-object", arglist);
 
   save = output_stream;
@@ -4160,7 +4160,7 @@ f_format_tab (int arglist)
   arg2 = cadr (arglist);
   if (length (arglist) != 2)
     error (WRONG_ARGS, "format-tab", arglist);
-  if (!output_stream_p (arg1))
+  if (!text_output_stream_p (arg1))
     error (NOT_OUT_STREAM, "format-tab", arg1);
   if (!integerp (arg2))
     error (IMPROPER_ARGS, "format-tab", arg2);
@@ -4281,7 +4281,10 @@ f_close (int arglist)
     error (NOT_STREAM, "close", arg1);
 
   if (GET_OPT (arg1) != EISL_INSTR && GET_OPT (arg1) != EISL_OUTSTR)
+  {
     fclose (GET_PORT (arg1));
+    SET_OPT (arg1, EISL_CLOSE);
+  }
   else
     SET_OPT (arg1, EISL_CLOSESTR);
 
@@ -4409,7 +4412,7 @@ f_write_byte (int arglist)
     error (NOT_INT, "write-byte", arg1);
   if (integerp (arg1) && ((n=GET_INT(arg1)) < 0 || n>255))
     error (IMPROPER_ARGS, "write-byte", arg1);
-  if (!(streamp (arg2) && GET_OPT (arg2)))
+  if (n > 1 && !binary_output_stream_p (arg2))
     error (NOT_OUT_STREAM, "write-byte", arg2);
 
   fputc ((char) GET_INT (arg1), GET_PORT (arg2));

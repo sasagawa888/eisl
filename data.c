@@ -335,6 +335,30 @@ input_stream_p (int x)
 }
 
 int
+text_input_stream_p (int x)
+{
+  if (streamp (x)
+      && (GET_OPT (x) == EISL_INPUT || 
+          GET_OPT (x) == EISL_OPEN ||
+          GET_OPT (x) == EISL_INSTR))
+    return (1);
+  else
+    return (0);
+}
+
+
+int
+binary_input_stream_p (int x)
+{
+  if (streamp (x)
+      && (GET_OPT (x) == EISL_INPUT_BIN ||
+          GET_OPT (x) == EISL_OPEN_BIN))
+    return (1);
+  else
+    return (0);
+}
+
+int
 output_stream_p (int x)
 {
   if (streamp (x)
@@ -347,6 +371,31 @@ output_stream_p (int x)
   else
     return (0);
 }
+
+int
+text_output_stream_p (int x)
+{
+  if (streamp (x)
+      && (GET_OPT (x) == EISL_OUTPUT ||
+          GET_OPT (x) == EISL_OPEN || 
+          GET_OPT (x) == EISL_OUTSTR))
+    return (1);
+  else
+    return (0);
+}
+
+
+int
+binary_output_stream_p (int x)
+{
+  if (streamp (x)
+      && (GET_OPT (x) == EISL_OUTPUT_BIN ||
+          GET_OPT (x) == EISL_OPEN_BIN))
+    return (1);
+  else
+    return (0);
+}
+
 
 int
 class_symbol_p (int x)

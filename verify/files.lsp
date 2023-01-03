@@ -10,7 +10,8 @@
 	(string-append 
 	 *tp-tmp-dir* 
 	 "islsp" 
-	 (convert (setq *tp-file-no* (+ *tp-file-no* 1)) <string>))))
+	 (convert (setq *tp-file-no* (+ *tp-file-no* 1)) <string>)
+	 ".dat")))
 (defconstant *tp-tmp-input-file* (tp-make-tmp-file))
 (defconstant *tp-tmp-output-file* (tp-make-tmp-file))
 (defconstant *tp-tmp-error-file* (tp-make-tmp-file))
@@ -302,4 +303,5 @@
 ($error (file-length *tp-example-file* 9) <error>)
 ($eval (close example))
 
+(system "rm verify/*.dat")
 ;;; end of file

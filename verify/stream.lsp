@@ -186,7 +186,6 @@
 ($test (input-stream-p instream) t)
 ($test (output-stream-p instream) nil)
 ($eval (close instream))
-#|
 ;;; element-class
 ($eval (tp-make-tmp-file))
 ($eval 
@@ -198,7 +197,6 @@
 ($eval (close byte-instream))
 ($error (open-input-file *tp-example-file* 7) <error>)
 ($error (open-input-file *tp-example-file* 9) <error>)
-|#
 ;;;
 ($argc open-input-file 1 1 0)
 ($type open-input-file ($string) :target 8)

@@ -4190,12 +4190,15 @@ f_format_tab (int arglist)
 int
 f_open_input_file (int arglist)
 {
-  int arg1, n;
+  int arg1, arg2, n;
   FILE *port;
 
   arg1 = car (arglist);
+  arg2 = cadr (arglist);
   if ((n = length (arglist)) != 1 && n != 2)
     error (WRONG_ARGS, "open-input-file", arglist);
+  if (n == 2 && !(integerp(arg2) && get_int(arg2) == 8))
+    error (IMPROPER_ARGS, "open-input-file", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "open-input-file", arg1);
 

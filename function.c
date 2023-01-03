@@ -2635,7 +2635,7 @@ f_input_stream_p (int arglist)
   arg = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "input-stream-p", arglist);
-  if (streamp (arg) && GET_OPT (arg) == EISL_INPUT)
+  if (input_stream_p(arg))
     return (T);
   else
     return (NIL);

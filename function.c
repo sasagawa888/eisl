@@ -4291,7 +4291,7 @@ f_finish_output (int arglist)
 int
 f_file_length (int arglist)
 {
-  int arg1, arg2, size, res;
+  int arg1, arg2, res;
   FILE *p;
 
   arg1 = car (arglist);
@@ -4300,8 +4300,8 @@ f_file_length (int arglist)
     error (WRONG_ARGS, "file-length", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "file-length", arg1);
-  if (!integerp (arg2))
-    error (NOT_INT, "file-length", arg2);
+  if (!(integerp (arg2) && GET_INT(arg2) == 8))
+    error (IMPROPER_ARGS, "file-length", arg2);
 
   p = fopen (GET_NAME (arg1), "rb");
   if (p == NULL)
@@ -4311,9 +4311,8 @@ f_file_length (int arglist)
     }
 
   fseek (p, 0, SEEK_END);
-  size = ftell (p);
+  res = ftell (p);
   fclose (p);
-  res = size;
   return (makeint (res));
 }
 

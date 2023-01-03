@@ -2621,7 +2621,7 @@ f_open_stream_p (int arglist)
   if (length (arglist) != 1)
     error (WRONG_ARGS, "open-stream-p", arglist);
   
-  if (input_stream_p(arg) || output_stream_p(arg))
+  if (streamp(arg) && GET_PROF(arg) == EISL_OPEN)
     return (T);
   else
     return (NIL);
@@ -2665,6 +2665,8 @@ f_stream_ready_p (int arglist)
     error (WRONG_ARGS, "stream-ready-p", arglist);
   if (!input_stream_p (arg1))
     error (NOT_STREAM, "stream-ready-p", arg1);
+  if (GET_PROF (arg1) == EISL_CLOSE)
+    error (CANT_OPEN, "stream-ready-p", arg1);
 
   if (input_stream_p (arg1))
     {

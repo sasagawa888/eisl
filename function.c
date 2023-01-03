@@ -2211,7 +2211,7 @@ f_read_char (int arglist)
   arg3 = caddr (arglist);
   if ((n = length (arglist)) > 3)
     error (WRONG_ARGS, "read-char", arglist);
-  if (GET_OPT (arg1) == EISL_CLOSESTR)
+  if (GET_PROF (arg1) == EISL_CLOSE)
     error (CANT_OPEN, "read-char", arg1);
   if (n > 0 && !text_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-char", arg1);
@@ -4249,12 +4249,15 @@ f_open_output_file (int arglist)
 int
 f_open_io_file (int arglist)
 {
-  int arg1, n;
+  int arg1, arg2, n;
   FILE *port;
 
   arg1 = car (arglist);
+  arg2 = cadr (arglist);
   if ((n = length (arglist)) != 1 && n != 2)
     error (WRONG_ARGS, "open-io-file", arglist);
+  if (n == 2 && !(integerp(arg2) && get_int(arg2) == 8))
+    error (IMPROPER_ARGS, "open-io-file", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "open-io-file", arg1);
 
@@ -4287,10 +4290,10 @@ f_close (int arglist)
   if (GET_OPT (arg1) != EISL_INSTR && GET_OPT (arg1) != EISL_OUTSTR)
   {
     fclose (GET_PORT (arg1));
-    SET_OPT (arg1, EISL_CLOSE);
+    SET_PROF (arg1, EISL_CLOSE);
   }
   else
-    SET_OPT (arg1, EISL_CLOSESTR);
+    SET_PROF (arg1, EISL_CLOSE);
 
   start_flag = true;
   return (UNDEF);

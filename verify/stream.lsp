@@ -229,11 +229,9 @@
 ($eval (close byte-outstream))
 ($error (open-output-file *tp-example-file* 7) <error>)
 ($error (open-output-file *tp-example-file* 9) <error>)
-#| 
 ;;;
 ($argc open-output-file 1 1 0)
 ($type open-output-file ($string) :target 8)
-|#
 ;;;------------------------------------------------------------
 ;;; [function] 
 ;;;
@@ -241,7 +239,6 @@
 ;;;------------------------------------------------------------
 ($ap 2 "open-io-file" P.102)
 ;;;
-#|
 ($eval (tp-make-tmp-file))
 ($eval 
  (defglobal iostream (open-io-file *tp-example-file*)))
@@ -268,7 +265,6 @@
 ;;;
 ($argc open-io-file 1 1 0)
 ($type open-io-file ($string) :target 8)
-|#
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;
@@ -283,7 +279,6 @@
 ($error (with-open-input-file ()) <error>)
 ($error (with-open-input-file (foo)) <error>)
 ;;; name ���V���{���łȂ�
-#|
 ($eval (tp-make-tmp-file))
 ($error (with-open-input-file (#2a((a b) (c d)) *tp-example-file*)) 
 	<domain-error>)
@@ -293,7 +288,6 @@
 ($error (with-open-input-file ("abc" *tp-example-file*)) <domain-error>)
 ($error (with-open-input-file (#(a b c) *tp-example-file*)) <domain-error>)
 ($error (with-open-input-file ((x y) *tp-example-file*)) <domain-error>)
-|#
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;
@@ -308,7 +302,6 @@
 ($error (with-open-output-file ()) <error>)
 ($error (with-open-output-file (foo)) <error>)
 ;;; name ���V���{���łȂ�
-#|
 ($eval (tp-make-tmp-file))
 ($error (with-open-output-file (#2a((a b) (c d)) *tp-example-file*)) 
 	<domain-error>)
@@ -318,7 +311,6 @@
 ($error (with-open-output-file ("abc" *tp-example-file*)) <domain-error>)
 ($error (with-open-output-file (#(a b c) *tp-example-file*)) <domain-error>)
 ($error (with-open-output-file ((x y) *tp-example-file*)) <domain-error>)
-|#
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;
@@ -334,7 +326,6 @@
 ($error (with-open-io-file ()) <error>)
 ($error (with-open-io-file (foo)) <error>)
 ;;; name ���V���{���łȂ�
-#|
 ($eval (tp-make-tmp-file))
 ($error (with-open-io-file (#2a((a b) (c d)) *tp-example-file*)) 
 	<domain-error>)
@@ -360,7 +351,6 @@
 		     (read iostream)
 		     (read iostream)))
  (hello world) equal)
-|#
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;

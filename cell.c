@@ -867,7 +867,7 @@ makestream (FILE * port, int type, const char *name)
                           // EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_OPEN_BIN
   SET_NAME (addr, name);
   SET_PROP (addr, 0);		// output-string-stream charcount from
-  // left
+  SET_PROF (addr, 0);  // EISL_CLOSE
   return (addr);
 }
 

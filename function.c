@@ -4210,7 +4210,10 @@ f_open_input_file (int arglist)
   if (port == NULL)
     error (CANT_OPEN, "open-input-file", arg1);
 
-  return (makestream (port, EISL_INPUT, Str_dup (fname, 1, 0, 1)));
+  if (n  == 1)
+    return (makestream (port, EISL_INPUT, Str_dup (fname, 1, 0, 1)));
+  else 
+    return (makestream (port, EISL_INPUT_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
 int
@@ -4226,11 +4229,17 @@ f_open_output_file (int arglist)
     error (NOT_STR, "open-output-file", arg1);
 
   const char *fname = GET_NAME (arg1);
-  port = fopen (fname, "w");
+  if (n == 1)
+    port = fopen (fname, "w");
+  else 
+    port = fopen (fname, "wb");
   if (port == NULL)
     error (CANT_OPEN, "open-output-file", arg1);
 
-  return (makestream (port, EISL_OUTPUT, Str_dup (fname, 1, 0, 1)));
+  if (n == 1)
+    return (makestream (port, EISL_OUTPUT, Str_dup (fname, 1, 0, 1)));
+  else 
+    return (makestream (port, EISL_OUTPUT_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
 int
@@ -4246,11 +4255,18 @@ f_open_io_file (int arglist)
     error (NOT_STR, "open-io-file", arg1);
 
   const char *fname = GET_NAME (arg1);
-  port = fopen (fname, "a+");
+  if (n == 1)
+    port = fopen (fname, "a+");
+  else 
+    port = fopen (fname, "ab+");
+
   if (port == NULL)
     error (CANT_OPEN, "open-io-file", arg1);
 
-  return (makestream (port, EISL_OPEN, Str_dup (fname, 1, 0, 1)));
+  if (n == 1)
+    return (makestream (port, EISL_OPEN, Str_dup (fname, 1, 0, 1)));
+  else 
+    return (makestream (port, EISL_OPEN_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
 int

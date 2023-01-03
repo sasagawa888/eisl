@@ -2010,7 +2010,7 @@ f_ignore_errors (int arglist)
 int
 f_with_open_input_file (int arglist)
 {
-  int arg1, arg2, sym, str, val, ep1, res;
+  int arg1, arg2, sym, str, n, val, ep1, res;
   FILE *port;
 
   if (nullp (arglist) || atomp (arglist))
@@ -2019,20 +2019,27 @@ f_with_open_input_file (int arglist)
     error (IMPROPER_ARGS, "with-open-input-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
-  sym = car (arg1);		// stream-name;
-  str = eval (cadr (arg1));	// file-name;
+  sym = car (arg1);		// stream-name
+  str = eval (cadr (arg1));	// file-name
+  n = length (arg1); // check element
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-input-file", sym);
   if (!stringp (str))
     error (NOT_STR, "with-open-input-file", str);
   const char *fname = GET_NAME (str);
-  port = fopen (fname, "r");
+  if (n == 2)
+    port = fopen (fname, "r");
+  else 
+    port = fopen (fname, "rb");
   if (port == NULL)
     {
       error (CANT_OPEN, "with-open-input-file", str);
       return NIL;
     }
-  val = makestream (port, EISL_INPUT, Str_dup (fname, 1, 0, 1));
+  if (n == 2)
+    val = makestream (port, EISL_INPUT, Str_dup (fname, 1, 0, 1));
+  else 
+    val = makestream (port, EISL_INPUT_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);
   res = f_progn (arg2);
@@ -2044,7 +2051,7 @@ f_with_open_input_file (int arglist)
 int
 f_with_open_output_file (int arglist)
 {
-  int arg1, arg2, sym, str, val, ep1, res;
+  int arg1, arg2, sym, str, n, val, ep1, res;
   FILE *port;
 
   if (nullp (arglist) || atomp (arglist))
@@ -2053,20 +2060,27 @@ f_with_open_output_file (int arglist)
     error (IMPROPER_ARGS, "with-open-output-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
-  sym = car (arg1);		// stream-name;
-  str = eval (cadr (arg1));	// file-name;
+  sym = car (arg1);		// stream-name
+  str = eval (cadr (arg1));	// file-name
+  n = length (arg1); // check element
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-output-file", sym);
   if (!stringp (str))
     error (NOT_STR, "with-open-output-file", str);
   const char *fname = GET_NAME (str);
-  port = fopen (fname, "w");
+  if (n == 2)
+    port = fopen (fname, "w");
+  else 
+    port = fopen (fname, "wb");
   if (port == NULL)
     {
       error (CANT_OPEN, "with-open-output-file", str);
       return NIL;
     }
-  val = makestream (port, EISL_OUTPUT, Str_dup (fname, 1, 0, 1));
+  if (n == 2)
+    val = makestream (port, EISL_OUTPUT, Str_dup (fname, 1, 0, 1));
+  else 
+    val = makestream (port, EISL_OUTPUT_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);
   res = f_progn (arg2);
@@ -2078,7 +2092,7 @@ f_with_open_output_file (int arglist)
 int
 f_with_open_io_file (int arglist)
 {
-  int arg1, arg2, sym, str, val, ep1, res;
+  int arg1, arg2, sym, str, n, val, ep1, res;
   FILE *port;
 
   if (nullp (arglist) || atomp (arglist))
@@ -2087,20 +2101,27 @@ f_with_open_io_file (int arglist)
     error (IMPROPER_ARGS, "with-open-io-file", arglist);
   arg1 = car (arglist);
   arg2 = cdr (arglist);
-  sym = car (arg1);		// stream-name;
-  str = eval (cadr (arg1));	// file-name;
+  sym = car (arg1);		// stream-name
+  str = eval (cadr (arg1));	// file-name
+  n = length(arg1); // check element
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-io-file", sym);
   if (!stringp (str))
     error (NOT_STR, "with-open-io-file", str);
   const char *fname = GET_NAME (str);
-  port = fopen (fname, "a+");
+  if (n == 2)
+    port = fopen (fname, "a+");
+  else
+    port = fopen (fname, "ab+");
   if (port == NULL)
     {
       error (CANT_OPEN, "with-open-io-file", str);
       return NIL;
     }
-  val = makestream (port, EISL_OPEN, Str_dup (fname, 1, 0, 1));
+  if (n == 2)
+    val = makestream (port, EISL_OPEN, Str_dup (fname, 1, 0, 1));
+  else 
+    val = makestream (port, EISL_OPEN_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);
   res = f_progn (arg2);

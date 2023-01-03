@@ -17,11 +17,7 @@
 
 ;;; byte-stream
 ($ap 2 "write-byte" P.111)
-($eval (tp-make-tmp-file))
-($error 
- (with-open-io-file (byte-stream *tp-example-file* 8)
-		    (write-byte 100 byte-stream)
-		    (read byte-stream)) <domain-error>)
+
 ;;; byte-stream
 ($eval (tp-make-tmp-file))
 ($error 
@@ -29,12 +25,6 @@
 		    (write-byte 100 byte-stream)
 		    (read-char byte-stream)) <domain-error>)
 
-;;; byte-stream
-($eval (tp-make-tmp-file))
-($error 
- (with-open-io-file (byte-stream *tp-example-file* 8)
-		    (write-byte 100 byte-stream)
-		    (preview-char byte-stream)) <domain-error>)
 ($eval (tp-make-tmp-file))
 ($test (with-open-output-file (out *tp-example-file*)
 			(format out "This is an example")

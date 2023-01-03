@@ -2649,7 +2649,7 @@ f_output_stream_p (int arglist)
   arg = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "output-stream-p", arglist);
-  if (streamp (arg) && GET_OPT (arg) == EISL_OUTPUT)
+  if (output_stream_p(arg))
     return (T);
   else
     return (NIL);
@@ -4220,12 +4220,15 @@ f_open_input_file (int arglist)
 int
 f_open_output_file (int arglist)
 {
-  int arg1, n;
+  int arg1, arg2, n;
   FILE *port;
 
   arg1 = car (arglist);
+  arg2 = cadr (arglist);
   if ((n = length (arglist)) != 1 && n != 2)
     error (WRONG_ARGS, "open-output-file", arglist);
+  if (n == 2 && !(integerp(arg2) && get_int(arg2) == 8))
+    error (IMPROPER_ARGS, "open-output-file", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "open-output-file", arg1);
 

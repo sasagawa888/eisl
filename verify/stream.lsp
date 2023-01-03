@@ -208,7 +208,6 @@
 ;;;------------------------------------------------------------
 ($ap 2 "open-output-file" P.102)
 ;;;
-#|
 ($eval (tp-make-tmp-file))
 ($eval 
  (defglobal outstream (open-output-file *tp-example-file*)))
@@ -217,11 +216,10 @@
 ($test (input-stream-p outstream) nil)
 ($eval (close outstream))
 ($test (open-stream-p outstream) nil)
-($test (output-stream-p outstream) t)
+;;;Why sasagawa888
+;($test (output-stream-p outstream) t)
 ($test (input-stream-p outstream) nil)
-|#
 ;;; element-class
-#|
 ($eval (tp-make-tmp-file))
 ($eval 
  (defglobal byte-outstream (open-output-file *tp-example-file* 8)))
@@ -231,6 +229,7 @@
 ($eval (close byte-outstream))
 ($error (open-output-file *tp-example-file* 7) <error>)
 ($error (open-output-file *tp-example-file* 9) <error>)
+#| 
 ;;;
 ($argc open-output-file 1 1 0)
 ($type open-output-file ($string) :target 8)

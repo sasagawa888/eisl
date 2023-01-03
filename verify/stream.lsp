@@ -217,7 +217,7 @@
 ($eval (close outstream))
 ($test (open-stream-p outstream) nil)
 ;;;Why sasagawa888
-;($test (output-stream-p outstream) t)
+($test (output-stream-p outstream) t)
 ($test (input-stream-p outstream) nil)
 ;;; element-class
 ($eval (tp-make-tmp-file))

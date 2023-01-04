@@ -70,7 +70,7 @@
 
 (defun isspace-l (c locale)
    (the <character> c)(the <longnum> locale)
-   (c-lang "res = ((isspace_l(Fgetname(C)[0], Fgetlong(LOCALE)) == 0) ? NIL : T);"))
+   (c-lang "res = ((isspace_l(Fgetname(C)[0], (locale_t)Fgetlong(LOCALE)) == 0) ? NIL : T);"))
 
 (defun strcoll-l (s1 s2 locale)
    (the <string> s1)(the <string> s2)(the <longnum> locale)
@@ -79,14 +79,14 @@
 (defun toupper-l (c locale)
    (the <character> c)(the <longnum> locale)
    (c-lang "char uc[2];")
-   (c-lang "uc[0] = toupper_l(Fgetname(C)[0], Fgetlong(LOCALE));")
+   (c-lang "uc[0] = toupper_l(Fgetname(C)[0], (locale_t)Fgetlong(LOCALE));")
    (c-lang "uc[1] = '\\0';")
    (c-lang "res = Fmakechar(uc);"))
 
 (defun tolower-l (c locale)
    (the <character> c)(the <longnum> locale)
    (c-lang "char lc[2];")
-   (c-lang "lc[0] = tolower_l(Fgetname(C)[0], Fgetlong(LOCALE));")
+   (c-lang "lc[0] = tolower_l(Fgetname(C)[0], (locale_t)Fgetlong(LOCALE));")
    (c-lang "lc[1] = '\\0';")
    (c-lang "res = Fmakechar(lc);"))
 

@@ -1231,19 +1231,8 @@ f_catch (int arglist)
 	}
       res = catch_arg;
       catch_arg = NIL;
-      sp = save;		// restore stack pointer. longjump destroy 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // 
-      // sp
+      sp = save;		
+      // restore stack pointer. longjump destroy sp
       return (res);
     }
   return (UNDEF);
@@ -1256,7 +1245,7 @@ f_throw (int arglist)
   int arg1, arg2, tag, i;
 
   arg1 = car (arglist);
-  arg2 = cdr (arglist);
+  arg2 = cadr (arglist);
   tag = eval (arg1);
 
   if (!symbolp (tag))
@@ -1265,8 +1254,12 @@ f_throw (int arglist)
     error (UNDEF_TAG, "throw", tag);
   if (GET_PROP (tag) == 0)
     error (CTRL_OVERF, "throw", NIL);
+  if (length (arglist) != 2)
+    error (WRONG_ARGS, "throw", arglist);
+  if (improper_list_p (arglist))
+    error (ILLEGAL_FORM, "throw", arglist);
 
-  catch_arg = f_progn (arg2);
+  catch_arg = eval (arg2);
   i = GET_PROP (tag);
   SET_PROP (tag, i - 1);
   ep = catch_env[GET_OPT (tag) - 1][i - 1];	// restore environment

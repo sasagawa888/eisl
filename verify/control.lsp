@@ -664,14 +664,14 @@
 ($error (block) <program-error>)
 ($error (block . 1) <program-error>)
 ($argc return-from 2 0 0)
-;($error (block b
-;	       (return-from b)) <program-error>)
-;($error (block b
-;	       (return-from b 1 2)) <program-error>)
+($error (block b
+	       (return-from b)) <program-error>)
+($error (block b
+	       (return-from b 1 2)) <program-error>)
 ;;; dot-list
 ($error (block b . 1) <error>)
-;($error (block b
-;	       (return-from b 1 . 2)) <error>)
+($error (block b
+	       (return-from b 1 . 2)) <error>)
 ;;; block tag 
 ($error (block #2a((a b) (c d))) <domain-error>)
 ($error (block #\a) <domain-error>)
@@ -688,12 +688,12 @@
 ($error (return-from #(a b c) 1) <domain-error>)
 ($error (return-from (x y) 1) <domain-error>)
 ;;; block tag
-;($error (block :a) <error>)
-;($error (return-from :a 1) <error>)
+($error (block :a) <error>)
+($error (return-from :a 1) <error>)
 ;;;
-;($error (block b
-;	       (return-from c 88)
-;	       99) <control-error>)
+($error (block b
+	       (return-from c 88)
+	       99) <control-error>)
 ;;; invalid-tag
 ;($error
 ; (block b1
@@ -765,14 +765,14 @@
 ($error (catch) <program-error>)
 ($error (catch . 1) <program-error>)
 ($argc throw 2 0 0)
-;($error (catch 'c
-;	       (throw 'c)) <program-error>)
-;($error (catch 'c
-;	       (throw 'c 1 2)) <program-error>)
+($error (catch 'c
+	       (throw 'c)) <program-error>)
+($error (catch 'c
+	       (throw 'c 1 2)) <program-error>)
 ;;; dot-list
 ($error (catch 'c . 1) <error>)
-;($error (catch 'c
-;	       (throw 'c 1 . 2)) <error>)
+($error (catch 'c
+	       (throw 'c 1 . 2)) <error>)
 ;;; catch tag <number> <character> 
 ($error (catch 1234) <error>)
 ($error (catch 1.234) <error>)
@@ -781,8 +781,8 @@
 ($error (throw 1.234 nil) <error>)
 ($error (throw #\a nil) <error>)
 ;;; 
-;($error (catch 'c
-;	  (throw 'd 88) 99) <control-error>)
+($error (catch 'c
+	  (throw 'd 88) 99) <control-error>)
 ;;; invalid-tag
 ;($error
 ; (catch 'c1
@@ -854,8 +854,8 @@
    x) (3 1) equal)
 ;;;
 ($argc tagbody 0 0 1)
-;($error (tagbody
-;	 (go)) <program-error>)
+($error (tagbody
+	 (go)) <program-error>)
 ($argc go 1 0 0)
 ($error (tagbody
 	 (go tag 1)) <program-error>)
@@ -883,8 +883,8 @@
 ;       (go tag1) ;;; tag2 invalid
 ;     (go tag2)))) <control-error>)
 ;;;
-;($error
-; (tagbody tag ((lambda ()) (go tagbody))) <control-error>)
+($error
+ (tagbody tag ((lambda ()) (go tagbody))) <control-error>)
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;
@@ -945,25 +945,25 @@
 ($test (foo-4 '(a b a c)) found)
 ($test (property 'a 'label) nil)
 ($eval
- (defun $test ()
-   (catch 'outer ($test2))))
+ (defun test ()
+   (catch 'outer (test2))))
 ($eval
- (defun $test2 ()
+ (defun test2 ()
    (block inner
-	  ($test3 (lambda ()
+	  (test3 (lambda ()
 		   (return-from inner 7))))))
 
 ($eval
- (defun $test3 (fun)
-   (unwind-protect ($test4) (funcall fun))))
+ (defun test3 (fun)
+   (unwind-protect (test4) (funcall fun))))
 ($eval
- (defun $test4 ()
+ (defun test4 ()
    (throw 'outer 6)))
-#|
-($error ($test) <control-error>)
+
+; Why? sasagawa888 segmentation fault 
+;($error (test) <control-error>) 
 ;;; 
 ($argc unwind-protect 1 0 1)
 ($error (unwind-protect) <program-error>)
 ($error (unwind-protect . 1) <program-error>)
-|#
 ;;; end of file

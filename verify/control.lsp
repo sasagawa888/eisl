@@ -688,8 +688,11 @@
 ($error (return-from #(a b c) 1) <domain-error>)
 ($error (return-from (x y) 1) <domain-error>)
 ;;; block tag
-($error (block :a) <error>)
-($error (return-from :a 1) <error>)
+;;; sasagawa888 memo
+;;; I comment out bellow two checks. Because :a is also symbol.
+;;; ISLisp standard not distinguish :a. P45 draft
+;($error (block :a) <error>)
+;($error (return-from :a 1) <error>)
 ;;;
 ($error (block b
 	       (return-from c 88)

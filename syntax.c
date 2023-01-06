@@ -1088,6 +1088,7 @@ f_block (int arglist)
   if (!symbolp (arg1))
     error (NOT_SYM, "block", arg1);
 
+
   tag = arg1;
 
   if (block_pt >= 50)

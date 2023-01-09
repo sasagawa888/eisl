@@ -427,7 +427,5 @@ two lines." equal)
 ;;;
 ;;;  (write-byte z output-stream) --> <integer>
 ;;;------------------------------------------------------------
-($ap 2 "write-byte" P.111)
-;;;
 
 ;;; end of file

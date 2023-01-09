@@ -54,7 +54,8 @@ SRC_LISP := library/bit.lsp \
 	    library/tcltk.lsp \
 	    library/tcpip.lsp \
 	    library/virtty.lsp \
-		library/prolog.lsp
+		library/prolog.lsp \
+		library/datetime.lsp
 
 ifeq ($(DEBUG),1)
 	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE -DWITH_NANA=1

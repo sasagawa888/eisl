@@ -50,6 +50,8 @@ If you modify or improve the library, please do the above make again.
 
 ![csv](CSV.md)
 
+![datetime](DATETIME.md)
+
 ![elixir](ELIXIR.md)
 
 ![escape](ESCAPE.md)

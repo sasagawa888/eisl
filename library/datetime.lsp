@@ -9,8 +9,8 @@
 
   (c-lang "res = Fcons(Fmakeint (jst->tm_year + 1900),
                  Fcons(Fmakeint (jst->tm_mon + 1),
-                 Fcons(Fmakeint (jst->tm_mday),
-                 Fcons(Fmakeint (jst->tm_hour),
+                 Fcons(Fmakeint (jst->tm_mday),")
+  (c-lang "Fcons(Fmakeint (jst->tm_hour),
 	         Fcons(Fmakeint (jst->tm_min), 
                  Fcons(Fmakeint (jst->tm_sec),NIL))))));")
 )

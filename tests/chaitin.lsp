@@ -12,3 +12,16 @@
 (defun size-list (ls)
     (cond ((null ls) 1)
           (t (+ (size (car ls))  1 (size-list (cdr ls))))))
+
+;;; try is eval with time limit.
+(defun try (option sexp binary)
+    (cond ((and (symbolp option) (eq option 'no-time-limit)) (eval sexp))
+          ((integerp option) (eval sexp option))))
+
+;;; UTM universal turing machine 
+(defun U (p)
+    (try 'no-time-limit
+         (read)
+         p))
+
+          

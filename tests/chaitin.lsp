@@ -16,7 +16,7 @@ y* means minimum size program of y
 (import "test")
 
 ;;; input-string-stream of program
-;;; eval convert binary-list to string-stream and save it to var program
+;;; try function convert binary-list to string-stream and save it to var program
 (defglobal program nil)
 
 ;;; try is eval with time limit.
@@ -86,7 +86,7 @@ y* means minimum size program of y
         0
         (+ (car ls) (* 2 (bin-to-int (cdr ls))))))
 
-;;; help funtion for bin-to-str
+;;; help function for bin-to-str
 ;;; get first 8 bit
 (defun get-8 (ls)
     (list (elt ls 0) (elt ls 1) (elt ls 2) (elt ls 3)
@@ -117,3 +117,4 @@ y* means minimum size program of y
 ($test (u (sexp-to-bin '(+ g 2))) nil)
 ($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(foo)))) failse)
 ($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ 1 2)))) success)
+($test (try 100 '(eval (read-exp)) (sexp-to-bin '(+ g 2))) nil)

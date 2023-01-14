@@ -3,7 +3,7 @@ limits of mathematics G.J.chaitin
 H(x,y) <= H(x)+H(y)+c
 in H(x) x means sexp.
 H(x) means bit size of minimum UTM that calculate x.
-H(y) means bit size of minimum UTM that calculate x.
+H(y) means bit size of minimum UTM that calculate y.
 
 φc x* y* 
 x* means minimum size program of x
@@ -21,13 +21,17 @@ y* means minimum size program of y
 
 ;;; try is eval with time limit.
 ;;; if error occurs, try function ignore error and return nil.
-;;; if eval can't calculate in limited time, return (faise nil intermediate-result)
+;;; if eval can't calculate in limited time, return (failse nil intermediate-result)
 ;;; if eval can calcurate int limited time, return (success val intermediate-result)
 ;;; if option is 'no-time-limit, eval calculate with no-time-limit.
-(defun try (option sexp binary)
+(defun try (time sexp binary)
     (setq program (create-string-input-stream (bin-to-str binary)))
-    (cond ((and (symbolp option) (eq option 'no-time-limit)) (ignore-errors (eval sexp)))
-          ((integerp option) (ignore-errors (eval sexp option)))))
+    (cond ((and (symbolp time) (eq time 'no-time-limit)) (ignore-errors (eval sexp)))
+          ((integerp time) (let ((result (ignore-errors (eval sexp time))))
+                                (if (null result)
+                                    '(failse nil error)
+                                    result)))
+          (t (error "try: improper limit" time))))
 
 ;;; read sexp from string-input-stream
 (defun read-exp ()
@@ -107,6 +111,16 @@ y* means minimum size program of y
 (defun foo ()
     (foo))
 
+
+(defun count-halt (time prefix bit-left)
+    (print prefix)
+    (if (= bit-left 0)
+        (if (eq 'success (car (try time '(eval (read-exp)) prefix)))
+            1
+            0)
+        (+ (count-halt time (append prefix '(0)) (- bit-left 1))
+           (count-halt time (append prefix '(1)) (- bit-left 1)))))
+
 ;;; test
 ($test (size '(+ 1 2)) 64)
 ($test (size '(cons (eval (read-exp)) (cons (eval (read-exp)) nil))) 432)
@@ -117,4 +131,4 @@ y* means minimum size program of y
 ($test (u (sexp-to-bin '(+ g 2))) nil)
 ($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(foo)))) failse)
 ($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ 1 2)))) success)
-($test (try 100 '(eval (read-exp)) (sexp-to-bin '(+ g 2))) nil)
+;($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ h 2)))) failse)

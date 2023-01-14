@@ -20,10 +20,10 @@ y* means minimum size program of y
 (defglobal program nil)
 
 ;;; try is eval with time limit.
-;;; if error occurs, ignore error and return nil.
+;;; if error occurs, try function ignore error and return nil.
 ;;; if eval can't calculate in limited time, return (faise nil intermediate-result)
 ;;; if eval can calcurate int limited time, return (success val intermediate-result)
-;;; if option is 'no-time-limit, eval calcurate with no-time-limit.
+;;; if option is 'no-time-limit, eval calculate with no-time-limit.
 (defun try (option sexp binary)
     (setq program (create-string-input-stream (bin-to-str binary)))
     (cond ((and (symbolp option) (eq option 'no-time-limit)) (ignore-errors (eval sexp)))

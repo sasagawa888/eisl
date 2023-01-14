@@ -27,8 +27,8 @@ y* means minimum size program of y
 ;;; try is eval with time limit.
 (defun try (option sexp binary)
     (setq program (create-string-input-stream (bin-to-string binary)))
-    (cond ((and (symbolp option) (eq option 'no-time-limit)) (eval sexp))
-          ((integerp option) (eval sexp option))))
+    (cond ((and (symbolp option) (eq option 'no-time-limit)) (ignore-errors (eval sexp)))
+          ((integerp option) (ignore-errors (eval sexp option)))))
 
 ;;; read sexp from string-input-stream
 (defun read-exp ()

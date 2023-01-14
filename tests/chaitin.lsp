@@ -118,8 +118,8 @@ y* means minimum size program of y
         (if (eq 'success (car (try time '(eval (read-exp)) prefix)))
             1
             0)
-        (+ (count-halt time (append prefix '(0)) (- bit-left 1))
-           (count-halt time (append prefix '(1)) (- bit-left 1)))))
+        (+ (count-halt time (cons 0 prefix) (- bit-left 1))
+           (count-halt time (cons 1 prefix) (- bit-left 1)))))
 
 ;;; test
 ($test (size '(+ 1 2)) 64)

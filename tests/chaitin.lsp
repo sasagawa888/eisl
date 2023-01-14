@@ -1,4 +1,20 @@
-;; limits of mathematics G.J.chaitin
+#|
+limits of mathematics G.J.chaitin
+H(x,y) <= H(x)+H(y)+c
+H(x) x means sexp.
+H(x) means bit size of minimum UTM that calculate x.
+H(y) means bit size of minimum UTM that calculate x.
+
+φc x* y* 
+x* means minimum size program of x
+y* means minimum size program of y
+φc is prefix for constant c
+
+(cons (eval (read-exp)) (cons (eval (read-exp)) nil) -> it make pair of x and y.
+|#          
+
+
+
 (import "test")
 
 ;;; string of program
@@ -21,24 +37,9 @@
 ;;; UTM universal turing machine 
 (defun U (p)
     (try 'no-time-limit
-         (read)
+         '(eval (read-exp))
          p))
 
-#|
-H(x,y) <= H(x)+H(y)+c
-H(x) x means sexp.
-H(x) means bit size of minimum UTM that calculate x.
-H(y) means bit size of minimum UTM that calculate x.
-
-φc x* y* 
-x* means minimum size program of x
-y* means minimum size program of y
-φc is prefix for constant c
-
-(cons (eval read) (cons (eval read))) -> it make pair of x and y.
-|#          
-
-(defglobal s '(cons (eval (read-exp)) (cons (eval (read-exp)) nil)))
 
 ;;; make binaly list of s-expression
 ;;; add newline to sexp 

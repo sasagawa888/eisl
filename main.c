@@ -1240,6 +1240,7 @@ sread (void)
     case LPAREN:
       return (readlist ());
     case RPAREN:
+      repl_flag = org_repl_flag;
       error (ILLEGAL_RPAREN, "read", NIL);
     default:
       break;
@@ -1261,7 +1262,10 @@ readlist (void)
     {
       rl_cdr = sread ();
       if (rl_cdr == FEND)
+      {
+  repl_flag = org_repl_flag;      
 	error (ILLEGAL_RPAREN, "read", makesym ("file end"));
+      }
       gettoken ();
       return (rl_cdr);
     }
@@ -1270,7 +1274,10 @@ readlist (void)
       stok.flag = BACK;
       rl_car = sread ();
       if (rl_car == FEND)
+  {
+  repl_flag = org_repl_flag;
 	error (ILLEGAL_RPAREN, "read", makesym ("file end"));
+  }
       rl_cdr = readlist ();
       return (cons (rl_car, rl_cdr));
     }

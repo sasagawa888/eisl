@@ -2162,7 +2162,6 @@ f_read (int arglist)
   if (n > 0 && !input_stream_p (arg1))
     error (NOT_IN_STREAM, "read", arg1);
 
-  org_repl_flag = repl_flag;
   save1 = save_repl_flag();
   if (n == 0)
     res = sread ();

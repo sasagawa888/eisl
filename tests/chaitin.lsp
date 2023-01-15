@@ -26,6 +26,7 @@ y* means minimum size program of y
 ;;; if option is 'no-time-limit, eval calculate with no-time-limit.
 (defun try (time sexp binary)
     (setq program (create-string-input-stream (bin-to-str binary)))
+    ;; need syntax check. if program has syntax error, avoid the binary
     (cond ((and (symbolp time) (eq time 'no-time-limit)) (ignore-errors (eval sexp)))
           ((integerp time) (let ((result (ignore-errors (eval sexp time))))
                                 (if (null result)
@@ -117,12 +118,17 @@ y* means minimum size program of y
 (defun foo ()
     (foo))
 
-
+#|
+if generated s-exp occures error. control is but.
+bit list generate many syntax error. so, before (read-exp) need to check syntax.
+|#
 (defun count-halt (time prefix bit-left)
     (if (= bit-left 0)
-        (progn (print prefix) (try 100 '(print (read-exp)) prefix))
-        (progn (count-halt time (cons 0 prefix) (- bit-left 1))
-               (count-halt time (cons 1 prefix) (- bit-left 1)))))
+        (if (eq 'success (try 100 '(print (read-exp)) prefix))
+            1 
+            0)
+        (+ (count-halt time (cons 0 prefix) (- bit-left 1))
+           (count-halt time (cons 1 prefix) (- bit-left 1)))))
 
 ;;; test
 ($test (size '(+ 1 2)) 64)

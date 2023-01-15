@@ -136,6 +136,7 @@ bool ignore_topchk = false;	// for FAST
 #ifndef WITHOUT_CURSES
 bool repl_flag = true;		// for REPL read_line true=on,
 					// false=off
+bool org_repl_flag;
 #endif
 bool option_flag = false;	// while handling command line option it is true, else false
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
@@ -595,6 +596,7 @@ skip:
 	      }
 	    if (c == EOF)
 	      {
+    repl_flag = org_repl_flag;
 		error (SYSTEM_ERR, "not exist right hand double quote", NIL);
 	      }
 	    c = readc ();

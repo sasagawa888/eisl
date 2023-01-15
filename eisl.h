@@ -577,6 +577,7 @@ extern bool     ignore_topchk;
 #define repl_flag false
 #else
 extern bool     repl_flag;
+extern bool     org_repl_flag;
 #endif
 extern bool     option_flag;
 extern volatile sig_atomic_t exit_flag;

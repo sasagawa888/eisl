@@ -79,6 +79,7 @@ y* means minimum size program of y
 (defun char-to-str (c)
     (cond ((char< c #\space) "")
           ((char> c #\z) "")
+          ;((char= c #\") "")
           (t (convert c <string>))))
 
 ;;; help function for bin-to-str

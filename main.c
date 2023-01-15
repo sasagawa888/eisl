@@ -136,7 +136,7 @@ bool ignore_topchk = false;	// for FAST
 #ifndef WITHOUT_CURSES
 bool repl_flag = true;		// for REPL read_line true=on,
 					// false=off
-bool org_repl_flag = true; // original val for restore
+bool org_repl_flag = true; // original val for restore          
 #endif
 bool option_flag = false;	// while handling command line option it is true, else false
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
@@ -1261,8 +1261,7 @@ readlist (void)
     {
       rl_cdr = sread ();
       if (rl_cdr == FEND)
-      {
-  repl_flag = org_repl_flag;      
+      {   
 	error (ILLEGAL_RPAREN, "read", makesym ("file end"));
       }
       gettoken ();
@@ -1274,7 +1273,6 @@ readlist (void)
       rl_car = sread ();
       if (rl_car == FEND)
   {
-  repl_flag = org_repl_flag;
 	error (ILLEGAL_RPAREN, "read", makesym ("file end"));
   }
       rl_cdr = readlist ();

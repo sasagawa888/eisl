@@ -42,8 +42,10 @@ error (int errnum, const char *fun, int arg)
   int initargs, i;
   char fun1[SYMSIZE];
 
+  #ifndef WITHOUT_CURSES
   // restore repl_flag
   repl_flag = org_repl_flag;
+  #endif
 
   // resolve unwind-protect
   if (unwind_pt > 0)

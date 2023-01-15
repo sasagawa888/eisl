@@ -131,4 +131,4 @@ y* means minimum size program of y
 ($test (u (sexp-to-bin '(+ g 2))) nil)
 ($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(foo)))) failse)
 ($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ 1 2)))) success)
-;($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ h 2)))) failse)
+($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ h 2)))) failse)

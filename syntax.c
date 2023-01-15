@@ -1998,6 +1998,7 @@ f_ignore_errors (int arglist)
   ELSE res = NIL;
   END_TRY;
   ignore_flag = false;
+  try_flag = false;
   return res;
 }
 

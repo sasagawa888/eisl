@@ -136,7 +136,7 @@ bool ignore_topchk = false;	// for FAST
 #ifndef WITHOUT_CURSES
 bool repl_flag = true;		// for REPL read_line true=on,
 					// false=off
-bool org_repl_flag;
+bool org_repl_flag = true; // original val for restore
 #endif
 bool option_flag = false;	// while handling command line option it is true, else false
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
@@ -239,6 +239,7 @@ static inline disable_repl_flag(void)
 {
 #ifndef WITHOUT_CURSES
   repl_flag = false;
+  org_repl_flag = false;
 #endif
 }
 
@@ -596,7 +597,6 @@ skip:
 	      }
 	    if (c == EOF)
 	      {
-    repl_flag = org_repl_flag;
 		error (SYSTEM_ERR, "not exist right hand double quote", NIL);
 	      }
 	    c = readc ();
@@ -1240,7 +1240,6 @@ sread (void)
     case LPAREN:
       return (readlist ());
     case RPAREN:
-      repl_flag = org_repl_flag;
       error (ILLEGAL_RPAREN, "read", NIL);
     default:
       break;

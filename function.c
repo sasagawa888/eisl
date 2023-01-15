@@ -2679,7 +2679,7 @@ f_stream_ready_p (int arglist)
       if (c == EOF)
 	{
 	  input_stream = save;
-	  error (NOT_IN_STREAM, "stream-ready-p", arg1);
+	  return (NIL);
 	}
       else
 	{

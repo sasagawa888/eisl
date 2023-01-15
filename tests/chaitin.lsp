@@ -124,7 +124,7 @@ bit list generate many syntax error. so, before (read-exp) need to check syntax.
 |#
 (defun count-halt (time prefix bit-left)
     (if (= bit-left 0)
-        (if (eq 'success (try 100 '(print (read-exp)) prefix))
+        (if (eq 'success (try 'no-time-limit '(print (read-exp)) prefix))
             1 
             0)
         (+ (count-halt time (cons 0 prefix) (- bit-left 1))

@@ -73,8 +73,13 @@ y* means minimum size program of y
 (defun charlist-to-str (ls)
     (if (null ls)
         ""
-        (string-append (convert (car ls) <string>)
+        (string-append (char-to-str (car ls))
                        (charlist-to-str (cdr ls)))))
+
+(defun char-to-str (c)
+    (cond ((char< c #\space) "")
+          ((char> c #\z) "")
+          (t (convert c <string>))))
 
 ;;; help function for bin-to-str
 (defun bin-to-charlist (ls)
@@ -113,13 +118,10 @@ y* means minimum size program of y
 
 
 (defun count-halt (time prefix bit-left)
-    (print prefix)
     (if (= bit-left 0)
-        (if (eq 'success (car (try time '(eval (read-exp)) prefix)))
-            1
-            0)
-        (+ (count-halt time (cons 0 prefix) (- bit-left 1))
-           (count-halt time (cons 1 prefix) (- bit-left 1)))))
+        (progn (print prefix) (try 100 '(print (read-exp)) prefix))
+        (progn (count-halt time (cons 0 prefix) (- bit-left 1))
+               (count-halt time (cons 1 prefix) (- bit-left 1)))))
 
 ;;; test
 ($test (size '(+ 1 2)) 64)

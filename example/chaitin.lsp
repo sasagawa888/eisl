@@ -121,13 +121,20 @@ y* means minimum size program of y
 #|
 if generated s-exp occures error. control is but.
 bit list generate many syntax error. so, before (read-exp) need to check syntax.
+memo
+(read-exp) is user defiend function. so, apply push ep(environment) and pop ep.
+but if occures error, igonore-errors dose not restore ep. problem is this one.
+idea ignore-errors check s-exp. if s-exp is user-defined-function and occures error, pop ep.
+e.g. (eval (read-exp)) eval is subr, read-exp is user-defined. How solve it.
+idea apply user-defined-function  begining set flag execute_flag and ending reset execute_flag.
+igonore-errors check execute_flag and if it is on pop ep. 
 |#
 (defun count-halt (time prefix bit-left)
     (print bit-left)
     (if (= bit-left 0)
         (if (eq 'success (try time '(read-exp) '(0 1 0 0 0 1 0 0)))
-            1 
-            0)
+            (progn (print "succ") (break) 1) 
+            (progn (print "fail") (break) 0))
         (+ (count-halt time (cons 0 prefix) (- bit-left 1))
            (count-halt time (cons 1 prefix) (- bit-left 1)))))
 

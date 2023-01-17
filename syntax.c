@@ -1991,14 +1991,23 @@ f_defmethod (int arglist)
 int
 f_ignore_errors (int arglist)
 {
-  volatile int res;
+  volatile int res,save1,save2;
 
   ignore_flag = true;
+  save1 = input_stream;
+  save2 = output_stream;
   TRY res = f_progn (arglist);
   ELSE res = NIL;
   END_TRY;
   ignore_flag = false;
   try_flag = false;
+  input_stream = save1;
+  output_stream = save2;
+  /*
+  memo 
+  if execute s-exp is (read stream) and occures an error, 
+  ignore_errors must restore original input output stream.
+  */
   return res;
 }
 

@@ -1991,7 +1991,7 @@ f_defmethod (int arglist)
 int
 f_ignore_errors (int arglist)
 {
-  volatile int res,save1,save2;
+  volatile int res,save1,save2,save3;
 
   ignore_flag = true;
   save1 = input_stream;
@@ -2003,6 +2003,7 @@ f_ignore_errors (int arglist)
   try_flag = false;
   input_stream = save1;
   output_stream = save2;
+
   /*
   memo 
   if execute s-exp is (read stream) and occures an error, 

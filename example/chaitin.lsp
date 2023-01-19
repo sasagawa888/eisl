@@ -130,13 +130,23 @@ idea apply user-defined-function  begining set flag execute_flag and ending rese
 igonore-errors check execute_flag and if it is on pop ep. 
 |#
 (defun count-halt (time prefix bit-left)
-    (print bit-left)
     (if (= bit-left 0)
-        (if (eq 'success (try time '(read-exp) '(0 1 0 0 0 1 0 0)))
-            (progn (print "succ") (break) 1) 
-            (progn (print "fail") (break) 0))
+        (check prefix)
         (+ (count-halt time (cons 0 prefix) (- bit-left 1))
            (count-halt time (cons 1 prefix) (- bit-left 1)))))
+
+(defun check (prefix)
+     (break)
+     (try 100 '(eval (read-exp)) '(0 1 0 0 0 1 0 0))
+     ;; try destry environment ep why?
+     ;; try function must save environment ep. 
+     ;; need to use C-wrapper for try. 
+     (break)
+     (print prefix) 
+     1)
+    ;(if (eq 'success (try 100 '(eval (read-exp)) '(0 1 0 0 0 1 0 0)))
+    ;        1 
+    ;        0))
 
 ;;; test
 ($test (size '(+ 1 2)) 64)

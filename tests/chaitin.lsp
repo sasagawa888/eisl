@@ -16,6 +16,13 @@ y* means minimum size program of y
 (import "test")
 
 ;;; I rewrite try and read-exp functions as SUBR
+#|
+memo
+
+Symbols that begin with #(sharp). try can't catch error. Need improvement of gettoken.
+e.g. #2a(EOF) should occure error.
+#
+|#
 
 ;;; UTM universal turing machine 
 (defun U (p)

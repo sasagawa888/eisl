@@ -929,7 +929,7 @@ f_try (int arglist)
       try_flag = true;
       ignore_flag = true;
       TRY res = eval (arg2);
-      ELSE res = NIL;
+      ELSE res = UNDEF;
       END_TRY;
       ignore_flag = false;
       try_flag = false;

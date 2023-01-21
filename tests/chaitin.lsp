@@ -15,6 +15,8 @@ y* means minimum size program of y
 
 (import "test")
 
+;;; I rewrite try and read-exp functions as SUBR
+
 ;;; UTM universal turing machine 
 (defun U (p)
     (try 'no-time-limit
@@ -66,7 +68,8 @@ Now count-halt does not work.
            (count-halt time (cons 1 prefix) (- bit-left 1)))))
 
 (defun check (prefix)
-    (if (eq 'success (try 100 '(eval (read-exp)) '(0 1 0 0 0 1 0 0)))
+    (print prefix)
+    (if (eq 'success (try 100 '(eval (read-exp)) '(0 1 0 0 0 0 0 0)))
         1 
         0))
 

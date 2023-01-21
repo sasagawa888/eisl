@@ -669,13 +669,15 @@ skip:
 	    c = readc ();
 	    while (c != '|')
 	      {
-		c = readc ();
+          if (c == EOF)
+             error (SYSTEM_ERR, "not exist right hand #| comment |#", NIL);
+		      c = readc ();
 	      }
-	    c = readc ();
-	    if (c == '#')
+	      c = readc ();
+	      if (c == '#')
 	      {
-		c = readc ();
-		goto skip;
+		      c = readc ();
+		      goto skip;
 	      }
 	    else
 	      goto reskip;

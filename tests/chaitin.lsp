@@ -75,8 +75,8 @@ Now count-halt does not work.
            (count-halt time (cons 1 prefix) (- bit-left 1)))))
 
 (defun check (prefix)
-    (print prefix)
-    (if (eq 'success (try 100 '(eval (read-exp)) prefix))
+    (format (standard-output) "~A" #\.)
+    (if (eq 'success (car (try 100 '(eval (read-exp)) prefix)))
         1 
         0))
 

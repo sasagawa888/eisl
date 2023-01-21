@@ -6,6 +6,11 @@
 #include <wiringPiSPI.h>
 #endif
 #include "eisl.h"
+#include "mem.h"
+#include "fmt.h"
+#include "except.h"
+#include "str.h"
+#include "text.h"
 
 void
 initexsubr (void)
@@ -48,6 +53,8 @@ initexsubr (void)
   defsubr ("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
   defsubr ("EISL-TEST", f_eisl_test);
 
+  defsubr ("TRY" ,f_try);
+  defsubr ("READ-EXP", f_read_exp);
 
 #ifdef __rpi__
   defsubr ("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -858,3 +865,104 @@ superp (int entry, int next)
   else
     return (0);
 }
+
+
+int program;
+
+
+int
+f_try (int arglist)
+{
+  int arg1,arg2,arg3,pos,c,bit,i,res,save1,save2;
+  char str[STRSIZE];
+
+  arg1 = car(arglist); //time 
+  arg2 = cadr(arglist); //sexp
+  arg3 = caddr(arglist); // binary
+
+  if (!integerp(arg1) && !(symbolp(arg1) && arg1 == makesym("NO-TIME=LIMIT")))
+    error (ILLEGAL_ARGS, "try", arg1);
+  if (!listp(arg2))
+    error (NOT_LIST, "try", arg2);
+  if (!listp(arg3))
+    error (NOT_LIST, "try", arg3);
+
+  pos = 0;
+  while (!nullp(arg3))
+  {
+      bit = 8;
+      c = 0;
+      while (bit > 0)
+      {
+          i = GET_INT(car(arg3));
+          c = 2 * c + i;
+          arg3 = cdr(arg3);
+          bit--;
+      }
+
+      str[pos] = c;
+      pos++;
+  }
+
+  str[pos] = NUL;
+
+  program = makestream (stdin, EISL_INSTR, NULL);
+  TRY heap[program].name = Str_dup (GET_NAME(makestr(str)), 1, 0, 1);
+  EXCEPT (Mem_Failed) error (MALLOC_OVERF, "try", NIL);
+  END_TRY;
+
+  save1 = input_stream;
+  save2 = output_stream;
+  
+  if(arg1 == makesym("NO-TIME=LIMIT"))
+  {
+      ignore_flag = true;
+      TRY res = eval(arg2);
+      ELSE res = NIL;
+      END_TRY;
+      ignore_flag = false;
+  }
+  else
+  {
+      try_timer = getETime () + (double)GET_INT(arg1)*0.000001;
+      try_res = NIL;
+      try_flag = true;
+      ignore_flag = true;
+      TRY res = eval (arg2);
+      ELSE res = NIL;
+      END_TRY;
+      ignore_flag = false;
+      try_flag = false;
+      if (res != UNDEF)
+        res = list3(makesym("SUCCESS"),res,try_res);
+      else 
+        res = list3(makesym("FAILSE"),NIL,try_res);
+  }
+
+  input_stream = save1;
+  output_stream = save2;
+  return(res);
+}
+
+
+int
+f_read_exp(int arglist)
+{
+  int res,save;
+
+  if (!nullp(arglist))
+    error (ILLEGAL_ARGS, "read-exp", arglist);
+
+
+  save = input_stream;
+  input_stream = program;
+  ignore_flag = true;
+  TRY res = sread();
+  ELSE res = UNDEF;
+  END_TRY;
+  ignore_flag = false;
+  input_stream = save;
+  
+  return (res);
+}
+

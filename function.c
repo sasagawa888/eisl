@@ -2699,28 +2699,11 @@ f_eval (int arglist)
   int arg1,arg2,len;
 
   arg1 = car (arglist);
-  arg2 = cadr(arglist);
   len = length(arglist);
-  if (len != 1 && len != 2)
+  if (len != 1)
     error (WRONG_ARGS, "eval", arglist);
 
-  if (len == 1)
-    return (eval (arg1));
-  else
-  {
-    if(!integerp(arg2))
-      error (WRONG_ARGS, "eval", arg2);
-    int res;
-    try_timer = getETime () + (double)GET_INT(arg2)*0.000001;
-    try_res = NIL;
-    try_flag = true;
-    res = eval (arg1);
-    try_flag = false;
-    if(res != UNDEF)
-      return(list3(makesym("SUCCESS"),res,try_res));
-    else
-      return(list3(makesym("FAILSE"),NIL,try_res));
-  }
+  return (eval (arg1));
 }
 
 int

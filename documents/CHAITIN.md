@@ -4,12 +4,18 @@ The eval function is extended to test the stopping probability (Ω) of Chitin' t
 see The LIMITS of MATHEMATICS by Gregory J. Chaitin.
 
 # extended eval
+(try limit-time S-expression binary-list)
 
-(eval S-expression limit-time)
+try function converts binary-list to ascii code character and make string-input-stream.
+and evaluate S-expression in limit-time.
 
+### limit-time
 limit-time(integer)  micro seconds
+or 'no-time-limit symbol 
 
-If an integer is given to the second argument, the S-expression of the first argument is evaluated with that time as the limit.
+If symbol no-time-limit is geven to the first argument, the S-expression second argument is evaluated with no time limitation.
+
+If an integer is given to the first argument, the S-expression of the second argument is evaluated with that time as the limit.
 
 If the calculation finishes within the time
 Returns a list of the following three values:
@@ -21,15 +27,17 @@ Returns a list of the following three values:
 
 (false value argument-of-calculation-process)
 
-# example
+### S-expression
+e.g.  (eval (read-exp))
 
-```
-> (eval '(fib 3) 100)
-(SUCCESS 2 ((1) (2) (3)))
-> (eval '(fib 10) 100)
-(FALSE NIL ((3) (2) (1) (2) (3) (4) (5) (2) (1) (2) (3) (4) (1) (2) (3) (2) (1) (2) (3) (4) (5) (6) (7) (8) (9) (10)))
+read-exp function is for try function. It read stream that created by binary-list.
 
-```
+### binary-list
+8 bits ascii code.
+
+e.g. 1 -> (0 0 1 1 0 0 0 1)(dec 49)
+
+ommit control code(0~31) and non ascii code(128~255)
 
 # sample code
 

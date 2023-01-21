@@ -880,7 +880,7 @@ f_try (int arglist)
   arg2 = cadr(arglist); //sexp
   arg3 = caddr(arglist); // binary
 
-  if (!integerp(arg1) && !(symbolp(arg1) && arg1 == makesym("NO-TIME=LIMIT")))
+  if (!integerp(arg1) && !(symbolp(arg1) && arg1 == makesym("NO-TIME-LIMIT")))
     error (ILLEGAL_ARGS, "try", arg1);
   if (!listp(arg2))
     error (NOT_LIST, "try", arg2);
@@ -914,7 +914,7 @@ f_try (int arglist)
   save1 = input_stream;
   save2 = output_stream;
   
-  if(arg1 == makesym("NO-TIME=LIMIT"))
+  if(arg1 == makesym("NO-TIME-LIMIT"))
   {
       ignore_flag = true;
       TRY res = eval(arg2);
@@ -956,11 +956,9 @@ f_read_exp(int arglist)
 
   save = input_stream;
   input_stream = program;
-  ignore_flag = true;
   TRY res = sread();
   ELSE res = UNDEF;
   END_TRY;
-  ignore_flag = false;
   input_stream = save;
   
   return (res);

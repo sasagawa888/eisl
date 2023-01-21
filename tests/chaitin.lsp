@@ -69,7 +69,7 @@ Now count-halt does not work.
 
 (defun check (prefix)
     (print prefix)
-    (if (eq 'success (try 100 '(eval (read-exp)) '(0 1 0 0 0 0 0 0)))
+    (if (eq 'success (try 100 '(eval (read-exp)) prefix))
         1 
         0))
 

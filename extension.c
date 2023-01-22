@@ -911,7 +911,7 @@ f_try (int arglist)
   str[pos] = NUL;
 
   program = makestream (stdin, EISL_INSTR, NULL);
-  TRY heap[program].name = Str_dup (GET_NAME(makestr(str)), 1, 0, 1);
+  TRY heap[program].name = Str_dup (str, 1, 0, 1);
   EXCEPT (Mem_Failed) error (MALLOC_OVERF, "try", NIL);
   END_TRY;
 

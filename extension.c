@@ -922,9 +922,13 @@ f_try (int arglist)
   {
       ignore_flag = true;
       TRY res = eval(arg2);
-      ELSE res = NIL;
+      ELSE res = UNDEF;
       END_TRY;
       ignore_flag = false;
+      if (res == UNDEF)
+        res = makesym("FAILSE");
+      else if (res == TIMELIMIT)
+        res = makesym("FAILSE");
   }
   else
   {
@@ -937,10 +941,12 @@ f_try (int arglist)
       END_TRY;
       ignore_flag = false;
       try_flag = false;
-      if (res != UNDEF)
-        res = list3(makesym("SUCCESS"),res,try_res);
+      if (res == UNDEF)
+        res = list3(makesym("FAILSE"),makesym("OUT-OF-DATA"),try_res);
+      else if (res == TIMELIMIT)
+        res = list3(makesym("FAILSE"),makesym("OUT-OF-TIME"),try_res);
       else 
-        res = list3(makesym("FAILSE"),NIL,try_res);
+        res = list3(makesym("SUCCESS"),res,try_res);
   }
 
   input_stream = save1;

@@ -15,15 +15,6 @@ y* means minimum size program of y
 
 (import "test")
 
-;;; I rewrite try and read-exp functions as SUBR
-#|
-memo
-
-Symbols that begin with #(sharp). try can't catch error. Need improvement of gettoken.
-e.g. #2a(EOF) should occure error.
-#
-|#
-
 ;;; UTM universal turing machine 
 (defun U (p)
     (try 'no-time-limit
@@ -32,7 +23,7 @@ e.g. #2a(EOF) should occure error.
 
 ;;; make binary list of s-expression
 ;;; add newline to sexp 
-(defun sexp-to-bin (s)
+(defun bits (s)
     (let ((stream (create-string-output-stream))
           (str nil))
         (format stream "~A~%" s)
@@ -58,7 +49,7 @@ e.g. #2a(EOF) should occure error.
 
 ;;; size of s-exp in binary
 (defun size (s)
-   (length (sexp-to-bin s)))
+   (length (bits s)))
 
 ;;; loop function
 ;;; eval can't calculate foo function.
@@ -83,10 +74,10 @@ Now count-halt does not work.
 ;;; test
 ($test (size '(+ 1 2)) 64)
 ($test (size '(cons (eval (read-exp)) (cons (eval (read-exp)) nil))) 432)
-($test (sexp-to-bin '(+ 1 2))
+($test (bits '(+ 1 2))
     (0 0 1 0 1 0 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 0 0 0 0 0 1 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 0 0 0 0 1 0 1 0))
-($test (u (sexp-to-bin '(+ 1 2))) 3)
-($test (u (sexp-to-bin '(+ g 2))) nil)
-($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(foo)))) failse)
-($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ 1 2)))) success)
-($test (car (try 100 '(eval (read-exp)) (sexp-to-bin '(+ h 2)))) failse)
+($test (u (bits '(+ 1 2))) 3)
+($test (u (bits '(+ g 2))) failse)
+($test (car (try 100 '(eval (read-exp)) (bits '(foo)))) failse)
+($test (car (try 100 '(eval (read-exp)) (bits '(+ 1 2)))) success)
+($test (car (try 100 '(eval (read-exp)) (bits '(+ h 2)))) failse)

@@ -95,6 +95,7 @@ static const int CHARSIZE = 7;	// unicode char. add \0 to tail
 static const int MATSIZE = 256;
 static const int UNDEF = 4;
 static const int FEND = 6;
+static const int TIMELIMIT = 8;
 
 static const int BIGNUM_BASE = 1000000000;
 static const int FAILSE = -1000000000;

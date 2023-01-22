@@ -25,7 +25,12 @@ Returns a list of the following three values:
 If the calculation did not finish within the time
 Returns a list of the following three values:
 
-(false value argument-of-calculation-process)
+(false out-of-time argument-of-calculation-process)
+
+If the calculation occures error
+Returns a list of the following three values:
+
+(false out-of-data argument-of-calculation-process)
 
 ### S-expression
 e.g.  (eval (read-exp))
@@ -35,7 +40,7 @@ read-exp function is for try function. It read stream that created by binary-lis
 ### binary-list
 8 bits ascii code.
 
-e.g. 1 -> (0 0 1 1 0 0 0 1)(dec 49)
+e.g. 1 -> (0 0 1 1 0 0 0 1)(49(10))
 
 ommit control code(0~31) and non ascii code(128~255)
 

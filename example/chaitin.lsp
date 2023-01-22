@@ -66,7 +66,7 @@ Now count-halt does not work.
            (count-halt time (cons 1 prefix) (- bit-left 1)))))
 
 (defun check (prefix)
-    (format (standard-output) "~A" #\.)
+    ;(print prefix)
     (if (eq 'success (car (try 100 '(eval (read-exp)) prefix)))
         1 
         0))
@@ -78,6 +78,6 @@ Now count-halt does not work.
     (0 0 1 0 1 0 0 0 0 0 1 0 1 0 1 1 0 0 1 0 0 0 0 0 0 0 1 1 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1 1 0 0 1 0 0 0 1 0 1 0 0 1 0 0 0 0 1 0 1 0))
 ($test (u (bits '(+ 1 2))) 3)
 ($test (u (bits '(+ g 2))) failse)
-($test (car (try 100 '(eval (read-exp)) (bits '(foo)))) failse)
+($test (elt (try 100 '(eval (read-exp)) (bits '(foo))) 1) out-of-time)
 ($test (car (try 100 '(eval (read-exp)) (bits '(+ 1 2)))) success)
-($test (car (try 100 '(eval (read-exp)) (bits '(+ h 2)))) failse)
+($test (elt (try 100 '(eval (read-exp)) (bits '(+ h 2))) 1) out-of-data)

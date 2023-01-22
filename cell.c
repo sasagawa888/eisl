@@ -51,7 +51,6 @@ initcell (void)
   SET_AUX (UNDEF, CLASS_SYMBOL);	// class of <undef> is symbol
   makesym ("<file-end>");	// 6th address is FEND
   SET_AUX (FEND, CLASS_SYMBOL);	// class of <end-of-file> is
-  makesym ("<time-limit>"); // 8th address is TIMELIMIT
   // symbol
   ep = 0;
   dp = 0;

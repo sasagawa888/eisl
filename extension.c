@@ -927,7 +927,7 @@ f_try (int arglist)
       ignore_flag = false;
       if (res == UNDEF)
         res = makesym("FAILSE");
-      else if (res == TIMELIMIT)
+      else if (res == FEND)
         res = makesym("FAILSE");
   }
   else
@@ -943,7 +943,7 @@ f_try (int arglist)
       try_flag = false;
       if (res == UNDEF)
         res = list3(makesym("FAILSE"),makesym("OUT-OF-DATA"),try_res);
-      else if (res == TIMELIMIT)
+      else if (res == FEND)
         res = list3(makesym("FAILSE"),makesym("OUT-OF-TIME"),try_res);
       else 
         res = list3(makesym("SUCCESS"),res,try_res);

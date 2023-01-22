@@ -1872,7 +1872,7 @@ DEF_GETTER (char, TR, trace, NIL)
   trace = 0;
 
   if(try_flag == true && getETime() >= try_timer)
-    return(TIMELIMIT);
+    return(FEND);
   
   switch (GET_TAG (func))
     {

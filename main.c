@@ -1246,7 +1246,6 @@ sread (void)
     default:
       break;
     }
-  Fmt_fprint (GET_PORT (error_stream), "%d%s", (int) stok.type, stok.buf);
   error (ILLEGAL_INPUT, "read", NIL);
   return (0);
 }

@@ -904,6 +904,12 @@ f_try (int arglist)
         str[pos] = c;
         pos++;
       }
+    
+  }
+
+  if (pos == 0)
+  {
+    return (list3(makesym("FAILSE"),makesym("OUT-OF-DATA"),NIL));
   }
 
   str[pos] = EOL;

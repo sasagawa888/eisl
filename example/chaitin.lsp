@@ -79,3 +79,4 @@ y* means minimum size program of y
 ($test (elt (try 100 '(eval (read-exp)) (bits '(foo))) 1) out-of-time)
 ($test (car (try 100 '(eval (read-exp)) (bits '(+ 1 2)))) success)
 ($test (elt (try 100 '(eval (read-exp)) (bits '(+ h 2))) 1) out-of-data)
+($test (elt (try 100 '(eval (read-exp)) '(1 1 0 0 0 0 0 0)) 1) out-of-data)

@@ -4,7 +4,7 @@ not tested
 |#
 
 (c-include "<GL/glut.h>")
-(c-option "-lglut -lGLU -lGL")
+(c-option "-lglut -lGLU -lGL -L/user/local/include/")
 
 (defun glut:init ()
     (c-lang "int argc = 0;")

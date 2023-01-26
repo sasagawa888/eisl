@@ -65,7 +65,7 @@ y* means minimum size program of y
 
 (defun check (time prefix)
     ;(print prefix)
-    (if (eq 'success (car (try time '(eval (read-exp)) prefix)))
+    (if (eq 'success (car (try time '(eval (read-exp)) prefix 'success)))
         1 
         0))
 

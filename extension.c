@@ -873,12 +873,13 @@ int program;
 int
 f_try (int arglist)
 {
-  int arg1,arg2,arg3,pos,c,bit,i,res,save1,save2;
+  int arg1,arg2,arg3,arg4,pos,c,bit,i,res,save1,save2;
   char str[STRSIZE];
 
   arg1 = car(arglist); //time 
   arg2 = cadr(arglist); //sexp
   arg3 = caddr(arglist); // binary
+  arg4 = caddr(cdr(arglist)); //print switch
 
   if (!integerp(arg1) && !(symbolp(arg1) && arg1 == makesym("NO-TIME-LIMIT")))
     error (ILLEGAL_ARGS, "try", arg1);
@@ -948,11 +949,25 @@ f_try (int arglist)
       ignore_flag = false;
       try_flag = false;
       if (res == UNDEF)
+      {
         res = list3(makesym("FAILSE"),makesym("OUT-OF-DATA"),try_res);
+        if (arg4 == makesym("OUT-OF-DATA"))
+        {
+          printf("%s", str);
+        }
+      }
       else if (res == FEND)
+        {
         res = list3(makesym("FAILSE"),makesym("OUT-OF-TIME"),try_res);
+        if (arg4 == makesym("OUT-OF-TIME"))
+          printf("%s", str);
+        }
       else 
+        {
         res = list3(makesym("SUCCESS"),res,try_res);
+        if (arg4 == makesym("SUCCESS"))
+          printf("%s", str);
+        }
   }
 
   input_stream = save1;

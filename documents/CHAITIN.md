@@ -4,7 +4,7 @@ The eval function is extended to test the stopping probability (Ω) of Chitin' t
 see The LIMITS of MATHEMATICS by Gregory J. Chaitin.
 
 # extended eval
-(try limit-time S-expression binary-list)
+(try limit-time S-expression binary-list :rest switch)
 
 try function converts binary-list to ascii code character and make string-input-stream.
 and evaluate S-expression in limit-time.
@@ -43,6 +43,15 @@ read-exp function is for try function. It read stream that created by binary-lis
 e.g. 1 -> (0 0 1 1 0 0 0 1)(49(10))
 
 ommit control code(0~31) and non ascii code(128-255)
+
+
+### switch
+
+out-of-time  print string when out-of-time
+
+out-of-data print string when out-of-data
+
+success print string when success
 
 # sample code
 

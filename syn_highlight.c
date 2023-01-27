@@ -86,7 +86,7 @@ static const char *extended[] = {
   "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
   "pwm-write", "pull-up-dn-control", "delay", "compile-file",
   "formatter", "line-argument", "getenv", "system",
-  "c-include", "c-define", "c-lang", "c-option", "try" , "read_exp" ,
+  "c-include", "c-define", "c-lang", "c-option", "try", "read_exp",
 };
 
 static bool

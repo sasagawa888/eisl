@@ -136,7 +136,7 @@ bool ignore_topchk = false;	// for FAST
 #ifndef WITHOUT_CURSES
 bool repl_flag = true;		// for REPL read_line true=on,
 					// false=off
-bool org_repl_flag = true; // original val for restore          
+bool org_repl_flag = true;	// original val for restore          
 #endif
 bool option_flag = false;	// while handling command line option it is true, else false
 volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
@@ -147,9 +147,9 @@ bool looking_for_shebang = false;	// skip over #!
 bool multiple_call_next_method;	// method body has multiple (call-next-method)
 
 // try function (try time s-exp)
-bool try_flag; // true or false
-double try_timer; // limit timer
-int try_res; // argument list
+bool try_flag;			// true or false
+double try_timer;		// limit timer
+int try_res;			// argument list
 
 // switch
 int gc_sw = 0;			// 0= mark-and-sweep-GC 1= copy-GC
@@ -235,7 +235,8 @@ maybe_greet (void)
     Fmt_print ("Easy-ISLisp Ver%1.2f\n", VERSION);
 }
 
-static inline disable_repl_flag(void)
+static inline
+disable_repl_flag (void)
 {
 #ifndef WITHOUT_CURSES
   repl_flag = false;
@@ -253,7 +254,7 @@ main (int argc, char *argv[])
       key_up == NULL || key_down == NULL ||
       key_right == NULL || key_left == NULL)
     {
-      disable_repl_flag();
+      disable_repl_flag ();
     }
   else
     {
@@ -272,10 +273,11 @@ main (int argc, char *argv[])
   initgeneric ();
   signal (SIGINT, signal_handler_c);
   signal (SIGSTOP, SIG_IGN);
-  if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) == -1) {
-    perror("setenv");
-    exit(EXIT_FAILURE);
-  }
+  if (setenv ("EASY_ISLISP", STRQUOTE (SHAREDIR), /* overwrite = */ 0) == -1)
+    {
+      perror ("setenv");
+      exit (EXIT_FAILURE);
+    }
 
   input_stream = standard_input;
   output_stream = standard_output;
@@ -325,13 +327,13 @@ main (int argc, char *argv[])
 		puts ("File doesn't exist.");
 		exit (EXIT_FAILURE);
 	      }
-	    disable_repl_flag();
+	    disable_repl_flag ();
 	    script_flag = true;
 	    looking_for_shebang = true;
 	    script_arg = optarg;
 	    break;
 	  case 'r':
-	    disable_repl_flag();
+	    disable_repl_flag ();
 	    break;
 	  case 'v':
 	    Fmt_print ("Easy-ISLisp Ver%1.2f\n", VERSION);
@@ -451,7 +453,7 @@ readc (void)
       // if not script-mode quit system
       if (!script_flag && input_stream == standard_input && c == EOF)
 	{
-    // quit from system(not script-mode)
+	  // quit from system(not script-mode)
 	  greeting_flag = false;
 	  putchar ('\n');
 	  RAISE (Exit_Interp);
@@ -461,7 +463,7 @@ readc (void)
 
     }
   else
-  // string-stream
+    // string-stream
     {
       c = GET_NAME (input_stream)[GET_CDR (input_stream)];
       SET_CDR (input_stream, GET_CDR (input_stream) + 1);
@@ -669,15 +671,16 @@ skip:
 	    c = readc ();
 	    while (c != '|')
 	      {
-          if (c == EOF)
-             error (SYSTEM_ERR, "not exist right hand #| comment |#", NIL);
-		      c = readc ();
+		if (c == EOF)
+		  error (SYSTEM_ERR, "not exist right hand #| comment |#",
+			 NIL);
+		c = readc ();
 	      }
-	      c = readc ();
-	      if (c == '#')
+	    c = readc ();
+	    if (c == '#')
 	      {
-		      c = readc ();
-		      goto skip;
+		c = readc ();
+		goto skip;
 	      }
 	    else
 	      goto reskip;
@@ -1262,9 +1265,9 @@ readlist (void)
     {
       rl_cdr = sread ();
       if (rl_cdr == FEND)
-      {   
-	error (ILLEGAL_RPAREN, "read", makesym ("file end"));
-      }
+	{
+	  error (ILLEGAL_RPAREN, "read", makesym ("file end"));
+	}
       gettoken ();
       return (rl_cdr);
     }
@@ -1273,9 +1276,9 @@ readlist (void)
       stok.flag = BACK;
       rl_car = sread ();
       if (rl_car == FEND)
-  {
-	error (ILLEGAL_RPAREN, "read", makesym ("file end"));
-  }
+	{
+	  error (ILLEGAL_RPAREN, "read", makesym ("file end"));
+	}
       rl_cdr = readlist ();
       return (cons (rl_car, rl_cdr));
     }
@@ -1870,9 +1873,9 @@ DEF_GETTER (char, TR, trace, NIL)
   qexist = 0;
   trace = 0;
 
-  if(try_flag == true && getETime() >= try_timer)
-    return(FEND);
-  
+  if (try_flag == true && getETime () >= try_timer)
+    return (FEND);
+
   switch (GET_TAG (func))
     {
     case SUBR:
@@ -1880,8 +1883,8 @@ DEF_GETTER (char, TR, trace, NIL)
     case FSUBR:
       return ((GET_SUBR (func)) (args));
     case FUNC:
-      if(try_flag == true)
-        try_res = cons(args,try_res);
+      if (try_flag == true)
+	try_res = cons (args, try_res);
       if (GET_TR (examin_sym) == 1)
 	{
 	  trace = examin_sym;

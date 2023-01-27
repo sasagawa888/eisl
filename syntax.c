@@ -785,9 +785,9 @@ f_function (int arglist)
       if (IS_FUNC (res))
 	return (res);
       else if (IS_FSUBR (GET_CAR (arg1)))
-  error (UNDEF_FUN, "function", arg1);
+	error (UNDEF_FUN, "function", arg1);
       else if (macrop (arg1))
-  error (UNDEF_FUN, "function", arg1);
+	error (UNDEF_FUN, "function", arg1);
       else if (GET_CAR (arg1) != NIL)
 	return (GET_CAR (arg1));
       else
@@ -1232,7 +1232,7 @@ f_catch (int arglist)
 	}
       res = catch_arg;
       catch_arg = NIL;
-      sp = save;		
+      sp = save;
       // restore stack pointer. longjump destroy sp
       return (res);
     }
@@ -1991,7 +1991,7 @@ f_defmethod (int arglist)
 int
 f_ignore_errors (int arglist)
 {
-  volatile int res,save1,save2,save3;
+  volatile int res, save1, save2, save3;
 
   ignore_flag = true;
   save1 = input_stream;
@@ -2005,10 +2005,10 @@ f_ignore_errors (int arglist)
   output_stream = save2;
 
   /*
-  memo 
-  if execute s-exp is (read stream) and occures an error, 
-  ignore_errors must restore original input output stream.
-  */
+     memo 
+     if execute s-exp is (read stream) and occures an error, 
+     ignore_errors must restore original input output stream.
+   */
   return res;
 }
 
@@ -2024,8 +2024,8 @@ f_with_open_input_file (int arglist)
   arg2 = cdr (arglist);
   sym = car (arg1);		// stream-name
   str = eval (cadr (arg1));	// file-name
-  n = length (arg1); // check element
-  if (!(listp(arg1) && (n == 2 || n == 3)))
+  n = length (arg1);		// check element
+  if (!(listp (arg1) && (n == 2 || n == 3)))
     error (ILLEGAL_FORM, "with-input-file", arg1);
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-input-file", sym);
@@ -2034,7 +2034,7 @@ f_with_open_input_file (int arglist)
   const char *fname = GET_NAME (str);
   if (n == 2)
     port = fopen (fname, "r");
-  else 
+  else
     port = fopen (fname, "rb");
   if (port == NULL)
     {
@@ -2043,7 +2043,7 @@ f_with_open_input_file (int arglist)
     }
   if (n == 2)
     val = makestream (port, EISL_INPUT, Str_dup (fname, 1, 0, 1));
-  else 
+  else
     val = makestream (port, EISL_INPUT_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);
@@ -2065,8 +2065,8 @@ f_with_open_output_file (int arglist)
   arg2 = cdr (arglist);
   sym = car (arg1);		// stream-name
   str = eval (cadr (arg1));	// file-name
-  n = length (arg1); // check element
-  if (!(listp(arg1) && (n == 2 || n == 3)))
+  n = length (arg1);		// check element
+  if (!(listp (arg1) && (n == 2 || n == 3)))
     error (ILLEGAL_FORM, "with-open-output-file", arg1);
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-output-file", sym);
@@ -2075,7 +2075,7 @@ f_with_open_output_file (int arglist)
   const char *fname = GET_NAME (str);
   if (n == 2)
     port = fopen (fname, "w");
-  else 
+  else
     port = fopen (fname, "wb");
   if (port == NULL)
     {
@@ -2084,7 +2084,7 @@ f_with_open_output_file (int arglist)
     }
   if (n == 2)
     val = makestream (port, EISL_OUTPUT, Str_dup (fname, 1, 0, 1));
-  else 
+  else
     val = makestream (port, EISL_OUTPUT_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);
@@ -2106,8 +2106,8 @@ f_with_open_io_file (int arglist)
   arg2 = cdr (arglist);
   sym = car (arg1);		// stream-name
   str = eval (cadr (arg1));	// file-name
-  n = length(arg1); // check element
-  if (!(listp(arg1) && (n == 2 || n == 3)))
+  n = length (arg1);		// check element
+  if (!(listp (arg1) && (n == 2 || n == 3)))
     error (ILLEGAL_FORM, "with-open-io-file", arg1);
   if (!symbolp (sym))
     error (NOT_SYM, "with-open-io-file", sym);
@@ -2125,7 +2125,7 @@ f_with_open_io_file (int arglist)
     }
   if (n == 2)
     val = makestream (port, EISL_INOUT, Str_dup (fname, 1, 0, 1));
-  else 
+  else
     val = makestream (port, EISL_INOUT_BIN, Str_dup (fname, 1, 0, 1));
   ep1 = ep;
   addlexenv (sym, val);

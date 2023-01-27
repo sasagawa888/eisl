@@ -54,5 +54,5 @@ There is no need to have zero warnings, but at least the reason for them should 
 We use
 [GNU Indent](https://www.gnu.org/software/indent/)
 to format the code.
-In particular, Berkeley style with the `-orig` option.
+In particular, GNU style with the default.
 Just try to fit in with the existing code for naming conventions.

@@ -1598,24 +1598,25 @@ display_unicode (int line, int col)
 }
 
 
-int 
-find_turn_buffer_position(int line)
+int
+find_turn_buffer_position (int line)
 {
-  int col,col1,turn;
+  int col, col1, turn;
 
   turn = COLS - LEFT_MARGIN;
   col = col1 = 0;
-  while(col1 < turn){
-    col1 = col1 + increase_terminal(line,col);
-    col = col + increase_buffer(line,col);
-  }
-  return(col);
+  while (col1 < turn)
+    {
+      col1 = col1 + increase_terminal (line, col);
+      col = col + increase_buffer (line, col);
+    }
+  return (col);
 }
 
 void
 display_line (int line)
 {
-  int col,col1, turn;
+  int col, col1, turn;
   char linestr[10];
 
   turn = COLS - LEFT_MARGIN;
@@ -1626,10 +1627,10 @@ display_line (int line)
   if (ed_col1 < turn)
     col = col1 = 0;
   else
-  {
-    col = find_turn_buffer_position(line); // need recalculation
-    col1 = turn;
-  }
+    {
+      col = find_turn_buffer_position (line);	// need recalculation
+      col1 = turn;
+    }
   while (((ed_col1 < turn && col1 < turn)
 	  || (ed_col1 >= turn && col < COL_SIZE))
 	 && ed_data[line][col] != EOL && ed_data[line][col] != NUL)
@@ -1657,7 +1658,7 @@ display_line (int line)
 		{
 		  display_unicode (line, col);
 		}
-        col1 = col1 + increase_terminal(line,col);
+	      col1 = col1 + increase_terminal (line, col);
 	      col = col + increase_buffer (line, col);
 
 	      if (ed_data[line][col - 2] == '|' &&
@@ -1677,7 +1678,7 @@ display_line (int line)
 	{
 	  CHECK (addch, ed_data[line][col]);
 	  col++;
-    col1++;
+	  col1++;
 	}
       else
 	{
@@ -1696,7 +1697,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
-      col1++;
+		  col1++;
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1714,7 +1715,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
-      col1++;
+		  col1++;
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1724,7 +1725,7 @@ display_line (int line)
 	      setcolor (ed_string_color);
 	      CHECK (addch, ed_data[line][col]);
 	      col++;
-        col1++;
+	      col1++;
 	      while (((ed_col1 < turn && col1 < turn)
 		      || (ed_col1 >= turn && col < COL_SIZE))
 		     && ed_data[line][col] != NUL
@@ -1738,7 +1739,7 @@ display_line (int line)
 		    {
 		      display_unicode (line, col);
 		    }
-      col1 = col1 + increase_terminal(line,col);
+		  col1 = col1 + increase_terminal (line, col);
 		  col = col + increase_buffer (line, col);
 
 
@@ -1764,7 +1765,7 @@ display_line (int line)
 		    {
 		      display_unicode (line, col);
 		    }
-      col1 = col1 + increase_terminal(line,col);
+		  col1 = col1 + increase_terminal (line, col);
 		  col = col + increase_buffer (line, col);
 
 		}
@@ -1784,7 +1785,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
-      col1++;
+		  col1++;
 		}
 	      ESCRST ();
 	      ESCFORG ();
@@ -1800,7 +1801,7 @@ display_line (int line)
 		{
 		  CHECK (addch, ed_data[line][col]);
 		  col++;
-      col1++;
+		  col1++;
 		  if (ed_data[line][col - 2] == '|' &&
 		      ed_data[line][col - 1] == '#')
 		    {
@@ -1828,7 +1829,7 @@ display_line (int line)
 		    {
 		      display_unicode (line, col);
 		    }
-      col1 = col1 + increase_terminal(line,col);
+		  col1 = col1 + increase_terminal (line, col);
 		  col = col + increase_buffer (line, col);
 
 		}

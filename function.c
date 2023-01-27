@@ -836,7 +836,8 @@ f_floor (int arglist)
       x = floor (GET_FLT (arg1));
       if (x <= 999999999 && x >= -999999999)
 	return (makeint ((int) x));
-      else if ((long long int)x <= 999999999999999999 && (long long int)x >= -999999999999999999)
+      else if ((long long int) x <= 999999999999999999
+	       && (long long int) x >= -999999999999999999)
 	return (makelong ((long long int) x));
       else
 	return (makeflt (x));
@@ -2130,7 +2131,8 @@ f_set_cdr (int arglist)
 
 // input and output
 
-static inline bool save_repl_flag(void)
+static inline bool
+save_repl_flag (void)
 {
 #if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
   bool result = repl_flag;
@@ -2141,7 +2143,8 @@ static inline bool save_repl_flag(void)
 #endif
 }
 
-static inline void restore_repl_flag(bool save)
+static inline void
+restore_repl_flag (bool save)
 {
 #if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
   repl_flag = save;
@@ -2162,7 +2165,7 @@ f_read (int arglist)
   if (n > 0 && !input_stream_p (arg1))
     error (NOT_IN_STREAM, "read", arg1);
 
-  save1 = save_repl_flag();
+  save1 = save_repl_flag ();
   if (n == 0)
     res = sread ();
   else if (n == 1)
@@ -2173,7 +2176,7 @@ f_read (int arglist)
       input_stream = save;
       if (res == FEND)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  error (END_STREAM, "read", NIL);
 	}
 
@@ -2186,7 +2189,7 @@ f_read (int arglist)
       input_stream = save;
       if (res == FEND)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  if (nullp (arg2) && n == 2)
 	    return (arg2);
 	  else if (nullp (arg2) && n == 3)
@@ -2195,7 +2198,7 @@ f_read (int arglist)
 	    error (END_STREAM, "read", NIL);
 	}
     }
-  restore_repl_flag(save1);
+  restore_repl_flag (save1);
   return (res);
 }
 
@@ -2216,7 +2219,7 @@ f_read_char (int arglist)
   if (n > 0 && !text_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-char", arg1);
 
-  save1 = save_repl_flag();
+  save1 = save_repl_flag ();
   if (n == 0)
     {
       rc_buf[0] = readc ();
@@ -2231,7 +2234,7 @@ f_read_char (int arglist)
       rc_buf[1] = NUL;
       if (rc_buf[0] == EOF)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  input_stream = save;
 	  error (END_STREAM, "read-char", NIL);
 	}
@@ -2247,7 +2250,7 @@ f_read_char (int arglist)
       input_stream = save;
       if (rc_buf[0] == EOF)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  input_stream = save;
 	  if (nullp (arg2) && n == 2)
 	    return (arg2);
@@ -2258,7 +2261,7 @@ f_read_char (int arglist)
 	}
       res = makechar ((char *) rc_buf);
     }
-  restore_repl_flag(save1);
+  restore_repl_flag (save1);
   return (res);
 }
 
@@ -2276,7 +2279,7 @@ f_read_byte (int arglist)
   if (n > 0 && !binary_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-byte", arg1);
 
-  save1 = save_repl_flag();
+  save1 = save_repl_flag ();
   if (n == 0)
     {
       res = readc ();
@@ -2288,7 +2291,7 @@ f_read_byte (int arglist)
       res = readc ();
       if (res == EOF)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  input_stream = save;
 	  error (END_STREAM, "read-byte", NIL);
 	}
@@ -2302,7 +2305,7 @@ f_read_byte (int arglist)
       input_stream = save;
       if (res == EOF)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  input_stream = save;
 	  if (nullp (arg2) && n == 2)
 	    return (arg2);
@@ -2312,7 +2315,7 @@ f_read_byte (int arglist)
 	    error (END_STREAM, "read-byte", NIL);
 	}
     }
-  restore_repl_flag(save1);
+  restore_repl_flag (save1);
   return (makeint (res));
 }
 
@@ -2393,7 +2396,7 @@ f_read_line (int arglist)
   if (n > 0 && !text_input_stream_p (arg1))
     error (NOT_IN_STREAM, "read-line", arg1);
 
-  save1 = save_repl_flag();
+  save1 = save_repl_flag ();
   if (n == 0)
     {
       pos = 0;
@@ -2415,8 +2418,8 @@ f_read_line (int arglist)
       c = readc ();
       if (c == EOF)
 	{
-    input_stream = save;
-    restore_repl_flag(save1);
+	  input_stream = save;
+	  restore_repl_flag (save1);
 	  error (END_STREAM, "read-line", NIL);
 	}
       while (c != EOL && c != EOF)
@@ -2437,7 +2440,7 @@ f_read_line (int arglist)
       c = readc ();
       if (c == EOF)
 	{
-          restore_repl_flag(save1);
+	  restore_repl_flag (save1);
 	  if (nullp (arg2) && n == 2)
 	    {
 	      input_stream = save;
@@ -2449,10 +2452,10 @@ f_read_line (int arglist)
 	      return (arg3);
 	    }
 	  else
-      {
-        input_stream = save;
+	    {
+	      input_stream = save;
 	      error (END_STREAM, "read-line", NIL);
-      }
+	    }
 	}
 
       while (c != EOL && c != EOF)
@@ -2467,7 +2470,7 @@ f_read_line (int arglist)
       if (res == FEND && arg2 == NIL)
 	res = arg3;
     }
-  restore_repl_flag(save1);
+  restore_repl_flag (save1);
   return (res);
 }
 
@@ -2495,7 +2498,7 @@ f_load (int arglist)
     }
   // text file
   save1 = input_stream;
-  save2 = save_repl_flag();
+  save2 = save_repl_flag ();
   const char *fname = GET_NAME (arg1);
   input_stream =
     makestream (fopen (fname, "r"), EISL_INPUT, Str_dup (fname, 1, 0, 1));
@@ -2503,7 +2506,7 @@ f_load (int arglist)
   if (GET_PORT (input_stream) == NULL)
     {
       input_stream = save1;
-      restore_repl_flag(save2);
+      restore_repl_flag (save2);
       error (CANT_OPEN, "load", arg1);
     }
   open_flag = true;
@@ -2545,15 +2548,15 @@ f_load (int arglist)
       if (sexp == FEND)
 	break;
       top_flag = true;
-      restore_repl_flag(save2);
+      restore_repl_flag (save2);
       eval (sexp);
-      save2 = save_repl_flag();
+      save2 = save_repl_flag ();
     }
 cleanup:
   open_flag = false;
   fclose (GET_PORT (input_stream));
   input_stream = save1;
-  restore_repl_flag(save2);
+  restore_repl_flag (save2);
   if (redef_flag)
     redef_generic ();
   return (T);
@@ -2620,8 +2623,8 @@ f_open_stream_p (int arglist)
   arg = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "open-stream-p", arglist);
-  
-  if (streamp(arg) && GET_PROF(arg) == EISL_OPEN)
+
+  if (streamp (arg) && GET_PROF (arg) == EISL_OPEN)
     return (T);
   else
     return (NIL);
@@ -2635,7 +2638,7 @@ f_input_stream_p (int arglist)
   arg = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "input-stream-p", arglist);
-  if (input_stream_p(arg))
+  if (input_stream_p (arg))
     return (T);
   else
     return (NIL);
@@ -2649,7 +2652,7 @@ f_output_stream_p (int arglist)
   arg = car (arglist);
   if (length (arglist) != 1)
     error (WRONG_ARGS, "output-stream-p", arglist);
-  if (output_stream_p(arg))
+  if (output_stream_p (arg))
     return (T);
   else
     return (NIL);
@@ -2696,10 +2699,10 @@ f_stream_ready_p (int arglist)
 int
 f_eval (int arglist)
 {
-  int arg1,arg2,len;
+  int arg1, arg2, len;
 
   arg1 = car (arglist);
-  len = length(arglist);
+  len = length (arglist);
   if (len != 1)
     error (WRONG_ARGS, "eval", arglist);
 
@@ -2724,11 +2727,12 @@ f_apply (int arglist)
 int
 bind_args (int x)
 {
-  if (nullp (cdr (x))){
-    if (improper_list_p (car (x)))
-      error(ILLEGAL_ARGS, "apply", car (x));
-    return (car (x));
-  }
+  if (nullp (cdr (x)))
+    {
+      if (improper_list_p (car (x)))
+	error (ILLEGAL_ARGS, "apply", car (x));
+      return (car (x));
+    }
   else
     return (cons (car (x), bind_args (cdr (x))));
 }
@@ -4182,7 +4186,7 @@ f_open_input_file (int arglist)
   arg2 = cadr (arglist);
   if ((n = length (arglist)) != 1 && n != 2)
     error (WRONG_ARGS, "open-input-file", arglist);
-  if (n == 2 && !(integerp(arg2) && get_int(arg2) == 8))
+  if (n == 2 && !(integerp (arg2) && get_int (arg2) == 8))
     error (IMPROPER_ARGS, "open-input-file", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "open-input-file", arg1);
@@ -4196,9 +4200,9 @@ f_open_input_file (int arglist)
   if (port == NULL)
     error (CANT_OPEN, "open-input-file", arg1);
 
-  if (n  == 1)
+  if (n == 1)
     return (makestream (port, EISL_INPUT, Str_dup (fname, 1, 0, 1)));
-  else 
+  else
     return (makestream (port, EISL_INPUT_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
@@ -4212,7 +4216,7 @@ f_open_output_file (int arglist)
   arg2 = cadr (arglist);
   if ((n = length (arglist)) != 1 && n != 2)
     error (WRONG_ARGS, "open-output-file", arglist);
-  if (n == 2 && !(integerp(arg2) && get_int(arg2) == 8))
+  if (n == 2 && !(integerp (arg2) && get_int (arg2) == 8))
     error (IMPROPER_ARGS, "open-output-file", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "open-output-file", arg1);
@@ -4220,14 +4224,14 @@ f_open_output_file (int arglist)
   const char *fname = GET_NAME (arg1);
   if (n == 1)
     port = fopen (fname, "w");
-  else 
+  else
     port = fopen (fname, "wb");
   if (port == NULL)
     error (CANT_OPEN, "open-output-file", arg1);
 
   if (n == 1)
     return (makestream (port, EISL_OUTPUT, Str_dup (fname, 1, 0, 1)));
-  else 
+  else
     return (makestream (port, EISL_OUTPUT_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
@@ -4241,7 +4245,7 @@ f_open_io_file (int arglist)
   arg2 = cadr (arglist);
   if ((n = length (arglist)) != 1 && n != 2)
     error (WRONG_ARGS, "open-io-file", arglist);
-  if (n == 2 && !(integerp(arg2) && get_int(arg2) == 8))
+  if (n == 2 && !(integerp (arg2) && get_int (arg2) == 8))
     error (IMPROPER_ARGS, "open-io-file", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "open-io-file", arg1);
@@ -4249,7 +4253,7 @@ f_open_io_file (int arglist)
   const char *fname = GET_NAME (arg1);
   if (n == 1)
     port = fopen (fname, "a+");
-  else 
+  else
     port = fopen (fname, "ab+");
 
   if (port == NULL)
@@ -4257,7 +4261,7 @@ f_open_io_file (int arglist)
 
   if (n == 1)
     return (makestream (port, EISL_INOUT, Str_dup (fname, 1, 0, 1)));
-  else 
+  else
     return (makestream (port, EISL_INOUT_BIN, Str_dup (fname, 1, 0, 1)));
 }
 
@@ -4273,10 +4277,10 @@ f_close (int arglist)
     error (NOT_STREAM, "close", arg1);
 
   if (GET_OPT (arg1) != EISL_INSTR && GET_OPT (arg1) != EISL_OUTSTR)
-  {
-    fclose (GET_PORT (arg1));
-    SET_PROF (arg1, EISL_CLOSE);
-  }
+    {
+      fclose (GET_PORT (arg1));
+      SET_PROF (arg1, EISL_CLOSE);
+    }
   else
     SET_PROF (arg1, EISL_CLOSE);
 
@@ -4311,7 +4315,7 @@ f_file_length (int arglist)
     error (WRONG_ARGS, "file-length", arglist);
   if (!stringp (arg1))
     error (NOT_STR, "file-length", arg1);
-  if (!(integerp (arg2) && GET_INT(arg2) == 8))
+  if (!(integerp (arg2) && GET_INT (arg2) == 8))
     error (IMPROPER_ARGS, "file-length", arg2);
 
   p = fopen (GET_NAME (arg1), "rb");
@@ -4402,7 +4406,7 @@ f_write_byte (int arglist)
     error (WRONG_ARGS, "write-byte", arglist);
   if (!integerp (arg1))
     error (NOT_INT, "write-byte", arg1);
-  if (integerp (arg1) && ((n=GET_INT(arg1)) < 0 || n>255))
+  if (integerp (arg1) && ((n = GET_INT (arg1)) < 0 || n > 255))
     error (IMPROPER_ARGS, "write-byte", arg1);
   if (n > 1 && !binary_output_stream_p (arg2))
     error (NOT_OUT_STREAM, "write-byte", arg2);

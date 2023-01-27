@@ -324,11 +324,10 @@ int
 input_stream_p (int x)
 {
   if (streamp (x)
-      && (GET_OPT (x) == EISL_INPUT || 
-          GET_OPT (x) == EISL_INOUT ||
-          GET_OPT (x) == EISL_INPUT_BIN ||
-          GET_OPT (x) == EISL_INOUT_BIN ||
-	        GET_OPT (x) == EISL_INSTR))
+      && (GET_OPT (x) == EISL_INPUT ||
+	  GET_OPT (x) == EISL_INOUT ||
+	  GET_OPT (x) == EISL_INPUT_BIN ||
+	  GET_OPT (x) == EISL_INOUT_BIN || GET_OPT (x) == EISL_INSTR))
     return (1);
   else
     return (0);
@@ -338,9 +337,8 @@ int
 text_input_stream_p (int x)
 {
   if (streamp (x)
-      && (GET_OPT (x) == EISL_INPUT || 
-          GET_OPT (x) == EISL_INOUT ||
-          GET_OPT (x) == EISL_INSTR))
+      && (GET_OPT (x) == EISL_INPUT ||
+	  GET_OPT (x) == EISL_INOUT || GET_OPT (x) == EISL_INSTR))
     return (1);
   else
     return (0);
@@ -351,8 +349,7 @@ int
 binary_input_stream_p (int x)
 {
   if (streamp (x)
-      && (GET_OPT (x) == EISL_INPUT_BIN ||
-          GET_OPT (x) == EISL_INOUT_BIN))
+      && (GET_OPT (x) == EISL_INPUT_BIN || GET_OPT (x) == EISL_INOUT_BIN))
     return (1);
   else
     return (0);
@@ -363,10 +360,9 @@ output_stream_p (int x)
 {
   if (streamp (x)
       && (GET_OPT (x) == EISL_OUTPUT ||
-          GET_OPT (x) == EISL_INOUT || 
-          GET_OPT (x) == EISL_OUTPUT_BIN ||
-          GET_OPT (x) == EISL_INOUT_BIN ||
-          GET_OPT (x) == EISL_OUTSTR))
+	  GET_OPT (x) == EISL_INOUT ||
+	  GET_OPT (x) == EISL_OUTPUT_BIN ||
+	  GET_OPT (x) == EISL_INOUT_BIN || GET_OPT (x) == EISL_OUTSTR))
     return (1);
   else
     return (0);
@@ -377,8 +373,7 @@ text_output_stream_p (int x)
 {
   if (streamp (x)
       && (GET_OPT (x) == EISL_OUTPUT ||
-          GET_OPT (x) == EISL_INOUT || 
-          GET_OPT (x) == EISL_OUTSTR))
+	  GET_OPT (x) == EISL_INOUT || GET_OPT (x) == EISL_OUTSTR))
     return (1);
   else
     return (0);
@@ -389,8 +384,7 @@ int
 binary_output_stream_p (int x)
 {
   if (streamp (x)
-      && (GET_OPT (x) == EISL_OUTPUT_BIN ||
-          GET_OPT (x) == EISL_INOUT_BIN))
+      && (GET_OPT (x) == EISL_OUTPUT_BIN || GET_OPT (x) == EISL_INOUT_BIN))
     return (1);
   else
     return (0);

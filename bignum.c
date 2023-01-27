@@ -917,8 +917,7 @@ bigx_div (int arg1, int arg2)
 int
 bigx_div1 (int arg1, int arg2)
 {
-  int shift, save1,
-    res, len, q, dividend, pointery, msb2;
+  int shift, save1, res, len, q, dividend, pointery, msb2;
   long long int lmsb1;
 
 
@@ -1017,8 +1016,7 @@ bigx_div1 (int arg1, int arg2)
 int
 bigx_remainder (int arg1, int arg2)
 {
-  int res, len, q, dividend,
-    pointery, save0, pointer, msb2;
+  int res, len, q, dividend, pointery, save0, pointer, msb2;
   long long int lmsb1;
 
 
@@ -1450,9 +1448,9 @@ ntt1 (int n, int h, int pos, int index)
   r = (n / 2) / h;		//Adjustment ratio with the original
   for (i = 0; i < h; i++)
     {
-      long long int temp =
-	plusmod (ntty[pos + i],
-		 multmod (ntt_factor[i * r][index], ntty[pos + h + i]));
+      long long int temp = plusmod (ntty[pos + i],
+				    multmod (ntt_factor[i * r][index],
+					     ntty[pos + h + i]));
       ntty[pos + h + i] =
 	plusmod (ntty[pos + i],
 		 multmod (ntt_factor[(i + h) * r][index], ntty[pos + h + i]));

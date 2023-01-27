@@ -53,7 +53,7 @@ initexsubr (void)
   defsubr ("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
   defsubr ("EISL-TEST", f_eisl_test);
 
-  defsubr ("TRY" ,f_try);
+  defsubr ("TRY", f_try);
   defsubr ("READ-EXP", f_read_exp);
 
 #ifdef __rpi__
@@ -329,7 +329,7 @@ f_set_random (int arglist)
   if (n < 0)
     error (ILLEGAL_ARGS, "set-random", n);
 
-  srand(n);
+  srand (n);
   return (arg1);
 }
 
@@ -734,9 +734,9 @@ f_line_argument (int arglist)
       res = makevec (gArgC, UNDEF);
 
       for (i = 0; i < gArgC; i++)
-        {
-          SET_VEC_ELT (res, i, makestr (gArgV[i]));
-        }
+	{
+	  SET_VEC_ELT (res, i, makestr (gArgV[i]));
+	}
 
       return res;
     }
@@ -745,13 +745,13 @@ f_line_argument (int arglist)
       int arg1 = car (arglist);
       int n = GET_INT (arg1);
       if (n < gArgC)
-        {
-          return makestr (gArgV[n]);
-        }
+	{
+	  return makestr (gArgV[n]);
+	}
       else
-        {
-          return NIL;
-        }
+	{
+	  return NIL;
+	}
     }
 }
 
@@ -873,45 +873,46 @@ int program;
 int
 f_try (int arglist)
 {
-  int arg1,arg2,arg3,arg4,pos,c,bit,i,res,save1,save2;
+  int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2;
   char str[STRSIZE];
 
-  arg1 = car(arglist); //time 
-  arg2 = cadr(arglist); //sexp
-  arg3 = caddr(arglist); // binary
-  arg4 = caddr(cdr(arglist)); //print switch
+  arg1 = car (arglist);		//time 
+  arg2 = cadr (arglist);	//sexp
+  arg3 = caddr (arglist);	// binary
+  arg4 = caddr (cdr (arglist));	//print switch
 
-  if (!integerp(arg1) && !(symbolp(arg1) && arg1 == makesym("NO-TIME-LIMIT")))
+  if (!integerp (arg1)
+      && !(symbolp (arg1) && arg1 == makesym ("NO-TIME-LIMIT")))
     error (ILLEGAL_ARGS, "try", arg1);
-  if (!listp(arg2))
+  if (!listp (arg2))
     error (NOT_LIST, "try", arg2);
-  if (!listp(arg3))
+  if (!listp (arg3))
     error (NOT_LIST, "try", arg3);
 
   pos = 0;
-  while (!nullp(arg3))
-  {
+  while (!nullp (arg3))
+    {
       bit = 8;
       c = 0;
       while (bit > 0)
-      {
-          i = GET_INT(car(arg3));
-          c = 2 * c + i;
-          arg3 = cdr(arg3);
-          bit--;
-      }
-      if(c >= 32 && c < 127)  //ommit control code and unicode 
-      {
-        str[pos] = c;
-        pos++;
-      }
-    
-  }
+	{
+	  i = GET_INT (car (arg3));
+	  c = 2 * c + i;
+	  arg3 = cdr (arg3);
+	  bit--;
+	}
+      if (c >= 32 && c < 127)	//ommit control code and unicode 
+	{
+	  str[pos] = c;
+	  pos++;
+	}
+
+    }
 
   if (pos == 0)
-  {
-    return (list3(makesym("FAILSE"),makesym("OUT-OF-DATA"),NIL));
-  }
+    {
+      return (list3 (makesym ("FAILSE"), makesym ("OUT-OF-DATA"), NIL));
+    }
 
   str[pos] = EOL;
   pos++;
@@ -924,22 +925,22 @@ f_try (int arglist)
 
   save1 = input_stream;
   save2 = output_stream;
-  
-  if(arg1 == makesym("NO-TIME-LIMIT"))
-  {
+
+  if (arg1 == makesym ("NO-TIME-LIMIT"))
+    {
       ignore_flag = true;
-      TRY res = eval(arg2);
+      TRY res = eval (arg2);
       ELSE res = UNDEF;
       END_TRY;
       ignore_flag = false;
       if (res == UNDEF)
-        res = makesym("FAILSE");
+	res = makesym ("FAILSE");
       else if (res == FEND)
-        res = makesym("FAILSE");
-  }
+	res = makesym ("FAILSE");
+    }
   else
-  {
-      try_timer = getETime () + (double)GET_INT(arg1)*0.000001;
+    {
+      try_timer = getETime () + (double) GET_INT (arg1) * 0.000001;
       try_res = NIL;
       try_flag = true;
       ignore_flag = true;
@@ -949,49 +950,48 @@ f_try (int arglist)
       ignore_flag = false;
       try_flag = false;
       if (res == UNDEF)
-      {
-        res = list3(makesym("FAILSE"),makesym("OUT-OF-DATA"),try_res);
-        if (arg4 == makesym("OUT-OF-DATA"))
-        {
-          printf("%s", str);
-        }
-      }
+	{
+	  res = list3 (makesym ("FAILSE"), makesym ("OUT-OF-DATA"), try_res);
+	  if (arg4 == makesym ("OUT-OF-DATA"))
+	    {
+	      printf ("%s", str);
+	    }
+	}
       else if (res == FEND)
-        {
-        res = list3(makesym("FAILSE"),makesym("OUT-OF-TIME"),try_res);
-        if (arg4 == makesym("OUT-OF-TIME"))
-          printf("%s", str);
-        }
-      else 
-        {
-        res = list3(makesym("SUCCESS"),res,try_res);
-        if (arg4 == makesym("SUCCESS"))
-          printf("%s", str);
-        }
-  }
+	{
+	  res = list3 (makesym ("FAILSE"), makesym ("OUT-OF-TIME"), try_res);
+	  if (arg4 == makesym ("OUT-OF-TIME"))
+	    printf ("%s", str);
+	}
+      else
+	{
+	  res = list3 (makesym ("SUCCESS"), res, try_res);
+	  if (arg4 == makesym ("SUCCESS"))
+	    printf ("%s", str);
+	}
+    }
 
   input_stream = save1;
   output_stream = save2;
-  return(res);
+  return (res);
 }
 
 
 int
-f_read_exp(int arglist)
+f_read_exp (int arglist)
 {
-  int res,save;
+  int res, save;
 
-  if (!nullp(arglist))
+  if (!nullp (arglist))
     error (ILLEGAL_ARGS, "read-exp", arglist);
 
 
   save = input_stream;
   input_stream = program;
-  TRY res = sread();
+  TRY res = sread ();
   ELSE res = UNDEF;
   END_TRY;
   input_stream = save;
-  
+
   return (res);
 }
-

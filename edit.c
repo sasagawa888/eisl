@@ -244,7 +244,7 @@ findlparen_buffer (int col)
 {
   int nest, uni_col, i;
 
-  REQUIRE(col <= COL_SIZE);
+  REQUIRE (col <= COL_SIZE);
   col--;
   nest = 0;
   while (col >= 0)
@@ -408,7 +408,7 @@ get_fragment_buffer (int col)
   static char str[FRAGMENT_MAX];
   int pos;
 
-  REQUIRE(col <= COL_SIZE);
+  REQUIRE (col <= COL_SIZE);
   while (col >= 0 &&
 	 buffer[col][0] != ' ' &&
 	 buffer[col][0] != '(' && buffer[col][0] != ')')

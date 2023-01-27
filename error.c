@@ -42,10 +42,10 @@ error (int errnum, const char *fun, int arg)
   int initargs, i;
   char fun1[SYMSIZE];
 
-#ifndef WITHOUT_CURSES
+  #ifndef WITHOUT_CURSES
   // restore repl_flag
   repl_flag = org_repl_flag;
-#endif
+  #endif
 
   // resolve unwind-protect
   if (unwind_pt > 0)
@@ -694,5 +694,5 @@ int
 set_error_handler (int x)
 {
   error_handler = x;
-  return (x);
+  return(x);
 }

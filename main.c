@@ -87,8 +87,7 @@ int input_stream;
 int output_stream;
 int error_stream;
 char stream_str[STRSIZE];
-int charcnt;			// for format-tab. store number of chars
-				// up to now.
+int charcnt;			/* for format-tab. store number of chars up to now. */
 
 
 // read scaner
@@ -109,58 +108,54 @@ int shelter[STACKSIZE];
 int dynamic[DYNSIZE][2];
 int bigcell[BIGSIZE];
 
-// object oriented
-int generic_func;		// generic function in eval.
-int generic_vars;		// args list of generic function in eval.
-int next_method;		// head address of finded method.
-int generic_list = NIL;		// symbol list of generic
-					// function.
+/* object oriented */
+int generic_func;		/* generic function in eval. */
+int generic_vars;		/* args list of generic function in eval. */
+int next_method;		/* head address of finded method. */
+int generic_list = NIL;		/* symbol list of generic function. */
 
-// flag
+/* system global variable */
 int gArgC;
 char **gArgV;
-bool gbc_flag = false;		// false=GC not display ,true= do
-					// display.
 int genint = 1;			// integer of gensym.
-bool simp_flag = true;		// true=simplify, false=Not for
-					// bignum
-bool ignore_flag = false;	// false=normal,true=ignore error
-bool open_flag = false;		// false=normal,true=now loading
-bool top_flag = true;		// true=top-level,false=not-top-level
-bool redef_flag = false;	// true=redefine-class,false=not-redefine
-bool start_flag = true;		// true=line-start,false=not-line-start
-bool back_flag = true;		// for backtrace,
-					// true=on,false=off
-bool ignore_topchk = false;	// for FAST
-					// compilertrue=ignore,false=normal
+
+/* flag */
+bool gbc_flag = false;		/* false=GC not display ,true= do display. */
+bool simp_flag = true;		/* true=simplify, false=Not for bignum */
+bool ignore_flag = false;	/* false=normal,true=ignore error */
+bool open_flag = false;		/* false=normal,true=now loading */
+bool top_flag = true;		/* true=top-level,false=not-top-level */
+bool redef_flag = false;	/* true=redefine-class,false=not-redefine */
+bool start_flag = true;		/* true=line-start,false=not-line-start */
+bool back_flag = true;		/* for backtrace,true=on,false=off */
+bool ignore_topchk = false;	/* for FAST-compiler true=ignore,false=normal */
 #ifndef WITHOUT_CURSES
-bool repl_flag = true;		// for REPL read_line true=on,
-					// false=off
-bool org_repl_flag = true;	// original val for restore          
+bool repl_flag = true;		/* for REPL read_line true=on,false=off */
+bool org_repl_flag = true;	/* original val for restore */
 #endif
-bool option_flag = false;	// while handling command line option it is true, else false
-volatile sig_atomic_t exit_flag = 0;	// true= ctrl+C
-bool greeting_flag = true;	// for (quit)
-bool script_flag = false;	// for -s option
-bool handling_resource_err = false;	// stop infinite recursion
-bool looking_for_shebang = false;	// skip over #!
-bool multiple_call_next_method;	// method body has multiple (call-next-method)
+bool option_flag = false;	/* while handling command line option it is true, else false */
+volatile sig_atomic_t exit_flag = 0;	/* true= ctrl+C */
+bool greeting_flag = true;	/* for (quit) */
+bool script_flag = false;	/* for -s option */
+bool handling_resource_err = false;	/* stop infinite recursion */
+bool looking_for_shebang = false;	/* skip over #! */
+bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 
-// try function (try time s-exp)
-bool try_flag;			// true or false
-double try_timer;		// limit timer
-int try_res;			// argument list
+/* try function (try time s-exp binary) */
+bool try_flag;			/* true or false */
+double try_timer;		/* limit timer */
+int try_res;			/* argument list */
 
-// switch
-int gc_sw = 0;			// 0= mark-and-sweep-GC 1= copy-GC
-int area_sw = 1;		// 1= lower area 2=higher area
+/* switch for GBC */
+int gc_sw = 0;			/* 0= mark-and-sweep-GC 1= copy-GC */
+int area_sw = 1;		/* 1= lower area 2=higher area */
 
-// bignum pointer
-int big_pt0 = 0;		// pointer of temporaly bignum
-int big_pt1 = BIGNUM_PARMA;	// pointer of parmanent bignum
+/* bignum pointer */
+int big_pt0 = 0;		/* pointer of temporaly bignum */
+int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 
 
-// longjmp control and etc
+/* longjmp control and etc */
 Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
   { "Exit interpreter" };
 jmp_buf block_buf[NESTED_BLOCKS_MAX];
@@ -168,36 +163,35 @@ int block_tag_check[NESTED_BLOCKS_MAX];
 int block_env[NESTED_BLOCKS_MAX][2];
 jmp_buf catch_buf[10][50];
 int catch_env[10][50];
-Except_T Ignored_Error = { "Ignored error" };	// for ignore-errors
+Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
-int block_tag[CTRLSTK];		// array of tag
+int block_tag[CTRLSTK];		/* array of tag */
 int catch_tag[CTRLSTK];
 int unwind_buf[CTRLSTK];
-int catch_symbols = NIL;	// to clear tag data
-int block_pt;			// index of block. following are similer
-int catch_pt = 0;		// catch counter
-int unwind_pt;			// lambda address for unwind-protect
-int block_arg;			// receive argument of block
-int catch_arg;			// receive argument of catch
-int tagbody_tag = NIL;		// tag address fo tagbody
-int error_handler = NIL;	// for store first argument of
-				// with-handler
-int trace_list = NIL;		// function list of trace
+int catch_symbols = NIL;	/* to clear tag data */
+int block_pt;			/* index of block. following are similer */
+int catch_pt = 0;		/* catch counter */
+int unwind_pt;			/* lambda address for unwind-protect */
+int block_arg;			/* receive argument of block */
+int catch_arg;			/* receive argument of catch */
+int tagbody_tag = NIL;		/* tag address fo tagbody */
+int error_handler = NIL;	/* for store first argument of with-handler */
+int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
 
-// -----debugger-----
+/* -----debugger----- */
 int examin_sym;
 int stepper_flag = 0;
 
 
-// -----profiler-----
-int prof_sw = 0;		//0= not profiler, 1=system-function 2=user-function
+/* -----profiler----- */
+int prof_sw = 0;		/* 0= not profiler, 1=system-function 2=user-function */
 int prof_sym[PROFSIZE];
 int prof_pt = 1;
 double prof_dt0[PROFSIZE];
 int prof_dt1[PROFSIZE];
 
-// -----editor-------
+/* -----editor------- */
 int ed_lparen_col;
 int ed_rparen_col;
 const char *ed_candidate[COMPLETION_CANDIDATES_MAX];
@@ -207,9 +201,9 @@ const short ed_builtin_color = COLOR_CYAN;
 const short ed_extended_color = COLOR_MAGENTA;
 const short ed_string_color = COLOR_YELLOW;
 const short ed_comment_color = COLOR_BLUE;
-int ed_incomment = -1;		// #|...|# comment
+int ed_incomment = -1;		/* #|...|# comment */
 
-// Defaults, should be filled in later
+/* Defaults, should be filled in later */
 char ed_key_up = 'A';
 char ed_key_down = 'B';
 char ed_key_right = 'C';
@@ -286,14 +280,13 @@ main (int argc, char *argv[])
   int ch;
   char *script_arg;
 
-  // handle command line options
+  /* handle command line options */
   option_flag = true;
   TRY
   {
     if (access ("startup.lsp", R_OK) == 0)
-      {
-	f_load (list1 (makestr ("startup.lsp")));
-      }
+      f_load (list1 (makestr ("startup.lsp")));
+
     while ((ch = getopt (argc, argv, "l:cfs:rhv")) != -1)
       {
 	char *str;
@@ -359,7 +352,7 @@ main (int argc, char *argv[])
 
   option_flag = false;
 
-  // REPL
+  /* REPL */
   volatile bool quit = false;
   do
     {
@@ -418,7 +411,7 @@ initpt (void)
   generic_func = NIL;
   generic_vars = NIL;
   big_pt0 = 0;
-  // clear nest level of tracing function.
+  /* clear nest level of tracing function. */
   ls = trace_list;
   while (!nullp (ls))
     {
@@ -437,33 +430,32 @@ signal_handler_c (int signo __unused)
 
 
 
-// -------read()--------
+/* -------read()-------- */
 int
 readc (void)
 {
   int c;
-  // REPL-mode and standard-input
+  /* REPL-mode and standard-input */
   if (input_stream == standard_input && repl_flag)
     c = read_line (1);
-  // not REPL-mode and standard-input 
+  /* not REPL-mode and standard-input */
   else if (GET_OPT (input_stream) != EISL_INSTR)
     {
       c = getc (GET_PORT (input_stream));
-      // ctrl+D
-      // if not script-mode quit system
+      /* ctrl+D if not script-mode quit system */
       if (!script_flag && input_stream == standard_input && c == EOF)
 	{
-	  // quit from system(not script-mode)
+	  /* quit from system(not script-mode) */
 	  greeting_flag = false;
 	  putchar ('\n');
 	  RAISE (Exit_Interp);
 	}
-      else			// if script-mode return(EOF)
+      else			/* if script-mode return(EOF) */
 	return (c);
 
     }
   else
-    // string-stream
+    /* string-stream */
     {
       c = GET_NAME (input_stream)[GET_CDR (input_stream)];
       SET_CDR (input_stream, GET_CDR (input_stream) + 1);
@@ -540,8 +532,9 @@ skip:
   while (c == SPACE || c == EOL || c == TAB || c == RET)
     c = readc ();
 
-  // skip comment line
-  // if find EOF at end of line, return FILEEND.
+  /* skip comment line
+   * if find EOF at end of line, return FILEEND.
+   */
   if (c == ';')
     {
       while (!(c == EOL))
@@ -555,7 +548,7 @@ skip:
 	}
       goto skip;
     }
-  // if end of file,return FILEEND.
+  /* if end of file,return FILEEND. */
   if (c == EOF)
     {
       stok.type = FILEEND;
@@ -706,8 +699,7 @@ skip:
 	    stok.type = FLOAT_N;
 	    break;
 	  }
-	// first step,check bignum. inttoken() ignores number of
-	// digits.
+	/* first step,check bignumtoken() and second inttoken() ignores number of digits. */
 	if (bignumtoken (stok.buf))
 	  {
 	    stok.type = BIGNUM;
@@ -826,7 +818,7 @@ laststr (char buf[])
 }
 
 
-// remove #\ from char, for example #\a -> a.
+/* remove #\ from char, for example #\a -> a. */
 void
 dropchar (char buf[])
 {
@@ -839,30 +831,30 @@ dropchar (char buf[])
 }
 
 
-// integer of sign. ignore number of digits.
+/* integer of sign. ignore number of digits. */
 int
 inttoken (char buf[])
 {
   int i;
   char c;
 
-  if (buf[0] == NUL)		// null string
+  if (buf[0] == NUL)		/* null string */
     return (0);
 
   if (((buf[0] == '+') || (buf[0] == '-')))
     {
       if (buf[1] == NUL)
-	return (0);		// case {+,-} => symbol
+	return (0);		/* case {+,-} => symbol */
       i = 1;
       while ((c = buf[i]) != NUL)
 	if (isdigit (c))
-	  i++;			// case {+123..., -123...}
+	  i++;			/* case {+123..., -123...} */
 	else
 	  return (0);
     }
   else
     {
-      i = 0;			// {1234...}
+      i = 0;			/* {1234...} */
       while ((c = buf[i]) != NUL)
 	if (isdigit (c))
 	  i++;
@@ -872,7 +864,7 @@ inttoken (char buf[])
   return (1);
 }
 
-// integer without sign
+/* integer without sign */
 int
 inttoken_nsgn (char buf[])
 {
@@ -914,7 +906,7 @@ flttoken (char buf[])
   if (tok.sepch == NUL)
     return (0);
 
-  if (tok.after[0] == NUL)	// "".""
+  if (tok.after[0] == NUL)	/* ""."" */
     return (0);
   else if (inttoken (tok.before) && inttoken_nsgn (tok.after))
     return (1);
@@ -931,28 +923,28 @@ bignumtoken (char buf[])
   if (((buf[0] == '+') || (buf[0] == '-')))
     {
       if (buf[1] == NUL)
-	return (0);		// case {+,-} => symbol
+	return (0);		/* case {+,-} => symbol */
       i = 1;
       while ((c = buf[i]) != NUL)
 	if (isdigit (c))
-	  i++;			// case {+123..., -123...}
+	  i++;			/* case {+123..., -123...} */
 	else
 	  return (0);
       if (strlen (buf) <= 10)
-	return (0);		// case not bignum
+	return (0);		/* case not bignum */
     }
   else
     {
-      i = 0;			// {1234...}
+      i = 0;			/* {1234...} */
       while ((c = buf[i]) != NUL)
 	if (isdigit (c))
 	  i++;
 	else
 	  return (0);
       if (strlen (buf) <= 9)
-	return (0);		// case not bignum
+	return (0);		/* case not bignum */
     }
-  return (1);			// bignum
+  return (1);			/* bignum */
 }
 
 
@@ -969,7 +961,7 @@ symboltoken (char buf[])
     else
       return (0);
 
-  // fold to upper letter.
+  /* fold to upper letter. */
   i = 0;
   while ((c = buf[i]) != NUL)
     {
@@ -1106,7 +1098,7 @@ expttoken (char buf[])
   septoken tok;
   char buf1[BUFSIZE];
 
-  if (buf[0] == '.')		// e.g. ".2E3"
+  if (buf[0] == '.')		/* e.g. ".2E3" */
     return (0);
 
   strncpy (buf1, buf, BUFSIZE - 1);
@@ -1117,11 +1109,11 @@ expttoken (char buf[])
       inttoken (tok.after))
     {
       if (atoi (tok.after) > 999)
-	return (2);		// overflow
+	return (2);		/* overflow */
       else if (atoi (tok.after) < -999)
-	return (3);		// underflow
+	return (3);		/* underflow */
       else
-	return (1);		// regular
+	return (1);		/* regular */
     }
 
   strncpy (buf, buf1, BUFSIZE - 1);
@@ -1133,11 +1125,11 @@ expttoken (char buf[])
       inttoken (tok.after))
     {
       if (atoi (tok.after) > 999)
-	return (2);		// overflow
+	return (2);		/* overflow */
       else if (atoi (tok.after) < -999)
-	return (3);		// underflow
+	return (3);		/* underflow */
       else
-	return (1);		// regular
+	return (1);		/* regular */
     }
   else
     return (0);
@@ -1366,7 +1358,7 @@ readhex (char *buf)
   return (res);
 }
 
-// -----print------------------
+/* -----print------------------ */
 void
 print (int addr)
 {
@@ -1738,7 +1730,7 @@ clean_stdin (void)
   while (c != '\n' && c != EOF);
 }
 
-// --------eval---------------
+/* --------eval--------------- */
 int
 eval (int addr)
 {
@@ -1903,15 +1895,15 @@ DEF_GETTER (char, TR, trace, NIL)
       push (ep);
       ep = GET_CDR (func);
 
-      // if lambda is generated during eval method, lambda saved method
-      // and argument
-      // restore the method and argument.
+      /* if lambda is generated during eval method, lambda saved method
+       * and argument
+       * restore the method and argument.
+       */
       if (GET_PROP (func) != NIL)
 	{
 	  next_method = car (GET_PROP (func));
 	  generic_vars = cdr (GET_PROP (func));
-	  generic_func = T;	// to avoid error check in
-	  // (call-next-method)
+	  generic_func = T;	/* to avoid error check in (call-next-method) */
 	}
 
       varlist = car (GET_CAR (func));
@@ -2020,12 +2012,10 @@ DEF_GETTER (char, TR, trace, NIL)
 	while (!nullp (next_method))
 	  {
 	    varlist = car (GET_CAR (car (next_method)));
-	    // adaptp(x,y) if sameclass or y is super-classs return 1
-	    // else 0;
+	    /* adaptp(x,y) if sameclass or y is super-classs return 1 else 0 */
 	    if (adaptp (varlist, args))
 	      {
-		// if only qualifier or sameclass-primary, eval
-		// method;
+		/* if only qualifier or sameclass-primary, eval method; */
 		if ((GET_OPT (car (next_method)) == AROUND
 		     || GET_OPT (car (next_method)) == BEFORE
 		     || GET_OPT (car (next_method)) == AFTER)
@@ -2035,7 +2025,7 @@ DEF_GETTER (char, TR, trace, NIL)
 
 		    if (GET_OPT (car (next_method)) == PRIMARY)
 		      {
-			// primary method must executes only once.
+			/* primary method must executes only once. */
 			if (pexist == 1)
 			  {
 			    goto exit;
@@ -2154,10 +2144,9 @@ adaptp (int varlist, int arglist)
     return (1);
   else if (eqp (makesym ("&rest"), car (varlist)))
     return (1);
-  else if (GET_AUX (cadar (varlist)) == GET_AUX (car (arglist)))	// equal
-    // class
+  else if (GET_AUX (cadar (varlist)) == GET_AUX (car (arglist)))	/* equal class */
     return (adaptp (cdr (varlist), cdr (arglist)));
-  else if (subclassp (GET_AUX (car (arglist)), GET_AUX (cadar (varlist))))	// subclass
+  else if (subclassp (GET_AUX (car (arglist)), GET_AUX (cadar (varlist))))	/* subclass */
     return (adaptp (cdr (varlist), cdr (arglist)));
   else
     return (0);
@@ -2181,10 +2170,9 @@ matchp (int varlist, int arglist)
     return (1);
   else if (eqp (makesym ("&rest"), car (varlist)))
     return (1);
-  else if (GET_AUX (cadar (varlist)) == GET_AUX (car (arglist)))	// match
-    // class
+  else if (GET_AUX (cadar (varlist)) == GET_AUX (car (arglist)))	/* match class */
     return (matchp (cdr (varlist), cdr (arglist)));
-  // when built-in class, subclass is also eqclass.
+  /* when built-in class, subclass is also eqclass. */
   else if (GET_OPT (cadar (varlist)) == SYSTEM
 	   && subclassp (GET_AUX (car (arglist)), GET_AUX (cadar (varlist))))
     return (matchp (cdr (varlist), cdr (arglist)));
@@ -2217,7 +2205,7 @@ genlamlis_to_lamlis (int varlist)
 }
 
 
-// for stack to store ep(environment)
+/* for stack to store ep(environment) */
 int
 push (int pt)
 {
@@ -2236,7 +2224,7 @@ pop (void)
   return (stack[--sp]);
 }
 
-// push/pop of arglist
+/* push/pop of arglist */
 int
 argpush (int addr)
 {
@@ -2251,7 +2239,7 @@ argpop (void)
   return (argstk[--ap]);
 }
 
-// shelter push/pop
+/* shelter push/pop */
 int
 shelterpush (int addr)
 {
@@ -2270,15 +2258,14 @@ shelterpop (void)
   return (shelter[--lp]);
 }
 
-// --------system function
-// regist subr to environment.
+/* system function regist subr to environment. */
 void
 defsubr (const char *symname, int (*func) (int))
 {
   bindfunc (symname, SUBR, func);
 }
 
-// regist fsubr(not eval argument)
+/* regist fsubr(not eval argument) */
 void
 deffsubr (const char *symname, int (*func) (int))
 {
@@ -2304,7 +2291,7 @@ bindfunc (const char *name, tag_t tag, int (*func) (int))
   SET_TAG (val, tag);
   SET_SUBR (val, func);
   SET_CDR (val, 0);
-  SET_AUX (val, cfunction);	// class function
+  SET_AUX (val, cfunction);	/* class function */
   SET_CAR (sym, val);
 }
 
@@ -2325,8 +2312,8 @@ bindmacro (char *name, int addr)
   END_TRY;
   SET_CAR (val2, val1);
   SET_CDR (val2, 0);
-  SET_AUX (val2, cfunction);	// class
-  SET_OPT (val2, (signed char) count_args (car (addr)));	// count of args
+  SET_AUX (val2, cfunction);	/* class */
+  SET_OPT (val2, (signed char) count_args (car (addr)));	/* count of args */
   SET_CAR (sym, val2);
 }
 
@@ -2340,7 +2327,7 @@ bindconst (const char *name, int obj)
   SET_OPT (sym, CONSTN);
 }
 
-// --------qusi quote---------------
+/* --------qusi quote--------------- */
 int
 quasi_transfer (int x, int n)
 {
@@ -2383,7 +2370,7 @@ quasi_transfer (int x, int n)
 	     quasi_transfer (cdr (x), n)));
 }
 
-// --------debug---------------
+/* --------debug--------------- */
 void
 debugger ()
 {

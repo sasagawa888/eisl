@@ -452,7 +452,7 @@ int f_instance(int arglist)
 }
 
 
-// ----------for Raspberry PI
+/* ----------for Raspberry PI */
 #ifdef __rpi__
 int f_wiringpi_setup_gpio(int arglist __unused)
 {
@@ -788,15 +788,19 @@ int superp(int entry, int next)
 	return (1);
     else if (symbolp(car(entry)))
 	return (superp(cdr(entry), cdr(next)));
-    else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// subclass
+    else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	/* subclass */
 	return (superp(cdr(entry), cdr(next)));
-    else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// same
-	// class
+    else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	/* same class */
 	return (superp(cdr(entry), cdr(next)));
     else
 	return (0);
 }
 
+
+/*
+* extended functions try/3 and read-exp/0
+* To understand Mr. Chaitin's book "The LIMITS of MATHEMATICA"
+*/
 
 int program;
 

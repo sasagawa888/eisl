@@ -1302,7 +1302,7 @@ int f_symbol_class(int arglist);
 void setcolor(short n);
 int eisl_getch(void);
 int f_edit(int arglist);
-#ifdef __arm__
+#ifdef __rpi__
 int f_wiringpi_setup_gpio(int arglist);
 int f_wiringpi_spi_setup_ch_speed(int arglist);
 int f_pwm_set_mode(int arglist);

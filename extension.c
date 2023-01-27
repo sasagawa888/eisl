@@ -12,796 +12,731 @@
 #include "str.h"
 #include "text.h"
 
-void
-initexsubr (void)
+void initexsubr(void)
 {
-  defsubr ("RANDOM-REAL", f_random_real);
-  defsubr ("RANDOM", f_random);
-  defsubr ("SET-RANDOM", f_set_random);
-  defsubr ("NCONC", f_nconc);
-  defsubr ("FAST-ADDRESS", f_address);
-  defsubr ("MACROEXPAND-1", f_macroexpand_1);
-  defsubr ("MACROEXPAND-ALL", f_macroexpand_all);
-  defsubr ("BACKTRACE", f_backtrace);
-  defsubr ("BREAK", f_break);
-  defsubr ("EDIT", f_edit);
-  defsubr ("FREEDLL", f_freedll);
-  defsubr ("SYSTEM", f_system);
-  defsubr ("SUBRP", f_subrp);
-  defsubr ("MACROP", f_macrop);
-  defsubr ("FUNCP", f_funcp);
-  defsubr ("FIXNUMP", f_fixnump);
-  defsubr ("LONGNUMP", f_longnump);
-  defsubr ("BIGNUMP", f_bignump);
-  defsubr ("SELF-INTRODUCTION", f_self_introduction);
-  defsubr ("CLASSP", f_classp);
-  defsubr ("C-INCLUDE", f_ignore);
-  defsubr ("C-DEFINE", f_ignore);
-  defsubr ("C-LANG", f_ignore);
-  defsubr ("C-OPTION", f_ignore);
-  defsubr ("HEAPDUMP", f_heapdump);
-  defsubr ("INSTANCE", f_instance);
-  defsubr ("LINE-ARGUMENT", f_line_argument);
-  defsubr ("GETENV", f_getenv);
-  defsubr ("PROF", f_prof);
-  defsubr ("EISL-MODULESUBST", f_modulesubst);
-  defsubr ("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
-  defsubr ("EISL-READED-ARRAY-LIST", f_readed_array_list);
-  defsubr ("EISL-GET-METHOD", f_get_method);
-  defsubr ("EISL-GET-METHOD-BODY", f_get_method_body);
-  defsubr ("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
-  defsubr ("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
-  defsubr ("EISL-TEST", f_eisl_test);
+    defsubr("RANDOM-REAL", f_random_real);
+    defsubr("RANDOM", f_random);
+    defsubr("SET-RANDOM", f_set_random);
+    defsubr("NCONC", f_nconc);
+    defsubr("FAST-ADDRESS", f_address);
+    defsubr("MACROEXPAND-1", f_macroexpand_1);
+    defsubr("MACROEXPAND-ALL", f_macroexpand_all);
+    defsubr("BACKTRACE", f_backtrace);
+    defsubr("BREAK", f_break);
+    defsubr("EDIT", f_edit);
+    defsubr("FREEDLL", f_freedll);
+    defsubr("SYSTEM", f_system);
+    defsubr("SUBRP", f_subrp);
+    defsubr("MACROP", f_macrop);
+    defsubr("FUNCP", f_funcp);
+    defsubr("FIXNUMP", f_fixnump);
+    defsubr("LONGNUMP", f_longnump);
+    defsubr("BIGNUMP", f_bignump);
+    defsubr("SELF-INTRODUCTION", f_self_introduction);
+    defsubr("CLASSP", f_classp);
+    defsubr("C-INCLUDE", f_ignore);
+    defsubr("C-DEFINE", f_ignore);
+    defsubr("C-LANG", f_ignore);
+    defsubr("C-OPTION", f_ignore);
+    defsubr("HEAPDUMP", f_heapdump);
+    defsubr("INSTANCE", f_instance);
+    defsubr("LINE-ARGUMENT", f_line_argument);
+    defsubr("GETENV", f_getenv);
+    defsubr("PROF", f_prof);
+    defsubr("EISL-MODULESUBST", f_modulesubst);
+    defsubr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
+    defsubr("EISL-READED-ARRAY-LIST", f_readed_array_list);
+    defsubr("EISL-GET-METHOD", f_get_method);
+    defsubr("EISL-GET-METHOD-BODY", f_get_method_body);
+    defsubr("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
+    defsubr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
+    defsubr("EISL-TEST", f_eisl_test);
 
-  defsubr ("TRY", f_try);
-  defsubr ("READ-EXP", f_read_exp);
+    defsubr("TRY", f_try);
+    defsubr("READ-EXP", f_read_exp);
 
 #ifdef __rpi__
-  defsubr ("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
-  defsubr ("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
-  defsubr ("PWM-SET-MODE", f_pwm_set_mode);
-  defsubr ("PWM-SET-RANGE", f_pwm_set_range);
-  defsubr ("PWM-SET-CLOCK", f_pwm_set_clock);
-  defsubr ("PIN-MODE", f_pin_mode);
-  defsubr ("DIGITAL-WRITE", f_digital_write);
-  defsubr ("DIGITAL-WRITE-BYTE", f_digital_write_byte);
-  defsubr ("PULL-UP-DN-CONTROL", f_pull_up_dn_control);
-  defsubr ("DIGITAL-READ", f_digital_read);
-  defsubr ("DELAY", f_delay);
-  defsubr ("DELAY-MICROSECONDS", f_delay_microseconds);
+    defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
+    defsubr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
+    defsubr("PWM-SET-MODE", f_pwm_set_mode);
+    defsubr("PWM-SET-RANGE", f_pwm_set_range);
+    defsubr("PWM-SET-CLOCK", f_pwm_set_clock);
+    defsubr("PIN-MODE", f_pin_mode);
+    defsubr("DIGITAL-WRITE", f_digital_write);
+    defsubr("DIGITAL-WRITE-BYTE", f_digital_write_byte);
+    defsubr("PULL-UP-DN-CONTROL", f_pull_up_dn_control);
+    defsubr("DIGITAL-READ", f_digital_read);
+    defsubr("DELAY", f_delay);
+    defsubr("DELAY-MICROSECONDS", f_delay_microseconds);
 #endif
 
 }
 
 // Fast Project
-int
-f_classp (int arglist)
+int f_classp(int arglist)
 {
-  int arg1;
+    int arg1;
 
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (ILLEGAL_ARGS, "classp", arglist);
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(ILLEGAL_ARGS, "classp", arglist);
 
-  if (IS_CLASS (arg1))
+    if (IS_CLASS(arg1))
+	return (T);
+    else
+	return (NIL);
+}
+
+
+int f_ignore(int arglist __unused)
+{
     return (T);
-  else
-    return (NIL);
 }
 
 
-int
-f_ignore (int arglist __unused)
-{
-  return (T);
-}
-
-
-int
-f_self_introduction (int arglist __unused)
+int f_self_introduction(int arglist __unused)
 {
 #if __APPLE__
-  return (makesym ("MACOS"));
+    return (makesym("MACOS"));
 #elif defined(__OpenBSD__)
-  return (makesym ("OPENBSD"));
+    return (makesym("OPENBSD"));
 #elif defined(__FreeBSD__)
-  return (makesym ("FREEBSD"));
+    return (makesym("FREEBSD"));
 #elif defined(__linux__)
-  return (makesym ("LINUX"));
+    return (makesym("LINUX"));
 #else
 #error "Unknown system"
 #endif
 }
 
 
-int
-f_ignore_toplevel_check (int arglist)
+int f_ignore_toplevel_check(int arglist)
 {
-  int arg1;
+    int arg1;
 
-  arg1 = car (arglist);
-  if (arg1 == T)
-    ignore_topchk = true;
-  else
-    ignore_topchk = false;
-  return (T);
-}
-
-DEF_PREDICATE (METHOD, METHOD)
-     int f_get_method_priority (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (!(IS_METHOD (arg1)))
-    error (ILLEGAL_ARGS, "eisl-get-method-priority", arg1);
-
-  return (makeint (GET_OPT (arg1) + 1));
-  /*
-   * 11=:around  12=:befor 13=:primary 14=:arter
-   */
-}
-
-
-int
-f_get_method_body (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (!(IS_METHOD (arg1)))
-    error (ILLEGAL_ARGS, "get-method-body", arg1);
-
-  return (GET_CAR (arg1));
-}
-
-int
-f_get_method (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (!genericp (arg1))
-    error (ILLEGAL_ARGS, "get-method", arg1);
-
-  return (GET_CDR (GET_CAR (arg1)));
-}
-
-
-int
-f_readed_array_list (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  return (GET_PROP (arg1));
-}
-
-
-int
-f_system (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (system (GET_NAME (arg1)) == -1)
-    error (SYSTEM_ERR, "system", arg1);
-  return (T);
-}
-
-
-
-int
-f_freedll (int arglist __unused)
-{
-  // dlclose(hmod);
-  return (T);
-}
-
-
-
-int
-f_macrop (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "macrop", arglist);
-  if (IS_MACRO (GET_CAR (arg1)))
+    arg1 = car(arglist);
+    if (arg1 == T)
+	ignore_topchk = true;
+    else
+	ignore_topchk = false;
     return (T);
-  else
-    return (NIL);
+}
+
+DEF_PREDICATE(METHOD, METHOD)
+int f_get_method_priority(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (!(IS_METHOD(arg1)))
+	error(ILLEGAL_ARGS, "eisl-get-method-priority", arg1);
+
+    return (makeint(GET_OPT(arg1) + 1));
+    /*
+     * 11=:around  12=:befor 13=:primary 14=:arter
+     */
 }
 
 
-int
-f_funcp (int arglist)
+int f_get_method_body(int arglist)
 {
-  int arg;
+    int arg1;
 
-  arg = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "funcp", arglist);
-  if (IS_FUNC (GET_CAR (arg)))
+    arg1 = car(arglist);
+    if (!(IS_METHOD(arg1)))
+	error(ILLEGAL_ARGS, "get-method-body", arg1);
+
+    return (GET_CAR(arg1));
+}
+
+int f_get_method(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (!genericp(arg1))
+	error(ILLEGAL_ARGS, "get-method", arg1);
+
+    return (GET_CDR(GET_CAR(arg1)));
+}
+
+
+int f_readed_array_list(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    return (GET_PROP(arg1));
+}
+
+
+int f_system(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (system(GET_NAME(arg1)) == -1)
+	error(SYSTEM_ERR, "system", arg1);
     return (T);
-  else
-    return (NIL);
 }
 
 
-int
-f_fixnump (int arglist)
-{
-  int arg1;
 
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "fixnump", arglist);
-  if (IS_INTEGER (arg1))
+int f_freedll(int arglist __unused)
+{
+    // dlclose(hmod);
     return (T);
-  else
-    return (NIL);
-}
-
-int
-f_longnump (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "longnump", arglist);
-  if (IS_LONGNUM (arg1))
-    return (T);
-  else
-    return (NIL);
-}
-
-int
-f_bignump (int arglist)
-{
-  int arg1;
-
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "bignump", arglist);
-  if (IS_BIGXNUM (arg1))
-    return (T);
-  else
-    return (NIL);
 }
 
 
-int
-f_subrp (int arglist)
-{
-  int arg;
 
-  arg = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "subrp", arglist);
-  if (IS_SUBR (GET_CAR (arg)))
-    return (T);
-  else
-    return (NIL);
+int f_macrop(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "macrop", arglist);
+    if (IS_MACRO(GET_CAR(arg1)))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-f_random_real (int arglist)
+
+int f_funcp(int arglist)
 {
-  double d;
+    int arg;
 
-  if (length (arglist) != 0)
-    error (WRONG_ARGS, "random-real", arglist);
-
-  d = (double) rand () / RAND_MAX;
-  return (makeflt (d));
+    arg = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "funcp", arglist);
+    if (IS_FUNC(GET_CAR(arg)))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-f_random (int arglist)
+
+int f_fixnump(int arglist)
 {
-  int arg1, n;
+    int arg1;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "random", arglist);
-
-  arg1 = car (arglist);
-  n = GET_INT (arg1);
-
-  return (makeint (rand () % n));
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "fixnump", arglist);
+    if (IS_INTEGER(arg1))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-f_set_random (int arglist)
+int f_longnump(int arglist)
 {
-  int arg1, n;
+    int arg1;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "set-random", arglist);
-
-  arg1 = car (arglist);
-  if (!numberp (arg1))
-    error (NOT_NUM, "set-random", arg1);
-
-  n = GET_INT (arg1);
-  if (n < 0)
-    error (ILLEGAL_ARGS, "set-random", n);
-
-  srand (n);
-  return (arg1);
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "longnump", arglist);
+    if (IS_LONGNUM(arg1))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-f_nconc (int arglist)
+int f_bignump(int arglist)
 {
-  int arg1, arg2;
+    int arg1;
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
-  if (length (arglist) != 2)
-    error (WRONG_ARGS, "nconc", arglist);
-
-  return (nconc (arg1, arg2));
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "bignump", arglist);
+    if (IS_BIGXNUM(arg1))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-f_address (int arglist)
+
+int f_subrp(int arglist)
 {
-  int arg1;
+    int arg;
 
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "address", arglist);
-
-  return (makeint (arg1));
+    arg = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "subrp", arglist);
+    if (IS_SUBR(GET_CAR(arg)))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-f_macroexpand_1 (int arglist)
+int f_random_real(int arglist)
 {
-  int arg1, args;
+    double d;
 
-  arg1 = caar (arglist);
-  args = cdar (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "macroexpand-1", arglist);
-  if (!symbolp (arg1))
-    error (NOT_SYM, "macroexpand-1", arg1);
+    if (length(arglist) != 0)
+	error(WRONG_ARGS, "random-real", arglist);
 
-  return (macroexpand_1 (arg1, args));
+    d = (double) rand() / RAND_MAX;
+    return (makeflt(d));
 }
 
-int
-macroexpand_1 (int macsym, int args)
+int f_random(int arglist)
 {
-  int func, body, macrofunc, varlist, save, res;
+    int arg1, n;
 
-  func = GET_CAR (macsym);
-  save = ep;
-  res = NIL;
-  macrofunc = GET_CAR (func);
-  varlist = car (GET_CAR (macrofunc));
-  if (GET_OPT (func) >= 0)
-    {
-      if (length (args) != (int) GET_OPT (func))
-	error (WRONG_ARGS, "macroexpand-1", args);
-    }
-  else
-    {
-      if (length (args) < (-1 * (int) GET_OPT (func) - 2))
-	error (WRONG_ARGS, "macroexpand-1", args);
-    }
-  body = cdr (GET_CAR (macrofunc));
-  bindarg (varlist, args);
-  while (!(IS_NIL (body)))
-    {
-      res = eval (car (body));
-      body = cdr (body);
-    }
-  unbind ();
-  ep = save;
-  return (res);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "random", arglist);
+
+    arg1 = car(arglist);
+    n = GET_INT(arg1);
+
+    return (makeint(rand() % n));
 }
 
-int
-f_macroexpand_all (int arglist)
+int f_set_random(int arglist)
 {
-  int arg1;
+    int arg1, n;
 
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "macroexpand-all", arglist);
-  if (listp (arg1) && car (arg1) == makesym ("DEFMACRO"))
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "set-random", arglist);
+
+    arg1 = car(arglist);
+    if (!numberp(arg1))
+	error(NOT_NUM, "set-random", arg1);
+
+    n = GET_INT(arg1);
+    if (n < 0)
+	error(ILLEGAL_ARGS, "set-random", n);
+
+    srand(n);
     return (arg1);
-  else
-    return (macroexpand_all (arg1));
 }
 
-
-int
-macroexpand_all (int sexp)
+int f_nconc(int arglist)
 {
+    int arg1, arg2;
 
-  if (nullp (sexp))
-    return (NIL);
-  else if (atomp (sexp))
-    return (sexp);
-  else if (listp (sexp) && car (sexp) == makesym ("QUOTE"))
-    return (sexp);
-  else if (listp (sexp) && macrop (car (sexp)))
-    return (macroexpand_all (macroexpand_1 (car (sexp), cdr (sexp))));
-  else if (listp (sexp))
-    return (cons
-	    (macroexpand_all (car (sexp)), macroexpand_all (cdr (sexp))));
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "nconc", arglist);
 
-  return (NIL);
+    return (nconc(arg1, arg2));
 }
 
-int
-f_backtrace (int arglist)
+int f_address(int arglist)
 {
-  int arg1, l;
+    int arg1;
 
-  if ((l = length (arglist)) != 0 && l != 1)
-    error (WRONG_ARGS, "backtrace", arglist);
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "address", arglist);
 
-  arg1 = car (arglist);
+    return (makeint(arg1));
+}
 
-  if (l == 0)
-    {
-      int i;
+int f_macroexpand_1(int arglist)
+{
+    int arg1, args;
 
-      for (i = 0; i < BACKSIZE; i++)
-	{
-	  print (backtrace[i]);
-	  putchar ('\n');
-	}
+    arg1 = caar(arglist);
+    args = cdar(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "macroexpand-1", arglist);
+    if (!symbolp(arg1))
+	error(NOT_SYM, "macroexpand-1", arg1);
+
+    return (macroexpand_1(arg1, args));
+}
+
+int macroexpand_1(int macsym, int args)
+{
+    int func, body, macrofunc, varlist, save, res;
+
+    func = GET_CAR(macsym);
+    save = ep;
+    res = NIL;
+    macrofunc = GET_CAR(func);
+    varlist = car(GET_CAR(macrofunc));
+    if (GET_OPT(func) >= 0) {
+	if (length(args) != (int) GET_OPT(func))
+	    error(WRONG_ARGS, "macroexpand-1", args);
+    } else {
+	if (length(args) < (-1 * (int) GET_OPT(func) - 2))
+	    error(WRONG_ARGS, "macroexpand-1", args);
     }
-  else if (arg1 == T)
-    back_flag = true;
-  else if (arg1 == NIL)
-    back_flag = false;
-
-  return (T);
+    body = cdr(GET_CAR(macrofunc));
+    bindarg(varlist, args);
+    while (!(IS_NIL(body))) {
+	res = eval(car(body));
+	body = cdr(body);
+    }
+    unbind();
+    ep = save;
+    return (res);
 }
 
-int
-f_break (int arglist __unused)
+int f_macroexpand_all(int arglist)
 {
-  puts ("break");
-  debugger ();
-  return (T);
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "macroexpand-all", arglist);
+    if (listp(arg1) && car(arg1) == makesym("DEFMACRO"))
+	return (arg1);
+    else
+	return (macroexpand_all(arg1));
 }
 
-int
-f_instance (int arglist)
-{
-  int arg1, addr;
 
-  arg1 = car (arglist);
-  addr = get_int (arg1);
-  print (addr);
-  return (T);
+int macroexpand_all(int sexp)
+{
+
+    if (nullp(sexp))
+	return (NIL);
+    else if (atomp(sexp))
+	return (sexp);
+    else if (listp(sexp) && car(sexp) == makesym("QUOTE"))
+	return (sexp);
+    else if (listp(sexp) && macrop(car(sexp)))
+	return (macroexpand_all(macroexpand_1(car(sexp), cdr(sexp))));
+    else if (listp(sexp))
+	return (cons
+		(macroexpand_all(car(sexp)), macroexpand_all(cdr(sexp))));
+
+    return (NIL);
+}
+
+int f_backtrace(int arglist)
+{
+    int arg1, l;
+
+    if ((l = length(arglist)) != 0 && l != 1)
+	error(WRONG_ARGS, "backtrace", arglist);
+
+    arg1 = car(arglist);
+
+    if (l == 0) {
+	int i;
+
+	for (i = 0; i < BACKSIZE; i++) {
+	    print(backtrace[i]);
+	    putchar('\n');
+	}
+    } else if (arg1 == T)
+	back_flag = true;
+    else if (arg1 == NIL)
+	back_flag = false;
+
+    return (T);
+}
+
+int f_break(int arglist __unused)
+{
+    puts("break");
+    debugger();
+    return (T);
+}
+
+int f_instance(int arglist)
+{
+    int arg1, addr;
+
+    arg1 = car(arglist);
+    addr = get_int(arg1);
+    print(addr);
+    return (T);
 }
 
 
 // ----------for Raspberry PI
 #ifdef __rpi__
-int
-f_wiringpi_setup_gpio (int arglist __unused)
+int f_wiringpi_setup_gpio(int arglist __unused)
 {
-  wiringPiSetupGpio ();
-  return (T);
+    wiringPiSetupGpio();
+    return (T);
 }
 
-int
-f_wiringpi_spi_setup_ch_speed (int arglist)
+int f_wiringpi_spi_setup_ch_speed(int arglist)
 {
-  int arg1, arg2, x, y;
+    int arg1, arg2, x, y;
 
-  if (length (arglist) != 2)
-    error (WRONG_ARGS, "wiringpi-spi-setup-ch-speed", arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "wiringpi-spi-setup-ch-speed", arglist);
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "wiringpi-spi-setup-ch-speed", arg1);
-  if (!integerp (arg2))
-    error (NOT_INT, "wiringpi-spi-setup-ch-speed", arg2);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "wiringpi-spi-setup-ch-speed", arg1);
+    if (!integerp(arg2))
+	error(NOT_INT, "wiringpi-spi-setup-ch-speed", arg2);
 
-  x = GET_INT (arg1);
-  y = GET_INT (arg2);
-  wiringPiSPISetup (x, y);
-  return (T);
+    x = GET_INT(arg1);
+    y = GET_INT(arg2);
+    wiringPiSPISetup(x, y);
+    return (T);
 }
 
-int
-f_pwm_set_mode (int arglist)
+int f_pwm_set_mode(int arglist)
 {
-  int arg1;
+    int arg1;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "pwm-set-mode", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "pwm-set-mode", arglist);
 
-  arg1 = car (arglist);
+    arg1 = car(arglist);
 
-  if (arg1 == makesym ("pwm-mode-ms"))
-    pwmSetMode (PWM_MODE_MS);
-  else if (arg1 == makesym ("pwm-mode-bal"))
-    pwmSetMode (PWM_MODE_BAL);
-  else
-    error (WRONG_ARGS, "pwm-set-mode", arg1);
+    if (arg1 == makesym("pwm-mode-ms"))
+	pwmSetMode(PWM_MODE_MS);
+    else if (arg1 == makesym("pwm-mode-bal"))
+	pwmSetMode(PWM_MODE_BAL);
+    else
+	error(WRONG_ARGS, "pwm-set-mode", arg1);
 
-  return (T);
+    return (T);
 }
 
-int
-f_pwm_set_range (int arglist)
+int f_pwm_set_range(int arglist)
 {
-  int arg1, x;
+    int arg1, x;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "pwm-set-range", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "pwm-set-range", arglist);
 
-  arg1 = car (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "pwm-set-range", arg1);
+    arg1 = car(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "pwm-set-range", arg1);
 
-  x = GET_INT (arg1);
-  pwmSetRange (x);
-  return (T);
+    x = GET_INT(arg1);
+    pwmSetRange(x);
+    return (T);
 }
 
-int
-f_pwm_set_clock (int arglist)
+int f_pwm_set_clock(int arglist)
 {
-  int arg1, x;
+    int arg1, x;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "pwm-set-clock", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "pwm-set-clock", arglist);
 
-  arg1 = car (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "pwm-set-clock", arg1);
+    arg1 = car(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "pwm-set-clock", arg1);
 
-  x = GET_INT (arg1);
-  pwmSetClock (x);
-  return (T);
+    x = GET_INT(arg1);
+    pwmSetClock(x);
+    return (T);
 }
 
-int
-f_pin_mode (int arglist)
+int f_pin_mode(int arglist)
 {
-  int arg1, arg2, x;
+    int arg1, arg2, x;
 
-  if (length (arglist) != 2)
-    error (WRONG_ARGS, "pin-mode", arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "pin-mode", arglist);
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "pin-,mode", arg1);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "pin-,mode", arg1);
 
-  x = GET_INT (arg1);
-  if (arg2 == makesym ("intput"))
-    pinMode (x, INPUT);
-  else if (arg2 == makesym ("output"))
-    pinMode (x, OUTPUT);
-  else if (arg2 == makesym ("pwm-output"))
-    pinMode (x, PWM_OUTPUT);
-  else
-    error (WRONG_ARGS, "pin-mode", arg2);
+    x = GET_INT(arg1);
+    if (arg2 == makesym("intput"))
+	pinMode(x, INPUT);
+    else if (arg2 == makesym("output"))
+	pinMode(x, OUTPUT);
+    else if (arg2 == makesym("pwm-output"))
+	pinMode(x, PWM_OUTPUT);
+    else
+	error(WRONG_ARGS, "pin-mode", arg2);
 
-  return (T);
+    return (T);
 }
 
-int
-f_digital_write (int arglist)
+int f_digital_write(int arglist)
 {
-  int arg1, arg2, x, y;
+    int arg1, arg2, x, y;
 
-  if (length (arglist) != 2)
-    error (WRONG_ARGS, "digital-write", arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "digital-write", arglist);
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "digital-write", arg1);
-  if (!integerp (arg2))
-    error (NOT_INT, "digital-write", arg2);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "digital-write", arg1);
+    if (!integerp(arg2))
+	error(NOT_INT, "digital-write", arg2);
 
-  x = GET_INT (arg1);
-  y = GET_INT (arg2);
-  digitalWrite (x, y);
-  return (T);
+    x = GET_INT(arg1);
+    y = GET_INT(arg2);
+    digitalWrite(x, y);
+    return (T);
 }
 
-int
-f_digital_write_byte (int arglist)
+int f_digital_write_byte(int arglist)
 {
-  int arg1, x;
+    int arg1, x;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "digital-write-byte", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "digital-write-byte", arglist);
 
-  arg1 = car (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "digital-write-byte", arg1);
+    arg1 = car(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "digital-write-byte", arg1);
 
-  x = GET_INT (arg1);
-  digitalWriteByte (x);
-  return (T);
+    x = GET_INT(arg1);
+    digitalWriteByte(x);
+    return (T);
 }
 
-int
-f_pull_up_dn_control (int arglist)
+int f_pull_up_dn_control(int arglist)
 {
-  int arg1, arg2, x, y;
+    int arg1, arg2, x, y;
 
-  if (length (arglist) != 2)
-    error (WRONG_ARGS, "pull-up-dn-control", arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "pull-up-dn-control", arglist);
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "pull-up-dn-control", arg1);
-  if (!integerp (arg2))
-    error (NOT_INT, "pull-up-dn-control", arg2);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "pull-up-dn-control", arg1);
+    if (!integerp(arg2))
+	error(NOT_INT, "pull-up-dn-control", arg2);
 
-  x = GET_INT (arg1);
-  y = GET_INT (arg2);
-  pullUpDnControl (x, y);
-  return (T);
+    x = GET_INT(arg1);
+    y = GET_INT(arg2);
+    pullUpDnControl(x, y);
+    return (T);
 }
 
-int
-f_digital_read (int arglist)
+int f_digital_read(int arglist)
 {
-  int arg1, x, res;
+    int arg1, x, res;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "digital-read", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "digital-read", arglist);
 
-  arg1 = car (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "digital-read", arg1);
+    arg1 = car(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "digital-read", arg1);
 
-  x = GET_INT (arg1);
-  res = digitalRead (x);
-  return (makeint (res));
+    x = GET_INT(arg1);
+    res = digitalRead(x);
+    return (makeint(res));
 }
 
-int
-f_delay (int arglist)
+int f_delay(int arglist)
 {
-  int arg1, x;
+    int arg1, x;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "delay", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "delay", arglist);
 
-  arg1 = car (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "delay", arg1);
+    arg1 = car(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "delay", arg1);
 
-  x = GET_INT (arg1);
-  delay (x);
-  return (T);
+    x = GET_INT(arg1);
+    delay(x);
+    return (T);
 }
 
-int
-f_delay_microseconds (int arglist)
+int f_delay_microseconds(int arglist)
 {
-  int arg1, x;
+    int arg1, x;
 
-  if (length (arglist) != 1)
-    error (WRONG_ARGS, "delay-microseconds", arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "delay-microseconds", arglist);
 
-  arg1 = car (arglist);
-  if (!integerp (arg1))
-    error (NOT_INT, "delay-microseconds", arg1);
+    arg1 = car(arglist);
+    if (!integerp(arg1))
+	error(NOT_INT, "delay-microseconds", arg1);
 
-  x = GET_INT (arg1);
-  delayMicroseconds (x);
-  return (T);
+    x = GET_INT(arg1);
+    delayMicroseconds(x);
+    return (T);
 }
 #endif
 
-int
-f_modulesubst (int arglist)
+int f_modulesubst(int arglist)
 {
-  int arg1, arg2, arg3;
+    int arg1, arg2, arg3;
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
-  arg3 = caddr (arglist);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
 
-  return (modulesubst (arg1, arg2, arg3));
+    return (modulesubst(arg1, arg2, arg3));
 }
 
-int
-f_line_argument (int arglist)
+int f_line_argument(int arglist)
 {
-  if (length (arglist) >= 2)
-    {
-      error (WRONG_ARGS, "line-argument", arglist);
+    if (length(arglist) >= 2) {
+	error(WRONG_ARGS, "line-argument", arglist);
     }
 
-  if (length (arglist) == 0)
-    {
-      int i, res;
-      res = makevec (gArgC, UNDEF);
+    if (length(arglist) == 0) {
+	int i, res;
+	res = makevec(gArgC, UNDEF);
 
-      for (i = 0; i < gArgC; i++)
-	{
-	  SET_VEC_ELT (res, i, makestr (gArgV[i]));
+	for (i = 0; i < gArgC; i++) {
+	    SET_VEC_ELT(res, i, makestr(gArgV[i]));
 	}
 
-      return res;
-    }
-  else
-    {
-      int arg1 = car (arglist);
-      int n = GET_INT (arg1);
-      if (n < gArgC)
-	{
-	  return makestr (gArgV[n]);
-	}
-      else
-	{
-	  return NIL;
+	return res;
+    } else {
+	int arg1 = car(arglist);
+	int n = GET_INT(arg1);
+	if (n < gArgC) {
+	    return makestr(gArgV[n]);
+	} else {
+	    return NIL;
 	}
     }
 }
 
-int
-f_getenv (int arglist)
+int f_getenv(int arglist)
 {
-  int arg1;
+    int arg1;
 
-  arg1 = car (arglist);
-  if (length (arglist) != 1)
-    {
-      error (WRONG_ARGS, "getenv", arglist);
+    arg1 = car(arglist);
+    if (length(arglist) != 1) {
+	error(WRONG_ARGS, "getenv", arglist);
     }
-  char *val = getenv (GET_NAME (arg1));
-  if (val == NULL)
-    {
-      return NIL;
-    }
-  else
-    {
-      return makestr (val);
+    char *val = getenv(GET_NAME(arg1));
+    if (val == NULL) {
+	return NIL;
+    } else {
+	return makestr(val);
     }
 }
 
-int
-f_prof (int arglist)
+int f_prof(int arglist)
 {
-  int arg1;
+    int arg1;
 
-  arg1 = car (arglist);
-  if (!symbolp (arg1))
-    error (NOT_SYM, "prof", arg1);
+    arg1 = car(arglist);
+    if (!symbolp(arg1))
+	error(NOT_SYM, "prof", arg1);
 
-  if (arg1 == NIL)
-    {
-      profiler_set (0);
-      profiler_clear ();
-    }
-  else if (eqp (arg1, makesym ("CL")))
-    profiler_clear ();
-  else if (eqp (arg1, makesym ("SYS")))
-    profiler_set (1);
-  else if (eqp (arg1, makesym ("USER")))
-    profiler_set (2);
-  else if (eqp (arg1, makesym ("PR")))
-    profiler_print ();
-  else
-    error (WRONG_ARGS, "prof", arg1);
+    if (arg1 == NIL) {
+	profiler_set(0);
+	profiler_clear();
+    } else if (eqp(arg1, makesym("CL")))
+	profiler_clear();
+    else if (eqp(arg1, makesym("SYS")))
+	profiler_set(1);
+    else if (eqp(arg1, makesym("USER")))
+	profiler_set(2);
+    else if (eqp(arg1, makesym("PR")))
+	profiler_print();
+    else
+	error(WRONG_ARGS, "prof", arg1);
 
-  return (T);
+    return (T);
 }
 
 /*
@@ -809,15 +744,14 @@ f_prof (int arglist)
 * for example FFT IFFT.
 * This function is for development testing code.
 */
-int
-f_eisl_test (int arglist)
+int f_eisl_test(int arglist)
 {
-  int arg1, arg2;
+    int arg1, arg2;
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
 
-  return (bigx_karatsuba_mult (arg1, arg2));
+    return (bigx_karatsuba_mult(arg1, arg2));
 }
 
 
@@ -830,168 +764,153 @@ f_eisl_test (int arglist)
  * see verify/object.lsp test-case foo-30
  */
 
-int
-f_superp_for_compiler (int arglist)
+int f_superp_for_compiler(int arglist)
 {
-  int arg1, arg2;
+    int arg1, arg2;
 
-  arg1 = car (arglist);
-  arg2 = cadr (arglist);
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
 
-  if (length (arglist) != 2)
-    {
-      error (WRONG_ARGS, "eisl-superp-for-compiler", arglist);
+    if (length(arglist) != 2) {
+	error(WRONG_ARGS, "eisl-superp-for-compiler", arglist);
     }
 
-  if (superp (arg1, arg2))
-    return (T);
-  else
-    return (NIL);
+    if (superp(arg1, arg2))
+	return (T);
+    else
+	return (NIL);
 }
 
-int
-superp (int entry, int next)
+int superp(int entry, int next)
 {
 
-  if (nullp (entry) && nullp (next))
-    return (1);
-  else if (symbolp (car (entry)))
-    return (superp (cdr (entry), cdr (next)));
-  else if (subclassp (GET_AUX (cadar (next)), GET_AUX (cadar (entry))))	// subclass
-    return (superp (cdr (entry), cdr (next)));
-  else if (eqp (GET_AUX (cadar (next)), GET_AUX (cadar (entry))))	// same
-    // class
-    return (superp (cdr (entry), cdr (next)));
-  else
-    return (0);
+    if (nullp(entry) && nullp(next))
+	return (1);
+    else if (symbolp(car(entry)))
+	return (superp(cdr(entry), cdr(next)));
+    else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// subclass
+	return (superp(cdr(entry), cdr(next)));
+    else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	// same
+	// class
+	return (superp(cdr(entry), cdr(next)));
+    else
+	return (0);
 }
 
 
 int program;
 
 
-int
-f_try (int arglist)
+int f_try(int arglist)
 {
-  int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2;
-  char str[STRSIZE];
+    int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2;
+    char str[STRSIZE];
 
-  arg1 = car (arglist);		//time 
-  arg2 = cadr (arglist);	//sexp
-  arg3 = caddr (arglist);	// binary
-  arg4 = caddr (cdr (arglist));	//print switch
+    arg1 = car(arglist);	//time 
+    arg2 = cadr(arglist);	//sexp
+    arg3 = caddr(arglist);	// binary
+    arg4 = caddr(cdr(arglist));	//print switch
 
-  if (!integerp (arg1)
-      && !(symbolp (arg1) && arg1 == makesym ("NO-TIME-LIMIT")))
-    error (ILLEGAL_ARGS, "try", arg1);
-  if (!listp (arg2))
-    error (NOT_LIST, "try", arg2);
-  if (!listp (arg3))
-    error (NOT_LIST, "try", arg3);
+    if (!integerp(arg1)
+	&& !(symbolp(arg1) && arg1 == makesym("NO-TIME-LIMIT")))
+	error(ILLEGAL_ARGS, "try", arg1);
+    if (!listp(arg2))
+	error(NOT_LIST, "try", arg2);
+    if (!listp(arg3))
+	error(NOT_LIST, "try", arg3);
 
-  pos = 0;
-  while (!nullp (arg3))
-    {
-      bit = 8;
-      c = 0;
-      while (bit > 0)
-	{
-	  i = GET_INT (car (arg3));
-	  c = 2 * c + i;
-	  arg3 = cdr (arg3);
-	  bit--;
+    pos = 0;
+    while (!nullp(arg3)) {
+	bit = 8;
+	c = 0;
+	while (bit > 0) {
+	    i = GET_INT(car(arg3));
+	    c = 2 * c + i;
+	    arg3 = cdr(arg3);
+	    bit--;
 	}
-      if (c >= 32 && c < 127)	//ommit control code and unicode 
+	if (c >= 32 && c < 127)	//ommit control code and unicode 
 	{
-	  str[pos] = c;
-	  pos++;
+	    str[pos] = c;
+	    pos++;
 	}
 
     }
 
-  if (pos == 0)
-    {
-      return (list3 (makesym ("FAILSE"), makesym ("OUT-OF-DATA"), NIL));
+    if (pos == 0) {
+	return (list3(makesym("FAILSE"), makesym("OUT-OF-DATA"), NIL));
     }
 
-  str[pos] = EOL;
-  pos++;
-  str[pos] = NUL;
+    str[pos] = EOL;
+    pos++;
+    str[pos] = NUL;
 
-  program = makestream (stdin, EISL_INSTR, NULL);
-  TRY heap[program].name = Str_dup (str, 1, 0, 1);
-  EXCEPT (Mem_Failed) error (MALLOC_OVERF, "try", NIL);
-  END_TRY;
+    program = makestream(stdin, EISL_INSTR, NULL);
+    TRY heap[program].name = Str_dup(str, 1, 0, 1);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "try", NIL);
+    END_TRY;
 
-  save1 = input_stream;
-  save2 = output_stream;
+    save1 = input_stream;
+    save2 = output_stream;
 
-  if (arg1 == makesym ("NO-TIME-LIMIT"))
-    {
-      ignore_flag = true;
-      TRY res = eval (arg2);
-      ELSE res = UNDEF;
-      END_TRY;
-      ignore_flag = false;
-      if (res == UNDEF)
-	res = makesym ("FAILSE");
-      else if (res == FEND)
-	res = makesym ("FAILSE");
-    }
-  else
-    {
-      try_timer = getETime () + (double) GET_INT (arg1) * 0.000001;
-      try_res = NIL;
-      try_flag = true;
-      ignore_flag = true;
-      TRY res = eval (arg2);
-      ELSE res = UNDEF;
-      END_TRY;
-      ignore_flag = false;
-      try_flag = false;
-      if (res == UNDEF)
-	{
-	  res = list3 (makesym ("FAILSE"), makesym ("OUT-OF-DATA"), try_res);
-	  if (arg4 == makesym ("OUT-OF-DATA"))
-	    {
-	      printf ("%s", str);
+    if (arg1 == makesym("NO-TIME-LIMIT")) {
+	ignore_flag = true;
+	TRY res = eval(arg2);
+	ELSE res = UNDEF;
+	END_TRY;
+	ignore_flag = false;
+	if (res == UNDEF)
+	    res = makesym("FAILSE");
+	else if (res == FEND)
+	    res = makesym("FAILSE");
+    } else {
+	try_timer = getETime() + (double) GET_INT(arg1) * 0.000001;
+	try_res = NIL;
+	try_flag = true;
+	ignore_flag = true;
+	TRY res = eval(arg2);
+	ELSE res = UNDEF;
+	END_TRY;
+	ignore_flag = false;
+	try_flag = false;
+	if (res == UNDEF) {
+	    res =
+		list3(makesym("FAILSE"), makesym("OUT-OF-DATA"), try_res);
+	    if (arg4 == makesym("OUT-OF-DATA")) {
+		printf("%s", str);
 	    }
-	}
-      else if (res == FEND)
-	{
-	  res = list3 (makesym ("FAILSE"), makesym ("OUT-OF-TIME"), try_res);
-	  if (arg4 == makesym ("OUT-OF-TIME"))
-	    printf ("%s", str);
-	}
-      else
-	{
-	  res = list3 (makesym ("SUCCESS"), res, try_res);
-	  if (arg4 == makesym ("SUCCESS"))
-	    printf ("%s", str);
+	} else if (res == FEND) {
+	    res =
+		list3(makesym("FAILSE"), makesym("OUT-OF-TIME"), try_res);
+	    if (arg4 == makesym("OUT-OF-TIME"))
+		printf("%s", str);
+	} else {
+	    res = list3(makesym("SUCCESS"), res, try_res);
+	    if (arg4 == makesym("SUCCESS"))
+		printf("%s", str);
 	}
     }
 
-  input_stream = save1;
-  output_stream = save2;
-  return (res);
+    input_stream = save1;
+    output_stream = save2;
+    return (res);
 }
 
 
-int
-f_read_exp (int arglist)
+int f_read_exp(int arglist)
 {
-  int res, save;
+    int res, save;
 
-  if (!nullp (arglist))
-    error (ILLEGAL_ARGS, "read-exp", arglist);
+    if (!nullp(arglist))
+	error(ILLEGAL_ARGS, "read-exp", arglist);
 
 
-  save = input_stream;
-  input_stream = program;
-  TRY res = sread ();
-  ELSE res = UNDEF;
-  END_TRY;
-  input_stream = save;
+    save = input_stream;
+    input_stream = program;
+    TRY res = sread();
+    ELSE res = UNDEF;
+    END_TRY;
+    input_stream = save;
 
-  return (res);
+    return (res);
 }

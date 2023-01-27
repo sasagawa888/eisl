@@ -16,8 +16,7 @@ static const int SMALL_INT_MAX = 1000000000;
 static const int SMALL_INT_MIN = -1000000000;
 static const int INT_FLAG = 1073741824;	// #b01000000_00000000_00000000_00000000
 static const int INT_MASK = 1073741823;	// #b00111111_11111111_11111111_11111111
-static inline bool
-CELLRANGE(int x)
+static inline bool CELLRANGE(int x)
 {
     return (x < CELLSIZE && x >= 0);
 }
@@ -31,24 +30,25 @@ enum Option {
     CONTINUABLE,		// continuable condition
     NOTCONT,			// no continuable condition
     ABSTRACT,			// abstract class
-    METACLASS,          // meta class
-    
+    METACLASS,			// meta class
+
     // *** WARNING: THE FOLLOWING ARE INTERNAL VALUES THAT CLIENTS SHOULD
     // NOT USE ***
     AROUND, BEFORE, PRIMARY, AFTER, EISL_INOUT, EISL_INPUT, EISL_OUTPUT,
-    EISL_INSTR, EISL_OUTSTR, EISL_INOUT_BIN, EISL_INPUT_BIN, EISL_OUTPUT_BIN, EISL_OPEN, EISL_CLOSE,
+    EISL_INSTR, EISL_OUTSTR, EISL_INOUT_BIN, EISL_INPUT_BIN,
+	EISL_OUTPUT_BIN, EISL_OPEN, EISL_CLOSE,
 };
 
-typedef int     (*fn0)(void);
-typedef int     (*fn1)(int);
-typedef int     (*fn2)(int, int);
-typedef int     (*fn3)(char *);
+typedef int (*fn0)(void);
+typedef int (*fn1)(int);
+typedef int (*fn2)(int, int);
+typedef int (*fn3)(char *);
 typedef long long int (*fn4)(int);
-typedef int     (*fn5)(int, int, int);
-typedef char   *(*fn6)(int);
-typedef double  (*fn7)(int);
-typedef int     (*fn8)(double);
-typedef void    (*tfunc)(const char *, int(*func)(int));
+typedef int (*fn5)(int, int, int);
+typedef char *(*fn6)(int);
+typedef double (*fn7)(int);
+typedef int (*fn8)(double);
+typedef void (*tfunc)(const char *, int (*func)(int));
 
 enum { CHECKGBC_IDX, GBC_IDX, FRESHCELL_IDX, FREECELL_IDX,
     GBCSW_IDX, GETWP_IDX, ARGPOP_IDX, SHELTERPOP_IDX,
@@ -72,7 +72,8 @@ enum { CONS_IDX, NTH_IDX, SETCAR_IDX, SETCDR_IDX,
     EQP_IDX, EQLP_IDX, NUMEQP_IDX, SMALLERP_IDX,
     EQSMALLERP_IDX, GREATERP_IDX, EQGREATERP_IDX, MEMBER_IDX,
     CONVERT_IDX, ARRAY_IDX, SETDYNENV_IDX, ADDDYNENV_IDX,
-    SETDYNAMIC_IDX, SETPROP_IDX, ADAPTP_IDX, MATCHP_IDX, ILOSERR_IDX , NUM_FN2S
+    SETDYNAMIC_IDX, SETPROP_IDX, ADAPTP_IDX, MATCHP_IDX, ILOSERR_IDX,
+	NUM_FN2S
 };
 enum { MAKESTR_IDX, MAKESYM_IDX, MAKECHAR_IDX, MAKESTRFLT_IDX,
     MAKEBIG_IDX, MAKESTRLONG_IDX, MAKEFASTSTRLONG_IDX, NUM_FN3S

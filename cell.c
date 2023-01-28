@@ -21,15 +21,11 @@ void initcell(void)
 {
     int addr, x;
 
-    // initialize heap area
+    /* initialize heap area */
     for (addr = 0; addr < CELLSIZE; addr++) {
-	/*
-	 * heap[addr].flag = FRE; FRE == 0 
-	 */
+	/* heap[addr].flag = FRE; FRE == 0 */
 	heap[addr].val.cdr.intnum = addr + 1;
-	/*
-	 * heap[addr].aux = 0; heap[addr].option = 0; 
-	 */
+	/* heap[addr].aux = 0; heap[addr].option = 0; */
     }
     hp = 0;
     fc = CELLSIZE;
@@ -38,18 +34,17 @@ void initcell(void)
 	cell_hash_table[x] = NIL;
 
 
-    // 0th address is for NIL, set initial environment
-    makesym("NIL");		// 0th address NIL
-    SET_AUX(NIL, CLASS_NULL);	// class of nil is null
+    /* 0th address is for NIL, set initial environment */
+    makesym("NIL");		/* 0th address NIL */
+    SET_AUX(NIL, CLASS_NULL);	/* class of nil is null */
     SET_OPT(NIL, CONSTN);
-    makesym("T");		// 2nd address is T
-    SET_AUX(T, CLASS_SYMBOL);	// class of t is symbol
+    makesym("T");		/* 2nd address is T */
+    SET_AUX(T, CLASS_SYMBOL);	/* class of t is symbol */
     SET_OPT(T, CONSTN);
-    makesym("<undef>");		// 4th address is UNDEF
-    SET_AUX(UNDEF, CLASS_SYMBOL);	// class of <undef> is symbol
-    makesym("<file-end>");	// 6th address is FEND
-    SET_AUX(FEND, CLASS_SYMBOL);	// class of <end-of-file> is
-    // symbol
+    makesym("<undef>");		/* 4th address is UNDEF */
+    SET_AUX(UNDEF, CLASS_SYMBOL);	/* class of <undef> is symbol */
+    makesym("<file-end>");	/* 6th address is FEND */
+    SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
     ep = 0;
     dp = 0;
     sp = 0;
@@ -62,12 +57,11 @@ void bindclass(const char *name, int cl)
 
     sym = makesym(name);
     SET_AUX(sym, cl);
-    SET_OPT(cl, SYSTEM);	// built-in-class
-    SET_OPT(sym, SYSTEM);	// symbol formated by <***> are
-    // built-in-classes
+    SET_OPT(cl, SYSTEM);	/* built-in-class */
+    SET_OPT(sym, SYSTEM);	/* symbol formated by <***> are built-in-classes */
 }
 
-// class aux = ((format-string . error-msg)(format-arguments . args))
+/* class aux = ((format-string . error-msg)(format-arguments . args)) */
 void initerrargs(int cl)
 {
     int vars, args;
@@ -285,8 +279,7 @@ int hfreshcell(void)
     return (res);
 }
 
-// set value to environment by destructive
-// by deep-bind
+/* set value to environment by destructive by deep-bind */
 void setlexenv(int sym, int val)
 {
     int addr;
@@ -298,7 +291,7 @@ void setlexenv(int sym, int val)
 	SET_CDR(addr, val);
 }
 
-// bind value to dynamic environment
+/* bind value to dynamic environment */
 int setdynenv(int sym, int val)
 {
     int i;
@@ -318,13 +311,13 @@ int setdynenv(int sym, int val)
 }
 
 
-// additinal of lexical variable
+/* additinal of lexical variable */
 void addlexenv(int sym, int val)
 {
     ep = cons(cons(sym, val), ep);
 }
 
-// addition of dynamic variable
+/* addition of dynamic variable */
 int adddynenv(int sym, int val)
 {
     dp++;
@@ -336,10 +329,12 @@ int adddynenv(int sym, int val)
 }
 
 
-// environment is association list
-// env = ((sym1 . val1) (sym2 . val2) ...)
-// find value with assq
-// when not find return FAILSE
+/*
+ * environment is association list
+ * env = ((sym1 . val1) (sym2 . val2) ...)
+ * find value with assq
+ * when not find return FAILSE
+ */
 int findenv(int sym)
 {
     int addr;
@@ -352,7 +347,7 @@ int findenv(int sym)
 	return (cdr(addr));
 }
 
-// find in dynamic environment
+/* find in dynamic environment */
 int finddyn(int sym)
 {
     int i;
@@ -364,7 +359,7 @@ int finddyn(int sym)
     return (FAILSE);
 }
 
-// bind to association list destructively
+/* bind to association list destructively */
 void setval(int sym, int val, int ls)
 {
     int addr;
@@ -375,7 +370,7 @@ void setval(int sym, int val, int ls)
 }
 
 
-// for uniqueness of symbol
+/* for uniqueness of symbol */
 int getsym(const char *name, int index)
 {
     int addr;
@@ -423,9 +418,10 @@ int makesym1(const char *pname)
     return (addr);
 }
 
-// calculate hash number
-// modulo sum of each charactor's ASCII code with
-// HASHTBSIZE(107)
+/* calculate hash number
+ * modulo sum of each charactor's ASCII code with
+ * HASHTBSIZE(107)
+ */
 int hash(const char *name)
 {
     int res;
@@ -438,7 +434,7 @@ int hash(const char *name)
     return (res % HASHTBSIZE);
 }
 
-// -------for debug------------------
+/* -------for debug------------------ */
 DEF_GETTER(flag, FLAG, flag, NIL)
 void cellprint(int addr)
 {
@@ -507,7 +503,7 @@ void cellprint(int addr)
     }
 }
 
-// heap dump
+/* heap dump */
 void heapdump(int start, int end)
 {
     int i;
@@ -537,12 +533,6 @@ void store_backtrace(int x)
 
 int makeint(int intn)
 {
-    // int addr;
-
-    // addr = freshcell();
-    // SET_TAG(addr,INTN);
-    // SET_INT(addr,intn);
-    // SET_AUX(addr,cfixnum); //class fixnum
     if (intn >= 0)
 	return (INT_FLAG | intn);
     else
@@ -556,7 +546,7 @@ int makelong(long long int lngnum)
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, lngnum);
-    SET_AUX(addr, clongnum);	// class longnum
+    SET_AUX(addr, clongnum);	/* class longnum */
     return (addr);
 }
 
@@ -567,7 +557,7 @@ int makeflt(double floatn)
     addr = freshcell();
     SET_TAG(addr, FLTN);
     SET_FLT(addr, floatn);
-    SET_AUX(addr, cfloat);	// class float
+    SET_AUX(addr, cfloat);	/* class float */
     return (addr);
 }
 
@@ -601,23 +591,16 @@ int makefunc(const char *pname, int addr)
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makefunc", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(addr));
-    SET_CDR(val, ep);		// local environment
-    SET_AUX(val, cfunction);	// class function
-    // if lambda is generated in method, save the method and given
-    // argument 
+    SET_CDR(val, ep);		/* local environment */
+    SET_AUX(val, cfunction);	/* class function */
+    /* if lambda is generated in method, save the method and given argument */
     if (generic_func != NIL)
-	SET_PROP(val, cons(next_method, generic_vars));	// method 
-    // 
-    // of 
-    // generic-function 
-    // and 
-    // argument 
-    // 
-    SET_OPT(val, count_args(car(addr)));	// amount of argument
+	SET_PROP(val, cons(next_method, generic_vars));	/* method of generic-function and argument */
+    SET_OPT(val, count_args(car(addr)));	/* amount of argument */
     return (val);
 }
 
-// amount of argument. if it has :rest or &rest, it is minus number
+/* amount of argument. if it has :rest or &rest, it is minus number */
 int count_args(int ls)
 {
     int ls1, n, res;
@@ -647,7 +630,7 @@ int makevec(int n, int obj)
     for (i = 0; i < n; i++)
 	SET_VEC_ELT(res, i, copy(obj));
     SET_CDR(res, n);
-    SET_AUX(res, cgeneral_vector);	// class general-vector
+    SET_AUX(res, cgeneral_vector);	/* class general-vector */
     return (res);
 }
 
@@ -682,15 +665,15 @@ int makegeneric(char *pname, int lamlist, int body)
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makegeneric", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(lamlist));
-    SET_OPT(val, count_args(lamlist));	// amount of argument
+    SET_OPT(val, count_args(lamlist));	/* amount of argument */
     SET_CDR(val, NIL);
-    SET_PROP(val, T);		// method-combination default is T
+    SET_PROP(val, T);		/* method-combination default is T */
     SET_AUX(val, cstandard_generic_function);
     if (illegal_lambda_p(lamlist))
 	error(ILLEGAL_ARGS, "makegeneric", lamlist);
 
     while (!nullp(body)) {
-	// (:method method-qualifier* parameter-profile form*)
+	/* (:method method-qualifier* parameter-profile form*) */
 	if (eqp(caar(body), makesym(":METHOD"))) {
 	    if (method_qualifier_p(cadar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
@@ -738,10 +721,10 @@ int makegeneric_star(int lamlist, int body)
     val = hfreshcell();
     SET_TAG(val, GENERIC);
     SET_CAR(val, copy_heap(lamlist));
-    SET_OPT(val, count_args(lamlist));	// amount of argument
+    SET_OPT(val, count_args(lamlist));	/* amount of argument */
     SET_CDR(val, NIL);
-    SET_PROP(val, T);		// method-combination default is T
-    SET_AUX(val, cgeneric_function);	// difference. only this.
+    SET_PROP(val, T);		/* method-combination default is T */
+    SET_AUX(val, cgeneric_function);	/* difference. only this. */
     while (!nullp(body)) {
 	if (eqp(caar(body), makesym(":METHOD")))
 	    insert_method(makemethod(cdar(body)), val);
@@ -781,21 +764,20 @@ int makemethod(int addr)
 }
 
 /*
-stream data structure
-<OPT part>
-EISL_INPUT input-stream text-mode
-EISL_OUTPUT output-stream text-mode
-EISL_INOUT io-stream text-mode
-EISL_INPUT_BIN input-stream binary-mode
-EISL_OUTPUT_BIN output-stream binary-mode
-EISL_INOUT_BIN io-stream binary-mode
-EISL_INSTR input-stream string-stream
-EISL_OUTSTR output-stream string-stream
-<PROF part>
-EISL_OPEN  stream state is open
-EISL_CLOSE stream state is close
-
-*/
+ * stream data structure
+ * <OPT part>
+ * EISL_INPUT input-stream text-mode
+ * EISL_OUTPUT output-stream text-mode
+ * EISL_INOUT io-stream text-mode
+ * EISL_INPUT_BIN input-stream binary-mode
+ * EISL_OUTPUT_BIN output-stream binary-mode
+ * EISL_INOUT_BIN io-stream binary-mode
+ * EISL_INSTR input-stream string-stream
+ * EISL_OUTSTR output-stream string-stream
+ * <PROF part>
+ * EISL_OPEN  stream state is open
+ * EISL_CLOSE stream state is close
+ */
 
 int makestream(FILE * port, int type, const char *name)
 {
@@ -803,14 +785,14 @@ int makestream(FILE * port, int type, const char *name)
 
     addr = freshcell();
     SET_TAG(addr, STREAM);
-    SET_PORT(addr, port);	// port for file stream
-    SET_CDR(addr, 0);		// string-stream-position
-    SET_AUX(addr, cstream);	// class
-    SET_OPT(addr, type);	// EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
-    // EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN
+    SET_PORT(addr, port);	/* port for file stream */
+    SET_CDR(addr, 0);		/* string-stream-position */
+    SET_AUX(addr, cstream);	/* class */
+    SET_OPT(addr, type);	/* EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
+				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN */
     SET_NAME(addr, name);
-    SET_PROP(addr, 0);		// output-string-stream charcount from
-    SET_PROF(addr, EISL_OPEN);	// EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN
+    SET_PROP(addr, 0);		/* output-string-stream charcount from */
+    SET_PROF(addr, EISL_OPEN);	/* EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN */
     return (addr);
 }
 
@@ -842,7 +824,7 @@ int makearray(int ls, int obj)
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
-	SET_AUX(res, cgeneral_array_star);	// class
+	SET_AUX(res, cgeneral_array_star);	/* class */
     } else if (length(ls1) == 1) {
 	SET_TAG(res, VEC);
 	SET_CDR(res, GET_INT(car(ls1)));
@@ -850,7 +832,7 @@ int makearray(int ls, int obj)
     } else {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
-	SET_AUX(res, cgeneral_array_star);	// class
+	SET_AUX(res, cgeneral_array_star);	/* class */
     }
     SET_VEC(res, vec);
     for (i = 0; i < size; i++)
@@ -869,7 +851,7 @@ int makestr(const char *string)
     TRY heap[addr].name = Str_dup(string, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makestr", NIL);
     END_TRY;
-    SET_AUX(addr, cstring);	// class string
+    SET_AUX(addr, cstring);	/* class string */
     return (addr);
 }
 
@@ -1000,9 +982,9 @@ int makeinstance(int cl, int initls)
 
     addr = freshcell();
     SET_TAG(addr, INSTANCE);
-    SET_CAR(addr, GET_CAR(cl));	// super class
-    SET_CDR(addr, slotvars(cl));	// slot vars with super class
-    SET_AUX(addr, cl);		// class of instance
+    SET_CAR(addr, GET_CAR(cl));	/* super class */
+    SET_CDR(addr, slotvars(cl));	/* slot vars with super class */
+    SET_AUX(addr, cl);		/* class of instance */
     while (!nullp(initls)) {
 	setval(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
 	       GET_CDR(addr));
@@ -1027,31 +1009,21 @@ int slotvars(int x)
 
 
 
-// initialize instance
-// x is class-instance
-// initls is list for initialize value
+/* initialize instance
+ * x is class-instance
+ * initls is list for initialize value
+ */
+
 int initinst(int x, int initls)
 {
     int cl, class_vars, inst_vars, initargs, n, temp;
 
-    cl = GET_AUX(x);		// class of x
-    class_vars = GET_CDR(cl);	// class variable list. This is assoc list 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // ((initarg1 . accessor1)(initarg2 .
-    // accesor2)...)
-    inst_vars = GET_CDR(x);	// instance variable list. This is assoc
-    // list ((accessor1 . val1)(accessor2 .
-    // val2) ...)
-    initargs = GET_AUX(cl);	// list to set (initarg1 val1 initarg2
-    // val2 ...)
+    cl = GET_AUX(x);		/* class of x */
+    class_vars = GET_CDR(cl);	/* class variable list. 
+				   This is assoc list ((initarg1 . accessor1)(initarg2 . accesor2)...) */
+    inst_vars = GET_CDR(x);	/* instance variable list. 
+				   This is assoc list ((accessor1 . val1)(accessor2 . val2) ...) */
+    initargs = GET_AUX(cl);	/* list to set (initarg1 val1 initarg2 val2 ...) */
     while (!nullp(class_vars)) {
 	if ((n = assq(caar(class_vars), inst_vars)) != FAILSE)
 	    SET_CDR(n, copy(cdar(class_vars)));
@@ -1073,12 +1045,11 @@ int initinst(int x, int initls)
     }
 
     SET_CDR(x, initinst1(inst_vars, GET_CAR(cl), temp));
-    // GET_CAR(cl) is super-class of cl
-    // temp is initls;
+    /* GET_CAR(cl) is super-class of cl temp is initls */
     return (x);
 }
 
-// initialize variables of super class of instance
+/* initialize variables of super class of instance */
 int initinst1(int inst_vars, int sc, int initls)
 {
     int class_vars;
@@ -1086,19 +1057,12 @@ int initinst1(int inst_vars, int sc, int initls)
 
     if (nullp(sc))
 	return (inst_vars);
-    else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) {	// when
-	// not
-	// exist
-	// super-class 
-	// of
-	// super-class
+    else if (atomp(sc) && nullp(GET_CAR(GET_AUX(sc)))) {
+	/* when not exist super-class of super-class */
 	class_vars = GET_AUX(GET_AUX(sc));
 	return (initinst2(inst_vars, class_vars, initls));
-    } else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) {	// when
-	// exists
-	// super-class 
-	// of
-	// superclass
+    } else if (atomp(sc) && !atomp(GET_CAR(GET_AUX(sc)))) {
+	/* when exists super-class of superclass */
 	class_vars = GET_AUX(GET_AUX(sc));
 	int temp1;
 	temp1 = initinst2(inst_vars, class_vars, initls);
@@ -1142,7 +1106,7 @@ int makedummy(void)
     return (res);
 }
 
-// -----for FAST compiler------
+/* -----for FAST compiler------ */
 int get_aux(int x)
 {
     return (GET_AUX(x));
@@ -1215,7 +1179,7 @@ int makeintlong(int n)
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, (long long int) n);
-    SET_AUX(addr, cinteger);	// class integer
+    SET_AUX(addr, cinteger);	/* class integer */
     return (addr);
 }
 
@@ -1389,8 +1353,8 @@ int a_adaptp(int x, int y)
 {
 
     if (!CELLRANGE(x)) {
-	// fixnum is immediate. so fixnum data is out of cellrange
-	if (cfixnum == GET_AUX(y))	// cfixnum is <class fixnum>
+	/* fixnum is immediate. so fixnum data is out of cellrange */
+	if (cfixnum == GET_AUX(y))	/* cfixnum is <class fixnum> */
 	    return (1);
 	else if (subclassp(cfixnum, GET_AUX(y)))
 	    return (1);
@@ -1413,11 +1377,11 @@ int a_matchp(int x, int y)
 {
 
     if (!CELLRANGE(x)) {
-	// when x is out of cell range, x is fixnum
+	/* when x is out of cell range, x is fixnum */
 	if (cfixnum == GET_AUX(y))
 	    return (1);
 	else if (GET_OPT(y) == SYSTEM && subclassp(cfixnum, GET_AUX(y)))
-	    // when built-in class, subclass is also eqclass. 
+	    /* when built-in class, subclass is also eqclass. */
 	    return (1);
 	else
 	    return (0);

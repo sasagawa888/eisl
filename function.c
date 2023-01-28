@@ -215,7 +215,7 @@ void initsubr(void)
     defsubr("VECTOR", f_vector);
     defsubr("WRITE-BYTE", f_write_byte);
 
-    // inner extended functions
+    /* inner extended functions */
     defsubr("EISL-DUMMYP", f_dummyp);
 }
 
@@ -274,7 +274,7 @@ void dynamic_link(int x)
     init_declare = (voidfunc_t) dlsym(hmod, "init_declare");
 
 
-    // argument-0 type
+    /* argument-0 type */
     init_f0(CHECKGBC_IDX, checkgbc);
     init_f0(GBC_IDX, gbc);
     init_f0(FRESHCELL_IDX, freshcell);
@@ -287,7 +287,7 @@ void dynamic_link(int x)
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
 
-    // argument-1 type
+    /* argument-1 type */
     init_f1(CAR_IDX, car);
     init_f1(CDR_IDX, cdr);
     init_f1(CADR_IDX, cadr);
@@ -323,7 +323,7 @@ void dynamic_link(int x)
     init_f1(BIGXTOPARMANENT_IDX, bigx_to_parmanent);
     init_f1(SET_ERROR_HANDLER_IDX, set_error_handler);
 
-    // argument-2 type
+    /* argument-2 type */
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);
@@ -360,7 +360,7 @@ void dynamic_link(int x)
 
 
 
-    // argument-1 string type
+    /* argument-1 string type */
     init_f3(MAKESTR_IDX, (fn3) makestr);
     init_f3(MAKESYM_IDX, (fn3) makesym);
     init_f3(MAKECHAR_IDX, (fn3) makechar);
@@ -369,21 +369,21 @@ void dynamic_link(int x)
     init_f3(MAKESTRLONG_IDX, (fn3) makestrlong);
     init_f3(MAKEFASTSTRLONG_IDX, (fn3) makefaststrlong);
 
-    // argument-1 long long int type
+    /* argument-1 long long int type */
     init_f4(GETLONG_IDX, get_long);
 
-    // argument-3 type
+    /* argument-3 type */
     init_f5(STRINGSET_IDX, string_set);
     init_f5(ARRAYSET_IDX, array_set);
     init_f5(MEMBER1_IDX, member1);
 
-    // string output type
+    /* string output type */
     init_f6(GETNAME_IDX, get_name);
 
-    // float output type
+    /* float output type */
     init_f7(GETFLT_IDX, get_flt);
 
-    // float input type
+    /* float input type */
     init_f8(MAKEDOUBLEFLT_IDX, makedoubleflt);
 
     init_deftfunc((tfunc) defsubr);
@@ -440,7 +440,7 @@ void initgeneric(void)
 }
 
 
-// arithmetic function
+/* arithmetic function */
 int f_plus(int arglist)
 {
     int res;
@@ -2596,8 +2596,7 @@ int f_stream_ready_p(int arglist)
 	return (NIL);
 }
 
-// evaluation function
-
+/* evaluation function */
 int f_eval(int arglist)
 {
     int arg1, arg2, len;
@@ -2648,9 +2647,7 @@ int f_funcall(int arglist)
 
 
 
-// character function
-
-
+/* character function */
 int f_characterp(int arglist)
 {
     int arg1;
@@ -2836,7 +2833,7 @@ int f_char_index(int arglist)
 }
 
 
-// string function
+/* string function */
 int f_stringp(int arglist)
 {
     int arg1;
@@ -3115,21 +3112,7 @@ int f_string_index(int arglist)
     if (n == 3 && GET_INT(arg3) >= string_length(arg2))
 	error(ILLEGAL_ARGS, "string-index", arg3);
 
-    if (string_length(arg1) == 0 && string_length(arg2) == 0)	// (string-index 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// "" "")
+    if (string_length(arg1) == 0 && string_length(arg2) == 0)	/* (string-index "" "") */
 	return (makeint(0));
 
     if (string_length(arg2) == 0)
@@ -3156,8 +3139,7 @@ int f_string_index(int arglist)
 }
 
 
-// vector and array
-
+/* vector and array */
 int f_aref(int arglist)
 {
     int arg1, arg2;
@@ -3433,8 +3415,8 @@ int f_create_star(int arglist)
 {
     int arg1, arg2;
 
-    arg1 = car(arglist);	// class
-    arg2 = cadr(arglist);	// initargs,vals
+    arg1 = car(arglist);	/* class */
+    arg2 = cadr(arglist);	/* initargs,vals */
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "create", arglist);
     if (!(IS_CLASS(arg1)))
@@ -3450,8 +3432,8 @@ int f_slot_value(int arglist)
 {
     int arg1, arg2, val;
 
-    arg1 = car(arglist);	// instance
-    arg2 = cadr(arglist);	// var
+    arg1 = car(arglist);	/* instance */
+    arg2 = cadr(arglist);	/* var */
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "slot-value", arglist);
     if (!(IS_INSTANCE(arg1)))
@@ -3471,9 +3453,9 @@ int f_set_slot_value(int arglist)
 {
     int arg1, arg2, arg3, val;
 
-    arg1 = car(arglist);	// value to set
-    arg2 = cadr(arglist);	// instance
-    arg3 = caddr(arglist);	// var
+    arg1 = car(arglist);	/* value to set */
+    arg2 = cadr(arglist);	/* instance */
+    arg3 = caddr(arglist);	/* var */
     if (length(arglist) != 3)
 	error(WRONG_ARGS, "set-slot-value", arglist);
     if (!(IS_INSTANCE(arg2)))
@@ -3494,9 +3476,9 @@ int f_format(int arglist)
     int arg1, arg2, args, i, save, n, quote_flag;
     char *str, c;
 
-    arg1 = car(arglist);	// output-stream
-    arg2 = cadr(arglist);	// format-string
-    args = cddr(arglist);	// data
+    arg1 = car(arglist);	/* output-stream */
+    arg2 = cadr(arglist);	/* format-string */
+    args = cddr(arglist);	/* data */
     quote_flag = 0;
     if (!output_stream_p(arg1))
 	error(NOT_OUT_STREAM, "format", arg1);
@@ -3745,8 +3727,9 @@ int f_format_fresh_line(int arglist)
 
 	save = output_stream;
 	output_stream = arg1;
-	// output newline char if it cannot be determinned that the output 
-	// stream is at the begining of a fresh line
+	/* output newline char if it cannot be determinned that the output 
+	 * stream is at the begining of a fresh line
+     */
 	if (GET_OPT(output_stream) == EISL_OUTSTR
 	    && strlen(GET_NAME(output_stream)) == 0) {
 	    goto skip;
@@ -3754,7 +3737,7 @@ int f_format_fresh_line(int arglist)
 	output_char(output_stream, '\n');
 	start_flag = false;
 	charcnt = 0;
-	// if output_stream is string-stream, set charcnt 0.
+	/* if output_stream is string-stream, set charcnt 0. */
 	if (GET_OPT(output_stream) == EISL_OUTSTR) {
 	    SET_PROP(output_stream, 0);
 	}
@@ -3783,7 +3766,7 @@ int f_format_float(int arglist)
     flt = exact_to_inexact(arg2);
     print(flt);
     start_flag = false;
-    // count character
+    /* count character */
     output_stream = save;
     charcnt = charcnt + strlen(stream_str);
     return (NIL);
@@ -4189,8 +4172,9 @@ int f_create_array(int arglist)
 
 }
 
-// when dimension is domain-error return 1.
-// when dimension is storage-exhausted-error return 2.
+/* when dimension is domain-error return 1.
+ * when dimension is storage-exhausted-error return 2.
+ */
 int check_dimension(int ls)
 {
     while (!nullp(ls)) {
@@ -4449,7 +4433,7 @@ int f_initialize_object_star(int arglist)
     return (initinst(arg1, arg2));
 }
 
-// controle
+/* controle */
 __dead int f_quit(int arglist __unused)
 {
     if (!script_flag) {
@@ -4459,8 +4443,7 @@ __dead int f_quit(int arglist __unused)
     RAISE(Exit_Interp);
 }
 
-// extension
-
+/* extension */
 int f_heapdump(int arglist)
 {
     int arg;
@@ -4489,7 +4472,7 @@ int f_gbc(int arglist)
     else if (car(arglist) == NIL)
 	gbc_flag = false;
     else if (car(arglist) == makesym("M&S")) {
-	// re initialize heap area
+	/* re initialize heap area */
 	for (addr = WORK1; addr < CELLSIZE; addr++) {
 	    SET_FLAG(addr, FRE);
 	    SET_CAR(addr, 0);
@@ -4502,7 +4485,7 @@ int f_gbc(int arglist)
 	fc = fc + (CELLSIZE - WORK1);
 	gc_sw = 0;
     } else if (car(arglist) == makesym("COPY")) {
-	// initialize work area
+	/* initialize work area */
 	for (addr = WORK1; addr < CELLSIZE; addr++) {
 	    SET_CAR(addr, 0);
 	    SET_CDR(addr, 0);
@@ -4532,8 +4515,7 @@ int f_dummyp(int arglist)
 	return (NIL);
 }
 
-// object
-
+/* object */
 int f_class_of(int arglist)
 {
     int arg;
@@ -4574,14 +4556,13 @@ int f_instancep(int arglist)
 	else
 	    return (NIL);
     } else if (IS_GENERIC(arg1) && strcmp(GET_NAME(arg1), "CREATE") == 0) {
-	// (instancep #'create (class <standard-generic-function>)) =>
-	// NIL)
+	/* (instancep #'create (class <standard-generic-function>)) => NIL) */
 	if (subclassp(GET_AUX(arg1), arg2))
 	    return (T);
 	else
 	    return (NIL);
     } else if (GET_OPT(arg1) == USER && arg2 == cstandard_class)
-	// user defined class instance is standard-class
+	/* user defined class instance is standard-class */
 	return (T);
     else if (GET_AUX(arg1) == arg2)
 	return (T);
@@ -4677,7 +4658,7 @@ int f_call_next_method(int arglist)
     if (GET_OPT(caller) == PRIMARY) {
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
-	    // match(x,y) if sameclass or subclass return 1 else 0;
+	    /* match(x,y) if sameclass or subclass return 1 else 0 */
 	    if (adaptp(varlist, generic_vars)) {
 		varlist = genlamlis_to_lamlis(varlist);
 		body = cdr(GET_CAR(car(next_method)));
@@ -4694,7 +4675,7 @@ int f_call_next_method(int arglist)
     } else {
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
-	    // match(x,y) if sameclass or subclass return 1 else 0;
+	    /* match(x,y) if sameclass or subclass return 1 else 0 */
 	    if (adaptp(varlist, generic_vars)) {
 		if (GET_OPT(car(next_method)) == AROUND
 		    || GET_OPT(car(next_method)) == BEFORE
@@ -4704,7 +4685,7 @@ int f_call_next_method(int arglist)
 		if (GET_OPT(car(next_method)) == PRIMARY) {
 		    pexist = 1;
 		}
-		// if only qualifier or sameclass-primary, eval method;
+		/* if only qualifier or sameclass-primary, eval method */
 		if ((GET_OPT(car(next_method)) == AROUND
 		     || GET_OPT(car(next_method)) == BEFORE
 		     || GET_OPT(car(next_method)) == AFTER)
@@ -4744,13 +4725,13 @@ int f_call_next_method(int arglist)
 
 
 
-// condition
+/* condition */
 int f_error(int arglist)
 {
     int arg1, arg2;
 
-    arg1 = car(arglist);	// error-string
-    arg2 = cdr(arglist);	// obj
+    arg1 = car(arglist);	/* error-string */
+    arg2 = cdr(arglist);	/* obj */
 
     if (!stringp(arg1))
 	error(NOT_STR, "error", arg1);
@@ -4763,9 +4744,9 @@ int f_cerror(int arglist)
 {
     int arg1, arg2, arg3;
 
-    arg1 = car(arglist);	// continue-string
-    arg2 = cadr(arglist);	// error-string
-    arg3 = cddr(arglist);	// obj
+    arg1 = car(arglist);	/* continue-string */
+    arg2 = cadr(arglist);	/* error-string */
+    arg3 = cddr(arglist);	/* obj */
     if (!stringp(arg1))
 	error(NOT_STR, "error", arg1);
     if (!stringp(arg2))

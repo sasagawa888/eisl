@@ -4336,19 +4336,19 @@ int f_parse_number(int arglist)
     strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
     stok.buf[BUFSIZE - 1] = '\0';
 
-    if (bignumtoken(stok.buf))
+    if (bignum_token(stok.buf))
 	return (makebigx(stok.buf));
 
-    if (dectoken(stok.buf))
+    if (dec_token(stok.buf))
 	return (make_int((int) strtol(stok.buf, &e, 10)));
 
-    if (inttoken(stok.buf))
+    if (int_token(stok.buf))
 	return (make_int(strtol(stok.buf, &e, 10)));
 
-    if (flttoken(stok.buf))
+    if (flt_token(stok.buf))
 	return (make_flt(atof(stok.buf)));
 
-    if ((res = expttoken(stok.buf))) {
+    if ((res = expt_token(stok.buf))) {
 	if (res == 2)
 	    error(FLT_OVERF, "number-parse", arg1);
 	else if (res == 3)
@@ -4357,14 +4357,14 @@ int f_parse_number(int arglist)
 	    return (make_flt(atof(stok.buf)));
     }
 
-    if (bintoken(stok.buf))
-	return (readbin(stok.buf));
+    if (bin_token(stok.buf))
+	return (read_bin(stok.buf));
 
-    if (octtoken(stok.buf))
-	return (readoct(stok.buf));
+    if (oct_token(stok.buf))
+	return (read_oct(stok.buf));
 
-    if (hextoken(stok.buf))
-	return (readhex(stok.buf));
+    if (hex_token(stok.buf))
+	return (read_hex(stok.buf));
 
 
     error(CANT_PARSE, "parse-number", arg1);

@@ -478,7 +478,7 @@ void unreadc(char c)
 
 
 
-void gettoken(void)
+void get_token(void)
 {
     int c;
     int pos;
@@ -645,40 +645,40 @@ void gettoken(void)
 	    stok.buf[pos] = NUL;
 	    stok.ch = c;
 
-	    if (flttoken(stok.buf)) {
+	    if (flt_token(stok.buf)) {
 		stok.type = FLOAT_N;
 		break;
 	    }
-	    /* first step,check bignumtoken() and second inttoken() ignores number of digits. */
-	    if (bignumtoken(stok.buf)) {
+	    /* first step,check bignum_token() and second int_token() ignores number of digits. */
+	    if (bignum_token(stok.buf)) {
 		stok.type = BIGNUM;
 		break;
 	    }
-	    if (inttoken(stok.buf)) {
+	    if (int_token(stok.buf)) {
 		stok.type = INTEGER;
 		break;
 	    }
-	    if (inttoken_nsgn(stok.buf)) {
+	    if (int_token_nsgn(stok.buf)) {
 		stok.type = INTEGER;
 		break;
 	    }
-	    if (bintoken(stok.buf)) {
+	    if (bin_token(stok.buf)) {
 		stok.type = BINARY;
 		break;
 	    }
-	    if (octtoken(stok.buf)) {
+	    if (oct_token(stok.buf)) {
 		stok.type = OCTAL;
 		break;
 	    }
-	    if (dectoken(stok.buf)) {
+	    if (dec_token(stok.buf)) {
 		stok.type = DECNUM;
 		break;
 	    }
-	    if (hextoken(stok.buf)) {
+	    if (hex_token(stok.buf)) {
 		stok.type = HEXNUM;
 		break;
 	    }
-	    if ((res = expttoken(stok.buf))) {
+	    if ((res = expt_token(stok.buf))) {
 		if (res == 2)
 		    stok.type = EXPTOVERF;
 		else if (res == 3)
@@ -687,7 +687,7 @@ void gettoken(void)
 		    stok.type = EXPTNUM;
 		break;
 	    }
-	    if (symboltoken(stok.buf)) {
+	    if (symbol_token(stok.buf)) {
 		stok.type = SYMBOL;
 		break;
 	    }
@@ -764,7 +764,7 @@ void dropchar(char buf[])
 
 
 /* integer of sign. ignore number of digits. */
-int inttoken(char buf[])
+int int_token(char buf[])
 {
     int i;
     char c;
@@ -793,7 +793,7 @@ int inttoken(char buf[])
 }
 
 /* integer without sign */
-int inttoken_nsgn(char buf[])
+int int_token_nsgn(char buf[])
 {
     int i;
     char c;
@@ -808,7 +808,7 @@ int inttoken_nsgn(char buf[])
     return (1);
 }
 
-int flttoken(char buf[])
+int flt_token(char buf[])
 {
     septoken tok;
 
@@ -820,7 +820,7 @@ int flttoken(char buf[])
 	strncpy(bufcp, buf, SYMSIZE - 1);
 	bufcp[SYMSIZE - 1] = '\0';
 	insertstr('0', bufcp);
-	if (flttoken(bufcp))
+	if (flt_token(bufcp))
 	    return (1);
     }
 
@@ -832,13 +832,13 @@ int flttoken(char buf[])
 
     if (tok.after[0] == NUL)	/* ""."" */
 	return (0);
-    else if (inttoken(tok.before) && inttoken_nsgn(tok.after))
+    else if (int_token(tok.before) && int_token_nsgn(tok.after))
 	return (1);
     else
 	return (0);
 }
 
-int bignumtoken(char buf[])
+int bignum_token(char buf[])
 {
     int i;
     char c;
@@ -868,7 +868,7 @@ int bignumtoken(char buf[])
 }
 
 
-int symboltoken(char buf[])
+int symbol_token(char buf[])
 {
     int i;
     char c;
@@ -889,7 +889,7 @@ int symboltoken(char buf[])
     return (1);
 }
 
-int bintoken(char buf[])
+int bin_token(char buf[])
 {
     int i;
     char c;
@@ -917,7 +917,7 @@ int bintoken(char buf[])
 	return (0);
 }
 
-int octtoken(char buf[])
+int oct_token(char buf[])
 {
     int i;
     char c;
@@ -945,7 +945,7 @@ int octtoken(char buf[])
 	return (0);
 }
 
-int dectoken(char buf[])
+int dec_token(char buf[])
 {
     int i;
     char c;
@@ -970,7 +970,7 @@ int dectoken(char buf[])
 	return (0);
 }
 
-int hextoken(char buf[])
+int hex_token(char buf[])
 {
     int i;
     char c;
@@ -998,7 +998,7 @@ int hextoken(char buf[])
 }
 
 
-int expttoken(char buf[])
+int expt_token(char buf[])
 {
     septoken tok;
     char buf1[BUFSIZE];
@@ -1010,8 +1010,8 @@ int expttoken(char buf[])
     buf1[BUFSIZE - 1] = '\0';
     tok = separater(buf, 'e');
     if (tok.sepch != NUL &&
-	(inttoken(tok.before) || flttoken(tok.before)) &&
-	inttoken(tok.after)) {
+	(int_token(tok.before) || flt_token(tok.before)) &&
+	int_token(tok.after)) {
 	if (atoi(tok.after) > 999)
 	    return (2);		/* overflow */
 	else if (atoi(tok.after) < -999)
@@ -1025,8 +1025,8 @@ int expttoken(char buf[])
     tok = separater(buf, 'E');
     if (tok.sepch == NUL)
 	return (0);
-    if ((inttoken(tok.before) || flttoken(tok.before)) &&
-	inttoken(tok.after)) {
+    if ((int_token(tok.before) || flt_token(tok.before)) &&
+	int_token(tok.after)) {
 	if (atoi(tok.after) > 999)
 	    return (2);		/* overflow */
 	else if (atoi(tok.after) < -999)
@@ -1078,7 +1078,7 @@ int sread(void)
     int n;
     char *e;
 
-    gettoken();
+    get_token();
     switch (stok.type) {
     case FILEEND:
 	return (FEND);
@@ -1091,11 +1091,11 @@ int sread(void)
     case DECNUM:
 	return (make_int((int) strtol(stok.buf, &e, 10)));
     case BINARY:
-	return (readbin(stok.buf));
+	return (read_bin(stok.buf));
     case OCTAL:
-	return (readoct(stok.buf));
+	return (read_oct(stok.buf));
     case HEXNUM:
-	return (readhex(stok.buf));
+	return (read_hex(stok.buf));
     case EXPTNUM:
 	return (make_flt(atof(stok.buf)));
     case EXPTOVERF:
@@ -1105,7 +1105,7 @@ int sread(void)
 	error(FLT_UNDERF, "read", NIL);
 	break;
     case VECTOR:
-	return (vector(readlist()));
+	return (vector(read_list()));
     case ARRAY:
 	n = atoi(stok.buf);
 	return (array(n, sread()));
@@ -1121,7 +1121,7 @@ int sread(void)
 	return (cons(make_sym("QUASI-QUOTE"), cons(sread(), NIL)));
     case COMMA:
 	{
-	    gettoken();
+	    get_token();
 	    if (stok.type == ATMARK)
 		return (cons
 			(make_sym("UNQUOTE-SPLICING"), cons(sread(), NIL)));
@@ -1133,7 +1133,7 @@ int sread(void)
     case FUNCTION:
 	return (cons(make_sym("FUNCTION"), cons(sread(), NIL)));
     case LPAREN:
-	return (readlist());
+	return (read_list());
     case RPAREN:
 	error(ILLEGAL_RPAREN, "read", NIL);
     default:
@@ -1143,11 +1143,11 @@ int sread(void)
     return (0);
 }
 
-int readlist(void)
+int read_list(void)
 {
     int rl_car, rl_cdr;
 
-    gettoken();
+    get_token();
     if (stok.type == RPAREN)
 	return (NIL);
     else if (stok.type == DOT) {
@@ -1155,7 +1155,7 @@ int readlist(void)
 	if (rl_cdr == FEND) {
 	    error(ILLEGAL_RPAREN, "read", make_sym("file end"));
 	}
-	gettoken();
+	get_token();
 	return (rl_cdr);
     } else {
 	stok.flag = BACK;
@@ -1163,12 +1163,12 @@ int readlist(void)
 	if (rl_car == FEND) {
 	    error(ILLEGAL_RPAREN, "read", make_sym("file end"));
 	}
-	rl_cdr = readlist();
+	rl_cdr = read_list();
 	return (cons(rl_car, rl_cdr));
     }
 }
 
-int readbin(char *buf)
+int read_bin(char *buf)
 {
     char str[BUFSIZE], *e;
     int pos, n, res, inc;
@@ -1193,7 +1193,7 @@ int readbin(char *buf)
     return (res);
 }
 
-int readoct(char *buf)
+int read_oct(char *buf)
 {
     char str[BUFSIZE], *e;
     int pos, n, res, inc;
@@ -1219,7 +1219,7 @@ int readoct(char *buf)
 }
 
 
-int readhex(char *buf)
+int read_hex(char *buf)
 {
     char str[BUFSIZE], *e;
     int pos, n, res, inc;

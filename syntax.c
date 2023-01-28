@@ -2094,22 +2094,22 @@ int convert(int arg1, int arg2)
 	    strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
 	    stok.buf[BUFSIZE - 1] = '\0';
 
-	    if (bignumtoken(stok.buf)) {
+	    if (bignum_token(stok.buf)) {
 		return (makebigx(stok.buf));
-	    } else if (inttoken(stok.buf)) {
+	    } else if (int_token(stok.buf)) {
 		return (make_int(strtol(stok.buf, &e, 10)));
-	    } else if (bintoken(stok.buf)) {
+	    } else if (bin_token(stok.buf)) {
 		return (make_int((int) strtol(stok.buf, &e, 2)));
-	    } else if (octtoken(stok.buf)) {
+	    } else if (oct_token(stok.buf)) {
 		return (make_int((int) strtol(stok.buf, &e, 8)));
-	    } else if (dectoken(stok.buf)) {
+	    } else if (dec_token(stok.buf)) {
 		return (make_int((int) strtol(stok.buf, &e, 10)));
-	    } else if (hextoken(stok.buf)) {
+	    } else if (hex_token(stok.buf)) {
 		return (make_int((int) strtol(stok.buf, &e, 16)));
 	    }
 	    break;
 	} else if (GET_AUX(arg2) == cfloat) {
-	    if (flttoken(GET_NAME(arg1)))
+	    if (flt_token(GET_NAME(arg1)))
 		return (make_flt(atof(GET_NAME(arg1))));
 	} else if (GET_AUX(arg2) == csymbol) {
 	    return (make_sym(GET_NAME(arg1)));

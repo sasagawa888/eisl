@@ -582,6 +582,96 @@ int f_instance(int arglist)
     return (T);
 }
 
+int f_heapdump(int arglist)
+{
+    int arg;
+
+    arg = GET_INT(car(arglist));
+    heapdump(arg, arg + 10);
+    return (T);
+}
+
+DEF_GETTER(flag, FLAG, flag, NIL)
+void cellprint(int addr)
+{
+    switch (GET_FLAG(addr)) {
+    case FRE:
+	fputs("FRE ", stdout);
+	break;
+    case USE:
+	fputs("USE ", stdout);
+	break;
+    }
+    switch (GET_TAG(addr)) {
+    case EMP:
+	puts("EMP");
+	break;
+    case INTN:
+	Fmt_print("INTN   %d\n", GET_INT(addr));
+	break;
+    case FLTN:
+	Fmt_print("FLTN   %f\n", GET_FLT(addr));
+	break;
+    case LONGN:
+	Fmt_print("LONGN  %D\n", GET_LONG(addr));
+	break;
+    case BIGX:
+	Fmt_print("BIGX   %d\n", GET_CAR(addr));
+	break;
+    case SYM:
+	Fmt_print("SYM    %07d %07d %07d %s\n", GET_CAR(addr),
+		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+	break;
+    case STR:
+	Fmt_print("STR    %07d %07d %07d %s\n", GET_CAR(addr),
+		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+	break;
+    case LIS:
+	Fmt_print("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+		  GET_AUX(addr));
+	break;
+    case SUBR:
+	Fmt_print("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+		  GET_AUX(addr));
+	break;
+    case FSUBR:
+	Fmt_print("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+		  GET_AUX(addr));
+	break;
+    case FUNC:
+	Fmt_print("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+		  GET_AUX(addr));
+	break;
+    case MACRO:
+	Fmt_print("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+		  GET_AUX(addr));
+	break;
+    case CLASS:
+	Fmt_print("CLASS  %07d %07d %07d %s\n", GET_CAR(addr),
+		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+	break;
+    case GENERIC:
+	Fmt_print("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+		  GET_AUX(addr));
+	break;
+    default:
+	Fmt_print("cellprint(%d) tag switch default action\n", addr);
+    }
+}
+
+/* heap dump */
+void heapdump(int start, int end)
+{
+    int i;
+
+    puts("addr    F   TAG    CAR     CDR     AUX     NAME");
+    for (i = start; i <= end; i++) {
+	Fmt_print("%07d ", i);
+	cellprint(i);
+    }
+}
+
+
 /*
  * profiler
  */

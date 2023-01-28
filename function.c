@@ -4546,15 +4546,6 @@ __dead int f_quit(int arglist __unused)
 }
 
 /* extension */
-int f_heapdump(int arglist)
-{
-    int arg;
-
-    arg = GET_INT(car(arglist));
-    heapdump(arg, arg + 10);
-    return (T);
-}
-
 static inline void SET_FLAG(int addr, flag x)
 {
     REQUIRE(CELLRANGE(addr));

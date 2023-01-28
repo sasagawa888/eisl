@@ -1,5 +1,11 @@
 /*
- * memo lisp-2 symbol-address car=function-addr, cdr=global-val closure
+ * generate basic symbol e.g. T nil ...
+ * generate class 
+ * functions to access cell data
+ *
+ * symbol data structure
+ * ISLisp is lisp-2 
+ * symbol-address car=function-addr, cdr=global-val closure
  * function-address car=arg+body, cdr=environment 
  */
 
@@ -23,9 +29,7 @@ void initcell(void)
 
     /* initialize heap area */
     for (addr = 0; addr < CELLSIZE; addr++) {
-	/* heap[addr].flag = FRE; FRE == 0 */
 	heap[addr].val.cdr.intnum = addr + 1;
-	/* heap[addr].aux = 0; heap[addr].option = 0; */
     }
     hp = 0;
     fc = CELLSIZE;
@@ -530,7 +534,12 @@ void store_backtrace(int x)
 }
 
 // ----------------------------------------
-
+/*
+ * integer is immediate
+ * positive integer, set 1 second bit from MSB.
+ * negative integer is only negative.
+ * integer is out of cell address.  so, integer does not require cell.
+ */
 int makeint(int intn)
 {
     if (intn >= 0)

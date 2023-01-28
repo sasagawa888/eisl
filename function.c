@@ -1960,6 +1960,22 @@ int f_nreverse(int arglist)
     return (nreverse(arg1));
 }
 
+int nreverse(int x)
+{
+    int res;
+
+    res = NIL;
+    while (!nullp(x) && !atomp(x)) {
+	int y;
+
+	y = cdr(x);
+	SET_CDR(x, res);
+	res = x;
+	x = y;
+    }
+    return (res);
+}
+
 int f_create_list(int arglist)
 {
     int arg1, arg2, n;

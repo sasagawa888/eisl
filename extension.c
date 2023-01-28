@@ -324,6 +324,22 @@ int f_nconc(int arglist)
     return (nconc(arg1, arg2));
 }
 
+int nconc(int x, int y)
+{
+    int ls;
+
+    if (nullp(x))
+	return (y);
+
+    ls = x;
+    while (!nullp(cdr(ls))) {
+	ls = cdr(ls);
+    }
+    SET_CDR(ls, y);
+    return (x);
+}
+
+
 int f_address(int arglist)
 {
     int arg1;

@@ -931,22 +931,6 @@ int hreverse(int x)
     return (res);
 }
 
-int nreverse(int x)
-{
-    int res;
-
-    res = NIL;
-    while (!nullp(x) && !atomp(x)) {
-	int y;
-
-	y = cdr(x);
-	SET_CDR(x, res);
-	res = x;
-	x = y;
-    }
-    return (res);
-}
-
 int last(int x)
 {
     return (car(reverse(x)));
@@ -966,22 +950,6 @@ int happend(int x, int y)
 	return (y);
     else
 	return (hcons(car(x), happend(cdr(x), y)));
-}
-
-
-int nconc(int x, int y)
-{
-    int ls;
-
-    if (nullp(x))
-	return (y);
-
-    ls = x;
-    while (!nullp(cdr(ls))) {
-	ls = cdr(ls);
-    }
-    SET_CDR(ls, y);
-    return (x);
 }
 
 int create_list(int x, int y)

@@ -952,14 +952,6 @@ int happend(int x, int y)
 	return (hcons(car(x), happend(cdr(x), y)));
 }
 
-int create_list(int x, int y)
-{
-    if (x == 0)
-	return (NIL);
-    else
-	return (cons(copy(y), create_list(x - 1, y)));
-}
-
 int copy(int x)
 {
     if (nullp(x))

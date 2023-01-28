@@ -1995,6 +1995,15 @@ int f_create_list(int arglist)
     return (create_list(GET_INT(arg1), arg2));
 }
 
+int create_list(int x, int y)
+{
+    if (x == 0)
+	return (NIL);
+    else
+	return (cons(copy(y), create_list(x - 1, y)));
+}
+
+
 int f_property(int arglist)
 {
     int arg1, arg2, arg3, res, n;

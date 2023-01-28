@@ -1,3 +1,8 @@
+/*
+ * predicate for ISLisp data structures
+ * operation for data structures
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>

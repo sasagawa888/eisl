@@ -1,3 +1,7 @@
+/*
+ * ISLisp standard functions.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -2102,7 +2106,7 @@ int f_set_cdr(int arglist)
 
 
 
-// input and output
+/* input and output */
 
 static inline bool save_repl_flag(void)
 {

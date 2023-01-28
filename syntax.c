@@ -1798,7 +1798,7 @@ int f_defmethod(int arglist)
 
 int f_ignore_errors(int arglist)
 {
-    volatile int res, save1, save2, save3;
+    volatile int res, save1, save2;
 
     ignore_flag = true;
     save1 = input_stream;

@@ -280,7 +280,7 @@ void copygbc(void)
     /* copy tagbody symbol */
     tagbody_tag = copy_work(tagbody_tag);
 
-    / copy thunk for unwind-protect */
+    /* copy thunk for unwind-protect */
     unwind_pt = copy_work(unwind_pt);
 
 

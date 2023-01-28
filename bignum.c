@@ -86,12 +86,12 @@ int makebigx(char *bignum)
     char integer[15];
     int i, j, res, sign, len;
 
-    // check sign
+    /* check sign */
     if (bignum[0] == '-')
 	sign = -1;
     else
 	sign = 1;
-    // remove sign
+    /* remove sign */
     if (bignum[0] == '-' || bignum[0] == '+') {
 	i = laststr(bignum);
 	for (j = 0; j < i; j++)
@@ -99,9 +99,9 @@ int makebigx(char *bignum)
 
 	bignum[j] = NUL;
     }
-    // length to check long data type
+    /* length to check long data type */
     len = 0;
-    // generate bignum data cell
+    /* generate bignum data cell */
     res = gen_big();
 
     i = laststr(bignum);
@@ -164,8 +164,8 @@ void print_bigx(int x)
 	    txt1 = Text_put("-");
 	}
     }
-    y = get_pointer(x);		//get pointer of bigcell
-    len = get_length(x);	//get length of bignum;
+    y = get_pointer(x);		/* get pointer of bigcell */
+    len = get_length(x);	/* get length of bignum */
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	Fmt_fprint(GET_PORT(output_stream), "%d", bigcell[y]);
     } else {
@@ -208,13 +208,13 @@ int gen_big(void)
     return (res);
 }
 
-// set sign
+/* set sign */
 void set_sign(int x, int y)
 {
     SET_OPT(x, y);
 }
 
-// get sign
+/* get sign */
 int get_sign(int x)
 {
     return (GET_OPT(x));
@@ -372,7 +372,7 @@ int bigx_simplify(int x)
 	return (x);
 }
 
-// subtract n-cells 
+/* subtract n-cells */ 
 int bigx_shift_left(int x, int n)
 {
     int res;
@@ -388,7 +388,7 @@ int bigx_shift_left(int x, int n)
 
 }
 
-// add n-zero-cells to x
+/* add n-zero-cells to x */
 int bigx_shift_right(int x, int n)
 {
     int res, len, pointer;
@@ -608,7 +608,7 @@ int bigx_minus(int arg1, int arg2)
 }
 
 
-// arg1 > arg2
+/* arg1 > arg2 */
 int bigx_minus1(int arg1, int arg2)
 {
     int len1, len2, pointerx, pointery, len, z, c, res;
@@ -717,7 +717,7 @@ int bigx_mult1(int arg1, int arg2)
     set_sign(res, 1);
     CHECKBIG2(len);
 
-    // clear area of calculate
+    /* clear area of calculate */
     int i, j;
     for (i = 0; i <= len; i++) {
 	bigcell[i + big_pt0] = 0;
@@ -762,7 +762,7 @@ int bigx_div(int arg1, int arg2)
 
 
     res = UNDEF;
-    // if devidend is smaller than divisor,return 0
+    /* if devidend is smaller than divisor,return 0 */
     if (bigx_abs_smallerp(arg1, arg2))
 	return (makeint(0));
 
@@ -796,7 +796,7 @@ int bigx_div1(int arg1, int arg2)
     long long int lmsb1;
 
 
-    // arg1 < arg2 -> 0
+    /* arg1 < arg2 -> 0 */
     if (smallerp(arg1, arg2))
 	return (makeint(0));
     CHECKBIG2(get_length(arg1) - get_length(arg2));
@@ -805,7 +805,7 @@ int bigx_div1(int arg1, int arg2)
     simp_flag = false;
     pointery = get_pointer(arg2);	//MSB pointer
 
-    // Knuth The art of computer programing D-algorithm
+    /* Knuth The art of computer programing D-algorithm */
     if (bigcell[pointery] < BIGNUM_BASE / 2) {
 	int d = BIGNUM_BASE / (1 + bigcell[pointery]);
 	arg1 = bigx_mult1(arg1, bigx_int_to_big(makeint(d)));
@@ -837,7 +837,7 @@ int bigx_div1(int arg1, int arg2)
 		(long long int) bigcell[pointerx - 1];
 	    q = (int) (lmsb1 / (long long int) msb2);
 	    shift--;
-	    // exception if q >= 10^10 , q = q/BIGNUMBASE. q must be smaller than BIGNUM_BASE
+	    /* exception if q >= 10^10 , q = q/BIGNUMBASE. q must be smaller than BIGNUM_BASE */
 	    if (q >= BIGNUM_BASE) {
 		q = q / BIGNUM_BASE;
 		shift++;
@@ -850,7 +850,7 @@ int bigx_div1(int arg1, int arg2)
 			     shift);
 	dividend = bigx_minus(dividend, subtract);
 
-	// e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
+	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
 	while (negativep(dividend)) {
 	    dividend = plus(dividend, bigx_shift_right(arg2, shift));
 	    q--;
@@ -864,8 +864,9 @@ int bigx_div1(int arg1, int arg2)
     }
     while (!bigx_zerop(dividend) && !smallerp(dividend, arg2));
 
-    // when divident is smaller than divisior and shift > 0 insert zero
-    //e.q.  div(3000000000000000000,30000000000)
+    /* when divident is smaller than divisior and shift > 0 insert zero
+     * e.g.  div(3000000000000000000,30000000000)
+     */
     while (shift > 0) {
 	bigcell[big_pt0 - len] = 0;
 	shift--;
@@ -886,7 +887,7 @@ int bigx_remainder(int arg1, int arg2)
     long long int lmsb1;
 
 
-    // arg1 > arg2 -> 0
+    /* arg1 > arg2 -> 0 */
     if (smallerp(arg1, arg2))
 	return (makeint(0));
     CHECKBIG2(get_length(arg2));
@@ -920,7 +921,7 @@ int bigx_remainder(int arg1, int arg2)
 			     shift);
 	dividend = bigx_minus(dividend, subtract);
 
-	// e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4)
+	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
 	while (negativep(dividend)) {
 	    dividend = plus(dividend, bigx_shift_right(arg2, shift));
 	    q--;
@@ -929,9 +930,7 @@ int bigx_remainder(int arg1, int arg2)
     }
     while (!smallerp(dividend, arg2));
 
-    big_pt0 = save0;		//restore pointer
-    // copy dividend to big_pt0 temporarly area
-
+    big_pt0 = save0;		/* restore pointer copy dividend to big_pt0 temporarly area */
     len = get_length(dividend);
     pointer = get_pointer(dividend) - len + 1;	//LSB
     int i;
@@ -969,7 +968,7 @@ int bigx_big_to_flt(int x)
 }
 
 
-// bignum remainder of bignum and int
+/* bignum remainder of bignum and int */
 int bigx_remainder_i(int x, int y)
 {
     int abs, pointer, len, sign1, sign2;
@@ -1060,7 +1059,7 @@ int bigx_div_i(int x, int y)
     return (res);
 }
 
-// multple of bignum and int
+/* multple of bignum and int */
 int bigx_mult_i(int x, int y)
 {
     int res, len, pointer, n, sign1, sign2;
@@ -1152,7 +1151,7 @@ long long int nttx[NTTSIZE], ntty[NTTSIZE], nttz[NTTSIZE];	// data area ntty=ntt
 long long int ntt_factor[NTTSIZE][2];
 int ntti[NTTSIZE];		// index of bit-reversal
 
-// return size of binary. e.g. 7=111 3bit
+/* return size of binary. e.g. 7=111 3bit */
 int get_bit(int n)
 {
     int bit;
@@ -1165,7 +1164,7 @@ int get_bit(int n)
     return (bit);
 }
 
-//return reversed bit number. e.g.  6=110 -> 011=3
+/* return reversed bit number. e.g.  6=110 -> 011=3 */
 int bit_reverse(long long int n, int bit)
 {
     int binary[32], i;
@@ -1184,7 +1183,7 @@ int bit_reverse(long long int n, int bit)
     return (n);
 }
 
-// save index of bit-reverse
+/* save index of bit-reverse */
 void ntt_set_bit_reverse(long long int n)
 {
     int i, bit;
@@ -1195,7 +1194,7 @@ void ntt_set_bit_reverse(long long int n)
     }
 }
 
-// exponentation x^y (mod z). see SICP
+/* exponentation x^y (mod z). see SICP */
 long long int expmod(long long int x, int y, long long int z)
 {
     long long int res, p;
@@ -1214,19 +1213,19 @@ long long int expmod(long long int x, int y, long long int z)
     return (res);
 }
 
-// x+y (mod P)
+/* x+y (mod P) */
 long long int plusmod(long long int x, long long int y)
 {
     return ((x + y) % P);
 }
 
-// x*y (mod P)
+/* x*y (mod P) */
 long long int multmod(long long int x, long long int y)
 {
     return ((x * y) % P);
 }
 
-// x-y (mod P)
+/* x-y (mod P) */
 long long int minusmod(long long int x, long long int y)
 {
     return ((x - y + P) % P);
@@ -1254,12 +1253,12 @@ void ntt1(int n, int h, int pos, int index)
     if (h == 0) {
 	return;
     } else {
-	//recursion
+	/* recursion */
 	ntt1(n, h / 2, pos, index);
 	ntt1(n, h / 2, pos + h, index);
     }
     int i, r;
-    r = (n / 2) / h;		//Adjustment ratio with the original
+    r = (n / 2) / h;		/* Adjustment ratio with the original */
     for (i = 0; i < h; i++) {
 	long long int temp = plusmod(ntty[pos + i],
 				     multmod(ntt_factor[i * r][index],
@@ -1279,7 +1278,7 @@ void ntt(int n)
     for (i = 0; i < n; i++) {
 	ntty[ntti[i]] = nttx[i];
     }
-    ntt1(n, n / 2, 0, 0);	// n,n/1,0=start-position of vector,0=base-index for forward
+    ntt1(n, n / 2, 0, 0);	/* n,n/1,0=start-position of vector,0=base-index for forward */
 
 }
 
@@ -1292,15 +1291,15 @@ void intt(int n)
     for (i = 0; i < n; i++) {
 	ntty[ntti[i]] = nttx[i];
     }
-    ntt1(n, n / 2, 0, 1);	// n,n/1,0=start-position of vector,1=base-index for inverse
-    n_inv = expmod(n, P - 2, P);	// n_env is 1/n (mod P). inverse is 1/nΣ...
+    ntt1(n, n / 2, 0, 1);	/* n,n/1,0=start-position of vector,1=base-index for inverse */
+    n_inv = expmod(n, P - 2, P);	/* n_env is 1/n (mod P). inverse is 1/nΣ... */
     for (i = 0; i < n; i++) {
 	ntty[i] = (ntty[i] * n_inv) % P;
     }
 }
 
 
-//-------mult with NTT-------
+/* -------mult with NTT------- */
 int bigx_ntt_mult(int x, int y)
 {
     int pointer, lenx, leny, max_len, ans_len, i, n, half, res;
@@ -1317,8 +1316,9 @@ int bigx_ntt_mult(int x, int y)
     if (ans_len * 2 * 3 > NTTSIZE)
 	error(RESOURCE_ERR, "ntt-mult", makeint(ans_len));
 
-    //prepare NTT data. datasize is twice of max_len
-    //Each one bigcell needs 3 NTT data.  n= 2^x >= max_len*2*3
+    /* prepare NTT data. datasize is twice of max_len
+     * Each one bigcell needs 3 NTT data.  n= 2^x >= max_len*2*3
+     */
     n = 1;
     while ((max_len * 2 * 3) > n) {
 	n = 2 * n;
@@ -1326,7 +1326,7 @@ int bigx_ntt_mult(int x, int y)
     ntt_set_bit_reverse(n);
     ntt_set_w_factor(n);
 
-    //------ntt(x)-----
+    /* ------ntt(x)----- */
     for (i = 0; i < NTTSIZE; i++) {
 	nttx[i] = 0;
     }
@@ -1335,7 +1335,7 @@ int bigx_ntt_mult(int x, int y)
     half = n / 2 - 1;
 
     for (i = 0; i < lenx; i++) {
-	//one bigcell separate to three NTT data. NTTBASE is 1000
+	/* one bigcell separate to three NTT data. NTTBASE is 1000 */
 	nttx[half - (3 * i)] = bigcell[pointer + i] % NTTBASE;
 	nttx[half - (3 * i + 1)] =
 	    (bigcell[pointer + i] / NTTBASE) % NTTBASE;
@@ -1344,13 +1344,13 @@ int bigx_ntt_mult(int x, int y)
     }
 
     ntt(n);
-    // save to nttz[]
+    /* save to nttz[] */
     for (i = 0; i < n; i++) {
 	nttz[i] = ntty[i];
     }
 
 
-    //-----ntt(y)--------
+    /* -----ntt(y)-------- */
     for (i = 0; i < NTTSIZE; i++) {
 	nttx[i] = 0;
     }
@@ -1366,22 +1366,22 @@ int bigx_ntt_mult(int x, int y)
 
     ntt(n);
 
-    //----mult---------
+    /* ----mult--------- */
     for (i = 0; i < n; i++) {
 	nttx[i] = multmod(ntty[i], nttz[i]);
     }
 
-    //---inverse NTT---
+    /* ---inverse NTT--- */
     intt(n);
 
-    //---generate-answer
+    /* ---generate-answer */
     res = gen_big();
     set_sign(res, get_sign(x) * get_sign(y));
     for (i = 0; i < ans_len; i++) {
 	bigcell[big_pt0 + i] = 0;
     }
 
-    // normalize
+    /* normalize */
     int carry;
     n = n - 2;
     carry = 0;
@@ -1400,7 +1400,7 @@ int bigx_ntt_mult(int x, int y)
 	bigcell[big_pt0++] = pool;
     }
 
-    //zero cut
+    /* zero cut */
     big_pt0--;
     while (bigcell[big_pt0] == 0 && ans_len > 0) {
 	big_pt0--;
@@ -1473,9 +1473,9 @@ int bigx_karatsuba_mult1(int x, int y)
 	int y0 = bigx_second_half(y);
 	int z2 = bigx_karatsuba_mult1(x1, y1);
 	int z0 = bigx_karatsuba_mult1(x0, y0);
-	//z1 := z2 + z0 - (x1 - x0)*(y1 - y0) 
+	/* z1 := z2 + z0 - (x1 - x0)*(y1 - y0) */ 
 	int z1 = minus(plus(z2, z0), mult(minus(x1, x0), minus(y1, y0)));
-	//Z = z2*b^2 + z1*b + z0  
+	/* Z = z2*b^2 + z1*b + z0 */  
 	simp_flag = 1;
 	int z = plus(plus(bigx_shift_right(z2, len),
 			  bigx_shift_right(z1, len / 2)),
@@ -1504,11 +1504,11 @@ int bigx_karatsuba_mult(int x, int y)
     x1 = bigx_zero_supress(x, n - lenx);
     y1 = bigx_zero_supress(y, n - leny);
 
-    // karatuba recursion
+    /* karatuba recursion */
     res = bigx_karatsuba_mult1(x1, y1);
     ans_len = get_length(res);
 
-    //zero cut
+    /* zero cut */
     big_pt0--;
     while (bigcell[big_pt0] == 0 && ans_len > 0) {
 	big_pt0--;

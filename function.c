@@ -125,7 +125,6 @@ void initsubr(void)
     defsubr("GET-INTERNAL-REAL-TIME", f_get_internal_real_time);
     defsubr("GET-OUTPUT-STREAM-STRING", f_get_output_stream_string);
     defsubr("GET-UNIVERSAL-TIME", f_get_universal_time);
-    defsubr("HDMP", f_heapdump);
     defsubr("IDENTITY", f_identity);
     defsubr("INITIALIZE-OBJECT*", f_initialize_object_star);
     defsubr("INPUT-STREAM-P", f_input_stream_p);

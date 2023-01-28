@@ -31,7 +31,7 @@
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
 #if defined(__TINYC__) && defined(__riscv)
-// TCC in RISC-V cannot handle a larger number
+/* TCC in RISC-V cannot handle a larger number */
 #define COL_SIZE 51
 #else
 #define COL_SIZE 255
@@ -45,7 +45,7 @@
 #define CPPQUOTE(x) #x
 #define STRQUOTE(x) CPPQUOTE(x)
 
-//following are for unicode<=>UTF-8 transform
+/* following are for unicode<=>UTF-8 transform */
 #define UNI2ADD1    192		//#b11000000
 #define UNI3ADD1    224		//#b11100000
 #define UNI4ADD1    240		//#b11110000
@@ -165,7 +165,7 @@ typedef struct {
 } septoken;
 
 
-// ------pointer----
+/* ------pointer---- */
 extern int ep;			// environment pointer
 extern int dp;			// dynamic pointer
 extern int hp;			// heap pointer
@@ -176,7 +176,7 @@ extern int lp;			// shelter pointer
 extern int wp;			// working pointer
 extern int ac;			// allocate counter
 
-// ------class-----
+/* ------class----- */
 extern int cobject;
 extern int cbasic_array;
 extern int cbasic_array_star;
@@ -226,7 +226,7 @@ static const int CLASS_NULL = 28;
 static const int CLASS_SYMBOL = 29;
 
 
-// stream
+/* stream */
 extern int standard_input;
 extern int standard_output;
 extern int standard_error;
@@ -237,7 +237,7 @@ extern char stream_str[STRSIZE];
 extern int charcnt;
 
 
-// read scanner
+/* read scanner */
 extern token stok;
 extern int line;
 extern int column;
@@ -245,7 +245,7 @@ extern int buffer[COL_SIZE + 1][NUM_HISTORY];
 extern int buffer1[COL_SIZE + 1];
 
 
-// heap and stack
+/* heap and stack */
 extern cell heap[CELLSIZE];
 extern int stack[STACKSIZE];
 extern int argstk[STACKSIZE];
@@ -254,9 +254,21 @@ extern int shelter[STACKSIZE];
 extern int dynamic[DYNSIZE][2];
 extern int bigcell[BIGSIZE];
 
-// bignum pointer, FFT_input_vector
+/* bignum pointer, NTT(FFT) input_vector */
 extern int big_pt0;
 extern int big_pt1;
+
+/* debugger */
+int examin_sym;
+int stepper_flag;
+
+
+/* profiler */
+extern int prof_sw;
+extern int prof_sym[PROFSIZE];
+extern int prof_pt;
+extern double prof_dt0[PROFSIZE];
+extern int prof_dt1[PROFSIZE];
 
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \

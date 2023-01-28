@@ -3259,6 +3259,37 @@ int f_garef(int arglist)
 
 }
 
+/*
+ * obj is array or vector
+ * ls is index. e.g. (0 1 1)
+ */
+int array_ref(int obj, int ls)
+{
+    int size, index;
+
+    if (vectorp(obj)) {
+	size = list1(vector_length(obj));
+    } else {
+	size = array_length(obj);	/* e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3) */
+    }
+
+    index = 0;
+    size = cdr(size);
+    while (!nullp(ls)) {
+	if (nullp(cdr(ls)))
+	    index = index + GET_INT(car(ls));
+	else if (GET_INT(car(ls)) != 0)
+	    index = index + GET_INT(car(size)) * GET_INT(car(ls));
+	/*
+	 * else if(GET_INT(car(ls)) == 0) index = index; 
+	 */
+
+	size = cdr(size);
+	ls = cdr(ls);
+    }
+    return (vector_ref(obj, index));
+}
+
 
 int f_set_aref(int arglist)
 {
@@ -3291,6 +3322,33 @@ int f_set_aref(int arglist)
 	error(ILLEGAL_ARGS, "set-aref", arg2);
 
     return (arg1);
+}
+
+int array_set(int obj, int ls, int val)
+{
+    int size, index;
+
+    if (vectorp(obj)) {
+	size = list1(vector_length(obj));
+    } else {
+	size = array_length(obj);	/* e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3) */
+    }
+    index = 0;
+    size = cdr(size);
+    while (!nullp(ls)) {
+	if (nullp(cdr(ls)))
+	    index = index + GET_INT(car(ls));
+	else if (GET_INT(car(ls)) != 0)
+	    index = index + GET_INT(car(size)) * GET_INT(car(ls));
+	/*
+	 * else if(GET_INT(car(ls)) == 0) index = index; 
+	 */
+
+	size = cdr(size);
+	ls = cdr(ls);
+    }
+    vector_set(obj, index, val);
+    return (obj);
 }
 
 int f_set_garef(int arglist)
@@ -3432,6 +3490,21 @@ int f_array_dimensions(int arglist)
 	return (list1(makeint(strlen(GET_NAME(arg1)))));
 }
 
+/*
+ * calculation of array's dimension
+ * e.g. ((1 2)(3 4)(5 6)) -> (3 2)
+ */
+int array_dim(int n, int ls)
+{
+    if (!nullp(ls) && atomp(ls) && n > 0)
+	error(ILLEGAL_ARGS, "array", NIL);
+    else if (n == 0)
+	return (NIL);
+    else
+	return (cons(makeint(length(ls)), array_dim(n - 1, car(ls))));
+
+    return (UNDEF);
+}
 
 
 int f_vector(int arglist)

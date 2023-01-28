@@ -519,8 +519,7 @@ int undef_parameter_p(int ls)
     else if (symbolp(car(ls)))
 	return (undef_parameter_p(cdr(ls)));
     else if (listp(car(ls))) {
-	// e.g. ((x undef)) undef is only symbol and it's class is (class
-	// <symbol>)
+	/* e.g. ((x undef)) undef is only symbol and it's class is (class <symbol>) */
 	if (symbolp(cadar(ls)) && GET_AUX(cadar(ls)) == csymbol)
 	    return (1);
 	else
@@ -557,7 +556,6 @@ int unified_parameter_p(int lamlis, int ls)
      * check unification lambda-list of generic-function and
      * method-parameter e.g. lambda-list=(x y :rest z) parameter= ((x
      * <integer>)(y <float>) :rest (z <array))
-     * 
      */
 
 }
@@ -647,7 +645,7 @@ int has_multiple_call_next_method_p1(int x)
 
 }
 
-// e.g. (list (call-next-method) (call-next-method))
+/* e.g. (list (call-next-method) (call-next-method)) */
 int has_multiple_call_next_method_p2(int x)
 {
     int count, ls;
@@ -666,7 +664,7 @@ int has_multiple_call_next_method_p2(int x)
 	return (0);
 }
 
-// --------------list operation---------------------
+/* --------------list operation--------------------- */
 
 int car(int addr)
 {
@@ -735,7 +733,7 @@ int cons(int car, int cdr)
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);
     SET_CDR(addr, cdr);
-    SET_AUX(addr, ccons);	// cons class
+    SET_AUX(addr, ccons);	/* cons class */
     return (addr);
 }
 
@@ -747,7 +745,7 @@ int hcons(int car, int cdr)
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);
     SET_CDR(addr, cdr);
-    SET_AUX(addr, ccons);	// cons class
+    SET_AUX(addr, ccons);	/* cons class */
     return (addr);
 }
 
@@ -938,7 +936,7 @@ int mapcan(int x, int y)
 }
 
 
-// extension
+/* extension */
 int list1(int x)
 {
     return (cons(x, NIL));
@@ -1187,9 +1185,10 @@ int array_length(int obj)
     return (GET_CDR(obj));
 }
 
-
-// obj is array or vector
-// ls is index. e.g. (0 1 1)
+/*
+ * obj is array or vector
+ * ls is index. e.g. (0 1 1)
+ */
 int array_ref(int obj, int ls)
 {
     int size, index;
@@ -1197,8 +1196,7 @@ int array_ref(int obj, int ls)
     if (vectorp(obj)) {
 	size = list1(vector_length(obj));
     } else {
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
-	// (1 2 3)
+	size = array_length(obj);	/* e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3) */
     }
 
     index = 0;
@@ -1225,8 +1223,7 @@ int array_set(int obj, int ls, int val)
     if (vectorp(obj)) {
 	size = list1(vector_length(obj));
     } else {
-	size = array_length(obj);	// e.g. #3a(((0 1 2) (3 4 5))) ->
-	// (1 2 3)
+	size = array_length(obj);	/* e.g. #3a(((0 1 2) (3 4 5))) -> (1 2 3) */
     }
     index = 0;
     size = cdr(size);
@@ -1246,8 +1243,10 @@ int array_set(int obj, int ls, int val)
     return (obj);
 }
 
-// calculation of array's dimension
-// e.g. ((1 2)(3 4)(5 6)) -> (3 2)
+/*
+ * calculation of array's dimension
+ * e.g. ((1 2)(3 4)(5 6)) -> (3 2)
+ */
 int array_dim(int n, int ls)
 {
     if (!nullp(ls) && atomp(ls) && n > 0)
@@ -1260,7 +1259,7 @@ int array_dim(int n, int ls)
     return (UNDEF);
 }
 
-// n=0 ex ((1 2) 3 (4 5)) -> (1 2 3 4 5)
+/* n=0 ex ((1 2) 3 (4 5)) -> (1 2 3 4 5) */
 int flatten(int n, int ls)
 {
     if (nullp(ls))
@@ -1275,7 +1274,7 @@ int flatten(int n, int ls)
 }
 
 
-// ex(1 2 3 4) -> ((1 2)(3 4))
+/* e.g. (1 2 3 4) -> ((1 2)(3 4)) */
 int structured(int ls, int st)
 {
     return (structured1(ls, reverse(st)));
@@ -1314,7 +1313,7 @@ int list_drop(int ls, int n)
 
 }
 
-// generate array from list. ex #na(ls) ls=((1 2)(3 4))
+/* generate array from list. e.g. #na(ls) ls=((1 2)(3 4)) */
 int array(int n, int ls)
 {
     int dim, res, ls1, i;
@@ -1335,7 +1334,7 @@ int array(int n, int ls)
 	i++;
 	ls1 = cdr(ls1);
     }
-    SET_PROP(res, ls);		// for FAST compiler regist original list
+    SET_PROP(res, ls);		/* for FAST compiler regist original list */
     return (res);
 }
 
@@ -1399,8 +1398,8 @@ int substr(int x, int s, int e)
     int i, j, pos, c;
     char *str;
 
-    str = ALLOC(((e - s) + 1) * 6);	// for unicode allocate 6 byte for 1 char 
-    // skip to start position
+    str = ALLOC(((e - s) + 1) * 6);	
+	/* for unicode allocate 6 byte for 1 char skip to start position */
     i = 0;
     pos = 0;
     while (i < s) {
@@ -1677,8 +1676,10 @@ int subvec(int x, int s, int e)
     return (res);
 }
 
-// compare priority of argument list of method
-// if x is higher than y, return 1.
+/*
+ * compare priority of argument list of method
+ * if x is higher than y, return 1.
+ */
 int high_priority_p(int x, int y)
 {
     int args1, args2, argx, argy, classx, classy;
@@ -1692,12 +1693,12 @@ int high_priority_p(int x, int y)
 	 * case :after this is reverse case primary when compiling,
 	 * compiler chenge order. use (change-priority-for-compiler t) 
 	 */
-	args1 = car(GET_CAR(x));	// lambda-list 
+	args1 = car(GET_CAR(x));	/* lambda-list */ 
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {
 	    argx = car(args1);
 	    argy = car(args2);
-	    if (atomp(argy)) {	// case of no class information
+	    if (atomp(argy)) {	/* case of no class information */
 		args1 = cdr(args1);
 		args2 = cdr(args2);
 	    } else {
@@ -1715,12 +1716,12 @@ int high_priority_p(int x, int y)
 	}
 	return (0);
     } else {
-	args1 = car(GET_CAR(x));	// lambda-list
+	args1 = car(GET_CAR(x));	/* lambda-list */
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {
 	    argx = car(args1);
 	    argy = car(args2);
-	    if (atomp(argx)) {	// case of no class information
+	    if (atomp(argx)) {	/* case of no class information */
 		args1 = cdr(args1);
 		args2 = cdr(args2);
 	    } else {
@@ -1818,10 +1819,10 @@ int method_qualifier_p(int x)
 	return (0);
 }
 
-// ------------for copy GC-----------------
+/* ------------for copy GC----------------- */
 int copy_work(int x)
 {
-    if (x < WORK1)		// nil t ...
+    if (x < WORK1)		/* nil t ... */
 	return (x);
 
     switch (GET_TAG(x)) {
@@ -1858,9 +1859,9 @@ int copy_work(int x)
     case GENERIC:
 	return (copy_generic(x));
     case METHOD:
-	return (x);		// ****
+	return (x);		/* **** */
     case INSTANCE:
-	return (x);		// ****
+	return (x);		/* **** */
     case LIS:
 	return (cons(copy_work(car(x)), copy_work(cdr(x))));
     case DUMMY:
@@ -1899,12 +1900,6 @@ int copy_symbol(int x)
  */
 int copy_int(int x)
 {
-    // int addr = NIL;
-
-    // addr = freshcell();
-    // SET_TAG(addr,INTN);
-    // SET_INT(addr,GET_INT(x));
-    // SET_AUX(addr,cfixnum); //class fixnum
     return (x);
 }
 
@@ -1915,7 +1910,7 @@ int copy_long(int x)
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, GET_LONG(x));
-    SET_AUX(addr, clongnum);	// class longnum
+    SET_AUX(addr, clongnum);	/* class longnum */
     return (addr);
 }
 
@@ -1927,7 +1922,7 @@ int copy_flt(int x)
     addr = freshcell();
     SET_TAG(addr, FLTN);
     SET_FLT(addr, GET_FLT(x));
-    SET_AUX(addr, cfloat);	// class float
+    SET_AUX(addr, cfloat);	/* class float */
     return (addr);
 }
 
@@ -1941,10 +1936,10 @@ int copy_vec(int x)
     int addr;
 
     addr = freshcell();
-    SET_VEC(addr, GET_VEC(x));	// vector elements
+    SET_VEC(addr, GET_VEC(x));	/* vector elements */
     SET_TAG(addr, VEC);
-    SET_CDR(addr, GET_CDR(x));	// vector size
-    SET_AUX(addr, cgeneral_vector);	// class general-vector
+    SET_CDR(addr, GET_CDR(x));	/* vector size */
+    SET_AUX(addr, cgeneral_vector);	/* class general-vector */
     return (addr);
 }
 
@@ -1954,10 +1949,10 @@ int copy_array(int x)
     int addr;
 
     addr = freshcell();
-    SET_VEC(addr, GET_VEC(x));	// array or vector
-    SET_TAG(addr, GET_TAG(x));	// tag ARR or VEC 
-    SET_CDR(addr, GET_CDR(x));	// dimension
-    SET_AUX(addr, GET_AUX(x));	// class
+    SET_VEC(addr, GET_VEC(x));	/* array or vector */
+    SET_TAG(addr, GET_TAG(x));	/* tag ARR or VEC */ 
+    SET_CDR(addr, GET_CDR(x));	/* dimension */
+    SET_AUX(addr, GET_AUX(x));	/* class */
     return (addr);
 }
 
@@ -1967,9 +1962,9 @@ int copy_str(int x)
     int addr;
 
     addr = freshcell();
-    SET_TAG(addr, STR);		// tag 
-    heap[addr].name = heap[x].name;	// string
-    SET_AUX(addr, GET_AUX(x));	// class string
+    SET_TAG(addr, STR);		/* tag */ 
+    heap[addr].name = heap[x].name;	/* string */
+    SET_AUX(addr, GET_AUX(x));	/* class string */
     return (addr);
 }
 
@@ -1994,8 +1989,8 @@ int copy_func(int x)
     SET_NAME(val, GET_NAME(x));
     SET_CAR(val, copy_work(GET_CAR(x)));
     SET_CDR(val, copy_work(GET_CDR(x)));
-    SET_AUX(val, GET_AUX(x));	// class function
-    SET_OPT(val, GET_OPT(x));	// amount of argument
+    SET_AUX(val, GET_AUX(x));	/* class function */
+    SET_OPT(val, GET_OPT(x));	/* amount of argument */
     return (val);
 }
 
@@ -2007,8 +2002,8 @@ int copy_generic(int x)
     SET_TAG(val, GENERIC);
     SET_NAME(val, GET_NAME(x));
     SET_CAR(val, GET_CAR(x));
-    SET_OPT(val, GET_OPT(x));	// amount of argument
-    SET_CDR(val, copy_work(GET_CDR(x)));	// method 
+    SET_OPT(val, GET_OPT(x));	/* amount of argument */
+    SET_CDR(val, copy_work(GET_CDR(x)));	/* method */ 
     SET_AUX(val, GET_AUX(x));
     return (val);
 }
@@ -2030,9 +2025,9 @@ int copy_stream(int x)
     addr = freshcell();
     SET_TAG(addr, STREAM);
     SET_PORT(addr, GET_PORT(x));
-    SET_CDR(addr, GET_CDR(x));	// string-stream-position
-    SET_AUX(addr, GET_AUX(x));	// class
-    SET_OPT(addr, GET_OPT(x));	// input/output/inout
+    SET_CDR(addr, GET_CDR(x));	/* string-stream-position */
+    SET_AUX(addr, GET_AUX(x));	/* class */
+    SET_OPT(addr, GET_OPT(x));	/* input/output/inout */
     return (addr);
 }
 
@@ -2066,7 +2061,6 @@ int copy_bignum(int x)
 /*
  * To check first cell, prop=-1. therefor when compute bignum, if it is
  * first cell, store data the cell. or else chain cell with cons_next.
- * 
  */
 int copy_gen_big(void)
 {
@@ -2095,8 +2089,10 @@ void copy_hash(int x)
 }
 
 
-// ----------unicode------------------
-// transform from UTF-8 to unicode
+/*
+ * ----------unicode------------------
+ * transform from UTF-8 to unicode
+ */
 int utf8_to_ucs4(char *p)
 {
     int x, x1, x2, x3, res;
@@ -2148,7 +2144,7 @@ int utf8_to_ucs4(char *p)
 
 
 
-// transform from Unicode to UTF-8
+/* transform from Unicode to UTF-8 */
 void ucs4_to_utf8(int n, char *p)
 {
     int w, x, y, z;

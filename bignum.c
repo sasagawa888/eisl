@@ -372,7 +372,7 @@ int bigx_simplify(int x)
 	return (x);
 }
 
-/* subtract n-cells */ 
+/* subtract n-cells */
 int bigx_shift_left(int x, int n)
 {
     int res;
@@ -1473,9 +1473,9 @@ int bigx_karatsuba_mult1(int x, int y)
 	int y0 = bigx_second_half(y);
 	int z2 = bigx_karatsuba_mult1(x1, y1);
 	int z0 = bigx_karatsuba_mult1(x0, y0);
-	/* z1 := z2 + z0 - (x1 - x0)*(y1 - y0) */ 
+	/* z1 := z2 + z0 - (x1 - x0)*(y1 - y0) */
 	int z1 = minus(plus(z2, z0), mult(minus(x1, x0), minus(y1, y0)));
-	/* Z = z2*b^2 + z1*b + z0 */  
+	/* Z = z2*b^2 + z1*b + z0 */
 	simp_flag = 1;
 	int z = plus(plus(bigx_shift_right(z2, len),
 			  bigx_shift_right(z1, len / 2)),
@@ -1521,4 +1521,3 @@ int bigx_karatsuba_mult(int x, int y)
     return (res);
 
 }
-

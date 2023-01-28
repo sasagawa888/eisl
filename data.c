@@ -1294,8 +1294,8 @@ int substr(int x, int s, int e)
     int i, j, pos, c;
     char *str;
 
-    str = ALLOC(((e - s) + 1) * 6);	
-	/* for unicode allocate 6 byte for 1 char skip to start position */
+    str = ALLOC(((e - s) + 1) * 6);
+    /* for unicode allocate 6 byte for 1 char skip to start position */
     i = 0;
     pos = 0;
     while (i < s) {
@@ -1589,7 +1589,7 @@ int high_priority_p(int x, int y)
 	 * case :after this is reverse case primary when compiling,
 	 * compiler chenge order. use (change-priority-for-compiler t) 
 	 */
-	args1 = car(GET_CAR(x));	/* lambda-list */ 
+	args1 = car(GET_CAR(x));	/* lambda-list */
 	args2 = car(GET_CAR(y));
 	while (!nullp(args1)) {
 	    argx = car(args1);
@@ -1846,7 +1846,7 @@ int copy_array(int x)
 
     addr = freshcell();
     SET_VEC(addr, GET_VEC(x));	/* array or vector */
-    SET_TAG(addr, GET_TAG(x));	/* tag ARR or VEC */ 
+    SET_TAG(addr, GET_TAG(x));	/* tag ARR or VEC */
     SET_CDR(addr, GET_CDR(x));	/* dimension */
     SET_AUX(addr, GET_AUX(x));	/* class */
     return (addr);
@@ -1858,7 +1858,7 @@ int copy_str(int x)
     int addr;
 
     addr = freshcell();
-    SET_TAG(addr, STR);		/* tag */ 
+    SET_TAG(addr, STR);		/* tag */
     heap[addr].name = heap[x].name;	/* string */
     SET_AUX(addr, GET_AUX(x));	/* class string */
     return (addr);
@@ -1899,7 +1899,7 @@ int copy_generic(int x)
     SET_NAME(val, GET_NAME(x));
     SET_CAR(val, GET_CAR(x));
     SET_OPT(val, GET_OPT(x));	/* amount of argument */
-    SET_CDR(val, copy_work(GET_CDR(x)));	/* method */ 
+    SET_CDR(val, copy_work(GET_CDR(x)));	/* method */
     SET_AUX(val, GET_AUX(x));
     return (val);
 }

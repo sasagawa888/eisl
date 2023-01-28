@@ -1399,7 +1399,7 @@ int f_defclass(int arglist)
     save = ignore_topchk;
     ignore_topchk = true;	/* ignore toplevel check for defgeneric defmethod */
     SET_AUX(arg1, USER);	/* temporary set USER to avoid undef entity error of defmethod 
-                              finaly set-aux formal class */ 
+				   finaly set-aux formal class */
     while (!nullp(arg3)) {
 	int sym,
 	    ls,
@@ -1435,7 +1435,7 @@ int f_defclass(int arglist)
 		 * (defmethod name ((x arg1))
 		 *    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y))
 		 *    (set-property 1 'reader 'read))
-		*/
+		 */
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1481,7 +1481,7 @@ int f_defclass(int arglist)
 		 * (defgeneric name (x y)))
 		 * (defmethod name (x (y arg1))
 		 *     (setf (slot-value y 'var) x))
-		*/
+		 */
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1514,7 +1514,7 @@ int f_defclass(int arglist)
 		 *     (let ((y (slot-value x 'var))) (if (dummyp y) (error "undefined" "accessor") y)))
 		 * (defmethod name ((x <null>)) for setf syntax
 		 *     'var)
-		*/
+		 */
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1560,7 +1560,7 @@ int f_defclass(int arglist)
 		 * (defgeneric name (x)))
 		 * (defmethod name ((x arg1))
 		 *     (not (dummyp (slot-value x 'var))))
-		*/
+		 */
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1790,7 +1790,7 @@ int f_defmethod(int arglist)
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }
-    
+
     gen = generic_func = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);
     generic_func = NIL;

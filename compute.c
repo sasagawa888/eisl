@@ -1010,4 +1010,3 @@ int isqrt(int x)
 	    return (isqrt4(x));
     }
 }
-

@@ -3733,7 +3733,7 @@ int f_format_fresh_line(int arglist)
 	output_stream = arg1;
 	/* output newline char if it cannot be determinned that the output 
 	 * stream is at the begining of a fresh line
-     */
+	 */
 	if (GET_OPT(output_stream) == EISL_OUTSTR
 	    && strlen(GET_NAME(output_stream)) == 0) {
 	    goto skip;

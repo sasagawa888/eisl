@@ -1,5 +1,17 @@
 /*
  * Easy-ISLisp (ISLisp) written by kenichi sasagawa 2016/4~ 
+ * main functions read,eval,print (REPL)
+ * <files>
+ * main.c        REPL
+ * cell.c        generate cells 
+ * data.c        predicate for data structure. operation of data structure.
+ * compute.c     computation
+ * bignum.c      computation of bignum
+ * function.c    builtintfunctions
+ * syntax.c      syntax functions
+ * extension.c   extended functions (non ISLisp standard)
+ * gbc.c         garbage collenction
+ * edlis.c       Edlis simple CUI editor
  */
 
 #include <stdio.h>

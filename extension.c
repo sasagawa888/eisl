@@ -831,8 +831,7 @@ int f_try(int arglist)
 	    arg3 = cdr(arg3);
 	    bit--;
 	}
-	if (c >= 32 && c < 127)	/* ommit control code and unicode */ 
-	{
+	if (c >= 32 && c < 127) {	/* ommit control code and unicode */
 	    str[pos] = c;
 	    pos++;
 	}

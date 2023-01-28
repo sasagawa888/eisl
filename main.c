@@ -1,6 +1,7 @@
 /*
  * Easy-ISLisp (ISLisp) written by kenichi sasagawa 2016/4~ 
  * main functions read,eval,print (REPL)
+ *
  * <files>
  * main.c        REPL
  * cell.c        generate cells 
@@ -12,6 +13,17 @@
  * extension.c   extended functions (non ISLisp standard)
  * gbc.c         garbage collenction
  * edlis.c       Edlis simple CUI editor
+ *
+ * <cell type summary>
+ * sym   symbol
+ * int   integer
+ * flt   float
+ * str   string
+ * stm   stream
+ * array array
+ * vec   vector
+ * char  character
+ *  
  */
 
 #include <stdio.h>
@@ -129,7 +141,7 @@ int generic_list = NIL;		/* symbol list of generic function. */
 /* system global variable */
 int gArgC;
 char **gArgV;
-int genint = 1;			// integer of gensym.
+int genint = 1;			/* integer of gensym */
 
 /* flag */
 bool gbc_flag = false;		/* false=GC not display ,true= do display. */

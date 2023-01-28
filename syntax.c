@@ -1811,10 +1811,9 @@ int f_ignore_errors(int arglist)
     input_stream = save1;
     output_stream = save2;
 
-    /*
-       memo 
-       if execute s-exp is (read stream) and occures an error, 
-       ignore_errors must restore original input output stream.
+    /* 
+     * if execute s-exp is (read stream) and occures an error, 
+     * ignore_errors must restore original input output stream.
      */
     return res;
 }

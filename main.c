@@ -1249,73 +1249,73 @@ void print(int addr)
 {
     switch (GET_TAG(addr)) {
     case INTN:
-	printint(addr);
+	print_int(addr);
 	break;
     case FLTN:
-	printflt(GET_FLT(addr));
+	print_flt(GET_FLT(addr));
 	break;
     case LONGN:
-	printlong(addr);
+	print_long(addr);
 	break;
     case BIGX:
 	print_bigx(addr);
 	break;
     case VEC:
-	printvec(addr);
+	print_vec(addr);
 	break;
     case ARR:
-	printarray(addr);
+	print_array(addr);
 	break;
     case STR:
-	printstr(addr);
+	print_str(addr);
 	break;
     case CHR:
-	printchar(addr);
+	print_char(addr);
 	break;
     case SYM:
-	printsym(addr);
+	print_sym(addr);
 	break;
     case SUBR:
-	printobj("<subr>");
+	print_obj("<subr>");
 	break;
     case FSUBR:
-	printobj("<fsubr>");
+	print_obj("<fsubr>");
 	break;
     case FUNC:
-	printobj("<function>");
+	print_obj("<function>");
 	break;
     case MACRO:
-	printobj("<macro>");
+	print_obj("<macro>");
 	break;
     case CLASS:
-	printclass(addr);
+	print_class(addr);
 	break;
     case STREAM:
-	printstream(addr);
+	print_stm(addr);
 	break;
     case GENERIC:
-	printobj("<generic>");
+	print_obj("<generic>");
 	break;
     case METHOD:
-	printobj("<method>");
+	print_obj("<method>");
 	break;
     case INSTANCE:
-	printobj("<instance>");
+	print_obj("<instance>");
 	break;
     case LIS:
 	output_char(output_stream, '(');
-	printlist(addr);
+	print_list(addr);
 	break;
     case DUMMY:
-	printobj("<undef*>");
+	print_obj("<undef*>");
 	break;
     default:
-	printobj("<undef>");
+	print_obj("<undef>");
 	break;
     }
 }
 
-void printint(int addr)
+void print_int(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
 	Fmt_fprint(GET_PORT(output_stream), "%d", GET_INT(addr));
@@ -1326,7 +1326,7 @@ void printint(int addr)
     }
 }
 
-void printflt(double x)
+void print_flt(double x)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	fprintf(GET_PORT(output_stream), "%g", x);
@@ -1342,7 +1342,7 @@ void printflt(double x)
 }
 
 
-void printlong(int addr)
+void print_long(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	Fmt_fprint(GET_PORT(output_stream), "%D", GET_LONG(addr));
@@ -1354,7 +1354,7 @@ void printlong(int addr)
 }
 
 
-void printlist(int addr)
+void print_list(int addr)
 {
     if (IS_NIL(addr)) {
 	output_char(output_stream, ')');
@@ -1368,11 +1368,11 @@ void printlist(int addr)
 	if (!(IS_NIL(GET_CDR(addr)))) {
 	    output_char(output_stream, ' ');
 	}
-	printlist(GET_CDR(addr));
+	print_list(GET_CDR(addr));
     }
 }
 
-void printvec(int x)
+void print_vec(int x)
 {
     int len, i;
 
@@ -1388,7 +1388,7 @@ void printvec(int x)
     output_char(output_stream, ')');
 }
 
-void printarray(int x)
+void print_array(int x)
 {
     int i, size, st, ls, dim;
 
@@ -1417,7 +1417,7 @@ void printarray(int x)
 }
 
 
-void printstr(int addr)
+void print_str(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
 	Fmt_fprint(GET_PORT(output_stream), "\"%s\"", GET_NAME(addr));
@@ -1427,7 +1427,7 @@ void printstr(int addr)
     }
 }
 
-void printchar(int addr)
+void print_char(int addr)
 {
     output_str(output_stream, "#\\");
     switch (GET_CHAR(addr)) {
@@ -1526,17 +1526,17 @@ void printchar(int addr)
     }
 }
 
-void printsym(int addr)
+void print_sym(int addr)
 {
     output_str(output_stream, GET_NAME(addr));
 }
 
-void printobj(const char *str)
+void print_obj(const char *str)
 {
     output_str(output_stream, str);
 }
 
-void printclass(int addr)
+void print_class(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
 	Fmt_fprint(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
@@ -1546,7 +1546,7 @@ void printclass(int addr)
     }
 }
 
-void printstream(int addr)
+void print_stm(int addr)
 {
     const char *name;
 

@@ -1663,6 +1663,41 @@ int f_mapcar(int arglist)
     return (mapcar(arg1, arg2));
 }
 
+
+int mapcar(int x, int y)
+{
+    int ls, res;
+
+    ls = y;
+    shelterpush(y);
+    if (nullp(ls) || member(NIL, ls)) {
+	res = NIL;
+    } else {
+	res = cons(apply(x, each_car(y)), mapcar(x, each_cdr(y)));
+    }
+    shelterpop();
+    return res;
+}
+
+int each_car(int x)
+{
+    REQUIRE(GET_TAG(x) == LIS || GET_TAG(x) == SYM);
+    if (nullp(x))
+	return (NIL);
+    else
+	return (cons(caar(x), each_car(cdr(x))));
+}
+
+int each_cdr(int x)
+{
+    REQUIRE(GET_TAG(x) == LIS || GET_TAG(x) == SYM);
+    if (nullp(x))
+	return (NIL);
+    else
+	return (cons(cdar(x), each_cdr(cdr(x))));
+}
+
+
 int f_mapc(int arglist)
 {
     int arg1, arg2;
@@ -1674,6 +1709,22 @@ int f_mapc(int arglist)
 	error(NOT_FUNC, "mapc", arg1);
 
     return (mapc(arg1, arg2));
+}
+
+int mapc(int x, int y)
+{
+    int ls;
+
+    ls = y;
+    shelterpush(y);
+    while (!member(NIL, ls)) {
+	shelterpush(ls);
+	apply(x, each_car(ls));
+	shelterpop();
+	ls = each_cdr(ls);
+    }
+    shelterpop();
+    return (car(y));
 }
 
 int f_maplist(int arglist)
@@ -1689,6 +1740,30 @@ int f_maplist(int arglist)
     return (maplist(arg1, arg2));
 }
 
+
+int maplist(int x, int y)
+{
+    if (member(NIL, y))
+	return (NIL);
+    else
+	return (cons(apply(x, y), maplist(x, maplist1(y))));
+}
+
+int maplist1(int y)
+{
+    int res;
+
+    res = NIL;
+    while (y != NIL) {
+	if (car(y) == NIL)
+	    return (NIL);
+	res = cons(cdar(y), res);
+	y = cdr(y);
+    }
+    return (reverse(res));
+}
+
+
 int f_mapl(int arglist)
 {
     int arg1, arg2;
@@ -1700,6 +1775,19 @@ int f_mapl(int arglist)
 
     return (mapl(arg1, arg2));
 }
+
+int mapl(int x, int y)
+{
+    int res;
+
+    res = y;
+    while (!member(NIL, y)) {
+	apply(x, y);
+	y = maplist1(y);
+    }
+    return (car(res));
+}
+
 
 int f_mapcon(int arglist)
 {
@@ -1714,6 +1802,21 @@ int f_mapcon(int arglist)
     return (mapcon(arg1, arg2));
 }
 
+int mapcon(int x, int y)
+{
+    int res;
+
+    if (member(NIL, y))
+	return (NIL);
+    res = apply(x, y);
+    y = maplist1(y);
+    while (!member(NIL, y)) {
+	res = nconc(res, apply(x, y));
+	y = maplist1(y);
+    }
+    return (res);
+}
+
 int f_mapcan(int arglist)
 {
     int arg1, arg2;
@@ -1725,6 +1828,21 @@ int f_mapcan(int arglist)
     return (mapcan(arg1, arg2));
 }
 
+
+int mapcan(int x, int y)
+{
+    int res;
+
+    if (member(NIL, y))
+	return (NIL);
+    res = apply(x, each_car(y));
+    y = each_cdr(y);
+    while (!member(NIL, y)) {
+	res = nconc(res, apply(x, each_car(y)));
+	y = each_cdr(y);
+    }
+    return (res);
+}
 
 int f_map_into(int arglist)
 {
@@ -1749,8 +1867,7 @@ int f_map_into(int arglist)
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
-    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	// when arg2 is thunk
-	// (lambda () ...)
+    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	/* when arg2 is thunk (lambda () ...) */
 	val = reverse(map_into_thunk(arg2, arg4));
     else
 	val = mapcar(arg2, arg4);
@@ -1763,7 +1880,7 @@ int f_map_into(int arglist)
 	    val = cdr(val);
 	}
     } else if (vectorp(arg1)) {
-	if (nullp(val))		// when val is null return arg1
+	if (nullp(val))		/* when val is null return arg1 */
 	    return (arg1);
 	i = 0;
 	while (!nullp(val)) {
@@ -1772,12 +1889,11 @@ int f_map_into(int arglist)
 	    val = cdr(val);
 	}
     } else if (stringp(arg1)) {
-	if (nullp(val))		// when val is null return arg1
+	if (nullp(val))		/* when val is null return arg1 */
 	    return (arg1);
 	i = 0;
 	while (!nullp(val)) {
-	    if (!charp(car(val)))	// when val is not char list
-		// return arg1
+	    if (!charp(car(val)))	/* when val is not char list return arg1 */
 		return (arg1);
 	    STRING_SET(res, i, GET_CHAR(car(val)));
 	    i++;

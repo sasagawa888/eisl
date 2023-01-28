@@ -1,6 +1,3 @@
-# Have fun with Lisp
-I want to convey the fun of Lisp to boys and girls around the world. It's fun to create. Peace is wonderful. Let's end the war.
-
 # Easy-ISLisp
 
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](https://minejima.jp/ISLispHyperDraft/islisp-v23.html).

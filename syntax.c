@@ -434,13 +434,13 @@ int f_setf(int arglist)
 	var = f_macroexpand_1(list1(arg1));
 	return (f_setf(list2(var, arg2)));
     }
-    // (setf (slot-value instance slot-name) value)
+    /* (setf (slot-value instance slot-name) value) */
     else if (listp(arg1) && eqp(car(arg1), makesym("SLOT-VALUE"))) {
 	newform = cons(makesym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
     }
-    // e.g. (setf (access-foo-a x) 100) 
+    /* e.g. (setf (access-foo-a x) 100) */ 
     else if (listp(arg1) && length(arg1) == 2) {
-	// a method returns it's variable name 
+	/* a method returns it's variable name */ 
 	if (functionp(car(arg1)) || genericp(car(arg1))) {
 	    var = eval(list2(car(arg1), NIL));
 	} else
@@ -451,10 +451,9 @@ int f_setf(int arglist)
 		 cons(arg2,
 		      list2(cadr(arg1), list2(makesym("QUOTE"), var))));
     }
-    // e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf
-    // foo) (x y z))
+    /* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) */
     else if (listp(arg1)) {
-	// e.g. above case (foo 3 1 2)
+	/* e.g. above case (foo 3 1 2) */
 	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
 	if (!genericp(car(arg1)))
 	    error(ILLEGAL_FORM, "setf", arg1);
@@ -546,7 +545,7 @@ int f_defconstant(int arglist)
 	error(NOT_TOP_LEVEL, "defconstant", arglist);
 
     SET_CDR(arg1, eval(arg2));
-    SET_OPT(arg1, CONSTN);	// constant
+    SET_OPT(arg1, CONSTN);	/* constant */
     return (arg1);
 
 }
@@ -744,8 +743,10 @@ int f_function(int arglist)
     return (UNDEF);
 }
 
-// function* diffrence of function is that return nil
-// defclass uses this function*
+/*
+ * function* diffrence of function is that return nil
+ * defclass uses this function*
+ */
 int f_function_star(int arglist)
 {
     int arg1;
@@ -958,24 +959,24 @@ int f_for(int arglist)
     save = ep;
 
     iter = arg1;
-    // initilize local variable
+    /* initilize local variable */
     while (iter != NIL) {
 	addlexenv(caar(iter), eval(cadar(iter)));
 	iter = cdr(iter);
     }
-    // check condition of end
+    /* check condition of end */
     while (eval(car(arg2)) == NIL) {
 	int save1;
 
 	save1 = ep;
 	shelterpush(arg3);
-	f_progn(arg3);		// do body
+	f_progn(arg3);		/* do body */
 	shelterpop();
 	ep = save1;
-	iter = arg1;		// update local variable
+	iter = arg1;		/* update local variable */
 	temp = NIL;
 	while (iter != NIL) {
-	    if (!nullp(caddar(iter))) {	// update part is not null
+	    if (!nullp(caddar(iter))) {	/* update part is not null */
 		shelterpush(iter);
 		shelterpush(temp);
 		temp = cons(cons(caar(iter), eval(caddar(iter))), temp);
@@ -1016,15 +1017,10 @@ int f_block(int arglist)
 	error(CTRL_OVERF, "block buffer over fllow", NIL);
 
 
-    block_env[block_pt][0] = ep;	// save environment
-    block_env[block_pt][1] = tag;	// save tag symbol
-    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));	// save
-    // flag.
-    // if
-    // exist
-    // return-from 
-    // 1 else
-    // -1
+    block_env[block_pt][0] = ep;	/* save environment */
+    block_env[block_pt][1] = tag;	/* save tag symbol */
+    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));	
+	/* save flag. if exist return-from 1 else -1 */
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
 
@@ -1081,7 +1077,7 @@ int f_return_from(int arglist)
     if (block_tag_check[block_pt] == -1)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
     block_arg = f_progn(arg2);
-    ep = block_env[block_pt][0];	// restore environment
+    ep = block_env[block_pt][0];	/* restore environment */
     longjmp(block_buf[block_pt], 1);
 }
 
@@ -1092,8 +1088,8 @@ int f_catch(int arglist)
     int arg1, arg2, i, tag, ret, res, save;
 
     save = sp;
-    arg1 = car(arglist);	// tag
-    arg2 = cdr(arglist);	// body
+    arg1 = car(arglist);	/* tag */
+    arg2 = cdr(arglist);	/* body */
     if (nullp(arglist))
 	error(WRONG_ARGS, "catch", arglist);
     if (arg1 == makesym("catch"))
@@ -1102,7 +1098,7 @@ int f_catch(int arglist)
 	error(WRONG_ARGS, "catch", arglist);
     if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "catch", arglist);
-    tag = eval(arg1);		// tag symbol
+    tag = eval(arg1);		/* tag symbol */
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "catch", tag);
 
@@ -1110,23 +1106,23 @@ int f_catch(int arglist)
     if (!member(tag, catch_symbols))
 	catch_symbols = cons(tag, catch_symbols);
     if (GET_OPT(tag) == 0) {
-	catch_pt++;		// opt is 1~5, when 0 symbol is not tag
+	catch_pt++;		/* opt is 1~5, when 0 symbol is not tag */
 	SET_OPT(tag, catch_pt);
 	if (catch_pt > CTRLSTK)
 	    error(CTRL_OVERF, "catch tag count", NIL);
     }
     i = GET_PROP(tag);
-    SET_PROP(tag, GET_PROP(tag) + 1);	// nest level +1
+    SET_PROP(tag, GET_PROP(tag) + 1);	/* nest level +1 */
     if (GET_PROP(tag) > CTRLSTK)
 	error(CTRL_OVERF, "catch tag nest", tag);
 
-    catch_env[GET_OPT(tag) - 1][i] = ep;	// save environment
+    catch_env[GET_OPT(tag) - 1][i] = ep;	/* save environment */
     ret = setjmp(catch_buf[GET_OPT(tag) - 1][i]);
 
 
     if (ret == 0) {
 	res = f_progn(arg2);
-	SET_PROP(tag, GET_PROP(tag) - 1);	// nest level -1
+	SET_PROP(tag, GET_PROP(tag) - 1);	/* nest level -1 */
 	return (res);
     } else if (ret == 1) {
 	if (unwind_pt > 0) {
@@ -1140,7 +1136,7 @@ int f_catch(int arglist)
 	res = catch_arg;
 	catch_arg = NIL;
 	sp = save;
-	// restore stack pointer. longjump destroy sp
+	/* restore stack pointer. longjump destroy sp */
 	return (res);
     }
     return (UNDEF);
@@ -2234,9 +2230,8 @@ int f_untrace(int arglist)
 
     if (nullp(arglist)) {
 	while (!nullp(trace_list)) {
-	    SET_TR(car(trace_list), 0);	// reset trace tag of symbol
-	    SET_TR(GET_CAR(car(trace_list)), 0);	// reset trace
-	    // nest level
+	    SET_TR(car(trace_list), 0);	/* reset trace tag of symbol */
+	    SET_TR(GET_CAR(car(trace_list)), 0);	/* reset trace nest level */
 	    trace_list = cdr(trace_list);
 	}
     } else {

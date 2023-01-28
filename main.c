@@ -21,18 +21,18 @@
 #include "compat/eiffel_stubs.h"
 #include "compat/curses_stubs.h"
 
-// ------pointer----
-int ep;				// environment pointer
-int dp;				// dynamic pointer
-int hp;				// heap pointer for mark and sweep
-int sp;				// stack pointer
-int fc;				// free counter
-int ap;				// arglist pointer
-int lp;				// shelter pointer
-int wp;				// working pointer for copy GC
+/* ------pointer---- */
+int ep;				/* environment pointer */
+int dp;				/* dynamic pointer */
+int hp;				/* heap pointer for mark and sweep */
+int sp;				/* stack pointer */
+int fc;				/* free counter */
+int ap;				/* arglist pointer */
+int lp;				/* shelter pointer */
+int wp;				/* working pointer for copy GC */
 
 
-// ------class-----
+/* ------class----- */
 int cobject;
 int cbasic_array;
 int cbasic_array_star;
@@ -79,7 +79,7 @@ int clongnum;
 int cbignum;
 
 
-// stream
+/* stream */
 int standard_input;
 int standard_output;
 int standard_error;
@@ -90,7 +90,7 @@ char stream_str[STRSIZE];
 int charcnt;			/* for format-tab. store number of chars up to now. */
 
 
-// read scaner
+/* read scaner */
 token stok = { '\0', GO, OTHER, { '\0' } };
 
 int line;
@@ -99,7 +99,7 @@ int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
 
 
-// heap ,stack and bignum
+/* heap ,stack and bignum */
 cell heap[CELLSIZE];
 int stack[STACKSIZE];
 int argstk[STACKSIZE];

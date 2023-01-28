@@ -1,3 +1,12 @@
+/* extended functions
+ * functions for compiler 
+ * functions for compatibility of Common Lisp
+ * functions for debug
+ * function for profiler
+ * functions for Raspbery-PI
+ * functions for Chaitin's omega
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -72,7 +81,9 @@ void initexsubr(void)
 
 }
 
-/* Fast Project */
+/* Fast Project 
+ * functions for compiler
+ */
 int f_classp(int arglist)
 {
     int arg1;
@@ -186,8 +197,6 @@ int f_freedll(int arglist __unused)
     return (T);
 }
 
-
-
 int f_macrop(int arglist)
 {
     int arg1;
@@ -269,88 +278,6 @@ int f_subrp(int arglist)
 	return (NIL);
 }
 
-int f_random_real(int arglist)
-{
-    double d;
-
-    if (length(arglist) != 0)
-	error(WRONG_ARGS, "random-real", arglist);
-
-    d = (double) rand() / RAND_MAX;
-    return (makeflt(d));
-}
-
-int f_random(int arglist)
-{
-    int arg1, n;
-
-    if (length(arglist) != 1)
-	error(WRONG_ARGS, "random", arglist);
-
-    arg1 = car(arglist);
-    n = GET_INT(arg1);
-
-    return (makeint(rand() % n));
-}
-
-int f_set_random(int arglist)
-{
-    int arg1, n;
-
-    if (length(arglist) != 1)
-	error(WRONG_ARGS, "set-random", arglist);
-
-    arg1 = car(arglist);
-    if (!numberp(arg1))
-	error(NOT_NUM, "set-random", arg1);
-
-    n = GET_INT(arg1);
-    if (n < 0)
-	error(ILLEGAL_ARGS, "set-random", n);
-
-    srand(n);
-    return (arg1);
-}
-
-int f_nconc(int arglist)
-{
-    int arg1, arg2;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-    if (length(arglist) != 2)
-	error(WRONG_ARGS, "nconc", arglist);
-
-    return (nconc(arg1, arg2));
-}
-
-int nconc(int x, int y)
-{
-    int ls;
-
-    if (nullp(x))
-	return (y);
-
-    ls = x;
-    while (!nullp(cdr(ls))) {
-	ls = cdr(ls);
-    }
-    SET_CDR(ls, y);
-    return (x);
-}
-
-
-int f_address(int arglist)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (length(arglist) != 1)
-	error(WRONG_ARGS, "address", arglist);
-
-    return (makeint(arg1));
-}
-
 int f_macroexpand_1(int arglist)
 {
     int arg1, args;
@@ -424,6 +351,196 @@ int macroexpand_all(int sexp)
     return (NIL);
 }
 
+int f_modulesubst(int arglist)
+{
+    int arg1, arg2, arg3;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+
+    return (modulesubst(arg1, arg2, arg3));
+}
+
+int f_line_argument(int arglist)
+{
+    if (length(arglist) >= 2) {
+	error(WRONG_ARGS, "line-argument", arglist);
+    }
+
+    if (length(arglist) == 0) {
+	int i, res;
+	res = makevec(gArgC, UNDEF);
+
+	for (i = 0; i < gArgC; i++) {
+	    SET_VEC_ELT(res, i, makestr(gArgV[i]));
+	}
+
+	return res;
+    } else {
+	int arg1 = car(arglist);
+	int n = GET_INT(arg1);
+	if (n < gArgC) {
+	    return makestr(gArgV[n]);
+	} else {
+	    return NIL;
+	}
+    }
+}
+
+int f_getenv(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1) {
+	error(WRONG_ARGS, "getenv", arglist);
+    }
+    char *val = getenv(GET_NAME(arg1));
+    if (val == NULL) {
+	return NIL;
+    } else {
+	return makestr(val);
+    }
+}
+
+
+/*
+ * f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 
+ * for generate (call-next-method) 
+ * compare entry-parameter and next-method-parameter.
+ * when entry-parameter is super-call than next-method-patarmeter, compiler must not generate next-method
+ * see verify/object.lsp test-case foo-30
+ */
+
+int f_superp_for_compiler(int arglist)
+{
+    int arg1, arg2;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+
+    if (length(arglist) != 2) {
+	error(WRONG_ARGS, "eisl-superp-for-compiler", arglist);
+    }
+
+    if (superp(arg1, arg2))
+	return (T);
+    else
+	return (NIL);
+}
+
+int superp(int entry, int next)
+{
+
+    if (nullp(entry) && nullp(next))
+	return (1);
+    else if (symbolp(car(entry)))
+	return (superp(cdr(entry), cdr(next)));
+    else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	/* subclass */
+	return (superp(cdr(entry), cdr(next)));
+    else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	/* same class */
+	return (superp(cdr(entry), cdr(next)));
+    else
+	return (0);
+}
+
+
+
+/*
+ * extended funcstions 
+ * random number
+ */
+int f_random_real(int arglist)
+{
+    double d;
+
+    if (length(arglist) != 0)
+	error(WRONG_ARGS, "random-real", arglist);
+
+    d = (double) rand() / RAND_MAX;
+    return (makeflt(d));
+}
+
+int f_random(int arglist)
+{
+    int arg1, n;
+
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "random", arglist);
+
+    arg1 = car(arglist);
+    n = GET_INT(arg1);
+
+    return (makeint(rand() % n));
+}
+
+int f_set_random(int arglist)
+{
+    int arg1, n;
+
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "set-random", arglist);
+
+    arg1 = car(arglist);
+    if (!numberp(arg1))
+	error(NOT_NUM, "set-random", arg1);
+
+    n = GET_INT(arg1);
+    if (n < 0)
+	error(ILLEGAL_ARGS, "set-random", n);
+
+    srand(n);
+    return (arg1);
+}
+
+/*
+ *  nconc compatible with Common Lisp
+ */
+
+int f_nconc(int arglist)
+{
+    int arg1, arg2;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "nconc", arglist);
+
+    return (nconc(arg1, arg2));
+}
+
+int nconc(int x, int y)
+{
+    int ls;
+
+    if (nullp(x))
+	return (y);
+
+    ls = x;
+    while (!nullp(cdr(ls))) {
+	ls = cdr(ls);
+    }
+    SET_CDR(ls, y);
+    return (x);
+}
+
+
+int f_address(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "address", arglist);
+
+    return (makeint(arg1));
+}
+
+/*
+ * functions for debugging
+ *
+ */
 int f_backtrace(int arglist)
 {
     int arg1, l;
@@ -465,8 +582,52 @@ int f_instance(int arglist)
     return (T);
 }
 
+/*
+ * profiler
+ */
+int f_prof(int arglist)
+{
+    int arg1;
 
-/* ----------for Raspberry PI */
+    arg1 = car(arglist);
+    if (!symbolp(arg1))
+	error(NOT_SYM, "prof", arg1);
+
+    if (arg1 == NIL) {
+	profiler_set(0);
+	profiler_clear();
+    } else if (eqp(arg1, makesym("CL")))
+	profiler_clear();
+    else if (eqp(arg1, makesym("SYS")))
+	profiler_set(1);
+    else if (eqp(arg1, makesym("USER")))
+	profiler_set(2);
+    else if (eqp(arg1, makesym("PR")))
+	profiler_print();
+    else
+	error(WRONG_ARGS, "prof", arg1);
+
+    return (T);
+}
+
+/*
+* f_eisl_test is test function for new code.
+* for example FFT IFFT.
+* This function is for development testing code.
+*/
+int f_eisl_test(int arglist)
+{
+    int arg1, arg2;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+
+    return (bigx_karatsuba_mult(arg1, arg2));
+}
+
+/* for Raspberry PI 
+ * wiringpi for GPIO 
+ */
 #ifdef __rpi__
 int f_wiringpi_setup_gpio(int arglist __unused)
 {
@@ -675,140 +836,6 @@ int f_delay_microseconds(int arglist)
 }
 #endif
 
-int f_modulesubst(int arglist)
-{
-    int arg1, arg2, arg3;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-    arg3 = caddr(arglist);
-
-    return (modulesubst(arg1, arg2, arg3));
-}
-
-int f_line_argument(int arglist)
-{
-    if (length(arglist) >= 2) {
-	error(WRONG_ARGS, "line-argument", arglist);
-    }
-
-    if (length(arglist) == 0) {
-	int i, res;
-	res = makevec(gArgC, UNDEF);
-
-	for (i = 0; i < gArgC; i++) {
-	    SET_VEC_ELT(res, i, makestr(gArgV[i]));
-	}
-
-	return res;
-    } else {
-	int arg1 = car(arglist);
-	int n = GET_INT(arg1);
-	if (n < gArgC) {
-	    return makestr(gArgV[n]);
-	} else {
-	    return NIL;
-	}
-    }
-}
-
-int f_getenv(int arglist)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (length(arglist) != 1) {
-	error(WRONG_ARGS, "getenv", arglist);
-    }
-    char *val = getenv(GET_NAME(arg1));
-    if (val == NULL) {
-	return NIL;
-    } else {
-	return makestr(val);
-    }
-}
-
-int f_prof(int arglist)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (!symbolp(arg1))
-	error(NOT_SYM, "prof", arg1);
-
-    if (arg1 == NIL) {
-	profiler_set(0);
-	profiler_clear();
-    } else if (eqp(arg1, makesym("CL")))
-	profiler_clear();
-    else if (eqp(arg1, makesym("SYS")))
-	profiler_set(1);
-    else if (eqp(arg1, makesym("USER")))
-	profiler_set(2);
-    else if (eqp(arg1, makesym("PR")))
-	profiler_print();
-    else
-	error(WRONG_ARGS, "prof", arg1);
-
-    return (T);
-}
-
-/*
-* f_eisl_test is test function for new code.
-* for example FFT IFFT.
-* This function is for development testing code.
-*/
-int f_eisl_test(int arglist)
-{
-    int arg1, arg2;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-
-    return (bigx_karatsuba_mult(arg1, arg2));
-}
-
-
-
-/*
- * f_superp_for_compiler (superp-for-compiler) is used in compiler.lsp. 
- * for generate (call-next-method) 
- * compare entry-parameter and next-method-parameter.
- * when entry-parameter is super-call than next-method-patarmeter, compiler must not generate next-method
- * see verify/object.lsp test-case foo-30
- */
-
-int f_superp_for_compiler(int arglist)
-{
-    int arg1, arg2;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-
-    if (length(arglist) != 2) {
-	error(WRONG_ARGS, "eisl-superp-for-compiler", arglist);
-    }
-
-    if (superp(arg1, arg2))
-	return (T);
-    else
-	return (NIL);
-}
-
-int superp(int entry, int next)
-{
-
-    if (nullp(entry) && nullp(next))
-	return (1);
-    else if (symbolp(car(entry)))
-	return (superp(cdr(entry), cdr(next)));
-    else if (subclassp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	/* subclass */
-	return (superp(cdr(entry), cdr(next)));
-    else if (eqp(GET_AUX(cadar(next)), GET_AUX(cadar(entry))))	/* same class */
-	return (superp(cdr(entry), cdr(next)));
-    else
-	return (0);
-}
 
 
 /*

@@ -1,6 +1,7 @@
 /*
  * generate basic symbol e.g. T nil ...
  * generate class 
+ * functions that make cell for data structures.
  * functions to access cell data
  *
  * symbol data structure
@@ -452,7 +453,26 @@ void store_backtrace(int x)
     backtrace[BACKSIZE - 1] = x;
 }
 
-// ----------------------------------------
+/*
+ * make_ generate cell for data structures
+ * makeint           make integer
+ * makelong          make long integer
+ * makeflt           make float number
+ * makesym           make symbol
+ * makefunc          make function (lambda)
+ * makegeneric       make generic function
+ * makegeneric_star  make generic function
+ * makemethod        make method for generic function
+ * makevec           make vector
+ * makearray         maker array
+ * maekstream        make stream
+ * makestr           make string
+ * makechar          make character
+ * makeclass         make class
+ * makeinstance      make instance
+ */
+
+
 /*
  * integer is immediate
  * positive integer, set 1 second bit from MSB.
@@ -545,42 +565,9 @@ int count_args(int ls)
     return (res);
 }
 
-int makevec(int n, int obj)
-{
-    int res, i, *vec;
-
-    res = freshcell();
-    TRY vec = (int *) ALLOC(sizeof(int) * n);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL);
-    END_TRY;
-    SET_TAG(res, VEC);
-    SET_VEC(res, vec);
-    for (i = 0; i < n; i++)
-	SET_VEC_ELT(res, i, copy(obj));
-    SET_CDR(res, n);
-    SET_AUX(res, cgeneral_vector);	/* class general-vector */
-    return (res);
-}
-
-
-
-int vector(int lis)
-{
-    int len, i, res;
-
-    len = length(lis);
-    i = 0;
-    res = makevec(len, UNDEF);
-    while (!nullp(lis)) {
-	vector_set(res, i, car(lis));
-	i++;
-	lis = cdr(lis);
-    }
-
-    return (res);
-}
 
 /*
+ * ILOS generic function
  * generic car = args cdr = method aux = class 
  */
 int makegeneric(char *pname, int lamlist, int body)
@@ -662,8 +649,6 @@ int makegeneric_star(int lamlist, int body)
     return (val);
 }
 
-
-
 /*
  * method car = args&body cdr = environment aux = null opt = priority 
  */
@@ -690,6 +675,43 @@ int makemethod(int addr)
     SET_AUX(val, NIL);
     return (val);
 }
+
+/* vector */
+int makevec(int n, int obj)
+{
+    int res, i, *vec;
+
+    res = freshcell();
+    TRY vec = (int *) ALLOC(sizeof(int) * n);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL);
+    END_TRY;
+    SET_TAG(res, VEC);
+    SET_VEC(res, vec);
+    for (i = 0; i < n; i++)
+	SET_VEC_ELT(res, i, copy(obj));
+    SET_CDR(res, n);
+    SET_AUX(res, cgeneral_vector);	/* class general-vector */
+    return (res);
+}
+
+
+
+int vector(int lis)
+{
+    int len, i, res;
+
+    len = length(lis);
+    i = 0;
+    res = makevec(len, UNDEF);
+    while (!nullp(lis)) {
+	vector_set(res, i, car(lis));
+	i++;
+	lis = cdr(lis);
+    }
+
+    return (res);
+}
+
 
 /*
  * stream data structure
@@ -1034,7 +1056,10 @@ int makedummy(void)
     return (res);
 }
 
-/* -----for FAST compiler------ */
+/* -----for FAST compiler------
+ * compiler access cell data by dynamic linked function
+ * following are dynamic linked from compiled function.
+ */
 int get_aux(int x)
 {
     return (GET_AUX(x));

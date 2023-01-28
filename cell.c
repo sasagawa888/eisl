@@ -1120,12 +1120,12 @@ int get_dynpt(void)
 }
 
 
-int callsubr(int func, int arglist)
+int call_subr(int func, int arglist)
 {
     return ((GET_SUBR(func)) (arglist));
 }
 
-int make_intlong(int n)
+int make_int_long(int n)
 {
     int addr;
 
@@ -1136,17 +1136,17 @@ int make_intlong(int n)
     return (addr);
 }
 
-int make_strflt(const char *str)
+int make_str_flt(const char *str)
 {
     return (make_flt(atof(str)));
 }
 
-int makedoubleflt(double x)
+int make_double_flt(double x)
 {
     return (make_flt(x));
 }
 
-int make_strlong(const char *str)
+int make_str_long(const char *str)
 {
     return (make_long(atol(str)));
 }
@@ -1160,7 +1160,7 @@ static inline int HexDigitToNybble(char c)
     return c - '0';
 }
 
-int makefaststrlong(const char *str)
+int make_fast_str_long(const char *str)
 {
     uint64_t u = 0;
     for (int i = 0; i < 8; i++) {

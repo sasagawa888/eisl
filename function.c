@@ -310,7 +310,7 @@ void dynamic_link(int x)
     init_f1(BIGNUMP_IDX, bignump);
     init_f1(GETINT_IDX, get_int);
     init_f1(MAKEINT_IDX, make_int);
-    init_f1(MAKEINTLONG_IDX, make_intlong);
+    init_f1(MAKEINTLONG_IDX, make_int_long);
     init_f1(VECTOR_IDX, vector);
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
@@ -333,7 +333,7 @@ void dynamic_link(int x)
     init_f2(SETCDR_IDX, set_cdr);
     init_f2(SETAUX_IDX, set_aux);
     init_f2(SETOPT_IDX, set_opt);
-    init_f2(CALLSUBR_IDX, callsubr);
+    init_f2(CALLSUBR_IDX, call_subr);
     init_f2(LIST2_IDX, list2);
     init_f2(NTHCDR_IDX, nth_cdr);
     init_f2(APPLY_IDX, apply);
@@ -367,10 +367,10 @@ void dynamic_link(int x)
     init_f3(MAKESTR_IDX, (fn3) make_str);
     init_f3(MAKESYM_IDX, (fn3) make_sym);
     init_f3(MAKECHAR_IDX, (fn3) make_char);
-    init_f3(MAKESTRFLT_IDX, (fn3) make_strflt);
+    init_f3(MAKESTRFLT_IDX, (fn3) make_str_flt);
     init_f3(MAKEBIG_IDX, makebigx);
-    init_f3(MAKESTRLONG_IDX, (fn3) make_strlong);
-    init_f3(MAKEFASTSTRLONG_IDX, (fn3) makefaststrlong);
+    init_f3(MAKESTRLONG_IDX, (fn3) make_str_long);
+    init_f3(MAKEFASTSTRLONG_IDX, (fn3) make_fast_str_long);
 
     /* argument-1 long long int type */
     init_f4(GETLONG_IDX, get_long);
@@ -387,7 +387,7 @@ void dynamic_link(int x)
     init_f7(GETFLT_IDX, get_flt);
 
     /* float input type */
-    init_f8(MAKEDOUBLEFLT_IDX, makedoubleflt);
+    init_f8(MAKEDOUBLEFLT_IDX, make_double_flt);
 
     init_deftfunc((tfunc) defsubr);
     init_tfunctions();

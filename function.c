@@ -30,9 +30,9 @@ static void *hmod;
 void initsubr(void)
 {
     // constant
-    bindconst("*PI*", makeflt(M_PI));
-    bindconst("*MOST-POSITIVE-FLOAT*", makeflt(DBL_MAX));
-    bindconst("*MOST-NEGATIVE-FLOAT*", makeflt(-DBL_MAX));
+    bindconst("*PI*", make_flt(M_PI));
+    bindconst("*MOST-POSITIVE-FLOAT*", make_flt(DBL_MAX));
+    bindconst("*MOST-NEGATIVE-FLOAT*", make_flt(-DBL_MAX));
 
     // function
     defsubr("-", f_minus);
@@ -309,8 +309,8 @@ void dynamic_link(int x)
     init_f1(LONGNUMP_IDX, longnump);
     init_f1(BIGNUMP_IDX, bignump);
     init_f1(GETINT_IDX, get_int);
-    init_f1(MAKEINT_IDX, makeint);
-    init_f1(MAKEINTLONG_IDX, makeintlong);
+    init_f1(MAKEINT_IDX, make_int);
+    init_f1(MAKEINTLONG_IDX, make_intlong);
     init_f1(VECTOR_IDX, vector);
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
@@ -364,12 +364,12 @@ void dynamic_link(int x)
 
 
     /* argument-1 string type */
-    init_f3(MAKESTR_IDX, (fn3) makestr);
-    init_f3(MAKESYM_IDX, (fn3) makesym);
-    init_f3(MAKECHAR_IDX, (fn3) makechar);
-    init_f3(MAKESTRFLT_IDX, (fn3) makestrflt);
+    init_f3(MAKESTR_IDX, (fn3) make_str);
+    init_f3(MAKESYM_IDX, (fn3) make_sym);
+    init_f3(MAKECHAR_IDX, (fn3) make_char);
+    init_f3(MAKESTRFLT_IDX, (fn3) make_strflt);
     init_f3(MAKEBIG_IDX, makebigx);
-    init_f3(MAKESTRLONG_IDX, (fn3) makestrlong);
+    init_f3(MAKESTRLONG_IDX, (fn3) make_strlong);
     init_f3(MAKEFASTSTRLONG_IDX, (fn3) makefaststrlong);
 
     /* argument-1 long long int type */
@@ -403,39 +403,39 @@ void initgeneric(void)
 {
     int lamlis, body;
 
-    lamlis = list3(makesym("x"), makesym(":REST"), makesym("y"));
+    lamlis = list3(make_sym("x"), make_sym(":REST"), make_sym("y"));
     body =
-	list3(makesym(":METHOD"),
-	      list3(makesym("x"), makesym(":REST"), makesym("y")),
-	      list4(makesym("LET"),
+	list3(make_sym(":METHOD"),
+	      list3(make_sym("x"), make_sym(":REST"), make_sym("y")),
+	      list4(make_sym("LET"),
 		    list1(list2
-			  (makesym("obj"),
-			   list3(makesym("CREATE*"), makesym("x"), NIL))),
-		    list3(makesym("INITIALIZE-OBJECT"), makesym("obj"),
-			  makesym("y")), makesym("obj")));
-    eval(list4(makesym("DEFGENERIC"), makesym("CREATE"), lamlis, body));
+			  (make_sym("obj"),
+			   list3(make_sym("CREATE*"), make_sym("x"), NIL))),
+		    list3(make_sym("INITIALIZE-OBJECT"), make_sym("obj"),
+			  make_sym("y")), make_sym("obj")));
+    eval(list4(make_sym("DEFGENERIC"), make_sym("CREATE"), lamlis, body));
     /*
      * (defgeneric create(x :rest y) (:method (x :rest y) (let ((obj (create* x
      * '()))) (initialize-object obj y) obj)))
      * 
      */
 
-    lamlis = list2(makesym("x"), makesym("y"));
-    body = list3(makesym(":METHOD"), list2(makesym("x"), makesym("y")),
-		 list3(makesym("INITIALIZE-OBJECT*"), makesym("x"),
-		       makesym("y")));
+    lamlis = list2(make_sym("x"), make_sym("y"));
+    body = list3(make_sym(":METHOD"), list2(make_sym("x"), make_sym("y")),
+		 list3(make_sym("INITIALIZE-OBJECT*"), make_sym("x"),
+		       make_sym("y")));
     eval(list4
-	 (makesym("DEFGENERIC*"), makesym("INITIALIZE-OBJECT"), lamlis,
+	 (make_sym("DEFGENERIC*"), make_sym("INITIALIZE-OBJECT"), lamlis,
 	  body));
     /*
      * (defgeneric* initialize-object(x y) (:method (x y)
      * (initialize-object* x y))) 
      */
 
-    lamlis = list2(makesym("x"), makesym("y"));
+    lamlis = list2(make_sym("x"), make_sym("y"));
     body = NIL;
     eval(list4
-	 (makesym("DEFGENERIC*"), makesym("REPORT-CONDITION"), lamlis,
+	 (make_sym("DEFGENERIC*"), make_sym("REPORT-CONDITION"), lamlis,
 	  body));
     /*
      * (defgeneric report-condition (x y)) 
@@ -449,7 +449,7 @@ int f_plus(int arglist)
     int res;
 
     if (nullp(arglist))
-	res = makeint(0);
+	res = make_int(0);
     else {
 	res = car(arglist);
 	if (!numberp(res))
@@ -485,7 +485,7 @@ int f_minus(int arglist)
     if ((n = length(arglist)) == 0)
 	error(WRONG_ARGS, "-", arglist);
     if (n == 1)
-	return (mult(res, makeint(-1)));
+	return (mult(res, make_int(-1)));
 
     arglist = cdr(arglist);
     while (!(IS_NIL(arglist))) {
@@ -513,7 +513,7 @@ int f_mult(int arglist)
     int res;
 
     if (nullp(arglist))
-	res = makeint(1);
+	res = make_int(1);
     else {
 	res = car(arglist);
 	arglist = cdr(arglist);
@@ -677,7 +677,7 @@ int f_sin(int arglist)
     if (!numberp(arg1))
 	error(NOT_NUM, "sin", arg1);
     val = sin(GET_FLT(exact_to_inexact(arg1)));
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_cos(int arglist)
@@ -691,7 +691,7 @@ int f_cos(int arglist)
     if (!numberp(arg1))
 	error(NOT_NUM, "cos", arg1);
     val = cos(GET_FLT(exact_to_inexact(arg1)));
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_tan(int arglist)
@@ -705,7 +705,7 @@ int f_tan(int arglist)
     if (!numberp(arg1))
 	error(NOT_NUM, "tan", arg1);
     val = tan(GET_FLT(exact_to_inexact(arg1)));
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_atan(int arglist)
@@ -719,7 +719,7 @@ int f_atan(int arglist)
     if (!numberp(arg1))
 	error(NOT_NUM, "atan", arg1);
     val = atan(GET_FLT(exact_to_inexact(arg1)));
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_sinh(int arglist)
@@ -738,7 +738,7 @@ int f_sinh(int arglist)
     if (val <= -10000000000.0)
 	error(FLT_UNDERF, "sinh", arg1);
     val = sinh(val);
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_cosh(int arglist)
@@ -758,7 +758,7 @@ int f_cosh(int arglist)
     if (val <= -10000000000.0)
 	error(FLT_UNDERF, "cosh", arg1);
     val = cosh(val);
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_tanh(int arglist)
@@ -778,7 +778,7 @@ int f_tanh(int arglist)
     if (val <= -10000000000.0)
 	error(FLT_UNDERF, "tanh", arg1);
     val = tanh(val);
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_atanh(int arglist)
@@ -795,7 +795,7 @@ int f_atanh(int arglist)
     if (val >= 1.0 || val <= -1.0)
 	error(FLT_OUT_OF_DOMAIN, "atanh", arg1);
     val = atanh(val);
-    return (makeflt(val));
+    return (make_flt(val));
 }
 
 int f_floor(int arglist)
@@ -814,12 +814,12 @@ int f_floor(int arglist)
 
 	x = floor(GET_FLT(arg1));
 	if (x <= 999999999 && x >= -999999999)
-	    return (makeint((int) x));
+	    return (make_int((int) x));
 	else if ((long long int) x <= 999999999999999999
 		 && (long long int) x >= -999999999999999999)
-	    return (makelong((long long int) x));
+	    return (make_long((long long int) x));
 	else
-	    return (makeflt(x));
+	    return (make_flt(x));
     } else
 	return (arg1);
 }
@@ -839,9 +839,9 @@ int f_ceiling(int arglist)
 
 	x = GET_FLT(arg1);
 	if (x <= 999999999.0 && x >= -999999999.0)
-	    return (makeint((int) ceil(x)));
+	    return (make_int((int) ceil(x)));
 	else
-	    return (makelong((long long int) (ceil(x))));
+	    return (make_long((long long int) (ceil(x))));
     } else
 	return (arg1);
 }
@@ -861,13 +861,13 @@ int f_truncate(int arglist)
 
 	x = GET_FLT(arg1);
 	if (x >= 0 && x <= 999999999.0)
-	    return (makeint((int) floor(x)));
+	    return (make_int((int) floor(x)));
 	else if (x > 999999999.0)
-	    return (makelong((long long int) floor(x)));
+	    return (make_long((long long int) floor(x)));
 	else if (x < 0 && x >= -999999999.0)
-	    return (makeint((int) ceil(x)));
+	    return (make_int((int) ceil(x)));
 	else
-	    return (makelong((long long int) ceil(x)));
+	    return (make_long((long long int) ceil(x)));
     } else
 	return (arg1);
 }
@@ -897,9 +897,9 @@ int f_round(int arglist)
 	else
 	    x = round(x);
 	if (x <= 999999999.0 && x >= -999999999.0)
-	    return (makeint((int) x));
+	    return (make_int((int) x));
 	else
-	    return (makelong((long long int) x));
+	    return (make_long((long long int) x));
     } else
 	return (arg1);
 }
@@ -1025,9 +1025,9 @@ int f_div(int arglist)
     if (zerop(r))
 	return (q);
     else if (positivep(arg1) && negativep(arg2))
-	return (minus(q, makeint(1)));
+	return (minus(q, make_int(1)));
     else if (negativep(arg1) && positivep(arg2))
-	return (minus(q, makeint(1)));
+	return (minus(q, make_int(1)));
     else
 	return (q);
 }
@@ -1091,7 +1091,7 @@ int f_exp(int arglist)
 	error(FLT_OVERF, "exp", arg1);
     if (val <= -10000000000.0)
 	error(FLT_UNDERF, "exp", arg1);
-    return (makeflt(exp(val)));
+    return (make_flt(exp(val)));
 }
 
 int f_log(int arglist)
@@ -1106,7 +1106,7 @@ int f_log(int arglist)
     if (!positivep(arg1))
 	error(OUT_OF_REAL, "log", arglist);
 
-    return (makeflt(log(GET_FLT(exact_to_inexact(arg1)))));
+    return (make_flt(log(GET_FLT(exact_to_inexact(arg1)))));
 }
 
 int f_expt(int arglist)
@@ -1128,18 +1128,18 @@ int f_expt(int arglist)
 	error(IMPROPER_ARGS, "expt", arglist);
     if (negativep(arg1) && floatp(arg2))
 	error(IMPROPER_ARGS, "expt", arglist);
-    if (greaterp(arg1, makeint(1)) && floatp(arg2)
+    if (greaterp(arg1, make_int(1)) && floatp(arg2)
 	&& GET_FLT(arg2) >= DBL_MAX)
 	error(FLT_OVERF, "expt", arglist);
-    if (greaterp(arg1, makeint(1)) && floatp(arg2)
+    if (greaterp(arg1, make_int(1)) && floatp(arg2)
 	&& GET_FLT(arg2) <= -DBL_MAX)
 	error(FLT_UNDERF, "expt", arglist);
-    if (greaterp(arg2, makeint(1)) && floatp(arg1)
+    if (greaterp(arg2, make_int(1)) && floatp(arg1)
 	&& GET_FLT(arg1) >= DBL_MAX)
 	error(FLT_OVERF, "expt", arglist);
     if (negativep(arg2) && floatp(arg1) && GET_FLT(arg1) >= DBL_MAX)
 	error(FLT_UNDERF, "expt", arglist);
-    if (greaterp(arg2, makeint(1)) && floatp(arg1)
+    if (greaterp(arg2, make_int(1)) && floatp(arg1)
 	&& GET_FLT(arg1) <= -DBL_MAX)
 	error(FLT_OVERF, "expt", arglist);
     if (negativep(arg2) && floatp(arg1) && GET_FLT(arg1) <= -DBL_MAX)
@@ -1147,50 +1147,50 @@ int f_expt(int arglist)
 
     if ((integerp(arg1) || longnump(arg1) || bignump(arg1))
 	&& integerp(arg2) && GET_INT(arg2) == 0)
-	return (makeint(1));
+	return (make_int(1));
 
     if (integerp(arg1) && GET_INT(arg1) == 1
 	&& (floatp(arg2) || negativep(arg2)))
-	return (makeflt(1.0));
+	return (make_flt(1.0));
 
     if (integerp(arg1) && GET_INT(arg1) == -1 && floatp(arg2)) {
 	x = GET_FLT(arg2);
 	if (x - ceil(x) == 0.0 && (int) x % 2 == 0)
-	    return (makeflt(1.0));
+	    return (make_flt(1.0));
 	else
-	    return (makeflt(-1.0));
+	    return (make_flt(-1.0));
     }
     if (integerp(arg1) && GET_INT(arg1) == -1 && integerp(arg2)) {
 	i = GET_INT(arg2);
 	if (i >= 0) {
 	    if (i % 2 == 0)
-		return (makeint(1));
+		return (make_int(1));
 	    else
-		return (makeint(-1));
+		return (make_int(-1));
 	} else {
 	    if (i % 2 == 0)
-		return (makeflt(1.0));
+		return (make_flt(1.0));
 	    else
-		return (makeflt(-1.0));
+		return (make_flt(-1.0));
 	}
     }
     if (integerp(arg1) && GET_INT(arg1) == -1
 	&& (longnump(arg2) || bignump(arg2))) {
 	int j, k;
 
-	i = makeint(2);
+	i = make_int(2);
 	j = divide(arg2, i);
 	k = minus(arg2, mult(j, i));
 	if (positivep(arg2)) {
 	    if (zerop(k))
-		return (makeint(1));
+		return (make_int(1));
 	    else
-		return (makeint(-1));
+		return (make_int(-1));
 	} else {
 	    if (zerop(k))
-		return (makeflt(1.0));
+		return (make_flt(1.0));
 	    else
-		return (makeflt(-1.0));
+		return (make_flt(-1.0));
 	}
     }
     if ((integerp(arg1) || longnump(arg1) || bignump(arg1))
@@ -1206,7 +1206,7 @@ int f_expt(int arglist)
 	x = GET_FLT(arg1);
 	y = GET_FLT(arg2);
 	z = pow(x, y);
-	return (makeflt(z));
+	return (make_flt(z));
     }
     if (integerp(arg1)
 	&& (integerp(arg2) || longnump(arg2) || bignump(arg2))) {
@@ -1215,8 +1215,8 @@ int f_expt(int arglist)
 	else if (GET_INT(arg1) == 0)
 	    return (arg1);
 	else if (GET_INT(arg1) == -1) {
-	    if (zerop(s_remainder(arg2, makeint(2))))
-		return (makeint(1));
+	    if (zerop(s_remainder(arg2, make_int(2))))
+		return (make_int(1));
 	    else
 		return (arg1);
 	}
@@ -1227,8 +1227,8 @@ int f_expt(int arglist)
 	else if (GET_FLT(arg1) == 0.0)
 	    return (arg1);
 	else if (GET_FLT(arg1) == -1.0) {
-	    if (zerop(s_remainder(arg2, makeint(2))))
-		return (makeflt(1.0));
+	    if (zerop(s_remainder(arg2, make_int(2))))
+		return (make_flt(1.0));
 	    else
 		return (arg1);
 	}
@@ -1237,40 +1237,40 @@ int f_expt(int arglist)
 	if (GET_INT(arg2) == 1) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = x;
-	    return (makeflt(y));
+	    return (make_flt(y));
 	} else if (GET_INT(arg2) == 2) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = x * x;
-	    return (makeflt(y));
+	    return (make_flt(y));
 	} else if (GET_INT(arg2) == -1) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = 1.0 / x;
-	    return (makeflt(y));
+	    return (make_flt(y));
 	} else if (GET_INT(arg2) == -2) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = 1.0 / (x * x);
-	    return (makeflt(y));
+	    return (make_flt(y));
 	}
     }
     if (longnump(arg1) && floatp(arg2)) {
 	if (GET_FLT(arg2) == 0.0) {
-	    return (makeflt(1.0));
+	    return (make_flt(1.0));
 	} else if (GET_FLT(arg2) == 1.0) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = x;
-	    return (makeflt(y));
+	    return (make_flt(y));
 	} else if (GET_FLT(arg2) == 2.0) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = x * x;
-	    return (makeflt(y));
+	    return (make_flt(y));
 	} else if (GET_FLT(arg2) == -1.0) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = 1.0 / x;
-	    return (makeflt(y));
+	    return (make_flt(y));
 	} else if (GET_FLT(arg2) == -2.0) {
 	    x = GET_FLT(exact_to_inexact(arg1));
 	    y = 1.0 / (x * x);
-	    return (makeflt(y));
+	    return (make_flt(y));
 	}
     }
     if (positivep(arg2))
@@ -1284,7 +1284,7 @@ int expt(int x, int y)
 {
     int res, p;
 
-    res = makeint(1);
+    res = make_int(1);
     p = x;
     while (y > 0) {
 	if ((y % 2) == 0) {
@@ -1316,13 +1316,13 @@ int f_sqrt(int arglist)
     if ((integerp(arg1) || longnump(arg1) || bignump(arg1))
 	&& ceil(x) == floor(x)) {
 	if (x <= 999999999.0)
-	    return (makeint((int) x));
+	    return (make_int((int) x));
 	else if (x <= 999999999999999999.0)
-	    return (makelong((long long int) x));
+	    return (make_long((long long int) x));
 	else
-	    return (makeflt(x));
+	    return (make_flt(x));
     } else
-	return (makeflt(x));
+	return (make_flt(x));
 }
 
 
@@ -1373,7 +1373,7 @@ int f_reciprocal(int arglist)
 	error(FLT_UNDERF, "resiprocal", arg1);
     if (val <= -DBL_MAX)
 	error(FLT_UNDERF, "resiprocal", arg1);
-    return (quotient(makeint(1), arg1));
+    return (quotient(make_int(1), arg1));
 }
 
 int f_numeqp(int arglist)
@@ -2076,7 +2076,7 @@ int f_gensym(int arglist __unused)
 
     Fmt_sfmt(str, SYMSIZE, "#:G%d", genint);
     genint++;
-    res = makesym(str);
+    res = make_sym(str);
     return (res);
 }
 
@@ -2091,11 +2091,11 @@ int f_length(int arglist)
 	error(ILLEGAL_ARGS, "length", arg);
 
     if (listp(arg))
-	return (makeint(length(arg)));
+	return (make_int(length(arg)));
     else if (vectorp(arg))
-	return (makeint(vector_length(arg)));
+	return (make_int(vector_length(arg)));
     else
-	return (makeint(string_length(arg)));
+	return (make_int(string_length(arg)));
 
 }
 
@@ -2215,7 +2215,7 @@ int f_read_char(int arglist)
     if (n == 0) {
 	rc_buf[0] = readc();
 	rc_buf[1] = NUL;
-	res = makechar((char *) rc_buf);
+	res = make_char((char *) rc_buf);
     } else if (n == 1) {
 	save = input_stream;
 	input_stream = arg1;
@@ -2227,7 +2227,7 @@ int f_read_char(int arglist)
 	    error(END_STREAM, "read-char", NIL);
 	}
 	input_stream = save;
-	res = makechar((char *) rc_buf);
+	res = make_char((char *) rc_buf);
     } else {
 	save = input_stream;
 	input_stream = arg1;
@@ -2244,7 +2244,7 @@ int f_read_char(int arglist)
 	    else
 		error(END_STREAM, "read-char", NIL);
 	}
-	res = makechar((char *) rc_buf);
+	res = make_char((char *) rc_buf);
     }
     restore_repl_flag(save1);
     return (res);
@@ -2293,7 +2293,7 @@ int f_read_byte(int arglist)
 	}
     }
     restore_repl_flag(save1);
-    return (makeint(res));
+    return (make_int(res));
 }
 
 
@@ -2315,7 +2315,7 @@ int f_preview_char(int arglist)
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
 	unreadc(pc_buf[0]);
-	res = makechar((char *) pc_buf);
+	res = make_char((char *) pc_buf);
     } else if (n == 1) {
 	save = input_stream;
 	input_stream = arg1;
@@ -2327,7 +2327,7 @@ int f_preview_char(int arglist)
 	    error(END_STREAM, "preview-char", NIL);
 	}
 	input_stream = save;
-	res = makechar((char *) pc_buf);
+	res = make_char((char *) pc_buf);
     } else {
 	save = input_stream;
 	input_stream = arg1;
@@ -2345,7 +2345,7 @@ int f_preview_char(int arglist)
 
 	}
 	input_stream = save;
-	res = makechar((char *) pc_buf);
+	res = make_char((char *) pc_buf);
     }
     return (res);
 }
@@ -2374,7 +2374,7 @@ int f_read_line(int arglist)
 	    c = readc();
 	}
 	rl_buf[pos] = NUL;
-	res = makestr(rl_buf);
+	res = make_str(rl_buf);
     } else if (n == 1) {
 	pos = 0;
 	save = input_stream;
@@ -2392,7 +2392,7 @@ int f_read_line(int arglist)
 	}
 	rl_buf[pos] = NUL;
 	input_stream = save;
-	res = makestr(rl_buf);
+	res = make_str(rl_buf);
     } else {
 	pos = 0;
 	save = input_stream;
@@ -2419,7 +2419,7 @@ int f_read_line(int arglist)
 	}
 	rl_buf[pos] = NUL;
 	input_stream = save;
-	res = makestr(rl_buf);
+	res = make_str(rl_buf);
 	if (res == FEND && arg2 == NIL)
 	    res = arg3;
     }
@@ -2452,7 +2452,7 @@ int f_load(int arglist)
     save2 = save_repl_flag();
     const char *fname = GET_NAME(arg1);
     input_stream =
-	makestream(fopen(fname, "r"), EISL_INPUT, Str_dup(fname, 1, 0, 1));
+	make_stm(fopen(fname, "r"), EISL_INPUT, Str_dup(fname, 1, 0, 1));
 
     if (GET_PORT(input_stream) == NULL) {
 	input_stream = save1;
@@ -2855,7 +2855,7 @@ int f_char_index(int arglist)
 	    break;
     }
     if (i < len)
-	return (makeint(i));
+	return (make_int(i));
     else
 	return (NIL);
 }
@@ -3091,7 +3091,7 @@ int f_string_append(int arglist)
     int arg1;
 
     if (nullp(arglist))
-	return (makestr(""));
+	return (make_str(""));
 
     arg1 = car(arglist);
     if (!stringp(arg1))
@@ -3113,7 +3113,7 @@ int f_string_append(int arglist)
 	txt1 = Text_cat(txt1, txt2);
     }
     char *str = Text_get(NULL, 0, txt1);
-    int res = makestr(str);
+    int res = make_str(str);
     FREE(str);
     Text_restore(&save);
     return res;
@@ -3141,7 +3141,7 @@ int f_string_index(int arglist)
 	error(ILLEGAL_ARGS, "string-index", arg3);
 
     if (string_length(arg1) == 0 && string_length(arg2) == 0)	/* (string-index "" "") */
-	return (makeint(0));
+	return (make_int(0));
 
     if (string_length(arg2) == 0)
 	return (NIL);
@@ -3158,7 +3158,7 @@ int f_string_index(int arglist)
     for (i = j; i < len2; i++)
 	for (k = 0; k < len1 + 1; k++)
 	    if (STRING_REF(arg1, k) == NUL)
-		return (makeint(i));
+		return (make_int(i));
 	    else if (STRING_REF(arg1, k) != STRING_REF(arg2, i + k))
 		break;
 
@@ -3187,7 +3187,7 @@ int f_aref(int arglist)
     } else if (vectorp(arg1)) {
 	if (!indomainp(arg2))
 	    error(OUT_OF_DOMAIN, "aref", arg2);
-	if (!inrangep(arg2, list1(makeint(vector_length(arg1)))))
+	if (!inrangep(arg2, list1(make_int(vector_length(arg1)))))
 	    error(OUT_OF_RANGE, "aref", arg2);
 	return (array_ref(arg1, arg2));
     } else if (arrayp(arg1)) {
@@ -3243,7 +3243,7 @@ int f_garef(int arglist)
     if (vectorp(arg1)) {
 	if (!indomainp(arg2))
 	    error(OUT_OF_DOMAIN, "garef", arg2);
-	if (!inrangep(arg2, list1(makeint(vector_length(arg1)))))
+	if (!inrangep(arg2, list1(make_int(vector_length(arg1)))))
 	    error(OUT_OF_RANGE, "garef", arg2);
 	return (array_ref(arg1, arg2));
     } else if (arrayp(arg1)) {
@@ -3308,7 +3308,7 @@ int f_set_aref(int arglist)
     } else if (vectorp(arg2)) {
 	if (!indomainp(arg3))
 	    error(OUT_OF_DOMAIN, "set-aref", arg3);
-	if (!inrangep(arg3, list1(makeint(vector_length(arg2)))))
+	if (!inrangep(arg3, list1(make_int(vector_length(arg2)))))
 	    error(OUT_OF_RANGE, "set-aref", arg3);
 	array_set(arg2, arg3, arg1);
     } else if (arrayp(arg2)) {
@@ -3364,7 +3364,7 @@ int f_set_garef(int arglist)
     if (vectorp(arg2)) {
 	if (!indomainp(arg3))
 	    error(OUT_OF_DOMAIN, "set-aref", arg3);
-	if (!inrangep(arg3, list1(makeint(vector_length(arg2)))))
+	if (!inrangep(arg3, list1(make_int(vector_length(arg2)))))
 	    error(OUT_OF_RANGE, "set-aref", arg3);
 	array_set(arg2, arg3, arg1);
     } else if (arrayp(arg2)) {
@@ -3482,11 +3482,11 @@ int f_array_dimensions(int arglist)
 	error(NOT_ARR, "array-dimensions", arg1);
 
     if (vectorp(arg1))
-	return (list1(makeint(GET_CDR(arg1))));
+	return (list1(make_int(GET_CDR(arg1))));
     else if (arrayp(arg1))
 	return (GET_CDR(arg1));
     else
-	return (list1(makeint(strlen(GET_NAME(arg1)))));
+	return (list1(make_int(strlen(GET_NAME(arg1)))));
 }
 
 /*
@@ -3500,7 +3500,7 @@ int array_dim(int n, int ls)
     else if (n == 0)
 	return (NIL);
     else
-	return (cons(makeint(length(ls)), array_dim(n - 1, car(ls))));
+	return (cons(make_int(length(ls)), array_dim(n - 1, car(ls))));
 
     return (UNDEF);
 }
@@ -3525,7 +3525,7 @@ int f_create_star(int arglist)
     if (GET_OPT(arg1) == SYSTEM || GET_OPT(arg1) == ABSTRACT)
 	error(CANT_CREATE, "create", arg1);
 
-    return (makeinstance(arg1, arg2));
+    return (make_instance(arg1, arg2));
 }
 
 DEF_PREDICATE(INSTANCE, INSTANCE)
@@ -3607,7 +3607,7 @@ int f_format(int arglist)
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~B", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), makeint(2)));
+		f_format_integer(list3(arg1, car(args), make_int(2)));
 		args = cdr(args);
 	    } else if (c == 'C') {
 		if (nullp(args)) {
@@ -3621,7 +3621,7 @@ int f_format(int arglist)
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~D", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), makeint(10)));
+		f_format_integer(list3(arg1, car(args), make_int(10)));
 		args = cdr(args);
 	    } else if (c == 'G') {
 		if (nullp(args)) {
@@ -3635,7 +3635,7 @@ int f_format(int arglist)
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~O", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), makeint(8)));
+		f_format_integer(list3(arg1, car(args), make_int(8)));
 		args = cdr(args);
 	    } else if (c == 'S') {
 		if (nullp(args)) {
@@ -3649,7 +3649,7 @@ int f_format(int arglist)
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~X", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), makeint(16)));
+		f_format_integer(list3(arg1, car(args), make_int(16)));
 		args = cdr(args);
 	    } else if (isdigit(c)) {
 		n = 0;
@@ -3663,10 +3663,10 @@ int f_format(int arglist)
 			output_stream = save;
 			error(IMPROPER_ARGS, "format ~nR", arg2);
 		    }
-		    f_format_integer(list3(arg1, car(args), makeint(n)));
+		    f_format_integer(list3(arg1, car(args), make_int(n)));
 		    args = cdr(args);
 		} else if (c == 'T') {
-		    f_format_tab(list2(arg1, makeint(n)));
+		    f_format_tab(list2(arg1, make_int(n)));
 		} else
 		    error(ILLEGAL_ARGS, "format ~n?", NIL);
 
@@ -4025,9 +4025,9 @@ int f_open_input_file(int arglist)
 	error(CANT_OPEN, "open-input-file", arg1);
 
     if (n == 1)
-	return (makestream(port, EISL_INPUT, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INPUT, Str_dup(fname, 1, 0, 1)));
     else
-	return (makestream(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
 int f_open_output_file(int arglist)
@@ -4053,9 +4053,9 @@ int f_open_output_file(int arglist)
 	error(CANT_OPEN, "open-output-file", arg1);
 
     if (n == 1)
-	return (makestream(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1)));
     else
-	return (makestream
+	return (make_stm
 		(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
@@ -4083,9 +4083,9 @@ int f_open_io_file(int arglist)
 	error(CANT_OPEN, "open-io-file", arg1);
 
     if (n == 1)
-	return (makestream(port, EISL_INOUT, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INOUT, Str_dup(fname, 1, 0, 1)));
     else
-	return (makestream(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
 int f_close(int arglist)
@@ -4145,7 +4145,7 @@ int f_file_length(int arglist)
     fseek(p, 0, SEEK_END);
     res = ftell(p);
     fclose(p);
-    return (makeint(res));
+    return (make_int(res));
 }
 
 int f_probe_file(int arglist)
@@ -4182,7 +4182,7 @@ int f_file_position(int arglist)
 	error(NOT_STREAM, "file-position", arg1);
 
     p = GET_PORT(arg1);
-    return (makeint(ftell(p)));
+    return (make_int(ftell(p)));
 
 }
 
@@ -4246,7 +4246,7 @@ int f_create_vector(int arglist)
     if (length(arglist) == 1)
 	arg2 = UNDEF;
 
-    return (makevec(GET_INT(arg1), arg2));
+    return (make_vec(GET_INT(arg1), arg2));
 }
 
 int f_create_array(int arglist)
@@ -4269,7 +4269,7 @@ int f_create_array(int arglist)
     if (length(arglist) == 1)
 	arg2 = UNDEF;
 
-    return (makearray(arg1, arg2));
+    return (make_array(arg1, arg2));
 
 }
 
@@ -4315,7 +4315,7 @@ int f_create_string(int arglist)
     str = ALLOC(n + 1);
     memset(str, c, n);
     str[n] = NUL;
-    int res = makestr(str);
+    int res = make_str(str);
     FREE(str);
     return res;
 }
@@ -4340,13 +4340,13 @@ int f_parse_number(int arglist)
 	return (makebigx(stok.buf));
 
     if (dectoken(stok.buf))
-	return (makeint((int) strtol(stok.buf, &e, 10)));
+	return (make_int((int) strtol(stok.buf, &e, 10)));
 
     if (inttoken(stok.buf))
-	return (makeint(strtol(stok.buf, &e, 10)));
+	return (make_int(strtol(stok.buf, &e, 10)));
 
     if (flttoken(stok.buf))
-	return (makeflt(atof(stok.buf)));
+	return (make_flt(atof(stok.buf)));
 
     if ((res = expttoken(stok.buf))) {
 	if (res == 2)
@@ -4354,7 +4354,7 @@ int f_parse_number(int arglist)
 	else if (res == 3)
 	    error(FLT_UNDERF, "number-parse", arg1);
 	else
-	    return (makeflt(atof(stok.buf)));
+	    return (make_flt(atof(stok.buf)));
     }
 
     if (bintoken(stok.buf))
@@ -4381,7 +4381,7 @@ int f_create_string_input_stream(int arglist)
     if (!stringp(arg1))
 	error(NOT_STR, "create-string-input-stream", arg1);
 
-    res = makestream(stdin, EISL_INSTR, NULL);
+    res = make_stm(stdin, EISL_INSTR, NULL);
     TRY heap[res].name = Str_dup(GET_NAME(arg1), 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "create-string-input-stream",
 			     NIL);
@@ -4397,7 +4397,7 @@ int f_create_string_output_stream(int arglist)
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "create-string-output-stream", arglist);
 
-    res = makestream(stdout, EISL_OUTSTR, NULL);
+    res = make_stm(stdout, EISL_OUTSTR, NULL);
     TRY str = (char *) ALLOC(STRSIZE);
     EXCEPT(Mem_Failed)
 	error(MALLOC_OVERF, "create-string-output-stream", NIL);
@@ -4417,7 +4417,7 @@ int f_get_output_stream_string(int arglist)
     if (!output_stream_p(arg1))
 	error(NOT_STR, "get-output-stream-string", arg1);
 
-    res = makestr(GET_NAME(arg1));
+    res = make_str(GET_NAME(arg1));
     heap[arg1].name[0] = '\0';
     return (res);
 }
@@ -4482,7 +4482,7 @@ int f_get_universal_time(int arglist)
 	error(WRONG_ARGS, "get-universal-time", arglist);
 
     t = time(NULL);
-    return (makelong((long long int) (t + 70 * 365.25 * 24 * 60 * 60)));
+    return (make_long((long long int) (t + 70 * 365.25 * 24 * 60 * 60)));
 }
 
 int f_get_internal_run_time(int arglist)
@@ -4493,7 +4493,7 @@ int f_get_internal_run_time(int arglist)
 	error(WRONG_ARGS, "get-internal-run-time", arglist);
 
     t = clock();
-    return (makeint((int) t));
+    return (make_int((int) t));
 }
 
 int f_get_internal_real_time(int arglist)
@@ -4504,7 +4504,7 @@ int f_get_internal_real_time(int arglist)
 	error(WRONG_ARGS, "get-internal-real-time", arglist);
 
     t = time(NULL);
-    return (makelong((long long int) (t * CLOCKS_PER_SEC)));
+    return (make_long((long long int) (t * CLOCKS_PER_SEC)));
 }
 
 int f_internal_time_units_per_second(int arglist)
@@ -4513,7 +4513,7 @@ int f_internal_time_units_per_second(int arglist)
     if (length(arglist) != 0)
 	error(WRONG_ARGS, "internal-time-units-per-second", arglist);
 
-    return (makeint(CLOCKS_PER_SEC));
+    return (make_int(CLOCKS_PER_SEC));
 }
 
 
@@ -4563,7 +4563,7 @@ int f_gbc(int arglist)
 	gbc_flag = true;
     else if (car(arglist) == NIL)
 	gbc_flag = false;
-    else if (car(arglist) == makesym("M&S")) {
+    else if (car(arglist) == make_sym("M&S")) {
 	/* re initialize heap area */
 	for (addr = WORK1; addr < CELLSIZE; addr++) {
 	    SET_FLAG(addr, FRE);
@@ -4576,7 +4576,7 @@ int f_gbc(int arglist)
 	}
 	fc = fc + (CELLSIZE - WORK1);
 	gc_sw = 0;
-    } else if (car(arglist) == makesym("COPY")) {
+    } else if (car(arglist) == make_sym("COPY")) {
 	/* initialize work area */
 	for (addr = WORK1; addr < CELLSIZE; addr++) {
 	    SET_CAR(addr, 0);
@@ -4869,7 +4869,7 @@ int f_simple_error_format_string(int arglist)
 	error(SIMPLE_ERR, "simple-error-format-string", arg1);
 
     vars = GET_CDR(arg1);
-    val = cdr(assq(makesym("a"), vars));
+    val = cdr(assq(make_sym("a"), vars));
     return (val);
 }
 
@@ -4882,7 +4882,7 @@ int f_simple_error_format_arguments(int arglist)
 	error(SIMPLE_ERR, "simple-error-format-arguments", arg1);
 
     vars = GET_CDR(arg1);
-    val = cdr(assq(makesym("b"), vars));
+    val = cdr(assq(make_sym("b"), vars));
     return (val);
 }
 
@@ -4894,7 +4894,7 @@ int f_arithmetic_error_operation(int arglist)
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
 	error(ARITHMETIC_ERR, "arithmetic-error-operation", arg1);
 
-    fun = GET_CAR(cdr(assoc(makesym("c"), GET_CDR(arg1))));
+    fun = GET_CAR(cdr(assoc(make_sym("c"), GET_CDR(arg1))));
     return (fun);
 }
 
@@ -4907,7 +4907,7 @@ int f_arithmetic_error_operands(int arglist)
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
 	error(ARITHMETIC_ERR, "arithmetic-error-operands", arg1);
 
-    fun = cdr(assoc(makesym("b"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("b"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4920,7 +4920,7 @@ int f_domain_error_object(int arglist)
 	error(DOMAIN_ERR, "domain-error-object",
 	      cons(arg1, cdomain_error));
 
-    fun = cdr(assoc(makesym("f"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("f"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4933,7 +4933,7 @@ int f_domain_error_expected_class(int arglist)
 	error(DOMAIN_ERR, "domain-error-expected-class",
 	      cons(arg1, cdomain_error));
 
-    fun = cdr(assoc(makesym("g"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("g"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4945,7 +4945,7 @@ int f_parse_error_string(int arglist)
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
 	error(DOMAIN_ERR, "parse-error-string", cons(arg1, cparse_error));
 
-    fun = cdr(assoc(makesym("h"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("h"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4959,7 +4959,7 @@ int f_parse_error_expected_class(int arglist)
 	error(DOMAIN_ERR, "parse-error-expected-class",
 	      cons(arg1, cparse_error));
 
-    fun = cdr(assoc(makesym("g"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("g"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4972,7 +4972,7 @@ int f_stream_error_stream(int arglist)
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
 	error(NOT_STREAM, "stream-error-stream", arg1);
 
-    fun = cdr(assoc(makesym("i"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("i"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4984,7 +4984,7 @@ int f_undefined_entity_name(int arglist)
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
 	error(UNDEF_ENTITY, "undefined-entity-name", arg1);
 
-    fun = cdr(assoc(makesym("j"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("j"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4996,7 +4996,7 @@ int f_undefined_entity_namespace(int arglist)
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
 	error(UNDEF_ENTITY, "undefined-entity-namespace", arg1);
 
-    fun = cdr(assoc(makesym("k"), GET_CDR(arg1)));
+    fun = cdr(assoc(make_sym("k"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -5012,7 +5012,7 @@ int f_condition_continuable(int arglist)
     if (GET_OPT(arg1) == NOTCONT)
 	return (NIL);
     else
-	return (makestr(GET_NAME(arg1)));
+	return (make_str(GET_NAME(arg1)));
 }
 
 int f_continue_condition(int arglist)

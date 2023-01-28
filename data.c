@@ -488,26 +488,26 @@ int illegal_lambda_p(int ls)
 	return (1);
     else if (car(ls) == NIL)
 	return (1);
-    else if (eqp(car(ls), makesym("*PI*")))
+    else if (eqp(car(ls), make_sym("*PI*")))
 	return (1);
-    else if (eqp(car(ls), makesym("*MOST-POSITIVE-FLOAT*")))
+    else if (eqp(car(ls), make_sym("*MOST-POSITIVE-FLOAT*")))
 	return (1);
-    else if (eqp(car(ls), makesym("*MOST-NEGATIVE-FLOAT*")))
+    else if (eqp(car(ls), make_sym("*MOST-NEGATIVE-FLOAT*")))
 	return (1);
-    else if (eqp(car(ls), makesym(":REST"))
-	     && member(makesym(":REST"), cdr(ls)))
+    else if (eqp(car(ls), make_sym(":REST"))
+	     && member(make_sym(":REST"), cdr(ls)))
 	return (1);
-    else if (eqp(car(ls), makesym("&REST"))
-	     && member(makesym("&REST"), cdr(ls)))
+    else if (eqp(car(ls), make_sym("&REST"))
+	     && member(make_sym("&REST"), cdr(ls)))
 	return (1);
-    else if (eqp(car(ls), makesym(":REST"))
-	     && member(makesym("&REST"), cdr(ls)))
+    else if (eqp(car(ls), make_sym(":REST"))
+	     && member(make_sym("&REST"), cdr(ls)))
 	return (1);
-    else if (eqp(car(ls), makesym("&REST"))
-	     && member(makesym(":REST"), cdr(ls)))
+    else if (eqp(car(ls), make_sym("&REST"))
+	     && member(make_sym(":REST"), cdr(ls)))
 	return (1);
-    else if (symbolp(car(ls)) && !eqp(car(ls), makesym(":REST"))
-	     && !eqp(car(ls), makesym("&REST"))
+    else if (symbolp(car(ls)) && !eqp(car(ls), make_sym(":REST"))
+	     && !eqp(car(ls), make_sym("&REST"))
 	     && (STRING_REF(car(ls), 0) == ':'
 		 || STRING_REF(car(ls), 0) == '&'))
 	return (1);
@@ -542,10 +542,10 @@ int unified_parameter_p(int lamlis, int ls)
 	return (0);
     else if (!nullp(lamlis) && nullp(ls))
 	return (0);
-    else if ((eqp(car(lamlis), makesym(":REST"))
-	      || eqp(car(lamlis), makesym("&REST")))
-	     && (eqp(car(ls), makesym(":REST"))
-		 || eqp(car(ls), makesym("&REST"))))
+    else if ((eqp(car(lamlis), make_sym(":REST"))
+	      || eqp(car(lamlis), make_sym("&REST")))
+	     && (eqp(car(ls), make_sym(":REST"))
+		 || eqp(car(ls), make_sym("&REST"))))
 	return (unified_parameter_p(cdr(lamlis), cdr(ls)));
     else if (symbolp(car(lamlis)) && symbolp(car(ls)))
 	return (unified_parameter_p(cdr(lamlis), cdr(ls)));
@@ -580,20 +580,20 @@ int duplicate_list_p(int ls)
 {
     if (nullp(ls))
 	return (0);
-    else if (!eqp(car(ls), makesym("&REST"))
-	     && !eqp(car(ls), makesym(":REST"))
+    else if (!eqp(car(ls), make_sym("&REST"))
+	     && !eqp(car(ls), make_sym(":REST"))
 	     && member(car(ls), cdr(ls)))
 	return (1);
-    else if (eqp(car(ls), makesym("&REST")) && nullp(cdr(ls)))
+    else if (eqp(car(ls), make_sym("&REST")) && nullp(cdr(ls)))
 	return (1);
-    else if (eqp(car(ls), makesym(":REST")) && nullp(cdr(ls)))
+    else if (eqp(car(ls), make_sym(":REST")) && nullp(cdr(ls)))
 	return (1);
-    else if (eqp(car(ls), makesym("&REST")) && length(cdr(ls)) > 1)
+    else if (eqp(car(ls), make_sym("&REST")) && length(cdr(ls)) > 1)
 	return (1);
-    else if (eqp(car(ls), makesym(":REST")) && length(cdr(ls)) > 1)
+    else if (eqp(car(ls), make_sym(":REST")) && length(cdr(ls)) > 1)
 	return (1);
-    else if (eqp(car(ls), makesym("&REST"))
-	     || eqp(car(ls), makesym(":REST")))
+    else if (eqp(car(ls), make_sym("&REST"))
+	     || eqp(car(ls), make_sym(":REST")))
 	return (duplicate_list_p(cddr(ls)));
     else
 	return (duplicate_list_p(cdr(ls)));
@@ -605,9 +605,9 @@ int symbol_list_p(int ls)
 	return (1);
     else if (!symbolp(car(ls)))
 	return (0);
-    else if (eqp(car(ls), makesym("&REST")) && !symbolp(cadr(ls)))
+    else if (eqp(car(ls), make_sym("&REST")) && !symbolp(cadr(ls)))
 	return (0);
-    else if (eqp(car(ls), makesym(":REST")) && !symbolp(cadr(ls)))
+    else if (eqp(car(ls), make_sym(":REST")) && !symbolp(cadr(ls)))
 	return (0);
     else
 	return (symbol_list_p(cdr(ls)));
@@ -638,7 +638,7 @@ int has_multiple_call_next_method_p1(int x)
 {
     if (nullp(x))
 	return (0);
-    else if (symbolp(x) && eqp(x, makesym("CALL-NEXT-METHOD")))
+    else if (symbolp(x) && eqp(x, make_sym("CALL-NEXT-METHOD")))
 	return (1);
     else if (atomp(x))
 	return (0);
@@ -959,13 +959,13 @@ int copy(int x)
     else if (x == UNDEF)
 	return (makedummy());
     else if (integerp(x))
-	return (makeint(GET_INT(x)));
+	return (make_int(GET_INT(x)));
     else if (floatp(x))
-	return (makeflt(GET_FLT(x)));
+	return (make_flt(GET_FLT(x)));
     else if (charp(x))
-	return (makechar(GET_NAME(x)));
+	return (make_char(GET_NAME(x)));
     else if (stringp(x))
-	return (makestr(GET_NAME(x)));
+	return (make_str(GET_NAME(x)));
     else if (listp(x))
 	return (cons(copy(car(x)), copy(cdr(x))));
     else
@@ -1102,12 +1102,12 @@ int array(int n, int ls)
 
     dim = array_dim(n, ls);
     if (n == 0) {
-	res = makearray(dim, ls);
+	res = make_array(dim, ls);
 	return (res);
     } else if (n == 1)
-	res = makevec(GET_INT(car(dim)), UNDEF);
+	res = make_vec(GET_INT(car(dim)), UNDEF);
     else
-	res = makearray(dim, UNDEF);
+	res = make_array(dim, UNDEF);
 
     ls1 = flatten(n, ls);
     i = 0;
@@ -1145,14 +1145,14 @@ int string_to_vector(int x)
     char c;
 
     len = strlen(GET_NAME(x));
-    res = makevec(len, UNDEF);
+    res = make_vec(len, UNDEF);
     ref = 0;
     i = 0;
     c = STRING_REF(x, i++);
     while (c != NUL) {
 	int chr;
 
-	chr = makechar("?");
+	chr = make_char("?");
 	SET_CHAR(chr, c);
 	vector_set(res, ref++, chr);
 	c = STRING_REF(x, i++);
@@ -1248,7 +1248,7 @@ int substr(int x, int s, int e)
 
     }
     str[j] = NUL;
-    int res = makestr(str);
+    int res = make_str(str);
     FREE(str);
     return res;
 }
@@ -1331,7 +1331,7 @@ int string_ref(int x, int y)
 		str[0] = STRING_REF(x, pos);
 		str[1] = NUL;
 	    }
-	    return (makechar(str));
+	    return (make_char(str));
 	}
 	if (isUni2(STRING_REF(x, pos))) {
 	    pos = pos + 2;
@@ -1403,7 +1403,7 @@ int string_set(int x, int y, int z)
 	    } else {
 		STRING_SET(x, pos, str[0]);
 	    }
-	    return (makechar(str));
+	    return (make_char(str));
 	}
 	if (isUni2(STRING_REF(x, pos))) {
 	    pos = pos + 2;
@@ -1449,7 +1449,7 @@ int subvec(int x, int s, int e)
 {
     int i, j, res;
 
-    res = makevec(e - s, UNDEF);
+    res = make_vec(e - s, UNDEF);
     j = 0;
     for (i = s; i < e; i++) {
 	SET_VEC_ELT(res, j, copy(GET_VEC_ELT(x, i)));
@@ -1594,8 +1594,8 @@ void redef_generic(void)
 
 int method_qualifier_p(int x)
 {
-    if (eqp(x, makesym(":BEFORE")) ||
-	eqp(x, makesym(":AFTER")) || eqp(x, makesym(":AROUND")))
+    if (eqp(x, make_sym(":BEFORE")) ||
+	eqp(x, make_sym(":AFTER")) || eqp(x, make_sym(":AROUND")))
 	return (1);
     else
 	return (0);

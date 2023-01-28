@@ -78,4 +78,4 @@ int car(int addr);
 void error(int errnum, const char *fun, int arg);
 char *get_name(int x);
 int length(int addr);
-int makestr(const char *string);
+int make_str(const char *string);

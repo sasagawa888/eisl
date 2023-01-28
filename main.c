@@ -289,15 +289,15 @@ int main(int argc, char *argv[])
     option_flag = true;
     TRY {
 	if (access("startup.lsp", R_OK) == 0)
-	    f_load(list1(makestr("startup.lsp")));
+	    f_load(list1(make_str("startup.lsp")));
 
 	while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
 	    char *str;
 
 	    switch (ch) {
 	    case 'l':
-		if (f_probe_file(list1(makestr(optarg))) == T) {
-		    f_load(list1(makestr(optarg)));
+		if (f_probe_file(list1(make_str(optarg))) == T) {
+		    f_load(list1(make_str(optarg)));
 		} else {
 		    puts("File doesn't exist.");
 		    exit(EXIT_FAILURE);
@@ -305,12 +305,12 @@ int main(int argc, char *argv[])
 		break;
 	    case 'c':
 		str = library_file("compiler.lsp");
-		f_load(list1(makestr(str)));
+		f_load(list1(make_str(str)));
 		FREE(str);
 		break;
 	    case 'f':
 		str = library_file("formatter.lsp");
-		f_load(list1(makestr(str)));
+		f_load(list1(make_str(str)));
 		FREE(str);
 		break;
 	    case 's':
@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
 	gArgC = argc - optind;
 	gArgV = argv + optind;
 	if (script_flag) {
-	    f_load(list1(makestr(script_arg)));
+	    f_load(list1(make_str(script_arg)));
 	    exit(EXIT_SUCCESS);
 	}
     }
@@ -1083,13 +1083,13 @@ int sread(void)
     case FILEEND:
 	return (FEND);
     case INTEGER:
-	return (makeint(atoi(stok.buf)));
+	return (make_int(atoi(stok.buf)));
     case FLOAT_N:
-	return (makeflt(atof(stok.buf)));
+	return (make_flt(atof(stok.buf)));
     case BIGNUM:
 	return (makebigx(stok.buf));
     case DECNUM:
-	return (makeint((int) strtol(stok.buf, &e, 10)));
+	return (make_int((int) strtol(stok.buf, &e, 10)));
     case BINARY:
 	return (readbin(stok.buf));
     case OCTAL:
@@ -1097,7 +1097,7 @@ int sread(void)
     case HEXNUM:
 	return (readhex(stok.buf));
     case EXPTNUM:
-	return (makeflt(atof(stok.buf)));
+	return (make_flt(atof(stok.buf)));
     case EXPTOVERF:
 	error(FLT_OVERF, "read", NIL);
 	break;
@@ -1110,28 +1110,28 @@ int sread(void)
 	n = atoi(stok.buf);
 	return (array(n, sread()));
     case STRING:
-	return (makestr(stok.buf));
+	return (make_str(stok.buf));
     case CHARACTER:
-	return (makechar(stok.buf));
+	return (make_char(stok.buf));
     case SYMBOL:
-	return (makesym(stok.buf));
+	return (make_sym(stok.buf));
     case QUOTE:
-	return (cons(makesym("QUOTE"), cons(sread(), NIL)));
+	return (cons(make_sym("QUOTE"), cons(sread(), NIL)));
     case BACKQUOTE:
-	return (cons(makesym("QUASI-QUOTE"), cons(sread(), NIL)));
+	return (cons(make_sym("QUASI-QUOTE"), cons(sread(), NIL)));
     case COMMA:
 	{
 	    gettoken();
 	    if (stok.type == ATMARK)
 		return (cons
-			(makesym("UNQUOTE-SPLICING"), cons(sread(), NIL)));
+			(make_sym("UNQUOTE-SPLICING"), cons(sread(), NIL)));
 	    else {
 		stok.flag = BACK;
-		return (cons(makesym("UNQUOTE"), cons(sread(), NIL)));
+		return (cons(make_sym("UNQUOTE"), cons(sread(), NIL)));
 	    }
 	}
     case FUNCTION:
-	return (cons(makesym("FUNCTION"), cons(sread(), NIL)));
+	return (cons(make_sym("FUNCTION"), cons(sread(), NIL)));
     case LPAREN:
 	return (readlist());
     case RPAREN:
@@ -1153,7 +1153,7 @@ int readlist(void)
     else if (stok.type == DOT) {
 	rl_cdr = sread();
 	if (rl_cdr == FEND) {
-	    error(ILLEGAL_RPAREN, "read", makesym("file end"));
+	    error(ILLEGAL_RPAREN, "read", make_sym("file end"));
 	}
 	gettoken();
 	return (rl_cdr);
@@ -1161,7 +1161,7 @@ int readlist(void)
 	stok.flag = BACK;
 	rl_car = sread();
 	if (rl_car == FEND) {
-	    error(ILLEGAL_RPAREN, "read", makesym("file end"));
+	    error(ILLEGAL_RPAREN, "read", make_sym("file end"));
 	}
 	rl_cdr = readlist();
 	return (cons(rl_car, rl_cdr));
@@ -1175,11 +1175,11 @@ int readbin(char *buf)
 
     n = strlen(buf);
     if (n <= 31)
-	return (makeint((int) strtol(buf, &e, 2)));
+	return (make_int((int) strtol(buf, &e, 2)));
 
     pos = 0;
-    res = makeint(0);
-    inc = makeint(2);
+    res = make_int(0);
+    inc = make_int(2);
 
     while (pos < n) {
 	int part;
@@ -1187,7 +1187,7 @@ int readbin(char *buf)
 	str[0] = buf[pos];
 	str[1] = NUL;
 	pos++;
-	part = makeint((int) strtol(str, &e, 2));
+	part = make_int((int) strtol(str, &e, 2));
 	res = plus(mult(res, inc), part);
     }
     return (res);
@@ -1200,11 +1200,11 @@ int readoct(char *buf)
 
     n = strlen(buf);
     if (n <= 10)
-	return (makeint((int) strtol(buf, &e, 8)));
+	return (make_int((int) strtol(buf, &e, 8)));
 
     pos = 0;
-    res = makeint(0);
-    inc = makeint(8);
+    res = make_int(0);
+    inc = make_int(8);
 
     while (pos < n) {
 	int part;
@@ -1212,7 +1212,7 @@ int readoct(char *buf)
 	str[0] = buf[pos];
 	str[1] = NUL;
 	pos++;
-	part = makeint((int) strtol(str, &e, 8));
+	part = make_int((int) strtol(str, &e, 8));
 	res = plus(mult(res, inc), part);
     }
     return (res);
@@ -1226,11 +1226,11 @@ int readhex(char *buf)
 
     n = strlen(buf);
     if (n <= 7)
-	return (makeint((int) strtol(buf, &e, 16)));
+	return (make_int((int) strtol(buf, &e, 16)));
 
     pos = 0;
-    res = makeint(0);
-    inc = makeint(16);
+    res = make_int(0);
+    inc = make_int(16);
 
     while (pos < n) {
 	int part;
@@ -1238,7 +1238,7 @@ int readhex(char *buf)
 	str[0] = buf[pos];
 	str[1] = NUL;
 	pos++;
-	part = makeint((int) strtol(str, &e, 16));
+	part = make_int((int) strtol(str, &e, 16));
 	res = plus(mult(res, inc), part);
     }
     return (res);
@@ -1875,8 +1875,8 @@ void bindarg(int varlist, int arglist)
 
     push(ep);
     while (!(IS_NIL(varlist))) {
-	if (cddr(varlist) == NIL && (car(varlist) == makesym(":REST")
-				     || car(varlist) == makesym("&REST"))) {
+	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")
+				     || car(varlist) == make_sym("&REST"))) {
 	    arg1 = cadr(varlist);
 	    arg2 = arglist;
 	    addlexenv(arg1, arg2);
@@ -1927,9 +1927,9 @@ int adaptp(int varlist, int arglist)
 	return (1);
     else if (symbolp(car(varlist)))
 	return (adaptp(cdr(varlist), cdr(arglist)));
-    else if (eqp(makesym(":rest"), car(varlist)))
+    else if (eqp(make_sym(":rest"), car(varlist)))
 	return (1);
-    else if (eqp(makesym("&rest"), car(varlist)))
+    else if (eqp(make_sym("&rest"), car(varlist)))
 	return (1);
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	/* equal class */
 	return (adaptp(cdr(varlist), cdr(arglist)));
@@ -1952,9 +1952,9 @@ int matchp(int varlist, int arglist)
 	return (1);
     else if (symbolp(car(varlist)))
 	return (matchp(cdr(varlist), cdr(arglist)));
-    else if (eqp(makesym(":rest"), car(varlist)))
+    else if (eqp(make_sym(":rest"), car(varlist)))
 	return (1);
-    else if (eqp(makesym("&rest"), car(varlist)))
+    else if (eqp(make_sym("&rest"), car(varlist)))
 	return (1);
     else if (GET_AUX(cadar(varlist)) == GET_AUX(car(arglist)))	/* match class */
 	return (matchp(cdr(varlist), cdr(arglist)));
@@ -2060,7 +2060,7 @@ void bindfunc(const char *name, tag_t tag, int (*func)(int))
 {
     int sym, val;
 
-    sym = makesym(name);
+    sym = make_sym(name);
     val = freshcell();
     SET_TAG(val, tag);
     SET_SUBR(val, func);
@@ -2073,7 +2073,7 @@ void bindmacro(char *name, int addr)
 {
     int sym, val1, val2;
 
-    sym = makesym(name);
+    sym = make_sym(name);
     val1 = freshcell();
     SET_TAG(val1, FUNC);
     SET_CAR(val1, addr);
@@ -2094,7 +2094,7 @@ void bindconst(const char *name, int obj)
 {
     int sym;
 
-    sym = makesym(name);
+    sym = make_sym(name);
     SET_CDR(sym, obj);
     SET_OPT(sym, CONSTN);
 }
@@ -2107,39 +2107,39 @@ int quasi_transfer(int x, int n)
     if (nullp(x))
 	return (NIL);
     else if (atomp(x))
-	return (list2(makesym("QUOTE"), x));
-    else if (listp(x) && eqp(car(x), makesym("UNQUOTE")) && n == 0)
+	return (list2(make_sym("QUOTE"), x));
+    else if (listp(x) && eqp(car(x), make_sym("UNQUOTE")) && n == 0)
 	return (cadr(x));
-    else if (listp(x) && eqp(car(x), makesym("UNQUOTE-SPLICING"))
+    else if (listp(x) && eqp(car(x), make_sym("UNQUOTE-SPLICING"))
 	     && n == 0)
 	return (cadr(x));
-    else if (listp(x) && eqp(car(x), makesym("QUASI-QUOTE")))
-	return (list3(makesym("LIST"),
-		      list2(makesym("QUOTE"), makesym("QUASI-QUOTE")),
+    else if (listp(x) && eqp(car(x), make_sym("QUASI-QUOTE")))
+	return (list3(make_sym("LIST"),
+		      list2(make_sym("QUOTE"), make_sym("QUASI-QUOTE")),
 		      quasi_transfer(cadr(x), n + 1)));
-    else if (listp(x) && eqp(caar(x), makesym("UNQUOTE")) && n == 0)
+    else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE")) && n == 0)
 	return (list3
-		(makesym("CONS"), cadar(x), quasi_transfer(cdr(x), n)));
-    else if (listp(x) && eqp(caar(x), makesym("UNQUOTE-SPLICING"))
+		(make_sym("CONS"), cadar(x), quasi_transfer(cdr(x), n)));
+    else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE-SPLICING"))
 	     && n == 0)
 	return (list3
-		(makesym("APPEND"), cadar(x), quasi_transfer(cdr(x), n)));
-    else if (listp(x) && eqp(caar(x), makesym("UNQUOTE")))
-	return (list3(makesym("CONS"),
-		      list3(makesym("LIST"),
-			    list2(makesym("QUOTE"), makesym("UNQUOTE")),
+		(make_sym("APPEND"), cadar(x), quasi_transfer(cdr(x), n)));
+    else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE")))
+	return (list3(make_sym("CONS"),
+		      list3(make_sym("LIST"),
+			    list2(make_sym("QUOTE"), make_sym("UNQUOTE")),
 			    quasi_transfer(cadar(x), n - 1)),
 		      quasi_transfer(cdr(x), n)));
-    else if (listp(x) && eqp(caar(x), makesym("UNQUOTE-SPLICING")))
-	return (list3(makesym("CONSc"),
-		      list3(makesym("LIST"),
-			    list2(makesym("QUOTE"),
-				  makesym("UNQUOTE-SPLICING")),
+    else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE-SPLICING")))
+	return (list3(make_sym("CONSc"),
+		      list3(make_sym("LIST"),
+			    list2(make_sym("QUOTE"),
+				  make_sym("UNQUOTE-SPLICING")),
 			    quasi_transfer(cadar(x), n - 1)),
 		      quasi_transfer(cdr(x), n)));
     else
 	return (list3
-		(makesym("CONS"), quasi_transfer(car(x), n),
+		(make_sym("CONS"), quasi_transfer(car(x), n),
 		 quasi_transfer(cdr(x), n)));
 }
 

@@ -108,13 +108,13 @@ int f_ignore(int arglist __unused)
 int f_self_introduction(int arglist __unused)
 {
 #if __APPLE__
-    return (makesym("MACOS"));
+    return (make_sym("MACOS"));
 #elif defined(__OpenBSD__)
-    return (makesym("OPENBSD"));
+    return (make_sym("OPENBSD"));
 #elif defined(__FreeBSD__)
-    return (makesym("FREEBSD"));
+    return (make_sym("FREEBSD"));
 #elif defined(__linux__)
-    return (makesym("LINUX"));
+    return (make_sym("LINUX"));
 #else
 #error "Unknown system"
 #endif
@@ -142,7 +142,7 @@ int f_get_method_priority(int arglist)
     if (!(IS_METHOD(arg1)))
 	error(ILLEGAL_ARGS, "eisl-get-method-priority", arg1);
 
-    return (makeint(GET_OPT(arg1) + 1));
+    return (make_int(GET_OPT(arg1) + 1));
     /* 11=:around  12=:befor 13=:primary 14=:arter */
 }
 
@@ -326,7 +326,7 @@ int f_macroexpand_all(int arglist)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "macroexpand-all", arglist);
-    if (listp(arg1) && car(arg1) == makesym("DEFMACRO"))
+    if (listp(arg1) && car(arg1) == make_sym("DEFMACRO"))
 	return (arg1);
     else
 	return (macroexpand_all(arg1));
@@ -340,7 +340,7 @@ int macroexpand_all(int sexp)
 	return (NIL);
     else if (atomp(sexp))
 	return (sexp);
-    else if (listp(sexp) && car(sexp) == makesym("QUOTE"))
+    else if (listp(sexp) && car(sexp) == make_sym("QUOTE"))
 	return (sexp);
     else if (listp(sexp) && macrop(car(sexp)))
 	return (macroexpand_all(macroexpand_1(car(sexp), cdr(sexp))));
@@ -370,10 +370,10 @@ int f_line_argument(int arglist)
 
     if (length(arglist) == 0) {
 	int i, res;
-	res = makevec(gArgC, UNDEF);
+	res = make_vec(gArgC, UNDEF);
 
 	for (i = 0; i < gArgC; i++) {
-	    SET_VEC_ELT(res, i, makestr(gArgV[i]));
+	    SET_VEC_ELT(res, i, make_str(gArgV[i]));
 	}
 
 	return res;
@@ -381,7 +381,7 @@ int f_line_argument(int arglist)
 	int arg1 = car(arglist);
 	int n = GET_INT(arg1);
 	if (n < gArgC) {
-	    return makestr(gArgV[n]);
+	    return make_str(gArgV[n]);
 	} else {
 	    return NIL;
 	}
@@ -400,7 +400,7 @@ int f_getenv(int arglist)
     if (val == NULL) {
 	return NIL;
     } else {
-	return makestr(val);
+	return make_str(val);
     }
 }
 
@@ -459,7 +459,7 @@ int f_random_real(int arglist)
 	error(WRONG_ARGS, "random-real", arglist);
 
     d = (double) rand() / RAND_MAX;
-    return (makeflt(d));
+    return (make_flt(d));
 }
 
 int f_random(int arglist)
@@ -472,7 +472,7 @@ int f_random(int arglist)
     arg1 = car(arglist);
     n = GET_INT(arg1);
 
-    return (makeint(rand() % n));
+    return (make_int(rand() % n));
 }
 
 int f_set_random(int arglist)
@@ -534,7 +534,7 @@ int f_address(int arglist)
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "address", arglist);
 
-    return (makeint(arg1));
+    return (make_int(arg1));
 }
 
 /*
@@ -581,7 +581,7 @@ void debugger()
     while (1) {
 	fputs(">>", stdout);
 	int x = sread();
-	if (eqp(x, makesym("?"))) {
+	if (eqp(x, make_sym("?"))) {
 	    puts("?  help\n"
 		 ":a abort\n"
 		 ":b backtrace\n"
@@ -590,25 +590,25 @@ void debugger()
 		 ":i identify examining symbol\n"
 		 ":q quit\n"
 		 ":r room\n" ":s stepper ON/OFF\n" "other S exps eval");
-	} else if (eqp(x, makesym(":A"))) {
+	} else if (eqp(x, make_sym(":A"))) {
 	    RAISE(Restart_Repl);
-	} else if (eqp(x, makesym(":B"))) {
+	} else if (eqp(x, make_sym(":B"))) {
 	    for (i = 0; i < BACKSIZE; i++) {
 		print(backtrace[i]);
 		putchar('\n');
 	    }
-	} else if (eqp(x, makesym(":D"))) {
+	} else if (eqp(x, make_sym(":D"))) {
 	    print(dp);
 	    putchar('\n');
-	} else if (eqp(x, makesym(":E"))) {
+	} else if (eqp(x, make_sym(":E"))) {
 	    print(ep);
 	    putchar('\n');
-	} else if (eqp(x, makesym(":I"))) {
+	} else if (eqp(x, make_sym(":I"))) {
 	    print(examin_sym);
 	    putchar('\n');
-	} else if (eqp(x, makesym(":Q"))) {
+	} else if (eqp(x, make_sym(":Q"))) {
 	    return;
-	} else if (eqp(x, makesym(":R"))) {
+	} else if (eqp(x, make_sym(":R"))) {
 	    Fmt_print("EP = %d (environment pointer)\n"
 		      "DP = %d (dynamic pointer)\n"
 		      "HP = %d (heap pointer)\n"
@@ -620,7 +620,7 @@ void debugger()
 		      "WP = %d (work area pointer)\n"
 		      "SW = %d (current work area 1or2)\n",
 		      ep, dp, hp, sp, fc, ap, lp, gc_sw, wp, area_sw);
-	} else if (eqp(x, makesym(":S"))) {
+	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");
 		stepper_flag = 1;
@@ -749,13 +749,13 @@ int f_prof(int arglist)
     if (arg1 == NIL) {
 	profiler_set(0);
 	profiler_clear();
-    } else if (eqp(arg1, makesym("CL")))
+    } else if (eqp(arg1, make_sym("CL")))
 	profiler_clear();
-    else if (eqp(arg1, makesym("SYS")))
+    else if (eqp(arg1, make_sym("SYS")))
 	profiler_set(1);
-    else if (eqp(arg1, makesym("USER")))
+    else if (eqp(arg1, make_sym("USER")))
 	profiler_set(2);
-    else if (eqp(arg1, makesym("PR")))
+    else if (eqp(arg1, make_sym("PR")))
 	profiler_print();
     else
 	error(WRONG_ARGS, "prof", arg1);
@@ -881,9 +881,9 @@ int f_pwm_set_mode(int arglist)
 
     arg1 = car(arglist);
 
-    if (arg1 == makesym("pwm-mode-ms"))
+    if (arg1 == make_sym("pwm-mode-ms"))
 	pwmSetMode(PWM_MODE_MS);
-    else if (arg1 == makesym("pwm-mode-bal"))
+    else if (arg1 == make_sym("pwm-mode-bal"))
 	pwmSetMode(PWM_MODE_BAL);
     else
 	error(WRONG_ARGS, "pwm-set-mode", arg1);
@@ -936,11 +936,11 @@ int f_pin_mode(int arglist)
 	error(NOT_INT, "pin-,mode", arg1);
 
     x = GET_INT(arg1);
-    if (arg2 == makesym("intput"))
+    if (arg2 == make_sym("intput"))
 	pinMode(x, INPUT);
-    else if (arg2 == makesym("output"))
+    else if (arg2 == make_sym("output"))
 	pinMode(x, OUTPUT);
-    else if (arg2 == makesym("pwm-output"))
+    else if (arg2 == make_sym("pwm-output"))
 	pinMode(x, PWM_OUTPUT);
     else
 	error(WRONG_ARGS, "pin-mode", arg2);
@@ -1017,7 +1017,7 @@ int f_digital_read(int arglist)
 
     x = GET_INT(arg1);
     res = digitalRead(x);
-    return (makeint(res));
+    return (make_int(res));
 }
 
 int f_delay(int arglist)
@@ -1074,7 +1074,7 @@ int f_try(int arglist)
     arg4 = caddr(cdr(arglist));	//print switch
 
     if (!integerp(arg1)
-	&& !(symbolp(arg1) && arg1 == makesym("NO-TIME-LIMIT")))
+	&& !(symbolp(arg1) && arg1 == make_sym("NO-TIME-LIMIT")))
 	error(ILLEGAL_ARGS, "try", arg1);
     if (!listp(arg2))
 	error(NOT_LIST, "try", arg2);
@@ -1099,14 +1099,14 @@ int f_try(int arglist)
     }
 
     if (pos == 0) {
-	return (list3(makesym("FAILSE"), makesym("OUT-OF-DATA"), NIL));
+	return (list3(make_sym("FAILSE"), make_sym("OUT-OF-DATA"), NIL));
     }
 
     str[pos] = EOL;
     pos++;
     str[pos] = NUL;
 
-    program = makestream(stdin, EISL_INSTR, NULL);
+    program = make_stm(stdin, EISL_INSTR, NULL);
     TRY heap[program].name = Str_dup(str, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "try", NIL);
     END_TRY;
@@ -1114,16 +1114,16 @@ int f_try(int arglist)
     save1 = input_stream;
     save2 = output_stream;
 
-    if (arg1 == makesym("NO-TIME-LIMIT")) {
+    if (arg1 == make_sym("NO-TIME-LIMIT")) {
 	ignore_flag = true;
 	TRY res = eval(arg2);
 	ELSE res = UNDEF;
 	END_TRY;
 	ignore_flag = false;
 	if (res == UNDEF)
-	    res = makesym("FAILSE");
+	    res = make_sym("FAILSE");
 	else if (res == FEND)
-	    res = makesym("FAILSE");
+	    res = make_sym("FAILSE");
     } else {
 	try_timer = getETime() + (double) GET_INT(arg1) * 0.000001;
 	try_res = NIL;
@@ -1136,18 +1136,18 @@ int f_try(int arglist)
 	try_flag = false;
 	if (res == UNDEF) {
 	    res =
-		list3(makesym("FAILSE"), makesym("OUT-OF-DATA"), try_res);
-	    if (arg4 == makesym("OUT-OF-DATA")) {
+		list3(make_sym("FAILSE"), make_sym("OUT-OF-DATA"), try_res);
+	    if (arg4 == make_sym("OUT-OF-DATA")) {
 		printf("%s", str);
 	    }
 	} else if (res == FEND) {
 	    res =
-		list3(makesym("FAILSE"), makesym("OUT-OF-TIME"), try_res);
-	    if (arg4 == makesym("OUT-OF-TIME"))
+		list3(make_sym("FAILSE"), make_sym("OUT-OF-TIME"), try_res);
+	    if (arg4 == make_sym("OUT-OF-TIME"))
 		printf("%s", str);
 	} else {
-	    res = list3(makesym("SUCCESS"), res, try_res);
-	    if (arg4 == makesym("SUCCESS"))
+	    res = list3(make_sym("SUCCESS"), res, try_res);
+	    if (arg4 == make_sym("SUCCESS"))
 		printf("%s", str);
 	}
     }

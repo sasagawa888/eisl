@@ -358,16 +358,16 @@ int bigx_simplify(int x)
     long long int l, l1, l2;
 
     if (get_length(x) == 0) {
-	return (makeint(0));
+	return (make_int(0));
     } else if (get_length(x) == 1) {
 	i1 = bigcell[get_pointer(x)];
 	i1 = i1 * get_sign(x);
-	return (makeint(i1));
+	return (make_int(i1));
     } else if (get_length(x) == 2) {
 	l1 = bigcell[get_pointer(x)];
 	l2 = bigcell[get_pointer(x) - 1];
 	l = (l1 * BIGNUM_BASE + l2) * get_sign(x);
-	return (makelong(l));
+	return (make_long(l));
     } else
 	return (x);
 }
@@ -764,7 +764,7 @@ int bigx_div(int arg1, int arg2)
     res = UNDEF;
     /* if devidend is smaller than divisor,return 0 */
     if (bigx_abs_smallerp(arg1, arg2))
-	return (makeint(0));
+	return (make_int(0));
 
     if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
 	res = bigx_div1(arg1, arg2);
@@ -798,7 +798,7 @@ int bigx_div1(int arg1, int arg2)
 
     /* arg1 < arg2 -> 0 */
     if (smallerp(arg1, arg2))
-	return (makeint(0));
+	return (make_int(0));
     CHECKBIG2(get_length(arg1) - get_length(arg2));
 
 
@@ -808,8 +808,8 @@ int bigx_div1(int arg1, int arg2)
     /* Knuth The art of computer programing D-algorithm */
     if (bigcell[pointery] < BIGNUM_BASE / 2) {
 	int d = BIGNUM_BASE / (1 + bigcell[pointery]);
-	arg1 = bigx_mult1(arg1, bigx_int_to_big(makeint(d)));
-	arg2 = bigx_mult1(arg2, bigx_int_to_big(makeint(d)));
+	arg1 = bigx_mult1(arg1, bigx_int_to_big(make_int(d)));
+	arg2 = bigx_mult1(arg2, bigx_int_to_big(make_int(d)));
     }
 
     res = gen_big();
@@ -846,7 +846,7 @@ int bigx_div1(int arg1, int arg2)
 
 
 	int subtract =
-	    bigx_shift_right(bigx_mult1(arg2, bigx_int_to_big(makeint(q))),
+	    bigx_shift_right(bigx_mult1(arg2, bigx_int_to_big(make_int(q))),
 			     shift);
 	dividend = bigx_minus(dividend, subtract);
 
@@ -889,7 +889,7 @@ int bigx_remainder(int arg1, int arg2)
 
     /* arg1 > arg2 -> 0 */
     if (smallerp(arg1, arg2))
-	return (makeint(0));
+	return (make_int(0));
     CHECKBIG2(get_length(arg2));
 
     res = gen_big();
@@ -917,7 +917,7 @@ int bigx_remainder(int arg1, int arg2)
 	    shift--;
 	}
 	int subtract =
-	    bigx_shift_right(bigx_mult1(arg2, bigx_int_to_big(makeint(q))),
+	    bigx_shift_right(bigx_mult1(arg2, bigx_int_to_big(make_int(q))),
 			     shift);
 	dividend = bigx_minus(dividend, subtract);
 
@@ -1002,7 +1002,7 @@ int bigx_remainder_i(int x, int y)
 	len--;
     }
     while (len > 0);
-    return (makeint((int) r * sign1 * sign2));
+    return (make_int((int) r * sign1 * sign2));
 }
 
 int bigx_div_i(int x, int y)
@@ -1314,7 +1314,7 @@ int bigx_ntt_mult(int x, int y)
 
     ans_len = lenx + leny + 1;
     if (ans_len * 2 * 3 > NTTSIZE)
-	error(RESOURCE_ERR, "ntt-mult", makeint(ans_len));
+	error(RESOURCE_ERR, "ntt-mult", make_int(ans_len));
 
     /* prepare NTT data. datasize is twice of max_len
      * Each one bigcell needs 3 NTT data.  n= 2^x >= max_len*2*3

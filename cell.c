@@ -40,15 +40,15 @@ void initcell(void)
 
 
     /* 0th address is for NIL, set initial environment */
-    makesym("NIL");		/* 0th address NIL */
+    make_sym("NIL");		/* 0th address NIL */
     SET_AUX(NIL, CLASS_NULL);	/* class of nil is null */
     SET_OPT(NIL, CONSTN);
-    makesym("T");		/* 2nd address is T */
+    make_sym("T");		/* 2nd address is T */
     SET_AUX(T, CLASS_SYMBOL);	/* class of t is symbol */
     SET_OPT(T, CONSTN);
-    makesym("<undef>");		/* 4th address is UNDEF */
+    make_sym("<undef>");		/* 4th address is UNDEF */
     SET_AUX(UNDEF, CLASS_SYMBOL);	/* class of <undef> is symbol */
-    makesym("<file-end>");	/* 6th address is FEND */
+    make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
     ep = 0;
     dp = 0;
@@ -60,7 +60,7 @@ void bindclass(const char *name, int cl)
 {
     int sym;
 
-    sym = makesym(name);
+    sym = make_sym(name);
     SET_AUX(sym, cl);
     SET_OPT(cl, SYSTEM);	/* built-in-class */
     SET_OPT(sym, SYSTEM);	/* symbol formated by <***> are built-in-classes */
@@ -71,87 +71,87 @@ void initerrargs(int cl)
 {
     int vars, args;
 
-    vars = list11(cons(makesym("a"), UNDEF),	// format-string
-		  cons(makesym("b"), UNDEF),	// format-arguments
-		  cons(makesym("c"), UNDEF),	// function
-		  cons(makesym("d"), UNDEF),	// operation
-		  cons(makesym("e"), UNDEF),	// operands
-		  cons(makesym("f"), UNDEF),	// object
-		  cons(makesym("g"), UNDEF),	// expected-class
-		  cons(makesym("h"), UNDEF),	// string
-		  cons(makesym("i"), UNDEF),	// stream
-		  cons(makesym("j"), UNDEF),	// name
-		  cons(makesym("k"), UNDEF));	// namespace
+    vars = list11(cons(make_sym("a"), UNDEF),	// format-string
+		  cons(make_sym("b"), UNDEF),	// format-arguments
+		  cons(make_sym("c"), UNDEF),	// function
+		  cons(make_sym("d"), UNDEF),	// operation
+		  cons(make_sym("e"), UNDEF),	// operands
+		  cons(make_sym("f"), UNDEF),	// object
+		  cons(make_sym("g"), UNDEF),	// expected-class
+		  cons(make_sym("h"), UNDEF),	// string
+		  cons(make_sym("i"), UNDEF),	// stream
+		  cons(make_sym("j"), UNDEF),	// name
+		  cons(make_sym("k"), UNDEF));	// namespace
 
     SET_CDR(cl, vars);
-    args = list11(cons(makesym("format-string"), makesym("a")),
-		  cons(makesym("format-arguments"), makesym("b")),
-		  cons(makesym("function"), makesym("c")),
-		  cons(makesym("operation"), makesym("d")),
-		  cons(makesym("operands"), makesym("e")),
-		  cons(makesym("object"), makesym("f")),
-		  cons(makesym("expected-class"), makesym("g")),
-		  cons(makesym("string"), makesym("h")),
-		  cons(makesym("stream"), makesym("i")),
-		  cons(makesym("name"), makesym("j")),
-		  cons(makesym("namespace"), makesym("k")));
+    args = list11(cons(make_sym("format-string"), make_sym("a")),
+		  cons(make_sym("format-arguments"), make_sym("b")),
+		  cons(make_sym("function"), make_sym("c")),
+		  cons(make_sym("operation"), make_sym("d")),
+		  cons(make_sym("operands"), make_sym("e")),
+		  cons(make_sym("object"), make_sym("f")),
+		  cons(make_sym("expected-class"), make_sym("g")),
+		  cons(make_sym("string"), make_sym("h")),
+		  cons(make_sym("stream"), make_sym("i")),
+		  cons(make_sym("name"), make_sym("j")),
+		  cons(make_sym("namespace"), make_sym("k")));
     SET_AUX(cl, args);
 
 }
 
 void initclass(void)
 {
-    cobject = makeclass("object", NIL);
-    cbasic_array = makeclass("basic-array", cobject);
-    cbasic_array_star = makeclass("basic-array*", cbasic_array);
-    cgeneral_array_star = makeclass("general-array*", cbasic_array_star);
-    cbasic_vector = makeclass("basic-vector", cbasic_array);
-    cgeneral_vector = makeclass("general-vector", cbasic_vector);
-    cstring = makeclass("string", cbasic_vector);
-    cbuilt_in_class = makeclass("built-in-class", cbuilt_in_class);
-    ccharacter = makeclass("character", cobject);
-    cfunction = makeclass("function", cobject);
-    cgeneric_function = makeclass("generic-function", cfunction);
+    cobject = make_class("object", NIL);
+    cbasic_array = make_class("basic-array", cobject);
+    cbasic_array_star = make_class("basic-array*", cbasic_array);
+    cgeneral_array_star = make_class("general-array*", cbasic_array_star);
+    cbasic_vector = make_class("basic-vector", cbasic_array);
+    cgeneral_vector = make_class("general-vector", cbasic_vector);
+    cstring = make_class("string", cbasic_vector);
+    cbuilt_in_class = make_class("built-in-class", cbuilt_in_class);
+    ccharacter = make_class("character", cobject);
+    cfunction = make_class("function", cobject);
+    cgeneric_function = make_class("generic-function", cfunction);
     cstandard_generic_function =
-	makeclass("standard-generic-function", cgeneric_function);
-    clist = makeclass("list", cobject);
-    ccons = makeclass("cons", clist);
+	make_class("standard-generic-function", cgeneric_function);
+    clist = make_class("list", cobject);
+    ccons = make_class("cons", clist);
     cnull =
-	makeclass("null", list2(makesym("<SYMBOL>"), makesym("<LIST>")));
-    csymbol = makeclass("symbol", cobject);
-    cnumber = makeclass("number", cobject);
-    cfloat = makeclass("float", cnumber);
-    cinteger = makeclass("integer", cnumber);
-    cserious_condition = makeclass("serious-condition", cobject);
-    cerror = makeclass("error", cserious_condition);
-    carithmetic_error = makeclass("arithmetic-condition", cerror);
-    cdivision_by_zero = makeclass("division-by-zero", carithmetic_error);
+	make_class("null", list2(make_sym("<SYMBOL>"), make_sym("<LIST>")));
+    csymbol = make_class("symbol", cobject);
+    cnumber = make_class("number", cobject);
+    cfloat = make_class("float", cnumber);
+    cinteger = make_class("integer", cnumber);
+    cserious_condition = make_class("serious-condition", cobject);
+    cerror = make_class("error", cserious_condition);
+    carithmetic_error = make_class("arithmetic-condition", cerror);
+    cdivision_by_zero = make_class("division-by-zero", carithmetic_error);
     cfloating_point_overflow =
-	makeclass("floating-point-overflow", carithmetic_error);
+	make_class("floating-point-overflow", carithmetic_error);
     cfloating_point_underflow =
-	makeclass("floating-point-underflow", carithmetic_error);
-    ccontrol_error = makeclass("control-error", cerror);
-    cparse_error = makeclass("parse-error", cerror);
-    cprogram_error = makeclass("program-error", cerror);
-    cdomain_error = makeclass("domain-error", cprogram_error);
-    cclass_error = makeclass("class-error", cprogram_error);
-    cundefined_entity = makeclass("undefined-entity", cprogram_error);
-    cunbound_variable = makeclass("unbound-variable", cundefined_entity);
+	make_class("floating-point-underflow", carithmetic_error);
+    ccontrol_error = make_class("control-error", cerror);
+    cparse_error = make_class("parse-error", cerror);
+    cprogram_error = make_class("program-error", cerror);
+    cdomain_error = make_class("domain-error", cprogram_error);
+    cclass_error = make_class("class-error", cprogram_error);
+    cundefined_entity = make_class("undefined-entity", cprogram_error);
+    cunbound_variable = make_class("unbound-variable", cundefined_entity);
     cundefined_function =
-	makeclass("undefined-function", cundefined_entity);
-    csimple_error = makeclass("simple-error", cerror);
-    cstream_error = makeclass("stream-error", cerror);
-    cend_of_stream = makeclass("end-of-stream", cstream_error);
+	make_class("undefined-function", cundefined_entity);
+    csimple_error = make_class("simple-error", cerror);
+    cstream_error = make_class("stream-error", cerror);
+    cend_of_stream = make_class("end-of-stream", cstream_error);
     cstorage_exhausted =
-	makeclass("storage-exhausted", cserious_condition);
+	make_class("storage-exhausted", cserious_condition);
 
-    cstandard_class = makeclass("standard-class", cobject);
-    cstandard_object = makeclass("standard-object", cobject);
-    cstream = makeclass("stream", cobject);
-    cinvalid = makeclass("invalid", cinvalid);
-    cfixnum = makeclass("fixnum", cinteger);
-    clongnum = makeclass("longnum", cinteger);
-    cbignum = makeclass("bignum", cinteger);
+    cstandard_class = make_class("standard-class", cobject);
+    cstandard_object = make_class("standard-object", cobject);
+    cstream = make_class("stream", cobject);
+    cinvalid = make_class("invalid", cinvalid);
+    cfixnum = make_class("fixnum", cinteger);
+    clongnum = make_class("longnum", cinteger);
+    cbignum = make_class("bignum", cinteger);
 
     bindclass("<OBJECT>", cobject);
     bindclass("<BASIC-ARRAY>", cbasic_array);
@@ -222,9 +222,9 @@ void initclass(void)
 
 void initstream(void)
 {
-    standard_input = makestream(stdin, EISL_INPUT, "standard-input");
-    standard_output = makestream(stdout, EISL_OUTPUT, "standard-output");
-    standard_error = makestream(stderr, EISL_OUTPUT, "error-output");
+    standard_input = make_stm(stdin, EISL_INPUT, "standard-input");
+    standard_output = make_stm(stdout, EISL_OUTPUT, "standard-output");
+    standard_error = make_stm(stderr, EISL_OUTPUT, "error-output");
 }
 
 int freshcell(void)
@@ -399,7 +399,7 @@ int addsym(const char *name, int index)
     int addr, res;
 
     addr = cell_hash_table[index];
-    addr = hcons(res = makesym1(name), addr);
+    addr = hcons(res = make_sym1(name), addr);
     cell_hash_table[index] = addr;
     return (res);
 }
@@ -408,14 +408,14 @@ int addsym(const char *name, int index)
  * symbol car = function addr cdr = global value aux = class symbol option 
  * = CONSTN(constant ) 
  */
-int makesym1(const char *pname)
+int make_sym1(const char *pname)
 {
     int addr;
 
     addr = hfreshcell();
     SET_TAG(addr, SYM);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makesym", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_sym", NIL);
     END_TRY;
     SET_CAR(addr, NIL);
     SET_CDR(addr, NIL);
@@ -455,21 +455,21 @@ void store_backtrace(int x)
 
 /*
  * make_ generate cell for data structures
- * makeint           make integer
- * makelong          make long integer
- * makeflt           make float number
- * makesym           make symbol
- * makefunc          make function (lambda)
- * makegeneric       make generic function
- * makegeneric_star  make generic function
- * makemethod        make method for generic function
- * makevec           make vector
- * makearray         maker array
+ * make_int           make integer
+ * make_long          make long integer
+ * make_flt           make float number
+ * make_sym           make symbol
+ * make_func          make function (lambda)
+ * make_generic       make generic function
+ * make_generic_star  make generic function
+ * make_method        make method for generic function
+ * make_vec           make vector
+ * make_array         maker array
  * maekstream        make stream
- * makestr           make string
- * makechar          make character
- * makeclass         make class
- * makeinstance      make instance
+ * make_str           make string
+ * make_char          make character
+ * make_class         make class
+ * make_instance      make instance
  */
 
 
@@ -479,7 +479,7 @@ void store_backtrace(int x)
  * negative integer is only negative.
  * integer is out of cell address.  so, integer does not require cell.
  */
-int makeint(int intn)
+int make_int(int intn)
 {
     if (intn >= 0)
 	return (INT_FLAG | intn);
@@ -487,7 +487,7 @@ int makeint(int intn)
 	return (intn);
 }
 
-int makelong(long long int lngnum)
+int make_long(long long int lngnum)
 {
     int addr;
 
@@ -498,7 +498,7 @@ int makelong(long long int lngnum)
     return (addr);
 }
 
-int makeflt(double floatn)
+int make_flt(double floatn)
 {
     int addr;
 
@@ -512,7 +512,7 @@ int makeflt(double floatn)
 /*
  * symbol car = function cdr = global value aux = class 
  */
-int makesym(const char *pname)
+int make_sym(const char *pname)
 {
     int index, res;
 
@@ -529,14 +529,14 @@ int makesym(const char *pname)
  * note, if ep(environment) has bignum, convert to parmanent)
  */
 
-int makefunc(const char *pname, int addr)
+int make_func(const char *pname, int addr)
 {
     int val;
 
     val = hfreshcell();
     SET_TAG(val, FUNC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makefunc", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(addr));
     SET_CDR(val, ep);		/* local environment */
@@ -555,9 +555,9 @@ int count_args(int ls)
 
     ls1 = reverse(ls);
     n = length(ls);
-    if (eqp(cadr(ls1), makesym(":REST")))
+    if (eqp(cadr(ls1), make_sym(":REST")))
 	res = -1 * n;
-    else if (eqp(cadr(ls1), makesym("&REST")))
+    else if (eqp(cadr(ls1), make_sym("&REST")))
 	res = -1 * n;
     else
 	res = n;
@@ -570,14 +570,14 @@ int count_args(int ls)
  * ILOS generic function
  * generic car = args cdr = method aux = class 
  */
-int makegeneric(char *pname, int lamlist, int body)
+int make_generic(char *pname, int lamlist, int body)
 {
     int val;
 
     val = hfreshcell();
     SET_TAG(val, GENERIC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makegeneric", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_generic", NIL);
     END_TRY;
     SET_CAR(val, copy_heap(lamlist));
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
@@ -585,11 +585,11 @@ int makegeneric(char *pname, int lamlist, int body)
     SET_PROP(val, T);		/* method-combination default is T */
     SET_AUX(val, cstandard_generic_function);
     if (illegal_lambda_p(lamlist))
-	error(ILLEGAL_ARGS, "makegeneric", lamlist);
+	error(ILLEGAL_ARGS, "make_generic", lamlist);
 
     while (!nullp(body)) {
 	/* (:method method-qualifier* parameter-profile form*) */
-	if (eqp(caar(body), makesym(":METHOD"))) {
+	if (eqp(caar(body), make_sym(":METHOD"))) {
 	    if (method_qualifier_p(cadar(body)) && GET_PROP(val) == NIL) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
@@ -606,15 +606,15 @@ int makegeneric(char *pname, int lamlist, int body)
 	    if (nullp(cadar(body))) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
-	    insert_method(makemethod(cdar(body)), val);
-	} else if (eqp(caar(body), makesym(":METHOD-COMBINATION"))) {
+	    insert_method(make_method(cdar(body)), val);
+	} else if (eqp(caar(body), make_sym(":METHOD-COMBINATION"))) {
 	    if (cadar(body) == NIL || cadar(body) == T)
 		SET_PROP(val, cadar(body));
 	    else
 		error(ILLEGAL_FORM, "defgeneric", body);
-	} else if (eqp(caar(body), makesym(":GENERIC-FUNCTION-CLASS"))) {
+	} else if (eqp(caar(body), make_sym(":GENERIC-FUNCTION-CLASS"))) {
 	    if (!(listp(cadar(body))
-		  && eqp(car(cadar(body)), makesym("CLASS")))) {
+		  && eqp(car(cadar(body)), make_sym("CLASS")))) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
 	    SET_AUX(val, eval(cadar(body)));
@@ -629,7 +629,7 @@ int makegeneric(char *pname, int lamlist, int body)
 /*
  * diffrence is class. the class is generic-function use in defgeneric* 
  */
-int makegeneric_star(int lamlist, int body)
+int make_generic_star(int lamlist, int body)
 {
     int val;
 
@@ -641,8 +641,8 @@ int makegeneric_star(int lamlist, int body)
     SET_PROP(val, T);		/* method-combination default is T */
     SET_AUX(val, cgeneric_function);	/* difference. only this. */
     while (!nullp(body)) {
-	if (eqp(caar(body), makesym(":METHOD")))
-	    insert_method(makemethod(cdar(body)), val);
+	if (eqp(caar(body), make_sym(":METHOD")))
+	    insert_method(make_method(cdar(body)), val);
 
 	body = cdr(body);
     }
@@ -652,19 +652,19 @@ int makegeneric_star(int lamlist, int body)
 /*
  * method car = args&body cdr = environment aux = null opt = priority 
  */
-int makemethod(int addr)
+int make_method(int addr)
 {
     int val;
 
     val = hfreshcell();
     SET_TAG(val, METHOD);
-    if (eqp(car(addr), makesym(":AROUND"))) {
+    if (eqp(car(addr), make_sym(":AROUND"))) {
 	SET_CAR(val, copy_heap(cdr(addr)));
 	SET_OPT(val, AROUND);
-    } else if (eqp(car(addr), makesym(":BEFORE"))) {
+    } else if (eqp(car(addr), make_sym(":BEFORE"))) {
 	SET_CAR(val, copy_heap(cdr(addr)));
 	SET_OPT(val, BEFORE);
-    } else if (eqp(car(addr), makesym(":AFTER"))) {
+    } else if (eqp(car(addr), make_sym(":AFTER"))) {
 	SET_CAR(val, copy_heap(cdr(addr)));
 	SET_OPT(val, AFTER);
     } else {
@@ -677,7 +677,7 @@ int makemethod(int addr)
 }
 
 /* vector */
-int makevec(int n, int obj)
+int make_vec(int n, int obj)
 {
     int res, i, *vec;
 
@@ -702,7 +702,7 @@ int vector(int lis)
 
     len = length(lis);
     i = 0;
-    res = makevec(len, UNDEF);
+    res = make_vec(len, UNDEF);
     while (!nullp(lis)) {
 	vector_set(res, i, car(lis));
 	i++;
@@ -729,7 +729,7 @@ int vector(int lis)
  * EISL_CLOSE stream state is close
  */
 
-int makestream(FILE * port, int type, const char *name)
+int make_stm(FILE * port, int type, const char *name)
 {
     int addr;
 
@@ -747,7 +747,7 @@ int makestream(FILE * port, int type, const char *name)
 }
 
 // --------array-------
-int makearray(int ls, int obj)
+int make_array(int ls, int obj)
 {
     int size, res, i, ls1, *vec;
 
@@ -792,20 +792,20 @@ int makearray(int ls, int obj)
 }
 
 
-int makestr(const char *string)
+int make_str(const char *string)
 {
     int addr;
 
     addr = freshcell();
     SET_TAG(addr, STR);
     TRY heap[addr].name = Str_dup(string, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makestr", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_str", NIL);
     END_TRY;
     SET_AUX(addr, cstring);	/* class string */
     return (addr);
 }
 
-int makechar(const char *pname)
+int make_char(const char *pname)
 {
     int addr, pos;
     char low_name[SYMSIZE], char_entity;
@@ -886,7 +886,7 @@ int makechar(const char *pname)
     addr = freshcell();
     SET_TAG(addr, CHR);
     TRY heap[addr].name = (char *) ALLOC(CHARSIZE);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makechar", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_char", NIL);
     END_TRY;
     if (!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0])
 	&& !isUni5(pname[0]) && !isUni6(pname[0])) {
@@ -908,14 +908,14 @@ int makechar(const char *pname)
  * class obj car = super class cdr = class variable aux = method name =
  * class name 
  */
-int makeclass(const char *pname, int superclass)
+int make_class(const char *pname, int superclass)
 {
     int addr;
 
     addr = freshcell();
     SET_TAG(addr, CLASS);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makeclass", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_class", NIL);
     END_TRY;
     SET_CAR(addr, superclass);
     SET_CDR(addr, NIL);
@@ -926,7 +926,7 @@ int makeclass(const char *pname, int superclass)
 /*
  * initls ((format-string a)(format-argments b))...(initarg var) ) 
  */
-int makeinstance(int cl, int initls)
+int make_instance(int cl, int initls)
 {
     int addr;
 
@@ -1125,7 +1125,7 @@ int callsubr(int func, int arglist)
     return ((GET_SUBR(func)) (arglist));
 }
 
-int makeintlong(int n)
+int make_intlong(int n)
 {
     int addr;
 
@@ -1136,19 +1136,19 @@ int makeintlong(int n)
     return (addr);
 }
 
-int makestrflt(const char *str)
+int make_strflt(const char *str)
 {
-    return (makeflt(atof(str)));
+    return (make_flt(atof(str)));
 }
 
 int makedoubleflt(double x)
 {
-    return (makeflt(x));
+    return (make_flt(x));
 }
 
-int makestrlong(const char *str)
+int make_strlong(const char *str)
 {
-    return (makelong(atol(str)));
+    return (make_long(atol(str)));
 }
 
 static inline int HexDigitToNybble(char c)
@@ -1169,7 +1169,7 @@ int makefaststrlong(const char *str)
 	uint64_t byte = (hi_nybble << 4) | lo_nybble;
 	u |= (byte << (i << 3));
     }
-    return makelong(u);
+    return make_long(u);
 }
 
 int nth_cdr(int n, int x)

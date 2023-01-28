@@ -97,7 +97,7 @@ int f_lambda(int arglist)
 	error(OUT_OF_DOMAIN, "lambda", car(arglist));
 
 
-    return (makefunc("", arglist));
+    return (make_func("", arglist));
 }
 
 int f_labels(int arglist)
@@ -148,7 +148,7 @@ int f_labels(int arglist)
 	if (!symbolp(sym))
 	    error(NOT_SYM, "labels", sym);
 	addlexenv(sym, NIL);
-	val = makefunc("", cdar(arg1));
+	val = make_func("", cdar(arg1));
 	setlexenv(sym, val);
 	func = cons(val, func);
 	arg1 = cdr(arg1);
@@ -212,7 +212,7 @@ int f_flet(int arglist)
 	if (!symbolp(sym))
 	    error(NOT_SYM, "flet", sym);
 	ep = save;
-	val = makefunc("", cdar(arg1));
+	val = make_func("", cdar(arg1));
 	ep = ep1;
 	addlexenv(sym, val);
 	ep1 = ep;
@@ -247,9 +247,9 @@ int f_let(int arglist)
 	    error(IMPROPER_ARGS, "let", car(temp));
 	if (!symbolp(temparg1))
 	    error(NOT_SYM, "let", temparg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*")
-	    || temparg1 == makesym("*MOST-POSITIVE-FLOAT*")
-	    || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "let", arg1);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
@@ -306,9 +306,9 @@ int f_letstar(int arglist)
 	    error(IMPROPER_ARGS, "let*", car(temp));
 	if (!symbolp(temparg1))
 	    error(NOT_SYM, "let*", temparg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*")
-	    || temparg1 == makesym("*MOST-POSITIVE-FLOAT*")
-	    || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "let*", arg1);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
@@ -357,9 +357,9 @@ int f_dynamic_let(int arglist)
 	    error(IMPROPER_ARGS, "dynamic-let", car(temp));
 	if (!symbolp(temparg1))
 	    error(NOT_SYM, "dynamic-let", temparg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*")
-	    || temparg1 == makesym("*MOST-POSITIVE-FLOAT*")
-	    || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "dynamic-let", arg1);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
@@ -406,37 +406,37 @@ int f_setf(int arglist)
     if (arg1 == T || arg1 == NIL)
 	error(CANT_MODIFY, "setf", arg1);
     if (listp(arg1)
-	&& eqlp(makeint(1),
-		cdr(assoc(makesym("read"), GET_AUX(car(arg1))))))
+	&& eqlp(make_int(1),
+		cdr(assoc(make_sym("read"), GET_AUX(car(arg1))))))
 	error(CANT_MODIFY, "setf", arg1);
     if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "setf", arglist);
 
-    if (listp(arg1) && eqp(car(arg1), makesym("AREF"))) {
-	newform = cons(makesym("SET-AREF"), cons(arg2, cdr(arg1)));
-    } else if (listp(arg1) && eqp(car(arg1), makesym("GAREF"))) {
-	newform = cons(makesym("SET-GAREF"), cons(arg2, cdr(arg1)));
-    } else if (listp(arg1) && eqp(car(arg1), makesym("ELT"))) {
-	newform = cons(makesym("SET-ELT"), cons(arg2, cdr(arg1)));
-    } else if (listp(arg1) && eqp(car(arg1), makesym("PROPERTY"))) {
-	newform = cons(makesym("SET-PROPERTY"), cons(arg2, cdr(arg1)));
-    } else if (listp(arg1) && eqp(car(arg1), makesym("CAR"))) {
-	newform = cons(makesym("SET-CAR"), cons(arg2, cdr(arg1)));
-    } else if (listp(arg1) && eqp(car(arg1), makesym("CDR"))) {
-	newform = cons(makesym("SET-CDR"), cons(arg2, cdr(arg1)));
-    } else if (listp(arg1) && eqp(car(arg1), makesym("DYNAMIC"))) {
+    if (listp(arg1) && eqp(car(arg1), make_sym("AREF"))) {
+	newform = cons(make_sym("SET-AREF"), cons(arg2, cdr(arg1)));
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("GAREF"))) {
+	newform = cons(make_sym("SET-GAREF"), cons(arg2, cdr(arg1)));
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("ELT"))) {
+	newform = cons(make_sym("SET-ELT"), cons(arg2, cdr(arg1)));
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("PROPERTY"))) {
+	newform = cons(make_sym("SET-PROPERTY"), cons(arg2, cdr(arg1)));
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("CAR"))) {
+	newform = cons(make_sym("SET-CAR"), cons(arg2, cdr(arg1)));
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("CDR"))) {
+	newform = cons(make_sym("SET-CDR"), cons(arg2, cdr(arg1)));
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("DYNAMIC"))) {
 	if (improper_list_p(arg1))
 	    error(IMPROPER_ARGS, "dynamic", arg1);
 	if (length(arg1) != 2)
 	    error(IMPROPER_ARGS, "dynamic", arg1);
-	newform = cons(makesym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
+	newform = cons(make_sym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
     } else if (listp(arg1) && macrop(car(arg1))) {
 	var = f_macroexpand_1(list1(arg1));
 	return (f_setf(list2(var, arg2)));
     }
     /* (setf (slot-value instance slot-name) value) */
-    else if (listp(arg1) && eqp(car(arg1), makesym("SLOT-VALUE"))) {
-	newform = cons(makesym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
+    else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
+	newform = cons(make_sym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
     }
     /* e.g. (setf (access-foo-a x) 100) */ 
     else if (listp(arg1) && length(arg1) == 2) {
@@ -447,9 +447,9 @@ int f_setf(int arglist)
 	    error(IMPROPER_ARGS, "setf", arg1);
 
 	newform =
-	    cons(makesym("SET-SLOT-VALUE"),
+	    cons(make_sym("SET-SLOT-VALUE"),
 		 cons(arg2,
-		      list2(cadr(arg1), list2(makesym("QUOTE"), var))));
+		      list2(cadr(arg1), list2(make_sym("QUOTE"), var))));
     }
     /* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) */
     else if (listp(arg1)) {
@@ -458,7 +458,7 @@ int f_setf(int arglist)
 	if (!genericp(car(arg1)))
 	    error(ILLEGAL_FORM, "setf", arg1);
     } else if (symbolp(arg1)) {
-	newform = cons(makesym("SETQ"), list2(arg1, arg2));
+	newform = cons(make_sym("SETQ"), list2(arg1, arg2));
     } else
 	error(IMPROPER_ARGS, "setf", arglist);
 
@@ -535,9 +535,9 @@ int f_defconstant(int arglist)
 	error(WRONG_ARGS, "defconstant", arglist);
     if (!symbolp(arg1))
 	error(NOT_SYM, "defconstant", arg1);
-    if (arg1 == T || arg1 == NIL || arg1 == makesym("*PI*") ||
-	arg1 == makesym("*MOST-POSITIVE-FLOAT*")
-	|| arg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+    if (arg1 == T || arg1 == NIL || arg1 == make_sym("*PI*") ||
+	arg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	|| arg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	error(WRONG_ARGS, "defconstant", arg1);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(WRONG_ARGS, "defconstant", arg1);
@@ -575,7 +575,7 @@ int f_defun(int arglist)
     if (!symbol_list_p(car(arg2)))
 	error(OUT_OF_DOMAIN, "defun", car(arg2));
 
-    val = makefunc(GET_NAME(arg1), arg2);
+    val = make_func(GET_NAME(arg1), arg2);
     SET_CAR(arg1, val);
     return (arg1);
 }
@@ -736,7 +736,7 @@ int f_function(int arglist)
 	    return (GET_CAR(arg1));
 	else
 	    error(UNDEF_FUN, "function", arg1);
-    } else if (listp(arg1) && eqp(car(arg1), makesym("lambda")))
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("lambda")))
 	return (eval(arg1));
     else
 	error(NOT_FUNC, "function", arg1);
@@ -767,7 +767,7 @@ int f_function_star(int arglist)
 	    return (GET_CAR(arg1));
 	else
 	    return (NIL);
-    } else if (listp(arg1) && eqp(car(arg1), makesym("lambda")))
+    } else if (listp(arg1) && eqp(car(arg1), make_sym("lambda")))
 	return (eval(arg1));
     else
 	return (NIL);
@@ -943,9 +943,9 @@ int f_for(int arglist)
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "for", arg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == makesym("*PI*")
-	    || temparg1 == makesym("*MOST-POSITIVE-FLOAT*")
-	    || temparg1 == makesym("*MOST-NEGATIVE-FLOAT*"))
+	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "for", temparg1);
 	if (length(temp1) != 2 && length(temp1) != 3)
 	    error(IMPROPER_ARGS, "for", temp1);
@@ -1048,7 +1048,7 @@ int find_return_from_p(int x)
 {
     if (nullp(x))
 	return (-1);
-    else if (symbolp(x) && eqp(x, makesym("RETURN-FROM")))
+    else if (symbolp(x) && eqp(x, make_sym("RETURN-FROM")))
 	return (1);
     else if (atomp(x))
 	return (-1);
@@ -1092,7 +1092,7 @@ int f_catch(int arglist)
     arg2 = cdr(arglist);	/* body */
     if (nullp(arglist))
 	error(WRONG_ARGS, "catch", arglist);
-    if (arg1 == makesym("catch"))
+    if (arg1 == make_sym("catch"))
 	error(WRONG_ARGS, "catch", arglist);
     if (nullp(arg1))
 	error(WRONG_ARGS, "catch", arglist);
@@ -1240,7 +1240,7 @@ int f_unwind_protect(int arglist)
     if (improper_list_p(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
 
-    unwind_buf[unwind_pt] = makefunc("", cons(NIL, args));	/* make thunk */
+    unwind_buf[unwind_pt] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
     res = eval(arg1);
     if (unwind_pt > 0) {
@@ -1417,7 +1417,7 @@ int f_defclass(int arglist)
 
 	while (!nullp(ls)) {
 
-	    if (eqp(car(ls), makesym(":READER"))) {
+	    if (eqp(car(ls), make_sym(":READER"))) {
 		reader = cadr(ls);
 		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
@@ -1432,39 +1432,39 @@ int f_defclass(int arglist)
 		 *    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y))
 		 *    (set-property 1 'reader 'read))
 		 */
-		form = list3(makesym("IF"),
-			     list2(makesym("NOT"),
-				   list2(makesym("GENERIC-FUNCTION-P"),
-					 list2(makesym("FUNCTION*"),
+		form = list3(make_sym("IF"),
+			     list2(make_sym("NOT"),
+				   list2(make_sym("GENERIC-FUNCTION-P"),
+					 list2(make_sym("FUNCTION*"),
 					       reader))),
-			     list3(makesym("DEFGENERIC"), reader,
-				   list1(makesym("x"))));
+			     list3(make_sym("DEFGENERIC"), reader,
+				   list1(make_sym("x"))));
 		eval(form);
 		form =
-		    list4(makesym("DEFMETHOD"), reader,
-			  list1(list2(makesym("x"), arg1)),
-			  list4(makesym("LET"),
+		    list4(make_sym("DEFMETHOD"), reader,
+			  list1(list2(make_sym("x"), arg1)),
+			  list4(make_sym("LET"),
 				list1(list2
-				      (makesym("y"),
-				       list3(makesym("SLOT-VALUE"),
-					     makesym("x"),
-					     list2(makesym("QUOTE"),
+				      (make_sym("y"),
+				       list3(make_sym("SLOT-VALUE"),
+					     make_sym("x"),
+					     list2(make_sym("QUOTE"),
 						   sym)))),
-				list3(makesym("IF"),
-				      list2(makesym("EISL-DUMMYP"),
-					    makesym("y")),
-				      list3(makesym("CERROR"),
-					    makestr("undefined"),
-					    makestr("reader"))),
-				makesym("y")));
+				list3(make_sym("IF"),
+				      list2(make_sym("EISL-DUMMYP"),
+					    make_sym("y")),
+				      list3(make_sym("CERROR"),
+					    make_str("undefined"),
+					    make_str("reader"))),
+				make_sym("y")));
 
 		eval(form);
-		form = list4(makesym("SET-PROPERTY"),
-			     makeint(1),
-			     list2(makesym("QUOTE"), reader),
-			     list2(makesym("QUOTE"), makesym("READ")));
+		form = list4(make_sym("SET-PROPERTY"),
+			     make_int(1),
+			     list2(make_sym("QUOTE"), reader),
+			     list2(make_sym("QUOTE"), make_sym("READ")));
 		eval(form);
-	    } else if (eqp(car(ls), makesym(":WRITER"))) {
+	    } else if (eqp(car(ls), make_sym(":WRITER"))) {
 		writer = cadr(ls);
 		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
@@ -1478,24 +1478,24 @@ int f_defclass(int arglist)
 		 * (defmethod name (x (y arg1))
 		 *     (setf (slot-value y 'var) x))
 		 */
-		form = list3(makesym("IF"),
-			     list2(makesym("NOT"),
-				   list2(makesym("GENERIC-FUNCTION-P"),
-					 list2(makesym("FUNCTION*"),
+		form = list3(make_sym("IF"),
+			     list2(make_sym("NOT"),
+				   list2(make_sym("GENERIC-FUNCTION-P"),
+					 list2(make_sym("FUNCTION*"),
 					       writer))),
-			     list3(makesym("DEFGENERIC"), writer,
-				   list2(makesym("x"),
-					 list2(makesym("y"), arg1))));
+			     list3(make_sym("DEFGENERIC"), writer,
+				   list2(make_sym("x"),
+					 list2(make_sym("y"), arg1))));
 		eval(form);
 		form =
-		    list4(makesym("DEFMETHOD"), writer,
-			  list2(makesym("x"), list2(makesym("y"), arg1)),
-			  list3(makesym("SETF"),
-				list3(makesym("SLOT-VALUE"), makesym("y"),
-				      list2(makesym("QUOTE"), sym)),
-				makesym("x")));
+		    list4(make_sym("DEFMETHOD"), writer,
+			  list2(make_sym("x"), list2(make_sym("y"), arg1)),
+			  list3(make_sym("SETF"),
+				list3(make_sym("SLOT-VALUE"), make_sym("y"),
+				      list2(make_sym("QUOTE"), sym)),
+				make_sym("x")));
 		eval(form);
-	    } else if (eqp(car(ls), makesym(":ACCESSOR"))) {
+	    } else if (eqp(car(ls), make_sym(":ACCESSOR"))) {
 		accessor = cadr(ls);
 		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
@@ -1511,39 +1511,39 @@ int f_defclass(int arglist)
 		 * (defmethod name ((x <null>)) for setf syntax
 		 *     'var)
 		 */
-		form = list3(makesym("IF"),
-			     list2(makesym("NOT"),
-				   list2(makesym("GENERIC-FUNCTION-P"),
-					 list2(makesym("FUNCTION*"),
+		form = list3(make_sym("IF"),
+			     list2(make_sym("NOT"),
+				   list2(make_sym("GENERIC-FUNCTION-P"),
+					 list2(make_sym("FUNCTION*"),
 					       accessor))),
-			     list3(makesym("DEFGENERIC"), accessor,
-				   list1(makesym("x"))));
+			     list3(make_sym("DEFGENERIC"), accessor,
+				   list1(make_sym("x"))));
 		eval(form);
 		form =
-		    list4(makesym("DEFMETHOD"), accessor,
-			  list1(list2(makesym("x"), arg1)),
-			  list4(makesym("LET"),
+		    list4(make_sym("DEFMETHOD"), accessor,
+			  list1(list2(make_sym("x"), arg1)),
+			  list4(make_sym("LET"),
 				list1(list2
-				      (makesym("y"),
-				       list3(makesym("SLOT-VALUE"),
-					     makesym("x"),
-					     list2(makesym("QUOTE"),
+				      (make_sym("y"),
+				       list3(make_sym("SLOT-VALUE"),
+					     make_sym("x"),
+					     list2(make_sym("QUOTE"),
 						   sym)))),
-				list3(makesym("IF"),
-				      list2(makesym("EISL-DUMMYP"),
-					    makesym("y")),
-				      list3(makesym("CERROR"),
-					    makestr("undefined"),
-					    makestr("accessor"))),
-				makesym("y")));
+				list3(make_sym("IF"),
+				      list2(make_sym("EISL-DUMMYP"),
+					    make_sym("y")),
+				      list3(make_sym("CERROR"),
+					    make_str("undefined"),
+					    make_str("accessor"))),
+				make_sym("y")));
 
 		eval(form);
 		form =
-		    list4(makesym("DEFMETHOD"), accessor,
-			  list1(list2(makesym("x"), makesym("<NULL>"))),
-			  list2(makesym("QUOTE"), sym));
+		    list4(make_sym("DEFMETHOD"), accessor,
+			  list1(list2(make_sym("x"), make_sym("<NULL>"))),
+			  list2(make_sym("QUOTE"), sym));
 		eval(form);
-	    } else if (eqp(car(ls), makesym(":BOUNDP"))) {
+	    } else if (eqp(car(ls), make_sym(":BOUNDP"))) {
 		boundp = cadr(ls);
 		if (nullp(boundp)) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
@@ -1557,25 +1557,25 @@ int f_defclass(int arglist)
 		 * (defmethod name ((x arg1))
 		 *     (not (dummyp (slot-value x 'var))))
 		 */
-		form = list3(makesym("IF"),
-			     list2(makesym("NOT"),
-				   list2(makesym("GENERIC-FUNCTION-P"),
-					 list2(makesym("FUNCTION*"),
+		form = list3(make_sym("IF"),
+			     list2(make_sym("NOT"),
+				   list2(make_sym("GENERIC-FUNCTION-P"),
+					 list2(make_sym("FUNCTION*"),
 					       boundp))),
-			     list3(makesym("DEFGENERIC"), boundp,
-				   list1(makesym("x"))));
+			     list3(make_sym("DEFGENERIC"), boundp,
+				   list1(make_sym("x"))));
 		eval(form);
 		form =
-		    list4(makesym("DEFMETHOD"), boundp,
-			  list1(list2(makesym("x"), arg1)),
-			  list2(makesym("NOT"),
-				list2(makesym("EISL-DUMMYP"),
-				      list3(makesym("SLOT-VALUE"),
-					    makesym("x"),
-					    list2(makesym("QUOTE"),
+		    list4(make_sym("DEFMETHOD"), boundp,
+			  list1(list2(make_sym("x"), arg1)),
+			  list2(make_sym("NOT"),
+				list2(make_sym("EISL-DUMMYP"),
+				      list3(make_sym("SLOT-VALUE"),
+					    make_sym("x"),
+					    list2(make_sym("QUOTE"),
 						  sym)))));
 		eval(form);
-	    } else if (eqp(car(ls), makesym(":INITFORM"))) {
+	    } else if (eqp(car(ls), make_sym(":INITFORM"))) {
 		initform = cadr(ls);
 		if (length(ls) < 2) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
@@ -1589,7 +1589,7 @@ int f_defclass(int arglist)
 		initform = eval(initform);
 		val = initform;
 		initform_flag = 1;
-	    } else if (eqp(car(ls), makesym(":INITARG"))) {
+	    } else if (eqp(car(ls), make_sym(":INITARG"))) {
 		initarg = cadr(ls);
 		if (nullp(initarg)) {
 		    error(ILLEGAL_FORM, "defclass", arg3);
@@ -1622,7 +1622,7 @@ int f_defclass(int arglist)
 	if (!listp(car(arg4)))
 	    error(ILLEGAL_FORM, "defclass", arg4);
 	ls = car(arg4);
-	if (eqp(car(ls), makesym(":ABSTRACTP"))) {
+	if (eqp(car(ls), make_sym(":ABSTRACTP"))) {
 	    abstractp = cadr(ls);
 	    if (length(ls) != 2)
 		error(ILLEGAL_FORM, "defclass", arg4);
@@ -1631,18 +1631,18 @@ int f_defclass(int arglist)
 	    if (abstractp_flag != UNDEF && abstractp != abstractp_flag)
 		error(ILLEGAL_FORM, "defclass", arg4);
 	    abstractp_flag = abstractp;
-	} else if (eqp(car(ls), makesym(":METACLASS"))) {
+	} else if (eqp(car(ls), make_sym(":METACLASS"))) {
 	    metaclass = cadr(ls);
 	    if (length(ls) != 2)
 		error(ILLEGAL_FORM, "defclass", arg4);
-	    if (!eqp(metaclass, makesym("<STANDARD-CLASS>")))
+	    if (!eqp(metaclass, make_sym("<STANDARD-CLASS>")))
 		error(ILLEGAL_FORM, "defclass", arg4);
 	} else {
 	    error(ILLEGAL_FORM, "defclass", ls);
 	}
 	arg4 = cdr(arg4);
     }
-    cl = makeclass(GET_NAME(arg1), sc);
+    cl = make_class(GET_NAME(arg1), sc);
     if (abstractp == T) {
 	SET_OPT(cl, ABSTRACT);	/* abstract-class */
     } else if (metaclass == T) {
@@ -1671,7 +1671,7 @@ int f_defgeneric(int arglist)
     if (symbolp(arg1) && (functionp(arg1) || subrp(arg1) || fsubrp(arg1))) {
 	error(CANT_MODIFY, "defgeneric", arg1);
     }
-    if (symbolp(arg1) && (genericp(arg1) && eqp(arg1, makesym("CREATE")))) {
+    if (symbolp(arg1) && (genericp(arg1) && eqp(arg1, make_sym("CREATE")))) {
 	error(CANT_MODIFY, "defgeneric", arg1);
     }
     if (symbolp(arg1)
@@ -1680,7 +1680,7 @@ int f_defgeneric(int arglist)
     }
     if (!symbolp(arg1)
 	&& (listp(arg1)
-	    && !(length(arg1) == 2 && eqp(car(arg1), makesym("SETF"))
+	    && !(length(arg1) == 2 && eqp(car(arg1), make_sym("SETF"))
 		 && symbolp(cadr(arg1))))) {
 	error(ILLEGAL_FORM, "defgeneric", arg1);
     }
@@ -1707,7 +1707,7 @@ int f_defgeneric(int arglist)
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
 
-    val = makegeneric(GET_NAME(arg1), arg2, arg3);
+    val = make_generic(GET_NAME(arg1), arg2, arg3);
     SET_CAR(arg1, val);
     return (arg1);
 }
@@ -1733,7 +1733,7 @@ int f_defgeneric_star(int arglist)
     if (!member(arg1, generic_list))
 	generic_list = hcons(arg1, generic_list);
 
-    val = makegeneric_star(arg2, arg3);
+    val = make_generic_star(arg2, arg3);
     SET_CAR(arg1, val);
     return (arg1);
 }
@@ -1760,7 +1760,7 @@ int f_defmethod(int arglist)
     }
     if (!symbolp(arg1)
 	&& (listp(arg1)
-	    && !(length(arg1) == 2 && eqp(car(arg1), makesym("SETF"))
+	    && !(length(arg1) == 2 && eqp(car(arg1), make_sym("SETF"))
 		 && symbolp(cadr(arg1))))) {
 	error(ILLEGAL_FORM, "defmethod", arg1);
     }
@@ -1788,7 +1788,7 @@ int f_defmethod(int arglist)
     }
 
     gen = generic_func = GET_CAR(arg1);
-    insert_method(makemethod(arg2), gen);
+    insert_method(make_method(arg2), gen);
     generic_func = NIL;
     return (arg1);
 }
@@ -1843,9 +1843,9 @@ int f_with_open_input_file(int arglist)
 	return NIL;
     }
     if (n == 2)
-	val = makestream(port, EISL_INPUT, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INPUT, Str_dup(fname, 1, 0, 1));
     else
-	val = makestream(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
     addlexenv(sym, val);
     res = f_progn(arg2);
@@ -1882,9 +1882,9 @@ int f_with_open_output_file(int arglist)
 	return NIL;
     }
     if (n == 2)
-	val = makestream(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1));
     else
-	val = makestream(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
     addlexenv(sym, val);
     res = f_progn(arg2);
@@ -1921,9 +1921,9 @@ int f_with_open_io_file(int arglist)
 	return NIL;
     }
     if (n == 2)
-	val = makestream(port, EISL_INOUT, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INOUT, Str_dup(fname, 1, 0, 1));
     else
-	val = makestream(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
     addlexenv(sym, val);
     res = f_progn(arg2);
@@ -2029,12 +2029,12 @@ int convert(int arg1, int arg2)
 	    return (arg1);
 	} else if (GET_AUX(arg2) == ccharacter) {
 	    ucs4_to_utf8(GET_INT(arg1), str);
-	    return (makechar(str));
+	    return (make_char(str));
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
 	    Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(arg1));
-	    return (makestr(str));
+	    return (make_str(str));
 	}
 	break;
     case LONGN:
@@ -2044,7 +2044,7 @@ int convert(int arg1, int arg2)
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
 	    Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
-	    return (makestr(str));
+	    return (make_str(str));
 	}
 	break;
     case BIGX:
@@ -2056,11 +2056,11 @@ int convert(int arg1, int arg2)
 	break;
     case CHR:
 	if (GET_AUX(arg2) == cinteger) {
-	    return (makeint(utf8_to_ucs4(GET_NAME(arg1))));
+	    return (make_int(utf8_to_ucs4(GET_NAME(arg1))));
 	} else if (GET_AUX(arg2) == csymbol) {
-	    return (makesym(GET_NAME(arg1)));
+	    return (make_sym(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == cstring) {
-	    return (makestr(GET_NAME(arg1)));
+	    return (make_str(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == ccharacter) {
 	    return (arg1);
 	}
@@ -2073,14 +2073,14 @@ int convert(int arg1, int arg2)
 
 	    x = GET_FLT(arg1);
 	    snprintf(str, SHORT_STRSIZE, "%g", x);
-	    return (makestr(str));
+	    return (make_str(str));
 	}
 	break;
     case SYM:
 	if (GET_AUX(arg2) == csymbol) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cstring) {
-	    return (makestr(GET_NAME(arg1)));
+	    return (make_str(GET_NAME(arg1)));
 	} else if (nullp(arg1) && GET_AUX(arg2) == cgeneral_vector) {
 	    return (vector(arg1));
 	} else if (nullp(arg1) && GET_AUX(arg2) == clist) {
@@ -2097,22 +2097,22 @@ int convert(int arg1, int arg2)
 	    if (bignumtoken(stok.buf)) {
 		return (makebigx(stok.buf));
 	    } else if (inttoken(stok.buf)) {
-		return (makeint(strtol(stok.buf, &e, 10)));
+		return (make_int(strtol(stok.buf, &e, 10)));
 	    } else if (bintoken(stok.buf)) {
-		return (makeint((int) strtol(stok.buf, &e, 2)));
+		return (make_int((int) strtol(stok.buf, &e, 2)));
 	    } else if (octtoken(stok.buf)) {
-		return (makeint((int) strtol(stok.buf, &e, 8)));
+		return (make_int((int) strtol(stok.buf, &e, 8)));
 	    } else if (dectoken(stok.buf)) {
-		return (makeint((int) strtol(stok.buf, &e, 10)));
+		return (make_int((int) strtol(stok.buf, &e, 10)));
 	    } else if (hextoken(stok.buf)) {
-		return (makeint((int) strtol(stok.buf, &e, 16)));
+		return (make_int((int) strtol(stok.buf, &e, 16)));
 	    }
 	    break;
 	} else if (GET_AUX(arg2) == cfloat) {
 	    if (flttoken(GET_NAME(arg1)))
-		return (makeflt(atof(GET_NAME(arg1))));
+		return (make_flt(atof(GET_NAME(arg1))));
 	} else if (GET_AUX(arg2) == csymbol) {
-	    return (makesym(GET_NAME(arg1)));
+	    return (make_sym(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == cgeneral_vector) {
 	    return (string_to_vector(arg1));
 	} else if (GET_AUX(arg2) == clist) {
@@ -2258,7 +2258,7 @@ int f_import(int arglist)
     char *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
     char *fname = library_file(str);
     if (access(fname, R_OK) != -1) {
-	f_load(list1(makestr(fname)));
+	f_load(list1(make_str(fname)));
 	goto cleanup;
     }
 
@@ -2267,7 +2267,7 @@ int f_import(int arglist)
     FREE(fname);
     fname = library_file(str);
     if (access(fname, R_OK) != -1) {
-	f_load(list1(makestr(fname)));
+	f_load(list1(make_str(fname)));
 	goto cleanup;
     }
     FREE(str);
@@ -2325,14 +2325,14 @@ int modulesubst(int addr, int module, int fname)
     else if (class_symbol_p(addr))
 	return (addr);
     else if (symbolp(addr)) {
-	if (!member(addr, fname) && !eqp(addr, makesym(":REST"))
-	    && !eqp(addr, makesym("&REST"))
-	    && !eqp(addr, makesym(":READER"))
-	    && !eqp(addr, makesym(":WRITER"))
-	    && !eqp(addr, makesym(":ACCESSOR"))
-	    && !eqp(addr, makesym(":BOUNDP"))
-	    && !eqp(addr, makesym(":INITFORM"))
-	    && !eqp(addr, makesym(":INITARG")))
+	if (!member(addr, fname) && !eqp(addr, make_sym(":REST"))
+	    && !eqp(addr, make_sym("&REST"))
+	    && !eqp(addr, make_sym(":READER"))
+	    && !eqp(addr, make_sym(":WRITER"))
+	    && !eqp(addr, make_sym(":ACCESSOR"))
+	    && !eqp(addr, make_sym(":BOUNDP"))
+	    && !eqp(addr, make_sym(":INITFORM"))
+	    && !eqp(addr, make_sym(":INITARG")))
 	    return (modulesubst1(addr, module));
 	else
 	    return (addr);
@@ -2363,7 +2363,7 @@ int modulesubst(int addr, int module, int fname)
 	else if ((symbolp(car(addr)))
 		 && (HAS_NAME(car(addr), "DEFPUBLIC")))
 	    return (cons
-		    (makesym("DEFUN"),
+		    (make_sym("DEFUN"),
 		     cons(cadr(addr),
 			  modulesubst(cddr(addr), module, fname))));
 	else if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "DEFUN")))
@@ -2406,7 +2406,7 @@ int modulesubst1(int x, int module)
     char str[SYMSIZE];
 
     Fmt_sfmt(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
-    return (makesym(str));
+    return (make_sym(str));
 }
 
 

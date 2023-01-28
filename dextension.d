@@ -20,6 +20,6 @@ f_getenv(int arglist)
     if (val == null) {
 	return NIL;
     } else {
-	return makestr(val);
+	return make_str(val);
     }
 }

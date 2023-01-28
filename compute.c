@@ -241,9 +241,9 @@ int plus(int arg1, int arg2)
 		l = (long long int) GET_INT(arg1) +
 		    (long long int) GET_INT(arg2);
 		if (SMALL_INT_MIN < l && l < SMALL_INT_MAX)
-		    return (makeint((int) l));
+		    return (make_int((int) l));
 		else
-		    return (makelong(l));
+		    return (make_long(l));
 	    }
 	case FLTN:
 	    {
@@ -253,7 +253,7 @@ int plus(int arg1, int arg2)
 		n = GET_INT(arg1);
 		x1 = (double) n;
 		y1 = GET_FLT(arg2);
-		return (makeflt(x1 + y1));
+		return (make_flt(x1 + y1));
 	    }
 	case LONGN:
 	    return (bigx_plus
@@ -297,13 +297,13 @@ int plus(int arg1, int arg2)
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
 		x2 = (double) s;
-		return (makeflt(x1 + x2));
+		return (make_flt(x1 + x2));
 	    }
 	case FLTN:
 	    {
 		x1 = GET_FLT(arg1);
 		x2 = GET_FLT(arg2);
-		return (makeflt(x1 + x2));
+		return (make_flt(x1 + x2));
 	    }
 	case LONGN:
 	    return (plus(arg1, exact_to_inexact(arg2)));
@@ -336,9 +336,9 @@ int minus(int arg1, int arg2)
 		l = (long long int) GET_INT(arg1) -
 		    (long long int) GET_INT(arg2);
 		if (SMALL_INT_MIN < l && l < SMALL_INT_MAX)
-		    return (makeint((int) l));
+		    return (make_int((int) l));
 		else
-		    return (makelong(l));
+		    return (make_long(l));
 	    }
 
 	case FLTN:
@@ -349,7 +349,7 @@ int minus(int arg1, int arg2)
 		n = GET_INT(arg1);
 		x1 = (double) n;
 		y1 = GET_FLT(arg2);
-		return (makeflt(x1 - y1));
+		return (make_flt(x1 - y1));
 	    }
 
 	case LONGN:
@@ -395,13 +395,13 @@ int minus(int arg1, int arg2)
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
 		x2 = (double) s;
-		return (makeflt(x1 - x2));
+		return (make_flt(x1 - x2));
 	    }
 	case FLTN:
 	    {
 		x1 = GET_FLT(arg1);
 		x2 = GET_FLT(arg2);
-		return (makeflt(x1 - x2));
+		return (make_flt(x1 - x2));
 	    }
 	case LONGN:
 	    return (minus(arg1, exact_to_inexact(arg2)));
@@ -434,7 +434,7 @@ int mult(int arg1, int arg2)
 		l2 = (long long int) GET_INT(arg2);
 		l = l1 * l2;
 		if (l < SMALL_INT_MAX && l > SMALL_INT_MIN)
-		    return (makeint((int) l));
+		    return (make_int((int) l));
 		else
 		    return (bigx_mult
 			    (bigx_int_to_big(arg1),
@@ -448,7 +448,7 @@ int mult(int arg1, int arg2)
 		n = GET_INT(arg1);
 		x1 = (double) n;
 		y1 = GET_FLT(arg2);
-		return (makeflt(x1 * y1));
+		return (make_flt(x1 * y1));
 	    }
 
 	case LONGN:
@@ -500,7 +500,7 @@ int mult(int arg1, int arg2)
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
 		x2 = (double) s;
-		return (makeflt(x1 * x2));
+		return (make_flt(x1 * x2));
 	    }
 	case FLTN:
 	    {
@@ -512,7 +512,7 @@ int mult(int arg1, int arg2)
 		if (x1 != 0.0 && x2 != 0.0 && y1 > -DBL_MIN
 		    && y1 < DBL_MIN)
 		    error(FLT_UNDERF, "*", list2(arg1, arg2));
-		return (makeflt(y1));
+		return (make_flt(y1));
 	    }
 	case LONGN:
 	case BIGX:
@@ -544,16 +544,16 @@ int quotient(int arg1, int arg2)
 		y1 = (double) s;
 		x2 = x1 / y1;
 		if ((x2 - floor(x2)) == 0.0)
-		    return (makeint((int) x2));
+		    return (make_int((int) x2));
 		else
-		    return (makeflt(x1 / y1));
+		    return (make_flt(x1 / y1));
 	    }
 	case FLTN:
 	    {
 		n = GET_INT(arg1);
 		x1 = (double) n;
 		y1 = GET_FLT(arg2);
-		return (makeflt(x1 / y1));
+		return (make_flt(x1 / y1));
 	    }
 
 	case LONGN:
@@ -592,9 +592,9 @@ int quotient(int arg1, int arg2)
 	    x1 = GET_FLT(n);
 	    x2 = x1 - ceil(x1);
 	    if (x1 == 1.0)
-		return (makeint(1));
+		return (make_int(1));
 	    else if (x1 == -1.0)
-		return (makeint(-1));
+		return (make_int(-1));
 	    else if (x2 == 0.0)
 		return (divide(arg1, arg2));
 	    else
@@ -610,13 +610,13 @@ int quotient(int arg1, int arg2)
 		x1 = GET_FLT(arg1);
 		s = GET_INT(arg2);
 		x2 = (double) s;
-		return (makeflt(x1 / x2));
+		return (make_flt(x1 / x2));
 	    }
 	case FLTN:
 	    {
 		x1 = GET_FLT(arg1);
 		x2 = GET_FLT(arg2);
-		return (makeflt(x1 / x2));
+		return (make_flt(x1 / x2));
 	    }
 	case LONGN:
 	case BIGX:
@@ -634,13 +634,13 @@ int divide(int x, int y)
 {
 
     if (integerp(x) && longnump(y))
-	return (makeint(0));
+	return (make_int(0));
     else if (integerp(x) && bignump(y))
-	return (makeint(0));
+	return (make_int(0));
     else if (longnump(x) && bignump(y))
-	return (makeint(0));
+	return (make_int(0));
     else if (integerp(x) && integerp(y))
-	return (makeint(GET_INT(x) / GET_INT(y)));
+	return (make_int(GET_INT(x) / GET_INT(y)));
     else if (longnump(x) && integerp(y))
 	return (long_int_div(x, y));
     else if (longnump(x) && longnump(y))
@@ -662,7 +662,7 @@ int s_remainder(int x, int y)
     int i;
 
     if (integerp(x) && integerp(y))
-	return (makeint(GET_INT(x) % GET_INT(y)));
+	return (make_int(GET_INT(x) % GET_INT(y)));
     else if (integerp(x) && longnump(y))
 	return (x);
     else if (integerp(x) && bignump(y))
@@ -696,7 +696,7 @@ int long_int_remainder(int x, int y)
     n = (long long int) GET_INT(y);
     r = m % n;
 
-    return (makeint((int) r));
+    return (make_int((int) r));
 }
 
 /* remainder of longnum and longnum. */
@@ -710,9 +710,9 @@ int long_long_remainder(int x, int y)
     r = m % n;
 
     if (llabs(r) < BIGNUM_BASE)
-	return (makeint((int) r));
+	return (make_int((int) r));
     else
-	return (makelong(r));
+	return (make_long(r));
 }
 
 /* divide of longnum and int. */
@@ -726,9 +726,9 @@ int long_int_div(int x, int y)
     q = m / n;
 
     if (llabs(q) < BIGNUM_BASE)
-	return (makeint((int) q));
+	return (make_int((int) q));
     else
-	return (makelong(q));
+	return (make_long(q));
 }
 
 /* divide of longnum and longnum */
@@ -742,21 +742,21 @@ int long_long_div(int x, int y)
     q = m / n;
 
     if (llabs(q) < BIGNUM_BASE)
-	return (makeint((int) q));
+	return (make_int((int) q));
     else
-	return (makelong(q));
+	return (make_long(q));
 }
 
 int absolute(int x)
 {
     if (integerp(x))
-	return (makeint(abs(GET_INT(x))));
+	return (make_int(abs(GET_INT(x))));
     else if (longnump(x))
-	return (makelong(llabs(GET_LONG(x))));
+	return (make_long(llabs(GET_LONG(x))));
     else if (bignump(x)) {
 	return (bigx_abs(x));
     } else if (floatp(x)) {
-	return (makeflt(fabs(GET_FLT(x))));
+	return (make_flt(fabs(GET_FLT(x))));
     }
     error(ILLEGAL_ARGS, "abs", x);
     return (UNDEF);
@@ -766,53 +766,53 @@ int angle(int y, int x)
 {
 
     if (positive_zerop(y) && positivep(x))
-	return (makeflt(0.0));
+	return (make_flt(0.0));
     else if (negative_zerop(y) && positivep(x))
-	return (makeflt(-0.0));
+	return (make_flt(-0.0));
     else if (positivep(y) && positivep(x))
-	return (makeflt
+	return (make_flt
 		(atan
 		 (GET_FLT(exact_to_inexact(y)) /
 		  GET_FLT(exact_to_inexact(x)))));
     else if (positivep(y) && zerop(x))
-	return (makeflt(M_PI_2));
+	return (make_flt(M_PI_2));
     else if (positivep(y) && negativep(x))
-	return (makeflt
+	return (make_flt
 		(M_PI +
 		 atan(GET_FLT(exact_to_inexact(y)) /
 		      GET_FLT(exact_to_inexact(x)))));
     else if (positive_zerop(y) && negativep(x))
-	return (makeflt(M_PI));
+	return (make_flt(M_PI));
     else if (negative_zerop(y) && negativep(x))
-	return (makeflt(-M_PI));
+	return (make_flt(-M_PI));
     else if (negativep(y) && negativep(x))
-	return (makeflt
+	return (make_flt
 		(-M_PI +
 		 atan(GET_FLT(exact_to_inexact(y)) /
 		      GET_FLT(exact_to_inexact(x)))));
     else if (negativep(y) && zerop(x))
-	return (makeflt(-M_PI_2));
+	return (make_flt(-M_PI_2));
     else if (negativep(y) && positivep(x))
-	return (makeflt
+	return (make_flt
 		(atan
 		 (GET_FLT(exact_to_inexact(y)) /
 		  GET_FLT(exact_to_inexact(x)))));
     else if (zerop(y) && positivep(x))
-	return (makeflt(0.0));
+	return (make_flt(0.0));
     else if (zerop(y) && negativep(x))
-	return (makeflt(M_PI));
+	return (make_flt(M_PI));
     else if (positive_zerop(y) && positive_zerop(x))
-	return (makeflt(+0.0));
+	return (make_flt(+0.0));
     else if (negative_zerop(y) && positive_zerop(x))
-	return (makeflt(-0.0));
+	return (make_flt(-0.0));
     else if (positive_zerop(y) && negative_zerop(x))
-	return (makeflt(M_PI));
+	return (make_flt(M_PI));
     else if (negative_zerop(y) && negative_zerop(x))
-	return (makeflt(-M_PI));
+	return (make_flt(-M_PI));
     else if (positive_zerop(y) && zerop(x))
-	return (makeflt(M_PI_2));
+	return (make_flt(M_PI_2));
     else if (negative_zerop(y) && zerop(x))
-	return (makeflt(-M_PI_2));
+	return (make_flt(-M_PI_2));
     else {
 	error(ILLEGAL_ARGS, "angle", list2(x, y));
 	return (UNDEF);
@@ -839,18 +839,18 @@ int int_gcd(int x, int y)
 int gcd(int x, int y)
 {
     if (integerp(x) && integerp(y))
-	return (makeint(abs(int_gcd(GET_INT(x), GET_INT(y)))));
+	return (make_int(abs(int_gcd(GET_INT(x), GET_INT(y)))));
 
     else if (floatp(x) && integerp(y))
-	return (makeflt
+	return (make_flt
 		((double) abs(int_gcd((int) GET_FLT(x), GET_INT(y)))));
 
     else if (integerp(x) && floatp(y))
-	return (makeflt
+	return (make_flt
 		((double) abs(int_gcd(GET_INT(x), (int) GET_FLT(y)))));
 
     else if (floatp(x) && floatp(y))
-	return (makeflt
+	return (make_flt
 		((double) abs(int_gcd(GET_FLT(x), (int) GET_FLT(y)))));
 
     while (!zerop(y)) {
@@ -880,18 +880,18 @@ int lcm(int x, int y)
     if (integerp(x) && integerp(y) && abs(GET_INT(x)) < 10000
 	&& abs(GET_INT(y)) < 10000)
 	// because  x,y < sqrt(BIGNUM_BASE)
-	return (makeint(abs(int_lcm(GET_INT(x), GET_INT(y)))));
+	return (make_int(abs(int_lcm(GET_INT(x), GET_INT(y)))));
 
     else if (floatp(x) && integerp(y))
-	return (makeflt
+	return (make_flt
 		((double) abs(int_lcm((int) GET_FLT(x), GET_INT(y)))));
 
     else if (integerp(x) && floatp(y))
-	return (makeflt
+	return (make_flt
 		((double) abs(int_lcm(GET_INT(x), (int) GET_FLT(y)))));
 
     else if (floatp(x) && floatp(y))
-	return (makeflt
+	return (make_flt
 		((double) abs(int_lcm(GET_FLT(x), (int) GET_FLT(y)))));
 
     else {
@@ -923,7 +923,7 @@ int isqrt2(int n, int init)
     s = init;
     while (greaterp(mult(s, s), n)) {
 	//print(s);printf("\n");
-	s = divide(plus(s, divide(n, s)), makeint(2));
+	s = divide(plus(s, divide(n, s)), make_int(2));
     }
     return (s);
 }
@@ -984,7 +984,7 @@ int isqrt4(int x)
     p = p / 2;
 
     init = bigx_shift_left(x, p);
-    init = plus(isqrt3(init), makeint(1));
+    init = plus(isqrt3(init), make_int(1));
     init = bigx_shift_right(init, p / 2);
 
     return (isqrt2(x, init));
@@ -995,14 +995,14 @@ int isqrt4(int x)
 int isqrt(int x)
 {
     if (integerp(x))
-	return (makeint(floor(sqrt(GET_INT(x)))));
+	return (make_int(floor(sqrt(GET_INT(x)))));
     else if (floatp(x))
-	return (makeint(floor(sqrt(GET_FLT(x)))));
+	return (make_int(floor(sqrt(GET_FLT(x)))));
     else if (longnump(x)) {
 	long long int n, init;
 	n = GET_LONG(x);
 	init = (long long int) sqrt(n) + 1;
-	return (makeint((int) isqrt1(n, init)));
+	return (make_int((int) isqrt1(n, init)));
     } else {
 	if (get_length(x) < 100)
 	    return (isqrt3(x));

@@ -1152,7 +1152,7 @@ int f_throw(int arglist)
 
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "throw", tag);
-    if (GET_OPT(tag) == 0)	// tag opt has 1~4
+    if (GET_OPT(tag) == 0)	/* tag opt has 1~4 */
 	error(UNDEF_TAG, "throw", tag);
     if (GET_PROP(tag) == 0)
 	error(CTRL_OVERF, "throw", NIL);
@@ -1164,7 +1164,7 @@ int f_throw(int arglist)
     catch_arg = eval(arg2);
     i = GET_PROP(tag);
     SET_PROP(tag, i - 1);
-    ep = catch_env[GET_OPT(tag) - 1][i - 1];	// restore environment
+    ep = catch_env[GET_OPT(tag) - 1][i - 1];	/* restore environment */
     longjmp(catch_buf[GET_OPT(tag) - 1][i - 1], 1);
 }
 
@@ -1190,7 +1190,7 @@ int f_tagbody(int arglist)
 	    tagbody_tag = NIL;
 	    eval(prog[tb_line]);
 	    tb_line++;
-	    // when go was evaled
+	    /* when go was evaled */
 	    if (tagbody_tag != NIL) {
 		for (i = 0; i < end; i++) {
 		    if (tagbody_tag == prog[i]) {
@@ -1239,8 +1239,7 @@ int f_unwind_protect(int arglist)
     if (improper_list_p(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
 
-    unwind_buf[unwind_pt] = makefunc("", cons(NIL, args));	// make
-    // thunk
+    unwind_buf[unwind_pt] = makefunc("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
     res = eval(arg1);
     if (unwind_pt > 0) {
@@ -1355,10 +1354,10 @@ int f_defclass(int arglist)
 	arg3, arg4, sc, var, val, cl, form, initargs, abstractp, metaclass,
 	save;
 
-    arg1 = car(arglist);	// class-name
-    arg2 = cadr(arglist);	// super-class
-    arg3 = caddr(arglist);	// slot-spec
-    arg4 = cdddr(arglist);	// class-opt
+    arg1 = car(arglist);	/* class-name */
+    arg2 = cadr(arglist);	/* super-class */
+    arg3 = caddr(arglist);	/* slot-spec */
+    arg4 = cdddr(arglist);	/* class-opt */
 
     if (!symbolp(arg1))
 	error(NOT_SYM, "defclass", arg1);
@@ -1387,17 +1386,15 @@ int f_defclass(int arglist)
 
     sc = arg2;
     if (subclassp(GET_AUX(arg1), cobject))
-	redef_flag = true;	// flag for check redefinition of class
+	redef_flag = true;	/* flag for check redefinition of class */
 
     var = NIL;
     val = UNDEF;
     initargs = NIL;
     save = ignore_topchk;
-    ignore_topchk = true;	// ignore toplevel check for defgeneric
-    // defmethod
-    SET_AUX(arg1, USER);	// temporary set USER to avoid undef
-    // entity error of defmethod 
-    // finaly set-aux formal class 
+    ignore_topchk = true;	/* ignore toplevel check for defgeneric defmethod */
+    SET_AUX(arg1, USER);	/* temporary set USER to avoid undef entity error of defmethod 
+                              finaly set-aux formal class */ 
     while (!nullp(arg3)) {
 	int sym,
 	    ls,
@@ -1409,8 +1406,7 @@ int f_defclass(int arglist)
 	initarg = NIL;
 	initform_flag = initarg_flag = 0;
 	if (!listp(car(arg3)))
-	    arg3 = list1(arg3);	// if form=(a :reader a-read) => ((a
-	// :reader a-read))
+	    arg3 = list1(arg3);	/* if form=(a :reader a-read) => ((a :reader a-read)) */
 	sym = caar(arg3);
 	if ((STRING_REF(sym, 0) == '&') || (STRING_REF(sym, 0) == ':'))
 	    error(IMPROPER_FORM, "defclass", sym);
@@ -1428,12 +1424,13 @@ int f_defclass(int arglist)
 		if (symbolp(reader) && STRING_REF(reader, 0) == ':') {
 		    error(IMPROPER_FORM, "defclass", arg3);
 		}
-		// (if (not (generic-function-p (function* name)))
-		// (defgeneric name (x)))
-		// (defmethod name ((x arg1))
-		// (let ((y (slot-value x 'var))) (if (dummyp y) (cerror
-		// "undefined" "reader")) y))
-		// (set-property 1 'reader 'read))
+		/*
+		 * (if (not (generic-function-p (function* name)))
+		 *     (defgeneric name (x)))
+		 * (defmethod name ((x arg1))
+		 *    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y))
+		 *    (set-property 1 'reader 'read))
+		*/
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1474,10 +1471,12 @@ int f_defclass(int arglist)
 		if (symbolp(writer) && STRING_REF(writer, 0) == ':') {
 		    error(IMPROPER_FORM, "defclass", arg3);
 		}
-		// (if (not (generic-function-p (function* name)))
-		// (defgeneric name (x y)))
-		// (defmethod name (x (y arg1))
-		// (setf (slot-value y 'var) x))
+		/*
+		 * (if (not (generic-function-p (function* name)))
+		 * (defgeneric name (x y)))
+		 * (defmethod name (x (y arg1))
+		 *     (setf (slot-value y 'var) x))
+		*/
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1503,13 +1502,14 @@ int f_defclass(int arglist)
 		if (symbolp(accessor) && STRING_REF(accessor, 0) == ':') {
 		    error(IMPROPER_FORM, "defclass", arg3);
 		}
-		// (if (not (generic-function-p (function* name)))
-		// (defgeneric name (x)))
-		// (defmethod name ((x arg1))
-		// (let ((y (slot-value x 'var))) (if (dummyp y) (error
-		// "undefined" "accessor") y)))
-		// (defmethod name ((x <null>)) for setf syntax
-		// 'var)
+		/*
+		 * (if (not (generic-function-p (function* name)))
+		 *     (defgeneric name (x)))
+		 * (defmethod name ((x arg1))
+		 *     (let ((y (slot-value x 'var))) (if (dummyp y) (error "undefined" "accessor") y)))
+		 * (defmethod name ((x <null>)) for setf syntax
+		 *     'var)
+		*/
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1550,10 +1550,12 @@ int f_defclass(int arglist)
 		if (symbolp(boundp) && STRING_REF(boundp, 0) == ':') {
 		    error(IMPROPER_FORM, "defclass", arg3);
 		}
-		// (if (not (generic-function-p (function* name)))
-		// (defgeneric name (x)))
-		// (defmethod name ((x arg1))
-		// (not (dummyp (slot-value x 'var))))
+		/*
+		 * (if (not (generic-function-p (function* name)))
+		 * (defgeneric name (x)))
+		 * (defmethod name ((x arg1))
+		 *     (not (dummyp (slot-value x 'var))))
+		*/
 		form = list3(makesym("IF"),
 			     list2(makesym("NOT"),
 				   list2(makesym("GENERIC-FUNCTION-P"),
@@ -1641,16 +1643,16 @@ int f_defclass(int arglist)
     }
     cl = makeclass(GET_NAME(arg1), sc);
     if (abstractp == T) {
-	SET_OPT(cl, ABSTRACT);	// abstract-class;
+	SET_OPT(cl, ABSTRACT);	/* abstract-class */
     } else if (metaclass == T) {
-	SET_OPT(cl, METACLASS);	// meta-class;
+	SET_OPT(cl, METACLASS);	/* meta-class */
     } else {
-	SET_OPT(cl, USER);	// standard-class;
+	SET_OPT(cl, USER);	/* standard-class */
     }
     SET_CDR(cl, var);
     SET_AUX(cl, initargs);
     SET_AUX(arg1, cl);
-    ignore_topchk = save;	// restore toplevel check;
+    ignore_topchk = save;	/* restore toplevel check */
     return (arg1);
 }
 
@@ -1659,9 +1661,9 @@ int f_defgeneric(int arglist)
 {
     int arg1, arg2, arg3, val;
 
-    arg1 = car(arglist);	// func-name
-    arg2 = cadr(arglist);	// lambda-list
-    arg3 = cddr(arglist);	// body
+    arg1 = car(arglist);	/* func-name */
+    arg2 = cadr(arglist);	/* lambda-list */
+    arg3 = cddr(arglist);	/*  body */
     if (symbolp(arg1) && GET_OPT(arg1) == CONSTN) {
 	error(CANT_MODIFY, "defgeneric", arg1);
     }
@@ -1696,7 +1698,7 @@ int f_defgeneric(int arglist)
     if (!top_flag && !ignore_topchk) {
 	error(NOT_TOP_LEVEL, "defgeneric", arglist);
     }
-    // when (defgeneric (set foo) ...)
+    /* when (defgeneric (set foo) ...) */
     if (listp(arg1)) {
 	arg1 = cadr(arg1);
     }
@@ -1713,9 +1715,9 @@ int f_defgeneric_star(int arglist)
 {
     int arg1, arg2, arg3, val;
 
-    arg1 = car(arglist);	// func-name
-    arg2 = cadr(arglist);	// lambda-list
-    arg3 = cddr(arglist);	// body
+    arg1 = car(arglist);	/* func-name */
+    arg2 = cadr(arglist);	/* lambda-list */
+    arg3 = cddr(arglist);	/* body */
     if (!symbolp(arg1))
 	error(NOT_SYM, "defgeneric", arg1);
     if (GET_OPT(arg1) == CONSTN)
@@ -1742,8 +1744,8 @@ int f_defmethod(int arglist)
 {
     int arg1, arg2, gen;
 
-    arg1 = car(arglist);	// method-name
-    arg2 = cdr(arglist);	// parameter-profile
+    arg1 = car(arglist);	/* method-name */
+    arg2 = cdr(arglist);	/* parameter-profile */
 
     if (symbolp(arg1) && (subrp(arg1) || fsubrp(arg1))) {
 	error(CANT_MODIFY, "defmethod", arg1);
@@ -1761,7 +1763,7 @@ int f_defmethod(int arglist)
 		 && symbolp(cadr(arg1))))) {
 	error(ILLEGAL_FORM, "defmethod", arg1);
     }
-    // when (defmethod (set foo) ...)
+    /* when (defmethod (set foo) ...) */
     if (listp(arg1)) {
 	arg1 = cadr(arg1);
     }
@@ -1776,20 +1778,14 @@ int f_defmethod(int arglist)
     if (listp(car(arg2)) && undef_parameter_p(car(arg2))) {
 	error(UNDEF_CLASS, "defmethod", arg2);
     }
-    // if method-qualifier and method-combination of generic-function is
-    // NIL -> error
+    /* if method-qualifier and method-combination of generic-function is NIL -> error */
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
 	&& GET_PROP(GET_CAR(arg1)) == NIL)
 	error(IMPROPER_ARGS, "defmethod", arg2);
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
 	error(IMPROPER_ARGS, "defmethod", arg2);
     }
-    // tests/ilos2.o error comment out
-    // if (!top_flag && !ignore_topchk) {
-    // error(NOT_TOP_LEVEL, "defmethod", arglist);
-    // }
-
-
+    
     gen = generic_func = GET_CAR(arg1);
     insert_method(makemethod(arg2), gen);
     generic_func = NIL;
@@ -1827,9 +1823,9 @@ int f_with_open_input_file(int arglist)
 	error(NOT_EXIST_ARG, "with-open-input-file", NIL);
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    sym = car(arg1);		// stream-name
-    str = eval(cadr(arg1));	// file-name
-    n = length(arg1);		// check element
+    sym = car(arg1);		/* stream-name */
+    str = eval(cadr(arg1));	/* file-name */
+    n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
 	error(ILLEGAL_FORM, "with-input-file", arg1);
     if (!symbolp(sym))
@@ -1866,9 +1862,9 @@ int f_with_open_output_file(int arglist)
 	error(NOT_EXIST_ARG, "with-open-output-file", NIL);
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    sym = car(arg1);		// stream-name
-    str = eval(cadr(arg1));	// file-name
-    n = length(arg1);		// check element
+    sym = car(arg1);		/* stream-name */
+    str = eval(cadr(arg1));	/* file-name */
+    n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
 	error(ILLEGAL_FORM, "with-open-output-file", arg1);
     if (!symbolp(sym))
@@ -1905,9 +1901,9 @@ int f_with_open_io_file(int arglist)
 	error(NOT_EXIST_ARG, "with-open-io-file", NIL);
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    sym = car(arg1);		// stream-name
-    str = eval(cadr(arg1));	// file-name
-    n = length(arg1);		// check element
+    sym = car(arg1);		/* stream-name */
+    str = eval(cadr(arg1));	/* file-name */
+    n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
 	error(ILLEGAL_FORM, "with-open-io-file", arg1);
     if (!symbolp(sym))
@@ -2289,8 +2285,8 @@ int f_defmodule(int arglist)
 {
     int arg1, arg2, exports;
 
-    arg1 = car(arglist);	// module name
-    arg2 = cdr(arglist);	// body
+    arg1 = car(arglist);	/* module name */
+    arg2 = cdr(arglist);	/* body */
     exports = NIL;
     ignore_topchk = true;
     while (!nullp(arg2)) {

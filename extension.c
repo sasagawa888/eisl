@@ -72,7 +72,7 @@ void initexsubr(void)
 
 }
 
-// Fast Project
+/* Fast Project */
 int f_classp(int arglist)
 {
     int arg1;
@@ -132,9 +132,7 @@ int f_get_method_priority(int arglist)
 	error(ILLEGAL_ARGS, "eisl-get-method-priority", arg1);
 
     return (makeint(GET_OPT(arg1) + 1));
-    /*
-     * 11=:around  12=:befor 13=:primary 14=:arter
-     */
+    /* 11=:around  12=:befor 13=:primary 14=:arter */
 }
 
 
@@ -833,7 +831,7 @@ int f_try(int arglist)
 	    arg3 = cdr(arg3);
 	    bit--;
 	}
-	if (c >= 32 && c < 127)	//ommit control code and unicode 
+	if (c >= 32 && c < 127)	/* ommit control code and unicode */ 
 	{
 	    str[pos] = c;
 	    pos++;

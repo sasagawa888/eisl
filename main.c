@@ -449,6 +449,7 @@ int readc(void)
 	    c = EOF;
 	    SET_CDR(input_stream, GET_CDR(input_stream) - 1);
 	}
+	return(c);
     } else if (input_stream == standard_input && repl_flag)
 	/* REPL-mode and standard-input */
 	c = read_line(1);

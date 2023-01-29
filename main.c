@@ -433,24 +433,30 @@ void signal_handler_c(int signo __unused)
 
 
 /* -------read()-------- */
+int string_readc(int stm)
+{
+    int c;
+
+    c = GET_NAME(input_stream)[GET_CDR(input_stream)];
+    SET_CDR(input_stream, GET_CDR(input_stream) + 1);
+    if (c == '\\') {
+	c = GET_NAME(input_stream)[GET_CDR(input_stream)];
+	SET_CDR(input_stream, GET_CDR(input_stream) + 1);
+    } else if (c == NUL) {
+	c = EOF;
+	SET_CDR(input_stream, GET_CDR(input_stream) - 1);
+    }
+    return (c);
+}
+
 int readc(void)
 {
     int c;
 
     if (string_input_stream_p(input_stream))
 	/* string-input-stream */
-    {
-	c = GET_NAME(input_stream)[GET_CDR(input_stream)];
-	SET_CDR(input_stream, GET_CDR(input_stream) + 1);
-	if (c == '\\') {
-	    c = GET_NAME(input_stream)[GET_CDR(input_stream)];
-	    SET_CDR(input_stream, GET_CDR(input_stream) + 1);
-	} else if (c == NUL) {
-	    c = EOF;
-	    SET_CDR(input_stream, GET_CDR(input_stream) - 1);
-	}
-	return(c);
-    } else if (input_stream == standard_input && repl_flag)
+	return (string_readc(input_stream));
+    else if (input_stream == standard_input && repl_flag)
 	/* REPL-mode and standard-input */
 	c = read_line(1);
     else {
@@ -461,7 +467,7 @@ int readc(void)
 	    greeting_flag = false;
 	    putchar('\n');
 	    RAISE(Exit_Interp);
-	} else if(script_flag)
+	} else if (script_flag)
 	    /* on script-mode only retrun c */
 	    return (c);
 

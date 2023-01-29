@@ -78,7 +78,7 @@ void mark_cell(int addr)
     case CHR:
     case STR:
     case STREAM:
-    case BIGX:
+    case BIGN:
 	return;
     case VEC:
 	n = vector_length(addr);
@@ -341,7 +341,7 @@ int copy_work(int x)
 	return (copy_flt(x));
     case LONGN:
 	return (copy_long(x));
-    case BIGX:
+    case BIGN:
 	return (copy_bignum(x));
     case VEC:
 	return (copy_vec(x));
@@ -560,7 +560,7 @@ int copy_bignum(int x)
 
     sign = get_sign(x);
     addr = copy_gen_big();
-    SET_TAG(addr, BIGX);
+    SET_TAG(addr, BIGN);
     set_sign(addr, sign);
     SET_AUX(addr, cbignum);
     return (addr);
@@ -576,7 +576,7 @@ int copy_gen_big(void)
     int addr;
 
     addr = freshcell();
-    SET_TAG(addr, BIGX);
+    SET_TAG(addr, BIGN);
     SET_AUX(addr, cbignum);
     return (addr);
 }

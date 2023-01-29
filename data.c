@@ -34,7 +34,7 @@ int atomp(int addr)
 int numberp(int addr)
 {
     if (IS_INTEGER(addr) || IS_FLOAT(addr) || IS_LONGNUM(addr)
-	|| IS_BIGXNUM(addr))
+	|| IS_BIGNNUM(addr))
 	return (1);
     else
 	return (0);
@@ -50,7 +50,7 @@ int integerp(int x)
 
 int bignump(int x)
 {
-    if (IS_BIGXNUM(x))
+    if (IS_BIGNNUM(x))
 	return (1);
     else
 	return (0);
@@ -74,7 +74,7 @@ int floatp(int x)
 
 int math_integerp(int addr)
 {
-    if (IS_INTEGER(addr) || IS_LONGNUM(addr) || IS_BIGXNUM(addr))
+    if (IS_INTEGER(addr) || IS_LONGNUM(addr) || IS_BIGNNUM(addr))
 	return (1);
     else
 	return (0);

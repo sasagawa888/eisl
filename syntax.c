@@ -2047,7 +2047,7 @@ int convert(int arg1, int arg2)
 	    return (make_str(str));
 	}
 	break;
-    case BIGX:
+    case BIGN:
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg2);
 	} else if (GET_AUX(arg2) == cfloat) {

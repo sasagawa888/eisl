@@ -291,7 +291,7 @@ static inline int Fsetcatchsymbols(int x)
 
 static inline int Fbigxtoparmanent(int x)
 {
-    return f1[BIGXTOPARMANENT_IDX] (x);
+    return f1[BIGNTOPARMANENT_IDX] (x);
 }
 
 static inline int Fset_error_handler(int x)

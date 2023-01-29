@@ -26,7 +26,7 @@ int exact_to_inexact(int x)
 	val = (double) GET_LONG(x);
 	SET_FLT(res, val);
 	return (res);
-    case BIGX:
+    case BIGN:
 	return (big_big_to_flt(x));
     case FLTN:
 	return (x);
@@ -258,7 +258,7 @@ int plus(int arg1, int arg2)
 	case LONGN:
 	    return (big_plus
 		    (big_int_to_big(arg1), big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_plus(big_int_to_big(arg1), arg2));
 	}
 	break;
@@ -272,11 +272,11 @@ int plus(int arg1, int arg2)
 	case LONGN:
 	    return (big_plus
 		    (big_long_to_big(arg1), big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_plus(big_long_to_big(arg1), arg2));
 	}
 	break;
-    case BIGX:
+    case BIGN:
 	switch (tag2) {
 	case INTN:
 	    return (big_plus(arg1, big_int_to_big(arg2)));
@@ -284,7 +284,7 @@ int plus(int arg1, int arg2)
 	    return (plus(exact_to_inexact(arg1), arg2));
 	case LONGN:
 	    return (big_plus(arg1, big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_plus(arg1, arg2));
 	}
 	break;
@@ -307,7 +307,7 @@ int plus(int arg1, int arg2)
 	    }
 	case LONGN:
 	    return (plus(arg1, exact_to_inexact(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (plus(arg1, exact_to_inexact(arg2)));
 	}
 	break;
@@ -356,7 +356,7 @@ int minus(int arg1, int arg2)
 	    return (big_minus(big_int_to_big(arg1),
 			       big_long_to_big(arg2)));
 
-	case BIGX:
+	case BIGN:
 	    return (big_minus(big_int_to_big(arg1), arg2));
 	}
 	break;
@@ -370,11 +370,11 @@ int minus(int arg1, int arg2)
 	case LONGN:
 	    return (big_minus
 		    (big_long_to_big(arg1), big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_minus(big_long_to_big(arg1), arg2));
 	}
 	break;
-    case BIGX:
+    case BIGN:
 	switch (tag2) {
 	case INTN:
 	    return (big_minus(arg1, big_int_to_big(arg2)));
@@ -382,7 +382,7 @@ int minus(int arg1, int arg2)
 	    return (minus(exact_to_inexact(arg1), arg2));
 	case LONGN:
 	    return (big_minus(arg1, big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_minus(arg1, arg2));
 	}
 	break;
@@ -405,7 +405,7 @@ int minus(int arg1, int arg2)
 	    }
 	case LONGN:
 	    return (minus(arg1, exact_to_inexact(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (minus(arg1, exact_to_inexact(arg2)));
 	}
 	break;
@@ -458,7 +458,7 @@ int mult(int arg1, int arg2)
 	    else
 		return (arg1);	/* int 0 */
 
-	case BIGX:
+	case BIGN:
 	    return (big_mult(arg2, big_int_to_big(arg1)));
 	}
 	break;
@@ -475,11 +475,11 @@ int mult(int arg1, int arg2)
 	case LONGN:
 	    return (big_mult
 		    (big_long_to_big(arg1), big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_mult(big_long_to_big(arg1), arg2));
 	}
 	break;
-    case BIGX:
+    case BIGN:
 	switch (tag2) {
 	case INTN:
 	    return (big_mult_i(arg1, arg2));
@@ -487,7 +487,7 @@ int mult(int arg1, int arg2)
 	    return (mult(exact_to_inexact(arg1), arg2));
 	case LONGN:
 	    return (big_mult(arg1, big_long_to_big(arg2)));
-	case BIGX:
+	case BIGN:
 	    return (big_mult(arg1, arg2));
 	}
 	break;
@@ -515,7 +515,7 @@ int mult(int arg1, int arg2)
 		return (make_flt(y1));
 	    }
 	case LONGN:
-	case BIGX:
+	case BIGN:
 	    return (mult(arg1, exact_to_inexact(arg2)));
 	}
 	break;
@@ -557,7 +557,7 @@ int quotient(int arg1, int arg2)
 	    }
 
 	case LONGN:
-	case BIGX:
+	case BIGN:
 	    if (GET_INT(arg1) == 0)
 		return (arg1);
 	    else
@@ -576,18 +576,18 @@ int quotient(int arg1, int arg2)
 		return (divide(arg1, arg2));
 	    } else
 		return (n);
-	case BIGX:
+	case BIGN:
 	    return (quotient
 		    (exact_to_inexact(arg1), exact_to_inexact(arg2)));
 	case FLTN:
 	    return (quotient(exact_to_inexact(arg1), arg2));
 	}
 	break;
-    case BIGX:
+    case BIGN:
 	switch (tag2) {
 	case INTN:
 	case LONGN:
-	case BIGX:
+	case BIGN:
 	    n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
 	    x1 = GET_FLT(n);
 	    x2 = x1 - ceil(x1);
@@ -619,7 +619,7 @@ int quotient(int arg1, int arg2)
 		return (make_flt(x1 / x2));
 	    }
 	case LONGN:
-	case BIGX:
+	case BIGN:
 	    return (quotient(arg1, exact_to_inexact(arg2)));
 
 	}

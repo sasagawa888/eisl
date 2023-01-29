@@ -323,7 +323,7 @@ void dynamic_link(int x)
     init_f1(GETPROP_IDX, get_prop);
     init_f1(SETDYNPT_IDX, set_dynpt);
     init_f1(SETCATCHSYMBOLS_IDX, set_catch_symbols);
-    init_f1(BIGXTOPARMANENT_IDX, big_to_parmanent);
+    init_f1(BIGNTOPARMANENT_IDX, big_to_parmanent);
     init_f1(SET_ERROR_HANDLER_IDX, set_error_handler);
 
     /* argument-2 type */

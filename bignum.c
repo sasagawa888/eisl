@@ -12,7 +12,7 @@
 *  
    bigcell[int]                  heap[cell structure]
    |(temporarly)|               |          |
-   |LSB  ^      |      |-------<|BIGX(car) |
+   |LSB  ^      |      |-------<|BIGN(car) |
    |     |      |      |        |          |
    |MSB         |<------        |          |
    |(working)   | big_pt0       |          |
@@ -136,7 +136,7 @@ int make_big(char *bignum)
 	SET_AUX(res, clongnum);
 	return (res);
     } else {
-	SET_TAG(res, BIGX);
+	SET_TAG(res, BIGN);
 	set_pointer(res, big_pt1 - 1);
 	set_length(res, len);
 	set_sign(res, sign);
@@ -203,7 +203,7 @@ int gen_big(void)
     int res;
 
     res = freshcell();
-    SET_TAG(res, BIGX);
+    SET_TAG(res, BIGN);
     SET_AUX(res, cbignum);
     return (res);
 }

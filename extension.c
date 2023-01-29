@@ -258,7 +258,7 @@ int f_bignump(int arglist)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "bignump", arglist);
-    if (IS_BIGXNUM(arg1))
+    if (IS_BIGNNUM(arg1))
 	return (T);
     else
 	return (NIL);
@@ -678,8 +678,8 @@ void cellprint(int addr)
     case LONGN:
 	Fmt_print("LONGN  %D\n", GET_LONG(addr));
 	break;
-    case BIGX:
-	Fmt_print("BIGX   %d\n", GET_CAR(addr));
+    case BIGN:
+	Fmt_print("BIGN   %d\n", GET_CAR(addr));
 	break;
     case SYM:
 	Fmt_print("SYM    %07d %07d %07d %s\n", GET_CAR(addr),

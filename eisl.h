@@ -100,7 +100,7 @@ static const int BIGNUM_WORK = BIGSIZE * 5 / 10;	// from 50% to 90% of bigcell a
 static const int BIGNUM_PARMA = BIGSIZE * 9 / 10;	//from 90% to 100% of bigcell area is parmanent area
 #endif
 
-typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGX, VEC, ARR, CHR, STR,
+typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGN, VEC, ARR, CHR, STR,
 	SYM,
     LIS, DUMMY,
     SUBR, FSUBR, FUNC, MACRO, CLASS, INSTANCE, GENERIC, METHOD,
@@ -409,7 +409,7 @@ static inline bool IS_INTEGER(int addr)
     return !CELLRANGE(addr);
 }
 
-DEF_PREDICATE(BIGXNUM, BIGX)
+DEF_PREDICATE(BIGNNUM, BIGN)
     DEF_PREDICATE(LONGNUM, LONGN)
     DEF_PREDICATE(FLOAT, FLTN)
     DEF_PREDICATE(LIST, LIS)

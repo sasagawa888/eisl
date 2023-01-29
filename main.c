@@ -1269,7 +1269,7 @@ void print(int addr)
     case LONGN:
 	print_long(addr);
 	break;
-    case BIGX:
+    case BIGN:
 	print_big(addr);
 	break;
     case VEC:

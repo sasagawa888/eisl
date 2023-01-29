@@ -22,8 +22,8 @@ int gbc(void)
 	int addr;
 
 	DBG_PRINTF("enter M&S-GC free=%d\n", fc);
-	gbcmark();
-	gbcsweep();
+	gbc_mark();
+	gbc_sweep();
 	fc = 0;
 	for (addr = 0; addr < CELLSIZE; addr++)
 	    if (IS_EMPTY(addr))
@@ -35,7 +35,7 @@ int gbc(void)
 	} else {
 	    DBG_PRINTF("enter COPY-GC free=%d\n", CELLSIZE - wp);
 	}
-	copygbc();
+	copy_gbc();
 	if (area_sw == 1) {
 	    DBG_PRINTF("exit  COPY-GC free=%d\n", WORK2 - wp);
 	} else {
@@ -56,7 +56,7 @@ static inline bool USED_CELL(int addr)
     return (heap[addr].flag == USE);
 }
 
-void markcell(int addr)
+void mark_cell(int addr)
 {
     int i, m, n, x;
 
@@ -81,7 +81,7 @@ void markcell(int addr)
 	n = vector_length(addr);
 	for (i = 0; i < n; i++) {
 	    x = GET_VEC_ELT(addr, i);
-	    markcell(x);
+	    mark_cell(x);
 	}
 	return;
 
@@ -94,22 +94,22 @@ void markcell(int addr)
 	}
 	for (i = 0; i < n; i++) {
 	    x = GET_VEC_ELT(addr, i);
-	    markcell(x);
+	    mark_cell(x);
 	}
-	markcell(cdr(addr));	/* dimension */
+	mark_cell(cdr(addr));	/* dimension */
 	return;
 
     case SYM:
-	markcell(car(addr));
-	markcell(cdr(addr));
-	markcell(GET_AUX(addr));
-	markcell(GET_PROP(addr));
+	mark_cell(car(addr));
+	mark_cell(cdr(addr));
+	mark_cell(GET_AUX(addr));
+	mark_cell(GET_PROP(addr));
 	return;
     case FUNC:
-	markcell(car(addr));
-	markcell(cdr(addr));
-	markcell(GET_AUX(addr));
-	markcell(GET_PROP(addr));
+	mark_cell(car(addr));
+	mark_cell(cdr(addr));
+	mark_cell(GET_AUX(addr));
+	mark_cell(GET_PROP(addr));
 	return;
     case MACRO:
     case GENERIC:
@@ -117,20 +117,20 @@ void markcell(int addr)
     case CLASS:
     case INSTANCE:
     case LIS:
-	markcell(car(addr));
-	markcell(cdr(addr));
-	markcell(GET_AUX(addr));
+	mark_cell(car(addr));
+	mark_cell(cdr(addr));
+	mark_cell(GET_AUX(addr));
 	return;
     case SUBR:
     case FSUBR:
-	markcell(GET_AUX(addr));
+	mark_cell(GET_AUX(addr));
 	return;
     default:
-	IP(false, "markcell tag switch default action");
+	IP(false, "mark_cell tag switch default action");
     }
 }
 
-void gbcmark(void)
+void gbc_mark(void)
 {
     int i;
 
@@ -138,52 +138,52 @@ void gbcmark(void)
     MARK_CELL(NIL);
     MARK_CELL(T);
     /* mark local environment */
-    markcell(ep);
+    mark_cell(ep);
     /* mark dynamic environment */
-    markcell(dp);
+    mark_cell(dp);
     /* mark stack */
     for (i = 0; i < sp; i++)
-	markcell(stack[i]);
+	mark_cell(stack[i]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap; i++)
-	markcell(argstk[i]);
+	mark_cell(argstk[i]);
 
     /* mark cell chained from hash table */
     for (i = 0; i < HASHTBSIZE; i++)
-	markcell(cell_hash_table[i]);
+	mark_cell(cell_hash_table[i]);
 
     /* mark tagbody symbol */
-    markcell(tagbody_tag);
+    mark_cell(tagbody_tag);
 
     /* mark thunk for unwind-protect */
     for (i = 0; i < unwind_pt; i++)
-	markcell(unwind_buf[i]);
+	mark_cell(unwind_buf[i]);
 
     /* mark error_handler */
-    markcell(error_handler);
+    mark_cell(error_handler);
 
     /* mark stream */
-    markcell(standard_input);
-    markcell(standard_output);
-    markcell(standard_error);
-    markcell(input_stream);
-    markcell(output_stream);
-    markcell(error_stream);
+    mark_cell(standard_input);
+    mark_cell(standard_output);
+    mark_cell(standard_error);
+    mark_cell(input_stream);
+    mark_cell(output_stream);
+    mark_cell(error_stream);
 
     /* mark shelter */
     for (i = 0; i < lp; i++)
-	markcell(shelter[i]);
+	mark_cell(shelter[i]);
 
     /* mark dynamic environment */
     for (i = 1; i <= dp; i++)
-	markcell(dynamic[i][1]);
+	mark_cell(dynamic[i][1]);
 
 
     /* mark generic_list */
-    markcell(generic_list);
+    mark_cell(generic_list);
 
     /* mark symbol list for catch */
-    markcell(catch_symbols);
+    mark_cell(catch_symbols);
 
 }
 
@@ -192,7 +192,7 @@ static inline void NOMARK_CELL(int addr)
     heap[addr].flag = FRE;
 }
 
-void gbcsweep(void)
+void gbc_sweep(void)
 {
     int addr;
 
@@ -201,7 +201,7 @@ void gbcsweep(void)
 	if (USED_CELL(addr))
 	    NOMARK_CELL(addr);
 	else {
-	    clrcell(addr);
+	    clr_cell(addr);
 	    SET_CDR(addr, hp);
 	    hp = addr;
 	}
@@ -209,7 +209,7 @@ void gbcsweep(void)
     }
 }
 
-void clrcell(int addr)
+void clr_cell(int addr)
 {
     if (IS_VECTOR(addr) || IS_ARRAY(addr))
 	FREE(heap[addr].val.car.dyna_vec);
@@ -226,7 +226,7 @@ void clrcell(int addr)
 }
 
 /* when free cells are less FREESIZE, invoke gbc() */
-int checkgbc(void)
+int check_gbc(void)
 {
     if (exit_flag) {
 	exit_flag = 0;
@@ -259,7 +259,7 @@ int getwp(void)
 }
 
 
-void copygbc(void)
+void copy_gbc(void)
 {
     int i;
 

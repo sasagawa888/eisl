@@ -278,7 +278,7 @@ void dynamic_link(int x)
 
 
     /* argument-0 type */
-    init_f0(CHECKGBC_IDX, checkgbc);
+    init_f0(CHECKGBC_IDX, check_gbc);
     init_f0(GBC_IDX, gbc);
     init_f0(FRESHCELL_IDX, freshcell);
     init_f0(FREECELL_IDX, freecell);

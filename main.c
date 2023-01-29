@@ -1593,7 +1593,7 @@ int eval(int addr)
     char c;
     double st, en;
 
-    (void) checkgbc();
+    (void) check_gbc();
 
     if (IS_NIL(addr) || IS_T(addr))
 	return (addr);

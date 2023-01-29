@@ -131,7 +131,7 @@ void init_subr(void)
     def_subr("INSTANCEP", f_instancep);
     def_subr("INTEGERP", f_integerp);
     def_subr("INTERNAL-TIME-UNITS-PER-SECOND",
-	    f_internal_time_units_per_second);
+	     f_internal_time_units_per_second);
     def_subr("ISQRT", f_isqrt);
     def_subr("LCM", f_lcm);
     def_subr("LENGTH", f_length);
@@ -187,7 +187,7 @@ void init_subr(void)
     def_subr("SET-SLOT-VALUE", f_set_slot_value);
     def_subr("SIGNAL-CONDITION", f_signal_condition);
     def_subr("SIMPLE-ERROR-FORMAT-ARGUMENTS",
-	    f_simple_error_format_arguments);
+	     f_simple_error_format_arguments);
     def_subr("SIMPLE-ERROR-FORMAT-STRING", f_simple_error_format_string);
     def_subr("SIN", f_sin);
     def_subr("SINH", f_sinh);
@@ -410,7 +410,8 @@ void init_generic(void)
 	      list4(make_sym("LET"),
 		    list1(list2
 			  (make_sym("obj"),
-			   list3(make_sym("CREATE*"), make_sym("x"), NIL))),
+			   list3(make_sym("CREATE*"), make_sym("x"),
+				 NIL))),
 		    list3(make_sym("INITIALIZE-OBJECT"), make_sym("obj"),
 			  make_sym("y")), make_sym("obj")));
     eval(list4(make_sym("DEFGENERIC"), make_sym("CREATE"), lamlis, body));
@@ -4055,8 +4056,7 @@ int f_open_output_file(int arglist)
     if (n == 1)
 	return (make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1)));
     else
-	return (make_stm
-		(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
 int f_open_io_file(int arglist)

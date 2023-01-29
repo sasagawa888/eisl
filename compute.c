@@ -256,8 +256,7 @@ int plus(int arg1, int arg2)
 		return (make_flt(x1 + y1));
 	    }
 	case LONGN:
-	    return (big_plus
-		    (big_int_to_big(arg1), big_long_to_big(arg2)));
+	    return (big_plus(big_int_to_big(arg1), big_long_to_big(arg2)));
 	case BIGN:
 	    return (big_plus(big_int_to_big(arg1), arg2));
 	}
@@ -265,8 +264,7 @@ int plus(int arg1, int arg2)
     case LONGN:
 	switch (tag2) {
 	case INTN:
-	    return (big_plus
-		    (big_long_to_big(arg1), big_int_to_big(arg2)));
+	    return (big_plus(big_long_to_big(arg1), big_int_to_big(arg2)));
 	case FLTN:
 	    return (plus(exact_to_inexact(arg1), arg2));
 	case LONGN:
@@ -354,7 +352,7 @@ int minus(int arg1, int arg2)
 
 	case LONGN:
 	    return (big_minus(big_int_to_big(arg1),
-			       big_long_to_big(arg2)));
+			      big_long_to_big(arg2)));
 
 	case BIGN:
 	    return (big_minus(big_int_to_big(arg1), arg2));
@@ -437,8 +435,7 @@ int mult(int arg1, int arg2)
 		    return (make_int((int) l));
 		else
 		    return (big_mult
-			    (big_int_to_big(arg1),
-			     big_int_to_big(arg2)));
+			    (big_int_to_big(arg1), big_int_to_big(arg2)));
 	    }
 
 	case FLTN:

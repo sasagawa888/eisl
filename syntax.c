@@ -247,7 +247,8 @@ int f_let(int arglist)
 	    error(IMPROPER_ARGS, "let", car(temp));
 	if (!symbolp(temparg1))
 	    error(NOT_SYM, "let", temparg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "let", arg1);
@@ -306,7 +307,8 @@ int f_letstar(int arglist)
 	    error(IMPROPER_ARGS, "let*", car(temp));
 	if (!symbolp(temparg1))
 	    error(NOT_SYM, "let*", temparg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "let*", arg1);
@@ -357,7 +359,8 @@ int f_dynamic_let(int arglist)
 	    error(IMPROPER_ARGS, "dynamic-let", car(temp));
 	if (!symbolp(temparg1))
 	    error(NOT_SYM, "dynamic-let", temparg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "dynamic-let", arg1);
@@ -438,9 +441,9 @@ int f_setf(int arglist)
     else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
 	newform = cons(make_sym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
     }
-    /* e.g. (setf (access-foo-a x) 100) */ 
+    /* e.g. (setf (access-foo-a x) 100) */
     else if (listp(arg1) && length(arg1) == 2) {
-	/* a method returns it's variable name */ 
+	/* a method returns it's variable name */
 	if (functionp(car(arg1)) || genericp(car(arg1))) {
 	    var = eval(list2(car(arg1), NIL));
 	} else
@@ -943,7 +946,8 @@ int f_for(int arglist)
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "for", arg1);
-	if (temparg1 == T || temparg1 == NIL || temparg1 == make_sym("*PI*")
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
 	    error(WRONG_ARGS, "for", temparg1);
@@ -1019,8 +1023,8 @@ int f_block(int arglist)
 
     block_env[block_pt][0] = ep;	/* save environment */
     block_env[block_pt][1] = tag;	/* save tag symbol */
-    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));	
-	/* save flag. if exist return-from 1 else -1 */
+    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
+    /* save flag. if exist return-from 1 else -1 */
     block_pt++;
     ret = setjmp(block_buf[block_pt - 1]);
 
@@ -1491,7 +1495,8 @@ int f_defclass(int arglist)
 		    list4(make_sym("DEFMETHOD"), writer,
 			  list2(make_sym("x"), list2(make_sym("y"), arg1)),
 			  list3(make_sym("SETF"),
-				list3(make_sym("SLOT-VALUE"), make_sym("y"),
+				list3(make_sym("SLOT-VALUE"),
+				      make_sym("y"),
 				      list2(make_sym("QUOTE"), sym)),
 				make_sym("x")));
 		eval(form);

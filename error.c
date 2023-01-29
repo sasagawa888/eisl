@@ -87,9 +87,11 @@ void error(int errnum, const char *fun, int arg)
 	    list10(make_sym("format-string"),
 		   make_str("Unbound function at "),
 		   make_sym("format-arguments"), arg, make_sym("function"),
-		   make_sym(fun1), make_sym("name"), make_sym("UNDEF-FUNC"),
-		   make_sym("namespace"), make_sym("FUNCTION"));
-	signal_condition(make_instance(cundefined_function, initargs), NIL);
+		   make_sym(fun1), make_sym("name"),
+		   make_sym("UNDEF-FUNC"), make_sym("namespace"),
+		   make_sym("FUNCTION"));
+	signal_condition(make_instance(cundefined_function, initargs),
+			 NIL);
 	break;
     case UNDEF_DYN:
 	initargs =
@@ -165,8 +167,8 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
-	signal_condition(make_instance(cfloating_point_underflow, initargs),
-			 NIL);
+	signal_condition(make_instance
+			 (cfloating_point_underflow, initargs), NIL);
 	break;
     case FLT_OUT_OF_DOMAIN:
 	initargs =
@@ -188,7 +190,8 @@ void error(int errnum, const char *fun, int arg)
 	break;
     case NOT_INT:
 	initargs =
-	    list10(make_sym("format-string"), make_str("Not an integer at "),
+	    list10(make_sym("format-string"),
+		   make_str("Not an integer at "),
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cinteger);
@@ -262,7 +265,8 @@ void error(int errnum, const char *fun, int arg)
 	break;
     case NOT_FUNC:
 	initargs =
-	    list10(make_sym("format-string"), make_str("Not a function at "),
+	    list10(make_sym("format-string"),
+		   make_str("Not a function at "),
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfunction);
@@ -389,7 +393,8 @@ void error(int errnum, const char *fun, int arg)
 	break;
     case NOT_COMPUTABLE:
 	initargs =
-	    list6(make_sym("format-string"), make_str("Not computable at "),
+	    list6(make_sym("format-string"),
+		  make_str("Not computable at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
 	signal_condition(make_instance(cdomain_error, initargs), NIL);
@@ -423,8 +428,8 @@ void error(int errnum, const char *fun, int arg)
 	    list10(make_sym("format-string"),
 		   make_str("Can't parse number at "),
 		   make_sym("format-arguments"), arg, make_sym("object"),
-		   arg, make_sym("string"), arg, make_sym("expected-class"),
-		   cnumber);
+		   arg, make_sym("string"), arg,
+		   make_sym("expected-class"), cnumber);
 	signal_condition(make_instance(cparse_error, initargs), NIL);
 	break;
     case CANT_ASSURE:
@@ -507,14 +512,16 @@ void error(int errnum, const char *fun, int arg)
 	break;
     case SHELTER_OVERF:
 	initargs =
-	    list6(make_sym("format-string"), make_str("Shelter over flow "),
+	    list6(make_sym("format-string"),
+		  make_str("Shelter over flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
 	signal_condition(make_instance(cprogram_error, initargs), NIL);
 	break;
     case DYNAMIC_OVERF:
 	initargs =
-	    list6(make_sym("format-string"), make_str("Shelter over flow "),
+	    list6(make_sym("format-string"),
+		  make_str("Shelter over flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
 	signal_condition(make_instance(cprogram_error, initargs), NIL);
@@ -528,7 +535,8 @@ void error(int errnum, const char *fun, int arg)
 	break;
     case SHELTER_UNDERF:
 	initargs =
-	    list6(make_sym("format-string"), make_str("Shelter under flow "),
+	    list6(make_sym("format-string"),
+		  make_str("Shelter under flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
 	signal_condition(make_instance(cprogram_error, initargs), NIL);
@@ -593,7 +601,8 @@ void error(int errnum, const char *fun, int arg)
 	break;
     case EXHAUSTED_ERR:
 	initargs =
-	    list6(make_sym("format-string"), make_str("Exhausted error at "),
+	    list6(make_sym("format-string"),
+		  make_str("Exhausted error at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
 	signal_condition(make_instance(cstorage_exhausted, initargs), NIL);

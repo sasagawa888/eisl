@@ -436,23 +436,9 @@ void signal_handler_c(int signo __unused)
 int readc(void)
 {
     int c;
-    /* REPL-mode and standard-input */
-    if (input_stream == standard_input && repl_flag)
-	c = read_line(1);
-    /* not REPL-mode and standard-input */
-    else if (GET_OPT(input_stream) != EISL_INSTR) {
-	c = getc(GET_PORT(input_stream));
-	/* ctrl+D if not script-mode quit system */
-	if (!script_flag && input_stream == standard_input && c == EOF) {
-	    /* quit from system(not script-mode) */
-	    greeting_flag = false;
-	    putchar('\n');
-	    RAISE(Exit_Interp);
-	} else			/* if script-mode return(EOF) */
-	    return (c);
 
-    } else
-	/* string-stream */
+    if (string_input_stream_p(input_stream))
+	/* string-input-stream */
     {
 	c = GET_NAME(input_stream)[GET_CDR(input_stream)];
 	SET_CDR(input_stream, GET_CDR(input_stream) + 1);
@@ -463,6 +449,21 @@ int readc(void)
 	    c = EOF;
 	    SET_CDR(input_stream, GET_CDR(input_stream) - 1);
 	}
+    } else if (input_stream == standard_input && repl_flag)
+	/* REPL-mode and standard-input */
+	c = read_line(1);
+    else {
+	/* not REPL-mode and standard-input */
+	c = getc(GET_PORT(input_stream));
+	if (!script_flag && input_stream == standard_input && c == EOF) {
+	    /* ctrl+D and not script-mode quit system */
+	    greeting_flag = false;
+	    putchar('\n');
+	    RAISE(Exit_Interp);
+	} else
+	    /* only retrun c */
+	    return (c);
+
     }
 
     if (c == EOL) {
@@ -1140,7 +1141,8 @@ int sread(void)
 	    get_token();
 	    if (stok.type == ATMARK)
 		return (cons
-			(make_sym("UNQUOTE-SPLICING"), cons(sread(), NIL)));
+			(make_sym("UNQUOTE-SPLICING"),
+			 cons(sread(), NIL)));
 	    else {
 		stok.flag = BACK;
 		return (cons(make_sym("UNQUOTE"), cons(sread(), NIL)));
@@ -2173,5 +2175,3 @@ int quasi_transfer(int x, int n)
 		(make_sym("CONS"), quasi_transfer(car(x), n),
 		 quasi_transfer(cdr(x), n)));
 }
-
-

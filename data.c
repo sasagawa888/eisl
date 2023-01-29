@@ -292,9 +292,9 @@ int streamp(int x)
 
 int string_input_stream_p(int x)
 {
-	if (streamp(x) && GET_OPT(x) == EISL_INSTR)
+    if (streamp(x) && GET_OPT(x) == EISL_INSTR)
 	return (1);
-	else
+    else
 	return (0);
 }
 

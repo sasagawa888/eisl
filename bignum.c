@@ -397,10 +397,10 @@ int big_shift_right(int x, int n)
 
     int i;
     for (i = 0; i < n; i++) {
-	    bigcell[big_pt0++] = 0;
+	bigcell[big_pt0++] = 0;
     }
     for (i = 0; i < len; i++) {
-	    bigcell[big_pt0++] = bigcell[pointer + i];
+	bigcell[big_pt0++] = bigcell[pointer + i];
     }
 
     set_pointer(res, big_pt0 - 1);
@@ -419,10 +419,10 @@ int big_zero_supress(int x, int n)
 
     int i;
     for (i = 0; i < len; i++) {
-	    bigcell[big_pt0++] = bigcell[pointer + i];
+	bigcell[big_pt0++] = bigcell[pointer + i];
     }
     for (i = 0; i < n; i++) {
-	    bigcell[big_pt0++] = 0;
+	bigcell[big_pt0++] = 0;
     }
 
     set_pointer(res, big_pt0 - 1);
@@ -837,7 +837,7 @@ int big_div1(int arg1, int arg2)
 
 	int subtract =
 	    big_shift_right(big_mult1(arg2, big_int_to_big(make_int(q))),
-			     shift);
+			    shift);
 	dividend = big_minus(dividend, subtract);
 
 	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
@@ -907,7 +907,7 @@ int big_remainder(int arg1, int arg2)
 	}
 	int subtract =
 	    big_shift_right(big_mult1(arg2, big_int_to_big(make_int(q))),
-			     shift);
+			    shift);
 	dividend = big_minus(dividend, subtract);
 
 	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */

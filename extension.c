@@ -762,6 +762,7 @@ int f_prof(int arglist)
 
     return (T);
 }
+
 /*
  * profiler
  * To improve builtin function or user-defined function
@@ -1136,13 +1137,15 @@ int f_try(int arglist)
 	try_flag = false;
 	if (res == UNDEF) {
 	    res =
-		list3(make_sym("FAILSE"), make_sym("OUT-OF-DATA"), try_res);
+		list3(make_sym("FAILSE"), make_sym("OUT-OF-DATA"),
+		      try_res);
 	    if (arg4 == make_sym("OUT-OF-DATA")) {
 		printf("%s", str);
 	    }
 	} else if (res == FEND) {
 	    res =
-		list3(make_sym("FAILSE"), make_sym("OUT-OF-TIME"), try_res);
+		list3(make_sym("FAILSE"), make_sym("OUT-OF-TIME"),
+		      try_res);
 	    if (arg4 == make_sym("OUT-OF-TIME"))
 		printf("%s", str);
 	} else {

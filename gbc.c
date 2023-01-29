@@ -596,4 +596,3 @@ void copy_hash(int x)
 	copy_hash(cdr(x));
     }
 }
-

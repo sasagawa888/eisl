@@ -46,7 +46,7 @@ void init_cell(void)
     make_sym("T");		/* 2nd address is T */
     SET_AUX(T, CLASS_SYMBOL);	/* class of t is symbol */
     SET_OPT(T, CONSTN);
-    make_sym("<undef>");		/* 4th address is UNDEF */
+    make_sym("<undef>");	/* 4th address is UNDEF */
     SET_AUX(UNDEF, CLASS_SYMBOL);	/* class of <undef> is symbol */
     make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
@@ -117,7 +117,8 @@ void init_class(void)
     clist = make_class("list", cobject);
     ccons = make_class("cons", clist);
     cnull =
-	make_class("null", list2(make_sym("<SYMBOL>"), make_sym("<LIST>")));
+	make_class("null",
+		   list2(make_sym("<SYMBOL>"), make_sym("<LIST>")));
     csymbol = make_class("symbol", cobject);
     cnumber = make_class("number", cobject);
     cfloat = make_class("float", cnumber);
@@ -928,7 +929,7 @@ int make_instance(int cl, int initls)
     SET_AUX(addr, cl);		/* class of instance */
     while (!nullp(initls)) {
 	set_val(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
-	       GET_CDR(addr));
+		GET_CDR(addr));
 	initls = cddr(initls);
     }
     return (addr);

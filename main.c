@@ -23,7 +23,7 @@
  * arr   array
  * vec   vector
  * char  character
- *  
+ * big   bignum 
  */
 
 #include <stdio.h>

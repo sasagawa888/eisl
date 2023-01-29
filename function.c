@@ -1,5 +1,5 @@
 /*
- * ISLisp standard functions.
+ * ISLisp standard builtin functions.
  */
 
 #include <stdio.h>
@@ -29,12 +29,12 @@ static void *hmod;
 
 void init_subr(void)
 {
-    // constant
+    /* constant */
     bind_const("*PI*", make_flt(M_PI));
     bind_const("*MOST-POSITIVE-FLOAT*", make_flt(DBL_MAX));
     bind_const("*MOST-NEGATIVE-FLOAT*", make_flt(-DBL_MAX));
 
-    // function
+    /* function */
     def_subr("-", f_minus);
     def_subr("*", f_mult);
     def_subr("/=", f_notnumeqp);
@@ -222,7 +222,10 @@ void init_subr(void)
     def_subr("EISL-DUMMYP", f_dummyp);
 }
 
-
+/*
+ * dynamic-link functions
+ * compiled code link following functions
+ */
 typedef void (*initdeftfunc_t)(tfunc);
 typedef void (*voidfunc_t)(void);
 
@@ -397,7 +400,9 @@ void dynamic_link(int x)
 }
 
 
-
+/*
+ * initialize generic functions
+ */
 
 void init_generic(void)
 {
@@ -1416,8 +1421,7 @@ int f_notnumeqp(int arglist)
 }
 
 
-// list function
-
+/* list function */
 int f_car(int arglist)
 {
     int arg;
@@ -1589,6 +1593,124 @@ int f_append(int arglist)
 }
 
 
+int f_reverse(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "reverse", arglist);
+    if (!listp(arg1))
+	error(NOT_LIST, "reverse", arg1);
+    return (reverse(arg1));
+}
+
+int f_nreverse(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "nreverse", arglist);
+    if (!listp(arg1))
+	error(NOT_LIST, "nreverse", arg1);
+    return (nreverse(arg1));
+}
+
+int nreverse(int x)
+{
+    int res;
+
+    res = NIL;
+    while (!nullp(x) && !atomp(x)) {
+	int y;
+
+	y = cdr(x);
+	SET_CDR(x, res);
+	res = x;
+	x = y;
+    }
+    return (res);
+}
+
+int f_create_list(int arglist)
+{
+    int arg1, arg2, n;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if ((n = length(arglist)) != 1 && n != 2)
+	error(WRONG_ARGS, "create-list", arglist);
+    if (longnump(arg1) || bignump(arg1))
+	error(MALLOC_OVERF, "create-list", arg1);
+    if (!integerp(arg1))
+	error(NOT_INT, "create-list", arg1);
+    if (GET_INT(arg1) < 0)
+	error(NOT_POSITIVE, "create-list", arg1);
+    if (nullp(arg2))
+	arg2 = UNDEF;
+    return (create_list(GET_INT(arg1), arg2));
+}
+
+int create_list(int x, int y)
+{
+    if (x == 0)
+	return (NIL);
+    else
+	return (cons(copy(y), create_list(x - 1, y)));
+}
+
+
+int f_length(int arglist)
+{
+    int arg;
+
+    arg = car(arglist);
+    if (!nullp(cdr(arglist)))
+	error(WRONG_ARGS, "length", arglist);
+    if (!listp(arg) && !vectorp(arg) && !stringp(arg))
+	error(ILLEGAL_ARGS, "length", arg);
+
+    if (listp(arg))
+	return (make_int(length(arg)));
+    else if (vectorp(arg))
+	return (make_int(vector_length(arg)));
+    else
+	return (make_int(string_length(arg)));
+
+}
+
+
+int f_set_car(int arglist)
+{
+    int arg1, arg2;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "set-car", arglist);
+    if (!(IS_LIST(arg2)))
+	error(NOT_CONS, "set-car", arg2);
+    SET_CAR(arg2, arg1);
+    return (arg1);
+}
+
+int f_set_cdr(int arglist)
+{
+    int arg1, arg2;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "set-cdr", arglist);
+    if (!(IS_LIST(arg2)))
+	error(NOT_CONS, "set-cdr", arg2);
+    SET_CDR(arg2, arg1);
+    return (arg1);
+}
+
+
+/* predicate */
 int f_symbolp(int arglist)
 {
     int arg1;
@@ -1655,6 +1777,8 @@ int f_assoc(int arglist)
     return (assoc(arg1, arg2));
 }
 
+
+/* map function */
 int f_mapcar(int arglist)
 {
     int arg1, arg2;
@@ -1935,75 +2059,7 @@ int map_into_to_list(int x)
     }
 }
 
-
-int f_reverse(int arglist)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (length(arglist) != 1)
-	error(WRONG_ARGS, "reverse", arglist);
-    if (!listp(arg1))
-	error(NOT_LIST, "reverse", arg1);
-    return (reverse(arg1));
-}
-
-int f_nreverse(int arglist)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (length(arglist) != 1)
-	error(WRONG_ARGS, "nreverse", arglist);
-    if (!listp(arg1))
-	error(NOT_LIST, "nreverse", arg1);
-    return (nreverse(arg1));
-}
-
-int nreverse(int x)
-{
-    int res;
-
-    res = NIL;
-    while (!nullp(x) && !atomp(x)) {
-	int y;
-
-	y = cdr(x);
-	SET_CDR(x, res);
-	res = x;
-	x = y;
-    }
-    return (res);
-}
-
-int f_create_list(int arglist)
-{
-    int arg1, arg2, n;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-    if ((n = length(arglist)) != 1 && n != 2)
-	error(WRONG_ARGS, "create-list", arglist);
-    if (longnump(arg1) || bignump(arg1))
-	error(MALLOC_OVERF, "create-list", arg1);
-    if (!integerp(arg1))
-	error(NOT_INT, "create-list", arg1);
-    if (GET_INT(arg1) < 0)
-	error(NOT_POSITIVE, "create-list", arg1);
-    if (nullp(arg2))
-	arg2 = UNDEF;
-    return (create_list(GET_INT(arg1), arg2));
-}
-
-int create_list(int x, int y)
-{
-    if (x == 0)
-	return (NIL);
-    else
-	return (cons(copy(y), create_list(x - 1, y)));
-}
-
-
+/* property */
 int f_property(int arglist)
 {
     int arg1, arg2, arg3, res, n;
@@ -2081,58 +2137,7 @@ int f_gensym(int arglist __unused)
     return (res);
 }
 
-int f_length(int arglist)
-{
-    int arg;
-
-    arg = car(arglist);
-    if (!nullp(cdr(arglist)))
-	error(WRONG_ARGS, "length", arglist);
-    if (!listp(arg) && !vectorp(arg) && !stringp(arg))
-	error(ILLEGAL_ARGS, "length", arg);
-
-    if (listp(arg))
-	return (make_int(length(arg)));
-    else if (vectorp(arg))
-	return (make_int(vector_length(arg)));
-    else
-	return (make_int(string_length(arg)));
-
-}
-
-
-int f_set_car(int arglist)
-{
-    int arg1, arg2;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-    if (length(arglist) != 2)
-	error(WRONG_ARGS, "set-car", arglist);
-    if (!(IS_LIST(arg2)))
-	error(NOT_CONS, "set-car", arg2);
-    SET_CAR(arg2, arg1);
-    return (arg1);
-}
-
-int f_set_cdr(int arglist)
-{
-    int arg1, arg2;
-
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
-    if (length(arglist) != 2)
-	error(WRONG_ARGS, "set-cdr", arglist);
-    if (!(IS_LIST(arg2)))
-	error(NOT_CONS, "set-cdr", arg2);
-    SET_CDR(arg2, arg1);
-    return (arg1);
-}
-
-
-
 /* input and output */
-
 static inline bool save_repl_flag(void)
 {
 #if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
@@ -3007,7 +3012,7 @@ int f_set_elt(int arglist)
 }
 
 
-
+/* string */
 int f_string_smallerp(int arglist)
 {
     int arg1, arg2;
@@ -3573,6 +3578,7 @@ int f_set_slot_value(int arglist)
     return (arg1);
 }
 
+/* format */
 int f_format(int arglist)
 {
     int arg1, arg2, args, i, save, n, quote_flag;
@@ -4002,6 +4008,7 @@ int f_format_tab(int arglist)
 }
 
 
+/* file */
 int f_open_input_file(int arglist)
 {
     int arg1, arg2, n;
@@ -4229,7 +4236,7 @@ int f_write_byte(int arglist)
 }
 
 
-
+/* create-*   */
 int f_create_vector(int arglist)
 {
     int arg1, arg2;

@@ -54,6 +54,7 @@
 
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
 
+
 int get_length(int x)
 {
     return (GET_CDR(x));
@@ -106,7 +107,7 @@ int make_big(char *bignum)
 		i--;
 	    }
 	    integer[9] = NUL;
-	    CHECKBIG0 bigcell[big_pt1++] = atoi(integer);
+	    bigcell[big_pt1++] = atoi(integer);
 	    len++;
 	} else {
 	    integer[i + 1] = NUL;
@@ -114,7 +115,7 @@ int make_big(char *bignum)
 		integer[i] = bignum[i];
 		i--;
 	    }
-	    CHECKBIG0 bigcell[big_pt1++] = atoi(integer);
+	    bigcell[big_pt1++] = atoi(integer);
 	    len++;
 	}
     }
@@ -122,7 +123,7 @@ int make_big(char *bignum)
     if (len == 2) {
 	long long int l, m;
 
-	CHECKBIG0 l = (long long int) bigcell[big_pt1 - 1] * BIGNUM_BASE;
+	l = (long long int) bigcell[big_pt1 - 1] * BIGNUM_BASE;
 	m = (long long int) bigcell[big_pt1 - 2];
 	m = (l + m) * sign;
 	SET_TAG(res, LONGN);
@@ -314,7 +315,7 @@ int big_int_to_big(int x)
     int res, y;
 
     y = GET_INT(x);
-    CHECKBIG0 bigcell[big_pt0++] = abs(y);
+    bigcell[big_pt0++] = abs(y);
     res = gen_big();
     set_pointer(res, big_pt0 - 1);
     set_length(res, 1);
@@ -333,8 +334,8 @@ int big_long_to_big(int x)
     l = GET_LONG(x);
     i2 = llabs(l) % BIGNUM_BASE;
     i1 = llabs(l) / BIGNUM_BASE;
-    CHECKBIG0 bigcell[big_pt0++] = i2;
-    CHECKBIG0 bigcell[big_pt0++] = i1;
+    bigcell[big_pt0++] = i2;
+    bigcell[big_pt0++] = i1;
     res = gen_big();
     set_pointer(res, big_pt0 - 1);
     set_length(res, 2);
@@ -396,10 +397,10 @@ int big_shift_right(int x, int n)
 
     int i;
     for (i = 0; i < n; i++) {
-	CHECKBIG0 bigcell[big_pt0++] = 0;
+	    bigcell[big_pt0++] = 0;
     }
     for (i = 0; i < len; i++) {
-	CHECKBIG0 bigcell[big_pt0++] = bigcell[pointer + i];
+	    bigcell[big_pt0++] = bigcell[pointer + i];
     }
 
     set_pointer(res, big_pt0 - 1);
@@ -418,10 +419,10 @@ int big_zero_supress(int x, int n)
 
     int i;
     for (i = 0; i < len; i++) {
-	CHECKBIG0 bigcell[big_pt0++] = bigcell[pointer + i];
+	    bigcell[big_pt0++] = bigcell[pointer + i];
     }
     for (i = 0; i < n; i++) {
-	CHECKBIG0 bigcell[big_pt0++] = 0;
+	    bigcell[big_pt0++] = 0;
     }
 
     set_pointer(res, big_pt0 - 1);
@@ -440,7 +441,7 @@ int big_to_parmanent(int x)
     pointer = get_pointer(x);
 
     big_pt1 = big_pt1 + len;
-    CHECKBIG1 int i;
+    int i;
     for (i = 0; i < len; i++) {
 	bigcell[big_pt1 - i] = bigcell[pointer - i];
     }
@@ -526,7 +527,6 @@ int big_plus1(int arg1, int arg2)
 
     len1 = get_length(arg1);
     len2 = get_length(arg2);
-    CHECKBIG2(big_max(len1, len2));
     pointerx = get_pointer(arg1) - len1 + 1;	//LSB
     pointery = get_pointer(arg2) - len2 + 1;	//LSB
     res = gen_big();
@@ -610,7 +610,6 @@ int big_minus1(int arg1, int arg2)
 
     len1 = get_length(arg1);
     len2 = get_length(arg2);
-    CHECKBIG2(len1);
     pointerx = get_pointer(arg1) - len1 + 1;	// LSB
     pointery = get_pointer(arg2) - len2 + 1;	// LSB
     res = gen_big();
@@ -709,7 +708,6 @@ int big_mult1(int arg1, int arg2)
     len2 = get_length(arg2);
     len = len1 + len2;
     set_sign(res, 1);
-    CHECKBIG2(len);
 
     /* clear area of calculate */
     int i, j;
@@ -793,8 +791,6 @@ int big_div1(int arg1, int arg2)
     /* arg1 < arg2 -> 0 */
     if (smallerp(arg1, arg2))
 	return (make_int(0));
-    CHECKBIG2(get_length(arg1) - get_length(arg2));
-
 
     simp_flag = false;
     pointery = get_pointer(arg2);	//MSB pointer
@@ -884,7 +880,6 @@ int big_remainder(int arg1, int arg2)
     /* arg1 > arg2 -> 0 */
     if (smallerp(arg1, arg2))
 	return (make_int(0));
-    CHECKBIG2(get_length(arg2));
 
     res = gen_big();
     set_sign(res, 1);
@@ -1009,7 +1004,6 @@ int big_div_i(int x, int y)
     len = n = get_length(x);
     msb = get_pointer(big_abs(x));
     sign1 = get_sign(x);
-    CHECKBIG2(len);
 
     j = GET_INT(y);
     if (j < 0) {
@@ -1064,7 +1058,6 @@ int big_mult_i(int x, int y)
     len = n = get_length(x);
     pointer = get_pointer(x) - len + 1;	//LSB
     sign1 = get_sign(x);
-    CHECKBIG2(len + 1);
 
     j = GET_INT(y);
     if (j < 0) {

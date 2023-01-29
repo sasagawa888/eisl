@@ -9,11 +9,11 @@
     (* x x) )
 
 
-#|
+
 ;;For Common-Lisp
-(defun div (x y)
-    (floor x y))
-|#
+;(defun div (x y)
+;    (floor x y))
+
 
 ; Compute pi using the 'brent-salamin' method.
 (defun pi-brent-salamin (nb-digits)

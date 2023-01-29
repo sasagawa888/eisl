@@ -1091,7 +1091,7 @@ int intlcm(int x, int y);
 int int_token(char buf[]);
 int int_token_nsgn(char buf[]);
 int isqrt(int x);
-int issymch(char c);
+int is_symbol_char(char c);
 int ILOSerror(int fun, int arg);
 int last(int x);
 int last_str(char buf[]);

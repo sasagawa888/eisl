@@ -405,7 +405,7 @@ int copy_symbol(int x)
 }
 
 /*
- * copy_??? for copying GC 
+ * copy_* for copying GC 
  */
 int copy_int(int x)
 {

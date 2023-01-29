@@ -887,7 +887,7 @@ int symbol_token(char buf[])
 
     i = 0;
     while ((c = buf[i]) != NUL)
-	if ((isalpha(c)) || (isdigit(c)) || (issymch(c)))
+	if ((isalpha(c)) || (isdigit(c)) || (is_symbol_char(c)))
 	    i++;
 	else
 	    return (0);
@@ -1050,7 +1050,7 @@ int expt_token(char buf[])
 }
 
 
-int issymch(char c)
+int is_symbol_char(char c)
 {
     switch (c) {
     case '!':
@@ -1084,7 +1084,11 @@ int issymch(char c)
     }
 }
 
-
+/*
+ * read S-expression from input stream
+ * to avoid name confliction sread() (not read()).
+ *
+ */
 int sread(void)
 {
     int n;

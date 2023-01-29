@@ -305,3 +305,274 @@ void copy_gbc(void)
 
 
 }
+
+
+/* ------------for copy GC----------------- */
+int copy_work(int x)
+{
+    if (x < WORK1)		/* nil t ... */
+	return (x);
+
+    switch (GET_TAG(x)) {
+    case INTN:
+	return (copy_int(x));
+    case FLTN:
+	return (copy_flt(x));
+    case LONGN:
+	return (copy_long(x));
+    case BIGX:
+	return (copy_bignum(x));
+    case VEC:
+	return (copy_vec(x));
+    case ARR:
+	return (copy_array(x));
+    case STR:
+	return (copy_str(x));
+    case CHR:
+	return (copy_char(x));
+    case SYM:
+	return (x);
+    case SUBR:
+	return (x);
+    case FSUBR:
+	return (x);
+    case FUNC:
+	return (copy_func(x));
+    case MACRO:
+	return (copy_macro(x));
+    case CLASS:
+	return (copy_class(x));
+    case STREAM:
+	return (copy_stream(x));
+    case GENERIC:
+	return (copy_generic(x));
+    case METHOD:
+	return (x);		/* **** */
+    case INSTANCE:
+	return (x);		/* **** */
+    case LIS:
+	return (cons(copy_work(car(x)), copy_work(cdr(x))));
+    case DUMMY:
+	return (x);
+    default:
+	Fmt_print("error addr=%d  ", x);
+	return (x);
+    }
+
+    return (x);
+}
+
+
+int copy_heap(int x)
+{
+    int save, res;
+
+    save = gc_sw;
+    gc_sw = 0;
+    res = copy_work(x);
+    gc_sw = save;
+    return (res);
+}
+
+int copy_symbol(int x)
+{
+
+    SET_CAR(x, copy_work(GET_CAR(x)));
+    SET_CDR(x, copy_work(GET_CDR(x)));
+    SET_OPT(x, GET_OPT(x));
+    return (x);
+}
+
+/*
+ * copy_??? for copying GC 
+ */
+int copy_int(int x)
+{
+    return (x);
+}
+
+int copy_long(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, LONGN);
+    SET_LONG(addr, GET_LONG(x));
+    SET_AUX(addr, clongnum);	/* class longnum */
+    return (addr);
+}
+
+
+int copy_flt(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, FLTN);
+    SET_FLT(addr, GET_FLT(x));
+    SET_AUX(addr, cfloat);	/* class float */
+    return (addr);
+}
+
+static inline int *GET_VEC(int addr)
+{
+    return heap[addr].val.car.dyna_vec;
+}
+
+int copy_vec(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_VEC(addr, GET_VEC(x));	/* vector elements */
+    SET_TAG(addr, VEC);
+    SET_CDR(addr, GET_CDR(x));	/* vector size */
+    SET_AUX(addr, cgeneral_vector);	/* class general-vector */
+    return (addr);
+}
+
+
+int copy_array(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_VEC(addr, GET_VEC(x));	/* array or vector */
+    SET_TAG(addr, GET_TAG(x));	/* tag ARR or VEC */
+    SET_CDR(addr, GET_CDR(x));	/* dimension */
+    SET_AUX(addr, GET_AUX(x));	/* class */
+    return (addr);
+}
+
+
+int copy_str(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, STR);		/* tag */
+    heap[addr].name = heap[x].name;	/* string */
+    SET_AUX(addr, GET_AUX(x));	/* class string */
+    return (addr);
+}
+
+
+int copy_char(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, CHR);
+    heap[addr].name = heap[x].name;
+    SET_AUX(addr, GET_AUX(x));
+    return (addr);
+}
+
+int copy_func(int x)
+{
+    int val;
+
+    val = freshcell();
+    SET_TAG(val, FUNC);
+    SET_NAME(val, GET_NAME(x));
+    SET_CAR(val, copy_work(GET_CAR(x)));
+    SET_CDR(val, copy_work(GET_CDR(x)));
+    SET_AUX(val, GET_AUX(x));	/* class function */
+    SET_OPT(val, GET_OPT(x));	/* amount of argument */
+    return (val);
+}
+
+int copy_generic(int x)
+{
+    int val;
+
+    val = freshcell();
+    SET_TAG(val, GENERIC);
+    SET_NAME(val, GET_NAME(x));
+    SET_CAR(val, GET_CAR(x));
+    SET_OPT(val, GET_OPT(x));	/* amount of argument */
+    SET_CDR(val, copy_work(GET_CDR(x)));	/* method */
+    SET_AUX(val, GET_AUX(x));
+    return (val);
+}
+
+int copy_macro(int x)
+{
+    int val;
+
+    val = freshcell();
+    SET_TAG(val, MACRO);
+    SET_CAR(val, copy_work(GET_CAR(x)));
+    return (val);
+}
+
+int copy_stream(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, STREAM);
+    SET_PORT(addr, GET_PORT(x));
+    SET_CDR(addr, GET_CDR(x));	/* string-stream-position */
+    SET_AUX(addr, GET_AUX(x));	/* class */
+    SET_OPT(addr, GET_OPT(x));	/* input/output/inout */
+    return (addr);
+}
+
+int copy_class(int x)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, CLASS);
+    SET_NAME(addr, GET_NAME(x));
+    SET_CAR(addr, GET_CAR(x));
+    SET_CDR(addr, GET_CAR(x));
+    SET_AUX(addr, GET_CAR(x));
+    return (addr);
+}
+
+
+int copy_bignum(int x)
+{
+    int addr, sign;
+
+    sign = get_sign(x);
+    addr = copy_gen_big();
+    SET_TAG(addr, BIGX);
+    set_sign(addr, sign);
+    SET_AUX(addr, cbignum);
+    return (addr);
+}
+
+
+/*
+ * To check first cell, prop=-1. therefor when compute bignum, if it is
+ * first cell, store data the cell. or else chain cell with cons_next.
+ */
+int copy_gen_big(void)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, BIGX);
+    SET_AUX(addr, cbignum);
+    return (addr);
+}
+
+
+/*
+ * copy symbol of hash list 
+ */
+
+void copy_hash(int x)
+{
+
+    if (nullp(x))
+	return;
+    else {
+	SET_CAR(x, copy_symbol(car(x)));
+	copy_hash(cdr(x));
+    }
+}
+

@@ -1648,7 +1648,7 @@ int f_assoc(int arglist)
 	error(WRONG_ARGS, "assoc", arglist);
     if (!listp(arg2))
 	error(NOT_LIST, "assoc", arg2);
-    if (!assoclistp(arg2))
+    if (!assoc_list_p(arg2))
 	error(IMPROPER_ARGS, "assoc", arg2);
 
     return (assoc(arg1, arg2));

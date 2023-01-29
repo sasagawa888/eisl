@@ -794,7 +794,7 @@ int assq(int x, int y)
 	return (assq(x, cdr(y)));
 }
 
-int assoclistp(int ls)
+int assoc_list_p(int ls)
 {
     while (!nullp(ls)) {
 	if (!listp(car(ls)))

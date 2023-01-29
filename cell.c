@@ -268,7 +268,9 @@ int freshcell(void)
     }
 }
 
-
+/* generate freshcell on heap area
+ * use copying GC
+ */
 int hfreshcell(void)
 {
     int res;
@@ -457,6 +459,8 @@ int hash(const char *name)
  * make_char          make character
  * make_class         make class
  * make_instance      make instance
+ * make_dummy         make dummy
+ * make_big           make bignum (bignum.c)
  */
 
 

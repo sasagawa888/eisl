@@ -687,7 +687,7 @@ int array_ref(int obj, int ls);
 int array_set(int obj, int ls, int val);
 int arrayp(int addr);
 int assoc(int sym, int lis);
-int assoclistp(int ls);
+int assoc_list_p(int ls);
 int assq(int x, int y);
 int atomp(int addr);
 int bignump(int x);

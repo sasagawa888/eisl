@@ -4,11 +4,11 @@
  *
  * <files>
  * main.c        REPL
- * cell.c        generate cells 
+ * cell.c        generate cells. interface functions for dynamic-linked code.
  * data.c        predicate for data structure. operation of data structure.
- * compute.c     computation
+ * compute.c     computation numeric
  * bignum.c      computation of bignum
- * function.c    builtintfunctions
+ * function.c    builtin functions
  * syntax.c      syntax functions
  * extension.c   extended functions (non ISLisp standard)
  * gbc.c         garbage collenction
@@ -45,7 +45,7 @@
 #include "compat/eiffel_stubs.h"
 #include "compat/curses_stubs.h"
 
-/* ------pointer---- */
+/* pointer */
 int ep;				/* environment pointer */
 int dp;				/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
@@ -56,7 +56,7 @@ int lp;				/* shelter pointer */
 int wp;				/* working pointer for copy GC */
 
 
-/* ------class----- */
+/* class */
 int cobject;
 int cbasic_array;
 int cbasic_array_star;

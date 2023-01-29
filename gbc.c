@@ -262,9 +262,9 @@ int freecell(void)
    |------------- 0  WP pointer
    |Heap area   save parmanent data
    |------------- 6000000
-   |Work1 area  if Work1 has a lot of data, copy from work1 to work2   switch gc_sw = 0
+   |Work1 area  if Work1 has a lot of data, copy from work1 to work2   switch gc_sw == 1
    |------------- 13000000
-   |Work2 area  if Work2 has a lot of data, copy from work2 to work1   gc_sw = 1  
+   |Work2 area  if Work2 has a lot of data, copy from work2 to work1   gc_sw == 2  
    |------------- 20000000
 
  */

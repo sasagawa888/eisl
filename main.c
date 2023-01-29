@@ -740,11 +740,11 @@ septoken separater(char buf[], char sep)
     return (res);
 }
 
-void insertstr(char ch, char buf[])
+void insert_str(char ch, char buf[])
 {
     int i;
 
-    i = laststr(buf) + 1;
+    i = last_str(buf) + 1;
     while (i >= 0) {
 	buf[i + 1] = buf[i];
 	i--;
@@ -752,7 +752,7 @@ void insertstr(char ch, char buf[])
     buf[0] = ch;
 }
 
-int laststr(char buf[])
+int last_str(char buf[])
 {
     int i;
 
@@ -763,12 +763,12 @@ int laststr(char buf[])
 }
 
 
-/* remove #\ from char, for example #\a -> a. */
-void dropchar(char buf[])
+/* remove #\ from char, for example #\a -> a */
+void drop_char(char buf[])
 {
     int i, j;
 
-    j = laststr(buf);
+    j = last_str(buf);
     for (i = 2; i <= j; i++)
 	buf[i - 2] = buf[i];
     buf[i - 2] = NUL;
@@ -831,7 +831,7 @@ int flt_token(char buf[])
 	    return (0);
 	strncpy(bufcp, buf, SYMSIZE - 1);
 	bufcp[SYMSIZE - 1] = '\0';
-	insertstr('0', bufcp);
+	insert_str('0', bufcp);
 	if (flt_token(bufcp))
 	    return (1);
     }
@@ -923,7 +923,7 @@ int bin_token(char buf[])
     if (i == 3 && (buf[2] == '+' || buf[2] == '-'))
 	return (0);
     else if (i != 2) {
-	dropchar(buf);
+	drop_char(buf);
 	return (1);
     } else
 	return (0);
@@ -951,7 +951,7 @@ int oct_token(char buf[])
     if (i == 3 && (buf[2] == '+' || buf[2] == '-'))
 	return (0);
     else if (i != 2) {
-	dropchar(buf);
+	drop_char(buf);
 	return (1);
     } else
 	return (0);
@@ -976,7 +976,7 @@ int dec_token(char buf[])
 	    return (0);
 
     if (i != 2) {
-	dropchar(buf);
+	drop_char(buf);
 	return (1);
     } else
 	return (0);
@@ -1003,7 +1003,7 @@ int hex_token(char buf[])
     if (i == 3 && (buf[2] == '+' || buf[2] == '-'))
 	return (0);
     else if (i != 2) {
-	dropchar(buf);
+	drop_char(buf);
 	return (1);
     } else
 	return (0);

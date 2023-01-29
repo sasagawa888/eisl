@@ -93,7 +93,7 @@ int make_big(char *bignum)
 	sign = 1;
     /* remove sign */
     if (bignum[0] == '-' || bignum[0] == '+') {
-	i = laststr(bignum);
+	i = last_str(bignum);
 	for (j = 0; j < i; j++)
 	    bignum[j] = bignum[j + 1];
 
@@ -104,7 +104,7 @@ int make_big(char *bignum)
     /* generate bignum data cell */
     res = gen_big();
 
-    i = laststr(bignum);
+    i = last_str(bignum);
     while (i >= 0) {
 	if (i > 8) {
 	    for (j = 8; j >= 0; j--) {

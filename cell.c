@@ -440,19 +440,6 @@ int hash(const char *name)
 }
 
 
-void store_backtrace(int x)
-{
-    int i;
-
-    for (i = 1; i < BACKSIZE; i++) {
-	int y;
-
-	y = backtrace[i];
-	backtrace[i - 1] = y;
-    }
-    backtrace[BACKSIZE - 1] = x;
-}
-
 /*
  * make_ generate cell for data structures
  * make_int           make integer

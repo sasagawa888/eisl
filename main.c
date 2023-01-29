@@ -2111,6 +2111,21 @@ void bind_const(const char *name, int obj)
     SET_OPT(sym, CONSTN);
 }
 
+
+void store_backtrace(int x)
+{
+    int i;
+
+    for (i = 1; i < BACKSIZE; i++) {
+	int y;
+
+	y = backtrace[i];
+	backtrace[i - 1] = y;
+    }
+    backtrace[BACKSIZE - 1] = x;
+}
+
+
 /* --------qusi quote--------------- */
 int quasi_transfer(int x, int n)
 {

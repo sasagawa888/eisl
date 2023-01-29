@@ -1,5 +1,8 @@
 /*
  * garbage collenction
+ * Easy-ISLisp has two garbage collection system. mark&sweep and copying GC.
+ * default is mark&sweep gc.
+ * function (gbc x) switch each method.
  */
 
 
@@ -14,7 +17,7 @@
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 
-/* ---------garbage collection----------- */
+/* mark&sweep garbage collection */
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {
@@ -247,6 +250,24 @@ int freecell(void)
 {
     return (fc);
 }
+
+
+/*
+ * copying garbage collection.
+ * memory map M&S GC mode address 0 - 19999999 Heap area
+ * 
+ * Copying GC mode 0 - 5999999 Heap area 6000000 - 12999999 Work1 area
+ * 12999999 - 19999999 Wrok2 area 
+   
+   |------------- 0  WP pointer
+   |Heap area   save parmanent data
+   |------------- 6000000
+   |Work1 area  if Work1 has a lot of data, copy from work1 to work2   switch gc_sw = 0
+   |------------- 13000000
+   |Work2 area  if Work2 has a lot of data, copy from work2 to work1   gc_sw = 1  
+   |------------- 20000000
+
+ */
 
 int gbcsw(void)
 {

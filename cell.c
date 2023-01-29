@@ -24,7 +24,7 @@
 #include "except.h"
 #include "str.h"
 
-void initcell(void)
+void init_cell(void)
 {
     int addr, x;
 
@@ -56,7 +56,7 @@ void initcell(void)
     ap = 0;
 }
 
-void bindclass(const char *name, int cl)
+void bind_class(const char *name, int cl)
 {
     int sym;
 
@@ -67,7 +67,7 @@ void bindclass(const char *name, int cl)
 }
 
 /* class aux = ((format-string . error-msg)(format-arguments . args)) */
-void initerrargs(int cl)
+void init_err_args(int cl)
 {
     int vars, args;
 
@@ -99,7 +99,7 @@ void initerrargs(int cl)
 
 }
 
-void initclass(void)
+void init_class(void)
 {
     cobject = make_class("object", NIL);
     cbasic_array = make_class("basic-array", cobject);
@@ -153,74 +153,74 @@ void initclass(void)
     clongnum = make_class("longnum", cinteger);
     cbignum = make_class("bignum", cinteger);
 
-    bindclass("<OBJECT>", cobject);
-    bindclass("<BASIC-ARRAY>", cbasic_array);
-    bindclass("<GENERAL-ARRAY*>", cgeneral_array_star);
-    bindclass("<BASIC-ARRAY*>", cbasic_array_star);
-    bindclass("<BASIC-VECTOR>", cbasic_vector);
-    bindclass("<GENERAL-VECTOR>", cgeneral_vector);
-    bindclass("<STRING>", cstring);
-    bindclass("<BUILT-IN-CLASS>", cbuilt_in_class);
-    bindclass("<CHARACTER>", ccharacter);
-    bindclass("<FUNCTION>", cfunction);
-    bindclass("<GENERIC-FUNCTION>", cgeneric_function);
-    bindclass("<STANDARD-GENERIC-FUNCTION>", cstandard_generic_function);
-    bindclass("<LIST>", clist);
-    bindclass("<CONS>", ccons);
-    bindclass("<NULL>", cnull);
-    bindclass("<SYMBOL>", csymbol);
-    bindclass("<NUMBER>", cnumber);
-    bindclass("<FLOAT>", cfloat);
-    bindclass("<INTEGER>", cinteger);
-    bindclass("<SERIOUS-CONDITION>", cserious_condition);
-    bindclass("<ERROR>", cerror);
-    bindclass("<ARITHMETIC-ERROR>", carithmetic_error);
-    bindclass("<DIVISION-BY-ZERO>", cdivision_by_zero);
-    bindclass("<FLOATING-POINT-OVERFLOW>", cfloating_point_overflow);
-    bindclass("<FLOATING-POINT-UNDERFLOW>", cfloating_point_underflow);
-    bindclass("<CONTROL-ERROR>", ccontrol_error);
-    bindclass("<PARSE-ERROR>", cparse_error);
-    bindclass("<PROGRAM-ERROR>", cprogram_error);
-    bindclass("<DOMAIN-ERROR>", cdomain_error);
-    bindclass("<CLASS-ERROR>", cclass_error);
-    bindclass("<UNDEFINED-ENTITY>", cundefined_entity);
-    bindclass("<UNBOUND-VARIABLE>", cunbound_variable);
-    bindclass("<UNDEFINED-FUNCTION>", cundefined_function);
-    bindclass("<SIMPLE-ERROR>", csimple_error);
-    bindclass("<STREAM-ERROR>", cstream_error);
-    bindclass("<END-OF-STREAM>", cend_of_stream);
-    bindclass("<STORAGE-EXHAUSTED>", cstorage_exhausted);
-    bindclass("<STANDARD-CLASS>", cstandard_class);
-    bindclass("<STANDARD-OBJECT>", cstandard_object);
-    bindclass("<STREAM>", cstream);
-    bindclass("<INVALID>", cinvalid);
-    bindclass("<FIXNUM>", cfixnum);
-    bindclass("<LONGNUM>", clongnum);
-    bindclass("<BIGNUM>", cbignum);
+    bind_class("<OBJECT>", cobject);
+    bind_class("<BASIC-ARRAY>", cbasic_array);
+    bind_class("<GENERAL-ARRAY*>", cgeneral_array_star);
+    bind_class("<BASIC-ARRAY*>", cbasic_array_star);
+    bind_class("<BASIC-VECTOR>", cbasic_vector);
+    bind_class("<GENERAL-VECTOR>", cgeneral_vector);
+    bind_class("<STRING>", cstring);
+    bind_class("<BUILT-IN-CLASS>", cbuilt_in_class);
+    bind_class("<CHARACTER>", ccharacter);
+    bind_class("<FUNCTION>", cfunction);
+    bind_class("<GENERIC-FUNCTION>", cgeneric_function);
+    bind_class("<STANDARD-GENERIC-FUNCTION>", cstandard_generic_function);
+    bind_class("<LIST>", clist);
+    bind_class("<CONS>", ccons);
+    bind_class("<NULL>", cnull);
+    bind_class("<SYMBOL>", csymbol);
+    bind_class("<NUMBER>", cnumber);
+    bind_class("<FLOAT>", cfloat);
+    bind_class("<INTEGER>", cinteger);
+    bind_class("<SERIOUS-CONDITION>", cserious_condition);
+    bind_class("<ERROR>", cerror);
+    bind_class("<ARITHMETIC-ERROR>", carithmetic_error);
+    bind_class("<DIVISION-BY-ZERO>", cdivision_by_zero);
+    bind_class("<FLOATING-POINT-OVERFLOW>", cfloating_point_overflow);
+    bind_class("<FLOATING-POINT-UNDERFLOW>", cfloating_point_underflow);
+    bind_class("<CONTROL-ERROR>", ccontrol_error);
+    bind_class("<PARSE-ERROR>", cparse_error);
+    bind_class("<PROGRAM-ERROR>", cprogram_error);
+    bind_class("<DOMAIN-ERROR>", cdomain_error);
+    bind_class("<CLASS-ERROR>", cclass_error);
+    bind_class("<UNDEFINED-ENTITY>", cundefined_entity);
+    bind_class("<UNBOUND-VARIABLE>", cunbound_variable);
+    bind_class("<UNDEFINED-FUNCTION>", cundefined_function);
+    bind_class("<SIMPLE-ERROR>", csimple_error);
+    bind_class("<STREAM-ERROR>", cstream_error);
+    bind_class("<END-OF-STREAM>", cend_of_stream);
+    bind_class("<STORAGE-EXHAUSTED>", cstorage_exhausted);
+    bind_class("<STANDARD-CLASS>", cstandard_class);
+    bind_class("<STANDARD-OBJECT>", cstandard_object);
+    bind_class("<STREAM>", cstream);
+    bind_class("<INVALID>", cinvalid);
+    bind_class("<FIXNUM>", cfixnum);
+    bind_class("<LONGNUM>", clongnum);
+    bind_class("<BIGNUM>", cbignum);
 
-    initerrargs(cserious_condition);
-    initerrargs(cerror);
-    initerrargs(carithmetic_error);
-    initerrargs(cdivision_by_zero);
-    initerrargs(cfloating_point_overflow);
-    initerrargs(cfloating_point_underflow);
-    initerrargs(ccontrol_error);
-    initerrargs(cparse_error);
-    initerrargs(cprogram_error);
-    initerrargs(cdomain_error);
-    initerrargs(cclass_error);
-    initerrargs(cundefined_entity);
-    initerrargs(cunbound_variable);
-    initerrargs(cundefined_function);
-    initerrargs(csimple_error);
-    initerrargs(cstream_error);
-    initerrargs(cend_of_stream);
-    initerrargs(cstorage_exhausted);
+    init_err_args(cserious_condition);
+    init_err_args(cerror);
+    init_err_args(carithmetic_error);
+    init_err_args(cdivision_by_zero);
+    init_err_args(cfloating_point_overflow);
+    init_err_args(cfloating_point_underflow);
+    init_err_args(ccontrol_error);
+    init_err_args(cparse_error);
+    init_err_args(cprogram_error);
+    init_err_args(cdomain_error);
+    init_err_args(cclass_error);
+    init_err_args(cundefined_entity);
+    init_err_args(cunbound_variable);
+    init_err_args(cundefined_function);
+    init_err_args(csimple_error);
+    init_err_args(cstream_error);
+    init_err_args(cend_of_stream);
+    init_err_args(cstorage_exhausted);
 
     ENSURE(cnull == CLASS_NULL && csymbol == CLASS_SYMBOL);
 }
 
-void initstream(void)
+void init_stream(void)
 {
     standard_input = make_stm(stdin, EISL_INPUT, "standard-input");
     standard_output = make_stm(stdout, EISL_OUTPUT, "standard-output");
@@ -365,7 +365,7 @@ int find_dyn(int sym)
 }
 
 /* bind to association list destructively */
-void setval(int sym, int val, int ls)
+void set_val(int sym, int val, int ls)
 {
     int addr;
 
@@ -936,7 +936,7 @@ int make_instance(int cl, int initls)
     SET_CDR(addr, slotvars(cl));	/* slot vars with super class */
     SET_AUX(addr, cl);		/* class of instance */
     while (!nullp(initls)) {
-	setval(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
+	set_val(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
 	       GET_CDR(addr));
 	initls = cddr(initls);
     }
@@ -1046,7 +1046,7 @@ int initinst2(int inst_vars, int class_vars, int initls)
     return (inst_vars);
 }
 
-int makedummy(void)
+int make_dummy(void)
 {
     int res;
 

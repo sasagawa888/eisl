@@ -275,9 +275,9 @@ int main(int argc, char *argv[])
 	ed_key_up = key_up[2];
     }
 
-    initcell();
-    initclass();
-    initstream();
+    init_cell();
+    init_class();
+    init_stream();
     initsubr();
     initexsubr();
     initsyntax();

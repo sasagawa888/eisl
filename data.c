@@ -957,7 +957,7 @@ int copy(int x)
     if (nullp(x))
 	return (NIL);
     else if (x == UNDEF)
-	return (makedummy());
+	return (make_dummy());
     else if (integerp(x))
 	return (make_int(GET_INT(x)));
     else if (floatp(x))

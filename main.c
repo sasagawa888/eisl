@@ -20,7 +20,7 @@
  * flt   float
  * str   string
  * stm   stream
- * array array
+ * arr   array
  * vec   vector
  * char  character
  *  
@@ -1276,7 +1276,7 @@ void print(int addr)
 	print_vec(addr);
 	break;
     case ARR:
-	print_array(addr);
+	print_arr(addr);
 	break;
     case STR:
 	print_str(addr);
@@ -1400,7 +1400,7 @@ void print_vec(int x)
     output_char(output_stream, ')');
 }
 
-void print_array(int x)
+void print_arr(int x)
 {
     int i, size, st, ls, dim;
 
@@ -1608,7 +1608,7 @@ int eval(int addr)
     else if (charp(addr))
 	return (addr);
     else if (symbolp(addr)) {
-	res = findenv(addr);
+	res = find_env(addr);
 	if (res != FAILSE)
 	    return (res);
 	else {
@@ -1642,9 +1642,9 @@ int eval(int addr)
 	} else if ((symbolp(car(addr)))
 		   && (HAS_NAME(car(addr), "QUASI-QUOTE"))) {
 	    temp = quasi_transfer(cadr(addr), 0);
-	    shelterpush(temp);
+	    shelter_push(temp);
 	    res = eval(temp);
-	    shelterpop();
+	    shelter_pop();
 	    return (res);
 	} else if (subrp(car(addr))) {
 	    st = getETime();
@@ -1724,8 +1724,8 @@ int apply(int func, int args)
 	    print(args);
 	    putchar('\n');
 	}
-	shelterpush(func);
-	shelterpush(args);
+	shelter_push(func);
+	shelter_push(args);
 	push(ep);
 	ep = GET_CDR(func);
 
@@ -1748,7 +1748,7 @@ int apply(int func, int args)
 		error(WRONG_ARGS, GET_NAME(func), args);
 	}
 	body = cdr(GET_CAR(func));
-	bindarg(varlist, args);
+	bind_arg(varlist, args);
 	while (!(IS_NIL(body))) {
 	    res = eval(car(body));
 	    body = cdr(body);
@@ -1766,8 +1766,8 @@ int apply(int func, int args)
 	    print(res);
 	    putchar('\n');
 	}
-	shelterpop();
-	shelterpop();
+	shelter_pop();
+	shelter_pop();
 	ep = pop();
 	return (res);
     case MACRO:
@@ -1786,17 +1786,17 @@ int apply(int func, int args)
 		    error(WRONG_ARGS, GET_NAME(func), args);
 	    }
 	    body = cdr(GET_CAR(macrofunc));
-	    bindarg(varlist, args);
+	    bind_arg(varlist, args);
 	    while (!(IS_NIL(body))) {
-		shelterpush(body);
+		shelter_push(body);
 		res = eval(car(body));
-		shelterpop();
+		shelter_pop();
 		body = cdr(body);
 	    }
 	    unbind();
-	    shelterpush(res);
+	    shelter_push(res);
 	    res = eval(res);
-	    shelterpop();
+	    shelter_pop();
 	    return (res);
 	}
 
@@ -1853,7 +1853,7 @@ int apply(int func, int args)
 			body = cdr(GET_CAR(car(next_method)));
 			multiple_call_next_method =
 			    has_multiple_call_next_method_p(body);
-			bindarg(varlist, args);
+			bind_arg(varlist, args);
 			while (!nullp(body)) {
 			    res = eval(car(body));
 			    body = cdr(body);
@@ -1881,7 +1881,7 @@ int apply(int func, int args)
     return (0);
 }
 
-void bindarg(int varlist, int arglist)
+void bind_arg(int varlist, int arglist)
 {
     int arg1, arg2;
 
@@ -1891,12 +1891,12 @@ void bindarg(int varlist, int arglist)
 				     || car(varlist) == make_sym("&REST"))) {
 	    arg1 = cadr(varlist);
 	    arg2 = arglist;
-	    addlexenv(arg1, arg2);
+	    add_lex_env(arg1, arg2);
 	    return;
 	} else {
 	    arg1 = car(varlist);
 	    arg2 = car(arglist);
-	    addlexenv(arg1, arg2);
+	    add_lex_env(arg1, arg2);
 	    varlist = cdr(varlist);
 	    arglist = cdr(arglist);
 	}
@@ -1911,19 +1911,19 @@ void unbind(void)
 
 int evlis(int addr)
 {
-    argpush(addr);
+    arg_push(addr);
     top_flag = false;
     if (IS_NIL(addr)) {
-	argpop();
+	arg_pop();
 	return (addr);
     } else {
 	int car_addr, cdr_addr;
 
 	car_addr = eval(car(addr));
-	argpush(car_addr);
+	arg_push(car_addr);
 	cdr_addr = evlis(cdr(addr));
-	car_addr = argpop();
-	(void) argpop();
+	car_addr = arg_pop();
+	(void) arg_pop();
 	return (cons(car_addr, cdr_addr));
     }
 }
@@ -2019,45 +2019,45 @@ int pop(void)
 }
 
 /* push/pop of arglist */
-int argpush(int addr)
+int arg_push(int addr)
 {
     argstk[ap++] = addr;
 
     return (T);
 }
 
-int argpop(void)
+int arg_pop(void)
 {
     return (argstk[--ap]);
 }
 
 /* shelter push/pop */
-int shelterpush(int addr)
+int shelter_push(int addr)
 {
     if (lp >= STACKSIZE)
-	error(SHELTER_OVERF, "shelterpush", NIL);
+	error(SHELTER_OVERF, "shelter_push", NIL);
     shelter[lp++] = addr;
 
     return (T);
 }
 
-int shelterpop(void)
+int shelter_pop(void)
 {
     if (lp <= 0)
-	error(SHELTER_UNDERF, "shelterpop", NIL);
+	error(SHELTER_UNDERF, "shelter_pop", NIL);
     return (shelter[--lp]);
 }
 
 /* system function regist subr to environment. */
-void defsubr(const char *symname, int (*func)(int))
+void def_subr(const char *symname, int (*func)(int))
 {
-    bindfunc(symname, SUBR, func);
+    bind_func(symname, SUBR, func);
 }
 
 /* regist fsubr(not eval argument) */
-void deffsubr(const char *symname, int (*func)(int))
+void def_fsubr(const char *symname, int (*func)(int))
 {
-    bindfunc(symname, FSUBR, func);
+    bind_func(symname, FSUBR, func);
 }
 
 
@@ -2068,7 +2068,7 @@ static inline void SET_SUBR(int addr, subr_t x)
     heap[addr].val.car.subr = x;
 }
 
-void bindfunc(const char *name, tag_t tag, int (*func)(int))
+void bind_func(const char *name, tag_t tag, int (*func)(int))
 {
     int sym, val;
 
@@ -2081,7 +2081,7 @@ void bindfunc(const char *name, tag_t tag, int (*func)(int))
     SET_CAR(sym, val);
 }
 
-void bindmacro(char *name, int addr)
+void bind_macro(char *name, int addr)
 {
     int sym, val1, val2;
 
@@ -2102,7 +2102,7 @@ void bindmacro(char *name, int addr)
     SET_CAR(sym, val2);
 }
 
-void bindconst(const char *name, int obj)
+void bind_const(const char *name, int obj)
 {
     int sym;
 

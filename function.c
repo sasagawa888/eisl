@@ -30,196 +30,196 @@ static void *hmod;
 void initsubr(void)
 {
     // constant
-    bindconst("*PI*", make_flt(M_PI));
-    bindconst("*MOST-POSITIVE-FLOAT*", make_flt(DBL_MAX));
-    bindconst("*MOST-NEGATIVE-FLOAT*", make_flt(-DBL_MAX));
+    bind_const("*PI*", make_flt(M_PI));
+    bind_const("*MOST-POSITIVE-FLOAT*", make_flt(DBL_MAX));
+    bind_const("*MOST-NEGATIVE-FLOAT*", make_flt(-DBL_MAX));
 
     // function
-    defsubr("-", f_minus);
-    defsubr("*", f_mult);
-    defsubr("/=", f_notnumeqp);
-    defsubr("+", f_plus);
-    defsubr("<", f_smaller);
-    defsubr("<=", f_eqsmaller);
-    defsubr("=", f_numeqp);
-    defsubr(">", f_greater);
-    defsubr(">=", f_eqgreater);
-    defsubr("ABS", f_abs);
-    defsubr("APPEND", f_append);
-    defsubr("APPLY", f_apply);
-    defsubr("AREF", f_aref);
-    defsubr("ARITHMETIC-ERROR-OPERANDS", f_arithmetic_error_operands);
-    defsubr("ARITHMETIC-ERROR-OPERATION", f_arithmetic_error_operation);
-    defsubr("ARRAY-DIMENSIONS", f_array_dimensions);
-    defsubr("ASSOC", f_assoc);
-    defsubr("ATAN", f_atan);
-    defsubr("ATAN2", f_atan2);
-    defsubr("ATANH", f_atanh);
-    defsubr("ATOM", f_atomp);
-    defsubr("BASIC-ARRAY-P", f_basic_array_p);
-    defsubr("BASIC-ARRAY*-P", f_basic_array_star_p);
-    defsubr("BASIC-VECTOR-P", f_basic_vector_p);
-    defsubr("CALL-NEXT-METHOD", f_call_next_method);
-    defsubr("CAR", f_car);
-    defsubr("CDR", f_cdr);
-    defsubr("CEILING", f_ceiling);
-    defsubr("CERROR", f_cerror);
-    defsubr("CHAR-INDEX", f_char_index);
-    defsubr("CHAR/=", f_char_noteqp);
-    defsubr("CHAR<", f_char_smallerp);
-    defsubr("CHAR<=", f_char_eqsmallerp);
-    defsubr("CHAR=", f_char_eqp);
-    defsubr("CHAR>", f_char_greaterp);
-    defsubr("CHAR>=", f_char_eqgreaterp);
-    defsubr("CHARACTERP", f_characterp);
-    defsubr("CLASS-OF", f_class_of);
-    defsubr("CLOSE", f_close);
-    defsubr("CONDITION-CONTINUABLE", f_condition_continuable);
-    defsubr("CONS", f_cons);
-    defsubr("CONSP", f_consp);
-    defsubr("CONTINUE-CONDITION", f_continue_condition);
-    defsubr("COS", f_cos);
-    defsubr("COSH", f_cosh);
-    defsubr("CREATE-ARRAY", f_create_array);
-    defsubr("CREATE-LIST", f_create_list);
-    defsubr("CREATE-STRING-INPUT-STREAM", f_create_string_input_stream);
-    defsubr("CREATE-STRING-OUTPUT-STREAM", f_create_string_output_stream);
-    defsubr("CREATE-STRING", f_create_string);
-    defsubr("CREATE-VECTOR", f_create_vector);
-    defsubr("CREATE*", f_create_star);
-    defsubr("DIV", f_div);
-    defsubr("DOMAIN-ERROR-OBJECT", f_domain_error_object);
-    defsubr("DOMAIN-ERROR-EXPECTED-CLASS", f_domain_error_expected_class);
-    defsubr("ELT", f_elt);
-    defsubr("EQ", f_eq);
-    defsubr("EQL", f_eql);
-    defsubr("EQUAL", f_equal);
-    defsubr("ERROR-OUTPUT", f_error_output);
-    defsubr("ERROR", f_error);
-    defsubr("EVAL", f_eval);
-    defsubr("EXP", f_exp);
-    defsubr("EXPT", f_expt);
-    defsubr("FILE-LENGTH", f_file_length);
-    defsubr("FILE-POSITION", f_file_position);
-    defsubr("FINISH-OUTPUT", f_finish_output);
-    defsubr("FLOAT", f_float);
-    defsubr("FLOATP", f_floatp);
-    defsubr("FLOOR", f_floor);
-    defsubr("FORMAT-CHAR", f_format_char);
-    defsubr("FORMAT-FRESH-LINE", f_format_fresh_line);
-    defsubr("FORMAT-FLOAT", f_format_float);
-    defsubr("FORMAT-INTEGER", f_format_integer);
-    defsubr("FORMAT-OBJECT", f_format_object);
-    defsubr("FORMAT-TAB", f_format_tab);
-    defsubr("FORMAT", f_format);
-    defsubr("FUNCALL", f_funcall);
-    defsubr("FUNCTIONP", f_functionp);
-    defsubr("GAREF", f_garef);
-    defsubr("GBC", f_gbc);
-    defsubr("GCD", f_gcd);
-    defsubr("GENERAL-ARRAY*-P", f_general_array_star_p);
-    defsubr("GENERAL-VECTOR-P", f_general_vector_p);
-    defsubr("GENERIC-FUNCTION-P", f_generic_function_p);
-    defsubr("GENSYM", f_gensym);
-    defsubr("GET-INTERNAL-RUN-TIME", f_get_internal_run_time);
-    defsubr("GET-INTERNAL-REAL-TIME", f_get_internal_real_time);
-    defsubr("GET-OUTPUT-STREAM-STRING", f_get_output_stream_string);
-    defsubr("GET-UNIVERSAL-TIME", f_get_universal_time);
-    defsubr("IDENTITY", f_identity);
-    defsubr("INITIALIZE-OBJECT*", f_initialize_object_star);
-    defsubr("INPUT-STREAM-P", f_input_stream_p);
-    defsubr("INSTANCEP", f_instancep);
-    defsubr("INTEGERP", f_integerp);
-    defsubr("INTERNAL-TIME-UNITS-PER-SECOND",
+    def_subr("-", f_minus);
+    def_subr("*", f_mult);
+    def_subr("/=", f_notnumeqp);
+    def_subr("+", f_plus);
+    def_subr("<", f_smaller);
+    def_subr("<=", f_eqsmaller);
+    def_subr("=", f_numeqp);
+    def_subr(">", f_greater);
+    def_subr(">=", f_eqgreater);
+    def_subr("ABS", f_abs);
+    def_subr("APPEND", f_append);
+    def_subr("APPLY", f_apply);
+    def_subr("AREF", f_aref);
+    def_subr("ARITHMETIC-ERROR-OPERANDS", f_arithmetic_error_operands);
+    def_subr("ARITHMETIC-ERROR-OPERATION", f_arithmetic_error_operation);
+    def_subr("ARRAY-DIMENSIONS", f_array_dimensions);
+    def_subr("ASSOC", f_assoc);
+    def_subr("ATAN", f_atan);
+    def_subr("ATAN2", f_atan2);
+    def_subr("ATANH", f_atanh);
+    def_subr("ATOM", f_atomp);
+    def_subr("BASIC-ARRAY-P", f_basic_array_p);
+    def_subr("BASIC-ARRAY*-P", f_basic_array_star_p);
+    def_subr("BASIC-VECTOR-P", f_basic_vector_p);
+    def_subr("CALL-NEXT-METHOD", f_call_next_method);
+    def_subr("CAR", f_car);
+    def_subr("CDR", f_cdr);
+    def_subr("CEILING", f_ceiling);
+    def_subr("CERROR", f_cerror);
+    def_subr("CHAR-INDEX", f_char_index);
+    def_subr("CHAR/=", f_char_noteqp);
+    def_subr("CHAR<", f_char_smallerp);
+    def_subr("CHAR<=", f_char_eqsmallerp);
+    def_subr("CHAR=", f_char_eqp);
+    def_subr("CHAR>", f_char_greaterp);
+    def_subr("CHAR>=", f_char_eqgreaterp);
+    def_subr("CHARACTERP", f_characterp);
+    def_subr("CLASS-OF", f_class_of);
+    def_subr("CLOSE", f_close);
+    def_subr("CONDITION-CONTINUABLE", f_condition_continuable);
+    def_subr("CONS", f_cons);
+    def_subr("CONSP", f_consp);
+    def_subr("CONTINUE-CONDITION", f_continue_condition);
+    def_subr("COS", f_cos);
+    def_subr("COSH", f_cosh);
+    def_subr("CREATE-ARRAY", f_create_array);
+    def_subr("CREATE-LIST", f_create_list);
+    def_subr("CREATE-STRING-INPUT-STREAM", f_create_string_input_stream);
+    def_subr("CREATE-STRING-OUTPUT-STREAM", f_create_string_output_stream);
+    def_subr("CREATE-STRING", f_create_string);
+    def_subr("CREATE-VECTOR", f_create_vector);
+    def_subr("CREATE*", f_create_star);
+    def_subr("DIV", f_div);
+    def_subr("DOMAIN-ERROR-OBJECT", f_domain_error_object);
+    def_subr("DOMAIN-ERROR-EXPECTED-CLASS", f_domain_error_expected_class);
+    def_subr("ELT", f_elt);
+    def_subr("EQ", f_eq);
+    def_subr("EQL", f_eql);
+    def_subr("EQUAL", f_equal);
+    def_subr("ERROR-OUTPUT", f_error_output);
+    def_subr("ERROR", f_error);
+    def_subr("EVAL", f_eval);
+    def_subr("EXP", f_exp);
+    def_subr("EXPT", f_expt);
+    def_subr("FILE-LENGTH", f_file_length);
+    def_subr("FILE-POSITION", f_file_position);
+    def_subr("FINISH-OUTPUT", f_finish_output);
+    def_subr("FLOAT", f_float);
+    def_subr("FLOATP", f_floatp);
+    def_subr("FLOOR", f_floor);
+    def_subr("FORMAT-CHAR", f_format_char);
+    def_subr("FORMAT-FRESH-LINE", f_format_fresh_line);
+    def_subr("FORMAT-FLOAT", f_format_float);
+    def_subr("FORMAT-INTEGER", f_format_integer);
+    def_subr("FORMAT-OBJECT", f_format_object);
+    def_subr("FORMAT-TAB", f_format_tab);
+    def_subr("FORMAT", f_format);
+    def_subr("FUNCALL", f_funcall);
+    def_subr("FUNCTIONP", f_functionp);
+    def_subr("GAREF", f_garef);
+    def_subr("GBC", f_gbc);
+    def_subr("GCD", f_gcd);
+    def_subr("GENERAL-ARRAY*-P", f_general_array_star_p);
+    def_subr("GENERAL-VECTOR-P", f_general_vector_p);
+    def_subr("GENERIC-FUNCTION-P", f_generic_function_p);
+    def_subr("GENSYM", f_gensym);
+    def_subr("GET-INTERNAL-RUN-TIME", f_get_internal_run_time);
+    def_subr("GET-INTERNAL-REAL-TIME", f_get_internal_real_time);
+    def_subr("GET-OUTPUT-STREAM-STRING", f_get_output_stream_string);
+    def_subr("GET-UNIVERSAL-TIME", f_get_universal_time);
+    def_subr("IDENTITY", f_identity);
+    def_subr("INITIALIZE-OBJECT*", f_initialize_object_star);
+    def_subr("INPUT-STREAM-P", f_input_stream_p);
+    def_subr("INSTANCEP", f_instancep);
+    def_subr("INTEGERP", f_integerp);
+    def_subr("INTERNAL-TIME-UNITS-PER-SECOND",
 	    f_internal_time_units_per_second);
-    defsubr("ISQRT", f_isqrt);
-    defsubr("LCM", f_lcm);
-    defsubr("LENGTH", f_length);
-    defsubr("LIST", f_list);
-    defsubr("LISTP", f_listp);
-    defsubr("LOAD", f_load);
-    defsubr("LOG", f_log);
-    defsubr("MAP-INTO", f_map_into);
-    defsubr("MAPC", f_mapc);
-    defsubr("MAPCAR", f_mapcar);
-    defsubr("MAPCAN", f_mapcan);
-    defsubr("MAPCON", f_mapcon);
-    defsubr("MAPL", f_mapl);
-    defsubr("MAPLIST", f_maplist);
-    defsubr("MAX", f_max);
-    defsubr("MEMBER", f_member);
-    defsubr("MIN", f_min);
-    defsubr("MOD", f_mod);
-    defsubr("NEXT-METHOD-P", f_next_method_p);
-    defsubr("NOT", f_not);
-    defsubr("NREVERSE", f_nreverse);
-    defsubr("NULL", f_nullp);
-    defsubr("NUMBERP", f_numberp);
-    defsubr("OPEN-INPUT-FILE", f_open_input_file);
-    defsubr("OPEN-IO-FILE", f_open_io_file);
-    defsubr("OPEN-OUTPUT-FILE", f_open_output_file);
-    defsubr("OPEN-STREAM-P", f_open_stream_p);
-    defsubr("OUTPUT-STREAM-P", f_output_stream_p);
-    defsubr("PARSE-ERROR-STRING", f_parse_error_string);
-    defsubr("PARSE-ERROR-EXPECTED-CLASS", f_parse_error_expected_class);
-    defsubr("PARSE-NUMBER", f_parse_number);
-    defsubr("PREVIEW-CHAR", f_preview_char);
-    defsubr("PRINT", f_print);
-    defsubr("PROBE-FILE", f_probe_file);
-    defsubr("PROPERTY", f_property);
-    defsubr("QUIT", f_quit);
-    defsubr("QUOTIENT", f_quotient);
-    defsubr("READ-BYTE", f_read_byte);
-    defsubr("READ-CHAR", f_read_char);
-    defsubr("READ-LINE", f_read_line);
-    defsubr("READ", f_read);
-    defsubr("RECIPROCAL", f_reciprocal);
-    defsubr("REMOVE-PROPERTY", f_remove_property);
-    defsubr("REVERSE", f_reverse);
-    defsubr("ROUND", f_round);
-    defsubr("SET-AREF", f_set_aref);
-    defsubr("SET-CAR", f_set_car);
-    defsubr("SET-CDR", f_set_cdr);
-    defsubr("SET-ELT", f_set_elt);
-    defsubr("SET-FILE-POSITION", f_set_file_position);
-    defsubr("SET-GAREF", f_set_garef);
-    defsubr("SET-PROPERTY", f_set_property);
-    defsubr("SET-SLOT-VALUE", f_set_slot_value);
-    defsubr("SIGNAL-CONDITION", f_signal_condition);
-    defsubr("SIMPLE-ERROR-FORMAT-ARGUMENTS",
+    def_subr("ISQRT", f_isqrt);
+    def_subr("LCM", f_lcm);
+    def_subr("LENGTH", f_length);
+    def_subr("LIST", f_list);
+    def_subr("LISTP", f_listp);
+    def_subr("LOAD", f_load);
+    def_subr("LOG", f_log);
+    def_subr("MAP-INTO", f_map_into);
+    def_subr("MAPC", f_mapc);
+    def_subr("MAPCAR", f_mapcar);
+    def_subr("MAPCAN", f_mapcan);
+    def_subr("MAPCON", f_mapcon);
+    def_subr("MAPL", f_mapl);
+    def_subr("MAPLIST", f_maplist);
+    def_subr("MAX", f_max);
+    def_subr("MEMBER", f_member);
+    def_subr("MIN", f_min);
+    def_subr("MOD", f_mod);
+    def_subr("NEXT-METHOD-P", f_next_method_p);
+    def_subr("NOT", f_not);
+    def_subr("NREVERSE", f_nreverse);
+    def_subr("NULL", f_nullp);
+    def_subr("NUMBERP", f_numberp);
+    def_subr("OPEN-INPUT-FILE", f_open_input_file);
+    def_subr("OPEN-IO-FILE", f_open_io_file);
+    def_subr("OPEN-OUTPUT-FILE", f_open_output_file);
+    def_subr("OPEN-STREAM-P", f_open_stream_p);
+    def_subr("OUTPUT-STREAM-P", f_output_stream_p);
+    def_subr("PARSE-ERROR-STRING", f_parse_error_string);
+    def_subr("PARSE-ERROR-EXPECTED-CLASS", f_parse_error_expected_class);
+    def_subr("PARSE-NUMBER", f_parse_number);
+    def_subr("PREVIEW-CHAR", f_preview_char);
+    def_subr("PRINT", f_print);
+    def_subr("PROBE-FILE", f_probe_file);
+    def_subr("PROPERTY", f_property);
+    def_subr("QUIT", f_quit);
+    def_subr("QUOTIENT", f_quotient);
+    def_subr("READ-BYTE", f_read_byte);
+    def_subr("READ-CHAR", f_read_char);
+    def_subr("READ-LINE", f_read_line);
+    def_subr("READ", f_read);
+    def_subr("RECIPROCAL", f_reciprocal);
+    def_subr("REMOVE-PROPERTY", f_remove_property);
+    def_subr("REVERSE", f_reverse);
+    def_subr("ROUND", f_round);
+    def_subr("SET-AREF", f_set_aref);
+    def_subr("SET-CAR", f_set_car);
+    def_subr("SET-CDR", f_set_cdr);
+    def_subr("SET-ELT", f_set_elt);
+    def_subr("SET-FILE-POSITION", f_set_file_position);
+    def_subr("SET-GAREF", f_set_garef);
+    def_subr("SET-PROPERTY", f_set_property);
+    def_subr("SET-SLOT-VALUE", f_set_slot_value);
+    def_subr("SIGNAL-CONDITION", f_signal_condition);
+    def_subr("SIMPLE-ERROR-FORMAT-ARGUMENTS",
 	    f_simple_error_format_arguments);
-    defsubr("SIMPLE-ERROR-FORMAT-STRING", f_simple_error_format_string);
-    defsubr("SIN", f_sin);
-    defsubr("SINH", f_sinh);
-    defsubr("SLOT-VALUE", f_slot_value);
-    defsubr("SQRT", f_sqrt);
-    defsubr("STANDARD-INPUT", f_standard_input);
-    defsubr("STANDARD-OUTPUT", f_standard_output);
-    defsubr("STREAM-ERROR-STREAM", f_stream_error_stream);
-    defsubr("STREAMP", f_streamp);
-    defsubr("STREAM-READY-P", f_stream_ready_p);
-    defsubr("STRING-APPEND", f_string_append);
-    defsubr("STRING-INDEX", f_string_index);
-    defsubr("STRING/=", f_string_noteqp);
-    defsubr("STRING<", f_string_smallerp);
-    defsubr("STRING<=", f_string_eqsmallerp);
-    defsubr("STRING=", f_string_eqp);
-    defsubr("STRING>", f_string_greaterp);
-    defsubr("STRING>=", f_string_eqgreaterp);
-    defsubr("STRINGP", f_stringp);
-    defsubr("SUBCLASSP", f_subclassp);
-    defsubr("SUBSEQ", f_subseq);
-    defsubr("SYMBOLP", f_symbolp);
-    defsubr("TAN", f_tan);
-    defsubr("TANH", f_tanh);
-    defsubr("TRUNCATE", f_truncate);
-    defsubr("UNDEFINED-ENTITY-NAME", f_undefined_entity_name);
-    defsubr("UNDEFINED-ENTITY-NAMESPACE", f_undefined_entity_namespace);
-    defsubr("VECTOR", f_vector);
-    defsubr("WRITE-BYTE", f_write_byte);
+    def_subr("SIMPLE-ERROR-FORMAT-STRING", f_simple_error_format_string);
+    def_subr("SIN", f_sin);
+    def_subr("SINH", f_sinh);
+    def_subr("SLOT-VALUE", f_slot_value);
+    def_subr("SQRT", f_sqrt);
+    def_subr("STANDARD-INPUT", f_standard_input);
+    def_subr("STANDARD-OUTPUT", f_standard_output);
+    def_subr("STREAM-ERROR-STREAM", f_stream_error_stream);
+    def_subr("STREAMP", f_streamp);
+    def_subr("STREAM-READY-P", f_stream_ready_p);
+    def_subr("STRING-APPEND", f_string_append);
+    def_subr("STRING-INDEX", f_string_index);
+    def_subr("STRING/=", f_string_noteqp);
+    def_subr("STRING<", f_string_smallerp);
+    def_subr("STRING<=", f_string_eqsmallerp);
+    def_subr("STRING=", f_string_eqp);
+    def_subr("STRING>", f_string_greaterp);
+    def_subr("STRING>=", f_string_eqgreaterp);
+    def_subr("STRINGP", f_stringp);
+    def_subr("SUBCLASSP", f_subclassp);
+    def_subr("SUBSEQ", f_subseq);
+    def_subr("SYMBOLP", f_symbolp);
+    def_subr("TAN", f_tan);
+    def_subr("TANH", f_tanh);
+    def_subr("TRUNCATE", f_truncate);
+    def_subr("UNDEFINED-ENTITY-NAME", f_undefined_entity_name);
+    def_subr("UNDEFINED-ENTITY-NAMESPACE", f_undefined_entity_namespace);
+    def_subr("VECTOR", f_vector);
+    def_subr("WRITE-BYTE", f_write_byte);
 
     /* inner extended functions */
-    defsubr("EISL-DUMMYP", f_dummyp);
+    def_subr("EISL-DUMMYP", f_dummyp);
 }
 
 
@@ -284,8 +284,8 @@ void dynamic_link(int x)
     init_f0(FREECELL_IDX, freecell);
     init_f0(GBCSW_IDX, gbcsw);
     init_f0(GETWP_IDX, getwp);
-    init_f0(ARGPOP_IDX, argpop);
-    init_f0(SHELTERPOP_IDX, shelterpop);
+    init_f0(ARGPOP_IDX, arg_pop);
+    init_f0(SHELTERPOP_IDX, shelter_pop);
     init_f0(POP_IDX, pop);
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
@@ -314,10 +314,10 @@ void dynamic_link(int x)
     init_f1(VECTOR_IDX, vector);
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
-    init_f1(FINDENV_IDX, findenv);
-    init_f1(FINDDYN_IDX, finddyn);
-    init_f1(ARGPUSH_IDX, argpush);
-    init_f1(SHELTERPUSH_IDX, shelterpush);
+    init_f1(FINDENV_IDX, find_env);
+    init_f1(FINDDYN_IDX, find_dyn);
+    init_f1(ARGPUSH_IDX, arg_push);
+    init_f1(SHELTERPUSH_IDX, shelter_push);
     init_f1(PUSH_IDX, push);
     init_f1(GETOPT_IDX, get_opt);
     init_f1(GETPROP_IDX, get_prop);
@@ -353,8 +353,8 @@ void dynamic_link(int x)
     init_f2(MEMBER_IDX, member);
     init_f2(CONVERT_IDX, convert);
     init_f2(ARRAY_IDX, array);
-    init_f2(SETDYNENV_IDX, setdynenv);
-    init_f2(ADDDYNENV_IDX, adddynenv);
+    init_f2(SETDYNENV_IDX, set_dyn_env);
+    init_f2(ADDDYNENV_IDX, add_dyn_env);
     init_f2(SETDYNAMIC_IDX, set_dynamic);
     init_f2(SETPROP_IDX, set_prop);
     init_f2(ADAPTP_IDX, a_adaptp);
@@ -389,7 +389,7 @@ void dynamic_link(int x)
     /* float input type */
     init_f8(MAKEDOUBLEFLT_IDX, make_double_flt);
 
-    init_deftfunc((tfunc) defsubr);
+    init_deftfunc((tfunc) def_subr);
     init_tfunctions();
     init_declare();
 
@@ -1573,9 +1573,9 @@ int f_append(int arglist)
     if (!listp(arg1) && nullp(arglist))
 	error(NOT_CONS, "append", arg1);
     if (length(arg1) >= fc) {
-	shelterpush(arglist);
+	shelter_push(arglist);
 	(void) gbc();
-	shelterpop();
+	shelter_pop();
     }
     if (nullp(arglist))
 	return (NIL);
@@ -1672,13 +1672,13 @@ int mapcar(int x, int y)
     int ls, res;
 
     ls = y;
-    shelterpush(y);
+    shelter_push(y);
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
 	res = cons(apply(x, each_car(y)), mapcar(x, each_cdr(y)));
     }
-    shelterpop();
+    shelter_pop();
     return res;
 }
 
@@ -1719,14 +1719,14 @@ int mapc(int x, int y)
     int ls;
 
     ls = y;
-    shelterpush(y);
+    shelter_push(y);
     while (!member(NIL, ls)) {
-	shelterpush(ls);
+	shelter_push(ls);
 	apply(x, each_car(ls));
-	shelterpop();
+	shelter_pop();
 	ls = each_cdr(ls);
     }
-    shelterpop();
+    shelter_pop();
     return (car(y));
 }
 
@@ -1903,8 +1903,8 @@ int f_map_into(int arglist)
 	    val = cdr(val);
 	}
     }
-    if (findenv(arg1) != FAILSE)
-	setlexenv(arg1, res);
+    if (find_env(arg1) != FAILSE)
+	set_lex_env(arg1, res);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, res);
     return (arg1);
@@ -4269,7 +4269,7 @@ int f_create_array(int arglist)
     if (length(arglist) == 1)
 	arg2 = UNDEF;
 
-    return (make_array(arg1, arg2));
+    return (make_arr(arg1, arg2));
 
 }
 
@@ -4754,7 +4754,7 @@ int f_call_next_method(int arglist)
 	    if (adaptp(varlist, generic_vars)) {
 		varlist = genlamlis_to_lamlis(varlist);
 		body = cdr(GET_CAR(car(next_method)));
-		bindarg(varlist, generic_vars);
+		bind_arg(varlist, generic_vars);
 		while (!nullp(body)) {
 		    res = eval(car(body));
 		    body = cdr(body);
@@ -4787,7 +4787,7 @@ int f_call_next_method(int arglist)
 		    save2 = multiple_call_next_method;
 		    multiple_call_next_method =
 			has_multiple_call_next_method_p(body);
-		    bindarg(varlist, generic_vars);
+		    bind_arg(varlist, generic_vars);
 		    while (!nullp(body)) {
 			res = eval(car(body));
 			body = cdr(body);

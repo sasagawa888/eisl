@@ -23,62 +23,62 @@
 
 void initsyntax(void)
 {
-    deffsubr("LAMBDA", f_lambda);
-    deffsubr("LABELS", f_labels);
-    deffsubr("FLET", f_flet);
-    deffsubr("LET", f_let);
-    deffsubr("LET*", f_letstar);
-    deffsubr("SETQ", f_setq);
-    deffsubr("SETF", f_setf);
-    deffsubr("SET-DYNAMIC", f_set_dynamic);
-    deffsubr("DEFCONSTANT", f_defconstant);
-    deffsubr("DEFUN", f_defun);
-    deffsubr("DEFMACRO", f_defmacro);
-    deffsubr("DEFGLOBAL", f_defglobal);
-    deffsubr("DEFDYNAMIC", f_defdynamic);
-    deffsubr("DYNAMIC", f_dynamic);
-    deffsubr("FUNCTION", f_function);
-    deffsubr("FUNCTION*", f_function_star);
-    deffsubr("SYMBOL-FUNCTION", f_symbol_function);
-    deffsubr("CLASS", f_class);
-    deffsubr("SYMBOL-CLASS", f_symbol_class);
-    deffsubr("AND", f_and);
-    deffsubr("OR", f_or);
-    deffsubr("IF", f_if);
-    deffsubr("COND", f_cond);
-    deffsubr("WHILE", f_while);
-    deffsubr("FOR", f_for);
-    deffsubr("BLOCK", f_block);
-    deffsubr("RETURN-FROM", f_return_from);
-    deffsubr("CASE", f_case);
-    deffsubr("CASE-USING", f_case_using);
-    deffsubr("CONVERT", f_convert);
-    deffsubr("PROGN", f_progn);
-    deffsubr("DEFCLASS", f_defclass);
-    deffsubr("DEFGENERIC", f_defgeneric);
-    deffsubr("DEFGENERIC*", f_defgeneric_star);
-    deffsubr("DEFMETHOD", f_defmethod);
-    deffsubr("DYNAMIC-LET", f_dynamic_let);
-    deffsubr("IGNORE-ERRORS", f_ignore_errors);
-    deffsubr("IMPORT", f_import);
-    deffsubr("CATCH", f_catch);
-    deffsubr("THROW", f_throw);
-    deffsubr("TAGBODY", f_tagbody);
-    deffsubr("GO", f_go);
-    deffsubr("UNWIND-PROTECT", f_unwind_protect);
-    deffsubr("WITH-STANDARD-INPUT", f_with_standard_input);
-    deffsubr("WITH-STANDARD-OUTPUT", f_with_standard_output);
-    deffsubr("WITH-ERROR-OUTPUT", f_with_error_output);
-    deffsubr("WITH-HANDLER", f_with_handler);
-    deffsubr("WITH-OPEN-INPUT-FILE", f_with_open_input_file);
-    deffsubr("WITH-OPEN-OUTPUT-FILE", f_with_open_output_file);
-    deffsubr("WITH-OPEN-IO-FILE", f_with_open_io_file);
-    deffsubr("THE", f_the);
-    deffsubr("ASSURE", f_assure);
-    deffsubr("TIME", f_time);
-    deffsubr("TRACE", f_trace);
-    deffsubr("UNTRACE", f_untrace);
-    deffsubr("DEFMODULE", f_defmodule);
+    def_fsubr("LAMBDA", f_lambda);
+    def_fsubr("LABELS", f_labels);
+    def_fsubr("FLET", f_flet);
+    def_fsubr("LET", f_let);
+    def_fsubr("LET*", f_letstar);
+    def_fsubr("SETQ", f_setq);
+    def_fsubr("SETF", f_setf);
+    def_fsubr("SET-DYNAMIC", f_set_dynamic);
+    def_fsubr("DEFCONSTANT", f_defconstant);
+    def_fsubr("DEFUN", f_defun);
+    def_fsubr("DEFMACRO", f_defmacro);
+    def_fsubr("DEFGLOBAL", f_defglobal);
+    def_fsubr("DEFDYNAMIC", f_defdynamic);
+    def_fsubr("DYNAMIC", f_dynamic);
+    def_fsubr("FUNCTION", f_function);
+    def_fsubr("FUNCTION*", f_function_star);
+    def_fsubr("SYMBOL-FUNCTION", f_symbol_function);
+    def_fsubr("CLASS", f_class);
+    def_fsubr("SYMBOL-CLASS", f_symbol_class);
+    def_fsubr("AND", f_and);
+    def_fsubr("OR", f_or);
+    def_fsubr("IF", f_if);
+    def_fsubr("COND", f_cond);
+    def_fsubr("WHILE", f_while);
+    def_fsubr("FOR", f_for);
+    def_fsubr("BLOCK", f_block);
+    def_fsubr("RETURN-FROM", f_return_from);
+    def_fsubr("CASE", f_case);
+    def_fsubr("CASE-USING", f_case_using);
+    def_fsubr("CONVERT", f_convert);
+    def_fsubr("PROGN", f_progn);
+    def_fsubr("DEFCLASS", f_defclass);
+    def_fsubr("DEFGENERIC", f_defgeneric);
+    def_fsubr("DEFGENERIC*", f_defgeneric_star);
+    def_fsubr("DEFMETHOD", f_defmethod);
+    def_fsubr("DYNAMIC-LET", f_dynamic_let);
+    def_fsubr("IGNORE-ERRORS", f_ignore_errors);
+    def_fsubr("IMPORT", f_import);
+    def_fsubr("CATCH", f_catch);
+    def_fsubr("THROW", f_throw);
+    def_fsubr("TAGBODY", f_tagbody);
+    def_fsubr("GO", f_go);
+    def_fsubr("UNWIND-PROTECT", f_unwind_protect);
+    def_fsubr("WITH-STANDARD-INPUT", f_with_standard_input);
+    def_fsubr("WITH-STANDARD-OUTPUT", f_with_standard_output);
+    def_fsubr("WITH-ERROR-OUTPUT", f_with_error_output);
+    def_fsubr("WITH-HANDLER", f_with_handler);
+    def_fsubr("WITH-OPEN-INPUT-FILE", f_with_open_input_file);
+    def_fsubr("WITH-OPEN-OUTPUT-FILE", f_with_open_output_file);
+    def_fsubr("WITH-OPEN-IO-FILE", f_with_open_io_file);
+    def_fsubr("THE", f_the);
+    def_fsubr("ASSURE", f_assure);
+    def_fsubr("TIME", f_time);
+    def_fsubr("TRACE", f_trace);
+    def_fsubr("UNTRACE", f_untrace);
+    def_fsubr("DEFMODULE", f_defmodule);
 }
 
 // --FSUBR-----------
@@ -147,9 +147,9 @@ int f_labels(int arglist)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "labels", sym);
-	addlexenv(sym, NIL);
+	add_lex_env(sym, NIL);
 	val = make_func("", cdar(arg1));
-	setlexenv(sym, val);
+	set_lex_env(sym, val);
 	func = cons(val, func);
 	arg1 = cdr(arg1);
     }
@@ -214,7 +214,7 @@ int f_flet(int arglist)
 	ep = save;
 	val = make_func("", cdar(arg1));
 	ep = ep1;
-	addlexenv(sym, val);
+	add_lex_env(sym, val);
 	ep1 = ep;
 	arg1 = cdr(arg1);
     }
@@ -268,17 +268,17 @@ int f_let(int arglist)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let", sym);
-	shelterpush(ep1);
+	shelter_push(ep1);
 	val = eval(cadar(arg1));
-	shelterpop();
+	shelter_pop();
 	ep = ep1;
-	addlexenv(sym, val);
+	add_lex_env(sym, val);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
-	shelterpush(arg2);
+	shelter_push(arg2);
 	res = eval(car(arg2));
-	shelterpop();
+	shelter_pop();
 	arg2 = cdr(arg2);
     }
     ep = save;
@@ -325,7 +325,7 @@ int f_letstar(int arglist)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let*", sym);
-	addlexenv(sym, eval(cadar(arg1)));
+	add_lex_env(sym, eval(cadar(arg1)));
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
@@ -375,14 +375,14 @@ int f_dynamic_let(int arglist)
 
 	dp1 = dp;
 	dp = save;
-	shelterpush(dp1);
+	shelter_push(dp1);
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "dynamic-let", sym);
 	val = eval(cadar(arg1));
 	dp = dp1;
-	shelterpop();
-	adddynenv(sym, val);
+	shelter_pop();
+	add_dyn_env(sym, val);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
@@ -462,9 +462,9 @@ int f_setf(int arglist)
     } else
 	error(IMPROPER_ARGS, "setf", arglist);
 
-    shelterpush(newform);
+    shelter_push(newform);
     res = eval(newform);
-    shelterpop();
+    shelter_pop();
     return (res);
 }
 
@@ -487,8 +487,8 @@ int f_set_dynamic(int arglist)
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(WRONG_ARGS, "set-dynamic", arg1);
 
-    if (finddyn(arg1) != FAILSE) {
-	setdynenv(arg1, arg2);
+    if (find_dyn(arg1) != FAILSE) {
+	set_dyn_env(arg1, arg2);
 	return (arg2);
     } else
 	error(UNDEF_VAR, "set-dynamic", arg1);
@@ -513,8 +513,8 @@ int f_setq(int arglist)
 	error(IMPROPER_ARGS, "setq", arglist);
 
     arg2 = eval(arg2);
-    if (findenv(arg1) != FAILSE)
-	setlexenv(arg1, arg2);
+    if (find_env(arg1) != FAILSE)
+	set_lex_env(arg1, arg2);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, arg2);
     else
@@ -615,7 +615,7 @@ int f_defmacro(int arglist)
 	error(NOT_TOP_LEVEL, "defmacro", arglist);
 
 
-    bindmacro(GET_NAME(arg1), arg2);
+    bind_macro(GET_NAME(arg1), arg2);
     return (arg1);
 }
 
@@ -659,7 +659,7 @@ int f_defdynamic(int arglist)
 	error(WRONG_ARGS, "defdynamic", arg1);
 
 
-    setdynenv(arg1, eval(arg2));
+    set_dyn_env(arg1, eval(arg2));
     return (arg1);
 }
 
@@ -675,7 +675,7 @@ int f_dynamic(int arglist)
     if (!symbolp(arg1))
 	error(NOT_SYM, "dynamic", arg1);
 
-    res = finddyn(arg1);
+    res = find_dyn(arg1);
     if (res == FAILSE)
 	error(UNDEF_DYN, "dynamic", arg1);
 
@@ -725,7 +725,7 @@ int f_function(int arglist)
     if (symbolp(arg1)) {
 	int res;
 
-	res = findenv(arg1);
+	res = find_env(arg1);
 	if (IS_FUNC(res))
 	    return (res);
 	else if (IS_FSUBR(GET_CAR(arg1)))
@@ -760,7 +760,7 @@ int f_function_star(int arglist)
     if (symbolp(arg1)) {
 	int res;
 
-	res = findenv(arg1);
+	res = find_env(arg1);
 	if (IS_FUNC(res))
 	    return (res);
 	else if (GET_CAR(arg1) != NIL)
@@ -785,14 +785,14 @@ int f_symbol_function(int arglist)
     if (symbolp(arg1)) {
 	int sym, res;
 
-	sym = findenv(arg1);
+	sym = find_env(arg1);
 	if (sym == FAILSE && GET_CDR(arg1) != NIL)
 	    sym = GET_CDR(arg1);
 
 	if (!symbolp(sym))
 	    error(UNDEF_FUN, "symbol-function", arg1);
 
-	res = findenv(sym);
+	res = find_env(sym);
 	if (IS_FUNC(res))
 	    return (res);
 	else if (GET_CAR(sym) != NIL)
@@ -832,7 +832,7 @@ int f_symbol_class(int arglist)
     if (symbolp(arg1)) {
 	int sym;
 
-	sym = findenv(arg1);
+	sym = find_env(arg1);
 	if (sym == FAILSE && GET_CDR(arg1) != NIL)
 	    sym = GET_CDR(arg1);
 
@@ -961,7 +961,7 @@ int f_for(int arglist)
     iter = arg1;
     /* initilize local variable */
     while (iter != NIL) {
-	addlexenv(caar(iter), eval(cadar(iter)));
+	add_lex_env(caar(iter), eval(cadar(iter)));
 	iter = cdr(iter);
     }
     /* check condition of end */
@@ -969,24 +969,24 @@ int f_for(int arglist)
 	int save1;
 
 	save1 = ep;
-	shelterpush(arg3);
+	shelter_push(arg3);
 	f_progn(arg3);		/* do body */
-	shelterpop();
+	shelter_pop();
 	ep = save1;
 	iter = arg1;		/* update local variable */
 	temp = NIL;
 	while (iter != NIL) {
 	    if (!nullp(caddar(iter))) {	/* update part is not null */
-		shelterpush(iter);
-		shelterpush(temp);
+		shelter_push(iter);
+		shelter_push(temp);
 		temp = cons(cons(caar(iter), eval(caddar(iter))), temp);
-		shelterpop();
-		shelterpop();
+		shelter_pop();
+		shelter_pop();
 	    }
 	    iter = cdr(iter);
 	}
 	while (temp != NIL) {
-	    setlexenv(caar(temp), cdar(temp));
+	    set_lex_env(caar(temp), cdar(temp));
 	    temp = cdr(temp);
 	}
     }
@@ -1847,7 +1847,7 @@ int f_with_open_input_file(int arglist)
     else
 	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
-    addlexenv(sym, val);
+    add_lex_env(sym, val);
     res = f_progn(arg2);
     fclose(port);
     ep = ep1;
@@ -1886,7 +1886,7 @@ int f_with_open_output_file(int arglist)
     else
 	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
-    addlexenv(sym, val);
+    add_lex_env(sym, val);
     res = f_progn(arg2);
     fclose(port);
     ep = ep1;
@@ -1925,7 +1925,7 @@ int f_with_open_io_file(int arglist)
     else
 	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep;
-    addlexenv(sym, val);
+    add_lex_env(sym, val);
     res = f_progn(arg2);
     fclose(port);
     ep = ep1;

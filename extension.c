@@ -23,60 +23,60 @@
 
 void initexsubr(void)
 {
-    defsubr("RANDOM-REAL", f_random_real);
-    defsubr("RANDOM", f_random);
-    defsubr("SET-RANDOM", f_set_random);
-    defsubr("NCONC", f_nconc);
-    defsubr("FAST-ADDRESS", f_address);
-    defsubr("MACROEXPAND-1", f_macroexpand_1);
-    defsubr("MACROEXPAND-ALL", f_macroexpand_all);
-    defsubr("BACKTRACE", f_backtrace);
-    defsubr("BREAK", f_break);
-    defsubr("EDIT", f_edit);
-    defsubr("FREEDLL", f_freedll);
-    defsubr("SYSTEM", f_system);
-    defsubr("SUBRP", f_subrp);
-    defsubr("MACROP", f_macrop);
-    defsubr("FUNCP", f_funcp);
-    defsubr("FIXNUMP", f_fixnump);
-    defsubr("LONGNUMP", f_longnump);
-    defsubr("BIGNUMP", f_bignump);
-    defsubr("SELF-INTRODUCTION", f_self_introduction);
-    defsubr("CLASSP", f_classp);
-    defsubr("C-INCLUDE", f_ignore);
-    defsubr("C-DEFINE", f_ignore);
-    defsubr("C-LANG", f_ignore);
-    defsubr("C-OPTION", f_ignore);
-    defsubr("HEAPDUMP", f_heapdump);
-    defsubr("INSTANCE", f_instance);
-    defsubr("LINE-ARGUMENT", f_line_argument);
-    defsubr("GETENV", f_getenv);
-    defsubr("PROF", f_prof);
-    defsubr("EISL-MODULESUBST", f_modulesubst);
-    defsubr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
-    defsubr("EISL-READED-ARRAY-LIST", f_readed_array_list);
-    defsubr("EISL-GET-METHOD", f_get_method);
-    defsubr("EISL-GET-METHOD-BODY", f_get_method_body);
-    defsubr("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
-    defsubr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
-    defsubr("EISL-TEST", f_eisl_test);
+    def_subr("RANDOM-REAL", f_random_real);
+    def_subr("RANDOM", f_random);
+    def_subr("SET-RANDOM", f_set_random);
+    def_subr("NCONC", f_nconc);
+    def_subr("FAST-ADDRESS", f_address);
+    def_subr("MACROEXPAND-1", f_macroexpand_1);
+    def_subr("MACROEXPAND-ALL", f_macroexpand_all);
+    def_subr("BACKTRACE", f_backtrace);
+    def_subr("BREAK", f_break);
+    def_subr("EDIT", f_edit);
+    def_subr("FREEDLL", f_freedll);
+    def_subr("SYSTEM", f_system);
+    def_subr("SUBRP", f_subrp);
+    def_subr("MACROP", f_macrop);
+    def_subr("FUNCP", f_funcp);
+    def_subr("FIXNUMP", f_fixnump);
+    def_subr("LONGNUMP", f_longnump);
+    def_subr("BIGNUMP", f_bignump);
+    def_subr("SELF-INTRODUCTION", f_self_introduction);
+    def_subr("CLASSP", f_classp);
+    def_subr("C-INCLUDE", f_ignore);
+    def_subr("C-DEFINE", f_ignore);
+    def_subr("C-LANG", f_ignore);
+    def_subr("C-OPTION", f_ignore);
+    def_subr("HEAPDUMP", f_heapdump);
+    def_subr("INSTANCE", f_instance);
+    def_subr("LINE-ARGUMENT", f_line_argument);
+    def_subr("GETENV", f_getenv);
+    def_subr("PROF", f_prof);
+    def_subr("EISL-MODULESUBST", f_modulesubst);
+    def_subr("EISL-SUPERP-FOR-COMPILER", f_superp_for_compiler);
+    def_subr("EISL-READED-ARRAY-LIST", f_readed_array_list);
+    def_subr("EISL-GET-METHOD", f_get_method);
+    def_subr("EISL-GET-METHOD-BODY", f_get_method_body);
+    def_subr("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
+    def_subr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
+    def_subr("EISL-TEST", f_eisl_test);
 
-    defsubr("TRY", f_try);
-    defsubr("READ-EXP", f_read_exp);
+    def_subr("TRY", f_try);
+    def_subr("READ-EXP", f_read_exp);
 
 #ifdef __rpi__
-    defsubr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
-    defsubr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
-    defsubr("PWM-SET-MODE", f_pwm_set_mode);
-    defsubr("PWM-SET-RANGE", f_pwm_set_range);
-    defsubr("PWM-SET-CLOCK", f_pwm_set_clock);
-    defsubr("PIN-MODE", f_pin_mode);
-    defsubr("DIGITAL-WRITE", f_digital_write);
-    defsubr("DIGITAL-WRITE-BYTE", f_digital_write_byte);
-    defsubr("PULL-UP-DN-CONTROL", f_pull_up_dn_control);
-    defsubr("DIGITAL-READ", f_digital_read);
-    defsubr("DELAY", f_delay);
-    defsubr("DELAY-MICROSECONDS", f_delay_microseconds);
+    def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
+    def_subr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
+    def_subr("PWM-SET-MODE", f_pwm_set_mode);
+    def_subr("PWM-SET-RANGE", f_pwm_set_range);
+    def_subr("PWM-SET-CLOCK", f_pwm_set_clock);
+    def_subr("PIN-MODE", f_pin_mode);
+    def_subr("DIGITAL-WRITE", f_digital_write);
+    def_subr("DIGITAL-WRITE-BYTE", f_digital_write_byte);
+    def_subr("PULL-UP-DN-CONTROL", f_pull_up_dn_control);
+    def_subr("DIGITAL-READ", f_digital_read);
+    def_subr("DELAY", f_delay);
+    def_subr("DELAY-MICROSECONDS", f_delay_microseconds);
 #endif
 
 }
@@ -309,7 +309,7 @@ int macroexpand_1(int macsym, int args)
 	    error(WRONG_ARGS, "macroexpand-1", args);
     }
     body = cdr(GET_CAR(macrofunc));
-    bindarg(varlist, args);
+    bind_arg(varlist, args);
     while (!(IS_NIL(body))) {
 	res = eval(car(body));
 	body = cdr(body);

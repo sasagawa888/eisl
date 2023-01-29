@@ -285,19 +285,19 @@ int hfreshcell(void)
 }
 
 /* set value to environment by destructive by deep-bind */
-void setlexenv(int sym, int val)
+void set_lex_env(int sym, int val)
 {
     int addr;
 
     addr = assq(sym, ep);
     if (addr == FAILSE)
-	addlexenv(sym, val);
+	add_lex_env(sym, val);
     else
 	SET_CDR(addr, val);
 }
 
 /* bind value to dynamic environment */
-int setdynenv(int sym, int val)
+int set_dyn_env(int sym, int val)
 {
     int i;
 
@@ -309,7 +309,7 @@ int setdynenv(int sym, int val)
     }
     dp++;
     if (dp >= DYNSIZE)
-	error(DYNAMIC_OVERF, "setdynenv", NIL);
+	error(DYNAMIC_OVERF, "set_dyn_env", NIL);
     dynamic[dp][0] = sym;
     dynamic[dp][1] = val;
     return (T);
@@ -317,17 +317,17 @@ int setdynenv(int sym, int val)
 
 
 /* additinal of lexical variable */
-void addlexenv(int sym, int val)
+void add_lex_env(int sym, int val)
 {
     ep = cons(cons(sym, val), ep);
 }
 
 /* addition of dynamic variable */
-int adddynenv(int sym, int val)
+int add_dyn_env(int sym, int val)
 {
     dp++;
     if (dp >= DYNSIZE)
-	error(DYNAMIC_OVERF, "adddynenv", NIL);
+	error(DYNAMIC_OVERF, "add_dyn_env", NIL);
     dynamic[dp][0] = sym;
     dynamic[dp][1] = val;
     return (T);
@@ -340,7 +340,7 @@ int adddynenv(int sym, int val)
  * find value with assq
  * when not find return FAILSE
  */
-int findenv(int sym)
+int find_env(int sym)
 {
     int addr;
 
@@ -353,7 +353,7 @@ int findenv(int sym)
 }
 
 /* find in dynamic environment */
-int finddyn(int sym)
+int find_dyn(int sym)
 {
     int i;
 
@@ -376,7 +376,7 @@ void setval(int sym, int val, int ls)
 
 
 /* for uniqueness of symbol */
-int getsym(const char *name, int index)
+int get_sym(const char *name, int index)
 {
     int addr;
 
@@ -394,7 +394,7 @@ int getsym(const char *name, int index)
 /*
  * link list is generated in hheap area allways 
  */
-int addsym(const char *name, int index)
+int add_sym(const char *name, int index)
 {
     int addr, res;
 
@@ -464,8 +464,8 @@ void store_backtrace(int x)
  * make_generic_star  make generic function
  * make_method        make method for generic function
  * make_vec           make vector
- * make_array         maker array
- * maekstream        make stream
+ * make_arr           maker array
+ * make_stm           make stream
  * make_str           make string
  * make_char          make character
  * make_class         make class
@@ -517,10 +517,10 @@ int make_sym(const char *pname)
     int index, res;
 
     index = hash(pname);
-    if ((res = getsym(pname, index)) != -1)
+    if ((res = get_sym(pname, index)) != -1)
 	return (res);
     else
-	return (addsym(pname, index));
+	return (add_sym(pname, index));
 }
 
 /*
@@ -747,7 +747,7 @@ int make_stm(FILE * port, int type, const char *name)
 }
 
 // --------array-------
-int make_array(int ls, int obj)
+int make_arr(int ls, int obj)
 {
     int size, res, i, ls1, *vec;
 
@@ -1275,8 +1275,8 @@ int fast_cdr(int x)
 
 int set_dynamic(int x, int y)
 {
-    if (finddyn(x) != FAILSE)
-	setdynenv(x, y);
+    if (find_dyn(x) != FAILSE)
+	set_dyn_env(x, y);
     else
 	error(UNDEF_VAR, "set-dynamic", x);
 

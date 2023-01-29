@@ -211,10 +211,10 @@ int functionp(int addr)
 {
     int val;
 
-    val = finddyn(addr);
+    val = find_dyn(addr);
     if ((val != -1) && IS_FUNC(val))
 	return (val);
-    val = findenv(addr);
+    val = find_env(addr);
     if ((val != FAILSE) && IS_FUNC(val))
 	return (val);
     val = GET_CAR(addr);
@@ -1102,12 +1102,12 @@ int array(int n, int ls)
 
     dim = array_dim(n, ls);
     if (n == 0) {
-	res = make_array(dim, ls);
+	res = make_arr(dim, ls);
 	return (res);
     } else if (n == 1)
 	res = make_vec(GET_INT(car(dim)), UNDEF);
     else
-	res = make_array(dim, UNDEF);
+	res = make_arr(dim, UNDEF);
 
     ls1 = flatten(n, ls);
     i = 0;

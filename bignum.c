@@ -1,5 +1,5 @@
-/* New bignum
-* I am designing a new bignum data structure.
+/* 
+*  bignum data structure.
 *  bigcell[BIGISZE]  array of 32bit integer.
 *  big_pt0  pointer of temporaly bignum. 
 *  big_pt1  pointer of parmanent bignum.
@@ -52,13 +52,7 @@
 #include "fmt.h"
 #include "text.h"
 
-
-#define CHECKBIG0 if(big_pt0<0 || big_pt0>=BIGNUM_PARMA){error(RESOURCE_ERR,"bigcell pt0",big_pt0);}
-#define CHECKBIG1 if(big_pt1<0 || big_pt1>=BIGSIZE){error(RESOURCE_ERR,"bigcell pt1",big_pt1);}
-#define CHECKBIG2(n) if(big_pt0+n>=BIGNUM_PARMA){error(RESOURCE_ERR,"bigcell pt1",big_pt0);}
-
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
-#define CPRINT(x) printf("%f+%fi\n", creal(x), cimag(x));
 
 int get_length(int x)
 {

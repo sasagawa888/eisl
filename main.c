@@ -461,8 +461,8 @@ int readc(void)
 	    greeting_flag = false;
 	    putchar('\n');
 	    RAISE(Exit_Interp);
-	} else
-	    /* only retrun c */
+	} else if(script_flag)
+	    /* on script-mode only retrun c */
 	    return (c);
 
     }

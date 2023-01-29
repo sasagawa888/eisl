@@ -216,7 +216,7 @@ enum HighlightToken check_token_buffer(int col)
 }
 
 
-int findlparen_buffer(int col)
+int find_lparen_buffer(int col)
 {
     int nest, uni_col, i;
 
@@ -248,7 +248,7 @@ int findlparen_buffer(int col)
     return (uni_col);
 }
 
-int findrparen_buffer(int col)
+int find_rparen_buffer(int col)
 {
     int nest, limit, uni_col, i;
 
@@ -293,7 +293,7 @@ void emphasis_rparen_buffer(int col, int uni_col)
 
     if (buffer[col][0] != '(')
 	return;
-    uni_pos = findrparen_buffer(col);
+    uni_pos = find_rparen_buffer(col);
     if (uni_pos < 0)
 	return;
 
@@ -318,7 +318,7 @@ void emphasis_lparen_buffer(int col, int uni_col)
     if (buffer[col][0] != ')')
 	return;
 
-    uni_pos = findlparen_buffer(col);
+    uni_pos = find_lparen_buffer(col);
     if (uni_pos < 0)
 	return;
 

@@ -28,8 +28,8 @@
 void deleterow(void);
 int findeol(int row);
 int findeol1(int row);
-struct position findlparen(int bias);
-struct position findrparen(int bias);
+struct position find_lparen(int bias);
+struct position find_rparen(int bias);
 void reset_paren(void);
 void restore_paren(void);
 void emphasis_lparen(void);

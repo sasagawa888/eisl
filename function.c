@@ -323,7 +323,7 @@ void dynamic_link(int x)
     init_f1(GETPROP_IDX, get_prop);
     init_f1(SETDYNPT_IDX, set_dynpt);
     init_f1(SETCATCHSYMBOLS_IDX, set_catch_symbols);
-    init_f1(BIGXTOPARMANENT_IDX, bigx_to_parmanent);
+    init_f1(BIGXTOPARMANENT_IDX, big_to_parmanent);
     init_f1(SET_ERROR_HANDLER_IDX, set_error_handler);
 
     /* argument-2 type */
@@ -368,7 +368,7 @@ void dynamic_link(int x)
     init_f3(MAKESYM_IDX, (fn3) make_sym);
     init_f3(MAKECHAR_IDX, (fn3) make_char);
     init_f3(MAKESTRFLT_IDX, (fn3) make_str_flt);
-    init_f3(MAKEBIG_IDX, makebigx);
+    init_f3(MAKEBIG_IDX, make_big);
     init_f3(MAKESTRLONG_IDX, (fn3) make_str_long);
     init_f3(MAKEFASTSTRLONG_IDX, (fn3) make_fast_str_long);
 
@@ -4337,7 +4337,7 @@ int f_parse_number(int arglist)
     stok.buf[BUFSIZE - 1] = '\0';
 
     if (bignum_token(stok.buf))
-	return (makebigx(stok.buf));
+	return (make_big(stok.buf));
 
     if (dec_token(stok.buf))
 	return (make_int((int) strtol(stok.buf, &e, 10)));

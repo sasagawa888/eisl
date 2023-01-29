@@ -25,7 +25,7 @@
 * bignum-x bignum-y     IFFT(FFT(x)*FFT(y)) -> bigcell 32bit integer(normalize) 
 * integer data type uses 64bit integer. Because to avoid overflow in 32bit.
 * It will be calculated correctly by multiplying by about 300000 digits.
-* if comment out #define NTT, bigx_mult does not use NTT.
+* if comment out #define NTT, big_mult does not use NTT.
 * 
 * KARATSUBA-Multiply 
 *    X = x1*b + x0
@@ -81,7 +81,7 @@ void set_pointer(int x, int y)
 }
 
 
-int makebigx(char *bignum)
+int make_big(char *bignum)
 {
     char integer[15];
     int i, j, res, sign, len;
@@ -146,7 +146,7 @@ int makebigx(char *bignum)
 }
 
 
-void print_bigx(int x)
+void print_big(int x)
 {
     int y, len;
     Text_save_T save;
@@ -220,7 +220,7 @@ int get_sign(int x)
     return (GET_OPT(x));
 }
 
-int bigx_positivep(int x)
+int big_positivep(int x)
 {
     if (get_sign(x) == 1)
 	return (1);
@@ -228,7 +228,7 @@ int bigx_positivep(int x)
 	return (0);
 }
 
-int bigx_negativep(int x)
+int big_negativep(int x)
 {
     if (get_sign(x) == -1)
 	return (1);
@@ -238,7 +238,7 @@ int bigx_negativep(int x)
 
 
 
-int bigx_eqp(int x, int y)
+int big_eqp(int x, int y)
 {
     int len, pointerx, pointery;
 
@@ -265,7 +265,7 @@ int bigx_eqp(int x, int y)
 }
 
 
-int bigx_abs_smallerp(int x, int y)
+int big_abs_smallerp(int x, int y)
 {
     int len1, len2, pointerx, pointery;
 
@@ -295,17 +295,17 @@ int bigx_abs_smallerp(int x, int y)
 
 }
 
-int bigx_smallerp(int x, int y)
+int big_smallerp(int x, int y)
 {
 
-    if (bigx_positivep(x) && bigx_negativep(x))
+    if (big_positivep(x) && big_negativep(x))
 	return (0);
-    else if (bigx_negativep(x) && bigx_positivep(y))
+    else if (big_negativep(x) && big_positivep(y))
 	return (1);
-    else if (bigx_positivep(x) && bigx_positivep(y))
-	return (bigx_abs_smallerp(x, y));
-    else if (bigx_negativep(x) && bigx_negativep(y))
-	return (bigx_abs_smallerp(y, x));
+    else if (big_positivep(x) && big_positivep(y))
+	return (big_abs_smallerp(x, y));
+    else if (big_negativep(x) && big_negativep(y))
+	return (big_abs_smallerp(y, x));
     else
 	return (0);
 
@@ -315,7 +315,7 @@ int bigx_smallerp(int x, int y)
 
 
 
-int bigx_int_to_big(int x)
+int big_int_to_big(int x)
 {
     int res, y;
 
@@ -331,7 +331,7 @@ int bigx_int_to_big(int x)
     return (res);
 }
 
-int bigx_long_to_big(int x)
+int big_long_to_big(int x)
 {
     int res, i2, i1;
     long long int l;
@@ -352,7 +352,7 @@ int bigx_long_to_big(int x)
 }
 
 
-int bigx_simplify(int x)
+int big_simplify(int x)
 {
     int i1;
     long long int l, l1, l2;
@@ -373,7 +373,7 @@ int bigx_simplify(int x)
 }
 
 /* subtract n-cells */
-int bigx_shift_left(int x, int n)
+int big_shift_left(int x, int n)
 {
     int res;
 
@@ -389,7 +389,7 @@ int bigx_shift_left(int x, int n)
 }
 
 /* add n-zero-cells to x */
-int bigx_shift_right(int x, int n)
+int big_shift_right(int x, int n)
 {
     int res, len, pointer;
 
@@ -413,7 +413,7 @@ int bigx_shift_right(int x, int n)
     return (res);
 }
 
-int bigx_zero_supress(int x, int n)
+int big_zero_supress(int x, int n)
 {
     int res, len, pointer;
 
@@ -435,7 +435,7 @@ int bigx_zero_supress(int x, int n)
     return (res);
 }
 
-int bigx_to_parmanent(int x)
+int big_to_parmanent(int x)
 {
     int len, pointer;
 
@@ -457,7 +457,7 @@ int bigx_to_parmanent(int x)
 }
 
 
-int bigx_abs(int x)
+int big_abs(int x)
 {
     int res;
 
@@ -468,7 +468,7 @@ int bigx_abs(int x)
     return (res);
 }
 
-int bigx_zerop(int x)
+int big_zerop(int x)
 {
     int len, pointer;
 
@@ -482,43 +482,43 @@ int bigx_zerop(int x)
     return (1);
 }
 
-int bigx_plus(int arg1, int arg2)
+int big_plus(int arg1, int arg2)
 {
     int res;
 
     res = UNDEF;
-    if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
-	res = bigx_plus1(arg1, arg2);
+    if (big_positivep(arg1) && big_positivep(arg2)) {
+	res = big_plus1(arg1, arg2);
 	set_sign(res, 1);
-    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {
-	res = bigx_plus1(arg1, arg2);
+    } else if (big_negativep(arg1) && big_negativep(arg2)) {
+	res = big_plus1(arg1, arg2);
 	set_sign(res, -1);
-    } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {
-	if (bigx_abs_smallerp(arg1, arg2)) {
-	    res = bigx_minus1(arg2, arg1);
+    } else if (big_positivep(arg1) && big_negativep(arg2)) {
+	if (big_abs_smallerp(arg1, arg2)) {
+	    res = big_minus1(arg2, arg1);
 	    set_sign(res, -1);
 	} else {
-	    res = bigx_minus1(arg1, arg2);
+	    res = big_minus1(arg1, arg2);
 	    set_sign(res, 1);
 	}
-    } else if (bigx_negativep(arg1) && bigx_positivep(arg2)) {
-	if (bigx_abs_smallerp(arg1, arg2)) {
-	    res = bigx_minus1(arg2, arg1);
+    } else if (big_negativep(arg1) && big_positivep(arg2)) {
+	if (big_abs_smallerp(arg1, arg2)) {
+	    res = big_minus1(arg2, arg1);
 	    set_sign(res, 1);
 	} else {
-	    res = bigx_minus1(arg1, arg2);
+	    res = big_minus1(arg1, arg2);
 	    set_sign(res, -1);
 	}
     }
 
     if (simp_flag)
-	res = bigx_simplify(res);
+	res = big_simplify(res);
 
     return (res);
 }
 
 
-int bigx_max(int x, int y)
+int big_max(int x, int y)
 {
     if (x > y)
 	return (x);
@@ -526,13 +526,13 @@ int bigx_max(int x, int y)
 	return (y);
 }
 
-int bigx_plus1(int arg1, int arg2)
+int big_plus1(int arg1, int arg2)
 {
     int len1, len2, pointerx, pointery, c, len, res;
 
     len1 = get_length(arg1);
     len2 = get_length(arg2);
-    CHECKBIG2(bigx_max(len1, len2));
+    CHECKBIG2(big_max(len1, len2));
     pointerx = get_pointer(arg1) - len1 + 1;	//LSB
     pointery = get_pointer(arg2) - len2 + 1;	//LSB
     res = gen_big();
@@ -573,43 +573,43 @@ int bigx_plus1(int arg1, int arg2)
 }
 
 
-int bigx_minus(int arg1, int arg2)
+int big_minus(int arg1, int arg2)
 {
     int res;
 
     res = UNDEF;
-    if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
-	if (bigx_smallerp(arg1, arg2)) {
-	    res = bigx_minus1(arg2, arg1);
+    if (big_positivep(arg1) && big_positivep(arg2)) {
+	if (big_smallerp(arg1, arg2)) {
+	    res = big_minus1(arg2, arg1);
 	    set_sign(res, -1);
 	} else {
-	    res = bigx_minus1(arg1, arg2);
+	    res = big_minus1(arg1, arg2);
 	    set_sign(res, 1);
 	}
-    } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {
-	res = bigx_plus1(arg1, arg2);
+    } else if (big_positivep(arg1) && big_negativep(arg2)) {
+	res = big_plus1(arg1, arg2);
 	set_sign(res, 1);
-    } else if (bigx_negativep(arg1) && bigx_positivep(arg2)) {
-	res = bigx_plus1(arg1, arg2);
+    } else if (big_negativep(arg1) && big_positivep(arg2)) {
+	res = big_plus1(arg1, arg2);
 	set_sign(res, -1);
-    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {
-	if (bigx_abs_smallerp(arg1, arg2)) {
-	    res = bigx_minus1(arg2, arg1);
+    } else if (big_negativep(arg1) && big_negativep(arg2)) {
+	if (big_abs_smallerp(arg1, arg2)) {
+	    res = big_minus1(arg2, arg1);
 	    set_sign(res, 1);
 	} else {
-	    res = bigx_minus1(arg1, arg2);
+	    res = big_minus1(arg1, arg2);
 	    set_sign(res, -1);
 	}
     }
     if (simp_flag)
-	res = bigx_simplify(res);
+	res = big_simplify(res);
 
     return (res);
 }
 
 
 /* arg1 > arg2 */
-int bigx_minus1(int arg1, int arg2)
+int big_minus1(int arg1, int arg2)
 {
     int len1, len2, pointerx, pointery, len, z, c, res;
 
@@ -667,44 +667,44 @@ int bigx_minus1(int arg1, int arg2)
 
 
 
-int bigx_mult(int arg1, int arg2)
+int big_mult(int arg1, int arg2)
 {
     int res;
 
 #ifdef NTT
     if (get_length(arg1) + get_length(arg2) > NTT)
-	return (bigx_ntt_mult(arg1, arg2));
+	return (big_ntt_mult(arg1, arg2));
 #endif
 
 #ifdef KARATSUBA
     if (get_length(arg1) + get_length(arg2) > KARATSUBA)
-	return (bigx_karatsuba_mult(arg1, arg2));
+	return (big_karatsuba_mult(arg1, arg2));
 #endif
 
 
     res = UNDEF;
-    if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
-	res = bigx_mult1(arg1, arg2);
+    if (big_positivep(arg1) && big_positivep(arg2)) {
+	res = big_mult1(arg1, arg2);
 	set_sign(res, 1);
-    } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {
-	res = bigx_mult1(arg1, arg2);
+    } else if (big_positivep(arg1) && big_negativep(arg2)) {
+	res = big_mult1(arg1, arg2);
 	set_sign(res, -1);
-    } else if (bigx_negativep(arg1) && bigx_positivep(arg2)) {
-	res = bigx_mult1(arg1, arg2);
+    } else if (big_negativep(arg1) && big_positivep(arg2)) {
+	res = big_mult1(arg1, arg2);
 	set_sign(res, -1);
-    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {
-	res = bigx_mult1(arg1, arg2);
+    } else if (big_negativep(arg1) && big_negativep(arg2)) {
+	res = big_mult1(arg1, arg2);
 	set_sign(res, 1);
     }
     if (simp_flag) {
-	res = bigx_simplify(res);
+	res = big_simplify(res);
     }
 
     return (res);
 }
 
 
-int bigx_mult1(int arg1, int arg2)
+int big_mult1(int arg1, int arg2)
 {
     int res, len1, len2, pointery, len;
     long long int x, y, z, l1, l2, c;
@@ -756,41 +756,41 @@ int bigx_mult1(int arg1, int arg2)
     return (res);
 }
 
-int bigx_div(int arg1, int arg2)
+int big_div(int arg1, int arg2)
 {
     int res, x, y;
 
 
     res = UNDEF;
     /* if devidend is smaller than divisor,return 0 */
-    if (bigx_abs_smallerp(arg1, arg2))
+    if (big_abs_smallerp(arg1, arg2))
 	return (make_int(0));
 
-    if (bigx_positivep(arg1) && bigx_positivep(arg2)) {
-	res = bigx_div1(arg1, arg2);
-    } else if (bigx_positivep(arg1) && bigx_negativep(arg2)) {
-	y = bigx_abs(arg2);
-	res = bigx_div1(arg1, y);
+    if (big_positivep(arg1) && big_positivep(arg2)) {
+	res = big_div1(arg1, arg2);
+    } else if (big_positivep(arg1) && big_negativep(arg2)) {
+	y = big_abs(arg2);
+	res = big_div1(arg1, y);
 	set_sign(res, -1);
-    } else if (bigx_negativep(arg1) && bigx_positivep(arg2)) {
-	x = bigx_abs(arg1);
-	res = bigx_div1(x, arg2);
+    } else if (big_negativep(arg1) && big_positivep(arg2)) {
+	x = big_abs(arg1);
+	res = big_div1(x, arg2);
 	set_sign(res, -1);
-    } else if (bigx_negativep(arg1) && bigx_negativep(arg2)) {
-	x = bigx_abs(arg1);
-	y = bigx_abs(arg2);
-	res = bigx_div1(x, y);
+    } else if (big_negativep(arg1) && big_negativep(arg2)) {
+	x = big_abs(arg1);
+	y = big_abs(arg2);
+	res = big_div1(x, y);
 	set_sign(res, 1);
     }
 
     if (simp_flag)
-	res = bigx_simplify(res);
+	res = big_simplify(res);
     return (res);
 }
 
 
 
-int bigx_div1(int arg1, int arg2)
+int big_div1(int arg1, int arg2)
 {
     int shift, save1, res, len, q, dividend, pointery, msb2;
     long long int lmsb1;
@@ -808,8 +808,8 @@ int bigx_div1(int arg1, int arg2)
     /* Knuth The art of computer programing D-algorithm */
     if (bigcell[pointery] < BIGNUM_BASE / 2) {
 	int d = BIGNUM_BASE / (1 + bigcell[pointery]);
-	arg1 = bigx_mult1(arg1, bigx_int_to_big(make_int(d)));
-	arg2 = bigx_mult1(arg2, bigx_int_to_big(make_int(d)));
+	arg1 = big_mult1(arg1, big_int_to_big(make_int(d)));
+	arg2 = big_mult1(arg2, big_int_to_big(make_int(d)));
     }
 
     res = gen_big();
@@ -846,13 +846,13 @@ int bigx_div1(int arg1, int arg2)
 
 
 	int subtract =
-	    bigx_shift_right(bigx_mult1(arg2, bigx_int_to_big(make_int(q))),
+	    big_shift_right(big_mult1(arg2, big_int_to_big(make_int(q))),
 			     shift);
-	dividend = bigx_minus(dividend, subtract);
+	dividend = big_minus(dividend, subtract);
 
 	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
 	while (negativep(dividend)) {
-	    dividend = plus(dividend, bigx_shift_right(arg2, shift));
+	    dividend = plus(dividend, big_shift_right(arg2, shift));
 	    q--;
 	}
 
@@ -862,7 +862,7 @@ int bigx_div1(int arg1, int arg2)
 	len++;
 
     }
-    while (!bigx_zerop(dividend) && !smallerp(dividend, arg2));
+    while (!big_zerop(dividend) && !smallerp(dividend, arg2));
 
     /* when divident is smaller than divisior and shift > 0 insert zero
      * e.g.  div(3000000000000000000,30000000000)
@@ -881,7 +881,7 @@ int bigx_div1(int arg1, int arg2)
 }
 
 
-int bigx_remainder(int arg1, int arg2)
+int big_remainder(int arg1, int arg2)
 {
     int res, len, q, dividend, pointery, save0, pointer, msb2;
     long long int lmsb1;
@@ -917,13 +917,13 @@ int bigx_remainder(int arg1, int arg2)
 	    shift--;
 	}
 	int subtract =
-	    bigx_shift_right(bigx_mult1(arg2, bigx_int_to_big(make_int(q))),
+	    big_shift_right(big_mult1(arg2, big_int_to_big(make_int(q))),
 			     shift);
-	dividend = bigx_minus(dividend, subtract);
+	dividend = big_minus(dividend, subtract);
 
 	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
 	while (negativep(dividend)) {
-	    dividend = plus(dividend, bigx_shift_right(arg2, shift));
+	    dividend = plus(dividend, big_shift_right(arg2, shift));
 	    q--;
 	}
 
@@ -943,7 +943,7 @@ int bigx_remainder(int arg1, int arg2)
 }
 
 
-int bigx_big_to_flt(int x)
+int big_big_to_flt(int x)
 {
     double val;
     int pointer, len, res;
@@ -969,12 +969,12 @@ int bigx_big_to_flt(int x)
 
 
 /* bignum remainder of bignum and int */
-int bigx_remainder_i(int x, int y)
+int big_remainder_i(int x, int y)
 {
     int abs, pointer, len, sign1, sign2;
     long long int j, r;
 
-    abs = bigx_abs(x);
+    abs = big_abs(x);
     pointer = get_pointer(abs);
     len = get_length(abs);
     sign1 = get_sign(x);
@@ -1005,7 +1005,7 @@ int bigx_remainder_i(int x, int y)
     return (make_int((int) r * sign1 * sign2));
 }
 
-int bigx_div_i(int x, int y)
+int big_div_i(int x, int y)
 {
     int res, pointer, msb, len, n, sign1, sign2;
     long long int j, r, q;
@@ -1013,7 +1013,7 @@ int bigx_div_i(int x, int y)
 
     res = gen_big();
     len = n = get_length(x);
-    msb = get_pointer(bigx_abs(x));
+    msb = get_pointer(big_abs(x));
     sign1 = get_sign(x);
     CHECKBIG2(len);
 
@@ -1055,12 +1055,12 @@ int bigx_div_i(int x, int y)
     set_length(res, len);
     set_sign(res, sign1 * sign2);
     if (simp_flag)
-	res = bigx_simplify(res);
+	res = big_simplify(res);
     return (res);
 }
 
 /* multple of bignum and int */
-int bigx_mult_i(int x, int y)
+int big_mult_i(int x, int y)
 {
     int res, len, pointer, n, sign1, sign2;
     long long int j, c;
@@ -1112,7 +1112,7 @@ int bigx_mult_i(int x, int y)
     set_pointer(res, big_pt0 - 1);
     set_length(res, len);
     set_sign(res, sign1 * sign2);
-    res = bigx_simplify(res);
+    res = big_simplify(res);
     return (res);
 }
 
@@ -1300,7 +1300,7 @@ void intt(int n)
 
 
 /* -------mult with NTT------- */
-int bigx_ntt_mult(int x, int y)
+int big_ntt_mult(int x, int y)
 {
     int pointer, lenx, leny, max_len, ans_len, i, n, half, res;
 
@@ -1426,7 +1426,7 @@ int bigx_ntt_mult(int x, int y)
 */
 
 
-int bigx_first_half(int x)
+int big_first_half(int x)
 {
     int pointer, len, res;
 
@@ -1441,7 +1441,7 @@ int bigx_first_half(int x)
     return (res);
 }
 
-int bigx_second_half(int x)
+int big_second_half(int x)
 {
     int pointer, len, res;
 
@@ -1458,33 +1458,33 @@ int bigx_second_half(int x)
 }
 
 
-int bigx_karatsuba_mult1(int x, int y)
+int big_karatsuba_mult1(int x, int y)
 {
     int len;
 
     len = get_length(x);
     if (len < 10)
-	return (bigx_mult(x, y));
+	return (big_mult(x, y));
     else {
 	simp_flag = 0;
-	int x1 = bigx_first_half(x);
-	int x0 = bigx_second_half(x);
-	int y1 = bigx_first_half(y);
-	int y0 = bigx_second_half(y);
-	int z2 = bigx_karatsuba_mult1(x1, y1);
-	int z0 = bigx_karatsuba_mult1(x0, y0);
+	int x1 = big_first_half(x);
+	int x0 = big_second_half(x);
+	int y1 = big_first_half(y);
+	int y0 = big_second_half(y);
+	int z2 = big_karatsuba_mult1(x1, y1);
+	int z0 = big_karatsuba_mult1(x0, y0);
 	/* z1 := z2 + z0 - (x1 - x0)*(y1 - y0) */
 	int z1 = minus(plus(z2, z0), mult(minus(x1, x0), minus(y1, y0)));
 	/* Z = z2*b^2 + z1*b + z0 */
 	simp_flag = 1;
-	int z = plus(plus(bigx_shift_right(z2, len),
-			  bigx_shift_right(z1, len / 2)),
+	int z = plus(plus(big_shift_right(z2, len),
+			  big_shift_right(z1, len / 2)),
 		     z0);
 	return (z);
     }
 }
 
-int bigx_karatsuba_mult(int x, int y)
+int big_karatsuba_mult(int x, int y)
 {
     int lenx, leny, max_len, n, x1, y1, ans_len, res;
 
@@ -1501,11 +1501,11 @@ int bigx_karatsuba_mult(int x, int y)
 	n = 2 * n;
     }
 
-    x1 = bigx_zero_supress(x, n - lenx);
-    y1 = bigx_zero_supress(y, n - leny);
+    x1 = big_zero_supress(x, n - lenx);
+    y1 = big_zero_supress(y, n - leny);
 
     /* karatuba recursion */
-    res = bigx_karatsuba_mult1(x1, y1);
+    res = big_karatsuba_mult1(x1, y1);
     ans_len = get_length(res);
 
     /* zero cut */

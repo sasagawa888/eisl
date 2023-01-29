@@ -27,7 +27,7 @@ int exact_to_inexact(int x)
 	SET_FLT(res, val);
 	return (res);
     case BIGX:
-	return (bigx_big_to_flt(x));
+	return (big_big_to_flt(x));
     case FLTN:
 	return (x);
     default:
@@ -57,7 +57,7 @@ int numeqp(int x, int y)
     }
 
     else if (bignump(x) && bignump(y)) {
-	if (bigx_eqp(x, y))
+	if (big_eqp(x, y))
 	    return (1);
 	else
 	    return (0);
@@ -104,7 +104,7 @@ int smallerp(int x1, int x2)
 	else
 	    return (0);
     } else if (bignump(x1) && bignump(x2)) {
-	if (bigx_smallerp(x1, x2))
+	if (big_smallerp(x1, x2))
 	    return (1);
 	else
 	    return (0);
@@ -133,7 +133,7 @@ int eqsmallerp(int x1, int x2)
 	else
 	    return (0);
     } else if (bignump(x1) && bignump(x2)) {
-	if (bigx_smallerp(x1, x2) || bigx_eqp(x1, x2))
+	if (big_smallerp(x1, x2) || big_eqp(x1, x2))
 	    return (1);
 	else
 	    return (0);
@@ -168,7 +168,7 @@ int positivep(int x)
 	return (1);
     else if (longnump(x) && GET_LONG(x) > 0)
 	return (1);
-    else if (bignump(x) && bigx_positivep(x))
+    else if (bignump(x) && big_positivep(x))
 	return (1);
     else if (floatp(x) && GET_FLT(x) > 0)
 	return (1);
@@ -183,7 +183,7 @@ int negativep(int x)
 	return (1);
     else if (longnump(x) && GET_LONG(x) < 0)
 	return (1);
-    else if (bignump(x) && bigx_negativep(x))
+    else if (bignump(x) && big_negativep(x))
 	return (1);
     else if (floatp(x) && GET_FLT(x) < 0)
 	return (1);
@@ -256,36 +256,36 @@ int plus(int arg1, int arg2)
 		return (make_flt(x1 + y1));
 	    }
 	case LONGN:
-	    return (bigx_plus
-		    (bigx_int_to_big(arg1), bigx_long_to_big(arg2)));
+	    return (big_plus
+		    (big_int_to_big(arg1), big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_plus(bigx_int_to_big(arg1), arg2));
+	    return (big_plus(big_int_to_big(arg1), arg2));
 	}
 	break;
     case LONGN:
 	switch (tag2) {
 	case INTN:
-	    return (bigx_plus
-		    (bigx_long_to_big(arg1), bigx_int_to_big(arg2)));
+	    return (big_plus
+		    (big_long_to_big(arg1), big_int_to_big(arg2)));
 	case FLTN:
 	    return (plus(exact_to_inexact(arg1), arg2));
 	case LONGN:
-	    return (bigx_plus
-		    (bigx_long_to_big(arg1), bigx_long_to_big(arg2)));
+	    return (big_plus
+		    (big_long_to_big(arg1), big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_plus(bigx_long_to_big(arg1), arg2));
+	    return (big_plus(big_long_to_big(arg1), arg2));
 	}
 	break;
     case BIGX:
 	switch (tag2) {
 	case INTN:
-	    return (bigx_plus(arg1, bigx_int_to_big(arg2)));
+	    return (big_plus(arg1, big_int_to_big(arg2)));
 	case FLTN:
 	    return (plus(exact_to_inexact(arg1), arg2));
 	case LONGN:
-	    return (bigx_plus(arg1, bigx_long_to_big(arg2)));
+	    return (big_plus(arg1, big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_plus(arg1, arg2));
+	    return (big_plus(arg1, arg2));
 	}
 	break;
     case FLTN:
@@ -353,37 +353,37 @@ int minus(int arg1, int arg2)
 	    }
 
 	case LONGN:
-	    return (bigx_minus(bigx_int_to_big(arg1),
-			       bigx_long_to_big(arg2)));
+	    return (big_minus(big_int_to_big(arg1),
+			       big_long_to_big(arg2)));
 
 	case BIGX:
-	    return (bigx_minus(bigx_int_to_big(arg1), arg2));
+	    return (big_minus(big_int_to_big(arg1), arg2));
 	}
 	break;
     case LONGN:
 	switch (tag2) {
 	case INTN:
-	    return (bigx_minus
-		    (bigx_long_to_big(arg1), bigx_int_to_big(arg2)));
+	    return (big_minus
+		    (big_long_to_big(arg1), big_int_to_big(arg2)));
 	case FLTN:
 	    return (minus(exact_to_inexact(arg1), arg2));
 	case LONGN:
-	    return (bigx_minus
-		    (bigx_long_to_big(arg1), bigx_long_to_big(arg2)));
+	    return (big_minus
+		    (big_long_to_big(arg1), big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_minus(bigx_long_to_big(arg1), arg2));
+	    return (big_minus(big_long_to_big(arg1), arg2));
 	}
 	break;
     case BIGX:
 	switch (tag2) {
 	case INTN:
-	    return (bigx_minus(arg1, bigx_int_to_big(arg2)));
+	    return (big_minus(arg1, big_int_to_big(arg2)));
 	case FLTN:
 	    return (minus(exact_to_inexact(arg1), arg2));
 	case LONGN:
-	    return (bigx_minus(arg1, bigx_long_to_big(arg2)));
+	    return (big_minus(arg1, big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_minus(arg1, arg2));
+	    return (big_minus(arg1, arg2));
 	}
 	break;
     case FLTN:
@@ -436,9 +436,9 @@ int mult(int arg1, int arg2)
 		if (l < SMALL_INT_MAX && l > SMALL_INT_MIN)
 		    return (make_int((int) l));
 		else
-		    return (bigx_mult
-			    (bigx_int_to_big(arg1),
-			     bigx_int_to_big(arg2)));
+		    return (big_mult
+			    (big_int_to_big(arg1),
+			     big_int_to_big(arg2)));
 	    }
 
 	case FLTN:
@@ -453,42 +453,42 @@ int mult(int arg1, int arg2)
 
 	case LONGN:
 	    if (GET_INT(arg1) != 0)
-		return (bigx_mult
-			(bigx_long_to_big(arg2), bigx_int_to_big(arg1)));
+		return (big_mult
+			(big_long_to_big(arg2), big_int_to_big(arg1)));
 	    else
 		return (arg1);	/* int 0 */
 
 	case BIGX:
-	    return (bigx_mult(arg2, bigx_int_to_big(arg1)));
+	    return (big_mult(arg2, big_int_to_big(arg1)));
 	}
 	break;
     case LONGN:
 	switch (tag2) {
 	case INTN:
 	    if (GET_INT(arg2) != 0)
-		return (bigx_mult
-			(bigx_long_to_big(arg1), bigx_int_to_big(arg2)));
+		return (big_mult
+			(big_long_to_big(arg1), big_int_to_big(arg2)));
 	    else
 		return (arg2);	/* int 0 */
 	case FLTN:
 	    return (mult(exact_to_inexact(arg1), arg2));
 	case LONGN:
-	    return (bigx_mult
-		    (bigx_long_to_big(arg1), bigx_long_to_big(arg2)));
+	    return (big_mult
+		    (big_long_to_big(arg1), big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_mult(bigx_long_to_big(arg1), arg2));
+	    return (big_mult(big_long_to_big(arg1), arg2));
 	}
 	break;
     case BIGX:
 	switch (tag2) {
 	case INTN:
-	    return (bigx_mult_i(arg1, arg2));
+	    return (big_mult_i(arg1, arg2));
 	case FLTN:
 	    return (mult(exact_to_inexact(arg1), arg2));
 	case LONGN:
-	    return (bigx_mult(arg1, bigx_long_to_big(arg2)));
+	    return (big_mult(arg1, big_long_to_big(arg2)));
 	case BIGX:
-	    return (bigx_mult(arg1, arg2));
+	    return (big_mult(arg1, arg2));
 	}
 	break;
     case FLTN:
@@ -646,11 +646,11 @@ int divide(int x, int y)
     else if (longnump(x) && longnump(y))
 	return (long_long_div(x, y));
     else if (bignump(x) && integerp(y))
-	return (bigx_div_i(x, y));
+	return (big_div_i(x, y));
     else if (bignump(x) && longnump(y))
-	return (bigx_div(x, bigx_long_to_big(y)));
+	return (big_div(x, big_long_to_big(y)));
     else if (bignump(x) && bignump(y))
-	return (bigx_div(x, y));
+	return (big_div(x, y));
     else
 	error(ILLEGAL_ARGS, "div", list2(x, y));
 
@@ -674,12 +674,12 @@ int s_remainder(int x, int y)
     else if (longnump(x) && longnump(y))
 	return (long_long_remainder(x, y));
     else if (bignump(x) && integerp(y))
-	return (bigx_remainder_i(x, y));
+	return (big_remainder_i(x, y));
     else if (bignump(x) && longnump(y)) {
-	i = bigx_long_to_big(y);
+	i = big_long_to_big(y);
 	return (minus(x, mult(divide(x, i), i)));
     } else if (bignump(x) && bignump(y))
-	return (bigx_remainder(x, y));
+	return (big_remainder(x, y));
 
     error(ILLEGAL_ARGS, "remainder", NIL);
     return (UNDEF);
@@ -754,7 +754,7 @@ int absolute(int x)
     else if (longnump(x))
 	return (make_long(llabs(GET_LONG(x))));
     else if (bignump(x)) {
-	return (bigx_abs(x));
+	return (big_abs(x));
     } else if (floatp(x)) {
 	return (make_flt(fabs(GET_FLT(x))));
     }
@@ -983,9 +983,9 @@ int isqrt4(int x)
     }
     p = p / 2;
 
-    init = bigx_shift_left(x, p);
+    init = big_shift_left(x, p);
     init = plus(isqrt3(init), make_int(1));
-    init = bigx_shift_right(init, p / 2);
+    init = big_shift_right(init, p / 2);
 
     return (isqrt2(x, init));
 

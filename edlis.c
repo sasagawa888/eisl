@@ -1740,7 +1740,7 @@ int findeol1(int row)
     return (-1);
 }
 
-struct position findlparen(int bias)
+struct position find_lparen(int bias)
 {
     int nest, row, col, col1, limit;	//col is position of buffer, col1 is position of display
     struct position pos;
@@ -1805,7 +1805,7 @@ struct position findlparen(int bias)
     return (pos);
 }
 
-struct position findrparen(int bias)
+struct position find_rparen(int bias)
 {
     int nest, row, col, col1, limit;	//col is position of buffer, col1 is position of display
     struct position pos;
@@ -1898,7 +1898,7 @@ void emphasis_lparen()
     if (ed_data[ed_row][ed_col] != ')')
 	return;
 
-    pos = findlparen(1);
+    pos = find_lparen(1);
     if (ed_col <= COLS - 1 - LEFT_MARGIN
 	&& pos.col <= COLS - 1 - LEFT_MARGIN) {
 	if (pos.row != -1) {
@@ -1950,7 +1950,7 @@ void emphasis_rparen()
     if (ed_data[ed_row][ed_col] != '(')
 	return;
 
-    pos = findrparen(1);
+    pos = find_rparen(1);
     if (ed_col <= COLS - 1 - LEFT_MARGIN
 	&& pos.col <= COLS - 1 - LEFT_MARGIN) {
 	if (pos.row != -1) {
@@ -2079,7 +2079,7 @@ int calc_tabs()
     if (ed_row == 0 && ed_col == 0)
 	return (0);
 
-    pos = findlparen(0);
+    pos = find_lparen(0);
 
     if (ed_data[ed_row][ed_col] == '(')
 	return (0);

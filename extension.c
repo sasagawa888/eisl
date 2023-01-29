@@ -839,7 +839,7 @@ int f_eisl_test(int arglist)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
 
-    return (bigx_karatsuba_mult(arg1, arg2));
+    return (big_karatsuba_mult(arg1, arg2));
 }
 
 /* for Raspberry PI 

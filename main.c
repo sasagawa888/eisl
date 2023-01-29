@@ -1099,7 +1099,7 @@ int sread(void)
     case FLOAT_N:
 	return (make_flt(atof(stok.buf)));
     case BIGNUM:
-	return (makebigx(stok.buf));
+	return (make_big(stok.buf));
     case DECNUM:
 	return (make_int((int) strtol(stok.buf, &e, 10)));
     case BINARY:
@@ -1270,7 +1270,7 @@ void print(int addr)
 	print_long(addr);
 	break;
     case BIGX:
-	print_bigx(addr);
+	print_big(addr);
 	break;
     case VEC:
 	print_vec(addr);

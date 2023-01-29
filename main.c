@@ -278,10 +278,10 @@ int main(int argc, char *argv[])
     init_cell();
     init_class();
     init_stream();
-    initsubr();
-    initexsubr();
-    initsyntax();
-    initgeneric();
+    init_subr();
+    init_exsubr();
+    init_syntax();
+    init_generic();
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
@@ -366,7 +366,7 @@ int main(int argc, char *argv[])
     do {
 	maybe_greet();
 	TRY while (1) {
-	    initpt();
+	    init_pointer();
 	    fputs("> ", stdout);
 	    print(eval(sread()));
 	    putchar('\n');
@@ -391,7 +391,7 @@ char *library_file(const char *basename)
     return Str_cat(STRQUOTE(SHAREDIR) "/library/", 1, 0, basename, 1, 0);
 }
 
-void initpt(void)
+void init_pointer(void)
 {
     int ls;
 

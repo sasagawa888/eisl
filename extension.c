@@ -21,7 +21,7 @@
 #include "str.h"
 #include "text.h"
 
-void initexsubr(void)
+void init_exsubr(void)
 {
     def_subr("RANDOM-REAL", f_random_real);
     def_subr("RANDOM", f_random);

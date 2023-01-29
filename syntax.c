@@ -21,7 +21,7 @@
 
 #define TAGBODY_LEN_MAX 100
 
-void initsyntax(void)
+void init_syntax(void)
 {
     def_fsubr("LAMBDA", f_lambda);
     def_fsubr("LABELS", f_labels);

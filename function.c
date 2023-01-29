@@ -27,7 +27,7 @@
 
 static void *hmod;
 
-void initsubr(void)
+void init_subr(void)
 {
     // constant
     bind_const("*PI*", make_flt(M_PI));
@@ -399,7 +399,7 @@ void dynamic_link(int x)
 
 
 
-void initgeneric(void)
+void init_generic(void)
 {
     int lamlis, body;
 

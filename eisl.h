@@ -1199,6 +1199,7 @@ int slotvars(int cl);
 int smallerp(int x, int y);
 int sprintr(char *str, int r, int n);
 int streamp(int x);
+int string_input_stream_p(int x);
 int string_length(int x);
 int string_ref(int x, int y);
 int string_set(int x, int y, int z);

@@ -1,3 +1,13 @@
+/*
+ * dynamic link for compiled code
+ * <dynamic linking mechanism>
+ * f_load calls dynamic_link when it receives file with extension o.
+ * fast.h header file has dynamically linked code. 
+ * compiler uses it to generate compiled code. 
+ * compiled lisp code is dynamically linkable code.
+ */
+
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <dlfcn.h>

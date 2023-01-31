@@ -4,7 +4,8 @@
  *
  * <files>
  * main.c        REPL
- * cell.c        generate cells. interface functions for dynamic-linked code.
+ * cell.c        generate cells. 
+ * link.c		 interface functions for dynamic-linked code.
  * data.c        predicate for data structure. operation of data structure.
  * compute.c     computation numeric
  * bignum.c      computation of bignum

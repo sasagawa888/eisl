@@ -1,5 +1,5 @@
 (import "opengl")
-;;compile library/opengl.lsp and sudo make install before import
+
 
 (defun main ()
   (glut:init)

@@ -248,7 +248,15 @@ defgeneric compile
                       ((eq (self-introduction) 'freebsd) "cc -O3 -w -shared -fPIC -s -o ")
                       ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
                (fname (filename x))
-               (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c ")) )
+               (infnames (string-append fname "0.c " fname "1.c " fname "5.c " fname "6.c " fname "7.c " fname "2.c " fname "3.c " fname "4.c "))
+               (env-cflags (getenv "CFLAGS"))
+               (env-cflags-str (if env-cflags
+                                   env-cflags
+                                 ""))
+               (env-ldflags (getenv "LDFLAGS"))
+               (env-ldflags-str (if env-ldflags
+                                    env-ldflags
+                                  "")) )
            (eisl-ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
            (initialize fname ".c")
@@ -260,7 +268,7 @@ defgeneric compile
            (format (standard-output) "finalize~%")
            (finalize (remove-dir fname) ".c")
            (format (standard-output) "invoke CC~%")
-           (system (string-append option fname ".o " include fname "0.c " c-lang-option))
+           (system (string-append option fname ".o " include fname "0.c " c-lang-option " " env-cflags-str " " env-ldflags-str))
            (system (string-append "rm " infnames))))
     
     ;;for debug compile and not remove C code
@@ -286,7 +294,15 @@ defgeneric compile
                (option
                (cond ((member (self-introduction) '(linux openbsd)) "cc -O3 -w -shared -fPIC -s -o ")
                      ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
-               (fname (filename x)) )
+               (fname (filename x))
+               (env-cflags (getenv "CFLAGS"))
+               (env-cflags-str (if env-cflags
+                                   env-cflags
+                                 ""))
+               (env-ldflags (getenv "LDFLAGS"))
+               (env-ldflags-str (if env-ldflags
+                                    env-ldflags
+                                  "")) )
            (eisl-ignore-toplevel-check t)
            (format (standard-output) "initialize~%")
            (initialize fname ".c")
@@ -298,7 +314,7 @@ defgeneric compile
            (format (standard-output) "finalize~%")
            (finalize (remove-dir fname) ".c")
            (format (standard-output) "invoke CC~%")
-           (system (string-append option fname ".o " include fname "0.c " c-lang-option))))
+           (system (string-append option fname ".o " include fname "0.c " c-lang-option " " env-cflags-str " " env-ldflags-str))))
     
     
     (defun pass1 (x)

@@ -118,7 +118,8 @@ EISL_OBJS := main.o \
 	compute.o \
 	edit.o \
 	syn_highlight.o \
-	long.o
+	long.o \
+	link.o
 
 ifeq  ($(WITHOUT_CURSES),1)
 	# Without curses support, do not build edlis

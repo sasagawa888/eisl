@@ -253,8 +253,8 @@ extern int big_pt0;
 extern int big_pt1;
 
 /* debugger */
-int examin_sym;
-int stepper_flag;
+extern int examin_sym;
+extern int stepper_flag;
 
 
 /* profiler */

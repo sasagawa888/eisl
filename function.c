@@ -2443,7 +2443,10 @@ int f_stream_ready_p(int arglist)
 	c = readc();
 	if (c == EOF) {
 	    input_stream = save;
-	    return (NIL);
+        if (string_input_stream_p(arg1))
+            return(NIL);
+        else
+	        error (NOT_STREAM, "stream-ready-p", NIL);
 	} else {
 	    unreadc(c);
 	    input_stream = save;

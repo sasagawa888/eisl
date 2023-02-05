@@ -70,6 +70,9 @@ int numeqp(int x, int y)
 	else if (GET_FLT(x) >= GET_FLT(y) - DBL_EPSILON &&
 		 GET_FLT(x) <= GET_FLT(y) + DBL_EPSILON)
 	    return (1);
+	/* when huge number*/
+	else if (fabs(GET_FLT(x)) > 1e+30 &&  fabs(GET_FLT(x) - GET_FLT(y)) < fabs(GET_FLT(x)) / 100000)
+		return (1);
 	else
 	    return (0);
     } else {

@@ -9,6 +9,7 @@
 
 
 #include <ctype.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <dlfcn.h>
 #include "eisl.h"

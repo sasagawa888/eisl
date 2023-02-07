@@ -1339,6 +1339,7 @@ long long int get_long(int addr);
 int nth(int n, int addr);
 int f_freedll(int arglist);
 int f_system(int arglist);
+void dynamic_link(int x);
 int set_car(int x, int y);
 int set_cdr(int x, int y);
 int set_aux(int x, int y);

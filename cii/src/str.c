@@ -270,7 +270,7 @@ int Str_rmatch(const char *s, int i, int j,
 		return j - len + 1;
 	return 0;
 }
-void Str_fmt(int code __unused, va_list_box *box,
+void Str_fmt(int code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	char *s;

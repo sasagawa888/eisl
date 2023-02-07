@@ -252,7 +252,7 @@ static inline void maybe_greet(void)
 	Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
 }
 
-static inline disable_repl_flag(void)
+static inline void disable_repl_flag(void)
 {
 #ifndef WITHOUT_CURSES
     repl_flag = false;
@@ -434,7 +434,7 @@ void signal_handler_c(int signo __unused)
 
 
 /* -------read()-------- */
-int string_readc(int stm)
+int string_readc(int stm __unused)
 {
     int c;
 

@@ -35,9 +35,9 @@ static char cset[] =
 	;
 const T Text_cset   = { 256, cset };
 const T Text_ascii  = { 127, cset };
-const T Text_ucase  = {  26, cset + 'A' };
-const T Text_lcase  = {  26, cset + 'a' };
-const T Text_digits = {  10, cset + '0' };
+const T Text_ucase  = {  26, &cset['A'] };
+const T Text_lcase  = {  26, &cset['a'] };
+const T Text_digits = {  10, &cset['0'] };
 const T Text_null   = {   0, cset };
 static struct chunk {
 	struct chunk *link;
@@ -88,7 +88,7 @@ T Text_put(const char *str) {
 	text.str = memcpy(alloc(text.len), str, text.len);
 	return text;
 }
-char *Text_get(char *str, int size, T s) {
+char *Text_get(char *str, int size __unused, T s) {
 	assert(s.len >= 0 && s.str);
 	if (str == NULL)
 		str = ALLOC(s.len + 1);
@@ -384,7 +384,7 @@ int Text_rmatch(T s, int i, int j, T str) {
 		return j - str.len + 1;
 	return 0;
 }
-void Text_fmt(int code, va_list_box *box,
+void Text_fmt(int code __unused, va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	T *s;

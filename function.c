@@ -2459,7 +2459,7 @@ int f_stream_ready_p(int arglist)
 /* evaluation function */
 int f_eval(int arglist)
 {
-    int arg1, arg2, len;
+    int arg1, len;
 
     arg1 = car(arglist);
     len = length(arglist);

@@ -434,7 +434,7 @@ void signal_handler_c(int signo __unused)
 
 
 /* -------read()-------- */
-int string_readc(int stm)
+int string_readc(int stm __unused)
 {
     int c;
 

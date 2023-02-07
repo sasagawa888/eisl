@@ -88,7 +88,7 @@ T Text_put(const char *str) {
 	text.str = memcpy(alloc(text.len), str, text.len);
 	return text;
 }
-char *Text_get(char *str, int size, T s) {
+char *Text_get(char *str, int size __unused, T s) {
 	assert(s.len >= 0 && s.str);
 	if (str == NULL)
 		str = ALLOC(s.len + 1);
@@ -384,7 +384,7 @@ int Text_rmatch(T s, int i, int j, T str) {
 		return j - str.len + 1;
 	return 0;
 }
-void Text_fmt(int code, va_list_box *box,
+void Text_fmt(int code __unused, va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	T *s;

@@ -4052,9 +4052,10 @@ int f_write_byte(int arglist)
 	error(WRONG_ARGS, "write-byte", arglist);
     if (!integerp(arg1))
 	error(NOT_INT, "write-byte", arg1);
-    if (integerp(arg1) && ((n = GET_INT(arg1)) < 0 || n > 255))
+    n = GET_INT(arg1);
+    if (n < 0 || n > 255)
 	error(IMPROPER_ARGS, "write-byte", arg1);
-    if (n > 1 && !binary_output_stream_p(arg2))
+    if (!binary_output_stream_p(arg2))
 	error(NOT_OUT_STREAM, "write-byte", arg2);
 
     fputc((char) GET_INT(arg1), GET_PORT(arg2));

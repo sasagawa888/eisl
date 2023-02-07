@@ -2447,12 +2447,11 @@ int f_stream_ready_p(int arglist)
             return(NIL);
         else
 	        error (NOT_STREAM, "stream-ready-p", NIL);
-	} else {
+        }
 	    unreadc(c);
 	    input_stream = save;
 	    return (T);
 	}
-    } else
 	return (NIL);
 }
 
@@ -4376,6 +4375,7 @@ __dead int f_quit(int arglist __unused)
     }
     greeting_flag = false;
     RAISE(Exit_Interp);
+    return (NIL);
 }
 
 /* extension */
@@ -4856,8 +4856,7 @@ int f_continue_condition(int arglist)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
 
-    if (GET_OPT(arg1) == CONTINUABLE)
-	return (arg2);
-    else
+    if (GET_OPT(arg1) != CONTINUABLE)
 	error(ILLEGAL_FORM, "continue-condition", arg1);
+    return (arg2);
 }

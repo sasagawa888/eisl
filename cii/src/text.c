@@ -35,9 +35,9 @@ static char cset[] =
 	;
 const T Text_cset   = { 256, cset };
 const T Text_ascii  = { 127, cset };
-const T Text_ucase  = {  26, cset + 'A' };
-const T Text_lcase  = {  26, cset + 'a' };
-const T Text_digits = {  10, cset + '0' };
+const T Text_ucase  = {  26, &cset['A'] };
+const T Text_lcase  = {  26, &cset['a'] };
+const T Text_digits = {  10, &cset['0'] };
 const T Text_null   = {   0, cset };
 static struct chunk {
 	struct chunk *link;

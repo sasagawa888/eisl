@@ -4127,7 +4127,7 @@ int check_dimension(int ls)
 int f_create_string(int arglist)
 {
     int arg1, arg2, n;
-    char *str, c;
+    char str[STRSIZE], c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -4145,11 +4145,9 @@ int f_create_string(int arglist)
     else
 	c = GET_CHAR(arg2);
 
-    str = ALLOC(n + 1);
     memset(str, c, n);
     str[n] = NUL;
     int res = make_str(str);
-    FREE(str);
     return res;
 }
 

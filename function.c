@@ -4127,7 +4127,7 @@ int check_dimension(int ls)
 int f_create_string(int arglist)
 {
     int arg1, arg2, n;
-    char str[STRSIZE], c;
+    char *str , c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -4138,16 +4138,18 @@ int f_create_string(int arglist)
     if (longnump(arg1) || bignump(arg1))
 	error(EXHAUSTED_ERR, "create-string", arg1);
 
-
+    
     n = GET_INT(arg1);
     if (nullp(arg2))
 	c = ' ';
     else
 	c = GET_CHAR(arg2);
 
+    str = ALLOC(n + 1);
     memset(str, c, n);
     str[n] = NUL;
     int res = make_str(str);
+    FREE(str);
     return res;
 }
 

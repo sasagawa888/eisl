@@ -61,7 +61,7 @@
 ;;;
 ($test (let ((time (get-internal-real-time))) (and (integerp time) (< 0 time))) t)
 ($test (let ((t1 (get-internal-real-time))
-       (dummy (tak 16 8 0)) ;modify from (tak 18 12 6)  current machine is high speed
+       (dummy (tak 18 12 6)) ;modify from (tak 18 12 6)  current machine is high speed
        (t2 (get-internal-real-time)))
    (< t1 t2))
  t)

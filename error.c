@@ -460,8 +460,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Memory allocate over flow at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	puts("Fatal error malloc over flow");
-	RAISE(Exit_Interp);
+	signal_condition(make_instance(cstorage_exhausted, initargs), NIL);
 	break;
     case NOT_EXIST_METHOD:
 	initargs =

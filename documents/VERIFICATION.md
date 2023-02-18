@@ -26,6 +26,9 @@ vector.lsp
 
 These are files of test code to test for ISLisp standard compatibility.
 
+# Run
+./verify/all.sh
+
 # Acknowledgments
 
 This was written by referring to the code at

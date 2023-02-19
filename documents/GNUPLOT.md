@@ -1,5 +1,7 @@
 # GNUPLOT
-under construction
+```
+sudo apt-get install gnuplot
+```
 
 # usage
 ```
@@ -9,8 +11,27 @@ under construction
 # Spec
 
 ### (open-plot)
+invoke GNUPLOT with pipe.
 
 ### (send-plot str)
+send message to GNUPLOT with pipe.
 
 ### (close-plot)
+end GNUPLOT. close the pipe.
 
+# Example
+
+```
+(import "plot")
+
+(defun foo ()
+    (open-plot)
+    (send-plot "set title \"sin cos curve\"")
+    (send-plot "set xlabel \"x\"")
+    (send-plot "set ylabel \"y\"")
+    (send-plot "set xtics 1")
+    (send-plot "set ytics 0.5")
+    (send-plot "plot sin(x),cos(x)")
+    (close-plot))
+
+```

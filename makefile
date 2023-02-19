@@ -38,7 +38,7 @@ else
 		endif
 	endif
 endif
-CFLAGS += $(INCS) -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -D_XOPEN_SOURCE_EXTENDED -Inana/src
+CFLAGS += $(INCS) -g -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -D_XOPEN_SOURCE_EXTENDED -Inana/src
 DFLAGS := --preview=all --de -w --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 SRC_D := dextension.d disl.d
@@ -55,7 +55,8 @@ SRC_LISP := library/bit.lsp \
 	    library/tcpip.lsp \
 	    library/virtty.lsp \
 		library/prolog.lsp \
-		library/datetime.lsp
+		library/datetime.lsp \
+		library/plot.lsp
 
 ifeq ($(DEBUG),1)
 	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE -DWITH_NANA=1

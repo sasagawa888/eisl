@@ -11,6 +11,12 @@ for gnuplot
     t)
 
 (defun send-plot (msg)
+     (let ((stm (create-string-output-stream)))
+        (format stm msg)
+        (send-plot1 (get-output-stream-string stm))
+        t))
+
+(defun send-plot1 (msg)
     (c-lang "fprintf(gp, \"%s\\n\", Fgetname(MSG));")
     t)
 

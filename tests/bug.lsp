@@ -1,0 +1,5 @@
+(defgeneric foo-35 (x)
+   (:method :around (x) (call-next-method))
+   (:method ((x <integer>)) 'primary-<integer>))
+;($test (foo-35 3) primary-<integer>)
+;($error (foo-35 3.3) <error>)

@@ -4561,7 +4561,7 @@ int f_next_method_p(int arglist)
 
 int f_call_next_method(int arglist)
 {
-    int varlist, body, res, pexist = 0, qexist, caller, save1, save2;
+    int varlist, body, res, pexist = 0, qexist = 0, caller, save1, save2;
 
     if (generic_func == NIL)
 	error(UNDEF_FUN, "call-next-method", NIL);
@@ -4582,6 +4582,7 @@ int f_call_next_method(int arglist)
     caller = car(next_method);
     next_method = cdr(next_method);
     if (GET_OPT(caller) == PRIMARY) {
+    pexist = 1;
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
 	    /* match(x,y) if sameclass or subclass return 1 else 0 */

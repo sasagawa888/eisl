@@ -1389,6 +1389,13 @@ int f_defclass(int arglist)
     if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defclass", arglist);
 
+	/* if re define class of global variable, then it's class is <invalid> */
+	if ((GET_CDR(arg1) != NIL)){
+		SET_AUX(GET_CDR(arg1),cinvalid);
+		return(arg1);
+	}
+
+
     sc = arg2;
     if (subclassp(GET_AUX(arg1), cobject))
 	redef_flag = true;	/* flag for check redefinition of class */

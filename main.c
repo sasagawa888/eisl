@@ -1829,7 +1829,7 @@ int apply(int func, int args)
 	    save2 = generic_vars;
 	    save3 = next_method;
 	    generic_func = func;
-	    generic_vars = args;
+	    generic_vars = copy(args);
 	    next_method = GET_CDR(func);
 	    if (GET_TR(examin_sym) == 1) {
 		trace = examin_sym;

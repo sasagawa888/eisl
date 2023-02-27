@@ -280,6 +280,14 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("expected-class"), cstream);
 	signal_condition(make_instance(cdomain_error, initargs), NIL);
 	break;
+	case NOT_STREAM_ERROR:
+	initargs =
+	    list10(make_sym("format-string"), make_str("Not a stream at "),
+		   make_sym("format-arguments"), arg, make_sym("function"),
+		   make_sym(fun1), make_sym("object"), arg,
+		   make_sym("expected-class"), cstream_error);
+	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	break;
     case NOT_IN_STREAM:
 	initargs =
 	    list10(make_sym("format-string"),

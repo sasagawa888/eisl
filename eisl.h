@@ -624,6 +624,7 @@ enum {
     CANT_MODIFY,
     NOT_INT,
     NOT_STREAM,
+    NOT_STREAM_ERROR,
     NOT_OUT_STREAM,
     NOT_IN_STREAM,
     NOT_CHAR,

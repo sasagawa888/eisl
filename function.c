@@ -4805,7 +4805,7 @@ int f_stream_error_stream(int arglist)
 
     arg1 = car(arglist);
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
-	error(NOT_STREAM, "stream-error-stream", arg1);
+	error(NOT_STREAM_ERROR, "stream-error-stream", arg1);
 
     fun = cdr(assoc(make_sym("i"), GET_CDR(arg1)));
     return (fun);

@@ -32,8 +32,8 @@
 ($test (let ((time (get-universal-time))) (and (integerp time) (< 0 time))) t)
 ($test (let ((t1 (get-universal-time))
        (dummy1 (tak 24 16 8))  ;; original is (tak 21 14 7) current machine is high speed
-       (dummy2 (tak 24 16 8))
-       (dummy3 (tak 24 16 8))
+       (dummy2 (tak 21 14 7))
+       (dummy3 (tak 21 14 7))
        (t2 (get-universal-time)))
    (< t1 t2))
  t)

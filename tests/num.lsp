@@ -22,6 +22,18 @@
 (defun rational (x y)
   (create (class <rational>) 'nu (div x (gcd x y)) 'de (div y (gcd x y))))   
 
+
+;;;  quaternion number
+(defclass <quaternion> ()
+  ((r :accessor r :initform 0 :initarg r)
+   (i :accessor i :initform 0 :initarg i)
+   (j :accessor j :initform 0 :initarg j)
+   (k :accessor k :initform 0 :initarg k)))
+
+;;; constructer
+(defun quaternion (a b c d)
+  (create (class <quaternion>) 'r a 'i b 'j c 'k d))    
+
 ;;; 表示
 (defun cprint (z)
   (format (standard-output) "#C(~G ~G)~%" (realpart z) (imagpart z)))

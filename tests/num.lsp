@@ -15,13 +15,21 @@
 
 ;;; rational number
 (defclass <rational> ()
-  ((nu :accessor numerator :initform 0.0 :initarg nu)
-   (de :accessor denominator :initform 0.0 :initarg de)))
+  ((nu :accessor numerator :initform 0 :initarg nu)
+   (de :accessor denominator :initform 0 :initarg de)))
 
 ;;; constructer
 (defun rational (x y)
   (create (class <rational>) 'nu (div x (gcd x y)) 'de (div y (gcd x y))))   
 
+(defun complexp (x)
+  (instancep x (class <complex>)))
+
+(defun rationalp (x)
+  (instancep x (class <rational>)))
+  
+(defun quaternion (x)
+  (instancep x (class <quaternion>)))
 
 ;;;  quaternion number
 (defclass <quaternion> ()
@@ -34,9 +42,28 @@
 (defun quaternion (a b c d)
   (create (class <quaternion>) 'r a 'i b 'j c 'k d))    
 
+;;; quaternion operator
+(defun qadd (x y)
+  (quaternion (+ (r x) (r y)) (+ (i x) (i y)) (+ (j x) (i y)) (+ (k x) (k y))))
+
+(defun qsub (x y)
+  (quaternion (- (r x) (r y)) (- (i x) (i y)) (- (j x) (i y)) (- (k x) (k y))))
+
+
+(defgeneric g+ (x y)
+  (:method ((x <complex>) (y <complex>)) (cadd x y))
+  (:method ((x <quaternion>) (y <quaternion>)) (qadd x y))
+  (:method ((x <rational>) (y <rational>)) (radd x y))
+  (:method (x y) (+ x y)))
+
+
 ;;; 表示
 (defun cprint (z)
   (format (standard-output) "#C(~G ~G)~%" (realpart z) (imagpart z)))
+
+(defun rprint (n)
+  (format (standard-output) "~A/~A~%" (numerator n) (denominator n)))
+
 
 ;;; 複素共役
 (defun conj (z)

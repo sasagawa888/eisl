@@ -56,6 +56,19 @@
   (:method ((x <rational>) (y <rational>)) (radd x y))
   (:method (x y) (+ x y)))
 
+(defgeneric g- (x y)
+  (:method ((x <complex>) (y <complex>)) (csub x y))
+  (:method ((x <quaternion>) (y <quaternion>)) (qsub x y))
+  (:method ((x <rational>) (y <rational>)) (rsub x y))
+  (:method (x y) (+ x y)))
+
+
+;;; transform
+(defun rational-to-float (x)
+  (quotient (numerator x) (denominator x)))
+
+
+
 
 ;;; 表示
 (defun cprint (z)

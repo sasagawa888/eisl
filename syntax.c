@@ -2036,13 +2036,6 @@ int convert(int arg1, int arg2)
     char str[SHORT_STRSIZE], *e;
 
     switch (GET_TAG(arg1)) {
-	case BIGN:
-	if (GET_AUX(arg2) == cinteger) {
-	    return (arg2);
-	} else if (GET_AUX(arg2) == cfloat) {
-	    return (exact_to_inexact(arg1));
-	}
-	break;
     case LONGN:
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg1);
@@ -2051,6 +2044,13 @@ int convert(int arg1, int arg2)
 	} else if (GET_AUX(arg2) == cstring) {
 	    Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
 	    return (make_str(str));
+	}
+	break;
+	case BIGN:
+	if (GET_AUX(arg2) == cinteger) {
+	    return (arg1);
+	} else if (GET_AUX(arg2) == cfloat) {
+	    return (exact_to_inexact(arg1));
 	}
 	break;
 	case INTN:

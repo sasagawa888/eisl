@@ -1818,15 +1818,11 @@ int f_map_into(int arglist)
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
-    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0){	/* when arg2 is thunk (lambda () ...) */
-	printf("case1");
-    val = reverse(map_into_thunk(arg2, arg4));
-    print(val);
-    }
-    else{
-    printf("case2");
+    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	/* when arg2 is thunk (lambda () ...) */
+    val = map_into_thunk(arg2, arg4);
+    else
 	val = mapcar(arg2, arg4);
-    }
+    
     res = arg1;
     if (listp(arg1)) {
 	while (!nullp(val)) {
@@ -1864,10 +1860,13 @@ int f_map_into(int arglist)
 
 int map_into_thunk(int x, int y)
 {
+    int temp;
     if (nullp(y))
 	return (NIL);
-    else
-	return (cons(apply(x, NIL), map_into_thunk(x, cdr(y))));
+    else{
+    temp = apply(x,NIL);
+	return (cons(temp, map_into_thunk(x, cdr(y))));
+    }
 }
 
 int map_into_to_list(int x)

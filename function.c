@@ -2164,6 +2164,7 @@ int f_preview_char(int arglist)
 	pc_buf[1] = NUL;
 	unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF) {
+        readc();
 	    input_stream = save;
 	    if (nullp(arg2) && n == 2)
 		return (arg2);

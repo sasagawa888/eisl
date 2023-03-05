@@ -1818,11 +1818,14 @@ int f_map_into(int arglist)
     else
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
-    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	/* when arg2 is thunk (lambda () ...) */
-	val = reverse(map_into_thunk(arg2, arg4));
-    else
+    if (IS_FUNC(arg2) && GET_OPT(arg2) == 0){	/* when arg2 is thunk (lambda () ...) */
+	printf("case1");
+    val = reverse(map_into_thunk(arg2, arg4));
+    }
+    else{
+    printf("case2");
 	val = mapcar(arg2, arg4);
-
+    }
     res = arg1;
     if (listp(arg1)) {
 	while (!nullp(val)) {

@@ -1821,6 +1821,7 @@ int f_map_into(int arglist)
     if (IS_FUNC(arg2) && GET_OPT(arg2) == 0){	/* when arg2 is thunk (lambda () ...) */
 	printf("case1");
     val = reverse(map_into_thunk(arg2, arg4));
+    print(val);
     }
     else{
     printf("case2");

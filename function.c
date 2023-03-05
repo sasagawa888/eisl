@@ -2150,7 +2150,8 @@ int f_preview_char(int arglist)
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-	unreadc(pc_buf[0]);
+    if (pc_buf[0] != EOF)
+	    unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF) {
 	    input_stream = save;
 	    error(END_STREAM, "preview-char", NIL);

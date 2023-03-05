@@ -1,16 +1,9 @@
-(defun domain-error-handler (condition)
-   (let ((data ()))
-     (setq data
-	   (cons (domain-error-object condition)
-		 (domain-error-expected-class condition)))
-     (throw 'c-domain-error data)))
+(defun foo ()
+(let ((x 0)
+       (a '((one . 11) (two . 12) (three . 13) 14)))
+   (list (map-into a (lambda () (setq x (+ x 2)))) a)))
 
-(defglobal data nil)
-;;; <stream-error>
-(defglobal data nil)
-(setq data (catch 'c-domain-error
-		    (with-handler #'domain-error-handler
-				  (stream-error-stream 1))))
-;($test (car data) 1 eql)
-;($test (eq (cdr data) (class <stream-error>)) t)
+; ((2 4 6 8) (2 4 6 8))
+; equal)
+ 
 

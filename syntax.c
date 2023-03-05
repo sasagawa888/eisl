@@ -2036,19 +2036,6 @@ int convert(int arg1, int arg2)
     char str[SHORT_STRSIZE], *e;
 
     switch (GET_TAG(arg1)) {
-    case INTN:
-	if (GET_AUX(arg2) == cinteger) {
-	    return (arg1);
-	} else if (GET_AUX(arg2) == ccharacter) {
-	    ucs4_to_utf8(GET_INT(arg1), str);
-	    return (make_char(str));
-	} else if (GET_AUX(arg2) == cfloat) {
-	    return (exact_to_inexact(arg1));
-	} else if (GET_AUX(arg2) == cstring) {
-	    Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(arg1));
-	    return (make_str(str));
-	}
-	break;
     case LONGN:
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg1);
@@ -2064,6 +2051,19 @@ int convert(int arg1, int arg2)
 	    return (arg2);
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
+	}
+	break;
+	case INTN:
+	if (GET_AUX(arg2) == cinteger) {
+	    return (arg1);
+	} else if (GET_AUX(arg2) == ccharacter) {
+	    ucs4_to_utf8(GET_INT(arg1), str);
+	    return (make_char(str));
+	} else if (GET_AUX(arg2) == cfloat) {
+	    return (exact_to_inexact(arg1));
+	} else if (GET_AUX(arg2) == cstring) {
+	    Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(arg1));
+	    return (make_str(str));
 	}
 	break;
     case CHR:

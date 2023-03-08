@@ -18,6 +18,7 @@ for gnuplot
 
 (defun send-plot1 (msg)
     (c-lang "fprintf(gp, \"%s\\n\", Fgetname(MSG));")
+    (c-lang "fflush(gp);")
     t)
 
 (defun close-plot ()    

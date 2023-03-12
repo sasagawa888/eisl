@@ -159,7 +159,7 @@ defgeneric compile
               (str1 "") )
              ((> i n)
               str1 )
-             (setq str1 (string-append str1 (convert (elt str i) <string>)))))
+             (setq str1 (string-append str1 (create-string 1 (elt str i))))))
     
     ;; e.g. (a b) -> (asubst bsubst) 
     (defun subst (vars)
@@ -2781,7 +2781,7 @@ defgeneric compile
               ((char= (car ls) #\}) (string-append "rcurl" (conv-name2 (cdr ls))))
               ((char= (car ls) #\?) (string-append "question" (conv-name2 (cdr ls))))
               ((char= (car ls) #\.) (string-append "dot" (conv-name2 (cdr ls))))
-              (t (string-append (convert (car ls) <string>) (conv-name2 (cdr ls))))))
+              (t (string-append (create-string 1 (car ls)) (conv-name2 (cdr ls))))))
     
     ;; fixnum translate to immediate
     (defun list-to-c (stream x)

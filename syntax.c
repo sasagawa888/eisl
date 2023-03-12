@@ -1386,11 +1386,11 @@ int f_defclass(int arglist)
 	error(HAS_COMMON_CLASS, "defclass", arg2);
     if (!listp(arg3))
 	error(NOT_LIST, "defclass", arg3);
-    if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defclass", arglist);
+    if (!top_flag && !ignore_topchk) {
+	error(NOT_TOP_LEVEL, "defclass", arglist);}
 
 	/* if re define class of global variable, then it's class is <invalid> */
-	if ((GET_CDR(arg1) != NIL)){
+	if (GET_CDR(arg1) != NIL){
 		SET_AUX(GET_CDR(arg1),cinvalid);
 		return(arg1);
 	}
@@ -2075,8 +2075,6 @@ int convert(int arg1, int arg2)
 	    return (make_int(utf8_to_ucs4(GET_NAME(arg1))));
 	} else if (GET_AUX(arg2) == csymbol) {
 	    return (make_sym(GET_NAME(arg1)));
-	} else if (GET_AUX(arg2) == cstring) {
-	    return (make_str(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == ccharacter) {
 	    return (arg1);
 	}

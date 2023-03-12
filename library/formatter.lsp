@@ -65,11 +65,11 @@
               (str1 "") )
              ((> i n)
               str1 )
-             (setq str1 (string-append str1 (convert (elt str i) <string>)))))
+             (setq str1 (string-append str1 (create-string 1 (elt str i))))))
 
     ;; to test pp1 in standard-input
-    (defun pp ()
-        (pp1 (sexp-read) 0))
+    (defpublic pp (x)
+        (pp1 x 0))
 
     ;; pretty-print if asdata is given, pp1 doesn't care syntax. 
     (defun pp1 (x lm :rest asdata)
@@ -633,7 +633,7 @@
     (defun convert-to-string (ls)
         (if (null ls)
             ""
-            (string-append (convert (car ls) <string>) (convert-to-string (cdr ls)))))
+            (string-append (create-string 1 (car ls)) (convert-to-string (cdr ls)))))
 
     ;; get one character from stream
     (defun getc ()

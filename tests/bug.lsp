@@ -1,11 +1,7 @@
 (defun foo ()
-(tagbody
-      tag1
-      (tagbody
-       tag2
-       (unwind-protect 
-           (go tag1) ;;; tag2 invalid
-         (go tag2)))))
+    (tagbody tag1
+             (tagbody tag2
+                      (unwind-protect (go tag1) ;;; tag2 invalid (go tag2)))))
 
 
 ;($error

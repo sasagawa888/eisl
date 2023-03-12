@@ -60,6 +60,7 @@ void init_exsubr(void)
     def_subr("EISL-GET-METHOD-PRIORITY", f_get_method_priority);
     def_subr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
     def_subr("EISL-TEST", f_eisl_test);
+    def_subr("EISL-GET-MYSELF", f_get_myself);
 
     def_subr("TRY", f_try);
     def_subr("READ-EXP", f_read_exp);
@@ -841,6 +842,17 @@ int f_eisl_test(int arglist)
     arg2 = cadr(arglist);
 
     return (big_karatsuba_mult(arg1, arg2));
+}
+
+int f_get_myself(int arglist)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (!symbolp(arg1))
+        error(NOT_SYM, "eisl-get-muself", arg1);
+    
+    return (cons(make_sym("DEFUN"),cons(arg1,GET_CAR(GET_CAR(arg1)))));
 }
 
 /* for Raspberry PI 

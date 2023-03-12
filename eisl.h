@@ -895,6 +895,7 @@ int f_generic_function_p(int arglist);
 int f_gensym(int arglist);
 int f_get_internal_real_time(int arglist);
 int f_get_internal_run_time(int arglist);
+int f_get_myself(int arglist);
 int f_get_output_stream_string(int arglist);
 int f_get_universal_time(int arglist);
 int f_go(int arglist);

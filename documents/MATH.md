@@ -154,3 +154,6 @@ The exponent always exists, but nil is returned if the given value does not meet
 Highly composite number?
 
 ### (max-tau n m)
+
+### (signum n)
+Computes the sign or signum function

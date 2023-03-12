@@ -91,6 +91,12 @@
 (defun sign (x)
     (expt -1 x) )
 
+;;; SIGNUM computes sign or signum function
+(defun signum (x)
+  (cond ((< x 0) -1)
+        ((> x 0) 1)
+        (t 0)))
+
 (defun transpose (x)
     (let* ((m (elt (array-dimensions x) 0))
            (n (elt (array-dimensions x) 1))

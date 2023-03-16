@@ -36,7 +36,7 @@ As described above, integer arguments `n` and `m` of the `ash` function must be 
 INT_FLAG | ...
 
 ```
-Before we can pass a small integer value into Easy-ISLisp, we must suppress the cell consumption of small integers. To convert a small C integer to an immediate Easy-ISLisp integer, perfom the bitwise OR operation with `INT_FLAG`. This sets the immediate integer flag bit to 1 and can thus be treated as an immediate small integer in Easy-ISLisp.
+Before we can pass a small integer value into Easy-ISLisp, we must suppress the cell consumption of small integers. To convert a small C integer to an immediate Easy-ISLisp integer, perfom the bitwise OR operation with `INT_FLAG`. This sets the immediate integer flag bit to 1 and it can thus be treated as an immediate small integer in Easy-ISLisp.
 
 ```
 res = ...

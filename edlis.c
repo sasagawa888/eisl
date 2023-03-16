@@ -903,7 +903,7 @@ bool edit_loop(char *fname)
 	    break;
 	}
 	ed_row = pos.row;
-	ed_col = pos.col;
+	ed_col = ed_col1 = pos.col;
 	ed_start = ed_row - ed_scroll / 2;
 	if (ed_start < 0) {
 	    ed_start = 0;
@@ -927,7 +927,7 @@ bool edit_loop(char *fname)
 	    break;
 	}
 	ed_row = pos.row;
-	ed_col = pos.col;
+	ed_col = ed_col1 = pos.col;
 	ed_start = ed_row - ed_scroll / 2;
 	if (ed_start < 0) {
 	    ed_start = 0;
@@ -971,7 +971,7 @@ bool edit_loop(char *fname)
 	    while (c != 'y' && c != 'n');
 	    if (c == 'y') {
 		ed_row = pos.row;
-		ed_col = pos.col;
+		ed_col = ed_col1 = pos.col;
 		replace_word(str1, str2);
 		display_screen();
 		modify_flag = true;

@@ -1,8 +1,7 @@
 # Interface between Lisp and C
 
 ## overview
-Easy-ISLisp's compiler depends on how it translates Lisp code into C code.
-You can embed C code in Lisp code. It allows you to call C code from Lisp.
+Easy-ISLisp's compiler is translater from Lisp code into C code.You can embed C code in Lisp code. It allows you to call C code from Lisp.
 
 
 ## simple example
@@ -24,7 +23,7 @@ Below is an example of bit manipulation in C code.
 ### (c-lang str)
 Embeds the string in str into the compiler-generated C code.
 
-### immediate
+### immediate value
 Small integers in Easy-ISLisp are immediate values. This makes it possible to suppress the cell consumption of small integers. In order to import this small integer into C language, it is necessary to apply a mask.
 
 ```
@@ -54,6 +53,7 @@ The value of the function converted to C should be assigned to a C variable call
 ```
 ;; example
 (c-include "stdio.h")  
+```
 
 This is translated and embedded into the following C code:
 

@@ -5,12 +5,16 @@
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (tarai (tarai (- x 1) y z) (tarai (- y 1) z x) (tarai (- z 1) x y)) ))
+        (tarai (tarai (- x 1) y z)
+               (tarai (- y 1) z x)
+               (tarai (- z 1) x y))))
 
 (defun tarai* (x y z)
     (if (<= x y)
         y
-        (tarai* (tarai* (- x 1.0) y z) (tarai* (- y 1.0) z x) (tarai* (- z 1.0) x y)) ))
+        (tarai* (tarai* (- x 1.0) y z)
+                (tarai* (- y 1.0) z x)
+                (tarai* (- z 1.0) x y))))
 
 (defun fib (n)
     (the <fixnum> n)
@@ -21,8 +25,7 @@
 (defun fib* (n)
     (cond ((= n 1.0) 1.0)
           ((= n 2.0) 1.0)
-          (t (+ (fib* (- n 1.0))
-                (fib* (- n 2.0))))))
+          (t (+ (fib* (- n 1.0)) (fib* (- n 2.0)))) ))
 
 (defun fib** (n)
     (cond ((< n 2) 1)
@@ -36,9 +39,10 @@
 
 
 (defgeneric gfib (n)
-    (:method ((n <integer>)) (cond ((= n 1) 1)
-                                   ((= n 2) 1)
-                                   (t (+ (gfib (- n 1)) (gfib (- n 2)))) )))
+    (:method ((n <integer>))
+             (cond ((= n 1) 1)
+                   ((= n 2) 1)
+                   (t (+ (gfib (- n 1)) (gfib (- n 2)))))))
 
 (defun tak (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
@@ -73,9 +77,8 @@
 (defun ctak-aux (x y z)
     (if (>= y x)
         (throw 'ctak-aux z)
-        (ctak-aux
-           (catch 'ctak-aux (ctak-aux (- x 1) y z))
-           (catch 'ctak-aux (ctak-aux (- y 1) z x))
-           (catch 'ctak-aux (ctak-aux (- z 1) x y)))))
+        (ctak-aux (catch 'ctak-aux (ctak-aux (- x 1) y z))
+                  (catch 'ctak-aux (ctak-aux (- y 1) z x))
+                  (catch 'ctak-aux (ctak-aux (- z 1) x y)))))
 
 

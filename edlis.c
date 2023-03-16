@@ -611,11 +611,17 @@ void pagedn()
 
 char *getname()
 {
-    int c, pos;
+    int c;
+	static int pos;
     static char buf[20];
-    pos = 0;
-    buf[0] = 0;
 
+	ESCMOVE(ed_footer, 12);
+	ESCREV();
+	CHECK(addstr, "                    ");
+	ESCMOVE(ed_footer, 12);
+	CHECK(addstr, buf);
+	ESCRST();
+	
     while (1) {
 	CHECK(refresh);
 	c = getch();

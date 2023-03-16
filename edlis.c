@@ -945,17 +945,19 @@ bool edit_loop(char *fname)
     case CTRL('T'):
 	clear_status();
 	CHECK(addstr, "search: ");
-	CHECK(refresh);
-	CHECK(getnstr, str1, SHORT_STR_MAX);
+	strcpy(str1, getname());
+	//CHECK(refresh);
+	//CHECK(getnstr, str1, SHORT_STR_MAX);
 	clear_status();
 	CHECK(addstr, "replace: ");
-	CHECK(refresh);
-	CHECK(getnstr, str2, SHORT_STR_MAX);
+	strcpy(str2, getname());
+	//CHECK(refresh);
+	//CHECK(getnstr, str2, SHORT_STR_MAX);
 	ESCRST();
 	pos = find_word(str1);
 	while (pos.row != -1) {
 	    ed_row = pos.row;
-	    ed_col = pos.col;
+	    ed_col = ed_col1 = pos.col;
 	    ed_start = ed_row - ed_scroll / 2;
 	    if (ed_start < 0) {
 		ed_start = 0;

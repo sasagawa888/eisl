@@ -1,10 +1,10 @@
 # Interface between Lisp and C
 
-## overview
-Easy-ISLisp's compiler is translater from Lisp code into C code.You can embed C code in Lisp code. It allows you to call C code from Lisp.
+## Overview
+Easy-ISLisp's compiler translates Lisp code into C code. This makes it possible to embed C code into ISLisp code and call C functions and access C variables.
 
 
-## simple example
+## Simple example
 Below is an example of bit manipulation in C code.
 
 ```
@@ -21,41 +21,42 @@ Below is an example of bit manipulation in C code.
 ```
 
 ### (c-lang str)
-Embeds the string in str into the compiler-generated C code.
+Embeds the C code string in `str` into the compiler generated C code. This C code can access ISLisp variables, however, the ISLisp varible names must be converted into upper case when referenced in the C code. For example: a variable with the name `foo` in ISLisp will be `FOO` in the C code. The value returned in this S-expression is equal to the value of the C variable `res`.
 
-### immediate value
-Small integers in Easy-ISLisp are immediate values. This makes it possible to suppress the cell consumption of small integers. In order to import this small integer into C language, it is necessary to apply a mask.
+### Handling small integers
+Small integers in Easy-ISLisp are handled as immediate values. In order to import a small integer into C code, it is necessary to apply the bit mask `INT_MASK`. This sets the immediate integer flag bit to 0. This flag bit is the second most significant bit in a C `int` type.
 
 ```
 INT_MASK & N
 ```
 
-The arguments n and m of the ash function are converted to upper case. In C language, it is a variable called N. This variable is int type of C language. It is converted to an integer that can be handled in C language by taking the AND with INT_MASK.
+As described above, integer arguments `n` and `m` of the `ash` function must be converted to upper case to be used in C code. In this example, the C variables would be `N` and `M`. The values of these variables are converted to integers of `int` type in the C language by performing a bitwise AND operation with `INT_MASK`.
 
 ```
 INT_FLAG | ...
 
 ```
-To convert a C integer to a Lisp number, OR it with INT_FLAG. As a result, the specified bit becomes 1 and can be treated as a small integer in Easy-ISLisp.
+Before we can pass a small integer value into Easy-ISLisp, we must suppress the cell consumption of small integers. To convert a small C integer to an immediate Easy-ISLisp integer, perfom the bitwise OR operation with `INT_FLAG`. This sets the immediate integer flag bit to 1 and it can thus be treated as an immediate small integer in Easy-ISLisp.
 
 ```
 res = ...
 
 ```
 
-The value of the function converted to C should be assigned to a C variable called res. This is the return value of the Lisp function.
+The value of an expression in C should be assigned to a C variable named `res`. This is the return value of the ISLisp S-expression.
 
 ## Other extension functions
 
 
 ### (c-include str)
+This includes a C file into the Easy-ISLisp compiler generated C code. It allows you to refrence code in the included file in the `c-lang` expressions.
 
 ```
 ;; example
 (c-include "stdio.h")  
 ```
 
-This is translated and embedded into the following C code:
+This is translated to the following C code, which is then embedded into the compiler generated C code:
 
 ```
 #include stdio.h
@@ -63,7 +64,7 @@ This is translated and embedded into the following C code:
 
 ### (c-option str)
 
-This is in addition to the options you give to the C compiler.
+This is used to specify C compiler options. This is useful for specifying which libraries to link to the binary created when the generated C code is compiled to machine code.
 
 ```
 (c-option "-lglut -lGLU -lGL -L/usr/local/include/")

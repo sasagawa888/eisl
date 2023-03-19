@@ -42,6 +42,7 @@ index  start from 0
                    ((eq com 't) (top))
                    ((eq com 'k) (delete current index))
                    ((eq com 's) (replace (read) current index))
+                   ((eq com 'e) (eval current))
                    ((consp com) (format (standard-output) "~A~%" (eval com)))
                    ((integerp com) (repeat com)))))
 
@@ -175,6 +176,7 @@ index  start from 0
         (format (standard-output) "k kill s-exp at index~%")
         (format (standard-output) "s replace s-exp at index~%")
         (format (standard-output) "p print s-exp and index~%")
+        (format (standard-output) "e eval s-exp and print it~%")
         (format (standard-output) "(s-exp) eval s-exp and print it~%"))
 
     

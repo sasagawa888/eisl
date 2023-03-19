@@ -47,7 +47,7 @@ index  start from 0
                    ((integerp com) (repeat com)))))
 
     (defun right ()
-        (if (>= index (length current))
+        (if (> index (length current))
             t
             (setq index (+ index 1))))
 
@@ -58,7 +58,7 @@ index  start from 0
 
     (defun repeat (n)
         (setq index (+ n index))
-        (cond ((> index (length current)) (setq index (- (length current) 1)))
+        (cond ((> index (length current)) (setq index (length current)))
               ((< index 0) (setq index 0))
               (t nil)))
 
@@ -172,7 +172,7 @@ index  start from 0
         (format (standard-output) "t move top~%")
         (format (standard-output) "positive number move right n~%")
         (format (standard-output) "negative number move left n~%")
-        (format (standard-output) "i insert s-exp at index~%")
+        (format (standard-output) "i insert s-exp at left side of index~%")
         (format (standard-output) "k kill s-exp at index~%")
         (format (standard-output) "s replace s-exp at index~%")
         (format (standard-output) "p print s-exp and index~%")

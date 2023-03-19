@@ -13,6 +13,7 @@ index  start from 0
 (defglobal stack '())
 (defglobal current '())
 (defglobal index 0)
+(defglobal function-name nil)
 
 ;;; test code
 (defun foo (x) (+ x 1))
@@ -27,6 +28,7 @@ index  start from 0
 
 ;; edit function
 (defun editf (x)
+    (setq function-name x)
     (setq current (eisl-get-myself x))
     (edits))
 
@@ -75,7 +77,7 @@ index  start from 0
     (setq index 0))
 
 (defun top ()
-    (setq current (eisl-get-myself x))
+    (setq current (eisl-get-myself function-name))
     (setq stack nil)
     (setq index 0))
 
@@ -86,10 +88,11 @@ index  start from 0
 ;; print structured S-exp
 (defun prints (x)
     (format (standard-output) "(")
-    (prints1 x))
+    (prints1 x)
+    (format (standard-output) "  [~A]~%" index))
 
 (defun prints1 (x)
-    (cond ((null (cdr x)) (prints2 (car x)) (format (standard-output) ")~%"))
+    (cond ((null (cdr x)) (prints2 (car x)) (format (standard-output) ")"))
           (t (prints2 (car x)) (format (standard-output) " ") (prints1 (cdr x)))))
 
 (defun prints2 (x)
@@ -171,4 +174,5 @@ index  start from 0
     (format (standard-output) "i insert s-exp at index~%")
     (format (standard-output) "k kill s-exp at index~%")
     (format (standard-output) "s replace s-exp at index~%")
+    (format (standard-output) "p print s-exp and index~%")
     (format (standard-output) "e eval editing s-exp at index~%"))

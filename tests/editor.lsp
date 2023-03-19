@@ -171,4 +171,4 @@ index  start from 0
     (format (standard-output) "i insert s-exp at index~%")
     (format (standard-output) "k kill s-exp at index~%")
     (format (standard-output) "s replace s-exp at index~%")
-    (format (standard-output) "e eval editing s-exp at index~%")
+    (format (standard-output) "e eval editing s-exp at index~%"))

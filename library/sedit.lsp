@@ -99,7 +99,7 @@ index  start from 0
             (format (standard-output) "~A" x)
             (format (standard-output) "###")))
 
-    ;; insert x nth y destructive
+    ;; insert x nth y destructively
     (defun insert (x y n)
         (if (= n 0)
             (insert1 x n)
@@ -120,7 +120,7 @@ index  start from 0
             (set-cdr (cons x (cdr y)) y)
             (insert2 x (cdr y) (- n 1))))
 
-    ;; replace x nth destructive
+    ;; replace x nth destructively
     (defun replace (x y n)
         (if (= n 0)
             (replace1 x n)
@@ -142,7 +142,7 @@ index  start from 0
             (replace2 x (cdr y) (- n 1))))
 
     
-    ;; delete nth y destructive
+    ;; delete nth y destructively
     (defun delete (y n)
         (if (= n 0)
             (delete1 n)
@@ -164,14 +164,15 @@ index  start from 0
             (delete2 (cdr y) (- n 1))))
 
     (defun help ()
+        (format (standard-output) "q quit~%")
         (format (standard-output) "h help~%")
         (format (standard-output) "r move right~%")
         (format (standard-output) "l move left~%")
         (format (standard-output) "u move up~%")
         (format (standard-output) "d move down~%")
         (format (standard-output) "t move top~%")
-        (format (standard-output) "positive number move right n~%")
-        (format (standard-output) "negative number move left n~%")
+        (format (standard-output) "n positive number move right n~%")
+        (format (standard-output) "n negative number move left n~%")
         (format (standard-output) "i insert s-exp at left side of index~%")
         (format (standard-output) "k kill s-exp at index~%")
         (format (standard-output) "s replace s-exp at index~%")

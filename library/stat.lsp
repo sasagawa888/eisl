@@ -2,6 +2,7 @@
 
 (defmodule stat
     (import "sort" quick-sort)
+    
     (defpublic average (ls)
         (quotient (apply #'+ ls) (length ls)) )
 

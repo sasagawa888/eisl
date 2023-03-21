@@ -48,4 +48,22 @@
     ;;standard deviation, SD
     (defpublic sd (ls)
         (sqrt (variance ls)))
+
+
+    (defpublic minimum (ls)
+        (minimum1 ls *most-positive-float*))
+    
+    (defun minimum1 (ls x)
+        (cond ((null ls) x) 
+              ((< (car ls) x) (minimum1 (cdr ls) (car ls)))
+              (t (minimum1 (cdr ls) x))))
+
+    (defpublic maximum (ls)
+        (maximum1 ls *most-negative-float*))
+    
+    (defun maximum1 (ls x)
+        (cond ((null ls) x) 
+              ((> (car ls) x) (maximum1 (cdr ls) (car ls)))
+              (t (maximum1 (cdr ls) x))))
+
 )

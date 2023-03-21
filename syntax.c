@@ -2346,7 +2346,10 @@ int modulesubst(int addr, int module, int fname)
 	    && !eqp(addr, make_sym(":ACCESSOR"))
 	    && !eqp(addr, make_sym(":BOUNDP"))
 	    && !eqp(addr, make_sym(":INITFORM"))
-	    && !eqp(addr, make_sym(":INITARG")))
+	    && !eqp(addr, make_sym(":INITARG"))
+		&& !eqp(addr, make_sym("*MOST-POSITIVE-FLOAT*"))
+		&& !eqp(addr, make_sym("*MOST-NEGATIVE-FLOAT*"))
+		&& !eqp(addr, make_sym("*PI*")))
 	    return (modulesubst1(addr, module));
 	else
 	    return (addr);

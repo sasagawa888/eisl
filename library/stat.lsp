@@ -37,4 +37,15 @@
               ((not (eq x (car z))) (cons y z))
               (t (pack1 x (cons (car z) y) (cdr z)))))
 
+
+    (defpublic variance (ls)
+        (let ((x1 (average ls)))
+            (average (mapcar (lambda (x) (square (- x x1))) ls))))
+    
+    (defun square (x)
+        (* x x))
+    
+    ;;standard deviation, SD
+    (defpublic sd (ls)
+        (sqrt (variance ls)))
 )

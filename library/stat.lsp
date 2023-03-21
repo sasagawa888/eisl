@@ -3,7 +3,7 @@
 (defmodule stat
     (import "sort" quick-sort)
     
-    (defpublic average (ls)
+    (defpublic mean (ls)
         (quotient (apply #'+ ls) (length ls)) )
 
     (defpublic median (ls)
@@ -12,7 +12,7 @@
                (ls1 (quick-sort ls)) )
             (if (oddp n)
                 (elt ls1 m)
-                (average (list (elt ls (- m 1)) (elt ls m))))))
+                (mean (list (elt ls (- m 1)) (elt ls m))))))
 
     (defpublic mode (ls)
         (let ((ls1 (pack (quick-sort ls))))
@@ -39,8 +39,8 @@
 
 
     (defpublic variance (ls)
-        (let ((x1 (average ls)))
-            (average (mapcar (lambda (x) (square (- x x1))) ls))))
+        (let ((x1 (mean ls)))
+            (mean (mapcar (lambda (x) (square (- x x1))) ls))))
     
     (defun square (x)
         (* x x))

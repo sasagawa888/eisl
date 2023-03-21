@@ -6,8 +6,8 @@ Stat library
 
 # Spec
 
-### (average ls)
-e.g. (agerage '(1 2 3)) => 2
+### (mean ls)
+e.g. (mean '(1 2 3)) => 2
 
 ### (median ls)
 e.g. (median '(1 2 3)) => 2

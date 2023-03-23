@@ -1,6 +1,6 @@
 
 
-(defun quaternion (x)
+(defun quaternionp (x)
   (instancep x (class <quaternion>)))
 
 ;;;  quaternion number

@@ -66,4 +66,9 @@
               ((> (car ls) x) (maximum1 (cdr ls) (car ls)))
               (t (maximum1 (cdr ls) x))))
 
+    (defpublic standardize (ls)
+        (let ((x1 (mean ls))
+              (s (sd ls)))
+            (mapcar (lambda (x) (quotient (- x x1) s)) ls)))
+
 )

@@ -21,6 +21,9 @@
 (defun qsub (x y)
   (quaternion (- (r x) (r y)) (- (i x) (i y)) (- (j x) (i y)) (- (k x) (k y))))
 
+(defun qabs (x)
+   (sqrt (+ (r x) (i x) (j x) (k x))))
+
 (defun qprint (x)
   (format (standard-output) "#[~A,~A,~A,~A]~%" (r x) (i x) (j x) (k x) ))
 

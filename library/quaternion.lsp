@@ -21,9 +21,22 @@
 (defun qsub (x y)
   (quaternion (- (r x) (r y)) (- (i x) (i y)) (- (j x) (i y)) (- (k x) (k y))))
 
+;;xy=　(x0y0−x1y1−x2y2−x3y3)+(x0y1+x1y0+x2y3−x3y2)i　+(x0y2−x1y3+x2y0+x3y1)j+(x0y3+x1y2−x2y1+x3y0)k 
+
+(defun qmult (x y)
+  (let* ((x0 (r x)) (x1 (i x)) (x2 (j x)) (x3 (k x))
+         (y0 (r y)) (y1 (i y)) (y2 (j y)) (y3 (k y))
+         (z0 (+ (* x0 y0) (- (* x1 y1)) (- (* x3 y3))))
+         (z1 (+ (* x0 y1) (* x0 y1) (* x2 y3) (- (* x3 y2))))
+         (z2 (- (* x0 y2) (- (* x1 y3)) (* x2 y0) (* x3 y1)))
+         (z3 (+ (* x0 y3) (*x1 y2) (- (* x2 y1)) (* x3 y0))))
+      (quaternion z0 z1 z2 z3)))
+        
+      
+
 (defun qabs (x)
    (sqrt (+ (r x) (i x) (j x) (k x))))
 
 (defun qprint (x)
-  (format (standard-output) "#[~A,~A,~A,~A]~%" (r x) (i x) (j x) (k x) ))
+  (format (standard-output) "Q[~A,~A,~A,~A]~%" (r x) (i x) (j x) (k x) ))
 

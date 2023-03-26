@@ -1,38 +1,20 @@
-# Complex
+# Quaternion
 
-The list library and complex-number library was written by M. Hiroi.
+Quaternion library
 
-# Acknowledgement
-Thanks to Mr. Hiroi.
 
 # Usage 
 
 ```lisp
-(import "complex")
+(import "quaternion")
 
 ```
 
 # Specification
-- complex make instance of rectangle complex
-- cprint  print complex instance
-- conj    conjugate of complex
-- cabs    absolute value of complex
-- carg    argument of complex
-- cadd    addition of complex
-- csub    subtraction of complex 
-- cmul    multiplication of complex
-- cdiv    divide of complex
-- cexp    exponential of complex
-- clog    logarithm of complex
-- cpow    exponentiation of complex
-- csin    sin of complex
-- ccos    cos of complex
-- ctan    tan of complex
-- csinh   hyperbolic sin of complex
-- ccosh   hyperbolic cos of complex
-- ctanh   hyperbolic tan of complex
-- csqrt   square root of complex
-- asinh   inverse hyperbolic sin
-- scosh   inverse hyperbolic cos
-- atanh   inverse hyperbolic tan
+- quaternion make instance of quaternion
+- qprint  print quaternion instance
+- cabs    absolute value of quaternion
+- cadd    addition of quaternion
+- csub    subtraction of quaternion 
+- cmul    multiplication of quaternion
 

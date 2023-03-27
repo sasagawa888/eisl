@@ -23,7 +23,7 @@
 
 ;;xy=　(x0y0−x1y1−x2y2−x3y3)+(x0y1+x1y0+x2y3−x3y2)i　+(x0y2−x1y3+x2y0+x3y1)j+(x0y3+x1y2−x2y1+x3y0)k 
 
-(defun qmult (x y)
+(defun qmul (x y)
   (let* ((x0 (r x)) (x1 (i x)) (x2 (j x)) (x3 (k x))
          (y0 (r y)) (y1 (i y)) (y2 (j y)) (y3 (k y))
          (z0 (+ (* x0 y0) (- (* x1 y1)) (- (* x2 y2)) (- (* x3 y3))))

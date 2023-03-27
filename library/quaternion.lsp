@@ -50,4 +50,6 @@
 (defun inverse (x)
     (let ((c (quotient 1 (+ (r x) (i x) (j x) (k x)))))
         (qmult (quaternion c 0 0 0) (conjugate x))))
-       
+
+(defun qeqlp (x y)
+  (and (= (r x) (r y)) (= (i x) (i y)) (= (j x) (j y)) (= (k x) (k y))))

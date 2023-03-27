@@ -18,4 +18,5 @@ Quaternion library
 - (cdiv c y) devident of quaternion
 - (inverse x) inverse of quaternion
 - (conjugate x) conjugate of quaternion
+- (qeqlp x y) if quaternion x y is equal return T, else NIL
 

@@ -15,3 +15,7 @@ Quaternion library
 - cadd addition of quaternion
 - csub subtraction of quaternion
 - cmul multiplication of quaternion
+- cdiv devident of quaternion
+- inverse inverse of quaternion
+- conjugate conjugate of quaternion
+

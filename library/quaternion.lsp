@@ -31,12 +31,23 @@
          (z2 (- (* x0 y2) (- (* x1 y3)) (* x2 y0) (* x3 y1)))
          (z3 (+ (* x0 y3) (*x1 y2) (- (* x2 y1)) (* x3 y0))))
       (quaternion z0 z1 z2 z3)))
-        
+
+(defun qdiv (x y)
+   (let ((c (quotient 1 (+ (r x) (i x) (j x) (k x)))))
+      (qmult (quaternion c 0 0 0) (qmult x (conjugate x)))))
       
 
 (defun qabs (x)
    (sqrt (+ (r x) (i x) (j x) (k x))))
 
 (defun qprint (x)
-  (format (standard-output) "Q[~A,~A,~A,~A]~%" (r x) (i x) (j x) (k x) ))
+  (format (standard-output) "#q(~A,~A,~A,~A)~%" (r x) (i x) (j x) (k x) ))
 
+(defun conjugate (x)
+  (let ((x0 (r x)) (x1 (i x)) (x2 (j x)) (x3 (k x)))
+      (quaternion x0 (- x1) (- x2) (- x3))))
+
+(defun inverse (x)
+    (let ((c (quotient 1 (+ (r x) (i x) (j x) (k x)))))
+        (qmult (quaternion c 0 0 0) (conjugate x))))
+       

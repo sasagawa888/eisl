@@ -41,7 +41,7 @@
    (sqrt (+ (r x) (i x) (j x) (k x))))
 
 (defun qprint (x)
-  (format (standard-output) "#q(~A,~A,~A,~A)~%" (r x) (i x) (j x) (k x) ))
+  (format (standard-output) "#Q(~A ~A ~A ~A)~%" (r x) (i x) (j x) (k x) ))
 
 (defun conjugate (x)
   (let ((x0 (r x)) (x1 (i x)) (x2 (j x)) (x3 (k x)))

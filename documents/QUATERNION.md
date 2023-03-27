@@ -9,13 +9,13 @@ Quaternion library
 
 #Specification
 
-- quaternion make instance of quaternion
-- qprint print quaternion instance
-- cabs absolute value of quaternion
-- cadd addition of quaternion
-- csub subtraction of quaternion
-- cmul multiplication of quaternion
-- cdiv devident of quaternion
-- inverse inverse of quaternion
-- conjugate conjugate of quaternion
+- (quaternion r i j k) make instance of quaternion
+- (qprint x) print quaternion instance
+- (cabs x) absolute value of quaternion
+- (cadd x y) addition of quaternion
+- (csub x y) subtraction of quaternion
+- (cmul x y) multiplication of quaternion
+- (cdiv c y) devident of quaternion
+- (inverse x) inverse of quaternion
+- (conjugate x) conjugate of quaternion
 

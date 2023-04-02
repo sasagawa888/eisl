@@ -62,6 +62,7 @@ T
 ## positive number move right n
 ## negative number move left n
 ## i insert s-exp at left side of index
+## a insert s-exp at right side of index
 ## k kill s-exp at index
 ## s replace s-exp at index
 ## p print s-exp and index

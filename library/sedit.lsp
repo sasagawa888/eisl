@@ -175,6 +175,7 @@ index  start from 0
         (format (standard-output) "n positive number move right n~%")
         (format (standard-output) "n negative number move left n~%")
         (format (standard-output) "i insert s-exp at left side of index~%")
+        (format (standard-output) "a insert s-exp at right side of index~%")
         (format (standard-output) "k kill s-exp at index~%")
         (format (standard-output) "s replace s-exp at index~%")
         (format (standard-output) "p print s-exp and index~%")

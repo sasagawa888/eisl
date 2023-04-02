@@ -14,6 +14,7 @@ index  start from 0
     (defglobal index 0)
     (defglobal function-name nil)
     (defglobal buffer nil)
+    (defglobal search-key nil)
 
     (defun push (x)
         (setq stack (cons x stack)) )
@@ -48,6 +49,8 @@ index  start from 0
                    ((eq com 'c) (setq buffer (elt current index)))
                    ((eq com 'm) (insert buffer current index))
                    ((eq com 'x) (exchange current index))
+                   ((eq com 'f) (setq search-key (read)) (find search-key current 0))
+                   ((eq com 'n) (find search-key (nth-cdr current index)))
                    ((consp com) (format (standard-output) "~A~%" (eval com)))
                    ((integerp com) (repeat com)))))
 
@@ -195,6 +198,16 @@ index  start from 0
               ((atom x) x)
               (t (cons (copy (car x)) (copy (cdr x))))))
 
+    (defun find (x y n)
+        (cond ((null y) nil) 
+              ((equal x (car y)) (setq index n))
+              (t (find x (cdr y) (+ n 1)))))
+
+    (defun nth-cdr (x n)
+        (cond ((null x) nil)
+              ((= n 0) (cdr x))
+              (t (nth-cdr (cdr x) (- n 1)))))
+
     (defun help ()
         (format (standard-output) "q quit~%")
         (format (standard-output) "h help~%")
@@ -212,6 +225,8 @@ index  start from 0
         (format (standard-output) "c copy s-exp to buffer at index~%")
         (format (standard-output) "m paste s-exp from buffer at index~%")
         (format (standard-output) "x exchange s-exp at index and s-exp at index+1~%")
+        (format (standard-output) "f find s-exp and set index~%")
+        (format (standard-output) "n find next and set index~%")
         (format (standard-output) "p print s-exp and index~%")
         (format (standard-output) "(s-exp) eval s-exp and print it~%"))
 

@@ -65,5 +65,8 @@ T
 ## a insert s-exp at right side of index
 ## k kill s-exp at index
 ## s replace s-exp at index
+## c copy s-exp to buffer at index
+## m paste s-exp from buffer at index
+## x exchange s-exp at index and s-exp at index+1
 ## p print s-exp and index
 ## (s-exp) eval s-exp and print it

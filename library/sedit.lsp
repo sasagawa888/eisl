@@ -13,6 +13,7 @@ index  start from 0
     (defglobal current '())
     (defglobal index 0)
     (defglobal function-name nil)
+    (defglobal buffer nil)
 
     (defun push (x)
         (setq stack (cons x stack)) )
@@ -44,6 +45,9 @@ index  start from 0
                    ((eq com 't) (top))
                    ((eq com 'k) (delete current index))
                    ((eq com 's) (replace (read) current index))
+                   ((eq com 'c) (setq buffer (elt current index)))
+                   ((eq com 'm) (insert buffer current index))
+                   ((eq com 'x) (exchange current index))
                    ((consp com) (format (standard-output) "~A~%" (eval com)))
                    ((integerp com) (repeat com)))))
 
@@ -142,7 +146,29 @@ index  start from 0
             (set-cdr (cons x (cdr (cdr y))) y)
             (replace2 x (cdr y) (- n 1))))
 
+    ;; exchange nth and n+1th destructively
+    (defun exchange (y n)
+        (if (= n 0)
+            (exchange1)
+            (exchange2 y n)))
+
+    ;; exchange head
+    (defun exchange1 ()
+        (if (null stack)
+            (setq current (cons (elt current 1) (cons (elt current 0) (cdr (cdr current)))))
+            (let ((i (car (car stack)))
+                  (s (cdr (car stack))) )
+               (set-elt (cons (elt current 1) (cons (elt current 0) (cdr (cdr current)))) s i)
+               (setq current (cons (elt current 1) (cons (elt current 0) (cdr (cdr current))))))))
+
+    ;; exchange not head
+    (defun exchange2 (y n)
+        (if (= n 1)
+            (set-cdr (cons (elt y 2) (cons (elt y 1) (cdr (cdr (cdr y))))) y)
+            (exchange2 (cdr y) (- n 1))))
+
     
+
     ;; delete nth y destructively
     (defun delete (y n)
         (if (= n 0)
@@ -164,6 +190,11 @@ index  start from 0
             (set-cdr (cdr y) y)
             (delete2 (cdr y) (- n 1))))
 
+    (defun copy (x)
+        (cond ((null x) nil)
+              ((atom x) x)
+              (t (cons (copy (car x)) (copy (cdr x))))))
+
     (defun help ()
         (format (standard-output) "q quit~%")
         (format (standard-output) "h help~%")
@@ -178,6 +209,9 @@ index  start from 0
         (format (standard-output) "a insert s-exp at right side of index~%")
         (format (standard-output) "k kill s-exp at index~%")
         (format (standard-output) "s replace s-exp at index~%")
+        (format (standard-output) "c copy s-exp to buffer at index~%")
+        (format (standard-output) "m paste s-exp from buffer at index~%")
+        (format (standard-output) "x exchange s-exp at index and s-exp at index+1~%")
         (format (standard-output) "p print s-exp and index~%")
         (format (standard-output) "(s-exp) eval s-exp and print it~%"))
 

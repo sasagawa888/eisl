@@ -36,6 +36,7 @@ index  start from 0
              (cond ((eq com 'h) (help))
                    ((eq com 'p) (prints current))
                    ((eq com 'i) (insert (read) current index))
+                   ((eq com 'a) (insert (read) current (+ index 1)))
                    ((eq com 'r) (right))
                    ((eq com 'l) (left))
                    ((eq com 'u) (up))

@@ -50,7 +50,7 @@ index  start from 0
                    ((eq com 'm) (insert buffer current index))
                    ((eq com 'x) (exchange current index))
                    ((eq com 'f) (setq search-key (read)) (find search-key current 0))
-                   ((eq com 'n) (find search-key (nth-cdr current index) index))
+                   ((eq com 'n) (find search-key (nth-cdr current index) (+ index 1)))
                    ((consp com) (format (standard-output) "~A~%" (eval com)))
                    ((integerp com) (repeat com)))))
 

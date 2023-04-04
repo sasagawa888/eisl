@@ -34,3 +34,13 @@ e.g. (minimum ls '(1 2 3)) -> 1
 ### (standardize ls)
 under construction
 
+
+### (large range-ls n)
+nth data from largest
+e.g. (large '(2 3 1 6) 2) -> 2
+
+### (small range-ls n)
+nth data from smallest
+e.g. (small '(2 3 1 6) 2) -> 3
+
+

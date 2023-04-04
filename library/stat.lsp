@@ -71,4 +71,10 @@
               (s (sd ls)))
             (mapcar (lambda (x) (quotient (- x x1) s)) ls)))
 
+    (defpublic large (ls n)
+        (elt (reverse (quick-sort ls)) n))
+
+    (defpublic small (ls n)
+        (elt (quick-sort ls) n))
+
 )

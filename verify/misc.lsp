@@ -1,15 +1,10 @@
 (import "test")
+(import "datetime")
 ;;;
 ;;;  Miscellaneous
 ;;;
 
 ($ap 1 "Miscellaneous")
-($eval (defun tak (x y z)
-         (if (not (< y x))
-             z
-             (tak (tak (- x 1) y z)
-                  (tak (- y 1) z x)
-                  (tak (- z 1) x y)))))
 
 ;;;
 ;;; (IDENTITY obj) --> <object>
@@ -31,12 +26,10 @@
 ;;;
 ($test (let ((time (get-universal-time))) (and (integerp time) (< 0 time))) t)
 ($test (let ((t1 (get-universal-time))
-       (dummy1 (tak 22 14 7))  ;; original is (tak 21 14 7) current machine is high speed
-       (dummy2 (tak 21 14 7))
-       (dummy3 (tak 21 14 7))
-       (t2 (get-universal-time)))
-   (< t1 t2))
- t)
+             (dummy (sleep 2))
+             (t2 (get-universal-time)))
+         (< t1 t2))
+       t)
 
 ;;;
 ;;; (GET-INTERNAL-RUN-TIME) --> <integer>
@@ -47,7 +40,7 @@
 ;;;
 ($test (let ((time (get-internal-run-time))) (and (integerp time) (< 0 time))) t)
 ($test (let ((t1 (get-internal-run-time))
-       (dummy (tak 18 12 6))  
+       (dummy (sleep 1))  
        (t2 (get-internal-run-time)))
    (< t1 t2))
  t)
@@ -61,7 +54,7 @@
 ;;;
 ($test (let ((time (get-internal-real-time))) (and (integerp time) (< 0 time))) t)
 ($test (let ((t1 (get-internal-real-time))
-       (dummy (tak 18 10 2)) ;modify from (tak 18 12 6)  current machine is high speed
+       (dummy (sleep 1))
        (t2 (get-internal-real-time)))
    (< t1 t2))
  t)

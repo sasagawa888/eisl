@@ -2,12 +2,12 @@
 
 Quaternion library
 
-#Usage
+# Usage
 ```
 (import "quaternion")
 ```
 
-#Specification
+# Specification
 
 - (quaternion r i j k) make instance of quaternion
 - (qprint x) print quaternion instance

@@ -1,9 +1,15 @@
-;; Forth in ISLISP
-;; usage
-;; (load "example/forth.lsp")
-;; (forth)
-;; ? 1 2 + .
-;; 3
+#|
+Forth in ISLISP
+usage
+(load "example/forth.lsp")
+(forth)
+? 1 2 + .
+3
+? bye
+May the Force be with you
+T
+> 
+|#
 
 (defglobal *data-stack* nil)
 (defglobal *return-stack* nil)

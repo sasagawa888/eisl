@@ -385,13 +385,13 @@
 (defun convert-to-string-upper (ls)
     (if (null ls)
         ""
-        (string-append (convert (uppercase (car ls)) <string>) (convert-to-string-upper (cdr ls))) ))
+        (string-append (create-string 1 (uppercase (car ls))) (convert-to-string-upper (cdr ls))) ))
 
 ;; convert from list of character to string
 (defun convert-to-string (ls)
     (if (null ls)
         ""
-        (string-append (convert (car ls) <string>) (convert-to-string (cdr ls))) ))
+        (string-append (create-string 1 (car ls)) (convert-to-string (cdr ls))) ))
 
 
 ;; convert lowercase leteer to uppercase.

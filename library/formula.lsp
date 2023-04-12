@@ -169,7 +169,7 @@
             (and (char= x #\>) (char= y #\=))))
 
     (defun char2->symbol (x y)
-        (convert (string-append (convert x <string>) (convert y <string>)) <symbol>))
+        (convert (string-append (create-string 1 x) (create-string 1 y)) <symbol>))
 
     (defglobal *rest-list* nil)
     
@@ -201,7 +201,7 @@
 
     (defun convert-token1 (x)
         (cond ((null x) "")
-              (t (string-append (convert (car x) <string>) (convert-token1 (cdr x))))))
+              (t (string-append (create-string 1 (car x)) (convert-token1 (cdr x))))))
 
     
 
@@ -254,7 +254,7 @@
     (defun expand (str x)
         (cond ((null x) str)
               ((atom x) (convert x <string>))
-              ((= (weight (car x)) 6) (string-append (convert (car x) <string>)
+              ((= (weight (car x)) 6) (string-append (create-string 1 (car x))
                                                      "("
                                                      (expand str (cdr x))
                                                      ")"))

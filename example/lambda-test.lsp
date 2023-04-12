@@ -1,4 +1,4 @@
-(load "tests/lambda.lsp")
+(load "example/lambda.lsp")
 
 
 ;;--------------tests------------------------

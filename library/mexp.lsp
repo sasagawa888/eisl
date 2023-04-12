@@ -187,12 +187,12 @@ from John allen book and Masakazu Nakanishi book
 
     (defun make-string1 (ls)
         (cond ((null ls) "")
-              (t (string-append (convert (car ls) <string>) (make-string1 (cdr ls))))))
+              (t (string-append (create-string 1 (car ls)) (make-string1 (cdr ls))))))
 
     (defun to-upper-string (ls)
         (if (null ls)
             ""
-            (string-append (convert (to-upper (car ls)) <string>) (to-upper-string (cdr ls)))))
+            (string-append (create-string 1 (to-upper (car ls))) (to-upper-string (cdr ls)))))
 
     (defun to-upper (x)
         (let ((ascii (convert x <integer>)))
@@ -213,12 +213,12 @@ from John allen book and Masakazu Nakanishi book
               ((char= (car ls) #\space) (tokenize1 (cdr ls) token res))
               ((char= (car ls) #\()
                (if (string= token "")
-                   (tokenize2 (cdr ls) "" (cons (convert (car ls) <string>) res) 0)
-                   (tokenize2 (cdr ls) "" (cons (convert (car ls) <string>) (cons token res)) 0)))
+                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) res) 0)
+                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) (cons token res)) 0)))
               ((delimiter-p (car ls))
                (if (string= token "")
-                   (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) res))
-                   (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) (cons token res)))))
+                   (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) res))
+                   (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) (cons token res)))))
               ((and (> (length ls) 1) (char= (car ls) #\<) (char= (cadr ls) #\=))
                (if (string= token "")
                    (tokenize1 (cddr ls) "" (cons "<=" res))
@@ -227,7 +227,7 @@ from John allen book and Masakazu Nakanishi book
                (if (string= token "")
                    (tokenize1 (cddr ls) "" (cons "->" res))
                    (tokenize1 (cddr ls) "" (cons "->" (cons token res)))))
-              (t (tokenize1 (cdr ls) (string-append token (convert (car ls) <string>)) res))))
+              (t (tokenize1 (cdr ls) (string-append token (create-string 1 (car ls))) res))))
 
     (defun delimiter-p (x)
         (or (char= x #\[) (char= x #\]) (char= x #\;)))
@@ -236,24 +236,24 @@ from John allen book and Masakazu Nakanishi book
     (defun tokenize2 (ls token res nest)
         (cond ((char= (car ls) #\()
                (if (string= token "")
-                   (tokenize2 (cdr ls) "" (cons (convert (car ls) <string>) res) (+ nest 1))
+                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) res) (+ nest 1))
                    (tokenize2
                     (cdr ls)
                     ""
-                    (cons (convert (car ls) <string>) (cons token res))
+                    (cons (create-string 1 (car ls)) (cons token res))
                     (+ nest 1))))
               ((and (char= (car ls) #\)) (> nest 0))
                (if (string= token "")
-                   (tokenize2 (cdr ls) "" (cons (convert (car ls) <string>) res) (+ nest 1))
+                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) res) (+ nest 1))
                    (tokenize2
                     (cdr ls)
                     ""
-                    (cons (convert (car ls) <string>) (cons token res))
+                    (cons (create-string 1 (car ls)) (cons token res))
                     (+ nest 1))))
               ((and (char= (car ls) #\)) (= nest 0))
                (if (string= token "")
-                   (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) res))
-                   (tokenize1 (cdr ls) "" (cons (convert (car ls) <string>) (cons token res)))))
+                   (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) res))
+                   (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) (cons token res)))))
               ((char= (car ls) #\space)
                (if (string= token "")
                    (tokenize2 (cdr ls) "" res nest)
@@ -270,7 +270,7 @@ from John allen book and Masakazu Nakanishi book
                     ""
                     (cons (convert (cadr ls) <string>) (cons token res))
                     nest)))
-              (t (tokenize2 (cdr ls) (string-append token (convert (car ls) <string>)) res nest))))
+              (t (tokenize2 (cdr ls) (string-append token (create-string 1 (car ls))) res nest))))
 
     (defun s-delimiter-p (x)
         (or (char= x #\space) (char= x #\.)))

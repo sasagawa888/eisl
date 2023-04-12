@@ -4144,7 +4144,7 @@ int f_create_string(int arglist)
 	error(DOMAIN_ERR, "create-string", arg1);
     if (longnump(arg1) || bignump(arg1))
 	error(EXHAUSTED_ERR, "create-string", arg1);
-    if (!charp(arg2))
+    if (!(charp(arg2) || nullp(arg2)))
     error(NOT_CHAR, "create-string", arg2);
 
     

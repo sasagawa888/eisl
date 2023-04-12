@@ -16,7 +16,6 @@ from John allen book and Masakazu Nakanishi book
     (import "formula" infix->prefix string->infix)
     
     (defglobal epilog nil)
-
     (defun cadr (x)
         (car (cdr x)) )
 
@@ -34,33 +33,33 @@ from John allen book and Masakazu Nakanishi book
         (repl) )
 
     (defun repl ()
-       (for ( )
-            (epilog (setq epilog nil) 'goobye)
-            (format (standard-output) "M> ")
-            (let ((s (val (mread nil (standard-input)))))
-               (let ((res (catch 'exit
-                                 ;(with-handler 
-                                 ;    (lambda (c) (throw 'exit c))
-                                     (cond ((equal s '(quit)) (setq epilog t))
-                                           ((and (consp s) (eq (elt s 0) 'load)) (load* (elt s 1)))
-                                           ((and (consp s) (eq (elt s 0) 'sexp)) (sexp (elt s 1)))
-                                           (t (eval s))))))
-                  (cond ((instancep res (class <error>)) 
-                         (format (standard-output) "System error ~A~%" (class-of res)))
-                        ((not (eq res 'error)) (print res)))) )))
-                        
+        (for ( )
+             (epilog
+              (setq epilog nil)
+              'goobye )
+             (format (standard-output) "M> ")
+             (let ((s (val (mread nil (standard-input)))))
+                (let ((res
+                      (catch 'exit
+                             (cond ((equal s '(quit)) (setq epilog t))
+                                   ((and (consp s) (eq (elt s 0) 'load)) (load* (elt s 1)))
+                                   ((and (consp s) (eq (elt s 0) 'sexp)) (sexp (elt s 1)))
+                                   (t (eval* s))))))
+                   (format (standard-output) "~A~%" res)))))
 
+    
     (defun error* (msg arg)
         (format (standard-output) "~A ~A~%" msg arg)
         (throw 'exit 'error))
 
     (defun mread (buffer stream)
         (cond ;; file end
-              ((and (stringp buffer)(string= buffer "the end")) (cons buffer nil)) 
+              ((and (stringp buffer) (string= buffer "the end")) (cons buffer nil))
               ;; buffer empty
               ((null buffer) (mread (tokenize (read-line stream nil "the end")) stream))
               ;; comment line
-              ((string= (car buffer) ";") (mread (tokenize (read-line stream nil "the end")) stream))
+              ((string= (car buffer) ";")
+               (mread (tokenize (read-line stream nil "the end")) stream))
               ;; string
               ((string-str-p (car buffer)) (cons (make-string (car buffer)) (cdr buffer)))
               ;; cond clause [x->x1;y->y1;z->z1]                    
@@ -69,17 +68,20 @@ from John allen book and Masakazu Nakanishi book
               ((string= (car buffer) "(")
                (let* ((result (sread (cdr buffer) stream nil))
                       (sexp (val result))
-                      (buffer* (rest result)))
-                 (cons (list 'quote sexp) buffer*)))
+                      (buffer* (rest result)) )
+                   (cons (list 'quote sexp) buffer*)))
               ;; S-expression symbol A -> 'A
               ((sexp-symbol-p (car buffer))
                (cons (list 'quote (make-symbol (car buffer))) (cdr buffer)))
               ;; definition e.g. foo[x] <= x+1
-              ((and (>= (length buffer) 5) (string= (cadr buffer) "[") (member "<=" buffer))
+              ((and (>= (length buffer) 5)
+                    (string= (cadr buffer) "[")
+                    (member "<=" buffer))
                (let* ((result0 (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
                       (arg (val result0))
-                      (dummy (eval (list 'defun fn arg))) ;for recursive call
+                      (dummy (eval (list 'defun fn arg)))
+                      ;for recursive call
                       (buffer* (rest result0))
                       (result1 (mread (cdr buffer*) stream))
                       (body (val result1))
@@ -90,33 +92,33 @@ from John allen book and Masakazu Nakanishi book
                (let* ((result (mread-argument (cdr (cdr buffer)) stream nil))
                       (fn (make-symbol (car buffer)))
                       (arg (val result))
-                      (buffer* (rest result)))
-                    (cons (cons fn arg) buffer*)))
+                      (buffer* (rest result)) )
+                   (cons (cons fn arg) buffer*)))
               ;; formula e.g. sin[x]+cos[x]
-              (t (let* ((result (mread-formula buffer stream ""))
-                        (formula (val result))
-                        (buffer* (rest result)))
-                    (cons (infix->prefix (string->infix formula)) buffer*)))))
+              (t
+               (let* ((result (mread-formula buffer stream ""))
+                      (formula (val result))
+                      (buffer* (rest result)) )
+                   (cons (infix->prefix (string->infix formula)) buffer*)))))
 
     (defun sexp-symbol-p (x)
         (let ((char (elt x 0)))
-            (and (char>= char #\A)
-                 (char<= char #\Z))))
+           (and (char>= char #\A) (char<= char #\Z))))
 
-
+    
     (defun non-formula-p (buffer)
         (or (and (>= (length buffer) 4)
                  (string= (cadr buffer) "[")
                  (subrp (make-symbol (car buffer)))
-                 (not (member (car buffer) 
-                      '("+" "-" "*" "/" "^" "=" "<" ">" "<=" ">=" "sin" "cos" "tan" "acos" "atan"))))
+                 (not
+                  (member (car buffer)
+                          '"+""-""*""/""^""=""<"">""<="">=""sin""cos""tan""acos""atan"())))
             (and (= (length buffer) 3)
                  (string= (cadr buffer) "[")
                  (string= (car buffer) "quit"))
             (and (= (length buffer) 4)
                  (string= (cadr buffer) "[")
                  (string= (car buffer) "sexp"))))
-                
 
     ;; e.g. ("foo" "[" "2" ";" "4" "]" "+bar" "[" "3" "]" "->") 
     ;;   -> "foo(2,4)+bar(3)"  rest=("->") 
@@ -125,25 +127,30 @@ from John allen book and Masakazu Nakanishi book
               ((string= (car buffer) "->") (cons res buffer))
               ((string= (car buffer) ";") (cons res buffer))
               ((string= (car buffer) "]") (cons res buffer))
-              ((string= (car buffer) "[") (let* ((result (mread-formula1 (cdr buffer) stream "("))
-                                                 (arg (val result))
-                                                 (buffer* (rest result)))
-                                            (mread-formula buffer* stream (string-append res arg))))
+              ((string= (car buffer) "[")
+               (let* ((result (mread-formula1 (cdr buffer) stream "("))
+                      (arg (val result))
+                      (buffer* (rest result)) )
+                   (mread-formula buffer* stream (string-append res arg))))
               (t (mread-formula (cdr buffer) stream (string-append res (car buffer))))))
+
     
     ;; e.g. ("2" ";" "4" "]" "+bar" "[" "3" "]" "->")
     ;;   -> "(2.4)" rest= ("+bar" "[" "3" "]" "->")
     (defun mread-formula1 (buffer stream res)
-        (cond ((null buffer) (mread-formula1 (tokenize (read-line stream nil "the end")) stream res))
+        (cond ((null buffer)
+               (mread-formula1 (tokenize (read-line stream nil "the end")) stream res))
               ((string= (car buffer) "]") (cons (string-append res ")") (cdr buffer)))
-              ((string= (car buffer) ";") (mread-formula1 (cdr buffer) stream (string-append res ",")))
-              ((string= (car buffer) "[") (let* ((result (mread-formula1 (cdr buffer) stream "("))
-                                                 (arg (val result))
-                                                 (buffer* (rest result)))
-                                            (mread-formula1 buffer* stream (string-append res arg))))
+              ((string= (car buffer) ";")
+               (mread-formula1 (cdr buffer) stream (string-append res ",")))
+              ((string= (car buffer) "[")
+               (let* ((result (mread-formula1 (cdr buffer) stream "("))
+                      (arg (val result))
+                      (buffer* (rest result)) )
+                   (mread-formula1 buffer* stream (string-append res arg))))
               (t (mread-formula1 (cdr buffer) stream (string-append res (car buffer))))))
 
-
+    
     (defun mread-cond (buffer stream res)
         (cond ((null buffer) (mread-cond (tokenize (read-line stream nil "the end")) stream res))
               ((string= (car buffer) "]") (cons (cons 'cond (reverse res)) (cdr buffer)))
@@ -171,12 +178,16 @@ from John allen book and Masakazu Nakanishi book
               ((string= (car buffer) ".")
                (let* ((result (sread (cdr buffer) stream nil))
                       (sexp (val result))
-                      (buffer* (rest result)))     
-                  (cons (cons (car res) (car sexp)) buffer*)))
+                      (buffer* (rest result)) )
+                   (cons (cons (car res) (car sexp)) buffer*)))
               ((float-str-p (car buffer))
-               (sread (cdr buffer) stream (cons (convert (car buffer) <float>) res)))
+               (sread (cdr buffer)
+                      stream
+                      (cons (convert (car buffer) <float>) res)))
               ((integer-str-p (car buffer))
-               (sread (cdr buffer) stream (cons (convert (car buffer) <integer>) res)))
+               (sread (cdr buffer)
+                      stream
+                      (cons (convert (car buffer) <integer>) res)))
               (t (sread (cdr buffer) stream (cons (make-symbol (car buffer)) res)))))
 
     (defun make-symbol (str)
@@ -192,7 +203,8 @@ from John allen book and Masakazu Nakanishi book
     (defun to-upper-string (ls)
         (if (null ls)
             ""
-            (string-append (create-string 1 (to-upper (car ls))) (to-upper-string (cdr ls)))))
+            (string-append (create-string 1 (to-upper (car ls)))
+                           (to-upper-string (cdr ls)))))
 
     (defun to-upper (x)
         (let ((ascii (convert x <integer>)))
@@ -214,20 +226,31 @@ from John allen book and Masakazu Nakanishi book
               ((char= (car ls) #\()
                (if (string= token "")
                    (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) res) 0)
-                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) (cons token res)) 0)))
+                   (tokenize2 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) (cons token res))
+                              0)))
               ((delimiter-p (car ls))
                (if (string= token "")
                    (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) res))
-                   (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) (cons token res)))))
-              ((and (> (length ls) 1) (char= (car ls) #\<) (char= (cadr ls) #\=))
+                   (tokenize1 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) (cons token res)))))
+              ((and (> (length ls) 1)
+                    (char= (car ls) #\<)
+                    (char= (cadr ls) #\=))
                (if (string= token "")
                    (tokenize1 (cddr ls) "" (cons "<=" res))
                    (tokenize1 (cddr ls) "" (cons "<=" (cons token res)))))
-              ((and (> (length ls) 1) (char= (car ls) #\-) (char= (cadr ls) #\>))
+              ((and (> (length ls) 1)
+                    (char= (car ls) #\-)
+                    (char= (cadr ls) #\>))
                (if (string= token "")
                    (tokenize1 (cddr ls) "" (cons "->" res))
                    (tokenize1 (cddr ls) "" (cons "->" (cons token res)))))
-              (t (tokenize1 (cdr ls) (string-append token (create-string 1 (car ls))) res))))
+              (t (tokenize1 (cdr ls)
+                            (string-append token (create-string 1 (car ls)))
+                            res))))
 
     (defun delimiter-p (x)
         (or (char= x #\[) (char= x #\]) (char= x #\;)))
@@ -236,50 +259,55 @@ from John allen book and Masakazu Nakanishi book
     (defun tokenize2 (ls token res nest)
         (cond ((char= (car ls) #\()
                (if (string= token "")
-                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) res) (+ nest 1))
-                   (tokenize2
-                    (cdr ls)
-                    ""
-                    (cons (create-string 1 (car ls)) (cons token res))
-                    (+ nest 1))))
+                   (tokenize2 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) res)
+                              (+ nest 1))
+                   (tokenize2 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) (cons token res))
+                              (+ nest 1))))
               ((and (char= (car ls) #\)) (> nest 0))
                (if (string= token "")
-                   (tokenize2 (cdr ls) "" (cons (create-string 1 (car ls)) res) (+ nest 1))
-                   (tokenize2
-                    (cdr ls)
-                    ""
-                    (cons (create-string 1 (car ls)) (cons token res))
-                    (+ nest 1))))
+                   (tokenize2 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) res)
+                              (+ nest 1))
+                   (tokenize2 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) (cons token res))
+                              (+ nest 1))))
               ((and (char= (car ls) #\)) (= nest 0))
                (if (string= token "")
                    (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) res))
-                   (tokenize1 (cdr ls) "" (cons (create-string 1 (car ls)) (cons token res)))))
+                   (tokenize1 (cdr ls)
+                              ""
+                              (cons (create-string 1 (car ls)) (cons token res)))))
               ((char= (car ls) #\space)
                (if (string= token "")
                    (tokenize2 (cdr ls) "" res nest)
-                   (tokenize2
-                    (cdr ls)
-                    ""
-                    (cons token res)
-                    nest)))
-              ((and (> (length ls) 1) (char= (car ls) #\space) (char= (cadr ls) #\.))
+                   (tokenize2 (cdr ls) "" (cons token res) nest)))
+              ((and (> (length ls) 1)
+                    (char= (car ls) #\space)
+                    (char= (cadr ls) #\.))
                (if (string= token "")
                    (tokenize2 (cdr ls) "" (cons (convert (cadr ls) <string>) res) nest)
-                   (tokenize2
-                    (cdr ls)
-                    ""
-                    (cons (convert (cadr ls) <string>) (cons token res))
-                    nest)))
-              (t (tokenize2 (cdr ls) (string-append token (create-string 1 (car ls))) res nest))))
+                   (tokenize2 (cdr ls)
+                              ""
+                              (cons (convert (cadr ls) <string>) (cons token res))
+                              nest)))
+              (t (tokenize2 (cdr ls)
+                            (string-append token (create-string 1 (car ls)))
+                            res
+                            nest))))
 
     (defun s-delimiter-p (x)
         (or (char= x #\space) (char= x #\.)))
 
-    
     (defun string-str-p (x)
-        (and (char= (elt x 0) #\") (char= (elt x (- (length x) 1)) #\")))
+        (and (char= (elt x 0) #\")
+             (char= (elt x (- (length x) 1)) #\")))
 
-    
     ;;is token integer-type?
     (defun integer-str-p (x)
         (cond ((and (char= (elt x 0) #\+) (number-char-p (elt x 1))) t)
@@ -297,26 +325,33 @@ from John allen book and Masakazu Nakanishi book
               (t nil)))
 
     (defun load* (filename)
-        (let ((instream (open-input-file filename))
-              (sexp nil))
-           (while (not (file-end-p sexp))
-              (setq sexp (val (mread nil instream)))
-              (eval sexp))
-           (close instream))
-        t)
+        (with-handler (lambda (c) (throw 'exit 'load-error))
+                      (let ((instream (open-input-file filename))
+                            (sexp nil) )
+                         (while (not (file-end-p sexp))
+                            (setq sexp (val (mread nil instream)))
+                            (eval sexp))
+                         (close instream))
+                      t))
 
     (defun sexp (filename)
-        (let* ((filename* (string-append (subseq filename 0 (char-index #\. filename)) ".lsp"))
-               (instream (open-input-file filename))
-               (outstream (open-output-file filename*))
-               (sexp nil))
-           (while (not (file-end-p sexp))
-              (setq sexp (val (mread nil instream)))
-              (if (not (file-end-p sexp))
-                  (format outstream "~A~%" sexp)))
-           (close instream)
-           (close outstream))
-        t)
+        (with-handler (lambda (c) (throw 'exit 'sexp-error))
+                      (let* ((filename*
+                             (string-append (subseq filename 0 (char-index #\. filename)) ".lsp"))
+                             (instream (open-input-file filename))
+                             (outstream (open-output-file filename*))
+                             (sexp nil) )
+                          (while (not (file-end-p sexp))
+                             (setq sexp (val (mread nil instream)))
+                             (if (not (file-end-p sexp))
+                                 (format outstream "~A~%" sexp)))
+                          (close instream)
+                          (close outstream))
+                      t))
+
+    
+    (defun eval* (x)
+        (with-handler (lambda (c) (throw 'exit 'eval-error)) (eval x)))
 
     (defun file-end-p (x)
         (and (stringp x) (string= x "the end")))

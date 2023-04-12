@@ -2077,6 +2077,9 @@ int convert(int arg1, int arg2)
 	    return (make_sym(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == ccharacter) {
 	    return (arg1);
+	// error
+	} else if (GET_AUX(arg2) == cstring) {
+	    return (make_str(GET_NAME(arg1)));
 	}
 	break;
     case FLTN:

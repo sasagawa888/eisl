@@ -37,7 +37,7 @@
              (abs abs*)
              (negate negate)
              (max max*)
-             (min mnin*)))
+             (min min*)))
 (defglobal *buffer* nil)
 
 
@@ -268,7 +268,7 @@
 
 (defun sqrt* ()
     (let ((x (pop)))
-       (push (sqrt (pop))) ))
+       (push (sqrt x)) ))
 
 ;; word = (name entity)
 ;; e.g. wntity = (1 + .)

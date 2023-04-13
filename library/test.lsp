@@ -1,13 +1,15 @@
 ;; macro for test
 
 ;;; $TEST compares the evaluated value of FORM1 with the quoted FORM2.
-;;; If they are not equal, an error message is printed
+;;; If the comparison fails, an error message is printed
+;;; PRED specifies the comparison function, which is EQUAL by default
 (defmacro $test (form1 form2 :rest pred)
-  `($test-equal ,form1 ',form2 ,@pred))
+  `($test-assert ,form1 ',form2 ,@pred))
 
-;;; $TEST-EQUAL compares the evaluated value of FORM1 with the evaluated value of FORM2.
-;;; If they are not equal, an error message is printed
-(defmacro $test-equal (form1 form2 :rest pred)
+;;; $TEST-ASSERT compares the evaluated value of FORM1 with the evaluated value of FORM2.
+;;; If the comparison fails, an error message is printed
+;;; PRED specifies the comparison function, which is EQUAL by default
+(defmacro $test-assert (form1 form2 :rest pred)
   (let ((test-predicate (if (null pred) '(equal) pred))
         (actual (gensym))
         (expected (gensym)))

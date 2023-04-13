@@ -1,15 +1,24 @@
 ;; macro for test
 
+;;; $TEST compares the evaluated value of FORM1 with the quoted FORM2.
+;;; If they are not equal, an error message is printed
 (defmacro $test (form1 form2 :rest pred)
-  (let ((test-predicate (if (null pred) '(equal) pred)))
+  `($test-equal ,form1 ',form2 ,@pred))
+
+;;; $TEST-EQUAL compares the evaluated value of FORM1 with the evaluated value of FORM2.
+;;; If they are not equal, an error message is printed
+(defmacro $test-equal (form1 form2 :rest pred)
+  (let ((test-predicate (if (null pred) '(equal) pred))
+        (actual (gensym))
+        (expected (gensym)))
       `(progn
           (eisl-ignore-toplevel-check t)
-          (let ((ans ,form1))
-            (if (,@test-predicate ans ',form2)
+          (let ((,actual ,form1)
+                (,expected ,form2))
+            (if (,@test-predicate ,actual ,expected)
               (format (standard-output) "" ',form1)
-              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1, ',form2 ans)))
-          (eisl-ignore-toplevel-check nil)
-      )))
+              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1, ,expected ,actual)))
+          (eisl-ignore-toplevel-check nil))))
           
 
 (defmacro $eval (form)

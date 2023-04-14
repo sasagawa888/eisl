@@ -1,23 +1,26 @@
 ;; macro for test
 
+;;; $TEST checks if the evaluated value of FORM1 and the quoted FORM2 are equal.
+;;; If they are not, an error message is printed
+;;; PRED specifies the comparison function, which is EQUAL by default
 (defmacro $test (form1 form2 :rest pred)
-  (if (null pred)
+  `($test-assert ,form1 ',form2 ,@pred))
+
+;;; $TEST-ASSERT checks if the evaluated value of FORM1 and the evaluated value of FORM2 are equal.
+;;; If they are not, an error message is printed
+;;; PRED specifies the comparison function, which is EQUAL by default
+(defmacro $test-assert (form1 form2 :rest pred)
+  (let ((test-predicate (if (null pred) '(equal) pred))
+        (actual (gensym))
+        (expected (gensym)))
       `(progn
           (eisl-ignore-toplevel-check t)
-          (let ((ans ,form1))
-            (if (equal ans ',form2)
+          (let ((,actual ,form1)
+                (,expected ,form2))
+            (if (,@test-predicate ,actual ,expected)
               (format (standard-output) "" ',form1)
-              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1 ',form2 ans)))
-          (eisl-ignore-toplevel-check nil)
-      )
-      `(progn
-          (eisl-ignore-toplevel-check t)
-          (let ((ans ,form1))
-            (if (,@pred ans ',form2)
-              (format (standard-output) "" ',form1)
-              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1, ',form2 ans)))
-          (eisl-ignore-toplevel-check nil)
-      )))
+              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1, ,expected ,actual)))
+          (eisl-ignore-toplevel-check nil))))
           
 
 (defmacro $eval (form)

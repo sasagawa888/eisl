@@ -10,7 +10,7 @@ Simple macro for unit testing.
 # Specification
 
 ```lisp
-($test-assert test-expression expected-value [pred-function])
+($assert test-expression expected-value [pred-function])
 ```
 Checks if the evaluated values of `test-expression` and `expected-value` are equal.
 If they are not, an error message is printed.

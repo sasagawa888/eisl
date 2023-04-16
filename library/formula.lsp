@@ -254,7 +254,7 @@
     (defun expand (str x)
         (cond ((null x) str)
               ((atom x) (convert x <string>))
-              ((= (weight (car x)) 6) (string-append (create-string 1 (car x))
+              ((= (weight (car x)) 6) (string-append (convert (car x) <string>)
                                                      "("
                                                      (expand str (cdr x))
                                                      ")"))

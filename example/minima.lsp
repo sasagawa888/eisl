@@ -27,7 +27,7 @@
           (t (repl)))))
 
 (defun read* ()
-    (format (standard-output) "M> ")
+    (format (standard-output) "* ")
     (infix->prefix (string->infix (read-line))))
 
 

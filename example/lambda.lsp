@@ -166,4 +166,22 @@ parse
           (t (cons (replace arg (car body) y)
                    (replace arg (cdr body) y)))))
 
-  
+
+;;--------------tests------------------------
+($test (parse* "^X.X") (^ x x))
+($test (parse* "^X. X") (^ x x))
+($test (parse* "^X.(^X.X)") (^ x (^ x x)))
+($test (parse* "end") end)
+($test (parse* "(^X.X)(^Y.Y)") ((^ x x)(^ y y)))
+($test (parse* "^XY.Z") (^ x (^ y z)))
+($test (parse* "^XYZ.Z") (^ X (^ Y (^ Z Z))))
+($test (parse* "(XY)Z") ((x y) z))
+($test (parse* "X(YZ)") (x (y z)))
+($test (parse* "ABCD") (((a b) c) d))
+($test (parse* "A(B(C(D)))") (a (b (c d))))
+
+($test (reduce 'y) y)
+($test (reduce '(x y)) (x y))
+($test (reduce '((^ x x) y) ) y)
+($test (reduce '((^ x a) y) ) a)
+

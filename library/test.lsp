@@ -4,7 +4,7 @@
 ;;; If they are not, an error message is printed
 ;;; PRED specifies the comparison function, which is EQUAL by default
 (defmacro $test (form1 form2 :rest pred)
-  `($test-assert ,form1 ',form2 ,@pred))
+  `($assert ,form1 ',form2 ,@pred))
 
 ;;; $ASSERT checks if the evaluated value of FORM1 and the evaluated value of FORM2 are equal.
 ;;; If they are not, an error message is printed

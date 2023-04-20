@@ -1,5 +1,5 @@
 (defmodule matrix
-           (import "seq" map every reduce)
+           (import "seq" map every reduce concatenate)
 
            (defun check-matrix (array)
              (when (/= (length (array-dimensions array)) 
@@ -125,12 +125,28 @@
                     (lambda (row) (mult row y)) 
                     (rows x))))
 
+           (defun negate (x)
+             (mult x -1)) 
+
            (defun dot (x  y)
              (assure <general-vector> x)
              (assure <general-vector> y)
              (check-same-dimensions x y)
              (reduce (lambda (x y) (add x y)) 
                      0 
-                     (element-wise-product x y))))
+                     (element-wise-product x y)))
+
+           (defun cartesian-product (&rest vectors)
+             (flet ((next-cartesian-product (previous-product next-vector)
+                      (reduce 
+                        (lambda (accumulated y) 
+                          (concatenate '<general-vector> 
+                                       accumulated 
+                                       (map '<list> 
+                                            (lambda (x) (concatenate '<general-vector> x (vector y))) 
+                                            previous-product)))
+                        (vector)
+                        next-vector)))
+               (reduce #'next-cartesian-product #(#()) vectors))))
 
 

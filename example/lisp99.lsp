@@ -415,6 +415,26 @@
                  (setq i (+ i 2)) )))))
 
 
+;;p46
+(defun table (v1 v2 exp)
+    (let ((exp1 (alpha v1 v2 exp))
+          (x nil)(y nil))
+        (setq x t)(setq y t)(format (standard-output) "~A ~A ~A~%" (tf x) (tf y) (tf (eval exp1)))
+        (setq x t)(setq y nil)(format (standard-output) "~A ~A ~A~%" (tf x) (tf y) (tf (eval exp1)))
+        (setq x nil)(setq y t)(format (standard-output) "~A ~A ~A~%" (tf x) (tf y) (tf (eval exp1)))
+        (setq x nil)(setq y nil)(format (standard-output) "~A ~A ~A~%" (tf x) (tf y) (tf (eval exp1)))))
+
+(defun alpha (v1 v2 exp)
+    (cond ((null exp) nil)
+          ((eq v1 exp) 'x)
+          ((eq v2 exp) 'y)
+          ((atom exp) exp)
+          (t (cons (alpha v1 v2 (car exp))
+                   (alpha v1 v2 (cdr exp))))))
+
+(defun tf (x)
+    (if (null x) 'nil 'true))
+
 ;;p49
 (defun gray (n)
     (if (= n 1)

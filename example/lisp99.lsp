@@ -415,6 +415,42 @@
                  (setq i (+ i 2)) )))))
 
 
+;;p49
+(defun gray (n)
+    (to-string (gray1 (init n) nil)))
+
+(defun gray1 (ls result)
+    (if (all-one-p ls)
+        (cons ls result)
+        (gray1 (inc ls 1) (cons ls result))))
+
+(defun init (n)
+    (if (= n 0)
+        nil
+        (cons 0 (init (- n 1)))))
+
+(defun all-one-p (ls)
+    (cond ((null ls) t)
+          ((= (car ls) 0) nil)
+          (t (= (car ls) 1) (all-one-p (cdr ls)))))
+
+(defun inc (ls c)
+    (cond ((null ls) nil)
+          ((and (= (car ls) 0) (= c 1)) (cons 1 (inc (cdr ls) 0)))
+          ((and (= (car ls) 0) (= c 0)) (cons 0 (inc (cdr ls) 0)))
+          ((and (= (car ls) 1) (= c 1)) (cons 0 (inc (cdr ls) 1)))
+          ((and (= (car ls) 1) (= c 0)) (cons 1 (inc (cdr ls) 0)))))
+
+(defun to-string (ls)
+    (mapcar (lambda (x) (to-string1 x)) (reverse ls)))
+
+(defun to-string1 (ls)
+    (if (null ls)
+        ""
+        (string-append (convert (car ls) <string>) (to-string1 (cdr ls)))))
+
+
+
 ;;p54A
 (defun istree (x)
     (if (and (= (length x) 3) (atom (elt x 0)) (atom (elt x 1)) (atom (elt x 2)))

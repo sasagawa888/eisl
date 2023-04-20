@@ -6,3 +6,4 @@ ex/
 *.c~
 *.h~
 TAGS
+*.swp

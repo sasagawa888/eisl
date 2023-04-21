@@ -17,17 +17,16 @@
 
     
     ;;; TO-STRING converts a given non-sequence atom to a string value
-    (defpublic to-string (value)
-        )
+    (defgeneric to-string (value))
 
     (defmethod to-string ((value <character>)) (create-string 1 value))
     (defmethod to-string (value) (convert value <string>))
+
     ;;; JOIN concatenates together a sequence of strings into a single string with the joiner string separating each element string.
     ;;; Comparable to .join() in Python or Javascript
     ;;; ELEMENTS is a sequence of strings to be joined
     ;;; JOINER is a string that will be concatenated between the element strings
-    (defpublic join (elements joiner)
-        )
+    (defgeneric join (elements joiner))
 
     (defmethod join
                ((elements <list>) (joining-string <string>))

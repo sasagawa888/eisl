@@ -1,4 +1,5 @@
 (defmodule string
+    
     (defpublic split (str)
         (split1 (convert str <list>) "") )
 
@@ -15,15 +16,14 @@
               ((char= (car ls) x) (string-append (create-string 1 y) (replace1 (cdr ls) x y)))
               (t (string-append (create-string 1 (car ls)) (replace1 (cdr ls) x y)))))
 
-    
     ;;; TO-STRING converts a given non-sequence atom to a string value
     (defgeneric to-string (value))
 
     (defmethod to-string ((value <character>)) (create-string 1 value))
     (defmethod to-string (value) (convert value <string>))
-
+    
     ;;; JOIN concatenates together a sequence of strings into a single string with the joiner string separating each element string.
-    ;;; Comparable to .join() in Python or Javascript
+    ;;; Comparable to .join() in Python or Javascript 
     ;;; ELEMENTS is a sequence of strings to be joined
     ;;; JOINER is a string that will be concatenated between the element strings
     (defgeneric join (elements joiner))
@@ -43,4 +43,5 @@
     (defmethod join
                (elements (joining-char <character>))
                (join elements (to-string joining-char)))
+    
 )

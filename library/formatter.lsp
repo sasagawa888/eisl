@@ -228,7 +228,7 @@
            (pp1 (elt x 1) lm1)
            (pp-string " ")
            (pp1 (elt x 2) lm1)
-           (newline lm1)
+           (if (cdr (cdr (cdr x))) (newline lm1))
            (pp-body (cdr (cdr (cdr x))) lm1)
            (if otomo
                (pp-string ")")
@@ -255,13 +255,19 @@
 
     ;; syntax defmodule
     (defun pp-defmodule (x lm)
-        (let ((lm1 (+ lm 4)))
+        (let ((lm1 (+ lm 4))
+              (exp nil))
            (pp-string "(")
            (pp1 (elt x 0) lm1)
            (pp-string " ")
            (pp1 (elt x 1) lm1)
            (newline lm1)
-           (pp-body (cdr (cdr x)) lm1)
+           (setq exp (cdr (cdr x)))
+           (while exp
+                (pp1 (car exp) lm1)
+                (if (not (comment-p (car exp)))
+                    (newline lm1))
+                (setq exp (cdr exp)))
            (newline lm)
            (pp-string ")")
            (newline lm)))
@@ -677,6 +683,9 @@
              (single-comment-p (car (cdr x)))))
 
     ;; ; type comment
+    (defun comment-p (x)
+        (or (short-comment-p x) (long-comment-p x)))
+
     ;; short-comment includes single-comment,double-somment,triple comment.
     (defun short-comment-p (x)
         (and (stringp x) (not (string= x "")) (char= (elt x 0) #\;)))

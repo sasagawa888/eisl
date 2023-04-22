@@ -1,6 +1,6 @@
 (defmodule string
     
-    (defpublic split (str x)
+    (defpublic string-split (str x)
         (let ((x1 (car (convert x <list>))))
            (split1 (convert str <list>) x1 "") ))
 
@@ -9,7 +9,7 @@
               ((char= (car ls) x) (cons y (split1 (cdr ls) x "")))
               (t (split1 (cdr ls) x (string-append y (create-string 1 (car ls)))))))
 
-    (defpublic replace (str x y)
+    (defpublic string-replace (str x y)
         (let ((x1 (car (convert x <list>)))
               (y1 (car (convert y <list>))) )
            (replace1 (convert str <list>) x1 y1)))
@@ -19,13 +19,22 @@
               ((char= (car ls) x) (string-append (create-string 1 y) (replace1 (cdr ls) x y)))
               (t (string-append (create-string 1 (car ls)) (replace1 (cdr ls) x y)))))
 
-    (defpublic slice (str s e)
+    (defpublic string-slice (str s e)
         (slice1 (convert str <list>) s e 0))
 
     (defun slice1 (ls s e i)
         (cond ((= i e) "")
               ((< i s) (slice1 (cdr ls) s e (+ i 1)))
               (t (string-append (create-string 1 (car ls)) (slice1 (cdr ls) s e (+ i 1))))))
+
+    (defpublic string-remove (str s e)
+        (remove1 (convert str <list>) s e 0))
+
+    (defun remove1 (ls s e i)
+        (cond ((null ls) "")
+              ((and (>= i s) (< i e)) (remove1 (cdr ls) s e (+ i 1)))
+              (t (string-append (create-string 1 (car ls)) (remove1 (cdr ls) s e (+ i 1))))))
+
 
     (defpublic to-upper (str)
         (to-upper1 (convert str <list>)))

@@ -1,9 +1,10 @@
 (import "string")
 (import "test")
 
-($test (split "asdf def gh" " ") ("asdf" "def" "gh"))
-($test (slice "hello" 3 5) "lo")
-($test (replace "hello" "e" "a") "hallo")
+($test (string-split "asdf def gh" " ") ("asdf" "def" "gh"))
+($test (string-slice "hello" 3 5) "lo")
+($test (string-replace "hello" "e" "a") "hallo")
+($test (string-remove "hello" 3 5) "hel")
 
 ($test (to-upper "asdf") "ASDF")
 ($test (to-lower "ASDF") "asdf")

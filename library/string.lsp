@@ -19,6 +19,15 @@
               ((char= (car ls) x) (string-append (create-string 1 y) (replace1 (cdr ls) x y)))
               (t (string-append (create-string 1 (car ls)) (replace1 (cdr ls) x y)))))
 
+    (defpublic string-delete (str x)
+        (let ((x1 (car (convert x <list>))))
+           (delete1 (convert str <list>) x1)))
+
+    (defun delete1 (ls x)
+        (cond ((null ls) "")
+              ((char= (car ls) x) (string-append (delete1 (cdr ls) x)))
+              (t (string-append (create-string 1 (car ls)) (delete1 (cdr ls) x)))))
+
     (defpublic string-slice (str s e)
         (slice1 (convert str <list>) s e 0))
 
@@ -42,7 +51,7 @@
         (cond ((null ls) "")
               (t (string-append (create-string 1 (car ls)) (list-to-string (cdr ls))))))
 
-    (defpublic to-upper (str)
+    (defpublic string-upper (str)
         (to-upper1 (convert str <list>)))
 
     (defun to-upper1 (ls)
@@ -54,7 +63,7 @@
                                      (to-upper1 (cdr ls)))
                       (string-append (create-string 1 (car ls)) (to-upper1 (cdr ls))))))))
 
-    (defpublic to-lower (str)
+    (defpublic string-lower (str)
         (to-lower1 (convert str <list>)))
 
     (defun to-lower1 (ls)

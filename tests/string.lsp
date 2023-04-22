@@ -6,9 +6,10 @@
 ($test (string-replace "hello" "e" "a") "hallo")
 ($test (string-remove "hello" 3 5) "hel")
 ($test (string-reverse "hello") "olleh")
+($test (string-delete "hello" "l") "heo")
 
-($test (to-upper "asdf") "ASDF")
-($test (to-lower "ASDF") "asdf")
+($test (string-upper "asdf") "ASDF")
+($test (string-lower "ASDF") "asdf")
 
 ($test (to-string "derp") "derp")
 ($test (to-string #\a) "a")

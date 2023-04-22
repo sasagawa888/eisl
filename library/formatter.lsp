@@ -716,7 +716,10 @@
 
     ;; #|    |# type comment
     (defun long-comment-p (x)
-        (and (stringp x) (char= (elt x 0) #\#) (char= (elt x 1) #\|)))
+        (and (stringp x)
+             (> (length x) 2)
+             (char= (elt x 0) #\#)
+             (char= (elt x 1) #\|)))
 
     ;; e.g. (the a <integer>) return T else NIL
     (defun the-p (x)

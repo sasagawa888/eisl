@@ -1,7 +1,7 @@
 (import "string")
 (import "test")
 
-($test (split "asdf def gh") ("asdf" "def" "gh"))
+($test (split "asdf def gh" " ") ("asdf" "def" "gh"))
 ($test (slice "hello" 3 5) "lo")
 ($test (replace "hello" "e" "a") "hallo")
 

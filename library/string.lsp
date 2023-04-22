@@ -1,12 +1,13 @@
 (defmodule string
     
-    (defpublic split (str)
-        (split1 (convert str <list>) "") )
+    (defpublic split (str x)
+        (let ((x1 (car (convert x <list>))))
+           (split1 (convert str <list>) x1 "") ))
 
-    (defun split1 (ls x)
-        (cond ((null ls) (list x))
-              ((char= (car ls) #\space) (cons x (split1 (cdr ls) "")))
-              (t (split1 (cdr ls) (string-append x (create-string 1 (car ls))))) ))
+    (defun split1 (ls x y)
+        (cond ((null ls) (list y))
+              ((char= (car ls) x) (cons y (split1 (cdr ls) x "")))
+              (t (split1 (cdr ls) x (string-append y (create-string 1 (car ls)))))))
 
     (defpublic replace (str x y)
         (let ((x1 (car (convert x <list>)))
@@ -49,8 +50,6 @@
                       (string-append (create-string 1 (convert (+ ascii 32) <character>))
                                      (to-lower1 (cdr ls)))
                       (string-append (create-string 1 (car ls)) (to-lower1 (cdr ls))))))))
-
-    
 
     
 

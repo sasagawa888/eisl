@@ -5,6 +5,7 @@
 ($test (string-slice "hello" 3 5) "lo")
 ($test (string-replace "hello" "e" "a") "hallo")
 ($test (string-remove "hello" 3 5) "hel")
+($test (string-reverse "hello") "olleh")
 
 ($test (to-upper "asdf") "ASDF")
 ($test (to-lower "ASDF") "asdf")

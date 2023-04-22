@@ -35,6 +35,12 @@
               ((and (>= i s) (< i e)) (remove1 (cdr ls) s e (+ i 1)))
               (t (string-append (create-string 1 (car ls)) (remove1 (cdr ls) s e (+ i 1))))))
 
+    (defpublic string-reverse (str)
+        (list-to-string (reverse (convert str <list>))))
+
+    (defun list-to-string (ls)
+        (cond ((null ls) "")
+              (t (string-append (create-string 1 (car ls)) (list-to-string (cdr ls))))))
 
     (defpublic to-upper (str)
         (to-upper1 (convert str <list>)))

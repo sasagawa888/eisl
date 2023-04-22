@@ -3,6 +3,7 @@
 
 ($test (split "asdf def gh") ("asdf" "def" "gh"))
 ($test (slice "hello" 3 5) "lo")
+($test (replace "hello" "e" "a") "hallo")
 
 ($test (to-upper "asdf") "ASDF")
 ($test (to-lower "ASDF") "asdf")

@@ -9,7 +9,9 @@
               (t (split1 (cdr ls) (string-append x (create-string 1 (car ls))))) ))
 
     (defpublic replace (str x y)
-        (replace1 (convert str <list>) x y))
+        (let ((x1 (car (convert x <list>)))
+              (y1 (car (convert y <list>))))
+            (replace1 (convert str <list>) x1 y1)))
 
     (defun replace1 (ls x y)
         (cond ((null ls) "")

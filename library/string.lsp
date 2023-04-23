@@ -45,11 +45,14 @@
               (t (string-append (create-string 1 (car ls)) (remove1 (cdr ls) s e (+ i 1))))))
 
     (defpublic string-reverse (str)
-        (list-to-string (reverse (convert str <list>))))
+        (list-to-string1 (reverse (convert str <list>))))
 
-    (defun list-to-string (ls)
+    (defpublic list-to-string (ls)
+        (list-to-string1 ls))
+
+    (defun list-to-string1 (ls)
         (cond ((null ls) "")
-              (t (string-append (create-string 1 (car ls)) (list-to-string (cdr ls))))))
+              (t (string-append (create-string 1 (car ls)) (list-to-string1 (cdr ls))))))
 
     (defpublic string-upper (str)
         (to-upper1 (convert str <list>)))
@@ -75,7 +78,11 @@
                                      (to-lower1 (cdr ls)))
                       (string-append (create-string 1 (car ls)) (to-lower1 (cdr ls))))))))
 
+    (defpublic string-head (str)
+        (create-string 1 (elt str 0)))
     
+    (defpublic string-tail (str)
+        (create-string 1 (car (reverse (convert str <list>)))))
 
     ;;; TO-STRING converts a given non-sequence atom to a string value
     (defpublic to-string (x)

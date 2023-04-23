@@ -15,6 +15,13 @@
 ($test (string-lower "ASDF") "asdf")
 ($test (list-to-string '(#\h #\e #\l #\l #\o)) "hello")
 
+($test (digit-char-p #\0) t)
+($test (digit-char-p #\9) t)
+($test (digit-char-p #\a) nil)
+($test (alpha-char-p #\a) t)
+($test (alpha-char-p #\Z) t)
+($test (alpha-char-p #\9) nil)
+
 ($test (to-string "derp") "derp")
 ($test (to-string #\a) "a")
 ($test (to-string 9) "9")

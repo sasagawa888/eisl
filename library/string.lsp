@@ -87,19 +87,19 @@
     (defpublic string-null-p (str)
         (and (stringp str) (string= str "")))
 
-    (defpublic digit-char-p (c)
+    (defpublic char-digit-p (c)
         (if (characterp c)
             (let ((ascii (convert c <integer>)))
                (and (>= ascii 48) (<= ascii 57)))
             nil))
 
-    (defpublic alpha-char-p (c)
+    (defpublic char-alpha-p (c)
         (if (characterp c)
             (let ((ascii (convert c <integer>)))
                (or (and (>= ascii 65) (<= ascii 90))
                    (and (>= ascii 97) (<= ascii 122))))
             nil))
-
+ 
     ;;; TO-STRING converts a given non-sequence atom to a string value
     (defpublic to-string (x)
         (to-string1 x))
@@ -132,5 +132,5 @@
     (defmethod join1
                (elements (joining-char <character>))
                (join1 elements (to-string joining-char)))
-    
+   
 )

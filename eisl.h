@@ -20,7 +20,7 @@
 #define BUFSIZE 256
 #define STRSIZE 10000
 #define SHORT_STRSIZE 32
-#define HASHTBSIZE 107
+#define HASHTBSIZE 137
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256

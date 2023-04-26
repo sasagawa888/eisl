@@ -20,24 +20,24 @@ Test 01: Fib     -> ok, time =   00000s.
 Test 02: Tak     -> ok, time =   00000s.
 Test 03: Stak    -> 12, time =   00000s.
 Test 04: Ctak    -> ok, time =   00000s.
-Test 05: Takl    -> ok, time =   0.015625s.
+Test 05: Takl    -> ok, time =   00000s.
 Test 06: Takr    -> ok, time =   00000s.
-Test 07: Boyer   -> T, time =   0.0625s.
-Test 08: Browse  -> ok, time =   0.015625s.
+Test 07: Boyer   -> T, time =   0.046875s.
+Test 08: Browse  -> ok, time =   0.078125s.
 Test 09: Destru  -> ok, time =   00000s.
 Test 10: Travini -> ok, time =   0.015625s.
-Test 11: Travrun -> ok, time =   0.328125s.
-Test 12: Deriv   -> ok, time =   0.015625s.
-Test 13: Dderiv  -> ok, time =   0.015625s.
-Test 14: Divit   -> ok, time =   0.015625s.
+Test 11: Travrun -> ok, time =   0.28125s.
+Test 12: Deriv   -> ok, time =   00000s.
+Test 13: Dderiv  -> ok, time =   00000s.
+Test 14: Divit   -> ok, time =   00000s.
 Test 15: Divrec  -> ok, time =   00000s.
-Test 16: FFT     -> ok, time =   0.0625s.
-Test 17: Puzzle  -> ok, time =   0.078125s.
-Test 18: Triang  -> ok, time =   1.5625s.
+Test 16: FFT     -> ok, time =   0.03125s.
+Test 17: Puzzle  -> ok, time =   0.0625s.
+Test 18: Triang  -> ok, time =   1.34375s.
 Test 19: Fprint  -> ok, time =   00000s.
 Test 20: Fread   -> ok, time =   00000s.
 Test 21: Tprint  -> ok, time =   00000s.
-Test 22: Frpoly  -> ok, time =   0.015625s.
+Test 22: Frpoly  -> ok, time =   0.00625s.
 
 Total   1.90625s.
 

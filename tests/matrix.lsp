@@ -68,6 +68,9 @@
   ($test-assert (matrix::mult test-vector identity-matrix) test-vector)
   ($ap 3 "mult matrix matrix")
   ($test-assert (matrix::mult test-matrix identity-matrix) test-matrix)
+
+  ($ap 2 "cross")
+  ($test-assert (matrix::cross #(1 2 3) #(4 5 6)) #(-3 6 -3))
   
 
   )

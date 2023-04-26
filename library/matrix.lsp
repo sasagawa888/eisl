@@ -66,75 +66,96 @@
              (when (not (equal (array-dimensions x) (array-dimensions y)))
                (error "All arguments must have the same dimensions")))
 
-           (defgeneric element-wise-operate (operator x y))
+           (defgeneric element-operate-2 (operator x y))
 
-           (defmethod element-wise-operate ((operator <function>) x y)
+           (defmethod element-operate-2 ((operator <function>) x y)
              (funcall operator x y))
 
-           (defmethod element-wise-operate ((operator <function>) (x <general-vector>) (y <general-vector>)) 
+           (defmethod element-operate-2 ((operator <function>) (x <general-vector>) (y <general-vector>)) 
              (check-same-dimensions x y)
-             (map '<general-vector> (lambda (x y) (element-wise-operate operator x y)) x y))
+             (map '<general-vector> (lambda (x y) (element-operate-2 operator x y)) x y))
 
-           (defmethod element-wise-operate ((operator <function>) (x <general-array*>) (y <general-array*>))
+           (defmethod element-operate-2 ((operator <function>) (x <general-array*>) (y <general-array*>))
              (check-matrix x)
              (check-matrix y)
              (check-same-dimensions x y)
              (rows->matrix 
-               (map '<general-vector> (lambda (x y) (element-wise-operate operator x y)) (rows x) (rows y))))
+               (map '<general-vector> (lambda (x y) (element-operate-2 operator x y)) (rows x) (rows y))))
 
-           (defun add (x y)
-             (element-wise-operate #'+ x y))
+           (defun element-operate (dyadic-operator &rest operands)
+             (reduce (lambda (x y) (element-operate-2 dyadic-operator x y)) 
+                     (car operands) 
+                     (cdr operands)))
 
-           (defun sub (x y)
-             (element-wise-operate #'- x y))
+           (defun add (&rest operands)
+             (apply #'element-operate #'+ operands))
 
-           (defun element-wise-product (x y)
-             (element-wise-operate #'* x y))
+           (defun sub (&rest operands)
+             (apply #'element-operate #'- operands))
 
-           (defgeneric mult (x y))
+           (defun element-wise-product (&rest operands)
+             (apply #'element-operate #'* operands))
 
-           (defmethod mult ((x <number>) (y <number>))
+           (defgeneric mult-2 (x y))
+
+           (defmethod mult-2 ((x <number>) (y <number>))
              (* x y))
 
-           (defmethod mult ((x <number>) (y <general-vector>))
-             (map '<general-vector> (lambda (component) (mult x component)) y))
+           (defmethod mult-2 ((x <number>) (y <general-vector>))
+             (map '<general-vector> (lambda (component) (mult-2 x component)) y))
 
-           (defmethod mult ((x <general-vector>) (y <number>))
-             (mult y x))
+           (defmethod mult-2 ((x <general-vector>) (y <number>))
+             (mult-2 y x))
 
-           (defmethod mult ((x <number>) (y <general-array*>))
+           (defmethod mult-2 ((x <number>) (y <general-array*>))
              (check-matrix y)
              (rows->matrix 
                (map '<general-vector> 
-                    (lambda (row) (mult x row)) 
+                    (lambda (row) (mult-2 x row)) 
                     (rows y))))
 
-           (defmethod mult ((x <general-array*>) (y <number>))
+           (defmethod mult-2 ((x <general-array*>) (y <number>))
              (check-matrix x)
-             (mult y x))
+             (mult-2 y x))
 
-           (defmethod mult ((x <general-vector>) (y <general-array*>))
+           (defmethod mult-2 ((x <general-vector>) (y <general-array*>))
              (check-matrix y)
              (map '<general-vector> (lambda (col) (dot col x)) (columns y)))
 
-           (defmethod mult ((x <general-array*>) (y <general-array*>))
+           (defmethod mult-2 ((x <general-array*>) (y <general-array*>))
              (check-matrix x)
              (check-matrix y)
              (rows->matrix 
                (map '<general-vector> 
-                    (lambda (row) (mult row y)) 
+                    (lambda (row) (mult-2 row y)) 
                     (rows x))))
 
+           (defun mult (&rest operands)
+             (reduce (lambda (x y) (mult-2 x y)) 
+                     (car operands) 
+                     (cdr operands)))
+
            (defun negate (x)
-             (mult x -1)) 
+             (mult-2 x -1)) 
 
            (defun dot (x  y)
              (assure <general-vector> x)
              (assure <general-vector> y)
              (check-same-dimensions x y)
-             (reduce (lambda (x y) (add x y)) 
-                     0 
-                     (element-wise-product x y)))
+             (reduce #'add 0 (element-wise-product x y)))
+
+           (defun cross (x y)
+             (let* ((x1 (elt x 0))
+                    (-x1 (- x1))
+                    (x2 (elt x 1))
+                    (-x2 (- x2))
+                    (x3 (elt x 2))
+                    (-x3 (- x3))
+                    (x-mat (rows->matrix (vector
+                                           (vector 0 -x3 x2)
+                                           (vector x3 0 -x1)
+                                           (vector -x2 x1 0)))))
+               (transpose (mult x-mat (transpose y)))))
 
            (defun cartesian-product (&rest vectors)
              (flet ((next-cartesian-product (previous-product next-vector)

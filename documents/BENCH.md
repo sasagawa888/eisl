@@ -39,7 +39,7 @@ Test 20: Fread   -> ok, time =   00000s.
 Test 21: Tprint  -> ok, time =   00000s.
 Test 22: Frpoly  -> ok, time =   0.015625s.
 
-Total   2.20312s.
+Total   1.90625s.
 
 ```
 

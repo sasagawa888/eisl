@@ -67,10 +67,7 @@
               str1 )
              (setq str1 (string-append str1 (create-string 1 (elt str i))))))
 
-    ;; to test pp1 in standard-input
-    (defpublic pp (x)
-        (pp1 x 0))
-
+    
     ;; pretty-print if asdata is given, pp1 doesn't care syntax. 
     (defun pp1 (x lm :rest asdata)
         (cond ((consp x)

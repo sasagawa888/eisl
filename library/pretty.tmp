@@ -1,0 +1,24 @@
+(defmodule pretty
+    ;; pretty printer for ISLisp
+    ;; written by kenichi sasagawa
+    (defconstant width 100)
+    (defconstant long-element 15)
+    (defconstant long-element-sum 60)
+    (defconstant defglobal-long-element 50)
+    (defconstant single-comment-margin 30)
+    (defglobal buffer nil)
+    (defglobal input-stream (standard-input))
+    (defglobal output-stream (standard-output))
+    (defglobal otomo nil)
+    
+    ;; to test pp1 in standard-input
+    (defpublic pp (x)
+        (pp1 x 0) )
+
+    ;; pretty-print if asdata is given, pp1 doesn't care syntax. 
+    (defun pp1 (x lm :rest asdata)
+        (cond ((atom x) (pp-atom x))
+              ((consp x)
+               (cond ((or (quote-p x) (backquote-p x) (unquote-p x)) (pp-quote x lm))
+                     ((unquote-splicing-p x) (pp-unquote-splicing x lm))
+                     ((and (null asdata) (eq (car x) (' 

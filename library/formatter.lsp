@@ -308,7 +308,7 @@
            (pp-string "(")
            (pp1 (elt x 0) lm1)
            (pp-string " ")
-           (pp-special (elt x 1) #'pp-let1 lm1)
+           (pp-let1 (elt x 1) lm1)
            (newline lm2)
            (pp-body (cdr (cdr x)) lm2)
            (cond (otomo (pp-string ")"))

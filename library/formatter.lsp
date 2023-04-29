@@ -162,8 +162,7 @@
         (cond ((quote-p x) (pp-quote x lm))
               ((backquote-p x) (pp-quote x lm))
               ((unquote-p x) (pp-quote x lm))
-              ((unquote-splicing-p x) (pp-quote x lm))
-              (t (funcall fun x lm))))
+              ((unquote-splicing-p x) (pp-quote x lm))))
 
     ;; write symbol number string object
     (defun pp-string (x)

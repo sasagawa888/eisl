@@ -228,7 +228,8 @@
            (pp1 (elt x 1) lm1)
            (pp-string " ")
            (pp1 (elt x 2) lm1)
-           (if (cdr (cdr (cdr x))) (newline lm1))
+           (if (cdr (cdr (cdr x)))
+               (newline lm1))
            (pp-body (cdr (cdr (cdr x))) lm1)
            (if otomo
                (pp-string ")")
@@ -256,7 +257,7 @@
     ;; syntax defmodule
     (defun pp-defmodule (x lm)
         (let ((lm1 (+ lm 4))
-              (exp nil))
+              (exp nil) )
            (pp-string "(")
            (pp1 (elt x 0) lm1)
            (pp-string " ")
@@ -264,10 +265,10 @@
            (newline lm1)
            (setq exp (cdr (cdr x)))
            (while exp
-                (pp1 (car exp) lm1)
-                (if (not (comment-p (car exp)))
-                    (newline lm1))
-                (setq exp (cdr exp)))
+              (pp1 (car exp) lm1)
+              (if (not (comment-p (car exp)))
+                  (newline lm1))
+              (setq exp (cdr exp)))
            (newline lm)
            (pp-string ")")
            (newline lm)))
@@ -779,9 +780,9 @@
               ((>= (flatsize (car x)) long-element) (long-element-p1 (cdr x)))
               (t nil)))
 
-    
     ;; is one-liner?
     (defun one-liner-p (x lm)
         (< (+ (flatsize x) lm) width))
 
+    
 )

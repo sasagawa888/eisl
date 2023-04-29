@@ -8,7 +8,11 @@ index  start from 0
 (editf 'function-name-symbol)
 |#
 
+
+
 (defmodule sedit
+    (import "pretty" pp)
+
     (defglobal stack '())
     (defglobal current '())
     (defglobal index 0)
@@ -37,6 +41,7 @@ index  start from 0
               t )
              (cond ((eq com 'h) (help))
                    ((eq com 'p) (prints current))
+                   ((eq com 'pp) (pp current))
                    ((eq com 'i) (insert (read) current index))
                    ((eq com 'a) (insert (read) current (+ index 1)))
                    ((eq com 'r) (right))

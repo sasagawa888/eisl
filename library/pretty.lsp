@@ -5,14 +5,13 @@
     (defconstant long-element 15)
     (defconstant long-element-sum 60)
     (defconstant defglobal-long-element 50)
-    (defconstant single-comment-margin 30)
     (defglobal buffer nil)
     (defglobal input-stream (standard-input))
     (defglobal output-stream (standard-output))
     (defglobal otomo nil)
     
     ;; to test pp1 in standard-input
-    (defpublic pp (x)
+    (defpublic pretty-print (x)
         (pp1 x 0) )
 
     ;; pretty-print if asdata is given, pp1 doesn't care syntax. 

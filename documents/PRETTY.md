@@ -5,5 +5,5 @@
 `(import "pretty")` 
 
 ```lisp
-(pp sexp)
+(pretty-print sexp)
 ```

@@ -172,7 +172,7 @@
     ;; syntax cond
     (defun pp-cond (x lm)
         (pp-string "(cond ")
-        (pp-special (cdr x) #'pp-cond1 (+ lm 7))
+        (pp-cond1 (cdr x) (+ lm 7))
         (cond (otomo (pp-string ")"))
               (t (setq otomo t) (pp-string " )"))))
 

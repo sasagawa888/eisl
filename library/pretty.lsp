@@ -95,10 +95,10 @@
 
     ;; syntax cond
     (defun pp-cond (x lm)
-        (pp-atom "(COND ")
+        (pp-text "(COND ")
         (pp-cond1 (cdr x) (+ lm 6))
-        (cond (otomo (pp-atom ")"))
-              (t (setq otomo t) (pp-atom " )"))))
+        (cond (otomo (pp-text ")"))
+              (t (setq otomo t) (pp-text " )"))))
 
     (defun pp-cond1 (x lm)
         (for ((s x (cdr s)))

@@ -41,7 +41,7 @@ index  start from 0
               t )
              (cond ((eq com 'h) (help))
                    ((eq com 'p) (prints current))
-                   ((eq com 'pp) (pp current))
+                   ((eq com 'pp) (pp current) (format (standard-output) "~%"))
                    ((eq com 'i) (insert (read) current index))
                    ((eq com 'a) (insert (read) current (+ index 1)))
                    ((eq com 'r) (right))

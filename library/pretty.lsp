@@ -13,7 +13,7 @@
     
     ;; to test pp1 in standard-input
     (defpublic pp (x)
-        (pp1 x 0))
+        (pp1 x 0) )
 
     ;; pretty-print if asdata is given, pp1 doesn't care syntax. 
     (defun pp1 (x lm :rest asdata)
@@ -237,11 +237,12 @@
            (pp-text ")")))
 
     (defun pp-quote (x lm)
-        (pp-text "'")
+        (format output-stream "~C" #\')
         (pp1 (car (cdr x)) (+ lm 1) t))
 
     (defun pp-unquote-splicing (x lm)
-        (pp1 (car x) lm)
+        (format output-stream "~C" #\,)
+        (format output-stream "~C" #\@)
         (pp1 (cdr x) (+ lm 2) t))
 
     ;; syntax block type
@@ -384,5 +385,6 @@
     ;; is one-liner?
     (defun one-liner-p (x lm)
         (< (+ (flatsize x) lm) width))
-   
+
+    
 )

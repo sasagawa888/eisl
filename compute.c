@@ -992,6 +992,29 @@ int isqrt4(int x)
 
 }
 
+/* idea memo
+ e.g. isqrt(12345678) 3513
+ isqrt(12) = 3
+
+ goal             init      value
+ isqrt(1234)        30        35
+ isqrt(12345678)  3500      3513
+
+ e.g. isqrt(123456789) 11111
+ 123456789 = 0123456789 (even length)
+ isqrt(01) = 1
+
+ goal                init      value
+ isqrt(0123)            1        11
+ isqrt(01234567)     1100      1111
+ isqrt(0123456789)  11110     11111
+
+*/
+int isqrt5(int x){
+
+}
+
+
 int isqrt(int x)
 {
     if (integerp(x))
@@ -1010,3 +1033,5 @@ int isqrt(int x)
 	    return (isqrt4(x));
     }
 }
+
+

@@ -157,6 +157,12 @@
                                            (vector -x2 x1 0)))))
                (transpose (mult x-mat (transpose y)))))
 
+           (defun norm (x)
+             (sqrt (dot x x)))
+
+           (defun normalize (x)
+             (mult x (reciprocal (norm x))))
+
            (defun cartesian-product (&rest vectors)
              (flet ((next-cartesian-product (previous-product next-vector)
                       (reduce 

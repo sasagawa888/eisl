@@ -373,7 +373,7 @@ int big_simplify(int x)
      V
 [dtMSB,dt1,dt2,...,dtLSB]<----n----->
 
-Cut bignum data from left amout ob n
+Cut bignum data from right to left amout of n
 */
 int big_shift_left(int x, int n)
 {
@@ -384,6 +384,31 @@ int big_shift_left(int x, int n)
     res = gen_big();
     set_pointer(res, get_pointer(x));
     set_length(res, get_length(x) - n);
+    set_sign(res, get_sign(x));
+
+    return (res);
+
+}
+
+/* take n-cells
+[dtMSB,dt1,dt2,dt3,dt4,dt5...,dtLSB,]
+     |
+     V
+[dtMSB,dt1,dt2,...,dtLSB]
+<----------n------------>
+
+Take bignum data from left amout of n
+*/
+
+int big_take_from_left(int x, int n)
+{
+    int res;
+
+    if (zerop(x))
+	return (x);
+    res = gen_big();
+    set_pointer(res, get_pointer(x));
+    set_length(res, n);
     set_sign(res, get_sign(x));
 
     return (res);

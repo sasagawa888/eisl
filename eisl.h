@@ -723,6 +723,7 @@ int big_shift_left(int x, int n);
 int big_shift_right(int x, int n);
 int big_simplify(int x);
 int big_smallerp(int arg1, int arg2);
+int big_take_from_left(int x, int n);
 int big_to_parmanent(int x);
 int big_zero_supress(int x, int n);
 int bind_args(int x);

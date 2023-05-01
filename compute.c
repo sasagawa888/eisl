@@ -1009,9 +1009,48 @@ int isqrt4(int x)
  isqrt(01234567)     1100      1111
  isqrt(0123456789)  11110     11111
 
+ size of bignum must be 6 or greater
 */
 int isqrt5(int x){
+	int len, len1, len2, pointer, x1, init, res;
 
+    len = get_length(x);
+	
+	if(len % 2 == 0){
+		x1 = x;
+	}
+	else{
+		x1 = big_zero_supress(x,1);
+		len = len + 1;
+	}
+
+	pointer = get_pointer(x1);
+	long long int lmsb =
+	    (long long int) bigcell[pointer] * BIGNUM_BASE +
+	    (long long int) bigcell[pointer - 1];
+
+	init = gen_big();
+	bigcell[big_pt0++] = (int) sqrt(lmsb) + 1;
+	set_sign(init, 1);
+	set_pointer(init, big_pt0 - 1);
+	set_length(init, 1);
+	
+	
+	len1 = 1; /* len1 is size of init bignum size. start from 1 */
+	len2 = 2; /* len2 is size of bignum size to calculate isqrt. start from 2 */
+	
+	while(len2*2 < len){
+		len1 = len1 * 2;
+		len2 = len2 * 2;
+		init = big_shift_right(init,len1-get_length(init));
+		init = isqrt2(big_take_from_left(x1,len2),init);
+	}
+	len1 = len / 2;
+	len2 = len;
+	init = big_shift_right(init,len1-get_length(init));
+	res = isqrt2(big_take_from_left(x1,len2),init);
+
+	return(res);
 }
 
 

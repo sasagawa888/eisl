@@ -367,7 +367,14 @@ int big_simplify(int x)
 	return (x);
 }
 
-/* subtract n-cells */
+/* subtract n-cells
+[dtMSB,dt1,dt2,dt3,dt4,dt5...,dtLSB,]
+     |
+     V
+[dtMSB,dt1,dt2,...,dtLSB]<----n----->
+
+Cut bignum data from left amout ob n
+*/
 int big_shift_left(int x, int n)
 {
     int res;
@@ -383,7 +390,13 @@ int big_shift_left(int x, int n)
 
 }
 
-/* add n-zero-cells to x */
+/* add n-zero-cells to x
+[dtMSB,dt1,dt2,..,dtLSB]
+   |
+   V
+[dtMSB,dt1,dt2,..,dtLSB,0,..,0]
+add 0 amount of n
+*/
 int big_shift_right(int x, int n)
 {
     int res, len, pointer;
@@ -407,6 +420,14 @@ int big_shift_right(int x, int n)
     set_length(res, len + n);
     return (res);
 }
+
+/*
+[dtMSB,dt1,dt2,.,dtLSB]
+   |
+   V
+[0,..,0,dtMSB,dt1,dt2,.,dtLSB]
+supress 0 amount of n
+*/
 
 int big_zero_supress(int x, int n)
 {

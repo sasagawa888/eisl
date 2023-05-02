@@ -993,64 +993,72 @@ int isqrt4(int x)
 }
 
 /* idea memo
- e.g. isqrt(12345678) 3513
- isqrt(12) = 3
+ e.g. isqrt(12345678901234) = 3513641
+ goal                     init         value
+ isqrt(123456)               -           351
+ isqrt(123456789012)   35100          351364
+ isqrt(12345678901234) 3513640       3513641 
+ 
+ 
+ e.g. isqrt(1234567890123) 1111111
+ goal                  init        value
+ isqrt(12345)             -          111
+ isqrt(123456789)      11100       11111
+ isqrt(1234567890123)  1111100   1111111
 
- goal             init      value
- isqrt(1234)        30        35
- isqrt(12345678)  3500      3513
-
- e.g. isqrt(123456789) 11111
- 123456789 = 0123456789 (even length)
- isqrt(01) = 1
-
- goal                init      value
- isqrt(0123)            1        11
- isqrt(01234567)     1100      1111
- isqrt(0123456789)  11110     11111
-
- size of bignum must be 6 or greater
+ size of bignum must be 10 or greater
 */
 int isqrt5(int x){
-	int len, len1, len2, pointer, x1, init, res;
+	int len, len1, len2, init, target, res;
 
     len = get_length(x);
 	
 	if(len % 2 == 0){
-		x1 = x;
-	}
-	else{
-		x1 = big_zero_supress(x,1);
-		len = len + 1;
-	}
-
-	pointer = get_pointer(x1);
-	long long int lmsb =
-	    (long long int) bigcell[pointer] * BIGNUM_BASE +
-	    (long long int) bigcell[pointer - 1];
-
-	init = gen_big();
-	bigcell[big_pt0++] = (int) sqrt(lmsb) + 1;
-	set_sign(init, 1);
-	set_pointer(init, big_pt0 - 1);
-	set_length(init, 1);
-	
-	
-	len1 = 1; /* len1 is size of init bignum size. start from 1 */
-	len2 = 2; /* len2 is size of bignum size to calculate isqrt. start from 2 */
-	
-	while(len2*2 < len){
-		len1 = len1 * 2;
-		len2 = len2 * 2;
+		//printf("%d even digits\n", len);
+		len1 = 3;
+		len2 = 6;
+		init = plus(isqrt3(big_take_from_left(x,len2)),make_int(1));
+		//printf("init = ");print(init);printf("\n");
+		while(len2*2 < len){
+			len1 = len1 * 2;
+			len2 = len2 * 2;
+			//printf("target=%d init=%d \n",len2,len1); 
+			target = big_take_from_left(x,len2);
+			//printf("target = ");print(target);printf("\n");
+			init = big_shift_right(init,len1-get_length(init));
+			//printf("init = ");print(init);printf("\n");
+			init = plus(isqrt2(target,init),make_int(1));
+			//printf("newinit = ");print(init);printf("\n");
+		}
+		len1 = len / 2;
+		len2 = len;
 		init = big_shift_right(init,len1-get_length(init));
-		init = isqrt2(big_take_from_left(x1,len2),init);
+		res = isqrt2(big_take_from_left(x,len2),init);
+		return(res);
 	}
-	len1 = len / 2;
-	len2 = len;
-	init = big_shift_right(init,len1-get_length(init));
-	res = isqrt2(big_take_from_left(x1,len2),init);
-
-	return(res);
+	else {
+		//printf("%d odd digits\n", len);
+		len1 = 3;
+		len2 = 5;
+		init = plus(isqrt3(big_take_from_left(x,len2)),make_int(1));
+		//printf("init = ");print(init);printf("\n");
+		while(len2*2-1 < len){
+			len1 = len1 + ((len2*2-1) - len2) / 2;
+			len2 = len2*2-1;
+			//printf("target=%d init=%d \n",len2,len1); 
+			target = big_take_from_left(x,len2);
+			//printf("target = ");print(target);printf("\n");
+			init = big_shift_right(init,len1-get_length(init));
+			//printf("init = ");print(init);printf("\n");
+			init = plus(isqrt2(target,init),make_int(1));
+			//printf("newinit = ");print(init);printf("\n");
+		}
+		len1 = (len+1) / 2;
+		len2 = len;
+		init = big_shift_right(init,len1-get_length(init));
+		res = isqrt2(big_take_from_left(x,len2),init);
+		return(res);
+	}
 }
 
 
@@ -1066,10 +1074,10 @@ int isqrt(int x)
 	init = (long long int) sqrt(n) + 1;
 	return (make_int((int) isqrt1(n, init)));
     } else {
-	if (get_length(x) < 100)
+	if (get_length(x) < 10)
 	    return (isqrt3(x));
 	else
-	    return (isqrt4(x));
+	    return (isqrt5(x));
     }
 }
 

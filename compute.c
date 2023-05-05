@@ -964,35 +964,9 @@ int isqrt3(int x)
 
 }
 
-/*
- * fast isqrt
- * Calculate the initial value of Newton's method by Newton's method.
- * The value of ISQRT (X) is half the number of digits in X. 
- * Find a value that is close to the true value with half the number of digits, 
- * and use that as the initial value.
-*/
-int isqrt4(int x)
-{
-    int len, p, init;
-
-    len = get_length(x);
-
-    p = 2;
-    while ((len - p) > len / 4) {
-	p = 2 * p;
-    }
-    p = p / 2;
-
-    init = big_shift_left(x, p);
-    init = plus(isqrt3(init), make_int(1));
-    init = big_shift_right(init, p / 2);
-
-    return (isqrt2(x, init));
-
-
-}
 
 /* idea memo
+ even digits
  e.g. isqrt(12345678901234) = 3513641
  goal                     init         value
  isqrt(123456)               -           351
@@ -1001,6 +975,7 @@ int isqrt4(int x)
  
  
  e.g. isqrt(1234567890123) 1111111
+ odd digits
  goal                  init        value
  isqrt(12345)             -          111
  isqrt(123456789)      11100       11111
@@ -1008,27 +983,21 @@ int isqrt4(int x)
 
  size of bignum must be 10 or greater
 */
-int isqrt5(int x){
+int isqrt4(int x){
 	int len, len1, len2, init, target, res;
 
     len = get_length(x);
 	
 	if(len % 2 == 0){
-		//printf("%d even digits\n", len);
 		len1 = 3;
 		len2 = 6;
 		init = plus(isqrt3(big_take_from_left(x,len2)),make_int(1));
-		//printf("init = ");print(init);printf("\n");
 		while(len2*2 < len){
 			len1 = len1 * 2;
 			len2 = len2 * 2;
-			//printf("target=%d init=%d \n",len2,len1); 
 			target = big_take_from_left(x,len2);
-			//printf("target = ");print(target);printf("\n");
 			init = big_shift_right(init,len1-get_length(init));
-			//printf("init = ");print(init);printf("\n");
 			init = plus(isqrt2(target,init),make_int(1));
-			//printf("newinit = ");print(init);printf("\n");
 		}
 		len1 = len / 2;
 		len2 = len;
@@ -1037,21 +1006,15 @@ int isqrt5(int x){
 		return(res);
 	}
 	else {
-		//printf("%d odd digits\n", len);
 		len1 = 3;
 		len2 = 5;
 		init = plus(isqrt3(big_take_from_left(x,len2)),make_int(1));
-		//printf("init = ");print(init);printf("\n");
 		while(len2*2-1 < len){
 			len1 = len1 + ((len2*2-1) - len2) / 2;
 			len2 = len2*2-1;
-			//printf("target=%d init=%d \n",len2,len1); 
 			target = big_take_from_left(x,len2);
-			//printf("target = ");print(target);printf("\n");
 			init = big_shift_right(init,len1-get_length(init));
-			//printf("init = ");print(init);printf("\n");
 			init = plus(isqrt2(target,init),make_int(1));
-			//printf("newinit = ");print(init);printf("\n");
 		}
 		len1 = (len+1) / 2;
 		len2 = len;
@@ -1077,7 +1040,7 @@ int isqrt(int x)
 	if (get_length(x) < 10)
 	    return (isqrt3(x));
 	else
-	    return (isqrt5(x));
+	    return (isqrt4(x));
     }
 }
 

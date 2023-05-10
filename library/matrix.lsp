@@ -6,6 +6,7 @@
                        2)
                (Error "Argument must be a matrix")))
 
+           ;;; ROWS returns the row vectors of a matrix
            (defun rows (matrix)
              (check-matrix matrix)
              (let* ((dimensions (array-dimensions matrix))
@@ -21,6 +22,7 @@
                    (setf (elt rows row-index) fields)))
                rows))
 
+           ;;; ROWS->MATRIX converts a vector of row vectors into a matrix
            (defun rows->matrix (rows)
              (let* ((dimensions (vector-of-vectors-dimensions rows))
                     (number-of-rows (elt dimensions 0))
@@ -33,9 +35,11 @@
                            (elt row col-index)))))
                matrix))
 
+           ;;; COLUMNS->MATRIX converts a vector of column vectors into a matrix
            (defun columns->matrix (columns)
              (transpose (rows->matrix columns)))
 
+           ;;; TRANSPOSE transposes a matrix or vector X
            (defgeneric transpose (x))
 
            (defmethod transpose ((matrix <general-array*>))
@@ -48,12 +52,17 @@
            (defmethod transpose ((vector <general-vector>))
              (columns->matrix (vector vector)))
 
+           ;;; COLUMNS returns the column vectors of matrix MATRIX
            (defun columns (matrix)
              (check-matrix matrix)
              (let ((get-col (lambda (&rest column-fields) (convert column-fields <general-vector>)))
                    (map (function map)))
                (apply map '<general-vector> get-col (convert (rows matrix) <list>))))
 
+           ;;; VECTOR-OF-VECTORS-DIMENSIONS returns a vector with the dimensions of VECTOR-OF-VECTORS
+           ;;; The first element of the returned vector is the number of vectors in VECTOR-OF-VECTORS
+           ;;; The second element of the returned vector is the length of each of the vectors in VECTOR-OF-VECTORS
+           ;;; All vectors in VECTOR-OF-VECTORS must have the same length
            (defun vector-of-vectors-dimensions (vector-of-vectors)
              (let ((first-vector-length (length (elt vector-of-vectors 0))))
                (if (every (lambda (vector) 
@@ -62,10 +71,15 @@
                    (vector (length vector-of-vectors) first-vector-length)
                    (error "All sub-vectors must have the same length"))))
 
+           ;;; CHECK-SAME-DIMENSIONS checks that arrays X and Y have the same dimensions.
+           ;;; If they do not, an error is signalled
            (defun check-same-dimensions (x y)
              (when (not (equal (array-dimensions x) (array-dimensions y)))
                (error "All arguments must have the same dimensions")))
 
+           ;;; ELEMENT-OPERATE-2 performs an element-wise operation on X and Y
+           ;;; Operator OPERATOR is the function that performs the operation.
+           ;;; OPERATOR must take at least two arguments
            (defgeneric element-operate-2 (operator x y))
 
            (defmethod element-operate-2 ((operator <function>) x y)
@@ -82,20 +96,28 @@
              (rows->matrix 
                (map '<general-vector> (lambda (x y) (element-operate-2 operator x y)) (rows x) (rows y))))
 
+           ;;; ELEMENT-OPERATE performs an element-wise operation on any number of operands in OPERANDS.
+           ;;; DYADIC-OPERATOR is an function that takes at least two argumenst
+           ;;; The element-wise operation is performed from left-to-right
            (defun element-operate (dyadic-operator &rest operands)
              (reduce (lambda (x y) (element-operate-2 dyadic-operator x y)) 
                      (car operands) 
                      (cdr operands)))
 
+           ;;; ADD adds the operands OPERANDS together
            (defun add (&rest operands)
              (apply #'element-operate #'+ operands))
 
+           ;;; SUB subtracts the OPERANDS from left to right
            (defun sub (&rest operands)
              (apply #'element-operate #'- operands))
 
+           ;;; ELEMENT-WISE-PRODUCT performs the element-wise-product of the operands OPERANDS
+           ;;; This is also known as the Hadamard product
            (defun element-wise-product (&rest operands)
              (apply #'element-operate #'* operands))
 
+           ;;; MULT-2 multiplies X and Y together
            (defgeneric mult-2 (x y))
 
            (defmethod mult-2 ((x <number>) (y <number>))
@@ -130,20 +152,25 @@
                     (lambda (row) (mult-2 row y)) 
                     (rows x))))
 
+           ;;; MULT multiplies operands OPERANDS together from left to right
            (defun mult (&rest operands)
              (reduce (lambda (x y) (mult-2 x y)) 
                      (car operands) 
                      (cdr operands)))
 
+           ;;; NEGATE negates X
+           ;;; Multiplies by negative 1
            (defun negate (x)
              (mult-2 x -1)) 
 
+           ;;; DOT calculates dot product of X and Y
            (defun dot (x  y)
              (assure <general-vector> x)
              (assure <general-vector> y)
              (check-same-dimensions x y)
              (reduce #'add 0 (element-wise-product x y)))
 
+           ;;; CROSS calculates cross product of X and Y
            (defun cross (x y)
              (let* ((x1 (elt x 0))
                     (-x1 (- x1))
@@ -157,12 +184,19 @@
                                            (vector -x2 x1 0)))))
                (transpose (mult x-mat (transpose y)))))
 
+           ;;; NORM calculates the Euclidean norm of x
            (defun norm (x)
              (sqrt (dot x x)))
 
+           ;;; NORMALIZE normalizes vector X
+           ;;; The normalized vector is a unit vector with the same direction of X
            (defun normalize (x)
-             (mult x (reciprocal (norm x))))
+             (let ((norm (norm x))) 
+               (if (= 0 norm) 
+                   (error "Cant normalize a zero-length vector!"))
+               (mult x (reciprocal norm))))
 
+           ;;; CARTESIAN-PRODUCT returns the cartesian product of the vectors in VECTORS
            (defun cartesian-product (&rest vectors)
              (flet ((next-cartesian-product (previous-product next-vector)
                       (reduce 

@@ -12,58 +12,61 @@
 
 ;;; constructer
 (defun create-rows (x)
-    (create (class <rows>) 'data x))
+    (create (class <rows>) 'data x) )
 
 (defun create-columns (x)
-    (create (class <columns>) 'data x))
+    (create (class <columns>) 'data x) )
 
 
 ;;; convert data structure
 (defmacro matrix-convert (x type)
-    `(matrix-convert1 ,x (class ,type)))
+    `(matrix-convert1 ,x (class ,type)) )
 
 (defun matrix-convert1 (x y)
-      (cond ((and (eq (class-of x) (class <rows>)) (eq y (class <general-array*>)))
-             (matrix::rows->matrix (data x)))
-            ((and (eq (class-of x) (class <columns>)) (eq y (class <general-array*>)))
-             (matrix::columns->matrix (data x)))
-            ((and (eq (class-of x) (class <general-array*>)) (eq y (class <rows>)))
-             (create-rows (matrix::rows x)))
-            ((and (eq (class-of x) (class <general-array*>)) (eq y (class <columns>)))
-             (create-rows (matrix::columns x)))
-            (t (error "matrix-convert no adapted data type"))))
+    (cond ((and (eq (class-of x) (class <rows>))
+                (eq y (class <general-array*>)))
+           (matrix::rows->matrix (data x)))
+          ((and (eq (class-of x) (class <columns>))
+                (eq y (class <general-array*>)))
+           (matrix::columns->matrix (data x)))
+          ((and (eq (class-of x) (class <general-array*>))
+                (eq y (class <rows>)))
+           (create-rows (matrix::rows x)))
+          ((and (eq (class-of x) (class <general-array*>))
+                (eq y (class <columns>)))
+           (create-rows (matrix::columns x)))
+          (t (error "matrix-convert no adapted data type"))))
 
 
 (defmacro matrix-add (:rest operands)
-    `(matrix::add ,@operands))
+    `(matrix::add ,@operands) )
 
 (defmacro matrix-sub (:rest operands)
-    `(matrix::sub ,@operands))
+    `(matrix::sub ,@operands) )
 
 (defmacro matrix-mult (:rest operands)
-    `(matrix::mult ,@operands))
+    `(matrix::mult ,@operands) )
 
 (defun matrix-transpose (x)
-    (matrix::transpose x))
+    (matrix::transpose x) )
 
 (defun matrix-negate (x)
-    (matrix::negate x))
+    (matrix::negate x) )
 
 (defun matrix-dot (x y)
-    (matrix::dot x y))
+    (matrix::dot x y) )
 
 (defun matrix-cross (x y)
-    (matrix::cross x y))
+    (matrix::cross x y) )
 
 (defun matrix-norm (x)
-    (matrix::norm x))
+    (matrix::norm x) )
 
 (defun matrix-normalize (x)
-    (matrix-::normalize x))
+    (matrix-::normalize x) )
 
 (defmodule matrix
     (import "seq" map every reduce concatenate)
-
     (defun check-matrix (array)
         (when (/= (length (array-dimensions array)) 2)
               (error "Argument must be a matrix")))
@@ -175,10 +178,12 @@
     ;;; ADD adds the operands OPERANDS together
     (defun add (&rest operands)
         (apply #'element-operate #'+ operands))
-       
+
+    
     ;;; SUB subtracts the OPERANDS from left to right
     (defun sub (&rest operands)
         (apply #'element-operate #'- operands))
+
     
     ;;; ELEMENT-WISE-PRODUCT performs the element-wise-product of the operands OPERANDS
     ;;; This is also known as the Hadamard product
@@ -262,6 +267,116 @@
                            (vector)
                            next-vector)))
             (reduce #'next-cartesian-product #(#()) vectors)))
+
+    ;;; added some functions from math library
+    (defun set-aref1 (val mat i j)
+        (set-aref val mat (- i 1) (- j 1)))
+
+    (defun aref1 (mat i j)
+        (aref mat (- i 1) (- j 1)))
+
+    (defun mult-scalar-mat (s mat)
+        (let ((m (elt (array-dimensions mat) 0))
+              (n (elt (array-dimensions mat) 1)) )
+           (for ((i 1 (+ i 1)))
+                ((> i m)
+                 mat )
+                (for ((j 1 (+ j 1)))
+                     ((> j n))
+                     (set-aref1 (* s (aref1 mat i j)) mat i j)))))
+
+    (defun matrix-ident (n)
+        (let ((m (create-array (list n n) 0)))
+           (for ((i 1 (+ i 1)))
+                ((> i n)
+                 m )
+                (set-aref1 1 m i i))))
+
+    (defun square-matrix-p (x)
+        (let ((dim (array-dimensions x)))
+           (and (= (length dim) 2) (= (elt dim 0) (elt dim 1)))))
+
+    (defpublic matrix-tr (x)
+        (unless (square-matrix-p x) (error "tr require square matrix" x))
+        (let ((l (elt (array-dimensions x) 0)))
+           (for ((i 1 (+ i 1))
+                 (y 0) )
+                ((> i l)
+                 y )
+                (setq y (+ (aref1 x i i) y)))))
+
+    
+
+    (defun sub-matrix (x r s)
+        (let* ((m (elt (array-dimensions x) 0))
+               (n (elt (array-dimensions x) 1))
+               (y (create-array (- m 1) (- n 1) 0)) )
+            (for ((i 0 (+ i 1)))
+                 ((>= i m)
+                  y )
+                 (for ((j 0 (+ j 1)))
+                      ((>= j n))
+                      (cond ((and (< i r) (< j s)) (set-aref1 (aref1 x i j) y i j))
+                            ((and (> i r) (< j s)) (set-aref1 (aref1 x i j) y (- i 1) j))
+                            ((and (< i r) (> j s)) (set-aref1 (aref1 x i j) y i (- j 1)))
+                            ((and (> i r) (> j s)) (set-aref1 (aref1 x i j) y (- i 1) (- j 1)))
+                            ((and (= i r) (= j s)) nil))))))
+
+    (defpublic matrix-det (x)
+        (unless (square-matrix-p x)
+                (error "det require square matrix" x))
+        (let ((m (elt (array-dimensions x) 0)))
+           (det1 x m)))
+
+    
+
+    (defun det1 (x m)
+        (if (= m 2)
+            (- (* (aref1 x 1 1) (aref1 x 2 2))
+               (* (aref1 x 1 2) (aref1 x 2 1)))
+            (for ((i 1 (+ i 1))
+                  (y 0) )
+                 ((> i m)
+                  y )
+                 (setq y
+                       (+ (* (sign (+ i 1))
+                             (aref1 x i 1)
+                             (det1 (sub-matrix x i 1) (- m 1)))
+                          y)))))
+
+    (defpublic matrix-inv (x)
+        (unless (square-matrix-p x)
+                (error "inv require square matrix" x))
+        (let ((m (elt (array-dimensions x) 0))
+              (n (elt (array-dimensions x) 1)) )
+           (if (> m 2)
+               (inv1 x m)
+               (inv0 x m))))
+
+    (defun inv0 (x m)
+        (let ((mat (create-array (list m m) 0))
+              (d (det x)) )
+           (when (= d 0) (error "inv determinant is zero" x))
+           (cond ((= m 1) (set-aref1 (quotient 1 d) mat 1 1) mat)
+                 (t (set-aref1 (aref1 x 2 2) mat 1 1)
+                    (set-aref1 (aref1 x 1 1) mat 2 2)
+                    (set-aref1 (- (aref1 x 1 2)) mat 1 2)
+                    (set-aref1 (- (aref1 x 2 1)) mat 2 1)
+                    (mult-scalar-mat (quotient 1 d) mat)))))
+
+    (defun inv1 (x m)
+        (let ((d (det x)))
+           (when (= d 0) (error "inv determinant is zero" x))
+           (* (quotient 1 d) (transpose (inv2 x m)))))
+
+    (defun inv2 (x m)
+        (let ((y (create-array (list m m) 0)))
+           (for ((i 1 (+ i 1)))
+                ((> i m)
+                 y )
+                (for ((j 1 (+ j 1)))
+                     ((> j m))
+                     (set-aref1 y i j (* (sign (+ i j)) (det (sub-matrix x i j))))))))
 
     
 )

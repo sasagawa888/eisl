@@ -12,26 +12,42 @@
     ((data :accessor data :initform 0 :initarg data)) )
 
 ;;; constructer
-(defun matrix (x)
+(defun create-matrix (x)
     (matrix::check-matrix x)
     (create (class <matrix>) 'data x) )
 
-(defun rows (x)
-    (let* ((dt (data x))
-           (x1 matrix::rows dt) )
-        (create (class <rows>) 'data x)))
+(defun create-rows (x)
+    (create (class <rows>) 'data x))
 
-(defun columns (x)
-    (let* ((dt (data x))
-           (x1 matrix::columns dt) )
-        (create (class <columns>) 'data x)))
+(defun create-columns (x)
+    (create (class <columns>) 'data x))
 
 ;;; display matrix
 (defun mprint (x)
     (print (data x)) )
 
+;;; convert data structure
+(defmacro mat-convert (x type)
+    `(mat-convert1 ,x (class ,type)))
+
+(defun mat-convert1 (x y)
+      (cond ((and (eq (class-of x) (class <rows>)) (eq y (class <matrix>)))
+             (create-matrix (matrix::rows->matrix (data x))))
+            ((and (eq (class-of x) (class <columns>)) (eq y (class <matrix>)))
+             (create-matrix (matrix::columns->matrix (data x))))
+            ((and (eq (class-of x) (class <matrix>)) (eq y (class <rows>)))
+             (create-rows (matrix::rows (data x))))
+            ((and (eq (class-of x) (class <matrix>)) (eq y (class <columns>)))
+             (create-rows (matrix::columns (data x))))
+            (t (error "mat-convert no adapted data type"))))
+
+  (defmacro map-add (:rest operands)
+    `(matrix::add ,(mapcar (lambda (x) (data x)) ,operands)))
+             
+
 (defmodule matrix
     (import "seq" map every reduce concatenate)
+
     (defun check-matrix (array)
         (when (/= (length (array-dimensions array)) 2)
               (Error "Argument must be a matrix")))

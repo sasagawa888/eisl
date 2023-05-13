@@ -158,7 +158,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
 	signal_condition(make_instance(cfloating_point_overflow, initargs),
-			 NIL);
+		make_str("Continuing ignores floating point overflow and the calculation returns infinity"));
 	break;
     case FLT_UNDERF:
 	initargs =
@@ -167,8 +167,8 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
-	signal_condition(make_instance
-			 (cfloating_point_underflow, initargs), NIL);
+	signal_condition(make_instance(cfloating_point_underflow, initargs), 
+		make_str("Continuing ignores floating point underflow and the calculation returns zero"));
 	break;
     case FLT_OUT_OF_DOMAIN:
 	initargs =

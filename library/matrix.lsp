@@ -391,6 +391,7 @@
         (inverse mat))
 
     (defun inverse (mat)
+        (unless (square-matrix-p mat) (error "matrix-inverse not square matrix"))
         (let ((n (elt (array-dimensions mat) 0)))
            (setq mat1 (rows mat))
            (setq mat2 (rows (ident n)))
@@ -411,7 +412,7 @@
         (block exit
            (for ((i (+ m 1) (+ i 1)))
                 ((> i n)
-                 (error "not regular matrix") )
+                 (error "matrix-inverse not regular matrix") )
                 (cond ((/= (rowref1 mat1 i m) 0) (exchange-row i m) (return-from exit nil))))))
 
     
@@ -428,7 +429,9 @@
              (for ((j (+ i 1) (+ j 1)))
                   ((> j n))
                   (if (/= (rowref1 mat1 j i) 0)
-                      (sub-multed-row j i (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
+                      (if (/= (rowref1 mat1 i i) 0)
+                          (sub-multed-row j i (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))
+                          (error "matrix-inverse not regular matrix"))))))
 
     (defun erase-upper-triang (n)
         (for ((i 2 (+ i 1)))
@@ -436,7 +439,9 @@
              (for ((j 1 (+ j 1)))
                   ((>= j i))
                   (if (/= (rowref1 mat1 j i) 0)
-                      (sub-multed-row j i (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
+                      (if (/= (rowref1 mat1 i i) 0)
+                          (sub-multed-row j i (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))
+                          (error "matrix-inverse not regular matrix"))))))
 
     
 )

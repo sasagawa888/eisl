@@ -34,7 +34,7 @@
            (create-rows (matrix::rows x)))
           ((and (eq (class-of x) (class <general-array*>))
                 (eq y (class <columns>)))
-           (create-rows (matrix::columns x)))
+           (create-columns (matrix::columns x)))
           (t (error "matrix-convert no adapted data type"))))
 
 
@@ -267,34 +267,20 @@
             (reduce #'next-cartesian-product #(#()) vectors)))
 
     ;;; added some functions from math library
-    ;;; buggy
+
+    ;;; set element to matrix (index is start from 1)
     (defun set-aref1 (val mat i j)
         (set-aref val mat (- i 1) (- j 1)))
 
+    ;;; get element from matrix (index is start from 1)
     (defun aref1 (mat i j)
         (aref mat (- i 1) (- j 1)))
-
-    (defun mult-scalar-mat (s mat)
-        (let ((m (elt (array-dimensions mat) 0))
-              (n (elt (array-dimensions mat) 1)) )
-           (for ((i 1 (+ i 1)))
-                ((> i m)
-                 mat )
-                (for ((j 1 (+ j 1)))
-                     ((> j n))
-                     (set-aref1 (* s (aref1 mat i j)) mat i j)))))
-
-    (defun matrix-ident (n)
-        (let ((m (create-array (list n n) 0)))
-           (for ((i 1 (+ i 1)))
-                ((> i n)
-                 m )
-                (set-aref1 1 m i i))))
 
     (defun square-matrix-p (x)
         (let ((dim (array-dimensions x)))
            (and (= (length dim) 2) (= (elt dim 0) (elt dim 1)))))
 
+    ;; calculate trace of matrix
     (defpublic matrix-tr (x)
         (unless (square-matrix-p x) (error "tr require square matrix" x))
         (let ((l (elt (array-dimensions x) 0)))
@@ -304,8 +290,7 @@
                  y )
                 (setq y (+ (aref1 x i i) y)))))
 
-    
-
+    ;; for determinant 
     (defun sub-matrix (x r s)
         (let* ((m (elt (array-dimensions x) 0))
                (n (elt (array-dimensions x) 1))
@@ -321,6 +306,7 @@
                             ((and (> i r) (> j s)) (set-aref1 (aref1 x i j) y (- i 1) (- j 1)))
                             ((and (= i r) (= j s)) nil))))))
 
+    ;; determinant
     (defpublic matrix-det (x)
         (det x))
 
@@ -330,7 +316,6 @@
         (let ((m (elt (array-dimensions x) 0)))
            (det1 x m)))
 
-    
 
     (defun det1 (x m)
         (if (= m 2)
@@ -348,42 +333,7 @@
 
     (defun sign (x)
         (expt -1 x))
-
-    (defpublic matrix-inv (x)
-        (unless (square-matrix-p x)
-                (error "inv require square matrix" x))
-        (let ((m (elt (array-dimensions x) 0))
-              (n (elt (array-dimensions x) 1)) )
-           (if (> m 2)
-               (inv1 x m)
-               (inv0 x m))))
-
-    (defun inv0 (x m)
-        (let ((mat (create-array (list m m) 0))
-              (d (det x)) )
-           (when (= d 0) (error "inv determinant is zero" x))
-           (cond ((= m 1) (set-aref1 (quotient 1 d) mat 1 1) mat)
-                 (t (set-aref1 (aref1 x 2 2) mat 1 1)
-                    (set-aref1 (aref1 x 1 1) mat 2 2)
-                    (set-aref1 (- (aref1 x 1 2)) mat 1 2)
-                    (set-aref1 (- (aref1 x 2 1)) mat 2 1)
-                    (mult-scalar-mat (quotient 1 d) mat)))))
-
-    (defun inv1 (x m)
-        (let ((d (det x)))
-           (when (= d 0) (error "inv determinant is zero" x))
-           (mult-scalar-mat (quotient 1 d) (transpose (inv2 x m)))))
-
-    (defun inv2 (x m)
-        (let ((y (create-array (list m m) 0)))
-           (for ((i 1 (+ i 1)))
-                ((> i m)
-                 y )
-                (for ((j 1 (+ j 1)))
-                     ((> j m))
-                     (set-aref1 (* (sign (+ i j)) (det (sub-matrix x i j))) y i j)))))
-
-    
+ 
 )
 
 

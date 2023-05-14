@@ -53,13 +53,13 @@ Negates `x`
 #### (vector-dot x y)
 Calculates the dot product of `x` and `y`
 
-#### (vector-cross *x* *y*)
+#### (vector-cross x y)
 Calculates the cross product of `x` and `y`
 
-#### (matrix-norm x)
+#### (vector-norm x)
 Calculates the Euclidean norm of vector `x`
 
-#### (matrix-normalize x)
+#### (vector-normalize x)
 Normalizes vector `x`
 
 #### (matrix-cartesian *vector+*)

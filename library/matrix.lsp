@@ -345,7 +345,48 @@
 
     (defun sign (x)
         (expt -1 x))
- 
+
+    
+    ;; inverse
+    (defglobal mat1 nil) ; original matrix
+    (defglobal mat2 nil) ; inverse matrix
+
+    ;; ident matrix n*n
+    (defun ident (n)
+        (let ((mat (create-array (list n n) 0)))
+            (for ((i 1 (+ i 1)))
+                 ((> i n) mat)
+                 (set-aref1 1 mat i i)))) 
+
+    ;; elementaly operation
+    (defun exchange-row (i j)
+        (let ((tmp1 (elt mat1 (- i 1)))
+              (tmp2 (elt mat2 (- i 1))))
+            (set-elt (elt mat1 (- j 1)) mat1 (- i 1))
+            (set-elt (elt mat2 (- j 1)) mat2 (- i 1))
+            (set-elt tmp mat1 (- i 1))
+            (set-elt tmp mat2 (- i 1))))
+    
+    ;; row(i) = row(i)-r*row(j)
+    (defun sub-multed-row (i j r))
+
+
+    ;; inverse
+    (defun inverse (mat)
+        (let ((n (elt (array-dimensions mat) 0)))
+            (setq mat1 (rows mat))
+            (setq mat2 (rows (ident n)))
+            (exchange-zero-row n)
+            (erase-lower-triang n)
+            (erase-upper-triang n))
+        (rows->matrix mat2))
+
+    (defun exchange-zero-row (n))
+
+    (defun erase-lower-triang (n))
+
+    (defun erase-upper-triang (n))
+            
 )
 
 

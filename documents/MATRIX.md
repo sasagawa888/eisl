@@ -71,5 +71,8 @@ Normalizes vector `x`
 #### (matrix-cartesian *vector+*)
 Returns the cartesian product of the vectors `vector`
 
-#### (matrix-det matrix)
-Returns matrix determinant of matrix
+#### (matrix-det x)
+Returns matrix determinant of matrix `x`
+
+#### (matrix-tr x)
+Retruns matrix trace of matrix `x`

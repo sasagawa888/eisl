@@ -26,6 +26,12 @@ Matrix it's elements are column vectors
 #### (matrixp x)
 If x is matrix data return t, else nil.
 
+#### (matrix-elt m i j)
+Returns element (i,j) of matrix m. Index i and j are start from 1. 
+
+#### (matrix-set-elt v m i j)
+Set v to element(i,j) of matrix m.
+
 #### (matrix-convert x class)
 - (matrix-convert x <rows>)  convert from matrix to row-vector matrix.
 - (matrix-convert x <columns>) convert from matrix to colmun-vector matrix.

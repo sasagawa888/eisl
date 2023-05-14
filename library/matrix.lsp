@@ -71,6 +71,12 @@
 (defun vector-normalize (x)
     (matrix-::normalize x) )
 
+(defun matrix-elt (m i j)
+    (matrix::aref1 m i j))
+
+(defun matrix-set-elt (v m i j)
+    (matrix::set-aref1 v m i j))
+
 (defmodule matrix
     (import "seq" map every reduce concatenate)
     (defun check-matrix (array)

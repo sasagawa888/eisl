@@ -179,12 +179,10 @@
     (defun add (&rest operands)
         (apply #'element-operate #'+ operands))
 
-    
     ;;; SUB subtracts the OPERANDS from left to right
     (defun sub (&rest operands)
         (apply #'element-operate #'- operands))
 
-    
     ;;; ELEMENT-WISE-PRODUCT performs the element-wise-product of the operands OPERANDS
     ;;; This is also known as the Hadamard product
     (defun element-wise-product (&rest operands)
@@ -269,6 +267,7 @@
             (reduce #'next-cartesian-product #(#()) vectors)))
 
     ;;; added some functions from math library
+    ;;; buggy
     (defun set-aref1 (val mat i j)
         (set-aref val mat (- i 1) (- j 1)))
 
@@ -348,7 +347,7 @@
                           y)))))
 
     (defun sign (x)
-        (expt -1 x) )
+        (expt -1 x))
 
     (defpublic matrix-inv (x)
         (unless (square-matrix-p x)
@@ -373,7 +372,7 @@
     (defun inv1 (x m)
         (let ((d (det x)))
            (when (= d 0) (error "inv determinant is zero" x))
-           (* (quotient 1 d) (transpose (inv2 x m)))))
+           (mult-scalar-mat (quotient 1 d) (transpose (inv2 x m)))))
 
     (defun inv2 (x m)
         (let ((y (create-array (list m m) 0)))
@@ -382,7 +381,7 @@
                  y )
                 (for ((j 1 (+ j 1)))
                      ((> j m))
-                     (set-aref1 y i j (* (sign (+ i j)) (det (sub-matrix x i j))))))))
+                     (set-aref1 (* (sign (+ i j)) (det (sub-matrix x i j))) y i j)))))
 
     
 )

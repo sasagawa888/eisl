@@ -68,7 +68,7 @@ Calculates the Euclidean norm of vector `x`
 #### (vector-normalize x)
 Normalizes vector `x`
 
-#### (matrix-cartesian *vector+*)
+#### (vector-cartesian *vector+*)
 Returns the cartesian product of the vectors `vector`
 
 #### (matrix-det x)

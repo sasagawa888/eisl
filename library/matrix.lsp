@@ -50,7 +50,7 @@
 (defmacro matrix-hadamard (:rest operands)
     `(matrix::element-wise-product ,@operands) )
 
-(defmacro matrix-cartesian (:rest vectors)
+(defmacro vector-cartesian (:rest vectors)
     `(matrix::cartesian-product ,@vectors) )
 
 (defun matrix-transpose (x)
@@ -290,7 +290,7 @@
         (let ((dim (array-dimensions x)))
            (and (= (length dim) 2) (= (elt dim 0) (elt dim 1)))))
 
-    ;; calculate trace of matrix
+    ;;; calculate trace of matrix
     (defpublic matrix-tr (x)
         (unless (square-matrix-p x) (error "tr require square matrix" x))
         (let ((l (elt (array-dimensions x) 0)))
@@ -316,7 +316,7 @@
                             ((and (> i r) (> j s)) (set-aref1 (aref1 x i j) y (- i 1) (- j 1)))
                             ((and (= i r) (= j s)) nil))))))
 
-    ;; determinant
+    ;;; determinant
     (defpublic matrix-det (x)
         (det x))
 
@@ -345,11 +345,12 @@
     (defun sign (x)
         (expt -1 x))
 
-    ;; inverse Gauss sweep method
+    ;;; inverse Gauss sweep out method
+    
+    ;; original matrix
     (defglobal mat1 nil)
-    ; original matrix
+    ;; inverse matrix
     (defglobal mat2 nil)
-    ; inverse matrix
     ;; access element (i,j) in rows matrix
     (defun rowref1 (mat i j)
         (elt (elt mat (- i 1)) (- j 1)))

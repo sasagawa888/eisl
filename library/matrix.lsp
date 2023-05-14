@@ -310,12 +310,12 @@
     (defun sub-matrix (x r s)
         (let* ((m (elt (array-dimensions x) 0))
                (n (elt (array-dimensions x) 1))
-               (y (create-array (- m 1) (- n 1) 0)) )
-            (for ((i 0 (+ i 1)))
-                 ((>= i m)
+               (y (create-array (list m n) 0)) )
+            (for ((i 1 (+ i 1)))
+                 ((> i m)
                   y )
-                 (for ((j 0 (+ j 1)))
-                      ((>= j n))
+                 (for ((j 1 (+ j 1)))
+                      ((> j n))
                       (cond ((and (< i r) (< j s)) (set-aref1 (aref1 x i j) y i j))
                             ((and (> i r) (< j s)) (set-aref1 (aref1 x i j) y (- i 1) j))
                             ((and (< i r) (> j s)) (set-aref1 (aref1 x i j) y i (- j 1)))
@@ -323,6 +323,9 @@
                             ((and (= i r) (= j s)) nil))))))
 
     (defpublic matrix-det (x)
+        (det x))
+
+    (defun det (x)
         (unless (square-matrix-p x)
                 (error "det require square matrix" x))
         (let ((m (elt (array-dimensions x) 0)))
@@ -343,6 +346,9 @@
                              (aref1 x i 1)
                              (det1 (sub-matrix x i 1) (- m 1)))
                           y)))))
+
+    (defun sign (x)
+        (expt -1 x) )
 
     (defpublic matrix-inv (x)
         (unless (square-matrix-p x)

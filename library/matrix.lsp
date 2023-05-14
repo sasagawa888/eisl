@@ -347,7 +347,7 @@
         (expt -1 x))
 
     
-    ;; inverse
+    ;; inverse Gauss sweep method
     (defglobal mat1 nil) ; original matrix
     (defglobal mat2 nil) ; inverse matrix
 
@@ -370,6 +370,8 @@
     ;; row(i) = row(i)-r*row(j)
     (defun sub-multed-row (i j r))
 
+    ;; row(i) = r*row(i)
+    (defun mult-row (i r))
 
     ;; inverse
     (defun inverse (mat)
@@ -377,11 +379,14 @@
             (setq mat1 (rows mat))
             (setq mat2 (rows (ident n)))
             (exchange-zero-row n)
+            (normalize-trace n)
             (erase-lower-triang n)
             (erase-upper-triang n))
         (rows->matrix mat2))
 
     (defun exchange-zero-row (n))
+
+    (defun normalize-row (n))
 
     (defun erase-lower-triang (n))
 

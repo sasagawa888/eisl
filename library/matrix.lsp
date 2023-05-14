@@ -48,10 +48,10 @@
     `(matrix::mult ,@operands) )
 
 (defmacro matrix-hadamard (:rest operands)
-    `(matrix::element-wise-product ,@operands))
+    `(matrix::element-wise-product ,@operands) )
 
 (defmacro matrix-cartesian (:rest vectors)
-    `(matrix::cartesian-product ,@vectors))
+    `(matrix::cartesian-product ,@vectors) )
 
 (defun matrix-transpose (x)
     (matrix::transpose x) )
@@ -72,10 +72,10 @@
     (matrix-::normalize x) )
 
 (defun matrix-elt (m i j)
-    (matrix::aref1 m i j))
+    (matrix::aref1 m i j) )
 
 (defun matrix-set-elt (v m i j)
-    (matrix::set-aref1 v m i j))
+    (matrix::set-aref1 v m i j) )
 
 (defmodule matrix
     (import "seq" map every reduce concatenate)
@@ -278,8 +278,6 @@
                            next-vector)))
             (reduce #'next-cartesian-product #(#()) vectors)))
 
-    ;;; added some functions from math library
-
     ;;; set element to matrix (index is start from 1)
     (defun set-aref1 (val mat i j)
         (set-aref val mat (- i 1) (- j 1)))
@@ -328,6 +326,7 @@
         (let ((m (elt (array-dimensions x) 0)))
            (det1 x m)))
 
+    
 
     (defun det1 (x m)
         (if (= m 2)
@@ -346,11 +345,11 @@
     (defun sign (x)
         (expt -1 x))
 
-    
     ;; inverse Gauss sweep method
-    (defglobal mat1 nil) ; original matrix
-    (defglobal mat2 nil) ; inverse matrix
-
+    (defglobal mat1 nil)
+    ; original matrix
+    (defglobal mat2 nil)
+    ; inverse matrix
     ;; access element (i,j) in rows matrix
     (defun rowref1 (mat i j)
         (elt (elt mat (- i 1)) (- j 1)))
@@ -358,23 +357,29 @@
     ;; ident matrix n*n
     (defun ident (n)
         (let ((mat (create-array (list n n) 0)))
-            (for ((i 1 (+ i 1)))
-                 ((> i n) mat)
-                 (set-aref1 1 mat i i)))) 
+           (for ((i 1 (+ i 1)))
+                ((> i n)
+                 mat )
+                (set-aref1 1 mat i i))))
 
-    ;; elementaly operation
+    ;; elementaly operations
     (defun exchange-row (i j)
         (let ((tmp1 (elt mat1 (- i 1)))
-              (tmp2 (elt mat2 (- i 1))))
-            (set-elt (elt mat1 (- j 1)) mat1 (- i 1))
-            (set-elt (elt mat2 (- j 1)) mat2 (- i 1))
-            (set-elt tmp mat1 (- i 1))
-            (set-elt tmp mat2 (- i 1))))
+              (tmp2 (elt mat2 (- i 1))) )
+           (set-elt (elt mat1 (- j 1)) mat1 (- i 1))
+           (set-elt (elt mat2 (- j 1)) mat2 (- i 1))
+           (set-elt tmp mat1 (- i 1))
+           (set-elt tmp mat2 (- i 1))))
+
     
     ;; row(i) = row(i)-r*row(j)
     (defun sub-multed-row (i j r)
-        (set-elt (sub (elt mat1 (- i 1)) (mult r (elt mat1 (- j 1)))) mat1 (- i 1))
-        (set-elt (sub (elt mat2 (- i 1)) (mult r (elt mat2 (- j 1)))) mat2 (- i 1)))
+        (set-elt (sub (elt mat1 (- i 1)) (mult r (elt mat1 (- j 1))))
+                 mat1
+                 (- i 1))
+        (set-elt (sub (elt mat2 (- i 1)) (mult r (elt mat2 (- j 1))))
+                 mat2
+                 (- i 1)))
 
     ;; row(i) = r*row(i)
     (defun mult-row (i r)
@@ -387,12 +392,12 @@
 
     (defun inverse (mat)
         (let ((n (elt (array-dimensions mat) 0)))
-            (setq mat1 (rows mat))
-            (setq mat2 (rows (ident n)))
-            (exchange-zero-row n)
-            (erase-lower-triang n)
-            (erase-upper-triang n)
-            (normalize-trace n))
+           (setq mat1 (rows mat))
+           (setq mat2 (rows (ident n)))
+           (exchange-zero-row n)
+           (erase-lower-triang n)
+           (erase-upper-triang n)
+           (normalize-trace n))
         (rows->matrix mat2))
 
     (defun exchange-zero-row (n)
@@ -400,13 +405,16 @@
              ((> i n))
              (if (= (rowref1 mat1 i i) 0)
                  (exchange-zero-row1 m n))))
+
     
     (defun exchange-zero-row1 (m n)
-        (for ((i (+ m 1) (+ i 1)))
-             ((> i n))
-             (if (/= (rowref1 mat1 i m) 0)
-                 (exchange-row i m))))
+        (block exit
+           (for ((i (+ m 1) (+ i 1)))
+                ((> i n)
+                 (error "not regular matrix") )
+                (cond ((/= (rowref1 mat1 i m) 0) (exchange-row i m) (return-from exit nil))))))
 
+    
 
     (defun normalize-trace (n)
         (for ((i 1 (+ i 1)))
@@ -420,8 +428,7 @@
              (for ((j (+ i 1) (+ j 1)))
                   ((> j n))
                   (if (/= (rowref1 mat1 j i) 0)
-                      (sub-multed-row j i
-                       (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
+                      (sub-multed-row j i (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
 
     (defun erase-upper-triang (n)
         (for ((i 2 (+ i 1)))
@@ -429,9 +436,9 @@
              (for ((j 1 (+ j 1)))
                   ((>= j i))
                   (if (/= (rowref1 mat1 j i) 0)
-                      (sub-multed-row j i 
-                        (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
-            
+                      (sub-multed-row j i (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
+
+    
 )
 
 

@@ -351,6 +351,10 @@
     (defglobal mat1 nil) ; original matrix
     (defglobal mat2 nil) ; inverse matrix
 
+    ;; access element (i,j) in rows matrix
+    (defun rowref1 (mat i j)
+        (elt (elt mat (- i 1)) (- j 1)))
+
     ;; ident matrix n*n
     (defun ident (n)
         (let ((mat (create-array (list n n) 0)))
@@ -368,29 +372,65 @@
             (set-elt tmp mat2 (- i 1))))
     
     ;; row(i) = row(i)-r*row(j)
-    (defun sub-multed-row (i j r))
+    (defun sub-multed-row (i j r)
+        (set-elt (sub (elt mat1 (- i 1)) (mult r (elt mat1 (- j 1)))) mat1 (- i 1))
+        (set-elt (sub (elt mat2 (- i 1)) (mult r (elt mat2 (- j 1)))) mat2 (- i 1)))
 
     ;; row(i) = r*row(i)
-    (defun mult-row (i r))
+    (defun mult-row (i r)
+        (set-elt (mult r (elt mat1 (- i 1))) mat1 (- i 1))
+        (set-elt (mult r (elt mat2 (- i 1))) mat2 (- i 1)))
 
     ;; inverse
+    (defpublic matrix-inverse (mat)
+        (inverse mat))
+
     (defun inverse (mat)
         (let ((n (elt (array-dimensions mat) 0)))
             (setq mat1 (rows mat))
             (setq mat2 (rows (ident n)))
             (exchange-zero-row n)
-            (normalize-trace n)
             (erase-lower-triang n)
-            (erase-upper-triang n))
+            (erase-upper-triang n)
+            (normalize-trace n))
         (rows->matrix mat2))
 
-    (defun exchange-zero-row (n))
+    (defun exchange-zero-row (n)
+        (for ((i 1 (+ i 1)))
+             ((> i n))
+             (if (= (rowref1 mat1 i i) 0)
+                 (exchange-zero-row1 m n))))
+    
+    (defun exchange-zero-row1 (m n)
+        (for ((i (+ m 1) (+ i 1)))
+             ((> i n))
+             (if (/= (rowref1 mat1 i m) 0)
+                 (exchange-row i m))))
 
-    (defun normalize-row (n))
 
-    (defun erase-lower-triang (n))
+    (defun normalize-trace (n)
+        (for ((i 1 (+ i 1)))
+             ((> i n))
+             (if (/= (rowref1 mat1 i i) 1)
+                 (mult-row i (quotient 1 (rowref1 mat1 i i))))))
 
-    (defun erase-upper-triang (n))
+    (defun erase-lower-triang (n)
+        (for ((i 1 (+ i 1)))
+             ((> i n))
+             (for ((j (+ i 1) (+ j 1)))
+                  ((> j n))
+                  (if (/= (rowref1 mat1 j i) 0)
+                      (sub-multed-row j i
+                       (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
+
+    (defun erase-upper-triang (n)
+        (for ((i 2 (+ i 1)))
+             ((> i n))
+             (for ((j 1 (+ j 1)))
+                  ((>= j i))
+                  (if (/= (rowref1 mat1 j i) 0)
+                      (sub-multed-row j i 
+                        (quotient (rowref1 mat1 j i) (rowref1 mat1 i i)))))))
             
 )
 

@@ -50,22 +50,25 @@
 (defmacro matrix-hadamard (:rest operands)
     `(matrix::element-wise-product ,@operands))
 
+(defmacro matrix-cartesian (:rest vectors)
+    `(matrix::cartesian-product ,@vectors))
+
 (defun matrix-transpose (x)
     (matrix::transpose x) )
 
 (defun matrix-negate (x)
     (matrix::negate x) )
 
-(defun matrix-dot (x y)
+(defun vector-dot (x y)
     (matrix::dot x y) )
 
-(defun matrix-cross (x y)
+(defun vector-cross (x y)
     (matrix::cross x y) )
 
-(defun matrix-norm (x)
+(defun vector-norm (x)
     (matrix::norm x) )
 
-(defun matrix-normalize (x)
+(defun vector-normalize (x)
     (matrix-::normalize x) )
 
 (defmodule matrix

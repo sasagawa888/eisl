@@ -63,8 +63,8 @@
   ($assert (matrix-sub test-matrix test-matrix) zeros-matrix)
 
   ($ap 2 "dot")
-  ($assert (matrix-dot #(1 2 3) #(1 1 1)) 6)
-  ($assert (matrix-dot #(1 2 3) #(0 0 0)) 0)
+  ($assert (vector-dot #(1 2 3) #(1 1 1)) 6)
+  ($assert (vector-dot #(1 2 3) #(0 0 0)) 0)
 
   ($ap 2 "mult")
   ($ap 3 "mult scalar scalar")
@@ -77,7 +77,7 @@
   ($assert (matrix-mult test-matrix identity-matrix) test-matrix)
 
   ($ap 2 "cross")
-  ($assert (matrix-cross #(1 2 3) #(4 5 6)) #(-3 6 -3))
+  ($assert (vector-cross #(1 2 3) #(4 5 6)) #(-3 6 -3))
   
 
   )

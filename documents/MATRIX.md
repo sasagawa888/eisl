@@ -50,10 +50,10 @@ Multiplies operands `operand` together from left to right
 #### (matrix-negate x)
 Negates `x`
 
-#### (matrix-dot x y)
+#### (vector-dot x y)
 Calculates the dot product of `x` and `y`
 
-#### (matrix-cross *x* *y*)
+#### (vector-cross *x* *y*)
 Calculates the cross product of `x` and `y`
 
 #### (matrix-norm x)

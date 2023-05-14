@@ -47,6 +47,9 @@
 (defmacro matrix-mult (:rest operands)
     `(matrix::mult ,@operands) )
 
+(defmacro matrix-hadamard (:rest operands)
+    `(matrix::element-wise-product ,@operands))
+
 (defun matrix-transpose (x)
     (matrix::transpose x) )
 

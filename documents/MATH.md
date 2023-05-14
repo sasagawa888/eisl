@@ -1,8 +1,6 @@
 # Math library
 A library of elementary mathematics written in ISLisp.
 I ported what I wrote in Scheme to understand linear algebra and elementary number theory to ISLisp.
-It also tests the EISL compiler.
-Linear algebra relations assume that subscripts start from 1 as in mathematics.
 
 # Functions
 ### (oddp n)
@@ -12,29 +10,6 @@ Linear algebra relations assume that subscripts start from 1 as in mathematics.
 ### (zerop n)
 
 ### (square n)
-    
-### (mult-scalar-mat s x)
-Multiply the elements of the matrix x by the scalar s.
-
-### (matrix-ident n)
-Identity matrix of size n.
-
-### (square-matrix-p x)
-
-### (tr x)
-Trace of matrix x.
-
-### (sub-matrix x r s)
-Submatrix of x for position (r, s)
-
-### (det x)
-Determinant of matrix x.
-
-### (transpose x)
-Transpose of matrix x.
-
-### (inv x)
-Inverse matrix using Cramer's rule. The efficiency is not good, but there is no problem if it is about 5 dimensions.
 
 ### (sum f ls)
 Sum of the values of the list ls after applying the function f to each element.

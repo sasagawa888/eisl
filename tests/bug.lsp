@@ -1,6 +1,11 @@
-(defun foo (x) )
+(defun handler (condition)
+  (continue-condition condition "continued"))
 
-(defgeneric foo (x) )
+(defun foo ()
+    (with-handler #'handler
+              (print (cerror "foo" "bar"))
+              (print (cerror "herp" "derp"))))
+
 
 ;($error
 ; (tagbody

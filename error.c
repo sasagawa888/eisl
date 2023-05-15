@@ -646,7 +646,9 @@ int signal_condition(int x, int y)
 	int handler;
 
 	handler = car(error_handler);
-	error_handler = cdr(error_handler);
+	/* if error is continuable, hold error_handler*/
+	if(y == NIL)
+		error_handler = cdr(error_handler);
 	return (apply(handler, list1(x)));
     }
     str = cdr(assoc(make_sym("a"), GET_CDR(x)));

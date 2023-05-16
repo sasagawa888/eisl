@@ -1,24 +1,20 @@
-(defun handler (condition)
-  (continue-condition condition "continued"))
+(defglobal error-count 0)
+
+(defun outer-handler (condition)
+  (continue-condition condition "outer handler continued"))
+
+(defun inner-handler (condition)
+  (if (< error-count 2) 
+      (progn 
+        (setf error-count (+ error-count 1))
+        (continue-condition condition "inner handler continued"))
+      (signal-condition condition (condition-continuable condition))))
 
 (defun foo ()
-    (with-handler #'handler
-              (print (cerror "foo" "bar"))
-              (print (cerror "herp" "derp"))))
-
-
-;($error
-; (tagbody
-;  tag1
-;  (tagbody
-;   tag2
-;   (unwind-protect 
-;       (go tag1) ;;; tag2 invalid
-;     (go tag2)))) <control-error>)
-;;;
-;;; sasagawa888 memo
-;;; ((lambda ()) (go tag)) ocuures wrong argument error (<program-error>).
-;;; processor find above error at first. I modify error case.
-
+  (with-handler #'outer-handler 
+                (with-handler #'inner-handler
+                              (print (cerror "foo" "bar"))
+                              (print (cerror "herp" "derp"))
+                              (print (cerror "bing" "bong")))))
 
 

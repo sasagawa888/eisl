@@ -4691,6 +4691,7 @@ int f_cerror(int arglist)
     return (signal_condition(makeusercond(cerror, arg2, arg3), arg1));
 }
 
+
 int f_signal_condition(int arglist)
 {
     int arg1, arg2;
@@ -4700,8 +4701,14 @@ int f_signal_condition(int arglist)
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "signal-condition", arglist);
 
-    signal_condition(arg1, arg2);
-    return (UNDEF);
+    /* if arg2 is not nil, it means continuable error. 
+    *  signal_condition must stop continuation.
+    *  So,pop error_handler. and move control to outer error_hander.
+    */
+    if (arg2 != NIL)
+        error_handler = cdr(error_handler);
+
+    return(signal_condition(arg1, arg2));
 }
 
 int f_simple_error_format_string(int arglist)

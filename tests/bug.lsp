@@ -1,3 +1,13 @@
+(defun handler (condition)
+  (throw 'tag "handled"))
+
+(defun baz ()
+  (with-handler #'handler
+                (print (catch 'tag
+                              (error "error")))
+                (print (catch 'tag
+                              (error "error")))))
+
 (defglobal error-count 0)
 
 (defun outer-handler (condition)

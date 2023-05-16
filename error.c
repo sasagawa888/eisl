@@ -625,6 +625,7 @@ int signal_condition(int x, int y)
 {
     int str, args, fun;
 
+	error_flag = true;
     if (y == NIL)
 	SET_OPT(x, NOTCONT);
     else {
@@ -647,8 +648,10 @@ int signal_condition(int x, int y)
 
 	handler = car(error_handler);
 	/* if error is continuable, hold error_handler*/
-	if(y == NIL)
+	if(y == NIL){
+		error_handler1 = error_handler;
 		error_handler = cdr(error_handler);
+	}
 	return (apply(handler, list1(x)));
     }
     str = cdr(assoc(make_sym("a"), GET_CDR(x)));

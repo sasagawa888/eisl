@@ -554,6 +554,7 @@ extern bool script_flag;
 extern bool handling_resource_err;
 extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
+extern bool error_flag;
 
 // try function
 extern bool try_flag;
@@ -583,6 +584,7 @@ extern int block_arg;		// argument that block will recieve
 extern int catch_arg;		// argument that catch will recieve
 extern int tagbody_tag;		// tag symbol address in tagbody
 extern int error_handler;
+extern int error_handler1;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 

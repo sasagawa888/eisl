@@ -1137,6 +1137,13 @@ int f_catch(int arglist)
 	    }
 	    unwind_pt = 0;
 	}
+	/*
+	*  while executing catch body, if error occurs restore error-handler
+	*/
+	if (error_flag) {
+		error_handler = error_handler1;
+	}
+
 	res = catch_arg;
 	catch_arg = NIL;
 	sp = save;

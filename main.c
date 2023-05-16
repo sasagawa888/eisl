@@ -165,7 +165,7 @@ bool script_flag = false;	/* for -s option */
 bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
-
+bool error_flag = false;    /* invoked error? */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -201,6 +201,7 @@ int block_arg;			/* receive argument of block */
 int catch_arg;			/* receive argument of catch */
 int tagbody_tag = NIL;		/* tag address fo tagbody */
 int error_handler = NIL;	/* for store first argument of with-handler */
+int error_handler1 = NIL;   /* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
 
@@ -416,6 +417,7 @@ void init_pointer(void)
     generic_func = NIL;
     generic_vars = NIL;
     big_pt0 = 0;
+	error_flag = false;
     /* clear nest level of tracing function. */
     ls = trace_list;
     while (!nullp(ls)) {

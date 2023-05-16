@@ -321,7 +321,7 @@
             (exchange-zero-row n)
             (erase-lower-triang n)
             (for ((i 1 (+ i 1)))
-                 ((> i n) result)
+                 ((> i n) (round result))
                  (setq result (* result (rowref1 mat1 i i))))))
 
 

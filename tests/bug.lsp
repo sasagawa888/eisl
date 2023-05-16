@@ -18,3 +18,4 @@
                               (print (cerror "bing" "bong")))))
 
 
+(defglobal a #2a((3 1 1 2)(5 1 3 4)(2 0 1 0)(1 3 2 1)))

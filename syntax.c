@@ -1142,6 +1142,7 @@ int f_catch(int arglist)
 	*/
 	if (error_flag) {
 		error_handler = error_handler1;
+		error_flag = false;
 	}
 
 	res = catch_arg;

@@ -300,57 +300,34 @@
                  y )
                 (setq y (+ (aref1 x i i) y)))))
 
-    ;; for determinant 
-    (defun sub-matrix (x r s)
-        (let* ((m (elt (array-dimensions x) 0))
-               (n (elt (array-dimensions x) 1))
-               (y (create-array (list m n) 0)) )
-            (for ((i 1 (+ i 1)))
-                 ((> i m)
-                  y )
-                 (for ((j 1 (+ j 1)))
-                      ((> j n))
-                      (cond ((and (< i r) (< j s)) (set-aref1 (aref1 x i j) y i j))
-                            ((and (> i r) (< j s)) (set-aref1 (aref1 x i j) y (- i 1) j))
-                            ((and (< i r) (> j s)) (set-aref1 (aref1 x i j) y i (- j 1)))
-                            ((and (> i r) (> j s)) (set-aref1 (aref1 x i j) y (- i 1) (- j 1)))
-                            ((and (= i r) (= j s)) nil))))))
+    
+    ;;; for determinant and inverse
+    ;; original matrix
+    (defglobal mat1 nil)
+    ;; inverse matrix in inverse
+    (defglobal mat2 nil)
 
-    ;;; determinant
+    ;;; determinant of matrix
     (defpublic matrix-det (x)
         (det x))
 
-    (defun det (x)
-        (unless (square-matrix-p x)
-                (error "det require square matrix" x))
-        (let ((m (elt (array-dimensions x) 0)))
-           (det1 x m)))
+    ;;; transform to upper triang and calculate product of diagonal
+    (defun det (mat)
+        (unless (square-matrix-p mat) (error "matrix-det not square matrix"))
+        (let ((n (elt (array-dimensions mat) 0))
+              (result 1))
+            (setq mat1 (rows mat))
+            (setq mat2 (rows (ident n))) ; ignore mat2
+            (exchange-zero-row n)
+            (erase-lower-triang n)
+            (for ((i 1 (+ i 1)))
+                 ((> i n) result)
+                 (setq result (* result (rowref1 mat1 i i))))))
 
-    
 
-    (defun det1 (x m)
-        (if (= m 2)
-            (- (* (aref1 x 1 1) (aref1 x 2 2))
-               (* (aref1 x 1 2) (aref1 x 2 1)))
-            (for ((i 1 (+ i 1))
-                  (y 0) )
-                 ((> i m)
-                  y )
-                 (setq y
-                       (+ (* (sign (+ i 1))
-                             (aref1 x i 1)
-                             (det1 (sub-matrix x i 1) (- m 1)))
-                          y)))))
-
-    (defun sign (x)
-        (expt -1 x))
 
     ;;; inverse Gauss sweep out method
     
-    ;; original matrix
-    (defglobal mat1 nil)
-    ;; inverse matrix
-    (defglobal mat2 nil)
     ;; access element (i,j) in rows matrix
     (defun rowref1 (mat i j)
         (elt (elt mat (- i 1)) (- j 1)))
@@ -399,7 +376,7 @@
            (exchange-zero-row n)
            (erase-lower-triang n)
            (erase-upper-triang n)
-           (normalize-trace n))
+           (normalize-diagonal n))
         (rows->matrix mat2))
 
     (defun exchange-zero-row (n)
@@ -418,7 +395,7 @@
 
     
 
-    (defun normalize-trace (n)
+    (defun normalize-diagonal (n)
         (for ((i 1 (+ i 1)))
              ((> i n))
              (if (/= (rowref1 mat1 i i) 1)

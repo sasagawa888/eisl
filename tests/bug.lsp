@@ -1,3 +1,21 @@
+(defun unwind1 ()
+  (unwind-protect 
+    (progn
+      (catch 'tag
+           (unwind-protect
+                  (throw 'tag "thrown")
+                  (print "should be printed first")))
+      (print "should be printed second"))
+    (print "should be printed third")))
+
+(defun unwind2 ()
+  (unwind-protect
+    (progn
+      (catch 'tag
+           (throw 'tag "thrown"))
+      (print "should be printed first"))
+    (print "should be printed second")))
+
 (defun handler (condition)
   (throw 'tag "handled"))
 

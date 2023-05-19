@@ -1121,6 +1121,7 @@ int f_catch(int arglist)
 	error(CTRL_OVERF, "catch tag nest", tag);
 
     catch_env[GET_OPT(tag) - 1][i] = ep;	/* save environment */
+	error_flag = false; /* reset error_flag*/
     ret = setjmp(catch_buf[GET_OPT(tag) - 1][i]);
 
 

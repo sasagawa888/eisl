@@ -555,6 +555,7 @@ extern bool handling_resource_err;
 extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
 extern bool error_flag;
+extern bool unwind_flag;
 
 // try function
 extern bool try_flag;

@@ -1156,7 +1156,7 @@ int f_throw(int arglist)
 
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "throw", tag);
-    if (GET_OPT(tag) == 0)	/* tag opt has 1~4 */
+    if (GET_OPT(tag) == 0)	/* tag opt has 1~CTRLSTK */
 	error(UNDEF_TAG, "throw", tag);
     if (GET_PROP(tag) == 0)
 	error(CTRL_OVERF, "throw", tag);
@@ -1164,6 +1164,14 @@ int f_throw(int arglist)
 	error(WRONG_ARGS, "throw", arglist);
     if (improper_list_p(arglist))
 	error(ILLEGAL_FORM, "throw", arglist);
+
+	/* memo
+	*  while executing unwind-protect, execute clean-up before throw.
+	*/
+	if (unwind_flag){
+		unwind_pt--;
+		apply(unwind_buf[unwind_pt], NIL);
+	}
 
     catch_arg = eval(arg2);
     i = GET_PROP(tag);
@@ -1231,13 +1239,16 @@ int f_go(int arglist)
     return (T);
 }
 
-
+/* unwind-protect memo 
+* body know while executing unwind-protect by uneind_flag.
+* if throw occurs in body, throw execute clean-up before.
+*/
 int f_unwind_protect(int arglist)
 {
     int arg1, args, res;
 
-    arg1 = car(arglist);
-    args = cdr(arglist);
+    arg1 = car(arglist); // body
+    args = cdr(arglist); // clean-up
     if (nullp(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
@@ -1245,15 +1256,11 @@ int f_unwind_protect(int arglist)
 
     unwind_buf[unwind_pt] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
+	unwind_flag = true;
     res = eval(arg1);
-    //if (unwind_pt > 0) {
+	unwind_flag = false;
 	unwind_pt--;
-	//while (unwind_pt >= 0) {
-	    apply(unwind_buf[unwind_pt], NIL);
-	//    unwind_pt--;
-	//}
-	//unwind_pt = 0;
-    //}
+	apply(unwind_buf[unwind_pt], NIL);
     return (res);
 }
 

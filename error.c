@@ -50,6 +50,7 @@ void error(int errnum, const char *fun, int arg)
 	    unwind_pt--;
 	}
 	unwind_pt = 0;
+	unwind_flag = false;
     }
     // initialize block-pointer
     block_pt = 0;

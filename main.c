@@ -166,6 +166,7 @@ bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;    /* invoked error? */
+bool unwind_flag = false;   /* executing unwind-protect? */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -204,7 +205,8 @@ int error_handler = NIL;	/* for store first argument of with-handler */
 int error_handler1 = NIL;   /* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
-int function_nest_count;    /* for catch-function 
+int function_nest_count;    /* for block syntax
+                            *  return-from must be in same function. 
                             *  when enter function plus 1 to function_nest_count.
 							*  when exit function minus 1 from function_nest_count.
 							*/

@@ -588,8 +588,6 @@ extern int error_handler1;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 extern int function_nest_count;
-extern int catch_nest_count;  
-extern int block_nest_count;
 
 extern int ed_lparen_col;
 extern int ed_rparen_col;

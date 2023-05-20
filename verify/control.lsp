@@ -716,7 +716,7 @@
 ;;;
 ($test (catch 'a) nil)
 ($test (catch 'a 1) 1 eql)
-($test (catch 'a 1 2) 2 eql)
+($test (catch 'a 1 2) 2 eql) 
 ;;;
 ($eval (defglobal x nil))
 ($test (catch 'c
@@ -724,7 +724,7 @@
    (setq x (cons 2 x))
    999) 999 eql)
 ($test x (2 1) equal)
-;;;
+;;; 
 ($eval (defglobal x nil))
 ($test (catch 'c
    (setq x (cons 1 x))
@@ -762,12 +762,11 @@
 	(lambda () 2)
 	(throw 'c 999)) 999 eql)
 ($test (catch 'c
-	((lambda (x) (throw 'c x)) 999)) 999 eql)
+	((lambda (x) (throw 'c x)) 999)) 999 eql) 
 ;;;
 ($argc catch 1 0 1)
 ($error (catch) <program-error>)
 ($error (catch . 1) <program-error>)
-#|
 ($argc throw 2 0 0)
 ($error (catch 'c
 	       (throw 'c)) <program-error>)
@@ -784,10 +783,9 @@
 ($error (throw 1234 nil) <error>)
 ($error (throw 1.234 nil) <error>)
 ($error (throw #\a nil) <error>)
-;;; 
+;;;  
 ($error (catch 'c
 	  (throw 'd 88) 99) <control-error>)
-|#
 ;;; invalid-tag
 ;($error
 ; (catch 'c1

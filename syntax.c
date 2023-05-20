@@ -1037,8 +1037,8 @@ int f_block(int arglist)
 	block_nest_count--;
 	return (res);
     } else if (ret == 1) {
-	if (current_block_nest != block_nest_count)
-		error(UNDEF_TAG, "return-from", tag);
+	//if (current_block_nest != block_nest_count)
+	//	error(UNDEF_TAG, "return-from", tag);
 	block_nest_count--;
 	if (unwind_pt > 0) {
 	    unwind_pt--;
@@ -1141,10 +1141,10 @@ int f_catch(int arglist)
 	catch_nest_count--;
 	return (res);
     } else if (ret == 1) {
-	if (current_catch_nest != catch_nest_count)
-		error(UNDEF_TAG,"throw",tag);
+	//if (current_catch_nest != catch_nest_count)
+	//	error(UNDEF_TAG,"throw",tag);
 	catch_nest_count--;
-	if (unwind_pt > 0) {
+	if (/*current_function_nest != function_nest_count &&*/ unwind_pt > 0) {
 		/* now ponding
 		*  if current_function_nest == function_nest_count throw occures in inner body.
 		*  catch invoke unwind-form if only throw occures in outer body.
@@ -1187,7 +1187,7 @@ int f_throw(int arglist)
     if (GET_OPT(tag) == 0)	/* tag opt has 1~4 */
 	error(UNDEF_TAG, "throw", tag);
     if (GET_PROP(tag) == 0)
-	error(CTRL_OVERF, "throw", NIL);
+	error(CTRL_OVERF, "throw", tag);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "throw", arglist);
     if (improper_list_p(arglist))

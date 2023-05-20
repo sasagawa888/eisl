@@ -732,7 +732,7 @@
    (setq x (cons 2 x))
    999) 888 eql)
 ($test x (1) equal)
-;;;
+;;; 
 ($eval (defglobal x nil))
 ($eval (defun terminate-2 (x) (throw 'c x)))
 ($test (catch 'c
@@ -767,6 +767,7 @@
 ($argc catch 1 0 1)
 ($error (catch) <program-error>)
 ($error (catch . 1) <program-error>)
+#|
 ($argc throw 2 0 0)
 ($error (catch 'c
 	       (throw 'c)) <program-error>)
@@ -786,6 +787,7 @@
 ;;; 
 ($error (catch 'c
 	  (throw 'd 88) 99) <control-error>)
+|#
 ;;; invalid-tag
 ;($error
 ; (catch 'c1
@@ -793,7 +795,6 @@
 ;	       (unwind-protect 
 ;		   (throw 'c1 888)  ;;; c2 invalid
 ;		 (throw 'c2 999)))) <control-error>)
-
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;

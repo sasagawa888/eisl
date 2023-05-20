@@ -1144,9 +1144,10 @@ int f_catch(int arglist)
 	if (current_catch_nest != catch_nest_count)
 		error(UNDEF_TAG,"throw",tag);
 	catch_nest_count--;
-	if (current_function_nest != function_nest_count && unwind_pt > 0) {
-		/* if current_nest == function_nest_count throw occures in inner body.
-		*  chatch invoke unwind-form if only throw occures in outer body.
+	if (unwind_pt > 0) {
+		/* now ponding
+		*  if current_function_nest == function_nest_count throw occures in inner body.
+		*  catch invoke unwind-form if only throw occures in outer body.
 		*/
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {

@@ -1089,7 +1089,7 @@ int f_return_from(int arglist)
 
 int f_catch(int arglist)
 {
-    int arg1, arg2, i, tag, ret, res, save, current_nest;
+    int arg1, arg2, i, tag, ret, res, save, current_function_nest;
 
     save = sp;
     arg1 = car(arglist);	/* tag */
@@ -1122,7 +1122,7 @@ int f_catch(int arglist)
 
     catch_env[GET_OPT(tag) - 1][i] = ep;	/* save environment */
 	error_flag = false; /* reset error_flag*/
-	current_nest = nest_count;  /* save nest_count*/
+	current_function_nest = function_nest_count;  /* save function_nest_count*/
     ret = setjmp(catch_buf[GET_OPT(tag) - 1][i]);
 
 
@@ -1131,8 +1131,8 @@ int f_catch(int arglist)
 	SET_PROP(tag, GET_PROP(tag) - 1);	/* nest level -1 */
 	return (res);
     } else if (ret == 1) {
-	if (current_nest != nest_count && unwind_pt > 0) {
-		/* if current_nest == nest_count throw occures in inner body.
+	if (current_function_nest != function_nest_count && unwind_pt > 0) {
+		/* if current_nest == function_nest_count throw occures in inner body.
 		*  chatch invoke unwind-form if only throw occures in outer body.
 		*/
 	    unwind_pt--;

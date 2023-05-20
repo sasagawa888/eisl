@@ -1001,7 +1001,7 @@ int f_for(int arglist)
 
 int f_block(int arglist)
 {
-    int arg1, arg2, tag, ret, res;
+    int arg1, arg2, tag, ret, res, current_block_nest;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1026,14 +1026,20 @@ int f_block(int arglist)
     block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
     /* save flag. if exist return-from 1 else -1 */
     block_pt++;
+	block_nest_count++;
+	current_block_nest = block_nest_count;
     ret = setjmp(block_buf[block_pt - 1]);
 
 
     if (ret == 0) {
 	res = f_progn(arg2);
 	block_pt--;
+	block_nest_count--;
 	return (res);
     } else if (ret == 1) {
+	if (current_block_nest != block_nest_count)
+		error(UNDEF_TAG, "return-from", tag);
+	block_nest_count--;
 	if (unwind_pt > 0) {
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
@@ -1089,7 +1095,8 @@ int f_return_from(int arglist)
 
 int f_catch(int arglist)
 {
-    int arg1, arg2, i, tag, ret, res, save, current_function_nest;
+    int arg1, arg2, i, tag, ret, res, save,
+	    current_function_nest,current_catch_nest;
 
     save = sp;
     arg1 = car(arglist);	/* tag */
@@ -1123,14 +1130,20 @@ int f_catch(int arglist)
     catch_env[GET_OPT(tag) - 1][i] = ep;	/* save environment */
 	error_flag = false; /* reset error_flag*/
 	current_function_nest = function_nest_count;  /* save function_nest_count*/
+	catch_nest_count++;
+	current_catch_nest = catch_nest_count;
     ret = setjmp(catch_buf[GET_OPT(tag) - 1][i]);
 
 
     if (ret == 0) {
 	res = f_progn(arg2);
 	SET_PROP(tag, GET_PROP(tag) - 1);	/* nest level -1 */
+	catch_nest_count--;
 	return (res);
     } else if (ret == 1) {
+	if (current_catch_nest != catch_nest_count)
+		error(UNDEF_TAG,"throw",tag);
+	catch_nest_count--;
 	if (current_function_nest != function_nest_count && unwind_pt > 0) {
 		/* if current_nest == function_nest_count throw occures in inner body.
 		*  chatch invoke unwind-form if only throw occures in outer body.

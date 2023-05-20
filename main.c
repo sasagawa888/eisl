@@ -208,6 +208,8 @@ int function_nest_count;    /* for catch-function
                             *  when enter function plus 1 to function_nest_count.
 							*  when exit function minus 1 from function_nest_count.
 							*/
+int catch_nest_count;       /* for catch error check catch & throw set has same nest level*/
+int block_nest_count;       /* for block error check block & return-from set has same nest level*/
 
 /* -----debugger----- */
 int examin_sym;

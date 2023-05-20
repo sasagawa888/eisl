@@ -555,7 +555,6 @@ extern bool handling_resource_err;
 extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
 extern bool error_flag;
-extern bool unwind_flag;
 
 // try function
 extern bool try_flag;
@@ -588,8 +587,8 @@ extern int error_handler;
 extern int error_handler1;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
-extern int function_nest_count;
-
+extern int function_nest;
+extern int unwind_nest;
 extern int ed_lparen_col;
 extern int ed_rparen_col;
 extern const char *ed_candidate[COMPLETION_CANDIDATES_MAX];

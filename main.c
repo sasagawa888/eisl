@@ -166,7 +166,6 @@ bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;    /* invoked error? */
-bool unwind_flag = false;   /* executing unwind-protect? */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -205,11 +204,12 @@ int error_handler = NIL;	/* for store first argument of with-handler */
 int error_handler1 = NIL;   /* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
-int function_nest_count;    /* for block syntax
+int function_nest;          /* for block syntax
                             *  return-from must be in same function. 
-                            *  when enter function plus 1 to function_nest_count.
-							*  when exit function minus 1 from function_nest_count.
+                            *  when enter function plus 1 to function_nest.
+							*  when exit function minus 1 from function_nest.
 							*/
+int unwind_nest;
 
 /* -----debugger----- */
 int examin_sym;
@@ -423,7 +423,8 @@ void init_pointer(void)
     generic_func = NIL;
     generic_vars = NIL;
     big_pt0 = 0;
-	function_nest_count = 0;
+	function_nest = 0;
+	unwind_nest = 0;
     /* clear nest level of tracing function. */
     ls = trace_list;
     while (!nullp(ls)) {
@@ -1732,7 +1733,7 @@ int apply(int func, int args)
     case FSUBR:
 	return ((GET_SUBR(func)) (args));
     case FUNC:
-	function_nest_count++;
+	function_nest++;
 	if (try_flag == true)
 	    try_res = cons(args, try_res);
 	if (GET_TR(examin_sym) == 1) {
@@ -1792,7 +1793,7 @@ int apply(int func, int args)
 	shelter_pop();
 	shelter_pop();
 	ep = pop();
-	function_nest_count--;
+	function_nest--;
 	return (res);
     case MACRO:
 	{
@@ -1827,7 +1828,7 @@ int apply(int func, int args)
     case GENERIC:
 	{
 	    int save1, save2, save3;
-		function_nest_count++;
+		function_nest++;
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
 		    error(WRONG_ARGS, GET_NAME(func), args);
@@ -1897,7 +1898,7 @@ int apply(int func, int args)
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;
-		function_nest_count--;
+		function_nest--;
 	    return (res);
 	}
     default:

@@ -1168,7 +1168,7 @@ int f_throw(int arglist)
 	/* memo
 	*  while executing unwind-protect, execute clean-up before throw.
 	*/
-	if (unwind_flag){
+	if (unwind_nest > 0){
 		unwind_pt--;
 		apply(unwind_buf[unwind_pt], NIL);
 	}
@@ -1256,9 +1256,9 @@ int f_unwind_protect(int arglist)
 
     unwind_buf[unwind_pt] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
-	unwind_flag = true;
+	unwind_nest++;
     res = eval(arg1);
-	unwind_flag = false;
+	unwind_nest--;
 	unwind_pt--;
 	apply(unwind_buf[unwind_pt], NIL);
     return (res);

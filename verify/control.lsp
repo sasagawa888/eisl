@@ -968,7 +968,7 @@
    (throw 'outer 6)))
 
 ; Why? sasagawa888 segmentation fault 
-;($error (test) <control-error>) 
+($error (test) <control-error>) 
 ;;; 
 ($argc unwind-protect 1 0 1)
 ($error (unwind-protect) <program-error>)

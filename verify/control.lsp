@@ -698,12 +698,12 @@
 	       (return-from c 88)
 	       99) <control-error>)
 ;;; invalid-tag
-;($error
-; (block b1
-;	(block b2
-;	       (unwind-protect 
-;		   (return-from b1 888) ;;; b2 invalid
-;		 (return-from b2 999)))) <control-error>)
+($error
+ (block b1
+	(block b2
+	       (unwind-protect 
+		   (return-from b1 888) ;;; b2 invalid
+		 (return-from b2 999)))) <control-error>)
 
 ;;;------------------------------------------------------------
 ;;; [special operator]
@@ -787,12 +787,12 @@
 ($error (catch 'c
 	  (throw 'd 88) 99) <control-error>)
 ;;; invalid-tag
-;($error
-; (catch 'c1
-;	(catch 'c2
-;	       (unwind-protect 
-;		   (throw 'c1 888)  ;;; c2 invalid
-;		 (throw 'c2 999)))) <control-error>)
+($error
+ (catch 'c1
+	(catch 'c2
+	       (unwind-protect 
+		   (throw 'c1 888)  ;;; c2 invalid
+		 (throw 'c2 999)))) <control-error>)
 ;;;------------------------------------------------------------
 ;;; [special operator]
 ;;;

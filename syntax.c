@@ -1039,7 +1039,7 @@ int f_block(int arglist)
 	/* while executing occures block & return-from, basicaly return-from resolve clean-up.
 	 * But, if remain not-resolved clean-up, block resolve all clean-up.
 	 */
-	if (unwind == 0 && unwind_pt > 0) {	
+	if (unwind == 0 && unwind_pt >= 0) {	
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
 		apply(unwind_buf[unwind_pt], NIL);
@@ -1092,7 +1092,8 @@ int f_return_from(int arglist)
      */
     if (unwind_nest > 0 &&
 	catch_env[block_pt][2] !=
-	unwind_nest) {
+	unwind_nest && 
+	unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
 	apply(unwind_buf[unwind_pt], NIL);
@@ -1152,7 +1153,7 @@ int f_catch(int arglist)
 	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
 	 * But, if remain not-resolved clean-up, catch resolve all clean-up.
 	 */
-	if (unwind == 0 && unwind_pt > 0) {
+	if (unwind == 0 && unwind_pt >= 0) {
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
 		apply(unwind_buf[unwind_pt], NIL);
@@ -1203,7 +1204,8 @@ int f_throw(int arglist)
      */
     if (unwind_nest > 0 &&
 	catch_unwind_nest[GET_OPT(tag) - 1][GET_PROP(tag) - 1] !=
-	unwind_nest) {
+	unwind_nest &&
+	unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
 	apply(unwind_buf[unwind_pt], NIL);

@@ -569,7 +569,7 @@ extern int area_sw;
 extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
 extern int block_tag_check[NESTED_BLOCKS_MAX];
-extern int block_env[NESTED_BLOCKS_MAX][2];
+extern int block_env[NESTED_BLOCKS_MAX][3];
 extern jmp_buf catch_buf[CTRLSTK][10];
 extern int catch_env[CTRLSTK][10];
 extern int catch_unwind_nest[CTRLSTK][10];

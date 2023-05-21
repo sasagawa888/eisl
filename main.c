@@ -185,7 +185,7 @@ Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
     { "Exit interpreter" };
 jmp_buf block_buf[NESTED_BLOCKS_MAX];
 int block_tag_check[NESTED_BLOCKS_MAX];
-int block_env[NESTED_BLOCKS_MAX][2];
+int block_env[NESTED_BLOCKS_MAX][3];
 jmp_buf catch_buf[CTRLSTK][10];
 int catch_env[CTRLSTK][10];
 int catch_unwind_nest[CTRLSTK][10];

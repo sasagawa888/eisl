@@ -1001,7 +1001,7 @@ int f_for(int arglist)
 
 int f_block(int arglist)
 {
-    int arg1, arg2, tag, ret, res;
+    int arg1, arg2, tag, ret, res, unwind;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1017,15 +1017,17 @@ int f_block(int arglist)
 
     tag = arg1;
 
-    if (block_pt >= 50)
+    if (block_pt >= CTRLSTK)
 	error(CTRL_OVERF, "block buffer over fllow", NIL);
 
 
     block_env[block_pt][0] = ep;	/* save environment */
     block_env[block_pt][1] = tag;	/* save tag symbol */
+	block_env[block_pt][2] = unwind_nest; /* save unwind_nest */
     block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
     /* save flag. if exist return-from 1 else -1 */
     block_pt++;
+	unwind = unwind_nest;
     ret = setjmp(block_buf[block_pt - 1]);
 
 
@@ -1034,7 +1036,10 @@ int f_block(int arglist)
 	block_pt--;
 	return (res);
     } else if (ret == 1) {
-	if (unwind_pt > 0) {
+	/* while executing occures block & return-from, basicaly return-from resolve clean-up.
+	 * But, if remain not-resolved clean-up, block resolve all clean-up.
+	 */
+	if (unwind == 0 && unwind_pt > 0) {	
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
 		apply(unwind_buf[unwind_pt], NIL);
@@ -1080,6 +1085,20 @@ int f_return_from(int arglist)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
     if (block_tag_check[block_pt] == -1)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
+
+	/* 
+     *  while executing unwind-protect, execute clean-up before return-from.
+     *  But, block & return-from occures in same unwind_nest level, not execute clean-up.
+     */
+    if (unwind_nest > 0 &&
+	catch_env[block_pt][2] !=
+	unwind_nest) {
+	unwind_pt--;
+	unwind_nest--;
+	apply(unwind_buf[unwind_pt], NIL);
+    }
+
+
     block_arg = f_progn(arg2);
     ep = block_env[block_pt][0];	/* restore environment */
     longjmp(block_buf[block_pt], 1);
@@ -1131,7 +1150,7 @@ int f_catch(int arglist)
 	return (res);
     } else if (ret == 1) {
 	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
-	 *  But, if remain not-resolved clean-up, catch resolve all clean-up.
+	 * But, if remain not-resolved clean-up, catch resolve all clean-up.
 	 */
 	if (unwind == 0 && unwind_pt > 0) {
 	    unwind_pt--;

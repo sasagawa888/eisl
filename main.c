@@ -183,9 +183,9 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 /* longjmp control and etc */
 Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
     { "Exit interpreter" };
-jmp_buf block_buf[NESTED_BLOCKS_MAX];
-int block_tag_check[NESTED_BLOCKS_MAX];
-int block_env[NESTED_BLOCKS_MAX][3];
+jmp_buf block_buf[CTRLSTK];
+int block_tag_check[CTRLSTK];
+int block_env[CTRLSTK][3];
 jmp_buf catch_buf[CTRLSTK][10];
 int catch_env[CTRLSTK][10];
 int catch_unwind_nest[CTRLSTK][10];

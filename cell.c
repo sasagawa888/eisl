@@ -1047,4 +1047,3 @@ int make_dummy(void)
     SET_AUX(res, cnull);
     return (res);
 }
-

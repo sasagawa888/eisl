@@ -850,12 +850,15 @@ int f_get_myself(int arglist)
 
     arg1 = car(arglist);
     if (!symbolp(arg1))
-        error(NOT_SYM, "eisl-get-muself", arg1);
-    
+	error(NOT_SYM, "eisl-get-muself", arg1);
+
     if (IS_FUNC(GET_CAR(arg1)))
-        return (cons(make_sym("DEFUN"),cons(arg1,GET_CAR(GET_CAR(arg1)))));
-    else if(IS_MACRO(GET_CAR(arg1)))
-        return (cons(make_sym("DEFMACRO"),cons(arg1,GET_CAR(GET_CAR(GET_CAR(arg1))))));
+	return (cons
+		(make_sym("DEFUN"), cons(arg1, GET_CAR(GET_CAR(arg1)))));
+    else if (IS_MACRO(GET_CAR(arg1)))
+	return (cons
+		(make_sym("DEFMACRO"),
+		 cons(arg1, GET_CAR(GET_CAR(GET_CAR(arg1))))));
 }
 
 /* for Raspberry PI 

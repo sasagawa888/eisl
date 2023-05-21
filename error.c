@@ -159,7 +159,8 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
 	signal_condition(make_instance(cfloating_point_overflow, initargs),
-		make_str("Continuing ignores floating point overflow and the calculation returns infinity"));
+			 make_str
+			 ("Continuing ignores floating point overflow and the calculation returns infinity"));
 	break;
     case FLT_UNDERF:
 	initargs =
@@ -168,8 +169,10 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
-	signal_condition(make_instance(cfloating_point_underflow, initargs), 
-		make_str("Continuing ignores floating point underflow and the calculation returns zero"));
+	signal_condition(make_instance
+			 (cfloating_point_underflow, initargs),
+			 make_str
+			 ("Continuing ignores floating point underflow and the calculation returns zero"));
 	break;
     case FLT_OUT_OF_DOMAIN:
 	initargs =
@@ -281,7 +284,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("expected-class"), cstream);
 	signal_condition(make_instance(cdomain_error, initargs), NIL);
 	break;
-	case NOT_STREAM_ERROR:
+    case NOT_STREAM_ERROR:
 	initargs =
 	    list10(make_sym("format-string"), make_str("Not a stream at "),
 		   make_sym("format-arguments"), arg, make_sym("function"),
@@ -626,7 +629,7 @@ int signal_condition(int x, int y)
 {
     int str, args, fun;
 
-	error_flag = true;
+    error_flag = true;
     if (y == NIL)
 	SET_OPT(x, NOTCONT);
     else {
@@ -648,10 +651,10 @@ int signal_condition(int x, int y)
 	int handler;
 
 	handler = car(error_handler);
-	/* if error is continuable, hold error_handler*/
-	if(y == NIL){
-		error_handler1 = error_handler;
-		error_handler = cdr(error_handler);
+	/* if error is continuable, hold error_handler */
+	if (y == NIL) {
+	    error_handler1 = error_handler;
+	    error_handler = cdr(error_handler);
 	}
 	return (apply(handler, list1(x)));
     }

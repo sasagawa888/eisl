@@ -1119,9 +1119,9 @@ int f_catch(int arglist)
 	error(CTRL_OVERF, "catch tag nest", tag);
 
     catch_env[GET_OPT(tag) - 1][i] = ep;	/* save environment */
-	catch_unwind_nest[GET_OPT(tag) - 1][i] = unwind_nest; /* save unwind_nest */
-	error_flag = false; /* reset error_flag*/
-	unwind = unwind_nest;
+    catch_unwind_nest[GET_OPT(tag) - 1][i] = unwind_nest;	/* save unwind_nest */
+    error_flag = false;		/* reset error_flag */
+    unwind = unwind_nest;
     ret = setjmp(catch_buf[GET_OPT(tag) - 1][i]);
 
 
@@ -1131,22 +1131,22 @@ int f_catch(int arglist)
 	return (res);
     } else if (ret == 1) {
 	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
-	*  But, if remain not-resolved clean-up, catch resolve all clean-up.
-	*/
+	 *  But, if remain not-resolved clean-up, catch resolve all clean-up.
+	 */
 	if (unwind == 0 && unwind_pt > 0) {
+	    unwind_pt--;
+	    while (unwind_pt >= 0) {
+		apply(unwind_buf[unwind_pt], NIL);
 		unwind_pt--;
-		while (unwind_pt >= 0) {
-	    	apply(unwind_buf[unwind_pt], NIL);
-	    	unwind_pt--;
-		}
-		unwind_pt = 0;
-		unwind_nest = 0;
+	    }
+	    unwind_pt = 0;
+	    unwind_nest = 0;
 	}
 
 	/* while executing catch body, if error occurs restore error-handler */
 	if (error_flag) {
-		error_handler = error_handler1;
-		error_flag = false;
+	    error_handler = error_handler1;
+	    error_flag = false;
 	}
 
 	res = catch_arg;
@@ -1178,17 +1178,18 @@ int f_throw(int arglist)
     if (improper_list_p(arglist))
 	error(ILLEGAL_FORM, "throw", arglist);
 
-	/* 
-	*  while executing unwind-protect, execute clean-up before throw.
-	*  But, catch & throw occures in same unwind_nest level, not execute clean-up.
-	*/	
-	if (unwind_nest > 0 &&
-		catch_unwind_nest[GET_OPT(tag)-1][GET_PROP(tag)-1] != unwind_nest){
-		unwind_pt--;
-		unwind_nest--;
-		apply(unwind_buf[unwind_pt], NIL);
-	}
-	
+    /* 
+     *  while executing unwind-protect, execute clean-up before throw.
+     *  But, catch & throw occures in same unwind_nest level, not execute clean-up.
+     */
+    if (unwind_nest > 0 &&
+	catch_unwind_nest[GET_OPT(tag) - 1][GET_PROP(tag) - 1] !=
+	unwind_nest) {
+	unwind_pt--;
+	unwind_nest--;
+	apply(unwind_buf[unwind_pt], NIL);
+    }
+
     catch_arg = eval(arg2);
     i = GET_PROP(tag);
     SET_PROP(tag, i - 1);
@@ -1267,8 +1268,8 @@ int f_unwind_protect(int arglist)
 {
     int arg1, args, res;
 
-    arg1 = car(arglist); // body
-    args = cdr(arglist); // clean-up
+    arg1 = car(arglist);	// body
+    args = cdr(arglist);	// clean-up
     if (nullp(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
@@ -1276,11 +1277,11 @@ int f_unwind_protect(int arglist)
 
     unwind_buf[unwind_pt] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
-	unwind_nest++;
+    unwind_nest++;
     res = eval(arg1);
-	unwind_nest--;
-	unwind_pt--;
-	apply(unwind_buf[unwind_pt], NIL);
+    unwind_nest--;
+    unwind_pt--;
+    apply(unwind_buf[unwind_pt], NIL);
     return (res);
 }
 
@@ -1413,13 +1414,14 @@ int f_defclass(int arglist)
     if (!listp(arg3))
 	error(NOT_LIST, "defclass", arg3);
     if (!top_flag && !ignore_topchk) {
-	error(NOT_TOP_LEVEL, "defclass", arglist);}
+	error(NOT_TOP_LEVEL, "defclass", arglist);
+    }
 
-	/* if re define class of global variable, then it's class is <invalid> */
-	if (GET_CDR(arg1) != NIL){
-		SET_AUX(GET_CDR(arg1),cinvalid);
-		return(arg1);
-	}
+    /* if re define class of global variable, then it's class is <invalid> */
+    if (GET_CDR(arg1) != NIL) {
+	SET_AUX(GET_CDR(arg1), cinvalid);
+	return (arg1);
+    }
 
 
     sc = arg2;
@@ -2068,22 +2070,22 @@ int convert(int arg1, int arg2)
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
-		#ifdef __rpi__
+#ifdef __rpi__
 	    sprintf(str, "%lld", GET_LONG(arg1));
-		#else		
-		Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
-		#endif
+#else
+	    Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
+#endif
 	    return (make_str(str));
 	}
 	break;
-	case BIGN:
+    case BIGN:
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	}
 	break;
-	case INTN:
+    case INTN:
 	if (GET_AUX(arg2) == cinteger) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == ccharacter) {
@@ -2103,8 +2105,8 @@ int convert(int arg1, int arg2)
 	    return (make_sym(GET_NAME(arg1)));
 	} else if (GET_AUX(arg2) == ccharacter) {
 	    return (arg1);
-	} 
-	
+	}
+
 	break;
     case FLTN:
 	if (GET_AUX(arg2) == cfloat) {
@@ -2374,9 +2376,9 @@ int modulesubst(int addr, int module, int fname)
 	    && !eqp(addr, make_sym(":BOUNDP"))
 	    && !eqp(addr, make_sym(":INITFORM"))
 	    && !eqp(addr, make_sym(":INITARG"))
-		&& !eqp(addr, make_sym("*MOST-POSITIVE-FLOAT*"))
-		&& !eqp(addr, make_sym("*MOST-NEGATIVE-FLOAT*"))
-		&& !eqp(addr, make_sym("*PI*")))
+	    && !eqp(addr, make_sym("*MOST-POSITIVE-FLOAT*"))
+	    && !eqp(addr, make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    && !eqp(addr, make_sym("*PI*")))
 	    return (modulesubst1(addr, module));
 	else
 	    return (addr);

@@ -1819,10 +1819,10 @@ int f_map_into(int arglist)
 	error(ILLEGAL_ARGS, "map-into", arg1);
 
     if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	/* when arg2 is thunk (lambda () ...) */
-    val = map_into_thunk(arg2, arg4);
+	val = map_into_thunk(arg2, arg4);
     else
 	val = mapcar(arg2, arg4);
-    
+
     res = arg1;
     if (listp(arg1)) {
 	while (!nullp(val)) {
@@ -1863,8 +1863,8 @@ int map_into_thunk(int x, int y)
     int temp;
     if (nullp(y))
 	return (NIL);
-    else{
-    temp = apply(x,NIL);
+    else {
+	temp = apply(x, NIL);
 	return (cons(temp, map_into_thunk(x, cdr(y))));
     }
 }
@@ -2153,7 +2153,7 @@ int f_preview_char(int arglist)
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-    if (pc_buf[0] != EOF)
+	if (pc_buf[0] != EOF)
 	    unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF) {
 	    input_stream = save;
@@ -2166,7 +2166,7 @@ int f_preview_char(int arglist)
 	input_stream = arg1;
 	pc_buf[0] = readc();
 	pc_buf[1] = NUL;
-    if (pc_buf[0] != EOF)
+	if (pc_buf[0] != EOF)
 	    unreadc(pc_buf[0]);
 	if (pc_buf[0] == EOF) {
 	    input_stream = save;
@@ -2448,16 +2448,16 @@ int f_stream_ready_p(int arglist)
 	c = readc();
 	if (c == EOF) {
 	    input_stream = save;
-        if (string_input_stream_p(arg1))
-            return(NIL);
-        else
-	        error (NOT_STREAM, "stream-ready-p", NIL);
-        }
-	    unreadc(c);
-	    input_stream = save;
-	    return (T);
+	    if (string_input_stream_p(arg1))
+		return (NIL);
+	    else
+		error(NOT_STREAM, "stream-ready-p", NIL);
 	}
-	return (NIL);
+	unreadc(c);
+	input_stream = save;
+	return (T);
+    }
+    return (NIL);
 }
 
 /* evaluation function */
@@ -4132,22 +4132,22 @@ int check_dimension(int ls)
 int f_create_string(int arglist)
 {
     int arg1, arg2, n;
-    char *str , c;
+    char *str, c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if ((n = length(arglist)) != 1 && n != 2)
 	error(WRONG_ARGS, "create-string", arglist);
     if (!math_integerp(arg1))
-    error(NOT_INT, "create-string", arg1);
+	error(NOT_INT, "create-string", arg1);
     if (negativep(arg1))
 	error(DOMAIN_ERR, "create-string", arg1);
     if (longnump(arg1) || bignump(arg1))
 	error(EXHAUSTED_ERR, "create-string", arg1);
     if (!(charp(arg2) || nullp(arg2)))
-    error(NOT_CHAR, "create-string", arg2);
+	error(NOT_CHAR, "create-string", arg2);
 
-    
+
     n = GET_INT(arg1);
     if (nullp(arg2))
 	c = ' ';
@@ -4591,7 +4591,7 @@ int f_call_next_method(int arglist)
     caller = car(next_method);
     next_method = cdr(next_method);
     if (GET_OPT(caller) == PRIMARY) {
-    pexist = 1;
+	pexist = 1;
 	while (!nullp(next_method)) {
 	    varlist = car(GET_CAR(car(next_method)));
 	    /* match(x,y) if sameclass or subclass return 1 else 0 */
@@ -4702,13 +4702,13 @@ int f_signal_condition(int arglist)
 	error(WRONG_ARGS, "signal-condition", arglist);
 
     /* if arg2 is not nil, it means continuable error. 
-    *  signal_condition must stop continuation.
-    *  So,pop error_handler. and move control to outer error_hander.
-    */
+     *  signal_condition must stop continuation.
+     *  So,pop error_handler. and move control to outer error_hander.
+     */
     if (arg2 != NIL)
-        error_handler = cdr(error_handler);
+	error_handler = cdr(error_handler);
 
-    return(signal_condition(arg1, arg2));
+    return (signal_condition(arg1, arg2));
 }
 
 int f_simple_error_format_string(int arglist)

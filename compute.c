@@ -70,9 +70,11 @@ int numeqp(int x, int y)
 	else if (GET_FLT(x) >= GET_FLT(y) - DBL_EPSILON &&
 		 GET_FLT(x) <= GET_FLT(y) + DBL_EPSILON)
 	    return (1);
-	/* when huge number*/
-	else if (fabs(GET_FLT(x)) > 1e+30 &&  fabs(GET_FLT(x) - GET_FLT(y)) < fabs(GET_FLT(x)) / 100000)
-		return (1);
+	/* when huge number */
+	else if (fabs(GET_FLT(x)) > 1e+30
+		 && fabs(GET_FLT(x) - GET_FLT(y)) <
+		 fabs(GET_FLT(x)) / 100000)
+	    return (1);
 	else
 	    return (0);
     } else {
@@ -983,45 +985,45 @@ int isqrt3(int x)
 
  size of bignum must be 10 or greater
 */
-int isqrt4(int x){
-	int len, len1, len2, init, target, res;
+int isqrt4(int x)
+{
+    int len, len1, len2, init, target, res;
 
     len = get_length(x);
-	
-	if(len % 2 == 0){
-		len1 = 3;
-		len2 = 6;
-		init = plus(isqrt3(big_take_from_left(x,len2)),make_int(1));
-		while(len2*2 < len){
-			len1 = len1 * 2;
-			len2 = len2 * 2;
-			target = big_take_from_left(x,len2);
-			init = big_shift_right(init,len1-get_length(init));
-			init = plus(isqrt2(target,init),make_int(1));
-		}
-		len1 = len / 2;
-		len2 = len;
-		init = big_shift_right(init,len1-get_length(init));
-		res = isqrt2(big_take_from_left(x,len2),init);
-		return(res);
+
+    if (len % 2 == 0) {
+	len1 = 3;
+	len2 = 6;
+	init = plus(isqrt3(big_take_from_left(x, len2)), make_int(1));
+	while (len2 * 2 < len) {
+	    len1 = len1 * 2;
+	    len2 = len2 * 2;
+	    target = big_take_from_left(x, len2);
+	    init = big_shift_right(init, len1 - get_length(init));
+	    init = plus(isqrt2(target, init), make_int(1));
 	}
-	else {
-		len1 = 3;
-		len2 = 5;
-		init = plus(isqrt3(big_take_from_left(x,len2)),make_int(1));
-		while(len2*2-1 < len){
-			len1 = len1 + ((len2*2-1) - len2) / 2;
-			len2 = len2*2-1;
-			target = big_take_from_left(x,len2);
-			init = big_shift_right(init,len1-get_length(init));
-			init = plus(isqrt2(target,init),make_int(1));
-		}
-		len1 = (len+1) / 2;
-		len2 = len;
-		init = big_shift_right(init,len1-get_length(init));
-		res = isqrt2(big_take_from_left(x,len2),init);
-		return(res);
+	len1 = len / 2;
+	len2 = len;
+	init = big_shift_right(init, len1 - get_length(init));
+	res = isqrt2(big_take_from_left(x, len2), init);
+	return (res);
+    } else {
+	len1 = 3;
+	len2 = 5;
+	init = plus(isqrt3(big_take_from_left(x, len2)), make_int(1));
+	while (len2 * 2 - 1 < len) {
+	    len1 = len1 + ((len2 * 2 - 1) - len2) / 2;
+	    len2 = len2 * 2 - 1;
+	    target = big_take_from_left(x, len2);
+	    init = big_shift_right(init, len1 - get_length(init));
+	    init = plus(isqrt2(target, init), make_int(1));
 	}
+	len1 = (len + 1) / 2;
+	len2 = len;
+	init = big_shift_right(init, len1 - get_length(init));
+	res = isqrt2(big_take_from_left(x, len2), init);
+	return (res);
+    }
 }
 
 
@@ -1043,5 +1045,3 @@ int isqrt(int x)
 	    return (isqrt4(x));
     }
 }
-
-

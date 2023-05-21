@@ -587,7 +587,6 @@ extern int error_handler;
 extern int error_handler1;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
-extern int function_nest;
 extern int unwind_nest;
 extern int ed_lparen_col;
 extern int ed_rparen_col;

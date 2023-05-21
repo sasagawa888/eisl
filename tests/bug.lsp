@@ -1,3 +1,22 @@
+(import "test")
+
+;;; invalid-tag
+($error
+ (block b1
+	(block b2
+	       (unwind-protect 
+		   (return-from b1 888) ;;; b2 invalid
+		 (return-from b2 999)))) <control-error>)
+
+
+(defun boo ()
+ (block b1
+	(block b2
+	       (unwind-protect 
+		         (return-from b1 888) ;;; b2 invalid
+		         (return-from b2 999)))))
+
+
 (defun unwind1 ()
   (unwind-protect 
     (progn

@@ -876,14 +876,14 @@
     (setq x (cons 3 x)))
    x) <control-error>)
 ;;; invalid-tag
-;($error
-; (tagbody
-;  tag1
-;  (tagbody
-;   tag2
-;   (unwind-protect 
-;       (go tag1) ;;; tag2 invalid
-;     (go tag2)))) <control-error>)
+($error
+ (tagbody
+  tag1
+  (tagbody
+   tag2
+   (unwind-protect 
+       (go tag1) ;;; tag2 invalid
+     (go tag2)))) <control-error>)
 ;;;
 ;;; sasagawa888 memo
 ;;; ((lambda ()) (go tagbody)) ocuures wrong argument error (<program-error>).
@@ -967,7 +967,6 @@
  (defun test4 ()
    (throw 'outer 6)))
 
-; Why? sasagawa888 segmentation fault 
 ($error (test) <control-error>) 
 ;;; 
 ($argc unwind-protect 1 0 1)

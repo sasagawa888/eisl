@@ -1067,6 +1067,7 @@ int get_sym(const char *name, int index);
 int greaterp(int x, int y);
 int has_common_p(int ls);
 int has_common_p1(int x, int y);
+int has_danger_p(int x);
 int hash(const char *name);
 int has_multiple_call_next_method_p(int x);
 int has_multiple_call_next_method_p1(int x);

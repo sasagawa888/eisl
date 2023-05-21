@@ -96,7 +96,6 @@ int f_lambda(int arglist)
     if (!symbol_list_p(car(arglist)))
 	error(OUT_OF_DOMAIN, "lambda", car(arglist));
 
-
     return (make_func("", arglist));
 }
 
@@ -1277,6 +1276,32 @@ int f_go(int arglist)
     return (T);
 }
 
+/* memo 
+ * This is for unwind-protect clean-up.
+ * Following clean-up is infinit loop. In Easy-ISLisp this is error forcibly.
+ *  (tagbody
+ *      tag1
+ *      (tagbody
+ *       tag2
+ *           (unwind-protect (go tag1)
+ *			                 (go tag2))))
+ * similarly (throw tag) (return-from tag) (go tag)
+*/
+int has_danger_p(int x){
+	if (nullp(x))
+		return(0);
+	else if (atomp(x))
+		return(0);
+	else if(listp(x) && 
+	        (eqp(car(x),make_sym("GO")) ||
+			 eqp(car(x),make_sym("THROW")) ||
+			 eqp(car(x),make_sym("RETURN-FROM"))))
+			 return(1);
+	else if(has_danger_p(car(x)) || has_danger_p(cdr(x)))
+		return(1);
+}
+
+
 /* unwind-protect memo 
 * body know while executing unwind-protect by unwind_nest.
 * if throw occurs in body, throw execute clean-up before.
@@ -1295,6 +1320,8 @@ int f_unwind_protect(int arglist)
 	error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
+	if (has_danger_p(args))
+	error(UNDEF_TAG, "unwind-protect", args);
 
     unwind_buf[unwind_pt] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;

@@ -1087,7 +1087,7 @@ int f_return_from(int arglist)
 
 int f_catch(int arglist)
 {
-    int arg1, arg2, i, tag, ret, res, save;
+    int arg1, arg2, i, tag, ret, res, save, unwind;
 
     save = sp;
     arg1 = car(arglist);	/* tag */
@@ -1119,7 +1119,9 @@ int f_catch(int arglist)
 	error(CTRL_OVERF, "catch tag nest", tag);
 
     catch_env[GET_OPT(tag) - 1][i] = ep;	/* save environment */
+	catch_unwind_nest[GET_OPT(tag) - 1][i] = unwind_nest; /* save unwind_nest */
 	error_flag = false; /* reset error_flag*/
+	unwind = unwind_nest;
     ret = setjmp(catch_buf[GET_OPT(tag) - 1][i]);
 
 
@@ -1128,9 +1130,20 @@ int f_catch(int arglist)
 	SET_PROP(tag, GET_PROP(tag) - 1);	/* nest level -1 */
 	return (res);
     } else if (ret == 1) {
-	/*
-	*  while executing catch body, if error occurs restore error-handler
+	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
+	*  But, if remain not-resolved clean-up, catch resolve all clean-up.
 	*/
+	if (unwind == 0 && unwind_pt > 0) {
+		unwind_pt--;
+		while (unwind_pt >= 0) {
+	    	apply(unwind_buf[unwind_pt], NIL);
+	    	unwind_pt--;
+		}
+		unwind_pt = 0;
+		unwind_nest = 0;
+	}
+
+	/* while executing catch body, if error occurs restore error-handler */
 	if (error_flag) {
 		error_handler = error_handler1;
 		error_flag = false;
@@ -1165,14 +1178,17 @@ int f_throw(int arglist)
     if (improper_list_p(arglist))
 	error(ILLEGAL_FORM, "throw", arglist);
 
-	/* memo
+	/* 
 	*  while executing unwind-protect, execute clean-up before throw.
-	*/
-	if (unwind_nest > 0){
+	*  But, catch & throw occures in same unwind_nest level, not execute clean-up.
+	*/	
+	if (unwind_nest > 0 &&
+		catch_unwind_nest[GET_OPT(tag)-1][GET_PROP(tag)-1] != unwind_nest){
 		unwind_pt--;
+		unwind_nest--;
 		apply(unwind_buf[unwind_pt], NIL);
 	}
-
+	
     catch_arg = eval(arg2);
     i = GET_PROP(tag);
     SET_PROP(tag, i - 1);
@@ -1240,8 +1256,12 @@ int f_go(int arglist)
 }
 
 /* unwind-protect memo 
-* body know while executing unwind-protect by uneind_flag.
+* body know while executing unwind-protect by unwind_nest.
 * if throw occurs in body, throw execute clean-up before.
+* but, if catch & throw set exist same unwind_nest level,
+* throw dos not execute clean-up. 
+* Catch save unwind_nest to tag. 
+* Throw know current unwind_nest level and catch's unwind_nest level. 
 */
 int f_unwind_protect(int arglist)
 {

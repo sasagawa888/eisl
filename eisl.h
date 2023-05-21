@@ -21,7 +21,7 @@
 #define STRSIZE 10000
 #define SHORT_STRSIZE 32
 #define HASHTBSIZE 137
-#define CTRLSTK 200
+#define CTRLSTK 50
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
 #if defined(__TINYC__) && defined(__riscv)
@@ -570,8 +570,9 @@ extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[NESTED_BLOCKS_MAX];
 extern int block_tag_check[NESTED_BLOCKS_MAX];
 extern int block_env[NESTED_BLOCKS_MAX][2];
-extern jmp_buf catch_buf[10][50];
-extern int catch_env[10][50];
+extern jmp_buf catch_buf[CTRLSTK][10];
+extern int catch_env[CTRLSTK][10];
+extern int catch_unwind_nest[CTRLSTK][10];
 extern Except_T Ignored_Error;	// for ignore-errors
 extern int block_tag[CTRLSTK];	// array to sotre tag address
 extern int catch_tag[CTRLSTK];

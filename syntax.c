@@ -1286,6 +1286,10 @@ int f_go(int arglist)
  *           (unwind-protect (go tag1)
  *			                 (go tag2))))
  * similarly (throw tag) (return-from tag) (go tag)
+ *
+ * To avoid test case in control.lsp, instantly this is error forcibly.
+ * (defun test3 (fun)
+ *   (unwind-protect (test4) (funcall fun)))
 */
 int has_danger_p(int x){
 	if (nullp(x))
@@ -1295,7 +1299,8 @@ int has_danger_p(int x){
 	else if(listp(x) && 
 	        (eqp(car(x),make_sym("GO")) ||
 			 eqp(car(x),make_sym("THROW")) ||
-			 eqp(car(x),make_sym("RETURN-FROM"))))
+			 eqp(car(x),make_sym("RETURN-FROM")) ||
+			 eqp(car(x),make_sym("FUNCALL"))))
 			 return(1);
 	else if(has_danger_p(car(x)) || has_danger_p(cdr(x)))
 		return(1);

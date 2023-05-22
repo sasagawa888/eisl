@@ -367,6 +367,18 @@ int find_dyn(int sym)
     return (FAILSE);
 }
 
+/* find tag in tag environment */
+int find_tag(int tag)
+{
+    int i;
+
+    for (i = cp; i > 0; i--) {
+	if (catchtag[i][0] == tag)
+	    return (catchtag[i][1]);
+    }
+    return (FAILSE);
+}
+
 /* bind to association list destructively */
 void set_val(int sym, int val, int ls)
 {

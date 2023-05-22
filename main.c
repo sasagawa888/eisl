@@ -55,7 +55,7 @@ int fc;				/* free counter */
 int ap;				/* arglist pointer */
 int lp;				/* shelter pointer */
 int wp;				/* working pointer for copy GC */
-
+int cp;				/* tag pointer for catch & throw */
 
 /* class */
 int cobject;
@@ -193,6 +193,7 @@ Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
 int block_tag[CTRLSTK];		/* array of tag */
 int catch_tag[CTRLSTK];
+int catchtag[CTRLSTK][2];   /* new data type for catch tag*/
 int unwind_buf[CTRLSTK];
 int catch_symbols = NIL;	/* to clear tag data */
 int block_pt;			/* index of block. following are similer */
@@ -403,6 +404,7 @@ void init_pointer(void)
     sp = 0;
     ap = 0;
     lp = 0;
+	cp = 0;
     ls = catch_symbols;
     while (!nullp(ls)) {
 	SET_PROP(car(ls), 0);
@@ -1745,6 +1747,7 @@ int apply(int func, int args)
 	shelter_push(func);
 	shelter_push(args);
 	push(ep);
+	push(cp);
 	ep = GET_CDR(func);
 
 	/* if lambda is generated during eval method, lambda saved method
@@ -1784,9 +1787,10 @@ int apply(int func, int args)
 	    print(res);
 	    putchar('\n');
 	}
-	shelter_pop();
-	shelter_pop();
+	cp = pop();
 	ep = pop();
+	shelter_pop();
+	shelter_pop();
 	return (res);
     case MACRO:
 	{
@@ -1834,6 +1838,7 @@ int apply(int func, int args)
 	    generic_func = func;
 	    generic_vars = copy(args);
 	    next_method = GET_CDR(func);
+		push(cp);
 	    if (GET_TR(examin_sym) == 1) {
 		trace = examin_sym;
 		n = GET_TR(func);
@@ -1890,6 +1895,7 @@ int apply(int func, int args)
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;
+		cp = pop();
 	    return (res);
 	}
     default:

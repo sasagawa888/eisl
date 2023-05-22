@@ -168,6 +168,7 @@ extern int ap;			// arglist pointer
 extern int lp;			// shelter pointer
 extern int wp;			// working pointer
 extern int ac;			// allocate counter
+extern int cp;          // catch tag pointer
 
 /* ------class----- */
 extern int cobject;
@@ -575,6 +576,7 @@ extern int catch_unwind_nest[CTRLSTK][10];
 extern Except_T Ignored_Error;	// for ignore-errors
 extern int block_tag[CTRLSTK];	// array to sotre tag address
 extern int catch_tag[CTRLSTK];
+extern int catchtag[CTRLSTK][2];
 extern int unwind_buf[CTRLSTK];
 extern int catch_symbols;
 extern int block_pt;		// pointer for block

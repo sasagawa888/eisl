@@ -1910,6 +1910,7 @@ void bind_arg(int varlist, int arglist)
     int arg1, arg2;
 
     push(ep);
+	push(cp);
     while (!(IS_NIL(varlist))) {
 	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")
 				     || car(varlist) == make_sym("&REST"))) {
@@ -1929,7 +1930,8 @@ void bind_arg(int varlist, int arglist)
 
 void unbind(void)
 {
-    ep = pop();
+    cp = pop();
+	ep = pop();
 }
 
 

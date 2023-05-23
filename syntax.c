@@ -1259,8 +1259,12 @@ int f_catch(int arglist)
 
     if (ret == 0) {
 	res = f_progn(arg2);
+	cp--;
+	catch_pt = cp + 1;
 	return (res);
     } else if (ret == 1) {
+	cp--;
+	catch_pt = cp + 1;
 	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
 	 * But, if remain not-resolved clean-up, catch resolve all clean-up.
 	 */

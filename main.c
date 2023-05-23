@@ -1748,7 +1748,7 @@ int apply(int func, int args)
 	shelter_push(func);
 	shelter_push(args);
 	push(ep);
-	push(make_int(cp));
+	push(cp);
 	ep = GET_CDR(func);
 
 	/* if lambda is generated during eval method, lambda saved method
@@ -1788,7 +1788,7 @@ int apply(int func, int args)
 	    print(res);
 	    putchar('\n');
 	}
-	cp = GET_INT(pop());
+	cp = pop();
 	ep = pop();
 	shelter_pop();
 	shelter_pop();
@@ -1896,7 +1896,7 @@ int apply(int func, int args)
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;
-		cp = GET_INT(pop());
+		cp = pop();
 	    return (res);
 	}
     default:

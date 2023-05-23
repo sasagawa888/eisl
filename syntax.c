@@ -1105,7 +1105,7 @@ int f_return_from(int arglist)
 }
 
 
-#define OLD
+//#define OLD
 #ifdef OLD
 int f_catch(int arglist)
 {
@@ -1250,7 +1250,7 @@ int f_catch(int arglist)
 	cp = catch_pt;
 	catch_pt++;
  
-    if (catch_pt > CTRLSTK)
+    if (catch_pt >= CTRLSTK)
 	error(CTRL_OVERF, "catch", tag);
 
     error_flag = false;		/* reset error_flag */
@@ -1264,7 +1264,7 @@ int f_catch(int arglist)
 	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
 	 * But, if remain not-resolved clean-up, catch resolve all clean-up.
 	 */
-	if (unwind == 0 && unwind_pt >= 0) {
+	if (unwind == 0 && unwind_pt > 0) {
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
 		apply(unwind_buf[unwind_pt], NIL);

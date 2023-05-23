@@ -1123,10 +1123,6 @@ int f_catch(int arglist)
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "catch", tag);
 
-
-    if (!member(tag, catch_symbols))
-	catch_symbols = cons(tag, catch_symbols);
-    
 	catch_data[catch_pt][0] = tag;
 	catch_data[catch_pt][1] = ep;
 	catch_data[catch_pt][2] = unwind_nest;

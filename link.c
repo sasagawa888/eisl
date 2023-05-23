@@ -426,7 +426,7 @@ int set_dynamic(int x, int y)
 
 int set_catch_symbols(int x)
 {
-    catch_symbols = x;
+    //catch_symbols = x;
     return (x);
 }
 

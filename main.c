@@ -193,7 +193,6 @@ Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 //int block_tag[CTRLSTK];		/* array of tag */
 int catch_data[CTRLSTK][3]; /* new data type for catch tag*/
 int unwind_buf[CTRLSTK];
-int catch_symbols = NIL;	/* to clear tag data */
 int block_pt;			/* index of block. following are similer */
 int catch_pt = 0;		/* catch counter */
 int unwind_pt;			/* lambda address for unwind-protect */
@@ -396,19 +395,13 @@ char *library_file(const char *basename)
 
 void init_pointer(void)
 {
-    int ls;
+	int ls;
 
     ep = 0;
     sp = 0;
     ap = 0;
     lp = 0;
 	cp = 0;
-    ls = catch_symbols;
-    while (!nullp(ls)) {
-	SET_PROP(car(ls), 0);
-	SET_OPT(car(ls), 0);
-	ls = cdr(ls);
-    }
     block_pt = 0;
     catch_pt = 0;
     unwind_pt = 0;

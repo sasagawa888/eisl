@@ -186,9 +186,6 @@ void gbc_mark(void)
     /* mark generic_list */
     mark_cell(generic_list);
 
-    /* mark symbol list for catch */
-    mark_cell(catch_symbols);
-
 }
 
 static inline void NOMARK_CELL(int addr)
@@ -317,9 +314,6 @@ void copy_gbc(void)
 
     /* copy generic_list */
     generic_list = copy_work(generic_list);
-
-    /* copy symbol list for catch */
-    catch_symbols = copy_work(catch_symbols);
 
     /* copy cell chained from hash table */
     for (i = 0; i < HASHTBSIZE; i++)

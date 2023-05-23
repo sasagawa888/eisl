@@ -574,7 +574,6 @@ extern jmp_buf catch_buf[CTRLSTK];
 extern Except_T Ignored_Error;	// for ignore-errors
 extern int catch_data[CTRLSTK][3];
 extern int unwind_buf[CTRLSTK];
-extern int catch_symbols;
 extern int block_pt;		// pointer for block
 extern int catch_pt;		// catch counter
 extern int unwind_pt;		// lambda address for unwind-protect

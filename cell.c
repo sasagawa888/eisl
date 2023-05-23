@@ -304,7 +304,7 @@ int set_dyn_env(int sym, int val)
 {
     int i;
 
-    for (i = dp; i > 0; i--) {
+    for (i = dp; i >= 0; i--) {
 	if (dynamic[i][0] == sym) {
 	    dynamic[i][1] = val;
 	    return (T);
@@ -360,7 +360,7 @@ int find_dyn(int sym)
 {
     int i;
 
-    for (i = dp; i > 0; i--) {
+    for (i = dp; i >= 0; i--) {
 	if (dynamic[i][0] == sym)
 	    return (dynamic[i][1]);
     }
@@ -376,7 +376,7 @@ int find_tag(int tag)
 {
     int i;
 
-    for (i = cp; i > 0; i--) {
+    for (i = cp; i >= 0; i--) {
 	if (catch_data[i][0] == tag)
 	    return (i);
     }

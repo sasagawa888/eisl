@@ -1104,6 +1104,9 @@ int f_return_from(int arglist)
     longjmp(block_buf[block_pt], 1);
 }
 
+
+#define OLD
+#ifdef OLD
 int f_catch(int arglist)
 {
     int arg1, arg2, i, tag, ret, res, save, unwind;
@@ -1216,6 +1219,112 @@ int f_throw(int arglist)
     ep = catch_env[GET_OPT(tag) - 1][i - 1];	/* restore environment */
     longjmp(catch_buf[GET_OPT(tag) - 1][i - 1], 1);
 }
+#else
+// new catch & throw
+int f_catch(int arglist)
+{
+    int arg1, arg2, i, tag, ret, res, save, unwind;
+
+    save = sp;
+    arg1 = car(arglist);	/* tag */
+    arg2 = cdr(arglist);	/* body */
+    if (nullp(arglist))
+	error(WRONG_ARGS, "catch", arglist);
+    if (arg1 == make_sym("catch"))
+	error(WRONG_ARGS, "catch", arglist);
+    if (nullp(arg1))
+	error(WRONG_ARGS, "catch", arglist);
+    if (improper_list_p(arglist))
+	error(IMPROPER_ARGS, "catch", arglist);
+    tag = eval(arg1);		/* tag symbol */
+    if (!symbolp(tag))
+	error(IMPROPER_ARGS, "catch", tag);
+
+
+    if (!member(tag, catch_symbols))
+	catch_symbols = cons(tag, catch_symbols);
+    
+	catch_data[catch_pt][0] = tag;
+	catch_data[catch_pt][1] = ep;
+	catch_data[catch_pt][2] = unwind_nest;
+	cp = catch_pt;
+	catch_pt++;
+ 
+    if (catch_pt > CTRLSTK)
+	error(CTRL_OVERF, "catch", tag);
+
+    error_flag = false;		/* reset error_flag */
+    unwind = unwind_nest;
+    ret = setjmp(catch_jump[catch_pt - 1]);
+
+    if (ret == 0) {
+	res = f_progn(arg2);
+	return (res);
+    } else if (ret == 1) {
+	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
+	 * But, if remain not-resolved clean-up, catch resolve all clean-up.
+	 */
+	if (unwind == 0 && unwind_pt >= 0) {
+	    unwind_pt--;
+	    while (unwind_pt >= 0) {
+		apply(unwind_buf[unwind_pt], NIL);
+		unwind_pt--;
+	    }
+	    unwind_pt = 0;
+	    unwind_nest = 0;
+	}
+
+	/* while executing catch body, if error occurs restore error-handler */
+	if (error_flag) {
+	    error_handler = error_handler1;
+	    error_flag = false;
+	}
+
+	res = catch_arg;
+	catch_arg = NIL;
+	sp = save;
+	/* restore stack pointer. longjump destroy sp */
+	return (res);
+    }
+    return (UNDEF);
+}
+
+
+int f_throw(int arglist)
+{
+    int arg1, arg2, tag, i;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    tag = eval(arg1);
+
+    if (!symbolp(tag))
+	error(IMPROPER_ARGS, "throw", tag);
+	if ((i=find_tag(tag)) == FAILSE)
+	error(UNDEF_TAG, "throw", tag);
+    if (length(arglist) != 2)
+	error(WRONG_ARGS, "throw", arglist);
+    if (improper_list_p(arglist))
+	error(ILLEGAL_FORM, "throw", arglist);
+
+    /* 
+     *  while executing unwind-protect, execute clean-up before throw.
+     *  But, catch & throw occures in same unwind_nest level, not execute clean-up.
+     */
+    if (unwind_nest > 0 &&
+	catch_data[i][2] != unwind_nest &&
+	unwind_pt > 0) {
+	unwind_pt--;
+	unwind_nest--;
+	apply(unwind_buf[unwind_pt], NIL);
+    }
+
+    catch_arg = eval(arg2);
+    ep = catch_data[i][1];	/* restore environment */
+    longjmp(catch_jump[i], 1);
+}
+#endif
+
 
 int f_tagbody(int arglist)
 {

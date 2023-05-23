@@ -187,6 +187,7 @@ jmp_buf block_buf[CTRLSTK];
 int block_tag_check[CTRLSTK];
 int block_env[CTRLSTK][3];
 jmp_buf catch_buf[CTRLSTK][10];
+jmp_buf catch_jump[CTRLSTK];
 int catch_env[CTRLSTK][10];
 int catch_unwind_nest[CTRLSTK][10];
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
@@ -1747,7 +1748,7 @@ int apply(int func, int args)
 	shelter_push(func);
 	shelter_push(args);
 	push(ep);
-	push(cp);
+	push(make_int(cp));
 	ep = GET_CDR(func);
 
 	/* if lambda is generated during eval method, lambda saved method
@@ -1787,7 +1788,7 @@ int apply(int func, int args)
 	    print(res);
 	    putchar('\n');
 	}
-	cp = pop();
+	cp = GET_INT(pop());
 	ep = pop();
 	shelter_pop();
 	shelter_pop();
@@ -1838,7 +1839,7 @@ int apply(int func, int args)
 	    generic_func = func;
 	    generic_vars = copy(args);
 	    next_method = GET_CDR(func);
-		push(cp);
+		push(make_int(cp));
 	    if (GET_TR(examin_sym) == 1) {
 		trace = examin_sym;
 		n = GET_TR(func);
@@ -1895,7 +1896,7 @@ int apply(int func, int args)
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;
-		cp = pop();
+		cp = GET_INT(pop());
 	    return (res);
 	}
     default:

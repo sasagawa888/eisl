@@ -571,6 +571,7 @@ extern jmp_buf block_buf[CTRLSTK];
 extern int block_tag_check[CTRLSTK];
 extern int block_env[CTRLSTK][3];
 extern jmp_buf catch_buf[CTRLSTK][10];
+extern jmp_buf catch_jump[CTRLSTK];
 extern int catch_env[CTRLSTK][10];
 extern int catch_unwind_nest[CTRLSTK][10];
 extern Except_T Ignored_Error;	// for ignore-errors

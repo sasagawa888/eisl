@@ -193,7 +193,7 @@ Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
 int block_tag[CTRLSTK];		/* array of tag */
 int catch_tag[CTRLSTK];
-int catchtag[CTRLSTK][2];   /* new data type for catch tag*/
+int catch_data[CTRLSTK][3]; /* new data type for catch tag*/
 int unwind_buf[CTRLSTK];
 int catch_symbols = NIL;	/* to clear tag data */
 int block_pt;			/* index of block. following are similer */

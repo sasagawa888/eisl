@@ -367,14 +367,18 @@ int find_dyn(int sym)
     return (FAILSE);
 }
 
-/* find tag in tag environment */
+/* find tag in tag environment 
+* catch_data structure
+* [tag_addr,ep,unwind_nest]
+* if find tag, return the index else return FAILSE
+*/
 int find_tag(int tag)
 {
     int i;
 
     for (i = cp; i > 0; i--) {
-	if (catchtag[i][0] == tag)
-	    return (catchtag[i][1]);
+	if (catch_data[i][0] == tag)
+	    return (i);
     }
     return (FAILSE);
 }

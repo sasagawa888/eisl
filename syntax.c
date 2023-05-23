@@ -1020,9 +1020,9 @@ int f_block(int arglist)
 	error(CTRL_OVERF, "block buffer over fllow", NIL);
 
 
-    block_env[block_pt][0] = ep;	/* save environment */
-    block_env[block_pt][1] = tag;	/* save tag symbol */
-	block_env[block_pt][2] = unwind_nest; /* save unwind_nest */
+    block_data[block_pt][0] = tag;	
+    block_data[block_pt][1] = ep;
+	block_data[block_pt][2] = unwind_nest;
     block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
     /* save flag. if exist return-from 1 else -1 */
     block_pt++;
@@ -1080,7 +1080,7 @@ int f_return_from(int arglist)
 	error(NOT_SYM, "return-from", arg1);
     tag = arg1;
     block_pt--;
-    if (block_env[block_pt][1] != tag)
+    if (block_data[block_pt][0] != tag)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
     if (block_tag_check[block_pt] == -1)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
@@ -1090,7 +1090,7 @@ int f_return_from(int arglist)
      *  But, block & return-from occures in same unwind_nest level, not execute clean-up.
      */
     if (unwind_nest > 0 &&
-	block_env[block_pt][2] !=
+	block_data[block_pt][2] !=
 	unwind_nest && 
 	unwind_pt > 0) {
 	unwind_pt--;
@@ -1100,7 +1100,7 @@ int f_return_from(int arglist)
 
 
     block_arg = f_progn(arg2);
-    ep = block_env[block_pt][0];	/* restore environment */
+    ep = block_data[block_pt][1];	/* restore environment */
     longjmp(block_buf[block_pt], 1);
 }
 
@@ -1138,7 +1138,7 @@ int f_catch(int arglist)
 
     error_flag = false;		/* reset error_flag */
     unwind = unwind_nest;
-    ret = setjmp(catch_jump[catch_pt - 1]);
+    ret = setjmp(catch_buf[catch_pt - 1]);
 
     if (ret == 0) {
 	res = f_progn(arg2);
@@ -1210,7 +1210,7 @@ int f_throw(int arglist)
 
     catch_arg = eval(arg2);
     ep = catch_data[i][1];	/* restore environment */
-    longjmp(catch_jump[i], 1);
+    longjmp(catch_buf[i], 1);
 }
 
 int f_tagbody(int arglist)

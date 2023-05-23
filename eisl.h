@@ -79,7 +79,7 @@
 
 
 
-static const float VERSION = 2.94;
+static const float VERSION = 2.95;
 static const int WORK1 = ((int) ((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int) ((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
@@ -571,9 +571,7 @@ extern jmp_buf block_buf[CTRLSTK];
 extern int block_tag_check[CTRLSTK];
 extern int block_data[CTRLSTK][3];
 extern jmp_buf catch_buf[CTRLSTK];
-extern int catch_unwind_nest[CTRLSTK][10];
 extern Except_T Ignored_Error;	// for ignore-errors
-extern int block_tag[CTRLSTK];	// array to sotre tag address
 extern int catch_data[CTRLSTK][3];
 extern int unwind_buf[CTRLSTK];
 extern int catch_symbols;

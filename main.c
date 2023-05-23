@@ -186,14 +186,11 @@ Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
 jmp_buf block_buf[CTRLSTK];
 int block_tag_check[CTRLSTK];
 int block_env[CTRLSTK][3];
-jmp_buf catch_buf[CTRLSTK][10];
 jmp_buf catch_jump[CTRLSTK];
-int catch_env[CTRLSTK][10];
 int catch_unwind_nest[CTRLSTK][10];
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
 int block_tag[CTRLSTK];		/* array of tag */
-int catch_tag[CTRLSTK];
 int catch_data[CTRLSTK][3]; /* new data type for catch tag*/
 int unwind_buf[CTRLSTK];
 int catch_symbols = NIL;	/* to clear tag data */

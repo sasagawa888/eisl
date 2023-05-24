@@ -209,6 +209,7 @@ defgeneric compile
     (defglobal generic-name-arg nil)
     (defglobal catch-block-tag nil)
     (defglobal unwind-thunk nil)
+    (defglobal unwind-nest 0)
     (defglobal file-name-and-ext nil)
     (defglobal lambda-count 0)
     (defglobal lambda-nest 0)
@@ -370,7 +371,8 @@ defgeneric compile
                     (t (check-args-count sexp)
                        (find-catch-block-tag (macroexpand-all sexp)))))
            (close instream)
-           (setq instream nil)))
+           (setq instream nil)
+           (mapc (lambda (x) (remove-property x 'unwind-nest)) catch-block-tag)))
 
     
     (defun module-check (x)
@@ -2787,6 +2789,7 @@ defgeneric compile
     
     (defun comp-catch (stream x env args tail name global test clos)
         (let ((tag (elt (elt x 1) 1)))
+           (set-property unwind-nest tag 'unwind-nest)
            (format stream "({int res,ret,i;~% ")
            (format stream "i = Fgetprop(Fmakesym(\"")
            (format-object stream tag nil)
@@ -2874,11 +2877,13 @@ defgeneric compile
 
     
     (defun comp-unwind-protect (stream x env args tail name global test clos)
+        (setq unwind-nest (+ unwind-nest 1))
         (format stream "({int res;~%")
         (setq unwind-thunk (comp-unwind-protect1 (cdr (cdr x)) env))
         (format stream "res=")
         (comp stream (elt x 1) env args tail name global test clos)
-        (format stream ";res;})"))
+        (format stream ";res;})")
+        (setq unwind-nest (- unwind-nest 1)))
 
     
     ;;create lambda thuck for unwind. and return the lambda-name

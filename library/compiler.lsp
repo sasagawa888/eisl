@@ -2875,7 +2875,13 @@ defgeneric compile
            (format-object stream (conv-name tag) nil)
            (format stream "[i-1],1);res;})~%")))
 
-    
+    ;;; memo
+    ;;; if body has throw, throw execute cleanup.
+    ;;; As the result unwind-thunk is nothing.
+    ;;; normal case unwind-nest and length of unwind-thunk is equal.
+    ;;; when equal unwind-protect execute clean up.
+    ;;; if nested unwind-protect unwind-thunk is following.
+    ;;; unwind-thunk= (thunkn ... thunk2 thunk1)
     (defun comp-unwind-protect (stream x env args tail name global test clos)
         (setq unwind-nest (+ unwind-nest 1))
         (format stream "({int res;~%")

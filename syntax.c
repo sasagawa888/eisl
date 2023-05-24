@@ -1309,7 +1309,7 @@ int has_danger_p(int x){
 */
 int f_unwind_protect(int arglist)
 {
-    int arg1, args, res;
+    int arg1, args, res, cleanup;
 
     arg1 = car(arglist);	// body
     args = cdr(arglist);	// clean-up
@@ -1320,13 +1320,20 @@ int f_unwind_protect(int arglist)
 	if (has_danger_p(args))
 	error(UNDEF_TAG, "unwind-protect", args);
 
-    unwind_buf[unwind_pt] = make_func("", cons(NIL, args));	/* make thunk */
+	cleanup = unwind_pt;
+    unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
     unwind_nest++;
     res = eval(arg1);
     unwind_nest--;
     unwind_pt--;
+	if (unwind_pt == cleanup){
     apply(unwind_buf[unwind_pt], NIL);
+	}
+	else {
+	/* if body has throw, body use cleanup and unwind_pt < cleanup*/	
+	unwind_pt = cleanup;	
+	}
     return (res);
 }
 

@@ -37,6 +37,12 @@
 (defmacro push (x place)
   `(setf ,place (cons ,x ,place)))
 
+;;; push X to end of PLACE
+(defmacro push-end (x place)
+  `(setf ,place (reverse 
+               (cons ,x
+                     (reverse ,place)))))
+
 ;;; pop place
 (defmacro pop (place)
   `(prog1 (car ,place) (setf ,place (cdr ,place))))

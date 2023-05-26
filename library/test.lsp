@@ -1,3 +1,4 @@
+(import "macro")
 ;; macro for test
 
 ;;; $TEST checks if the evaluated value of FORM1 and the quoted FORM2 are equal.
@@ -22,13 +23,26 @@
               (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form1, ,expected ,actual)))
           (eisl-ignore-toplevel-check nil))))
           
+;;; RECORD-OPERATION appends the given ORDER-IN-SEQUENCE value to the
+;;; dynamic *operation-sequence* list, which serves as a record of the
+;;; order in which operations occur.
+(defun record-operation (order-in-sequence)
+  (push-end order-in-sequence (dynamic *operation-sequence*)))
+
+;;; $ASSERT-ORDERED-OPERATIONS evaluates the provided BODY forms, which
+;;; may contain operation orders recorded by the RECORD-OPERATION function.
+;;; After evaluating the BODY forms, it asserts that the recorded operations
+;;; in the dynamic *operation-sequence* list match EXPECTED-SEQUENCE. 
+(defmacro $assert-ordered-operations (expected-sequence &rest body)
+  `(dynamic-let ((*operation-sequence* (list)))
+                ,@body
+                ($assert (dynamic *operation-sequence*) ,expected-sequence)))
 
 (defmacro $eval (form)
   `(progn 
         (eisl-ignore-toplevel-check t)
         (eval ',form)
         (eisl-ignore-toplevel-check nil)))
-          
 
 (defmacro $error (form name)
   `(progn

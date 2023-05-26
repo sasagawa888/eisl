@@ -36,6 +36,15 @@
       (print "should be printed first"))
     (print "should be printed second")))
 
+
+(defun unwind3 ()
+  (unwind-protect
+    (catch 'tag (throw 'tag "asdf1"))
+    (print "asdf2")))
+
+(defun unwind4 ()
+  (catch 'tag (throw 'tag "asdf1")))
+
 (defun handler (condition)
   (throw 'tag "handled"))
 

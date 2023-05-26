@@ -208,7 +208,7 @@ defgeneric compile
     (defglobal function-arg nil)
     (defglobal generic-name-arg nil)
     (defglobal catch-block-tag nil)
-    (defglobal unwind-thunk nil)
+    (defglobal unwind-cleanup nil)
     (defglobal unwind-nest 0)
     (defglobal file-name-and-ext nil)
     (defglobal lambda-count 0)
@@ -489,7 +489,8 @@ defgeneric compile
                   (setq optimize-enable nil))
               (compile sexp))
            (close instream)
-           (setq instream nil)))
+           (setq instream nil))
+           (mapc (lambda (x) (remove-property x 'unwind-nest)) catch-block-tag))
 
     
     (defun count-args (ls)
@@ -2807,8 +2808,8 @@ defgeneric compile
            (format stream "\"),i);~%")
            (format stream "}~% else{~%")
            (format stream "ret = 0;~%")
-           (cond (unwind-thunk (format-object stream unwind-thunk nil)
-                               (format stream "();")))
+           ;(cond (unwind-cleanup (format-object stream unwind-cleanup nil)
+           ;                    (format stream "();")))
            (format stream "res=catch_arg;}~%")
            (format stream "res;})")))
 
@@ -2852,7 +2853,7 @@ defgeneric compile
            (format stream "\"),i);~%")
            (format stream "}~% else{~%")
            (format stream "ret = 0;~%")
-           (cond (unwind-thunk (format-object stream unwind-thunk nil)
+           (cond (unwind-cleanup (format-object stream unwind-cleanup nil)
                                (format stream "();")))
            (format stream "res=block_arg;}~%")
            (format stream "res;})")))
@@ -2877,32 +2878,23 @@ defgeneric compile
 
     ;;; memo
     ;;; if body has throw, throw execute cleanup.
-    ;;; As the result unwind-thunk is nothing.
-    ;;; normal case unwind-nest and length of unwind-thunk is equal.
+    ;;; As the result unwind-cleanup is nothing.
+    ;;; normal case unwind-nest and length of unwind-cleanup is equal.
     ;;; when equal unwind-protect execute clean up.
-    ;;; if nested unwind-protect unwind-thunk is following.
-    ;;; unwind-thunk= (thunkn ... thunk2 thunk1)
+    ;;; if nested unwind-protect unwind-cleanup is following.
+    ;;; unwind-cleanup= (thunkn ... thunk2 thunk1)
     (defun comp-unwind-protect (stream x env args tail name global test clos)
         (setq unwind-nest (+ unwind-nest 1))
         (format stream "({int res;~%")
-        (setq unwind-thunk (comp-unwind-protect1 (cdr (cdr x)) env))
+        (setq unwind-cleanup (cons (cdr (cdr x)) unwind-cleanup))
         (format stream "res=")
         (comp stream (elt x 1) env args tail name global test clos)
+        (cond ((= (length unwind-cleanup) unwind-nest)
+               (format stream ";")
+               (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
+               (setq unwind-cleanup (cdr unwind-cleanup))))
         (format stream ";res;})")
         (setq unwind-nest (- unwind-nest 1)))
-
-    
-    ;;create lambda thuck for unwind. and return the lambda-name
-    (defun comp-unwind-protect1 (body env)
-        (let* ((x (append '(lambda ()) body))
-               (name (lambda-name))
-               (args '())
-               (free (find-free-variable body args env)) )
-            (comp-lambda0 x name)
-            (comp-lambda1 x name)
-            (comp-lambda2 body env args name free)
-            (comp-lambda3 name)
-            name))
 
     
     (defun comp-setf (stream x env args tail name global test clos)

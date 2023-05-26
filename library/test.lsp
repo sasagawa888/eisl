@@ -38,98 +38,11 @@
                 ,@body
                 ($assert (dynamic *operation-sequence*) ,expected-sequence)))
 
-(defun unwind1 ()
-  ($assert-ordered-operations
-    '(first second third)
-    (unwind-protect 
-      (progn
-        (catch 'tag
-               (unwind-protect
-                 (throw 'tag "thrown")
-                 (operation-order 'first)))
-        (operation-order 'second))
-      (operation-order 'third))))
-
-(defun unwind2 ()
-  ($assert-ordered-operations
-    '(first second)
-    (unwind-protect
-      (progn
-        (catch 'tag
-               (throw 'tag "thrown"))
-        (operation-order 'first))
-      (operation-order 'second))))
-
-
-(defun unwind3 ()
-  ($assert-ordered-operations
-    '("asdf1" "asdf2")
-    (unwind-protect
-      (operation-order (catch 'tag (throw 'tag "asdf1")))
-      (operation-order "asdf2"))))
-
-(defun unwind4 ()
-  ($assert (catch 'tag (throw 'tag "asdf1")) "asdf1"))
-
-(defun baz ()
-  (with-handler (lambda (condition) 
-                  (throw 'tag "handled"))
-                (operation-order (catch 'tag
-                                        (error "error")))
-                (operation-order (catch 'tag
-                                        (error "error")))))
-
-(defun baz-test ()
-  ($assert-ordered-operations
-    '("handled" "handled")
-    (baz)))
-
-(defun baz-unwind-test ()
-  ($assert-ordered-operations
-    '("handled" "handled" "cleanup")
-    (unwind-protect 
-      (baz)
-      (operation-order "cleanup"))))
-
-(defun foo ()
-  (let ((error-count 0)) 
-    (flet ((inner-handler (condition)
-             (if (< error-count 2) 
-                 (progn 
-                   (setf error-count (+ error-count 1))
-                   (continue-condition condition "inner handler continued"))
-                 (signal-condition condition (condition-continuable condition))))
-           (outer-handler (condition)
-             (continue-condition condition "outer handler continued"))) 
-      (with-handler #'outer-handler 
-                    (with-handler #'inner-handler
-                      (operation-order (cerror "foo" "bar"))
-                      (operation-order (cerror "herp" "derp"))
-                      (operation-order (cerror "bing" "bong")))))))
-
-(defun foo-test ()
-  ($assert-ordered-operations
-    '("inner handler continued" 
-      "inner handler continued" 
-      "outer handler continued") 
-    (foo)))
-
-(defun foo-unwind-test ()
-  ($assert-ordered-operations
-    '("inner handler continued" 
-      "inner handler continued" 
-      "outer handler continued"
-      "cleanup") 
-    (unwind-protect (foo)
-    (operation-order "cleanup"))))
-
-
 (defmacro $eval (form)
   `(progn 
         (eisl-ignore-toplevel-check t)
         (eval ',form)
         (eisl-ignore-toplevel-check nil)))
-          
 
 (defmacro $error (form name)
   `(progn

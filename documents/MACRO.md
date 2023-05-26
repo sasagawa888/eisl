@@ -15,6 +15,7 @@ Thanks to Mr. Hiroi.
 (incf place [delta])
 (decf place [delta])
 (push item place)
+(push-end item place)
 (pop place)
 (loop body ...)
 (return result)

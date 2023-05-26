@@ -1,15 +1,10 @@
+;;; test for unwind-protect & with-handler
+;;;
+;;;
+
 (import "test")
 
-#| 
-;;; invalid-tag
-($error
-  (block b1
-         (block b2
-                (unwind-protect 
-                  (return-from b1 888) ;;; b2 invalid
-                  (return-from b2 999)))) <control-error>)
 
-|#
 (defun boo ()
   (block b1
          (block b2
@@ -112,5 +107,5 @@
   (foo-test)
   (foo-unwind-test))
 
-
-(defglobal a #2a((3 1 1 2)(5 1 3 4)(2 0 1 0)(1 3 2 1)))
+($ap 1 "unwind-protect & with-handler")
+(test-all)

@@ -20,4 +20,5 @@ eisl -s verify/seq.lsp
 eisl -s verify/stream.lsp
 eisl -s verify/string.lsp
 eisl -s verify/symbol.lsp
+eisl -s verify/unwind.lsp
 eisl -s verify/vector.lsp

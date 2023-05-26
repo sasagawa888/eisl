@@ -2808,8 +2808,6 @@ defgeneric compile
            (format stream "\"),i);~%")
            (format stream "}~% else{~%")
            (format stream "ret = 0;~%")
-           ;(cond (unwind-cleanup (format-object stream unwind-cleanup nil)
-           ;                    (format stream "();")))
            (format stream "res=catch_arg;}~%")
            (format stream "res;})")))
 
@@ -2819,6 +2817,9 @@ defgeneric compile
            (when (not (member tag catch-block-tag))
                  (error* "throw: tag not exist " tag))
            (format stream "({int res,i;~%")
+           (cond ((/= (property tag 'unwind-nest) unwind-nest)
+                  (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
+                  (setq unwind-cleanup (cdr unwind-cleanup))))
            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
            (format stream "catch_arg=res;~% ")
            (format stream "i = Fgetprop(Fmakesym(\"")

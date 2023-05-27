@@ -2812,6 +2812,7 @@ defgeneric compile
            (when (not (member tag catch-block-tag))
                  (error* "throw: tag not exist " tag))
            (format stream "({int res,i;~%")
+           ;; while executing unwind-protect, throw execute cleanup before.
            (cond ((and (property tag 'unwind-nest) (/= (property tag 'unwind-nest) unwind-nest))
                   (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
                   (setq unwind-cleanup (cdr unwind-cleanup))))
@@ -2849,8 +2850,6 @@ defgeneric compile
            (format stream "\"),i);~%")
            (format stream "}~% else{~%")
            (format stream "ret = 0;~%")
-           (cond (unwind-cleanup (format-object stream unwind-cleanup nil)
-                               (format stream "();")))
            (format stream "res=block_arg;}~%")
            (format stream "res;})")))
 
@@ -2860,6 +2859,10 @@ defgeneric compile
                 (error* "return-from: not symbol" (elt x 1)))
         (let ((tag (elt x 1)))
            (format stream "({int res,i;~%")
+           ;; while executing unwind-protect, return-from execute cleanup before.
+           (cond ((and (property tag 'unwind-nest) (/= (property tag 'unwind-nest) unwind-nest))
+                  (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
+                  (setq unwind-cleanup (cdr unwind-cleanup))))
            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
            (format stream "block_arg=res;~% ")
            (format stream "i = Fgetprop(Fmakesym(\"")

@@ -1,4 +1,4 @@
-;;FAST compiler ver2.52
+;;FAST compiler ver2.95
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -2817,7 +2817,7 @@ defgeneric compile
            (when (not (member tag catch-block-tag))
                  (error* "throw: tag not exist " tag))
            (format stream "({int res,i;~%")
-           (cond ((/= (property tag 'unwind-nest) unwind-nest)
+           (cond ((and (property tag 'unwind-nest) (/= (property tag 'unwind-nest) unwind-nest))
                   (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
                   (setq unwind-cleanup (cdr unwind-cleanup))))
            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)

@@ -1,12 +1,9 @@
 (defun baz ()
-  (with-handler (lambda (condition) 
-                  (throw 'tag "handled"))
-                (catch 'tag
-                                        (error "error"))
-                (catch 'tag
-                                        (error "error"))))
+    (with-handler (lambda (condition) (throw 'tag "handled"))
+                  (print (catch 'tag (error "error")))
+                  (print (catch 'tag (error "error")))))
 
-
+#| 
 (defun foo ()
   (let ((error-count 0)) 
     (flet ((inner-handler (condition)
@@ -22,3 +19,4 @@
                       (cerror "foo" "bar")
                       (cerror "herp" "derp")
                       (cerror "bing" "bong"))))))
+|#

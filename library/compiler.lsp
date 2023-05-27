@@ -2015,6 +2015,7 @@ defgeneric compile
 
     ;;labels syntax. flet syntax is same as labels
     (defun comp-labels (stream x env args tail name global test clos)
+        (format stream "({int res;")
         (comp-labels1 stream (elt x 1) env args tail name global test clos)
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null body1)
@@ -2023,7 +2024,7 @@ defgeneric compile
              (if (not (not-need-res-p (car body1)))
                  (format stream "res = "))
              (comp stream (car body1) env args tail name global test clos)
-             (format stream ";~%")))
+             (format stream ";res;})~%")))
 
     
     (defun comp-labels1 (stream x env args tail name global test clos)

@@ -2283,15 +2283,7 @@ defgeneric compile
         (format stream
                 "Fset_error_handler(Fcons(handler,Fget_error_handler()));")
         (format stream "res = ")
-        (comp stream
-              (list 'progn (elt x 2))
-              env
-              args
-              nil
-              name
-              global
-              test
-              clos)
+        (comp-progn1 stream (cdr (cdr x)) env args nil name global test clos)
         (format stream ";")
         (format stream "Fset_error_handler(Fcdr(Fget_error_handler()));")
         (format stream "res;})"))

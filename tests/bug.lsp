@@ -12,24 +12,24 @@
            (rec n))))
 
 
+
 (defglobal error-count 0)
 
 (defun outer-handler (condition)
-  (continue-condition condition "outer handler continued"))
+    (continue-condition condition "outer handler continued") )
 
 (defun inner-handler (condition)
-  (if (< error-count 2) 
-      (progn 
-        (setf error-count (+ error-count 1))
-        (continue-condition condition "inner handler continued"))
-      (signal-condition condition (condition-continuable condition))))
+    (if (< error-count 2)
+        (progn (setf error-count (+ error-count 1))
+               (continue-condition condition "inner handler continued"))
+        (signal-condition condition (condition-continuable condition))))
 
 (defun foo ()
-  (with-handler #'outer-handler 
-                (with-handler #'inner-handler
-                              (print (cerror "foo" "bar"))
-                              (print (cerror "herp" "derp"))
-                              (print (cerror "bing" "bong")))))
+    (with-handler #'outer-handler
+                  (with-handler #'inner-handler
+                                (print (cerror "foo" "bar"))
+                                (print (cerror "herp" "derp"))
+                                (print (cerror "bing" "bong")))))
 
 (defun foo1 ()
     (let ((error-count 0))
@@ -45,3 +45,17 @@
                                        (cerror "herp" "derp")
                                        (cerror "bing" "bong"))))))
 
+
+
+(defun unwind1 ()
+    (unwind-protect (progn (catch 'tag
+                                  (unwind-protect
+                                   (throw 'tag "thrown")
+                                   (print "should be printed first")))
+                           (print "should be printed second"))
+                    (print "should be printed third")))
+
+(defun unwind2 ()
+    (unwind-protect (progn (catch 'tag (throw 'tag "thrown"))
+                           (print "should be printed first"))
+                    (print "should be printed second")))

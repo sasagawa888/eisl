@@ -709,3 +709,15 @@ int get_error_flag(void)
 {
 	return (error_flag);
 }
+
+int set_error_flag(int x)
+{
+	error_flag = x;
+	return (x);
+}
+
+int restore_error_handler(void)
+{
+	error_handler = error_handler1;
+	return(error_handler);
+}

@@ -133,6 +133,11 @@ static inline int Fget_error_flag(void)
     return f0[GET_ERROR_FLAG_IDX] ();
 }
 
+static inline int Frestore_error_handler(void)
+{
+    return f0[RESTORE_ERROR_HANDLER_IDX] ();
+}
+
 static inline int Fcar(int x)
 {
     return f1[CAR_IDX] (x);
@@ -301,6 +306,11 @@ static inline int Fbigxtoparmanent(int x)
 static inline int Fset_error_handler(int x)
 {
     return f1[SET_ERROR_HANDLER_IDX] (x);
+}
+
+static inline int Fset_error_flag(int x)
+{
+    return f1[SET_ERROR_FLAG_IDX] (x);
 }
 
 static inline int Fcons(int x, int y)

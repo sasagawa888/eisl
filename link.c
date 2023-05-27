@@ -90,6 +90,7 @@ void dynamic_link(int x)
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
     init_f0(GET_ERROR_FLAG_IDX, get_error_flag);
+    init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
 
     /* argument-1 type */
     init_f1(CAR_IDX, car);
@@ -126,6 +127,7 @@ void dynamic_link(int x)
     init_f1(SETCATCHSYMBOLS_IDX, set_catch_symbols);
     init_f1(BIGNTOPARMANENT_IDX, big_to_parmanent);
     init_f1(SET_ERROR_HANDLER_IDX, set_error_handler);
+    init_f1(SET_ERROR_FLAG_IDX, set_error_flag);
 
     /* argument-2 type */
     init_f2(CONS_IDX, cons);

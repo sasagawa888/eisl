@@ -2785,6 +2785,7 @@ defgeneric compile
         (let ((tag (elt (elt x 1) 1)))
            (set-property unwind-nest tag 'unwind-nest)
            (format stream "({int res,ret,i;~% ")
+           (format stream "Fset_error_flag(1);~%")
            (format stream "i = Fgetprop(Fmakesym(\"")
            (format-object stream tag nil)
            (format stream "\"));~%")
@@ -2801,6 +2802,7 @@ defgeneric compile
            (format stream "\"),i);~%")
            (format stream "}~% else{~%")
            (format stream "ret = 0;~%")
+           (format stream "if(Fget_error_flag()){Frestore_error_handler();}~%")
            (format stream "res=catch_arg;}~%")
            (format stream "res;})")))
 

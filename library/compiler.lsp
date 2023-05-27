@@ -2272,9 +2272,9 @@ defgeneric compile
         (format stream ";res;})"))
 
     
-    ;;          ____ ____ 
-    ;; handler |_car|_cdr|
-    ;;            ___ set car subr of compiled handler
+    ;;          
+    ;; error_handler = (handlerN ... handler2 handler1) 
+    ;; set subr of compiled handler
     (defun comp-with-handler (stream x env args tail name global test clos)
         (format stream "({int res;")
         (format stream "int handler = ")

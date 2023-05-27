@@ -89,6 +89,7 @@ void dynamic_link(int x)
     init_f0(POP_IDX, pop);
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
+    init_f0(GET_ERROR_FLAG_IDX, get_error_flag);
 
     /* argument-1 type */
     init_f1(CAR_IDX, car);

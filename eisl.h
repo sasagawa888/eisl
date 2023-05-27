@@ -1049,6 +1049,7 @@ int fsubrp(int addr);
 int functionp(int addr);
 int gbcsw(void);
 int gcd(int x, int y);
+int get_error_flag(void);
 int get_error_handler(void);
 int getwp(void);
 int gen_big(void);

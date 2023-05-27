@@ -128,6 +128,10 @@ static inline int Fget_error_handler(void)
     return f0[GET_ERROR_HANDLER_IDX] ();
 }
 
+static inline int Fget_error_flag(void)
+{
+    return f0[GET_ERROR_FLAG_IDX] ();
+}
 
 static inline int Fcar(int x)
 {

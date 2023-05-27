@@ -704,3 +704,8 @@ int set_error_handler(int x)
     error_handler = x;
     return (x);
 }
+
+int get_error_flag(void)
+{
+	return (error_flag);
+}

@@ -511,6 +511,7 @@ defgeneric compile
               ((eq (car x) 'defgeneric) (comp-defgeneric x))
               ((eq (car x) 'defmethod) (comp-defmethod x))
               ((eq (car x) 'defmodule) (comp-defmodule x))
+              ((eq (car x) 'import) (comp-import x))
               (t (comp code4 x nil nil nil nil t nil nil)
                  (format code4 ";"))))
 
@@ -853,7 +854,18 @@ defgeneric compile
                  t )
                 (if (and (consp (car s)) (eq (car (car s)) 'defpublic))
                     (setq public (cons (elt (car s) 1) public)))
+                (if (and (consp (car s)) (eq (car (car s)) 'import) (cdr (cdr (car s))))
+                    (setq public (append (cdr (cdr (car s))) public)))
                 (compile (eisl-modulesubst (car s) name public)))))
+
+    (defun comp-import (x)
+        (let* ((name (elt x 1))
+               (name1 (string-append name ".o"))
+               (name2 (string-append name ".lsp"))
+               (code `(cond ((probe-file ,name1) (load ,name1))
+                            ((probe-file ,name2) (load ,name2)))))
+           (compile code)))
+            
 
     
     (defun comp-defun0 (x)

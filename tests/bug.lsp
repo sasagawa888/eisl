@@ -1,3 +1,14 @@
+(defun flet1 ()
+  (flet ((test-func () T))
+    (let* ((result "flet test"))
+      result)))
+
+(defun flet2 ()
+  (flet ((test-func () T))
+      "flet test")) 
+
+
+
 (defun baz ()
     (with-handler (lambda (condition) (throw 'tag "handled"))
                   (print (catch 'tag (error "error")))

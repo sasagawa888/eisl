@@ -199,7 +199,7 @@ defgeneric compile
     
     (defglobal instream nil)
     (defglobal not-need-res
-               '(labels flet return-from go tagbody while the c-lang c-define c-include c-option))
+               '(return-from go tagbody while the c-lang c-define c-include c-option))
     
     (defglobal not-need-colon '(c-lang c-define c-include c-option)
 )

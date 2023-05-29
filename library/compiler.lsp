@@ -1458,7 +1458,7 @@ defgeneric compile
               ;;when method has only one symbol argument, require "1"
               ((symbolp (car x))
                (format stream "1")
-               (comp-defgeneric-primary-cond (cdr x) stream env args tail name global test clos))
+               (comp-defgeneric-primary-cond1 (cdr x) stream env args tail name global test clos))
               ((consp (car x))
                (format stream "Fmatchp(")
                (comp stream

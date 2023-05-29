@@ -860,8 +860,8 @@ defgeneric compile
 
     (defun comp-import (x)
         (let* ((name (elt x 1))
-               (name1 (string-append name ".o"))
-               (name2 (string-append name ".lsp"))
+               (name1 (string-append "/usr/local/share/eisl/library/" name ".o"))
+               (name2 (string-append "/usr/local/share/eisl/library/" name ".lsp"))
                (code `(cond ((probe-file ,name1) (load ,name1))
                             ((probe-file ,name2) (load ,name2)))))
            (compile code)))

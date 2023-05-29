@@ -32,6 +32,8 @@ void init_subr(void)
     bind_const("*PI*", make_flt(M_PI));
     bind_const("*MOST-POSITIVE-FLOAT*", make_flt(DBL_MAX));
     bind_const("*MOST-NEGATIVE-FLOAT*", make_flt(-DBL_MAX));
+    bind_const("*POSITIVE-INFINITY*", make_flt(INFINITY));
+    bind_const("*NEGATIVE-INFINITY*", make_flt(-INFINITY));
 
     /* function */
     def_subr("-", f_minus);
@@ -339,48 +341,53 @@ int f_minus(int arglist)
 
 int f_mult(int arglist)
 {
-    int res;
+    int product;
 
     if (nullp(arglist))
-	res = make_int(1);
+	product = make_int(1);
     else {
-	res = car(arglist);
-	arglist = cdr(arglist);
+        product = car(arglist);
+        arglist = cdr(arglist);
     }
-    while (!(IS_NIL(arglist))) {
-	int arg;
-	double val;
+    
+    for (int remaining_operands = arglist; 
+        !(IS_NIL(remaining_operands)); 
+        remaining_operands = cdr(remaining_operands)) {
 
-	arg = car(arglist);
-	if (!numberp(arg) && !arrayp(arg) && !vectorp(arg))
-	    error(NOT_NUM, "*", arg);
+        int multiplier = car(remaining_operands);
+        if (!numberp(multiplier) && !arrayp(multiplier) && !vectorp(multiplier))
+            error(NOT_NUM, "*", multiplier);
 
-	if (floatp(res) && fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX
-	    && fabs(GET_FLT(exact_to_inexact(arg))) > 1.0)
-	    error(FLT_OVERF, "*", arg);
-	if (floatp(res)
-	    && (val = fabs(GET_FLT(exact_to_inexact(res)))) != 0.0
-	    && val > 1.0
-	    && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX)
-	    error(FLT_OVERF, "*", arg);
-	if (floatp(arg) && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX
-	    && fabs(GET_FLT(exact_to_inexact(res))) > 1.0)
-	    error(FLT_OVERF, "*", arg);
-	if (floatp(arg)
-	    && (val = fabs(GET_FLT(exact_to_inexact(arg)))) != 0.0
-	    && val > 1.0
-	    && fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX)
-	    error(FLT_OVERF, "*", arg);
-	if ((val = fabs(GET_FLT(exact_to_inexact(res)))) != 0.0
-	    && val <= DBL_EPSILON
-	    && (val = fabs(GET_FLT(exact_to_inexact(arg)))) != 0.0
-	    && val <= DBL_EPSILON)
-	    error(FLT_UNDERF, "*", arg);
+        double product_magnitude = fabs(GET_FLT(exact_to_inexact(product)));
+        double multiplier_magnitude = fabs(GET_FLT(exact_to_inexact(multiplier)));
 
-	arglist = cdr(arglist);
-	res = mult(res, arg);
+        if (floatp(product) || floatp(multiplier)) 
+        {
+
+            // If the accumulated product is larger than max float and the multiplier is larger than one,
+            // signal overflow condition
+            if (multiplier_magnitude > 1.0
+                && product_magnitude >= DBL_MAX)
+                error(FLT_OVERF, "*", multiplier);
+
+            // If the accumulated product is larger than one and the multiplier is larger than max float
+            // signal overflow condition
+            if (product_magnitude > 1.0 
+                && multiplier_magnitude >= DBL_MAX)
+                error(FLT_OVERF, "*", multiplier);
+        }
+
+        // If the accumulated product and the multiplier are smaller than epsilon
+        // signal underflow condition
+        if (product_magnitude != 0.0
+            && product_magnitude <= DBL_EPSILON
+            && (multiplier_magnitude = fabs(GET_FLT(exact_to_inexact(multiplier)))) != 0.0
+            && multiplier_magnitude <= DBL_EPSILON)
+            error(FLT_UNDERF, "*", multiplier);
+
+        product = mult(product, multiplier);
     }
-    return (res);
+    return (product);
 }
 
 int f_quotient(int arglist)
@@ -554,26 +561,25 @@ int f_atan(int arglist)
 int f_sinh(int arglist)
 {
     int arg1;
-    double val;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "sinh", arglist);
     if (!numberp(arg1))
 	error(NOT_NUM, "sinh", arg1);
-    val = GET_FLT(exact_to_inexact(arg1));
-    if (val >= 10000000000.0)
+
+    double x, y;
+
+    x = GET_FLT(exact_to_inexact(arg1));
+    y = sinh(x);
+    if (fabs(y) >= DBL_MAX)
 	error(FLT_OVERF, "sinh", arg1);
-    if (val <= -10000000000.0)
-	error(FLT_UNDERF, "sinh", arg1);
-    val = sinh(val);
-    return (make_flt(val));
+    return (make_flt(y));
 }
 
 int f_cosh(int arglist)
 {
     int arg1;
-    double val;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -581,13 +587,13 @@ int f_cosh(int arglist)
     if (!numberp(arg1))
 	error(NOT_NUM, "cosh", arg1);
 
-    val = GET_FLT(exact_to_inexact(arg1));
-    if (val >= 10000000000.0)
-	error(FLT_OVERF, "cosh", arg1);
-    if (val <= -10000000000.0)
-	error(FLT_UNDERF, "cosh", arg1);
-    val = cosh(val);
-    return (make_flt(val));
+    double x, y;
+
+    x = GET_FLT(exact_to_inexact(arg1));
+    y = cosh(x);
+    if (fabs(y) >= DBL_MAX)
+	error(FLT_OVERF, "sinh", arg1);
+    return (make_flt(y));
 }
 
 int f_tanh(int arglist)
@@ -602,10 +608,6 @@ int f_tanh(int arglist)
 	error(NOT_NUM, "tanh", arg1);
 
     val = GET_FLT(exact_to_inexact(arg1));
-    if (val >= 10000000000.0)
-	error(FLT_OVERF, "tanh", arg1);
-    if (val <= -10000000000.0)
-	error(FLT_UNDERF, "tanh", arg1);
     val = tanh(val);
     return (make_flt(val));
 }
@@ -907,7 +909,6 @@ int f_mod(int arglist)
 int f_exp(int arglist)
 {
     int arg1;
-    double val;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -915,12 +916,16 @@ int f_exp(int arglist)
     if (!numberp(arg1))
 	error(NOT_NUM, "exp", arg1);
 
-    val = GET_FLT(exact_to_inexact(arg1));
-    if (val >= 10000000000.0)
+    double x, y;
+
+    x = GET_FLT(exact_to_inexact(arg1));
+    y = exp(x);
+
+    if (y > DBL_MAX)
 	error(FLT_OVERF, "exp", arg1);
-    if (val <= -10000000000.0)
+    if (x < -DBL_MAX)
 	error(FLT_UNDERF, "exp", arg1);
-    return (make_flt(exp(val)));
+    return (make_flt(y));
 }
 
 int f_log(int arglist)
@@ -957,20 +962,42 @@ int f_expt(int arglist)
 	error(IMPROPER_ARGS, "expt", arglist);
     if (negativep(arg1) && floatp(arg2))
 	error(IMPROPER_ARGS, "expt", arglist);
+
+    // If base is greater than 1 and exponent is infinite
+    // signal overflow condition
     if (greaterp(arg1, make_int(1)) && floatp(arg2)
 	&& GET_FLT(arg2) >= DBL_MAX)
 	error(FLT_OVERF, "expt", arglist);
+
+    // If base is greater than one and the exponent is negative infinite
+    // signal underflow condition
     if (greaterp(arg1, make_int(1)) && floatp(arg2)
 	&& GET_FLT(arg2) <= -DBL_MAX)
 	error(FLT_UNDERF, "expt", arglist);
+
+    // If base is infinite and the exponent is greater than one
+    // signal overflow condition
     if (greaterp(arg2, make_int(1)) && floatp(arg1)
 	&& GET_FLT(arg1) >= DBL_MAX)
 	error(FLT_OVERF, "expt", arglist);
+
+    // If base is infinite and exponent is negative
+    // signal underflow condition
     if (negativep(arg2) && floatp(arg1) && GET_FLT(arg1) >= DBL_MAX)
 	error(FLT_UNDERF, "expt", arglist);
+
+    // BUG: This behavior should depend on whether the exponent is odd or even.
+    // Even exponents should give an overflow condition
+    // Odd exponents should give an underflow condition
+    //
+    // If base is negative infinite and exponent is integer greater than one
+    // signal overflow condition
     if (greaterp(arg2, make_int(1)) && floatp(arg1)
 	&& GET_FLT(arg1) <= -DBL_MAX)
 	error(FLT_OVERF, "expt", arglist);
+
+    // If base is negative infinite and exponent is negative 
+    // signal underflow condition
     if (negativep(arg2) && floatp(arg1) && GET_FLT(arg1) <= -DBL_MAX)
 	error(FLT_UNDERF, "expt", arglist);
 
@@ -1191,17 +1218,17 @@ int f_reciprocal(int arglist)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "resiprocal", arglist);
+	error(WRONG_ARGS, "reciprocal", arglist);
     if (!numberp(arg1))
-	error(NOT_NUM, "resiprocal", arg1);
+	error(NOT_NUM, "reciprocal", arg1);
 
     val = GET_FLT(exact_to_inexact(arg1));
     if (val == 0.0)
-	error(DIV_ZERO, "resiprocal", arg1);
-    if (val >= DBL_MAX)
-	error(FLT_UNDERF, "resiprocal", arg1);
-    if (val <= -DBL_MAX)
-	error(FLT_UNDERF, "resiprocal", arg1);
+	error(DIV_ZERO, "reciprocal", arg1);
+    if (fabs(val) > DBL_MAX)
+	error(FLT_UNDERF, "reciprocal", arg1);
+    if (fabs(val) < DBL_MIN)
+	error(FLT_OVERF, "reciprocal", arg1);
     return (quotient(make_int(1), arg1));
 }
 
@@ -4195,8 +4222,7 @@ int f_parse_number(int arglist)
 	    error(FLT_OVERF, "number-parse", arg1);
 	else if (res == 3)
 	    error(FLT_UNDERF, "number-parse", arg1);
-	else
-	    return (make_flt(atof(stok.buf)));
+	return (make_flt(atof(stok.buf)));
     }
 
     if (bin_token(stok.buf))

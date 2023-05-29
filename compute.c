@@ -428,99 +428,96 @@ int mult(int arg1, int arg2)
 
     switch (tag1) {
     case INTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		long long int l1, l2, l;
+		switch (tag2) {
+			case INTN:
+				{
+				long long int l1, l2, l;
 
-		l1 = (long long int) GET_INT(arg1);
-		l2 = (long long int) GET_INT(arg2);
-		l = l1 * l2;
-		if (l < SMALL_INT_MAX && l > SMALL_INT_MIN)
-		    return (make_int((int) l));
-		else
-		    return (big_mult
-			    (big_int_to_big(arg1), big_int_to_big(arg2)));
-	    }
+				l1 = (long long int) GET_INT(arg1);
+				l2 = (long long int) GET_INT(arg2);
+				l = l1 * l2;
+				if (l < SMALL_INT_MAX && l > SMALL_INT_MIN)
+					return (make_int((int) l));
+				else
+					return (big_mult
+						(big_int_to_big(arg1), big_int_to_big(arg2)));
+				}
 
-	case FLTN:
-	    {
-		int n;
+			case FLTN: {
+				int n;
 
-		n = GET_INT(arg1);
-		x1 = (double) n;
-		y1 = GET_FLT(arg2);
-		return (make_flt(x1 * y1));
-	    }
+				n = GET_INT(arg1);
+				x1 = (double) n;
+				y1 = GET_FLT(arg2);
+				return (make_flt(x1 * y1));
+			}
 
-	case LONGN:
-	    if (GET_INT(arg1) != 0)
-		return (big_mult
-			(big_long_to_big(arg2), big_int_to_big(arg1)));
-	    else
-		return (arg1);	/* int 0 */
+			case LONGN:
+				if (GET_INT(arg1) != 0)
+				return (big_mult
+					(big_long_to_big(arg2), big_int_to_big(arg1)));
+				else
+				return (arg1);	/* int 0 */
 
-	case BIGN:
-	    return (big_mult(arg2, big_int_to_big(arg1)));
-	}
-	break;
-    case LONGN:
-	switch (tag2) {
-	case INTN:
-	    if (GET_INT(arg2) != 0)
-		return (big_mult
-			(big_long_to_big(arg1), big_int_to_big(arg2)));
-	    else
-		return (arg2);	/* int 0 */
-	case FLTN:
-	    return (mult(exact_to_inexact(arg1), arg2));
-	case LONGN:
-	    return (big_mult
-		    (big_long_to_big(arg1), big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_mult(big_long_to_big(arg1), arg2));
-	}
-	break;
-    case BIGN:
-	switch (tag2) {
-	case INTN:
-	    return (big_mult_i(arg1, arg2));
-	case FLTN:
-	    return (mult(exact_to_inexact(arg1), arg2));
-	case LONGN:
-	    return (big_mult(arg1, big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_mult(arg1, arg2));
-	}
-	break;
-    case FLTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		int s;
+			case BIGN:
+				return (big_mult(arg2, big_int_to_big(arg1)));
+		}
+		break;
+    case LONGN: 
+		switch (tag2) {
+				case INTN:
+					if (GET_INT(arg2) != 0)
+					return (big_mult
+						(big_long_to_big(arg1), big_int_to_big(arg2)));
+					else
+					return (arg2);	/* int 0 */
+				case FLTN:
+					return (mult(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_mult
+						(big_long_to_big(arg1), big_long_to_big(arg2)));
+				case BIGN:
+					return (big_mult(big_long_to_big(arg1), arg2));
+		}
+		break;
+    case BIGN: 
+		switch (tag2) {
+				case INTN:
+					return (big_mult_i(arg1, arg2));
+				case FLTN:
+					return (mult(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_mult(arg1, big_long_to_big(arg2)));
+				case BIGN:
+					return (big_mult(arg1, arg2));
+		}
+		break;
+    case FLTN: 
+		switch (tag2) {
+			case INTN: {
+				int s;
 
-		x1 = GET_FLT(arg1);
-		s = GET_INT(arg2);
-		x2 = (double) s;
-		return (make_flt(x1 * x2));
-	    }
-	case FLTN:
-	    {
-		x1 = GET_FLT(arg1);
-		x2 = GET_FLT(arg2);
-		y1 = x1 * x2;
-		if (y1 > DBL_MAX || y1 < -DBL_MAX)
-		    error(FLT_OVERF, "*", list2(arg1, arg2));
-		if (x1 != 0.0 && x2 != 0.0 && y1 > -DBL_MIN
-		    && y1 < DBL_MIN)
-		    error(FLT_UNDERF, "*", list2(arg1, arg2));
-		return (make_flt(y1));
-	    }
-	case LONGN:
-	case BIGN:
-	    return (mult(arg1, exact_to_inexact(arg2)));
-	}
-	break;
+				x1 = GET_FLT(arg1);
+				s = GET_INT(arg2);
+				x2 = (double) s;
+				return (make_flt(x1 * x2));
+			}
+			case FLTN: {
+				x1 = GET_FLT(arg1);
+				x2 = GET_FLT(arg2);
+				y1 = x1 * x2;
+				if (y1 > DBL_MAX || y1 < -DBL_MAX)
+					error(FLT_OVERF, "*", list2(arg1, arg2));
+				if (x1 != 0.0 && x2 != 0.0 && y1 > -DBL_MIN
+					&& y1 < DBL_MIN)
+					error(FLT_UNDERF, "*", list2(arg1, arg2));
+				return (make_flt(y1));
+			}
+			case LONGN:
+			case BIGN:
+				return (mult(arg1, exact_to_inexact(arg2)));
+		}
+		break;
     }
     error(NOT_COMPUTABLE, "*", list2(arg1, arg2));
     return (UNDEF);

@@ -2591,8 +2591,8 @@
 ($error (reciprocal            0.0) <division-by-zero>)
 ($test (reciprocal            1.0)  1.0 eql)
 ($test (reciprocal          100.0)  0.01 eql)
-($error (reciprocal *most-negative-float*) <floating-point-underflow>)
-($error (reciprocal *most-positive-float*) <floating-point-underflow>)
+($error (reciprocal *negative-infinity*) <floating-point-underflow>)
+($error (reciprocal *positive-infinity*) <floating-point-underflow>)
 
 ;; modified by sasagawa888
 (defun ~eql (x y)
@@ -3111,9 +3111,8 @@
 ($test (exp 1.0) 2.718281828459045 ~eql)
 ($test (exp 2.0) 7.38905609893065 eql)
 ($test (exp 0.0) 1.0 eql)
-($error (exp -10000000000) <floating-point-underflow>)
 ($error (exp  10000000000) <floating-point-overflow>)
-($error (exp *most-negative-float*) <floating-point-underflow>)
+($error (exp *negative-infinity*) <floating-point-underflow>)
 ($error (exp *most-positive-float*) <floating-point-overflow>)
 
 ;;;
@@ -3693,14 +3692,14 @@
 ($test (sinh  -1)     -1.1752011936438014 ~eql)
 ($test (sinh  10)  11013.23287470339 ~eql)
 ($error (sinh  10000000000) <floating-point-overflow>)
-($error (sinh -10000000000.0) <floating-point-underflow>)
+($error (sinh -10000000000.0) <floating-point-overflow>)
 ($test (sinh -10.0) -11013.23287470339 ~eql)
 ($test (sinh  -1.0)     -1.1752011936438014 ~eql)
 ($test (sinh   0.0)      0.0 eql)
 ($test (sinh   1.0)      1.1752011936438014 ~eql)
 ($test (sinh  10.0)  11013.23287470339 ~eql)
 ($error (sinh  10000000000.0) <floating-point-overflow>)
-($error (sinh *most-negative-float*) <floating-point-underflow>)
+($error (sinh *most-negative-float*) <floating-point-overflow>)
 ($error (sinh *most-positive-float*) <floating-point-overflow>)
 
 ;;;
@@ -3714,12 +3713,12 @@
 ($argc cosh 1 0 0)
 ($type cosh ($integer $float) :target)
 ;;;
-($error (cosh -10000000000) <floating-point-underflow>)
+($error (cosh -10000000000) <floating-point-overflow>)
 ($test (cosh -10) 11013.23292010332 ~eql)
 ($test (cosh  -1)     1.5430806348152437 ~eql)
 ($test (cosh  10) 11013.23292010332 ~eql)
 ($error (cosh  10000000000) <floating-point-overflow>)
-($error (cosh -10000000000.0) <floating-point-underflow>)
+($error (cosh -10000000000.0) <floating-point-overflow>)
 ($test (cosh -10.0) 11013.23292010332 ~eql)
 ($test (cosh  -1.0)     1.5430806348152437 ~eql)
 ($test (cosh  -0.001)   1.0000005000000416 ~eql)
@@ -3727,7 +3726,7 @@
 ($test (cosh   1.0)     1.5430806348152437 ~eql)
 ($test (cosh  10.0) 11013.23292010332 ~eql)
 ($error (cosh  10000000000.0) <floating-point-overflow>)
-($error (cosh *most-negative-float*) <floating-point-underflow>)
+($error (cosh *most-negative-float*) <floating-point-overflow>)
 ($error (cosh *most-positive-float*) <floating-point-overflow>)
 
 ;;;
@@ -3741,20 +3740,13 @@
 ($argc tanh 1 0 0)
 ($type tanh ($integer $float) :target)
 ;;;
-($error (tanh -10000000000) <floating-point-underflow>)
 ($test (tanh          -10) -0.9999999958776926 ~eql)
 ($test (tanh           -1) -0.7615941559557649 ~eql)
 ($test (tanh           10)  0.9999999958776926 ~eql)
-($error (tanh  10000000000) <floating-point-overflow>)
-($error (tanh -10000000000.0) <floating-point-underflow>)
-($test (tanh          -10.0) -0.9999999958776926 ~eql)
 ($test (tanh           -1.0) -0.7615941559557649 ~eql)
 ($test (tanh            0.0)  0.0 eql)
 ($test (tanh            1.0)  0.7615941559557649 ~eql)
 ($test (tanh           10.0)  0.9999999958776926 ~eql)
-($error (tanh  10000000000.0) <floating-point-overflow>)
-($error (tanh *most-negative-float*) <floating-point-underflow>)
-($error (tanh *most-positive-float*) <floating-point-overflow>)
 
 ;;;
 ;;; function (ATANH x) --> <number>

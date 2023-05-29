@@ -39,7 +39,7 @@ Apply the function fn to each element (key, val) of the hash table. Unlike mapca
 # Example
 
 ```
->(defglobal h (create (class )))
+>(defglobal h (create (class <hash>)))
 H
 >(sethash h "foo" 10)
 10

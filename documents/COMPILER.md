@@ -19,6 +19,13 @@ It also launches GCC/clang and creates a shared object.
 EISL loads this with the load function like a normal text Lisp file.
 If the file extension is ".o", the load function handles dynamic linking.
 
+### option
+- (compile-file filename nil)
+for debug. not remove compiled C codes.
+
+- (compmile-file filename t)
+for installer. remove compiled C codes with sudo command.
+
 # Immediate value of small integer
 The interpreter of EISL created cell objects for everything, including small integers.
 For this reason, GC started soon and it was difficult to speed up.

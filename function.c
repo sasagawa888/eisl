@@ -273,154 +273,75 @@ void init_generic(void)
      */
 }
 
-
 /* arithmetic function */
-int f_plus(int arglist)
-{
-    int res;
+int f_plus(int arglist) {
+    int augend;
 
-    if (nullp(arglist))
-	res = make_int(0);
-    else {
-	res = car(arglist);
-	if (!numberp(res))
-	    error(NOT_NUM, "+", res);
-	arglist = cdr(arglist);
+    augend = make_int(0);
+
+    for (int remaining_operands = arglist;
+         !(IS_NIL(remaining_operands));
+         remaining_operands = cdr(remaining_operands)) {
+
+        int addend = car(remaining_operands);
+
+        augend = plus(augend, addend);
     }
-    while (!(IS_NIL(arglist))) {
-	int arg;
-
-	arg = car(arglist);
-	if (!numberp(arg) && !vectorp(arg) && !arrayp(arg))
-	    error(NOT_NUM, "+", arg);
-
-	if (floatp(res) && positivep(res)
-	    && GET_FLT(exact_to_inexact(res)) >= DBL_MAX && positivep(arg))
-	    error(FLT_OVERF, "+", arg);
-	if (floatp(res) && negativep(res)
-	    && GET_FLT(exact_to_inexact(res)) <= -DBL_MAX
-	    && negativep(arg))
-	    error(FLT_OVERF, "+", arg);
-
-	arglist = cdr(arglist);
-	res = plus(res, arg);
-    }
-    return (res);
+    return (augend);
 }
 
-int f_minus(int arglist)
-{
-    int res, n;
+int f_minus(int arglist) {
+    int minuend, n;
 
-    res = car(arglist);
+    minuend = car(arglist);
     if ((n = length(arglist)) == 0)
 	error(WRONG_ARGS, "-", arglist);
     if (n == 1)
-	return (mult(res, make_int(-1)));
+        return (mult(minuend, make_int(-1)));
 
     arglist = cdr(arglist);
-    while (!(IS_NIL(arglist))) {
-	int arg;
 
-	arg = car(arglist);
-	if (!numberp(arg) && !vectorp(arg) && !arrayp(arg))
-	    error(NOT_NUM, "-", arg);
+    for (int remaining_operands = arglist;
+         !(IS_NIL(remaining_operands));
+         remaining_operands = cdr(remaining_operands)) {
 
-	if (floatp(res) && positivep(res)
-	    && GET_FLT(exact_to_inexact(res)) >= DBL_MAX && negativep(arg))
-	    error(FLT_OVERF, "+", arg);
-	if (floatp(res) && negativep(res)
-	    && GET_FLT(exact_to_inexact(res)) <= -DBL_MAX
-	    && positivep(arg))
-	    error(FLT_OVERF, "+", arg);
-	arglist = cdr(arglist);
-	res = minus(res, arg);
+        int subtrahend = car(remaining_operands);
+        minuend = minus(minuend, subtrahend);
     }
-    return (res);
+    return (minuend);
 }
 
-int f_mult(int arglist)
-{
-    int product;
+int f_mult(int arglist) {
+    int multiplicand;
 
-    if (nullp(arglist))
-	product = make_int(1);
-    else {
-        product = car(arglist);
-        arglist = cdr(arglist);
-    }
+    multiplicand = make_int(1);
     
     for (int remaining_operands = arglist; 
         !(IS_NIL(remaining_operands)); 
         remaining_operands = cdr(remaining_operands)) {
 
         int multiplier = car(remaining_operands);
-        if (!numberp(multiplier) && !arrayp(multiplier) && !vectorp(multiplier))
-            error(NOT_NUM, "*", multiplier);
 
-        double product_magnitude = fabs(GET_FLT(exact_to_inexact(product)));
-        double multiplier_magnitude = fabs(GET_FLT(exact_to_inexact(multiplier)));
-
-        if (floatp(product) || floatp(multiplier)) 
-        {
-
-            // If the accumulated product is larger than max float and the multiplier is larger than one,
-            // signal overflow condition
-            if (multiplier_magnitude > 1.0
-                && product_magnitude >= DBL_MAX)
-                error(FLT_OVERF, "*", multiplier);
-
-            // If the accumulated product is larger than one and the multiplier is larger than max float
-            // signal overflow condition
-            if (product_magnitude > 1.0 
-                && multiplier_magnitude >= DBL_MAX)
-                error(FLT_OVERF, "*", multiplier);
+        multiplicand = mult(multiplicand, multiplier);
         }
-
-        // If the accumulated product and the multiplier are smaller than epsilon
-        // signal underflow condition
-        if (product_magnitude != 0.0
-            && product_magnitude <= DBL_EPSILON
-            && (multiplier_magnitude = fabs(GET_FLT(exact_to_inexact(multiplier)))) != 0.0
-            && multiplier_magnitude <= DBL_EPSILON)
-            error(FLT_UNDERF, "*", multiplier);
-
-        product = mult(product, multiplier);
-    }
-    return (product);
+    return (multiplicand);
 }
 
-int f_quotient(int arglist)
-{
-    int res;
+int f_quotient(int arglist) {
+    int dividend;
 
-    res = car(arglist);
+    dividend = car(arglist);
     arglist = cdr(arglist);
 
+    for (int remaining_operands = arglist;
+         !(IS_NIL(remaining_operands));
+         remaining_operands = cdr(remaining_operands)) {
 
-    while (!(IS_NIL(arglist))) {
-	int arg;
-	double val;
+        int divisor = car(remaining_operands);
 
-	arg = car(arglist);
-	if (!numberp(arg))
-	    error(NOT_NUM, "quotient", arg);
-	if (zerop(arg))
-	    error(DIV_ZERO, "quotient", arg);
-
-	if (fabs(GET_FLT(exact_to_inexact(res))) >= DBL_MAX
-	    && fabs(GET_FLT(exact_to_inexact(arg))) < 1.0)
-	    error(FLT_OVERF, "quotient", list2(arg, res));
-	if ((val = fabs(GET_FLT(exact_to_inexact(res)))) != 0.0
-	    && val <= 1.0
-	    && fabs(GET_FLT(exact_to_inexact(arg))) >= DBL_MAX)
-	    error(FLT_UNDERF, "quotient", list2(arg, res));
-
-	arglist = cdr(arglist);
-	res = quotient(res, arg);
-
+        dividend = quotient(dividend, divisor);
     }
-    return (res);
+    return (dividend);
 }
 
 int f_smaller(int arglist)

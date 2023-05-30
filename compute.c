@@ -237,85 +237,71 @@ int plus(int arg1, int arg2)
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
     switch (tag1) {
-    case INTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		long long int l;
+		case INTN:
+			switch (tag2) {
+				case INTN: {
+					long long int l;
 
-		l = (long long int) GET_INT(arg1) +
-		    (long long int) GET_INT(arg2);
-		if (SMALL_INT_MIN < l && l < SMALL_INT_MAX)
-		    return (make_int((int) l));
-		else
-		    return (make_long(l));
-	    }
-	case FLTN:
-	    {
-		int n;
-		double y1;
+					l = (long long int) GET_INT(arg1) +
+						(long long int) GET_INT(arg2);
+					if (SMALL_INT_MIN < l && l < SMALL_INT_MAX)
+						return (make_int((int) l));
+					else
+						return (make_long(l));
+				}
+				case FLTN:
+					return (plus(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_plus(big_int_to_big(arg1), big_long_to_big(arg2)));
+				case BIGN:
+					return (big_plus(big_int_to_big(arg1), arg2));
+			}
+			break;
+		case LONGN:
+			switch (tag2) {
+				case INTN:
+					return (big_plus(big_long_to_big(arg1), big_int_to_big(arg2)));
+				case FLTN:
+					return (plus(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_plus
+						(big_long_to_big(arg1), big_long_to_big(arg2)));
+				case BIGN:
+					return (big_plus(big_long_to_big(arg1), arg2));
+			}
+			break;
+		case BIGN:
+			switch (tag2) {
+				case INTN:
+					return (big_plus(arg1, big_int_to_big(arg2)));
+				case FLTN:
+					return (plus(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_plus(arg1, big_long_to_big(arg2)));
+				case BIGN:
+					return (big_plus(arg1, arg2));
+			}
+			break;
+		case FLTN:
+			switch (tag2) {
+				case FLTN: {
+					x1 = GET_FLT(arg1);
+					x2 = GET_FLT(arg2);
 
-		n = GET_INT(arg1);
-		x1 = (double) n;
-		y1 = GET_FLT(arg2);
-		return (make_flt(x1 + y1));
-	    }
-	case LONGN:
-	    return (big_plus(big_int_to_big(arg1), big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_plus(big_int_to_big(arg1), arg2));
-	}
-	break;
-    case LONGN:
-	switch (tag2) {
-	case INTN:
-	    return (big_plus(big_long_to_big(arg1), big_int_to_big(arg2)));
-	case FLTN:
-	    return (plus(exact_to_inexact(arg1), arg2));
-	case LONGN:
-	    return (big_plus
-		    (big_long_to_big(arg1), big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_plus(big_long_to_big(arg1), arg2));
-	}
-	break;
-    case BIGN:
-	switch (tag2) {
-	case INTN:
-	    return (big_plus(arg1, big_int_to_big(arg2)));
-	case FLTN:
-	    return (plus(exact_to_inexact(arg1), arg2));
-	case LONGN:
-	    return (big_plus(arg1, big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_plus(arg1, arg2));
-	}
-	break;
-    case FLTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		int s;
+					double y = x1 + x2;
+					if (fabs(y) > DBL_MAX)
+						error(FLT_OVERF, "+",  list2(arg1, arg2));
 
-		x1 = GET_FLT(arg1);
-		s = GET_INT(arg2);
-		x2 = (double) s;
-		return (make_flt(x1 + x2));
-	    }
-	case FLTN:
-	    {
-		x1 = GET_FLT(arg1);
-		x2 = GET_FLT(arg2);
-		return (make_flt(x1 + x2));
-	    }
-	case LONGN:
-	    return (plus(arg1, exact_to_inexact(arg2)));
-	case BIGN:
-	    return (plus(arg1, exact_to_inexact(arg2)));
-	}
-	break;
-    default:
-	break;
+					return (make_flt(y));
+				}
+				case INTN:
+				case LONGN:
+				case BIGN:
+					return (plus(arg1, exact_to_inexact(arg2)));
+			}
+			break;
+		default:
+			break;
     }
     error(NOT_COMPUTABLE, "+", list2(arg1, arg2));
     return (UNDEF);
@@ -330,88 +316,75 @@ int minus(int arg1, int arg2)
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
     switch (tag1) {
-    case INTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		long long int l;
+		case INTN:
+			switch (tag2) {
+				case INTN: {
+					long long int l;
 
-		l = (long long int) GET_INT(arg1) -
-		    (long long int) GET_INT(arg2);
-		if (SMALL_INT_MIN < l && l < SMALL_INT_MAX)
-		    return (make_int((int) l));
-		else
-		    return (make_long(l));
-	    }
+					l = (long long int) GET_INT(arg1) -
+						(long long int) GET_INT(arg2);
+					if (SMALL_INT_MIN < l && l < SMALL_INT_MAX)
+						return (make_int((int) l));
+					else
+						return (make_long(l));
+				}
 
-	case FLTN:
-	    {
-		int n;
-		double y1;
+				case FLTN: {
+					return minus(exact_to_inexact(arg1), arg2);
+				}
 
-		n = GET_INT(arg1);
-		x1 = (double) n;
-		y1 = GET_FLT(arg2);
-		return (make_flt(x1 - y1));
-	    }
+				case LONGN:
+					return (big_minus(big_int_to_big(arg1),
+							big_long_to_big(arg2)));
 
-	case LONGN:
-	    return (big_minus(big_int_to_big(arg1),
-			      big_long_to_big(arg2)));
+				case BIGN:
+					return (big_minus(big_int_to_big(arg1), arg2));
+			}
+			break;
+		case LONGN:
+			switch (tag2) {
+				case INTN:
+					return (big_minus
+						(big_long_to_big(arg1), big_int_to_big(arg2)));
+				case FLTN:
+					return (minus(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_minus
+						(big_long_to_big(arg1), big_long_to_big(arg2)));
+				case BIGN:
+					return (big_minus(big_long_to_big(arg1), arg2));
+			}
+			break;
+		case BIGN:
+			switch (tag2) {
+				case INTN:
+					return (big_minus(arg1, big_int_to_big(arg2)));
+				case FLTN:
+					return (minus(exact_to_inexact(arg1), arg2));
+				case LONGN:
+					return (big_minus(arg1, big_long_to_big(arg2)));
+				case BIGN:
+					return (big_minus(arg1, arg2));
+			}
+			break;
+		case FLTN:
+			switch (tag2) {
+				case FLTN: {
+					x1 = GET_FLT(arg1);
+					x2 = GET_FLT(arg2);
 
-	case BIGN:
-	    return (big_minus(big_int_to_big(arg1), arg2));
-	}
-	break;
-    case LONGN:
-	switch (tag2) {
-	case INTN:
-	    return (big_minus
-		    (big_long_to_big(arg1), big_int_to_big(arg2)));
-	case FLTN:
-	    return (minus(exact_to_inexact(arg1), arg2));
-	case LONGN:
-	    return (big_minus
-		    (big_long_to_big(arg1), big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_minus(big_long_to_big(arg1), arg2));
-	}
-	break;
-    case BIGN:
-	switch (tag2) {
-	case INTN:
-	    return (big_minus(arg1, big_int_to_big(arg2)));
-	case FLTN:
-	    return (minus(exact_to_inexact(arg1), arg2));
-	case LONGN:
-	    return (big_minus(arg1, big_long_to_big(arg2)));
-	case BIGN:
-	    return (big_minus(arg1, arg2));
-	}
-	break;
-    case FLTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		int s;
+					double y = x1 - x2;
+					if (fabs(y) > DBL_MAX)
+						error(FLT_OVERF, "-",  list2(arg1, arg2));
 
-		x1 = GET_FLT(arg1);
-		s = GET_INT(arg2);
-		x2 = (double) s;
-		return (make_flt(x1 - x2));
-	    }
-	case FLTN:
-	    {
-		x1 = GET_FLT(arg1);
-		x2 = GET_FLT(arg2);
-		return (make_flt(x1 - x2));
-	    }
-	case LONGN:
-	    return (minus(arg1, exact_to_inexact(arg2)));
-	case BIGN:
-	    return (minus(arg1, exact_to_inexact(arg2)));
-	}
-	break;
+					return (make_flt(y));
+				}
+				case INTN:
+				case LONGN:
+				case BIGN:
+					return (minus(arg1, exact_to_inexact(arg2)));
+			}
+			break;
     }
     error(NOT_COMPUTABLE, "-", list2(arg1, arg2));
     return (UNDEF);
@@ -444,12 +417,7 @@ int mult(int arg1, int arg2)
 				}
 
 			case FLTN: {
-				int n;
-
-				n = GET_INT(arg1);
-				x1 = (double) n;
-				y1 = GET_FLT(arg2);
-				return (make_flt(x1 * y1));
+				return mult(exact_to_inexact(arg1), arg2);
 			}
 
 			case LONGN:
@@ -494,14 +462,6 @@ int mult(int arg1, int arg2)
 		break;
     case FLTN: 
 		switch (tag2) {
-			case INTN: {
-				int s;
-
-				x1 = GET_FLT(arg1);
-				s = GET_INT(arg2);
-				x2 = (double) s;
-				return (make_flt(x1 * x2));
-			}
 			case FLTN: {
 				x1 = GET_FLT(arg1);
 				x2 = GET_FLT(arg2);
@@ -513,6 +473,7 @@ int mult(int arg1, int arg2)
 					error(FLT_UNDERF, "*", list2(arg1, arg2));
 				return (make_flt(y1));
 			}
+			case INTN:
 			case LONGN:
 			case BIGN:
 				return (mult(arg1, exact_to_inexact(arg2)));
@@ -528,101 +489,100 @@ int quotient(int arg1, int arg2)
     int n, s, tag1, tag2;
     double x1, y1, x2;
 
+	if (zerop(arg2))
+		error(DIV_ZERO, "quotient", arg2);
+
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
     switch (tag1) {
-    case INTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		n = GET_INT(arg1);
-		if (n == 0)
-		    return (arg1);
-		x1 = (double) n;
-		s = GET_INT(arg2);
-		y1 = (double) s;
-		x2 = x1 / y1;
-		if ((x2 - floor(x2)) == 0.0)
-		    return (make_int((int) x2));
-		else
-		    return (make_flt(x1 / y1));
-	    }
-	case FLTN:
-	    {
-		n = GET_INT(arg1);
-		x1 = (double) n;
-		y1 = GET_FLT(arg2);
-		return (make_flt(x1 / y1));
-	    }
+		case INTN:
+			switch (tag2) {
+				case INTN:
+					{
+					n = GET_INT(arg1);
+					if (n == 0)
+						return (arg1);
+					x1 = (double) n;
+					s = GET_INT(arg2);
+					y1 = (double) s;
+					x2 = x1 / y1;
+					if ((x2 - floor(x2)) == 0.0)
+						return (make_int((int) x2));
+					else
+						return (make_flt(x1 / y1));
+					}
+				case FLTN:
+					return quotient(exact_to_inexact(arg1), arg2);
 
-	case LONGN:
-	case BIGN:
-	    if (GET_INT(arg1) == 0)
-		return (arg1);
-	    else
-		return (quotient
-			(exact_to_inexact(arg1), exact_to_inexact(arg2)));
-	}
-	break;
-    case LONGN:
-	switch (tag2) {
-	case INTN:
-	case LONGN:
-	    n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
-	    x1 = GET_FLT(n);
-	    x2 = x1 - ceil(x1);
-	    if (x2 == 0.0) {
-		return (divide(arg1, arg2));
-	    } else
-		return (n);
-	case BIGN:
-	    return (quotient
-		    (exact_to_inexact(arg1), exact_to_inexact(arg2)));
-	case FLTN:
-	    return (quotient(exact_to_inexact(arg1), arg2));
-	}
-	break;
-    case BIGN:
-	switch (tag2) {
-	case INTN:
-	case LONGN:
-	case BIGN:
-	    n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
-	    x1 = GET_FLT(n);
-	    x2 = x1 - ceil(x1);
-	    if (x1 == 1.0)
-		return (make_int(1));
-	    else if (x1 == -1.0)
-		return (make_int(-1));
-	    else if (x2 == 0.0)
-		return (divide(arg1, arg2));
-	    else
-		return (n);
-	case FLTN:
-	    return (quotient(exact_to_inexact(arg1), arg2));
-	}
-	break;
-    case FLTN:
-	switch (tag2) {
-	case INTN:
-	    {
-		x1 = GET_FLT(arg1);
-		s = GET_INT(arg2);
-		x2 = (double) s;
-		return (make_flt(x1 / x2));
-	    }
-	case FLTN:
-	    {
-		x1 = GET_FLT(arg1);
-		x2 = GET_FLT(arg2);
-		return (make_flt(x1 / x2));
-	    }
-	case LONGN:
-	case BIGN:
-	    return (quotient(arg1, exact_to_inexact(arg2)));
+				case LONGN:
+				case BIGN:
+					if (GET_INT(arg1) == 0)
+					return (arg1);
+					else
+					return (quotient
+						(exact_to_inexact(arg1), exact_to_inexact(arg2)));
+			}
+			break;
+		case LONGN:
+			switch (tag2) {
+				case INTN:
+				case LONGN:
+					n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
+					x1 = GET_FLT(n);
+					x2 = x1 - ceil(x1);
+					if (x2 == 0.0) {
+					return (divide(arg1, arg2));
+					} else
+					return (n);
+				case BIGN:
+					return (quotient
+						(exact_to_inexact(arg1), exact_to_inexact(arg2)));
+				case FLTN:
+					return (quotient(exact_to_inexact(arg1), arg2));
+			}
+			break;
+		case BIGN:
+			switch (tag2) {
+				case INTN:
+				case LONGN:
+				case BIGN:
+					n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
+					x1 = GET_FLT(n);
+					x2 = x1 - ceil(x1);
+					if (x1 == 1.0)
+					return (make_int(1));
+					else if (x1 == -1.0)
+					return (make_int(-1));
+					else if (x2 == 0.0)
+					return (divide(arg1, arg2));
+					else
+					return (n);
+				case FLTN:
+					return (quotient(exact_to_inexact(arg1), arg2));
+			}
+			break;
+		case FLTN:
+			switch (tag2) {
+			case FLTN:
+				{
+				x1 = GET_FLT(arg1);
+				x2 = GET_FLT(arg2);
+				y1 = x1 / x2;
+				if (fabs(y1) > DBL_MAX)
+					error(FLT_OVERF, "quotient", list2(arg1, arg2));
+				
+				if (x1 != 0.0 && x2 != 0.0 && fabs(y1) < DBL_MIN)
+					error(FLT_UNDERF, "quotient", list2(arg1, arg2));
 
-	}
-	break;
+				return make_flt(y1);
+				}
+			case INTN:
+			case LONGN:
+			case BIGN:
+				return (quotient(arg1, exact_to_inexact(arg2)));
+
+			}
+			break;
     }
     error(NOT_COMPUTABLE, "/", list2(arg1, arg2));
     return (UNDEF);

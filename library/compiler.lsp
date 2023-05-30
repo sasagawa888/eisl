@@ -230,19 +230,19 @@ defgeneric compile
     
     ;; This function generate C code and write to file *.c
     ;; Caution! for raspi "gcc -O3 -w -shared -fPIC -o ";
-    (defpublic compile-file (x)
+    (defpublic compile-file (x :rest rm-opt)
         (setq file-name-and-ext x)
         (setq type-function nil)
         (inference-file x)
         (catch 'exit
-               (unwind-protect (compile-file1 x)
+               (unwind-protect (compile-file1 x rm-opt)
                                (if instream
                                    (close instream))
                                (eisl-ignore-toplevel-check nil)))
         t)
 
     
-    (defun compile-file1 (x)
+    (defun compile-file1 (x rm-opt)
         (let* ((include
                (let ((prefix (getenv "EASY_ISLISP")))
                   (if (null prefix)
@@ -302,64 +302,9 @@ defgeneric compile
                             env-cflags-str
                             " "
                             env-ldflags-str))
-            (system (string-append "rm " infnames))))
-
-    
-    ;;for debug compile and not remove C code
-    (defpublic compile-file* (x)
-        (setq file-name-and-ext x)
-        (setq type-function nil)
-        (inference-file x)
-        (catch 'exit
-               (unwind-protect (compile-file1* x)
-                               (if instream
-                                   (close instream))
-                               (eisl-ignore-toplevel-check nil)))
-        t)
-
-    
-    (defun compile-file1* (x)
-        (let* ((include
-               (let ((prefix (getenv "EASY_ISLISP")))
-                  (if (null prefix)
-                      "-I$HOME/eisl "
-                      "-I$EASY_ISLISP ")))
-               (option
-               (cond ((member (self-introduction) '(linux openbsd))
-                      "cc -O3 -w -shared -fPIC -s -o ")
-                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
-               (fname (filename x))
-               (env-cflags (getenv "CFLAGS"))
-               (env-cflags-str (if env-cflags
-                                  env-cflags
-                                  ""))
-               (env-ldflags (getenv "LDFLAGS"))
-               (env-ldflags-str (if env-ldflags
-                                   env-ldflags
-                                   "")) )
-            (eisl-ignore-toplevel-check t)
-            (format (standard-output) "initialize~%")
-            (initialize fname ".c")
-            (format (standard-output) "pass1~%")
-            (pass1 x)
-            (format (standard-output) "pass2~%")
-            (pass2 x)
-            (eisl-ignore-toplevel-check nil)
-            (format (standard-output) "finalize~%")
-            (finalize (remove-dir fname) ".c")
-            (format (standard-output) "invoke CC~%")
-            (system
-             (string-append option
-                            fname
-                            ".o "
-                            include
-                            fname
-                            "0.c "
-                            c-lang-option
-                            " "
-                            env-cflags-str
-                            " "
-                            env-ldflags-str))))
+            (cond ((null rm-opt) (system (string-append "rm " infnames)))
+                  ((eq (car rm-opt) nil) nil)
+                  ((eq (car rm-opt) t) (system (string-append "sudo rm " infnames))))))
 
     
     (defun pass1 (x)

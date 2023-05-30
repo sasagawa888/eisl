@@ -4,6 +4,7 @@
 ;;          Copyright (C) 2016 Makoto Hiroi
 ;;
 (import "cxr")
+(import "seq")
 
 (defglobal default-hash-size 8191)
 

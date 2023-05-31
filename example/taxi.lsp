@@ -1,5 +1,5 @@
 ;;; ramanujan's taxi-number
-
+;;; 1729 = 9^3+10^3 = 1^3+12^3
 (import "combination")
 (import "list")
 
@@ -7,7 +7,9 @@
 
 (defun taxi-number (ls)
     (if (taxi-number-p ls)
-        (print ls)))
+        (format (standard-output) 
+                "~D ~A ~%" 
+                (+ (expt (elt ls 0) 3) (expt (elt ls 1) 3)) ls))) 
 
 (defun taxi-number-p (ls)
     (let ((a (elt ls 0))

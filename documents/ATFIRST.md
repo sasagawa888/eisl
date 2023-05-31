@@ -64,6 +64,8 @@ If you modify or improve the library, please do the above make again.
 
 ![functionsJ](FUNCTIONSJ.md)
 
+![hash](HASH.md)
+
 ![lazy](LAZY.md)
 
 ![list](LIST.md)
@@ -71,6 +73,8 @@ If you modify or improve the library, please do the above make again.
 ![math](MATH.md)
 
 ![macro](MACRO.md)
+
+![matrix](MATRIX.md)
 
 ![mexp](MEXP.md)
 

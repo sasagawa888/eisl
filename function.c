@@ -4823,7 +4823,10 @@ int f_continue_condition(int arglist)
     if (GET_OPT(arg1) != CONTINUABLE)
 	error(ILLEGAL_FORM, "continue-condition", arg1);
 
+    /* memo
+    *  if error is continuable signal_condition set_jump
+    *  continue-condition longjump to signal_condition. 
+    */
     cont_arg = arg2;
     longjmp(cont_buf,1);
-    //return (arg2);
 }

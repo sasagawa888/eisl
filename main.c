@@ -184,13 +184,13 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
     { "Exit interpreter" };
 jmp_buf block_buf[CTRLSTK];
-int block_tag_check[CTRLSTK];
-int block_data[CTRLSTK][3];
 jmp_buf catch_buf[CTRLSTK];
+jmp_buf cont_buf;
 //int catch_unwind_nest[CTRLSTK][10];
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
-//int block_tag[CTRLSTK];		/* array of tag */
+int block_tag_check[CTRLSTK];
+int block_data[CTRLSTK][3];
 int catch_data[CTRLSTK][3]; /* new data type for catch tag*/
 int unwind_buf[CTRLSTK];
 int block_pt;			/* index of block. following are similer */

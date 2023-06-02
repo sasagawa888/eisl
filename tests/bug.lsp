@@ -1,3 +1,8 @@
+(defun sss ()
+    (unwind-protect 
+        (mult-underflow)
+        (print 'cleanup)))
+
 
 (defun test-error-handler (condition)
     (print "first")

@@ -42,19 +42,6 @@ void error(int errnum, const char *fun, int arg)
     repl_flag = org_repl_flag;
 #endif
 
-    /* resolve unwind-protect
-	* FLT_OVERF and FLT_UNDERF is continueable error
-	* So, unwind-protect does not execute cleanup.
-	*/
-    if (errnum != FLT_OVERF && errnum != FLT_UNDERF && unwind_pt > 0) {
-	unwind_pt--;
-	while (unwind_pt >= 0) {
-	    apply(unwind_buf[unwind_pt], NIL);
-	    unwind_pt--;
-	}
-	unwind_pt = 0;
-	unwind_nest = 0;
-    }
     // initialize block-pointer
     block_pt = 0;
 
@@ -666,6 +653,16 @@ int signal_condition(int x, int y)
     } else if (ret == 1) {
 	return (cont_arg);
 	}
+    }
+	/* resolve unwind-protect */
+	if (unwind_pt > 0) {
+	unwind_pt--;
+	while (unwind_pt >= 0) {
+	    apply(unwind_buf[unwind_pt], NIL);
+	    unwind_pt--;
+	}
+	unwind_pt = 0;
+	unwind_nest = 0;
     }
     str = cdr(assoc(make_sym("a"), GET_CDR(x)));
     args = cdr(assoc(make_sym("b"), GET_CDR(x)));

@@ -198,6 +198,7 @@ int catch_pt = 0;		/* catch counter */
 int unwind_pt;			/* lambda address for unwind-protect */
 int block_arg;			/* receive argument of block */
 int catch_arg;			/* receive argument of catch */
+int cont_arg;           /* receive argument of continue-condition */
 int tagbody_tag = NIL;		/* tag address fo tagbody */
 int error_handler = NIL;	/* for store first argument of with-handler */
 int error_handler1 = NIL;	/* for restore error_handler */

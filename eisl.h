@@ -580,6 +580,7 @@ extern int catch_pt;		// catch counter
 extern int unwind_pt;		// lambda address for unwind-protect
 extern int block_arg;		// argument that block will recieve
 extern int catch_arg;		// argument that catch will recieve
+extern int cont_arg;        // argument that signal_condition will recieve
 extern int tagbody_tag;		// tag symbol address in tagbody
 extern int error_handler;
 extern int error_handler1;

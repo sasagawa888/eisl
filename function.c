@@ -4822,5 +4822,8 @@ int f_continue_condition(int arglist)
 
     if (GET_OPT(arg1) != CONTINUABLE)
 	error(ILLEGAL_FORM, "continue-condition", arg1);
-    return (arg2);
+
+    cont_arg = arg2;
+    longjmp(cont_buf,1);
+    //return (arg2);
 }

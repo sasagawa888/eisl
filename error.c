@@ -627,7 +627,7 @@ void error(int errnum, const char *fun, int arg)
  */
 int signal_condition(int x, int y)
 {
-    int str, args, fun;
+    int str, args, fun, ret;
 
     error_flag = true;
     if (y == NIL)
@@ -656,7 +656,13 @@ int signal_condition(int x, int y)
 	    error_handler1 = error_handler;
 	    error_handler = cdr(error_handler);
 	}
+	ret = setjmp(cont_buf);
+
+    if (ret == 0) {
 	return (apply(handler, list1(x)));
+    } else if (ret == 1) {
+	return (cont_arg);
+	}
     }
     str = cdr(assoc(make_sym("a"), GET_CDR(x)));
     args = cdr(assoc(make_sym("b"), GET_CDR(x)));

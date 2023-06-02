@@ -13,6 +13,7 @@ eisl -s verify/list.lsp
 eisl -s verify/macro.lsp
 eisl -s verify/matrix.lsp
 eisl -s verify/misc.lsp
+eisl -s verify/noble.lsp
 eisl -s verify/number.lsp
 eisl -s verify/object.lsp
 eisl -s verify/pred.lsp

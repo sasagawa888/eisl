@@ -42,8 +42,11 @@ void error(int errnum, const char *fun, int arg)
     repl_flag = org_repl_flag;
 #endif
 
-    // resolve unwind-protect
-    if (unwind_pt > 0) {
+    /* resolve unwind-protect
+	* FLT_OVERF and FLT_UNDERF is continueable error
+	* So, unwind-protect does not execute cleanup.
+	*/
+    if (errnum != FLT_OVERF && errnum != FLT_UNDERF && unwind_pt > 0) {
 	unwind_pt--;
 	while (unwind_pt >= 0) {
 	    apply(unwind_buf[unwind_pt], NIL);

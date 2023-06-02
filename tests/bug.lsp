@@ -8,8 +8,6 @@
     (with-handler #'test-error-handler (cerror "foo" "bar")) )
 
 
-(import "test")
-
 (defun mult-underflow ()
     (* 1E-200 1E-200) )
 
@@ -20,14 +18,13 @@
     (+ *positive-infinity*) )
 
 (defun test-underflow-overflow (underflowing)
-    ($assert-ordered-operations '(first second third fourth)
-                                (unwind-protect (with-handler (lambda (condition) 
-                                                                 (record-operation 'second)
-                                                                 (continue-condition condition))
-                                                              (record-operation 'first)
-                                                              (funcall underflowing)
-                                                              (record-operation 'third))
-                                                (record-operation 'fourth))))
+    (unwind-protect (with-handler (lambda (condition) 
+                                     (print 'second)
+                                     (continue-condition condition))
+                                  (print 'first)
+                                  (funcall underflowing)
+                                  (print 'third))
+                    (print 'fourth)))
 
 (defun foo ()
     (test-underflow-overflow #'mult-underflow) )

@@ -146,7 +146,7 @@ endif
 	$(DC) $(DFLAGS) -c $<
 
 %.o: %.lsp eisl
-	echo '(load "library/compiler.lsp") (compile-file "$<" t)' | ./eisl -r
+	echo '(load "library/compiler.lsp") (compile-file "$<")' | ./eisl -r
 
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h

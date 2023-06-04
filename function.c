@@ -1565,14 +1565,16 @@ int f_mapcar(int arglist)
 
 int mapcar(int x, int y)
 {
-    int ls, res;
+    int ls, res, car, cdr;
 
     ls = y;
     shelter_push(y);
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
-	res = cons(apply(x, each_car(y)), mapcar(x, each_cdr(y)));
+    car = apply(x, each_car(y));
+    cdr = mapcar(x, each_cdr(y));
+	res = cons(car, cdr);
     }
     shelter_pop();
     return res;

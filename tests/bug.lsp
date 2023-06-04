@@ -9,4 +9,3 @@
   (let ((a 0))
     (print (mapcar (lambda (x) (setq a (+ a x)) a) xs))
     a))
-

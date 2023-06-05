@@ -212,6 +212,7 @@ defgeneric compile
     (defglobal file-name-and-ext nil)
     (defglobal lambda-count 0)
     (defglobal lambda-nest 0)
+    (defglobal lambda-free-var nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
     (defglobal inference-name nil)
@@ -523,6 +524,15 @@ defgeneric compile
                ;;not in lambda
                (cond ((eq x nil) (format stream "NIL"))
                      ((eq x t) (format stream "T"))
+                     ((find-free-variable-outer-lambda x lambda-free-var)
+                      (let* ((dt (find-free-variable-outer-lambda x lambda-free-var))
+                             (pos (position x dt))
+                             (name (last dt)))
+                         (format stream "Fnth(")
+                         (format-integer stream pos 10)
+                         (format stream ",Fcdr(Fmakesym(\"")
+                         (format stream (convert name <string>))
+                         (format stream "\")))")))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t (when (and (not (member x global-variable))
                                    (not (eq x '*pi*))
@@ -742,6 +752,7 @@ defgeneric compile
         (unless (listp (elt x 2)) (error* "defun: not list " (elt x 2)))
         (when (null (cdr (cdr (cdr x))))
               (error* "defun: not exist body" (elt x 1)))
+        (setq lambda-free-var nil)
         (comp-defun0 x)
         (comp-defun1 x)
         (comp-defun2 x)
@@ -749,6 +760,8 @@ defgeneric compile
 
     
     ;;create lambda as SUBR and invoke the SUBR.
+    ;;lambda-free-var ((var11 var12 .. var1N lambdasym1) (var21 var22 .. var2N lambdasym2)...)
+    ;;comp generate free-variable with lambda-free-var 
     (defun comp-lambda (x env global)
         (unless (listp (elt x 1)) (error* "lambda: not list" (elt x 1)))
         (when (null (cdr (cdr x))) (error* "lambda: not exist body" x))
@@ -759,6 +772,7 @@ defgeneric compile
                (free0 (find-free-variable body args env))
                (free (append (varlis-to-lambda-args method-args) free0))
                (stream (lambda-stream-caller global)) )
+            (setq lambda-free-var (cons (append free (list name)) lambda-free-var))
             (comp-lambda0 x name)
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)
@@ -966,7 +980,7 @@ defgeneric compile
                 (format stream ";~%"))))
 
     
-    ;;when lambda nest, select nested str-stream
+    ;;when lambda nest, select nested file
     ;;for lambda callee
     (defun lambda-stream-callee ()
         (cond ((= lambda-nest 0) code5)
@@ -1012,6 +1026,12 @@ defgeneric compile
                  (free-variable-list stream (cdr x))
                  (format stream ")"))))
 
+    ;; find free-variable outer lambda
+    ;; free-var  ((v1 v2 .. lambda-sym1)(v1 v2 .. lambda-sym2)...)
+    (defun find-free-variable-outer-lambda (x free-var)
+        (cond ((null free-var) nil)
+              ((member x (car free-var)) (car free-var))
+              (t (find-free-variable-outer-lambda x (cdr free-var)))))
     
     (defun comp-defgeneric2 (x)
         (let* ((name0 (elt x 1))

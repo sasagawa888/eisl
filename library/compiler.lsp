@@ -986,7 +986,7 @@ defgeneric compile
     
     ;;for lambda find free-variable. if no variable return '(t)
     (defun find-free-variable (x env args)
-        (append (find-free-variable1 x env args) '(t)))
+        (append (find-free-variable2 (find-free-variable1 x env args)) '(t)))
 
     
     (defun find-free-variable1 (x env args)
@@ -997,7 +997,12 @@ defgeneric compile
                (append (find-free-variable1 (car x) env args)
                        (find-free-variable1 (cdr x) env args)))))
 
-    
+    ;; remove dupilicate variable
+    (defun find-free-variable2 (x)
+        (cond ((null x) nil)
+              ((member (car x) (cdr x)) (find-free-variable2 (cdr x)))
+              (t (cons (car x) (find-free-variable2 (cdr x))))))
+
     ;;create free-variable list to set lambda-name symbol
     (defun free-variable-list (stream x)
         (cond ((null x) (format stream "NIL"))

@@ -224,6 +224,7 @@ defgeneric compile
     (defglobal code5 nil)
     (defglobal code6 nil)
     (defglobal code7 nil)
+
     (defun error* (str x)
         (format (standard-output) "compile error ~A ~A ~%" str x)
         (throw 'exit t))
@@ -800,6 +801,7 @@ defgeneric compile
     
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
+        (setq lambda-free-var nil)
         (comp-defgeneric0 x)
         (comp-defgeneric1 x)
         (comp-defgeneric2 x)
@@ -3122,6 +3124,7 @@ defgeneric compile
     
     ;;defmacro
     (defun comp-defmacro (x)
+        (setq lambda-free-var nil)
         (format code4 "Feval(")
         (list-to-c1 code4 '(eisl-ignore-toplevel-check t))
         (format code4 ");~%")

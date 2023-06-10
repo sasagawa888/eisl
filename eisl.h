@@ -15,6 +15,7 @@
 #include "except.h"
 #include "compat/eiffel_stubs.h"
 
+#define ENVSIZE 1000
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define BUFSIZE 256
@@ -245,6 +246,7 @@ extern int stack[STACKSIZE];
 extern int argstk[STACKSIZE];
 extern int cell_hash_table[HASHTBSIZE];
 extern int shelter[STACKSIZE];
+extern int environment[ENVSIZE][2];
 extern int dynamic[DYNSIZE][2];
 extern int bigcell[BIGSIZE];
 

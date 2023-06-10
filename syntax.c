@@ -2186,8 +2186,7 @@ int convert(int arg1, int arg2)
 	if (GET_AUX(arg2) == cstring) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cinteger) {
-	    strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
-	    stok.buf[BUFSIZE - 1] = '\0';
+		replace_stok_buf(stok, GET_NAME(arg1));
 
 	    if (bignum_token(stok.buf)) {
 		return (make_big(stok.buf));

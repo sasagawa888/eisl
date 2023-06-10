@@ -755,7 +755,7 @@ int hcons(int car, int cdr)
 {
     int addr;
 
-    addr = hfreshcell();
+    addr = freshcell();
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);
     SET_CDR(addr, cdr);

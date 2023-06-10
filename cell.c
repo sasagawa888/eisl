@@ -232,7 +232,6 @@ int freshcell(void)
 {
     int res;
 
-    if (gc_sw == 0) {
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
@@ -242,50 +241,10 @@ int freshcell(void)
 	    error(RESOURCE_ERR, "M&S freshcell", NIL);
 	}
 	return (res);
-    } else {
-	res = wp;
-	if (IS_VECTOR(res) || IS_ARRAY(res)) {
-	    FREE(heap[res].val.car.dyna_vec);
-	} else if (IS_STRING(res)) {
-	    FREE(heap[res].name);
-	}
-	SET_TAG(res, EMP);
-	SET_CAR(res, 0);
-	SET_CDR(res, 0);
-	SET_AUX(res, 0);
-	SET_PROP(res, 0);
-	SET_OPT(res, 0);
-	SET_TR(res, 0);
-	wp++;
-	if (wp < CELLSIZE && wp > CELLSIZE - 50 && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "copying freshcell", NIL);
-	} else if (wp > CELLSIZE && wp > CELLSIZE - 50
-		   && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "copying freshcell", NIL);
-	}
-	return (res);
-    }
+    
 }
 
-/* generate freshcell on heap area
- * use copying GC
- */
-int hfreshcell(void)
-{
-    int res;
 
-    res = hp;
-    hp = heap[hp].val.cdr.intnum;
-    SET_CDR(res, 0);
-    fc--;
-    if (fc <= 50 && !handling_resource_err) {
-	handling_resource_err = true;
-	error(RESOURCE_ERR, "hfreshcell", NIL);
-    }
-    return (res);
-}
 
 //#define SSS
 /* set value to environment by destructive by deep-bind */
@@ -478,7 +437,7 @@ int make_sym1(const char *pname)
 {
     int addr;
 
-    addr = hfreshcell();
+    addr = freshcell();
     SET_TAG(addr, SYM);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_sym", NIL);
@@ -588,7 +547,7 @@ int make_func(const char *pname, int addr)
 {
     int val;
 
-    val = hfreshcell();
+    val = freshcell();
     SET_TAG(val, FUNC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL);
@@ -629,7 +588,7 @@ int make_generic(char *pname, int lamlist, int body)
 {
     int val;
 
-    val = hfreshcell();
+    val = freshcell();
     SET_TAG(val, GENERIC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_generic", NIL);
@@ -688,7 +647,7 @@ int make_generic_star(int lamlist, int body)
 {
     int val;
 
-    val = hfreshcell();
+    val = freshcell();
     SET_TAG(val, GENERIC);
     SET_CAR(val, lamlist);
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
@@ -711,7 +670,7 @@ int make_method(int addr)
 {
     int val;
 
-    val = hfreshcell();
+    val = freshcell();
     SET_TAG(val, METHOD);
     if (eqp(car(addr), make_sym(":AROUND"))) {
 	SET_CAR(val, cdr(addr));

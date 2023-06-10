@@ -82,8 +82,6 @@ void dynamic_link(int x)
     init_f0(GBC_IDX, gbc);
     init_f0(FRESHCELL_IDX, freshcell);
     init_f0(FREECELL_IDX, freecell);
-    init_f0(GBCSW_IDX, gbcsw);
-    init_f0(GETWP_IDX, getwp);
     init_f0(ARGPOP_IDX, arg_pop);
     init_f0(SHELTERPOP_IDX, shelter_pop);
     init_f0(POP_IDX, pop);

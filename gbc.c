@@ -236,13 +236,4 @@ int freecell(void)
 }
 
 
-int gbcsw(void)
-{
-    return (gc_sw);
-}
-
-int getwp(void)
-{
-    return (wp);
-}
 

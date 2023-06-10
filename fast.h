@@ -93,15 +93,6 @@ static inline int Ffreecell(void)
     return f0[FREECELL_IDX] ();
 }
 
-static inline int Fgbcsw(void)
-{
-    return f0[GBCSW_IDX] ();
-}
-
-static inline int Fgetwp(void)
-{
-    return f0[GETWP_IDX] ();
-}
 
 static inline int Fargpop(void)
 {

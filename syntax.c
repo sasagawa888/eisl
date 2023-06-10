@@ -1797,7 +1797,7 @@ int f_defgeneric(int arglist)
     }
 
     if (!member(arg1, generic_list))
-	generic_list = hcons(arg1, generic_list);
+	generic_list = cons(arg1, generic_list);
 
     val = make_generic(GET_NAME(arg1), arg2, arg3);
     SET_CAR(arg1, val);
@@ -1823,7 +1823,7 @@ int f_defgeneric_star(int arglist)
 	error(NOT_LIST, "defgeneric", arg2);
 
     if (!member(arg1, generic_list))
-	generic_list = hcons(arg1, generic_list);
+	generic_list = cons(arg1, generic_list);
 
     val = make_generic_star(arg2, arg3);
     SET_CAR(arg1, val);

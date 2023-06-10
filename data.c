@@ -751,6 +751,7 @@ int cons(int car, int cdr)
     return (addr);
 }
 
+/*
 int hcons(int car, int cdr)
 {
     int addr;
@@ -759,10 +760,10 @@ int hcons(int car, int cdr)
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);
     SET_CDR(addr, cdr);
-    SET_AUX(addr, ccons);	/* cons class */
+    SET_AUX(addr, ccons);	
     return (addr);
 }
-
+*/
 
 int length(int addr)
 {
@@ -847,10 +848,6 @@ int list1(int x)
     return (cons(x, NIL));
 }
 
-int hlist1(int x)
-{
-    return (hcons(x, NIL));
-}
 
 int list2(int x, int y)
 {
@@ -928,18 +925,6 @@ int reverse(int x)
     return (res);
 }
 
-int hreverse(int x)
-{
-    int res;
-
-    res = NIL;
-    while (!nullp(x) && !atomp(x)) {
-	res = hcons(car(x), res);
-	x = cdr(x);
-    }
-    return (res);
-}
-
 int last(int x)
 {
     return (car(reverse(x)));
@@ -951,14 +936,6 @@ int append(int x, int y)
 	return (y);
     else
 	return (cons(car(x), append(cdr(x), y)));
-}
-
-int happend(int x, int y)
-{
-    if (nullp(x))
-	return (y);
-    else
-	return (hcons(car(x), happend(cdr(x), y)));
 }
 
 int copy(int x)
@@ -1538,18 +1515,18 @@ void insert_method(int x, int func)
 
     methods = GET_CDR(func);
     if (nullp(methods)) {
-	SET_CDR(func, hlist1(x));
+	SET_CDR(func, list1(x));
 	return;
     }
     res = NIL;
     while (!nullp(methods)) {
 	if (high_priority_p(car(methods), x)) {
-	    res = hcons(car(methods), res);
+	    res = cons(car(methods), res);
 	    methods = cdr(methods);
 	} else
 	    break;
     }
-    res = happend(hreverse(hcons(x, res)), methods);
+    res = append(reverse(cons(x, res)), methods);
     SET_CDR(func, res);
     return;
 }
@@ -1562,7 +1539,7 @@ void resort_method(int func)
     if (nullp(methods))
 	return;
 
-    res = hcons(car(methods), NIL);
+    res = cons(car(methods), NIL);
     methods = cdr(methods);
     while (!nullp(methods)) {
 	int temp, x;
@@ -1572,16 +1549,16 @@ void resort_method(int func)
 	bool high_priority_found = false;
 	while (!nullp(res)) {
 	    if (high_priority_p(x, car(res))) {
-		res = happend(hreverse(temp), hcons(x, res));
+		res = append(reverse(temp), cons(x, res));
 		high_priority_found = true;
 		break;
 	    } else {
-		temp = hcons(car(res), temp);
+		temp = cons(car(res), temp);
 		res = cdr(res);
 	    }
 	}
 	if (!high_priority_found) {
-	    res = hreverse(cons(x, temp));
+	    res = reverse(cons(x, temp));
 	}
 	methods = cdr(methods);
     }

@@ -424,7 +424,7 @@ int add_sym(const char *name, int index)
     int addr, res;
 
     addr = cell_hash_table[index];
-    addr = hcons(res = make_sym1(name), addr);
+    addr = cons(res = make_sym1(name), addr);
     cell_hash_table[index] = addr;
     return (res);
 }

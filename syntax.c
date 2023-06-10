@@ -1294,8 +1294,12 @@ int has_danger_p(int x){
 			 eqp(car(x),make_sym("RETURN-FROM")) ||
 			 eqp(car(x),make_sym("FUNCALL"))))
 			 return(1);
-	else if(has_danger_p(car(x)) || has_danger_p(cdr(x)))
-		return(1);
+
+	for (int remaining_elements = cdr(x); 
+		! nullp(remaining_elements); 
+		remaining_elements = cdr(remaining_elements))
+		if (has_danger_p(car(remaining_elements)))
+			return 1;
 }
 
 
@@ -1317,8 +1321,13 @@ int f_unwind_protect(int arglist)
 	error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
 	error(WRONG_ARGS, "unwind-protect", arglist);
-	if (has_danger_p(args))
-	error(UNDEF_TAG, "unwind-protect", args);
+
+	int remaining_args;
+
+	for (int remaining_args = args; ! nullp(remaining_args); remaining_args = cdr(remaining_args)) {
+		if (has_danger_p(car(remaining_args)))
+			error(UNDEF_TAG, "unwind-protect", args);
+	}
 
 	cleanup = unwind_pt;
     unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */

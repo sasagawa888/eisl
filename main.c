@@ -506,10 +506,10 @@ void init_stok()  {
 	stok.buf[0] = '\0';
 }
 
-void set_stok_buf(token stok, int index, char c) {
+void set_stok_buf(int index, char c) {
 	if (index >= stok.bufsize) {
 		int new_bufsize = index + 1;
-		RESIZE(stok.buf, sizeof(char) * new_bufsize);
+		stok.buf = RESIZE(stok.buf, sizeof(char) * new_bufsize);;
 		stok.bufsize = new_bufsize;
 
 	}
@@ -517,7 +517,7 @@ void set_stok_buf(token stok, int index, char c) {
 	return;
 }
 
-void replace_stok_buf(token stok, char *str) {
+void replace_stok_buf(char *str) {
 	if (strlen(str) > stok.bufsize) {
 		int new_bufsize = strlen(str);
 		RESIZE(stok.buf, sizeof(char) * new_bufsize);
@@ -601,10 +601,10 @@ void get_token(void)
 	    c = readc();
 	    pos = 0;
 	    while (c != '"') {
-		set_stok_buf(stok, pos++, c);
+		set_stok_buf(pos++, c);
 		if (c == '\\') {
 		    c = readc();
-			set_stok_buf(stok, pos++, c);
+			set_stok_buf(pos++, c);
 		}
 		if (c == EOF) {
 		    error(SYSTEM_ERR, "not exist right hand double quote",
@@ -612,7 +612,7 @@ void get_token(void)
 		}
 		c = readc();
 	    }
-		set_stok_buf(stok, pos, NUL);
+		set_stok_buf(pos, NUL);
 	    stok.type = STRING;
 	    break;
 	}
@@ -628,18 +628,18 @@ void get_token(void)
 	    } else if (c == '\\') {
 		c = readc();
 		pos = 0;
-		set_stok_buf(stok, pos++, c);
+		set_stok_buf(pos++, c);
 		if (c == ' ')
 		    goto chskip;
 
 		while (((c = readc()) != EOL) && (c != EOF)
 		       && (pos < stok.bufsize - 1) && (c != SPACE) && (c != '(')
 		       && (c != ')')) {
-			set_stok_buf(stok, pos++, c);
+			set_stok_buf(pos++, c);
 		}
 
 	      chskip:
-		set_stok_buf(stok, pos, NUL);
+		set_stok_buf(pos, NUL);
 		stok.type = CHARACTER;
 		if (c == EOF)
 		    stok.ch = ' ';
@@ -649,12 +649,12 @@ void get_token(void)
 	    } else if (isdigit(c)) {
 		pos = 0;
 		while (isdigit(c)) {
-			set_stok_buf(stok, pos, c);
+			set_stok_buf(pos, c);
 		    pos++;
 		    c = readc();
 		}
 		stok.buf[pos] = NUL;
-		set_stok_buf(stok, pos, c);
+		set_stok_buf(pos, c);
 		if (c == 'a' || c == 'A') {
 		    stok.type = ARRAY;
 		    break;
@@ -685,13 +685,13 @@ void get_token(void)
      /*FALLTHROUGH*/ default:
 	{
 	    pos = 0;
-		set_stok_buf(stok, pos++, c);
+		set_stok_buf(pos++, c);
 	    while (((c = readc()) != EOL) && (c != EOF)
 		   && (pos < stok.bufsize - 1) && (c != SPACE) && (c != '(')
 		   && (c != ')') && (c != '`') && (c != ',') && (c != '@'))
-		set_stok_buf(stok, pos++, c);
+		set_stok_buf(pos++, c);
 
-		set_stok_buf(stok, pos, NUL);
+		set_stok_buf(pos, NUL);
 	    stok.ch = c;
 
 	    if (flt_token(stok.buf)) {

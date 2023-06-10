@@ -22,7 +22,6 @@
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {
-    if (gc_sw == 0) {
 	int addr;
 
 	DBG_PRINTF("enter M&S-GC free=%d\n", fc);
@@ -33,19 +32,6 @@ int gbc(void)
 	    if (IS_EMPTY(addr))
 		fc++;
 	DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
-    } else {
-	if (area_sw == 1) {
-	    DBG_PRINTF("enter COPY-GC free=%d\n", WORK2 - wp);
-	} else {
-	    DBG_PRINTF("enter COPY-GC free=%d\n", CELLSIZE - wp);
-	}
-	//copy_gbc();
-	if (area_sw == 1) {
-	    DBG_PRINTF("exit  COPY-GC free=%d\n", WORK2 - wp);
-	} else {
-	    DBG_PRINTF("exit  COPY-GC free=%d\n", CELLSIZE - wp);
-	}
-    }
     return 0;
 }
 

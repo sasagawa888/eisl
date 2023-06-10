@@ -15,7 +15,6 @@
 #include "except.h"
 #include "compat/eiffel_stubs.h"
 
-#define ENVSIZE 1000
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define BUFSIZE 256
@@ -246,7 +245,6 @@ extern int stack[STACKSIZE];
 extern int argstk[STACKSIZE];
 extern int cell_hash_table[HASHTBSIZE];
 extern int shelter[STACKSIZE];
-extern int environment[ENVSIZE][2];
 extern int dynamic[DYNSIZE][2];
 extern int bigcell[BIGSIZE];
 
@@ -675,7 +673,6 @@ enum {
 double getETime(void);
 int readc(void);
 int absolute(int x);
-int add_dyn_env(int sym, int val);
 int add_sym(const char *name, int index);
 int adaptp(int varlist, int arglist);
 int angle(int y, int x);
@@ -1198,7 +1195,6 @@ int remove_list(int x, int y);
 int remove_prop(int x, int lis);
 int restore_error_handler(void);
 int reverse(int x);
-int set_dyn_env(int sym, int val);
 int set_error_handler(int x);
 int shelter_pop(void);
 int s_remainder(int x, int y);
@@ -1242,6 +1238,7 @@ int vectorp(int x);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void add_lex_env(int sym, int val);
+void add_dyn_env(int sym, int val);
 void big_gbc(int x);
 void big_minus2(int arg, int c, int msb);
 void big_plus2(int arg, int c, int msb);
@@ -1300,6 +1297,7 @@ void set_sign(int x, int y);
 void set_length(int x, int len);
 void set_pointer(int x, int pointer);
 void set_lex_env(int sym, int val);
+void set_dyn_env(int sym, int val);
 void set_val(int sym, int val, int ls);
 void signal_handler_c(int signo);
 void unbind(void);

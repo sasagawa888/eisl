@@ -81,4 +81,7 @@
                   (catch 'ctak-aux (ctak-aux (- y 1) z x))
                   (catch 'ctak-aux (ctak-aux (- z 1) x y)))))
 
-
+(defun fact (n)
+    (if (= n 0)
+        1
+        (* n (fact (- n 1)))))

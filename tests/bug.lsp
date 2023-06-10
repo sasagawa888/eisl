@@ -1,5 +1,5 @@
 ;;; bug copy GC
-(gbc 'copy)
+;(gbc 'copy)
 (gbc t)
 ;;; (taxi 70)
 

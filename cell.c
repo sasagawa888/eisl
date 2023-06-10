@@ -287,7 +287,27 @@ int hfreshcell(void)
     return (res);
 }
 
+//#define SSS
 /* set value to environment by destructive by deep-bind */
+#ifdef SSS
+void set_lex_env(int sym, int val)
+{
+    int i;
+
+    for (i = ep-1; i >= 0; i--) {
+	if (environment[i][0] == sym) {
+	    environment[i][1] = val;
+	    return;
+	}
+    }
+    environment[ep][0] = sym;
+    environment[ep][1] = val;
+    ep++;
+    if (ep >= ENVSIZE)
+	error(VARIABLE_OVERF, "set_lex_env", NIL);
+    return;
+}
+#else
 void set_lex_env(int sym, int val)
 {
     int addr;
@@ -298,16 +318,18 @@ void set_lex_env(int sym, int val)
     else
 	SET_CDR(addr, val);
 }
+#endif
+
 
 /* bind value to dynamic environment */
-int set_dyn_env(int sym, int val)
+void set_dyn_env(int sym, int val)
 {
     int i;
 
     for (i = dp-1; i >= 0; i--) {
 	if (dynamic[i][0] == sym) {
 	    dynamic[i][1] = val;
-	    return (T);
+	    return;
 	}
     }
     dynamic[dp][0] = sym;
@@ -315,25 +337,37 @@ int set_dyn_env(int sym, int val)
     dp++;
     if (dp >= DYNSIZE)
 	error(VARIABLE_OVERF, "set_dyn_env", NIL);
-    return (T);
+    return;
 }
 
 
 /* additinal of lexical variable */
+#ifdef SSS
+void add_lex_env(int sym, int val)
+{
+    environment[ep][0] = sym;
+    environment[ep][1] = val;
+    ep++;
+    if (ep >= ENVSIZE)
+	error(VARIABLE_OVERF, "add_lex_env", NIL);
+    return;
+}
+#else
 void add_lex_env(int sym, int val)
 {
     ep = cons(cons(sym, val), ep);
 }
+#endif
 
 /* addition of dynamic variable */
-int add_dyn_env(int sym, int val)
+void add_dyn_env(int sym, int val)
 {
     dynamic[dp][0] = sym;
     dynamic[dp][1] = val;
     dp++;
     if (dp >= DYNSIZE)
 	error(VARIABLE_OVERF, "add_dyn_env", NIL);
-    return (T);
+    return;
 }
 
 
@@ -343,6 +377,18 @@ int add_dyn_env(int sym, int val)
  * find value with assq
  * when not find return FAILSE
  */
+#ifdef SSS
+int find_env(int sym)
+{
+    int i;
+
+    for (i = ep-1; i >= 0; i--) {
+	if (environment[i][0] == sym)
+	    return (environment[i][1]);
+    }
+    return (FAILSE);
+}
+#else
 int find_env(int sym)
 {
     int addr;
@@ -354,6 +400,7 @@ int find_env(int sym)
     else
 	return (cdr(addr));
 }
+#endif
 
 /* find in dynamic environment */
 int find_dyn(int sym)

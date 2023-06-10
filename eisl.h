@@ -561,10 +561,6 @@ extern bool try_flag;
 extern double try_timer;
 extern int try_res;
 
-// switch
-extern int gc_sw;
-extern int area_sw;
-
 // longjmp control and etc
 extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[CTRLSTK];
@@ -747,22 +743,6 @@ int cons(int car, int cdr);
 int cons_next(int x, int y);
 int cons_prev(int x, int y);
 int copy(int x);
-int copy_work(int x);
-int copy_long(int x);
-int copy_flt(int x);
-int copy_vec(int x);
-int copy_array(int x);
-int copy_str(int x);
-int copy_char(int x);
-int copy_func(int x);
-int copy_generic(int x);
-int copy_macro(int x);
-int copy_stream(int x);
-int copy_class(int x);
-int copy_bignum(int x);
-int copy_heap(int x);
-int copy_cons_next(int x, int y);
-int copy_gen_big(void);
 int count_args(int ls);
 int create_array(int x);
 int create_list(int x, int y);

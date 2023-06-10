@@ -309,15 +309,15 @@ void copy_gbc(void)
 
 
     /* copy shelter */
-    for (i = 0; i < lp; i++)
-	shelter[i] = copy_work(shelter[i]);
+    //for (i = 0; i < lp; i++)
+	//shelter[i] = copy_work(shelter[i]);
 
     /* copy generic_list */
     generic_list = copy_work(generic_list);
 
     /* copy cell chained from hash table */
-    for (i = 0; i < HASHTBSIZE; i++)
-	copy_hash(cell_hash_table[i]);
+    //for (i = 0; i < HASHTBSIZE; i++)
+	//copy_hash(cell_hash_table[i]);
 
 
 }
@@ -331,7 +331,7 @@ int copy_work(int x)
 
     switch (GET_TAG(x)) {
     case INTN:
-	return (copy_int(x));
+	return (x);
     case FLTN:
 	return (copy_flt(x));
     case LONGN:
@@ -402,11 +402,6 @@ int copy_symbol(int x)
 /*
  * copy_* for copying GC 
  */
-int copy_int(int x)
-{
-    return (x);
-}
-
 int copy_long(int x)
 {
     int addr;
@@ -576,18 +571,3 @@ int copy_gen_big(void)
     return (addr);
 }
 
-
-/*
- * copy symbol of hash list 
- */
-
-void copy_hash(int x)
-{
-
-    if (nullp(x))
-	return;
-    else {
-	SET_CAR(x, copy_symbol(car(x)));
-	copy_hash(cdr(x));
-    }
-}

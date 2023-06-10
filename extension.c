@@ -599,7 +599,12 @@ void debugger()
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    print(dp);
+        for (i = 0; i < dp; i++) {
+        print(dynamic[i][0]);
+        printf("=");
+        print(dynamic[i][1]);
+        printf(" ");
+        }
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":E"))) {
 	    print(ep);

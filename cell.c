@@ -328,11 +328,11 @@ void add_lex_env(int sym, int val)
 /* addition of dynamic variable */
 int add_dyn_env(int sym, int val)
 {
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
     dp++;
     if (dp >= DYNSIZE)
 	error(DYNAMIC_OVERF, "add_dyn_env", NIL);
-    dynamic[dp][0] = sym;
-    dynamic[dp][1] = val;
     return (T);
 }
 

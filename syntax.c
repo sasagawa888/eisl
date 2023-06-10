@@ -1294,12 +1294,14 @@ int has_danger_p(int x){
 			 eqp(car(x),make_sym("RETURN-FROM")) ||
 			 eqp(car(x),make_sym("FUNCALL"))))
 			 return(1);
-
-	for (int remaining_elements = cdr(x); 
-		! nullp(remaining_elements); 
-		remaining_elements = cdr(remaining_elements))
-		if (has_danger_p(car(remaining_elements)))
-			return 1;
+	else {
+		for (int remaining_elements = cdr(x); 
+			! nullp(remaining_elements); 
+			remaining_elements = cdr(remaining_elements))
+			if (has_danger_p(car(remaining_elements)))
+				return 1;
+	}
+	return 0;
 }
 
 
@@ -1318,18 +1320,17 @@ int f_unwind_protect(int arglist)
     arg1 = car(arglist);	// body
     args = cdr(arglist);	// clean-up
     if (nullp(arglist))
-	error(WRONG_ARGS, "unwind-protect", arglist);
+		error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
-	error(WRONG_ARGS, "unwind-protect", arglist);
-
-	int remaining_args;
+		error(WRONG_ARGS, "unwind-protect", arglist);
 
 	//Ensure that there are no non-local exits within the cleanup forms
 	for (int remaining_args = args; 
 		! nullp(remaining_args); 
-		remaining_args = cdr(remaining_args)) 
-		if (has_danger_p(car(remaining_args)))
-			error(UNDEF_TAG, "unwind-protect", args);
+		remaining_args = cdr(remaining_args)) {
+			if (has_danger_p(car(remaining_args)))
+				error(UNDEF_TAG, "unwind-protect", args);
+	}
 
 	cleanup = unwind_pt;
     unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */

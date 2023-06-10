@@ -304,17 +304,17 @@ int set_dyn_env(int sym, int val)
 {
     int i;
 
-    for (i = dp; i >= 0; i--) {
+    for (i = dp-1; i >= 0; i--) {
 	if (dynamic[i][0] == sym) {
 	    dynamic[i][1] = val;
 	    return (T);
 	}
     }
+    dynamic[dp][0] = sym;
+    dynamic[dp][1] = val;
     dp++;
     if (dp >= DYNSIZE)
 	error(DYNAMIC_OVERF, "set_dyn_env", NIL);
-    dynamic[dp][0] = sym;
-    dynamic[dp][1] = val;
     return (T);
 }
 
@@ -360,7 +360,7 @@ int find_dyn(int sym)
 {
     int i;
 
-    for (i = dp; i >= 0; i--) {
+    for (i = dp-1; i >= 0; i--) {
 	if (dynamic[i][0] == sym)
 	    return (dynamic[i][1]);
     }

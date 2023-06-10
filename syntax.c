@@ -1324,10 +1324,12 @@ int f_unwind_protect(int arglist)
 
 	int remaining_args;
 
-	for (int remaining_args = args; ! nullp(remaining_args); remaining_args = cdr(remaining_args)) {
+	//Ensure that there are no non-local exits within the cleanup forms
+	for (int remaining_args = args; 
+		! nullp(remaining_args); 
+		remaining_args = cdr(remaining_args)) 
 		if (has_danger_p(car(remaining_args)))
 			error(UNDEF_TAG, "unwind-protect", args);
-	}
 
 	cleanup = unwind_pt;
     unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */

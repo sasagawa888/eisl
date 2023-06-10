@@ -171,9 +171,6 @@ bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
 int try_res;			/* argument list */
 
-/* switch for GBC */
-int gc_sw = 0;			/* 0= mark-and-sweep-GC 1= copy-GC */
-int area_sw = 1;		/* 1= lower area 2=higher area */
 
 /* bignum pointer */
 int big_pt0 = 0;		/* pointer of temporaly bignum */

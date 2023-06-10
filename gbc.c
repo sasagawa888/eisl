@@ -219,12 +219,9 @@ int check_gbc(void)
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
-    if (gc_sw == 0 && fc < FREESIZE)
+    if (fc < FREESIZE)
 	(void) gbc();
-    else if (gc_sw == 1 && wp < WORK2 && wp > WORK2 - FREESIZE)
-	(void) gbc();
-    else if (gc_sw == 1 && wp > WORK2 && wp > CELLSIZE - FREESIZE)
-	(void) gbc();
+    
     return 0;
 }
 

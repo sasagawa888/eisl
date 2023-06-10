@@ -4355,31 +4355,7 @@ int f_gbc(int arglist)
 	gbc_flag = true;
     else if (car(arglist) == NIL)
 	gbc_flag = false;
-    else if (car(arglist) == make_sym("M&S")) {
-	/* re initialize heap area */
-	for (addr = WORK1; addr < CELLSIZE; addr++) {
-	    SET_FLAG(addr, FRE);
-	    SET_CAR(addr, 0);
-	    SET_AUX(addr, 0);
-	    SET_PROP(addr, 0);
-	    SET_OPT(addr, 0);
-	    SET_CDR(addr, hp);
-	    hp = addr;
-	}
-	fc = fc + (CELLSIZE - WORK1);
-	gc_sw = 0;
-    } else if (car(arglist) == make_sym("COPY")) {
-	/* initialize work area */
-	for (addr = WORK1; addr < CELLSIZE; addr++) {
-	    SET_CAR(addr, 0);
-	    SET_CDR(addr, 0);
-	    SET_AUX(addr, 0);
-	    SET_OPT(addr, 0);
-	}
-	fc = fc - (CELLSIZE - WORK1);
-	gc_sw = 1;
-	wp = WORK1;
-    } else
+    else
 	error(WRONG_ARGS, "gbc", arglist);
 
     return (T);

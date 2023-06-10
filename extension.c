@@ -621,11 +621,8 @@ void debugger()
 		      "SP = %d (stack pointer)\n"
 		      "FC = %d (free counter)\n"
 		      "AP = %d (arglist pointer)\n"
-		      "LP = %d (shelter pointer)\n"
-		      "GC = %d (GC switch 0=m&sGC 1=copyGC)\n"
-		      "WP = %d (work area pointer)\n"
-		      "SW = %d (current work area 1or2)\n",
-		      ep, dp, hp, sp, fc, ap, lp, gc_sw, wp, area_sw);
+		      "LP = %d (shelter pointer)\n",
+		      ep, dp, hp, sp, fc, ap, lp);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

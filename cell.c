@@ -593,7 +593,7 @@ int make_func(const char *pname, int addr)
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL);
     END_TRY;
-    SET_CAR(val, copy_heap(addr));
+    SET_CAR(val, addr);
     SET_CDR(val, ep);		/* local environment */
     SET_AUX(val, cfunction);	/* class function */
     /* if lambda is generated in method, save the method and given argument */
@@ -634,7 +634,7 @@ int make_generic(char *pname, int lamlist, int body)
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_generic", NIL);
     END_TRY;
-    SET_CAR(val, copy_heap(lamlist));
+    SET_CAR(val, lamlist);
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
     SET_CDR(val, NIL);
     SET_PROP(val, T);		/* method-combination default is T */
@@ -690,7 +690,7 @@ int make_generic_star(int lamlist, int body)
 
     val = hfreshcell();
     SET_TAG(val, GENERIC);
-    SET_CAR(val, copy_heap(lamlist));
+    SET_CAR(val, lamlist);
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
     SET_CDR(val, NIL);
     SET_PROP(val, T);		/* method-combination default is T */
@@ -714,19 +714,19 @@ int make_method(int addr)
     val = hfreshcell();
     SET_TAG(val, METHOD);
     if (eqp(car(addr), make_sym(":AROUND"))) {
-	SET_CAR(val, copy_heap(cdr(addr)));
+	SET_CAR(val, cdr(addr));
 	SET_OPT(val, AROUND);
     } else if (eqp(car(addr), make_sym(":BEFORE"))) {
-	SET_CAR(val, copy_heap(cdr(addr)));
+	SET_CAR(val, cdr(addr));
 	SET_OPT(val, BEFORE);
     } else if (eqp(car(addr), make_sym(":AFTER"))) {
-	SET_CAR(val, copy_heap(cdr(addr)));
+	SET_CAR(val, cdr(addr));
 	SET_OPT(val, AFTER);
     } else {
-	SET_CAR(val, copy_heap(addr));
+	SET_CAR(val, addr);
 	SET_OPT(val, PRIMARY);
     }
-    SET_CDR(val, copy_heap(ep));
+    SET_CDR(val, ep);
     SET_AUX(val, NIL);
     return (val);
 }

@@ -307,18 +307,10 @@ void copy_gbc(void)
     /* copy thunk for unwind-protect */
     unwind_pt = copy_work(unwind_pt);
 
-
-    /* copy shelter */
-    //for (i = 0; i < lp; i++)
-	//shelter[i] = copy_work(shelter[i]);
-
     /* copy generic_list */
     generic_list = copy_work(generic_list);
 
-    /* copy cell chained from hash table */
-    //for (i = 0; i < HASHTBSIZE; i++)
-	//copy_hash(cell_hash_table[i]);
-
+   
 
 }
 
@@ -388,15 +380,6 @@ int copy_heap(int x)
     res = copy_work(x);
     gc_sw = save;
     return (res);
-}
-
-int copy_symbol(int x)
-{
-
-    SET_CAR(x, copy_work(GET_CAR(x)));
-    SET_CDR(x, copy_work(GET_CDR(x)));
-    SET_OPT(x, GET_OPT(x));
-    return (x);
 }
 
 /*

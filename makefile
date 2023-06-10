@@ -68,7 +68,7 @@ ifeq ($(DEBUG),1)
 		LDFLAGS += -fsanitize=undefined
 	endif
 else
-	CFLAGS += -Og -ggdb -flto -DNDEBUG=1 -DWITHOUT_NANA=1
+	CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
 	SRC_CII += cii/src/mem.c
 endif
 OBJ_CII := $(SRC_CII:.c=.o)

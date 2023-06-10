@@ -669,7 +669,7 @@ enum {
     UNDEF_ENTITY,
     SIMPLE_ERR,
     EXHAUSTED_ERR,
-    DYNAMIC_OVERF,
+    VARIABLE_OVERF,
 };
 
 double getETime(void);
@@ -763,6 +763,7 @@ int copy_macro(int x);
 int copy_stream(int x);
 int copy_class(int x);
 int copy_bignum(int x);
+int copy_heap(int x);
 int copy_cons_next(int x, int y);
 int copy_gen_big(void);
 int count_args(int ls);
@@ -1253,7 +1254,6 @@ void cellprint(int addr);
 int check_gbc(void);
 void clr_cell(int addr);
 void copy_gbc(void);
-void copy_hash(int x);
 void cut_zero(int x);
 void def_fsubr(const char *symname, int (*func)(int));
 void def_subr(const char *symname, int (*func)(int));

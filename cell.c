@@ -314,7 +314,7 @@ int set_dyn_env(int sym, int val)
     dynamic[dp][1] = val;
     dp++;
     if (dp >= DYNSIZE)
-	error(DYNAMIC_OVERF, "set_dyn_env", NIL);
+	error(VARIABLE_OVERF, "set_dyn_env", NIL);
     return (T);
 }
 
@@ -332,7 +332,7 @@ int add_dyn_env(int sym, int val)
     dynamic[dp][1] = val;
     dp++;
     if (dp >= DYNSIZE)
-	error(DYNAMIC_OVERF, "add_dyn_env", NIL);
+	error(VARIABLE_OVERF, "add_dyn_env", NIL);
     return (T);
 }
 

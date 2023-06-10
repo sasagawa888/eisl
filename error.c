@@ -520,7 +520,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_sym(fun1));
 	signal_condition(make_instance(cprogram_error, initargs), NIL);
 	break;
-    case DYNAMIC_OVERF:
+    case VARIABLE_OVERF:
 	initargs =
 	    list6(make_sym("format-string"),
 		  make_str("Shelter over flow "),

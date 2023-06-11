@@ -2002,7 +2002,6 @@ defgeneric compile
 
     ;;; alpha convert before labels
     (defun comp-flet (stream x env args tail name global test clos)
-        (print (comp-flet1 x))
         (comp-labels stream (comp-flet1 x) env args tail name global test clos))
 
     ;; if body is nested (flet ...) 
@@ -2010,7 +2009,19 @@ defgeneric compile
         (if (eq (car (elt x 2)) 'flet)
             (comp-flet2 x)
             x))
-    
+    ;; (flet ((f (x)
+    ;;           (+ x 3) ))
+    ;;    (flet ((f (x)
+    ;;               (+ x (f x)) ))
+    ;;        (f x)))
+    ;;       | convert
+    ;;       v
+    ;; (flet ((f (x)
+    ;;           (+ x 3) ))
+    ;;    (flet ((fsubst (x)
+    ;;               (+ x (f x)) ))
+    ;;        (fsubst x)))
+
     (defun comp-flet2 (x)
         (let* ((nest (elt x 2))
                (forms (elt nest 1))

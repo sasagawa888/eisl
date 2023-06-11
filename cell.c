@@ -232,16 +232,16 @@ int freshcell(void)
 {
     int res;
 
-	res = hp;
-	hp = GET_CDR(hp);
-	SET_CDR(res, 0);
-	fc--;
-	if (fc <= 50 && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL);
-	}
-	return (res);
-    
+    res = hp;
+    hp = GET_CDR(hp);
+    SET_CDR(res, 0);
+    fc--;
+    if (fc <= 50 && !handling_resource_err) {
+	handling_resource_err = true;
+	error(RESOURCE_ERR, "M&S freshcell", NIL);
+    }
+    return (res);
+
 }
 
 
@@ -264,7 +264,7 @@ void set_dyn_env(int sym, int val)
 {
     int i;
 
-    for (i = dp-1; i >= 0; i--) {
+    for (i = dp - 1; i >= 0; i--) {
 	if (dynamic[i][0] == sym) {
 	    dynamic[i][1] = val;
 	    return;
@@ -322,7 +322,7 @@ int find_dyn(int sym)
 {
     int i;
 
-    for (i = dp-1; i >= 0; i--) {
+    for (i = dp - 1; i >= 0; i--) {
 	if (dynamic[i][0] == sym)
 	    return (dynamic[i][1]);
     }

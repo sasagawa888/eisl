@@ -648,14 +648,14 @@ int signal_condition(int x, int y)
 	}
 	ret = setjmp(cont_buf);
 
-    if (ret == 0) {
-	return (apply(handler, list1(x)));
-    } else if (ret == 1) {
-	return (cont_arg);
+	if (ret == 0) {
+	    return (apply(handler, list1(x)));
+	} else if (ret == 1) {
+	    return (cont_arg);
 	}
     }
-	/* resolve unwind-protect */
-	if (unwind_pt > 0) {
+    /* resolve unwind-protect */
+    if (unwind_pt > 0) {
 	unwind_pt--;
 	while (unwind_pt >= 0) {
 	    apply(unwind_buf[unwind_pt], NIL);
@@ -713,17 +713,17 @@ int set_error_handler(int x)
 
 int get_error_flag(void)
 {
-	return (error_flag);
+    return (error_flag);
 }
 
 int set_error_flag(int x)
 {
-	error_flag = x;
-	return (x);
+    error_flag = x;
+    return (x);
 }
 
 int restore_error_handler(void)
 {
-	error_handler = error_handler1;
-	return(error_handler);
+    error_handler = error_handler1;
+    return (error_handler);
 }

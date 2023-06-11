@@ -274,72 +274,76 @@ void init_generic(void)
 }
 
 /* arithmetic function */
-int f_plus(int arglist) {
+int f_plus(int arglist)
+{
     int augend;
 
     augend = make_int(0);
 
     for (int remaining_operands = arglist;
-         !(IS_NIL(remaining_operands));
-         remaining_operands = cdr(remaining_operands)) {
+	 !(IS_NIL(remaining_operands));
+	 remaining_operands = cdr(remaining_operands)) {
 
-        int addend = car(remaining_operands);
+	int addend = car(remaining_operands);
 
-        augend = plus(augend, addend);
+	augend = plus(augend, addend);
     }
     return (augend);
 }
 
-int f_minus(int arglist) {
+int f_minus(int arglist)
+{
     int minuend, n;
 
     minuend = car(arglist);
     if ((n = length(arglist)) == 0)
 	error(WRONG_ARGS, "-", arglist);
     if (n == 1)
-        return (mult(minuend, make_int(-1)));
+	return (mult(minuend, make_int(-1)));
 
     arglist = cdr(arglist);
 
     for (int remaining_operands = arglist;
-         !(IS_NIL(remaining_operands));
-         remaining_operands = cdr(remaining_operands)) {
+	 !(IS_NIL(remaining_operands));
+	 remaining_operands = cdr(remaining_operands)) {
 
-        int subtrahend = car(remaining_operands);
-        minuend = minus(minuend, subtrahend);
+	int subtrahend = car(remaining_operands);
+	minuend = minus(minuend, subtrahend);
     }
     return (minuend);
 }
 
-int f_mult(int arglist) {
+int f_mult(int arglist)
+{
     int multiplicand;
 
     multiplicand = make_int(1);
-    
-    for (int remaining_operands = arglist; 
-        !(IS_NIL(remaining_operands)); 
-        remaining_operands = cdr(remaining_operands)) {
 
-        int multiplier = car(remaining_operands);
+    for (int remaining_operands = arglist;
+	 !(IS_NIL(remaining_operands));
+	 remaining_operands = cdr(remaining_operands)) {
 
-        multiplicand = mult(multiplicand, multiplier);
-        }
+	int multiplier = car(remaining_operands);
+
+	multiplicand = mult(multiplicand, multiplier);
+    }
     return (multiplicand);
 }
 
-int f_quotient(int arglist) {
+int f_quotient(int arglist)
+{
     int dividend;
 
     dividend = car(arglist);
     arglist = cdr(arglist);
 
     for (int remaining_operands = arglist;
-         !(IS_NIL(remaining_operands));
-         remaining_operands = cdr(remaining_operands)) {
+	 !(IS_NIL(remaining_operands));
+	 remaining_operands = cdr(remaining_operands)) {
 
-        int divisor = car(remaining_operands);
+	int divisor = car(remaining_operands);
 
-        dividend = quotient(dividend, divisor);
+	dividend = quotient(dividend, divisor);
     }
     return (dividend);
 }
@@ -1572,8 +1576,8 @@ int mapcar(int x, int y)
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
-    car = apply(x, each_car(y));
-    cdr = mapcar(x, each_cdr(y));
+	car = apply(x, each_car(y));
+	cdr = mapcar(x, each_cdr(y));
 	res = cons(car, cdr);
     }
     shelter_pop();
@@ -4801,9 +4805,9 @@ int f_continue_condition(int arglist)
 	error(ILLEGAL_FORM, "continue-condition", arg1);
 
     /* memo
-    *  if error is continuable signal_condition set_jump
-    *  continue-condition longjump to signal_condition. 
-    */
+     *  if error is continuable signal_condition set_jump
+     *  continue-condition longjump to signal_condition. 
+     */
     cont_arg = arg2;
-    longjmp(cont_buf,1);
+    longjmp(cont_buf, 1);
 }

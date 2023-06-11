@@ -1020,13 +1020,13 @@ int f_block(int arglist)
 	error(CTRL_OVERF, "block buffer over fllow", NIL);
 
 
-    block_data[block_pt][0] = tag;	
+    block_data[block_pt][0] = tag;
     block_data[block_pt][1] = ep;
-	block_data[block_pt][2] = unwind_nest;
+    block_data[block_pt][2] = unwind_nest;
     block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
     /* save flag. if exist return-from 1 else -1 */
     block_pt++;
-	unwind = unwind_nest;
+    unwind = unwind_nest;
     ret = setjmp(block_buf[block_pt - 1]);
 
 
@@ -1038,7 +1038,7 @@ int f_block(int arglist)
 	/* while executing occures block & return-from, basicaly return-from resolve clean-up.
 	 * But, if remain not-resolved clean-up, block resolve all clean-up.
 	 */
-	if (unwind == 0 && unwind_pt >= 0) {	
+	if (unwind == 0 && unwind_pt >= 0) {
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
 		apply(unwind_buf[unwind_pt], NIL);
@@ -1085,14 +1085,12 @@ int f_return_from(int arglist)
     if (block_tag_check[block_pt] == -1)
 	error(UNDEF_TAG, "return-from tag not exist", tag);
 
-	/* 
+    /* 
      *  while executing unwind-protect, execute clean-up before return-from.
      *  But, block & return-from occures in same unwind_nest level, not execute clean-up.
      */
     if (unwind_nest > 0 &&
-	block_data[block_pt][2] !=
-	unwind_nest && 
-	unwind_pt > 0) {
+	block_data[block_pt][2] != unwind_nest && unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
 	apply(unwind_buf[unwind_pt], NIL);
@@ -1123,12 +1121,12 @@ int f_catch(int arglist)
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "catch", tag);
 
-	catch_data[catch_pt][0] = tag;
-	catch_data[catch_pt][1] = ep;
-	catch_data[catch_pt][2] = unwind_nest;
-	cp = catch_pt;
-	catch_pt++;
- 
+    catch_data[catch_pt][0] = tag;
+    catch_data[catch_pt][1] = ep;
+    catch_data[catch_pt][2] = unwind_nest;
+    cp = catch_pt;
+    catch_pt++;
+
     if (catch_pt >= CTRLSTK)
 	error(CTRL_OVERF, "catch", tag);
 
@@ -1138,12 +1136,12 @@ int f_catch(int arglist)
 
     if (ret == 0) {
 	res = f_progn(arg2);
-	/* after execution of arg2 tag arg1 is not neccesally*/
+	/* after execution of arg2 tag arg1 is not neccesally */
 	cp--;
 	catch_pt = cp + 1;
 	return (res);
     } else if (ret == 1) {
-	/* after execution of arg2 tag arg1 is not neccesally*/
+	/* after execution of arg2 tag arg1 is not neccesally */
 	cp--;
 	catch_pt = cp + 1;
 	/* while executing occures chatch & throw, basicaly throw resolve clean-up.
@@ -1185,7 +1183,7 @@ int f_throw(int arglist)
 
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "throw", tag);
-	if ((i=find_tag(tag)) == FAILSE)
+    if ((i = find_tag(tag)) == FAILSE)
 	error(UNDEF_TAG, "throw", tag);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "throw", arglist);
@@ -1197,8 +1195,7 @@ int f_throw(int arglist)
      *  But, catch & throw occures in same unwind_nest level, not execute clean-up.
      */
     if (unwind_nest > 0 &&
-	catch_data[i][2] != unwind_nest &&
-	unwind_pt > 0) {
+	catch_data[i][2] != unwind_nest && unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
 	apply(unwind_buf[unwind_pt], NIL);
@@ -1283,25 +1280,26 @@ int f_go(int arglist)
  * (defun test3 (fun)
  *   (unwind-protect (test4) (funcall fun)))
 */
-int has_danger_p(int x){
-	if (nullp(x))
-		return(0);
-	else if (atomp(x))
-		return(0);
-	else if(listp(x) && 
-	        (eqp(car(x),make_sym("GO")) ||
-			 eqp(car(x),make_sym("THROW")) ||
-			 eqp(car(x),make_sym("RETURN-FROM")) ||
-			 eqp(car(x),make_sym("FUNCALL"))))
-			 return(1);
-	else {
-		for (int remaining_elements = cdr(x); 
-			! nullp(remaining_elements); 
-			remaining_elements = cdr(remaining_elements))
-			if (has_danger_p(car(remaining_elements)))
-				return 1;
-	}
-	return 0;
+int has_danger_p(int x)
+{
+    if (nullp(x))
+	return (0);
+    else if (atomp(x))
+	return (0);
+    else if (listp(x) &&
+	     (eqp(car(x), make_sym("GO")) ||
+	      eqp(car(x), make_sym("THROW")) ||
+	      eqp(car(x), make_sym("RETURN-FROM")) ||
+	      eqp(car(x), make_sym("FUNCALL"))))
+	return (1);
+    else {
+	for (int remaining_elements = cdr(x);
+	     !nullp(remaining_elements);
+	     remaining_elements = cdr(remaining_elements))
+	    if (has_danger_p(car(remaining_elements)))
+		return 1;
+    }
+    return 0;
 }
 
 
@@ -1320,32 +1318,30 @@ int f_unwind_protect(int arglist)
     arg1 = car(arglist);	// body
     args = cdr(arglist);	// clean-up
     if (nullp(arglist))
-		error(WRONG_ARGS, "unwind-protect", arglist);
+	error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
-		error(WRONG_ARGS, "unwind-protect", arglist);
+	error(WRONG_ARGS, "unwind-protect", arglist);
 
-	//Ensure that there are no non-local exits within the cleanup forms
-	for (int remaining_args = args; 
-		! nullp(remaining_args); 
-		remaining_args = cdr(remaining_args)) {
-			if (has_danger_p(car(remaining_args)))
-				error(UNDEF_TAG, "unwind-protect", args);
-	}
+    //Ensure that there are no non-local exits within the cleanup forms
+    for (int remaining_args = args;
+	 !nullp(remaining_args); remaining_args = cdr(remaining_args)) {
+	if (has_danger_p(car(remaining_args)))
+	    error(UNDEF_TAG, "unwind-protect", args);
+    }
 
-	cleanup = unwind_pt;
+    cleanup = unwind_pt;
     unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
     unwind_nest++;
     res = eval(arg1);
     unwind_nest--;
     unwind_pt--;
-	if (unwind_pt == cleanup){
-    apply(unwind_buf[unwind_pt], NIL);
-	}
-	else {
-	/* if body has throw, body use cleanup and unwind_pt < cleanup*/	
-	unwind_pt = cleanup;	
-	}
+    if (unwind_pt == cleanup) {
+	apply(unwind_buf[unwind_pt], NIL);
+    } else {
+	/* if body has throw, body use cleanup and unwind_pt < cleanup */
+	unwind_pt = cleanup;
+    }
     return (res);
 }
 
@@ -2198,7 +2194,7 @@ int convert(int arg1, int arg2)
 	if (GET_AUX(arg2) == cstring) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cinteger) {
-		replace_stok_buf(GET_NAME(arg1));
+	    replace_stok_buf(GET_NAME(arg1));
 
 	    if (bignum_token(stok.buf)) {
 		return (make_big(stok.buf));

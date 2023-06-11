@@ -1,4 +1,4 @@
-;;FAST compiler ver2.99
+;;FAST compiler ver3.00
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -73,43 +73,35 @@ defgeneric compile
     (defmacro when (test :rest body)
         `(if ,test (progn ,@body)) )
 
-    
     (defmacro unless (test :rest body)
         `(if (not ,test) (progn ,@body)) )
 
-    
     (defun any (f ls)
         (cond ((null ls) nil)
               ((funcall f (car ls)) t)
               (t (any f (cdr ls))) ))
 
-    
     (defun every (f ls)
         (cond ((null ls) t)
               ((funcall f (car ls)) (every f (cdr ls)))
               (t nil)))
 
-    
     (defun take (n ls)
         (if (= n 0)
             nil
             (cons (car ls) (take (- n 1) (cdr ls)))))
 
-    
     (defun drop (n ls)
         (if (= n 0)
             ls
             (drop (- n 1) (cdr ls))))
 
-    
     (defun last (ls)
         (car (reverse ls)))
 
-    
     (defun second-last (ls)
         (elt (reverse ls) 1))
 
-    
     (defun butlast (x)
         (cond ((null x) nil)
               ((null (cdr x)) nil)
@@ -120,31 +112,26 @@ defgeneric compile
               ((eq x (car ls)) (remove x (cdr ls)))
               (t (cons (car ls) (remove x (cdr ls))))))
 
-    
     (defun append! (x y)
         (while (not (null (cdr x)))
            (setq x (cdr x)))
         (set-cdr y x))
 
-    
     (defun position (x ls)
         (cond ((eq x (car ls)) 0)
               (t (+ 1 (position x (cdr ls))))))
 
-    
     (defun filename (str)
         (if (eql (substring str 0 0) ".")
             (filename2 str)
             (filename1 str)))
 
-    
     (defun filename1 (str)
         (let* ((n (char-index #\. str)))
             (if (null n)
                 (error* "lack of filename ext" str))
             (substring str 0 (- n 1))))
 
-    
     ;; e.g. ./example/test.lsp 
     (defun filename2 (str)
         (let* ((n (char-index #\. (dropstring str 1))))
@@ -152,7 +139,6 @@ defgeneric compile
                 (error* "lack of filename ext" str))
             (substring str 0 n)))
 
-    
     ;; e.g. tests/boo/lisp -> lisp
     (defun remove-dir (str)
         (let* ((n (char-index #\/ str)))
@@ -160,11 +146,9 @@ defgeneric compile
                 str
                 (remove-dir (substring str (+ n 1) (- (length str) 1))))))
 
-    
     (defun dropstring (str n)
         (substring str n (- (length str) 1)))
 
-    
     (defun substring (str m n)
         (for ((i m (+ i 1))
               (str1 "") )
@@ -172,7 +156,6 @@ defgeneric compile
               str1 )
              (setq str1 (string-append str1 (create-string 1 (elt str i))))))
 
-    
     ;; e.g. (a b) -> (asubst bsubst) 
     (defun subst (vars)
         (if (null vars)
@@ -181,7 +164,6 @@ defgeneric compile
                            <symbol>)
                   (subst (cdr vars)))))
 
-    
     (defun alpha-conv (x vars subst)
         (cond ((null x) nil)
               ((and (symbolp x) (member x vars))
@@ -190,18 +172,17 @@ defgeneric compile
               (t (cons (alpha-conv (car x) vars subst)
                        (alpha-conv (cdr x) vars subst)))))
 
-    
     (defun nth (x n)
         (if (= n 0)
             (car x)
             (nth (cdr x) (- n 1))))
 
-    
     (defglobal instream nil)
     (defglobal not-need-res
                '(return-from go tagbody while the c-lang c-define c-include c-option))
     
-    (defglobal not-need-colon '(c-lang c-define c-include c-option))
+    (defglobal not-need-colon '(c-lang c-define c-include c-option)
+)
     (defglobal global-variable nil)
     (defglobal global-dynamic nil)
     (defglobal function-arg nil)
@@ -224,12 +205,10 @@ defgeneric compile
     (defglobal code5 nil)
     (defglobal code6 nil)
     (defglobal code7 nil)
-
     (defun error* (str x)
         (format (standard-output) "compile error ~A ~A ~%" str x)
         (throw 'exit t))
 
-    
     ;; This function generate C code and write to file *.c
     ;; Caution! for raspi "gcc -O3 -w -shared -fPIC -o ";
     (defpublic compile-file (x :rest rm-opt)
@@ -243,7 +222,6 @@ defgeneric compile
                                (eisl-ignore-toplevel-check nil)))
         t)
 
-    
     (defun compile-file1 (x rm-opt)
         (let* ((include
                (let ((prefix (getenv "EASY_ISLISP")))
@@ -308,7 +286,6 @@ defgeneric compile
                   ((eq (car rm-opt) nil) nil)
                   ((eq (car rm-opt) t) (system (string-append "sudo rm " infnames))))))
 
-    
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))
@@ -318,9 +295,9 @@ defgeneric compile
                        (find-catch-block-tag (macroexpand-all sexp)))))
            (close instream)
            (setq instream nil)
-           (mapc (lambda (x) (remove-property x 'unwind-nest)) catch-block-tag)))
+           (mapc (lambda (x) (remove-property x 'unwind-nest))
+                 catch-block-tag)))
 
-    
     (defun module-check (x)
         (for ((name (car (cdr x)))
               (body (cdr (cdr x)) (cdr body)) )
@@ -407,7 +384,6 @@ defgeneric compile
                      (error* "defmethod: not exist body" x))
                (eval x))))
 
-    
     (defun find-catch-block-tag (x)
         (cond ((null x) nil)
               ((atom x) nil)
@@ -424,7 +400,6 @@ defgeneric compile
               ((consp (car x)) (find-catch-block-tag (car x)) (find-catch-block-tag (cdr x)))
               (t (find-catch-block-tag (cdr x)))))
 
-    
     (defun pass2 (x)
         (setq instream (open-input-file x))
         (declare-catch-block-buffer)
@@ -436,9 +411,9 @@ defgeneric compile
               (compile sexp))
            (close instream)
            (setq instream nil))
-           (mapc (lambda (x) (remove-property x 'unwind-nest)) catch-block-tag))
+        (mapc (lambda (x) (remove-property x 'unwind-nest))
+              catch-block-tag))
 
-    
     (defun count-args (ls)
         (cond ((null ls) 0)
               ((= (length ls) 1) 1)
@@ -446,7 +421,6 @@ defgeneric compile
               ((eq (second-last ls) '&rest) (* -1 (- (length ls) 1)))
               (t (length ls))))
 
-    
     (defun compile (x)
         (cond ((eq (car x) 'defun) (comp-defun x))
               ((eq (car x) 'defpattern) (comp-defun (macroexpand-all x)))
@@ -462,7 +436,6 @@ defgeneric compile
               (t (comp code4 x nil nil nil nil t nil nil)
                  (format code4 ";"))))
 
-    
     (defun comp (stream x env args tail name global test clos)
         (cond ((and (fixnump x) (not global))
                (cond ((not optimize-enable)
@@ -528,12 +501,12 @@ defgeneric compile
                      ((find-free-variable-outer-lambda x lambda-free-var)
                       (let* ((dt (find-free-variable-outer-lambda x lambda-free-var))
                              (pos (position x dt))
-                             (name (last dt)))
-                         (format stream "Fnth(")
-                         (format-integer stream pos 10)
-                         (format stream ",Fcdr(Fmakesym(\"")
-                         (format stream (convert name <string>))
-                         (format stream "\")))")))
+                             (name (last dt)) )
+                          (format stream "Fnth(")
+                          (format-integer stream pos 10)
+                          (format stream ",Fcdr(Fmakesym(\"")
+                          (format stream (convert name <string>))
+                          (format stream "\")))")))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t (when (and (not (member x global-variable))
                                    (not (eq x '*pi*))
@@ -672,7 +645,6 @@ defgeneric compile
                (comp-subrcall stream x env args tail name global test clos))
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
 
-    
     (defun special-char-p (x)
         (member x
                 '(#\alarm
@@ -715,7 +687,6 @@ defgeneric compile
         (format code3 "void init_tfunctions(void){~%")
         (format code4 "void init_declare(void){~%"))
 
-    
     (defun declare-catch-block-buffer ()
         (format code4 "Fsetcatchsymbols(")
         (list-to-c1 code4 catch-block-tag)
@@ -727,7 +698,6 @@ defgeneric compile
              (format-object code0 (conv-name (car tag)) nil)
              (format code0 "[50];~%")))
 
-    
     (defun finalize (fname ext)
         (format code0 "#include \"~A\"~%" (string-append fname "1" ext))
         (format code0 "#include \"~A\"~%" (string-append fname "5" ext))
@@ -747,7 +717,6 @@ defgeneric compile
         (close code6)
         (close code7))
 
-    
     (defun comp-defun (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
         (unless (symbolp (elt x 1))
@@ -761,7 +730,6 @@ defgeneric compile
         (comp-defun2 x)
         (comp-defun3 x))
 
-    
     ;;create lambda as SUBR and invoke the SUBR.
     ;;lambda-free-var ((var11 var12 .. var1N lambdasym1) (var21 var22 .. var2N lambdasym2)...)
     ;;comp generate free-variable with lambda-free-var 
@@ -775,7 +743,8 @@ defgeneric compile
                (free0 (find-free-variable body args env))
                (free (append (varlis-to-lambda-args method-args) free0))
                (stream (lambda-stream-caller global)) )
-            (setq lambda-free-var (cons (append free (list name)) lambda-free-var))
+            (setq lambda-free-var
+                  (cons (append free (list name)) lambda-free-var))
             (comp-lambda0 x name)
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)
@@ -790,7 +759,6 @@ defgeneric compile
             (format stream "\"));})")
             (setq lambda-nest (- lambda-nest 1))))
 
-    
     (defun lambda-name ()
         (let ((name
               (conv-name
@@ -800,7 +768,6 @@ defgeneric compile
            (setq lambda-count (+ lambda-count 1))
            name))
 
-    
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
         (setq lambda-free-var nil)
@@ -809,7 +776,6 @@ defgeneric compile
         (comp-defgeneric2 x)
         (comp-defgeneric3 x))
 
-    
     (defun comp-defmodule (x)
         (let ((name (car (cdr x)))
               (body (cdr (cdr x)))
@@ -819,7 +785,9 @@ defgeneric compile
                  t )
                 (if (and (consp (car s)) (eq (car (car s)) 'defpublic))
                     (setq public (cons (elt (car s) 1) public)))
-                (if (and (consp (car s)) (eq (car (car s)) 'import) (cdr (cdr (car s))))
+                (if (and (consp (car s))
+                         (eq (car (car s)) 'import)
+                         (cdr (cdr (car s))))
                     (setq public (append (cdr (cdr (car s))) public)))
                 (compile (eisl-modulesubst (car s) name public)))))
 
@@ -827,12 +795,10 @@ defgeneric compile
         (let* ((name (elt x 1))
                (name1 (string-append "/usr/local/share/eisl/library/" name ".o"))
                (name2 (string-append "/usr/local/share/eisl/library/" name ".lsp"))
-               (code `(cond ((probe-file ,name1) (load ,name1))
-                            ((probe-file ,name2) (load ,name2)))))
-           (compile code)))
-            
+               (code
+               `(cond ((probe-file ,name1) (load ,name1)) ((probe-file ,name2) (load ,name2)))) )
+            (compile code)))
 
-    
     (defun comp-defun0 (x)
         (let* ((name (elt x 1))
                (args (elt x 2))
@@ -847,7 +813,6 @@ defgeneric compile
                 (type-gen-arg2 code0 args (argument-type name)))
             (format code0 ";~%")))
 
-    
     (defun comp-lambda0 (x name)
         (let* ((args (elt x 1))
                (n (length args)) )
@@ -859,7 +824,6 @@ defgeneric compile
             (gen-arg2 code0 args)
             (format code0 ";~%")))
 
-    
     (defun comp-defgeneric0 (x)
         (let* ((name0 (elt x 1))
                (name (if (listp name0)
@@ -876,7 +840,6 @@ defgeneric compile
             (gen-arg2 code0 args)
             (format code0 ";~%")))
 
-    
     ;;generate f_XXX(int arg){...}
     (defun comp-defun1 (x)
         (let* ((name (elt x 1))
@@ -892,7 +855,6 @@ defgeneric compile
                 (type-gen-call name (abs n)))
             (format code1 "}~%")))
 
-    
     (defun comp-lambda1 (x name)
         (let* ((args (elt x 1))
                (n (count-args args)) )
@@ -904,7 +866,6 @@ defgeneric compile
             (gen-call (conv-name name) (abs n))
             (format code1 "}~%")))
 
-    
     (defun comp-defgeneric1 (x)
         (let* ((name0 (elt x 1))
                (name (if (listp name0)
@@ -921,7 +882,6 @@ defgeneric compile
             (gen-call (conv-name name) (abs n))
             (format code1 "}~%")))
 
-    
     ;;genrate int XXX(int x, ...){...} this is main function.
     (defun comp-defun2 (x)
         (let ((name (elt x 1))
@@ -960,7 +920,6 @@ defgeneric compile
                 (if (not (not-need-colon-p (car body1)))
                     (format code2 ";~%")))))
 
-    
     (defun comp-lambda2 (body env args name clos)
         (let ((stream (lambda-stream-callee)))
            (format stream "static int ")
@@ -983,7 +942,6 @@ defgeneric compile
                 (comp stream (car body1) args args nil name nil nil clos)
                 (format stream ";~%"))))
 
-    
     ;;when lambda nest, select nested file
     ;;for lambda callee
     (defun lambda-stream-callee ()
@@ -993,7 +951,6 @@ defgeneric compile
               ((= lambda-nest 3) code7)
               (t (error* "lambda: over nesting" lambda-nest))))
 
-    
     (defun lambda-stream-caller (global)
         (cond (global code4)
               ((= lambda-nest 1) code2)
@@ -1001,12 +958,11 @@ defgeneric compile
               ((= lambda-nest 3) code6)
               (t (error* "lambda: over nesting" lambda-nest))))
 
-    
     ;;for lambda find free-variable. if no variable return '(t)
     (defun find-free-variable (x env args)
-        (append (find-free-variable2 (find-free-variable1 x env args)) '(t)))
+        (append (find-free-variable2 (find-free-variable1 x env args))
+                '(t)))
 
-    
     (defun find-free-variable1 (x env args)
         (cond ((null x) nil)
               ((and (symbolp x) (not (member x env)) (member x args)) (list x))
@@ -1036,6 +992,7 @@ defgeneric compile
         (cond ((null free-var) nil)
               ((member x (car free-var)) (car free-var))
               (t (find-free-variable-outer-lambda x (cdr free-var)))))
+
     
     (defun comp-defgeneric2 (x)
         (let* ((name0 (elt x 1))
@@ -1322,7 +1279,6 @@ defgeneric compile
             (format stream "T")
             (format stream "NIL")))
 
-    
     (defun comp-next-method-p1 (next-method)
         (cond ((null next-method) nil)
               (t
@@ -1372,7 +1328,6 @@ defgeneric compile
               ((eq x (car (car y))) (cdr (car y)))
               (t (alpha-var x (cdr y)))))
 
-    
     ;;varlis -> C condition
     (defun comp-defgeneric-qualifier-cond (x stream env args tail name global test clos)
         (cond ((null x) t)
@@ -1399,7 +1354,6 @@ defgeneric compile
                (comp-defgeneric-qualifier-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
-    
     ;; generate Fadapt(P1) && Fadapt(P2) ... && Fadapt(Pn)  P is each parameter
     ;; Fadaptp check sameclass or superclass.
     (defun comp-defgeneric-qualifier-cond1 (x stream env args tail name global test clos)
@@ -1452,7 +1406,6 @@ defgeneric compile
                (comp-defgeneric-primary-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
-    
     (defun comp-defgeneric-primary-cond1 (x stream env args tail name global test clos)
         (cond ((null x) t)
               ((eq (car x) ':rest) t)
@@ -1476,7 +1429,6 @@ defgeneric compile
                (comp-defgeneric-primary-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
-    
     ;;generate define code
     (defun comp-defun3 (x)
         (let ((name (elt x 1)))
@@ -1486,7 +1438,6 @@ defgeneric compile
            (format-object code3 (conv-name name) nil)
            (format code3 ");~%")))
 
-    
     (defun comp-lambda3 (name)
         (format code3 "(deftfunc)(\"")
         (format-object code3 name nil)
@@ -1494,7 +1445,6 @@ defgeneric compile
         (format-object code3 (conv-name name) nil)
         (format code3 ");~%"))
 
-    
     (defun comp-defgeneric3 (x)
         (let* ((name0 (elt x 1))
                (name (if (listp name0)
@@ -1506,7 +1456,6 @@ defgeneric compile
             (format-object code3 (conv-name name) nil)
             (format code3 ");~%")))
 
-    
     ;; int arg1,arg2...argn;
     (defun gen-arg1 (n)
         (unless (= n 0)
@@ -1520,7 +1469,6 @@ defgeneric compile
                      (format-object code1 m nil)
                      (format code1 ","))))
 
-    
     ;; (x y z) -> (int x, int y, int z)
     ;; (x y :rest z) -> (int x, int y, int z)
     ;; output to stream of string
@@ -1562,7 +1510,6 @@ defgeneric compile
                      (format code2 (convert m <string>))
                      (format code2 ","))))
 
-    
     ;;arg1 = Fnth(1,arglist);
     ;;arg2 = Fnth(2,arglist);
     ;;when :rest parameter argn = Fnthcdr(n,arglist);
@@ -1591,7 +1538,6 @@ defgeneric compile
                     (format code1 (convert (- m 1) <string>))
                     (format code1 ",arglist);~%")))))
 
-    
     ;;(foo arg1 arg2) ->
     ;;  return(foo(arg1,arg2));
     (defun gen-call (name n)
@@ -1611,7 +1557,6 @@ defgeneric compile
                       (format code1 (convert m <string>))
                       (format code1 ",")))))
 
-    
     ;; args = (x)
     ;; if(CELLRANGE(x)) Fshelterpush(x)
     (defun gen-shelterpush (stream ls)
@@ -1625,7 +1570,6 @@ defgeneric compile
                      (format-object stream (conv-name (car ls1)) nil)
                      (format stream ");~%"))))
 
-    
     ;; args = (x)
     ;; if(CELLRANGE(x)) Fshelterpop(x)
     (defun gen-shelterpop (stream ls)
@@ -1639,12 +1583,10 @@ defgeneric compile
                      (format-object stream (conv-name (car ls1)) nil)
                      (format stream "=Fshelterpop();~%"))))
 
-    
     ;;Fcheckgbc();
     (defun gen-checkgc ()
         (format code2 "Fcheckgbc();~%"))
 
-    
     (defun comp-if (stream x env args tail name global test clos)
         (unless (or (= (length x) 3) (= (length x) 4))
                 (error* "if: illegal form" x))
@@ -1681,7 +1623,6 @@ defgeneric compile
                (comp stream (elt x 3) env args tail name global test clos)
                (format stream ";}res;})~%"))))
 
-    
     ;;two arguments numeric function ex (= x y) etc...
     (defun comp-numeric (stream x env args tail name global test clos)
         (cond ((not optimize-enable)
@@ -1714,7 +1655,6 @@ defgeneric compile
                        ((eq (elt x 0) 'mod) (format stream "%")))
                  (comp stream (elt x 2) env args nil name global test clos))))
 
-    
     ;; (foo x y z) -> foo(x,y,z)
     (defun comp-funcall (stream x env args tail name global test clos)
         (cond ((and tail (eq (car x) name))
@@ -1732,7 +1672,6 @@ defgeneric compile
               (optimize-enable (comp-funcall-clang stream x env args tail name global test clos))
               (t (comp-funcall-clang-left-to-right stream x env args tail name global test clos))))
 
-    
     (defun comp-funcall-clang-left-to-right (stream x env args tail name global test clos)
         (let ((n (cdr (assoc (car x) function-arg))))
            (when (and (> n 0) (/= (length (cdr x)) n))
@@ -1789,7 +1728,6 @@ defgeneric compile
                         (format stream ",")
                         (comp-funcall-clang-left-to-right1 stream (+ m 1) n o))))))
 
-    
     (defun comp-funcall-clang-left-to-right2 (stream m n)
         (cond ((> m n) (format stream "NIL"))
               (t (format stream "Fcons(arg")
@@ -1823,7 +1761,6 @@ defgeneric compile
                          (comp stream (car ls) env args nil name global test clos)
                          (format stream ","))))))
 
-    
     (defun comp-funcall-clang1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               (t (format stream "Fcons(")
@@ -1902,7 +1839,6 @@ defgeneric compile
         (comp-funcall3 stream (cdr x) env args nil name global test clos)
         (format stream ")"))
 
-    
     (defun comp-funcall3 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               ((null (cdr x))
@@ -1921,7 +1857,6 @@ defgeneric compile
             (comp-subrcall1 stream x env args tail name global test clos)
             (comp-subrcall2 stream x env args tail name global test clos)))
 
-    
     ;;Simple subrcall arguments are all subr or atom
     (defun comp-subrcall1 (stream x env args tail name global test clos)
         (format stream "Fcallsubr(Fcar(Fmakesym(\"")
@@ -1993,7 +1928,6 @@ defgeneric compile
                  (comp-subrcall3 stream (+ m 1) n)
                  (format stream ")"))))
 
-    
     (defun simple-subrcall-p (x)
         (cond ((null x) t)
               ((and (consp (car x)) (subrp (car (car x)))) (simple-subrcall-p (cdr x)))
@@ -2009,6 +1943,7 @@ defgeneric compile
         (if (eq (car (elt x 2)) 'flet)
             (comp-flet2 x)
             x))
+
     ;; (flet ((f (x)
     ;;           (+ x 3) ))
     ;;    (flet ((f (x)
@@ -2021,17 +1956,14 @@ defgeneric compile
     ;;    (flet ((fsubst (x)
     ;;               (+ x (f x)) ))
     ;;        (fsubst x)))
-
     (defun comp-flet2 (x)
         (let* ((nest (elt x 2))
                (forms (elt nest 1))
                (fn1 (mapcar #'car forms))
                (fn2 (subst fn1))
                (forms1 (mapcar (lambda (x y) (cons x (cdr y))) fn2 forms))
-               (end (alpha-conv (elt nest 2) fn1 fn2)))
-            (list (elt x 0) (elt x 1) 
-                  (list (elt nest 0) forms1 end))))
-               
+               (end (alpha-conv (elt nest 2) fn1 fn2)) )
+            (list (elt x 0) (elt x 1) (list (elt nest 0) forms1 end))))
 
     ;;labels syntax. flet syntax is same as labels
     (defun comp-labels (stream x env args tail name global test clos)
@@ -2046,13 +1978,11 @@ defgeneric compile
              (comp stream (car body1) env args tail name global test clos)
              (format stream "~%")))
 
-    
     (defun comp-labels1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               (t (comp-labels2 stream (car x) env args tail name global test clos)
                  (comp-labels1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-labels2 (stream x env args tail name global test clos)
         (when (< (length x) 3) (error* "labels: illegal form" x))
         (unless (symbolp (elt x 0))
@@ -2098,7 +2028,6 @@ defgeneric compile
                       clos)
                 (format code2 ";~%"))))
 
-    
     (defun comp-let (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "let: not list" (elt x 1)))
         (format stream "({int res;")
@@ -2106,7 +2035,7 @@ defgeneric compile
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null (cdr body1))
               (if (and (not (tailcallp (car body1) tail name))
-                       (not (not-need-res-p (car body1))))
+                      (not (not-need-res-p (car body1))))
                  (format stream "res = "))
               (comp stream
                    (car body1)
@@ -2132,7 +2061,6 @@ defgeneric compile
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
 
-    
     (defun comp-let* (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "let*: not list" (elt x 1)))
         (format stream "({int res;")
@@ -2148,7 +2076,7 @@ defgeneric compile
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null (cdr body1))
               (if (and (not (tailcallp (car body1) tail name))
-                       (not (not-need-res-p (car body1))))
+                      (not (not-need-res-p (car body1))))
                  (format stream "res = "))
               (comp stream
                    (car body1)
@@ -2174,25 +2102,20 @@ defgeneric compile
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
 
-    
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))
 
-    
     (defun not-need-colon-p (x)
         (and (consp x) (member (car x) not-need-colon)))
 
-    
     (defun tailcallp (x tail name)
         (and tail (and (consp x) (eq (car x) name))))
 
-    
     (defun comp-let1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               (t (comp-let2 stream (car x) env args tail name global test clos)
                  (comp-let1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-let2 (stream x env args tail name global test clos)
         (unless (symbolp (elt x 0)) (error* "let: illegal let form" x))
         (format stream "int ")
@@ -2294,7 +2217,6 @@ defgeneric compile
                     clos)
         (format stream ";res;})"))
 
-    
     ;;          
     ;; error_handler = (handlerN ... handler2 handler1) 
     ;; set subr of compiled handler
@@ -2311,7 +2233,6 @@ defgeneric compile
         (format stream "Fset_error_handler(Fcdr(Fget_error_handler()));")
         (format stream "res;})"))
 
-    
     (defun comp-cond (stream x env args tail name global test clos)
         (format stream "({int res=NIL;~%if(")
         (comp stream (car (elt x 1)) env args tail name global t clos)
@@ -2329,7 +2250,6 @@ defgeneric compile
                     clos)
         (comp-cond1 stream (cdr (cdr x)) env args tail name global test clos))
 
-    
     (defun comp-cond1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream ";res;})"))
               ((eq (car (car x)) t)
@@ -2344,7 +2264,6 @@ defgeneric compile
                  (comp-cond2 stream (cdr (car x)) env args tail name global test clos)
                  (comp-cond1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-cond2 (stream x env args tail name global test clos)
         (when (null x) (error* "cond: illegal form*" x))
         (cond ((null (cdr x))
@@ -2361,7 +2280,6 @@ defgeneric compile
                      (format stream ";~%"))
                  (comp-cond2 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-case (stream x env args tail name global test clos)
         (unless (consp (car (elt x 2)))
                 (error* "case: illegal form" (car (elt x 2))))
@@ -2390,7 +2308,6 @@ defgeneric compile
                     clos
                     (elt x 1)))
 
-    
     (defun comp-case1 (stream x env args tail name global test clos key)
         (cond ((null x) (format stream ";res;})"))
               ((eq (car (car x)) t)
@@ -2405,7 +2322,6 @@ defgeneric compile
                  (comp-cond2 stream (cdr (car x)) env args nil name global test clos)
                  (comp-case1 stream (cdr x) env args tail name global test clos key))))
 
-    
     (defun comp-case-using (stream x env args tail name global test clos)
         (format stream "({int res;~%if(Fmember1(")
         (comp stream (elt x 2) env args tail name global test clos)
@@ -2435,7 +2351,6 @@ defgeneric compile
                           (elt x 2)
                           (elt x 1)))
 
-    
     (defun comp-case-using1 (stream x env args tail name global test clos key pred)
         (cond ((null x) (format stream ";res;})"))
               ((eq (car (car x)) t)
@@ -2462,12 +2377,10 @@ defgeneric compile
                                    key
                                    pred))))
 
-    
     (defun has-tail-recur-p (x name)
         (cond ((null x) nil)
               (t (has-tail-recur-p1 (last x) name))))
 
-    
     (defun has-tail-recur-p1 (x name)
         (cond ((null x) nil)
               ((atom x) nil)
@@ -2484,7 +2397,6 @@ defgeneric compile
               ((eq (car x) 'block) (has-tail-recur-p (cdr (cdr x)) name))
               (t nil)))
 
-    
     ;; comp-for alpha convert e.g.
     ;; from
     ;; (defun iota (n m)
@@ -2554,14 +2466,12 @@ defgeneric compile
                 (format stream "res=NIL;"))
             (format stream "res;})")))
 
-    
     (defun comp-for1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               (t (comp stream (car x) env args tail name global test clos)
                  (format stream ";~%")
                  (comp-for1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-for2 (stream x env args tail name global test clos)
         (for ((update x (cdr update))
               (n 1 (+ n 1)) )
@@ -2592,7 +2502,6 @@ defgeneric compile
                    (format stream ";~%")))
         (format stream "}~%"))
 
-    
     ;; alpha convert vars list
     (defun comp-for3 (vars var subst)
         (mapcar (lambda (x) (if (= (length x) 3)
@@ -2602,13 +2511,11 @@ defgeneric compile
                        (list (alpha-conv (elt x 0) var subst) (elt x 1))))
                 vars))
 
-    
     (defun comp-progn (stream x env args tail name global test clos)
         (format stream "({int res;~%")
         (comp-progn1 stream (cdr x) env args tail name global test clos)
         (format stream "res;})"))
 
-    
     (defun comp-progn1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               ((null (cdr x))
@@ -2623,7 +2530,6 @@ defgeneric compile
                      (format stream ";~%"))
                  (comp-progn1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-and (stream x env args tail name global test clos)
         (format stream "({int res;~%if((res = ")
         (comp stream (elt x 1) env args nil name global test clos)
@@ -2631,7 +2537,6 @@ defgeneric compile
         (comp-and1 stream (cdr (cdr x)) env args nil name global test clos)
         (format stream "else res=NIL;res;})~%"))
 
-    
     (defun comp-and1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "res=res;"))
               ((null (cdr x))
@@ -2644,7 +2549,6 @@ defgeneric compile
                  (comp-and1 stream (cdr x) env args nil name global test clos)
                  (format stream "else res=NIL;"))))
 
-    
     (defun comp-or (stream x env args tail name global test clos)
         (format stream "({int res;~%if((res=")
         (comp stream (elt x 1) env args nil name global test clos)
@@ -2652,7 +2556,6 @@ defgeneric compile
         (comp-or1 stream (cdr (cdr x)) env args nil name global test clos)
         (format stream "else res=res;res;})~%"))
 
-    
     (defun comp-or1 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "res = res;"))
               ((null (cdr x))
@@ -2665,33 +2568,28 @@ defgeneric compile
                  (comp-or1 stream (cdr x) env args nil name global test clos)
                  (format stream "else res=res;"))))
 
-    
     (defun comp-test-and (stream x env args tail name global test clos)
         (format stream "(")
         (comp-test-and1 stream (cdr x) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-test-and1 (stream x env args tail name global test clos)
         (cond ((null (cdr x)) (comp stream (car x) env args nil name global test clos))
               (t (comp stream (car x) env args nil name global test clos)
                  (format stream " && ")
                  (comp-test-and1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-test-or (stream x env args tail name global test clos)
         (format stream "(")
         (comp-test-or1 stream (cdr x) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-test-or1 (stream x env args tail name global test clos)
         (cond ((null (cdr x)) (comp stream (car x) env args nil name global test clos))
               (t (comp stream (car x) env args nil name global test clos)
                  (format stream " || ")
                  (comp-test-or1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-while (stream x env args tail name global test clos)
         (format stream "({int res;~%while(")
         (comp stream (elt x 1) env args tail name global t clos)
@@ -2700,7 +2598,6 @@ defgeneric compile
         (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "};res;})~%"))
 
-    
     (defun comp-setq (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1)) (error* "setq: not symbol" x))
         (cond ((member (elt x 1) env)
@@ -2725,7 +2622,6 @@ defgeneric compile
                  (comp stream (elt x 2) env args nil name t test clos)
                  (format stream ");res;})"))))
 
-    
     (defun comp-tagbody (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1))
                 (error* "tagbody: not symbol" (elt x 1)))
@@ -2735,7 +2631,6 @@ defgeneric compile
         (comp-tagbody1 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "res;})~%"))
 
-    
     (defun comp-tagbody1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               ((symbolp (car x))
@@ -2752,14 +2647,12 @@ defgeneric compile
                  (format stream ";~%")
                  (comp-tagbody1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-go (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1)) (error* "go: not symbol" (elt x 1)))
         (format stream "goto ")
         (format stream (convert (conv-name (elt x 1)) <string>))
         (format stream ";~%"))
 
-    
     (defun comp-convert (stream x env args tail name global test clos)
         (unless (symbolp (elt x 2)) (error* "convert: not symbol" x))
         (unless (= (length x) 3) (error* "convert: illegal form" x))
@@ -2769,7 +2662,6 @@ defgeneric compile
         (format-object stream (elt x 2) nil)
         (format stream "\"))"))
 
-    
     (defun comp-function (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "function: illegal form" x))
         (unless (symbolp (elt x 1)) (error* "function: illegal form" x))
@@ -2777,7 +2669,6 @@ defgeneric compile
         (format-object stream (elt x 1) nil)
         (format stream "\"))"))
 
-    
     (defun comp-symbol-function (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1))
                 (error* "symbol-function: illegal form" x))
@@ -2787,7 +2678,6 @@ defgeneric compile
         (comp stream (elt x 1) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-class (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "class: illegal form" x))
         (unless (symbolp (elt x 1)) (error* "class: illegal form" x))
@@ -2795,7 +2685,6 @@ defgeneric compile
         (format-object stream (elt x 1) nil)
         (format stream "\"))"))
 
-    
     (defun comp-symbol-class (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "class: illegal form" x))
         (unless (symbolp (elt x 1)) (error* "class: illegal form" x))
@@ -2803,7 +2692,6 @@ defgeneric compile
         (comp stream (elt x 1) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-catch (stream x env args tail name global test clos)
         (let ((tag (elt (elt x 1) 1)))
            (set-property unwind-nest tag 'unwind-nest)
@@ -2825,19 +2713,28 @@ defgeneric compile
            (format stream "\"),i);~%")
            (format stream "}~% else{~%")
            (format stream "ret = 0;~%")
-           (format stream "if(Fget_error_flag()){Frestore_error_handler();}~%")
+           (format stream
+                   "if(Fget_error_flag()){Frestore_error_handler();}~%")
            (format stream "res=catch_arg;}~%")
            (format stream "res;})")))
 
-    
     (defun comp-throw (stream x env args tail name global test clos)
         (let ((tag (elt (elt x 1) 1)))
            (when (not (member tag catch-block-tag))
                  (error* "throw: tag not exist " tag))
            (format stream "({int res,i;~%")
            ;; while executing unwind-protect, throw execute cleanup before.
-           (cond ((and (property tag 'unwind-nest) (/= (property tag 'unwind-nest) unwind-nest))
-                  (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
+           (cond ((and (property tag 'unwind-nest)
+                       (/= (property tag 'unwind-nest) unwind-nest))
+                  (comp-progn1 stream
+                               (car unwind-cleanup)
+                               env
+                               args
+                               tail
+                               name
+                               global
+                               test
+                               clos)
                   (setq unwind-cleanup (cdr unwind-cleanup))))
            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
            (format stream "catch_arg=res;~% ")
@@ -2851,7 +2748,6 @@ defgeneric compile
            (format-object stream (conv-name tag) nil)
            (format stream "[i-1],1);res;})~%")))
 
-    
     (defun comp-block (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1))
                 (error* "block: not symbol" (elt x 1)))
@@ -2876,15 +2772,23 @@ defgeneric compile
            (format stream "res=block_arg;}~%")
            (format stream "res;})")))
 
-    
     (defun comp-return-from (stream x env args tail name global test clos)
         (unless (symbolp (elt x 1))
                 (error* "return-from: not symbol" (elt x 1)))
         (let ((tag (elt x 1)))
            (format stream "({int res,i;~%")
            ;; while executing unwind-protect, return-from execute cleanup before.
-           (cond ((and (property tag 'unwind-nest) (/= (property tag 'unwind-nest) unwind-nest))
-                  (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
+           (cond ((and (property tag 'unwind-nest)
+                       (/= (property tag 'unwind-nest) unwind-nest))
+                  (comp-progn1 stream
+                               (car unwind-cleanup)
+                               env
+                               args
+                               tail
+                               name
+                               global
+                               test
+                               clos)
                   (setq unwind-cleanup (cdr unwind-cleanup))))
            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
            (format stream "block_arg=res;~% ")
@@ -2913,12 +2817,19 @@ defgeneric compile
         (comp stream (elt x 1) env args tail name global test clos)
         (cond ((= (length unwind-cleanup) unwind-nest)
                (format stream ";")
-               (comp-progn1 stream (car unwind-cleanup) env args tail name global test clos)
+               (comp-progn1 stream
+                            (car unwind-cleanup)
+                            env
+                            args
+                            tail
+                            name
+                            global
+                            test
+                            clos)
                (setq unwind-cleanup (cdr unwind-cleanup))))
         (format stream ";res;})")
         (setq unwind-nest (- unwind-nest 1)))
 
-    
     (defun comp-setf (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "setf: illegal form" x))
         (when (or (eq (elt x 1) t) (eq (elt x 1) nil))
@@ -2974,7 +2885,6 @@ defgeneric compile
                               clos))
                   (t (error* "setf: illegal form" x)))))
 
-    
     (defun comp-dynamic (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "dynamic: illegal form" x))
         (unless (symbolp (elt x 1)) (error* "dynamic: illegal form" x))
@@ -2982,20 +2892,17 @@ defgeneric compile
         (format-object stream (elt x 1) nil)
         (format stream "\"))"))
 
-    
     (defun comp-dynamic-let (stream x env args tail name global test clos)
         (format stream "({int res,val,save,dynpt;~% save=Fgetdynpt();~%")
         (comp-dynamic-let1 stream (elt x 1) env args tail name global test clos)
         (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "Fsetdynpt(save);res;})"))
 
-    
     (defun comp-dynamic-let1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               (t (comp-dynamic-let2 stream (car x) env args tail name global test clos)
                  (comp-dynamic-let1 stream (cdr x) env args tail name global test clos))))
 
-    
     (defun comp-dynamic-let2 (stream x env args tail name global test clos)
         (unless (symbolp (elt x 0))
                 (error* "dynamic-let: illegal let form" x))
@@ -3010,14 +2917,12 @@ defgeneric compile
            (format-object stream symbol nil)
            (format stream "\"),val);")))
 
-    
     (defun comp-not (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "not: illegal form" x))
         (format stream "fast_not(")
         (comp stream (elt x 1) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-car (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "car: illegal form" x))
         (unless (or (symbolp (elt x 1)) (consp (elt x 1)))
@@ -3026,7 +2931,6 @@ defgeneric compile
         (comp stream (elt x 1) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-cdr (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "cdr: illegal form" x))
         (unless (or (symbolp (elt x 1)) (consp (elt x 1)))
@@ -3035,7 +2939,6 @@ defgeneric compile
         (comp stream (elt x 1) env args tail name global test clos)
         (format stream ")"))
 
-    
     (defun comp-cons (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "cons: illegal form" x))
         (format stream "Fcons(")
@@ -3044,7 +2947,6 @@ defgeneric compile
         (comp stream (elt x 2) env args nil name global test clos)
         (format stream ")"))
 
-    
     (defun comp-length (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "length: illegal form" x))
         (unless (or (symbolp (elt x 1))
@@ -3055,7 +2957,6 @@ defgeneric compile
         (comp stream (elt x 1) env args tail name global test clos)
         (format stream ")"))
 
-    
     ;;add code0 stream #include C code.
     (defun comp-c-include (x)
         (unless (or (= (length x) 2) (= (length x) 3))
@@ -3071,7 +2972,6 @@ defgeneric compile
                (format code0 (elt x 1))
                (format code0 "~%"))))
 
-    
     ;;add code2 stream C define
     (defun comp-c-define (x)
         (unless (= (length x) 3) (error* "c-define: illegal form" x))
@@ -3083,7 +2983,6 @@ defgeneric compile
         (format code0 (elt x 2))
         (format code0 "~%"))
 
-    
     ;;add code2 stream C language code.
     (defun comp-c-lang (x)
         (unless (= (length x) 2) (error* "c-lang: illegal form" x))
@@ -3092,7 +2991,6 @@ defgeneric compile
         (format code2 (elt x 1) nil)
         (format code2 "~%"))
 
-    
     ;;add compile option
     (defun comp-c-option (x)
         (unless (or (= (length x) 2) (= (length x) 3))
@@ -3103,7 +3001,6 @@ defgeneric compile
                (setq c-lang-option (elt x 1)))
               ((= (length x) 2) (setq c-lang-option (elt x 1)))))
 
-    
     ;;defglobal
     (defun comp-defglobal (x)
         (let ((symbol (elt x 1))
@@ -3117,7 +3014,6 @@ defgeneric compile
            (format-object code4 symbol nil)
            (format code4 "\"),GLOBAL);~%")))
 
-    
     ;;defconstant
     (defun comp-defconstant (x)
         (let ((symbol (elt x 1))
@@ -3131,7 +3027,6 @@ defgeneric compile
            (format-object code4 symbol nil)
            (format code4 "\"),CONSTN);~%")))
 
-    
     ;;defdynamic
     (defun comp-defdynamic (x)
         (unless (= (length x) 3) (error* "defdynamic: illegal form" x))
@@ -3145,7 +3040,6 @@ defgeneric compile
            (comp code4 value nil nil nil nil t nil nil)
            (format code4 ");")))
 
-    
     ;;set-dynamic
     (defun comp-set-dynamic (stream x env args tail name global test clos)
         (unless (= (length x) 3) (error* "set-dynamic: illegal form" x))
@@ -3159,7 +3053,6 @@ defgeneric compile
            (comp stream value env args tail name global test clos)
            (format stream ")")))
 
-    
     ;;defmacro
     (defun comp-defmacro (x)
         (setq lambda-free-var nil)
@@ -3173,7 +3066,6 @@ defgeneric compile
         (list-to-c1 code4 '(eisl-ignore-toplevel-check nil))
         (format code4 ");~%"))
 
-    
     ;;defclass
     (defun comp-defclass (x)
         (comp code4
@@ -3199,7 +3091,6 @@ defgeneric compile
               nil)
         (format code4 ";~%"))
 
-    
     ;;defmethod only create initialize-object
     ;;these are nead to save as C-list
     (defun comp-defmethod (x)
@@ -3223,7 +3114,6 @@ defgeneric compile
         (convert (conv-name1 (convert (convert sym <string>) <list>))
                  <symbol>))
 
-    
     (defun conv-name1 (ls)
         (cond ((char= (car ls) #\0) (string-append "zero" (conv-name2 (cdr ls))))
               ((char= (car ls) #\1) (string-append "one" (conv-name2 (cdr ls))))
@@ -3237,7 +3127,6 @@ defgeneric compile
               ((char= (car ls) #\9) (string-append "nine" (conv-name2 (cdr ls))))
               (t (conv-name2 ls))))
 
-    
     (defun conv-name2 (ls)
         (cond ((null ls) "")
               ((char= (car ls) #\-) (string-append "_" (conv-name2 (cdr ls))))
@@ -3266,7 +3155,6 @@ defgeneric compile
               ((char= (car ls) #\.) (string-append "dot" (conv-name2 (cdr ls))))
               (t (string-append (create-string 1 (car ls)) (conv-name2 (cdr ls))))))
 
-    
     ;; fixnum translate to immediate
     (defun list-to-c (stream x)
         (cond ((null x) (format stream "NIL"))
@@ -3317,7 +3205,6 @@ defgeneric compile
                  (list-to-c stream (cdr x))
                  (format stream ")"))))
 
-    
     ;;translate fixnum to int-cell
     (defun list-to-c1 (stream x)
         (cond ((null x) (format stream "NIL"))
@@ -3370,7 +3257,6 @@ defgeneric compile
                  (list-to-c1 stream (cdr x))
                  (format stream ")"))))
 
-    
     ;;quasi-quote
     (defun quasi-transfer (x n)
         (cond ((null x) nil)
@@ -3409,7 +3295,6 @@ defgeneric compile
                        (quasi-transfer (car x) n)
                        (quasi-transfer (cdr x) n)))))
 
-    
     ;;-----------type inferrence-------------
     ;;if following all test is true, it is optimizable
     ;;output type is fixnum or float
@@ -3429,7 +3314,6 @@ defgeneric compile
                       (t nil)))
             nil))
 
-    
     ;;local type is optimizable?
     (defun optimize-p1 (x)
         (cond ((null x) t)
@@ -3438,31 +3322,26 @@ defgeneric compile
                (optimize-p1 (cdr x)))
               (t nil)))
 
-    
     ;;global function, return output type
     (defun return-type (x)
         (elt (assoc x type-function) 1))
 
-    
     ;;global function, return input argument type
     (defun argument-type (x)
         (elt (assoc x type-function) 2))
 
-    
     ;;local function, return output type
     ;;x is global name, y is local name
     (defun local-return-type (x y)
         (let ((local (elt (assoc x type-function) 3)))
            (elt (assoc y local) 1)))
 
-    
     ;;local function, return input argument type
     ;;x is global name, y is local name
     (defun local-argument-type (x y)
         (let ((local (elt (assoc x type-function) 3)))
            (elt (assoc y local) 2)))
 
-    
     ;; (x y z) -> (int x, double y, int z) when (<fixnum> <float> <fixnum>)
     ;; output to stream of string
     (defun type-gen-arg2 (stream ls type)
@@ -3489,7 +3368,6 @@ defgeneric compile
                         (format-object stream (conv-name (car ls1)) nil)
                         (format stream ","))))))
 
-    
     ;;for tail call
     ;; when ls=(<fixnum> <float> <fixnum>) -> int temp1; double temp2; int temp3;
     (defun type-gen-arg3 (n ls)
@@ -3503,7 +3381,6 @@ defgeneric compile
                      (format code2 (convert m <string>))
                      (format code2 ";"))))
 
-    
     ;;(foo arg1 arg2) ->
     ;;  return(F_makeint(foo(Fgetint(arg1),Fgetint(arg2))));
     (defun type-gen-call (name n)
@@ -3546,17 +3423,14 @@ defgeneric compile
                                 (format code1 (convert m <string>))
                                 (format code1 "),"))))))))
 
-    
     (defun subsetp (x y)
         (cond ((null x) t)
               ((member (car x) y) (subsetp (cdr x) y))
               (t nil)))
 
-    
     (defmacro assert (sym :rest class)
         `(set-property (list (mapcar #'eval ',class)) ',sym 'inference))
 
-    
     (defmacro assertz (sym :rest class)
         `(let
           ((old (property ',sym 'inference)))
@@ -3564,7 +3438,6 @@ defgeneric compile
                         ',sym
                         'inference)))
 
-    
     (defun class-dynamic (c)
         (cond ((eq c '<string>) (class <string>))
               ((eq c '<list>) (class <list>))
@@ -3573,7 +3446,6 @@ defgeneric compile
               ((eq c '<float>) (class <float>))
               (t (class <object>))))
 
-    
     ;;type-function ((name output-type (input-type1 input-typr2 ...) (local-type-function)) ...)
     (defglobal file-name-and-ext nil)
     (defglobal instream nil)
@@ -3592,7 +3464,6 @@ defgeneric compile
     (defpublic type* ()
         (print type-function))
 
-    
     ;;type inference s-expression(s) in file x.
     ;;x is string of filename.
     (defun inference-file (x)
@@ -3609,7 +3480,6 @@ defgeneric compile
            (setq instream nil))
         t)
 
-    
     (defun inference-defmodule (x)
         (for ((name (car (cdr x)))
               (body (cdr (cdr x)) (cdr body)) )
@@ -3635,7 +3505,6 @@ defgeneric compile
                (if (not (null local-type-function))
                    (add-type-function-local name)))))
 
-    
     (defun inference-labels (x type-env)
         (setq local-type-function nil)
         (let ((labels-func (elt x 1))
@@ -3652,16 +3521,12 @@ defgeneric compile
                         (cons (list name (class <object>) init-type-input)
                               local-type-function))
                   (setq local-type-env
-                        (inference-all body
-                                       (append init-env type-env)
-                                       name
-                                       t))
+                        (inference-all body (append init-env type-env) name t))
                   (if (not (eq local-type-env 'no))
                       (set-local-type-function-input name (find-argument-class arg local-type-env)))
                   (setq labels-func (cdr labels-func))))
            local-type-env))
 
-    
     ;;transform from data in ls to class data.
     (defun find-argument-class (ls type-env)
         (for ((arg ls (cdr arg))
@@ -3670,7 +3535,6 @@ defgeneric compile
               (reverse result) )
              (setq result (cons (find-class (car arg) type-env) result))))
 
-    
     ;;create list that length is length of ls. all element is <object>
     (defun create-init-env (ls)
         (for ((arg ls (cdr arg))
@@ -3679,7 +3543,6 @@ defgeneric compile
               (reverse result) )
              (setq result (cons (cons (car arg) (class <object>)) result))))
 
-    
     ;; inference a s-expression
     ;; if x is true return type-env else return 'no
     (defun inference (x type-env)
@@ -3732,7 +3595,6 @@ defgeneric compile
                       (inference-arg (cdr x) (elt type 1) type-env))))
               (t (warning "can't inference " x) 'no)))
 
-    
     ;; inference s-expressions
     ;; if all success return type-env else return 'no
     (defun inference-all (x type-env fn local)
@@ -3743,7 +3605,6 @@ defgeneric compile
                   (set-local-type-function-output fn (find-class (last x) result))))
            result))
 
-    
     (defun inference-all1 (x type-env fn)
         (cond ((null x) type-env)
               ((and (consp (car x))
@@ -3768,12 +3629,10 @@ defgeneric compile
                   (cond ((eq new-env 'no) (warning "type mismatch" (car x)) 'no)
                         (t (inference-all1 (cdr x) new-env fn)))))))
 
-    
     ;;cond syntax
     (defun inference-cond (x type-env)
         (inference-cond1 (cdr x) type-env))
 
-    
     (defun inference-cond1 (x type-env)
         (cond ((null x) type-env)
               (t
@@ -3782,7 +3641,6 @@ defgeneric compile
                         (t (warning "cond mismatch" (car x))
                            (inference-cond1 (cdr x) type-env)))))))
 
-    
     (defun inference-cond2 (x type-env)
         (cond ((null x) type-env)
               (t
@@ -3791,12 +3649,10 @@ defgeneric compile
                         (t (warning "cond mismatch" x)
                            (inference-cond2 (cdr x) type-env)))))))
 
-    
     ;;case syntax
     (defun inference-case (x type-env)
         (inference-case1 (cdr (cdr x)) type-env))
 
-    
     (defun inference-case1 (x type-env)
         (cond ((null x) type-env)
               (t
@@ -3805,20 +3661,17 @@ defgeneric compile
                       (inference-case1 (cdr x) new-env)
                       (warning "case mismatch" x))))))
 
-    
     (defun inference-case2 (x type-env)
         (if (null x)
             type-env
             (inference-case2 (cdr x) (inference (car x) type-env))))
 
-    
     ;;if syntax
     (defun inference-if (x type-env)
         (if (= (length x) 4)
             (inference-if1 x type-env)
             (inference-if2 x type-env)))
 
-    
     ;;(if test true else)
     (defun inference-if1 (x type-env)
         (let ((test (inference (elt x 1) type-env)))
@@ -3832,7 +3685,6 @@ defgeneric compile
                       'no))
                'no)))
 
-    
     ;;(if test true)
     (defun inference-if2 (x type-env)
         (let ((test (inference (elt x 1) type-env)))
@@ -3843,7 +3695,6 @@ defgeneric compile
                       (progn (warning "if mismatch" x) 'no)))
                'no)))
 
-    
     ;; +-* ...
     (defun inference-numeric (x type-env)
         (cond ((every (lambda (x) (eq (class <fixnum>) (find-class x type-env)))
@@ -3867,7 +3718,6 @@ defgeneric compile
                (estimate (cdr x) (class <number>) type-env))
               (t (warning "numerical argument type mismatch" x) 'no)))
 
-    
     ;;let syntax
     (defun inference-let (x type-env)
         (let ((vars (elt x 1))
@@ -3883,7 +3733,6 @@ defgeneric compile
                            (return-from exit-let 'no)))
                   (inference-all1 body type-env nil)))))
 
-    
     ;;for syntax
     (defun inference-for (x type-env)
         (let ((vars (elt x 1))
@@ -3902,22 +3751,18 @@ defgeneric compile
                        (return-from exit-for 'no)))
               (inference-all1 body type-env nil))))
 
-    
     (defun inference-while (x type-env)
         (inference-while1 (cdr x) type-env))
 
-    
     (defun inference-while1 (x type-env)
         (cond ((null x) type-env)
               (t (inference-while1 (cdr x) (inference (car x) type-env)))))
 
-    
     (defun inference-function (x type-env)
         (let ((new-env (unify (car (cdr x)) (class <symbol>) type-env)))
            (cond ((eq new-env 'no) (warning "function mismatch" x) type-env)
                  (t new-env))))
 
-    
     ;;find type-data of user defined function.
     ;;first look for in type-function environment
     ;;second look for int local-type-function environment
@@ -3931,7 +3776,6 @@ defgeneric compile
                       (cdr z)))
                (cdr y))))
 
-    
     ;;if argument is atom, unify the atom and type of argument.
     ;;else if argument is cons, inference the cons.
     ;;and unify the cons and type of argument.
@@ -3965,7 +3809,6 @@ defgeneric compile
                                         (return-from exit-arg 'no)))))
                           (setq type-env new-env)))))))
 
-    
     ;;if x is registed in type-function data,
     ;;return t (if the output-class is <object>)
     ;;return nil (if the output-class is not <object>)
@@ -3975,7 +3818,6 @@ defgeneric compile
                nil
                (eq (elt y 0) (class <object>)))))
 
-    
     ;;find class of s-exp
     (defun find-class (x type-env)
         (cond ((null x) (class <null>))
@@ -4009,16 +3851,13 @@ defgeneric compile
               ((consp x) (class <object>))
               (t (class <object>))))
 
-    
     (defun find-class-if (x type-env)
         (find-class (elt x 2) type-env))
 
-    
     (defun find-class-cond (x type-env)
         (cond ((null x) (class <object>))
               (t (find-class (last (car x)) type-env))))
 
-    
     (defun find-class-numeric (x type-env)
         (cond ((every (lambda (x) (let ((type (find-class x type-env)))
                             (or (null type) (eq type (class <object>)))))
@@ -4038,33 +3877,28 @@ defgeneric compile
                (class <integer>))
               (t (class <number>))))
 
-    
     ;;reference symbol x in type-env
     (defun refer (x type-env)
         (let ((y (assoc x type-env)))
            (cond ((null y) (class <object>))
                  (t (cdr y)))))
 
-    
     ;;assign type destructive in type-function
     ;;set output class
     (defun set-type-function-output (fn y)
         (let ((z (assoc fn type-function)))
            (setf (elt z 1) y)))
 
-    
     ;;set input class
     (defun set-type-function-input (fn y)
         (let ((z (assoc fn type-function)))
            (setf (elt z 2) y)))
 
-    
     ;;add local function type data
     (defun add-type-function-local (fn)
         (let ((z (assoc fn type-function)))
            (append! z (list local-type-function))))
 
-    
     ;;local type-function
     ;;assign type destructive in local-type-function
     ;;set output class
@@ -4072,19 +3906,16 @@ defgeneric compile
         (let ((z (assoc fn local-type-function)))
            (setf (elt z 1) y)))
 
-    
     ;;set input class
     (defun set-local-type-function-input (fn y)
         (let ((z (assoc fn local-type-function)))
            (setf (elt z 2) y)))
 
-    
     ;;if x is registed in type-function return not nil
     ;;elt return nil
     (defun type-function-p (x)
         (assoc x type-function))
 
-    
     ;;if eq(x,y) subclassp(x,y) or subclassp(y,x),then unify is success
     ;;if success return type-env else return 'no.
     ;;type-env  ((x . (class integer))(x . (class <number>))(x . y))
@@ -4122,18 +3953,15 @@ defgeneric compile
                         (t 'no))))
               (t (setq type-env (cons (cons x y) type-env)) type-env)))
 
-    
     ;;symbol is variable in unify.
     ;;but nil and t are not variable.
     (defun variablep (x)
         (and (symbolp x) (not (null x)) (not (eq x t))))
 
-    
     (defun subclassp* (x y)
         (cond ((or (eq x nil) (eq x t) (eq y nil) (eq y t)) nil)
               (t (subclassp x y))))
 
-    
     ;;unify all data in ls with class.
     (defun estimate (ls class type-env)
         (for ((ls1 ls (cdr ls1)))
@@ -4142,11 +3970,9 @@ defgeneric compile
              (cond ((not (symbolp (car ls1))) t)
                    (t (setq type-env (unify (car ls1) class type-env))))))
 
-    
     (defun class* (x)
         (symbol-class x))
 
-    
     ;;subr type data
     ;;       fn          output           input
     (assert parse-number (class <number>) (class <string>))

@@ -188,20 +188,20 @@ Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
 int block_tag_check[CTRLSTK];
 int block_data[CTRLSTK][3];
-int catch_data[CTRLSTK][3]; /* new data type for catch tag*/
+int catch_data[CTRLSTK][3];	/* new data type for catch tag */
 int unwind_buf[CTRLSTK];
 int block_pt;			/* index of block. following are similer */
 int catch_pt = 0;		/* catch counter */
 int unwind_pt;			/* lambda address for unwind-protect */
 int block_arg;			/* receive argument of block */
 int catch_arg;			/* receive argument of catch */
-int cont_arg;           /* receive argument of continue-condition */
+int cont_arg;			/* receive argument of continue-condition */
 int tagbody_tag = NIL;		/* tag address fo tagbody */
 int error_handler = NIL;	/* for store first argument of with-handler */
 int error_handler1 = NIL;	/* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
-int unwind_nest;            /* unwind-protect nest level */
+int unwind_nest;		/* unwind-protect nest level */
 
 /* -----debugger----- */
 int examin_sym;
@@ -275,7 +275,7 @@ int main(int argc, char *argv[])
 	ed_key_up = key_up[2];
     }
 
-	init_stok();
+    init_stok();
     init_cell();
     init_class();
     init_stream();
@@ -394,13 +394,13 @@ char *library_file(const char *basename)
 
 void init_pointer(void)
 {
-	int ls;
+    int ls;
 
     ep = 0;
     sp = 0;
     ap = 0;
     lp = 0;
-	cp = 0;
+    cp = 0;
     block_pt = 0;
     catch_pt = 0;
     unwind_pt = 0;
@@ -494,33 +494,36 @@ void unreadc(char c)
 	SET_CDR(input_stream, GET_CDR(input_stream) - 1);
 }
 
-void init_stok()  {
-	stok.ch = '\0';
-	stok.flag = GO;
-	stok.type = OTHER;
-	stok.bufsize = BUFSIZE;
-	stok.buf = ALLOC(BUFSIZE * sizeof(char));
-	stok.buf[0] = '\0';
+void init_stok()
+{
+    stok.ch = '\0';
+    stok.flag = GO;
+    stok.type = OTHER;
+    stok.bufsize = BUFSIZE;
+    stok.buf = ALLOC(BUFSIZE * sizeof(char));
+    stok.buf[0] = '\0';
 }
 
-void set_stok_buf(int index, char c) {
-	if (index >= stok.bufsize) {
-		int new_bufsize = index + 1;
-		stok.buf = RESIZE(stok.buf, sizeof(char) * new_bufsize);;
-		stok.bufsize = new_bufsize;
+void set_stok_buf(int index, char c)
+{
+    if (index >= stok.bufsize) {
+	int new_bufsize = index + 1;
+	stok.buf = RESIZE(stok.buf, sizeof(char) * new_bufsize);;
+	stok.bufsize = new_bufsize;
 
-	}
-	stok.buf[index] = c;
-	return;
+    }
+    stok.buf[index] = c;
+    return;
 }
 
-void replace_stok_buf(char *str) {
-	if (strlen(str) > stok.bufsize) {
-		int new_bufsize = strlen(str);
-		RESIZE(stok.buf, sizeof(char) * new_bufsize);
-		stok.bufsize = new_bufsize;
-	}
-	strcpy(stok.buf, str);
+void replace_stok_buf(char *str)
+{
+    if (strlen(str) > stok.bufsize) {
+	int new_bufsize = strlen(str);
+	RESIZE(stok.buf, sizeof(char) * new_bufsize);
+	stok.bufsize = new_bufsize;
+    }
+    strcpy(stok.buf, str);
 }
 
 void get_token(void)
@@ -601,7 +604,7 @@ void get_token(void)
 		set_stok_buf(pos++, c);
 		if (c == '\\') {
 		    c = readc();
-			set_stok_buf(pos++, c);
+		    set_stok_buf(pos++, c);
 		}
 		if (c == EOF) {
 		    error(SYSTEM_ERR, "not exist right hand double quote",
@@ -609,7 +612,7 @@ void get_token(void)
 		}
 		c = readc();
 	    }
-		set_stok_buf(pos, NUL);
+	    set_stok_buf(pos, NUL);
 	    stok.type = STRING;
 	    break;
 	}
@@ -630,9 +633,10 @@ void get_token(void)
 		    goto chskip;
 
 		while (((c = readc()) != EOL) && (c != EOF)
-		       && (pos < stok.bufsize - 1) && (c != SPACE) && (c != '(')
+		       && (pos < stok.bufsize - 1) && (c != SPACE)
+		       && (c != '(')
 		       && (c != ')')) {
-			set_stok_buf(pos++, c);
+		    set_stok_buf(pos++, c);
 		}
 
 	      chskip:
@@ -646,7 +650,7 @@ void get_token(void)
 	    } else if (isdigit(c)) {
 		pos = 0;
 		while (isdigit(c)) {
-			set_stok_buf(pos, c);
+		    set_stok_buf(pos, c);
 		    pos++;
 		    c = readc();
 		}
@@ -682,13 +686,14 @@ void get_token(void)
      /*FALLTHROUGH*/ default:
 	{
 	    pos = 0;
-		set_stok_buf(pos++, c);
+	    set_stok_buf(pos++, c);
 	    while (((c = readc()) != EOL) && (c != EOF)
-		   && (pos < stok.bufsize - 1) && (c != SPACE) && (c != '(')
+		   && (pos < stok.bufsize - 1) && (c != SPACE)
+		   && (c != '(')
 		   && (c != ')') && (c != '`') && (c != ',') && (c != '@'))
 		set_stok_buf(pos++, c);
 
-		set_stok_buf(pos, NUL);
+	    set_stok_buf(pos, NUL);
 	    stok.ch = c;
 
 	    if (flt_token(stok.buf)) {
@@ -1857,7 +1862,7 @@ int apply(int func, int args)
 	    generic_func = func;
 	    generic_vars = copy(args);
 	    next_method = GET_CDR(func);
-		push(make_int(cp));
+	    push(make_int(cp));
 	    if (GET_TR(examin_sym) == 1) {
 		trace = examin_sym;
 		n = GET_TR(func);
@@ -1914,7 +1919,7 @@ int apply(int func, int args)
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;
-		cp = pop();
+	    cp = pop();
 	    return (res);
 	}
     default:
@@ -1928,7 +1933,7 @@ void bind_arg(int varlist, int arglist)
     int arg1, arg2;
 
     push(ep);
-	push(cp);
+    push(cp);
     while (!(IS_NIL(varlist))) {
 	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")
 				     || car(varlist) == make_sym("&REST"))) {
@@ -1949,7 +1954,7 @@ void bind_arg(int varlist, int arglist)
 void unbind(void)
 {
     cp = pop();
-	ep = pop();
+    ep = pop();
 }
 
 

@@ -22,16 +22,16 @@
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {
-	int addr;
+    int addr;
 
-	DBG_PRINTF("enter M&S-GC free=%d\n", fc);
-	gbc_mark();
-	gbc_sweep();
-	fc = 0;
-	for (addr = 0; addr < CELLSIZE; addr++)
-	    if (IS_EMPTY(addr))
-		fc++;
-	DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
+    DBG_PRINTF("enter M&S-GC free=%d\n", fc);
+    gbc_mark();
+    gbc_sweep();
+    fc = 0;
+    for (addr = 0; addr < CELLSIZE; addr++)
+	if (IS_EMPTY(addr))
+	    fc++;
+    DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
     return 0;
 }
 
@@ -221,7 +221,7 @@ int check_gbc(void)
     }
     if (fc < FREESIZE)
 	(void) gbc();
-    
+
     return 0;
 }
 
@@ -231,6 +231,3 @@ int freecell(void)
 {
     return (fc);
 }
-
-
-

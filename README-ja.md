@@ -255,8 +255,6 @@ EISL <==================================> C
 - `(gbc)` ガーベッジコレクション (GC) を実行.
   - `(gbc t)` GC実行時に通達する。
   - `(gbc nil)` GC実行時に通達しない。
-  - `(gbc 'copy)`GCの方法をコピーイングGCに切り換える。
-  - `(gbc 'm&s)`GCの方法をマーク＆スイープGCに切り換える。
 - `(heapdump n)`ｎ番目のセルからダンプリストを表示する。
 - `(instance n)`ｎ番目のセルの実体を表示する。
 - `(defmodule name body)` tests/module.lsp 参照

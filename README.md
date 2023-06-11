@@ -259,8 +259,6 @@ EISL <==================================> C
 | (gbc)                 | invoke garbage collection.                     |
 | (gbc t)               | display message when invoke GC.                |
 | (gbc nil)             | not display message when invoke GC.            |
-| (gbc 'copy)           | change GC method to copying-GC                 |
-| (gbc 'm&s)            | change GC method to mark & sweep               |
 | (heapdump n)          | display cell dump list from nth address        |
 | (instance n)          | display instance of nth address                |
 | (defmodule name body) | see tests/module.lsp                           |

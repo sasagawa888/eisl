@@ -1,19 +1,23 @@
-;;; bug copy GC
-;(gbc 'copy)
-(gbc t)
-;;; (taxi 70)
+;;; bug compiled flet
+#| 
+(defun foo (x)
+    (flet ((f (x)
+               (+ x 3) ))
+        (flet ((f (x)
+                   (+ x (f x)) ))
+            (f x))) )
+|#
+;; alpha convert
+;; if body of flet is flet, alpha convert.
 
-(defun taxi (n)
-  (for ((a 1 (+ a 1)))
-       ((< n a))
-       (for ((b a (+ b 1)))
-            ((< n b))
-            (for ((c (+ a 1) (+ c 1)))
-                 ((< n c))
-                 (for ((d c (+ d 1)))
-                      ((<= b d))
-                      (let ((e (+ (* a a a) (* b b b))))
-                        (if (= (+ (* c c c) (* d d d)) e)
-                            (format (standard-output) "~D: (~D, ~D), (~D,~D)~%" e a b c d))))))))
+(defun boo (x)
+    (flet ((f (x)
+               (+ x 3) ))
+        (flet ((f (x)
+                   (+ x (f x)) ))
+            (f x))) )
 
-
+(defun bar (x)
+    (flet ((f (x)
+               (+ x 3) ))
+      (f x)))

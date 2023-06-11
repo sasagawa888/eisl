@@ -581,7 +581,9 @@ defgeneric compile
                (comp-case stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'case-using))
                (comp-case-using stream x env args tail name global test clos))
-              ((and (consp x) (or (eq (car x) 'labels) (eq (car x) 'flet)))
+              ((and (consp x) (eq (car x) 'flet))
+               (comp-flet stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'labels))
                (comp-labels stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'let))
                (comp-let stream x env args tail name global test clos))
@@ -1997,6 +1999,28 @@ defgeneric compile
               ((and (consp (car x)) (subrp (car (car x)))) (simple-subrcall-p (cdr x)))
               ((atom (car x)) (simple-subrcall-p (cdr x)))
               (t nil)))
+
+    ;;; alpha convert before labels
+    (defun comp-flet (stream x env args tail name global test clos)
+        (print (comp-flet1 x))
+        (comp-labels stream (comp-flet1 x) env args tail name global test clos))
+
+    ;; if body is nested (flet ...) 
+    (defun comp-flet1 (x)
+        (if (eq (car (elt x 2)) 'flet)
+            (comp-flet2 x)
+            x))
+    
+    (defun comp-flet2 (x)
+        (let* ((nest (elt x 2))
+               (forms (elt nest 1))
+               (fn1 (mapcar #'car forms))
+               (fn2 (subst fn1))
+               (forms1 (mapcar (lambda (x y) (cons x (cdr y))) fn2 forms))
+               (end (alpha-conv (elt nest 2) fn1 fn2)))
+            (list (elt x 0) (elt x 1) 
+                  (list (elt nest 0) forms1 end))))
+               
 
     ;;labels syntax. flet syntax is same as labels
     (defun comp-labels (stream x env args tail name global test clos)
@@ -3543,7 +3567,7 @@ defgeneric compile
     (defglobal type-function nil)
     ;; for global defun
     (defglobal local-type-function nil)
-    ;;for lavels flet syntax
+    ;;for labels flet syntax
     (defun warning (str x)
         (format (standard-output)
                 "warning ~A ~A ~A~%"
@@ -3615,7 +3639,7 @@ defgeneric compile
                         (cons (list name (class <object>) init-type-input)
                               local-type-function))
                   (setq local-type-env
-                        (inference-all (append labels-body body)
+                        (inference-all body
                                        (append init-env type-env)
                                        name
                                        t))

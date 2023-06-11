@@ -2105,7 +2105,8 @@ defgeneric compile
         (comp-let1 stream (elt x 1) env args tail name global test clos)
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null (cdr body1))
-              (if (not (tailcallp (car body1) tail name))
+              (if (and (not (tailcallp (car body1) tail name))
+                       (not (not-need-res-p (car body1))))
                  (format stream "res = "))
               (comp stream
                    (car body1)

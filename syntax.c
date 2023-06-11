@@ -1294,8 +1294,14 @@ int has_danger_p(int x){
 			 eqp(car(x),make_sym("RETURN-FROM")) ||
 			 eqp(car(x),make_sym("FUNCALL"))))
 			 return(1);
-	else if(has_danger_p(car(x)) || has_danger_p(cdr(x)))
-		return(1);
+	else {
+		for (int remaining_elements = cdr(x); 
+			! nullp(remaining_elements); 
+			remaining_elements = cdr(remaining_elements))
+			if (has_danger_p(car(remaining_elements)))
+				return 1;
+	}
+	return 0;
 }
 
 
@@ -1314,11 +1320,17 @@ int f_unwind_protect(int arglist)
     arg1 = car(arglist);	// body
     args = cdr(arglist);	// clean-up
     if (nullp(arglist))
-	error(WRONG_ARGS, "unwind-protect", arglist);
+		error(WRONG_ARGS, "unwind-protect", arglist);
     if (improper_list_p(arglist))
-	error(WRONG_ARGS, "unwind-protect", arglist);
-	if (has_danger_p(args))
-	error(UNDEF_TAG, "unwind-protect", args);
+		error(WRONG_ARGS, "unwind-protect", arglist);
+
+	//Ensure that there are no non-local exits within the cleanup forms
+	for (int remaining_args = args; 
+		! nullp(remaining_args); 
+		remaining_args = cdr(remaining_args)) {
+			if (has_danger_p(car(remaining_args)))
+				error(UNDEF_TAG, "unwind-protect", args);
+	}
 
 	cleanup = unwind_pt;
     unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */
@@ -2186,8 +2198,7 @@ int convert(int arg1, int arg2)
 	if (GET_AUX(arg2) == cstring) {
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cinteger) {
-	    strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
-	    stok.buf[BUFSIZE - 1] = '\0';
+		replace_stok_buf(GET_NAME(arg1));
 
 	    if (bignum_token(stok.buf)) {
 		return (make_big(stok.buf));

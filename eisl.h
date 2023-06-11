@@ -148,7 +148,8 @@ typedef struct {
     char ch;
     backtrack flag;
     toktype type;
-    char buf[BUFSIZE];
+    int bufsize;
+    char *buf;
 } token;
 
 typedef struct {
@@ -520,6 +521,7 @@ static inline void output_char(int output_stream, char c)
 	append_str(output_stream, stream_str);
     }
 }
+
 
 // object oriented
 extern int generic_func;
@@ -1240,6 +1242,8 @@ int gbc(void);
 void gbc_mark(void);
 void gbc_sweep(void);
 void get_token(void);
+void set_stok_buf(int index, char c);
+void replace_stok_buf(char *str);
 void heapdump(int start, int end);
 void init_cell(void);
 void init_class(void);
@@ -1249,6 +1253,7 @@ void init_generic(void);
 void init_pointer(void);
 void init_stream(void);
 void init_subr(void);
+void init_stok(void);
 void init_syntax(void);
 void insert_method(int x, int func);
 void insert_str(char ch, char buf[]);

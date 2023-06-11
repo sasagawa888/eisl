@@ -4125,8 +4125,7 @@ int f_parse_number(int arglist)
     if (strcmp(GET_NAME(arg1), "") == 0)
 	error(CANT_PARSE, "parse-number", arg1);
 
-    strncpy(stok.buf, GET_NAME(arg1), BUFSIZE - 1);
-    stok.buf[BUFSIZE - 1] = '\0';
+    replace_stok_buf(GET_NAME(arg1));
 
     if (bignum_token(stok.buf))
 	return (make_big(stok.buf));

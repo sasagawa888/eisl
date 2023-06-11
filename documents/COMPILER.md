@@ -105,12 +105,6 @@ This is useful for converting Lisp code to C code by pooling into a string strea
 > 
 ```
 
-# Constraints of labels and flet
-In C language, it is not possible to define a local function inside a function. 
-GCC makes this possible with extensions. I used this extension to gain speed while ensuring static scope operation. 
-However, the scope is different from that of Lisp. 
-Note that clang does not support this feature at all.
-
 # Implementation of lambda
 `lambda` is supposed to define an anonymous function, but C functions must have a name.
 The name is the file name supplied to compile-file + a natural number.

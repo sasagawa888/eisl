@@ -16,3 +16,22 @@
                 "~D ~A ~%" 
                 (+ (expt a 3)(expt b 3)) ls)))) 
           
+
+;;; fast version with hash
+;;; written by M.hiroi
+;;; e.g. (taxi-fast 50)
+(import "hash")
+
+(defun taxi-fast (n)
+  (let ((ht (create (class <hash>))))
+    (combination
+     (lambda (xs)
+       (let* ((a (first xs))
+              (b (second xs))
+              (k (+ (* a a a) (* b b b)))
+              (v (gethash ht k)))
+         (if v
+             (format (standard-output) "~D: ~A, ~A~%" k xs (first v)))
+         (sethash ht k (cons xs v))))
+     2
+     (iota 1 n))))

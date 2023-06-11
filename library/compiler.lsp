@@ -2472,6 +2472,7 @@ defgeneric compile
             (when (any (lambda (x) (not (symbolp x))) var1)
                   (error* "for: illegal variable" vars))
             (format stream "({int res;~%")
+            (format stream "Fcheckgbc();~%")
             (comp-let1 stream vars env args nil name global test clos)
             (gen-arg3 (length vars))
             (format stream "while(")

@@ -1,7 +1,7 @@
 ;;; compiler test with M.hiroi example
 (import "macro")
 (import "seq")
-
+;;日本語のコメント
 (defun kakko-p (s)
     (let ((l 0)
           (r 0) )

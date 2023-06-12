@@ -1,4 +1,6 @@
 ;;; Peano axioms
+;;; e.g. 3 = (s (s (s 0)))
+;;;      0 = 0
 
 (defconstant zero 0)
 

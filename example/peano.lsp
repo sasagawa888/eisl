@@ -31,12 +31,12 @@
 (defun eqn (x y)
     (equal x y))
 
-(defun integer-to-peano (n)
+(defun peano (n)
     (if (= n 0)
         zero
-        (plus1 (make-n (- n 1)))))
+        (plus1 (peano (- n 1)))))
 
-(defun peano-to-integer (x)
+(defun integer (x)
     (if (equal x zero)
         0
-        (+ 1 (peano-to-integer (minus1 x)))))
+        (+ 1 (integer (minus1 x)))))

@@ -45,14 +45,14 @@
             (filename1 str)))
 
     (defun filename1 (str)
-        (let* ((n (char-index #\. str)))
+        (let* ((n (char-index #\\. str)))
             (if (null n)
                 (error "lack of filename ext" str))
             (substring str 0 (- n 1))))
 
     ;; e.g. ./example/test.lsp 
     (defun filename2 (str)
-        (let* ((n (char-index #\. (dropstring str 1))))
+        (let* ((n (char-index #\\. (dropstring str 1))))
             (if (null n)
                 (error "lack of filename ext" str))
             (substring str 0 n)))
@@ -174,7 +174,11 @@
 
     ;; write symbol number string object
     (defun pp-string (x)
-        (format output-stream x))
+        (if (and (>= (length x) 2)
+                 (char= (elt x 0) #\\')
+                 (char= (elt x 1) #\\'))
+            (format output-stream x)
+            (format output-stream "~A" x)))
 
     ;; syntax cond
     (defun pp-cond (x lm)
@@ -280,7 +284,6 @@
            (pp-string ")")
            (newline lm)))
 
-    
     (defun pp-defpattern (x lm)
         (let ((lm1 (+ lm 4)))
            (pp-string "(")
@@ -518,12 +521,12 @@
               ((and (consp x)
                     (stringp (car x))
                     (not (string= (car x) ""))
-                    (char= (elt (car x) 0) #\'))
+                    (char= (elt (car x) 0) #\\'))
                (+ (length (car x)) (flatsize (cdr x))))
               ((and (consp x)
                     (stringp (car x))
                     (not (string= (car x) ""))
-                    (char= (elt (car x) 0) #\`))
+                    (char= (elt (car x) 0) #\\`))
                (+ (length (car x)) (flatsize (cdr x))))
               ((and (consp x) (stringp (car x))) (+ (length (car x)) 1 (flatsize (cdr x))))
               ((consp x) (+ (flatsize (car x)) 1 (flatsize (cdr x))))))
@@ -531,7 +534,7 @@
     ;; read S-expression. each atom is represented as string
     (defun sexp-read ()
         (let ((token (get-token)))
-           (cond ((and (characterp token) (char= token #\()) (sexp-read-list))
+           (cond ((and (characterp token) (char= token #\\()) (sexp-read-list))
                  (t token))))
 
     (defun sexp-read-list ()
@@ -540,8 +543,8 @@
            (setq token (get-token))
            (if (and (stringp token) (string= token ""))
                (setq token (get-token)))
-           (cond ((and (characterp token) (char= token #\))) nil)
-                 ((and (characterp token) (char= token #\())
+           (cond ((and (characterp token) (char= token #\\))) nil)
+                 ((and (characterp token) (char= token #\\())
                   (cons (sexp-read-list) (sexp-read-list)))
                  (t (cons token (sexp-read-list))))))
 
@@ -569,20 +572,20 @@
               (cond ((skip-p char) ;space skip
                      (space-skip) (setq char (getc))))
               (cond ((end-of-file-p char) (return-from exit char)) ;EOF
-                    ((char= char #\null) "") ;empty line
+                    ((char= char #\\null) "") ;empty line
                     ((delimiter-p char) char) ;delimiter
-                    ((char= char #\") ;string e.g. "asdf"
-                     (setq token (cons #\' (cons #\' token)))
+                    ((char= char #\\") ;string e.g. "asdf"
+                     (setq token (cons #\\' (cons #\\' token)))
                      (setq char (getc))
-                     (while (not (char= char #\"))
+                     (while (not (char= char #\\"))
                         (setq token (cons char token))
-                        (cond ((char= char #\\) (setq token (cons (getc) token))))
+                        (cond ((char= char #\\\) (setq token (cons (getc) token))))
                         (setq char (getc)))
-                     (setq token (cons #\' (cons #\' token)))
+                     (setq token (cons #\\' (cons #\\' token)))
                      (convert-to-string (reverse token)))
-                    ((and (char= char #\#) (char= (look) #\\)) ;character e.g. "#a" double 
+                    ((and (char= char #\\#) (char= (look) #\\\)) ;character e.g. "#a" double 
                      (setq token (cons (getc) (cons char nil)))
-                     (setq token (cons #\\ token))
+                     (setq token (cons #\\\ token))
                      (setq token (cons (getc) token))
                      (setq char (getc))
                      (while (not (delimiter-p char))
@@ -590,32 +593,32 @@
                         (setq char (getc)))
                      (ungetc char)
                      (convert-to-string (reverse token)))
-                    ((char= char #\') ;quote
+                    ((char= char #\\') ;quote
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
-                    ((char= char #\`) ;back quote
+                    ((char= char #\\`) ;back quote
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
-                    ((and (char= char #\,) (char= (look) #\@)) ;unquote-splicing
+                    ((and (char= char #\\,) (char= (look) #\\@)) ;unquote-splicing
                      (setq token (cons char (cons (getc) nil)))
                      (cons (convert-to-string token) (sexp-read)))
-                    ((char= char #\,) ;unquote
+                    ((char= char #\\,) ;unquote
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
-                    ((and (char= char #\#) (char= (look) #\|)) ;long comment #|..|#
+                    ((and (char= char #\\#) (char= (look) #\\|)) ;long comment #|..|#
                      (setq token (cons (getc) (cons char nil)))
                      (setq token (cons (getc) token))
                      (setq char (getc))
-                     (while (not (and (char= char #\|) (char= (look) #\#)))
+                     (while (not (and (char= char #\\|) (char= (look) #\\#)))
                         (setq token (cons char token))
                         (setq char (getc)))
                      (setq token (cons char token))
                      (setq token (cons (getc) token))
                      (convert-to-string (reverse token)))
-                    ((and (char= char #\#) (char= (look) #\()) ;vector
+                    ((and (char= char #\\#) (char= (look) #\\()) ;vector
                      (setq token (cons char nil))
                      (cons (convert-to-string token) (sexp-read)))
-                    ((and (char= char #\#) (char= (look) #\')) ;e.g. #'foo
+                    ((and (char= char #\\#) (char= (look) #\\')) ;e.g. #'foo
                      (setq token (cons (getc) (cons char nil)))
                      (setq char (getc))
                      (while (not (delimiter-p char))
@@ -623,20 +626,20 @@
                         (setq char (getc)))
                      (ungetc char)
                      (convert-to-string (reverse token)))
-                    ((char= char #\#)
+                    ((char= char #\\#)
                      (while (not (delimiter-p char))
                         (setq token (cons char token))
                         (setq char (getc)))
                      (ungetc char)
                      (setq token (reverse token))
-                     (cond ((member (elt token 1) '(#\X #\B #\O)) (convert-to-string token)) ;hex oct bin integer
-                           ((or (char= (elt token 2) #\a) (char= (elt token 2) #\f))
+                     (cond ((member (elt token 1) '(#\\X #\\B #\\O)) (convert-to-string token)) ;hex oct bin integer
+                           ((or (char= (elt token 2) #\\a) (char= (elt token 2) #\\f))
                             (cons (convert-to-string token) (sexp-read))) ;array
                            (t (convert-to-string token)))) ;other 
-                    ((char= char #\;) ;comment
+                    ((char= char #\\;) ;comment
                      (setq token (cons char token))
                      (setq char (getc))
-                     (while (not (char= char #\newline))
+                     (while (not (char= char #\\newline))
                         (setq token (cons char token))
                         (setq char (getc)))
                      (ungetc char)
@@ -652,9 +655,9 @@
     (defun space-skip ()
         ;;space skip
         (while (and (not (null buffer))
-                (or (char= (car buffer) #\space)
-                    (char= (car buffer) #\tab)
-                    (char= (car buffer) #\newline)))
+                (or (char= (car buffer) #\\space)
+                    (char= (car buffer) #\\tab)
+                    (char= (car buffer) #\\newline)))
            (setq buffer (cdr buffer))))
 
     ;; convert atom to string
@@ -671,8 +674,8 @@
               (while (null buffer)
                  (setq input (read-line input-stream nil 'eof))
                  (cond ((end-of-file-p input) (return-from exit 'eof))
-                       ((string= input "") (return-from exit #\null))
-                       (t (setq buffer (append (convert input <list>) '(#\newline))))))
+                       ((string= input "") (return-from exit #\\null))
+                       (t (setq buffer (append (convert input <list>) '(#\\newline))))))
               
               (setq result (car buffer))
               (setq buffer (cdr buffer))
@@ -693,11 +696,11 @@
     ;; if delimiter T else NIL. delimiter is space newline ledt-paren right paren
     (defun delimiter-p (c)
         (and (characterp c)
-             (member c '(#\space #\newline #\( #\)))))
+             (member c '(#\\space #\\newline #\\( #\\)))))
 
     ;;is it skip able character?
     (defun skip-p (c)
-        (and (characterp c) (member c '(#\space #\newline))))
+        (and (characterp c) (member c '(#\\space #\\newline))))
 
     (defun has-single-comment-p (x)
         (and (not (null x))
@@ -710,38 +713,38 @@
 
     ;; short-comment includes single-comment,double-somment,triple comment.
     (defun short-comment-p (x)
-        (and (stringp x) (not (string= x "")) (char= (elt x 0) #\;)))
+        (and (stringp x) (not (string= x "")) (char= (elt x 0) #\\;)))
 
     ;; ; single semicolon comment
     (defun single-comment-p (x)
         (and (stringp x)
              (> (length x) 1)
-             (char= (elt x 0) #\;)
-             (not (char= (elt x 1) #\;))))
+             (char= (elt x 0) #\\;)
+             (not (char= (elt x 1) #\\;))))
 
     ;; ;; double semicolon comment
     (defun double-comment-p (x)
         (and (stringp x)
              (> (length x) 2)
-             (char= (elt x 0) #\;)
-             (char= (elt x 1) #\;)
-             (not (char= (elt x 2) #\;))))
+             (char= (elt x 0) #\\;)
+             (char= (elt x 1) #\\;)
+             (not (char= (elt x 2) #\\;))))
 
     ;; ;;; triple seimicolon comment
     (defun triple-comment-p (x)
         (and (stringp x)
              (> (length x) 3)
-             (char= (elt x 0) #\;)
-             (char= (elt x 1) #\;)
-             (char= (elt x 2) #\;)
-             (not (char= (elt x 3) #\;))))
+             (char= (elt x 0) #\\;)
+             (char= (elt x 1) #\\;)
+             (char= (elt x 2) #\\;)
+             (not (char= (elt x 3) #\\;))))
 
     ;; #|    |# type comment
     (defun long-comment-p (x)
         (and (stringp x)
              (> (length x) 2)
-             (char= (elt x 0) #\#)
-             (char= (elt x 1) #\|)))
+             (char= (elt x 0) #\\#)
+             (char= (elt x 1) #\\|)))
 
     ;; e.g. (the a <integer>) return T else NIL
     (defun the-p (x)
@@ -756,34 +759,34 @@
         (and (consp x)
              (stringp (elt x 0))
              (= (length (elt x 0)) 3)
-             (char= (elt (elt x 0) 0) #\#)
-             (or (char= (elt (elt x 0) 2) #\a)
-                 (char= (elt (elt x 0) 2) #\f))))
+             (char= (elt (elt x 0) 0) #\\#)
+             (or (char= (elt (elt x 0) 2) #\\a)
+                 (char= (elt (elt x 0) 2) #\\f))))
 
     ;; is it quote? e.g. 'foo
     (defun quote-p (x)
         (and (consp x)
              (stringp (elt x 0))
-             (char= (elt (car x) 0) #\')))
+             (char= (elt (car x) 0) #\\')))
 
     ;; is it backquote? e.g. `(if a b c)
     (defun backquote-p (x)
         (and (consp x)
              (stringp (elt x 0))
-             (char= (elt (car x) 0) #\`)))
+             (char= (elt (car x) 0) #\\`)))
 
     ;; is it unquote? e.g. ,name
     (defun unquote-p (x)
         (and (consp x)
              (stringp (elt x 0))
-             (char= (elt (car x) 0) #\,)))
+             (char= (elt (car x) 0) #\\,)))
 
     ;; is it unquote-splicing? e.g. ,@name
     (defun unquote-splicing-p (x)
         (and (consp x)
              (stringp (elt x 0))
-             (char= (elt (car x) 0) #\,)
-             (char= (elt (car x) 1) #\@)))
+             (char= (elt (car x) 0) #\\,)
+             (char= (elt (car x) 1) #\\@)))
 
     ;; is it function that has long size element?  e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
     ;; if all each element size is over long-element, return t.

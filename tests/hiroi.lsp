@@ -13,9 +13,10 @@
            '((a b c) (b a c d) (c a b e) (d b e f) (e c d g) (f d) (g e)))
 
 #| 
-(defun print (x) (+ x 1))
+;(format (standard-output) 
+;(defun pp-string (x)
+;        (format output-stream "~A" x))
 |#
-
 ;; 深さ優先探索
 (defun depth-first-search (goal path)
     (if (eq goal (car path))

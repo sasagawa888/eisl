@@ -1,6 +1,10 @@
 ;;; compiler test with M.hiroi example
 (import "macro")
 (import "seq")
+
+(defun foo (x)
+    (eq x 'a) )
+
 ;;日本語のコメント
 (defun kakko-p (s)
     (let ((l 0)

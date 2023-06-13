@@ -993,7 +993,6 @@ defgeneric compile
               ((member x (car free-var)) (car free-var))
               (t (find-free-variable-outer-lambda x (cdr free-var)))))
 
-    
     (defun comp-defgeneric2 (x)
         (let* ((name0 (elt x 1))
                (name (if (listp name0)

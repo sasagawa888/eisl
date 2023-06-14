@@ -130,7 +130,7 @@
                      ((and (null asdata)
                            (stringp (car x))
                            (string= (car x) "defmethod"))
-                      (pp-defpattern x lm))
+                      (pp-defun x lm))
                      ((and (null asdata)
                            (stringp (car x))
                            (string= (car x) "block"))
@@ -288,7 +288,6 @@
            (pp-string ")")
            (newline lm)))
 
-    
     (defun pp-defpattern (x lm)
         (let ((lm1 (+ lm 4)))
            (pp-string "(")

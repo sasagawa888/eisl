@@ -130,6 +130,13 @@
 	 ((member nil ys))
 	 (apply f (mapcar #'car ys)))))
 
+#| 
+(defmacro for-each (f xs &rest args)
+  `(mapcan ,f ,xs ,@args))
+;;; modified by sasagawa
+;;; for compiled code
+|#
+
 ;;;
 ;;; 分割
 ;;;

@@ -5,6 +5,8 @@
 (defun foo (x)
     (eq x 'a) )
 
+;;;(format (standard-output) "~A" x)
+
 ;;日本語のコメント
 (defun kakko-p (s)
     (let ((l 0)

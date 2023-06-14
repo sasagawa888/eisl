@@ -163,8 +163,8 @@
               ((null x) (pp-string "()"))
               ((characterp x) nil)
               ((string= x "") (format output-stream "~%"))
-              ((short-comment-p x) (pp-string x) (newline lm))
-              ((long-comment-p x) (pp-string x) (newline 0))
+              ((short-comment-p x) (pp-comment x) (newline lm))
+              ((long-comment-p x) (pp-comment x) (newline 0))
               (t (pp-string x))))
 
     ;; write each syntax but 
@@ -179,6 +179,10 @@
     ;; write symbol number string object
     (defun pp-string (x)
         (format output-stream x))
+
+    ;; write comment
+    (defun pp-comment (x)
+        (format output-stream "~A" x))
 
     ;; syntax cond
     (defun pp-cond (x lm)

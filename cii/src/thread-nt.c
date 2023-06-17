@@ -1,3 +1,4 @@
+static const char __attribute__((unused)) rcsid[] = "$Id$";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +10,6 @@
 #include "thread.h"
 #include "sem.h"
 
-static char rcsid[] = "$Id$";
 
 #define T Thread_T
 struct T {

@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id$";
+static const char __attribute__((unused)) rcsid[] = "$Id$";
 #include <stdlib.h>
 #include <stddef.h>
 #include "assert.h"
@@ -33,7 +33,7 @@ void *Mem_calloc(long count, long nbytes,
 		}
 	return ptr;
 }
-void Mem_free(void *ptr, const char *file , int line ) {
+void Mem_free(void *ptr, const char * __attribute__((unused)) file , int __attribute__((unused)) line ) {
 	if (ptr)
 		free(ptr);
 }

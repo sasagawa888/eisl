@@ -15,6 +15,8 @@ LIBSRASPI := -lm -ldl -lwiringPi
 LIBTHREAD := -lpthread
 INCS := -Icii/include
 
+LDFLAGS += -Wl,-sectcreate,.data,.gitCommitID,"$(shell f=$$(mktemp) ; git rev-parse HEAD|tr -d '\012' > $$f ; echo $$f)"
+
 ifeq  ($(WITHOUT_CURSES),1)
 	CURSES_CFLAGS := -DWITHOUT_CURSES=1
 	CURSES_LIBS :=

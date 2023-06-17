@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id$";
+static const char __attribute__((unused)) rcsid[] = "$Id$";
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,7 +20,7 @@ struct buf {
 #define pad(n,c) do { int nn = (n); \
 	while (nn-- > 0) \
 		put((c), cl); } while (0)
-static void cvt_s(int code , va_list_box *box,
+static void cvt_s(int __attribute((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	char *str = va_arg(box->ap, char *);
@@ -28,7 +28,7 @@ static void cvt_s(int code , va_list_box *box,
 	Fmt_puts(str, strlen(str), put, cl, flags,
 		width, precision);
 }
-static void cvt_d(int code , va_list_box *box,
+static void cvt_d(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	int val = va_arg(box->ap, int);
@@ -49,7 +49,7 @@ static void cvt_d(int code , va_list_box *box,
 	Fmt_putd(p, (buf + sizeof buf) - p, put, cl, flags,
 		width, precision);
 }
-static void cvt_u(int code , va_list_box *box,
+static void cvt_u(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	unsigned m = va_arg(box->ap, unsigned);
@@ -61,7 +61,7 @@ static void cvt_u(int code , va_list_box *box,
 	Fmt_putd(p, (buf + sizeof buf) - p, put, cl, flags,
 		width, precision);
 }
-static void cvt_o(int code , va_list_box *box,
+static void cvt_o(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	unsigned m = va_arg(box->ap, unsigned);
@@ -73,7 +73,7 @@ static void cvt_o(int code , va_list_box *box,
 	Fmt_putd(p, (buf + sizeof buf) - p, put, cl, flags,
 		width, precision);
 }
-static void cvt_x(int code , va_list_box *box,
+static void cvt_x(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	unsigned m = va_arg(box->ap, unsigned);
@@ -85,7 +85,7 @@ static void cvt_x(int code , va_list_box *box,
 	Fmt_putd(p, (buf + sizeof buf) - p, put, cl, flags,
 		width, precision);
 }
-static void cvt_p(int code , va_list_box *box,
+static void cvt_p(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	unsigned long m = (unsigned long)va_arg(box->ap, void*);
@@ -98,9 +98,9 @@ static void cvt_p(int code , va_list_box *box,
 	Fmt_putd(p, (buf + sizeof buf) - p, put, cl, flags,
 		width, precision);
 }
-static void cvt_c(int code , va_list_box *box,
+static void cvt_c(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
-	unsigned char flags[], int width, int precision ) {
+	unsigned char flags[], int width, int __attribute__((unused)) precision ) {
 	if (width == INT_MIN)
 		width = 0;
 	if (width < 0) {

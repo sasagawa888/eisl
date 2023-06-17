@@ -861,6 +861,7 @@ int f_get_myself(int arglist)
 	return (cons
 		(make_sym("DEFMACRO"),
 		 cons(arg1, GET_CAR(GET_CAR(GET_CAR(arg1))))));
+    return 0;
 }
 
 /* for Raspberry PI 

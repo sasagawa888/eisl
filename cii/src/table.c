@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id$";
+static const char __attribute__((unused)) rcsid[] = "$Id$";
 #include <limits.h>
 #include <stddef.h>
 #include "mem.h"

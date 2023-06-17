@@ -1,4 +1,4 @@
-static const char *rcsid = "$Id$";
+static const char __attribute__((unused)) rcsid[] = "$Id$";
 #include <string.h>
 #include <limits.h>
 #include "assert.h"
@@ -88,7 +88,7 @@ T Text_put(const char *str) {
 	text.str = memcpy(alloc(text.len), str, text.len);
 	return text;
 }
-char *Text_get(char *str, int size , T s) {
+char *Text_get(char *str, int __attribute__((unused)) size , T s) {
 	assert(s.len >= 0 && s.str);
 	if (str == NULL)
 		str = ALLOC(s.len + 1);
@@ -165,7 +165,6 @@ T Text_reverse(T s) {
 }
 T Text_map(T s, const T *from, const T *to) {
 	static char map[256];
-	static int inited = 0;
 	assert(s.len >= 0 && s.str);
 	if (from && to) {
 		int k;
@@ -174,7 +173,6 @@ T Text_map(T s, const T *from, const T *to) {
 		assert(from->len == to->len);
 		for (k = 0; k < from->len; k++)
 			map[(unsigned char)from->str[k]] = to->str[k];
-		inited = 1;
 	} else {
 		assert(from == NULL && to == NULL);
 		assert(inited);
@@ -384,7 +382,7 @@ int Text_rmatch(T s, int i, int j, T str) {
 		return j - str.len + 1;
 	return 0;
 }
-void Text_fmt(int code , va_list_box *box,
+void Text_fmt(int __attribute__((unused)) code , va_list_box *box,
 	int put(int c, void *cl), void *cl,
 	unsigned char flags[], int width, int precision) {
 	T *s;

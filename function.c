@@ -4086,7 +4086,7 @@ int check_dimension(int ls)
 int f_create_string(int arglist)
 {
     int arg1, arg2, n, i, pos;
-    char *str, c;
+    char *str = NULL, c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -4398,15 +4398,15 @@ __dead int f_quit(int arglist __unused)
 }
 
 /* extension */
-static inline void SET_FLAG(int addr, flag x)
-{
-    REQUIRE(CELLRANGE(addr));
-    heap[addr].flag = x;
-}
+/* static inline void SET_FLAG(int addr, flag x) */
+/* { */
+/*     REQUIRE(CELLRANGE(addr)); */
+/*     heap[addr].flag = x; */
+/* } */
 
 int f_gbc(int arglist)
 {
-    int n, addr;
+    int n;
 
     if ((n = length(arglist)) != 0 && n != 1)
 	error(WRONG_ARGS, "gbc", arglist);

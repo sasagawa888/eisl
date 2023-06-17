@@ -18,6 +18,7 @@
 #include "str.h"
 #include "mem.h"
 
+int find_tag(int tag);
 
 #define TAGBODY_LEN_MAX 100
 
@@ -1104,7 +1105,7 @@ int f_return_from(int arglist)
 
 int f_catch(int arglist)
 {
-    int arg1, arg2, i, tag, ret, res, save, unwind;
+    int arg1, arg2, tag, ret, res, save, unwind;
 
     save = sp;
     arg1 = car(arglist);	/* tag */

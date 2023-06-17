@@ -3,8 +3,16 @@ library for OpenGL
 not tested
 |#
 
-(c-include "<GL/glut.h>")
-(c-option "-lglut -lGLU -lGL -L/usr/local/include/")
+
+;; On macOS, we'd have to use frameworks instead of libraries.
+;; With this, it can compile this module.
+;; Unfortunately, I've found to way to test for the OS in eisl.
+
+;; (c-include "<GL/glut.h>")
+;; (c-option "-lglut -lGLU -lGL -L/usr/local/include/")
+
+(c-include "<GLUT/glut.h>")
+(c-option "-framework GLUT -framework OpenGL -framework Cocoa")
 
 (defun glut:init ()
     (c-lang "int argc = 0;")

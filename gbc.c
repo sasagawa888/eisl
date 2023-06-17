@@ -1,10 +1,9 @@
 /*
  * garbage collenction
- * Easy-ISLisp has two garbage collection system. mark&sweep and copying GC.
- * default is mark&sweep gc.
- * function (gbc x) switch each method.
+ * Easy-ISLisp has mark&sweep garbage collection system.
+ * Testing parallel GC. if define thread, use parallel GC. still buggy.
  */
-
+//#define THREAD
 
 #include <stdio.h>
 #include <string.h>
@@ -137,7 +136,7 @@ void *func(void *arg){
     return NULL;
 }
 
-//#define THREAD
+
 #define NUM_THREAD 4
 /* mark symbol hash-table with thread*/
 void gbc_hash_mark(void)
@@ -176,6 +175,15 @@ void gbc_mark(void)
     /* mark nil and t */
     MARK_CELL(NIL);
     MARK_CELL(T);
+
+    /* mark cell chained from hash table */
+    #ifdef THREAD
+    gbc_hash_mark();
+    #else 
+    for (i = 0; i < HASHTBSIZE; i++)
+	mark_cell(cell_hash_table[i]);
+    #endif
+
     /* mark local environment */
     mark_cell(ep);
     /* mark dynamic environment */
@@ -186,14 +194,6 @@ void gbc_mark(void)
     /* mark cell binded by argstack */
     for (i = 0; i < ap; i++)
 	mark_cell(argstk[i]);
-
-    /* mark cell chained from hash table */
-    #ifdef THREAD
-    gbc_hash_mark();
-    #else 
-    for (i = 0; i < HASHTBSIZE; i++)
-	mark_cell(cell_hash_table[i]);
-    #endif
 
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);

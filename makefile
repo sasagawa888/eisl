@@ -12,6 +12,7 @@ ifneq  ($(shell uname),Darwin)
 	endif
 endif
 LIBSRASPI := -lm -ldl -lwiringPi
+LIBTHREAD := -lpthread
 INCS := -Icii/include
 
 ifeq  ($(WITHOUT_CURSES),1)
@@ -136,7 +137,7 @@ eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI)
 else
-	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS)
+	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS) $(LIBTHREAD)
 endif
 
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h

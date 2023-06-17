@@ -10,6 +10,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <pthread.h>
 #include "eisl.h"
 #include "compat/nana_stubs.h"
 #include "mem.h"
@@ -120,6 +121,54 @@ void mark_cell(int addr)
     }
 }
 
+struct data {
+    int start;
+    int end;
+};
+
+void *func(void *arg);
+void *func(void *arg){
+    int i;
+    struct data *pd = (struct data *)arg;
+
+    for(i = pd->start; i < pd->end; i++){
+        mark_cell(cell_hash_table[i]);
+    }
+    return NULL;
+}
+
+#define THREAD
+#define NUM_THREAD 4
+/* mark symbol hash-table with thread*/
+void gbc_hash_mark(void)
+{
+    pthread_t t[NUM_THREAD];
+    struct data d[NUM_THREAD];
+
+    d[0].start = 0;
+    d[0].end = 35;
+    pthread_create(&t[0], NULL, func, &d[0]);
+
+    d[1].start = 36;
+    d[1].end = 70;
+    pthread_create(&t[1], NULL, func, &d[1]);
+
+    d[2].start = 71;
+    d[2].end = 106;
+    pthread_create(&t[2], NULL, func, &d[2]);
+
+    d[3].start = 107;
+    d[3].end = 137;
+    pthread_create(&t[3], NULL, func, &d[3]);
+
+    pthread_join(t[0], NULL);
+    pthread_join(t[1], NULL);
+    pthread_join(t[2], NULL);
+    pthread_join(t[3], NULL);
+
+    return;
+}
+
 void gbc_mark(void)
 {
     int i;
@@ -139,8 +188,12 @@ void gbc_mark(void)
 	mark_cell(argstk[i]);
 
     /* mark cell chained from hash table */
+    #ifdef THREAD
+    gbc_hash_mark();
+    #else 
     for (i = 0; i < HASHTBSIZE; i++)
 	mark_cell(cell_hash_table[i]);
+    #endif
 
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);

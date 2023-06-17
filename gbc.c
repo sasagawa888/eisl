@@ -137,7 +137,7 @@ void *func(void *arg){
     return NULL;
 }
 
-#define THREAD
+//#define THREAD
 #define NUM_THREAD 4
 /* mark symbol hash-table with thread*/
 void gbc_hash_mark(void)

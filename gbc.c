@@ -5,7 +5,7 @@
  * Now I'm making concurrent GC. if define 
  */
 #define PARALLEL
-#define CONCURRENT 
+//#define CONCURRENT 
 
 #include <stdio.h>
 #include <string.h>
@@ -54,7 +54,7 @@ int gbc(void)
 
 void *concurrent(void *arg);
 void *concurrent(void *arg){
-    int i,addr,fc1;
+    int addr,fc1;
     struct data *pd = (struct data *)arg;
 
     pd->free = CELLSIZE;
@@ -377,7 +377,11 @@ int check_gbc(void)
 	RAISE(Restart_Repl);
     }
     if (fc < FREESIZE)
+    #ifdef CONCURRENT 
+    gbc_concurrent();
+    #else
 	(void) gbc();
+    #endif
 
     return 0;
 }

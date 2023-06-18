@@ -1,7 +1,7 @@
 /*
  * garbage collenction
  * Easy-ISLisp has mark&sweep garbage collection system.
- * Testing parallel GC. if define thread, use parallel GC. still buggy.
+ * Testing parallel GC. if define thread, use parallel GC. still testing.
  */
 #define THREAD
 
@@ -17,6 +17,7 @@
 #include "fmt.h"
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
+#define DEBUG error(RESOURCE_ERR,"debug",NIL);
 
 /* mark&sweep garbage collection */
 DEF_PREDICATE(EMPTY, EMP)
@@ -26,7 +27,11 @@ int gbc(void)
 
     DBG_PRINTF("enter M&S-GC free=%d\n", fc);
     gbc_mark();
+    #ifdef THREAD
+    gbc_sweep_thread();
+    #else
     gbc_sweep();
+    #endif
     fc = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
@@ -123,6 +128,8 @@ void mark_cell(int addr)
 struct data {
     int start;
     int end;
+    int head;
+    int tail;
 };
 
 void *mark(void *arg);
@@ -230,6 +237,67 @@ void gbc_mark(void)
 static inline void NOMARK_CELL(int addr)
 {
     heap[addr].flag = FRE;
+}
+
+void *sweep(void *arg);
+void *sweep(void *arg){
+    int addr,free;
+    bool init;
+    struct data *pd = (struct data *)arg;
+
+    addr = pd->start;
+    free = NIL;
+    init = true;
+    
+    while (addr < pd->end) {
+	if (USED_CELL(addr))
+	    NOMARK_CELL(addr);
+	else {
+        if(init){
+        pd->tail = addr;
+        init = false;
+        }
+	    clr_cell(addr);
+	    SET_CDR(addr, free);
+	    free = addr;
+	}
+	addr++;
+    }
+    pd->head = free;
+    return NULL;
+}
+
+void gbc_sweep_thread(void){
+    pthread_t t[NUM_THREAD];
+    struct data d[NUM_THREAD];
+
+    d[0].start = 0;
+    d[0].end = 5000000;
+    pthread_create(&t[0], NULL, sweep, &d[0]);
+
+    d[1].start = 5000000;
+    d[1].end =  10000000;
+    pthread_create(&t[1], NULL, sweep, &d[1]);
+
+    d[2].start = 10000000;
+    d[2].end =   15000000;
+    pthread_create(&t[2], NULL, sweep, &d[2]);
+
+    d[3].start = 15000000;
+    d[3].end =   CELLSIZE;
+    pthread_create(&t[3], NULL, sweep, &d[3]);
+
+    pthread_join(t[0], NULL);
+    pthread_join(t[1], NULL);
+    pthread_join(t[2], NULL);
+    pthread_join(t[3], NULL);
+
+    SET_CDR(d[3].tail,d[2].head);
+    SET_CDR(d[2].tail,d[1].head);
+    SET_CDR(d[1].tail,d[0].head);
+    SET_CDR(d[0].tail,NIL);
+    hp = d[3].head;
+    return;
 }
 
 void gbc_sweep(void)

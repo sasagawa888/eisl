@@ -135,7 +135,7 @@ all: $(TARGETS)
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) $(LIBTHREAD)
 else
 	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS) $(LIBTHREAD)
 endif

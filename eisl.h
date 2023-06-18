@@ -1241,6 +1241,7 @@ void error(int errnum, const char *fun, int arg);
 int gbc(void);
 void gbc_mark(void);
 void gbc_sweep(void);
+void gbc_sweep_thread(void);
 void get_token(void);
 void set_stok_buf(int index, char c);
 void replace_stok_buf(char *str);

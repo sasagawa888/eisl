@@ -40,6 +40,7 @@ We confirmed operation in the following environments.
 - macOS 11.1 clang 12.0.0 
 - OpenBSD
 
+If you use Clang on MacOS, provide option to Clang compatible with GCC.
 
 If you want to use library files from anyplace other than the `PREFIX` argument
 (default */usr/local*),

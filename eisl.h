@@ -79,7 +79,7 @@
 
 
 
-static const float VERSION = 3.00;
+static const float VERSION = 3.01;
 static const int WORK1 = ((int) ((CELLSIZE) / 20 * 6));
 static const int WORK2 = ((int) ((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
@@ -557,6 +557,7 @@ extern bool handling_resource_err;
 extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
 extern bool error_flag;
+extern bool concurrent_flag;
 
 // try function
 extern bool try_flag;

@@ -1,9 +1,11 @@
 /*
  * garbage collenction
  * Easy-ISLisp has mark&sweep garbage collection system.
- * Testing parallel GC. if define thread, use parallel GC. still testing.
+ * Testing parallel GC. if define PARALLEL, use parallel GC. still testing.
+ * Now I'm making concurrent GC. if define 
  */
-//#define THREAD
+#define PARALLEL
+#define CONCURRENT 
 
 #include <stdio.h>
 #include <string.h>
@@ -27,7 +29,7 @@ int gbc(void)
 
     DBG_PRINTF("enter M&S-GC free=%d\n", fc);
     gbc_mark();
-    #ifdef THREAD
+    #ifdef PARALLEL
     gbc_sweep_thread();
     #else
     gbc_sweep();
@@ -130,6 +132,8 @@ struct data {
     int end;
     int head;
     int tail;
+    int* free;
+    int* flag;
 };
 
 void *mark(void *arg);
@@ -184,7 +188,7 @@ void gbc_mark(void)
     MARK_CELL(T);
 
     /* mark cell chained from hash table */
-    #ifdef THREAD
+    #ifdef PARALLEL
     gbc_hash_mark();
     #else 
     for (i = 0; i < HASHTBSIZE; i++)

@@ -3,7 +3,7 @@
  * Easy-ISLisp has mark&sweep garbage collection system.
  * Testing parallel GC. if define thread, use parallel GC. still testing.
  */
-#define THREAD
+//#define THREAD
 
 #include <stdio.h>
 #include <string.h>

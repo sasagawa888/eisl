@@ -166,7 +166,7 @@ bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;	/* invoked error? */
-bool concurrent_flag = false; /* while executing concurrent_flag -> true*/
+int concurrent_flag = 0; /* while executing concurrent_flag -> true*/
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */

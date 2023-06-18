@@ -21,6 +21,16 @@
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
 
+struct data {
+    int start;
+    int end;
+    int head;
+    int tail;
+    int* free;
+    int* flag;
+};
+
+
 /* mark&sweep garbage collection */
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
@@ -42,6 +52,37 @@ int gbc(void)
     return 0;
 }
 
+void *concurrent(void *arg);
+void *concurrent(void *arg){
+    int i,addr,fc1;
+    struct data *pd = (struct data *)arg;
+
+    pd->free = CELLSIZE;
+    pd->flag = 1;
+    DBG_PRINTF("enter M&S-GC free=%d\n", fc);
+    gbc_mark();
+    gbc_sweep();
+    fc1 = 0;
+    for (addr = 0; addr < CELLSIZE; addr++)
+	if (IS_EMPTY(addr))
+	    fc1++;
+    DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
+    pd->free = fc1;
+    pd->flag = 0;
+    return NULL;
+}
+
+int gbc_concurrent(void)
+{
+    pthread_t t[1];
+    struct data d[1];
+
+    d[0].free = &fc;
+    d[0].flag = &concurrent_flag;
+    pthread_create(&t[0], NULL, concurrent, &d[0]);
+
+    return 0;
+}
 
 static inline void MARK_CELL(int addr)
 {
@@ -126,15 +167,6 @@ void mark_cell(int addr)
 	IP(false, "mark_cell tag switch default action");
     }
 }
-
-struct data {
-    int start;
-    int end;
-    int head;
-    int tail;
-    int* free;
-    int* flag;
-};
 
 void *mark(void *arg);
 void *mark(void *arg){

@@ -3,7 +3,7 @@
  * Easy-ISLisp has mark&sweep garbage collection system.
  * Testing parallel GC. if define thread, use parallel GC. still buggy.
  */
-//#define THREAD
+#define THREAD
 
 #include <stdio.h>
 #include <string.h>
@@ -148,15 +148,15 @@ void gbc_hash_mark(void)
     d[0].end = 35;
     pthread_create(&t[0], NULL, func, &d[0]);
 
-    d[1].start = 36;
+    d[1].start = 35;
     d[1].end = 70;
     pthread_create(&t[1], NULL, func, &d[1]);
 
-    d[2].start = 71;
+    d[2].start = 70;
     d[2].end = 106;
     pthread_create(&t[2], NULL, func, &d[2]);
 
-    d[3].start = 107;
+    d[3].start = 106;
     d[3].end = 137;
     pthread_create(&t[3], NULL, func, &d[3]);
 

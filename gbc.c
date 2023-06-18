@@ -125,8 +125,8 @@ struct data {
     int end;
 };
 
-void *func(void *arg);
-void *func(void *arg){
+void *mark(void *arg);
+void *mark(void *arg){
     int i;
     struct data *pd = (struct data *)arg;
 
@@ -146,19 +146,19 @@ void gbc_hash_mark(void)
 
     d[0].start = 0;
     d[0].end = 35;
-    pthread_create(&t[0], NULL, func, &d[0]);
+    pthread_create(&t[0], NULL, mark, &d[0]);
 
     d[1].start = 35;
     d[1].end = 70;
-    pthread_create(&t[1], NULL, func, &d[1]);
+    pthread_create(&t[1], NULL, mark, &d[1]);
 
     d[2].start = 70;
     d[2].end = 106;
-    pthread_create(&t[2], NULL, func, &d[2]);
+    pthread_create(&t[2], NULL, mark, &d[2]);
 
     d[3].start = 106;
     d[3].end = 137;
-    pthread_create(&t[3], NULL, func, &d[3]);
+    pthread_create(&t[3], NULL, mark, &d[3]);
 
     pthread_join(t[0], NULL);
     pthread_join(t[1], NULL);

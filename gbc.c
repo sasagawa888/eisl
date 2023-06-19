@@ -26,9 +26,6 @@ struct data {
     int end;
     int head;
     int tail;
-    int* fc;
-    int* rc;
-    int* flag;
 };
 
 
@@ -58,7 +55,8 @@ void *concurrent(void *arg){
     int addr,fc1;
     struct data *pd = (struct data *)arg;
 
-    DBG_PRINTF("enter M&S-GC free=%d\n", rc);
+    DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
+    concurrent_flag = 1;
     gbc_mark();
     gbc_sweep();
     fc1 = 0;
@@ -68,7 +66,7 @@ void *concurrent(void *arg){
     fc = fc1;
     rc = fc1;
     concurrent_flag = 0;
-    DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
+    DBG_PRINTF("exit  concurrent M&S-GC free=%d\n", fc);
     return NULL;
 }
 
@@ -80,10 +78,6 @@ int gbc_concurrent(void)
     /* to avoid gbc set fc dummy. set rc real-count */
     rc = fc;
     fc = CELLSIZE;
-    d[0].fc = &fc;
-    d[0].rc = &rc;
-    d[0].flag = &concurrent_flag;
-    concurrent_flag = 1;
     pthread_create(&t[0], NULL, concurrent, &d[0]);
 
     return 0;

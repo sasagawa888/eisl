@@ -244,7 +244,7 @@ int freshcell(void)
         return (res);
         }
     else {
-        error(RESOURCE_ERR, "M&S freshcell", NIL);
+        RAISE(Exit_Interp);
         
     }
     }

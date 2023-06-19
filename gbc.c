@@ -5,7 +5,7 @@
  * Now I'm making concurrent GC. if define 
  */
 //#define PARALLEL
-//#define CONCURRENT 
+#define CONCURRENT 
 
 #include <stdio.h>
 #include <string.h>

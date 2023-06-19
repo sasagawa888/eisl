@@ -235,7 +235,7 @@ int freshcell(void)
     res = hp;
     hp = GET_CDR(hp);
     SET_CDR(res, 0);
-    /* while executing concurrent-GC */
+    /* write barrier while executing concurrent-GC */
     if(concurrent_flag)
     {
     if(rc > 10){
@@ -244,12 +244,11 @@ int freshcell(void)
         return (res);
         }
     else {
-        loop:
-        if (rc < FREESIZE)
-            goto loop;
-        return(res);
+        error(RESOURCE_ERR, "M&S freshcell", NIL);
+        
     }
     }
+    /* end of write barrier */
     fc--;
     if (fc <= 50 && !handling_resource_err) {
 	handling_resource_err = true;

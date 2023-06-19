@@ -4,7 +4,7 @@
  * Testing parallel GC. if define PARALLEL, use parallel GC. still testing.
  * Now I'm making concurrent GC. if define 
  */
-#define PARALLEL
+//#define PARALLEL
 //#define CONCURRENT 
 
 #include <stdio.h>
@@ -58,17 +58,16 @@ void *concurrent(void *arg){
     int addr,fc1;
     struct data *pd = (struct data *)arg;
 
-    pd->flag = 1;
     DBG_PRINTF("enter M&S-GC free=%d\n", rc);
     gbc_mark();
-    gbc_sweep1();
+    gbc_sweep();
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
-    pd->fc = fc1;
-    pd->rc = fc1;
-    pd->flag = 0;
+    fc = fc1;
+    rc = fc1;
+    concurrent_flag = 0;
     DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
     return NULL;
 }
@@ -84,6 +83,7 @@ int gbc_concurrent(void)
     d[0].fc = &fc;
     d[0].rc = &rc;
     d[0].flag = &concurrent_flag;
+    concurrent_flag = 1;
     pthread_create(&t[0], NULL, concurrent, &d[0]);
 
     return 0;
@@ -343,23 +343,6 @@ void gbc_sweep_thread(void){
 
 void gbc_sweep(void)
 {
-    int addr;
-
-    addr = 0;
-    while (addr < CELLSIZE) {
-	if (USED_CELL(addr))
-	    NOMARK_CELL(addr);
-	else {
-	    clr_cell(addr);
-	    SET_CDR(addr, hp);
-	    hp = addr;
-	}
-	addr++;
-    }
-}
-
-void gbc_sweep1(void)
-{
     int addr, free;
 
     addr = 0;
@@ -376,6 +359,7 @@ void gbc_sweep1(void)
     }
     hp = free;
 }
+
 
 void clr_cell(int addr)
 {
@@ -400,10 +384,12 @@ int check_gbc(void)
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
-    if (fc < FREESIZE)
+
     #ifdef CONCURRENT 
+    if (fc < FREESIZE)
     gbc_concurrent();
     #else
+    if (fc < FREESIZE)
 	(void) gbc();
     #endif
 

@@ -236,8 +236,20 @@ int freshcell(void)
     hp = GET_CDR(hp);
     SET_CDR(res, 0);
     /* while executing concurrent-GC */
-    if(concurrent_flag){
-    return (heap[res].flag == USE);}
+    if(concurrent_flag)
+    {
+    if(rc > 10){
+        rc--;
+        heap[res].flag = USE;
+        return (res);
+        }
+    else {
+        loop:
+        if (rc < FREESIZE)
+            goto loop;
+        return(res);
+    }
+    }
     fc--;
     if (fc <= 50 && !handling_resource_err) {
 	handling_resource_err = true;

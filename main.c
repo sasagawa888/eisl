@@ -52,6 +52,7 @@ int dp;				/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
 int sp;				/* stack pointer */
 int fc;				/* free counter */
+int rc;				/* real free counter */
 int ap;				/* arglist pointer */
 int lp;				/* shelter pointer */
 int wp;				/* working pointer for copy GC */
@@ -2056,6 +2057,7 @@ int push(int pt)
 {
     if (sp >= STACKSIZE)
 	error(STACK_OVERF, "push", NIL);
+	
     stack[sp++] = pt;
 
     return (T);
@@ -2071,7 +2073,7 @@ int pop(void)
 /* push/pop of arglist */
 int arg_push(int addr)
 {
-    argstk[ap++] = addr;
+	argstk[ap++] = addr;
 
     return (T);
 }
@@ -2086,6 +2088,7 @@ int shelter_push(int addr)
 {
     if (lp >= STACKSIZE)
 	error(SHELTER_OVERF, "shelter_push", NIL);
+
     shelter[lp++] = addr;
 
     return (T);

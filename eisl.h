@@ -165,6 +165,7 @@ extern int dp;			// dynamic pointer
 extern int hp;			// heap pointer
 extern int sp;			// stack pointer
 extern int fc;			// free counter
+extern int rc;          // real free counter
 extern int ap;			// arglist pointer
 extern int lp;			// shelter pointer
 extern int wp;			// working pointer
@@ -1242,6 +1243,7 @@ void error(int errnum, const char *fun, int arg);
 int gbc(void);
 void gbc_mark(void);
 void gbc_sweep(void);
+void gbc_sweep1(void);
 void gbc_sweep_thread(void);
 void get_token(void);
 void set_stok_buf(int index, char c);

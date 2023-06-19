@@ -26,7 +26,8 @@ struct data {
     int end;
     int head;
     int tail;
-    int* free;
+    int* fc;
+    int* rc;
     int* flag;
 };
 
@@ -57,18 +58,18 @@ void *concurrent(void *arg){
     int addr,fc1;
     struct data *pd = (struct data *)arg;
 
-    pd->free = CELLSIZE;
     pd->flag = 1;
-    DBG_PRINTF("enter M&S-GC free=%d\n", fc);
+    DBG_PRINTF("enter M&S-GC free=%d\n", rc);
     gbc_mark();
-    gbc_sweep();
+    gbc_sweep1();
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
-    DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
-    pd->free = fc1;
+    pd->fc = fc1;
+    pd->rc = fc1;
     pd->flag = 0;
+    DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
     return NULL;
 }
 
@@ -77,7 +78,11 @@ int gbc_concurrent(void)
     pthread_t t[1];
     struct data d[1];
 
-    d[0].free = &fc;
+    /* to avoid gbc set fc dummy. set rc real-count */
+    rc = fc;
+    fc = CELLSIZE;
+    d[0].fc = &fc;
+    d[0].rc = &rc;
     d[0].flag = &concurrent_flag;
     pthread_create(&t[0], NULL, concurrent, &d[0]);
 
@@ -351,6 +356,25 @@ void gbc_sweep(void)
 	}
 	addr++;
     }
+}
+
+void gbc_sweep1(void)
+{
+    int addr, free;
+
+    addr = 0;
+    free = NIL;
+    while (addr < CELLSIZE) {
+	if (USED_CELL(addr))
+	    NOMARK_CELL(addr);
+	else {
+	    clr_cell(addr);
+	    SET_CDR(addr, free);
+	    free = addr;
+	}
+	addr++;
+    }
+    hp = free;
 }
 
 void clr_cell(int addr)

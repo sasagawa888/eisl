@@ -4,8 +4,8 @@
  * Testing parallel GC. if define PARALLEL, use parallel GC. still testing.
  * Now I'm making concurrent GC. if define 
  */
-//#define PARALLEL
-//#define CONCURRENT 
+#define PARALLEL
+#define CONCURRENT 
 
 #include <stdio.h>
 #include <string.h>
@@ -72,13 +72,12 @@ void *concurrent(void *arg){
 
 int gbc_concurrent(void)
 {
-    pthread_t t[1];
     struct data d[1];
 
     /* to avoid gbc set fc dummy. set rc real-count */
     rc = fc;
     fc = CELLSIZE;
-    pthread_create(&t[0], NULL, concurrent, &d[0]);
+    pthread_create(&concurrent_thread, NULL, concurrent, &d[0]);
 
     return 0;
 }

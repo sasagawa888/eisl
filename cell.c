@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
+#include <pthread.h>
 #include "eisl.h"
 #include "compat/nana_stubs.h"
 #include "mem.h"
@@ -238,14 +239,18 @@ int freshcell(void)
     /* write barrier while executing concurrent-GC */
     if(concurrent_flag)
     {
-    if(rc > 10){
+    if(rc > FREESIZE){
+        /* acturely stop the world*/
         rc--;
         heap[res].flag = USE;
         return (res);
         }
     else {
-        RAISE(Exit_Interp);
-        
+        pthread_join(concurrent_thread, NULL);
+        res = hp;
+        hp = GET_CDR(hp);
+        SET_CDR(res, 0);   
+        return(res);   
     }
     }
     /* end of write barrier */

@@ -80,8 +80,6 @@
 
 
 static const float VERSION = 3.01;
-static const int WORK1 = ((int) ((CELLSIZE) / 20 * 6));
-static const int WORK2 = ((int) ((CELLSIZE) / 20 * 13));
 static const int FREESIZE = 900;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
@@ -597,6 +595,7 @@ extern const short ed_extended_color;
 extern const short ed_string_color;
 extern const short ed_comment_color;
 extern int ed_incomment;
+extern pthread_t concurrent_thread;
 
 // -------error code---
 enum {

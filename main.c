@@ -36,6 +36,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <pthread.h>
 #include "compat/term_stubs.h"
 #include "eisl.h"
 #include "mem.h"
@@ -185,7 +186,6 @@ Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
 jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
-//int catch_unwind_nest[CTRLSTK][10];
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 
 int block_tag_check[CTRLSTK];
@@ -204,6 +204,10 @@ int error_handler1 = NIL;	/* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
 int unwind_nest;		/* unwind-protect nest level */
+
+/* concurrent GC*/
+pthread_t concurrent_thread;
+
 
 /* -----debugger----- */
 int examin_sym;

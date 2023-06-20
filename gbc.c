@@ -2,10 +2,10 @@
  * garbage collenction
  * Easy-ISLisp has mark&sweep garbage collection system.
  * Testing parallel GC. if define PARALLEL, use parallel GC. still testing.
- * Now I'm making concurrent GC. if define 
+ * Now I'm making concurrent GC. if define CONCURRENT
  */
 #define PARALLEL
-#define CONCURRENT 
+//#define CONCURRENT 
 
 #include <stdio.h>
 #include <string.h>

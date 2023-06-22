@@ -1,3 +1,4 @@
+;;
 (defun test (x)
     (print "call test")
     (print x)

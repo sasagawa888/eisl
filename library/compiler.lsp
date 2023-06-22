@@ -958,10 +958,9 @@ defgeneric compile
               ((= lambda-nest 3) code6)
               (t (error* "lambda: over nesting" lambda-nest))))
 
-    ;;for lambda find free-variable. if no variable return '(t)
+    ;;for lambda find free-variable. 
     (defun find-free-variable (x env args)
-        (append (find-free-variable2 (find-free-variable1 x env args))
-                '(t)))
+        (find-free-variable2 (find-free-variable1 x env args)))
 
     (defun find-free-variable1 (x env args)
         (cond ((null x) nil)

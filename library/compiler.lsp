@@ -742,9 +742,10 @@ defgeneric compile
                (body (cdr (cdr x)))
                (free0 (find-free-variable body args env))
                (free (append (varlis-to-lambda-args method-args) free0))
+               (destructive (find-destructive-free-variable free body))
                (stream (lambda-stream-caller global)) )
             (setq lambda-free-var
-                  (cons (append free (list name)) lambda-free-var))
+                  (cons (append destructive (list name)) lambda-free-var))
             (comp-lambda0 x name)
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)
@@ -975,6 +976,19 @@ defgeneric compile
         (cond ((null x) nil)
               ((member (car x) (cdr x)) (find-free-variable2 (cdr x)))
               (t (cons (car x) (find-free-variable2 (cdr x))))))
+
+    ;; find destructive-free-variable
+    ;; e.g. (let ((a 0)) (lambda () (setq a x))
+    (defun find-destructive-free-variable (x body)
+        (cond ((null x) nil)
+              ((find-destructive-free-variable1 (car x) body)
+               (cons (car x) (find-destructive-free-variable (cdr x) body)))
+              (t (find-destructive-free-variable1 (cdr x) body))))
+    
+    (defun find-destructive-free-variable1 (x body)
+        (any (lambda (y) (or (and (consp y) (eq (car y) 'setq) (member x (cdr y)))
+                             (and (consp y) (eq (car y) 'setf) (member x (cdr y)))))
+        body))
 
     ;;create free-variable list to set lambda-name symbol
     (defun free-variable-list (stream x)

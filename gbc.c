@@ -50,37 +50,6 @@ int gbc(void)
     return 0;
 }
 
-void *concurrent(void *arg);
-void *concurrent(void *arg){
-    int addr,fc1;
-    struct data *pd = (struct data *)arg;
-
-    DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
-    concurrent_flag = 1;
-    gbc_mark();
-    gbc_sweep();
-    fc1 = 0;
-    for (addr = 0; addr < CELLSIZE; addr++)
-	if (IS_EMPTY(addr))
-	    fc1++;
-    fc = fc1;
-    rc = fc1;
-    concurrent_flag = 0;
-    DBG_PRINTF("exit  concurrent M&S-GC free=%d\n", fc);
-    return NULL;
-}
-
-int gbc_concurrent(void)
-{
-    struct data d[1];
-
-    /* to avoid gbc set fc dummy. set rc real-count */
-    rc = fc;
-    fc = CELLSIZE;
-    pthread_create(&concurrent_thread, NULL, concurrent, &d[0]);
-
-    return 0;
-}
 
 static inline void MARK_CELL(int addr)
 {
@@ -332,6 +301,87 @@ void gbc_sweep_thread(void){
     SET_CDR(d[0].tail,NIL);
     hp = d[3].head;
     return;
+}
+
+void *concurrent(void *arg);
+void *concurrent(void *arg){
+    int addr,fc1,i;
+    struct data *pd = (struct data *)arg;
+
+    DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
+    concurrent_flag = 1;
+    
+    /* mark hash table*/
+    for (i = 0; i < HASHTBSIZE; i++)
+	mark_cell(cell_hash_table[i]);
+
+    concurrent_stop_flag = 1;
+    /* mark nil and t */
+    MARK_CELL(NIL);
+    MARK_CELL(T);
+
+    /* mark local environment */
+    mark_cell(ep);
+    /* mark dynamic environment */
+    mark_cell(dp);
+    /* mark stack */
+    for (i = 0; i < sp; i++)
+	mark_cell(stack[i]);
+    /* mark cell binded by argstack */
+    for (i = 0; i < ap; i++)
+	mark_cell(argstk[i]);
+    /* mark tagbody symbol */
+    mark_cell(tagbody_tag);
+    /* mark thunk for unwind-protect */
+    for (i = 0; i < unwind_pt; i++)
+	mark_cell(unwind_buf[i]);
+    /* mark error_handler */
+    mark_cell(error_handler);
+    /* mark stream */
+    mark_cell(standard_input);
+    mark_cell(standard_output);
+    mark_cell(standard_error);
+    mark_cell(input_stream);
+    mark_cell(output_stream);
+    mark_cell(error_stream);
+    /* mark shelter */
+    for (i = 0; i < lp; i++)
+	mark_cell(shelter[i]);
+    /* mark dynamic environment */
+    for (i = 1; i <= dp; i++)
+	mark_cell(dynamic[i][1]);
+    /* mark generic_list */
+    mark_cell(generic_list);
+
+    /* remark hash table */
+    for(i=0;i<remark_pt;i++)
+    mark_cell(remark[i]);
+
+    remark_pt = 0;
+
+    gbc_sweep();
+    fc1 = 0;
+    for (addr = 0; addr < CELLSIZE; addr++)
+	if (IS_EMPTY(addr))
+	    fc1++;
+    fc = fc1;
+    rc = fc1;
+    concurrent_stop_flag = 0;
+    concurrent_flag = 0;
+    DBG_PRINTF("exit  concurrent M&S-GC free=%d\n", fc);
+    return NULL;
+}
+
+int gbc_concurrent(void)
+{
+    struct data d[1];
+
+    /* to avoid gbc set fc dummy. set rc real-count */
+    rc = fc;
+    fc = CELLSIZE;
+    pthread_create(&concurrent_thread, NULL, concurrent, &d[0]);
+
+    return 0;
 }
 
 void gbc_sweep(void)

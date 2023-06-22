@@ -557,6 +557,7 @@ extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
 extern bool error_flag;
 extern int  concurrent_flag;
+extern int  concurrent_stop_flag;
 
 // try function
 extern bool try_flag;
@@ -595,7 +596,11 @@ extern const short ed_extended_color;
 extern const short ed_string_color;
 extern const short ed_comment_color;
 extern int ed_incomment;
+
+/* concurrent GC */
 extern pthread_t concurrent_thread;
+extern int remark[STACKSIZE];
+extern int remark_pt;
 
 // -------error code---
 enum {

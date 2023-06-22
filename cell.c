@@ -233,34 +233,39 @@ int freshcell(void)
 {
     int res;
 
+    if(!concurrent_flag){
     res = hp;
     hp = GET_CDR(hp);
     SET_CDR(res, 0);
-    /* write barrier while executing concurrent-GC */
-    if(concurrent_flag)
-    {
-    if(rc > FREESIZE){
-        /* acturely stop the world*/
-        rc--;
-        heap[res].flag = USE;
-        return (res);
-        }
-    else {
-        pthread_join(concurrent_thread, NULL);
-        res = hp;
-        hp = GET_CDR(hp);
-        SET_CDR(res, 0);   
-        return(res);   
-    }
-    }
-    /* end of write barrier */
     fc--;
     if (fc <= 50 && !handling_resource_err) {
 	handling_resource_err = true;
 	error(RESOURCE_ERR, "M&S freshcell", NIL);
     }
-    return (res);
-
+    }
+    else if(concurrent_stop_flag){
+        pthread_join(concurrent_thread, NULL);
+        res = hp;
+        hp = GET_CDR(hp);
+        SET_CDR(res, 0);
+        fc--;     
+    }
+    else if(rc > 50){
+        res = hp;
+        hp = GET_CDR(hp);
+        SET_CDR(res, 0);
+        rc--;
+        remark[remark_pt++] = res;
+    }
+    else {
+        pthread_join(concurrent_thread, NULL);
+        res = hp;
+        hp = GET_CDR(hp);
+        SET_CDR(res, 0);
+        fc--;      
+    }
+    
+    return(res);
 }
 
 

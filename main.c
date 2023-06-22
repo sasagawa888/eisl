@@ -169,6 +169,7 @@ bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;	/* invoked error? */
 int concurrent_flag = 0; /* while executing concurrent_flag -> true*/
+int concurrent_stop_flag = 0; /* while remarking&sweeping */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -207,6 +208,8 @@ int unwind_nest;		/* unwind-protect nest level */
 
 /* concurrent GC*/
 pthread_t concurrent_thread;
+int remark[STACKSIZE];
+int remark_pt = 0;
 
 
 /* -----debugger----- */

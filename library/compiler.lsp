@@ -1675,6 +1675,16 @@ defgeneric compile
               ((not (assoc (car x) function-arg))
                ;;interpreter
                (comp-funcall2 stream x env args tail name global test clos))
+              (clos
+               ;;in lambda 
+               (format stream "Fpush(Fcdr(Fmakesym(\"")
+               (format-object stream (last (car lambda-free-var)) nil)
+               (format stream "\")));")
+               (format stream "res=")
+               (comp-funcall-clang-left-to-right stream x env args tail name global test clos)
+               (format stream ";Fset_cdr(Fmakesym(\"")
+               (format-object stream (last (car lambda-free-var)) nil)
+               (format stream "\"),Fpop());"))
               ((null (cdr x))
                ;;thunk
                (unless (= (cdr (assoc (car x) function-arg)) 0)

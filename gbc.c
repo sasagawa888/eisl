@@ -13,16 +13,18 @@
  * current thread remark cell with remark array data.
  * if CONCSIZE is small(900), occure error. Now CONCSIZE is 900000. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
- *    
+ * if define GCTIME print GC time and stop time   
  */
 //#define PARALLEL
 #define CONCURRENT 
+//#define GCTIME
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 #include "eisl.h"
 #include "compat/nana_stubs.h"
 #include "mem.h"
@@ -326,15 +328,25 @@ void *concurrent(void *arg);
 void *concurrent(void *arg){
     int addr,fc1,i;
     struct data *pd = (struct data *)arg;
+    #ifdef GCTIME
+    double in,st,en;
+    #endif
 
     DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
     concurrent_flag = 1;
-    
+    #ifdef GCTIME
+    in = getETime();
+    #endif 
+
     /* mark hash table*/
     for (i = 0; i < HASHTBSIZE; i++)
 	mark_cell(cell_hash_table[i]);
 
     concurrent_stop_flag = 1;
+    #ifdef GCTIME
+    st = getETime();
+    #endif 
+
     /* mark nil and t */
     MARK_CELL(NIL);
     MARK_CELL(T);
@@ -378,13 +390,18 @@ void *concurrent(void *arg){
 
     remark_pt = 0;
 
-    gbc_sweep();
+    gbc_sweep_thread();
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
     fc = fc1;
     rc = fc1;
+    #ifdef GCTIME
+    en = getETime();
+    Fmt_print("Elapsed GC   Time(second)=%.6f\n", en - in);
+    Fmt_print("Elapsed stop Time(second)=%.6f\n", en - st);
+    #endif
     concurrent_stop_flag = 0;
     concurrent_flag = 0;
     DBG_PRINTF("exit  concurrent M&S-GC free=%d\n", fc);

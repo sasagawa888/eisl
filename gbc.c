@@ -11,7 +11,7 @@
  * while remark&sweep concurrent_stop_flag = 1;
  * freshcell provide cell and save the address to remark array.
  * current thread remark cell with remark array data.
- * if CONSIZE is small(900), occure error. Now CONSIZE is 900000. 
+ * if CONCSIZE is small(900), occure error. Now CONCSIZE is 900000. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
  *    
  */

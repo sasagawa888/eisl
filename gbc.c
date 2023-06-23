@@ -4,6 +4,7 @@
  * Testing parallel GC. if define PARALLEL, use parallel GC. still testing.
  * Now I'm making concurrent GC. if define CONCURRENT
  * On Windows WSL it works, but on Linux MINT it occures error. Now debugging.
+ * Change FREESIZE from 900 to 9000, On Linux MINT it works. 
  */
 //#define PARALLEL
 #define CONCURRENT 

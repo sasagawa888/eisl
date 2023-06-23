@@ -439,7 +439,7 @@ int check_gbc(void)
     }
 
     #ifdef CONCURRENT 
-    if (fc < FREESIZE)
+    if (fc < CONCSIZE)
     gbc_concurrent();
     #else
     if (fc < FREESIZE)

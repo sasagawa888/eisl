@@ -79,8 +79,9 @@
 
 
 
-static const float VERSION = 3.01;
-static const int FREESIZE = 9000;
+static const float VERSION = 3.02;
+static const int FREESIZE = 900;
+static const int CONCSIZE = 900000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
 static const int MATSIZE = 256;

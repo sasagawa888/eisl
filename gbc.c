@@ -3,6 +3,7 @@
  * Easy-ISLisp has mark&sweep garbage collection system.
  * Testing parallel GC. if define PARALLEL, use parallel GC. still testing.
  * Now I'm making concurrent GC. if define CONCURRENT
+ * On Windows WSL it works, but on Linux MINT it occures error. Now debugging.
  */
 #define PARALLEL
 //#define CONCURRENT 
@@ -35,19 +36,27 @@ int gbc(void)
 {
     int addr;
 
+    #ifdef PARALLEL
+    DBG_PRINTF("enter parallel M&S-GC free=%d\n", fc);
+    gbc_mark();
+    gbc_sweep_thread();
+    fc = 0;
+    for (addr = 0; addr < CELLSIZE; addr++)
+	if (IS_EMPTY(addr))
+	    fc++;
+    DBG_PRINTF("exit  parallel M&S-GC free=%d\n", fc);
+    return 0;
+    #else
     DBG_PRINTF("enter M&S-GC free=%d\n", fc);
     gbc_mark();
-    #ifdef PARALLEL
-    gbc_sweep_thread();
-    #else
     gbc_sweep();
-    #endif
     fc = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc++;
     DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
     return 0;
+    #endif
 }
 
 

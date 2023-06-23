@@ -5,8 +5,8 @@
  * Now I'm making concurrent GC. if define CONCURRENT
  * On Windows WSL it works, but on Linux MINT it occures error. Now debugging.
  */
-#define PARALLEL
-//#define CONCURRENT 
+//#define PARALLEL
+#define CONCURRENT 
 
 #include <stdio.h>
 #include <string.h>

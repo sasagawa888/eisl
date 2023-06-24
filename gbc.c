@@ -390,7 +390,9 @@ void *concurrent(void *arg){
 
     remark_pt = 0;
 
+    concurrent_sweep_flag = 1;
     gbc_sweep_thread();
+    concurrent_sweep_flag = 0;
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))

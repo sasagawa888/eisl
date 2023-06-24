@@ -211,6 +211,7 @@ int unwind_nest;		/* unwind-protect nest level */
 pthread_t concurrent_thread;
 int remark[STACKSIZE];
 int remark_pt = 0;
+pthread_mutex_t mutex;
 
 
 /* -----debugger----- */

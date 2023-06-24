@@ -239,13 +239,6 @@ int freshcell(void)
     hp = GET_CDR(hp);
     SET_CDR(res, 0);
     fc--;
-    /* flag == use means it is not free alive cell generated while concurrent-sweeping
-    *  if it is alive cell, set flag FRE, and find next free cell.
-    */
-    if (heap[res].flag == USE){
-    heap[res].flag = FRE;
-    goto loop;
-    }
     if (fc <= 50 && !handling_resource_err) {
 	handling_resource_err = true;
 	error(RESOURCE_ERR, "M&S freshcell", NIL);
@@ -253,18 +246,25 @@ int freshcell(void)
     }
     else if(concurrent_stop_flag){
         /* while remarking stop the world */
-        pthread_join(concurrent_thread, NULL);
+        pthread_mutex_lock(&mutex);
+        while (concurrent_stop_flag) {
+        pthread_mutex_unlock(&mutex);
+        pthread_mutex_lock(&mutex);
+        }
+        pthread_mutex_unlock(&mutex);
         res = hp;
         hp = GET_CDR(hp);
         SET_CDR(res, 0);
-        fc--;     
+        fc--;    
+
     }
     else if(concurrent_sweep_flag && rc > 50){
         /* while concurrent-sweeping set flag USE*/
         res = hp;
+        pthread_mutex_lock(&mutex);
         hp = GET_CDR(hp);
+        pthread_mutex_unlock(&mutex); 
         SET_CDR(res, 0);
-        heap[res].flag = USE;
         rc--;
     }
     else if(concurrent_flag && rc > 50){

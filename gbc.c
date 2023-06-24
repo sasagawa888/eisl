@@ -324,6 +324,8 @@ void gbc_sweep_thread(void){
     return;
 }
 
+
+
 void *concurrent(void *arg);
 void *concurrent(void *arg){
     int addr,fc1,i;
@@ -334,7 +336,9 @@ void *concurrent(void *arg){
     #endif
 
     DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
+    pthread_mutex_lock(&mutex);
     concurrent_flag = 1;
+    pthread_mutex_unlock(&mutex);
     #ifdef GCTIME
     st = getETime();
     #endif 
@@ -343,7 +347,10 @@ void *concurrent(void *arg){
     for (i = 0; i < HASHTBSIZE; i++)
 	mark_cell(cell_hash_table[i]);
 
+    /* stop the world*/
+    pthread_mutex_lock(&mutex);
     concurrent_stop_flag = 1;
+    pthread_mutex_unlock(&mutex);
     #ifdef GCTIME
     stop = getETime();
     #endif 
@@ -390,28 +397,54 @@ void *concurrent(void *arg){
     mark_cell(remark[i]);
 
     remark_pt = 0;
+    
     #ifdef GCTIME
     go = getETime();
     #endif
-    concurrent_sweep_flag = 1;
-    gbc_sweep_thread();
-    concurrent_sweep_flag = 0;
-    #ifdef GCTIME
-    min = rc;
-    #endif
     
+    /* concurrent sweep */
+    pthread_mutex_lock(&mutex);
+    concurrent_sweep_flag = 1;
+    pthread_mutex_unlock(&mutex);
+    addr = 0;
+    hp = NIL;
+    while (addr < CELLSIZE) {
+	if (USED_CELL(addr))
+	    NOMARK_CELL(addr);
+	else {
+	    clr_cell(addr);
+	    SET_CDR(addr, hp);
+        //pthread_mutex_lock(&mutex);
+	    hp = addr;
+        //pthread_mutex_unlock(&mutex);
+        rc++;
+	}
+	addr++;
+    }
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
     fc = fc1;
     rc = fc1;
+    pthread_mutex_lock(&mutex);
+    concurrent_stop_flag = 0;
+    pthread_mutex_unlock(&mutex);
+    /* end of stop the world */
+    pthread_mutex_lock(&mutex);
+    concurrent_sweep_flag = 0;
+    pthread_mutex_unlock(&mutex);
+    #ifdef GCTIME
+    min = rc;
+    #endif
+
     #ifdef GCTIME
     en = getETime();
     Fmt_print("GC (stop) (second) minimum cells %.6f (%.6f) %d\n", en-st, go-stop, min);
     #endif
-    concurrent_stop_flag = 0;
+    pthread_mutex_lock(&mutex);
     concurrent_flag = 0;
+    pthread_mutex_unlock(&mutex);
     DBG_PRINTF("exit  concurrent M&S-GC free=%d\n", fc);
     return NULL;
 }

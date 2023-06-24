@@ -603,6 +603,7 @@ extern int ed_incomment;
 extern pthread_t concurrent_thread;
 extern int remark[STACKSIZE];
 extern int remark_pt;
+extern pthread_mutex_t mutex;
 
 // -------error code---
 enum {

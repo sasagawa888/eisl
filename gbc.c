@@ -329,13 +329,13 @@ void *concurrent(void *arg){
     int addr,fc1,i;
     struct data *pd = (struct data *)arg;
     #ifdef GCTIME
-    double in,st,en;
+    double stop,go,st,en;
     #endif
 
     DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
     concurrent_flag = 1;
     #ifdef GCTIME
-    in = getETime();
+    st = getETime();
     #endif 
 
     /* mark hash table*/
@@ -344,7 +344,7 @@ void *concurrent(void *arg){
 
     concurrent_stop_flag = 1;
     #ifdef GCTIME
-    st = getETime();
+    stop = getETime();
     #endif 
 
     /* mark nil and t */
@@ -389,10 +389,15 @@ void *concurrent(void *arg){
     mark_cell(remark[i]);
 
     remark_pt = 0;
-
+    #ifdef GCTIME
+    go = getETime();
+    #endif
     concurrent_sweep_flag = 1;
     gbc_sweep_thread();
     concurrent_sweep_flag = 0;
+    #ifdef GCTIME
+    Fmt_print("Elapsed Stop Time(second)=%.6f rc=%d\n", go - stop, rc);
+    #endif
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
@@ -401,8 +406,7 @@ void *concurrent(void *arg){
     rc = fc1;
     #ifdef GCTIME
     en = getETime();
-    Fmt_print("Elapsed GC   Time(second)=%.6f\n", en - in);
-    Fmt_print("Elapsed stop Time(second)=%.6f\n", en - st);
+    Fmt_print("Elapsed GC   Time(second)=%.6f\n", en - st);
     #endif
     concurrent_stop_flag = 0;
     concurrent_flag = 0;

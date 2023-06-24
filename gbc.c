@@ -11,7 +11,7 @@
  * while remark&sweep concurrent_stop_flag = 1;
  * freshcell provide cell and save the address to remark array.
  * current thread remark cell with remark array data.
- * if CONCSIZE is small(900), occure error. Now CONCSIZE is 900000. 
+ * if CONCSIZE is small(900), occure error. Now CONCSIZE is 90000. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
  * if define GCTIME print GC time and stop time   
  */
@@ -330,6 +330,7 @@ void *concurrent(void *arg){
     struct data *pd = (struct data *)arg;
     #ifdef GCTIME
     double stop,go,st,en;
+    int min;
     #endif
 
     DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
@@ -396,8 +397,9 @@ void *concurrent(void *arg){
     gbc_sweep_thread();
     concurrent_sweep_flag = 0;
     #ifdef GCTIME
-    Fmt_print("Elapsed Stop Time(second)=%.6f rc=%d\n", go - stop, rc);
+    min = rc;
     #endif
+    
     fc1 = 0;
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
@@ -406,7 +408,7 @@ void *concurrent(void *arg){
     rc = fc1;
     #ifdef GCTIME
     en = getETime();
-    Fmt_print("Elapsed GC   Time(second)=%.6f\n", en - st);
+    Fmt_print("GC (stop) (second) minimum cells %.6f (%.6f) %d\n", en-st, go-stop, min);
     #endif
     concurrent_stop_flag = 0;
     concurrent_flag = 0;

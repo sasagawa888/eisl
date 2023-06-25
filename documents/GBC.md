@@ -7,7 +7,6 @@ We have implemented parallel and concurrent garbage collection (GC) in Easy-ISLi
 Easy-ISLisp is designed for learning purposes and implements cells as arrays of C language structures. The total number of cells is 20 megacells. In the interpreter, the environment is implemented as an associative list. The compiler adopts a method of converting Lisp code into C code.
 
 # Processing Phases
-
 Concurrent GC consists of the following four phases:
 
 ## Initial Marking

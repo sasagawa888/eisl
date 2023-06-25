@@ -19,7 +19,7 @@
  * second step, sweep concurrent SEQUENT~CELLSOZE cells while stop_flag=0, sweep_flag=1.  
  */
 //#define PARALLEL
-#define CONCURRENT 
+#define CONCURRENT
 #define SEQUENT 4000000
 //#define GCTIME
 
@@ -52,7 +52,7 @@ int gbc(void)
 {
     int addr;
 
-    #ifdef PARALLEL
+#ifdef PARALLEL
     DBG_PRINTF("enter parallel M&S-GC free=%d\n", fc);
     gbc_mark();
     gbc_sweep_thread();
@@ -62,7 +62,7 @@ int gbc(void)
 	    fc++;
     DBG_PRINTF("exit  parallel M&S-GC free=%d\n", fc);
     return 0;
-    #else
+#else
     DBG_PRINTF("enter M&S-GC free=%d\n", fc);
     gbc_mark();
     gbc_sweep();
@@ -72,7 +72,7 @@ int gbc(void)
 	    fc++;
     DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
     return 0;
-    #endif
+#endif
 }
 
 
@@ -161,12 +161,13 @@ void mark_cell(int addr)
 }
 
 void *mark(void *arg);
-void *mark(void *arg){
+void *mark(void *arg)
+{
     int i;
-    struct data *pd = (struct data *)arg;
+    struct data *pd = (struct data *) arg;
 
-    for(i = pd->start; i < pd->end; i++){
-        mark_cell(cell_hash_table[i]);
+    for (i = pd->start; i < pd->end; i++) {
+	mark_cell(cell_hash_table[i]);
     }
     return NULL;
 }
@@ -212,12 +213,12 @@ void gbc_mark(void)
     MARK_CELL(T);
 
     /* mark cell chained from hash table */
-    #ifdef PARALLEL
+#ifdef PARALLEL
     gbc_hash_mark();
-    #else 
+#else
     for (i = 0; i < HASHTBSIZE; i++)
 	mark_cell(cell_hash_table[i]);
-    #endif
+#endif
 
     /* mark local environment */
     mark_cell(ep);
@@ -268,23 +269,24 @@ static inline void NOMARK_CELL(int addr)
 }
 
 void *sweep(void *arg);
-void *sweep(void *arg){
-    int addr,free;
+void *sweep(void *arg)
+{
+    int addr, free;
     bool init;
-    struct data *pd = (struct data *)arg;
+    struct data *pd = (struct data *) arg;
 
     addr = pd->start;
     free = NIL;
     init = true;
-    
+
     while (addr < pd->end) {
 	if (USED_CELL(addr))
 	    NOMARK_CELL(addr);
 	else {
-        if(init){
-        pd->tail = addr;
-        init = false;
-        }
+	    if (init) {
+		pd->tail = addr;
+		init = false;
+	    }
 	    clr_cell(addr);
 	    SET_CDR(addr, free);
 	    free = addr;
@@ -295,7 +297,8 @@ void *sweep(void *arg){
     return NULL;
 }
 
-void gbc_sweep_thread(void){
+void gbc_sweep_thread(void)
+{
     pthread_t t[NUM_THREAD];
     struct data d[NUM_THREAD];
 
@@ -304,15 +307,15 @@ void gbc_sweep_thread(void){
     pthread_create(&t[0], NULL, sweep, &d[0]);
 
     d[1].start = 5000000;
-    d[1].end =  10000000;
+    d[1].end = 10000000;
     pthread_create(&t[1], NULL, sweep, &d[1]);
 
     d[2].start = 10000000;
-    d[2].end =   15000000;
+    d[2].end = 15000000;
     pthread_create(&t[2], NULL, sweep, &d[2]);
 
     d[3].start = 15000000;
-    d[3].end =   CELLSIZE;
+    d[3].end = CELLSIZE;
     pthread_create(&t[3], NULL, sweep, &d[3]);
 
     pthread_join(t[0], NULL);
@@ -320,10 +323,10 @@ void gbc_sweep_thread(void){
     pthread_join(t[2], NULL);
     pthread_join(t[3], NULL);
 
-    SET_CDR(d[3].tail,d[2].head);
-    SET_CDR(d[2].tail,d[1].head);
-    SET_CDR(d[1].tail,d[0].head);
-    SET_CDR(d[0].tail,NIL);
+    SET_CDR(d[3].tail, d[2].head);
+    SET_CDR(d[2].tail, d[1].head);
+    SET_CDR(d[1].tail, d[0].head);
+    SET_CDR(d[0].tail, NIL);
     hp = d[3].head;
     return;
 }
@@ -331,33 +334,34 @@ void gbc_sweep_thread(void){
 
 
 void *concurrent(void *arg);
-void *concurrent(void *arg){
-    int addr,fc1,i,free;
-    struct data *pd = (struct data *)arg;
-    #ifdef GCTIME
-    double stop,go,st,en;
+void *concurrent(void *arg)
+{
+    int addr, fc1, i, free;
+    struct data *pd = (struct data *) arg;
+#ifdef GCTIME
+    double stop, go, st, en;
     int min;
-    #endif
+#endif
 
     DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
     pthread_mutex_lock(&mutex);
     concurrent_flag = 1;
     pthread_mutex_unlock(&mutex);
-    #ifdef GCTIME
+#ifdef GCTIME
     st = getETime();
-    #endif 
+#endif
 
-    /* mark hash table*/
+    /* mark hash table */
     for (i = 0; i < HASHTBSIZE; i++)
 	mark_cell(cell_hash_table[i]);
 
-    /* stop the world*/
+    /* stop the world */
     pthread_mutex_lock(&mutex);
     concurrent_stop_flag = 1;
     pthread_mutex_unlock(&mutex);
-    #ifdef GCTIME
+#ifdef GCTIME
     stop = getETime();
-    #endif 
+#endif
 
     /* mark nil and t */
     MARK_CELL(NIL);
@@ -397,11 +401,11 @@ void *concurrent(void *arg){
     mark_cell(generic_list);
 
     /* remark hash table */
-    for(i=0;i<remark_pt;i++)
-    mark_cell(remark[i]);
+    for (i = 0; i < remark_pt; i++)
+	mark_cell(remark[i]);
 
     remark_pt = 0;
-    
+
     addr = 0;
     hp = NIL;
     while (addr < SEQUENT) {
@@ -411,14 +415,14 @@ void *concurrent(void *arg){
 	    clr_cell(addr);
 	    SET_CDR(addr, hp);
 	    hp = addr;
-        rc++;
+	    rc++;
 	}
 	addr++;
     }
-    #ifdef GCTIME
+#ifdef GCTIME
     go = getETime();
     min = rc;
-    #endif
+#endif
     /* end of stop the world */
     pthread_mutex_lock(&mutex);
     concurrent_stop_flag = 0;
@@ -446,18 +450,19 @@ void *concurrent(void *arg){
 	    fc1++;
     fc = fc1;
     rc = fc1;
-    
+
     pthread_mutex_lock(&mutex);
     hp = free;
     concurrent_sweep_flag = 0;
     pthread_mutex_unlock(&mutex);
-    
 
-    #ifdef GCTIME
+
+#ifdef GCTIME
     en = getETime();
-    Fmt_print("GC (stop) (second) minimum cells %.6f (%.6f) %d\n", en-st, go-stop, min);
-    #endif
-    
+    Fmt_print("GC (stop) (second) minimum cells %.6f (%.6f) %d\n", en - st,
+	      go - stop, min);
+#endif
+
     pthread_mutex_lock(&mutex);
     concurrent_flag = 0;
     pthread_mutex_unlock(&mutex);
@@ -520,14 +525,13 @@ int check_gbc(void)
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
-
-    #ifdef CONCURRENT 
+#ifdef CONCURRENT
     if (fc < CONCSIZE)
-    gbc_concurrent();
-    #else
+	gbc_concurrent();
+#else
     if (fc < FREESIZE)
 	(void) gbc();
-    #endif
+#endif
 
     return 0;
 }

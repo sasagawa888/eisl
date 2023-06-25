@@ -233,56 +233,52 @@ int freshcell(void)
 {
     int res;
 
-    if(!concurrent_flag){
-    loop:
-    res = hp;
-    hp = GET_CDR(hp);
-    SET_CDR(res, 0);
-    fc--;
-    if (fc <= 50 && !handling_resource_err) {
-	handling_resource_err = true;
-	error(RESOURCE_ERR, "M&S freshcell", NIL);
-    }
-    }
-    else if(concurrent_stop_flag){
-        /* while remarking stop the world */
-        pthread_mutex_lock(&mutex);
-        while (concurrent_stop_flag) {
-        pthread_mutex_unlock(&mutex);
-        pthread_mutex_lock(&mutex);
-        }
-        pthread_mutex_unlock(&mutex);
-        res = hp;
-        hp = GET_CDR(hp);
-        SET_CDR(res, 0);
-        fc--;    
+    if (!concurrent_flag) {
+      loop:
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
+	if (fc <= 50 && !handling_resource_err) {
+	    handling_resource_err = true;
+	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	}
+    } else if (concurrent_stop_flag) {
+	/* while remarking stop the world */
+	pthread_mutex_lock(&mutex);
+	while (concurrent_stop_flag) {
+	    pthread_mutex_unlock(&mutex);
+	    pthread_mutex_lock(&mutex);
+	}
+	pthread_mutex_unlock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
 
+    } else if (concurrent_sweep_flag && rc > 50) {
+	/* while concurrent-sweeping set flag USE */
+	res = hp;
+	//pthread_mutex_lock(&mutex);
+	hp = GET_CDR(hp);
+	//pthread_mutex_unlock(&mutex); 
+	SET_CDR(res, 0);
+	rc--;
+    } else if (concurrent_flag && rc > 50) {
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	rc--;
+	remark[remark_pt++] = res;
+    } else {
+	pthread_join(concurrent_thread, NULL);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
     }
-    else if(concurrent_sweep_flag && rc > 50){
-        /* while concurrent-sweeping set flag USE*/
-        res = hp;
-        //pthread_mutex_lock(&mutex);
-        hp = GET_CDR(hp);
-        //pthread_mutex_unlock(&mutex); 
-        SET_CDR(res, 0);
-        rc--;
-    }
-    else if(concurrent_flag && rc > 50){
-        res = hp;
-        hp = GET_CDR(hp);
-        SET_CDR(res, 0);
-        rc--;
-        remark[remark_pt++] = res;
-    }
-    else {
-        pthread_join(concurrent_thread, NULL);
-        res = hp;
-        hp = GET_CDR(hp);
-        SET_CDR(res, 0);
-        fc--;      
-    }
-    
-    return(res);
+
+    return (res);
 }
 
 

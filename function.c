@@ -4108,65 +4108,60 @@ int f_create_string(int arglist)
     else
 	c = GET_CHAR(arg2);
 
-    if(isUni1(c)){
-    str = ALLOC(n + 1);
-    memset(str, c, n);
-    str[n] = NUL;
-    }
-    else if(isUni2(c)){
-    str = ALLOC(2*n + 1);
-    pos = 0;
-    for(i=0;i<n;i++){
-    str[pos++] = heap[arg1].name[0];
-    str[pos++] = heap[arg1].name[1];
-    }
-    str[pos] = NUL;    
-    }
-    else if(isUni3(c)){
-    str = ALLOC(3*n + 1);
-    pos = 0;
-    for(i=0;i<n;i++){
-    str[pos++] = heap[arg2].name[0];
-    str[pos++] = heap[arg2].name[1];
-    str[pos++] = heap[arg2].name[2];
-    }
-    str[pos] = NUL;     
-    }
-    else if(isUni4(c)){
-    str = ALLOC(4*n + 1);
-    pos = 0;
-    for(i=0;i<n;i++){
-    str[pos++] = heap[arg2].name[0];
-    str[pos++] = heap[arg2].name[1];
-    str[pos++] = heap[arg2].name[2];
-    str[pos++] = heap[arg2].name[3];
-    }
-    str[pos] = NUL;     
-    }
-    else if(isUni5(c)){
-    str = ALLOC(5*n + 1);
-    pos = 0;
-    for(i=0;i<n;i++){
-    str[pos++] = heap[arg2].name[0];
-    str[pos++] = heap[arg2].name[1];
-    str[pos++] = heap[arg2].name[2];
-    str[pos++] = heap[arg2].name[3];
-    str[pos++] = heap[arg2].name[4];
-    }
-    str[pos] = NUL;     
-    }
-    else if(isUni6(c)){
-    str = ALLOC(6*n + 1);
-    pos = 0;
-    for(i=0;i<n;i++){
-    str[pos++] = heap[arg2].name[0];
-    str[pos++] = heap[arg2].name[1];
-    str[pos++] = heap[arg2].name[2];
-    str[pos++] = heap[arg2].name[3];
-    str[pos++] = heap[arg2].name[4];
-    str[pos++] = heap[arg2].name[5];
-    }
-    str[pos] = NUL;     
+    if (isUni1(c)) {
+	str = ALLOC(n + 1);
+	memset(str, c, n);
+	str[n] = NUL;
+    } else if (isUni2(c)) {
+	str = ALLOC(2 * n + 1);
+	pos = 0;
+	for (i = 0; i < n; i++) {
+	    str[pos++] = heap[arg1].name[0];
+	    str[pos++] = heap[arg1].name[1];
+	}
+	str[pos] = NUL;
+    } else if (isUni3(c)) {
+	str = ALLOC(3 * n + 1);
+	pos = 0;
+	for (i = 0; i < n; i++) {
+	    str[pos++] = heap[arg2].name[0];
+	    str[pos++] = heap[arg2].name[1];
+	    str[pos++] = heap[arg2].name[2];
+	}
+	str[pos] = NUL;
+    } else if (isUni4(c)) {
+	str = ALLOC(4 * n + 1);
+	pos = 0;
+	for (i = 0; i < n; i++) {
+	    str[pos++] = heap[arg2].name[0];
+	    str[pos++] = heap[arg2].name[1];
+	    str[pos++] = heap[arg2].name[2];
+	    str[pos++] = heap[arg2].name[3];
+	}
+	str[pos] = NUL;
+    } else if (isUni5(c)) {
+	str = ALLOC(5 * n + 1);
+	pos = 0;
+	for (i = 0; i < n; i++) {
+	    str[pos++] = heap[arg2].name[0];
+	    str[pos++] = heap[arg2].name[1];
+	    str[pos++] = heap[arg2].name[2];
+	    str[pos++] = heap[arg2].name[3];
+	    str[pos++] = heap[arg2].name[4];
+	}
+	str[pos] = NUL;
+    } else if (isUni6(c)) {
+	str = ALLOC(6 * n + 1);
+	pos = 0;
+	for (i = 0; i < n; i++) {
+	    str[pos++] = heap[arg2].name[0];
+	    str[pos++] = heap[arg2].name[1];
+	    str[pos++] = heap[arg2].name[2];
+	    str[pos++] = heap[arg2].name[3];
+	    str[pos++] = heap[arg2].name[4];
+	    str[pos++] = heap[arg2].name[5];
+	}
+	str[pos] = NUL;
     }
     int res = make_str(str);
     FREE(str);

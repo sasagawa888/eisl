@@ -171,11 +171,11 @@ int main(int argc, char *argv[])
 	    c = fgetc(port);
 	}
 	/* if get EOF without EOL 
-	*  this is a pen[EOF] -> this is a pen[EOL]
-	*/
-	if(ed_col != 0){
-		ed_data[ed_row][ed_col] = EOL;
-		ed_row++;
+	 *  this is a pen[EOF] -> this is a pen[EOL]
+	 */
+	if (ed_col != 0) {
+	    ed_data[ed_row][ed_col] = EOL;
+	    ed_row++;
 	}
 	ed_end = ed_row;
 	ed_data[ed_end][0] = EOL;
@@ -883,12 +883,12 @@ bool edit_loop(char *fname)
 		    c = fgetc(port);
 		}
 		/* if get EOF without EOL 
-	    *  this is a pen[EOF] -> this is a pen[EOL]
-	    */
-	    if(ed_col != 0){
+		 *  this is a pen[EOF] -> this is a pen[EOL]
+		 */
+		if (ed_col != 0) {
 		    ed_data[ed_row][ed_col] = EOL;
-			ed_row++;
-	    }
+		    ed_row++;
+		}
 		ed_end = ed_row;
 		ed_data[ed_end][0] = EOL;
 		fclose(port);

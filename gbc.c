@@ -13,10 +13,14 @@
  * current thread remark cell with remark array data.
  * if CONCSIZE is small(900), occure error. Now CONCSIZE is 90000. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
- * if define GCTIME print GC time and stop time   
+ * if define GCTIME print GC time and stop time 
+ * concurrent sweep 
+ * first step, sweep sequential 0~SEQUENT cells while stop_flag = 1
+ * second step, sweep concurrent SEQUENT~CELLSOZE cells while stop_flag=0, sweep_flag=1.  
  */
 //#define PARALLEL
 #define CONCURRENT 
+#define SEQUENT 4000000
 //#define GCTIME
 
 #include <stdio.h>
@@ -328,7 +332,7 @@ void gbc_sweep_thread(void){
 
 void *concurrent(void *arg);
 void *concurrent(void *arg){
-    int addr,fc1,i;
+    int addr,fc1,i,free;
     struct data *pd = (struct data *)arg;
     #ifdef GCTIME
     double stop,go,st,en;
@@ -398,50 +402,62 @@ void *concurrent(void *arg){
 
     remark_pt = 0;
     
-    #ifdef GCTIME
-    go = getETime();
-    #endif
-    
-    /* concurrent sweep */
-    pthread_mutex_lock(&mutex);
-    concurrent_sweep_flag = 1;
-    pthread_mutex_unlock(&mutex);
     addr = 0;
     hp = NIL;
-    while (addr < CELLSIZE) {
+    while (addr < SEQUENT) {
 	if (USED_CELL(addr))
 	    NOMARK_CELL(addr);
 	else {
 	    clr_cell(addr);
 	    SET_CDR(addr, hp);
-        //pthread_mutex_lock(&mutex);
 	    hp = addr;
-        //pthread_mutex_unlock(&mutex);
         rc++;
 	}
 	addr++;
     }
+    #ifdef GCTIME
+    go = getETime();
+    min = rc;
+    #endif
+    /* end of stop the world */
+    pthread_mutex_lock(&mutex);
+    concurrent_stop_flag = 0;
+    pthread_mutex_unlock(&mutex);
+
+    /* concurrent sweep */
+    pthread_mutex_lock(&mutex);
+    concurrent_sweep_flag = 1;
+    pthread_mutex_unlock(&mutex);
+    addr = SEQUENT;
+    free = NIL;
+    while (addr < CELLSIZE) {
+	if (USED_CELL(addr))
+	    NOMARK_CELL(addr);
+	else {
+	    clr_cell(addr);
+	    SET_CDR(addr, free);
+	    free = addr;
+	}
+	addr++;
+    }
     fc1 = 0;
-    for (addr = 0; addr < CELLSIZE; addr++)
+    for (addr = SEQUENT; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
     fc = fc1;
     rc = fc1;
+    
     pthread_mutex_lock(&mutex);
-    concurrent_stop_flag = 0;
-    pthread_mutex_unlock(&mutex);
-    /* end of stop the world */
-    pthread_mutex_lock(&mutex);
+    hp = free;
     concurrent_sweep_flag = 0;
     pthread_mutex_unlock(&mutex);
-    #ifdef GCTIME
-    min = rc;
-    #endif
+    
 
     #ifdef GCTIME
     en = getETime();
     Fmt_print("GC (stop) (second) minimum cells %.6f (%.6f) %d\n", en-st, go-stop, min);
     #endif
+    
     pthread_mutex_lock(&mutex);
     concurrent_flag = 0;
     pthread_mutex_unlock(&mutex);

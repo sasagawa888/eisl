@@ -261,9 +261,9 @@ int freshcell(void)
     else if(concurrent_sweep_flag && rc > 50){
         /* while concurrent-sweeping set flag USE*/
         res = hp;
-        pthread_mutex_lock(&mutex);
+        //pthread_mutex_lock(&mutex);
         hp = GET_CDR(hp);
-        pthread_mutex_unlock(&mutex); 
+        //pthread_mutex_unlock(&mutex); 
         SET_CDR(res, 0);
         rc--;
     }

@@ -1,9 +1,9 @@
 /*
  * garbage collenction
  * Easy-ISLisp has mark&sweep garbage collection system.
- * if define PARALLEL, paralell mark and paralell sweep (4 threads)
- * if define CONCURRENT. concurrent mark&sweep
- * if not define both, sequential mark&sweep
+ * if GC == 0 , concurrent mark&sweep
+ * if GC == 1 , paralell mark and paralell sweep (4 threads)
+ * if GC == 2 , sequential mark&sweep
  * in sequential or paralell mode if remain cell < FREESIZE, invoke gc.
  * in cuncurrent mode if remain cell < CONCSIZE, invoke gc.
  * <memo concurrent>
@@ -18,8 +18,12 @@
  * first step, sweep sequential 0~SEQUENT cells while stop_flag = 1
  * second step, sweep concurrent SEQUENT~CELLSOZE cells while stop_flag=0, sweep_flag=1.  
  */
-//#define PARALLEL
-#define CONCURRENT
+
+/*  GC = 0 concurrent
+ *  GC = 1 parallel
+ *  GC = 2 sequential
+*/
+#define GC  0
 #define SEQUENT 4000000
 //#define GCTIME
 
@@ -50,9 +54,14 @@ struct data {
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {
-    int addr;
 
-#ifdef PARALLEL
+#if   GC == 0
+    gbc_concurrent();
+    return 0;
+
+#elif GC == 1
+    int addr;
+ 
     DBG_PRINTF("enter parallel M&S-GC free=%d\n", fc);
     gbc_mark();
     gbc_sweep_thread();
@@ -62,7 +71,9 @@ int gbc(void)
 	    fc++;
     DBG_PRINTF("exit  parallel M&S-GC free=%d\n", fc);
     return 0;
-#else
+#elif GC == 2
+    int addr;
+
     DBG_PRINTF("enter M&S-GC free=%d\n", fc);
     gbc_mark();
     gbc_sweep();
@@ -213,7 +224,7 @@ void gbc_mark(void)
     MARK_CELL(T);
 
     /* mark cell chained from hash table */
-#ifdef PARALLEL
+#if GC == 1
     gbc_hash_mark();
 #else
     for (i = 0; i < HASHTBSIZE; i++)
@@ -340,7 +351,6 @@ void *concurrent(void *arg)
     struct data *pd = (struct data *) arg;
 #ifdef GCTIME
     double stop, go, st, en;
-    int min;
 #endif
 
     DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
@@ -421,7 +431,6 @@ void *concurrent(void *arg)
     }
 #ifdef GCTIME
     go = getETime();
-    min = rc;
 #endif
     /* end of stop the world */
     pthread_mutex_lock(&mutex);
@@ -459,8 +468,8 @@ void *concurrent(void *arg)
 
 #ifdef GCTIME
     en = getETime();
-    Fmt_print("GC (stop) (second) minimum cells %.6f (%.6f) %d\n", en - st,
-	      go - stop, min);
+    Fmt_print("GC (within stop) %.6f (%.6f)(second)\n", en - st,
+	      go - stop);
 #endif
 
     pthread_mutex_lock(&mutex);
@@ -525,9 +534,9 @@ int check_gbc(void)
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
-#ifdef CONCURRENT
+#if GC == 0
     if (fc < CONCSIZE)
-	gbc_concurrent();
+	gbc();
 #else
     if (fc < FREESIZE)
 	(void) gbc();

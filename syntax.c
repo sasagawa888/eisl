@@ -537,7 +537,7 @@ int f_set_dynamic(int arglist, int th)
 	error(WRONG_ARGS, "set-dynamic", arg1);
 
     if (find_dyn(arg1) != FAILSE) {
-	set_dyn_env(arg1, arg2);
+	set_dyn_env(arg1, arg2, th);
 	return (arg2);
     } else
 	error(UNDEF_VAR, "set-dynamic", arg1);
@@ -692,7 +692,7 @@ int f_defglobal(int arglist)
     return (arg1);
 }
 
-int f_defdynamic(int arglist)
+int f_defdynamic(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -708,7 +708,7 @@ int f_defdynamic(int arglist)
 	error(WRONG_ARGS, "defdynamic", arg1);
 
 
-    set_dyn_env(arg1, eval(arg2, 0));
+    set_dyn_env(arg1, eval(arg2, th), th);
     return (arg1);
 }
 

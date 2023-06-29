@@ -128,6 +128,10 @@ void dynamic_link(int x)
     init_f1(SET_ERROR_FLAG_IDX, set_error_flag);
 
     /* argument-2 type */
+    void set_dyn_env1(int x, int y)
+    {
+        set_dyn_env(x, y, 0);
+    }
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);
@@ -154,7 +158,7 @@ void dynamic_link(int x)
     init_f2(MEMBER_IDX, member);
     init_f2(CONVERT_IDX, convert);
     init_f2(ARRAY_IDX, array);
-    init_f2(SETDYNENV_IDX, set_dyn_env);
+    init_f2(SETDYNENV_IDX, set_dyn_env1);
     init_f2(ADDDYNENV_IDX, add_dyn_env);
     init_f2(SETDYNAMIC_IDX, set_dynamic);
     init_f2(SETPROP_IDX, set_prop);
@@ -418,7 +422,7 @@ int fast_cdr(int x)
 int set_dynamic(int x, int y)
 {
     if (find_dyn(x) != FAILSE)
-	set_dyn_env(x, y);
+	set_dyn_env(x, y, 0);
     else
 	error(UNDEF_VAR, "set-dynamic", x);
 

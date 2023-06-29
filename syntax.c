@@ -855,7 +855,7 @@ int f_symbol_class(int arglist)
 
 
 
-int f_if(int arglist)
+int f_if(int arglist, int th)
 {
     int arg1, arg2, arg3, n;
 
@@ -871,14 +871,14 @@ int f_if(int arglist)
     else
 	arg3 = NIL;
 
-    if (!(nullp(eval(arg1, 0))))
-	return (eval(arg2, 0));
+    if (!(nullp(eval(arg1, th))))
+	return (eval(arg2, th));
     else {
-	return (eval(arg3, 0));
+	return (eval(arg3, th));
     }
 }
 
-int f_cond(int arglist)
+int f_cond(int arglist, int th)
 {
     int arg1, arg2, arg3;
 
@@ -894,12 +894,12 @@ int f_cond(int arglist)
 	error(IMPROPER_ARGS, "cond", arg1);
 
 
-    if (length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2, 0)))
+    if (length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2, th)))
 	return (arg2);
-    else if (!nullp(eval(arg2, 0)))
+    else if (!nullp(eval(arg2, th)))
 	return (f_progn(arg3));
     else
-	return (f_cond(cdr(arglist)));
+	return (f_cond(cdr(arglist),th));
 }
 
 int f_while(int arglist)
@@ -998,7 +998,7 @@ int f_for(int arglist)
     return (res);
 }
 
-int f_block(int arglist)
+int f_block(int arglist, int th)
 {
     int arg1, arg2, tag, ret, res, unwind;
 
@@ -1041,7 +1041,7 @@ int f_block(int arglist)
 	if (unwind == 0 && unwind_pt >= 0) {
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
-		apply(unwind_buf[unwind_pt], NIL, 0);
+		apply(unwind_buf[unwind_pt], NIL, th);
 		unwind_pt--;
 	    }
 	    unwind_pt = 0;

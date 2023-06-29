@@ -128,6 +128,12 @@ void dynamic_link(int x)
     init_f1(SET_ERROR_FLAG_IDX, set_error_flag);
 
     /* argument-2 type */
+    /* compiler generate should generate following code while in plet compile
+     * *plet(*arg){
+     * Fsetdynenv(x,y,cellarg->th)
+     }
+     * compile set flag while compiling plet. and generate Pthread code.
+    */
     void set_dyn_env1(int x, int y)
     {
         set_dyn_env(x, y, 0);

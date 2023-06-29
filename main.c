@@ -1761,9 +1761,9 @@ int apply(int func, int args, int th)
 
     switch (GET_TAG(func)) {
     case SUBR:
-	return ((GET_SUBR(func)) (args));
+	return ((GET_SUBR(func)) (args, th));
     case FSUBR:
-	return ((GET_SUBR(func)) (args));
+	return ((GET_SUBR(func)) (args, th));
     case FUNC:
 	if (try_flag == true)
 	    try_res = cons(args, try_res);

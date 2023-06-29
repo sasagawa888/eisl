@@ -264,7 +264,7 @@ int get_dynpt(void)
 
 int call_subr(int func, int arglist)
 {
-    return ((GET_SUBR(func)) (arglist));
+    return ((GET_SUBR(func)) (arglist,0));
 }
 
 int make_int_long(int n)

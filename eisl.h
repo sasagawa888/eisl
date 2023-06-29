@@ -106,7 +106,7 @@ typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGN, VEC, ARR, CHR, STR,
 } tag_t;
 typedef enum __packed { FRE, USE } flag;
 
-typedef int (*subr_t)(int args);
+typedef int (*subr_t)(int args, int th);
 typedef struct __packed {
     union __packed {
 	double fltnum;

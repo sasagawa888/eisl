@@ -417,19 +417,19 @@ int f_dynamic_let(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    save = dp;
+    save = dp[0];
     res = NIL;
     while (arg1 != NIL) {
 	int dp1, sym, val;
 
-	dp1 = dp;
-	dp = save;
+	dp1 = dp[0];
+	dp[0] = save;
 	shelter_push(dp1);
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "dynamic-let", sym);
 	val = eval(cadar(arg1), th);
-	dp = dp1;
+	dp[0] = dp1;
 	shelter_pop();
 	add_dyn_env(sym, val);
 	arg1 = cdr(arg1);
@@ -438,7 +438,7 @@ int f_dynamic_let(int arglist, int th)
 	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
-    dp = save;
+    dp[0] = save;
     return (res);
 }
 

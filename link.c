@@ -240,7 +240,7 @@ int set_prop(int x, int y)
 
 int set_dynpt(int x)
 {
-    dp = x;
+    dp[0] = x;
     return (x);
 }
 
@@ -258,7 +258,7 @@ int get_prop(int x)
 
 int get_dynpt(void)
 {
-    return (dp);
+    return (dp[0]);
 }
 
 

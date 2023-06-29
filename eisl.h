@@ -21,6 +21,7 @@
 #define STRSIZE 10000
 #define SHORT_STRSIZE 32
 #define HASHTBSIZE 137
+#define PARASIZE 4
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
@@ -160,7 +161,7 @@ typedef struct {
 
 /* ------pointer---- */
 extern int ep;			// environment pointer
-extern int dp;			// dynamic pointer
+extern int dp[PARASIZE];	// dynamic pointer
 extern int hp;			// heap pointer
 extern int sp;			// stack pointer
 extern int fc;			// free counter

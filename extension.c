@@ -599,7 +599,7 @@ void debugger()
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    for (i = 0; i < dp; i++) {
+	    for (i = 0; i < dp[0]; i++) {
 		print(dynamic[i][0]);
 		printf("=");
 		print(dynamic[i][1]);
@@ -622,7 +622,7 @@ void debugger()
 		      "FC = %d (free counter)\n"
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n",
-		      ep, dp, hp, sp, fc, ap, lp);
+		      ep, dp[0], hp, sp, fc, ap, lp);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

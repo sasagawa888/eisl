@@ -52,7 +52,9 @@ void init_cell(void)
     make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
     ep = 0;
-    dp = 0;
+    int i;
+    for(i=0;i<PARASIZE;i++)
+        dp[i] = 0;
     sp = 0;
     ap = 0;
 }
@@ -301,16 +303,16 @@ void set_dyn_env(int sym, int val)
 {
     int i;
 
-    for (i = dp - 1; i >= 0; i--) {
+    for (i = dp[0] - 1; i >= 0; i--) {
 	if (dynamic[i][0] == sym) {
 	    dynamic[i][1] = val;
 	    return;
 	}
     }
-    dynamic[dp][0] = sym;
-    dynamic[dp][1] = val;
-    dp++;
-    if (dp >= DYNSIZE)
+    dynamic[dp[0]][0] = sym;
+    dynamic[dp[0]][1] = val;
+    dp[0]++;
+    if (dp[0] >= DYNSIZE)
 	error(VARIABLE_OVERF, "set_dyn_env", NIL);
     return;
 }
@@ -326,10 +328,10 @@ void add_lex_env(int sym, int val)
 /* addition of dynamic variable */
 void add_dyn_env(int sym, int val)
 {
-    dynamic[dp][0] = sym;
-    dynamic[dp][1] = val;
-    dp++;
-    if (dp >= DYNSIZE)
+    dynamic[dp[0]][0] = sym;
+    dynamic[dp[0]][1] = val;
+    dp[0]++;
+    if (dp[0] >= DYNSIZE)
 	error(VARIABLE_OVERF, "add_dyn_env", NIL);
     return;
 }
@@ -359,7 +361,7 @@ int find_dyn(int sym)
 {
     int i;
 
-    for (i = dp - 1; i >= 0; i--) {
+    for (i = dp[0] - 1; i >= 0; i--) {
 	if (dynamic[i][0] == sym)
 	    return (dynamic[i][1]);
     }

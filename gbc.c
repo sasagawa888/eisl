@@ -24,7 +24,7 @@
  *  GC = 2 sequential
 */
 #define GC  0
-#define SEQUENT 5000000
+#define SEQUENT 4000000
 //#define GCTIME
 
 #include <stdio.h>
@@ -54,6 +54,7 @@ struct data {
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {
+
 
 #if   GC == 0
     gbc_concurrent();
@@ -234,7 +235,7 @@ void gbc_mark(void)
     /* mark local environment */
     mark_cell(ep);
     /* mark dynamic environment */
-    mark_cell(dp);
+    mark_cell(dp[0]);
     /* mark stack */
     for (i = 0; i < sp; i++)
 	mark_cell(stack[i]);
@@ -265,7 +266,7 @@ void gbc_mark(void)
 	mark_cell(shelter[i]);
 
     /* mark dynamic environment */
-    for (i = 1; i <= dp; i++)
+    for (i = 1; i <= dp[0]; i++)
 	mark_cell(dynamic[i][1]);
 
 
@@ -380,7 +381,7 @@ void *concurrent(void *arg)
     /* mark local environment */
     mark_cell(ep);
     /* mark dynamic environment */
-    mark_cell(dp);
+    mark_cell(dp[0]);
     /* mark stack */
     for (i = 0; i < sp; i++)
 	mark_cell(stack[i]);
@@ -405,7 +406,7 @@ void *concurrent(void *arg)
     for (i = 0; i < lp; i++)
 	mark_cell(shelter[i]);
     /* mark dynamic environment */
-    for (i = 1; i <= dp; i++)
+    for (i = 1; i <= dp[0]; i++)
 	mark_cell(dynamic[i][1]);
     /* mark generic_list */
     mark_cell(generic_list);

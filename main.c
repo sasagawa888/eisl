@@ -49,7 +49,7 @@
 
 /* pointer */
 int ep;				/* environment pointer */
-int dp;				/* dynamic pointer */
+int dp[PARASIZE];	/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
 int sp;				/* stack pointer */
 int fc;				/* free counter */

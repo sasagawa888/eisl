@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
     option_flag = true;
     TRY {
 	if (access("startup.lsp", R_OK) == 0)
-	    f_load(list1(make_str("startup.lsp")));
+	    f_load(list1(make_str("startup.lsp")),0);
 
 	while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
 	    char *str;
@@ -321,7 +321,7 @@ int main(int argc, char *argv[])
 	    switch (ch) {
 	    case 'l':
 		if (f_probe_file(list1(make_str(optarg))) == T) {
-		    f_load(list1(make_str(optarg)));
+		    f_load(list1(make_str(optarg)),0);
 		} else {
 		    puts("File doesn't exist.");
 		    exit(EXIT_FAILURE);
@@ -329,12 +329,12 @@ int main(int argc, char *argv[])
 		break;
 	    case 'c':
 		str = library_file("compiler.lsp");
-		f_load(list1(make_str(str)));
+		f_load(list1(make_str(str)),0);
 		FREE(str);
 		break;
 	    case 'f':
 		str = library_file("formatter.lsp");
-		f_load(list1(make_str(str)));
+		f_load(list1(make_str(str)),0);
 		FREE(str);
 		break;
 	    case 's':
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
 	gArgC = argc - optind;
 	gArgV = argv + optind;
 	if (script_flag) {
-	    f_load(list1(make_str(script_arg)));
+	    f_load(list1(make_str(script_arg)),0);
 	    exit(EXIT_SUCCESS);
 	}
     }

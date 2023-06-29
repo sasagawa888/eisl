@@ -101,7 +101,7 @@ int f_lambda(int arglist)
     return (make_func("", arglist));
 }
 
-int f_labels(int arglist)
+int f_labels(int arglist, int th)
 {
     int arg1, arg2, save, func, res, temp;
 
@@ -159,14 +159,14 @@ int f_labels(int arglist)
 	func = cdr(func);
     }
     while (arg2 != NIL) {
-	res = eval(car(arg2), 0);
+	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
     ep = save;
     return (res);
 }
 
-int f_flet(int arglist)
+int f_flet(int arglist, int th)
 {
     int arg1, arg2, save, ep1, res, temp;
 
@@ -220,7 +220,7 @@ int f_flet(int arglist)
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
-	res = eval(car(arg2), 0);
+	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
     ep = save;
@@ -272,7 +272,7 @@ int f_plet(int arglist)
 }
 
 
-int f_let(int arglist)
+int f_let(int arglist, int th)
 {
     int arg1, arg2, save, res, temp;
 
@@ -316,7 +316,7 @@ int f_let(int arglist)
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let", sym);
 	shelter_push(ep1);
-	val = eval(cadar(arg1), 0);
+	val = eval(cadar(arg1), th);
 	shelter_pop();
 	ep = ep1;
 	add_lex_env(sym, val);
@@ -324,7 +324,7 @@ int f_let(int arglist)
     }
     while (arg2 != NIL) {
 	shelter_push(arg2);
-	res = eval(car(arg2), 0);
+	res = eval(car(arg2), th);
 	shelter_pop();
 	arg2 = cdr(arg2);
     }
@@ -332,7 +332,7 @@ int f_let(int arglist)
     return (res);
 }
 
-int f_letstar(int arglist)
+int f_letstar(int arglist, int th)
 {
     int arg1, arg2, save, res, temp;
 
@@ -373,18 +373,18 @@ int f_letstar(int arglist)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let*", sym);
-	add_lex_env(sym, eval(cadar(arg1), 0));
+	add_lex_env(sym, eval(cadar(arg1), th));
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
-	res = eval(car(arg2), 0);
+	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
     ep = save;
     return (res);
 }
 
-int f_dynamic_let(int arglist)
+int f_dynamic_let(int arglist, int th)
 {
     int arg1, arg2, save, res, temp;
 
@@ -428,14 +428,14 @@ int f_dynamic_let(int arglist)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "dynamic-let", sym);
-	val = eval(cadar(arg1), 0);
+	val = eval(cadar(arg1), th);
 	dp = dp1;
 	shelter_pop();
 	add_dyn_env(sym, val);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
-	res = eval(car(arg2), 0);
+	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
     dp = save;
@@ -443,7 +443,7 @@ int f_dynamic_let(int arglist)
 }
 
 
-int f_setf(int arglist)
+int f_setf(int arglist, int th)
 {
     int arg1, arg2, newform, var = 0, res;
 
@@ -481,7 +481,7 @@ int f_setf(int arglist)
 	newform = cons(make_sym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
     } else if (listp(arg1) && macrop(car(arg1))) {
 	var = f_macroexpand_1(list1(arg1));
-	return (f_setf(list2(var, arg2)));
+	return (f_setf(list2(var, arg2),th));
     }
     /* (setf (slot-value instance slot-name) value) */
     else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
@@ -491,7 +491,7 @@ int f_setf(int arglist)
     else if (listp(arg1) && length(arg1) == 2) {
 	/* a method returns it's variable name */
 	if (functionp(car(arg1)) || genericp(car(arg1))) {
-	    var = eval(list2(car(arg1), NIL), 0);
+	    var = eval(list2(car(arg1), NIL), th);
 	} else
 	    error(IMPROPER_ARGS, "setf", arg1);
 
@@ -512,19 +512,19 @@ int f_setf(int arglist)
 	error(IMPROPER_ARGS, "setf", arglist);
 
     shelter_push(newform);
-    res = eval(newform, 0);
+    res = eval(newform, th);
     shelter_pop();
     return (res);
 }
 
 
 
-int f_set_dynamic(int arglist)
+int f_set_dynamic(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
-    arg2 = eval(cadr(arglist), 0);
+    arg2 = eval(cadr(arglist), th);
     if (nullp(arglist))
 	error(IMPROPER_ARGS, "set-dynamic", arglist);
     if (improper_list_p(arglist))
@@ -1115,7 +1115,7 @@ int find_return_from_p(int x)
 
 }
 
-int f_return_from(int arglist)
+int f_return_from(int arglist, int th)
 {
     int arg1, arg2, tag;
 
@@ -1140,7 +1140,7 @@ int f_return_from(int arglist)
 	block_data[block_pt][2] != unwind_nest && unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
-	apply(unwind_buf[unwind_pt], NIL, 0);
+	apply(unwind_buf[unwind_pt], NIL, th);
     }
 
 
@@ -1149,7 +1149,7 @@ int f_return_from(int arglist)
     longjmp(block_buf[block_pt], 1);
 }
 
-int f_catch(int arglist)
+int f_catch(int arglist, int th)
 {
     int arg1, arg2, i, tag, ret, res, save, unwind;
 
@@ -1164,7 +1164,7 @@ int f_catch(int arglist)
 	error(WRONG_ARGS, "catch", arglist);
     if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "catch", arglist);
-    tag = eval(arg1, 0);	/* tag symbol */
+    tag = eval(arg1, th);	/* tag symbol */
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "catch", tag);
 
@@ -1197,7 +1197,7 @@ int f_catch(int arglist)
 	if (unwind == 0 && unwind_pt > 0) {
 	    unwind_pt--;
 	    while (unwind_pt >= 0) {
-		apply(unwind_buf[unwind_pt], NIL, 0);
+		apply(unwind_buf[unwind_pt], NIL, th);
 		unwind_pt--;
 	    }
 	    unwind_pt = 0;
@@ -1220,7 +1220,7 @@ int f_catch(int arglist)
 }
 
 
-int f_throw(int arglist)
+int f_throw(int arglist, int th)
 {
     int arg1, arg2, tag, i;
 
@@ -1245,10 +1245,10 @@ int f_throw(int arglist)
 	catch_data[i][2] != unwind_nest && unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
-	apply(unwind_buf[unwind_pt], NIL, 0);
+	apply(unwind_buf[unwind_pt], NIL, th);
     }
 
-    catch_arg = eval(arg2, 0);
+    catch_arg = eval(arg2, th);
     ep = catch_data[i][1];	/* restore environment */
     longjmp(catch_buf[i], 1);
 }
@@ -1358,7 +1358,7 @@ int has_danger_p(int x)
 * Catch save unwind_nest to tag. 
 * Throw know current unwind_nest level and catch's unwind_nest level. 
 */
-int f_unwind_protect(int arglist)
+int f_unwind_protect(int arglist, int th)
 {
     int arg1, args, res, cleanup;
 
@@ -1380,11 +1380,11 @@ int f_unwind_protect(int arglist)
     unwind_buf[cleanup] = make_func("", cons(NIL, args));	/* make thunk */
     unwind_pt++;
     unwind_nest++;
-    res = eval(arg1, 0);
+    res = eval(arg1, th);
     unwind_nest--;
     unwind_pt--;
     if (unwind_pt == cleanup) {
-	apply(unwind_buf[unwind_pt], NIL, 0);
+	apply(unwind_buf[unwind_pt], NIL, th);
     } else {
 	/* if body has throw, body use cleanup and unwind_pt < cleanup */
 	unwind_pt = cleanup;
@@ -2407,7 +2407,7 @@ int f_import(int arglist)
     char *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
     char *fname = library_file(str);
     if (access(fname, R_OK) != -1) {
-	f_load(list1(make_str(fname)));
+	f_load(list1(make_str(fname)),0);
 	goto cleanup;
     }
 
@@ -2416,7 +2416,7 @@ int f_import(int arglist)
     FREE(fname);
     fname = library_file(str);
     if (access(fname, R_OK) != -1) {
-	f_load(list1(make_str(fname)));
+	f_load(list1(make_str(fname)),0);
 	goto cleanup;
     }
     FREE(str);

@@ -1555,7 +1555,7 @@ int f_assoc(int arglist)
 
 
 /* map function */
-int f_mapcar(int arglist)
+int f_mapcar(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -1564,11 +1564,11 @@ int f_mapcar(int arglist)
 
     if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
 	error(NOT_FUNC, "mapcar", arg1);
-    return (mapcar(arg1, arg2));
+    return (mapcar(arg1, arg2, th));
 }
 
 
-int mapcar(int x, int y)
+int mapcar(int x, int y, int th)
 {
     int ls, res, car, cdr;
 
@@ -1577,8 +1577,8 @@ int mapcar(int x, int y)
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
-	car = apply(x, each_car(y), 0);
-	cdr = mapcar(x, each_cdr(y));
+	car = apply(x, each_car(y), th);
+	cdr = mapcar(x, each_cdr(y), th);
 	res = cons(car, cdr);
     }
     shelter_pop();
@@ -1750,7 +1750,7 @@ int mapcan(int x, int y)
     return (res);
 }
 
-int f_map_into(int arglist)
+int f_map_into(int arglist, int th)
 {
     int arg1, arg2, arg3, arg4, val, i, res;
 
@@ -1776,7 +1776,7 @@ int f_map_into(int arglist)
     if (IS_FUNC(arg2) && GET_OPT(arg2) == 0)	/* when arg2 is thunk (lambda () ...) */
 	val = map_into_thunk(arg2, arg4);
     else
-	val = mapcar(arg2, arg4);
+	val = mapcar(arg2, arg4, th);
 
     res = arg1;
     if (listp(arg1)) {
@@ -2216,7 +2216,7 @@ int f_read_line(int arglist)
     return (res);
 }
 
-int f_load(int arglist)
+int f_load(int arglist, int th)
 {
     int arg1, save1, n;
     bool save2;
@@ -2282,7 +2282,7 @@ int f_load(int arglist)
 	    break;
 	top_flag = true;
 	restore_repl_flag(save2);
-	eval(sexp, 0);
+	eval(sexp, th);
 	save2 = save_repl_flag();
     }
   cleanup:
@@ -2416,7 +2416,7 @@ int f_stream_ready_p(int arglist)
 }
 
 /* evaluation function */
-int f_eval(int arglist)
+int f_eval(int arglist, int th)
 {
     int arg1, len;
 
@@ -2425,10 +2425,10 @@ int f_eval(int arglist)
     if (len != 1)
 	error(WRONG_ARGS, "eval", arglist);
 
-    return (eval(arg1, 0));
+    return (eval(arg1, th));
 }
 
-int f_apply(int arglist)
+int f_apply(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -2439,7 +2439,7 @@ int f_apply(int arglist)
     if (!listp(last(arg2)))
 	error(NOT_LIST, "apply", last(arg2));
 
-    return (apply(arg1, bind_args(arg2), 0));
+    return (apply(arg1, bind_args(arg2), th));
 }
 
 int bind_args(int x)
@@ -2452,7 +2452,7 @@ int bind_args(int x)
 	return (cons(car(x), bind_args(cdr(x))));
 }
 
-int f_funcall(int arglist)
+int f_funcall(int arglist, int th)
 {
     int arg1, arg2, res;
 
@@ -2460,7 +2460,7 @@ int f_funcall(int arglist)
     arg2 = cdr(arglist);
     if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
 	error(NOT_FUNC, "funcall", arg1);
-    res = apply(arg1, arg2, 0);
+    res = apply(arg1, arg2, th);
     return (res);
 }
 
@@ -4550,7 +4550,7 @@ int f_next_method_p(int arglist)
     return (NIL);
 }
 
-int f_call_next_method(int arglist)
+int f_call_next_method(int arglist, int th)
 {
     int varlist, body, res, pexist = 0, qexist = 0, caller, save1, save2;
 
@@ -4582,7 +4582,7 @@ int f_call_next_method(int arglist)
 		body = cdr(GET_CAR(car(next_method)));
 		bind_arg(varlist, generic_vars);
 		while (!nullp(body)) {
-		    res = eval(car(body), 0);
+		    res = eval(car(body), th);
 		    body = cdr(body);
 		}
 		unbind();
@@ -4615,7 +4615,7 @@ int f_call_next_method(int arglist)
 			has_multiple_call_next_method_p(body);
 		    bind_arg(varlist, generic_vars);
 		    while (!nullp(body)) {
-			res = eval(car(body), 0);
+			res = eval(car(body), th);
 			body = cdr(body);
 		    }
 		    multiple_call_next_method = save2;

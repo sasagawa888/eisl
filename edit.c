@@ -37,7 +37,7 @@ int f_edit(int arglist)
     FREE(str);
     if (res == -1)
 	error(SYSTEM_ERR, "edit", arg1);
-    f_load(arglist);
+    f_load(arglist,0);
     return (T);
 }
 

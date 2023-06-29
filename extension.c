@@ -312,7 +312,7 @@ int macroexpand_1(int macsym, int args)
     body = cdr(GET_CAR(macrofunc));
     bind_arg(varlist, args);
     while (!(IS_NIL(body))) {
-	res = eval(car(body));
+	res = eval(car(body), 0);
 	body = cdr(body);
     }
     unbind();
@@ -632,7 +632,7 @@ void debugger()
 		stepper_flag = 0;
 	    }
 	} else {
-	    print(eval(x));
+	    print(eval(x, 0));
 	    putchar('\n');
 	}
     }
@@ -1137,7 +1137,7 @@ int f_try(int arglist)
 
     if (arg1 == make_sym("NO-TIME-LIMIT")) {
 	ignore_flag = true;
-	TRY res = eval(arg2);
+	TRY res = eval(arg2, 0);
 	ELSE res = UNDEF;
 	END_TRY;
 	ignore_flag = false;
@@ -1150,7 +1150,7 @@ int f_try(int arglist)
 	try_res = NIL;
 	try_flag = true;
 	ignore_flag = true;
-	TRY res = eval(arg2);
+	TRY res = eval(arg2, 0);
 	ELSE res = UNDEF;
 	END_TRY;
 	ignore_flag = false;

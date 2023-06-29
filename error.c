@@ -649,7 +649,7 @@ int signal_condition(int x, int y)
 	ret = setjmp(cont_buf);
 
 	if (ret == 0) {
-	    return (apply(handler, list1(x)));
+	    return (apply(handler, list1(x), 0));
 	} else if (ret == 1) {
 	    return (cont_arg);
 	}
@@ -658,7 +658,7 @@ int signal_condition(int x, int y)
     if (unwind_pt > 0) {
 	unwind_pt--;
 	while (unwind_pt >= 0) {
-	    apply(unwind_buf[unwind_pt], NIL);
+	    apply(unwind_buf[unwind_pt], NIL, 0);
 	    unwind_pt--;
 	}
 	unwind_pt = 0;

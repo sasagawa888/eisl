@@ -829,7 +829,7 @@ int member1(int x, int y, int z)
 {
     if (nullp(y))
 	return (NIL);
-    else if (apply(z, list2(x, car(y))) != NIL)
+    else if (apply(z, list2(x, car(y)), 0) != NIL)
 	return (y);
     else
 	return (member1(x, cdr(y), z));

@@ -61,7 +61,7 @@ int gbc(void)
 
 #elif GC == 1
     int addr;
- 
+
     DBG_PRINTF("enter parallel M&S-GC free=%d\n", fc);
     gbc_mark();
     gbc_sweep_thread();

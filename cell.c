@@ -624,7 +624,7 @@ int make_generic(char *pname, int lamlist, int body)
 		  && eqp(car(cadar(body)), make_sym("CLASS")))) {
 		error(ILLEGAL_FORM, "defgeneric", body);
 	    }
-	    SET_AUX(val, eval(cadar(body)));
+	    SET_AUX(val, eval(cadar(body), 0));
 	} else {
 	    error(ILLEGAL_FORM, "defgeneric", body);
 	}

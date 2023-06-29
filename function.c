@@ -244,7 +244,8 @@ void init_generic(void)
 				 NIL))),
 		    list3(make_sym("INITIALIZE-OBJECT"), make_sym("obj"),
 			  make_sym("y")), make_sym("obj")));
-    eval(list4(make_sym("DEFGENERIC"), make_sym("CREATE"), lamlis, body));
+    eval(list4(make_sym("DEFGENERIC"), make_sym("CREATE"), lamlis, body),
+	 0);
     /*
      * (defgeneric create(x :rest y) (:method (x :rest y) (let ((obj (create* x
      * '()))) (initialize-object obj y) obj)))
@@ -257,7 +258,7 @@ void init_generic(void)
 		       make_sym("y")));
     eval(list4
 	 (make_sym("DEFGENERIC*"), make_sym("INITIALIZE-OBJECT"), lamlis,
-	  body));
+	  body), 0);
     /*
      * (defgeneric* initialize-object(x y) (:method (x y)
      * (initialize-object* x y))) 
@@ -267,7 +268,7 @@ void init_generic(void)
     body = NIL;
     eval(list4
 	 (make_sym("DEFGENERIC*"), make_sym("REPORT-CONDITION"), lamlis,
-	  body));
+	  body), 0);
     /*
      * (defgeneric report-condition (x y)) 
      */
@@ -1576,7 +1577,7 @@ int mapcar(int x, int y)
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
-	car = apply(x, each_car(y));
+	car = apply(x, each_car(y), 0);
 	cdr = mapcar(x, each_cdr(y));
 	res = cons(car, cdr);
     }
@@ -1624,7 +1625,7 @@ int mapc(int x, int y)
     shelter_push(y);
     while (!member(NIL, ls)) {
 	shelter_push(ls);
-	apply(x, each_car(ls));
+	apply(x, each_car(ls), 0);
 	shelter_pop();
 	ls = each_cdr(ls);
     }
@@ -1651,7 +1652,7 @@ int maplist(int x, int y)
     if (member(NIL, y))
 	return (NIL);
     else
-	return (cons(apply(x, y), maplist(x, maplist1(y))));
+	return (cons(apply(x, y, 0), maplist(x, maplist1(y))));
 }
 
 int maplist1(int y)
@@ -1687,7 +1688,7 @@ int mapl(int x, int y)
 
     res = y;
     while (!member(NIL, y)) {
-	apply(x, y);
+	apply(x, y, 0);
 	y = maplist1(y);
     }
     return (car(res));
@@ -1713,10 +1714,10 @@ int mapcon(int x, int y)
 
     if (member(NIL, y))
 	return (NIL);
-    res = apply(x, y);
+    res = apply(x, y, 0);
     y = maplist1(y);
     while (!member(NIL, y)) {
-	res = nconc(res, apply(x, y));
+	res = nconc(res, apply(x, y, 0));
 	y = maplist1(y);
     }
     return (res);
@@ -1740,10 +1741,10 @@ int mapcan(int x, int y)
 
     if (member(NIL, y))
 	return (NIL);
-    res = apply(x, each_car(y));
+    res = apply(x, each_car(y), 0);
     y = each_cdr(y);
     while (!member(NIL, y)) {
-	res = nconc(res, apply(x, each_car(y)));
+	res = nconc(res, apply(x, each_car(y), 0));
 	y = each_cdr(y);
     }
     return (res);
@@ -1818,7 +1819,7 @@ int map_into_thunk(int x, int y)
     if (nullp(y))
 	return (NIL);
     else {
-	temp = apply(x, NIL);
+	temp = apply(x, NIL, 0);
 	return (cons(temp, map_into_thunk(x, cdr(y))));
     }
 }
@@ -2281,7 +2282,7 @@ int f_load(int arglist)
 	    break;
 	top_flag = true;
 	restore_repl_flag(save2);
-	eval(sexp);
+	eval(sexp, 0);
 	save2 = save_repl_flag();
     }
   cleanup:
@@ -2424,7 +2425,7 @@ int f_eval(int arglist)
     if (len != 1)
 	error(WRONG_ARGS, "eval", arglist);
 
-    return (eval(arg1));
+    return (eval(arg1, 0));
 }
 
 int f_apply(int arglist)
@@ -2438,7 +2439,7 @@ int f_apply(int arglist)
     if (!listp(last(arg2)))
 	error(NOT_LIST, "apply", last(arg2));
 
-    return (apply(arg1, bind_args(arg2)));
+    return (apply(arg1, bind_args(arg2), 0));
 }
 
 int bind_args(int x)
@@ -2459,7 +2460,7 @@ int f_funcall(int arglist)
     arg2 = cdr(arglist);
     if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
 	error(NOT_FUNC, "funcall", arg1);
-    res = apply(arg1, arg2);
+    res = apply(arg1, arg2, 0);
     return (res);
 }
 
@@ -4581,7 +4582,7 @@ int f_call_next_method(int arglist)
 		body = cdr(GET_CAR(car(next_method)));
 		bind_arg(varlist, generic_vars);
 		while (!nullp(body)) {
-		    res = eval(car(body));
+		    res = eval(car(body), 0);
 		    body = cdr(body);
 		}
 		unbind();
@@ -4614,7 +4615,7 @@ int f_call_next_method(int arglist)
 			has_multiple_call_next_method_p(body);
 		    bind_arg(varlist, generic_vars);
 		    while (!nullp(body)) {
-			res = eval(car(body));
+			res = eval(car(body), 0);
 			body = cdr(body);
 		    }
 		    multiple_call_next_method = save2;

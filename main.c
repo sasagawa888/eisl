@@ -380,7 +380,7 @@ int main(int argc, char *argv[])
 	TRY while (1) {
 	    init_pointer();
 	    fputs("> ", stdout);
-	    print(eval(sread()));
+	    print(eval(sread(), 0));
 	    putchar('\n');
 	    if (redef_flag)
 		redef_generic();
@@ -1642,7 +1642,7 @@ static void clean_stdin(void)
 }
 
 /* --------eval--------------- */
-int eval(int addr)
+int eval(int addr, int th)
 {
     int val, res, temp;
     char c;
@@ -1698,43 +1698,43 @@ int eval(int addr)
 		   && (HAS_NAME(car(addr), "QUASI-QUOTE"))) {
 	    temp = quasi_transfer(cadr(addr), 0);
 	    shelter_push(temp);
-	    res = eval(temp);
+	    res = eval(temp, th);
 	    shelter_pop();
 	    return (res);
 	} else if (subrp(car(addr))) {
 	    st = getETime();
-	    res = apply(caar(addr), evlis(cdr(addr)));
+	    res = apply(caar(addr), evlis(cdr(addr), th), th);
 	    en = getETime();
 	    if (prof_sw == 1)
 		profiler(car(addr), en - st);
 	    return (res);
 	} else if (fsubrp(car(addr))) {
-	    return (apply(caar(addr), cdr(addr)));
+	    return (apply(caar(addr), cdr(addr), th));
 	    en = getETime();
 	} else if ((val = functionp(car(addr)))) {
 	    if (GET_CDR(car(addr)) != NIL)
 		error(UNDEF_FUN, "eval", addr);
-	    temp = evlis(cdr(addr));
+	    temp = evlis(cdr(addr), th);
 	    examin_sym = car(addr);
 	    st = getETime();
-	    res = apply(val, temp);
+	    res = apply(val, temp, th);
 	    en = getETime();
 	    if (prof_sw == 2)
 		profiler(car(addr), en - st);
 	    return (res);
 	} else if (macrop(car(addr))) {
 	    examin_sym = car(addr);
-	    return (apply(caar(addr), cdr(addr)));
+	    return (apply(caar(addr), cdr(addr), th));
 	} else if (genericp(car(addr))) {
 	    examin_sym = car(addr);
 	    st = getETime();
-	    res = apply(caar(addr), evlis(cdr(addr)));
+	    res = apply(caar(addr), evlis(cdr(addr), th), th);
 	    en = getETime();
 	    if (prof_sw == 2)
 		profiler(car(addr), en - st);
 	    return (res);
 	} else if (listp(car(addr)))
-	    return (apply(eval(car(addr)), evlis(cdr(addr))));
+	    return (apply(eval(car(addr), th), evlis(cdr(addr), th), th));
 	else
 	    error(UNDEF_FUN, "eval", car(addr));
 
@@ -1744,7 +1744,7 @@ int eval(int addr)
 }
 
 DEF_GETTER(char, TR, trace, NIL)
-int apply(int func, int args)
+int apply(int func, int args, int th)
 {
     int varlist, body, res, i, n, pexist, qexist, trace;
     REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR
@@ -1806,7 +1806,7 @@ int apply(int func, int args)
 	body = cdr(GET_CAR(func));
 	bind_arg(varlist, args);
 	while (!(IS_NIL(body))) {
-	    res = eval(car(body));
+	    res = eval(car(body), th);
 	    body = cdr(body);
 	}
 	unbind();
@@ -1846,13 +1846,13 @@ int apply(int func, int args)
 	    bind_arg(varlist, args);
 	    while (!(IS_NIL(body))) {
 		shelter_push(body);
-		res = eval(car(body));
+		res = eval(car(body), th);
 		shelter_pop();
 		body = cdr(body);
 	    }
 	    unbind();
 	    shelter_push(res);
-	    res = eval(res);
+	    res = eval(res, th);
 	    shelter_pop();
 	    return (res);
 	}
@@ -1912,7 +1912,7 @@ int apply(int func, int args)
 			    has_multiple_call_next_method_p(body);
 			bind_arg(varlist, args);
 			while (!nullp(body)) {
-			    res = eval(car(body));
+			    res = eval(car(body), th);
 			    body = cdr(body);
 			}
 			unbind();
@@ -1969,7 +1969,7 @@ void unbind(void)
 }
 
 
-int evlis(int addr)
+int evlis(int addr, int th)
 {
     arg_push(addr);
     top_flag = false;
@@ -1979,9 +1979,9 @@ int evlis(int addr)
     } else {
 	int car_addr, cdr_addr;
 
-	car_addr = eval(car(addr));
+	car_addr = eval(car(addr), th);
 	arg_push(car_addr);
-	cdr_addr = evlis(cdr(addr));
+	cdr_addr = evlis(cdr(addr), th);
 	car_addr = arg_pop();
 	(void) arg_pop();
 	return (cons(car_addr, cdr_addr));

@@ -12,6 +12,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "eisl.h"
 #include "compat/nana_stubs.h"
 #include "fmt.h"
@@ -79,6 +80,7 @@ void init_syntax(void)
     def_fsubr("TRACE", f_trace);
     def_fsubr("UNTRACE", f_untrace);
     def_fsubr("DEFMODULE", f_defmodule);
+	def_fsubr("PLET", f_plet);
 }
 
 // --FSUBR-----------
@@ -224,6 +226,50 @@ int f_flet(int arglist)
     ep = save;
     return (res);
 }
+
+struct para {
+    int in;
+	int	th;
+    int out;
+};
+
+
+void *plet(void *arg);
+void *plet(void *arg)
+{
+
+	struct para *pd = (struct para *) arg;
+
+    pd->out = eval(pd->in,pd->th);
+    return NULL;
+}
+
+int f_plet(int arglist)
+{
+	int arg1,arg2;
+
+	arg1 = caar(arglist);
+	arg2 = cadar(arglist);
+	
+	pthread_t t[2];
+    struct para d[2];
+
+    d[0].in = cadr(arg1);
+	d[0].th = 1;
+    pthread_create(&t[0], NULL, plet, &d[0]);
+
+	d[1].in = cadr(arg2);
+	d[1].th = 2;
+    pthread_create(&t[0], NULL, plet, &d[1]);
+
+	pthread_join(t[0], NULL);
+    pthread_join(t[1], NULL);
+
+	print(d[0].out);
+	print(d[1].out);
+	return(T);
+}
+
 
 int f_let(int arglist)
 {

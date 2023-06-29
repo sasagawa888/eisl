@@ -4,7 +4,7 @@
 
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
 
-// special form token
+// special form token. use in Edlis indentation
 static const char *special[] = {
     "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
     "let", "let*", "case", "while", "progn", "defmodule",
@@ -23,7 +23,7 @@ static const char *syntax[] = {
     "with-standard-output", "with-error-output", "with-handler",
     "convert", "with-open-input-file", "with-open-output-file",
     "with-open-io-file", "the", "assure", "time", "trace", "untrace",
-    "defmodule", "defpublic", "modulesubst",
+    "defmodule", "defpublic", "modulesubst", "plet",
 };
 
 // builtin token

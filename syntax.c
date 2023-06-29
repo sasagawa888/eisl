@@ -246,11 +246,12 @@ void *plet(void *arg)
 
 int f_plet(int arglist)
 {
-	int arg1,arg2;
+	int arg1,arg2,body;
 
 	arg1 = caar(arglist);
 	arg2 = cadar(arglist);
-	
+	body = cdr(arglist);
+
 	pthread_t t[2];
     struct para d[2];
 
@@ -260,14 +261,14 @@ int f_plet(int arglist)
 
 	d[1].in = cadr(arg2);
 	d[1].th = 2;
-    pthread_create(&t[0], NULL, plet, &d[1]);
+    pthread_create(&t[1], NULL, plet, &d[1]);
 
 	pthread_join(t[0], NULL);
     pthread_join(t[1], NULL);
 
-	print(d[0].out);
-	print(d[1].out);
-	return(T);
+	add_lex_env(car(arg1),d[0].out);
+	add_lex_env(car(arg2),d[1].out);
+	return(f_progn(body));
 }
 
 

@@ -310,7 +310,7 @@ int macroexpand_1(int macsym, int args)
 	    error(WRONG_ARGS, "macroexpand-1", args);
     }
     body = cdr(GET_CAR(macrofunc));
-    bind_arg(varlist, args);
+    bind_arg(varlist, args, 0);
     while (!(IS_NIL(body))) {
 	res = eval(car(body), 0);
 	body = cdr(body);

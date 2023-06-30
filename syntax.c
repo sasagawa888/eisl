@@ -148,9 +148,9 @@ int f_labels(int arglist, int th)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "labels", sym);
-	add_lex_env(sym, NIL);
+	add_lex_env(sym, NIL, th);
 	val = make_func("", cdar(arg1));
-	set_lex_env(sym, val);
+	set_lex_env(sym, val, th);
 	func = cons(val, func);
 	arg1 = cdr(arg1);
     }
@@ -215,7 +215,7 @@ int f_flet(int arglist, int th)
 	ep[th] = save;
 	val = make_func("", cdar(arg1));
 	ep[th] = ep1;
-	add_lex_env(sym, val);
+	add_lex_env(sym, val, th);
 	ep1 = ep[th];
 	arg1 = cdr(arg1);
     }
@@ -266,8 +266,8 @@ int f_plet(int arglist)
 	pthread_join(t[0], NULL);
     pthread_join(t[1], NULL);
 
-	add_lex_env(car(arg1),d[0].out);
-	add_lex_env(car(arg2),d[1].out);
+	add_lex_env(car(arg1),d[0].out, 0);
+	add_lex_env(car(arg2),d[1].out, 0);
 	return(f_progn(body));
 }
 
@@ -319,7 +319,7 @@ int f_let(int arglist, int th)
 	val = eval(cadar(arg1), th);
 	shelter_pop();
 	ep[th] = ep1;
-	add_lex_env(sym, val);
+	add_lex_env(sym, val, th);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
@@ -373,7 +373,7 @@ int f_letstar(int arglist, int th)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let*", sym);
-	add_lex_env(sym, eval(cadar(arg1), th));
+	add_lex_env(sym, eval(cadar(arg1), th), th);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
@@ -546,7 +546,7 @@ int f_set_dynamic(int arglist, int th)
 }
 
 
-int f_setq(int arglist)
+int f_setq(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -563,7 +563,7 @@ int f_setq(int arglist)
 
     arg2 = eval(arg2, 0);
     if (find_env(arg1) != FAILSE)
-	set_lex_env(arg1, arg2);
+	set_lex_env(arg1, arg2, th);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, arg2);
     else
@@ -1011,7 +1011,7 @@ int f_for(int arglist, int th)
     iter = arg1;
     /* initilize local variable */
     while (iter != NIL) {
-	add_lex_env(caar(iter), eval(cadar(iter), th));
+	add_lex_env(caar(iter), eval(cadar(iter), th), th);
 	iter = cdr(iter);
     }
     /* check condition of end */
@@ -1036,7 +1036,7 @@ int f_for(int arglist, int th)
 	    iter = cdr(iter);
 	}
 	while (temp != NIL) {
-	    set_lex_env(caar(temp), cdar(temp));
+	    set_lex_env(caar(temp), cdar(temp), th);
 	    temp = cdr(temp);
 	}
     }
@@ -1962,7 +1962,7 @@ int f_ignore_errors(int arglist)
     return res;
 }
 
-int f_with_open_input_file(int arglist)
+int f_with_open_input_file(int arglist, int th)
 {
     int arg1, arg2, sym, str, n, val, ep1, res;
     FILE *port;
@@ -1993,15 +1993,15 @@ int f_with_open_input_file(int arglist)
 	val = make_stm(port, EISL_INPUT, Str_dup(fname, 1, 0, 1));
     else
 	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
-    ep1 = ep[0];
-    add_lex_env(sym, val);
+    ep1 = ep[th];
+    add_lex_env(sym, val, th);
     res = f_progn(arg2);
     fclose(port);
-    ep[0] = ep1;
+    ep[th] = ep1;
     return (res);
 }
 
-int f_with_open_output_file(int arglist)
+int f_with_open_output_file(int arglist, int th)
 {
     int arg1, arg2, sym, str, n, val, ep1, res;
     FILE *port;
@@ -2032,15 +2032,15 @@ int f_with_open_output_file(int arglist)
 	val = make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1));
     else
 	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
-    ep1 = ep[0];
-    add_lex_env(sym, val);
+    ep1 = ep[th];
+    add_lex_env(sym, val, th);
     res = f_progn(arg2);
     fclose(port);
-    ep[0] = ep1;
+    ep[th] = ep1;
     return (res);
 }
 
-int f_with_open_io_file(int arglist)
+int f_with_open_io_file(int arglist, int th)
 {
     int arg1, arg2, sym, str, n, val, ep1, res;
     FILE *port;
@@ -2071,11 +2071,11 @@ int f_with_open_io_file(int arglist)
 	val = make_stm(port, EISL_INOUT, Str_dup(fname, 1, 0, 1));
     else
 	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
-    ep1 = ep[0];
-    add_lex_env(sym, val);
+    ep1 = ep[th];
+    add_lex_env(sym, val, th);
     res = f_progn(arg2);
     fclose(port);
-    ep[0] = ep1;
+    ep[th] = ep1;
     return (res);
 }
 

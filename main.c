@@ -1804,7 +1804,7 @@ int apply(int func, int args, int th)
 		error(WRONG_ARGS, GET_NAME(func), args);
 	}
 	body = cdr(GET_CAR(func));
-	bind_arg(varlist, args);
+	bind_arg(varlist, args, th);
 	while (!(IS_NIL(body))) {
 	    res = eval(car(body), th);
 	    body = cdr(body);
@@ -1843,7 +1843,7 @@ int apply(int func, int args, int th)
 		    error(WRONG_ARGS, GET_NAME(func), args);
 	    }
 	    body = cdr(GET_CAR(macrofunc));
-	    bind_arg(varlist, args);
+	    bind_arg(varlist, args, th);
 	    while (!(IS_NIL(body))) {
 		shelter_push(body);
 		res = eval(car(body), th);
@@ -1910,7 +1910,7 @@ int apply(int func, int args, int th)
 			body = cdr(GET_CAR(car(next_method)));
 			multiple_call_next_method =
 			    has_multiple_call_next_method_p(body);
-			bind_arg(varlist, args);
+			bind_arg(varlist, args, th);
 			while (!nullp(body)) {
 			    res = eval(car(body), th);
 			    body = cdr(body);
@@ -1939,7 +1939,7 @@ int apply(int func, int args, int th)
     return (0);
 }
 
-void bind_arg(int varlist, int arglist)
+void bind_arg(int varlist, int arglist, int th)
 {
     int arg1, arg2;
 
@@ -1950,12 +1950,12 @@ void bind_arg(int varlist, int arglist)
 				     || car(varlist) == make_sym("&REST"))) {
 	    arg1 = cadr(varlist);
 	    arg2 = arglist;
-	    add_lex_env(arg1, arg2);
+	    add_lex_env(arg1, arg2, th);
 	    return;
 	} else {
 	    arg1 = car(varlist);
 	    arg2 = car(arglist);
-	    add_lex_env(arg1, arg2);
+	    add_lex_env(arg1, arg2, th);
 	    varlist = cdr(varlist);
 	    arglist = cdr(arglist);
 	}

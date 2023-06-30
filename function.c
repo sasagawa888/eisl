@@ -1807,7 +1807,7 @@ int f_map_into(int arglist, int th)
 	}
     }
     if (find_env(arg1) != FAILSE)
-	set_lex_env(arg1, res);
+	set_lex_env(arg1, res, th);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, res);
     return (arg1);
@@ -4580,7 +4580,7 @@ int f_call_next_method(int arglist, int th)
 	    if (adaptp(varlist, generic_vars)) {
 		varlist = genlamlis_to_lamlis(varlist);
 		body = cdr(GET_CAR(car(next_method)));
-		bind_arg(varlist, generic_vars);
+		bind_arg(varlist, generic_vars, th);
 		while (!nullp(body)) {
 		    res = eval(car(body), th);
 		    body = cdr(body);
@@ -4613,7 +4613,7 @@ int f_call_next_method(int arglist, int th)
 		    save2 = multiple_call_next_method;
 		    multiple_call_next_method =
 			has_multiple_call_next_method_p(body);
-		    bind_arg(varlist, generic_vars);
+		    bind_arg(varlist, generic_vars, th);
 		    while (!nullp(body)) {
 			res = eval(car(body), th);
 			body = cdr(body);

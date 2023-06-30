@@ -138,6 +138,7 @@ void dynamic_link(int x)
     {
         set_dyn_env(x, y, 0);
     }
+
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);

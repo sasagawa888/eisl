@@ -283,13 +283,13 @@ int freshcell(void)
 
 
 /* set value to environment by destructive by deep-bind */
-void set_lex_env(int sym, int val)
+void set_lex_env(int sym, int val, int th)
 {
     int addr;
 
-    addr = assq(sym, ep[0]);
+    addr = assq(sym, ep[th]);
     if (addr == FAILSE)
-	add_lex_env(sym, val);
+	add_lex_env(sym, val, th);
     else
 	SET_CDR(addr, val);
 }
@@ -316,9 +316,9 @@ void set_dyn_env(int sym, int val, int th)
 
 
 /* additinal of lexical variable */
-void add_lex_env(int sym, int val)
+void add_lex_env(int sym, int val, int th)
 {
-    ep[0] = cons(cons(sym, val), ep[0]);
+    ep[th] = cons(cons(sym, val), ep[th]);
 }
 
 

@@ -1806,7 +1806,7 @@ int f_map_into(int arglist, int th)
 	    val = cdr(val);
 	}
     }
-    if (find_env(arg1) != FAILSE)
+    if (find_env(arg1, th) != FAILSE)
 	set_lex_env(arg1, res, th);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, res);

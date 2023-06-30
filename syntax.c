@@ -562,7 +562,7 @@ int f_setq(int arglist, int th)
 	error(IMPROPER_ARGS, "setq", arglist);
 
     arg2 = eval(arg2, 0);
-    if (find_env(arg1) != FAILSE)
+    if (find_env(arg1,th) != FAILSE)
 	set_lex_env(arg1, arg2, th);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, arg2);
@@ -761,7 +761,7 @@ int f_or(int arglist)
     return (UNDEF);
 }
 
-int f_function(int arglist)
+int f_function(int arglist, int th)
 {
     int arg1;
 
@@ -774,7 +774,7 @@ int f_function(int arglist)
     if (symbolp(arg1)) {
 	int res;
 
-	res = find_env(arg1);
+	res = find_env(arg1, th);
 	if (IS_FUNC(res))
 	    return (res);
 	else if (IS_FSUBR(GET_CAR(arg1)))
@@ -786,7 +786,7 @@ int f_function(int arglist)
 	else
 	    error(UNDEF_FUN, "function", arg1);
     } else if (listp(arg1) && eqp(car(arg1), make_sym("lambda")))
-	return (eval(arg1, 0));
+	return (eval(arg1, th));
     else
 	error(NOT_FUNC, "function", arg1);
     return (UNDEF);
@@ -796,7 +796,7 @@ int f_function(int arglist)
  * function* diffrence of function is that return nil
  * defclass uses this function*
  */
-int f_function_star(int arglist)
+int f_function_star(int arglist, int th)
 {
     int arg1;
 
@@ -809,7 +809,7 @@ int f_function_star(int arglist)
     if (symbolp(arg1)) {
 	int res;
 
-	res = find_env(arg1);
+	res = find_env(arg1, th);
 	if (IS_FUNC(res))
 	    return (res);
 	else if (GET_CAR(arg1) != NIL)
@@ -817,13 +817,13 @@ int f_function_star(int arglist)
 	else
 	    return (NIL);
     } else if (listp(arg1) && eqp(car(arg1), make_sym("lambda")))
-	return (eval(arg1, 0));
+	return (eval(arg1, th));
     else
 	return (NIL);
     return (UNDEF);
 }
 
-int f_symbol_function(int arglist)
+int f_symbol_function(int arglist, int th)
 {
     int arg1;
 
@@ -834,14 +834,14 @@ int f_symbol_function(int arglist)
     if (symbolp(arg1)) {
 	int sym, res;
 
-	sym = find_env(arg1);
+	sym = find_env(arg1, th);
 	if (sym == FAILSE && GET_CDR(arg1) != NIL)
 	    sym = GET_CDR(arg1);
 
 	if (!symbolp(sym))
 	    error(UNDEF_FUN, "symbol-function", arg1);
 
-	res = find_env(sym);
+	res = find_env(sym, th);
 	if (IS_FUNC(res))
 	    return (res);
 	else if (GET_CAR(sym) != NIL)
@@ -870,7 +870,7 @@ int f_class(int arglist)
     return (GET_AUX(arg1));
 }
 
-int f_symbol_class(int arglist)
+int f_symbol_class(int arglist, int th)
 {
     int arg1;
 
@@ -881,7 +881,7 @@ int f_symbol_class(int arglist)
     if (symbolp(arg1)) {
 	int sym;
 
-	sym = find_env(arg1);
+	sym = find_env(arg1, th);
 	if (sym == FAILSE && GET_CDR(arg1) != NIL)
 	    sym = GET_CDR(arg1);
 

@@ -214,7 +214,7 @@ int functionp(int addr)
     val = find_dyn(addr);
     if ((val != -1) && IS_FUNC(val))
 	return (val);
-    val = find_env(addr);
+    val = find_env(addr,0);
     if ((val != FAILSE) && IS_FUNC(val))
 	return (val);
     val = GET_CAR(addr);

@@ -1663,7 +1663,7 @@ int eval(int addr, int th)
     else if (charp(addr))
 	return (addr);
     else if (symbolp(addr)) {
-	res = find_env(addr);
+	res = find_env(addr, th);
 	if (res != FAILSE)
 	    return (res);
 	else {

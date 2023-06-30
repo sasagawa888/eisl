@@ -340,11 +340,11 @@ void add_dyn_env(int sym, int val)
  * find value with assq
  * when not find return FAILSE
  */
-int find_env(int sym)
+int find_env(int sym, int th)
 {
     int addr;
 
-    addr = assq(sym, ep[0]);
+    addr = assq(sym, ep[th]);
 
     if (addr == FAILSE)
 	return (FAILSE);

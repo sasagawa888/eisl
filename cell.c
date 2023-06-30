@@ -358,9 +358,9 @@ int find_dyn(int sym, int th)
 {
     int i;
 
-    for (i = dp[0] - 1; i >= 0; i--) {
-	if (dynamic[i][0][0] == sym)
-	    return (dynamic[i][1][0]);
+    for (i = dp[th] - 1; i >= 0; i--) {
+	if (dynamic[i][0][th] == sym)
+	    return (dynamic[i][1][th]);
     }
     return (FAILSE);
 }

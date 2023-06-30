@@ -842,7 +842,7 @@ int f_div(int arglist);
 int f_domain_error_expected_class(int arglist);
 int f_domain_error_object(int arglist);
 int f_dummyp(int arglist);
-int f_dynamic(int arglist);
+int f_dynamic(int arglist, int th);
 int f_dynamic_let(int arglist, int th);
 int f_eisl_test(int arglist);
 int f_elt(int arglist);

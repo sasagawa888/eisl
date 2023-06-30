@@ -712,7 +712,7 @@ int f_defdynamic(int arglist, int th)
     return (arg1);
 }
 
-int f_dynamic(int arglist)
+int f_dynamic(int arglist, int th)
 {
     int arg1, res;
 
@@ -724,7 +724,7 @@ int f_dynamic(int arglist)
     if (!symbolp(arg1))
 	error(NOT_SYM, "dynamic", arg1);
 
-    res = find_dyn(arg1,0);
+    res = find_dyn(arg1,th);
     if (res == FAILSE)
 	error(UNDEF_DYN, "dynamic", arg1);
 

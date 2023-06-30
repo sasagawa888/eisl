@@ -91,6 +91,11 @@ void dynamic_link(int x)
     init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
 
     /* argument-1 type */
+    int find_dyn1(int x)
+    {
+        return(find_dyn(x,0));
+    }
+
     init_f1(CAR_IDX, car);
     init_f1(CDR_IDX, cdr);
     init_f1(CADR_IDX, cadr);
@@ -115,7 +120,7 @@ void dynamic_link(int x)
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
     init_f1(FINDENV_IDX, find_env);
-    init_f1(FINDDYN_IDX, find_dyn);
+    init_f1(FINDDYN_IDX, find_dyn1);
     init_f1(ARGPUSH_IDX, arg_push);
     init_f1(SHELTERPUSH_IDX, shelter_push);
     init_f1(PUSH_IDX, push);
@@ -146,7 +151,7 @@ void dynamic_link(int x)
     {
         set_dynamic(x,y,0);
     }
-
+    
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);

@@ -211,7 +211,7 @@ int functionp(int addr)
 {
     int val;
 
-    val = find_dyn(addr);
+    val = find_dyn(addr,0);
     if ((val != -1) && IS_FUNC(val))
 	return (val);
     val = find_env(addr,0);

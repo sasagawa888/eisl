@@ -1030,7 +1030,7 @@ int f_with_standard_output(int arglist);
 int f_write_byte(int arglist);
 int f_line_argument(int arglist);
 int find_return_from_p(int x);
-int find_dyn(int sym);
+int find_dyn(int sym, int th);
 int find_env(int sym, int th);
 int flatten(int n, int ls);
 int floatp(int x);

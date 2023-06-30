@@ -354,7 +354,7 @@ int find_env(int sym, int th)
 
 
 /* find in dynamic environment */
-int find_dyn(int sym)
+int find_dyn(int sym, int th)
 {
     int i;
 

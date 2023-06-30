@@ -247,7 +247,7 @@ extern int stack[STACKSIZE];
 extern int argstk[STACKSIZE];
 extern int cell_hash_table[HASHTBSIZE];
 extern int shelter[STACKSIZE];
-extern int dynamic[DYNSIZE][2];
+extern int dynamic[DYNSIZE][2][PARASIZE];
 extern int bigcell[BIGSIZE];
 
 /* bignum pointer, NTT(FFT) input_vector */

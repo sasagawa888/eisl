@@ -132,7 +132,7 @@ int stack[STACKSIZE];
 int argstk[STACKSIZE];
 int cell_hash_table[HASHTBSIZE];
 int shelter[STACKSIZE];
-int dynamic[DYNSIZE][2];
+int dynamic[DYNSIZE][2][PARASIZE];
 int bigcell[BIGSIZE];
 
 /* object oriented */

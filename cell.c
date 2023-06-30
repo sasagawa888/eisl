@@ -301,13 +301,13 @@ void set_dyn_env(int sym, int val, int th)
     int i;
 
     for (i = dp[th] - 1; i >= 0; i--) {
-	if (dynamic[i][0] == sym) {
-	    dynamic[i][1] = val;
+	if (dynamic[i][0][th] == sym) {
+	    dynamic[i][1][th] = val;
 	    return;
 	}
     }
-    dynamic[dp[th]][0] = sym;
-    dynamic[dp[th]][1] = val;
+    dynamic[dp[th]][0][th] = sym;
+    dynamic[dp[th]][1][th] = val;
     dp[th]++;
     if (dp[th] >= DYNSIZE)
 	error(VARIABLE_OVERF, "set_dyn_env", NIL);
@@ -325,9 +325,9 @@ void add_lex_env(int sym, int val, int th)
 /* addition of dynamic variable */
 void add_dyn_env(int sym, int val, int th)
 {
-    dynamic[dp[th]][0] = sym;
-    dynamic[dp[th]][1] = val;
-    dp[0]++;
+    dynamic[dp[th]][0][th] = sym;
+    dynamic[dp[th]][1][th] = val;
+    dp[th]++;
     if (dp[th] >= DYNSIZE)
 	error(VARIABLE_OVERF, "add_dyn_env", NIL);
     return;
@@ -359,8 +359,8 @@ int find_dyn(int sym)
     int i;
 
     for (i = dp[0] - 1; i >= 0; i--) {
-	if (dynamic[i][0] == sym)
-	    return (dynamic[i][1]);
+	if (dynamic[i][0][0] == sym)
+	    return (dynamic[i][1][0]);
     }
     return (FAILSE);
 }

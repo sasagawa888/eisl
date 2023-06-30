@@ -155,7 +155,7 @@ int f_labels(int arglist, int th)
 	arg1 = cdr(arg1);
     }
     while (func != NIL) {
-	SET_CDR(car(func), ep);
+	SET_CDR(car(func), ep[th]);
 	func = cdr(func);
     }
     while (arg2 != NIL) {
@@ -431,7 +431,7 @@ int f_dynamic_let(int arglist, int th)
 	val = eval(cadar(arg1), th);
 	dp[0] = dp1;
 	shelter_pop();
-	add_dyn_env(sym, val);
+	add_dyn_env(sym, val, th);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {

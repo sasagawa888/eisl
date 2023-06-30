@@ -1231,7 +1231,7 @@ int vectorp(int x);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void add_lex_env(int sym, int val, int th);
-void add_dyn_env(int sym, int val);
+void add_dyn_env(int sym, int val, int th);
 void big_gbc(int x);
 void big_minus2(int arg, int c, int msb);
 void big_plus2(int arg, int c, int msb);

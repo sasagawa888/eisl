@@ -1368,7 +1368,7 @@ int fast_length(int x);
 int fast_car(int x);
 int fast_cdr(int x);
 int f_self_introduction(int arglist);
-int set_dynamic(int x, int y);
+int set_dynamic(int x, int y, int th);
 int set_prop(int x, int y);
 int get_prop(int x);
 int get_opt(int x);

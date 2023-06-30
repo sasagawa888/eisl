@@ -142,6 +142,10 @@ void dynamic_link(int x)
     {
         add_dyn_env(x, y, 0);
     }
+    void set_dynamic1(int x, int y)
+    {
+        set_dynamic(x,y,0);
+    }
 
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
@@ -171,7 +175,7 @@ void dynamic_link(int x)
     init_f2(ARRAY_IDX, array);
     init_f2(SETDYNENV_IDX, set_dyn_env1);
     init_f2(ADDDYNENV_IDX, add_dyn_env1);
-    init_f2(SETDYNAMIC_IDX, set_dynamic);
+    init_f2(SETDYNAMIC_IDX, set_dynamic1);
     init_f2(SETPROP_IDX, set_prop);
     init_f2(ADAPTP_IDX, a_adaptp);
     init_f2(MATCHP_IDX, a_matchp);
@@ -430,7 +434,7 @@ int fast_cdr(int x)
 }
 
 
-int set_dynamic(int x, int y)
+int set_dynamic(int x, int y, int th)
 {
     if (find_dyn(x,0) != FAILSE)
 	set_dyn_env(x, y, 0);

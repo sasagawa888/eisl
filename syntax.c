@@ -536,7 +536,7 @@ int f_set_dynamic(int arglist, int th)
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(WRONG_ARGS, "set-dynamic", arg1);
 
-    if (find_dyn(arg1,0) != FAILSE) {
+    if (find_dyn(arg1,th) != FAILSE) {
 	set_dyn_env(arg1, arg2, th);
 	return (arg2);
     } else

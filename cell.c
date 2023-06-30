@@ -52,9 +52,7 @@ void init_cell(void)
     make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
     ep = 0;
-    int i;
-    for(i=0;i<PARASIZE;i++)
-        dp[i] = 0;
+    dp[0] = 0;
     sp = 0;
     ap = 0;
 }
@@ -236,7 +234,6 @@ int freshcell(void)
     int res;
 
     if (!concurrent_flag) {
-      loop:
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);

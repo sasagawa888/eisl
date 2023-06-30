@@ -316,7 +316,7 @@ int macroexpand_1(int macsym, int args)
 	body = cdr(body);
     }
     unbind();
-    ep = save;
+    ep[0] = save;
     return (res);
 }
 
@@ -607,7 +607,7 @@ void debugger()
 	    }
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":E"))) {
-	    print(ep);
+	    print(ep[0]);
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":I"))) {
 	    print(examin_sym);

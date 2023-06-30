@@ -51,7 +51,7 @@ void init_cell(void)
     SET_AUX(UNDEF, CLASS_SYMBOL);	/* class of <undef> is symbol */
     make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
-    ep = 0;
+    ep[0] = 0;
     dp[0] = 0;
     sp = 0;
     ap = 0;
@@ -287,7 +287,7 @@ void set_lex_env(int sym, int val)
 {
     int addr;
 
-    addr = assq(sym, ep);
+    addr = assq(sym, ep[0]);
     if (addr == FAILSE)
 	add_lex_env(sym, val);
     else
@@ -318,7 +318,7 @@ void set_dyn_env(int sym, int val, int th)
 /* additinal of lexical variable */
 void add_lex_env(int sym, int val)
 {
-    ep = cons(cons(sym, val), ep);
+    ep[0] = cons(cons(sym, val), ep[0]);
 }
 
 
@@ -344,7 +344,7 @@ int find_env(int sym)
 {
     int addr;
 
-    addr = assq(sym, ep);
+    addr = assq(sym, ep[0]);
 
     if (addr == FAILSE)
 	return (FAILSE);
@@ -545,7 +545,7 @@ int make_func(const char *pname, int addr)
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL);
     END_TRY;
     SET_CAR(val, addr);
-    SET_CDR(val, ep);		/* local environment */
+    SET_CDR(val, ep[0]);		/* local environment */
     SET_AUX(val, cfunction);	/* class function */
     /* if lambda is generated in method, save the method and given argument */
     if (generic_func != NIL)

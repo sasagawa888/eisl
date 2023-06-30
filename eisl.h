@@ -160,7 +160,7 @@ typedef struct {
 
 
 /* ------pointer---- */
-extern int ep;			// environment pointer
+extern int ep[PARASIZE];	// environment pointer
 extern int dp[PARASIZE];	// dynamic pointer
 extern int hp;			// heap pointer
 extern int sp;			// stack pointer
@@ -863,7 +863,7 @@ int f_flet(int arglist, int th);
 int f_float(int arglist);
 int f_floatp(int arglist);
 int f_floor(int arglist);
-int f_for(int arglist);
+int f_for(int arglist, int th);
 int f_format(int arglist);
 int f_format_char(int arglist);
 int f_format_float(int arglist);

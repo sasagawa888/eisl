@@ -139,7 +139,7 @@ int f_labels(int arglist, int th)
     }
 
 
-    save = ep;
+    save = ep[th];
     func = NIL;
     res = NIL;
     while (arg1 != NIL) {
@@ -162,7 +162,7 @@ int f_labels(int arglist, int th)
 	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
-    ep = save;
+    ep[th] = save;
     return (res);
 }
 
@@ -203,8 +203,8 @@ int f_flet(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    save = ep;
-    ep1 = ep;
+    save = ep[th];
+    ep1 = ep[th];
     res = NIL;
     while (arg1 != NIL) {
 	int sym, val;
@@ -212,18 +212,18 @@ int f_flet(int arglist, int th)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "flet", sym);
-	ep = save;
+	ep[th] = save;
 	val = make_func("", cdar(arg1));
-	ep = ep1;
+	ep[th] = ep1;
 	add_lex_env(sym, val);
-	ep1 = ep;
+	ep1 = ep[th];
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
 	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
-    ep = save;
+    ep[th] = save;
     return (res);
 }
 
@@ -305,20 +305,20 @@ int f_let(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    save = ep;
+    save = ep[th];
     res = NIL;
     while (arg1 != NIL) {
 	int ep1, sym, val;
 
-	ep1 = ep;
-	ep = save;
+	ep1 = ep[th];
+	ep[th] = save;
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let", sym);
 	shelter_push(ep1);
 	val = eval(cadar(arg1), th);
 	shelter_pop();
-	ep = ep1;
+	ep[th] = ep1;
 	add_lex_env(sym, val);
 	arg1 = cdr(arg1);
     }
@@ -328,7 +328,7 @@ int f_let(int arglist, int th)
 	shelter_pop();
 	arg2 = cdr(arg2);
     }
-    ep = save;
+    ep[th] = save;
     return (res);
 }
 
@@ -365,7 +365,7 @@ int f_letstar(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    save = ep;
+    save = ep[th];
     res = NIL;
     while (arg1 != NIL) {
 	int sym;
@@ -380,7 +380,7 @@ int f_letstar(int arglist, int th)
 	res = eval(car(arg2), th);
 	arg2 = cdr(arg2);
     }
-    ep = save;
+    ep[th] = save;
     return (res);
 }
 
@@ -961,7 +961,7 @@ int f_while(int arglist)
     return (NIL);
 }
 
-int f_for(int arglist)
+int f_for(int arglist, int th)
 {
     int arg1, arg2, arg3, iter, temp, save, res, temparg2;
 
@@ -1006,30 +1006,30 @@ int f_for(int arglist)
 	temp = cdr(temp);
     }
 
-    save = ep;
+    save = ep[th];
 
     iter = arg1;
     /* initilize local variable */
     while (iter != NIL) {
-	add_lex_env(caar(iter), eval(cadar(iter), 0));
+	add_lex_env(caar(iter), eval(cadar(iter), th));
 	iter = cdr(iter);
     }
     /* check condition of end */
-    while (eval(car(arg2), 0) == NIL) {
+    while (eval(car(arg2), th) == NIL) {
 	int save1;
 
-	save1 = ep;
+	save1 = ep[th];
 	shelter_push(arg3);
 	f_progn(arg3);		/* do body */
 	shelter_pop();
-	ep = save1;
+	ep[th] = save1;
 	iter = arg1;		/* update local variable */
 	temp = NIL;
 	while (iter != NIL) {
 	    if (!nullp(caddar(iter))) {	/* update part is not null */
 		shelter_push(iter);
 		shelter_push(temp);
-		temp = cons(cons(caar(iter), eval(caddar(iter), 0)), temp);
+		temp = cons(cons(caar(iter), eval(caddar(iter), th)), temp);
 		shelter_pop();
 		shelter_pop();
 	    }
@@ -1041,7 +1041,7 @@ int f_for(int arglist)
 	}
     }
     res = f_progn(cdr(arg2));
-    ep = save;
+    ep[th] = save;
     return (res);
 }
 
@@ -1068,7 +1068,7 @@ int f_block(int arglist, int th)
 
 
     block_data[block_pt][0] = tag;
-    block_data[block_pt][1] = ep;
+    block_data[block_pt][1] = ep[th];
     block_data[block_pt][2] = unwind_nest;
     block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
     /* save flag. if exist return-from 1 else -1 */
@@ -1145,7 +1145,7 @@ int f_return_from(int arglist, int th)
 
 
     block_arg = f_progn(arg2);
-    ep = block_data[block_pt][1];	/* restore environment */
+    ep[th] = block_data[block_pt][1];	/* restore environment */
     longjmp(block_buf[block_pt], 1);
 }
 
@@ -1169,7 +1169,7 @@ int f_catch(int arglist, int th)
 	error(IMPROPER_ARGS, "catch", tag);
 
     catch_data[catch_pt][0] = tag;
-    catch_data[catch_pt][1] = ep;
+    catch_data[catch_pt][1] = ep[th];
     catch_data[catch_pt][2] = unwind_nest;
     cp = catch_pt;
     catch_pt++;
@@ -1249,7 +1249,7 @@ int f_throw(int arglist, int th)
     }
 
     catch_arg = eval(arg2, th);
-    ep = catch_data[i][1];	/* restore environment */
+    ep[th] = catch_data[i][1];	/* restore environment */
     longjmp(catch_buf[i], 1);
 }
 
@@ -1993,11 +1993,11 @@ int f_with_open_input_file(int arglist)
 	val = make_stm(port, EISL_INPUT, Str_dup(fname, 1, 0, 1));
     else
 	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
-    ep1 = ep;
+    ep1 = ep[0];
     add_lex_env(sym, val);
     res = f_progn(arg2);
     fclose(port);
-    ep = ep1;
+    ep[0] = ep1;
     return (res);
 }
 
@@ -2032,11 +2032,11 @@ int f_with_open_output_file(int arglist)
 	val = make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1));
     else
 	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
-    ep1 = ep;
+    ep1 = ep[0];
     add_lex_env(sym, val);
     res = f_progn(arg2);
     fclose(port);
-    ep = ep1;
+    ep[0] = ep1;
     return (res);
 }
 
@@ -2071,11 +2071,11 @@ int f_with_open_io_file(int arglist)
 	val = make_stm(port, EISL_INOUT, Str_dup(fname, 1, 0, 1));
     else
 	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
-    ep1 = ep;
+    ep1 = ep[0];
     add_lex_env(sym, val);
     res = f_progn(arg2);
     fclose(port);
-    ep = ep1;
+    ep[0] = ep1;
     return (res);
 }
 

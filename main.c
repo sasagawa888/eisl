@@ -48,7 +48,7 @@
 #include "compat/curses_stubs.h"
 
 /* pointer */
-int ep;				/* environment pointer */
+int ep[PARASIZE];	/* environment pointer */
 int dp[PARASIZE];	/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
 int sp;				/* stack pointer */
@@ -407,7 +407,7 @@ void init_pointer(void)
 {
     int ls;
 
-    ep = 0;
+    ep[0] = 0;
     sp = 0;
     ap = 0;
     lp = 0;
@@ -1781,9 +1781,9 @@ int apply(int func, int args, int th)
 	}
 	shelter_push(func);
 	shelter_push(args);
-	push(ep);
+	push(ep[th]);
 	push(cp);
-	ep = GET_CDR(func);
+	ep[th] = GET_CDR(func);
 
 	/* if lambda is generated during eval method, lambda saved method
 	 * and argument
@@ -1823,7 +1823,7 @@ int apply(int func, int args, int th)
 	    putchar('\n');
 	}
 	cp = pop();
-	ep = pop();
+	ep[th] = pop();
 	shelter_pop();
 	shelter_pop();
 	return (res);
@@ -1943,7 +1943,7 @@ void bind_arg(int varlist, int arglist)
 {
     int arg1, arg2;
 
-    push(ep);
+    push(ep[0]);
     push(cp);
     while (!(IS_NIL(varlist))) {
 	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")
@@ -1965,7 +1965,7 @@ void bind_arg(int varlist, int arglist)
 void unbind(void)
 {
     cp = pop();
-    ep = pop();
+    ep[0] = pop();
 }
 
 

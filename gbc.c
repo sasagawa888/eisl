@@ -233,7 +233,7 @@ void gbc_mark(void)
 #endif
 
     /* mark local environment */
-    mark_cell(ep);
+    mark_cell(ep[0]);
     /* mark dynamic environment */
     mark_cell(dp[0]);
     /* mark stack */
@@ -379,7 +379,7 @@ void *concurrent(void *arg)
     MARK_CELL(T);
 
     /* mark local environment */
-    mark_cell(ep);
+    mark_cell(ep[0]);
     /* mark dynamic environment */
     mark_cell(dp[0]);
     /* mark stack */

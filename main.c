@@ -47,6 +47,8 @@
 #include "compat/eiffel_stubs.h"
 #include "compat/curses_stubs.h"
 
+//#define DEBUG
+
 /* pointer */
 int ep[PARASIZE];	/* environment pointer */
 int dp[PARASIZE];	/* dynamic pointer */
@@ -1755,6 +1757,8 @@ int apply(int func, int args, int th)
 	     || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO
 	     || GET_TAG(func) == GENERIC) && (GET_TAG(args) == LIS
 					      || GET_TAG(args) == SYM));
+
+	
     res = NIL;
     pexist = 0;
     qexist = 0;
@@ -1769,6 +1773,14 @@ int apply(int func, int args, int th)
     case FSUBR:
 	return ((GET_SUBR(func)) (args, th));
     case FUNC:
+
+	#if DEBUG
+	print(ep[0]);
+    print(ep[1]);
+    print(ep[2]);
+	putchar('\n');
+	#endif
+
 	if (try_flag == true)
 	    try_res = cons(args, try_res);
 	if (GET_TR(examin_sym) == 1) {

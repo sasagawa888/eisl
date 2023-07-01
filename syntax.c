@@ -1457,8 +1457,8 @@ int f_case_using(int arglist, int th)
     }
 
     res = NIL;
-    key = eval(arg2, 0);
-    fun = eval(arg1, 0);
+    key = eval(arg2, th);
+    fun = eval(arg1, th);
     while (arg3 != NIL) {
 	if (caar(arg3) == T) {
 	    res = f_progn(cdar(arg3),th);
@@ -2148,7 +2148,7 @@ int f_with_handler(int arglist, int th)
     return (res);
 }
 
-int f_convert(int arglist)
+int f_convert(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -2163,7 +2163,7 @@ int f_convert(int arglist)
     if (GET_OPT(arg2) != SYSTEM)
 	error(NOT_CLASS, "convert", arg2);
 
-    arg1 = eval(arg1, 0);
+    arg1 = eval(arg1, th);
     return convert(arg1, arg2);
 }
 

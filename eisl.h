@@ -818,7 +818,7 @@ int f_condition_continuable(int arglist);
 int f_cons(int arglist);
 int f_consp(int arglist);
 int f_continue_condition(int arglist);
-int f_convert(int arglist);
+int f_convert(int arglist, int th);
 int f_cos(int arglist);
 int f_cosh(int arglist);
 int f_create_array(int arglist);

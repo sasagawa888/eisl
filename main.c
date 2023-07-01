@@ -1774,7 +1774,7 @@ int apply(int func, int args, int th)
 	return ((GET_SUBR(func)) (args, th));
     case FUNC:
 
-	#if DEBUG
+	#ifdef DEBUG
 	print(ep[0]);
     print(ep[1]);
     print(ep[2]);

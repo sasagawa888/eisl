@@ -51,9 +51,13 @@ void init_cell(void)
     SET_AUX(UNDEF, CLASS_SYMBOL);	/* class of <undef> is symbol */
     make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
-    ep[0] = 0;
-    dp[0] = 0;
-    sp[0] = 0;
+    int i;
+    for(i=0;i<PARASIZE;i++)
+    {
+    ep[i] = 0;
+    dp[i] = 0;
+    sp[i] = 0;
+    }
     ap = 0;
 }
 
@@ -234,7 +238,7 @@ int freshcell(void)
     int res;
 
     if (!concurrent_flag) {
-	res = hp;
+	res = hp;   
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	fc--;
@@ -291,7 +295,9 @@ void set_lex_env(int sym, int val, int th)
     if (addr == FAILSE)
 	add_lex_env(sym, val, th);
     else
+    {
 	SET_CDR(addr, val);
+    }
 }
 
 
@@ -318,6 +324,7 @@ void set_dyn_env(int sym, int val, int th)
 /* additinal of lexical variable */
 void add_lex_env(int sym, int val, int th)
 {
+
     ep[th] = cons(cons(sym, val), ep[th]);
 }
 

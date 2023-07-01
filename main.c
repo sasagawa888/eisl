@@ -405,10 +405,14 @@ char *library_file(const char *basename)
 
 void init_pointer(void)
 {
-    int ls;
+    int i,ls;
 
-    ep[0] = 0;
-    sp[0] = 0;
+	for(i=0;i<PARASIZE;i++)
+	{
+    ep[i] = 0;
+	dp[i] = 0;
+    sp[i] = 0;
+	}
     ap = 0;
     lp = 0;
     cp = 0;

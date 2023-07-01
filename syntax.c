@@ -257,10 +257,12 @@ int f_plet(int arglist)
 
     d[0].in = cadr(arg1);
 	d[0].th = 1;
+	ep[1] = ep[0];
     pthread_create(&t[0], NULL, plet, &d[0]);
 
 	d[1].in = cadr(arg2);
 	d[1].th = 2;
+	ep[2] = ep[0];
     pthread_create(&t[1], NULL, plet, &d[1]);
 
 	pthread_join(t[0], NULL);
@@ -268,7 +270,7 @@ int f_plet(int arglist)
 
 	add_lex_env(car(arg1),d[0].out, 0);
 	add_lex_env(car(arg2),d[1].out, 0);
-	return(f_progn(body));
+	return(f_progn(body,0));
 }
 
 
@@ -561,7 +563,7 @@ int f_setq(int arglist, int th)
     if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "setq", arglist);
 
-    arg2 = eval(arg2, 0);
+    arg2 = eval(arg2, th);
     if (find_env(arg1,th) != FAILSE)
 	set_lex_env(arg1, arg2, th);
     else if (GET_OPT(arg1) == GLOBAL)
@@ -944,19 +946,19 @@ int f_cond(int arglist, int th)
     if (length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2, th)))
 	return (arg2);
     else if (!nullp(eval(arg2, th)))
-	return (f_progn(arg3));
+	return (f_progn(arg3,th));
     else
 	return (f_cond(cdr(arglist),th));
 }
 
-int f_while(int arglist)
+int f_while(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     while (eval(arg1, 0) != NIL) {
-	f_progn(arg2);
+	f_progn(arg2,th);
     }
     return (NIL);
 }
@@ -1020,7 +1022,7 @@ int f_for(int arglist, int th)
 
 	save1 = ep[th];
 	shelter_push(arg3);
-	f_progn(arg3);		/* do body */
+	f_progn(arg3,th);		/* do body */
 	shelter_pop();
 	ep[th] = save1;
 	iter = arg1;		/* update local variable */
@@ -1040,7 +1042,7 @@ int f_for(int arglist, int th)
 	    temp = cdr(temp);
 	}
     }
-    res = f_progn(cdr(arg2));
+    res = f_progn(cdr(arg2),th);
     ep[th] = save;
     return (res);
 }
@@ -1078,7 +1080,7 @@ int f_block(int arglist, int th)
 
 
     if (ret == 0) {
-	res = f_progn(arg2);
+	res = f_progn(arg2,th);
 	block_pt--;
 	return (res);
     } else if (ret == 1) {
@@ -1144,7 +1146,7 @@ int f_return_from(int arglist, int th)
     }
 
 
-    block_arg = f_progn(arg2);
+    block_arg = f_progn(arg2,th);
     ep[th] = block_data[block_pt][1];	/* restore environment */
     longjmp(block_buf[block_pt], 1);
 }
@@ -1182,7 +1184,7 @@ int f_catch(int arglist, int th)
     ret = setjmp(catch_buf[catch_pt - 1]);
 
     if (ret == 0) {
-	res = f_progn(arg2);
+	res = f_progn(arg2,th);
 	/* after execution of arg2 tag arg1 is not neccesally */
 	cp--;
 	catch_pt = cp + 1;
@@ -1393,7 +1395,7 @@ int f_unwind_protect(int arglist, int th)
 }
 
 
-int f_case(int arglist)
+int f_case(int arglist, int th)
 {
     int arg1, arg2, key, res, temp;
 
@@ -1419,10 +1421,10 @@ int f_case(int arglist)
     key = eval(arg1, 0);
     while (arg2 != NIL) {
 	if (caar(arg2) == T) {
-	    res = f_progn(cdar(arg2));
+	    res = f_progn(cdar(arg2),th);
 	    break;
 	} else if (member(key, caar(arg2)) != NIL) {
-	    res = f_progn(cdar(arg2));
+	    res = f_progn(cdar(arg2),th);
 	    break;
 	} else {
 	    arg2 = cdr(arg2);
@@ -1431,7 +1433,7 @@ int f_case(int arglist)
     return (res);
 }
 
-int f_case_using(int arglist)
+int f_case_using(int arglist, int th)
 {
     int arg1, arg2, arg3, key, fun, res, temp;
 
@@ -1459,10 +1461,10 @@ int f_case_using(int arglist)
     fun = eval(arg1, 0);
     while (arg3 != NIL) {
 	if (caar(arg3) == T) {
-	    res = f_progn(cdar(arg3));
+	    res = f_progn(cdar(arg3),th);
 	    break;
 	} else if (member1(key, caar(arg3), fun) != NIL) {
-	    res = f_progn(cdar(arg3));
+	    res = f_progn(cdar(arg3),th);
 	    break;
 	} else {
 	    arg3 = cdr(arg3);
@@ -1472,7 +1474,7 @@ int f_case_using(int arglist)
 }
 
 
-int f_progn(int arglist)
+int f_progn(int arglist, int th)
 {
     int res;
 
@@ -1480,7 +1482,7 @@ int f_progn(int arglist)
 	error(IMPROPER_ARGS, "progn", arglist);
     res = NIL;
     while (arglist != NIL) {
-	res = eval(car(arglist), 0);
+	res = eval(car(arglist), th);
 	arglist = cdr(arglist);
     }
     return (res);
@@ -1940,14 +1942,14 @@ int f_defmethod(int arglist)
     return (arg1);
 }
 
-int f_ignore_errors(int arglist)
+int f_ignore_errors(int arglist, int th)
 {
     volatile int res, save1, save2;
 
     ignore_flag = true;
     save1 = input_stream;
     save2 = output_stream;
-    TRY res = f_progn(arglist);
+    TRY res = f_progn(arglist,th);
     ELSE res = NIL;
     END_TRY;
     ignore_flag = false;
@@ -1972,7 +1974,7 @@ int f_with_open_input_file(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     sym = car(arg1);		/* stream-name */
-    str = eval(cadr(arg1), 0);	/* file-name */
+    str = eval(cadr(arg1), th);	/* file-name */
     n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
 	error(ILLEGAL_FORM, "with-input-file", arg1);
@@ -1995,7 +1997,7 @@ int f_with_open_input_file(int arglist, int th)
 	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
-    res = f_progn(arg2);
+    res = f_progn(arg2,th);
     fclose(port);
     ep[th] = ep1;
     return (res);
@@ -2011,7 +2013,7 @@ int f_with_open_output_file(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     sym = car(arg1);		/* stream-name */
-    str = eval(cadr(arg1), 0);	/* file-name */
+    str = eval(cadr(arg1), th);	/* file-name */
     n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
 	error(ILLEGAL_FORM, "with-open-output-file", arg1);
@@ -2034,7 +2036,7 @@ int f_with_open_output_file(int arglist, int th)
 	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
-    res = f_progn(arg2);
+    res = f_progn(arg2,th);
     fclose(port);
     ep[th] = ep1;
     return (res);
@@ -2050,7 +2052,7 @@ int f_with_open_io_file(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     sym = car(arg1);		/* stream-name */
-    str = eval(cadr(arg1), 0);	/* file-name */
+    str = eval(cadr(arg1), th);	/* file-name */
     n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
 	error(ILLEGAL_FORM, "with-open-io-file", arg1);
@@ -2073,75 +2075,75 @@ int f_with_open_io_file(int arglist, int th)
 	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
-    res = f_progn(arg2);
+    res = f_progn(arg2,th);
     fclose(port);
     ep[th] = ep1;
     return (res);
 }
 
-int f_with_standard_input(int arglist)
+int f_with_standard_input(int arglist, int th)
 {
     int arg1, arg2, stream, save, res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    stream = eval(arg1, 0);
+    stream = eval(arg1, th);
     if (!input_stream_p(stream))
 	error(NOT_STREAM, "with-standard-input, stream", stream);
 
     save = input_stream;
     input_stream = stream;
-    res = f_progn(arg2);
+    res = f_progn(arg2,th);
     input_stream = save;
     return (res);
 }
 
-int f_with_standard_output(int arglist)
+int f_with_standard_output(int arglist, int th)
 {
     int arg1, arg2, stream, save, res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    stream = eval(arg1, 0);
+    stream = eval(arg1, th);
     if (!output_stream_p(stream))
 	error(NOT_STREAM, "with-standard-output, stream", stream);
 
     save = output_stream;
     output_stream = stream;
-    res = f_progn(arg2);
+    res = f_progn(arg2,th);
     output_stream = save;
     return (res);
 }
 
-int f_with_error_output(int arglist)
+int f_with_error_output(int arglist, int th)
 {
     int arg1, arg2, stream, save, res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    stream = eval(arg1, 0);
+    stream = eval(arg1, th);
     if (!output_stream_p(stream))
 	error(NOT_STREAM, "with-error-output, stream", stream);
 
     save = output_stream;
     output_stream = stream;
-    res = f_progn(arg2);
+    res = f_progn(arg2,th);
     output_stream = save;
     return (res);
 }
 
-int f_with_handler(int arglist)
+int f_with_handler(int arglist, int th)
 {
     int arg1, arg2, res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    error_handler = cons(eval(arg1, 0), error_handler);
-    res = f_progn(arg2);
+    error_handler = cons(eval(arg1, th), error_handler);
+    res = f_progn(arg2,th);
     error_handler = cdr(error_handler);
     return (res);
 }

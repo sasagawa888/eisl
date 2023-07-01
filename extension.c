@@ -608,6 +608,8 @@ void debugger()
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":E"))) {
 	    print(ep[0]);
+        print(ep[1]);
+        print(ep[2]);
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":I"))) {
 	    print(examin_sym);

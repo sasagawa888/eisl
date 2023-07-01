@@ -1943,7 +1943,7 @@ void bind_arg(int varlist, int arglist, int th)
 {
     int arg1, arg2;
 
-    push(ep[0],th);
+    push(ep[th],th);
     push(cp,th);
     while (!(IS_NIL(varlist))) {
 	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")

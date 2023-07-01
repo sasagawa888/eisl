@@ -51,7 +51,7 @@
 int ep[PARASIZE];	/* environment pointer */
 int dp[PARASIZE];	/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
-int sp;				/* stack pointer */
+int sp[PARASIZE];	/* stack pointer */
 int fc;				/* free counter */
 int rc;				/* real free counter */
 int ap;				/* arglist pointer */
@@ -408,7 +408,7 @@ void init_pointer(void)
     int ls;
 
     ep[0] = 0;
-    sp = 0;
+    sp[0] = 0;
     ap = 0;
     lp = 0;
     cp = 0;
@@ -2064,19 +2064,19 @@ int genlamlis_to_lamlis(int varlist)
 /* for stack to store ep(environment) */
 int push(int pt, int th)
 {
-    if (sp >= STACKSIZE)
+    if (sp[th] >= STACKSIZE)
 	error(STACK_OVERF, "push", NIL);
 
-    stack[sp++][th] = pt;
+    stack[sp[th]++][th] = pt;
 
     return (T);
 }
 
 int pop(int th)
 {
-    if (sp <= 0)
+    if (sp[th] <= 0)
 	error(STACK_UNDERF, "pop", NIL);
-    return (stack[--sp][th]);
+    return (stack[--sp[th]][th]);
 }
 
 /* push/pop of arglist */

@@ -237,7 +237,7 @@ void gbc_mark(void)
     /* mark dynamic environment */
     mark_cell(dp[0]);
     /* mark stack */
-    for (i = 0; i < sp; i++)
+    for (i = 0; i < sp[0]; i++)
 	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap; i++)
@@ -383,7 +383,7 @@ void *concurrent(void *arg)
     /* mark dynamic environment */
     mark_cell(dp[0]);
     /* mark stack */
-    for (i = 0; i < sp; i++)
+    for (i = 0; i < sp[0]; i++)
 	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap; i++)

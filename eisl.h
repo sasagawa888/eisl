@@ -163,7 +163,7 @@ typedef struct {
 extern int ep[PARASIZE];	// environment pointer
 extern int dp[PARASIZE];	// dynamic pointer
 extern int hp;			// heap pointer
-extern int sp;			// stack pointer
+extern int sp[PARASIZE];	// stack pointer
 extern int fc;			// free counter
 extern int rc;          // real free counter
 extern int ap;			// arglist pointer

@@ -1153,7 +1153,7 @@ int f_catch(int arglist, int th)
 {
     int arg1, arg2, i, tag, ret, res, save, unwind;
 
-    save = sp;
+    save = sp[th];
     arg1 = car(arglist);	/* tag */
     arg2 = cdr(arglist);	/* body */
     if (nullp(arglist))
@@ -1212,7 +1212,7 @@ int f_catch(int arglist, int th)
 
 	res = catch_arg;
 	catch_arg = NIL;
-	sp = save;
+	sp[th] = save;
 	/* restore stack pointer. longjump destroy sp */
 	return (res);
     }

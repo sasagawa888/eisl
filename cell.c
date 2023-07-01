@@ -53,7 +53,7 @@ void init_cell(void)
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
     ep[0] = 0;
     dp[0] = 0;
-    sp = 0;
+    sp[0] = 0;
     ap = 0;
 }
 

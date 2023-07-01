@@ -128,7 +128,7 @@ int buffer1[COL_SIZE + 1];
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
-int stack[STACKSIZE];
+int stack[STACKSIZE][PARASIZE];
 int argstk[STACKSIZE];
 int cell_hash_table[HASHTBSIZE];
 int shelter[STACKSIZE];
@@ -1781,8 +1781,8 @@ int apply(int func, int args, int th)
 	}
 	shelter_push(func);
 	shelter_push(args);
-	push(ep[th]);
-	push(cp);
+	push(ep[th],th);
+	push(cp,th);
 	ep[th] = GET_CDR(func);
 
 	/* if lambda is generated during eval method, lambda saved method
@@ -1809,7 +1809,7 @@ int apply(int func, int args, int th)
 	    res = eval(car(body), th);
 	    body = cdr(body);
 	}
-	unbind();
+	unbind(th);
 	if (trace != NIL) {
 	    n = GET_TR(func);
 	    n = n - 1;
@@ -1822,8 +1822,8 @@ int apply(int func, int args, int th)
 	    print(res);
 	    putchar('\n');
 	}
-	cp = pop();
-	ep[th] = pop();
+	cp = pop(th);
+	ep[th] = pop(th);
 	shelter_pop();
 	shelter_pop();
 	return (res);
@@ -1850,7 +1850,7 @@ int apply(int func, int args, int th)
 		shelter_pop();
 		body = cdr(body);
 	    }
-	    unbind();
+	    unbind(th);
 	    shelter_push(res);
 	    res = eval(res, th);
 	    shelter_pop();
@@ -1873,7 +1873,7 @@ int apply(int func, int args, int th)
 	    generic_func = func;
 	    generic_vars = copy(args);
 	    next_method = GET_CDR(func);
-	    push(make_int(cp));
+	    push(make_int(cp),th);
 	    if (GET_TR(examin_sym) == 1) {
 		trace = examin_sym;
 		n = GET_TR(func);
@@ -1915,7 +1915,7 @@ int apply(int func, int args, int th)
 			    res = eval(car(body), th);
 			    body = cdr(body);
 			}
-			unbind();
+			unbind(th);
 		    }
 		    if (GET_OPT(car(next_method)) == AROUND) {
 			goto exit;
@@ -1930,7 +1930,7 @@ int apply(int func, int args, int th)
 	    generic_func = save1;
 	    generic_vars = save2;
 	    next_method = save3;
-	    cp = pop();
+	    cp = pop(th);
 	    return (res);
 	}
     default:
@@ -1943,8 +1943,8 @@ void bind_arg(int varlist, int arglist, int th)
 {
     int arg1, arg2;
 
-    push(ep[0]);
-    push(cp);
+    push(ep[0],th);
+    push(cp,th);
     while (!(IS_NIL(varlist))) {
 	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")
 				     || car(varlist) == make_sym("&REST"))) {
@@ -1962,10 +1962,10 @@ void bind_arg(int varlist, int arglist, int th)
     }
 }
 
-void unbind(void)
+void unbind(int th)
 {
-    cp = pop();
-    ep[0] = pop();
+    cp = pop(th);
+    ep[th] = pop(th);
 }
 
 
@@ -2062,21 +2062,21 @@ int genlamlis_to_lamlis(int varlist)
 
 
 /* for stack to store ep(environment) */
-int push(int pt)
+int push(int pt, int th)
 {
     if (sp >= STACKSIZE)
 	error(STACK_OVERF, "push", NIL);
 
-    stack[sp++] = pt;
+    stack[sp++][th] = pt;
 
     return (T);
 }
 
-int pop(void)
+int pop(int th)
 {
     if (sp <= 0)
 	error(STACK_UNDERF, "pop", NIL);
-    return (stack[--sp]);
+    return (stack[--sp][th]);
 }
 
 /* push/pop of arglist */

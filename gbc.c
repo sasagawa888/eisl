@@ -238,7 +238,7 @@ void gbc_mark(void)
     mark_cell(dp[0]);
     /* mark stack */
     for (i = 0; i < sp; i++)
-	mark_cell(stack[i]);
+	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap; i++)
 	mark_cell(argstk[i]);
@@ -384,7 +384,7 @@ void *concurrent(void *arg)
     mark_cell(dp[0]);
     /* mark stack */
     for (i = 0; i < sp; i++)
-	mark_cell(stack[i]);
+	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap; i++)
 	mark_cell(argstk[i]);

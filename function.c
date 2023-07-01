@@ -4585,7 +4585,7 @@ int f_call_next_method(int arglist, int th)
 		    res = eval(car(body), th);
 		    body = cdr(body);
 		}
-		unbind();
+		unbind(th);
 		goto exit;
 	    }
 	    next_method = cdr(next_method);
@@ -4619,7 +4619,7 @@ int f_call_next_method(int arglist, int th)
 			body = cdr(body);
 		    }
 		    multiple_call_next_method = save2;
-		    unbind();
+		    unbind(th);
 		}
 		if (GET_OPT(car(next_method)) == AROUND) {
 		    goto exit;

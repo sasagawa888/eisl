@@ -480,7 +480,7 @@ int f_setf(int arglist, int th)
 	    error(IMPROPER_ARGS, "dynamic", arg1);
 	newform = cons(make_sym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
     } else if (listp(arg1) && macrop(car(arg1))) {
-	var = f_macroexpand_1(list1(arg1));
+	var = f_macroexpand_1(list1(arg1),th);
 	return (f_setf(list2(var, arg2),th));
     }
     /* (setf (slot-value instance slot-name) value) */
@@ -1070,7 +1070,7 @@ int f_block(int arglist, int th)
     block_data[block_pt][0] = tag;
     block_data[block_pt][1] = ep[th];
     block_data[block_pt][2] = unwind_nest;
-    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2));
+    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2,th));
     /* save flag. if exist return-from 1 else -1 */
     block_pt++;
     unwind = unwind_nest;

@@ -279,7 +279,7 @@ int f_subrp(int arglist)
 	return (NIL);
 }
 
-int f_macroexpand_1(int arglist)
+int f_macroexpand_1(int arglist, int th)
 {
     int arg1, args;
 
@@ -290,15 +290,15 @@ int f_macroexpand_1(int arglist)
     if (!symbolp(arg1))
 	error(NOT_SYM, "macroexpand-1", arg1);
 
-    return (macroexpand_1(arg1, args));
+    return (macroexpand_1(arg1, args, th));
 }
 
-int macroexpand_1(int macsym, int args)
+int macroexpand_1(int macsym, int args, int th)
 {
     int func, body, macrofunc, varlist, save, res;
 
     func = GET_CAR(macsym);
-    save = ep;
+    save = ep[th];
     res = NIL;
     macrofunc = GET_CAR(func);
     varlist = car(GET_CAR(macrofunc));
@@ -315,12 +315,12 @@ int macroexpand_1(int macsym, int args)
 	res = eval(car(body), 0);
 	body = cdr(body);
     }
-    unbind();
-    ep[0] = save;
+    unbind(th);
+    ep[th] = save;
     return (res);
 }
 
-int f_macroexpand_all(int arglist)
+int f_macroexpand_all(int arglist, int th)
 {
     int arg1;
 
@@ -330,11 +330,11 @@ int f_macroexpand_all(int arglist)
     if (listp(arg1) && car(arg1) == make_sym("DEFMACRO"))
 	return (arg1);
     else
-	return (macroexpand_all(arg1));
+	return (macroexpand_all(arg1,th));
 }
 
 
-int macroexpand_all(int sexp)
+int macroexpand_all(int sexp, int th)
 {
 
     if (nullp(sexp))
@@ -344,10 +344,10 @@ int macroexpand_all(int sexp)
     else if (listp(sexp) && car(sexp) == make_sym("QUOTE"))
 	return (sexp);
     else if (listp(sexp) && macrop(car(sexp)))
-	return (macroexpand_all(macroexpand_1(car(sexp), cdr(sexp))));
+	return (macroexpand_all(macroexpand_1(car(sexp), cdr(sexp),th),th));
     else if (listp(sexp))
 	return (cons
-		(macroexpand_all(car(sexp)), macroexpand_all(cdr(sexp))));
+		(macroexpand_all(car(sexp),th), macroexpand_all(cdr(sexp),th)));
 
     return (NIL);
 }

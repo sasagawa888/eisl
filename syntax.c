@@ -257,12 +257,12 @@ int f_plet(int arglist)
 
     d[0].in = cadr(arg1);
 	d[0].th = 1;
-	ep[1] = copy(ep[0]);
+	ep[1] = ep[0];
     pthread_create(&t[0], NULL, plet, &d[0]);
 
 	d[1].in = cadr(arg2);
 	d[1].th = 2;
-	ep[2] = copy(ep[0]);
+	ep[2] = ep[0];
     pthread_create(&t[1], NULL, plet, &d[1]);
 
 	pthread_join(t[0], NULL);

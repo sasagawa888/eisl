@@ -1778,7 +1778,7 @@ int apply(int func, int args, int th)
 	print(ep[0]);
     print(ep[1]);
     print(ep[2]);
-	putchar('\n');
+	printf("thread=%d\n", th);
 	#endif
 
 	if (try_flag == true)
@@ -1800,6 +1800,7 @@ int apply(int func, int args, int th)
 	push(ep[th],th);
 	push(cp,th);
 	ep[th] = GET_CDR(func);
+
 
 	/* if lambda is generated during eval method, lambda saved method
 	 * and argument
@@ -2084,7 +2085,6 @@ int push(int pt, int th)
 	error(STACK_OVERF, "push", NIL);
 
     stack[sp[th]++][th] = pt;
-
     return (T);
 }
 

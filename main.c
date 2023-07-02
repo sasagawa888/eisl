@@ -173,6 +173,7 @@ bool error_flag = false;	/* invoked error? */
 int concurrent_flag = 0;	/* while executing concurrent_flag */
 int concurrent_stop_flag = 0;	/* while remarking&sweeping */
 int concurrent_sweep_flag = 0;	/* while concurrent-sweeping */
+int parallel_flag = 0;          /* while executing parallel thread */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */

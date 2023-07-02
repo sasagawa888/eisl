@@ -733,30 +733,30 @@ int f_dynamic(int arglist, int th)
     return (res);
 }
 
-int f_and(int arglist)
+int f_and(int arglist, int th)
 {
 
     if (nullp(arglist))
 	return (T);
     else if (nullp(cdr(arglist)))
-	return (eval(car(arglist), 0));
-    else if (eval(car(arglist), 0) != NIL)
-	return (f_and(cdr(arglist)));
+	return (eval(car(arglist), th));
+    else if (eval(car(arglist), th) != NIL)
+	return (f_and(cdr(arglist),th));
     else
 	return (NIL);
 
 }
 
-int f_or(int arglist)
+int f_or(int arglist, int th)
 {
     int temp;
 
     if (nullp(arglist))
 	return (NIL);
     else if (nullp(cdr(arglist)))
-	return (eval(car(arglist), 0));
-    else if ((temp = eval(car(arglist), 0)) == NIL)
-	return (f_or(cdr(arglist)));
+	return (eval(car(arglist), th));
+    else if ((temp = eval(car(arglist), th)) == NIL)
+	return (f_or(cdr(arglist),th));
     else
 	return (temp);
 
@@ -957,7 +957,7 @@ int f_while(int arglist, int th)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    while (eval(arg1, 0) != NIL) {
+    while (eval(arg1, th) != NIL) {
 	f_progn(arg2,th);
     }
     return (NIL);
@@ -1228,7 +1228,7 @@ int f_throw(int arglist, int th)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    tag = eval(arg1, 0);
+    tag = eval(arg1, th);
 
     if (!symbolp(tag))
 	error(IMPROPER_ARGS, "throw", tag);
@@ -1255,7 +1255,7 @@ int f_throw(int arglist, int th)
     longjmp(catch_buf[i], 1);
 }
 
-int f_tagbody(int arglist)
+int f_tagbody(int arglist, int th)
 {
     int prog[TAGBODY_LEN_MAX], tb_line, end, i;
 
@@ -1275,7 +1275,7 @@ int f_tagbody(int arglist)
 	    tb_line++;
 	else {
 	    tagbody_tag = NIL;
-	    eval(prog[tb_line], 0);
+	    eval(prog[tb_line], th);
 	    tb_line++;
 	    /* when go was evaled */
 	    if (tagbody_tag != NIL) {

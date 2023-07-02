@@ -21,4 +21,40 @@ We will implement parallel processing using the thread-based approach using pthr
 
 To avoid conflicts in cell supply from the free list while operating in parallel, we will add a mutex.
 
-Functions like eval and apply will operate independently for each thread. Add arguments and assign the thread number to them. For example, eval(1).
+Functions like eval and apply will operate independently for each thread. Add arguments and assign the thread number to them. For example, eval(x,1).
+
+## debugging
+Now small fibonacci is OK.
+#define DEBUG -> print process. env(main) env(th1) env(th2) thread=N
+
+```
+> (fib 6)
+NILNILNILthread=0
+((N( . (N . 6))((N . 66)))((N . )6))((N . 6))((N . thread=2
+((N . 6))((N . 6))((N . 4))thread=2
+((N . 6))((N . 6))((N . 3))thread=2
+((N . 6))((N . 6))((N . 2))thread=2
+((N . 6))thread=1
+((N . 6))((N . 5))((N . 2))thread=1
+((N . 6))((N . 4))((N . 2))thread=1
+((N . 6))((N . 3))((N . 2))thread=1
+((N . 6))((N . 2))((N . 2))thread=1
+((N . 6))((N . 2))((N . 2))thread=1
+((N . 6))((N . 3))((N . 2))thread=1
+((N . 6))((N . 4))((N . 2))thread=1
+((N . 6))((N . 2))((N . 2))thread=1
+((N . 6))((N . 2))((N . 2))thread=1
+((N . 6))((N . 5))((N . 2))thread=1
+((N . 6))((N . 3))((N . 2))thread=1
+((N . 6))((N . 2))((N . 2))thread=1
+((N . 6))((N . 2))((N . 2))thread=1
+((N . 6))((N . 3))((N . 2))thread=1
+6))((N . 6))((N . 2))thread=2
+((N . 6))((N . 6))((N . 3))thread=2
+((N . 6))((N . 6))((N . 4))thread=2
+((N . 6))((N . 6))((N . 2))thread=2
+((N . 6))((N . 6))((N . 2))thread=2
+8
+> (quit)
+
+```

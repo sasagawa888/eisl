@@ -229,7 +229,7 @@ int f_flet(int arglist, int th)
 
 struct para {
     int in;
-    int th;
+    int num;
     int out;
 };
 
@@ -241,38 +241,37 @@ void *plet(void *arg)
     struct para *pd = (struct para *) arg;
 
     parallel_flag = 1;
-    pd->out = eval(pd->in, pd->th);
+    pd->out = eval(pd->in, pd->num);
     parallel_flag = 0;
     return NULL;
 }
 
 int f_plet(int arglist)
 {
-    int arg1, arg2, body;
+    int arg1, arg2;
 
-    arg1 = caar(arglist);
-    arg2 = cadar(arglist);
-    body = cdr(arglist);
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
 
-    pthread_t t[2];
-    struct para d[2];
+    pthread_t t[PARASIZE];
+    struct para d[PARASIZE];
 
-    d[0].in = cadr(arg1);
-    d[0].th = 1;
+    d[0].in = cadr(car(arg1));
+    d[0].num = 1;
     ep[1] = ep[0];
     pthread_create(&t[0], NULL, plet, &d[0]);
 
-    d[1].in = cadr(arg2);
-    d[1].th = 2;
+    d[1].in = cadr(cadr(arg1));
+    d[1].num = 2;
     ep[2] = ep[0];
     pthread_create(&t[1], NULL, plet, &d[1]);
 
     pthread_join(t[0], NULL);
     pthread_join(t[1], NULL);
 
-    add_lex_env(car(arg1), d[0].out, 0);
-    add_lex_env(car(arg2), d[1].out, 0);
-    return (f_progn(body, 0));
+    add_lex_env(car(car(arg1)), d[0].out, 0);
+    add_lex_env(car(cadr(arg1)), d[1].out, 0);
+    return (f_progn(arg2, 0));
 }
 
 
@@ -1156,7 +1155,7 @@ int f_return_from(int arglist, int th)
 
 int f_catch(int arglist, int th)
 {
-    int arg1, arg2, i, tag, ret, res, save, unwind;
+    int arg1, arg2, tag, ret, res, save, unwind;
 
     save = sp[th];
     arg1 = car(arglist);	/* tag */

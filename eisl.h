@@ -162,15 +162,14 @@ typedef struct {
 /* ------pointer---- */
 extern int ep[PARASIZE];	// environment pointer
 extern int dp[PARASIZE];	// dynamic pointer
-extern int hp;			// heap pointer
+extern int hp;			    // heap pointer
 extern int sp[PARASIZE];	// stack pointer
-extern int fc;			// free counter
-extern int rc;          // real free counter
-extern int ap[PARASIZE];// arglist pointer
-extern int lp;			// shelter pointer
-extern int wp;			// working pointer
-extern int ac;			// allocate counter
-extern int cp;          // catch tag pointer
+extern int fc;			    // free counter
+extern int rc;              // real free counter
+extern int ap[PARASIZE];    // arglist pointer
+extern int lp;			    // shelter pointer
+extern int ac;			    // allocate counter
+extern int cp;              // catch tag pointer
 
 /* ------class----- */
 extern int cobject;

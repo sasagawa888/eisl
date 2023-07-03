@@ -52,14 +52,13 @@
 /* pointer */
 int ep[PARASIZE];		/* environment pointer */
 int dp[PARASIZE];		/* dynamic pointer */
-int hp;				/* heap pointer for mark and sweep */
+int hp;					/* heap pointer for mark and sweep */
 int sp[PARASIZE];		/* stack pointer */
-int fc;				/* free counter */
-int rc;				/* real free counter */
+int fc;					/* free counter */
+int rc;					/* real free counter */
 int ap[PARASIZE];		/* arglist pointer */
-int lp;				/* shelter pointer */
-int wp;				/* working pointer for copy GC */
-int cp;				/* tag pointer for catch & throw */
+int lp;					/* shelter pointer */
+int cp;					/* tag pointer for catch & throw */
 
 /* class */
 int cobject;

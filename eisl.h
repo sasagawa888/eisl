@@ -244,7 +244,7 @@ extern int buffer1[COL_SIZE + 1];
 /* heap and stack */
 extern cell heap[CELLSIZE];
 extern int stack[STACKSIZE][PARASIZE];
-extern int argstk[STACKSIZE];
+extern int argstk[STACKSIZE][PARASIZE];
 extern int cell_hash_table[HASHTBSIZE];
 extern int shelter[STACKSIZE];
 extern int dynamic[DYNSIZE][2][PARASIZE];

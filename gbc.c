@@ -241,7 +241,7 @@ void gbc_mark(void)
 	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap[0]; i++)
-	mark_cell(argstk[i]);
+	mark_cell(argstk[i][0]);
 
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);
@@ -387,7 +387,7 @@ void *concurrent(void *arg)
 	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
     for (i = 0; i < ap[0]; i++)
-	mark_cell(argstk[i]);
+	mark_cell(argstk[i][0]);
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);
     /* mark thunk for unwind-protect */

@@ -131,7 +131,7 @@ int buffer1[COL_SIZE + 1];
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
 int stack[STACKSIZE][PARASIZE];
-int argstk[STACKSIZE];
+int argstk[STACKSIZE][PARASIZE];
 int cell_hash_table[HASHTBSIZE];
 int shelter[STACKSIZE];
 int dynamic[DYNSIZE][2][PARASIZE];
@@ -2099,14 +2099,14 @@ int pop(int th)
 /* push/pop of arglist */
 int arg_push(int addr)
 {
-    argstk[ap[0]++] = addr;
+    argstk[ap[0]++][0] = addr;
 
     return (T);
 }
 
 int arg_pop(void)
 {
-    return (argstk[--ap[0]]);
+    return (argstk[--ap[0]][0]);
 }
 
 /* shelter push/pop */

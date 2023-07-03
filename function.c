@@ -1346,7 +1346,7 @@ int f_list(int arglist)
     return (list(arglist));
 }
 
-int f_append(int arglist)
+int f_append(int arglist, int th)
 {
     int arg1;
 
@@ -1354,18 +1354,18 @@ int f_append(int arglist)
     if (!listp(arg1) && nullp(arglist))
 	error(NOT_CONS, "append", arg1);
     if (length(arg1) >= fc) {
-	shelter_push(arglist);
+	shelter_push(arglist,th);
 	(void) gbc();
-	shelter_pop();
+	shelter_pop(th);
     }
     if (nullp(arglist))
 	return (NIL);
     else if (nullp(cdr(arglist)))
 	return (car(arglist));
     else if (nullp(arg1))
-	return (f_append(cdr(arglist)));
+	return (f_append(cdr(arglist),th));
     else
-	return (append(car(arglist), f_append(cdr(arglist))));
+	return (append(car(arglist), f_append(cdr(arglist),th)));
 }
 
 
@@ -1573,7 +1573,7 @@ int mapcar(int x, int y, int th)
     int ls, res, car, cdr;
 
     ls = y;
-    shelter_push(y);
+    shelter_push(y,th);
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
@@ -1581,7 +1581,7 @@ int mapcar(int x, int y, int th)
 	cdr = mapcar(x, each_cdr(y), th);
 	res = cons(car, cdr);
     }
-    shelter_pop();
+    shelter_pop(th);
     return res;
 }
 
@@ -1604,7 +1604,7 @@ int each_cdr(int x)
 }
 
 
-int f_mapc(int arglist)
+int f_mapc(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -1614,22 +1614,22 @@ int f_mapc(int arglist)
     if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
 	error(NOT_FUNC, "mapc", arg1);
 
-    return (mapc(arg1, arg2));
+    return (mapc(arg1, arg2, th));
 }
 
-int mapc(int x, int y)
+int mapc(int x, int y, int th)
 {
     int ls;
 
     ls = y;
-    shelter_push(y);
+    shelter_push(y,th);
     while (!member(NIL, ls)) {
-	shelter_push(ls);
-	apply(x, each_car(ls), 0);
-	shelter_pop();
+	shelter_push(ls,th);
+	apply(x, each_car(ls), th);
+	shelter_pop(th);
 	ls = each_cdr(ls);
     }
-    shelter_pop();
+    shelter_pop(th);
     return (car(y));
 }
 

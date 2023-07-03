@@ -80,13 +80,17 @@ void dynamic_link(int x)
 	return (arg_pop(0));
     }
 
+    int shelter_pop1(int th){
+    return (shelter_pop(0));
+    }
+
     /* argument-0 type */
     init_f0(CHECKGBC_IDX, check_gbc);
     init_f0(GBC_IDX, gbc);
     init_f0(FRESHCELL_IDX, freshcell);
     init_f0(FREECELL_IDX, freecell);
     init_f0(ARGPOP_IDX, arg_pop1);
-    init_f0(SHELTERPOP_IDX, shelter_pop);
+    init_f0(SHELTERPOP_IDX, shelter_pop1);
     init_f0(POP_IDX, pop);
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
@@ -104,6 +108,10 @@ void dynamic_link(int x)
 
     int eval1(int x) {
 	return (eval(x, 0));
+    }
+
+    int shelter_push1(int x){
+    return (shelter_push(x,0));
     }
 
     init_f1(CAR_IDX, car);
@@ -132,7 +140,7 @@ void dynamic_link(int x)
     init_f1(FINDENV_IDX, find_env);
     init_f1(FINDDYN_IDX, find_dyn1);
     init_f1(ARGPUSH_IDX, arg_push1);
-    init_f1(SHELTERPUSH_IDX, shelter_push);
+    init_f1(SHELTERPUSH_IDX, shelter_push1);
     init_f1(PUSH_IDX, push);
     init_f1(GETOPT_IDX, get_opt);
     init_f1(GETPROP_IDX, get_prop);

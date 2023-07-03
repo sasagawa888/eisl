@@ -319,17 +319,17 @@ int f_let(int arglist, int th)
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "let", sym);
-	shelter_push(ep1);
+	shelter_push(ep1,th);
 	val = eval(cadar(arg1), th);
-	shelter_pop();
+	shelter_pop(th);
 	ep[th] = ep1;
 	add_lex_env(sym, val, th);
 	arg1 = cdr(arg1);
     }
     while (arg2 != NIL) {
-	shelter_push(arg2);
+	shelter_push(arg2,th);
 	res = eval(car(arg2), th);
-	shelter_pop();
+	shelter_pop(th);
 	arg2 = cdr(arg2);
     }
     ep[th] = save;
@@ -428,13 +428,13 @@ int f_dynamic_let(int arglist, int th)
 
 	dp1 = dp[0];
 	dp[0] = save;
-	shelter_push(dp1);
+	shelter_push(dp1,th);
 	sym = caar(arg1);
 	if (!symbolp(sym))
 	    error(NOT_SYM, "dynamic-let", sym);
 	val = eval(cadar(arg1), th);
 	dp[0] = dp1;
-	shelter_pop();
+	shelter_pop(th);
 	add_dyn_env(sym, val, th);
 	arg1 = cdr(arg1);
     }
@@ -515,9 +515,9 @@ int f_setf(int arglist, int th)
     } else
 	error(IMPROPER_ARGS, "setf", arglist);
 
-    shelter_push(newform);
+    shelter_push(newform,th);
     res = eval(newform, th);
-    shelter_pop();
+    shelter_pop(th);
     return (res);
 }
 
@@ -1022,20 +1022,20 @@ int f_for(int arglist, int th)
 	int save1;
 
 	save1 = ep[th];
-	shelter_push(arg3);
+	shelter_push(arg3,th);
 	f_progn(arg3, th);	/* do body */
-	shelter_pop();
+	shelter_pop(th);
 	ep[th] = save1;
 	iter = arg1;		/* update local variable */
 	temp = NIL;
 	while (iter != NIL) {
 	    if (!nullp(caddar(iter))) {	/* update part is not null */
-		shelter_push(iter);
-		shelter_push(temp);
+		shelter_push(iter,th);
+		shelter_push(temp,th);
 		temp =
 		    cons(cons(caar(iter), eval(caddar(iter), th)), temp);
-		shelter_pop();
-		shelter_pop();
+		shelter_pop(th);
+		shelter_pop(th);
 	    }
 	    iter = cdr(iter);
 	}

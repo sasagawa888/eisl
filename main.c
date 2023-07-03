@@ -1702,9 +1702,9 @@ int eval(int addr, int th)
 	} else if ((symbolp(car(addr)))
 		   && (HAS_NAME(car(addr), "QUASI-QUOTE"))) {
 	    temp = quasi_transfer(cadr(addr), 0);
-	    shelter_push(temp);
+	    shelter_push(temp,th);
 	    res = eval(temp, th);
-	    shelter_pop();
+	    shelter_pop(th);
 	    return (res);
 	} else if (subrp(car(addr))) {
 	    st = getETime();
@@ -1794,8 +1794,8 @@ int apply(int func, int args, int th)
 	    print(args);
 	    putchar('\n');
 	}
-	shelter_push(func);
-	shelter_push(args);
+	shelter_push(func,th);
+	shelter_push(args,th);
 	push(ep[th], th);
 	push(cp, th);
 	ep[th] = GET_CDR(func);
@@ -1840,8 +1840,8 @@ int apply(int func, int args, int th)
 	}
 	cp = pop(th);
 	ep[th] = pop(th);
-	shelter_pop();
-	shelter_pop();
+	shelter_pop(th);
+	shelter_pop(th);
 	return (res);
     case MACRO:
 	{
@@ -1861,15 +1861,15 @@ int apply(int func, int args, int th)
 	    body = cdr(GET_CAR(macrofunc));
 	    bind_arg(varlist, args, th);
 	    while (!(IS_NIL(body))) {
-		shelter_push(body);
+		shelter_push(body,th);
 		res = eval(car(body), th);
-		shelter_pop();
+		shelter_pop(th);
 		body = cdr(body);
 	    }
 	    unbind(th);
-	    shelter_push(res);
+	    shelter_push(res,th);
 	    res = eval(res, th);
-	    shelter_pop();
+	    shelter_pop(th);
 	    return (res);
 	}
 
@@ -2107,21 +2107,21 @@ int arg_pop(int th)
 }
 
 /* shelter push/pop */
-int shelter_push(int addr)
+int shelter_push(int addr, int th)
 {
-    if (lp[0] >= STACKSIZE)
+    if (lp[th] >= STACKSIZE)
 	error(SHELTER_OVERF, "shelter_push", NIL);
 
-    shelter[lp[0]++][0] = addr;
+    shelter[lp[th]++][th] = addr;
 
     return (T);
 }
 
-int shelter_pop(void)
+int shelter_pop(int th)
 {
-    if (lp[0] <= 0)
+    if (lp[th] <= 0)
 	error(SHELTER_UNDERF, "shelter_pop", NIL);
-    return (shelter[--lp[0]][0]);
+    return (shelter[--lp[th]][th]);
 }
 
 /* system function regist subr to environment. */

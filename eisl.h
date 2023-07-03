@@ -167,7 +167,7 @@ extern int sp[PARASIZE];	// stack pointer
 extern int fc;			    // free counter
 extern int rc;              // real free counter
 extern int ap[PARASIZE];    // arglist pointer
-extern int lp;			    // shelter pointer
+extern int lp[PARASIZE];	// shelter pointer
 extern int ac;			    // allocate counter
 extern int cp;              // catch tag pointer
 
@@ -245,7 +245,7 @@ extern cell heap[CELLSIZE];
 extern int stack[STACKSIZE][PARASIZE];
 extern int argstk[STACKSIZE][PARASIZE];
 extern int cell_hash_table[HASHTBSIZE];
-extern int shelter[STACKSIZE];
+extern int shelter[STACKSIZE][PARASIZE];
 extern int dynamic[DYNSIZE][2][PARASIZE];
 extern int bigcell[BIGSIZE];
 

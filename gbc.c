@@ -262,8 +262,8 @@ void gbc_mark(void)
     mark_cell(error_stream);
 
     /* mark shelter */
-    for (i = 0; i < lp; i++)
-	mark_cell(shelter[i]);
+    for (i = 0; i < lp[0]; i++)
+	mark_cell(shelter[i][0]);
 
     /* mark dynamic environment */
     for (i = 1; i <= dp[0]; i++)
@@ -403,8 +403,8 @@ void *concurrent(void *arg)
     mark_cell(output_stream);
     mark_cell(error_stream);
     /* mark shelter */
-    for (i = 0; i < lp; i++)
-	mark_cell(shelter[i]);
+    for (i = 0; i < lp[0]; i++)
+	mark_cell(shelter[i][0]);
     /* mark dynamic environment */
     for (i = 1; i <= dp[0]; i++)
 	mark_cell(dynamic[i][1]);

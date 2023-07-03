@@ -57,7 +57,7 @@ int sp[PARASIZE];		/* stack pointer */
 int fc;					/* free counter */
 int rc;					/* real free counter */
 int ap[PARASIZE];		/* arglist pointer */
-int lp;					/* shelter pointer */
+int lp[PARASIZE];		/* shelter pointer */
 int cp;					/* tag pointer for catch & throw */
 
 /* class */
@@ -132,7 +132,7 @@ cell heap[CELLSIZE];
 int stack[STACKSIZE][PARASIZE];
 int argstk[STACKSIZE][PARASIZE];
 int cell_hash_table[HASHTBSIZE];
-int shelter[STACKSIZE];
+int shelter[STACKSIZE][PARASIZE];
 int dynamic[DYNSIZE][2][PARASIZE];
 int bigcell[BIGSIZE];
 
@@ -414,8 +414,8 @@ void init_pointer(void)
 	dp[i] = 0;
 	sp[i] = 0;
 	ap[i] = 0;
+	lp[i] = 0;
     }
-    lp = 0;
     cp = 0;
     block_pt = 0;
     catch_pt = 0;
@@ -2109,19 +2109,19 @@ int arg_pop(int th)
 /* shelter push/pop */
 int shelter_push(int addr)
 {
-    if (lp >= STACKSIZE)
+    if (lp[0] >= STACKSIZE)
 	error(SHELTER_OVERF, "shelter_push", NIL);
 
-    shelter[lp++] = addr;
+    shelter[lp[0]++][0] = addr;
 
     return (T);
 }
 
 int shelter_pop(void)
 {
-    if (lp <= 0)
+    if (lp[0] <= 0)
 	error(SHELTER_UNDERF, "shelter_pop", NIL);
-    return (shelter[--lp]);
+    return (shelter[--lp[0]][0]);
 }
 
 /* system function regist subr to environment. */

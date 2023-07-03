@@ -330,7 +330,7 @@ int f_macroexpand_all(int arglist, int th)
     if (listp(arg1) && car(arg1) == make_sym("DEFMACRO"))
 	return (arg1);
     else
-	return (macroexpand_all(arg1,th));
+	return (macroexpand_all(arg1, th));
 }
 
 
@@ -344,10 +344,12 @@ int macroexpand_all(int sexp, int th)
     else if (listp(sexp) && car(sexp) == make_sym("QUOTE"))
 	return (sexp);
     else if (listp(sexp) && macrop(car(sexp)))
-	return (macroexpand_all(macroexpand_1(car(sexp), cdr(sexp),th),th));
+	return (macroexpand_all
+		(macroexpand_1(car(sexp), cdr(sexp), th), th));
     else if (listp(sexp))
 	return (cons
-		(macroexpand_all(car(sexp),th), macroexpand_all(cdr(sexp),th)));
+		(macroexpand_all(car(sexp), th),
+		 macroexpand_all(cdr(sexp), th)));
 
     return (NIL);
 }
@@ -608,8 +610,8 @@ void debugger()
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":E"))) {
 	    print(ep[0]);
-        print(ep[1]);
-        print(ep[2]);
+	    print(ep[1]);
+	    print(ep[2]);
 	    putchar('\n');
 	} else if (eqp(x, make_sym(":I"))) {
 	    print(examin_sym);

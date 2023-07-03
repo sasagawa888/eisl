@@ -80,7 +80,7 @@ void init_syntax(void)
     def_fsubr("TRACE", f_trace);
     def_fsubr("UNTRACE", f_untrace);
     def_fsubr("DEFMODULE", f_defmodule);
-	def_fsubr("PLET", f_plet);
+    def_fsubr("PLET", f_plet);
 }
 
 // --FSUBR-----------
@@ -229,7 +229,7 @@ int f_flet(int arglist, int th)
 
 struct para {
     int in;
-	int	th;
+    int th;
     int out;
 };
 
@@ -238,41 +238,41 @@ void *plet(void *arg);
 void *plet(void *arg)
 {
 
-	struct para *pd = (struct para *) arg;
+    struct para *pd = (struct para *) arg;
 
-	parallel_flag = 1;
-    pd->out = eval(pd->in,pd->th);
-	parallel_flag = 0;
+    parallel_flag = 1;
+    pd->out = eval(pd->in, pd->th);
+    parallel_flag = 0;
     return NULL;
 }
 
 int f_plet(int arglist)
 {
-	int arg1,arg2,body;
+    int arg1, arg2, body;
 
-	arg1 = caar(arglist);
-	arg2 = cadar(arglist);
-	body = cdr(arglist);
+    arg1 = caar(arglist);
+    arg2 = cadar(arglist);
+    body = cdr(arglist);
 
-	pthread_t t[2];
+    pthread_t t[2];
     struct para d[2];
 
     d[0].in = cadr(arg1);
-	d[0].th = 1;
-	ep[1] = ep[0];
+    d[0].th = 1;
+    ep[1] = ep[0];
     pthread_create(&t[0], NULL, plet, &d[0]);
 
-	d[1].in = cadr(arg2);
-	d[1].th = 2;
-	ep[2] = ep[0];
+    d[1].in = cadr(arg2);
+    d[1].th = 2;
+    ep[2] = ep[0];
     pthread_create(&t[1], NULL, plet, &d[1]);
 
-	pthread_join(t[0], NULL);
+    pthread_join(t[0], NULL);
     pthread_join(t[1], NULL);
 
-	add_lex_env(car(arg1),d[0].out, 0);
-	add_lex_env(car(arg2),d[1].out, 0);
-	return(f_progn(body,0));
+    add_lex_env(car(arg1), d[0].out, 0);
+    add_lex_env(car(arg2), d[1].out, 0);
+    return (f_progn(body, 0));
 }
 
 
@@ -484,8 +484,8 @@ int f_setf(int arglist, int th)
 	    error(IMPROPER_ARGS, "dynamic", arg1);
 	newform = cons(make_sym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
     } else if (listp(arg1) && macrop(car(arg1))) {
-	var = f_macroexpand_1(list1(arg1),th);
-	return (f_setf(list2(var, arg2),th));
+	var = f_macroexpand_1(list1(arg1), th);
+	return (f_setf(list2(var, arg2), th));
     }
     /* (setf (slot-value instance slot-name) value) */
     else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
@@ -540,7 +540,7 @@ int f_set_dynamic(int arglist, int th)
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
 	error(WRONG_ARGS, "set-dynamic", arg1);
 
-    if (find_dyn(arg1,th) != FAILSE) {
+    if (find_dyn(arg1, th) != FAILSE) {
 	set_dyn_env(arg1, arg2, th);
 	return (arg2);
     } else
@@ -566,7 +566,7 @@ int f_setq(int arglist, int th)
 	error(IMPROPER_ARGS, "setq", arglist);
 
     arg2 = eval(arg2, th);
-    if (find_env(arg1,th) != FAILSE)
+    if (find_env(arg1, th) != FAILSE)
 	set_lex_env(arg1, arg2, th);
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, arg2);
@@ -728,7 +728,7 @@ int f_dynamic(int arglist, int th)
     if (!symbolp(arg1))
 	error(NOT_SYM, "dynamic", arg1);
 
-    res = find_dyn(arg1,th);
+    res = find_dyn(arg1, th);
     if (res == FAILSE)
 	error(UNDEF_DYN, "dynamic", arg1);
 
@@ -743,7 +743,7 @@ int f_and(int arglist, int th)
     else if (nullp(cdr(arglist)))
 	return (eval(car(arglist), th));
     else if (eval(car(arglist), th) != NIL)
-	return (f_and(cdr(arglist),th));
+	return (f_and(cdr(arglist), th));
     else
 	return (NIL);
 
@@ -758,7 +758,7 @@ int f_or(int arglist, int th)
     else if (nullp(cdr(arglist)))
 	return (eval(car(arglist), th));
     else if ((temp = eval(car(arglist), th)) == NIL)
-	return (f_or(cdr(arglist),th));
+	return (f_or(cdr(arglist), th));
     else
 	return (temp);
 
@@ -947,9 +947,9 @@ int f_cond(int arglist, int th)
     if (length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2, th)))
 	return (arg2);
     else if (!nullp(eval(arg2, th)))
-	return (f_progn(arg3,th));
+	return (f_progn(arg3, th));
     else
-	return (f_cond(cdr(arglist),th));
+	return (f_cond(cdr(arglist), th));
 }
 
 int f_while(int arglist, int th)
@@ -959,7 +959,7 @@ int f_while(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     while (eval(arg1, th) != NIL) {
-	f_progn(arg2,th);
+	f_progn(arg2, th);
     }
     return (NIL);
 }
@@ -1023,7 +1023,7 @@ int f_for(int arglist, int th)
 
 	save1 = ep[th];
 	shelter_push(arg3);
-	f_progn(arg3,th);		/* do body */
+	f_progn(arg3, th);	/* do body */
 	shelter_pop();
 	ep[th] = save1;
 	iter = arg1;		/* update local variable */
@@ -1032,7 +1032,8 @@ int f_for(int arglist, int th)
 	    if (!nullp(caddar(iter))) {	/* update part is not null */
 		shelter_push(iter);
 		shelter_push(temp);
-		temp = cons(cons(caar(iter), eval(caddar(iter), th)), temp);
+		temp =
+		    cons(cons(caar(iter), eval(caddar(iter), th)), temp);
 		shelter_pop();
 		shelter_pop();
 	    }
@@ -1043,7 +1044,7 @@ int f_for(int arglist, int th)
 	    temp = cdr(temp);
 	}
     }
-    res = f_progn(cdr(arg2),th);
+    res = f_progn(cdr(arg2), th);
     ep[th] = save;
     return (res);
 }
@@ -1073,7 +1074,8 @@ int f_block(int arglist, int th)
     block_data[block_pt][0] = tag;
     block_data[block_pt][1] = ep[th];
     block_data[block_pt][2] = unwind_nest;
-    block_tag_check[block_pt] = find_return_from_p(macroexpand_all(arg2,th));
+    block_tag_check[block_pt] =
+	find_return_from_p(macroexpand_all(arg2, th));
     /* save flag. if exist return-from 1 else -1 */
     block_pt++;
     unwind = unwind_nest;
@@ -1081,7 +1083,7 @@ int f_block(int arglist, int th)
 
 
     if (ret == 0) {
-	res = f_progn(arg2,th);
+	res = f_progn(arg2, th);
 	block_pt--;
 	return (res);
     } else if (ret == 1) {
@@ -1147,7 +1149,7 @@ int f_return_from(int arglist, int th)
     }
 
 
-    block_arg = f_progn(arg2,th);
+    block_arg = f_progn(arg2, th);
     ep[th] = block_data[block_pt][1];	/* restore environment */
     longjmp(block_buf[block_pt], 1);
 }
@@ -1185,7 +1187,7 @@ int f_catch(int arglist, int th)
     ret = setjmp(catch_buf[catch_pt - 1]);
 
     if (ret == 0) {
-	res = f_progn(arg2,th);
+	res = f_progn(arg2, th);
 	/* after execution of arg2 tag arg1 is not neccesally */
 	cp--;
 	catch_pt = cp + 1;
@@ -1422,10 +1424,10 @@ int f_case(int arglist, int th)
     key = eval(arg1, 0);
     while (arg2 != NIL) {
 	if (caar(arg2) == T) {
-	    res = f_progn(cdar(arg2),th);
+	    res = f_progn(cdar(arg2), th);
 	    break;
 	} else if (member(key, caar(arg2)) != NIL) {
-	    res = f_progn(cdar(arg2),th);
+	    res = f_progn(cdar(arg2), th);
 	    break;
 	} else {
 	    arg2 = cdr(arg2);
@@ -1462,10 +1464,10 @@ int f_case_using(int arglist, int th)
     fun = eval(arg1, th);
     while (arg3 != NIL) {
 	if (caar(arg3) == T) {
-	    res = f_progn(cdar(arg3),th);
+	    res = f_progn(cdar(arg3), th);
 	    break;
 	} else if (member1(key, caar(arg3), fun) != NIL) {
-	    res = f_progn(cdar(arg3),th);
+	    res = f_progn(cdar(arg3), th);
 	    break;
 	} else {
 	    arg3 = cdr(arg3);
@@ -1950,7 +1952,7 @@ int f_ignore_errors(int arglist, int th)
     ignore_flag = true;
     save1 = input_stream;
     save2 = output_stream;
-    TRY res = f_progn(arglist,th);
+    TRY res = f_progn(arglist, th);
     ELSE res = NIL;
     END_TRY;
     ignore_flag = false;
@@ -1998,7 +2000,7 @@ int f_with_open_input_file(int arglist, int th)
 	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     fclose(port);
     ep[th] = ep1;
     return (res);
@@ -2037,7 +2039,7 @@ int f_with_open_output_file(int arglist, int th)
 	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     fclose(port);
     ep[th] = ep1;
     return (res);
@@ -2076,7 +2078,7 @@ int f_with_open_io_file(int arglist, int th)
 	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     fclose(port);
     ep[th] = ep1;
     return (res);
@@ -2095,7 +2097,7 @@ int f_with_standard_input(int arglist, int th)
 
     save = input_stream;
     input_stream = stream;
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     input_stream = save;
     return (res);
 }
@@ -2113,7 +2115,7 @@ int f_with_standard_output(int arglist, int th)
 
     save = output_stream;
     output_stream = stream;
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     output_stream = save;
     return (res);
 }
@@ -2131,7 +2133,7 @@ int f_with_error_output(int arglist, int th)
 
     save = output_stream;
     output_stream = stream;
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     output_stream = save;
     return (res);
 }
@@ -2144,7 +2146,7 @@ int f_with_handler(int arglist, int th)
     arg2 = cdr(arglist);
 
     error_handler = cons(eval(arg1, th), error_handler);
-    res = f_progn(arg2,th);
+    res = f_progn(arg2, th);
     error_handler = cdr(error_handler);
     return (res);
 }
@@ -2410,7 +2412,7 @@ int f_import(int arglist)
     char *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
     char *fname = library_file(str);
     if (access(fname, R_OK) != -1) {
-	f_load(list1(make_str(fname)),0);
+	f_load(list1(make_str(fname)), 0);
 	goto cleanup;
     }
 
@@ -2419,7 +2421,7 @@ int f_import(int arglist)
     FREE(fname);
     fname = library_file(str);
     if (access(fname, R_OK) != -1) {
-	f_load(list1(make_str(fname)),0);
+	f_load(list1(make_str(fname)), 0);
 	goto cleanup;
     }
     FREE(str);

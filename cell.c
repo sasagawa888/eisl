@@ -52,12 +52,11 @@ void init_cell(void)
     make_sym("<file-end>");	/* 6th address is FEND */
     SET_AUX(FEND, CLASS_SYMBOL);	/* class of <end-of-file> is symbol */
     int i;
-    for(i=0;i<PARASIZE;i++)
-    {
-    ep[i] = 0;
-    dp[i] = 0;
-    sp[i] = 0;
-    ap[i] = 0;
+    for (i = 0; i < PARASIZE; i++) {
+	ep[i] = 0;
+	dp[i] = 0;
+	sp[i] = 0;
+	ap[i] = 0;
     }
 
 }
@@ -239,9 +238,11 @@ int freshcell(void)
     int res;
 
     if (!concurrent_flag) {
-	res = hp;   
+    pthread_mutex_lock(&mutex);
+	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
+    pthread_mutex_unlock(&mutex);
 	fc--;
 	if (fc <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
@@ -295,8 +296,7 @@ void set_lex_env(int sym, int val, int th)
     addr = assq(sym, ep[th]);
     if (addr == FAILSE)
 	add_lex_env(sym, val, th);
-    else
-    {
+    else {
 	SET_CDR(addr, val);
     }
 }
@@ -553,7 +553,7 @@ int make_func(const char *pname, int addr)
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL);
     END_TRY;
     SET_CAR(val, addr);
-    SET_CDR(val, ep[0]);		/* local environment */
+    SET_CDR(val, ep[0]);	/* local environment */
     SET_AUX(val, cfunction);	/* class function */
     /* if lambda is generated in method, save the method and given argument */
     if (generic_func != NIL)

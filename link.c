@@ -76,9 +76,8 @@ void dynamic_link(int x)
     init_tfunctions = (voidfunc_t) dlsym(hmod, "init_tfunctions");
     init_declare = (voidfunc_t) dlsym(hmod, "init_declare");
 
-    int arg_pop1(int th)
-    {
-        return(arg_pop(0));
+    int arg_pop1(int th) {
+	return (arg_pop(0));
     }
 
     /* argument-0 type */
@@ -95,19 +94,16 @@ void dynamic_link(int x)
     init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
 
     /* argument-1 type */
-    int find_dyn1(int x)
-    {
-        return(find_dyn(x,0));
+    int find_dyn1(int x) {
+	return (find_dyn(x, 0));
     }
 
-    int arg_push1(int x)
-    {
-        return(arg_push(x,0));
+    int arg_push1(int x) {
+	return (arg_push(x, 0));
     }
 
-    int eval1(int x)
-    {
-        return(eval(x,0));
+    int eval1(int x) {
+	return (eval(x, 0));
     }
 
     init_f1(CAR_IDX, car);
@@ -152,20 +148,17 @@ void dynamic_link(int x)
      * Fsetdynenv(x,y,cellarg->th)
      }
      * compile set flag while compiling plet. and generate Pthread code.
-    */
-    void set_dyn_env1(int x, int y)
-    {
-        set_dyn_env(x, y, 0);
+     */
+    void set_dyn_env1(int x, int y) {
+	set_dyn_env(x, y, 0);
     }
-    void add_dyn_env1(int x, int y)
-    {
-        add_dyn_env(x, y, 0);
+    void add_dyn_env1(int x, int y) {
+	add_dyn_env(x, y, 0);
     }
-    void set_dynamic1(int x, int y)
-    {
-        set_dynamic(x,y,0);
+    void set_dynamic1(int x, int y) {
+	set_dynamic(x, y, 0);
     }
-    
+
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);
@@ -302,7 +295,7 @@ int get_dynpt(void)
 
 int call_subr(int func, int arglist)
 {
-    return ((GET_SUBR(func)) (arglist,0));
+    return ((GET_SUBR(func)) (arglist, 0));
 }
 
 int make_int_long(int n)
@@ -455,7 +448,7 @@ int fast_cdr(int x)
 
 int set_dynamic(int x, int y, int th)
 {
-    if (find_dyn(x,0) != FAILSE)
+    if (find_dyn(x, 0) != FAILSE)
 	set_dyn_env(x, y, 0);
     else
 	error(UNDEF_VAR, "set-dynamic", x);

@@ -211,10 +211,10 @@ int functionp(int addr)
 {
     int val;
 
-    val = find_dyn(addr,0);
+    val = find_dyn(addr, 0);
     if ((val != -1) && IS_FUNC(val))
 	return (val);
-    val = find_env(addr,0);
+    val = find_env(addr, 0);
     if ((val != FAILSE) && IS_FUNC(val))
 	return (val);
     val = GET_CAR(addr);

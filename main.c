@@ -50,13 +50,13 @@
 //#define DEBUG
 
 /* pointer */
-int ep[PARASIZE];	/* environment pointer */
-int dp[PARASIZE];	/* dynamic pointer */
+int ep[PARASIZE];		/* environment pointer */
+int dp[PARASIZE];		/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
-int sp[PARASIZE];	/* stack pointer */
+int sp[PARASIZE];		/* stack pointer */
 int fc;				/* free counter */
 int rc;				/* real free counter */
-int ap[PARASIZE];	/* arglist pointer */
+int ap[PARASIZE];		/* arglist pointer */
 int lp;				/* shelter pointer */
 int wp;				/* working pointer for copy GC */
 int cp;				/* tag pointer for catch & throw */
@@ -173,7 +173,7 @@ bool error_flag = false;	/* invoked error? */
 int concurrent_flag = 0;	/* while executing concurrent_flag */
 int concurrent_stop_flag = 0;	/* while remarking&sweeping */
 int concurrent_sweep_flag = 0;	/* while concurrent-sweeping */
-int parallel_flag = 0;          /* while executing parallel thread */
+int parallel_flag = 0;		/* while executing parallel thread */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -316,7 +316,7 @@ int main(int argc, char *argv[])
     option_flag = true;
     TRY {
 	if (access("startup.lsp", R_OK) == 0)
-	    f_load(list1(make_str("startup.lsp")),0);
+	    f_load(list1(make_str("startup.lsp")), 0);
 
 	while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
 	    char *str;
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
 	    switch (ch) {
 	    case 'l':
 		if (f_probe_file(list1(make_str(optarg))) == T) {
-		    f_load(list1(make_str(optarg)),0);
+		    f_load(list1(make_str(optarg)), 0);
 		} else {
 		    puts("File doesn't exist.");
 		    exit(EXIT_FAILURE);
@@ -332,12 +332,12 @@ int main(int argc, char *argv[])
 		break;
 	    case 'c':
 		str = library_file("compiler.lsp");
-		f_load(list1(make_str(str)),0);
+		f_load(list1(make_str(str)), 0);
 		FREE(str);
 		break;
 	    case 'f':
 		str = library_file("formatter.lsp");
-		f_load(list1(make_str(str)),0);
+		f_load(list1(make_str(str)), 0);
 		FREE(str);
 		break;
 	    case 's':
@@ -367,7 +367,7 @@ int main(int argc, char *argv[])
 	gArgC = argc - optind;
 	gArgV = argv + optind;
 	if (script_flag) {
-	    f_load(list1(make_str(script_arg)),0);
+	    f_load(list1(make_str(script_arg)), 0);
 	    exit(EXIT_SUCCESS);
 	}
     }
@@ -408,15 +408,14 @@ char *library_file(const char *basename)
 
 void init_pointer(void)
 {
-    int i,ls;
+    int i, ls;
 
-	for(i=0;i<PARASIZE;i++)
-	{
-    ep[i] = 0;
+    for (i = 0; i < PARASIZE; i++) {
+	ep[i] = 0;
 	dp[i] = 0;
-    sp[i] = 0;
+	sp[i] = 0;
 	ap[i] = 0;
-	}
+    }
     lp = 0;
     cp = 0;
     block_pt = 0;
@@ -1759,7 +1758,7 @@ int apply(int func, int args, int th)
 	     || GET_TAG(func) == GENERIC) && (GET_TAG(args) == LIS
 					      || GET_TAG(args) == SYM));
 
-	
+
     res = NIL;
     pexist = 0;
     qexist = 0;
@@ -1775,12 +1774,12 @@ int apply(int func, int args, int th)
 	return ((GET_SUBR(func)) (args, th));
     case FUNC:
 
-	#ifdef DEBUG
+#ifdef DEBUG
 	print(ep[0]);
-    print(ep[1]);
-    print(ep[2]);
+	print(ep[1]);
+	print(ep[2]);
 	printf("thread=%d\n", th);
-	#endif
+#endif
 
 	if (try_flag == true)
 	    try_res = cons(args, try_res);
@@ -1798,8 +1797,8 @@ int apply(int func, int args, int th)
 	}
 	shelter_push(func);
 	shelter_push(args);
-	push(ep[th],th);
-	push(cp,th);
+	push(ep[th], th);
+	push(cp, th);
 	ep[th] = GET_CDR(func);
 
 
@@ -1891,7 +1890,7 @@ int apply(int func, int args, int th)
 	    generic_func = func;
 	    generic_vars = copy(args);
 	    next_method = GET_CDR(func);
-	    push(make_int(cp),th);
+	    push(make_int(cp), th);
 	    if (GET_TR(examin_sym) == 1) {
 		trace = examin_sym;
 		n = GET_TR(func);
@@ -1961,8 +1960,8 @@ void bind_arg(int varlist, int arglist, int th)
 {
     int arg1, arg2;
 
-    push(ep[th],th);
-    push(cp,th);
+    push(ep[th], th);
+    push(cp, th);
     while (!(IS_NIL(varlist))) {
 	if (cddr(varlist) == NIL && (car(varlist) == make_sym(":REST")
 				     || car(varlist) == make_sym("&REST"))) {
@@ -1989,7 +1988,7 @@ void unbind(int th)
 
 int evlis(int addr, int th)
 {
-    arg_push(addr,th);
+    arg_push(addr, th);
     top_flag = false;
     if (IS_NIL(addr)) {
 	arg_pop(th);
@@ -1998,7 +1997,7 @@ int evlis(int addr, int th)
 	int car_addr, cdr_addr;
 
 	car_addr = eval(car(addr), th);
-	arg_push(car_addr,th);
+	arg_push(car_addr, th);
 	cdr_addr = evlis(cdr(addr), th);
 	car_addr = arg_pop(th);
 	(void) arg_pop(th);

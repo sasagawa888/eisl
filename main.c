@@ -56,7 +56,7 @@ int hp;				/* heap pointer for mark and sweep */
 int sp[PARASIZE];	/* stack pointer */
 int fc;				/* free counter */
 int rc;				/* real free counter */
-int ap;				/* arglist pointer */
+int ap[PARASIZE];	/* arglist pointer */
 int lp;				/* shelter pointer */
 int wp;				/* working pointer for copy GC */
 int cp;				/* tag pointer for catch & throw */
@@ -415,8 +415,8 @@ void init_pointer(void)
     ep[i] = 0;
 	dp[i] = 0;
     sp[i] = 0;
+	ap[i] = 0;
 	}
-    ap = 0;
     lp = 0;
     cp = 0;
     block_pt = 0;
@@ -2099,14 +2099,14 @@ int pop(int th)
 /* push/pop of arglist */
 int arg_push(int addr)
 {
-    argstk[ap++] = addr;
+    argstk[ap[0]++] = addr;
 
     return (T);
 }
 
 int arg_pop(void)
 {
-    return (argstk[--ap]);
+    return (argstk[--ap[0]]);
 }
 
 /* shelter push/pop */

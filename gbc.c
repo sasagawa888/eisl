@@ -240,7 +240,7 @@ void gbc_mark(void)
     for (i = 0; i < sp[0]; i++)
 	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
-    for (i = 0; i < ap; i++)
+    for (i = 0; i < ap[0]; i++)
 	mark_cell(argstk[i]);
 
     /* mark tagbody symbol */
@@ -386,7 +386,7 @@ void *concurrent(void *arg)
     for (i = 0; i < sp[0]; i++)
 	mark_cell(stack[i][0]);
     /* mark cell binded by argstack */
-    for (i = 0; i < ap; i++)
+    for (i = 0; i < ap[0]; i++)
 	mark_cell(argstk[i]);
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);

@@ -944,7 +944,6 @@ int f_cond(int arglist, int th)
     if (improper_list_p(arg1))
 	error(IMPROPER_ARGS, "cond", arg1);
 
-
     if (length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2, th)))
 	return (arg2);
     else if (!nullp(eval(arg2, th)))

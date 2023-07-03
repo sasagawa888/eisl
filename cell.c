@@ -57,8 +57,9 @@ void init_cell(void)
     ep[i] = 0;
     dp[i] = 0;
     sp[i] = 0;
+    ap[i] = 0;
     }
-    ap = 0;
+
 }
 
 void bind_class(const char *name, int cl)

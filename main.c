@@ -1989,19 +1989,19 @@ void unbind(int th)
 
 int evlis(int addr, int th)
 {
-    arg_push(addr);
+    arg_push(addr,0);
     top_flag = false;
     if (IS_NIL(addr)) {
-	arg_pop();
+	arg_pop(0);
 	return (addr);
     } else {
 	int car_addr, cdr_addr;
 
 	car_addr = eval(car(addr), th);
-	arg_push(car_addr);
+	arg_push(car_addr,0);
 	cdr_addr = evlis(cdr(addr), th);
-	car_addr = arg_pop();
-	(void) arg_pop();
+	car_addr = arg_pop(0);
+	(void) arg_pop(0);
 	return (cons(car_addr, cdr_addr));
     }
 }
@@ -2097,16 +2097,16 @@ int pop(int th)
 }
 
 /* push/pop of arglist */
-int arg_push(int addr)
+int arg_push(int addr, int th)
 {
-    argstk[ap[0]++][0] = addr;
+    argstk[ap[th]++][th] = addr;
 
     return (T);
 }
 
-int arg_pop(void)
+int arg_pop(int th)
 {
-    return (argstk[--ap[0]][0]);
+    return (argstk[--ap[th]][th]);
 }
 
 /* shelter push/pop */

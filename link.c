@@ -105,6 +105,11 @@ void dynamic_link(int x)
         return(arg_push(x,0));
     }
 
+    int eval1(int x)
+    {
+        return(eval(x,0));
+    }
+
     init_f1(CAR_IDX, car);
     init_f1(CDR_IDX, cdr);
     init_f1(CADR_IDX, cadr);
@@ -112,7 +117,7 @@ void dynamic_link(int x)
     init_f1(CAAR_IDX, caar);
     init_f1(CADAR_IDX, cadar);
     init_f1(LIST1_IDX, list1);
-    init_f1(EVAL_IDX, eval);
+    init_f1(EVAL_IDX, eval1);
     init_f1(AUX_IDX, get_aux);
     init_f1(LENGTH_IDX, fast_length);
     init_f1(SUBRP_IDX, subrp);

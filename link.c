@@ -80,8 +80,8 @@ void dynamic_link(int x)
 	return (arg_pop(0));
     }
 
-    int shelter_pop1(int th){
-    return (shelter_pop(0));
+    int shelter_pop1(int th) {
+	return (shelter_pop(0));
     }
 
     /* argument-0 type */
@@ -110,8 +110,8 @@ void dynamic_link(int x)
 	return (eval(x, 0));
     }
 
-    int shelter_push1(int x){
-    return (shelter_push(x,0));
+    int shelter_push1(int x) {
+	return (shelter_push(x, 0));
     }
 
     init_f1(CAR_IDX, car);

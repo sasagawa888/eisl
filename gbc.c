@@ -218,7 +218,7 @@ void gbc_hash_mark(void)
 
 void gbc_mark(void)
 {
-    int i;
+    int i, j;
 
     /* mark nil and t */
     MARK_CELL(NIL);
@@ -233,15 +233,21 @@ void gbc_mark(void)
 #endif
 
     /* mark local environment */
-    mark_cell(ep[0]);
+    for (j = 0; j < PARASIZE; j++)
+	mark_cell(ep[j]);
     /* mark dynamic environment */
-    mark_cell(dp[0]);
+    for (j = 0; j < PARASIZE; j++)
+	mark_cell(dp[j]);
     /* mark stack */
-    for (i = 0; i < sp[0]; i++)
-	mark_cell(stack[i][0]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i < sp[j]; i++)
+	    mark_cell(stack[i][j]);
+    }
     /* mark cell binded by argstack */
-    for (i = 0; i < ap[0]; i++)
-	mark_cell(argstk[i][0]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i < ap[j]; i++)
+	    mark_cell(argstk[i][j]);
+    }
 
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);
@@ -262,13 +268,16 @@ void gbc_mark(void)
     mark_cell(error_stream);
 
     /* mark shelter */
-    for (i = 0; i < lp[0]; i++)
-	mark_cell(shelter[i][0]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i < lp[j]; i++)
+	    mark_cell(shelter[i][j]);
+    }
 
     /* mark dynamic environment */
-    for (i = 1; i <= dp[0]; i++)
-	mark_cell(dynamic[i][1]);
-
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i <= dp[j]; i++)
+	    mark_cell(dynamic[i][j]);
+    }
 
     /* mark generic_list */
     mark_cell(generic_list);
@@ -348,7 +357,7 @@ void gbc_sweep_thread(void)
 void *concurrent(void *arg);
 void *concurrent(void *arg)
 {
-    int addr, fc1, i, free;
+    int addr, fc1, i, j, free;
     struct data *pd = (struct data *) arg;
 #ifdef GCTIME
     double stop, go, st, en;
@@ -379,15 +388,21 @@ void *concurrent(void *arg)
     MARK_CELL(T);
 
     /* mark local environment */
-    mark_cell(ep[0]);
+    for (j = 0; j < PARASIZE; j++)
+	mark_cell(ep[j]);
     /* mark dynamic environment */
-    mark_cell(dp[0]);
+    for (j = 0; j < PARASIZE; j++)
+	mark_cell(dp[j]);
     /* mark stack */
-    for (i = 0; i < sp[0]; i++)
-	mark_cell(stack[i][0]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i < sp[j]; i++)
+	    mark_cell(stack[i][j]);
+    }
     /* mark cell binded by argstack */
-    for (i = 0; i < ap[0]; i++)
-	mark_cell(argstk[i][0]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i < ap[j]; i++)
+	    mark_cell(argstk[i][j]);
+    }
     /* mark tagbody symbol */
     mark_cell(tagbody_tag);
     /* mark thunk for unwind-protect */
@@ -403,11 +418,15 @@ void *concurrent(void *arg)
     mark_cell(output_stream);
     mark_cell(error_stream);
     /* mark shelter */
-    for (i = 0; i < lp[0]; i++)
-	mark_cell(shelter[i][0]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i < lp[j]; i++)
+	    mark_cell(shelter[i][j]);
+    }
     /* mark dynamic environment */
-    for (i = 1; i <= dp[0]; i++)
-	mark_cell(dynamic[i][1]);
+    for (j = 0; j < PARASIZE; j++) {
+	for (i = 0; i <= dp[j]; i++)
+	    mark_cell(dynamic[i][j]);
+    }
     /* mark generic_list */
     mark_cell(generic_list);
 

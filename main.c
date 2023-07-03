@@ -52,13 +52,13 @@
 /* pointer */
 int ep[PARASIZE];		/* environment pointer */
 int dp[PARASIZE];		/* dynamic pointer */
-int hp;					/* heap pointer for mark and sweep */
+int hp;				/* heap pointer for mark and sweep */
 int sp[PARASIZE];		/* stack pointer */
-int fc;					/* free counter */
-int rc;					/* real free counter */
+int fc;				/* free counter */
+int rc;				/* real free counter */
 int ap[PARASIZE];		/* arglist pointer */
 int lp[PARASIZE];		/* shelter pointer */
-int cp;					/* tag pointer for catch & throw */
+int cp;				/* tag pointer for catch & throw */
 
 /* class */
 int cobject;
@@ -1702,7 +1702,7 @@ int eval(int addr, int th)
 	} else if ((symbolp(car(addr)))
 		   && (HAS_NAME(car(addr), "QUASI-QUOTE"))) {
 	    temp = quasi_transfer(cadr(addr), 0);
-	    shelter_push(temp,th);
+	    shelter_push(temp, th);
 	    res = eval(temp, th);
 	    shelter_pop(th);
 	    return (res);
@@ -1794,8 +1794,8 @@ int apply(int func, int args, int th)
 	    print(args);
 	    putchar('\n');
 	}
-	shelter_push(func,th);
-	shelter_push(args,th);
+	shelter_push(func, th);
+	shelter_push(args, th);
 	push(ep[th], th);
 	push(cp, th);
 	ep[th] = GET_CDR(func);
@@ -1861,13 +1861,13 @@ int apply(int func, int args, int th)
 	    body = cdr(GET_CAR(macrofunc));
 	    bind_arg(varlist, args, th);
 	    while (!(IS_NIL(body))) {
-		shelter_push(body,th);
+		shelter_push(body, th);
 		res = eval(car(body), th);
 		shelter_pop(th);
 		body = cdr(body);
 	    }
 	    unbind(th);
-	    shelter_push(res,th);
+	    shelter_push(res, th);
 	    res = eval(res, th);
 	    shelter_pop(th);
 	    return (res);

@@ -238,11 +238,11 @@ int freshcell(void)
     int res;
 
     if (!concurrent_flag) {
-    pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex);
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
-    pthread_mutex_unlock(&mutex);
+	pthread_mutex_unlock(&mutex);
 	fc--;
 	if (fc <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;

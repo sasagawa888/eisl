@@ -1354,7 +1354,7 @@ int f_append(int arglist, int th)
     if (!listp(arg1) && nullp(arglist))
 	error(NOT_CONS, "append", arg1);
     if (length(arg1) >= fc) {
-	shelter_push(arglist,th);
+	shelter_push(arglist, th);
 	(void) gbc();
 	shelter_pop(th);
     }
@@ -1363,9 +1363,9 @@ int f_append(int arglist, int th)
     else if (nullp(cdr(arglist)))
 	return (car(arglist));
     else if (nullp(arg1))
-	return (f_append(cdr(arglist),th));
+	return (f_append(cdr(arglist), th));
     else
-	return (append(car(arglist), f_append(cdr(arglist),th)));
+	return (append(car(arglist), f_append(cdr(arglist), th)));
 }
 
 
@@ -1573,7 +1573,7 @@ int mapcar(int x, int y, int th)
     int ls, res, car, cdr;
 
     ls = y;
-    shelter_push(y,th);
+    shelter_push(y, th);
     if (nullp(ls) || member(NIL, ls)) {
 	res = NIL;
     } else {
@@ -1622,9 +1622,9 @@ int mapc(int x, int y, int th)
     int ls;
 
     ls = y;
-    shelter_push(y,th);
+    shelter_push(y, th);
     while (!member(NIL, ls)) {
-	shelter_push(ls,th);
+	shelter_push(ls, th);
 	apply(x, each_car(ls), th);
 	shelter_pop(th);
 	ls = each_cdr(ls);

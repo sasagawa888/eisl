@@ -47,7 +47,6 @@
 #include "compat/eiffel_stubs.h"
 #include "compat/curses_stubs.h"
 
-//#define DEBUG
 
 /* pointer */
 int ep[PARASIZE];		/* environment pointer */
@@ -1773,12 +1772,6 @@ int apply(int func, int args, int th)
 	return ((GET_SUBR(func)) (args, th));
     case FUNC:
 
-#ifdef DEBUG
-	print(ep[0]);
-	print(ep[1]);
-	print(ep[2]);
-	printf("thread=%d\n", th);
-#endif
 
 	if (try_flag == true)
 	    try_res = cons(args, try_res);

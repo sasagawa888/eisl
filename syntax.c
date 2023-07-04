@@ -248,30 +248,75 @@ void *plet(void *arg)
 
 int f_plet(int arglist)
 {
-    int arg1, arg2;
+    int arg1, arg2, temp, i ,res;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
+	if (length(arglist) == 0)
+	error(WRONG_ARGS, "plet", arglist);
+	if (length(arg1) > PARASIZE)
+	error(WRONG_ARGS, "plet", arg1); 
+    if (!listp(arg1))
+	error(IMPROPER_ARGS, "plet", arg1);
+    temp = arg1;
+    while (!nullp(temp)) {
+	int temparg1;
+
+	temparg1 = car(car(temp));
+	if (improper_list_p(car(temp)))
+	    error(IMPROPER_ARGS, "plet", car(temp));
+	if (length(car(temp)) != 2)
+	    error(IMPROPER_ARGS, "plet", car(temp));
+	if (!symbolp(temparg1))
+	    error(NOT_SYM, "plet", temparg1);
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    error(WRONG_ARGS, "plet", arg1);
+	if (STRING_REF(temparg1, 0) == ':'
+	    || STRING_REF(temparg1, 0) == '&')
+	    error(WRONG_ARGS, "plet", arg1);
+
+	temp = cdr(temp);
+    }
+
 
     pthread_t t[PARASIZE];
     struct para d[PARASIZE];
 
-    d[0].in = cadr(car(arg1));
-    d[0].num = 1;
-    ep[1] = ep[0];
-    pthread_create(&t[0], NULL, plet, &d[0]);
+	temp = arg1;
+	i = 0;
+	while (!nullp(temp)){
+    d[i].in = cadr(car(temp));
+    d[i].num = i+1;
+    ep[i+1] = ep[i];
+    pthread_create(&t[i], NULL, plet, &d[i]);
+	temp = cdr(temp);
+	i++;
+	}
 
-    d[1].in = cadr(cadr(arg1));
-    d[1].num = 2;
-    ep[2] = ep[0];
-    pthread_create(&t[1], NULL, plet, &d[1]);
-
-    pthread_join(t[0], NULL);
-    pthread_join(t[1], NULL);
-
-    add_lex_env(car(car(arg1)), d[0].out, 0);
-    add_lex_env(car(cadr(arg1)), d[1].out, 0);
-    return (f_progn(arg2, 0));
+	temp = arg1;
+	i = 0;
+	while (!nullp(temp)){
+    pthread_join(t[i], NULL);
+    temp = cdr(temp);
+	i++;
+	}
+	temp = arg1;
+	i = 0;
+	while (!nullp(temp)){
+    add_lex_env(car(car(temp)), d[i].out, 0);
+	temp = cdr(temp);
+	i++;
+	}
+	while (arg2 != NIL) {
+	shelter_push(arg2, 0);
+	res = eval(car(arg2), 0);
+	shelter_pop(0);
+	arg2 = cdr(arg2);
+    }
+    return (res);
 }
 
 

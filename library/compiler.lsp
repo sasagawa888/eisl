@@ -196,6 +196,7 @@ defgeneric compile
     (defglobal lambda-free-var nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
+    (defglobal plet-switch nil)
     (defglobal inference-name nil)
     (defglobal code0 nil)
     (defglobal code1 nil)
@@ -562,6 +563,8 @@ defgeneric compile
                (comp-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'let*))
                (comp-let* stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'plet))
+               (comp-plet stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2123,6 +2126,12 @@ defgeneric compile
                    clos)
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
+
+    (defun comp-plet (stream x env args tail name global test clos)
+        (setq plet-switch t)
+        ;; compile plet
+        (setq plet-switch nil))
+
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

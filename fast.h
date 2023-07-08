@@ -99,6 +99,13 @@ static inline int Fargpop(void)
     return f0[ARGPOP_IDX] ();
 }
 
+static inline int Fpargpop(int x)
+{
+    return f1[PARGPOP_IDX] (x);
+}
+
+
+
 static inline int Fshelterpop(void)
 {
     return f0[SHELTERPOP_IDX] ();
@@ -107,6 +114,11 @@ static inline int Fshelterpop(void)
 static inline int Fpop(void)
 {
     return f0[POP_IDX] ();
+}
+
+static inline int Fpshelterpop(int x)
+{
+    return f1[PSHELTERPOP_IDX] (x);
 }
 
 static inline int Fgetdynpt(void)
@@ -167,6 +179,11 @@ static inline int Flist1(int x)
 static inline int Feval(int x)
 {
     return f1[EVAL_IDX] (x);
+}
+
+static inline int Fpeval(int x, int y)
+{
+    return f2[PEVAL_IDX] (x, y);
 }
 
 static inline int Faux(int x)
@@ -254,14 +271,29 @@ static inline int Ffinddyn(int x)
     return f1[FINDDYN_IDX] (x);
 }
 
+static inline int Fpfinddyn(int x, int y)
+{
+    return f2[PFINDDYN_IDX] (x, y);
+}
+
 static inline int Fargpush(int x)
 {
     return f1[ARGPUSH_IDX] (x);
 }
 
+static inline int Fpargpush(int x, int y)
+{
+    return f2[PARGPUSH_IDX] (x, y);
+}
+
 static inline int Fshelterpush(int x)
 {
     return f1[SHELTERPUSH_IDX] (x);
+}
+
+static inline int Fpshelterpush(int x, int y)
+{
+    return f2[PSHELTERPUSH_IDX] (x, y);
 }
 
 static inline int Fpush(int x)
@@ -439,14 +471,30 @@ static inline int Fsetdynenv(int x, int y)
     return f2[SETDYNENV_IDX] (x, y);
 }
 
+static inline int Fpsetdynenv(int x, int y, int z)
+{
+    return f5[SETDYNENV_IDX] (x, y, z);
+}
+
 static inline int Fadddynenv(int x, int y)
 {
     return f2[ADDDYNENV_IDX] (x, y);
 }
 
+static inline int Fpadddynenv(int x, int y, int z)
+{
+    return f5[ADDDYNENV_IDX] (x, y, z);
+}
+
+
 static inline int Fsetdynamic(int x, int y)
 {
     return f2[SETDYNAMIC_IDX] (x, y);
+}
+
+static inline int Fpsetdynamic(int x, int y, int z)
+{
+    return f5[PSET_DYNAMIC_IDX] (x, y, z);
 }
 
 static inline int Fsetprop(int x, int y)

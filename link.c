@@ -149,6 +149,8 @@ void dynamic_link(int x)
     init_f1(BIGNTOPARMANENT_IDX, big_to_parmanent);
     init_f1(SET_ERROR_HANDLER_IDX, set_error_handler);
     init_f1(SET_ERROR_FLAG_IDX, set_error_flag);
+    init_f1(PARGPOP_IDX, arg_pop);
+    init_f1(PSHELTERPOP_IDX, shelter_pop);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile
@@ -200,7 +202,10 @@ void dynamic_link(int x)
     init_f2(ADAPTP_IDX, a_adaptp);
     init_f2(MATCHP_IDX, a_matchp);
     init_f2(ILOSERR_IDX, ILOSerror);
-
+    init_f2(PFINDDYN_IDX, find_dyn);
+    init_f2(PARGPUSH_IDX, arg_push);
+    init_f2(PEVAL_IDX, eval);
+    init_f2(PSHELTERPUSH_IDX, shelter_push);
 
 
     /* argument-1 string type */
@@ -219,6 +224,9 @@ void dynamic_link(int x)
     init_f5(STRINGSET_IDX, string_set);
     init_f5(ARRAYSET_IDX, array_set);
     init_f5(MEMBER1_IDX, member1);
+    init_f5(PSETDYNENV_IDX, set_dyn_env);
+    init_f5(PADDDYNENV_IDX, add_dyn_env);
+    init_f5(PSET_DYNAMIC_IDX, set_dynamic);
 
     /* string output type */
     init_f6(GETNAME_IDX, get_name);

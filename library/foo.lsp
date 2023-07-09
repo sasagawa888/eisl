@@ -3047,14 +3047,14 @@ defgeneric compile
     (defun comp-defconstant (x)
         (let ((symbol (elt x 1))
               (value (elt x 2)) )
-           (format code4 "Fset_cdr(Fmakesym(\"")
+           (format code4 "({int th=0;Fset_cdr(Fmakesym(\"")
            (format-object code4 symbol nil)
            (format code4 "\"),")
            (comp code4 value nil nil nil nil t nil nil)
            (format code4 ");")
            (format code4 "Fset_opt(Fmakesym(\"")
            (format-object code4 symbol nil)
-           (format code4 "\"),CONSTN);~%")))
+           (format code4 "\"),CONSTN);});~%")))
 
     ;;defdynamic
     (defun comp-defdynamic (x)

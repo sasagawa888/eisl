@@ -7,6 +7,15 @@
 #include <stdint.h>
 #include <ctype.h>
 #include "ffi.h"
+
+
+struct para {
+	int sym;
+    int arg;
+    int num;
+    int out;
+};
+
 const int INT_PSQRT = 1073773446;	// INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;	// - sqrt(999999999)
 #define FASTSTRLONG_SIZE 17
@@ -341,9 +350,10 @@ static inline int Fset_opt(int x, int y)
     return f2[SETOPT_IDX] (x, y);
 }
 
-static inline int Fcallsubr(int x, int y)
+
+static inline int Fpcallsubr(int x, int y, int z)
 {
-    return f2[CALLSUBR_IDX] (x, y);
+    return f5[PCALL_SUBR_IDX] (x, y, z);
 }
 
 static inline int Flist2(int x, int y)

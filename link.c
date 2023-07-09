@@ -131,6 +131,7 @@ void dynamic_link(int x)
     init_f1(SET_ERROR_FLAG_IDX, set_error_flag);
     init_f1(PARGPOP_IDX, arg_pop);
     init_f1(PSHELTERPOP_IDX, shelter_pop);
+    init_f1(PSHELTERPOP_IDX, shelter_pop);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile
@@ -139,13 +140,13 @@ void dynamic_link(int x)
      }
      * compile set flag while compiling plet. and generate Pthread code.
      */
+   
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);
     init_f2(SETCDR_IDX, set_cdr);
     init_f2(SETAUX_IDX, set_aux);
     init_f2(SETOPT_IDX, set_opt);
-    init_f2(CALLSUBR_IDX, call_subr);
     init_f2(LIST2_IDX, list2);
     init_f2(NTHCDR_IDX, nth_cdr);
     init_f2(APPLY_IDX, apply);
@@ -165,9 +166,6 @@ void dynamic_link(int x)
     init_f2(MEMBER_IDX, member);
     init_f2(CONVERT_IDX, convert);
     init_f2(ARRAY_IDX, array);
-    //init_f2(SETDYNENV_IDX, set_dyn_env1);
-    //init_f2(ADDDYNENV_IDX, add_dyn_env1);
-    //init_f2(SETDYNAMIC_IDX, set_dynamic1);
     init_f2(SETPROP_IDX, set_prop);
     init_f2(ADAPTP_IDX, a_adaptp);
     init_f2(MATCHP_IDX, a_matchp);
@@ -197,6 +195,7 @@ void dynamic_link(int x)
     init_f5(PSETDYNENV_IDX, set_dyn_env);
     init_f5(PADDDYNENV_IDX, add_dyn_env);
     init_f5(PSET_DYNAMIC_IDX, set_dynamic);
+    init_f5(PCALL_SUBR_IDX, call_subr);
 
     /* string output type */
     init_f6(GETNAME_IDX, get_name);
@@ -279,9 +278,9 @@ int get_dynpt(void)
 }
 
 
-int call_subr(int func, int arglist)
+int call_subr(int func, int arglist, int th)
 {
-    return ((GET_SUBR(func)) (arglist, 0));
+    return ((GET_SUBR(func)) (arglist, th));
 }
 
 int make_int_long(int n)

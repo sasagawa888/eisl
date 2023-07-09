@@ -1343,7 +1343,7 @@ int set_car(int x, int y);
 int set_cdr(int x, int y);
 int set_aux(int x, int y);
 int set_opt(int x, int y);
-int call_subr(int func, int arglist);
+int call_subr(int func, int arglist, int th);
 int f_subrp(int arglist);
 int make_int_long(int n);
 int make_str_flt(const char *str);

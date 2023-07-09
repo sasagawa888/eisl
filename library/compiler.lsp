@@ -1885,11 +1885,11 @@ defgeneric compile
 
     ;;Simple subrcall arguments are all subr or atom
     (defun comp-subrcall1 (stream x env args tail name global test clos)
-        (format stream "Fcallsubr(Fcar(Fmakesym(\"")
+        (format stream "Fpcallsubr(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
         (comp-funcall3 stream (cdr x) env args nil name global test clos)
-        (format stream ")~%"))
+        (format stream ",th)~%"))
 
     ;;Not tail call subr.To avoid data loss by GC, push each data to shelter
     ;; ({int arg1,...,argn,res;
@@ -1927,11 +1927,11 @@ defgeneric compile
                       (format stream "Fpshelterpush(arg")
                       (format-integer stream n 10)
                       (format stream ",th);~%"))))
-        (format stream "res = Fcallsubr(Fcar(Fmakesym(\"")
+        (format stream "res = Fpcallsubr(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
         (comp-subrcall3 stream 1 (length (cdr x)))
-        (format stream ");~%")
+        (format stream ",th);~%")
         (cond ((not (null (cdr x)))
                (for ((ls (cdr x) (cdr ls))
                      (n (length (cdr x)) (- n 1)) )
@@ -2129,8 +2129,24 @@ defgeneric compile
                  (format stream ";~%"))))
 
     (defun comp-plet (stream x env args tail name global test clos)
-        ;; compile plet
+        ;; thread code
+        (comp-plet1 name)
+        ;; body
+        (comp stream t env args tail name global test clos)
+        ;(comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
         )
+
+    (defun comp-plet1 (name)
+        (format code1 "void *plet")
+        (format code1 (convert (conv-name name) <string>))
+        (format code1 "(void *arg);~%")
+        (format code1 "void *plet")
+        (format code1 (convert (conv-name name) <string>))
+        (format code1 "(void *arg)")
+        (format code1 "{struct para *pd = (struct para *) arg;")
+	    (format code1 "pd->out = (GET_SUBR(pd->sym)) (pd->arg, pd->num);")
+        (format code1 "return NULL;}"))
+
 
 
     (defun not-need-res-p (x)

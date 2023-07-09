@@ -256,16 +256,6 @@ static inline int fast_cdr(int x)
     return f1[FASTCDR_IDX] (x);
 }
 
-static inline int Ffindenv(int x)
-{
-    return f1[FINDENV_IDX] (x);
-}
-
-static inline int Ffinddyn(int x)
-{
-    return f1[FINDDYN_IDX] (x);
-}
-
 static inline int Fpfinddyn(int x, int y)
 {
     return f2[PFINDDYN_IDX] (x, y);

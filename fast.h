@@ -620,11 +620,57 @@ static int fast_numeqp()
 	return (Fnumeqp(x, y));
 }
 
+static int pfast_numeqp(int th)
+{
+    int x, y;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    if (x >= INT_FLAG && y >= INT_FLAG)
+	if (x == y)
+	    return (T);
+	else
+	    return (0);
+    else if (x < 0 && y < 0)
+	if (x == y)
+	    return (T);
+	else
+	    return (0);
+    else if (x >= INT_FLAG && y < 0)
+	return (0);
+    else if (x < 0 && y >= INT_FLAG)
+	return (0);
+    else
+	return (Fnumeqp(x, y));
+}
+
 static int fast_smallerp()
 {
     int x, y;
     y = Fargpop();
     x = Fargpop();
+    if (x >= INT_FLAG && y >= INT_FLAG)
+	if (x < y)
+	    return (T);
+	else
+	    return (0);
+    else if (x < 0 && y < 0)
+	if (x < y)
+	    return (T);
+	else
+	    return (0);
+    else if (x >= INT_FLAG && y < 0)
+	return (0);
+    else if (x < 0 && y >= INT_FLAG)
+	return (T);
+    else
+	return (Fsmallerp(x, y));
+}
+
+static int pfast_smallerp(int th)
+{
+    int x, y;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
     if (x >= INT_FLAG && y >= INT_FLAG)
 	if (x < y)
 	    return (T);
@@ -666,6 +712,30 @@ static int fast_eqsmallerp()
 	return (Feqsmallerp(x, y));
 }
 
+static int pfast_eqsmallerp(int th)
+{
+    int x, y;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    if (x >= INT_FLAG && y >= INT_FLAG)
+	if (x <= y)
+	    return (T);
+	else
+	    return (0);
+    else if (x < 0 && y < 0)
+	if (x <= y)
+	    return (T);
+	else
+	    return (0);
+    else if (x >= INT_FLAG && y < 0)
+	return (0);
+    else if (x < 0 && y >= INT_FLAG)
+	return (T);
+    else
+	return (Feqsmallerp(x, y));
+}
+
+
 static inline int fast_greaterp()
 {
     int x, y;
@@ -673,6 +743,16 @@ static inline int fast_greaterp()
     x = Fargpop();
     Fargpush(y);
     Fargpush(x);
+    return (fast_smallerp());
+}
+
+static inline int pfast_greaterp(int th)
+{
+    int x, y;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    Fpargpush(y,th);
+    Fpargpush(x,th);
     return (fast_smallerp());
 }
 
@@ -685,6 +765,17 @@ static inline int fast_eqgreaterp()
     Fargpush(x);
     return (fast_eqsmallerp());
 }
+
+static inline int pfast_eqgreaterp(int th)
+{
+    int x, y;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    Fpargpush(y,th);
+    Fpargpush(x,th);
+    return (pfast_eqsmallerp(th));
+}
+
 
 static int fast_plus()
 {
@@ -716,6 +807,38 @@ static int fast_plus()
     } else
 	return (Fplus(x, y));
 }
+
+static int pfast_plus(int th)
+{
+    int x, y, intx, inty, res;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    if (x >= INT_FLAG && y >= INT_FLAG) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx + inty;
+	if (res >= SMALL_INT_MAX)
+	    return (Fmakeintlong(res));
+	else
+	    return (res | INT_FLAG);
+    } else if (x >= INT_FLAG && y < 0) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = intx + inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y >= INT_FLAG) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = intx + inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else
+	return (Fplus(x, y));
+}
+
 
 static int fast_minus()
 {
@@ -750,11 +873,69 @@ static int fast_minus()
 	return (Fminus(x, y));
 }
 
+static int pfast_minus(int th)
+{
+    int x, y, intx, inty, res;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    if (x >= INT_FLAG && y >= INT_FLAG) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx - inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x >= INT_FLAG && y < 0) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = intx - inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y >= INT_FLAG) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = intx - inty;
+	if (res >= 0)
+	    return (res | INT_FLAG);
+	else if (res <= SMALL_INT_MAX)
+	    return (Fmakeintlong(res));
+	else
+	    return (res);
+    } else
+	return (Fminus(x, y));
+}
+
+
 static int fast_mult()
 {
     int x, y, intx, inty, res;
     y = Fargpop();
     x = Fargpop();
+    if (x >= INT_FLAG && x <= INT_PSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx * inty;
+	return (res | INT_FLAG);
+    } else if (x >= INT_FLAG && x <= INT_PSQRT && y < 0 && y >= INT_MSQRT) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = intx * inty;
+	return (res);
+    } else if (x < 0 && x >= INT_MSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = intx * inty;
+	return (res);
+    } else
+	return (Fmult(x, y));
+}
+
+static int pfast_mult(int th)
+{
+    int x, y, intx, inty, res;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
     if (x >= INT_FLAG && x <= INT_PSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
 	intx = (x & INT_MASK);
 	inty = (y & INT_MASK);
@@ -816,6 +997,49 @@ static int fast_mod()
 	return (Fcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y)));
 }
 
+static int pfast_mod(int th)
+{
+    int x, y, intx, inty, res;
+    long long int longx, longy;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
+    if (x >= INT_FLAG && y >= INT_FLAG) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx % inty;
+	res = res | INT_FLAG;
+	return (res);
+    } else if (x >= INT_FLAG && y < 0) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = -1 * (intx % inty);
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y >= INT_FLAG) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = inty + (intx % inty);
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y < 0) {
+	res = -1 * ((-1 * x) % (-1 * y));
+	return (res);
+    } else if ((CELLRANGE(x) && Flongnump(x)) && !CELLRANGE(y)) {
+	longx = Fgetlong(x);
+	if (y >= INT_FLAG)
+	    inty = (y & INT_MASK);
+	longy = (long long int) inty;
+	res = (int) (longx % longy);
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else
+	return (Fcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y)));
+}
+
+
 static inline int fast_not(int x)
 {
     if (x == NIL)
@@ -829,6 +1053,17 @@ static inline int fast_eq()
     int x, y;
     y = Fargpop();
     x = Fargpop();
+    if (x == y)
+	return (T);
+    else
+	return (NIL);
+}
+
+static inline int pfast_eq(int th)
+{
+    int x, y;
+    y = Fpargpop(th);
+    x = Fpargpop(th);
     if (x == y)
 	return (T);
     else

@@ -687,7 +687,7 @@ defgeneric compile
         (setq code7 (open-output-file (string-append fname "7" ext)))
         (format code0 "#include \"fast.h\"~%")
         (format code3 "void init_tfunctions(void){~%")
-        (format code4 "void init_declare(void){~%"))
+        (format code4 "void init_declare(void){int th=0;~%"))
 
     (defun declare-catch-block-buffer ()
         (format code4 "Fsetcatchsymbols(")
@@ -1692,7 +1692,7 @@ defgeneric compile
                (unless (= (cdr (assoc (car x) function-arg)) 0)
                        (error* "call: illegal argument count" x))
                (format-object stream (conv-name (car x)) nil)
-               (format stream "()"))
+               (format stream "(th)"))
               (optimize-enable (comp-funcall-clang stream x env args tail name global test clos))
               (t (comp-funcall-clang-left-to-right stream x env args tail name global test clos))))
 

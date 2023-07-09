@@ -2131,10 +2131,10 @@ defgeneric compile
     (defun comp-plet (stream x env args tail name global test clos)
         (comp-plet1 name) ;; thread code
         (format stream "pthread_t t[PARASIZE]; struct para d[PARASIZE];")
-        (let ((env1) (comp-plet2 (stream x env args tail name global test clos)))
-            (comp-progn1 (stream (cdr (cdr x)) (append env1 env) args tail name global test clos))))
+        (let ((env1 (comp-plet2 stream x env args tail name global test clos)))
+            (comp-progn1 stream (cdr (cdr x)) (append env1 env) args tail name global test clos)))
         
-        
+
     (defun comp-plet1 (name)
         (format code1 "void *plet")
         (format code1 (convert (conv-name name) <string>))
@@ -2146,7 +2146,8 @@ defgeneric compile
 	    (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym), pd->arg, pd->num);")
         (format code1 "return NULL;}"))
 
-    (defun plet2 (stream x env args tail name global test clos)
+    (defun comp-plet2 (stream x env args tail name global test clos)
+        #|
         ;; cleate
         (for ((form (elt x 1) (cdr form))
               (num 0 (+ num 1)))
@@ -2179,6 +2180,7 @@ defgeneric compile
               (num 0 (+ num 1)))
              ((null form) nil)
              (format stream "~A = d[~D].out;" (elt (elt (form) 0) 0) num)) 
+        |#
         (mapcar (lambda (y) (car y)) (elt x 1))) 
 
 

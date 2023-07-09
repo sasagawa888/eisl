@@ -2919,9 +2919,9 @@ defgeneric compile
     (defun comp-dynamic (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "dynamic: illegal form" x))
         (unless (symbolp (elt x 1)) (error* "dynamic: illegal form" x))
-        (format stream "Ffinddyn(Fmakesym(\"")
+        (format stream "Fpfinddyn(Fmakesym(\"")
         (format-object stream (elt x 1) nil)
-        (format stream "\"))"))
+        (format stream "\"),th)"))
 
     (defun comp-dynamic-let (stream x env args tail name global test clos)
         (format stream "({int res,val,save,dynpt;~% save=Fgetdynpt();~%")
@@ -3087,15 +3087,15 @@ defgeneric compile
     ;;defmacro
     (defun comp-defmacro (x)
         (setq lambda-free-var nil)
-        (format code4 "Feval(")
+        (format code4 "Fpeval(")
         (list-to-c1 code4 '(eisl-ignore-toplevel-check t))
-        (format code4 ");~%")
-        (format code4 "Feval(")
+        (format code4 ",0);~%")
+        (format code4 "Fpeval(")
         (list-to-c1 code4 x)
-        (format code4 ");~%")
-        (format code4 "Feval(")
+        (format code4 ",0);~%")
+        (format code4 "Fpeval(")
         (list-to-c1 code4 '(eisl-ignore-toplevel-check nil))
-        (format code4 ");~%"))
+        (format code4 ",0);~%"))
 
     ;;defclass
     (defun comp-defclass (x)
@@ -3108,9 +3108,9 @@ defgeneric compile
               nil
               nil
               nil)
-        (format code4 ";Feval(")
+        (format code4 ";Fpeval(")
         (list-to-c1 code4 x)
-        (format code4 ");")
+        (format code4 ",0);")
         (comp code4
               '(eisl-ignore-toplevel-check nil)
               nil
@@ -3126,9 +3126,9 @@ defgeneric compile
     ;;these are nead to save as C-list
     (defun comp-defmethod (x)
         (cond ((or (eq (elt x 1) 'create) (eq (elt x 1) 'initialize-object))
-               (format code4 "Feval(")
+               (format code4 "Fpeval(")
                (list-to-c1 code4 x)
-               (format code4 ");~%"))
+               (format code4 ",0);~%"))
               (t
                (let* ((name0 (elt x 1))
                       (name (if (listp name0)

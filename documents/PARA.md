@@ -244,3 +244,26 @@ For version 4, we plan to enhance the parallel processing component. Specificall
 - Parallelization of map-type functions like pmapcar: We intend to extend the parallelization capabilities to functions that operate on sequences, such as pmapcar, enabling efficient parallel processing of data.
 
 By addressing these areas, we aim to further improve the parallel processing capabilities of the system, enhance performance, and provide more flexibility for parallel execution in future versions.
+
+
+# Thread safety in compiled code
+
+## from REPL
+   e.g. takeuchi function
+   ```
+   f_tarai(int x,int y,int z){
+	  tarai(x,y,z,th)
+   }
+
+   int tarai(int x, int y, int z, int th){
+	 -- compiled code --
+   }
+	```
+## inner code
+	```
+	int tarai(int x, int y, int z, int th)
+	```
+
+	All function has th argument. Th argument have thread number
+
+   

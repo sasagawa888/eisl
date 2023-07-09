@@ -121,8 +121,6 @@ void dynamic_link(int x)
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
     init_f1(FINDENV_IDX, find_env);
-    //init_f1(ARGPUSH_IDX, arg_push1);
-    //init_f1(SHELTERPUSH_IDX, shelter_push1);
     init_f1(PUSH_IDX, push);
     init_f1(GETOPT_IDX, get_opt);
     init_f1(GETPROP_IDX, get_prop);
@@ -141,16 +139,6 @@ void dynamic_link(int x)
      }
      * compile set flag while compiling plet. and generate Pthread code.
      */
-    void set_dyn_env1(int x, int y) {
-	set_dyn_env(x, y, 0);
-    }
-    void add_dyn_env1(int x, int y) {
-	add_dyn_env(x, y, 0);
-    }
-    void set_dynamic1(int x, int y) {
-	set_dynamic(x, y, 0);
-    }
-
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);
@@ -177,9 +165,9 @@ void dynamic_link(int x)
     init_f2(MEMBER_IDX, member);
     init_f2(CONVERT_IDX, convert);
     init_f2(ARRAY_IDX, array);
-    init_f2(SETDYNENV_IDX, set_dyn_env1);
-    init_f2(ADDDYNENV_IDX, add_dyn_env1);
-    init_f2(SETDYNAMIC_IDX, set_dynamic1);
+    //init_f2(SETDYNENV_IDX, set_dyn_env1);
+    //init_f2(ADDDYNENV_IDX, add_dyn_env1);
+    //init_f2(SETDYNAMIC_IDX, set_dynamic1);
     init_f2(SETPROP_IDX, set_prop);
     init_f2(ADAPTP_IDX, a_adaptp);
     init_f2(MATCHP_IDX, a_matchp);

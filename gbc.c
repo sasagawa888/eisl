@@ -24,7 +24,7 @@
  *  GC = 2 sequential
 */
 #define GC  0
-#define SEQUENT 4000000
+#define SEQUENT 5000000
 //#define GCTIME
 
 #include <stdio.h>

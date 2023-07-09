@@ -2944,9 +2944,9 @@ defgeneric compile
            (format stream "val=")
            (comp stream value env args nil name global test clos)
            (format stream ";Fsetdynpt(dynpt);Fpshelterpop(th);")
-           (format stream "Fadddynenv(Fmakesym(\"")
+           (format stream "Fpadddynenv(Fmakesym(\"")
            (format-object stream symbol nil)
-           (format stream "\"),val);")))
+           (format stream "\"),val,th);")))
 
     (defun comp-not (stream x env args tail name global test clos)
         (unless (= (length x) 2) (error* "not: illegal form" x))
@@ -3065,11 +3065,11 @@ defgeneric compile
                 (error: "defdynamic: not symbol" (elt x 1)))
         (let ((symbol (elt x 1))
               (value (elt x 2)) )
-           (format code4 "Fsetdynenv(Fmakesym(\"")
+           (format code4 "Fpsetdynenv(Fmakesym(\"")
            (format-object code4 symbol nil)
            (format code4 "\"),")
            (comp code4 value nil nil nil nil t nil nil)
-           (format code4 ");")))
+           (format code4 ",0);")))
 
     ;;set-dynamic
     (defun comp-set-dynamic (stream x env args tail name global test clos)
@@ -3078,11 +3078,11 @@ defgeneric compile
                 (error: "set-dynamic: not symbol" (elt x 1)))
         (let ((symbol (elt x 1))
               (value (elt x 2)) )
-           (format stream "Fsetdynamic(Fmakesym(\"")
+           (format stream "Fpsetdynamic(Fmakesym(\"")
            (format-object stream symbol nil)
            (format stream "\"),")
            (comp stream value env args tail name global test clos)
-           (format stream ")")))
+           (format stream ",th)")))
 
     ;;defmacro
     (defun comp-defmacro (x)

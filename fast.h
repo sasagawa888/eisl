@@ -473,7 +473,7 @@ static inline int Fsetdynenv(int x, int y)
 
 static inline int Fpsetdynenv(int x, int y, int z)
 {
-    return f5[SETDYNENV_IDX] (x, y, z);
+    return f5[PSETDYNENV_IDX] (x, y, z);
 }
 
 static inline int Fadddynenv(int x, int y)
@@ -483,7 +483,7 @@ static inline int Fadddynenv(int x, int y)
 
 static inline int Fpadddynenv(int x, int y, int z)
 {
-    return f5[ADDDYNENV_IDX] (x, y, z);
+    return f5[PADDDYNENV_IDX] (x, y, z);
 }
 
 

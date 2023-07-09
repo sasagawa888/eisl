@@ -1,6 +1,7 @@
 ;;sample code for type inference
 ;;benchmark test
 
+ 
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
@@ -54,13 +55,14 @@
     (if (not (= 0 n))
         (cons n (listn (- n 1))) ))
 
+#| 
 (defconstant ll-18 (listn 18))
 (defconstant ll-12 (listn 12))
 (defconstant ll-6 (listn 6))
 (defconstant ll-32 (listn 32))
 (defconstant ll-16 (listn 16))
 (defconstant ll-8 (listn 8))
-
+|#
 (defmacro shorterp (x y)
     `(< (length ,x) (length ,y)) )
 

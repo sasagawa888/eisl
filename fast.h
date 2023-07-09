@@ -261,19 +261,9 @@ static inline int Fpfinddyn(int x, int y)
     return f2[PFINDDYN_IDX] (x, y);
 }
 
-static inline int Fargpush(int x)
-{
-    return f1[ARGPUSH_IDX] (x);
-}
-
 static inline int Fpargpush(int x, int y)
 {
     return f2[PARGPUSH_IDX] (x, y);
-}
-
-static inline int Fshelterpush(int x)
-{
-    return f1[SHELTERPUSH_IDX] (x);
 }
 
 static inline int Fpshelterpush(int x, int y)

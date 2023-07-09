@@ -98,14 +98,6 @@ void dynamic_link(int x)
     init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
 
     /* argument-1 type */
-    int arg_push1(int x) {
-	return (arg_push(x, 0));
-    }
-
-    int shelter_push1(int x) {
-	return (shelter_push(x, 0));
-    }
-
     init_f1(CAR_IDX, car);
     init_f1(CDR_IDX, cdr);
     init_f1(CADR_IDX, cadr);
@@ -129,8 +121,8 @@ void dynamic_link(int x)
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
     init_f1(FINDENV_IDX, find_env);
-    init_f1(ARGPUSH_IDX, arg_push1);
-    init_f1(SHELTERPUSH_IDX, shelter_push1);
+    //init_f1(ARGPUSH_IDX, arg_push1);
+    //init_f1(SHELTERPUSH_IDX, shelter_push1);
     init_f1(PUSH_IDX, push);
     init_f1(GETOPT_IDX, get_opt);
     init_f1(GETPROP_IDX, get_prop);

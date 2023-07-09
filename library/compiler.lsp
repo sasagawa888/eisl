@@ -1859,11 +1859,11 @@ defgeneric compile
     ;;funcall for not SUBR function.
     ;;apply(func,args)
     (defun comp-funcall2 (stream x env args tail name global test clos)
-        (format stream "Fapply(Fcar(Fmakesym(\"")
+        (format stream "Fpapply(Fcar(Fmakesym(\"")
         (format-object stream (car x) nil)
         (format stream "\")),")
         (comp-funcall3 stream (cdr x) env args nil name global test clos)
-        (format stream ")"))
+        (format stream ",th)"))
 
     (defun comp-funcall3 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))

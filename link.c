@@ -140,7 +140,7 @@ void dynamic_link(int x)
      }
      * compile set flag while compiling plet. and generate Pthread code.
      */
-   
+    
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);
@@ -149,7 +149,6 @@ void dynamic_link(int x)
     init_f2(SETOPT_IDX, set_opt);
     init_f2(LIST2_IDX, list2);
     init_f2(NTHCDR_IDX, nth_cdr);
-    init_f2(APPLY_IDX, apply);
     init_f2(PLUS_IDX, plus);
     init_f2(MINUS_IDX, minus);
     init_f2(MULT_IDX, mult);
@@ -196,6 +195,7 @@ void dynamic_link(int x)
     init_f5(PADDDYNENV_IDX, add_dyn_env);
     init_f5(PSET_DYNAMIC_IDX, set_dynamic);
     init_f5(PCALL_SUBR_IDX, call_subr);
+    init_f5(PAPPLY_IDX, apply);
 
     /* string output type */
     init_f6(GETNAME_IDX, get_name);

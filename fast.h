@@ -366,9 +366,10 @@ static inline int Fnthcdr(int x, int y)
     return f2[NTHCDR_IDX] (x, y);
 }
 
-static inline int Fapply(int x, int y)
+
+static inline int Fpapply(int x, int y, int z)
 {
-    return f2[APPLY_IDX] (x, y);
+    return f5[PAPPLY_IDX] (x, y, z);
 }
 
 static inline int Fplus(int x, int y)

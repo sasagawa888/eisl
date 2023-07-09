@@ -176,11 +176,6 @@ static inline int Flist1(int x)
     return f1[LIST1_IDX] (x);
 }
 
-static inline int Feval(int x)
-{
-    return f1[EVAL_IDX] (x);
-}
-
 static inline int Fpeval(int x, int y)
 {
     return f2[PEVAL_IDX] (x, y);

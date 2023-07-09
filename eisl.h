@@ -560,7 +560,6 @@ extern bool error_flag;
 extern int  concurrent_flag;
 extern int  concurrent_stop_flag;
 extern int  concurrent_sweep_flag;
-extern int  parallel_flag;
 
 // try function
 extern bool try_flag;

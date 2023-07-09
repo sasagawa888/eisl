@@ -240,9 +240,7 @@ void *plet(void *arg)
 
     struct para *pd = (struct para *) arg;
 
-    parallel_flag = 1;
     pd->out = eval(pd->in, pd->num);
-    parallel_flag = 0;
     return NULL;
 }
 

@@ -2129,13 +2129,12 @@ defgeneric compile
                  (format stream ";~%"))))
 
     (defun comp-plet (stream x env args tail name global test clos)
-        ;; thread code
-        (comp-plet1 name)
-        ;; body
-        (comp stream t env args tail name global test clos)
-        ;(comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
-        )
-
+        (comp-plet1 name) ;; thread code
+        (format stream "pthread_t t[PARASIZE]; struct para d[PARASIZE];")
+        (let ((env1) (comp-plet2 (stream x env args tail name global test clos)))
+            (comp-progn1 (stream (cdr (cdr x)) (append env1 env) args tail name global test clos))))
+        
+        
     (defun comp-plet1 (name)
         (format code1 "void *plet")
         (format code1 (convert (conv-name name) <string>))
@@ -2144,9 +2143,43 @@ defgeneric compile
         (format code1 (convert (conv-name name) <string>))
         (format code1 "(void *arg)")
         (format code1 "{struct para *pd = (struct para *) arg;")
-	    (format code1 "pd->out = (GET_SUBR(pd->sym)) (pd->arg, pd->num);")
+	    (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym), pd->arg, pd->num);")
         (format code1 "return NULL;}"))
 
+    (defun plet2 (stream x env args tail name global test clos)
+        ;; cleate
+        (for ((form (elt x 1) (cdr form))
+              (num 0 (+ num 1)))
+             ((null form) nil)
+             ;;d[N].sym = Fmakesym(function-sym);
+             (format stream "d[")
+             (format stream "~D" num)
+             (format "].sym = Fmakesym(")
+             (format stream (elt (elt form 0) 1))
+             (format stream ");")
+             ;;d[N].arg = FlistM(arg1,arg2,...argM);
+             (format stream "d[~D].arg = Flist~D(" num num (length (cdr (elt (elt form 0) 1))))
+             (for ((arg1 (cdr (elt (elt form 0))) (cdr arg1)))
+                  ((null arg1) nil)
+                  (comp stream (car arg1) env args tail name global test clos)
+                  (if (cdr arg1)
+                      (format stream ",")))
+             (format stream ");")
+             ;; d[N].num = N+1;
+             (format stream "d[~D].num = ~D;" num (+ num 1))
+             ;; pthread_create(&t[N], NULL, pletFIB, &d[N]);
+             (format stream "pthread_create(&t[~D], NULL, plet~A, &d[~D]);" num (conv-name name) num))
+        ;; join
+        (for ((form (elt x 1) (cdr form))
+              (num 1 (+ num 1)))
+             ((null form) nil)
+             (format stream "pthread_join(t[~D], NULL);~%" num))
+        ;; var = d[N].out;
+        (for ((form (elt x 1) (cdr form))
+              (num 0 (+ num 1)))
+             ((null form) nil)
+             (format stream "~A = d[~D].out;" (elt (elt (form) 0) 0) num)) 
+        (mapcar (lambda (y) (car y)) (elt x 1))) 
 
 
     (defun not-need-res-p (x)

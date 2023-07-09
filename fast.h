@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <ctype.h>
+#include <pthread.h>
 #include "ffi.h"
 
 
@@ -19,6 +20,7 @@ struct para {
 const int INT_PSQRT = 1073773446;	// INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;	// - sqrt(999999999)
 #define FASTSTRLONG_SIZE 17
+#define PARASIZE 4
 static tfunc deftfunc;
 static fn0 f0[NUM_FN0S];
 static fn1 f1[NUM_FN1S];
@@ -786,7 +788,7 @@ static int pfast_mod(int th)
 	    res = res | INT_FLAG;
 	return (res);
     } else
-	return (Fcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y)));
+	return (Fpcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y),th));
 }
 
 

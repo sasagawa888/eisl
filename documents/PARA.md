@@ -136,9 +136,7 @@ void *plet(void *arg)
 
     struct para *pd = (struct para *) arg;
 
-    parallel_flag = 1;
     pd->out = eval(pd->in, pd->num);
-    parallel_flag = 0;
     return NULL;
 }
 
@@ -251,7 +249,10 @@ By addressing these areas, we aim to further improve the parallel processing cap
 ## from REPL
    e.g. takeuchi function
    ```
-   f_tarai(int x,int y,int z){
+   f_tarai(int arglist, int th){
+	  x = nth(arglist,0);
+	  y = nth(arglist,1);
+	  z = nth(arglist,2);
 	  tarai(x,y,z,th)
    }
 
@@ -266,4 +267,45 @@ By addressing these areas, we aim to further improve the parallel processing cap
 
 	All function has th argument. Th argument have thread number
 
-   
+## compiled code
+e.g. parallel fibonacci
+
+```
+struct para {
+	int sym
+    int arg;
+    int num;
+    int out;
+};
+
+
+void *pletFIB(void *arg);
+void *pletFIB(void *arg)
+{
+    struct para *pd = (struct para *) arg;
+	pd->out = (GET_SUBR(func)) (pd->arg, pd->num);  //call f_FIB(arg, num)
+    return NULL;
+}
+
+(body)
+{
+	pthread_t t[PARASIZE];
+    struct para d[PARASIZE];
+
+	d[0].sym = Fmakesym("FIB);
+    d[0].arg = Flist1(Fminus(N,makeint(1)));  //Flist1(comp(body0))
+    d[0].num = 1
+    pthread_create(&t[0], NULL, pletFIB, &d[0]);
+
+	d[1].sym = Fmakesym("FIB);
+    d[1].arg = Flist1(Fminus(N,makeint(2)));  //Flist1(comp(body1))
+    d[1].num = 2
+    pthread_create(&t[1], NULL, pletFIB, &d[1]);
+
+	pthread_join(t[1], NULL);
+	pthread_join(t[2], NULL);
+
+	a = d[0].out;
+	b = d[1].out;
+}
+```

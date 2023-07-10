@@ -80,8 +80,8 @@
    (setq *call-tree* nil)
    (foo-sub-30 x)
    (reverse *call-tree*))
+#|
 ;;
-#| 
 ($test (foo-30 1) (primary-<object>) equal)
 ($test (foo-30 c00) (around-<standard-object>-begin
 	      before-<standard-object>
@@ -153,3 +153,28 @@
 	      around-c3-end) 
  equal)
 ;;|#
+
+(defgeneric foo-31 (x)
+   (:method ((x <integer>))
+	    (lambda (y) (* y (call-next-method))))
+   (:method ((x <number>))
+	    (* x x)))
+(defglobal x (foo-31 3))
+#| 
+($test (funcall x 5) 45 eql)
+($test (funcall x 5) 45 eql)
+|#
+#| 
+(defglobal f nil)
+(defgeneric foo-38 (x y))
+(defmethod foo-38 (x y) (list x y))
+(defmethod foo-38 ((x <integer>) (y <integer>))
+	 (setq x (* x 10))
+	 (setq y (* y 10))
+	 (setq f (lambda () (if (next-method-p) (call-next-method))))
+	 (list x y))
+ 
+($test (foo-38 2 3) (20 30) equal)
+($test (funcall f) (2 3) equal)
+;;
+|#

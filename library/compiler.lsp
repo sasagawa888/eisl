@@ -857,9 +857,7 @@ defgeneric compile
                ; e.g. (setf foo)
                (args (elt x 2))
                (n (count-args args)) )
-            (format code1 "static int f_")
-            (format-object code1 (conv-name name) nil)
-            (format code1 "(int arglist, int th){~%")
+            (format code1 "static int f_~A(int arglist, int th){~%" (conv-name name))
             (gen-arg1 (abs n))
             (gen-assign n)
             (gen-call (conv-name name) (abs n))
@@ -870,8 +868,7 @@ defgeneric compile
         (let ((name (elt x 1))
               (args (elt x 2))
               (body (cdr (cdr (cdr x)))) )
-           (format code2 "static int ")
-           (format-object code2 (conv-name name) nil)
+           (format code2 "static int ~A" (conv-name name))
            (if (not optimize-enable)
                (gen-arg2 code2 args)
                (type-gen-arg2 code2 args (argument-type name)))
@@ -1161,13 +1158,8 @@ defgeneric compile
             (for ((ls1 (remove '&rest (remove ':rest generic-args)) (cdr ls1)))
                  ((null ls1)
                   t )
-                 (format stream "Fpargpush(")
-                 (format-object stream (conv-name (car ls1)) nil)
-                 (format stream ",th);~%")
-                 (format-object stream (conv-name (car ls1)) nil)
-                 (format stream " = ")
-                 (format-object stream (conv-name (car ls1)) nil)
-                 (format stream "copy;~%"))
+                 (format stream "Fpargpush(~A,th);~%" (conv-name (car ls1)))
+                 (format stream "~A = ~Acopy;~%" (conv-name (car ls1)) (conv-name (car ls1))))
             nil))
 
     (defun comp-call-next-method-restore-argument (stream env args tail name global test clos)
@@ -1176,9 +1168,7 @@ defgeneric compile
                       (cdr ls1)))
                  ((null ls1)
                   t )
-                 (format-object stream (conv-name (car ls1)) nil)
-                 (format stream " = ")
-                 (format stream "Fpargpop(th);~%"))
+                 (format stream "~A = Fpargpop(th);~%" (conv-name (car ls1))))
             nil))
 
     
@@ -1339,9 +1329,7 @@ defgeneric compile
                      global
                      test
                      clos)
-               (format stream ",Fmakesym(\"")
-               (format-object stream (elt (car x) 1) nil)
-               (format stream "\"))")
+               (format stream ",Fmakesym(\"~A\"))" (elt (car x) 1))
                (comp-defgeneric-qualifier-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
@@ -1364,9 +1352,7 @@ defgeneric compile
                      global
                      test
                      clos)
-               (format stream ",Fmakesym(\"")
-               (format-object stream (elt (car x) 1) nil)
-               (format stream "\"))")
+               (format stream ",Fmakesym(\"~A\"))" (elt (car x) 1))
                (comp-defgeneric-qualifier-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
@@ -1391,9 +1377,7 @@ defgeneric compile
                      global
                      test
                      clos)
-               (format stream ",Fmakesym(\"")
-               (format-object stream (elt (car x) 1) nil)
-               (format stream "\"))")
+               (format stream ",Fmakesym(\"~A\"))" (elt (car x) 1))
                (comp-defgeneric-primary-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
@@ -1413,39 +1397,25 @@ defgeneric compile
                      name
                      global
                      test
-                     clos)    ;(format-object stream (conv-name (elt (car x) 0)) nil)
-               (format stream ",Fmakesym(\"")
-               (format-object stream (elt (car x) 1) nil)
-               (format stream "\"))")
+                     clos)  
+               (format stream ",Fmakesym(\"~A\"))" (elt (car x) 1))
                (comp-defgeneric-primary-cond1 (cdr x) stream env args tail name global test clos))
               (t (error* "defgeneric" x))))
 
     ;;generate define code
     (defun comp-defun3 (x)
         (let ((name (elt x 1)))
-           (format code3 "(deftfunc)(\"")
-           (format-object code3 name nil)
-           (format code3 "\" , f_")
-           (format-object code3 (conv-name name) nil)
-           (format code3 ");~%")))
+           (format code3 "(deftfunc)(\"~A\" , f_~A);~%" name (conv-name name))))
 
     (defun comp-lambda3 (name)
-        (format code3 "(deftfunc)(\"")
-        (format-object code3 name nil)
-        (format code3 "\" , f_")
-        (format-object code3 (conv-name name) nil)
-        (format code3 ");~%"))
+        (format code3 "(deftfunc)(\"~A\" , f_~A);~%" name (conv-name name)))
 
     (defun comp-defgeneric3 (x)
         (let* ((name0 (elt x 1))
                (name (if (listp name0)
                         (elt name0 1)
                         name0)) )
-            (format code3 "(deftfunc)(\"")
-            (format-object code3 name nil)
-            (format code3 "\" , f_")
-            (format-object code3 (conv-name name) nil)
-            (format code3 ");~%")))
+            (format code3 "(deftfunc)(\"~A\" , f_~A);~%" name (conv-name name))))
 
     ;; int arg1,arg2...argn;
     (defun gen-arg1 (n)
@@ -1453,12 +1423,8 @@ defgeneric compile
                 (format code1 "int ")
                 (for ((m 1 (+ m 1)))
                      ((= m n)
-                      (format code1 "arg")
-                      (format-object code1 m nil)
-                      (format code1 ";~%") )
-                     (format code1 "arg")
-                     (format-object code1 m nil)
-                     (format code1 ","))))
+                      (format code1 "arg~A;~%" m))
+                     (format code1 "arg~A," m))))
 
     ;; (x y z) -> (int x, int y, int z, int th)
     ;; (x y :rest z) -> (int x, int y, int z, int th)
@@ -1469,12 +1435,8 @@ defgeneric compile
             (format stream "int th)")
             (for ((ls1 (remove '&rest (remove ':rest ls)) (cdr ls1)))
                  ((null (cdr ls1))
-                  (format stream "int ")
-                  (format-object stream (conv-name (car ls1)) nil)
-                  (format stream ", int th)") )
-                 (format stream "int ")
-                 (format-object stream (conv-name (car ls1)) nil)
-                 (format stream ","))))
+                  (format stream "int ~A, int th)" (conv-name (car ls1))))
+                 (format stream "int ~A," (conv-name (car ls1))))))
 
     ;;for generic-function (call-next-method)
     ;;make copy original arguments. (call-next-method) uses this copy 
@@ -1482,11 +1444,7 @@ defgeneric compile
         (for ((ls1 (remove '&rest (remove ':rest ls)) (cdr ls1)))
              ((null ls1)
               t )
-             (format stream "int ")
-             (format-object stream (conv-name (car ls1)) nil)
-             (format stream "copy = ")
-             (format-object stream (conv-name (car ls1)) nil)
-             (format stream ";~%")))
+             (format stream "int ~Acopy = ~A;~%" (conv-name (car ls1)) (conv-name (car ls1)))))
 
     ;; int temp1,temp2...tempn;
     (defun gen-arg3 (n)
@@ -1494,12 +1452,8 @@ defgeneric compile
                 (format code2 "int ")
                 (for ((m 1 (+ m 1)))
                      ((= m n)
-                      (format code2 "temp")
-                      (format code2 (convert m <string>))
-                      (format code2 ";~%") )
-                     (format code2 "temp")
-                     (format code2 (convert m <string>))
-                     (format code2 ","))))
+                      (format code2 "temp~D;~%" m))
+                     (format code2 "temp~D," m))))
 
     ;;arg1 = Fnth(1,arglist);
     ;;arg2 = Fnth(2,arglist);

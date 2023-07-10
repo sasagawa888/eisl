@@ -696,9 +696,7 @@ defgeneric compile
         (for ((tag catch-block-tag (cdr tag)))
              ((null tag)
               t )
-             (format code0 "jmp_buf c_")
-             (format-object code0 (conv-name (car tag)) nil)
-             (format code0 "[50];~%")))
+             (format code0 "jmp_buf c_~A[50];~%" (conv-name (car tag)))))
 
     (defun finalize (fname ext)
         (format code0 "#include \"~A\"~%" (string-append fname "1" ext))

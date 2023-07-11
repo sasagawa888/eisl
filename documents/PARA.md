@@ -286,8 +286,6 @@ e.g. parallel fibonacci
 ```
 
 ```
-
-```
 struct para {
 	int sym
     int arg;

@@ -271,6 +271,23 @@ By addressing these areas, we aim to further improve the parallel processing cap
 e.g. parallel fibonacci
 
 ```
+```
+;;; test paralell
+
+(defun fib (n)
+    (plet ((a (fib1 (- n 1)))
+           (b (fib1 (- n 2)))) (+ a b)))
+
+(defun fib1 (n)
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (t (+ (fib1 (- n 1)) (fib1 (- n 2))))))
+
+```
+
+```
+
+```
 struct para {
 	int sym
     int arg;
@@ -308,4 +325,30 @@ void *pletFIB(void *arg)
 	a = d[0].out;
 	b = d[1].out;
 }
+```
+
+
+## execution
+
+```
+eisl -c
+Easy-ISLisp Ver3.14
+> (compile-file "./tests/para.lsp")
+type inference
+initialize
+pass1
+pass2
+compiling FIB 
+compiling FIB1 
+finalize
+invoke CC
+T
+> (load "./tests/para.o")
+T
+> (fib 30)
+832040
+> (fib1 30)
+832040
+> 
+
 ```

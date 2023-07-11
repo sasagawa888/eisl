@@ -2007,7 +2007,7 @@ defgeneric compile
              ;;d[N].sym = Fmakesym(function-sym);
              (format stream "d[~D].sym = Fmakesym(\"~A\");~%" num (car (elt (elt form 0) 1)))
              ;;d[N].arg = FlistM(arg1,arg2,...argM);
-             (format stream "d[~D].arg = Flist~D(" num num (length (cdr (elt (elt form 0) 1))))
+             (format stream "d[~D].arg = Flist~D(" num (length (cdr (elt (elt form 0) 1))))
              (for ((arg1 (cdr (elt (elt form 0) 1)) (cdr arg1)))
                   ((null arg1) nil)
                   (comp stream (car arg1) env args tail name global test clos)

@@ -283,7 +283,7 @@ void *pletFIB(void *arg);
 void *pletFIB(void *arg)
 {
     struct para *pd = (struct para *) arg;
-	pd->out = (GET_SUBR(func)) (pd->arg, pd->num);  //call f_FIB(arg, num)
+	pd->out = Fpcallsubr(pd->sym, pd->arg, pd->num);  //call f_FIB(arg, num)
     return NULL;
 }
 

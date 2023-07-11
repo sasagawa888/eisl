@@ -1980,9 +1980,10 @@ defgeneric compile
 
     (defun comp-plet (stream x env args tail name global test clos)
         (comp-plet1 name) ;; thread code
-        (format stream "pthread_t t[PARASIZE]; struct para d[PARASIZE];")
+        (format stream "({pthread_t t[PARASIZE]; struct para d[PARASIZE];")
         (let ((env1 (comp-plet2 stream x env args tail name global test clos)))
-            (comp-progn1 stream (cdr (cdr x)) (append env1 env) args tail name global test clos)))
+            (comp-progn1 stream (cdr (cdr x)) (append env1 env) args tail name global test clos))
+        (format stream "res;})"))
         
 
     (defun comp-plet1 (name)
@@ -1993,22 +1994,28 @@ defgeneric compile
         (format code1 "return NULL;}"))
 
     (defun comp-plet2 (stream x env args tail name global test clos)
+        ;; declare
+        (format stream "int ")
+        (for ((form (elt x 1) (cdr form)))
+             ((null (cdr form))
+              (format stream "~A;" (elt (elt form 0) 0)))
+             (format stream "~A," (elt (elt form 0) 0)))
         ;; cleate
         (for ((form (elt x 1) (cdr form))
               (num 0 (+ num 1)))
              ((null form) nil)
              ;;d[N].sym = Fmakesym(function-sym);
-             (format stream "d[~D].sym = Fmakesym(~A);" num (elt (elt form 0) 1))
+             (format stream "d[~D].sym = Fmakesym(\"~A\");~%" num (car (elt (elt form 0) 1)))
              ;;d[N].arg = FlistM(arg1,arg2,...argM);
              (format stream "d[~D].arg = Flist~D(" num num (length (cdr (elt (elt form 0) 1))))
-             (for ((arg1 (cdr (elt (elt form 0))) (cdr arg1)))
+             (for ((arg1 (cdr (elt (elt form 0) 1)) (cdr arg1)))
                   ((null arg1) nil)
                   (comp stream (car arg1) env args tail name global test clos)
                   (if (cdr arg1)
                       (format stream ",")))
-             (format stream ");")
+             (format stream ");~%")
              ;; d[N].num = N+1;
-             (format stream "d[~D].num = ~D;" num (+ num 1))
+             (format stream "d[~D].num = ~D;~%" num (+ num 1))
              ;; pthread_create(&t[N], NULL, pletFIB, &d[N]);
              (format stream "pthread_create(&t[~D], NULL, plet~A, &d[~D]);" num (conv-name name) num))
         ;; join
@@ -2020,7 +2027,7 @@ defgeneric compile
         (for ((form (elt x 1) (cdr form))
               (num 0 (+ num 1)))
              ((null form) nil)
-             (format stream "~A = d[~D].out;" (elt (elt (form) 0) 0) num)) 
+             (format stream "~A = d[~D].out;~%" (elt (elt form 0) 0) num)) 
         (mapcar (lambda (y) (car y)) (elt x 1))) 
 
 

@@ -1799,12 +1799,8 @@ defgeneric compile
     (defun comp-subrcall3 (stream m n)
         (cond ((> m n) (format stream "NIL"))
               ((= m n)
-               (format stream "Flist1(arg")
-               (format-integer stream m 10)
-               (format stream ")"))
-              (t (format stream "Fcons(arg")
-                 (format-integer stream m 10)
-                 (format stream ",")
+               (format stream "Flist1(arg~D)" m))
+              (t (format stream "Fcons(arg~D," m)
                  (comp-subrcall3 stream (+ m 1) n)
                  (format stream ")"))))
 
@@ -1990,28 +1986,19 @@ defgeneric compile
         
 
     (defun comp-plet1 (name)
-        (format code1 "void *plet")
-        (format code1 (convert (conv-name name) <string>))
-        (format code1 "(void *arg);~%")
-        (format code1 "void *plet")
-        (format code1 (convert (conv-name name) <string>))
-        (format code1 "(void *arg)")
+        (format code1 "void *plet~A(void *arg);~%" (conv-name name))
+        (format code1 "void *plet~A(void *arg)" (conv-name name))
         (format code1 "{struct para *pd = (struct para *) arg;")
 	    (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym), pd->arg, pd->num);")
         (format code1 "return NULL;}"))
 
     (defun comp-plet2 (stream x env args tail name global test clos)
-        #|
         ;; cleate
         (for ((form (elt x 1) (cdr form))
               (num 0 (+ num 1)))
              ((null form) nil)
              ;;d[N].sym = Fmakesym(function-sym);
-             (format stream "d[")
-             (format stream "~D" num)
-             (format "].sym = Fmakesym(")
-             (format stream (elt (elt form 0) 1))
-             (format stream ");")
+             (format stream "d[~D].sym = Fmakesym(~A);" num (elt (elt form 0) 1))
              ;;d[N].arg = FlistM(arg1,arg2,...argM);
              (format stream "d[~D].arg = Flist~D(" num num (length (cdr (elt (elt form 0) 1))))
              (for ((arg1 (cdr (elt (elt form 0))) (cdr arg1)))
@@ -2034,7 +2021,6 @@ defgeneric compile
               (num 0 (+ num 1)))
              ((null form) nil)
              (format stream "~A = d[~D].out;" (elt (elt (form) 0) 0) num)) 
-        |#
         (mapcar (lambda (y) (car y)) (elt x 1))) 
 
 

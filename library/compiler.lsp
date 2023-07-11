@@ -2020,7 +2020,7 @@ defgeneric compile
              (format stream "pthread_create(&t[~D], NULL, plet~A, &d[~D]);" num (conv-name name) num))
         ;; join
         (for ((form (elt x 1) (cdr form))
-              (num 1 (+ num 1)))
+              (num 0 (+ num 1)))
              ((null form) nil)
              (format stream "pthread_join(t[~D], NULL);~%" num))
         ;; var = d[N].out;

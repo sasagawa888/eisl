@@ -2321,6 +2321,7 @@ defgeneric compile
                    (and (= (length x) 4) (has-tail-recur-p1 (elt x 3) name))))
               ((eq (car x) 'let) (has-tail-recur-p (cdr (cdr x)) name))
               ((eq (car x) 'let*) (has-tail-recur-p (cdr (cdr x)) name))
+              ((eq (car x) 'plet) (has-tail-recur-p (cdr (cdr x)) name))
               ((eq (car x) 'dynamic-let) (has-tail-recur-p (cdr (cdr x)) name))
               ((eq (car x) 'progn) (has-tail-recur-p (cdr x) name))
               ((eq (car x) 'block) (has-tail-recur-p (cdr (cdr x)) name))

@@ -196,6 +196,7 @@ void dynamic_link(int x)
     init_f5(PSET_DYNAMIC_IDX, set_dynamic);
     init_f5(PCALL_SUBR_IDX, call_subr);
     init_f5(PAPPLY_IDX, apply);
+    init_f5(LIST3_IDX, list3);
 
     /* string output type */
     init_f6(GETNAME_IDX, get_name);

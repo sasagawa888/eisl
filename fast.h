@@ -363,6 +363,11 @@ static inline int Flist2(int x, int y)
     return f2[LIST2_IDX] (x, y);
 }
 
+static inline int Flist3(int x, int y, int z)
+{
+    return f5[LIST2_IDX] (x, y, z);
+}
+
 static inline int Fnthcdr(int x, int y)
 {
     return f2[NTHCDR_IDX] (x, y);

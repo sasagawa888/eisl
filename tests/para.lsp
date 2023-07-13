@@ -32,9 +32,9 @@
 (defun count (n)
     (plet ((a (count1 1 (div n 2)))
            (b (count1 (+ (div n 2) 1) n)))
-        (+ a b)))
+     t))
 
 (defun count1 (m n)
     (if (= m n)
-        m
-        (+ m (count1 (+ m 1) n))))
+        t
+        (count1 (+ m 1) n)))

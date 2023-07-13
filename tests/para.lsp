@@ -13,10 +13,14 @@
 
 (defun tarai (x y z)
     ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
-        (plet ((x1 (tarai1 (- x 1) y z))) x1))
+    (if (<= x y)
+        y
+        (plet ((x1 (tarai1 (- x 1) y z))
+               (y1 (tarai1 (- y 1) z x))
+               (z1 (tarai1 (- z 1) x y)))
+            (tarai x1 y1 z1))))
 
 (defun tarai1 (x y z)
-    (print x)
     ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y

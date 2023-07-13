@@ -27,3 +27,14 @@
         (tarai1 (tarai1 (- x 1) y z)
                 (tarai1 (- y 1) z x)
                 (tarai1 (- z 1) x y))))
+
+
+(defun count (n)
+    (plet ((a (count1 1 (div n 2)))
+           (b (count1 (+ (div n 2) 1) n)))
+        (+ a b)))
+
+(defun count1 (m n)
+    (if (= m n)
+        m
+        (+ m (count1 (+ m 1) n))))

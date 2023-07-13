@@ -365,7 +365,7 @@ static inline int Flist2(int x, int y)
 
 static inline int Flist3(int x, int y, int z)
 {
-    return f5[LIST2_IDX] (x, y, z);
+    return f5[LIST3_IDX] (x, y, z);
 }
 
 static inline int Fnthcdr(int x, int y)

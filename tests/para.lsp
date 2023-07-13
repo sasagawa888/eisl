@@ -16,6 +16,7 @@
         (plet ((x1 (tarai1 (- x 1) y z))) x1))
 
 (defun tarai1 (x y z)
+    (print x)
     ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y

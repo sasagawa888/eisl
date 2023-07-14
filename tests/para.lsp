@@ -1,15 +1,16 @@
 ;;; test paralell
 
 (defun pfib (n)
-    (plet ((a (fib (- n 1)))
-           (b (fib (- n 2)))) (+ a b)))
+    (the <fixnum> n) 
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (t (pcall + (pfib (- n 1)) (pfib (- n 2))))))
 
 (defun fib (n)
     (the <fixnum> n) 
     (cond ((= n 0) 0)
           ((= n 1) 1)
           (t (+ (fib (- n 1)) (fib (- n 2))))))
-
 
 (defun ptarai (x y z)
     ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)

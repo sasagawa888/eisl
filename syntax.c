@@ -2642,7 +2642,7 @@ void *pcall(void *arg)
 
 int f_pcall(int arglist, int th)
 {
-    int arg1, arg2, temp, i ,res;
+    int arg1, arg2, temp, i;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -2655,7 +2655,7 @@ int f_pcall(int arglist, int th)
     
 	/* while executing pcall sub thread*/
 	if(th != 0){
-		return(apply(arg1,arg2,th));
+		return(apply(car(arg1),evlis(arg2,th),th));
 	}
 
 
@@ -2665,7 +2665,7 @@ int f_pcall(int arglist, int th)
 	temp = arg2;
 	i = 0;
 	while (!nullp(temp)){
-    d[i].in = cadr(car(temp));
+    d[i].in = car(temp);
     d[i].num = i+1;
     ep[i+1] = ep[i];
     pthread_create(&t[i], NULL, pcall, &d[i]);
@@ -2687,5 +2687,5 @@ int f_pcall(int arglist, int th)
 	temp = cons(d[i].out,temp);
 	i--;
     }
-    return (apply(arg1,temp,th));
+    return (apply(car(arg1),temp,th));
 }

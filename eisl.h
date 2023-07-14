@@ -945,6 +945,7 @@ int f_parse_error_expected_class(int arglist);
 int f_parse_error_string(int arglist);
 int f_parse_number(int arglist);
 int f_plet(int arglist);
+int f_pcall(int arglist, int th);
 int f_plus(int arglist);
 int f_preview_char(int arglist);
 int f_print(int arglist);

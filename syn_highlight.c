@@ -7,7 +7,7 @@
 // special form token. use in Edlis indentation
 static const char *special[] = {
     "defun", "defmacro", "defglobal", "defdynamic", "defconstant",
-    "let", "let*", "case", "while", "progn", "defmodule",
+    "let", "let*", "plet", "case", "while", "progn", "defmodule",
 };
 
 // syntax token
@@ -23,7 +23,7 @@ static const char *syntax[] = {
     "with-standard-output", "with-error-output", "with-handler",
     "convert", "with-open-input-file", "with-open-output-file",
     "with-open-io-file", "the", "assure", "time", "trace", "untrace",
-    "defmodule", "defpublic", "modulesubst", "plet",
+    "defmodule", "defpublic", "modulesubst", "plet", "pcall",
 };
 
 // builtin token

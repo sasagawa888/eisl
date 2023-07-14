@@ -81,6 +81,7 @@ void init_syntax(void)
     def_fsubr("UNTRACE", f_untrace);
     def_fsubr("DEFMODULE", f_defmodule);
     def_fsubr("PLET", f_plet);
+	def_fsubr("PCALL", f_pcall);
 }
 
 // --FSUBR-----------
@@ -224,96 +225,6 @@ int f_flet(int arglist, int th)
 	arg2 = cdr(arg2);
     }
     ep[th] = save;
-    return (res);
-}
-
-struct para {
-    int in;
-    int num;
-    int out;
-};
-
-
-void *plet(void *arg);
-void *plet(void *arg)
-{
-
-    struct para *pd = (struct para *) arg;
-
-    pd->out = eval(pd->in, pd->num);
-    return NULL;
-}
-
-int f_plet(int arglist)
-{
-    int arg1, arg2, temp, i ,res;
-
-    arg1 = car(arglist);
-    arg2 = cdr(arglist);
-	if (length(arglist) == 0)
-	error(WRONG_ARGS, "plet", arglist);
-	if (length(arg1) > PARASIZE)
-	error(WRONG_ARGS, "plet", arg1); 
-    if (!listp(arg1))
-	error(IMPROPER_ARGS, "plet", arg1);
-    temp = arg1;
-    while (!nullp(temp)) {
-	int temparg1;
-
-	temparg1 = car(car(temp));
-	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "plet", car(temp));
-	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "plet", car(temp));
-	if (!symbolp(temparg1))
-	    error(NOT_SYM, "plet", temparg1);
-	if (temparg1 == T || temparg1 == NIL
-	    || temparg1 == make_sym("*PI*")
-	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
-	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "plet", arg1);
-	if (STRING_REF(temparg1, 0) == ':'
-	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "plet", arg1);
-
-	temp = cdr(temp);
-    }
-
-
-    pthread_t t[PARASIZE];
-    struct para d[PARASIZE];
-
-	temp = arg1;
-	i = 0;
-	while (!nullp(temp)){
-    d[i].in = cadr(car(temp));
-    d[i].num = i+1;
-    ep[i+1] = ep[i];
-    pthread_create(&t[i], NULL, plet, &d[i]);
-	temp = cdr(temp);
-	i++;
-	}
-
-	temp = arg1;
-	i = 0;
-	while (!nullp(temp)){
-    pthread_join(t[i], NULL);
-    temp = cdr(temp);
-	i++;
-	}
-	temp = arg1;
-	i = 0;
-	while (!nullp(temp)){
-    add_lex_env(car(car(temp)), d[i].out, 0);
-	temp = cdr(temp);
-	i++;
-	}
-	while (arg2 != NIL) {
-	shelter_push(arg2, 0);
-	res = eval(car(arg2), 0);
-	shelter_pop(0);
-	arg2 = cdr(arg2);
-    }
     return (res);
 }
 
@@ -2627,4 +2538,154 @@ int modulesubst_case(int addr, int module, int fname)
     }
     newbodies = reverse(newbodies);
     return (newbodies);
+}
+
+struct para {
+    int in;
+    int num;
+    int out;
+};
+
+
+void *plet(void *arg);
+void *plet(void *arg)
+{
+
+    struct para *pd = (struct para *) arg;
+
+    pd->out = eval(pd->in, pd->num);
+    return NULL;
+}
+
+int f_plet(int arglist)
+{
+    int arg1, arg2, temp, i ,res;
+
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+	if (length(arglist) == 0)
+	error(WRONG_ARGS, "plet", arglist);
+	if (length(arg1) > PARASIZE)
+	error(WRONG_ARGS, "plet", arg1); 
+    if (!listp(arg1))
+	error(IMPROPER_ARGS, "plet", arg1);
+    temp = arg1;
+    while (!nullp(temp)) {
+	int temparg1;
+
+	temparg1 = car(car(temp));
+	if (improper_list_p(car(temp)))
+	    error(IMPROPER_ARGS, "plet", car(temp));
+	if (length(car(temp)) != 2)
+	    error(IMPROPER_ARGS, "plet", car(temp));
+	if (!symbolp(temparg1))
+	    error(NOT_SYM, "plet", temparg1);
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    error(WRONG_ARGS, "plet", arg1);
+	if (STRING_REF(temparg1, 0) == ':'
+	    || STRING_REF(temparg1, 0) == '&')
+	    error(WRONG_ARGS, "plet", arg1);
+
+	temp = cdr(temp);
+    }
+
+
+    pthread_t t[PARASIZE];
+    struct para d[PARASIZE];
+
+	temp = arg1;
+	i = 0;
+	while (!nullp(temp)){
+    d[i].in = cadr(car(temp));
+    d[i].num = i+1;
+    ep[i+1] = ep[i];
+    pthread_create(&t[i], NULL, plet, &d[i]);
+	temp = cdr(temp);
+	i++;
+	}
+
+	temp = arg1;
+	i = 0;
+	while (!nullp(temp)){
+    pthread_join(t[i], NULL);
+    temp = cdr(temp);
+	i++;
+	}
+	temp = arg1;
+	i = 0;
+	while (!nullp(temp)){
+    add_lex_env(car(car(temp)), d[i].out, 0);
+	temp = cdr(temp);
+	i++;
+	}
+	while (arg2 != NIL) {
+	shelter_push(arg2, 0);
+	res = eval(car(arg2), 0);
+	shelter_pop(0);
+	arg2 = cdr(arg2);
+    }
+    return (res);
+}
+
+void *pcall(void *arg);
+void *pcall(void *arg)
+{
+
+    struct para *pd = (struct para *) arg;
+
+    pd->out = eval(pd->in, pd->num);
+    return NULL;
+}
+
+int f_pcall(int arglist, int th)
+{
+    int arg1, arg2, temp, i ,res;
+
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+	if (length(arglist) == 0)
+	error(WRONG_ARGS, "pcall", arglist);
+	if (length(arg2) > PARASIZE)
+	error(WRONG_ARGS, "pcall", arg1); 
+    if (!symbolp(arg1))
+	error(IMPROPER_ARGS, "pcall", arg1);
+    
+	/* while executing pcall sub thread*/
+	if(th != 0){
+		return(apply(arg1,arg2,th));
+	}
+
+
+    pthread_t t[PARASIZE];
+    struct para d[PARASIZE];
+
+	temp = arg2;
+	i = 0;
+	while (!nullp(temp)){
+    d[i].in = cadr(car(temp));
+    d[i].num = i+1;
+    ep[i+1] = ep[i];
+    pthread_create(&t[i], NULL, pcall, &d[i]);
+	temp = cdr(temp);
+	i++;
+	}
+
+	temp = arg2;
+	i = 0;
+	while (!nullp(temp)){
+    pthread_join(t[i], NULL);
+    temp = cdr(temp);
+	i++;
+	}
+	
+	temp = NIL;
+	i--;
+	while (i >= 0) {
+	temp = cons(d[i].out,temp);
+	i--;
+    }
+    return (apply(arg1,temp,th));
 }

@@ -1,4 +1,4 @@
-;;FAST compiler ver3.14
+;;FAST compiler ver3.22
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -2037,7 +2037,7 @@ defgeneric compile
         (comp-pcall1 name) ;; thread code
         ;; if not main thread, call apply sequentialy and return.
         (format stream "({if(th != 0){res = ")
-        (comp stream (cdr x) env args tail name global test clos)
+        (comp stream (cdr x) env args nil name global test clos)
         (format stream ";return(res);};~%")
         (format stream "pthread_t t[PARASIZE]; struct para d[PARASIZE];")
         (comp-pcall2 stream x env args tail name global test clos)
@@ -2107,7 +2107,7 @@ defgeneric compile
         (let ((argument '(temp0 temp1 temp2 temp3 temp4 temp5 temp6 temp7)))
             (format stream "res = ")
             (comp stream (cons (elt x 1) (take (length (cdr (cdr x))) argument))
-                  (append argument env) args tail name global test clos)
+                  (append argument env) args nil name global test clos)
             (format stream ";~%")))
 
     (defun not-need-res-p (x)

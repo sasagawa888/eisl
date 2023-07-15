@@ -13,16 +13,15 @@
           (t (+ (fib (- n 1)) (fib (- n 2))))))
 
 (defun ptarai (x y z)
-    ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
+    (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (plet ((x1 (tarai (- x 1) y z))
-               (y1 (tarai (- y 1) z x))
-               (z1 (tarai (- z 1) x y)))
-            (ptarai x1 y1 z1))))
+        (pcall ptarai (tarai (- x 1) y z)
+                      (tarai (- y 1) z x)
+                      (tarai (- z 1) x y))))
 
 (defun tarai (x y z)
-    ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
+    (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
         (tarai (tarai (- x 1) y z)

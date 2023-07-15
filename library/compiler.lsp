@@ -406,7 +406,7 @@ defgeneric compile
         (let ((sexp nil))
            (while (setq sexp (read instream nil nil))
               (if (optimize-p sexp)
-                  (setq optimize-enable sexp)
+                  (setq optimize-enable (elt sexp 1))
                   (setq optimize-enable nil))
               (compile sexp))
            (close instream)

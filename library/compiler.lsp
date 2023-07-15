@@ -1648,7 +1648,8 @@ defgeneric compile
                  (format stream ")"))))
 
     
-
+    ;; if optimize-enable funcall is like C function call
+    ;; e.g. (foo x) -> foo(x,th)
     (defun comp-funcall-clang (stream x env args tail name global test clos)
         (let ((n (cdr (assoc (car x) function-arg))))
            (when (and (> n 0) (/= (length (cdr x)) n))
@@ -1658,7 +1659,7 @@ defgeneric compile
                   (for ((ls (cdr x) (cdr ls)))
                        ((null (cdr ls))
                         (comp stream (car ls) env args nil name global test clos)
-                        (format stream ")") )
+                        (format stream ",th)") )
                        (comp stream (car ls) env args nil name global test clos)
                        (format stream ",")))
                  (t (format stream "~A(" (conv-name (car x)))
@@ -1666,7 +1667,7 @@ defgeneric compile
                           (m (abs n) (- m 1)) )
                          ((= m 1)
                           (comp-funcall-clang1 stream ls env args nil name global test clos)
-                          (format stream ")") )
+                          (format stream ",th)") )
                          (comp stream (car ls) env args nil name global test clos)
                          (format stream ","))))))
 
@@ -2047,7 +2048,7 @@ defgeneric compile
 
     (defun comp-pcall2 (stream x env args tail name global test clos)
         ;; if not main thread, call apply sequentialy and return.
-        (format stream "if(th!=0) return(")
+        (format stream "if(th != 0) return(")
         (comp stream (cdr x) env args tail name global test clos)
         (format stream ");~%")
         ;; declare
@@ -3327,23 +3328,23 @@ defgeneric compile
         (let ((local (elt (assoc x type-function) 3)))
            (elt (assoc y local) 2)))
 
-    ;; (x y z) -> (int x, double y, int z) when (<fixnum> <float> <fixnum>)
+    ;; (x y z) -> (int x, double y, int z, int th) when (<fixnum> <float> <fixnum>)
     ;; output to stream of string
     (defun type-gen-arg2 (stream ls type)
         (format stream "(")
         (if (null ls)
-            (format stream ")")
+            (format stream ",int th)")
             (for ((ls1 ls (cdr ls1))
                   (n 0 (+ n 1)) )
                  ((null (cdr ls1))
                   (cond ((eq (elt type n) (class <fixnum>))
                         (format stream "int ")
                         (format-object stream (conv-name (car ls1)) nil)
-                        (format stream ")"))
+                        (format stream ", int th)"))
                        ((eq (elt type n) (class <float>))
                         (format stream "double ")
                         (format-object stream (conv-name (car ls1)) nil)
-                        (format stream ")"))) )
+                        (format stream ",int th)"))) )
                  (cond ((eq (elt type n) (class <fixnum>))
                         (format stream "int ")
                         (format-object stream (conv-name (car ls1)) nil)
@@ -3394,11 +3395,11 @@ defgeneric compile
                           (cond ((eq (elt argument (- m 1)) (class <fixnum>))
                                 (format code1 "Fgetint(arg")
                                 (format code1 (convert m <string>))
-                                (format code1 "))));~%"))
+                                (format code1 "),0)));~%"))
                                ((eq (elt argument (- m 1)) (class <float>))
                                 (format code1 "Fgetflt(arg")
                                 (format code1 (convert m <string>))
-                                (format code1 "))));~%"))) )
+                                (format code1 "),0)));~%"))) )
                          (cond ((eq (elt argument (- m 1)) (class <fixnum>))
                                 (format code1 "Fgetint(arg")
                                 (format code1 (convert m <string>))

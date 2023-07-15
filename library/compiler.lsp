@@ -2035,7 +2035,11 @@ defgeneric compile
 
     (defun comp-pcall (stream x env args tail name global test clos)
         (comp-pcall1 name) ;; thread code
-        (format stream "({pthread_t t[PARASIZE]; struct para d[PARASIZE];")
+        ;; if not main thread, call apply sequentialy and return.
+        (format stream "({if(th != 0){res = ")
+        (comp stream (cdr x) env args tail name global test clos)
+        (format stream ";goto pcallexit;};~%")
+        (format stream "pthread_t t[PARASIZE]; struct para d[PARASIZE];")
         (comp-pcall2 stream x env args tail name global test clos)
         (format stream "res;})"))
     
@@ -2047,10 +2051,6 @@ defgeneric compile
         (format code1 "return NULL;}"))
 
     (defun comp-pcall2 (stream x env args tail name global test clos)
-        ;; if not main thread, call apply sequentialy and return.
-        (format stream "if(th != 0) return(")
-        (comp stream (cdr x) env args tail name global test clos)
-        (format stream ");~%")
         ;; declare
         ;; int TEMP0,TEMP1...
         (format stream "int ")
@@ -2108,7 +2108,7 @@ defgeneric compile
             (format stream "res = ")
             (comp stream (cons (elt x 1) (take (length (cdr (cdr x))) argument))
                   (append argument env) args tail name global test clos)
-            (format stream ";~%")))
+            (format stream ";pcallexit: res = res;~%")))
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

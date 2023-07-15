@@ -564,6 +564,8 @@ defgeneric compile
                (comp-let* stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'plet))
                (comp-plet stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'pcall))
+               (comp-pcall stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2029,6 +2031,59 @@ defgeneric compile
              ((null form) nil)
              (format stream "~A = d[~D].out;~%" (elt (elt form 0) 0) num)) 
         (mapcar (lambda (y) (car y)) (elt x 1))) 
+
+    (defun comp-pcall (stream x env args tail name global test clos)
+        (comp-pcall1 name) ;; thread code
+        (format stream "({pthread_t t[PARASIZE]; struct para d[PARASIZE];")
+        (comp-pcall2 stream x env args tail name global test clos)
+        (format stream "res;})"))
+    
+    (defun comp-pcall1 (name)
+        (format code1 "void *pcall~A(void *arg);~%" (conv-name name))
+        (format code1 "void *pcall~A(void *arg)" (conv-name name))
+        (format code1 "{struct para *pd = (struct para *) arg;")
+	    (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym),pd->arg, pd->num);")
+        (format code1 "return NULL;}"))
+
+    (defun comp-pcall2 (stream x env args tail name global test clos)
+        ;; if not main thread, call apply sequentialy and return.
+        (format stream "if(th!=0) return(")
+        (comp stream (cdr x) env args tail name global test clos)
+        (format stream ");~%")
+        ;; declare
+        (format stream "int temp;")
+        ;; cleate
+        (for ((arg1 (cdr (cdr x)) (cdr arg1))
+              (num 0 (+ num 1)))
+             ((null arg1) nil)
+             ;;d[N].sym = Fmakesym(function-sym);
+             (format stream "d[~D].sym = Fmakesym(\"~A\");~%" num (car (car arg1)))
+             ;;d[N].arg = FlistM(arg1,arg2,...argM);
+             (format stream "d[~D].arg = Flist~D(" num (length (cdr (car arg1))))
+             (for ((arg2 (cdr (car arg1)) (cdr arg2)))
+                  ((null arg2) nil)
+                  (comp stream (car arg2) env args tail name global test clos)
+                  (if (cdr arg2)
+                      (format stream ",")))
+             (format stream ");~%")
+             ;; d[N].num = N+1;
+             (format stream "d[~D].num = ~D;~%" num (+ num 1))
+             ;; pthread_create(&t[N], NULL, pletFIB, &d[N]);
+             (format stream "pthread_create(&t[~D], NULL, pcall~A, &d[~D]);~%" num (conv-name name) num))
+        ;; join
+        (for ((argument (cdr (cdr x)) (cdr argument))
+              (num 0 (+ num 1)))
+             ((null argument) nil)
+             (format stream "pthread_join(t[~D], NULL);~%" num))
+        ;; temp = listN(d[0].out,d[1].out,...);
+        (format stream "temp = Flist~D(" (length (cdr (cdr x))))
+        (for ((argument (cdr (cdr x)) (cdr argument))
+              (num 0 (+ num 1)))
+             ((null argument) (format stream ");~%"))
+             (format stream "d[~D].out" num)
+             (if (cdr argument) (format stream ","))) 
+        (format stream "res = Fpapply(Fcar(Fmakesym(\"~A\")),temp,th);" (elt x 1)))  
+
 
 
     (defun not-need-res-p (x)

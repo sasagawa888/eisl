@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include "ffi.h"
 
-
 struct para {
 	int sym;
     int arg;

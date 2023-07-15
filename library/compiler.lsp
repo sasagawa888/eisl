@@ -3556,11 +3556,13 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'if)) (inference-if x type-env))
               ((and (consp x) (eq (car x) 'let)) (inference-let x type-env))
               ((and (consp x) (eq (car x) 'let*)) (inference-let x type-env))
+              ((and (consp x) (eq (car x) 'plet)) (inference-let x type-env))
               ((and (consp x) (eq (car x) 'for)) (inference-for x type-env))
               ((and (consp x) (eq (car x) 'while)) (inference-while x type-env))
               ((and (consp x) (eq (car x) 'labels)) (inference-labels x type-env))
               ((and (consp x) (eq (car x) 'flet)) (inference-labels x type-env))
               ((and (consp x) (eq (car x) 'function)) (inference-function x type-env))
+              ((and (consp x) (eq (car x) 'pcall)) (inference (cdr x) type-env))
               ((and (consp x) (macrop x)) (inference (macroexpand-1 x) type-env))
               ((and (consp x) (member (car x) '(+ - * = > < >= <= /=)))
                (inference-numeric x type-env))
@@ -3717,6 +3719,8 @@ defgeneric compile
                        (if (eq type-env 'no)
                            (return-from exit-let 'no)))
                   (inference-all1 body type-env nil)))))
+
+
 
     ;;for syntax
     (defun inference-for (x type-env)

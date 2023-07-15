@@ -1,3 +1,12 @@
+# Spec
+
+- (plet form body)  
+
+```
+form   ((var1 sexp1)(var2 sexp2)...)
+```
+- (pcall fun arg ...)
+
 # Summary
  I am attempting to introduce parallel computing to Easy-ISLisp. First, I added parallel syntax to the interpreter and achieved some results by running it with multiple threads. I am documenting these findings for future reference.
 

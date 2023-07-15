@@ -406,7 +406,7 @@ defgeneric compile
         (let ((sexp nil))
            (while (setq sexp (read instream nil nil))
               (if (optimize-p sexp)
-                  (setq optimize-enable t)
+                  (setq optimize-enable sexp)
                   (setq optimize-enable nil))
               (compile sexp))
            (close instream)
@@ -1993,7 +1993,7 @@ defgeneric compile
         (format code1 "void *plet~A(void *arg);~%" (conv-name name))
         (format code1 "void *plet~A(void *arg)" (conv-name name))
         (format code1 "{struct para *pd = (struct para *) arg;")
-	    (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym), pd->arg, pd->num);")
+	    (format code1 "pd->out = Fpeval(Fcons(pd->sym, pd->arg), pd->num);")
         (format code1 "return NULL;}"))
 
     (defun comp-plet2 (stream x env args tail name global test clos)
@@ -2043,7 +2043,7 @@ defgeneric compile
         (format code1 "void *pcall~A(void *arg);~%" (conv-name name))
         (format code1 "void *pcall~A(void *arg)" (conv-name name))
         (format code1 "{struct para *pd = (struct para *) arg;")
-	    (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym),pd->arg, pd->num);")
+        (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym),pd->arg, pd->num);")
         (format code1 "return NULL;}"))
 
     (defun comp-pcall2 (stream x env args tail name global test clos)
@@ -2052,7 +2052,13 @@ defgeneric compile
         (comp stream (cdr x) env args tail name global test clos)
         (format stream ");~%")
         ;; declare
-        (format stream "int temp;")
+        ;; int TEMP0,TEMP1...
+        (format stream "int ")
+        (for ((arg1 (cdr (cdr x)) (cdr arg1))
+              (num 0 (+ num 1)))
+             ((null arg1) (format stream ";"))
+             (format stream "TEMP~D" num)
+             (if (cdr arg1) (format stream ",")))
         ;; cleate
         (for ((arg1 (cdr (cdr x)) (cdr arg1))
               (num 0 (+ num 1)))
@@ -2076,16 +2082,16 @@ defgeneric compile
               (num 0 (+ num 1)))
              ((null argument) nil)
              (format stream "pthread_join(t[~D], NULL);~%" num))
-        ;; temp = listN(d[0].out,d[1].out,...);
-        (format stream "temp = Flist~D(" (length (cdr (cdr x))))
+        ;; TEMP0 = d[0].out; TEMP1 = d[1].out; ...
         (for ((argument (cdr (cdr x)) (cdr argument))
               (num 0 (+ num 1)))
-             ((null argument) (format stream ");~%"))
-             (format stream "d[~D].out" num)
-             (if (cdr argument) (format stream ","))) 
-        (format stream "res = Fpapply(Fcar(Fmakesym(\"~A\")),temp,th);" (elt x 1)))  
-
-
+             ((null argument) (format stream "~%"))
+             (format stream "TEMP~D = d[~D].out;" num num))
+        (let ((argument '(temp0 temp1 temp2 temp3 temp4 temp5 temp6 temp7)))
+            (format stream "res = ")
+            (comp stream (cons (elt x 1) (take (length (cdr (cdr x))) argument))
+                  (append argument env) args tail name global test clos)
+            (format stream ";~%")))
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

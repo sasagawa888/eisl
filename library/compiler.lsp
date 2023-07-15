@@ -2628,7 +2628,7 @@ defgeneric compile
                  (format stream "Fset_cdr(Fmakesym(\"")
                  (format stream (convert (elt x 1) <string>))
                  (format stream "\"),")
-                 (comp stream (elt x 2) env args nil name t test clos)
+                 (comp stream (elt x 2) env args nil name global test clos)
                  (format stream ");res;})"))))
 
     (defun comp-tagbody (stream x env args tail name global test clos)

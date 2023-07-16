@@ -555,7 +555,7 @@ int check_gbc(void)
 	RAISE(Restart_Repl);
     }
 #if GC == 0
-    if (fc < CONCSIZE)
+    if (fc < CONCSIZE && !concurrent_flag)
 	gbc();
 #else
     if (fc < FREESIZE)

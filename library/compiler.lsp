@@ -1994,7 +1994,7 @@ defgeneric compile
         (format code1 "void *plet~A(void *arg)" (conv-name name))
         (format code1 "{struct para *pd = (struct para *) arg;")
 	    (format code1 "pd->out = Fpeval(Fcons(pd->sym, pd->arg), pd->num);")
-        (format code1 "return NULL;}"))
+        (format code1 "pthread_exit(NULL);}"))
 
     (defun comp-plet2 (stream x env args tail name global test clos)
         ;; declare
@@ -2048,7 +2048,7 @@ defgeneric compile
         (format code1 "void *pcall~A(void *arg)" (conv-name name))
         (format code1 "{struct para *pd = (struct para *) arg;")
         (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym),pd->arg, pd->num);")
-        (format code1 "return NULL;}"))
+        (format code1 "pthread_exit(NULL);}"))
 
     (defun comp-pcall2 (stream x env args tail name global test clos)
         ;; declare

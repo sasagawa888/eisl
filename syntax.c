@@ -2554,7 +2554,7 @@ void *plet(void *arg)
     struct para *pd = (struct para *) arg;
 
     pd->out = eval(pd->in, pd->num);
-    return NULL;
+    pthread_exit(NULL);
 }
 
 int f_plet(int arglist)
@@ -2637,7 +2637,7 @@ void *pcall(void *arg)
     struct para *pd = (struct para *) arg;
 
     pd->out = eval(pd->in, pd->num);
-    return NULL;
+    pthread_exit(NULL);
 }
 
 int f_pcall(int arglist, int th)
@@ -2654,7 +2654,8 @@ int f_pcall(int arglist, int th)
 	error(IMPROPER_ARGS, "pcall", arg1);
     
 	/* while executing pcall sub thread*/
-	if(th != 0){
+	if(th != 0)
+	{
 		return(apply(car(arg1),evlis(arg2,th),th));
 	}
 

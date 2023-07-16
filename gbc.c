@@ -363,7 +363,7 @@ void *concurrent(void *arg)
     double stop, go, st, en;
 #endif
 
-    DBG_PRINTF("enter concurrent M&S-GC free=%d\n", rc);
+    DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", rc);
     pthread_mutex_lock(&mutex);
     concurrent_flag = 1;
     pthread_mutex_unlock(&mutex);
@@ -496,7 +496,7 @@ void *concurrent(void *arg)
     pthread_mutex_lock(&mutex);
     concurrent_flag = 0;
     pthread_mutex_unlock(&mutex);
-    DBG_PRINTF("exit  concurrent M&S-GC free=%d\n", fc);
+    DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
     return NULL;
 }
 

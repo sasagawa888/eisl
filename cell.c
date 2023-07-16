@@ -270,11 +270,13 @@ int freshcell(void)
 	SET_CDR(res, 0);
 	rc--;
     } else if (concurrent_flag && rc > 50) {
+    pthread_mutex_lock(&mutex);
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	rc--;
 	remark[remark_pt++] = res;
+    pthread_mutex_unlock(&mutex);
     } else {
 	pthread_join(concurrent_thread, NULL);
 	res = hp;

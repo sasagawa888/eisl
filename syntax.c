@@ -21,6 +21,7 @@
 
 
 #define TAGBODY_LEN_MAX 100
+#define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 
 void init_syntax(void)
 {
@@ -2669,6 +2670,7 @@ int f_pcall(int arglist, int th)
     d[i].in = car(temp);
     d[i].num = i+1;
     ep[i+1] = ep[i];
+	DBG_PRINTF("invoke thread%d\n",i);
     pthread_create(&t[i], NULL, pcall, &d[i]);
 	temp = cdr(temp);
 	i++;

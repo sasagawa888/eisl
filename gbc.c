@@ -14,9 +14,9 @@
  * if CONCSIZE is small(900), occure error. Now CONCSIZE is 90000. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
  * if define GCTIME print GC time and stop time 
- * concurrent sweep 
- * first step, sweep sequential 0~SEQUENT cells while stop_flag = 1
- * second step, sweep concurrent SEQUENT~CELLSOZE cells while stop_flag=0, sweep_flag=1.  
+ * sweep 
+ * now, sweep is not concurrent. because it is difficult for paralell function. 
+ *   
  */
 
 /*  GC = 0 concurrent
@@ -24,7 +24,6 @@
  *  GC = 2 sequential
 */
 #define GC  0
-#define SEQUENT 6000000
 //#define GCTIME
 
 #include <stdio.h>
@@ -357,7 +356,7 @@ void gbc_sweep_thread(void)
 void *concurrent(void *arg);
 void *concurrent(void *arg)
 {
-    int addr, fc1, i, j, free;
+    int addr, fc1, i, j;
     struct data *pd = (struct data *) arg;
 #ifdef GCTIME
     double stop, go, st, en;
@@ -439,7 +438,7 @@ void *concurrent(void *arg)
 
     addr = 0;
     hp = NIL;
-    while (addr < SEQUENT) {
+    while (addr < CELLSIZE) {
 	if (USED_CELL(addr))
 	    NOMARK_CELL(addr);
 	else {
@@ -453,47 +452,24 @@ void *concurrent(void *arg)
 #ifdef GCTIME
     go = getETime();
 #endif
-    /* end of stop the world */
-    pthread_mutex_lock(&mutex);
-    concurrent_stop_flag = 0;
-    pthread_mutex_unlock(&mutex);
-
-    /* concurrent sweep */
-    pthread_mutex_lock(&mutex);
-    concurrent_sweep_flag = 1;
-    pthread_mutex_unlock(&mutex);
-    addr = SEQUENT;
-    free = NIL;
-    while (addr < CELLSIZE) {
-	if (USED_CELL(addr))
-	    NOMARK_CELL(addr);
-	else {
-	    clr_cell(addr);
-	    SET_CDR(addr, free);
-	    free = addr;
-	}
-	addr++;
-    }
-    fc1 = 0;
-    for (addr = SEQUENT; addr < CELLSIZE; addr++)
+    
+    for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
     fc = fc1;
     rc = fc1;
 
-    pthread_mutex_lock(&mutex);
-    hp = free;
-    concurrent_sweep_flag = 0;
-    pthread_mutex_unlock(&mutex);
-
-
+    
 #ifdef GCTIME
     en = getETime();
     Fmt_print("GC (within stop) %.6f (%.6f)(second)\n", en - st,
 	      go - stop);
 #endif
 
+    /* end of stop the world */
     pthread_mutex_lock(&mutex);
+    concurrent_sweep_flag = 0;
+    concurrent_stop_flag = 0;
     concurrent_flag = 0;
     pthread_mutex_unlock(&mutex);
     DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
@@ -550,13 +526,20 @@ void clr_cell(int addr)
 
 /* when free cells are less FREESIZE, invoke gbc() */
 int check_gbc(void)
-{
+{   
+    int temp;
+
     if (exit_flag) {
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
 #if GC == 0
-    if (fc < CONCSIZE && !concurrent_flag)
+    pthread_mutex_lock(&mutex);
+    temp = concurrent_flag;
+    pthread_mutex_unlock(&mutex);
+    if (temp) return 0;
+
+    if (fc < CONCSIZE)
 	gbc();
 #else
     if (fc < FREESIZE)

@@ -24,7 +24,7 @@
  *  GC = 2 sequential
 */
 #define GC  0
-#define SEQUENT 6000000
+#define SEQUENT 8000000
 //#define GCTIME
 
 #include <stdio.h>
@@ -431,6 +431,7 @@ void *concurrent(void *arg)
     mark_cell(generic_list);
 
     /* remark hash table */
+    DBG_PRINTF("remark concurrent M&S-GC pt=%d\n", remark_pt);
     for (i = 0; i < remark_pt; i++)
 	mark_cell(remark[i]);
 

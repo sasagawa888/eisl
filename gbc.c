@@ -74,6 +74,8 @@ int gbc(void)
 #elif GC == 2
     int addr;
 
+    concurrent_flag = 1;
+    concurrent_stop_flag = 1;
     DBG_PRINTF("enter M&S-GC free=%d\n", fc);
     gbc_mark();
     gbc_sweep();
@@ -82,6 +84,8 @@ int gbc(void)
 	if (IS_EMPTY(addr))
 	    fc++;
     DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
+    concurrent_flag = 0;
+    concurrent_stop_flag = 0;
     return 0;
 #endif
 }

@@ -104,22 +104,12 @@ static inline int Ffreecell(void)
 }
 
 
-static inline int Fargpop(void)
-{
-    return f0[ARGPOP_IDX] ();
-}
-
 static inline int Fpargpop(int x)
 {
     return f1[PARGPOP_IDX] (x);
 }
 
 
-
-static inline int Fshelterpop(void)
-{
-    return f0[SHELTERPOP_IDX] ();
-}
 
 static inline int Fpop(void)
 {

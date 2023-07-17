@@ -51,7 +51,6 @@ typedef int (*fn8)(double);
 typedef void (*tfunc)(const char *, int (*func)(int));
 
 enum { CHECKGBC_IDX, GBC_IDX, FRESHCELL_IDX, FREECELL_IDX,
-    ARGPOP_IDX, SHELTERPOP_IDX,
     POP_IDX, GETDYNPT_IDX, GET_ERROR_HANDLER_IDX, GET_ERROR_FLAG_IDX, 
     RESTORE_ERROR_HANDLER_IDX, NUM_FN0S
 };

@@ -76,21 +76,14 @@ void dynamic_link(int x)
     init_tfunctions = (voidfunc_t) dlsym(hmod, "init_tfunctions");
     init_declare = (voidfunc_t) dlsym(hmod, "init_declare");
 
-    int arg_pop1(int th) {
-	return (arg_pop(0));
-    }
-
-    int shelter_pop1(int th) {
-	return (shelter_pop(0));
-    }
-
+    
     /* argument-0 type */
     init_f0(CHECKGBC_IDX, check_gbc);
     init_f0(GBC_IDX, gbc);
     init_f0(FRESHCELL_IDX, freshcell);
     init_f0(FREECELL_IDX, freecell);
-    init_f0(ARGPOP_IDX, arg_pop1);
-    init_f0(SHELTERPOP_IDX, shelter_pop1);
+    //init_f0(ARGPOP_IDX, arg_pop1);
+    //init_f0(SHELTERPOP_IDX, shelter_pop1);
     init_f0(POP_IDX, pop);
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);

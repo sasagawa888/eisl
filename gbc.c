@@ -472,7 +472,7 @@ void *concurrent(void *arg)
     concurrent_flag = 0;
     pthread_mutex_unlock(&mutex);
     DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
-    return NULL;
+    pthread_exit(NULL);
 }
 
 int gbc_concurrent(void)

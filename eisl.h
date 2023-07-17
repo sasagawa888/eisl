@@ -80,7 +80,7 @@
 
 
 
-static const float VERSION = 3.22;
+static const float VERSION = 3.24;
 static const int FREESIZE = 900;
 static const int CONCSIZE = 900000;
 static const int SYMSIZE = 256;

@@ -76,7 +76,7 @@ void dynamic_link(int x)
     init_tfunctions = (voidfunc_t) dlsym(hmod, "init_tfunctions");
     init_declare = (voidfunc_t) dlsym(hmod, "init_declare");
 
-    
+
     /* argument-0 type */
     init_f0(CHECKGBC_IDX, check_gbc);
     init_f0(GBC_IDX, gbc);
@@ -131,7 +131,7 @@ void dynamic_link(int x)
      }
      * compile set flag while compiling plet. and generate Pthread code.
      */
-    
+
     init_f2(CONS_IDX, cons);
     init_f2(NTH_IDX, nth);
     init_f2(SETCAR_IDX, set_car);

@@ -578,7 +578,7 @@ int f_break(int arglist __unused)
 /* --------debug--------------- */
 void debugger()
 {
-    int i;
+    int i, j;
 
     puts("debug mode ?(help)");
     while (1) {
@@ -601,18 +601,22 @@ void debugger()
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    for (i = 0; i < dp[0]; i++) {
-		print(dynamic[i][0]);
-		printf("=");
-		print(dynamic[i][1]);
-		printf(" ");
+	    for (i = 0; i < PARASIZE; i++) {
+		Fmt_print("thread%d=", i);
+		for (j = 0; j < dp[i]; j++) {
+		    print(dynamic[j][0]);
+		    printf("=");
+		    print(dynamic[j][1]);
+		    printf(" ");
+		}
+		putchar('\n');
 	    }
-	    putchar('\n');
 	} else if (eqp(x, make_sym(":E"))) {
-	    print(ep[0]);
-	    print(ep[1]);
-	    print(ep[2]);
-	    putchar('\n');
+	    for (i = 0; i < PARASIZE; i++) {
+		Fmt_print("thread%d=", i);
+		print(ep[i]);
+		putchar('\n');
+	    }
 	} else if (eqp(x, make_sym(":I"))) {
 	    print(examin_sym);
 	    putchar('\n');

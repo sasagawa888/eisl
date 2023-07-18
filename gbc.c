@@ -455,14 +455,14 @@ void *concurrent(void *arg)
 #ifdef GCTIME
     go = getETime();
 #endif
-    
+
     for (addr = 0; addr < CELLSIZE; addr++)
 	if (IS_EMPTY(addr))
 	    fc1++;
     fc = fc1;
     rc = fc1;
 
-    
+
 #ifdef GCTIME
     en = getETime();
     Fmt_print("GC (within stop) %.6f (%.6f)(second)\n", en - st,
@@ -529,7 +529,7 @@ void clr_cell(int addr)
 
 /* when free cells are less FREESIZE, invoke gbc() */
 int check_gbc(void)
-{   
+{
     int temp;
 
     if (exit_flag) {
@@ -540,7 +540,8 @@ int check_gbc(void)
     pthread_mutex_lock(&mutex);
     temp = concurrent_flag;
     pthread_mutex_unlock(&mutex);
-    if (temp) return 0;
+    if (temp)
+	return 0;
 
     if (fc < CONCSIZE)
 	gbc();

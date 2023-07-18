@@ -237,18 +237,8 @@ int freshcell(void)
 {
     int res;
 
-    if (!concurrent_flag) {
-	pthread_mutex_lock(&mutex);
-	res = hp;
-	hp = GET_CDR(hp);
-	SET_CDR(res, 0);
-	pthread_mutex_unlock(&mutex);
-	fc--;
-	if (fc <= 50 && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL);
-	}
-    } else if (concurrent_stop_flag) {
+
+    if (concurrent_stop_flag) {
 	/* while remarking stop the world */
 	pthread_mutex_lock(&mutex);
 	while (concurrent_stop_flag) {
@@ -261,6 +251,17 @@ int freshcell(void)
 	SET_CDR(res, 0);
 	fc--;
 
+    } else if (!concurrent_flag) {
+	pthread_mutex_lock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	pthread_mutex_unlock(&mutex);
+	fc--;
+	if (fc <= 50 && !handling_resource_err) {
+	    handling_resource_err = true;
+	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	}
     } else if (concurrent_sweep_flag && rc > 50) {
 	/* while concurrent-sweeping set flag USE */
 	res = hp;

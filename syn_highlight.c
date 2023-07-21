@@ -23,7 +23,7 @@ static const char *syntax[] = {
     "with-standard-output", "with-error-output", "with-handler",
     "convert", "with-open-input-file", "with-open-output-file",
     "with-open-io-file", "the", "assure", "time", "trace", "untrace",
-    "defmodule", "defpublic", "modulesubst", "plet", "pcall",
+    "defmodule", "defpublic", "modulesubst", 
 };
 
 // builtin token
@@ -87,6 +87,7 @@ static const char *extended[] = {
     "pwm-write", "pull-up-dn-control", "delay", "compile-file",
     "formatter", "line-argument", "getenv", "system",
     "c-include", "c-define", "c-lang", "c-option", "try", "read_exp",
+    "pcall", "plet",
 };
 
 static bool in_syntax_table(const char *str)

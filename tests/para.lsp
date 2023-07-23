@@ -40,6 +40,6 @@
      t))
 
 (defun count (m n)
-    (if (= m n)
-        t
-        (count (+ m 1) n)))
+    (for ((i m (+ i 1)))
+         ((= i n) t)
+         (sin (cos (tan i)))))

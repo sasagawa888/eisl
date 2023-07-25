@@ -37,6 +37,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <pthread.h>
+#include <sys/sysinfo.h>
 #include "compat/term_stubs.h"
 #include "eisl.h"
 #include "mem.h"
@@ -212,7 +213,7 @@ pthread_t concurrent_thread;
 int remark[STACKSIZE];
 int remark_pt = 0;
 pthread_mutex_t mutex;
-
+int cores;
 
 /* -----debugger----- */
 int examin_sym;
@@ -294,6 +295,7 @@ int main(int argc, char *argv[])
     init_exsubr();
     init_syntax();
     init_generic();
+	init_thread();
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
@@ -434,6 +436,12 @@ void init_pointer(void)
     }
 }
 
+void init_thread(void)
+{
+	struct sysinfo info;
+    sysinfo(&info);
+    cores = info.procs;
+}
 
 void signal_handler_c(int signo __unused)
 {

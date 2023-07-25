@@ -604,6 +604,7 @@ extern pthread_t concurrent_thread;
 extern int remark[STACKSIZE];
 extern int remark_pt;
 extern pthread_mutex_t mutex;
+extern int cores;
 
 // -------error code---
 enum {
@@ -1266,6 +1267,7 @@ void init_stream(void);
 void init_subr(void);
 void init_stok(void);
 void init_syntax(void);
+void init_thread(void);
 void insert_method(int x, int func);
 void insert_str(char ch, char buf[]);
 void mark_cell(int addr);

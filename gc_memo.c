@@ -88,6 +88,7 @@ void *parallel(void *arg){
         if(parallel_exit_flag)
             goto exit;
         output[num] = eval(input[num], num);
+        enqueue(num);
     }
 exit:
     pthread_exit(NULL);

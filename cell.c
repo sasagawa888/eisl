@@ -251,39 +251,46 @@ int freshcell(void)
 	SET_CDR(res, 0);
 	fc--;
 
+    }  else if (concurrent_sweep_flag && fc < 50) {
+    pthread_mutex_lock(&mutex);
+	while (fc < 50) {
+	    pthread_mutex_unlock(&mutex);
+	    pthread_mutex_lock(&mutex);
+	}
+	pthread_mutex_unlock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
+
+    } else if (concurrent_flag && fc > 50) {
+	pthread_mutex_lock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
+	remark[remark_pt++] = res;
+	pthread_mutex_unlock(&mutex);
     } else if (!concurrent_flag) {
 	pthread_mutex_lock(&mutex);
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
-	pthread_mutex_unlock(&mutex);
 	fc--;
+    pthread_mutex_unlock(&mutex);
 	if (fc <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "M&S freshcell", NIL);
 	}
-    } else if (concurrent_sweep_flag && rc > 50) {
-	/* while concurrent-sweeping set flag USE */
-	res = hp;
-	//pthread_mutex_lock(&mutex);
-	hp = GET_CDR(hp);
-	//pthread_mutex_unlock(&mutex); 
-	SET_CDR(res, 0);
-	rc--;
-    } else if (concurrent_flag && rc > 50) {
-	pthread_mutex_lock(&mutex);
-	res = hp;
-	hp = GET_CDR(hp);
-	SET_CDR(res, 0);
-	rc--;
-	remark[remark_pt++] = res;
-	pthread_mutex_unlock(&mutex);
-    } else {
-	pthread_join(concurrent_thread, NULL);
+    }
+    
+    else {
+    pthread_mutex_lock(&mutex);
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	fc--;
+    pthread_mutex_unlock(&mutex);
     }
 
     return (res);

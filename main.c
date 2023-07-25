@@ -55,7 +55,6 @@ int dp[PARASIZE];		/* dynamic pointer */
 int hp;				/* heap pointer for mark and sweep */
 int sp[PARASIZE];		/* stack pointer */
 int fc;				/* free counter */
-int rc;				/* real free counter */
 int ap[PARASIZE];		/* arglist pointer */
 int lp[PARASIZE];		/* shelter pointer */
 int cp;				/* tag pointer for catch & throw */

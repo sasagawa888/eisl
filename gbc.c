@@ -15,7 +15,6 @@
  *   
  */
 
-#define GC  0
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -30,13 +29,6 @@
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 #define DEBUG error(RESOURCE_ERR,"debug",NIL);
-
-struct data {
-    int start;
-    int end;
-    int head;
-    int tail;
-};
 
 
 /* concurrent mark&sweep garbage collection */
@@ -132,151 +124,12 @@ void mark_cell(int addr)
     }
 }
 
-void *mark(void *arg);
-void *mark(void *arg)
-{
-    int i;
-    struct data *pd = (struct data *) arg;
-
-    for (i = pd->start; i < pd->end; i++) {
-	mark_cell(cell_hash_table[i]);
-    }
-    return NULL;
-}
-
-
-#define NUM_THREAD 4
-/* mark symbol hash-table with thread*/
-void gbc_hash_mark(void)
-{
-    pthread_t t[NUM_THREAD];
-    struct data d[NUM_THREAD];
-
-    d[0].start = 0;
-    d[0].end = 35;
-    pthread_create(&t[0], NULL, mark, &d[0]);
-
-    d[1].start = 35;
-    d[1].end = 70;
-    pthread_create(&t[1], NULL, mark, &d[1]);
-
-    d[2].start = 70;
-    d[2].end = 106;
-    pthread_create(&t[2], NULL, mark, &d[2]);
-
-    d[3].start = 106;
-    d[3].end = 137;
-    pthread_create(&t[3], NULL, mark, &d[3]);
-
-    pthread_join(t[0], NULL);
-    pthread_join(t[1], NULL);
-    pthread_join(t[2], NULL);
-    pthread_join(t[3], NULL);
-
-    return;
-}
-
-void gbc_mark(void)
-{
-    int i, j;
-
-    /* mark nil and t */
-    MARK_CELL(NIL);
-    MARK_CELL(T);
-
-    /* mark cell chained from hash table */
-#if GC == 1
-    gbc_hash_mark();
-#else
-    for (i = 0; i < HASHTBSIZE; i++)
-	mark_cell(cell_hash_table[i]);
-#endif
-
-    /* mark local environment */
-    for (j = 0; j < PARASIZE; j++)
-	mark_cell(ep[j]);
-    /* mark dynamic environment */
-    for (j = 0; j < PARASIZE; j++)
-	mark_cell(dp[j]);
-    /* mark stack */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i < sp[j]; i++)
-	    mark_cell(stack[i][j]);
-    }
-    /* mark cell binded by argstack */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i < ap[j]; i++)
-	    mark_cell(argstk[i][j]);
-    }
-
-    /* mark tagbody symbol */
-    mark_cell(tagbody_tag);
-
-    /* mark thunk for unwind-protect */
-    for (i = 0; i < unwind_pt; i++)
-	mark_cell(unwind_buf[i]);
-
-    /* mark error_handler */
-    mark_cell(error_handler);
-
-    /* mark stream */
-    mark_cell(standard_input);
-    mark_cell(standard_output);
-    mark_cell(standard_error);
-    mark_cell(input_stream);
-    mark_cell(output_stream);
-    mark_cell(error_stream);
-
-    /* mark shelter */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i < lp[j]; i++)
-	    mark_cell(shelter[i][j]);
-    }
-
-    /* mark dynamic environment */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i <= dp[j]; i++)
-	    mark_cell(dynamic[i][j]);
-    }
-
-    /* mark generic_list */
-    mark_cell(generic_list);
-
-}
 
 static inline void NOMARK_CELL(int addr)
 {
     heap[addr].flag = FRE;
 }
 
-void *sweep(void *arg);
-void *sweep(void *arg)
-{
-    int addr, free;
-    bool init;
-    struct data *pd = (struct data *) arg;
-
-    addr = pd->start;
-    free = NIL;
-    init = true;
-
-    while (addr < pd->end) {
-	if (USED_CELL(addr))
-	    NOMARK_CELL(addr);
-	else {
-	    if (init) {
-		pd->tail = addr;
-		init = false;
-	    }
-	    clr_cell(addr);
-	    SET_CDR(addr, free);
-	    free = addr;
-	}
-	addr++;
-    }
-    pd->head = free;
-    return NULL;
-}
 
 void *concurrent(void *arg)
 {
@@ -290,18 +143,14 @@ void *concurrent(void *arg)
 	    goto exit;
 
 	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", rc);
-	pthread_mutex_lock(&mutex);
 	concurrent_flag = 1;
-	pthread_mutex_unlock(&mutex);
-
+	
 	/* mark hash table */
 	for (i = 0; i < HASHTBSIZE; i++)
 	    mark_cell(cell_hash_table[i]);
 
 	/* stop the world */
-	pthread_mutex_lock(&mutex);
 	concurrent_stop_flag = 1;
-	pthread_mutex_unlock(&mutex);
 
 	/* mark nil and t */
 	MARK_CELL(NIL);
@@ -378,11 +227,9 @@ void *concurrent(void *arg)
 	rc = fc1;
 
 	/* end of stop the world */
-	pthread_mutex_lock(&mutex);
 	concurrent_sweep_flag = 0;
 	concurrent_stop_flag = 0;
 	concurrent_flag = 0;
-	pthread_mutex_unlock(&mutex);
 	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
 
     }
@@ -428,9 +275,9 @@ int check_gbc(void)
 	RAISE(Restart_Repl);
     }
 
-    if (fc < CONCSIZE)
+    if (fc < FREESIZE)
 	gbc();
-    
+
     return 0;
 }
 

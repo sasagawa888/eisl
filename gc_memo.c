@@ -45,7 +45,6 @@ int queue[10];
 int queue_pt;
 int input[10];
 int output[10];
-struct para d[10];
 pthread_t para_thread[10]
 pthread_cond_t cond_para[10];
 
@@ -54,7 +53,7 @@ void enqueue(int n){
     queue_pt++;
 }
 
-void dequeue(int arg1){
+int dequeue(int arg){
     int th,i;
 
     th = queue[0];
@@ -62,30 +61,32 @@ void dequeue(int arg1){
         queue[i] = queue[i+1];
     }
     pthread_mutex_lock(&mutex);
-    d[th].in = arg1;
-    d[th].num = th;
+    input[th] = arg;
     pthread_cond_signal(&cond_para[th]);
     pthread_mutex_unlock(&mutex);
+
+    return(th);
 }
 
-struct para {
-    int in;
-    int num;
-    int out;
-};
 
+int exec_para(int arg){
+    int th;
+    th = decueue(arg);
+    pthread_join(para[th],NULL);
+    return(output[th]);
+}
 
 void *parallel(void *arg);
 void *parallel(void *arg)
 {
-    struct para *pd = (struct para *) arg;
+    int *num = (int *) arg;
     while(1){
     pthread_mutex_lock(&mutex);
-    pthread_cond_wait(&cond_para[pd->num], &mutex); 
+    pthread_cond_wait(&cond_para[num], &mutex); 
     pthread_mutex_unlock(&mutex);
     if(parallel_exit_flag)
         goto exit;
-    output[pd->num] = eval(input[pd->num], pd->num);
+    output[num] = eval(input[num], num);
     }
     exit:
     pthread_exit(NULL);
@@ -96,8 +97,8 @@ void init_para(void){
     int i;
 
     for(i=0;i<10;i++){
-        pthread_create(para_thread[i],NULL,parallel,&d[i]);
         queue[i] = i+1;
+        pthread_create(para_thread[i],NULL,parallel,&queue[i]);
     }
     queue_pt = 0;
 }

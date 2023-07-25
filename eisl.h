@@ -560,6 +560,7 @@ extern bool error_flag;
 extern int  concurrent_flag;
 extern int  concurrent_stop_flag;
 extern int  concurrent_sweep_flag;
+extern int  concurrent_exit_flag;
 
 // try function
 extern bool try_flag;
@@ -601,9 +602,10 @@ extern int ed_incomment;
 
 /* concurrent GC */
 extern pthread_t concurrent_thread;
+extern pthread_cond_t cond_gc;
+extern pthread_mutex_t mutex;
 extern int remark[STACKSIZE];
 extern int remark_pt;
-extern pthread_mutex_t mutex;
 extern int cores;
 
 // -------error code---
@@ -1244,6 +1246,7 @@ void cellprint(int addr);
 int check_gbc(void);
 void clr_cell(int addr);
 void copy_gbc(void);
+void *concurrent(void *arg);
 void cut_zero(int x);
 void def_fsubr(const char *symname, int (*func)(int));
 void def_subr(const char *symname, int (*func)(int));

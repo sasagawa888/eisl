@@ -1,10 +1,6 @@
 /*
  * garbage collenction
- * Easy-ISLisp has mark&sweep garbage collection system.
- * if GC == 0 , concurrent mark&sweep
- * if GC == 1 , paralell mark and paralell sweep (4 threads)
- * if GC == 2 , sequential mark&sweep
- * in sequential or paralell mode if remain cell < FREESIZE, invoke gc.
+ * Easy-ISLisp has concurrent mark&sweep garbage collection system.
  * in cuncurrent mode if remain cell < CONCSIZE, invoke gc.
  * <memo concurrent>
  * cell.c freshcell provide cell. while executing GC thread concurrent_flag = 1.
@@ -19,13 +15,7 @@
  *   
  */
 
-/*  GC = 0 concurrent
- *  GC = 1 parallel
- *  GC = 2 sequential
-*/
 #define GC  0
-//#define GCTIME
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -49,45 +39,12 @@ struct data {
 };
 
 
-/* mark&sweep garbage collection */
+/* concurrent mark&sweep garbage collection */
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {
-
-
-#if   GC == 0
     gbc_concurrent();
     return 0;
-
-#elif GC == 1
-    int addr;
-
-    DBG_PRINTF("enter parallel M&S-GC free=%d\n", fc);
-    gbc_mark();
-    gbc_sweep_thread();
-    fc = 0;
-    for (addr = 0; addr < CELLSIZE; addr++)
-	if (IS_EMPTY(addr))
-	    fc++;
-    DBG_PRINTF("exit  parallel M&S-GC free=%d\n", fc);
-    return 0;
-#elif GC == 2
-    int addr;
-
-    concurrent_flag = 1;
-    concurrent_stop_flag = 1;
-    DBG_PRINTF("enter M&S-GC free=%d\n", fc);
-    gbc_mark();
-    gbc_sweep();
-    fc = 0;
-    for (addr = 0; addr < CELLSIZE; addr++)
-	if (IS_EMPTY(addr))
-	    fc++;
-    DBG_PRINTF("exit  M&S-GC free=%d\n", fc);
-    concurrent_flag = 0;
-    concurrent_stop_flag = 0;
-    return 0;
-#endif
 }
 
 
@@ -321,193 +278,127 @@ void *sweep(void *arg)
     return NULL;
 }
 
-void gbc_sweep_thread(void)
-{
-    pthread_t t[NUM_THREAD];
-    struct data d[NUM_THREAD];
-
-    d[0].start = 0;
-    d[0].end = 5000000;
-    pthread_create(&t[0], NULL, sweep, &d[0]);
-
-    d[1].start = 5000000;
-    d[1].end = 10000000;
-    pthread_create(&t[1], NULL, sweep, &d[1]);
-
-    d[2].start = 10000000;
-    d[2].end = 15000000;
-    pthread_create(&t[2], NULL, sweep, &d[2]);
-
-    d[3].start = 15000000;
-    d[3].end = CELLSIZE;
-    pthread_create(&t[3], NULL, sweep, &d[3]);
-
-    pthread_join(t[0], NULL);
-    pthread_join(t[1], NULL);
-    pthread_join(t[2], NULL);
-    pthread_join(t[3], NULL);
-
-    SET_CDR(d[3].tail, d[2].head);
-    SET_CDR(d[2].tail, d[1].head);
-    SET_CDR(d[1].tail, d[0].head);
-    SET_CDR(d[0].tail, NIL);
-    hp = d[3].head;
-    return;
-}
-
-
-
-void *concurrent(void *arg);
 void *concurrent(void *arg)
 {
     int addr, fc1, i, j;
-    struct data *pd = (struct data *) arg;
-#ifdef GCTIME
-    double stop, go, st, en;
-#endif
 
-    DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", rc);
-    pthread_mutex_lock(&mutex);
-    concurrent_flag = 1;
-    pthread_mutex_unlock(&mutex);
-#ifdef GCTIME
-    st = getETime();
-#endif
+    while (1) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_gc, &mutex);
+	pthread_mutex_unlock(&mutex);
+	if (concurrent_exit_flag)
+	    goto exit;
 
-    /* mark hash table */
-    for (i = 0; i < HASHTBSIZE; i++)
-	mark_cell(cell_hash_table[i]);
+	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", rc);
+	pthread_mutex_lock(&mutex);
+	concurrent_flag = 1;
+	pthread_mutex_unlock(&mutex);
 
-    /* stop the world */
-    pthread_mutex_lock(&mutex);
-    concurrent_stop_flag = 1;
-    pthread_mutex_unlock(&mutex);
-#ifdef GCTIME
-    stop = getETime();
-#endif
+	/* mark hash table */
+	for (i = 0; i < HASHTBSIZE; i++)
+	    mark_cell(cell_hash_table[i]);
 
-    /* mark nil and t */
-    MARK_CELL(NIL);
-    MARK_CELL(T);
+	/* stop the world */
+	pthread_mutex_lock(&mutex);
+	concurrent_stop_flag = 1;
+	pthread_mutex_unlock(&mutex);
 
-    /* mark local environment */
-    for (j = 0; j < PARASIZE; j++)
-	mark_cell(ep[j]);
-    /* mark dynamic environment */
-    for (j = 0; j < PARASIZE; j++)
-	mark_cell(dp[j]);
-    /* mark stack */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i < sp[j]; i++)
-	    mark_cell(stack[i][j]);
-    }
-    /* mark cell binded by argstack */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i < ap[j]; i++)
-	    mark_cell(argstk[i][j]);
-    }
-    /* mark tagbody symbol */
-    mark_cell(tagbody_tag);
-    /* mark thunk for unwind-protect */
-    for (i = 0; i < unwind_pt; i++)
-	mark_cell(unwind_buf[i]);
-    /* mark error_handler */
-    mark_cell(error_handler);
-    /* mark stream */
-    mark_cell(standard_input);
-    mark_cell(standard_output);
-    mark_cell(standard_error);
-    mark_cell(input_stream);
-    mark_cell(output_stream);
-    mark_cell(error_stream);
-    /* mark shelter */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i < lp[j]; i++)
-	    mark_cell(shelter[i][j]);
-    }
-    /* mark dynamic environment */
-    for (j = 0; j < PARASIZE; j++) {
-	for (i = 0; i <= dp[j]; i++)
-	    mark_cell(dynamic[i][j]);
-    }
-    /* mark generic_list */
-    mark_cell(generic_list);
+	/* mark nil and t */
+	MARK_CELL(NIL);
+	MARK_CELL(T);
 
-    /* remark hash table */
-    for (i = 0; i < remark_pt; i++)
-	mark_cell(remark[i]);
-
-    remark_pt = 0;
-
-    addr = 0;
-    hp = NIL;
-    while (addr < CELLSIZE) {
-	if (USED_CELL(addr))
-	    NOMARK_CELL(addr);
-	else {
-	    clr_cell(addr);
-	    SET_CDR(addr, hp);
-	    hp = addr;
-	    rc++;
+	/* mark local environment */
+	for (j = 0; j < PARASIZE; j++)
+	    mark_cell(ep[j]);
+	/* mark dynamic environment */
+	for (j = 0; j < PARASIZE; j++)
+	    mark_cell(dp[j]);
+	/* mark stack */
+	for (j = 0; j < PARASIZE; j++) {
+	    for (i = 0; i < sp[j]; i++)
+		mark_cell(stack[i][j]);
 	}
-	addr++;
+	/* mark cell binded by argstack */
+	for (j = 0; j < PARASIZE; j++) {
+	    for (i = 0; i < ap[j]; i++)
+		mark_cell(argstk[i][j]);
+	}
+	/* mark tagbody symbol */
+	mark_cell(tagbody_tag);
+	/* mark thunk for unwind-protect */
+	for (i = 0; i < unwind_pt; i++)
+	    mark_cell(unwind_buf[i]);
+	/* mark error_handler */
+	mark_cell(error_handler);
+	/* mark stream */
+	mark_cell(standard_input);
+	mark_cell(standard_output);
+	mark_cell(standard_error);
+	mark_cell(input_stream);
+	mark_cell(output_stream);
+	mark_cell(error_stream);
+	/* mark shelter */
+	for (j = 0; j < PARASIZE; j++) {
+	    for (i = 0; i < lp[j]; i++)
+		mark_cell(shelter[i][j]);
+	}
+	/* mark dynamic environment */
+	for (j = 0; j < PARASIZE; j++) {
+	    for (i = 0; i <= dp[j]; i++)
+		mark_cell(dynamic[i][j]);
+	}
+	/* mark generic_list */
+	mark_cell(generic_list);
+
+	/* remark hash table */
+	for (i = 0; i < remark_pt; i++)
+	    mark_cell(remark[i]);
+
+	remark_pt = 0;
+
+	addr = 0;
+	hp = NIL;
+	while (addr < CELLSIZE) {
+	    if (USED_CELL(addr))
+		NOMARK_CELL(addr);
+	    else {
+		clr_cell(addr);
+		SET_CDR(addr, hp);
+		hp = addr;
+		rc++;
+	    }
+	    addr++;
+	}
+
+    fc1 = 0;
+	for (addr = 0; addr < CELLSIZE; addr++)
+	    if (IS_EMPTY(addr))
+		fc1++;
+	fc = fc1;
+	rc = fc1;
+
+	/* end of stop the world */
+	pthread_mutex_lock(&mutex);
+	concurrent_sweep_flag = 0;
+	concurrent_stop_flag = 0;
+	concurrent_flag = 0;
+	pthread_mutex_unlock(&mutex);
+	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
+
     }
-#ifdef GCTIME
-    go = getETime();
-#endif
-
-    for (addr = 0; addr < CELLSIZE; addr++)
-	if (IS_EMPTY(addr))
-	    fc1++;
-    fc = fc1;
-    rc = fc1;
-
-
-#ifdef GCTIME
-    en = getETime();
-    Fmt_print("GC (within stop) %.6f (%.6f)(second)\n", en - st,
-	      go - stop);
-#endif
-
-    /* end of stop the world */
-    pthread_mutex_lock(&mutex);
-    concurrent_sweep_flag = 0;
-    concurrent_stop_flag = 0;
-    concurrent_flag = 0;
-    pthread_mutex_unlock(&mutex);
-    DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
+  exit:
     pthread_exit(NULL);
 }
 
 int gbc_concurrent(void)
 {
-    struct data d[1];
-
     /* to avoid gbc set fc dummy. set rc real-count */
     rc = fc;
     fc = CELLSIZE;
-    pthread_create(&concurrent_thread, NULL, concurrent, &d[0]);
-
+    pthread_mutex_lock(&mutex);
+    pthread_cond_signal(&cond_gc);
+    pthread_mutex_unlock(&mutex);
     return 0;
-}
-
-void gbc_sweep(void)
-{
-    int addr, free;
-
-    addr = 0;
-    free = NIL;
-    while (addr < CELLSIZE) {
-	if (USED_CELL(addr))
-	    NOMARK_CELL(addr);
-	else {
-	    clr_cell(addr);
-	    SET_CDR(addr, free);
-	    free = addr;
-	}
-	addr++;
-    }
-    hp = free;
 }
 
 
@@ -536,20 +427,10 @@ int check_gbc(void)
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
-#if GC == 0
-    pthread_mutex_lock(&mutex);
-    temp = concurrent_flag;
-    pthread_mutex_unlock(&mutex);
-    if (temp)
-	return 0;
 
     if (fc < CONCSIZE)
 	gbc();
-#else
-    if (fc < FREESIZE)
-	(void) gbc();
-#endif
-
+    
     return 0;
 }
 

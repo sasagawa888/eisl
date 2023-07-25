@@ -23,7 +23,7 @@ static const char *syntax[] = {
     "with-standard-output", "with-error-output", "with-handler",
     "convert", "with-open-input-file", "with-open-output-file",
     "with-open-io-file", "the", "assure", "time", "trace", "untrace",
-    "defmodule", "defpublic", "modulesubst", 
+    "defmodule", "defpublic", "modulesubst",
 };
 
 // builtin token

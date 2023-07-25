@@ -172,6 +172,7 @@ bool error_flag = false;	/* invoked error? */
 int concurrent_flag = 0;	/* while executing concurrent_flag */
 int concurrent_stop_flag = 0;	/* while remarking&sweeping */
 int concurrent_sweep_flag = 0;	/* while concurrent-sweeping */
+int concurrent_exit_flag = 0;	/* To exit thread */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -210,9 +211,10 @@ int unwind_nest;		/* unwind-protect nest level */
 
 /* concurrent GC*/
 pthread_t concurrent_thread;
+pthread_mutex_t mutex;
+pthread_cond_t cond_gc;
 int remark[STACKSIZE];
 int remark_pt = 0;
-pthread_mutex_t mutex;
 int cores;
 
 /* -----debugger----- */
@@ -295,7 +297,7 @@ int main(int argc, char *argv[])
     init_exsubr();
     init_syntax();
     init_generic();
-	init_thread();
+    init_thread();
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
@@ -388,7 +390,13 @@ int main(int argc, char *argv[])
 		redef_generic();
 	}
 	EXCEPT(Restart_Repl);
-	EXCEPT(Exit_Interp) quit = true;
+	EXCEPT(Exit_Interp) {
+	    quit = true;
+	    pthread_mutex_lock(&mutex);
+	    concurrent_exit_flag = 1;
+	    pthread_cond_signal(&cond_gc);
+	    pthread_mutex_unlock(&mutex);
+	}
 	END_TRY;
     }
     while (!quit);
@@ -438,9 +446,11 @@ void init_pointer(void)
 
 void init_thread(void)
 {
-	struct sysinfo info;
+    struct sysinfo info;
     sysinfo(&info);
     cores = info.procs;
+
+    pthread_create(&concurrent_thread, NULL, concurrent, NULL);
 }
 
 void signal_handler_c(int signo __unused)

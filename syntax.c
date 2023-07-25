@@ -2566,7 +2566,7 @@ int f_plet(int arglist)
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "plet", arglist);
-    if (length(arg1) > PARASIZE)
+    if (length(arg1) > worker_count)
 	error(WRONG_ARGS, "plet", arg1);
     if (!listp(arg1))
 	error(IMPROPER_ARGS, "plet", arg1);
@@ -2649,7 +2649,7 @@ int f_pcall(int arglist, int th)
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "pcall", arglist);
-    if (length(arg2) > PARASIZE)
+    if (length(arg2) > worker_count)
 	error(WRONG_ARGS, "pcall", arg1);
     if (!symbolp(arg1))
 	error(IMPROPER_ARGS, "pcall", arg1);

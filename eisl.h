@@ -604,7 +604,7 @@ extern pthread_cond_t cond_gc;
 extern pthread_mutex_t mutex;
 extern int remark[STACKSIZE];
 extern int remark_pt;
-extern int cores;
+extern int worker_count;
 
 // -------error code---
 enum {
@@ -1250,6 +1250,7 @@ void def_fsubr(const char *symname, int (*func)(int));
 void def_subr(const char *symname, int (*func)(int));
 void drop_char(char buf[]);
 void error(int errnum, const char *fun, int arg);
+void exit_thread(void);
 int gbc(void);
 void gbc_mark(void);
 void gbc_sweep(void);

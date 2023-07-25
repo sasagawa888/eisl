@@ -214,7 +214,7 @@ pthread_mutex_t mutex;
 pthread_cond_t cond_gc;
 int remark[STACKSIZE];
 int remark_pt = 0;
-int cores;
+int worker_count;
 
 /* -----debugger----- */
 int examin_sym;
@@ -391,10 +391,7 @@ int main(int argc, char *argv[])
 	EXCEPT(Restart_Repl);
 	EXCEPT(Exit_Interp) {
 	    quit = true;
-	    pthread_mutex_lock(&mutex);
-	    concurrent_exit_flag = 1;
-	    pthread_cond_signal(&cond_gc);
-	    pthread_mutex_unlock(&mutex);
+	    exit_thread();
 	}
 	END_TRY;
     }
@@ -447,9 +444,17 @@ void init_thread(void)
 {
     struct sysinfo info;
     sysinfo(&info);
-    cores = info.procs;
+    worker_count = info.procs - 2;
 
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);
+}
+
+void exit_thread(void)
+{
+	pthread_mutex_lock(&mutex);
+	concurrent_exit_flag = 1;
+	pthread_cond_signal(&cond_gc);
+	pthread_mutex_unlock(&mutex);
 }
 
 void signal_handler_c(int signo __unused)

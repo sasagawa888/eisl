@@ -1,13 +1,12 @@
 /*
  * garbage collenction
  * Easy-ISLisp has concurrent mark&sweep garbage collection system.
- * in cuncurrent mode if remain cell < CONCSIZE, invoke gc.
+ * in cuncurrent mode if remain cell < FREESIZE, invoke gc.
  * <memo concurrent>
  * cell.c freshcell provide cell. while executing GC thread concurrent_flag = 1.
  * while remark&sweep concurrent_stop_flag = 1;
  * freshcell provide cell and save the address to remark array.
- * current thread remark cell with remark array data.
- * if CONCSIZE is small(900), occure error. Now CONCSIZE is 90000. 
+ * current thread remark cell with remark array data. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
  * if define GCTIME print GC time and stop time 
  * sweep 

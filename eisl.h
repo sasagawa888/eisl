@@ -21,7 +21,7 @@
 #define STRSIZE 10000
 #define SHORT_STRSIZE 32
 #define HASHTBSIZE 137
-#define PARASIZE 4
+#define PARASIZE 10
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
@@ -559,6 +559,7 @@ extern int  concurrent_flag;
 extern int  concurrent_stop_flag;
 extern int  concurrent_sweep_flag;
 extern int  concurrent_exit_flag;
+extern int parallel_exit_flag;
 
 // try function
 extern bool try_flag;
@@ -605,6 +606,16 @@ extern pthread_mutex_t mutex;
 extern int remark[STACKSIZE];
 extern int remark_pt;
 extern int worker_count;
+
+/* parallel */
+extern int queue[PARASIZE];
+extern int queue_pt;
+extern int para_input[PARASIZE];
+extern int para_output[PARASIZE];
+extern pthread_t para_thread[PARASIZE];
+extern pthread_cond_t cond_para[PARASIZE];
+
+
 
 // -------error code---
 enum {

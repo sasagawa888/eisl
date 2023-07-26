@@ -171,7 +171,8 @@ bool error_flag = false;	/* invoked error? */
 int concurrent_flag = 0;	/* while executing concurrent_flag */
 int concurrent_stop_flag = 0;	/* while remarking&sweeping */
 int concurrent_sweep_flag = 0;	/* while concurrent-sweeping */
-int concurrent_exit_flag = 0;	/* To exit thread */
+int concurrent_exit_flag = 0;	/* To exit GC thread */
+int parallel_exit_flag = 0;	/* To exit parallel threads */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -215,6 +216,15 @@ pthread_cond_t cond_gc;
 int remark[STACKSIZE];
 int remark_pt = 0;
 int worker_count;
+
+/* parallel */
+int queue[PARASIZE];
+int queue_pt;
+int para_input[PARASIZE];
+int para_output[PARASIZE];
+pthread_t para_thread[PARASIZE];
+pthread_cond_t cond_para[PARASIZE];
+
 
 /* -----debugger----- */
 int examin_sym;
@@ -451,10 +461,10 @@ void init_thread(void)
 
 void exit_thread(void)
 {
-	pthread_mutex_lock(&mutex);
-	concurrent_exit_flag = 1;
-	pthread_cond_signal(&cond_gc);
-	pthread_mutex_unlock(&mutex);
+    pthread_mutex_lock(&mutex);
+    concurrent_exit_flag = 1;
+    pthread_cond_signal(&cond_gc);
+    pthread_mutex_unlock(&mutex);
 }
 
 void signal_handler_c(int signo __unused)

@@ -143,7 +143,7 @@ void *concurrent(void *arg)
 
 	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc);
 	concurrent_flag = 1;
-	
+
 	/* mark hash table */
 	for (i = 0; i < HASHTBSIZE; i++)
 	    mark_cell(cell_hash_table[i]);
@@ -203,7 +203,7 @@ void *concurrent(void *arg)
 	    mark_cell(remark[i]);
 
 	remark_pt = 0;
-	
+
 	concurrent_sweep_flag = 1;
 	addr = 0;
 	hp = NIL;
@@ -220,7 +220,7 @@ void *concurrent(void *arg)
 	    addr++;
 	}
 
-	/* end of stop the world and into sweep mode*/
+	/* end of stop the world and into sweep mode */
 	concurrent_stop_flag = 0;
 	concurrent_sweep_flag = 0;
 	concurrent_flag = 0;

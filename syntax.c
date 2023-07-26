@@ -2541,26 +2541,93 @@ int modulesubst_case(int addr, int module, int fname)
     return (newbodies);
 }
 
-struct para {
-    int in;
-    int num;
-    int out;
-};
-
-
-void *plet(void *arg);
-void *plet(void *arg)
+/* Parallel function */
+void enqueue(int n)
 {
+    queue[queue_pt] = n;
+    queue_pt++;
+}
 
-    struct para *pd = (struct para *) arg;
+int dequeue(int arg)
+{
+    int num, i;
 
-    pd->out = eval(pd->in, pd->num);
+    if (queue_pt == 0) {
+	while (queue_pt == 0) {
+	    pthread_mutex_unlock(&mutex);
+	    pthread_mutex_lock(&mutex);
+	}
+    }
+    num = queue[0];
+    queue_pt--;
+    for (i = 0; i < queue_pt; i++) {
+	queue[i] = queue[i + 1];
+    }
+    pthread_mutex_lock(&mutex);
+    para_input[num] = arg;
+    para_output[num] = -1;
+    pthread_cond_signal(&cond_para[num]);
+    pthread_mutex_unlock(&mutex);
+
+    return(num);
+}
+
+int exec_para(int arg)
+{
+    int num;
+
+    num = dequeue(arg);
+    return (num);
+}
+
+void *parallel(void *arg)
+{
+    int num = *(int *) arg;
+    while (1) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_para[num], &mutex);
+	pthread_mutex_unlock(&mutex);
+	if (parallel_exit_flag)
+	    goto exit;
+	ep[num] = ep[0];
+	para_output[num] = eval(para_input[num], num);
+	enqueue(num);
+    }
+  exit:
     pthread_exit(NULL);
 }
 
+void init_para(void)
+{
+    int i;
+
+    for (i = 0; i < worker_count; i++) {
+	queue[i] = i + 1;
+	/* queue[1,2,3,4,...] worker thread number 
+	 * para_thread[0] has worker-number 1
+	 * para_thread[1] has worker-number 2 ... 
+	*/
+	pthread_create(&para_thread[i], NULL, parallel, &queue[i]);
+    }
+    queue_pt = worker_count;
+}
+
+void exit_para(void)
+{
+    int i;
+    pthread_mutex_lock(&mutex);
+    parallel_exit_flag = 1;
+    for (i = 0; i < worker_count; i++) {
+	pthread_cond_signal(&cond_para[i]);
+    }
+    pthread_mutex_unlock(&mutex);
+}
+
+
+
 int f_plet(int arglist)
 {
-    int arg1, arg2, temp, i, res;
+    int arg1, arg2, temp, i, res, num[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -2594,16 +2661,10 @@ int f_plet(int arglist)
     }
 
 
-    pthread_t t[PARASIZE];
-    struct para d[PARASIZE];
-
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
-	d[i].in = cadr(car(temp));
-	d[i].num = i + 1;
-	ep[i + 1] = ep[i];
-	pthread_create(&t[i], NULL, plet, &d[i]);
+	num[i] = exec_para(cadr(car(temp)));
 	temp = cdr(temp);
 	i++;
     }
@@ -2611,17 +2672,17 @@ int f_plet(int arglist)
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
-	pthread_join(t[i], NULL);
+	pthread_mutex_lock(&mutex);
+	while (para_output[num[i]] == -1) {
+	    pthread_mutex_unlock(&mutex);
+	    pthread_mutex_lock(&mutex);
+	}
+	pthread_mutex_unlock(&mutex);
+	add_lex_env(car(car(temp)), para_output[num[i]], 0);
 	temp = cdr(temp);
 	i++;
     }
-    temp = arg1;
-    i = 0;
-    while (!nullp(temp)) {
-	add_lex_env(car(car(temp)), d[i].out, 0);
-	temp = cdr(temp);
-	i++;
-    }
+
     while (arg2 != NIL) {
 	shelter_push(arg2, 0);
 	res = eval(car(arg2), 0);
@@ -2631,19 +2692,10 @@ int f_plet(int arglist)
     return (res);
 }
 
-void *pcall(void *arg);
-void *pcall(void *arg)
-{
-
-    struct para *pd = (struct para *) arg;
-
-    pd->out = eval(pd->in, pd->num);
-    pthread_exit(NULL);
-}
 
 int f_pcall(int arglist, int th)
 {
-    int arg1, arg2, temp, i;
+    int arg1, arg2, temp, i, num[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -2660,16 +2712,10 @@ int f_pcall(int arglist, int th)
     }
 
 
-    pthread_t t[PARASIZE];
-    struct para d[PARASIZE];
-
     temp = arg2;
     i = 0;
     while (!nullp(temp)) {
-	d[i].in = car(temp);
-	d[i].num = i + 1;
-	ep[i + 1] = ep[i];
-	pthread_create(&t[i], NULL, pcall, &d[i]);
+	num[i] = exec_para(car(temp));
 	temp = cdr(temp);
 	i++;
     }
@@ -2677,7 +2723,12 @@ int f_pcall(int arglist, int th)
     temp = arg2;
     i = 0;
     while (!nullp(temp)) {
-	pthread_join(t[i], NULL);
+	pthread_mutex_lock(&mutex);
+	while (para_output[num[i]] == -1) {
+	    pthread_mutex_unlock(&mutex);
+	    pthread_mutex_lock(&mutex);
+	}
+	pthread_mutex_unlock(&mutex);
 	temp = cdr(temp);
 	i++;
     }
@@ -2685,7 +2736,7 @@ int f_pcall(int arglist, int th)
     temp = NIL;
     i--;
     while (i >= 0) {
-	temp = cons(d[i].out, temp);
+	temp = cons(para_output[num[i]], temp);
 	i--;
     }
     return (apply(car(arg1), temp, th));

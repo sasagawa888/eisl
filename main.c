@@ -37,7 +37,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <pthread.h>
-#include <sys/sysinfo.h>
 #include "compat/term_stubs.h"
 #include "eisl.h"
 #include "mem.h"
@@ -452,15 +451,14 @@ void init_pointer(void)
 
 void init_thread(void)
 {
-    struct sysinfo info;
-    sysinfo(&info);
-    worker_count = info.procs - 2;
+
+    worker_count = sysconf(_SC_NPROCESSORS_CONF);
 
 	/* create concurrent GC thread */
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);
 
 	/* create parallel function thread */
-	//init_para();
+	init_para();
 }
 
 void exit_thread(void)
@@ -472,7 +470,7 @@ void exit_thread(void)
     pthread_mutex_unlock(&mutex);
 
 	/* exit parallel function thread*/
-	//exit_para();
+	exit_para();
 }
 
 void signal_handler_c(int signo __unused)

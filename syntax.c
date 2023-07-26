@@ -2594,7 +2594,6 @@ void *parallel(void *arg)
 	enqueue(num);
     }
   exit:
-	printf("%d ", num);
     pthread_exit(NULL);
 }
 
@@ -2602,12 +2601,12 @@ void init_para(void)
 {
     int i;
 
-    for (i = 0; i < worker_count; i++) {
-	queue[i] = i + 1;
+    for (i = 1; i <= worker_count; i++) {
+	queue[i] = i;
 	/* worker_count is cores - 2(main+GC)
 	 * queue[1,2,3,4,...] worker thread number 
-	 * para_thread[0] has worker-number 1
-	 * para_thread[1] has worker-number 2 ... 
+	 * para_thread[1] has worker-number 1
+	 * para_thread[2] has worker-number 2 ... 
 	*/
 	pthread_create(&para_thread[i], NULL, parallel, &queue[i]);
     }
@@ -2619,7 +2618,7 @@ void exit_para(void)
     int i;
     pthread_mutex_lock(&mutex);
     parallel_exit_flag = 1;
-    for (i = 0; i < worker_count; i++) {
+    for (i = 1; i <= worker_count; i++) {
 	pthread_cond_signal(&cond_para[i]);
     }
     pthread_mutex_unlock(&mutex);

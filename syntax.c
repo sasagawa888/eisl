@@ -2663,7 +2663,7 @@ int f_plet(int arglist)
 
 
     temp = arg1;
-    i = 0;
+    i = 1;
     while (!nullp(temp)) {
 	num[i] = exec_para(cadr(car(temp)));
 	temp = cdr(temp);
@@ -2671,7 +2671,7 @@ int f_plet(int arglist)
     }
 
     temp = arg1;
-    i = 0;
+    i = 1;
     while (!nullp(temp)) {
 	pthread_mutex_lock(&mutex);
 	while (para_output[num[i]] == -1) {
@@ -2714,7 +2714,7 @@ int f_pcall(int arglist, int th)
 
 
     temp = arg2;
-    i = 0;
+    i = 1;
     while (!nullp(temp)) {
 	num[i] = exec_para(car(temp));
 	temp = cdr(temp);
@@ -2722,7 +2722,7 @@ int f_pcall(int arglist, int th)
     }
 
     temp = arg2;
-    i = 0;
+    i = 1;
     while (!nullp(temp)) {
 	pthread_mutex_lock(&mutex);
 	while (para_output[num[i]] == -1) {
@@ -2736,7 +2736,7 @@ int f_pcall(int arglist, int th)
 
     temp = NIL;
     i--;
-    while (i >= 0) {
+    while (i > 0) {
 	temp = cons(para_output[num[i]], temp);
 	i--;
     }

@@ -2553,11 +2553,14 @@ int dequeue(int arg)
     int num, i;
 
     if (queue_pt == 0) {
+	pthread_mutex_lock(&mutex);
 	while (queue_pt == 0) {
 	    pthread_mutex_unlock(&mutex);
 	    pthread_mutex_lock(&mutex);
 	}
+	pthread_mutex_unlock(&mutex);
     }
+	
     num = queue[0];
     queue_pt--;
     for (i = 0; i < queue_pt; i++) {
@@ -2583,12 +2586,14 @@ int exec_para(int arg)
 void *parallel(void *arg)
 {
     int num = *(int *) arg;
+	
     while (1) {
 	pthread_mutex_lock(&mutex);
 	pthread_cond_wait(&cond_para[num], &mutex);
 	pthread_mutex_unlock(&mutex);
 	if (parallel_exit_flag)
 	    goto exit;
+	
 	ep[num] = ep[0];
 	para_output[num] = eval(para_input[num], num);
 	enqueue(num);
@@ -2601,27 +2606,34 @@ void init_para(void)
 {
     int i;
 
-    for (i = 1; i <= worker_count; i++) {
-	queue[i] = i;
-	/* worker_count is cores - 2(main+GC)
+	/* worker_count is cores - 1(main+GC)
 	 * queue[1,2,3,4,...] worker thread number 
 	 * para_thread[1] has worker-number 1
 	 * para_thread[2] has worker-number 2 ... 
 	*/
-	pthread_create(&para_thread[i], NULL, parallel, &queue[i]);
-    }
+    for (i = 0; i < worker_count; i++) {
+	queue[i] = i + 1;
+	}
+	
+	for (i=0;i<worker_count;i++)
+	{
+	pthread_create(&para_thread[i+1], NULL, parallel, &queue[i]);
+	}
+
     queue_pt = worker_count;
 }
 
 void exit_para(void)
 {
     int i;
-    pthread_mutex_lock(&mutex);
+    
     parallel_exit_flag = 1;
     for (i = 1; i <= worker_count; i++) {
+	pthread_mutex_lock(&mutex);	
 	pthread_cond_signal(&cond_para[i]);
+	pthread_mutex_unlock(&mutex);
     }
-    pthread_mutex_unlock(&mutex);
+    
 }
 
 
@@ -2661,17 +2673,18 @@ int f_plet(int arglist)
 	temp = cdr(temp);
     }
 
-
+	
     temp = arg1;
-    i = 1;
+    i = 0;
     while (!nullp(temp)) {
 	num[i] = exec_para(cadr(car(temp)));
 	temp = cdr(temp);
 	i++;
     }
 
+	
     temp = arg1;
-    i = 1;
+    i = 0;
     while (!nullp(temp)) {
 	pthread_mutex_lock(&mutex);
 	while (para_output[num[i]] == -1) {
@@ -2683,7 +2696,7 @@ int f_plet(int arglist)
 	temp = cdr(temp);
 	i++;
     }
-
+	
     while (arg2 != NIL) {
 	shelter_push(arg2, 0);
 	res = eval(car(arg2), 0);

@@ -2594,6 +2594,7 @@ void *parallel(void *arg)
 	enqueue(num);
     }
   exit:
+	printf("%d ", num);
     pthread_exit(NULL);
 }
 
@@ -2603,7 +2604,8 @@ void init_para(void)
 
     for (i = 0; i < worker_count; i++) {
 	queue[i] = i + 1;
-	/* queue[1,2,3,4,...] worker thread number 
+	/* worker_count is cores - 2(main+GC)
+	 * queue[1,2,3,4,...] worker thread number 
 	 * para_thread[0] has worker-number 1
 	 * para_thread[1] has worker-number 2 ... 
 	*/

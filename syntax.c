@@ -2743,7 +2743,7 @@ int f_pcall(int arglist, int th)
 
     temp = NIL;
 	i--;
-    while (i > 0) {
+    while (i >= 0) {
 	temp = cons(para_output[num[i]], temp);
 	i--;
     }

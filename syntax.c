@@ -2546,6 +2546,9 @@ void enqueue(int n)
 {
     queue[queue_pt] = n;
     queue_pt++;
+	pthread_mutex_lock(&mutex);
+	pthread_cond_signal(&cond_queue);
+	pthread_mutex_unlock(&mutex);	
 }
 
 int dequeue(int arg)
@@ -2554,10 +2557,7 @@ int dequeue(int arg)
 
     if (queue_pt == 0) {
 	pthread_mutex_lock(&mutex);
-	while (queue_pt == 0) {
-	    pthread_mutex_unlock(&mutex);
-	    pthread_mutex_lock(&mutex);
-	}
+	pthread_cond_wait(&cond_queue,&mutex);
 	pthread_mutex_unlock(&mutex);
     }
 	

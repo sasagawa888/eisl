@@ -223,7 +223,7 @@ int para_input[PARASIZE];
 int para_output[PARASIZE];
 pthread_t para_thread[PARASIZE];
 pthread_cond_t cond_para[PARASIZE];
-pthread_cond_t cond_main[PARASIZE];
+pthread_cond_t cond_main;
 pthread_cond_t cond_queue;
 
 /* -----debugger----- */

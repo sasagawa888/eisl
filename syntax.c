@@ -2597,6 +2597,11 @@ void *parallel(void *arg)
 	ep[num] = ep[0];
 	para_output[num] = eval(para_input[num], num);
 	enqueue(num);
+	if(queue_pt == worker_count){
+		pthread_mutex_lock(&mutex);
+		pthread_cond_signal(&cond_main);
+		pthread_mutex_unlock(&mutex);
+	}
     }
   exit:
     pthread_exit(NULL);
@@ -2682,16 +2687,14 @@ int f_plet(int arglist)
 	i++;
     }
 
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_main,&mutex);
+	pthread_mutex_unlock(&mutex);
+
 	
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
-	pthread_mutex_lock(&mutex);
-	while (para_output[num[i]] == -1) {
-	    pthread_mutex_unlock(&mutex);
-	    pthread_mutex_lock(&mutex);
-	}
-	pthread_mutex_unlock(&mutex);
 	add_lex_env(car(car(temp)), para_output[num[i]], 0);
 	temp = cdr(temp);
 	i++;
@@ -2727,28 +2730,19 @@ int f_pcall(int arglist, int th)
 
 
     temp = arg2;
-    i = 1;
+    i = 0;
     while (!nullp(temp)) {
 	num[i] = exec_para(car(temp));
 	temp = cdr(temp);
 	i++;
     }
 
-    temp = arg2;
-    i = 1;
-    while (!nullp(temp)) {
 	pthread_mutex_lock(&mutex);
-	while (para_output[num[i]] == -1) {
-	    pthread_mutex_unlock(&mutex);
-	    pthread_mutex_lock(&mutex);
-	}
+	pthread_cond_wait(&cond_main,&mutex);
 	pthread_mutex_unlock(&mutex);
-	temp = cdr(temp);
-	i++;
-    }
 
     temp = NIL;
-    i--;
+	i--;
     while (i > 0) {
 	temp = cons(para_output[num[i]], temp);
 	i--;

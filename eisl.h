@@ -614,7 +614,7 @@ extern int para_input[PARASIZE];
 extern int para_output[PARASIZE];
 extern pthread_t para_thread[PARASIZE];
 extern pthread_cond_t cond_para[PARASIZE];
-extern pthread_cond_t cond_main[PARASIZE];
+extern pthread_cond_t cond_main;
 extern pthread_cond_t cond_queue;
 
 // -------error code---

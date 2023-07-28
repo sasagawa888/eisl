@@ -2034,39 +2034,23 @@ defgeneric compile
         (mapcar (lambda (y) (car y)) (elt x 1))) 
 
     (defun comp-pcall (stream x env args tail name global test clos)
-        (comp-pcall1 name) ;; thread code
+        (format stream "({int num[PARASIZE];")
         ;; if not main thread, call apply sequentialy and return.
-        (format stream "({if(th != 0){res = ")
+        (format stream "if(th != 0){res = ")
         (comp stream (cdr x) env args nil name global test clos)
         (format stream ";return(res);};~%")
-        (format stream "pthread_t t[PARASIZE]; struct para d[PARASIZE];")
-        (comp-pcall2 stream x env args tail name global test clos)
+        (comp-pcall1 stream x env args tail name global test clos)
         (format stream "res;})"))
     
-    (defun comp-pcall1 (name)
-        (format code1 "void *pcall~A(void *arg);~%" (conv-name name))
-        (format code1 "void *pcall~A(void *arg)" (conv-name name))
-        (format code1 "{struct para *pd = (struct para *) arg;")
-        (format code1 "pd->out = Fpcallsubr(Fcar(pd->sym),pd->arg, pd->num);")
-        (format code1 "pthread_exit(NULL);}"))
 
-    (defun comp-pcall2 (stream x env args tail name global test clos)
-        ;; declare
-        ;; int TEMP0,TEMP1...
-        (format stream "int ")
-        (for ((arg1 (cdr (cdr x)) (cdr arg1))
-              (num 0 (+ num 1)))
-             ((null arg1) (format stream ";"))
-             (format stream "TEMP~D" num)
-             (if (cdr arg1) (format stream ",")))
-        ;; cleate
+    (defun comp-pcall1 (stream x env args tail name global test clos)
+        ;; eval_para
         (for ((arg1 (cdr (cdr x)) (cdr arg1))
               (num 0 (+ num 1)))
              ((null arg1) nil)
-             ;;d[N].sym = Fmakesym(function-sym);
-             (format stream "d[~D].sym = Fmakesym(\"~A\");~%" num (car (car arg1)))
-             ;;d[N].arg = FlistM(arg1,arg2,...argM);
-             (format stream "d[~D].arg = Flist~D(" num (length (cdr (car arg1))))
+             ;;num[N] = Fcons(Fmakesym(function-sym),FlistM(arg1,arg2,...argM));
+             (format stream "num[~D] = Feval_para(Fcons(Fmakesym(\"~A\")," num (car (car arg1)))
+             (format stream "Flist~D(" (length (cdr (car arg1))))
              (for ((arg2 (cdr (car arg1)) (cdr arg2))
                    (argnum 0 (+ argnum 1))
                    (fun (car (car arg1))))
@@ -2083,27 +2067,21 @@ defgeneric compile
                          (format stream ")")))
                   (if (cdr arg2)
                       (format stream ",")))
-             (format stream ");~%")
-             ;; d[N].num = N+1;
-             (format stream "d[~D].num = ~D;~%" num (+ num 1))
-             ;; pthread_create(&t[N], NULL, pletFIB, &d[N]);
-             (format stream "pthread_create(&t[~D], NULL, pcall~A, &d[~D]);~%" num (conv-name name) num))
-        ;; join
-        (for ((argument (cdr (cdr x)) (cdr argument))
-              (num 0 (+ num 1)))
-             ((null argument) nil)
-             (format stream "pthread_join(t[~D], NULL);~%" num))
-        ;; TEMP0 = d[0].out; TEMP1 = d[1].out; ...
+             (format stream ")));~%"))        
+        ;; wait
+        (format stream "Fwait_para();~%")
+        ;; TEMP0 = Fget_output_para(0); TEMP1 = Fget_output_para(1); ...
         ;; if function of argument is optimizable, convert data.
         (for ((argument (cdr (cdr x)) (cdr argument))
               (num 0 (+ num 1)))
              ((null argument) (format stream "~%"))
              (cond ((not (eq (car (car argument)) optimize-enable))
-                    (format stream "TEMP~D = d[~D].out;" num num))
+                    (format stream "int TEMP~D = Fget_para_output(num[~D]);" num num))
                    ((eq (return-type (car (car argument))) (class <fixnum>))
-                    (format stream "TEMP~D = Fgetint(d[~D].out);" num num))
+                    (format stream "int TEMP~D = Fgetint(Fget_para_output(num[~D]));" num num))
                    ((eq (return-type (car (car argument))) (class <float>))
-                    (format stream "TEMP~D = Fgetflt(d[~D].out);" num num))))
+                    (format stream "int TEMP~D = Fgetflt(Fget_para_output(num[~D]));" num num))))
+        ;; res = comp((fun temp0 temp1 ... tempn));
         (let ((argument '(temp0 temp1 temp2 temp3 temp4 temp5 temp6 temp7)))
             (format stream "res = ")
             (comp stream (cons (elt x 1) (take (length (cdr (cdr x))) argument))

@@ -1982,55 +1982,43 @@ defgeneric compile
                  (format stream ";~%"))))
 
     (defun comp-plet (stream x env args tail name global test clos)
-        (comp-plet1 name) ;; thread code
-        (format stream "({pthread_t t[PARASIZE]; struct para d[PARASIZE];")
-        (let ((env1 (comp-plet2 stream x env args tail name global test clos)))
+        (format stream "({int num[PARASIZE];")
+        (let ((env1 (comp-plet1 stream x env args tail name global test clos)))
             (comp-progn1 stream (cdr (cdr x)) (append env1 env) args tail name global test clos))
         (format stream "res;})"))
         
-
-    (defun comp-plet1 (name)
-        (format code1 "void *plet~A(void *arg);~%" (conv-name name))
-        (format code1 "void *plet~A(void *arg)" (conv-name name))
-        (format code1 "{struct para *pd = (struct para *) arg;")
-	    (format code1 "pd->out = Fpeval(Fcons(pd->sym, pd->arg), pd->num);")
-        (format code1 "pthread_exit(NULL);}"))
-
-    (defun comp-plet2 (stream x env args tail name global test clos)
-        ;; declare
-        (format stream "int ")
-        (for ((form (elt x 1) (cdr form)))
-             ((null (cdr form))
-              (format stream "~A;" (elt (elt form 0) 0)))
-             (format stream "~A," (elt (elt form 0) 0)))
-        ;; cleate
-        (for ((form (elt x 1) (cdr form))
+    (defun comp-plet1 (stream x env args tail name global test clos)
+        ;; eval_para
+        (for ((arg1 (elt x 1) (cdr arg1))
               (num 0 (+ num 1)))
-             ((null form) nil)
-             ;;d[N].sym = Fmakesym(function-sym);
-             (format stream "d[~D].sym = Fmakesym(\"~A\");~%" num (car (elt (elt form 0) 1)))
-             ;;d[N].arg = FlistM(arg1,arg2,...argM);
-             (format stream "d[~D].arg = Flist~D(" num (length (cdr (elt (elt form 0) 1))))
-             (for ((arg1 (cdr (elt (elt form 0) 1)) (cdr arg1)))
-                  ((null arg1) nil)
-                  (comp stream (car arg1) env args tail name global test clos)
-                  (if (cdr arg1)
+             ((null arg1) nil)
+             ;;num[N] = Fcons(Fmakesym(function-sym),FlistM(arg1,arg2,...argM));
+             (format stream "num[~D] = Feval_para(Fcons(Fmakesym(\"~A\")," num (car (elt (car arg1) 1)))
+             (format stream "Flist~D(" (length (cdr (elt (car arg1) 1))))
+             (for ((arg2 (cdr (elt (car arg1) 1)) (cdr arg2))
+                   (argnum 0 (+ argnum 1))
+                   (fun (car (elt (car arg1) 1))))
+                  ((null arg2) nil)
+                  (cond ((not (eq fun optimize-enable))
+                         (comp stream (car arg2) env args tail name global test clos))
+                        ((eq (elt (argument-type fun) argnum) (class <fixnum>))
+                         (format stream "Fmakeint(" )
+                         (comp stream (car arg2) env args tail name global test clos)
+                         (format stream ")"))
+                        ((eq (elt (argument-type fun) argnum) (class <float>))
+                         (format stream "Fmakedoubleflt(" )
+                         (comp stream (car arg2) env args tail name global test clos)
+                         (format stream ")")))
+                  (if (cdr arg2)
                       (format stream ",")))
-             (format stream ");~%")
-             ;; d[N].num = N+1;
-             (format stream "d[~D].num = ~D;~%" num (+ num 1))
-             ;; pthread_create(&t[N], NULL, pletFIB, &d[N]);
-             (format stream "pthread_create(&t[~D], NULL, plet~A, &d[~D]);" num (conv-name name) num))
-        ;; join
-        (for ((form (elt x 1) (cdr form))
+        (format stream ")));~%"))     
+        ;; wait
+        (format stream "Fwait_para();~%")     
+        ;; var = Fget_para_output(N);
+        (for ((arg1 (elt x 1) (cdr arg1))
               (num 0 (+ num 1)))
-             ((null form) nil)
-             (format stream "pthread_join(t[~D], NULL);~%" num))
-        ;; var = d[N].out;
-        (for ((form (elt x 1) (cdr form))
-              (num 0 (+ num 1)))
-             ((null form) nil)
-             (format stream "~A = d[~D].out;~%" (elt (elt form 0) 0) num)) 
+             ((null arg1) nil)
+             (format stream "int ~A = Fget_para_output(num[~D]);~%" (elt (elt arg1 0) 0) num)) 
         (mapcar (lambda (y) (car y)) (elt x 1))) 
 
     (defun comp-pcall (stream x env args tail name global test clos)
@@ -2070,7 +2058,7 @@ defgeneric compile
              (format stream ")));~%"))        
         ;; wait
         (format stream "Fwait_para();~%")
-        ;; TEMP0 = Fget_output_para(0); TEMP1 = Fget_output_para(1); ...
+        ;; TEMP0 = Fget_para_output(0); TEMP1 = Fget_para_output(1); ...
         ;; if function of argument is optimizable, convert data.
         (for ((argument (cdr (cdr x)) (cdr argument))
               (num 0 (+ num 1)))

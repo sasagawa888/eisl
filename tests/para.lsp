@@ -35,11 +35,14 @@
 
 
 (defun pcount (n)
-    (plet ((a (count 1 (div n 2)))
-           (b (count (+ (div n 2) 1) n)))
+    (plet ((a (count1 1 (div n 2)))
+           (b (count1 (+ (div n 2) 1) n)))
      t))
 
-(defun count (m n)
+(defun count (n)
+    (count1 1 n))
+
+(defun count1 (m n)
     (for ((i m (+ i 1)))
          ((= i n) t)
          (sin (cos (tan i)))))

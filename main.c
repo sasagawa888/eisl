@@ -455,23 +455,23 @@ void init_thread(void)
 
     worker_count = sysconf(_SC_NPROCESSORS_CONF);
 
-	/* create concurrent GC thread */
+    /* create concurrent GC thread */
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);
 
-	/* create parallel function thread */
-	init_para();
+    /* create parallel function thread */
+    init_para();
 }
 
 void exit_thread(void)
 {
-	/* exit concurrent GC thread */
+    /* exit concurrent GC thread */
     pthread_mutex_lock(&mutex);
     concurrent_exit_flag = 1;
     pthread_cond_signal(&cond_gc);
     pthread_mutex_unlock(&mutex);
 
-	/* exit parallel function thread*/
-	exit_para();
+    /* exit parallel function thread */
+    exit_para();
 }
 
 void signal_handler_c(int signo __unused)

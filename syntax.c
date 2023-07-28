@@ -2546,9 +2546,9 @@ void enqueue(int n)
 {
     queue[queue_pt] = n;
     queue_pt++;
-	pthread_mutex_lock(&mutex);
-	pthread_cond_signal(&cond_queue);
-	pthread_mutex_unlock(&mutex);	
+    pthread_mutex_lock(&mutex);
+    pthread_cond_signal(&cond_queue);
+    pthread_mutex_unlock(&mutex);
 }
 
 int dequeue(int arg)
@@ -2557,10 +2557,10 @@ int dequeue(int arg)
 
     if (queue_pt == 0) {
 	pthread_mutex_lock(&mutex);
-	pthread_cond_wait(&cond_queue,&mutex);
+	pthread_cond_wait(&cond_queue, &mutex);
 	pthread_mutex_unlock(&mutex);
     }
-	
+
     num = queue[0];
     queue_pt--;
     for (i = 0; i < queue_pt; i++) {
@@ -2572,7 +2572,7 @@ int dequeue(int arg)
     pthread_cond_signal(&cond_para[num]);
     pthread_mutex_unlock(&mutex);
 
-    return(num);
+    return (num);
 }
 
 int eval_para(int arg)
@@ -2586,21 +2586,21 @@ int eval_para(int arg)
 void *parallel(void *arg)
 {
     int num = *(int *) arg;
-	
+
     while (1) {
 	pthread_mutex_lock(&mutex);
 	pthread_cond_wait(&cond_para[num], &mutex);
 	pthread_mutex_unlock(&mutex);
 	if (parallel_exit_flag)
 	    goto exit;
-	
+
 	ep[num] = ep[0];
 	para_output[num] = eval(para_input[num], num);
 	enqueue(num);
-	if(queue_pt == worker_count){
-		pthread_mutex_lock(&mutex);
-		pthread_cond_signal(&cond_main);
-		pthread_mutex_unlock(&mutex);
+	if (queue_pt == worker_count) {
+	    pthread_mutex_lock(&mutex);
+	    pthread_cond_signal(&cond_main);
+	    pthread_mutex_unlock(&mutex);
 	}
     }
   exit:
@@ -2611,19 +2611,18 @@ void init_para(void)
 {
     int i;
 
-	/* worker_count is cores - 1(main+GC)
-	 * queue[1,2,3,4,...] worker thread number 
-	 * para_thread[1] has worker-number 1
-	 * para_thread[2] has worker-number 2 ... 
-	*/
+    /* worker_count is cores - 1(main+GC)
+     * queue[1,2,3,4,...] worker thread number 
+     * para_thread[1] has worker-number 1
+     * para_thread[2] has worker-number 2 ... 
+     */
     for (i = 0; i < worker_count; i++) {
 	queue[i] = i + 1;
-	}
-	
-	for (i=0;i<worker_count;i++)
-	{
-	pthread_create(&para_thread[i+1], NULL, parallel, &queue[i]);
-	}
+    }
+
+    for (i = 0; i < worker_count; i++) {
+	pthread_create(&para_thread[i + 1], NULL, parallel, &queue[i]);
+    }
 
     queue_pt = worker_count;
 }
@@ -2631,27 +2630,27 @@ void init_para(void)
 void exit_para(void)
 {
     int i;
-    
+
     parallel_exit_flag = 1;
     for (i = 1; i <= worker_count; i++) {
-	pthread_mutex_lock(&mutex);	
+	pthread_mutex_lock(&mutex);
 	pthread_cond_signal(&cond_para[i]);
 	pthread_mutex_unlock(&mutex);
     }
-    
+
 }
 
 int get_para_output(int n)
 {
-	return(para_output[n]);
+    return (para_output[n]);
 }
 
 int wait_para(void)
 {
-	pthread_mutex_lock(&mutex);
-	pthread_cond_wait(&cond_main,&mutex);
-	pthread_mutex_unlock(&mutex);
-	return(0);
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+    return (0);
 }
 
 
@@ -2690,7 +2689,7 @@ int f_plet(int arglist)
 	temp = cdr(temp);
     }
 
-	
+
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
@@ -2699,11 +2698,11 @@ int f_plet(int arglist)
 	i++;
     }
 
-	pthread_mutex_lock(&mutex);
-	pthread_cond_wait(&cond_main,&mutex);
-	pthread_mutex_unlock(&mutex);
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
 
-	
+
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
@@ -2711,7 +2710,7 @@ int f_plet(int arglist)
 	temp = cdr(temp);
 	i++;
     }
-	
+
     while (arg2 != NIL) {
 	shelter_push(arg2, 0);
 	res = eval(car(arg2), 0);
@@ -2749,12 +2748,12 @@ int f_pcall(int arglist, int th)
 	i++;
     }
 
-	pthread_mutex_lock(&mutex);
-	pthread_cond_wait(&cond_main,&mutex);
-	pthread_mutex_unlock(&mutex);
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
 
     temp = NIL;
-	i--;
+    i--;
     while (i >= 0) {
 	temp = cons(para_output[num[i]], temp);
 	i--;

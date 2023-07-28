@@ -2641,6 +2641,10 @@ void exit_para(void)
     
 }
 
+int get_para_output(int n)
+{
+	return(para_output[n]);
+}
 
 
 int f_plet(int arglist)

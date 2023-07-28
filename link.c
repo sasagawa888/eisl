@@ -123,6 +123,8 @@ void dynamic_link(int x)
     init_f1(PARGPOP_IDX, arg_pop);
     init_f1(PSHELTERPOP_IDX, shelter_pop);
     init_f1(PSHELTERPOP_IDX, shelter_pop);
+    init_f1(EXEC_PARA_IDX, exec_para);
+    init_f1(GET_PARA_OUTPUT_IDX, get_para_output);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile

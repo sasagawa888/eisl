@@ -311,6 +311,16 @@ static inline int Fset_error_flag(int x)
     return f1[SET_ERROR_FLAG_IDX] (x);
 }
 
+static inline int Fexec_para(int x)
+{
+    return f1[EXEC_PARA_IDX] (x);
+}
+
+static inline int Fget_para_output(int x)
+{
+    return f1[GET_PARA_OUTPUT_IDX] (x);
+}
+
 static inline int Fcons(int x, int y)
 {
     return f2[CONS_IDX] (x, y);

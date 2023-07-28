@@ -2685,7 +2685,8 @@ int f_plet(int arglist)
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "plet", arg1);
-
+	if (!listp(cadr(temp)))
+		error(WRONG_ARGS, "plet", arg1);
 	temp = cdr(temp);
     }
 
@@ -2733,6 +2734,13 @@ int f_pcall(int arglist, int th)
 	error(WRONG_ARGS, "pcall", arg1);
     if (!symbolp(arg1))
 	error(IMPROPER_ARGS, "pcall", arg1);
+	
+	temp = arg2;
+	while(!nullp(temp)){
+		if(!listp(car(temp)))
+		error(WRONG_ARGS, "pcall", arg2);
+		temp = cdr(temp);
+	}
 
     /* while executing pcall sub thread */
     if (th != 0) {

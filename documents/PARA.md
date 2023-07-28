@@ -76,18 +76,8 @@ int freshcell(void)
 {
     int res;
 
-    if (!concurrent_flag) {
-	pthread_mutex_lock(&mutex);
-	res = hp;
-	hp = GET_CDR(hp);
-	SET_CDR(res, 0);
-	pthread_mutex_unlock(&mutex);
-	fc--;
-	if (fc <= 50 && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL);
-	}
-    } else if (concurrent_stop_flag) {
+
+    if (concurrent_stop_flag) {
 	/* while remarking stop the world */
 	pthread_mutex_lock(&mutex);
 	while (concurrent_stop_flag) {
@@ -100,65 +90,77 @@ int freshcell(void)
 	SET_CDR(res, 0);
 	fc--;
 
-    } else if (concurrent_sweep_flag && rc > 50) {
-	/* while concurrent-sweeping set flag USE */
-	res = hp;
-	//pthread_mutex_lock(&mutex);
-	hp = GET_CDR(hp);
-	//pthread_mutex_unlock(&mutex); 
-	SET_CDR(res, 0);
-	rc--;
-    } else if (concurrent_flag && rc > 50) {
-	res = hp;
-	hp = GET_CDR(hp);
-	SET_CDR(res, 0);
-	rc--;
-	remark[remark_pt++] = res;
-    } else {
-	pthread_join(concurrent_thread, NULL);
+    } else if (concurrent_sweep_flag) {
+	pthread_mutex_lock(&mutex);
+	while (fc < 50) {
+	    pthread_mutex_unlock(&mutex);
+	    pthread_mutex_lock(&mutex);
+	}
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	fc--;
+	pthread_mutex_unlock(&mutex);
+    } else if (concurrent_flag && fc > 50) {
+	pthread_mutex_lock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
+	remark[remark_pt++] = res;
+	pthread_mutex_unlock(&mutex);
+    } else if (!concurrent_flag) {
+	pthread_mutex_lock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
+	pthread_mutex_unlock(&mutex);
+	if (fc <= 50 && !handling_resource_err) {
+	    handling_resource_err = true;
+	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	}
+    }
+
+    else {
+	pthread_mutex_lock(&mutex);
+	res = hp;
+	hp = GET_CDR(hp);
+	SET_CDR(res, 0);
+	fc--;
+	pthread_mutex_unlock(&mutex);
     }
 
     return (res);
 }
 
+
 ```
 Ensuring thread safety in cases where destructive assignment, such as setq, is used is currently unsupported.
 
 # Implementation
-Achieving thread safety proved to be quite challenging. It was necessary to carefully divide functions under eval at the thread level. With the help of ChatGPT, I managed to make it thread-safe and functional with plet. The code for plet is as follows:
+Achieving thread safety proved to be quite challenging. It was necessary to carefully divide functions under eval at the thread level. With the help of ChatGPT, I managed to make it thread-safe and functional with plet. 
+
+We further introduced thread pooling, which allows us to eliminate the overhead of thread creation and disposal.
+
+- worker_thread has it's number (1 ~ core)
+- exec_para(int arg)  eval S-exp in thread-pooling. It return thread-number.
+- para_output[N] result of eval in thread N
+
+The code for plet is as follows:
 
 ```
-struct para {
-    int in;
-    int num;
-    int out;
-};
-
-
-void *plet(void *arg);
-void *plet(void *arg)
-{
-
-    struct para *pd = (struct para *) arg;
-
-    pd->out = eval(pd->in, pd->num);
-    return NULL;
-}
 
 int f_plet(int arglist)
 {
-    int arg1, arg2, temp, i ,res;
+    int arg1, arg2, temp, i, res, num[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-	if (length(arglist) == 0)
+    if (length(arglist) == 0)
 	error(WRONG_ARGS, "plet", arglist);
-	if (length(arg1) > PARASIZE)
-	error(WRONG_ARGS, "plet", arg1); 
+    if (length(arg1) > worker_count)
+	error(WRONG_ARGS, "plet", arg1);
     if (!listp(arg1))
 	error(IMPROPER_ARGS, "plet", arg1);
     temp = arg1;
@@ -184,36 +186,29 @@ int f_plet(int arglist)
 	temp = cdr(temp);
     }
 
-
-    pthread_t t[PARASIZE];
-    struct para d[PARASIZE];
-
-	temp = arg1;
-	i = 0;
-	while (!nullp(temp)){
-    d[i].in = cadr(car(temp));
-    d[i].num = i+1;
-    ep[i+1] = ep[i];
-    pthread_create(&t[i], NULL, plet, &d[i]);
+	
+    temp = arg1;
+    i = 0;
+    while (!nullp(temp)) {
+	num[i] = exec_para(cadr(car(temp)));
 	temp = cdr(temp);
 	i++;
-	}
+    }
 
-	temp = arg1;
-	i = 0;
-	while (!nullp(temp)){
-    pthread_join(t[i], NULL);
-    temp = cdr(temp);
-	i++;
-	}
-	temp = arg1;
-	i = 0;
-	while (!nullp(temp)){
-    add_lex_env(car(car(temp)), d[i].out, 0);
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_main,&mutex);
+	pthread_mutex_unlock(&mutex);
+
+	
+    temp = arg1;
+    i = 0;
+    while (!nullp(temp)) {
+	add_lex_env(car(car(temp)), para_output[num[i]], 0);
 	temp = cdr(temp);
 	i++;
-	}
-	while (arg2 != NIL) {
+    }
+	
+    while (arg2 != NIL) {
 	shelter_push(arg2, 0);
 	res = eval(car(arg2), 0);
 	shelter_pop(0);
@@ -222,10 +217,11 @@ int f_plet(int arglist)
     return (res);
 }
 
+
 ```
 
 # Measurement
-We have achieved parallel computation in the interpreter for Fibonacci numbers up to around 25. By utilizing parallel processing, the execution time has been significantly reduced. The following measurements were taken on Windows WSL Ubuntu:
+We have achieved parallel computation in the interpreter for Fibonacci numbers up to around 30. By utilizing parallel processing, the execution time has been significantly reduced. The following measurements were taken on Windows WSL Ubuntu:
 
 ```
 Easy-ISLisp Ver3.14
@@ -236,6 +232,17 @@ Elapsed Time(second)=1.017071
 <undef>
 > (time (fib1 25))
 Elapsed Time(second)=1.492650
+<undef>
+> 
+On Linux MINT
+Easy-ISLisp Ver3.26
+> (load "./tests/para.lsp")
+T
+> (time (fib 30))
+Elapsed Time(second)=2.301220
+<undef>
+> (time (pfib 30))
+Elapsed Time(second)=4.423270
 <undef>
 > 
 

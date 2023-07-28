@@ -302,42 +302,16 @@ e.g. parallel fibonacci
 ```
 
 ```
-struct para {
-	int sym
-    int arg;
-    int num;
-    int out;
-};
-
-
-void *pletFIB(void *arg);
-void *pletFIB(void *arg)
 {
-    struct para *pd = (struct para *) arg;
-	pd->out = Fpcallsubr(pd->sym, pd->arg, pd->num);  //call f_FIB(arg, num)
-    return NULL;
-}
+	int num[PARASIZE];
 
-(body)
-{
-	pthread_t t[PARASIZE];
-    struct para d[PARASIZE];
+	num[0] = Feval_para(Fcons(Fmakesym("FIB1"),Flist1(Fminus(N,makeint(1)))));
+	num[1] = Feval_para_fcons(Fmakesym("FIB1"),Flist1(Fminus(N,makeint(2))))); 
 
-	d[0].sym = Fmakesym("FIB);
-    d[0].arg = Flist1(Fminus(N,makeint(1)));  //Flist1(comp(body0))
-    d[0].num = 1
-    pthread_create(&t[0], NULL, pletFIB, &d[0]);
-
-	d[1].sym = Fmakesym("FIB);
-    d[1].arg = Flist1(Fminus(N,makeint(2)));  //Flist1(comp(body1))
-    d[1].num = 2
-    pthread_create(&t[1], NULL, pletFIB, &d[1]);
-
-	pthread_join(t[1], NULL);
-	pthread_join(t[2], NULL);
-
-	a = d[0].out;
-	b = d[1].out;
+	Fwait_para();
+	
+	int a = Fget_para_output(num[0]);
+	int b = Fget_para_output(num[1]);
 }
 ```
 
@@ -345,7 +319,7 @@ void *pletFIB(void *arg)
 
 ```
 eisl -c
-Easy-ISLisp Ver3.14
+Easy-ISLisp Ver3.26
 > (compile-file "./tests/para.lsp")
 type inference
 initialize

@@ -87,6 +87,7 @@ void dynamic_link(int x)
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
     init_f0(GET_ERROR_FLAG_IDX, get_error_flag);
     init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
+    init_f0(WAIT_PARA_IDX, wait_para);
 
     /* argument-1 type */
     init_f1(CAR_IDX, car);
@@ -123,7 +124,7 @@ void dynamic_link(int x)
     init_f1(PARGPOP_IDX, arg_pop);
     init_f1(PSHELTERPOP_IDX, shelter_pop);
     init_f1(PSHELTERPOP_IDX, shelter_pop);
-    init_f1(EXEC_PARA_IDX, exec_para);
+    init_f1(EVAL_PARA_IDX, eval_para);
     init_f1(GET_PARA_OUTPUT_IDX, get_para_output);
 
     /* argument-2 type */

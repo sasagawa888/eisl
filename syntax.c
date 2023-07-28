@@ -2575,7 +2575,7 @@ int dequeue(int arg)
     return(num);
 }
 
-int exec_para(int arg)
+int eval_para(int arg)
 {
     int num;
 
@@ -2646,6 +2646,14 @@ int get_para_output(int n)
 	return(para_output[n]);
 }
 
+int wait_para(void)
+{
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_main,&mutex);
+	pthread_mutex_unlock(&mutex);
+	return(0);
+}
+
 
 int f_plet(int arglist)
 {
@@ -2686,7 +2694,7 @@ int f_plet(int arglist)
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
-	num[i] = exec_para(cadr(car(temp)));
+	num[i] = eval_para(cadr(car(temp)));
 	temp = cdr(temp);
 	i++;
     }
@@ -2736,7 +2744,7 @@ int f_pcall(int arglist, int th)
     temp = arg2;
     i = 0;
     while (!nullp(temp)) {
-	num[i] = exec_para(car(temp));
+	num[i] = eval_para(car(temp));
 	temp = cdr(temp);
 	i++;
     }

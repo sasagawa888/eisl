@@ -311,9 +311,9 @@ static inline int Fset_error_flag(int x)
     return f1[SET_ERROR_FLAG_IDX] (x);
 }
 
-static inline int Fexec_para(int x)
+static inline int Feval_para(int x)
 {
-    return f1[EXEC_PARA_IDX] (x);
+    return f1[EVAL_PARA_IDX] (x);
 }
 
 static inline int Fget_para_output(int x)

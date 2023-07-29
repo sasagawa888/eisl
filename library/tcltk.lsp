@@ -21,7 +21,7 @@
     args = Fcons(intarg,args);
   }")
 (c-lang 
- "i = Fgetint(Feval(Fcons(func,args)));
+ "i = Fgetint(Fpeval(Fcons(func,args),0));
   Tcl_SetObjResult(interp, Tcl_NewIntObj(i));
   return TCL_OK;
 }")

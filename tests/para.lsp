@@ -33,6 +33,16 @@
                (tarai (- y 1) z x)
                (tarai (- z 1) x y))))
 
+(defun ptarai2 (x y z)
+    (plet ((a (tarai x y z))
+           (b (tarai x y z)))
+        a))
+
+(defun tarai2 (x y z)
+    (let ((a (tarai x y z))
+          (b (tarai x y z)))
+        a))
+
 
 (defun pcount (n)
     (plet ((a (count1 1 (div n 2)))

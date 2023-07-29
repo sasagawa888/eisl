@@ -1,6 +1,6 @@
 ;; Lambda calculus interpreter 
 ;; Usage   
-;; (load "examples/lambda.lsp")
+;; (load "example/lambda.lsp")
 ;; > (repl)
 ;; L>
 ;; To quit enter end

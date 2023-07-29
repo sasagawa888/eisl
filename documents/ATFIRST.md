@@ -113,6 +113,7 @@ If you modify or improve the library, please do the above make again.
 
 ![chaitin](CHAITIN.md)
 
+![parallel](PARA.md)
 
 # Specification
 

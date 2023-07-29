@@ -18,6 +18,10 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 You may get an error that the curses.h file cannot be found when compiling EISL & Edlis.
 In this case, enter the following from the terminal
 
+Update Easy-ISlisp
+- Type "sudo make clean".
+- Type "sudo make install".
+
 ```sh
 sudo apt install libncurses-dev
 ```

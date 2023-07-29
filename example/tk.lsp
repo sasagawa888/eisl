@@ -108,6 +108,7 @@
           (t
             (draw-triang a b c)
             (draw-triang (midpoint a b) (midpoint b c) (midpoint c a))
+            (tk:pack 'c0)(tk:update)
             (gasket a (midpoint a b) (midpoint a c) (- n 1))
             (gasket (midpoint a b) b (midpoint b c) (- n 1))
             (gasket (midpoint a c) (midpoint b c) c (- n 1)) )))

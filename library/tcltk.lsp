@@ -183,6 +183,12 @@
    Tcl_Eval(
     interp,buff);")))
 
+(defun tk:update ()
+  (c-lang 
+  "strcpy(buff,''update'');
+   strcat(buff,''\n'');
+   Tcl_Eval(
+    interp,buff);"))
 
 (defun tk:mainloop ()
     (c-lang "Tk_MainLoop();"))

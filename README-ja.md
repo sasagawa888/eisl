@@ -22,6 +22,10 @@ Edlisのコンパイルでcurses.hファイルが見つからないというエ�
 sudo apt install libncurses-dev
 ```
 
+2. Easy-ISLispを更新する場合
+- 端末上で`sudo make clean`と入力する。
+- 端末上で`sudo make install`と入力する。
+
 ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。
 注：WindowsバージョンのVS-CODEをWSLで使用する場合
 参照　[Windows Subsystem for Linux で Visual Studio Code の使用を開始する](https://docs.microsoft.com/ja-jp/windows/wsl/tutorials/wsl-vscode)

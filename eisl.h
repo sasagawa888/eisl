@@ -80,7 +80,7 @@
 
 
 
-static const float VERSION = 3.26;
+static const float VERSION = 3.27;
 static const int FREESIZE = 900000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail

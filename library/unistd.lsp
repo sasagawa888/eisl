@@ -5,3 +5,6 @@
 
 (defun usleep (delay-micro-seconds)
   (c-lang "res = usleep(DELAY_MICRO_SECONDS & INT_MASK) | INT_FLAG;"))
+
+(defun core-count ()
+  (c-lang "res = Fmakeint(sysconf(_SC_NPROCESSORS_CONF));"))

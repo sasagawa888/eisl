@@ -850,7 +850,7 @@ static char *fast_sprint_hex_long(long int n)
 static int displayfunc;
 static inline void display_callback(void)
 {
-    Feval(displayfunc);
+    Fpeval(displayfunc,0);
 }
 
 static int keyboardfunc;
@@ -860,7 +860,7 @@ static void keyboard_callback(unsigned char key, int x, int y)
     Fset_cdr(Fmakesym("gl::key"), Fmakeint((int) key));
     Fset_cdr(Fmakesym("gl::x"), Fmakeint(x));
     Fset_cdr(Fmakesym("gl::y"), Fmakeint(y));
-    Feval(keyboardfunc);
+    Fpeval(keyboardfunc,0);
 }
 
 static int mousefunc;
@@ -871,7 +871,7 @@ static void mouse_callback(int button, int state, int x, int y)
     Fset_cdr(Fmakesym("gl::state"), Fmakeint(state));
     Fset_cdr(Fmakesym("gl::x"), Fmakeint(x));
     Fset_cdr(Fmakesym("gl::y"), Fmakeint(y));
-    Feval(mousefunc);
+    Fpeval(mousefunc,0);
 }
 #endif				/* */
 

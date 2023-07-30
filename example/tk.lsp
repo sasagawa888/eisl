@@ -81,7 +81,7 @@
 (defun recur ()
     (tk:init)
     (tk:canvas 'c0 '-width 600 '-height 600)
-    (gasket #(300 0) #(0 600) #(600 600) 10)
+    (gasket #(300 0) #(0 600) #(600 600) 4)
     (tk:pack 'c0)
     (tk:mainloop))
 
@@ -106,10 +106,21 @@
 (defun gasket (a b c n)
     (cond ((= n 0) t)
           (t
+            (plock
             (draw-triang a b c)
             (draw-triang (midpoint a b) (midpoint b c) (midpoint c a))
-            (tk:pack 'c0)(tk:update)
-            (gasket a (midpoint a b) (midpoint a c) (- n 1))
-            (gasket (midpoint a b) b (midpoint b c) (- n 1))
-            (gasket (midpoint a c) (midpoint b c) c (- n 1)) )))
+            (tk:pack 'c0)(tk:update))
+            (plet ((x (gasket1 a (midpoint a b) (midpoint a c) (- n 1)))
+                   (y (gasket1 (midpoint a b) b (midpoint b c) (- n 1)))
+                   (z (gasket1 (midpoint a c) (midpoint b c) c (- n 1)) ))))))
 
+(defun gasket1 (a b c n)
+    (cond ((= n 0) t)
+          (t
+            (plock
+            (draw-triang a b c)
+            (draw-triang (midpoint a b) (midpoint b c) (midpoint c a))
+            (tk:pack 'c0)(tk:update))
+            (gasket1 a (midpoint a b) (midpoint a c) (- n 1))
+            (gasket1 (midpoint a b) b (midpoint b c) (- n 1))
+            (gasket1 (midpoint a c) (midpoint b c) c (- n 1)) )))

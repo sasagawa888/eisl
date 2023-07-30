@@ -83,6 +83,7 @@ void init_syntax(void)
     def_fsubr("DEFMODULE", f_defmodule);
     def_fsubr("PLET", f_plet);
     def_fsubr("PCALL", f_pcall);
+	def_fsubr("PLOCK", f_plock);
 }
 
 // --FSUBR-----------
@@ -2767,4 +2768,15 @@ int f_pcall(int arglist, int th)
 	i--;
     }
     return (apply(car(arg1), temp, th));
+}
+
+int f_plock(int arglist, int th)
+{
+	
+	int res;
+
+	pthread_mutex_lock(&mutex1);
+	res = f_progn(arglist,th);
+	pthread_mutex_unlock(&mutex1);
+	return(res);
 }

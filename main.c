@@ -211,6 +211,7 @@ int unwind_nest;		/* unwind-protect nest level */
 /* concurrent GC*/
 pthread_t concurrent_thread;
 pthread_mutex_t mutex;
+pthread_mutex_t mutex1;
 pthread_cond_t cond_gc;
 int remark[STACKSIZE];
 int remark_pt = 0;

@@ -961,7 +961,7 @@ int f_parse_number(int arglist);
 int f_plet(int arglist);
 int f_pcall(int arglist, int th);
 int f_plock(int arglist, int th);
-int f_pprogn(int arglist, int th);
+int f_pexec(int arglist, int th);
 int f_plus(int arglist);
 int f_preview_char(int arglist);
 int f_print(int arglist);

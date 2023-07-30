@@ -84,7 +84,7 @@ void init_syntax(void)
     def_fsubr("PLET", f_plet);
     def_fsubr("PCALL", f_pcall);
 	def_fsubr("PLOCK", f_plock);
-	def_fsubr("PPROGN", f_pprogn);
+	def_fsubr("PEXEC", f_pexec);
 }
 
 // --FSUBR-----------
@@ -2772,14 +2772,14 @@ int f_pcall(int arglist, int th)
 }
 
 
-int f_pprogn(int arglist, int th)
+int f_pexec(int arglist, int th)
 {
     int arg1, arg2, temp, i, num[PARASIZE];
 
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "pprogn", arglist);
+	error(WRONG_ARGS, "pexec", arglist);
     if (length(arglist) > worker_count)
-	error(WRONG_ARGS, "pprogn", arglist);
+	error(WRONG_ARGS, "pexec", arglist);
 	
 	temp = arglist;
 	while(!nullp(temp)){

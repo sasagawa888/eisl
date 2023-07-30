@@ -566,8 +566,8 @@ defgeneric compile
                (comp-plet stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'pcall))
                (comp-pcall stream x env args tail name global test clos))
-              ((and (consp x) (eq (car x) 'pprogn))
-               (comp-pprogn stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'pexec))
+               (comp-pexec stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2080,17 +2080,17 @@ defgeneric compile
                   (append argument env) args nil name global test clos)
             (format stream ";~%")))
 
-    (defun comp-pprogn (stream x env args tail name global test clos)
+    (defun comp-pexec (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")
         ;; if not main thread, progn sequentialy and return.
         (format stream "if(th != 0){res = ")
         (comp-progn1 stream (cdr x) env args nil name global test clos)
         (format stream ";return(res);};~%")
-        (comp-pprogn1 stream x env args tail name global test clos)
+        (comp-exec1 stream x env args tail name global test clos)
         (format stream "res;})"))
     
 
-    (defun comp-pprogn1 (stream x env args tail name global test clos)
+    (defun comp-exec1 (stream x env args tail name global test clos)
         ;; eval_para
         (for ((arg1 (cdr x) (cdr arg1))
               (num 0 (+ num 1)))

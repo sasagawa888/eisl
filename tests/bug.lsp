@@ -3,7 +3,7 @@
     (plock (print a)(print b)(print c)))
 
 (defun bar (a b c)
-    (pprogn (print a) (print b) (print c)))
+    (pexec (count 0 a) (count 1 b) (count 2 c)))
 
 (defun pcount (n)
     (plet ((a (count 1 (div n 2)))

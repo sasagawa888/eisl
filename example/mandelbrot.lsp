@@ -4,6 +4,7 @@
     (open-plot)
     (send-plot "set xrange [-1:1]")
     (send-plot "set yrange [-1:1]")
+    (send-plot "set zrange [-1:10]")
     (send-plot "set xlabel \"Real\"")
     (send-plot "set ylabel \"Imaginary\"")
     (send-plot "splot \"data1.txt\", \"data2.txt\"")
@@ -29,8 +30,8 @@
     (mandelbrot1 0 0 a b 0))
 
 (defun mandelbrot1 (r i a b n)
-    (cond ((> n 30) 1.0)
-          ((> (cabs r i) 2) 0.0)
+    (cond ((> n 30) 6.0)
+          ((> (cabs r i) 2) (log n))
           (t (mandelbrot1 (+ (- (* r r) (* i i)) a)
                            (+ (* 2 r i) b)
                            a

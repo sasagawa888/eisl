@@ -87,7 +87,7 @@ static const char *extended[] = {
     "pwm-write", "pull-up-dn-control", "delay", "compile-file",
     "formatter", "line-argument", "getenv", "system",
     "c-include", "c-define", "c-lang", "c-option", "try", "read_exp",
-    "pcall", "plet", "plock", 
+    "pcall", "plet", "plock", "pprogn",
 };
 
 static bool in_syntax_table(const char *str)

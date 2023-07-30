@@ -84,6 +84,7 @@ void init_syntax(void)
     def_fsubr("PLET", f_plet);
     def_fsubr("PCALL", f_pcall);
 	def_fsubr("PLOCK", f_plock);
+	def_fsubr("PPROGN", f_pprogn);
 }
 
 // --FSUBR-----------
@@ -2769,6 +2770,47 @@ int f_pcall(int arglist, int th)
     }
     return (apply(car(arg1), temp, th));
 }
+
+
+int f_pprogn(int arglist, int th)
+{
+    int arg1, arg2, temp, i, num[PARASIZE];
+
+    if (length(arglist) == 0)
+	error(WRONG_ARGS, "pprogn", arglist);
+    if (length(arglist) > worker_count)
+	error(WRONG_ARGS, "pprogn", arglist);
+	
+	temp = arglist;
+	while(!nullp(temp)){
+		if(!listp(car(temp)))
+		error(WRONG_ARGS, "pplogn", arglist);
+		temp = cdr(temp);
+	}
+
+    /* while executing pprogn sub thread */
+    if (th != 0) {
+	return (f_progn(arglist, th));
+    }
+
+
+    temp = arglist;
+    i = 0;
+    while (!nullp(temp)) {
+	num[i] = eval_para(car(temp));
+	temp = cdr(temp);
+	i++;
+    }
+
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+
+    i--;
+	return (para_output[num[i]]);
+}
+
+
 
 int f_plock(int arglist, int th)
 {

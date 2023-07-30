@@ -81,14 +81,14 @@
 (defun precur ()
     (tk:init)
     (tk:canvas 'c0 '-width 600 '-height 600)
-    (pgasket #(300 0) #(0 600) #(600 600) 10)
+    (pgasket #(300 0) #(0 600) #(600 600) 6)
     (tk:pack 'c0)
     (tk:mainloop))
 
 (defun recur ()
     (tk:init)
     (tk:canvas 'c0 '-width 600 '-height 600)
-    (gasket #(300 0) #(0 600) #(600 600) 10)
+    (gasket #(300 0) #(0 600) #(600 600) 6)
     (tk:pack 'c0)
     (tk:mainloop))
 

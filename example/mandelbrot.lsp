@@ -2,13 +2,11 @@
 
 (defun mandelbrot-draw ()
     (open-plot)
-    (send-plot "set term png size 900, 900")
-    (send-plot "set output \"mandelbrot.png\"")
-    (send-plot "set grid")
-    (send-plot "set pm3d map")
-    (send-plot "set size square")
-    (send-plot "set palette defined (0 \"#000000\", 2 \"#c00000\", 7 \"#ffff00\", 9 \"#ffffff\") ")
-    (send-plot "splot \"data1.txt\" \"data2.exe.\"")
+    (send-plot "set xrange [-1:1]")
+    (send-plot "set yrange [-1:1]")
+    (send-plot "set xlabel \"Real\"")
+    (send-plot "set ylabel \"Imaginary\"")
+    (send-plot "splot \"data1.txt\", \"data2.txt\"")
     (close-plot))
 
 
@@ -32,7 +30,7 @@
 
 (defun mandelbrot1 (r i a b n)
     (cond ((> n 30) 1.0)
-          ((> (cabs r i) 2) (log n))
+          ((> (cabs r i) 2) 0.0)
           (t (mandelbrot1 (+ (- (* r r) (* i i)) a)
                            (+ (* 2 r i) b)
                            a

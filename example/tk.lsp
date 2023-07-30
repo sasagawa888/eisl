@@ -127,3 +127,4 @@
             (gasket a (midpoint a b) (midpoint a c) (- n 1))
             (gasket (midpoint a b) b (midpoint b c) (- n 1))
             (gasket (midpoint a c) (midpoint b c) c (- n 1)) )))
+

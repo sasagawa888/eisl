@@ -566,6 +566,8 @@ defgeneric compile
                (comp-plet stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'pcall))
                (comp-pcall stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'pprogn))
+               (comp-pprogn stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -584,6 +586,8 @@ defgeneric compile
                    (comp-or stream x env args tail name global test clos)))
               ((and (consp x) (eq (car x) 'progn))
                (comp-progn stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'plock))
+               (comp-plock stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'for))
                (comp-for stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'while))
@@ -2076,6 +2080,47 @@ defgeneric compile
                   (append argument env) args nil name global test clos)
             (format stream ";~%")))
 
+    (defun comp-pprogn (stream x env args tail name global test clos)
+        (format stream "({int num[PARASIZE];")
+        ;; if not main thread, progn sequentialy and return.
+        (format stream "if(th != 0){res = ")
+        (comp-progn1 stream (cdr x) env args nil name global test clos)
+        (format stream ";return(res);};~%")
+        (comp-pprogn1 stream x env args tail name global test clos)
+        (format stream "res;})"))
+    
+
+    (defun comp-pprogn1 (stream x env args tail name global test clos)
+        ;; eval_para
+        (for ((arg1 (cdr x) (cdr arg1))
+              (num 0 (+ num 1)))
+             ((null arg1) nil)
+             ;;num[N] = Fcons(Fmakesym(function-sym),FlistM(arg1,arg2,...argM));
+             (format stream "num[~D] = Feval_para(Fcons(Fmakesym(\"~A\")," num (car (car arg1)))
+             (format stream "Flist~D(" (length (cdr (car arg1))))
+             (for ((arg2 (cdr (car arg1)) (cdr arg2))
+                   (argnum 0 (+ argnum 1))
+                   (fun (car (car arg1))))
+                  ((null arg2) nil)
+                  (cond ((not (eq fun optimize-enable))
+                         (comp stream (car arg2) env args tail name global test clos))
+                        ((eq (elt (argument-type fun) argnum) (class <fixnum>))
+                         (format stream "Fmakeint(" )
+                         (comp stream (car arg2) env args tail name global test clos)
+                         (format stream ")"))
+                        ((eq (elt (argument-type fun) argnum) (class <float>))
+                         (format stream "Fmakedoubleflt(" )
+                         (comp stream (car arg2) env args tail name global test clos)
+                         (format stream ")")))
+                  (if (cdr arg2)
+                      (format stream ",")))
+             (format stream ")));~%"))        
+        ;; wait
+        (format stream "Fwait_para();~%")
+        ;; result
+        (format stream "res = Fget_para_output(num[~D]);~%" (- (length (cdr x)) 1)))
+
+      
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))
 
@@ -2504,6 +2549,29 @@ defgeneric compile
                  (if (not (not-need-colon-p (car x)))
                      (format stream ";~%"))
                  (comp-progn1 stream (cdr x) env args tail name global test clos))))
+
+    (defun comp-plock (stream x env args tail name global test clos)
+        (format stream "({int res;~%")
+        (format stream "pthread_mutex_lock(&plock_mutex);")
+        (comp-plock1 stream (cdr x) env args tail name global test clos)
+        (format stream "pthread_mutex_unlock(&plock_mutex);")
+        (format stream "res;})"))
+
+    (defun comp-plock1 (stream x env args tail name global test clos)
+        (cond ((null x) t)
+              ((null (cdr x))
+               (if (and (not (not-need-res-p (car x)))
+                        (not (tailcallp (car x) tail name)))
+                   (format stream "res = "))
+               (comp stream (car x) env args tail name global test clos)
+               (if (not (not-need-colon-p (car x)))
+                   (format stream ";")))
+              (t (comp stream (car x) env args nil name global test clos)
+                 (if (not (not-need-colon-p (car x)))
+                     (format stream ";~%"))
+                 (comp-plock1 stream (cdr x) env args tail name global test clos))))
+
+
 
     (defun comp-and (stream x env args tail name global test clos)
         (format stream "({int res;~%if((res = ")

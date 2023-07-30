@@ -43,10 +43,6 @@
   (tk:mainloop))
 
 
-(defun bar (x y)
-  (error "asdf" (list x y)))
-
-
 (defglobal area (create-array '(100 100) 0))
 
 (defun init-area ()

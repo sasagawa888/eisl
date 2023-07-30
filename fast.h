@@ -9,12 +9,7 @@
 #include <pthread.h>
 #include "ffi.h"
 
-struct para {
-	int sym;
-    int arg;
-    int num;
-    int out;
-};
+pthread_mutex_t plock_mutex;
 
 const int INT_PSQRT = 1073773446;	// INT_FLAG+sqrt(999999999)
 const int INT_MSQRT = -31622;	// - sqrt(999999999)

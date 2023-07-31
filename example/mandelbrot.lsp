@@ -1,3 +1,10 @@
+;;; test of pexec parallel function
+;;; usage
+;;; (load "./example/mandelbrot.lsp")
+;;; (mandelbrot-data)
+;;; (mandelbrot-draw)
+;;;
+
 (import "plot")
 
 (defun mandelbrot-draw ()

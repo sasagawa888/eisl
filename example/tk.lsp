@@ -113,9 +113,9 @@
             (draw-triang a b c)
             (draw-triang (midpoint a b) (midpoint b c) (midpoint c a))
             (tk:pack 'c0)(tk:update))
-            (pprogn (pgasket a (midpoint a b) (midpoint a c) (- n 1))
-                    (pgasket (midpoint a b) b (midpoint b c) (- n 1))
-                    (pgasket (midpoint a c) (midpoint b c) c (- n 1)) ))))
+            (pexec (pgasket a (midpoint a b) (midpoint a c) (- n 1))
+                   (pgasket (midpoint a b) b (midpoint b c) (- n 1))
+                   (pgasket (midpoint a c) (midpoint b c) c (- n 1)) ))))
 
 (defun gasket (a b c n)
     (cond ((= n 0) t)

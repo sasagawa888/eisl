@@ -7,21 +7,22 @@
 
 (import "plot")
 
-(defun mandelbrot-draw ()
+(defun draw ()
+    (mandelbrot-data)
     (open-plot)
-    (send-plot "set xrange [-1:1]")
-    (send-plot "set yrange [-1:1]")
-    (send-plot "set zrange [-1:10]")
+    (send-plot "set xrange [-1.5:1.5]")
+    (send-plot "set yrange [-1.5:1.5]")
     (send-plot "set xlabel \"Real\"")
     (send-plot "set ylabel \"Imaginary\"")
-    (send-plot "splot \"data1.txt\", \"data2.txt\"")
-    (close-plot))
+    (send-plot "plot \"data1.txt\", \"data2.txt\"")
+    (close-plot)
+    (system "rm -rf data1.txt data2.txt"))
 
 
 
 (defun mandelbrot-data ()
-    (pexec (mandelbrot-part -1.0 -1.0 1.0 0.0 "data1.txt")
-           (mandelbrot-part -1.0 0.0 1.0 1.0 "data2.txt")))
+    (pexec (mandelbrot-part -1.5 -1.6 1.6 0.0 "data1.txt")
+           (mandelbrot-part -1.5 0.0 1.5 1.5 "data2.txt")))
 
 (defun mandelbrot-part (r1 i1 r2 i2 file)
     (let ((stream (open-output-file file)))
@@ -29,7 +30,8 @@
               ((> r r2) t)
               (for ((i i1 (+ i 0.01)))
                    ((> i i2) t)
-                   (format stream "~G ~G ~G~%" r i (mandelbrot r i))))
+                   (if (mandelbrot r i)
+                       (format stream "~G ~G ~%" r i))))
          (close stream)))
 
 
@@ -37,8 +39,8 @@
     (mandelbrot1 0 0 a b 0))
 
 (defun mandelbrot1 (r i a b n)
-    (cond ((> n 30) 6.0)
-          ((> (cabs r i) 2) (log n))
+    (cond ((> n 30) t)
+          ((> (cabs r i) 2) nil)
           (t (mandelbrot1 (+ (- (* r r) (* i i)) a)
                            (+ (* 2 r i) b)
                            a

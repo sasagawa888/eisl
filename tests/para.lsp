@@ -45,9 +45,8 @@
 
 
 (defun pcount (n)
-    (plet ((a (count1 1 (div n 2)))
-           (b (count1 (+ (div n 2) 1) n)))
-     t))
+    (pexec (count1 1 (div n 2))
+           (count1 (+ (div n 2) 1) n)))
 
 (defun count (n)
     (count1 1 n))

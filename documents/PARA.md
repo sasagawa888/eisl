@@ -65,3 +65,13 @@ pthread_mutex_unlock()
          (sin (cos (tan i)))))
 
 ```
+
+# Thread pooling
+
+queue[] = 1,2,3,... worker_count
+
+worker_count = core_count - 2(main + GC);
+
+
+
+

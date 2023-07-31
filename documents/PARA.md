@@ -84,3 +84,8 @@ worker1 eval(arg) -> para_output[1]=result.
 worker1 send signal to main thread.
 enqueue [2,3,4,1]
 queue_pt = 4
+
+## Example
+see example/mandelbrot.lsp
+
+![mandelbrot](mandelbrot.png)

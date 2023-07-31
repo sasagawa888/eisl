@@ -72,6 +72,15 @@ queue[] = 1,2,3,... worker_count
 
 worker_count = core_count - 2(main + GC);
 
+initital
+queue  [1,2,3,4]  hexa core
+queue_pt = 4;
 
-
-
+eval_para(arg)
+dequeue [2,3,4]
+queue_pt = 3
+main thread send signal to worker1 thread.
+worker1 eval(arg) -> para_output[1]=result.
+worker1 send signal to main thread.
+enqueue [2,3,4,1]
+queue_pt = 4

@@ -83,8 +83,8 @@ void init_syntax(void)
     def_fsubr("DEFMODULE", f_defmodule);
     def_fsubr("PLET", f_plet);
     def_fsubr("PCALL", f_pcall);
-	def_fsubr("PLOCK", f_plock);
-	def_fsubr("PEXEC", f_pexec);
+    def_fsubr("PLOCK", f_plock);
+    def_fsubr("PEXEC", f_pexec);
 }
 
 // --FSUBR-----------
@@ -2688,7 +2688,7 @@ int f_plet(int arglist)
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "plet", arg1);
 	if (!listp(cadr(temp)))
-		error(WRONG_ARGS, "plet", arg1);
+	    error(WRONG_ARGS, "plet", arg1);
 	temp = cdr(temp);
     }
 
@@ -2736,13 +2736,13 @@ int f_pcall(int arglist, int th)
 	error(WRONG_ARGS, "pcall", arg1);
     if (!symbolp(arg1))
 	error(IMPROPER_ARGS, "pcall", arg1);
-	
-	temp = arg2;
-	while(!nullp(temp)){
-		if(!listp(car(temp)))
-		error(WRONG_ARGS, "pcall", arg2);
-		temp = cdr(temp);
-	}
+
+    temp = arg2;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "pcall", arg2);
+	temp = cdr(temp);
+    }
 
     /* while executing pcall sub thread */
     if (th != 0) {
@@ -2780,13 +2780,13 @@ int f_pexec(int arglist, int th)
 	error(WRONG_ARGS, "pexec", arglist);
     if (length(arglist) > worker_count)
 	error(WRONG_ARGS, "pexec", arglist);
-	
-	temp = arglist;
-	while(!nullp(temp)){
-		if(!listp(car(temp)))
-		error(WRONG_ARGS, "pplogn", arglist);
-		temp = cdr(temp);
-	}
+
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "pplogn", arglist);
+	temp = cdr(temp);
+    }
 
     /* while executing pprogn sub thread */
     if (th != 0) {
@@ -2807,18 +2807,18 @@ int f_pexec(int arglist, int th)
     pthread_mutex_unlock(&mutex);
 
     i--;
-	return (para_output[num[i]]);
+    return (para_output[num[i]]);
 }
 
 
 
 int f_plock(int arglist, int th)
 {
-	
-	int res;
 
-	pthread_mutex_lock(&mutex1);
-	res = f_progn(arglist,th);
-	pthread_mutex_unlock(&mutex1);
-	return(res);
+    int res;
+
+    pthread_mutex_lock(&mutex1);
+    res = f_progn(arglist, th);
+    pthread_mutex_unlock(&mutex1);
+    return (res);
 }

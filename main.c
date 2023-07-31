@@ -454,7 +454,7 @@ void init_pointer(void)
 void init_thread(void)
 {
 
-    worker_count = sysconf(_SC_NPROCESSORS_CONF)-1;
+    worker_count = sysconf(_SC_NPROCESSORS_CONF) - 2;
 
     /* create concurrent GC thread */
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);

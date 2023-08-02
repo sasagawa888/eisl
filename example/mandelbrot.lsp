@@ -8,6 +8,7 @@
 (import "plot")
 
 (defun draw ()
+    (gbc)
     (mandelbrot-data)
     (open-plot)
     (send-plot "set xrange [-1.5:1.5]")

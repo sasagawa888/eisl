@@ -15,12 +15,13 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 - You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 - For more advanced hacking on the interpreter itself, you can build a debug-mode executable by supplying a "DEBUG=1" argument to make, but this is unlikely to be needed by someone starting out.
 
-You may get an error that the curses.h file cannot be found when compiling EISL & Edlis.
-In this case, enter the following from the terminal
-
 Update Easy-ISlisp
 - Type "sudo make clean".
 - Type "sudo make install".
+
+
+You may get an error that the curses.h file cannot be found when compiling EISL & Edlis.
+In this case, enter the following from the terminal
 
 ```sh
 sudo apt install libncurses-dev

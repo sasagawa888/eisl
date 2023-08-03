@@ -270,6 +270,9 @@ int check_gbc(void)
 	RAISE(Restart_Repl);
     }
 
+	pthread_mutex_lock(&mutex);
+	temp = concurrent_flag;
+	pthread_mutex_unlock(&mutex);
     if (!concurrent_flag && fc < FREESIZE)
 	gbc();
 

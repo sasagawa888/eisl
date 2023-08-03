@@ -601,7 +601,7 @@ void debugger()
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    for (i = 0; i < PARASIZE; i++) {
+	    for (i = 0; i < worker_count; i++) {
 		Fmt_print("thread%d=", i);
 		for (j = 0; j < dp[i]; j++) {
 		    print(dynamic[j][0]);
@@ -612,7 +612,7 @@ void debugger()
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
-	    for (i = 0; i < PARASIZE; i++) {
+	    for (i = 0; i < worker_count; i++) {
 		Fmt_print("thread%d=", i);
 		print(ep[i]);
 		putchar('\n');

@@ -56,3 +56,19 @@ We use
 to format the code.
 In particular, KR style with the -kr option.
 Just try to fit in with the existing code for naming conventions.
+
+# Still buggy
+
+```
+(ptarai 12 6 0)
+
+Unbound variable at EVAL Z
+debug mode ?(help)
+>>:e
+thread0=((Z . 0) (Y . 6) (X . 12))
+thread1=((Z . 2) (Y . 0) (X . 0))
+thread2=((Z . 0) (Y . 6) (X . 12))
+thread3=(X . 1) <- why???
+
+
+```

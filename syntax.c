@@ -2744,6 +2744,8 @@ int f_pcall(int arglist, int th)
 	temp = cdr(temp);
     }
 
+	gbc();
+	
     /* while executing pcall sub thread */
     if (th != 0) {
 	return (apply(car(arg1), evlis(arg2, th), th));

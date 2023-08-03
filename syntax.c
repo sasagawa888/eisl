@@ -2692,7 +2692,7 @@ int f_plet(int arglist)
 	temp = cdr(temp);
     }
 
-	check_gbc();
+    check_gbc();
 
     temp = arg1;
     i = 0;
@@ -2750,7 +2750,7 @@ int f_pcall(int arglist, int th)
 	return (apply(car(arg1), evlis(arg2, th), th));
     }
 
-	check_gbc();
+    check_gbc();
 
     temp = arg2;
     i = 0;
@@ -2795,7 +2795,7 @@ int f_pexec(int arglist, int th)
 	return (f_progn(arglist, th));
     }
 
-	check_gbc();
+    check_gbc();
 
     temp = arglist;
     i = 0;

@@ -76,7 +76,7 @@ plock.. f_plock
 
 queue[] = 1,2,3,... worker_count
 
-worker_count = core_count - 2(main + GC);
+worker_count = core_count - 1(main + GC);
 
 core_count is count of CPU's multicores
 e.g. icore5 hexa core => 6

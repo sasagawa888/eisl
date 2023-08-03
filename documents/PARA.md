@@ -18,7 +18,7 @@ execute (prgn arg ...) with mutex.
 
 ```
 pthread_mutex_lock()
-arg ...
+execute arg ...
 pthread_mutex_unlock()
 ```
 
@@ -67,10 +67,19 @@ pthread_mutex_unlock()
 ```
 
 # Thread pooling
+source code syntax.c line 2546
+
+plet... f_plet
+pcall.. f_pcall
+pexec.. f_pexec
+plock.. f_plock
 
 queue[] = 1,2,3,... worker_count
 
 worker_count = core_count - 2(main + GC);
+
+core_count is count of CPU's multicores
+e.g. icore5 hexa core => 6
 
 initital
 queue  [1,2,3,4]  hexa core

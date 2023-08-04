@@ -146,13 +146,14 @@ void *concurrent(void *arg)
 	concurrent_flag = 1;
 	pthread_mutex_unlock(&mutex);
 
-	/* stop the world */
-	concurrent_stop_flag = 1;
+	
 
 	/* mark hash table */
 	for (i = 0; i < HASHTBSIZE; i++)
 	    mark_cell(cell_hash_table[i]);
 
+	/* stop the world */
+	concurrent_stop_flag = 1;
 
 	/* mark nil and t */
 	MARK_CELL(NIL);

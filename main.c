@@ -226,6 +226,9 @@ pthread_t para_thread[PARASIZE];
 pthread_cond_t cond_para[PARASIZE];
 pthread_cond_t cond_main;
 pthread_cond_t cond_queue;
+pthread_attr_t para_attr[PARASIZE];
+size_t para_size[PARASIZE];
+
 
 /* -----debugger----- */
 int examin_sym;

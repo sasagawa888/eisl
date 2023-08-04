@@ -617,6 +617,8 @@ extern pthread_t para_thread[PARASIZE];
 extern pthread_cond_t cond_para[PARASIZE];
 extern pthread_cond_t cond_main;
 extern pthread_cond_t cond_queue;
+extern pthread_attr_t para_attr[PARASIZE];
+extern size_t para_size[PARASIZE];
 
 // -------error code---
 enum {

@@ -604,6 +604,7 @@ extern pthread_t concurrent_thread;
 extern pthread_cond_t cond_gc;
 extern pthread_mutex_t mutex;
 extern pthread_mutex_t mutex1;
+extern pthread_mutex_t mutex_gc;
 extern int remark[STACKSIZE];
 extern int remark_pt;
 extern int worker_count;

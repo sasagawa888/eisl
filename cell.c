@@ -434,7 +434,9 @@ int add_sym(const char *name, int index)
 
     addr = cell_hash_table[index];
     addr = cons(res = make_sym1(name), addr);
+    pthread_mutex_lock(&mutex);
     cell_hash_table[index] = addr;
+    pthread_mutex_unlock(&mutex);
     return (res);
 }
 

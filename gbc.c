@@ -141,13 +141,10 @@ void *concurrent(void *arg)
 	if (concurrent_exit_flag)
 	    goto exit;
 
+	pthread_mutex_lock(&mutex_gc);
 	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc);
-	pthread_mutex_lock(&mutex);
 	concurrent_flag = 1;
-	pthread_mutex_unlock(&mutex);
-
 	
-
 	/* mark hash table */
 	for (i = 0; i < HASHTBSIZE; i++)
 	    mark_cell(cell_hash_table[i]);
@@ -225,13 +222,11 @@ void *concurrent(void *arg)
 	}
 
 	/* end of stop the world and into sweep mode */
-	pthread_mutex_lock(&mutex);
 	concurrent_stop_flag = 0;
 	//concurrent_sweep_flag = 0;
 	concurrent_flag = 0;
-	pthread_mutex_unlock(&mutex);
 	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
-
+	pthread_mutex_unlock(&mutex_gc);
     }
   exit:
     pthread_exit(NULL);

@@ -245,12 +245,12 @@ int freshcell(void)
 	    pthread_mutex_unlock(&mutex);
 	    pthread_mutex_lock(&mutex);
 	}
-	pthread_mutex_unlock(&mutex);
 	res = hp;
 	hp = GET_CDR(hp);
 	SET_CDR(res, 0);
 	fc--;
-
+    pthread_mutex_unlock(&mutex);
+    
     } else if (concurrent_sweep_flag) {
 	pthread_mutex_lock(&mutex);
 	while (fc < 50) {
@@ -270,7 +270,8 @@ int freshcell(void)
 	fc--;
 	remark[remark_pt++] = res;
 	pthread_mutex_unlock(&mutex);
-    } else if (!concurrent_flag) {
+    } 
+     else if (!concurrent_flag) {
 	pthread_mutex_lock(&mutex);
 	res = hp;
 	hp = GET_CDR(hp);

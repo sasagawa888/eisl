@@ -2036,7 +2036,6 @@ int evlis(int addr, int th)
 	car_addr = eval(car(addr), th);
 	arg_push(car_addr, th);
 	cdr_addr = evlis(cdr(addr), th);
-	mark_cell(cdr_addr);
 	car_addr = arg_pop(th);
 	(void) arg_pop(th);
 	return (cons(car_addr, cdr_addr));

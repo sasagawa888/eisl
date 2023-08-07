@@ -612,7 +612,7 @@ void debugger()
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
-	    for (i = 0; i < worker_count; i++) {
+	    for (i = 0; i <= worker_count; i++) {
 		Fmt_print("thread%d=", i);
 		print(ep[i]);
 		putchar('\n');

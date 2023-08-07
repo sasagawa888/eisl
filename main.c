@@ -212,7 +212,6 @@ int unwind_nest;		/* unwind-protect nest level */
 pthread_t concurrent_thread;
 pthread_mutex_t mutex;
 pthread_mutex_t mutex1;
-pthread_mutex_t mutex_gc;
 pthread_cond_t cond_gc;
 int remark[STACKSIZE];
 int remark_pt = 0;
@@ -2031,8 +2030,6 @@ int evlis(int addr, int th)
     } else {
 	int car_addr, cdr_addr;
 
-	pthread_mutex_lock(&mutex_gc);
-	pthread_mutex_unlock(&mutex_gc);
 	car_addr = eval(car(addr), th);
 	arg_push(car_addr, th);
 	cdr_addr = evlis(cdr(addr), th);
@@ -2121,9 +2118,7 @@ int push(int pt, int th)
     if (sp[th] >= STACKSIZE)
 	error(STACK_OVERF, "push", NIL);
 
-	pthread_mutex_lock(&mutex_gc);
     stack[sp[th]++][th] = pt;
-	pthread_mutex_unlock(&mutex_gc);
     return (T);
 }
 
@@ -2133,27 +2128,23 @@ int pop(int th)
 
 	if (sp[th] <= 0)
 	error(STACK_UNDERF, "pop", NIL);
-	pthread_mutex_lock(&mutex_gc);
     res = stack[--sp[th]][th];
-	pthread_mutex_unlock(&mutex_gc);
 	return (res);
 }
 
 /* push/pop of arglist */
 int arg_push(int addr, int th)
 {
-	pthread_mutex_lock(&mutex_gc);
+
     argstk[ap[th]++][th] = addr;
-	pthread_mutex_unlock(&mutex_gc);
     return (T);
 }
 
 int arg_pop(int th)
 {
 	int res;
-	pthread_mutex_lock(&mutex_gc);
+	
     res = argstk[--ap[th]][th];
-	pthread_mutex_unlock(&mutex_gc);
 	return(res);
 }
 
@@ -2163,9 +2154,7 @@ int shelter_push(int addr, int th)
     if (lp[th] >= STACKSIZE)
 	error(SHELTER_OVERF, "shelter_push", NIL);
 
-	pthread_mutex_lock(&mutex_gc);
     shelter[lp[th]++][th] = addr;
-	pthread_mutex_unlock(&mutex_gc);
     return (T);
 }
 
@@ -2175,9 +2164,8 @@ int shelter_pop(int th)
 
     if (lp[th] <= 0)
 	error(SHELTER_UNDERF, "shelter_pop", NIL);
-    pthread_mutex_lock(&mutex_gc);
+    
 	res = shelter[--lp[th]][th];
-	pthread_mutex_unlock(&mutex_gc);
 	return(res);
 }
 

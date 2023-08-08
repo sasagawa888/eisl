@@ -6,6 +6,10 @@
  e.g. ala = Alanine
 DNA and RNA data is string each element is nucleotide.
 DNA is pair of a DNA e.g. ("TTGCGAT" "AACGCTA")
+
+example execution
+> (foo dna)
+(ARG ASN VAL TYR ILE PRO ALA SER GLN PHE GLN GLY CYS LYS)
 |#
 
 (import "elixir")
@@ -138,5 +142,5 @@ DNA is pair of a DNA e.g. ("TTGCGAT" "AACGCTA")
 (defun list->string (x)
     (if (null x)
         ""
-        (string-append (convert (car x) <string>)
+        (string-append (create-string 1 (car x))
                        (list->string (cdr x)))))

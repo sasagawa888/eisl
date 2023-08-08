@@ -1,6 +1,13 @@
 #|
-godel number (test unicode)
+godel number 
 
+example execution
+> (load "./example/godel.lsp")
+> (encode dt)
+395017145154031183566599905857292182568201440502240006394147044479902343750000
+> (decode 395017145154031183566599905857292182568201440502240006394147044479902343750000)
+"∃xy〜(x)∧(y)"
+> 
 |#
 (import "math")
 (import "cxr")
@@ -50,6 +57,6 @@ godel number (test unicode)
 (defun decode1 (ls)
     (if (null ls)
         ""
-        (string-append (convert (cadr (assoc (cadar ls) code-list))  <string>)
+        (string-append (create-string 1 (cadr (assoc (cadar ls) code-list)))
                        (decode1 (cdr ls)))))
          

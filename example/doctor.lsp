@@ -1,4 +1,39 @@
-;; Doctor 
+ #|
+Doctor 
+
+> (load "./example/doctor.lsp")
+> (doctor)
+Easy-ISLisp Ver3.33
+> (load "./example/doctor.lsp")
+T
+> (doctor)
+Hi!,I am a doctor
+   Speak up
+hello
+(HELLO)
+YOU SAY SO BEFORE TOO?
+no
+(NO)
+PLEASE DO NOT BE SO SHORT WITH ME.
+I am warried about mother
+(I AM WARRIED ABOUT MOTHER)
+TELL ME MORE ABOUT YOUR FAMILY.
+my mother is friendly
+(MY MOTHER IS FRIENDLY)
+TELL ME MORE ABOUT YOUR FAMILY.
+my sister is pretty
+(MY SISTER IS PRETTY)
+EARLIER YOU SPOKE OF YOUR MOTHER.
+yes
+(YES)
+PLEASE DO NOT BE SO SHORT WITH ME.
+stop
+(STOP)
+I AM SORRY OUR TIME IS UP.
+NIL
+> 
+|#
+
 (import "elixir")
 
 (defglobal flag nil)
@@ -9,7 +44,7 @@
 (defun string->list1 (ls word result)
     (cond ((null ls) (reverse (cons (convert word <symbol>) result)))
           ((char= (car ls) #\space) (string->list1 (cdr ls) "" (cons (convert word <symbol>) result)))
-          (t (string->list1 (cdr ls) (string-append word (convert (car ls) <string>)) result))))
+          (t (string->list1 (cdr ls) (string-append word (create-string 1 (car ls))) result))))
 
 (defun capitalize (ls)
     (mapcar (lambda (x) (capitalize1 x)) ls))

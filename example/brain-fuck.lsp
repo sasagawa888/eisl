@@ -1,3 +1,14 @@
+#|
+Brain fuck  (still buggy)
+Usage
+
+> (load "./example/brain-fuck.lsp")
+> (repl)
+bf> end
+
+|#
+
+
 (defmacro unless (test :rest body)
     `(if (not ,test) (progn ,@body)) )
 
@@ -37,13 +48,16 @@
 
 
 (defun repl ()
-    (for ((input (read-line) (read-line)))
+    (for ((input (read-code) (read-code)))
          ((string= input "end")
           'end )
          (init)
          (read-BF-code input)
-         (operate-BF-code)
-         (format (standard-output) "~%bf> ")))
+         (operate-BF-code)))
+
+(defun read-code()
+    (format (standard-output) "~%bf> ")
+    (read-line))
 
 (defun init ()
     (setq pointer 0)
@@ -62,7 +76,7 @@
      (string= str "")
      (let ((len (length str)))
         (for ((i 0 (+ i 1)))
-             ((>= i len))
+             ((>= i len) t)
              (set-elt (elt str i) code i)))))
 
 
@@ -71,6 +85,7 @@
     (for ((op (get-code) (get-code)))
          ((char= op #\null)
           nil )
+         (print op)
          (cond ((char= op #\>) (inc pointer) (inc pc))
                ((char= op #\<) (dec pointer) (inc pc))
                ((char= op #\+) (inc-mem) (inc pc))

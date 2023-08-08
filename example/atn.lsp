@@ -1,6 +1,19 @@
 #|
 study of English grammar (under construction)
 ATN Argumented Transition Network 
+
+Usage
+
+> (load "./example/atn.lsp")
+> (start '(the dog bites a postman))
+((S (DET THE) (N DOG)) (V (VT BITES)) (O (DET A) (N POSTMAN)))
+> (start '(the dog runs))
+((S (DET THE) (N DOG)) (V (VI RUNS)))
+> (start '(the dog can bites a postman))
+((S (DET THE) (N DOG)) (V (AUX CAN) (VT BITES)) (O (DET A) (N POSTMAN)))
+> 
+
+
 ((subj (det the) (n dog)) (v (vt bites)) (o (n postman)) ) 
 
 s subject

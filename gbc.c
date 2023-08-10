@@ -3,8 +3,8 @@
  * Easy-ISLisp has concurrent mark&sweep garbage collection system.
  * in cuncurrent mode if remain cell < FREESIZE, invoke gc.
  * <memo concurrent>
- * cell.c freshcell provide cell. while executing GC thread concurrent_flag = 1.
- * while remark&sweep concurrent_stop_flag = 1;
+ * cell.c freshcell provide cell. while executing GC thread concurrent_flag = true.
+ * while remark&sweep concurrent_stop_flag = true;
  * freshcell provide cell and save the address to remark array.
  * current thread remark cell with remark array data. 
  * rc means real count. While executing concurrent GC, rc has real remain cell count.
@@ -142,14 +142,14 @@ void *concurrent(void *arg)
 	    goto exit;
 
 	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc);
-	concurrent_flag = 1;
+	concurrent_flag = true;
 	
 	/* mark hash table */
 	for (i = 0; i < HASHTBSIZE; i++)
 	    mark_cell(cell_hash_table[i]);
 
 	/* stop the world */
-	concurrent_stop_flag = 1;
+	concurrent_stop_flag = true;
 
 	/* mark nil and t */
 	MARK_CELL(NIL);
@@ -204,7 +204,6 @@ void *concurrent(void *arg)
 
 	remark_pt = 0;
 
-	//concurrent_sweep_flag = 1;
 	addr = 0;
 	hp = NIL;
 	fc = 0;
@@ -221,9 +220,8 @@ void *concurrent(void *arg)
 	}
 
 	/* end of stop the world and into sweep mode */
-	concurrent_stop_flag = 0;
-	//concurrent_sweep_flag = 0;
-	concurrent_flag = 0;
+	concurrent_stop_flag = false;
+	concurrent_flag = false;
 	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
     }
   exit:
@@ -258,16 +256,11 @@ void clr_cell(int addr)
 /* when free cells are less FREESIZE, invoke gbc() */
 int check_gbc(void)
 {
-    int temp;
-
     if (exit_flag) {
 	exit_flag = 0;
 	RAISE(Restart_Repl);
     }
 
-	pthread_mutex_lock(&mutex);
-	temp = concurrent_flag;
-	pthread_mutex_unlock(&mutex);
     if (!concurrent_flag && fc < FREESIZE)
 	gbc();
 

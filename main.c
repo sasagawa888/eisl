@@ -167,12 +167,11 @@ bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;	/* invoked error? */
-int concurrent_flag = 0;	/* while executing concurrent */
-int concurrent_stop_flag = 0;	/* while remarking&sweeping */
-int concurrent_sweep_flag = 0;	/* while concurrent-sweeping */
-int concurrent_exit_flag = 0;	/* To exit GC thread */
-int parallel_flag = 0;      /* while executing parallel */
-int parallel_exit_flag = 0;	/* To exit parallel threads */
+bool concurrent_flag = false;	/* while executing concurrent */
+bool concurrent_stop_flag = false;	/* while remarking&sweeping */
+bool concurrent_exit_flag = false;	/* To exit GC thread */
+bool parallel_flag = false;      /* while executing parallel */
+bool parallel_exit_flag = false;	/* To exit parallel threads */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */

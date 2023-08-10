@@ -555,12 +555,11 @@ extern bool handling_resource_err;
 extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
 extern bool error_flag;
-extern int  concurrent_flag;
-extern int  concurrent_stop_flag;
-extern int  concurrent_sweep_flag;
-extern int  concurrent_exit_flag;
-extern int parallel_flag;
-extern int parallel_exit_flag;
+extern bool concurrent_flag;
+extern bool concurrent_stop_flag;
+extern bool concurrent_exit_flag;
+extern bool parallel_flag;
+extern bool parallel_exit_flag;
 
 // try function
 extern bool try_flag;

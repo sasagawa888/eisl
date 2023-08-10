@@ -2639,7 +2639,7 @@ void exit_para(void)
 {
     int i;
 
-    parallel_exit_flag = 1;
+    parallel_exit_flag = true;
     for (i = 1; i <= worker_count; i++) {
 	pthread_mutex_lock(&mutex);
 	pthread_cond_signal(&cond_para[i]);

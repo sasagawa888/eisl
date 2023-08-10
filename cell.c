@@ -251,17 +251,6 @@ int freshcell(void)
 	fc--;
     pthread_mutex_unlock(&mutex);
     
-    } else if (concurrent_sweep_flag) {
-	pthread_mutex_lock(&mutex);
-	while (fc < 50) {
-	    pthread_mutex_unlock(&mutex);
-	    pthread_mutex_lock(&mutex);
-	}
-	res = hp;
-	hp = GET_CDR(hp);
-	SET_CDR(res, 0);
-	fc--;
-	pthread_mutex_unlock(&mutex);
     } else if (concurrent_flag && fc > 50) {
 	pthread_mutex_lock(&mutex);
 	res = hp;

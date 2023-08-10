@@ -474,7 +474,7 @@ void exit_thread(void)
 {
     /* exit concurrent GC thread */
     pthread_mutex_lock(&mutex);
-    concurrent_exit_flag = 1;
+    concurrent_exit_flag = true;
     pthread_cond_signal(&cond_gc);
     pthread_mutex_unlock(&mutex);
 
@@ -1462,10 +1462,18 @@ void print_flt(double x)
 void print_long(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
+	#ifdef __rpi__
+	fprintf(GET_PORT(output_stream), "%lld", GET_LONG(addr));
+	#else	
 	Fmt_fprint(GET_PORT(output_stream), "%D", GET_LONG(addr));
-    } else {
+    #endif
+	} else {
 	char str[SHORT_STRSIZE];
+	#ifdef __rpi__
+	sprintf(str, SHORT_STRSIZE, "%lld", GET_LONG(addr));
+	#else 
 	Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(addr));
+	#endif
 	append_str(output_stream, str);
     }
 }

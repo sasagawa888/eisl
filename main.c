@@ -167,10 +167,11 @@ bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;	/* invoked error? */
-int concurrent_flag = 0;	/* while executing concurrent_flag */
+int concurrent_flag = 0;	/* while executing concurrent */
 int concurrent_stop_flag = 0;	/* while remarking&sweeping */
 int concurrent_sweep_flag = 0;	/* while concurrent-sweeping */
 int concurrent_exit_flag = 0;	/* To exit GC thread */
+int parallel_flag = 0;      /* while executing parallel */
 int parallel_exit_flag = 0;	/* To exit parallel threads */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
@@ -184,12 +185,15 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 
 
 /* longjmp control and etc */
-Except_T Restart_Repl = { "Restart REPL" }, Exit_Interp =
-    { "Exit interpreter" };
+Except_T Restart_Repl = { "Restart REPL" }, 
+Exit_Interp = { "Exit interpreter" };
 jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
+Except_T Exit_Thread = { "Exit thread" };
+int signal_condition_x;
+int signal_condition_y;
 
 int block_tag_check[CTRLSTK];
 int block_data[CTRLSTK][3];

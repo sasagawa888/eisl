@@ -559,6 +559,7 @@ extern int  concurrent_flag;
 extern int  concurrent_stop_flag;
 extern int  concurrent_sweep_flag;
 extern int  concurrent_exit_flag;
+extern int parallel_flag;
 extern int parallel_exit_flag;
 
 // try function
@@ -566,12 +567,13 @@ extern bool try_flag;
 extern double try_timer;
 extern int try_res;
 
-// longjmp control and etc
+/* longjmp control and etc */
 extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[CTRLSTK];
 extern jmp_buf catch_buf[CTRLSTK];
 extern jmp_buf cont_buf;
 extern Except_T Ignored_Error;	// for ignore-errors
+extern Except_T Exit_Thread;
 extern int block_tag_check[CTRLSTK];
 extern int block_data[CTRLSTK][3];
 extern int catch_data[CTRLSTK][3];
@@ -588,6 +590,10 @@ extern int error_handler1;
 extern int trace_list;
 extern int backtrace[BACKSIZE];
 extern int unwind_nest;
+extern int signal_condition_x;
+extern int signal_condition_y;
+
+/* editor */
 extern int ed_lparen_col;
 extern int ed_rparen_col;
 extern const char *ed_candidate[COMPLETION_CANDIDATES_MAX];

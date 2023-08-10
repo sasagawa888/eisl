@@ -445,6 +445,7 @@ void init_pointer(void)
     error_handler = NIL;
     top_flag = true;
     start_flag = true;
+	error_flag = false;
     charcnt = 0;
     generic_func = NIL;
     generic_vars = NIL;

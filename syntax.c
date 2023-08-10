@@ -2714,7 +2714,7 @@ int f_plet(int arglist)
     pthread_mutex_unlock(&mutex);
 	parallel_flag = 0;
 	if(error_flag){
-		error_flag = 0;
+		error_flag = false;
 		signal_condition(signal_condition_x,signal_condition_y);
 	}
 
@@ -2777,7 +2777,7 @@ int f_pcall(int arglist, int th)
     pthread_mutex_unlock(&mutex);
 	parallel_flag = 0;
 	if(error_flag){
-		error_flag = 0;
+		error_flag = false;
 		signal_condition(signal_condition_x,signal_condition_y);
 	}
 
@@ -2828,7 +2828,7 @@ int f_pexec(int arglist, int th)
     pthread_mutex_unlock(&mutex);
 	parallel_flag = 0;
 	if(error_flag){
-		error_flag = 0;
+		error_flag = false;
 		signal_condition(signal_condition_x,signal_condition_y);
 	}
 

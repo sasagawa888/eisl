@@ -55,3 +55,8 @@
     (for ((i m (+ i 1)))
          ((= i n) t)
          (sin (cos (tan i)))))
+
+(defun error-test ()
+    (plet ((a (+ 1 2))
+           (b (error "error-test-parallel")))
+        a))

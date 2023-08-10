@@ -2623,7 +2623,7 @@ void init_para(void)
     }
 
     for (i = 0; i < worker_count; i++) {
-	para_size[i + 1] = 8 * 1024 * 1024; 
+	para_size[i + 1] = 100 * 1024 * 1024; 
 	pthread_attr_init(&para_attr[i + 1]);
 	pthread_attr_setstacksize(&para_attr[i + 1], para_size[i + 1]);
 	pthread_create(&para_thread[i + 1], &para_attr[i + 1], parallel, &queue[i]);

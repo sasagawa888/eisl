@@ -217,7 +217,7 @@ pthread_t concurrent_thread;
 pthread_mutex_t mutex;
 pthread_mutex_t mutex1;
 pthread_cond_t cond_gc;
-int remark[STACKSIZE];
+int remark[REMKSIZE];
 int remark_pt = 0;
 int worker_count;
 

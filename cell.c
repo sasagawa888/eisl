@@ -259,6 +259,10 @@ int freshcell(void)
 	fc--;
 	remark[remark_pt++] = res;
 	pthread_mutex_unlock(&mutex);
+    if (remark_pt > REMKSIZE) {
+	    handling_resource_err = true;
+	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	}
     } else if (!concurrent_flag) {
 	pthread_mutex_lock(&mutex);
 	res = hp;

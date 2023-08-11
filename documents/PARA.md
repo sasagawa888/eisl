@@ -94,6 +94,10 @@ worker1 send signal to main thread.
 enqueue [2,3,4,1]
 queue_pt = 4
 
+![GC](para1.png)
+
+![parallel](para1.png)
+
 ## Example
 see example/mandelbrot.lsp
 

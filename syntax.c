@@ -2597,8 +2597,7 @@ void *parallel(void *arg)
 	    goto exit;
 
 	ep[num] = ep[0];
-	TRY
-	para_output[num] = eval(para_input[num], num);
+	TRY para_output[num] = eval(para_input[num], num);
 	EXCEPT(Exit_Thread);
 	END_TRY;
 	enqueue(num);
@@ -2626,10 +2625,11 @@ void init_para(void)
     }
 
     for (i = 0; i < worker_count; i++) {
-	para_size[i + 1] = 8 * 1024 * 1024; 
+	para_size[i + 1] = 8 * 1024 * 1024;
 	pthread_attr_init(&para_attr[i + 1]);
 	pthread_attr_setstacksize(&para_attr[i + 1], para_size[i + 1]);
-	pthread_create(&para_thread[i + 1], &para_attr[i + 1], parallel, &queue[i]);
+	pthread_create(&para_thread[i + 1], &para_attr[i + 1], parallel,
+		       &queue[i]);
     }
 
     queue_pt = worker_count;
@@ -2702,7 +2702,7 @@ int f_plet(int arglist)
 
     temp = arg1;
     i = 0;
-	parallel_flag = 1;
+    parallel_flag = 1;
     while (!nullp(temp)) {
 	num[i] = eval_para(cadr(car(temp)));
 	temp = cdr(temp);
@@ -2712,11 +2712,11 @@ int f_plet(int arglist)
     pthread_mutex_lock(&mutex);
     pthread_cond_wait(&cond_main, &mutex);
     pthread_mutex_unlock(&mutex);
-	parallel_flag = 0;
-	if(error_flag){
-		error_flag = false;
-		signal_condition(signal_condition_x,signal_condition_y);
-	}
+    parallel_flag = 0;
+    if (error_flag) {
+	error_flag = false;
+	signal_condition(signal_condition_x, signal_condition_y);
+    }
 
     temp = arg1;
     i = 0;
@@ -2765,7 +2765,7 @@ int f_pcall(int arglist, int th)
 
     temp = arg2;
     i = 0;
-	parallel_flag = 1;
+    parallel_flag = 1;
     while (!nullp(temp)) {
 	num[i] = eval_para(car(temp));
 	temp = cdr(temp);
@@ -2775,11 +2775,11 @@ int f_pcall(int arglist, int th)
     pthread_mutex_lock(&mutex);
     pthread_cond_wait(&cond_main, &mutex);
     pthread_mutex_unlock(&mutex);
-	parallel_flag = 0;
-	if(error_flag){
-		error_flag = false;
-		signal_condition(signal_condition_x,signal_condition_y);
-	}
+    parallel_flag = 0;
+    if (error_flag) {
+	error_flag = false;
+	signal_condition(signal_condition_x, signal_condition_y);
+    }
 
     temp = NIL;
     i--;
@@ -2816,7 +2816,7 @@ int f_pexec(int arglist, int th)
 
     temp = arglist;
     i = 0;
-	parallel_flag = 1;
+    parallel_flag = 1;
     while (!nullp(temp)) {
 	num[i] = eval_para(car(temp));
 	temp = cdr(temp);
@@ -2826,11 +2826,11 @@ int f_pexec(int arglist, int th)
     pthread_mutex_lock(&mutex);
     pthread_cond_wait(&cond_main, &mutex);
     pthread_mutex_unlock(&mutex);
-	parallel_flag = 0;
-	if(error_flag){
-		error_flag = false;
-		signal_condition(signal_condition_x,signal_condition_y);
-	}
+    parallel_flag = 0;
+    if (error_flag) {
+	error_flag = false;
+	signal_condition(signal_condition_x, signal_condition_y);
+    }
 
     i--;
     return (para_output[num[i]]);

@@ -170,7 +170,7 @@ bool error_flag = false;	/* invoked error? */
 bool concurrent_flag = false;	/* while executing concurrent */
 bool concurrent_stop_flag = false;	/* while remarking&sweeping */
 bool concurrent_exit_flag = false;	/* To exit GC thread */
-bool parallel_flag = false;      /* while executing parallel */
+bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
@@ -184,13 +184,14 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 
 
 /* longjmp control and etc */
-Except_T Restart_Repl = { "Restart REPL" }, 
-Exit_Interp = { "Exit interpreter" };
+Except_T Restart_Repl = { "Restart REPL" },
+    Exit_Interp = { "Exit interpreter" };
 jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 Except_T Exit_Thread = { "Exit thread" };
+
 int signal_condition_x;
 int signal_condition_y;
 
@@ -444,7 +445,7 @@ void init_pointer(void)
     error_handler = NIL;
     top_flag = true;
     start_flag = true;
-	error_flag = false;
+    error_flag = false;
     charcnt = 0;
     generic_func = NIL;
     generic_vars = NIL;
@@ -462,11 +463,13 @@ void init_thread(void)
 {
 
     worker_count = sysconf(_SC_NPROCESSORS_CONF) - 1;
+    if (worker_count > 5)
+	worker_count = 5;
 
     /* create parallel function thread */
     init_para();
 
-	/* create concurrent GC thread */
+    /* create concurrent GC thread */
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);
 }
 
@@ -1462,18 +1465,18 @@ void print_flt(double x)
 void print_long(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	#ifdef __rpi__
+#ifdef __rpi__
 	fprintf(GET_PORT(output_stream), "%lld", GET_LONG(addr));
-	#else	
+#else
 	Fmt_fprint(GET_PORT(output_stream), "%D", GET_LONG(addr));
-    #endif
-	} else {
+#endif
+    } else {
 	char str[SHORT_STRSIZE];
-	#ifdef __rpi__
+#ifdef __rpi__
 	sprintf(str, SHORT_STRSIZE, "%lld", GET_LONG(addr));
-	#else 
+#else
 	Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(addr));
-	#endif
+#endif
 	append_str(output_stream, str);
     }
 }
@@ -2138,10 +2141,10 @@ int pop(int th)
 {
     int res;
 
-	if (sp[th] <= 0)
+    if (sp[th] <= 0)
 	error(STACK_UNDERF, "pop", NIL);
     res = stack[--sp[th]][th];
-	return (res);
+    return (res);
 }
 
 /* push/pop of arglist */
@@ -2154,10 +2157,10 @@ int arg_push(int addr, int th)
 
 int arg_pop(int th)
 {
-	int res;
-	
+    int res;
+
     res = argstk[--ap[th]][th];
-	return(res);
+    return (res);
 }
 
 /* shelter push/pop */
@@ -2172,13 +2175,13 @@ int shelter_push(int addr, int th)
 
 int shelter_pop(int th)
 {
-	int res;
+    int res;
 
     if (lp[th] <= 0)
 	error(SHELTER_UNDERF, "shelter_pop", NIL);
-    
-	res = shelter[--lp[th]][th];
-	return(res);
+
+    res = shelter[--lp[th]][th];
+    return (res);
 }
 
 /* system function regist subr to environment. */

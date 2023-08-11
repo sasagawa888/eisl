@@ -632,7 +632,7 @@ int signal_condition(int x, int y)
 	handling_resource_err = false;
 	RAISE(Ignored_Error);
     }
-	if (parallel_flag) {
+    if (parallel_flag) {
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;

@@ -60,3 +60,21 @@
     (plet ((a (+ 1 2))
            (b (error "error-test-parallel")))
         a))
+
+
+(defun rfib (n)
+    (for ((i 2 (+ i 1))
+          (f1 1 (+ i f1))
+          (f0 0 f1))
+         ((= i n) (+ n f1))))
+
+(defun repeat-fib30 (n)
+    (for ((i 0 (+ i 1)))
+         ((= i n) t)
+         (rfib 30)))
+
+(defun para-fib30 (n)
+    (pexec (repeat-fib30 (div n 2)) (repeat-fib30 (div n 2))))
+
+(defun seq-fib30 (n)
+    (repeat-fib30 n))

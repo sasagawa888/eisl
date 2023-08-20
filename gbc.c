@@ -257,8 +257,13 @@ void clr_cell(int addr)
 int check_gbc(void)
 {
     if (exit_flag) {
-	exit_flag = 0;
-	RAISE(Restart_Repl);
+	if (parallel_flag) {
+	    exit_flag = 0;
+	    RAISE(Exit_Thread);
+	} else {
+	    exit_flag = 0;
+	    RAISE(Restart_Repl);
+	}
     }
 
     if (!concurrent_flag && fc < FREESIZE)

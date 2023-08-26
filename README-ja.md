@@ -277,5 +277,8 @@ EISL <==================================> C
 - `(bignump x)` xが巨大整数ならばTをそうでなければNILを返す。
 - `(macroexpand-1 x)` S式であるｘを１度だけマクロ展開する。
 - `(macroexpand-all x)` S式であるｘを完全にマクロ展開する。
-
+- `(pcall fun a1 ... an)` 並列でfunに引数を適用する。PARA.mdを参照
+- `(pexec s1 ... sn)`  prognの並列版。PARA.mdを参照
+- `(plet forms body)`  letの並列版。PARA.mdを参照
+- `(plock s1 ... sn)`  ミューテックスをかけたprogn。PARA.mdを参照
 

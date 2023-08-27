@@ -21,7 +21,7 @@
               (find-all goal *ops* #'appropriate-p))))
 
 (defun appropriate-p (goal op)
-    (member goal (op-add-list op)))
+    (equal goal (op-add-list op)))
 
 (defun apply-op (op)
     (cond ((every #'achieve (op-preconds op))
@@ -92,3 +92,13 @@
     (gps '(son-at-home car-needs-batttery have-money have-phone-bool)
          '(son-at-school)
          *school-ops*))
+
+(import "test")
+(defglobal *tests-op* (make-op 'drive-son-to-school
+                               '(son-at-home car-works)
+                               '(son-at-school)
+                               '(son-at-home)))
+
+($test (op-add-list *tests-op*) (son-at-school))
+($test (op-del-list *tests-op*) (son-at-home))
+($test (appropriate-p '(son-at-school) *tests-op*) t)

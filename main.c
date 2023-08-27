@@ -316,6 +316,7 @@ int main(int argc, char *argv[])
     init_generic();
     init_thread();
 	init_dp();
+	init_pointer();
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==

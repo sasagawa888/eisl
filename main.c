@@ -315,6 +315,7 @@ int main(int argc, char *argv[])
     init_syntax();
     init_generic();
     init_thread();
+	init_dp();
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
@@ -427,13 +428,19 @@ char *library_file(const char *basename)
     return Str_cat(STRQUOTE(SHAREDIR) "/library/", 1, 0, basename, 1, 0);
 }
 
+void init_dp(void)
+{
+	int i;
+	for (i = 0; i < PARASIZE; i++)
+		dp[i] = 0;
+}
+
 void init_pointer(void)
 {
     int i, ls;
 
     for (i = 0; i < PARASIZE; i++) {
 	ep[i] = 0;
-	dp[i] = 0;
 	sp[i] = 0;
 	ap[i] = 0;
 	lp[i] = 0;

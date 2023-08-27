@@ -1287,6 +1287,7 @@ void replace_stok_buf(char *str);
 void heapdump(int start, int end);
 void init_cell(void);
 void init_class(void);
+void init_dp(void);
 void init_err_args(int cl);
 void init_exsubr(void);
 void init_generic(void);

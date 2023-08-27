@@ -87,3 +87,8 @@
                  '(have-money)
                  '(shop-has-money)
                  '(have-mone))))
+
+(defun test ()
+    (gps '(son-at-home car-needs-batttery have-money have-phone-bool)
+         '(son-at-school)
+         *school-ops*))

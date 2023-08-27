@@ -9,7 +9,8 @@
    (add-list :accessor op-add-list :initform nil :initarg add-list)
    (del-list :accessor op-del-list :initform nil :initarg del-list)))
 
-(defglobal op (create (class <op>)))
+(defun make-op (x1 x2 x3 x4)
+    (create (class <op>) 'action x1 'precond x2 'add-list x3 'del-list x4)) 
 
 (defun gps (*state* goals *ops*)
     (if (every #'achieve goals) 'solved))
@@ -57,3 +58,32 @@
     (cond ((null x) nil)
           ((member (car x) y) (cons (car x) (union (cdr x) y)))
           (t (union (cdr x) y))))
+
+
+;;; test
+(defglobal *school-ops*
+    (list
+        (make-op 'drive-son-to-school
+                 '(son-at-home car-works)
+                 '(son-at-school)
+                 '(son-at-home))
+        (make-op 'shop-installs-battery
+                 '(car-needs-battery shop-knows-problem shop-has-money)
+                 '(car-works)
+                 nil)
+        (make-op '(tell-shop-problem)
+                 `(in-communication-with-shop)
+                 '(shop-knows-problem)
+                 nil)
+        (make-op 'telephone-shop
+                 '(know-phone-number)
+                 '(in-comunication-with-shop)
+                 nil)
+        (make-op 'look-up-number
+                 '(have-phone-book)
+                 '(know-phone-number)
+                 nil)
+        (make-op 'give-shop-money
+                 '(have-money)
+                 '(shop-has-money)
+                 '(have-mone))))

@@ -1,33 +1,21 @@
 ;;; GPS(General problem Solver) PAIP
 
-(defglobal *state* nil)
-(defglobal *ops* nil)
+(defun gps (goal state ops)
+    (if (every #'achieve goal state ops) 'solved))
 
-(defclass <op> ()
-  ((action :accessor op-action :initform nil :initarg action)
-   (precond :accessor op-precond :initform nil :initarg precond)
-   (add-list :accessor op-add-list :initform nil :initarg add-list)
-   (del-list :accessor op-del-list :initform nil :initarg del-list)))
-
-(defun make-op (x1 x2 x3 x4)
-    (create (class <op>) 'action x1 'precond x2 'add-list x3 'del-list x4)) 
-
-(defun gps (*state* goals *ops*)
-    (if (every #'achieve goals) 'solved))
-
-(defun achieve (goal)
-    (or (member goal *state*)
-        (some #'apply-op
-              (find-all goal *ops* #'appropriate-p))))
+(defun achieve (goal state ops)
+    (cond ((null ops) t)
+          ((member goal state) t)
+          (t (achieve goal state (cdr ops)))))
 
 (defun appropriate-p (goal op)
-    (equal goal (op-add-list op)))
+    (if (member goal (op-add-list op)) t nil))
 
 (defun apply-op (op)
     (cond ((every #'achieve (op-preconds op))
            (print (list 'executing (op-acrion op)))
-           (setf *state* (set-difference *state* (op-del-list op)))
-           (setf *state* (union *state* (op-add-list op)))
+           (setf (dynamic *state*) (set-difference (dynamic *state*) (op-del-list op)))
+           (setf (dynamic *state*) (union (dynamic *state*) (op-add-list op)))
            t)))
 
 (defun some (f ls)
@@ -35,9 +23,9 @@
           ((funcall f (car ls)) t)
           (t (some f (cdr ls))) ))
 
-(defun every (f ls)
+(defun every (f :rest ls)
     (cond ((null ls) t)
-          ((funcall f (car ls)) (every f (cdr ls)))
+          ((apply f ls) (every f (cdr ls)))
           (t nil)))
 
 (defun find-all (x ls f)
@@ -59,6 +47,16 @@
           ((member (car x) y) (cons (car x) (union (cdr x) y)))
           (t (union (cdr x) y))))
 
+(defun make-op (action precond add-list del-list)
+    (list action precond add-list del-list))
+
+(defun op-action (x) (elt x 0))
+
+(defun op-precond (x) (elt x 1))
+
+(defun op-add-list (x) (elt x 2))
+
+(defun op-del-list (x) (elt x 3))
 
 ;;; test
 (defglobal *school-ops*
@@ -89,8 +87,8 @@
                  '(have-mone))))
 
 (defun test ()
-    (gps '(son-at-home car-needs-batttery have-money have-phone-bool)
-         '(son-at-school)
+    (gps '(son-at-home car-needs-batttery have-money have-phone-book)
+         'son-at-school
          *school-ops*))
 
 (import "test")
@@ -101,4 +99,5 @@
 
 ($test (op-add-list *tests-op*) (son-at-school))
 ($test (op-del-list *tests-op*) (son-at-home))
-($test (appropriate-p '(son-at-school) *tests-op*) t)
+($test (appropriate-p 'son-at-school *tests-op*) t)
+($test (achieve 'son-at-home (op-precond *tests-op*)) t)

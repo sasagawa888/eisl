@@ -1,37 +1,26 @@
 ;;; GPS(General problem Solver) PAIP
 
-(defun gps (goal state ops)
-    (if (every #'achieve goal state ops) 'solved))
+(defun gps (goal state)
+    (cond ((achieve goal state) t)
+          (t (gps goal (apply-op goal state)))))
 
-(defun achieve (goal state ops)
-    (cond ((null ops) t)
-          ((member goal state) t)
-          (t (achieve goal state (cdr ops)))))
+(defun achieve (goal state)
+    (if (member goal state) t nil))
 
-(defun appropriate-p (goal op)
-    (if (member goal (op-add-list op)) t nil))
-
-(defun apply-op (op)
-    (cond ((every #'achieve (op-preconds op))
-           (print (list 'executing (op-acrion op)))
-           (setf (dynamic *state*) (set-difference (dynamic *state*) (op-del-list op)))
-           (setf (dynamic *state*) (union (dynamic *state*) (op-add-list op)))
-           t)))
-
-(defun some (f ls)
-    (cond ((null ls) nil)
-          ((funcall f (car ls)) t)
-          (t (some f (cdr ls))) ))
-
-(defun every (f :rest ls)
-    (cond ((null ls) t)
-          ((apply f ls) (every f (cdr ls)))
-          (t nil)))
-
-(defun find-all (x ls f)
-    (cond ((null ls) nil)
-          ((funcall f x (car ls)) (find-all x (cdr ls) f))
-          (t (find-all x (cdr ls) f))))
+(defun apply-op (goal state)
+    (apply-op1 goal state *school-ops*))
+    
+(defun apply-op1 (goal state ops)
+    (cond ((null ops) (error "cant apply"))
+          ((member goal (op-add-list (car ops)))
+           (print (op-action (car ops)))
+           (union (set-difference state (op-del-list (car ops))) (op-add-list (car ops))))
+          (t (apply-op1 goal state (cdr ops)))))
+          
+(defun union (x y)
+    (cond ((null x) y)
+          ((member (car x) y) (union (cdr x) y))
+          (t (cons (car x) (union (cdr x) y)))))
 
 (defun set-difference (x y)
     (append (set-difference1 x y)
@@ -41,11 +30,6 @@
     (cond ((null x) nil)
           ((member (car x) y) (set-difference1 (cdr x) y))
           (t (cons (car x) (set-difference1 (cdr x) y)))))
-
-(defun union (x y)
-    (cond ((null x) nil)
-          ((member (car x) y) (cons (car x) (union (cdr x) y)))
-          (t (union (cdr x) y))))
 
 (defun make-op (action precond add-list del-list)
     (list action precond add-list del-list))
@@ -87,9 +71,8 @@
                  '(have-mone))))
 
 (defun test ()
-    (gps '(son-at-home car-needs-batttery have-money have-phone-book)
-         'son-at-school
-         *school-ops*))
+    (gps 'son-at-school
+         '(son-at-home car-needs-batttery have-money have-phone-book)))
 
 (import "test")
 (defglobal *tests-op* (make-op 'drive-son-to-school
@@ -99,5 +82,4 @@
 
 ($test (op-add-list *tests-op*) (son-at-school))
 ($test (op-del-list *tests-op*) (son-at-home))
-($test (appropriate-p 'son-at-school *tests-op*) t)
 ($test (achieve 'son-at-home (op-precond *tests-op*)) t)

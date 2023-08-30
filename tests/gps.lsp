@@ -1,37 +1,45 @@
 ;;; GPS(General problem Solver) PAIP
+(defglobal *ops* nil)
 
+;; solve a goal
 (defun gps (goal state)
     (cond ((achieve goal state) state)
           (t (gps goal (apply-op goal state)))))
 
+;; solve subgoals  
 (defun gps-all (goals state)
     (if (null goals)
         state
         (let ((result (gps (car goals) state)))
-            (if (not (eq result 'false))
+            (if result
                 (gps-all (cdr goals) result)
-                result))))
+                nil))))
 
-
+;; when goal is member of state, achieved a goal
 (defun achieve (goal state)
     (if (member goal state) t nil))
 
+;; apply goal on rule *ops*
 (defun apply-op (goal state)
-    (apply-op1 goal state *school-ops*))
+    (apply-op1 goal state *ops*))
     
+;; sub program of apply
 (defun apply-op1 (goal state ops)
-    (cond ((null ops) 'false)
-          ((not (eq (appropriate-p goal state (car ops)) 'false))
+    (cond ((null ops) nil) ;false 
+          ((appropriate-p goal state (car ops)) ;success goal
            (format (standard-output) "executing ~A~%" (op-action (car ops)))
            (union (set-difference state (op-del-list (car ops))) (op-add-list (car ops))))
-          (t (apply-op1 goal state (cdr ops)))))
+          (t (apply-op1 goal state (cdr ops))))) ; try next ops
 
+;; case1 goal is member of add-list and state is subset of precond -> success
+;; case2 goal is member of add-list and state is not subset of precond -> try subgoal precond.
+;; case3 or else false
 (defun appropriate-p (goal state op)
     (if (member goal (op-add-list op))
         (if (subsetp state (op-precond op))
             state
             (gps-all (op-precond op) state))
-        'false))
+        nil))
           
 (defun union (x y)
     (cond ((null x) y)
@@ -53,7 +61,7 @@
           (t nil)))
 
 (defun make-op (action precond add-list del-list)
-    (list action precond add-list del-list t))
+    (list action precond add-list del-list))
 
 (defun op-action (x) (elt x 0))
 
@@ -63,9 +71,6 @@
 
 (defun op-del-list (x) (elt x 3))
 
-(defun newp (x) (elt x 4))
-
-(defun used (x) (set-elt nil x 4))
 
 ;;; test
 (defglobal *school-ops*
@@ -96,6 +101,7 @@
                  '(have-mone))))
 
 (defun test ()
+    (setq *ops* *school-ops*)
     (gps 'son-at-school
          '(son-at-home car-needs-battery have-money have-phone-book)))
 

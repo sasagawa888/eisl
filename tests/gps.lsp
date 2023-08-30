@@ -104,3 +104,13 @@
     (setq *ops* *school-ops*)
     (gps '(son-at-school)
          '(son-at-home car-needs-battery have-money have-phone-book)))
+
+(defun test2 ()
+    (setq *ops* *school-ops*)
+    (gps '(have-money son-at-school)
+         '(son-at-home have-money car-works)))
+
+(defun test3 ()
+    (setq *ops* *school-ops*)
+    (gps '(have-money son-at-school)
+         '(son-at-home car-needs-battery have-money have-phone-book)))

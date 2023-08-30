@@ -2,17 +2,17 @@
 (defglobal *ops* nil)
 
 ;; solve a goal
-(defun gps (goal state)
+(defun gps-one (goal state)
     (cond ((achieve goal state) state)
-          (t (gps goal (apply-op goal state)))))
+          (t (gps-one goal (apply-op goal state)))))
 
-;; solve subgoals  
-(defun gps-all (goals state)
+;; solve goals  
+(defun gps (goals state)
     (if (null goals)
         state
-        (let ((result (gps (car goals) state)))
+        (let ((result (gps-one (car goals) state)))
             (if result
-                (gps-all (cdr goals) result)
+                (gps (cdr goals) result)
                 nil))))
 
 ;; when goal is member of state, achieved a goal
@@ -38,7 +38,7 @@
     (if (member goal (op-add-list op))
         (if (subsetp state (op-precond op))
             state
-            (gps-all (op-precond op) state))
+            (gps (op-precond op) state))
         nil))
           
 (defun union (x y)
@@ -100,17 +100,7 @@
                  '(shop-has-money)
                  '(have-mone))))
 
-(defun test ()
+(defun test1 ()
     (setq *ops* *school-ops*)
-    (gps 'son-at-school
+    (gps '(son-at-school)
          '(son-at-home car-needs-battery have-money have-phone-book)))
-
-(import "test")
-(defglobal *tests-op* (make-op 'drive-son-to-school
-                               '(son-at-home car-works)
-                               '(son-at-school)
-                               '(son-at-home)))
-
-($test (op-add-list *tests-op*) (son-at-school))
-($test (op-del-list *tests-op*) (son-at-home))
-($test (achieve 'son-at-home (op-precond *tests-op*)) t)

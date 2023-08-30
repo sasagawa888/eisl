@@ -12,10 +12,16 @@
     
 (defun apply-op1 (goal state ops)
     (cond ((null ops) (error "cant apply"))
-          ((member goal (op-add-list (car ops)))
-           (print (op-action (car ops)))
+          ((appropriate-p state (car ops))
+           (format (standard-output) "executing ~A~%" (op-action (car ops)))
+           (used (car ops))
            (union (set-difference state (op-del-list (car ops))) (op-add-list (car ops))))
           (t (apply-op1 goal state (cdr ops)))))
+
+(defun appropriate-p (state op)
+    (if (and (newp op) (subsetp (op-precond op) state))
+        t
+        nil))
           
 (defun union (x y)
     (cond ((null x) y)
@@ -31,8 +37,13 @@
           ((member (car x) y) (set-difference1 (cdr x) y))
           (t (cons (car x) (set-difference1 (cdr x) y)))))
 
+(defun subsetp (x y)
+    (cond ((null x) t)
+          ((member (car x) y) (subsetp (cdr x) y))
+          (t nil)))
+
 (defun make-op (action precond add-list del-list)
-    (list action precond add-list del-list))
+    (list action precond add-list del-list t))
 
 (defun op-action (x) (elt x 0))
 
@@ -41,6 +52,10 @@
 (defun op-add-list (x) (elt x 2))
 
 (defun op-del-list (x) (elt x 3))
+
+(defun newp (x) (elt x 4))
+
+(defun used (x) (set-elt nil x 4))
 
 ;;; test
 (defglobal *school-ops*
@@ -53,13 +68,13 @@
                  '(car-needs-battery shop-knows-problem shop-has-money)
                  '(car-works)
                  nil)
-        (make-op '(tell-shop-problem)
+        (make-op 'tell-shop-problem
                  `(in-communication-with-shop)
                  '(shop-knows-problem)
                  nil)
         (make-op 'telephone-shop
                  '(know-phone-number)
-                 '(in-comunication-with-shop)
+                 '(in-communication-with-shop)
                  nil)
         (make-op 'look-up-number
                  '(have-phone-book)
@@ -72,7 +87,7 @@
 
 (defun test ()
     (gps 'son-at-school
-         '(son-at-home car-needs-batttery have-money have-phone-book)))
+         '(son-at-home car-needs-battery have-money have-phone-book)))
 
 (import "test")
 (defglobal *tests-op* (make-op 'drive-son-to-school

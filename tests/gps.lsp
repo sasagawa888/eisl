@@ -1,8 +1,17 @@
 ;;; GPS(General problem Solver) PAIP
 
 (defun gps (goal state)
-    (cond ((achieve goal state) t)
+    (cond ((achieve goal state) state)
           (t (gps goal (apply-op goal state)))))
+
+(defun gps-all (goals state)
+    (if (null goals)
+        state
+        (let ((result (gps (car goals) state)))
+            (if (not (eq result 'false))
+                (gps-all (cdr goals) result)
+                result))))
+
 
 (defun achieve (goal state)
     (if (member goal state) t nil))
@@ -11,17 +20,18 @@
     (apply-op1 goal state *school-ops*))
     
 (defun apply-op1 (goal state ops)
-    (cond ((null ops) (error "cant apply"))
-          ((appropriate-p state (car ops))
+    (cond ((null ops) 'false)
+          ((not (eq (appropriate-p goal state (car ops)) 'false))
            (format (standard-output) "executing ~A~%" (op-action (car ops)))
-           (used (car ops))
            (union (set-difference state (op-del-list (car ops))) (op-add-list (car ops))))
           (t (apply-op1 goal state (cdr ops)))))
 
-(defun appropriate-p (state op)
-    (if (and (newp op) (subsetp (op-precond op) state))
-        t
-        nil))
+(defun appropriate-p (goal state op)
+    (if (member goal (op-add-list op))
+        (if (subsetp state (op-precond op))
+            state
+            (gps-all (op-precond op) state))
+        'false))
           
 (defun union (x y)
     (cond ((null x) y)

@@ -73,6 +73,7 @@
 
 (defun op-del-list (x) (elt x 3))
 
+(defun use (x) (setq *ops* x) (length x))
 
 ;;; test
 (defglobal *school-ops*
@@ -103,17 +104,48 @@
                  '(have-mone))))
 
 (defun test1 ()
-    (setq *ops* *school-ops*)
+    (use *school-ops*)
     (gps '(son-at-home car-needs-battery have-money have-phone-book)
          '(son-at-school)))
 
 (defun test2 ()
-    (setq *ops* *school-ops*)
+    (use *school-ops*)
     (gps '(son-at-home have-money car-works)
          '(have-money son-at-school)))
 
 (defun test3 ()
-    (setq *ops* *school-ops*)
+    (use *school-ops*)
     (gps '(son-at-home car-needs-battery have-money have-phone-book)
          '(have-money son-at-school)))
-         
+
+
+(defglobal *banana-ops* 
+    (list (make-op 'limb-on-chair
+                   '(chaire-at-middle-room at-middle-room on-floor)
+                   '(at-bananas on-chair)
+                   '(at-middle-room on-floor))
+          (make-op 'push-chair-from-door-to-middle-room
+                   '(chair-at-foor at-door)
+                   '(chair-at-middle-door at-middle-door)
+                   '(chair-at-door at-door))
+          (make-op 'walk-from-door-to-middle-room
+                   '(at-door on-floor)
+                   '(at-middle-room)
+                   '(at-door))
+          (make-op 'grasp-bananas
+                   '(at-bananas empty-handed)
+                   '(has-bananas)
+                   '(empty-handed))
+          (make-op 'drop-ball
+                   '(has-ball)
+                   '(empty-handed)
+                   '(has-ball))
+          (make-op 'eat-bananas
+                   '(has-bananas)
+                   '(empty-handed not-hungry)
+                   '(has-bananas hungry))))
+
+(defun banana ()
+    (use *banana-ops*)
+    (gps '(at-door on-floor has-ball hungry chair-at-door)
+         '(not-hungry)))

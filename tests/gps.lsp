@@ -1,44 +1,46 @@
 ;;; GPS(General problem Solver) PAIP
+
+
 (defglobal *ops* nil)
 
-;; solve a goal
-(defun gps-one (goal state)
-    (cond ((achieve goal state) state)
-          (t (gps-one goal (apply-op goal state)))))
-
 ;; solve goals  
-(defun gps (goals state)
+(defun gps (state goals)
     (if (null goals)
         state
-        (let ((result (gps-one (car goals) state)))
-            (if result
-                (gps (cdr goals) result)
+        (let ((state1 (solve state (car goals))))
+            (if state1
+                (gps state1 (cdr goals))
                 nil))))
 
+;; solve a goal
+(defun solve (state goal)
+    (cond ((achieve state goal) state)
+          (t (solve (apply-op state goal) goal))))
+
 ;; when goal is member of state, achieved a goal
-(defun achieve (goal state)
+(defun achieve (state goal)
     (if (member goal state) t nil))
 
 ;; apply goal on rule *ops*
-(defun apply-op (goal state)
-    (apply-op1 goal state *ops*))
+(defun apply-op (state goal)
+    (apply-op1 state goal *ops*))
     
 ;; sub program of apply
-(defun apply-op1 (goal state ops)
+(defun apply-op1 (state goal ops)
     (cond ((null ops) nil) ;false 
-          ((appropriate-p goal state (car ops)) ;success goal
+          ((appropriate-p state goal (car ops)) ;success goal
            (format (standard-output) "executing ~A~%" (op-action (car ops)))
            (union (set-difference state (op-del-list (car ops))) (op-add-list (car ops))))
-          (t (apply-op1 goal state (cdr ops))))) ; try next ops
+          (t (apply-op1 state goal (cdr ops))))) ; try next ops
 
 ;; case1 goal is member of add-list and state is subset of precond -> success
 ;; case2 goal is member of add-list and state is not subset of precond -> try subgoal precond.
 ;; case3 or else false
-(defun appropriate-p (goal state op)
+(defun appropriate-p (state goal op)
     (if (member goal (op-add-list op))
         (if (subsetp state (op-precond op))
             state
-            (gps (op-precond op) state))
+            (gps state (op-precond op)))
         nil))
           
 (defun union (x y)
@@ -102,15 +104,16 @@
 
 (defun test1 ()
     (setq *ops* *school-ops*)
-    (gps '(son-at-school)
-         '(son-at-home car-needs-battery have-money have-phone-book)))
+    (gps '(son-at-home car-needs-battery have-money have-phone-book)
+         '(son-at-school)))
 
 (defun test2 ()
     (setq *ops* *school-ops*)
-    (gps '(have-money son-at-school)
-         '(son-at-home have-money car-works)))
+    (gps '(son-at-home have-money car-works)
+         '(have-money son-at-school)))
 
 (defun test3 ()
     (setq *ops* *school-ops*)
-    (gps '(have-money son-at-school)
-         '(son-at-home car-needs-battery have-money have-phone-book)))
+    (gps '(son-at-home car-needs-battery have-money have-phone-book)
+         '(have-money son-at-school)))
+         

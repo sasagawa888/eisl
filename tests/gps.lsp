@@ -2,19 +2,27 @@
 
 
 (defglobal *ops* nil)
+(defglobal *dbg* nil)
+
+
 
 ;; solve goals  
 (defun gps (state goals)
+    (if (gps1 state goals)
+        t
+        nil))
+
+(defun gps1 (state goals)
     (if (null goals)
         state
         (let ((state1 (solve state (car goals))))
             (if state1
-                (gps state1 (cdr goals))
+                (gps1 state1 (cdr goals))
                 nil))))
 
 ;; solve a goal
 (defun solve (state goal)
-    ;(print goal)
+    (dbgprt state goal)
     (cond ((achieve state goal) state)
           (t (solve (apply-op state goal) goal))))
 
@@ -41,7 +49,7 @@
     (if (member goal (op-add-list op))
         (if (subsetp state (op-precond op))
             state
-            (gps state (op-precond op)))
+            (gps1 state (op-precond op)))
         nil))
           
 (defun union (x y)
@@ -76,6 +84,13 @@
 
 (defun use (x) (setq *ops* x) (length x))
 
+(defun dbgprt (state goal)
+    (if *dbg*
+        (format (standard-output) "state=~A goal=~A~%" state goal)))
+
+(defun debug (x)
+    (if x (setq *dbg* t) (setq *dbg* nil)))
+
 ;;; test
 (defglobal *school-ops*
     (list
@@ -104,17 +119,17 @@
                  '(shop-has-money)
                  '(have-mone))))
 
-(defun test1 ()
+(defun school1 ()
     (use *school-ops*)
     (gps '(son-at-home car-needs-battery have-money have-phone-book)
          '(son-at-school)))
 
-(defun test2 ()
+(defun school2 ()
     (use *school-ops*)
     (gps '(son-at-home have-money car-works)
          '(have-money son-at-school)))
 
-(defun test3 ()
+(defun school3 ()
     (use *school-ops*)
     (gps '(son-at-home car-needs-battery have-money have-phone-book)
          '(have-money son-at-school)))

@@ -14,6 +14,7 @@
 
 ;; solve a goal
 (defun solve (state goal)
+    ;(print goal)
     (cond ((achieve state goal) state)
           (t (solve (apply-op state goal) goal))))
 
@@ -120,13 +121,13 @@
 
 
 (defglobal *banana-ops* 
-    (list (make-op 'limb-on-chair
-                   '(chaire-at-middle-room at-middle-room on-floor)
+    (list (make-op 'climb-on-chair
+                   '(chair-at-middle-room at-middle-room on-floor)
                    '(at-bananas on-chair)
                    '(at-middle-room on-floor))
           (make-op 'push-chair-from-door-to-middle-room
-                   '(chair-at-foor at-door)
-                   '(chair-at-middle-door at-middle-door)
+                   '(chair-at-door at-door)
+                   '(chair-at-middle-room at-middle-room)
                    '(chair-at-door at-door))
           (make-op 'walk-from-door-to-middle-room
                    '(at-door on-floor)

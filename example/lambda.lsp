@@ -116,10 +116,10 @@ parse
   (((#\) :rest _ls) _res)
       (setq *rest-list* _ls)
       _res)
-  (((_body :rest _ls) empty) (when (variable-p _body))
+  (((_body :rest _ls) empty) (when (alphabet-p _body))
              (setq *rest-list* _ls)
              (parse *rest-list* (convert _body <symbol>)))
-  (((_body :rest _ls) _res) (when (variable-p _body))
+  (((_body :rest _ls) _res) (when (alphabet-p _body))
              (setq *rest-list* _ls)
              (parse *rest-list* (cons _res (list (convert _body <symbol>)))))
   (else (print "syntax error")))
@@ -127,8 +127,9 @@ parse
 (defun lambda-p (x)
   (and (consp x) (eq (car x) '^)))
 
-(defun variable-p (x)
+(defun alphabet-p (x)
   (and (characterp x) (char>= x #\A) (char<= x #\z)))
+
 
 (defpattern combinator
   ((empty) nil)

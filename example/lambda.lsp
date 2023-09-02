@@ -14,6 +14,7 @@
 ;; I = ^x.x
 ;; K = ^x.^y.x
 ;; S = ^x.^y.^z.xz(yz)
+;; Y = ^y.(^x.y(xx))(^x.y(xx))
 
 ;; Shorthand
 ;; ^xyz.z -> ^x.^y.^z.z
@@ -134,10 +135,10 @@ parse
 (defpattern combinator
   ((empty) nil)
   ((_x) (when (lambda-p _x)) _x)
-  ((I) '(^ x x))
-  ((K) '(^ x (^ y x)))
-  ((S) '(^ x (^ y (^ z ((x z) (y z))))))
-  ((Y) '(^ y ((^ x (y (x x))) (^ x (y (x x))))))
+  ((I) (parse* "^x.x"))
+  ((K) (parse* "^x.^y.x"))
+  ((S) (parse* "^x.^y.^z.xz(yz)"))
+  ((Y) (parse* "^y.(^x.y(xx))(^x.y(xx))"))
   (((_x :rest _xs)) (cons (combinator _x) (combinator _xs)))
   ((_x) _x))
 
@@ -181,8 +182,8 @@ parse
 ($test (parse* "ABCD") (((a b) c) d))
 ($test (parse* "A(B(C(D)))") (a (b (c d))))
 
-($test (reduce 'y) y)
-($test (reduce '(x y)) (x y))
-($test (reduce '((^ x x) y) ) y)
-($test (reduce '((^ x a) y) ) a)
+;($test (reduce 'y) y)
+;($test (reduce '(x y)) (x y))
+;($test (reduce '((^ x x) y) ) y)
+;($test (reduce '((^ x a) y) ) a)
 

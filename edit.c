@@ -442,7 +442,7 @@ static void right(int *j, int *uni_j)
 {
     int c;
 
-    if (buffer[*j][0] == 0) {
+    if (buffer[*j][0] == 0 || buffer[*j][0] == EOL) {
 	return;
     }
 

@@ -84,7 +84,7 @@ static const char *extended[] = {
     "delay-microseconds", "wiringpi-spi-setup", "digital-write-byte",
     "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",
     "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
-    "pwm-write", "pull-up-dn-control", "delay", "compile-file",
+    "pwm-write", "pull-up-dn-control", "delay-seconds", "compile-file",
     "formatter", "line-argument", "getenv", "system",
     "c-include", "c-define", "c-lang", "c-option", "try", "read_exp",
     "plet", "pcall", "pexec", "plock",

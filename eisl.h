@@ -1362,7 +1362,24 @@ int f_delay_microseconds(int arglist, int th);
 void debugger(void);
 void ntt_test();
 
-// Fast project
+/* Fast project */
+int f_bignump(int arglist, int th);
+int f_classp(int arglist, int th);
+int f_fixnump(int arglist, int th);
+int f_freedll(int arglist, int th);
+int f_longnump(int arglist, int th);
+int f_get_method(int arglist,int th);
+int f_get_method_body(int arglist, int th);
+int f_get_method_priority(int arglist, int th);
+int f_ignore(int arglist, int th);
+int f_ignore_toplevel_check(int arglist, int th);
+int f_macrop(int arglist, int th);
+int f_readed_array_list(int arglist,int th);
+int f_self_introduction(int arglist,int th);
+int f_superp_for_compiler(int arglist,int th);
+int f_subrp(int arglist, int th);
+int f_system(int arglist, int th);
+
 int a_adaptp(int x, int y);
 int a_matchp(int x, int y);
 int shelter_push(int addr, int th);
@@ -1371,36 +1388,23 @@ int freecell(void);
 int get_int(int addr);
 long long int get_long(int addr);
 int nth(int n, int addr);
-int f_freedll(int arglist, int th);
-int f_system(int arglist, int th);
 void dynamic_link(int x);
 int set_car(int x, int y);
 int set_cdr(int x, int y);
 int set_aux(int x, int y);
 int set_opt(int x, int y);
 int call_subr(int func, int arglist, int th);
-int f_subrp(int arglist, int th);
 int make_int_long(int n);
 int make_str_flt(const char *str);
 int make_double_flt(double x);
 int make_str_long(const char *str);
 int make_fast_str_long(const char *str);
 int nth_cdr(int n, int x);
-int f_macrop(int arglist, int th);
-int f_fixnump(int arglist, int th);
-int f_longnump(int arglist, int th);
-int f_bignump(int arglist, int th);
 int convert(int arg1, int arg2);
 int get_aux(int x);
-int f_readed_array_list(int arglist,int th);
-int f_get_method(int arglist,int th);
-int f_get_method_body(int arglist, int th);
-int f_get_method_priority(int arglist, int th);
-int f_ignore_toplevel_check(int arglist, int th);
 int fast_length(int x);
 int fast_car(int x);
 int fast_cdr(int x);
-int f_self_introduction(int arglist,int th);
 int set_dynamic(int x, int y, int th);
 int set_prop(int x, int y);
 int get_prop(int x);
@@ -1408,13 +1412,10 @@ int get_opt(int x);
 int get_dynpt();
 int set_dynpt(int x);
 int set_catch_symbols(int x);
-int f_ignore(int arglist, int th);
-int f_classp(int arglist, int th);
-int f_superp_for_compiler(int arglist,int th);
 char *get_name(int x);
 double get_flt(int x);
 
-
+/* Edlis */
 void display_buffer(void);
 enum HighlightToken check_token_buffer(int col);
 int find_lparen_buffer(int col);
@@ -1429,6 +1430,5 @@ int replace_fragment_buffer(const char *newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
-
 
 #endif

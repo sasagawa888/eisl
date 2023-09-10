@@ -2726,6 +2726,7 @@ int f_plet(int arglist, int th __unused)
 	i++;
     }
 
+	res = NIL;
     while (arg2 != NIL) {
 	shelter_push(arg2, 0);
 	res = eval(car(arg2), 0);

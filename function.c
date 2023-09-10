@@ -1758,6 +1758,7 @@ int f_map_into(int arglist, int th)
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
 
+    arg4 = NIL;
     if (listp(arg1) && nullp(arg3))
 	arg4 = arg1;
     else if (listp(arg1))

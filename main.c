@@ -580,7 +580,7 @@ void set_stok_buf(int index, char c)
 {
     if (index >= stok.bufsize) {
 	int new_bufsize = index + 1;
-	stok.buf = RESIZE(stok.buf, sizeof(char) * new_bufsize);;
+	RESIZE(stok.buf, sizeof(char) * new_bufsize);
 	stok.bufsize = new_bufsize;
 
     }
@@ -590,7 +590,7 @@ void set_stok_buf(int index, char c)
 
 void replace_stok_buf(char *str)
 {
-    if (strlen(str) > stok.bufsize) {
+    if (strlen(str) > (size_t)stok.bufsize) {
 	int new_bufsize = strlen(str);
 	RESIZE(stok.buf, sizeof(char) * new_bufsize);
 	stok.bufsize = new_bufsize;

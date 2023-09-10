@@ -76,7 +76,7 @@ void init_exsubr(void)
     def_subr("DIGITAL-WRITE-BYTE", f_digital_write_byte);
     def_subr("PULL-UP-DN-CONTROL", f_pull_up_dn_control);
     def_subr("DIGITAL-READ", f_digital_read);
-    def_subr("DELAY", f_delay);
+    def_subr("DELAY-SECONDS", f_delay);
     def_subr("DELAY-MICROSECONDS", f_delay_microseconds);
 #endif
 

@@ -198,7 +198,8 @@ EISL <==================================> C
 (digital-write n v) <===> digitalWrite(n, v)
 (digital-write-byte v) <===> digitalWriteByte(value)
 (digital-read pin) <===> digitalRead(pin)
-(delay howlong) <===> void delay(unsigned int howLong)
+(delay-seconds howlong) <===> void delay(unsigned int howLong)
+(delay-microseconds howlong) <===> void delayMicroseconds(unsigned int howLong)
 (pull-up-dn-control pin pud) <===> pullUpDnControl(pin,pud)
 (pwm-set-mode 'pwm-mode-ms) <===> pwmSetMode(PWM_MODE_MS); or 'pwm-mode-bal -> PWM_MODE_BAL
 (pwm-set-clock n) <===> pwmSetClock(n)

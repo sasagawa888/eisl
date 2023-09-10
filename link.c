@@ -82,7 +82,6 @@ void dynamic_link(int x)
     init_f0(GBC_IDX, gbc);
     init_f0(FRESHCELL_IDX, freshcell);
     init_f0(FREECELL_IDX, freecell);
-    init_f0(POP_IDX, pop);
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
     init_f0(GET_ERROR_FLAG_IDX, get_error_flag);
@@ -112,8 +111,6 @@ void dynamic_link(int x)
     init_f1(VECTOR_IDX, vector);
     init_f1(FASTCAR_IDX, fast_car);
     init_f1(FASTCDR_IDX, fast_cdr);
-    init_f1(FINDENV_IDX, find_env);
-    init_f1(PUSH_IDX, push);
     init_f1(GETOPT_IDX, get_opt);
     init_f1(GETPROP_IDX, get_prop);
     init_f1(SETDYNPT_IDX, set_dynpt);
@@ -121,8 +118,8 @@ void dynamic_link(int x)
     init_f1(BIGNTOPARMANENT_IDX, big_to_parmanent);
     init_f1(SET_ERROR_HANDLER_IDX, set_error_handler);
     init_f1(SET_ERROR_FLAG_IDX, set_error_flag);
+    init_f1(PPOP_IDX, pop);
     init_f1(PARGPOP_IDX, arg_pop);
-    init_f1(PSHELTERPOP_IDX, shelter_pop);
     init_f1(PSHELTERPOP_IDX, shelter_pop);
     init_f1(EVAL_PARA_IDX, eval_para);
     init_f1(GET_PARA_OUTPUT_IDX, get_para_output);
@@ -163,9 +160,11 @@ void dynamic_link(int x)
     init_f2(ADAPTP_IDX, a_adaptp);
     init_f2(MATCHP_IDX, a_matchp);
     init_f2(ILOSERR_IDX, ILOSerror);
+    init_f2(PFINDENV_IDX, find_env);
     init_f2(PFINDDYN_IDX, find_dyn);
     init_f2(PARGPUSH_IDX, arg_push);
     init_f2(PEVAL_IDX, eval);
+    init_f2(PPUSH_IDX, push);
     init_f2(PSHELTERPUSH_IDX, shelter_push);
 
 

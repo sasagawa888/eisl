@@ -19,7 +19,7 @@
 bool read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 		    int *rl_line);
 
-int f_edit(int arglist)
+int f_edit(int arglist, int th __unused)
 {
     int arg1, res;
 

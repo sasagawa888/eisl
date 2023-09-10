@@ -112,9 +112,9 @@ static inline int Fpargpop(int x)
 
 
 
-static inline int Fpop(void)
+static inline int Fpop(int x)
 {
-    return f0[POP_IDX] ();
+    return f1[PPOP_IDX] (x);
 }
 
 static inline int Fpshelterpop(int x)
@@ -257,6 +257,11 @@ static inline int fast_cdr(int x)
     return f1[FASTCDR_IDX] (x);
 }
 
+static inline int Fpfindenv(int x, int y)
+{
+    return f2[PFINDENV_IDX] (x, y);
+}
+
 static inline int Fpfinddyn(int x, int y)
 {
     return f2[PFINDDYN_IDX] (x, y);
@@ -272,9 +277,9 @@ static inline int Fpshelterpush(int x, int y)
     return f2[PSHELTERPUSH_IDX] (x, y);
 }
 
-static inline int Fpush(int x)
+static inline int Fpush(int x, int y)
 {
-    return f1[PUSH_IDX] (x);
+    return f2[PPUSH_IDX] (x, y);
 }
 
 static inline int Fgetopt(int x)

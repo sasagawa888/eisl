@@ -1342,7 +1342,7 @@ int f_symbol_class(int arglist, int th);
 
 void setcolor(short n);
 int eisl_getch(void);
-int f_edit(int arglist);
+int f_edit(int arglist, int th);
 #ifdef __rpi__
 int f_wiringpi_setup_gpio(int arglist, int th);
 int f_wiringpi_spi_setup_ch_speed(int arglist, int th);

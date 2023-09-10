@@ -1591,10 +1591,10 @@ defgeneric compile
                (comp-funcall2 stream x env args tail name global test clos))
               (clos
                ;;in lambda 
-               (format stream "Fpush(Fcdr(Fmakesym(\"~A\")));" (last (car lambda-free-var)))
+               (format stream "Fpush(Fcdr(Fmakesym(\"~A\")),0);" (last (car lambda-free-var)))
                (format stream "res=")
                (comp-funcall-clang-left-to-right stream x env args tail name global test clos)
-               (format stream ";Fset_cdr(Fmakesym(\"~A\"),Fpop());" (last (car lambda-free-var))))
+               (format stream ";Fset_cdr(Fmakesym(\"~A\"),Fpop(0));" (last (car lambda-free-var))))
               ((null (cdr x))
                ;;thunk
                (unless (= (cdr (assoc (car x) function-arg)) 0)

@@ -604,9 +604,9 @@ void debugger()
 	    for (i = 0; i < worker_count; i++) {
 		Fmt_print("thread%d=", i);
 		for (j = 0; j < dp[i]; j++) {
-		    print(dynamic[j][0]);
+		    print(dynamic[j][0][i]);
 		    printf("=");
-		    print(dynamic[j][1]);
+		    print(dynamic[j][1][i]);
 		    printf(" ");
 		}
 		putchar('\n');
@@ -869,6 +869,8 @@ int f_get_myself(int arglist, int th __unused)
 	return (cons
 		(make_sym("DEFMACRO"),
 		 cons(arg1, GET_CAR(GET_CAR(GET_CAR(arg1))))));
+
+    return(NIL);
 }
 
 /* for Raspberry PI 

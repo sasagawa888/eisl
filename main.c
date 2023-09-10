@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
 
 	    switch (ch) {
 	    case 'l':
-		if (f_probe_file(list1(make_str(optarg))) == T) {
+		if (f_probe_file(list1(make_str(optarg)),0) == T) {
 		    f_load(list1(make_str(optarg)), 0);
 		} else {
 		    puts("File doesn't exist.");
@@ -2193,13 +2193,13 @@ int shelter_pop(int th)
 }
 
 /* system function regist subr to environment. */
-void def_subr(const char *symname, int (*func)(int))
+void def_subr(const char *symname, int (*func)(int, int))
 {
     bind_func(symname, SUBR, func);
 }
 
 /* regist fsubr(not eval argument) */
-void def_fsubr(const char *symname, int (*func)(int))
+void def_fsubr(const char *symname, int (*func)(int, int))
 {
     bind_func(symname, FSUBR, func);
 }
@@ -2212,7 +2212,7 @@ static inline void SET_SUBR(int addr, subr_t x)
     heap[addr].val.car.subr = x;
 }
 
-void bind_func(const char *name, tag_t tag, int (*func)(int))
+void bind_func(const char *name, tag_t tag, int (*func)(int, int))
 {
     int sym, val;
 

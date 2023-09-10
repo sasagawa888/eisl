@@ -275,7 +275,7 @@ void init_generic(void)
 }
 
 /* arithmetic function */
-int f_plus(int arglist)
+int f_plus(int arglist, int th __unused)
 {
     int augend;
 
@@ -292,7 +292,7 @@ int f_plus(int arglist)
     return (augend);
 }
 
-int f_minus(int arglist)
+int f_minus(int arglist, int th __unused)
 {
     int minuend, n;
 
@@ -314,7 +314,7 @@ int f_minus(int arglist)
     return (minuend);
 }
 
-int f_mult(int arglist)
+int f_mult(int arglist, int th __unused)
 {
     int multiplicand;
 
@@ -331,7 +331,7 @@ int f_mult(int arglist)
     return (multiplicand);
 }
 
-int f_quotient(int arglist)
+int f_quotient(int arglist, int th __unused)
 {
     int dividend;
 
@@ -349,7 +349,7 @@ int f_quotient(int arglist)
     return (dividend);
 }
 
-int f_smaller(int arglist)
+int f_smaller(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -368,7 +368,7 @@ int f_smaller(int arglist)
 	return (NIL);
 }
 
-int f_eqsmaller(int arglist)
+int f_eqsmaller(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -387,7 +387,7 @@ int f_eqsmaller(int arglist)
 	return (NIL);
 }
 
-int f_greater(int arglist)
+int f_greater(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -407,7 +407,7 @@ int f_greater(int arglist)
 }
 
 
-int f_eqgreater(int arglist)
+int f_eqgreater(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -428,7 +428,7 @@ int f_eqgreater(int arglist)
 	return (NIL);
 }
 
-int f_sin(int arglist)
+int f_sin(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -442,7 +442,7 @@ int f_sin(int arglist)
     return (make_flt(val));
 }
 
-int f_cos(int arglist)
+int f_cos(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -456,7 +456,7 @@ int f_cos(int arglist)
     return (make_flt(val));
 }
 
-int f_tan(int arglist)
+int f_tan(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -470,7 +470,7 @@ int f_tan(int arglist)
     return (make_flt(val));
 }
 
-int f_atan(int arglist)
+int f_atan(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -484,7 +484,7 @@ int f_atan(int arglist)
     return (make_flt(val));
 }
 
-int f_sinh(int arglist)
+int f_sinh(int arglist, int th __unused)
 {
     int arg1;
 
@@ -503,7 +503,7 @@ int f_sinh(int arglist)
     return (make_flt(y));
 }
 
-int f_cosh(int arglist)
+int f_cosh(int arglist, int th __unused)
 {
     int arg1;
 
@@ -522,7 +522,7 @@ int f_cosh(int arglist)
     return (make_flt(y));
 }
 
-int f_tanh(int arglist)
+int f_tanh(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -538,7 +538,7 @@ int f_tanh(int arglist)
     return (make_flt(val));
 }
 
-int f_atanh(int arglist)
+int f_atanh(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -555,7 +555,7 @@ int f_atanh(int arglist)
     return (make_flt(val));
 }
 
-int f_floor(int arglist)
+int f_floor(int arglist, int th __unused)
 {
     int arg1;
 
@@ -581,7 +581,7 @@ int f_floor(int arglist)
 	return (arg1);
 }
 
-int f_ceiling(int arglist)
+int f_ceiling(int arglist, int th __unused)
 {
     int arg1;
 
@@ -603,7 +603,7 @@ int f_ceiling(int arglist)
 	return (arg1);
 }
 
-int f_truncate(int arglist)
+int f_truncate(int arglist, int th __unused)
 {
     int arg1;
 
@@ -630,7 +630,7 @@ int f_truncate(int arglist)
 }
 
 
-int f_round(int arglist)
+int f_round(int arglist, int th __unused)
 {
     int arg1;
 
@@ -661,7 +661,7 @@ int f_round(int arglist)
 	return (arg1);
 }
 
-int f_gcd(int arglist)
+int f_gcd(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -677,7 +677,7 @@ int f_gcd(int arglist)
     return (gcd(arg1, arg2));
 }
 
-int f_lcm(int arglist)
+int f_lcm(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -693,7 +693,7 @@ int f_lcm(int arglist)
     return (lcm(arg1, arg2));
 }
 
-int f_max(int arglist)
+int f_max(int arglist, int th __unused)
 {
     int res;
 
@@ -714,7 +714,7 @@ int f_max(int arglist)
     return (res);
 }
 
-int f_min(int arglist)
+int f_min(int arglist, int th __unused)
 {
     int res;
 
@@ -736,7 +736,7 @@ int f_min(int arglist)
 
 }
 
-int f_float(int arglist)
+int f_float(int arglist, int th __unused)
 {
     int arg1;
 
@@ -748,7 +748,7 @@ int f_float(int arglist)
     return (exact_to_inexact(arg1));
 }
 
-int f_floatp(int arglist)
+int f_floatp(int arglist, int th __unused)
 {
     int arg;
 
@@ -762,7 +762,7 @@ int f_floatp(int arglist)
 }
 
 
-int f_div(int arglist)
+int f_div(int arglist, int th __unused)
 {
     int arg1, arg2, q, r;
 
@@ -789,7 +789,7 @@ int f_div(int arglist)
 	return (q);
 }
 
-int f_integerp(int arglist)
+int f_integerp(int arglist, int th __unused)
 {
     int arg;
 
@@ -802,7 +802,7 @@ int f_integerp(int arglist)
 	return (NIL);
 }
 
-int f_abs(int arglist)
+int f_abs(int arglist, int th __unused)
 {
     int arg1;
 
@@ -814,7 +814,7 @@ int f_abs(int arglist)
     return (absolute(arg1));
 }
 
-int f_mod(int arglist)
+int f_mod(int arglist, int th __unused)
 {
     int arg1, arg2, div;
 
@@ -827,12 +827,12 @@ int f_mod(int arglist)
     if (!integerp(arg2) && !longnump(arg2) && !bignump(arg2))
 	error(NOT_INT, "mod", arg2);
 
-    div = f_div(arglist);
+    div = f_div(arglist,0);
     return (minus(arg1, mult(arg2, div)));
 
 }
 
-int f_exp(int arglist)
+int f_exp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -854,7 +854,7 @@ int f_exp(int arglist)
     return (make_flt(y));
 }
 
-int f_log(int arglist)
+int f_log(int arglist, int th __unused)
 {
     int arg1;
 
@@ -869,7 +869,7 @@ int f_log(int arglist)
     return (make_flt(log(GET_FLT(exact_to_inexact(arg1)))));
 }
 
-int f_expt(int arglist)
+int f_expt(int arglist, int th __unused)
 {
     int arg1, arg2, i;
     double x, y;
@@ -1081,7 +1081,7 @@ int expt(int x, int y)
 }
 
 
-int f_sqrt(int arglist)
+int f_sqrt(int arglist, int th __unused)
 {
     int arg1;
     double x;
@@ -1108,7 +1108,7 @@ int f_sqrt(int arglist)
 }
 
 
-int f_isqrt(int arglist)
+int f_isqrt(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1122,7 +1122,7 @@ int f_isqrt(int arglist)
     return (isqrt(arg1));
 }
 
-int f_atan2(int arglist)
+int f_atan2(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1137,7 +1137,7 @@ int f_atan2(int arglist)
     return (angle(arg1, arg2));
 }
 
-int f_reciprocal(int arglist)
+int f_reciprocal(int arglist, int th __unused)
 {
     int arg1;
     double val;
@@ -1158,7 +1158,7 @@ int f_reciprocal(int arglist)
     return (quotient(make_int(1), arg1));
 }
 
-int f_numeqp(int arglist)
+int f_numeqp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1177,7 +1177,7 @@ int f_numeqp(int arglist)
 	return (NIL);
 }
 
-int f_notnumeqp(int arglist)
+int f_notnumeqp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1198,7 +1198,7 @@ int f_notnumeqp(int arglist)
 
 
 /* list function */
-int f_car(int arglist)
+int f_car(int arglist, int th __unused)
 {
     int arg;
 
@@ -1210,7 +1210,7 @@ int f_car(int arglist)
     return (car(arg));
 }
 
-int f_cdr(int arglist)
+int f_cdr(int arglist, int th __unused)
 {
     int arg;
 
@@ -1222,7 +1222,7 @@ int f_cdr(int arglist)
     return (cdr(arg));
 }
 
-int f_cons(int arglist)
+int f_cons(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1233,7 +1233,7 @@ int f_cons(int arglist)
     return (cons(arg1, arg2));
 }
 
-int f_eq(int arglist)
+int f_eq(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1247,7 +1247,7 @@ int f_eq(int arglist)
 	return (NIL);
 }
 
-int f_eql(int arglist)
+int f_eql(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1261,7 +1261,7 @@ int f_eql(int arglist)
 	return (NIL);
 }
 
-int f_equal(int arglist)
+int f_equal(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1275,7 +1275,7 @@ int f_equal(int arglist)
 	return (NIL);
 }
 
-int f_not(int arglist)
+int f_not(int arglist, int th __unused)
 {
     int arg;
 
@@ -1288,7 +1288,7 @@ int f_not(int arglist)
 	return (NIL);
 }
 
-int f_nullp(int arglist)
+int f_nullp(int arglist, int th __unused)
 {
     int arg;
 
@@ -1301,7 +1301,7 @@ int f_nullp(int arglist)
 	return (NIL);
 }
 
-int f_atomp(int arglist)
+int f_atomp(int arglist, int th __unused)
 {
     int arg;
 
@@ -1314,7 +1314,7 @@ int f_atomp(int arglist)
 	return (NIL);
 }
 
-int f_functionp(int arglist)
+int f_functionp(int arglist, int th __unused)
 {
     int arg;
 
@@ -1327,7 +1327,7 @@ int f_functionp(int arglist)
 	return (NIL);
 }
 
-int f_consp(int arglist)
+int f_consp(int arglist, int th __unused)
 {
     int arg;
 
@@ -1341,7 +1341,7 @@ int f_consp(int arglist)
 }
 
 
-int f_list(int arglist)
+int f_list(int arglist, int th __unused)
 {
     return (list(arglist));
 }
@@ -1369,7 +1369,7 @@ int f_append(int arglist, int th)
 }
 
 
-int f_reverse(int arglist)
+int f_reverse(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1381,7 +1381,7 @@ int f_reverse(int arglist)
     return (reverse(arg1));
 }
 
-int f_nreverse(int arglist)
+int f_nreverse(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1409,7 +1409,7 @@ int nreverse(int x)
     return (res);
 }
 
-int f_create_list(int arglist)
+int f_create_list(int arglist, int th __unused)
 {
     int arg1, arg2, n;
 
@@ -1437,7 +1437,7 @@ int create_list(int x, int y)
 }
 
 
-int f_length(int arglist)
+int f_length(int arglist, int th __unused)
 {
     int arg;
 
@@ -1457,7 +1457,7 @@ int f_length(int arglist)
 }
 
 
-int f_set_car(int arglist)
+int f_set_car(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1471,7 +1471,7 @@ int f_set_car(int arglist)
     return (arg1);
 }
 
-int f_set_cdr(int arglist)
+int f_set_cdr(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1487,7 +1487,7 @@ int f_set_cdr(int arglist)
 
 
 /* predicate */
-int f_symbolp(int arglist)
+int f_symbolp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1500,7 +1500,7 @@ int f_symbolp(int arglist)
 	return (NIL);
 }
 
-int f_numberp(int arglist)
+int f_numberp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1513,7 +1513,7 @@ int f_numberp(int arglist)
 	return (NIL);
 }
 
-int f_listp(int arglist)
+int f_listp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1527,7 +1527,7 @@ int f_listp(int arglist)
 }
 
 
-int f_member(int arglist)
+int f_member(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1537,7 +1537,7 @@ int f_member(int arglist)
     return (member(arg1, arg2));
 }
 
-int f_assoc(int arglist)
+int f_assoc(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1633,7 +1633,7 @@ int mapc(int x, int y, int th)
     return (car(y));
 }
 
-int f_maplist(int arglist)
+int f_maplist(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1670,7 +1670,7 @@ int maplist1(int y)
 }
 
 
-int f_mapl(int arglist)
+int f_mapl(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1695,7 +1695,7 @@ int mapl(int x, int y)
 }
 
 
-int f_mapcon(int arglist)
+int f_mapcon(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1723,7 +1723,7 @@ int mapcon(int x, int y)
     return (res);
 }
 
-int f_mapcan(int arglist)
+int f_mapcan(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -1841,7 +1841,7 @@ int map_into_to_list(int x)
 }
 
 /* property */
-int f_property(int arglist)
+int f_property(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, res, n;
 
@@ -1860,7 +1860,7 @@ int f_property(int arglist)
 	return (cdr(res));
 }
 
-int f_set_property(int arglist)
+int f_set_property(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, res;
 
@@ -1875,7 +1875,7 @@ int f_set_property(int arglist)
     return (arg1);
 }
 
-int f_remove_property(int arglist)
+int f_remove_property(int arglist, int th __unused)
 {
     int arg1, arg2, val;
 
@@ -1907,7 +1907,7 @@ int remove_prop(int x, int lis)
 	return (cons(car(lis), remove_prop(x, cdr(lis))));
 }
 
-int f_gensym(int arglist __unused)
+int f_gensym(int arglist __unused, int th __unused)
 {
     int res;
     char str[SYMSIZE];
@@ -1937,7 +1937,7 @@ static inline void restore_repl_flag(bool save)
 #endif
 }
 
-int f_read(int arglist)
+int f_read(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, save, n, res;
     bool save1;
@@ -1982,7 +1982,7 @@ int f_read(int arglist)
     return (res);
 }
 
-int f_read_char(int arglist)
+int f_read_char(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, save, n, res;
     int rc_buf[CHARSIZE];
@@ -2037,7 +2037,7 @@ int f_read_char(int arglist)
     return (res);
 }
 
-int f_read_byte(int arglist)
+int f_read_byte(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, save, n, res;
     bool save1;
@@ -2085,7 +2085,7 @@ int f_read_byte(int arglist)
 
 
 
-int f_preview_char(int arglist)
+int f_preview_char(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, save, n, res;
     int pc_buf[CHARSIZE];
@@ -2139,7 +2139,7 @@ int f_preview_char(int arglist)
     return (res);
 }
 
-int f_read_line(int arglist)
+int f_read_line(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, n, pos, save, res, c;
     char rl_buf[LINE_MAX];
@@ -2295,7 +2295,7 @@ int f_load(int arglist, int th)
     return (T);
 }
 
-int f_print(int arglist)
+int f_print(int arglist, int th __unused)
 {
     int arg1;
 
@@ -2309,28 +2309,28 @@ int f_print(int arglist)
 
 
 
-int f_standard_input(int arglist)
+int f_standard_input(int arglist, int th __unused)
 {
     if (!nullp(arglist))
 	error(WRONG_ARGS, "standard-input", arglist);
     return (standard_input);
 }
 
-int f_standard_output(int arglist)
+int f_standard_output(int arglist, int th __unused)
 {
     if (!nullp(arglist))
 	error(WRONG_ARGS, "standard-output", arglist);
     return (standard_output);
 }
 
-int f_error_output(int arglist)
+int f_error_output(int arglist, int th __unused)
 {
     if (!nullp(arglist))
 	error(WRONG_ARGS, "error-output", arglist);
     return (standard_error);
 }
 
-int f_streamp(int arglist)
+int f_streamp(int arglist, int th __unused)
 {
     int arg;
 
@@ -2343,7 +2343,7 @@ int f_streamp(int arglist)
 	return (NIL);
 }
 
-int f_open_stream_p(int arglist)
+int f_open_stream_p(int arglist, int th __unused)
 {
     int arg;
 
@@ -2357,7 +2357,7 @@ int f_open_stream_p(int arglist)
 	return (NIL);
 }
 
-int f_input_stream_p(int arglist)
+int f_input_stream_p(int arglist, int th __unused)
 {
     int arg;
 
@@ -2370,7 +2370,7 @@ int f_input_stream_p(int arglist)
 	return (NIL);
 }
 
-int f_output_stream_p(int arglist)
+int f_output_stream_p(int arglist, int th __unused)
 {
     int arg;
 
@@ -2383,7 +2383,7 @@ int f_output_stream_p(int arglist)
 	return (NIL);
 }
 
-int f_stream_ready_p(int arglist)
+int f_stream_ready_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -2467,7 +2467,7 @@ int f_funcall(int arglist, int th)
 
 
 /* character function */
-int f_characterp(int arglist)
+int f_characterp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -2482,7 +2482,7 @@ int f_characterp(int arglist)
 
 
 
-int f_char_eqp(int arglist)
+int f_char_eqp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2502,7 +2502,7 @@ int f_char_eqp(int arglist)
 	return (NIL);
 }
 
-int f_char_noteqp(int arglist)
+int f_char_noteqp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2527,7 +2527,7 @@ static inline bool SMALLER_NAME(int addr1, int addr2)
     return (strcmp(heap[addr1].name, heap[addr2].name) < 0);
 }
 
-int f_char_smallerp(int arglist)
+int f_char_smallerp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2547,7 +2547,7 @@ int f_char_smallerp(int arglist)
 	return (NIL);
 }
 
-int f_char_eqsmallerp(int arglist)
+int f_char_eqsmallerp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2571,7 +2571,7 @@ static inline bool GREATER_NAME(int addr1, int addr2)
     return (strcmp(heap[addr1].name, heap[addr2].name) > 0);
 }
 
-int f_char_greaterp(int arglist)
+int f_char_greaterp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2590,7 +2590,7 @@ int f_char_greaterp(int arglist)
 	return (NIL);
 }
 
-int f_char_eqgreaterp(int arglist)
+int f_char_eqgreaterp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2609,7 +2609,7 @@ int f_char_eqgreaterp(int arglist)
 	return (NIL);
 }
 
-int f_char_index(int arglist)
+int f_char_index(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, n, i, j, len;
     char c;
@@ -2653,7 +2653,7 @@ int f_char_index(int arglist)
 
 
 /* string function */
-int f_stringp(int arglist)
+int f_stringp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -2666,7 +2666,7 @@ int f_stringp(int arglist)
 	return (NIL);
 }
 
-int f_string_eqp(int arglist)
+int f_string_eqp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2684,7 +2684,7 @@ int f_string_eqp(int arglist)
 	return (NIL);
 }
 
-int f_string_noteqp(int arglist)
+int f_string_noteqp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2702,7 +2702,7 @@ int f_string_noteqp(int arglist)
 	return (T);
 }
 
-int f_elt(int arglist)
+int f_elt(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2750,7 +2750,7 @@ int f_elt(int arglist)
 
 
 
-int f_set_elt(int arglist)
+int f_set_elt(int arglist, int th __unused)
 {
     int arg1, arg2, arg3;
 
@@ -2798,7 +2798,7 @@ int f_set_elt(int arglist)
 
 
 /* string */
-int f_string_smallerp(int arglist)
+int f_string_smallerp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2817,7 +2817,7 @@ int f_string_smallerp(int arglist)
 	return (NIL);
 }
 
-int f_string_greaterp(int arglist)
+int f_string_greaterp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2836,7 +2836,7 @@ int f_string_greaterp(int arglist)
 	return (NIL);
 }
 
-int f_string_eqgreaterp(int arglist)
+int f_string_eqgreaterp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2857,7 +2857,7 @@ int f_string_eqgreaterp(int arglist)
 }
 
 
-int f_string_eqsmallerp(int arglist)
+int f_string_eqsmallerp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2877,7 +2877,7 @@ int f_string_eqsmallerp(int arglist)
 
 }
 
-int f_string_append(int arglist)
+int f_string_append(int arglist, int th __unused)
 {
     int arg1;
 
@@ -2911,7 +2911,7 @@ int f_string_append(int arglist)
 }
 
 
-int f_string_index(int arglist)
+int f_string_index(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, n, i, j, k, len1, len2;
 
@@ -2959,7 +2959,7 @@ int f_string_index(int arglist)
 
 
 /* vector and array */
-int f_aref(int arglist)
+int f_aref(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -3024,7 +3024,7 @@ int inrangep(int x, int y)
 	return (0);
 }
 
-int f_garef(int arglist)
+int f_garef(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -3081,7 +3081,7 @@ int array_ref(int obj, int ls)
 }
 
 
-int f_set_aref(int arglist)
+int f_set_aref(int arglist, int th __unused)
 {
     int arg1, arg2, arg3;
 
@@ -3141,7 +3141,7 @@ int array_set(int obj, int ls, int val)
     return (obj);
 }
 
-int f_set_garef(int arglist)
+int f_set_garef(int arglist, int th __unused)
 {
     int arg1, arg2, arg3;
 
@@ -3169,7 +3169,7 @@ int f_set_garef(int arglist)
     return (arg1);
 }
 
-int f_basic_vector_p(int arglist)
+int f_basic_vector_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3187,7 +3187,7 @@ int f_basic_vector_p(int arglist)
     return (UNDEF);
 }
 
-int f_general_vector_p(int arglist)
+int f_general_vector_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3206,7 +3206,7 @@ int f_general_vector_p(int arglist)
 }
 
 
-int f_basic_array_p(int arglist)
+int f_basic_array_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3224,7 +3224,7 @@ int f_basic_array_p(int arglist)
     return (UNDEF);
 }
 
-int f_basic_array_star_p(int arglist)
+int f_basic_array_star_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3242,7 +3242,7 @@ int f_basic_array_star_p(int arglist)
     return (UNDEF);
 }
 
-int f_general_array_star_p(int arglist)
+int f_general_array_star_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3262,7 +3262,7 @@ int f_general_array_star_p(int arglist)
 }
 
 
-int f_array_dimensions(int arglist)
+int f_array_dimensions(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3297,13 +3297,13 @@ int array_dim(int n, int ls)
 }
 
 
-int f_vector(int arglist)
+int f_vector(int arglist, int th __unused)
 {
     return (vector(arglist));
 }
 
 
-int f_create_star(int arglist)
+int f_create_star(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -3320,7 +3320,7 @@ int f_create_star(int arglist)
 }
 
 DEF_PREDICATE(INSTANCE, INSTANCE)
-int f_slot_value(int arglist)
+int f_slot_value(int arglist, int th __unused)
 {
     int arg1, arg2, val;
 
@@ -3341,7 +3341,7 @@ int f_slot_value(int arglist)
     return (cdr(val));
 }
 
-int f_set_slot_value(int arglist)
+int f_set_slot_value(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, val;
 
@@ -3364,7 +3364,7 @@ int f_set_slot_value(int arglist)
 }
 
 /* format */
-int f_format(int arglist)
+int f_format(int arglist, int th __unused)
 {
     int arg1, arg2, args, i, save, n, quote_flag;
     char *str, c;
@@ -3392,56 +3392,56 @@ int f_format(int arglist)
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~A", arg2);
 		}
-		f_format_object(list3(arg1, car(args), NIL));
+		f_format_object(list3(arg1, car(args), NIL),0);
 		args = cdr(args);
 	    } else if (c == 'B') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~B", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(2)));
+		f_format_integer(list3(arg1, car(args), make_int(2)),0);
 		args = cdr(args);
 	    } else if (c == 'C') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~C", arg2);
 		}
-		f_format_char(list2(arg1, car(args)));
+		f_format_char(list2(arg1, car(args)),0);
 		args = cdr(args);
 	    } else if (c == 'D') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~D", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(10)));
+		f_format_integer(list3(arg1, car(args), make_int(10)),0);
 		args = cdr(args);
 	    } else if (c == 'G') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~G", arg2);
 		}
-		f_format_float(list2(arg1, car(args)));
+		f_format_float(list2(arg1, car(args)),0);
 		args = cdr(args);
 	    } else if (c == 'O') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~O", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(8)));
+		f_format_integer(list3(arg1, car(args), make_int(8)),0);
 		args = cdr(args);
 	    } else if (c == 'S') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~S", arg2);
 		}
-		f_format_object(list3(arg1, car(args), T));
+		f_format_object(list3(arg1, car(args), T),0);
 		args = cdr(args);
 	    } else if (c == 'X') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~X", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(16)));
+		f_format_integer(list3(arg1, car(args), make_int(16)),0);
 		args = cdr(args);
 	    } else if (isdigit(c)) {
 		n = 0;
@@ -3455,10 +3455,10 @@ int f_format(int arglist)
 			output_stream = save;
 			error(IMPROPER_ARGS, "format ~nR", arg2);
 		    }
-		    f_format_integer(list3(arg1, car(args), make_int(n)));
+		    f_format_integer(list3(arg1, car(args), make_int(n)),0);
 		    args = cdr(args);
 		} else if (c == 'T') {
-		    f_format_tab(list2(arg1, make_int(n)));
+		    f_format_tab(list2(arg1, make_int(n)),0);
 		} else
 		    error(ILLEGAL_ARGS, "format ~n?", NIL);
 
@@ -3468,7 +3468,7 @@ int f_format(int arglist)
 		start_flag = false;
 		charcnt = 0;
 	    } else if (c == '&') {
-		f_format_fresh_line(list1(arg1));
+		f_format_fresh_line(list1(arg1),0);
 	    } else if (c == '~') {
 		output_char(output_stream, '~');
 		start_flag = false;
@@ -3581,7 +3581,7 @@ int sprintr(char *str, int r, int n)
     return (len);
 }
 
-int f_format_char(int arglist)
+int f_format_char(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -3605,7 +3605,7 @@ int f_format_char(int arglist)
     return (NIL);
 }
 
-int f_format_fresh_line(int arglist)
+int f_format_fresh_line(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3642,7 +3642,7 @@ int f_format_fresh_line(int arglist)
 }
 
 
-int f_format_float(int arglist)
+int f_format_float(int arglist, int th __unused)
 {
     int arg1, arg2, save, flt;
 
@@ -3666,7 +3666,7 @@ int f_format_float(int arglist)
 }
 
 
-int f_format_integer(int arglist)
+int f_format_integer(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, n, save;
 
@@ -3705,7 +3705,7 @@ int f_format_integer(int arglist)
     return (NIL);
 }
 
-int f_format_object(int arglist)
+int f_format_object(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, save;
 
@@ -3757,7 +3757,7 @@ int f_format_object(int arglist)
     return (NIL);
 }
 
-int f_format_tab(int arglist)
+int f_format_tab(int arglist, int th __unused)
 {
     int arg1, arg2, n, save;
 
@@ -3794,7 +3794,7 @@ int f_format_tab(int arglist)
 
 
 /* file */
-int f_open_input_file(int arglist)
+int f_open_input_file(int arglist, int th __unused)
 {
     int arg1, arg2, n;
     FILE *port;
@@ -3823,7 +3823,7 @@ int f_open_input_file(int arglist)
 	return (make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
-int f_open_output_file(int arglist)
+int f_open_output_file(int arglist, int th __unused)
 {
     int arg1, arg2, n;
     FILE *port;
@@ -3851,7 +3851,7 @@ int f_open_output_file(int arglist)
 	return (make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
-int f_open_io_file(int arglist)
+int f_open_io_file(int arglist, int th __unused)
 {
     int arg1, arg2, n;
     FILE *port;
@@ -3880,7 +3880,7 @@ int f_open_io_file(int arglist)
 	return (make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1)));
 }
 
-int f_close(int arglist)
+int f_close(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3900,7 +3900,7 @@ int f_close(int arglist)
     return (UNDEF);
 }
 
-int f_finish_output(int arglist)
+int f_finish_output(int arglist, int th __unused)
 {
     int arg1;
 
@@ -3914,7 +3914,7 @@ int f_finish_output(int arglist)
 }
 
 
-int f_file_length(int arglist)
+int f_file_length(int arglist, int th __unused)
 {
     int arg1, arg2, res;
     FILE *p;
@@ -3940,7 +3940,7 @@ int f_file_length(int arglist)
     return (make_int(res));
 }
 
-int f_probe_file(int arglist)
+int f_probe_file(int arglist, int th __unused)
 {
     int arg1, res;
     FILE *p;
@@ -3962,7 +3962,7 @@ int f_probe_file(int arglist)
     return (res);
 }
 
-int f_file_position(int arglist)
+int f_file_position(int arglist, int th __unused)
 {
     int arg1;
     FILE *p;
@@ -3978,7 +3978,7 @@ int f_file_position(int arglist)
 
 }
 
-int f_set_file_position(int arglist)
+int f_set_file_position(int arglist, int th __unused)
 {
     int arg1, arg2;
     FILE *p;
@@ -4001,7 +4001,7 @@ int f_set_file_position(int arglist)
 
 
 
-int f_write_byte(int arglist)
+int f_write_byte(int arglist, int th __unused)
 {
     int arg1, arg2, n;
 
@@ -4023,7 +4023,7 @@ int f_write_byte(int arglist)
 
 
 /* create-*   */
-int f_create_vector(int arglist)
+int f_create_vector(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -4042,7 +4042,7 @@ int f_create_vector(int arglist)
     return (make_vec(GET_INT(arg1), arg2));
 }
 
-int f_create_array(int arglist)
+int f_create_array(int arglist, int th __unused)
 {
     int arg1, arg2, temp;
 
@@ -4084,7 +4084,7 @@ int check_dimension(int ls)
     return (0);
 }
 
-int f_create_string(int arglist)
+int f_create_string(int arglist, int th __unused)
 {
     int arg1, arg2, n, i, pos;
     char *str, c;
@@ -4170,7 +4170,7 @@ int f_create_string(int arglist)
 
 }
 
-int f_parse_number(int arglist)
+int f_parse_number(int arglist, int th __unused)
 {
     int arg1, res;
     char *e;
@@ -4219,7 +4219,7 @@ int f_parse_number(int arglist)
     return (UNDEF);
 }
 
-int f_create_string_input_stream(int arglist)
+int f_create_string_input_stream(int arglist, int th __unused)
 {
     int arg1, res;
 
@@ -4237,7 +4237,7 @@ int f_create_string_input_stream(int arglist)
     return (res);
 }
 
-int f_create_string_output_stream(int arglist)
+int f_create_string_output_stream(int arglist, int th __unused)
 {
     int res;
     char *str;
@@ -4255,7 +4255,7 @@ int f_create_string_output_stream(int arglist)
     return (res);
 }
 
-int f_get_output_stream_string(int arglist)
+int f_get_output_stream_string(int arglist, int th __unused)
 {
     int arg1, res;
 
@@ -4272,7 +4272,7 @@ int f_get_output_stream_string(int arglist)
 
 
 
-int f_subseq(int arglist)
+int f_subseq(int arglist, int th __unused)
 {
     int arg1, arg2, arg3;
 
@@ -4311,7 +4311,7 @@ int f_subseq(int arglist)
 }
 
 
-int f_identity(int arglist)
+int f_identity(int arglist, int th __unused)
 {
     int arg1;
 
@@ -4322,7 +4322,7 @@ int f_identity(int arglist)
     return (arg1);
 }
 
-int f_get_universal_time(int arglist)
+int f_get_universal_time(int arglist, int th __unused)
 {
     time_t t;
 
@@ -4333,7 +4333,7 @@ int f_get_universal_time(int arglist)
     return (make_long((long long int) (t + 70 * 365.25 * 24 * 60 * 60)));
 }
 
-int f_get_internal_run_time(int arglist)
+int f_get_internal_run_time(int arglist, int th __unused)
 {
     clock_t t;
 
@@ -4344,7 +4344,7 @@ int f_get_internal_run_time(int arglist)
     return (make_int((int) t));
 }
 
-int f_get_internal_real_time(int arglist)
+int f_get_internal_real_time(int arglist, int th __unused)
 {
     time_t t;
 
@@ -4355,7 +4355,7 @@ int f_get_internal_real_time(int arglist)
     return (make_long((long long int) (t * CLOCKS_PER_SEC)));
 }
 
-int f_internal_time_units_per_second(int arglist)
+int f_internal_time_units_per_second(int arglist, int th __unused)
 {
 
     if (length(arglist) != 0)
@@ -4365,7 +4365,7 @@ int f_internal_time_units_per_second(int arglist)
 }
 
 
-int f_initialize_object_star(int arglist)
+int f_initialize_object_star(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -4383,14 +4383,14 @@ int f_initialize_object_star(int arglist)
 }
 
 /* controle */
-__dead int f_quit(int arglist __unused)
+__dead int f_quit(int arglist __unused, int th __unused)
 {
     if (!script_flag) {
 	puts("- good bye -");
     }
     greeting_flag = false;
     RAISE(Exit_Interp);
-    return (NIL);
+    exit(EXIT_SUCCESS);
 }
 
 /* extension */
@@ -4400,9 +4400,9 @@ static inline void SET_FLAG(int addr, flag x)
     heap[addr].flag = x;
 }
 
-int f_gbc(int arglist)
+int f_gbc(int arglist, int th __unused)
 {
-    int n, addr;
+    int n;
 
     if ((n = length(arglist)) != 0 && n != 1)
 	error(WRONG_ARGS, "gbc", arglist);
@@ -4418,7 +4418,7 @@ int f_gbc(int arglist)
     return (T);
 }
 
-int f_dummyp(int arglist)
+int f_dummyp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -4433,7 +4433,7 @@ int f_dummyp(int arglist)
 }
 
 /* object */
-int f_class_of(int arglist)
+int f_class_of(int arglist, int th __unused)
 {
     int arg;
 
@@ -4452,7 +4452,7 @@ int f_class_of(int arglist)
 	return (GET_AUX(arg));
 }
 
-int f_instancep(int arglist)
+int f_instancep(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -4491,7 +4491,7 @@ int f_instancep(int arglist)
 	return (NIL);
 }
 
-int f_subclassp(int arglist)
+int f_subclassp(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -4512,7 +4512,7 @@ int f_subclassp(int arglist)
 }
 
 
-int f_generic_function_p(int arglist)
+int f_generic_function_p(int arglist, int th __unused)
 {
     int arg1;
 
@@ -4528,7 +4528,7 @@ int f_generic_function_p(int arglist)
 
 
 
-int f_next_method_p(int arglist)
+int f_next_method_p(int arglist, int th __unused)
 {
     int method;
 
@@ -4644,7 +4644,7 @@ int f_call_next_method(int arglist, int th)
 
 
 /* condition */
-int f_error(int arglist)
+int f_error(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -4658,7 +4658,7 @@ int f_error(int arglist)
 	    (makeusercond(csimple_error, arg1, arg2), NIL));
 }
 
-int f_cerror(int arglist)
+int f_cerror(int arglist, int th __unused)
 {
     int arg1, arg2, arg3;
 
@@ -4674,7 +4674,7 @@ int f_cerror(int arglist)
 }
 
 
-int f_signal_condition(int arglist)
+int f_signal_condition(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -4693,7 +4693,7 @@ int f_signal_condition(int arglist)
     return (signal_condition(arg1, arg2));
 }
 
-int f_simple_error_format_string(int arglist)
+int f_simple_error_format_string(int arglist, int th __unused)
 {
     int arg1, vars, val;
 
@@ -4706,7 +4706,7 @@ int f_simple_error_format_string(int arglist)
     return (val);
 }
 
-int f_simple_error_format_arguments(int arglist)
+int f_simple_error_format_arguments(int arglist, int th __unused)
 {
     int arg1, vars, val;
 
@@ -4719,7 +4719,7 @@ int f_simple_error_format_arguments(int arglist)
     return (val);
 }
 
-int f_arithmetic_error_operation(int arglist)
+int f_arithmetic_error_operation(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4732,7 +4732,7 @@ int f_arithmetic_error_operation(int arglist)
 }
 
 
-int f_arithmetic_error_operands(int arglist)
+int f_arithmetic_error_operands(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4744,7 +4744,7 @@ int f_arithmetic_error_operands(int arglist)
     return (fun);
 }
 
-int f_domain_error_object(int arglist)
+int f_domain_error_object(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4757,7 +4757,7 @@ int f_domain_error_object(int arglist)
     return (fun);
 }
 
-int f_domain_error_expected_class(int arglist)
+int f_domain_error_expected_class(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4770,7 +4770,7 @@ int f_domain_error_expected_class(int arglist)
     return (fun);
 }
 
-int f_parse_error_string(int arglist)
+int f_parse_error_string(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4783,7 +4783,7 @@ int f_parse_error_string(int arglist)
 }
 
 
-int f_parse_error_expected_class(int arglist)
+int f_parse_error_expected_class(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4797,7 +4797,7 @@ int f_parse_error_expected_class(int arglist)
 }
 
 
-int f_stream_error_stream(int arglist)
+int f_stream_error_stream(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4809,7 +4809,7 @@ int f_stream_error_stream(int arglist)
     return (fun);
 }
 
-int f_undefined_entity_name(int arglist)
+int f_undefined_entity_name(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4821,7 +4821,7 @@ int f_undefined_entity_name(int arglist)
     return (fun);
 }
 
-int f_undefined_entity_namespace(int arglist)
+int f_undefined_entity_namespace(int arglist, int th __unused)
 {
     int arg1, fun;
 
@@ -4833,7 +4833,7 @@ int f_undefined_entity_namespace(int arglist)
     return (fun);
 }
 
-int f_condition_continuable(int arglist)
+int f_condition_continuable(int arglist, int th __unused)
 {
     int arg1;
 
@@ -4848,7 +4848,7 @@ int f_condition_continuable(int arglist)
 	return (make_str(GET_NAME(arg1)));
 }
 
-int f_continue_condition(int arglist)
+int f_continue_condition(int arglist, int th __unused)
 {
     int arg1, arg2;
 

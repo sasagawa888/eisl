@@ -429,7 +429,7 @@ int fast_cdr(int x)
 int set_dynamic(int x, int y, int th)
 {
     if (find_dyn(x, 0) != FAILSE)
-	set_dyn_env(x, y, 0);
+	set_dyn_env(x, y, th);
     else
 	error(UNDEF_VAR, "set-dynamic", x);
 

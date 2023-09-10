@@ -300,14 +300,14 @@ void set_lex_env(int sym, int val, int th)
 
 
 /* bind value to dynamic environment */
-void set_dyn_env(int sym, int val, int th)
+int set_dyn_env(int sym, int val, int th)
 {
     int i;
 
     for (i = dp[th] - 1; i >= 0; i--) {
 	if (dynamic[i][0][th] == sym) {
 	    dynamic[i][1][th] = val;
-	    return;
+	    return(T);
 	}
     }
     dynamic[dp[th]][0][th] = sym;
@@ -315,7 +315,7 @@ void set_dyn_env(int sym, int val, int th)
     dp[th]++;
     if (dp[th] >= DYNSIZE)
 	error(VARIABLE_OVERF, "set_dyn_env", NIL);
-    return;
+    return(T);
 }
 
 
@@ -329,14 +329,14 @@ void add_lex_env(int sym, int val, int th)
 
 
 /* addition of dynamic variable */
-void add_dyn_env(int sym, int val, int th)
+int add_dyn_env(int sym, int val, int th)
 {
     dynamic[dp[th]][0][th] = sym;
     dynamic[dp[th]][1][th] = val;
     dp[th]++;
     if (dp[th] >= DYNSIZE)
 	error(VARIABLE_OVERF, "add_dyn_env", NIL);
-    return;
+    return(T);
 }
 
 
@@ -685,7 +685,7 @@ int make_method(int addr)
 	SET_CAR(val, addr);
 	SET_OPT(val, PRIMARY);
     }
-    SET_CDR(val, ep);
+    SET_CDR(val, ep[0]);
     SET_AUX(val, NIL);
     return (val);
 }

@@ -85,7 +85,7 @@ void init_exsubr(void)
 /* Fast Project 
  * functions for compiler
  */
-int f_classp(int arglist)
+int f_classp(int arglist, int th __unused)
 {
     int arg1;
 
@@ -100,13 +100,13 @@ int f_classp(int arglist)
 }
 
 
-int f_ignore(int arglist __unused)
+int f_ignore(int arglist __unused, int th __unused)
 {
     return (T);
 }
 
 
-int f_self_introduction(int arglist __unused)
+int f_self_introduction(int arglist __unused, int th __unused)
 {
 #if __APPLE__
     return (make_sym("MACOS"));
@@ -122,7 +122,7 @@ int f_self_introduction(int arglist __unused)
 }
 
 
-int f_ignore_toplevel_check(int arglist)
+int f_ignore_toplevel_check(int arglist, int th __unused)
 {
     int arg1;
 
@@ -135,7 +135,7 @@ int f_ignore_toplevel_check(int arglist)
 }
 
 DEF_PREDICATE(METHOD, METHOD)
-int f_get_method_priority(int arglist)
+int f_get_method_priority(int arglist, int th __unused)
 {
     int arg1;
 
@@ -148,7 +148,7 @@ int f_get_method_priority(int arglist)
 }
 
 
-int f_get_method_body(int arglist)
+int f_get_method_body(int arglist, int th __unused)
 {
     int arg1;
 
@@ -159,7 +159,7 @@ int f_get_method_body(int arglist)
     return (GET_CAR(arg1));
 }
 
-int f_get_method(int arglist)
+int f_get_method(int arglist, int th __unused)
 {
     int arg1;
 
@@ -171,7 +171,7 @@ int f_get_method(int arglist)
 }
 
 
-int f_readed_array_list(int arglist)
+int f_readed_array_list(int arglist, int th __unused)
 {
     int arg1;
 
@@ -180,7 +180,7 @@ int f_readed_array_list(int arglist)
 }
 
 
-int f_system(int arglist)
+int f_system(int arglist, int th __unused)
 {
     int arg1;
 
@@ -192,13 +192,13 @@ int f_system(int arglist)
 
 
 
-int f_freedll(int arglist __unused)
+int f_freedll(int arglist __unused, int th __unused)
 {
     // dlclose(hmod);
     return (T);
 }
 
-int f_macrop(int arglist)
+int f_macrop(int arglist, int th __unused)
 {
     int arg1;
 
@@ -212,7 +212,7 @@ int f_macrop(int arglist)
 }
 
 
-int f_funcp(int arglist)
+int f_funcp(int arglist, int th __unused)
 {
     int arg;
 
@@ -226,7 +226,7 @@ int f_funcp(int arglist)
 }
 
 
-int f_fixnump(int arglist)
+int f_fixnump(int arglist, int th __unused)
 {
     int arg1;
 
@@ -239,7 +239,7 @@ int f_fixnump(int arglist)
 	return (NIL);
 }
 
-int f_longnump(int arglist)
+int f_longnump(int arglist, int th __unused)
 {
     int arg1;
 
@@ -252,7 +252,7 @@ int f_longnump(int arglist)
 	return (NIL);
 }
 
-int f_bignump(int arglist)
+int f_bignump(int arglist, int th __unused)
 {
     int arg1;
 
@@ -266,7 +266,7 @@ int f_bignump(int arglist)
 }
 
 
-int f_subrp(int arglist)
+int f_subrp(int arglist, int th __unused)
 {
     int arg;
 
@@ -354,7 +354,7 @@ int macroexpand_all(int sexp, int th)
     return (NIL);
 }
 
-int f_modulesubst(int arglist)
+int f_modulesubst(int arglist, int th __unused)
 {
     int arg1, arg2, arg3;
 
@@ -365,7 +365,7 @@ int f_modulesubst(int arglist)
     return (modulesubst(arg1, arg2, arg3));
 }
 
-int f_line_argument(int arglist)
+int f_line_argument(int arglist, int th __unused)
 {
     if (length(arglist) >= 2) {
 	error(WRONG_ARGS, "line-argument", arglist);
@@ -391,7 +391,7 @@ int f_line_argument(int arglist)
     }
 }
 
-int f_getenv(int arglist)
+int f_getenv(int arglist, int th __unused)
 {
     int arg1;
 
@@ -416,7 +416,7 @@ int f_getenv(int arglist)
  * see verify/object.lsp test-case foo-30
  */
 
-int f_superp_for_compiler(int arglist)
+int f_superp_for_compiler(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -454,7 +454,7 @@ int superp(int entry, int next)
  * extended funcstions 
  * random number
  */
-int f_random_real(int arglist)
+int f_random_real(int arglist, int th __unused)
 {
     double d;
 
@@ -465,7 +465,7 @@ int f_random_real(int arglist)
     return (make_flt(d));
 }
 
-int f_random(int arglist)
+int f_random(int arglist, int th __unused)
 {
     int arg1, n;
 
@@ -478,7 +478,7 @@ int f_random(int arglist)
     return (make_int(rand() % n));
 }
 
-int f_set_random(int arglist)
+int f_set_random(int arglist, int th __unused)
 {
     int arg1, n;
 
@@ -501,7 +501,7 @@ int f_set_random(int arglist)
  *  nconc compatible with Common Lisp
  */
 
-int f_nconc(int arglist)
+int f_nconc(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -529,7 +529,7 @@ int nconc(int x, int y)
 }
 
 
-int f_address(int arglist)
+int f_address(int arglist, int th __unused)
 {
     int arg1;
 
@@ -544,7 +544,7 @@ int f_address(int arglist)
  * functions for debugging
  *
  */
-int f_backtrace(int arglist)
+int f_backtrace(int arglist, int th __unused)
 {
     int arg1, l;
 
@@ -568,7 +568,7 @@ int f_backtrace(int arglist)
     return (T);
 }
 
-int f_break(int arglist __unused)
+int f_break(int arglist __unused, int th __unused)
 {
     puts("break");
     debugger();
@@ -646,7 +646,7 @@ void debugger()
     }
 }
 
-int f_instance(int arglist)
+int f_instance(int arglist, int th __unused)
 {
     int arg1, addr;
 
@@ -656,7 +656,7 @@ int f_instance(int arglist)
     return (T);
 }
 
-int f_heapdump(int arglist)
+int f_heapdump(int arglist, int th __unused)
 {
     int arg;
 
@@ -749,7 +749,7 @@ void heapdump(int start, int end)
 /*
  * profiler
  */
-int f_prof(int arglist)
+int f_prof(int arglist, int th __unused)
 {
     int arg1;
 
@@ -844,7 +844,7 @@ void profiler_print()
 * for example FFT IFFT.
 * This function is for development testing code.
 */
-int f_eisl_test(int arglist)
+int f_eisl_test(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -854,13 +854,13 @@ int f_eisl_test(int arglist)
     return (big_karatsuba_mult(arg1, arg2));
 }
 
-int f_get_myself(int arglist)
+int f_get_myself(int arglist, int th __unused)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!symbolp(arg1))
-	error(NOT_SYM, "eisl-get-muself", arg1);
+	error(NOT_SYM, "eisl-get-myself", arg1);
 
     if (IS_FUNC(GET_CAR(arg1)))
 	return (cons
@@ -875,13 +875,13 @@ int f_get_myself(int arglist)
  * wiringpi for GPIO 
  */
 #ifdef __rpi__
-int f_wiringpi_setup_gpio(int arglist __unused)
+int f_wiringpi_setup_gpio(int arglist __unused, int th __unused)
 {
     wiringPiSetupGpio();
     return (T);
 }
 
-int f_wiringpi_spi_setup_ch_speed(int arglist)
+int f_wiringpi_spi_setup_ch_speed(int arglist, int th __unused)
 {
     int arg1, arg2, x, y;
 
@@ -901,7 +901,7 @@ int f_wiringpi_spi_setup_ch_speed(int arglist)
     return (T);
 }
 
-int f_pwm_set_mode(int arglist)
+int f_pwm_set_mode(int arglist, int th __unused)
 {
     int arg1;
 
@@ -920,7 +920,7 @@ int f_pwm_set_mode(int arglist)
     return (T);
 }
 
-int f_pwm_set_range(int arglist)
+int f_pwm_set_range(int arglist, int th __unused)
 {
     int arg1, x;
 
@@ -936,7 +936,7 @@ int f_pwm_set_range(int arglist)
     return (T);
 }
 
-int f_pwm_set_clock(int arglist)
+int f_pwm_set_clock(int arglist, int th __unused)
 {
     int arg1, x;
 
@@ -952,7 +952,7 @@ int f_pwm_set_clock(int arglist)
     return (T);
 }
 
-int f_pin_mode(int arglist)
+int f_pin_mode(int arglist, int th __unused)
 {
     int arg1, arg2, x;
 
@@ -977,7 +977,7 @@ int f_pin_mode(int arglist)
     return (T);
 }
 
-int f_digital_write(int arglist)
+int f_digital_write(int arglist, int th __unused)
 {
     int arg1, arg2, x, y;
 
@@ -997,7 +997,7 @@ int f_digital_write(int arglist)
     return (T);
 }
 
-int f_digital_write_byte(int arglist)
+int f_digital_write_byte(int arglist, int th __unused)
 {
     int arg1, x;
 
@@ -1013,7 +1013,7 @@ int f_digital_write_byte(int arglist)
     return (T);
 }
 
-int f_pull_up_dn_control(int arglist)
+int f_pull_up_dn_control(int arglist, int th __unused)
 {
     int arg1, arg2, x, y;
 
@@ -1033,7 +1033,7 @@ int f_pull_up_dn_control(int arglist)
     return (T);
 }
 
-int f_digital_read(int arglist)
+int f_digital_read(int arglist, int th __unused)
 {
     int arg1, x, res;
 
@@ -1049,7 +1049,7 @@ int f_digital_read(int arglist)
     return (make_int(res));
 }
 
-int f_delay(int arglist)
+int f_delay(int arglist, int th __unused)
 {
     int arg1, x;
 
@@ -1065,7 +1065,7 @@ int f_delay(int arglist)
     return (T);
 }
 
-int f_delay_microseconds(int arglist)
+int f_delay_microseconds(int arglist, int th __unused)
 {
     int arg1, x;
 
@@ -1092,7 +1092,7 @@ int f_delay_microseconds(int arglist)
 int program;
 
 
-int f_try(int arglist)
+int f_try(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2;
     char str[STRSIZE];
@@ -1189,7 +1189,7 @@ int f_try(int arglist)
 }
 
 
-int f_read_exp(int arglist)
+int f_read_exp(int arglist, int th __unused)
 {
     int res, save;
 

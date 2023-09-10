@@ -130,9 +130,9 @@ static inline void NOMARK_CELL(int addr)
 }
 
 
-void *concurrent(void *arg)
+void *concurrent(void *arg __unused)
 {
-    int addr, fc1, i, j;
+    int addr, i, j;
 
     while (1) {
 	pthread_mutex_lock(&mutex);
@@ -193,7 +193,7 @@ void *concurrent(void *arg)
 	/* mark dynamic environment */
 	for (j = 0; j <= worker_count; j++) {
 	    for (i = 0; i <= dp[j]; i++)
-		mark_cell(dynamic[i][j]);
+		mark_cell(dynamic[i][1][j]);
 	}
 	/* mark generic_list */
 	mark_cell(generic_list);
@@ -228,12 +228,12 @@ void *concurrent(void *arg)
     pthread_exit(NULL);
 }
 
-int gbc_concurrent(void)
+void gbc_concurrent(void)
 {
     pthread_mutex_lock(&mutex);
     pthread_cond_signal(&cond_gc);
     pthread_mutex_unlock(&mutex);
-    return 0;
+    return;
 }
 
 

@@ -88,7 +88,7 @@ void init_syntax(void)
 }
 
 // --FSUBR-----------
-int f_lambda(int arglist)
+int f_lambda(int arglist, int th __unused)
 {
 
     if (nullp(arglist))
@@ -532,7 +532,7 @@ int f_setq(int arglist, int th)
     return (arg2);
 }
 
-int f_defconstant(int arglist)
+int f_defconstant(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -559,7 +559,7 @@ int f_defconstant(int arglist)
 
 }
 
-int f_defun(int arglist)
+int f_defun(int arglist, int th __unused)
 {
     int arg1, arg2, val;
 
@@ -589,7 +589,7 @@ int f_defun(int arglist)
     return (arg1);
 }
 
-int f_defmacro(int arglist)
+int f_defmacro(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -628,7 +628,7 @@ int f_defmacro(int arglist)
     return (arg1);
 }
 
-int f_defglobal(int arglist)
+int f_defglobal(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -813,7 +813,7 @@ int f_symbol_function(int arglist, int th)
     return (UNDEF);
 }
 
-int f_class(int arglist)
+int f_class(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1257,7 +1257,7 @@ int f_tagbody(int arglist, int th)
     return (NIL);
 }
 
-int f_go(int arglist)
+int f_go(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1447,7 +1447,7 @@ int f_progn(int arglist, int th)
     return (res);
 }
 
-int f_defclass(int arglist)
+int f_defclass(int arglist, int th __unused)
 {
     int arg1,
 	arg2,
@@ -1766,7 +1766,7 @@ int f_defclass(int arglist)
 }
 
 
-int f_defgeneric(int arglist)
+int f_defgeneric(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, val;
 
@@ -1820,7 +1820,7 @@ int f_defgeneric(int arglist)
     return (arg1);
 }
 
-int f_defgeneric_star(int arglist)
+int f_defgeneric_star(int arglist, int th __unused)
 {
     int arg1, arg2, arg3, val;
 
@@ -1849,7 +1849,7 @@ int f_defgeneric_star(int arglist)
 /*
  * if Generic function, set CDR area method object with insert sorting. 
  */
-int f_defmethod(int arglist)
+int f_defmethod(int arglist, int th __unused)
 {
     int arg1, arg2, gen;
 
@@ -2250,7 +2250,7 @@ int convert(int arg1, int arg2)
     return (UNDEF);
 }
 
-int f_the(int arglist)
+int f_the(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2269,7 +2269,7 @@ int f_the(int arglist)
     return (UNDEF);
 }
 
-int f_assure(int arglist)
+int f_assure(int arglist, int th __unused)
 {
     int arg1, arg2;
 
@@ -2300,7 +2300,7 @@ double getETime()
 
 
 
-int f_time(int arglist)
+int f_time(int arglist, int th __unused)
 {
     int arg1;
     double st, en;
@@ -2316,7 +2316,7 @@ int f_time(int arglist)
     return (UNDEF);
 }
 
-int f_trace(int arglist)
+int f_trace(int arglist, int th __unused)
 {
 
     if (nullp(arglist)) {
@@ -2335,7 +2335,7 @@ int f_trace(int arglist)
     }
 }
 
-int f_untrace(int arglist)
+int f_untrace(int arglist, int th __unused)
 {
 
     if (nullp(arglist)) {
@@ -2359,7 +2359,7 @@ int f_untrace(int arglist)
 
 
 
-int f_import(int arglist)
+int f_import(int arglist, int th __unused)
 {
     int arg1 = car(arglist);
     if (!stringp(arg1))
@@ -2391,7 +2391,7 @@ int f_import(int arglist)
 }
 
 
-int f_defmodule(int arglist)
+int f_defmodule(int arglist, int th __unused)
 {
     int arg1, arg2, exports;
 
@@ -2662,7 +2662,7 @@ int wait_para(void)
 }
 
 
-int f_plet(int arglist)
+int f_plet(int arglist, int th __unused)
 {
     int arg1, arg2, temp, i, res, num[PARASIZE];
 
@@ -2793,7 +2793,7 @@ int f_pcall(int arglist, int th)
 
 int f_pexec(int arglist, int th)
 {
-    int arg1, arg2, temp, i, num[PARASIZE];
+    int temp, i, num[PARASIZE];
 
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "pexec", arglist);

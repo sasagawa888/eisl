@@ -3,16 +3,17 @@
 ;;;  since 2021/5
 ;;;
 
-(defglobal g (formula 6.67430 * 10 ^ -11))
-(defglobal m (formula 1.0 * 10 ^ 10))
+(defglobal g (* 6.67430 (expt 10 -11)))
+(defglobal m (* 1.0 (expt 10 10)))
 
+(defun / (x y) (quotient x y))
 
 (defun make-metric (r theta)
     (let ((tensor (create-tensor '(4 4))))
-        (setf (aref tensor 0 0) (lambda () (formula - (1 - 2 * G * M / r))))
-        (setf (aref tensor 1 1) (lambda () (formula 1 / (1 - 2 * G* M / r))))
-        (setf (aref tensor 2 2) (lambda () (formula r ^ 2)))
-        (setf (aref tensor 3 3) (lambda () (formula r ^ 2 * sin(theta) ^ 2)))
+        (setf (aref tensor 0 0) (- (- 1 (/ (* 2 G M) r))))
+        (setf (aref tensor 1 1) (/  1 (- 1 (/ (* 2 G M) r))))
+        (setf (aref tensor 2 2) (expt r 2))
+        (setf (aref tensor 3 3) (* (expt r 2) (expt (sin theta) 2)))
         tensor))
 
 (defun create-tensor (dimension)
@@ -29,7 +30,7 @@
              ((= i r) ten1)
              (for ((j 0 (+ j 1)))
                   ((= j c) nil)
-                  (setf (aref ten1 i j) (* scalar (funcall (aref ten i j))))))))
+                  (setf (aref ten1 i j) (* scalar (aref ten i j)))))))
 
 
 (defun test ()

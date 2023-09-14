@@ -1,10 +1,10 @@
 ;;;;;;;;;;;;;;;;;
 ;; project to understand Riemannian geometry and general theory of relativity.
 ;;;  since 2021/5
-;;;
+;;; calculating   Schwarzschild 
 
-(defglobal g (* 6.67430 (expt 10 -11)))
-(defglobal m (* 1.0 (expt 10 10)))
+(defglobal g 6.67430e-11)
+(defglobal m 5.972e24)
 
 (defun / (x y) (quotient x y))
 
@@ -19,7 +19,6 @@
 (defun create-tensor (dimension)
     (create-array dimension 0))
 
-(defglobal a (make-metric 10 0.3))
 
 (defun tmul (scalar ten)
     (let* ((dim (array-dimensions ten))
@@ -32,6 +31,7 @@
                   ((= j c) nil)
                   (setf (aref ten1 i j) (* scalar (aref ten i j)))))))
 
+(defglobal a (make-metric 10 0.3))
 
 (defun test ()
     (tmul (* 8 *pi* g) a))

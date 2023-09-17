@@ -6,6 +6,7 @@
 (defglobal G 6.67430e-11)
 (defglobal M 5.972e24)
 (defglobal C 2.99792458e8)
+(defglobal scale 10e-23)
 
 (defun / (x y) (quotient x y))
 (defun ^ (x y) (expt x y))
@@ -36,7 +37,7 @@
     (let* ((result (create-vector 4)))
         (for ((i 0 (+ i 1)))
              ((= i 4) result)
-             (setf (elt result i) (* (aref ten i i) (elt dx i)) ))))
+             (setf (elt result i) (* (aref ten i i) (elt dx i) scale) ))))
 
 ;; vector operation
 (defun vadd (x y)
@@ -45,7 +46,22 @@
          (setf (elt x i) (+ (elt x i) (elt y i)))))
 
 
-(defglobal r 10e10)
+(defun polar-to-cartesian (v)
+    (let ((r (elt v 1))
+          (theta (elt v 2))
+          (phi (elt v 3)))
+        (vector 0
+                (* r (sin phi) (cos theta))
+                (* r (sin phi) (sin theta))
+                (* r (cos phi)))))
+
+;t = 0
+;x = r * sin(φ) * cos(θ)
+;y = r * sin(φ) * sin(θ)
+;z = r * cos(φ)
+
+
+(defglobal r 10e6)
 (defglobal theta 0)
 (defglobal phi 0)
 (defglobal dt 0)
@@ -58,9 +74,10 @@
 (defun foo ()
     (let ((g (make-metric (elt pos 1) (elt pos 2))))
         (for ((i 0 (+ i 1)))
-             ((= i 1000) t)
+             ((= i 10) t)
              (vadd pos (tangent g dx))
              (print pos)
+             (print (polar-to-cartesian pos))
              (setq g (make-metric (elt pos 1) (elt pos 2))))))
 
     

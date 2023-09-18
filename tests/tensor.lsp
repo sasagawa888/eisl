@@ -72,7 +72,7 @@
 (defglobal dtheta 0.000001)
 (defglobal dphi 0.000001)
 (defglobal dx (vector dt dr dtheta dphi))
-(defglobal pos (vector 0 30 0 0))
+(defglobal pos (vector 0 50 0 0))
 
 (defun foo (times file)
     (let ((stream (open-output-file file))

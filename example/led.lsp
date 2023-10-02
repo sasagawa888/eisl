@@ -8,9 +8,9 @@
          ((> i n)
           t )
          (digital-write pin 1)
-         (delay-second 1
+         (delay-seconds 1
          (digital-write pin 0)
-         (delay-second 1)))
+         (delay-seconds 1)))
 
 (defun setup ()
     (cond ((null flag) (wiringpi-setup-gpio) (setq flag t)) )

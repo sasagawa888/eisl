@@ -222,9 +222,9 @@ EISL <==================================> C
    (for ((i 0 (+ i 1)))
         ((> i n) t)
         (digital-write pin 1)
-        (delay-second 1)
+        (delay-seconds 1)
         (digital-write pin 0)
-        (delay-second 1)))
+        (delay-seconds 1)))
 
 
 ;; サーボモータを制御する。

@@ -74,6 +74,35 @@
     (tk:pack 'c0)
     (tk:mainloop))
 
+(defun flag1 ()
+    (tk:init)
+    (tk:canvas 'c0)
+    (tk:create 'c0 (rectangle 0 0 300 50) '-fill 'blue)
+    (tk:create 'c0 (rectangle 0 150 300 200) '-fill 'blue)
+    (draw-star #(100 60) #(100 140) #(200 60) #(200 140))
+    (tk:create 'c0 (text 20 210) '-text "Love and Peace!" '-anchor 'nw)
+    (tk:pack 'c0)
+    (tk:mainloop))
+
+(defun draw-star (a b c d)
+  (draw-star1 (midpoint a c) (up-point b 20) (up-point d 20))
+  (draw-star1 (midpoint b d) (down-point a 20) (down-point c 20)))
+
+(defun up-point (x y)
+  (vector (elt x 0) (- (elt x 1) y)))
+
+(defun down-point (x y)
+  (vector (elt x 0) (+ (elt x 1) y)))
+
+(defun draw-star1 (a b c)
+   (let ((a0 (elt a 0))
+         (a1 (elt a 1))
+         (b0 (elt b 0))
+         (b1 (elt b 1))
+         (c0 (elt c 0))
+         (c1 (elt c 1)))
+      (tk:create 'c0 (line a0 a1 b0 b1 c0 c1 a0 a1) '-fill 'blue)))
+
 (defun precur ()
     (tk:init)
     (tk:canvas 'c0 '-width 600 '-height 600)

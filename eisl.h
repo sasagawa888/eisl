@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <signal.h>
+#include <pthread.h>
 #include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"

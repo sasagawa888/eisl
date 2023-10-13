@@ -473,12 +473,6 @@ void init_thread(void)
     worker_count = sysconf(_SC_NPROCESSORS_CONF) - 1;
     if (worker_count > 5)
 	worker_count = 5;
-	/* sysconf(_SC_NPROCESSORS_CONF) may operate correctly depending on the OS,
-	*  and in such cases, it could potentially result in a negative number. 
-	*  It is assumed that the current CPU has at least 4 cores. 
-	*  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
-	*/
-	else if (worker_count < 0)
 	worker_count = 3;
 
     /* create parallel function thread */

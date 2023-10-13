@@ -39,7 +39,7 @@ else
 		endif
 	endif
 endif
-CFLAGS += $(INCS) -g -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -D_XOPEN_SOURCE=700 -D_XOPEN_SOURCE_EXTENDED -Inana/src
+CFLAGS += $(INCS) -g -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -Inana/src
 DFLAGS := --preview=all --de -w --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 SRC_D := dextension.d disl.d

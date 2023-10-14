@@ -7,6 +7,7 @@
 
 #include <setjmp.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 #include <signal.h>
 #include <pthread.h>

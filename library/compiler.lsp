@@ -1,4 +1,4 @@
-;;FAST compiler ver3.22
+;;FAST compiler ver3.51
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -3634,7 +3634,6 @@ defgeneric compile
                   (block exit-all
                      (for ((type type-subr (cdr type)))
                           ((null type)
-                           (warning "subr type mismatch" (car x))
                            'no )
                           (let ((new-env (inference-arg (cdr (car x)) (cdr (car type)) type-env)))
                              (if (not (eq new-env 'no))

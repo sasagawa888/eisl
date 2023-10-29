@@ -1,7 +1,9 @@
 (defun foo (x)
-   (string-append x "abc")
+   (bar y "abc")
    (+ x 1))
 
-(defun bar (x)
-  (length x)
-  (string-append x "123"))
+(defun bar (x y)
+   (string-append x y))
+
+
+(defglobal y 1)

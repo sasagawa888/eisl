@@ -602,7 +602,7 @@ void debugger()
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
 	    for (i = 0; i < worker_count; i++) {
-		Fmt_print("thread%d=", i);
+		Fmt_print("thread%d = ", i);
 		for (j = 0; j < dp[i]; j++) {
 		    print(dynamic[j][0][i]);
 		    printf("=");
@@ -613,7 +613,7 @@ void debugger()
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
 	    for (i = 0; i <= worker_count; i++) {
-		Fmt_print("thread%d=", i);
+		Fmt_print("thread%d = ", i);
 		print(ep[i]);
 		putchar('\n');
 	    }
@@ -629,8 +629,9 @@ void debugger()
 		      "SP = %d (stack pointer)\n"
 		      "FC = %d (free counter)\n"
 		      "AP = %d (arglist pointer)\n"
-		      "LP = %d (shelter pointer)\n",
-		      ep, dp[0], hp, sp, fc, ap, lp);
+		      "LP = %d (shelter pointer)\n"
+              "Parallel = %d (worker_count)\n",
+		      ep, dp[0], hp, sp, fc, ap, lp, worker_count);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

@@ -80,3 +80,19 @@ y* means minimum size program of y
 ($test (car (try 100 '(eval (read-exp)) (bits '(+ 1 2)))) success)
 ($test (elt (try 100 '(eval (read-exp)) (bits '(+ h 2))) 1) out-of-data)
 ($test (elt (try 100 '(eval (read-exp)) '(1 1 0 0 0 0 0 0)) 1) out-of-data)
+
+
+;;;---------------------------------------------------------------
+;;;(set 'g '(lambda (x) `(unprovable-p (eval (,x ',x)))))
+;;;(fset 'g g)
+
+(defun valid-proof-p (x) 
+    ;; un implemented
+)
+
+(defun unprovable-p (x) (not (valid-proof-p x)))
+
+(defun g (x)
+    `(unprobable-p (eval (,x ',x))))
+
+;; (g #'g)

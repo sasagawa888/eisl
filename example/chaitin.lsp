@@ -98,3 +98,7 @@ y* means minimum size program of y
 
 ;; (funcall #'g #'g)
 ;; (UNPROBABLE-P (FUNCALL <function> (QUOTE <function>)))
+;; > (let ((f (funcall #'g #'g))) (funcall (elt (elt f 1) 1) (elt (elt (elt f 1) 2) 1)))
+;; (UNPROBABLE-P (FUNCALL <function> (QUOTE <function>)))
+;; > (equal (funcall #'g #'g) (let ((f (funcall #'g #'g))) (funcall (elt (elt f 1) 1) (elt (elt (elt f 1) 2) 1))))
+;; T

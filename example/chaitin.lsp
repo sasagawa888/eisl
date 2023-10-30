@@ -83,6 +83,7 @@ y* means minimum size program of y
 
 
 ;;;---------------------------------------------------------------
+;;; inspired by Kazuhiko Yamamoto
 ;;;(set 'g '(lambda (x) `(unprovable-p (eval (,x ',x)))))
 ;;;(fset 'g g)
 
@@ -93,6 +94,7 @@ y* means minimum size program of y
 (defun unprovable-p (x) (not (valid-proof-p x)))
 
 (defun g (x)
-    `(unprobable-p (eval (,x ',x))))
+    `(unprobable-p (funcall ,x ',x)))
 
-;; (g #'g)
+;; (funcall #'g #'g)
+;; (UNPROBABLE-P (FUNCALL <function> (QUOTE <function>)))

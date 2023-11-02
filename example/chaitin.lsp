@@ -94,11 +94,11 @@ y* means minimum size program of y
 (defun unprovable-p (x) (not (valid-proof-p x)))
 
 (defun g (x)
-    `(unprobable-p (funcall ,x ,x)))
+    `(unprovable-p (funcall ,x ,x)))
 
 ;; (funcall #'g #'g)
-;; (UNPROBABLE-P (FUNCALL <function> <function>))
+;; (UNPROVABLE-P (FUNCALL <function> <function>))
 ;; > (let ((f (funcall #'g #'g))) (funcall (elt (elt f 1) 1) (elt (elt f 1) 2)))
-;; (UNPROBABLE-P (FUNCALL <function> <function>))
+;; (UNPROVABLE-P (FUNCALL <function> <function>))
 ;; (equal (funcall #'g #'g) (let ((f (funcall #'g #'g))) (funcall (elt (elt f 1) 1) (elt (elt f 1) 2))))
 ;; T

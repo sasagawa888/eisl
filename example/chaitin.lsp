@@ -86,6 +86,7 @@ y* means minimum size program of y
 ;;; inspired by Kazuhiko Yamamoto
 ;;;(set 'g '(lambda (x) `(unprovable-p (eval (,x ',x)))))
 ;;;(fset 'g g)
+;;; see https://medium.com/@kenichisasagawa/g%C3%B6dels-proof-in-lisp-4f4b6a51a1e8
 
 (defun valid-proof-p (x) 
     ;; un implemented

@@ -14,3 +14,7 @@
 
 
 (defglobal y 1)
+
+(tests aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)
+(test 1 2)

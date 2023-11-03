@@ -823,7 +823,9 @@
     ;; if quoted data, return nil.
     (defun long-element-p (x)
         (and (consp x)
+             (stringp (car x))
              (not (string= (car x) "'"))
+             (not (member (elt (car x) 0) '(#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)))
              (> (length x) 2)
              (or (long-element-p1 (cdr x))
                  (>= (flatsize (cdr x)) long-element-sum))))
@@ -833,6 +835,8 @@
               ((< (flatsize (car x)) long-element) nil)
               ((>= (flatsize (car x)) long-element) (long-element-p1 (cdr x)))
               (t nil)))
+
+
 
     ;; is one-liner?
     (defun one-liner-p (x lm)

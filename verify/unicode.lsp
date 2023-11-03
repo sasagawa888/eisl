@@ -4,6 +4,10 @@ Unicode extention tests
 
 (import "test")
 
+($ap 2 "Unicode test")
+
+($test (create-string 1 #\φ) "φ")
+($test (create-string 1 #\金) "金")
 ($test (char= #\笹 #\笹) t)
 ($test (char= #\笹 #\川) nil)
 ($test (string= "こんにちは世界" "こんにちは世界") t)

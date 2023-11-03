@@ -4120,8 +4120,8 @@ int f_create_string(int arglist, int th __unused)
 	str = ALLOC(2 * n + 1);
 	pos = 0;
 	for (i = 0; i < n; i++) {
-	    str[pos++] = heap[arg1].name[0];
-	    str[pos++] = heap[arg1].name[1];
+	    str[pos++] = heap[arg2].name[0];
+	    str[pos++] = heap[arg2].name[1];
 	}
 	str[pos] = NUL;
     } else if (isUni3(c)) {
@@ -4173,6 +4173,7 @@ int f_create_string(int arglist, int th __unused)
     return res;
 
 }
+
 
 int f_parse_number(int arglist, int th __unused)
 {

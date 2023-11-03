@@ -8,7 +8,7 @@
 
 
 #|
-漢字
+漢字φψ＋＋
 (cons (eval (read-exp)) (cons (eval (read-exp)) nil) -> it make pair of x and y.
 |#
 

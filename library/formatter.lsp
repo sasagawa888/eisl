@@ -820,9 +820,10 @@
     ;; is it function that has long size element?  e.g. (+ (asdfghjklqwert x)(lkjdslkjsdflkj y))
     ;; if all each element size is over long-element, return t.
     ;; if sum of all element size is over long-element-sum, return t.
+    ;; if quoted data, return nil.
     (defun long-element-p (x)
         (and (consp x)
-             (stringp (car x))
+             (not (string= (car x) "'"))
              (> (length x) 2)
              (or (long-element-p1 (cdr x))
                  (>= (flatsize (cdr x)) long-element-sum))))

@@ -4103,12 +4103,14 @@ int f_create_string(int arglist, int th __unused)
     if (!(charp(arg2) || nullp(arg2)))
 	error(NOT_CHAR, "create-string", arg2);
 
+    
 
     n = GET_INT(arg1);
     if (nullp(arg2))
 	c = ' ';
     else
 	c = GET_CHAR(arg2);
+
 
     if (isUni1(c)) {
 	str = ALLOC(n + 1);
@@ -4123,7 +4125,7 @@ int f_create_string(int arglist, int th __unused)
 	}
 	str[pos] = NUL;
     } else if (isUni3(c)) {
-	str = ALLOC(3 * n + 1);
+	str = ALLOC(3 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4132,7 +4134,7 @@ int f_create_string(int arglist, int th __unused)
 	}
 	str[pos] = NUL;
     } else if (isUni4(c)) {
-	str = ALLOC(4 * n + 1);
+	str = ALLOC(4 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4142,7 +4144,7 @@ int f_create_string(int arglist, int th __unused)
 	}
 	str[pos] = NUL;
     } else if (isUni5(c)) {
-	str = ALLOC(5 * n + 1);
+	str = ALLOC(5 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4153,7 +4155,7 @@ int f_create_string(int arglist, int th __unused)
 	}
 	str[pos] = NUL;
     } else if (isUni6(c)) {
-	str = ALLOC(6 * n + 1);
+	str = ALLOC(6 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4165,6 +4167,7 @@ int f_create_string(int arglist, int th __unused)
 	}
 	str[pos] = NUL;
     }
+
     int res = make_str(str);
     FREE(str);
     return res;

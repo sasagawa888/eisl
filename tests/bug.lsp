@@ -8,12 +8,9 @@
 
 
 #|
-漢字φ
+漢字
 (cons (eval (read-exp)) (cons (eval (read-exp)) nil) -> it make pair of x and y.
 |#
 
 
-(defglobal
- y
- 1
-)
+(defglobal y 1)

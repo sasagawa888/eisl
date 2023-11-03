@@ -10,7 +10,6 @@
     (defglobal input-stream (standard-input))
     (defglobal output-stream (standard-output))
     (defglobal otomo nil)
-    (defglobal long-comment nil)
     
     ;; write formated code to **.tmp file
     ;; if given option is 'stdio, input/output is standard stream.
@@ -165,9 +164,7 @@
               ((characterp x) nil)
               ((string= x "") (format output-stream "~%"))
               ((short-comment-p x) (pp-comment x) (newline lm))
-              ((long-comment-begin-p x) (setq long-comment t) (pp-comment x) (newline 0))
-              (long-comment (pp-comment x) (newline 0))
-              ((long-comment-end-p x) (setq long-comment nil) (pp-comment x) (newline 0))
+              ((long-comment-p x) (pp-comment x) (newline 0))
               (t (pp-string x))))
 
     ;; write each syntax but 
@@ -732,7 +729,7 @@
 
     ;; ; type comment
     (defun comment-p (x)
-        (or (short-comment-p x) (long-comment-begin-p x)))
+        (or (short-comment-p x) (long-comment-p x)))
 
     ;; short-comment includes single-comment,double-somment,triple comment.
     (defun short-comment-p (x)
@@ -763,7 +760,7 @@
              (not (char= (elt x 3) #\;))))
 
     ;; #|    |# type comment
-    (defun long-comment-begin-p (x)
+    (defun long-comment-p (x)
         (and (stringp x)
              (> (length x) 2)
              (char= (elt x 0) #\#)

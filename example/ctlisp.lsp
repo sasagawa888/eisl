@@ -30,7 +30,6 @@ undefined symbol return symbol itself.
                     ((equal s '(quit))
                      (return-from repl t) )
                     (print (eval* s nil))
-                    (setq *dynamic* nil)
                     (prompt)))
               t)
              (t (prompt) (repl)))))
@@ -69,7 +68,7 @@ undefined symbol return symbol itself.
 
 (defun apply* (f arg env)
     (cond ((special-form-p f) (special-form f arg env))
-          ((primitivep f) (apply (symbol-function f) arg))
+          ((primitivep f) (primitive-form f arg))
           ((functionp* f)
            (let ((env1 (bindarg (elt (elt f 1) 0) arg (elt f 2))))
               (for ((body (cdr (elt f 1)) (cdr body)))
@@ -125,6 +124,13 @@ undefined symbol return symbol itself.
 ;;if x is primitive return t
 (defun primitivep (x)
     (member x *primitive*) )
+
+;;call primitive-form 
+(defun primitive-form (f arg)
+    (cond ((eq f '+) (apply #'+ arg))
+          ((eq f '-) (apply #'- arg))
+          ((eq f '*) (apply #'* arg))))
+
 
 ;;if x is user defined function return t
 (defun functionp* (x)
@@ -204,17 +210,6 @@ undefined symbol return symbol itself.
            (set-cdr (eval* (elt arg 1) env) (assoc (elt arg 0) *global*))
            (elt arg 0))
           (t (setq *global* (cons (cons (elt arg 0) (elt arg 1)) *global*)) (elt arg 0))))
-
-;;special-form dynamic
-(defun evdynamic (arg env)
-    (dynamic-lookup (elt arg 0)) )
-
-;;special-form defdynamic
-(defun evdefdynamic (arg env)
-    (cond ((assoc (elt arg 0) *dynamic*)
-           (set-cdr (eval* (elt arg 1) env) (assoc (elt arg 0) *dynamic*))
-           (elt arg 0))
-          (t (setq *dynamic* (cons (cons (elt arg 0) (elt arg 1)) *dynamic*)) (elt arg 0))))
 
 
 ;;spedial-form defun

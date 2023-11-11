@@ -315,8 +315,8 @@ int main(int argc, char *argv[])
     init_syntax();
     init_generic();
     init_thread();
-	init_dp();
-	init_pointer();
+    init_dp();
+    init_pointer();
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
 
 	    switch (ch) {
 	    case 'l':
-		if (f_probe_file(list1(make_str(optarg)),0) == T) {
+		if (f_probe_file(list1(make_str(optarg)), 0) == T) {
 		    f_load(list1(make_str(optarg)), 0);
 		} else {
 		    puts("File doesn't exist.");
@@ -431,9 +431,9 @@ char *library_file(const char *basename)
 
 void init_dp(void)
 {
-	int i;
-	for (i = 0; i < PARASIZE; i++)
-		dp[i] = 0;
+    int i;
+    for (i = 0; i < PARASIZE; i++)
+	dp[i] = 0;
 }
 
 void init_pointer(void)
@@ -473,12 +473,12 @@ void init_thread(void)
     worker_count = sysconf(_SC_NPROCESSORS_CONF) - 1;
     if (worker_count > 5)
 	worker_count = 5;
-	/* sysconf(_SC_NPROCESSORS_CONF) may operate correctly depending on the OS,
-	*  and in such cases, it could potentially result in a negative number. 
-	*  It is assumed that the current CPU has at least 4 cores. 
-	*  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
-	*/
-	else if (worker_count < 0)
+    /* sysconf(_SC_NPROCESSORS_CONF) may operate correctly depending on the OS,
+     *  and in such cases, it could potentially result in a negative number. 
+     *  It is assumed that the current CPU has at least 4 cores. 
+     *  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
+     */
+    else if (worker_count < 0)
 	worker_count = 3;
 
     /* create parallel function thread */
@@ -597,7 +597,7 @@ void set_stok_buf(int index, char c)
 
 void replace_stok_buf(char *str)
 {
-    if (strlen(str) > (size_t)stok.bufsize) {
+    if (strlen(str) > (size_t) stok.bufsize) {
 	int new_bufsize = strlen(str);
 	RESIZE(stok.buf, sizeof(char) * new_bufsize);
 	stok.bufsize = new_bufsize;
@@ -2284,6 +2284,10 @@ int quasi_transfer(int x, int n)
 
     if (nullp(x))
 	return (NIL);
+    else if (vectorp(x))
+	return (quasi_vector_transfer(x, n));
+    else if (arrayp(x))
+	return (quasi_array_transfer(x, n));
     else if (atomp(x))
 	return (list2(make_sym("QUOTE"), x));
     else if (listp(x) && eqp(car(x), make_sym("UNQUOTE")) && n == 0)
@@ -2319,4 +2323,44 @@ int quasi_transfer(int x, int n)
 	return (list3
 		(make_sym("CONS"), quasi_transfer(car(x), n),
 		 quasi_transfer(cdr(x), n)));
+}
+
+int quasi_vector_transfer(int x, int n)
+{
+    int i, size;
+
+    size = GET_INT(GET_CDR(x));
+
+    for (i = 0; i < size; i++) {
+	SET_VEC_ELT(x, i, quasi_transfer(GET_VEC_ELT(x, i), n));
+    }
+    return (x);
+}
+
+
+int quasi_array_transfer(int x, int n)
+{
+    int i, size, ls;
+
+    ls = GET_CDR(x);
+    if (!nullp(ls)) {
+	size = 1;
+	while (!nullp(ls)) {
+	    int n;
+
+	    n = GET_INT(car(ls));
+	    if (n == 0)
+		n = 1;
+	    size = n * size;
+	    ls = cdr(ls);
+	}
+	size++;
+    } else {
+	size = 1;
+    }
+
+    for (i = 0; i < size; i++) {
+	SET_VEC_ELT(x, i, quasi_transfer(GET_VEC_ELT(x, i), n));
+    }
+    return (x);
 }

@@ -630,7 +630,7 @@ void debugger()
 		      "FC = %d (free counter)\n"
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
-              "Parallel = %d (worker_count)\n",
+		      "Parallel = %d (worker_count)\n",
 		      ep, dp[0], hp, sp, fc, ap, lp, worker_count);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
@@ -871,7 +871,7 @@ int f_get_myself(int arglist, int th __unused)
 		(make_sym("DEFMACRO"),
 		 cons(arg1, GET_CAR(GET_CAR(GET_CAR(arg1))))));
 
-    return(NIL);
+    return (NIL);
 }
 
 /* for Raspberry PI 

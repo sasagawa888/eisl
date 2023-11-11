@@ -1204,6 +1204,8 @@ int positivep(int x);
 int prev(int x);
 int push(int x, int th);
 int quasi_transfer(int x, int n);
+int quasi_vector_transfer(int x, int n);
+int quasi_array_transfer(int x, int n);
 int quotient(int x, int y);
 int set_error_flag(int x);
 int signal_condition(int x, int y);

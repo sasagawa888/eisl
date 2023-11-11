@@ -4,7 +4,7 @@
 #include <termios.h>
 
 #define _XOPEN_SOURCE 700
-#define _XOPEN_SOURCE_EXTENDED 
+#define _XOPEN_SOURCE_EXTENDED
 #define NCURSES_OPAQUE 1
 #ifdef __linux__
 #include <ncurses.h>

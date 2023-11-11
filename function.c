@@ -827,7 +827,7 @@ int f_mod(int arglist, int th __unused)
     if (!integerp(arg2) && !longnump(arg2) && !bignump(arg2))
 	error(NOT_INT, "mod", arg2);
 
-    div = f_div(arglist,0);
+    div = f_div(arglist, 0);
     return (minus(arg1, mult(arg2, div)));
 
 }
@@ -3393,56 +3393,56 @@ int f_format(int arglist, int th __unused)
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~A", arg2);
 		}
-		f_format_object(list3(arg1, car(args), NIL),0);
+		f_format_object(list3(arg1, car(args), NIL), 0);
 		args = cdr(args);
 	    } else if (c == 'B') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~B", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(2)),0);
+		f_format_integer(list3(arg1, car(args), make_int(2)), 0);
 		args = cdr(args);
 	    } else if (c == 'C') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~C", arg2);
 		}
-		f_format_char(list2(arg1, car(args)),0);
+		f_format_char(list2(arg1, car(args)), 0);
 		args = cdr(args);
 	    } else if (c == 'D') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~D", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(10)),0);
+		f_format_integer(list3(arg1, car(args), make_int(10)), 0);
 		args = cdr(args);
 	    } else if (c == 'G') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~G", arg2);
 		}
-		f_format_float(list2(arg1, car(args)),0);
+		f_format_float(list2(arg1, car(args)), 0);
 		args = cdr(args);
 	    } else if (c == 'O') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~O", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(8)),0);
+		f_format_integer(list3(arg1, car(args), make_int(8)), 0);
 		args = cdr(args);
 	    } else if (c == 'S') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~S", arg2);
 		}
-		f_format_object(list3(arg1, car(args), T),0);
+		f_format_object(list3(arg1, car(args), T), 0);
 		args = cdr(args);
 	    } else if (c == 'X') {
 		if (nullp(args)) {
 		    output_stream = save;
 		    error(IMPROPER_ARGS, "format ~X", arg2);
 		}
-		f_format_integer(list3(arg1, car(args), make_int(16)),0);
+		f_format_integer(list3(arg1, car(args), make_int(16)), 0);
 		args = cdr(args);
 	    } else if (isdigit(c)) {
 		n = 0;
@@ -3456,10 +3456,11 @@ int f_format(int arglist, int th __unused)
 			output_stream = save;
 			error(IMPROPER_ARGS, "format ~nR", arg2);
 		    }
-		    f_format_integer(list3(arg1, car(args), make_int(n)),0);
+		    f_format_integer(list3(arg1, car(args), make_int(n)),
+				     0);
 		    args = cdr(args);
 		} else if (c == 'T') {
-		    f_format_tab(list2(arg1, make_int(n)),0);
+		    f_format_tab(list2(arg1, make_int(n)), 0);
 		} else
 		    error(ILLEGAL_ARGS, "format ~n?", NIL);
 
@@ -3469,7 +3470,7 @@ int f_format(int arglist, int th __unused)
 		start_flag = false;
 		charcnt = 0;
 	    } else if (c == '&') {
-		f_format_fresh_line(list1(arg1),0);
+		f_format_fresh_line(list1(arg1), 0);
 	    } else if (c == '~') {
 		output_char(output_stream, '~');
 		start_flag = false;
@@ -4103,7 +4104,7 @@ int f_create_string(int arglist, int th __unused)
     if (!(charp(arg2) || nullp(arg2)))
 	error(NOT_CHAR, "create-string", arg2);
 
-    
+
 
     n = GET_INT(arg1);
     if (nullp(arg2))

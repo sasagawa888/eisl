@@ -1,4 +1,4 @@
-;;Chaitin's lisp to understand his thory
+;;Chaitin's lisp to understand his theory
 #|
 memo 
 
@@ -152,8 +152,6 @@ undefined symbol return symbol itself.
           ((eq f 'let*) (evlet* arg env))
           ((eq f 'progn) (evprogn arg env))
           ((eq f 'defglobal) (evdefglobal arg env))
-          ((eq f 'defdynamic) (evdefdynamic arg env))
-          ((eq f 'dynamic) (evdynamic arg env))
           ((eq f 'function) (if (primitivep (car arg))
                                 (car arg)
                                 (function-lookup (car arg)) ))))

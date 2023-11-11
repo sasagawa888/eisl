@@ -2309,7 +2309,7 @@ int quasi_transfer(int x, int n)
 			    quasi_transfer(cadar(x), n - 1)),
 		      quasi_transfer(cdr(x), n)));
     else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE-SPLICING")))
-	return (list3(make_sym("CONSc"),
+	return (list3(make_sym("CONS"),
 		      list3(make_sym("LIST"),
 			    list2(make_sym("QUOTE"),
 				  make_sym("UNQUOTE-SPLICING")),

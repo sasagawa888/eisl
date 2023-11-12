@@ -64,5 +64,12 @@
 ($argc foo 2 0 0)
 ($error (foo 1 2 . 3) <error>)
 
+
+;;; added test cases vector and array
+(defmacro foo (a) `(list #(1 ,a)))
+($test (foo 2) (#(1 2)) equal)
+(defmacro bar (a) `(list #2a((1 ,a)(2 ,a))))
+($test (bar 3) (#2a((1 3) (2 3))) equal)
+
 ;;; end of file
 

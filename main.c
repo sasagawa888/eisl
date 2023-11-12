@@ -2332,7 +2332,7 @@ int quasi_vector_transfer(int x, int n)
     size = GET_INT(GET_CDR(x));
 
     for (i = 0; i < size; i++) {
-	SET_VEC_ELT(x, i, quasi_transfer(GET_VEC_ELT(x, i), n));
+	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n),0));
     }
     return (x);
 }
@@ -2360,7 +2360,7 @@ int quasi_array_transfer(int x, int n)
     }
 
     for (i = 0; i < size; i++) {
-	SET_VEC_ELT(x, i, quasi_transfer(GET_VEC_ELT(x, i), n));
+	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n),0));
     }
     return (x);
 }

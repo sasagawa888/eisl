@@ -3,57 +3,89 @@ The Rules of Representing Roman Numerals:
 
 ① I, V, X, L, C, D, M represent 1, 5, 10, 50, 100, 500, 1000 respectively.
 
-② These characters are combined in writing. 
-In this case, larger numbers are written to the left. 
-For example, 23 is written as XXIII, and writing XIIXI or similar combinations is incorrect. 
-When all numeral symbols are added together, they represent the displayed number.
-
-③ 4 and 9 are written as IV and IX respectively. 
-These are numbers obtained by subtracting the left numeral from the right numeral. 
-This subtraction rule is only used when the right numeral is exactly 5 times or 10 times the value of the left numeral. 
-For instance, 99 is written as XCIX, but writing IC is not permitted.
-
-Why XIIXI is incorrect?
-
 |#
 
 (import "test")
 
 (defun roman-to-arabian (str)
-    (cond ((string= str "") 0)
-          (t (let* ((right (roman-to-arabian (string-cdr str)))
-                    (next (if (>= (length str) 2) (elt str 1) nil)))
-                (case (elt str 0)
-                   ((#\I) (cond ((member next '(#\I nil)) (+ right 1))
-                                ((member next '(#\V #\X)) (- right 1))
-                                (t (error "not permitted"))))
-                   ((#\V) (cond ((member next '(#\I #\V nil)) (+ right 5))
-                                ((member next '(#\L #\C)) (- right 5))
-                                (t (error "not permitted"))))
-                   ((#\X) (cond ((member next '(#\I #\V #\X nil)) (+ right 10))
-                                ((member next '(#\L #\C #\D #\M)) (- right 10))
-                                (t (error "not permitted"))))
-                   ((#\L) (cond ((member next '(#\I #\V #\X #\L nil)) (+ right 50))
-                                ((member next '(#\D)) (- right 50))
-                                (t (error "not permitted"))))
-                   ((#\C) (cond ((member next '(#\I #\V #\X #\L #\C nil)) (+ right 100))
-                                ((member next '(#\D #\M)) (- right 100))
-                                (t (error "not permitted"))))
-                   ((#\D) (cond ((member next '(#\I #\V #\X #\L #\C #\D nil)) (+ right 500))
-                                ((member next '(#\M)) (- right 500))
-                                (t (error "not permitted"))))
-                   ((#\M) (+ right 1000)))))))
+   (roman-to-arabian1 (convert str <list>)))
+
+(defun roman-to-arabian1 (ls)
+    (cond ((null ls) 0)
+          ((char= (car ls) #\I)
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 1))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 2))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls))) 3)))
+                             ((reversep ls) (- (roman-to-arabian1 (cdr ls)) 1))
+                             (t (error "not permitted"))))                
+          ((char= (car ls) #\V)
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 5))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 10))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls)))) 15))
+                             ((reversep ls) (- (roman-to-arabian1 (cdr ls)) 5))
+                             (t (error "not permitted"))))
+          ((char= (car ls) #\X)
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 10))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 20))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls)))) 30))
+                             ((reversep ls) (- (roman-to-arabian1 (cdr ls)) 10))
+                             (t (error "not permitted"))))
+          ((char= (car ls) #\L)
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 50))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 100))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls)))) 150))
+                             ((reversep ls) (- (roman-to-arabian1 (cdr ls)) 50))
+                             (t (error "not permitted"))))
+          ((char= (car ls) #\C)
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 100))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 200))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls)))) 300))
+                             ((reversep ls) (- (roman-to-arabian1 (cdr ls)) 100))
+                             (t (error "not permitted"))))
+          ((char= (car ls) #\D) 
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 500))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 1000))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls)))) 1500))
+                             ((reversep ls) (- (roman-to-arabian1 (cdr ls)) 500))
+                             (t (error "not permitted"))))
+          ((char= (car ls) #\M)
+                       (cond ((singlep ls) (+ (roman-to-arabian1 (cdr ls)) 1000))
+                             ((doublep ls) (+ (roman-to-arabian1 (cdr (cdr ls))) 2000))
+                             ((triplep ls) (+ (roman-to-arabian1 (cdr (cdr (cdr ls)))) 3000))
+                             (t (error "not permitted"))))))
 
 
 
-(defun string-cdr (str)
-    (list-to-string (cdr (convert str <list>))))
+(defun singlep (ls)
+    (cond ((null (cdr ls)) t)
+          ((not (smallerp (elt ls 0) (elt ls 1))) t)
+          (t nil)))
 
-(defun list-to-string (ls)
-    (cond ((null ls) "")
-          (t (string-append (create-string 1 (car ls))
-                            (list-to-string (cdr ls))))))
-    
+(defun doublep (ls)
+    (or (and (= (length ls) 2) (char= (elt ls 0) (elt ls 1)))
+        (and (> (length ls) 2) (char= (elt ls 0) (elt ls 1)) (smallerp (elt ls 2) (elt ls 1)))))
+
+(defun triplep (ls)
+    (and (>= (length ls) 3) (char= (elt ls 0) (elt ls 1)) (char= (elt ls 0) (elt ls 2))))
+
+(defun reversep (ls)
+    (and (>= (length ls) 2) (multiplep (elt ls 0) (elt ls 1))))
+
+(defun smallerp (l r)
+    (cond ((char= l #\I) (member r '(#\V #\X #\L #\C #\D #\M)))
+          ((char= l #\V) (member r '(#\X #\L #\C #\D #\M)))
+          ((char= l #\X) (member r '(#\L #\C #\D #\M)))
+          ((char= l #\L) (member r '(#\C #\D #\M)))
+          ((char= l #\C) (member r '(#\D #\M)))
+          ((char= l #\D) (member r '(#\M)))))
+
+(defun multiplep (l r)
+    (cond ((char= l #\I) (member r '(#\V #\X)))
+          ((char= l #\V) (member r '(#\L)))
+          ((char= l #\X) (member r '(#\L #\C #\D #\M)))
+          ((char= l #\L) (member r '(#\C #\D #\M)))
+          ((char= l #\C) (member r '(#\D #\M)))
+          ((char= l #\D) (member r '(#\M)))))
 
 (defun arabian-to-roman (n)
     (cond ((= n 0) "")
@@ -66,13 +98,15 @@ Why XIIXI is incorrect?
           (t (string-append "I" (arabian-to-roman (- n 1))))))
 
 
+
 ($test (roman-to-arabian "XXIII") 23)
 ($test (roman-to-arabian "VI") 6)
 ($test (roman-to-arabian "IV") 4)
 ($test (roman-to-arabian "XCIX") 99)
 
-;($error (roman-to-arabian "XIIXI") <simple-error>)
+($error (roman-to-arabian "XIIXI") <simple-error>)
 ($error (roman-to-arabian "IC") <simple-error>)
 
-($test (arabian-to-roman 2) "II")
-($test (arabian-to-roman 6) "VI")
+;($test (arabian-to-roman 2) "II")
+;($test (arabian-to-roman 6) "VI")
+

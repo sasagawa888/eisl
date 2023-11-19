@@ -12,6 +12,9 @@ When all numeral symbols are added together, they represent the displayed number
 These are numbers obtained by subtracting the left numeral from the right numeral. 
 This subtraction rule is only used when the right numeral is exactly 5 times or 10 times the value of the left numeral. 
 For instance, 99 is written as XCIX, but writing IC is not permitted.
+
+why IC XIIXI are not permitted ?
+
 |#
 
 (import "test")
@@ -29,9 +32,6 @@ For instance, 99 is written as XCIX, but writing IC is not permitted.
                    ((#\D) (if (member next '(#\M)) (- right 500) (+ right 500)))
                    ((#\M) (+ right 1000)))))))
 
-(defun multiplep (m n)
-    (or (and (>= n (* 5 m)) (= (mod n (* 5 m)) 0))
-        (and (>= n (* 10 m)) (= (mod n (* 10 m)) 0))))
 
 
 (defun string-cdr (str)

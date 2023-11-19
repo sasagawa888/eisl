@@ -5,7 +5,7 @@ I, V, X, L, C, D, M represent 1, 5, 10, 50, 100, 500, 1000 respectively.
 
 repeat same symbol max 3 times.
 
-
+subtruct when right numeric is 5 or 10 times multiple number of left numeric. 
 
 |#
 
@@ -96,20 +96,25 @@ repeat same symbol max 3 times.
           ((char= l #\D) nil)))
 
 (defun arabian-to-roman (n)
+      (cond ((< n 0) (error "not permitted"))
+            ((> n 3999) (error "not permitted"))
+            (t (arabian-to-roman1 n))))
+
+(defun arabian-to-roman1 (n)
     (cond ((= n 0) "")
-          ((>= n 1000) (string-append "M" (arabian-to-roman (- n 1000))))
-          ((= (div n 100) 9) (string-append "CM" (arabian-to-roman (- n 900))))
-          ((= (div n 100) 4) (string-append "CD" (arabian-to-roman (- n 400))))
-          ((>= n 500) (string-append "D" (arabian-to-roman (- n 500))))
-          ((>= n 100) (string-append "C" (arabian-to-roman (- n 100))))
-          ((= (div n 10) 9) (string-append "XC" (arabian-to-roman (- n 90))))
-          ((= (div n 10) 4) (string-append "VC" (arabian-to-roman (- n 40))))
-          ((>= n 50) (string-append "L" (arabian-to-roman (- n 50))))
-          ((>= n 10) (string-append "X" (arabian-to-roman (- n 10))))
+          ((>= n 1000) (string-append "M" (arabian-to-roman1 (- n 1000))))
+          ((= (div n 100) 9) (string-append "CM" (arabian-to-roman1 (- n 900))))
+          ((= (div n 100) 4) (string-append "CD" (arabian-to-roman1 (- n 400))))
+          ((>= n 500) (string-append "D" (arabian-to-roman1 (- n 500))))
+          ((>= n 100) (string-append "C" (arabian-to-roman1 (- n 100))))
+          ((= (div n 10) 9) (string-append "XC" (arabian-to-roman1 (- n 90))))
+          ((= (div n 10) 4) (string-append "VC" (arabian-to-roman1 (- n 40))))
+          ((>= n 50) (string-append "L" (arabian-to-roman1 (- n 50))))
+          ((>= n 10) (string-append "X" (arabian-to-roman1 (- n 10))))
           ((= n 9) "IX")
           ((= n 4) "IV")
-          ((>= n 5) (string-append "V" (arabian-to-roman (- n 5))))
-          (t (string-append "I" (arabian-to-roman (- n 1))))))
+          ((>= n 5) (string-append "V" (arabian-to-roman1 (- n 5))))
+          (t (string-append "I" (arabian-to-roman1 (- n 1))))))
 
 
 
@@ -126,5 +131,6 @@ repeat same symbol max 3 times.
 ($test (arabian-to-roman 2) "II")
 ($test (arabian-to-roman 6) "VI")
 ($test (arabian-to-roman 4) "IV")
+($test (arabian-to-roman 99) "XCIX")
 ($test (arabian-to-roman 999) "CMXCIX")
 

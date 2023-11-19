@@ -88,7 +88,7 @@
               ((char= l #\D) nil)))
 
     (defpublic arabian-to-roman (n)
-        (cond ((< n 0) (error "not permitted"))
+        (cond ((<= n 0) (error "not permitted"))
               ((> n 3999) (error "not permitted"))
               (t (arabian-to-roman1 n))))
 

@@ -301,12 +301,12 @@
     (rnd-select ls (length ls)) )
 
 ;;p26
-(defun combination (n xs)
-    (labels ((comb (n xs ys zs)
-               (cond ((= n 0) (cons (reverse ys) zs))
-                     ((null xs) zs)
-                     (t (comb (- n 1) (cdr xs) (cons (car xs) ys) (comb n (cdr xs) ys zs))) )))
-        (comb n xs nil nil)))
+(defun combination (n x)
+    (cond ((null x) nil)
+          ((= n 1) (mapcar (lambda (y) (list y)) x))
+          (t  (append (mapcar (lambda (y) (cons (car x) y)) (combination (- n 1) (cdr x)))
+                      (combination n (cdr x))))))
+
 
 ;;p31
 (defun is-prime (n)

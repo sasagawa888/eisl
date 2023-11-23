@@ -301,16 +301,25 @@
     (rnd-select ls (length ls)) )
 
 ;;p26
+;; () -> ()
+;; n=1 (a b c) -> ((a)(b)(c))
+;; else (append (cons a (combination (- n 1) '(b c)))
+;;              (combination n '(b c))) 
 (defun combination (n x)
     (cond ((null x) nil)
           ((= n 1) (mapcar (lambda (y) (list y)) x))
           (t  (append (mapcar (lambda (y) (cons (car x) y)) (combination (- n 1) (cdr x)))
                       (combination n (cdr x))))))
-
+;;; e.g. (a b c)
+;;; (append 
+;;;  (cons 'a (permutation '(b c))
+;;;  (cons 'b (permutation '(a c))
+;;;  (cons 'c (permutation '(a b))
+;;; )
 (defun permutation (x)
     (if (null (cdr x))
         (list x)
-        (perm x 0 (length x))))
+        (permutation1 x 0 (length x))))
 
 (defun permutation1 (x s e)
     (if (= s e) 

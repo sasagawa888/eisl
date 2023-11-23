@@ -307,6 +307,18 @@
           (t  (append (mapcar (lambda (y) (cons (car x) y)) (combination (- n 1) (cdr x)))
                       (combination n (cdr x))))))
 
+(defun permutation (x)
+    (if (null (cdr x))
+        (list x)
+        (perm x 0 (length x))))
+
+(defun permutation1 (x s e)
+    (if (= s e) 
+        nil    
+        (append (mapcar (lambda (y) (cons (elt x s) y))
+                        (permutation (remove-at x (+ s 1))))
+                (permutation1 x (+ s 1) e))))
+
 
 ;;p31
 (defun is-prime (n)

@@ -301,13 +301,13 @@
     (rnd-select ls (length ls)) )
 
 ;;p26
-;; () -> ()
-;; n=1 (a b c) -> ((a)(b)(c))
+;; x=() -> ()
+;; n=0 (a b c) -> (())
 ;; else (append (cons a (combination (- n 1) '(b c)))
 ;;              (combination n '(b c))) 
 (defun combination (n x)
-    (cond ((null x) nil)
-          ((= n 1) (mapcar (lambda (y) (list y)) x))
+    (cond ((= n 0) '(()))
+          ((null x) nil)
           (t  (append (mapcar (lambda (y) (cons (car x) y)) (combination (- n 1) (cdr x)))
                       (combination n (cdr x))))))
 ;;; e.g. (a b c)

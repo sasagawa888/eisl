@@ -3909,7 +3909,7 @@ int f_finish_output(int arglist, int th __unused)
     arg1 = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "finish-output", arglist);
-    if (!(streamp(arg1) && GET_CDR(arg1) == EISL_OUTPUT))
+    if (!(streamp(arg1) && GET_OPT(arg1) == EISL_OUTPUT))
 	error(NOT_OUT_STREAM, "finish-output", arg1);
     fflush(GET_PORT(arg1));
     return (UNDEF);

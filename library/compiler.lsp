@@ -183,6 +183,16 @@ defgeneric compile
     
     (defglobal not-need-colon '(c-lang c-define c-include c-option)
 )
+    (defglobal builtin-class 
+    '((<OBJECT> <BASIC-ARRAY> <GENERAL-ARRAY*> <BASIC-ARRAY*> <BASIC-VECTOR> <GENERAL-VECTOR>
+       <STRING> <BUILT-IN-CLASS> <CHARACTER> <FUNCTION> <GENERIC-FUNCTION>
+       <STANDARD-GENERIC-FUNCTION> <LIST> <CONS> <NULL> <SYMBOL> <NUMBER> <FLOAT> <INTEGER>
+       <SERIOUS-CONDITION> <ERROR> <ARITHMETIC-ERROR> <DIVISION-BY-ZERO>
+       <FLOATING-POINT-OVERFLOW> <FLOATING-POINT-UNDERFLOW> <CONTROL-ERROR> <PARSE-ERROR>
+       <PROGRAM-ERROR> <DOMAIN-ERROR> <CLASS-ERROR> <UNDEFINED-ENTITY> <UNBOUND-VARIABLE>
+       <UNDEFINED-FUNCTION> <SIMPLE-ERROR> <STREAM-ERROR> <END-OF-STREAM> <STORAGE-EXHAUSTED>
+       <STANDARD-CLASS> <STANDARD-OBJECT> <STREAM> <INVALID> <FIXNUM> <LONGNUM> <BIGNUM>)))
+    (defglobal user-class nil)
     (defglobal global-variable nil)
     (defglobal global-dynamic nil)
     (defglobal function-arg nil)
@@ -292,7 +302,8 @@ defgeneric compile
            (while (setq sexp (read instream nil nil))
               (cond ((and (consp sexp) (eq (car sexp) 'defmodule)) (module-check sexp))
                     (t (check-args-count sexp)
-                       (find-catch-block-tag (macroexpand-all sexp)))))
+                       (find-catch-block-tag (macroexpand-all sexp))
+                       (find-user-class sexp))))
            (close instream)
            (setq instream nil)
            (mapc (lambda (x) (remove-property x 'unwind-nest))
@@ -399,6 +410,8 @@ defgeneric compile
                (find-catch-block-tag (cdr (cdr x))))
               ((consp (car x)) (find-catch-block-tag (car x)) (find-catch-block-tag (cdr x)))
               (t (find-catch-block-tag (cdr x)))))
+    
+    (defun find-user-class (x) )
 
     (defun pass2 (x)
         (setq instream (open-input-file x))
@@ -682,6 +695,7 @@ defgeneric compile
         (setq function-arg nil)
         (setq generic-name-arg nil)
         (setq catch-block-tag nil)
+        (setq user-class nil)
         (setq c-lang-option "")
         (setq code0 (open-output-file (string-append fname "0" ext)))
         (setq code1 (open-output-file (string-append fname "1" ext)))

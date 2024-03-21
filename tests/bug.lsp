@@ -77,10 +77,10 @@
 (defun matrix-set-elt (v m i j)
     (matrix::set-aref1 v m i j) )
 
-(import "seq")
 (import "macro")
 
 (defmodule matrix
+    (import "seq" map every reduce concatenate)
     (defun check-matrix (array)
         (when (/= (length (array-dimensions array)) 2)
               (error "Argument must be a matrix")))

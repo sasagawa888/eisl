@@ -10,13 +10,13 @@
 (defclass <columns> ()
     ((data :accessor data :initform 0 :initarg data)) )
 
+
 ;;; constructer
 (defun create-rows (x)
     (create (class <rows>) 'data x) )
 
 (defun create-columns (x)
     (create (class <columns>) 'data x) )
-
 
 ;;; convert data structure
 (defmacro matrix-convert (x type)
@@ -79,10 +79,12 @@
 
 (defmodule matrix
     (import "seq" map every reduce concatenate)
+    (import "macro")
     (defun check-matrix (array)
         (when (/= (length (array-dimensions array)) 2)
               (error "Argument must be a matrix")))
 
+    
     ;;; ROWS returns the row vectors of a matrix
     (defun rows (matrix)
         (check-matrix matrix)
@@ -97,8 +99,9 @@
                            (aref matrix row-index column-index)))
                   (setf (elt rows row-index) fields)))
             rows))
-
+    
     ;;; ROWS->MATRIX converts a vector of row vectors into a matrix
+    
     (defun rows->matrix (rows)
         (let* ((dimensions (vector-of-vectors-dimensions rows))
                (number-of-rows (elt dimensions 0))
@@ -109,7 +112,7 @@
                   (dotimes (col-index number-of-columns)
                      (setf (garef matrix row-index col-index) (elt row col-index)))))
             matrix))
-
+    
     ;;; COLUMNS->MATRIX converts a vector of column vectors into a matrix
     (defun columns->matrix (columns)
         (transpose (rows->matrix columns)))
@@ -127,6 +130,7 @@
     (defmethod transpose
                ((vector <general-vector>))
                (columns->matrix (vector vector)))
+    
     ;;; COLUMNS returns the column vectors of matrix MATRIX
     (defun columns (matrix)
         (check-matrix matrix)
@@ -187,6 +191,7 @@
                 (car operands)
                 (cdr operands)))
 
+    
     ;;; ADD adds the operands OPERANDS together
     (defun add (&rest operands)
         (apply #'element-operate #'+ operands))
@@ -230,7 +235,7 @@
     ;;; MULT multiplies operands OPERANDS together from left to right
     (defun mult (&rest operands)
         (reduce (lambda (x y) (mult-2 x y)) (car operands) (cdr operands)))
-
+    
     ;;; NEGATE negates X
     ;;; Multiplies by negative 1
     (defun negate (x)
@@ -253,18 +258,19 @@
                (-x3 (- x3))
                (x-mat (rows->matrix (vector (vector 0 -x3 x2) (vector x3 0 -x1) (vector -x2 x1 0)))) )
             (transpose (mult x-mat (transpose y)))))
-
+    
     ;;; NORM calculates the Euclidean norm of x
     (defun norm (x)
         (sqrt (dot x x)))
-
+    
+    
     ;;; NORMALIZE normalizes vector X
     ;;; The normalized vector is a unit vector with the same direction of X
     (defun normalize (x)
-        (let ((norm (norm x)))
-           (if (= 0 norm)
+        (let ((norm1 (norm x)))
+           (if (= 0 norm1)
                (error "Cant normalize a zero-length vector!"))
-           (mult x (reciprocal norm))))
+           (mult x (reciprocal norm1))))
 
     ;;; CARTESIAN-PRODUCT returns the cartesian product of the vectors in VECTORS
     (defun cartesian-product (&rest vectors)
@@ -285,7 +291,7 @@
     ;;; get element from matrix (index is start from 1)
     (defun aref1 (mat i j)
         (aref mat (- i 1) (- j 1)))
-
+    
     (defun square-matrix-p (x)
         (let ((dim (array-dimensions x)))
            (and (= (length dim) 2) (= (elt dim 0) (elt dim 1)))))
@@ -310,7 +316,7 @@
     ;;; determinant of matrix
     (defpublic matrix-det (x)
         (det x))
-
+    
     ;;; transform to upper triang and calculate product of diagonal
     (defun det (mat)
         (unless (square-matrix-p mat) (error "matrix-det not square matrix"))
@@ -339,15 +345,15 @@
                 ((> i n)
                  mat )
                 (set-aref1 1 mat i i))))
-
+    
     ;; elementaly operations
     (defun exchange-row (i j)
         (let ((tmp1 (elt mat1 (- i 1)))
               (tmp2 (elt mat2 (- i 1))) )
            (set-elt (elt mat1 (- j 1)) mat1 (- i 1))
            (set-elt (elt mat2 (- j 1)) mat2 (- i 1))
-           (set-elt tmp mat1 (- i 1))
-           (set-elt tmp mat2 (- i 1))))
+           (set-elt tmp1 mat1 (- i 1))
+           (set-elt tmp2 mat2 (- i 1))))
 
     
     ;; row(i) = row(i)-r*row(j)
@@ -383,7 +389,7 @@
         (for ((i 1 (+ i 1)))
              ((> i n))
              (if (= (rowref1 mat1 i i) 0)
-                 (exchange-zero-row1 m n))))
+                 (exchange-zero-row1 i n))))
 
     
     (defun exchange-zero-row1 (m n)

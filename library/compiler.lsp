@@ -184,14 +184,14 @@ defgeneric compile
     (defglobal not-need-colon '(c-lang c-define c-include c-option)
 )
     (defglobal builtin-class 
-    '((<OBJECT> <BASIC-ARRAY> <GENERAL-ARRAY*> <BASIC-ARRAY*> <BASIC-VECTOR> <GENERAL-VECTOR>
+    '(<OBJECT> <BASIC-ARRAY> <GENERAL-ARRAY*> <BASIC-ARRAY*> <BASIC-VECTOR> <GENERAL-VECTOR>
        <STRING> <BUILT-IN-CLASS> <CHARACTER> <FUNCTION> <GENERIC-FUNCTION>
        <STANDARD-GENERIC-FUNCTION> <LIST> <CONS> <NULL> <SYMBOL> <NUMBER> <FLOAT> <INTEGER>
        <SERIOUS-CONDITION> <ERROR> <ARITHMETIC-ERROR> <DIVISION-BY-ZERO>
        <FLOATING-POINT-OVERFLOW> <FLOATING-POINT-UNDERFLOW> <CONTROL-ERROR> <PARSE-ERROR>
        <PROGRAM-ERROR> <DOMAIN-ERROR> <CLASS-ERROR> <UNDEFINED-ENTITY> <UNBOUND-VARIABLE>
        <UNDEFINED-FUNCTION> <SIMPLE-ERROR> <STREAM-ERROR> <END-OF-STREAM> <STORAGE-EXHAUSTED>
-       <STANDARD-CLASS> <STANDARD-OBJECT> <STREAM> <INVALID> <FIXNUM> <LONGNUM> <BIGNUM>)))
+       <STANDARD-CLASS> <STANDARD-OBJECT> <STREAM> <INVALID> <FIXNUM> <LONGNUM> <BIGNUM>))
     (defglobal user-class nil)
     (defglobal global-variable nil)
     (defglobal global-dynamic nil)
@@ -521,6 +521,14 @@ defgeneric compile
                           (format stream (convert name <string>))
                           (format stream "\")))")))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
+                     ((member x builtin-class)
+                      (format stream "Fmakesym(\"")
+                      (format stream (convert x <string>))
+                      (format stream "\")"))
+                     ((member x user-class)
+                      (format stream "Fmakesym(\"")
+                      (format stream (convert x <string>))
+                      (format stream "\")"))
                      (t (when (and (not (member x global-variable))
                                    (not (eq x '*pi*))
                                    (not (eq x '*most-negative-float*))

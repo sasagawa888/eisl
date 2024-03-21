@@ -411,7 +411,10 @@ defgeneric compile
               ((consp (car x)) (find-catch-block-tag (car x)) (find-catch-block-tag (cdr x)))
               (t (find-catch-block-tag (cdr x)))))
     
-    (defun find-user-class (x) )
+    (defun find-user-class (x) 
+        (cond ((and (consp x) (eq (car x) 'defclass))
+               (setq user-class (cons (elt x 1) user-class)))
+              (t nil)))
 
     (defun pass2 (x)
         (setq instream (open-input-file x))

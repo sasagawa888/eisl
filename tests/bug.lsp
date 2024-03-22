@@ -1,4 +1,20 @@
+(import "test")
+
 ;;; matrix library
+(defglobal identity-matrix 
+           #2a((1 0 0)
+               (0 1 0)
+               (0 0 1)))
+
+(defglobal zeros-matrix
+          #2a((0 0 0)
+              (0 0 0)
+              (0 0 0)))
+
+(defglobal test-matrix 
+          #2a((1 2 3)
+              (4 5 6)
+              (7 8 9)))
 
 (defglobal a #2a((1 2 3)(4 5 6)))
 (defglobal b #2a((2 3 4)(5 6 7)))
@@ -7,6 +23,10 @@
 (defun matrixp (x)
     (and (eq (class-of x) (class <general-array*>))
          (= (length (array-dimensions x)) 2)))
+
+(defun vectorp (x)
+    (and (eq (class-of x) (class <general-vector>))
+         (= (length x) 3)))
 
 (defun matrix-add (x y)
     (let ((dx (array-dimensions x))
@@ -92,13 +112,17 @@
                  (set-aref (* -1 (aref x i j)) a i j)))))
 
 (defun vector-dot (x y)
-    (matrix::dot x y) )
+    (+ (* (elt x 0) (elt y 0))
+       (* (elt x 1) (elt y 1))
+       (* (elt x 2) (elt y 2))))
 
 (defun vector-cross (x y)
-    (matrix::cross x y) )
+    (vector (- (* (elt x 1) (elt y 2)) (* (elt x 2) (elt y 0)))
+            (- (* (elt x 2) (elt y 0)) (* (elt x 0) (elt y 2)))
+            (- (* (elt x 0) (elt y 1)) (* (elt x 1) (elt y 0)))))
 
 (defun vector-norm (x)
-    (matrix::norm x) )
+    (sqrt (matrix-dot x x)))
 
 (defun vector-normalize (x)
     (matrix-::normalize x) )
@@ -109,204 +133,19 @@
 (defun matrix-set-elt (v x i j)
     (set-aref v x (- i 1) (- j 1) ))
 
-(import "macro")
-
-(defmodule matrix
-    (import "seq" map every reduce concatenate)
-    (defun check-matrix (array)
-        (when (/= (length (array-dimensions array)) 2)
-              (error "Argument must be a matrix")))
 
     
-    ;;; ROWS returns the row vectors of a matrix
-    (defun rows (matrix)
-        (check-matrix matrix)
-        (let* ((dimensions (array-dimensions matrix))
-               (number-of-rows (elt dimensions 0))
-               (number-of-columns (elt dimensions 1))
-               (rows (create-vector number-of-rows)) )
-            (dotimes (row-index number-of-rows)
-               (let ((fields (create-vector number-of-columns)))
-                  (dotimes (column-index number-of-columns)
-                     (setf (elt fields column-index)
-                           (aref matrix row-index column-index)))
-                  (setf (elt rows row-index) fields)))
-            rows))
     
-    ;;; ROWS->MATRIX converts a vector of row vectors into a matrix
-    
-    (defun rows->matrix (rows)
-        (let* ((dimensions (vector-of-vectors-dimensions rows))
-               (number-of-rows (elt dimensions 0))
-               (number-of-columns (elt dimensions 1))
-               (matrix (create-array (convert dimensions <list>))) )
-            (dotimes (row-index number-of-rows)
-               (let ((row (elt rows row-index)))
-                  (dotimes (col-index number-of-columns)
-                     (setf (garef matrix row-index col-index) (elt row col-index)))))
-            matrix))
-    
-    ;;; COLUMNS->MATRIX converts a vector of column vectors into a matrix
-    (defun columns->matrix (columns)
-        (transpose (rows->matrix columns)))
-
-    ;;; TRANSPOSE transposes a matrix or vector X
-    (defgeneric transpose (x))
-
-    (defmethod transpose
-               ((matrix <general-array*>))
-               (check-matrix matrix)
-               (let ((matrix-columns (columns matrix)))
-                  (if (= (length matrix-columns) 1)
-                      (elt matrix-columns 0)
-                      (rows->matrix matrix-columns))))
-    (defmethod transpose
-               ((vector <general-vector>))
-               (columns->matrix (vector vector)))
-    
-    ;;; COLUMNS returns the column vectors of matrix MATRIX
-    (defun columns (matrix)
-        (check-matrix matrix)
-        (let ((get-col (lambda (&rest column-fields) (convert column-fields <general-vector>)))
-              (map (function map)) )
-           (apply map
-                  '<general-vector>
-                  get-col
-                  (convert (rows matrix) <list>))))
-
-    ;;; VECTOR-OF-VECTORS-DIMENSIONS returns a vector with the dimensions of VECTOR-OF-VECTORS
-    ;;; The first element of the returned vector is the number of vectors in VECTOR-OF-VECTORS
-    ;;; The second element of the returned vector is the length of each of the vectors in VECTOR-OF-VECTORS
-    ;;; All vectors in VECTOR-OF-VECTORS must have the same length
-    (defun vector-of-vectors-dimensions (vector-of-vectors)
-        (let ((first-vector-length (length (elt vector-of-vectors 0))))
-           (if (every (lambda (vector) (= (length vector) first-vector-length))
-                      vector-of-vectors)
-               (vector (length vector-of-vectors) first-vector-length)
-               (error "All sub-vectors must have the same length"))))
-
-    ;;; CHECK-SAME-DIMENSIONS checks that arrays X and Y have the same dimensions.
-    ;;; If they do not, an error is signalled
-    (defun check-same-dimensions (x y)
-        (when (not (equal (array-dimensions x) (array-dimensions y)))
-              (error "All arguments must have the same dimensions")))
-
-    ;;; ELEMENT-OPERATE-2 performs an element-wise operation on X and Y
-    ;;; Operator OPERATOR is the function that performs the operation.
-    ;;; OPERATOR must take at least two arguments
-    (defgeneric element-operate-2 (operator x y))
-
-    (defmethod element-operate-2
-               ((operator <function>) x y)
-               (funcall operator x y))
-    (defmethod element-operate-2
-               ((operator <function>) (x <general-vector>) (y <general-vector>))
-               (check-same-dimensions x y)
-               (map '<general-vector>
-                    (lambda (x y) (element-operate-2 operator x y))
-                    x
-                    y))
-    (defmethod element-operate-2
-               ((operator <function>) (x <general-array*>) (y <general-array*>))
-               (check-matrix x)
-               (check-matrix y)
-               (check-same-dimensions x y)
-               (rows->matrix
-                (map '<general-vector>
-                     (lambda (x y) (element-operate-2 operator x y))
-                     (rows x)
-                     (rows y))))
-    ;;; ELEMENT-OPERATE performs an element-wise operation on any number of operands in OPERANDS.
-    ;;; DYADIC-OPERATOR is an function that takes at least two argumenst
-    ;;; The element-wise operation is performed from left-to-right
-    (defun element-operate (dyadic-operator &rest operands)
-        (reduce (lambda (x y) (element-operate-2 dyadic-operator x y))
-                (car operands)
-                (cdr operands)))
-
-    
-    ;;; ADD adds the operands OPERANDS together
-    (defun add (&rest operands)
-        (apply #'element-operate #'+ operands))
-
-    ;;; SUB subtracts the OPERANDS from left to right
-    (defun sub (&rest operands)
-        (apply #'element-operate #'- operands))
-
-    ;;; ELEMENT-WISE-PRODUCT performs the element-wise-product of the operands OPERANDS
-    ;;; This is also known as the Hadamard product
-    (defun element-wise-product (&rest operands)
-        (apply #'element-operate #'* operands))
-
-    ;;; MULT-2 multiplies X and Y together
-    (defgeneric mult-2 (x y))
-
-    (defmethod mult-2 ((x <number>) (y <number>)) (* x y))
-    (defmethod mult-2
-               ((x <number>) (y <general-vector>))
-               (map '<general-vector>
-                    (lambda (component) (mult-2 x component))
-                    y))
-    (defmethod mult-2 ((x <general-vector>) (y <number>)) (mult-2 y x))
-    (defmethod mult-2
-               ((x <number>) (y <general-array*>))
-               (check-matrix y)
-               (rows->matrix (map '<general-vector> (lambda (row) (mult-2 x row)) (rows y))))
-    (defmethod mult-2
-               ((x <general-array*>) (y <number>))
-               (check-matrix x)
-               (mult-2 y x))
-    (defmethod mult-2
-               ((x <general-vector>) (y <general-array*>))
-               (check-matrix y)
-               (map '<general-vector> (lambda (col) (dot col x)) (columns y)))
-    (defmethod mult-2
-               ((x <general-array*>) (y <general-array*>))
-               (check-matrix x)
-               (check-matrix y)
-               (rows->matrix (map '<general-vector> (lambda (row) (mult-2 row y)) (rows x))))
-    ;;; MULT multiplies operands OPERANDS together from left to right
-    (defun mult (&rest operands)
-        (reduce (lambda (x y) (mult-2 x y)) (car operands) (cdr operands)))
-    
-    ;;; NEGATE negates X
-    ;;; Multiplies by negative 1
-    (defun negate (x)
-        (mult-2 x -1))
-
-    ;;; DOT calculates dot product of X and Y
-    (defun dot (x y)
-        (assure <general-vector> x)
-        (assure <general-vector> y)
-        (check-same-dimensions x y)
-        (reduce #'add 0 (element-wise-product x y)))
-
-    ;;; CROSS calculates cross product of X and Y
-    (defun cross (x y)
-        (let* ((x1 (elt x 0))
-               (-x1 (- x1))
-               (x2 (elt x 1))
-               (-x2 (- x2))
-               (x3 (elt x 2))
-               (-x3 (- x3))
-               (x-mat (rows->matrix (vector (vector 0 -x3 x2) (vector x3 0 -x1) (vector -x2 x1 0)))) )
-            (transpose (mult x-mat (transpose y)))))
-    
-    ;;; NORM calculates the Euclidean norm of x
-    (defun norm (x)
-        (sqrt (dot x x)))
-    
-    
-    ;;; NORMALIZE normalizes vector X
-    ;;; The normalized vector is a unit vector with the same direction of X
-    (defun normalize (x)
-        (let ((norm1 (norm x)))
-           (if (= 0 norm1)
-               (error "Cant normalize a zero-length vector!"))
+;;; NORMALIZE normalizes vector X
+;;; The normalized vector is a unit vector with the same direction of X
+(defun normalize (x)
+    (let ((norm1 (norm x)))
+        (if (= 0 norm1)
+            (error "Cant normalize a zero-length vector!"))
            (mult x (reciprocal norm1))))
 
-    ;;; CARTESIAN-PRODUCT returns the cartesian product of the vectors in VECTORS
-    (defun cartesian-product (&rest vectors)
+;;; CARTESIAN-PRODUCT returns the cartesian product of the vectors in VECTORS
+(defun cartesian-product (&rest vectors)
         (flet ((next-cartesian-product (previous-product next-vector)
                    (reduce (lambda (accumulated y) (concatenate '<general-vector>
                                            accumulated
@@ -317,20 +156,14 @@
                            next-vector)))
             (reduce #'next-cartesian-product #(#()) vectors)))
 
-    ;;; set element to matrix (index is start from 1)
-    (defun set-aref1 (val mat i j)
-        (set-aref val mat (- i 1) (- j 1)))
+(defmodule matrix
 
-    ;;; get element from matrix (index is start from 1)
-    (defun aref1 (mat i j)
-        (aref mat (- i 1) (- j 1)))
-    
     (defun square-matrix-p (x)
-        (let ((dim (array-dimensions x)))
-           (and (= (length dim) 2) (= (elt dim 0) (elt dim 1)))))
+    (let ((dim (array-dimensions x)))
+        (and (= (length dim) 2) (= (elt dim 0) (elt dim 1)))))
 
-    ;;; calculate trace of matrix
-    (defpublic matrix-tr (x)
+;;; calculate trace of matrix
+(defpublic matrix-tr (x)
         (unless (square-matrix-p x) (error "tr require square matrix" x))
         (let ((l (elt (array-dimensions x) 0)))
            (for ((i 1 (+ i 1))
@@ -464,3 +297,45 @@
 )
 
 
+($assert (matrixp a) t)
+($ap 2 "transpose")
+($ap 3 "transpose matrix")
+($assert (matrix-transpose (matrix-transpose test-matrix)) test-matrix)
+
+($ap 3 "add matrix")
+($assert (matrix-add identity-matrix identity-matrix) 
+         #2a((2 0 0)
+             (0 2 0)
+             (0 0 2)))
+
+($ap 2 "sub")
+;($ap 2 "sub scalar")
+;($assert (matrix-sub 2 1) 1)
+;($ap 2 "sub vector")
+;($assert (matrix-sub #(4 5 6) #(1 2 3)) #(3 3 3))
+($ap 2 "sub matrix")
+($assert (matrix-sub test-matrix identity-matrix)
+         #2a((0 2 3)
+             (4 4 6)
+             (7 8 8)))
+($assert (matrix-sub test-matrix test-matrix) zeros-matrix)
+
+($ap 2 "dot")
+($assert (vector-dot #(1 2 3) #(1 1 1)) 6)
+($assert (vector-dot #(1 2 3) #(0 0 0)) 0)
+
+($ap 2 "mult")
+;($ap 3 "mult scalar scalar")
+;($assert (matrix-mult 2 3) 6)
+;($ap 3 "mult vector scalar")
+;($assert (matrix-mult #(1 2 3) 2) #(2 4 6))
+;($ap 3 "mult vector matrix")
+;($assert (matrix-mult test-vector identity-matrix) test-vector)
+($ap 3 "mult matrix matrix")
+($assert (matrix-mult test-matrix identity-matrix) test-matrix)
+
+($ap 2 "cross")
+;($assert (vector-cross #(1 2 3) #(4 5 6)) #(-3 6 -3))
+  
+($ap 2 "determinant")
+;($test (matrix-det #2a((3 1 1 2) (5 1 3 4) (2 0 1 0) (1 3 2 1))) -22 eql)

@@ -792,7 +792,7 @@ int make_arr(int ls, int obj)
     } else if (length(ls1) == 1) {
 	SET_TAG(res, VEC);
 	SET_CDR(res, GET_INT(car(ls1)));
-	SET_AUX(res, cbasic_vector);
+	SET_AUX(res, cgeneral_vector);
     } else {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);

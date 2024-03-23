@@ -215,7 +215,7 @@
 
     ;;; calculate trace of matrix
     (defpublic matrix-tr (x)
-        (unless (square-matrix-p x) (error "tr require square matrix" x))
+        (if (not (square-matrix-p x)) (error "tr require square matrix" x))
         (let ((l (elt (array-dimensions x) 0)))
            (for ((i 1 (+ i 1))
                  (y 0) )
@@ -234,8 +234,8 @@
 
     ;;; transform to upper triang and calculate product of diagonal
     (defun det (mat)
-        (unless (square-matrix-p mat)
-                (error "matrix-det not square matrix"))
+        (if (not (square-matrix-p mat))
+            (error "matrix-det not square matrix" mat))
         (let ((n (elt (array-dimensions mat) 0))
               (result 1) )
            (setq mat1 (rows mat))
@@ -298,8 +298,8 @@
         (inverse mat))
 
     (defun inverse (mat)
-        (unless (square-matrix-p mat)
-                (error "matrix-inverse not square matrix"))
+        (if (not (square-matrix-p mat))
+            (error "matrix-inverse not square matrix"))
         (let ((n (elt (array-dimensions mat) 0)))
            (setq mat1 (rows mat))
            (setq mat2 (rows (ident n)))

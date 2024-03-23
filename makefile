@@ -58,8 +58,7 @@ SRC_LISP := library/bit.lsp \
 		library/prolog.lsp \
 		library/datetime.lsp \
 		library/plot.lsp \
-		library/unistd.lsp \
-		library/matrix.lsp
+		library/unistd.lsp 
 
 ifeq ($(DEBUG),1)
 	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE -DWITH_NANA=1

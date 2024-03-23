@@ -165,7 +165,7 @@
               ((and (matrixp x) (vectorp y)) (matrix-mult x (column-vector->matrix y)))
               (t (error "mult"))))
 
-    (defun rows (x)
+    (defun matrix->rows (x)
         (let* ((dx (array-dimensions x))
                (r (elt dx 0))
                (c (elt dx 1))
@@ -179,7 +179,7 @@
                        (set-aref v a i) )
                       (set-aref (aref x i j) v j)))))
 
-    (defun columns (x)
+    (defun matrix->columns (x)
         (let* ((dx (array-dimensions x))
                (r (elt dx 0))
                (c (elt dx 1))
@@ -192,6 +192,27 @@
                       ((= i r)
                        (set-aref v a j) )
                       (set-aref (aref x i j) v i)))))
+    
+    (defun rows->matrix (x)
+        (let* ((r (length x))
+               (c (length (elt x 0)))
+               (a (create-array (list r c))))
+            (for ((i 0 (+ i 1)))
+                 ((= i r) a)
+                 (for ((j 0 (+ j 1)))
+                      ((= j c))
+                      (set-aref (elt (elt x i) j) a i j)))))
+            
+    (defun columns->matrix (x)
+        (let* ((c (length x))
+               (r (length (elt x 0)))
+               (a (create-array (list r c))))
+            (for ((j 0 (+ j 1)))
+                 ((= j r) a)
+                 (for ((i 0 (+ i 1)))
+                      ((= i c))
+                      (set-aref (elt (elt x j) i) a i j)))))
+            
 
     
     (defun row-vector->matrix (x)
@@ -238,8 +259,8 @@
             (error "matrix-det not square matrix" mat))
         (let ((n (elt (array-dimensions mat) 0))
               (result 1) )
-           (setq mat1 (rows mat))
-           (setq mat2 (rows (ident n))) ; ignore mat2
+           (setq mat1 (matrix->rows mat))
+           (setq mat2 (matrix->rows (ident n))) ; ignore mat2
            (exchange-zero-row n)
            (erase-lower-triang n)
            (for ((i 1 (+ i 1)))
@@ -301,8 +322,8 @@
         (if (not (square-matrix-p mat))
             (error "matrix-inverse not square matrix"))
         (let ((n (elt (array-dimensions mat) 0)))
-           (setq mat1 (rows mat))
-           (setq mat2 (rows (ident n)))
+           (setq mat1 (matrix->rows mat))
+           (setq mat2 (matrix->rows (ident n)))
            (exchange-zero-row n)
            (erase-lower-triang n)
            (erase-upper-triang n)

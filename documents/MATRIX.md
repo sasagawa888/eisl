@@ -39,17 +39,19 @@ Set v to element(i,j) of matrix m.
 Transposes a vector or matrix `x`
 
 #### (add x y)
-Adds the operands `operand` together
+Adds x and y
+x and y are number,vector,matrix
 
 #### (sub x y)
-Subtracts the operands `operand` from left to right
+Subtracts y from x
+x and y are number,vector,matrix
 
-#### (matrix-hadamard *operand* *operand+*)`
-Performs the element-wise product on operands `operand`.
+#### (matrix-hadamard x y)`
 This is also known as the Hadamard product
 
 #### (mult x y)
-Multiplies operands `operand` together from left to right
+Multiplies x and y.
+x and y are number,vector,matrix
 
 #### (matrix-negate x)
 Negates `x`
@@ -68,3 +70,6 @@ Returns matrix determinant of matrix `x`
 
 #### (matrix-tr x)
 Retruns matrix trace of matrix `x`
+
+### (matrix-inverse x)
+Returns inverse-matrix of matrix `x`

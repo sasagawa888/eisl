@@ -26,31 +26,29 @@ Matrix it's elements are column vectors
 #### (matrixp x)
 If x is matrix data return t, else nil.
 
+#### (vectorp x)
+If x is vector data return t, else nil.
+
 #### (matrix-elt m i j)
 Returns element (i,j) of matrix m. Index i and j are start from 1. 
 
 #### (matrix-set-elt v m i j)
 Set v to element(i,j) of matrix m.
 
-#### (matrix-convert x class)
-- (matrix-convert x <rows>)  convert from matrix to row-vector matrix.
-- (matrix-convert x <columns>) convert from matrix to colmun-vector matrix.
-- (matrix-convert x <general-array*>) convert from row(or column)-vector to matrix. 
-
 #### (matrix-transpose x)
 Transposes a vector or matrix `x`
 
-#### (matrix-add *operand* *operand+*)
+#### (add x y)
 Adds the operands `operand` together
 
-#### (matrix-sub *operand* *operand+*)
+#### (sub x y)
 Subtracts the operands `operand` from left to right
 
 #### (matrix-hadamard *operand* *operand+*)`
 Performs the element-wise product on operands `operand`.
 This is also known as the Hadamard product
 
-#### (matrix-mult *operands* *operand+*)
+#### (mult x y)
 Multiplies operands `operand` together from left to right
 
 #### (matrix-negate x)
@@ -64,12 +62,6 @@ Calculates the cross product of `x` and `y`
 
 #### (vector-norm x)
 Calculates the Euclidean norm of vector `x`
-
-#### (vector-normalize x)
-Normalizes vector `x`
-
-#### (vector-cartesian *vector+*)
-Returns the cartesian product of the vectors `vector`
 
 #### (matrix-det x)
 Returns matrix determinant of matrix `x`

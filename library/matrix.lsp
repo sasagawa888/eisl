@@ -165,7 +165,7 @@
               ((and (matrixp x) (vectorp y)) (matrix-mult x (column-vector->matrix y)))
               (t (error "mult"))))
 
-    (defpublic rows (x)
+    (defun rows (x)
         (let* ((dx (array-dimensions x))
                (r (elt dx 0))
                (c (elt dx 1))
@@ -179,7 +179,7 @@
                        (set-aref v a i) )
                       (set-aref (aref x i j) v j)))))
 
-    (defpublic columns (x)
+    (defun columns (x)
         (let* ((dx (array-dimensions x))
                (r (elt dx 0))
                (c (elt dx 1))

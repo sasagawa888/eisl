@@ -73,3 +73,4 @@ Retruns matrix trace of matrix `x`
 
 ### (matrix-inverse x)
 Returns inverse-matrix of matrix `x`
+Each element should be float number.

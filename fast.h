@@ -740,7 +740,9 @@ static int pfast_mult(int th)
     int x, y, intx, inty, res;
     y = Fpargpop(th);
     x = Fpargpop(th);
-    if (x >= INT_FLAG && x <= INT_PSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
+    if (x == INT_FLAG) return(x);
+    else if (y == INT_FLAG) return(y);
+    else if (x >= INT_FLAG && x <= INT_PSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
 	intx = (x & INT_MASK);
 	inty = (y & INT_MASK);
 	res = intx * inty;

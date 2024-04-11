@@ -969,16 +969,16 @@ defgeneric compile
               (t (error* "lambda: over nesting" lambda-nest))))
 
     ;;for lambda find free-variable. 
-    (defun find-free-variable (x env args)
-        (find-free-variable2 (find-free-variable1 x env args)))
+    (defun find-free-variable (x args env)
+        (find-free-variable2 (find-free-variable1 x args env)))
 
-    (defun find-free-variable1 (x env args)
+    (defun find-free-variable1 (x args env)
         (cond ((null x) nil)
-              ((and (symbolp x) (not (member x env)) (member x args)) (list x))
+              ((and (symbolp x) (member x env) (not (member x args))) (list x))
               ((atom x) nil)
               (t
-               (append (find-free-variable1 (car x) env args)
-                       (find-free-variable1 (cdr x) env args)))))
+               (append (find-free-variable1 (car x) args env)
+                       (find-free-variable1 (cdr x) args env)))))
 
     ;; remove dupilicate variable
     (defun find-free-variable2 (x)

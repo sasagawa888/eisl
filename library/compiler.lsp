@@ -784,13 +784,13 @@ defgeneric compile
                (stream (lambda-stream-caller global)) )
             (setq lambda-free-var
                   (cons (append destructive (list name)) lambda-free-var))
+            (cond ((= lambda-nest 1) (setq lambda-root lambda-count)))
             (comp-lambda0 x name)
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)
             (comp-lambda3 name)
             ;; only root lambda has free-variable-list
             (cond ((= lambda-nest 1)
-                   (setq lambda-root lambda-count)
                    (format stream "({Fset_cdr(Fmakesym(\"~A\")," name)
                    (free-variable-list stream free)
                    (format stream ");Fcar(Fmakesym(\"~A\"));})" name))

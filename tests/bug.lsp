@@ -6,7 +6,7 @@
 
 
 (defun dtarai (x y z)
-    (print x)
+    (print (force x))
     (if (<= (force x) (force y))
         (force y)
         (dtarai (delay (dtarai (delay (- (force x) 1)) y z))

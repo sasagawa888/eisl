@@ -148,6 +148,9 @@ defgeneric compile
 
     (defun dropstring (str n)
         (substring str n (- (length str) 1)))
+    
+    (defun cutstring (str n)
+        (substring str 0 (- (length str) n 1)))
 
     (defun substring (str m n)
         (for ((i m (+ i 1))
@@ -229,6 +232,8 @@ defgeneric compile
                (unwind-protect (compile-file1 x rm-opt)
                                (if instream
                                    (close instream))
+                               (setq lambda-nest 0)
+                               (setq lambda-count 0)
                                (eisl-ignore-toplevel-check nil)))
         t)
 
@@ -504,7 +509,7 @@ defgeneric compile
                       (format stream "Fnth(")
                       (format-integer stream (position x clos) 10)
                       (format stream ",Fcdr(Fmakesym(\"")
-                      (format stream (convert (conv-name name) <string>))
+                      (format stream (lambda-name-with-zero (convert (conv-name name) <string>)))
                       (format stream "\")))"))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t (format stream "Fcdr(Fmakesym(\"")
@@ -781,9 +786,12 @@ defgeneric compile
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)
             (comp-lambda3 name)
-            (format stream "({Fset_cdr(Fmakesym(\"~A\")," name)
-            (free-variable-list stream free)
-            (format stream ");Fcar(Fmakesym(\"~A\"));})" name)
+            ;; only root lambda has free-variable-list
+            (cond ((= lambda-nest 1)
+                   (format stream "({Fset_cdr(Fmakesym(\"~A\")," name)
+                   (free-variable-list stream free)
+                   (format stream ");Fcar(Fmakesym(\"~A\"));})" name))
+                  (t (format stream "({Fcar(Fmakesym(\"~A\"));})" name)))
             (setq lambda-nest (- lambda-nest 1))))
 
     (defun lambda-name ()
@@ -794,6 +802,11 @@ defgeneric compile
                         <symbol>))))
            (setq lambda-count (+ lambda-count 1))
            name))
+    
+    ;; "abcd1" -> "abcd0"
+    (defun lambda-name-with-zero (name)
+        (string-append  (cutstring name 1)
+                        "0"))
 
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
@@ -945,7 +958,7 @@ defgeneric compile
                 ((null (cdr body1))
                  (if (not (not-need-res-p (car body1)))
                     (format stream "res = "))
-                 (comp stream (car body1) args args nil name nil nil clos)
+                 (comp stream (car body1) env args nil name nil nil clos)
                  (format stream ";~%")
                  (gen-shelterpop stream (reverse args))
                  (format stream "return(res);}~%") )

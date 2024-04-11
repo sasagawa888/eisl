@@ -1,4 +1,5 @@
 ;;compile tests free-variable in nested lambda.
+(import "lazy")
 
 (defun foo (x)
     (lambda () (lambda () x)))

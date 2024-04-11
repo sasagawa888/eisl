@@ -206,6 +206,7 @@ defgeneric compile
     (defglobal file-name-and-ext nil)
     (defglobal lambda-count 0)
     (defglobal lambda-nest 0)
+    (defglobal lambda-root 0)
     (defglobal lambda-free-var nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
@@ -234,6 +235,7 @@ defgeneric compile
                                    (close instream))
                                (setq lambda-nest 0)
                                (setq lambda-count 0)
+                               (setq lambda-root 0)
                                (eisl-ignore-toplevel-check nil)))
         t)
 
@@ -509,7 +511,7 @@ defgeneric compile
                       (format stream "Fnth(")
                       (format-integer stream (position x clos) 10)
                       (format stream ",Fcdr(Fmakesym(\"")
-                      (format stream (lambda-name-with-zero (convert (conv-name name) <string>)))
+                      (format stream (lambda-name-with-root (convert (conv-name name) <string>) lambda-root))
                       (format stream "\")))"))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t (format stream "Fcdr(Fmakesym(\"")
@@ -788,6 +790,7 @@ defgeneric compile
             (comp-lambda3 name)
             ;; only root lambda has free-variable-list
             (cond ((= lambda-nest 1)
+                   (setq lambda-root lambda-count)
                    (format stream "({Fset_cdr(Fmakesym(\"~A\")," name)
                    (free-variable-list stream free)
                    (format stream ");Fcar(Fmakesym(\"~A\"));})" name))
@@ -803,10 +806,10 @@ defgeneric compile
            (setq lambda-count (+ lambda-count 1))
            name))
     
-    ;; "abcd1" -> "abcd0"
-    (defun lambda-name-with-zero (name)
+    ;; "abcd1" 0 -> "abcd0"
+    (defun lambda-name-with-root (name n)
         (string-append  (cutstring name 1)
-                        "0"))
+                        (convert n <string>)))
 
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))

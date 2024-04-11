@@ -1,17 +1,12 @@
 ;;compile tests free-variable in nested lambda.
 (import "lazy")
 
-(defun foo (x)
-    (lambda () (lambda () x)))
-    
-(defun bar (x)
-    (lambda () x))
-
 (defun tarai* (x y z)
     (dtarai (delay x) (delay y) (delay z)))
 
 
 (defun dtarai (x y z)
+    (print x)
     (if (<= (force x) (force y))
         (force y)
         (dtarai (delay (dtarai (delay (- (force x) 1)) y z))

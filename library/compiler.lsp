@@ -961,7 +961,7 @@ defgeneric compile
                 ((null (cdr body1))
                  (if (not (not-need-res-p (car body1)))
                     (format stream "res = "))
-                 (comp stream (car body1) env args nil name nil nil clos)
+                 (comp stream (car body1) (append args env) args nil name nil nil clos)
                  (format stream ";~%")
                  (gen-shelterpop stream (reverse args))
                  (format stream "return(res);}~%") )
@@ -990,7 +990,7 @@ defgeneric compile
 
     (defun find-free-variable1 (x args env)
         (cond ((null x) nil)
-              ((and (symbolp x) (member x env) (not (member x args))) (list x))
+              ((and (symbolp x) (not (member x args)) (member x env)) (list x))
               ((atom x) nil)
               (t
                (append (find-free-variable1 (car x) args env)

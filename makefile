@@ -55,6 +55,7 @@ SRC_LISP := library/bit.lsp \
 	    library/tcltk.lsp \
 	    library/tcpip.lsp \
 	    library/virtty.lsp \
+		library/prolog.lsp \
 		library/datetime.lsp \
 		library/plot.lsp \
 		library/unistd.lsp 

@@ -775,6 +775,7 @@ defgeneric compile
         (unless (listp (elt x 1)) (error* "lambda: not list" (elt x 1)))
         (when (null (cdr (cdr x))) (error* "lambda: not exist body" x))
         (setq lambda-nest (+ lambda-nest 1))
+        (cond ((= lambda-nest 1) (setq lambda-root lambda-count)))
         (let* ((name (lambda-name))
                (args (elt x 1))
                (body (cdr (cdr x)))
@@ -784,7 +785,6 @@ defgeneric compile
                (stream (lambda-stream-caller global)) )
             (setq lambda-free-var
                   (cons (append destructive (list name)) lambda-free-var))
-            (cond ((= lambda-nest 1) (setq lambda-root lambda-count)))
             (comp-lambda0 x name)
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)

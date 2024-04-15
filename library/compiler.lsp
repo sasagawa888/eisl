@@ -510,7 +510,7 @@ defgeneric compile
                       (format stream "Fnth(")
                       (format-integer stream (position x clos) 10)
                       (format stream ",Fcdr(Fmakesym(\"")
-                      (format stream (lambda-name-with-root (convert (conv-name name) <string>) lambda-root))
+                      (format stream (lambda-name-with-root (convert (conv-name name) <string>)))
                       (format stream "\")))"))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t (format stream "Fcdr(Fmakesym(\"")
@@ -789,10 +789,11 @@ defgeneric compile
            (setq lambda-count (+ lambda-count 1))
            name))
     
-    ;; "abcd1" 0 -> "abcd0"
-    (defun lambda-name-with-root (name n)
-        (string-append  (cutstring name 1)
-                        (convert n <string>)))
+    ;; "abcd12" -> "abcd3" when lambda-root is 3
+    (defun lambda-name-with-root (name)
+        (let ((count-length (length (convert lambda-count <string>))))
+            (string-append  (cutstring name count-length)
+                            (convert lambda-root <string>))))
 
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))

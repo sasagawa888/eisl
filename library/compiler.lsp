@@ -207,6 +207,7 @@ defgeneric compile
     (defglobal lambda-count 0)
     (defglobal lambda-nest 0)
     (defglobal lambda-root 0)
+    (defglobal lambda-history nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
     (defglobal inference-name nil)
@@ -235,6 +236,7 @@ defgeneric compile
                                (setq lambda-nest 0)
                                (setq lambda-count 0)
                                (setq lambda-root 0)
+                               (setq lambda-history nil)
                                (eisl-ignore-toplevel-check nil)))
         t)
 
@@ -456,7 +458,8 @@ defgeneric compile
               ((eq (car x) 'defmodule) (comp-defmodule x))
               ((eq (car x) 'import) (comp-import x))
               (t (comp code4 x nil nil nil nil t nil nil)
-                 (format code4 ";"))))
+                 (format code4 ";")))
+        (setq lambda-history nil))
 
     ;; x object to compile
     ;; env environment (local variables)

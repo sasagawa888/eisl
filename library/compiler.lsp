@@ -458,6 +458,14 @@ defgeneric compile
               (t (comp code4 x nil nil nil nil t nil nil)
                  (format code4 ";"))))
 
+    ;; x object to compile
+    ;; env environment (local variables)
+    ;; args arguments of function or lambda
+    ;; tail tail recursive?
+    ;; name function name, lambda name
+    ;; global global-variables
+    ;; test test part of if syntax?
+    ;; clos free-variables that closure has.
     (defun comp (stream x env args tail name global test clos)
         (cond ((and (fixnump x) (not global))
                (cond ((not optimize-enable)
@@ -503,7 +511,7 @@ defgeneric compile
                (list-to-c1 stream (eisl-readed-array-list x))
                (format stream ")"))
               ((and (symbolp x) clos)
-               ;;in lambda
+               ;;closure has free-variable
                (cond ((eq x nil) (format stream "NIL"))
                      ((eq x t) (format stream "T"))
                      ((member x clos)
@@ -517,7 +525,7 @@ defgeneric compile
                         (format stream (convert x <string>))
                         (format stream "\"))"))))
               ((and (symbolp x) (not clos))
-               ;;not has free-variable
+               ;;closure does not have free-variable
                (cond ((eq x nil) (format stream "NIL"))
                      ((eq x t) (format stream "T"))
                      ((member x env) (format stream (convert (conv-name x) <string>)))

@@ -798,8 +798,11 @@ defgeneric compile
            name))
     
     ;; "abcd12" -> "abcd3" when lambda-root is 3
+    ;; innested lambda free-variables are saved in root lambda
+    ;; so,generate root-lambda-name from current state.
+
     (defun lambda-name-with-root (name)
-        (let ((count-length (length (convert lambda-count <string>))))
+        (let ((count-length (length (convert (- lambda-count 1) <string>))))
             (string-append  (cutstring name count-length)
                             (convert lambda-root <string>))))
 

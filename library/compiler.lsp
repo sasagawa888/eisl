@@ -530,7 +530,18 @@ defgeneric compile
                ;;closure does not have free-variable
                (cond ((eq x nil) (format stream "NIL"))
                      ((eq x t) (format stream "T"))
-                     ((member x env) (format stream (convert (conv-name x) <string>)))
+                     ((member x env) 
+                      (cond ((free-variable-in-history-p x lambda-history)
+                            ;; free-variable in out of lambda
+                              (let* ((history (free-variable-in-history-p x lambda-history))
+                                     (root (car history))
+                                     (free (cdr history)))
+                                 (format stream "Fnth(")
+                                 (format-integer stream (position x free) 10)
+                                 (format stream ",Fcdr(Fmakesym(\"~A" root)
+                                 (format stream "\")))")))
+                            ;; normal local variable
+                            (t (format stream (convert (conv-name x) <string>)))))
                      ((member x builtin-class)
                       (format stream "Fmakesym(\"")
                       (format stream (convert x <string>))
@@ -788,7 +799,8 @@ defgeneric compile
             (cond ((= lambda-nest 1)
                    (format stream "({Fset_cdr(Fmakesym(\"~A\")," name)
                    (free-variable-list stream free)
-                   (format stream ");Fcar(Fmakesym(\"~A\"));})" name))
+                   (format stream ");Fcar(Fmakesym(\"~A\"));})" name)
+                   (setq lambda-history (cons (cons name free) lambda-history)))
                   (t (format stream "({Fcar(Fmakesym(\"~A\"));})" name)))
             (setq lambda-nest (- lambda-nest 1))))
 
@@ -1000,6 +1012,13 @@ defgeneric compile
         (cond ((null x) nil)
               ((member (car x) (cdr x)) (find-free-variable2 (cdr x)))
               (t (cons (car x) (find-free-variable2 (cdr x))))))
+    
+
+    (defun free-variable-in-history-p (x history)
+        (cond ((null history) nil)
+              ((member x (cdr (car history))) (car history))
+              (t (free-variable-in-history-p x (cdr history)))))
+               
 
     
     ;;create free-variable list to set lambda-name symbol

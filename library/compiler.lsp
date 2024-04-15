@@ -680,6 +680,8 @@ defgeneric compile
                (comp-next-method-p stream env args tail name global test clos))
               ((and (consp x) (subrp (car x)))
                (comp-subrcall stream x env args tail name global test clos))
+              ((and (consp x) (consp (car x)) (eq (car (car x)) 'lambda))
+               (comp stream (cons 'funcall x) env args tail name global test clos))
               ((listp x) (comp-funcall stream x env args tail name global test clos))))
 
     (defun special-char-p (x)

@@ -517,8 +517,7 @@ defgeneric compile
                      ((member x clos)
                       (format stream "Fnth(")
                       (format-integer stream (position x clos) 10)
-                      (format stream ",Fcdr(Fmakesym(\"")
-                      (format stream (lambda-name-with-root (convert name <string>)))
+                      (format stream ",Fcdr(Fmakesym(\"~A" (lambda-name-with-root name))
                       (format stream "\")))"))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      (t (format stream "Fcdr(Fmakesym(\"")
@@ -799,14 +798,15 @@ defgeneric compile
            (setq lambda-count (+ lambda-count 1))
            name))
     
-    ;; "abcd12" -> "abcd3" when lambda-root is 3
+    ;; abcd12 -> abcd3 when lambda-root is 3
     ;; innested lambda free-variables are saved in root lambda
     ;; so,generate root-lambda-name from current state.
-
     (defun lambda-name-with-root (name)
-        (let ((count-length (length (convert (- lambda-count 1) <string>))))
-            (string-append  (cutstring name count-length)
-                            (convert lambda-root <string>))))
+        (let ((count-length (length (convert (- lambda-count 1) <string>)))
+              (name-str (convert name <string>)))
+            (convert (string-append  (cutstring name-str count-length)
+                                     (convert lambda-root <string>))
+                     <symbol>)))
 
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
@@ -2646,8 +2646,7 @@ defgeneric compile
                (format stream ";res;})~%"))
               ((member (elt x 1) clos)
                (format stream "({int res;~% res = ")
-               (format stream "fast_setnth(Fcdr(Fmakesym(\"")
-               (format stream (lambda-name-with-root (convert name <string>)))
+               (format stream "fast_setnth(Fcdr(Fmakesym(\"~A" (lambda-name-with-root name))
                (format stream "\")),")
                (format-integer stream (position (elt x 1) clos) 10)
                (format stream ",")

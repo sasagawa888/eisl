@@ -3,6 +3,8 @@
 
 (defun foo (x)
     (let ((a 0))
-        ((lambda (x) (setq a x)) x)
-        a))
+        ((lambda (x) (setq x 0)) x)))
+
+(defun bar (x)
+    (lambda () (lambda () x)))
 

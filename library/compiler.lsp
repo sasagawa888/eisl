@@ -207,7 +207,6 @@ defgeneric compile
     (defglobal lambda-count 0)
     (defglobal lambda-nest 0)
     (defglobal lambda-root 0)
-    (defglobal lambda-free-var nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
     (defglobal inference-name nil)
@@ -518,18 +517,9 @@ defgeneric compile
                         (format stream (convert x <string>))
                         (format stream "\"))"))))
               ((and (symbolp x) (not clos))
-               ;;not in lambda
+               ;;not has free-variable
                (cond ((eq x nil) (format stream "NIL"))
                      ((eq x t) (format stream "T"))
-                     ((find-free-variable-outer-lambda x lambda-free-var)
-                      (let* ((dt (find-free-variable-outer-lambda x lambda-free-var))
-                             (pos (position x dt))
-                             (name (last dt)) )
-                          (format stream "Fnth(")
-                          (format-integer stream pos 10)
-                          (format stream ",Fcdr(Fmakesym(\"")
-                          (format stream (convert name <string>))
-                          (format stream "\")))")))
                      ((member x env) (format stream (convert (conv-name x) <string>)))
                      ((member x builtin-class)
                       (format stream "Fmakesym(\"")
@@ -762,15 +752,12 @@ defgeneric compile
         (unless (listp (elt x 2)) (error* "defun: not list " (elt x 2)))
         (when (null (cdr (cdr (cdr x))))
               (error* "defun: not exist body" (elt x 1)))
-        (setq lambda-free-var nil)
         (comp-defun0 x)
         (comp-defun1 x)
         (comp-defun2 x)
         (comp-defun3 x))
 
     ;;create lambda as SUBR and invoke the SUBR.
-    ;;lambda-free-var ((var11 var12 .. var1N lambdasym1) (var21 var22 .. var2N lambdasym2)...)
-    ;;comp generate free-variable with lambda-free-var 
     (defun comp-lambda (x env global)
         (unless (listp (elt x 1)) (error* "lambda: not list" (elt x 1)))
         (when (null (cdr (cdr x))) (error* "lambda: not exist body" x))
@@ -779,12 +766,8 @@ defgeneric compile
         (let* ((name (lambda-name))
                (args (elt x 1))
                (body (cdr (cdr x)))
-               (free0 (find-free-variable body args env))
-               (free (append (varlis-to-lambda-args method-args) free0))
-               (destructive (find-destructive-free-variable free body))
+               (free (find-free-variable body args env))
                (stream (lambda-stream-caller global)) )
-            (setq lambda-free-var
-                  (cons (append destructive (list name)) lambda-free-var))
             (comp-lambda0 x name)
             (comp-lambda1 x name)
             (comp-lambda2 body env args name free)
@@ -813,7 +796,6 @@ defgeneric compile
 
     (defun comp-defgeneric (x)
         (format (standard-output) "compiling ~A ~%" (elt x 1))
-        (setq lambda-free-var nil)
         (comp-defgeneric0 x)
         (comp-defgeneric1 x)
         (comp-defgeneric2 x)
@@ -1002,19 +984,7 @@ defgeneric compile
               ((member (car x) (cdr x)) (find-free-variable2 (cdr x)))
               (t (cons (car x) (find-free-variable2 (cdr x))))))
 
-    ;; find destructive-free-variable
-    ;; e.g. (let ((a 0)) (lambda () (setq a x))
-    (defun find-destructive-free-variable (x body)
-        (cond ((null x) nil)
-              ((find-destructive-free-variable1 (car x) body)
-               (cons (car x) (find-destructive-free-variable (cdr x) body)))
-              (t (find-destructive-free-variable1 (cdr x) body))))
     
-    (defun find-destructive-free-variable1 (x body)
-        (any (lambda (y) (or (and (consp y) (eq (car y) 'setq) (member x (cdr y)))
-                             (and (consp y) (eq (car y) 'setf) (member x (cdr y)))))
-        body))
-
     ;;create free-variable list to set lambda-name symbol
     (defun free-variable-list (stream x)
         (cond ((null x) (format stream "NIL"))
@@ -1631,11 +1601,9 @@ defgeneric compile
                ;;interpreter
                (comp-funcall2 stream x env args tail name global test clos))
               (clos
-               ;;in lambda 
-               (format stream "Fpush(Fcdr(Fmakesym(\"~A\")),0);" (last (car lambda-free-var)))
+               ;;has free variable
                (format stream "res=")
-               (comp-funcall-clang-left-to-right stream x env args tail name global test clos)
-               (format stream ";Fset_cdr(Fmakesym(\"~A\"),Fpop(0));" (last (car lambda-free-var))))
+               (comp-funcall-clang-left-to-right stream x env args tail name global test clos))
               ((null (cdr x))
                ;;thunk
                (unless (= (cdr (assoc (car x) function-arg)) 0)
@@ -3111,7 +3079,6 @@ defgeneric compile
 
     ;;defmacro
     (defun comp-defmacro (x)
-        (setq lambda-free-var nil)
         (format code4 "Fpeval(")
         (list-to-c1 code4 '(eisl-ignore-toplevel-check t))
         (format code4 ",0);~%")

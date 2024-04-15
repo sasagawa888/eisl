@@ -2,4 +2,7 @@
 
 
 (defun foo (x)
-    ((lambda (x) x) x))
+    (let ((a 0))
+        ((lambda (x) (setq a x)) x)
+        a))
+

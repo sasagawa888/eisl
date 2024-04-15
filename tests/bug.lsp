@@ -2,4 +2,4 @@
 
 
 (defun foo (x)
-    (lambda () (lambda () x)))
+    (lambda () (lambda () (setf x 3) x)))

@@ -219,6 +219,7 @@ defgeneric compile
     (defglobal code5 nil)
     (defglobal code6 nil)
     (defglobal code7 nil)
+
     (defun error* (str x)
         (format (standard-output) "compile error ~A ~A ~%" str x)
         (throw 'exit t))
@@ -1013,7 +1014,14 @@ defgeneric compile
               ((member (car x) (cdr x)) (find-free-variable2 (cdr x)))
               (t (cons (car x) (find-free-variable2 (cdr x))))))
     
-
+    ;;lambda-history is used in following code.
+    ;;(defun foo (x)
+    ;;(let ((a 0))
+    ;;    ((lambda (x) (setq a x)) x)
+    ;;    a))
+    ;;variable a has a side effect. 
+    ;;lambda-history save lambda-root symbol and free-variables
+    ;;avobe case history is (lambda-name a)
     (defun free-variable-in-history-p (x history)
         (cond ((null history) nil)
               ((member x (cdr (car history))) (car history))

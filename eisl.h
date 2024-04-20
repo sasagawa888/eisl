@@ -1363,7 +1363,7 @@ int f_delay(int arglist, int th);
 int f_delay_microseconds(int arglist, int th);
 #endif
 
-void debugger(void);
+void debugger(int th);
 void ntt_test();
 
 /* Fast project */

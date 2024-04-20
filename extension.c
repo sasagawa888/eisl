@@ -568,15 +568,15 @@ int f_backtrace(int arglist, int th __unused)
     return (T);
 }
 
-int f_break(int arglist __unused, int th __unused)
+int f_break(int arglist __unused, int th)
 {
     puts("break");
-    debugger();
+    debugger(th);
     return (T);
 }
 
 /* --------debug--------------- */
-void debugger()
+void debugger(int th)
 {
     int i, j;
 
@@ -592,7 +592,9 @@ void debugger()
 		 ":e environment\n"
 		 ":i identify examining symbol\n"
 		 ":q quit\n"
-		 ":r room\n" ":s stepper ON/OFF\n" "other S exps eval");
+		 ":r room\n"
+         ":s stepper ON/OFF\n"
+         "other S exps eval");
 	} else if (eqp(x, make_sym(":A"))) {
 	    RAISE(Restart_Repl);
 	} else if (eqp(x, make_sym(":B"))) {
@@ -630,8 +632,9 @@ void debugger()
 		      "FC = %d (free counter)\n"
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
-		      "Parallel = %d (worker_count)\n",
-		      ep[0], dp[0], hp, sp[0], fc, ap[0], lp[0], worker_count);
+		      "Parallel = %d (worker_count)\n"
+              "Thread = %d (current thread)\n",
+		      ep[th], dp[th], hp, sp[th], fc, ap[th], lp[th], worker_count, th);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

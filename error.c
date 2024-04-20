@@ -687,7 +687,7 @@ int signal_condition(int x, int y)
     output_stream = standard_output;
     handling_resource_err = false;
     if (!option_flag)
-	debugger();
+	debugger(0);
     else {
 	puts("Error occurred while executing command line options.");
 	option_flag = false;

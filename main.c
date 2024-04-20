@@ -1760,7 +1760,7 @@ int eval(int addr, int th)
 	    clean_stdin();
 	    c = getc(stdin);
 	    if (c == 'q')
-		debugger();
+		debugger(th);
 	}
 
 	if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "QUOTE"))) {

@@ -392,7 +392,6 @@ void left()
 
     if (ed_col1 < turn) {
 	if (ed_col1 <= turn - 1) {
-	    //reset_paren();
 	    ESCCLSLA();
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
 	    display_line(ed_row);

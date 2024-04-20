@@ -85,13 +85,13 @@ void init_exsubr(void)
 /* Fast Project 
  * functions for compiler
  */
-int f_classp(int arglist, int th __unused)
+int f_classp(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(ILLEGAL_ARGS, "classp", arglist);
+	error(ILLEGAL_ARGS, "classp", arglist, th);
 
     if (IS_CLASS(arg1))
 	return (T);
@@ -135,37 +135,37 @@ int f_ignore_toplevel_check(int arglist, int th __unused)
 }
 
 DEF_PREDICATE(METHOD, METHOD)
-int f_get_method_priority(int arglist, int th __unused)
+int f_get_method_priority(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!(IS_METHOD(arg1)))
-	error(ILLEGAL_ARGS, "eisl-get-method-priority", arg1);
+	error(ILLEGAL_ARGS, "eisl-get-method-priority", arg1, th);
 
     return (make_int(GET_OPT(arg1) + 1));
     /* 11=:around  12=:befor 13=:primary 14=:arter */
 }
 
 
-int f_get_method_body(int arglist, int th __unused)
+int f_get_method_body(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!(IS_METHOD(arg1)))
-	error(ILLEGAL_ARGS, "get-method-body", arg1);
+	error(ILLEGAL_ARGS, "get-method-body", arg1, th);
 
     return (GET_CAR(arg1));
 }
 
-int f_get_method(int arglist, int th __unused)
+int f_get_method(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!genericp(arg1))
-	error(ILLEGAL_ARGS, "get-method", arg1);
+	error(ILLEGAL_ARGS, "get-method", arg1, th);
 
     return (GET_CDR(GET_CAR(arg1)));
 }
@@ -180,13 +180,13 @@ int f_readed_array_list(int arglist, int th __unused)
 }
 
 
-int f_system(int arglist, int th __unused)
+int f_system(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (system(GET_NAME(arg1)) == -1)
-	error(SYSTEM_ERR, "system", arg1);
+	error(SYSTEM_ERR, "system", arg1, th);
     return (T);
 }
 
@@ -198,13 +198,13 @@ int f_freedll(int arglist __unused, int th __unused)
     return (T);
 }
 
-int f_macrop(int arglist, int th __unused)
+int f_macrop(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "macrop", arglist);
+	error(WRONG_ARGS, "macrop", arglist, th);
     if (IS_MACRO(GET_CAR(arg1)))
 	return (T);
     else
@@ -212,13 +212,13 @@ int f_macrop(int arglist, int th __unused)
 }
 
 
-int f_funcp(int arglist, int th __unused)
+int f_funcp(int arglist, int th)
 {
     int arg;
 
     arg = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "funcp", arglist);
+	error(WRONG_ARGS, "funcp", arglist, th);
     if (IS_FUNC(GET_CAR(arg)))
 	return (T);
     else
@@ -226,39 +226,39 @@ int f_funcp(int arglist, int th __unused)
 }
 
 
-int f_fixnump(int arglist, int th __unused)
+int f_fixnump(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "fixnump", arglist);
+	error(WRONG_ARGS, "fixnump", arglist, th);
     if (IS_INTEGER(arg1))
 	return (T);
     else
 	return (NIL);
 }
 
-int f_longnump(int arglist, int th __unused)
+int f_longnump(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "longnump", arglist);
+	error(WRONG_ARGS, "longnump", arglist, th);
     if (IS_LONGNUM(arg1))
 	return (T);
     else
 	return (NIL);
 }
 
-int f_bignump(int arglist, int th __unused)
+int f_bignump(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "bignump", arglist);
+	error(WRONG_ARGS, "bignump", arglist, th);
     if (IS_BIGNNUM(arg1))
 	return (T);
     else
@@ -266,13 +266,13 @@ int f_bignump(int arglist, int th __unused)
 }
 
 
-int f_subrp(int arglist, int th __unused)
+int f_subrp(int arglist, int th)
 {
     int arg;
 
     arg = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "subrp", arglist);
+	error(WRONG_ARGS, "subrp", arglist, th);
     if (IS_SUBR(GET_CAR(arg)))
 	return (T);
     else
@@ -286,9 +286,9 @@ int f_macroexpand_1(int arglist, int th)
     arg1 = caar(arglist);
     args = cdar(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "macroexpand-1", arglist);
+	error(WRONG_ARGS, "macroexpand-1", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "macroexpand-1", arg1);
+	error(NOT_SYM, "macroexpand-1", arg1, th);
 
     return (macroexpand_1(arg1, args, th));
 }
@@ -304,10 +304,10 @@ int macroexpand_1(int macsym, int args, int th)
     varlist = car(GET_CAR(macrofunc));
     if (GET_OPT(func) >= 0) {
 	if (length(args) != (int) GET_OPT(func))
-	    error(WRONG_ARGS, "macroexpand-1", args);
+	    error(WRONG_ARGS, "macroexpand-1", args, th);
     } else {
 	if (length(args) < (-1 * (int) GET_OPT(func) - 2))
-	    error(WRONG_ARGS, "macroexpand-1", args);
+	    error(WRONG_ARGS, "macroexpand-1", args, th);
     }
     body = cdr(GET_CAR(macrofunc));
     bind_arg(varlist, args, th);
@@ -326,7 +326,7 @@ int f_macroexpand_all(int arglist, int th)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "macroexpand-all", arglist);
+	error(WRONG_ARGS, "macroexpand-all", arglist, th);
     if (listp(arg1) && car(arg1) == make_sym("DEFMACRO"))
 	return (arg1);
     else
@@ -365,10 +365,10 @@ int f_modulesubst(int arglist, int th __unused)
     return (modulesubst(arg1, arg2, arg3));
 }
 
-int f_line_argument(int arglist, int th __unused)
+int f_line_argument(int arglist, int th)
 {
     if (length(arglist) >= 2) {
-	error(WRONG_ARGS, "line-argument", arglist);
+	error(WRONG_ARGS, "line-argument", arglist, th);
     }
 
     if (length(arglist) == 0) {
@@ -391,13 +391,13 @@ int f_line_argument(int arglist, int th __unused)
     }
 }
 
-int f_getenv(int arglist, int th __unused)
+int f_getenv(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1) {
-	error(WRONG_ARGS, "getenv", arglist);
+	error(WRONG_ARGS, "getenv", arglist, th);
     }
     char *val = getenv(GET_NAME(arg1));
     if (val == NULL) {
@@ -416,7 +416,7 @@ int f_getenv(int arglist, int th __unused)
  * see verify/object.lsp test-case foo-30
  */
 
-int f_superp_for_compiler(int arglist, int th __unused)
+int f_superp_for_compiler(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -424,7 +424,7 @@ int f_superp_for_compiler(int arglist, int th __unused)
     arg2 = cadr(arglist);
 
     if (length(arglist) != 2) {
-	error(WRONG_ARGS, "eisl-superp-for-compiler", arglist);
+	error(WRONG_ARGS, "eisl-superp-for-compiler", arglist, th);
     }
 
     if (superp(arg1, arg2))
@@ -454,23 +454,23 @@ int superp(int entry, int next)
  * extended funcstions 
  * random number
  */
-int f_random_real(int arglist, int th __unused)
+int f_random_real(int arglist, int th)
 {
     double d;
 
     if (length(arglist) != 0)
-	error(WRONG_ARGS, "random-real", arglist);
+	error(WRONG_ARGS, "random-real", arglist, th);
 
     d = (double) rand() / RAND_MAX;
     return (make_flt(d));
 }
 
-int f_random(int arglist, int th __unused)
+int f_random(int arglist, int th)
 {
     int arg1, n;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "random", arglist);
+	error(WRONG_ARGS, "random", arglist, th);
 
     arg1 = car(arglist);
     n = GET_INT(arg1);
@@ -478,20 +478,20 @@ int f_random(int arglist, int th __unused)
     return (make_int(rand() % n));
 }
 
-int f_set_random(int arglist, int th __unused)
+int f_set_random(int arglist, int th)
 {
     int arg1, n;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "set-random", arglist);
+	error(WRONG_ARGS, "set-random", arglist, th);
 
     arg1 = car(arglist);
     if (!numberp(arg1))
-	error(NOT_NUM, "set-random", arg1);
+	error(NOT_NUM, "set-random", arg1, th);
 
     n = GET_INT(arg1);
     if (n < 0)
-	error(ILLEGAL_ARGS, "set-random", n);
+	error(ILLEGAL_ARGS, "set-random", n, th);
 
     srand(n);
     return (arg1);
@@ -501,14 +501,14 @@ int f_set_random(int arglist, int th __unused)
  *  nconc compatible with Common Lisp
  */
 
-int f_nconc(int arglist, int th __unused)
+int f_nconc(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "nconc", arglist);
+	error(WRONG_ARGS, "nconc", arglist, th);
 
     return (nconc(arg1, arg2));
 }
@@ -529,13 +529,13 @@ int nconc(int x, int y)
 }
 
 
-int f_address(int arglist, int th __unused)
+int f_address(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "address", arglist);
+	error(WRONG_ARGS, "address", arglist, th);
 
     return (make_int(arg1));
 }
@@ -544,12 +544,12 @@ int f_address(int arglist, int th __unused)
  * functions for debugging
  *
  */
-int f_backtrace(int arglist, int th __unused)
+int f_backtrace(int arglist, int th)
 {
     int arg1, l;
 
     if ((l = length(arglist)) != 0 && l != 1)
-	error(WRONG_ARGS, "backtrace", arglist);
+	error(WRONG_ARGS, "backtrace", arglist, th);
 
     arg1 = car(arglist);
 
@@ -753,13 +753,13 @@ void heapdump(int start, int end)
 /*
  * profiler
  */
-int f_prof(int arglist, int th __unused)
+int f_prof(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!symbolp(arg1))
-	error(NOT_SYM, "prof", arg1);
+	error(NOT_SYM, "prof", arg1, th);
 
     if (arg1 == NIL) {
 	profiler_set(0);
@@ -773,7 +773,7 @@ int f_prof(int arglist, int th __unused)
     else if (eqp(arg1, make_sym("PR")))
 	profiler_print();
     else
-	error(WRONG_ARGS, "prof", arg1);
+	error(WRONG_ARGS, "prof", arg1, th);
 
     return (T);
 }
@@ -858,13 +858,13 @@ int f_eisl_test(int arglist, int th __unused)
     return (big_karatsuba_mult(arg1, arg2));
 }
 
-int f_get_myself(int arglist, int th __unused)
+int f_get_myself(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!symbolp(arg1))
-	error(NOT_SYM, "eisl-get-myself", arg1);
+	error(NOT_SYM, "eisl-get-myself", arg1, th);
 
     if (IS_FUNC(GET_CAR(arg1)))
 	return (cons
@@ -887,19 +887,19 @@ int f_wiringpi_setup_gpio(int arglist __unused, int th __unused)
     return (T);
 }
 
-int f_wiringpi_spi_setup_ch_speed(int arglist, int th __unused)
+int f_wiringpi_spi_setup_ch_speed(int arglist, int th)
 {
     int arg1, arg2, x, y;
 
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "wiringpi-spi-setup-ch-speed", arglist);
+	error(WRONG_ARGS, "wiringpi-spi-setup-ch-speed", arglist, th);
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "wiringpi-spi-setup-ch-speed", arg1);
+	error(NOT_INT, "wiringpi-spi-setup-ch-speed", arg1, th);
     if (!integerp(arg2))
-	error(NOT_INT, "wiringpi-spi-setup-ch-speed", arg2);
+	error(NOT_INT, "wiringpi-spi-setup-ch-speed", arg2, th);
 
     x = GET_INT(arg1);
     y = GET_INT(arg2);
@@ -907,12 +907,12 @@ int f_wiringpi_spi_setup_ch_speed(int arglist, int th __unused)
     return (T);
 }
 
-int f_pwm_set_mode(int arglist, int th __unused)
+int f_pwm_set_mode(int arglist, int th)
 {
     int arg1;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "pwm-set-mode", arglist);
+	error(WRONG_ARGS, "pwm-set-mode", arglist, th);
 
     arg1 = car(arglist);
 
@@ -921,54 +921,54 @@ int f_pwm_set_mode(int arglist, int th __unused)
     else if (arg1 == make_sym("pwm-mode-bal"))
 	pwmSetMode(PWM_MODE_BAL);
     else
-	error(WRONG_ARGS, "pwm-set-mode", arg1);
+	error(WRONG_ARGS, "pwm-set-mode", arg1, th);
 
     return (T);
 }
 
-int f_pwm_set_range(int arglist, int th __unused)
+int f_pwm_set_range(int arglist, int th)
 {
     int arg1, x;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "pwm-set-range", arglist);
+	error(WRONG_ARGS, "pwm-set-range", arglist, th);
 
     arg1 = car(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "pwm-set-range", arg1);
+	error(NOT_INT, "pwm-set-range", arg1, th);
 
     x = GET_INT(arg1);
     pwmSetRange(x);
     return (T);
 }
 
-int f_pwm_set_clock(int arglist, int th __unused)
+int f_pwm_set_clock(int arglist, int th)
 {
     int arg1, x;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "pwm-set-clock", arglist);
+	error(WRONG_ARGS, "pwm-set-clock", arglist, th);
 
     arg1 = car(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "pwm-set-clock", arg1);
+	error(NOT_INT, "pwm-set-clock", arg1, th);
 
     x = GET_INT(arg1);
     pwmSetClock(x);
     return (T);
 }
 
-int f_pin_mode(int arglist, int th __unused)
+int f_pin_mode(int arglist, int th)
 {
     int arg1, arg2, x;
 
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "pin-mode", arglist);
+	error(WRONG_ARGS, "pin-mode", arglist, th);
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "pin-,mode", arg1);
+	error(NOT_INT, "pin-,mode", arg1, th);
 
     x = GET_INT(arg1);
     if (arg2 == make_sym("intput"))
@@ -978,24 +978,24 @@ int f_pin_mode(int arglist, int th __unused)
     else if (arg2 == make_sym("pwm-output"))
 	pinMode(x, PWM_OUTPUT);
     else
-	error(WRONG_ARGS, "pin-mode", arg2);
+	error(WRONG_ARGS, "pin-mode", arg2, th);
 
     return (T);
 }
 
-int f_digital_write(int arglist, int th __unused)
+int f_digital_write(int arglist, int th)
 {
     int arg1, arg2, x, y;
 
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "digital-write", arglist);
+	error(WRONG_ARGS, "digital-write", arglist, th);
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "digital-write", arg1);
+	error(NOT_INT, "digital-write", arg1, th);
     if (!integerp(arg2))
-	error(NOT_INT, "digital-write", arg2);
+	error(NOT_INT, "digital-write", arg2, th);
 
     x = GET_INT(arg1);
     y = GET_INT(arg2);
@@ -1003,35 +1003,35 @@ int f_digital_write(int arglist, int th __unused)
     return (T);
 }
 
-int f_digital_write_byte(int arglist, int th __unused)
+int f_digital_write_byte(int arglist, int th)
 {
     int arg1, x;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "digital-write-byte", arglist);
+	error(WRONG_ARGS, "digital-write-byte", arglist, th);
 
     arg1 = car(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "digital-write-byte", arg1);
+	error(NOT_INT, "digital-write-byte", arg1, th);
 
     x = GET_INT(arg1);
     digitalWriteByte(x);
     return (T);
 }
 
-int f_pull_up_dn_control(int arglist, int th __unused)
+int f_pull_up_dn_control(int arglist, int th)
 {
     int arg1, arg2, x, y;
 
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "pull-up-dn-control", arglist);
+	error(WRONG_ARGS, "pull-up-dn-control", arglist, th);
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "pull-up-dn-control", arg1);
+	error(NOT_INT, "pull-up-dn-control", arg1, th);
     if (!integerp(arg2))
-	error(NOT_INT, "pull-up-dn-control", arg2);
+	error(NOT_INT, "pull-up-dn-control", arg2, th);
 
     x = GET_INT(arg1);
     y = GET_INT(arg2);
@@ -1039,48 +1039,48 @@ int f_pull_up_dn_control(int arglist, int th __unused)
     return (T);
 }
 
-int f_digital_read(int arglist, int th __unused)
+int f_digital_read(int arglist, int th)
 {
     int arg1, x, res;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "digital-read", arglist);
+	error(WRONG_ARGS, "digital-read", arglist, th);
 
     arg1 = car(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "digital-read", arg1);
+	error(NOT_INT, "digital-read", arg1, th);
 
     x = GET_INT(arg1);
     res = digitalRead(x);
     return (make_int(res));
 }
 
-int f_delay(int arglist, int th __unused)
+int f_delay(int arglist, int th)
 {
     int arg1, x;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "delay", arglist);
+	error(WRONG_ARGS, "delay", arglist, th);
 
     arg1 = car(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "delay", arg1);
+	error(NOT_INT, "delay", arg1, th);
 
     x = GET_INT(arg1);
     delay(x);
     return (T);
 }
 
-int f_delay_microseconds(int arglist, int th __unused)
+int f_delay_microseconds(int arglist, int th)
 {
     int arg1, x;
 
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "delay-microseconds", arglist);
+	error(WRONG_ARGS, "delay-microseconds", arglist, th);
 
     arg1 = car(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "delay-microseconds", arg1);
+	error(NOT_INT, "delay-microseconds", arg1, th);
 
     x = GET_INT(arg1);
     delayMicroseconds(x);
@@ -1098,7 +1098,7 @@ int f_delay_microseconds(int arglist, int th __unused)
 int program;
 
 
-int f_try(int arglist, int th __unused)
+int f_try(int arglist, int th)
 {
     int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2;
     char str[STRSIZE];
@@ -1110,11 +1110,11 @@ int f_try(int arglist, int th __unused)
 
     if (!integerp(arg1)
 	&& !(symbolp(arg1) && arg1 == make_sym("NO-TIME-LIMIT")))
-	error(ILLEGAL_ARGS, "try", arg1);
+	error(ILLEGAL_ARGS, "try", arg1, th);
     if (!listp(arg2))
-	error(NOT_LIST, "try", arg2);
+	error(NOT_LIST, "try", arg2, th);
     if (!listp(arg3))
-	error(NOT_LIST, "try", arg3);
+	error(NOT_LIST, "try", arg3, th);
 
     pos = 0;
     while (!nullp(arg3)) {
@@ -1143,7 +1143,7 @@ int f_try(int arglist, int th __unused)
 
     program = make_stm(stdin, EISL_INSTR, NULL);
     TRY heap[program].name = Str_dup(str, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "try", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "try", NIL, th);
     END_TRY;
 
     save1 = input_stream;
@@ -1164,7 +1164,7 @@ int f_try(int arglist, int th __unused)
 	try_res = NIL;
 	try_flag = true;
 	ignore_flag = true;
-	TRY res = eval(arg2, 0);
+	TRY res = eval(arg2, th);
 	ELSE res = UNDEF;
 	END_TRY;
 	ignore_flag = false;
@@ -1195,12 +1195,12 @@ int f_try(int arglist, int th __unused)
 }
 
 
-int f_read_exp(int arglist, int th __unused)
+int f_read_exp(int arglist, int th)
 {
     int res, save;
 
     if (!nullp(arglist))
-	error(ILLEGAL_ARGS, "read-exp", arglist);
+	error(ILLEGAL_ARGS, "read-exp", arglist, th);
 
 
     save = input_stream;

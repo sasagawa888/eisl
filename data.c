@@ -751,19 +751,6 @@ int cons(int car, int cdr)
     return (addr);
 }
 
-/*
-int hcons(int car, int cdr)
-{
-    int addr;
-
-    addr = freshcell();
-    SET_TAG(addr, LIS);
-    SET_CAR(addr, car);
-    SET_CDR(addr, cdr);
-    SET_AUX(addr, ccons);	
-    return (addr);
-}
-*/
 
 int length(int addr)
 {
@@ -1693,7 +1680,7 @@ void ucs4_to_utf8(int n, char *p)
 	p++;
 	*p = (char) z;
     } else {
-	error(OUT_OF_RANGE, "Unicode->UTF-8", NIL);
+	error(OUT_OF_RANGE, "Unicode->UTF-8", NIL, 0);
     }
     p++;
     *p = NUL;

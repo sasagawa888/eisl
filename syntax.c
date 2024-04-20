@@ -88,19 +88,19 @@ void init_syntax(void)
 }
 
 // --FSUBR-----------
-int f_lambda(int arglist, int th __unused)
+int f_lambda(int arglist, int th)
 {
 
     if (nullp(arglist))
-	error(NOT_EXIST_ARG, "lambda", NIL);
+	error(NOT_EXIST_ARG, "lambda", NIL, th);
     if (duplicate_list_p(car(arglist)))
-	error(IMPROPER_ARGS, "lambda", car(arglist));
+	error(IMPROPER_ARGS, "lambda", car(arglist), th);
     if (improper_list_p(car(arglist)))
-	error(IMPROPER_ARGS, "lambda", car(arglist));
+	error(IMPROPER_ARGS, "lambda", car(arglist), th);
     if (illegal_lambda_p(car(arglist)))
-	error(ILLEGAL_ARGS, "lambda", car(arglist));
+	error(ILLEGAL_ARGS, "lambda", car(arglist), th);
     if (!symbol_list_p(car(arglist)))
-	error(OUT_OF_DOMAIN, "lambda", car(arglist));
+	error(OUT_OF_DOMAIN, "lambda", car(arglist), th);
 
     return (make_func("", arglist));
 }
@@ -112,11 +112,11 @@ int f_labels(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "labels", arglist);
+	error(IMPROPER_ARGS, "labels", arglist, th);
     if (nullp(arglist))
-	error(NOT_EXIST_ARG, "labels", NIL);
+	error(NOT_EXIST_ARG, "labels", NIL, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "labels", arg1);
+	error(IMPROPER_ARGS, "labels", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1, temparg2;
@@ -124,20 +124,20 @@ int f_labels(int arglist, int th)
 	temparg1 = car(car(temp));
 	temparg2 = cdr(car(temp));
 	if (length(car(temp)) < 2)
-	    error(IMPROPER_ARGS, "labels", car(temp));
+	    error(IMPROPER_ARGS, "labels", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "labels", temparg1);
+	    error(NOT_SYM, "labels", temparg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "labels", temparg1);
+	    error(WRONG_ARGS, "labels", temparg1, th);
 	if (duplicate_list_p(car(temparg2)))
-	    error(IMPROPER_ARGS, "labels", car(temparg2));
+	    error(IMPROPER_ARGS, "labels", car(temparg2), th);
 	if (improper_list_p(car(temparg2)))
-	    error(IMPROPER_ARGS, "labels", car(temparg2));
+	    error(IMPROPER_ARGS, "labels", car(temparg2), th);
 	if (illegal_lambda_p(car(temparg2)))
-	    error(ILLEGAL_ARGS, "labels", car(temparg2));
+	    error(ILLEGAL_ARGS, "labels", car(temparg2), th);
 	if (!symbol_list_p(car(temparg2)))
-	    error(OUT_OF_DOMAIN, "labels", car(temparg2));
+	    error(OUT_OF_DOMAIN, "labels", car(temparg2), th);
 
 	temp = cdr(temp);
     }
@@ -151,7 +151,7 @@ int f_labels(int arglist, int th)
 
 	sym = caar(arg1);
 	if (!symbolp(sym))
-	    error(NOT_SYM, "labels", sym);
+	    error(NOT_SYM, "labels", sym, th);
 	add_lex_env(sym, NIL, th);
 	val = make_func("", cdar(arg1));
 	set_lex_env(sym, val, th);
@@ -177,11 +177,11 @@ int f_flet(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "flet", arglist);
+	error(IMPROPER_ARGS, "flet", arglist, th);
     if (nullp(arglist))
-	error(NOT_EXIST_ARG, "flet", NIL);
+	error(NOT_EXIST_ARG, "flet", NIL, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "flet", arg1);
+	error(IMPROPER_ARGS, "flet", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1, temparg2;
@@ -189,20 +189,20 @@ int f_flet(int arglist, int th)
 	temparg1 = car(car(temp));
 	temparg2 = cdr(car(temp));
 	if (length(car(temp)) < 2)
-	    error(IMPROPER_ARGS, "flet", car(temp));
+	    error(IMPROPER_ARGS, "flet", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "flet", temparg1);
+	    error(NOT_SYM, "flet", temparg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "flet", temparg1);
+	    error(WRONG_ARGS, "flet", temparg1, th);
 	if (duplicate_list_p(car(temparg2)))
-	    error(IMPROPER_ARGS, "flet", car(temparg2));
+	    error(IMPROPER_ARGS, "flet", car(temparg2), th);
 	if (improper_list_p(car(temparg2)))
-	    error(IMPROPER_ARGS, "flet", car(temparg2));
+	    error(IMPROPER_ARGS, "flet", car(temparg2), th);
 	if (illegal_lambda_p(car(temparg2)))
-	    error(ILLEGAL_ARGS, "flet", car(temparg2));
+	    error(ILLEGAL_ARGS, "flet", car(temparg2), th);
 	if (!symbol_list_p(car(temparg2)))
-	    error(OUT_OF_DOMAIN, "flet", car(temparg2));
+	    error(OUT_OF_DOMAIN, "flet", car(temparg2), th);
 
 	temp = cdr(temp);
     }
@@ -215,7 +215,7 @@ int f_flet(int arglist, int th)
 
 	sym = caar(arg1);
 	if (!symbolp(sym))
-	    error(NOT_SYM, "flet", sym);
+	    error(NOT_SYM, "flet", sym, th);
 	ep[th] = save;
 	val = make_func("", cdar(arg1));
 	ep[th] = ep1;
@@ -239,28 +239,28 @@ int f_let(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "let", arglist);
+	error(WRONG_ARGS, "let", arglist, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "let", arg1);
+	error(IMPROPER_ARGS, "let", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(car(temp));
 	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "let", car(temp));
+	    error(IMPROPER_ARGS, "let", car(temp), th);
 	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "let", car(temp));
+	    error(IMPROPER_ARGS, "let", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "let", temparg1);
+	    error(NOT_SYM, "let", temparg1, th);
 	if (temparg1 == T || temparg1 == NIL
 	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "let", arg1);
+	    error(WRONG_ARGS, "let", arg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "let", arg1);
+	    error(WRONG_ARGS, "let", arg1, th);
 
 	temp = cdr(temp);
     }
@@ -274,7 +274,7 @@ int f_let(int arglist, int th)
 	ep[th] = save;
 	sym = caar(arg1);
 	if (!symbolp(sym))
-	    error(NOT_SYM, "let", sym);
+	    error(NOT_SYM, "let", sym, th);
 	shelter_push(ep1, th);
 	val = eval(cadar(arg1), th);
 	shelter_pop(th);
@@ -299,28 +299,28 @@ int f_letstar(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "let*", arglist);
+	error(WRONG_ARGS, "let*", arglist, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "let*", arg1);
+	error(IMPROPER_ARGS, "let*", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(car(temp));
 	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "let*", car(temp));
+	    error(IMPROPER_ARGS, "let*", car(temp), th);
 	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "let*", car(temp));
+	    error(IMPROPER_ARGS, "let*", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "let*", temparg1);
+	    error(NOT_SYM, "let*", temparg1, th);
 	if (temparg1 == T || temparg1 == NIL
 	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "let*", arg1);
+	    error(WRONG_ARGS, "let*", arg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "let*", arg1);
+	    error(WRONG_ARGS, "let*", arg1, th);
 
 	temp = cdr(temp);
     }
@@ -332,7 +332,7 @@ int f_letstar(int arglist, int th)
 
 	sym = caar(arg1);
 	if (!symbolp(sym))
-	    error(NOT_SYM, "let*", sym);
+	    error(NOT_SYM, "let*", sym, th);
 	add_lex_env(sym, eval(cadar(arg1), th), th);
 	arg1 = cdr(arg1);
     }
@@ -351,28 +351,28 @@ int f_dynamic_let(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "dynamic-let", arglist);
+	error(WRONG_ARGS, "dynamic-let", arglist, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "dynamic-let", arg1);
+	error(IMPROPER_ARGS, "dynamic-let", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(car(temp));
 	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "dynamic-let", car(temp));
+	    error(IMPROPER_ARGS, "dynamic-let", car(temp), th);
 	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "dynamic-let", car(temp));
+	    error(IMPROPER_ARGS, "dynamic-let", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "dynamic-let", temparg1);
+	    error(NOT_SYM, "dynamic-let", temparg1, th);
 	if (temparg1 == T || temparg1 == NIL
 	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "dynamic-let", arg1);
+	    error(WRONG_ARGS, "dynamic-let", arg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "dynamic-let", arg1);
+	    error(WRONG_ARGS, "dynamic-let", arg1, th);
 
 	temp = cdr(temp);
     }
@@ -387,7 +387,7 @@ int f_dynamic_let(int arglist, int th)
 	shelter_push(dp1, th);
 	sym = caar(arg1);
 	if (!symbolp(sym))
-	    error(NOT_SYM, "dynamic-let", sym);
+	    error(NOT_SYM, "dynamic-let", sym, th);
 	val = eval(cadar(arg1), th);
 	dp[0] = dp1;
 	shelter_pop(th);
@@ -411,15 +411,15 @@ int f_setf(int arglist, int th)
     arg2 = cadr(arglist);
     newform = NIL;
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "setf", arglist);
+	error(WRONG_ARGS, "setf", arglist, th);
     if (arg1 == T || arg1 == NIL)
-	error(CANT_MODIFY, "setf", arg1);
+	error(CANT_MODIFY, "setf", arg1, th);
     if (listp(arg1)
 	&& eqlp(make_int(1),
 		cdr(assoc(make_sym("read"), GET_AUX(car(arg1))))))
-	error(CANT_MODIFY, "setf", arg1);
+	error(CANT_MODIFY, "setf", arg1, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "setf", arglist);
+	error(IMPROPER_ARGS, "setf", arglist, th);
 
     if (listp(arg1) && eqp(car(arg1), make_sym("AREF"))) {
 	newform = cons(make_sym("SET-AREF"), cons(arg2, cdr(arg1)));
@@ -435,9 +435,9 @@ int f_setf(int arglist, int th)
 	newform = cons(make_sym("SET-CDR"), cons(arg2, cdr(arg1)));
     } else if (listp(arg1) && eqp(car(arg1), make_sym("DYNAMIC"))) {
 	if (improper_list_p(arg1))
-	    error(IMPROPER_ARGS, "dynamic", arg1);
+	    error(IMPROPER_ARGS, "dynamic", arg1, th);
 	if (length(arg1) != 2)
-	    error(IMPROPER_ARGS, "dynamic", arg1);
+	    error(IMPROPER_ARGS, "dynamic", arg1, th);
 	newform = cons(make_sym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
     } else if (listp(arg1) && macrop(car(arg1))) {
 	var = f_macroexpand_1(list1(arg1), th);
@@ -453,7 +453,7 @@ int f_setf(int arglist, int th)
 	if (functionp(car(arg1)) || genericp(car(arg1))) {
 	    var = eval(list2(car(arg1), NIL), th);
 	} else
-	    error(IMPROPER_ARGS, "setf", arg1);
+	    error(IMPROPER_ARGS, "setf", arg1, th);
 
 	newform =
 	    cons(make_sym("SET-SLOT-VALUE"),
@@ -465,11 +465,11 @@ int f_setf(int arglist, int th)
 	/* e.g. above case (foo 3 1 2) */
 	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
 	if (!genericp(car(arg1)))
-	    error(ILLEGAL_FORM, "setf", arg1);
+	    error(ILLEGAL_FORM, "setf", arg1, th);
     } else if (symbolp(arg1)) {
 	newform = cons(make_sym("SETQ"), list2(arg1, arg2));
     } else
-	error(IMPROPER_ARGS, "setf", arglist);
+	error(IMPROPER_ARGS, "setf", arglist, th);
 
     shelter_push(newform, th);
     res = eval(newform, th);
@@ -486,21 +486,21 @@ int f_set_dynamic(int arglist, int th)
     arg1 = car(arglist);
     arg2 = eval(cadr(arglist), th);
     if (nullp(arglist))
-	error(IMPROPER_ARGS, "set-dynamic", arglist);
+	error(IMPROPER_ARGS, "set-dynamic", arglist, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "set-dynamic", arglist);
+	error(IMPROPER_ARGS, "set-dynamic", arglist, th);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "set-dynamic", arglist);
+	error(WRONG_ARGS, "set-dynamic", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "set-dynamic", arg1);
+	error(NOT_SYM, "set-dynamic", arg1, th);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(WRONG_ARGS, "set-dynamic", arg1);
+	error(WRONG_ARGS, "set-dynamic", arg1, th);
 
     if (find_dyn(arg1, th) != FAILSE) {
 	set_dyn_env(arg1, arg2, th);
 	return (arg2);
     } else
-	error(UNDEF_VAR, "set-dynamic", arg1);
+	error(UNDEF_VAR, "set-dynamic", arg1, th);
 
     return (arg2);
 }
@@ -513,13 +513,13 @@ int f_setq(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "setq", arglist);
+	error(WRONG_ARGS, "setq", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "setq", arg1);
+	error(NOT_SYM, "setq", arg1, th);
     if (GET_OPT(arg1) == CONSTN)
-	error(CANT_MODIFY, "setq", arg1);
+	error(CANT_MODIFY, "setq", arg1, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "setq", arglist);
+	error(IMPROPER_ARGS, "setq", arglist, th);
 
     arg2 = eval(arg2, th);
     if (find_env(arg1, th) != FAILSE)
@@ -527,31 +527,31 @@ int f_setq(int arglist, int th)
     else if (GET_OPT(arg1) == GLOBAL)
 	SET_CDR(arg1, arg2);
     else
-	error(UNDEF_VAR, "setq", arg1);
+	error(UNDEF_VAR, "setq", arg1, th);
 
     return (arg2);
 }
 
-int f_defconstant(int arglist, int th __unused)
+int f_defconstant(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "defconstant", arglist);
+	error(IMPROPER_ARGS, "defconstant", arglist, th);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "defconstant", arglist);
+	error(WRONG_ARGS, "defconstant", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "defconstant", arg1);
+	error(NOT_SYM, "defconstant", arg1, th);
     if (arg1 == T || arg1 == NIL || arg1 == make_sym("*PI*") ||
 	arg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	|| arg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	error(WRONG_ARGS, "defconstant", arg1);
+	error(WRONG_ARGS, "defconstant", arg1, th);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(WRONG_ARGS, "defconstant", arg1);
+	error(WRONG_ARGS, "defconstant", arg1, th);
     if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defconstant", arglist);
+	error(NOT_TOP_LEVEL, "defconstant", arglist, th);
 
     SET_CDR(arg1, eval(arg2, 0));
     SET_OPT(arg1, CONSTN);	/* constant */
@@ -559,37 +559,37 @@ int f_defconstant(int arglist, int th __unused)
 
 }
 
-int f_defun(int arglist, int th __unused)
+int f_defun(int arglist, int th)
 {
     int arg1, arg2, val;
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) < 2)
-	error(WRONG_ARGS, "defun", arglist);
+	error(WRONG_ARGS, "defun", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "defun", arg1);
+	error(NOT_SYM, "defun", arg1, th);
     if (IS_SUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defun", arg1);
+	error(CANT_MODIFY, "defun", arg1, th);
     if (IS_FSUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defun", arg1);
+	error(CANT_MODIFY, "defun", arg1, th);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(WRONG_ARGS, "defun", arg1);
+	error(WRONG_ARGS, "defun", arg1, th);
     if (duplicate_list_p(car(arg2)))
-	error(IMPROPER_ARGS, "defun", car(arg2));
+	error(IMPROPER_ARGS, "defun", car(arg2), th);
     if (improper_list_p(car(arg2)))
-	error(IMPROPER_ARGS, "defun", car(arg2));
+	error(IMPROPER_ARGS, "defun", car(arg2), th);
     if (illegal_lambda_p(car(arg2)))
-	error(ILLEGAL_ARGS, "defun", car(arg2));
+	error(ILLEGAL_ARGS, "defun", car(arg2), th);
     if (!symbol_list_p(car(arg2)))
-	error(OUT_OF_DOMAIN, "defun", car(arg2));
+	error(OUT_OF_DOMAIN, "defun", car(arg2), th);
 
     val = make_func(GET_NAME(arg1), arg2);
     SET_CAR(arg1, val);
     return (arg1);
 }
 
-int f_defmacro(int arglist, int th __unused)
+int f_defmacro(int arglist, int th)
 {
     int arg1, arg2;
 
@@ -597,53 +597,53 @@ int f_defmacro(int arglist, int th __unused)
     arg2 = cdr(arglist);
 
     if (length(arglist) < 2)
-	error(WRONG_ARGS, "defmacro", arglist);
+	error(WRONG_ARGS, "defmacro", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "defmacro", arg1);
+	error(NOT_SYM, "defmacro", arg1, th);
     if (GET_OPT(arg1) == CONSTN)
-	error(CANT_MODIFY, "defmacro", arg1);
+	error(CANT_MODIFY, "defmacro", arg1, th);
     if (IS_SUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defmacro", arg1);
+	error(CANT_MODIFY, "defmacro", arg1, th);
     if (IS_FSUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defmacro", arg1);
+	error(CANT_MODIFY, "defmacro", arg1, th);
     if (improper_list_p(arg2)) {
-	error(IMPROPER_ARGS, "defmacro", arg2);
+	error(IMPROPER_ARGS, "defmacro", arg2, th);
     }
     if (duplicate_list_p(car(arg2)))
-	error(IMPROPER_ARGS, "defmacro", car(arg2));
+	error(IMPROPER_ARGS, "defmacro", car(arg2), th);
     if (improper_list_p(car(arg2))) {
-	error(IMPROPER_ARGS, "defmacro", car(arg2));
+	error(IMPROPER_ARGS, "defmacro", car(arg2), th);
     }
     if (illegal_lambda_p(car(arg2))) {
-	error(ILLEGAL_ARGS, "defmacro", car(arg2));
+	error(ILLEGAL_ARGS, "defmacro", car(arg2), th);
     }
     if (!symbol_list_p(car(arg2))) {
-	error(OUT_OF_DOMAIN, "defmacro", car(arg2));
+	error(OUT_OF_DOMAIN, "defmacro", car(arg2), th);
     }
     if (!top_flag && !ignore_topchk)
-	error(NOT_TOP_LEVEL, "defmacro", arglist);
+	error(NOT_TOP_LEVEL, "defmacro", arglist, th);
 
 
     bind_macro(GET_NAME(arg1), arg2);
     return (arg1);
 }
 
-int f_defglobal(int arglist, int th __unused)
+int f_defglobal(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "defglobal", arglist);
+	error(IMPROPER_ARGS, "defglobal", arglist, th);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "defglobal", arglist);
+	error(WRONG_ARGS, "defglobal", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "defglobal", arg1);
+	error(NOT_SYM, "defglobal", arg1, th);
     if (GET_OPT(arg1) == CONSTN)
-	error(CANT_MODIFY, "defglobal", arg1);
+	error(CANT_MODIFY, "defglobal", arg1, th);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(ILLEGAL_ARGS, "defglobal", arg1);
+	error(ILLEGAL_ARGS, "defglobal", arg1, th);
 
     arg2 = big_to_parmanent(eval(arg2, 0));
     SET_CDR(arg1, arg2);
@@ -659,13 +659,13 @@ int f_defdynamic(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (improper_list_p(cdr(arglist)))
-	error(IMPROPER_ARGS, "defdynamic", arglist);
+	error(IMPROPER_ARGS, "defdynamic", arglist, th);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "defdynamic", arglist);
+	error(WRONG_ARGS, "defdynamic", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "defdynamic", arg1);
+	error(NOT_SYM, "defdynamic", arg1, th);
     if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(WRONG_ARGS, "defdynamic", arg1);
+	error(WRONG_ARGS, "defdynamic", arg1, th);
 
 
     set_dyn_env(arg1, eval(arg2, th), th);
@@ -678,15 +678,15 @@ int f_dynamic(int arglist, int th)
 
     arg1 = car(arglist);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "dynamic", arglist);
+	error(IMPROPER_ARGS, "dynamic", arglist, th);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "dynamic", arglist);
+	error(WRONG_ARGS, "dynamic", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "dynamic", arg1);
+	error(NOT_SYM, "dynamic", arg1, th);
 
     res = find_dyn(arg1, th);
     if (res == FAILSE)
-	error(UNDEF_DYN, "dynamic", arg1);
+	error(UNDEF_DYN, "dynamic", arg1, th);
 
     return (res);
 }
@@ -727,9 +727,9 @@ int f_function(int arglist, int th)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "function", arglist);
+	error(WRONG_ARGS, "function", arglist, th);
     if (improper_list_p(arglist))
-	error(ILLEGAL_FORM, "function", arglist);
+	error(ILLEGAL_FORM, "function", arglist, th);
 
     if (symbolp(arg1)) {
 	int res;
@@ -738,17 +738,17 @@ int f_function(int arglist, int th)
 	if (IS_FUNC(res))
 	    return (res);
 	else if (IS_FSUBR(GET_CAR(arg1)))
-	    error(UNDEF_FUN, "function", arg1);
+	    error(UNDEF_FUN, "function", arg1, th);
 	else if (macrop(arg1))
-	    error(UNDEF_FUN, "function", arg1);
+	    error(UNDEF_FUN, "function", arg1, th);
 	else if (GET_CAR(arg1) != NIL)
 	    return (GET_CAR(arg1));
 	else
-	    error(UNDEF_FUN, "function", arg1);
+	    error(UNDEF_FUN, "function", arg1, th);
     } else if (listp(arg1) && eqp(car(arg1), make_sym("lambda")))
 	return (eval(arg1, th));
     else
-	error(NOT_FUNC, "function", arg1);
+	error(NOT_FUNC, "function", arg1, th);
     return (UNDEF);
 }
 
@@ -762,9 +762,9 @@ int f_function_star(int arglist, int th)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "function*", arglist);
+	error(WRONG_ARGS, "function*", arglist, th);
     if (improper_list_p(arglist))
-	error(ILLEGAL_ARGS, "function*", arglist);
+	error(ILLEGAL_ARGS, "function*", arglist, th);
 
     if (symbolp(arg1)) {
 	int res;
@@ -789,7 +789,7 @@ int f_symbol_function(int arglist, int th)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "symbol-function", arglist);
+	error(WRONG_ARGS, "symbol-function", arglist, th);
 
     if (symbolp(arg1)) {
 	int sym, res;
@@ -799,7 +799,7 @@ int f_symbol_function(int arglist, int th)
 	    sym = GET_CDR(arg1);
 
 	if (!symbolp(sym))
-	    error(UNDEF_FUN, "symbol-function", arg1);
+	    error(UNDEF_FUN, "symbol-function", arg1, th);
 
 	res = find_env(sym, th);
 	if (IS_FUNC(res))
@@ -807,25 +807,25 @@ int f_symbol_function(int arglist, int th)
 	else if (GET_CAR(sym) != NIL)
 	    return (GET_CAR(sym));
 	else
-	    error(UNDEF_FUN, "symbol-function", sym);
+	    error(UNDEF_FUN, "symbol-function", sym, th);
     } else
-	error(ILLEGAL_ARGS, "symbol-function", arg1);
+	error(ILLEGAL_ARGS, "symbol-function", arg1, th);
     return (UNDEF);
 }
 
-int f_class(int arglist, int th __unused)
+int f_class(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "class", arglist);
+	error(WRONG_ARGS, "class", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "class", arglist);
+	error(NOT_SYM, "class", arglist, th);
     if (GET_AUX(arg1) == NIL)
-	error(UNDEF_CLASS, "class", arg1);
+	error(UNDEF_CLASS, "class", arg1, th);
     if (GET_AUX(arg1) == csymbol && GET_OPT(arg1) != SYSTEM)
-	error(UNDEF_CLASS, "class", arg1);
+	error(UNDEF_CLASS, "class", arg1, th);
 
     return (GET_AUX(arg1));
 }
@@ -836,7 +836,7 @@ int f_symbol_class(int arglist, int th)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "symbol-class", arglist);
+	error(WRONG_ARGS, "symbol-class", arglist, th);
 
     if (symbolp(arg1)) {
 	int sym;
@@ -846,16 +846,16 @@ int f_symbol_class(int arglist, int th)
 	    sym = GET_CDR(arg1);
 
 	if (!symbolp(sym))
-	    error(UNDEF_CLASS, "symbol-class", arg1);
+	    error(UNDEF_CLASS, "symbol-class", arg1, th);
 
 	if (GET_AUX(sym) == NIL)
-	    error(UNDEF_CLASS, "symbol-class", sym);
+	    error(UNDEF_CLASS, "symbol-class", sym, th);
 	if (GET_AUX(sym) == csymbol && GET_OPT(sym) != SYSTEM)
-	    error(UNDEF_CLASS, "class", sym);
+	    error(UNDEF_CLASS, "class", sym, th);
 
 	return (GET_AUX(sym));
     } else {
-	error(ILLEGAL_ARGS, "symbol-class", arg1);
+	error(ILLEGAL_ARGS, "symbol-class", arg1, th);
 	return (UNDEF);
     }
 }
@@ -869,9 +869,9 @@ int f_if(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if ((n = length(arglist)) < 2 || n > 3)
-	error(WRONG_ARGS, "if", arglist);
+	error(WRONG_ARGS, "if", arglist, th);
     if (improper_list_p(arglist))
-	error(WRONG_ARGS, "if", arglist);
+	error(WRONG_ARGS, "if", arglist, th);
 
     if (length(arglist) == 3)
 	arg3 = car(cdr(cdr(arglist)));
@@ -896,9 +896,9 @@ int f_cond(int arglist, int th)
     arg2 = car(arg1);
     arg3 = cdr(arg1);
     if (nullp(arg1))
-	error(IMPROPER_ARGS, "cond", arglist);
+	error(IMPROPER_ARGS, "cond", arglist, th);
     if (improper_list_p(arg1))
-	error(IMPROPER_ARGS, "cond", arg1);
+	error(IMPROPER_ARGS, "cond", arg1, th);
 
     if (length(arg1) == 1 && atomp(arg2) && !nullp(eval(arg2, th)))
 	return (arg2);
@@ -928,13 +928,13 @@ int f_for(int arglist, int th)
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
     if (length(arglist) < 2)
-	error(WRONG_ARGS, "for", arglist);
+	error(WRONG_ARGS, "for", arglist, th);
     if (!listp(arg1))
-	error(NOT_LIST, "for", arg1);
+	error(NOT_LIST, "for", arg1, th);
     if (!listp(arg2))
-	error(NOT_LIST, "for", arg2);
+	error(NOT_LIST, "for", arg2, th);
     if (nullp(arg2))
-	error(IMPROPER_ARGS, "for", arg2);
+	error(IMPROPER_ARGS, "for", arg2, th);
 
     temp = arg1;
     temparg2 = NIL;
@@ -943,23 +943,23 @@ int f_for(int arglist, int th)
 
 	temp1 = car(temp);
 	if (!listp(temp1))
-	    error(IMPROPER_ARGS, "for", temp1);
+	    error(IMPROPER_ARGS, "for", temp1, th);
 	temparg1 = car(temp1);
 
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "for", temparg1);
+	    error(NOT_SYM, "for", temparg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "for", arg1);
+	    error(WRONG_ARGS, "for", arg1, th);
 	if (temparg1 == T || temparg1 == NIL
 	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "for", temparg1);
+	    error(WRONG_ARGS, "for", temparg1, th);
 	if (length(temp1) != 2 && length(temp1) != 3)
-	    error(IMPROPER_ARGS, "for", temp1);
+	    error(IMPROPER_ARGS, "for", temp1, th);
 	if (member(temparg1, temparg2))
-	    error(IMPROPER_ARGS, "for", temparg1);
+	    error(IMPROPER_ARGS, "for", temparg1, th);
 
 	temparg2 = cons(temparg1, temparg2);
 	temp = cdr(temp);
@@ -1012,19 +1012,19 @@ int f_block(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (nullp(arglist))
-	error(WRONG_ARGS, "block", arglist);
+	error(WRONG_ARGS, "block", arglist, th);
     if (improper_list_p(arglist) && nullp(arg1))
-	error(WRONG_ARGS, "block", arglist);
+	error(WRONG_ARGS, "block", arglist, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "block", arglist);
+	error(IMPROPER_ARGS, "block", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "block", arg1);
+	error(NOT_SYM, "block", arg1, th);
 
 
     tag = arg1;
 
     if (block_pt >= CTRLSTK)
-	error(CTRL_OVERF, "block buffer over fllow", NIL);
+	error(CTRL_OVERF, "block buffer over fllow", NIL, th);
 
 
     block_data[block_pt][0] = tag;
@@ -1083,15 +1083,15 @@ int f_return_from(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "return-from", arglist);
+	error(WRONG_ARGS, "return-from", arglist, th);
     if (!symbolp(arg1))
-	error(NOT_SYM, "return-from", arg1);
+	error(NOT_SYM, "return-from", arg1, th);
     tag = arg1;
     block_pt--;
     if (block_data[block_pt][0] != tag)
-	error(UNDEF_TAG, "return-from tag not exist", tag);
+	error(UNDEF_TAG, "return-from tag not exist", tag, th);
     if (block_tag_check[block_pt] == -1)
-	error(UNDEF_TAG, "return-from tag not exist", tag);
+	error(UNDEF_TAG, "return-from tag not exist", tag, th);
 
     /* 
      *  while executing unwind-protect, execute clean-up before return-from.
@@ -1118,16 +1118,16 @@ int f_catch(int arglist, int th)
     arg1 = car(arglist);	/* tag */
     arg2 = cdr(arglist);	/* body */
     if (nullp(arglist))
-	error(WRONG_ARGS, "catch", arglist);
+	error(WRONG_ARGS, "catch", arglist, th);
     if (arg1 == make_sym("catch"))
-	error(WRONG_ARGS, "catch", arglist);
+	error(WRONG_ARGS, "catch", arglist, th);
     if (nullp(arg1))
-	error(WRONG_ARGS, "catch", arglist);
+	error(WRONG_ARGS, "catch", arglist, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "catch", arglist);
+	error(IMPROPER_ARGS, "catch", arglist, th);
     tag = eval(arg1, th);	/* tag symbol */
     if (!symbolp(tag))
-	error(IMPROPER_ARGS, "catch", tag);
+	error(IMPROPER_ARGS, "catch", tag, th);
 
     catch_data[catch_pt][0] = tag;
     catch_data[catch_pt][1] = ep[th];
@@ -1136,7 +1136,7 @@ int f_catch(int arglist, int th)
     catch_pt++;
 
     if (catch_pt >= CTRLSTK)
-	error(CTRL_OVERF, "catch", tag);
+	error(CTRL_OVERF, "catch", tag, th);
 
     error_flag = false;		/* reset error_flag */
     unwind = unwind_nest;
@@ -1190,13 +1190,13 @@ int f_throw(int arglist, int th)
     tag = eval(arg1, th);
 
     if (!symbolp(tag))
-	error(IMPROPER_ARGS, "throw", tag);
+	error(IMPROPER_ARGS, "throw", tag, th);
     if ((i = find_tag(tag)) == FAILSE)
-	error(UNDEF_TAG, "throw", tag);
+	error(UNDEF_TAG, "throw", tag, th);
     if (length(arglist) != 2)
-	error(WRONG_ARGS, "throw", arglist);
+	error(WRONG_ARGS, "throw", arglist, th);
     if (improper_list_p(arglist))
-	error(ILLEGAL_FORM, "throw", arglist);
+	error(ILLEGAL_FORM, "throw", arglist, th);
 
     /* 
      *  while executing unwind-protect, execute clean-up before throw.
@@ -1219,7 +1219,7 @@ int f_tagbody(int arglist, int th)
     int prog[TAGBODY_LEN_MAX], tb_line, end, i;
 
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "tagbody", arglist);
+	error(IMPROPER_ARGS, "tagbody", arglist, th);
 
     end = 0;
     while (!nullp(arglist)) {
@@ -1246,7 +1246,7 @@ int f_tagbody(int arglist, int th)
 		    }
 		}
 		if (tagbody_tag != NIL) {
-		    error(UNDEF_TAG, "tagbody", tagbody_tag);
+		    error(UNDEF_TAG, "tagbody", tagbody_tag, th);
 		} else {
 		    continue;
 		}
@@ -1257,17 +1257,17 @@ int f_tagbody(int arglist, int th)
     return (NIL);
 }
 
-int f_go(int arglist, int th __unused)
+int f_go(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
     if (!symbolp(arg1))
-	error(NOT_SYM, "go", arg1);
+	error(NOT_SYM, "go", arg1, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "go", arglist);
+	error(IMPROPER_ARGS, "go", arglist, th);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "go", arglist);
+	error(WRONG_ARGS, "go", arglist, th);
 
     tagbody_tag = arg1;
     return (T);
@@ -1326,15 +1326,15 @@ int f_unwind_protect(int arglist, int th)
     arg1 = car(arglist);	// body
     args = cdr(arglist);	// clean-up
     if (nullp(arglist))
-	error(WRONG_ARGS, "unwind-protect", arglist);
+	error(WRONG_ARGS, "unwind-protect", arglist, th);
     if (improper_list_p(arglist))
-	error(WRONG_ARGS, "unwind-protect", arglist);
+	error(WRONG_ARGS, "unwind-protect", arglist, th);
 
     //Ensure that there are no non-local exits within the cleanup forms
     for (int remaining_args = args;
 	 !nullp(remaining_args); remaining_args = cdr(remaining_args)) {
 	if (has_danger_p(car(remaining_args)))
-	    error(UNDEF_TAG, "unwind-protect", args);
+	    error(UNDEF_TAG, "unwind-protect", args, th);
     }
 
     cleanup = unwind_pt;
@@ -1361,18 +1361,18 @@ int f_case(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (nullp(car(arg2)))
-	error(IMPROPER_ARGS, "case", arg2);
+	error(IMPROPER_ARGS, "case", arg2, th);
     temp = arg2;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(temp);
 	if (!listp(temparg1))
-	    error(WRONG_ARGS, "case", temparg1);
+	    error(WRONG_ARGS, "case", temparg1, th);
 	if (car(temparg1) == T && length(temp) != 1)
-	    error(IMPROPER_ARGS, "case", temparg1);
+	    error(IMPROPER_ARGS, "case", temparg1, th);
 	if (atomp(car(temparg1)) && car(temparg1) != T)
-	    error(IMPROPER_ARGS, "case", temparg1);
+	    error(IMPROPER_ARGS, "case", temparg1, th);
 	temp = cdr(temp);
     }
 
@@ -1400,18 +1400,18 @@ int f_case_using(int arglist, int th)
     arg2 = cadr(arglist);
     arg3 = cddr(arglist);
     if (nullp(car(arg3)))
-	error(IMPROPER_ARGS, "case-using", arg3);
+	error(IMPROPER_ARGS, "case-using", arg3, th);
     temp = arg3;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(temp);
 	if (!listp(temparg1))
-	    error(WRONG_ARGS, "case-using", temparg1);
+	    error(WRONG_ARGS, "case-using", temparg1, th);
 	if (car(temparg1) == T && length(temp) != 1)
-	    error(IMPROPER_ARGS, "case-using", temparg1);
+	    error(IMPROPER_ARGS, "case-using", temparg1, th);
 	if (atomp(car(temparg1)) && car(temparg1) != T)
-	    error(IMPROPER_ARGS, "case-using", temparg1);
+	    error(IMPROPER_ARGS, "case-using", temparg1, th);
 	temp = cdr(temp);
     }
 
@@ -1438,7 +1438,7 @@ int f_progn(int arglist, int th)
     int res;
 
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "progn", arglist);
+	error(IMPROPER_ARGS, "progn", arglist, th);
     res = NIL;
     while (arglist != NIL) {
 	res = eval(car(arglist), th);
@@ -1447,7 +1447,7 @@ int f_progn(int arglist, int th)
     return (res);
 }
 
-int f_defclass(int arglist, int th __unused)
+int f_defclass(int arglist, int th)
 {
     int arg1,
 	arg2,
@@ -1460,29 +1460,29 @@ int f_defclass(int arglist, int th __unused)
     arg4 = cdddr(arglist);	/* class-opt */
 
     if (!symbolp(arg1))
-	error(NOT_SYM, "defclass", arg1);
+	error(NOT_SYM, "defclass", arg1, th);
     if (GET_OPT(arg1) == SYSTEM)
-	error(CANT_REDEFINE, "defclass", arg1);
+	error(CANT_REDEFINE, "defclass", arg1, th);
     if (GET_OPT(arg1) == CONSTN)
-	error(CANT_MODIFY, "defclass", arg1);
+	error(CANT_MODIFY, "defclass", arg1, th);
     if (IS_FSUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defclass", arg1);
+	error(CANT_MODIFY, "defclass", arg1, th);
     if ((STRING_REF(arg1, 0) == '&') || (STRING_REF(arg1, 0) == ':'))
-	error(CANT_MODIFY, "defclass", arg1);
+	error(CANT_MODIFY, "defclass", arg1, th);
     if (!listp(arg2))
-	error(NOT_LIST, "defclass", arg2);
+	error(NOT_LIST, "defclass", arg2, th);
     if (has_same_p(arg2))
-	error(IMPROPER_ARGS, "defclass", arg2);
+	error(IMPROPER_ARGS, "defclass", arg2, th);
     if (has_sys_class_p(arg2))
-	error(IMPROPER_ARGS, "defclass", arg2);
+	error(IMPROPER_ARGS, "defclass", arg2, th);
     if (not_exist_class_p(arg2))
-	error(UNDEF_CLASS, "defclass", arg2);
+	error(UNDEF_CLASS, "defclass", arg2, th);
     if (has_common_p(arg2))
-	error(HAS_COMMON_CLASS, "defclass", arg2);
+	error(HAS_COMMON_CLASS, "defclass", arg2,th);
     if (!listp(arg3))
-	error(NOT_LIST, "defclass", arg3);
+	error(NOT_LIST, "defclass", arg3, th);
     if (!top_flag && !ignore_topchk) {
-	error(NOT_TOP_LEVEL, "defclass", arglist);
+	error(NOT_TOP_LEVEL, "defclass", arglist, th);
     }
 
     /* if re define class of global variable, then it's class is <invalid> */
@@ -1517,20 +1517,20 @@ int f_defclass(int arglist, int th __unused)
 	    arg3 = list1(arg3);	/* if form=(a :reader a-read) => ((a :reader a-read)) */
 	sym = caar(arg3);
 	if ((STRING_REF(sym, 0) == '&') || (STRING_REF(sym, 0) == ':'))
-	    error(IMPROPER_FORM, "defclass", sym);
+	    error(IMPROPER_FORM, "defclass", sym, th);
 	ls = cdar(arg3);
 	if (!listp(car(arg3)))
-	    error(ILLEGAL_FORM, "defclass", arg3);
+	    error(ILLEGAL_FORM, "defclass", arg3, th);
 
 	while (!nullp(ls)) {
 
 	    if (eqp(car(ls), make_sym(":READER"))) {
 		reader = cadr(ls);
 		if (length(ls) < 2) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, th);
 		}
 		if (symbolp(reader) && STRING_REF(reader, 0) == ':') {
-		    error(IMPROPER_FORM, "defclass", arg3);
+		    error(IMPROPER_FORM, "defclass", arg3, th);
 		}
 		/*
 		 * (if (not (generic-function-p (function* name)))
@@ -1574,10 +1574,10 @@ int f_defclass(int arglist, int th __unused)
 	    } else if (eqp(car(ls), make_sym(":WRITER"))) {
 		writer = cadr(ls);
 		if (length(ls) < 2) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		if (symbolp(writer) && STRING_REF(writer, 0) == ':') {
-		    error(IMPROPER_FORM, "defclass", arg3);
+		    error(IMPROPER_FORM, "defclass", arg3, 0);
 		}
 		/*
 		 * (if (not (generic-function-p (function* name)))
@@ -1606,10 +1606,10 @@ int f_defclass(int arglist, int th __unused)
 	    } else if (eqp(car(ls), make_sym(":ACCESSOR"))) {
 		accessor = cadr(ls);
 		if (length(ls) < 2) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		if (symbolp(accessor) && STRING_REF(accessor, 0) == ':') {
-		    error(IMPROPER_FORM, "defclass", arg3);
+		    error(IMPROPER_FORM, "defclass", arg3, 0);
 		}
 		/*
 		 * (if (not (generic-function-p (function* name)))
@@ -1654,10 +1654,10 @@ int f_defclass(int arglist, int th __unused)
 	    } else if (eqp(car(ls), make_sym(":BOUNDP"))) {
 		boundp = cadr(ls);
 		if (nullp(boundp)) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		if (symbolp(boundp) && STRING_REF(boundp, 0) == ':') {
-		    error(IMPROPER_FORM, "defclass", arg3);
+		    error(IMPROPER_FORM, "defclass", arg3, 0);
 		}
 		/*
 		 * (if (not (generic-function-p (function* name)))
@@ -1686,13 +1686,13 @@ int f_defclass(int arglist, int th __unused)
 	    } else if (eqp(car(ls), make_sym(":INITFORM"))) {
 		initform = cadr(ls);
 		if (length(ls) < 2) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		if (symbolp(initform) && STRING_REF(initform, 0) == ':') {
-		    error(IMPROPER_FORM, "defclass", arg3);
+		    error(IMPROPER_FORM, "defclass", arg3, 0);
 		}
 		if (initform_flag) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		initform = eval(initform, 0);
 		val = initform;
@@ -1700,17 +1700,17 @@ int f_defclass(int arglist, int th __unused)
 	    } else if (eqp(car(ls), make_sym(":INITARG"))) {
 		initarg = cadr(ls);
 		if (nullp(initarg)) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		if (symbolp(initarg) && STRING_REF(initarg, 0) == ':') {
-		    error(IMPROPER_FORM, "defclass", arg3);
+		    error(IMPROPER_FORM, "defclass", arg3, 0);
 		}
 		if (initarg_flag) {
-		    error(ILLEGAL_FORM, "defclass", arg3);
+		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
 		initarg_flag = 1;
 	    } else
-		error(ILLEGAL_FORM, "defclass", ls);
+		error(ILLEGAL_FORM, "defclass", ls, 0);
 
 	    ls = cddr(ls);
 	}
@@ -1728,25 +1728,25 @@ int f_defclass(int arglist, int th __unused)
 	int ls;
 
 	if (!listp(car(arg4)))
-	    error(ILLEGAL_FORM, "defclass", arg4);
+	    error(ILLEGAL_FORM, "defclass", arg4, 0);
 	ls = car(arg4);
 	if (eqp(car(ls), make_sym(":ABSTRACTP"))) {
 	    abstractp = cadr(ls);
 	    if (length(ls) != 2)
-		error(ILLEGAL_FORM, "defclass", arg4);
+		error(ILLEGAL_FORM, "defclass", arg4, 0);
 	    if (abstractp != NIL && abstractp != T)
-		error(ILLEGAL_FORM, "defclass", arg4);
+		error(ILLEGAL_FORM, "defclass", arg4, 0);
 	    if (abstractp_flag != UNDEF && abstractp != abstractp_flag)
-		error(ILLEGAL_FORM, "defclass", arg4);
+		error(ILLEGAL_FORM, "defclass", arg4, 0);
 	    abstractp_flag = abstractp;
 	} else if (eqp(car(ls), make_sym(":METACLASS"))) {
 	    metaclass = cadr(ls);
 	    if (length(ls) != 2)
-		error(ILLEGAL_FORM, "defclass", arg4);
+		error(ILLEGAL_FORM, "defclass", arg4, 0);
 	    if (!eqp(metaclass, make_sym("<STANDARD-CLASS>")))
-		error(ILLEGAL_FORM, "defclass", arg4);
+		error(ILLEGAL_FORM, "defclass", arg4, 0);
 	} else {
-	    error(ILLEGAL_FORM, "defclass", ls);
+	    error(ILLEGAL_FORM, "defclass", ls, 0);
 	}
 	arg4 = cdr(arg4);
     }
@@ -1766,7 +1766,7 @@ int f_defclass(int arglist, int th __unused)
 }
 
 
-int f_defgeneric(int arglist, int th __unused)
+int f_defgeneric(int arglist, int th)
 {
     int arg1, arg2, arg3, val;
 
@@ -1774,38 +1774,38 @@ int f_defgeneric(int arglist, int th __unused)
     arg2 = cadr(arglist);	/* lambda-list */
     arg3 = cddr(arglist);	/*  body */
     if (symbolp(arg1) && GET_OPT(arg1) == CONSTN) {
-	error(CANT_MODIFY, "defgeneric", arg1);
+	error(CANT_MODIFY, "defgeneric", arg1, th);
     }
     if (symbolp(arg1) && (functionp(arg1) || subrp(arg1) || fsubrp(arg1))) {
-	error(CANT_MODIFY, "defgeneric", arg1);
+	error(CANT_MODIFY, "defgeneric", arg1, th);
     }
     if (symbolp(arg1) && (genericp(arg1) && eqp(arg1, make_sym("CREATE")))) {
-	error(CANT_MODIFY, "defgeneric", arg1);
+	error(CANT_MODIFY, "defgeneric", arg1, th);
     }
     if (symbolp(arg1)
 	&& (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')) {
-	error(WRONG_ARGS, "defgeneric", arg1);
+	error(WRONG_ARGS, "defgeneric", arg1, th);
     }
     if (!symbolp(arg1)
 	&& (listp(arg1)
 	    && !(length(arg1) == 2 && eqp(car(arg1), make_sym("SETF"))
 		 && symbolp(cadr(arg1))))) {
-	error(ILLEGAL_FORM, "defgeneric", arg1);
+	error(ILLEGAL_FORM, "defgeneric", arg1, th);
     }
     if (!listp(arg2)) {
-	error(NOT_LIST, "defgeneric", arg2);
+	error(NOT_LIST, "defgeneric", arg2, th);
     }
     if (duplicate_list_p(arg2)) {
-	error(IMPROPER_ARGS, "defgeneric", arg2);
+	error(IMPROPER_ARGS, "defgeneric", arg2, th);
     }
     if (improper_list_p(arg2)) {
-	error(IMPROPER_ARGS, "defgeneric", arg2);
+	error(IMPROPER_ARGS, "defgeneric", arg2, th);
     }
     if (illegal_lambda_p(arg2)) {
-	error(ILLEGAL_ARGS, "defgeneric", arg2);
+	error(ILLEGAL_ARGS, "defgeneric", arg2, th);
     }
     if (!top_flag && !ignore_topchk) {
-	error(NOT_TOP_LEVEL, "defgeneric", arglist);
+	error(NOT_TOP_LEVEL, "defgeneric", arglist, th);
     }
     /* when (defgeneric (set foo) ...) */
     if (listp(arg1)) {
@@ -1820,7 +1820,7 @@ int f_defgeneric(int arglist, int th __unused)
     return (arg1);
 }
 
-int f_defgeneric_star(int arglist, int th __unused)
+int f_defgeneric_star(int arglist, int th)
 {
     int arg1, arg2, arg3, val;
 
@@ -1828,15 +1828,15 @@ int f_defgeneric_star(int arglist, int th __unused)
     arg2 = cadr(arglist);	/* lambda-list */
     arg3 = cddr(arglist);	/* body */
     if (!symbolp(arg1))
-	error(NOT_SYM, "defgeneric", arg1);
+	error(NOT_SYM, "defgeneric", arg1, th);
     if (GET_OPT(arg1) == CONSTN)
-	error(CANT_MODIFY, "defgeneric", arg1);
+	error(CANT_MODIFY, "defgeneric", arg1, th);
     if (IS_FUNC(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defgeneric", arg1);
+	error(CANT_MODIFY, "defgeneric", arg1, th);
     if (IS_SUBR(GET_CAR(arg1)))
-	error(CANT_MODIFY, "defgeneric", arg1);
+	error(CANT_MODIFY, "defgeneric", arg1, th);
     if (!listp(arg2))
-	error(NOT_LIST, "defgeneric", arg2);
+	error(NOT_LIST, "defgeneric", arg2, th);
 
     if (!member(arg1, generic_list))
 	generic_list = cons(arg1, generic_list);
@@ -1849,7 +1849,7 @@ int f_defgeneric_star(int arglist, int th __unused)
 /*
  * if Generic function, set CDR area method object with insert sorting. 
  */
-int f_defmethod(int arglist, int th __unused)
+int f_defmethod(int arglist, int th)
 {
     int arg1, arg2, gen;
 
@@ -1857,20 +1857,20 @@ int f_defmethod(int arglist, int th __unused)
     arg2 = cdr(arglist);	/* parameter-profile */
 
     if (symbolp(arg1) && (subrp(arg1) || fsubrp(arg1))) {
-	error(CANT_MODIFY, "defmethod", arg1);
+	error(CANT_MODIFY, "defmethod", arg1, th);
     }
     if (symbolp(arg1) && (functionp(arg1) || macrop(arg1))) {
-	error(ILLEGAL_FORM, "defmethod", arg1);
+	error(ILLEGAL_FORM, "defmethod", arg1, th);
     }
     if (symbolp(arg1)
 	&& (GET_CAR(arg1) == NIL && !member(arg1, generic_list))) {
-	error(UNDEF_FUN, "defmethod", arg1);
+	error(UNDEF_FUN, "defmethod", arg1, th);
     }
     if (!symbolp(arg1)
 	&& (listp(arg1)
 	    && !(length(arg1) == 2 && eqp(car(arg1), make_sym("SETF"))
 		 && symbolp(cadr(arg1))))) {
-	error(ILLEGAL_FORM, "defmethod", arg1);
+	error(ILLEGAL_FORM, "defmethod", arg1, th);
     }
     /* when (defmethod (set foo) ...) */
     if (listp(arg1)) {
@@ -1878,21 +1878,21 @@ int f_defmethod(int arglist, int th __unused)
     }
 
     if (listp(car(arg2)) && illegal_lambda_p(car(arg2))) {
-	error(ILLEGAL_ARGS, "defmethod", arg2);
+	error(ILLEGAL_ARGS, "defmethod", arg2, th);
     }
     if (listp(car(arg2))
 	&& !unified_parameter_p(GET_CAR(GET_CAR(arg1)), car(arg2))) {
-	error(ILLEGAL_FORM, "defmethod", arg2);
+	error(ILLEGAL_FORM, "defmethod", arg2, th);
     }
     if (listp(car(arg2)) && undef_parameter_p(car(arg2))) {
-	error(UNDEF_CLASS, "defmethod", arg2);
+	error(UNDEF_CLASS, "defmethod", arg2, th);
     }
     /* if method-qualifier and method-combination of generic-function is NIL -> error */
     if (symbolp(car(arg2)) && method_qualifier_p(car(arg2))
 	&& GET_PROP(GET_CAR(arg1)) == NIL)
-	error(IMPROPER_ARGS, "defmethod", arg2);
+	error(IMPROPER_ARGS, "defmethod", arg2, th);
     if (symbolp(car(arg2)) && !method_qualifier_p(car(arg2))) {
-	error(IMPROPER_ARGS, "defmethod", arg2);
+	error(IMPROPER_ARGS, "defmethod", arg2, th);
     }
 
     gen = generic_func = GET_CAR(arg1);
@@ -1929,25 +1929,25 @@ int f_with_open_input_file(int arglist, int th)
     FILE *port;
 
     if (nullp(arglist) || atomp(arglist))
-	error(NOT_EXIST_ARG, "with-open-input-file", NIL);
+	error(NOT_EXIST_ARG, "with-open-input-file", NIL, th);
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     sym = car(arg1);		/* stream-name */
     str = eval(cadr(arg1), th);	/* file-name */
     n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
-	error(ILLEGAL_FORM, "with-input-file", arg1);
+	error(ILLEGAL_FORM, "with-input-file", arg1, th);
     if (!symbolp(sym))
-	error(NOT_SYM, "with-open-input-file", sym);
+	error(NOT_SYM, "with-open-input-file", sym, th);
     if (!stringp(str))
-	error(NOT_STR, "with-open-input-file", str);
+	error(NOT_STR, "with-open-input-file", str, th);
     const char *fname = GET_NAME(str);
     if (n == 2)
 	port = fopen(fname, "r");
     else
 	port = fopen(fname, "rb");
     if (port == NULL) {
-	error(CANT_OPEN, "with-open-input-file", str);
+	error(CANT_OPEN, "with-open-input-file", str, th);
 	return NIL;
     }
     if (n == 2)
@@ -1968,25 +1968,25 @@ int f_with_open_output_file(int arglist, int th)
     FILE *port;
 
     if (nullp(arglist) || atomp(arglist))
-	error(NOT_EXIST_ARG, "with-open-output-file", NIL);
+	error(NOT_EXIST_ARG, "with-open-output-file", NIL, th);
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     sym = car(arg1);		/* stream-name */
     str = eval(cadr(arg1), th);	/* file-name */
     n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
-	error(ILLEGAL_FORM, "with-open-output-file", arg1);
+	error(ILLEGAL_FORM, "with-open-output-file", arg1, th);
     if (!symbolp(sym))
-	error(NOT_SYM, "with-open-output-file", sym);
+	error(NOT_SYM, "with-open-output-file", sym, th);
     if (!stringp(str))
-	error(NOT_STR, "with-open-output-file", str);
+	error(NOT_STR, "with-open-output-file", str, th);
     const char *fname = GET_NAME(str);
     if (n == 2)
 	port = fopen(fname, "w");
     else
 	port = fopen(fname, "wb");
     if (port == NULL) {
-	error(CANT_OPEN, "with-open-output-file", str);
+	error(CANT_OPEN, "with-open-output-file", str, th);
 	return NIL;
     }
     if (n == 2)
@@ -2007,25 +2007,25 @@ int f_with_open_io_file(int arglist, int th)
     FILE *port;
 
     if (nullp(arglist) || atomp(arglist))
-	error(NOT_EXIST_ARG, "with-open-io-file", NIL);
+	error(NOT_EXIST_ARG, "with-open-io-file", NIL, th);
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     sym = car(arg1);		/* stream-name */
     str = eval(cadr(arg1), th);	/* file-name */
     n = length(arg1);		/* check element */
     if (!(listp(arg1) && (n == 2 || n == 3)))
-	error(ILLEGAL_FORM, "with-open-io-file", arg1);
+	error(ILLEGAL_FORM, "with-open-io-file", arg1, th);
     if (!symbolp(sym))
-	error(NOT_SYM, "with-open-io-file", sym);
+	error(NOT_SYM, "with-open-io-file", sym, th);
     if (!stringp(str))
-	error(NOT_STR, "with-open-io-file", str);
+	error(NOT_STR, "with-open-io-file", str, th);
     const char *fname = GET_NAME(str);
     if (n == 2)
 	port = fopen(fname, "a+");
     else
 	port = fopen(fname, "ab+");
     if (port == NULL) {
-	error(CANT_OPEN, "with-open-io-file", str);
+	error(CANT_OPEN, "with-open-io-file", str, th);
 	return NIL;
     }
     if (n == 2)
@@ -2049,7 +2049,7 @@ int f_with_standard_input(int arglist, int th)
 
     stream = eval(arg1, th);
     if (!input_stream_p(stream))
-	error(NOT_STREAM, "with-standard-input, stream", stream);
+	error(NOT_STREAM, "with-standard-input, stream", stream, th);
 
     save = input_stream;
     input_stream = stream;
@@ -2067,7 +2067,7 @@ int f_with_standard_output(int arglist, int th)
 
     stream = eval(arg1, th);
     if (!output_stream_p(stream))
-	error(NOT_STREAM, "with-standard-output, stream", stream);
+	error(NOT_STREAM, "with-standard-output, stream", stream, th);
 
     save = output_stream;
     output_stream = stream;
@@ -2085,7 +2085,7 @@ int f_with_error_output(int arglist, int th)
 
     stream = eval(arg1, th);
     if (!output_stream_p(stream))
-	error(NOT_STREAM, "with-error-output, stream", stream);
+	error(NOT_STREAM, "with-error-output, stream", stream, th);
 
     save = output_stream;
     output_stream = stream;
@@ -2114,13 +2114,13 @@ int f_convert(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
-	error(IMPROPER_ARGS, "convert", arglist);
+	error(IMPROPER_ARGS, "convert", arglist, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "convert", arglist);
+	error(IMPROPER_ARGS, "convert", arglist, th);
     if (!symbolp(arg2))
-	error(NOT_SYM, "convert", arg2);
+	error(NOT_SYM, "convert", arg2, th);
     if (GET_OPT(arg2) != SYSTEM)
-	error(NOT_CLASS, "convert", arg2);
+	error(NOT_CLASS, "convert", arg2, th);
 
     arg1 = eval(arg1, th);
     return convert(arg1, arg2);
@@ -2246,39 +2246,39 @@ int convert(int arg1, int arg2)
     default:
 	VL(("convert tag switch default action"));
     }
-    error(OUT_OF_DOMAIN, "convert", arg1);
+    error(OUT_OF_DOMAIN, "convert", arg1, 0);
     return (UNDEF);
 }
 
-int f_the(int arglist, int th __unused)
+int f_the(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
-	error(IMPROPER_ARGS, "the", arglist);
+	error(IMPROPER_ARGS, "the", arglist, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "the", arglist);
+	error(IMPROPER_ARGS, "the", arglist, th);
 
     if (GET_AUX(arg1) != NIL)
 	return (eval(arg2, 0));
     else
-	error(NOT_CLASS, "the", arg1);
+	error(NOT_CLASS, "the", arg1, th);
 
     return (UNDEF);
 }
 
-int f_assure(int arglist, int th __unused)
+int f_assure(int arglist, int th)
 {
     int arg1, arg2;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (length(arglist) != 2)
-	error(IMPROPER_ARGS, "assure", arglist);
+	error(IMPROPER_ARGS, "assure", arglist, th);
     if (improper_list_p(arglist))
-	error(IMPROPER_ARGS, "assure", arglist);
+	error(IMPROPER_ARGS, "assure", arglist, th);
 
     arg2 = eval(arg2, 0);
     if (GET_AUX(arg1) == GET_AUX(arg2))
@@ -2286,7 +2286,7 @@ int f_assure(int arglist, int th __unused)
     else if (subclassp(GET_AUX(arg2), GET_AUX(arg1)))
 	return (arg2);
     else
-	error(CANT_ASSURE, "assure", arg2);
+	error(CANT_ASSURE, "assure", arg2, th);
 
     return (UNDEF);
 }
@@ -2300,14 +2300,14 @@ double getETime()
 
 
 
-int f_time(int arglist, int th __unused)
+int f_time(int arglist, int th)
 {
     int arg1;
     double st, en;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "time", arglist);
+	error(WRONG_ARGS, "time", arglist, th);
 
     st = getETime();
     eval(arg1, 0);
@@ -2316,7 +2316,7 @@ int f_time(int arglist, int th __unused)
     return (UNDEF);
 }
 
-int f_trace(int arglist, int th __unused)
+int f_trace(int arglist, int th)
 {
 
     if (nullp(arglist)) {
@@ -2324,7 +2324,7 @@ int f_trace(int arglist, int th __unused)
     } else {
 	while (!nullp(arglist)) {
 	    if (!symbolp(car(arglist)))
-		error(NOT_SYM, "trace", car(arglist));
+		error(NOT_SYM, "trace", car(arglist), th);
 	    if (!member(car(arglist), trace_list)) {
 		SET_TR(car(arglist), 1);
 		trace_list = cons(car(arglist), trace_list);
@@ -2335,7 +2335,7 @@ int f_trace(int arglist, int th __unused)
     }
 }
 
-int f_untrace(int arglist, int th __unused)
+int f_untrace(int arglist, int th)
 {
 
     if (nullp(arglist)) {
@@ -2347,7 +2347,7 @@ int f_untrace(int arglist, int th __unused)
     } else {
 	while (!nullp(arglist)) {
 	    if (!symbolp(car(arglist)))
-		error(NOT_SYM, "untrace", car(arglist));
+		error(NOT_SYM, "untrace", car(arglist), th);
 	    SET_TR(car(arglist), 0);
 	    SET_TR(GET_CAR(car(arglist)), 0);
 	    arglist = cdr(arglist);
@@ -2359,11 +2359,11 @@ int f_untrace(int arglist, int th __unused)
 
 
 
-int f_import(int arglist, int th __unused)
+int f_import(int arglist, int th)
 {
     int arg1 = car(arglist);
     if (!stringp(arg1))
-	error(NOT_SYM, "import", arg1);
+	error(NOT_SYM, "import", arg1, th);
 
     char *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
     char *fname = library_file(str);
@@ -2382,7 +2382,7 @@ int f_import(int arglist, int th __unused)
     }
     FREE(str);
     FREE(fname);
-    error(CANT_OPEN, "import", arg1);
+    error(CANT_OPEN, "import", arg1, th);
 
   cleanup:
     FREE(str);
@@ -2662,39 +2662,39 @@ int wait_para(void)
 }
 
 
-int f_plet(int arglist, int th __unused)
+int f_plet(int arglist, int th)
 {
     int arg1, arg2, temp, i, res, num[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "plet", arglist);
+	error(WRONG_ARGS, "plet", arglist, th);
     if (length(arg1) > worker_count)
-	error(WRONG_ARGS, "plet", arg1);
+	error(WRONG_ARGS, "plet", arg1, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "plet", arg1);
+	error(IMPROPER_ARGS, "plet", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(car(temp));
 	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "plet", car(temp));
+	    error(IMPROPER_ARGS, "plet", car(temp), th);
 	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "plet", car(temp));
+	    error(IMPROPER_ARGS, "plet", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "plet", temparg1);
+	    error(NOT_SYM, "plet", temparg1, th);
 	if (temparg1 == T || temparg1 == NIL
 	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "plet", arg1);
+	    error(WRONG_ARGS, "plet", arg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "plet", arg1);
+	    error(WRONG_ARGS, "plet", arg1, th);
 	if (!listp(cadr(temp)))
-	    error(WRONG_ARGS, "plet", arg1);
+	    error(WRONG_ARGS, "plet", arg1, th);
 	temp = cdr(temp);
     }
 
@@ -2715,7 +2715,7 @@ int f_plet(int arglist, int th __unused)
     parallel_flag = 0;
     if (error_flag) {
 	error_flag = false;
-	signal_condition(signal_condition_x, signal_condition_y);
+	signal_condition(signal_condition_x, signal_condition_y, th);
     }
 
     temp = arg1;
@@ -2744,16 +2744,16 @@ int f_pcall(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "pcall", arglist);
+	error(WRONG_ARGS, "pcall", arglist, th);
     if (length(arg2) > worker_count)
-	error(WRONG_ARGS, "pcall", arg1);
+	error(WRONG_ARGS, "pcall", arg1, th);
     if (!symbolp(arg1))
-	error(IMPROPER_ARGS, "pcall", arg1);
+	error(IMPROPER_ARGS, "pcall", arg1, th);
 
     temp = arg2;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
-	    error(WRONG_ARGS, "pcall", arg2);
+	    error(WRONG_ARGS, "pcall", arg2, th);
 	temp = cdr(temp);
     }
 
@@ -2779,7 +2779,7 @@ int f_pcall(int arglist, int th)
     parallel_flag = 0;
     if (error_flag) {
 	error_flag = false;
-	signal_condition(signal_condition_x, signal_condition_y);
+	signal_condition(signal_condition_x, signal_condition_y, th);
     }
 
     temp = NIL;
@@ -2797,14 +2797,14 @@ int f_pexec(int arglist, int th)
     int temp, i, num[PARASIZE];
 
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "pexec", arglist);
+	error(WRONG_ARGS, "pexec", arglist, th);
     if (length(arglist) > worker_count)
-	error(WRONG_ARGS, "pexec", arglist);
+	error(WRONG_ARGS, "pexec", arglist, th);
 
     temp = arglist;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
-	    error(WRONG_ARGS, "pexec", arglist);
+	    error(WRONG_ARGS, "pexec", arglist, th);
 	temp = cdr(temp);
     }
 
@@ -2830,7 +2830,7 @@ int f_pexec(int arglist, int th)
     parallel_flag = 0;
     if (error_flag) {
 	error_flag = false;
-	signal_condition(signal_condition_x, signal_condition_y);
+	signal_condition(signal_condition_x, signal_condition_y, th);
     }
 
     i--;

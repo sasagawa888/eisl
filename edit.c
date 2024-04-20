@@ -19,13 +19,13 @@
 bool read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 		    int *rl_line);
 
-int f_edit(int arglist, int th __unused)
+int f_edit(int arglist, int th)
 {
     int arg1, res;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-	error(WRONG_ARGS, "edit", arglist);
+	error(WRONG_ARGS, "edit", arglist, th);
     char *ed;
     if ((ed = getenv("VISUAL")) == NULL) {
 	if ((ed = getenv("EDITOR")) == NULL) {
@@ -36,7 +36,7 @@ int f_edit(int arglist, int th __unused)
     res = system(str);
     FREE(str);
     if (res == -1)
-	error(SYSTEM_ERR, "edit", arg1);
+	error(SYSTEM_ERR, "edit", arg1, th);
     f_load(arglist, 0);
     return (T);
 }

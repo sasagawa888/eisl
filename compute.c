@@ -33,7 +33,7 @@ int exact_to_inexact(int x)
     default:
 	return (x);
     }
-    error(OUT_OF_RANGE, "exact_to_inexact", x);
+    error(OUT_OF_RANGE, "exact_to_inexact", x, 0);
     return (UNDEF);
 }
 
@@ -290,7 +290,7 @@ int plus(int arg1, int arg2)
 
 		double y = x1 + x2;
 		if (fabs(y) > DBL_MAX)
-		    error(FLT_OVERF, "+", list2(arg1, arg2));
+		    error(FLT_OVERF, "+", list2(arg1, arg2), 0);
 
 		return (make_flt(y));
 	    }
@@ -303,7 +303,7 @@ int plus(int arg1, int arg2)
     default:
 	break;
     }
-    error(NOT_COMPUTABLE, "+", list2(arg1, arg2));
+    error(NOT_COMPUTABLE, "+", list2(arg1, arg2), 0);
     return (UNDEF);
 }
 
@@ -375,7 +375,7 @@ int minus(int arg1, int arg2)
 
 		double y = x1 - x2;
 		if (fabs(y) > DBL_MAX)
-		    error(FLT_OVERF, "-", list2(arg1, arg2));
+		    error(FLT_OVERF, "-", list2(arg1, arg2), 0);
 
 		return (make_flt(y));
 	    }
@@ -386,7 +386,7 @@ int minus(int arg1, int arg2)
 	}
 	break;
     }
-    error(NOT_COMPUTABLE, "-", list2(arg1, arg2));
+    error(NOT_COMPUTABLE, "-", list2(arg1, arg2), 0);
     return (UNDEF);
 }
 
@@ -467,10 +467,10 @@ int mult(int arg1, int arg2)
 		x2 = GET_FLT(arg2);
 		y1 = x1 * x2;
 		if (y1 > DBL_MAX || y1 < -DBL_MAX)
-		    error(FLT_OVERF, "*", list2(arg1, arg2));
+		    error(FLT_OVERF, "*", list2(arg1, arg2), 0);
 		if (x1 != 0.0 && x2 != 0.0 && y1 > -DBL_MIN
 		    && y1 < DBL_MIN)
-		    error(FLT_UNDERF, "*", list2(arg1, arg2));
+		    error(FLT_UNDERF, "*", list2(arg1, arg2), 0);
 		return (make_flt(y1));
 	    }
 	case INTN:
@@ -480,7 +480,7 @@ int mult(int arg1, int arg2)
 	}
 	break;
     }
-    error(NOT_COMPUTABLE, "*", list2(arg1, arg2));
+    error(NOT_COMPUTABLE, "*", list2(arg1, arg2), 0);
     return (UNDEF);
 }
 
@@ -490,7 +490,7 @@ int quotient(int arg1, int arg2)
     double x1, y1, x2;
 
     if (zerop(arg2))
-	error(DIV_ZERO, "quotient", arg2);
+	error(DIV_ZERO, "quotient", arg2, 0);
 
     tag1 = GET_TAG(arg1);
     tag2 = GET_TAG(arg2);
@@ -569,10 +569,10 @@ int quotient(int arg1, int arg2)
 		x2 = GET_FLT(arg2);
 		y1 = x1 / x2;
 		if (fabs(y1) > DBL_MAX)
-		    error(FLT_OVERF, "quotient", list2(arg1, arg2));
+		    error(FLT_OVERF, "quotient", list2(arg1, arg2), 0);
 
 		if (x1 != 0.0 && x2 != 0.0 && fabs(y1) < DBL_MIN)
-		    error(FLT_UNDERF, "quotient", list2(arg1, arg2));
+		    error(FLT_UNDERF, "quotient", list2(arg1, arg2), 0);
 
 		return make_flt(y1);
 	    }
@@ -584,7 +584,7 @@ int quotient(int arg1, int arg2)
 	}
 	break;
     }
-    error(NOT_COMPUTABLE, "/", list2(arg1, arg2));
+    error(NOT_COMPUTABLE, "/", list2(arg1, arg2), 0);
     return (UNDEF);
 }
 
@@ -611,7 +611,7 @@ int divide(int x, int y)
     else if (bignump(x) && bignump(y))
 	return (big_div(x, y));
     else
-	error(ILLEGAL_ARGS, "div", list2(x, y));
+	error(ILLEGAL_ARGS, "div", list2(x, y), 0);
 
     return (UNDEF);
 }
@@ -640,7 +640,7 @@ int s_remainder(int x, int y)
     } else if (bignump(x) && bignump(y))
 	return (big_remainder(x, y));
 
-    error(ILLEGAL_ARGS, "remainder", NIL);
+    error(ILLEGAL_ARGS, "remainder", NIL, 0);
     return (UNDEF);
 }
 
@@ -717,7 +717,7 @@ int absolute(int x)
     } else if (floatp(x)) {
 	return (make_flt(fabs(GET_FLT(x))));
     }
-    error(ILLEGAL_ARGS, "abs", x);
+    error(ILLEGAL_ARGS, "abs", x, 0);
     return (UNDEF);
 }
 
@@ -773,7 +773,7 @@ int angle(int y, int x)
     else if (negative_zerop(y) && zerop(x))
 	return (make_flt(-M_PI_2));
     else {
-	error(ILLEGAL_ARGS, "angle", list2(x, y));
+	error(ILLEGAL_ARGS, "angle", list2(x, y), 0);
 	return (UNDEF);
     }
 }

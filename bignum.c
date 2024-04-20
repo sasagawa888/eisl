@@ -52,7 +52,7 @@
 #include "fmt.h"
 #include "text.h"
 
-#define DEBUG error(RESOURCE_ERR,"debug",NIL);
+#define DEBUG error(RESOURCE_ERR,"debug",NIL,0);
 
 
 int get_length(int x)
@@ -1347,7 +1347,7 @@ int big_ntt_mult(int x, int y)
 
     ans_len = lenx + leny + 1;
     if (ans_len * 2 * 3 > NTTSIZE)
-	error(RESOURCE_ERR, "ntt-mult", make_int(ans_len));
+	error(RESOURCE_ERR, "ntt-mult", make_int(ans_len), 0);
 
     /* prepare NTT data. datasize is twice of max_len
      * Each one bigcell needs 3 NTT data.  n= 2^x >= max_len*2*3

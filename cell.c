@@ -261,7 +261,7 @@ int freshcell(void)
 	pthread_mutex_unlock(&mutex);
 	if (remark_pt > REMKSIZE) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	    error(RESOURCE_ERR, "M&S freshcell", NIL, 0);
 	}
     } else if (!concurrent_flag) {
 	pthread_mutex_lock(&mutex);
@@ -272,12 +272,12 @@ int freshcell(void)
 	pthread_mutex_unlock(&mutex);
 	if (fc <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL);
+	    error(RESOURCE_ERR, "M&S freshcell", NIL, 0);
 	}
     }
 
     else {
-	error(RESOURCE_ERR, "M&S freshcell", NIL);
+	error(RESOURCE_ERR, "M&S freshcell", NIL, 0);
     }
 
     return (res);
@@ -314,7 +314,7 @@ int set_dyn_env(int sym, int val, int th)
     dynamic[dp[th]][1][th] = val;
     dp[th]++;
     if (dp[th] >= DYNSIZE)
-	error(VARIABLE_OVERF, "set_dyn_env", NIL);
+	error(VARIABLE_OVERF, "set_dyn_env", NIL, 0);
     return (T);
 }
 
@@ -335,7 +335,7 @@ int add_dyn_env(int sym, int val, int th)
     dynamic[dp[th]][1][th] = val;
     dp[th]++;
     if (dp[th] >= DYNSIZE)
-	error(VARIABLE_OVERF, "add_dyn_env", NIL);
+	error(VARIABLE_OVERF, "add_dyn_env", NIL, th);
     return (T);
 }
 
@@ -440,7 +440,7 @@ int make_sym1(const char *pname)
     addr = freshcell();
     SET_TAG(addr, SYM);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_sym", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_sym", NIL, 0);
     END_TRY;
     SET_CAR(addr, NIL);
     SET_CDR(addr, NIL);
@@ -550,7 +550,7 @@ int make_func(const char *pname, int addr)
     val = freshcell();
     SET_TAG(val, FUNC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL, 0);
     END_TRY;
     SET_CAR(val, addr);
     SET_CDR(val, ep[0]);	/* local environment */
@@ -591,7 +591,7 @@ int make_generic(char *pname, int lamlist, int body)
     val = freshcell();
     SET_TAG(val, GENERIC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_generic", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_generic", NIL, 0);
     END_TRY;
     SET_CAR(val, lamlist);
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
@@ -599,41 +599,41 @@ int make_generic(char *pname, int lamlist, int body)
     SET_PROP(val, T);		/* method-combination default is T */
     SET_AUX(val, cstandard_generic_function);
     if (illegal_lambda_p(lamlist))
-	error(ILLEGAL_ARGS, "make_generic", lamlist);
+	error(ILLEGAL_ARGS, "make_generic", lamlist, 0);
 
     while (!nullp(body)) {
 	/* (:method method-qualifier* parameter-profile form*) */
 	if (eqp(caar(body), make_sym(":METHOD"))) {
 	    if (method_qualifier_p(cadar(body)) && GET_PROP(val) == NIL) {
-		error(ILLEGAL_FORM, "defgeneric", body);
+		error(ILLEGAL_FORM, "defgeneric", body, 0);
 	    }
 	    if (symbolp(cadar(body)) && !method_qualifier_p(cadar(body))) {
-		error(ILLEGAL_FORM, "defgeneric", body);
+		error(ILLEGAL_FORM, "defgeneric", body, 0);
 	    }
 	    if (listp(cadar(body)) && undef_parameter_p(cadar(body))) {
-		error(UNDEF_ENTITY, "defgeneric", body);
+		error(UNDEF_ENTITY, "defgeneric", body, 0);
 	    }
 	    if (listp(cadar(body))
 		&& !unified_parameter_p(lamlist, cadar(body))) {
-		error(ILLEGAL_FORM, "defgeneric", body);
+		error(ILLEGAL_FORM, "defgeneric", body, 0);
 	    }
 	    if (nullp(cadar(body))) {
-		error(ILLEGAL_FORM, "defgeneric", body);
+		error(ILLEGAL_FORM, "defgeneric", body, 0);
 	    }
 	    insert_method(make_method(cdar(body)), val);
 	} else if (eqp(caar(body), make_sym(":METHOD-COMBINATION"))) {
 	    if (cadar(body) == NIL || cadar(body) == T)
 		SET_PROP(val, cadar(body));
 	    else
-		error(ILLEGAL_FORM, "defgeneric", body);
+		error(ILLEGAL_FORM, "defgeneric", body, 0);
 	} else if (eqp(caar(body), make_sym(":GENERIC-FUNCTION-CLASS"))) {
 	    if (!(listp(cadar(body))
 		  && eqp(car(cadar(body)), make_sym("CLASS")))) {
-		error(ILLEGAL_FORM, "defgeneric", body);
+		error(ILLEGAL_FORM, "defgeneric", body, 0);
 	    }
 	    SET_AUX(val, eval(cadar(body), 0));
 	} else {
-	    error(ILLEGAL_FORM, "defgeneric", body);
+	    error(ILLEGAL_FORM, "defgeneric", body, 0);
 	}
 	body = cdr(body);
     }
@@ -697,7 +697,7 @@ int make_vec(int n, int obj)
 
     res = freshcell();
     TRY vec = (int *) ALLOC(sizeof(int) * n);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL, 0);
     END_TRY;
     SET_TAG(res, VEC);
     SET_VEC(res, vec);
@@ -783,7 +783,7 @@ int make_arr(int ls, int obj)
 
     res = freshcell();
     TRY vec = (int *) ALLOC(sizeof(int) * size);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "array", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "array", NIL, 0);
     END_TRY;
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
@@ -813,7 +813,7 @@ int make_str(const char *string)
     addr = freshcell();
     SET_TAG(addr, STR);
     TRY heap[addr].name = Str_dup(string, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_str", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_str", NIL, 0);
     END_TRY;
     SET_AUX(addr, cstring);	/* class string */
     return (addr);
@@ -900,7 +900,7 @@ int make_char(const char *pname)
     addr = freshcell();
     SET_TAG(addr, CHR);
     TRY heap[addr].name = (char *) ALLOC(CHARSIZE);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_char", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_char", NIL, 0);
     END_TRY;
     if (!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0])
 	&& !isUni5(pname[0]) && !isUni6(pname[0])) {
@@ -929,7 +929,7 @@ int make_class(const char *pname, int superclass)
     addr = freshcell();
     SET_TAG(addr, CLASS);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_class", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_class", NIL, 0);
     END_TRY;
     SET_CAR(addr, superclass);
     SET_CDR(addr, NIL);
@@ -996,7 +996,7 @@ int initinst(int x, int initls)
     temp = initls;
     while (!nullp(initls)) {
 	if (length(initls) < 2) {
-	    error(WRONG_ARGS, "initinst", initls);
+	    error(WRONG_ARGS, "initinst", initls, 0);
 	}
 	n = assq(car(initls), initargs);
 	if (n != 0 && n != FAILSE) {

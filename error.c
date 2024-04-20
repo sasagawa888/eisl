@@ -27,12 +27,12 @@ static inline void ESCERRFORG()
 // for compiler 
 int ILOSerror(int fun, int arg)
 {
-    error(NOT_EXIST_METHOD, GET_NAME(fun), arg);
+    error(NOT_EXIST_METHOD, GET_NAME(fun), arg, 0);
     return (NIL);
 }
 
 
-void error(int errnum, const char *fun, int arg)
+void error(int errnum, const char *fun, int arg, int th)
 {
     int initargs, i;
     char fun1[SYMSIZE];
@@ -62,7 +62,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("division by zero at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cdivision_by_zero, initargs), NIL);
+	signal_condition(make_instance(cdivision_by_zero, initargs), NIL, th);
 	break;
     case UNDEF_VAR:
 	initargs =
@@ -71,7 +71,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("name"), make_sym("UNDEF-VAR"),
 		   make_sym("namespace"), make_sym("VARIABLE"));
-	signal_condition(make_instance(cunbound_variable, initargs), NIL);
+	signal_condition(make_instance(cunbound_variable, initargs), NIL, th);
 	break;
     case UNDEF_FUN:
 	initargs =
@@ -82,7 +82,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("UNDEF-FUNC"), make_sym("namespace"),
 		   make_sym("FUNCTION"));
 	signal_condition(make_instance(cundefined_function, initargs),
-			 NIL);
+			 NIL, th);
 	break;
     case UNDEF_DYN:
 	initargs =
@@ -92,21 +92,21 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym(fun1), make_sym("name"),
 		   make_sym("UNDEF-DYNAMIC-VAR"), make_sym("namespace"),
 		   make_sym("DYNAMIC-VARIABLE"));
-	signal_condition(make_instance(cunbound_variable, initargs), NIL);
+	signal_condition(make_instance(cunbound_variable, initargs), NIL, th);
 	break;
     case UNDEF_CLASS:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Unbound class at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cundefined_entity, initargs), NIL);
+	signal_condition(make_instance(cundefined_entity, initargs), NIL, th);
 	break;
     case UNDEF_TAG:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Unbound tag at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(ccontrol_error, initargs), NIL);
+	signal_condition(make_instance(ccontrol_error, initargs), NIL, th);
 	break;
     case WRONG_ARGS:
 	initargs =
@@ -114,7 +114,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Wrong arguments at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case NOT_EXIST_ARG:
 	initargs =
@@ -122,7 +122,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Not exist argument at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case NOT_NUM:
 	initargs =
@@ -130,7 +130,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cnumber);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_POSITIVE:
 	initargs =
@@ -139,7 +139,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cnumber);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case FLT_OVERF:
 	initargs =
@@ -150,7 +150,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("expected-class"), cfloat);
 	signal_condition(make_instance(cfloating_point_overflow, initargs),
 			 make_str
-			 ("Continuing ignores floating point overflow and the calculation returns infinity"));
+			 ("Continuing ignores floating point overflow and the calculation returns infinity"), th);
 	break;
     case FLT_UNDERF:
 	initargs =
@@ -162,7 +162,7 @@ void error(int errnum, const char *fun, int arg)
 	signal_condition(make_instance
 			 (cfloating_point_underflow, initargs),
 			 make_str
-			 ("Continuing ignores floating point underflow and the calculation returns zero"));
+			 ("Continuing ignores floating point underflow and the calculation returns zero"), th);
 	break;
     case FLT_OUT_OF_DOMAIN:
 	initargs =
@@ -171,7 +171,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case OUT_OF_REAL:
 	initargs =
@@ -180,7 +180,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case NOT_INT:
 	initargs =
@@ -189,7 +189,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cinteger);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_FLT:
 	initargs =
@@ -198,7 +198,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfloat);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_STR:
 	initargs =
@@ -206,7 +206,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cstring);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_CHAR:
 	initargs =
@@ -215,7 +215,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), ccharacter);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_LIST:
 	initargs =
@@ -223,7 +223,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), clist);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_CONS:
 	initargs =
@@ -231,7 +231,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), ccons);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_VEC:
 	initargs =
@@ -239,7 +239,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cbasic_vector);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_ARR:
 	initargs =
@@ -247,7 +247,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cbasic_array);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_SYM:
 	initargs =
@@ -255,7 +255,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), csymbol);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_FUNC:
 	initargs =
@@ -264,7 +264,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cfunction);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_STREAM:
 	initargs =
@@ -272,7 +272,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cstream);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_STREAM_ERROR:
 	initargs =
@@ -280,7 +280,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cstream_error);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_IN_STREAM:
 	initargs =
@@ -289,7 +289,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cstream);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_OUT_STREAM:
 	initargs =
@@ -298,7 +298,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cstream);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_INSTANCE:
 	initargs =
@@ -307,7 +307,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cobject);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_CLASS:
 	initargs =
@@ -315,7 +315,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cobject);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_BASIC_ARRAY:
 	initargs =
@@ -323,7 +323,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cbasic_array);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_VECARR:
 	initargs =
@@ -332,7 +332,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cgeneral_array_star);
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case ILLEGAL_RPAREN:
 	initargs =
@@ -340,28 +340,28 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Illegal right parenthesis at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case ILLEGAL_INPUT:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Illegal input at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case ILLEGAL_FORM:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Illegal form at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case IMPROPER_FORM:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Illegal form at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case ILLEGAL_ARGS:
 	initargs =
@@ -369,7 +369,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Illegal argument at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case IMPROPER_ARGS:
 	initargs =
@@ -377,21 +377,21 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Improper arguments at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case OUT_OF_RANGE:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Out of range at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case OUT_OF_DOMAIN:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Out of domain at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case NOT_COMPUTABLE:
 	initargs =
@@ -399,14 +399,14 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Not computable at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case CANT_MODIFY:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Can't modify at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case CANT_OPEN:
 	initargs =
@@ -414,7 +414,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Can't open a file at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cstream_error, initargs), NIL);
+	signal_condition(make_instance(cstream_error, initargs), NIL, th);
 	break;
     case CANT_CREATE:
 	initargs =
@@ -423,7 +423,7 @@ void error(int errnum, const char *fun, int arg)
 		  ("Can't create instance for system defined or abstract class at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case CANT_PARSE:
 	initargs =
@@ -432,14 +432,14 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("object"),
 		   arg, make_sym("string"), arg,
 		   make_sym("expected-class"), cnumber);
-	signal_condition(make_instance(cparse_error, initargs), NIL);
+	signal_condition(make_instance(cparse_error, initargs), NIL, th);
 	break;
     case CANT_ASSURE:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Can't assure at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case CTRL_OVERF:
 	initargs =
@@ -447,14 +447,14 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Control stack over flow at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(ccontrol_error, initargs), NIL);
+	signal_condition(make_instance(ccontrol_error, initargs), NIL, th);
 	break;
     case END_STREAM:
 	initargs =
 	    list8(make_sym("format-string"), make_str("End of stream at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1), make_sym("stream"), arg);
-	signal_condition(make_instance(cend_of_stream, initargs), NIL);
+	signal_condition(make_instance(cend_of_stream, initargs), NIL, th);
 	break;
     case MALLOC_OVERF:
 	initargs =
@@ -462,7 +462,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Memory allocate over flow at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cstorage_exhausted, initargs), NIL);
+	signal_condition(make_instance(cstorage_exhausted, initargs), NIL, th);
 	break;
     case NOT_EXIST_METHOD:
 	initargs =
@@ -470,7 +470,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Not exist matched method at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case HAS_COMMON_CLASS:
 	initargs =
@@ -478,7 +478,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Super class has common parents at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case ILLEGAL_CLASS:
 	initargs =
@@ -487,7 +487,7 @@ void error(int errnum, const char *fun, int arg)
 		  ("Next method allows only primary and :around method at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cclass_error, initargs), NIL);
+	signal_condition(make_instance(cclass_error, initargs), NIL, th);
 	break;
     case NOT_TOP_LEVEL:
 	initargs =
@@ -495,7 +495,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Definition must be on top level at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case CANT_REDEFINE:
 	initargs =
@@ -503,14 +503,14 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Can't modify system defined class at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cerror, initargs), NIL);
+	signal_condition(make_instance(cerror, initargs), NIL, th);
 	break;
     case STACK_OVERF:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Stack over flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case SHELTER_OVERF:
 	initargs =
@@ -518,7 +518,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Shelter over flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case VARIABLE_OVERF:
 	initargs =
@@ -526,14 +526,14 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Shelter over flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case STACK_UNDERF:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Stack under flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case SHELTER_UNDERF:
 	initargs =
@@ -541,14 +541,14 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Shelter under flow "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case SYSTEM_ERR:
 	initargs =
 	    list6(make_sym("format-string"), make_str("system error "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case RESOURCE_ERR:
 	gbc();
@@ -556,7 +556,7 @@ void error(int errnum, const char *fun, int arg)
 	    list6(make_sym("format-string"), make_str("resource error "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cprogram_error, initargs), NIL);
+	signal_condition(make_instance(cprogram_error, initargs), NIL, th);
 	break;
     case SERIOUS_ERR:
 	initargs =
@@ -565,7 +565,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cserious_condition);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case ARITHMETIC_ERR:
 	initargs =
@@ -574,7 +574,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), carithmetic_error);
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case DOMAIN_ERR:
 	initargs =
@@ -582,7 +582,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), car(arg),
 		   make_sym("expected-class"), cdr(arg));
-	signal_condition(make_instance(cdomain_error, initargs), NIL);
+	signal_condition(make_instance(cdomain_error, initargs), NIL, th);
 	break;
     case UNDEF_ENTITY:
 	initargs =
@@ -591,7 +591,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cundefined_entity);
-	signal_condition(make_instance(cundefined_entity, initargs), NIL);
+	signal_condition(make_instance(cundefined_entity, initargs), NIL, th);
 	break;
     case SIMPLE_ERR:
 	initargs =
@@ -599,7 +599,7 @@ void error(int errnum, const char *fun, int arg)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), csimple_error);
-	signal_condition(make_instance(csimple_error, initargs), NIL);
+	signal_condition(make_instance(csimple_error, initargs), NIL, th);
 	break;
     case EXHAUSTED_ERR:
 	initargs =
@@ -607,7 +607,7 @@ void error(int errnum, const char *fun, int arg)
 		  make_str("Exhausted error at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cstorage_exhausted, initargs), NIL);
+	signal_condition(make_instance(cstorage_exhausted, initargs), NIL, th);
 	break;
     }
 }
@@ -615,7 +615,7 @@ void error(int errnum, const char *fun, int arg)
 /*
  * x = class y = continuable string/NIL 
  */
-int signal_condition(int x, int y)
+int signal_condition(int x, int y, int th)
 {
     int str, args, fun, ret;
 
@@ -625,7 +625,7 @@ int signal_condition(int x, int y)
     else {
 	SET_OPT(x, CONTINUABLE);
 	TRY heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
-	EXCEPT(Mem_Failed) error(MALLOC_OVERF, "signal-condition", NIL);
+	EXCEPT(Mem_Failed) error(MALLOC_OVERF, "signal-condition", NIL, th);
 	END_TRY;
     }
     if (ignore_flag) {
@@ -687,7 +687,7 @@ int signal_condition(int x, int y)
     output_stream = standard_output;
     handling_resource_err = false;
     if (!option_flag)
-	debugger(0);
+	debugger(th);
     else {
 	puts("Error occurred while executing command line options.");
 	option_flag = false;

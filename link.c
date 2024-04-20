@@ -61,7 +61,7 @@ void dynamic_link(int x)
 
     FREE(str);
     if (hmod == NULL)
-	error(ILLEGAL_ARGS, "load", x);
+	error(ILLEGAL_ARGS, "load", x, 0);
 
     init_f0 = (initfunc0) dlsym(hmod, "init0");
     init_f1 = (initfunc1) dlsym(hmod, "init1");
@@ -347,7 +347,7 @@ int a_adaptp(int x, int y)
 	    return (0);
     }
     if (x >= CELLSIZE) {
-	error(ILLEGAL_ARGS, "a_adaptp", x);
+	error(ILLEGAL_ARGS, "a_adaptp", x, 0);
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
 	return (1);
@@ -372,7 +372,7 @@ int a_matchp(int x, int y)
 	    return (0);
     }
     if (x >= CELLSIZE) {
-	error(ILLEGAL_ARGS, "a-matchp", x);
+	error(ILLEGAL_ARGS, "a-matchp", x, 0);
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
 	return (1);
@@ -389,7 +389,7 @@ int fast_length(int x)
     int res;
 
     if (!listp(x) && !vectorp(x) && !stringp(x)) {
-	error(ILLEGAL_ARGS, "length", x);
+	error(ILLEGAL_ARGS, "length", x, 0);
     }
 
     if (listp(x))
@@ -406,9 +406,9 @@ int fast_length(int x)
 int fast_car(int x)
 {
     if (!(IS_LIST(x)))
-	error(NOT_LIST, "car", x);
+	error(NOT_LIST, "car", x, 0);
     if (IS_NIL(x))
-	error(NOT_LIST, "car", x);
+	error(NOT_LIST, "car", x, 0);
 
     return (GET_CAR(x));
 }
@@ -417,9 +417,9 @@ int fast_car(int x)
 int fast_cdr(int x)
 {
     if (!(IS_LIST(x)))
-	error(NOT_LIST, "cdr", x);
+	error(NOT_LIST, "cdr", x, 0);
     if (IS_NIL(x))
-	error(NOT_LIST, "cdr", x);
+	error(NOT_LIST, "cdr", x, 0);
 
     return (GET_CDR(x));
 }
@@ -430,7 +430,7 @@ int set_dynamic(int x, int y, int th)
     if (find_dyn(x, 0) != FAILSE)
 	set_dyn_env(x, y, th);
     else
-	error(UNDEF_VAR, "set-dynamic", x);
+	error(UNDEF_VAR, "set-dynamic", x, th);
 
     return (y);
 }

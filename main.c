@@ -687,7 +687,7 @@ void get_token(void)
 		}
 		if (c == EOF) {
 		    error(SYSTEM_ERR, "not exist right hand double quote",
-			  NIL);
+			  NIL, 0);
 		}
 		c = readc();
 	    }
@@ -749,7 +749,7 @@ void get_token(void)
 		while (c != '|') {
 		    if (c == EOF)
 			error(SYSTEM_ERR,
-			      "not exist right hand #| comment |#", NIL);
+			      "not exist right hand #| comment |#", NIL, 0);
 		    c = readc();
 		}
 		c = readc();
@@ -1233,10 +1233,10 @@ int sread(void)
     case EXPTNUM:
 	return (make_flt(atof(stok.buf)));
     case EXPTOVERF:
-	error(FLT_OVERF, "read", NIL);
+	error(FLT_OVERF, "read", NIL, 0);
 	break;
     case EXPTUNDERF:
-	error(FLT_UNDERF, "read", NIL);
+	error(FLT_UNDERF, "read", NIL, 0);
 	break;
     case VECTOR:
 	return (vector(read_list()));
@@ -1270,11 +1270,11 @@ int sread(void)
     case LPAREN:
 	return (read_list());
     case RPAREN:
-	error(ILLEGAL_RPAREN, "read", NIL);
+	error(ILLEGAL_RPAREN, "read", NIL, 0);
     default:
 	break;
     }
-    error(ILLEGAL_INPUT, "read", NIL);
+    error(ILLEGAL_INPUT, "read", NIL, 0);
     return (0);
 }
 
@@ -1288,7 +1288,7 @@ int read_list(void)
     else if (stok.type == DOT) {
 	rl_cdr = sread();
 	if (rl_cdr == FEND) {
-	    error(ILLEGAL_RPAREN, "read", make_sym("file end"));
+	    error(ILLEGAL_RPAREN, "read", make_sym("file end"), 0);
 	}
 	get_token();
 	return (rl_cdr);
@@ -1296,7 +1296,7 @@ int read_list(void)
 	stok.flag = BACK;
 	rl_car = sread();
 	if (rl_car == FEND) {
-	    error(ILLEGAL_RPAREN, "read", make_sym("file end"));
+	    error(ILLEGAL_RPAREN, "read", make_sym("file end"), 0);
 	}
 	rl_cdr = read_list();
 	return (cons(rl_car, rl_cdr));
@@ -1748,7 +1748,7 @@ int eval(int addr, int th)
 	    else if (GET_OPT(addr) == CONSTN)
 		return (GET_CDR(addr));
 	    else
-		error(UNDEF_VAR, "eval", addr);
+		error(UNDEF_VAR, "eval", addr, th);
 
 	}
     } else if (listp(addr)) {
@@ -1765,9 +1765,9 @@ int eval(int addr, int th)
 
 	if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "QUOTE"))) {
 	    if (improper_list_p(cdr(addr)))
-		error(ILLEGAL_ARGS, "quote", cdr(addr));
+		error(ILLEGAL_ARGS, "quote", cdr(addr), th);
 	    else if (length(cdr(addr)) != 1)
-		error(ILLEGAL_ARGS, "quote", cdr(addr));
+		error(ILLEGAL_ARGS, "quote", cdr(addr), th);
 	    else
 		return (cadr(addr));
 	} else if ((symbolp(car(addr)))
@@ -1789,7 +1789,7 @@ int eval(int addr, int th)
 	    en = getETime();
 	} else if ((val = functionp(car(addr)))) {
 	    if (GET_CDR(car(addr)) != NIL)
-		error(UNDEF_FUN, "eval", addr);
+		error(UNDEF_FUN, "eval", addr, th);
 	    temp = evlis(cdr(addr), th);
 	    examin_sym = car(addr);
 	    st = getETime();
@@ -1812,10 +1812,10 @@ int eval(int addr, int th)
 	} else if (listp(car(addr)))
 	    return (apply(eval(car(addr), th), evlis(cdr(addr), th), th));
 	else
-	    error(UNDEF_FUN, "eval", car(addr));
+	    error(UNDEF_FUN, "eval", car(addr), th);
 
     }
-    error(UNDEF_FUN, "eval", addr);
+    error(UNDEF_FUN, "eval", addr, th);
     return (0);
 }
 
@@ -1879,10 +1879,10 @@ int apply(int func, int args, int th)
 	varlist = car(GET_CAR(func));
 	if (GET_OPT(func) >= 0) {
 	    if (length(args) != (int) GET_OPT(func))
-		error(WRONG_ARGS, GET_NAME(func), args);
+		error(WRONG_ARGS, GET_NAME(func), args, th);
 	} else {
 	    if (length(args) < (-1 * (int) GET_OPT(func) - 2))
-		error(WRONG_ARGS, GET_NAME(func), args);
+		error(WRONG_ARGS, GET_NAME(func), args, th);
 	}
 	body = cdr(GET_CAR(func));
 	bind_arg(varlist, args, th);
@@ -1913,15 +1913,15 @@ int apply(int func, int args, int th)
 	    int macrofunc;
 
 	    if (improper_list_p(args))
-		error(IMPROPER_ARGS, "apply", args);
+		error(IMPROPER_ARGS, "apply", args, th);
 	    macrofunc = GET_CAR(func);
 	    varlist = car(GET_CAR(macrofunc));
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
-		    error(WRONG_ARGS, GET_NAME(func), args);
+		    error(WRONG_ARGS, GET_NAME(func), args, th);
 	    } else {
 		if (length(args) < (-1 * (int) GET_OPT(func) - 2))
-		    error(WRONG_ARGS, GET_NAME(func), args);
+		    error(WRONG_ARGS, GET_NAME(func), args, th);
 	    }
 	    body = cdr(GET_CAR(macrofunc));
 	    bind_arg(varlist, args, th);
@@ -1943,10 +1943,10 @@ int apply(int func, int args, int th)
 	    int save1, save2, save3;
 	    if (GET_OPT(func) >= 0) {
 		if (length(args) != (int) GET_OPT(func))
-		    error(WRONG_ARGS, GET_NAME(func), args);
+		    error(WRONG_ARGS, GET_NAME(func), args, th);
 	    } else {
 		if (length(args) < (-1 * (int) GET_OPT(func) - 2))
-		    error(WRONG_ARGS, GET_NAME(func), args);
+		    error(WRONG_ARGS, GET_NAME(func), args, th);
 	    }
 	    save1 = generic_func;
 	    save2 = generic_vars;
@@ -2005,7 +2005,7 @@ int apply(int func, int args, int th)
 		next_method = cdr(next_method);
 	    }
 	    if (pexist == 0 && qexist == 0) {
-		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args);
+		error(NOT_EXIST_METHOD, GET_NAME(generic_func), args, th);
 	    }
 	  exit:
 	    generic_func = save1;
@@ -2015,7 +2015,7 @@ int apply(int func, int args, int th)
 	    return (res);
 	}
     default:
-	error(NOT_FUNC, "apply", list2(func, args));
+	error(NOT_FUNC, "apply", list2(func, args), th);
     }
     return (0);
 }
@@ -2146,7 +2146,7 @@ int genlamlis_to_lamlis(int varlist)
 int push(int pt, int th)
 {
     if (sp[th] >= STACKSIZE)
-	error(STACK_OVERF, "push", NIL);
+	error(STACK_OVERF, "push", NIL, th);
 
     stack[sp[th]++][th] = pt;
     return (T);
@@ -2157,7 +2157,7 @@ int pop(int th)
     int res;
 
     if (sp[th] <= 0)
-	error(STACK_UNDERF, "pop", NIL);
+	error(STACK_UNDERF, "pop", NIL, th);
     res = stack[--sp[th]][th];
     return (res);
 }
@@ -2182,7 +2182,7 @@ int arg_pop(int th)
 int shelter_push(int addr, int th)
 {
     if (lp[th] >= STACKSIZE)
-	error(SHELTER_OVERF, "shelter_push", NIL);
+	error(SHELTER_OVERF, "shelter_push", NIL, th);
 
     shelter[lp[th]++][th] = addr;
     return (T);
@@ -2193,7 +2193,7 @@ int shelter_pop(int th)
     int res;
 
     if (lp[th] <= 0)
-	error(SHELTER_UNDERF, "shelter_pop", NIL);
+	error(SHELTER_UNDERF, "shelter_pop", NIL, th);
 
     res = shelter[--lp[th]][th];
     return (res);
@@ -2244,7 +2244,7 @@ void bind_macro(char *name, int addr)
     val2 = freshcell();
     SET_TAG(val2, MACRO);
     TRY heap[val2].name = Str_dup(name, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makemacro", NIL);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makemacro", NIL, 0);
     END_TRY;
     SET_CAR(val2, val1);
     SET_CDR(val2, 0);

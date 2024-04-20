@@ -631,7 +631,7 @@ void debugger()
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
 		      "Parallel = %d (worker_count)\n",
-		      ep, dp[0], hp, sp, fc, ap, lp, worker_count);
+		      ep[0], dp[0], hp, sp[0], fc, ap[0], lp[0], worker_count);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

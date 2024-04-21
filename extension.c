@@ -1221,6 +1221,9 @@ int f_read_exp(int arglist, int th)
 
 
 //-----------multi proccess-----------
+// invoke eisl -r (non editable mode) to change stdin/out to pipe.
+// editable REPL uses terminal directly.
+
 #define R (0)
 #define W (1)
 
@@ -1248,7 +1251,7 @@ int f_mp_create(int arglist, int th)
         close(pipe_c2p[process_pt][W]);
         execl("./", "eisl -r", NULL);
         exit(1);
-		error(CANT_CREATE, "mp-create", NIL, th);
+	
     } 
     close(pipe_p2c[process_pt][R]);
     close(pipe_c2p[process_pt][W]);
@@ -1268,6 +1271,11 @@ int f_mp_exec(int arglist, int th)
 
 int f_mp_close(int arglist, int th)
 {
-
+    int i;
+    char data[] = "(quit)\n";
+    for(i=0;i<process_pt;i++){
+        write(pipe_p2c[i], data, sizeof(data));
+    }
+    return(T);
 }
 

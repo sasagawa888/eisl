@@ -1221,12 +1221,17 @@ int f_read_exp(int arglist, int th)
 
 
 //-----------multi proccess-----------
+#define R (0)
+#define W (1)
 
 int f_mp_create(int arglist, int th)
 {
 	int res;
 
-	if(pipe(pipefd[process_pt]) == -1){
+	if(pipe(pipe_p2c[process_pt]) == -1){
+		error(CANT_CREATE, "mp-create", NIL, th);
+	}
+    if(pipe(pipe_c2p[process_pt]) == -1){
 		error(CANT_CREATE, "mp-create", NIL, th);
 	}
 
@@ -1234,45 +1239,35 @@ int f_mp_create(int arglist, int th)
 	if(pid[process_pt] == -1){
 		error(CANT_CREATE, "mp-create", NIL, th);
 	}
-	else if (pid == 0) { // child 
-        close(pipefd[process_pt][1]);
-        dup2(pipefd[process_pt][0], STDIN_FILENO);
-        execl("./", "eisl", NULL);
-
+	if (pid == 0) { // child 
+        close(pipe_p2c[process_pt][W]);
+        close(pipe_c2p[process_pt][R]);
+        dup2(pipe_p2c[process_pt][R], 0);
+        dup2(pipe_c2p[process_pt][W], 1);
+        close(pipe_p2c[process_pt][R]);
+        close(pipe_c2p[process_pt][W]);
+        execl("./", "eisl -r", NULL);
+        exit(1);
 		error(CANT_CREATE, "mp-create", NIL, th);
-    } else { // parent
-        close(pipefd[process_pt][0]);
+    } 
+    close(pipe_p2c[process_pt][R]);
+    close(pipe_c2p[process_pt][W]);
 
-        res = make_int(process_pt);
-		process_pt++;
-		return(res);
-    }
+    res = make_int(process_pt);
+	process_pt++;
+	return(res);
 }
+
 
 
 
 int f_mp_exec(int arglist, int th)
 {
-	int arg1,arg2,n;
-
-	arg1 = car(arglist);
-	arg2 = cadr(arglist);
-	n = GET_INT(arg2);
-
-    write(pipefd[n][1], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
-    close(pipefd[n][1]);
+	
 }
-
 
 int f_mp_close(int arglist, int th)
 {
-	int i;
 
-	for(i=0;i<process_pt;i++){
-    	char message[] = "(quit)\n";
-    	write(pipefd[i][1], message, sizeof(message));
-    	close(pipefd[i][1]);
-	}
-
-	process_pt = 0;
 }
+

@@ -629,9 +629,11 @@ extern pthread_attr_t para_attr[PARASIZE];
 extern size_t para_size[PARASIZE];
 
 /*multi proccess*/
-extern int pipefd[10][2]; 
+extern int pipe_p2c[10][2]; 
+extern int pipe_c2p[10][2];
 extern pid_t pid[10];
 extern int process_pt;
+
 
 // -------error code---
 enum {

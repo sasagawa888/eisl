@@ -233,6 +233,13 @@ pthread_cond_t cond_queue;
 pthread_attr_t para_attr[PARASIZE];
 size_t para_size[PARASIZE];
 
+/*multi proccess*/
+int pipefd[10][2]; 
+pid_t pid[10];
+int process_pt = 0;
+
+
+
 
 /* -----debugger----- */
 int examin_sym;

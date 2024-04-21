@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <unistd.h>
 #ifdef __rpi__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
@@ -64,6 +65,10 @@ void init_exsubr(void)
 
     def_subr("TRY", f_try);
     def_subr("READ-EXP", f_read_exp);
+
+    def_subr("MP-CREATE", f_mp_create);
+    def_subr("MP-EXEC", f_mp_exec);
+    def_subr("MP-CLOSE", f_mp_close);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1211,4 +1216,63 @@ int f_read_exp(int arglist, int th)
     input_stream = save;
 
     return (res);
+}
+
+
+
+//-----------multi proccess-----------
+
+int f_mp_create(int arglist, int th)
+{
+	int res;
+
+	if(pipe(pipefd[process_pt]) == -1){
+		error(CANT_CREATE, "mp-create", NIL, th);
+	}
+
+	pid[process_pt] = fork();
+	if(pid[process_pt] == -1){
+		error(CANT_CREATE, "mp-create", NIL, th);
+	}
+	else if (pid == 0) { // child 
+        close(pipefd[process_pt][1]);
+        dup2(pipefd[process_pt][0], STDIN_FILENO);
+        execl("./", "eisl", NULL);
+
+		error(CANT_CREATE, "mp-create", NIL, th);
+    } else { // parent
+        close(pipefd[process_pt][0]);
+
+        res = make_int(process_pt);
+		process_pt++;
+		return(res);
+    }
+}
+
+
+
+int f_mp_exec(int arglist, int th)
+{
+	int arg1,arg2,n;
+
+	arg1 = car(arglist);
+	arg2 = cadr(arglist);
+	n = GET_INT(arg2);
+
+    write(pipefd[n][1], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
+    close(pipefd[n][1]);
+}
+
+
+int f_mp_close(int arglist, int th)
+{
+	int i;
+
+	for(i=0;i<process_pt;i++){
+    	char message[] = "(quit)\n";
+    	write(pipefd[i][1], message, sizeof(message));
+    	close(pipefd[i][1]);
+	}
+
+	process_pt = 0;
 }

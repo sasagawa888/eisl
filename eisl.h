@@ -628,6 +628,11 @@ extern pthread_cond_t cond_queue;
 extern pthread_attr_t para_attr[PARASIZE];
 extern size_t para_size[PARASIZE];
 
+/*multi proccess*/
+extern int pipefd[10][2]; 
+extern pid_t pid[10];
+extern int process_pt;
+
 // -------error code---
 enum {
     UNDEF_VAR = 101,
@@ -951,6 +956,9 @@ int f_min(int arglist, int th);
 int f_minus(int arglist, int th);
 int f_mod(int arglist, int th);
 int f_mult(int arglist, int th);
+int f_mp_create(int arglist, int th);
+int f_mp_exec(int arglist, int th);
+int f_mp_close(int arglist, int th);
 int f_nconc(int arglist, int th);
 int f_next_method_p(int arglist, int th);
 int f_not(int arglist, int th);

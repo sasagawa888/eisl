@@ -67,7 +67,7 @@ void init_exsubr(void)
     def_subr("READ-EXP", f_read_exp);
 
     def_subr("MP-CREATE", f_mp_create);
-    def_subr("MP-EXEC", f_mp_exec);
+    def_fsubr("MP-EXEC", f_mp_exec);
     def_subr("MP-CLOSE", f_mp_close);
 
 #ifdef __rpi__
@@ -1221,8 +1221,6 @@ int f_read_exp(int arglist, int th)
 
 
 //-----------multi proccess-----------
-// invoke eisl -r (non editable mode) to change stdin/out to pipe.
-// editable REPL uses terminal directly.
 
 #define R (0)
 #define W (1)
@@ -1231,51 +1229,83 @@ int f_mp_create(int arglist, int th)
 {
 	int res;
 
-	if(pipe(pipe_p2c[process_pt]) == -1){
+	if(pipe(pipe_p2c) == -1){
 		error(CANT_CREATE, "mp-create", NIL, th);
 	}
-    if(pipe(pipe_c2p[process_pt]) == -1){
+    if(pipe(pipe_c2p) == -1){
 		error(CANT_CREATE, "mp-create", NIL, th);
 	}
 
-	pid[process_pt] = fork();
+	pid[0] = fork();
 	if(pid[process_pt] == -1){
 		error(CANT_CREATE, "mp-create", NIL, th);
 	}
-	if (pid == 0) { // child 
-        close(pipe_p2c[process_pt][W]);
-        close(pipe_c2p[process_pt][R]);
-        dup2(pipe_p2c[process_pt][R], 0);
-        dup2(pipe_c2p[process_pt][W], 1);
-        close(pipe_p2c[process_pt][R]);
-        close(pipe_c2p[process_pt][W]);
-        execl("./", "eisl -r", NULL);
+	if (pid[0] == 0) { // child 
+        printf("child");
+        close(pipe_p2c[W]);
+        close(pipe_c2p[R]);
+        if(dup2(pipe_p2c[R], STDIN_FILENO) == -1)
+            error(CANT_CREATE, "dup2 stdin", NIL, th);
+        if(dup2(pipe_c2p[W], STDOUT_FILENO) == -1)
+            error(CANT_CREATE, "dup2 stdout", NIL, th);
+        close(pipe_p2c[R]);
+        close(pipe_c2p[W]);
+        //system("./a.out");
+        //execl("/bin/ls", "ls", "-l", NULL);
+        execl("/usr/local/bin/eisl", "eisl", "-r", NULL);
         exit(1);
 	
     } 
-    close(pipe_p2c[process_pt][R]);
-    close(pipe_c2p[process_pt][W]);
+    close(pipe_p2c[R]);
+    close(pipe_c2p[W]);
 
     res = make_int(process_pt);
 	process_pt++;
 	return(res);
 }
 
+int eval_args(int x);
+int eval_args1(int x);
+int eval_args(int x){
 
+    return(cons(car(x),eval_args1(cdr(x))));
+}
 
+int eval_args1(int x){
+
+    if(nullp(x))
+        return(NIL);
+    else 
+        return(cons(eval(car(x),0),eval_args1(cdr(x))));
+}
 
 int f_mp_exec(int arglist, int th)
 {
-	
+	int i,j,stm,save1,save2,res;
+    char buffer[256];
+
+    char data[] = "(+ 1 2)\n";
+    write(pipe_p2c[W], data, sizeof(data));
+
+    sleep(1);
+
+    int bytes_read = read(pipe_c2p[R], buffer, 256);
+    if (bytes_read == -1) {
+            error(CANT_OPEN, "mp-exec", NIL, th);
+            }
+    buffer[bytes_read] = '\0';
+    printf("%s sdf",buffer);
+    
+    return(T);
 }
+
+
+
 
 int f_mp_close(int arglist, int th)
 {
-    int i;
-    char data[] = "(quit)\n";
-    for(i=0;i<process_pt;i++){
-        write(pipe_p2c[i], data, sizeof(data));
-    }
+    char data[] = "(quit)\0";
+    write(pipe_p2c, data, sizeof(data));
     return(T);
 }
 

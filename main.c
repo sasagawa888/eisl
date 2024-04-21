@@ -234,8 +234,8 @@ pthread_attr_t para_attr[PARASIZE];
 size_t para_size[PARASIZE];
 
 /*multi proccess*/
-int pipe_p2c[10][2]; 
-int pipe_c2p[10][2];
+int pipe_p2c[2]; 
+int pipe_c2p[2];
 pid_t pid[10];
 int process_pt = 0;
 
@@ -413,6 +413,7 @@ int main(int argc, char *argv[])
 	    fputs("> ", stdout);
 	    print(eval(sread(), 0));
 	    putchar('\n');
+		fflush(stdout);
 	    if (redef_flag)
 		redef_generic();
 	}

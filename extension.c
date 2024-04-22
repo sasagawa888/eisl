@@ -1250,9 +1250,7 @@ int f_mp_create(int arglist, int th)
             error(CANT_CREATE, "dup2 stdout", NIL, th);
         close(pipe_p2c[R]);
         close(pipe_c2p[W]);
-        //system("./a.out");
-        //execl("/bin/ls", "ls", "-l", NULL);
-        execl("/usr/local/bin/eisl", "eisl", "-r", NULL);
+        execl("/usr/local/bin/eisl", "eisl", "-r", "-p",  NULL);
         exit(1);
 	
     } 
@@ -1286,6 +1284,8 @@ int f_mp_exec(int arglist, int th)
 
     arg1 = car(arglist);
     write(pipe_p2c[W], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
+
+    sleep(1);
 
     int bytes_read = read(pipe_c2p[R], buffer, 256);
     if (bytes_read == -1) {

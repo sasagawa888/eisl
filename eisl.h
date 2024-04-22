@@ -563,6 +563,7 @@ extern bool concurrent_stop_flag;
 extern bool concurrent_exit_flag;
 extern bool parallel_flag;
 extern bool parallel_exit_flag;
+extern bool process_flag;
 
 // try function
 extern bool try_flag;

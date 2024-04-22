@@ -172,6 +172,7 @@ bool concurrent_stop_flag = false;	/* while remarking&sweeping */
 bool concurrent_exit_flag = false;	/* To exit GC thread */
 bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
+bool process_flag = false;  /* when invoke as child process falg is true*/
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -346,7 +347,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:cfs:rhv")) != -1) {
+	while ((ch = getopt(argc, argv, "l:cfs:rhvp")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -381,6 +382,9 @@ int main(int argc, char *argv[])
 	    case 'r':
 		disable_repl_flag();
 		break;
+		case 'p':
+		process_flag = true;
+		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
 		exit(EXIT_SUCCESS);
@@ -407,13 +411,20 @@ int main(int argc, char *argv[])
     /* REPL */
     volatile bool quit = false;
     do {
-	maybe_greet();
+	if (!process_flag)
+		maybe_greet();
 	TRY while (1) {
 	    init_pointer();
-	    fputs("> ", stdout);
-	    print(eval(sread(), 0));
-	    putchar('\n');
-		fflush(stdout);
+	    if (!process_flag) {
+			fputs("> ", stdout);
+	    	print(eval(sread(), 0));
+	    	putchar('\n');
+		}
+		else {
+	    	print(sread());
+	    	putchar('\n');
+			fflush(stdout);
+		}
 	    if (redef_flag)
 		redef_generic();
 	}

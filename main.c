@@ -421,7 +421,13 @@ int main(int argc, char *argv[])
 	    	putchar('\n');
 		}
 		else {
-	    	print(sread());
+			//char buffer1[1024];
+			//fgets(buffer1, 1024, stdin);
+	    	//print(sread());
+			//sread();
+			int c;
+			c = readc();
+			printf("child process get %c", c);
 	    	putchar('\n');
 			fflush(stdout);
 		}

@@ -1281,11 +1281,11 @@ int eval_args1(int x){
 
 int f_mp_exec(int arglist, int th)
 {
-	int i,j,stm,save1,save2,res;
+	int arg1;
     char buffer[256];
 
-    char data[] = "(+ 1 2)\n";
-    write(pipe_p2c[W], data, sizeof(data));
+    arg1 = car(arglist);
+    write(pipe_p2c[W], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
 
     sleep(1);
 

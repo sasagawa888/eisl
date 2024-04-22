@@ -1287,14 +1287,12 @@ int f_mp_exec(int arglist, int th)
     arg1 = car(arglist);
     write(pipe_p2c[W], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
 
-    sleep(1);
-
     int bytes_read = read(pipe_c2p[R], buffer, 256);
     if (bytes_read == -1) {
             error(CANT_OPEN, "mp-exec", NIL, th);
             }
     buffer[bytes_read] = '\0';
-    printf("%s sdf",buffer);
+    printf("ans = %s",buffer);
     
     return(T);
 }

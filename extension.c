@@ -1229,63 +1229,80 @@ int f_read_exp(int arglist, int th)
 
 int f_mp_create(int arglist, int th)
 {
-	int res;
+	int arg1,n,i;
 
-	if(pipe(pipe_p2c[0]) == -1){
-		error(CANT_CREATE, "mp-create", NIL, th);
-	}
-    if(pipe(pipe_c2p[0]) == -1){
-		error(CANT_CREATE, "mp-create", NIL, th);
-	}
+    arg1 = car(arglist);
+    n = GET_INT(arg1);
+    if (length(arglist) != 1)
+        error(ILLEGAL_ARGS, "mp-create", arglist, th);
+    if (n > PROCSIZE)
+        error(CANT_CREATE, "mp-create", n, th);
 
-	pid[0] = fork();
-	if(pid[process_pt] == -1){
-		error(CANT_CREATE, "mp-create", NIL, th);
-	}
-	if (pid[0] == 0) { // child 
-        close(pipe_p2c[0][W]);
-        close(pipe_c2p[0][R]);
-        if(dup2(pipe_p2c[0][R], STDIN_FILENO) == -1)
-            error(CANT_CREATE, "dup2 stdin", NIL, th);
-        if(dup2(pipe_c2p[0][W], STDOUT_FILENO) == -1)
-            error(CANT_CREATE, "dup2 stdout", NIL, th);
-        close(pipe_p2c[0][R]);
-        close(pipe_c2p[0][W]);
-        execl("/usr/local/bin/eisl", "eisl", "-r", "-p",  NULL);
-        exit(1);
+    for(i=0;i<n;i++){
+	    if(pipe(pipe_p2c[i]) == -1){
+		    error(CANT_CREATE, "mp-create", NIL, th);
+	    }
+        if(pipe(pipe_c2p[i]) == -1){
+		    error(CANT_CREATE, "mp-create", NIL, th);
+	    }
+
+	    pid[i] = fork();
+	    if(pid[i] == -1){
+		    error(CANT_CREATE, "mp-create", NIL, th);
+	    }   
+	    if (pid[i] == 0) { // child 
+            close(pipe_p2c[i][W]);
+            close(pipe_c2p[i][R]);
+            if(dup2(pipe_p2c[i][R], STDIN_FILENO) == -1)
+                error(CANT_CREATE, "dup2 stdin", NIL, th);
+            if(dup2(pipe_c2p[i][W], STDOUT_FILENO) == -1)
+                error(CANT_CREATE, "dup2 stdout", NIL, th);
+            close(pipe_p2c[i][R]);
+            close(pipe_c2p[i][W]);
+            execl("/usr/local/bin/eisl", "eisl", "-r", "-p",  NULL);
+            exit(1);
 	
-    } 
-    close(pipe_p2c[0][R]);
-    close(pipe_c2p[0][W]);
+        } 
+        close(pipe_p2c[i][R]);
+        close(pipe_c2p[i][W]);
 
-    res = make_int(process_pt);
-	process_pt++;
-	return(res);
+	    process_pt++;
+    }
+
+	return(T);
 }
 
 
-// (mp-exec "(time (" "tarai 1" "0 5 0))") 
+// (mp-exec 0 "(time (" "tarai 1" "0 5 0))") 
 int f_mp_exec(int arglist, int th)
 {
-	int arg1,arg2,arg3;
+	int arg1,arg2,n;
     char buffer[256];
 
     arg1 = car(arglist);
-    arg2 = cadr(arglist);
-    arg3 = caddr(arglist);
-    write(pipe_p2c[0][W], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
-    write(pipe_p2c[0][W], GET_NAME(arg2), sizeof(GET_NAME(arg2)));
-    write(pipe_p2c[0][W], GET_NAME(arg3), sizeof(GET_NAME(arg3)));
-
+    arg2 = cdr(arglist);
+    if(length(arglist) < 2)
+        error(ILLEGAL_ARGS, "mp-exec", arglist, th);
+    if(!integerp(arg1))
+        error(NOT_INT, "mp-exec", arg1, th);
+    n = GET_INT(arg1);
+    if(!(n < process_pt))
+        error(ILLEGAL_ARGS, "mp-exec", n, th);
+    
+    
+    while(!nullp(arg2)){
+        write(pipe_p2c[n][W], GET_NAME(car(arg2)), sizeof(GET_NAME(car(arg2))));
+        arg2 = cdr(arg2);
+    }
     
     // set nonblock mode
-    int flags = fcntl(pipe_c2p[0][R], F_GETFL, 0);
-    fcntl(pipe_c2p[0][R], F_SETFL, flags | O_NONBLOCK);
+    int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
+    fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
 
     
     int bytes_read;
     // wait until get result
-    while ((bytes_read = read(pipe_c2p[0][R], buffer, 256)) == -1 && errno == EAGAIN);
+    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
 
     buffer[bytes_read] = '\0';
     printf("ans = %s",buffer);
@@ -1297,8 +1314,14 @@ int f_mp_exec(int arglist, int th)
 
 int f_mp_close(int arglist, int th)
 {
-    char data[] = "(quit)\0";
-    write(pipe_p2c[0], data, sizeof(data));
+    int i;
+
+    for(i=0;i<process_pt;i++){
+        char data[] = "(quit)";
+        write(pipe_p2c[i][W], data, sizeof(data));
+    }
+
+    process_pt = 0;
     return(T);
 }
 

@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #ifdef __rpi__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
@@ -1278,7 +1280,7 @@ int eval_args1(int x){
 }
 
 
-// (mp-exec "(time  " "(tarai " "8 4 0))") 
+// (mp-exec "(time (" "tarai 1" "0 5 0))") 
 int f_mp_exec(int arglist, int th)
 {
 	int arg1,arg2,arg3;
@@ -1291,12 +1293,16 @@ int f_mp_exec(int arglist, int th)
     write(pipe_p2c[W], GET_NAME(arg2), sizeof(GET_NAME(arg2)));
     write(pipe_p2c[W], GET_NAME(arg3), sizeof(GET_NAME(arg3)));
 
-    sleep(10);
+    
+    // パイプを非同期モードに設定
+    int flags = fcntl(pipe_c2p[0], F_GETFL, 0);
+    fcntl(pipe_c2p[0], F_SETFL, flags | O_NONBLOCK);
 
-    int bytes_read = read(pipe_c2p[R], buffer, 256);
-    if (bytes_read == -1) {
-            error(CANT_OPEN, "mp-exec", NIL, th);
-            }
+    
+    int bytes_read;
+    // データが読み取れるまでループ
+    while ((bytes_read = read(pipe_c2p[R], buffer, 256)) == -1 && errno == EAGAIN);
+
     buffer[bytes_read] = '\0';
     printf("ans = %s",buffer);
     

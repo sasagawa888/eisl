@@ -549,12 +549,12 @@ int read_stdin(void)
     static int pos = 0;
 
 	// when buffer is empty buffering from stdin
-    if (buffer[pos][0] == 0) {
+    if (buffer2[pos] == 0) {
 	int c;
 	
 	// clear buffer
 	for (j = 0; j <= COL_SIZE; j++)
-	    buffer[j][0] = 0;
+	    buffer2[j] = 0;
 
 	// add data from stdin until get null(0) code
 	j = 0;
@@ -564,13 +564,14 @@ int read_stdin(void)
 	c = getc(stdin);
 	if (c == 0) goto loop;
 	while (c != 0) {
-	    buffer[j][0] = c;
+	    buffer2[j] = c;
 		c = getc(stdin);
 		j++;
 	}
+	buffer2[j] = 0;
 	pos = 0;
     }
-    return (buffer[pos++][0]);
+    return (buffer2[pos++]);
 }
 
 void up(int limit, int *rl_line, int *j, int *uni_j, int *pos)

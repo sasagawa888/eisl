@@ -239,6 +239,7 @@ extern int line;
 extern int column;
 extern int buffer[COL_SIZE + 1][NUM_HISTORY];
 extern int buffer1[COL_SIZE + 1];
+extern int buffer2[COL_SIZE + 1];
 
 
 /* heap and stack */

@@ -123,6 +123,7 @@ int line;
 int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
+int buffer2[COL_SIZE + 1] = {0};  //for read_stdin()
 
 
 /* heap ,stack and bignum */
@@ -424,8 +425,8 @@ int main(int argc, char *argv[])
 			//fflush(stdin);
 	    	print(eval(sread(),0));
 			//int c;
-			//c = read_stdin();
-			//printf("child process get %c", c);
+			//c = readc();
+			//printf("child process get %d", c);
 	    	putchar('\n');
 			fflush(stdout);
 		}

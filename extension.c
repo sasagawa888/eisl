@@ -69,8 +69,9 @@ void init_exsubr(void)
     def_subr("READ-EXP", f_read_exp);
 
     def_subr("MP-CREATE", f_mp_create);
-    def_fsubr("MP-EXEC", f_mp_exec);
+    def_subr("MP-EXEC", f_mp_exec);
     def_subr("MP-CLOSE", f_mp_close);
+    def_fsubr("MP-CALL", f_mp_call);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1274,6 +1275,11 @@ int f_mp_create(int arglist, int th)
 	return(T);
 }
 
+// fsubr (mp-call fun arg1 arg2 ... argn)
+int f_mp_call(int arglist, int th)
+{
+
+}
 
 // (mp-exec 0 "(time (" "tarai 1" "0 5 0))")
 // 1st is process number

@@ -964,6 +964,7 @@ int f_mult(int arglist, int th);
 int f_mp_create(int arglist, int th);
 int f_mp_exec(int arglist, int th);
 int f_mp_close(int arglist, int th);
+int f_mp_call(int arglist, int th);
 int f_nconc(int arglist, int th);
 int f_next_method_p(int arglist, int th);
 int f_not(int arglist, int th);

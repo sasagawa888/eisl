@@ -422,11 +422,7 @@ int main(int argc, char *argv[])
 	    	putchar('\n');
 		}
 		else {
-			//fflush(stdin);
 	    	print(eval(sread(),0));
-			//int c;
-			//c = readc();
-			//printf("child process get %d", c);
 	    	putchar('\n');
 			fflush(stdout);
 		}

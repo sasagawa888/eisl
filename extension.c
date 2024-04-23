@@ -1276,7 +1276,7 @@ int f_mp_create(int arglist, int th)
 // (mp-exec 0 "(time (" "tarai 1" "0 5 0))") 
 int f_mp_exec(int arglist, int th)
 {
-	int arg1,arg2,n;
+	int arg1,arg2,n,res;
     char buffer[256];
 
     arg1 = car(arglist);
@@ -1305,9 +1305,9 @@ int f_mp_exec(int arglist, int th)
     while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
 
     buffer[bytes_read] = '\0';
-    printf("ans = %s",buffer);
+    res = make_sym(buffer);
     
-    return(T);
+    return(res);
 }
 
 

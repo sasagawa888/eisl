@@ -1222,11 +1222,13 @@ int f_read_exp(int arglist, int th)
 
 
 
-//-----------multi proccess-----------
+//-----------multi process-----------
 
 #define R (0)
 #define W (1)
 
+
+// 1st arg is count of process
 int f_mp_create(int arglist, int th)
 {
 	int arg1,n,i;
@@ -1273,7 +1275,9 @@ int f_mp_create(int arglist, int th)
 }
 
 
-// (mp-exec 0 "(time (" "tarai 1" "0 5 0))") 
+// (mp-exec 0 "(time (" "tarai 1" "0 5 0))")
+// 1st is process number
+// rest are string(length 7) atom
 int f_mp_exec(int arglist, int th)
 {
 	int arg1,arg2,n,res;
@@ -1311,7 +1315,7 @@ int f_mp_exec(int arglist, int th)
 }
 
 
-
+// close all process 
 int f_mp_close(int arglist, int th)
 {
     int i;

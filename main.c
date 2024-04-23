@@ -422,10 +422,10 @@ int main(int argc, char *argv[])
 		}
 		else {
 			//fflush(stdin);
-	    	//print(sread());
-			char buffer1[256];
-			fgets(buffer1, 7, stdin);
-			printf("child process get %s", buffer1);
+	    	print(eval(sread(),0));
+			//int c;
+			//c = read_stdin();
+			//printf("child process get %c", c);
 	    	putchar('\n');
 			fflush(stdout);
 		}
@@ -560,6 +560,9 @@ int readc(void)
     else if (input_stream == standard_input && repl_flag)
 	/* REPL-mode and standard-input */
 	c = read_line(1);
+	else if (process_flag == true)
+	/* EISL as child process*/
+	c = read_stdin();
     else {
 	/* not REPL-mode and standard-input */
 	c = getc(GET_PORT(input_stream));

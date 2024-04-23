@@ -1279,11 +1279,13 @@ int eval_args1(int x){
 
 int f_mp_exec(int arglist, int th)
 {
-	int arg1;
+	int arg1,arg2;
     char buffer[256];
 
     arg1 = car(arglist);
+    arg2 = cadr(arglist);
     write(pipe_p2c[W], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
+    write(pipe_p2c[W], GET_NAME(arg2), sizeof(GET_NAME(arg2)));
 
     sleep(1);
 

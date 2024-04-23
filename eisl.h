@@ -1445,5 +1445,6 @@ int replace_fragment_buffer(const char *newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
+int read_stdin(void);
 
 #endif

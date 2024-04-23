@@ -540,6 +540,39 @@ int read_line(int flag)
     return (buffer[pos++][0]);
 }
 
+// for Multi-process 
+// input from stdin with pipe
+//
+int read_stdin(void)
+{
+    int j;			// colums position of buffer 
+    static int pos = 0;
+
+	// when buffer is empty buffering from stdin
+    if (buffer[pos][0] == 0) {
+	int c;
+	
+	// clear buffer
+	for (j = 0; j <= COL_SIZE; j++)
+	    buffer[j][0] = 0;
+
+	// add data from stdin until get null(0) code
+	j = 0;
+
+	// wait until get not null data
+	loop:
+	c = getc(stdin);
+	if (c == 0) goto loop;
+	while (c != 0) {
+	    buffer[j][0] = c;
+		c = getc(stdin);
+		j++;
+	}
+	pos = 0;
+    }
+    return (buffer[pos++][0]);
+}
+
 void up(int limit, int *rl_line, int *j, int *uni_j, int *pos)
 {
     if (limit <= 1)

@@ -1277,17 +1277,21 @@ int eval_args1(int x){
         return(cons(eval(car(x),0),eval_args1(cdr(x))));
 }
 
+
+// (mp-exec "(time  " "(tarai " "8 4 0))") 
 int f_mp_exec(int arglist, int th)
 {
-	int arg1,arg2;
+	int arg1,arg2,arg3;
     char buffer[256];
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
     write(pipe_p2c[W], GET_NAME(arg1), sizeof(GET_NAME(arg1)));
     write(pipe_p2c[W], GET_NAME(arg2), sizeof(GET_NAME(arg2)));
+    write(pipe_p2c[W], GET_NAME(arg3), sizeof(GET_NAME(arg3)));
 
-    sleep(1);
+    sleep(10);
 
     int bytes_read = read(pipe_c2p[R], buffer, 256);
     if (bytes_read == -1) {

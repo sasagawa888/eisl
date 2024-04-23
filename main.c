@@ -236,9 +236,9 @@ pthread_attr_t para_attr[PARASIZE];
 size_t para_size[PARASIZE];
 
 /*multi proccess*/
-int pipe_p2c[2]; 
-int pipe_c2p[2];
-pid_t pid[10];
+int pipe_p2c[PROCSIZE][2]; 
+int pipe_c2p[PROCSIZE][2];
+pid_t pid[PROCSIZE];
 int process_pt = 0;
 
 

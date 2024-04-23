@@ -25,6 +25,7 @@
 #define SHORT_STRSIZE 32
 #define HASHTBSIZE 137
 #define PARASIZE 20
+#define PROCSIZE 10
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
@@ -631,9 +632,9 @@ extern pthread_attr_t para_attr[PARASIZE];
 extern size_t para_size[PARASIZE];
 
 /*multi proccess*/
-extern int pipe_p2c[2]; 
-extern int pipe_c2p[2];
-extern pid_t pid[10];
+extern int pipe_p2c[PROCSIZE][2]; 
+extern int pipe_c2p[PROCSIZE][2];
+extern pid_t pid[PROCSIZE];
 extern int process_pt;
 
 

@@ -1242,23 +1242,23 @@ int f_mp_create(int arglist, int th)
 
     for(i=0;i<n;i++){
 	    if(pipe(pipe_p2c[i]) == -1){
-		    error(CANT_CREATE, "mp-create", NIL, th);
+		    error(CANT_CREATE, "mp-create pipe_p2c", NIL, th);
 	    }
         if(pipe(pipe_c2p[i]) == -1){
-		    error(CANT_CREATE, "mp-create", NIL, th);
+		    error(CANT_CREATE, "mp-create pipe_c2p", NIL, th);
 	    }
 
 	    pid[i] = fork();
 	    if(pid[i] == -1){
-		    error(CANT_CREATE, "mp-create", NIL, th);
+		    error(CANT_CREATE, "mp-create fork", NIL, th);
 	    }   
 	    if (pid[i] == 0) { // child 
             close(pipe_p2c[i][W]);
             close(pipe_c2p[i][R]);
             if(dup2(pipe_p2c[i][R], STDIN_FILENO) == -1)
-                error(CANT_CREATE, "dup2 stdin", NIL, th);
+                error(CANT_CREATE, "mp-create dup2 stdin", NIL, th);
             if(dup2(pipe_c2p[i][W], STDOUT_FILENO) == -1)
-                error(CANT_CREATE, "dup2 stdout", NIL, th);
+                error(CANT_CREATE, "mp-create dup2 stdout", NIL, th);
             close(pipe_p2c[i][R]);
             close(pipe_c2p[i][W]);
             execl("/usr/local/bin/eisl", "eisl", "-r", "-p",  NULL);

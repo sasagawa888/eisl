@@ -1299,11 +1299,11 @@ int sexp_to_str(int x)
 
 void write_to_pipe(int n,int x)
 {
-    int i,j,pos,c;
-    char buffer1[8],buffer2[STRSIZE];
+    int i,j,pos,c,err;
+    char buffer1[7],buffer2[STRSIZE];
 
     strcpy(buffer2,GET_NAME(x));
-    
+
     i = 0;
     pos = 0;
     for(j=0;j<7;j++)
@@ -1316,16 +1316,17 @@ void write_to_pipe(int n,int x)
             i++;
             pos++;
             c = buffer2[pos];
-            for(j=0;j<7;j++)
-                buffer1[j] = 0;
+            
         }
         // write to pipe
-        write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
+        err = write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
 
         if(c == 0)
             break;
 
         i = 0;
+        for(j=0;j<7;j++)
+            buffer1[j] = 0;
     }
 }
 
@@ -1374,10 +1375,10 @@ int f_mp_call(int arglist, int th)
         while ((bytes_read = read(pipe_c2p[i][R], buffer, 256)) == -1 && errno == EAGAIN);
         buffer[bytes_read] = '\0';
 
-        args = cons(str_to_sexp(buffer),args);
+        args = cons(str_to_sexp(make_str(buffer)),args);
     }
 
-    res = apply(arg1, arg2, th);
+    res = apply(eval(arg1,th), args, th);
     return(res);
 }
 

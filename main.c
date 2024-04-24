@@ -422,6 +422,9 @@ int main(int argc, char *argv[])
 	    	putchar('\n');
 		}
 		else {
+			//int c;
+			//c = getc(stdin);
+			//printf("%d" ,c);
 	    	print(eval(sread(),0));
 	    	putchar('\n');
 			fflush(stdout);

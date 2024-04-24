@@ -1300,7 +1300,7 @@ int sexp_to_str(int x)
 void write_to_pipe(int n,int x)
 {
     int i,j,pos,c,err;
-    char buffer1[7],buffer2[STRSIZE];
+    char buffer1[10],buffer2[STRSIZE];
 
     strcpy(buffer2,GET_NAME(x));
 

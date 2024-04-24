@@ -1275,10 +1275,110 @@ int f_mp_create(int arglist, int th)
 	return(T);
 }
 
+
+int sexp_to_str(int x)
+{
+    int save,res;
+    char *str;
+
+    res = make_stm(stdout, EISL_OUTSTR, NULL);
+    TRY str = (char *) ALLOC(STRSIZE);
+    EXCEPT(Mem_Failed)
+	error(MALLOC_OVERF, "create-string-output-stream", NIL, 0);
+    END_TRY;
+    heap[res].name = str;
+    heap[res].name[0] = '\0';
+
+    save = output_stream;
+    output_stream = res;
+    print(x);
+    res = output_stream;
+    output_stream = save;
+    return(res);
+}
+
+void write_to_pipe(int n,int x)
+{
+    int i,j,pos,c;
+    char buffer1[8],buffer2[STRSIZE];
+
+    strcpy(buffer2,GET_NAME(x));
+    
+    i = 0;
+    pos = 0;
+    for(j=0;j<7;j++)
+            buffer1[j] = 0;
+    c = buffer2[pos];
+    while(1){
+        while(i < 7 && c != 0)
+        {
+            buffer1[i] = c;
+            i++;
+            pos++;
+            c = buffer2[pos];
+            for(j=0;j<7;j++)
+                buffer1[j] = 0;
+        }
+        // write to pipe
+        write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
+
+        if(c == 0)
+            break;
+
+        i = 0;
+    }
+}
+
+int str_to_sexp(int x)
+{
+    int stm,save,res;
+
+    stm = make_stm(stdin, EISL_INSTR, NULL);
+    TRY heap[stm].name = Str_dup(GET_NAME(x), 1, 0, 1);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "create-string-input-stream",
+			     NIL, 0);
+    END_TRY;
+
+    save = input_stream;
+    input_stream = stm;
+    res = sread();
+    input_stream = save;
+    return (res);
+}
+
 // fsubr (mp-call fun arg1 arg2 ... argn)
 int f_mp_call(int arglist, int th)
 {
+    int arg1,arg2,res,n,i,args;
+    char buffer[256];
 
+    arg1 = car(arglist); //fun
+    arg2 = cdr(arglist); //args
+    n = length(arg2);
+
+    i = 0;
+    while(!nullp(arg2)){
+        write_to_pipe(i,sexp_to_str(car(arg2)));
+        arg2 = cdr(arg2);
+        i++;
+    }
+
+    args = NIL;
+    for(i=n-1;i>=0;i--){
+        // set nonblock mode
+        int flags = fcntl(pipe_c2p[i][R], F_GETFL, 0);
+        fcntl(pipe_c2p[i][R], F_SETFL, flags | O_NONBLOCK);
+
+        int bytes_read;
+        // wait until get result
+        while ((bytes_read = read(pipe_c2p[i][R], buffer, 256)) == -1 && errno == EAGAIN);
+        buffer[bytes_read] = '\0';
+
+        args = cons(str_to_sexp(buffer),args);
+    }
+
+    res = apply(arg1, arg2, th);
+    return(res);
 }
 
 // (mp-exec 0 "(time (" "tarai 1" "0 5 0))")

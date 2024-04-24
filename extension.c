@@ -1299,7 +1299,7 @@ int sexp_to_str(int x)
 
 void write_to_pipe(int n,int x)
 {
-    int i,j,pos,c,err;
+    int i,j,pos,c;
     char buffer1[10],buffer2[STRSIZE];
 
     strcpy(buffer2,GET_NAME(x));
@@ -1319,7 +1319,7 @@ void write_to_pipe(int n,int x)
             
         }
         // write to pipe
-        err = write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
+        write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
 
         if(c == 0)
             break;
@@ -1347,10 +1347,23 @@ int str_to_sexp(int x)
     return (res);
 }
 
+int eval_args1(int x);
+int eval_args1(int x){
+    if(nullp(x))
+        return(NIL);
+    else
+        return(cons(eval(car(x),0),eval_args1(cdr(x))));
+}
+
+int eval_args(int x){
+    return(cons(car(x),eval_args1(cdr(x))));
+}
+
+
 // fsubr (mp-call fun arg1 arg2 ... argn)
 int f_mp_call(int arglist, int th)
 {
-    int arg1,arg2,res,n,i,args;
+    int arg1,arg2,res,n,i,args,exp;
     char buffer[256];
 
     arg1 = car(arglist); //fun
@@ -1359,7 +1372,8 @@ int f_mp_call(int arglist, int th)
 
     i = 0;
     while(!nullp(arg2)){
-        write_to_pipe(i,sexp_to_str(car(arg2)));
+        exp = eval_args(car(arg2));
+        write_to_pipe(i,sexp_to_str(exp));
         arg2 = cdr(arg2);
         i++;
     }

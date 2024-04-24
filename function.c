@@ -12,6 +12,8 @@
 #include <dlfcn.h>
 #include <limits.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
@@ -2217,11 +2219,12 @@ int f_read_line(int arglist, int th)
     return (res);
 }
 
+#define R (0)
+#define W (1)
+
 int f_load(int arglist, int th)
-{
-    int arg1, save1, n;
-    bool save2;
-    char str[PATH_MAX];
+{   
+    int arg1,i,exp;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -2229,13 +2232,44 @@ int f_load(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_STR, "load", arg1, th);
 
+    load(arg1, th);
+
+    /*
+    if(process_pt > 0){
+        char buffer[256];
+        exp = list2(make_sym("load"),arg1);
+       
+        for(i=0;i<process_pt;i++){
+            //printf("%s", GET_NAME(sexp_to_str(exp)));
+            write_to_pipe(i,sexp_to_str(exp));
+            // set nonblock mode
+            int flags = fcntl(pipe_c2p[i][R], F_GETFL, 0);
+            fcntl(pipe_c2p[i][R], F_SETFL, flags | O_NONBLOCK);
+
+            int bytes_read;
+            // wait until get result
+            while ((bytes_read = read(pipe_c2p[i][R], buffer, 256)) == -1 && errno == EAGAIN);
+            buffer[bytes_read] = '\0';
+            }
+    }
+    */
+    return(T);
+}
+
+void load(int arg1, int th)
+{
+    int save1, n;
+    bool save2;
+    char str[PATH_MAX];
+
+    //print(arg1);
     // object file ex "foo.o"
     n = strlen(GET_NAME(arg1));
     strncpy(str, GET_NAME(arg1), PATH_MAX - 1);
     str[PATH_MAX - 1] = '\0';
     if (str[n - 1] == 'o' && str[n - 2] == '.') {
 	dynamic_link(arg1);
-	return (T);
+	return;
     }
     // text file
     save1 = input_stream;
@@ -2293,7 +2327,7 @@ int f_load(int arglist, int th)
     restore_repl_flag(save2);
     if (redef_flag)
 	redef_generic();
-    return (T);
+    return;
 }
 
 int f_print(int arglist, int th)

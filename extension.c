@@ -1441,6 +1441,9 @@ int f_mp_close(int arglist, int th)
 {
     int i;
 
+    if(!nullp(arglist));
+        error(ILLEGAL_ARGS, "mp-close", arglist, th);
+
     for(i=0;i<process_pt;i++){
         char data[] = "(quit)";
         write(pipe_p2c[i][W], data, sizeof(data));

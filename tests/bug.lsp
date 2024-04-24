@@ -10,6 +10,10 @@
                           (tarai (- y 1) z x)
                           (tarai (- z 1) x y))))
 
+(defun fib* (n)
+    (mp-call #'+ (fib (- n 1))
+                 (fib (- n 2))))
+
 ;(mp-close)
 
 

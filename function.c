@@ -2229,10 +2229,16 @@ int f_load(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_STR, "load", arg1, th);
 
-    load(arg1, th);
+    if(!process_flag)
+        load(arg1, th);
+    else{
+        process_flag = false;
+        load(arg1, th);
+        process_flag = true;
+    }
 
-    /* still buggy
-    if(process_pt > 0){
+    
+    if(!process_flag && process_pt > 0){
         exp = list2(make_sym("load"),arg1);
        
         for(i=0;i<process_pt;i++){
@@ -2240,7 +2246,7 @@ int f_load(int arglist, int th)
             read_from_pipe(i);
         }
     }
-    */
+    
     return(T);
 }
 
@@ -2250,7 +2256,6 @@ void load(int arg1, int th)
     bool save2;
     char str[PATH_MAX];
 
-    //print(arg1);
     // object file ex "foo.o"
     n = strlen(GET_NAME(arg1));
     strncpy(str, GET_NAME(arg1), PATH_MAX - 1);

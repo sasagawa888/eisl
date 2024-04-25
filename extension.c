@@ -1385,6 +1385,8 @@ int f_mp_call(int arglist, int th)
     arg1 = car(arglist); //fun
     arg2 = cdr(arglist); //args
     n = length(arg2);
+    if(n > process_pt)
+        error(ILLEGAL_ARGS, "mp-call", arg2, th);
 
     i = 0;
     while(!nullp(arg2)){

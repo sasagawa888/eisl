@@ -12,8 +12,6 @@
 #include <dlfcn.h>
 #include <limits.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
@@ -2219,8 +2217,7 @@ int f_read_line(int arglist, int th)
     return (res);
 }
 
-#define R (0)
-#define W (1)
+
 
 int f_load(int arglist, int th)
 {   
@@ -2234,23 +2231,14 @@ int f_load(int arglist, int th)
 
     load(arg1, th);
 
-    /*
+    /* still buggy
     if(process_pt > 0){
-        char buffer[256];
         exp = list2(make_sym("load"),arg1);
        
         for(i=0;i<process_pt;i++){
-            //printf("%s", GET_NAME(sexp_to_str(exp)));
             write_to_pipe(i,sexp_to_str(exp));
-            // set nonblock mode
-            int flags = fcntl(pipe_c2p[i][R], F_GETFL, 0);
-            fcntl(pipe_c2p[i][R], F_SETFL, flags | O_NONBLOCK);
-
-            int bytes_read;
-            // wait until get result
-            while ((bytes_read = read(pipe_c2p[i][R], buffer, 256)) == -1 && errno == EAGAIN);
-            buffer[bytes_read] = '\0';
-            }
+            read_from_pipe(i);
+        }
     }
     */
     return(T);

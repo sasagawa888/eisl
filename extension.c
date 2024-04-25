@@ -1330,6 +1330,22 @@ void write_to_pipe(int n,int x)
     }
 }
 
+int read_from_pipe(int n)
+{
+    char buffer[256];
+
+    // set nonblock mode
+    int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
+    fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
+
+    int bytes_read;
+    // wait until get result
+    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
+    buffer[bytes_read] = '\0';
+
+    return(make_str(buffer));
+}
+
 int str_to_sexp(int x)
 {
     int stm,save,res;
@@ -1360,11 +1376,11 @@ int eval_args(int x){
 }
 
 
+
 // fsubr (mp-call fun arg1 arg2 ... argn)
 int f_mp_call(int arglist, int th)
 {
     int arg1,arg2,res,n,i,args,exp;
-    char buffer[256];
 
     arg1 = car(arglist); //fun
     arg2 = cdr(arglist); //args
@@ -1380,16 +1396,7 @@ int f_mp_call(int arglist, int th)
 
     args = NIL;
     for(i=n-1;i>=0;i--){
-        // set nonblock mode
-        int flags = fcntl(pipe_c2p[i][R], F_GETFL, 0);
-        fcntl(pipe_c2p[i][R], F_SETFL, flags | O_NONBLOCK);
-
-        int bytes_read;
-        // wait until get result
-        while ((bytes_read = read(pipe_c2p[i][R], buffer, 256)) == -1 && errno == EAGAIN);
-        buffer[bytes_read] = '\0';
-
-        args = cons(str_to_sexp(make_str(buffer)),args);
+        args = cons(str_to_sexp(read_from_pipe(i)),args);
     }
 
     res = apply(eval(arg1,th), args, th);
@@ -1441,7 +1448,7 @@ int f_mp_close(int arglist, int th)
 {
     int i;
 
-    if(!nullp(arglist));
+    if(!nullp(arglist))
         error(ILLEGAL_ARGS, "mp-close", arglist, th);
 
     for(i=0;i<process_pt;i++){

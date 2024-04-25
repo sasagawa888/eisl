@@ -1453,5 +1453,6 @@ void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
 int read_stdin(void);
+int read_from_pipe(int n);
 
 #endif

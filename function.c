@@ -2232,12 +2232,14 @@ int f_load(int arglist, int th)
     if(!process_flag)
         load(arg1, th);
     else{
+        // when process_flag == true, sread() use read_stdin.
+        // To avoid this problem, change process_flag temporarily.
         process_flag = false;
         load(arg1, th);
         process_flag = true;
     }
 
-    
+    // only parent lisp sends message (load fn) to child lisps.
     if(!process_flag && process_pt > 0){
         exp = list2(make_sym("load"),arg1);
        

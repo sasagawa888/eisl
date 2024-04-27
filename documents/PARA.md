@@ -8,18 +8,18 @@ eisl -t
 
 # Spec
 
-- (plet form body)  
+- (mt-let form body)  
 
 ```
 form   ((var1 sexp1)(var2 sexp2)...)
 ```
-- (pcall fun arg ...)
+- (mt-call fun arg ...)
 eval (fun arg ...) with paralell
 
-- (pexec arg ...)
+- (mt-exec arg ...)
 execute (progn arg ...) with paralell
 
-- (plock arg ...)
+- (mt-lock arg ...)
 execute (prgn arg ...) with mutex. 
 
 ```
@@ -32,7 +32,7 @@ pthread_mutex_unlock()
 
 ```
 (defun pfib (n)
-    (plet ((a (fib (- n 1)))
+    (mt-let ((a (fib (- n 1)))
            (b (fib (- n 2))))
         (+ a b)))
 
@@ -46,9 +46,9 @@ pthread_mutex_unlock()
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (pcall ptarai (ptarai (- x 1) y z)
-                      (ptarai (- y 1) z x)
-                      (ptarai (- z 1) x y))))
+        (mt-call ptarai (ptarai (- x 1) y z)
+                        (ptarai (- y 1) z x)
+                        (ptarai (- z 1) x y))))
 
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
@@ -59,8 +59,8 @@ pthread_mutex_unlock()
                (tarai (- z 1) x y))))
 
 (defun pcount (n)
-    (pexec (count1 1 (div n 2))
-           (count1 (+ (div n 2) 1) n)))
+    (mt-exec (count1 1 (div n 2))
+             (count1 (+ (div n 2) 1) n)))
 
 (defun count (n)
     (count1 1 n))
@@ -75,10 +75,10 @@ pthread_mutex_unlock()
 # Thread pooling
 source code syntax.c line 2546
 
-plet... f_plet
-pcall.. f_pcall
-pexec.. f_pexec
-plock.. f_plock
+mp-let... f_plet
+mp-call.. f_pcall
+mp-exec.. f_pexec
+mp-lock.. f_plock
 
 queue[] = 1,2,3,... worker_count
 

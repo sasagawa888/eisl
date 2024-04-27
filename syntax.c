@@ -81,10 +81,10 @@ void init_syntax(void)
     def_fsubr("TRACE", f_trace);
     def_fsubr("UNTRACE", f_untrace);
     def_fsubr("DEFMODULE", f_defmodule);
-    def_fsubr("PLET", f_plet);
-    def_fsubr("PCALL", f_pcall);
-    def_fsubr("PLOCK", f_plock);
-    def_fsubr("PEXEC", f_pexec);
+    def_fsubr("MT-LET", f_mt_let);
+    def_fsubr("MT-CALL", f_mt_call);
+    def_fsubr("MT-LOCK", f_mt_lock);
+    def_fsubr("MT-EXEC", f_mt_exec);
 }
 
 // --FSUBR-----------
@@ -2662,39 +2662,39 @@ int wait_para(void)
 }
 
 
-int f_plet(int arglist, int th)
+int f_mt_let(int arglist, int th)
 {
     int arg1, arg2, temp, i, res, num[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "plet", arglist, th);
+	error(WRONG_ARGS, "mt-let", arglist, th);
     if (length(arg1) > worker_count)
-	error(WRONG_ARGS, "plet", arg1, th);
+	error(WRONG_ARGS, "mt-let", arg1, th);
     if (!listp(arg1))
-	error(IMPROPER_ARGS, "plet", arg1, th);
+	error(IMPROPER_ARGS, "mt-let", arg1, th);
     temp = arg1;
     while (!nullp(temp)) {
 	int temparg1;
 
 	temparg1 = car(car(temp));
 	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "plet", car(temp), th);
+	    error(IMPROPER_ARGS, "mt-let", car(temp), th);
 	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "plet", car(temp), th);
+	    error(IMPROPER_ARGS, "mt-let", car(temp), th);
 	if (!symbolp(temparg1))
-	    error(NOT_SYM, "plet", temparg1, th);
+	    error(NOT_SYM, "mt-let", temparg1, th);
 	if (temparg1 == T || temparg1 == NIL
 	    || temparg1 == make_sym("*PI*")
 	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
 	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "plet", arg1, th);
+	    error(WRONG_ARGS, "mt-let", arg1, th);
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "plet", arg1, th);
+	    error(WRONG_ARGS, "mt-let", arg1, th);
 	if (!listp(cadr(temp)))
-	    error(WRONG_ARGS, "plet", arg1, th);
+	    error(WRONG_ARGS, "mt-let", arg1, th);
 	temp = cdr(temp);
     }
 
@@ -2737,23 +2737,23 @@ int f_plet(int arglist, int th)
 }
 
 
-int f_pcall(int arglist, int th)
+int f_mt_call(int arglist, int th)
 {
     int arg1, arg2, temp, i, num[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "pcall", arglist, th);
+	error(WRONG_ARGS, "mt-call", arglist, th);
     if (length(arg2) > worker_count)
-	error(WRONG_ARGS, "pcall", arg1, th);
+	error(WRONG_ARGS, "mt-call", arg1, th);
     if (!symbolp(arg1))
-	error(IMPROPER_ARGS, "pcall", arg1, th);
+	error(IMPROPER_ARGS, "mt-call", arg1, th);
 
     temp = arg2;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
-	    error(WRONG_ARGS, "pcall", arg2, th);
+	    error(WRONG_ARGS, "mt-call", arg2, th);
 	temp = cdr(temp);
     }
 
@@ -2792,19 +2792,19 @@ int f_pcall(int arglist, int th)
 }
 
 
-int f_pexec(int arglist, int th)
+int f_mt_exec(int arglist, int th)
 {
     int temp, i, num[PARASIZE];
 
     if (length(arglist) == 0)
-	error(WRONG_ARGS, "pexec", arglist, th);
+	error(WRONG_ARGS, "mt-exec", arglist, th);
     if (length(arglist) > worker_count)
-	error(WRONG_ARGS, "pexec", arglist, th);
+	error(WRONG_ARGS, "mt-exec", arglist, th);
 
     temp = arglist;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
-	    error(WRONG_ARGS, "pexec", arglist, th);
+	    error(WRONG_ARGS, "mt-exec", arglist, th);
 	temp = cdr(temp);
     }
 
@@ -2839,7 +2839,7 @@ int f_pexec(int arglist, int th)
 
 
 
-int f_plock(int arglist, int th)
+int f_mt_lock(int arglist, int th)
 {
 
     int res;

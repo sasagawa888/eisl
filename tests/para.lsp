@@ -4,10 +4,10 @@
     (the <fixnum> n) 
     (cond ((= n 0) 0)
           ((= n 1) 1)
-          (t (pcall + (pfib (- n 1)) (pfib (- n 2))))))
+          (t (mt-call + (pfib (- n 1)) (pfib (- n 2))))))
 
 (defun fib1 (n)
-    (plet ((a (fib (- n 1)))
+    (mt-let ((a (fib (- n 1)))
            (b (fib (- n 2))))
         (+ a b)))
 
@@ -21,7 +21,7 @@
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (pcall ptarai (ptarai (- x 1) y z)
+        (mt-call ptarai (ptarai (- x 1) y z)
                       (ptarai (- y 1) z x)
                       (ptarai (- z 1) x y))))
 
@@ -34,7 +34,7 @@
                (tarai (- z 1) x y))))
 
 (defun ptarai2 (x y z)
-    (plet ((a (tarai x y z))
+    (mt-let ((a (tarai x y z))
            (b (tarai x y z)))
         a))
 
@@ -45,8 +45,8 @@
 
 
 (defun pcount (n)
-    (pexec (count1 1 (div n 2))
-           (count1 (+ (div n 2) 1) n)))
+    (mp-exec (count1 1 (div n 2))
+             (count1 (+ (div n 2) 1) n)))
 
 (defun count (n)
     (count1 1 n))
@@ -57,8 +57,8 @@
          (sin (cos (tan i)))))
 
 (defun error-test ()
-    (plet ((a (+ 1 2))
-           (b (error "error-test-parallel")))
+    (mt-let ((a (+ 1 2))
+             (b (error "error-test-parallel")))
         a))
 
 
@@ -74,7 +74,7 @@
          (rfib 30)))
 
 (defun para-fib30 (n)
-    (pexec (repeat-fib30 (div n 2)) (repeat-fib30 (div n 2))))
+    (mt-exec (repeat-fib30 (div n 2)) (repeat-fib30 (div n 2))))
 
 (defun seq-fib30 (n)
     (repeat-fib30 n))

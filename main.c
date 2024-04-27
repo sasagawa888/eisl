@@ -174,6 +174,7 @@ bool concurrent_exit_flag = false;	/* To exit GC thread */
 bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;  /* when invoke as child process falg is true*/
+bool thread_flag = false;  /* when invoke with multi thread*/
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -386,6 +387,9 @@ int main(int argc, char *argv[])
 		case 'p':
 		process_flag = true;
 		break;
+		case 't':
+		thread_flag = true;
+		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
 		exit(EXIT_SUCCESS);
@@ -422,9 +426,6 @@ int main(int argc, char *argv[])
 	    	putchar('\n');
 		}
 		else {
-			//int c;
-			//c = getc(stdin);
-			//printf("%d" ,c);
 	    	print(eval(sread(),0));
 	    	putchar('\n');
 			fflush(stdout);
@@ -493,17 +494,21 @@ void init_pointer(void)
 
 void init_thread(void)
 {
-
-    worker_count = sysconf(_SC_NPROCESSORS_CONF) - 1;
-    if (worker_count > 5)
-	worker_count = 5;
-    /* sysconf(_SC_NPROCESSORS_CONF) may operate correctly depending on the OS,
-     *  and in such cases, it could potentially result in a negative number. 
-     *  It is assumed that the current CPU has at least 4 cores. 
-     *  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
-     */
-    else if (worker_count < 0)
-	worker_count = 3;
+	if (thread_flag){
+    	worker_count = sysconf(_SC_NPROCESSORS_CONF) - 1;
+    	if (worker_count > 5)
+		worker_count = 5;
+    	/* sysconf(_SC_NPROCESSORS_CONF) may operate correctly depending on the OS,
+     	*  and in such cases, it could potentially result in a negative number. 
+     	*  It is assumed that the current CPU has at least 4 cores. 
+     	*  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
+     	*/
+    	else if (worker_count < 0)
+		worker_count = 3;
+	}
+	else{
+		worker_count = 0;
+	}
 
     /* create parallel function thread */
     init_para();

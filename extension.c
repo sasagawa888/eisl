@@ -69,9 +69,9 @@ void init_exsubr(void)
     def_subr("READ-EXP", f_read_exp);
 
     def_subr("MP-CREATE", f_mp_create);
-    def_subr("MP-EXEC", f_mp_exec);
     def_subr("MP-CLOSE", f_mp_close);
     def_fsubr("MP-CALL", f_mp_call);
+    def_fsubr("MP-EXEC", f_mp_exec);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1380,13 +1380,19 @@ int eval_args(int x){
 // fsubr (mp-call fun arg1 arg2 ... argn)
 int f_mp_call(int arglist, int th)
 {
-    int arg1,arg2,res,n,i,args,exp;
+    int arg1,arg2,temp,res,n,i,args,exp;
 
     arg1 = car(arglist); //fun
     arg2 = cdr(arglist); //args
     n = length(arg2);
     if(n > process_pt)
         error(ILLEGAL_ARGS, "mp-call", arg2, th);
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "mp-call", arglist, th);
+	temp = cdr(temp);
+    }
 
     i = 0;
     while(!nullp(arg2)){
@@ -1405,43 +1411,35 @@ int f_mp_call(int arglist, int th)
     return(res);
 }
 
-// (mp-exec 0 "(time (" "tarai 1" "0 5 0))")
-// 1st is process number
-// rest are string(length 7) atom
+
 int f_mp_exec(int arglist, int th)
 {
-	int arg1,arg2,n,res;
-    char buffer[256];
+    int temp,res,n,i,exp;
 
-    arg1 = car(arglist);
-    arg2 = cdr(arglist);
-    if(length(arglist) < 2)
+    n = length(arglist);
+    if(n > process_pt)
         error(ILLEGAL_ARGS, "mp-exec", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT, "mp-exec", arg1, th);
-    n = GET_INT(arg1);
-    if(!(n < process_pt))
-        error(ILLEGAL_ARGS, "mp-exec", n, th);
-    
-    
-    while(!nullp(arg2)){
-        write(pipe_p2c[n][W], GET_NAME(car(arg2)), sizeof(GET_NAME(car(arg2))));
-        arg2 = cdr(arg2);
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "mp-exec", arglist, th);
+	temp = cdr(temp);
     }
-    
-    // set nonblock mode
-    int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
-    fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
 
-    
-    int bytes_read;
-    // wait until get result
-    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
+    i = 0;
+    while(!nullp(arglist)){
+        exp = eval_args(car(arglist));
+        write_to_pipe(i,sexp_to_str(exp));
+        arglist = cdr(arglist);
+        i++;
+    }
 
-    buffer[bytes_read] = '\0';
-    res = make_sym(buffer);
-    
+    for(i=0;i<n;i++){
+        res = str_to_sexp(read_from_pipe(i));
+    }
+
     return(res);
+
 }
 
 

@@ -7,6 +7,8 @@
 
 (mp-call fun arg1 ... argn)
 
+(mp-exec arg1 ... argn)
+
 (mp-close)
 
 ```

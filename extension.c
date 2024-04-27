@@ -1306,7 +1306,7 @@ void write_to_pipe(int n,int x)
 
     i = 0;
     pos = 0;
-    for(j=0;j<7;j++)
+    for(j=0;j<10;j++)
             buffer1[j] = 0;
     c = buffer2[pos];
     while(1){
@@ -1325,7 +1325,7 @@ void write_to_pipe(int n,int x)
             break;
 
         i = 0;
-        for(j=0;j<7;j++)
+        for(j=0;j<10;j++)
             buffer1[j] = 0;
     }
 }

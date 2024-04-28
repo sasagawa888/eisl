@@ -2150,17 +2150,17 @@ defgeneric compile
     
     (defun comp-mp-call (stream x env args tail name global test clos)
         (format stream "({int res;")
-        (comp-mp-call1 stream (cdr (cdr x)) env args tail name global test clos)
-        (comp-mp-call2 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-call1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-call3 stream (cdr x) env args tail name global test clos)
         (format stream "res;})"))
 
     ;; write to pipe
-    (defun comp-mp-call1 (stream x env args tail name global test clos)
+    (defun comp-mp-call1 (i stream x env args tail name global test clos)
         (cond ((null x) nil)
-              (t (format stream "Fwrite_to_pipe(Fsexp_to_str(Fcons(Fmake_sym(\"~A\")," (car (car x)))
-                 (comp-mp-call2 stream x env args tail name global test clos)
-                 (format stream ")));~%")
-                 (comp-mp-call1 stream (cdr x) env args tail name global test clos))))
+              (t (format stream "Fwrite_to_pipe(Fsexp_to_str(Fcons(Fmakesym(\"~A\")," (car (car x)))
+                 (comp-mp-call2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")),~A);~%" i)
+                 (comp-mp-call1 (+ i 1) stream (cdr x) env args tail name global test clos))))
                  
     ;; eval args
     (defun comp-mp-call2 (stream x env args tail name global test clos)
@@ -2168,22 +2168,22 @@ defgeneric compile
               (t (format stream "Fcons(")
                  (comp stream (car x) env args tail name global test clos)
                  (format stream ",")
-                 (comp-mp-call2 (cdr x) env args tail name global test clos)
+                 (comp-mp-call2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
     ;; apply recieved args
     (defun comp-mp-call3 (stream x env args tail name global test clos)
-        (format (stream) "res=Fapply(")
+        (format stream "res=Fapply(")
         (comp stream (car x) env args tail name global test clos)
-        (format (stream) ",")
-        (comp-mp-call4 stream 0 (length x))
-        (format (stream) ",0);"))
+        (format stream ",")
+        (comp-mp-call4 stream 0 (length (cdr x)))
+        (format stream ",0);"))
     
     ;; recieve args from pipe
     (defun comp-mp-call4 (stream i n)
         (cond ((= i n) (format stream "NIL"))
               (t (format stream "Fcons(Fstr_to_sexp(Fread_from_pipe(~A))," i)
-                 (comp-mp-call4 stream (+ i 1 n))
+                 (comp-mp-call4 stream (+ i 1) n)
                  (format stream ")"))))
 
 

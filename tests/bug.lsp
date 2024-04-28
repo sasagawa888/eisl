@@ -9,6 +9,11 @@
 (defun bar (x y)
     (mp-exec (+ x y) (- x y)))
 
+(defun boo (x y)
+    (mp-let ((a (+ x y))
+             (b (- x y)))
+        (+ a b)))
+
 (defun tarai* (x y z)
     (if (<= x y)
         y

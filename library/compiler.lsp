@@ -2227,7 +2227,7 @@ defgeneric compile
     (defun comp-mp-let (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "mp-let: not list" (elt x 1)))
         (format stream "({int res;")
-        (comp-mp-let1 stream (elt x 1) env args tail name global test clos)
+        (comp-mp-let1 0 stream (elt x 1) env args tail name global test clos)
         (comp-mp-let3 stream (elt x 1) env args tail name global test clos)
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null (cdr body1))
@@ -2272,20 +2272,19 @@ defgeneric compile
               (t (format stream "Fcons(")
                  (comp stream (car x) env args tail name global test clos)
                  (format stream ",")
-                 (comp-mp-exec2 stream (cdr x) env args tail name global test clos)
+                 (comp-mp-let2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
     ;; recieved args
     (defun comp-mp-let3 (stream x env args tail name global test clos)
-        (comp-mp-let4 stream x 0 (length (cdr x))))
+        (comp-mp-let4 stream x 0 (length x)))
 
     
     ;; recieve args from pipe
     (defun comp-mp-let4 (stream x i n)
         (cond ((= i n) nil)
-              (t (format stream (car (car x)))
-                 (format stream "=Fstr_to_sexp(Fread_from_pipe(~A));" i)
-                 (comp-mp-let4 stream x (+ i 1) n))))
+              (t (format stream "int ~A=Fstr_to_sexp(Fread_from_pipe(~A));" (car (car x)) i)
+                 (comp-mp-let4 stream (cdr x) (+ i 1) n))))
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

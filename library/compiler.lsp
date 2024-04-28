@@ -615,6 +615,8 @@ defgeneric compile
                (comp-mp-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mp-exec))
                (comp-mp-exec stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'mp-let))
+               (comp-mp-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2222,6 +2224,68 @@ defgeneric compile
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe(~A));" i)
                  (comp-mp-exec4 stream (+ i 1) n))))
 
+    (defun comp-mp-let (stream x env args tail name global test clos)
+        (unless (listp (elt x 1)) (error* "mp-let: not list" (elt x 1)))
+        (format stream "({int res;")
+        (comp-mp-let1 stream (elt x 1) env args tail name global test clos)
+        (comp-mp-let3 stream (elt x 1) env args tail name global test clos)
+        (for ((body1 (cdr (cdr x)) (cdr body1)))
+             ((null (cdr body1))
+              (if (and (not (tailcallp (car body1) tail name))
+                      (not (not-need-res-p (car body1))))
+                 (format stream "res = "))
+              (comp stream
+                   (car body1)
+                   (append (mapcar #'car (elt x 1)) env)
+                   args
+                   tail
+                   name
+                   global
+                   test
+                   clos)
+              (if (not (not-need-colon-p (car body1)))
+                 (format stream ";~%"))
+              (format stream "res;})~%") )
+             (comp stream
+                   (car body1)
+                   (append (mapcar #'car (elt x 1)) env)
+                   args
+                   tail
+                   name
+                   global
+                   test
+                   clos)
+             (if (not (not-need-colon-p (car body1)))
+                 (format stream ";~%"))))
+
+    ;; write to pipe
+    (defun comp-mp-let1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fwrite_to_pipe(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (elt (car x) 1)))
+                 (comp-mp-let2 stream (cdr (elt (car x) 1)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-mp-let1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-mp-let2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-mp-exec2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+    ;; recieved args
+    (defun comp-mp-let3 (stream x env args tail name global test clos)
+        (comp-mp-let4 stream x 0 (length (cdr x))))
+
+    
+    ;; recieve args from pipe
+    (defun comp-mp-let4 (stream x i n)
+        (cond ((= i n) nil)
+              (t (format stream (car (car x)))
+                 (format stream "=Fstr_to_sexp(Fread_from_pipe(~A));" i)
+                 (comp-mp-let4 stream x (+ i 1) n))))
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

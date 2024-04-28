@@ -2163,19 +2163,28 @@ defgeneric compile
                  (comp-mp-call1 stream (cdr x) env args tail name global test clos))))
                  
     ;; eval args
-    (defun comp-mp-call2 (stream x env args tail name global test clos))
+    (defun comp-mp-call2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-mp-call2 (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
 
     ;; apply recieved args
     (defun comp-mp-call3 (stream x env args tail name global test clos)
-        (format (stream) "Fapply(Feval(Fmake_sym(\"~A\")),"
-        (comp-mp-call4 stream 0 (length x)))
-        (format (stream) ");"))
+        (format (stream) "res=Fapply(")
+        (comp stream (car x) env args tail name global test clos)
+        (format (stream) ",")
+        (comp-mp-call4 stream 0 (length x))
+        (format (stream) ",0);"))
     
     ;; recieve args from pipe
     (defun comp-mp-call4 (stream i n)
         (cond ((= i n) (format stream "NIL"))
               (t (format stream "Fcons(Fstr_to_sexp(Fread_from_pipe(~A))," i)
-                 (comp-mp-call4 stream (+ i 1 n)))))
+                 (comp-mp-call4 stream (+ i 1 n))
+                 (format stream ")"))))
 
 
     (defun not-need-res-p (x)

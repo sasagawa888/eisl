@@ -337,6 +337,11 @@ static inline int Fstr_to_sexp(int x)
     return f1[STR_TO_SEXP_IDX] (x);
 }
 
+static inline int Fread_from_pipe(int x)
+{
+    return f1[READ_FROM_PIPE_IDX] (x);
+}
+
 
 static inline int Fcons(int x, int y)
 {

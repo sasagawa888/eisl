@@ -125,6 +125,7 @@ void dynamic_link(int x)
     init_f1(GET_PARA_OUTPUT_IDX, get_para_output);
     init_f1(SEXP_TO_STR_IDX, sexp_to_str);
     init_f1(STR_TO_SEXP_IDX, str_to_sexp);
+    init_f1(READ_FROM_PIPE_IDX, read_from_pipe);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile

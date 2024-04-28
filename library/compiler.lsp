@@ -606,11 +606,11 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'let*))
                (comp-let* stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-let))
-               (comp-plet stream x env args tail name global test clos))
+               (comp-mt-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-call))
-               (comp-pcall stream x env args tail name global test clos))
+               (comp-mt-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-exec))
-               (comp-pexec stream x env args tail name global test clos))
+               (comp-mt-exec stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -630,7 +630,7 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'progn))
                (comp-progn stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-lock))
-               (comp-plock stream x env args tail name global test clos))
+               (comp-mt-lock stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'for))
                (comp-for stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'while))
@@ -2038,13 +2038,13 @@ defgeneric compile
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
 
-    (defun comp-plet (stream x env args tail name global test clos)
+    (defun comp-mt-let (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")
-        (let ((env1 (comp-plet1 stream x env args tail name global test clos)))
+        (let ((env1 (comp-mt-let1 stream x env args tail name global test clos)))
             (comp-progn1 stream (cdr (cdr x)) (append env1 env) args tail name global test clos))
         (format stream "res;})"))
         
-    (defun comp-plet1 (stream x env args tail name global test clos)
+    (defun comp-mt-let1 (stream x env args tail name global test clos)
         ;; eval_para
         (for ((arg1 (elt x 1) (cdr arg1))
               (num 0 (+ num 1)))
@@ -2062,17 +2062,17 @@ defgeneric compile
              (format stream "int ~A = Fget_para_output(num[~D]);~%" (elt (elt arg1 0) 0) num)) 
         (mapcar (lambda (y) (car y)) (elt x 1))) 
 
-    (defun comp-pcall (stream x env args tail name global test clos)
+    (defun comp-mt-call (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")
         ;; if not main thread, call apply sequentialy and return.
         (format stream "if(th != 0){res = ")
         (comp stream (cdr x) env args nil name global test clos)
         (format stream ";return(res);};~%")
-        (comp-pcall1 stream x env args tail name global test clos)
+        (comp-mt-call1 stream x env args tail name global test clos)
         (format stream "res;})"))
     
 
-    (defun comp-pcall1 (stream x env args tail name global test clos)
+    (defun comp-mt-call1 (stream x env args tail name global test clos)
         ;; eval_para
         (for ((arg1 (cdr (cdr x)) (cdr arg1))
               (num 0 (+ num 1)))
@@ -2101,17 +2101,17 @@ defgeneric compile
                   (append argument env) args nil name global test clos)
             (format stream ";~%")))
 
-    (defun comp-pexec (stream x env args tail name global test clos)
+    (defun comp-mt-exec (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")
         ;; if not main thread, progn sequentialy and return.
         (format stream "if(th != 0){res = ")
         (comp-progn1 stream (cdr x) env args nil name global test clos)
         (format stream ";return(res);};~%")
-        (comp-exec1 stream x env args tail name global test clos)
+        (comp-mt-exec1 stream x env args tail name global test clos)
         (format stream "res;})"))
     
 
-    (defun comp-exec1 (stream x env args tail name global test clos)
+    (defun comp-mt-exec1 (stream x env args tail name global test clos)
         ;; eval_para
         (for ((arg1 (cdr x) (cdr arg1))
               (num 0 (+ num 1)))
@@ -2575,14 +2575,14 @@ defgeneric compile
                      (format stream ";~%"))
                  (comp-progn1 stream (cdr x) env args tail name global test clos))))
 
-    (defun comp-plock (stream x env args tail name global test clos)
+    (defun comp-mt-lock (stream x env args tail name global test clos)
         (format stream "({int res;~%")
         (format stream "pthread_mutex_lock(&plock_mutex);")
         (comp-plock1 stream (cdr x) env args tail name global test clos)
         (format stream "pthread_mutex_unlock(&plock_mutex);")
         (format stream "res;})"))
 
-    (defun comp-plock1 (stream x env args tail name global test clos)
+    (defun comp-mt-lock1 (stream x env args tail name global test clos)
         (cond ((null x) t)
               ((null (cdr x))
                (if (and (not (not-need-res-p (car x)))
@@ -2594,7 +2594,7 @@ defgeneric compile
               (t (comp stream (car x) env args nil name global test clos)
                  (if (not (not-need-colon-p (car x)))
                      (format stream ";~%"))
-                 (comp-plock1 stream (cdr x) env args tail name global test clos))))
+                 (comp-mt-lock1 stream (cdr x) env args tail name global test clos))))
 
 
 

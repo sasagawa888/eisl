@@ -327,6 +327,22 @@ static inline int Fget_para_output(int x)
     return f1[GET_PARA_OUTPUT_IDX] (x);
 }
 
+static inline int Feval_args(int x)
+{
+    return f1[EVAL_ARGS_IDX] (x);
+}
+
+static inline int Fsexp_to_str(int x)
+{
+    return f1[SEXP_TO_STR_IDX] (x);
+}
+
+static inline int Fstr_to_sexp(int x)
+{
+    return f1[STR_TO_SEXP_IDX] (x);
+}
+
+
 static inline int Fcons(int x, int y)
 {
     return f2[CONS_IDX] (x, y);
@@ -499,6 +515,12 @@ static inline int FILOSerror(int x, int y)
 {
     return f2[ILOSERR_IDX] (x, y);
 }
+
+static inline int Fwrite_to_pipe(int x, int y)
+{
+    return f2[WRITE_TO_PIPE_IDX] (x, y);
+}
+
 
 
 static inline int Fmakestr(const char *x)

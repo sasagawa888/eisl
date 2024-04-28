@@ -805,6 +805,7 @@ int eval(int addr, int th);
 int evlis(int addr, int th);
 int exact_to_inexact(int x);
 int eval_para(int arg);
+int eval_args(int x);
 int expt(int x, int y);
 int expt_token(char buf[]);
 int f_abs(int arglist, int th);

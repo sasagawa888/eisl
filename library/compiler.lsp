@@ -2157,9 +2157,9 @@ defgeneric compile
     ;; write to pipe
     (defun comp-mp-call1 (i stream x env args tail name global test clos)
         (cond ((null x) nil)
-              (t (format stream "Fwrite_to_pipe(Fsexp_to_str(Fcons(Fmakesym(\"~A\")," (car (car x)))
+              (t (format stream "Fwrite_to_pipe(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
                  (comp-mp-call2 stream (cdr (car x)) env args tail name global test clos)
-                 (format stream ")),~A);~%" i)
+                 (format stream ")));~%")
                  (comp-mp-call1 (+ i 1) stream (cdr x) env args tail name global test clos))))
                  
     ;; eval args
@@ -2173,7 +2173,7 @@ defgeneric compile
 
     ;; apply recieved args
     (defun comp-mp-call3 (stream x env args tail name global test clos)
-        (format stream "res=Fapply(")
+        (format stream "res=Fpapply(")
         (comp stream (car x) env args tail name global test clos)
         (format stream ",")
         (comp-mp-call4 stream 0 (length (cdr x)))

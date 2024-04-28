@@ -6,6 +6,9 @@
 (defun foo (x y)
     (mp-call #'+ (- x y) (+ x y)))
 
+(defun bar (x y)
+    (mp-exec (+ x y) (- x y)))
+
 (defun tarai* (x y z)
     (if (<= x y)
         y

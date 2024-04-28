@@ -2218,7 +2218,7 @@ defgeneric compile
     
     ;; recieve args from pipe
     (defun comp-mp-exec4 (stream i n)
-        (cond ((= i n) (format stream "NIL"))
+        (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe(~A));" i)
                  (comp-mp-exec4 stream (+ i 1) n))))
 

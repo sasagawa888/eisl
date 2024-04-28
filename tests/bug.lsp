@@ -18,7 +18,7 @@
                (tarai (- z 1) x y))))
 
 
-
+#|
 (defun fib* (n)
     (mp-call #'+ (fib (- n 1))
                  (fib (- n 2))))
@@ -28,7 +28,7 @@
     (cond ((= n 1) 1)
           ((= n 2) 1)
           (t (+ (fib (- n 1)) (fib (- n 2)))) ))
-
+|#
 ;(mp-close)
 
 

@@ -327,11 +327,6 @@ static inline int Fget_para_output(int x)
     return f1[GET_PARA_OUTPUT_IDX] (x);
 }
 
-static inline int Feval_args(int x)
-{
-    return f1[EVAL_ARGS_IDX] (x);
-}
-
 static inline int Fsexp_to_str(int x)
 {
     return f1[SEXP_TO_STR_IDX] (x);

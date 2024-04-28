@@ -123,7 +123,6 @@ void dynamic_link(int x)
     init_f1(PSHELTERPOP_IDX, shelter_pop);
     init_f1(EVAL_PARA_IDX, eval_para);
     init_f1(GET_PARA_OUTPUT_IDX, get_para_output);
-    init_f1(EVAL_ARGS_IDX, eval_args);
     init_f1(SEXP_TO_STR_IDX, sexp_to_str);
     init_f1(STR_TO_SEXP_IDX, str_to_sexp);
 

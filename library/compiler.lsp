@@ -611,6 +611,8 @@ defgeneric compile
                (comp-mt-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-exec))
                (comp-mt-exec stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'mp-call))
+               (comp-mp-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2145,6 +2147,36 @@ defgeneric compile
                (format stream "),")
                (comp-argument stream (cdr x) (+ argnum 1) fun env args tail name global test clos)
                (format stream ")"))))
+    
+    (defun comp-mp-call (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (comp-mp-call1 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-call2 stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "res;})"))
+
+    ;; write to pipe
+    (defun comp-mp-call1 (stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fwrite_to_pipe(Fsexp_to_str(Fcons(Fmake_sym(\"~A\")," (car (car x)))
+                 (comp-mp-call2 stream x env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-mp-call1 stream (cdr x) env args tail name global test clos))))
+                 
+    ;; eval args
+    (defun comp-mp-call2 (stream x env args tail name global test clos))
+
+    ;; apply recieved args
+    (defun comp-mp-call3 (stream x env args tail name global test clos)
+        (format (stream) "Fapply(Feval(Fmake_sym(\"~A\")),"
+        (comp-mp-call4 stream 0 (length x)))
+        (format (stream) ");"))
+    
+    ;; recieve args from pipe
+    (defun comp-mp-call4 (stream i n)
+        (cond ((= i n) (format stream "NIL"))
+              (t (format stream "Fcons(Fstr_to_sexp(Fread_from_pipe(~A))," i)
+                 (comp-mp-call4 stream (+ i 1 n)))))
+
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

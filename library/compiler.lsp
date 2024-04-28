@@ -613,6 +613,8 @@ defgeneric compile
                (comp-mt-exec stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mp-call))
                (comp-mp-call stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'mp-exec))
+               (comp-mp-exec stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2185,6 +2187,40 @@ defgeneric compile
               (t (format stream "Fcons(Fstr_to_sexp(Fread_from_pipe(~A))," i)
                  (comp-mp-call4 stream (+ i 1) n)
                  (format stream ")"))))
+
+    (defun comp-mp-exec (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (comp-mp-exec1 0 stream (cdr x) env args tail name global test clos)
+        (comp-mp-exec3 stream (cdr x) env args tail name global test clos)
+        (format stream "res;})"))
+
+    ;; write to pipe
+    (defun comp-mp-exec1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fwrite_to_pipe(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
+                 (comp-mp-exec2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-mp-exec1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-mp-exec2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-mp-exec2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+
+    ;; recieved args
+    (defun comp-mp-exec3 (stream x env args tail name global test clos)
+        (comp-mp-exec4 stream 0 (length (cdr x))))
+    
+    ;; recieve args from pipe
+    (defun comp-mp-exec4 (stream i n)
+        (cond ((= i n) (format stream "NIL"))
+              (t (format stream "res=Fstr_to_sexp(Fread_from_pipe(~A));" i)
+                 (comp-mp-exec4 stream (+ i 1) n))))
 
 
     (defun not-need-res-p (x)

@@ -9,6 +9,8 @@
 
 (mp-exec arg1 ... argn)
 
+(mp-let ((sym1 (exp1)) ... (symn (expn))) body)
+
 (mp-close)
 
 ```

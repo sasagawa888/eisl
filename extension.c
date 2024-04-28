@@ -72,6 +72,7 @@ void init_exsubr(void)
     def_subr("MP-CLOSE", f_mp_close);
     def_fsubr("MP-CALL", f_mp_call);
     def_fsubr("MP-EXEC", f_mp_exec);
+    def_fsubr("MP-LET", f_mp_let);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1427,10 +1428,11 @@ int f_mp_exec(int arglist, int th)
     }
 
     i = 0;
-    while(!nullp(arglist)){
-        exp = eval_args(car(arglist));
+    temp = arglist;
+    while(!nullp(temp)){
+        exp = eval_args(car(temp));
         write_to_pipe(i,sexp_to_str(exp));
-        arglist = cdr(arglist);
+        temp = cdr(temp);
         i++;
     }
 
@@ -1438,9 +1440,76 @@ int f_mp_exec(int arglist, int th)
         res = str_to_sexp(read_from_pipe(i));
     }
 
+    
+
     return(res);
 
 }
+
+int f_mp_let(int arglist, int th)
+{
+    int arg1, arg2, temp, exp, i, res;
+
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    if (length(arglist) == 0)
+	error(WRONG_ARGS, "mp-let", arglist, th);
+    if (length(arg1) > process_pt)
+	error(WRONG_ARGS, "mp-let", arg1, th);
+    if (!listp(arg1))
+	error(IMPROPER_ARGS, "mp-let", arg1, th);
+    temp = arg1;
+    while (!nullp(temp)) {
+	int temparg1;
+
+	temparg1 = car(car(temp));
+	if (improper_list_p(car(temp)))
+	    error(IMPROPER_ARGS, "mp-let", car(temp), th);
+	if (length(car(temp)) != 2)
+	    error(IMPROPER_ARGS, "mp-let", car(temp), th);
+	if (!symbolp(temparg1))
+	    error(NOT_SYM, "mp-let", temparg1, th);
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    error(WRONG_ARGS, "mt-let", arg1, th);
+	if (STRING_REF(temparg1, 0) == ':'
+	    || STRING_REF(temparg1, 0) == '&')
+	    error(WRONG_ARGS, "mp-let", arg1, th);
+	if (!listp(cadr(temp)))
+	    error(WRONG_ARGS, "mp-let", arg1, th);
+	temp = cdr(temp);
+    }
+
+    temp = arg1;
+    i = 0;
+    while (!nullp(temp)) {
+    exp = eval_args(cadr(car(temp)));
+	write_to_pipe(i,sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
+    }
+    
+    temp = arg1;
+    i = 0;
+    while(!nullp(temp)){
+        add_lex_env(car(car(temp)), str_to_sexp(read_from_pipe(i)), th);
+        temp = cdr(temp);
+        i++;
+    }
+    
+    res = NIL;
+    while (arg2 != NIL) {
+	shelter_push(arg2, 0);
+	res = eval(car(arg2), 0);
+	shelter_pop(0);
+	arg2 = cdr(arg2);
+    }
+    
+    return (res);
+}
+
 
 
 // close all process 

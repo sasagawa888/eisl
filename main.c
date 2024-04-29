@@ -326,7 +326,6 @@ int main(int argc, char *argv[])
     init_exsubr();
     init_syntax();
     init_generic();
-    init_thread();
     init_dp();
     init_pointer();
     signal(SIGINT, signal_handler_c);
@@ -413,7 +412,8 @@ int main(int argc, char *argv[])
     END_TRY;
 
     option_flag = false;
-
+	init_thread();
+	
     /* REPL */
     volatile bool quit = false;
     do {

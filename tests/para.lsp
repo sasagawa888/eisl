@@ -3,14 +3,14 @@
 ;(mp-create 3)
 
 (defun foo (x y)
-    (mp-call #'+ (- x y) (+ x y)))
+    (mp-call #'+ (fib x) (fib y)))
 
 (defun bar (x y)
-    (mp-exec (+ x y) (- x y)))
+    (mp-exec (fib x) (fib y)))
 
 (defun boo (x y)
-    (mp-let ((a (+ x y))
-             (b (- x y)))
+    (mp-let ((a (fib x))
+             (b (fib y)))
         (+ a b)))
 
 (defun tarai* (x y z)

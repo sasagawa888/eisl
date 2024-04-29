@@ -1,10 +1,5 @@
 # Thread Parallel functions
 
-invoke with -t option.
-
-```
-eisl -t
-```
 
 # Spec
 

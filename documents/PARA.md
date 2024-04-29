@@ -4,15 +4,20 @@ Easy-ISLisp supports parallel processing with multiprocessing.
 # Spec
 
 ```
-(mp-create n) Launches n child Lisps.
+- (mp-create n) 
+Launches n child Lisps.
 
-(mp-call fun arg1 ... argn) Executes arg1 to argn in parallel in child Lisps, then executes function fun with the results and returns the result.
+- (mp-call fun arg1 ... argn) 
+Executes arg1 to argn in parallel in child Lisps, then executes function fun with the results and returns the result.
 
-(mp-exec arg1 ... argn) Executes arg1 to argn in parallel in child Lisps and returns the result of the last execution.
+- (mp-exec arg1 ... argn)
+Executes arg1 to argn in parallel in child Lisps and returns the result of the last execution.
 
-(mp-let ((sym1 (exp1)) ... (symn (expn))) body) Evaluates each exp in parallel in child Lisps, binds its value to sym, executes body, and returns the final result.
+- (mp-let ((sym1 (exp1)) ... (symn (expn))) body) 
+Evaluates each exp in parallel in child Lisps, binds its value to sym, executes body, and returns the final result.
 
-(mp-close) Terminates all child Lisps.
+- (mp-close) 
+Terminates all child Lisps.
 
 ```
 

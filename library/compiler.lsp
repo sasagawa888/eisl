@@ -2072,7 +2072,7 @@ defgeneric compile
         (format stream "({int num[PARASIZE];")
         ;; if not main thread, call apply sequentialy and return.
         (format stream "if(th != 0){res = ")
-        (comp stream (cdr x) env args nil name global test clos)
+        (comp stream (cons (elt (car (cdr x)) 1) (cdr (cdr x))) env args nil name global test clos)
         (format stream ";return(res);};~%")
         (comp-mt-call1 stream x env args tail name global test clos)
         (format stream "res;})"))
@@ -2103,7 +2103,7 @@ defgeneric compile
         ;; res = comp((fun temp0 temp1 ... tempn));
         (let ((argument '(temp0 temp1 temp2 temp3 temp4 temp5 temp6 temp7)))
             (format stream "res = ")
-            (comp stream (cons (elt x 1) (take (length (cdr (cdr x))) argument))
+            (comp stream (cons (elt (elt x 1) 1) (take (length (cdr (cdr x))) argument))
                   (append argument env) args nil name global test clos)
             (format stream ";~%")))
 

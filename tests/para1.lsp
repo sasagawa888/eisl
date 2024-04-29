@@ -6,10 +6,10 @@
           ((= n 1) 1)
           (t (mt-call #'+ (pfib (- n 1)) (pfib (- n 2))))))
 
-#|
+
 (defun fib1 (n)
     (mt-let ((a (fib (- n 1)))
-            (b (fib (- n 2))))
+             (b (fib (- n 2))))
         (+ a b)))
 
 (defun fib (n)
@@ -80,4 +80,4 @@
 (defun seq-fib30 (n)
     (repeat-fib30 n))
 
-|#
+

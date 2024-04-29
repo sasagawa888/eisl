@@ -33,7 +33,7 @@ pthread_mutex_unlock()
 ```
 (defun pfib (n)
     (mt-let ((a (fib (- n 1)))
-           (b (fib (- n 2))))
+             (b (fib (- n 2))))
         (+ a b)))
 
 (defun fib (n)
@@ -46,9 +46,9 @@ pthread_mutex_unlock()
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (mt-call ptarai (ptarai (- x 1) y z)
-                        (ptarai (- y 1) z x)
-                        (ptarai (- z 1) x y))))
+        (mt-call #'ptarai (ptarai (- x 1) y z)
+                          (ptarai (- y 1) z x)
+                          (ptarai (- z 1) x y))))
 
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
@@ -75,10 +75,10 @@ pthread_mutex_unlock()
 # Thread pooling
 source code syntax.c line 2546
 
-mp-let... f_plet
-mp-call.. f_pcall
-mp-exec.. f_pexec
-mp-lock.. f_plock
+mt-let... f_mt_let
+mt-call.. f_mt_call
+mt-exec.. f_mt_exec
+mp-lock.. f_mt_lock
 
 queue[] = 1,2,3,... worker_count
 

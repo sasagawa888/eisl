@@ -2747,8 +2747,8 @@ int f_mt_call(int arglist, int th)
 	error(WRONG_ARGS, "mt-call", arglist, th);
     if (length(arg2) > worker_count)
 	error(WRONG_ARGS, "mt-call", arg1, th);
-    if (!symbolp(arg1))
-	error(IMPROPER_ARGS, "mt-call", arg1, th);
+    //if (!symbolp(arg1))
+	//error(IMPROPER_ARGS, "mt-call", arg1, th);
 
     temp = arg2;
     while (!nullp(temp)) {
@@ -2759,7 +2759,7 @@ int f_mt_call(int arglist, int th)
 
     /* while executing pcall sub thread */
     if (th != 0) {
-	return (apply(car(arg1), evlis(arg2, th), th));
+	return (apply(eval(arg1,th), evlis(arg2, th), th));
     }
 
     check_gbc();
@@ -2788,7 +2788,7 @@ int f_mt_call(int arglist, int th)
 	temp = cons(para_output[num[i]], temp);
 	i--;
     }
-    return (apply(car(arg1), temp, th));
+    return (apply(eval(arg1,th), temp, th));
 }
 
 

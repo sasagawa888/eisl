@@ -5,11 +5,11 @@
     (the <fixnum> n) 
     (cond ((= n 0) 0)
           ((= n 1) 1)
-          (t (mt-call + (pfib (- n 1)) (pfib (- n 2))))))
+          (t (mt-call #'+ (pfib (- n 1)) (pfib (- n 2))))))
 
 (defun fib1 (n)
     (mt-let ((a (fib (- n 1)))
-           (b (fib (- n 2))))
+            (b (fib (- n 2))))
         (+ a b)))
 
 (defun fib (n)
@@ -22,9 +22,9 @@
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (mt-call ptarai (ptarai (- x 1) y z)
-                        (ptarai (- y 1) z x)
-                        (ptarai (- z 1) x y))))
+        (mt-call #'ptarai (ptarai (- x 1) y z)
+                          (ptarai (- y 1) z x)
+                          (ptarai (- z 1) x y))))
 
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)

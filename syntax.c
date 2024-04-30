@@ -2757,11 +2757,6 @@ int f_mt_call(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    /* while executing pcall sub thread */
-    if (th != 0) {
-	return (apply(eval(arg1,th), evlis(arg2, th), th));
-    }
-
     check_gbc();
 
     temp = arg2;

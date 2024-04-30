@@ -283,7 +283,6 @@ static void usage(void)
 	 "-l filename  -- EISL starts after reading the file.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
-	 "-t           -- EISL runs as multi thread mode.\n"
 	 "-v           -- display version number.");
 }
 
@@ -349,7 +348,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:cfs:rhvpt")) != -1) {
+	while ((ch = getopt(argc, argv, "l:cfs:rhvp")) != -1) {
 	    char *str;
 
 	    switch (ch) {

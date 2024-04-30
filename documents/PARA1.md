@@ -41,9 +41,9 @@ pthread_mutex_unlock()
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
         y
-        (mt-call #'ptarai (ptarai (- x 1) y z)
-                          (ptarai (- y 1) z x)
-                          (ptarai (- z 1) x y))))
+        (mt-call #'ptarai (tarai (- x 1) y z)
+                          (tarai (- y 1) z x)
+                          (tarai (- z 1) x y))))
 
 (defun tarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)

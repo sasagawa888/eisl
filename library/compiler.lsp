@@ -2070,10 +2070,6 @@ defgeneric compile
 
     (defun comp-mt-call (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")
-        ;; if not main thread, call apply sequentialy and return.
-        ;;(format stream "if(th != 0){res = ")
-        ;;(comp stream (cons (elt (car (cdr x)) 1) (cdr (cdr x))) env args nil name global test clos)
-        ;;(format stream ";return(res);};~%")
         (comp-mt-call1 stream x env args tail name global test clos)
         (format stream "res;})"))
     
@@ -2109,10 +2105,6 @@ defgeneric compile
 
     (defun comp-mt-exec (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")
-        ;; if not main thread, progn sequentialy and return.
-        (format stream "if(th != 0){res = ")
-        (comp-progn1 stream (cdr x) env args nil name global test clos)
-        (format stream ";return(res);};~%")
         (comp-mt-exec1 stream x env args tail name global test clos)
         (format stream "res;})"))
     

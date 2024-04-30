@@ -2803,11 +2803,7 @@ int f_mt_exec(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    /* while executing pprogn sub thread */
-    if (th != 0) {
-	return (f_progn(arglist, th));
-    }
-
+    
     check_gbc();
 
     temp = arglist;

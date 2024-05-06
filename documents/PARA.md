@@ -113,3 +113,18 @@ T
 > 
 
 ```
+
+# Extended format function
+Please enclose with ~! when outputting via the format function to standard output from Child Lisp.
+
+```
+(defun bar (x y)
+    (mp-exec (fib x) (uoo y)))
+
+(defun uoo (x) 
+    (format (standard-output) "~! test1 ~A ~%~!" x)
+    (sleep 1)
+    (format (standard-output) "~! test2 ~A ~%~!" x)
+    (sleep 1)
+    t)
+```

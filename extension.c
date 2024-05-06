@@ -1334,27 +1334,51 @@ void write_to_pipe(int n,int x)
 int read_from_pipe(int n)
 {
     char buffer[256];
-    int i;
+    int i,j;
 
     // set nonblock mode
     int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
     fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
 
     int bytes_read;
-    read:
+    reread:
     // wait until get result
     while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
     buffer[bytes_read] = '\0';
 
-    if (buffer[0] == '\x1b'){
+    
+    if (buffer[0] == '\x02'){
         i = 1;
-        while(buffer[i] != 'x1b'){
-            putc(stdout,buffer[i]);
+        rewrite:
+        while(buffer[i] != '\x02' && i < 256){
+            putc(buffer[i],stdout);
             i++;
         }
-        goto read;        
+        i++;
+        if (buffer[i] == '\x02'){
+            i++;
+            goto rewrite;
+        }
+        else if (buffer[i] == '\0'){
+            /* still not recieve result */
+            for(i=0;i<256;i++){
+                buffer[i] = 0;
+            }
+            goto reread;
+        }
+        else {
+            /* already recieved result */
+            j = 0;
+            while(buffer[i] != '\0'){
+                buffer[j] = buffer[i];
+                i++;
+                j++;
+            }
+            buffer[j] = '\0';
+        } 
+               
     }
-
+    
     return(make_str(buffer));
 }
 

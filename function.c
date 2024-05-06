@@ -3505,7 +3505,8 @@ int f_format(int arglist, int th)
 		start_flag = false;
 		charcnt++;
 	    } else if (c == 'E') {
-        output_char(output_stream, '\x1b');
+        /* extension for parallel lisp. To send message to parent from child sandwich with STX code*/
+        output_char(output_stream, '\x02');
         }
 
 	    i++;

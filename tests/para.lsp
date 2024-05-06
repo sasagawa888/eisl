@@ -6,7 +6,11 @@
     (mp-call #'+ (fib x) (fib y)))
 
 (defun bar (x y)
-    (mp-exec (fib x) (fib y)))
+    (mp-exec (fib x) (uoo y)))
+
+(defun uoo (x) 
+    (format (standard-output) "~E asdf ~A ~%~E" x)
+    (format (standard-output) "~E 1234 ~A ~%~E" x))
 
 (defun boo (x y)
     (mp-let ((a (fib x))

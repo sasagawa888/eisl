@@ -1,6 +1,9 @@
 # Bit
 bitwise library 
 
+# Usage
+(import "bit")
+
 # functions
 ### logand
 logand returns the bitwise AND of the two arguments.

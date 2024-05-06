@@ -2,6 +2,8 @@
 
 ;(mp-create 3)
 
+(import "unistd")
+
 (defun foo (x y)
     (mp-call #'+ (fib x) (fib y)))
 
@@ -9,8 +11,11 @@
     (mp-exec (fib x) (uoo y)))
 
 (defun uoo (x) 
-    (format (standard-output) "~E asdf ~A ~%~E" x)
-    (format (standard-output) "~E 1234 ~A ~%~E" x))
+    (format (standard-output) "~! test1 ~A ~%~!" x)
+    (sleep 1)
+    (format (standard-output) "~! test2 ~A ~%~!" x)
+    (sleep 1)
+    t)
 
 (defun boo (x y)
     (mp-let ((a (fib x))

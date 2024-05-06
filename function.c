@@ -3504,7 +3504,7 @@ int f_format(int arglist, int th)
 		output_char(output_stream, '~');
 		start_flag = false;
 		charcnt++;
-	    } else if (c == 'E') {
+	    } else if (c == '!') {
         /* extension for parallel lisp. To send message to parent from child sandwich with STX code*/
         output_char(output_stream, '\x02');
         }

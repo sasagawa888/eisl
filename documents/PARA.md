@@ -119,7 +119,7 @@ Please enclose with ~! when outputting via the format function to standard outpu
 
 ```
 (defun bar (x y)
-    (mp-exec (fib x) (uoo y)))
+    (mp-exec (uoo x) (uoo y)))
 
 (defun uoo (x) 
     (format (standard-output) "~! test1 ~A ~%~!" x)

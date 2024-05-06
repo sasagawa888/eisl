@@ -8,7 +8,7 @@
     (mp-call #'+ (fib x) (fib y)))
 
 (defun bar (x y)
-    (mp-exec (fib x) (uoo y)))
+    (mp-exec (uoo x) (uoo y)))
 
 (defun uoo (x) 
     (format (standard-output) "~! test1 ~A ~%~!" x)

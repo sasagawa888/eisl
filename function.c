@@ -3504,7 +3504,10 @@ int f_format(int arglist, int th)
 		output_char(output_stream, '~');
 		start_flag = false;
 		charcnt++;
-	    }
+	    } else if (c == 'E') {
+        output_char(output_stream, '\x1b');
+        }
+
 	    i++;
 	} else if (c == '\\' && str[i + 1] == '\\' && quote_flag == 0) {
 	    output_char(output_stream, c);

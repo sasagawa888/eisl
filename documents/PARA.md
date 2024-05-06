@@ -123,8 +123,12 @@ Please enclose with ~! when outputting via the format function to standard outpu
 
 (defun uoo (x) 
     (format (standard-output) "~! test1 ~A ~%~!" x)
+    (finish-output (standard-output))
     (sleep 1)
     (format (standard-output) "~! test2 ~A ~%~!" x)
+    (finish-output (standard-output))
     (sleep 1)
     t)
+
+
 ```

@@ -12,8 +12,10 @@
 
 (defun uoo (x) 
     (format (standard-output) "~! test1 ~A ~%~!" x)
+    (finish-output (standard-output))
     (sleep 1)
     (format (standard-output) "~! test2 ~A ~%~!" x)
+    (finish-output (standard-output))
     (sleep 1)
     t)
 

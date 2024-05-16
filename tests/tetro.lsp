@@ -2,21 +2,22 @@
 
 ;;; parts
 
-(defglobal a #2a((1 1)(1 1)))
+(defconstant row 5)
+(defconstant col 8)
 
 (defun succp (board)
     (block exit
-        (for ((i 0 5))
-             ((= i 5) t)
-             (for ((j 0 8))
-                  ((= j 8) t)
+        (for ((i 0 (+ i 1)))
+             ((= i row) t)
+             (for ((j 0 (+ j 1)))
+                  ((= j col) t)
                   (if (= (aref board i j) 0)
                       (return-from exit nil))))))
 
 (defun find-empty (board i)
     (block exit
         (for ((j 0 (+ j 1)))
-             ((= j 8) nil)
+             ((= j col) nil)
              (if (= (aref board i j) 0)
                  (return-from exit j)))))
 
@@ -27,6 +28,24 @@
           ;;
           (t (error "placep"))))
 
+(defun place-A0p (board i j)
+    (and (<= (+ j 4) col)
+         (= (aref board i (+ j 1)) 0)
+         (= (aref board i (+ j 2)) 0)
+         (= (aref board i (+ j 3)) 0)))
+
+(defun place-A1p (board i j)
+    (and (<= (+ i 4) row)
+         (= (aref board (+ i 1) j) 0)
+         (= (aref board (+ i 2) j) 0)
+         (= (aref board (+ i 3) j) 0)))
+         
+(defun place-B0p (board i j)
+    (and (<= (+ i 2) row)
+         (<= (+ j 2) col)
+         (= (aref board (+ i 1) j) 0)
+         (= (aref board i (+ j 1)) 0)
+         (= (aref board (+ i 1) (+ j 1) 0))))
 
                       
 #|         A0         A1
@@ -39,15 +58,15 @@
  B peace  [1,1]
           [1,1]
 
-          C0      C1     C2          C3
- C peace  [1]     [1,1]  [1,1,1]      [1]
-          [1]       [1]      [1]  [1,1,1]
+          C0      C1     C2          C3     C4        C5
+ C peace  [1]     [1,1]  [1,1,1]      [1]   [1]       [1,1,1]
+          [1]       [1]      [1]  [1,1,1]   [1,1,1]   [1]
           [1,1]     [1]
 
-          D0      D1
- D peace  [1]       [1,1]
-          [1,1]   [1,1]
-            [1]
+          D0      D1        D2      D3
+ D peace  [1]       [1,1]     [1]   [1,1]
+          [1,1]   [1,1]     [1,1]     [1,1]
+            [1]             [1]
 
           E0      E1      E2         E3
  E peace  [1,1,1] [1]       [1]        [1]
@@ -60,7 +79,7 @@
 (defun tetro (board)
     (if (succp board) t)
         (for ((r 0 (+ r 1)))
-             ((= r 5) nil)
+             ((= r row) nil)
              (cond ((placep 'A0 board) (tetro (puton 'A0 board)))
                    ((placep 'A1 board) (tetro (puton 'A1 board)))
                    ((placep 'B0 board) (tetro (puton 'B0 board)))
@@ -68,8 +87,12 @@
                    ((placep 'C1 board) (tetro (puton 'C1 board)))
                    ((placep 'C2 board) (tetro (puton 'C2 board)))
                    ((placep 'C3 board) (tetro (puton 'C3 board)))
+                   ((placep 'C4 board) (tetro (puton 'C4 board)))
+                   ((placep 'C5 board) (tetro (puton 'C5 board)))
                    ((placep 'D0 board) (tetro (puton 'D0 board)))
                    ((placep 'D1 board) (tetro (puton 'D1 board)))
+                   ((placep 'D2 board) (tetro (puton 'D2 board)))
+                   ((placep 'D3 board) (tetro (puton 'D3 board)))
                    ((placep 'E0 board) (tetro (puton 'E0 board)))
                    ((placep 'E1 board) (tetro (puton 'E1 board)))
                    ((placep 'E2 board) (tetro (puton 'E2 board)))

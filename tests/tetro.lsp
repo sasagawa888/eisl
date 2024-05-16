@@ -47,6 +47,19 @@
          (= (aref board i (+ j 1)) 0)
          (= (aref board (+ i 1) (+ j 1) 0))))
 
+
+(defun puton (peace board i j)
+    (cond ((eq peace 'A0) (puton-A0 board i j))
+          ((eq peace 'A1) (puton-A1 board i j))))
+
+
+
+(defun puton-A0 (board i j)
+    (set-aref 1 board i j)
+    (set-aref 1 board i (+ j 1))
+    (set-aref 1 board i (+ j 2))
+    (set-aref 1 board i (+ j 3))
+    board)
                       
 #|         A0         A1
  A peace   [1,1,1,1]  [1]
@@ -96,7 +109,8 @@
                    ((placep 'E0 board) (tetro (puton 'E0 board)))
                    ((placep 'E1 board) (tetro (puton 'E1 board)))
                    ((placep 'E2 board) (tetro (puton 'E2 board)))
-                   ((placep 'E3 board) (tetro (puton 'E3 board))))))
+                   ((placep 'E3 board) (tetro (puton 'E3 board)))
+                   (t nil))))
 #|
   if sunccp -> t
   row 0~7 find-empty

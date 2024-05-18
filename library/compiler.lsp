@@ -948,7 +948,7 @@ defgeneric compile
                   (type-gen-arg3 (length args) (argument-type name))))
            (cond ((has-tail-recur-p (macroexpand-all body) name)
                   (format-object code2 (conv-name name) nil)
-                  (format code2 "loop:~%")))
+                  (format code2 "loop:~% if(exit_flag == 1){exit_flag = 0; Fjump_to_repl();}")))
            (cond ((not optimize-enable) (gen-shelterpush code2 args) (gen-checkgc)))
            (for ((body1 body (cdr body1)))
                 ((null (cdr body1))

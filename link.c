@@ -87,6 +87,7 @@ void dynamic_link(int x)
     init_f0(GET_ERROR_FLAG_IDX, get_error_flag);
     init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
     init_f0(WAIT_PARA_IDX, wait_para);
+    init_f0(JUMP_TO_REPL_IDX, jump_to_repl);
 
     /* argument-1 type */
     init_f1(CAR_IDX, car);
@@ -453,4 +454,8 @@ char *get_name(int x)
 double get_flt(int x)
 {
     return (GET_FLT(x));
+}
+
+int jump_to_repl(){
+    RAISE(Restart_Repl);
 }

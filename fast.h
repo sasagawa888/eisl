@@ -112,6 +112,10 @@ static inline int Fwait_para(void)
     return f0[WAIT_PARA_IDX] ();
 }
 
+static inline int Fjump_to_repl(void)
+{
+    return f0[JUMP_TO_REPL_IDX] ();
+}
 
 
 static inline int Fpargpop(int x)

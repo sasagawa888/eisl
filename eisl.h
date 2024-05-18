@@ -1440,6 +1440,7 @@ int set_dynpt(int x);
 int set_catch_symbols(int x);
 char *get_name(int x);
 double get_flt(int x);
+int jump_to_repl();
 
 /* Edlis */
 void display_buffer(void);

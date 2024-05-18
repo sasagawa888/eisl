@@ -745,7 +745,7 @@ defgeneric compile
         (setq code7 (open-output-file (string-append fname "7" ext)))
         (format code0 "#include \"fast.h\"~%")
         (format code3 "void init_tfunctions(void){~%")
-        (format code4 "void init_declare(void){int th=0;~%"))
+        (format code4 "void init_declare(void){int th=0;~%signal(SIGINT, signal_handler_c);~%"))
 
     (defun declare-catch-block-buffer ()
         (format code4 "Fsetcatchsymbols(")

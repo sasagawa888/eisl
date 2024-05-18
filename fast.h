@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <ctype.h>
 #include <pthread.h>
+#include <signal.h>
 #include "ffi.h"
 
 pthread_mutex_t plock_mutex;
@@ -25,6 +26,14 @@ static fn5 f5[NUM_FN5S];
 static fn6 f6[NUM_FN6S];
 static fn7 f7[NUM_FN7S];
 static fn8 f8[NUM_FN8S];
+int exit_flag = 0;
+
+void signal_handler_c(int signo)
+{
+    exit_flag = 1;
+}
+
+
 void init0(int n, fn0 x)
 {
     f0[n] = x;

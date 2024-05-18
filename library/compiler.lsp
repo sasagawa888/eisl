@@ -1,4 +1,4 @@
-;;FAST compiler ver3.75
+;;FAST compiler ver3.93
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -9,7 +9,8 @@ code3 void init_tfunctions(void){
 (deftfunc)("XXX" ,(int)f_XXX);
 }
 code4 ex (defglobal abc 1)
-void declare(){Fset_cdr(makesym("abc"),makeint(1));
+void declare(){signal(SIGINT, signal_handler_c);
+               Fset_cdr(makesym("abc"),makeint(1));
                Fset_opt(makesym("abc"),GLOBAL)};
 init_deftfunc{
 deftfunc("XXX",f_xxx);
@@ -3925,6 +3926,7 @@ defgeneric compile
 
     (defun numeric-type-p (x)
         (or (subclassp x (class <number>))
+            (eq x (class <number>))
             (eq x (class <object>))))
 
     ;;let syntax

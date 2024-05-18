@@ -1234,6 +1234,7 @@ int f_read_exp(int arglist, int th)
 int f_mp_create(int arglist, int th)
 {
 	int arg1,n,i;
+    char str[10];
 
     arg1 = car(arglist);
     n = GET_INT(arg1);
@@ -1263,7 +1264,8 @@ int f_mp_create(int arglist, int th)
                 error(CANT_CREATE, "mp-create dup2 stdout", NIL, th);
             close(pipe_p2c[i][R]);
             close(pipe_c2p[i][W]);
-            execl("/usr/local/bin/eisl", "eisl", "-r", "-p",  NULL);
+            sprintf(str,"%d", i);
+            execl("/usr/local/bin/eisl", "eisl", "-r", "-p", str, NULL);
             exit(1);
 	
         } 

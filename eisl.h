@@ -598,6 +598,7 @@ extern int unwind_nest;
 extern int signal_condition_x;
 extern int signal_condition_y;
 
+
 /* editor */
 extern int ed_lparen_col;
 extern int ed_rparen_col;
@@ -636,6 +637,7 @@ extern int pipe_p2c[PROCSIZE][2];
 extern int pipe_c2p[PROCSIZE][2];
 extern pid_t pid[PROCSIZE];
 extern int process_pt;
+extern int process_num;
 
 
 // -------error code---

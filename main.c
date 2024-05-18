@@ -213,6 +213,7 @@ int error_handler1 = NIL;	/* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
 int unwind_nest;		/* unwind-protect nest level */
+int process_arg;        /* when -p option child process number*/
 
 /* concurrent GC*/
 pthread_t concurrent_thread;
@@ -240,6 +241,7 @@ int pipe_p2c[PROCSIZE][2];
 int pipe_c2p[PROCSIZE][2];
 pid_t pid[PROCSIZE];
 int process_pt = 0;
+int process_num;
 
 
 
@@ -348,7 +350,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:cfs:rhvp")) != -1) {
+	while ((ch = getopt(argc, argv, "l:s:p:cfrhv")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -385,6 +387,7 @@ int main(int argc, char *argv[])
 		break;
 		case 'p':
 		process_flag = true;
+		//process_num = strtol(optarg, NULL, 10);
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

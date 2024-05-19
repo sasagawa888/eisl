@@ -1533,13 +1533,7 @@ int f_mp_part(int arglist, int th)
         i++;
     }
 
-    
     usleep(2000);
-    /*
-    for(i=0;i<n;i++){
-        printf("%d ", child_signal[i]);
-    }
-    */
     
     for(i=0;i<n;i++){
         res = str_to_sexp(read_from_pipe_part(n));
@@ -1547,15 +1541,18 @@ int f_mp_part(int arglist, int th)
     }
     
     for(i=0;i<n;i++){
+        printf("%d ", child_signal[i]);
+    }
+    
+    for(i=0;i<n;i++){
         if(child_signal[i] == 0){
             kill(pid[i], SIGINT);
-            //usleep(100);
         }
     }
     
     
     for(i=0;i<n;i++){
-        if(child_signal[i] == 0){
+        if(child_signal[i] == 0 || child_signal[i] == 1){
             read_from_pipe(i);
         }
     }

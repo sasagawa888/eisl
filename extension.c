@@ -1388,7 +1388,7 @@ int read_from_pipe(int n)
 int read_from_pipe_part(int n)
 {
     char buffer[256];
-    int i;
+    int i,bytes_read;
 
     while(1){
         for(i=0;i<n;i++){
@@ -1401,7 +1401,6 @@ int read_from_pipe_part(int n)
     }
 
     exit:
-    int bytes_read;
     bytes_read = read(pipe_c2p[i][R], buffer, 256);
     buffer[bytes_read] = '\0';
 
@@ -1533,7 +1532,7 @@ int f_mp_part(int arglist, int th)
         i++;
     }
 
-    usleep(2000);
+    usleep(5000);
     
     for(i=0;i<n;i++){
         res = str_to_sexp(read_from_pipe_part(n));

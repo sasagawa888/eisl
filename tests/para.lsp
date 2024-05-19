@@ -1,7 +1,7 @@
 ;;multi-process
 
-;(mp-create 3)
-
+;(mp-create 5)
+;(primep* 1000003)
 (defun primep* (n)
     (if (= (mod n 2) 0)
         nil
@@ -18,7 +18,7 @@
           (t (coprimep n (+ s 2) e))))
 
 (defun primep (n)
-    (cond ((mod n 2) nil)
+    (cond ((= (mod n 2) 0) nil)
           (t (coprimep n 3 (sqrt n)))))
 
 

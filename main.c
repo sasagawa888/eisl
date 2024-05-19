@@ -439,9 +439,7 @@ int main(int argc, char *argv[])
 			fflush(stdout);
 			union sigval value;
             value.sival_int = (int)process_num; 
-			if(sigqueue(getppid(), SIGRTMIN, value) == -1){
-				perror("sigqueue");
-			};
+			sigqueue(getppid(), SIGRTMIN, value);
 		}
 	    if (redef_flag)
 		redef_generic();

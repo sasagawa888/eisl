@@ -1384,6 +1384,66 @@ int read_from_pipe(int n)
     return(make_str(buffer));
 }
 
+int read_from_pipe_part(void)
+{
+    char buffer[256];
+    int i,j,n;
+    sigset_t mask;
+    siginfo_t siginfo;
+
+
+    // set nonblock mode
+    int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
+    fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
+
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGRTMIN);
+    sigwaitinfo(&mask, &siginfo);
+    n = (int)siginfo.si_value.sival_int;
+
+    int bytes_read;
+    reread:
+    // wait until get result
+    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
+    buffer[bytes_read] = '\0';
+
+    
+    if (buffer[0] == '\x02'){
+        i = 1;
+        rewrite:
+        while(buffer[i] != '\x02' && i < 256){
+            putc(buffer[i],stdout);
+            i++;
+        }
+        i++;
+        if (buffer[i] == '\x02'){
+            i++;
+            goto rewrite;
+        }
+        else if (buffer[i] == '\0'){
+            /* still not recieve result */
+            for(i=0;i<256;i++){
+                buffer[i] = 0;
+            }
+            goto reread;
+        }
+        else {
+            /* already recieved result */
+            j = 0;
+            while(buffer[i] != '\0'){
+                buffer[j] = buffer[i];
+                i++;
+                j++;
+            }
+            buffer[j] = '\0';
+        } 
+               
+    }
+    
+    return(make_str(buffer));
+}
+
+
 int str_to_sexp(int x)
 {
     int stm,save,res;

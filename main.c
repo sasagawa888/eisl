@@ -243,6 +243,7 @@ pid_t pid[PROCSIZE];
 int process_pt = 0;
 int process_num;
 struct sigaction child_action;
+int child_signal[PROCSIZE];
 
 
 
@@ -394,7 +395,7 @@ int main(int argc, char *argv[])
 		break;
 		case 'p':
 		process_flag = true;
-		//process_num = strtol(optarg, NULL, 10);
+		process_num = strtol(optarg, NULL, 10);
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

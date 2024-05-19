@@ -1397,6 +1397,7 @@ int read_from_pipe_part(void)
     sigaddset(&mask, SIGRTMIN);
     sigwaitinfo(&mask, &siginfo);
     n = (int)siginfo.si_value.sival_int;
+    child_signal[n] = 1;
 
     int bytes_read;
     bytes_read = read(pipe_c2p[n][R], buffer, 256);
@@ -1554,10 +1555,21 @@ int f_mp_part(int arglist, int th)
     }
 
     for(i=0;i<n;i++){
+       child_signal[i] = 0; 
+    }
+
+    /*
+    for(i=0;i<n;i++){
         res = str_to_sexp(read_from_pipe_part());
         if(res == NIL) break;
     }
 
+    for(i=0;i<n;i++){
+        if(child_signal[i] == 0){
+            kill(pid[i], SIGINT);
+        }
+    }
+    */
 
     return(res);
 

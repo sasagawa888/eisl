@@ -545,7 +545,11 @@ void signal_handler_c(int signo __unused)
 }
 
 void signal_handler_child(int sig, siginfo_t *siginfo, void *context) {
-	process_num = siginfo->si_value.sival_int;
+	int n;
+
+	n = siginfo->si_value.sival_int;
+	child_signal[n] = 1;
+
 }
 
 

@@ -1385,16 +1385,23 @@ int read_from_pipe(int n)
     return(make_str(buffer));
 }
 
-int read_from_pipe_part(void)
+int read_from_pipe_part(int n)
 {
     char buffer[256];
-    int i,j,n;
+    int i;
 
-    pause();
-    n = process_num;
-    child_signal[n] = 1;
+    while(1){
+        for(i=0;i<n;i++){
+            if(child_signal[i] == 1){
+                child_signal[i] = -1;
+                goto exit;
+            }
+        }
+    }
+
+    exit:
     int bytes_read;
-    bytes_read = read(pipe_c2p[n][R], buffer, 256);
+    bytes_read = read(pipe_c2p[i][R], buffer, 256);
     buffer[bytes_read] = '\0';
 
     return(make_str(buffer));
@@ -1512,6 +1519,10 @@ int f_mp_part(int arglist, int th)
 	temp = cdr(temp);
     }
 
+    
+    for(i=0;i<n;i++){
+       child_signal[i] = 0; 
+    }
     i = 0;
     temp = arglist;
     while(!nullp(temp)){
@@ -1521,13 +1532,18 @@ int f_mp_part(int arglist, int th)
         i++;
     }
 
+    
+    sleep(1);
+    /*
     for(i=0;i<n;i++){
-       child_signal[i] = 0; 
+        printf("%d ", child_signal[i]);
     }
-
+    */
     
     for(i=0;i<n;i++){
-        res = str_to_sexp(read_from_pipe_part());
+        res = str_to_sexp(read_from_pipe_part(n));
+        usleep(100);
+        //print(res);
         if(res == NIL) break;
     }
     
@@ -1542,6 +1558,7 @@ int f_mp_part(int arglist, int th)
             read_from_pipe(i);
         }
     }
+    
     return(res);
 
 }

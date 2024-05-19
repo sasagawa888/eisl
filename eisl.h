@@ -1463,6 +1463,6 @@ void backspace_buffer(int col);
 int read_line(int flag);
 int read_stdin(void);
 int read_from_pipe(int n);
-int read_from_pipe_part(void);
+int read_from_pipe_part(int n);
 
 #endif

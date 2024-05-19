@@ -2,7 +2,7 @@
 
 ;(mp-create 3)
 
-(defun primep (n)
+(defun primep* (n)
     (if (= (mod n 2) 0)
         nil
         (mp-part (coprimep n 3 200)
@@ -17,6 +17,9 @@
           ((= (mod n s) 0) nil)
           (t (coprimep n (+ s 2) e))))
 
+(defun primep (n)
+    (cond ((mod n 2) nil)
+          (t (coprimep n 3 (sqrt n)))))
 
 
 (import "unistd")
@@ -28,11 +31,9 @@
     (mp-exec (bar x) (boo y)))
 
 (defun bar (x)
-    (sleep 10)
     (if (= x 1) t nil))
 
 (defun boo (x)
-    (sleep 1)
     (if (= x 1) t nil))
 
 

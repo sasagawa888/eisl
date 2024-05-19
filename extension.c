@@ -1537,7 +1537,11 @@ int f_mp_part(int arglist, int th)
         }
     }
     
-
+    for(i=0;i<n;i++){
+        if(child_signal[i] == 0){
+            read_from_pipe(i);
+        }
+    }
     return(res);
 
 }

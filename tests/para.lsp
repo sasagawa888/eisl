@@ -7,6 +7,9 @@
 (defun foo (x y)
     (mp-part (bar x) (boo y)))
 
+(defun foo* (x y)
+    (mp-exec (bar x) (boo y)))
+
 (defun bar (x)
     (sleep 10)
     (if (= x 1) t nil))

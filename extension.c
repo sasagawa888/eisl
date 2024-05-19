@@ -73,6 +73,7 @@ void init_exsubr(void)
     def_fsubr("MP-CALL", f_mp_call);
     def_fsubr("MP-EXEC", f_mp_exec);
     def_fsubr("MP-LET", f_mp_let);
+    def_fsubr("MP-PART", f_mp_part);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1524,6 +1525,39 @@ int f_mp_exec(int arglist, int th)
     }
 
     
+
+    return(res);
+
+}
+
+int f_mp_part(int arglist, int th)
+{
+    int temp,res,n,i,exp;
+
+    n = length(arglist);
+    if(n > process_pt)
+        error(ILLEGAL_ARGS, "mp-part", arglist, th);
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "mp-part", arglist, th);
+	temp = cdr(temp);
+    }
+
+    i = 0;
+    temp = arglist;
+    while(!nullp(temp)){
+        exp = eval_args(car(temp));
+        write_to_pipe(i,sexp_to_str(exp));
+        temp = cdr(temp);
+        i++;
+    }
+
+    for(i=0;i<n;i++){
+        res = str_to_sexp(read_from_pipe_part());
+        if(res == NIL) break;
+    }
+
 
     return(res);
 

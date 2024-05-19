@@ -5,10 +5,10 @@
 (import "unistd")
 
 (defun foo (x y)
-    (mp-call #'+ (fib x) (fib y)))
+    (mp-part (bar x) (bar y)))
 
-(defun bar (x y)
-    (mp-exec (uoo x) (uoo y)))
+(defun bar (x)
+    (if (= x 1) t nil))
 
 (defun uoo (x) 
     (format (standard-output) "~! test1 ~A ~%~!" x)

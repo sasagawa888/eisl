@@ -969,6 +969,7 @@ int f_mp_exec(int arglist, int th);
 int f_mp_close(int arglist, int th);
 int f_mp_call(int arglist, int th);
 int f_mp_let(int arglist, int th);
+int f_mp_part(int arglist, int th);
 int f_mt_call(int arglist, int th);
 int f_mt_lock(int arglist, int th);
 int f_mt_exec(int arglist, int th);

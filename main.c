@@ -242,6 +242,7 @@ int pipe_c2p[PROCSIZE][2];
 pid_t pid[PROCSIZE];
 int process_pt = 0;
 int process_num;
+struct sigaction child_action;
 
 
 
@@ -329,8 +330,14 @@ int main(int argc, char *argv[])
     init_dp();
     init_pointer();
 	init_thread();
+	/* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
+	/* signal for read_from_pipe_part() */
+	memset(&child_action, 0, sizeof(child_action));
+    child_action.sa_sigaction = &signal_handler_child;
+    child_action.sa_flags = SA_SIGINFO;
+	sigaction(SIGRTMIN, &child_action, NULL);
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
 	-1) {
 	perror("setenv");
@@ -429,6 +436,9 @@ int main(int argc, char *argv[])
 	    	print(eval(sread(),0));
 	    	putchar('\n');
 			fflush(stdout);
+			union sigval value;
+            value.sival_int = (int)process_num; 
+			sigqueue(getppid(), SIGRTMIN, value);
 		}
 	    if (redef_flag)
 		redef_generic();
@@ -530,6 +540,11 @@ void signal_handler_c(int signo __unused)
 {
     exit_flag = 1;
 }
+
+void signal_handler_child(int sig, siginfo_t *siginfo, void *context) {
+
+}
+
 
 
 

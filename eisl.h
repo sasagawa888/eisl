@@ -1355,6 +1355,7 @@ void set_lex_env(int sym, int val, int th);
 int set_dyn_env(int sym, int val, int th);
 void set_val(int sym, int val, int ls);
 void signal_handler_c(int signo);
+void signal_handler_child(int sig, siginfo_t *siginfo, void *context);
 void unbind(int th);
 void unreadc(char c);
 void ucs4_to_utf8(int n, char *p);

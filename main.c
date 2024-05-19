@@ -439,7 +439,9 @@ int main(int argc, char *argv[])
 			fflush(stdout);
 			union sigval value;
             value.sival_int = (int)process_num; 
-			sigqueue(getppid(), SIGRTMIN, value);
+			if(sigqueue(getppid(), SIGRTMIN, value) == -1){
+				perror("sigqueue");
+			};
 		}
 	    if (redef_flag)
 		redef_generic();
@@ -543,7 +545,7 @@ void signal_handler_c(int signo __unused)
 }
 
 void signal_handler_child(int sig, siginfo_t *siginfo, void *context) {
-
+	process_num = siginfo->si_value.sival_int;
 }
 
 

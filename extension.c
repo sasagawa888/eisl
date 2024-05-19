@@ -1389,45 +1389,14 @@ int read_from_pipe_part(void)
 {
     char buffer[256];
     int i,j,n;
-    sigset_t mask;
-    siginfo_t siginfo;
 
-
-    sigemptyset(&mask);
-    sigaddset(&mask, SIGRTMIN);
-    sigwaitinfo(&mask, &siginfo);
-    n = (int)siginfo.si_value.sival_int;
+    pause();
+    n = process_num;
     child_signal[n] = 1;
-
     int bytes_read;
     bytes_read = read(pipe_c2p[n][R], buffer, 256);
     buffer[bytes_read] = '\0';
 
-    
-    if (buffer[0] == '\x02'){
-        i = 1;
-        rewrite:
-        while(buffer[i] != '\x02' && i < 256){
-            putc(buffer[i],stdout);
-            i++;
-        }
-        i++;
-        if (buffer[i] == '\x02'){
-            i++;
-            goto rewrite;
-        }
-        else {
-            j = 0;
-            while(buffer[i] != '\0'){
-                buffer[j] = buffer[i];
-                i++;
-                j++;
-            }
-            buffer[j] = '\0';
-        } 
-               
-    }
-    
     return(make_str(buffer));
 }
 
@@ -1525,8 +1494,6 @@ int f_mp_exec(int arglist, int th)
         res = str_to_sexp(read_from_pipe(i));
     }
 
-    
-
     return(res);
 
 }
@@ -1558,18 +1525,18 @@ int f_mp_part(int arglist, int th)
        child_signal[i] = 0; 
     }
 
-    /*
+    
     for(i=0;i<n;i++){
         res = str_to_sexp(read_from_pipe_part());
         if(res == NIL) break;
     }
-
+    
     for(i=0;i<n;i++){
         if(child_signal[i] == 0){
             kill(pid[i], SIGINT);
         }
     }
-    */
+    
 
     return(res);
 

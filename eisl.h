@@ -638,6 +638,7 @@ extern int pipe_c2p[PROCSIZE][2];
 extern pid_t pid[PROCSIZE];
 extern int process_pt;
 extern int process_num;
+extern struct sigaction child_action;
 extern int child_signal[PROCSIZE];
 
 

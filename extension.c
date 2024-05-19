@@ -1392,19 +1392,13 @@ int read_from_pipe_part(void)
     siginfo_t siginfo;
 
 
-    // set nonblock mode
-    int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
-    fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
-
     sigemptyset(&mask);
     sigaddset(&mask, SIGRTMIN);
     sigwaitinfo(&mask, &siginfo);
     n = (int)siginfo.si_value.sival_int;
 
     int bytes_read;
-    reread:
-    // wait until get result
-    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
+    bytes_read = read(pipe_c2p[n][R], buffer, 256);
     buffer[bytes_read] = '\0';
 
     
@@ -1420,15 +1414,7 @@ int read_from_pipe_part(void)
             i++;
             goto rewrite;
         }
-        else if (buffer[i] == '\0'){
-            /* still not recieve result */
-            for(i=0;i<256;i++){
-                buffer[i] = 0;
-            }
-            goto reread;
-        }
         else {
-            /* already recieved result */
             j = 0;
             while(buffer[i] != '\0'){
                 buffer[j] = buffer[i];

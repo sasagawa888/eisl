@@ -616,6 +616,8 @@ defgeneric compile
                (comp-mp-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mp-exec))
                (comp-mp-exec stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'mp-part))
+               (comp-mp-part stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mp-let))
                (comp-mp-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
@@ -2216,6 +2218,45 @@ defgeneric compile
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe(~A));" i)
                  (comp-mp-exec4 stream (+ i 1) n))))
+
+    (defun comp-mp-part (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (format stream "Fclear_child_signal();")
+        (comp-mp-part1 0 stream (cdr x) env args tail name global test clos)
+        (format stream "usleep(5000);")
+        (comp-mp-part3 stream (cdr x) env args tail name global test clos)
+        (format stream "exit: usleep(1000);Fkill_rest_process(~A);" (length (cdr x)))
+        (format stream "res;})"))
+
+    ;; write to pipe
+    (defun comp-mp-part1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fwrite_to_pipe(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
+                 (comp-mp-part2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-mp-part1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-mp-part2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-mp-part2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+
+    ;; recieved args
+    (defun comp-mp-part3 (stream x env args tail name global test clos)
+        (comp-mp-part4 stream 0 (length (cdr x))))
+    
+    ;; recieve args from pipe
+    (defun comp-mp-part4 (stream i n)
+        (cond ((= i n) nil)
+              (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
+                 (format stream "if(res == NIL) goto exit;")
+                 (comp-mp-part4 stream (+ i 1) n))))
+
 
     (defun comp-mp-let (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "mp-let: not list" (elt x 1)))

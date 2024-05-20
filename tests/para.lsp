@@ -21,19 +21,3 @@
     (cond ((= (mod n 2) 0) nil)
           (t (coprimep n 3 (sqrt n)))))
 
-
-(import "unistd")
-
-(defun foo (x y)
-    (mp-part (bar x) (boo y)))
-
-(defun foo* (x y)
-    (mp-exec (bar x) (boo y)))
-
-(defun bar (x)
-    (if (= x 1) t nil))
-
-(defun boo (x)
-    (if (= x 1) t nil))
-
-

@@ -88,6 +88,7 @@ void dynamic_link(int x)
     init_f0(RESTORE_ERROR_HANDLER_IDX, restore_error_handler);
     init_f0(WAIT_PARA_IDX, wait_para);
     init_f0(JUMP_TO_REPL_IDX, jump_to_repl);
+    init_f0(CLEAR_CHILD_SIGNAL_IDX, clear_child_signal);
 
     /* argument-1 type */
     init_f1(CAR_IDX, car);
@@ -127,6 +128,8 @@ void dynamic_link(int x)
     init_f1(SEXP_TO_STR_IDX, sexp_to_str);
     init_f1(STR_TO_SEXP_IDX, str_to_sexp);
     init_f1(READ_FROM_PIPE_IDX, read_from_pipe);
+    init_f1(KILL_REST_PROCESS_IDX, kill_rest_process);
+    init_f1(READ_FROM_PIPE_PART_IDX, read_from_pipe_part);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile

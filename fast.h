@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <signal.h>
+#include <unistd.h>
 #include "ffi.h"
 
 pthread_mutex_t plock_mutex;
@@ -116,6 +117,12 @@ static inline int Fjump_to_repl(void)
 {
     return f0[JUMP_TO_REPL_IDX] ();
 }
+
+static inline int Fclear_child_signal(void)
+{
+    return f0[CLEAR_CHILD_SIGNAL_IDX] ();
+}
+
 
 
 static inline int Fpargpop(int x)
@@ -353,6 +360,16 @@ static inline int Fstr_to_sexp(int x)
 static inline int Fread_from_pipe(int x)
 {
     return f1[READ_FROM_PIPE_IDX] (x);
+}
+
+static inline int Fkill_rest_process(int x)
+{
+    return f1[KILL_REST_PROCESS_IDX] (x);
+}
+
+static inline int Fread_from_pipe_part(int x)
+{
+    return f1[READ_FROM_PIPE_PART_IDX] (x);
 }
 
 

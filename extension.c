@@ -1407,6 +1407,30 @@ int read_from_pipe_part(int n)
     return(make_str(buffer));
 }
 
+int clear_child_signal(void){
+    int i;
+
+    for(i=0;i<PROCSIZE;i++){
+        child_signal[i] = 0;
+    }
+}
+
+int kill_rest_process(int n){
+    int i;
+
+    for(i=0;i<n;i++){
+        if(child_signal[i] == 0){
+            kill(pid[i], SIGINT);
+        }
+    }
+    
+    for(i=0;i<n;i++){
+        if(child_signal[i] == 0 || child_signal[i] == 1){
+            read_from_pipe(i);
+        }
+    }
+}
+
 
 int str_to_sexp(int x)
 {
@@ -1519,10 +1543,7 @@ int f_mp_part(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    
-    for(i=0;i<n;i++){
-       child_signal[i] = 0; 
-    }
+    clear_child_signal();
     i = 0;
     temp = arglist;
     while(!nullp(temp)){
@@ -1538,24 +1559,13 @@ int f_mp_part(int arglist, int th)
         res = str_to_sexp(read_from_pipe_part(n));
         if(res == NIL) break;
     }
-    
+
+
     for(i=0;i<n;i++){
         printf("%d ", child_signal[i]);
     }
     
-    for(i=0;i<n;i++){
-        if(child_signal[i] == 0){
-            kill(pid[i], SIGINT);
-        }
-    }
-    
-    
-    for(i=0;i<n;i++){
-        if(child_signal[i] == 0 || child_signal[i] == 1){
-            read_from_pipe(i);
-        }
-    }
-    
+    kill_rest_process(n);
     return(res);
 
 }

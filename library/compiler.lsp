@@ -1,4 +1,4 @@
-;;FAST compiler ver3.93
+;;FAST compiler ver3.94
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"

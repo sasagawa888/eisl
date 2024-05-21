@@ -1426,7 +1426,10 @@ int kill_rest_process(int n){
         }
     }
 
-    
+    /*
+    if child_signal1[i] is 0 ,ignore the pipe output.
+    Because ctrl+c does not output to buffer.
+    */
     for(i=0;i<n;i++){
         if(child_signal1[i] == 1){
             read_from_pipe(i);

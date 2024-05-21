@@ -1,15 +1,22 @@
 ;;multi-process
 
 ;(mp-create 5)
-;(primep* 1000003)
+;(primep* 1000000007)
 (defun primep* (n)
     (if (= (mod n 2) 0)
         nil
-        (mp-part (coprimep n 3 200)
-                 (coprimep n 201 400)
-                 (coprimep n 401 600)
-                 (coprimep n 601 800)
-                 (coprimep n 801 1000))))
+        (let* ((limit (isqrt n))
+               (span (div limit 5)))
+            (mp-part (coprimep n 3 span)
+                     (coprimep n (near-odd span) (* 2 span ))
+                     (coprimep n (near-odd (* 2 span)) (* 3 span))
+                     (coprimep n (near-odd (* 3 span)) (* 4 span))
+                     (coprimep n (near-odd (* 4 span)) limit)))))
+
+(defun near-odd (n)
+    (if (= (mod n 2) 0)
+        (- n 1)
+        n))
 
 
 (defun coprimep (n s e)

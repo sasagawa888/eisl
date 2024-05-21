@@ -2223,9 +2223,8 @@ defgeneric compile
         (format stream "({int res;")
         (format stream "Fclear_child_signal();")
         (comp-mp-part1 0 stream (cdr x) env args tail name global test clos)
-        (format stream "usleep(5000);")
         (comp-mp-part3 stream (cdr x) env args tail name global test clos)
-        (format stream "exit: usleep(1000);Fkill_rest_process(~A);" (length (cdr x)))
+        (format stream "exit: Fkill_rest_process(~A);" (length (cdr x)))
         (format stream "res;})"))
 
     ;; write to pipe

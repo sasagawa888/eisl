@@ -1390,6 +1390,7 @@ int read_from_pipe_part(int n)
     char buffer[256];
     int i,bytes_read;
 
+    
     while(1){
         for(i=0;i<n;i++){
             if(child_signal[i] == 1){
@@ -1403,7 +1404,7 @@ int read_from_pipe_part(int n)
     exit:
     bytes_read = read(pipe_c2p[i][R], buffer, 256);
     buffer[bytes_read] = '\0';
-
+    
     return(make_str(buffer));
 }
 
@@ -1423,12 +1424,15 @@ int kill_rest_process(int n){
             kill(pid[i], SIGINT);
         }
     }
-    
+
+    /*
     for(i=0;i<n;i++){
         if(child_signal[i] == 0 || child_signal[i] == 1){
-            read_from_pipe(i);
+            printf("kill %d ", i );
+            //read_from_pipe(i);
         }
     }
+    */
 }
 
 
@@ -1552,18 +1556,17 @@ int f_mp_part(int arglist, int th)
         temp = cdr(temp);
         i++;
     }
-
-    usleep(5000);
     
     for(i=0;i<n;i++){
         res = str_to_sexp(read_from_pipe_part(n));
         if(res == NIL) break;
     }
 
-
+    /*
     for(i=0;i<n;i++){
         printf("%d ", child_signal[i]);
     }
+    */
     
     kill_rest_process(n);
     return(res);

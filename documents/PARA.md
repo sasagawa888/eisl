@@ -11,7 +11,12 @@ Launches n child Lisps.
 Executes arg1 to argn in parallel in child Lisps, then executes function fun with the results and returns the result.
 
 - (mp-exec arg1 ... argn)
-Executes arg1 to argn in parallel in child Lisps and returns the result of the last execution.
+Executes arg1 to argn in parallel in child Lisps and returns the result of the argn execution.
+
+- (mp-part arg1 ... argn)
+Executes arg1 to argn in parallel in child Lisps.
+If one of arg returns nil stops exections and return nil,
+else  returns the result of the last execution.
 
 - (mp-let ((sym1 (exp1)) ... (symn (expn))) body) 
 Evaluates each exp in parallel in child Lisps, binds its value to sym, executes body, and returns the final result.
@@ -130,5 +135,33 @@ Please enclose with ~! when outputting via the format function to standard outpu
     (sleep 1)
     t)
 
+
+```
+
+# Example of mp-part
+
+```
+;(primep* 100000000000031)
+(defun primep* (n)
+    (if (= (mod n 2) 0)
+        nil
+        (let* ((limit (isqrt n))
+               (span (div limit 5)))
+            (mp-part (coprimep n 3 span)
+                     (coprimep n (near-odd span) (* 2 span ))
+                     (coprimep n (near-odd (* 2 span)) (* 3 span))
+                     (coprimep n (near-odd (* 3 span)) (* 4 span))
+                     (coprimep n (near-odd (* 4 span)) limit)))))
+
+(defun near-odd (n)
+    (if (= (mod n 2) 0)
+        (- n 1)
+        n))
+
+
+(defun coprimep (n s e)
+    (cond ((> s e) t)
+          ((= (mod n s) 0) nil)
+          (t (coprimep n (+ s 2) e))))
 
 ```

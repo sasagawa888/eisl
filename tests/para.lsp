@@ -1,7 +1,7 @@
 ;;multi-process
 
 ;(mp-create 5)
-;(primep* 1000000007)
+;(primep* 100000000000031)
 (defun primep* (n)
     (if (= (mod n 2) 0)
         nil

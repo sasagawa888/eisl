@@ -26,5 +26,5 @@
 
 (defun primep (n)
     (cond ((= (mod n 2) 0) nil)
-          (t (coprimep n 3 (sqrt n)))))
+          (t (coprimep n 3 (isqrt n)))))
 

@@ -244,6 +244,7 @@ int process_pt = 0;
 int process_num;
 struct sigaction child_action;
 int child_signal[PROCSIZE];
+int child_signal1[PROCSIZE];
 
 
 

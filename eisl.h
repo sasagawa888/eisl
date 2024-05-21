@@ -640,7 +640,7 @@ extern int process_pt;
 extern int process_num;
 extern struct sigaction child_action;
 extern int child_signal[PROCSIZE];
-
+extern int child_signal1[PROCSIZE];
 
 // -------error code---
 enum {

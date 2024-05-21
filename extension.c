@@ -1420,19 +1420,19 @@ int kill_rest_process(int n){
     int i;
 
     for(i=0;i<n;i++){
+        child_signal1[i] = child_signal[i];
         if(child_signal[i] == 0){
             kill(pid[i], SIGINT);
         }
     }
 
-    /*
+    
     for(i=0;i<n;i++){
-        if(child_signal[i] == 0 || child_signal[i] == 1){
-            printf("kill %d ", i );
-            //read_from_pipe(i);
+        if(child_signal1[i] == 1){
+            read_from_pipe(i);
         }
     }
-    */
+    
 }
 
 

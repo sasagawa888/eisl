@@ -2,8 +2,7 @@
 ;;; n = p*q. p <> q, p and q is near prime number.
 ;;; e.g. 100000007 * 100000039 = 10000004600000273
 ;;; 1000037 * 100000039 = 100003739001443
-;;; 1000000009 * 1000000063 = 1000000072000000567
-;;; 10000000033 * 10000000019 = 100000000520000000627
+;;; 1000000007 * 1000000009 = 1000000016000000063
 ;;; add option to (mp-part opt arg1 arg2 ... argn)
 ;;; mp-part option t. if recieve not nil, return it and send ctrl+c to rest process.
 ;;; mp-part option nil. if recieve nil, return it and send ctrl+c to rest process.

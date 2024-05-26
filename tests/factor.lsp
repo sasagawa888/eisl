@@ -31,10 +31,5 @@
 
 ;; sequence
 (defun factors (n)
-    (cond ((= (mod n 2) 0) (cons 2 (factors1 (div n 2) 3 (isqrt (div n 2)))))
-          (t (factors1 n 3 (isqrt n)))))
-
-(defun factors1 (n s e)
-    (cond ((> s e) (list n))
-          ((= (mod n s) 0) (cons s (factors1 (div n s) s (isqrt (div n s)))))
-          (t (factors1 n (+ s 2) e))))
+    (let ((p (cofactor n 3 (isqrt n))))
+        (list p (div n p))))

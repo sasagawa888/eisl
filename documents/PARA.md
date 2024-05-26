@@ -13,9 +13,14 @@ Executes arg1 to argn in parallel in child Lisps, then executes function fun wit
 - (mp-exec arg1 ... argn)
 Executes arg1 to argn in parallel in child Lisps and returns the result of the argn execution.
 
-- (mp-part arg1 ... argn)
+- (mp-part option arg1 ... argn)
 Executes arg1 to argn in parallel in child Lisps.
+option == nil
 If one of arg returns nil stops exections and return nil,
+else  returns the result of the last execution.
+
+option == t
+If one of arg returns non-nil stops exections and return result,
 else  returns the result of the last execution.
 
 - (mp-let ((sym1 (exp1)) ... (symn (expn))) body) 
@@ -147,11 +152,11 @@ Please enclose with ~! when outputting via the format function to standard outpu
         nil
         (let* ((limit (isqrt n))
                (span (div limit 5)))
-            (mp-part (coprimep n 3 span)
-                     (coprimep n (near-odd span) (* 2 span ))
-                     (coprimep n (near-odd (* 2 span)) (* 3 span))
-                     (coprimep n (near-odd (* 3 span)) (* 4 span))
-                     (coprimep n (near-odd (* 4 span)) limit)))))
+            (mp-part nil (coprimep n 3 span)
+                         (coprimep n (near-odd span) (* 2 span ))
+                         (coprimep n (near-odd (* 2 span)) (* 3 span))
+                         (coprimep n (near-odd (* 3 span)) (* 4 span))
+                         (coprimep n (near-odd (* 4 span)) limit)))))
 
 (defun near-odd (n)
     (if (= (mod n 2) 0)

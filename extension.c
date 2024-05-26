@@ -1408,6 +1408,29 @@ int read_from_pipe_part(int n)
     return(make_str(buffer));
 }
 
+int read_from_pipe_part_nth(int n)
+{
+    char buffer[256];
+    int i,bytes_read;
+
+    
+    while(1){
+            if(child_signal[n] == 1){
+                child_signal[n] = -1;
+                goto exit;
+            }
+        usleep(1000);
+    }
+
+    exit:
+    bytes_read = read(pipe_c2p[n][R], buffer, 256);
+    buffer[bytes_read] = '\0';
+    
+    return(make_str(buffer));
+}
+
+
+
 int clear_child_signal(void){
     int i;
 
@@ -1538,12 +1561,15 @@ int f_mp_exec(int arglist, int th)
 
 int f_mp_part(int arglist, int th)
 {
-    int temp,res,n,i,exp;
+    int temp,res,n,i,exp,opt;
 
-    n = length(arglist);
+    opt = car(arglist);
+    n = length(cdr(arglist));
+    if(opt != T && opt != NIL)
+        error(ILLEGAL_ARGS, "mp-part", opt, th);
     if(n > process_pt)
-        error(ILLEGAL_ARGS, "mp-part", arglist, th);
-    temp = arglist;
+        error(ILLEGAL_ARGS, "mp-part", cdr(arglist), th);
+    temp = cdr(arglist);
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
 	    error(WRONG_ARGS, "mp-part", arglist, th);
@@ -1552,25 +1578,27 @@ int f_mp_part(int arglist, int th)
 
     clear_child_signal();
     i = 0;
-    temp = arglist;
+    temp = cdr(arglist);
     while(!nullp(temp)){
         exp = eval_args(car(temp));
         write_to_pipe(i,sexp_to_str(exp));
         temp = cdr(temp);
         i++;
     }
-    
-    for(i=0;i<n;i++){
-        res = str_to_sexp(read_from_pipe_part(n));
-        if(res == NIL) break;
+    if(opt == NIL){
+        for(i=0;i<n;i++){
+            res = str_to_sexp(read_from_pipe_part(n));
+            if(res == NIL) break;
+        }
     }
+    else if(opt == T){
+        for(i=0;i<n;i++){
+            res = str_to_sexp(read_from_pipe_part(n));
+            if(res != NIL) break;
+        }
+    }
+    
 
-    /*
-    for(i=0;i<n;i++){
-        printf("%d ", child_signal[i]);
-    }
-    */
-    
     kill_rest_process(n);
     return(res);
 

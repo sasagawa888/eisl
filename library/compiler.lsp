@@ -2222,9 +2222,9 @@ defgeneric compile
     (defun comp-mp-part (stream x env args tail name global test clos)
         (format stream "({int res;")
         (format stream "Fclear_child_signal();")
-        (comp-mp-part1 0 stream (cdr x) env args tail name global test clos)
-        (comp-mp-part3 stream (cdr x) env args tail name global test clos)
-        (format stream "exit: Fkill_rest_process(~A);" (length (cdr x)))
+        (comp-mp-part1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-part3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "exit: Fkill_rest_process(~A);" (length (cdr (cdr x))))
         (format stream "res;})"))
 
     ;; write to pipe
@@ -2246,16 +2246,24 @@ defgeneric compile
 
 
     ;; recieved args
-    (defun comp-mp-part3 (stream x env args tail name global test clos)
-        (comp-mp-part4 stream 0 (length (cdr x))))
+    (defun comp-mp-part3 (opt stream x env args tail name global test clos)
+        (cond ((null opt) (comp-mp-part4 stream 0 (length x)))
+              ((eq opt t) (comp-mp-part5 stream 0 (length x)))
+              (t (error* "mp-part: illegal option" opt))))
     
-    ;; recieve args from pipe
+    ;; recieve args from pipe(option=nil)
     (defun comp-mp-part4 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
                  (format stream "if(res == NIL) goto exit;")
                  (comp-mp-part4 stream (+ i 1) n))))
 
+    ;; recieve args from pipe(option=t)
+    (defun comp-mp-part5 (stream i n)
+        (cond ((= i n) nil)
+              (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
+                 (format stream "if(res != NIL) goto exit;")
+                 (comp-mp-part5 stream (+ i 1) n))))
 
     (defun comp-mp-let (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "mp-let: not list" (elt x 1)))

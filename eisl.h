@@ -1466,5 +1466,6 @@ int read_line(int flag);
 int read_stdin(void);
 int read_from_pipe(int n);
 int read_from_pipe_part(int n);
+int read_from_pipe_part_nth(int n);
 
 #endif

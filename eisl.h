@@ -1283,6 +1283,7 @@ int vector_ref(int v, int n);
 int vector_to_list(int x);
 int vectorp(int x);
 int wait_para(void);
+int write_to_pipe(int n, int x);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void add_lex_env(int sym, int val, int th);
@@ -1366,7 +1367,7 @@ void unreadc(char c);
 void ucs4_to_utf8(int n, char *p);
 void vector_set(int v, int n, int obj);
 void store_backtrace(int x);
-void write_to_pipe(int n, int x);
+
 
 int f_backtrace(int arglist, int th);
 int f_symbol_function(int arglist, int th);

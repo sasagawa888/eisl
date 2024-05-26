@@ -1301,7 +1301,7 @@ int sexp_to_str(int x)
     return(res);
 }
 
-void write_to_pipe(int n,int x)
+int write_to_pipe(int n,int x)
 {
     int i,j,pos,c;
     char buffer1[10],buffer2[STRSIZE];
@@ -1332,6 +1332,7 @@ void write_to_pipe(int n,int x)
         for(j=0;j<10;j++)
             buffer1[j] = 0;
     }
+    return(NIL);
 }
 
 int read_from_pipe(int n)

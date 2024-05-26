@@ -6,7 +6,7 @@
 ;;; 10000000033 * 10000000019 = 100000000520000000627
 ;;; add option to (mp-part opt arg1 arg2 ... argn)
 ;;; mp-part option t. if recieve not nil, return it and send ctrl+c to rest process.
-;;; mp-part option t. if recieve nil, return it and send ctrl+c to rest process.
+;;; mp-part option nil. if recieve nil, return it and send ctrl+c to rest process.
 
 ;;para
 (defun factors* (n)

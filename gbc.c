@@ -116,7 +116,7 @@ void mark_cell(int addr)
 	return;
     case SUBR:
 	mark_cell(GET_AUX(addr));
-	mark_cell(GET_CDR(addr)); //compiled lambda's free variables
+	mark_cell(GET_CDR(addr));	//compiled lambda's free variables
 	return;
     case FSUBR:
 	mark_cell(GET_AUX(addr));

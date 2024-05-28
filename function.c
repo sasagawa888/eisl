@@ -2220,8 +2220,8 @@ int f_read_line(int arglist, int th)
 
 
 int f_load(int arglist, int th)
-{   
-    int arg1,i,exp;
+{
+    int arg1, i, exp;
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
@@ -2229,27 +2229,27 @@ int f_load(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_STR, "load", arg1, th);
 
-    if(!process_flag)
-        load(arg1, th);
-    else{
-        // when process_flag == true, sread() use read_stdin.
-        // To avoid this problem, change process_flag temporarily.
-        process_flag = false;
-        load(arg1, th);
-        process_flag = true;
+    if (!process_flag)
+	load(arg1, th);
+    else {
+	// when process_flag == true, sread() use read_stdin.
+	// To avoid this problem, change process_flag temporarily.
+	process_flag = false;
+	load(arg1, th);
+	process_flag = true;
     }
 
     // only parent lisp sends message (load fn) to child lisps.
-    if(!process_flag && process_pt > 0){
-        exp = list2(make_sym("load"),arg1);
-       
-        for(i=0;i<process_pt;i++){
-            write_to_pipe(i,sexp_to_str(exp));
-            read_from_pipe(i);
-        }
+    if (!process_flag && process_pt > 0) {
+	exp = list2(make_sym("load"), arg1);
+
+	for (i = 0; i < process_pt; i++) {
+	    write_to_pipe(i, sexp_to_str(exp));
+	    read_from_pipe(i);
+	}
     }
-    
-    return(T);
+
+    return (T);
 }
 
 void load(int arg1, int th)
@@ -2747,9 +2747,9 @@ int f_elt(int arglist, int th)
 
     if (listp(arg1)) {
 	if (length(arg1) == 0)
-	    error(OUT_OF_RANGE, "elt", arg1,th);
+	    error(OUT_OF_RANGE, "elt", arg1, th);
 	if (integerp(arg2) && length(arg1) <= GET_INT(arg2))
-	    error(OUT_OF_RANGE, "elt", arg2,th);
+	    error(OUT_OF_RANGE, "elt", arg2, th);
 	if (longnump(arg2)
 	    && (long long int) length(arg1) <= GET_LONG(arg2))
 	    error(OUT_OF_RANGE, "elt", arg2, th);
@@ -3505,9 +3505,9 @@ int f_format(int arglist, int th)
 		start_flag = false;
 		charcnt++;
 	    } else if (c == '!') {
-        /* extension for parallel lisp. To send message to parent from child sandwich with STX code*/
-        output_char(output_stream, '\x02');
-        }
+		/* extension for parallel lisp. To send message to parent from child sandwich with STX code */
+		output_char(output_stream, '\x02');
+	    }
 
 	    i++;
 	} else if (c == '\\' && str[i + 1] == '\\' && quote_flag == 0) {
@@ -4815,7 +4815,8 @@ int f_parse_error_string(int arglist, int th)
 
     arg1 = car(arglist);
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
-	error(DOMAIN_ERR, "parse-error-string", cons(arg1, cparse_error), th);
+	error(DOMAIN_ERR, "parse-error-string", cons(arg1, cparse_error),
+	      th);
 
     fun = cdr(assoc(make_sym("h"), GET_CDR(arg1)));
     return (fun);

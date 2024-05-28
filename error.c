@@ -62,7 +62,8 @@ void error(int errnum, const char *fun, int arg, int th)
 		  make_str("division by zero at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cdivision_by_zero, initargs), NIL, th);
+	signal_condition(make_instance(cdivision_by_zero, initargs), NIL,
+			 th);
 	break;
     case UNDEF_VAR:
 	initargs =
@@ -71,7 +72,8 @@ void error(int errnum, const char *fun, int arg, int th)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("name"), make_sym("UNDEF-VAR"),
 		   make_sym("namespace"), make_sym("VARIABLE"));
-	signal_condition(make_instance(cunbound_variable, initargs), NIL, th);
+	signal_condition(make_instance(cunbound_variable, initargs), NIL,
+			 th);
 	break;
     case UNDEF_FUN:
 	initargs =
@@ -92,14 +94,16 @@ void error(int errnum, const char *fun, int arg, int th)
 		   make_sym(fun1), make_sym("name"),
 		   make_sym("UNDEF-DYNAMIC-VAR"), make_sym("namespace"),
 		   make_sym("DYNAMIC-VARIABLE"));
-	signal_condition(make_instance(cunbound_variable, initargs), NIL, th);
+	signal_condition(make_instance(cunbound_variable, initargs), NIL,
+			 th);
 	break;
     case UNDEF_CLASS:
 	initargs =
 	    list6(make_sym("format-string"), make_str("Unbound class at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cundefined_entity, initargs), NIL, th);
+	signal_condition(make_instance(cundefined_entity, initargs), NIL,
+			 th);
 	break;
     case UNDEF_TAG:
 	initargs =
@@ -150,7 +154,8 @@ void error(int errnum, const char *fun, int arg, int th)
 		   make_sym("expected-class"), cfloat);
 	signal_condition(make_instance(cfloating_point_overflow, initargs),
 			 make_str
-			 ("Continuing ignores floating point overflow and the calculation returns infinity"), th);
+			 ("Continuing ignores floating point overflow and the calculation returns infinity"),
+			 th);
 	break;
     case FLT_UNDERF:
 	initargs =
@@ -162,7 +167,8 @@ void error(int errnum, const char *fun, int arg, int th)
 	signal_condition(make_instance
 			 (cfloating_point_underflow, initargs),
 			 make_str
-			 ("Continuing ignores floating point underflow and the calculation returns zero"), th);
+			 ("Continuing ignores floating point underflow and the calculation returns zero"),
+			 th);
 	break;
     case FLT_OUT_OF_DOMAIN:
 	initargs =
@@ -462,7 +468,8 @@ void error(int errnum, const char *fun, int arg, int th)
 		  make_str("Memory allocate over flow at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cstorage_exhausted, initargs), NIL, th);
+	signal_condition(make_instance(cstorage_exhausted, initargs), NIL,
+			 th);
 	break;
     case NOT_EXIST_METHOD:
 	initargs =
@@ -591,7 +598,8 @@ void error(int errnum, const char *fun, int arg, int th)
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("object"), arg,
 		   make_sym("expected-class"), cundefined_entity);
-	signal_condition(make_instance(cundefined_entity, initargs), NIL, th);
+	signal_condition(make_instance(cundefined_entity, initargs), NIL,
+			 th);
 	break;
     case SIMPLE_ERR:
 	initargs =
@@ -607,7 +615,8 @@ void error(int errnum, const char *fun, int arg, int th)
 		  make_str("Exhausted error at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
 		  make_sym(fun1));
-	signal_condition(make_instance(cstorage_exhausted, initargs), NIL, th);
+	signal_condition(make_instance(cstorage_exhausted, initargs), NIL,
+			 th);
 	break;
     }
 }
@@ -625,7 +634,8 @@ int signal_condition(int x, int y, int th)
     else {
 	SET_OPT(x, CONTINUABLE);
 	TRY heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
-	EXCEPT(Mem_Failed) error(MALLOC_OVERF, "signal-condition", NIL, th);
+	EXCEPT(Mem_Failed) error(MALLOC_OVERF, "signal-condition", NIL,
+				 th);
 	END_TRY;
     }
     if (ignore_flag) {

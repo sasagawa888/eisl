@@ -1478,7 +1478,7 @@ int f_defclass(int arglist, int th)
     if (not_exist_class_p(arg2))
 	error(UNDEF_CLASS, "defclass", arg2, th);
     if (has_common_p(arg2))
-	error(HAS_COMMON_CLASS, "defclass", arg2,th);
+	error(HAS_COMMON_CLASS, "defclass", arg2, th);
     if (!listp(arg3))
 	error(NOT_LIST, "defclass", arg3, th);
     if (!top_flag && !ignore_topchk) {
@@ -2748,7 +2748,7 @@ int f_mt_call(int arglist, int th)
     if (length(arg2) > worker_count)
 	error(WRONG_ARGS, "mt-call", arg1, th);
     //if (!symbolp(arg1))
-	//error(IMPROPER_ARGS, "mt-call", arg1, th);
+    //error(IMPROPER_ARGS, "mt-call", arg1, th);
 
     temp = arg2;
     while (!nullp(temp)) {
@@ -2783,7 +2783,7 @@ int f_mt_call(int arglist, int th)
 	temp = cons(para_output[num[i]], temp);
 	i--;
     }
-    return (apply(eval(arg1,th), temp, th));
+    return (apply(eval(arg1, th), temp, th));
 }
 
 
@@ -2803,7 +2803,7 @@ int f_mt_exec(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    
+
     check_gbc();
 
     temp = arglist;
@@ -2840,4 +2840,3 @@ int f_mt_lock(int arglist, int th)
     pthread_mutex_unlock(&mutex1);
     return (res);
 }
-

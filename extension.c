@@ -602,9 +602,7 @@ void debugger(int th)
 		 ":e environment\n"
 		 ":i identify examining symbol\n"
 		 ":q quit\n"
-		 ":r room\n"
-         ":s stepper ON/OFF\n"
-         "other S exps eval");
+		 ":r room\n" ":s stepper ON/OFF\n" "other S exps eval");
 	} else if (eqp(x, make_sym(":A"))) {
 	    RAISE(Restart_Repl);
 	} else if (eqp(x, make_sym(":B"))) {
@@ -643,8 +641,9 @@ void debugger(int th)
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
 		      "Parallel = %d (worker_count)\n"
-              "Thread = %d (current thread)\n",
-		      ep[th], dp[th], hp, sp[th], fc, ap[th], lp[th], worker_count, th);
+		      "Thread = %d (current thread)\n",
+		      ep[th], dp[th], hp, sp[th], fc, ap[th], lp[th],
+		      worker_count, th);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");
@@ -1234,55 +1233,55 @@ int f_read_exp(int arglist, int th)
 // 1st arg is count of process
 int f_mp_create(int arglist, int th)
 {
-	int arg1,n,i;
+    int arg1, n, i;
     char str[10];
 
     arg1 = car(arglist);
     n = GET_INT(arg1);
     if (length(arglist) != 1)
-        error(ILLEGAL_ARGS, "mp-create", arglist, th);
+	error(ILLEGAL_ARGS, "mp-create", arglist, th);
     if (n > PROCSIZE)
-        error(CANT_CREATE, "mp-create", n, th);
+	error(CANT_CREATE, "mp-create", n, th);
 
-    for(i=0;i<n;i++){
-	    if(pipe(pipe_p2c[i]) == -1){
-		    error(CANT_CREATE, "mp-create pipe_p2c", NIL, th);
-	    }
-        if(pipe(pipe_c2p[i]) == -1){
-		    error(CANT_CREATE, "mp-create pipe_c2p", NIL, th);
-	    }
+    for (i = 0; i < n; i++) {
+	if (pipe(pipe_p2c[i]) == -1) {
+	    error(CANT_CREATE, "mp-create pipe_p2c", NIL, th);
+	}
+	if (pipe(pipe_c2p[i]) == -1) {
+	    error(CANT_CREATE, "mp-create pipe_c2p", NIL, th);
+	}
 
-	    pid[i] = fork();
-	    if(pid[i] == -1){
-		    error(CANT_CREATE, "mp-create fork", NIL, th);
-	    }   
-	    if (pid[i] == 0) { // child 
-            close(pipe_p2c[i][W]);
-            close(pipe_c2p[i][R]);
-            if(dup2(pipe_p2c[i][R], STDIN_FILENO) == -1)
-                error(CANT_CREATE, "mp-create dup2 stdin", NIL, th);
-            if(dup2(pipe_c2p[i][W], STDOUT_FILENO) == -1)
-                error(CANT_CREATE, "mp-create dup2 stdout", NIL, th);
-            close(pipe_p2c[i][R]);
-            close(pipe_c2p[i][W]);
-            sprintf(str,"%d", i);
-            execl("/usr/local/bin/eisl", "eisl", "-r", "-p", str, NULL);
-            exit(1);
-	
-        } 
-        close(pipe_p2c[i][R]);
-        close(pipe_c2p[i][W]);
+	pid[i] = fork();
+	if (pid[i] == -1) {
+	    error(CANT_CREATE, "mp-create fork", NIL, th);
+	}
+	if (pid[i] == 0) {	// child 
+	    close(pipe_p2c[i][W]);
+	    close(pipe_c2p[i][R]);
+	    if (dup2(pipe_p2c[i][R], STDIN_FILENO) == -1)
+		error(CANT_CREATE, "mp-create dup2 stdin", NIL, th);
+	    if (dup2(pipe_c2p[i][W], STDOUT_FILENO) == -1)
+		error(CANT_CREATE, "mp-create dup2 stdout", NIL, th);
+	    close(pipe_p2c[i][R]);
+	    close(pipe_c2p[i][W]);
+	    sprintf(str, "%d", i);
+	    execl("/usr/local/bin/eisl", "eisl", "-r", "-p", str, NULL);
+	    exit(1);
 
-	    process_pt++;
+	}
+	close(pipe_p2c[i][R]);
+	close(pipe_c2p[i][W]);
+
+	process_pt++;
     }
 
-	return(T);
+    return (T);
 }
 
 
 int sexp_to_str(int x)
 {
-    int save,res;
+    int save, res;
     char *str;
 
     res = make_stm(stdout, EISL_OUTSTR, NULL);
@@ -1298,174 +1297,174 @@ int sexp_to_str(int x)
     print(x);
     res = output_stream;
     output_stream = save;
-    return(res);
+    return (res);
 }
 
-int write_to_pipe(int n,int x)
+int write_to_pipe(int n, int x)
 {
-    int i,j,pos,c;
-    char buffer1[10],buffer2[STRSIZE];
+    int i, j, pos, c;
+    char buffer1[10], buffer2[STRSIZE];
 
-    strcpy(buffer2,GET_NAME(x));
+    strcpy(buffer2, GET_NAME(x));
 
     i = 0;
     pos = 0;
-    for(j=0;j<10;j++)
-            buffer1[j] = 0;
+    for (j = 0; j < 10; j++)
+	buffer1[j] = 0;
     c = buffer2[pos];
-    while(1){
-        while(i < 7 && c != 0)
-        {
-            buffer1[i] = c;
-            i++;
-            pos++;
-            c = buffer2[pos];
-            
-        }
-        // write to pipe
-        write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
+    while (1) {
+	while (i < 7 && c != 0) {
+	    buffer1[i] = c;
+	    i++;
+	    pos++;
+	    c = buffer2[pos];
 
-        if(c == 0)
-            break;
+	}
+	// write to pipe
+	write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
 
-        i = 0;
-        for(j=0;j<10;j++)
-            buffer1[j] = 0;
+	if (c == 0)
+	    break;
+
+	i = 0;
+	for (j = 0; j < 10; j++)
+	    buffer1[j] = 0;
     }
-    return(NIL);
+    return (NIL);
 }
 
 int read_from_pipe(int n)
 {
     char buffer[256];
-    int i,j;
+    int i, j;
 
     // set nonblock mode
     int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
     fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
 
     int bytes_read;
-    reread:
+  reread:
     // wait until get result
-    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1 && errno == EAGAIN);
+    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1
+	   && errno == EAGAIN);
     buffer[bytes_read] = '\0';
 
-    
-    if (buffer[0] == '\x02'){
-        i = 1;
-        rewrite:
-        while(buffer[i] != '\x02' && i < 256){
-            putc(buffer[i],stdout);
-            i++;
-        }
-        i++;
-        if (buffer[i] == '\x02'){
-            i++;
-            goto rewrite;
-        }
-        else if (buffer[i] == '\0'){
-            /* still not recieve result */
-            for(i=0;i<256;i++){
-                buffer[i] = 0;
-            }
-            goto reread;
-        }
-        else {
-            /* already recieved result */
-            j = 0;
-            while(buffer[i] != '\0'){
-                buffer[j] = buffer[i];
-                i++;
-                j++;
-            }
-            buffer[j] = '\0';
-        } 
-               
+
+    if (buffer[0] == '\x02') {
+	i = 1;
+      rewrite:
+	while (buffer[i] != '\x02' && i < 256) {
+	    putc(buffer[i], stdout);
+	    i++;
+	}
+	i++;
+	if (buffer[i] == '\x02') {
+	    i++;
+	    goto rewrite;
+	} else if (buffer[i] == '\0') {
+	    /* still not recieve result */
+	    for (i = 0; i < 256; i++) {
+		buffer[i] = 0;
+	    }
+	    goto reread;
+	} else {
+	    /* already recieved result */
+	    j = 0;
+	    while (buffer[i] != '\0') {
+		buffer[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    buffer[j] = '\0';
+	}
+
     }
-    
-    return(make_str(buffer));
+
+    return (make_str(buffer));
 }
 
 int read_from_pipe_part(int n)
 {
     char buffer[256];
-    int i,bytes_read;
+    int i, bytes_read;
 
-    
-    while(1){
-        for(i=0;i<n;i++){
-            if(child_signal[i] == 1){
-                child_signal[i] = -1;
-                goto exit;
-            }
-        }
-        usleep(1000);
+
+    while (1) {
+	for (i = 0; i < n; i++) {
+	    if (child_signal[i] == 1) {
+		child_signal[i] = -1;
+		goto exit;
+	    }
+	}
+	usleep(1000);
     }
 
-    exit:
+  exit:
     bytes_read = read(pipe_c2p[i][R], buffer, 256);
     buffer[bytes_read] = '\0';
-    
-    return(make_str(buffer));
+
+    return (make_str(buffer));
 }
 
 int read_from_pipe_part_nth(int n)
 {
     char buffer[256];
-    int i,bytes_read;
+    int i, bytes_read;
 
-    
-    while(1){
-            if(child_signal[n] == 1){
-                child_signal[n] = -1;
-                goto exit;
-            }
-        usleep(1000);
+
+    while (1) {
+	if (child_signal[n] == 1) {
+	    child_signal[n] = -1;
+	    goto exit;
+	}
+	usleep(1000);
     }
 
-    exit:
+  exit:
     bytes_read = read(pipe_c2p[n][R], buffer, 256);
     buffer[bytes_read] = '\0';
-    
-    return(make_str(buffer));
+
+    return (make_str(buffer));
 }
 
 
 
-int clear_child_signal(void){
+int clear_child_signal(void)
+{
     int i;
 
-    for(i=0;i<PROCSIZE;i++){
-        child_signal[i] = 0;
+    for (i = 0; i < PROCSIZE; i++) {
+	child_signal[i] = 0;
     }
 }
 
-int kill_rest_process(int n){
+int kill_rest_process(int n)
+{
     int i;
 
-    for(i=0;i<n;i++){
-        child_signal1[i] = child_signal[i];
-        if(child_signal[i] == 0){
-            kill(pid[i], SIGINT);
-        }
+    for (i = 0; i < n; i++) {
+	child_signal1[i] = child_signal[i];
+	if (child_signal[i] == 0) {
+	    kill(pid[i], SIGINT);
+	}
     }
 
     /*
-    if child_signal1[i] is 0 ,ignore the pipe output.
-    Because ctrl+c does not output to buffer.
-    */
-    for(i=0;i<n;i++){
-        if(child_signal1[i] == 1){
-            read_from_pipe(i);
-        }
+       if child_signal1[i] is 0 ,ignore the pipe output.
+       Because ctrl+c does not output to buffer.
+     */
+    for (i = 0; i < n; i++) {
+	if (child_signal1[i] == 1) {
+	    read_from_pipe(i);
+	}
     }
-    
+
 }
 
 
 int str_to_sexp(int x)
 {
-    int stm,save,res;
+    int stm, save, res;
 
     stm = make_stm(stdin, EISL_INSTR, NULL);
     TRY heap[stm].name = Str_dup(GET_NAME(x), 1, 0, 1);
@@ -1481,15 +1480,17 @@ int str_to_sexp(int x)
 }
 
 int eval_args1(int x);
-int eval_args1(int x){
-    if(nullp(x))
-        return(NIL);
+int eval_args1(int x)
+{
+    if (nullp(x))
+	return (NIL);
     else
-        return(cons(eval(car(x),0),eval_args1(cdr(x))));
+	return (cons(eval(car(x), 0), eval_args1(cdr(x))));
 }
 
-int eval_args(int x){
-    return(cons(car(x),eval_args1(cdr(x))));
+int eval_args(int x)
+{
+    return (cons(car(x), eval_args1(cdr(x))));
 }
 
 
@@ -1497,13 +1498,13 @@ int eval_args(int x){
 // fsubr (mp-call fun arg1 arg2 ... argn)
 int f_mp_call(int arglist, int th)
 {
-    int arg1,arg2,temp,res,n,i,args,exp;
+    int arg1, arg2, temp, res, n, i, args, exp;
 
-    arg1 = car(arglist); //fun
-    arg2 = cdr(arglist); //args
+    arg1 = car(arglist);	//fun
+    arg2 = cdr(arglist);	//args
     n = length(arg2);
-    if(n > process_pt)
-        error(ILLEGAL_ARGS, "mp-call", arg2, th);
+    if (n > process_pt)
+	error(ILLEGAL_ARGS, "mp-call", arg2, th);
     temp = arglist;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
@@ -1512,30 +1513,30 @@ int f_mp_call(int arglist, int th)
     }
 
     i = 0;
-    while(!nullp(arg2)){
-        exp = eval_args(car(arg2));
-        write_to_pipe(i,sexp_to_str(exp));
-        arg2 = cdr(arg2);
-        i++;
+    while (!nullp(arg2)) {
+	exp = eval_args(car(arg2));
+	write_to_pipe(i, sexp_to_str(exp));
+	arg2 = cdr(arg2);
+	i++;
     }
 
     args = NIL;
-    for(i=n-1;i>=0;i--){
-        args = cons(str_to_sexp(read_from_pipe(i)),args);
+    for (i = n - 1; i >= 0; i--) {
+	args = cons(str_to_sexp(read_from_pipe(i)), args);
     }
 
-    res = apply(eval(arg1,th), args, th);
-    return(res);
+    res = apply(eval(arg1, th), args, th);
+    return (res);
 }
 
 
 int f_mp_exec(int arglist, int th)
 {
-    int temp,res,n,i,exp;
+    int temp, res, n, i, exp;
 
     n = length(arglist);
-    if(n > process_pt)
-        error(ILLEGAL_ARGS, "mp-exec", arglist, th);
+    if (n > process_pt)
+	error(ILLEGAL_ARGS, "mp-exec", arglist, th);
     temp = arglist;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
@@ -1545,31 +1546,31 @@ int f_mp_exec(int arglist, int th)
 
     i = 0;
     temp = arglist;
-    while(!nullp(temp)){
-        exp = eval_args(car(temp));
-        write_to_pipe(i,sexp_to_str(exp));
-        temp = cdr(temp);
-        i++;
+    while (!nullp(temp)) {
+	exp = eval_args(car(temp));
+	write_to_pipe(i, sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
     }
 
-    for(i=0;i<n;i++){
-        res = str_to_sexp(read_from_pipe(i));
+    for (i = 0; i < n; i++) {
+	res = str_to_sexp(read_from_pipe(i));
     }
 
-    return(res);
+    return (res);
 
 }
 
 int f_mp_part(int arglist, int th)
 {
-    int temp,res,n,i,exp,opt;
+    int temp, res, n, i, exp, opt;
 
     opt = car(arglist);
     n = length(cdr(arglist));
-    if(opt != T && opt != NIL)
-        error(ILLEGAL_ARGS, "mp-part", opt, th);
-    if(n > process_pt)
-        error(ILLEGAL_ARGS, "mp-part", cdr(arglist), th);
+    if (opt != T && opt != NIL)
+	error(ILLEGAL_ARGS, "mp-part", opt, th);
+    if (n > process_pt)
+	error(ILLEGAL_ARGS, "mp-part", cdr(arglist), th);
     temp = cdr(arglist);
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
@@ -1580,28 +1581,29 @@ int f_mp_part(int arglist, int th)
     clear_child_signal();
     i = 0;
     temp = cdr(arglist);
-    while(!nullp(temp)){
-        exp = eval_args(car(temp));
-        write_to_pipe(i,sexp_to_str(exp));
-        temp = cdr(temp);
-        i++;
+    while (!nullp(temp)) {
+	exp = eval_args(car(temp));
+	write_to_pipe(i, sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
     }
-    if(opt == NIL){
-        for(i=0;i<n;i++){
-            res = str_to_sexp(read_from_pipe_part(n));
-            if(res == NIL) break;
-        }
+    if (opt == NIL) {
+	for (i = 0; i < n; i++) {
+	    res = str_to_sexp(read_from_pipe_part(n));
+	    if (res == NIL)
+		break;
+	}
+    } else if (opt == T) {
+	for (i = 0; i < n; i++) {
+	    res = str_to_sexp(read_from_pipe_part(n));
+	    if (res != NIL)
+		break;
+	}
     }
-    else if(opt == T){
-        for(i=0;i<n;i++){
-            res = str_to_sexp(read_from_pipe_part(n));
-            if(res != NIL) break;
-        }
-    }
-    
+
 
     kill_rest_process(n);
-    return(res);
+    return (res);
 
 }
 
@@ -1644,20 +1646,20 @@ int f_mp_let(int arglist, int th)
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
-    exp = eval_args(cadr(car(temp)));
-	write_to_pipe(i,sexp_to_str(exp));
+	exp = eval_args(cadr(car(temp)));
+	write_to_pipe(i, sexp_to_str(exp));
 	temp = cdr(temp);
 	i++;
     }
-    
+
     temp = arg1;
     i = 0;
-    while(!nullp(temp)){
-        add_lex_env(car(car(temp)), str_to_sexp(read_from_pipe(i)), th);
-        temp = cdr(temp);
-        i++;
+    while (!nullp(temp)) {
+	add_lex_env(car(car(temp)), str_to_sexp(read_from_pipe(i)), th);
+	temp = cdr(temp);
+	i++;
     }
-    
+
     res = NIL;
     while (arg2 != NIL) {
 	shelter_push(arg2, 0);
@@ -1665,7 +1667,7 @@ int f_mp_let(int arglist, int th)
 	shelter_pop(0);
 	arg2 = cdr(arg2);
     }
-    
+
     return (res);
 }
 
@@ -1676,15 +1678,14 @@ int f_mp_close(int arglist, int th)
 {
     int i;
 
-    if(!nullp(arglist))
-        error(ILLEGAL_ARGS, "mp-close", arglist, th);
+    if (!nullp(arglist))
+	error(ILLEGAL_ARGS, "mp-close", arglist, th);
 
-    for(i=0;i<process_pt;i++){
-        char data[] = "(quit)";
-        write(pipe_p2c[i][W], data, sizeof(data));
+    for (i = 0; i < process_pt; i++) {
+	char data[] = "(quit)";
+	write(pipe_p2c[i][W], data, sizeof(data));
     }
 
     process_pt = 0;
-    return(T);
+    return (T);
 }
-

@@ -123,7 +123,7 @@ int line;
 int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
-int buffer2[COL_SIZE + 1] = {0};  //for read_stdin()
+int buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
 
 
 /* heap ,stack and bignum */
@@ -173,7 +173,7 @@ bool concurrent_stop_flag = false;	/* while remarking&sweeping */
 bool concurrent_exit_flag = false;	/* To exit GC thread */
 bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
-bool process_flag = false;  /* when invoke as child process falg is true*/
+bool process_flag = false;	/* when invoke as child process falg is true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -213,7 +213,7 @@ int error_handler1 = NIL;	/* for restore error_handler */
 int trace_list = NIL;		/* function list of trace */
 int backtrace[BACKSIZE];
 int unwind_nest;		/* unwind-protect nest level */
-int process_arg;        /* when -p option child process number*/
+int process_arg;		/* when -p option child process number */
 
 /* concurrent GC*/
 pthread_t concurrent_thread;
@@ -237,7 +237,7 @@ pthread_attr_t para_attr[PARASIZE];
 size_t para_size[PARASIZE];
 
 /*multi proccess*/
-int pipe_p2c[PROCSIZE][2]; 
+int pipe_p2c[PROCSIZE][2];
 int pipe_c2p[PROCSIZE][2];
 pid_t pid[PROCSIZE];
 int process_pt = 0;
@@ -331,19 +331,19 @@ int main(int argc, char *argv[])
     init_generic();
     init_dp();
     init_pointer();
-	init_thread();
-	/* ctrl+c */
+    init_thread();
+    /* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
-	/* signal for read_from_pipe_part() */
-	memset(&child_action, 0, sizeof(child_action));
+    /* signal for read_from_pipe_part() */
+    memset(&child_action, 0, sizeof(child_action));
     child_action.sa_sigaction = &signal_handler_child;
     child_action.sa_flags = SA_SIGINFO;
-	#ifdef __linux__
-	sigaction(SIGRTMIN, &child_action, NULL);
-	#else
-	sigaction(SIGUSR1, &child_action, NULL);
-	#endif
+#ifdef __linux__
+    sigaction(SIGRTMIN, &child_action, NULL);
+#else
+    sigaction(SIGUSR1, &child_action, NULL);
+#endif
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
 	-1) {
 	perror("setenv");
@@ -398,7 +398,7 @@ int main(int argc, char *argv[])
 	    case 'r':
 		disable_repl_flag();
 		break;
-		case 'p':
+	    case 'p':
 		process_flag = true;
 		process_num = strtol(optarg, NULL, 10);
 		break;
@@ -424,32 +424,31 @@ int main(int argc, char *argv[])
     END_TRY;
 
     option_flag = false;
-	
-	
+
+
     /* REPL */
     volatile bool quit = false;
     do {
 	if (!process_flag)
-		maybe_greet();
+	    maybe_greet();
 	TRY while (1) {
 	    init_pointer();
 	    if (!process_flag) {
-			fputs("> ", stdout);
-	    	print(eval(sread(), 0));
-	    	putchar('\n');
-		}
-		else {
-	    	print(eval(sread(),0));
-	    	putchar('\n');
-			fflush(stdout);
-			union sigval value;
-            value.sival_int = (int)process_num; 
-			#ifdef __linux__
-			sigqueue(getppid(), SIGRTMIN, value);
-			#else
-			kill(getppid(), SIGUSR1); 
-			#endif
-		}
+		fputs("> ", stdout);
+		print(eval(sread(), 0));
+		putchar('\n');
+	    } else {
+		print(eval(sread(), 0));
+		putchar('\n');
+		fflush(stdout);
+		union sigval value;
+		value.sival_int = (int) process_num;
+#ifdef __linux__
+		sigqueue(getppid(), SIGRTMIN, value);
+#else
+		kill(getppid(), SIGUSR1);
+#endif
+	    }
 	    if (redef_flag)
 		redef_generic();
 	}
@@ -519,13 +518,13 @@ void init_thread(void)
     if (worker_count > 5)
 	worker_count = 5;
     /* sysconf(_SC_NPROCESSORS_CONF) may operate correctly depending on the OS,
-    *  and in such cases, it could potentially result in a negative number. 
-    *  It is assumed that the current CPU has at least 4 cores. 
-    *  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
-    */
+     *  and in such cases, it could potentially result in a negative number. 
+     *  It is assumed that the current CPU has at least 4 cores. 
+     *  Therefore, in the event of a negative number, we set it to 4 - 1 = 3.
+     */
     else if (worker_count < 0)
-		worker_count = 3;
-	
+	worker_count = 3;
+
 
     /* create parallel function thread */
     init_para();
@@ -551,11 +550,12 @@ void signal_handler_c(int signo __unused)
     exit_flag = 1;
 }
 
-void signal_handler_child(int sig, siginfo_t *siginfo, void *context) {
-	int n;
+void signal_handler_child(int sig, siginfo_t * siginfo, void *context)
+{
+    int n;
 
-	n = siginfo->si_value.sival_int;
-	child_signal[n] = 1;
+    n = siginfo->si_value.sival_int;
+    child_signal[n] = 1;
 
 }
 
@@ -591,8 +591,8 @@ int readc(void)
     else if (input_stream == standard_input && repl_flag)
 	/* REPL-mode and standard-input */
 	c = read_line(1);
-	else if (process_flag == true)
-	/* EISL as child process*/
+    else if (process_flag == true)
+	/* EISL as child process */
 	c = read_stdin();
     else {
 	/* not REPL-mode and standard-input */
@@ -807,7 +807,8 @@ void get_token(void)
 		while (c != '|') {
 		    if (c == EOF)
 			error(SYSTEM_ERR,
-			      "not exist right hand #| comment |#", NIL, 0);
+			      "not exist right hand #| comment |#", NIL,
+			      0);
 		    c = readc();
 		}
 		c = readc();
@@ -2390,7 +2391,7 @@ int quasi_vector_transfer(int x, int n)
     size = GET_INT(GET_CDR(x));
 
     for (i = 0; i < size; i++) {
-	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n),0));
+	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n), 0));
     }
     return (x);
 }
@@ -2418,7 +2419,7 @@ int quasi_array_transfer(int x, int n)
     }
 
     for (i = 0; i < size; i++) {
-	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n),0));
+	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n), 0));
     }
     return (x);
 }

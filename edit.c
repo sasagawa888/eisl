@@ -548,10 +548,10 @@ int read_stdin(void)
     int j;			// colums position of buffer 
     static int pos = 0;
 
-	// when buffer is empty buffering from stdin
+    // when buffer is empty buffering from stdin
     if (buffer2[pos] == 0) {
 	int c;
-	
+
 	// clear buffer
 	for (j = 0; j <= COL_SIZE; j++)
 	    buffer2[j] = 0;
@@ -560,13 +560,14 @@ int read_stdin(void)
 	j = 0;
 
 	// wait until get not null data
-	loop:
+      loop:
 	c = getc(stdin);
-	if (c == 0) goto loop;
+	if (c == 0)
+	    goto loop;
 	while (c != 0) {
 	    buffer2[j] = c;
-		c = getc(stdin);
-		j++;
+	    c = getc(stdin);
+	    j++;
 	}
 	buffer2[j] = 0;
 	pos = 0;

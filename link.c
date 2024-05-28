@@ -459,6 +459,7 @@ double get_flt(int x)
     return (GET_FLT(x));
 }
 
-int jump_to_repl(){
+int jump_to_repl()
+{
     RAISE(Restart_Repl);
 }

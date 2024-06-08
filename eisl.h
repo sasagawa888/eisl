@@ -789,8 +789,6 @@ int classp(int x);
 int class_symbol_p(int x);
 int clear_child_signal(void);
 int cons(int car, int cdr);
-int cons_next(int x, int y);
-int cons_prev(int x, int y);
 int copy(int x);
 int count_args(int ls);
 int create_array(int x);

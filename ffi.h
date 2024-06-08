@@ -50,8 +50,7 @@ typedef double (*fn7)(int);
 typedef int (*fn8)(double);
 typedef void (*tfunc)(const char *, int (*func)(int));
 
-enum { CHECKGBC_IDX, GBC_IDX, FRESHCELL_IDX, FREECELL_IDX, 
-    GETDYNPT_IDX, GET_ERROR_HANDLER_IDX, GET_ERROR_FLAG_IDX, 
+enum { CHECKGBC_IDX, GBC_IDX, GETDYNPT_IDX, GET_ERROR_HANDLER_IDX, GET_ERROR_FLAG_IDX, 
     RESTORE_ERROR_HANDLER_IDX, WAIT_PARA_IDX, JUMP_TO_REPL_IDX, CLEAR_CHILD_SIGNAL_IDX,
     NUM_FN0S
 };

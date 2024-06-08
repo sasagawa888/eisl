@@ -98,15 +98,6 @@ static inline int Fgbc(void)
     return f0[GBC_IDX] ();
 }
 
-static inline int Ffreshcell(void)
-{
-    return f0[FRESHCELL_IDX] ();
-}
-
-static inline int Ffreecell(void)
-{
-    return f0[FREECELL_IDX] ();
-}
 
 static inline int Fwait_para(void)
 {

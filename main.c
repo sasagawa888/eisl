@@ -173,7 +173,8 @@ bool concurrent_stop_flag = false;	/* while remarking&sweeping */
 bool concurrent_exit_flag = false;	/* To exit GC thread */
 bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
-bool process_flag = false;	/* when invoke as child process falg is true */
+bool process_flag = false;	/* when invoke as child process, flag is true */
+bool thread_flag = false;   /* when invoke as multi thread, flag is true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -288,6 +289,7 @@ static void usage(void)
 	 "-l filename  -- EISL starts after reading the file.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
+	 "-t           -- EISL runs with multi thread mode.\n"
 	 "-v           -- display version number.");
 }
 
@@ -363,7 +365,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:s:p:cfrhv")) != -1) {
+	while ((ch = getopt(argc, argv, "l:s:p:cfrhvt")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -401,6 +403,9 @@ int main(int argc, char *argv[])
 	    case 'p':
 		process_flag = true;
 		process_num = strtol(optarg, NULL, 10);
+		break;
+		case 't':
+		thread_flag = true;
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

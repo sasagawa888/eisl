@@ -290,6 +290,7 @@ int freshcell(void)
     }
 
     else {
+    printf("concurrent=%d  stop=%d fc[]=%d", concurrent_flag, concurrent_stop_flag, fc[0]);
 	error(RESOURCE_ERR, "freshcell other case", NIL, 0);
     }
 
@@ -323,7 +324,7 @@ int tfreshcell(int th)
 	//pthread_mutex_unlock(&mutex);
 	if (remark_pt > REMKSIZE) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "freshcell remark", NIL, 0);
+	    error(RESOURCE_ERR, "tfreshcell remark", NIL, 0);
 	}
     } else if (!concurrent_flag) {
 	//pthread_mutex_lock(&mutex);
@@ -334,12 +335,12 @@ int tfreshcell(int th)
 	//pthread_mutex_unlock(&mutex);
 	if (fc[th] <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "freshcell rest", NIL, 0);
+	    error(RESOURCE_ERR, "tfreshcell rest", NIL, 0);
 	}
     }
 
     else {
-	error(RESOURCE_ERR, "freshcell other case", NIL, 0);
+	error(RESOURCE_ERR, "tfreshcell other case", NIL, 0);
     }
 
     return (res);

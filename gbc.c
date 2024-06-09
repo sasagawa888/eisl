@@ -293,7 +293,8 @@ int check_gbc(void)
 	}
     }
 
-    if (!thread_flag && concurrent_flag && fc[0] < FREESIZE) {
+
+    if (!concurrent_flag && fc[0] < FREESIZE) {
 	gbc();
 	return 0;
     }

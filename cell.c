@@ -66,10 +66,10 @@ void init_cell(void)
 void reinit_cell(void){
     int i,w;
 
-    fc[0] = CELLSIZE/2;
-    w = (CELLSIZE/2)/queue_num; 
+    w = CELLSIZE/(queue_num+1);
+    fc[0] = w; 
     for(i=1;i<=queue_num;i++){
-        hp[i] = CELLSIZE/2 + w*i + 1;
+        hp[i] = w*i + 1;
         fc[i] = w;
     }
 }

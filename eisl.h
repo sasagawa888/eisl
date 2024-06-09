@@ -619,11 +619,11 @@ extern pthread_mutex_t mutex;
 extern pthread_mutex_t mutex1;
 extern int remark[REMKSIZE];
 extern int remark_pt;
-extern int worker_count;
 
 /* multi thread */
 extern int queue[PARASIZE];
 extern int queue_pt;
+extern int queue_num;
 extern int para_input[PARASIZE];
 extern int para_output[PARASIZE];
 extern pthread_t para_thread[PARASIZE];

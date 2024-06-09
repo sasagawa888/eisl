@@ -2601,7 +2601,7 @@ void *parallel(void *arg)
 	EXCEPT(Exit_Thread);
 	END_TRY;
 	enqueue(num);
-	if (queue_pt == worker_count) {
+	if (queue_pt == queue_num) {
 	    pthread_mutex_lock(&mutex);
 	    pthread_cond_signal(&cond_main);
 	    pthread_mutex_unlock(&mutex);
@@ -2615,16 +2615,15 @@ void init_para(void)
 {
     int i;
 
-    /* worker_count is cores - 1(main+GC)
-     * queue[1,2,3,4,...] worker thread number 
+    /* queue[1,2,3,4,...] worker thread number 
      * para_thread[1] has worker-number 1
      * para_thread[2] has worker-number 2 ... 
      */
-    for (i = 0; i < worker_count; i++) {
+    for (i = 0; i < queue_num; i++) {
 	queue[i] = i + 1;
     }
 
-    for (i = 0; i < worker_count; i++) {
+    for (i = 0; i < queue_num; i++) {
 	para_size[i + 1] = 8 * 1024 * 1024;
 	pthread_attr_init(&para_attr[i + 1]);
 	pthread_attr_setstacksize(&para_attr[i + 1], para_size[i + 1]);
@@ -2632,15 +2631,16 @@ void init_para(void)
 		       &queue[i]);
     }
 
-    queue_pt = worker_count;
+    queue_pt = queue_num;
 }
+
 
 void exit_para(void)
 {
     int i;
 
     parallel_exit_flag = true;
-    for (i = 1; i <= worker_count; i++) {
+    for (i = 1; i <= queue_num; i++) {
 	pthread_mutex_lock(&mutex);
 	pthread_cond_signal(&cond_para[i]);
 	pthread_mutex_unlock(&mutex);
@@ -2670,7 +2670,7 @@ int f_mt_let(int arglist, int th)
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "mt-let", arglist, th);
-    if (length(arg1) > worker_count)
+    if (length(arg1) > queue_num)
 	error(WRONG_ARGS, "mt-let", arg1, th);
     if (!listp(arg1))
 	error(IMPROPER_ARGS, "mt-let", arg1, th);
@@ -2745,7 +2745,7 @@ int f_mt_call(int arglist, int th)
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "mt-call", arglist, th);
-    if (length(arg2) > worker_count)
+    if (length(arg2) > queue_num)
 	error(WRONG_ARGS, "mt-call", arg1, th);
     //if (!symbolp(arg1))
     //error(IMPROPER_ARGS, "mt-call", arg1, th);
@@ -2793,7 +2793,7 @@ int f_mt_exec(int arglist, int th)
 
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "mt-exec", arglist, th);
-    if (length(arglist) > worker_count)
+    if (length(arglist) > queue_num)
 	error(WRONG_ARGS, "mt-exec", arglist, th);
 
     temp = arglist;

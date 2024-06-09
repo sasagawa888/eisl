@@ -702,6 +702,7 @@ int signal_condition(int x, int y, int th)
 	puts("Error occurred while executing command line options.");
 	option_flag = false;
     }
+	ct = 0; /* set current thread default */
     RAISE(Restart_Repl);
     return 0;
 }

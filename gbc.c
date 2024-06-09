@@ -159,18 +159,18 @@ void *concurrent(void *arg __unused)
 	MARK_CELL(T);
 
 	/* mark local environment */
-	for (j = 0; j <= worker_count; j++)
+	for (j = 0; j <= queue_num; j++)
 	    mark_cell(ep[j]);
 	/* mark dynamic environment */
-	for (j = 0; j <= worker_count; j++)
+	for (j = 0; j <= queue_num; j++)
 	    mark_cell(dp[j]);
 	/* mark stack */
-	for (j = 0; j <= worker_count; j++) {
+	for (j = 0; j <= queue_num; j++) {
 	    for (i = 0; i < sp[j]; i++)
 		mark_cell(stack[i][j]);
 	}
 	/* mark cell binded by argstack */
-	for (j = 0; j <= worker_count; j++) {
+	for (j = 0; j <= queue_num; j++) {
 	    for (i = 0; i < ap[j]; i++)
 		mark_cell(argstk[i][j]);
 	}
@@ -189,12 +189,12 @@ void *concurrent(void *arg __unused)
 	mark_cell(output_stream);
 	mark_cell(error_stream);
 	/* mark shelter */
-	for (j = 0; j <= worker_count; j++) {
+	for (j = 0; j <= queue_num; j++) {
 	    for (i = 0; i < lp[j]; i++)
 		mark_cell(shelter[i][j]);
 	}
 	/* mark dynamic environment */
-	for (j = 0; j <= worker_count; j++) {
+	for (j = 0; j <= queue_num; j++) {
 	    for (i = 0; i <= dp[j]; i++)
 		mark_cell(dynamic[i][1][j]);
 	}

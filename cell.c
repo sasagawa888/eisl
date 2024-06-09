@@ -250,32 +250,29 @@ int freshcell(void)
 	SET_CDR(res, 0);
 	fc[ct]--;
 	pthread_mutex_unlock(&mutex);
-	ct = 0;
     } else if (concurrent_flag && fc[ct] > 50) {
-	pthread_mutex_lock(&mutex);
+	//pthread_mutex_lock(&mutex);
 	res = hp[ct];
 	hp[ct] = GET_CDR(hp[ct]);
 	SET_CDR(res, 0);
 	fc[ct]--;
 	remark[remark_pt++] = res;
-	pthread_mutex_unlock(&mutex);
+	//pthread_mutex_unlock(&mutex);
 	if (remark_pt > REMKSIZE) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "freshcell remark", NIL, 0);
 	}
-	ct = 0;
     } else if (!concurrent_flag) {
-	pthread_mutex_lock(&mutex);
+	//pthread_mutex_lock(&mutex);
 	res = hp[ct];
 	hp[ct] = GET_CDR(hp[ct]);
 	SET_CDR(res, 0);
 	fc[ct]--;
-	pthread_mutex_unlock(&mutex);
+	//pthread_mutex_unlock(&mutex);
 	if (fc[ct] <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "freshcell rest", NIL, 0);
 	}
-	ct = 0;
     }
 
     else {

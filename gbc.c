@@ -224,26 +224,27 @@ void *concurrent(void *arg __unused)
 	    }
 	} else {
 	    for (i = 0; i <= queue_num; i++) {
-		hp[0] = NIL;
-		fc[0] = 0;
+		hp[i] = NIL;
+		fc[i] = 0;
 	    }
 	    addr = 0;
-
+		i = 0;
 	    while (addr < CELLSIZE) {
-		if (USED_CELL(addr))
+		if (USED_CELL(addr)){
 		    NOMARK_CELL(addr);
+		}
 		else {
-		    for (i = 0; i <= queue_num; i++) {
 			clr_cell(addr);
 			SET_CDR(addr, hp[i]);
 			hp[i] = addr;
 			fc[i]++;
-			addr++;
-			if (addr >= CELLSIZE)
-			    break;
-		    }
+			i++;
+			if(i > queue_num) i= 0;
+		
 		}
+		addr++;
 	    }
+	
 	}
 	/* end of stop the world and into sweep mode */
 	concurrent_stop_flag = false;
@@ -292,7 +293,7 @@ int check_gbc(void)
 	}
     }
 
-    if (!concurrent_flag && fc[0] < FREESIZE) {
+    if (!thread_flag && concurrent_flag && fc[0] < FREESIZE) {
 	gbc();
 	return 0;
     }

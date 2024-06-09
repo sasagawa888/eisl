@@ -17,6 +17,7 @@
 #include "except.h"
 #include "compat/eiffel_stubs.h"
 
+
 #define DYNSIZE 1000
 #define STACKSIZE 400000
 #define REMKSIZE 3000000
@@ -1271,6 +1272,8 @@ int symnamep(int addr, char *name);
 int superp(int x, int y);
 int text_input_stream_p(int x);
 int text_output_stream_p(int x);
+int tfreshcell(int th);
+int tcons(int x, int y, int th);
 int undef_parameter_p(int ls);
 int unified_parameter_p(int lamlis, int ls);
 int utf8_to_ucs4(char *p);

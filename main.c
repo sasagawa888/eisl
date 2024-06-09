@@ -2119,7 +2119,7 @@ int evlis(int addr, int th)
 	cdr_addr = evlis(cdr(addr), th);
 	car_addr = arg_pop(th);
 	(void) arg_pop(th);
-	return (cons(car_addr, cdr_addr));
+	return (tcons(car_addr, cdr_addr, th));
     }
 }
 

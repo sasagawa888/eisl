@@ -409,6 +409,7 @@ int main(int argc, char *argv[])
 		thread_flag = true;
 		queue_num = strtol(optarg, NULL, 10);
 		reinit_cell();
+		init_para();
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
@@ -522,7 +523,7 @@ void init_pointer(void)
 void init_thread(void)
 {
     /* create parallel function thread */
-    init_para();
+    //init_para();
 
     /* create concurrent GC thread */
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);

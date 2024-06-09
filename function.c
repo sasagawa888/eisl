@@ -279,7 +279,6 @@ int f_plus(int arglist, int th)
 {
     int augend;
 
-    ct = th;
     augend = make_int(0);
 
     for (int remaining_operands = arglist;
@@ -290,7 +289,6 @@ int f_plus(int arglist, int th)
 
 	augend = plus(augend, addend);
     }
-    ct = 0;
     return (augend);
 }
 
@@ -298,7 +296,6 @@ int f_minus(int arglist, int th)
 {
     int minuend, n;
 
-    ct = th;
     minuend = car(arglist);
     if ((n = length(arglist)) == 0)
 	error(WRONG_ARGS, "-", arglist, th);
@@ -314,7 +311,6 @@ int f_minus(int arglist, int th)
 	int subtrahend = car(remaining_operands);
 	minuend = minus(minuend, subtrahend);
     }
-    ct = 0;
     return (minuend);
 }
 
@@ -322,7 +318,6 @@ int f_mult(int arglist, int th)
 {
     int multiplicand;
 
-    ct = th;
     multiplicand = make_int(1);
 
     for (int remaining_operands = arglist;
@@ -333,7 +328,6 @@ int f_mult(int arglist, int th)
 
 	multiplicand = mult(multiplicand, multiplier);
     }
-    ct = 0;
     return (multiplicand);
 }
 
@@ -341,7 +335,6 @@ int f_quotient(int arglist, int th)
 {
     int dividend;
 
-    ct = th;
     dividend = car(arglist);
     arglist = cdr(arglist);
 
@@ -353,7 +346,6 @@ int f_quotient(int arglist, int th)
 
 	dividend = quotient(dividend, divisor);
     }
-    ct = 0;
     return (dividend);
 }
 
@@ -1356,7 +1348,7 @@ int f_list(int arglist, int th __unused)
 
 int f_append(int arglist, int th)
 {
-    int arg1,res;
+    int arg1;
 
     arg1 = car(arglist);
     if (!listp(arg1) && nullp(arglist))
@@ -1372,12 +1364,9 @@ int f_append(int arglist, int th)
 	return (car(arglist));
     else if (nullp(arg1))
 	return (f_append(cdr(arglist), th));
-    else{
-    ct = th;
-    res = append(car(arglist), f_append(cdr(arglist), th));
-    ct = 0;
-    return (res);    
-    }
+    else
+    return (append(car(arglist), f_append(cdr(arglist), th)));    
+    
 	
 }
 

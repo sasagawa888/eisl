@@ -57,7 +57,6 @@ int fc[PARASIZE];		/* free counter */
 int ap[PARASIZE];		/* arglist pointer */
 int lp[PARASIZE];		/* shelter pointer */
 int cp;				/* tag pointer for catch & throw */
-int ct;				/* current thread number (defualt 0) */
 
 /* class */
 int cobject;

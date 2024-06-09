@@ -144,7 +144,7 @@ void *concurrent(void *arg __unused)
 	if (concurrent_exit_flag)
 	    goto exit;
 
-	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc);
+	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc[0]);
 	concurrent_flag = true;
 
 	/* mark hash table */
@@ -208,16 +208,16 @@ void *concurrent(void *arg __unused)
 	remark_pt = 0;
 
 	addr = 0;
-	hp = NIL;
-	fc = 0;
+	hp[0] = NIL;
+	fc[0] = 0;
 	while (addr < CELLSIZE) {
 	    if (USED_CELL(addr))
 		NOMARK_CELL(addr);
 	    else {
 		clr_cell(addr);
-		SET_CDR(addr, hp);
-		hp = addr;
-		fc++;
+		SET_CDR(addr, hp[0]);
+		hp[0] = addr;
+		fc[0]++;
 	    }
 	    addr++;
 	}
@@ -225,7 +225,7 @@ void *concurrent(void *arg __unused)
 	/* end of stop the world and into sweep mode */
 	concurrent_stop_flag = false;
 	concurrent_flag = false;
-	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc);
+	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc[0]);
     }
   exit:
     pthread_exit(NULL);
@@ -269,7 +269,7 @@ int check_gbc(void)
 	}
     }
 
-    if (!concurrent_flag && fc < FREESIZE)
+    if (!concurrent_flag && fc[0] < FREESIZE)
 	gbc();
 
     return 0;
@@ -279,5 +279,5 @@ int check_gbc(void)
 
 int freecell(void)
 {
-    return (fc);
+    return (fc[0]);
 }

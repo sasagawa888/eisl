@@ -51,12 +51,13 @@
 /* pointer */
 int ep[PARASIZE];		/* environment pointer */
 int dp[PARASIZE];		/* dynamic pointer */
-int hp;				    /* heap pointer for mark and sweep */
+int hp[PARASIZE];		/* heap pointer for mark and sweep */
 int sp[PARASIZE];		/* stack pointer */
-int fc;				    /* free counter */
+int fc[PARASIZE];		/* free counter */
 int ap[PARASIZE];		/* arglist pointer */
 int lp[PARASIZE];		/* shelter pointer */
-int cp;				    /* tag pointer for catch & throw */
+int cp;				/* tag pointer for catch & throw */
+int ct;				/* current thread number (defualt 0) */
 
 /* class */
 int cobject;
@@ -174,7 +175,7 @@ bool concurrent_exit_flag = false;	/* To exit GC thread */
 bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
-bool thread_flag = false;   /* when invoke as multi thread, flag is true */
+bool thread_flag = false;	/* when invoke as multi thread, flag is true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -225,7 +226,7 @@ int remark[REMKSIZE];
 int remark_pt = 0;
 int worker_count;
 
-/* parallel */
+/* multi thread */
 int queue[PARASIZE];
 int queue_pt;
 int para_input[PARASIZE];
@@ -404,7 +405,7 @@ int main(int argc, char *argv[])
 		process_flag = true;
 		process_num = strtol(optarg, NULL, 10);
 		break;
-		case 't':
+	    case 't':
 		thread_flag = true;
 		break;
 	    case 'v':

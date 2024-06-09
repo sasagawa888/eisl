@@ -33,8 +33,8 @@ void init_cell(void)
     for (addr = 0; addr < CELLSIZE; addr++) {
 	heap[addr].val.cdr.intnum = addr + 1;
     }
-    hp = 0;
-    fc = CELLSIZE;
+    hp[0] = 0;
+    fc[0] = CELLSIZE;
 
     for (x = 0; x < HASHTBSIZE; x++)
 	cell_hash_table[x] = NIL;
@@ -245,39 +245,41 @@ int freshcell(void)
 	    pthread_mutex_unlock(&mutex);
 	    pthread_mutex_lock(&mutex);
 	}
-	res = hp;
-	hp = GET_CDR(hp);
+	res = hp[ct];
+	hp[ct] = GET_CDR(hp[ct]);
 	SET_CDR(res, 0);
-	fc--;
+	fc[ct]--;
 	pthread_mutex_unlock(&mutex);
-
-    } else if (concurrent_flag && fc > 50) {
+	ct = 0;
+    } else if (concurrent_flag && fc[ct] > 50) {
 	pthread_mutex_lock(&mutex);
-	res = hp;
-	hp = GET_CDR(hp);
+	res = hp[ct];
+	hp[ct] = GET_CDR(hp[ct]);
 	SET_CDR(res, 0);
-	fc--;
+	fc[ct]--;
 	remark[remark_pt++] = res;
 	pthread_mutex_unlock(&mutex);
 	if (remark_pt > REMKSIZE) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL, 0);
+	    error(RESOURCE_ERR, "freshcell remark", NIL, 0);
 	}
+	ct = 0;
     } else if (!concurrent_flag) {
 	pthread_mutex_lock(&mutex);
-	res = hp;
-	hp = GET_CDR(hp);
+	res = hp[ct];
+	hp[ct] = GET_CDR(hp[ct]);
 	SET_CDR(res, 0);
-	fc--;
+	fc[ct]--;
 	pthread_mutex_unlock(&mutex);
-	if (fc <= 50 && !handling_resource_err) {
+	if (fc[ct] <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "M&S freshcell", NIL, 0);
+	    error(RESOURCE_ERR, "freshcell rest", NIL, 0);
 	}
+	ct = 0;
     }
 
     else {
-	error(RESOURCE_ERR, "M&S freshcell", NIL, 0);
+	error(RESOURCE_ERR, "freshcell other case", NIL, 0);
     }
 
     return (res);

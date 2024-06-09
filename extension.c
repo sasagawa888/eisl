@@ -642,8 +642,8 @@ void debugger(int th)
 		      "LP = %d (shelter pointer)\n"
 		      "Parallel = %d (worker_count)\n"
 		      "Thread = %d (current thread)\n",
-		      ep[th], dp[th], hp, sp[th], fc, ap[th], lp[th],
-		      worker_count, th);
+		      ep[th], dp[th], hp[th], sp[th], fc[th], ap[th],
+		      lp[th], worker_count, th);
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

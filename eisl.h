@@ -165,14 +165,14 @@ typedef struct {
 /* ------pointer---- */
 extern int ep[PARASIZE];	// environment pointer
 extern int dp[PARASIZE];	// dynamic pointer
-extern int hp;			    // heap pointer
+extern int hp[PARASIZE];	// heap pointer
 extern int sp[PARASIZE];	// stack pointer
-extern int fc;			    // free counter
+extern int fc[PARASIZE];	// free counter
 extern int ap[PARASIZE];    // arglist pointer
 extern int lp[PARASIZE];	// shelter pointer
 extern int ac;			    // allocate counter
 extern int cp;              // catch tag pointer
-
+extern int ct;              // current thread number
 /* ------class----- */
 extern int cobject;
 extern int cbasic_array;
@@ -621,7 +621,7 @@ extern int remark[REMKSIZE];
 extern int remark_pt;
 extern int worker_count;
 
-/* parallel */
+/* multi thread */
 extern int queue[PARASIZE];
 extern int queue_pt;
 extern int para_input[PARASIZE];

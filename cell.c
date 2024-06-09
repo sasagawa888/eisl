@@ -31,11 +31,12 @@ void init_cell(void)
 
     /* initialize heap area */
     for (addr = 0; addr < CELLSIZE; addr++) {
-	heap[addr].val.cdr.intnum = addr + 1;
+    SET_CDR(addr,addr+1);
     }
     hp[0] = 0;
     fc[0] = CELLSIZE;
 
+    /* hash table for symbol */
     for (x = 0; x < HASHTBSIZE; x++)
 	cell_hash_table[x] = NIL;
 
@@ -59,6 +60,18 @@ void init_cell(void)
 	ap[i] = 0;
     }
 
+}
+
+
+void reinit_cell(void){
+    int i,w;
+
+    fc[0] = CELLSIZE/2;
+    w = (CELLSIZE/2)/queue_num; 
+    for(i=1;i<=queue_num;i++){
+        hp[i] = CELLSIZE/2 + w*i + 1;
+        fc[i] = w;
+    }
 }
 
 void bind_class(const char *name, int cl)

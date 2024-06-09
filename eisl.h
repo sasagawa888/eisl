@@ -1353,6 +1353,7 @@ void profiler_set(int sw);
 void profiler_print();
 void redef_generic(void);
 void resort_method(int func);
+void reinit_cell(void);
 void set_sign(int x, int y);
 void set_length(int x, int len);
 void set_pointer(int x, int pointer);

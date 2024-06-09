@@ -637,13 +637,16 @@ void debugger(int th)
 		      "DP = %d (dynamic pointer)\n"
 		      "HP = %d (heap pointer)\n"
 		      "SP = %d (stack pointer)\n"
-		      "FC = %d (free counter)\n"
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
 		      "Parallel = %d (queue_num)\n"
 		      "Thread = %d (current thread)\n",
-		      ep[th], dp[th], hp[th], sp[th], fc[th], ap[th],
+		      ep[th], dp[th], hp[th], sp[th], ap[th],
 		      lp[th], queue_num, th);
+        puts("Free cell ");
+        for(i=0;i<=queue_num;i++){
+            Fmt_print("thread%d = %d\n", i, fc[i]);
+        }
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

@@ -408,6 +408,7 @@ int main(int argc, char *argv[])
 	    case 't':
 		thread_flag = true;
 		queue_num = strtol(optarg, NULL, 10);
+		reinit_cell();
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

@@ -207,21 +207,44 @@ void *concurrent(void *arg __unused)
 
 	remark_pt = 0;
 
-	addr = 0;
-	hp[0] = NIL;
-	fc[0] = 0;
-	while (addr < CELLSIZE) {
-	    if (USED_CELL(addr))
-		NOMARK_CELL(addr);
-	    else {
-		clr_cell(addr);
-		SET_CDR(addr, hp[0]);
-		hp[0] = addr;
-		fc[0]++;
+	if (!thread_flag) {
+	    addr = 0;
+	    hp[0] = NIL;
+	    fc[0] = 0;
+	    while (addr < CELLSIZE) {
+		if (USED_CELL(addr))
+		    NOMARK_CELL(addr);
+		else {
+		    clr_cell(addr);
+		    SET_CDR(addr, hp[0]);
+		    hp[0] = addr;
+		    fc[0]++;
+		}
+		addr++;
 	    }
-	    addr++;
-	}
+	} else {
+	    for (i = 0; i <= queue_num; i++) {
+		hp[0] = NIL;
+		fc[0] = 0;
+	    }
+	    addr = 0;
 
+	    while (addr < CELLSIZE) {
+		if (USED_CELL(addr))
+		    NOMARK_CELL(addr);
+		else {
+		    for (i = 0; i <= queue_num; i++) {
+			clr_cell(addr);
+			SET_CDR(addr, hp[i]);
+			hp[i] = addr;
+			fc[i]++;
+			addr++;
+			if (addr >= CELLSIZE)
+			    break;
+		    }
+		}
+	    }
+	}
 	/* end of stop the world and into sweep mode */
 	concurrent_stop_flag = false;
 	concurrent_flag = false;
@@ -269,8 +292,20 @@ int check_gbc(void)
 	}
     }
 
-    if (!concurrent_flag && fc[0] < FREESIZE)
+    if (!concurrent_flag && fc[0] < FREESIZE) {
 	gbc();
+	return 0;
+    }
+
+    if (thread_flag && !concurrent_flag) {
+	int i;
+	for (i = 0; i <= queue_num; i++) {
+	    if (fc[i] < FREESIZE) {
+		gbc();
+		return 0;
+	    }
+	}
+    }
 
     return 0;
 }

@@ -643,10 +643,10 @@ void debugger(int th)
 		      "Thread = %d (current thread)\n",
 		      ep[th], dp[th], hp[th], sp[th], ap[th],
 		      lp[th], queue_num, th);
-        puts("Free cell ");
-        for(i=0;i<=queue_num;i++){
-            Fmt_print("thread%d = %d\n", i, fc[i]);
-        }
+	    puts("Free cell ");
+	    for (i = 0; i <= queue_num; i++) {
+		Fmt_print("thread%d = %d\n", i, fc[i]);
+	    }
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
 		puts("stepper ON. enter 'q' to quit stepper");

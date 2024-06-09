@@ -31,7 +31,7 @@ void init_cell(void)
 
     /* initialize heap area */
     for (addr = 0; addr < CELLSIZE; addr++) {
-    SET_CDR(addr,addr+1);
+	SET_CDR(addr, addr + 1);
     }
     hp[0] = 0;
     fc[0] = CELLSIZE;
@@ -63,14 +63,15 @@ void init_cell(void)
 }
 
 
-void reinit_cell(void){
-    int i,w;
+void reinit_cell(void)
+{
+    int i, w;
 
-    w = CELLSIZE/(queue_num+1);
-    fc[0] = w; 
-    for(i=1;i<=queue_num;i++){
-        hp[i] = w*i + 1;
-        fc[i] = w;
+    w = CELLSIZE / (queue_num + 1);
+    fc[0] = w;
+    for (i = 1; i <= queue_num; i++) {
+	hp[i] = w * i + 1;
+	fc[i] = w;
     }
 }
 

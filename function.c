@@ -1365,9 +1365,9 @@ int f_append(int arglist, int th)
     else if (nullp(arg1))
 	return (f_append(cdr(arglist), th));
     else
-    return (append(car(arglist), f_append(cdr(arglist), th)));    
-    
-	
+	return (append(car(arglist), f_append(cdr(arglist), th)));
+
+
 }
 
 

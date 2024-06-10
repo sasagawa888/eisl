@@ -2543,7 +2543,7 @@ int modulesubst_case(int addr, int module, int fname)
     return (newbodies);
 }
 
-/* Parallel function */
+/* multi thread parallel functions */
 void enqueue(int n)
 {
     queue[queue_pt] = n;

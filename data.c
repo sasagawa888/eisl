@@ -743,7 +743,6 @@ int cons(int car, int cdr)
 {
     int addr;
 
-	if(check_sw) printf("cons");
     addr = freshcell();
     SET_TAG(addr, LIS);
     SET_CAR(addr, car);

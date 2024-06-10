@@ -382,7 +382,7 @@ int set_dyn_env(int sym, int val, int th)
 void add_lex_env(int sym, int val, int th)
 {
 
-    ep[th] = cons(cons(sym, val), ep[th]);
+    ep[th] = tcons(tcons(sym, val, th), ep[th], th);
 
 }
 

@@ -2060,7 +2060,7 @@ defgeneric compile
              ((null arg1) nil)
              ;;num[N] = Fcons(Fmakesym(function-sym),FlistM(arg1,arg2,...argM));
              (format stream "num[~D] = Feval_para(Fcons(Fmakesym(\"~A\")," num (car (elt (car arg1) 1)))
-             (comp-argument stream (cdr (car arg1)) 0 (car (car arg1)) env args tail name global test clos)
+             (comp-argument stream (cdr (elt (car arg1) 1)) 0 (car (elt (car arg1) 1)) env args tail name global test clos)
              (format stream "));~%"))     
         ;; wait
         (format stream "Fwait_para();~%")     

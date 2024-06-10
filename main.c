@@ -2281,7 +2281,6 @@ void bind_func(const char *name, tag_t tag, int (*func)(int, int))
     int sym, val;
 
     sym = make_sym(name);
-	if(check_sw) printf("bind_func");
     val = freshcell();
     SET_TAG(val, tag);
     SET_SUBR(val, func);

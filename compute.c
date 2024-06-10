@@ -15,14 +15,12 @@ int exact_to_inexact(int x)
     tag = GET_TAG(x);
     switch (tag) {
     case INTN:
-	if(check_sw) printf("exact_to_inexact");
 	res = freshcell();
 	SET_TAG(res, FLTN);
 	val = (double) GET_INT(x);
 	SET_FLT(res, val);
 	return (res);
     case LONGN:
-	if(check_sw) printf("exact_to_inexact");
 	res = freshcell();
 	SET_TAG(res, FLTN);
 	val = (double) GET_LONG(x);

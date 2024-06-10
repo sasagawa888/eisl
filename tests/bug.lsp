@@ -1,10 +1,20 @@
+;;----------- multi-thread-----------------
 
-(defun tarai (x y z)
-    ;(the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
-    (if (<= x y)
-        y
-        (tarai (tarai (- x 1) y z)
-               (tarai (- y 1) z x)
-               (tarai (- z 1) x y))))
+(defun pfib (n)
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (t (mt-call #'+ (fib (- n 1)) (fib (- n 2))))))
 
-;(tarai 16 8 0)
+
+(defun fib1 (n)
+    (mt-let ((a (fib (- n 1)))
+             (b (fib (- n 2))))
+        (+ a b)))
+
+(defun fib (n)
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (t (+ (fib (- n 1)) (fib (- n 2))))))
+
+
+

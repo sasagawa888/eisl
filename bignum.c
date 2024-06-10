@@ -197,6 +197,7 @@ int gen_big(void)
 {
     int res;
 
+    if(check_sw) printf("gen_big");
     res = freshcell();
     SET_TAG(res, BIGN);
     SET_AUX(res, cbignum);
@@ -983,6 +984,7 @@ int big_big_to_flt(int x)
     double val;
     int pointer, len, res;
 
+    if(check_sw) printf("big_big_to_flt");
     res = freshcell();
     val = 0.0;
     pointer = get_pointer(x);

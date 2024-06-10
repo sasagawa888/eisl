@@ -857,7 +857,6 @@ void profiler_print()
 
 /*
 * f_eisl_test is test function for new code.
-* for example FFT IFFT.
 * This function is for development testing code.
 */
 int f_eisl_test(int arglist, int th __unused)
@@ -865,9 +864,12 @@ int f_eisl_test(int arglist, int th __unused)
     int arg1, arg2;
 
     arg1 = car(arglist);
-    arg2 = cadr(arglist);
+    if(arg1 == T)
+        check_sw = 1;
+    else if(arg1 == NIL)
+        check_sw = 0;
 
-    return (big_karatsuba_mult(arg1, arg2));
+    return (arg1);
 }
 
 int f_get_myself(int arglist, int th)

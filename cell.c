@@ -251,7 +251,7 @@ int freshcell(void)
 {
     int res;
 
-
+    
     if (concurrent_stop_flag) {
 	/* while remarking stop the world */
 	pthread_mutex_lock(&mutex);
@@ -564,6 +564,7 @@ int make_long(long long int lngnum)
 {
     int addr;
 
+    if(check_sw) printf("make_long");
     addr = freshcell();
     SET_TAG(addr, LONGN);
     SET_LONG(addr, lngnum);
@@ -586,6 +587,7 @@ int make_flt(double floatn)
 {
     int addr;
 
+    if(check_sw) printf("make_flt");
     addr = freshcell();
     SET_TAG(addr, FLTN);
     SET_FLT(addr, floatn);
@@ -629,6 +631,7 @@ int make_func(const char *pname, int addr)
 {
     int val;
 
+    if(check_sw) printf("make_func");
     val = freshcell();
     SET_TAG(val, FUNC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
@@ -670,6 +673,7 @@ int make_generic(char *pname, int lamlist, int body)
 {
     int val;
 
+    if(check_sw) printf("make_generic");
     val = freshcell();
     SET_TAG(val, GENERIC);
     TRY heap[val].name = Str_dup(pname, 1, 0, 1);
@@ -729,6 +733,7 @@ int make_generic_star(int lamlist, int body)
 {
     int val;
 
+    if(check_sw) printf("makegeneric_star");
     val = freshcell();
     SET_TAG(val, GENERIC);
     SET_CAR(val, lamlist);
@@ -752,6 +757,7 @@ int make_method(int addr)
 {
     int val;
 
+    if(check_sw) printf("make_method");
     val = freshcell();
     SET_TAG(val, METHOD);
     if (eqp(car(addr), make_sym(":AROUND"))) {
@@ -777,6 +783,7 @@ int make_vec(int n, int obj)
 {
     int res, i, *vec;
 
+    if(check_sw) printf("make_vec");
     res = freshcell();
     TRY vec = (int *) ALLOC(sizeof(int) * n);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL, 0);
@@ -846,6 +853,7 @@ int make_stm(FILE * port, int type, const char *name)
 {
     int addr;
 
+    if(check_sw) printf("make_stm");
     addr = freshcell();
     SET_TAG(addr, STREAM);
     SET_PORT(addr, port);	/* port for file stream */
@@ -897,6 +905,7 @@ int make_arr(int ls, int obj)
     } else
 	size = 1;
 
+    if(check_sw) printf("make_arr");
     res = freshcell();
     TRY vec = (int *) ALLOC(sizeof(int) * size);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "array", NIL, 0);
@@ -970,6 +979,7 @@ int make_str(const char *string)
 {
     int addr;
 
+    if(check_sw) printf("make_str");
     addr = freshcell();
     SET_TAG(addr, STR);
     TRY heap[addr].name = Str_dup(string, 1, 0, 1);
@@ -1068,7 +1078,7 @@ int make_char(const char *pname)
 	char_entity = 26;
     }
 
-
+    if(check_sw) printf("make_char");
     addr = freshcell();
     SET_TAG(addr, CHR);
     TRY heap[addr].name = (char *) ALLOC(CHARSIZE);
@@ -1197,6 +1207,7 @@ int make_class(const char *pname, int superclass)
 {
     int addr;
 
+   if(check_sw) printf("make_class"); 
     addr = freshcell();
     SET_TAG(addr, CLASS);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
@@ -1230,6 +1241,7 @@ int make_instance(int cl, int initls)
 {
     int addr;
 
+    if(check_sw) printf("make_instance");
     addr = freshcell();
     SET_TAG(addr, INSTANCE);
     SET_CAR(addr, GET_CAR(cl));	/* super class */
@@ -1368,6 +1380,7 @@ int make_dummy(void)
 {
     int res;
 
+    if(check_sw) printf("make_dummy");
     res = freshcell();
     SET_TAG(res, DUMMY);
     SET_AUX(res, cnull);

@@ -47,6 +47,9 @@
 #include "compat/eiffel_stubs.h"
 #include "compat/curses_stubs.h"
 
+/* debug */
+int check_sw = 0;
+
 
 /* pointer */
 int ep[PARASIZE];		/* environment pointer */
@@ -2278,6 +2281,7 @@ void bind_func(const char *name, tag_t tag, int (*func)(int, int))
     int sym, val;
 
     sym = make_sym(name);
+	if(check_sw) printf("bind_func");
     val = freshcell();
     SET_TAG(val, tag);
     SET_SUBR(val, func);

@@ -17,6 +17,8 @@
 #include "except.h"
 #include "compat/eiffel_stubs.h"
 
+/* debug */
+extern int check_sw;
 
 #define DYNSIZE 1000
 #define STACKSIZE 400000

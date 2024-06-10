@@ -315,24 +315,20 @@ int tfreshcell(int th)
 	fc[th]--;
 	pthread_mutex_unlock(&mutex);
     } else if (concurrent_flag && fc[th] > 50) {
-	//pthread_mutex_lock(&mutex);
 	res = hp[th];
 	hp[th] = GET_CDR(hp[th]);
 	SET_CDR(res, 0);
 	fc[th]--;
 	remark[remark_pt++] = res;
-	//pthread_mutex_unlock(&mutex);
 	if (remark_pt > REMKSIZE) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "tfreshcell remark", NIL, 0);
 	}
     } else if (!concurrent_flag) {
-	//pthread_mutex_lock(&mutex);
 	res = hp[th];
 	hp[th] = GET_CDR(hp[th]);
 	SET_CDR(res, 0);
 	fc[th]--;
-	//pthread_mutex_unlock(&mutex);
 	if (fc[th] <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
 	    error(RESOURCE_ERR, "tfreshcell rest", NIL, 0);
@@ -575,6 +571,17 @@ int make_long(long long int lngnum)
     return (addr);
 }
 
+int tmake_long(long long int lngnum, int th)
+{
+    int addr;
+
+    addr = tfreshcell(th);
+    SET_TAG(addr, LONGN);
+    SET_LONG(addr, lngnum);
+    SET_AUX(addr, clongnum);	/* class longnum */
+    return (addr);
+}
+
 int make_flt(double floatn)
 {
     int addr;
@@ -585,6 +592,18 @@ int make_flt(double floatn)
     SET_AUX(addr, cfloat);	/* class float */
     return (addr);
 }
+
+int tmake_flt(double floatn, int th)
+{
+    int addr;
+
+    addr = tfreshcell(th);
+    SET_TAG(addr, FLTN);
+    SET_FLT(addr, floatn);
+    SET_AUX(addr, cfloat);	/* class float */
+    return (addr);
+}
+
 
 /*
  * symbol car = function cdr = global value aux = class 
@@ -771,6 +790,23 @@ int make_vec(int n, int obj)
     return (res);
 }
 
+int tmake_vec(int n, int obj, int th)
+{
+    int res, i, *vec;
+
+    res = tfreshcell(th);
+    TRY vec = (int *) ALLOC(sizeof(int) * n);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL, 0);
+    END_TRY;
+    SET_TAG(res, VEC);
+    SET_VEC(res, vec);
+    for (i = 0; i < n; i++)
+	SET_VEC_ELT(res, i, copy(obj));
+    SET_CDR(res, n);
+    SET_AUX(res, cgeneral_vector);	/* class general-vector */
+    return (res);
+}
+
 
 
 int vector(int lis)
@@ -811,6 +847,23 @@ int make_stm(FILE * port, int type, const char *name)
     int addr;
 
     addr = freshcell();
+    SET_TAG(addr, STREAM);
+    SET_PORT(addr, port);	/* port for file stream */
+    SET_CDR(addr, 0);		/* string-stream-position */
+    SET_AUX(addr, cstream);	/* class */
+    SET_OPT(addr, type);	/* EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
+				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN */
+    SET_NAME(addr, name);
+    SET_PROP(addr, 0);		/* output-string-stream charcount from */
+    SET_PROF(addr, EISL_OPEN);	/* EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN */
+    return (addr);
+}
+
+int tmake_stm(FILE * port, int type, const char *name, int th)
+{
+    int addr;
+
+    addr = tfreshcell(th);
     SET_TAG(addr, STREAM);
     SET_PORT(addr, port);	/* port for file stream */
     SET_CDR(addr, 0);		/* string-stream-position */
@@ -868,12 +921,69 @@ int make_arr(int ls, int obj)
     return (res);
 }
 
+int tmake_arr(int ls, int obj, int th)
+{
+    int size, res, i, ls1, *vec;
+
+    ls1 = ls;
+    if (!nullp(ls)) {
+	size = 1;
+	while (!nullp(ls)) {
+	    int n;
+
+	    n = GET_INT(car(ls));
+	    if (n == 0)
+		n = 1;
+	    size = n * size;
+	    ls = cdr(ls);
+	}
+	size++;
+    } else
+	size = 1;
+
+    res = tfreshcell(th);
+    TRY vec = (int *) ALLOC(sizeof(int) * size);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "array", NIL, 0);
+    END_TRY;
+    if (nullp(ls1)) {
+	SET_TAG(res, ARR);
+	SET_CDR(res, ls1);
+	SET_AUX(res, cgeneral_array_star);	/* class */
+    } else if (length(ls1) == 1) {
+	SET_TAG(res, VEC);
+	SET_CDR(res, GET_INT(car(ls1)));
+	SET_AUX(res, cgeneral_vector);
+    } else {
+	SET_TAG(res, ARR);
+	SET_CDR(res, ls1);
+	SET_AUX(res, cgeneral_array_star);	/* class */
+    }
+    SET_VEC(res, vec);
+    for (i = 0; i < size; i++)
+	SET_VEC_ELT(res, i, copy(obj));
+
+    return (res);
+}
+
 
 int make_str(const char *string)
 {
     int addr;
 
     addr = freshcell();
+    SET_TAG(addr, STR);
+    TRY heap[addr].name = Str_dup(string, 1, 0, 1);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_str", NIL, 0);
+    END_TRY;
+    SET_AUX(addr, cstring);	/* class string */
+    return (addr);
+}
+
+int tmake_str(const char *string, int th)
+{
+    int addr;
+
+    addr = tfreshcell(th);
     SET_TAG(addr, STR);
     TRY heap[addr].name = Str_dup(string, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_str", NIL, 0);
@@ -980,6 +1090,105 @@ int make_char(const char *pname)
     return (addr);
 }
 
+int tmake_char(const char *pname, int th)
+{
+    int addr, pos;
+    char low_name[SYMSIZE], char_entity;
+
+
+    pos = 0;
+    while (pname[pos] != NUL) {
+	low_name[pos] = tolower(pname[pos]);
+	pos++;
+    }
+    low_name[pos] = NUL;
+    char_entity = pname[0];
+
+    if (strcmp(low_name, "alarm") == 0) {
+	char_entity = BEL;
+    } else if (strcmp(low_name, "backspace") == 0) {
+	char_entity = BS;
+    } else if (strcmp(low_name, "delete") == 0) {
+	char_entity = DEL;
+    } else if (strcmp(low_name, "escape") == 0) {
+	char_entity = ESC;
+    } else if (strcmp(low_name, "return") == 0) {
+	char_entity = RET;
+    } else if (strcmp(low_name, "newline") == 0) {
+	char_entity = EOL;
+    } else if (strcmp(low_name, "null") == 0) {
+	char_entity = NUL;
+    } else if (strcmp(low_name, "space") == 0) {
+	char_entity = SPACE;
+    } else if (strcmp(low_name, "tab") == 0) {
+	char_entity = TAB;
+    } else if (strcmp(low_name, "^a") == 0) {
+	char_entity = 1;
+    } else if (strcmp(low_name, "^b") == 0) {
+	char_entity = 2;
+    } else if (strcmp(low_name, "^c") == 0) {
+	char_entity = 3;
+    } else if (strcmp(low_name, "^d") == 0) {
+	char_entity = 4;
+    } else if (strcmp(low_name, "^e") == 0) {
+	char_entity = 5;
+    } else if (strcmp(low_name, "^f") == 0) {
+	char_entity = 6;
+    } else if (strcmp(low_name, "^k") == 0) {
+	char_entity = 11;
+    } else if (strcmp(low_name, "^l") == 0) {
+	char_entity = 12;
+    } else if (strcmp(low_name, "^n") == 0) {
+	char_entity = 14;
+    } else if (strcmp(low_name, "^o") == 0) {
+	char_entity = 15;
+    } else if (strcmp(low_name, "^p") == 0) {
+	char_entity = 16;
+    } else if (strcmp(low_name, "^q") == 0) {
+	char_entity = 17;
+    } else if (strcmp(low_name, "^r") == 0) {
+	char_entity = 18;
+    } else if (strcmp(low_name, "^s") == 0) {
+	char_entity = 19;
+    } else if (strcmp(low_name, "^t") == 0) {
+	char_entity = 20;
+    } else if (strcmp(low_name, "^u") == 0) {
+	char_entity = 21;
+    } else if (strcmp(low_name, "^v") == 0) {
+	char_entity = 22;
+    } else if (strcmp(low_name, "^w") == 0) {
+	char_entity = 23;
+    } else if (strcmp(low_name, "^x") == 0) {
+	char_entity = 24;
+    } else if (strcmp(low_name, "^y") == 0) {
+	char_entity = 25;
+    } else if (strcmp(low_name, "^z") == 0) {
+	char_entity = 26;
+    }
+
+
+    addr = tfreshcell(th);
+    SET_TAG(addr, CHR);
+    TRY heap[addr].name = (char *) ALLOC(CHARSIZE);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_char", NIL, 0);
+    END_TRY;
+    if (!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0])
+	&& !isUni5(pname[0]) && !isUni6(pname[0])) {
+	heap[addr].name[0] = char_entity;
+	heap[addr].name[1] = NUL;
+    } else {
+	pos = 0;
+	while (pname[pos] != NUL) {
+	    heap[addr].name[pos] = pname[pos];
+	    pos++;
+	}
+	heap[addr].name[pos] = NUL;
+    }
+    SET_AUX(addr, ccharacter);
+    return (addr);
+}
+
+
 /*
  * class obj car = super class cdr = class variable aux = method name =
  * class name 
@@ -989,6 +1198,21 @@ int make_class(const char *pname, int superclass)
     int addr;
 
     addr = freshcell();
+    SET_TAG(addr, CLASS);
+    TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
+    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_class", NIL, 0);
+    END_TRY;
+    SET_CAR(addr, superclass);
+    SET_CDR(addr, NIL);
+    SET_AUX(addr, NIL);
+    return (addr);
+}
+
+int tmake_class(const char *pname, int superclass, int th)
+{
+    int addr;
+
+    addr = tfreshcell(th);
     SET_TAG(addr, CLASS);
     TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
     EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_class", NIL, 0);
@@ -1018,6 +1242,24 @@ int make_instance(int cl, int initls)
     }
     return (addr);
 }
+
+int tmake_instance(int cl, int initls, int th)
+{
+    int addr;
+
+    addr = tfreshcell(th);
+    SET_TAG(addr, INSTANCE);
+    SET_CAR(addr, GET_CAR(cl));	/* super class */
+    SET_CDR(addr, slotvars(cl));	/* slot vars with super class */
+    SET_AUX(addr, cl);		/* class of instance */
+    while (!nullp(initls)) {
+	set_val(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
+		GET_CDR(addr));
+	initls = cddr(initls);
+    }
+    return (addr);
+}
+
 
 int slotvars(int x)
 {
@@ -1131,3 +1373,14 @@ int make_dummy(void)
     SET_AUX(res, cnull);
     return (res);
 }
+
+int tmake_dummy(int th)
+{
+    int res;
+
+    res = tfreshcell(th);
+    SET_TAG(res, DUMMY);
+    SET_AUX(res, cnull);
+    return (res);
+}
+

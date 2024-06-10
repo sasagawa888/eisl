@@ -2747,8 +2747,6 @@ int f_mt_call(int arglist, int th)
 	error(WRONG_ARGS, "mt-call", arglist, th);
     if (length(arg2) > queue_num)
 	error(WRONG_ARGS, "mt-call", arg1, th);
-    //if (!symbolp(arg1))
-    //error(IMPROPER_ARGS, "mt-call", arg1, th);
 
     temp = arg2;
     while (!nullp(temp)) {
@@ -2780,7 +2778,7 @@ int f_mt_call(int arglist, int th)
     temp = NIL;
     i--;
     while (i >= 0) {
-	temp = cons(para_output[num[i]], temp);
+	temp = tcons(para_output[num[i]], temp, th);
 	i--;
     }
     return (apply(eval(arg1, th), temp, th));

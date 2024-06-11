@@ -1,5 +1,12 @@
 ;;----------- multi-thread-----------------
 
+(import "unistd")
+
+(defun foo (n)
+    (mt-let ((a (sleep n))
+             (b (sleep n)))
+        (print 'end)))
+
 (defun pfib (n)
     (cond ((= n 0) 0)
           ((= n 1) 1)

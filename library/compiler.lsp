@@ -306,6 +306,60 @@ defgeneric compile
                   ((eq (car rm-opt) nil) nil)
                   ((eq (car rm-opt) t) (system (string-append "sudo rm " infnames))))))
 
+    ;; not lisp code compile only C compile. 
+    (defpublic compile-file* (x :rest rm-opt)
+        (setq c-lang-option "")
+        (let* ((include
+               (let ((prefix (getenv "EASY_ISLISP")))
+                  (if (null prefix)
+                      "-I$HOME/eisl "
+                      "-I$EASY_ISLISP ")))
+               (option
+               (cond ((member (self-introduction) '(linux openbsd))
+                      "cc -O3 -w -shared -fPIC -s -o ")
+                     ((eq (self-introduction) 'freebsd) "cc -O3 -w -shared -fPIC -s -o ")
+                     ((eq (self-introduction) 'macos) "cc -O3 -w -shared -fPIC -Wl,-S,-x -o ")))
+               (fname (filename x))
+               (infnames
+               (string-append fname
+                              "0.c "
+                              fname
+                              "1.c "
+                              fname
+                              "5.c "
+                              fname
+                              "6.c "
+                              fname
+                              "7.c "
+                              fname
+                              "2.c "
+                              fname
+                              "3.c "
+                              fname
+                              "4.c "))
+               (env-cflags (getenv "CFLAGS"))
+               (env-cflags-str (if env-cflags
+                                  env-cflags
+                                  ""))
+               (env-ldflags (getenv "LDFLAGS"))
+               (env-ldflags-str (if env-ldflags
+                                   env-ldflags
+                                   "")) )
+            (system (string-append 
+                            option
+                            fname
+                            ".o "
+                            include
+                            fname
+                            "0.c "
+                            c-lang-option
+                            " "
+                            env-cflags-str
+                            " "
+                            env-ldflags-str))))
+            
+
+
     (defun pass1 (x)
         (setq instream (open-input-file x))
         (let ((sexp nil))

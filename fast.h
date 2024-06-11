@@ -645,6 +645,27 @@ static int pfast_numeqp(int th)
 	return (Fnumeqp(x, y));
 }
 
+static int fast_numeqp(int x, int y)
+{
+    if (x >= INT_FLAG && y >= INT_FLAG)
+	if (x == y)
+	    return (T);
+	else
+	    return (0);
+    else if (x < 0 && y < 0)
+	if (x == y)
+	    return (T);
+	else
+	    return (0);
+    else if (x >= INT_FLAG && y < 0)
+	return (0);
+    else if (x < 0 && y >= INT_FLAG)
+	return (0);
+    else
+	return (Fnumeqp(x, y));
+}
+
+
 static int pfast_smallerp(int th)
 {
     int x, y;
@@ -667,6 +688,28 @@ static int pfast_smallerp(int th)
     else
 	return (Fsmallerp(x, y));
 }
+
+
+static int fast_smallerp(int x, int y)
+{
+    if (x >= INT_FLAG && y >= INT_FLAG)
+	if (x < y)
+	    return (T);
+	else
+	    return (0);
+    else if (x < 0 && y < 0)
+	if (x < y)
+	    return (T);
+	else
+	    return (0);
+    else if (x >= INT_FLAG && y < 0)
+	return (0);
+    else if (x < 0 && y >= INT_FLAG)
+	return (T);
+    else
+	return (Fsmallerp(x, y));
+}
+
 
 static int pfast_eqsmallerp(int th)
 {
@@ -691,6 +734,27 @@ static int pfast_eqsmallerp(int th)
 	return (Feqsmallerp(x, y));
 }
 
+static int fast_eqsmallerp(int x, int y)
+{
+    if (x >= INT_FLAG && y >= INT_FLAG)
+	if (x <= y)
+	    return (T);
+	else
+	    return (0);
+    else if (x < 0 && y < 0)
+	if (x <= y)
+	    return (T);
+	else
+	    return (0);
+    else if (x >= INT_FLAG && y < 0)
+	return (0);
+    else if (x < 0 && y >= INT_FLAG)
+	return (T);
+    else
+	return (Feqsmallerp(x, y));
+}
+
+
 static inline int pfast_greaterp(int th)
 {
     int x, y;
@@ -699,6 +763,11 @@ static inline int pfast_greaterp(int th)
     Fpargpush(y,th);
     Fpargpush(x,th);
     return (pfast_smallerp(th));
+}
+
+static inline int fast_greaterp(int x, int y)
+{
+    return (fast_smallerp(y,x));
 }
 
 
@@ -712,11 +781,46 @@ static inline int pfast_eqgreaterp(int th)
     return (pfast_eqsmallerp(th));
 }
 
+static inline int fast_eqgreaterp(int x, int y)
+{
+    return (fast_eqsmallerp(x,y));
+}
+
+
 static int pfast_plus(int th)
 {
     int x, y, intx, inty, res;
     y = Fpargpop(th);
     x = Fpargpop(th);
+    if (x >= INT_FLAG && y >= INT_FLAG) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx + inty;
+	if (res >= SMALL_INT_MAX)
+	    return (Fmakeintlong(res));
+	else
+	    return (res | INT_FLAG);
+    } else if (x >= INT_FLAG && y < 0) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = intx + inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y >= INT_FLAG) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = intx + inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else
+	return (Fplus(x, y));
+}
+
+static int fast_plus(int x, int y)
+{
+    int intx, inty, res;
     if (x >= INT_FLAG && y >= INT_FLAG) {
 	intx = (x & INT_MASK);
 	inty = (y & INT_MASK);
@@ -777,6 +881,38 @@ static int pfast_minus(int th)
 	return (Fminus(x, y));
 }
 
+static int fast_minus(int x, int y)
+{
+    int intx, inty, res;
+    if (x >= INT_FLAG && y >= INT_FLAG) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx - inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x >= INT_FLAG && y < 0) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = intx - inty;
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y >= INT_FLAG) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = intx - inty;
+	if (res >= 0)
+	    return (res | INT_FLAG);
+	else if (res <= SMALL_INT_MAX)
+	    return (Fmakeintlong(res));
+	else
+	    return (res);
+    } else
+	return (Fminus(x, y));
+}
+
+
 
 static int pfast_mult(int th)
 {
@@ -803,6 +939,32 @@ static int pfast_mult(int th)
     } else
 	return (Fmult(x, y));
 }
+
+
+static int fast_mult(int x, int y)
+{
+    int intx, inty, res;
+    if (x == INT_FLAG) return(x);
+    else if (y == INT_FLAG) return(y);
+    else if (x >= INT_FLAG && x <= INT_PSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx * inty;
+	return (res | INT_FLAG);
+    } else if (x >= INT_FLAG && x <= INT_PSQRT && y < 0 && y >= INT_MSQRT) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = intx * inty;
+	return (res);
+    } else if (x < 0 && x >= INT_MSQRT && y >= INT_FLAG && y <= INT_PSQRT) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = intx * inty;
+	return (res);
+    } else
+	return (Fmult(x, y));
+}
+
 
 static int pfast_mod(int th)
 {
@@ -846,6 +1008,47 @@ static int pfast_mod(int th)
 	return (Fpcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y),th));
 }
 
+static int fast_mod(int x, int y)
+{
+    int intx, inty, res;
+    long long int longx, longy;
+
+    if (x >= INT_FLAG && y >= INT_FLAG) {
+	intx = (x & INT_MASK);
+	inty = (y & INT_MASK);
+	res = intx % inty;
+	res = res | INT_FLAG;
+	return (res);
+    } else if (x >= INT_FLAG && y < 0) {
+	intx = (x & INT_MASK);
+	inty = y;
+	res = -1 * (intx % inty);
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y >= INT_FLAG) {
+	intx = x;
+	inty = (y & INT_MASK);
+	res = inty + (intx % inty);
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else if (x < 0 && y < 0) {
+	res = -1 * ((-1 * x) % (-1 * y));
+	return (res);
+    } else if ((CELLRANGE(x) && Flongnump(x)) && !CELLRANGE(y)) {
+	longx = Fgetlong(x);
+	if (y >= INT_FLAG)
+	    inty = (y & INT_MASK);
+	longy = (long long int) inty;
+	res = (int) (longx % longy);
+	if (res >= 0)
+	    res = res | INT_FLAG;
+	return (res);
+    } else
+	return (Fpcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y),0));
+}
+
 
 static inline int fast_not(int x)
 {
@@ -866,6 +1069,15 @@ static inline int pfast_eq(int th)
     else
 	return (NIL);
 }
+
+static inline int fast_eq(int x, int y)
+{
+    if (x == y)
+	return (T);
+    else
+	return (NIL);
+}
+
 
 static int fast_setnth(int x, int n, int y)
 {

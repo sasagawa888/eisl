@@ -48,8 +48,8 @@ if(CELLRANGE(N)) N=Fpshelterpop(th);
 return(res);}
 static int FIB(int N, int th){
 int res;
-//if(CELLRANGE(N)) Fpshelterpush(N,th);
-//Fcheckgbc();
+if(CELLRANGE(N)) Fpshelterpush(N,th);
+Fcheckgbc();
 res = ({int res=NIL;
 if(fast_numeqp(N,fast_immediate(0)) != NIL){
 res = fast_immediate(0);}
@@ -68,5 +68,5 @@ res = FIB(arg1,th);
 //arg1=Fpshelterpop(th);
 ;res;}));}
 ;res;});
-//if(CELLRANGE(N)) N=Fpshelterpop(th);
+if(CELLRANGE(N)) N=Fpshelterpop(th);
 return(res);}

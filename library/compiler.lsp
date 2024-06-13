@@ -1629,7 +1629,7 @@ defgeneric compile
 
     ;;Fcheckgbc();
     (defun gen-checkgc ()
-        (format code2 "Fcheckgbc();~%"))
+        (format code2 "Fcheckgbc(th);~%"))
 
     (defun comp-if (stream x env args tail name global test clos)
         (unless (or (= (length x) 3) (= (length x) 4))
@@ -2685,7 +2685,7 @@ defgeneric compile
             (when (any (lambda (x) (not (symbolp x))) var1)
                   (error* "for: illegal variable" vars))
             (format stream "({int res;~%")
-            (format stream "Fcheckgbc();~%")
+            (format stream "Fcheckgbc(th);~%")
             (comp-let1 stream vars env args nil name global test clos)
             (gen-arg3 (length vars))
             (format stream "while(")
@@ -2881,7 +2881,7 @@ defgeneric compile
         (format stream "({int res;~%while(")
         (comp stream (elt x 1) env args tail name global t clos)
         (format stream " !=NIL){~%")
-        (format stream "Fcheckgbc();")
+        (format stream "Fcheckgbc(th);")
         (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "};res;})~%"))
 

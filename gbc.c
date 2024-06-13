@@ -281,7 +281,7 @@ void clr_cell(int addr)
 }
 
 /* when free cells are less FREESIZE, invoke gbc() */
-int check_gbc(void)
+int check_gbc(int th)
 {
     if (exit_flag) {
 	if (parallel_flag) {
@@ -294,24 +294,13 @@ int check_gbc(void)
     }
 
 
-    if (!concurrent_flag && fc[0] < FREESIZE) {
+    if (!concurrent_flag && fc[th] < FREESIZE) {
 	gbc();
-	return 0;
     }
 
-    if (thread_flag && !concurrent_flag) {
-	int i;
-	for (i = 0; i <= queue_num; i++) {
-	    if (fc[i] < FREESIZE) {
-		gbc();
-		return 0;
-	    }
-	}
-    }
 
     return 0;
 }
-
 
 
 int freecell(void)

@@ -88,10 +88,7 @@ void init_deftfunc(tfunc x)
 static int catch_arg;		// recieve argument of catch
 
 static int block_arg;		// recieve argument of block
-static inline int Fcheckgbc(void)
-{
-    return f0[CHECKGBC_IDX] ();
-}
+
 
 static inline int Fgbc(void)
 {
@@ -267,6 +264,12 @@ static inline int fast_cdr(int x)
 {
     return f1[FASTCDR_IDX] (x);
 }
+
+static inline int Fcheckgbc(int x)
+{
+    return f1[CHECKGBC_IDX] (x);
+}
+
 
 static inline int Fpfindenv(int x, int y)
 {

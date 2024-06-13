@@ -2698,7 +2698,7 @@ int f_mt_let(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    check_gbc();
+    check_gbc1(th);
 
     temp = arg1;
     i = 0;
@@ -2755,7 +2755,7 @@ int f_mt_call(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    check_gbc();
+    check_gbc1(th);
 
     temp = arg2;
     i = 0;
@@ -2802,7 +2802,7 @@ int f_mt_exec(int arglist, int th)
     }
 
 
-    check_gbc();
+    check_gbc1(th);
 
     temp = arglist;
     i = 0;

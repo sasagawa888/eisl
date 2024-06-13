@@ -78,7 +78,6 @@ void dynamic_link(int x)
 
 
     /* argument-0 type */
-    init_f0(CHECKGBC_IDX, check_gbc);
     init_f0(GBC_IDX, gbc);
     init_f0(GETDYNPT_IDX, get_dynpt);
     init_f0(GET_ERROR_HANDLER_IDX, get_error_handler);
@@ -128,6 +127,7 @@ void dynamic_link(int x)
     init_f1(READ_FROM_PIPE_IDX, read_from_pipe);
     init_f1(KILL_REST_PROCESS_IDX, kill_rest_process);
     init_f1(READ_FROM_PIPE_PART_IDX, read_from_pipe_part);
+    init_f1(CHECKGBC_IDX, check_gbc);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile

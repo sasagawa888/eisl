@@ -23,6 +23,8 @@ option == t
 If one of arg returns non-nil stops exections and return result,
 else  returns the result of the last execution.
 
+On macOS mp-part is not available. 
+
 - (mp-let ((sym1 (exp1)) ... (symn (expn))) body) 
 Evaluates each exp in parallel in child Lisps, binds its value to sym, executes body, and returns the final result.
 

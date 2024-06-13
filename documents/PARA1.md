@@ -1,5 +1,4 @@
 # Thread Parallel functions
-now we are improving multi thread.
 
 # Invoke 
 eisl -t n

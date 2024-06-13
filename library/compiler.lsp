@@ -1570,12 +1570,15 @@ defgeneric compile
               t )
              (format stream "int ~Acopy = ~A;~%" (conv-name (car ls1)) (conv-name (car ls1)))))
 
-    ;; int temp1,temp2...tempn;
+    ;; int temp1,temp2...tempn.tempn+1,tempn+2;
+    ;; Since the number of arguments for tail is unknown 
+    ;; when args includes rest parameters, 
+    ;; compiler define two additional arguments as a precaution.
     (defun gen-arg3 (n)
         (unless (= n 0)
                 (format code2 "int ")
                 (for ((m 1 (+ m 1)))
-                     ((= m n)
+                     ((= m (+ n 2)) ;see comment
                       (format code2 "temp~D;~%" m))
                      (format code2 "temp~D," m))))
 

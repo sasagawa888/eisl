@@ -1781,7 +1781,7 @@ int eval(int addr, int th)
     char c;
     double st, en;
 
-    (void) check_gbc1(th);
+    (void) check_gbc(th);
 
     if (IS_NIL(addr) || IS_T(addr))
 	return (addr);

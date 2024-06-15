@@ -285,10 +285,14 @@ EISL <==================================> C
 | (bignump x)           | is x bignum? return T or NIL                   |
 | (macroexpand-1 x)     | macroexpand x only once                        |
 | (macroexpand-all x)   | macroexpand x completely                       |
-| (pcall fun a1 .. an)  | apply fun args with parallel.  see PARA.md     |
-| (pexec s1 ... sn)     | progn with parallel. see PARA.md               |
-| (plet forms body)     | let with parallel. see PARA.md                 |
-| (plock s1 ... sn)     | progn with mutex. see PARA.md                  |
+| (mp-call fun a1 .. an)| apply fun args with multi-process. see PARA.md |
+| (mp-exec s1 ... sn)   | progn with multi-process. see PARA.md          |
+| (mp-part s1 ... sn)   | partial progn with multi-process. see PARA.md  |    
+| (mp-let forms body)   | let with multi-process. see PARA.md            |
+| (mt-call fun a1 .. an)| apply fun args with multi-thread.see PARA1.md  |
+| (mt-exec s1 ... sn)   | progn with multi-thread. see PARA1.md          |
+| (mt-let forms body)   | let with multi-thread. see PARA1.md            |
+| (mt-lock s1 ... sn)   | progn with mutex multi-thread. see PARA1.md    |
 
 
 

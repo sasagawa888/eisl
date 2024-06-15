@@ -1,5 +1,6 @@
 ;;; test of pexec parallel function
 ;;; usage
+;;; invoke eisl with multi-thread  eisl -t 2
 ;;; (load "./example/mandelbrot.lsp")
 ;;; (mandelbrot-data)
 ;;; (mandelbrot-draw)
@@ -22,8 +23,8 @@
 
 
 (defun mandelbrot-data ()
-    (pexec (mandelbrot-part -1.5 -1.6 1.6 0.0 "data1.txt")
-           (mandelbrot-part -1.5 0.0 1.5 1.5 "data2.txt")))
+    (mp-exec (mandelbrot-part -1.5 -1.6 1.6 0.0 "data1.txt")
+             (mandelbrot-part -1.5 0.0 1.5 1.5 "data2.txt")))
 
 (defun mandelbrot-part (r1 i1 r2 i2 file)
     (let ((stream (open-output-file file)))

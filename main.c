@@ -292,7 +292,7 @@ static void usage(void)
 	 "-l filename  -- EISL starts after reading the file.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
-	 "-t           -- EISL runs with multi thread mode.\n"
+	 "-t N         -- EISL runs with multi thread(N) mode.\n"
 	 "-v           -- display version number.");
 }
 

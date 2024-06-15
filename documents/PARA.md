@@ -3,7 +3,6 @@ Easy-ISLisp supports parallel processing with multiprocessing.
 
 # Spec
 
-```
 - (mp-create n) 
 Launches n child Lisps.
 
@@ -31,7 +30,6 @@ Evaluates each exp in parallel in child Lisps, binds its value to sym, executes 
 - (mp-close) 
 Terminates all child Lisps.
 
-```
 
 # example
 

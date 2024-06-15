@@ -278,8 +278,12 @@ EISL <==================================> C
 - `(bignump x)` xが巨大整数ならばTをそうでなければNILを返す。
 - `(macroexpand-1 x)` S式であるｘを１度だけマクロ展開する。
 - `(macroexpand-all x)` S式であるｘを完全にマクロ展開する。
-- `(pcall fun a1 ... an)` 並列でfunに引数を適用する。PARA.mdを参照
-- `(pexec s1 ... sn)`  prognの並列版。PARA.mdを参照
-- `(plet forms body)`  letの並列版。PARA.mdを参照
-- `(plock s1 ... sn)`  ミューテックスをかけたprogn。PARA.mdを参照
+- `(mp-call fun a1 ... an)` マルチプロセス並列でfunに引数を適用する。PARA.mdを参照
+- `(mp-exec s1 ... sn)`  prognの並列版。PARA.mdを参照
+- `(mp-part s1 ... sn)`  prognの並列部分実行版。PARA.mdを参照
+- `(mp-let forms body)`  letの並列版。PARA.mdを参照
+- `(mt-call fun a1 ... an)` マルチスレッド並列でfunに引数を適用する。PARA1.mdを参照
+- `(mt-exec s1 ... sn)`  prognの並列版。PARA1.mdを参照
+- `(mt-let forms body)`  letの並列版。PARA1.mdを参照
+- `(mt-lock s1 ... sn)`  ミューテックスをかけたprogn。PARA1.mdを参照
 

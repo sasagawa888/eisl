@@ -258,7 +258,7 @@ int child_signal1[PROCSIZE];
 int sockfd, newsockfd;
 socklen_t clilen;
 struct sockaddr_in serv_addr, cli_addr;
-
+char ip_address[INET_ADDRSTRLEN];
 
 
 /* -----debugger----- */
@@ -298,9 +298,10 @@ static void usage(void)
 	 "-f           -- EISL starts after reading formatter.lsp.\n"
 	 "-h           -- display help.\n"
 	 "-l filename  -- EISL starts after reading the file.\n"
+	 "-n address   -- EISL starts as child mode with pairent address.\n "
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
-	 "-t N         -- EISL runs with multi thread(N) mode.\n"
+	 "-t N         -- EISL runs as multi thread(N) mode.\n"
 	 "-v           -- display version number.");
 }
 
@@ -377,7 +378,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:s:t:p:cfrhv")) != -1) {
+	while ((ch = getopt(argc, argv, "l:s:t:p:n:cfrhv")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -421,6 +422,9 @@ int main(int argc, char *argv[])
 		queue_num = strtol(optarg, NULL, 10);
 		reinit_cell();
 		init_para();
+		break;
+		case 'n':
+		strcpy(ip_address,optarg);
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

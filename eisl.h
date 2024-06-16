@@ -656,6 +656,7 @@ extern int child_signal1[PROCSIZE];
 extern int sockfd, newsockfd;
 extern socklen_t clilen;
 extern struct sockaddr_in serv_addr, cli_addr;
+extern char ip_address[INET_ADDRSTRLEN];
 
 // -------error code---
 enum {

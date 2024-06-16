@@ -299,7 +299,7 @@ static void usage(void)
 	 "-f           -- EISL starts after reading formatter.lsp.\n"
 	 "-h           -- display help.\n"
 	 "-l filename  -- EISL starts after reading the file.\n"
-	 "-n address   -- EISL starts as child mode with pairent address.\n "
+	 "-n address   -- EISL starts as child mode with pairent address.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
 	 "-t N         -- EISL runs as multi thread(N) mode.\n"

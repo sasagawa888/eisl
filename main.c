@@ -254,10 +254,11 @@ struct sigaction child_action;
 int child_signal[PROCSIZE];
 int child_signal1[PROCSIZE];
 
-/* -----TCP/IP------*/
-int sockfd, newsockfd;
-socklen_t clilen;
-struct sockaddr_in serv_addr, cli_addr;
+/* -----TCPIP------*/
+int sockfd[PARASIZE];
+socklen_t pairent;
+socklen_t child[PARASIZE];
+struct sockaddr_in pairent_addr, child_addr;
 char ip_address[INET_ADDRSTRLEN][PARASIZE];
 
 
@@ -346,7 +347,7 @@ int main(int argc, char *argv[])
     init_dp();
     init_pointer();
     init_thread();
-	init_tcpip();
+	//init_pairent();
     /* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
@@ -480,7 +481,7 @@ int main(int argc, char *argv[])
 	EXCEPT(Exit_Interp) {
 	    quit = true;
 	    exit_thread();
-		exit_tcpip();
+		//exit_tcpip();
 	}
 	END_TRY;
     }

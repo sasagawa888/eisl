@@ -1768,7 +1768,7 @@ void init_child(int n){
 void exit_tcpip(void){
 	int i;
 
-    for(i=0;PARASIZE;i++)
+    for(i=0;i<PARASIZE;i++)
         close(sockfd[i]);
 }
 

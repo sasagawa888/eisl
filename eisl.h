@@ -656,7 +656,7 @@ extern int child_signal1[PROCSIZE];
 extern int sockfd, newsockfd;
 extern socklen_t clilen;
 extern struct sockaddr_in serv_addr, cli_addr;
-extern char ip_address[INET_ADDRSTRLEN];
+extern char ip_address[INET_ADDRSTRLEN][PARASIZE];
 
 // -------error code---
 enum {
@@ -895,6 +895,7 @@ int f_defun(int arglist, int th);
 int f_div(int arglist, int th);
 int f_domain_error_expected_class(int arglist, int th);
 int f_domain_error_object(int arglist, int th);
+int f_dp_create(int arglist, int th);
 int f_dummyp(int arglist, int th);
 int f_dynamic(int arglist, int th);
 int f_dynamic_let(int arglist, int th);

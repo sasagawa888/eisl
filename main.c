@@ -258,7 +258,7 @@ int child_signal1[PROCSIZE];
 int sockfd, newsockfd;
 socklen_t clilen;
 struct sockaddr_in serv_addr, cli_addr;
-char ip_address[INET_ADDRSTRLEN];
+char ip_address[INET_ADDRSTRLEN][PARASIZE];
 
 
 /* -----debugger----- */
@@ -424,7 +424,7 @@ int main(int argc, char *argv[])
 		init_para();
 		break;
 		case 'n':
-		strcpy(ip_address,optarg);
+		strcpy(ip_address[0],optarg);
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

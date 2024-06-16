@@ -79,6 +79,8 @@ void init_exsubr(void)
     def_fsubr("MP-LET", f_mp_let);
     def_fsubr("MP-PART", f_mp_part);
 
+    def_fsubr("DP-CREATE", f_dp_create);
+
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
     def_subr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
@@ -1703,6 +1705,21 @@ int f_mp_close(int arglist, int th)
 //------------TCP/IP--------------------------
 // draft for connection machine
 #define SERVER_ADDR "127.0.0.1"  // address 
+
+int f_dp_create(int arglist, int th){
+
+    int i;
+
+    i = 0;
+    while(!nullp(arglist)){
+        if(!stringp(car(arglist)))
+            error(NOT_STR, "DP-CREATE" , car(arglist), th);
+        strcpy(ip_address[i],GET_NAME(car(arglist)));
+        arglist = cdr(arglist); 
+        i++;
+    }
+    return(T);
+}
 
 void init_tcpip(void){
     int n;

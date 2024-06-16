@@ -11,6 +11,10 @@
 #include <string.h>
 #include <signal.h>
 #include <pthread.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
@@ -244,6 +248,7 @@ extern int column;
 extern int buffer[COL_SIZE + 1][NUM_HISTORY];
 extern int buffer1[COL_SIZE + 1];
 extern int buffer2[COL_SIZE + 1];
+extern int buffer3[COL_SIZE + 1];
 
 
 /* heap and stack */
@@ -645,6 +650,12 @@ extern int process_num;
 extern struct sigaction child_action;
 extern int child_signal[PROCSIZE];
 extern int child_signal1[PROCSIZE];
+
+/* TCPIP*/
+#define PORT 12345 
+extern int sockfd, newsockfd;
+extern socklen_t clilen;
+extern struct sockaddr_in serv_addr, cli_addr;
 
 // -------error code---
 enum {
@@ -1312,6 +1323,7 @@ void drop_char(char buf[]);
 void error(int errnum, const char *fun, int arg, int th);
 void exit_para(void);
 void exit_thread(void);
+void exit_tcpip(void);
 int gbc(void);
 void gbc_concurrent(void);
 void gbc_mark(void);
@@ -1334,6 +1346,7 @@ void init_subr(void);
 void init_stok(void);
 void init_syntax(void);
 void init_thread(void);
+void init_tcpip(void);
 void insert_method(int x, int func);
 void insert_str(char ch, char buf[]);
 void load(int x, int th);

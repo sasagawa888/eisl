@@ -16,6 +16,10 @@
 #ifdef __rpi__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
+#include <arpa/inet.h>
+#include <sys/types.h>
+
+
 #endif
 #include "eisl.h"
 #include "mem.h"
@@ -1693,4 +1697,99 @@ int f_mp_close(int arglist, int th)
 
     process_pt = 0;
     return (T);
+}
+
+
+//------------TCP/IP--------------------------
+// draft for connection machine
+#define SERVER_ADDR "127.0.0.1"  // address 
+
+void init_tcpip(void){
+    int n;
+
+    // create socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+        perror("Error opening socket");
+        exit(1);
+    }
+
+    // initialize serv_addr を初期化
+    memset((char *) &serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(PORT);
+
+    // bind socket
+    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Error on binding");
+        exit(1);
+    }
+}
+
+void exit_tcpip(void){
+	close(newsockfd);
+    close(sockfd);
+}
+
+
+void recieve_from_pairent(void){
+    int n;
+
+    // wait conneting
+    listen(sockfd, 5);
+    clilen = sizeof(cli_addr);
+
+    // wait connectin from pairent
+    newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+    if (newsockfd < 0) {
+        perror("Error on accept");
+        exit(1);
+    }
+
+    // read message from piarent
+    memset(buffer, 0, sizeof(buffer));
+    n = read(newsockfd, buffer, sizeof(buffer) - 1);
+    if (n < 0) {
+        perror("Error reading from socket");
+        exit(1);
+    }
+    printf("Received message from client: %s\n", buffer);
+}
+
+void send_to_pairent(void){
+    int n;
+
+    // send message to pairent
+    n = write(newsockfd, "I got your message", 18);
+    if (n < 0) {
+        perror("Error writing to socket");
+        exit(1);
+    }
+}
+
+
+
+
+void send_message_to_pairent(void){
+    int n;
+    // send message
+    strcpy(buffer, "Hello, server!");
+    n = write(sockfd, buffer, strlen(buffer));
+    if (n < 0) {
+        perror("Error writing to socket");
+        exit(1);
+    }
+}
+
+void recieve_from_child(void){
+    int n;
+    // recieve from child
+    memset(buffer, 0, sizeof(buffer));
+    n = read(sockfd, buffer, sizeof(buffer) - 1);
+    if (n < 0) {
+        perror("Error reading from socket");
+        exit(1);
+    }
+    printf("Received message from server: %s\n", buffer2);
 }

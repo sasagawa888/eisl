@@ -37,6 +37,10 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <pthread.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include "compat/term_stubs.h"
 #include "eisl.h"
 #include "mem.h"
@@ -127,7 +131,7 @@ int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
 int buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
-
+int buffer3[COL_SIZE + 1];          //for TCPIP read
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
@@ -250,6 +254,10 @@ struct sigaction child_action;
 int child_signal[PROCSIZE];
 int child_signal1[PROCSIZE];
 
+/* -----TCP/IP------*/
+int sockfd, newsockfd;
+socklen_t clilen;
+struct sockaddr_in serv_addr, cli_addr;
 
 
 
@@ -337,6 +345,7 @@ int main(int argc, char *argv[])
     init_dp();
     init_pointer();
     init_thread();
+	init_tcpip();
     /* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
@@ -467,6 +476,7 @@ int main(int argc, char *argv[])
 	EXCEPT(Exit_Interp) {
 	    quit = true;
 	    exit_thread();
+		exit_tcpip();
 	}
 	END_TRY;
     }
@@ -524,9 +534,6 @@ void init_pointer(void)
 
 void init_thread(void)
 {
-    /* create parallel function thread */
-    //init_para();
-
     /* create concurrent GC thread */
     pthread_create(&concurrent_thread, NULL, concurrent, NULL);
 }
@@ -542,6 +549,7 @@ void exit_thread(void)
     /* exit parallel function thread */
     exit_para();
 }
+
 
 void signal_handler_c(int signo __unused)
 {

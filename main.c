@@ -182,6 +182,7 @@ bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
+bool network_flag = false;  /* when invoke as network child, flag is true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -259,7 +260,6 @@ int sockfd[PARASIZE];
 socklen_t pairent;
 socklen_t child[PARASIZE];
 struct sockaddr_in pairent_addr, child_addr;
-char ip_address[INET_ADDRSTRLEN][PARASIZE];
 
 
 /* -----debugger----- */
@@ -299,7 +299,7 @@ static void usage(void)
 	 "-f           -- EISL starts after reading formatter.lsp.\n"
 	 "-h           -- display help.\n"
 	 "-l filename  -- EISL starts after reading the file.\n"
-	 "-n address   -- EISL starts as child mode with pairent address.\n"
+	 "-n           -- EISL starts as network child mode.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
 	 "-t N         -- EISL runs as multi thread(N) mode.\n"
@@ -425,7 +425,7 @@ int main(int argc, char *argv[])
 		init_para();
 		break;
 		case 'n':
-		strcpy(ip_address[0],optarg);
+		network_flag = true;
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

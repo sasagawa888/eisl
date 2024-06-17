@@ -1709,12 +1709,13 @@ int f_mp_close(int arglist, int th)
 int f_dp_create(int arglist, int th){
 
     int i;
+    struct in_addr ip_addr;
 
     i = 0;
     while(!nullp(arglist)){
         if(!stringp(car(arglist)))
             error(NOT_STR, "DP-CREATE" , car(arglist), th);
-        strcpy(ip_address[i],GET_NAME(car(arglist)));
+        child[i] = inet_pton(AF_INET, GET_NAME(car(arglist)), &ip_addr);
         arglist = cdr(arglist); 
         i++;
     }

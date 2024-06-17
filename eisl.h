@@ -575,6 +575,7 @@ extern bool parallel_flag;
 extern bool parallel_exit_flag;
 extern bool process_flag;
 extern bool thread_flag;
+extern bool network_flag;
 
 // try function
 extern bool try_flag;
@@ -657,7 +658,6 @@ extern int sockfd[PARASIZE];
 extern socklen_t pairent;
 extern socklen_t child[PARASIZE];
 extern struct sockaddr_in pairent_addr, child_addr;
-extern char ip_address[INET_ADDRSTRLEN][PARASIZE];
 
 // -------error code---
 enum {

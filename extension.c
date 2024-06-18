@@ -1822,3 +1822,16 @@ void receive_from_child(int i){
     }
     printf("Received message from server: %s\n", buffer3);
 }
+
+int read_network(void)
+{
+    int j;			// colums position of buffer 
+    static int pos = 0;
+
+    // when buffer is empty, receive from network
+    if (buffer3[pos] == 0) {
+	recieve_from_parent();
+	pos = 0;
+    }
+    return (buffer3[pos++]);
+}

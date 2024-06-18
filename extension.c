@@ -1787,8 +1787,8 @@ int receive_from_parent(void){
     }
 
     // read message from parent
-    memset(buffer, 0, sizeof(buffer));
-    n = read(sockfd[1], buffer, sizeof(buffer) - 1);
+    memset(buffer3, 0, sizeof(buffer3));
+    n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
         error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }

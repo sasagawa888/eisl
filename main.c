@@ -183,6 +183,7 @@ bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
 bool network_flag = false;  /* when invoke as network child, flag is true */
+bool connect_flag = false;  /* when child listen, connect_flag = true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -257,9 +258,9 @@ int child_signal1[PROCSIZE];
 
 /* -----TCPIP------*/
 int sockfd[PARASIZE];
-socklen_t pairent;
+socklen_t parent;
 socklen_t child[PARASIZE];
-struct sockaddr_in pairent_addr, child_addr;
+struct sockaddr_in parent_addr, child_addr[PARASIZE];
 
 
 /* -----debugger----- */

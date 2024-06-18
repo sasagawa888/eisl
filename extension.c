@@ -1715,14 +1715,14 @@ int f_dp_create(int arglist, int th){
     while(!nullp(arglist)){
         if(!stringp(car(arglist)))
             error(NOT_STR, "DP-CREATE" , car(arglist), th);
-        child[i] = inet_pton(AF_INET, GET_NAME(car(arglist)), &ip_addr);
+        inet_pton(AF_INET, GET_NAME(car(arglist)), &child_addr[i].sin_addr);
         arglist = cdr(arglist); 
         i++;
     }
     return(T);
 }
 
-void init_pairent(void){
+void init_parent(void){
     int n;
 
     // create socket
@@ -1733,13 +1733,13 @@ void init_pairent(void){
     }
 
     // initialize pairent_addr
-    memset((char *) &pairent_addr, 0, sizeof(pairent_addr));
-    pairent_addr.sin_family = AF_INET;
-    pairent_addr.sin_addr.s_addr = INADDR_ANY;
-    pairent_addr.sin_port = htons(PORT);
+    memset((char *) &parent_addr, 0, sizeof(parent_addr));
+    parent_addr.sin_family = AF_INET;
+    parent_addr.sin_addr.s_addr = INADDR_ANY;
+    parent_addr.sin_port = htons(PORT);
 
     // bind socket
-    if (bind(sockfd[0], (struct sockaddr *) &pairent_addr, sizeof(pairent_addr)) < 0) {
+    if (bind(sockfd[0], (struct sockaddr *) &parent_addr, sizeof(parent_addr)) < 0) {
         perror("Error on binding");
         exit(1);
     }
@@ -1754,13 +1754,13 @@ void init_child(int n){
     }
 
     // initialize child_addr
-    memset((char *) &child_addr, 0, sizeof(child_addr));
-    child_addr.sin_family = AF_INET;
-    child_addr.sin_addr.s_addr = INADDR_ANY;
-    child_addr.sin_port = htons(PORT);
+    memset((char *) &child_addr[n], 0, sizeof(child_addr[n]));
+    child_addr[n].sin_family = AF_INET;
+    child_addr[n].sin_addr.s_addr = INADDR_ANY;
+    child_addr[n].sin_port = htons(PORT);
 
     // bind socket
-    if (bind(sockfd, (struct sockaddr *) &child_addr, sizeof(child_addr)) < 0) {
+    if (bind(sockfd, (struct sockaddr *) &child_addr[n], sizeof(child_addr[n])) < 0) {
         perror("Error on binding");
         exit(1);
     }
@@ -1774,15 +1774,15 @@ void exit_tcpip(void){
 }
 
 
-void recieve_from_pairent(void){
+void recieve_from_parent(void){
     int n;
 
     // wait conneting
     listen(sockfd[0], 5);
-    pairent = sizeof(pairent_addr);
+    parent = sizeof(parent_addr);
 
     // wait connectin from pairent
-    sockfd[1] = accept(sockfd[0], (struct sockaddr *) &pairent_addr, &pairent);
+    sockfd[1] = accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
     if (sockfd[1] < 0) {
         perror("Error on accept");
         exit(1);
@@ -1795,7 +1795,7 @@ void recieve_from_pairent(void){
         perror("Error reading from socket");
         exit(1);
     }
-    printf("Received message from client: %s\n", buffer2);
+    printf("Received message from client: %s\n", buffer3);
 }
 
 void send_to_pairent(void){
@@ -1816,7 +1816,7 @@ void send_message_to_pairent(void){
     int n;
     // send message
     strcpy(buffer2, "Hello, server!");
-    n = write(sockfd, buffer, strlen(buffer2));
+    n = write(sockfd, buffer, strlen(buffer3));
     if (n < 0) {
         perror("Error writing to socket");
         exit(1);
@@ -1826,11 +1826,11 @@ void send_message_to_pairent(void){
 void recieve_from_child(int i){
     int n;
     // recieve from child
-    memset(buffer2, 0, sizeof(buffer2));
-    n = read(sockfd[i], buffer2, sizeof(buffer2) - 1);
+    memset(buffer3, 0, sizeof(buffer3));
+    n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
         perror("Error reading from socket");
         exit(1);
     }
-    printf("Received message from server: %s\n", buffer2);
+    printf("Received message from server: %s\n", buffer3);
 }

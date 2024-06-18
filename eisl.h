@@ -576,6 +576,7 @@ extern bool parallel_exit_flag;
 extern bool process_flag;
 extern bool thread_flag;
 extern bool network_flag;
+extern bool connect_flag;
 
 // try function
 extern bool try_flag;
@@ -653,11 +654,11 @@ extern int child_signal[PROCSIZE];
 extern int child_signal1[PROCSIZE];
 
 /* TCPIP*/
-#define PORT 12345 
+#define PORT 5000 
 extern int sockfd[PARASIZE];
-extern socklen_t pairent;
+extern socklen_t parent;
 extern socklen_t child[PARASIZE];
-extern struct sockaddr_in pairent_addr, child_addr;
+extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 
 // -------error code---
 enum {

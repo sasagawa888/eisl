@@ -1728,8 +1728,7 @@ void init_parent(void){
     // create socket
     sockfd[0] = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd[0] < 0) {
-        perror("Error opening socket");
-        exit(1);
+        error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 
     // initialize parent_addr
@@ -1740,8 +1739,7 @@ void init_parent(void){
 
     // bind socket
     if (bind(sockfd[0], (struct sockaddr *) &parent_addr, sizeof(parent_addr)) < 0) {
-        perror("Error on binding");
-        exit(1);
+        error(SYSTEM_ERR, "init parent" , NIL, 0);
     }
 }
 
@@ -1803,14 +1801,14 @@ void send_to_parent(int x){
     // send message to parent
     n = write(sockfd[1], GET_NAME(x), strlen(GET_NAME(x)));
     if (n < 0) {
-        error(SYSTEM_ERR, "sen to parent", x, 0);
+        error(SYSTEM_ERR, "send to parent", x, 0);
     }
 }
 
 
 void receive_from_child(int i){
     int n;
-    // recieve from child
+    // receive from child
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {

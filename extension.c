@@ -1772,7 +1772,7 @@ void exit_tcpip(void){
 }
 
 
-void recieve_from_parent(void){
+int receive_from_parent(void){
     int n;
 
     if(!connect_flag){
@@ -1782,31 +1782,28 @@ void recieve_from_parent(void){
     connect_flag = true;
     }
     
-    // connectin from parent
+    // connection from parent
     sockfd[1] = accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
     if (sockfd[1] < 0) {
-        perror("Error on accept");
-        exit(1);
+        error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
-    // read message from piarent
+    // read message from parent
     memset(buffer, 0, sizeof(buffer));
     n = read(sockfd[1], buffer, sizeof(buffer) - 1);
     if (n < 0) {
-        perror("Error reading from socket");
-        exit(1);
+        error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-    printf("Received message from client: %s\n", buffer3);
+    return(make_str(buffer3));
 }
 
-void send_to_parent(void){
+void send_to_parent(int x){
     int n;
 
     // send message to parent
-    n = write(sockfd[1], "I got your message", 18);
+    n = write(sockfd[1], GET_NAME(x), strlen(GET_NAME(x)));
     if (n < 0) {
-        perror("Error writing to socket");
-        exit(1);
+        error(SYSTEM_ERR, "sen to parent", x, 0);
     }
 }
 
@@ -1817,20 +1814,18 @@ void receive_from_child(int i){
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
-        perror("Error reading from socket");
-        exit(1);
+        error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
-    printf("Received message from server: %s\n", buffer3);
+    return(make_str(buffer3));
 }
 
 int read_network(void)
 {
-    int j;			// colums position of buffer 
     static int pos = 0;
 
     // when buffer is empty, receive from network
     if (buffer3[pos] == 0) {
-	recieve_from_parent();
+	receive_from_parent();
 	pos = 0;
     }
     return (buffer3[pos++]);

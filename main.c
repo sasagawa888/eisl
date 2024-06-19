@@ -256,12 +256,22 @@ struct sigaction child_action;
 int child_signal[PROCSIZE];
 int child_signal1[PROCSIZE];
 
-/* -----TCPIP------*/
+/* -----distributed parallel & TCPIP------*/
 int sockfd[PARASIZE];
 socklen_t parent;
 socklen_t child[PARASIZE];
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
+int dp_queue[PARASIZE];
+int dp_queue_pt;
+int dp_queue_num;
+pthread_t dp_para_thread[PARASIZE];
+pthread_cond_t dp_cond_para[PARASIZE];
+pthread_cond_t dp_cond_main;
+pthread_cond_t dp_cond_queue;
+pthread_attr_t dp_para_attr[PARASIZE];
+size_t dp_para_size[PARASIZE];
+
 
 
 /* -----debugger----- */

@@ -1841,14 +1841,12 @@ int read_network(void)
 
 //------- thread for distributed parallel --------------
 /* multi thread parallel functions for DP
- * The data structure of the queue is reused from Multi-thread.
- * The processing in the threads is different.
  * Write the content to be sent to the child in buffer3 and start the thread.
  */
 void dp_enqueue(int n)
 {
-    queue[queue_pt] = n;
-    queue_pt++;
+    dp_queue[dp_queue_pt] = n;
+    dp_queue_pt++;
     pthread_mutex_lock(&mutex);
     pthread_cond_signal(&cond_queue);
     pthread_mutex_unlock(&mutex);
@@ -1858,19 +1856,19 @@ int dp_dequeue(int arg)
 {
     int num, i;
 
-    if (queue_pt == 0) {
+    if (dp_queue_pt == 0) {
 	pthread_mutex_lock(&mutex);
-	pthread_cond_wait(&cond_queue, &mutex);
+	pthread_cond_wait(&dp_cond_queue, &mutex);
 	pthread_mutex_unlock(&mutex);
     }
 
-    num = queue[0];
-    queue_pt--;
+    num = dp_queue[0];
+    dp_queue_pt--;
     for (i = 0; i < queue_pt; i++) {
-	queue[i] = queue[i + 1];
+	dp_queue[i] = dp_queue[i + 1];
     }
     pthread_mutex_lock(&mutex);
-    pthread_cond_signal(&cond_para[num]);
+    pthread_cond_signal(&dp_cond_para[num]);
     pthread_mutex_unlock(&mutex);
 
     return (num);
@@ -1890,7 +1888,7 @@ void *dp_parallel(void *arg)
 
     while (1) {
 	pthread_mutex_lock(&mutex);
-	pthread_cond_wait(&cond_para[num], &mutex);
+	pthread_cond_wait(&dp_cond_para[num], &mutex);
 	pthread_mutex_unlock(&mutex);
 	if (parallel_exit_flag)
 	    goto exit;
@@ -1901,9 +1899,9 @@ void *dp_parallel(void *arg)
 	EXCEPT(Exit_Thread);
 	END_TRY;
 	dp_enqueue(num);
-	if (queue_pt == queue_num) {
+	if (dp_queue_pt == dp_queue_num) {
 	    pthread_mutex_lock(&mutex);
-	    pthread_cond_signal(&cond_main);
+	    pthread_cond_signal(&dp_cond_main);
 	    pthread_mutex_unlock(&mutex);
 	}
     }
@@ -1915,23 +1913,23 @@ void init_dp_para(void)
 {
     int i;
 
-    /* queue[1,2,3,4,...] worker thread number 
-     * para_thread[1] has worker-number 1
-     * para_thread[2] has worker-number 2 ... 
+    /* dp_queue[1,2,3,4,...] worker thread number 
+     * dp_para_thread[1] has worker-number 1
+     * dp_para_thread[2] has worker-number 2 ... 
      */
-    for (i = 0; i < queue_num; i++) {
-	queue[i] = i + 1;
+    for (i = 0; i < dp_queue_num; i++) {
+	dp_queue[i] = i + 1;
     }
 
-    for (i = 0; i < queue_num; i++) {
-	para_size[i + 1] = 8 * 1024 * 1024;
-	pthread_attr_init(&para_attr[i + 1]);
-	pthread_attr_setstacksize(&para_attr[i + 1], para_size[i + 1]);
-	pthread_create(&para_thread[i + 1], &para_attr[i + 1], dp_parallel,
-		       &queue[i]);
+    for (i = 0; i < dp_queue_num; i++) {
+	dp_para_size[i + 1] = 8 * 1024 * 1024;
+	pthread_attr_init(&dp_para_attr[i + 1]);
+	pthread_attr_setstacksize(&dp_para_attr[i + 1], dp_para_size[i + 1]);
+	pthread_create(&dp_para_thread[i + 1], &dp_para_attr[i + 1], dp_parallel,
+		       &dp_queue[i]);
     }
 
-    queue_pt = queue_num;
+    dp_queue_pt = dp_queue_num;
 }
 
 
@@ -1940,9 +1938,9 @@ void exit_dp_para(void)
     int i;
 
     parallel_exit_flag = true;
-    for (i = 1; i <= queue_num; i++) {
+    for (i = 1; i <= dp_queue_num; i++) {
 	pthread_mutex_lock(&mutex);
-	pthread_cond_signal(&cond_para[i]);
+	pthread_cond_signal(&dp_cond_para[i]);
 	pthread_mutex_unlock(&mutex);
     }
 
@@ -1952,7 +1950,7 @@ void exit_dp_para(void)
 int wait_dp_para(void)
 {
     pthread_mutex_lock(&mutex);
-    pthread_cond_wait(&cond_main, &mutex);
+    pthread_cond_wait(&dp_cond_main, &mutex);
     pthread_mutex_unlock(&mutex);
     return (0);
 }

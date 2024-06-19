@@ -617,7 +617,7 @@ void debugger(int th)
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    for (i = 0; i <= queue_num; i++) {
+	    for (i = 0; i <= mt_queue_num; i++) {
 		Fmt_print("thread%d = ", i);
 		for (j = 0; j < dp[i]; j++) {
 		    print(dynamic[j][0][i]);
@@ -628,7 +628,7 @@ void debugger(int th)
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
-	    for (i = 0; i <= queue_num; i++) {
+	    for (i = 0; i <= mt_queue_num; i++) {
 		Fmt_print("thread%d = ", i);
 		print(ep[i]);
 		putchar('\n');
@@ -645,12 +645,12 @@ void debugger(int th)
 		      "SP = %d (stack pointer)\n"
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
-		      "Parallel = %d (queue_num)\n"
+		      "Parallel = %d (mt_queue_num)\n"
 		      "Thread = %d (current thread)\n",
 		      ep[th], dp[th], hp[th], sp[th], ap[th],
-		      lp[th], queue_num, th);
+		      lp[th], mt_queue_num, th);
 	    puts("Free cell ");
-	    for (i = 0; i <= queue_num; i++) {
+	    for (i = 0; i <= mt_queue_num; i++) {
 		Fmt_print("thread%d = %d\n", i, fc[i]);
 	    }
 	} else if (eqp(x, make_sym(":S"))) {
@@ -1848,7 +1848,7 @@ void dp_enqueue(int n)
     dp_queue[dp_queue_pt] = n;
     dp_queue_pt++;
     pthread_mutex_lock(&mutex);
-    pthread_cond_signal(&cond_queue);
+    pthread_cond_signal(&dp_cond_queue);
     pthread_mutex_unlock(&mutex);
 }
 
@@ -1864,7 +1864,7 @@ int dp_dequeue(int arg)
 
     num = dp_queue[0];
     dp_queue_pt--;
-    for (i = 0; i < queue_pt; i++) {
+    for (i = 0; i < dp_queue_pt; i++) {
 	dp_queue[i] = dp_queue[i + 1];
     }
     pthread_mutex_lock(&mutex);

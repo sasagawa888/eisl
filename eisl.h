@@ -631,17 +631,17 @@ extern int remark[REMKSIZE];
 extern int remark_pt;
 
 /* multi thread */
-extern int queue[PARASIZE];
-extern int queue_pt;
-extern int queue_num;
+extern int mt_queue[PARASIZE];
+extern int mt_queue_pt;
+extern int mt_queue_num;
 extern int para_input[PARASIZE];
 extern int para_output[PARASIZE];
-extern pthread_t para_thread[PARASIZE];
-extern pthread_cond_t cond_para[PARASIZE];
-extern pthread_cond_t cond_main;
-extern pthread_cond_t cond_queue;
-extern pthread_attr_t para_attr[PARASIZE];
-extern size_t para_size[PARASIZE];
+extern pthread_t mt_para_thread[PARASIZE];
+extern pthread_cond_t mt_cond_para[PARASIZE];
+extern pthread_cond_t mt_cond_main;
+extern pthread_cond_t mt_cond_queue;
+extern pthread_attr_t mt_para_attr[PARASIZE];
+extern size_t mt_para_size[PARASIZE];
 
 /*multi proccess*/
 extern int pipe_p2c[PROCSIZE][2]; 

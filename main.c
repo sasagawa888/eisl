@@ -234,17 +234,17 @@ int remark[REMKSIZE];
 int remark_pt = 0;
 
 /* multi thread */
-int queue[PARASIZE];
-int queue_pt;
-int queue_num;
+int mt_queue[PARASIZE];
+int mt_queue_pt;
+int mt_queue_num;
 int para_input[PARASIZE];
 int para_output[PARASIZE];
-pthread_t para_thread[PARASIZE];
-pthread_cond_t cond_para[PARASIZE];
-pthread_cond_t cond_main;
-pthread_cond_t cond_queue;
-pthread_attr_t para_attr[PARASIZE];
-size_t para_size[PARASIZE];
+pthread_t mt_para_thread[PARASIZE];
+pthread_cond_t mt_cond_para[PARASIZE];
+pthread_cond_t mt_cond_main;
+pthread_cond_t mt_cond_queue;
+pthread_attr_t mt_para_attr[PARASIZE];
+size_t mt_para_size[PARASIZE];
 
 /*multi proccess*/
 int pipe_p2c[PROCSIZE][2];
@@ -432,7 +432,7 @@ int main(int argc, char *argv[])
 		break;
 	    case 't':
 		thread_flag = true;
-		queue_num = strtol(optarg, NULL, 10);
+		mt_queue_num = strtol(optarg, NULL, 10);
 		reinit_cell();
 		init_para();
 		break;

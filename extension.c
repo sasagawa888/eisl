@@ -1703,21 +1703,21 @@ int f_mp_close(int arglist, int th)
 
 
 //------------TCP/IP--------------------------
-// draft for connection machine
+// draft for distributed parallel machine
 
 int f_dp_create(int arglist, int th){
 
-    int i,n;
+    int n;
 
-    i = 0;
+    child_num = 0;
     while(!nullp(arglist)){
         if(!stringp(car(arglist)))
             error(NOT_STR, "DP-CREATE" , car(arglist), th);
-        if(inet_pton(AF_INET, GET_NAME(car(arglist)), &child_addr[i].sin_addr) < 0)
+        if(inet_pton(AF_INET, GET_NAME(car(arglist)), &child_addr[child_num].sin_addr) < 0)
             error(SYSTEM_ERR, "DP-CREATE" , car(arglist), th);
-        init_child(i);
+        init_child(child_num);
         arglist = cdr(arglist); 
-        i++;
+        child_num++;
     }
     return(T);
 }
@@ -1787,12 +1787,12 @@ int receive_from_parent(void){
     }
 
     // read message from parent
-    memset(buffer3, 0, sizeof(buffer3));
-    n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
+    memset(buffer3[1], 0, sizeof(buffer3[1]));
+    n = read(sockfd[1], buffer3[1], sizeof(buffer3[1]) - 1);
     if (n < 0) {
         error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-    return(make_str(buffer3));
+    return(make_str(buffer3[1]));
 }
 
 void send_to_parent(int x){
@@ -1805,16 +1805,25 @@ void send_to_parent(int x){
     }
 }
 
+void send_to_child(int n){
+    int m;
+
+    // send message to child
+    m = write(sockfd[n], buffer3[n], strlen(buffer3[n]));
+    if (n < 0) {
+        error(SYSTEM_ERR, "send to child", NIL, 0);
+    }
+}
 
 void receive_from_child(int i){
     int n;
     // receive from child
-    memset(buffer3, 0, sizeof(buffer3));
-    n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
+    memset(buffer3[i], 0, sizeof(buffer3[i]));
+    n = read(sockfd[i], buffer3[i], sizeof(buffer3[i]) - 1);
     if (n < 0) {
         error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
-    return(make_str(buffer3));
+    return(make_str(buffer3[i]));
 }
 
 int read_network(void)
@@ -1822,9 +1831,128 @@ int read_network(void)
     static int pos = 0;
 
     // when buffer is empty, receive from network
-    if (buffer3[pos] == 0) {
+    if (buffer3[pos][1] == 0) {
 	receive_from_parent();
 	pos = 0;
     }
-    return (buffer3[pos++]);
+    return (buffer3[pos++][1]);
 }
+
+
+//------- thread for distributed parallel --------------
+/* multi thread parallel functions for DP */
+void dp_enqueue(int n)
+{
+    queue[queue_pt] = n;
+    queue_pt++;
+    pthread_mutex_lock(&mutex);
+    pthread_cond_signal(&cond_queue);
+    pthread_mutex_unlock(&mutex);
+}
+
+int dp_dequeue(int arg)
+{
+    int num, i;
+
+    if (queue_pt == 0) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_queue, &mutex);
+	pthread_mutex_unlock(&mutex);
+    }
+
+    num = queue[0];
+    queue_pt--;
+    for (i = 0; i < queue_pt; i++) {
+	queue[i] = queue[i + 1];
+    }
+    pthread_mutex_lock(&mutex);
+    para_input[num] = arg;
+    //para_output[num] = NIL;
+    pthread_cond_signal(&cond_para[num]);
+    pthread_mutex_unlock(&mutex);
+
+    return (num);
+}
+
+int dp_eval_para(int arg)
+{
+    int num;
+
+    num = dp_dequeue(arg);
+    return (num);
+}
+
+void *dp_parallel(void *arg)
+{
+    int num = *(int *) arg;
+
+    while (1) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&cond_para[num], &mutex);
+	pthread_mutex_unlock(&mutex);
+	if (parallel_exit_flag)
+	    goto exit;
+
+	TRY  
+    send_to_child(num);
+    receive_from_child(num);
+	EXCEPT(Exit_Thread);
+	END_TRY;
+	dp_enqueue(num);
+	if (queue_pt == queue_num) {
+	    pthread_mutex_lock(&mutex);
+	    pthread_cond_signal(&cond_main);
+	    pthread_mutex_unlock(&mutex);
+	}
+    }
+  exit:
+    pthread_exit(NULL);
+}
+
+void init_dp_para(void)
+{
+    int i;
+
+    /* queue[1,2,3,4,...] worker thread number 
+     * para_thread[1] has worker-number 1
+     * para_thread[2] has worker-number 2 ... 
+     */
+    for (i = 0; i < queue_num; i++) {
+	queue[i] = i + 1;
+    }
+
+    for (i = 0; i < queue_num; i++) {
+	para_size[i + 1] = 8 * 1024 * 1024;
+	pthread_attr_init(&para_attr[i + 1]);
+	pthread_attr_setstacksize(&para_attr[i + 1], para_size[i + 1]);
+	pthread_create(&para_thread[i + 1], &para_attr[i + 1], dp_parallel,
+		       &queue[i]);
+    }
+
+    queue_pt = queue_num;
+}
+
+
+void exit_dp_para(void)
+{
+    int i;
+
+    parallel_exit_flag = true;
+    for (i = 1; i <= queue_num; i++) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_signal(&cond_para[i]);
+	pthread_mutex_unlock(&mutex);
+    }
+
+}
+
+
+int wait_dp_para(void)
+{
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+    return (0);
+}
+
+

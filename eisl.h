@@ -248,7 +248,7 @@ extern int column;
 extern int buffer[COL_SIZE + 1][NUM_HISTORY];
 extern int buffer1[COL_SIZE + 1];
 extern int buffer2[COL_SIZE + 1];
-extern int buffer3[COL_SIZE + 1];
+extern int buffer3[COL_SIZE + 1][PARASIZE];
 
 
 /* heap and stack */
@@ -659,6 +659,7 @@ extern int sockfd[PARASIZE];
 extern socklen_t parent;
 extern socklen_t child[PARASIZE];
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
+extern child_num;
 
 // -------error code---
 enum {

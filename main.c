@@ -130,8 +130,8 @@ int line;
 int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
-int buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
-int buffer3[COL_SIZE + 1];          //for TCPIP read
+int buffer2[COL_SIZE + 1] = { 0 };	 //for read_stdin()
+int buffer3[COL_SIZE + 1][PARASIZE]; //for TCPIP read
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
@@ -261,6 +261,7 @@ int sockfd[PARASIZE];
 socklen_t parent;
 socklen_t child[PARASIZE];
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
+int child_num;
 
 
 /* -----debugger----- */

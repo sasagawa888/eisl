@@ -1840,7 +1840,11 @@ int read_network(void)
 
 
 //------- thread for distributed parallel --------------
-/* multi thread parallel functions for DP */
+/* multi thread parallel functions for DP
+ * The data structure of the queue is reused from Multi-thread.
+ * The processing in the threads is different.
+ * Write the content to be sent to the child in buffer3 and start the thread.
+ */
 void dp_enqueue(int n)
 {
     queue[queue_pt] = n;
@@ -1866,8 +1870,6 @@ int dp_dequeue(int arg)
 	queue[i] = queue[i + 1];
     }
     pthread_mutex_lock(&mutex);
-    para_input[num] = arg;
-    //para_output[num] = NIL;
     pthread_cond_signal(&cond_para[num]);
     pthread_mutex_unlock(&mutex);
 

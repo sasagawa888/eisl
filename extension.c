@@ -1712,9 +1712,9 @@ int f_dp_create(int arglist, int th){
     child_num = 0;
     while(!nullp(arglist)){
         if(!stringp(car(arglist)))
-            error(NOT_STR, "DP-CREATE" , car(arglist), th);
+            error(NOT_STR, "dp-create" , car(arglist), th);
         if(inet_pton(AF_INET, GET_NAME(car(arglist)), &child_addr[child_num].sin_addr) < 0)
-            error(SYSTEM_ERR, "DP-CREATE" , car(arglist), th);
+            error(SYSTEM_ERR, "dp-create" , car(arglist), th);
         init_child(child_num);
         arglist = cdr(arglist); 
         child_num++;
@@ -1747,7 +1747,7 @@ void init_child(int n){
     // create socket
     sockfd[n] = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd[n] < 0) {
-        error(SYSTEM_ERR, "DP-CREATE", make_int(n),0);
+        error(SYSTEM_ERR, "dp-create", make_int(n),0);
     }
 
     // initialize child_addr
@@ -1758,7 +1758,7 @@ void init_child(int n){
 
     // bind socket
     if (bind(sockfd[n], (struct sockaddr *) &child_addr[n], sizeof(child_addr[n])) < 0) {
-        error(SYSTEM_ERR, "DP-CREATE", make_int(n),0);
+        error(SYSTEM_ERR, "dp-create", make_int(n),0);
     }
 }
 

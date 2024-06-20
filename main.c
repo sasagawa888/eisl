@@ -51,9 +51,6 @@
 #include "compat/eiffel_stubs.h"
 #include "compat/curses_stubs.h"
 
-/* debug */
-int check_sw = 0;
-
 
 /* pointer */
 int ep[PARASIZE];		/* environment pointer */
@@ -429,6 +426,7 @@ int main(int argc, char *argv[])
 		init_para();
 		break;
 	    case 'n':
+		puts("EISL runs with network mode.");
 		network_flag = true;
 		init_parent();
 		break;

@@ -21,8 +21,6 @@
 #include "except.h"
 #include "compat/eiffel_stubs.h"
 
-/* debug */
-extern int check_sw;
 
 #define DYNSIZE 1000
 #define STACKSIZE 400000
@@ -899,6 +897,7 @@ int f_div(int arglist, int th);
 int f_domain_error_expected_class(int arglist, int th);
 int f_domain_error_object(int arglist, int th);
 int f_dp_create(int arglist, int th);
+int f_dp_close(int arglist, int th);
 int f_dp_let(int arglist, int th);
 int f_dummyp(int arglist, int th);
 int f_dynamic(int arglist, int th);
@@ -1266,6 +1265,7 @@ int read_network(void);
 int read_from_pipe(int n);
 int read_from_pipe_part(int n);
 int read_from_pipe_part_nth(int n);
+int receive_from_child(int n);
 int sexp_to_str(int x);
 int str_to_sexp(int x);
 int set_error_handler(int x);
@@ -1359,6 +1359,8 @@ void init_stok(void);
 void init_syntax(void);
 void init_thread(void);
 void init_tcpip(void);
+void init_parent(void);
+void init_child(int i);
 void insert_method(int x, int func);
 void insert_str(char ch, char buf[]);
 void load(int x, int th);
@@ -1384,6 +1386,7 @@ void profiler_print();
 void redef_generic(void);
 void resort_method(int func);
 void reinit_cell(void);
+void receive_from_parent(void);
 void set_sign(int x, int y);
 void set_length(int x, int len);
 void set_pointer(int x, int pointer);
@@ -1392,6 +1395,8 @@ int set_dyn_env(int sym, int val, int th);
 void set_val(int sym, int val, int ls);
 void signal_handler_c(int signo);
 void signal_handler_child(int sig, siginfo_t *siginfo, void *context);
+void send_to_parent(int x);
+void send_to_child(int n, int x);
 void unbind(int th);
 void unreadc(char c);
 void ucs4_to_utf8(int n, char *p);

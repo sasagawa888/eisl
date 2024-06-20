@@ -80,6 +80,7 @@ void init_exsubr(void)
     def_fsubr("MP-PART", f_mp_part);
 
     def_subr("DP-CREATE", f_dp_create);
+    def_subr("DP-CLOSE", f_dp_close);
     def_fsubr("DP-LET", f_dp_let);
 
 #ifdef __rpi__
@@ -868,15 +869,14 @@ void profiler_print()
 */
 int f_eisl_test(int arglist, int th __unused)
 {
-    int arg1, arg2;
+    int arg1,arg2,res;
 
     arg1 = car(arglist);
-    if (arg1 == T)
-	check_sw = 1;
-    else if (arg1 == NIL)
-	check_sw = 0;
+    arg2 = cadr(arglist);
 
-    return (arg1);
+    send_to_child(GET_INT(arg1), sexp_to_str(arg2));
+    res = str_to_sexp(receive_from_child(GET_INT(arg1)));
+    return (res);
 }
 
 int f_get_myself(int arglist, int th)
@@ -1727,6 +1727,26 @@ int f_dp_create(int arglist, int th)
     return (T);
 }
 
+// close all distributed child 
+int f_dp_close(int arglist, int th)
+{
+    int i,exp;
+
+    if (!nullp(arglist))
+	error(ILLEGAL_ARGS, "dp-close", arglist, th);
+
+    exp = list(make_sym("QUIT"));
+    for (i = 0; i < child_num; i++) {
+    send_to_child(i, sexp_to_str(exp));    
+    }
+
+    close_socket();
+    child_num = 0;
+    return (T);
+}
+
+
+
 int f_dp_let(int arglist, int th)
 {
     int arg1, arg2, temp, exp, i, res;
@@ -1846,6 +1866,7 @@ void close_socket(void)
 	for (i = 0; i < child_num; i++)
 	    close(sockfd[i]);
     } else if (network_flag) {
+    puts("EISL exit network mode.\n");
 	close(sockfd[0]);
 	close(sockfd[1]);
     }

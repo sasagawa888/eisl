@@ -1787,12 +1787,12 @@ int receive_from_parent(void){
     }
 
     // read message from parent
-    memset(buffer3[1], 0, sizeof(buffer3[1]));
-    n = read(sockfd[1], buffer3[1], sizeof(buffer3[1]) - 1);
+    memset(buffer3, 0, sizeof(buffer3));
+    n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
         error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-    return(make_str(buffer3[1]));
+    return(make_str(buffer3));
 }
 
 void send_to_parent(int x){
@@ -1805,11 +1805,11 @@ void send_to_parent(int x){
     }
 }
 
-void send_to_child(int n){
+void send_to_child(int x, int n){
     int m;
 
     // send message to child
-    m = write(sockfd[n], buffer3[n], strlen(buffer3[n]));
+    m = write(sockfd[n], GET_NAME(x), strlen(GET_NAME(x)));
     if (n < 0) {
         error(SYSTEM_ERR, "send to child", NIL, 0);
     }
@@ -1818,12 +1818,12 @@ void send_to_child(int n){
 void receive_from_child(int i){
     int n;
     // receive from child
-    memset(buffer3[i], 0, sizeof(buffer3[i]));
-    n = read(sockfd[i], buffer3[i], sizeof(buffer3[i]) - 1);
+    memset(buffer3, 0, sizeof(buffer3));
+    n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
         error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
-    return(make_str(buffer3[i]));
+    return(make_str(buffer3));
 }
 
 int read_network(void)
@@ -1831,10 +1831,10 @@ int read_network(void)
     static int pos = 0;
 
     // when buffer is empty, receive from network
-    if (buffer3[pos][1] == 0) {
+    if (buffer3[pos] == 0) {
 	receive_from_parent();
 	pos = 0;
     }
-    return (buffer3[pos++][1]);
+    return (buffer3[pos++]);
 }
 

@@ -131,7 +131,7 @@ int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
 int buffer2[COL_SIZE + 1] = { 0 };	 //for read_stdin()
-int buffer3[COL_SIZE + 1][PARASIZE]; //for TCPIP read
+int buffer3[COL_SIZE + 1];           //for TCPIP read
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];

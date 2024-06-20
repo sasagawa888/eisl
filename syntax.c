@@ -2624,11 +2624,7 @@ void init_para(void)
     }
 
     for (i = 0; i < mt_queue_num; i++) {
-	mt_para_size[i + 1] = 8 * 1024 * 1024;
-	pthread_attr_init(&mt_para_attr[i + 1]);
-	pthread_attr_setstacksize(&mt_para_attr[i + 1], mt_para_size[i + 1]);
-	pthread_create(&mt_para_thread[i + 1], &mt_para_attr[i + 1], parallel,
-		       &mt_queue[i]);
+	pthread_create(&mt_para_thread[i + 1], NULL, parallel, &mt_queue[i]);
     }
 
     mt_queue_pt = mt_queue_num;

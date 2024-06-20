@@ -660,15 +660,6 @@ extern socklen_t parent;
 extern socklen_t child[PARASIZE];
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern child_num;
-extern int dp_queue[PARASIZE];
-extern int dp_queue_pt;
-extern int dp_queue_num;
-extern pthread_t dp_para_thread[PARASIZE];
-extern pthread_cond_t dp_cond_para[PARASIZE];
-extern pthread_cond_t dp_cond_main;
-extern pthread_cond_t dp_cond_queue;
-extern pthread_attr_t dp_para_attr[PARASIZE];
-extern size_t dp_para_size[PARASIZE];
 
 // -------error code---
 enum {

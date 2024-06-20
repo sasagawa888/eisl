@@ -1,5 +1,23 @@
 ;;multi-process
 
+(defun pfib (n)
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (t (mp-call #'+ (fib (- n 1)) (fib (- n 2))))))
+
+
+(defun fib1 (n)
+    (mp-let ((a (fib (- n 1)))
+             (b (fib (- n 2))))
+        (+ a b)))
+
+(defun fib (n)
+    ;(the <fixnum> n) 
+    (cond ((= n 0) 0)
+          ((= n 1) 1)
+          (t (+ (fib (- n 1)) (fib (- n 2))))))
+
+
 ;(mp-create 5)
 ;(primep* 100000000000031)
 (defun primep* (n)

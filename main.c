@@ -352,7 +352,6 @@ int main(int argc, char *argv[])
     init_dp();
     init_pointer();
     init_thread();
-    //init_pairent();
     /* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
@@ -602,15 +601,22 @@ int readc(void)
 {
     int c;
 
-    if (string_input_stream_p(input_stream))
+    if (string_input_stream_p(input_stream)){
 	/* string-input-stream */
 	return (string_readc(input_stream));
-    else if (input_stream == standard_input && repl_flag)
+	}
+	else if (process_flag == true){
+	/* EISL as child process */
+	return(read_stdin());
+	}
+	else if (network_flag){
+	/* EISL as network child */
+	return(read_network());	
+	}
+    else if (input_stream == standard_input && repl_flag){
 	/* REPL-mode and standard-input */
 	c = read_line(1);
-    else if (process_flag == true)
-	/* EISL as child process */
-	c = read_stdin();
+	}
     else {
 	/* not REPL-mode and standard-input */
 	c = getc(GET_PORT(input_stream));

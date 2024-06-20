@@ -1260,6 +1260,11 @@ int remove_list(int x, int y);
 int remove_prop(int x, int lis);
 int restore_error_handler(void);
 int reverse(int x);
+int read_stdin(void);
+int read_network(void);
+int read_from_pipe(int n);
+int read_from_pipe_part(int n);
+int read_from_pipe_part_nth(int n);
 int sexp_to_str(int x);
 int str_to_sexp(int x);
 int set_error_handler(int x);
@@ -1488,9 +1493,6 @@ int replace_fragment_buffer(const char *newstr, int col);
 void insertcol_buffer(int col);
 void backspace_buffer(int col);
 int read_line(int flag);
-int read_stdin(void);
-int read_from_pipe(int n);
-int read_from_pipe_part(int n);
-int read_from_pipe_part_nth(int n);
+
 
 #endif

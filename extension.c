@@ -1778,14 +1778,14 @@ void close_socket(void)
     if (child_num > 0) {
 	for (i = 0; i < child_num; i++)
 	    close(sockfd[i]);
-    } else {
+    } else if (network_flag) {
 	close(sockfd[0]);
 	close(sockfd[1]);
     }
 }
 
 
-int receive_from_parent(void)
+void receive_from_parent(void)
 {
     int n;
 
@@ -1809,7 +1809,6 @@ int receive_from_parent(void)
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-    return (make_str(buffer3));
 }
 
 void send_to_parent(int x)
@@ -1823,7 +1822,7 @@ void send_to_parent(int x)
     }
 }
 
-void send_to_child(int x, int n)
+void send_to_child(int n, int x)
 {
     int m;
 
@@ -1834,7 +1833,7 @@ void send_to_child(int x, int n)
     }
 }
 
-void receive_from_child(int i)
+int receive_from_child(int i)
 {
     int n;
     // receive from child

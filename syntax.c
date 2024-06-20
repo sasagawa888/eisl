@@ -2544,7 +2544,7 @@ int modulesubst_case(int addr, int module, int fname)
 }
 
 /* multi thread parallel functions */
-void enqueue(int n)
+void mt_enqueue(int n)
 {
     mt_queue[mt_queue_pt] = n;
     mt_queue_pt++;
@@ -2553,7 +2553,7 @@ void enqueue(int n)
     pthread_mutex_unlock(&mutex);
 }
 
-int dequeue(int arg)
+int mt_dequeue(int arg)
 {
     int num, i;
 
@@ -2581,7 +2581,7 @@ int eval_para(int arg)
 {
     int num;
 
-    num = dequeue(arg);
+    num = mt_dequeue(arg);
     return (num);
 }
 
@@ -2600,7 +2600,7 @@ void *parallel(void *arg)
 	TRY para_output[num] = eval(para_input[num], num);
 	EXCEPT(Exit_Thread);
 	END_TRY;
-	enqueue(num);
+	mt_enqueue(num);
 	if (mt_queue_pt == mt_queue_num) {
 	    pthread_mutex_lock(&mutex);
 	    pthread_cond_signal(&mt_cond_main);

@@ -1532,9 +1532,10 @@ int f_mp_call(int arglist, int th)
     }
 
     args = NIL;
-    for (i = n - 1; i >= 0; i--) {
+    for (i = 0; i < n; i++) {
 	args = cons(str_to_sexp(read_from_pipe(i)), args);
     }
+    args = reverse(args);
 
     res = apply(eval(arg1, th), args, th);
     return (res);

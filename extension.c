@@ -870,10 +870,10 @@ int f_eisl_test(int arglist, int th __unused)
     int arg1, arg2;
 
     arg1 = car(arglist);
-    if(arg1 == T)
-        check_sw = 1;
-    else if(arg1 == NIL)
-        check_sw = 0;
+    if (arg1 == T)
+	check_sw = 1;
+    else if (arg1 == NIL)
+	check_sw = 0;
 
     return (arg1);
 }
@@ -1705,30 +1705,34 @@ int f_mp_close(int arglist, int th)
 //------------TCP/IP--------------------------
 // draft for distributed parallel machine
 
-int f_dp_create(int arglist, int th){
+int f_dp_create(int arglist, int th)
+{
 
     int n;
 
     child_num = 0;
-    while(!nullp(arglist)){
-        if(!stringp(car(arglist)))
-            error(NOT_STR, "dp-create" , car(arglist), th);
-        if(inet_pton(AF_INET, GET_NAME(car(arglist)), &child_addr[child_num].sin_addr) < 0)
-            error(SYSTEM_ERR, "dp-create" , car(arglist), th);
-        init_child(child_num);
-        arglist = cdr(arglist); 
-        child_num++;
+    while (!nullp(arglist)) {
+	if (!stringp(car(arglist)))
+	    error(NOT_STR, "dp-create", car(arglist), th);
+	if (inet_pton
+	    (AF_INET, GET_NAME(car(arglist)),
+	     &child_addr[child_num].sin_addr) < 0)
+	    error(SYSTEM_ERR, "dp-create", car(arglist), th);
+	init_child(child_num);
+	arglist = cdr(arglist);
+	child_num++;
     }
-    return(T);
+    return (T);
 }
 
-void init_parent(void){
+void init_parent(void)
+{
     int n;
 
     // create socket
     sockfd[0] = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd[0] < 0) {
-        error(SYSTEM_ERR, "init parent", NIL, 0);
+	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 
     // initialize parent_addr
@@ -1738,16 +1742,19 @@ void init_parent(void){
     parent_addr.sin_port = htons(PORT);
 
     // bind socket
-    if (bind(sockfd[0], (struct sockaddr *) &parent_addr, sizeof(parent_addr)) < 0) {
-        error(SYSTEM_ERR, "init parent" , NIL, 0);
+    if (bind
+	(sockfd[0], (struct sockaddr *) &parent_addr,
+	 sizeof(parent_addr)) < 0) {
+	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 }
 
-void init_child(int n){
+void init_child(int n)
+{
     // create socket
     sockfd[n] = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd[n] < 0) {
-        error(SYSTEM_ERR, "dp-create", make_int(n),0);
+	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
 
     // initialize child_addr
@@ -1757,73 +1764,86 @@ void init_child(int n){
     child_addr[n].sin_port = htons(PORT);
 
     // bind socket
-    if (bind(sockfd[n], (struct sockaddr *) &child_addr[n], sizeof(child_addr[n])) < 0) {
-        error(SYSTEM_ERR, "dp-create", make_int(n),0);
+    if (bind
+	(sockfd[n], (struct sockaddr *) &child_addr[n],
+	 sizeof(child_addr[n])) < 0) {
+	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
 }
 
-void exit_tcpip(void){
-	int i;
+void close_socket(void)
+{
+    int i;
 
-    for(i=0;i<PARASIZE;i++)
-        close(sockfd[i]);
+    if (child_num > 0) {
+	for (i = 0; i < child_num; i++)
+	    close(sockfd[i]);
+    } else {
+	close(sockfd[0]);
+	close(sockfd[1]);
+    }
 }
 
 
-int receive_from_parent(void){
+int receive_from_parent(void)
+{
     int n;
 
-    if(!connect_flag){
-    // wait conneting
-    listen(sockfd[0], 5);
-    parent = sizeof(parent_addr);
-    connect_flag = true;
+    if (!connect_flag) {
+	// wait conneting
+	listen(sockfd[0], 5);
+	parent = sizeof(parent_addr);
+	connect_flag = true;
     }
-    
+
     // connection from parent
-    sockfd[1] = accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
+    sockfd[1] =
+	accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
     if (sockfd[1] < 0) {
-        error(SYSTEM_ERR, "receive from parent", NIL, 0);
+	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
     // read message from parent
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
-        error(SYSTEM_ERR, "receive from parent", NIL, 0);
+	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-    return(make_str(buffer3));
+    return (make_str(buffer3));
 }
 
-void send_to_parent(int x){
+void send_to_parent(int x)
+{
     int n;
 
     // send message to parent
     n = write(sockfd[1], GET_NAME(x), strlen(GET_NAME(x)));
     if (n < 0) {
-        error(SYSTEM_ERR, "send to parent", x, 0);
+	error(SYSTEM_ERR, "send to parent", x, 0);
     }
 }
 
-void send_to_child(int x, int n){
+void send_to_child(int x, int n)
+{
     int m;
 
     // send message to child
     m = write(sockfd[n], GET_NAME(x), strlen(GET_NAME(x)));
     if (n < 0) {
-        error(SYSTEM_ERR, "send to child", NIL, 0);
+	error(SYSTEM_ERR, "send to child", NIL, 0);
     }
 }
 
-void receive_from_child(int i){
+void receive_from_child(int i)
+{
     int n;
     // receive from child
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
-        error(SYSTEM_ERR, "receive from child", make_int(i), 0);
+	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
-    return(make_str(buffer3));
+    return (make_str(buffer3));
 }
 
 int read_network(void)
@@ -1837,4 +1857,3 @@ int read_network(void)
     }
     return (buffer3[pos++]);
 }
-

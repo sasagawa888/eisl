@@ -2624,7 +2624,8 @@ void init_para(void)
     }
 
     for (i = 0; i < mt_queue_num; i++) {
-	pthread_create(&mt_para_thread[i + 1], NULL, parallel, &mt_queue[i]);
+	pthread_create(&mt_para_thread[i + 1], NULL, parallel,
+		       &mt_queue[i]);
     }
 
     mt_queue_pt = mt_queue_num;

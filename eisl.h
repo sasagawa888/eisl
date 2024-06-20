@@ -91,7 +91,7 @@ extern int check_sw;
 
 
 
-static const float VERSION = 4.00;
+static const float VERSION = 4.10;
 static const int FREESIZE = 3000000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
@@ -1319,6 +1319,7 @@ void bind_func(const char *name, tag_t tag, int (*func)(int, int));
 void bind_macro(char *name, int addr);
 void cellprint(int addr);
 void clr_cell(int addr);
+void close_socket(void);
 void copy_gbc(void);
 void *concurrent(void *arg);
 void cut_zero(int x);

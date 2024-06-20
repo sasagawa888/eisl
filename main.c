@@ -130,8 +130,9 @@ int line;
 int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
-int buffer2[COL_SIZE + 1] = { 0 };	 //for read_stdin()
-int buffer3[COL_SIZE + 1];           //for TCPIP read
+int buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
+
+int buffer3[COL_SIZE + 1];	//for TCPIP read
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
@@ -182,8 +183,8 @@ bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
-bool network_flag = false;  /* when invoke as network child, flag is true */
-bool connect_flag = false;  /* when child listen, connect_flag = true */
+bool network_flag = false;	/* when invoke as network child, flag is true */
+bool connect_flag = false;	/* when child listen, connect_flag = true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -351,7 +352,7 @@ int main(int argc, char *argv[])
     init_dp();
     init_pointer();
     init_thread();
-	//init_pairent();
+    //init_pairent();
     /* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
@@ -428,7 +429,7 @@ int main(int argc, char *argv[])
 		reinit_cell();
 		init_para();
 		break;
-		case 'n':
+	    case 'n':
 		network_flag = true;
 		break;
 	    case 'v':
@@ -485,7 +486,7 @@ int main(int argc, char *argv[])
 	EXCEPT(Exit_Interp) {
 	    quit = true;
 	    exit_thread();
-		//exit_tcpip();
+	    close_socket();
 	}
 	END_TRY;
     }

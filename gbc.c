@@ -228,23 +228,23 @@ void *concurrent(void *arg __unused)
 		fc[i] = 0;
 	    }
 	    addr = 0;
-		i = 0;
+	    i = 0;
 	    while (addr < CELLSIZE) {
-		if (USED_CELL(addr)){
+		if (USED_CELL(addr)) {
 		    NOMARK_CELL(addr);
-		}
-		else {
-			clr_cell(addr);
-			SET_CDR(addr, hp[i]);
-			hp[i] = addr;
-			fc[i]++;
-			i++;
-			if(i > mt_queue_num) i= 0;
-		
+		} else {
+		    clr_cell(addr);
+		    SET_CDR(addr, hp[i]);
+		    hp[i] = addr;
+		    fc[i]++;
+		    i++;
+		    if (i > mt_queue_num)
+			i = 0;
+
 		}
 		addr++;
 	    }
-	
+
 	}
 	/* end of stop the world and into sweep mode */
 	concurrent_stop_flag = false;

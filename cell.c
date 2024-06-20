@@ -251,7 +251,7 @@ int freshcell(void)
 {
     int res;
 
-    
+
     if (concurrent_stop_flag) {
 	/* while remarking stop the world */
 	pthread_mutex_lock(&mutex);
@@ -290,7 +290,8 @@ int freshcell(void)
     }
 
     else {
-    printf("concurrent=%d  stop=%d fc[]=%d", concurrent_flag, concurrent_stop_flag, fc[0]);
+	printf("concurrent=%d  stop=%d fc[]=%d", concurrent_flag,
+	       concurrent_stop_flag, fc[0]);
 	error(RESOURCE_ERR, "freshcell other case", NIL, 0);
     }
 
@@ -1128,5 +1129,3 @@ int make_dummy(void)
     SET_AUX(res, cnull);
     return (res);
 }
-
-

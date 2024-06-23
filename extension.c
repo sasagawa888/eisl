@@ -1938,6 +1938,8 @@ int read_network(void)
 {
     static int pos = 0;
 
+    printf("network");
+
     // when buffer is empty, receive from network
     if (buffer3[pos] == 0) {
 	receive_from_parent();

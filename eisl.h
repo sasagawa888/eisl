@@ -1360,7 +1360,7 @@ void init_syntax(void);
 void init_thread(void);
 void init_tcpip(void);
 void init_parent(void);
-void init_child(int i);
+void init_child(int n, int x);
 void insert_method(int x, int func);
 void insert_str(char ch, char buf[]);
 void load(int x, int th);

@@ -1717,11 +1717,8 @@ int f_dp_create(int arglist, int th)
     while (!nullp(arglist)) {
 	if (!stringp(car(arglist)))
 	    error(NOT_STR, "dp-create", car(arglist), th);
-	if (inet_pton
-	    (AF_INET, GET_NAME(car(arglist)),
-	     &child_addr[child_num].sin_addr) < 0)
-	    error(SYSTEM_ERR, "dp-create", car(arglist), th);
-	init_child(child_num);
+	
+	init_child(child_num,car(arglist));
 	arglist = cdr(arglist);
 	child_num++;
     }
@@ -1837,7 +1834,7 @@ void init_parent(void)
     }
 }
 
-void init_child(int n)
+void init_child(int n, int x)
 {
     // create socket
     sockfd[n] = socket(AF_INET, SOCK_STREAM, 0);
@@ -1848,15 +1845,13 @@ void init_child(int n)
     // initialize child_addr
     memset((char *) &child_addr[n], 0, sizeof(child_addr[n]));
     child_addr[n].sin_family = AF_INET;
-    child_addr[n].sin_addr.s_addr = INADDR_ANY;
     child_addr[n].sin_port = htons(PORT);
 
-    // bind socket
-    if (bind
-	(sockfd[n], (struct sockaddr *) &child_addr[n],
-	 sizeof(child_addr[n])) < 0) {
-	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
-    }
+    if (inet_pton
+	    (AF_INET, GET_NAME(x),
+	     &child_addr[n].sin_addr) < 0)
+	    error(SYSTEM_ERR, "dp-create", x, 0);
+    
 
     if (connect(sockfd[n], (struct sockaddr *)&child_addr[n], sizeof(child_addr[n])) < 0) {
         error(SYSTEM_ERR, "dp-create", make_int(n), 0);

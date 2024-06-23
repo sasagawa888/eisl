@@ -461,11 +461,11 @@ int main(int argc, char *argv[])
 	    maybe_greet();
 	TRY while (1) {
 	    init_pointer();
-	    if (!process_flag) {
+	    if (!process_flag && !network_flag) {
 		fputs("> ", stdout);
 		print(eval(sread(), 0));
 		putchar('\n');
-	    } else {
+	    } else if (process_flag) {
 		print(eval(sread(), 0));
 		putchar('\n');
 		fflush(stdout);
@@ -477,6 +477,10 @@ int main(int argc, char *argv[])
 		kill(getppid(), SIGUSR1);
 #endif
 	    }
+		else if(network_flag){
+			send_to_parent(sexp_to_str(eval(sread(), 0)));
+		}
+		
 	    if (redef_flag)
 		redef_generic();
 	}

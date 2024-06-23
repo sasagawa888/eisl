@@ -478,9 +478,10 @@ int main(int argc, char *argv[])
 #endif
 	    }
 		else if(network_flag){
+			print(eval(sread(), 0));
 			send_to_parent(sexp_to_str(eval(sread(), 0)));
 		}
-		
+
 	    if (redef_flag)
 		redef_generic();
 	}

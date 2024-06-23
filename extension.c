@@ -1832,6 +1832,7 @@ void init_parent(void)
 	 sizeof(parent_addr)) < 0) {
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
+    printf("finish init parent\n");
 }
 
 void init_child(int n, int x)
@@ -1878,12 +1879,19 @@ void receive_from_parent(void)
 {
     int n;
 
+    printf("receive_from_parent1\n");
+    fflush(stdout);
+
     if (!connect_flag) {
 	// wait conneting
 	listen(sockfd[0], 5);
 	parent = sizeof(parent_addr);
 	connect_flag = true;
     }
+
+    printf("receive_from_parent2\n");
+    fflush(stdout);
+
 
     // connection from parent
     sockfd[1] =
@@ -1892,12 +1900,20 @@ void receive_from_parent(void)
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
+    printf("receive_from_parent3\n");
+    fflush(stdout);
+
+
     // read message from parent
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
+
+    printf("receive_from_parent4\n");
+    fflush(stdout);
+
 }
 
 void send_to_parent(int x)
@@ -1938,7 +1954,8 @@ int read_network(void)
 {
     static int pos = 0;
 
-    printf("network");
+    printf("read_network");
+    fflush(stdout);
 
     // when buffer is empty, receive from network
     if (buffer3[pos] == 0) {

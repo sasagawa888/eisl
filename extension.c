@@ -875,6 +875,7 @@ int f_eisl_test(int arglist, int th __unused)
     arg2 = cadr(arglist);
 
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
+    sleep(1);
     res = str_to_sexp(receive_from_child(GET_INT(arg1)));
     return (res);
 }

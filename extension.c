@@ -1857,6 +1857,11 @@ void init_child(int n)
 	 sizeof(child_addr[n])) < 0) {
 	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
+
+    if (connect(sockfd[n], (struct sockaddr *)&child_addr[n], sizeof(child_addr[n])) < 0) {
+        error(SYSTEM_ERR, "dp-create", make_int(n), 0);
+    }
+
 }
 
 void close_socket(void)

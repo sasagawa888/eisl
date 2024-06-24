@@ -1919,12 +1919,18 @@ void receive_from_parent(void)
 void send_to_parent(int x)
 {
     int n;
-
+    printf("send_to_parent1\n");
+    fflush(stdout);
     // send message to parent
-    n = write(sockfd[1], GET_NAME(x), strlen(GET_NAME(x)));
+    memset(buffer3,0,sizeof(buffer3));
+    strcpy(buffer3,GET_NAME(x));
+    strcat(buffer3, "\n");
+    n = write(sockfd[1], buffer3, strlen(buffer3));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
     }
+    printf("send_to_parent2\n"); 
+    fflush(stdout);
 }
 
 void send_to_child(int n, int x)
@@ -1932,7 +1938,10 @@ void send_to_child(int n, int x)
     int m;
 
     // send message to child
-    m = write(sockfd[n], GET_NAME(x), strlen(GET_NAME(x)));
+    memset(buffer3,0,sizeof(buffer3));
+    strcpy(buffer3,GET_NAME(x));
+    strcat(buffer3, "\n");
+    m = write(sockfd[n], buffer3, strlen(buffer3));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to child", NIL, 0);
     }

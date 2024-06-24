@@ -1912,7 +1912,10 @@ void receive_from_parent(void)
     }
 
     printf("receive_from_parent4\n");
+    printf("%s\n", buffer3);
     fflush(stdout);
+
+
 
 }
 

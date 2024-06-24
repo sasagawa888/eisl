@@ -876,7 +876,7 @@ int f_eisl_test(int arglist, int th __unused)
 
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
     sleep(1);
-    res = str_to_sexp(receive_from_child(GET_INT(arg1)));
+    res = receive_from_child(GET_INT(arg1));
     return (res);
 }
 
@@ -1875,7 +1875,7 @@ void close_socket(void)
 }
 
 
-void receive_from_parent(void)
+int receive_from_parent(void)
 {
     int n;
 
@@ -1883,11 +1883,10 @@ void receive_from_parent(void)
     fflush(stdout);
 
     if (!connect_flag) {
-	// wait conneting
+	 //wait conneting
 	listen(sockfd[0], 5);
 	parent = sizeof(parent_addr);
 	connect_flag = true;
-    }
 
     printf("receive_from_parent2\n");
     fflush(stdout);
@@ -1899,7 +1898,7 @@ void receive_from_parent(void)
     if (sockfd[1] < 0) {
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-
+    }
     printf("receive_from_parent3\n");
     fflush(stdout);
 
@@ -1912,10 +1911,9 @@ void receive_from_parent(void)
     }
 
     printf("receive_from_parent4\n");
-    printf("%s\n", buffer3);
     fflush(stdout);
 
-
+    return(make_sym(buffer3));
 
 }
 
@@ -1965,14 +1963,19 @@ int receive_from_child(int i)
 int read_network(void)
 {
     static int pos = 0;
+    int res;
 
-    printf("read_network");
+    printf("read_network\n");
     fflush(stdout);
 
     // when buffer is empty, receive from network
     if (buffer3[pos] == 0) {
 	receive_from_parent();
+    printf("%s", buffer3);
 	pos = 0;
     }
-    return (buffer3[pos++]);
+    
+    res = buffer3[pos];
+    pos++;
+    return (res);
 }

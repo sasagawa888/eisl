@@ -657,7 +657,7 @@ extern int sockfd[PARASIZE];
 extern socklen_t parent;
 extern socklen_t child[PARASIZE];
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
-extern child_num;
+extern int child_num;
 
 // -------error code---
 enum {
@@ -1266,6 +1266,7 @@ int read_from_pipe(int n);
 int read_from_pipe_part(int n);
 int read_from_pipe_part_nth(int n);
 int receive_from_child(int n);
+int receive_from_parent(void);
 int sexp_to_str(int x);
 int str_to_sexp(int x);
 int set_error_handler(int x);
@@ -1386,7 +1387,6 @@ void profiler_print();
 void redef_generic(void);
 void resort_method(int func);
 void reinit_cell(void);
-void receive_from_parent(void);
 void set_sign(int x, int y);
 void set_length(int x, int len);
 void set_pointer(int x, int pointer);

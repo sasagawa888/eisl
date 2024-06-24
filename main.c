@@ -477,10 +477,13 @@ int main(int argc, char *argv[])
 #endif
 	    }
 		else if(network_flag){
-			//print(eval(sread(), 0));
-			//send_to_parent(sexp_to_str(eval(sread(), 0)));
-			print(receive_from_parent());
-			send_to_parent(make_str(buffer3));
+			int exp;
+			exp = str_to_sexp(receive_from_parent());
+
+			if (equalp(exp,make_int(999)))
+				exit(0);
+			else 
+				send_to_parent(sexp_to_str(eval(exp,0)));
 		}
 
 	    if (redef_flag)

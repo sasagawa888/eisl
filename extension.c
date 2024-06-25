@@ -1752,7 +1752,7 @@ int f_dp_let(int arglist, int th)
     arg2 = cdr(arglist);
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "dp-let", arglist, th);
-    if (length(arg1) > process_pt)
+    if (length(arg1) > child_num)
 	error(WRONG_ARGS, "dp-let", arg1, th);
     if (!listp(arg1))
 	error(IMPROPER_ARGS, "dp-let", arg1, th);

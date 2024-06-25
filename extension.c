@@ -1732,9 +1732,9 @@ int f_dp_close(int arglist, int th)
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "dp-close", arglist, th);
 
-    exp = list(make_sym("QUIT"));
+    exp = make_str("999");
     for (i = 0; i < child_num; i++) {
-    send_to_child(i, sexp_to_str(exp));    
+    send_to_child(i, exp);    
     }
 
     close_socket();

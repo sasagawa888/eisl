@@ -477,13 +477,21 @@ int main(int argc, char *argv[])
 #endif
 	    }
 		else if(network_flag){
-			int exp;
+			int exp,res;
 			exp = str_to_sexp(receive_from_parent());
-
-			if (equalp(exp,make_int(999)))
+			printf("receive_from_parent ");
+			print(exp); printf("\n"); fflush(stdout);
+			if (equalp(exp,make_int(999))){
+				printf("exit_from_network_mode\n");
+				close_socket();
 				exit(0);
-			else 
-				send_to_parent(sexp_to_str(eval(exp,0)));
+			}
+			else {
+				res = eval(exp,0);
+				printf("send_to_parent ");
+				print(res); printf("\n"); fflush(stdout);
+				send_to_parent(sexp_to_str(res));
+			}
 		}
 
 	    if (redef_flag)
@@ -493,7 +501,7 @@ int main(int argc, char *argv[])
 	EXCEPT(Exit_Interp) {
 	    quit = true;
 	    exit_thread();
-	    close_socket();
+		close_socket();
 	}
 	END_TRY;
     }

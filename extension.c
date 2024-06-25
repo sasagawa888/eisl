@@ -1816,7 +1816,7 @@ void init_parent(void)
     // create socket
     sockfd[0] = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd[0] < 0) {
-	error(SYSTEM_ERR, "init parent", NIL, 0);
+	error(SYSTEM_ERR, "init parent0", NIL, 0);
     }
 
     // initialize parent_addr
@@ -1829,7 +1829,7 @@ void init_parent(void)
     if (bind
 	(sockfd[0], (struct sockaddr *) &parent_addr,
 	 sizeof(parent_addr)) < 0) {
-	error(SYSTEM_ERR, "init parent", NIL, 0);
+	error(SYSTEM_ERR, "init parent1", NIL, 0);
     }
 
 }

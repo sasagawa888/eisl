@@ -1831,7 +1831,7 @@ void init_parent(void)
 	 sizeof(parent_addr)) < 0) {
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
-    printf("finish init parent\n");
+
 }
 
 void init_child(int n, int x)
@@ -1878,18 +1878,11 @@ int receive_from_parent(void)
 {
     int n;
 
-    printf("receive_from_parent1\n");
-    fflush(stdout);
-
     if (!connect_flag) {
-	 //wait conneting
+	//wait conneting
 	listen(sockfd[0], 5);
 	parent = sizeof(parent_addr);
 	connect_flag = true;
-
-    printf("receive_from_parent2\n");
-    fflush(stdout);
-
 
     // connection from parent
     sockfd[1] =
@@ -1898,19 +1891,13 @@ int receive_from_parent(void)
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
     }
-    printf("receive_from_parent3\n");
-    fflush(stdout);
-
-
+    
     // read message from parent
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
-
-    printf("receive_from_parent4\n");
-    fflush(stdout);
 
     return(make_sym(buffer3));
 
@@ -1919,8 +1906,7 @@ int receive_from_parent(void)
 void send_to_parent(int x)
 {
     int n;
-    printf("send_to_parent1\n");
-    fflush(stdout);
+    
     // send message to parent
     memset(buffer3,0,sizeof(buffer3));
     strcpy(buffer3,GET_NAME(x));
@@ -1929,8 +1915,7 @@ void send_to_parent(int x)
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
     }
-    printf("send_to_parent2\n"); 
-    fflush(stdout);
+    
 }
 
 void send_to_child(int n, int x)
@@ -1957,24 +1942,4 @@ int receive_from_child(int i)
 	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
     return (make_str(buffer3));
-}
-
-int read_network(void)
-{
-    static int pos = 0;
-    int res;
-
-    printf("read_network\n");
-    fflush(stdout);
-
-    // when buffer is empty, receive from network
-    if (buffer3[pos] == 0) {
-	receive_from_parent();
-    printf("%s", buffer3);
-	pos = 0;
-    }
-    
-    res = buffer3[pos];
-    pos++;
-    return (res);
 }

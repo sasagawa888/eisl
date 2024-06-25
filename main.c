@@ -616,11 +616,6 @@ int readc(void)
 	/* EISL as child process */
 	return(read_stdin());
 	}
-	else if (network_flag){
-	printf("readc with network_flag\n");
-	/* EISL as network child */
-	return(read_network());	
-	}
     else if (input_stream == standard_input && repl_flag){
 	/* REPL-mode and standard-input */
 	c = read_line(1);

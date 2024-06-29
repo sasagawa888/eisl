@@ -113,6 +113,7 @@ int cbignum;
 int standard_input;
 int standard_output;
 int standard_error;
+int parent_output;
 int input_stream;
 int output_stream;
 int error_stream;

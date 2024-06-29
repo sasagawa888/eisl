@@ -466,8 +466,7 @@ int main(int argc, char *argv[])
 		print(eval(sread(), 0));
 		putchar('\n');
 	    } else if (process_flag) {
-		TRY
-		print(eval(sread(), 0));
+		TRY print(eval(sread(), 0));
 		putchar('\n');
 		fflush(stdout);
 		union sigval value;
@@ -478,25 +477,27 @@ int main(int argc, char *argv[])
 		kill(getppid(), SIGUSR1);
 #endif
 		EXCEPT(Exit_Process);
-	    END_TRY;
+		END_TRY;
+	    } else if (network_flag) {
+		int exp, res;
+		exp = str_to_sexp(receive_from_parent());
+		printf("receive_from_parent ");
+		print(exp);
+		printf("\n");
+		fflush(stdout);
+		if (equalp(exp, make_int(999))) {
+		    printf("exit_from_network_mode\n");
+		    close_socket();
+		    exit(0);
+		} else {
+		    res = eval(exp, 0);
+		    printf("send_to_parent ");
+		    print(res);
+		    printf("\n");
+		    fflush(stdout);
+		    send_to_parent(sexp_to_str(res));
 		}
-		else if(network_flag){
-			int exp,res;
-			exp = str_to_sexp(receive_from_parent());
-			printf("receive_from_parent ");
-			print(exp); printf("\n"); fflush(stdout);
-			if (equalp(exp,make_int(999))){
-				printf("exit_from_network_mode\n");
-				close_socket();
-				exit(0);
-			}
-			else {
-				res = eval(exp,0);
-				printf("send_to_parent ");
-				print(res); printf("\n"); fflush(stdout);
-				send_to_parent(sexp_to_str(res));
-			}
-		}
+	    }
 
 	    if (redef_flag)
 		redef_generic();
@@ -505,7 +506,7 @@ int main(int argc, char *argv[])
 	EXCEPT(Exit_Interp) {
 	    quit = true;
 	    exit_thread();
-		close_socket();
+	    close_socket();
 	}
 	END_TRY;
     }
@@ -620,19 +621,16 @@ int readc(void)
 {
     int c;
 
-    if (string_input_stream_p(input_stream)){
+    if (string_input_stream_p(input_stream)) {
 	/* string-input-stream */
 	return (string_readc(input_stream));
-	}
-	else if (process_flag == true){
+    } else if (process_flag == true) {
 	/* EISL as child process */
-	return(read_stdin());
-	}
-    else if (input_stream == standard_input && repl_flag){
+	return (read_stdin());
+    } else if (input_stream == standard_input && repl_flag) {
 	/* REPL-mode and standard-input */
 	c = read_line(1);
-	}
-    else {
+    } else {
 	/* not REPL-mode and standard-input */
 	c = getc(GET_PORT(input_stream));
 	if (!script_flag && input_stream == standard_input && c == EOF) {

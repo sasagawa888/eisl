@@ -869,7 +869,7 @@ void profiler_print()
 */
 int f_eisl_test(int arglist, int th __unused)
 {
-    int arg1,arg2,res;
+    int arg1, arg2, res;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -1389,9 +1389,9 @@ int read_from_pipe(int n)
 	    }
 	    buffer[j] = '\0';
 	}
-    /* while evalating in child process, error occuers */
-    } else if(strcmp(buffer,"***error***") == 0){
-        error(SYSTEM_ERR, "read_from_pipe", NIL, 0);
+	/* while evalating in child process, error occuers */
+    } else if (strcmp(buffer, "***error***") == 0) {
+	error(SYSTEM_ERR, "read_from_pipe", NIL, 0);
     }
 
     return (make_str(buffer));
@@ -1718,8 +1718,8 @@ int f_dp_create(int arglist, int th)
     while (!nullp(arglist)) {
 	if (!stringp(car(arglist)))
 	    error(NOT_STR, "dp-create", car(arglist), th);
-	
-	init_child(child_num,car(arglist));
+
+	init_child(child_num, car(arglist));
 	arglist = cdr(arglist);
 	child_num++;
     }
@@ -1729,14 +1729,14 @@ int f_dp_create(int arglist, int th)
 // close all distributed child 
 int f_dp_close(int arglist, int th)
 {
-    int i,exp;
+    int i, exp;
 
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "dp-close", arglist, th);
 
     exp = make_str("999");
     for (i = 0; i < child_num; i++) {
-    send_to_child(i, exp);    
+	send_to_child(i, exp);
     }
 
     close_socket();
@@ -1794,7 +1794,8 @@ int f_dp_let(int arglist, int th)
     temp = arg1;
     i = 0;
     while (!nullp(temp)) {
-	add_lex_env(car(car(temp)), str_to_sexp(receive_from_child(i)), th);
+	add_lex_env(car(car(temp)), str_to_sexp(receive_from_child(i)),
+		    th);
 	temp = cdr(temp);
 	i++;
     }
@@ -1849,14 +1850,14 @@ void init_child(int n, int x)
     child_addr[n].sin_family = AF_INET;
     child_addr[n].sin_port = htons(PORT);
 
-    if (inet_pton
-	    (AF_INET, GET_NAME(x),
-	     &child_addr[n].sin_addr) < 0)
-	    error(SYSTEM_ERR, "dp-create", x, 0);
-    
+    if (inet_pton(AF_INET, GET_NAME(x), &child_addr[n].sin_addr) < 0)
+	error(SYSTEM_ERR, "dp-create", x, 0);
 
-    if (connect(sockfd[n], (struct sockaddr *)&child_addr[n], sizeof(child_addr[n])) < 0) {
-        error(SYSTEM_ERR, "dp-create", make_int(n), 0);
+
+    if (connect
+	(sockfd[n], (struct sockaddr *) &child_addr[n],
+	 sizeof(child_addr[n])) < 0) {
+	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
 
 }
@@ -1869,7 +1870,7 @@ void close_socket(void)
 	for (i = 0; i < child_num; i++)
 	    close(sockfd[i]);
     } else if (network_flag) {
-    puts("EISL exit network mode.\n");
+	puts("EISL exit network mode.\n");
 	close(sockfd[0]);
 	close(sockfd[1]);
     }
@@ -1886,14 +1887,14 @@ int receive_from_parent(void)
 	parent = sizeof(parent_addr);
 	connect_flag = true;
 
-    // connection from parent
-    sockfd[1] =
-	accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
-    if (sockfd[1] < 0) {
-	error(SYSTEM_ERR, "receive from parent", NIL, 0);
+	// connection from parent
+	sockfd[1] =
+	    accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
+	if (sockfd[1] < 0) {
+	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
+	}
     }
-    }
-    
+
     // read message from parent
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
@@ -1901,23 +1902,23 @@ int receive_from_parent(void)
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
-    return(make_sym(buffer3));
+    return (make_sym(buffer3));
 
 }
 
 void send_to_parent(int x)
 {
     int n;
-    
+
     // send message to parent
-    memset(buffer3,0,sizeof(buffer3));
-    strcpy(buffer3,GET_NAME(x));
+    memset(buffer3, 0, sizeof(buffer3));
+    strcpy(buffer3, GET_NAME(x));
     strcat(buffer3, "\n");
     n = write(sockfd[1], buffer3, strlen(buffer3));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
     }
-    
+
 }
 
 void send_to_child(int n, int x)
@@ -1925,8 +1926,8 @@ void send_to_child(int n, int x)
     int m;
 
     // send message to child
-    memset(buffer3,0,sizeof(buffer3));
-    strcpy(buffer3,GET_NAME(x));
+    memset(buffer3, 0, sizeof(buffer3));
+    strcpy(buffer3, GET_NAME(x));
     strcat(buffer3, "\n");
     m = write(sockfd[n], buffer3, strlen(buffer3));
     if (n < 0) {

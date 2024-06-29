@@ -648,7 +648,7 @@ int signal_condition(int x, int y, int th)
 	signal_condition_y = y;
 	RAISE(Exit_Thread);
     }
-	if (process_flag) {
+    if (process_flag) {
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;

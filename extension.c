@@ -1374,13 +1374,13 @@ int read_from_pipe(int n)
 	    i++;
 	    goto rewrite;
 	} else if (buffer[i] == '\0') {
-	    /* still not recieve result */
+	    /* still not receive result */
 	    for (i = 0; i < 256; i++) {
 		buffer[i] = 0;
 	    }
 	    goto reread;
 	} else {
-	    /* already recieved result */
+	    /* already received result */
 	    j = 0;
 	    while (buffer[i] != '\0') {
 		buffer[j] = buffer[i];

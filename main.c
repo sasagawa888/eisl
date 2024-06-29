@@ -200,6 +200,7 @@ jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 Except_T Exit_Thread = { "Exit thread" };
+Except_T Exit_Process = { "Exit Process" };
 
 int signal_condition_x;
 int signal_condition_y;
@@ -465,6 +466,7 @@ int main(int argc, char *argv[])
 		print(eval(sread(), 0));
 		putchar('\n');
 	    } else if (process_flag) {
+		TRY
 		print(eval(sread(), 0));
 		putchar('\n');
 		fflush(stdout);
@@ -475,7 +477,9 @@ int main(int argc, char *argv[])
 #else
 		kill(getppid(), SIGUSR1);
 #endif
-	    }
+		EXCEPT(Exit_Process);
+	    END_TRY;
+		}
 		else if(network_flag){
 			int exp,res;
 			exp = str_to_sexp(receive_from_parent());

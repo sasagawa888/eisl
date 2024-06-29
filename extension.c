@@ -1389,7 +1389,9 @@ int read_from_pipe(int n)
 	    }
 	    buffer[j] = '\0';
 	}
-
+    /* while evalating in child process, error occuers */
+    } else if(strcmp(buffer,"***error***") == 0){
+        error(SYSTEM_ERR, "read_from_pipe", NIL, 0);
     }
 
     return (make_str(buffer));

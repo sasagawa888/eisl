@@ -586,8 +586,9 @@ extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[CTRLSTK];
 extern jmp_buf catch_buf[CTRLSTK];
 extern jmp_buf cont_buf;
-extern Except_T Ignored_Error;	// for ignore-errors
+extern Except_T Ignored_Error;
 extern Except_T Exit_Thread;
+extern Except_T Exit_Process;
 extern int block_tag_check[CTRLSTK];
 extern int block_data[CTRLSTK][3];
 extern int catch_data[CTRLSTK][3];

@@ -3398,6 +3398,13 @@ int f_set_slot_value(int arglist, int th)
 /* format */
 int f_format(int arglist, int th)
 {
+    /* protocol in multi-process and distributed-parallel
+    *  0x10, message, 0x00
+    *  in multi-process(process_flag == true) output to stdout
+    *  in distributed-parallel(network_flag == true) output to parent-stream(string-output-stream)
+    *  and in distributed-parallel send date with send_to_parent
+    *  send information to f_format_*  with protocol_flag. during protocol message protocol_flag == true 
+    */
     int arg1, arg2, args, i, save, n, quote_flag;
     char *str, c;
 

@@ -1651,7 +1651,7 @@ int f_mp_let(int arglist, int th)
 	if (STRING_REF(temparg1, 0) == ':'
 	    || STRING_REF(temparg1, 0) == '&')
 	    error(WRONG_ARGS, "mp-let", arg1, th);
-	if (!listp(cadr(temp)))
+	if (!listp(cadr(car(temp))))
 	    error(WRONG_ARGS, "mp-let", arg1, th);
 	temp = cdr(temp);
     }

@@ -180,7 +180,9 @@ bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
 bool network_flag = false;	/* when invoke as network child, flag is true */
-bool connect_flag = false;	/* when child listen, connect_flag = true */
+bool connect_flag = false;	/* when child listen, connect_flag is true */
+bool receiver_exit_flag = false;  /* TO exit child TCP/IP receiver */
+bool child_busy_flag = false;     /* while evalating in child, child_buzy_flag is true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -260,7 +262,7 @@ socklen_t parent;
 socklen_t child[PARASIZE];
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
-
+pthread_t receiver_thread;
 
 
 
@@ -429,6 +431,7 @@ int main(int argc, char *argv[])
 		puts("EISL runs with network mode.");
 		network_flag = true;
 		init_parent();
+		init_receiver();
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
@@ -493,7 +496,9 @@ int main(int argc, char *argv[])
 		    close_socket();
 		    exit(0);
 		} else {
+			child_busy_flag = true;
 		    res = eval(exp, 0);
+			child_busy_flag = false;
 		    printf("send_to_parent ");
 		    print(res);
 		    printf("\n");

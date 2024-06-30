@@ -1915,6 +1915,8 @@ void close_socket(void)
 	close(sockfd[0]);
 	close(sockfd[1]);
     }
+
+    receiver_exit_flag = true;
 }
 
 
@@ -1953,8 +1955,9 @@ void send_to_parent(int x)
 
     // send message to parent
     memset(buffer3, 0, sizeof(buffer3));
-    strcpy(buffer3, GET_NAME(x));
-    strcat(buffer3, "\n");
+    strcpy(buffer3,"\x12"); // add protocol 0x12
+    strcat(buffer3, GET_NAME(x));
+    strcat(buffer3, "\0\n"); // add protocol 0x00
     n = write(sockfd[1], buffer3, strlen(buffer3));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
@@ -1978,12 +1981,62 @@ void send_to_child(int n, int x)
 
 int receive_from_child(int i)
 {
-    int n;
+    int n,j;
     // receive from child
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
+    if (buffer3[0] != '\x12')
+    error(SYSTEM_ERR, "receive from child", make_int(i), 0);
+
+    /* remove protocol 0x12 */
+    for (j=1;j<n;j++){
+        buffer3[j-1] = buffer3[j];
+    }
     return (make_str(buffer3));
 }
+
+/* Thread for child lisp receiver
+*/
+void *receiver(void *arg __unused)
+{
+    int i, res;
+    char buffer[256];
+
+    while (1) {
+	if (receiver_exit_flag)
+	    goto exit;
+    
+    if (child_busy_flag){
+        res = receive_from_parent();
+        strcpy(buffer,GET_NAME(res));
+            if(buffer[0] == '\x02'){
+            /* child start */
+
+            } else if(buffer[0] == '\x03'){
+            /* child stop */
+
+            } else if(buffer[0] == '\x13'){
+            /* child pause */
+
+            } else if(buffer[0] == '\x11'){
+            /* chidl resume */    
+
+            }
+    }
+
+    }
+	
+  exit:
+    pthread_exit(NULL);
+}
+
+
+void init_receiver(void)
+{
+    /* create child receiver thread */
+    pthread_create(&receiver_thread, NULL, receiver, NULL);
+}
+

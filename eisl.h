@@ -575,6 +575,8 @@ extern bool process_flag;
 extern bool thread_flag;
 extern bool network_flag;
 extern bool connect_flag;
+extern bool receiver_exit_flag;
+extern bool child_busy_flag;
 
 // try function
 extern bool try_flag;
@@ -652,13 +654,14 @@ extern struct sigaction child_action;
 extern int child_signal[PROCSIZE];
 extern int child_signal1[PROCSIZE];
 
-/* distributed paralle & TCPIP*/
+/* distributed parallel & TCPIP*/
 #define PORT 5000 
 extern int sockfd[PARASIZE];
 extern socklen_t parent;
 extern socklen_t child[PARASIZE];
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
+extern pthread_t receiver_thread;
 
 // -------error code---
 enum {
@@ -1355,6 +1358,7 @@ void init_exsubr(void);
 void init_generic(void);
 void init_para(void);
 void init_pointer(void);
+void init_receiver(void);
 void init_stream(void);
 void init_subr(void);
 void init_stok(void);

@@ -1977,19 +1977,19 @@ void send_to_child(int n, int x)
     }
 }
 
-int receive_from_child(int i)
+int receive_from_child(int n)
 {
-    int n, j;
+    int m, i,j;
     char buffer1[256];
 
-    while (1) {
     // receive from child
     memset(buffer3, 0, sizeof(buffer3));
-    n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
-    if (n < 0) {
-	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
+    m = read(sockfd[n], buffer3, sizeof(buffer3) - 1);
+    if (m < 0) {
+	error(SYSTEM_ERR, "receive from child", make_int(n), 0);
     }
 
+    /*
 	i = 0;
 	if (buffer3[i] == '\x10') {
 	    j = 0;
@@ -2000,7 +2000,7 @@ int receive_from_child(int i)
 		j++;
 	    }
 	    printf("%s", buffer1);
-	    /* while evalating in child process, an error occuers */
+	    // while evalating in child process, an error occuers 
 	} else if (buffer3[i] == '\x15') {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
@@ -2010,11 +2010,11 @@ int receive_from_child(int i)
 		i++;
 		j++;
 	    }
-	    return (make_str(buffer1));
+        buffer1[j] = '\0';
+        return (make_str(buffer1));
 	}
-    }
-    
-    return (make_str(buffer3));
+    */
+    return(make_str(buffer3));
 }
 
 /* Thread for child lisp receiver

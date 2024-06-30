@@ -245,7 +245,6 @@ void init_stream(void)
     standard_input = make_stm(stdin, EISL_INPUT, "standard-input");
     standard_output = make_stm(stdout, EISL_OUTPUT, "standard-output");
     standard_error = make_stm(stderr, EISL_OUTPUT, "error-output");
-    parent_output = f_create_string_output_stream(NIL,0);
 }
 
 int freshcell(void)

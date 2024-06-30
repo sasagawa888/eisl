@@ -82,7 +82,6 @@ void init_exsubr(void)
     def_subr("DP-CREATE", f_dp_create);
     def_subr("DP-CLOSE", f_dp_close);
     def_fsubr("DP-LET", f_dp_let);
-    def_subr("PARENT-OUTPUT", f_parent_output);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1948,11 +1947,4 @@ int receive_from_child(int i)
     return (make_str(buffer3));
 }
 
-
-int f_parent_output(int arglist, int th)
-{
-    if (!nullp(arglist))
-	error(WRONG_ARGS, "parent-output", arglist, th);
-    return (parent_output);
-}
 

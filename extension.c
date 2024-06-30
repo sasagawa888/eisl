@@ -1346,9 +1346,10 @@ int write_to_pipe(int n, int x)
     return (NIL);
 }
 
-/*  Message: 0x10, message, 0x00
+/*  Protocol
+*   Message: 0x10, message, 0x00
 *   Error: 0x15
-*   Computation results: 0x12, result,0x00
+*   Computation results: non
 */
 int read_from_pipe(int n)
 {
@@ -1979,11 +1980,38 @@ void send_to_child(int n, int x)
 int receive_from_child(int i)
 {
     int n, j;
+    char buffer1[256];
+
+    while (1) {
     // receive from child
     memset(buffer3, 0, sizeof(buffer3));
     n = read(sockfd[i], buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
+    }
+
+	i = 0;
+	if (buffer3[i] == '\x10') {
+	    j = 0;
+	    i++;
+	    while (buffer3[i] != EOF) {
+		buffer1[j] = buffer3[i];
+		i++;
+		j++;
+	    }
+	    printf("%s", buffer1);
+	    /* while evalating in child process, an error occuers */
+	} else if (buffer3[i] == '\x15') {
+	    error(SYSTEM_ERR, "in child", make_int(n), 0);
+	} else {
+	    j = 0;
+	    while (buffer3[i] != EOF) {
+		buffer1[j] = buffer3[i];
+		i++;
+		j++;
+	    }
+	    return (make_str(buffer1));
+	}
     }
     
     return (make_str(buffer3));

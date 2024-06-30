@@ -128,7 +128,7 @@ int column;
 int buffer[COL_SIZE + 1][NUM_HISTORY];
 int buffer1[COL_SIZE + 1];
 int buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
-int buffer3[STRSIZE] = { 0 };	    //for TCPIP read
+int buffer3[STRSIZE] = { 0 };	//for TCPIP read
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
@@ -466,8 +466,9 @@ int main(int argc, char *argv[])
 		print(eval(sread(), 0));
 		putchar('\n');
 	    } else if (process_flag) {
-		TRY print(eval(sread(), 0));
-		putchar('\n');
+		TRY putchar('\x12');
+		print(eval(sread(), 0));
+		putchar('\0\n');
 		fflush(stdout);
 		union sigval value;
 		value.sival_int = (int) process_num;

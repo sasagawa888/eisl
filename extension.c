@@ -1347,7 +1347,7 @@ int write_to_pipe(int n, int x)
 
 int read_from_pipe(int n)
 {
-    char buffer[256],buffer1[256];
+    char buffer[256], buffer1[256];
     int i, j;
 
     // set nonblock mode
@@ -1355,29 +1355,39 @@ int read_from_pipe(int n)
     fcntl(pipe_c2p[n][R], F_SETFL, flags | O_NONBLOCK);
 
     int bytes_read;
-  reread:
-    // wait until get result
-    while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1
-	   && errno == EAGAIN);
-    //buffer[bytes_read] = '\0';
 
-    j = 0;
-    cont:
-    if (buffer[j] == '\x10') {
+    while (1) {
+	// wait until get result
+	while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1
+	       && errno == EAGAIN);
+	buffer[bytes_read] = EOF;
+
 	i = 0;
-	while (buffer[i] != '\0' && i < 256) {
-	    buffer2[i] = buffer[i];
-	    i++;
-        j++;
+      cont:
+	if (buffer[i] == '\x10') {
+	    j = 0;
+        i++;
+	    while (buffer[i] != EOF) {
+		buffer1[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    printf("%s", buffer1);
+	    /* while evalating in child process, an error occuers */
+	} else if (buffer[i] == '\x15') {
+	    error(SYSTEM_ERR, "in child", make_int(n), 0);
+	} else if (buffer[i] == '\x12') {
+	    j = 0;
+        i++;
+	    while (buffer[i] != '\0') {
+		buffer1[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    return (make_str(buffer1));
 	}
-    printf("%s", buffer2);
-    goto cont;
-	/* while evalating in child process, an error occuers */
-    } else if (buffer[0] == '\x15') {
-	error(SYSTEM_ERR, "in child", make_int(n), 0);
     }
 
-    return (make_str(buffer));
 }
 
 int read_from_pipe_part(int n)
@@ -1929,5 +1939,3 @@ int receive_from_child(int i)
     }
     return (make_str(buffer3));
 }
-
-

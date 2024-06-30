@@ -1989,7 +1989,7 @@ int receive_from_child(int n)
 	error(SYSTEM_ERR, "receive from child", make_int(n), 0);
     }
 
-    /*
+    
 	i = 0;
 	if (buffer3[i] == '\x10') {
 	    j = 0;
@@ -2013,8 +2013,8 @@ int receive_from_child(int n)
         buffer1[j] = '\0';
         return (make_str(buffer1));
 	}
-    */
-    return(make_str(buffer3));
+    
+    //return(make_str(buffer3));
 }
 
 /* Thread for child lisp receiver

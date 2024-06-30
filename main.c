@@ -469,11 +469,8 @@ int main(int argc, char *argv[])
 		print(eval(sread(), 0));
 		putchar('\n');
 	    } else if (process_flag) {
-		int exp;
-		TRY exp = eval(sread(), 0);
-		putchar('\x12');
-		print(exp);
-		putchar('\0\n');
+		TRY print(eval(sread(), 0));
+		putchar('\n');
 		fflush(stdout);
 		union sigval value;
 		value.sival_int = (int) process_num;

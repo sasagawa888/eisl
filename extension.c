@@ -1379,10 +1379,9 @@ int read_from_pipe(int n)
 	    /* while evalating in child process, an error occuers */
 	} else if (buffer[i] == '\x15') {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
-	} else if (buffer[i] == '\x12') {
+	} else {
 	    j = 0;
-	    i++;
-	    while (buffer[i] != '\0') {
+	    while (buffer[i] != EOF) {
 		buffer1[j] = buffer[i];
 		i++;
 		j++;
@@ -1425,10 +1424,9 @@ int read_from_pipe_part(int n)
 	/* while evalating in child process, an error occuers */
     } else if (buffer[i] == '\x15') {
 	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else if (buffer[i] == '\x12') {
+    } else {
 	j = 0;
-	i++;
-	while (buffer[i] != '\0') {
+	while (buffer[i] != EOF) {
 	    buffer1[j] = buffer[i];
 	    i++;
 	    j++;
@@ -1469,10 +1467,9 @@ int read_from_pipe_part_nth(int n)
 	/* while evalating in child process, an error occuers */
     } else if (buffer[i] == '\x15') {
 	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else if (buffer[i] == '\x12') {
+    } else {
 	j = 0;
-	i++;
-	while (buffer[i] != '\0') {
+	while (buffer[i] != EOF) {
 	    buffer1[j] = buffer[i];
 	    i++;
 	    j++;

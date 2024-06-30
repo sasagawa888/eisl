@@ -1347,7 +1347,7 @@ int write_to_pipe(int n, int x)
 
 int read_from_pipe(int n)
 {
-    char buffer[256];
+    char buffer[256],buffer1[256];
     int i, j;
 
     // set nonblock mode
@@ -1359,36 +1359,19 @@ int read_from_pipe(int n)
     // wait until get result
     while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1
 	   && errno == EAGAIN);
-    buffer[bytes_read] = '\0';
+    //buffer[bytes_read] = '\0';
 
-
-    if (buffer[0] == '\x10') {
-	i = 1;
-      rewrite:
+    j = 0;
+    cont:
+    if (buffer[j] == '\x10') {
+	i = 0;
 	while (buffer[i] != '\0' && i < 256) {
-	    putc(buffer[i], stdout);
+	    buffer2[i] = buffer[i];
 	    i++;
+        j++;
 	}
-	i++;
-	if (buffer[i] == '\x10') {
-	    i++;
-	    goto rewrite;
-	} else if (buffer[i] == '\0') {
-	    /* still not receive result */
-	    for (i = 0; i < 256; i++) {
-		buffer[i] = 0;
-	    }
-	    goto reread;
-	} else {
-	    /* already received result */
-	    j = 0;
-	    while (buffer[i] != '\0') {
-		buffer[j] = buffer[i];
-		i++;
-		j++;
-	    }
-	    buffer[j] = '\0';
-	}
+    printf("%s", buffer2);
+    goto cont;
 	/* while evalating in child process, an error occuers */
     } else if (buffer[0] == '\x15') {
 	error(SYSTEM_ERR, "in child", make_int(n), 0);

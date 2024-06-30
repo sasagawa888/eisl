@@ -1362,15 +1362,15 @@ int read_from_pipe(int n)
     buffer[bytes_read] = '\0';
 
 
-    if (buffer[0] == '\x02') {
+    if (buffer[0] == '\x10') {
 	i = 1;
       rewrite:
-	while (buffer[i] != '\x02' && i < 256) {
+	while (buffer[i] != '\0' && i < 256) {
 	    putc(buffer[i], stdout);
 	    i++;
 	}
 	i++;
-	if (buffer[i] == '\x02') {
+	if (buffer[i] == '\x10') {
 	    i++;
 	    goto rewrite;
 	} else if (buffer[i] == '\0') {

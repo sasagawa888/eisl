@@ -1367,7 +1367,6 @@ int read_from_pipe(int n)
 	buffer[bytes_read] = EOF;
 
 	i = 0;
-      cont:
 	if (buffer[i] == '\x10') {
 	    j = 0;
         i++;
@@ -1391,13 +1390,12 @@ int read_from_pipe(int n)
 	    return (make_str(buffer1));
 	}
     }
-    perror("dkjlj");
 }
 
 int read_from_pipe_part(int n)
 {
-    char buffer[256];
-    int i, bytes_read;
+    char buffer[256],buffer1[256];
+    int i, j, bytes_read;
 
 
     while (1) {
@@ -1412,15 +1410,38 @@ int read_from_pipe_part(int n)
 
   exit:
     bytes_read = read(pipe_c2p[i][R], buffer, 256);
-    buffer[bytes_read] = '\0';
+    buffer[bytes_read] = EOF;
 
-    return (make_str(buffer));
+    i = 0;
+	if (buffer[i] == '\x10') {
+	    j = 0;
+        i++;
+	    while (buffer[i] != EOF) {
+		buffer1[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    printf("%s", buffer1);
+	    /* while evalating in child process, an error occuers */
+	} else if (buffer[i] == '\x15') {
+	    error(SYSTEM_ERR, "in child", make_int(n), 0);
+	} else if (buffer[i] == '\x12') {
+	    j = 0;
+        i++;
+	    while (buffer[i] != '\0') {
+		buffer1[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    return (make_str(buffer1));
+	}
+    
 }
 
 int read_from_pipe_part_nth(int n)
 {
-    char buffer[256];
-    int i, bytes_read;
+    char buffer[256],buffer1[256];
+    int i, j, bytes_read;
 
 
     while (1) {
@@ -1433,9 +1454,32 @@ int read_from_pipe_part_nth(int n)
 
   exit:
     bytes_read = read(pipe_c2p[n][R], buffer, 256);
-    buffer[bytes_read] = '\0';
+    buffer[bytes_read] = EOF;
 
-    return (make_str(buffer));
+    i = 0;
+	if (buffer[i] == '\x10') {
+	    j = 0;
+        i++;
+	    while (buffer[i] != EOF) {
+		buffer1[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    printf("%s", buffer1);
+	    /* while evalating in child process, an error occuers */
+	} else if (buffer[i] == '\x15') {
+	    error(SYSTEM_ERR, "in child", make_int(n), 0);
+	} else if (buffer[i] == '\x12') {
+	    j = 0;
+        i++;
+	    while (buffer[i] != '\0') {
+		buffer1[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    return (make_str(buffer1));
+	}
+    
 }
 
 

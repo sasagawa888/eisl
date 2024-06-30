@@ -1345,6 +1345,10 @@ int write_to_pipe(int n, int x)
     return (NIL);
 }
 
+/*  Message: 0x10, message, 0x00
+*   Error: 0x15
+*   Computation results: 0x12, result,0x00
+*/
 int read_from_pipe(int n)
 {
     char buffer[256], buffer1[256];
@@ -1387,7 +1391,7 @@ int read_from_pipe(int n)
 	    return (make_str(buffer1));
 	}
     }
-
+    perror("dkjlj");
 }
 
 int read_from_pipe_part(int n)

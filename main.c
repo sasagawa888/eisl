@@ -466,8 +466,10 @@ int main(int argc, char *argv[])
 		print(eval(sread(), 0));
 		putchar('\n');
 	    } else if (process_flag) {
-		TRY putchar('\x12');
-		print(eval(sread(), 0));
+		int exp;
+		TRY exp = eval(sread(), 0);
+		putchar('\x12');
+		print(exp);
 		putchar('\0\n');
 		fflush(stdout);
 		union sigval value;

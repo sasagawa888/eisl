@@ -1994,7 +1994,7 @@ int receive_from_child(int i)
 	if (buffer3[i] == '\x10') {
 	    j = 0;
 	    i++;
-	    while (buffer3[i] != EOF) {
+	    while (buffer3[i] != '\0') {
 		buffer1[j] = buffer3[i];
 		i++;
 		j++;
@@ -2005,7 +2005,7 @@ int receive_from_child(int i)
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    j = 0;
-	    while (buffer3[i] != EOF) {
+	    while (buffer3[i] != '\0') {
 		buffer1[j] = buffer3[i];
 		i++;
 		j++;

@@ -660,6 +660,8 @@ int signal_condition(int x, int y, int th)
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;
+	printf("send to parent error code");
+	fflush(stdout);
 	send_to_parent(make_sym("\x15"));
 	RAISE(Exit_Network);
     }

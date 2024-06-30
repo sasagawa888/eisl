@@ -181,8 +181,8 @@ bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
 bool network_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
-bool receiver_exit_flag = false;  /* TO exit child TCP/IP receiver */
-bool child_busy_flag = false;     /* while evalating in child, child_buzy_flag is true */
+bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
+bool child_busy_flag = false;	/* while evalating in child, child_buzy_flag is true */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -496,9 +496,9 @@ int main(int argc, char *argv[])
 		    close_socket();
 		    exit(0);
 		} else {
-			child_busy_flag = true;
+		    child_busy_flag = true;
 		    res = eval(exp, 0);
-			child_busy_flag = false;
+		    child_busy_flag = false;
 		    printf("send_to_parent ");
 		    print(res);
 		    printf("\n");

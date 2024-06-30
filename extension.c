@@ -1955,9 +1955,8 @@ void send_to_parent(int x)
 
     // send message to parent
     memset(buffer3, 0, sizeof(buffer3));
-    strcpy(buffer3, "\x12");	// add protocol 0x12
-    strcat(buffer3, GET_NAME(x));
-    strcat(buffer3, "\0\n");	// add protocol 0x00
+    strcpy(buffer3, GET_NAME(x));
+    strcat(buffer3, "\n");
     n = write(sockfd[1], buffer3, strlen(buffer3));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
@@ -1988,13 +1987,7 @@ int receive_from_child(int i)
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
     }
-    if (buffer3[0] != '\x12')
-	error(SYSTEM_ERR, "receive from child", make_int(i), 0);
-
-    /* remove protocol 0x12 */
-    for (j = 1; j < n; j++) {
-	buffer3[j - 1] = buffer3[j];
-    }
+    
     return (make_str(buffer3));
 }
 

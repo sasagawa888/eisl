@@ -201,8 +201,9 @@ jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
 Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
-Except_T Exit_Thread = { "Exit thread" };
-Except_T Exit_Process = { "Exit Process" };
+Except_T Exit_Thread = { "Exit thread" };       /* for Multi-thread */
+Except_T Exit_Process = { "Exit Process" };     /* for Multi-process */
+Except_T Exit_Network = { "Exit Network" };     /* for Distributed parallel */
 
 int signal_condition_x;
 int signal_condition_y;
@@ -493,6 +494,7 @@ int main(int argc, char *argv[])
 		    close_socket();
 		    exit(0);
 		} else {
+			TRY
 		    child_busy_flag = true;
 		    res = eval(exp, 0);
 		    child_busy_flag = false;
@@ -501,6 +503,8 @@ int main(int argc, char *argv[])
 		    printf("\n");
 		    fflush(stdout);
 		    send_to_parent(sexp_to_str(res));
+			EXCEPT(Exit_Network);
+			END_TRY;
 		}
 	    }
 

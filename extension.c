@@ -82,6 +82,7 @@ void init_exsubr(void)
     def_subr("DP-CREATE", f_dp_create);
     def_subr("DP-CLOSE", f_dp_close);
     def_fsubr("DP-LET", f_dp_let);
+    def_subr("DP-SYSTEM", f_dp_system);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -2028,4 +2029,18 @@ void init_receiver(void)
 {
     /* create child receiver thread */
     pthread_create(&receiver_thread, NULL, receiver, NULL);
+}
+
+int f_dp_system(int arglist, int th __unused)
+{
+    int arg1, arg2, res;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if (GET_INT(arg1) >= child_num || GET_INT(arg1) < 0)
+    error(WRONG_ARGS, "dp-system", arg1 ,0);   
+
+    send_to_child(GET_INT(arg1), sexp_to_str(arg2));
+    res = str_to_sexp(receive_from_child(GET_INT(arg1)));
+    return (res);
 }

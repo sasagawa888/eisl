@@ -1362,35 +1362,24 @@ int read_from_pipe(int n)
 
     int bytes_read;
 
-    while (1) {
 	// wait until get result
 	while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1
 	       && errno == EAGAIN);
-	buffer[bytes_read] = EOF;
 
-	i = 0;
-	if (buffer[i] == '\x10') {
-	    j = 0;
-	    i++;
-	    while (buffer[i] != EOF) {
-		buffer1[j] = buffer[i];
+	if (buffer[0] == '\x02') {
+	    i = 1;
+	    while (buffer[i] != '\x03') {
+		buffer1[i-1] = buffer[i];
 		i++;
-		j++;
 	    }
+        buffer1[i-1] = 0;
 	    printf("%s", buffer1);
-	    /* while evalating in child process, an error occuers */
-	} else if (buffer[i] == '\x15') {
+	} else if (strcmp(buffer,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
-	    j = 0;
-	    while (buffer[i] != EOF) {
-		buffer1[j] = buffer[i];
-		i++;
-		j++;
-	    }
-	    return (make_str(buffer1));
+	    return (make_str(buffer));
 	}
-    }
+    
 }
 
 int read_from_pipe_part(int n)
@@ -1989,51 +1978,42 @@ int receive_from_child(int n)
 	error(SYSTEM_ERR, "receive from child", make_int(n), 0);
     }
 
-    
-	i = 0;
-	if (buffer3[i] == '\x10') {
-	    j = 0;
-	    i++;
-	    while (buffer3[i] != '\0') {
-		buffer1[j] = buffer3[i];
+
+	if (buffer3[0] == '\x02') {
+	    i = 1;
+	    while (buffer3[i] != '\03') {
+		buffer1[i-1] = buffer3[i];
 		i++;
-		j++;
 	    }
+        buffer1[i-1] = 0;
 	    printf("%s", buffer1);
-	    // while evalating in child process, an error occuers 
 	} else if (strcmp(buffer3,"***error***\n") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
         return (make_str(buffer3));
 	}
     
-    //return(make_str(buffer3));
 }
 
 /* Thread for child lisp receiver
 */
 void *receiver(void *arg __unused)
 {
-    int i, res;
-    char buffer[256];
-
+    int res;
+    
     while (1) {
 	if (receiver_exit_flag)
 	    goto exit;
 
 	if (child_busy_flag) {
 	    res = receive_from_parent();
-	    strcpy(buffer, GET_NAME(res));
-	    if (buffer[0] == '\x02') {
-		/* child start */
-
-	    } else if (buffer[0] == '\x03') {
+	    if (strcmp(GET_NAME(res),"***stop***\n")) {
 		/* child stop */
 
-	    } else if (buffer[0] == '\x13') {
+	    } else if (strcmp(GET_NAME(res),"***pause***\n")) {
 		/* child pause */
 
-	    } else if (buffer[0] == '\x11') {
+	    } else if (strcmp(GET_NAME(res),"***resume***\n")) {
 		/* chidl resume */
 
 	    }

@@ -2001,7 +2001,7 @@ int receive_from_child(int n)
 	    }
 	    printf("%s", buffer1);
 	    // while evalating in child process, an error occuers 
-	} else if (buffer3[i] == '\x15') {
+	} else if (strcmp(buffer3,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    j = 0;

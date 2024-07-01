@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "eisl.h"
 #include "fmt.h"
 #include "except.h"
@@ -660,9 +661,8 @@ int signal_condition(int x, int y, int th)
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;
-	printf("send to parent error code");
 	fflush(stdout);
-	send_to_parent(make_sym("\x15"));
+	send_to_parent(make_sym("***error***"));
 	RAISE(Exit_Network);
     }
     if (open_flag && error_handler == NIL) {

@@ -2005,12 +2005,12 @@ int receive_from_child(int n)
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    j = 0;
-	    while (buffer3[i] != '\0') {
+	    while (buffer3[i] != '\n') {
 		buffer1[j] = buffer3[i];
 		i++;
 		j++;
 	    }
-        buffer1[j] = '\0';
+        buffer1[j] = '\n';
         return (make_str(buffer1));
 	}
     

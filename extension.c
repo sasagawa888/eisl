@@ -1400,30 +1400,21 @@ int read_from_pipe_part(int n)
 
   exit:
     bytes_read = read(pipe_c2p[i][R], buffer, 256);
-    buffer[bytes_read] = EOF;
 
-    i = 0;
-    if (buffer[i] == '\x10') {
-	j = 0;
-	i++;
-	while (buffer[i] != EOF) {
-	    buffer1[j] = buffer[i];
-	    i++;
-	    j++;
+    if (buffer[0] == '\x02') {
+	    i = 1;
+	    while (buffer[i] != '\x03') {
+		buffer1[i-1] = buffer[i];
+		i++;
+	    }
+        buffer1[i-1] = 0;
+	    printf("%s", buffer1);
+	} else if (strcmp(buffer,"***error***") == 0) {
+	    error(SYSTEM_ERR, "in child", make_int(n), 0);
+	} else {
+	    return (make_str(buffer));
 	}
-	printf("%s", buffer1);
-	/* while evalating in child process, an error occuers */
-    } else if (buffer[i] == '\x15') {
-	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else {
-	j = 0;
-	while (buffer[i] != EOF) {
-	    buffer1[j] = buffer[i];
-	    i++;
-	    j++;
-	}
-	return (make_str(buffer1));
-    }
+    
 
 }
 
@@ -1443,31 +1434,21 @@ int read_from_pipe_part_nth(int n)
 
   exit:
     bytes_read = read(pipe_c2p[n][R], buffer, 256);
-    buffer[bytes_read] = EOF;
 
-    i = 0;
-    if (buffer[i] == '\x10') {
-	j = 0;
-	i++;
-	while (buffer[i] != EOF) {
-	    buffer1[j] = buffer[i];
-	    i++;
-	    j++;
+    if (buffer[0] == '\x02') {
+	    i = 1;
+	    while (buffer[i] != '\x03') {
+		buffer1[i-1] = buffer[i];
+		i++;
+	    }
+        buffer1[i-1] = 0;
+	    printf("%s", buffer1);
+	} else if (strcmp(buffer,"***error***") == 0) {
+	    error(SYSTEM_ERR, "in child", make_int(n), 0);
+	} else {
+	    return (make_str(buffer));
 	}
-	printf("%s", buffer1);
-	/* while evalating in child process, an error occuers */
-    } else if (buffer[i] == '\x15') {
-	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else {
-	j = 0;
-	while (buffer[i] != EOF) {
-	    buffer1[j] = buffer[i];
-	    i++;
-	    j++;
-	}
-	return (make_str(buffer1));
-    }
-
+    
 }
 
 

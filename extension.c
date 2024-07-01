@@ -1944,7 +1944,6 @@ void send_to_parent(int x)
     // send message to parent
     memset(buffer3, 0, sizeof(buffer3));
     strcpy(buffer3, GET_NAME(x));
-    strcat(buffer3, "\n");
     n = write(sockfd[1], buffer3, strlen(buffer3));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
@@ -1987,7 +1986,7 @@ int receive_from_child(int n)
 	    }
         buffer1[i-1] = 0;
 	    printf("%s", buffer1);
-	} else if (strcmp(buffer3,"***error***\n") == 0) {
+	} else if (strcmp(buffer3,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
         return (make_str(buffer3));

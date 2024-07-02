@@ -1353,7 +1353,7 @@ int write_to_pipe(int n, int x)
 */
 int read_from_pipe(int n)
 {
-    char buffer1[256];
+    char sub_buffer[256];
     int i, j;
 
     // set nonblock mode
@@ -1369,10 +1369,10 @@ int read_from_pipe(int n)
 	if (buffer3[0] == '\x02') {
 	    i = 1;
 	    while (buffer3[i] != '\x03') {
-		buffer1[i-1] = buffer3[i];
+		sub_buffer[i-1] = buffer3[i];
 		i++;
 	    }
-        buffer1[i-1] = 0;
+        sub_buffer[i-1] = 0;
 	    printf("%s", buffer1);
 	} else if (strcmp(buffer,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);

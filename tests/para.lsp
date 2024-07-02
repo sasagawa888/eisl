@@ -47,3 +47,17 @@
           ((= (mod n 2) 0) nil)
           (t (coprimep n 3 (isqrt n)))))
 
+(import "unistd")
+
+(defun bar (x y)
+    (mp-exec (uoo x) (uoo y)))
+
+(defun uoo (x) 
+    (let ((stm (create-string-output-stream)))
+        (format stm "test1 ~A ~%" x)
+        (mp-report (get-output-stream-string stm))
+        (sleep 1)
+        (format stm "test2 ~A ~%" x)
+        (mp-report (get-output-stream-string stm))
+        (sleep 1)
+        t))

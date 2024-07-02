@@ -78,6 +78,7 @@ void init_exsubr(void)
     def_fsubr("MP-EXEC", f_mp_exec);
     def_fsubr("MP-LET", f_mp_let);
     def_fsubr("MP-PART", f_mp_part);
+    def_subr("MP-REPORT", f_mp_report);
 
     def_subr("DP-CREATE", f_dp_create);
     def_subr("DP-CLOSE", f_dp_close);
@@ -1713,6 +1714,21 @@ int f_mp_close(int arglist, int th)
 
     process_pt = 0;
     return (T);
+}
+
+int f_mp_report(int arglist, int th)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (!stringp(arg1))
+    error(NOT_STR, "mp-report", arg1, 0);
+
+    Fmt_print("\x02");
+    printf("%s",GET_NAME(arg1));
+    Fmt_print("\x03");
+    fflush(stdout);
+    return(T);
 }
 
 

@@ -243,9 +243,9 @@ extern int charcnt;
 extern token stok;
 extern int line;
 extern int column;
-extern int buffer[COL_SIZE + 1][NUM_HISTORY];
-extern int buffer1[COL_SIZE + 1];
-extern int buffer2[COL_SIZE + 1];
+extern char buffer[COL_SIZE + 1][NUM_HISTORY];
+extern char buffer1[COL_SIZE + 1];
+extern char buffer2[COL_SIZE + 1];
 extern char buffer3[STRSIZE];
 
 

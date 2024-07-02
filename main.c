@@ -125,9 +125,9 @@ token stok;
 
 int line;
 int column;
-int buffer[COL_SIZE + 1][NUM_HISTORY];
-int buffer1[COL_SIZE + 1];
-int buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
+char buffer[COL_SIZE + 1][NUM_HISTORY];
+char buffer1[COL_SIZE + 1];
+char buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
 char buffer3[STRSIZE] = { 0 };	//for Multi-Process and Distributed TCP/IP
 
 /* heap ,stack and bignum */

@@ -246,7 +246,7 @@ extern int column;
 extern int buffer[COL_SIZE + 1][NUM_HISTORY];
 extern int buffer1[COL_SIZE + 1];
 extern int buffer2[COL_SIZE + 1];
-extern int buffer3[STRSIZE];
+extern char buffer3[STRSIZE];
 
 
 /* heap and stack */

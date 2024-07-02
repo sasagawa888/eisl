@@ -1384,7 +1384,7 @@ int read_from_pipe(int n)
 
 int read_from_pipe_part(int n)
 {
-    char buffer[256], buffer1[256];
+    char sub_buffer[256];
     int i, j, bytes_read;
 
 
@@ -1399,20 +1399,20 @@ int read_from_pipe_part(int n)
     }
 
   exit:
-    bytes_read = read(pipe_c2p[i][R], buffer, 256);
+    bytes_read = read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
 
-    if (buffer[0] == '\x02') {
+    if (buffer3[0] == '\x02') {
 	    i = 1;
-	    while (buffer[i] != '\x03') {
-		buffer1[i-1] = buffer[i];
+	    while (buffer3[i] != '\x03') {
+		sub_buffer[i-1] = buffer3[i];
 		i++;
 	    }
-        buffer1[i-1] = 0;
-	    printf("%s", buffer1);
-	} else if (strcmp(buffer,"***error***") == 0) {
+        sub_buffer[i-1] = 0;
+	    printf("%s", sub_buffer);
+	} else if (strcmp(buffer3,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
-	    return (make_str(buffer));
+	    return (make_str(buffer3));
 	}
     
 
@@ -1420,7 +1420,7 @@ int read_from_pipe_part(int n)
 
 int read_from_pipe_part_nth(int n)
 {
-    char buffer[256], buffer1[256];
+    char sub_buffer[256];
     int i, j, bytes_read;
 
 
@@ -1433,20 +1433,20 @@ int read_from_pipe_part_nth(int n)
     }
 
   exit:
-    bytes_read = read(pipe_c2p[n][R], buffer, 256);
+    bytes_read = read(pipe_c2p[n][R], buffer3, sizeof(buffer3));
 
-    if (buffer[0] == '\x02') {
+    if (buffer3[0] == '\x02') {
 	    i = 1;
-	    while (buffer[i] != '\x03') {
-		buffer1[i-1] = buffer[i];
+	    while (buffer3[i] != '\x03') {
+		sub_buffer[i-1] = buffer3[i];
 		i++;
 	    }
-        buffer1[i-1] = 0;
-	    printf("%s", buffer1);
+        sub_buffer[i-1] = 0;
+	    printf("%s", sub_buffer);
 	} else if (strcmp(buffer,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
-	    return (make_str(buffer));
+	    return (make_str(buffer3));
 	}
     
 }

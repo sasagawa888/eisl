@@ -653,7 +653,7 @@ int signal_condition(int x, int y, int th)
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;
-	Fmt_print("***error***");
+	Fmt_print("\x15");
 	fflush(stdout);
 	RAISE(Exit_Process);
     }

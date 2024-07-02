@@ -1388,7 +1388,7 @@ int read_from_pipe(int n)
             goto reread;
         else 
             goto retry;
-	} else if (strcmp(buffer3,"***error***") == 0) {
+	} else if (buffer3[0]  == '\x15') {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    return (make_str(buffer3));

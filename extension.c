@@ -1415,21 +1415,32 @@ int read_from_pipe_part(int n)
   exit:
     bytes_read = read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
 
-    if (buffer3[0] == '\x02') {
-	    i = 1;
-	    while (buffer3[i] != '\x03') {
-		sub_buffer[i-1] = buffer3[i];
+    retry:
+	if (buffer3[0] == '\x02') {
+	    i = 0;
+	    while (buffer3[i+1] != '\x03') {
+		sub_buffer[i] = buffer3[i+1];
 		i++;
 	    }
-        sub_buffer[i-1] = 0;
+        sub_buffer[i] = 0;
 	    printf("%s", sub_buffer);
-	} else if (strcmp(buffer3,"***error***") == 0) {
+        j = 0;
+        i = i+2;
+        while(buffer3[j+i] != 0){
+            buffer3[j] = buffer3[j+i];
+            j++;
+        }
+        buffer3[j] = 0;
+        if(buffer3[0] == 0)
+            goto exit;
+        else 
+            goto retry;
+	} else if (buffer3[0]  == '\x15') {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    return (make_str(buffer3));
 	}
     
-
 }
 
 int read_from_pipe_part_nth(int n)
@@ -1449,15 +1460,27 @@ int read_from_pipe_part_nth(int n)
   exit:
     bytes_read = read(pipe_c2p[n][R], buffer3, sizeof(buffer3));
 
-    if (buffer3[0] == '\x02') {
-	    i = 1;
-	    while (buffer3[i] != '\x03') {
-		sub_buffer[i-1] = buffer3[i];
+    retry:
+	if (buffer3[0] == '\x02') {
+	    i = 0;
+	    while (buffer3[i+1] != '\x03') {
+		sub_buffer[i] = buffer3[i+1];
 		i++;
 	    }
-        sub_buffer[i-1] = 0;
+        sub_buffer[i] = 0;
 	    printf("%s", sub_buffer);
-	} else if (strcmp(buffer,"***error***") == 0) {
+        j = 0;
+        i = i+2;
+        while(buffer3[j+i] != 0){
+            buffer3[j] = buffer3[j+i];
+            j++;
+        }
+        buffer3[j] = 0;
+        if(buffer3[0] == 0)
+            goto exit;
+        else 
+            goto retry;
+	} else if (buffer3[0]  == '\x15') {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    return (make_str(buffer3));

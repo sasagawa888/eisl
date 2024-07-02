@@ -1353,7 +1353,7 @@ int write_to_pipe(int n, int x)
 */
 int read_from_pipe(int n)
 {
-    char buffer[256], buffer1[256];
+    char buffer1[256];
     int i, j;
 
     // set nonblock mode
@@ -1363,13 +1363,13 @@ int read_from_pipe(int n)
     int bytes_read;
 
 	// wait until get result
-	while ((bytes_read = read(pipe_c2p[n][R], buffer, 256)) == -1
+	while ((bytes_read = read(pipe_c2p[n][R], buffer3, sizeof(buffer3))) == -1
 	       && errno == EAGAIN);
 
-	if (buffer[0] == '\x02') {
+	if (buffer3[0] == '\x02') {
 	    i = 1;
-	    while (buffer[i] != '\x03') {
-		buffer1[i-1] = buffer[i];
+	    while (buffer3[i] != '\x03') {
+		buffer1[i-1] = buffer3[i];
 		i++;
 	    }
         buffer1[i-1] = 0;
@@ -1377,7 +1377,7 @@ int read_from_pipe(int n)
 	} else if (strcmp(buffer,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
-	    return (make_str(buffer));
+	    return (make_str(buffer3));
 	}
     
 }

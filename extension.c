@@ -1374,8 +1374,8 @@ int read_from_pipe(int n)
 		i++;
 	    }
         sub_buffer[i-1] = 0;
-	    printf("%s", buffer1);
-	} else if (strcmp(buffer,"***error***") == 0) {
+	    printf("%s", sub_buffer);
+	} else if (strcmp(buffer3,"***error***") == 0) {
 	    error(SYSTEM_ERR, "in child", make_int(n), 0);
 	} else {
 	    return (make_str(buffer3));

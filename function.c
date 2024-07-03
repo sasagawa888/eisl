@@ -3398,7 +3398,7 @@ int f_set_slot_value(int arglist, int th)
 /* format */
 int f_format(int arglist, int th)
 {
-    
+
     int arg1, arg2, args, i, save, n, quote_flag;
     char *str, c;
 

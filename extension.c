@@ -1363,37 +1363,39 @@ int read_from_pipe(int n)
 
     int bytes_read;
 
-    reread:
-	// wait until get result
-	while ((bytes_read = read(pipe_c2p[n][R], buffer3, sizeof(buffer3))) == -1
-	       && errno == EAGAIN);
+  reread:
+    // wait until get result
+    memset(buffer3, 0, sizeof(buffer3));
+    while ((bytes_read =
+	    read(pipe_c2p[n][R], buffer3, sizeof(buffer3))) == -1
+	   && errno == EAGAIN);
 
-    retry:
-	if (buffer3[0] == '\x02') {
-	    i = 0;
-	    while (buffer3[i+1] != '\x03') {
-		sub_buffer[i] = buffer3[i+1];
-		i++;
-	    }
-        sub_buffer[i] = 0;
-	    printf("%s", sub_buffer);
-        j = 0;
-        i = i+2;
-        while(buffer3[j+i] != 0){
-            buffer3[j] = buffer3[j+i];
-            j++;
-        }
-        buffer3[j] = 0;
-        if(buffer3[0] == 0)
-            goto reread;
-        else 
-            goto retry;
-	} else if (buffer3[0]  == '\x15') {
-	    error(SYSTEM_ERR, "in child", make_int(n), 0);
-	} else {
-	    return (make_str(buffer3));
+  retry:
+    if (buffer3[0] == '\x02') {
+	i = 0;
+	while (buffer3[i + 1] != '\x03') {
+	    sub_buffer[i] = buffer3[i + 1];
+	    i++;
 	}
-    
+	sub_buffer[i] = 0;
+	printf("%s", sub_buffer);
+	j = 0;
+	i = i + 2;
+	while (buffer3[j + i] != 0) {
+	    buffer3[j] = buffer3[j + i];
+	    j++;
+	}
+	buffer3[j] = 0;
+	if (buffer3[0] == 0)
+	    goto reread;
+	else
+	    goto retry;
+    } else if (buffer3[0] == '\x15') {
+	error(SYSTEM_ERR, "in child", make_int(n), 0);
+    } else {
+	return (make_str(buffer3));
+    }
+
 }
 
 int read_from_pipe_part(int n)
@@ -1413,34 +1415,35 @@ int read_from_pipe_part(int n)
     }
 
   exit:
+    memset(buffer3, 0, sizeof(buffer3));
     bytes_read = read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
 
-    retry:
-	if (buffer3[0] == '\x02') {
-	    i = 0;
-	    while (buffer3[i+1] != '\x03') {
-		sub_buffer[i] = buffer3[i+1];
-		i++;
-	    }
-        sub_buffer[i] = 0;
-	    printf("%s", sub_buffer);
-        j = 0;
-        i = i+2;
-        while(buffer3[j+i] != 0){
-            buffer3[j] = buffer3[j+i];
-            j++;
-        }
-        buffer3[j] = 0;
-        if(buffer3[0] == 0)
-            goto exit;
-        else 
-            goto retry;
-	} else if (buffer3[0]  == '\x15') {
-	    error(SYSTEM_ERR, "in child", make_int(n), 0);
-	} else {
-	    return (make_str(buffer3));
+  retry:
+    if (buffer3[0] == '\x02') {
+	i = 0;
+	while (buffer3[i + 1] != '\x03') {
+	    sub_buffer[i] = buffer3[i + 1];
+	    i++;
 	}
-    
+	sub_buffer[i] = 0;
+	printf("%s", sub_buffer);
+	j = 0;
+	i = i + 2;
+	while (buffer3[j + i] != 0) {
+	    buffer3[j] = buffer3[j + i];
+	    j++;
+	}
+	buffer3[j] = 0;
+	if (buffer3[0] == 0)
+	    goto exit;
+	else
+	    goto retry;
+    } else if (buffer3[0] == '\x15') {
+	error(SYSTEM_ERR, "in child", make_int(n), 0);
+    } else {
+	return (make_str(buffer3));
+    }
+
 }
 
 int read_from_pipe_part_nth(int n)
@@ -1458,34 +1461,35 @@ int read_from_pipe_part_nth(int n)
     }
 
   exit:
+    memset(buffer3, 0, sizeof(buffer3));
     bytes_read = read(pipe_c2p[n][R], buffer3, sizeof(buffer3));
 
-    retry:
-	if (buffer3[0] == '\x02') {
-	    i = 0;
-	    while (buffer3[i+1] != '\x03') {
-		sub_buffer[i] = buffer3[i+1];
-		i++;
-	    }
-        sub_buffer[i] = 0;
-	    printf("%s", sub_buffer);
-        j = 0;
-        i = i+2;
-        while(buffer3[j+i] != 0){
-            buffer3[j] = buffer3[j+i];
-            j++;
-        }
-        buffer3[j] = 0;
-        if(buffer3[0] == 0)
-            goto exit;
-        else 
-            goto retry;
-	} else if (buffer3[0]  == '\x15') {
-	    error(SYSTEM_ERR, "in child", make_int(n), 0);
-	} else {
-	    return (make_str(buffer3));
+  retry:
+    if (buffer3[0] == '\x02') {
+	i = 0;
+	while (buffer3[i + 1] != '\x03') {
+	    sub_buffer[i] = buffer3[i + 1];
+	    i++;
 	}
-    
+	sub_buffer[i] = 0;
+	printf("%s", sub_buffer);
+	j = 0;
+	i = i + 2;
+	while (buffer3[j + i] != 0) {
+	    buffer3[j] = buffer3[j + i];
+	    j++;
+	}
+	buffer3[j] = 0;
+	if (buffer3[0] == 0)
+	    goto exit;
+	else
+	    goto retry;
+    } else if (buffer3[0] == '\x15') {
+	error(SYSTEM_ERR, "in child", make_int(n), 0);
+    } else {
+	return (make_str(buffer3));
+    }
+
 }
 
 
@@ -1758,13 +1762,13 @@ int f_mp_report(int arglist, int th)
 
     arg1 = car(arglist);
     if (!stringp(arg1))
-    error(NOT_STR, "mp-report", arg1, 0);
+	error(NOT_STR, "mp-report", arg1, 0);
 
     Fmt_print("\x02");
-    printf("%s",GET_NAME(arg1));
+    printf("%s", GET_NAME(arg1));
     Fmt_print("\x03");
     fflush(stdout);
-    return(T);
+    return (T);
 }
 
 
@@ -2000,7 +2004,7 @@ void send_to_child(int n, int x)
 
 int receive_from_child(int n)
 {
-    int m, i,j;
+    int m, i, j;
     char buffer1[256];
 
     // receive from child
@@ -2011,20 +2015,20 @@ int receive_from_child(int n)
     }
 
 
-	if (buffer3[0] == '\x02') {
-	    i = 1;
-	    while (buffer3[i] != '\03') {
-		buffer1[i-1] = buffer3[i];
-		i++;
-	    }
-        buffer1[i-1] = 0;
-	    printf("%s", buffer1);
-	} else if (strcmp(buffer3,"***error***") == 0) {
-	    error(SYSTEM_ERR, "in child", make_int(n), 0);
-	} else {
-        return (make_str(buffer3));
+    if (buffer3[0] == '\x02') {
+	i = 1;
+	while (buffer3[i] != '\03') {
+	    buffer1[i - 1] = buffer3[i];
+	    i++;
 	}
-    
+	buffer1[i - 1] = 0;
+	printf("%s", buffer1);
+    } else if (strcmp(buffer3, "***error***") == 0) {
+	error(SYSTEM_ERR, "in child", make_int(n), 0);
+    } else {
+	return (make_str(buffer3));
+    }
+
 }
 
 /* Thread for child lisp receiver
@@ -2032,20 +2036,20 @@ int receive_from_child(int n)
 void *receiver(void *arg __unused)
 {
     int res;
-    
+
     while (1) {
 	if (receiver_exit_flag)
 	    goto exit;
 
 	if (child_busy_flag) {
 	    res = receive_from_parent();
-	    if (strcmp(GET_NAME(res),"***stop***\n")) {
+	    if (strcmp(GET_NAME(res), "***stop***\n")) {
 		/* child stop */
 
-	    } else if (strcmp(GET_NAME(res),"***pause***\n")) {
+	    } else if (strcmp(GET_NAME(res), "***pause***\n")) {
 		/* child pause */
 
-	    } else if (strcmp(GET_NAME(res),"***resume***\n")) {
+	    } else if (strcmp(GET_NAME(res), "***resume***\n")) {
 		/* chidl resume */
 
 	    }
@@ -2071,7 +2075,7 @@ int f_dp_system(int arglist, int th __unused)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (GET_INT(arg1) >= child_num || GET_INT(arg1) < 0)
-    error(WRONG_ARGS, "dp-system", arg1 ,0);   
+	error(WRONG_ARGS, "dp-system", arg1, 0);
 
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
     res = str_to_sexp(receive_from_child(GET_INT(arg1)));

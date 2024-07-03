@@ -88,7 +88,7 @@ static const char *extended[] = {
     "formatter", "line-argument", "getenv", "system",
     "c-include", "c-define", "c-lang", "c-option", "try", "read_exp",
     "mt-let", "mt-call", "mt-exec", "mt-lock", "mp-create", "mp-exec",
-    "mp-close", "mp-call", "mp-let", "mp-part", "mp-report" , 
+    "mp-close", "mp-call", "mp-let", "mp-part", "mp-report",
     "dp-create", "dp-let", "dp-close", "dp-system",
 };
 

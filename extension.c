@@ -1970,6 +1970,7 @@ int receive_from_parent(void)
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
+
     return (make_sym(buffer3));
 
 }
@@ -2005,25 +2006,37 @@ void send_to_child(int n, int x)
 int receive_from_child(int n)
 {
     int m, i, j;
-    char buffer1[256];
+    char sub_buffer[256];
 
     // receive from child
+    reread:
     memset(buffer3, 0, sizeof(buffer3));
     m = read(sockfd[n], buffer3, sizeof(buffer3) - 1);
     if (m < 0) {
 	error(SYSTEM_ERR, "receive from child", make_int(n), 0);
     }
 
-
+    retry:
     if (buffer3[0] == '\x02') {
-	i = 1;
-	while (buffer3[i] != '\03') {
-	    buffer1[i - 1] = buffer3[i];
+	i = 0;
+	while (buffer3[i + 1] != '\x03') {
+	    sub_buffer[i] = buffer3[i + 1];
 	    i++;
 	}
-	buffer1[i - 1] = 0;
-	printf("%s", buffer1);
-    } else if (strcmp(buffer3, "***error***") == 0) {
+	sub_buffer[i] = 0;
+	printf("%s", sub_buffer);
+	j = 0;
+	i = i + 2;
+	while (buffer3[j + i] != 0) {
+	    buffer3[j] = buffer3[j + i];
+	    j++;
+	}
+	buffer3[j] = 0;
+	if (buffer3[0] == 0)
+	    goto reread;
+	else
+	    goto retry;
+    } else if (buffer3[0] == '\x15') {
 	error(SYSTEM_ERR, "in child", make_int(n), 0);
     } else {
 	return (make_str(buffer3));

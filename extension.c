@@ -13,14 +13,15 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <curl/curl.h>
+
 #ifdef __rpi__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
-
-
 #endif
+
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
@@ -1784,7 +1785,8 @@ int f_dp_create(int arglist, int th)
     while (!nullp(arglist)) {
 	if (!stringp(car(arglist)))
 	    error(NOT_STR, "dp-create", car(arglist), th);
-
+    
+    strcpy(child_ip[child_num],GET_NAME(car(arglist)));
 	init_child(child_num, car(arglist));
 	arglist = cdr(arglist);
 	child_num++;
@@ -2093,4 +2095,57 @@ int f_dp_system(int arglist, int th __unused)
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
     res = str_to_sexp(receive_from_child(GET_INT(arg1)));
     return (res);
+}
+
+int dp_transfer(int arglist, int th)
+{
+    int arg1;
+
+    CURL *curl;
+    CURLcode res;
+    FILE *file;
+    char ftp_url[256],local_file_path[256];
+
+    arg1 = car(arglist);
+
+    memset(ftp_url,0,sizeof(ftp_url));
+    memset(local_file_path,0,sizeof(ftp_url));
+    //const char *ftp_url = "ftp://192.168.1.100/upload/test.txt"; // FTPサーバーのIPアドレス
+    //const char *local_file_path = "test.txt"; // アップロードするローカルファイルのパス
+
+    // open local file
+    file = fopen(local_file_path, "rb");
+    if (!file) {
+        perror("fopen");
+        return 1;
+    }
+
+    // initilize libcurl
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
+    if (curl) {
+        // set URL of FTP server
+        curl_easy_setopt(curl, CURLOPT_URL, ftp_url);
+
+        // set file to upload 
+        curl_easy_setopt(curl, CURLOPT_READDATA, file);
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+
+        // transfer file
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        // cleanup
+        curl_easy_cleanup(curl);
+    }
+
+    // close local file
+    fclose(file);
+
+    // cleanup libcurl
+    curl_global_cleanup();
+
+    return(T);
 }

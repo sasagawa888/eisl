@@ -27,6 +27,13 @@ In this case, enter the following from the terminal
 sudo apt install libncurses-dev
 ```
 
+You may get an error that the curl.h file cannot be found when compiling EISL.
+In this case, enter the following from the terminal
+
+```sh
+sudo apt-get install libcurl4-openssl-dev
+```
+
 Otherwise, support for `curses` can be disable with `WITHOUT_CURSES=1` in the `make` command. However, this will limit REPL support and will disable `edlis`.
 
 After version 1.4 Windows OS is not supported. Please use WSL on Windows.

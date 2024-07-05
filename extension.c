@@ -2110,7 +2110,7 @@ int dp_transfer(int arglist, int th)
 
     memset(ftp_url,0,sizeof(ftp_url));
     memset(local_file_path,0,sizeof(ftp_url));
-    //const char *ftp_url = "ftp://192.168.1.100/upload/test.txt"; // FTPサーバーのIPアドレス
+    //const char *ftp_url = "ftp://102.110.1.100/upload/test.txt"; // FTPサーバーのIPアドレス
     //const char *local_file_path = "test.txt"; // アップロードするローカルファイルのパス
 
     // open local file

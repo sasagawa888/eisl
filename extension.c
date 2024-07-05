@@ -2099,7 +2099,7 @@ int f_dp_system(int arglist, int th __unused)
 
 int dp_transfer(int arglist, int th)
 {
-    int arg1;
+    int arg1,i;
 
     CURL *curl;
     CURLcode res;
@@ -2108,22 +2108,30 @@ int dp_transfer(int arglist, int th)
 
     arg1 = car(arglist);
 
-    memset(ftp_url,0,sizeof(ftp_url));
-    memset(local_file_path,0,sizeof(ftp_url));
-    //const char *ftp_url = "ftp://102.110.1.100/upload/test.txt"; // FTPサーバーのIPアドレス
-    //const char *local_file_path = "test.txt"; // アップロードするローカルファイルのパス
-
+    
     // open local file
     file = fopen(local_file_path, "rb");
     if (!file) {
-        perror("fopen");
-        return 1;
+        error(CANT_OPEN, "dp-transfer" , arg1, th);
     }
 
     // initilize libcurl
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
-    if (curl) {
+    if (!curl) {
+        error(SYSTEM_ERR, "dp-transfer" , arg1, th);
+    }
+
+    for(i=0; i<child_num; i++){
+        memset(ftp_url,0,sizeof(ftp_url));
+        strcpy(ftp_url, "ftp://");
+        strcat(ftp_url, child_ip[i]);
+        strcat(ftp_url, "/");
+        strcat(ftp_url, GET_NAME(arg1));
+
+        memset(local_file_path,0,sizeof(ftp_url));
+        strcpy(local_file_path, GET_NAME(arg1));
+        
         // set URL of FTP server
         curl_easy_setopt(curl, CURLOPT_URL, ftp_url);
 

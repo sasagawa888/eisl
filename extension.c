@@ -85,6 +85,7 @@ void init_exsubr(void)
     def_fsubr("DP-LET", f_dp_let);
     def_subr("DP-SYSTEM", f_dp_system);
     def_subr("DP-TRANSFER", f_dp_transfer);
+    def_subr("DP-RECEIVE", f_dp_receive);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);

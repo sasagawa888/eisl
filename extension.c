@@ -2155,7 +2155,7 @@ int f_dp_transfer(int arglist, int th)
     return (T);
 }
 
-/* chidl lisp */
+/* child lisp */
 int f_dp_receive(int arglist, int th)
 {
     int arg1;

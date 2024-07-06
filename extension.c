@@ -2193,7 +2193,7 @@ int f_dp_load(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_STR, "dp-load", arg1, th);
 
-    exp = list2(make_sym("load"), arg1);
+    exp = list2(make_sym("LOAD"), arg1);
 
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
@@ -2214,7 +2214,7 @@ int f_dp_compile(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_STR, "dp-compile", arg1, th);
 
-    exp = list2(make_sym("compile-file"), arg1);
+    exp = list2(make_sym("COMPILE-FILE"), arg1);
 
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));

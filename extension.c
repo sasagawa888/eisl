@@ -2141,10 +2141,10 @@ int f_dp_transfer(int arglist, int th)
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
-
+    usleep(1000);
 	memset(buffer3, 0, sizeof(buffer3));
 	buffer3[0] = EOF;
-	m = write(sockfd[i], buffer3, strlen(buffer3));
+	m = write(sockfd[i], buffer3, 1);
 	if (m < 0) {
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}

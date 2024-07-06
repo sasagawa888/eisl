@@ -85,6 +85,7 @@ void init_exsubr(void)
     def_subr("DP-CLOSE", f_dp_close);
     def_fsubr("DP-LET", f_dp_let);
     def_subr("DP-SYSTEM", f_dp_system);
+    def_subr("DP-TRANSFER", f_dp_transfer);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -1882,7 +1883,6 @@ int f_dp_let(int arglist, int th)
 
 void init_parent(void)
 {
-    int n;
 
     // create socket
     sockfd[0] = socket(AF_INET, SOCK_STREAM, 0);
@@ -2000,7 +2000,7 @@ void send_to_child(int n, int x)
     strcpy(buffer3, GET_NAME(x));
     strcat(buffer3, "\n");
     m = write(sockfd[n], buffer3, strlen(buffer3));
-    if (n < 0) {
+    if (m < 0) {
 	error(SYSTEM_ERR, "send to child", NIL, 0);
     }
 }
@@ -2107,6 +2107,8 @@ int dp_transfer(int arglist, int th)
     char ftp_url[256],local_file_path[256];
 
     arg1 = car(arglist);
+    if(!stringp(arg1))
+        error(NOT_STR,"dp-transfer", arg1,th);
 
     
     // open local file
@@ -2122,15 +2124,12 @@ int dp_transfer(int arglist, int th)
         error(SYSTEM_ERR, "dp-transfer" , arg1, th);
     }
 
+    memset(local_file_path,0,sizeof(ftp_url));
+    strcpy(local_file_path, GET_NAME(arg1));
+
     for(i=0; i<child_num; i++){
         memset(ftp_url,0,sizeof(ftp_url));
-        strcpy(ftp_url, "ftp://");
-        strcat(ftp_url, child_ip[i]);
-        strcat(ftp_url, "/");
-        strcat(ftp_url, GET_NAME(arg1));
-
-        memset(local_file_path,0,sizeof(ftp_url));
-        strcpy(local_file_path, GET_NAME(arg1));
+        snprintf(ftp_url, sizeof(ftp_url), "ftp://%s/%s", child_ip[i], GET_NAME(arg1));
         
         // set URL of FTP server
         curl_easy_setopt(curl, CURLOPT_URL, ftp_url);

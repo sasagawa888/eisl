@@ -906,6 +906,7 @@ int f_dp_create(int arglist, int th);
 int f_dp_close(int arglist, int th);
 int f_dp_let(int arglist, int th);
 int f_dp_system(int arglist, int th);
+int f_dp_transfer(int arglist, int th);
 int f_dummyp(int arglist, int th);
 int f_dynamic(int arglist, int th);
 int f_dynamic_let(int arglist, int th);

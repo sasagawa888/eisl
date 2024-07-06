@@ -2176,7 +2176,6 @@ int f_dp_receive(int arglist, int th)
 	    break;
 	}
 	fwrite(buffer3, sizeof(char), bytes_received, file);
-    printf("%s\n", buffer3);
     }
     fclose(file);
 

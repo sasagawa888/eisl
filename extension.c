@@ -1318,7 +1318,7 @@ int sexp_to_str(int x)
 
 int write_to_pipe(int n, int x)
 {
-    int i, j, pos, c;
+    int i, j, pos, c, m;
     char buffer1[10], buffer2[STRSIZE];
 
     strcpy(buffer2, GET_NAME(x));
@@ -1337,7 +1337,9 @@ int write_to_pipe(int n, int x)
 
 	}
 	// write to pipe
-	write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
+	m = write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
+    if(m<0)
+    error(SYSTEM_ERR,"write_to_pipe",NIL,0);
 
 	if (c == 0)
 	    break;
@@ -1403,7 +1405,7 @@ int read_from_pipe(int n)
 int read_from_pipe_part(int n)
 {
     char sub_buffer[256];
-    int i, j, bytes_read;
+    int i, j;
 
 
     while (1) {
@@ -1418,7 +1420,7 @@ int read_from_pipe_part(int n)
 
   exit:
     memset(buffer3, 0, sizeof(buffer3));
-    bytes_read = read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
+    read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
 
   retry:
     if (buffer3[0] == '\x02') {
@@ -1451,7 +1453,7 @@ int read_from_pipe_part(int n)
 int read_from_pipe_part_nth(int n)
 {
     char sub_buffer[256];
-    int i, j, bytes_read;
+    int i, j;
 
 
     while (1) {
@@ -1464,7 +1466,7 @@ int read_from_pipe_part_nth(int n)
 
   exit:
     memset(buffer3, 0, sizeof(buffer3));
-    bytes_read = read(pipe_c2p[n][R], buffer3, sizeof(buffer3));
+    read(pipe_c2p[n][R], buffer3, sizeof(buffer3));
 
   retry:
     if (buffer3[0] == '\x02') {
@@ -1744,14 +1746,16 @@ int f_mp_let(int arglist, int th)
 // close all process 
 int f_mp_close(int arglist, int th)
 {
-    int i;
+    int i,m;
 
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "mp-close", arglist, th);
 
     for (i = 0; i < process_pt; i++) {
 	char data[] = "(quit)";
-	write(pipe_p2c[i][W], data, sizeof(data));
+	m =write(pipe_p2c[i][W], data, sizeof(data));
+    if(m<0)
+    error(SYSTEM_ERR,"mp-close",NIL,th);
     }
 
     process_pt = 0;
@@ -1779,8 +1783,6 @@ int f_mp_report(int arglist, int th)
 
 int f_dp_create(int arglist, int th)
 {
-
-    int n;
 
     child_num = 0;
     while (!nullp(arglist)) {
@@ -2097,7 +2099,7 @@ int f_dp_system(int arglist, int th __unused)
     return (res);
 }
 
-int dp_transfer(int arglist, int th)
+int f_dp_transfer(int arglist, int th)
 {
     int arg1,i;
 

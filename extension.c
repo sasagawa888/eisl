@@ -1789,7 +1789,6 @@ int f_dp_create(int arglist, int th)
 	if (!stringp(car(arglist)))
 	    error(NOT_STR, "dp-create", car(arglist), th);
 
-	strcpy(child_ip[child_num], GET_NAME(car(arglist)));
 	init_child(child_num, car(arglist));
 	arglist = cdr(arglist);
 	child_num++;
@@ -2166,17 +2165,18 @@ int f_dp_receive(int arglist, int th)
 
     file = fopen(GET_NAME(arg1), "w");
     if (!file) {
-        error(CANT_OPEN, "dp-receive", arg1,th);
+	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
     int bytes_received;
-    while ((bytes_received = read(sockfd[1], buffer3, sizeof(buffer3))) > 0) {
-        if (buffer3[0] == EOF) {
-            break;
-        }
-        fwrite(buffer3, sizeof(char), bytes_received, file);
+    while ((bytes_received =
+	    read(sockfd[1], buffer3, sizeof(buffer3))) > 0) {
+	if (buffer3[0] == EOF) {
+	    break;
+	}
+	fwrite(buffer3, sizeof(char), bytes_received, file);
     }
     fclose(file);
 
-    return(T);
+    return (T);
 }

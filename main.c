@@ -261,7 +261,6 @@ int child_signal1[PROCSIZE];
 int sockfd[PARASIZE];
 socklen_t parent;
 socklen_t child[PARASIZE];
-char child_ip[20][PARASIZE];
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
 pthread_t receiver_thread;

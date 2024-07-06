@@ -660,7 +660,6 @@ extern int child_signal1[PROCSIZE];
 extern int sockfd[PARASIZE];
 extern socklen_t parent;
 extern socklen_t child[PARASIZE];
-extern char child_ip[20][PARASIZE];
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
 extern pthread_t receiver_thread;

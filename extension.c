@@ -2175,7 +2175,7 @@ int f_dp_receive(int arglist, int th)
         }
         fwrite(buffer3, sizeof(char), bytes_received, file);
     }
-    flose(file);
+    fclose(file);
 
     return(T);
 }

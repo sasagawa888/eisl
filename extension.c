@@ -13,7 +13,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <curl/curl.h>
 
 #ifdef __rpi__
 #include <wiringPi.h>
@@ -2118,58 +2117,6 @@ int f_dp_transfer(int arglist, int th)
 {
     int arg1,i;
 
-    CURL *curl;
-    CURLcode res;
-    FILE *file;
-    char ftp_url[256],local_file_path[256];
-
-    arg1 = car(arglist);
-    if(!stringp(arg1))
-        error(NOT_STR,"dp-transfer", arg1,th);
-
-    
-    // open local file
-    file = fopen(local_file_path, "rb");
-    if (!file) {
-        error(CANT_OPEN, "dp-transfer" , arg1, th);
-    }
-
-    // initilize libcurl
-    curl_global_init(CURL_GLOBAL_DEFAULT);
-    curl = curl_easy_init();
-    if (!curl) {
-        error(SYSTEM_ERR, "dp-transfer" , arg1, th);
-    }
-
-    memset(local_file_path,0,sizeof(ftp_url));
-    strcpy(local_file_path, GET_NAME(arg1));
-
-    for(i=0; i<child_num; i++){
-        memset(ftp_url,0,sizeof(ftp_url));
-        snprintf(ftp_url, sizeof(ftp_url), "ftp://%s/%s", child_ip[i], GET_NAME(arg1));
-        
-        // set URL of FTP server
-        curl_easy_setopt(curl, CURLOPT_URL, ftp_url);
-
-        // set file to upload 
-        curl_easy_setopt(curl, CURLOPT_READDATA, file);
-        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-
-        // transfer file
-        res = curl_easy_perform(curl);
-        if (res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        }
-
-        // cleanup
-        curl_easy_cleanup(curl);
-    }
-
-    // close local file
-    fclose(file);
-
-    // cleanup libcurl
-    curl_global_cleanup();
 
     return(T);
 }

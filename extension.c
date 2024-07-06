@@ -2173,7 +2173,8 @@ int f_dp_receive(int arglist, int th)
     int bytes_received;
     while ((bytes_received =
 	    read(sockfd[1], buffer3, sizeof(buffer3))) > 0) {
-	if (buffer3[bytes_received - 1] == EOF) {
+	if (buffer3[bytes_received-1] == EOF) {
+        fwrite(buffer3, sizeof(char), bytes_received-1, file);
 	    break;
 	}
 	fwrite(buffer3, sizeof(char), bytes_received, file);

@@ -2148,6 +2148,7 @@ int f_dp_transfer(int arglist, int th)
 	if (m < 0) {
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}
+    receive_from_child(i);
     }
 
     fclose(file);
@@ -2175,6 +2176,7 @@ int f_dp_receive(int arglist, int th)
 	    break;
 	}
 	fwrite(buffer3, sizeof(char), bytes_received, file);
+    printf("%s\n", buffer3);
     }
     fclose(file);
 

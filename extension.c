@@ -86,6 +86,8 @@ void init_exsubr(void)
     def_subr("DP-SYSTEM", f_dp_system);
     def_subr("DP-TRANSFER", f_dp_transfer);
     def_subr("DP-RECEIVE", f_dp_receive);
+    def_subr("DP-LOAD", f_dp_load);
+    def_subr("DP-COMPILE", f_dp_compile);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -2178,6 +2180,44 @@ int f_dp_receive(int arglist, int th)
 	fwrite(buffer3, sizeof(char), bytes_received, file);
     }
     fclose(file);
+
+    return (T);
+}
+
+
+int f_dp_load(int arglist, int th)
+{
+    int arg1, exp ,i;
+
+    arg1 = car(arglist);
+    if (!stringp(arg1))
+	error(NOT_STR, "dp-load", arg1, th);
+
+    exp = list2(make_sym("load"), arg1);
+
+    for (i = 0; i < child_num; i++) {
+	send_to_child(i, sexp_to_str(exp));
+    receive_from_child(i);
+    }
+
+    return (T);
+}
+
+
+int f_dp_compile(int arglist, int th)
+{
+    int arg1, exp ,i;
+
+    arg1 = car(arglist);
+    if (!stringp(arg1))
+	error(NOT_STR, "dp-compile", arg1, th);
+
+    exp = list2(make_sym("compile-file"), arg1);
+
+    for (i = 0; i < child_num; i++) {
+	send_to_child(i, sexp_to_str(exp));
+    receive_from_child(i);
+    }
 
     return (T);
 }

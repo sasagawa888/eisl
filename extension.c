@@ -1337,8 +1337,8 @@ int write_to_pipe(int n, int x)
 	}
 	// write to pipe
 	m = write(pipe_p2c[n][W], buffer1, sizeof(buffer1));
-    if(m<0)
-    error(SYSTEM_ERR,"write_to_pipe",NIL,0);
+	if (m < 0)
+	    error(SYSTEM_ERR, "write_to_pipe", NIL, 0);
 
 	if (c == 0)
 	    break;
@@ -1745,16 +1745,16 @@ int f_mp_let(int arglist, int th)
 // close all process 
 int f_mp_close(int arglist, int th)
 {
-    int i,m;
+    int i, m;
 
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "mp-close", arglist, th);
 
     for (i = 0; i < process_pt; i++) {
 	char data[] = "(quit)";
-	m =write(pipe_p2c[i][W], data, sizeof(data));
-    if(m<0)
-    error(SYSTEM_ERR,"mp-close",NIL,th);
+	m = write(pipe_p2c[i][W], data, sizeof(data));
+	if (m < 0)
+	    error(SYSTEM_ERR, "mp-close", NIL, th);
     }
 
     process_pt = 0;
@@ -1787,8 +1787,8 @@ int f_dp_create(int arglist, int th)
     while (!nullp(arglist)) {
 	if (!stringp(car(arglist)))
 	    error(NOT_STR, "dp-create", car(arglist), th);
-    
-    strcpy(child_ip[child_num],GET_NAME(car(arglist)));
+
+	strcpy(child_ip[child_num], GET_NAME(car(arglist)));
 	init_child(child_num, car(arglist));
 	arglist = cdr(arglist);
 	child_num++;
@@ -2012,14 +2012,14 @@ int receive_from_child(int n)
     char sub_buffer[256];
 
     // receive from child
-    reread:
+  reread:
     memset(buffer3, 0, sizeof(buffer3));
     m = read(sockfd[n], buffer3, sizeof(buffer3) - 1);
     if (m < 0) {
 	error(SYSTEM_ERR, "receive from child", make_int(n), 0);
     }
 
-    retry:
+  retry:
     if (buffer3[0] == '\x02') {
 	i = 0;
 	while (buffer3[i + 1] != '\x03') {
@@ -2059,9 +2059,9 @@ void *receiver(void *arg __unused)
 
 	if (child_busy_flag) {
 	    res = receive_from_parent();
-        memset(buffer3,0,sizeof(buffer3));
-        strcpy(buffer3,GET_NAME(res));
-        retry:
+	    memset(buffer3, 0, sizeof(buffer3));
+	    strcpy(buffer3, GET_NAME(res));
+	  retry:
 	    if (buffer3[0] == '\x11') {
 		/* child stop */
 
@@ -2073,16 +2073,16 @@ void *receiver(void *arg __unused)
 
 	    }
 
-        if(buffer3[1] != 0){
-            int i;
-            i= 0;
-            while(buffer3[i+1] != 0){
-                buffer3[i] = buffer3[i+1];
-                i++;
-            }
-            buffer3[i] = 0;
-            goto retry;
-        }
+	    if (buffer3[1] != 0) {
+		int i;
+		i = 0;
+		while (buffer3[i + 1] != 0) {
+		    buffer3[i] = buffer3[i + 1];
+		    i++;
+		}
+		buffer3[i] = 0;
+		goto retry;
+	    }
 
 	}
 
@@ -2113,10 +2113,69 @@ int f_dp_system(int arglist, int th __unused)
     return (res);
 }
 
+/* parent lisp */
 int f_dp_transfer(int arglist, int th)
 {
-    int arg1,i;
+    int arg1, exp, i, m;
+    FILE *file;
 
+    arg1 = car(arglist);
+    if (!stringp(arg1))
+	error(NOT_STR, "dp-transfer", arg1, th);
+
+    file = fopen(GET_NAME(arg1), "r");
+    if (!file) {
+	error(CANT_OPEN, "dp-transfer", arg1, th);
+    }
+
+    exp = list2(make_sym("dp-receive"), arg1);
+
+    for (i = 0; i < child_num; i++) {
+	send_to_child(i, sexp_to_str(exp));
+
+	int bytes_read;
+	while ((bytes_read =
+		fread(buffer3, sizeof(char), sizeof(buffer3), file)) > 0) {
+	    m = write(sockfd[i], buffer3, bytes_read);
+	    if (m < 0) {
+		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
+	    }
+	}
+
+	memset(buffer3, 0, sizeof(buffer3));
+	buffer3[0] = EOF;
+	m = write(sockfd[i], buffer3, strlen(buffer3));
+	if (m < 0) {
+	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
+	}
+    }
+
+    fclose(file);
+
+    return (T);
+}
+
+/* chidl lisp */
+int f_dp_receive(int arglist, int th)
+{
+    int arg1;
+    FILE *file;
+
+    arg1 = car(arglist);
+
+    file = fopen(GET_NAME(arg1), "w");
+    if (!file) {
+        error(CANT_OPEN, "dp-receive", arg1,th);
+    }
+
+    int bytes_received;
+    while ((bytes_received = read(sockfd[1], buffer3, sizeof(buffer3))) > 0) {
+        if (buffer3[0] == EOF) {
+            break;
+        }
+        fwrite(buffer3, sizeof(char), bytes_received, file);
+    }
+    flose(file);
 
     return(T);
 }

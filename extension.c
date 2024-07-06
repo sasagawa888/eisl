@@ -2060,16 +2060,31 @@ void *receiver(void *arg __unused)
 
 	if (child_busy_flag) {
 	    res = receive_from_parent();
-	    if (strcmp(GET_NAME(res), "***stop***\n")) {
+        memset(buffer3,0,sizeof(buffer3));
+        strcpy(buffer3,GET_NAME(res));
+        retry:
+	    if (buffer3[0] == '\x11') {
 		/* child stop */
 
-	    } else if (strcmp(GET_NAME(res), "***pause***\n")) {
+	    } else if (buffer3[0] == '\x12') {
 		/* child pause */
 
-	    } else if (strcmp(GET_NAME(res), "***resume***\n")) {
+	    } else if (buffer3[0] == '\x13') {
 		/* chidl resume */
 
 	    }
+
+        if(buffer3[1] != 0){
+            int i;
+            i= 0;
+            while(buffer3[i+1] != 0){
+                buffer3[i] = buffer3[i+1];
+                i++;
+            }
+            buffer3[i] = 0;
+            goto retry;
+        }
+
 	}
 
     }

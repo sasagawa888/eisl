@@ -22,11 +22,6 @@ Edlisのコンパイルでcurses.hファイルが見つからないというエ�
 sudo apt install libncurses-dev
 ```
 
-EISLのコンパイルでcurl.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
-
-```sh
-sudo apt-get install libcurl4-openssl-dev
-```
 
 2. Easy-ISLispを更新する場合
 - 端末上で`sudo make clean`と入力する。

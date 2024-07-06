@@ -1,4 +1,4 @@
-;;FAST compiler ver3.96
+;;FAST compiler ver4.30
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -674,6 +674,8 @@ defgeneric compile
                (comp-mp-part stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mp-let))
                (comp-mp-let stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'dp-let))
+               (comp-dp-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2367,6 +2369,70 @@ defgeneric compile
         (cond ((= i n) nil)
               (t (format stream "int ~A=Fstr_to_sexp(Fread_from_pipe(~A));" (car (car x)) i)
                  (comp-mp-let4 stream (cdr x) (+ i 1) n))))
+
+    ;; distributed paralle let
+    (defun comp-dp-let (stream x env args tail name global test clos)
+        (unless (listp (elt x 1)) (error* "dp-let: not list" (elt x 1)))
+        (format stream "({int res;")
+        (comp-mp-let1 0 stream (elt x 1) env args tail name global test clos)
+        (comp-mp-let3 stream (elt x 1) env args tail name global test clos)
+        (for ((body1 (cdr (cdr x)) (cdr body1)))
+             ((null (cdr body1))
+              (if (and (not (tailcallp (car body1) tail name))
+                      (not (not-need-res-p (car body1))))
+                 (format stream "res = "))
+              (comp stream
+                   (car body1)
+                   (append (mapcar #'car (elt x 1)) env)
+                   args
+                   tail
+                   name
+                   global
+                   test
+                   clos)
+              (if (not (not-need-colon-p (car body1)))
+                 (format stream ";~%"))
+              (format stream "res;})~%") )
+             (comp stream
+                   (car body1)
+                   (append (mapcar #'car (elt x 1)) env)
+                   args
+                   tail
+                   name
+                   global
+                   test
+                   clos)
+             (if (not (not-need-colon-p (car body1)))
+                 (format stream ";~%"))))
+
+    ;; send to child
+    (defun comp-dp-let1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fsend_to_child(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (elt (car x) 1)))
+                 (comp-dp-let2 stream (cdr (elt (car x) 1)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-dp-let1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-dp-let2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-dp-let2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+    ;; recieved args
+    (defun comp-dp-let3 (stream x env args tail name global test clos)
+        (comp-dp-let4 stream x 0 (length x)))
+
+    
+    ;; recieve args from child
+    (defun comp-dp-let4 (stream x i n)
+        (cond ((= i n) nil)
+              (t (format stream "int ~A=Fstr_to_sexp(Freceive_from_child(~A));" (car (car x)) i)
+                 (comp-dp-let4 stream (cdr x) (+ i 1) n))))
+
 
     (defun not-need-res-p (x)
         (and (consp x) (member (car x) not-need-res)))

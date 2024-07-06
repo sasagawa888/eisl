@@ -433,6 +433,9 @@ int main(int argc, char *argv[])
 		network_flag = true;
 		init_parent();
 		init_receiver();
+		str = library_file("compiler.lsp");
+		f_load(list1(make_str(str)), 0);
+		FREE(str);
 		break;
 	    case 'v':
 		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);

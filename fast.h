@@ -356,6 +356,12 @@ static inline int Fread_from_pipe(int x)
     return f1[READ_FROM_PIPE_IDX] (x);
 }
 
+static inline int Freceive_from_child(int x)
+{
+    return f1[RECEIVE_FROM_CHILD_IDX] (x);
+}
+
+
 static inline int Fkill_rest_process(int x)
 {
     return f1[KILL_REST_PROCESS_IDX] (x);
@@ -545,7 +551,10 @@ static inline int Fwrite_to_pipe(int x, int y)
     return f2[WRITE_TO_PIPE_IDX] (x, y);
 }
 
-
+static inline int Fsend_to_child(int x, int y)
+{
+    return f2[SEND_TO_CHILD_IDX] (x, y);
+}
 
 static inline int Fmakestr(const char *x)
 {

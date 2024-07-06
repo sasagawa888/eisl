@@ -128,6 +128,7 @@ void dynamic_link(int x)
     init_f1(KILL_REST_PROCESS_IDX, kill_rest_process);
     init_f1(READ_FROM_PIPE_PART_IDX, read_from_pipe_part);
     init_f1(CHECKGBC_IDX, check_gbc);
+    init_f1(RECEIVE_FROM_CHILD_IDX, receive_from_child);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile
@@ -172,6 +173,7 @@ void dynamic_link(int x)
     init_f2(PPUSH_IDX, push);
     init_f2(PSHELTERPUSH_IDX, shelter_push);
     init_f2(WRITE_TO_PIPE_IDX, write_to_pipe);
+    init_f2(SEND_TO_CHILD_IDX, send_to_child);
 
     /* argument-1 string type */
     init_f3(MAKESTR_IDX, (fn3) make_str);

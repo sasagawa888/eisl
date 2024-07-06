@@ -2200,6 +2200,8 @@ int f_dp_load(int arglist, int th)
     receive_from_child(i);
     }
 
+    eval(exp,0);
+
     return (T);
 }
 
@@ -2218,6 +2220,8 @@ int f_dp_compile(int arglist, int th)
 	send_to_child(i, sexp_to_str(exp));
     receive_from_child(i);
     }
+
+    eval(exp,0);
 
     return (T);
 }

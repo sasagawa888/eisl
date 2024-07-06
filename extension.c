@@ -2162,7 +2162,8 @@ int f_dp_receive(int arglist, int th)
 {
     int arg1;
     FILE *file;
-
+    
+    child_busy_flag = false;
     arg1 = car(arglist);
 
     file = fopen(GET_NAME(arg1), "w");

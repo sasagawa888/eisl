@@ -70,6 +70,12 @@ void init_exsubr(void)
     def_subr("EISL-TEST", f_eisl_test);
     def_subr("EISL-GET-MYSELF", f_get_myself);
 
+    def_fsubr("TIME", f_time);
+    def_fsubr("TRACE", f_trace);
+    def_fsubr("UNTRACE", f_untrace);
+    def_fsubr("DEFMODULE", f_defmodule);
+    
+
     def_subr("TRY", f_try);
     def_subr("READ-EXP", f_read_exp);
 
@@ -1121,6 +1127,257 @@ int f_delay_microseconds(int arglist, int th)
 }
 #endif
 
+double getETime()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec + (double) tv.tv_usec * 1e-6;
+}
+
+
+
+int f_time(int arglist, int th)
+{
+    int arg1;
+    double st, en;
+
+    arg1 = car(arglist);
+    if (length(arglist) != 1)
+	error(WRONG_ARGS, "time", arglist, th);
+
+    st = getETime();
+    eval(arg1, 0);
+    en = getETime();
+    Fmt_print("Elapsed Time(second)=%.6f\n", en - st);
+    return (UNDEF);
+}
+
+int f_trace(int arglist, int th)
+{
+
+    if (nullp(arglist)) {
+	return (trace_list);
+    } else {
+	while (!nullp(arglist)) {
+	    if (!symbolp(car(arglist)))
+		error(NOT_SYM, "trace", car(arglist), th);
+	    if (!member(car(arglist), trace_list)) {
+		SET_TR(car(arglist), 1);
+		trace_list = cons(car(arglist), trace_list);
+	    }
+	    arglist = cdr(arglist);
+	}
+	return (T);
+    }
+}
+
+int f_untrace(int arglist, int th)
+{
+
+    if (nullp(arglist)) {
+	while (!nullp(trace_list)) {
+	    SET_TR(car(trace_list), 0);	/* reset trace tag of symbol */
+	    SET_TR(GET_CAR(car(trace_list)), 0);	/* reset trace nest level */
+	    trace_list = cdr(trace_list);
+	}
+    } else {
+	while (!nullp(arglist)) {
+	    if (!symbolp(car(arglist)))
+		error(NOT_SYM, "untrace", car(arglist), th);
+	    SET_TR(car(arglist), 0);
+	    SET_TR(GET_CAR(car(arglist)), 0);
+	    arglist = cdr(arglist);
+	}
+	trace_list = remove_list(trace_list, arglist);
+    }
+    return (T);
+}
+
+
+
+int f_import(int arglist, int th)
+{
+    int arg1 = car(arglist);
+    if (!stringp(arg1))
+	error(NOT_SYM, "import", arg1, th);
+
+    char *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
+    char *fname = library_file(str);
+    if (access(fname, R_OK) != -1) {
+	f_load(list1(make_str(fname)), 0);
+	goto cleanup;
+    }
+
+    FREE(str);
+    str = Str_cat(GET_NAME(arg1), 1, 0, ".lsp", 1, 0);
+    FREE(fname);
+    fname = library_file(str);
+    if (access(fname, R_OK) != -1) {
+	f_load(list1(make_str(fname)), 0);
+	goto cleanup;
+    }
+    FREE(str);
+    FREE(fname);
+    error(CANT_OPEN, "import", arg1, th);
+
+  cleanup:
+    FREE(str);
+    FREE(fname);
+    return (T);
+}
+
+
+int f_defmodule(int arglist, int th __unused)
+{
+    int arg1, arg2, exports;
+
+    arg1 = car(arglist);	/* module name */
+    arg2 = cdr(arglist);	/* body */
+    exports = NIL;
+    ignore_topchk = true;
+    while (!nullp(arg2)) {
+	int sexp;
+
+	sexp = car(arg2);
+	if (symbolp(car(sexp)) && HAS_NAME(car(sexp), "DEFPUBLIC"))
+	    exports = cons(cadr(sexp), exports);
+	else if (symbolp(car(sexp)) && HAS_NAME(car(sexp), "IMPORT"))
+	    exports = append(cddr(sexp), exports);
+
+	eval(modulesubst(car(arg2), arg1, exports), 0);
+	arg2 = cdr(arg2);
+    }
+    ignore_topchk = false;
+    return (T);
+}
+
+
+int modulesubst(int addr, int module, int fname)
+{
+    int temp;
+
+    if (IS_NIL(addr) || IS_T(addr))
+	return (addr);
+    else if (numberp(addr))
+	return (addr);
+    else if (vectorp(addr))
+	return (addr);
+    else if (arrayp(addr))
+	return (addr);
+    else if (stringp(addr))
+	return (addr);
+    else if (charp(addr))
+	return (addr);
+    else if (class_symbol_p(addr))
+	return (addr);
+    else if (symbolp(addr)) {
+	if (!member(addr, fname) && !eqp(addr, make_sym(":REST"))
+	    && !eqp(addr, make_sym("&REST"))
+	    && !eqp(addr, make_sym(":READER"))
+	    && !eqp(addr, make_sym(":WRITER"))
+	    && !eqp(addr, make_sym(":ACCESSOR"))
+	    && !eqp(addr, make_sym(":BOUNDP"))
+	    && !eqp(addr, make_sym(":INITFORM"))
+	    && !eqp(addr, make_sym(":INITARG"))
+	    && !eqp(addr, make_sym("*MOST-POSITIVE-FLOAT*"))
+	    && !eqp(addr, make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    && !eqp(addr, make_sym("*PI*")))
+	    return (modulesubst1(addr, module));
+	else
+	    return (addr);
+    } else if (listp(addr)) {
+	if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "QUOTE"))) {
+	    temp = cadr(addr);
+	    if (listp(temp) && symbolp(car(temp))
+		&& (HAS_NAME(car(temp), "UNQUOTE")))
+		return (cons
+			(car(addr),
+			 modulesubst(cdr(addr), module, fname)));
+	    else
+		return (addr);
+	} else if ((symbolp(car(addr)))
+		   && (HAS_NAME(car(addr), "QUASI-QUOTE")))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "UNQUOTE")))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if ((symbolp(car(addr)))
+		 && (HAS_NAME(car(addr), "UNQUOTE-SPLICING")))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if (subrp(car(addr)))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if ((symbolp(car(addr)))
+		 && (HAS_NAME(car(addr), "DEFPUBLIC")))
+	    return (cons
+		    (make_sym("DEFUN"),
+		     cons(cadr(addr),
+			  modulesubst(cddr(addr), module, fname))));
+	else if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "DEFUN")))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if ((symbolp(car(addr))) && (HAS_NAME(car(addr), ":METHOD")))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if ((symbolp(car(addr))) && (HAS_NAME(car(addr), "CASE")))
+	    return (cons
+		    (car(addr),
+		     cons(modulesubst(cadr(addr), module, fname),
+			  modulesubst_case(cddr(addr), module, fname))));
+	else if ((symbolp(car(addr)))
+		 && (HAS_NAME(car(addr), "CASE-USING")))
+	    return (cons
+		    (car(addr),
+		     cons(modulesubst(cadr(addr), module, fname),
+			  modulesubst_case(cddr(addr), module, fname))));
+	else if (fsubrp(car(addr)))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if (macrop(car(addr)))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else if (genericp(car(addr)))
+	    return (cons
+		    (car(addr), modulesubst(cdr(addr), module, fname)));
+	else
+	    return (cons
+		    (modulesubst(car(addr), module, fname),
+		     modulesubst(cdr(addr), module, fname)));
+
+    }
+    return (T);
+}
+
+int modulesubst1(int x, int module)
+{
+    char str[SYMSIZE];
+
+    Fmt_sfmt(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
+    return (make_sym(str));
+}
+
+
+int modulesubst_case(int addr, int module, int fname)
+{
+    int bodies, newbodies;
+
+    bodies = addr;
+    newbodies = NIL;
+
+    while (!nullp(bodies)) {
+	int body, newbody;
+
+	body = car(bodies);
+	newbody = cons(car(body), modulesubst(cdr(body), module, fname));
+	newbodies = cons(newbody, newbodies);
+
+	bodies = cdr(bodies);
+    }
+    newbodies = reverse(newbodies);
+    return (newbodies);
+}
 
 
 /*

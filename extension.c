@@ -1910,7 +1910,7 @@ int write_to_pipe(int n, int x)
 }
 
 /*  Protocol
-*   Message: 0x10, message, 0x00
+*   Message: 0x02, message, 0x03
 *   Error: 0x15
 *   Computation results: non
 */

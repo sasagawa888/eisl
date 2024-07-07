@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <pthread.h>
 
 #ifdef __rpi__
 #include <wiringPi.h>
@@ -71,6 +72,11 @@ void init_exsubr(void)
 
     def_subr("TRY", f_try);
     def_subr("READ-EXP", f_read_exp);
+
+    def_fsubr("MT-LET", f_mt_let);
+    def_fsubr("MT-CALL", f_mt_call);
+    def_fsubr("MT-LOCK", f_mt_lock);
+    def_fsubr("MT-EXEC", f_mt_exec);
 
     def_subr("MP-CREATE", f_mp_create);
     def_subr("MP-CLOSE", f_mp_close);
@@ -1240,6 +1246,299 @@ int f_read_exp(int arglist, int th)
     return (res);
 }
 
+
+/* multi thread parallel functions */
+void mt_enqueue(int n)
+{
+    mt_queue[mt_queue_pt] = n;
+    mt_queue_pt++;
+    pthread_mutex_lock(&mutex);
+    pthread_cond_signal(&mt_cond_queue);
+    pthread_mutex_unlock(&mutex);
+}
+
+int mt_dequeue(int arg)
+{
+    int num, i;
+
+    if (mt_queue_pt == 0) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&mt_cond_queue, &mutex);
+	pthread_mutex_unlock(&mutex);
+    }
+
+    num = mt_queue[0];
+    mt_queue_pt--;
+    for (i = 0; i < mt_queue_pt; i++) {
+	mt_queue[i] = mt_queue[i + 1];
+    }
+    pthread_mutex_lock(&mutex);
+    para_input[num] = arg;
+    para_output[num] = NIL;
+    pthread_cond_signal(&mt_cond_para[num]);
+    pthread_mutex_unlock(&mutex);
+
+    return (num);
+}
+
+int eval_para(int arg)
+{
+    int num;
+
+    num = mt_dequeue(arg);
+    return (num);
+}
+
+void *parallel(void *arg)
+{
+    int num = *(int *) arg;
+
+    while (1) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_wait(&mt_cond_para[num], &mutex);
+	pthread_mutex_unlock(&mutex);
+	if (parallel_exit_flag)
+	    goto exit;
+
+	ep[num] = ep[0];
+	TRY para_output[num] = eval(para_input[num], num);
+	EXCEPT(Exit_Thread);
+	END_TRY;
+	mt_enqueue(num);
+	if (mt_queue_pt == mt_queue_num) {
+	    pthread_mutex_lock(&mutex);
+	    pthread_cond_signal(&mt_cond_main);
+	    pthread_mutex_unlock(&mutex);
+	}
+    }
+  exit:
+    pthread_exit(NULL);
+}
+
+void init_para(void)
+{
+    int i;
+
+    /* mt_queue[1,2,3,4,...] worker thread number 
+     * mt_para_thread[1] has worker-number 1
+     * mt_para_thread[2] has worker-number 2 ... 
+     */
+    for (i = 0; i < mt_queue_num; i++) {
+	mt_queue[i] = i + 1;
+    }
+
+    for (i = 0; i < mt_queue_num; i++) {
+	pthread_create(&mt_para_thread[i + 1], NULL, parallel,
+		       &mt_queue[i]);
+    }
+
+    mt_queue_pt = mt_queue_num;
+}
+
+
+void exit_para(void)
+{
+    int i;
+
+    parallel_exit_flag = true;
+    for (i = 1; i <= mt_queue_num; i++) {
+	pthread_mutex_lock(&mutex);
+	pthread_cond_signal(&mt_cond_para[i]);
+	pthread_mutex_unlock(&mutex);
+    }
+
+}
+
+int get_para_output(int n)
+{
+    return (para_output[n]);
+}
+
+int wait_para(void)
+{
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&mt_cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+    return (0);
+}
+
+
+int f_mt_let(int arglist, int th)
+{
+    int arg1, arg2, temp, i, res, num[PARASIZE];
+
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    if (length(arglist) == 0)
+	error(WRONG_ARGS, "mt-let", arglist, th);
+    if (length(arg1) > mt_queue_num)
+	error(WRONG_ARGS, "mt-let", arg1, th);
+    if (!listp(arg1))
+	error(IMPROPER_ARGS, "mt-let", arg1, th);
+    temp = arg1;
+    while (!nullp(temp)) {
+	int temparg1;
+
+	temparg1 = car(car(temp));
+	if (improper_list_p(car(temp)))
+	    error(IMPROPER_ARGS, "mt-let", car(temp), th);
+	if (length(car(temp)) != 2)
+	    error(IMPROPER_ARGS, "mt-let", car(temp), th);
+	if (!symbolp(temparg1))
+	    error(NOT_SYM, "mt-let", temparg1, th);
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    error(WRONG_ARGS, "mt-let", arg1, th);
+	if (STRING_REF(temparg1, 0) == ':'
+	    || STRING_REF(temparg1, 0) == '&')
+	    error(WRONG_ARGS, "mt-let", arg1, th);
+	if (!listp(cadr(temp)))
+	    error(WRONG_ARGS, "mt-let", arg1, th);
+	temp = cdr(temp);
+    }
+
+    check_gbc(th);
+
+    temp = arg1;
+    i = 0;
+    parallel_flag = 1;
+    while (!nullp(temp)) {
+	num[i] = eval_para(cadr(car(temp)));
+	temp = cdr(temp);
+	i++;
+    }
+
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&mt_cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+    parallel_flag = 0;
+    if (error_flag) {
+	error_flag = false;
+	signal_condition(signal_condition_x, signal_condition_y, th);
+    }
+
+    temp = arg1;
+    i = 0;
+    while (!nullp(temp)) {
+	add_lex_env(car(car(temp)), para_output[num[i]], 0);
+	temp = cdr(temp);
+	i++;
+    }
+
+    res = NIL;
+    while (arg2 != NIL) {
+	shelter_push(arg2, 0);
+	res = eval(car(arg2), 0);
+	shelter_pop(0);
+	arg2 = cdr(arg2);
+    }
+    return (res);
+}
+
+
+int f_mt_call(int arglist, int th)
+{
+    int arg1, arg2, temp, i, num[PARASIZE];
+
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    if (length(arglist) == 0)
+	error(WRONG_ARGS, "mt-call", arglist, th);
+    if (length(arg2) > mt_queue_num)
+	error(WRONG_ARGS, "mt-call", arg1, th);
+
+    temp = arg2;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "mt-call", arg2, th);
+	temp = cdr(temp);
+    }
+
+    check_gbc(th);
+
+    temp = arg2;
+    i = 0;
+    parallel_flag = 1;
+    while (!nullp(temp)) {
+	num[i] = eval_para(car(temp));
+	temp = cdr(temp);
+	i++;
+    }
+
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&mt_cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+    parallel_flag = 0;
+    if (error_flag) {
+	error_flag = false;
+	signal_condition(signal_condition_x, signal_condition_y, th);
+    }
+
+    temp = NIL;
+    i--;
+    while (i >= 0) {
+	temp = tcons(para_output[num[i]], temp, th);
+	i--;
+    }
+    return (apply(eval(arg1, th), temp, th));
+}
+
+
+int f_mt_exec(int arglist, int th)
+{
+    int temp, i, num[PARASIZE];
+
+    if (length(arglist) == 0)
+	error(WRONG_ARGS, "mt-exec", arglist, th);
+    if (length(arglist) > mt_queue_num)
+	error(WRONG_ARGS, "mt-exec", arglist, th);
+
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "mt-exec", arglist, th);
+	temp = cdr(temp);
+    }
+
+
+    check_gbc(th);
+
+    temp = arglist;
+    i = 0;
+    parallel_flag = 1;
+    while (!nullp(temp)) {
+	num[i] = eval_para(car(temp));
+	temp = cdr(temp);
+	i++;
+    }
+
+    pthread_mutex_lock(&mutex);
+    pthread_cond_wait(&mt_cond_main, &mutex);
+    pthread_mutex_unlock(&mutex);
+    parallel_flag = 0;
+    if (error_flag) {
+	error_flag = false;
+	signal_condition(signal_condition_x, signal_condition_y, th);
+    }
+
+    i--;
+    return (para_output[num[i]]);
+}
+
+
+
+int f_mt_lock(int arglist, int th)
+{
+
+    int res;
+
+    pthread_mutex_lock(&mutex1);
+    res = f_progn(arglist, th);
+    pthread_mutex_unlock(&mutex1);
+    return (res);
+}
 
 
 //-----------multi process-----------

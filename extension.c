@@ -2593,7 +2593,7 @@ int receive_from_child_part(int n, int opt)
     return (res);
 }
 
-int receive_from_child_t_part1(int n, int opt)
+int receive_from_child_part1(int n, int opt)
 {
     int m, i;
 

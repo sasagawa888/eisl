@@ -72,6 +72,3 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 
 ```
 
-![Medium](https://medium.com/@kenichisasagawa/distributed-parallel-lisp-midterm-report-f17c914a47fd)
-
-

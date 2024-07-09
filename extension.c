@@ -95,13 +95,13 @@ void init_exsubr(void)
     def_subr("DP-CREATE", f_dp_create);
     def_subr("DP-CLOSE", f_dp_close);
     def_fsubr("DP-LET", f_dp_let);
+    def_fsubr("DP-CALL", f_dp_call);
+    def_fsubr("DP-EXEC", f_dp_exec);
     def_subr("DP-SYSTEM", f_dp_system);
     def_subr("DP-TRANSFER", f_dp_transfer);
     def_subr("DP-RECEIVE", f_dp_receive);
     def_subr("DP-LOAD", f_dp_load);
     def_subr("DP-COMPILE", f_dp_compile);
-    def_subr("DP-CALL", f_dp_call);
-    def_subr("DP-EXEC", f_dp_exec);
     def_subr("DP-REPORT", f_dp_report);
 
 #ifdef __rpi__

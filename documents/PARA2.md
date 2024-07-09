@@ -17,6 +17,12 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 
 - (dp-let forms body): Distributed parallel version of the let syntax.
 
+- (dp-call fun a0 a1 ... an): Distributed parallel version of the call syntax.
+
+- (dp-exec a0 a1 ... an): Distributed parallel version of progn
+
+- (dp-part opt a0 a1 ... an): Sidtributed paralle version partial-execution.
+
 - (dp-transfer fn): Transfers file fn to all child machines from the parent machine.
 
 - (dp-compile fn): Compiles file fn on both parent and child machines.

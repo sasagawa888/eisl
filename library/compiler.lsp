@@ -2546,7 +2546,7 @@ defgeneric compile
         (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
 
     ;; receive args from pipe(option=t)
-    (defun comp-mp-part5 (stream i n)
+    (defun comp-dp-part5 (stream i n)
         (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
 
 

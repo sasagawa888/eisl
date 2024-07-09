@@ -2578,7 +2578,7 @@ void *receiver(void *arg __unused)
 	  retry:
 	    if (buffer3[0] == '\x11') {
 		/* child stop */
-
+        exit_flag = 1;
 	    } else if (buffer3[0] == '\x12') {
 		/* child pause */
 

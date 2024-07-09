@@ -663,6 +663,7 @@ extern socklen_t child[PARASIZE];
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
 extern pthread_t receiver_thread;
+extern int child_result[PARASIZE];
 
 // -------error code---
 enum {
@@ -911,6 +912,7 @@ int f_dp_load(int arglist, int th);
 int f_dp_compile(int arglist, int th);
 int f_dp_call(int arglist, int th);
 int f_dp_exec(int arglist, int th);
+int f_dp_part(int arglist, int th);
 int f_dp_report(int arglist, int th);
 int f_dummyp(int arglist, int th);
 int f_dynamic(int arglist, int th);
@@ -1280,6 +1282,8 @@ int read_from_pipe(int n);
 int read_from_pipe_part(int n);
 int receive_from_child(int n);
 int receive_from_parent(void);
+int receive_from_child_part(int n, int opt);
+int receive_from_child_part1(int n, int opt);
 int sexp_to_str(int x);
 int str_to_sexp(int x);
 int set_error_handler(int x);

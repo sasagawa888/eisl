@@ -90,7 +90,7 @@ static const char *extended[] = {
     "mt-let", "mt-call", "mt-exec", "mt-lock", "mp-create", "mp-exec",
     "mp-close", "mp-call", "mp-let", "mp-part", "mp-report",
     "dp-create", "dp-let", "dp-close", "dp-system", "dp-transfer",
-    "dp-load", "dp-compile", "dp-call", "dp-exec", "dp-report",
+    "dp-load", "dp-compile", "dp-call", "dp-exec", "dp-report", "dp-part",
 };
 
 static bool in_syntax_table(const char *str)

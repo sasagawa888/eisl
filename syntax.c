@@ -76,7 +76,7 @@ void init_syntax(void)
     def_fsubr("WITH-OPEN-IO-FILE", f_with_open_io_file);
     def_fsubr("THE", f_the);
     def_fsubr("ASSURE", f_assure);
-    
+
 }
 
 // --FSUBR-----------
@@ -2282,4 +2282,3 @@ int f_assure(int arglist, int th)
 
     return (UNDEF);
 }
-

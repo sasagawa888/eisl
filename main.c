@@ -264,6 +264,7 @@ socklen_t child[PARASIZE];
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
 pthread_t receiver_thread;
+int child_result[PARASIZE];
 
 
 

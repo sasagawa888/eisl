@@ -676,6 +676,10 @@ defgeneric compile
                (comp-mp-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'dp-let))
                (comp-dp-let stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'dp-call))
+               (comp-dp-call stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'dp-exec))
+               (comp-dp-exec stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2213,7 +2217,7 @@ defgeneric compile
                  (comp-mp-call2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
-    ;; apply recieved args
+    ;; apply received args
     (defun comp-mp-call3 (stream x env args tail name global test clos)
         (format stream "res=Fpapply(")
         (comp stream (car x) env args tail name global test clos)
@@ -2221,7 +2225,7 @@ defgeneric compile
         (comp-mp-call4 stream 0 (length (cdr x)))
         (format stream ",0);"))
     
-    ;; recieve args from pipe
+    ;; receive args from pipe
     (defun comp-mp-call4 (stream i n)
         (cond ((= i n) (format stream "NIL"))
               (t (format stream "Fcons(Fstr_to_sexp(Fread_from_pipe(~A))," i)
@@ -2252,11 +2256,11 @@ defgeneric compile
                  (format stream ")"))))
 
 
-    ;; recieved args
+    ;; received args
     (defun comp-mp-exec3 (stream x env args tail name global test clos)
         (comp-mp-exec4 stream 0 (length (cdr x))))
     
-    ;; recieve args from pipe
+    ;; receive args from pipe
     (defun comp-mp-exec4 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe(~A));" i)
@@ -2288,20 +2292,20 @@ defgeneric compile
                  (format stream ")"))))
 
 
-    ;; recieved args
+    ;; received args
     (defun comp-mp-part3 (opt stream x env args tail name global test clos)
         (cond ((null opt) (comp-mp-part4 stream 0 (length x)))
               ((eq opt t) (comp-mp-part5 stream 0 (length x)))
               (t (error* "mp-part: illegal option" opt))))
     
-    ;; recieve args from pipe(option=nil)
+    ;; receive args from pipe(option=nil)
     (defun comp-mp-part4 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
                  (format stream "if(res == NIL) goto exit;")
                  (comp-mp-part4 stream (+ i 1) n))))
 
-    ;; recieve args from pipe(option=t)
+    ;; receive args from pipe(option=t)
     (defun comp-mp-part5 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
@@ -2359,12 +2363,12 @@ defgeneric compile
                  (comp-mp-let2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
-    ;; recieved args
+    ;; received args
     (defun comp-mp-let3 (stream x env args tail name global test clos)
         (comp-mp-let4 stream x 0 (length x)))
 
     
-    ;; recieve args from pipe
+    ;; receive args from pipe
     (defun comp-mp-let4 (stream x i n)
         (cond ((= i n) nil)
               (t (format stream "int ~A=Fstr_to_sexp(Fread_from_pipe(~A));" (car (car x)) i)
@@ -2422,16 +2426,88 @@ defgeneric compile
                  (comp-dp-let2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
-    ;; recieved args
+    ;; received args
     (defun comp-dp-let3 (stream x env args tail name global test clos)
         (comp-dp-let4 stream x 0 (length x)))
 
     
-    ;; recieve args from child
+    ;; receive args from child
     (defun comp-dp-let4 (stream x i n)
         (cond ((= i n) nil)
               (t (format stream "int ~A=Fstr_to_sexp(Freceive_from_child(~A));" (car (car x)) i)
                  (comp-dp-let4 stream (cdr x) (+ i 1) n))))
+
+    (defun comp-dp-call (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (comp-dp-call1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-dp-call3 stream (cdr x) env args tail name global test clos)
+        (format stream "res;})"))
+
+    ;; send to child
+    (defun comp-dp-call1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fsend_to_child(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
+                 (comp-dp-call2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-dp-call1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+                 
+    ;; eval args
+    (defun comp-dp-call2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-dp-call2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+    ;; apply received args
+    (defun comp-dp-call3 (stream x env args tail name global test clos)
+        (format stream "res=Fpapply(")
+        (comp stream (car x) env args tail name global test clos)
+        (format stream ",")
+        (comp-dp-call4 stream 0 (length (cdr x)))
+        (format stream ",0);"))
+    
+    ;; receive args from child
+    (defun comp-dp-call4 (stream i n)
+        (cond ((= i n) (format stream "NIL"))
+              (t (format stream "Fcons(Fstr_to_sexp(Freceive_from_child(~A))," i)
+                 (comp-dp-call4 stream (+ i 1) n)
+                 (format stream ")"))))
+
+    (defun comp-dp-exec (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (comp-dp-exec1 0 stream (cdr x) env args tail name global test clos)
+        (comp-dp-exec3 stream (cdr x) env args tail name global test clos)
+        (format stream "res;})"))
+
+    ;; send to child
+    (defun comp-dp-exec1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fsend_to_child(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
+                 (comp-dp-exec2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-dp-exec1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-dp-exec2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-dp-exec2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+
+    ;; received args
+    (defun comp-dp-exec3 (stream x env args tail name global test clos)
+        (comp-dp-exec4 stream 0 (length (cdr x))))
+    
+    ;; receive args from child
+    (defun comp-dp-exec4 (stream i n)
+        (cond ((= i n) nil)
+              (t (format stream "res=Fstr_to_sexp(Freceive_from_child(~A));" i)
+                 (comp-dp-exec4 stream (+ i 1) n))))
 
 
     (defun not-need-res-p (x)

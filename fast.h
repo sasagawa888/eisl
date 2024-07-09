@@ -556,6 +556,12 @@ static inline int Fsend_to_child(int x, int y)
     return f2[SEND_TO_CHILD_IDX] (x, y);
 }
 
+static inline int Freceive_from_child_part(int x, int y)
+{
+    return f2[RECEIVE_FROM_CHILD_PART_IDX] (x, y);
+}
+
+
 static inline int Fmakestr(const char *x)
 {
     return f3[MAKESTR_IDX] ((char *) x);

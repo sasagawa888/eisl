@@ -100,6 +100,9 @@ void init_exsubr(void)
     def_subr("DP-RECEIVE", f_dp_receive);
     def_subr("DP-LOAD", f_dp_load);
     def_subr("DP-COMPILE", f_dp_compile);
+    def_subr("DP-CALL", f_dp_call);
+    def_subr("DP-EXEC", f_dp_exec);
+    def_subr("DP-REPORT", f_dp_report);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -2781,5 +2784,86 @@ int f_dp_compile(int arglist, int th)
 
     eval(exp,0);
 
+    return (T);
+}
+
+// fsubr (dp-call fun arg1 arg2 ... argn)
+int f_dp_call(int arglist, int th)
+{
+    int arg1, arg2, temp, res, n, i, args, exp;
+
+    arg1 = car(arglist);	//fun
+    arg2 = cdr(arglist);	//args
+    n = length(arg2);
+    if (n > process_pt)
+	error(ILLEGAL_ARGS, "dp-call", arg2, th);
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "dp-call", arglist, th);
+	temp = cdr(temp);
+    }
+
+    i = 0;
+    while (!nullp(arg2)) {
+	exp = eval_args(car(arg2));
+	send_to_child(i, sexp_to_str(exp));
+	arg2 = cdr(arg2);
+	i++;
+    }
+
+    args = NIL;
+    for (i = 0; i < n; i++) {
+	args = cons(str_to_sexp(receive_from_child(i)), args);
+    }
+    args = reverse(args);
+
+    res = apply(eval(arg1, th), args, th);
+    return (res);
+}
+
+
+int f_dp_exec(int arglist, int th)
+{
+    int temp, res, n, i, exp;
+
+    n = length(arglist);
+    if (n > process_pt)
+	error(ILLEGAL_ARGS, "dp-exec", arglist, th);
+    temp = arglist;
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "dp-exec", arglist, th);
+	temp = cdr(temp);
+    }
+
+    i = 0;
+    temp = arglist;
+    while (!nullp(temp)) {
+	exp = eval_args(car(temp));
+	send_to_child(i, sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
+    }
+
+    for (i = 0; i < n; i++) {
+	res = str_to_sexp(receive_from_child(i));
+    }
+
+    return (res);
+
+}
+
+int f_dp_report(int arglist, int th)
+{
+    int arg1;
+    char sub_buffer[STRSIZE];
+
+    arg1 = car(arglist);
+    if (!stringp(arg1))
+	error(NOT_STR, "dp-report", arg1, 0);
+
+    fprintf(sub_buffer, "\x02%s\x03" , GET_NAME(arg1));
+    send_to_parent(sub_buffer);
     return (T);
 }

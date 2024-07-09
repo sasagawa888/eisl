@@ -2011,53 +2011,6 @@ int read_from_pipe_part(int n)
 
 }
 
-int read_from_pipe_part_nth(int n)
-{
-    char sub_buffer[256];
-    int i, j;
-
-
-    while (1) {
-	if (child_signal[n] == 1) {
-	    child_signal[n] = -1;
-	    goto exit;
-	}
-	usleep(1000);
-    }
-
-  exit:
-    memset(buffer3, 0, sizeof(buffer3));
-    read(pipe_c2p[n][R], buffer3, sizeof(buffer3));
-
-  retry:
-    if (buffer3[0] == '\x02') {
-	i = 0;
-	while (buffer3[i + 1] != '\x03') {
-	    sub_buffer[i] = buffer3[i + 1];
-	    i++;
-	}
-	sub_buffer[i] = 0;
-	printf("%s", sub_buffer);
-	j = 0;
-	i = i + 2;
-	while (buffer3[j + i] != 0) {
-	    buffer3[j] = buffer3[j + i];
-	    j++;
-	}
-	buffer3[j] = 0;
-	if (buffer3[0] == 0)
-	    goto exit;
-	else
-	    goto retry;
-    } else if (buffer3[0] == '\x15') {
-	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else {
-	return (make_str(buffer3));
-    }
-
-}
-
-
 
 int clear_child_signal(void)
 {

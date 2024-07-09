@@ -1278,7 +1278,6 @@ int read_stdin(void);
 int read_network(void);
 int read_from_pipe(int n);
 int read_from_pipe_part(int n);
-int read_from_pipe_part_nth(int n);
 int receive_from_child(int n);
 int receive_from_parent(void);
 int sexp_to_str(int x);

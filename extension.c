@@ -2722,6 +2722,7 @@ int f_dp_transfer(int arglist, int th)
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}
 	receive_from_child(i);
+    fseek(file, 0, SEEK_SET);
     }
 
     fclose(file);

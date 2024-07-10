@@ -2260,7 +2260,7 @@ defgeneric compile
 
     ;; received args
     (defun comp-mp-exec3 (stream x env args tail name global test clos)
-        (comp-mp-exec4 stream 0 (length (cdr x))))
+        (comp-mp-exec4 stream 0 (length x)))
     
     ;; receive args from pipe
     (defun comp-mp-exec4 (stream i n)
@@ -2503,7 +2503,7 @@ defgeneric compile
 
     ;; received args
     (defun comp-dp-exec3 (stream x env args tail name global test clos)
-        (comp-dp-exec4 stream 0 (length (cdr x))))
+        (comp-dp-exec4 stream 0 (length x)))
     
     ;; receive args from child
     (defun comp-dp-exec4 (stream i n)

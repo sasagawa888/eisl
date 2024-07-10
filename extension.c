@@ -2809,7 +2809,7 @@ int f_dp_call(int arglist, int th)
     arg1 = car(arglist);	//fun
     arg2 = cdr(arglist);	//args
     n = length(arg2);
-    if (n > process_pt)
+    if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-call", arg2, th);
     temp = arglist;
     while (!nullp(temp)) {
@@ -2842,7 +2842,7 @@ int f_dp_exec(int arglist, int th)
     int temp, res, n, i, exp;
 
     n = length(arglist);
-    if (n > process_pt)
+    if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-exec", arglist, th);
     temp = arglist;
     while (!nullp(temp)) {

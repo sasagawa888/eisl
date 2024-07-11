@@ -2598,7 +2598,7 @@ int receive_from_child_part1(int n, int opt)
     int m, i;
 
     // receive from child
-    while (1) {
+    retry:
 	memset(buffer3, 0, sizeof(buffer3));
 	for (i = 0; i < n; i++) {
 	    if (child_result[i] == -1) {
@@ -2613,12 +2613,24 @@ int receive_from_child_part1(int n, int opt)
 
 	//if find non nil, return it, else retry reading.
 	for (i = 0; i < n; i++) {
-	    if (opt == 1 && child_result[i] != NIL)
+	    if (opt == 1 && child_result[i] > NIL)
 		return (child_result[i]);
 	    else if (opt == 0 && child_result[i] == NIL)
 		return (child_result[i]);
 	}
+    
+
+    //if exist not received result, goto retry
+    for(i=0;i<n;i++){
+        if(child_result[i] == -1) goto retry;
     }
+
+    //if opt==1 and all results are nil, return nil
+    //if opt==0 and all returls are non nil,return T
+    if(opt==1)
+        return(NIL);
+    else if(opt==0)
+        return(T);
 }
 
 /* Thread for child lisp receiver

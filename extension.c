@@ -2877,10 +2877,10 @@ int f_dp_report(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_STR, "dp-report", arg1, 0);
 
-    //memset(sub_buffer, 0, sizeof(sub_buffer));
-    //fprintf(sub_buffer, "\x02%s\x03", GET_NAME(arg1));
+    memset(sub_buffer, 0, sizeof(sub_buffer));
+    fprintf(sub_buffer, "\x02%s\x03", GET_NAME(arg1));
     //send_to_parent(make_str(sub_buffer));
-    print(arg1);
+    print(make_str(sub_buffer));
     return (T);
 }
 

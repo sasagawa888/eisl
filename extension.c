@@ -2593,6 +2593,7 @@ int receive_from_child_part(int n, int opt)
     return (res);
 }
 
+
 int receive_from_child_part1(int n, int opt)
 {
     int m, i;
@@ -2607,7 +2608,7 @@ int receive_from_child_part1(int n, int opt)
 	    if (m < 0) {
 		error(SYSTEM_ERR, "receive from child", make_int(i), 0);
 	    } else if (m > 0) {
-		child_result[i] = str_to_sexp(make_sym(buffer3));
+		child_result[i] = receive_from_child_part2(i);
 	    }
 	}
 
@@ -2632,6 +2633,42 @@ int receive_from_child_part1(int n, int opt)
     else if(opt==0)
         return(T);
 }
+
+int receive_from_child_part2(int n)
+{
+    char sub_buffer[256];
+    int i,j;
+
+    retry:
+    if (buffer3[0] == '\x02') {
+	i = 0;
+	while (buffer3[i + 1] != '\x03') {
+	    sub_buffer[i] = buffer3[i + 1];
+	    i++;
+	}
+	sub_buffer[i] = 0;
+	printf("%s", sub_buffer);
+	j = 0;
+	i = i + 2;
+	while (buffer3[j + i] != 0) {
+	    buffer3[j] = buffer3[j + i];
+	    j++;
+	}
+	buffer3[j] = 0;
+	if (buffer3[0] == 0)
+        return(-1);
+    else 
+        goto retry;
+    
+    } else if (buffer3[0] == '\x15') {
+	error(SYSTEM_ERR, "in child", make_int(n), 0);
+    } else {
+	return (str_to_sexp(make_str(buffer3)));
+    }
+
+}
+
+
 
 /* Thread for child lisp receiver
 */

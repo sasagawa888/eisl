@@ -1284,6 +1284,7 @@ int receive_from_child(int n);
 int receive_from_parent(void);
 int receive_from_child_part(int n, int opt);
 int receive_from_child_part1(int n, int opt);
+int receive_from_child_part2(int n);
 int sexp_to_str(int x);
 int str_to_sexp(int x);
 int set_error_handler(int x);

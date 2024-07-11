@@ -2537,8 +2537,8 @@ defgeneric compile
 
     ;; received args
     (defun comp-dp-part3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-mp-part4 stream 0 (length x)))
-              ((eq opt t) (comp-mp-part5 stream 1 (length x)))
+        (cond ((null opt) (comp-dp-part4 stream 0 (length x)))
+              ((eq opt t) (comp-dp-part5 stream 1 (length x)))
               (t (error* "dp-part: illegal option" opt))))
     
     ;; receive args from pipe(option=nil)

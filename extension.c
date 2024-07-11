@@ -2878,9 +2878,8 @@ int f_dp_report(int arglist, int th)
 	error(NOT_STR, "dp-report", arg1, 0);
 
     memset(sub_buffer, 0, sizeof(sub_buffer));
-    fprintf(sub_buffer, "\x02%s\x03", GET_NAME(arg1));
-    //send_to_parent(make_str(sub_buffer));
-    print(make_str(sub_buffer));
+    sprintf(sub_buffer, "\x02%s\x03", GET_NAME(arg1));
+    send_to_parent(make_str(sub_buffer));
     return (T);
 }
 

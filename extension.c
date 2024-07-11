@@ -2878,7 +2878,7 @@ int f_dp_report(int arglist, int th)
 	error(NOT_STR, "dp-report", arg1, 0);
 
     fprintf(sub_buffer, "\x02%s\x03", GET_NAME(arg1));
-    send_to_parent(sub_buffer);
+    send_to_parent(make_str(sub_buffer));
     return (T);
 }
 

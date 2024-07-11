@@ -15,6 +15,18 @@
           (t (+ (fib (- n 1)) (fib (- n 2))))))
 
 
+
+(import "unistd")
+
 (defun bar (x y)
-    (dp-exec (fib x) (fib y)))
-    
+    (dp-exec (uoo x) (uoo y)))
+
+(defun uoo (x) 
+    (let ((stm (create-string-output-stream)))
+        (format stm "test1 ~A ~%" x)
+        (dp-report (get-output-stream-string stm))
+        (sleep 1)
+        (format stm "test2 ~A ~%" x)
+        (dp-report (get-output-stream-string stm))
+        (sleep 1)
+        t))

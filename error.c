@@ -664,19 +664,11 @@ int signal_condition(int x, int y, int th)
 	str = cdr(assoc(make_sym("a"), GET_CDR(x)));
     args = cdr(assoc(make_sym("b"), GET_CDR(x)));
     fun = cdr(assoc(make_sym("c"), GET_CDR(x)));
-    output_stream = error_stream;
-    if (repl_flag)
-	ESCERRFRED();
-    fputs(GET_NAME(str), stderr);
+    printf("%s",GET_NAME(str));
     print(fun);
-    fputc(' ', stderr);
+    printf(" ");
     print(args);
-    fputc('\n', stderr);
-    if (repl_flag)
-	ESCERRFORG();
-    input_stream = standard_input;
-    output_stream = standard_output;
-    handling_resource_err = false;
+    printf("\n");
 	send_to_parent(make_sym("\x15"));
 	RAISE(Exit_Network);
     }

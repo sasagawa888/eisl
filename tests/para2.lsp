@@ -18,8 +18,8 @@
 
 (import "unistd")
 
-(defun bar (x y)
-    (dp-exec (uoo x) (uoo y)))
+(defun bar (x)
+    (dp-exec (uoo x)))
 
 (defun uoo (x) 
     (let ((stm (create-string-output-stream)))

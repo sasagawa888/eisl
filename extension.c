@@ -2892,7 +2892,7 @@ int f_dp_part(int arglist, int th)
     n = length(cdr(arglist));
     if (opt != T && opt != NIL)
 	error(ILLEGAL_ARGS, "dp-part", opt, th);
-    if (n > process_pt)
+    if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-part", cdr(arglist), th);
     temp = cdr(arglist);
     while (!nullp(temp)) {

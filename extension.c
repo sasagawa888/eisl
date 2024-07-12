@@ -641,7 +641,7 @@ void debugger(int th)
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    for (i = 0; i <= mt_queue_num; i++) {
+	    for (i = 0; i < mt_queue_num; i++) {
 		Fmt_print("thread%d = ", i);
 		for (j = 0; j < dp[i]; j++) {
 		    print(dynamic[j][0][i]);
@@ -652,7 +652,7 @@ void debugger(int th)
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
-	    for (i = 0; i <= mt_queue_num; i++) {
+	    for (i = 0; i < mt_queue_num; i++) {
 		Fmt_print("thread%d = ", i);
 		print(ep[i]);
 		putchar('\n');
@@ -674,7 +674,7 @@ void debugger(int th)
 		      ep[th], dp[th], hp[th], sp[th], ap[th],
 		      lp[th], mt_queue_num, th);
 	    puts("Free cell ");
-	    for (i = 0; i <= mt_queue_num; i++) {
+	    for (i = 0; i < mt_queue_num; i++) {
 		Fmt_print("thread%d = %d\n", i, fc[i]);
 	    }
 	} else if (eqp(x, make_sym(":S"))) {

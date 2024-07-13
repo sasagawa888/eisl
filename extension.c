@@ -93,6 +93,7 @@ void init_exsubr(void)
     def_fsubr("MP-LET", f_mp_let);
     def_fsubr("MP-PART", f_mp_part);
     def_subr("MP-REPORT", f_mp_report);
+    def_subr("MP-EVAL", f_mp_eval);
 
     def_subr("DP-CREATE", f_dp_create);
     def_subr("DP-CLOSE", f_dp_close);
@@ -2326,6 +2327,23 @@ int f_mp_report(int arglist, int th)
     Fmt_print("\x03");
     fflush(stdout);
     return (T);
+}
+
+int f_mp_eval(int arglist, int th)
+{
+    int arg1,arg2,i,res;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!integerp(arg1))
+    error(NOT_INT,"mp-eval",arg1,th);
+    if(GET_INT(arg1) > process_pt || GET_INT(arg1) < 0)
+    error(WRONG_ARGS,"mp-eval",arg1,th);
+    
+    i = GET_INT(arg1);
+    write_to_pipe(i, sexp_to_str(arg2));
+    res = str_to_sexp(read_from_pipe(i));
+    return(res);
 }
 
 

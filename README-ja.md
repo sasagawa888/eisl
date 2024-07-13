@@ -302,4 +302,7 @@ EISL <==================================> C
 - `(dp-let forms body)`  letの分散並列版。PARA2.mdを参照
 - `(dp-report str)`  親lispの端末に文字列strを表示する。PARA2.mdを参照
 - `(dp-eval n exp)`  n番目の子lispでexpを評価する。PARA2.mdを参照
-- `(dt-close)`  すべてのスレッドを閉じる。PARA2.mdを参照
+- `(dp-transfer fn)`  ファイルをすべての子lispに転送する。PARA2.mdを参照
+- `(dp-compile fn)`  ファイルを親lisp及びすべての子lispでコンパイルする。PARA2.mdを参照
+- `(dp-load fn)`  ファイルを親lisp及びすべての子lispにロードする。PARA2.mdを参照
+- `(dp-close)`  すべてのスレッドを閉じる。PARA2.mdを参照

@@ -80,6 +80,7 @@ void init_exsubr(void)
     def_subr("READ-EXP", f_read_exp);
 
     def_subr("MT-CREATE", f_mt_create);
+    def_subr("MT-CLOSE", f_mt_close);
     def_fsubr("MT-LET", f_mt_let);
     def_fsubr("MT-CALL", f_mt_call);
     def_fsubr("MT-LOCK", f_mt_lock);
@@ -642,7 +643,7 @@ void debugger(int th)
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
-	    for (i = 0; i < mt_queue_num; i++) {
+	    for (i = 0; i < thread_num; i++) {
 		Fmt_print("thread%d = ", i);
 		for (j = 0; j < dp[i]; j++) {
 		    print(dynamic[j][0][i]);
@@ -653,7 +654,7 @@ void debugger(int th)
 		putchar('\n');
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
-	    for (i = 0; i < mt_queue_num; i++) {
+	    for (i = 0; i < thread_num; i++) {
 		Fmt_print("thread%d = ", i);
 		print(ep[i]);
 		putchar('\n');
@@ -670,12 +671,12 @@ void debugger(int th)
 		      "SP = %d (stack pointer)\n"
 		      "AP = %d (arglist pointer)\n"
 		      "LP = %d (shelter pointer)\n"
-		      "Parallel = %d (mt_queue_num)\n"
+		      "Parallel = %d (thread_num)\n"
 		      "Thread = %d (current thread)\n",
 		      ep[th], dp[th], hp[th], sp[th], ap[th],
-		      lp[th], mt_queue_num, th);
+		      lp[th], thread_num, th);
 	    puts("Free cell ");
-	    for (i = 0; i < mt_queue_num; i++) {
+	    for (i = 0; i < thread_num; i++) {
 		Fmt_print("thread%d = %d\n", i, fc[i]);
 	    }
 	} else if (eqp(x, make_sym(":S"))) {
@@ -1638,10 +1639,24 @@ int f_mt_create(int arglist, int th)
 	error(WRONG_ARGS, "mt-create", arg1, th);
 
     mt_queue_num = GET_INT(arg1);
+    thread_num = mt_queue_num;
     thread_flag = true;
     init_para();
     gbc();
     return (T);
+}
+
+int f_mt_close(int arglist, int th)
+{
+    if (!nullp(arglist))
+	error(ILLEGAL_ARGS, "mt-close", arglist, th);
+
+    exit_para();
+    thread_flag = false;
+    mt_queue_num = 0;
+    thread_num = 1;
+    gbc();
+    return(T);
 }
 
 

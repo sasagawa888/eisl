@@ -238,6 +238,7 @@ int remark_pt = 0;
 int mt_queue[PARASIZE];
 int mt_queue_pt;
 int mt_queue_num;
+int thread_num = 1;
 int para_input[PARASIZE];
 int para_output[PARASIZE];
 pthread_t mt_para_thread[PARASIZE];

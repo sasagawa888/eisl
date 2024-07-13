@@ -46,7 +46,7 @@
 
 
 (defun pcount (n)
-    (mp-exec (count1 1 (div n 2))
+    (mt-exec (count1 1 (div n 2))
              (count1 (+ (div n 2) 1) n)))
 
 (defun count (n)

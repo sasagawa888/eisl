@@ -1629,10 +1629,19 @@ int f_mt_create(int arglist, int th)
     int arg1;
 
     arg1 = car(arglist);
+
+    if (!integerp(arg1))
+	error(NOT_INT, "mt-create", arg1, th);
+    if (GET_INT(arg1) > PARASIZE)
+	error(WRONG_ARGS, "mt-create", arg1, th);
+    if (thread_flag)
+	error(WRONG_ARGS, "mt-create", arg1, th);
+
     mt_queue_num = GET_INT(arg1);
     thread_flag = true;
     init_para();
     gbc();
+    return (T);
 }
 
 
@@ -2611,47 +2620,48 @@ int receive_from_child_part1(int n, int opt)
     int m, i;
 
     // receive from child
-    retry:
-	memset(buffer3, 0, sizeof(buffer3));
-	for (i = 0; i < n; i++) {
-	    if (child_result[i] == -1) {
-		m = read(sockfd[i], buffer3, sizeof(buffer3));
-	    }
-	    if (m < 0) {
-		error(SYSTEM_ERR, "receive from child", make_int(i), 0);
-	    } else if (m > 0) {
-		child_result[i] = receive_from_child_part2(i);
-	    }
+  retry:
+    memset(buffer3, 0, sizeof(buffer3));
+    for (i = 0; i < n; i++) {
+	if (child_result[i] == -1) {
+	    m = read(sockfd[i], buffer3, sizeof(buffer3));
 	}
+	if (m < 0) {
+	    error(SYSTEM_ERR, "receive from child", make_int(i), 0);
+	} else if (m > 0) {
+	    child_result[i] = receive_from_child_part2(i);
+	}
+    }
 
-	//if find non nil, return it, else retry reading.
-	for (i = 0; i < n; i++) {
-	    if (opt == 1 && child_result[i] > NIL)
-		return (child_result[i]);
-	    else if (opt == 0 && child_result[i] == NIL)
-		return (child_result[i]);
-	}
-    
+    //if find non nil, return it, else retry reading.
+    for (i = 0; i < n; i++) {
+	if (opt == 1 && child_result[i] > NIL)
+	    return (child_result[i]);
+	else if (opt == 0 && child_result[i] == NIL)
+	    return (child_result[i]);
+    }
+
 
     //if exist not received result, goto retry
-    for(i=0;i<n;i++){
-        if(child_result[i] == -1) goto retry;
+    for (i = 0; i < n; i++) {
+	if (child_result[i] == -1)
+	    goto retry;
     }
 
     //if opt==1 and all results are nil, return nil
     //if opt==0 and all returls are non nil,return T
-    if(opt==1)
-        return(NIL);
-    else if(opt==0)
-        return(T);
+    if (opt == 1)
+	return (NIL);
+    else if (opt == 0)
+	return (T);
 }
 
 int receive_from_child_part2(int n)
 {
     char sub_buffer[256];
-    int i,j;
+    int i, j;
 
-    retry:
+  retry:
     if (buffer3[0] == '\x02') {
 	i = 0;
 	while (buffer3[i + 1] != '\x03') {
@@ -2668,10 +2678,10 @@ int receive_from_child_part2(int n)
 	}
 	buffer3[j] = 0;
 	if (buffer3[0] == 0)
-        return(-1);
-    else 
-        goto retry;
-    
+	    return (-1);
+	else
+	    goto retry;
+
     } else if (buffer3[0] == '\x15') {
 	error(SYSTEM_ERR, "in child", make_int(n), 0);
     } else {
@@ -2783,7 +2793,7 @@ int f_dp_transfer(int arglist, int th)
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}
 	receive_from_child(i);
-    fseek(file, 0, SEEK_SET);
+	fseek(file, 0, SEEK_SET);
     }
 
     fclose(file);

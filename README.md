@@ -297,6 +297,7 @@ EISL <==================================> C
 | (mp-part sw s1 ... sn)| partial progn with multi-process. see PARA.md  |    
 | (mp-let forms body)   | let with multi-process. see PARA.md            |
 | (mp-eval n exp)       | evaluate exp in nth child Lisp                 |
+| (mp-report str)       | display string on parent terminal. see PARA2.md|
 | (mp-close)            | close all process. see PARA.md                 |
 | (mt-create n)         | create n threads. see PARA1.md                 |
 | (mt-call fun a1 .. an)| apply fun args with multi-thread.see PARA1.md  |
@@ -309,6 +310,7 @@ EISL <==================================> C
 | (dp-exec s1 ... sn)   | progn with distributed. see PARA2.md           |
 | (dt-let forms body)   | let with distributed. see PARA2.md             |
 | (dp-part sw s1 ... sn)| partial progn with ditributed. see PARA2.md    |
+| (dp-report str)       | display string on parent terminal. see PARA2.md|
 | (dt-close)            | close all distributions. see PARA2.md          |
 
 

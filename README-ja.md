@@ -286,6 +286,8 @@ EISL <==================================> C
 - `(mp-exec s1 ... sn)`  prognの並列版。PARA.mdを参照
 - `(mp-part sw s1 ... sn)`  prognの並列部分実行版。PARA.mdを参照
 - `(mp-let forms body)`  letの並列版。PARA.mdを参照
+- `(mp-report str)`  親lispの端末に文字列strを表示する。PARA.mdを参照
+- `(mp-eval n exp)`  n番目の子lispでexpを評価する。PARA.mdを参照
 - `(mp-close)`  すべてのプロセスを閉じる。PARA.mdを参照
 - `(mt-create n)` n個のスレッドを生成する。PARA1.mdを参照
 - `(mt-call fun a1 ... an)` マルチスレッド並列でfunに引数を適用する。PARA1.mdを参照
@@ -298,4 +300,6 @@ EISL <==================================> C
 - `(dp-exec s1 ... sn)`  prognの分散並列版。PARA2.mdを参照
 - `(dp-part sw s1 ... sn)`  prognの分散並列部分実行版。PARA2.mdを参照
 - `(dp-let forms body)`  letの分散並列版。PARA2.mdを参照
+- `(dp-report str)`  親lispの端末に文字列strを表示する。PARA2.mdを参照
+- `(dp-eval n exp)`  n番目の子lispでexpを評価する。PARA2.mdを参照
 - `(dt-close)`  すべてのスレッドを閉じる。PARA2.mdを参照

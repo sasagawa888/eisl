@@ -89,7 +89,7 @@
 
 
 
-static const float VERSION = 4.90;
+static const float VERSION = 4.91;
 static const int FREESIZE = 3000000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
@@ -1012,6 +1012,7 @@ int f_mt_call(int arglist, int th);
 int f_mt_lock(int arglist, int th);
 int f_mt_exec(int arglist, int th);
 int f_mt_let(int arglist, int th);
+int f_mt_create(int arglist, int th);
 int f_nconc(int arglist, int th);
 int f_next_method_p(int arglist, int th);
 int f_not(int arglist, int th);

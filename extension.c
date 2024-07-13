@@ -79,6 +79,7 @@ void init_exsubr(void)
     def_subr("TRY", f_try);
     def_subr("READ-EXP", f_read_exp);
 
+    def_subr("MT-CREATE", f_mt_create);
     def_fsubr("MT-LET", f_mt_let);
     def_fsubr("MT-CALL", f_mt_call);
     def_fsubr("MT-LOCK", f_mt_lock);
@@ -1621,6 +1622,17 @@ int wait_para(void)
     pthread_cond_wait(&mt_cond_main, &mutex);
     pthread_mutex_unlock(&mutex);
     return (0);
+}
+
+int f_mt_create(int arglist, int th)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    mt_queue_num = GET_INT(arg1);
+    thread_flag = true;
+    init_para();
+    gbc();
 }
 
 

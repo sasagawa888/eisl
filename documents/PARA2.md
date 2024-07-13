@@ -1,5 +1,5 @@
 # Districuted Parallel functions
-now constructing.
+
 
 # Invoke 
 eisl -n on child machine terminal.

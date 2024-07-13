@@ -100,7 +100,7 @@ void init_exsubr(void)
     def_fsubr("DP-CALL", f_dp_call);
     def_fsubr("DP-EXEC", f_dp_exec);
     def_fsubr("DP-PART", f_dp_part);
-    def_subr("DP-SYSTEM", f_dp_system);
+    def_subr("DP-EVAL", f_dp_eval);
     def_subr("DP-TRANSFER", f_dp_transfer);
     def_subr("DP-RECEIVE", f_dp_receive);
     def_subr("DP-LOAD", f_dp_load);
@@ -2759,14 +2759,14 @@ void init_receiver(void)
     pthread_create(&receiver_thread, NULL, receiver, NULL);
 }
 
-int f_dp_system(int arglist, int th __unused)
+int f_dp_eval(int arglist, int th __unused)
 {
     int arg1, arg2, res;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (GET_INT(arg1) >= child_num || GET_INT(arg1) < 0)
-	error(WRONG_ARGS, "dp-system", arg1, 0);
+	error(WRONG_ARGS, "dp-eval", arg1, 0);
 
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
     res = str_to_sexp(receive_from_child(GET_INT(arg1)));

@@ -906,7 +906,7 @@ int f_domain_error_object(int arglist, int th);
 int f_dp_create(int arglist, int th);
 int f_dp_close(int arglist, int th);
 int f_dp_let(int arglist, int th);
-int f_dp_system(int arglist, int th);
+int f_dp_eval(int arglist, int th);
 int f_dp_transfer(int arglist, int th);
 int f_dp_receive(int arglist, int th);
 int f_dp_load(int arglist, int th);

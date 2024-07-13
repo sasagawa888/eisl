@@ -308,10 +308,13 @@ EISL <==================================> C
 | (dp-create n)         | create n distributions. see PARA2.md           |
 | (dp-call fun a1 .. an)| apply fun args with distributed. see PARA2.md  |
 | (dp-exec s1 ... sn)   | progn with distributed. see PARA2.md           |
-| (dt-let forms body)   | let with distributed. see PARA2.md             |
+| (dp-let forms body)   | let with distributed. see PARA2.md             |
 | (dp-part sw s1 ... sn)| partial progn with ditributed. see PARA2.md    |
 | (dp-report str)       | display string on parent terminal. see PARA2.md|
-| (dt-close)            | close all distributions. see PARA2.md          |
+| (dp-transfer fn)      | transfer file to all child Lisp. see PARA2.md  |
+| (dp-compile fn)       | compile file in all child Lisp. see PARA2md    |
+| (dp-load fn)          | load file to parent and all child Lisp.PARA2.md|
+| (dp-close)            | close all distributions. see PARA2.md          |
 
 
 

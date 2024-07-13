@@ -27,6 +27,9 @@ On macOS mp-part is not available.
 - (mp-let ((sym1 (exp1)) ... (symn (expn))) body) 
 Evaluates each exp in parallel in child Lisps, binds its value to sym, executes body, and returns the final result.
 
+- (mp-eval n exp)
+Evaluates exp in nth child Lisp.
+
 - (mp-close) 
 Terminates all child Lisps.
 

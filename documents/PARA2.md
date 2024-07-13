@@ -29,7 +29,7 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 
 - (dp-load fn): Loads file fn on both parent and child machines.
 
-- (dp-system n sexp): Evaluates S-expression sexp on the nth child Lisp for testing.
+- (dp-eval n sexp): Evaluates S-expression sexp on the nth child Lisp for testing.
 
 - (dp-close): Sends termination command to child machines and closes communication.
 

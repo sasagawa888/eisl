@@ -279,12 +279,23 @@ EISL <==================================> C
 - `(bignump x)` xが巨大整数ならばTをそうでなければNILを返す。
 - `(macroexpand-1 x)` S式であるｘを１度だけマクロ展開する。
 - `(macroexpand-all x)` S式であるｘを完全にマクロ展開する。
+
+# 並列関数
+- `(mp-create n)` n個のプロセスを生成する。PARA.mdを参照
 - `(mp-call fun a1 ... an)` マルチプロセス並列でfunに引数を適用する。PARA.mdを参照
 - `(mp-exec s1 ... sn)`  prognの並列版。PARA.mdを参照
-- `(mp-part s1 ... sn)`  prognの並列部分実行版。PARA.mdを参照
+- `(mp-part sw s1 ... sn)`  prognの並列部分実行版。PARA.mdを参照
 - `(mp-let forms body)`  letの並列版。PARA.mdを参照
+- `(mp-close)`  すべてのプロセスを閉じる。PARA.mdを参照
+- `(mt-create n)` n個のスレッドを生成する。PARA1.mdを参照
 - `(mt-call fun a1 ... an)` マルチスレッド並列でfunに引数を適用する。PARA1.mdを参照
 - `(mt-exec s1 ... sn)`  prognの並列版。PARA1.mdを参照
 - `(mt-let forms body)`  letの並列版。PARA1.mdを参照
 - `(mt-lock s1 ... sn)`  ミューテックスをかけたprogn。PARA1.mdを参照
-
+- `(mt-close)`  すべてのスレッドを閉じる。PARA1.mdを参照
+- `(dp-create n)` n個の分散を生成する。PARA2.mdを参照
+- `(dp-call fun a1 ... an)` 分散並列でfunに引数を適用する。PARA2.mdを参照
+- `(dp-exec s1 ... sn)`  prognの分散並列版。PARA2.mdを参照
+- `(dp-part sw s1 ... sn)`  prognの分散並列部分実行版。PARA2.mdを参照
+- `(dp-let forms body)`  letの分散並列版。PARA2.mdを参照
+- `(dt-close)`  すべてのスレッドを閉じる。PARA2.mdを参照

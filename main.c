@@ -308,7 +308,6 @@ static void usage(void)
 	 "-n           -- EISL starts as network child mode.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
-	 "-t N         -- EISL runs as multi thread(N) mode.\n"
 	 "-v           -- display version number.");
 }
 
@@ -384,7 +383,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:s:t:p:cfrhvn")) != -1) {
+	while ((ch = getopt(argc, argv, "l:s:p:cfrhvn")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -422,12 +421,6 @@ int main(int argc, char *argv[])
 	    case 'p':
 		process_flag = true;
 		process_num = strtol(optarg, NULL, 10);
-		break;
-	    case 't':
-		thread_flag = true;
-		mt_queue_num = strtol(optarg, NULL, 10);
-		reinit_cell();
-		init_para();
 		break;
 	    case 'n':
 		puts("EISL runs with network mode.");

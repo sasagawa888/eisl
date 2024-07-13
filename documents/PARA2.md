@@ -78,3 +78,11 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 
 ```
 
+![Child-Lisp](para22.md)
+![Parent-Lisp](para23.md)
+![Create](para24.md)
+![Transfer](para25.md)
+![Compile](para26.md)
+![Code](para27.md)
+![Time](para28.md)
+![Close](para29.md)

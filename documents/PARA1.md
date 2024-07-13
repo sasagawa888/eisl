@@ -1,12 +1,10 @@
 # Thread Parallel functions
 
-# Invoke 
-eisl -t n
-
--t is option to use thread
-n is worker thread count.
-
 # Spec
+
+- (mt-create n) create n threads.
+
+- (mt-close) close all threads.
 
 - (mt-let form body)  
 

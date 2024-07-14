@@ -30,6 +30,9 @@ Evaluates each exp in parallel in child Lisps, binds its value to sym, executes 
 - (mp-eval n exp)
 Evaluates exp in nth child Lisp.
 
+- (mp-report str)
+Display string on parent terminal.
+
 - (mp-close) 
 Terminates all child Lisps.
 
@@ -127,22 +130,21 @@ T
 
 ```
 
-# Extended format function
-Please enclose with ~! when outputting via the format function to standard output from Child Lisp.
+# Usage of mp-report function
 
 ```
 (defun bar (x y)
     (mp-exec (uoo x) (uoo y)))
 
 (defun uoo (x) 
-    (format (standard-output) "~! test1 ~A ~%~!" x)
-    (finish-output (standard-output))
-    (sleep 1)
-    (format (standard-output) "~! test2 ~A ~%~!" x)
-    (finish-output (standard-output))
-    (sleep 1)
-    t)
-
+    (let ((stm (create-string-output-stream)))
+        (format stm "test1 ~A ~%" x)
+        (mp-report (get-output-stream-string stm))
+        (sleep 1)
+        (format stm "test2 ~A ~%" x)
+        (mp-report (get-output-stream-string stm))
+        (sleep 1)
+        t))
 
 ```
 

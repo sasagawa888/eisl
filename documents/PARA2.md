@@ -22,6 +22,15 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 - (dp-exec a0 a1 ... an): Distributed parallel version of progn
 
 - (dp-part opt a0 a1 ... an): Sidtributed paralle version partial-execution.
+Executes arg1 to argn in parallel in child Lisps.
+opt == nil
+If one of arg returns nil stops exections and return nil,
+else  returns the result of the last execution.
+
+opt == t
+If one of arg returns non-nil stops exections and return result,
+else  returns the result of the last execution.
+
 
 - (dp-transfer fn): Transfers file fn to all child machines from the parent machine.
 
@@ -30,6 +39,8 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 - (dp-load fn): Loads file fn on both parent and child machines.
 
 - (dp-eval n sexp): Evaluates S-expression sexp on the nth child Lisp for testing.
+
+- (dp-report str): Display string on parent terminal.
 
 - (dp-close): Sends termination command to child machines and closes communication.
 
@@ -75,6 +86,51 @@ and (dp-create ) to establish TCP/IP between child Lisp.
     (for ((i m (+ i 1)))
          ((= i n) t)
          (sin (cos (tan i)))))
+
+
+;(dp-create "xxx.xxx.xxx.xxx" "yyy.yyy.yyy.yyy")
+;(primep* 100000000000031)
+(defun primep* (n)
+    (cond ((= n 2) t)
+          ((= (mod n 2) 0) nil)
+          (t (let* ((limit (isqrt n))
+                    (span (div limit 2)))
+                 (dp-part nil (coprimep n 3 span)
+                              (coprimep n (near-odd span) limit))))))
+
+(defun near-odd (n)
+    (if (= (mod n 2) 0)
+        (- n 1)
+        n))
+
+
+(defun coprimep (n s e)
+    (cond ((> s e) t)
+          ((= (mod n s) 0) nil)
+          (t (coprimep n (+ s 2) e))))
+
+(defun primep (n)
+    (cond ((= n 2) t)
+          ((= (mod n 2) 0) nil)
+          (t (coprimep n 3 (isqrt n)))))
+
+(import "unistd")
+
+(defun bar (x y)
+    (dp-exec (uoo x) (uoo y)))
+
+(defun uoo (x) 
+    (let ((stm (create-string-output-stream)))
+        (format stm "test1 ~A ~%" x)
+        (dp-report (get-output-stream-string stm))
+        (sleep 1)
+        (format stm "test2 ~A ~%" x)
+        (dp-report (get-output-stream-string stm))
+        (sleep 1)
+        t))
+
+(defun woo (x y)
+    (dp-part nil (uoo x) (uoo y)))
 
 ```
 

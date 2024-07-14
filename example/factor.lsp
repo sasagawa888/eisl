@@ -1,4 +1,4 @@
-;;; factorize
+;;; factorize in multi-process
 ;;; n = p*q. p <> q, p and q is near prime number.
 ;;; e.g. 100000007 * 100000039 = 10000004600000273
 ;;; 1000037 * 100000039 = 100003739001443

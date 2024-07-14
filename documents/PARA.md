@@ -12,13 +12,13 @@ Executes arg1 to argn in parallel in child Lisps, then executes function fun wit
 - (mp-exec arg1 ... argn)
 Executes arg1 to argn in parallel in child Lisps and returns the result of the argn execution.
 
-- (mp-part option arg1 ... argn)
+- (mp-part sw arg1 ... argn)
 Executes arg1 to argn in parallel in child Lisps.
-option == nil
+sw == nil
 If one of arg returns nil stops exections and return nil,
 else  returns the result of the last execution.
 
-option == t
+sw == t
 If one of arg returns non-nil stops exections and return result,
 else  returns the result of the last execution.
 

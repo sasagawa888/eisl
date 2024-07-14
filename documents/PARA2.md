@@ -21,13 +21,13 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 
 - (dp-exec a0 a1 ... an): Distributed parallel version of progn
 
-- (dp-part opt a0 a1 ... an): Sidtributed paralle version partial-execution.
+- (dp-part sw a0 a1 ... an): Sidtributed paralle version partial-execution.
 Executes arg1 to argn in parallel in child Lisps.
-opt == nil
+sw == nil
 If one of arg returns nil stops exections and return nil,
 else  returns the result of the last execution.
 
-opt == t
+sw == t
 If one of arg returns non-nil stops exections and return result,
 else  returns the result of the last execution.
 

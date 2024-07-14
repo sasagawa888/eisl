@@ -1657,7 +1657,7 @@ int f_mt_close(int arglist, int th)
     mt_queue_num = 0;
     thread_num = 1;
     gbc();
-    return(T);
+    return (T);
 }
 
 
@@ -2331,19 +2331,19 @@ int f_mp_report(int arglist, int th)
 
 int f_mp_eval(int arglist, int th)
 {
-    int arg1,arg2,i,res;
+    int arg1, arg2, i, res;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if(!integerp(arg1))
-    error(NOT_INT,"mp-eval",arg1,th);
-    if(GET_INT(arg1) > process_pt || GET_INT(arg1) < 0)
-    error(WRONG_ARGS,"mp-eval",arg1,th);
-    
+    if (!integerp(arg1))
+	error(NOT_INT, "mp-eval", arg1, th);
+    if (GET_INT(arg1) > process_pt || GET_INT(arg1) < 0)
+	error(WRONG_ARGS, "mp-eval", arg1, th);
+
     i = GET_INT(arg1);
     write_to_pipe(i, sexp_to_str(arg2));
     res = str_to_sexp(read_from_pipe(i));
-    return(res);
+    return (res);
 }
 
 

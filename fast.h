@@ -28,7 +28,7 @@ static fn6 f6[NUM_FN6S];
 static fn7 f7[NUM_FN7S];
 static fn8 f8[NUM_FN8S];
 volatile sig_atomic_t exit_flag = 0;
-static int dynamic_var[256][20];
+
 
 void signal_handler_c(int signo)
 {

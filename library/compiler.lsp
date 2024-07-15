@@ -1,4 +1,4 @@
-;;FAST compiler ver4.30
+;;FAST compiler ver5.10
 #|
 (defun xxx (x1 x2 ...) (foo1 x)(foo2 x2) ...)
 #include "fast.h"
@@ -199,6 +199,7 @@ defgeneric compile
     (defglobal user-class nil)
     (defglobal global-variable nil)
     (defglobal global-dynamic nil)
+    (defglobal local-dynamic nil)
     (defglobal function-arg nil)
     (defglobal generic-name-arg nil)
     (defglobal catch-block-tag nil)
@@ -795,6 +796,7 @@ defgeneric compile
     (defun initialize (fname ext)
         (setq global-variable nil)
         (setq global-dynamic nil)
+        (setq local-dynamic nil)
         (setq function-arg nil)
         (setq generic-name-arg nil)
         (setq catch-block-tag nil)
@@ -3364,10 +3366,12 @@ defgeneric compile
         (format stream "\"),th)"))
 
     (defun comp-dynamic-let (stream x env args tail name global test clos)
-        (format stream "({int res,val,save,dynpt;~% save=Fgetdynpt();~%")
-        (comp-dynamic-let1 stream (elt x 1) env args tail name global test clos)
-        (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "Fsetdynpt(save);res;})"))
+        (let ((dyn local-dynamic))
+            (format stream "({int res,val,save,dynpt;~% save=Fgetdynpt();~%")
+            (comp-dynamic-let1 stream (elt x 1) env args tail name global test clos)
+            (comp-progn1 stream (cdr (cdr x)) env args tail name global test clos)
+            (format stream "Fsetdynpt(save);res;})")
+            (setq local-dynamic dyn)))
 
     (defun comp-dynamic-let1 (stream x env args tail name global test clos)
         (cond ((null x) t)
@@ -3379,6 +3383,7 @@ defgeneric compile
                 (error* "dynamic-let: illegal let form" x))
         (let ((symbol (elt x 0))
               (value (elt x 1)) )
+           (setq local-dynamic (cons symbol local-dynamic))
            (format stream
                    "dynpt=Fgetdynpt();Fpshelterpush(dynpt,th);Fsetdynpt(save);~%")
            (format stream "val=")

@@ -63,17 +63,6 @@ void init_cell(void)
 }
 
 
-void reinit_cell(void)
-{
-    int i, w;
-
-    w = CELLSIZE / (mt_queue_num + 1);
-    fc[0] = w;
-    for (i = 1; i <= mt_queue_num; i++) {
-	hp[i] = w * i + 1;
-	fc[i] = w;
-    }
-}
 
 void bind_class(const char *name, int cl)
 {

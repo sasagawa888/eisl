@@ -114,6 +114,11 @@ void init_exsubr(void)
     def_subr("DP-COMPILE", f_dp_compile);
     def_subr("DP-REPORT", f_dp_report);
 
+    def_subr("CREATE-SOCKET", f_create_socket);
+    def_subr("SEND-SOCKET", f_send_socket);
+    def_subr("RECEIVE-SOCKET", f_receive_socket);
+    def_subr("CLOSE-SOCKET", f_close_socket);
+
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
     def_subr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
@@ -3027,3 +3032,117 @@ int f_dp_part(int arglist, int th)
 
 }
 
+
+//-----------TCP/IP--------------------
+
+f_create_socket(int arglist, int th)
+{
+    struct sockaddr_in addr;
+    int arg1, res, size, socket1, socket2;
+
+    if (nullp(arglist)) {
+	// server 
+	// create socket
+	socket1 = socket(AF_INET, SOCK_STREAM, 0);
+	if (socket1 < 0) {
+	    error(SYSTEM_ERR, "create-socket", NIL, th);
+	}
+
+	// initialize server_addr
+	memset((char *) &addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_port = htons(PORT);
+
+	// bind socket
+	if (bind(socket1, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+	    error(SYSTEM_ERR, "create-socket", NIL, 0);
+	}
+
+	//wait conneting
+	listen(socket1, 5);
+	size = sizeof(addr);
+
+	// connection from client
+	socket2 = accept(socket1, (struct sockaddr *) &addr, &size);
+	if (socket2 < 0) {
+	    error(SYSTEM_ERR, "create-socket", NIL, th);
+	}
+	res = make_socket(socket2, EISL_SOCKET, NIL, socket1);
+    } else if (length(arglist) == 1) {
+	arg1 = car(arglist);
+	// client side
+	socket1 = socket(AF_INET, SOCK_STREAM, 0);
+	if (socket < 0) {
+	    error(SYSTEM_ERR, "create-socket", arg1, th);
+	}
+
+	// initialize client_addr
+	memset((char *) &addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(PORT);
+
+	if (inet_pton(AF_INET, GET_NAME(arg1), &addr.sin_addr) < 0)
+	    error(SYSTEM_ERR, "create-socket", arg1, th);
+
+
+	if (connect(socket1, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+	    error(SYSTEM_ERR, "create-socket", arg1, th);
+	}
+	res = make_socket(socket1, EISL_SOCKET, GET_NAME(arg1), NIL);
+    } else {
+	error(WRONG_ARGS, "create-socket", arglist, th);
+    }
+
+    return (res);
+}
+
+
+int f_receive_socket(int arglist, int th)
+{
+    int arg1, n;
+    char buffer[STRSIZE];
+
+    arg1 = car(arglist);
+
+    memset(buffer, 0, sizeof(buffer));
+    n = read(GET_SOCKET(arg1), buffer, sizeof(buffer));
+
+    if (n < 0) {
+	error(SYSTEM_ERR, "receive-socket", arg1, th);
+    }
+
+    return (make_str(buffer));
+
+}
+
+int f_send_socket(int arglist, int th)
+{
+    int arg1, n;
+    char buffer[STRSIZE];
+
+    arg1 = car(arglist);
+    // send message 
+    memset(buffer, 0, sizeof(buffer));
+    strcpy(buffer, GET_NAME(arg1));
+    n = write(GET_SOCKET(arg1), buffer3, strlen(buffer));
+    if (n < 0) {
+	error(SYSTEM_ERR, "send-socket", arg1, th);
+    }
+
+    return (make_str(buffer));
+}
+
+f_close_socket(int arglist, int th)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+
+    close(GET_SOCKET(arg1));
+
+    if (GET_CDR(arg1) != NIL)
+	close(GET_CDR(arg1));	// socket when listen
+
+    return (T);
+}

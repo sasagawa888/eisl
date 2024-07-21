@@ -8,6 +8,7 @@
  * functions for multi-tread
  * functions for multi-process
  * functions for distributed-process
+ * functions for TCP/IP
  */
 
 #include <stdio.h>
@@ -17,12 +18,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <string.h>
 
 
 

@@ -818,7 +818,7 @@ int make_socket(int sockfd, int type, const char *name)
     SET_SOCKET(addr, sockfd);	/* socket for */
     SET_AUX(addr, cstream);	/* class */
     SET_OPT(addr, type);	/* EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
-				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN/EISL_INSOCKET/EISL_OUTSOCKET */
+				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN/EISL_SOCKET */
     SET_NAME(addr, name);    /* ip address */
     SET_PROP(addr, 0);		/* output-string-stream charcount from */
     SET_PROF(addr, EISL_OPEN);	/* EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN */

@@ -267,6 +267,10 @@ int child_num;
 pthread_t receiver_thread;
 int child_result[PARASIZE];
 
+/* -----TCPIP for server----------------*/
+int default_ip_version;
+
+
 
 
 /* -----debugger----- */

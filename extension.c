@@ -5,6 +5,9 @@
  * function for profiler
  * functions for Raspbery-PI
  * functions for Chaitin's omega
+ * functions for multi-tread
+ * functions for multi-process
+ * functions for distributed-process
  */
 
 #include <stdio.h>
@@ -14,6 +17,14 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <string.h>
+
+
 
 #ifdef __rpi__
 #include <wiringPi.h>
@@ -2347,8 +2358,8 @@ int f_mp_eval(int arglist, int th)
 }
 
 
-//------------TCP/IP--------------------------
-// draft for distributed parallel machine
+//------------Distributed procces--------------------------
+// code for distributed parallel machine
 
 int f_dp_create(int arglist, int th)
 {
@@ -3020,3 +3031,4 @@ int f_dp_part(int arglist, int th)
     return (res);
 
 }
+

@@ -127,6 +127,7 @@ typedef struct __packed {
 		FILE *port;
 		int *dyna_vec;
 		float *dyna_fvec;
+        int sockfd;
 	    } car;
 	    union {
 		int intnum;
@@ -289,7 +290,9 @@ DEF_GETTER(int, CDR, val.cdr.intnum, NIL)
 DEF_GETTER(int, AUX, aux, cfixnum)
 DEF_GETTER(int, PROP, prop, NIL)
 DEF_GETTER(subr_t, SUBR, val.car.subr, NULL)
-DEF_GETTER(tag_t, TAG, tag, INTN) DEF_GETTER(int, PROF, prof, NIL)
+DEF_GETTER(tag_t, TAG, tag, INTN) 
+DEF_GETTER(int, PROF, prof, NIL)
+DEF_GETTER(int, SOCKET, val.car.sockfd, NIL)
 static inline FILE *GET_PORT(int addr)
 {
     REQUIRE(CELLRANGE(addr) && GET_TAG(addr) == STREAM);
@@ -386,6 +389,13 @@ static inline void SET_PORT(int addr, FILE * x)
     REQUIRE(CELLRANGE(addr) && GET_TAG(addr) == STREAM);
     heap[addr].val.car.port = x;
 }
+
+static inline void SET_SOCKET(int addr, int x)
+{
+    REQUIRE(CELLRANGE(addr) && GET_TAG(addr) == STREAM);
+    heap[addr].val.car.port = x;
+}
+
 
 static inline void SET_OPT(int addr, signed char x)
 {
@@ -1223,6 +1233,7 @@ int make_int(int intn);
 int make_long(long long int x);
 int make_method(int x);
 int makenum(int num);
+int make_socket(int sockfd, int type, const char *name);
 int make_str(const char *string);
 int make_stm(FILE * port, int type, const char *name);
 int make_sym(const char *pname);

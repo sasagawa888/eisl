@@ -802,12 +802,29 @@ int make_stm(FILE * port, int type, const char *name)
     SET_CDR(addr, 0);		/* string-stream-position */
     SET_AUX(addr, cstream);	/* class */
     SET_OPT(addr, type);	/* EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
-				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN */
+				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN/EISL_INSOCKET/EISL_OUTSOCKET */
     SET_NAME(addr, name);
     SET_PROP(addr, 0);		/* output-string-stream charcount from */
     SET_PROF(addr, EISL_OPEN);	/* EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN */
     return (addr);
 }
+
+int make_socket(int sockfd, int type, const char *name)
+{
+    int addr;
+
+    addr = freshcell();
+    SET_TAG(addr, STREAM);
+    SET_SOCKET(addr, sockfd);	/* socket for */
+    SET_AUX(addr, cstream);	/* class */
+    SET_OPT(addr, type);	/* EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
+				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN/EISL_INSOCKET/EISL_OUTSOCKET */
+    SET_NAME(addr, name);    /* ip address */
+    SET_PROP(addr, 0);		/* output-string-stream charcount from */
+    SET_PROF(addr, EISL_OPEN);	/* EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN */
+    return (addr);
+}
+
 
 // --------array-------
 int make_arr(int ls, int obj)

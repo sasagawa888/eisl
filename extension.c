@@ -3125,7 +3125,7 @@ int f_send_socket(int arglist, int th)
     // send message 
     memset(buffer, 0, sizeof(buffer));
     strcpy(buffer, GET_NAME(arg1));
-    n = write(GET_SOCKET(arg1), buffer3, strlen(buffer));
+    n = write(GET_SOCKET(arg1), buffer, strlen(buffer));
     if (n < 0) {
 	error(SYSTEM_ERR, "send-socket", arg1, th);
     }

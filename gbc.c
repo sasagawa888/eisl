@@ -15,10 +15,8 @@
 #include "fmt.h"
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
-#define DEBUG error(RESOURCE_ERR,"debug",NIL);
 
-
-/* concurrent mark&sweep garbage collection */
+/* mark&sweep garbage collection */
 DEF_PREDICATE(EMPTY, EMP)
 int gbc(void)
 {

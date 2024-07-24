@@ -258,43 +258,14 @@ int tfreshcell(int th)
 {
     int res;
 
-
-    if (concurrent_stop_flag) {
-	/* while remarking stop the world */
-	pthread_mutex_lock(&mutex);
-	while (concurrent_stop_flag) {
-	    pthread_mutex_unlock(&mutex);
-	    pthread_mutex_lock(&mutex);
-	}
-	res = hp[th];
-	hp[th] = GET_CDR(hp[th]);
-	SET_CDR(res, 0);
-	fc[th]--;
-	pthread_mutex_unlock(&mutex);
-    } else if (concurrent_flag && fc[th] > 50) {
-	res = hp[th];
-	hp[th] = GET_CDR(hp[th]);
-	SET_CDR(res, 0);
-	fc[th]--;
-	remark[remark_pt++] = res;
-	if (remark_pt > REMKSIZE) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "tfreshcell remark", NIL, 0);
-	}
-    } else if (!concurrent_flag) {
 	res = hp[th];
 	hp[th] = GET_CDR(hp[th]);
 	SET_CDR(res, 0);
 	fc[th]--;
 	if (fc[th] <= 50 && !handling_resource_err) {
 	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "tfreshcell rest", NIL, 0);
+	    error(RESOURCE_ERR, "tfreshcell", NIL, 0);
 	}
-    }
-
-    else {
-	error(RESOURCE_ERR, "tfreshcell other case", NIL, 0);
-    }
 
     return (res);
 }

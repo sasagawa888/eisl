@@ -576,9 +576,6 @@ extern bool handling_resource_err;
 extern bool looking_for_shebang;
 extern bool multiple_call_next_method;
 extern bool error_flag;
-extern bool concurrent_flag;
-extern bool concurrent_stop_flag;
-extern bool concurrent_exit_flag;
 extern bool parallel_flag;
 extern bool parallel_exit_flag;
 extern bool process_flag;
@@ -635,12 +632,8 @@ extern const short ed_comment_color;
 extern int ed_incomment;
 
 /* concurrent GC */
-extern pthread_t concurrent_thread;
-extern pthread_cond_t cond_gc;
 extern pthread_mutex_t mutex;
 extern pthread_mutex_t mutex1;
-extern int remark[REMKSIZE];
-extern int remark_pt;
 
 /* multi thread */
 extern int mt_queue[PARASIZE];

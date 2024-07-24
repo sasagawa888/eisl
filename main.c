@@ -172,9 +172,6 @@ bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */
 bool multiple_call_next_method;	/* method body has multiple (call-next-method) */
 bool error_flag = false;	/* invoked error? */
-bool concurrent_flag = false;	/* while executing concurrent */
-bool concurrent_stop_flag = false;	/* while remarking&sweeping */
-bool concurrent_exit_flag = false;	/* To exit GC thread */
 bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
@@ -227,12 +224,8 @@ int unwind_nest;		/* unwind-protect nest level */
 int process_arg;		/* when -p option child process number */
 
 /* concurrent GC*/
-pthread_t concurrent_thread;
 pthread_mutex_t mutex;
 pthread_mutex_t mutex1;
-pthread_cond_t cond_gc;
-int remark[REMKSIZE];
-int remark_pt = 0;
 
 /* multi thread */
 int mt_queue[PARASIZE];

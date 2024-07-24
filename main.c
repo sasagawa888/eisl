@@ -356,7 +356,6 @@ int main(int argc, char *argv[])
     init_generic();
     init_dp();
     init_pointer();
-    init_thread();
     /* ctrl+c */
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, SIG_IGN);
@@ -572,19 +571,14 @@ void init_pointer(void)
     }
 }
 
-void init_thread(void)
-{
-    /* create concurrent GC thread */
-    pthread_create(&concurrent_thread, NULL, concurrent, NULL);
-}
 
 void exit_thread(void)
 {
     /* exit concurrent GC thread */
-    pthread_mutex_lock(&mutex);
-    concurrent_exit_flag = true;
-    pthread_cond_signal(&cond_gc);
-    pthread_mutex_unlock(&mutex);
+    //pthread_mutex_lock(&mutex);
+    //concurrent_exit_flag = true;
+    //pthread_cond_signal(&cond_gc);
+    //pthread_mutex_unlock(&mutex);
 
     /* exit parallel function thread */
     exit_para();

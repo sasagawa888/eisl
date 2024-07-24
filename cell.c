@@ -279,8 +279,6 @@ int freshcell(void)
     }
 
     else {
-	printf("concurrent=%d  stop=%d fc[]=%d", concurrent_flag,
-	       concurrent_stop_flag, fc[0]);
 	error(RESOURCE_ERR, "freshcell other case", NIL, 0);
     }
 

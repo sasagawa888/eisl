@@ -1,0 +1,21 @@
+
+(defun server ()
+    (let ((socket (create-socket))
+          (msg nil))
+        (setq msg (receive-socket socket))
+        (while (not (equal msg "quit"))
+            (format (standard-output) msg)
+            (send_socket socket "receive data")
+            (setq msg (receive-socket socket)))
+        (close-socket socket)))
+
+(defun client (ip)
+    (let ((socket (create-socket ip))
+          (msg nil))
+        (setq msg (read-line))
+        (while (not (equal msg "end"))
+            (send-socket socket msg)
+            (setq msg (receive-socket socket))
+            (format (standard-output) msg)
+            (setq mas (read-line)))))
+            

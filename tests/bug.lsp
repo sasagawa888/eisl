@@ -5,7 +5,7 @@
         (setq msg (receive-socket socket))
         (while (not (equal msg "quit"))
             (format (standard-output) msg)
-            (send_socket socket "receive data")
+            (send-socket socket "receive data")
             (setq msg (receive-socket socket)))
         (close-socket socket)))
 
@@ -17,5 +17,5 @@
             (send-socket socket msg)
             (setq msg (receive-socket socket))
             (format (standard-output) msg)
-            (setq mas (read-line)))))
+            (setq msg (read-line)))))
             

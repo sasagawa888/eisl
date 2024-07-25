@@ -631,11 +631,10 @@ extern const short ed_string_color;
 extern const short ed_comment_color;
 extern int ed_incomment;
 
-/* concurrent GC */
-extern pthread_mutex_t mutex;
-extern pthread_mutex_t mutex1;
 
 /* multi thread */
+extern pthread_mutex_t mutex;
+extern pthread_mutex_t mutex1;
 extern int mt_queue[PARASIZE];
 extern int mt_queue_pt;
 extern int mt_queue_num;

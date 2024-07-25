@@ -223,11 +223,10 @@ int backtrace[BACKSIZE];
 int unwind_nest;		/* unwind-protect nest level */
 int process_arg;		/* when -p option child process number */
 
-/* concurrent GC*/
-pthread_mutex_t mutex;
-pthread_mutex_t mutex1;
 
 /* multi thread */
+pthread_mutex_t mutex;
+pthread_mutex_t mutex1;
 int mt_queue[PARASIZE];
 int mt_queue_pt;
 int mt_queue_num;

@@ -392,7 +392,7 @@ static inline void SET_PORT(int addr, FILE * x)
 static inline void SET_SOCKET(int addr, int x)
 {
     REQUIRE(CELLRANGE(addr) && GET_TAG(addr) == STREAM);
-    heap[addr].val.car.port = x;
+    heap[addr].val.car.sockfd = x;
 }
 
 

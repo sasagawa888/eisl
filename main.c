@@ -1876,8 +1876,12 @@ int eval(int addr, int th)
 		profiler(car(addr), en - st);
 	    return (res);
 	} else if (fsubrp(car(addr))) {
-	    return (apply(caar(addr), cdr(addr), th));
+		st = getETime();
+	    res = apply(caar(addr), cdr(addr), th);
 	    en = getETime();
+		if (prof_sw == 1)
+		profiler(car(addr), en - st);
+	    return (res);
 	} else if ((val = functionp(car(addr)))) {
 	    if (GET_CDR(car(addr)) != NIL)
 		error(UNDEF_FUN, "eval", addr, th);

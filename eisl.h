@@ -126,7 +126,6 @@ typedef struct __packed {
 		subr_t subr;
 		FILE *port;
 		int *dyna_vec;
-		float *dyna_fvec;
         int sockfd;
 	    } car;
 	    union {

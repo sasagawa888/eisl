@@ -1870,9 +1870,12 @@ int f_mp_create(int arglist, int th)
     char str[10];
 
     arg1 = car(arglist);
-    n = GET_INT(arg1);
+    
+    if(!integerp(arg1))
+    error(NOT_INT,"mp-create",arg1,th);
     if (length(arglist) != 1)
 	error(ILLEGAL_ARGS, "mp-create", arglist, th);
+    n = GET_INT(arg1);
     if (n > PROCSIZE)
 	error(CANT_CREATE, "mp-create", n, th);
 

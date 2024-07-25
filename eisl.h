@@ -89,7 +89,7 @@
 
 
 
-static const float VERSION = 5.02;
+static const float VERSION = 5.03;
 static const int FREESIZE = 1000000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
@@ -1295,6 +1295,7 @@ int receive_from_parent(void);
 int receive_from_child_part(int n, int opt);
 int receive_from_child_part1(int n, int opt);
 int receive_from_child_part2(int n);
+int send_to_child(int n, int x);
 int sexp_to_str(int x);
 int str_to_sexp(int x);
 int set_error_handler(int x);
@@ -1424,7 +1425,6 @@ void set_val(int sym, int val, int ls);
 void signal_handler_c(int signo);
 void signal_handler_child(int sig, siginfo_t *siginfo, void *context);
 void send_to_parent(int x);
-void send_to_child(int n, int x);
 void unbind(int th);
 void unreadc(char c);
 void ucs4_to_utf8(int n, char *p);

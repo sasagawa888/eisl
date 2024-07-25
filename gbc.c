@@ -44,104 +44,104 @@ static inline void NOMARK_CELL(int addr)
 
 void gbc_sequence(void)
 {
-int addr, i, j;
+    int addr, i, j;
 
-	DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc[0]);
+    DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc[0]);
 
-	/* mark hash table */
-	for (i = 0; i < HASHTBSIZE; i++)
-	    mark_cell(cell_hash_table[i]);
+    /* mark hash table */
+    for (i = 0; i < HASHTBSIZE; i++)
+	mark_cell(cell_hash_table[i]);
 
-	/* mark nil and t */
-	MARK_CELL(NIL);
-	MARK_CELL(T);
+    /* mark nil and t */
+    MARK_CELL(NIL);
+    MARK_CELL(T);
 
-	/* mark local environment */
-	for (j = 0; j <= mt_queue_num; j++)
-	    mark_cell(ep[j]);
-	/* mark dynamic environment */
-	for (j = 0; j <= mt_queue_num; j++)
-	    mark_cell(dp[j]);
-	/* mark stack */
-	for (j = 0; j <= mt_queue_num; j++) {
-	    for (i = 0; i < sp[j]; i++)
-		mark_cell(stack[i][j]);
-	}
-	/* mark cell binded by argstack */
-	for (j = 0; j <= mt_queue_num; j++) {
-	    for (i = 0; i < ap[j]; i++)
-		mark_cell(argstk[i][j]);
-	}
-	/* mark tagbody symbol */
-	mark_cell(tagbody_tag);
-	/* mark thunk for unwind-protect */
-	for (i = 0; i < unwind_pt; i++)
-	    mark_cell(unwind_buf[i]);
-	/* mark error_handler */
-	mark_cell(error_handler);
-	/* mark stream */
-	mark_cell(standard_input);
-	mark_cell(standard_output);
-	mark_cell(standard_error);
-	mark_cell(input_stream);
-	mark_cell(output_stream);
-	mark_cell(error_stream);
-	/* mark shelter */
-	for (j = 0; j <= mt_queue_num; j++) {
-	    for (i = 0; i < lp[j]; i++)
-		mark_cell(shelter[i][j]);
-	}
-	/* mark dynamic environment */
-	for (j = 0; j <= mt_queue_num; j++) {
-	    for (i = 0; i <= dp[j]; i++)
-		mark_cell(dynamic[i][1][j]);
-	}
-	/* mark generic_list */
-	mark_cell(generic_list);
+    /* mark local environment */
+    for (j = 0; j <= mt_queue_num; j++)
+	mark_cell(ep[j]);
+    /* mark dynamic environment */
+    for (j = 0; j <= mt_queue_num; j++)
+	mark_cell(dp[j]);
+    /* mark stack */
+    for (j = 0; j <= mt_queue_num; j++) {
+	for (i = 0; i < sp[j]; i++)
+	    mark_cell(stack[i][j]);
+    }
+    /* mark cell binded by argstack */
+    for (j = 0; j <= mt_queue_num; j++) {
+	for (i = 0; i < ap[j]; i++)
+	    mark_cell(argstk[i][j]);
+    }
+    /* mark tagbody symbol */
+    mark_cell(tagbody_tag);
+    /* mark thunk for unwind-protect */
+    for (i = 0; i < unwind_pt; i++)
+	mark_cell(unwind_buf[i]);
+    /* mark error_handler */
+    mark_cell(error_handler);
+    /* mark stream */
+    mark_cell(standard_input);
+    mark_cell(standard_output);
+    mark_cell(standard_error);
+    mark_cell(input_stream);
+    mark_cell(output_stream);
+    mark_cell(error_stream);
+    /* mark shelter */
+    for (j = 0; j <= mt_queue_num; j++) {
+	for (i = 0; i < lp[j]; i++)
+	    mark_cell(shelter[i][j]);
+    }
+    /* mark dynamic environment */
+    for (j = 0; j <= mt_queue_num; j++) {
+	for (i = 0; i <= dp[j]; i++)
+	    mark_cell(dynamic[i][1][j]);
+    }
+    /* mark generic_list */
+    mark_cell(generic_list);
 
 
-	if (!thread_flag) {
-	    addr = 0;
-	    hp[0] = NIL;
-	    fc[0] = 0;
-	    while (addr < CELLSIZE) {
-		if (USED_CELL(addr))
-		    NOMARK_CELL(addr);
-		else {
-		    clr_cell(addr);
-		    SET_CDR(addr, hp[0]);
-		    hp[0] = addr;
-		    fc[0]++;
-		}
-		addr++;
+    if (!thread_flag) {
+	addr = 0;
+	hp[0] = NIL;
+	fc[0] = 0;
+	while (addr < CELLSIZE) {
+	    if (USED_CELL(addr))
+		NOMARK_CELL(addr);
+	    else {
+		clr_cell(addr);
+		SET_CDR(addr, hp[0]);
+		hp[0] = addr;
+		fc[0]++;
 	    }
-	} else {
-	    for (i = 0; i <= mt_queue_num; i++) {
-		hp[i] = NIL;
-		fc[i] = 0;
-	    }
-	    addr = 0;
-	    i = 0;
-	    while (addr < CELLSIZE) {
-		if (USED_CELL(addr)) {
-		    NOMARK_CELL(addr);
-		} else {
-		    clr_cell(addr);
-		    SET_CDR(addr, hp[i]);
-		    hp[i] = addr;
-		    fc[i]++;
-		    i++;
-		    if (i > mt_queue_num)
-			i = 0;
+	    addr++;
+	}
+    } else {
+	for (i = 0; i <= mt_queue_num; i++) {
+	    hp[i] = NIL;
+	    fc[i] = 0;
+	}
+	addr = 0;
+	i = 0;
+	while (addr < CELLSIZE) {
+	    if (USED_CELL(addr)) {
+		NOMARK_CELL(addr);
+	    } else {
+		clr_cell(addr);
+		SET_CDR(addr, hp[i]);
+		hp[i] = addr;
+		fc[i]++;
+		i++;
+		if (i > mt_queue_num)
+		    i = 0;
 
-		}
-		addr++;
 	    }
-
+	    addr++;
 	}
 
-	DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc[0]);
-    
+    }
+
+    DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc[0]);
+
 }
 
 

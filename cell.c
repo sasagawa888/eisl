@@ -240,17 +240,17 @@ int freshcell(void)
 {
     int res;
 
-	pthread_mutex_lock(&mutex);
-	res = hp[0];
-	hp[0] = GET_CDR(hp[0]);
-	SET_CDR(res, 0);
-	fc[0]--;
-	pthread_mutex_unlock(&mutex);
-	if (fc[0] <= 50 && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "freshcell", NIL, 0);
-	}
-    
+    pthread_mutex_lock(&mutex);
+    res = hp[0];
+    hp[0] = GET_CDR(hp[0]);
+    SET_CDR(res, 0);
+    fc[0]--;
+    pthread_mutex_unlock(&mutex);
+    if (fc[0] <= 50 && !handling_resource_err) {
+	handling_resource_err = true;
+	error(RESOURCE_ERR, "freshcell", NIL, 0);
+    }
+
     return (res);
 }
 
@@ -258,14 +258,14 @@ int tfreshcell(int th)
 {
     int res;
 
-	res = hp[th];
-	hp[th] = GET_CDR(hp[th]);
-	SET_CDR(res, 0);
-	fc[th]--;
-	if (fc[th] <= 50 && !handling_resource_err) {
-	    handling_resource_err = true;
-	    error(RESOURCE_ERR, "tfreshcell", NIL, 0);
-	}
+    res = hp[th];
+    hp[th] = GET_CDR(hp[th]);
+    SET_CDR(res, 0);
+    fc[th]--;
+    if (fc[th] <= 50 && !handling_resource_err) {
+	handling_resource_err = true;
+	error(RESOURCE_ERR, "tfreshcell", NIL, 0);
+    }
 
     return (res);
 }

@@ -275,7 +275,7 @@ void init_generic(void)
 }
 
 /* arithmetic function */
-int f_plus(int arglist, int th)
+int f_plus(int arglist, int th __unused)
 {
     int augend;
 
@@ -314,7 +314,7 @@ int f_minus(int arglist, int th)
     return (minuend);
 }
 
-int f_mult(int arglist, int th)
+int f_mult(int arglist, int th __unused)
 {
     int multiplicand;
 
@@ -331,7 +331,7 @@ int f_mult(int arglist, int th)
     return (multiplicand);
 }
 
-int f_quotient(int arglist, int th)
+int f_quotient(int arglist, int th __unused)
 {
     int dividend;
 

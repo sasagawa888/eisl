@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <pthread.h>
-
+#include <sys/time.h>
 
 
 #ifdef __rpi__
@@ -815,8 +815,8 @@ int f_prof(int arglist, int th)
 
     arg1 = car(arglist);
     if (length(arglist) != 1)
-        goto error;
-    
+	goto error;
+
     if (arg1 == NIL) {
 	profiler_set(0);
 	profiler_clear();
@@ -828,14 +828,14 @@ int f_prof(int arglist, int th)
 	profiler_set(2);
     else if (eqp(arg1, make_sym("PR")))
 	profiler_print();
-    else{
-    error:
-    puts("argument:\n"
-         "'sys system function profile\n"
-         "'user user function profile\n"
-         "'pr print result\n"
-         "'cl clear profile data\n"
-         "nil stop profiler and clear result\n");
+    else {
+      error:
+	puts("argument:\n"
+	     "'sys system function profile\n"
+	     "'user user function profile\n"
+	     "'pr print result\n"
+	     "'cl clear profile data\n"
+	     "nil stop profiler and clear result\n");
 	error(WRONG_ARGS, "prof", arg1, th);
     }
     return (T);
@@ -2017,6 +2017,7 @@ int read_from_pipe(int n)
 	return (make_str(buffer3));
     }
 
+    return (0);
 }
 
 int read_from_pipe_part(int n)
@@ -2037,7 +2038,10 @@ int read_from_pipe_part(int n)
 
   exit:
     memset(buffer3, 0, sizeof(buffer3));
-    read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
+    int m;
+    m = read(pipe_c2p[i][R], buffer3, sizeof(buffer3));
+    if (m < 0)
+	error(SYSTEM_ERR, "read_from_pipe_part", NIL, 0);
 
   retry:
     if (buffer3[0] == '\x02') {
@@ -2065,6 +2069,7 @@ int read_from_pipe_part(int n)
 	return (make_str(buffer3));
     }
 
+    return (0);
 }
 
 
@@ -2075,6 +2080,8 @@ int clear_child_signal(void)
     for (i = 0; i < PROCSIZE; i++) {
 	child_signal[i] = 0;
     }
+
+    return (0);
 }
 
 int kill_rest_process(int n)
@@ -2097,7 +2104,7 @@ int kill_rest_process(int n)
 	    read_from_pipe(i);
 	}
     }
-
+    return (0);
 }
 
 
@@ -2332,7 +2339,7 @@ int f_mp_close(int arglist, int th)
     return (T);
 }
 
-int f_mp_report(int arglist, int th)
+int f_mp_report(int arglist, int th __unused)
 {
     int arg1;
 
@@ -2579,7 +2586,7 @@ void send_to_parent(int x)
 
 }
 
-void send_to_child(int n, int x)
+int send_to_child(int n, int x)
 {
     int m;
 
@@ -2591,6 +2598,7 @@ void send_to_child(int n, int x)
     if (m < 0) {
 	error(SYSTEM_ERR, "send to child", NIL, 0);
     }
+    return(0);
 }
 
 int receive_from_child(int n)
@@ -2632,6 +2640,7 @@ int receive_from_child(int n)
 	return (make_str(buffer3));
     }
 
+    return (0);
 }
 
 /* opt == 0 find NIL, opt == 1 find non NIL */
@@ -2705,6 +2714,8 @@ int receive_from_child_part1(int n, int opt)
 	return (NIL);
     else if (opt == 0)
 	return (T);
+
+    return (0);
 }
 
 int receive_from_child_part2(int n)
@@ -2739,6 +2750,7 @@ int receive_from_child_part2(int n)
 	return (str_to_sexp(make_str(buffer3)));
     }
 
+    return (0);
 }
 
 
@@ -2990,7 +3002,7 @@ int f_dp_exec(int arglist, int th)
 
 }
 
-int f_dp_report(int arglist, int th)
+int f_dp_report(int arglist, int th __unused)
 {
     int arg1;
     char sub_buffer[STRSIZE];
@@ -3042,10 +3054,11 @@ int f_dp_part(int arglist, int th)
 
 //-----------TCP/IP--------------------
 
-f_create_socket(int arglist, int th)
+int f_create_socket(int arglist, int th)
 {
     struct sockaddr_in addr;
-    int arg1, res, size, socket1, socket2;
+    int arg1, res, socket1, socket2;
+    socklen_t size;
 
     if (nullp(arglist)) {
 	// server 
@@ -3075,12 +3088,12 @@ f_create_socket(int arglist, int th)
 	if (socket2 < 0) {
 	    error(SYSTEM_ERR, "create-socket", NIL, th);
 	}
-	res = make_socket(socket2, EISL_SOCKET, NIL, socket1);
+	res = make_socket(socket2, EISL_SOCKET, "", socket1);
     } else if (length(arglist) == 1) {
 	arg1 = car(arglist);
 	// client side
 	socket1 = socket(AF_INET, SOCK_STREAM, 0);
-	if (socket < 0) {
+	if (socket1 < 0) {
 	    error(SYSTEM_ERR, "create-socket", arg1, th);
 	}
 
@@ -3140,7 +3153,7 @@ int f_send_socket(int arglist, int th)
     return (make_str(buffer));
 }
 
-f_close_socket(int arglist, int th)
+int f_close_socket(int arglist, int th __unused)
 {
     int arg1;
 

@@ -566,7 +566,7 @@ void init_pointer(void)
 
 void exit_thread(void)
 {
-    
+
     /* exit parallel function thread */
     exit_para();
 }
@@ -1871,10 +1871,10 @@ int eval(int addr, int th)
 		profiler(car(addr), en - st);
 	    return (res);
 	} else if (fsubrp(car(addr))) {
-		st = getETime();
+	    st = getETime();
 	    res = apply(caar(addr), cdr(addr), th);
 	    en = getETime();
-		if (prof_sw == 1)
+	    if (prof_sw == 1)
 		profiler(car(addr), en - st);
 	    return (res);
 	} else if ((val = functionp(car(addr)))) {

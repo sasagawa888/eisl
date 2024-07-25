@@ -566,12 +566,7 @@ void init_pointer(void)
 
 void exit_thread(void)
 {
-    /* exit concurrent GC thread */
-    //pthread_mutex_lock(&mutex);
-    //concurrent_exit_flag = true;
-    //pthread_cond_signal(&cond_gc);
-    //pthread_mutex_unlock(&mutex);
-
+    
     /* exit parallel function thread */
     exit_para();
 }

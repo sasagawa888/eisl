@@ -814,9 +814,9 @@ int f_prof(int arglist, int th)
     int arg1;
 
     arg1 = car(arglist);
-    if (!symbolp(arg1))
-	error(NOT_SYM, "prof", arg1, th);
-
+    if (length(arglist) != 1)
+        goto error;
+    
     if (arg1 == NIL) {
 	profiler_set(0);
 	profiler_clear();
@@ -828,9 +828,16 @@ int f_prof(int arglist, int th)
 	profiler_set(2);
     else if (eqp(arg1, make_sym("PR")))
 	profiler_print();
-    else
+    else{
+    error:
+    puts("argument:\n"
+         "'sys system function profile\n"
+         "'user user function profile\n"
+         "'pr print result\n"
+         "'cl clear profile data\n"
+         "nil stop profiler and clear result\n");
 	error(WRONG_ARGS, "prof", arg1, th);
-
+    }
     return (T);
 }
 

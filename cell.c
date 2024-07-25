@@ -756,8 +756,7 @@ int make_socket(int sockfd, int type, const char *name, int listenfd)
     SET_SOCKET(addr, sockfd);	/* socket fd */
     SET_CDR(addr, listenfd);	/* socket when linten */
     SET_AUX(addr, cstream);	/* class */
-    SET_OPT(addr, type);	/* EISL_INPUT/EISL_OUTPUT/EISL_INOUT/EISL_INSTR/EISL_OUTSTR/
-				 * EISL_INPUT_BIN/EISL_OUTPUT_BIN/EISL_INOUT_BIN/EISL_SOCKET */
+    SET_OPT(addr, type);	/* EISL_SOCKET */
     SET_NAME(addr, name);	/* ip address */
     SET_PROF(addr, EISL_OPEN);	/* EISL_OPEN/EISL_CLOSE initial value is EISL_OPEN */
     return (addr);

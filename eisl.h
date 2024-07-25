@@ -1278,6 +1278,7 @@ int quotient(int x, int y);
 int set_error_flag(int x);
 int signal_condition(int x, int y, int th);
 int sread(void);
+int socketp(int x);
 int read_list(void);
 int read_bin(char *buf);
 int read_oct(char *buf);

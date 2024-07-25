@@ -363,6 +363,13 @@ int binary_output_stream_p(int x)
 	return (0);
 }
 
+int socketp(int x)
+{
+    if (streamp(x) && GET_OPT(x) == EISL_SOCKET)
+	return (1);
+    else
+	return (0);
+}
 
 int class_symbol_p(int x)
 {

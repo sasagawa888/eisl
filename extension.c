@@ -2598,7 +2598,7 @@ int send_to_child(int n, int x)
     if (m < 0) {
 	error(SYSTEM_ERR, "send to child", NIL, 0);
     }
-    return(0);
+    return (0);
 }
 
 int receive_from_child(int n)
@@ -3060,6 +3060,11 @@ int f_create_socket(int arglist, int th)
     int arg1, res, socket1, socket2;
     socklen_t size;
 
+    if (!(nullp(arglist) || length(arglist) == 1))
+	error(WRONG_ARGS, "create-socket", arglist, th);
+    if (length(arglist) == 1 && !stringp(car(arglist)))
+	error(NOT_STR, "create-socket", car(arglist), th);
+
     if (nullp(arglist)) {
 	// server 
 	// create socket
@@ -3124,6 +3129,8 @@ int f_receive_socket(int arglist, int th)
     char buffer[STRSIZE];
 
     arg1 = car(arglist);
+    if (!socketp(arg1))
+	error(NOT_IN_STREAM, "receive-socket", arg1, th);
 
     memset(buffer, 0, sizeof(buffer));
     n = read(GET_SOCKET(arg1), buffer, sizeof(buffer));
@@ -3142,6 +3149,9 @@ int f_send_socket(int arglist, int th)
     char buffer[STRSIZE];
 
     arg1 = car(arglist);
+    if (!socketp(arg1))
+	error(NOT_IN_STREAM, "send-socket", arg1, th);
+
     // send message 
     memset(buffer, 0, sizeof(buffer));
     strcpy(buffer, GET_NAME(arg1));
@@ -3153,16 +3163,20 @@ int f_send_socket(int arglist, int th)
     return (make_str(buffer));
 }
 
-int f_close_socket(int arglist, int th __unused)
+int f_close_socket(int arglist, int th)
 {
     int arg1;
 
     arg1 = car(arglist);
+    if (!socketp(arg1))
+	error(NOT_IN_STREAM, "close-socket", arg1, th);
 
     close(GET_SOCKET(arg1));
+    SET_PROF(arg1, EISL_CLOSE);
 
     if (GET_CDR(arg1) != NIL)
 	close(GET_CDR(arg1));	// socket when listen
+    SET_PROF(arg1, EISL_CLOSE);
 
     return (T);
 }

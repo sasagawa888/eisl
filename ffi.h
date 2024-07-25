@@ -5,7 +5,6 @@
 #ifndef FFI_H
 #define FFI_H
 #define CELLSIZE 20000000
-#define VECSIZE 1000000
 // TCC does not have support for "static conts" as compile time constant
 #ifdef __TINYC__
 #define NIL 0

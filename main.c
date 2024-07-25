@@ -61,7 +61,6 @@ int fc[PARASIZE];		/* free counter */
 int ap[PARASIZE];		/* arglist pointer */
 int lp[PARASIZE];		/* shelter pointer */
 int cp;				/* tag pointer for catch & throw */
-int vp;             /* vector-heap pointer */
 
 /* class */
 int cobject;
@@ -133,7 +132,6 @@ char buffer3[STRSIZE] = { 0 };	//for Multi-Process and Distributed TCP/IP
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
-int vector_heap[VECSIZE];
 int stack[STACKSIZE][PARASIZE];
 int argstk[STACKSIZE][PARASIZE];
 int cell_hash_table[HASHTBSIZE];
@@ -545,7 +543,6 @@ void init_pointer(void)
 	lp[i] = 0;
     }
     cp = 0;
-	vp = 0;
     block_pt = 0;
     catch_pt = 0;
     unwind_pt = 0;

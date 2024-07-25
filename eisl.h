@@ -126,7 +126,6 @@ typedef struct __packed {
 		subr_t subr;
 		FILE *port;
 		int *dyna_vec;
-        int heap_vec;
         int sockfd;
 	    } car;
 	    union {
@@ -178,7 +177,6 @@ extern int ap[PARASIZE];    // arglist pointer
 extern int lp[PARASIZE];	// shelter pointer
 extern int ac;			    // allocate counter
 extern int cp;              // catch tag pointer
-extern int vp;              // vector-heap pointer
 
 /* ------class----- */
 extern int cobject;
@@ -253,7 +251,6 @@ extern char buffer3[STRSIZE];
 
 /* heap and stack */
 extern cell heap[CELLSIZE];
-extern int vector_heap[VECSIZE];
 extern int stack[STACKSIZE][PARASIZE];
 extern int argstk[STACKSIZE][PARASIZE];
 extern int cell_hash_table[HASHTBSIZE];

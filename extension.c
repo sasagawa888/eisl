@@ -115,6 +115,10 @@ void init_exsubr(void)
     def_subr("DP-REPORT", f_dp_report);
 
     def_subr("CREATE-SOCKET", f_create_socket);
+    def_subr("BIND-SOCKET", f_bind_socket);
+    def_subr("LISTEN-SOCKET", f_listen_socket);
+    def_subr("ACCEPT-SOCKET", f_accept_socket);
+    def_subr("CONNECT-SOCKET", f_connect_socket);
     def_subr("SEND-SOCKET", f_send_socket);
     def_subr("RECEIVE-SOCKET", f_receive_socket);
     def_subr("CLOSE-SOCKET", f_close_socket);
@@ -3074,21 +3078,16 @@ int f_create_socket(int arglist, int th)
 
 int f_bind_socket(int arglist, int th)
 {
-    int arg1, arg2, arg3;
+    int arg1, arg2;
 
     arg1 = car(arglist);   // socket
     arg2 = cadr(arglist);  // port
-    arg3 = caddr(arglist); //mode
     if (!socketp(arg1))
 	error(NOT_STREAM, "bind-socket", arg1, th);
     if(!integerp(arg2))
     error(NOT_INT, "bind-socket", arg2, th);
-    if(!stringp(arg3))
-    error(NOT_STR, "bind-socket", arg3, th);
-
 
     // initialize addr
-    if(equalp(arg3,make_sym("ipv4"))){
     struct sockaddr_in addr;
 	memset((char *) &addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
@@ -3097,20 +3096,7 @@ int f_bind_socket(int arglist, int th)
 	if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) < 0) {
 	    error(SYSTEM_ERR, "bind-socket", NIL, th);
 	}
-    }
-    else if(equalp(arg3,make_sym("ipv6"))){
-    struct sockaddr_in6 addr6;
-    memset(&addr6, 0, sizeof(addr6));
-    addr6.sin6_family = AF_INET6;
-    addr6.sin6_addr = in6addr_any;
-    addr6.sin6_port = htons(GET_INT(arg2));
-    if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr6, sizeof(addr6)) < 0) {
-	    error(SYSTEM_ERR, "bind-socket", NIL, th);
-	}
-    } else{
-        error(WRONG_ARGS,"bind-socket",arg3,th);
-    }
-
+    
     return(arg1);
 }
 

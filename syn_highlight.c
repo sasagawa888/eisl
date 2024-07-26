@@ -80,7 +80,7 @@ static const char *extended[] = {
     "nconc", "fast-address", "macroexpand-1", "macroexpand-all",
     "backtrace", "subrp", "funcp", "macrop", "fixnump", "longnump",
     "bignump", "prof", "create-socket", "send-socket", "receive-socket",
-    "close-socket",
+    "close-socket", "bind-socket", "listen-socket", "accept-socket", "connect-socket",
     "break", "edit", "set-editor", "wiringpi-setup-gpio",
     "delay-microseconds", "wiringpi-spi-setup", "digital-write-byte",
     "wiringpi-spi-setup-ch-speed", "pwm-set-mode", "pwm-set-range",

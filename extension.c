@@ -3059,70 +3059,110 @@ int f_dp_part(int arglist, int th)
 
 int f_create_socket(int arglist, int th)
 {
-    struct sockaddr_in addr;
-    int arg1, res, socket1, socket2;
-    socklen_t size;
+    int sockfd, res;
+    
+    if (!nullp(arglist)){
+	error(WRONG_ARGS, "create-socket", arglist, th);}
 
-    if (!(nullp(arglist) || length(arglist) == 1))
-	error(WRONG_ARGS, "create-socket", arglist, th);
-    if (length(arglist) == 1 && !stringp(car(arglist)))
-	error(NOT_STR, "create-socket", car(arglist), th);
-
-    if (nullp(arglist)) {
-	// server 
-	// create socket
-	socket1 = socket(AF_INET, SOCK_STREAM, 0);
-	if (socket1 < 0) {
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) {
 	    error(SYSTEM_ERR, "create-socket", NIL, th);
 	}
+      res = make_socket(sockfd, EISL_SOCKET, "socket", NIL);
+    return(res);
+}
 
-	// initialize server_addr
+int f_bind_socket(int arglist, int th)
+{
+    int arg1, arg2, arg3;
+
+    arg1 = car(arglist);   // socket
+    arg2 = cadr(arglist);  // port
+    arg3 = caddr(arglist); //mode
+    if (!socketp(arg1))
+	error(NOT_STREAM, "bind-socket", arg1, th);
+    if(!integerp(arg2))
+    error(NOT_INT, "bind-socket", arg2, th);
+    if(!stringp(arg3))
+    error(NOT_STR, "bind-socket", arg3, th);
+
+
+    // initialize addr
+    if(equalp(arg3,make_sym("ipv4"))){
+    struct sockaddr_in addr;
 	memset((char *) &addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_port = htons(PORT);
-
-	// bind socket
-	if (bind(socket1, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-	    error(SYSTEM_ERR, "create-socket", NIL, 0);
+	addr.sin_port = htons(GET_INT(arg2));
+	if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+	    error(SYSTEM_ERR, "bind-socket", NIL, th);
 	}
-
-	//wait conneting
-	listen(socket1, 5);
-	size = sizeof(addr);
-
-	// connection from client
-	socket2 = accept(socket1, (struct sockaddr *) &addr, &size);
-	if (socket2 < 0) {
-	    error(SYSTEM_ERR, "create-socket", NIL, th);
+    }
+    else if(equalp(arg3,make_sym("ipv6"))){
+    struct sockaddr_in6 addr6;
+    memset(&addr6, 0, sizeof(addr6));
+    addr6.sin6_family = AF_INET6;
+    addr6.sin6_addr = in6addr_any;
+    addr6.sin6_port = htons(GET_INT(arg2));
+    if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr6, sizeof(addr6)) < 0) {
+	    error(SYSTEM_ERR, "bind-socket", NIL, th);
 	}
-	res = make_socket(socket2, EISL_SOCKET, "", socket1);
-    } else if (length(arglist) == 1) {
-	arg1 = car(arglist);
-	// client side
-	socket1 = socket(AF_INET, SOCK_STREAM, 0);
-	if (socket1 < 0) {
-	    error(SYSTEM_ERR, "create-socket", arg1, th);
-	}
-
-	// initialize client_addr
-	memset((char *) &addr, 0, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(PORT);
-
-	if (inet_pton(AF_INET, GET_NAME(arg1), &addr.sin_addr) < 0)
-	    error(SYSTEM_ERR, "create-socket", arg1, th);
-
-
-	if (connect(socket1, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-	    error(SYSTEM_ERR, "create-socket", arg1, th);
-	}
-	res = make_socket(socket1, EISL_SOCKET, GET_NAME(arg1), NIL);
-    } else {
-	error(WRONG_ARGS, "create-socket", arglist, th);
+    } else{
+        error(WRONG_ARGS,"bind-socket",arg3,th);
     }
 
-    return (res);
+    return(arg1);
+}
+
+int f_listen_socket(int arglist, int th __unused)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    if (!socketp(arg1)){
+	error(NOT_STREAM, "listen-socket", arg1, th);}
+
+	listen(GET_SOCKET(arg1), 5);
+	return(arg1);
+}
+
+int f_accept_socket(int arglist, int th)
+{
+    int arg1,sockfd,res;
+    struct sockaddr_in addr;
+    socklen_t size;
+
+    arg1 = car(arglist);
+    if (!socketp(arg1)){
+	error(NOT_STREAM, "accept-socket", arg1, th);}
+
+	sockfd = accept(GET_SOCKET(arg1), (struct sockaddr *) &addr, &size);
+	if (sockfd < 0) {
+	    error(SYSTEM_ERR, "accept-socket", NIL, th);
+	}
+    res = make_socket(sockfd, EISL_SOCKET, "", GET_SOCKET(arg1));
+    return(res);
+}
+
+int f_connect_socket(int arglist, int th)
+{
+    int arg1,arg2;
+    struct sockaddr_in addr;
+
+    arg1 = car(arglist);  // socket
+    arg2 = cadr(arglist); // IP address
+    if (!socketp(arg1))
+	error(NOT_STREAM, "connect-socket", arg1, th);
+    if (!stringp(arg2))
+    error(NOT_STR, "connect-socket", arg2, th);
+
+    if (inet_pton(AF_INET, GET_NAME(arg2), &addr.sin_addr) < 0)
+	    error(SYSTEM_ERR, "connect-socket", arg1, th);
+
+    if (connect(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) < 0) {
+	    error(SYSTEM_ERR, "connect-socket", arg1, th);
+	}
+    return(arg1);
 }
 
 

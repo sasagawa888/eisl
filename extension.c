@@ -114,9 +114,10 @@ void init_exsubr(void)
     def_subr("DP-COMPILE", f_dp_compile);
     def_subr("DP-REPORT", f_dp_report);
 
-    def_subr("CREATE-SOCKET", f_create_socket);
+    def_subr("CREATE-SERVER-SOCKET", f_create_server_socket);
+    def_subr("CREATE_CLIENT-SOCKET", f_create_client_socket);
     def_subr("SEND-SOCKET", f_send_socket);
-    def_subr("RECEIVE-SOCKET", f_recv_socket);
+    def_subr("RECV-SOCKET", f_recv_socket);
     def_subr("CLOSE-SOCKET", f_close_socket);
 
 #ifdef __rpi__

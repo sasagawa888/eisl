@@ -668,6 +668,7 @@ extern pthread_t receiver_thread;
 extern int child_result[PARASIZE];
 
 /* -----TCPIP for server----------------*/
+extern socklen_t server_len,client_len;
 extern struct sockaddr_in server_addr,client_addr;
 
 // -------error code---

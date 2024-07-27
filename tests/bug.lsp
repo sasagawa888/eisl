@@ -1,4 +1,7 @@
 ;;; test code for TCP/IP functions
+
+(defglobal ip "127.001.001.01") ; change your server ip address
+
 (defun server ()
     (let ((socket (listen-socket (bind-socket (create-socket) 5000)))
           (msg nil) )
@@ -10,7 +13,7 @@
        (close-socket socket)))
 
 (defun client (ip)
-    (let ((socket (connect-socket (create-socket) ip-addr))
+    (let ((socket (connect-socket (create-socket) ip))
           (msg nil) )
        (setq msg (read-line))
        (while (not (equal msg "end"))

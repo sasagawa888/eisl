@@ -260,7 +260,8 @@ pthread_t receiver_thread;
 int child_result[PARASIZE];
 
 /* -----TCPIP for server----------------*/
-int default_ip_version;
+struct sockaddr_in server_addr,client_addr;
+
 
 
 

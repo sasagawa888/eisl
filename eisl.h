@@ -657,7 +657,7 @@ extern struct sigaction child_action;
 extern int child_signal[PROCSIZE];
 extern int child_signal1[PROCSIZE];
 
-/* distributed parallel & TCPIP*/
+/* distributed parallel */
 #define PORT 5000 
 extern int sockfd[PARASIZE];
 extern socklen_t parent;
@@ -666,6 +666,9 @@ extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
 extern pthread_t receiver_thread;
 extern int child_result[PARASIZE];
+
+/* -----TCPIP for server----------------*/
+extern struct sockaddr_in server_addr,client_addr;
 
 // -------error code---
 enum {
@@ -1357,6 +1360,7 @@ void bind_func(const char *name, tag_t tag, int (*func)(int, int));
 void bind_macro(char *name, int addr);
 void cellprint(int addr);
 void clr_cell(int addr);
+void close_socket(void);
 void copy_gbc(void);
 void *concurrent(void *arg);
 void cut_zero(int x);

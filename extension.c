@@ -3058,7 +3058,40 @@ int f_dp_part(int arglist, int th)
 
 //-----------TCP/IP--------------------
 
-int f_create_socket(int arglist, int th)
+int f_create_client_socket(int arglist, int th)
+{
+    int arg1,arg2,res,sockfd;
+
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!integerp(arg1))
+    error(NOT_INT,"create-client-socket",arg1,th);
+    if(!stringp(arg2))
+    error(NOT_STR,"create-client-socket",arg2,th);
+
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+	error(SYSTEM_ERR, "create-client-socket", NIL , th);
+    }
+
+    memset((char *) &server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(GET_INT(arg1));
+
+    if (inet_pton(AF_INET, GET_NAME(arg2), &client_addr.sin_addr) < 0)
+	error(SYSTEM_ERR, "create-client-socket", arg2, th);
+
+
+    if (connect(sockfd, (struct sockaddr *) &client_addr, sizeof(client_addr)) < 0) {
+	error(SYSTEM_ERR, "create-client-create", NIL , th);
+    }
+
+    res = make_socket(sockfd,EISL_SOCKET,"client",NIL);
+    return(res);
+}
+
+int f_create_server_socket(int arglist, int th)
 {
 
 }

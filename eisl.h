@@ -660,15 +660,14 @@ extern int child_signal1[PROCSIZE];
 /* distributed parallel */
 #define PORT 5000 
 extern int sockfd[PARASIZE];
-extern socklen_t parent;
-extern socklen_t child[PARASIZE];
+extern socklen_t parent_len;
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
 extern pthread_t receiver_thread;
 extern int child_result[PARASIZE];
 
 /* -----TCPIP for server----------------*/
-extern socklen_t server_len,client_len;
+extern socklen_t server_len;
 extern struct sockaddr_in server_addr,client_addr;
 
 // -------error code---

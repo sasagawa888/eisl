@@ -252,15 +252,14 @@ int child_signal1[PROCSIZE];
 
 /* -----distributed parallel & TCPIP------*/
 int sockfd[PARASIZE];
-socklen_t parent;
-socklen_t child[PARASIZE];
+socklen_t parent_len;
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
 pthread_t receiver_thread;
 int child_result[PARASIZE];
 
 /* -----TCPIP for server----------------*/
-socklen_t server_len,client_len;
+socklen_t server_len;
 struct sockaddr_in server_addr,client_addr;
 
 

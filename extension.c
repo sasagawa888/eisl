@@ -2553,12 +2553,12 @@ int receive_from_parent(void)
     if (!connect_flag) {
 	//wait conneting
 	listen(sockfd[0], 5);
-	parent = sizeof(parent_addr);
+	parent_len = sizeof(parent_addr);
 	connect_flag = true;
 
 	// connection from parent
 	sockfd[1] =
-	    accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent);
+	    accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent_len);
 	if (sockfd[1] < 0) {
 	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
 	}

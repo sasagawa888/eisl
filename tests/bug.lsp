@@ -1,4 +1,4 @@
-;;; test code for ICP/IP functions
+;;; test code for TCP/IP functions
 (defun server ()
     (let ((socket (listen-socket (bind-socket (create-socket) 5000)))
           (msg nil) )
@@ -17,4 +17,5 @@
           (send-socket socket msg)
           (setq msg (receive-socket socket))
           (format (standard-output) msg)
-          (setq msg (read-line)))))
+          (setq msg (read-line)))
+       (close socket)))

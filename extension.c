@@ -114,14 +114,10 @@ void init_exsubr(void)
     def_subr("DP-COMPILE", f_dp_compile);
     def_subr("DP-REPORT", f_dp_report);
 
-    def_subr("SOCKET-CREATE", f_socket_create);
-    def_subr("SOCKET-BIND", f_socket_bind);
-    def_subr("SOCKET-LISTEN", f_socket_listen);
-    def_subr("SOCKET-ACCEPT", f_socket_accept);
-    def_subr("SOCKET-CONNECT", f_socket_connect);
-    def_subr("SOCKET-SEND", f_socket_send);
-    def_subr("SOCKET-RECEIVE", f_socket_receive);
-    def_subr("SOCKET-CLOSE", f_socket_close);
+    def_subr("CREATE-SOCKET", f_create_socket);
+    def_subr("SEND-SOCKET", f_send_socket);
+    def_subr("RECEIVE-SOCKET", f_recv_socket);
+    def_subr("CLOSE-SOCKET", f_close_socket);
 
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
@@ -3061,158 +3057,22 @@ int f_dp_part(int arglist, int th)
 
 //-----------TCP/IP--------------------
 
-int f_socket_create(int arglist, int th)
+int f_create_socket(int arglist, int th)
 {
-    int sockfd, res;
-
-    if (!nullp(arglist)) {
-	error(WRONG_ARGS, "socket-create", arglist, th);
-    }
-
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-	error(SYSTEM_ERR, "socket-create", NIL, th);
-    }
-    res = make_socket(sockfd, EISL_SOCKET, "socket", NIL);
-    return (res);
-}
-
-int f_socket_bind(int arglist, int th)
-{
-    int arg1, arg2;
-
-    arg1 = car(arglist);	// socket
-    arg2 = cadr(arglist);	// port
-    if (!socketp(arg1))
-	error(NOT_STREAM, "socket-bind", arg1, th);
-    if (!integerp(arg2))
-	error(NOT_INT, "socket-bind", arg2, th);
-    if (GET_INT(arg2) <= 1024 || GET_INT(arg2) > 65535)
-	error(WRONG_ARGS, "socket-bind", arg2, th);
-
-    // initialize addr
-    struct sockaddr_in addr;
-    memset((char *) &addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(GET_INT(arg2));
-    if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) <
-	0) {
-	error(SYSTEM_ERR, "bind-socket", NIL, th);
-    }
-
-    return (arg1);
-}
-
-int f_socket_listen(int arglist, int th __unused)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (!socketp(arg1)) {
-	error(NOT_STREAM, "socket-listen", arg1, th);
-    }
-
-    listen(GET_SOCKET(arg1), 5);
-    return (arg1);
-}
-
-int f_socket_accept(int arglist, int th)
-{
-    int arg1, sockfd, res;
-    struct sockaddr_in addr;
-    socklen_t size;
-
-    arg1 = car(arglist);
-    if (!socketp(arg1)) {
-	error(NOT_STREAM, "socket-accept", arg1, th);
-    }
-
-    sockfd = accept(GET_SOCKET(arg1), (struct sockaddr *) &addr, &size);
-    if (sockfd < 0) {
-	error(SYSTEM_ERR, "socket-accept", NIL, th);
-    }
-    res = make_socket(sockfd, EISL_SOCKET, "", GET_SOCKET(arg1));
-    return (res);
-}
-
-int f_socket_connect(int arglist, int th)
-{
-    int arg1, arg2;
-    struct sockaddr_in addr;
-
-    arg1 = car(arglist);	// socket
-    arg2 = cadr(arglist);	// IP address
-    if (!socketp(arg1))
-	error(NOT_STREAM, "socket-connect", arg1, th);
-    if (!stringp(arg2))
-	error(NOT_STR, "socket-connect", arg2, th);
-
-    if (inet_pton(AF_INET, GET_NAME(arg2), &addr.sin_addr) < 0)
-	error(SYSTEM_ERR, "socket-connect", arg1, th);
-
-    if (connect(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr))
-	< 0) {
-	error(SYSTEM_ERR, "socket-connect", arg1, th);
-    }
-    return (arg1);
-}
-
-
-int f_socket_receive(int arglist, int th)
-{
-    int arg1, n;
-    char buffer[STRSIZE];
-
-    arg1 = car(arglist);
-    if (!socketp(arg1))
-	error(NOT_IN_STREAM, "socket-receive", arg1, th);
-
-    memset(buffer, 0, sizeof(buffer));
-    n = read(GET_SOCKET(arg1), buffer, sizeof(buffer));
-
-    if (n < 0) {
-	error(SYSTEM_ERR, "socket-receive", arg1, th);
-    }
-
-    return (make_str(buffer));
 
 }
 
-int f_socket_send(int arglist, int th)
+int f_send_socket(int arglist, int th)
 {
-    int arg1, n;
-    char buffer[STRSIZE];
 
-    arg1 = car(arglist);
-    if (!socketp(arg1))
-	error(NOT_IN_STREAM, "socket-send", arg1, th);
-
-    // send message 
-    memset(buffer, 0, sizeof(buffer));
-    strcpy(buffer, GET_NAME(arg1));
-    n = write(GET_SOCKET(arg1), buffer, strlen(buffer));
-    if (n < 0) {
-	error(SYSTEM_ERR, "socket-send", arg1, th);
-    }
-
-    return (make_str(buffer));
 }
 
-int f_socket_close(int arglist, int th)
+int f_recv_socket(int arglist, int th)
 {
-    int arg1;
 
-    arg1 = car(arglist);
-    if (!socketp(arg1))
-	error(NOT_IN_STREAM, "socket-close", arg1, th);
+}
 
-    close(GET_SOCKET(arg1));
-    SET_PROF(arg1, EISL_CLOSE);
+int f_close_socket(int arglist, int th)
+{
 
-    if (GET_CDR(arg1) != NIL)
-	close(GET_CDR(arg1));	// socket when listen
-    SET_PROF(arg1, EISL_CLOSE);
-
-    return (T);
 }

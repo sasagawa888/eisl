@@ -3127,12 +3127,43 @@ int f_create_server_socket(int arglist, int th)
 
 int f_send_socket(int arglist, int th)
 {
+    int arg1,arg2,sockfd,n;
+    char buffer[STRSIZE];
 
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    if(!socketp(arg1))
+    error(WRONG_ARGS,"send-socket", arg1,th);
+    if(!stringp(arg2))
+    error(NOT_STR,"send-socket", arg2,th);
+
+    sockfd = GET_SOCKET(arg1);
+    memset(buffer, 0, sizeof(buffer));
+    strcpy(buffer, GET_NAME(arg2));
+    n = write(sockfd, buffer, strlen(buffer));
+    if (n < 0) {
+	error(SYSTEM_ERR, "send-socket", NIL, th);
+    }
+    return(T);
 }
 
 int f_recv_socket(int arglist, int th)
 {
+    int arg1,sockfd,n;
+    char buffer[STRSIZE];
 
+    arg1 = car(arglist);
+    if(!socketp(arg1))
+    error(WRONG_ARGS,"recv-socket",arg1,th);
+
+    sockfd = GET_SOCKET(arg1);
+    memset(buffer, 0, sizeof(buffer));
+    n = read(sockfd, buffer, sizeof(buffer));
+    if (n < 0) {
+	error(SYSTEM_ERR, "recv-socket", NIL, th);
+    }
+
+    return (make_sym(buffer));
 }
 
 int f_close_socket(int arglist, int th)

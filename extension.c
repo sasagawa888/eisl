@@ -1874,9 +1874,9 @@ int f_mp_create(int arglist, int th)
     char str[10];
 
     arg1 = car(arglist);
-    
-    if(!integerp(arg1))
-    error(NOT_INT,"mp-create",arg1,th);
+
+    if (!integerp(arg1))
+	error(NOT_INT, "mp-create", arg1, th);
     if (length(arglist) != 1)
 	error(ILLEGAL_ARGS, "mp-create", arglist, th);
     n = GET_INT(arg1);
@@ -3064,40 +3064,44 @@ int f_dp_part(int arglist, int th)
 int f_create_socket(int arglist, int th)
 {
     int sockfd, res;
-    
-    if (!nullp(arglist)){
-	error(WRONG_ARGS, "create-socket", arglist, th);}
 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-	    error(SYSTEM_ERR, "create-socket", NIL, th);
-	}
-      res = make_socket(sockfd, EISL_SOCKET, "socket", NIL);
-    return(res);
+    if (!nullp(arglist)) {
+	error(WRONG_ARGS, "create-socket", arglist, th);
+    }
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0) {
+	error(SYSTEM_ERR, "create-socket", NIL, th);
+    }
+    res = make_socket(sockfd, EISL_SOCKET, "socket", NIL);
+    return (res);
 }
 
 int f_bind_socket(int arglist, int th)
 {
     int arg1, arg2;
 
-    arg1 = car(arglist);   // socket
-    arg2 = cadr(arglist);  // port
+    arg1 = car(arglist);	// socket
+    arg2 = cadr(arglist);	// port
     if (!socketp(arg1))
 	error(NOT_STREAM, "bind-socket", arg1, th);
-    if(!integerp(arg2))
-    error(NOT_INT, "bind-socket", arg2, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "bind-socket", arg2, th);
+    if (GET_INT(arg2) <= 1024 || GET_INT(arg2) > 65535)
+	error(WRONG_ARGS, "bind-socket", arg2, th);
 
     // initialize addr
     struct sockaddr_in addr;
-	memset((char *) &addr, 0, sizeof(addr));
-	addr.sin_family = AF_INET;
-	addr.sin_addr.s_addr = INADDR_ANY;
-	addr.sin_port = htons(GET_INT(arg2));
-	if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-	    error(SYSTEM_ERR, "bind-socket", NIL, th);
-	}
-    
-    return(arg1);
+    memset((char *) &addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = INADDR_ANY;
+    addr.sin_port = htons(GET_INT(arg2));
+    if (bind(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) <
+	0) {
+	error(SYSTEM_ERR, "bind-socket", NIL, th);
+    }
+
+    return (arg1);
 }
 
 int f_listen_socket(int arglist, int th __unused)
@@ -3105,50 +3109,53 @@ int f_listen_socket(int arglist, int th __unused)
     int arg1;
 
     arg1 = car(arglist);
-    if (!socketp(arg1)){
-	error(NOT_STREAM, "listen-socket", arg1, th);}
+    if (!socketp(arg1)) {
+	error(NOT_STREAM, "listen-socket", arg1, th);
+    }
 
-	listen(GET_SOCKET(arg1), 5);
-	return(arg1);
+    listen(GET_SOCKET(arg1), 5);
+    return (arg1);
 }
 
 int f_accept_socket(int arglist, int th)
 {
-    int arg1,sockfd,res;
+    int arg1, sockfd, res;
     struct sockaddr_in addr;
     socklen_t size;
 
     arg1 = car(arglist);
-    if (!socketp(arg1)){
-	error(NOT_STREAM, "accept-socket", arg1, th);}
+    if (!socketp(arg1)) {
+	error(NOT_STREAM, "accept-socket", arg1, th);
+    }
 
-	sockfd = accept(GET_SOCKET(arg1), (struct sockaddr *) &addr, &size);
-	if (sockfd < 0) {
-	    error(SYSTEM_ERR, "accept-socket", NIL, th);
-	}
+    sockfd = accept(GET_SOCKET(arg1), (struct sockaddr *) &addr, &size);
+    if (sockfd < 0) {
+	error(SYSTEM_ERR, "accept-socket", NIL, th);
+    }
     res = make_socket(sockfd, EISL_SOCKET, "", GET_SOCKET(arg1));
-    return(res);
+    return (res);
 }
 
 int f_connect_socket(int arglist, int th)
 {
-    int arg1,arg2;
+    int arg1, arg2;
     struct sockaddr_in addr;
 
-    arg1 = car(arglist);  // socket
-    arg2 = cadr(arglist); // IP address
+    arg1 = car(arglist);	// socket
+    arg2 = cadr(arglist);	// IP address
     if (!socketp(arg1))
 	error(NOT_STREAM, "connect-socket", arg1, th);
     if (!stringp(arg2))
-    error(NOT_STR, "connect-socket", arg2, th);
+	error(NOT_STR, "connect-socket", arg2, th);
 
     if (inet_pton(AF_INET, GET_NAME(arg2), &addr.sin_addr) < 0)
-	    error(SYSTEM_ERR, "connect-socket", arg1, th);
+	error(SYSTEM_ERR, "connect-socket", arg1, th);
 
-    if (connect(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-	    error(SYSTEM_ERR, "connect-socket", arg1, th);
-	}
-    return(arg1);
+    if (connect(GET_SOCKET(arg1), (struct sockaddr *) &addr, sizeof(addr))
+	< 0) {
+	error(SYSTEM_ERR, "connect-socket", arg1, th);
+    }
+    return (arg1);
 }
 
 

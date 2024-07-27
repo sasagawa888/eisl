@@ -1,6 +1,6 @@
-
+;;; test code for ICP/IP functions
 (defun server ()
-    (let ((socket (create-socket))
+    (let ((socket (listen-socket (bind-socket (create-socket) 5000)))
           (msg nil) )
        (setq msg (receive-socket socket))
        (while (not (equal msg "quit"))
@@ -10,7 +10,7 @@
        (close-socket socket)))
 
 (defun client (ip)
-    (let ((socket (create-socket ip))
+    (let ((socket (connect-socket (create-socket) ip-addr))
           (msg nil) )
        (setq msg (read-line))
        (while (not (equal msg "end"))

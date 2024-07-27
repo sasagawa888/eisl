@@ -3137,5 +3137,17 @@ int f_recv_socket(int arglist, int th)
 
 int f_close_socket(int arglist, int th)
 {
+    int arg1,sockfd0,sockfd1;
 
+    arg1 = car(arglist);
+    if(!socketp(arg1))
+    error(WRONG_ARGS,"close-socket", arg1, th);
+
+    sockfd0 = GET_SOCKET(arg1);
+    sockfd1 = GET_CDR(sockfd0);
+    close(sockfd0);
+    if(!nullp(sockfd1))
+    close(sockfd1);
+
+    return(T);
 }

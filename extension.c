@@ -3058,10 +3058,32 @@ int f_dp_part(int arglist, int th)
 
 int f_create_client_socket(int arglist, int th)
 {
-    int arg1,res;
+    int arg1,res,n,x;
 
     arg1 = car(arglist);
-    init_child(0,arg1);
+    n = 0;
+    x = arg1;
+    // create socket
+    sockfd[n] = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd[n] < 0) {
+	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
+    }
+
+    // initialize child_addr
+    memset((char *) &child_addr[n], 0, sizeof(child_addr[n]));
+    child_addr[n].sin_family = AF_INET;
+    child_addr[n].sin_port = htons(PORT);
+
+    if (inet_pton(AF_INET, GET_NAME(x), &child_addr[n].sin_addr) < 0)
+	error(SYSTEM_ERR, "dp-create", x, 0);
+
+
+    if (connect
+	(sockfd[n], (struct sockaddr *) &child_addr[n],
+	 sizeof(child_addr[n])) < 0) {
+	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
+    }
+
     res = make_socket(sockfd[0],EISL_SOCKET,"socket",NIL);
     return(res);
 }

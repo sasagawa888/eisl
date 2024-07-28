@@ -3091,7 +3091,7 @@ int f_create_client_socket(int arglist, int th)
 
 int f_create_server_socket(int arglist, int th)
 {
-    int sock0,sock1;
+    int sock0,sock1,res;
     char buf[STRSIZE];
 
     // create socket
@@ -3128,16 +3128,9 @@ int f_create_server_socket(int arglist, int th)
 	
     }
 
-    // read message from parent
-    memset(buf, 0, sizeof(buf));
-    n = read(sock1, buf, sizeof(buf) - 1);
-    if (n < 0) {
-	error(SYSTEM_ERR, "receive from parent", NIL, 0);
-    }
-
-
-    return (make_sym(buf));
-
+    res = make_socket(sock1,EISL_SOCKET,"server",sock0);
+    return(res);
+   
 }
 
 int f_send_socket(int arglist, int th)
@@ -3152,8 +3145,18 @@ int f_send_socket(int arglist, int th)
 
 int f_recv_socket(int arglist, int th)
 {
-    
+    int arg1,sock,n;
+    char buf[STRSIZE];
 
+    arg1 = car(arglist);
+    sock = GET_SOCKET(arg1);
+    memset(buf, 0, sizeof(buf));
+    n = read(sock, buf, sizeof(buf) - 1);
+    if (n < 0) {
+	error(SYSTEM_ERR, "receive from parent", NIL, 0);
+    }
+
+    return (make_sym(buf));
 }
 
 int f_close_socket(int arglist, int th)

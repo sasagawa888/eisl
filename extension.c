@@ -3058,11 +3058,12 @@ int f_dp_part(int arglist, int th)
 
 int f_create_client_socket(int arglist, int th)
 {
-    int arg1,res,n,x;
+    int arg1,arg2,res,n,x;
 
     arg1 = car(arglist);
+    arg2 = cadr(arglist);
     n = 0;
-    x = arg1;
+    x = arg2;
     // create socket
     sockfd[n] = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd[n] < 0) {
@@ -3072,7 +3073,7 @@ int f_create_client_socket(int arglist, int th)
     // initialize child_addr
     memset((char *) &child_addr[n], 0, sizeof(child_addr[n]));
     child_addr[n].sin_family = AF_INET;
-    child_addr[n].sin_port = htons(PORT);
+    child_addr[n].sin_port = htons(GET_INT(arg1));
 
     if (inet_pton(AF_INET, GET_NAME(x), &child_addr[n].sin_addr) < 0)
 	error(SYSTEM_ERR, "dp-create", x, 0);

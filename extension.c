@@ -3071,17 +3071,17 @@ int f_create_client_socket(int arglist, int th)
     }
 
     // initialize child_addr
-    memset((char *) &child_addr[n], 0, sizeof(child_addr[n]));
-    child_addr[n].sin_family = AF_INET;
-    child_addr[n].sin_port = htons(GET_INT(arg1));
+    memset((char *) &client_addr, 0, sizeof(client_addr));
+    client_addr.sin_family = AF_INET;
+    client_addr.sin_port = htons(GET_INT(arg1));
 
-    if (inet_pton(AF_INET, GET_NAME(x), &child_addr[n].sin_addr) < 0)
+    if (inet_pton(AF_INET, GET_NAME(x), &client_addr.sin_addr) < 0)
 	error(SYSTEM_ERR, "dp-create", x, 0);
 
 
     if (connect
-	(sock, (struct sockaddr *) &child_addr[n],
-	 sizeof(child_addr[n])) < 0) {
+	(sock, (struct sockaddr *) &client_addr,
+	 sizeof(client_addr)) < 0) {
 	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
 

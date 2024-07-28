@@ -306,3 +306,9 @@ EISL <==================================> C
 - `(dp-compile fn)`  ファイルを親lisp及びすべての子lispでコンパイルする。PARA2.mdを参照
 - `(dp-load fn)`  ファイルを親lisp及びすべての子lispにロードする。PARA2.mdを参照
 - `(dp-close)`  すべてのスレッドを閉じる。PARA2.mdを参照
+
+# TCP/IP
+- `(create-server-socket n)` ポート番号ｎでサーバーとしてのソケットを生成する。
+- `(create-client-socket n ip)` ポート番号ｎでIPアドレスに対しソケットを生成する。
+- `(send-socket socket str)` socketに対して文字列strを送信する。
+- `(recv-socket socket)` socketから文字列を受信する。 

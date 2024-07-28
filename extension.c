@@ -2570,7 +2570,7 @@ int receive_from_parent(void)
     }
 
 
-    return (make_sym(buffer3));
+    return (make_str(buffer3));
 
 }
 

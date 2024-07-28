@@ -3129,14 +3129,14 @@ int f_create_server_socket(int arglist, int th)
     }
 
     // read message from parent
-    memset(buffer3, 0, sizeof(buffer3));
-    n = read(sock1, buffer3, sizeof(buffer3) - 1);
+    memset(buf, 0, sizeof(buf));
+    n = read(sock1, buf, sizeof(buf) - 1);
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
 
-    return (make_sym(buffer3));
+    return (make_sym(buf));
 
 }
 

@@ -3099,16 +3099,16 @@ int f_create_server_socket(int arglist, int th)
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 
-    // initialize parent_addr
-    memset((char *) &parent_addr, 0, sizeof(parent_addr));
-    parent_addr.sin_family = AF_INET;
-    parent_addr.sin_addr.s_addr = INADDR_ANY;
-    parent_addr.sin_port = htons(PORT);
+    // initialize server_addr
+    memset((char *) &server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
 
     // bind socket
     if (bind
-	(sock0, (struct sockaddr *) &parent_addr,
-	 sizeof(parent_addr)) < 0) {
+	(sock0, (struct sockaddr *) &server_addr,
+	 sizeof(server_addr)) < 0) {
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 
@@ -3116,12 +3116,12 @@ int f_create_server_socket(int arglist, int th)
 
 	//wait conneting
 	listen(sock0, 5);
-	parent_len = sizeof(parent_addr);
+	parent_len = sizeof(server_addr);
 
 
 	// connection from parent
 	sock1 =
-	    accept(sock0, (struct sockaddr *) &parent_addr, &parent_len);
+	    accept(sock0, (struct sockaddr *) &server_addr, &parent_len);
 	if (sock1 < 0) {
 	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
 	
@@ -3166,6 +3166,5 @@ int f_close_socket(int arglist, int th)
     if(!nullp(sock1))
     close(sock1);
 
-    close_socket();
     return(T);
 }

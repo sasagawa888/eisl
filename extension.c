@@ -3151,7 +3151,7 @@ int f_recv_socket(int arglist, int th)
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }
 
-    return (make_sym(buf));
+    return (make_str(buf));
 }
 
 int f_close_socket(int arglist, int th)

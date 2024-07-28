@@ -3075,7 +3075,7 @@ int f_create_client_socket(int arglist, int th)
 	error(SYSTEM_ERR, "create-client-socket", NIL , th);
     }
 
-    memset((char *) &server_addr, 0, sizeof(server_addr));
+    memset((char *) &client_addr, 0, sizeof(client_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
 

@@ -79,7 +79,7 @@ static const char *extended[] = {
     "random-real", "random", "set-random", "heapdump", "instance",
     "nconc", "fast-address", "macroexpand-1", "macroexpand-all",
     "backtrace", "subrp", "funcp", "macrop", "fixnump", "longnump",
-    "bignump", "prof", "create-server-socket", "create-server-socket",
+    "bignump", "prof", "create-server-socket", "create-client-socket",
     "send-socket", "recv-socket", "close-soket", 
     "break", "edit", "set-editor", "wiringpi-setup-gpio",
     "delay-microseconds", "wiringpi-spi-setup", "digital-write-byte",

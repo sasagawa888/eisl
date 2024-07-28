@@ -3058,11 +3058,12 @@ int f_dp_part(int arglist, int th)
 
 int f_create_client_socket(int arglist, int th)
 {
-    int arg1;
+    int arg1,res;
 
     arg1 = car(arglist);
     init_child(0,arg1);
-    return(T);
+    res = make_socket(sockfd[0],EISL_SOCKET,"socket",NIL);
+    return(res);
 }
 
 int f_create_server_socket(int arglist, int th)
@@ -3073,9 +3074,13 @@ int f_create_server_socket(int arglist, int th)
 
 int f_send_socket(int arglist, int th)
 {   
-    int arg1;
+    int arg1,arg2;
+    char buf[256];
     arg1 = car(arglist);
-    send_to_child(0,arg1);
+    arg2 = cadr(arglist);
+    //send_to_child(0,arg1);
+    strcpy(buf,GET_NAME(arg2));
+    write(GET_SOCKET(arg1),buf,256);
 }
 
 int f_recv_socket(int arglist, int th)

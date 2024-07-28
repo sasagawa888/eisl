@@ -1,9 +1,9 @@
-# TCPIP
+# TCP/IP
 Currently, only IPv4 is supported. There are plans to support IPv6 in the future.
 The functionality is minimal. If you need any additional features, please write in the issues.
 Pull requests are also welcome.
 
-# Spec
+# Specifications
 - (create-server-socket port)
 Creates and returns a socket as a server based on the port number.
 Provide the port number to port. It ranges from 0 to 65536.
@@ -23,6 +23,7 @@ Receives from the socket and returns a string.
 - (close-socket socket)
 Closes the socket.
 Returns T.
+
 
 # Usage
 
@@ -55,3 +56,10 @@ See the following sample code:
           (setq msg (read-line)))
        (close-socket socket)))
 ```
+
+# Error Handling
+
+- Port Number: If a non-integer is provided, a non-integer error is raised.
+- IP Address: If a non-string is provided, a non-string error is raised.
+- Socket: If a non-socket is provided, a WRONG_ARGUMENT error is raised.
+- Internal Processing: If an error occurs in socket(...), bind(...), listen(...), accept(...), connect(...), send(...), or recv(...), a system error is raised.

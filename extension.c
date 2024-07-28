@@ -3092,6 +3092,7 @@ int f_create_client_socket(int arglist, int th)
 int f_create_server_socket(int arglist, int th)
 {
     int sock0,sock1;
+    char buf[STRSIZE];
 
     // create socket
     sock0 = socket(AF_INET, SOCK_STREAM, 0);

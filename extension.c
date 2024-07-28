@@ -3110,7 +3110,32 @@ int f_create_server_socket(int arglist, int th)
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 
-    return(receive_from_parent());
+    int n;
+
+    if (!connect_flag) {
+	//wait conneting
+	listen(sockfd[0], 5);
+	parent_len = sizeof(parent_addr);
+	connect_flag = true;
+
+	// connection from parent
+	sockfd[1] =
+	    accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent_len);
+	if (sockfd[1] < 0) {
+	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
+	}
+    }
+
+    // read message from parent
+    memset(buffer3, 0, sizeof(buffer3));
+    n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
+    if (n < 0) {
+	error(SYSTEM_ERR, "receive from parent", NIL, 0);
+    }
+
+
+    return (make_sym(buffer3));
+
 }
 
 int f_send_socket(int arglist, int th)

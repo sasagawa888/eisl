@@ -3058,73 +3058,66 @@ int f_dp_part(int arglist, int th)
 
 int f_create_client_socket(int arglist, int th)
 {
-    int arg1,arg2,res,n,x,sock;
+    int arg1,arg2,res,sock;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    n = 0;
-    x = arg2;
-    // create socket
+    
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
-	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
+	error(SYSTEM_ERR, "create-client-socket", NIL , th);
     }
 
-    // initialize child_addr
     memset((char *) &client_addr, 0, sizeof(client_addr));
     client_addr.sin_family = AF_INET;
     client_addr.sin_port = htons(GET_INT(arg1));
 
-    if (inet_pton(AF_INET, GET_NAME(x), &client_addr.sin_addr) < 0)
-	error(SYSTEM_ERR, "dp-create", x, 0);
+    if (inet_pton(AF_INET, GET_NAME(arg2), &client_addr.sin_addr) < 0)
+	error(SYSTEM_ERR, "create-client-socket", NIL, 0);
 
 
     if (connect
 	(sock, (struct sockaddr *) &client_addr,
 	 sizeof(client_addr)) < 0) {
-	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
+	error(SYSTEM_ERR, "create-client-socket", NIL, 0);
     }
 
-    res = make_socket(sock,EISL_SOCKET,"socket",NIL);
+    res = make_socket(sock,EISL_SOCKET,"client",NIL);
     return(res);
 }
 
 int f_create_server_socket(int arglist, int th)
 {
-    int sock0,sock1,res;
-    char buf[STRSIZE];
+    int arg1,sock0,sock1,res;
 
-    // create socket
+    arg1 = car(arglist);
+    if(!integerp(arg1))
+    error(NOT_INT,"create-server-socket",arg1,th);
+
     sock0 = socket(AF_INET, SOCK_STREAM, 0);
     if (sock0 < 0) {
-	error(SYSTEM_ERR, "init parent", NIL, 0);
+	error(SYSTEM_ERR, "cread-server-socket", NIL, th);
     }
 
-    // initialize server_addr
     memset((char *) &server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(GET_INT(arg1));
 
-    // bind socket
     if (bind
 	(sock0, (struct sockaddr *) &server_addr,
 	 sizeof(server_addr)) < 0) {
-	error(SYSTEM_ERR, "init parent", NIL, 0);
+	error(SYSTEM_ERR, "create-server-socket", NIL, th);
     }
 
-    int n;
-
-	//wait conneting
 	listen(sock0, 5);
 	parent_len = sizeof(server_addr);
 
 
-	// connection from parent
 	sock1 =
 	    accept(sock0, (struct sockaddr *) &server_addr, &parent_len);
 	if (sock1 < 0) {
-	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
+	    error(SYSTEM_ERR, "create-server-socket", NIL, th);
 	
     }
 
@@ -3135,12 +3128,14 @@ int f_create_server_socket(int arglist, int th)
 
 int f_send_socket(int arglist, int th)
 {   
-    int arg1,arg2;
+    int arg1,arg2,n;
     char buf[256];
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     strcpy(buf,GET_NAME(arg2));
-    write(GET_SOCKET(arg1),buf,256);
+    n = write(GET_SOCKET(arg1),buf,256);
+    if(n<0)
+    error(SYSTEM_ERR,"send-socket", NIL, th);
 }
 
 int f_recv_socket(int arglist, int th)

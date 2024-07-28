@@ -3060,8 +3060,13 @@ int f_create_client_socket(int arglist, int th)
 {
     int arg1,arg2,res,sock;
 
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
+    arg1 = car(arglist);  //port number
+    arg2 = cadr(arglist); // IP address
+    if(!integerp(arg1))
+    error(NOT_INT,"create-client-socket", arg1,th);
+    if(!stringp(arg2))
+    error(NOT_STR,"create-client-socket", arg2,th);
+
     
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
@@ -3090,7 +3095,7 @@ int f_create_server_socket(int arglist, int th)
 {
     int arg1,sock0,sock1,res;
 
-    arg1 = car(arglist);
+    arg1 = car(arglist); // port number
     if(!integerp(arg1))
     error(NOT_INT,"create-server-socket",arg1,th);
 
@@ -3130,8 +3135,15 @@ int f_send_socket(int arglist, int th)
 {   
     int arg1,arg2,n;
     char buf[256];
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
+
+    arg1 = car(arglist);   //socket
+    arg2 = cadr(arglist);  //message string
+
+    if(!socketp(arg1))
+    error(WRONG_ARGS,"send-socket",arg1,th);
+    if(!stringp(arg2))
+    error(NOT_STR,"send-socket",arg2,th);
+    
     strcpy(buf,GET_NAME(arg2));
     n = write(GET_SOCKET(arg1),buf,256);
     if(n<0)
@@ -3143,7 +3155,10 @@ int f_recv_socket(int arglist, int th)
     int arg1,sock,n;
     char buf[STRSIZE];
 
-    arg1 = car(arglist);
+    arg1 = car(arglist);  //socket
+    if(!socketp(arg1))
+    error(WRONG_ARGS,"recv-socket",arg1,th);
+
     sock = GET_SOCKET(arg1);
     memset(buf, 0, sizeof(buf));
     n = read(sock, buf, sizeof(buf) - 1);
@@ -3158,7 +3173,11 @@ int f_close_socket(int arglist, int th)
 {
     int arg1,sock0,sock1;
 
-    arg1 = car(arglist);
+    arg1 = car(arglist); //socket
+    if(!socketp(arg1))
+    error(WRONG_ARGS,"clos-socket",arg1,th);
+
+
     sock0 = GET_SOCKET(arg1);
     sock1 = GET_CDR(arg1);
     close(sock0);

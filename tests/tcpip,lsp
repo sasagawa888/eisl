@@ -1,6 +1,6 @@
 ;;; test code for TCP/IP functions
 
-(defglobal ip "127.001.001.01") ; change your server ip address
+(defglobal ip "127.1.1.11") ; change your server ip address
 
 (defun server ()
     (let* ((socket (create-server-socket 5000))

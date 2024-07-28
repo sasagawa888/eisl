@@ -3058,15 +3058,15 @@ int f_dp_part(int arglist, int th)
 
 int f_create_client_socket(int arglist, int th)
 {
-    int arg1,arg2,res,n,x;
+    int arg1,arg2,res,n,x,sock;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     n = 0;
     x = arg2;
     // create socket
-    sockfd[n] = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd[n] < 0) {
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
 	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
 
@@ -3080,12 +3080,12 @@ int f_create_client_socket(int arglist, int th)
 
 
     if (connect
-	(sockfd[n], (struct sockaddr *) &child_addr[n],
+	(sock, (struct sockaddr *) &child_addr[n],
 	 sizeof(child_addr[n])) < 0) {
 	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
 
-    res = make_socket(sockfd[0],EISL_SOCKET,"socket",NIL);
+    res = make_socket(sock,EISL_SOCKET,"socket",NIL);
     return(res);
 }
 

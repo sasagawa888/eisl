@@ -8,6 +8,7 @@
        (setq msg (recv-socket socket))
        (while (not (equal msg "quit"))
           (format (standard-output) msg)
+          (finish-output (standard-output))
           (send-socket socket "receive data")
           (setq msg (recv-socket socket)))
        (close-socket socket)))

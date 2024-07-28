@@ -61,6 +61,7 @@
 (format output-stream "This is a tilde: ~~")⇒nilOutput is:This is a tilde: ~
 ```
 
+(finish-output stream) = fflush(stdout)
 
 # setf
 ```

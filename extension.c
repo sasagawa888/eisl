@@ -3077,7 +3077,7 @@ int f_create_client_socket(int arglist, int th)
 
     memset((char *) &server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(GET_INT(arg1));
+    server_addr.sin_port = htons(PORT);
 
     if (inet_pton(AF_INET, GET_NAME(arg2), &client_addr.sin_addr) < 0)
 	error(SYSTEM_ERR, "create-client-socket", arg2, th);
@@ -3107,7 +3107,7 @@ int f_create_server_socket(int arglist, int th)
     memset((char *) &server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(GET_INT(arg1));
+    server_addr.sin_port = htons(PORT);
 
     if (bind(sockfd0, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
@@ -3117,11 +3117,11 @@ int f_create_server_socket(int arglist, int th)
 	server_len = sizeof(server_addr);
 
 	sockfd1 = accept(sockfd0, (struct sockaddr *) &server_addr, &server_len);
-	if (sockfd0 < 0) {
+	if (sockfd1 < 0) {
 	    error(SYSTEM_ERR, "create-server-socket", NIL, th);
 	}
     
-    res = make_socket(sockfd1,EISL_SOCKET,"client",sockfd0);
+    res = make_socket(sockfd1,EISL_SOCKET,"server",sockfd0);
     return(res);
 }
 

@@ -3091,7 +3091,25 @@ int f_create_client_socket(int arglist, int th)
 
 int f_create_server_socket(int arglist, int th)
 {
-    init_parent();
+    // create socket
+    sockfd[0] = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd[0] < 0) {
+	error(SYSTEM_ERR, "init parent", NIL, 0);
+    }
+
+    // initialize parent_addr
+    memset((char *) &parent_addr, 0, sizeof(parent_addr));
+    parent_addr.sin_family = AF_INET;
+    parent_addr.sin_addr.s_addr = INADDR_ANY;
+    parent_addr.sin_port = htons(PORT);
+
+    // bind socket
+    if (bind
+	(sockfd[0], (struct sockaddr *) &parent_addr,
+	 sizeof(parent_addr)) < 0) {
+	error(SYSTEM_ERR, "init parent", NIL, 0);
+    }
+
     return(receive_from_parent());
 }
 
@@ -3101,7 +3119,6 @@ int f_send_socket(int arglist, int th)
     char buf[256];
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    //send_to_child(0,arg1);
     strcpy(buf,GET_NAME(arg2));
     write(GET_SOCKET(arg1),buf,256);
 }
@@ -3114,6 +3131,15 @@ int f_recv_socket(int arglist, int th)
 
 int f_close_socket(int arglist, int th)
 {
+    int arg1,sock0,sock1;
+
+    arg1 = car(arglist);
+    sock0 = GET_SOCKET(arg1);
+    sock1 = GET_CDR(arg1);
+    close(sock0);
+    if(!nullp(sock1))
+    close(sock1);
+
     close_socket();
     return(T);
 }

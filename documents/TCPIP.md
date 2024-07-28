@@ -1,48 +1,50 @@
 # TCPIP
+Now adapted only IPv4
 
-This is a library for TCP/IP communication.
-Thanks to "poldy" for his contributions.
+
+# Spec
+
+- (create-server-socket port ip-address)
+return socket 
+
+- (create-client-socket port)
+return socket 
+
+- (send-socket socket string)
+
+- (recv-socket socket)
+
+- (close-socket socket)
+
 
 # Usage
-
-```lisp
-(import "tcpip")
-```
 
 See the following sample code:
 
 ```lisp
-(import "tcpip")
-;; Please compile tcpip.lsp in library before. 
+;;; test code for TCP/IP functions
 
-;; (set-dynamic *default-ip-version* 'ipv6)
+(defglobal ip "127.001.001.01") ; change your server ip address
 
 (defun server ()
-  (let ((s (create (class socket)))
-        (c nil)
-        (msg ""))
-    (setf (socket-ip s) (get-host-address "localhost"))
-    (setf (socket-n s) 5000)
-    (create-server s)
-    (setq c (server-accept s))
-    (while (not (string= msg "end"))
-           (setq msg (socket-receive c))
-           (print msg)
-           (socket-send c msg))
-    (socket-close s)))
+    (let* ((socket (create-server-socket 5000))
+           (msg nil) )
+       (setq msg (recv-socket socket))
+       (while (not (equal msg "quit"))
+          (format (standard-output) "~A~%" msg)
+          (finish-output (standard-output))
+          (send-socket socket "receive data")
+          (setq msg (recv-socket socket)))
+       (close-socket socket)))
 
 (defun client ()
-  (let ((s (create (class socket)))
-        (msg ""))
-    (setf (socket-ip s) (get-host-address "localhost"))
-    (setf (socket-n s) 5000)
-    (client-connect s)
-    (while (not (string= msg "end"))
-           (setq msg (read))
-           (socket-send s msg)
-           (setq msg (socket-receive s))
-           (print msg))
-    (socket-close s)))
+    (let ((socket (create-client-socket 5000 ip))
+          (msg nil) )
+       (setq msg (read-line))
+       (while (not (equal msg "end"))
+          (send-socket socket msg)
+          (setq msg (recv-socket socket))
+          (format (standard-output) "~A~%" msg)
+          (setq msg (read-line)))
+       (close-socket socket)))
 ```
-
-Support for I/O multiplexing, e.g. `select` or `poll`, may be necessary in the future.

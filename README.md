@@ -316,6 +316,17 @@ EISL <==================================> C
 | (dp-load fn)          | load file to parent and all child Lisp.PARA2.md|
 | (dp-close)            | close all distributions. see PARA2.md          |
 
+# TCP/IP functions
+
+| Function                      | Description                                    |
+| ----------------------------- | ---------------------------------------------- |
+| (create-server-socket port)   | create socket for server see TCPIP.md          |
+| (create-client-socket port ip)| create socket for client see TCPIP.md          |
+| (send-socket socket str)      | send message to socket                         |
+| (recv-socket socket)          | receive message from socket                    |
+| (close-socket socket)         | close socket                                   |
+  
+
 
 
 

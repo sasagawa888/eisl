@@ -3091,9 +3091,11 @@ int f_create_client_socket(int arglist, int th)
 
 int f_create_server_socket(int arglist, int th)
 {
+    int sock0,sock1;
+
     // create socket
-    sockfd[0] = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd[0] < 0) {
+    sock0 = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock0 < 0) {
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
 
@@ -3105,7 +3107,7 @@ int f_create_server_socket(int arglist, int th)
 
     // bind socket
     if (bind
-	(sockfd[0], (struct sockaddr *) &parent_addr,
+	(sock0, (struct sockaddr *) &parent_addr,
 	 sizeof(parent_addr)) < 0) {
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
@@ -3113,21 +3115,21 @@ int f_create_server_socket(int arglist, int th)
     int n;
 
 	//wait conneting
-	listen(sockfd[0], 5);
+	listen(sock0, 5);
 	parent_len = sizeof(parent_addr);
-	connect_flag = true;
+
 
 	// connection from parent
-	sockfd[1] =
-	    accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent_len);
-	if (sockfd[1] < 0) {
+	sock1 =
+	    accept(sock0, (struct sockaddr *) &parent_addr, &parent_len);
+	if (sock1 < 0) {
 	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
 	
     }
 
     // read message from parent
     memset(buffer3, 0, sizeof(buffer3));
-    n = read(sockfd[1], buffer3, sizeof(buffer3) - 1);
+    n = read(sock1, buffer3, sizeof(buffer3) - 1);
     if (n < 0) {
 	error(SYSTEM_ERR, "receive from parent", NIL, 0);
     }

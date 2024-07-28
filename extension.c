@@ -3112,7 +3112,6 @@ int f_create_server_socket(int arglist, int th)
 
     int n;
 
-    if (!connect_flag) {
 	//wait conneting
 	listen(sockfd[0], 5);
 	parent_len = sizeof(parent_addr);
@@ -3123,7 +3122,7 @@ int f_create_server_socket(int arglist, int th)
 	    accept(sockfd[0], (struct sockaddr *) &parent_addr, &parent_len);
 	if (sockfd[1] < 0) {
 	    error(SYSTEM_ERR, "receive from parent", NIL, 0);
-	}
+	
     }
 
     // read message from parent

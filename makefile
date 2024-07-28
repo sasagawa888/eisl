@@ -53,7 +53,6 @@ SRC_LISP := library/bit.lsp \
 	    library/opengl.lsp \
 	    library/regex.lsp \
 	    library/tcltk.lsp \
-	    library/tcpip.lsp \
 	    library/virtty.lsp \
 		library/prolog.lsp \
 		library/datetime.lsp \

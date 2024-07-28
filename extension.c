@@ -916,10 +916,8 @@ int f_eisl_test(int arglist, int th __unused)
     int arg1, arg2, res;
 
     arg1 = car(arglist);
-    arg2 = cadr(arglist);
-
-    send_to_child(GET_INT(arg1), sexp_to_str(arg2));
-    res = str_to_sexp(receive_from_child(GET_INT(arg1)));
+    SET_SOCKET(100000,arg1);
+    res = GET_SOCKET(100000);
     return (res);
 }
 
@@ -3060,7 +3058,7 @@ int f_dp_part(int arglist, int th)
 
 int f_create_client_socket(int arglist, int th)
 {
-    int arg1,arg2,res,sockfd;
+    int arg1,arg2,res,sock;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -3070,77 +3068,77 @@ int f_create_client_socket(int arglist, int th)
     error(NOT_STR,"create-client-socket",arg2,th);
 
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
 	error(SYSTEM_ERR, "create-client-socket", NIL , th);
     }
 
     memset((char *) &client_addr, 0, sizeof(client_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(GET_INT(arg1));
 
     if (inet_pton(AF_INET, GET_NAME(arg2), &client_addr.sin_addr) < 0)
 	error(SYSTEM_ERR, "create-client-socket", arg2, th);
 
 
-    if (connect(sockfd, (struct sockaddr *) &client_addr, sizeof(client_addr)) < 0) {
+    if (connect(sock, (struct sockaddr *) &client_addr, sizeof(client_addr)) < 0) {
 	error(SYSTEM_ERR, "create-client-create", NIL , th);
     }
 
-    res = make_socket(sockfd,EISL_SOCKET,"client",NIL);
+    res = make_socket(sock,EISL_SOCKET,"client",NIL);
     return(res);
 }
 
 int f_create_server_socket(int arglist, int th)
 {
-    int arg1,res,sockfd0,sockfd1;
+    int arg1,res,sock0,sock1;
 
-    arg1 = car(arglist);
+    arg1 = car(arglist); //port number
     if(!integerp(arg1))
     error(NOT_INT,"create-server-socket", arg1, th);
 
-    sockfd0 = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd0 < 0) {
+    sock0 = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock0 < 0) {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
     }
 
     memset((char *) &server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(GET_INT(arg1));
 
-    if (bind(sockfd0, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
+    if (bind(sock0, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
     }
 
-	listen(sockfd0, 5);
-	server_len = sizeof(server_addr);
-
-	sockfd1 = accept(sockfd0, (struct sockaddr *) &server_addr, &server_len);
-	if (sockfd1 < 0) {
+	listen(sock0, 5);
+	
+    server_len = sizeof(server_addr);
+	sock1 = accept(sock0, (struct sockaddr *) &server_addr, &server_len);
+	if (sock1 < 0) {
 	    error(SYSTEM_ERR, "create-server-socket", NIL, th);
 	}
     
-    res = make_socket(sockfd1,EISL_SOCKET,"server",sockfd0);
+    res = make_socket(sock1,EISL_SOCKET,"server",sock0);
     return(res);
 }
 
 int f_send_socket(int arglist, int th)
 {
-    int arg1,arg2,sockfd,n;
-    char buffer[STRSIZE];
+    int arg1,arg2,sock,n;
+    char buf[STRSIZE];
 
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
+    arg1 = car(arglist);  //socket 
+    arg2 = cadr(arglist); //str message
     if(!socketp(arg1))
     error(WRONG_ARGS,"send-socket", arg1,th);
     if(!stringp(arg2))
     error(NOT_STR,"send-socket", arg2,th);
 
-    sockfd = GET_SOCKET(arg1);
-    memset(buffer, 0, sizeof(buffer));
-    strcpy(buffer, GET_NAME(arg2));
-    n = write(sockfd, buffer, strlen(buffer));
+    sock = GET_SOCKET(arg1);
+    memset(buf, 0, sizeof(buf));
+    strcpy(buf, GET_NAME(arg2));
+    n = write(sock, buf, strlen(buf));
     if (n < 0) {
 	error(SYSTEM_ERR, "send-socket", NIL, th);
     }
@@ -3149,36 +3147,36 @@ int f_send_socket(int arglist, int th)
 
 int f_recv_socket(int arglist, int th)
 {
-    int arg1,sockfd,n;
-    char buffer[STRSIZE];
+    int arg1,sock,n;
+    char buf[STRSIZE];
 
     arg1 = car(arglist);
     if(!socketp(arg1))
     error(WRONG_ARGS,"recv-socket",arg1,th);
 
-    sockfd = GET_SOCKET(arg1);
-    memset(buffer, 0, sizeof(buffer));
-    n = read(sockfd, buffer, sizeof(buffer));
+    sock = GET_SOCKET(arg1);
+    memset(buf, 0, sizeof(buf));
+    n = read(sock, buf, sizeof(buf));
     if (n < 0) {
 	error(SYSTEM_ERR, "recv-socket", NIL, th);
     }
 
-    return (make_sym(buffer));
+    return (make_str(buf));
 }
 
 int f_close_socket(int arglist, int th)
 {
-    int arg1,sockfd0,sockfd1;
+    int arg1,sock0,sock1;
 
     arg1 = car(arglist);
     if(!socketp(arg1))
     error(WRONG_ARGS,"close-socket", arg1, th);
 
-    sockfd0 = GET_SOCKET(arg1);
-    sockfd1 = GET_CDR(sockfd0);
-    close(sockfd0);
-    if(!nullp(sockfd1))
-    close(sockfd1);
+    sock0 = GET_SOCKET(arg1);
+    sock1 = GET_CDR(sock0);
+    close(sock0);
+    if(!nullp(sock1))
+    close(sock1);
 
     return(T);
 }

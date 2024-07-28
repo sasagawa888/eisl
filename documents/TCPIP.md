@@ -1,21 +1,28 @@
 # TCPIP
-Now adapted only IPv4
-
+Currently, only IPv4 is supported. There are plans to support IPv6 in the future.
+The functionality is minimal. If you need any additional features, please write in the issues.
+Pull requests are also welcome.
 
 # Spec
+- (create-server-socket port)
+Creates and returns a socket as a server based on the port number.
+Provide the port number to port. It ranges from 0 to 65536.
 
-- (create-server-socket port ip-address)
-return socket 
-
-- (create-client-socket port)
-return socket 
+- (create-client-socket port ip-address)
+Provide the port number to port. It ranges from 0 to 65536.
+ip-address is given as a string. Example: "127.1.1.1"
+Returns a socket as a client if successful.
 
 - (send-socket socket string)
+Sends a string to the socket.
+Returns T.
 
 - (recv-socket socket)
+Receives from the socket and returns a string.
 
 - (close-socket socket)
-
+Closes the socket.
+Returns T.
 
 # Usage
 
@@ -24,10 +31,10 @@ See the following sample code:
 ```lisp
 ;;; test code for TCP/IP functions
 
-(defglobal ip "127.001.001.01") ; change your server ip address
+(defglobal ip "127.1.1.1") ; change your server ip address
 
 (defun server ()
-    (let* ((socket (create-server-socket 5000))
+    (let ((socket (create-server-socket 5000))
            (msg nil) )
        (setq msg (recv-socket socket))
        (while (not (equal msg "quit"))

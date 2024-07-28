@@ -3,7 +3,7 @@
 (defglobal ip "127.1.1.11") ; change your server ip address
 
 (defun server ()
-    (let* ((socket (create-server-socket 5000))
+    (let ((socket (create-server-socket 5000))
            (msg nil) )
        (setq msg (recv-socket socket))
        (while (not (equal msg "quit"))

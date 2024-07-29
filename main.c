@@ -260,7 +260,7 @@ int child_result[PARASIZE];
 
 /* -----TCPIP for server----------------*/
 socklen_t server_len;
-struct sockaddr_in server_addr,client_addr;
+struct sockaddr_in server_addr, client_addr;
 
 
 

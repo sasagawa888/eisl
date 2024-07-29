@@ -3062,6 +3062,8 @@ int f_create_client_socket(int arglist, int th)
 
     arg1 = car(arglist);  //port number
     arg2 = cadr(arglist); // IP address
+    if(length(arglist) != 2)
+    error(WRONG_ARGS,"create-client-socket", arglist, th);
     if(!integerp(arg1))
     error(NOT_INT,"create-client-socket", arg1,th);
     if(!stringp(arg2))
@@ -3096,6 +3098,8 @@ int f_create_server_socket(int arglist, int th)
     int arg1,sock0,sock1,res;
 
     arg1 = car(arglist); // port number
+    if(length(arglist) != 1)
+    error(WRONG_ARGS,"create-server-socket",arglist,th);
     if(!integerp(arg1))
     error(NOT_INT,"create-server-socket",arg1,th);
 

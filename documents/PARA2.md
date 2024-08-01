@@ -1,4 +1,4 @@
-# Districuted Parallel functions
+# Distributed Parallel functions
 
 
 # Invoke 

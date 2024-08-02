@@ -127,7 +127,7 @@ ifeq  ($(WITHOUT_CURSES),1)
 	# Without curses support, do not build edlis
 	TARGETS := eisl $(OBJ_LISP)
 else
-	TARGETS := eisl edlis $(OBJ_LISP)
+	TARGETS := eisl edlis edmin $(OBJ_LISP)
 endif
 
 all: $(TARGETS)
@@ -161,11 +161,19 @@ edlis: edlis.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
 edlis.o: edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c
 
+edmin: edmin.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
+	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
+
+edmin.o: edmin.c edmin.h term.h
+	$(CC) $(CFLAGS) -c edmin.c
+
+
 .PHONY: install
-install: eisl edlis $(OBJ_LISP)
+install: eisl edlis edmin $(OBJ_LISP)
 	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
+	$(INSTALL_PROGRAM) edmin $(DESTDIR)$(bindir)/$(EDMIN)
 	$(MKDIR_PROGRAM) $(DESTDIR)$(sharedir)
 	$(INSTALL_PROGRAM) library/* $(DESTDIR)$(sharedir)
 	$(INSTALL_PROGRAM) fast.h ffi.h $(DESTDIR)/$(PREFIX)/share/eisl
@@ -174,10 +182,11 @@ install: eisl edlis $(OBJ_LISP)
 uninstall:
 	$(RM) $(DESTDIR)$(bindir)/eisl
 	$(RM) $(DESTDIR)$(bindir)/edlis
+	$(RM) $(DESTDIR)$(bindir)/edmin
 
 .PHONY: clean
 clean:
-	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) $(OBJ_D) $(OBJ_LISP) eisl edlis
+	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) $(OBJ_D) $(OBJ_LISP) eisl edlis edmin
 
 .PHONY: check
 check:

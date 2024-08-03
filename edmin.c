@@ -2392,7 +2392,7 @@ pid = fork();
 		perror("listener dup2 stdout");
 	    close(pipe_p2c[R]);
 	    close(pipe_c2p[W]);
-	    execl("/usr/local/bin/eisl", "eisl", NULL);
+	    execl("/usr/local/bin/eisl", "eisl", "-r", NULL);
 	    exit(1);
 
 	}

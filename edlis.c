@@ -486,7 +486,7 @@ void down()
 	emphasis_lparen();
 	emphasis_rparen();
 	recalculate_col(ed_row, ed_col1);
-	ESCMOVE(ed_footer, ed_col1 + LEFT_MARGIN);
+	ESCMOVE(ed_footer-1, ed_col1 + LEFT_MARGIN);
     } else if (ed_clip_start != -1) {
 	if (ed_row == ed_clip_end)
 	    ed_clip_end++;

@@ -134,10 +134,6 @@ int main(int argc, char *argv[])
     }
 
     setlocale(LC_ALL, "");
-    if (argc <= 1) {
-	fputs("usage: edlis <filename>\n", stderr);
-	exit(EXIT_FAILURE);
-    }
     fname = argv[1];
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, signal_handler_z);
@@ -486,7 +482,7 @@ void down()
 	emphasis_lparen();
 	emphasis_rparen();
 	recalculate_col(ed_row, ed_col1);
-	ESCMOVE(ed_footer, ed_col1 + LEFT_MARGIN);
+	ESCMOVE(ed_footer-1, ed_col1 + LEFT_MARGIN);
     } else if (ed_clip_start != -1) {
 	if (ed_row == ed_clip_end)
 	    ed_clip_end++;
@@ -1358,7 +1354,7 @@ void display_command(char *fname)
     int i;
     ESCHOME();
     ESCREV();
-    CHECK(printw, "Edlis %1.2f        File: %s    ", VERSION, fname);
+    CHECK(printw, "Edmin %1.2f        File: %s    ", VERSION, fname);
     for (i = 31; i < COLS; i++)
 	CHECK(addch, ' ');
     ESCRST();

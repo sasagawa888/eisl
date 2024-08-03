@@ -3,6 +3,8 @@
 #include <signal.h>
 #include <termios.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #define _XOPEN_SOURCE 700
 #define _XOPEN_SOURCE_EXTENDED
@@ -68,6 +70,7 @@ bool modify_flag;
 int pipe_p2c[2];
 int pipe_c2p[2];
 pid_t pid;
+char buffer[256];
 
 __dead void errw(const char *msg)
 {
@@ -2397,3 +2400,58 @@ pid = fork();
 	close(pipe_c2p[W]);
 
 }
+
+
+void write_to_pipe(void)
+{
+    int i, j, pos, c, m;
+    char sub_buffer[10];
+
+    i = 0;
+    pos = 0;
+    for (j = 0; j < 10; j++)
+	sub_buffer[j] = 0;
+    c = buffer[pos];
+    while (1) {
+	while (i < 7 && c != 0) {
+	    sub_buffer[i] = c;
+	    i++;
+	    pos++;
+	    c = buffer[pos];
+
+	}
+	// write to pipe
+	m = write(pipe_p2c[W], sub_buffer, sizeof(sub_buffer));
+	if (m < 0)
+	    perror("write_to_pipe");
+
+	if (c == 0)
+	    break;
+
+	i = 0;
+	for (j = 0; j < 10; j++)
+	    sub_buffer[j] = 0;
+    }
+    
+}
+
+
+int read_from_pipe(int n)
+{
+    char sub_buffer[256];
+    int i, j;
+
+    // set nonblock mode
+    int flags = fcntl(pipe_c2p[R], F_GETFL, 0);
+    fcntl(pipe_c2p[R], F_SETFL, flags | O_NONBLOCK);
+
+    int bytes_read;
+
+    // wait until get result
+    memset(buffer, 0, sizeof(buffer));
+    while ((bytes_read =
+	    read(pipe_c2p[R], buffer, sizeof(buffer))) == -1
+	   && errno == EAGAIN);
+
+}
+

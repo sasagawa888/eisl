@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <termios.h>
+#include <unistd.h>
 
 #define _XOPEN_SOURCE 700
 #define _XOPEN_SOURCE_EXTENDED
@@ -62,6 +63,11 @@ const enum Color ed_string_color = YELLOW_ON_DFL;
 const enum Color ed_comment_color = BLUE_ON_DFL;
 int ed_incomment = -1;		// #|...|# comment
 bool modify_flag;
+
+//--------listern-----------
+int pipe_p2c[2];
+int pipe_c2p[2];
+pid_t pid;
 
 __dead void errw(const char *msg)
 {
@@ -2363,4 +2369,31 @@ void replace_word(const char *str1, const char *str2)
 	    str2++;
 	}
     }
+}
+
+
+#define R (0)
+#define W (1)
+
+void init_listener(void){
+pid = fork();
+	if (pid == -1) {
+	    perror("listener fork");
+	}
+	if (pid == 0) {	// child 
+	    close(pipe_p2c[W]);
+	    close(pipe_c2p[R]);
+	    if (dup2(pipe_p2c[R], STDIN_FILENO) == -1)
+		perror("listener dup2 stdin");
+	    if (dup2(pipe_c2p[W], STDOUT_FILENO) == -1)
+		perror("listener dup2 stdout");
+	    close(pipe_p2c[R]);
+	    close(pipe_c2p[W]);
+	    execl("/usr/local/bin/eisl", "eisl", NULL);
+	    exit(1);
+
+	}
+	close(pipe_p2c[R]);
+	close(pipe_c2p[W]);
+
 }

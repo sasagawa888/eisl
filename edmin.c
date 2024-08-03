@@ -738,6 +738,9 @@ bool edit_listener_loop(void)
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	modify_flag = true;
 	break;
+	case CTRL('W'):
+	printf("sadf");
+	break;
     case CTRL('X'):
 	ESCMOVE(ed_footer, 1);
 	ESCREV();
@@ -1012,7 +1015,7 @@ bool edit_listener_loop(void)
 		restore_paren();
 		insertcol();
 		ed_data[ed_row][ed_col] = c;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+		ESCMOVE(ed_row - LISTENER_BIAS + lis_start, 1);
 		display_line(ed_row);
 		emphasis_lparen();
 		emphasis_rparen();
@@ -1041,13 +1044,13 @@ bool edit_listener_loop(void)
 		    uni3 = false;
 		}
 
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ESCMOVE(ed_row - LISTENER_BIAS + lis_start,
 			ed_col1 - COLS + LEFT_MARGIN);
 	    } else {
 		restore_paren();
 		insertcol();
 		ed_data[ed_row][ed_col] = c;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+		ESCMOVE(ed_row - LISTENER_BIAS + lis_start, 1);
 		display_line(ed_row);
 		emphasis_lparen();
 		emphasis_rparen();
@@ -1074,7 +1077,7 @@ bool edit_listener_loop(void)
 			ed_col1 + increase_terminal(ed_row, ed_col - 2);
 		    uni3 = false;
 		}
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ESCMOVE(ed_row - LISTENER_BIAS + lis_start,
 			ed_col1 + LEFT_MARGIN);
 	    }
 	} else {
@@ -1132,9 +1135,9 @@ bool edit_listener_loop(void)
 }
 
 
-void edit_listner(void)
+void edit_listener(void)
 {
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    //ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     bool quit = edit_listener_loop();
     while (!quit) {
 	quit = edit_listener_loop();
@@ -1374,7 +1377,13 @@ bool edit_loop(char *fname)
 	}
 	break;
     case CTRL('V'):
-	pagedn();
+	ESCMOVE(lis_start,6);
+	save_col = ed_col;
+	save_row = ed_row;
+	ed_row = LISTENER_BIAS;
+	ed_col = 0;
+	edit_listener();
+	//pagedn();
 	break;
     case CTRL('S'):
 	clear_status();
@@ -1861,8 +1870,8 @@ void display_listener()
 		ESCCLSLA();
 	}
 	
-    line1 = 5000;  /* 5000~*/
-    line2 = 5000 + lis_scroll;
+    line1 = LISTENER_BIAS;  /* 10000~*/
+    line2 = LISTENER_BIAS + lis_scroll;
 	
 	ESCMOVE(lis_start,1);
     while (line1 <= line2) {
@@ -1947,8 +1956,13 @@ void display_line(int line)
     char linestr[10];
 
     turn = COLS - LEFT_MARGIN;
+	if(line < LISTENER_BIAS){ /* in editor display line-number */
     sprintf(linestr, "% 5d ", line);
-    CHECK(addstr, linestr);
+    CHECK(addstr, linestr);   /* in listener not display line-number */
+	}
+	else{
+	CHECK(addstr, "      ");	
+	}
 
 
 

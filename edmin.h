@@ -11,12 +11,13 @@
 
 static const float VERSION = 0.01;
 
-#define ROW_SIZE 5050  /*0~4999 edit-text, 5000~5049 listener */
+#define ROW_SIZE 10050  /*0~9999 edit-text, 10000~10049 listener */
 #define COL_SIZE 255
 #define COPY_SIZE 500
 #define TOKEN_MAX   80
 #define LEFT_MARGIN 7
 #define TOP_MARGIN  2
+#define LISTENER_BIAS 10000
 
 static const int NIL = 0;
 
@@ -24,6 +25,8 @@ static const int NIL = 0;
 void input(char *str);
 
 void edit_screen(char *fname);
+
+void edit_listener(void);
 
 void display_command(char *fname);
 

@@ -11,7 +11,7 @@
 
 static const float VERSION = 0.01;
 
-#define ROW_SIZE 5000
+#define ROW_SIZE 5050  /*0~4999 edit-text, 5000~5049 listener */
 #define COL_SIZE 255
 #define COPY_SIZE 500
 #define TOKEN_MAX   80
@@ -28,6 +28,10 @@ void edit_screen(char *fname);
 void display_command(char *fname);
 
 void display_screen(void);
+
+void display_listener(void);
+
+void display_listeger(void);
 
 void display_line(int line);
 

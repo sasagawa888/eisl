@@ -203,13 +203,15 @@ int main(int argc, char *argv[])
     ed_scroll = (LINES / 3 * 2) - 4;
     ed_footer = (LINES / 3 * 2) - 1;
     ed_middle = LINES / 3;
-	lis_scroll = LINES / 3 + 2;
+	lis_start =  (LINES / 3 * 2);
+	lis_scroll = (LINES / 3) - 2;
 	lis_footer = LINES -1;
     ESCCLS();
     display_command(fname);
-	display_listener();
     display_screen();
+	display_listener();
     ed_row = ed_col = ed_col1 = 0;
+	ESCMOVE(2,1);
     edit_screen(fname);
     CHECK(endwin);
     if (system("stty ixon") == -1) {
@@ -1854,17 +1856,24 @@ void display_listener()
 {
     int line1, line2, i;
 
-	for(i=lis_start;i<lis_footer;i++){
-		ESCMOVE(i, 0);
+	for(i=lis_start;i<=lis_footer;i++){
+		ESCMOVE(i, 1);
 		ESCCLSLA();
 	}
+	
     line1 = 5000;  /* 5000~*/
     line2 = 5000 + lis_scroll;
-
+	
+	ESCMOVE(lis_start,1);
     while (line1 <= line2) {
 	display_line(line1);
 	line1++;
     }
+	ESCREV();
+	for (i = 0; i < COLS - 10; i++)
+	CHECK(addch, ' ');
+    CHECK(addstr, "Listener  ");
+	ESCRST();
 }
 
 
@@ -1938,13 +1947,9 @@ void display_line(int line)
     char linestr[10];
 
     turn = COLS - LEFT_MARGIN;
-	if(line<5000){
     sprintf(linestr, "% 5d ", line);
     CHECK(addstr, linestr);
-	}
-	else {
-		CHECK(addstr, "     ");
-	}
+
 
 
     if (ed_col1 < turn)

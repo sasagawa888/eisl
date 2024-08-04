@@ -9,7 +9,7 @@
 #define FULLSCREEN
 #include "term.h"
 
-static const float VERSION = 4.01;
+static const float VERSION = 4.02;
 
 #define ROW_SIZE 5000
 #define COL_SIZE 255
@@ -45,7 +45,6 @@ void find_candidate(void);
 void help(void);
 void init_ncurses(void);
 void input(char *str);
-void insert(void);
 void insertcol(void);
 void insertrow(void);
 void load_data(char *name);

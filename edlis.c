@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
     }
 
     setlocale(LC_ALL, "");
-	if(argc == 1)
+	if(argc == 2)
     	fname = argv[1];
 	else
 		fname = "";

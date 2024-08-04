@@ -9,7 +9,7 @@
 #define FULLSCREEN
 #include "term.h"
 
-static const float VERSION = 4.00;
+static const float VERSION = 4.01;
 
 #define ROW_SIZE 5000
 #define COL_SIZE 255

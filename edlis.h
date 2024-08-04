@@ -9,7 +9,7 @@
 #define FULLSCREEN
 #include "term.h"
 
-static const float VERSION = 3.75;
+static const float VERSION = 4.00;
 
 #define ROW_SIZE 5000
 #define COL_SIZE 255
@@ -61,6 +61,8 @@ void softtabs(int n);
 
 void save_data(char *name);
 
+void load_data(char *name);
+
 bool is_special(int row, int col);
 
 int findnext(int row, int col);
@@ -89,7 +91,7 @@ struct position find_word_back(const char *word);
 
 void replace_word(const char *str1, const char *str2);
 
- 
+void help(void);
  
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192		//#b11000000
@@ -122,5 +124,4 @@ void replace_word(const char *str1, const char *str2);
     ((unsigned char) (c) <= 0xf7)) 
  
  
-#endif	/* 
- */
+#endif	

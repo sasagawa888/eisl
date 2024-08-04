@@ -31,6 +31,8 @@ bool edit_loop(char *fname);
 volatile sig_atomic_t ctrl_c = 0;
 volatile sig_atomic_t ctrl_z = 0;
 
+FILE *port;
+
 // -----editor-----
 int ed_scroll;
 int ed_footer;
@@ -127,7 +129,7 @@ int main(int argc, char *argv[])
 {
     int i, j;
     char *fname;
-
+	
     if (system("stty -ixon") == -1) {
 	printf("terminal error\n");
 	return (0);
@@ -138,50 +140,13 @@ int main(int argc, char *argv[])
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, signal_handler_z);
     signal(SIGTSTP, signal_handler_z);
-    for (i = 0; i < ROW_SIZE; i++)
-	for (j = 0; j < COL_SIZE; j++)
+    for (i = 0; i < ROW_SIZE; i++){
+	for (j = 0; j < COL_SIZE; j++){
 	    ed_data[i][j] = NUL;
-    FILE *port = fopen(fname, "r");
-
-    ed_row = 0;
-    ed_col = 0;
-    ed_col1 = 0;
-    ed_start = 0;
-    ed_end = 0;
-    ed_lparen_row = -1;
-    ed_rparen_row = -1;
-    ed_clip_start = -1;
-    ed_clip_end = -1;
-    ed_data[0][0] = EOL;
-    if (port != NULL) {
-	int c;
-
-	c = fgetc(port);
-	while (c != EOF) {
-	    ed_data[ed_row][ed_col] = c;
-	    if (c == EOL) {
-		ed_row++;
-		ed_col = ed_col1 = 0;
-		if (ed_row >= ROW_SIZE)
-		    printf("row %d over max-row", ed_row);
-	    } else {
-		ed_col++;
-		if (ed_col >= COL_SIZE)
-		    printf("column %d over max-column", ed_col);
-	    }
-	    c = fgetc(port);
 	}
-	/* if get EOF without EOL 
-	 *  this is a pen[EOF] -> this is a pen[EOL]
-	 */
-	if (ed_col != 0) {
-	    ed_data[ed_row][ed_col] = EOL;
-	    ed_row++;
 	}
-	ed_end = ed_row;
-	ed_data[ed_end][0] = EOL;
-	fclose(port);
-    }
+    
+	load_data(fname);
     init_ncurses();
     ed_scroll = LINES - 3;
     ed_footer = LINES;
@@ -689,32 +654,7 @@ bool edit_loop(char *fname)
     }
     switch (c) {
     case CTRL('H'):
-	ESCMOVE(2, 1);		// help
-	ESCCLS1();
-	CHECK(addstr, "Edlis help\n"
-	      "CTRL+F  move to right          CTRL+S  forward search word\n"
-	      "CTRL+B  move to left           CTRL+R  backward search word\n"
-	      "CTRL+P  move to up             ESC TAB complete name\n"
-	      "CTRL+N  move to down           ESC <   goto top page\n"
-	      "CTRL+J  end of line            ESC >   goto end page\n"
-	      "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
-	      "CTRL+E  end of line            CTRL+D  delete one char\n"
-	      "CTRL+V  page down              CTRL+O  return\n"
-	      "ESC V   page up                CTRL+T  replace word\n"
-	      "TAB     insert spaces according to lisp indent rule\n"
-	      "CTRL+X CTRL+C quit from editor with save\n"
-	      "CTRL+X CTRL+S save file\n"
-	      "CTRL+X CTRL+I insert buffer from file\n"
-	      "CTRL+X CTRL+W write buffer to file\n"
-	      "CTRL+K  cut one line\n"
-	      "CTRL+W  cut selection\n"
-	      "ESC W   save selection\n"
-	      "CTRL+Y  uncut selection\n"
-	      "CTRL+G  cancel command\n"
-	      "\n  enter any key to exit help\n");
-	CHECK(refresh);
-	CHECK(getch);
-	display_screen();
+	help();
 	break;
     case CTRL('F'):
 	right();
@@ -830,6 +770,25 @@ bool edit_loop(char *fname)
 		ESCREV();
 		CHECK(addstr, "saved");
 		ESCRST();
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+		modify_flag = false;
+		break;
+		} else if (c == CTRL('V')) {
+		ESCMOVE(ed_footer, 1);
+		clear_status();
+		CHECK(addstr, "filename:  ");
+		strcpy(str1, getname());
+		load_data(str1);
+		ESCCLS();
+    	display_command(str1);
+    	display_screen();
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		CHECK(addstr, "loaded ");
+		CHECK(addstr, str1);
+		ESCRST();
+    	ed_row = ed_col = ed_col1 = 0;
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 			ed_col1 + LEFT_MARGIN);
 		modify_flag = false;
@@ -1381,6 +1340,37 @@ void display_screen()
 	CHECK(addch, ' ');
     CHECK(addstr, "^H(help) ^X^C(quit) ^X^S(save)");
     ESCRST();
+}
+
+void help(void)
+{
+	ESCMOVE(2, 1);
+	ESCCLS1();
+	CHECK(addstr, "Edlis help\n"
+	      "CTRL+F  move to right          CTRL+S  forward search word\n"
+	      "CTRL+B  move to left           CTRL+R  backward search word\n"
+	      "CTRL+P  move to up             ESC TAB complete name\n"
+	      "CTRL+N  move to down           ESC <   goto top page\n"
+	      "CTRL+J  end of line            ESC >   goto end page\n"
+	      "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
+	      "CTRL+E  end of line            CTRL+D  delete one char\n"
+	      "CTRL+V  page down              CTRL+O  return\n"
+	      "ESC V   page up                CTRL+T  replace word\n"
+	      "TAB     insert spaces according to lisp indent rule\n"
+	      "CTRL+X CTRL+C quit from editor with save\n"
+		  "CTRL+X CTRL+V visit from file to editor\n"
+	      "CTRL+X CTRL+S save file\n"
+	      "CTRL+X CTRL+I insert buffer from file\n"
+	      "CTRL+X CTRL+W write buffer to file\n"
+	      "CTRL+K  cut one line\n"
+	      "CTRL+W  cut selection\n"
+	      "ESC W   save selection\n"
+	      "CTRL+Y  uncut selection\n"
+	      "CTRL+G  cancel command\n"
+	      "\n  enter any key to exit help\n");
+	CHECK(refresh);
+	CHECK(getch);
+	display_screen();
 }
 
 /*                                     COL_SIZE
@@ -2043,6 +2033,51 @@ void save_data(char *fname)
 	}
     fclose(port);
 }
+
+void load_data(char *fname)
+{
+	port = fopen(fname, "r");
+    ed_row = 0;
+    ed_col = 0;
+    ed_col1 = 0;
+    ed_start = 0;
+    ed_end = 0;
+    ed_lparen_row = -1;
+    ed_rparen_row = -1;
+    ed_clip_start = -1;
+    ed_clip_end = -1;
+    ed_data[0][0] = EOL;
+    if (port != NULL) {
+	int c;
+
+	c = fgetc(port);
+	while (c != EOF) {
+	    ed_data[ed_row][ed_col] = c;
+	    if (c == EOL) {
+		ed_row++;
+		ed_col = ed_col1 = 0;
+		if (ed_row >= ROW_SIZE)
+		    printf("row %d over max-row", ed_row);
+	    } else {
+		ed_col++;
+		if (ed_col >= COL_SIZE)
+		    printf("column %d over max-column", ed_col);
+	    }
+	    c = fgetc(port);
+	}
+	/* if get EOF without EOL 
+	 *  this is a pen[EOF] -> this is a pen[EOL]
+	 */
+	if (ed_col != 0) {
+	    ed_data[ed_row][ed_col] = EOL;
+	    ed_row++;
+	}
+	ed_end = ed_row;
+	ed_data[ed_end][0] = EOL;
+	fclose(port);
+    }
+}
+
 
 bool is_special(int row, int col)
 {

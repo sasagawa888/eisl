@@ -134,10 +134,6 @@ int main(int argc, char *argv[])
     }
 
     setlocale(LC_ALL, "");
-    if (argc <= 1) {
-	fputs("usage: edlis <filename>\n", stderr);
-	exit(EXIT_FAILURE);
-    }
     fname = argv[1];
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, signal_handler_z);

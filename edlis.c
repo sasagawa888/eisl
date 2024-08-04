@@ -774,7 +774,7 @@ bool edit_loop(char *fname)
 			ed_col1 + LEFT_MARGIN);
 		modify_flag = false;
 		break;
-		} else if (c == CTRL('V')) {
+		} else if (c == CTRL('F')) {
 		ESCMOVE(ed_footer, 1);
 		clear_status();
 		CHECK(addstr, "filename:  ");
@@ -1358,7 +1358,7 @@ void help(void)
 	      "ESC V   page up                CTRL+T  replace word\n"
 	      "TAB     insert spaces according to lisp indent rule\n"
 	      "CTRL+X CTRL+C quit from editor with save\n"
-		  "CTRL+X CTRL+V visit from file to editor\n"
+		  "CTRL+X CTRL+F load from file to editor\n"
 	      "CTRL+X CTRL+S save file\n"
 	      "CTRL+X CTRL+I insert buffer from file\n"
 	      "CTRL+X CTRL+W write buffer to file\n"

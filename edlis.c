@@ -183,8 +183,8 @@ int main(int argc, char *argv[])
 	fclose(port);
     }
     init_ncurses();
-    ed_scroll = LINES - 4;
-    ed_footer = LINES - 1;
+    ed_scroll = LINES - 3;
+    ed_footer = LINES;
     ed_middle = LINES / 2;
     ESCCLS();
     display_command(fname);

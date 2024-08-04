@@ -136,7 +136,11 @@ int main(int argc, char *argv[])
     }
 
     setlocale(LC_ALL, "");
-    fname = argv[1];
+	if(argc == 1)
+    	fname = argv[1];
+	else
+		fname = "";
+	
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, signal_handler_z);
     signal(SIGTSTP, signal_handler_z);
@@ -779,6 +783,7 @@ bool edit_loop(char *fname)
 		clear_status();
 		CHECK(addstr, "filename:  ");
 		strcpy(str1, getname());
+		fname = str1;
 		load_data(str1);
 		ESCCLS();
     	display_command(str1);

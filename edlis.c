@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     ed_footer = LINES;
     ed_middle = LINES / 2;
     ESCCLS();
-    display_command(fname);
+    display_header(fname);
     display_screen();
     ed_row = ed_col = ed_col1 = 0;
     edit_screen(fname);
@@ -786,7 +786,7 @@ bool edit_loop(char *fname)
 		fname = str1;
 		load_data(str1);
 		ESCCLS();
-    	display_command(str1);
+    	display_header(str1);
     	display_screen();
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
@@ -1313,13 +1313,13 @@ bool edit_loop(char *fname)
     return false;
 }
 
-void display_command(char *fname)
+void display_header(char *fname)
 {
     int i;
     ESCHOME();
     ESCREV();
     CHECK(printw, "Edlis %1.2f        File: %s    ", VERSION, fname);
-    for (i = 31; i < COLS; i++)
+    for (i = 30; i < COLS; i++)
 	CHECK(addch, ' ');
     ESCRST();
 }
@@ -1341,9 +1341,9 @@ void display_screen()
     }
     ESCMOVE(ed_footer, 1);
     ESCREV();
-    for (i = 0; i < COLS - 31; i++)
+    for (i = 0; i < COLS - 9; i++)
 	CHECK(addch, ' ');
-    CHECK(addstr, "^H(help) ^X^C(quit) ^X^S(save)");
+    CHECK(addstr, "^H(help)");
     ESCRST();
 }
 

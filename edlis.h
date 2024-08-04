@@ -35,7 +35,7 @@ void backspace(void);
 void copy_selection(void);
 void deleterow(void);
 void delete_selection(void);
-void display_command(char *fname);
+void display_header(char *fname);
 void display_screen(void);
 void display_line(int line);
 void edit_screen(char *fname);

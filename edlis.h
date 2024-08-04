@@ -20,78 +20,47 @@ static const float VERSION = 4.01;
 
 static const int NIL = 0;
 
- 
-void input(char *str);
-
-void edit_screen(char *fname);
-
-void display_command(char *fname);
-
-void display_screen(void);
-
-void display_line(int line);
-
-void setcolor(enum Color);
-
-void backspace(void);
-
-void insertcol(void);
-
-void insertrow(void);
-
-void deleterow(void);
-
-int findeol(int row);
-
-int findeol1(int row);
-
-struct position find_lparen(int bias);
-
-struct position find_rparen(int bias);
-
-void reset_paren(void);
-
-void restore_paren(void);
-
-void emphasis_lparen(void);
-
-void emphasis_rparen(void);
-
-void softtabs(int n);
-
-void save_data(char *name);
-
-void load_data(char *name);
-
 bool is_special(int row, int col);
-
-int findnext(int row, int col);
-
-void remove_headspace(int row);
-
 int calc_tabs(void);
-
-void copy_selection(void);
-
-void paste_selection(void);
-
-void delete_selection(void);
-
-enum HighlightToken check_token(int row, int col);
-
+int findnext(int row, int col);
+int findeol(int row);
+int findeol1(int row);
 char *get_fragment(void);
-
-void find_candidate(void);
-
-void replace_fragment(const char *newstr);
-
+enum HighlightToken check_token(int row, int col);
+struct position find_lparen(int bias);
+struct position find_rparen(int bias);
 struct position find_word(const char *word);
-
 struct position find_word_back(const char *word);
-
-void replace_word(const char *str1, const char *str2);
-
+void backspace(void);
+void copy_selection(void);
+void deleterow(void);
+void delete_selection(void);
+void display_command(char *fname);
+void display_screen(void);
+void display_line(int line);
+void edit_screen(char *fname);
+void emphasis_lparen(void);
+void emphasis_rparen(void);
+void find_candidate(void);
 void help(void);
+void init_ncurses(void);
+void input(char *str);
+void insert(void);
+void insertcol(void);
+void insertrow(void);
+void load_data(char *name);
+void paste_selection(void);
+void replace_fragment(const char *newstr);
+void replace_word(const char *str1, const char *str2);
+void reset_paren(void);
+void restore_paren(void);
+void remove_headspace(int row);
+void setcolor(enum Color);
+void softtabs(int n);
+void save_data(char *name);
+void signal_handler_c(int signo __unused);
+void signal_handler_z(int signo __unused);
+ 
  
 //following are for unicode<=>UTF-8 transform
 #define UNI2ADD1    192		//#b11000000

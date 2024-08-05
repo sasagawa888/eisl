@@ -32,6 +32,7 @@ volatile sig_atomic_t ctrl_c = 0;
 volatile sig_atomic_t ctrl_z = 0;
 
 FILE *port;
+char fname[256];
 
 // -----editor-----
 int ed_scroll;
@@ -128,7 +129,6 @@ void signal_handler_z(int signo __unused)
 int main(int argc, char *argv[])
 {
     int i, j;
-    char *fname;
 	
     if (system("stty -ixon") == -1) {
 	printf("terminal error\n");
@@ -137,9 +137,7 @@ int main(int argc, char *argv[])
 
     setlocale(LC_ALL, "");
 	if(argc == 2)
-    	fname = argv[1];
-	else
-		fname = "";
+    	strcpy(fname,argv[1]);
 	
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, signal_handler_z);
@@ -783,15 +781,15 @@ bool edit_loop(char *fname)
 		clear_status();
 		CHECK(addstr, "filename:  ");
 		strcpy(str1, getname());
-		fname = str1;
-		load_data(str1);
+		strcpy(fname,str1);
+		load_data(fname);
 		ESCCLS();
-    	display_header(str1);
+    	display_header(fname);
     	display_screen();
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
 		CHECK(addstr, "loaded ");
-		CHECK(addstr, str1);
+		CHECK(addstr, fname);
 		ESCRST();
     	ed_row = ed_col = ed_col1 = 0;
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
@@ -804,8 +802,12 @@ bool edit_loop(char *fname)
 		CHECK(addstr, "filename:  ");
 		strcpy(str1, getname());
 		save_data(str1);
+		fname = str1;
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
+		for(i=0;i<COLS-9;i++)
+			CHECK(addstr," ");
+		ESCMOVE(ed_footer, 1);
 		CHECK(addstr, "saved ");
 		CHECK(addstr, str1);
 		ESCRST();

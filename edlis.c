@@ -66,6 +66,45 @@ const enum Color ed_comment_color = BLUE_ON_DFL;
 int ed_incomment = -1;		// #|...|# comment
 bool modify_flag;
 
+
+int main(int argc, char *argv[])
+{
+    int i, j;
+	
+    if (system("stty -ixon") == -1) {
+	printf("terminal error\n");
+	return (0);
+    }
+
+    setlocale(LC_ALL, "");
+	if(argc == 2)
+    	strcpy(fname,argv[1]);
+	
+    signal(SIGINT, signal_handler_c);
+    signal(SIGSTOP, signal_handler_z);
+    signal(SIGTSTP, signal_handler_z);
+    for (i = 0; i < ROW_SIZE; i++){
+	for (j = 0; j < COL_SIZE; j++){
+	    ed_data[i][j] = NUL;
+	}
+	}
+    
+	load_data(fname);
+    init_ncurses();
+    ed_scroll = LINES - 3;
+    ed_footer = LINES;
+    ed_middle = LINES / 2;
+    ESCCLS();
+    display_header(fname);
+    display_screen();
+    ed_row = ed_col = ed_col1 = 0;
+    edit_screen(fname);
+    CHECK(endwin);
+    if (system("stty ixon") == -1) {
+	printf("terminal error\n");
+    }
+}
+
 __dead void errw(const char *msg)
 {
     endwin();
@@ -124,44 +163,6 @@ void signal_handler_c(int signo __unused)
 void signal_handler_z(int signo __unused)
 {
     ctrl_z = 1;
-}
-
-int main(int argc, char *argv[])
-{
-    int i, j;
-	
-    if (system("stty -ixon") == -1) {
-	printf("terminal error\n");
-	return (0);
-    }
-
-    setlocale(LC_ALL, "");
-	if(argc == 2)
-    	strcpy(fname,argv[1]);
-	
-    signal(SIGINT, signal_handler_c);
-    signal(SIGSTOP, signal_handler_z);
-    signal(SIGTSTP, signal_handler_z);
-    for (i = 0; i < ROW_SIZE; i++){
-	for (j = 0; j < COL_SIZE; j++){
-	    ed_data[i][j] = NUL;
-	}
-	}
-    
-	load_data(fname);
-    init_ncurses();
-    ed_scroll = LINES - 3;
-    ed_footer = LINES;
-    ed_middle = LINES / 2;
-    ESCCLS();
-    display_header(fname);
-    display_screen();
-    ed_row = ed_col = ed_col1 = 0;
-    edit_screen(fname);
-    CHECK(endwin);
-    if (system("stty ixon") == -1) {
-	printf("terminal error\n");
-    }
 }
 
 

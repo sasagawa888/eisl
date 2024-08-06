@@ -2293,6 +2293,7 @@ void replace_fragment(const char *newstr)
 	insertcol();
 	ed_data[ed_row][ed_col] = *newstr;
 	ed_col++;
+	ed_col1++;
 	newstr++;
 	n--;
     }

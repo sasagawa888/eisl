@@ -768,10 +768,20 @@ bool edit_loop(char *fname)
 	    c = getch();
 	    timeout(-1);
 	    if (c == CTRL('S')) {
+		if(strcmp(fname,"") == 0){
+			ESCMOVE(ed_footer, 1);
+			clear_status();
+			CHECK(addstr, "filename:  ");
+			strcpy(fname, getname());
+		}
 		save_data(fname);
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
+		for(i=0;i<COLS-9;i++)
+			CHECK(addstr," ");
+		ESCMOVE(ed_footer, 1);
 		CHECK(addstr, "saved");
+		CHECK(addstr, fname);
 		ESCRST();
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 			ed_col1 + LEFT_MARGIN);

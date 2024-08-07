@@ -72,7 +72,9 @@ int getch1()
 	int c;
 
 	retry:
+	timeout(0);
 	c = getch();
+	timeout(-1);
 	if(ctrl_c == 1){
 		ctrl_c = 0;
 		return(CTRL('C'));
@@ -81,7 +83,8 @@ int getch1()
 		ctrl_z = 0;
 		return(CTRL('Z'));
 	}
-	else if(c == ERR){
+	
+	if(c == ERR){
 		goto retry;
 	}
 	return(c);
@@ -95,7 +98,7 @@ int main(int argc, char *argv[])
 	printf("terminal error\n");
 	return (0);
     }
-	timeout(10);
+	timeout(0);
 
     setlocale(LC_ALL, "");
 	if(argc == 2)
@@ -742,7 +745,8 @@ bool edit_loop(char *fname)
 	CHECK(addstr, "^X");
 	ESCRST();
 	while (1) {
-	    if (ctrl_c == 1) {
+		c = getch1();
+	    if (c == CTRL('C')) {
 		if (!modify_flag) {
 		    ESCCLS();
 		    ESCMOVE(1, 1);
@@ -783,9 +787,6 @@ bool edit_loop(char *fname)
 		    while (c != 'y' && c != 'n');
 		}
 	    }
-	    timeout(10);
-	    c = getch();
-	    timeout(-1);
 	    if (c == CTRL('S')) {
 		if(strcmp(fname,"") == 0){
 			ESCMOVE(ed_footer, 1);
@@ -891,6 +892,10 @@ bool edit_loop(char *fname)
 		display_screen();
 		modify_flag = true;
 		break;
+		} else if (c == CTRL('Z')){
+			ESCCLS();
+		    ESCMOVE(1, 1);
+		    return true;
 	    } else if (c == CTRL('G')) {
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
@@ -1395,6 +1400,7 @@ void help(void)
 	      "ESC V   page up                CTRL+T  replace word\n"
 	      "TAB     insert spaces according to lisp indent rule\n"
 	      "CTRL+X CTRL+C quit from editor with save\n"
+		  "CTRL+X CTRL+Z quit from editor without save\n"
 		  "CTRL+X CTRL+F load from file to editor\n"
 	      "CTRL+X CTRL+S save file\n"
 	      "CTRL+X CTRL+I insert buffer from file\n"

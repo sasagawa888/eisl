@@ -797,8 +797,7 @@ bool edit_loop(char *fname)
 		save_data(fname);
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
-		for(i=0;i<COLS-9;i++)
-			CHECK(addstr," ");
+		clear_status();
 		ESCMOVE(ed_footer, 1);
 		CHECK(addstr, "saved");
 		CHECK(addstr, fname);
@@ -836,8 +835,7 @@ bool edit_loop(char *fname)
 		fname = str1;
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
-		for(i=0;i<COLS-9;i++)
-			CHECK(addstr," ");
+		clear_status();
 		ESCMOVE(ed_footer, 1);
 		CHECK(addstr, "saved ");
 		CHECK(addstr, str1);

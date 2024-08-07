@@ -24,8 +24,8 @@
 #define CTRL(X) ((X) & 0x1F)
 #endif
 
-const int NUM_STR_MAX = 5;
-const int SHORT_STR_MAX = 20;
+#define NUM_STR_MAX 5
+#define SHORT_STR_MAX 30
 
 bool edit_loop(char *fname);
 volatile sig_atomic_t ctrl_c = 0;
@@ -615,7 +615,7 @@ char *getname()
 {
     int c;
     static int pos;
-    static char buf[30];
+    static char buf[SHORT_STR_MAX];
 
     ESCMOVE(ed_footer, 12);
     ESCREV();
@@ -640,7 +640,7 @@ char *getname()
 	    buf[pos] = 0;
 	    break;
 	default:
-	    if (pos > 30)
+	    if (pos > SHORT_STR_MAX)
 		break;
 	    else if (c < 20)
 		break;

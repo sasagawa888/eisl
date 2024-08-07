@@ -931,6 +931,9 @@ bool edit_loop(char *fname)
 	}
 	display_screen();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	ESCREV();
+	CHECK(addstr, str1);
+	ESCRST();
 	break;
     case CTRL('R'):
 	clear_status();
@@ -955,19 +958,18 @@ bool edit_loop(char *fname)
 	}
 	display_screen();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	ESCREV();
+	CHECK(addstr, str1);
+	ESCRST();
 	break;
 
     case CTRL('T'):
 	clear_status();
 	CHECK(addstr, "search: ");
 	strcpy(str1, getname());
-	//CHECK(refresh);
-	//CHECK(getnstr, str1, SHORT_STR_MAX);
 	clear_status();
 	CHECK(addstr, "replace: ");
 	strcpy(str2, getname());
-	//CHECK(refresh);
-	//CHECK(getnstr, str2, SHORT_STR_MAX);
 	ESCRST();
 	pos = find_word(str1);
 	while (pos.row != -1) {

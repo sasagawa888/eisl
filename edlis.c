@@ -808,7 +808,7 @@ bool edit_loop(char *fname)
 			ed_col1 + LEFT_MARGIN);
 		modify_flag = false;
 		break;
-		} else if (c == CTRL('F')) {
+		} else if (c == CTRL('F') || c == CTRL('V')) {
 		ESCMOVE(ed_footer, 1);
 		clear_status();
 		CHECK(addstr, "filename:  ");
@@ -1404,6 +1404,7 @@ void help(void)
 	      "CTRL+X CTRL+C quit from editor with save\n"
 		  "CTRL+X CTRL+Z quit from editor without save\n"
 		  "CTRL+X CTRL+F load from file to editor\n"
+		  "CTRL+X CTRL+V load from file to editor\n"
 	      "CTRL+X CTRL+S save file\n"
 	      "CTRL+X CTRL+I insert buffer from file\n"
 	      "CTRL+X CTRL+W write buffer to file\n"

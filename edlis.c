@@ -139,9 +139,11 @@ __dead void errw(const char *msg)
 
 void clear_status()
 {
-    ESCREV();
+    int i;
+	ESCREV();
     ESCMOVE(ed_footer, 1);
-    CHECK(addstr, "                                            ");
+	for(i=0;i<COLS-9;i++)
+    CHECK(addstr, " ");
     ESCMOVE(ed_footer, 1);
 }
 

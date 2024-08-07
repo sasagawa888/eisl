@@ -67,6 +67,26 @@ int ed_incomment = -1;		// #|...|# comment
 bool modify_flag;
 
 
+int getch1()
+{
+	int c;
+
+	retry:
+	c = getch();
+	if(ctrl_c == 1){
+		ctrl_c = 0;
+		return(CTRL('C'));
+	}
+	else if(ctrl_z == 1){
+		ctrl_z = 0;
+		return(CTRL('Z'));
+	}
+	else if(c == ERR){
+		goto retry;
+	}
+	return(c);
+}
+
 int main(int argc, char *argv[])
 {
     int i, j;
@@ -75,6 +95,7 @@ int main(int argc, char *argv[])
 	printf("terminal error\n");
 	return (0);
     }
+	timeout(10);
 
     setlocale(LC_ALL, "");
 	if(argc == 2)
@@ -103,6 +124,7 @@ int main(int argc, char *argv[])
     if (system("stty ixon") == -1) {
 	printf("terminal error\n");
     }
+	timeout(-1);
 }
 
 __dead void errw(const char *msg)
@@ -651,10 +673,7 @@ bool edit_loop(char *fname)
     static bool uni3 = false;
 
     CHECK(refresh);
-    c = getch();
-    if (c == ERR) {
-	errw("getch");
-    }
+    c = getch1();
     switch (c) {
     case CTRL('H'):
 	help();

@@ -615,7 +615,7 @@ char *getname()
 {
     int c;
     static int pos;
-    static char buf[20];
+    static char buf[30];
 
     ESCMOVE(ed_footer, 12);
     ESCREV();
@@ -640,7 +640,7 @@ char *getname()
 	    buf[pos] = 0;
 	    break;
 	default:
-	    if (pos > 20)
+	    if (pos > 30)
 		break;
 	    else if (c < 20)
 		break;

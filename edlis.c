@@ -2447,7 +2447,6 @@ void replace_word(const char *str1, const char *str2)
     }
 }
 
-
 static const char *functions_data[] = {
 	"basic-array-p" ,
 	"(BASIC-ARRAY-P obj) boolean",
@@ -2701,126 +2700,314 @@ static const char *functions_data[] = {
 	"format-object",
 	"(format-object output-stream obj escape-p) <null>",
 	"Output as an object",
+	"format-tab",
+	"(format-tab output-stream column) <null>",
+	"Output ASCII TAB",
+	"read-byte",
+	"(read-byte input-stream eos-error-p + eos-value +) <integer>",
+	"Read as a byte",
+	"write",
+	"(write-byte z output-stream) <integer>",
+	"Write as a byte",
+	"consp",
+	"(CONSP obj) boolean",
+	"Check if obj is a cons",
+	"cons",
+	"(CONS obj1 obj2) <cons>",
+	"Generate a cons",
+	"car",
+	"(CAR cons) <object>",
+	"Return the Car part of a cons",
+	"cdr",
+	"(CDR cons) <object>",
+	"Return the Cdr part of a cons",
+	"set-car",
+	"(SET-CAR obj cons) <object>",
+	"Set the Car part of a cons",
+	"set-cdr",
+	"(SET-CDR obj cons) <object>",
+	"Set the Cdr part of a cons",
+	"null",
+	"(NULL obj) boolean",
+	"Check if obj is null",
+	"listp",
+	"(LISTP obj) boolean",
+	"Check if obj is a list",
+	"create-list",
+	"(CREATE-LIST i initial-element +) <list>",
+	"Generates a list with length i and initial values 'initial-element'",
+	"list",
+	"(LIST obj *) <list>",
+	"Generate a list with every element set to obj",
+	"reverse",
+	"(REVERSE list) <list>",
+	"Reverse the list (do not destroy the original list)",
+	"nreverse",
+	"(NREVERSE list) <list>",
+	"Reverse the list (the original list is destroyed)",
+	"append",
+	"(APPEND list *) <list>",
+	"Concatenate lists",
+	"member",
+	"(MEMBER obj list) <list>",
+	"If the list list contains obj, it returns a partial list starting with obj",
+	"mapcar",
+	"(MAPCAR function list +) <list>",
+	"Execute the function function on the elements of list 'list' and return a list of results",
+	"mapc",
+	"(MAPC function list +) <list>",
+	"Execute the function function on the elements of list 'list' and return the 'list' argument",
+	"mapcan",
+	"(MAPCAN function list +) <list>",
+	"Like 'mapcar', but the list is destroyed",
+	"maplist",
+	"(MAPLIST function list +) <list>",
+	"Execute 'function' on a part of 'list' and return a list of results",
+	"mapl",
+	"(MAPL function list +) <list>",
+	"Executes the 'function' on a part of 'list' and return the 'list' argument",
+	"mapcon",
+	"(MAPCON function list +) <list>",
+	"Like 'maplist', but the list is destroyed",
+	"assoc",
+	"(ASSOC obj association-list) <cons>",
+	"Return an obj-keyed value from association-list",
+	"defmacro",
+	"(defmacro macro-name lambda-list form *) <symbol>",
+	"Define a macro (special form)",
+	"identity",
+	"(IDENTITY obj) <object>",
+	"Return obj as is",
+	"get-universal-time",
+	"(GET-UNIVERSAL-TIME) <integer>",
+	"Returns universal time (seconds)",
+	"get-internal-run-time",
+	"(GET-INTERNAL-RUN-TIME) <integer>",
+	"Return the execution time",
+	"get-internal-real-time",
+	"(GET-INTERNAL-REAL-TIME) <integer>",
+	"Return elapsed time",
+	"internal-time-units-per-second",
+	"(internal-time-units-per-second) <integer>",
+	"Return internal time units per second",
+	"numberp",
+	"(NUMBERP obj) boolean",
+	"Test if 'obj' is a number",
+	"parse-number",
+	"(PARSE-NUMBER string) <number>",
+	"Parse the string 'string' and convert it into a number",
+	"=",
+	"(= x1 x2) boolean",
+	"Test if two numeric values are equal",
+	"/=",
+	"(/= x1 x2) boolean",
+	"Test if two numeric values are not equal",
+	">=",
+	"(>= x1 x2) boolean",
+	"Test if numeric value 'x1' is greater than or equal to 'x2'",
+	"<=",
+	"(<= x1 x2) boolean",
+	"Test if numeric value 'x1' is less than or equal to 'x2'",
+	">",
+	"(> x1 x2) boolean",
+	"Test if numeric value 'x1' is greater than 'x2'",
+	"<",
+	"(< x1 x2) boolean",
+	"Test if numeric value 'x1' is less than 'x2'",
+	"+",
+	"(+ x *) <number>",
+	"Sum of the numbers 'x ...'",
+	"*",
+	"(* x *) <number>",
+	"Product of the numbers 'x ...'",
+	"-",
+	"(- x y *) <number>",
+	"Successive subtraction of 'x y ...'",
+	"quotient",
+	"(QUOTIENT dividend divisor +) <number>",
+	"Successive division of 'dividend' by 'divisor ...'",
+	"reciprocal",
+	"(RECIPROCAL x) <number>",
+	"Return 1/x",
+	"max",
+	"(MAX x y *) <number>",
+	"Return the maximum of 'x y ...'",
+	"min",
+	"(MIN x y *) <number>",
+	"Return the minimum of 'x y ...'",
+	"abs",
+	"(ABS x) <number>",
+	"Return the absolute value of 'x'",
+	"exp",
+	"(EXP x) <number>",
+	"Return e^x",
+	"log",
+	"(LOG x) <number>",
+	"Return the natural logarithm of x",
+	"expt",
+	"(EXPT x1 x2) <number>",
+	"Return x1 to the power of x2",
+	"sqrt",
+	"(SQRT x) <number>",
+	"Return the positive square root of x",
+	"sin",
+	"(SIN x) <number>",
+	"Return the sine of x",
+	"cos",
+	"(COS x) <number>",
+	"Return the cosine of x",
+	"tan",
+	"(TAN x) <number>",
+	"Return the tangent of x",
+	"atan",
+	"(ATAN x) <number>",
+	"Return the arctangent of x",
+	"atan2",
+	"(ATAN2 x1 x2) <number>",
+	"Convert from rectangular coordinates (x1, x2) to the angle part of a polar coordinate",
+	"sinh",
+	"(SINH x) <number>",
+	"Return the hyperbolic sine of x",
+	"cosh",
+	"(COSH x) <number>",
+	"Return the hyperbolic cosine of x",
+	"tanh",
+	"(TANH x) <number>",
+	"Return the hyperbolic tangent of x",
+	"atanh",
+	"(ATANH x) <number>",
+	"Return the hyperbolic tangent of x",
+	"floatp",
+	"(FLOATP obj) boolean",
+	"Test if 'obj' is a floating-point number",
+	"float",
+	"(FLOAT x) <float>",
+	"Convert 'x' to a floating-point number",
+	"floor",
+	"(FLOOR x) <integer>",
+	"Truncation towards negative infinity",
+	"ceiling",
+	"(CEILING x) <integer>",
+	"Truncation towards positive infinity",
+	"truncate",
+	"(TRUNCATE x) <integer>",
+	"Truncation towards 0",
+	"round",
+	"(ROUND x) <integer>",
+	"Round to integer nearest 'x'",
+	"integerp",
+	"(INTEGERP obj) boolean",
+	"Check if 'obj' is an integer",
+	"div",
+	"(DIV z1 z2) <integer>",
+	"Integer division",
+	"mod",
+	"(MOD z1 z2) <integer>",
+	"Modulus",
+	"gcd",
+	"(GCD z1 z2) <integer>",
+	"'Greatest Common Divisor' or 'Highest Common Factor'",
+	"lcm",
+	"(LCM z1 z2) <integer>",
+	"'Lowest Common Multiple'",
+	"isqrt",
+	"(ISQRT z) <integer>",
+	"Integer square root, i.e. greatest integer <= '(sqrt z)'",
+	"defclass",
+	"(defclass class-name (sc-name *) (slot-spec *) class-opt *) <symbol>",
+	"Define a class (special form)",
+	"generic-function-p",
+	"(generic-function-p obj) boolean",
+	"Test of 'obj' is a generic function",
+	"defgeneric",
+	"(defgeneric func-spec lambda-list option * method-desc *) <symbol>",
+	"Define a generic function (special form)",
+	"defmethod",
+	"(defmethod func-spec method-qualifier * parameter-profile form *) <symbol>",
+	"Define a method (special form)",
+	"call-next-method",
+	"(call-next-method) <object>",
+	"Call the next method in a class's precedence order (special form)",
+	"next-method-p",
+	"(next-method-p) boolean",
+	"Test if a next method exists (special form)",
+	"create-class",
+	"(create class initarg * initval *) <object>",
+	"Create an instance of a class (generic function)",
+	"initialize-object",
+	"(initialize-object instance initialization-list) <object>",
+	"Initialize an object",
+	"class-of",
+	"(class-of obj) <class>",
+	"Return the class of an object",
+	"instancep",
+	"(instancep obj class) boolean",
+	"Test whether 'obj' is an instance of 'class'",
+	"subclassp",
+	"(subclassp class1 class2) boolean",
+	"Test for a subclass relation",
+	"class",
+	"(class class-name) <class>",
+	"Return the class named 'class-name' (special form)",
+	"eq",
+	"(EQ obj1 obj2) boolean",
+	"Test whether obj1 and obj2 are 'eq'",
+	"eql",
+	"(EQL obj1 obj2) boolean",
+	"Test whether obj1 and obj2 are 'eql'",
+	"equal",
+	"(EQUAL obj1 obj2) boolean",
+	"Test whether obj1 and obj2 are 'equal'",
+	"not",
+	"(NOT obj) boolean",
+	"Return the logical NOT of 'obj'",
+	"and",
+	"(AND form *) <object>",
+	"Logical AND of the forms 'form ...' (special form)",
+	"or",
+	"(OR form *) <object>",
+	"logical OR of the forms 'form ...' (special form)",
+	"length",
+	"(LENGTH sequence) <integer>",
+	"Return the length of 'sequence'",
+	"elt",
+	"(ELT sequence z) <object>",
+	"Return element no. 'z' of 'sequence'",
+	"set-elt",
+	"(SET-ELT obj sequence z) <object>",
+	"Set item 'z' of 'sequence' to 'obj'",
+	"subseq",
+	"(SUBSEQ sequence z1 z2) sequence",
+	"Get the portion of 'sequence' from indexes z1 to z2",
+	"map-into",
+	"(MAP-INTO destination function seq *) sequenc",
+	"Apply 'function' to the elements of 'sequence' in turn, then store the results in 'destination'",
+	"streamp",
+	"(streamp obj) boolean",
+	"Predicate that is true for streams",
+	"open-stream-p",
+	"(open-stream-p obj) boolean",
+	"Predicate is true for open streams",
+	"input-stream-p",
+	"(input-stream-p obj) boolean",
+	"Predicate that is true for input streams",
+	"output-stream-p",
+	"(output-stream-p obj) boolean",
+	"Predicate that is true for output streams",
+	"standard-input",
+	"(standard-input) <stream>",
+	"Return the standard input stream",
+	"standard-output",
+	"(standard-output) <stream>",
+	"Return the standard output stream",
+	"error-output",
+	"(error-output) <stream>",
+	"Return the standard error stream",
+	"with-standard-input",
+	"(with-standard-input stream-form form *) <object>",
+	"Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
 };
 /*
-((format-tab output-stream column) <null> "Output ASCII TAB")
-((read-byte input-stream eos-error-p + eos-value +) <integer> "Read as a byte")
-((write-byte z output-stream) <integer> "Write as a byte")
-
-;;; list
-((CONSP obj) boolean "Check if obj is a cons")
-((CONS obj1 obj2) <cons> "Generate a cons")
-((CAR cons) <object> "Return the Car part of a cons")
-((CDR cons) <object> "Return the Cdr part of a cons")
-((SET-CAR obj cons) <object> "Set the Car part of a cons")
-((SET-CDR obj cons) <object> "Set the Cdr part of a cons")
-((NULL obj) boolean "Check if obj is null")
-((LISTP obj) boolean "Check if obj is a list")
-((CREATE-LIST i initial-element +) <list> "Generates a list with length i and initial values 'initial-element'")
-((LIST obj *) <list> "Generate a list with every element set to obj")
-((REVERSE list) <list> "Reverse the list (do not destroy the original list)")
-((NREVERSE list) <list> "Reverse the list (the original list is destroyed)")
-((APPEND list *) <list> "Concatenate lists")
-((MEMBER obj list) <list>  "If the list list contains obj, it returns a partial list starting with obj")
-((MAPCAR function list +) <list> "Execute the function function on the elements of list 'list' and return a list of results")
-((MAPC function list +) <list>  "Execute the function function on the elements of list 'list' and return the 'list' argument")
-((MAPCAN function list +) <list>  "Like 'mapcar', but the list is destroyed")
-((MAPLIST function list +) <list>  "Execute 'function' on a part of 'list' and return a list of results")
-((MAPL function list +) <list>  "Executes the 'function' on a part of 'list' and return the 'list' argument")
-((MAPCON function list +) <list> "Like 'maplist', but the list is destroyed")
-((ASSOC obj association-list) <cons>  "Return an obj-keyed value from association-list")
-
-;;; macro
-((defmacro macro-name lambda-list form *) <symbol> "Define a macro (special form)")
-
-;;; misc
-((IDENTITY obj) <object> "Return obj as is")
-((GET-UNIVERSAL-TIME) <integer> "Returns universal time (seconds)")
-((GET-INTERNAL-RUN-TIME) <integer> "Return the execution time")
-((GET-INTERNAL-REAL-TIME) <integer> "Return elapsed time")
-((internal-time-units-per-second) <integer> "Return internal time units per second")
-
-;;; number
-((NUMBERP obj) boolean "Test if 'obj' is a number")
-((PARSE-NUMBER string) <number> "Parse the string 'string' and convert it into a number")
-((= x1 x2) boolean "Test if two numeric values are equal")
-((/= x1 x2) boolean "Test if two numeric values are not equal")
-((>= x1 x2) boolean "Test if numeric value 'x1' is greater than or equal to 'x2'")
-((<= x1 x2) boolean "Test if numeric value 'x1' is less than or equal to 'x2'")
-((> x1 x2) boolean "Test if numeric value 'x1' is greater than 'x2'")
-((< x1 x2) boolean "Test if numeric value 'x1' is less than 'x2'")
-((+ x *) <number> "Sum of the numbers 'x ...'")
-((* x *) <number> "Product of the numbers 'x ...'")
-((- x y *) <number> "Successive subtraction of 'x y ...'")
-((QUOTIENT dividend divisor +) <number> "Successive division of 'dividend' by 'divisor ...'")
-((RECIPROCAL x) <number> "Return 1/x")
-((MAX x y *) <number> "Return the maximum of 'x y ...'")
-((MIN x y *) <number> "Return the minimum of 'x y ...'")
-((ABS x) <number> "Return the absolute value of 'x'")
-((EXP x) <number> "Return e^x")
-((LOG x) <number> "Return the natural logarithm of x")
-((EXPT x1 x2) <number> "Return x1 to the power of x2")
-((SQRT x) <number> "Return the positive square root of x")
-((SIN x) <number> "Return the sine of x")
-((COS x) <number> "Return the cosine of x")
-((TAN x) <number> "Return the tangent of x")
-((ATAN x) <number> "Return the arctangent of x")
-((ATAN2 x1 x2) <number> "Convert from rectangular coordinates (x1, x2) to the angle part of a polar coordinate")
-((SINH x) <number> "Return the hyperbolic sine of x")
-((COSH x) <number> "Return the hyperbolic cosine of x")
-((TANH x) <number> "Return the hyperbolic tangent of x")
-((ATANH x) <number> "Return the hyperbolic tangent of x")
-((FLOATP obj) boolean "Test if 'obj' is a floating-point number")
-((FLOAT x) <float> "Convert 'x' to a floating-point number")
-((FLOOR x) <integer> "Truncation towards negative infinity")
-((CEILING x) <integer> "Truncation towards positive infinity")
-((TRUNCATE x) <integer> "Truncation towards 0")
-((ROUND x) <integer> "Round to integer nearest 'x'")
-((INTEGERP obj) boolean "Check if 'obj' is an integer")
-((DIV z1 z2) <integer> "Integer division")
-((MOD z1 z2) <integer> "Modulus")
-((GCD z1 z2) <integer> "'Greatest Common Divisor' or 'Highest Common Factor'")
-((LCM z1 z2) <integer> "'Lowest Common Multiple'")
-((ISQRT z) <integer> "Integer square root, i.e. greatest integer <= '(sqrt z)'")
-
-;;; object
-((defclass class-name (sc-name *) (slot-spec *) class-opt *) <symbol>  "Define a class (special form)")
-((generic-function-p obj) boolean "Test of 'obj' is a generic function")
-((defgeneric func-spec lambda-list option * method-desc *) <symbol>  "Define a generic function (special form)")
-((defmethod func-spec method-qualifier * parameter-profile form *) <symbol> "Define a method (special form)")
-((call-next-method) <object> "Call the next method in a class's precedence order (special form)")
-((next-method-p) boolean "Test if a next method exists (special form)")
-((create class initarg * initval *) <object> "Create an instance of a class (generic function)")
-((initialize-object instance initialization-list) <object> "Initialize an object")
-((class-of obj) <class> "Return the class of an object")
-((instancep obj class) boolean "Test whether 'obj' is an instance of 'class'")
-((subclassp class1 class2) boolean "Test for a subclass relation")
-((class class-name) <class> "Return the class named 'class-name' (special form)")
-
-;;; pred
-((EQ obj1 obj2) boolean "Test whether obj1 and obj2 are 'eq'")
-((EQL obj1 obj2) boolean "Test whether obj1 and obj2 are 'eql'")
-((EQUAL obj1 obj2) boolean "Test whether obj1 and obj2 are 'equal'")
-((NOT obj) boolean "Return the logical NOT of 'obj'")
-((AND form *) <object> "Logical AND of the forms 'form ...' (special form)")
-((OR form *) <object> "logical OR of the forms 'form ...' (special form)")
-
-;;; seq
-((LENGTH sequence) <integer> "Return the length of 'sequence'")
-((ELT sequence z) <object> "Return element no. 'z' of 'sequence'")
-((SET-ELT obj sequence z) <object> "Set item 'z' of 'sequence' to 'obj'")
-((SUBSEQ sequence z1 z2) sequence "Get the portion of 'sequence' from indexes z1 to z2")
-((MAP-INTO destination function seq *) sequence  "Apply 'function' to the elements of 'sequence' in turn, then store the results in 'destination'")
-
-;;; stream
-((streamp obj) boolean "Predicate that is true for streams")
-((open-stream-p obj) boolean "Predicate is true for open streams")
-((input-stream-p obj) boolean "Predicate that is true for input streams")
-((output-stream-p obj) boolean "Predicate that is true for output streams")
-((standard-input) <stream> "Return the standard input stream")
-((standard-output) <stream> "Return the standard output stream")
-((error-output) <stream> "Return the standard error stream")
-((with-standard-input stream-form form *) <object>  "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)")
 ((with-standard-output stream-form form *) <object> "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)")
 ((with-error-output stream-form form *) <object>  "Evaluate the forms form ... with standard-error set to the result of 'stream-form' (special form)")
 ((open-input-file filename element-class +) <stream> "Open the file 'filename' as an input stream")
@@ -2876,3 +3063,18 @@ static const char *functions_data[] = {
 ;((write object stream +) <null> "object を stream に表示する(拡張)")
 ((quit) transfers-control "Exit the ISLisp interpreter (extension)")
 */
+
+
+#define NELEM(X) (sizeof(X) / sizeof((X)[0]))
+
+int find_function_data(const char *str)
+{
+    int i;
+
+    for (i = 0; i < (int) NELEM(functions_data); i++) {
+	if (strcmp(functions_data[i], str) == 0) {
+	    return i;
+	}
+    }
+    return -1;
+}

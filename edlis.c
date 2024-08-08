@@ -2461,104 +2461,248 @@ static const char *functions_data[] = {
 	"garef", 
 	"(GAREF general-array z *) <object>",
 	"Return the zth element of the general-array",
+	"set-are",
+	"(SET-AREF obj basic-array z *) <object>", 
+	"Set the zth element of the basic-array to obj",
+    "set-gref", 
+	"(SET-GAREF obj general-array z *) <object>",
+	"Set the zth element of the general-array to obj",
+	"array-dimensions", 
+	"(ARRAY-DIMENSIONS basic-array) <list>", 
+	"Return a list of the dimensions of a basic-array",
+	"characterp",
+	"(CHARACTERP obj) boolean",
+	"Check if obj is a string",
+	"char=",
+	"(CHAR= char1 char2) boolean",
+	"Check if the characters char1 and char2 are equal",
+	"char/=",
+	"(CHAR/= char1 char2) boolean",
+	"Check if the characters char1 and char2 are not equal",
+	"char<",
+	"(CHAR< char1 char2) boolean",
+	"Check if the character code of char1 is less than char2",
+	"char>",
+	"(CHAR> char1 char2) boolean",
+	"Check if the character code of char1 is greater than char2",
+	"char<=",
+	"(CHAR<= char1 char2) boolean",
+	"Check if the character code of char1 is less than or equal to char2",
+	"char>=",
+	"(CHAR>= char1 char2) boolean",
+	"Check if the character code of char1 is greater than or equal to char2",
+	"error",
+	"(error error-string obj *) <object>",
+	"Signal an error",
+	"cerror",
+	"(cerror continue-string error-string obj *) <object>",
+	"Signal a continuable error",
+	"signal-condition",
+	"(signal-condition condition continuable) <object>",
+	"Signal a condition",
+	"ignore-errors",
+	"(ignore-errors form *) <object>",
+	"Ignore errors (special form)",
+	"report-condition",
+	"(report-condition condition stream) <condition>",
+	"Report the condition 'condition' to stream 'stream'",
+	"condition-continuable", 
+	"(condition-continuable condition) <object>",
+	"Check if a condition is continuable",
+	"continue-condition",
+	"(continue-condition condition value +) <object>",
+	"Continue from a condition",
+	"with-handler",
+	"(with-handler handler form *) <object>",
+	"Evaluate the handler and execute the form (special form)",
+	"arithmetic-error-operation",
+	"(arithmetic-error-operation arithmetic-error) <function>",
+	"Return the operation of an arithmetic error",
+	"arithmetic-error-operands",
+	"(arithmetic-error-operands arithmetic-error) <list>",
+	"Return the operands of an arithmetic error",
+	"domain-error-object",
+	"(domain-error-object domain-error) <object>",
+	"Return the object supplied when creating the domain error 'domain-error'",
+	"domain-error-expected-calss",
+	"(domain-error-expected-class domain-error) <class>",
+	"Domain error, return the desired domain supplied when creating 'domain-error'",
+	"parse-error-string",
+	"(parse-error-string parse-error) <string>",
+	"Parsing error, return the string supplied when creating 'parse-error",
+	"parse-error-expected-class",
+	"(parse-error-expected-class parse-error) <class>",
+	"Parsing error, return the desired class supplied when creating 'parse-error'",
+	"simple-error-format-string",
+	"(simple-error-format-string simple-error) <string>",
+	"Return the string supplied when creating 'simple-error'",
+	"simple-error-format-arguments",
+	"(simple-error-format-arguments simple-error) <list>",
+	"Return the list of arguments supplied when creating 'simple-error'",
+	"stream-error-stream",
+	"(stream-error-stream stream-error) <stream>",
+	"Stream error, return the stream supplied when creating 'stream-error'",
+	"undefined-entity-name",
+	"(undefined-entity-name undefined-entity) <symbol>",
+	"Return the symbol supplied when createing the undefined entity 'undefined-entity'",
+	"undefined-entity-namespace",
+	"(undefined-entity-namespace undefined-entity) <symbol>",
+	"Return the namespace supplied when createing the undefined entity 'undefined-entity'",
+	"quote",
+	"(quote obj) <object>",
+	"Return a reference to obj (special form)",
+	"setq",
+	"(setq var form) <object>",
+	"Assign the result of evaluating 'form' to the variable 'var' (special form)",
+	"setf",
+	"(setf place form) <object>",
+	"Assign the result of evaluating 'form' to 'place' (special form)",
+	"let",
+	"(let ((var form) *) body-form *) <object>",
+	"Define local variables and execute 'body-form ...' in that environment (special form)",
+	"let*",
+	"(let* ((var form) *) body-form *) <object>",
+	"Similar to let, except that local variables are bound sequentially (special form)",
+	"dynamic",
+	"(dynamic var) <object>",
+	"Return the binding of a dynamic variable (special form)",
+	"setf",
+	"(setf (dynamic var) form) <object>",
+	"Assign a value to a dynamic variable (special form)",
+	"dynamic-let",
+	"(dynamic-let ((var form) *) body-form *) <object>",
+	"Temporarily bind dynamic variables (special form)",
+	"if",
+	"(if test-form then-form else-form+) <object>",
+	"Branch according to a condition (special form)",
+	"cond",
+	"(cond (test form *) *) <object>",
+	"Branch according to a condition (special form)",
+	"case",
+	"(case keyform ((key *) form *) * (t form *)+) <object>",
+	"Branches in various ways depending on the value of keyform (special form)",
+	"case-using",
+	"(case-using predform keyform ((key *) form *) * (t form *) +) <object>",
+	"Almost the same as the case statement, but using the predicate function 'predform' for comparison (special form)",
+	"progn",	
+	"(progn form*) <object>",
+	"Perform sequential execution (special format)",
+	"while",
+	"(while test-form body-form *) <null>",
+	"Execute body-form repeatedly as long as 'test-form' is not nil (special form)",
+	"for",
+	"(for (iteration-spec *) (end-test result *) form *) <object>",
+	"Iterate repeatedly while end-test is not nil, using the initial values and steppers indicated by iteration-spec (special form)",
+	"block",
+	"(block name form *) <object>",
+	"Execute sequentially with block tags (special format)",
+	"return-from",
+	"(return-from name result-form) transfers-control-and-data",
+	"Exit the 'name' block (special form)",
+	"catch",
+	"(catch tag-form form *) <object>",
+	"Catch tag-form and execute 'form ...' (special form)",
+	"throw",
+	"(throw tag-form result-form) transfers-control-and-data",
+	"Throw tag-form (special form)",
+	"tagbody",
+	"(tagbody tagbody-tag * form *) <object>",
+	"Execute sequentially with optional 'tagbody-tag' labels (special form)",
+	"go",
+	"(go tagbody-tag) transfers-control",
+	"Transfer control to 'tagbody-tag' in a tagbody (special format)",
+	"unwind-protect",
+	"(unwind-protect form cleanup-form *) <object>",
+	"Execute 'cleanup-form ...' whenever the evaluation of 'form' finishes (special form)",
+	"the",
+	"(THE class-name form) <object>",
+	"Declare the class of the execution result of 'form' as class-name (special form)",
+	"assure",
+	"(ASSURE class-name form) <object>",
+	"Claim the class of the execution result of 'form' as class-name, if it is different, an error will occur (special form)",
+	"convert",
+	"(CONVERT obj class-name) <object>",
+	"Convert obj to class 'class-name' (special form)",
+	"probe-file",
+	"(probe-file filename) boolean",
+	"Check if a file 'filename' exists",
+	"file-position",
+	"(file-position stream) <integer>",
+	"Return the current file position of a stream",
+	"set-file-position",
+	"(set-file-position stream z) <integer>",
+	"Set the file position of 'stream' to z",
+	"file-length",
+	"(file-length filename element-class) <integer>",
+	"Return the size of the file 'filename' as an 'element-class' file",
+	"functionp",
+	"(functionp obj) boolean",
+	"Check if obj is a function",
+	"function",
+	"(function function-name) <function>",
+	"Returns a function named function-name (special form)",
+	"lambda",
+ 	"(lambda lambda-list form *) <function>",
+	"Generate a lambda expression (special form)",
+	"labels",
+	"(labels ((function-name lambda-list form *) *) body-forms *) <object>",
+	"Like 'flet', but binds local functions sequentially (recursive definition is possible) (special form)",
+	"flet",
+	"(flet ((function-name lambda-list form *) *) body-forms *) <object>",
+	"Binds local functions (special form)",
+	"apply",
+	"(apply function obj * list) <object>",
+	"Apply function",
+	"funcall",
+	"(funcall function obj *) <object>",
+	"Call function",
+	"defconstant",
+	"(defconstant name form) <symbol>",
+	"Define a constant (special form)",
+	"defglobal",
+	"(defglobal name form) <symbol>",
+	"Define a global variable (special form)",
+	"defdynamic",
+	"(defdynamic name form) <symbol>",
+	"Define a dynamic variable (special form)",
+	"defun",
+	"(defun function-name lambda-list form *) <symbol>",
+	"Define a function (special form)",
+	"read",
+	"(read input-stream + eos-error-p + eos-value +) <object>",
+	"Read an S-expression from 'input-stream'",
+	"read-char",
+	"(read-char input-stream + eos-error-p + eos-value +) <object>",
+	"Read one character from 'input-stream'",
+	"preview-char",
+	"(preview-char input-stream + eos-error-p + eos-value +) <object>",
+	"Returnsthe next character that will be read (one character look-ahead, file position does not change)",
+	"read-line",
+	"(read-line input-stream + eos-error-p + eos-value +) <object>",
+	"Read one line as a string",
+	"stream-ready-p",
+	"(stream-ready-p input-stream) boolean",
+	"Is the stream readable?",
+	"format",
+	"(format output-stream format-string obj *) <null>",
+	"Output obj according to format-string",
+	"format-char",
+	"(format-char output-stream char) <null>",
+	"Output one character",
+	"format-float",
+	"(format-float output-stream float) <null>",
+	"Output as a floating point number",
+	"format-fresh-line",
+	"(format-fresh-line output-stream) <null>",
+	"Begin on a new line",
+	"format-integer",
+	"(format-integer output-stream integer radix) <null>",
+	"Output as an integer",
+	"format-object",
+	"(format-object output-stream obj escape-p) <null>",
+	"Output as an object",
 };
-
 /*
-
-((SET-AREF obj basic-array z *) <object> "Set the zth element of the basic-array to obj")
-((SET-GAREF obj general-array z *) <object> "Set the zth element of the general-array to obj")
-((ARRAY-DIMENSIONS basic-array) <list> "Return a list of the dimensions of a basic-array")
-
-;;; char
-((CHARACTERP obj) boolean "Check if obj is a string")
-((CHAR= char1 char2) boolean "Check if the characters char1 and char2 are equal")
-((CHAR/= char1 char2) boolean "Check if the characters char1 and char2 are not equal")
-((CHAR< char1 char2) boolean "Check if the character code of char1 is less than char2")
-((CHAR> char1 char2) boolean "Check if the character code of char1 is greater than char2")
-((CHAR<= char1 char2) boolean "Check if the character code of char1 is less than or equal to char2")
-((CHAR>= char1 char2) boolean "Check if the character code of char1 is greater than or equal to char2")
-
-;;; cond
-((error error-string obj *) <object> "Signal an error")
-((cerror continue-string error-string obj *) <object> "Signal a continuable error")
-((signal-condition condition continuable) <object> "Signal a condition")
-((ignore-errors form *) <object> "Ignore errors (special form)")
-((report-condition condition stream) <condition> "Report the condition 'condition' to stream 'stream'") 
-((condition-continuable condition) <object> "Check if a condition is continuable")
-((continue-condition condition value +) <object> "Continue from a condition")
-((with-handler handler form *) <object> "Evaluate the handler and execute the form (special form)")
-((arithmetic-error-operation arithmetic-error) <function> "Return the operation of an arithmetic error")
-((arithmetic-error-operands arithmetic-error) <list> "Return the operands of an arithmetic error")
-((domain-error-object domain-error) <object>  "Return the object supplied when creating the domain error 'domain-error'")
-((domain-error-expected-class domain-error) <class> "Domain error, return the desired domain supplied when creating 'domain-error'")
-((parse-error-string parse-error) <string> "Parsing error, return the string supplied when creating 'parse-error")
-((parse-error-expected-class parse-error) <class>  "Parsing error, return the desired class supplied when creating 'parse-error'")
-((simple-error-format-string simple-error) <string> "Return the string supplied when creating 'simple-error'")
-((simple-error-format-arguments simple-error) <list> "Return the list of arguments supplied when creating 'simple-error'")
-((stream-error-stream stream-error) <stream> "Stream error, return the stream supplied when creating 'stream-error'")
-((undefined-entity-name undefined-entity) <symbol> "Return the symbol supplied when createing the undefined entity 'undefined-entity'")
-((undefined-entity-namespace undefined-entity) <symbol> "Return the namespace supplied when createing the undefined entity 'undefined-entity'")
-
-;;; control
-((quote obj) <object> "Return a reference to obj (special form)")
-((setq var form) <object> "Assign the result of evaluating 'form' to the variable 'var' (special form)")
-((setf place form) <object> "Assign the result of evaluating 'form' to 'place' (special form)")
-((let ((var form) *) body-form *) <object> "Define local variables and execute 'body-form ...' in that environment (special form)")
-((let* ((var form) *) body-form *) <object>  "Similar to let, except that local variables are bound sequentially (special form)")
-((dynamic var) <object> "Return the binding of a dynamic variable (special form)")
-((setf (dynamic var) form) <object> "Assign a value to a dynamic variable (special form)")
-((dynamic-let ((var form) *) body-form *) <object> "Temporarily bind dynamic variables (special form)")
-((if test-form then-form else-form+) <object> "Branch according to a condition (special form)")
-((cond (test form *) *) <object> "Branch according to a condition (special form)")
-((case keyform ((key *) form *) * (t form *)+) <object> "Branches in various ways depending on the value of keyform (special form)")
-((case-using predform keyform ((key *) form *) * (t form *) +) <object> "Almost the same as the case statement, but using the predicate function 'predform' for comparison (special form)")
-((progn form*) <object> "Perform sequential execution (special format)")
-((while test-form body-form *) <null> "Execute body-form repeatedly as long as 'test-form' is not nil (special form)")
-((for (iteration-spec *) (end-test result *) form *) <object> "Iterate repeatedly while end-test is not nil, using the initial values and steppers indicated by iteration-spec (special form)")
-((block name form *) <object> "Execute sequentially with block tags (special format)")
-((return-from name result-form) transfers-control-and-data "Exit the 'name' block (special form)")
-((catch tag-form form *) <object> "Catch tag-form and execute 'form ...' (special form)")
-((throw tag-form result-form) transfers-control-and-data "Throw tag-form (special form)")
-((tagbody tagbody-tag * form *) <object> "Execute sequentially with optional 'tagbody-tag' labels (special form)")
-((go tagbody-tag) transfers-control "Transfer control to 'tagbody-tag' in a tagbody (special format)")
-((unwind-protect form cleanup-form *) <object>  "Execute 'cleanup-form ...' whenever the evaluation of 'form' finishes (special form)")
-
-;;; declare
-((THE class-name form) <object> "Declare the class of the execution result of 'form' as class-name (special form)")
-((ASSURE class-name form) <object> "Claim the class of the execution result of 'form' as class-name, if it is different, an error will occur (special form)")
-((CONVERT obj class-name) <object> "Convert obj to class 'class-name' (special form)")
-
-;;; files
-((probe-file filename) boolean "Check if a file 'filename' exists")
-((file-position stream) <integer> "Return the current file position of a stream")
-((set-file-position stream z) <integer> "Set the file position of 'stream' to z")
-((file-length filename element-class) <integer> "Return the size of the file 'filename' as an 'element-class' file")
-
-;;; formeval
-((functionp obj) boolean "Check if obj is a function")
-((function function-name) <function> "Returns a function named function-name (special form)")
-((lambda lambda-list form *) <function> "Generate a lambda expression (special form)")
-((labels ((function-name lambda-list form *) *) body-forms *) <object>  "Like 'flet', but binds local functions sequentially (recursive definition is possible) (special form)")
-((flet ((function-name lambda-list form *) *) body-forms *) <object>  "Binds local functions (special form)")
-((apply function obj * list) <object> "Apply function")
-((funcall function obj *) <object> "Call function")
-((defconstant name form) <symbol> "Define a constant (special form)")
-((defglobal name form) <symbol> "Define a global variable (special form)")
-((defdynamic name form) <symbol> "Define a dynamic variable (special form)")
-((defun function-name lambda-list form *) <symbol> "Define a function (special form)")
-
-;;; io
-((read input-stream + eos-error-p + eos-value +) <object> "Read an S-expression from 'input-stream'")
-((read-char input-stream + eos-error-p + eos-value +) <object> "Read one character from 'input-stream'")
-((preview-char input-stream + eos-error-p + eos-value +) <object>  "Returnsthe next character that will be read (one character look-ahead, file position does not change)")
-((read-line input-stream + eos-error-p + eos-value +) <object> "Read one line as a string")
-((stream-ready-p input-stream) boolean "Is the stream readable?")
-((format output-stream format-string obj *) <null> "Output obj according to format-string")
-((format-char output-stream char) <null> "Output one character")
-((format-float output-stream float) <null> "Output as a floating point number")
-((format-fresh-line output-stream) <null> "Begin on a new line")
-((format-integer output-stream integer radix) <null> "Output as an integer")
-((format-object output-stream obj escape-p) <null> "Output as an object")
 ((format-tab output-stream column) <null> "Output ASCII TAB")
 ((read-byte input-stream eos-error-p + eos-value +) <integer> "Read as a byte")
 ((write-byte z output-stream) <integer> "Write as a byte")

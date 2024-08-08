@@ -39,8 +39,8 @@ int ed_scroll;
 int ed_footer;
 int ed_middle;
 int ed_row;
-int ed_col;			//position of buffer
-int ed_col1;			//position of terminal when include unicode ed_col1 is different from ed_col
+int ed_col;	 //position of buffer
+int ed_col1; //position of terminal when include unicode ed_col1 is different from ed_col
 int ed_start;
 int ed_end;
 bool ed_ins = true;
@@ -568,6 +568,58 @@ void del()
     modify_flag = true;
 }
 
+void begin()
+{
+	ed_col = ed_col1 = 0;
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+}
+
+void line_end()
+{	
+	int i;
+	for (i = 0; i < COL_SIZE; i++) {
+	    if (ed_data[ed_row][i] == NUL)
+		break;
+	}
+	ed_col = ed_col1 = i - 1;
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	modify_flag = true;
+}
+
+void cut_line()
+{
+	ed_clip_start = ed_clip_end = ed_row;
+	copy_selection();
+	delete_selection();
+	ed_row = ed_clip_start;
+	ed_clip_start = ed_clip_end = -1;
+	restore_paren();
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	modify_flag = true;
+}
+
+void cut_selection()
+{
+	copy_selection();
+	delete_selection();
+	ed_row = ed_clip_start;
+	ed_clip_start = ed_clip_end = -1;
+	restore_paren();
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	modify_flag = true;
+}
+
+void uncut_selection()
+{
+	paste_selection();
+	restore_paren();
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	modify_flag = true;
+}
+
 void pageup()
 {
     ed_start = ed_start - ed_scroll;
@@ -699,45 +751,19 @@ bool edit_loop(char *fname)
 	del();
 	break;
     case CTRL('A'):
-	ed_col = ed_col1 = 0;
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	begin();
 	break;
     case CTRL('E'):
-	for (i = 0; i < COL_SIZE; i++) {
-	    if (ed_data[ed_row][i] == NUL)
-		break;
-	}
-	ed_col = ed_col1 = i - 1;
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+	line_end();
 	break;
     case CTRL('K'):
-	ed_clip_start = ed_clip_end = ed_row;
-	copy_selection();
-	delete_selection();
-	ed_row = ed_clip_start;
-	ed_clip_start = ed_clip_end = -1;
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+	cut_line();
 	break;
     case CTRL('W'):
-	copy_selection();
-	delete_selection();
-	ed_row = ed_clip_start;
-	ed_clip_start = ed_clip_end = -1;
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
-	modify_flag = true;
+	cut_selection();
 	break;
     case CTRL('Y'):
-	paste_selection();
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+	uncut_selection();
 	break;
     case CTRL('X'):
 	ESCMOVE(ed_footer, 1);

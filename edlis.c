@@ -977,17 +977,17 @@ bool edit_loop(char *fname)
 		return (quit_with_save());
 	    case CTRL('S'):
 		save_file();
-		break;
+		return false;
 	    case CTRL('F'):
 	    case CTRL('V'):
 		load_file();
-		break;
+		return false;
 	    case CTRL('W'):
 		save_file_as();
-		break;
+		return false;
 	    case CTRL('I'):
 		insert_file();
-		break;
+		return false;
 	    case CTRL('Z'):
 		ESCCLS();
 		ESCMOVE(1, 1);
@@ -997,7 +997,7 @@ bool edit_loop(char *fname)
 		ESCREV();
 		clear_status();
 		ESCRST();
-		break;
+		return false;
 	    }
 	}
 	break;

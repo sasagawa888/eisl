@@ -39,8 +39,8 @@ int ed_scroll;
 int ed_footer;
 int ed_middle;
 int ed_row;
-int ed_col;	 //position of buffer
-int ed_col1; //position of terminal when include unicode ed_col1 is different from ed_col
+int ed_col;			//position of buffer
+int ed_col1;			//position of terminal when include unicode ed_col1 is different from ed_col
 int ed_start;
 int ed_end;
 bool ed_ins = true;
@@ -69,51 +69,50 @@ bool modify_flag;
 
 int getch1()
 {
-	int c;
+    int c;
 
-	retry:
-	timeout(0);
-	c = getch();
-	timeout(-1);
-	if(ctrl_c == 1){
-		ctrl_c = 0;
-		return(CTRL('C'));
-	}
-	else if(ctrl_z == 1){
-		ctrl_z = 0;
-		return(CTRL('Z'));
-	}
-	
-	if(c == ERR){
-		goto retry;
-	}
-	return(c);
+  retry:
+    timeout(0);
+    c = getch();
+    timeout(-1);
+    if (ctrl_c == 1) {
+	ctrl_c = 0;
+	return (CTRL('C'));
+    } else if (ctrl_z == 1) {
+	ctrl_z = 0;
+	return (CTRL('Z'));
+    }
+
+    if (c == ERR) {
+	goto retry;
+    }
+    return (c);
 }
 
 int main(int argc, char *argv[])
 {
     int i, j;
-	
+
     if (system("stty -ixon") == -1) {
 	printf("terminal error\n");
 	return (0);
     }
-	timeout(0);
+    timeout(0);
 
     setlocale(LC_ALL, "");
-	if(argc == 2)
-    	strcpy(fname,argv[1]);
-	
+    if (argc == 2)
+	strcpy(fname, argv[1]);
+
     signal(SIGINT, signal_handler_c);
     signal(SIGSTOP, signal_handler_z);
     signal(SIGTSTP, signal_handler_z);
-    for (i = 0; i < ROW_SIZE; i++){
-	for (j = 0; j < COL_SIZE; j++){
+    for (i = 0; i < ROW_SIZE; i++) {
+	for (j = 0; j < COL_SIZE; j++) {
 	    ed_data[i][j] = NUL;
 	}
-	}
-    
-	load_data(fname);
+    }
+
+    load_data(fname);
     init_ncurses();
     ed_scroll = LINES - 3;
     ed_footer = LINES;
@@ -127,7 +126,7 @@ int main(int argc, char *argv[])
     if (system("stty ixon") == -1) {
 	printf("terminal error\n");
     }
-	timeout(-1);
+    timeout(-1);
 }
 
 __dead void errw(const char *msg)
@@ -140,10 +139,10 @@ __dead void errw(const char *msg)
 void clear_status()
 {
     int i;
-	ESCREV();
+    ESCREV();
     ESCMOVE(ed_footer, 1);
-	for(i=0;i<COLS-9;i++)
-    CHECK(addstr, " ");
+    for (i = 0; i < COLS - 9; i++)
+	CHECK(addstr, " ");
     ESCMOVE(ed_footer, 1);
 }
 
@@ -477,7 +476,7 @@ void down()
 	emphasis_lparen();
 	emphasis_rparen();
 	recalculate_col(ed_row, ed_col1);
-	ESCMOVE(ed_footer-1, ed_col1 + LEFT_MARGIN);
+	ESCMOVE(ed_footer - 1, ed_col1 + LEFT_MARGIN);
     } else if (ed_clip_start != -1) {
 	if (ed_row == ed_clip_end)
 	    ed_clip_end++;
@@ -505,6 +504,50 @@ void down()
 	emphasis_rparen();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     }
+}
+
+void return_key()
+{
+    int i;
+
+    if (ed_indent == 1)
+	i = calc_tabs();
+
+    if (ed_row == ed_start + ed_scroll) {
+	restore_paren();
+	insertrow();
+	ed_start++;
+	ed_row++;
+	ed_end++;
+	ed_col = ed_col1 = 0;
+	display_screen();
+	ESCMOVE(ed_footer, LEFT_MARGIN);
+    } else if (ed_col >= COLS) {
+	restore_paren();
+	insertrow();
+	ed_start++;
+	ed_row++;
+	ed_end++;
+	ed_col = ed_col1 = 0;
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+    } else {
+	restore_paren();
+	insertrow();
+	ed_row++;
+	ed_end++;
+	ed_col = ed_col1 = 0;
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+    }
+    if (ed_indent == 1) {
+	ed_col = ed_col1 = 0;
+	remove_headspace(ed_row);
+	softtabs(i);
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    }
+    modify_flag = true;
 }
 
 void backspace_key()
@@ -570,162 +613,209 @@ void del()
 
 void begin()
 {
-	ed_col = ed_col1 = 0;
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    ed_col = ed_col1 = 0;
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 void line_end()
-{	
-	int i;
-	for (i = 0; i < COL_SIZE; i++) {
-	    if (ed_data[ed_row][i] == NUL)
-		break;
-	}
-	ed_col = ed_col1 = i - 1;
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+{
+    int i;
+    for (i = 0; i < COL_SIZE; i++) {
+	if (ed_data[ed_row][i] == NUL)
+	    break;
+    }
+    ed_col = ed_col1 = i - 1;
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = true;
 }
 
 void cut_line()
 {
-	ed_clip_start = ed_clip_end = ed_row;
-	copy_selection();
-	delete_selection();
-	ed_row = ed_clip_start;
-	ed_clip_start = ed_clip_end = -1;
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+    ed_clip_start = ed_clip_end = ed_row;
+    copy_selection();
+    delete_selection();
+    ed_row = ed_clip_start;
+    ed_clip_start = ed_clip_end = -1;
+    restore_paren();
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = true;
 }
 
 void cut_selection()
 {
-	copy_selection();
-	delete_selection();
-	ed_row = ed_clip_start;
-	ed_clip_start = ed_clip_end = -1;
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
-	modify_flag = true;
+    copy_selection();
+    delete_selection();
+    ed_row = ed_clip_start;
+    ed_clip_start = ed_clip_end = -1;
+    restore_paren();
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+    modify_flag = true;
 }
 
 void uncut_selection()
 {
-	paste_selection();
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+    paste_selection();
+    restore_paren();
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = true;
 }
 
 bool quit_with_save()
-{	
-	int c;
-	if (!modify_flag) {
-		    ESCCLS();
-		    ESCMOVE(1, 1);
-		    return true;
-		} else {
-		    do {
-			ESCREV();
-			ESCMOVE(ed_footer, 1);
-			CHECK(addstr, "save modified buffer? Yes/No ");
-			CHECK(refresh);
-			c = getch();
-			if (c == ERR) {
-			    errw("getch");
-			}
-			ESCRST();
-			switch (c) {
-			case 'y':
-			    save_data(fname);
-			    ESCCLS();
-			    ESCMOVE(1, 1);
-			    return true;
-			    break;
-			case 'n':
-			    ESCCLS();
-			    ESCMOVE(1, 1);
-			    return true;
-			    break;
-			case CTRL('G'):
-			    clear_status();
-			    ESCRST();
-			    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-				    ed_col1 + LEFT_MARGIN);
-			    ctrl_c = 0;
-			    return false;
-			    break;
-			}
-		    }
-		    while (c != 'y' && c != 'n');
-		}
+{
+    int c;
+    if (!modify_flag) {
+	ESCCLS();
+	ESCMOVE(1, 1);
+	return true;
+    } else {
+	do {
+	    ESCREV();
+	    ESCMOVE(ed_footer, 1);
+	    CHECK(addstr, "save modified buffer? Yes/No ");
+	    CHECK(refresh);
+	    c = getch();
+	    if (c == ERR) {
+		errw("getch");
+	    }
+	    ESCRST();
+	    switch (c) {
+	    case 'y':
+		save_data(fname);
+		ESCCLS();
+		ESCMOVE(1, 1);
+		return true;
+		break;
+	    case 'n':
+		ESCCLS();
+		ESCMOVE(1, 1);
+		return true;
+		break;
+	    case CTRL('G'):
+		clear_status();
+		ESCRST();
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+		ctrl_c = 0;
+		return false;
+		break;
+	    }
+	}
+	while (c != 'y' && c != 'n');
+    }
 }
 
 void save_file()
 {
-	if(strcmp(fname,"") == 0){
-			ESCMOVE(ed_footer, 1);
-			clear_status();
-			CHECK(addstr, "filename:  ");
-			strcpy(fname, getname());
-		}
-		save_data(fname);
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		clear_status();
-		ESCMOVE(ed_footer, 1);
-		CHECK(addstr, "saved");
-		CHECK(addstr, fname);
-		ESCRST();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-		modify_flag = false;
+    if (strcmp(fname, "") == 0) {
+	ESCMOVE(ed_footer, 1);
+	clear_status();
+	CHECK(addstr, "filename:  ");
+	strcpy(fname, getname());
+    }
+    save_data(fname);
+    ESCMOVE(ed_footer, 1);
+    ESCREV();
+    clear_status();
+    ESCMOVE(ed_footer, 1);
+    CHECK(addstr, "saved");
+    CHECK(addstr, fname);
+    ESCRST();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = false;
 }
 
 
 void save_file_as()
 {
-	char str1[SHORT_STR_MAX];
-	ESCMOVE(ed_footer, 1);
-		clear_status();
-		CHECK(addstr, "filename:  ");
-		strcpy(str1, getname());
-		save_data(str1);
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		clear_status();
-		ESCMOVE(ed_footer, 1);
-		CHECK(addstr, "saved ");
-		CHECK(addstr, str1);
-		ESCRST();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-		modify_flag = false;
+    char str1[SHORT_STR_MAX];
+
+    ESCMOVE(ed_footer, 1);
+    clear_status();
+    CHECK(addstr, "filename:  ");
+    strcpy(str1, getname());
+    save_data(str1);
+    ESCMOVE(ed_footer, 1);
+    ESCREV();
+    clear_status();
+    ESCMOVE(ed_footer, 1);
+    CHECK(addstr, "saved ");
+    CHECK(addstr, str1);
+    ESCRST();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = false;
+}
+
+void insert_file()
+{
+    char str1[SHORT_STR_MAX];
+    int c;
+
+    clear_status();
+    CHECK(addstr, "filename:  ");
+    strcpy(str1, getname());
+    ESCRST();
+    port = fopen(str1, "r");
+    if (port == NULL) {
+	clear_status();
+	CHECK(addstr, str1);
+	CHECK(addstr, " doesn't exist");
+	ESCRST();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    c = fgetc(port);
+    while (c != EOF) {
+	ed_data[ed_row][ed_col] = c;
+	if (c == EOL) {
+	    ed_row++;
+	    ed_col = ed_col1 = 0;
+	    if (ed_row >= ROW_SIZE - 1) {
+		CHECK(printw, "row %d over max-row", ed_row);
+	    }
+	} else {
+	    ed_col++;
+	    if (ed_col >= COL_SIZE) {
+		CHECK(printw, "column %d over max-column", ed_col);
+	    }
+	}
+	c = fgetc(port);
+    }
+    /* if get EOF without EOL 
+     *  this is a pen[EOF] -> this is a pen[EOL]
+     */
+    if (ed_col != 0) {
+	ed_data[ed_row][ed_col] = EOL;
+	ed_row++;
+    }
+    ed_end = ed_row;
+    ed_data[ed_end][0] = EOL;
+    fclose(port);
+    display_screen();
+    modify_flag = true;
 }
 
 void load_file()
 {
-	ESCMOVE(ed_footer, 1);
-		clear_status();
-		CHECK(addstr, "filename:  ");
-		strcpy(fname, getname());
-		load_data(fname);
-		ESCCLS();
-    	display_header(fname);
-    	display_screen();
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		CHECK(addstr, "loaded ");
-		CHECK(addstr, fname);
-		ESCRST();
-    	ed_row = ed_col = ed_col1 = 0;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-		modify_flag = false;
-	
+    ESCMOVE(ed_footer, 1);
+    clear_status();
+    CHECK(addstr, "filename:  ");
+    strcpy(fname, getname());
+    load_data(fname);
+    ESCCLS();
+    display_header(fname);
+    display_screen();
+    ESCMOVE(ed_footer, 1);
+    ESCREV();
+    CHECK(addstr, "loaded ");
+    CHECK(addstr, fname);
+    ESCRST();
+    ed_row = ed_col = ed_col1 = 0;
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = false;
+
 }
 
 void pageup()
@@ -881,88 +971,28 @@ bool edit_loop(char *fname)
 	CHECK(addstr, "^X");
 	ESCRST();
 	while (1) {
-		c = getch1();
-	    if (c == CTRL('C')) {
-		return(quit_with_save());
-	    }
-	    if (c == CTRL('S')) {
+	    c = getch1();
+	    switch (c) {
+	    case CTRL('C'):
+		return (quit_with_save());
+	    case CTRL('S'):
 		save_file();
 		break;
-		} else if (c == CTRL('F') || c == CTRL('V')) {
+	    case CTRL('F'):
+	    case CTRL('V'):
 		load_file();
 		break;
-	    } else if (c == CTRL('W')) {
+	    case CTRL('W'):
 		save_file_as();
-		/*
-		ESCMOVE(ed_footer, 1);
-		clear_status();
-		CHECK(addstr, "filename:  ");
-		strcpy(str1, getname());
-		save_data(str1);
-		fname = str1;
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		clear_status();
-		ESCMOVE(ed_footer, 1);
-		CHECK(addstr, "saved ");
-		CHECK(addstr, str1);
-		ESCRST();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-		modify_flag = false;
-		*/
 		break;
-	    } else if (c == CTRL('I')) {
-		clear_status();
-		CHECK(addstr, "filename:  ");
-		strcpy(str1, getname());
-		ESCRST();
-		port = fopen(str1, "r");
-		if (port == NULL) {
-		    clear_status();
-		    CHECK(addstr, str1);
-		    CHECK(addstr, " doesn't exist");
-		    ESCRST();
-		    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			    ed_col1 + LEFT_MARGIN);
-		    break;
-		}
-		c = fgetc(port);
-		while (c != EOF) {
-		    ed_data[ed_row][ed_col] = c;
-		    if (c == EOL) {
-			ed_row++;
-			ed_col = ed_col1 = 0;
-			if (ed_row >= ROW_SIZE - 1) {
-			    CHECK(printw, "row %d over max-row", ed_row);
-			}
-		    } else {
-			ed_col++;
-			if (ed_col >= COL_SIZE) {
-			    CHECK(printw, "column %d over max-column",
-				  ed_col);
-			}
-		    }
-		    c = fgetc(port);
-		}
-		/* if get EOF without EOL 
-		 *  this is a pen[EOF] -> this is a pen[EOL]
-		 */
-		if (ed_col != 0) {
-		    ed_data[ed_row][ed_col] = EOL;
-		    ed_row++;
-		}
-		ed_end = ed_row;
-		ed_data[ed_end][0] = EOL;
-		fclose(port);
-		display_screen();
-		modify_flag = true;
+	    case CTRL('I'):
+		insert_file();
 		break;
-		} else if (c == CTRL('Z')){
-			ESCCLS();
-		    ESCMOVE(1, 1);
-		    return true;
-	    } else if (c == CTRL('G')) {
+	    case CTRL('Z'):
+		ESCCLS();
+		ESCMOVE(1, 1);
+		return true;
+	    case CTRL('G'):
 		ESCMOVE(ed_footer, 1);
 		ESCREV();
 		clear_status();
@@ -1238,44 +1268,7 @@ bool edit_loop(char *fname)
 	break;
     case RET:
     case CTRL('O'):
-	if (ed_indent == 1)
-	    i = calc_tabs();
-
-	if (ed_row == ed_start + ed_scroll) {
-	    restore_paren();
-	    insertrow();
-	    ed_start++;
-	    ed_row++;
-	    ed_end++;
-	    ed_col = ed_col1 = 0;
-	    display_screen();
-	    ESCMOVE(ed_footer, LEFT_MARGIN);
-	} else if (ed_col >= COLS) {
-	    restore_paren();
-	    insertrow();
-	    ed_start++;
-	    ed_row++;
-	    ed_end++;
-	    ed_col = ed_col1 = 0;
-	    display_screen();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	} else {
-	    restore_paren();
-	    insertrow();
-	    ed_row++;
-	    ed_end++;
-	    ed_col = ed_col1 = 0;
-	    display_screen();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	}
-	if (ed_indent == 1) {
-	    ed_col = ed_col1 = 0;
-	    remove_headspace(ed_row);
-	    softtabs(i);
-	    display_screen();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	}
-	modify_flag = true;
+	return_key();
 	break;
     case TAB:
 	if (ed_tab == 0) {
@@ -1454,35 +1447,34 @@ void display_screen()
 
 void help(void)
 {
-	ESCMOVE(2, 1);
-	ESCCLS1();
-	CHECK(addstr, "Edlis help\n"
-	      "CTRL+F  move to right          CTRL+S  forward search word\n"
-	      "CTRL+B  move to left           CTRL+R  backward search word\n"
-	      "CTRL+P  move to up             ESC TAB complete name\n"
-	      "CTRL+N  move to down           ESC <   goto top page\n"
-	      "CTRL+J  end of line            ESC >   goto end page\n"
-	      "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
-	      "CTRL+E  end of line            CTRL+D  delete one char\n"
-	      "CTRL+V  page down              CTRL+O  return\n"
-	      "ESC V   page up                CTRL+T  replace word\n"
-	      "TAB     insert spaces according to lisp indent rule\n"
-	      "CTRL+X CTRL+C quit from editor with save\n"
-		  "CTRL+X CTRL+Z quit from editor without save\n"
-		  "CTRL+X CTRL+F load from file to editor\n"
-		  "CTRL+X CTRL+V load from file to editor\n"
-	      "CTRL+X CTRL+S save file\n"
-	      "CTRL+X CTRL+I insert buffer from file\n"
-	      "CTRL+X CTRL+W save file as\n"
-	      "CTRL+K  cut one line\n"
-	      "CTRL+W  cut selection\n"
-	      "ESC W   save selection\n"
-	      "CTRL+Y  uncut selection\n"
-	      "CTRL+G  cancel command\n"
-	      "\n  enter any key to exit help\n");
-	CHECK(refresh);
-	CHECK(getch);
-	display_screen();
+    ESCMOVE(2, 1);
+    ESCCLS1();
+    CHECK(addstr, "Edlis help\n"
+	  "CTRL+F  move to right          CTRL+S  forward search word\n"
+	  "CTRL+B  move to left           CTRL+R  backward search word\n"
+	  "CTRL+P  move to up             ESC TAB complete name\n"
+	  "CTRL+N  move to down           ESC <   goto top page\n"
+	  "CTRL+J  end of line            ESC >   goto end page\n"
+	  "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
+	  "CTRL+E  end of line            CTRL+D  delete one char\n"
+	  "CTRL+V  page down              CTRL+O  return\n"
+	  "ESC V   page up                CTRL+T  replace word\n"
+	  "TAB     insert spaces according to lisp indent rule\n"
+	  "CTRL+X CTRL+C quit from editor with save\n"
+	  "CTRL+X CTRL+Z quit from editor without save\n"
+	  "CTRL+X CTRL+F load from file to editor\n"
+	  "CTRL+X CTRL+V load from file to editor\n"
+	  "CTRL+X CTRL+S save file\n"
+	  "CTRL+X CTRL+I insert buffer from file\n"
+	  "CTRL+X CTRL+W save file as\n"
+	  "CTRL+K  cut one line\n"
+	  "CTRL+W  cut selection\n"
+	  "ESC W   save selection\n"
+	  "CTRL+Y  uncut selection\n"
+	  "CTRL+G  cancel command\n" "\n  enter any key to exit help\n");
+    CHECK(refresh);
+    CHECK(getch);
+    display_screen();
 }
 
 /*                                     COL_SIZE
@@ -2148,7 +2140,7 @@ void save_data(char *fname)
 
 void load_data(char *fname)
 {
-	port = fopen(fname, "r");
+    port = fopen(fname, "r");
     ed_row = 0;
     ed_col = 0;
     ed_col1 = 0;
@@ -2514,565 +2506,566 @@ void replace_word(const char *str1, const char *str2)
 }
 
 static const char *functions_data[] = {
-	"basic-array-p" ,
-	"(BASIC-ARRAY-P obj) boolean",
-	"Check if obj is an array, string or vector",
-	"general-array*p", 
+    "basic-array-p",
+    "(BASIC-ARRAY-P obj) boolean",
+    "Check if obj is an array, string or vector",
+    "general-array*p",
     "(GENERAL-ARRAY*-P obj) boolean",
-	"Check if obj is a general-array",
-	"aref",
-	"(AREF basic-array z *) <object>", 
-	"Return the zth element of the basic-array",
-	"garef", 
-	"(GAREF general-array z *) <object>",
-	"Return the zth element of the general-array",
-	"set-are",
-	"(SET-AREF obj basic-array z *) <object>", 
-	"Set the zth element of the basic-array to obj",
-    "set-gref", 
-	"(SET-GAREF obj general-array z *) <object>",
-	"Set the zth element of the general-array to obj",
-	"array-dimensions", 
-	"(ARRAY-DIMENSIONS basic-array) <list>", 
-	"Return a list of the dimensions of a basic-array",
-	"characterp",
-	"(CHARACTERP obj) boolean",
-	"Check if obj is a string",
-	"char=",
-	"(CHAR= char1 char2) boolean",
-	"Check if the characters char1 and char2 are equal",
-	"char/=",
-	"(CHAR/= char1 char2) boolean",
-	"Check if the characters char1 and char2 are not equal",
-	"char<",
-	"(CHAR< char1 char2) boolean",
-	"Check if the character code of char1 is less than char2",
-	"char>",
-	"(CHAR> char1 char2) boolean",
-	"Check if the character code of char1 is greater than char2",
-	"char<=",
-	"(CHAR<= char1 char2) boolean",
-	"Check if the character code of char1 is less than or equal to char2",
-	"char>=",
-	"(CHAR>= char1 char2) boolean",
-	"Check if the character code of char1 is greater than or equal to char2",
-	"error",
-	"(error error-string obj *) <object>",
-	"Signal an error",
-	"cerror",
-	"(cerror continue-string error-string obj *) <object>",
-	"Signal a continuable error",
-	"signal-condition",
-	"(signal-condition condition continuable) <object>",
-	"Signal a condition",
-	"ignore-errors",
-	"(ignore-errors form *) <object>",
-	"Ignore errors (special form)",
-	"report-condition",
-	"(report-condition condition stream) <condition>",
-	"Report the condition 'condition' to stream 'stream'",
-	"condition-continuable", 
-	"(condition-continuable condition) <object>",
-	"Check if a condition is continuable",
-	"continue-condition",
-	"(continue-condition condition value +) <object>",
-	"Continue from a condition",
-	"with-handler",
-	"(with-handler handler form *) <object>",
-	"Evaluate the handler and execute the form (special form)",
-	"arithmetic-error-operation",
-	"(arithmetic-error-operation arithmetic-error) <function>",
-	"Return the operation of an arithmetic error",
-	"arithmetic-error-operands",
-	"(arithmetic-error-operands arithmetic-error) <list>",
-	"Return the operands of an arithmetic error",
-	"domain-error-object",
-	"(domain-error-object domain-error) <object>",
-	"Return the object supplied when creating the domain error 'domain-error'",
-	"domain-error-expected-calss",
-	"(domain-error-expected-class domain-error) <class>",
-	"Domain error, return the desired domain supplied when creating 'domain-error'",
-	"parse-error-string",
-	"(parse-error-string parse-error) <string>",
-	"Parsing error, return the string supplied when creating 'parse-error",
-	"parse-error-expected-class",
-	"(parse-error-expected-class parse-error) <class>",
-	"Parsing error, return the desired class supplied when creating 'parse-error'",
-	"simple-error-format-string",
-	"(simple-error-format-string simple-error) <string>",
-	"Return the string supplied when creating 'simple-error'",
-	"simple-error-format-arguments",
-	"(simple-error-format-arguments simple-error) <list>",
-	"Return the list of arguments supplied when creating 'simple-error'",
-	"stream-error-stream",
-	"(stream-error-stream stream-error) <stream>",
-	"Stream error, return the stream supplied when creating 'stream-error'",
-	"undefined-entity-name",
-	"(undefined-entity-name undefined-entity) <symbol>",
-	"Return the symbol supplied when createing the undefined entity 'undefined-entity'",
-	"undefined-entity-namespace",
-	"(undefined-entity-namespace undefined-entity) <symbol>",
-	"Return the namespace supplied when createing the undefined entity 'undefined-entity'",
-	"quote",
-	"(quote obj) <object>",
-	"Return a reference to obj (special form)",
-	"setq",
-	"(setq var form) <object>",
-	"Assign the result of evaluating 'form' to the variable 'var' (special form)",
-	"setf",
-	"(setf place form) <object>",
-	"Assign the result of evaluating 'form' to 'place' (special form)",
-	"let",
-	"(let ((var form) *) body-form *) <object>",
-	"Define local variables and execute 'body-form ...' in that environment (special form)",
-	"let*",
-	"(let* ((var form) *) body-form *) <object>",
-	"Similar to let, except that local variables are bound sequentially (special form)",
-	"dynamic",
-	"(dynamic var) <object>",
-	"Return the binding of a dynamic variable (special form)",
-	"setf",
-	"(setf (dynamic var) form) <object>",
-	"Assign a value to a dynamic variable (special form)",
-	"dynamic-let",
-	"(dynamic-let ((var form) *) body-form *) <object>",
-	"Temporarily bind dynamic variables (special form)",
-	"if",
-	"(if test-form then-form else-form+) <object>",
-	"Branch according to a condition (special form)",
-	"cond",
-	"(cond (test form *) *) <object>",
-	"Branch according to a condition (special form)",
-	"case",
-	"(case keyform ((key *) form *) * (t form *)+) <object>",
-	"Branches in various ways depending on the value of keyform (special form)",
-	"case-using",
-	"(case-using predform keyform ((key *) form *) * (t form *) +) <object>",
-	"Almost the same as the case statement, but using the predicate function 'predform' for comparison (special form)",
-	"progn",	
-	"(progn form*) <object>",
-	"Perform sequential execution (special format)",
-	"while",
-	"(while test-form body-form *) <null>",
-	"Execute body-form repeatedly as long as 'test-form' is not nil (special form)",
-	"for",
-	"(for (iteration-spec *) (end-test result *) form *) <object>",
-	"Iterate repeatedly while end-test is not nil, using the initial values and steppers indicated by iteration-spec (special form)",
-	"block",
-	"(block name form *) <object>",
-	"Execute sequentially with block tags (special format)",
-	"return-from",
-	"(return-from name result-form) transfers-control-and-data",
-	"Exit the 'name' block (special form)",
-	"catch",
-	"(catch tag-form form *) <object>",
-	"Catch tag-form and execute 'form ...' (special form)",
-	"throw",
-	"(throw tag-form result-form) transfers-control-and-data",
-	"Throw tag-form (special form)",
-	"tagbody",
-	"(tagbody tagbody-tag * form *) <object>",
-	"Execute sequentially with optional 'tagbody-tag' labels (special form)",
-	"go",
-	"(go tagbody-tag) transfers-control",
-	"Transfer control to 'tagbody-tag' in a tagbody (special format)",
-	"unwind-protect",
-	"(unwind-protect form cleanup-form *) <object>",
-	"Execute 'cleanup-form ...' whenever the evaluation of 'form' finishes (special form)",
-	"the",
-	"(THE class-name form) <object>",
-	"Declare the class of the execution result of 'form' as class-name (special form)",
-	"assure",
-	"(ASSURE class-name form) <object>",
-	"Claim the class of the execution result of 'form' as class-name, if it is different, an error will occur (special form)",
-	"convert",
-	"(CONVERT obj class-name) <object>",
-	"Convert obj to class 'class-name' (special form)",
-	"probe-file",
-	"(probe-file filename) boolean",
-	"Check if a file 'filename' exists",
-	"file-position",
-	"(file-position stream) <integer>",
-	"Return the current file position of a stream",
-	"set-file-position",
-	"(set-file-position stream z) <integer>",
-	"Set the file position of 'stream' to z",
-	"file-length",
-	"(file-length filename element-class) <integer>",
-	"Return the size of the file 'filename' as an 'element-class' file",
-	"functionp",
-	"(functionp obj) boolean",
-	"Check if obj is a function",
-	"function",
-	"(function function-name) <function>",
-	"Returns a function named function-name (special form)",
-	"lambda",
- 	"(lambda lambda-list form *) <function>",
-	"Generate a lambda expression (special form)",
-	"labels",
-	"(labels ((function-name lambda-list form *) *) body-forms *) <object>",
-	"Like 'flet', but binds local functions sequentially (recursive definition is possible) (special form)",
-	"flet",
-	"(flet ((function-name lambda-list form *) *) body-forms *) <object>",
-	"Binds local functions (special form)",
-	"apply",
-	"(apply function obj * list) <object>",
-	"Apply function",
-	"funcall",
-	"(funcall function obj *) <object>",
-	"Call function",
-	"defconstant",
-	"(defconstant name form) <symbol>",
-	"Define a constant (special form)",
-	"defglobal",
-	"(defglobal name form) <symbol>",
-	"Define a global variable (special form)",
-	"defdynamic",
-	"(defdynamic name form) <symbol>",
-	"Define a dynamic variable (special form)",
-	"defun",
-	"(defun function-name lambda-list form *) <symbol>",
-	"Define a function (special form)",
-	"read",
-	"(read input-stream + eos-error-p + eos-value +) <object>",
-	"Read an S-expression from 'input-stream'",
-	"read-char",
-	"(read-char input-stream + eos-error-p + eos-value +) <object>",
-	"Read one character from 'input-stream'",
-	"preview-char",
-	"(preview-char input-stream + eos-error-p + eos-value +) <object>",
-	"Returnsthe next character that will be read (one character look-ahead, file position does not change)",
-	"read-line",
-	"(read-line input-stream + eos-error-p + eos-value +) <object>",
-	"Read one line as a string",
-	"stream-ready-p",
-	"(stream-ready-p input-stream) boolean",
-	"Is the stream readable?",
-	"format",
-	"(format output-stream format-string obj *) <null>",
-	"Output obj according to format-string",
-	"format-char",
-	"(format-char output-stream char) <null>",
-	"Output one character",
-	"format-float",
-	"(format-float output-stream float) <null>",
-	"Output as a floating point number",
-	"format-fresh-line",
-	"(format-fresh-line output-stream) <null>",
-	"Begin on a new line",
-	"format-integer",
-	"(format-integer output-stream integer radix) <null>",
-	"Output as an integer",
-	"format-object",
-	"(format-object output-stream obj escape-p) <null>",
-	"Output as an object",
-	"format-tab",
-	"(format-tab output-stream column) <null>",
-	"Output ASCII TAB",
-	"read-byte",
-	"(read-byte input-stream eos-error-p + eos-value +) <integer>",
-	"Read as a byte",
-	"write",
-	"(write-byte z output-stream) <integer>",
-	"Write as a byte",
-	"consp",
-	"(CONSP obj) boolean",
-	"Check if obj is a cons",
-	"cons",
-	"(CONS obj1 obj2) <cons>",
-	"Generate a cons",
-	"car",
-	"(CAR cons) <object>",
-	"Return the Car part of a cons",
-	"cdr",
-	"(CDR cons) <object>",
-	"Return the Cdr part of a cons",
-	"set-car",
-	"(SET-CAR obj cons) <object>",
-	"Set the Car part of a cons",
-	"set-cdr",
-	"(SET-CDR obj cons) <object>",
-	"Set the Cdr part of a cons",
-	"null",
-	"(NULL obj) boolean",
-	"Check if obj is null",
-	"listp",
-	"(LISTP obj) boolean",
-	"Check if obj is a list",
-	"create-list",
-	"(CREATE-LIST i initial-element +) <list>",
-	"Generates a list with length i and initial values 'initial-element'",
-	"list",
-	"(LIST obj *) <list>",
-	"Generate a list with every element set to obj",
-	"reverse",
-	"(REVERSE list) <list>",
-	"Reverse the list (do not destroy the original list)",
-	"nreverse",
-	"(NREVERSE list) <list>",
-	"Reverse the list (the original list is destroyed)",
-	"append",
-	"(APPEND list *) <list>",
-	"Concatenate lists",
-	"member",
-	"(MEMBER obj list) <list>",
-	"If the list list contains obj, it returns a partial list starting with obj",
-	"mapcar",
-	"(MAPCAR function list +) <list>",
-	"Execute the function function on the elements of list 'list' and return a list of results",
-	"mapc",
-	"(MAPC function list +) <list>",
-	"Execute the function function on the elements of list 'list' and return the 'list' argument",
-	"mapcan",
-	"(MAPCAN function list +) <list>",
-	"Like 'mapcar', but the list is destroyed",
-	"maplist",
-	"(MAPLIST function list +) <list>",
-	"Execute 'function' on a part of 'list' and return a list of results",
-	"mapl",
-	"(MAPL function list +) <list>",
-	"Executes the 'function' on a part of 'list' and return the 'list' argument",
-	"mapcon",
-	"(MAPCON function list +) <list>",
-	"Like 'maplist', but the list is destroyed",
-	"assoc",
-	"(ASSOC obj association-list) <cons>",
-	"Return an obj-keyed value from association-list",
-	"defmacro",
-	"(defmacro macro-name lambda-list form *) <symbol>",
-	"Define a macro (special form)",
-	"identity",
-	"(IDENTITY obj) <object>",
-	"Return obj as is",
-	"get-universal-time",
-	"(GET-UNIVERSAL-TIME) <integer>",
-	"Returns universal time (seconds)",
-	"get-internal-run-time",
-	"(GET-INTERNAL-RUN-TIME) <integer>",
-	"Return the execution time",
-	"get-internal-real-time",
-	"(GET-INTERNAL-REAL-TIME) <integer>",
-	"Return elapsed time",
-	"internal-time-units-per-second",
-	"(internal-time-units-per-second) <integer>",
-	"Return internal time units per second",
-	"numberp",
-	"(NUMBERP obj) boolean",
-	"Test if 'obj' is a number",
-	"parse-number",
-	"(PARSE-NUMBER string) <number>",
-	"Parse the string 'string' and convert it into a number",
-	"=",
-	"(= x1 x2) boolean",
-	"Test if two numeric values are equal",
-	"/=",
-	"(/= x1 x2) boolean",
-	"Test if two numeric values are not equal",
-	">=",
-	"(>= x1 x2) boolean",
-	"Test if numeric value 'x1' is greater than or equal to 'x2'",
-	"<=",
-	"(<= x1 x2) boolean",
-	"Test if numeric value 'x1' is less than or equal to 'x2'",
-	">",
-	"(> x1 x2) boolean",
-	"Test if numeric value 'x1' is greater than 'x2'",
-	"<",
-	"(< x1 x2) boolean",
-	"Test if numeric value 'x1' is less than 'x2'",
-	"+",
-	"(+ x *) <number>",
-	"Sum of the numbers 'x ...'",
-	"*",
-	"(* x *) <number>",
-	"Product of the numbers 'x ...'",
-	"-",
-	"(- x y *) <number>",
-	"Successive subtraction of 'x y ...'",
-	"quotient",
-	"(QUOTIENT dividend divisor +) <number>",
-	"Successive division of 'dividend' by 'divisor ...'",
-	"reciprocal",
-	"(RECIPROCAL x) <number>",
-	"Return 1/x",
-	"max",
-	"(MAX x y *) <number>",
-	"Return the maximum of 'x y ...'",
-	"min",
-	"(MIN x y *) <number>",
-	"Return the minimum of 'x y ...'",
-	"abs",
-	"(ABS x) <number>",
-	"Return the absolute value of 'x'",
-	"exp",
-	"(EXP x) <number>",
-	"Return e^x",
-	"log",
-	"(LOG x) <number>",
-	"Return the natural logarithm of x",
-	"expt",
-	"(EXPT x1 x2) <number>",
-	"Return x1 to the power of x2",
-	"sqrt",
-	"(SQRT x) <number>",
-	"Return the positive square root of x",
-	"sin",
-	"(SIN x) <number>",
-	"Return the sine of x",
-	"cos",
-	"(COS x) <number>",
-	"Return the cosine of x",
-	"tan",
-	"(TAN x) <number>",
-	"Return the tangent of x",
-	"atan",
-	"(ATAN x) <number>",
-	"Return the arctangent of x",
-	"atan2",
-	"(ATAN2 x1 x2) <number>",
-	"Convert from rectangular coordinates (x1, x2) to the angle part of a polar coordinate",
-	"sinh",
-	"(SINH x) <number>",
-	"Return the hyperbolic sine of x",
-	"cosh",
-	"(COSH x) <number>",
-	"Return the hyperbolic cosine of x",
-	"tanh",
-	"(TANH x) <number>",
-	"Return the hyperbolic tangent of x",
-	"atanh",
-	"(ATANH x) <number>",
-	"Return the hyperbolic tangent of x",
-	"floatp",
-	"(FLOATP obj) boolean",
-	"Test if 'obj' is a floating-point number",
-	"float",
-	"(FLOAT x) <float>",
-	"Convert 'x' to a floating-point number",
-	"floor",
-	"(FLOOR x) <integer>",
-	"Truncation towards negative infinity",
-	"ceiling",
-	"(CEILING x) <integer>",
-	"Truncation towards positive infinity",
-	"truncate",
-	"(TRUNCATE x) <integer>",
-	"Truncation towards 0",
-	"round",
-	"(ROUND x) <integer>",
-	"Round to integer nearest 'x'",
-	"integerp",
-	"(INTEGERP obj) boolean",
-	"Check if 'obj' is an integer",
-	"div",
-	"(DIV z1 z2) <integer>",
-	"Integer division",
-	"mod",
-	"(MOD z1 z2) <integer>",
-	"Modulus",
-	"gcd",
-	"(GCD z1 z2) <integer>",
-	"'Greatest Common Divisor' or 'Highest Common Factor'",
-	"lcm",
-	"(LCM z1 z2) <integer>",
-	"'Lowest Common Multiple'",
-	"isqrt",
-	"(ISQRT z) <integer>",
-	"Integer square root, i.e. greatest integer <= '(sqrt z)'",
-	"defclass",
-	"(defclass class-name (sc-name *) (slot-spec *) class-opt *) <symbol>",
-	"Define a class (special form)",
-	"generic-function-p",
-	"(generic-function-p obj) boolean",
-	"Test of 'obj' is a generic function",
-	"defgeneric",
-	"(defgeneric func-spec lambda-list option * method-desc *) <symbol>",
-	"Define a generic function (special form)",
-	"defmethod",
-	"(defmethod func-spec method-qualifier * parameter-profile form *) <symbol>",
-	"Define a method (special form)",
-	"call-next-method",
-	"(call-next-method) <object>",
-	"Call the next method in a class's precedence order (special form)",
-	"next-method-p",
-	"(next-method-p) boolean",
-	"Test if a next method exists (special form)",
-	"create-class",
-	"(create class initarg * initval *) <object>",
-	"Create an instance of a class (generic function)",
-	"initialize-object",
-	"(initialize-object instance initialization-list) <object>",
-	"Initialize an object",
-	"class-of",
-	"(class-of obj) <class>",
-	"Return the class of an object",
-	"instancep",
-	"(instancep obj class) boolean",
-	"Test whether 'obj' is an instance of 'class'",
-	"subclassp",
-	"(subclassp class1 class2) boolean",
-	"Test for a subclass relation",
-	"class",
-	"(class class-name) <class>",
-	"Return the class named 'class-name' (special form)",
-	"eq",
-	"(EQ obj1 obj2) boolean",
-	"Test whether obj1 and obj2 are 'eq'",
-	"eql",
-	"(EQL obj1 obj2) boolean",
-	"Test whether obj1 and obj2 are 'eql'",
-	"equal",
-	"(EQUAL obj1 obj2) boolean",
-	"Test whether obj1 and obj2 are 'equal'",
-	"not",
-	"(NOT obj) boolean",
-	"Return the logical NOT of 'obj'",
-	"and",
-	"(AND form *) <object>",
-	"Logical AND of the forms 'form ...' (special form)",
-	"or",
-	"(OR form *) <object>",
-	"logical OR of the forms 'form ...' (special form)",
-	"length",
-	"(LENGTH sequence) <integer>",
-	"Return the length of 'sequence'",
-	"elt",
-	"(ELT sequence z) <object>",
-	"Return element no. 'z' of 'sequence'",
-	"set-elt",
-	"(SET-ELT obj sequence z) <object>",
-	"Set item 'z' of 'sequence' to 'obj'",
-	"subseq",
-	"(SUBSEQ sequence z1 z2) sequence",
-	"Get the portion of 'sequence' from indexes z1 to z2",
-	"map-into",
-	"(MAP-INTO destination function seq *) sequenc",
-	"Apply 'function' to the elements of 'sequence' in turn, then store the results in 'destination'",
-	"streamp",
-	"(streamp obj) boolean",
-	"Predicate that is true for streams",
-	"open-stream-p",
-	"(open-stream-p obj) boolean",
-	"Predicate is true for open streams",
-	"input-stream-p",
-	"(input-stream-p obj) boolean",
-	"Predicate that is true for input streams",
-	"output-stream-p",
-	"(output-stream-p obj) boolean",
-	"Predicate that is true for output streams",
-	"standard-input",
-	"(standard-input) <stream>",
-	"Return the standard input stream",
-	"standard-output",
-	"(standard-output) <stream>",
-	"Return the standard output stream",
-	"error-output",
-	"(error-output) <stream>",
-	"Return the standard error stream",
-	"with-standard-input",
-	"(with-standard-input stream-form form *) <object>",
-	"Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
+    "Check if obj is a general-array",
+    "aref",
+    "(AREF basic-array z *) <object>",
+    "Return the zth element of the basic-array",
+    "garef",
+    "(GAREF general-array z *) <object>",
+    "Return the zth element of the general-array",
+    "set-are",
+    "(SET-AREF obj basic-array z *) <object>",
+    "Set the zth element of the basic-array to obj",
+    "set-gref",
+    "(SET-GAREF obj general-array z *) <object>",
+    "Set the zth element of the general-array to obj",
+    "array-dimensions",
+    "(ARRAY-DIMENSIONS basic-array) <list>",
+    "Return a list of the dimensions of a basic-array",
+    "characterp",
+    "(CHARACTERP obj) boolean",
+    "Check if obj is a string",
+    "char=",
+    "(CHAR= char1 char2) boolean",
+    "Check if the characters char1 and char2 are equal",
+    "char/=",
+    "(CHAR/= char1 char2) boolean",
+    "Check if the characters char1 and char2 are not equal",
+    "char<",
+    "(CHAR< char1 char2) boolean",
+    "Check if the character code of char1 is less than char2",
+    "char>",
+    "(CHAR> char1 char2) boolean",
+    "Check if the character code of char1 is greater than char2",
+    "char<=",
+    "(CHAR<= char1 char2) boolean",
+    "Check if the character code of char1 is less than or equal to char2",
+    "char>=",
+    "(CHAR>= char1 char2) boolean",
+    "Check if the character code of char1 is greater than or equal to char2",
+    "error",
+    "(error error-string obj *) <object>",
+    "Signal an error",
+    "cerror",
+    "(cerror continue-string error-string obj *) <object>",
+    "Signal a continuable error",
+    "signal-condition",
+    "(signal-condition condition continuable) <object>",
+    "Signal a condition",
+    "ignore-errors",
+    "(ignore-errors form *) <object>",
+    "Ignore errors (special form)",
+    "report-condition",
+    "(report-condition condition stream) <condition>",
+    "Report the condition 'condition' to stream 'stream'",
+    "condition-continuable",
+    "(condition-continuable condition) <object>",
+    "Check if a condition is continuable",
+    "continue-condition",
+    "(continue-condition condition value +) <object>",
+    "Continue from a condition",
+    "with-handler",
+    "(with-handler handler form *) <object>",
+    "Evaluate the handler and execute the form (special form)",
+    "arithmetic-error-operation",
+    "(arithmetic-error-operation arithmetic-error) <function>",
+    "Return the operation of an arithmetic error",
+    "arithmetic-error-operands",
+    "(arithmetic-error-operands arithmetic-error) <list>",
+    "Return the operands of an arithmetic error",
+    "domain-error-object",
+    "(domain-error-object domain-error) <object>",
+    "Return the object supplied when creating the domain error 'domain-error'",
+    "domain-error-expected-calss",
+    "(domain-error-expected-class domain-error) <class>",
+    "Domain error, return the desired domain supplied when creating 'domain-error'",
+    "parse-error-string",
+    "(parse-error-string parse-error) <string>",
+    "Parsing error, return the string supplied when creating 'parse-error",
+    "parse-error-expected-class",
+    "(parse-error-expected-class parse-error) <class>",
+    "Parsing error, return the desired class supplied when creating 'parse-error'",
+    "simple-error-format-string",
+    "(simple-error-format-string simple-error) <string>",
+    "Return the string supplied when creating 'simple-error'",
+    "simple-error-format-arguments",
+    "(simple-error-format-arguments simple-error) <list>",
+    "Return the list of arguments supplied when creating 'simple-error'",
+    "stream-error-stream",
+    "(stream-error-stream stream-error) <stream>",
+    "Stream error, return the stream supplied when creating 'stream-error'",
+    "undefined-entity-name",
+    "(undefined-entity-name undefined-entity) <symbol>",
+    "Return the symbol supplied when createing the undefined entity 'undefined-entity'",
+    "undefined-entity-namespace",
+    "(undefined-entity-namespace undefined-entity) <symbol>",
+    "Return the namespace supplied when createing the undefined entity 'undefined-entity'",
+    "quote",
+    "(quote obj) <object>",
+    "Return a reference to obj (special form)",
+    "setq",
+    "(setq var form) <object>",
+    "Assign the result of evaluating 'form' to the variable 'var' (special form)",
+    "setf",
+    "(setf place form) <object>",
+    "Assign the result of evaluating 'form' to 'place' (special form)",
+    "let",
+    "(let ((var form) *) body-form *) <object>",
+    "Define local variables and execute 'body-form ...' in that environment (special form)",
+    "let*",
+    "(let* ((var form) *) body-form *) <object>",
+    "Similar to let, except that local variables are bound sequentially (special form)",
+    "dynamic",
+    "(dynamic var) <object>",
+    "Return the binding of a dynamic variable (special form)",
+    "setf",
+    "(setf (dynamic var) form) <object>",
+    "Assign a value to a dynamic variable (special form)",
+    "dynamic-let",
+    "(dynamic-let ((var form) *) body-form *) <object>",
+    "Temporarily bind dynamic variables (special form)",
+    "if",
+    "(if test-form then-form else-form+) <object>",
+    "Branch according to a condition (special form)",
+    "cond",
+    "(cond (test form *) *) <object>",
+    "Branch according to a condition (special form)",
+    "case",
+    "(case keyform ((key *) form *) * (t form *)+) <object>",
+    "Branches in various ways depending on the value of keyform (special form)",
+    "case-using",
+    "(case-using predform keyform ((key *) form *) * (t form *) +) <object>",
+    "Almost the same as the case statement, but using the predicate function 'predform' for comparison (special form)",
+    "progn",
+    "(progn form*) <object>",
+    "Perform sequential execution (special format)",
+    "while",
+    "(while test-form body-form *) <null>",
+    "Execute body-form repeatedly as long as 'test-form' is not nil (special form)",
+    "for",
+    "(for (iteration-spec *) (end-test result *) form *) <object>",
+    "Iterate repeatedly while end-test is not nil, using the initial values and steppers indicated by iteration-spec (special form)",
+    "block",
+    "(block name form *) <object>",
+    "Execute sequentially with block tags (special format)",
+    "return-from",
+    "(return-from name result-form) transfers-control-and-data",
+    "Exit the 'name' block (special form)",
+    "catch",
+    "(catch tag-form form *) <object>",
+    "Catch tag-form and execute 'form ...' (special form)",
+    "throw",
+    "(throw tag-form result-form) transfers-control-and-data",
+    "Throw tag-form (special form)",
+    "tagbody",
+    "(tagbody tagbody-tag * form *) <object>",
+    "Execute sequentially with optional 'tagbody-tag' labels (special form)",
+    "go",
+    "(go tagbody-tag) transfers-control",
+    "Transfer control to 'tagbody-tag' in a tagbody (special format)",
+    "unwind-protect",
+    "(unwind-protect form cleanup-form *) <object>",
+    "Execute 'cleanup-form ...' whenever the evaluation of 'form' finishes (special form)",
+    "the",
+    "(THE class-name form) <object>",
+    "Declare the class of the execution result of 'form' as class-name (special form)",
+    "assure",
+    "(ASSURE class-name form) <object>",
+    "Claim the class of the execution result of 'form' as class-name, if it is different, an error will occur (special form)",
+    "convert",
+    "(CONVERT obj class-name) <object>",
+    "Convert obj to class 'class-name' (special form)",
+    "probe-file",
+    "(probe-file filename) boolean",
+    "Check if a file 'filename' exists",
+    "file-position",
+    "(file-position stream) <integer>",
+    "Return the current file position of a stream",
+    "set-file-position",
+    "(set-file-position stream z) <integer>",
+    "Set the file position of 'stream' to z",
+    "file-length",
+    "(file-length filename element-class) <integer>",
+    "Return the size of the file 'filename' as an 'element-class' file",
+    "functionp",
+    "(functionp obj) boolean",
+    "Check if obj is a function",
+    "function",
+    "(function function-name) <function>",
+    "Returns a function named function-name (special form)",
+    "lambda",
+    "(lambda lambda-list form *) <function>",
+    "Generate a lambda expression (special form)",
+    "labels",
+    "(labels ((function-name lambda-list form *) *) body-forms *) <object>",
+    "Like 'flet', but binds local functions sequentially (recursive definition is possible) (special form)",
+    "flet",
+    "(flet ((function-name lambda-list form *) *) body-forms *) <object>",
+    "Binds local functions (special form)",
+    "apply",
+    "(apply function obj * list) <object>",
+    "Apply function",
+    "funcall",
+    "(funcall function obj *) <object>",
+    "Call function",
+    "defconstant",
+    "(defconstant name form) <symbol>",
+    "Define a constant (special form)",
+    "defglobal",
+    "(defglobal name form) <symbol>",
+    "Define a global variable (special form)",
+    "defdynamic",
+    "(defdynamic name form) <symbol>",
+    "Define a dynamic variable (special form)",
+    "defun",
+    "(defun function-name lambda-list form *) <symbol>",
+    "Define a function (special form)",
+    "read",
+    "(read input-stream + eos-error-p + eos-value +) <object>",
+    "Read an S-expression from 'input-stream'",
+    "read-char",
+    "(read-char input-stream + eos-error-p + eos-value +) <object>",
+    "Read one character from 'input-stream'",
+    "preview-char",
+    "(preview-char input-stream + eos-error-p + eos-value +) <object>",
+    "Returnsthe next character that will be read (one character look-ahead, file position does not change)",
+    "read-line",
+    "(read-line input-stream + eos-error-p + eos-value +) <object>",
+    "Read one line as a string",
+    "stream-ready-p",
+    "(stream-ready-p input-stream) boolean",
+    "Is the stream readable?",
+    "format",
+    "(format output-stream format-string obj *) <null>",
+    "Output obj according to format-string",
+    "format-char",
+    "(format-char output-stream char) <null>",
+    "Output one character",
+    "format-float",
+    "(format-float output-stream float) <null>",
+    "Output as a floating point number",
+    "format-fresh-line",
+    "(format-fresh-line output-stream) <null>",
+    "Begin on a new line",
+    "format-integer",
+    "(format-integer output-stream integer radix) <null>",
+    "Output as an integer",
+    "format-object",
+    "(format-object output-stream obj escape-p) <null>",
+    "Output as an object",
+    "format-tab",
+    "(format-tab output-stream column) <null>",
+    "Output ASCII TAB",
+    "read-byte",
+    "(read-byte input-stream eos-error-p + eos-value +) <integer>",
+    "Read as a byte",
+    "write",
+    "(write-byte z output-stream) <integer>",
+    "Write as a byte",
+    "consp",
+    "(CONSP obj) boolean",
+    "Check if obj is a cons",
+    "cons",
+    "(CONS obj1 obj2) <cons>",
+    "Generate a cons",
+    "car",
+    "(CAR cons) <object>",
+    "Return the Car part of a cons",
+    "cdr",
+    "(CDR cons) <object>",
+    "Return the Cdr part of a cons",
+    "set-car",
+    "(SET-CAR obj cons) <object>",
+    "Set the Car part of a cons",
+    "set-cdr",
+    "(SET-CDR obj cons) <object>",
+    "Set the Cdr part of a cons",
+    "null",
+    "(NULL obj) boolean",
+    "Check if obj is null",
+    "listp",
+    "(LISTP obj) boolean",
+    "Check if obj is a list",
+    "create-list",
+    "(CREATE-LIST i initial-element +) <list>",
+    "Generates a list with length i and initial values 'initial-element'",
+    "list",
+    "(LIST obj *) <list>",
+    "Generate a list with every element set to obj",
+    "reverse",
+    "(REVERSE list) <list>",
+    "Reverse the list (do not destroy the original list)",
+    "nreverse",
+    "(NREVERSE list) <list>",
+    "Reverse the list (the original list is destroyed)",
+    "append",
+    "(APPEND list *) <list>",
+    "Concatenate lists",
+    "member",
+    "(MEMBER obj list) <list>",
+    "If the list list contains obj, it returns a partial list starting with obj",
+    "mapcar",
+    "(MAPCAR function list +) <list>",
+    "Execute the function function on the elements of list 'list' and return a list of results",
+    "mapc",
+    "(MAPC function list +) <list>",
+    "Execute the function function on the elements of list 'list' and return the 'list' argument",
+    "mapcan",
+    "(MAPCAN function list +) <list>",
+    "Like 'mapcar', but the list is destroyed",
+    "maplist",
+    "(MAPLIST function list +) <list>",
+    "Execute 'function' on a part of 'list' and return a list of results",
+    "mapl",
+    "(MAPL function list +) <list>",
+    "Executes the 'function' on a part of 'list' and return the 'list' argument",
+    "mapcon",
+    "(MAPCON function list +) <list>",
+    "Like 'maplist', but the list is destroyed",
+    "assoc",
+    "(ASSOC obj association-list) <cons>",
+    "Return an obj-keyed value from association-list",
+    "defmacro",
+    "(defmacro macro-name lambda-list form *) <symbol>",
+    "Define a macro (special form)",
+    "identity",
+    "(IDENTITY obj) <object>",
+    "Return obj as is",
+    "get-universal-time",
+    "(GET-UNIVERSAL-TIME) <integer>",
+    "Returns universal time (seconds)",
+    "get-internal-run-time",
+    "(GET-INTERNAL-RUN-TIME) <integer>",
+    "Return the execution time",
+    "get-internal-real-time",
+    "(GET-INTERNAL-REAL-TIME) <integer>",
+    "Return elapsed time",
+    "internal-time-units-per-second",
+    "(internal-time-units-per-second) <integer>",
+    "Return internal time units per second",
+    "numberp",
+    "(NUMBERP obj) boolean",
+    "Test if 'obj' is a number",
+    "parse-number",
+    "(PARSE-NUMBER string) <number>",
+    "Parse the string 'string' and convert it into a number",
+    "=",
+    "(= x1 x2) boolean",
+    "Test if two numeric values are equal",
+    "/=",
+    "(/= x1 x2) boolean",
+    "Test if two numeric values are not equal",
+    ">=",
+    "(>= x1 x2) boolean",
+    "Test if numeric value 'x1' is greater than or equal to 'x2'",
+    "<=",
+    "(<= x1 x2) boolean",
+    "Test if numeric value 'x1' is less than or equal to 'x2'",
+    ">",
+    "(> x1 x2) boolean",
+    "Test if numeric value 'x1' is greater than 'x2'",
+    "<",
+    "(< x1 x2) boolean",
+    "Test if numeric value 'x1' is less than 'x2'",
+    "+",
+    "(+ x *) <number>",
+    "Sum of the numbers 'x ...'",
+    "*",
+    "(* x *) <number>",
+    "Product of the numbers 'x ...'",
+    "-",
+    "(- x y *) <number>",
+    "Successive subtraction of 'x y ...'",
+    "quotient",
+    "(QUOTIENT dividend divisor +) <number>",
+    "Successive division of 'dividend' by 'divisor ...'",
+    "reciprocal",
+    "(RECIPROCAL x) <number>",
+    "Return 1/x",
+    "max",
+    "(MAX x y *) <number>",
+    "Return the maximum of 'x y ...'",
+    "min",
+    "(MIN x y *) <number>",
+    "Return the minimum of 'x y ...'",
+    "abs",
+    "(ABS x) <number>",
+    "Return the absolute value of 'x'",
+    "exp",
+    "(EXP x) <number>",
+    "Return e^x",
+    "log",
+    "(LOG x) <number>",
+    "Return the natural logarithm of x",
+    "expt",
+    "(EXPT x1 x2) <number>",
+    "Return x1 to the power of x2",
+    "sqrt",
+    "(SQRT x) <number>",
+    "Return the positive square root of x",
+    "sin",
+    "(SIN x) <number>",
+    "Return the sine of x",
+    "cos",
+    "(COS x) <number>",
+    "Return the cosine of x",
+    "tan",
+    "(TAN x) <number>",
+    "Return the tangent of x",
+    "atan",
+    "(ATAN x) <number>",
+    "Return the arctangent of x",
+    "atan2",
+    "(ATAN2 x1 x2) <number>",
+    "Convert from rectangular coordinates (x1, x2) to the angle part of a polar coordinate",
+    "sinh",
+    "(SINH x) <number>",
+    "Return the hyperbolic sine of x",
+    "cosh",
+    "(COSH x) <number>",
+    "Return the hyperbolic cosine of x",
+    "tanh",
+    "(TANH x) <number>",
+    "Return the hyperbolic tangent of x",
+    "atanh",
+    "(ATANH x) <number>",
+    "Return the hyperbolic tangent of x",
+    "floatp",
+    "(FLOATP obj) boolean",
+    "Test if 'obj' is a floating-point number",
+    "float",
+    "(FLOAT x) <float>",
+    "Convert 'x' to a floating-point number",
+    "floor",
+    "(FLOOR x) <integer>",
+    "Truncation towards negative infinity",
+    "ceiling",
+    "(CEILING x) <integer>",
+    "Truncation towards positive infinity",
+    "truncate",
+    "(TRUNCATE x) <integer>",
+    "Truncation towards 0",
+    "round",
+    "(ROUND x) <integer>",
+    "Round to integer nearest 'x'",
+    "integerp",
+    "(INTEGERP obj) boolean",
+    "Check if 'obj' is an integer",
+    "div",
+    "(DIV z1 z2) <integer>",
+    "Integer division",
+    "mod",
+    "(MOD z1 z2) <integer>",
+    "Modulus",
+    "gcd",
+    "(GCD z1 z2) <integer>",
+    "'Greatest Common Divisor' or 'Highest Common Factor'",
+    "lcm",
+    "(LCM z1 z2) <integer>",
+    "'Lowest Common Multiple'",
+    "isqrt",
+    "(ISQRT z) <integer>",
+    "Integer square root, i.e. greatest integer <= '(sqrt z)'",
+    "defclass",
+    "(defclass class-name (sc-name *) (slot-spec *) class-opt *) <symbol>",
+    "Define a class (special form)",
+    "generic-function-p",
+    "(generic-function-p obj) boolean",
+    "Test of 'obj' is a generic function",
+    "defgeneric",
+    "(defgeneric func-spec lambda-list option * method-desc *) <symbol>",
+    "Define a generic function (special form)",
+    "defmethod",
+    "(defmethod func-spec method-qualifier * parameter-profile form *) <symbol>",
+    "Define a method (special form)",
+    "call-next-method",
+    "(call-next-method) <object>",
+    "Call the next method in a class's precedence order (special form)",
+    "next-method-p",
+    "(next-method-p) boolean",
+    "Test if a next method exists (special form)",
+    "create-class",
+    "(create class initarg * initval *) <object>",
+    "Create an instance of a class (generic function)",
+    "initialize-object",
+    "(initialize-object instance initialization-list) <object>",
+    "Initialize an object",
+    "class-of",
+    "(class-of obj) <class>",
+    "Return the class of an object",
+    "instancep",
+    "(instancep obj class) boolean",
+    "Test whether 'obj' is an instance of 'class'",
+    "subclassp",
+    "(subclassp class1 class2) boolean",
+    "Test for a subclass relation",
+    "class",
+    "(class class-name) <class>",
+    "Return the class named 'class-name' (special form)",
+    "eq",
+    "(EQ obj1 obj2) boolean",
+    "Test whether obj1 and obj2 are 'eq'",
+    "eql",
+    "(EQL obj1 obj2) boolean",
+    "Test whether obj1 and obj2 are 'eql'",
+    "equal",
+    "(EQUAL obj1 obj2) boolean",
+    "Test whether obj1 and obj2 are 'equal'",
+    "not",
+    "(NOT obj) boolean",
+    "Return the logical NOT of 'obj'",
+    "and",
+    "(AND form *) <object>",
+    "Logical AND of the forms 'form ...' (special form)",
+    "or",
+    "(OR form *) <object>",
+    "logical OR of the forms 'form ...' (special form)",
+    "length",
+    "(LENGTH sequence) <integer>",
+    "Return the length of 'sequence'",
+    "elt",
+    "(ELT sequence z) <object>",
+    "Return element no. 'z' of 'sequence'",
+    "set-elt",
+    "(SET-ELT obj sequence z) <object>",
+    "Set item 'z' of 'sequence' to 'obj'",
+    "subseq",
+    "(SUBSEQ sequence z1 z2) sequence",
+    "Get the portion of 'sequence' from indexes z1 to z2",
+    "map-into",
+    "(MAP-INTO destination function seq *) sequenc",
+    "Apply 'function' to the elements of 'sequence' in turn, then store the results in 'destination'",
+    "streamp",
+    "(streamp obj) boolean",
+    "Predicate that is true for streams",
+    "open-stream-p",
+    "(open-stream-p obj) boolean",
+    "Predicate is true for open streams",
+    "input-stream-p",
+    "(input-stream-p obj) boolean",
+    "Predicate that is true for input streams",
+    "output-stream-p",
+    "(output-stream-p obj) boolean",
+    "Predicate that is true for output streams",
+    "standard-input",
+    "(standard-input) <stream>",
+    "Return the standard input stream",
+    "standard-output",
+    "(standard-output) <stream>",
+    "Return the standard output stream",
+    "error-output",
+    "(error-output) <stream>",
+    "Return the standard error stream",
+    "with-standard-input",
+    "(with-standard-input stream-form form *) <object>",
+    "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
 };
+
 /*
 ((with-standard-output stream-form form *) <object> "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)")
 ((with-error-output stream-form form *) <object>  "Evaluate the forms form ... with standard-error set to the result of 'stream-form' (special form)")

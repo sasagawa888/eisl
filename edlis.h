@@ -26,6 +26,7 @@ int findnext(int row, int col);
 int findeol(int row);
 int findeol1(int row);
 char *get_fragment(void);
+char *getname(void);
 enum HighlightToken check_token(int row, int col);
 struct position find_lparen(int bias);
 struct position find_rparen(int bias);

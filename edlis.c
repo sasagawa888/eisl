@@ -620,6 +620,114 @@ void uncut_selection()
 	modify_flag = true;
 }
 
+bool quit_with_save()
+{	
+	int c;
+	if (!modify_flag) {
+		    ESCCLS();
+		    ESCMOVE(1, 1);
+		    return true;
+		} else {
+		    do {
+			ESCREV();
+			ESCMOVE(ed_footer, 1);
+			CHECK(addstr, "save modified buffer? Yes/No ");
+			CHECK(refresh);
+			c = getch();
+			if (c == ERR) {
+			    errw("getch");
+			}
+			ESCRST();
+			switch (c) {
+			case 'y':
+			    save_data(fname);
+			    ESCCLS();
+			    ESCMOVE(1, 1);
+			    return true;
+			    break;
+			case 'n':
+			    ESCCLS();
+			    ESCMOVE(1, 1);
+			    return true;
+			    break;
+			case CTRL('G'):
+			    clear_status();
+			    ESCRST();
+			    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+				    ed_col1 + LEFT_MARGIN);
+			    ctrl_c = 0;
+			    return false;
+			    break;
+			}
+		    }
+		    while (c != 'y' && c != 'n');
+		}
+}
+
+void save_file()
+{
+	if(strcmp(fname,"") == 0){
+			ESCMOVE(ed_footer, 1);
+			clear_status();
+			CHECK(addstr, "filename:  ");
+			strcpy(fname, getname());
+		}
+		save_data(fname);
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		clear_status();
+		ESCMOVE(ed_footer, 1);
+		CHECK(addstr, "saved");
+		CHECK(addstr, fname);
+		ESCRST();
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+		modify_flag = false;
+}
+
+
+void save_file_as()
+{
+	char str1[SHORT_STR_MAX];
+	ESCMOVE(ed_footer, 1);
+		clear_status();
+		CHECK(addstr, "filename:  ");
+		strcpy(str1, getname());
+		save_data(str1);
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		clear_status();
+		ESCMOVE(ed_footer, 1);
+		CHECK(addstr, "saved ");
+		CHECK(addstr, str1);
+		ESCRST();
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+		modify_flag = false;
+}
+
+void load_file()
+{
+	ESCMOVE(ed_footer, 1);
+		clear_status();
+		CHECK(addstr, "filename:  ");
+		strcpy(fname, getname());
+		load_data(fname);
+		ESCCLS();
+    	display_header(fname);
+    	display_screen();
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		CHECK(addstr, "loaded ");
+		CHECK(addstr, fname);
+		ESCRST();
+    	ed_row = ed_col = ed_col1 = 0;
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+		modify_flag = false;
+	
+}
+
 void pageup()
 {
     ed_start = ed_start - ed_scroll;
@@ -775,86 +883,17 @@ bool edit_loop(char *fname)
 	while (1) {
 		c = getch1();
 	    if (c == CTRL('C')) {
-		if (!modify_flag) {
-		    ESCCLS();
-		    ESCMOVE(1, 1);
-		    return true;
-		} else {
-		    do {
-			ESCREV();
-			ESCMOVE(ed_footer, 1);
-			CHECK(addstr, "save modified buffer? Yes/No ");
-			CHECK(refresh);
-			c = getch();
-			if (c == ERR) {
-			    errw("getch");
-			}
-			ESCRST();
-			switch (c) {
-			case 'y':
-			    save_data(fname);
-			    ESCCLS();
-			    ESCMOVE(1, 1);
-			    return true;
-			    break;
-			case 'n':
-			    ESCCLS();
-			    ESCMOVE(1, 1);
-			    return true;
-			    break;
-			case CTRL('G'):
-			    clear_status();
-			    ESCRST();
-			    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-				    ed_col1 + LEFT_MARGIN);
-			    ctrl_c = 0;
-			    return false;
-			    break;
-			}
-		    }
-		    while (c != 'y' && c != 'n');
-		}
+		return(quit_with_save());
 	    }
 	    if (c == CTRL('S')) {
-		if(strcmp(fname,"") == 0){
-			ESCMOVE(ed_footer, 1);
-			clear_status();
-			CHECK(addstr, "filename:  ");
-			strcpy(fname, getname());
-		}
-		save_data(fname);
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		clear_status();
-		ESCMOVE(ed_footer, 1);
-		CHECK(addstr, "saved");
-		CHECK(addstr, fname);
-		ESCRST();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-		modify_flag = false;
+		save_file();
 		break;
 		} else if (c == CTRL('F') || c == CTRL('V')) {
-		ESCMOVE(ed_footer, 1);
-		clear_status();
-		CHECK(addstr, "filename:  ");
-		strcpy(str1, getname());
-		strcpy(fname,str1);
-		load_data(fname);
-		ESCCLS();
-    	display_header(fname);
-    	display_screen();
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		CHECK(addstr, "loaded ");
-		CHECK(addstr, fname);
-		ESCRST();
-    	ed_row = ed_col = ed_col1 = 0;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-		modify_flag = false;
+		load_file();
 		break;
 	    } else if (c == CTRL('W')) {
+		save_file_as();
+		/*
 		ESCMOVE(ed_footer, 1);
 		clear_status();
 		CHECK(addstr, "filename:  ");
@@ -871,6 +910,7 @@ bool edit_loop(char *fname)
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 			ed_col1 + LEFT_MARGIN);
 		modify_flag = false;
+		*/
 		break;
 	    } else if (c == CTRL('I')) {
 		clear_status();
@@ -1433,7 +1473,7 @@ void help(void)
 		  "CTRL+X CTRL+V load from file to editor\n"
 	      "CTRL+X CTRL+S save file\n"
 	      "CTRL+X CTRL+I insert buffer from file\n"
-	      "CTRL+X CTRL+W write buffer to file\n"
+	      "CTRL+X CTRL+W save file as\n"
 	      "CTRL+K  cut one line\n"
 	      "CTRL+W  cut selection\n"
 	      "ESC W   save selection\n"

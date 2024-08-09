@@ -882,7 +882,10 @@ char *getname()
 	}
 	switch (c) {
 	case RET:
-	    return (buf);
+		if(strcmp(buf,"") == 0)
+			break;
+		else
+	    	return (buf);
 	case KEY_BACKSPACE:
 	case DEL:
 	    if (pos > 0)

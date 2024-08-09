@@ -836,6 +836,71 @@ void load_file()
 
 }
 
+void search_next()
+{
+	char str1[SHORT_STR_MAX];
+	struct position pos;
+
+	clear_status();
+	CHECK(addstr, "search:    ");
+	strcpy(str1, getname());
+	ESCRST();
+	pos = find_word(str1);
+	if (pos.row == -1) {
+	    ESCREV();
+	    ESCMOVE(ed_footer, 1);
+	    CHECK(addstr, "can't find ");
+	    CHECK(addstr, str1);
+	    ESCRST();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    return;
+	}
+	ed_row = pos.row;
+	ed_col = ed_col1 = pos.col;
+	ed_start = ed_row - ed_scroll / 2;
+	if (ed_start < 0) {
+	    ed_start = 0;
+	}
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	ESCREV();
+	CHECK(addstr, str1);
+	ESCRST();
+}
+
+void search_prev()
+{
+	char str1[SHORT_STR_MAX];
+	struct position pos;
+
+	clear_status();
+	CHECK(addstr, "search:    ");
+	strcpy(str1, getname());
+	ESCRST();
+	pos = find_word_back(str1);
+	if (pos.row == -1) {
+	    ESCREV();
+	    ESCMOVE(ed_footer, 1);
+	    CHECK(addstr, "can't find ");
+	    CHECK(addstr, str1);
+	    ESCRST();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    return;
+	}
+	ed_row = pos.row;
+	ed_col = ed_col1 = pos.col;
+	ed_start = ed_row - ed_scroll / 2;
+	if (ed_start < 0) {
+	    ed_start = 0;
+	}
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	ESCREV();
+	CHECK(addstr, str1);
+	ESCRST();
+}
+
+
 void transfer_word()
 {
 	int c;
@@ -1070,10 +1135,9 @@ void edit_screen(char *fname)
 bool edit_loop(char *fname)
 {
     int c;
-    int i;
-    char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
+    char str1[SHORT_STR_MAX];
     struct position pos;
-    FILE *port;
+
     static int skip = 0;
     static bool uni3 = false;
 
@@ -1155,58 +1219,10 @@ bool edit_loop(char *fname)
 	pagedn();
 	break;
     case CTRL('S'):
-	clear_status();
-	CHECK(addstr, "search:    ");
-	strcpy(str1, getname());
-	ESCRST();
-	pos = find_word(str1);
-	if (pos.row == -1) {
-	    ESCREV();
-	    ESCMOVE(ed_footer, 1);
-	    CHECK(addstr, "can't find ");
-	    CHECK(addstr, str1);
-	    ESCRST();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    break;
-	}
-	ed_row = pos.row;
-	ed_col = ed_col1 = pos.col;
-	ed_start = ed_row - ed_scroll / 2;
-	if (ed_start < 0) {
-	    ed_start = 0;
-	}
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	ESCREV();
-	CHECK(addstr, str1);
-	ESCRST();
+	search_next();
 	break;
     case CTRL('R'):
-	clear_status();
-	CHECK(addstr, "search:    ");
-	strcpy(str1, getname());
-	ESCRST();
-	pos = find_word_back(str1);
-	if (pos.row == -1) {
-	    ESCREV();
-	    ESCMOVE(ed_footer, 1);
-	    CHECK(addstr, "can't find ");
-	    CHECK(addstr, str1);
-	    ESCRST();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    break;
-	}
-	ed_row = pos.row;
-	ed_col = ed_col1 = pos.col;
-	ed_start = ed_row - ed_scroll / 2;
-	if (ed_start < 0) {
-	    ed_start = 0;
-	}
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	ESCREV();
-	CHECK(addstr, str1);
-	ESCRST();
+	search_prev();
 	break;
     case CTRL('T'):
 	transfer_word();

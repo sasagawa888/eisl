@@ -818,6 +818,135 @@ void load_file()
 
 }
 
+void transfer_word()
+{
+	int c;
+	char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
+	struct position pos;
+
+	clear_status();
+	CHECK(addstr, "search: ");
+	strcpy(str1, getname());
+	clear_status();
+	CHECK(addstr, "replace: ");
+	strcpy(str2, getname());
+	ESCRST();
+	pos = find_word(str1);
+	while (pos.row != -1) {
+	    ed_row = pos.row;
+	    ed_col = ed_col1 = pos.col;
+	    ed_start = ed_row - ed_scroll / 2;
+	    if (ed_start < 0) {
+		ed_start = 0;
+	    }
+	    display_screen();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    ESCREV();
+	    CHECK(addstr, str1);
+	    clear_status();
+	    do {
+		CHECK(addstr, "replace? y/n ");
+		ESCRST();
+		CHECK(refresh);
+		c = getch();
+		if (c == ERR) {
+		    errw("getch");
+		}
+	    }
+	    while (c != 'y' && c != 'n');
+	    if (c == 'y') {
+		ed_row = pos.row;
+		ed_col = ed_col1 = pos.col;
+		replace_word(str1, str2);
+		display_screen();
+		modify_flag = true;
+		ed_col++;
+	    } else {
+		display_screen();
+		ed_col++;
+	    }
+	    pos = find_word(str1);
+	}
+	clear_status();
+	CHECK(addstr, "can't find ");
+	CHECK(addstr, str1);
+	ESCRST();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+}
+
+void completion()
+{
+	int i,c;
+	find_candidate();	// completion
+	    if (ed_candidate_pt == 0)
+		return;
+	    else if (ed_candidate_pt == 1) {
+		replace_fragment(ed_candidate[0]);
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+		display_line(ed_row);
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+	    } else {
+		const int CANDIDATE = 3;
+		int k = 0;
+		ESCMOVE(ed_footer, 1);
+		bool more_candidates_selected;
+		do {
+		    more_candidates_selected = false;
+		    ESCREV();
+		    for (i = 0; i < CANDIDATE; i++) {
+			if (i + k >= ed_candidate_pt)
+			    break;
+			CHECK(printw, "%d:%s ", i + 1,
+			      ed_candidate[i + k]);
+		    }
+		    if (ed_candidate_pt > k + CANDIDATE)
+			CHECK(addstr, "4:more");
+		    ESCRST();
+		    bool bad_candidate_selected;
+		    do {
+			bad_candidate_selected = false;
+			CHECK(refresh);
+			c = getch();
+			if (c == ERR) {
+			    errw("getch");
+			}
+			if (c != CTRL('G')) {
+			    i = c - '1';
+			    more_candidates_selected =
+				ed_candidate_pt > k + CANDIDATE
+				&& i == CANDIDATE;
+			    if (more_candidates_selected) {
+				k = k + CANDIDATE;
+				ESCMVLEFT(1);
+				ESCCLSL();
+				break;
+			    }
+			    bad_candidate_selected =
+				i + k > ed_candidate_pt || i < 0
+				|| c == RET;
+			} else {
+			    ESCMOVE(ed_footer, 1);
+			    ESCREV();
+			    clear_status();
+			    ESCRST();
+			    return false;
+			}
+		    }
+		    while (bad_candidate_selected);
+		}
+		while (more_candidates_selected);
+		if (c != ESC)
+		    replace_fragment(ed_candidate[i + k]);
+		display_screen();
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
+	    }
+	    return false;
+}
+
+
+
 void pageup()
 {
     ed_start = ed_start - ed_scroll;
@@ -1061,56 +1190,8 @@ bool edit_loop(char *fname)
 	CHECK(addstr, str1);
 	ESCRST();
 	break;
-
     case CTRL('T'):
-	clear_status();
-	CHECK(addstr, "search: ");
-	strcpy(str1, getname());
-	clear_status();
-	CHECK(addstr, "replace: ");
-	strcpy(str2, getname());
-	ESCRST();
-	pos = find_word(str1);
-	while (pos.row != -1) {
-	    ed_row = pos.row;
-	    ed_col = ed_col1 = pos.col;
-	    ed_start = ed_row - ed_scroll / 2;
-	    if (ed_start < 0) {
-		ed_start = 0;
-	    }
-	    display_screen();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    ESCREV();
-	    CHECK(addstr, str1);
-	    clear_status();
-	    do {
-		CHECK(addstr, "replace? y/n ");
-		ESCRST();
-		CHECK(refresh);
-		c = getch();
-		if (c == ERR) {
-		    errw("getch");
-		}
-	    }
-	    while (c != 'y' && c != 'n');
-	    if (c == 'y') {
-		ed_row = pos.row;
-		ed_col = ed_col1 = pos.col;
-		replace_word(str1, str2);
-		display_screen();
-		modify_flag = true;
-		ed_col++;
-	    } else {
-		display_screen();
-		ed_col++;
-	    }
-	    pos = find_word(str1);
-	}
-	clear_status();
-	CHECK(addstr, "can't find ");
-	CHECK(addstr, str1);
-	ESCRST();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	transfer_word();
 	break;
     case ESC:
 	ESCMOVE(ed_footer, 1);
@@ -1161,78 +1242,14 @@ bool edit_loop(char *fname)
 		return false;
 	    }
 	case TAB:
-	    find_candidate();	// completion
-	    if (ed_candidate_pt == 0)
-		break;
-	    else if (ed_candidate_pt == 1) {
-		replace_fragment(ed_candidate[0]);
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-		display_line(ed_row);
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-	    } else {
-		const int CANDIDATE = 3;
-		int k = 0;
-		ESCMOVE(ed_footer, 1);
-		bool more_candidates_selected;
-		do {
-		    more_candidates_selected = false;
-		    ESCREV();
-		    for (i = 0; i < CANDIDATE; i++) {
-			if (i + k >= ed_candidate_pt)
-			    break;
-			CHECK(printw, "%d:%s ", i + 1,
-			      ed_candidate[i + k]);
-		    }
-		    if (ed_candidate_pt > k + CANDIDATE)
-			CHECK(addstr, "4:more");
-		    ESCRST();
-		    bool bad_candidate_selected;
-		    do {
-			bad_candidate_selected = false;
-			CHECK(refresh);
-			c = getch();
-			if (c == ERR) {
-			    errw("getch");
-			}
-			if (c != CTRL('G')) {
-			    i = c - '1';
-			    more_candidates_selected =
-				ed_candidate_pt > k + CANDIDATE
-				&& i == CANDIDATE;
-			    if (more_candidates_selected) {
-				k = k + CANDIDATE;
-				ESCMVLEFT(1);
-				ESCCLSL();
-				break;
-			    }
-			    bad_candidate_selected =
-				i + k > ed_candidate_pt || i < 0
-				|| c == RET;
-			} else {
-			    ESCMOVE(ed_footer, 1);
-			    ESCREV();
-			    clear_status();
-			    ESCRST();
-			    return false;
-			}
-		    }
-		    while (bad_candidate_selected);
-		}
-		while (more_candidates_selected);
-		if (c != ESC)
-		    replace_fragment(ed_candidate[i + k]);
-		display_screen();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-	    }
-	    return false;
+		completion();
+		return false;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);
 	    ESCREV();
 	    clear_status();
 	    ESCRST();
-	    break;
+	    return false;
 	}
 	break;
     case KEY_UP:

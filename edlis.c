@@ -1134,7 +1134,7 @@ void edit_screen(char *fname)
 
 bool edit_loop(char *fname)
 {
-    int c;
+    int c,i;
     char str1[SHORT_STR_MAX];
     struct position pos;
 
@@ -1279,7 +1279,6 @@ bool edit_loop(char *fname)
 		completion();
 		return false;
 	case 'i':
-		int i;
 		i = find_function_data(get_fragment());
 		ESCMOVE(ed_footer, 1);
 	    ESCREV();

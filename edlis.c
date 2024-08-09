@@ -1698,7 +1698,7 @@ void display_line(int line)
 
 
 		    if (ed_data[line][col - 1] == '"' &&
-			    ed_data[line][col - 2] != '/')
+			    ed_data[line][col - 2] != '\\')
 			break;
 		}
 		ESCRST();

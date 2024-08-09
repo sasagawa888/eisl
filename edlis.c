@@ -550,6 +550,24 @@ void return_key()
     modify_flag = true;
 }
 
+
+void tab_key()
+{
+	int i;
+
+	if (ed_tab == 0) {
+	    ed_col = ed_col1 = 0;
+	    i = calc_tabs();
+	    remove_headspace(ed_row);
+	    softtabs(i);
+	} else {
+	    softtabs(ed_tab);
+	}
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	modify_flag = true;
+}
+
 void backspace_key()
 {
     enum HighlightToken type;
@@ -930,7 +948,7 @@ void completion()
 			    ESCREV();
 			    clear_status();
 			    ESCRST();
-			    return false;
+			    return;
 			}
 		    }
 		    while (bad_candidate_selected);
@@ -942,7 +960,7 @@ void completion()
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 			ed_col1 + LEFT_MARGIN);
 	    }
-	    return false;
+	    return;
 }
 
 
@@ -1291,17 +1309,7 @@ bool edit_loop(char *fname)
 	return_key();
 	break;
     case TAB:
-	if (ed_tab == 0) {
-	    ed_col = ed_col1 = 0;
-	    i = calc_tabs();
-	    remove_headspace(ed_row);
-	    softtabs(i);
-	} else {
-	    softtabs(ed_tab);
-	}
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+	tab_key();
 	break;
     default:
 	if (ed_ins) {

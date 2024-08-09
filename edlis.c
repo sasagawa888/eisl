@@ -369,6 +369,103 @@ void right()
     }
 }
 
+void word_next()
+{
+	int turn;
+    turn = COLS - LEFT_MARGIN;
+
+	while(ed_data[ed_row][ed_col] != ' ' &&
+	      ed_data[ed_row][ed_col] != '(' &&
+		  ed_data[ed_row][ed_col] != ')' &&
+		  ed_data[ed_row][ed_col] != EOL &&
+		  ed_data[ed_row][ed_col] != EOF){
+			ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    		ed_col = ed_col + increase_buffer(ed_row, ed_col);
+	}
+
+
+	while(1){
+    ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    ed_col = ed_col + increase_buffer(ed_row, ed_col);
+	if(ed_data[ed_row][ed_col] == ' '){
+		ed_col1++;
+		ed_col++;
+	}
+	else if(ed_data[ed_row][ed_col] == EOL){
+		ed_col = ed_col1 = 0;
+		ed_row++;
+	}
+	else if(ed_data[ed_row][ed_col] == '(' || 
+	        ed_data[ed_row][ed_col] == ')' ){
+		ed_col1++;
+		ed_col++;
+	}
+	else if(ed_data[ed_row][ed_col] == EOF){
+		break;
+	}
+	}
+
+	display_screen();
+    if (ed_col1 < turn) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else if (ed_col1 == turn) {
+	    ESCCLSLA();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	    display_line(ed_row);
+	} else{
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - turn + LEFT_MARGIN);
+		display_line(ed_row);
+    }
+}
+
+
+void word_prev()
+{
+	int turn;
+    turn = COLS - LEFT_MARGIN;
+
+	while(1){
+    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+	if(ed_data[ed_row][ed_col-1] == ' '){
+		break;
+	}
+	else if(ed_row > 0 && ed_col == 0){
+		ed_col = ed_col1 = 0;
+		ed_row--;
+		while(1){
+    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
+		if(ed_data[ed_row][ed_col-1] == EOL){
+		break;
+		}
+		}
+	}
+	else if(ed_data[ed_row][ed_col] == '(' || 
+	        ed_data[ed_row][ed_col] == ')' ){
+		ed_col1--;
+		ed_col--;
+	}
+	else if(ed_row == 0 && ed_col == 0){
+		break;
+	}
+	}
+
+	display_screen();
+    if (ed_col1 < turn) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else if (ed_col1 == turn) {
+	    ESCCLSLA();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	    display_line(ed_row);
+	} else{
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - turn + LEFT_MARGIN);
+		display_line(ed_row);
+    }
+}
+
 
 void left()
 {
@@ -629,7 +726,7 @@ void del()
     modify_flag = true;
 }
 
-void begin()
+void line_begin()
 {
     ed_col = ed_col1 = 0;
     ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
@@ -1163,7 +1260,7 @@ bool edit_loop(char *fname)
 	del();
 	break;
     case CTRL('A'):
-	begin();
+	line_begin();
 	break;
     case CTRL('E'):
 	line_end();
@@ -1292,6 +1389,12 @@ bool edit_loop(char *fname)
 		ESCRST();
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 		return false;
+	case 'f':
+		word_next();
+		break;
+	case 'b':
+		word_prev();
+		break;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);
 	    ESCREV();

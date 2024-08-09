@@ -19,6 +19,7 @@ static const float VERSION = 4.20;
 #define TOP_MARGIN  2
 
 static const int NIL = 0;
+static const char *functions_data[];
 
 bool is_special(int row, int col);
 int calc_tabs(void);

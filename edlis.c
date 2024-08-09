@@ -1278,6 +1278,21 @@ bool edit_loop(char *fname)
 	case TAB:
 		completion();
 		return false;
+	case 'i':
+		int i;
+		i = find_function_data(get_fragment());
+		ESCMOVE(ed_footer, 1);
+	    ESCREV();
+	    clear_status();
+		if(i != -1){
+			CHECK(addstr, functions_data[i+1]);
+		}
+		else{
+			CHECK(addstr, "Can't fild");
+		}
+		ESCRST();
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+		return false;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);
 	    ESCREV();
@@ -1503,7 +1518,9 @@ void help(void)
 	  "CTRL+E  end of line            CTRL+D  delete one char\n"
 	  "CTRL+V  page down              CTRL+O  return\n"
 	  "ESC V   page up                CTRL+T  replace word\n"
-	  "TAB     insert spaces according to lisp indent rule\n"
+	  "ESC I   info of function       TAB     insert spaces as lisp indent rule\n"
+	  "CTRL+K  cut one line           CTRL+W  cut selection\n"
+	  "ESC W   save selection         CTRL+Y  uncut selection\n"
 	  "CTRL+X CTRL+C quit from editor with save\n"
 	  "CTRL+X CTRL+Z quit from editor without save\n"
 	  "CTRL+X CTRL+F load from file to editor\n"
@@ -1511,11 +1528,7 @@ void help(void)
 	  "CTRL+X CTRL+S save file\n"
 	  "CTRL+X CTRL+I insert buffer from file\n"
 	  "CTRL+X CTRL+W save file as\n"
-	  "CTRL+K  cut one line\n"
-	  "CTRL+W  cut selection\n"
-	  "ESC W   save selection\n"
-	  "CTRL+Y  uncut selection\n"
-	  "CTRL+G  cancel command\n" "\n  enter any key to exit help\n");
+	  "CTRL+G cancel command\n" "--- enter any key to exit help ---");
     CHECK(refresh);
     CHECK(getch);
     display_screen();
@@ -3109,65 +3122,121 @@ static const char *functions_data[] = {
     "with-standard-input",
     "(with-standard-input stream-form form *) <object>",
     "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
+	"with-standard-output",
+ 	"(with-standard-output stream-form form *) <object>",
+	"Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
+	"with-error-output",
+	"(with-error-output stream-form form *) <object>",
+	"Evaluate the forms form ... with standard-error set to the result of 'stream-form' (special form)",
+	"open-input-file",
+	"(open-input-file filename element-class +) <stream>",
+	"Open the file 'filename' as an input stream",
+	"open-output-file",
+	"(open-output-file filename element-class +) <stream>",
+	"Open the file 'filename' as an output stream",
+	"open-io-file",
+	"(open-io-file filename element-class +) <stream>",
+	"Open the file 'filename' for as an input/output stream",
+	"with-open-input-file",
+	"(with-open-input-file (name file element-class +) form *) <object>",
+	"Evaluate 'form' with standard-input redirected from 'file' and afterwards close it (special form)",
+	"with-open-output-file",
+	"(with-open-output-file (name file element-class +) form *) <object>",
+	"Evaluate 'form' with standard-output redirected to 'file' and afterwards close it (special form)",
+	"with-open-io-file",
+	"(with-open-io-file (name file element-class +) form *) <object>",
+	"Evaluate 'form' with both standard-input and standard-output streams redirected to/from 'file' and afterwards close it (special form)",
+	"close",	
+	"(close stream) implementation-defined",
+	"Close a stream",
+	"create-string-input-stream",
+	"(create-string-input-stream string) <stream>",
+	"Create a string input stream",
+	"create-string-output-stream",
+	"(create-string-output-stream) <stream>",
+	"Create a string output stream",
+	"get-output-stream-string",
+	"(get-output-stream-string stream) <string>",
+	"Return a string containing the output that was sent to a string output stream",
+	"stringp",
+	"(STRINGP obj) boolean",
+	"Predicate that is true for strings",
+	"create-string",
+	"(CREATE-STRING i initial-element+) <string>",
+	"Create a string of length 'i' filled with 'initial-element'",
+	"string=",
+	"(STRING= string1 string2) quasi-boolean",
+	"Are two strings equal?",
+	"string/=",
+	"(STRING/= string1 string2) quasi-boolean",
+	"Are two strings not equal?",
+	"string<",
+	"(STRING< string1 string2) quasi-boolean",
+	"Is 'string1' before 'string2' in sort order?",
+	"string>",
+	"(STRING> string1 string2) quasi-boolean",
+	"Is 'string1' after 'string2' in sort order?",
+	"string>=",
+	"(STRING>= string1 string2) quasi-boolean",
+	"Is 'string1' after or equal to 'string2' in sort order?",
+	"string<=",
+	"(STRING<= string1 string2) quasi-boolean",
+	"Is 'string1' before or equal to 'string2' in sort order?",
+	"char-index",
+	"(CHAR-INDEX character string start-position +) <object>",
+	"Return the position where 'character' occurs in 'string'",
+	"string-index",
+	"(STRING-INDEX substring string start-position +) <object>",
+	"Return the position where 'substring' occurs in 'string'",
+	"string-append",
+	"(STRING-APPEND string *) <string>",
+	"Concatenate the strings string ...",
+	"symbolp",
+	"(SYMBOLP obj) boolean",
+	"Predicate that is true for <symbol> objects",
+	"property",
+	"(PROPERTY symbol property-name obj +) <object>",
+	"Return a property of a symbol",
+	"set-property",
+	"(SET-PROPERTY obj symbol property-name) <object>",
+	"Set a property of a symbol",
+	"remove-property",
+	"(REMOVE-PROPERTY symbol property-name) <object>",
+	"Remove a property from a symbol",
+	"gensym",
+	"(GENSYM) <symbol>",
+	"Create an anonymous symbol",
+	"basic-vector-p",
+	"(BASIC-VECTOR-P obj) boolean",
+	"Predicate that is true for <basic-vector> objects",
+	"general-vector-p",
+	"(GENERAL-VECTOR-P obj) boolean",
+	"Predicate that is true for <general-vector> objects",
+	"create-vector",
+	"(CREATE-VECTOR i initial-element +) <general-vector>",
+	"Create a vector of length 'i', with each element initialised to 'initial-element'",
+	"vector",
+	"(VECTOR obj *) <general-vector>",
+	"Create a vector from the elements obj ...",
+	"load",
+	"(load file) T",
+	"Load 'file' (extension)",
+	"time",
+	"(time form) <object>",
+	"Show the time to evaluate 'form' (special form) (extension)",
+	"eval",
+	"(eval form) <object>",
+	"Evaluate 'form' (extension)",
+	"compile-file",
+	"(compile-file file) boolean",
+	"Compile 'file' (extension)",
+	"gbc",
+	"(gbc) <null>",
+	"Force garbage collection (extension)",
+	"quit",
+	"(quit) transfers-control",
+	"Exit the ISLisp interpreter (extension)",
 };
-
-/*
-((with-standard-output stream-form form *) <object> "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)")
-((with-error-output stream-form form *) <object>  "Evaluate the forms form ... with standard-error set to the result of 'stream-form' (special form)")
-((open-input-file filename element-class +) <stream> "Open the file 'filename' as an input stream")
-((open-output-file filename element-class +) <stream> "Open the file 'filename' as an output stream")
-((open-io-file filename element-class +) <stream> "Open the file 'filename' for as an input/output stream")
-((with-open-input-file (name file element-class +) form *) <object> "Evaluate 'form' with standard-input redirected from 'file' and afterwards close it (special form)")
-((with-open-output-file (name file element-class +) form *) <object> "Evaluate 'form' with standard-output redirected to 'file' and afterwards close it (special form)")
-((with-open-io-file (name file element-class +) form *) <object> "Evaluate 'form' with both standard-input and standard-output streams redirected to/from 'file' and afterwards close it (special form)")
-((close stream) implementation-defined "Close a stream")
-((create-string-input-stream string) <stream> "Create a string input stream")
-((create-string-output-stream) <stream> "Create a string output stream")
-((get-output-stream-string stream) <string> "Return a string containing the output that was sent to a string output stream")
-
-;;; string
-((STRINGP obj) boolean "Predicate that is true for strings")
-((CREATE-STRING i initial-element+) <string> "Create a string of length 'i' filled with 'initial-element'")
-((STRING= string1 string2) quasi-boolean "Are two strings equal?")
-((STRING/= string1 string2) quasi-boolean "Are two strings not equal?")
-((STRING< string1 string2) quasi-boolean "Is 'string1' before 'string2' in sort order?")
-((STRING> string1 string2) quasi-boolean "Is 'string1' after 'string2' in sort order?")
-((STRING>= string1 string2) quasi-boolean "Is 'string1' after or equal to 'string2' in sort order?")
-((STRING<= string1 string2) quasi-boolean "Is 'string1' before or equal to 'string2' in sort order?")
-((CHAR-INDEX character string start-position +) <object> "Return the position where 'character' occurs in 'string'")
-((STRING-INDEX substring string start-position +) <object> "Return the position where 'substring' occurs in 'string'")
-((STRING-APPEND string *) <string> "Concatenate the strings string ...")
-
-;;; symbol
-((SYMBOLP obj) boolean "Predicate that is true for <symbol> objects")
-((PROPERTY symbol property-name obj +) <object> "Return a property of a symbol")
-((SET-PROPERTY obj symbol property-name) <object> "Set a property of a symbol")
-((REMOVE-PROPERTY symbol property-name) <object> "Remove a property from a symbol")
-((GENSYM) <symbol> "Create an anonymous symbol")
-
-;;; vector
-((BASIC-VECTOR-P obj) boolean "Predicate that is true for <basic-vector> objects")
-((GENERAL-VECTOR-P obj) boolean "Predicate that is true for <general-vector> objects")
-((CREATE-VECTOR i initial-element +) <general-vector>  "Create a vector of length 'i', with each element initialised to 'initial-element'")
-((VECTOR obj *) <general-vector> "Create a vector from the elements obj ...")
-
-;;; OKI ISlisp
-((load file) T "Load 'file' (extension)" )
-((time form) <object> "Show the time to evaluate 'form' (special form) (extension)")
-;((room) <null> "現在のメモリ使用状況を表示する（拡張）")
-((eval form) <object> "Evaluate 'form' (extension)")
-;((list* obj *) <list>  "関数 list とほぼ同じであるが最後の引数を最後のコンスの CDR 部に格納する（拡張）")
-;((append* obj *) <list>  "関数 append とほぼ同じであるが最後の引数を最後のコンスの CDR 部に格納する（拡張）")
-;((nth n list) <object> "list の n 番目の要素を返す（拡張）") 
-;((compile fun) boolean "関数 fun をコンパイルする(拡張)")
-((compile-file file) boolean "Compile 'file' (extension)")
-;((compile-files dst-fname src-fname *) boolean  "src-fname の複数のファイルを dst-fname のファイルにコンパイルする(拡張)")
-;((descibe obj) idef "obj の内容を表示する（拡張）")
-((gbc) <null> "Force garbage collection (extension)")
-;((write object stream +) <null> "object を stream に表示する(拡張)")
-((quit) transfers-control "Exit the ISLisp interpreter (extension)")
-*/
-
 
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
 
@@ -3175,7 +3244,7 @@ int find_function_data(const char *str)
 {
     int i;
 
-    for (i = 0; i < (int) NELEM(functions_data); i++) {
+    for (i = 0; i < (int) NELEM(functions_data); i=i+3) {
 	if (strcmp(functions_data[i], str) == 0) {
 	    return i;
 	}

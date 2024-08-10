@@ -1966,19 +1966,33 @@ void help(void)
 {
     ESCMOVE(2, 1);
     ESCCLS1();
-    CHECK(addstr, "Edlis help\n"
-	  "CTRL+F  move to right          CTRL+S  forward search word\n"
-	  "CTRL+B  move to left           CTRL+R  backward search word\n"
-	  "CTRL+P  move to up             ESC TAB complete name\n"
-	  "CTRL+N  move to down           ESC < , > goto top(end) page\n"
-	  "CTRL+J  end of line            ESC CTRL+F,B,N,P,U,D move in S-exp\n"
-	  "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
-	  "CTRL+E  end of line            CTRL+D  delete one char\n"
-	  "CTRL+V  page down              CTRL+O  return\n"
-	  "ESC V   page up                CTRL+T  replace word\n"
-	  "ESC I , ESC J info of function TAB     insert spaces as lisp indent rule\n"
-	  "CTRL+K  cut one line           CTRL+W  cut selection\n"
-	  "ESC W   save selection         CTRL+Y  uncut selection\n"
+    CHECK(addstr, "--- Edlis help(1) ---\n"
+	  "CTRL+F  move to right          \n"
+	  "CTRL+B  move to left           \n"
+	  "CTRL+P  move to up             \n"
+	  "CTRL+N  move to down           \n"
+	  "CTRL+J  end of line            \n"
+	  "CTRL+A  begin of line          \n"
+	  "CTRL+E  end of line            \n"
+	  "CTRL+D  delete one char        \n"
+	  "CTRL+O  return                 \n"
+	  "CTRL+V  page down              \n"
+	  "ESC V   page up                \n"
+	  "ESC <   goto top(end) page   \n"
+	  "ESC >   goto top(end) page   \n"
+	  "TAB     insert spaces as lisp indent rule\n"
+      "ESC CTRL+F,\n"
+	  "ESC CTRL+B,\n"
+	  "ESC CTRL+N,\n"
+	  "ESC CTRL+P,\n"
+	  "ESC CTRL+U \n"
+	  "ESC STRL+D move in S-exp\n"
+	  "--- enter any key to go next page ---");
+    CHECK(refresh);
+    CHECK(getch);
+	ESCMOVE(2, 1);
+    ESCCLS1();
+	CHECK(addstr,"--- Edlis help(1) ---\n"
 	  "CTRL+X CTRL+C quit from editor with save\n"
 	  "CTRL+X CTRL+Z quit from editor without save\n"
 	  "CTRL+X CTRL+F load from file to editor\n"
@@ -1986,10 +2000,22 @@ void help(void)
 	  "CTRL+X CTRL+S save file\n"
 	  "CTRL+X CTRL+I insert buffer from file\n"
 	  "CTRL+X CTRL+W save file as\n"
-	  "CTRL+G cancel command\n" "--- enter any key to exit help ---");
+	  "CTRL+S  forward search word\n"
+	  "CTRL+R  backward search word\n"
+	  "CTRL+T  replace word\n"
+	  "ESC TAB complete name\n"
+	  "ESC I , ESC J info of function\n"
+	  "ESC ^   mark(or unmark) row for selection\n"
+	  "CTRL+K  cut one line \n"
+	  "CTRL+W  cut selection\n"
+	  "ESC W   save selection\n"
+	  "CTRL+Y  uncut selection\n"
+	  "CTRL+G cancel command\n" 
+	  "--- enter any key to exit help ---");
     CHECK(refresh);
     CHECK(getch);
     display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 /*                                     COL_SIZE

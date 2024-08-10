@@ -369,9 +369,10 @@ void right()
     }
 }
 
-void word_next()
+void sexp_next()
 {
 	int turn;
+	struct position pos;
     turn = COLS - LEFT_MARGIN;
 
 	if(ed_data[ed_row][ed_col] == EOF){
@@ -379,39 +380,50 @@ void word_next()
 	return;
 	}
 
-	while(ed_data[ed_row][ed_col] != ' ' &&
-	      ed_data[ed_row][ed_col] != '(' &&
-		  ed_data[ed_row][ed_col] != ')' &&
-		  ed_data[ed_row][ed_col] != EOL &&
-		  ed_data[ed_row][ed_col] != EOF){
-			ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    		ed_col = ed_col + increase_buffer(ed_row, ed_col);
-	}
-
-
+	/* skip space comment */
 	while(1){
 	if(ed_data[ed_row][ed_col] == ' '){
 		ed_col1++;
 		ed_col++;
 	}
+	else if(ed_data[ed_row][ed_col] == ')'){
+		ed_col1++;
+		ed_col++;
+	}
+	else if(ed_data[ed_row][ed_col] == ';'){
+		ed_col = ed_col1 = 0;
+		ed_row++;
+	}
 	else if(ed_data[ed_row][ed_col] == EOL){
 		ed_col = ed_col1 = 0;
 		ed_row++;
 	}
-	else if(ed_data[ed_row][ed_col] == '(' || 
-	        ed_data[ed_row][ed_col] == ')' || 
-			ed_data[ed_row][ed_col] == ';'){
-		ed_col1++;
-		ed_col++;
-	}
 	else if(ed_data[ed_row][ed_col] == EOF){
-		break;
+		goto skip;
 	}
 	else{
 		break;
 	}
 	}
 
+	if(ed_data[ed_row][ed_col] == '('){  /* list */
+		pos = find_rparen(1);
+		ed_row = pos.row;
+		ed_col = ed_col1 = pos.col;
+	}
+	else { /* atom */
+		while(ed_data[ed_row][ed_col] != ' ' &&
+			  ed_data[ed_row][ed_col] != '(' &&
+		      ed_data[ed_row][ed_col] != ')'){
+				ed_col++;
+				ed_col1++;
+			  }
+	}
+
+	skip:
+	if(ed_row > ed_start + ed_scroll){
+		ed_start = ed_row - ed_scroll / 2;
+	}
 	display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
@@ -427,43 +439,29 @@ void word_next()
 }
 
 
-void word_prev()
+void sexp_prev()
 {
 	int turn;
+	struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	if(ed_col == 0 && ed_row == 0){
-	clear_status();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	return;
-	}
-
-	while(ed_data[ed_row][ed_col] != ' ' &&
-	      ed_data[ed_row][ed_col] != '(' &&
-		  ed_data[ed_row][ed_col] != ')' &&
-		  ed_col != 0){
-		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);	
-	}
-
-	if(ed_row > 0 && ed_col == 0){
-		ed_row--;
-		while(ed_data[ed_row][ed_col] != EOL){
-    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		}
-	}
-
+	/* skip space */
 	while(1){
 	if(ed_col > 0 && ed_data[ed_row][ed_col] == ' '){
+		ed_col1--;
+		ed_col--;
+	}
+	if(ed_col > 0 && ed_data[ed_row][ed_col] == EOL){
+		ed_col1--;
+		ed_col--;
+	}
+	else if(ed_col > 0 && ed_data[ed_row][ed_col] == '('){
 		ed_col1--;
 		ed_col--;
 	}
 	else if(ed_row > 0 && ed_col == 0 &&
 	        (ed_data[ed_row][ed_col] == ' ' ||
 			 ed_data[ed_row][ed_col] == '(' ||
-			 ed_data[ed_row][ed_col] == ')' ||
-			 ed_data[ed_row][ed_col] == ';' ||
 			 ed_data[ed_row][ed_col] == EOL)){
 		ed_col = ed_col1 = 0;
 		ed_row--;
@@ -472,24 +470,20 @@ void word_prev()
     	ed_col = ed_col + increase_buffer(ed_row, ed_col);
 		}
 	}
-	else if(ed_col > 0 && (ed_data[ed_row][ed_col] == '(' || 
-	        ed_data[ed_row][ed_col] == ')' ||
-			ed_data[ed_row][ed_col] == ';' || 
-			ed_data[ed_row][ed_col] == EOL)){
-		ed_col1--;
-		ed_col--;
-	}
 	else if(ed_row == 0 && ed_col == 0){
-		break;
+		goto skip;
 	}
 	else {
 		break;
 	}
 	}
 
-	if(ed_col != 0){
-	ed_col1--;
-	ed_col--;
+	if(ed_data[ed_row][ed_col] == ')'){
+		pos = find_lparen(1);
+		ed_row = pos.row;
+		ed_col = ed_col1 = pos.col;
+	}
+	else{
 	while(ed_data[ed_row][ed_col] != ' ' &&
 	      ed_data[ed_row][ed_col] != '(' &&
 		  ed_data[ed_row][ed_col] != ')' &&
@@ -497,11 +491,13 @@ void word_prev()
 		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
     	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);	
 	}
-	ed_col1++;
-	ed_col++;
-
 	}
 
+	skip:
+	if(ed_row < ed_start){
+		ed_start = ed_row - ed_scroll / 2;
+		if(ed_start < 0) ed_start = 0;
+	}
 	display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
@@ -1439,11 +1435,11 @@ bool edit_loop(char *fname)
 		ESCRST();
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 		return false;
-	case 'f':
-		word_next();
+	case CTRL('F'):
+		sexp_next();
 		break;
-	case 'b':
-		word_prev();
+	case CTRL('B'):
+		sexp_prev();
 		break;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);

@@ -9,7 +9,7 @@
 #define FULLSCREEN
 #include "term.h"
 
-static const float VERSION = 4.21;
+static const float VERSION = 4.23;
 
 #define ROW_SIZE 5000
 #define COL_SIZE 255
@@ -21,6 +21,7 @@ static const float VERSION = 4.21;
 static const int NIL = 0;
 static const char *functions_data[];
 
+bool edit_loop(void);
 bool is_special(int row, int col);
 int calc_tabs(void);
 int findnext(int row, int col);
@@ -40,7 +41,7 @@ void delete_selection(void);
 void display_header(char *fname);
 void display_screen(void);
 void display_line(int line);
-void edit_screen(char *fname);
+void edit_screen(void);
 void emphasis_lparen(void);
 void emphasis_rparen(void);
 void find_candidate(void);

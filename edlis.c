@@ -27,7 +27,7 @@
 #define NUM_STR_MAX 5
 #define SHORT_STR_MAX 30
 
-bool edit_loop(char *fname);
+bool edit_loop(void);
 volatile sig_atomic_t ctrl_c = 0;
 volatile sig_atomic_t ctrl_z = 0;
 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     display_header(fname);
     display_screen();
     ed_row = ed_col = ed_col1 = 0;
-    edit_screen(fname);
+    edit_screen();
     CHECK(endwin);
     if (system("stty ixon") == -1) {
 	printf("terminal error\n");
@@ -1531,16 +1531,16 @@ char *getname()
 
 }
 
-void edit_screen(char *fname)
+void edit_screen(void)
 {
     ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    bool quit = edit_loop(fname);
+    bool quit = edit_loop();
     while (!quit) {
-	quit = edit_loop(fname);
+	quit = edit_loop();
     }
 }
 
-bool edit_loop(char *fname)
+bool edit_loop(void)
 {
     int c, i;
     char str1[SHORT_STR_MAX];

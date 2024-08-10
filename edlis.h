@@ -9,7 +9,7 @@
 #define FULLSCREEN
 #include "term.h"
 
-static const float VERSION = 4.23;
+static const float VERSION = 4.24;
 
 #define ROW_SIZE 5000
 #define COL_SIZE 255
@@ -23,10 +23,12 @@ static const char *functions_data[];
 
 bool edit_loop(void);
 bool is_special(int row, int col);
+bool quit_with_save(void);
 int calc_tabs(void);
 int findnext(int row, int col);
 int findeol(int row);
 int findeol1(int row);
+int find_function_data(const char *str);
 char *get_fragment(void);
 char *getname(void);
 enum HighlightToken check_token(int row, int col);
@@ -34,6 +36,7 @@ struct position find_lparen(int bias);
 struct position find_rparen(int bias);
 struct position find_word(const char *word);
 struct position find_word_back(const char *word);
+void backspace(void);
 void backspace_key(void);
 void copy_selection(void);
 void del(void);
@@ -57,6 +60,7 @@ void insertcol(void);
 void insertrow(void);
 void left(void);
 void load_data(char *name);
+void mark_unmark(void);
 void pageup(void);
 void pagedown(void);
 void paste_selection(void);

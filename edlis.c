@@ -491,7 +491,6 @@ void list_next()
 void list_down()
 {
     int turn, save_row, save_col, save_col1;
-    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
     save_row = ed_row;
@@ -684,7 +683,6 @@ void list_prev()
 void list_up()
 {
     int turn, save_row, save_col, save_col1;
-    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
     save_row = ed_row;
@@ -952,7 +950,7 @@ void tab_key()
     modify_flag = true;
 }
 
-void backspace_key()
+void backspace_key(void)
 {
     enum HighlightToken type;
 
@@ -1076,7 +1074,7 @@ void save_selection()
 	modify_flag = true;
 }
 
-bool quit_with_save()
+bool quit_with_save(void)
 {
     int c;
     if (!modify_flag) {
@@ -1377,7 +1375,7 @@ void transfer_word()
 }
 
 
-void mark_unmark()
+void mark_unmark(void)
 {
 	if (ed_clip_start == -1) {
 		ed_clip_start = ed_clip_end = ed_row;
@@ -1385,7 +1383,7 @@ void mark_unmark()
 		ESCREV();
 		CHECK(addstr, "marked");
 		ESCRST();
-		return false;
+		return;
 	    } else {
 		ed_clip_start = ed_clip_end = -1;
 		display_screen();
@@ -1393,7 +1391,7 @@ void mark_unmark()
 		ESCREV();
 		CHECK(addstr, "unmark");
 		ESCRST();
-		return false;
+		return;
 	    }
 }
 
@@ -1573,9 +1571,7 @@ void edit_screen(void)
 
 bool edit_loop(void)
 {
-    int c, i;
-    char str1[SHORT_STR_MAX];
-    struct position pos;
+    int c;
 
     static int skip = 0;
     static bool uni3 = false;
@@ -1627,7 +1623,7 @@ bool edit_loop(void)
 	    c = getch1();
 	    switch (c) {
 	    case CTRL('C'):
-		return (quit_with_save());
+		return(quit_with_save());
 	    case CTRL('S'):
 		save_file();
 		return false;
@@ -1957,26 +1953,26 @@ void help(void)
 	  "ESC <   goto top page                         Home key\n"
 	  "ESC >   goto end page                         End key\n"
 	  "TAB     insert spaces as lisp indent rule\n"
-	  "ESC CTRL+F Move forward in S-expressdion units\n"
-	  "ESC CTRL+B Move Back in S-expression units\n"
-	  "ESC CTRL+N Move forward in list units\n"
-	  "ESC CTRL+P Move back in List units\n"
-	  "ESC CTRL+U Move up a level in the list structure\n"
-	  "ESC STRL+D Move down a level in the list structure\n"
-	  "Insert Switch insert-mode and overwrite-mode\n"
+	  "ESC CTRL+F  Move forward in S-expressdion units\n"
+	  "ESC CTRL+B  Move Back in S-expression units\n"
+	  "ESC CTRL+N  Move forward in list units\n"
+	  "ESC CTRL+P  Move back in List units\n"
+	  "ESC CTRL+U  Move up a level in the list structure\n"
+	  "ESC STRL+D  Move down a level in the list structure\n"
+	  "Insert      Switch insert-mode and overwrite-mode\n"
 	  "--- enter any key to go next page ---");
     CHECK(refresh);
     CHECK(getch);
     ESCMOVE(2, 1);
     ESCCLS1();
     CHECK(addstr, "--- Edlis help(2) ---\n"
-	  "CTRL+X CTRL+C quit from editor with save\n"
-	  "CTRL+X CTRL+Z quit from editor without save\n"
-	  "CTRL+X CTRL+F load from file to editor\n"
-	  "CTRL+X CTRL+V load from file to editor\n"
-	  "CTRL+X CTRL+I insert buffer from file\n"
-	  "CTRL+X CTRL+S save file\n"
-	  "CTRL+X CTRL+W save file as\n"
+	  "CTRL+X  CTRL+C quit from editor with save\n"
+	  "CTRL+X  CTRL+Z quit from editor without save\n"
+	  "CTRL+X  CTRL+F load from file to editor\n"
+	  "CTRL+X  CTRL+V load from file to editor\n"
+	  "CTRL+X  CTRL+I insert buffer from file\n"
+	  "CTRL+X  CTRL+S save file\n"
+	  "CTRL+X  CTRL+W save file as\n"
 	  "CTRL+S  search a word forward\n"
 	  "CTRL+R  search a word backward\n"
 	  "CTRL+T  replace a word\n"
@@ -2264,7 +2260,7 @@ void setcolor(enum Color n)
     }
 }
 
-void backspace()
+void backspace(void)
 {
     int i, size;
 

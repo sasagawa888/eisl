@@ -1927,9 +1927,11 @@ void display_header(char *fname)
     int i;
     ESCHOME();
     ESCREV();
-    CHECK(printw, "Edlis %1.2f        File: %s    ", VERSION, fname);
-    for (i = 30; i < COLS - 9; i++)
+	for (i = 0;i<COLS; i++)
 	CHECK(addch, ' ');
+	ESCHOME();
+    CHECK(printw, "Edlis %1.2f        File: %s   ", VERSION, fname);
+	ESCMOVE(1,COLS-9);
 	if(ed_ins == true){
 	CHECK(addstr, "   insert");}
 	else{

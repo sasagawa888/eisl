@@ -498,6 +498,74 @@ void list_next()
     }
 }
 
+void list_down()
+{
+	int turn,save_row,save_col,save_col1;
+	struct position pos;
+    turn = COLS - LEFT_MARGIN;
+
+	save_row = ed_row;
+	save_col = ed_col;
+	save_col1 = ed_col1;
+	if(ed_data[ed_row][ed_col] == EOF){
+	clear_status();
+	return;
+	}
+
+	/* skip space comment */
+	while(1){
+	if(ed_data[ed_row][ed_col] == '('){
+		break;
+	}
+	else if(ed_data[ed_row][ed_col] == ')'){
+		ESCREV();
+		ESCMOVE(ed_footer, 1);
+    	clear_status();
+    	ESCMOVE(ed_footer, 1);
+    	CHECK(addstr, "Can't find");
+		ESCRST();
+		ed_row = save_row;
+		ed_col = save_col;
+		ed_col1 = save_col1;
+		goto skip;
+	}
+	else if(ed_data[ed_row][ed_col] == ';'){
+		ed_col = ed_col1 = 0;
+		ed_row++;
+	}
+	else if(ed_data[ed_row][ed_col] == EOL){
+		ed_col = ed_col1 = 0;
+		ed_row++;
+	}
+	else if(ed_data[ed_row][ed_col] == EOF){
+		goto skip;
+	}
+	else{
+		ed_col++;
+		ed_col1++;
+	}
+	}
+
+	ed_col++;
+	ed_col1++;
+
+	skip:
+	if(ed_row > ed_start + ed_scroll){
+		ed_start = ed_row - ed_scroll / 2;
+	}
+	display_screen();
+    if (ed_col1 < turn) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else if (ed_col1 == turn) {
+	    ESCCLSLA();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	    display_line(ed_row);
+	} else{
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - turn + LEFT_MARGIN);
+		display_line(ed_row);
+    }
+}
 
 
 void sexp_prev()
@@ -635,6 +703,81 @@ void list_prev()
 		display_line(ed_row);
     }
 }
+
+void list_up()
+{
+	int turn,save_row,save_col,save_col1;
+	struct position pos;
+    turn = COLS - LEFT_MARGIN;
+
+	save_row = ed_row;
+	save_col = ed_col;
+	save_col1 = ed_col1;
+	if(ed_col > 0 && ed_data[ed_row][ed_col] == '('){
+		ed_col--;
+		ed_col1--;
+	}
+
+	/* skip space */
+	while(1){
+	if (ed_data[ed_row][ed_col] == '('){
+		break;
+	}
+	else if(ed_data[ed_row][ed_col] == ')'){
+		ESCREV();
+		ESCMOVE(ed_footer, 1);
+    	clear_status();
+    	ESCMOVE(ed_footer, 1);
+    	CHECK(addstr, "Can't find");
+		ESCRST();
+		ed_row = save_row;
+		ed_col = save_col;
+		ed_col1 = save_col1;
+		goto skip;
+	}
+	else if(ed_col > 0){
+		ed_col1--;
+		ed_col--;
+	}
+	else if(ed_col > 0 && ed_data[ed_row][ed_col] == EOL){
+		ed_col1--;
+		ed_col--;
+	}
+	else if(ed_row > 0 && ed_col == 0 &&
+	        (ed_data[ed_row][ed_col] == ' ' ||
+			 ed_data[ed_row][ed_col] == EOL)){
+		ed_col = ed_col1 = 0;
+		ed_row--;
+		while(ed_data[ed_row][ed_col] != EOL){
+    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
+		}
+	}
+	else if(ed_row == 0 && ed_col == 0){
+		goto skip;
+	}
+	}
+
+
+	skip:
+	if(ed_row < ed_start){
+		ed_start = ed_row - ed_scroll / 2;
+		if(ed_start < 0) ed_start = 0;
+	}
+	display_screen();
+    if (ed_col1 < turn) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else if (ed_col1 == turn) {
+	    ESCCLSLA();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	    display_line(ed_row);
+	} else{
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - turn + LEFT_MARGIN);
+		display_line(ed_row);
+    }
+}
+
 
 
 void left()
@@ -1570,6 +1713,12 @@ bool edit_loop(char *fname)
 		break;
 	case CTRL('P'):
 		list_prev();
+		break;
+	case CTRL('D'):
+		list_down();
+		break;
+	case CTRL('U'):
+		list_up();
 		break;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);

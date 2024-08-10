@@ -1771,6 +1771,8 @@ bool edit_loop(char *fname)
 	break;
     case KEY_IC:
 	ed_ins = !ed_ins;
+	display_header(fname);
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	break;
     case KEY_PPAGE:
 	pageup();
@@ -1926,8 +1928,12 @@ void display_header(char *fname)
     ESCHOME();
     ESCREV();
     CHECK(printw, "Edlis %1.2f        File: %s    ", VERSION, fname);
-    for (i = 30; i < COLS; i++)
+    for (i = 30; i < COLS - 9; i++)
 	CHECK(addch, ' ');
+	if(ed_ins == true){
+	CHECK(addstr, "*insert   ");}
+	else{
+	CHECK(addstr, "*overwrite");}
     ESCRST();
 }
 

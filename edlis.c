@@ -1931,9 +1931,9 @@ void display_header(char *fname)
     for (i = 30; i < COLS - 9; i++)
 	CHECK(addch, ' ');
 	if(ed_ins == true){
-	CHECK(addstr, "*insert   ");}
+	CHECK(addstr, "   insert");}
 	else{
-	CHECK(addstr, "*overwrite");}
+	CHECK(addstr, "overwrite");}
     ESCRST();
 }
 

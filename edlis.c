@@ -587,7 +587,7 @@ void list_prev()
 	if (ed_data[ed_row][ed_col] == ')'){
 		break;
 	}
-	else if(ed_col > 0 && ed_data[ed_row][ed_col] == ' '){
+	else if(ed_col > 0){
 		ed_col1--;
 		ed_col--;
 	}
@@ -608,10 +608,6 @@ void list_prev()
 	}
 	else if(ed_row == 0 && ed_col == 0){
 		goto skip;
-	}
-	else {
-		ed_col--;
-		ed_col1--;
 	}
 	}
 

@@ -374,6 +374,11 @@ void word_next()
 	int turn;
     turn = COLS - LEFT_MARGIN;
 
+	if(ed_data[ed_row][ed_col] == EOF){
+	clear_status();
+	return;
+	}
+
 	while(ed_data[ed_row][ed_col] != ' ' &&
 	      ed_data[ed_row][ed_col] != '(' &&
 		  ed_data[ed_row][ed_col] != ')' &&
@@ -385,8 +390,6 @@ void word_next()
 
 
 	while(1){
-    ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    ed_col = ed_col + increase_buffer(ed_row, ed_col);
 	if(ed_data[ed_row][ed_col] == ' '){
 		ed_col1++;
 		ed_col++;
@@ -396,11 +399,15 @@ void word_next()
 		ed_row++;
 	}
 	else if(ed_data[ed_row][ed_col] == '(' || 
-	        ed_data[ed_row][ed_col] == ')' ){
+	        ed_data[ed_row][ed_col] == ')' || 
+			ed_data[ed_row][ed_col] == ';'){
 		ed_col1++;
 		ed_col++;
 	}
 	else if(ed_data[ed_row][ed_col] == EOF){
+		break;
+	}
+	else{
 		break;
 	}
 	}
@@ -425,31 +432,83 @@ void word_prev()
 	int turn;
     turn = COLS - LEFT_MARGIN;
 
-	while(1){
-    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
-	if(ed_data[ed_row][ed_col-1] == ' '){
-		break;
+	if(ed_col == 0 && ed_row == 0){
+	clear_status();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
 	}
-	else if(ed_row > 0 && ed_col == 0){
+
+	while(ed_data[ed_row][ed_col] != ' ' &&
+	      ed_data[ed_row][ed_col] != '(' &&
+		  ed_data[ed_row][ed_col] != ')' &&
+		  ed_col != 0){
+		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);	
+	}
+
+	if(ed_row > 0 && ed_col == 0){
+		ed_row--;
+		while(1){
+    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
+		if(ed_data[ed_row][ed_col] == EOL){
+		break;
+		}
+		}
+		ed_col1--;
+		ed_col--;
+	}
+
+	while(1){
+	if(ed_col > 0 && ed_data[ed_row][ed_col] == ' '){
+		ed_col1--;
+		ed_col--;
+	}
+	else if(ed_row > 0 && ed_col == 0 &&
+	        (ed_data[ed_row][ed_col] == ' ' ||
+			 ed_data[ed_row][ed_col] == '(' ||
+			 ed_data[ed_row][ed_col] == ')' ||
+			 ed_data[ed_row][ed_col] == ';' ||
+			 ed_data[ed_row][ed_col] == EOL)){
 		ed_col = ed_col1 = 0;
 		ed_row--;
 		while(1){
     	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
     	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		if(ed_data[ed_row][ed_col-1] == EOL){
+		if(ed_data[ed_row][ed_col] == EOL){
 		break;
 		}
 		}
+		ed_col1--;
+		ed_col--;
 	}
-	else if(ed_data[ed_row][ed_col] == '(' || 
-	        ed_data[ed_row][ed_col] == ')' ){
+	else if(ed_col > 0 && (ed_data[ed_row][ed_col] == '(' || 
+	        ed_data[ed_row][ed_col] == ')' ||
+			ed_data[ed_row][ed_col] == ';')){
 		ed_col1--;
 		ed_col--;
 	}
 	else if(ed_row == 0 && ed_col == 0){
 		break;
 	}
+	else {
+		break;
+	}
+	}
+
+	if(ed_col != 0){
+	ed_col1--;
+	ed_col--;
+	while(ed_data[ed_row][ed_col] != ' ' &&
+	      ed_data[ed_row][ed_col] != '(' &&
+		  ed_data[ed_row][ed_col] != ')' &&
+		  ed_col != 0){
+		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);	
+	}
+	ed_col1++;
+	ed_col++;
+
 	}
 
 	display_screen();

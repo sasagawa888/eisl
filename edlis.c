@@ -33,6 +33,7 @@ volatile sig_atomic_t ctrl_z = 0;
 
 FILE *port;
 char fname[256];
+bool cancel_flag;
 
 // -----editor-----
 int ed_scroll;
@@ -371,412 +372,384 @@ void right()
 
 void sexp_next()
 {
-	int turn;
-	struct position pos;
+    int turn;
+    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	if(ed_data[ed_row][ed_col] == EOF){
+    if (ed_data[ed_row][ed_col] == EOF) {
 	clear_status();
 	return;
-	}
+    }
 
-	/* skip space comment */
-	while(1){
-	if(ed_data[ed_row][ed_col] == ' '){
-		ed_col1++;
-		ed_col++;
+    /* skip space comment */
+    while (1) {
+	if (ed_data[ed_row][ed_col] == ' ') {
+	    ed_col1++;
+	    ed_col++;
+	} else if (ed_data[ed_row][ed_col] == ')') {
+	    ed_col1++;
+	    ed_col++;
+	} else if (ed_data[ed_row][ed_col] == ';') {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOL) {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOF) {
+	    goto skip;
+	} else {
+	    break;
 	}
-	else if(ed_data[ed_row][ed_col] == ')'){
-		ed_col1++;
-		ed_col++;
-	}
-	else if(ed_data[ed_row][ed_col] == ';'){
-		ed_col = ed_col1 = 0;
-		ed_row++;
-	}
-	else if(ed_data[ed_row][ed_col] == EOL){
-		ed_col = ed_col1 = 0;
-		ed_row++;
-	}
-	else if(ed_data[ed_row][ed_col] == EOF){
-		goto skip;
-	}
-	else{
-		break;
-	}
-	}
+    }
 
-	if(ed_data[ed_row][ed_col] == '('){  /* list */
-		pos = find_rparen(1);
-		if(pos.row != -1){
-		ed_row = pos.row;
-		ed_col = ed_col1 = pos.col;
-		}
+    if (ed_data[ed_row][ed_col] == '(') {	/* list */
+	pos = find_rparen(1);
+	if (pos.row != -1) {
+	    ed_row = pos.row;
+	    ed_col = ed_col1 = pos.col;
 	}
-	else { /* atom */
-		while(ed_data[ed_row][ed_col] != ' ' &&
-			  ed_data[ed_row][ed_col] != '(' &&
-		      ed_data[ed_row][ed_col] != ')'){
-				ed_col++;
-				ed_col1++;
-			  }
+    } else {			/* atom */
+	while (ed_data[ed_row][ed_col] != ' ' &&
+	       ed_data[ed_row][ed_col] != '(' &&
+	       ed_data[ed_row][ed_col] != ')') {
+	    ed_col++;
+	    ed_col1++;
 	}
+    }
 
-	skip:
-	if(ed_row > ed_start + ed_scroll){
-		ed_start = ed_row - ed_scroll / 2;
-	}
-	display_screen();
+  skip:
+    if (ed_row > ed_start + ed_scroll) {
+	ed_start = ed_row - ed_scroll / 2;
+    }
+    display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     } else if (ed_col1 == turn) {
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
-	} else{
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 		ed_col1 - turn + LEFT_MARGIN);
-		display_line(ed_row);
+	display_line(ed_row);
     }
 }
 
 
 void list_next()
 {
-	int turn;
-	struct position pos;
+    int turn;
+    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	if(ed_data[ed_row][ed_col] == EOF){
+    if (ed_data[ed_row][ed_col] == EOF) {
 	clear_status();
 	return;
-	}
+    }
 
-	/* skip space comment */
-	while(1){
-	if(ed_data[ed_row][ed_col] == '('){
-		break;
+    /* skip space comment */
+    while (1) {
+	if (ed_data[ed_row][ed_col] == '(') {
+	    break;
+	} else if (ed_data[ed_row][ed_col] == ';') {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOL) {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOF) {
+	    goto skip;
+	} else {
+	    ed_col++;
+	    ed_col1++;
 	}
-	else if(ed_data[ed_row][ed_col] == ';'){
-		ed_col = ed_col1 = 0;
-		ed_row++;
-	}
-	else if(ed_data[ed_row][ed_col] == EOL){
-		ed_col = ed_col1 = 0;
-		ed_row++;
-	}
-	else if(ed_data[ed_row][ed_col] == EOF){
-		goto skip;
-	}
-	else{
-		ed_col++;
-		ed_col1++;
-	}
-	}
+    }
 
-	pos = find_rparen(1);
-	if(pos.row != -1){
+    pos = find_rparen(1);
+    if (pos.row != -1) {
 	ed_row = pos.row;
-	ed_col = ed_col1 = pos.col+1;
-	}
+	ed_col = ed_col1 = pos.col + 1;
+    }
 
-	skip:
-	if(ed_row > ed_start + ed_scroll){
-		ed_start = ed_row - ed_scroll / 2;
-	}
-	display_screen();
+  skip:
+    if (ed_row > ed_start + ed_scroll) {
+	ed_start = ed_row - ed_scroll / 2;
+    }
+    display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     } else if (ed_col1 == turn) {
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
-	} else{
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 		ed_col1 - turn + LEFT_MARGIN);
-		display_line(ed_row);
+	display_line(ed_row);
     }
 }
 
 void list_down()
 {
-	int turn,save_row,save_col,save_col1;
-	struct position pos;
+    int turn, save_row, save_col, save_col1;
+    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	save_row = ed_row;
-	save_col = ed_col;
-	save_col1 = ed_col1;
-	if(ed_data[ed_row][ed_col] == EOF){
+    save_row = ed_row;
+    save_col = ed_col;
+    save_col1 = ed_col1;
+    if (ed_data[ed_row][ed_col] == EOF) {
 	clear_status();
 	return;
-	}
+    }
 
-	/* skip space comment */
-	while(1){
-	if(ed_data[ed_row][ed_col] == '('){
-		break;
+    /* skip space comment */
+    while (1) {
+	if (ed_data[ed_row][ed_col] == '(') {
+	    break;
+	} else if (ed_data[ed_row][ed_col] == ')') {
+	    ESCREV();
+	    ESCMOVE(ed_footer, 1);
+	    clear_status();
+	    ESCMOVE(ed_footer, 1);
+	    CHECK(addstr, "Can't find");
+	    ESCRST();
+	    ed_row = save_row;
+	    ed_col = save_col;
+	    ed_col1 = save_col1;
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    return;
+	} else if (ed_data[ed_row][ed_col] == ';') {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOL) {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOF) {
+	    goto skip;
+	} else {
+	    ed_col++;
+	    ed_col1++;
 	}
-	else if(ed_data[ed_row][ed_col] == ')'){
-		ESCREV();
-		ESCMOVE(ed_footer, 1);
-    	clear_status();
-    	ESCMOVE(ed_footer, 1);
-    	CHECK(addstr, "Can't find");
-		ESCRST();
-		ed_row = save_row;
-		ed_col = save_col;
-		ed_col1 = save_col1;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-		return;
-	}
-	else if(ed_data[ed_row][ed_col] == ';'){
-		ed_col = ed_col1 = 0;
-		ed_row++;
-	}
-	else if(ed_data[ed_row][ed_col] == EOL){
-		ed_col = ed_col1 = 0;
-		ed_row++;
-	}
-	else if(ed_data[ed_row][ed_col] == EOF){
-		goto skip;
-	}
-	else{
-		ed_col++;
-		ed_col1++;
-	}
-	}
+    }
 
-	ed_col++;
-	ed_col1++;
+    ed_col++;
+    ed_col1++;
 
-	skip:
-	if(ed_row > ed_start + ed_scroll){
-		ed_start = ed_row - ed_scroll / 2;
-	}
-	display_screen();
+  skip:
+    if (ed_row > ed_start + ed_scroll) {
+	ed_start = ed_row - ed_scroll / 2;
+    }
+    display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     } else if (ed_col1 == turn) {
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
-	} else{
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 		ed_col1 - turn + LEFT_MARGIN);
-		display_line(ed_row);
+	display_line(ed_row);
     }
 }
 
 
 void sexp_prev()
 {
-	int turn;
-	struct position pos;
+    int turn;
+    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	/* skip space */
-	while(1){
-	if(ed_col > 0 && ed_data[ed_row][ed_col] == ' '){
-		ed_col1--;
-		ed_col--;
+    /* skip space */
+    while (1) {
+	if (ed_col > 0 && ed_data[ed_row][ed_col] == ' ') {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_col > 0 && ed_data[ed_row][ed_col] == EOL) {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_col > 0 && ed_data[ed_row][ed_col] == '(') {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_row > 0 && ed_col == 0 &&
+		   (ed_data[ed_row][ed_col] == ' ' ||
+		    ed_data[ed_row][ed_col] == '(' ||
+		    ed_data[ed_row][ed_col] == EOL)) {
+	    ed_col = ed_col1 = 0;
+	    ed_row--;
+	    while (ed_data[ed_row][ed_col] != EOL) {
+		ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+		ed_col = ed_col + increase_buffer(ed_row, ed_col);
+	    }
+	} else if (ed_row == 0 && ed_col == 0) {
+	    goto skip;
+	} else {
+	    break;
 	}
-	else if(ed_col > 0 && ed_data[ed_row][ed_col] == EOL){
-		ed_col1--;
-		ed_col--;
-	}
-	else if(ed_col > 0 && ed_data[ed_row][ed_col] == '('){
-		ed_col1--;
-		ed_col--;
-	}
-	else if(ed_row > 0 && ed_col == 0 &&
-	        (ed_data[ed_row][ed_col] == ' ' ||
-			 ed_data[ed_row][ed_col] == '(' ||
-			 ed_data[ed_row][ed_col] == EOL)){
-		ed_col = ed_col1 = 0;
-		ed_row--;
-		while(ed_data[ed_row][ed_col] != EOL){
-    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		}
-	}
-	else if(ed_row == 0 && ed_col == 0){
-		goto skip;
-	}
-	else {
-		break;
-	}
-	}
+    }
 
-	if(ed_data[ed_row][ed_col] == ')'){
-		pos = find_lparen(1);
-		if(pos.row != -1){
-		ed_row = pos.row;
-		ed_col = ed_col1 = pos.col;
-		}
+    if (ed_data[ed_row][ed_col] == ')') {
+	pos = find_lparen(1);
+	if (pos.row != -1) {
+	    ed_row = pos.row;
+	    ed_col = ed_col1 = pos.col;
 	}
-	else{
-	while(ed_data[ed_row][ed_col] != ' ' &&
-	      ed_data[ed_row][ed_col] != '(' &&
-		  ed_data[ed_row][ed_col] != ')' &&
-		  ed_col != 0){
-		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);	
+    } else {
+	while (ed_data[ed_row][ed_col] != ' ' &&
+	       ed_data[ed_row][ed_col] != '(' &&
+	       ed_data[ed_row][ed_col] != ')' && ed_col != 0) {
+	    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+	    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 	}
-	}
+    }
 
-	skip:
-	if(ed_row < ed_start){
-		ed_start = ed_row - ed_scroll / 2;
-		if(ed_start < 0) ed_start = 0;
-	}
-	display_screen();
+  skip:
+    if (ed_row < ed_start) {
+	ed_start = ed_row - ed_scroll / 2;
+	if (ed_start < 0)
+	    ed_start = 0;
+    }
+    display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     } else if (ed_col1 == turn) {
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
-	} else{
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 		ed_col1 - turn + LEFT_MARGIN);
-		display_line(ed_row);
+	display_line(ed_row);
     }
 }
 
 
 void list_prev()
 {
-	int turn;
-	struct position pos;
+    int turn;
+    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	/* skip space */
-	while(1){
-	if (ed_data[ed_row][ed_col] == ')'){
-		break;
+    /* skip space */
+    while (1) {
+	if (ed_data[ed_row][ed_col] == ')') {
+	    break;
+	} else if (ed_col > 0) {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_col > 0 && ed_data[ed_row][ed_col] == EOL) {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_row > 0 && ed_col == 0 &&
+		   (ed_data[ed_row][ed_col] == ' ' ||
+		    ed_data[ed_row][ed_col] == '(' ||
+		    ed_data[ed_row][ed_col] == EOL)) {
+	    ed_col = ed_col1 = 0;
+	    ed_row--;
+	    while (ed_data[ed_row][ed_col] != EOL) {
+		ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+		ed_col = ed_col + increase_buffer(ed_row, ed_col);
+	    }
+	} else if (ed_row == 0 && ed_col == 0) {
+	    goto skip;
 	}
-	else if(ed_col > 0){
-		ed_col1--;
-		ed_col--;
-	}
-	else if(ed_col > 0 && ed_data[ed_row][ed_col] == EOL){
-		ed_col1--;
-		ed_col--;
-	}
-	else if(ed_row > 0 && ed_col == 0 &&
-	        (ed_data[ed_row][ed_col] == ' ' ||
-			 ed_data[ed_row][ed_col] == '(' ||
-			 ed_data[ed_row][ed_col] == EOL)){
-		ed_col = ed_col1 = 0;
-		ed_row--;
-		while(ed_data[ed_row][ed_col] != EOL){
-    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		}
-	}
-	else if(ed_row == 0 && ed_col == 0){
-		goto skip;
-	}
-	}
+    }
 
-		pos = find_lparen(1);
-		if(pos.row != -1){
-		ed_row = pos.row;
-		ed_col = ed_col1 = pos.col;
-		}
+    pos = find_lparen(1);
+    if (pos.row != -1) {
+	ed_row = pos.row;
+	ed_col = ed_col1 = pos.col;
+    }
 
-	skip:
-	if(ed_row < ed_start){
-		ed_start = ed_row - ed_scroll / 2;
-		if(ed_start < 0) ed_start = 0;
-	}
-	display_screen();
+  skip:
+    if (ed_row < ed_start) {
+	ed_start = ed_row - ed_scroll / 2;
+	if (ed_start < 0)
+	    ed_start = 0;
+    }
+    display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     } else if (ed_col1 == turn) {
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
-	} else{
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 		ed_col1 - turn + LEFT_MARGIN);
-		display_line(ed_row);
+	display_line(ed_row);
     }
 }
 
 void list_up()
 {
-	int turn,save_row,save_col,save_col1;
-	struct position pos;
+    int turn, save_row, save_col, save_col1;
+    struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	save_row = ed_row;
-	save_col = ed_col;
-	save_col1 = ed_col1;
-	if(ed_col > 0 && ed_data[ed_row][ed_col] == '('){
-		ed_col--;
-		ed_col1--;
-	}
+    save_row = ed_row;
+    save_col = ed_col;
+    save_col1 = ed_col1;
+    if (ed_col > 0 && ed_data[ed_row][ed_col] == '(') {
+	ed_col--;
+	ed_col1--;
+    }
 
-	/* skip space */
-	while(1){
-	if (ed_data[ed_row][ed_col] == '('){
-		break;
+    /* skip space */
+    while (1) {
+	if (ed_data[ed_row][ed_col] == '(') {
+	    break;
+	} else if (ed_data[ed_row][ed_col] == ')') {
+	    ESCREV();
+	    ESCMOVE(ed_footer, 1);
+	    clear_status();
+	    ESCMOVE(ed_footer, 1);
+	    CHECK(addstr, "Can't find");
+	    ESCRST();
+	    ed_row = save_row;
+	    ed_col = save_col;
+	    ed_col1 = save_col1;
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    return;
+	} else if (ed_col > 0) {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_col > 0 && ed_data[ed_row][ed_col] == EOL) {
+	    ed_col1--;
+	    ed_col--;
+	} else if (ed_row > 0 && ed_col == 0 &&
+		   (ed_data[ed_row][ed_col] == ' ' ||
+		    ed_data[ed_row][ed_col] == EOL)) {
+	    ed_col = ed_col1 = 0;
+	    ed_row--;
+	    while (ed_data[ed_row][ed_col] != EOL) {
+		ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+		ed_col = ed_col + increase_buffer(ed_row, ed_col);
+	    }
+	} else if (ed_row == 0 && ed_col == 0) {
+	    goto skip;
 	}
-	else if(ed_data[ed_row][ed_col] == ')'){
-		ESCREV();
-		ESCMOVE(ed_footer, 1);
-    	clear_status();
-    	ESCMOVE(ed_footer, 1);
-    	CHECK(addstr, "Can't find");
-		ESCRST();
-		ed_row = save_row;
-		ed_col = save_col;
-		ed_col1 = save_col1;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-		return;
-	}
-	else if(ed_col > 0){
-		ed_col1--;
-		ed_col--;
-	}
-	else if(ed_col > 0 && ed_data[ed_row][ed_col] == EOL){
-		ed_col1--;
-		ed_col--;
-	}
-	else if(ed_row > 0 && ed_col == 0 &&
-	        (ed_data[ed_row][ed_col] == ' ' ||
-			 ed_data[ed_row][ed_col] == EOL)){
-		ed_col = ed_col1 = 0;
-		ed_row--;
-		while(ed_data[ed_row][ed_col] != EOL){
-    	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		}
-	}
-	else if(ed_row == 0 && ed_col == 0){
-		goto skip;
-	}
-	}
+    }
 
 
-	skip:
-	if(ed_row < ed_start){
-		ed_start = ed_row - ed_scroll / 2;
-		if(ed_start < 0) ed_start = 0;
-	}
-	display_screen();
+  skip:
+    if (ed_row < ed_start) {
+	ed_start = ed_row - ed_scroll / 2;
+	if (ed_start < 0)
+	    ed_start = 0;
+    }
+    display_screen();
     if (ed_col1 < turn) {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     } else if (ed_col1 == turn) {
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
-	} else{
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 		ed_col1 - turn + LEFT_MARGIN);
-		display_line(ed_row);
+	display_line(ed_row);
     }
 }
 
@@ -965,19 +938,19 @@ void return_key()
 
 void tab_key()
 {
-	int i;
+    int i;
 
-	if (ed_tab == 0) {
-	    ed_col = ed_col1 = 0;
-	    i = calc_tabs();
-	    remove_headspace(ed_row);
-	    softtabs(i);
-	} else {
-	    softtabs(ed_tab);
-	}
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+    if (ed_tab == 0) {
+	ed_col = ed_col1 = 0;
+	i = calc_tabs();
+	remove_headspace(ed_row);
+	softtabs(i);
+    } else {
+	softtabs(ed_tab);
+    }
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = true;
 }
 
 void backspace_key()
@@ -1250,194 +1223,213 @@ void load_file()
 
 void search_next()
 {
-	char str1[SHORT_STR_MAX];
-	struct position pos;
+    char str1[SHORT_STR_MAX];
+    struct position pos;
 
+    clear_status();
+    CHECK(addstr, "search:    ");
+    strcpy(str1, getname());
+    ESCRST();
+    if (cancel_flag) {
+	cancel_flag = false;
 	clear_status();
-	CHECK(addstr, "search:    ");
-	strcpy(str1, getname());
-	ESCRST();
-	pos = find_word(str1);
-	if (pos.row == -1) {
-	    ESCREV();
-	    ESCMOVE(ed_footer, 1);
-	    CHECK(addstr, "can't find ");
-	    CHECK(addstr, str1);
-	    ESCRST();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    return;
-	}
-	ed_row = pos.row;
-	ed_col = ed_col1 = pos.col;
-	ed_start = ed_row - ed_scroll / 2;
-	if (ed_start < 0) {
-	    ed_start = 0;
-	}
-	display_screen();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    pos = find_word(str1);
+    if (pos.row == -1) {
 	ESCREV();
+	ESCMOVE(ed_footer, 1);
+	CHECK(addstr, "can't find ");
 	CHECK(addstr, str1);
 	ESCRST();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    ed_row = pos.row;
+    ed_col = ed_col1 = pos.col;
+    ed_start = ed_row - ed_scroll / 2;
+    if (ed_start < 0) {
+	ed_start = 0;
+    }
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    ESCREV();
+    CHECK(addstr, str1);
+    ESCRST();
 }
 
 void search_prev()
 {
-	char str1[SHORT_STR_MAX];
-	struct position pos;
+    char str1[SHORT_STR_MAX];
+    struct position pos;
 
+    clear_status();
+    CHECK(addstr, "search:    ");
+    strcpy(str1, getname());
+    ESCRST();
+    if (cancel_flag) {
+	cancel_flag = false;
 	clear_status();
-	CHECK(addstr, "search:    ");
-	strcpy(str1, getname());
-	ESCRST();
-	pos = find_word_back(str1);
-	if (pos.row == -1) {
-	    ESCREV();
-	    ESCMOVE(ed_footer, 1);
-	    CHECK(addstr, "can't find ");
-	    CHECK(addstr, str1);
-	    ESCRST();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    return;
-	}
-	ed_row = pos.row;
-	ed_col = ed_col1 = pos.col;
-	ed_start = ed_row - ed_scroll / 2;
-	if (ed_start < 0) {
-	    ed_start = 0;
-	}
-	display_screen();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    pos = find_word_back(str1);
+    if (pos.row == -1) {
 	ESCREV();
+	ESCMOVE(ed_footer, 1);
+	CHECK(addstr, "can't find ");
 	CHECK(addstr, str1);
 	ESCRST();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    ed_row = pos.row;
+    ed_col = ed_col1 = pos.col;
+    ed_start = ed_row - ed_scroll / 2;
+    if (ed_start < 0) {
+	ed_start = 0;
+    }
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    ESCREV();
+    CHECK(addstr, str1);
+    ESCRST();
 }
 
 
 void transfer_word()
 {
-	int c;
-	char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
-	struct position pos;
+    int c;
+    char str1[SHORT_STR_MAX], str2[SHORT_STR_MAX];
+    struct position pos;
 
+    clear_status();
+    CHECK(addstr, "search: ");
+    strcpy(str1, getname());
+    clear_status();
+    if (cancel_flag) {
+	cancel_flag = false;
 	clear_status();
-	CHECK(addstr, "search: ");
-	strcpy(str1, getname());
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    CHECK(addstr, "replace: ");
+    strcpy(str2, getname());
+    if (cancel_flag) {
+	cancel_flag = false;
 	clear_status();
-	CHECK(addstr, "replace: ");
-	strcpy(str2, getname());
-	ESCRST();
-	pos = find_word(str1);
-	while (pos.row != -1) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+    ESCRST();
+    pos = find_word(str1);
+    while (pos.row != -1) {
+	ed_row = pos.row;
+	ed_col = ed_col1 = pos.col;
+	ed_start = ed_row - ed_scroll / 2;
+	if (ed_start < 0) {
+	    ed_start = 0;
+	}
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	ESCREV();
+	CHECK(addstr, str1);
+	clear_status();
+	do {
+	    CHECK(addstr, "replace? y/n ");
+	    ESCRST();
+	    CHECK(refresh);
+	    c = getch();
+	    if (c == ERR) {
+		errw("getch");
+	    }
+	}
+	while (c != 'y' && c != 'n');
+	if (c == 'y') {
 	    ed_row = pos.row;
 	    ed_col = ed_col1 = pos.col;
-	    ed_start = ed_row - ed_scroll / 2;
-	    if (ed_start < 0) {
-		ed_start = 0;
-	    }
+	    replace_word(str1, str2);
 	    display_screen();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    modify_flag = true;
+	    ed_col++;
+	} else {
+	    display_screen();
+	    ed_col++;
+	}
+	pos = find_word(str1);
+    }
+    clear_status();
+    CHECK(addstr, "can't find ");
+    CHECK(addstr, str1);
+    ESCRST();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+}
+
+void completion()
+{
+    int i, c;
+    find_candidate();		// completion
+    if (ed_candidate_pt == 0)
+	return;
+    else if (ed_candidate_pt == 1) {
+	replace_fragment(ed_candidate[0]);
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else {
+	const int CANDIDATE = 3;
+	int k = 0;
+	ESCMOVE(ed_footer, 1);
+	bool more_candidates_selected;
+	do {
+	    more_candidates_selected = false;
 	    ESCREV();
-	    CHECK(addstr, str1);
-	    clear_status();
+	    for (i = 0; i < CANDIDATE; i++) {
+		if (i + k >= ed_candidate_pt)
+		    break;
+		CHECK(printw, "%d:%s ", i + 1, ed_candidate[i + k]);
+	    }
+	    if (ed_candidate_pt > k + CANDIDATE)
+		CHECK(addstr, "4:more");
+	    ESCRST();
+	    bool bad_candidate_selected;
 	    do {
-		CHECK(addstr, "replace? y/n ");
-		ESCRST();
+		bad_candidate_selected = false;
 		CHECK(refresh);
 		c = getch();
 		if (c == ERR) {
 		    errw("getch");
 		}
-	    }
-	    while (c != 'y' && c != 'n');
-	    if (c == 'y') {
-		ed_row = pos.row;
-		ed_col = ed_col1 = pos.col;
-		replace_word(str1, str2);
-		display_screen();
-		modify_flag = true;
-		ed_col++;
-	    } else {
-		display_screen();
-		ed_col++;
-	    }
-	    pos = find_word(str1);
-	}
-	clear_status();
-	CHECK(addstr, "can't find ");
-	CHECK(addstr, str1);
-	ESCRST();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-}
-
-void completion()
-{
-	int i,c;
-	find_candidate();	// completion
-	    if (ed_candidate_pt == 0)
-		return;
-	    else if (ed_candidate_pt == 1) {
-		replace_fragment(ed_candidate[0]);
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-		display_line(ed_row);
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-	    } else {
-		const int CANDIDATE = 3;
-		int k = 0;
-		ESCMOVE(ed_footer, 1);
-		bool more_candidates_selected;
-		do {
-		    more_candidates_selected = false;
+		if (c != CTRL('G')) {
+		    i = c - '1';
+		    more_candidates_selected =
+			ed_candidate_pt > k + CANDIDATE && i == CANDIDATE;
+		    if (more_candidates_selected) {
+			k = k + CANDIDATE;
+			ESCMVLEFT(1);
+			ESCCLSL();
+			break;
+		    }
+		    bad_candidate_selected =
+			i + k > ed_candidate_pt || i < 0 || c == RET;
+		} else {
+		    ESCMOVE(ed_footer, 1);
 		    ESCREV();
-		    for (i = 0; i < CANDIDATE; i++) {
-			if (i + k >= ed_candidate_pt)
-			    break;
-			CHECK(printw, "%d:%s ", i + 1,
-			      ed_candidate[i + k]);
-		    }
-		    if (ed_candidate_pt > k + CANDIDATE)
-			CHECK(addstr, "4:more");
+		    clear_status();
 		    ESCRST();
-		    bool bad_candidate_selected;
-		    do {
-			bad_candidate_selected = false;
-			CHECK(refresh);
-			c = getch();
-			if (c == ERR) {
-			    errw("getch");
-			}
-			if (c != CTRL('G')) {
-			    i = c - '1';
-			    more_candidates_selected =
-				ed_candidate_pt > k + CANDIDATE
-				&& i == CANDIDATE;
-			    if (more_candidates_selected) {
-				k = k + CANDIDATE;
-				ESCMVLEFT(1);
-				ESCCLSL();
-				break;
-			    }
-			    bad_candidate_selected =
-				i + k > ed_candidate_pt || i < 0
-				|| c == RET;
-			} else {
-			    ESCMOVE(ed_footer, 1);
-			    ESCREV();
-			    clear_status();
-			    ESCRST();
-			    return;
-			}
-		    }
-		    while (bad_candidate_selected);
+		    return;
 		}
-		while (more_candidates_selected);
-		if (c != ESC)
-		    replace_fragment(ed_candidate[i + k]);
-		display_screen();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
 	    }
-	    return;
+	    while (bad_candidate_selected);
+	}
+	while (more_candidates_selected);
+	if (c != ESC)
+	    replace_fragment(ed_candidate[i + k]);
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    }
+    return;
 }
 
 
@@ -1491,6 +1483,7 @@ char *getname()
     static int pos;
     static char buf[SHORT_STR_MAX];
 
+    cancel_flag = false;
     ESCMOVE(ed_footer, 12);
     ESCREV();
     CHECK(addstr, "                    ");
@@ -1506,16 +1499,19 @@ char *getname()
 	}
 	switch (c) {
 	case RET:
-		if(strcmp(buf,"") == 0)
-			break;
-		else
-	    	return (buf);
+	    if (strcmp(buf, "") == 0)
+		break;
+	    else
+		return (buf);
 	case KEY_BACKSPACE:
 	case DEL:
 	    if (pos > 0)
 		pos--;
 	    buf[pos] = 0;
 	    break;
+	case CTRL('G'):
+	    cancel_flag = true;
+	    return (buf);
 	default:
 	    if (pos > SHORT_STR_MAX)
 		break;
@@ -1546,7 +1542,7 @@ void edit_screen(char *fname)
 
 bool edit_loop(char *fname)
 {
-    int c,i;
+    int c, i;
     char str1[SHORT_STR_MAX];
     struct position pos;
 
@@ -1688,61 +1684,59 @@ bool edit_loop(char *fname)
 		return false;
 	    }
 	case TAB:
-		completion();
-		return false;
+	    completion();
+	    return false;
 	case 'i':
-		i = find_function_data(get_fragment());
-		ESCMOVE(ed_footer, 1);
+	    i = find_function_data(get_fragment());
+	    ESCMOVE(ed_footer, 1);
 	    ESCREV();
 	    clear_status();
-		if(i != -1){
-			CHECK(addstr, functions_data[i+1]);
-		}
-		else{
-			CHECK(addstr, "Can't fild");
-		}
-		ESCRST();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-		return false;
+	    if (i != -1) {
+		CHECK(addstr, functions_data[i + 1]);
+	    } else {
+		CHECK(addstr, "Can't fild");
+	    }
+	    ESCRST();
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    return false;
 	case 'j':
-		i = find_function_data(get_fragment());
-		if(i != -1){
-			ESCMOVE(2, 1);
-    		ESCCLS1();
-			CHECK(addstr, functions_data[i+2]);
-			CHECK(addstr,"\n\n--- enter any key to exit ---")
-			CHECK(refresh);
-    		CHECK(getch);
-    		display_screen();
-		}
-		else{
-			ESCMOVE(ed_footer, 1);
-	    	ESCREV();
-	    	clear_status();
-			CHECK(addstr, "Can't fild");
-			ESCMOVE(ed_footer, 1);
-	    	ESCRST();
-		}
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-		return false;
+	    i = find_function_data(get_fragment());
+	    if (i != -1) {
+		ESCMOVE(2, 1);
+		ESCCLS1();
+		CHECK(addstr, functions_data[i + 2]);
+		CHECK(addstr, "\n\n--- enter any key to exit ---")
+		    CHECK(refresh);
+		CHECK(getch);
+		display_screen();
+	    } else {
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		clear_status();
+		CHECK(addstr, "Can't fild");
+		ESCMOVE(ed_footer, 1);
+		ESCRST();
+	    }
+	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	    return false;
 	case CTRL('F'):
-		sexp_next();
-		break;
+	    sexp_next();
+	    break;
 	case CTRL('B'):
-		sexp_prev();
-		break;
+	    sexp_prev();
+	    break;
 	case CTRL('N'):
-		list_next();
-		break;
+	    list_next();
+	    break;
 	case CTRL('P'):
-		list_prev();
-		break;
+	    list_prev();
+	    break;
 	case CTRL('D'):
-		list_down();
-		break;
+	    list_down();
+	    break;
 	case CTRL('U'):
-		list_up();
-		break;
+	    list_up();
+	    break;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);
 	    ESCREV();
@@ -1927,15 +1921,16 @@ void display_header(char *fname)
     int i;
     ESCHOME();
     ESCREV();
-	for (i = 0;i<COLS; i++)
+    for (i = 0; i < COLS; i++)
 	CHECK(addch, ' ');
-	ESCHOME();
+    ESCHOME();
     CHECK(printw, "Edlis %1.2f        File: %s   ", VERSION, fname);
-	ESCMOVE(1,COLS-9);
-	if(ed_ins == true){
-	CHECK(addstr, "   insert");}
-	else{
-	CHECK(addstr, "overwrite");}
+    ESCMOVE(1, COLS - 9);
+    if (ed_ins == true) {
+	CHECK(addstr, "   insert");
+    } else {
+	CHECK(addstr, "overwrite");
+    }
     ESCRST();
 }
 
@@ -1981,7 +1976,7 @@ void help(void)
 	  "ESC <   goto top page                         Home key\n"
 	  "ESC >   goto end page                         End key\n"
 	  "TAB     insert spaces as lisp indent rule\n"
-      "ESC CTRL+F Move forward in S-expressdion units\n"
+	  "ESC CTRL+F Move forward in S-expressdion units\n"
 	  "ESC CTRL+B Move Back in S-expression units\n"
 	  "ESC CTRL+N Move forward in list units\n"
 	  "ESC CTRL+P Move back in List units\n"
@@ -1991,9 +1986,9 @@ void help(void)
 	  "--- enter any key to go next page ---");
     CHECK(refresh);
     CHECK(getch);
-	ESCMOVE(2, 1);
+    ESCMOVE(2, 1);
     ESCCLS1();
-	CHECK(addstr,"--- Edlis help(2) ---\n"
+    CHECK(addstr, "--- Edlis help(2) ---\n"
 	  "CTRL+X CTRL+C quit from editor with save\n"
 	  "CTRL+X CTRL+Z quit from editor without save\n"
 	  "CTRL+X CTRL+F load from file to editor\n"
@@ -2011,12 +2006,11 @@ void help(void)
 	  "CTRL+W  cut selection\n"
 	  "ESC W   save selection\n"
 	  "CTRL+Y  uncut selection\n"
-	  "CTRL+G  cancel command\n" 
-	  "--- enter any key to exit help ---");
+	  "CTRL+G  cancel command\n" "--- enter any key to exit help ---");
     CHECK(refresh);
     CHECK(getch);
     display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 /*                                     COL_SIZE
@@ -2196,7 +2190,7 @@ void display_line(int line)
 
 
 		    if (ed_data[line][col - 1] == '"' &&
-			    ed_data[line][col - 2] != '\\')
+			ed_data[line][col - 2] != '\\')
 			break;
 		}
 		ESCRST();
@@ -3607,120 +3601,120 @@ static const char *functions_data[] = {
     "with-standard-input",
     "(with-standard-input stream-form form *) <object>",
     "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
-	"with-standard-output",
- 	"(with-standard-output stream-form form *) <object>",
-	"Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
-	"with-error-output",
-	"(with-error-output stream-form form *) <object>",
-	"Evaluate the forms form ... with standard-error set to the result of 'stream-form' (special form)",
-	"open-input-file",
-	"(open-input-file filename element-class +) <stream>",
-	"Open the file 'filename' as an input stream",
-	"open-output-file",
-	"(open-output-file filename element-class +) <stream>",
-	"Open the file 'filename' as an output stream",
-	"open-io-file",
-	"(open-io-file filename element-class +) <stream>",
-	"Open the file 'filename' for as an input/output stream",
-	"with-open-input-file",
-	"(with-open-input-file (name file element-class +) form *) <object>",
-	"Evaluate 'form' with standard-input redirected from 'file' and afterwards close it (special form)",
-	"with-open-output-file",
-	"(with-open-output-file (name file element-class +) form *) <object>",
-	"Evaluate 'form' with standard-output redirected to 'file' and afterwards close it (special form)",
-	"with-open-io-file",
-	"(with-open-io-file (name file element-class +) form *) <object>",
-	"Evaluate 'form' with both standard-input and standard-output streams redirected to/from 'file' and afterwards close it (special form)",
-	"close",	
-	"(close stream) implementation-defined",
-	"Close a stream",
-	"create-string-input-stream",
-	"(create-string-input-stream string) <stream>",
-	"Create a string input stream",
-	"create-string-output-stream",
-	"(create-string-output-stream) <stream>",
-	"Create a string output stream",
-	"get-output-stream-string",
-	"(get-output-stream-string stream) <string>",
-	"Return a string containing the output that was sent to a string output stream",
-	"stringp",
-	"(STRINGP obj) boolean",
-	"Predicate that is true for strings",
-	"create-string",
-	"(CREATE-STRING i initial-element+) <string>",
-	"Create a string of length 'i' filled with 'initial-element'",
-	"string=",
-	"(STRING= string1 string2) quasi-boolean",
-	"Are two strings equal?",
-	"string/=",
-	"(STRING/= string1 string2) quasi-boolean",
-	"Are two strings not equal?",
-	"string<",
-	"(STRING< string1 string2) quasi-boolean",
-	"Is 'string1' before 'string2' in sort order?",
-	"string>",
-	"(STRING> string1 string2) quasi-boolean",
-	"Is 'string1' after 'string2' in sort order?",
-	"string>=",
-	"(STRING>= string1 string2) quasi-boolean",
-	"Is 'string1' after or equal to 'string2' in sort order?",
-	"string<=",
-	"(STRING<= string1 string2) quasi-boolean",
-	"Is 'string1' before or equal to 'string2' in sort order?",
-	"char-index",
-	"(CHAR-INDEX character string start-position +) <object>",
-	"Return the position where 'character' occurs in 'string'",
-	"string-index",
-	"(STRING-INDEX substring string start-position +) <object>",
-	"Return the position where 'substring' occurs in 'string'",
-	"string-append",
-	"(STRING-APPEND string *) <string>",
-	"Concatenate the strings string ...",
-	"symbolp",
-	"(SYMBOLP obj) boolean",
-	"Predicate that is true for <symbol> objects",
-	"property",
-	"(PROPERTY symbol property-name obj +) <object>",
-	"Return a property of a symbol",
-	"set-property",
-	"(SET-PROPERTY obj symbol property-name) <object>",
-	"Set a property of a symbol",
-	"remove-property",
-	"(REMOVE-PROPERTY symbol property-name) <object>",
-	"Remove a property from a symbol",
-	"gensym",
-	"(GENSYM) <symbol>",
-	"Create an anonymous symbol",
-	"basic-vector-p",
-	"(BASIC-VECTOR-P obj) boolean",
-	"Predicate that is true for <basic-vector> objects",
-	"general-vector-p",
-	"(GENERAL-VECTOR-P obj) boolean",
-	"Predicate that is true for <general-vector> objects",
-	"create-vector",
-	"(CREATE-VECTOR i initial-element +) <general-vector>",
-	"Create a vector of length 'i', with each element initialised to 'initial-element'",
-	"vector",
-	"(VECTOR obj *) <general-vector>",
-	"Create a vector from the elements obj ...",
-	"load",
-	"(load file) T",
-	"Load 'file' (extension)",
-	"time",
-	"(time form) <object>",
-	"Show the time to evaluate 'form' (special form) (extension)",
-	"eval",
-	"(eval form) <object>",
-	"Evaluate 'form' (extension)",
-	"compile-file",
-	"(compile-file file) boolean",
-	"Compile 'file' (extension)",
-	"gbc",
-	"(gbc) <null>",
-	"Force garbage collection (extension)",
-	"quit",
-	"(quit) transfers-control",
-	"Exit the ISLisp interpreter (extension)",
+    "with-standard-output",
+    "(with-standard-output stream-form form *) <object>",
+    "Evaluate the forms form ... with standard-output set to the result of 'steram-form' (special form)",
+    "with-error-output",
+    "(with-error-output stream-form form *) <object>",
+    "Evaluate the forms form ... with standard-error set to the result of 'stream-form' (special form)",
+    "open-input-file",
+    "(open-input-file filename element-class +) <stream>",
+    "Open the file 'filename' as an input stream",
+    "open-output-file",
+    "(open-output-file filename element-class +) <stream>",
+    "Open the file 'filename' as an output stream",
+    "open-io-file",
+    "(open-io-file filename element-class +) <stream>",
+    "Open the file 'filename' for as an input/output stream",
+    "with-open-input-file",
+    "(with-open-input-file (name file element-class +) form *) <object>",
+    "Evaluate 'form' with standard-input redirected from 'file' and afterwards close it (special form)",
+    "with-open-output-file",
+    "(with-open-output-file (name file element-class +) form *) <object>",
+    "Evaluate 'form' with standard-output redirected to 'file' and afterwards close it (special form)",
+    "with-open-io-file",
+    "(with-open-io-file (name file element-class +) form *) <object>",
+    "Evaluate 'form' with both standard-input and standard-output streams redirected to/from 'file' and afterwards close it (special form)",
+    "close",
+    "(close stream) implementation-defined",
+    "Close a stream",
+    "create-string-input-stream",
+    "(create-string-input-stream string) <stream>",
+    "Create a string input stream",
+    "create-string-output-stream",
+    "(create-string-output-stream) <stream>",
+    "Create a string output stream",
+    "get-output-stream-string",
+    "(get-output-stream-string stream) <string>",
+    "Return a string containing the output that was sent to a string output stream",
+    "stringp",
+    "(STRINGP obj) boolean",
+    "Predicate that is true for strings",
+    "create-string",
+    "(CREATE-STRING i initial-element+) <string>",
+    "Create a string of length 'i' filled with 'initial-element'",
+    "string=",
+    "(STRING= string1 string2) quasi-boolean",
+    "Are two strings equal?",
+    "string/=",
+    "(STRING/= string1 string2) quasi-boolean",
+    "Are two strings not equal?",
+    "string<",
+    "(STRING< string1 string2) quasi-boolean",
+    "Is 'string1' before 'string2' in sort order?",
+    "string>",
+    "(STRING> string1 string2) quasi-boolean",
+    "Is 'string1' after 'string2' in sort order?",
+    "string>=",
+    "(STRING>= string1 string2) quasi-boolean",
+    "Is 'string1' after or equal to 'string2' in sort order?",
+    "string<=",
+    "(STRING<= string1 string2) quasi-boolean",
+    "Is 'string1' before or equal to 'string2' in sort order?",
+    "char-index",
+    "(CHAR-INDEX character string start-position +) <object>",
+    "Return the position where 'character' occurs in 'string'",
+    "string-index",
+    "(STRING-INDEX substring string start-position +) <object>",
+    "Return the position where 'substring' occurs in 'string'",
+    "string-append",
+    "(STRING-APPEND string *) <string>",
+    "Concatenate the strings string ...",
+    "symbolp",
+    "(SYMBOLP obj) boolean",
+    "Predicate that is true for <symbol> objects",
+    "property",
+    "(PROPERTY symbol property-name obj +) <object>",
+    "Return a property of a symbol",
+    "set-property",
+    "(SET-PROPERTY obj symbol property-name) <object>",
+    "Set a property of a symbol",
+    "remove-property",
+    "(REMOVE-PROPERTY symbol property-name) <object>",
+    "Remove a property from a symbol",
+    "gensym",
+    "(GENSYM) <symbol>",
+    "Create an anonymous symbol",
+    "basic-vector-p",
+    "(BASIC-VECTOR-P obj) boolean",
+    "Predicate that is true for <basic-vector> objects",
+    "general-vector-p",
+    "(GENERAL-VECTOR-P obj) boolean",
+    "Predicate that is true for <general-vector> objects",
+    "create-vector",
+    "(CREATE-VECTOR i initial-element +) <general-vector>",
+    "Create a vector of length 'i', with each element initialised to 'initial-element'",
+    "vector",
+    "(VECTOR obj *) <general-vector>",
+    "Create a vector from the elements obj ...",
+    "load",
+    "(load file) T",
+    "Load 'file' (extension)",
+    "time",
+    "(time form) <object>",
+    "Show the time to evaluate 'form' (special form) (extension)",
+    "eval",
+    "(eval form) <object>",
+    "Evaluate 'form' (extension)",
+    "compile-file",
+    "(compile-file file) boolean",
+    "Compile 'file' (extension)",
+    "gbc",
+    "(gbc) <null>",
+    "Force garbage collection (extension)",
+    "quit",
+    "(quit) transfers-control",
+    "Exit the ISLisp interpreter (extension)",
 };
 
 #define NELEM(X) (sizeof(X) / sizeof((X)[0]))
@@ -3729,7 +3723,7 @@ int find_function_data(const char *str)
 {
     int i;
 
-    for (i = 0; i < (int) NELEM(functions_data); i=i+3) {
+    for (i = 0; i < (int) NELEM(functions_data); i = i + 3) {
 	if (strcmp(functions_data[i], str) == 0) {
 	    return i;
 	}

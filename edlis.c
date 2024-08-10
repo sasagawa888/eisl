@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     ed_footer = LINES;
     ed_middle = LINES / 2;
     ESCCLS();
-    display_header(fname);
+    display_header();
     display_screen();
     ed_row = ed_col = ed_col1 = 0;
     edit_screen();
@@ -1218,7 +1218,7 @@ void load_file()
     strcpy(fname, getname());
     load_data(fname);
     ESCCLS();
-    display_header(fname);
+    display_header();
     display_screen();
     ESCMOVE(ed_footer, 1);
     ESCREV();
@@ -1700,26 +1700,6 @@ bool edit_loop(void)
 	case 'i':
 		information();
 		break;
-	case 'j':
-	    i = find_function_data(get_fragment());
-	    if (i != -1) {
-		ESCMOVE(2, 1);
-		ESCCLS1();
-		CHECK(addstr, functions_data[i + 2]);
-		CHECK(addstr, "\n\n--- enter any key to exit ---")
-		    CHECK(refresh);
-		CHECK(getch);
-		display_screen();
-	    } else {
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		clear_status();
-		CHECK(addstr, "Can't fild");
-		ESCMOVE(ed_footer, 1);
-		ESCRST();
-	    }
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    return false;
 	case CTRL('F'):
 	    sexp_next();
 	    break;
@@ -1766,7 +1746,7 @@ bool edit_loop(void)
 	break;
     case KEY_IC:
 	ed_ins = !ed_ins;
-	display_header(fname);
+	display_header();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	break;
     case KEY_PPAGE:
@@ -1917,7 +1897,7 @@ bool edit_loop(void)
     return false;
 }
 
-void display_header(char *fname)
+void display_header(void)
 {
     int i;
     ESCHOME();
@@ -3059,7 +3039,7 @@ void information(void)
 	CHECK(addstr, " --- enter any key to exit ---");
 	CHECK(refresh);
     CHECK(getch);
-	display_header(fname);
+	display_header();
 	display_screen();
 	} else {
 	CHECK(addstr, "Can't fild");

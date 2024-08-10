@@ -27,13 +27,12 @@
 #define NUM_STR_MAX 5
 #define SHORT_STR_MAX 30
 
-bool edit_loop(void);
 volatile sig_atomic_t ctrl_c = 0;
 volatile sig_atomic_t ctrl_z = 0;
 
 FILE *port;
-char fname[256];
-bool cancel_flag;
+char fname[256];  // file name 
+bool cancel_flag; // for CTRL+G 
 
 // -----editor-----
 int ed_scroll;
@@ -1066,6 +1065,17 @@ void uncut_selection()
     modify_flag = true;
 }
 
+void save_selection()
+{
+	copy_selection();
+	ed_row = ed_clip_start;
+	ed_clip_start = ed_clip_end = -1;
+	restore_paren();
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	modify_flag = true;
+}
+
 bool quit_with_save()
 {
     int c;
@@ -1366,6 +1376,27 @@ void transfer_word()
     ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
+
+void mark_unmark()
+{
+	if (ed_clip_start == -1) {
+		ed_clip_start = ed_clip_end = ed_row;
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		CHECK(addstr, "marked");
+		ESCRST();
+		return false;
+	    } else {
+		ed_clip_start = ed_clip_end = -1;
+		display_screen();
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		CHECK(addstr, "unmark");
+		ESCRST();
+		return false;
+	    }
+}
+
 void completion()
 {
     int i, c;
@@ -1640,7 +1671,7 @@ bool edit_loop(void)
 	ESCREV();
 	clear_status();
 	ESCMOVE(ed_footer, 1);
-	CHECK(addstr, "^meta");
+	CHECK(addstr, "M");
 	ESCRST();
 	CHECK(refresh);
 	c = getch();
@@ -1649,13 +1680,7 @@ bool edit_loop(void)
 	}
 	switch (c) {
 	case 'w':
-	    copy_selection();
-	    ed_row = ed_clip_start;
-	    ed_clip_start = ed_clip_end = -1;
-	    restore_paren();
-	    display_screen();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    modify_flag = true;
+		save_selection();
 	    break;
 	case '<':
 	    home();
@@ -1667,38 +1692,14 @@ bool edit_loop(void)
 	    pageup();
 	    break;
 	case '^':
-	    if (ed_clip_start == -1) {
-		ed_clip_start = ed_clip_end = ed_row;
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		CHECK(addstr, "marked");
-		ESCRST();
-		return false;
-	    } else {
-		ed_clip_start = ed_clip_end = -1;
-		display_screen();
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		CHECK(addstr, "unmark");
-		ESCRST();
-		return false;
-	    }
+		mark_unmark();
+		break;
 	case TAB:
 	    completion();
-	    return false;
+	    break;
 	case 'i':
-	    i = find_function_data(get_fragment());
-	    ESCMOVE(ed_footer, 1);
-	    ESCREV();
-	    clear_status();
-	    if (i != -1) {
-		CHECK(addstr, functions_data[i + 1]);
-	    } else {
-		CHECK(addstr, "Can't fild");
-	    }
-	    ESCRST();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	    return false;
+		information();
+		break;
 	case 'j':
 	    i = find_function_data(get_fragment());
 	    if (i != -1) {
@@ -3040,6 +3041,31 @@ void replace_word(const char *str1, const char *str2)
 	    str2++;
 	}
     }
+}
+
+void information(void)
+{
+	int i;
+
+	i = find_function_data(get_fragment());
+	ESCMOVE(ed_footer, 1);
+	ESCREV();
+	clear_status();
+	if (i != -1) {
+	CHECK(addstr, functions_data[i + 1]);
+	CHECK(addstr, "\n");
+	ESCRST();
+	CHECK(addstr, functions_data[i + 2]);
+	CHECK(addstr, " --- enter any key to exit ---");
+	CHECK(refresh);
+    CHECK(getch);
+	display_header(fname);
+	display_screen();
+	} else {
+	CHECK(addstr, "Can't fild");
+	ESCRST();
+	}
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 static const char *functions_data[] = {

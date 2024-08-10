@@ -1002,7 +1002,7 @@ void backspace_key()
     modify_flag = true;
 }
 
-void del()
+void del(void)
 {
     if (ed_data[ed_row][ed_col] == EOL)
 	return;

@@ -448,15 +448,10 @@ void word_prev()
 
 	if(ed_row > 0 && ed_col == 0){
 		ed_row--;
-		while(1){
+		while(ed_data[ed_row][ed_col] != EOL){
     	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
     	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		if(ed_data[ed_row][ed_col] == EOL){
-		break;
 		}
-		}
-		ed_col1--;
-		ed_col--;
 	}
 
 	while(1){
@@ -472,19 +467,15 @@ void word_prev()
 			 ed_data[ed_row][ed_col] == EOL)){
 		ed_col = ed_col1 = 0;
 		ed_row--;
-		while(1){
+		while(ed_data[ed_row][ed_col] != EOL){
     	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
     	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		if(ed_data[ed_row][ed_col] == EOL){
-		break;
 		}
-		}
-		ed_col1--;
-		ed_col--;
 	}
 	else if(ed_col > 0 && (ed_data[ed_row][ed_col] == '(' || 
 	        ed_data[ed_row][ed_col] == ')' ||
-			ed_data[ed_row][ed_col] == ';')){
+			ed_data[ed_row][ed_col] == ';' || 
+			ed_data[ed_row][ed_col] == EOL)){
 		ed_col1--;
 		ed_col--;
 	}

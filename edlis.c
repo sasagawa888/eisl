@@ -527,7 +527,8 @@ void list_down()
 		ed_row = save_row;
 		ed_col = save_col;
 		ed_col1 = save_col1;
-		goto skip;
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+		return;
 	}
 	else if(ed_data[ed_row][ed_col] == ';'){
 		ed_col = ed_col1 = 0;
@@ -733,7 +734,8 @@ void list_up()
 		ed_row = save_row;
 		ed_col = save_col;
 		ed_col1 = save_col1;
-		goto skip;
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+		return;
 	}
 	else if(ed_col > 0){
 		ed_col1--;
@@ -1702,6 +1704,27 @@ bool edit_loop(char *fname)
 		ESCRST();
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 		return false;
+	case 'j':
+		i = find_function_data(get_fragment());
+		if(i != -1){
+			ESCMOVE(2, 1);
+    		ESCCLS1();
+			CHECK(addstr, functions_data[i+2]);
+			CHECK(addstr,"\n\n--- enter any key to exit ---")
+			CHECK(refresh);
+    		CHECK(getch);
+    		display_screen();
+		}
+		else{
+			ESCMOVE(ed_footer, 1);
+	    	ESCREV();
+	    	clear_status();
+			CHECK(addstr, "Can't fild");
+			ESCMOVE(ed_footer, 1);
+	    	ESCRST();
+		}
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+		return false;
 	case CTRL('F'):
 		sexp_next();
 		break;
@@ -1939,13 +1962,13 @@ void help(void)
 	  "CTRL+F  move to right          CTRL+S  forward search word\n"
 	  "CTRL+B  move to left           CTRL+R  backward search word\n"
 	  "CTRL+P  move to up             ESC TAB complete name\n"
-	  "CTRL+N  move to down           ESC <   goto top page\n"
-	  "CTRL+J  end of line            ESC >   goto end page\n"
+	  "CTRL+N  move to down           ESC < , > goto top(end) page\n"
+	  "CTRL+J  end of line            ESC CTRL+F,B,N,P,U,D move in S-exp\n"
 	  "CTRL+A  begin of line          ESC ^   mark(or unmark) row for selection\n"
 	  "CTRL+E  end of line            CTRL+D  delete one char\n"
 	  "CTRL+V  page down              CTRL+O  return\n"
 	  "ESC V   page up                CTRL+T  replace word\n"
-	  "ESC I   info of function       TAB     insert spaces as lisp indent rule\n"
+	  "ESC I , ESC J info of function TAB     insert spaces as lisp indent rule\n"
 	  "CTRL+K  cut one line           CTRL+W  cut selection\n"
 	  "ESC W   save selection         CTRL+Y  uncut selection\n"
 	  "CTRL+X CTRL+C quit from editor with save\n"

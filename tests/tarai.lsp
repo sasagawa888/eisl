@@ -1,4 +1,3 @@
-
 ;;sample code for type inference
 ;;benchmark test
 
@@ -88,3 +87,4 @@
     (if (= n 0)
         1
         (* n (fact (- n 1)))))
+

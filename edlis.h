@@ -29,6 +29,7 @@ int findnext(int row, int col);
 int findeol(int row);
 int findeol1(int row);
 int find_function_data(const char *str);
+int getch1(void);
 char *get_fragment(void);
 char *getname(void);
 enum HighlightToken check_token(int row, int col);

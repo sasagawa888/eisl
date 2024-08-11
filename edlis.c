@@ -405,7 +405,7 @@ void sexp_next()
 	pos = find_rparen(1);
 	if (pos.row != -1) {
 	    ed_row = pos.row;
-	    ed_col = ed_col1 = pos.col;
+	    ed_col = ed_col1 = pos.col+1;
 	}
     } else {			/* atom */
 	while (ed_data[ed_row][ed_col] != ' ' &&
@@ -559,6 +559,23 @@ void sexp_prev()
     struct position pos;
     turn = COLS - LEFT_MARGIN;
 
+	/* skip atom */
+	if (ed_data[ed_row][ed_col] != ' ' &&
+	    ed_data[ed_row][ed_col] != '(' &&
+		ed_data[ed_row][ed_col] != ')'){
+			while (ed_data[ed_row][ed_col] != ' ' &&
+	               ed_data[ed_row][ed_col] != '(' &&
+	               ed_data[ed_row][ed_col] != ')' && ed_col != 0) {
+	                   ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+	                   ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+	}
+	}
+
+	if(ed_data[ed_row][ed_col] == '(' &&
+	   ed_col == 0){
+		goto skip;
+	   }
+
     /* skip space */
     while (1) {
 	if (ed_col > 0 && ed_data[ed_row][ed_col] == ' ') {
@@ -587,6 +604,11 @@ void sexp_prev()
 	}
     }
 
+	if(ed_data[ed_row][ed_col] == ')' &&
+	   ed_data[ed_row][ed_col-1] == ')'){
+		ed_col--;
+	}
+
     if (ed_data[ed_row][ed_col] == ')') {
 	pos = find_lparen(1);
 	if (pos.row != -1) {
@@ -600,6 +622,8 @@ void sexp_prev()
 	    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
 	    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 	}
+	ed_col1++;
+	ed_col++;
     }
 
   skip:

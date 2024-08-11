@@ -651,19 +651,6 @@ void line_end()
     modify_flag = true;
 }
 
-void cut_line()
-{
-    ed_clip_start = ed_clip_end = ed_row;
-    copy_selection();
-    delete_selection();
-    ed_row = ed_clip_start;
-    ed_clip_start = ed_clip_end = -1;
-    restore_paren();
-    display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    modify_flag = true;
-}
-
 
 void sexp_next()
 {
@@ -1069,7 +1056,29 @@ void list_up()
     }
 }
 
+void redisplay_screen()
+{
+	ed_start = ed_row - ed_scroll / 2;
+	if(ed_start < 0)
+	ed_start = 0;
+
+	display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+}
+
 //-----------cut and paste-------------------------------
+void cut_line()
+{
+    ed_clip_start = ed_clip_end = ed_row;
+    copy_selection();
+    delete_selection();
+    ed_row = ed_clip_start;
+    ed_clip_start = ed_clip_end = -1;
+    restore_paren();
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = true;
+}
 
 void mark_unmark(void)
 {
@@ -1710,6 +1719,9 @@ bool edit_loop(void)
 	break;
     case CTRL('T'):
 	transfer_word();
+	break;
+	case CTRL('L'):
+	redisplay_screen();
 	break;
     case ESC:
 	ESCMOVE(ed_footer, 1);

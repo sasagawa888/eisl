@@ -1216,11 +1216,13 @@ void insert_file()
     char str1[SHORT_STR_MAX];
     int c,row,col;
 
+	/* clear copy buffer */
 	for(row=0;row<COPY_SIZE;row++){
-		for(col=0;COL_SIZE;col++){
+		for(col=0;col<COL_SIZE;col++){
 			ed_copy[row][col] = 0;
 		}
 	}
+
 
     clear_status();
     CHECK(addstr, "filename:  ");
@@ -1235,6 +1237,8 @@ void insert_file()
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	return;
     }
+
+	/* load file to copy buffer */
 	row = col = 0;
     c = fgetc(port);
     while (c != EOF) {
@@ -1263,8 +1267,11 @@ void insert_file()
     ed_copy_end = row;
     ed_copy[ed_copy_end][0] = EOL;
     fclose(port);
+
+	/* paste copy buffer to main buffer */
 	paste_selection();
     display_screen();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     modify_flag = true;
 }
 

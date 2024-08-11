@@ -11,11 +11,12 @@ Edlis supports Unicode from ver2.57.
 
 ## Commands
 
-| Key           | Command               |
-| ------------- | --------------------- |
-| CTRL+X CTRL+S | Save file             |
-| CTRL+X CTRL+C | Quit editor with save |
-| CTRL+X CTRL+I | Insert file           |
+| Key           | Command                 |
+| ------------- | ------------------------|
+| CTRL+X CTRL+S | Save file               |
+| CTRL+X CTRL+C | Quit editor with save   |
+| CTRL+X CTRL+I | Insert file             |
+| CTRL+X CTRL+Z | Quit editor without save|
 
 ## Editing
 The key bindings are a hybrid of Emacs and nano.
@@ -47,9 +48,22 @@ The key bindings are a hybrid of Emacs and nano.
 | ESC TAB   | Complete builtin function or syntax |
 | ESC <     | Goto top page                   |
 | ESC >     | Goto end page                   |
+| ESC CTRL+F| Move right in S-exp units       |
+| ESC CTRL+B| Move left in S-exp units        |
+| ESC CTRL+N| Move right in list units        |
+| ESC CTRL+P| Move left in list units         |
+| ESC CTRL+U| Move up in list structure       |
+| ESC CTRL+D| Move down in list structure     |
 | ESC ^     | Mark (or unmark) row for selection. "ESC ^" marks the current row, then cursor up or down selects rows. "ESC ^" again unmarks.|
 | ←　→　↑　↓　| Usual cursor movement          |
 | Home      | Display top page                |
 | End       | Display end page                |
 | PageUp    | Page up                         |
 | PageDown  | Page down                       |
+
+
+# Spec 
+
+- main buffer  row-size  5000, col-size 256 (defined in edlis.h)
+- sub buffer  row-size 1000, col-size 256 (defined in edlis.h)
+

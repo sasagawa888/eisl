@@ -706,7 +706,8 @@ void sexp_next()
     } else {			/* atom */
 	while (ed_data[ed_row][ed_col] != ' ' &&
 	       ed_data[ed_row][ed_col] != '(' &&
-	       ed_data[ed_row][ed_col] != ')') {
+	       ed_data[ed_row][ed_col] != ')' &&
+		   ed_data[ed_row][ed_col] != EOL) {
 	    ed_col++;
 	    ed_col1++;
 	}

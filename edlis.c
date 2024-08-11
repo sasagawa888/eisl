@@ -1214,7 +1214,13 @@ void save_file_as()
 void insert_file()
 {
     char str1[SHORT_STR_MAX];
-    int c;
+    int c,row,col;
+
+	for(row=0;row<COPY_SIZE;row++){
+		for(col=0;COL_SIZE;col++){
+			ed_copy[row][col] = 0;
+		}
+	}
 
     clear_status();
     CHECK(addstr, "filename:  ");
@@ -1229,19 +1235,20 @@ void insert_file()
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	return;
     }
+	row = col = 0;
     c = fgetc(port);
     while (c != EOF) {
-	ed_data[ed_row][ed_col] = c;
+	ed_copy[row][col] = c;
 	if (c == EOL) {
-	    ed_row++;
-	    ed_col = ed_col1 = 0;
-	    if (ed_row >= ROW_SIZE - 1) {
-		CHECK(printw, "row %d over max-row", ed_row);
+	    row++;
+	    col = 0;
+	    if (row >= COPY_SIZE - 1) {
+		CHECK(printw, "row %d over max-row", row);
 	    }
 	} else {
-	    ed_col++;
-	    if (ed_col >= COL_SIZE) {
-		CHECK(printw, "column %d over max-column", ed_col);
+	    col++;
+	    if (col >= COL_SIZE) {
+		CHECK(printw, "column %d over max-column", col);
 	    }
 	}
 	c = fgetc(port);
@@ -1249,13 +1256,14 @@ void insert_file()
     /* if get EOF without EOL 
      *  this is a pen[EOF] -> this is a pen[EOL]
      */
-    if (ed_col != 0) {
-	ed_data[ed_row][ed_col] = EOL;
-	ed_row++;
+    if (col != 0) {
+	ed_copy[ed_row][ed_col] = EOL;
+	row++;
     }
-    ed_end = ed_row;
-    ed_data[ed_end][0] = EOL;
+    ed_copy_end = row;
+    ed_copy[ed_copy_end][0] = EOL;
     fclose(port);
+	paste_selection();
     display_screen();
     modify_flag = true;
 }
@@ -2827,8 +2835,15 @@ void paste_selection()
 
     if (ed_copy_end == 0)
 	return;
-    if (ed_end + ed_copy_end > 1000)
+    if (ed_end + ed_copy_end > ROW_SIZE){
+	clear_status();
+	ESCMOVE(ed_footer,1);
+	ESCREV();
+	CHECK(addstr,"Buffer over flow");
+	ESCRST();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	return;
+	}
 
     for (i = ed_end; i >= ed_row; i--) {
 	for (j = 0; j < COL_SIZE; j++) {
@@ -2845,6 +2860,7 @@ void paste_selection()
 	}
 	k++;
     }
+	ed_end = ed_end + ed_copy_end;
 }
 
 void delete_selection()

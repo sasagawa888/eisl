@@ -13,7 +13,7 @@ static const float VERSION = 5.20;
 
 #define ROW_SIZE 5000
 #define COL_SIZE 255
-#define COPY_SIZE 500
+#define COPY_SIZE 1000
 #define TOKEN_MAX   80
 #define LEFT_MARGIN 7
 #define TOP_MARGIN  2

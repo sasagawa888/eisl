@@ -31,8 +31,8 @@ volatile sig_atomic_t ctrl_c = 0;
 volatile sig_atomic_t ctrl_z = 0;
 
 FILE *port;
-char fname[256];  // file name 
-bool cancel_flag; // for CTRL+G 
+char fname[256];		// file name 
+bool cancel_flag;		// for CTRL+G 
 
 // -----editor-----
 int ed_scroll;
@@ -701,7 +701,7 @@ void sexp_next()
 	pos = find_rparen(1);
 	if (pos.row != -1) {
 	    ed_row = pos.row;
-	    ed_col = ed_col1 = pos.col+1;
+	    ed_col = ed_col1 = pos.col + 1;
 	}
     } else {			/* atom */
 	while (ed_data[ed_row][ed_col] != ' ' &&
@@ -855,22 +855,20 @@ void sexp_prev()
     struct position pos;
     turn = COLS - LEFT_MARGIN;
 
-	/* skip atom */
-	if (ed_data[ed_row][ed_col] != ' ' &&
-	    ed_data[ed_row][ed_col] != '(' &&
-		ed_data[ed_row][ed_col] != ')'){
-			while (ed_data[ed_row][ed_col] != ' ' &&
-	               ed_data[ed_row][ed_col] != '(' &&
-	               ed_data[ed_row][ed_col] != ')' && ed_col != 0) {
-	                   ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-	                   ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+    /* skip atom */
+    if (ed_data[ed_row][ed_col] != ' ' &&
+	ed_data[ed_row][ed_col] != '(' && ed_data[ed_row][ed_col] != ')') {
+	while (ed_data[ed_row][ed_col] != ' ' &&
+	       ed_data[ed_row][ed_col] != '(' &&
+	       ed_data[ed_row][ed_col] != ')' && ed_col != 0) {
+	    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+	    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 	}
-	}
+    }
 
-	if(ed_data[ed_row][ed_col] == '(' &&
-	   ed_col == 0){
-		goto skip;
-	   }
+    if (ed_data[ed_row][ed_col] == '(' && ed_col == 0) {
+	goto skip;
+    }
 
     /* skip space */
     while (1) {
@@ -900,10 +898,10 @@ void sexp_prev()
 	}
     }
 
-	if(ed_data[ed_row][ed_col] == ')' &&
-	   ed_data[ed_row][ed_col-1] == ')'){
-		ed_col--;
-	}
+    if (ed_data[ed_row][ed_col] == ')' &&
+	ed_data[ed_row][ed_col - 1] == ')') {
+	ed_col--;
+    }
 
     if (ed_data[ed_row][ed_col] == ')') {
 	pos = find_lparen(1);
@@ -1074,22 +1072,22 @@ void list_up()
 
 void mark_unmark(void)
 {
-	if (ed_clip_start == -1) {
-		ed_clip_start = ed_clip_end = ed_row;
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		CHECK(addstr, "marked");
-		ESCRST();
-		return;
-	    } else {
-		ed_clip_start = ed_clip_end = -1;
-		display_screen();
-		ESCMOVE(ed_footer, 1);
-		ESCREV();
-		CHECK(addstr, "unmark");
-		ESCRST();
-		return;
-	    }
+    if (ed_clip_start == -1) {
+	ed_clip_start = ed_clip_end = ed_row;
+	ESCMOVE(ed_footer, 1);
+	ESCREV();
+	CHECK(addstr, "marked");
+	ESCRST();
+	return;
+    } else {
+	ed_clip_start = ed_clip_end = -1;
+	display_screen();
+	ESCMOVE(ed_footer, 1);
+	ESCREV();
+	CHECK(addstr, "unmark");
+	ESCRST();
+	return;
+    }
 }
 
 void cut_selection()
@@ -1115,13 +1113,13 @@ void uncut_selection()
 
 void save_selection()
 {
-	copy_selection();
-	ed_row = ed_clip_start;
-	ed_clip_start = ed_clip_end = -1;
-	restore_paren();
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	modify_flag = true;
+    copy_selection();
+    ed_row = ed_clip_start;
+    ed_clip_start = ed_clip_end = -1;
+    restore_paren();
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    modify_flag = true;
 }
 
 //-----------------command----------------------------
@@ -1214,14 +1212,14 @@ void save_file_as()
 void insert_file()
 {
     char str1[SHORT_STR_MAX];
-    int c,row,col;
+    int c, row, col;
 
-	/* clear copy buffer */
-	for(row=0;row<COPY_SIZE;row++){
-		for(col=0;col<COL_SIZE;col++){
-			ed_copy[row][col] = 0;
-		}
+    /* clear copy buffer */
+    for (row = 0; row < COPY_SIZE; row++) {
+	for (col = 0; col < COL_SIZE; col++) {
+	    ed_copy[row][col] = 0;
 	}
+    }
 
 
     clear_status();
@@ -1238,8 +1236,8 @@ void insert_file()
 	return;
     }
 
-	/* load file to copy buffer */
-	row = col = 0;
+    /* load file to copy buffer */
+    row = col = 0;
     c = fgetc(port);
     while (c != EOF) {
 	ed_copy[row][col] = c;
@@ -1268,10 +1266,10 @@ void insert_file()
     ed_copy[ed_copy_end][0] = EOL;
     fclose(port);
 
-	/* paste copy buffer to main buffer */
-	paste_selection();
+    /* paste copy buffer to main buffer */
+    paste_selection();
     display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     modify_flag = true;
 }
 
@@ -1673,7 +1671,7 @@ bool edit_loop(void)
 	    c = getch1();
 	    switch (c) {
 	    case CTRL('C'):
-		return(quit_with_save());
+		return (quit_with_save());
 	    case CTRL('S'):
 		save_file();
 		return false;
@@ -1726,7 +1724,7 @@ bool edit_loop(void)
 	}
 	switch (c) {
 	case 'w':
-		save_selection();
+	    save_selection();
 	    break;
 	case '<':
 	    home();
@@ -1738,14 +1736,14 @@ bool edit_loop(void)
 	    pageup();
 	    break;
 	case '^':
-		mark_unmark();
-		break;
+	    mark_unmark();
+	    break;
 	case TAB:
 	    completion();
 	    break;
 	case 'i':
-		information();
-		break;
+	    information();
+	    break;
 	case CTRL('F'):
 	    sexp_next();
 	    break;
@@ -2842,15 +2840,15 @@ void paste_selection()
 
     if (ed_copy_end == 0)
 	return;
-    if (ed_end + ed_copy_end > ROW_SIZE){
+    if (ed_end + ed_copy_end > ROW_SIZE) {
 	clear_status();
-	ESCMOVE(ed_footer,1);
+	ESCMOVE(ed_footer, 1);
 	ESCREV();
-	CHECK(addstr,"Buffer over flow");
+	CHECK(addstr, "Buffer over flow");
 	ESCRST();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	return;
-	}
+    }
 
     for (i = ed_end; i >= ed_row; i--) {
 	for (j = 0; j < COL_SIZE; j++) {
@@ -2867,7 +2865,7 @@ void paste_selection()
 	}
 	k++;
     }
-	ed_end = ed_end + ed_copy_end;
+    ed_end = ed_end + ed_copy_end;
 }
 
 void delete_selection()
@@ -3081,27 +3079,27 @@ void replace_word(const char *str1, const char *str2)
 
 void information(void)
 {
-	int i;
+    int i;
 
-	i = find_function_data(get_fragment());
-	ESCMOVE(ed_footer, 1);
-	ESCREV();
-	clear_status();
-	if (i != -1) {
+    i = find_function_data(get_fragment());
+    ESCMOVE(ed_footer, 1);
+    ESCREV();
+    clear_status();
+    if (i != -1) {
 	CHECK(addstr, functions_data[i + 1]);
 	CHECK(addstr, "\n");
 	ESCRST();
 	CHECK(addstr, functions_data[i + 2]);
 	CHECK(addstr, " --- enter any key to exit ---");
 	CHECK(refresh);
-    CHECK(getch);
+	CHECK(getch);
 	display_header();
 	display_screen();
-	} else {
+    } else {
 	CHECK(addstr, "Can't fild");
 	ESCRST();
-	}
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    }
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 static const char *functions_data[] = {

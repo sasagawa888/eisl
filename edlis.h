@@ -72,6 +72,7 @@ void replace_fragment(const char *newstr);
 void replace_word(const char *str1, const char *str2);
 void reset_paren(void);
 void restore_paren(void);
+void restore_cursol(void);
 void return_key(void);
 void remove_headspace(int row);
 void right(void);

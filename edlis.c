@@ -148,6 +148,11 @@ void clear_status()
     ESCMOVE(ed_footer, 1);
 }
 
+void restore_cursol()
+{
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+}
+
 void init_ncurses()
 {
     if (initscr() == NULL) {
@@ -1220,6 +1225,7 @@ void mark_unmark(void)
 	ESCREV();
 	CHECK(addstr, "marked");
 	ESCRST();
+	restore_cursol();
 	return;
     } else {
 	ed_clip_start = ed_clip_end = -1;
@@ -1228,6 +1234,7 @@ void mark_unmark(void)
 	ESCREV();
 	CHECK(addstr, "unmark");
 	ESCRST();
+	restore_cursol();
 	return;
     }
 }
@@ -1319,6 +1326,7 @@ void save_file()
 	strcpy(fname, getname());
 	if (cancel_flag) {
 	    cancel_flag = 0;
+		restore_cursol();
 	    return;
 	}
     }
@@ -1330,7 +1338,7 @@ void save_file()
     CHECK(addstr, "saved");
     CHECK(addstr, fname);
     ESCRST();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = false;
 }
 
@@ -1351,7 +1359,7 @@ void save_file_as()
     CHECK(addstr, "saved ");
     CHECK(addstr, str1);
     ESCRST();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = false;
 }
 
@@ -1365,6 +1373,7 @@ void save_region()
     strcpy(str1, getname());
     if (cancel_flag) {
 	cancel_flag = 0;
+	restore_cursol();
 	return;
     }
     copy_selection();
@@ -1377,7 +1386,7 @@ void save_region()
     CHECK(addstr, "saved ");
     CHECK(addstr, str1);
     ESCRST();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 }
 
 void insert_file()
@@ -1398,6 +1407,7 @@ void insert_file()
     strcpy(str1, getname());
     if (cancel_flag) {
 	cancel_flag = 0;
+	restore_cursol();
 	return;
     }
     ESCRST();
@@ -1407,7 +1417,7 @@ void insert_file()
 	CHECK(addstr, str1);
 	CHECK(addstr, " doesn't exist");
 	ESCRST();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
 
@@ -1445,7 +1455,7 @@ void insert_file()
     paste_selection();
     ed_copy_end = 0;
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 
@@ -1457,6 +1467,7 @@ void load_file()
     strcpy(fname, getname());
     if (cancel_flag) {
 	cancel_flag = 0;
+	restore_cursol();
 	return;
     }
     load_data(fname);
@@ -1469,7 +1480,7 @@ void load_file()
     CHECK(addstr, fname);
     ESCRST();
     ed_row = ed_col = ed_col1 = 0;
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = false;
 
 }
@@ -1489,7 +1500,7 @@ void search_next()
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
     pos = find_word(str1);
@@ -1499,7 +1510,7 @@ void search_next()
 	CHECK(addstr, "can't find ");
 	CHECK(addstr, str1);
 	ESCRST();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
     ed_row = pos.row;
@@ -1509,7 +1520,7 @@ void search_next()
 	ed_start = 0;
     }
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     ESCREV();
     CHECK(addstr, str1);
     ESCRST();
@@ -1527,7 +1538,7 @@ void search_prev()
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
     pos = find_word_back(str1);
@@ -1537,7 +1548,7 @@ void search_prev()
 	CHECK(addstr, "can't find ");
 	CHECK(addstr, str1);
 	ESCRST();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
     ed_row = pos.row;
@@ -1547,7 +1558,7 @@ void search_prev()
 	ed_start = 0;
     }
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     ESCREV();
     CHECK(addstr, str1);
     ESCRST();
@@ -1567,7 +1578,7 @@ void transfer_word()
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
     CHECK(addstr, "replace: ");
@@ -1575,7 +1586,7 @@ void transfer_word()
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
     ESCRST();
@@ -1588,7 +1599,7 @@ void transfer_word()
 	    ed_start = 0;
 	}
 	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	ESCREV();
 	CHECK(addstr, str1);
 	clear_status();
@@ -1619,7 +1630,7 @@ void transfer_word()
     CHECK(addstr, "can't find ");
     CHECK(addstr, str1);
     ESCRST();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 }
 
 
@@ -1912,49 +1923,49 @@ bool edit_loop(void)
 	switch (c) {
 	case 'w':
 	    save_selection();
-	    break;
+	    return false;
 	case '<':
 	    home();
-	    break;
+	    return false;
 	case '>':
 	    end();
-	    break;
+	    return false;
 	case 'v':
 	    pageup();
-	    break;
+	    return false;
 	case '^':
 	    mark_unmark();
-	    break;
+	    return false;
 	case TAB:
 	    completion();
-	    break;
+	    return false;
 	case 'i':
 	    information();
-	    break;
+	    return false;
 	case 'f':
 	    word_next();
-	    break;
+	    return false;
 	case 'b':
 	    word_prev();
-	    break;
+	    return false;
 	case CTRL('F'):
 	    sexp_next();
-	    break;
+	    return false;
 	case CTRL('B'):
 	    sexp_prev();
-	    break;
+	    return false;
 	case CTRL('N'):
 	    list_next();
-	    break;
+	    return false;
 	case CTRL('P'):
 	    list_prev();
-	    break;
+	    return false;
 	case CTRL('D'):
 	    list_down();
-	    break;
+	    return false;
 	case CTRL('U'):
 	    list_up();
-	    break;
+	    return false;
 	case CTRL('G'):
 	    ESCMOVE(ed_footer, 1);
 	    ESCREV();

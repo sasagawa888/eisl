@@ -62,6 +62,11 @@ The key bindings are a hybrid of Emacs and nano.
 | PageDown  | Page down                       |
 
 
+# Tmux
+Using tmux is very convenient. Pressing CTRL+B followed by % will split the screen into two panes. You can start Edlis on the left side and Easy-ISLisp on the right side. When you want to finish, detach by pressing CTRL+B followed by D in the terminal. To reattach, use tmux attach. The previous state will be restored.
+
+![tmux](edlis.png)
+
 # Spec 
 
 - main buffer  row-size  5000, col-size 256 (defined in edlis.h)

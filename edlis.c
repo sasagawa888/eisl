@@ -1904,6 +1904,7 @@ bool edit_loop(void)
 	CHECK(addstr, "M");
 	ESCRST();
 	CHECK(refresh);
+	while(1){
 	c = getch();
 	if (c == ERR) {
 	    errw("getch");
@@ -1960,6 +1961,7 @@ bool edit_loop(void)
 	    clear_status();
 	    ESCRST();
 	    return false;
+	}
 	}
 	break;
     case KEY_UP:

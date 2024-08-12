@@ -2204,6 +2204,7 @@ void help(void)
 	  "CTRL+X  CTRL+I insert buffer from file\n"
 	  "CTRL+X  CTRL+S save file\n"
 	  "CTRL+X  CTRL+W save file as\n"
+	  "CTRL+X  CTRL+L save region to file as\n"
 	  "CTRL+S  search a word forward\n"
 	  "CTRL+R  search a word backward\n"
 	  "CTRL+T  replace a word\n"

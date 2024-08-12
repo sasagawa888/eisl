@@ -1356,6 +1356,27 @@ void save_file_as()
     modify_flag = false;
 }
 
+void save_region()
+{
+	char str1[SHORT_STR_MAX];
+
+    ESCMOVE(ed_footer, 1);
+    clear_status();
+    CHECK(addstr, "filename:  ");
+    strcpy(str1, getname());
+	copy_selection();
+    save_copy(str1);
+	ed_copy_end = 0;
+    ESCMOVE(ed_footer, 1);
+    ESCREV();
+    clear_status();
+    ESCMOVE(ed_footer, 1);
+    CHECK(addstr, "saved ");
+    CHECK(addstr, str1);
+    ESCRST();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+}
+
 void insert_file()
 {
     char str1[SHORT_STR_MAX];
@@ -1832,6 +1853,9 @@ bool edit_loop(void)
 		return false;
 	    case CTRL('I'):
 		insert_file();
+		return false;
+		case CTRL('P'):
+		save_region();
 		return false;
 	    case CTRL('Z'):
 		ESCCLS();
@@ -2856,6 +2880,23 @@ void save_data(char *fname)
 	    if (ed_data[row][col] == EOL)
 		break;
 	}
+    fclose(port);
+}
+
+void save_copy(char *fname)
+{
+    int row, col;
+
+    FILE *port = fopen(fname, "w");
+    for (row = 0; row < ed_copy_end; row++){
+	for (col = 0; col < COL_SIZE; col++) {
+	    fputc(ed_copy[row][col], port);
+	    if (ed_copy[row][col] == EOL)
+		break;
+	}
+	}
+	fputc(EOL,port);
+	fputc(EOF,port);
     fclose(port);
 }
 

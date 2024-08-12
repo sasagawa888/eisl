@@ -241,16 +241,16 @@ int utf8_to_ucs4(int row, int col)
 
 bool is_word_char(char x)
 {
-	if(isalpha(x))
-		return true;
-	else if(isUni2(x))
-		return true;
-	else if(isUni3(x))
-		return true;
-	else if(isUni4(x))
-		return true;
-	
-	return false;
+    if (isalpha(x))
+	return true;
+    else if (isUni2(x))
+	return true;
+    else if (isUni3(x))
+	return true;
+    else if (isUni4(x))
+	return true;
+
+    return false;
 }
 
 
@@ -709,7 +709,7 @@ void sexp_next()
 	while (ed_data[ed_row][ed_col] != ' ' &&
 	       ed_data[ed_row][ed_col] != '(' &&
 	       ed_data[ed_row][ed_col] != ')' &&
-		   ed_data[ed_row][ed_col] != EOL) {
+	       ed_data[ed_row][ed_col] != EOL) {
 	    ed_col++;
 	    ed_col1++;
 	}
@@ -736,31 +736,28 @@ void sexp_next()
 
 void word_next()
 {
-	int turn;
+    int turn;
     turn = COLS - LEFT_MARGIN;
 
     if (ed_data[ed_row][ed_col] == EOF) {
 	clear_status();
 	return;
     }
-
-	// skip word char 
-	if(is_word_char(ed_data[ed_row][ed_col])){
-		while(is_word_char(ed_data[ed_row][ed_col])){
-			ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-			ed_col = ed_col + increase_buffer(ed_row, ed_col);
-		}
+    // skip word char 
+    if (is_word_char(ed_data[ed_row][ed_col])) {
+	while (is_word_char(ed_data[ed_row][ed_col])) {
+	    ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+	    ed_col = ed_col + increase_buffer(ed_row, ed_col);
 	}
-
-	// skip space 
+    }
+    // skip space 
     while (1) {
 	if (ed_data[ed_row][ed_col] == EOL) {
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
 	} else if (ed_data[ed_row][ed_col] == EOF) {
 	    goto skip;
-	} 
-	else if (!is_word_char(ed_data[ed_row][ed_col])) {
+	} else if (!is_word_char(ed_data[ed_row][ed_col])) {
 	    ed_col1++;
 	    ed_col++;
 	} else {
@@ -768,8 +765,8 @@ void word_next()
 	}
     }
 
-	skip:
-	if (ed_row > ed_start + ed_scroll) {
+  skip:
+    if (ed_row > ed_start + ed_scroll) {
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
@@ -999,7 +996,7 @@ void sexp_prev()
 
 void word_prev()
 {
-	int turn;
+    int turn;
     turn = COLS - LEFT_MARGIN;
 
     if (ed_row == 0 && ed_col == 0) {
@@ -1007,48 +1004,46 @@ void word_prev()
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	return;
     }
-
-	// skip word char 
-	if(is_word_char(ed_data[ed_row][ed_col])){
-		while(is_word_char(ed_data[ed_row][ed_col])){
-			ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    		ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
-		}
+    // skip word char 
+    if (is_word_char(ed_data[ed_row][ed_col])) {
+	while (is_word_char(ed_data[ed_row][ed_col])) {
+	    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+	    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 	}
-
-	// skip space 
+    }
+    // skip space 
     while (1) {
 	if (ed_row == 0 && ed_col == 0) {
 	    goto skip;
 	} else if (ed_row > 0 && ed_col == 0 &&
-		   (!is_word_char(ed_data[ed_row][ed_col]))){
+		   (!is_word_char(ed_data[ed_row][ed_col]))) {
 	    ed_col = ed_col1 = 0;
 	    ed_row--;
 	    while (ed_data[ed_row][ed_col] != EOL) {
 		ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
 		ed_col = ed_col + increase_buffer(ed_row, ed_col);
 	    }
-	} else if(ed_col > 0 && !is_word_char(ed_data[ed_row][ed_col])){
-		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
-	} else{
-		break;
+	} else if (ed_col > 0 && !is_word_char(ed_data[ed_row][ed_col])) {
+	    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+	    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+	} else {
+	    break;
 	}
+    }
+
+    // skip word char 
+    if (is_word_char(ed_data[ed_row][ed_col])) {
+	while (is_word_char(ed_data[ed_row][ed_col])) {
+	    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+	    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 	}
+    }
 
-	// skip word char 
-	if(is_word_char(ed_data[ed_row][ed_col])){
-		while(is_word_char(ed_data[ed_row][ed_col])){
-			ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    		ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
-		}
-	}
+    ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    ed_col = ed_col + increase_buffer(ed_row, ed_col);
 
-	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-	ed_col = ed_col + increase_buffer(ed_row, ed_col);
-
-	skip:
-	if (ed_row > ed_start + ed_scroll) {
+  skip:
+    if (ed_row > ed_start + ed_scroll) {
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
@@ -1195,12 +1190,12 @@ void list_up()
 
 void redisplay_screen()
 {
-	ed_start = ed_row - ed_scroll / 2;
-	if(ed_start < 0)
+    ed_start = ed_row - ed_scroll / 2;
+    if (ed_start < 0)
 	ed_start = 0;
 
-	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    display_screen();
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 }
 
 //-----------cut and paste-------------------------------
@@ -1322,6 +1317,10 @@ void save_file()
 	clear_status();
 	CHECK(addstr, "filename:  ");
 	strcpy(fname, getname());
+	if (cancel_flag) {
+	    cancel_flag = 0;
+	    return;
+	}
     }
     save_data(fname);
     ESCMOVE(ed_footer, 1);
@@ -1358,15 +1357,19 @@ void save_file_as()
 
 void save_region()
 {
-	char str1[SHORT_STR_MAX];
+    char str1[SHORT_STR_MAX];
 
     ESCMOVE(ed_footer, 1);
     clear_status();
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
-	copy_selection();
+    if (cancel_flag) {
+	cancel_flag = 0;
+	return;
+    }
+    copy_selection();
     save_copy(str1);
-	ed_copy_end = 0;
+    ed_copy_end = 0;
     ESCMOVE(ed_footer, 1);
     ESCREV();
     clear_status();
@@ -1393,6 +1396,10 @@ void insert_file()
     clear_status();
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
+    if (cancel_flag) {
+	cancel_flag = 0;
+	return;
+    }
     ESCRST();
     port = fopen(str1, "r");
     if (port == NULL) {
@@ -1436,7 +1443,7 @@ void insert_file()
 
     /* paste copy buffer to main buffer */
     paste_selection();
-	ed_copy_end = 0;
+    ed_copy_end = 0;
     display_screen();
     ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     modify_flag = true;
@@ -1448,6 +1455,10 @@ void load_file()
     clear_status();
     CHECK(addstr, "filename:  ");
     strcpy(fname, getname());
+    if (cancel_flag) {
+	cancel_flag = 0;
+	return;
+    }
     load_data(fname);
     ESCCLS();
     display_header();
@@ -1854,7 +1865,7 @@ bool edit_loop(void)
 	    case CTRL('I'):
 		insert_file();
 		return false;
-		case CTRL('P'):
+	    case CTRL('P'):
 		save_region();
 		return false;
 	    case CTRL('Z'):
@@ -1882,7 +1893,7 @@ bool edit_loop(void)
     case CTRL('T'):
 	transfer_word();
 	break;
-	case CTRL('L'):
+    case CTRL('L'):
 	redisplay_screen();
 	break;
     case ESC:
@@ -1920,11 +1931,11 @@ bool edit_loop(void)
 	    information();
 	    break;
 	case 'f':
-		word_next();
-		break;
+	    word_next();
+	    break;
 	case 'b':
-		word_prev();
-		break;
+	    word_prev();
+	    break;
 	case CTRL('F'):
 	    sexp_next();
 	    break;
@@ -2889,15 +2900,15 @@ void save_copy(char *fname)
     int row, col;
 
     FILE *port = fopen(fname, "w");
-    for (row = 0; row < ed_copy_end; row++){
+    for (row = 0; row < ed_copy_end; row++) {
 	for (col = 0; col < COL_SIZE; col++) {
 	    fputc(ed_copy[row][col], port);
 	    if (ed_copy[row][col] == EOL)
 		break;
 	}
-	}
-	fputc(EOL,port);
-	fputc(EOF,port);
+    }
+    fputc(EOL, port);
+    fputc(EOF, port);
     fclose(port);
 }
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <termios.h>
+#include <ctype.h>
 
 #define _XOPEN_SOURCE 700
 #define _XOPEN_SOURCE_EXTENDED
@@ -237,6 +238,20 @@ int utf8_to_ucs4(int row, int col)
 	return (-1);
 }
 
+
+bool is_word_char(char x)
+{
+	if(isalpha(x))
+		return true;
+	else if(isUni2(x))
+		return true;
+	else if(isUni3(x))
+		return true;
+	else if(isUni4(x))
+		return true;
+	
+	return false;
+}
 
 
 // calculate buffer position to increase according to UTF8 unicode
@@ -719,6 +734,59 @@ void sexp_next()
 }
 
 
+void word_next()
+{
+	int turn;
+    turn = COLS - LEFT_MARGIN;
+
+    if (ed_data[ed_row][ed_col] == EOF) {
+	clear_status();
+	return;
+    }
+
+	// skip word char 
+	if(is_word_char(ed_data[ed_row][ed_col])){
+		while(is_word_char(ed_data[ed_row][ed_col])){
+			ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+			ed_col = ed_col + increase_buffer(ed_row, ed_col);
+		}
+	}
+
+	// skip space 
+    while (1) {
+	if (ed_data[ed_row][ed_col] == EOL) {
+	    ed_col = ed_col1 = 0;
+	    ed_row++;
+	} else if (ed_data[ed_row][ed_col] == EOF) {
+	    goto skip;
+	} 
+	else if (!is_word_char(ed_data[ed_row][ed_col])) {
+	    ed_col1++;
+	    ed_col++;
+	} else {
+	    break;
+	}
+    }
+
+	skip:
+	if (ed_row > ed_start + ed_scroll) {
+	ed_start = ed_row - ed_scroll / 2;
+    }
+    display_screen();
+    if (ed_col1 < turn) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else if (ed_col1 == turn) {
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - turn + LEFT_MARGIN);
+	display_line(ed_row);
+    }
+}
+
+
 void list_next()
 {
     int turn;
@@ -913,6 +981,75 @@ void sexp_prev()
 	ed_start = ed_row - ed_scroll / 2;
 	if (ed_start < 0)
 	    ed_start = 0;
+    }
+    display_screen();
+    if (ed_col1 < turn) {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    } else if (ed_col1 == turn) {
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+    } else {
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - turn + LEFT_MARGIN);
+	display_line(ed_row);
+    }
+}
+
+
+void word_prev()
+{
+	int turn;
+    turn = COLS - LEFT_MARGIN;
+
+    if (ed_row == 0 && ed_col == 0) {
+	clear_status();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	return;
+    }
+
+	// skip word char 
+	if(is_word_char(ed_data[ed_row][ed_col])){
+		while(is_word_char(ed_data[ed_row][ed_col])){
+			ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    		ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+		}
+	}
+
+	// skip space 
+    while (1) {
+	if (ed_row == 0 && ed_col == 0) {
+	    goto skip;
+	} else if (ed_row > 0 && ed_col == 0 &&
+		   (!is_word_char(ed_data[ed_row][ed_col]))){
+	    ed_col = ed_col1 = 0;
+	    ed_row--;
+	    while (ed_data[ed_row][ed_col] != EOL) {
+		ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+		ed_col = ed_col + increase_buffer(ed_row, ed_col);
+	    }
+	} else if(ed_col > 0 && !is_word_char(ed_data[ed_row][ed_col])){
+		ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    	ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+	} else{
+		break;
+	}
+	}
+
+	// skip word char 
+	if(is_word_char(ed_data[ed_row][ed_col])){
+		while(is_word_char(ed_data[ed_row][ed_col])){
+			ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    		ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+		}
+	}
+
+	ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+	ed_col = ed_col + increase_buffer(ed_row, ed_col);
+
+	skip:
+	if (ed_row > ed_start + ed_scroll) {
+	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
     if (ed_col1 < turn) {
@@ -1757,6 +1894,12 @@ bool edit_loop(void)
 	case 'i':
 	    information();
 	    break;
+	case 'f':
+		word_next();
+		break;
+	case 'b':
+		word_prev();
+		break;
 	case CTRL('F'):
 	    sexp_next();
 	    break;

@@ -23,6 +23,7 @@ static const char *functions_data[];
 
 bool edit_loop(void);
 bool is_special(int row, int col);
+bool is_word_char(char x);
 bool quit_with_save(void);
 int calc_tabs(void);
 int findnext(int row, int col);
@@ -81,6 +82,8 @@ void signal_handler_c(int signo __unused);
 void signal_handler_z(int signo __unused);
 void tab_key(void);
 void up(void);
+void word_next(void);
+void word_prev(void);
  
  
 //following are for unicode<=>UTF-8 transform

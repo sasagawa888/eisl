@@ -17,6 +17,8 @@ Edlis supports Unicode from ver2.57.
 | CTRL+X CTRL+C | Quit editor with save   |
 | CTRL+X CTRL+I | Insert file             |
 | CTRL+X CTRL+Z | Quit editor without save|
+| CTRL+X CTRL+W | Save buffer to file     |
+| CTRL+X CTRL+L | Save region to file     |
 
 ## Editing
 The key bindings are a hybrid of Emacs and nano.
@@ -48,6 +50,8 @@ The key bindings are a hybrid of Emacs and nano.
 | ESC TAB   | Complete builtin function or syntax |
 | ESC <     | Goto top page                   |
 | ESC >     | Goto end page                   |
+| ESC f     | Move right in word units        |
+| ESC b     | Move left in word units         |
 | ESC CTRL+F| Move right in S-exp units       |
 | ESC CTRL+B| Move left in S-exp units        |
 | ESC CTRL+N| Move right in list units        |

@@ -1415,6 +1415,7 @@ void insert_file()
 
     /* paste copy buffer to main buffer */
     paste_selection();
+	ed_copy_end = 0;
     display_screen();
     ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
     modify_flag = true;
@@ -2156,20 +2157,22 @@ void help(void)
 	  "ESC V   display previous page                 Page Up key\n"
 	  "ESC <   goto top page                         Home key\n"
 	  "ESC >   goto end page                         End key\n"
-	  "TAB     insert spaces as lisp indent rule\n"
+	  "ESC f   Move forward in word units\n"
+	  "ESC b   Move backward in word units\n"
 	  "ESC CTRL+F  Move forward in S-expressdion units\n"
 	  "ESC CTRL+B  Move Back in S-expression units\n"
 	  "ESC CTRL+N  Move forward in list units\n"
 	  "ESC CTRL+P  Move back in List units\n"
 	  "ESC CTRL+U  Move up a level in the list structure\n"
 	  "ESC STRL+D  Move down a level in the list structure\n"
-	  "Insert      Switch insert-mode and overwrite-mode\n"
 	  "--- enter any key to go next page ---");
     CHECK(refresh);
     CHECK(getch);
     ESCMOVE(2, 1);
     ESCCLS1();
     CHECK(addstr, "--- Edlis help(2) ---\n"
+	  "Insert      Switch insert-mode and overwrite-mode\n"
+	  "TAB     insert spaces as lisp indent rule\n"
 	  "CTRL+X  CTRL+C quit from editor with save\n"
 	  "CTRL+X  CTRL+Z quit from editor without save\n"
 	  "CTRL+X  CTRL+F load from file to editor\n"

@@ -3111,7 +3111,7 @@ void delete_selection()
 
 enum HighlightToken check_token(int row, int col)
 {
-    char str[COLS];
+    char str[COL_SIZE];
     int pos;
 
     pos = 0;

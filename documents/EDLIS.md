@@ -80,3 +80,15 @@ const enum Color ed_string_color = YELLOW_ON_DFL;
 const enum Color ed_comment_color = BLUE_ON_DFL;
 
 ```
+
+ Parentheses highlighting is handled by emphasis_lparen() & emphasis_rparen(). If you change the color settings here, you can modify the color used for bracket highlighting.
+
+ ```
+CHECK(addch, ')');
+ESCBORG();
+if (pos.row >= ed_start) {
+ESCMOVE(pos.row + TOP_MARGIN - ed_start,
+pos.col + LEFT_MARGIN);
+ESCBCYAN();   <----- -------------- color
+CHECK(addch, '(');
+ ```

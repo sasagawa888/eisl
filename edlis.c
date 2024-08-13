@@ -368,63 +368,58 @@ void recalculate_col(int row, int oldcol1)
 
 void right()
 {
-    int turn;
+    int turn,new_ed_col,new_ed_col1;
     turn = COLS - LEFT_MARGIN;
     if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
 	return;
 
-    ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    ed_col = ed_col + increase_buffer(ed_row, ed_col);
+    new_ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    new_ed_col = ed_col + increase_buffer(ed_row, ed_col);
 
-    if (ed_col1 < turn) {
-	restore_paren();
-	emphasis_lparen();
-	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    } else {
-	if (ed_col1 == turn) {
-	    reset_paren();
+    if (ed_col1 < turn && new_ed_col1 >= turn) {
+		ed_col = new_ed_col;
+		ed_col1 = new_ed_col1;
 	    ESCCLSLA();
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
 	    display_line(ed_row);
 	}
+	else {
+		ed_col = new_ed_col;
+		ed_col1 = new_ed_col1;
+	}
 	restore_paren();
 	emphasis_lparen();
 	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - turn + LEFT_MARGIN);
-    }
+	restore_cursol();
 }
 
 
 
 void left()
 {
-    int turn;
+    int turn,new_ed_col,new_ed_col1;
     turn = COLS - LEFT_MARGIN;
     if (ed_col1 == 0)
 	return;
 
-    ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+    new_ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    new_ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 
-    if (ed_col1 < turn) {
-	if (ed_col1 <= turn - 1) {
+    if (ed_col1 >= turn && new_ed_col1 < turn) {
+		ed_col = new_ed_col;
+		ed_col1 = new_ed_col1;
 	    ESCCLSLA();
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
 	    display_line(ed_row);
 	}
+	else {
+		ed_col = new_ed_col;
+		ed_col1 = new_ed_col1;
+	}
 	restore_paren();
 	emphasis_lparen();
 	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    } else if (ed_col1 >= turn) {
-	restore_paren();
-	emphasis_lparen();
-	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - turn + LEFT_MARGIN);
-    }
+	restore_cursol();
 }
 
 void up()
@@ -2211,7 +2206,7 @@ void display_line(int line)
 	col = col1 = 0;
     else {
 	col = find_turn_buffer_position(line);	// need recalculation
-	col1 = col;
+	col1 = turn;
     }
     while (((ed_col1 < turn && col1 < turn)
 	    || (ed_col1 >= turn && col < COL_SIZE))

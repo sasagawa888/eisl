@@ -43,6 +43,7 @@ void backspace_key(void);
 void copy_selection(void);
 void cut_line(void);
 void del(void);
+void delete_char(void);
 void deleterow(void);
 void delete_selection(void);
 void display_header(void);

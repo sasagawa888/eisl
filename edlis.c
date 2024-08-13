@@ -617,16 +617,13 @@ void backspace_key(void)
 
 void del(void)
 {
+	int save;
+
     if (ed_data[ed_row][ed_col] == EOL)
 	return;
-    ed_col++;
-    backspace();
+    delete_char();
     display_screen();
-    if (ed_col1 < COLS - LEFT_MARGIN)
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    else
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 
@@ -2423,6 +2420,23 @@ void backspace(void)
 	i++;
     }
 }
+
+void delete_char(void)
+{
+    int i, size;
+
+    if (ed_data[ed_row][ed_col] == ')') {
+	ed_lparen_row = -1;
+	ed_rparen_row = -1;
+    }
+    i = ed_col;
+    while (ed_data[ed_row][i+1] != 0) {
+	ed_data[ed_row][i] = ed_data[ed_row][i+1];
+	i++;
+    }
+	ed_data[ed_row][i] = 0;
+}
+
 
 void insertcol()
 {

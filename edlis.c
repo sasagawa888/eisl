@@ -150,7 +150,10 @@ void clear_status()
 
 void restore_cursol()
 {
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	if(ed_col1 < COLS - LEFT_MARGIN)
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	else
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
 }
 
 void init_ncurses()
@@ -607,10 +610,7 @@ void backspace_key(void)
 	backspace();
 	}
 	display_screen();
-	if(ed_col1 < COLS - LEFT_MARGIN)
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	else
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 

@@ -2022,7 +2022,7 @@ bool edit_loop(void)
 	if (ed_ins) {
 	    if (ed_col >= COL_SIZE)
 		break;
-	    else if (ed_col >= COLS) {
+	    else if (ed_col1 >= COLS - LEFT_MARGIN) { // out turn
 		ESCCLSLA();
 		restore_paren();
 		insertcol();
@@ -2055,10 +2055,9 @@ bool edit_loop(void)
 			ed_col1 + increase_terminal(ed_row, ed_col - 2);
 		    uni3 = false;
 		}
-
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 - COLS + LEFT_MARGIN);
-	    } else {
+			ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
+	    } else { // in turn
 		restore_paren();
 		insertcol();
 		ed_data[ed_row][ed_col] = c;
@@ -2324,7 +2323,7 @@ void display_line(int line)
 	col = col1 = 0;
     else {
 	col = find_turn_buffer_position(line);	// need recalculation
-	col1 = turn;
+	col1 = col;
     }
     while (((ed_col1 < turn && col1 < turn)
 	    || (ed_col1 >= turn && col < COL_SIZE))

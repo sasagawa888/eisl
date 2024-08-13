@@ -2425,8 +2425,9 @@ void delete_char(void)
 	ed_rparen_row = -1;
     }
     i = ed_col;
-    while (ed_data[ed_row][i+1] != 0) {
-	ed_data[ed_row][i] = ed_data[ed_row][i+1];
+	size = increase_buffer(ed_row,ed_col);
+    while (ed_data[ed_row][i+size] != 0) {
+	ed_data[ed_row][i] = ed_data[ed_row][i+size];
 	i++;
     }
 	ed_data[ed_row][i] = 0;

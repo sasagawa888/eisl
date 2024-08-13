@@ -2019,7 +2019,7 @@ bool edit_loop(void)
 	tab_key();
 	break;
     default:
-	if (ed_ins) {
+	if (ed_ins) { // insert mode
 	    if (ed_col >= COL_SIZE)
 		break;
 	    else if (ed_col1 >= COLS - LEFT_MARGIN) { // out turn
@@ -2091,15 +2091,18 @@ bool edit_loop(void)
 		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
 			ed_col1 + LEFT_MARGIN);
 	    }
-	} else {
-	    if (ed_col >= COL_SIZE)
+	} else { // over write mode
+		if (ed_col >= COL_SIZE)
 		break;
-	    else if (ed_col >= COLS) {
-		if (ed_col == COLS)
-		    ESCCLSLA();
+	    else if (ed_col1 >= COLS - LEFT_MARGIN) { // out turn
+		ESCCLSLA();
+		restore_paren();
+		//insertcol();
 		ed_data[ed_row][ed_col] = c;
-		CHECK(addch, c);
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+		display_line(ed_row);
 		emphasis_lparen();
+		emphasis_rparen();
 		ed_col++;
 		if (isUni1(c) && skip == 0) {
 		    ed_col1++;
@@ -2111,16 +2114,28 @@ bool edit_loop(void)
 		    ed_col1++;
 		    skip = 3;
 		} else if (isUni3(c) && skip == 0) {
-		    ed_col1 = ed_col1 + 2;
+		    uni3 = true;
 		    skip = 2;
 		}
 
 		if (skip > 0)
 		    skip--;
-	    } else {
+
+		// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+		if (uni3 == true && skip == 0) {
+		    ed_col1 =
+			ed_col1 + increase_terminal(ed_row, ed_col - 2);
+		    uni3 = false;
+		}
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
+	    } else { // in turn
+		restore_paren();
 		ed_data[ed_row][ed_col] = c;
-		CHECK(addch, c);
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+		display_line(ed_row);
 		emphasis_lparen();
+		emphasis_rparen();
 		ed_col++;
 		if (isUni1(c) && skip == 0) {
 		    ed_col1++;
@@ -2132,12 +2147,20 @@ bool edit_loop(void)
 		    ed_col1++;
 		    skip = 3;
 		} else if (isUni3(c) && skip == 0) {
-		    ed_col1 = ed_col1 + 2;
+		    uni3 = true;
 		    skip = 2;
 		}
 
 		if (skip > 0)
 		    skip--;
+		// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+		if (uni3 == true && skip == 0) {
+		    ed_col1 =
+			ed_col1 + increase_terminal(ed_row, ed_col - 2);
+		    uni3 = false;
+		}
+		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+			ed_col1 + LEFT_MARGIN);
 	    }
 	}
 	modify_flag = true;

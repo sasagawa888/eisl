@@ -649,7 +649,10 @@ void del(void)
     ed_col++;
     backspace();
     display_screen();
+	if(ed_col1 < COLS - LEFT_MARGIN)
     ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	else
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 -(COLS - LEFT_MARGIN) + LEFT_MARGIN);
     modify_flag = true;
 }
 

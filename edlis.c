@@ -594,51 +594,23 @@ void tab_key()
 
 void backspace_key(void)
 {
-    enum HighlightToken type;
 
     if (ed_row == 0 && ed_col == 0)
 	return;
     else if (ed_col == 0) {
 	restore_paren();
 	deleterow();
-	if (ed_row < ed_start)
+	if (ed_row < ed_start){
 	    ed_start = ed_row;
-	display_screen();
-	if (ed_row < ed_start + ed_scroll) {
-	    if (ed_col <= COLS - 1 - LEFT_MARGIN)
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-	    else
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 - COLS + LEFT_MARGIN);
-	} else {
-	    if (ed_col <= COLS - 1 - LEFT_MARGIN)
-		ESCMOVE(21, ed_col + LEFT_MARGIN);
-	    else
-		ESCMOVE(21, ed_col - COLS + LEFT_MARGIN);
-	}
-    } else if (ed_col >= COLS) {
-	type = check_token(ed_row, ed_col - 2);
-	if (type == HIGHLIGHT_MULTILINE_COMMENT)
-	    ed_incomment = -1;
-	backspace();
-	display_screen();
-	if (ed_row < ed_start + ed_scroll)
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		    ed_col1 - COLS + LEFT_MARGIN);
-	else
-	    ESCMOVE(ed_footer, ed_col1 - COLS + LEFT_MARGIN);
-    } else {
-	type = check_token(ed_row, ed_col - 2);
-	if (type == HIGHLIGHT_MULTILINE_COMMENT)
-	    ed_incomment = -1;
-	backspace();
-	display_screen();
-	if (ed_row < ed_start + ed_scroll)
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	else
-	    ESCMOVE(ed_footer, ed_col + LEFT_MARGIN);
     }
+	} else {
+	backspace();
+	}
+	display_screen();
+	if(ed_col1 < COLS - LEFT_MARGIN)
+    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	else
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
     modify_flag = true;
 }
 

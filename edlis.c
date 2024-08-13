@@ -150,10 +150,11 @@ void clear_status()
 
 void restore_cursol()
 {
-	if(ed_col1 < COLS - LEFT_MARGIN)
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	else
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
+    if (ed_col1 < COLS - LEFT_MARGIN)
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    else
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
 }
 
 void init_ncurses()
@@ -603,14 +604,14 @@ void backspace_key(void)
     else if (ed_col == 0) {
 	restore_paren();
 	deleterow();
-	if (ed_row < ed_start){
+	if (ed_row < ed_start) {
 	    ed_start = ed_row;
-    }
-	} else {
-	backspace();
 	}
-	display_screen();
-	restore_cursol();
+    } else {
+	backspace();
+    }
+    display_screen();
+    restore_cursol();
     modify_flag = true;
 }
 
@@ -621,10 +622,11 @@ void del(void)
     ed_col++;
     backspace();
     display_screen();
-	if(ed_col1 < COLS - LEFT_MARGIN)
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-	else
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 -(COLS - LEFT_MARGIN) + LEFT_MARGIN);
+    if (ed_col1 < COLS - LEFT_MARGIN)
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    else
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
+		ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
     modify_flag = true;
 }
 
@@ -1301,7 +1303,7 @@ void save_file()
 	strcpy(fname, getname());
 	if (cancel_flag) {
 	    cancel_flag = 0;
-		restore_cursol();
+	    restore_cursol();
 	    return;
 	}
     }
@@ -1313,7 +1315,7 @@ void save_file()
     CHECK(addstr, "saved");
     CHECK(addstr, fname);
     ESCRST();
-	restore_cursol();
+    restore_cursol();
     modify_flag = false;
 }
 
@@ -1334,7 +1336,7 @@ void save_file_as()
     CHECK(addstr, "saved ");
     CHECK(addstr, str1);
     ESCRST();
-	restore_cursol();
+    restore_cursol();
     modify_flag = false;
 }
 
@@ -1361,7 +1363,7 @@ void save_region()
     CHECK(addstr, "saved ");
     CHECK(addstr, str1);
     ESCRST();
-	restore_cursol();
+    restore_cursol();
 }
 
 void insert_file()
@@ -1430,7 +1432,7 @@ void insert_file()
     paste_selection();
     ed_copy_end = 0;
     display_screen();
-	restore_cursol();
+    restore_cursol();
     modify_flag = true;
 }
 
@@ -1455,7 +1457,7 @@ void load_file()
     CHECK(addstr, fname);
     ESCRST();
     ed_row = ed_col = ed_col1 = 0;
-	restore_cursol();
+    restore_cursol();
     modify_flag = false;
 
 }
@@ -1495,7 +1497,7 @@ void search_next()
 	ed_start = 0;
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
     ESCREV();
     CHECK(addstr, str1);
     ESCRST();
@@ -1533,7 +1535,7 @@ void search_prev()
 	ed_start = 0;
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
     ESCREV();
     CHECK(addstr, str1);
     ESCRST();
@@ -1605,7 +1607,7 @@ void transfer_word()
     CHECK(addstr, "can't find ");
     CHECK(addstr, str1);
     ESCRST();
-	restore_cursol();
+    restore_cursol();
 }
 
 
@@ -1890,64 +1892,64 @@ bool edit_loop(void)
 	CHECK(addstr, "M");
 	ESCRST();
 	CHECK(refresh);
-	while(1){
-	c = getch();
-	if (c == ERR) {
-	    errw("getch");
-	}
-	switch (c) {
-	case 'w':
-	    save_selection();
-	    return false;
-	case '<':
-	    home();
-	    return false;
-	case '>':
-	    end();
-	    return false;
-	case 'v':
-	    pageup();
-	    return false;
-	case '^':
-	    mark_unmark();
-	    return false;
-	case TAB:
-	    completion();
-	    return false;
-	case 'i':
-	    information();
-	    return false;
-	case 'f':
-	    word_next();
-	    return false;
-	case 'b':
-	    word_prev();
-	    return false;
-	case CTRL('F'):
-	    sexp_next();
-	    return false;
-	case CTRL('B'):
-	    sexp_prev();
-	    return false;
-	case CTRL('N'):
-	    list_next();
-	    return false;
-	case CTRL('P'):
-	    list_prev();
-	    return false;
-	case CTRL('D'):
-	    list_down();
-	    return false;
-	case CTRL('U'):
-	    list_up();
-	    return false;
-	case CTRL('G'):
-	    ESCMOVE(ed_footer, 1);
-	    ESCREV();
-	    clear_status();
-	    ESCRST();
-	    return false;
-	}
+	while (1) {
+	    c = getch();
+	    if (c == ERR) {
+		errw("getch");
+	    }
+	    switch (c) {
+	    case 'w':
+		save_selection();
+		return false;
+	    case '<':
+		home();
+		return false;
+	    case '>':
+		end();
+		return false;
+	    case 'v':
+		pageup();
+		return false;
+	    case '^':
+		mark_unmark();
+		return false;
+	    case TAB:
+		completion();
+		return false;
+	    case 'i':
+		information();
+		return false;
+	    case 'f':
+		word_next();
+		return false;
+	    case 'b':
+		word_prev();
+		return false;
+	    case CTRL('F'):
+		sexp_next();
+		return false;
+	    case CTRL('B'):
+		sexp_prev();
+		return false;
+	    case CTRL('N'):
+		list_next();
+		return false;
+	    case CTRL('P'):
+		list_prev();
+		return false;
+	    case CTRL('D'):
+		list_down();
+		return false;
+	    case CTRL('U'):
+		list_up();
+		return false;
+	    case CTRL('G'):
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		clear_status();
+		ESCRST();
+		return false;
+	    }
 	}
 	break;
     case KEY_UP:
@@ -1994,150 +1996,41 @@ bool edit_loop(void)
 	tab_key();
 	break;
     default:
-	if (ed_ins) { // insert mode
-	    if (ed_col >= COL_SIZE)
-		break;
-	    else if (ed_col1 >= COLS - LEFT_MARGIN) { // out turn
-		ESCCLSLA();
-		restore_paren();
-		insertcol();
-		ed_data[ed_row][ed_col] = c;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-		display_line(ed_row);
-		emphasis_lparen();
-		emphasis_rparen();
-		ed_col++;
-		if (isUni1(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 0;
-		} else if (isUni2(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 1;
-		} else if (isUni4(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 3;
-		} else if (isUni3(c) && skip == 0) {
-		    uni3 = true;
-		    skip = 2;
-		}
-
-		if (skip > 0)
-		    skip--;
-
-		// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
-		if (uni3 == true && skip == 0) {
-		    ed_col1 =
-			ed_col1 + increase_terminal(ed_row, ed_col - 2);
-		    uni3 = false;
-		}
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
-	    } else { // in turn
-		restore_paren();
-		insertcol();
-		ed_data[ed_row][ed_col] = c;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-		display_line(ed_row);
-		emphasis_lparen();
-		emphasis_rparen();
-		ed_col++;
-		if (isUni1(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 0;
-		} else if (isUni2(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 1;
-		} else if (isUni4(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 3;
-		} else if (isUni3(c) && skip == 0) {
-		    uni3 = true;
-		    skip = 2;
-		}
-
-		if (skip > 0)
-		    skip--;
-		// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
-		if (uni3 == true && skip == 0) {
-		    ed_col1 =
-			ed_col1 + increase_terminal(ed_row, ed_col - 2);
-		    uni3 = false;
-		}
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-	    }
-	} else { // over write mode
-		if (ed_col >= COL_SIZE)
-		break;
-	    else if (ed_col1 >= COLS - LEFT_MARGIN) { // out turn
-		ESCCLSLA();
-		restore_paren();
-		//insertcol();
-		ed_data[ed_row][ed_col] = c;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-		display_line(ed_row);
-		emphasis_lparen();
-		emphasis_rparen();
-		ed_col++;
-		if (isUni1(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 0;
-		} else if (isUni2(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 1;
-		} else if (isUni4(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 3;
-		} else if (isUni3(c) && skip == 0) {
-		    uni3 = true;
-		    skip = 2;
-		}
-
-		if (skip > 0)
-		    skip--;
-
-		// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
-		if (uni3 == true && skip == 0) {
-		    ed_col1 =
-			ed_col1 + increase_terminal(ed_row, ed_col - 2);
-		    uni3 = false;
-		}
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 - (COLS - LEFT_MARGIN) + LEFT_MARGIN);
-	    } else { // in turn
-		restore_paren();
-		ed_data[ed_row][ed_col] = c;
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-		display_line(ed_row);
-		emphasis_lparen();
-		emphasis_rparen();
-		ed_col++;
-		if (isUni1(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 0;
-		} else if (isUni2(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 1;
-		} else if (isUni4(c) && skip == 0) {
-		    ed_col1++;
-		    skip = 3;
-		} else if (isUni3(c) && skip == 0) {
-		    uni3 = true;
-		    skip = 2;
-		}
-
-		if (skip > 0)
-		    skip--;
-		// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
-		if (uni3 == true && skip == 0) {
-		    ed_col1 =
-			ed_col1 + increase_terminal(ed_row, ed_col - 2);
-		    uni3 = false;
-		}
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
-	    }
+	if (ed_col >= COL_SIZE)
+	    break;
+	ESCCLSLA();
+	restore_paren();
+	if (ed_ins)
+	    insertcol();
+	ed_data[ed_row][ed_col] = c;
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+	emphasis_lparen();
+	emphasis_rparen();
+	ed_col++;
+	if (isUni1(c) && skip == 0) {
+	    ed_col1++;
+	    skip = 0;
+	} else if (isUni2(c) && skip == 0) {
+	    ed_col1++;
+	    skip = 1;
+	} else if (isUni4(c) && skip == 0) {
+	    ed_col1++;
+	    skip = 3;
+	} else if (isUni3(c) && skip == 0) {
+	    uni3 = true;
+	    skip = 2;
 	}
+
+	if (skip > 0)
+	    skip--;
+
+	// groupe uni3 has 1 or 2 width char  e.g. tai char is width 1, japanese is 2
+	if (uni3 == true && skip == 0) {
+	    ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col - 2);
+	    uni3 = false;
+	}
+	restore_cursol();
 	modify_flag = true;
     }
     return false;

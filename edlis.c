@@ -463,7 +463,7 @@ void up()
 	restore_paren();
 	emphasis_lparen();
 	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     } else {
 	if (ed_col >= COLS) {
 	    ed_col = ed_col1 = COLS - 1 - LEFT_MARGIN;
@@ -476,7 +476,7 @@ void up()
 	restore_paren();
 	emphasis_lparen();
 	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     }
 }
 
@@ -573,7 +573,7 @@ void return_key()
 	remove_headspace(ed_row);
 	softtabs(i);
 	display_screen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     }
     modify_flag = true;
 }
@@ -592,7 +592,7 @@ void tab_key()
 	softtabs(ed_tab);
     }
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 

@@ -40,8 +40,8 @@ int ed_scroll;
 int ed_footer;
 int ed_middle;
 int ed_row;
-int ed_col;			//position of buffer
-int ed_col1;			//position of terminal when include unicode ed_col1 is different from ed_col
+int ed_col;		//position of buffer
+int ed_col1;	//position of terminal when include unicode ed_col1 is different from ed_col
 int ed_start;
 int ed_end;
 bool ed_ins = true;
@@ -72,11 +72,11 @@ int main(int argc, char *argv[])
 {
     int i, j;
 
+	/* to enable CTRL('S') */
     if (system("stty -ixon") == -1) {
 	printf("terminal error\n");
 	return (0);
     }
-    timeout(0);
 
     setlocale(LC_ALL, "");
     if (argc == 2)
@@ -102,10 +102,10 @@ int main(int argc, char *argv[])
     ed_row = ed_col = ed_col1 = 0;
     edit_screen();
     CHECK(endwin);
+	/* restore CTRL('S') */
     if (system("stty ixon") == -1) {
 	printf("terminal error\n");
     }
-    timeout(-1);
 }
 
 int getch1(void)

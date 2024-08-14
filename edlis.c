@@ -376,6 +376,9 @@ void right()
     new_ed_col = ed_col + increase_buffer(ed_row, ed_col);
 
     if (ed_col1 < turn && new_ed_col1 >= turn) {
+		restore_paren();
+		emphasis_lparen();
+		emphasis_rparen();
 		ed_col = new_ed_col;
 		ed_col1 = new_ed_col1;
 	    display_screen();
@@ -383,10 +386,10 @@ void right()
 	else {
 		ed_col = new_ed_col;
 		ed_col1 = new_ed_col1;
+		restore_paren();
+		emphasis_lparen();
+		emphasis_rparen();
 	}
-	restore_paren();
-	emphasis_lparen();
-	emphasis_rparen();
 	restore_cursol();
 }
 
@@ -1189,7 +1192,7 @@ void redisplay_screen()
 	ed_start = 0;
 
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 }
 
 //-----------cut and paste-------------------------------

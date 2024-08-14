@@ -343,23 +343,23 @@ int decrease_terminal(int row, int col)
 // re calculate buffer position and terminal position at row
 void recalculate_col(int row, int oldcol1)
 {
-    int newcol, newcol1;
+    int new_col, new_col1;
 
-    newcol = 0;
-    newcol1 = 0;
-    while (newcol < COL_SIZE) {
-	if (newcol1 == oldcol1) {
+    new_col = 0;
+    new_col1 = 0;
+    while (new_col < COL_SIZE) {
+	if (new_col1 == oldcol1) {
 	    break;
-	} else if (ed_data[row][newcol] == EOL) {
+	} else if (ed_data[row][new_col] == EOL) {
 	    break;
-	} else if (ed_data[row][newcol] == 0) {
+	} else if (ed_data[row][new_col] == 0) {
 	    break;
 	}
-	newcol1 = newcol1 + increase_terminal(row, newcol);
-	newcol = newcol + increase_buffer(row, newcol);
+	new_col1 = new_col1 + increase_terminal(row, new_col);
+	new_col = new_col + increase_buffer(row, new_col);
     }
-    ed_col = newcol;
-    ed_col1 = newcol1;
+    ed_col = new_col;
+    ed_col1 = new_col1;
 }
 
 
@@ -367,26 +367,26 @@ void recalculate_col(int row, int oldcol1)
 
 void right()
 {
-    int turn,new_ed_col,new_ed_col1;
+    int turn,new_col,new_col1;
     turn = COLS - LEFT_MARGIN;
     if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
 	return;
 
-    new_ed_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
-    new_ed_col = ed_col + increase_buffer(ed_row, ed_col);
+    new_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
+    new_col = ed_col + increase_buffer(ed_row, ed_col);
 
-    if (ed_col1 < turn && new_ed_col1 >= turn) {
+    if (ed_col1 < turn && new_col1 >= turn) {
 		restore_paren();
+		ed_col = new_col;
+		ed_col1 = new_col1;
+	    display_screen();
 		emphasis_lparen();
 		emphasis_rparen();
-		ed_col = new_ed_col;
-		ed_col1 = new_ed_col1;
-	    display_screen();
 	}
 	else {
-		ed_col = new_ed_col;
-		ed_col1 = new_ed_col1;
 		restore_paren();
+		ed_col = new_col;
+		ed_col1 = new_col1;
 		emphasis_lparen();
 		emphasis_rparen();
 	}
@@ -397,22 +397,22 @@ void right()
 
 void left()
 {
-    int turn,new_ed_col,new_ed_col1;
+    int turn,new_col,new_col1;
     turn = COLS - LEFT_MARGIN;
     if (ed_col1 == 0)
 	return;
 
-    new_ed_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
-    new_ed_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
+    new_col1 = ed_col1 - decrease_terminal(ed_row, ed_col - 1);
+    new_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 
-    if (ed_col1 >= turn && new_ed_col1 < turn) {
-		ed_col = new_ed_col;
-		ed_col1 = new_ed_col1;
+    if (ed_col1 >= turn && new_col1 < turn) {
+		ed_col = new_col;
+		ed_col1 = new_col1;
 		display_screen();
 	}
 	else {
-		ed_col = new_ed_col;
-		ed_col1 = new_ed_col1;
+		ed_col = new_col;
+		ed_col1 = new_col1;
 	}
 	restore_paren();
 	emphasis_lparen();
@@ -422,6 +422,8 @@ void left()
 
 void up()
 {
+	int turn,oldcol1;
+    turn = COLS - LEFT_MARGIN;
 
     if (ed_row == 0)
 	return;
@@ -458,15 +460,14 @@ void up()
 	emphasis_rparen();
 	restore_cursol();
     } else {
-	if (ed_col >= COLS) {
-	    ed_col = ed_col1 = COLS - 1 - LEFT_MARGIN;
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 0);
-	    display_line(ed_row);
-	}
-	ed_row--;
-	recalculate_col(ed_row, ed_col1);
 	restore_paren();
+	ed_row--;
+	oldcol1 = ed_col1; 
+	recalculate_col(ed_row, ed_col1);
+	if((ed_col1 >= turn && oldcol1 < turn) ||
+	   (ed_col1 < turn && oldcol1 >= turn)){
+		display_screen();
+	}
 	emphasis_lparen();
 	emphasis_rparen();
 	restore_cursol();

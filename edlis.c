@@ -624,20 +624,41 @@ void del(void)
 
 void line_begin()
 {
+	int turn;
+    turn = COLS - LEFT_MARGIN;
+
+	if(ed_col1 < turn){
     ed_col = ed_col1 = 0;
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	}
+	else{
+	ed_col = ed_col1 = 0;
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+	}
+	restore_cursol();
 }
 
 void line_end()
 {
-    int i;
+	int turn,i;
+    turn = COLS - LEFT_MARGIN;
+
     for (i = 0; i < COL_SIZE; i++) {
 	if (ed_data[ed_row][i] == NUL)
 	    break;
     }
+
+	if(ed_col1 < turn && i < turn){
     ed_col = ed_col1 = i - 1;
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    modify_flag = true;
+	}
+	else{
+	ed_col = ed_col1 = i - 1;
+	ESCCLSLA();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
+	}
+	restore_cursol();
 }
 
 

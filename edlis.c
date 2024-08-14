@@ -47,7 +47,6 @@ int ed_end;
 bool ed_ins = true;
 int ed_tab = 0;
 int ed_indent = 1;
-int ed_name = NIL;
 char ed_data[ROW_SIZE][COL_SIZE];
 char ed_copy[COPY_SIZE][COL_SIZE];
 int ed_lparen_row;

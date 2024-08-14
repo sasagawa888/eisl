@@ -379,9 +379,7 @@ void right()
     if (ed_col1 < turn && new_ed_col1 >= turn) {
 		ed_col = new_ed_col;
 		ed_col1 = new_ed_col1;
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
+	    display_screen();
 	}
 	else {
 		ed_col = new_ed_col;
@@ -408,9 +406,7 @@ void left()
     if (ed_col1 >= turn && new_ed_col1 < turn) {
 		ed_col = new_ed_col;
 		ed_col1 = new_ed_col1;
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	    display_line(ed_row);
+		display_screen();
 	}
 	else {
 		ed_col = new_ed_col;
@@ -602,10 +598,14 @@ void backspace_key(void)
 	if (ed_row < ed_start) {
 	    ed_start = ed_row;
 	}
+	display_screen();
     } else {
 	backspace();
+	ESCCLSLA();
+	restore_paren();
+	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
+	display_line(ed_row);
     }
-    display_screen();
     restore_cursol();
     modify_flag = true;
 }

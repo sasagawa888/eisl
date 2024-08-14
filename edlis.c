@@ -476,6 +476,8 @@ void up()
 
 void down()
 {
+	int turn,oldcol1;
+    turn = COLS - LEFT_MARGIN;
 
     if (ed_row == ed_end)
 	return;
@@ -511,20 +513,19 @@ void down()
 	emphasis_lparen();
 	emphasis_rparen();
 	recalculate_col(ed_row, ed_col1);
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     } else {
-	if (ed_col >= COLS) {
-	    ed_col = ed_col1 = COLS - 1 - LEFT_MARGIN;
-	    ESCCLSLA();
-	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, 0);
-	    display_line(ed_row);
-	}
-	ed_row++;
-	recalculate_col(ed_row, ed_col1);
 	restore_paren();
+	ed_row++;
+	oldcol1 = ed_col1; 
+	recalculate_col(ed_row, ed_col1);
+	if((ed_col1 >= turn && oldcol1 < turn) ||
+	   (ed_col1 < turn && oldcol1 >= turn)){
+		display_screen();
+	}
 	emphasis_lparen();
 	emphasis_rparen();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     }
 }
 

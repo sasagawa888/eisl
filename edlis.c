@@ -2929,8 +2929,6 @@ int calc_tabs()
 
     pos = find_lparen(0);
 
-    if (ed_data[ed_row][ed_col] == '(')
-	return (0);
 
     if (pos.row == -1)
 	return (0);		// can't find left paren

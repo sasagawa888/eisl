@@ -533,9 +533,6 @@ void return_key()
 {
     int i;
 
-    if (ed_indent == 1)
-	i = calc_tabs();
-
     if (ed_row == ed_start + ed_scroll) {
 	restore_paren();
 	insertrow();
@@ -563,9 +560,10 @@ void return_key()
 	display_screen();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
     }
-    if (ed_indent == 1) {
+    if (ed_indent) {
 	ed_col = ed_col1 = 0;
 	remove_headspace(ed_row);
+	i = calc_tabs();
 	softtabs(i);
 	display_screen();
 	restore_cursol();
@@ -2039,7 +2037,7 @@ void help(void)
 	  "ESC CTRL+F  Move forward in S-expressdion units\n"
 	  "ESC CTRL+B  Move Back in S-expression units\n"
 	  "ESC CTRL+N  Move forward in list units\n"
-	  "ESC CTRL+P  Move back in List units\n"
+	  "ESC CTRL+P  Move back in list units\n"
 	  "ESC CTRL+U  Move up a level in the list structure\n"
 	  "ESC STRL+D  Move down a level in the list structure\n"
 	  "--- enter any key to go next page ---");

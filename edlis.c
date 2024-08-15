@@ -66,7 +66,10 @@ const enum Color ed_comment_color = BLUE_ON_DFL;
 int ed_incomment = -1;		// #|...|# comment
 bool modify_flag;
 
-
+/*  buffer data structure   text is "abc" at first row
+ *  0,1,2,3,4,5...255 
+ * [a,b,c,EOL,0,0,0,....,0]
+*/
 
 int main(int argc, char *argv[])
 {
@@ -87,10 +90,9 @@ int main(int argc, char *argv[])
     signal(SIGTSTP, signal_handler_z);
     for (i = 0; i < ROW_SIZE; i++) {
 	for (j = 0; j < COL_SIZE; j++) {
-	    ed_data[i][j] = NUL;
+	    ed_data[i][j] = 0;
 	}
     }
-	ed_data[0][0] = EOF;
 
     load_data(fname);
     init_ncurses();
@@ -666,15 +668,14 @@ void line_end()
 
 void sexp_next()
 {
-    int turn;
+    int old_row,old_col,old_col1;
     struct position pos;
-    turn = COLS - LEFT_MARGIN;
+    
+	old_row = ed_row;
+	old_col = ed_col;
+	old_col1 = ed_col1;
 
-    if (ed_data[ed_row][ed_col] == EOF) {
-	clear_status();
-	return;
-    }
-
+    
     /* skip space comment */
     while (1) {
 	if (ed_data[ed_row][ed_col] == ' ') {
@@ -689,7 +690,10 @@ void sexp_next()
 	} else if (ed_data[ed_row][ed_col] == EOL) {
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
-	} else if (ed_data[ed_row][ed_col] == EOF) {
+	} else if (ed_data[ed_row][ed_col] == 0) {
+		ed_row = old_row;
+		ed_col = old_col;
+		ed_col1 = old_col1;
 	    goto skip;
 	} else {
 	    break;
@@ -723,13 +727,11 @@ void sexp_next()
 
 void word_next()
 {
+	int old_row,old_col,old_col1;
 
-    if (ed_data[ed_row][ed_col] == EOF) {
-	clear_status();
-	ESCRST();
-	restore_cursol();
-	return;
-    }
+	old_row = ed_row;
+	old_col = ed_col;
+	old_col1 = ed_col1;
     // skip word char 
     if (is_word_char(ed_data[ed_row][ed_col])) {
 	while (is_word_char(ed_data[ed_row][ed_col])) {
@@ -742,7 +744,10 @@ void word_next()
 	if (ed_data[ed_row][ed_col] == EOL) {
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
-	} else if (ed_data[ed_row][ed_col] == EOF) {
+	} else if (ed_data[ed_row][ed_col] == 0) {
+		ed_row = old_row;
+		ed_col = old_col;
+		ed_col1 = old_col1;
 		goto skip;
 	} else if (!is_word_char(ed_data[ed_row][ed_col])) {
 	    ed_col1++;
@@ -763,15 +768,12 @@ void word_next()
 
 void list_next()
 {
-    int turn;
+    int old_row,old_col,old_col1;
     struct position pos;
-    turn = COLS - LEFT_MARGIN;
 
-    if (ed_data[ed_row][ed_col] == EOF) {
-	clear_status();
-	return;
-    }
-
+	old_row = ed_row;
+	old_col = ed_col;
+	old_col1 = ed_col1;
     /* skip space comment */
     while (1) {
 	if (ed_data[ed_row][ed_col] == '(') {
@@ -782,7 +784,10 @@ void list_next()
 	} else if (ed_data[ed_row][ed_col] == EOL) {
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
-	} else if (ed_data[ed_row][ed_col] == EOF) {
+	} else if (ed_data[ed_row][ed_col] == 0) {
+		ed_row = old_row;
+		ed_col = old_col;
+		ed_col1 = old_col1;
 	    goto skip;
 	} else {
 	    ed_col++;
@@ -806,17 +811,12 @@ void list_next()
 
 void list_down()
 {
-    int turn, save_row, save_col, save_col1;
-    turn = COLS - LEFT_MARGIN;
+    int save_row, save_col, save_col1;
 
     save_row = ed_row;
     save_col = ed_col;
     save_col1 = ed_col1;
-    if (ed_data[ed_row][ed_col] == EOF) {
-	clear_status();
-	return;
-    }
-
+    
     /* skip space comment */
     while (1) {
 	if (ed_data[ed_row][ed_col] == '(') {
@@ -839,7 +839,7 @@ void list_down()
 	} else if (ed_data[ed_row][ed_col] == EOL) {
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
-	} else if (ed_data[ed_row][ed_col] == EOF) {
+	} else if (ed_data[ed_row][ed_col] == 0) {
 	    goto skip;
 	} else {
 	    ed_col++;
@@ -995,9 +995,7 @@ void word_prev()
 
 void list_prev()
 {
-    int turn;
     struct position pos;
-    turn = COLS - LEFT_MARGIN;
 
     /* skip space */
     while (1) {
@@ -1386,6 +1384,14 @@ void insert_file()
 
 void load_file()
 {
+	int i,j;
+
+	for (i = 0; i < ROW_SIZE; i++) {
+	for (j = 0; j < COL_SIZE; j++) {
+	    ed_data[i][j] = 0;
+	}
+    }
+
     ESCMOVE(ed_footer, 1);
     clear_status();
     CHECK(addstr, "filename:  ");

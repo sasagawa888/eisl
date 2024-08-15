@@ -768,17 +768,7 @@ void word_next()
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
-    if (ed_col1 < turn) {
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    } else if (ed_col1 == turn) {
-	ESCCLSLA();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	display_line(ed_row);
-    } else {
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - turn + LEFT_MARGIN);
-	display_line(ed_row);
-    }
+	restore_cursol();
 }
 
 
@@ -1045,17 +1035,7 @@ void word_prev()
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
-    if (ed_col1 < turn) {
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
-    } else if (ed_col1 == turn) {
-	ESCCLSLA();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
-	display_line(ed_row);
-    } else {
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - turn + LEFT_MARGIN);
-	display_line(ed_row);
-    }
+	restore_cursol();
 }
 
 

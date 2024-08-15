@@ -616,7 +616,6 @@ void backspace_key(void)
 
 void del(void)
 {
-	int save;
 
     if (ed_data[ed_row][ed_col] == EOL)
 	return;
@@ -1287,7 +1286,12 @@ bool quit_with_save(void)
 	    ESCRST();
 	    switch (c) {
 	    case 'y':
+		if(strcmp(fname,"") != 0){
 		save_data(fname);
+		}
+		else{
+		save_file_as();
+		}
 		ESCCLS();
 		ESCMOVE(1, 1);
 		return true;
@@ -1345,6 +1349,10 @@ void save_file_as()
     clear_status();
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
+	if(cancel_flag){
+		cancel_flag = 0;
+		return;
+	}
     save_data(str1);
     ESCMOVE(ed_footer, 1);
     ESCREV();

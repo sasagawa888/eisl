@@ -78,6 +78,7 @@ void return_key(void);
 void remove_headspace(int row);
 void right(void);
 void save_region(void);
+void save_file_as(void);
 void setcolor(enum Color);
 void softtabs(int n);
 void save_data(char *name);

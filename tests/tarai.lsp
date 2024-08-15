@@ -7,8 +7,8 @@
     (if (<= x y)
         y
           (tarai (tarai (- x 1) y z)
-               (tarai (- y 1) z x)
-               (tarai (- z 1) x y))))
+                 (tarai (- y 1) z x)
+                 (tarai (- z 1) x y))))
 
 (defun tarai* (x y z)
     (if (<= x y)
@@ -87,6 +87,7 @@
     (if (= n 0)
         1
         (* n (fact (- n 1)))))
+
 
 
 

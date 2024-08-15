@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
 	    ed_data[i][j] = NUL;
 	}
     }
+	ed_data[0][0] = EOF;
 
     load_data(fname);
     init_ncurses();
@@ -725,6 +726,8 @@ void word_next()
 
     if (ed_data[ed_row][ed_col] == EOF) {
 	clear_status();
+	ESCRST();
+	restore_cursol();
 	return;
     }
     // skip word char 
@@ -740,7 +743,7 @@ void word_next()
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
 	} else if (ed_data[ed_row][ed_col] == EOF) {
-	    goto skip;
+		goto skip;
 	} else if (!is_word_char(ed_data[ed_row][ed_col])) {
 	    ed_col1++;
 	    ed_col++;
@@ -1234,8 +1237,10 @@ void save_file()
 	CHECK(addstr, "filename:  ");
 	strcpy(fname, getname());
 	if (cancel_flag) {
-	    cancel_flag = 0;
-	    restore_cursol();
+		cancel_flag = 0;
+		clear_status();
+		ESCRST();
+		restore_cursol();
 	    return;
 	}
     }
@@ -1262,6 +1267,8 @@ void save_file_as()
     strcpy(str1, getname());
 	if (cancel_flag) {
 	cancel_flag = 0;
+	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1286,7 +1293,9 @@ void save_region()
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
     if (cancel_flag) {
-	cancel_flag = 0;
+		cancel_flag = 0;
+	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1320,7 +1329,9 @@ void insert_file()
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
     if (cancel_flag) {
-	cancel_flag = 0;
+		cancel_flag = 0;
+	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1381,6 +1392,8 @@ void load_file()
     strcpy(fname, getname());
     if (cancel_flag) {
 	cancel_flag = 0;
+	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1412,8 +1425,9 @@ void search_next()
     strcpy(str1, getname());
     ESCRST();
     if (cancel_flag) {
-	cancel_flag = false;
+	cancel_flag = 0;
 	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1450,8 +1464,9 @@ void search_prev()
     strcpy(str1, getname());
     ESCRST();
     if (cancel_flag) {
-	cancel_flag = false;
+	cancel_flag = 0;
 	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1492,6 +1507,7 @@ void transfer_word()
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -1500,6 +1516,7 @@ void transfer_word()
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
+	ESCRST();
 	restore_cursol();
 	return;
     }
@@ -2766,7 +2783,6 @@ void save_copy(char *fname)
 	}
     }
     fputc(EOL, port);
-    fputc(EOF, port);
     fclose(port);
 }
 
@@ -2812,6 +2828,9 @@ void load_data(char *fname)
 	ed_data[ed_end][0] = EOL;
 	fclose(port);
     }
+	else {
+		ed_data[0][0] = EOF;
+	}
 }
 
 

@@ -2828,9 +2828,6 @@ void load_data(char *fname)
 	ed_data[ed_end][0] = EOL;
 	fclose(port);
     }
-	else {
-		ed_data[0][0] = EOF;
-	}
 }
 
 

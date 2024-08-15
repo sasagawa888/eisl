@@ -1349,10 +1349,11 @@ void save_file_as()
     clear_status();
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
-	if(cancel_flag){
-		cancel_flag = 0;
-		return;
-	}
+	if (cancel_flag) {
+	cancel_flag = 0;
+	restore_cursol();
+	return;
+    }
     save_data(str1);
     ESCMOVE(ed_footer, 1);
     ESCREV();

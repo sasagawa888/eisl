@@ -40,8 +40,8 @@ int ed_scroll;
 int ed_footer;
 int ed_middle;
 int ed_row;
-int ed_col;		//position of buffer
-int ed_col1;	//position of terminal when include unicode ed_col1 is different from ed_col
+int ed_col;			//position of buffer
+int ed_col1;			//position of terminal when include unicode ed_col1 is different from ed_col
 int ed_start;
 int ed_end;
 bool ed_ins = true;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 {
     int i, j;
 
-	/* to enable CTRL('S') */
+    /* to enable CTRL('S') */
     if (system("stty -ixon") == -1) {
 	printf("terminal error\n");
 	return (0);
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     ed_row = ed_col = ed_col1 = 0;
     edit_screen();
     CHECK(endwin);
-	/* restore CTRL('S') */
+    /* restore CTRL('S') */
     if (system("stty ixon") == -1) {
 	printf("terminal error\n");
     }
@@ -370,37 +370,36 @@ void recalculate_col(int row, int oldcol1)
 
 void right()
 {
-    int turn,new_col,new_col1;
+    int turn, new_col, new_col1;
     turn = COLS - LEFT_MARGIN;
-    if (ed_col == findeol(ed_row) || ed_col >= COL_SIZE)
+    if (ed_col == find_eol(ed_row) || ed_col >= COL_SIZE)
 	return;
 
     new_col1 = ed_col1 + increase_terminal(ed_row, ed_col);
     new_col = ed_col + increase_buffer(ed_row, ed_col);
 
     if (ed_col1 < turn && new_col1 >= turn) {
-		restore_paren();
-		ed_col = new_col;
-		ed_col1 = new_col1;
-	    display_screen();
-		emphasis_lparen();
-		emphasis_rparen();
-	}
-	else {
-		restore_paren();
-		ed_col = new_col;
-		ed_col1 = new_col1;
-		emphasis_lparen();
-		emphasis_rparen();
-	}
-	restore_cursol();
+	restore_paren();
+	ed_col = new_col;
+	ed_col1 = new_col1;
+	display_screen();
+	emphasis_lparen();
+	emphasis_rparen();
+    } else {
+	restore_paren();
+	ed_col = new_col;
+	ed_col1 = new_col1;
+	emphasis_lparen();
+	emphasis_rparen();
+    }
+    restore_cursol();
 }
 
 
 
 void left()
 {
-    int turn,new_col,new_col1;
+    int turn, new_col, new_col1;
     turn = COLS - LEFT_MARGIN;
     if (ed_col1 == 0)
 	return;
@@ -409,23 +408,22 @@ void left()
     new_col = ed_col - decrease_buffer(ed_row, ed_col - 1);
 
     if (ed_col1 >= turn && new_col1 < turn) {
-		ed_col = new_col;
-		ed_col1 = new_col1;
-		display_screen();
-	}
-	else {
-		ed_col = new_col;
-		ed_col1 = new_col1;
-	}
-	restore_paren();
-	emphasis_lparen();
-	emphasis_rparen();
-	restore_cursol();
+	ed_col = new_col;
+	ed_col1 = new_col1;
+	display_screen();
+    } else {
+	ed_col = new_col;
+	ed_col1 = new_col1;
+    }
+    restore_paren();
+    emphasis_lparen();
+    emphasis_rparen();
+    restore_cursol();
 }
 
 void up()
 {
-	int turn,oldcol1;
+    int turn, oldcol1;
     turn = COLS - LEFT_MARGIN;
 
     if (ed_row == 0)
@@ -465,11 +463,11 @@ void up()
     } else {
 	restore_paren();
 	ed_row--;
-	oldcol1 = ed_col1; 
+	oldcol1 = ed_col1;
 	recalculate_col(ed_row, ed_col1);
-	if((ed_col1 >= turn && oldcol1 < turn) ||
-	   (ed_col1 < turn && oldcol1 >= turn)){
-		display_screen();
+	if ((ed_col1 >= turn && oldcol1 < turn) ||
+	    (ed_col1 < turn && oldcol1 >= turn)) {
+	    display_screen();
 	}
 	emphasis_lparen();
 	emphasis_rparen();
@@ -479,7 +477,7 @@ void up()
 
 void down()
 {
-	int turn,oldcol1;
+    int turn, oldcol1;
     turn = COLS - LEFT_MARGIN;
 
     if (ed_row == ed_end)
@@ -520,11 +518,11 @@ void down()
     } else {
 	restore_paren();
 	ed_row++;
-	oldcol1 = ed_col1; 
+	oldcol1 = ed_col1;
 	recalculate_col(ed_row, ed_col1);
-	if((ed_col1 >= turn && oldcol1 < turn) ||
-	   (ed_col1 < turn && oldcol1 >= turn)){
-		display_screen();
+	if ((ed_col1 >= turn && oldcol1 < turn) ||
+	    (ed_col1 < turn && oldcol1 >= turn)) {
+	    display_screen();
 	}
 	emphasis_lparen();
 	emphasis_rparen();
@@ -538,7 +536,7 @@ void return_key()
 
     if (ed_row == ed_start + ed_scroll) {
 	restore_paren();
-	insertrow();
+	insert_row();
 	ed_start++;
 	ed_row++;
 	ed_end++;
@@ -547,7 +545,7 @@ void return_key()
 	ESCMOVE(ed_footer, LEFT_MARGIN);
     } else if (ed_col >= COLS) {
 	restore_paren();
-	insertrow();
+	insert_row();
 	ed_start++;
 	ed_row++;
 	ed_end++;
@@ -556,7 +554,7 @@ void return_key()
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
     } else {
 	restore_paren();
-	insertrow();
+	insert_row();
 	ed_row++;
 	ed_end++;
 	ed_col = ed_col1 = 0;
@@ -588,7 +586,7 @@ void tab_key()
 	softtabs(ed_tab);
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
     modify_flag = true;
 }
 
@@ -599,7 +597,7 @@ void backspace_key(void)
 	return;
     else if (ed_col == 0) {
 	restore_paren();
-	deleterow();
+	delete_row();
 	if (ed_row < ed_start) {
 	    ed_start = ed_row;
 	}
@@ -622,30 +620,29 @@ void del(void)
 	return;
     delete_char();
     display_screen();
-	restore_cursol();
+    restore_cursol();
     modify_flag = true;
 }
 
 void line_begin()
 {
-	int turn;
+    int turn;
     turn = COLS - LEFT_MARGIN;
 
-	if(ed_col1 < turn){
-    ed_col = ed_col1 = 0;
-	}
-	else{
+    if (ed_col1 < turn) {
+	ed_col = ed_col1 = 0;
+    } else {
 	ed_col = ed_col1 = 0;
 	ESCCLSLA();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
 	display_line(ed_row);
-	}
-	restore_cursol();
+    }
+    restore_cursol();
 }
 
 void line_end()
 {
-	int turn,i;
+    int turn, i;
     turn = COLS - LEFT_MARGIN;
 
     for (i = 0; i < COL_SIZE; i++) {
@@ -653,29 +650,28 @@ void line_end()
 	    break;
     }
 
-	if(ed_col1 < turn && i < turn){
-    ed_col = ed_col1 = i - 1;
-	}
-	else{
+    if (ed_col1 < turn && i < turn) {
+	ed_col = ed_col1 = i - 1;
+    } else {
 	ed_col = ed_col1 = i - 1;
 	ESCCLSLA();
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
 	display_line(ed_row);
-	}
-	restore_cursol();
+    }
+    restore_cursol();
 }
 
 
 void sexp_next()
 {
-    int old_row,old_col,old_col1;
+    int old_row, old_col, old_col1;
     struct position pos;
-    
-	old_row = ed_row;
-	old_col = ed_col;
-	old_col1 = ed_col1;
 
-    
+    old_row = ed_row;
+    old_col = ed_col;
+    old_col1 = ed_col1;
+
+
     /* skip space comment */
     while (1) {
 	if (ed_data[ed_row][ed_col] == ' ') {
@@ -691,9 +687,9 @@ void sexp_next()
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
 	} else if (ed_data[ed_row][ed_col] == 0) {
-		ed_row = old_row;
-		ed_col = old_col;
-		ed_col1 = old_col1;
+	    ed_row = old_row;
+	    ed_col = old_col;
+	    ed_col1 = old_col1;
 	    goto skip;
 	} else {
 	    break;
@@ -721,17 +717,17 @@ void sexp_next()
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 
 void word_next()
 {
-	int old_row,old_col,old_col1;
+    int old_row, old_col, old_col1;
 
-	old_row = ed_row;
-	old_col = ed_col;
-	old_col1 = ed_col1;
+    old_row = ed_row;
+    old_col = ed_col;
+    old_col1 = ed_col1;
     // skip word char 
     if (is_word_char(ed_data[ed_row][ed_col])) {
 	while (is_word_char(ed_data[ed_row][ed_col])) {
@@ -745,10 +741,10 @@ void word_next()
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
 	} else if (ed_data[ed_row][ed_col] == 0) {
-		ed_row = old_row;
-		ed_col = old_col;
-		ed_col1 = old_col1;
-		goto skip;
+	    ed_row = old_row;
+	    ed_col = old_col;
+	    ed_col1 = old_col1;
+	    goto skip;
 	} else if (!is_word_char(ed_data[ed_row][ed_col])) {
 	    ed_col1++;
 	    ed_col++;
@@ -762,18 +758,18 @@ void word_next()
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 
 void list_next()
 {
-    int old_row,old_col,old_col1;
+    int old_row, old_col, old_col1;
     struct position pos;
 
-	old_row = ed_row;
-	old_col = ed_col;
-	old_col1 = ed_col1;
+    old_row = ed_row;
+    old_col = ed_col;
+    old_col1 = ed_col1;
     /* skip space comment */
     while (1) {
 	if (ed_data[ed_row][ed_col] == '(') {
@@ -785,9 +781,9 @@ void list_next()
 	    ed_col = ed_col1 = 0;
 	    ed_row++;
 	} else if (ed_data[ed_row][ed_col] == 0) {
-		ed_row = old_row;
-		ed_col = old_col;
-		ed_col1 = old_col1;
+	    ed_row = old_row;
+	    ed_col = old_col;
+	    ed_col1 = old_col1;
 	    goto skip;
 	} else {
 	    ed_col++;
@@ -811,12 +807,12 @@ void list_next()
 
 void list_down()
 {
-    int save_row, save_col, save_col1;
+    int old_row, old_col, old_col1;
 
-    save_row = ed_row;
-    save_col = ed_col;
-    save_col1 = ed_col1;
-    
+    old_row = ed_row;
+    old_col = ed_col;
+    old_col1 = ed_col1;
+
     /* skip space comment */
     while (1) {
 	if (ed_data[ed_row][ed_col] == '(') {
@@ -828,9 +824,9 @@ void list_down()
 	    ESCMOVE(ed_footer, 1);
 	    CHECK(addstr, "Can't find");
 	    ESCRST();
-	    ed_row = save_row;
-	    ed_col = save_col;
-	    ed_col1 = save_col1;
+	    ed_row = old_row;
+	    ed_col = old_col;
+	    ed_col1 = old_col1;
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    return;
 	} else if (ed_data[ed_row][ed_col] == ';') {
@@ -989,7 +985,7 @@ void word_prev()
 	ed_start = ed_row - ed_scroll / 2;
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 
@@ -1040,12 +1036,11 @@ void list_prev()
 
 void list_up()
 {
-    int turn, save_row, save_col, save_col1;
-    turn = COLS - LEFT_MARGIN;
+    int old_row, old_col, old_col1;
 
-    save_row = ed_row;
-    save_col = ed_col;
-    save_col1 = ed_col1;
+    old_row = ed_row;
+    old_col = ed_col;
+    old_col1 = ed_col1;
     if (ed_col > 0 && ed_data[ed_row][ed_col] == '(') {
 	ed_col--;
 	ed_col1--;
@@ -1062,9 +1057,9 @@ void list_up()
 	    ESCMOVE(ed_footer, 1);
 	    CHECK(addstr, "Can't find");
 	    ESCRST();
-	    ed_row = save_row;
-	    ed_col = save_col;
-	    ed_col1 = save_col1;
+	    ed_row = old_row;
+	    ed_col = old_col;
+	    ed_col1 = old_col1;
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
 	    return;
 	} else if (ed_col > 0) {
@@ -1095,7 +1090,7 @@ void list_up()
 	    ed_start = 0;
     }
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 void redisplay_screen()
@@ -1105,7 +1100,7 @@ void redisplay_screen()
 	ed_start = 0;
 
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 //-----------cut and paste-------------------------------
@@ -1198,11 +1193,10 @@ bool quit_with_save(void)
 	    ESCRST();
 	    switch (c) {
 	    case 'y':
-		if(strcmp(fname,"") != 0){
-		save_data(fname);
-		}
-		else{
-		save_file_as();
+		if (strcmp(fname, "") != 0) {
+		    save_data(fname);
+		} else {
+		    save_file_as();
 		}
 		ESCCLS();
 		ESCMOVE(1, 1);
@@ -1235,10 +1229,10 @@ void save_file()
 	CHECK(addstr, "filename:  ");
 	strcpy(fname, getname());
 	if (cancel_flag) {
-		cancel_flag = 0;
-		clear_status();
-		ESCRST();
-		restore_cursol();
+	    cancel_flag = 0;
+	    clear_status();
+	    ESCRST();
+	    restore_cursol();
 	    return;
 	}
     }
@@ -1263,7 +1257,7 @@ void save_file_as()
     clear_status();
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
-	if (cancel_flag) {
+    if (cancel_flag) {
 	cancel_flag = 0;
 	clear_status();
 	ESCRST();
@@ -1291,7 +1285,7 @@ void save_region()
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
     if (cancel_flag) {
-		cancel_flag = 0;
+	cancel_flag = 0;
 	clear_status();
 	ESCRST();
 	restore_cursol();
@@ -1327,7 +1321,7 @@ void insert_file()
     CHECK(addstr, "filename:  ");
     strcpy(str1, getname());
     if (cancel_flag) {
-		cancel_flag = 0;
+	cancel_flag = 0;
 	clear_status();
 	ESCRST();
 	restore_cursol();
@@ -1384,9 +1378,9 @@ void insert_file()
 
 void load_file()
 {
-	int i,j;
+    int i, j;
 
-	for (i = 0; i < ROW_SIZE; i++) {
+    for (i = 0; i < ROW_SIZE; i++) {
 	for (j = 0; j < COL_SIZE; j++) {
 	    ed_data[i][j] = 0;
 	}
@@ -1961,7 +1955,7 @@ bool edit_loop(void)
 	ESCCLSLA();
 	restore_paren();
 	if (ed_ins)
-	    insertcol();
+	    insert_col();
 	ed_data[ed_row][ed_col] = c;
 	ESCMOVE(ed_row + TOP_MARGIN - ed_start, 1);
 	display_line(ed_row);
@@ -2188,7 +2182,7 @@ void display_line(int line)
 	    // 
 	    // #|...|#
 	    ESCBOLD();
-	    setcolor(ed_comment_color);
+	    set_color(ed_comment_color);
 	    while (((ed_col1 < turn && col1 < turn)
 		    || (ed_col1 >= turn && col < COL_SIZE))
 		   && ed_data[line][col] != EOL
@@ -2221,7 +2215,7 @@ void display_line(int line)
 	    switch (check_token(line, col)) {
 	    case HIGHLIGHT_SYNTAX:
 		ESCBOLD();
-		setcolor(ed_syntax_color);
+		set_color(ed_syntax_color);
 		while (((ed_col1 < turn && col1 < turn)
 			|| (ed_col1 >= turn && col < COL_SIZE))
 		       && ed_data[line][col] != ' '
@@ -2238,7 +2232,7 @@ void display_line(int line)
 		break;
 	    case HIGHLIGHT_BUILTIN:
 		ESCBOLD();
-		setcolor(ed_builtin_color);
+		set_color(ed_builtin_color);
 		while (((ed_col1 < turn && col1 < turn)
 			|| (ed_col1 >= turn && col < COL_SIZE))
 		       && ed_data[line][col] != ' '
@@ -2255,7 +2249,7 @@ void display_line(int line)
 		break;
 	    case HIGHLIGHT_STRING:
 		ESCBOLD();
-		setcolor(ed_string_color);
+		set_color(ed_string_color);
 		CHECK(addch, ed_data[line][col]);
 		col++;
 		col1++;
@@ -2281,7 +2275,7 @@ void display_line(int line)
 		break;
 	    case HIGHLIGHT_COMMENT:
 		ESCBOLD();
-		setcolor(ed_comment_color);
+		set_color(ed_comment_color);
 		while (((ed_col1 < turn && col1 < turn)
 			|| (ed_col1 >= turn && col < COL_SIZE))
 		       && ed_data[line][col] != NUL
@@ -2300,7 +2294,7 @@ void display_line(int line)
 		break;
 	    case HIGHLIGHT_EXTENDED:
 		ESCBOLD();
-		setcolor(ed_extended_color);
+		set_color(ed_extended_color);
 		while (((ed_col1 < turn && col1 < turn)
 			|| (ed_col1 >= turn && col < COL_SIZE))
 		       && ed_data[line][col] != ' '
@@ -2317,7 +2311,7 @@ void display_line(int line)
 		break;
 	    case HIGHLIGHT_MULTILINE_COMMENT:
 		ESCBOLD();
-		setcolor(ed_comment_color);
+		set_color(ed_comment_color);
 		ed_incomment = line;
 		while (((ed_col1 < turn && col1 < turn)
 			|| (ed_col1 >= turn && col < COL_SIZE))
@@ -2359,7 +2353,7 @@ void display_line(int line)
     ESCRST();
 }
 
-void setcolor(enum Color n)
+void set_color(enum Color n)
 {
     if (has_colors()) {
 	CHECK(color_set, n, NULL);
@@ -2393,27 +2387,27 @@ void delete_char(void)
 	ed_rparen_row = -1;
     }
     i = ed_col;
-	size = increase_buffer(ed_row,ed_col);
-    while (ed_data[ed_row][i+size] != 0) {
-	ed_data[ed_row][i] = ed_data[ed_row][i+size];
+    size = increase_buffer(ed_row, ed_col);
+    while (ed_data[ed_row][i + size] != 0) {
+	ed_data[ed_row][i] = ed_data[ed_row][i + size];
 	i++;
     }
-	ed_data[ed_row][i] = 0;
+    ed_data[ed_row][i] = 0;
 }
 
 
-void insertcol()
+void insert_col()
 {
     int i;
 
-    i = findeol(ed_row);
+    i = find_eol(ed_row);
     while (i >= ed_col) {
 	ed_data[ed_row][i + 1] = ed_data[ed_row][i];
 	i--;
     }
 }
 
-void insertrow()
+void insert_row()
 {
     int i, j, k;
 
@@ -2430,12 +2424,12 @@ void insertrow()
     ed_data[ed_row][ed_col] = EOL;
 }
 
-void deleterow()
+void delete_row()
 {
     int i, j, k, l, l1;
 
-    k = l = findeol(ed_row - 1);
-    l1 = findeol1(ed_row - 1);
+    k = l = find_eol(ed_row - 1);
+    l1 = find_eol1(ed_row - 1);
     for (j = 0; j < COL_SIZE; j++) {
 	ed_data[ed_row - 1][k] = ed_data[ed_row][j];
 	k++;
@@ -2455,9 +2449,9 @@ void deleterow()
 }
 
 /*
- * findeol find position of eol in buffer
+ * find_eol find position of eol in buffer
 */
-int findeol(int row)
+int find_eol(int row)
 {
     int i;
 
@@ -2469,9 +2463,9 @@ int findeol(int row)
 }
 
 /*
-* findeol1 find position of eol on display terminal
+* find_eol1 find position of eol on display terminal
 */
-int findeol1(int row)
+int find_eol1(int row)
 {
     int col, col1;		// col1 is position of display terminal
     col = col1 = 0;
@@ -2508,8 +2502,8 @@ struct position find_lparen(int bias)
 	if (row < 0) {
 	    pos.col = 0;
 	}
-	col = findeol(row);
-	col1 = findeol1(row);
+	col = find_eol(row);
+	col1 = find_eol1(row);
     }
 
     nest = 0;
@@ -2540,8 +2534,8 @@ struct position find_lparen(int bias)
 	if (col == 0) {
 	    row--;
 	    if (row > 0) {
-		col = findeol(row);
-		col1 = findeol1(row);
+		col = find_eol(row);
+		col1 = find_eol1(row);
 	    }
 
 	} else {
@@ -2753,7 +2747,7 @@ void emphasis_rparen()
 void softtabs(int n)
 {
     while (n > 0) {
-	insertcol();
+	insert_col();
 	ed_data[ed_row][ed_col] = ' ';
 	ed_col++;
 	ed_col1++;
@@ -2877,7 +2871,7 @@ void remove_headspace(int row __unused)
     col = 0;
     while (ed_data[ed_row][col] == ' ')
 	col++;
-    k = findeol(ed_row);
+    k = find_eol(ed_row);
     if (k == -1)		// can't find
 	k = 0;
     i = 0;
@@ -3046,7 +3040,7 @@ void replace_fragment(const char *newstr)
 	m--;
     }
     while (n > 0) {
-	insertcol();
+	insert_col();
 	ed_data[ed_row][ed_col] = *newstr;
 	ed_col++;
 	ed_col1++;
@@ -3151,7 +3145,7 @@ void replace_word(const char *str1, const char *str2)
 	    str2++;
 	}
     } else {			// len1 < len2
-	i = findeol(ed_row);
+	i = find_eol(ed_row);
 	j = len2 - len1;
 	while (i >= ed_col + len1) {
 	    ed_data[ed_row][i + j] = ed_data[ed_row][i];

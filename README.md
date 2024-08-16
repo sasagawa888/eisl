@@ -110,7 +110,7 @@ In the non-editable REPL type (quit) or CTRL+D.
 Mr. Hiroi has published introductory articles about ISLisp. It's written in plain Japanese, so you can easily translate it into your native language with google translator. http://www.nct9.ne.jp/m_hiroi/clisp/islisp.html
 
 # Editable REPL
-
+When entering a line in the REPL, syntax highlighting, completion, and text editing are available.
 Key bindings are as follows:
 
 | Key         | Description           |

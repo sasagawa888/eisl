@@ -121,7 +121,7 @@ Key bindings are as follows:
 | ctrl+N or ↓ | recall history newer  |
 | ctrl+A      | move to begin of line |
 | strl+E      | move to end of line   |
-| ctrl+J ctrl+M or return | insert end of line             |
+| ctrl+J ctrl+M or return | send S-exp to Lisp             |
 | ctrl+H or back-space    | backspace                      |
 | ctrl+D                  | delete one char                |
 | ctrl+K                  | kill line from current positon |

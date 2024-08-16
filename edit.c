@@ -893,6 +893,9 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 	break;
 
     default:
+	if(c < 32) // if control char, ignore it.
+	return false;
+
 	for (k = COL_SIZE; k > *j; k--)
 	    buffer[k][0] = buffer[k - 1][0];
 	buffer[(*j)++][0] = c;

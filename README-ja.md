@@ -98,8 +98,6 @@ http://www.nct9.ne.jp/m_hiroi/clisp/islisp.html
 | <kbd>Ctrl</kbd>+<kbd>J</kbd>，<kbd>ctrl</kbd>+<kbd>M</kbd>又は<kbd>Enter</kbd> | 改行を挿入
 | <kbd>Ctrl</kbd>+<kbd>H</kbd>又は<kbd>back-space</kbd> | 前方削除
 | <kbd>Ctrl</kbd>+<kbd>D</kbd> | 後方削除
-| <kbd>Ctrl</kbd>+<kbd>K</kbd> | 行の現在以後を切り取り
-| <kbd>Ctrl</kbd>+<kbd>Y</kbd> | 切り取った行を貼り付け
 | <kbd>Esc</kbd><kbd>Tab</kbd> | 補完
 
 

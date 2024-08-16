@@ -747,28 +747,6 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 	if (ed_lparen_col > *j)
 	    ed_lparen_col--;
 	break;
-    case CTRL('K'):
-	buffer1[0] = '\0';
-	for (k = *j; k < COL_SIZE; k++) {
-	    buffer1[k - *j] = buffer[k][0];
-	    buffer[k][0] = NUL;
-	}
-	display_buffer();
-	ESCMVLEFT(*j + 3);
-	break;
-    case CTRL('Y'):
-	for (k = 0; k < COL_SIZE; k++)
-	    buffer[k][0] = buffer1[k];
-
-	for (k = 0; k < COL_SIZE; k++) {
-	    if (buffer[k][0] == NUL)
-		break;
-	}
-
-	display_buffer();
-	*j = k;
-	ESCMVLEFT(k + 3);
-	break;
     case CTRL('A'):
 	*j = 0;
 	*uni_j = 0;

@@ -124,8 +124,6 @@ Key bindings are as follows:
 | ctrl+J ctrl+M or return | send S-exp to Lisp             |
 | ctrl+H or back-space    | backspace                      |
 | ctrl+D                  | delete one char                |
-| ctrl+K                  | kill line from current positon |
-| ctrl+Y                  | yank killed line               |
 | Esc Tab                 | completion                     |
 
 # Goal

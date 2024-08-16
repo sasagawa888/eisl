@@ -7,7 +7,9 @@ Edlis is a simple editor for ISLisp. Edlis is subset Edwin.
 Edlis supports Unicode from ver2.57.
 
 ## Invocation
-`(edit filename)` in the REPL.
+`(edit filename)` in the Easy-ISLisp REPL.
+
+`edlis` or `edlis filename` on terminal.
 
 ## Commands
 
@@ -76,7 +78,7 @@ Using tmux is very convenient. Pressing CTRL+B followed by % will split the scre
 - main buffer  row-size  5000, col-size 256 (defined in edlis.h)
 - sub buffer  row-size 1000, col-size 256 (defined in edlis.h)
 
-- hint to modify
+# Hint to modify
 The structure of the buffer is extremely simple. Each line consists of 256 characters and is initially initialized to 0. The line ends with an EOL character. The remaining part is left unused. Although there is a lot of waste, the simple structure makes it easy to understand.
 
 The color specification for syntax highlighting is described around line 60 in edlis.c. The curses library allows for 16 color settings. By modifying this part, you can change it to your desired colors.

@@ -690,6 +690,7 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
     case CTRL('M'):
     case EOL:
 	if(!check_balance()){
+		restore_paren_buffer(*j);
 		return false;
 	}
 	for (*j = 0; *j <= COL_SIZE; (*j)++)

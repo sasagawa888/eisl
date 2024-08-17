@@ -576,6 +576,31 @@ int read_stdin(void)
     return (buffer2[pos++]);
 }
 
+bool check_balance(void)
+{
+	int col,paren,quote;
+
+	col = paren = quote = 0;
+
+	while(buffer[col][0] != 0){
+		if(buffer[col][0] == '(')
+			paren++;
+		else if(buffer[col][0] == ')')
+			paren--;
+		else if(col == 0 && buffer[col][0] == '"')
+			quote++;
+		else if(col > 0 && buffer[col][0] == '"' && buffer[col-1][0] != '\\')
+			quote++;
+
+		col++;
+	}
+
+	if(paren == 0 && quote % 2 == 0)
+		return true;
+
+	return false;
+}
+
 void up(int limit, int *rl_line, int *j, int *uni_j, int *pos)
 {
     if (limit <= 1)
@@ -664,6 +689,9 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
     switch (c) {
     case CTRL('M'):
     case EOL:
+	if(!check_balance()){
+		return false;
+	}
 	for (*j = 0; *j <= COL_SIZE; (*j)++)
 	    if (buffer[*j][0] == 0) {
 		buffer[*j][0] = c;

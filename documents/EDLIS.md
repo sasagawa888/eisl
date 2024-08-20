@@ -73,6 +73,9 @@ Using tmux is very convenient. Pressing CTRL+B followed by % will split the scre
 
 ![tmux](screen7.png)
 
+To easily move between the two split screens, add the following setting to the ~/.tmux.conf file:
+`set -g mouse on`
+
 # Spec 
 
 - main buffer  row-size  5000, col-size 256 (defined in edlis.h)

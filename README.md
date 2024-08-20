@@ -7,7 +7,7 @@ https://qiita.com/sym_num/items/793adfe118514668e5b0
 See [ISLisp](https://en.wikipedia.org/wiki/ISLISP)
 YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=KfrRyKMcTw8&t=330s)
 
-![EISL](document/eisl.png)
+![EISL](documents/eisl.png)
 
 # Installation
 

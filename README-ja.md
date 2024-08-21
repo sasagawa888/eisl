@@ -3,12 +3,12 @@
 Easy-ISLisp (EISL) はISLisp標準の解釈実行器及び翻訳系です。
 ![EISL](documents/eisl.png)
 
-Kenichi Sasagawa氏が制作しました（[Easy-ISLispのコンパイラ - Qiita](https://qiita.com/sym_num/items/793adfe118514668e5b0)）。
+Kenichi Sasagawa氏が制作しました。
 
 ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki/ISLISP)）もご覧下さい。
 
-次の動画ではEISLの紹介と導入方法の説明を行っています（英語）
-[![Introduction of Easy-ISLisp](http://img.youtube.com/vi/KfrRyKMcTw8/0.jpg)](https://youtu.be/KfrRyKMcTw8)
+次の動画ではEISLの紹介と導入方法の説明を行っています。
+[![Introduction of Easy-ISLisp](http://img.youtube.com/vi/KfrRyKMcTw8/0.jpg)](https://www.youtube.com/watch?v=OkDb4ttbAZU)
 
 
 ## 導入方法

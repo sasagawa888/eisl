@@ -33,6 +33,8 @@ int find_function_data(const char *str);
 int getch1(void);
 char *get_fragment(void);
 char *getname(void);
+char *getword1(void);
+char *getword2(void);
 enum HighlightToken check_token(int row, int col);
 struct position find_lparen(int bias);
 struct position find_rparen(int bias);

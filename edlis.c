@@ -1440,7 +1440,7 @@ void search_next()
 
     clear_status();
     CHECK(addstr, "search:    ");
-    strcpy(str1, getname());
+    strcpy(str1, getword1());
     ESCRST();
     if (cancel_flag) {
 	cancel_flag = 0;
@@ -1479,7 +1479,7 @@ void search_prev()
 
     clear_status();
     CHECK(addstr, "search:    ");
-    strcpy(str1, getname());
+    strcpy(str1, getword1());
     ESCRST();
     if (cancel_flag) {
 	cancel_flag = 0;
@@ -1520,7 +1520,7 @@ void transfer_word()
 
     clear_status();
     CHECK(addstr, "search: ");
-    strcpy(str1, getname());
+    strcpy(str1, getword1());
     clear_status();
     if (cancel_flag) {
 	cancel_flag = false;
@@ -1530,7 +1530,7 @@ void transfer_word()
 	return;
     }
     CHECK(addstr, "replace: ");
-    strcpy(str2, getname());
+    strcpy(str2, getword2());
     if (cancel_flag) {
 	cancel_flag = false;
 	clear_status();
@@ -1556,12 +1556,9 @@ void transfer_word()
 	    CHECK(addstr, "replace? y/n ");
 	    ESCRST();
 	    CHECK(refresh);
-	    c = getch();
-	    if (c == ERR) {
-		errw("getch");
-	    }
+	    c = getch1();
 	}
-	while (c != 'y' && c != 'n');
+	while (c != 'y' && c != 'n' && c != CTRL('G'));
 	if (c == 'y') {
 	    ed_row = pos.row;
 	    ed_col = ed_col1 = pos.col;
@@ -1569,6 +1566,12 @@ void transfer_word()
 	    display_screen();
 	    modify_flag = true;
 	    ed_col++;
+	} else if(c == CTRL('G')){
+		clear_status();
+		ESCRST();
+		display_screen();
+		restore_cursol();
+		return;
 	} else {
 	    display_screen();
 	    ed_col++;
@@ -1695,6 +1698,115 @@ void pagedn()
 
 
 char *getname()
+{
+    int c;
+    static int pos;
+    static char buf[SHORT_STR_MAX];
+
+    cancel_flag = false;
+    ESCMOVE(ed_footer, 12);
+    ESCREV();
+    CHECK(addstr, "                    ");
+    ESCMOVE(ed_footer, 12);
+    CHECK(addstr, buf);
+    ESCRST();
+
+    while (1) {
+	CHECK(refresh);
+	c = getch();
+	if (c == ERR) {
+	    errw("getch");
+	}
+	switch (c) {
+	case RET:
+	    if (strcmp(buf, "") == 0)
+		break;
+	    else
+		return (buf);
+	case KEY_BACKSPACE:
+	case DEL:
+	    if (pos > 0)
+		pos--;
+	    buf[pos] = 0;
+	    break;
+	case CTRL('G'):
+	    cancel_flag = true;
+	    return (buf);
+	default:
+	    if (pos > SHORT_STR_MAX)
+		break;
+	    else if (c < 20)
+		break;
+	    buf[pos] = c;
+	    pos++;
+	    break;
+	}
+	ESCMOVE(ed_footer, 12);
+	ESCREV();
+	CHECK(addstr, "                    ");
+	ESCMOVE(ed_footer, 12);
+	CHECK(addstr, buf);
+	ESCRST();
+    }
+
+}
+
+
+char *getword1()
+{
+    int c;
+    static int pos;
+    static char buf[SHORT_STR_MAX];
+
+    cancel_flag = false;
+    ESCMOVE(ed_footer, 12);
+    ESCREV();
+    CHECK(addstr, "                    ");
+    ESCMOVE(ed_footer, 12);
+    CHECK(addstr, buf);
+    ESCRST();
+
+    while (1) {
+	CHECK(refresh);
+	c = getch();
+	if (c == ERR) {
+	    errw("getch");
+	}
+	switch (c) {
+	case RET:
+	    if (strcmp(buf, "") == 0)
+		break;
+	    else
+		return (buf);
+	case KEY_BACKSPACE:
+	case DEL:
+	    if (pos > 0)
+		pos--;
+	    buf[pos] = 0;
+	    break;
+	case CTRL('G'):
+	    cancel_flag = true;
+	    return (buf);
+	default:
+	    if (pos > SHORT_STR_MAX)
+		break;
+	    else if (c < 20)
+		break;
+	    buf[pos] = c;
+	    pos++;
+	    break;
+	}
+	ESCMOVE(ed_footer, 12);
+	ESCREV();
+	CHECK(addstr, "                    ");
+	ESCMOVE(ed_footer, 12);
+	CHECK(addstr, buf);
+	ESCRST();
+    }
+
+}
+
+char *getword2()
 {
     int c;
     static int pos;

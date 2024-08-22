@@ -1173,6 +1173,24 @@ void save_selection()
 
 //-----------------command----------------------------
 
+char* replace_tilde(char* fname)
+{
+	if (fname[0] == '~'){
+		static char fname1[256];
+		char *home = getenv("HOME");
+		if(home == NULL)
+		return "";
+		else{
+		strcpy(fname1,home);
+		strcat(fname1,fname+1);
+		return fname1;
+		}
+	}
+	else {
+		return fname;
+	}
+}
+
 bool quit_with_save(void)
 {
     int c;
@@ -1227,7 +1245,7 @@ void save_file()
 	ESCMOVE(ed_footer, 1);
 	clear_status();
 	CHECK(addstr, "filename:  ");
-	strcpy(fname, getname());
+	strcpy(fname, replace_tilde(getname()));
 	if (cancel_flag) {
 	    cancel_flag = 0;
 	    clear_status();
@@ -1256,7 +1274,7 @@ void save_file_as()
     ESCMOVE(ed_footer, 1);
     clear_status();
     CHECK(addstr, "filename:  ");
-    strcpy(str1, getname());
+	strcpy(str1, replace_tilde(getname()));
     if (cancel_flag) {
 	cancel_flag = 0;
 	clear_status();
@@ -1389,7 +1407,7 @@ void load_file()
     ESCMOVE(ed_footer, 1);
     clear_status();
     CHECK(addstr, "filename:  ");
-    strcpy(fname, getname());
+    strcpy(fname, replace_tilde(getname()));
     if (cancel_flag) {
 	cancel_flag = 0;
 	clear_status();

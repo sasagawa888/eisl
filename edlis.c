@@ -1234,8 +1234,7 @@ bool quit_with_save(void)
 	    case CTRL('G'):
 		clear_status();
 		ESCRST();
-		ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-			ed_col1 + LEFT_MARGIN);
+		restore_cursol();
 		ctrl_c = 0;
 		return false;
 		break;
@@ -1667,7 +1666,7 @@ void pageup()
 	ed_start = 0;
     ed_row = ed_start;
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	restore_cursol();
 }
 
 void home()
@@ -1686,7 +1685,7 @@ void end()
 	ed_start = ed_row - ed_middle;
     recalculate_col(ed_row, ed_col);
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 }
 
 void pagedn()
@@ -1699,7 +1698,7 @@ void pagedn()
     ed_row = ed_start;
     recalculate_col(ed_row, ed_col);
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 }
 
 
@@ -1868,7 +1867,7 @@ char *getword2()
 
 void edit_screen(void)
 {
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+    restore_cursol();
     bool quit = edit_loop();
     while (!quit) {
 	quit = edit_loop();
@@ -2063,7 +2062,7 @@ bool edit_loop(void)
     case KEY_IC:
 	ed_ins = !ed_ins;
 	display_header();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	break;
     case KEY_PPAGE:
 	pageup();
@@ -2131,7 +2130,7 @@ void display_header(void)
     int i;
     ESCHOME();
     ESCREV();
-    for (i = 0; i < COLS; i++)
+    for (i = 0; i < COLS-1; i++)
 	CHECK(addch, ' ');
     ESCHOME();
     CHECK(printw, "Edlis %1.2f        File: %s   ", VERSION, fname);
@@ -2223,7 +2222,7 @@ void help(void)
     CHECK(refresh);
     CHECK(getch);
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 }
 
 /*                                     COL_SIZE
@@ -2802,7 +2801,7 @@ void emphasis_lparen()
 	    ed_rparen_col = ed_col1;
 	    ESCBORG();
 	}
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     } else if (ed_col >= COLS && pos.col >= COLS) {
 	if (pos.row != -1) {
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
@@ -2822,8 +2821,7 @@ void emphasis_lparen()
 	    ed_rparen_col = ed_col1;
 	    ESCBORG();
 	}
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - COLS + LEFT_MARGIN);
+	restore_cursol();
     }
 }
 
@@ -2854,7 +2852,7 @@ void emphasis_rparen()
 	    ed_lparen_col = ed_col1;
 	    ESCBORG();
 	}
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     } else if (ed_col >= COLS && pos.col >= COLS) {
 	if (pos.row != -1) {
 	    ESCMOVE(ed_row + TOP_MARGIN - ed_start,
@@ -2874,8 +2872,7 @@ void emphasis_rparen()
 	    ed_lparen_col = ed_col1;
 	    ESCBORG();
 	}
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start,
-		ed_col1 - COLS + LEFT_MARGIN);
+	restore_cursol();
     }
 }
 

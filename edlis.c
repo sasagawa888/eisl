@@ -1113,7 +1113,7 @@ void cut_line()
     ed_clip_start = ed_clip_end = -1;
     restore_paren();
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 
@@ -1143,11 +1143,17 @@ void cut_selection()
 {
     copy_selection();
     delete_selection();
-    ed_row = ed_clip_start;
-    ed_clip_start = ed_clip_end = -1;
     restore_paren();
-    display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col + LEFT_MARGIN);
+	ed_start = ed_clip_start - ed_scroll/2;
+	if(ed_start < 0)
+		ed_start = 0;
+	ed_row = ed_clip_start - 1;
+	if(ed_row < 0)
+		ed_row = 0;
+	ed_col = 0;
+    ed_clip_start = ed_clip_end = -1;
+	display_screen();
+    restore_cursol();
     modify_flag = true;
 }
 
@@ -1156,7 +1162,7 @@ void uncut_selection()
     paste_selection();
     restore_paren();
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 
@@ -1167,7 +1173,7 @@ void save_selection()
     ed_clip_start = ed_clip_end = -1;
     restore_paren();
     display_screen();
-    ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
     modify_flag = true;
 }
 
@@ -3060,7 +3066,7 @@ void paste_selection()
 	ESCREV();
 	CHECK(addstr, "Buffer over flow");
 	ESCRST();
-	ESCMOVE(ed_row + TOP_MARGIN - ed_start, ed_col1 + LEFT_MARGIN);
+	restore_cursol();
 	return;
     }
 
@@ -3079,7 +3085,7 @@ void paste_selection()
 	}
 	k++;
     }
-    ed_end = ed_end + ed_copy_end;
+
 }
 
 void delete_selection()

@@ -170,7 +170,7 @@ Elapsed Time(second)=3.728262
 EISLはエディタを備えています。
 エディタを利用するには`edit`関数を用いて下さい。
 
-併せてご覧ください: [sasagawa888/Edlis: Simple CUI editor for Easy-ISLisp](https://github.com/sasagawa888/Edlis)
+併せてご覧ください: [Edlis](documents/EDLIS.md)
 
 ### 用法
 

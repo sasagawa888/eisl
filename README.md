@@ -186,7 +186,7 @@ Elapsed Time(second)=3.728262
 # Invoke editor
 
 By default the `edit` function invokes the
-[Edlis](https://github.com/sasagawa888/Edlis)
+[Edlis](documents/EDLIS.md)
 editor.
 But note that it respects the UNIX convention of the `VISUAL` and `EDITOR` environment variables, so if either of those is defined it will be used instead.
 

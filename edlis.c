@@ -1264,7 +1264,7 @@ void save_file()
     ESCREV();
     clear_status();
     ESCMOVE(ed_footer, 1);
-    CHECK(addstr, "saved");
+    CHECK(addstr, "saved ");
     CHECK(addstr, fname);
     ESCRST();
     restore_cursol();

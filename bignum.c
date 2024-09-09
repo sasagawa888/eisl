@@ -40,8 +40,9 @@
 * other case                -> Long division multiplication algorithm
 */
 
-#define NTT 100
-#define KARATSUBA 20
+#define NTT 20
+//#define KARATSUBA 20
+// KARATSUBA is still buggy. not use.
 
 #include <stdio.h>
 #include <string.h>

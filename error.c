@@ -638,6 +638,7 @@ int signal_condition(int x, int y, int th)
 	END_TRY;
     }
     if (ignore_flag) {
+	block_pt = 0;
 	handling_resource_err = false;
 	RAISE(Ignored_Error);
     }

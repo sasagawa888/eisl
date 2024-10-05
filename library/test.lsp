@@ -58,13 +58,15 @@
 
 (defmacro $error1 (form name)
   `(progn
+      (eisl-ignore-toplevel-check 0)
       (let ((ans (catch 'c-parse-error
               (with-handler 
                 (lambda (c) (throw 'c-parse-error c))
                 ,form))))
           (if (equal (class-of ans) (class ,name))
               (format (standard-output) "" ',form)
-              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans))))))
+              (format (standard-output) "~S is bad. correct is ~A but got ~A ~%" ',form (class ,name) (class-of ans))))
+      (eisl-ignore-toplevel-check nil)))        
 
 
 

@@ -160,6 +160,7 @@ bool redef_flag = false;	/* true=redefine-class,false=not-redefine */
 bool start_flag = true;		/* true=line-start,false=not-line-start */
 bool back_flag = true;		/* for backtrace,true=on,false=off */
 bool ignore_topchk = false;	/* for FAST-compiler true=ignore,false=normal */
+bool obey_topchk = false;   /* while $error1 true*/
 #ifndef WITHOUT_CURSES
 bool repl_flag = true;		/* for REPL read_line true=on,false=off */
 bool org_repl_flag = true;	/* original val for restore */

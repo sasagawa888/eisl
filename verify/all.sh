@@ -24,3 +24,4 @@ eisl -s verify/symbol.lsp
 eisl -s verify/unicode.lsp
 eisl -s verify/unwind.lsp
 eisl -s verify/vector.lsp
+eisl -s verify/arvyy.lsp

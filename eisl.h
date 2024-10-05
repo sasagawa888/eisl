@@ -561,6 +561,7 @@ extern bool redef_flag;
 extern bool start_flag;
 extern bool back_flag;
 extern bool ignore_topchk;
+extern bool obey_topchk;
 #ifdef WITHOUT_CURSES
 #define repl_flag false
 #else

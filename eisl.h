@@ -600,7 +600,7 @@ extern Except_T Exit_Process;
 extern Except_T Exit_Network;
 extern int block_tag_check[CTRLSTK];
 extern int block_data[CTRLSTK][3];
-extern int catch_data[CTRLSTK][3];
+extern int catch_data[CTRLSTK][4];
 extern int unwind_buf[CTRLSTK];
 extern int block_pt;		// pointer for block
 extern int catch_pt;		// catch counter

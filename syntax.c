@@ -1124,6 +1124,7 @@ int f_catch(int arglist, int th)
     catch_data[catch_pt][0] = tag;
     catch_data[catch_pt][1] = ep[th];
     catch_data[catch_pt][2] = unwind_nest;
+	catch_data[catch_pt][3] = ap[th];
     cp = catch_pt;
     catch_pt++;
 
@@ -1203,6 +1204,7 @@ int f_throw(int arglist, int th)
 
     catch_arg = eval(arg2, th);
     ep[th] = catch_data[i][1];	/* restore environment */
+	ap[th] = catch_data[i][3];  /* restore args pointer */
     longjmp(catch_buf[i], 1);
 }
 

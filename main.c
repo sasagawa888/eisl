@@ -207,7 +207,7 @@ int signal_condition_y;
 
 int block_tag_check[CTRLSTK];
 int block_data[CTRLSTK][3];
-int catch_data[CTRLSTK][3];	/* new data type for catch tag */
+int catch_data[CTRLSTK][4];	/* new data type for catch tag */
 int unwind_buf[CTRLSTK];
 int block_pt;			/* index of block. following are similer */
 int catch_pt = 0;		/* catch counter */

@@ -2175,7 +2175,10 @@ int convert(int arg1, int arg2)
 	    double x;
 
 	    x = GET_FLT(arg1);
-	    snprintf(str, SHORT_STRSIZE, "%g", x);
+		if (x == (int)x) 
+			snprintf(str, SHORT_STRSIZE, "%.1f", x);
+        else 
+	    	snprintf(str, SHORT_STRSIZE, "%g", x);
 	    return (make_str(str));
 	}
 	break;

@@ -9,3 +9,6 @@
 (m1 1)
 ($assert (m2 2) (list 1 2))
 
+($test (convert 97.0 <string>) "97.0")
+
+

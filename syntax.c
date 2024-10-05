@@ -612,7 +612,7 @@ int f_defmacro(int arglist, int th)
     if (!symbol_list_p(car(arg2))) {
 	error(OUT_OF_DOMAIN, "defmacro", car(arg2), th);
     }
-    if (obey_topchk && !top_flag)
+    if (!top_flag && !ignore_topchk)
 	error(NOT_TOP_LEVEL, "defmacro", arglist, th);
 
 

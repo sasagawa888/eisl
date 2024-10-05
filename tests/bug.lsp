@@ -1,8 +1,9 @@
+(import "test")
 
-(block exit
-    (with-handler
-        (lambda (condition)
-            (return-from exit nil))
-        (foo1)))
-
+($assert
+    (+ 1
+       (catch 'foo
+         (+ 2 (throw 'foo 1)))
+       3)
+    5)
 

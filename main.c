@@ -160,7 +160,6 @@ bool redef_flag = false;	/* true=redefine-class,false=not-redefine */
 bool start_flag = true;		/* true=line-start,false=not-line-start */
 bool back_flag = true;		/* for backtrace,true=on,false=off */
 bool ignore_topchk = false;	/* for FAST-compiler true=ignore,false=normal */
-bool obey_topchk = false;   /* while $error1 true*/
 #ifndef WITHOUT_CURSES
 bool repl_flag = true;		/* for REPL read_line true=on,false=off */
 bool org_repl_flag = true;	/* original val for restore */
@@ -2020,6 +2019,10 @@ int apply(int func, int args, int th)
 	    while (!(IS_NIL(body))) {
 		shelter_push(body, th);
 		res = eval(car(body), th);
+		if(listp(res) && car(res) == make_sym("DEFMACRO")){
+			//if defmacro has inner defmacro, not occur error 
+			ignore_topchk = true;
+		}
 		shelter_pop(th);
 		body = cdr(body);
 	    }

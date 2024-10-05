@@ -184,12 +184,8 @@ int f_ignore_toplevel_check(int arglist, int th __unused)
     arg1 = car(arglist);
     if (arg1 == T)
 	ignore_topchk = true;
-    else if (arg1 == make_int(0))
-    obey_topchk = true;
-    else{
+    else
 	ignore_topchk = false;
-    obey_topchk = false;
-    }
     return (T);
 }
 

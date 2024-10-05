@@ -16,6 +16,8 @@
     (let ((f (create (class <foo2>) 'bar 2)))
         (get-bar f) 2))
 
+#|
+generate following code automaticaly by defclass
 (IF (NOT (GENERIC-FUNCTION-P (FUNCTION* GET-BAR))) (DEFGENERIC GET-BAR (x)))
 (DEFMETHOD GET-BAR ((x <FOO>)) 
      (LET ((y (SLOT-VALUE x (QUOTE BAR))))
@@ -35,3 +37,5 @@
 (IF (NOT (GENERIC-FUNCTION-P (FUNCTION* BAR-BOUNDP))) (DEFGENERIC BAR-BOUNDP (x)))
 
 (DEFMETHOD BAR-BOUNDP ((x <FOO>)) (NOT (EISL-DUMMYP (SLOT-VALUE x (QUOTE BAR)))))
+
+|#

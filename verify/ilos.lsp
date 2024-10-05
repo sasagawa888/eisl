@@ -87,6 +87,7 @@
    (reverse *call-tree*))
 
 ;;
+($ap 2 "ILOS execute")
 ($test (foo-30 1) (primary-<object>) equal)
 ($test (foo-30 c00) (around-<standard-object>-begin
 	      before-<standard-object>
@@ -196,3 +197,5 @@
  
 ($test (foo-39 2 3) (20 30) equal)
 ($test (funcall f) (20 30 (2 3)) equal)
+
+($ap 2 "ILOS execute end")

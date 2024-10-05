@@ -1,9 +1,8 @@
-;;; bignum test
 
-
-(defun fact (n)
-    (if (= n 0)
-        1
-        (* n (fact (- n 1)))))
+(block exit
+    (with-handler
+        (lambda (condition)
+            (return-from exit nil))
+        (foo1)))
 
 

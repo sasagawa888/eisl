@@ -43,9 +43,7 @@ void error(int errnum, const char *fun, int arg, int th)
     repl_flag = org_repl_flag;
 #endif
 
-    // initialize block-pointer
-    block_pt = 0;
-
+    
     // fold to upper letter.
     for (i = 0; i < (int) strlen(fun); i++) {
 	fun1[i] = toupper(fun[i]);
@@ -697,6 +695,9 @@ int signal_condition(int x, int y, int th)
 	unwind_pt = 0;
 	unwind_nest = 0;
     }
+	// initialize block-pointer after unwind resolve
+    block_pt = 0;
+
     str = cdr(assoc(make_sym("a"), GET_CDR(x)));
     args = cdr(assoc(make_sym("b"), GET_CDR(x)));
     fun = cdr(assoc(make_sym("c"), GET_CDR(x)));

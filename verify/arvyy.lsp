@@ -11,4 +11,10 @@
 
 ($test (convert 97.0 <string>) "97.0")
 
-
+(block exit
+    (with-handler
+        (lambda (condition)
+            ($assert (instancep condition (class <program-error>)) t)
+            (return-from exit nil))
+        (foo1)
+        ($assert t nil)))

@@ -7,19 +7,21 @@
   ($assert (get-bar f) 1)
   (set-bar 2 f)
   ($assert (get-bar f) 2))
-#|
+
 ;; check inheritance
 (defclass <foo2> (<foo>) ())
-(let ((f (create (class <foo2>) 'bar 2)))
-  ($assert (get-bar f) 2))
+
+
+;(let ((f (create (class <foo2>) 'bar 2)))
+;  ($assert (get-bar f) 2))
 
 ;; check initialize-object
 (defclass <foo3> () ((bar3 :reader get-bar3 :writer set-bar3 :initarg bar)))
-(defmethod initialize-object ((f <foo3>) :rest args)
-    (set-bar3 3 f)
-    (call-next-method))
-($assert (get-bar3 (create (class <foo3>) 'bar 0)) 3)
-|#
+;(defmethod initialize-object ((f <foo3>) :rest args)
+;    (set-bar3 3 f)
+;    (call-next-method))
+;($assert (get-bar3 (create (class <foo3>) 'bar 0)) 3)
+
 
 ;; check accessor
 (let ((obj (create (class <foo>))))

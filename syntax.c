@@ -1540,6 +1540,7 @@ int f_defclass(int arglist, int th)
 					       reader))),
 			     list3(make_sym("DEFGENERIC"), reader,
 				   list1(make_sym("x"))));
+	
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), reader,
@@ -1558,7 +1559,7 @@ int f_defclass(int arglist, int th)
 					    make_str("undefined"),
 					    make_str("reader"))),
 				make_sym("y")));
-
+	
 		eval(form, 0);
 		form = list4(make_sym("SET-PROPERTY"),
 			     make_int(1),
@@ -1587,6 +1588,7 @@ int f_defclass(int arglist, int th)
 			     list3(make_sym("DEFGENERIC"), writer,
 				   list2(make_sym("x"),
 					 list2(make_sym("y"), arg1))));
+	
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), writer,
@@ -1596,6 +1598,7 @@ int f_defclass(int arglist, int th)
 				      make_sym("y"),
 				      list2(make_sym("QUOTE"), sym)),
 				make_sym("x")));
+	
 		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":ACCESSOR"))) {
 		accessor = cadr(ls);
@@ -1620,6 +1623,7 @@ int f_defclass(int arglist, int th)
 					       accessor))),
 			     list3(make_sym("DEFGENERIC"), accessor,
 				   list1(make_sym("x"))));
+	
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), accessor,
@@ -1644,6 +1648,7 @@ int f_defclass(int arglist, int th)
 		    list4(make_sym("DEFMETHOD"), accessor,
 			  list1(list2(make_sym("x"), make_sym("<NULL>"))),
 			  list2(make_sym("QUOTE"), sym));
+	
 		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":BOUNDP"))) {
 		boundp = cadr(ls);
@@ -1666,6 +1671,7 @@ int f_defclass(int arglist, int th)
 					       boundp))),
 			     list3(make_sym("DEFGENERIC"), boundp,
 				   list1(make_sym("x"))));
+	
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), boundp,
@@ -1676,6 +1682,7 @@ int f_defclass(int arglist, int th)
 					    make_sym("x"),
 					    list2(make_sym("QUOTE"),
 						  sym)))));
+
 		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":INITFORM"))) {
 		initform = cadr(ls);
@@ -1688,6 +1695,7 @@ int f_defclass(int arglist, int th)
 		if (initform_flag) {
 		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
+	
 		initform = eval(initform, 0);
 		val = initform;
 		initform_flag = 1;

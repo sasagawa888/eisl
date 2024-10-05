@@ -1,4 +1,9 @@
-;;; ILOS compile tests
+;;; ILOS tests
+
+(import "test")
+
+($ap 1 "ILOS")
+
 (defglobal *call-tree* nil)
 ;;
 (defclass c00 () ())
@@ -80,7 +85,7 @@
    (setq *call-tree* nil)
    (foo-sub-30 x)
    (reverse *call-tree*))
-#|
+
 ;;
 ($test (foo-30 1) (primary-<object>) equal)
 ($test (foo-30 c00) (around-<standard-object>-begin
@@ -152,7 +157,7 @@
 	      around-c2-end 
 	      around-c3-end) 
  equal)
-;;|#
+
 
 (defgeneric foo-31 (x)
    (:method ((x <integer>))
@@ -160,11 +165,11 @@
    (:method ((x <number>))
 	    (* x x)))
 (defglobal x (foo-31 3))
-#| 
+
 ($test (funcall x 5) 45 eql)
 ($test (funcall x 5) 45 eql)
-|#
-#| 
+
+
 (defglobal f nil)
 (defgeneric foo-38 (x y))
 (defmethod foo-38 (x y) (list x y))
@@ -176,8 +181,8 @@
  
 ($test (foo-38 2 3) (20 30) equal)
 ($test (funcall f) (2 3) equal)
-;;
-|#
+
+
 (defglobal f nil)
 (defgeneric foo-39 (x y))
 (defmethod foo-39 (x y) (list x y))
@@ -188,7 +193,6 @@
 		   (if (next-method-p) (list x y (call-next-method)))))
 	 (list x y))
 
-#| 
+ 
 ($test (foo-39 2 3) (20 30) equal)
 ($test (funcall f) (20 30 (2 3)) equal)
-|#

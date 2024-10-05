@@ -8,6 +8,7 @@ eisl -s verify/elixir.lsp
 eisl -s verify/files.lsp
 eisl -s verify/formeval.lsp
 eisl -s verify/hiroi.lsp
+eisl -s verify/ilos.lsp
 eisl -s verify/io.lsp
 eisl -s verify/list.lsp
 eisl -s verify/macro.lsp

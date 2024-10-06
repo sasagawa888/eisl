@@ -430,7 +430,7 @@ int f_setf(int arglist, int th)
 	    error(IMPROPER_ARGS, "dynamic", arg1, th);
 	if (length(arg1) != 2)
 	    error(IMPROPER_ARGS, "dynamic", arg1, th);
-	newform = cons(make_sym("SET-DYNAMIC"), list2(cadr(arg1), arg2));
+	newform = cons(make_sym("SET-DYNAMIC"), list2(arg2, cadr(arg1)));
     } else if (listp(arg1) && macrop(car(arg1))) {
 	var = f_macroexpand_1(list1(arg1), th);
 	return (f_setf(list2(var, arg2), th));
@@ -475,22 +475,22 @@ int f_set_dynamic(int arglist, int th)
 {
     int arg1, arg2;
 
-    arg1 = car(arglist);
-    arg2 = eval(cadr(arglist), th);
+    arg1 = eval(car(arglist),th); // val
+    arg2 = cadr(arglist);         // var
     if (nullp(arglist))
 	error(IMPROPER_ARGS, "set-dynamic", arglist, th);
     if (improper_list_p(arglist))
 	error(IMPROPER_ARGS, "set-dynamic", arglist, th);
     if (length(arglist) != 2)
 	error(WRONG_ARGS, "set-dynamic", arglist, th);
-    if (!symbolp(arg1))
-	error(NOT_SYM, "set-dynamic", arg1, th);
-    if (STRING_REF(arg1, 0) == ':' || STRING_REF(arg1, 0) == '&')
-	error(WRONG_ARGS, "set-dynamic", arg1, th);
+    if (!symbolp(arg2))
+	error(NOT_SYM, "set-dynamic", arg2, th);
+    if (STRING_REF(arg2, 0) == ':' || STRING_REF(arg2, 0) == '&')
+	error(WRONG_ARGS, "set-dynamic", arg2, th);
 
-    if (find_dyn(arg1, th) != FAILSE) {
-	set_dyn_env(arg1, arg2, th);
-	return (arg2);
+    if (find_dyn(arg2, th) != FAILSE) {
+	set_dyn_env(arg2, arg1, th);
+	return (arg1);
     } else
 	error(UNDEF_VAR, "set-dynamic", arg1, th);
 

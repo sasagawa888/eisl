@@ -10,6 +10,7 @@
 ;;;  (defclass class-name (sc-name*) (slot-spec*) class-opt*)
 ;;;    --> <symbol>
 ;;;------------------------------------------------------------
+($ap 1 "defclass")
 ($argc defclass 3 0 1)
 ($stype defclass ($symbol $null) :target () ())
 ;;($stype defclass ($cons $null) foo :target ())

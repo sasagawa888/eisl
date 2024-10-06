@@ -26,4 +26,17 @@
        3)
     5)
 
+(defclass <foo> ()
+    ((bar :reader get-bar :writer set-bar :accessor bar :initarg bar :boundp bar-boundp)))
+
+(let ((f (create (class <foo>) 'bar 1)))
+  ($test (get-bar f) 1)
+  (set-bar 2 f)
+  ($test (get-bar f) 2))
+
+;; check inheritance
+(defclass <foo2> (<foo>) ())
+(let ((f (create (class <foo2>) 'bar 2)))
+  ($test (get-bar f) 2))
+
 

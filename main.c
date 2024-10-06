@@ -2064,14 +2064,14 @@ int apply(int func, int args, int th)
 	    }
 	    while (!nullp(next_method)) {
 		varlist = car(GET_CAR(car(next_method)));
-		/* adaptp(x,y) if sameclass or y is super-classs return 1 else 0 */
+		/* adaptp(x,y) if sameclass or x is super-classs return 1 else 0 */
 		if (adaptp(varlist, args)) {
 		    /* if only qualifier or sameclass-primary, eval method; */
 		    if ((GET_OPT(car(next_method)) == AROUND
 			 || GET_OPT(car(next_method)) == BEFORE
 			 || GET_OPT(car(next_method)) == AFTER)
 			|| (GET_OPT(car(next_method)) == PRIMARY
-			    && matchp(varlist, args) && pexist == 0)) {
+			    && adaptp(varlist, args) && pexist == 0)) {
 
 			if (GET_OPT(car(next_method)) == PRIMARY) {
 			    /* primary method must executes only once. */

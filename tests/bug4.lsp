@@ -1,18 +1,17 @@
 (import "test")
 
-(defdynamic *dyn1* 1)
+($assert `(1 2) (list 1 2))
+($assert `(1 ,2) (list 1 2))
+($assert `(1 ,(+ 1 2)) (list 1 3))
+($assert `#(1 ,(+ 1 2)) (vector 1 3))
+($assert `#(1 ,@(progn '(2 3))) (vector 1 2 3))
 
-($test
-    (dynamic *dyn1*)
-    1)
+;; nested quasiquote representation seems to be underspecified,
+;; use a macro defining macro to portably test nested quasiquote behavior.
+(defmacro m1 (a)
+  `(defmacro m2 (b)
+      `(list ,,a ,b)))
 
-(dynamic-let ((*dyn1* 2)
-              (*dyn2* 3))
-  ($test (dynamic *dyn1*) 2)
-  ($test (dynamic *dyn2*) 3)
-  (set-dynamic 4 *dyn1*) 
-  ($test (dynamic *dyn1*) 4))
-
-($test (dynamic *dyn1*) 1)
-
+(m1 1)
+($assert (m2 2) (list 1 2))
 

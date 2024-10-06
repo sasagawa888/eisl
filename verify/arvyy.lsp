@@ -62,3 +62,5 @@
       ($test (read-line stream) "abc")
       ($test (read-line stream) "de")
       ($test (read-line stream nil) nil)))
+
+($assert `#(1 ,@(progn '(2 3))) (vector 1 2 3))

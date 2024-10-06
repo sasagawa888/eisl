@@ -2422,14 +2422,10 @@ int quasi_transfer(int x, int n)
 
 int quasi_vector_transfer(int x, int n)
 {
-    int i, size;
+    int y;
 
-    size = GET_INT(GET_CDR(x));
-
-    for (i = 0; i < size; i++) {
-	SET_VEC_ELT(x, i, eval(quasi_transfer(GET_VEC_ELT(x, i), n), 0));
-    }
-    return (x);
+	y = vector(eval(quasi_transfer(vector_to_list(x),n),0));
+    return (y);
 }
 
 

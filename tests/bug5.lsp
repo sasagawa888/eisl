@@ -44,7 +44,7 @@
 
 (let ((out (create-string-output-stream)))
   (format out "abc~%de")
-  ;(finish-output out) // error occur
+  (finish-output out) 
   (let ((stream (create-string-input-stream (get-output-stream-string out))))
       ($assert (read-line stream) "abc")
       ($assert (read-line stream) "de")

@@ -55,4 +55,10 @@
 
 ($test (dynamic *dyn1*) 1)
 
-
+(let ((out (create-string-output-stream)))
+  (format out "abc~%de")
+  (finish-output out) 
+  (let ((stream (create-string-input-stream (get-output-stream-string out))))
+      ($test (read-line stream) "abc")
+      ($test (read-line stream) "de")
+      ($test (read-line stream nil) nil)))

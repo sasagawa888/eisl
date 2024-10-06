@@ -64,3 +64,18 @@
       ($test (read-line stream nil) nil)))
 
 ($assert `#(1 ,@(progn '(2 3))) (vector 1 2 3))
+
+(defun test-print (str)
+    (format-object (standard-output) str nil)
+    (format-char (standard-output) #\newline))
+
+#|
+(block exit
+    (with-handler
+        (lambda (c)
+            (test-print "OK3.1")
+            (continue-condition c "OK3.2")
+            (test-print "FAIL3"))
+        (let ((v (signal-condition (create (class <simple-error>) 'format-string "message") t)))
+            (test-print v))))
+|#

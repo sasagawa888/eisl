@@ -1,41 +1,49 @@
+(import "test")
+
+(defun test-print (int)
+    (format-integer (standard-output) int 10)
+    (format-char (standard-output) #\newline))
+
+(defgeneric foo1 (a b))
+(defmethod foo1 :before (a b) (test-print 2))
+(defmethod foo1 :before ((a <integer>) (b <integer>)) (test-print 1))
+(defmethod foo1 (a b) (test-print 3))
+(defmethod foo1 ((a <integer>) (b <integer>))
+    (call-next-method)
+    (test-print 4))
+(defmethod foo1 :after (a b) (test-print 5))
+(defmethod foo1 :after ((a <integer>) (b <integer>)) (test-print 6))
+(defmethod foo1 :around (a b)
+    (call-next-method)
+    (test-print 7))
+(defmethod foo1 :around ((a <integer>) (b <integer>))
+    (call-next-method)
+    (test-print 8)
+    a)
+
+(let ((result (foo1 9 10)))
+  (test-print result))
 
 
-(defclass <foo> ()
-    ((bar :reader get-bar :writer set-bar :accessor bar :initarg bar :boundp bar-boundp)))
-
-(defun test1 ()
-    (let ((f (create (class <foo>) 'bar 1)))
-        (get-bar f)
-        (set-bar 2 f)
-        (get-bar f) 2))
-
-;; check inheritance
-(defclass <foo2> (<foo>) ())
-
-(defun test2 ()
-    (let ((f (create (class <foo2>) 'bar 2)))
-        (get-bar f) 2))
-
+;; test setf
+;; is it specified in ISLisp ?
 #|
-generate following code automaticaly by defclass
-(IF (NOT (GENERIC-FUNCTION-P (FUNCTION* GET-BAR))) (DEFGENERIC GET-BAR (x)))
-(DEFMETHOD GET-BAR ((x <FOO>)) 
-     (LET ((y (SLOT-VALUE x (QUOTE BAR))))
-      (IF (EISL-DUMMYP y)
-          (CERROR "undefined" "reader")) y))
+(defgeneric (setf foo2) (value a))
+(defmethod (setf foo2) (value a)
+    (test-print a)
+    (test-print value))
 
-(IF (NOT (GENERIC-FUNCTION-P (FUNCTION* SET-BAR)))(DEFGENERIC SET-BAR (x (y <FOO>))))
-
-(DEFMETHOD SET-BAR (x (y <FOO>)) (SETF (SLOT-VALUE y (QUOTE BAR)) x))
-     
-(IF (NOT (GENERIC-FUNCTION-P (FUNCTION* BAR))) (DEFGENERIC BAR (x)))
-
-(DEFMETHOD BAR ((x <FOO>)) (LET ((y (SLOT-VALUE x (QUOTE BAR)))) (IF (EISL-DUMMYP y) (CERROR "undefined" "accessor")) y))
-
-(DEFMETHOD BAR ((x <NULL>)) (QUOTE BAR))
-
-(IF (NOT (GENERIC-FUNCTION-P (FUNCTION* BAR-BOUNDP))) (DEFGENERIC BAR-BOUNDP (x)))
-
-(DEFMETHOD BAR-BOUNDP ((x <FOO>)) (NOT (EISL-DUMMYP (SLOT-VALUE x (QUOTE BAR)))))
-
+(setf (foo2 10) 11)
 |#
+;; test no next-method error reporting
+(defgeneric foo3 (value))
+(defmethod foo3 ((value <number>))
+    (call-next-method))
+(block exit
+    (with-handler
+        (lambda (condition)
+            ;; can't portably test anything about condition
+            ;; since spec doesn't tell what it exactly should be
+            (return-from exit nil))
+        (foo3 1)
+        (print "FAIL")))

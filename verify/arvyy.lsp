@@ -69,6 +69,16 @@
     (format-object (standard-output) str nil)
     (format-char (standard-output) #\newline))
 
+;; I think the intention of the test is probably something like this.
+(block exit
+    (with-handler
+        (lambda (c)
+            (test-print "OK3.1")
+            (continue-condition c "OK3.2")
+            (test-print "FAIL3"))
+        (let ((v (cerror "abc" "123")))
+            (test-print v))))
+
 #|
 (block exit
     (with-handler

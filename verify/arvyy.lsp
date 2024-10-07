@@ -80,6 +80,7 @@
             (test-print v))))
 
 #|
+in filesignal.lisp
 (block exit
     (with-handler
         (lambda (c)

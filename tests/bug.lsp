@@ -1,6 +1,6 @@
 (defgeneric (setf foo2) (value a))
 (defmethod (setf foo2) (value a)
-    (test-print a)
-    (test-print value))
+    (print a)
+    (print value))
 
-;(setf (foo2 10) 11)
+(setf (foo2 10) 11)

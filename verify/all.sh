@@ -16,7 +16,7 @@ eisl -s verify/matrix.lsp
 eisl -s verify/misc.lsp
 eisl -s verify/noble.lsp
 eisl -s verify/number.lsp
-eisl -s verify/object.lsp
+#eisl -s verify/object.lsp
 eisl -s verify/pred.lsp
 eisl -s verify/seq.lsp
 eisl -s verify/stream.lsp

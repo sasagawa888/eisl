@@ -435,6 +435,11 @@ int f_setf(int arglist, int th)
 	var = f_macroexpand_1(list1(arg1), th);
 	return (f_setf(list2(var, arg2), th));
     }
+	/* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) */
+    else if (listp(arg1) && genericp(car(arg1))) {
+	/* e.g. above case (foo 3 1 2) */
+	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
+    }
     /* (setf (slot-value instance slot-name) value) */
     else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
 	newform = cons(make_sym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
@@ -452,13 +457,7 @@ int f_setf(int arglist, int th)
 		 cons(arg2,
 		      list2(cadr(arg1), list2(make_sym("QUOTE"), var))));
     }
-    /* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) */
-    else if (listp(arg1)) {
-	/* e.g. above case (foo 3 1 2) */
-	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
-	if (!genericp(car(arg1)))
-	    error(ILLEGAL_FORM, "setf", arg1, th);
-    } else if (symbolp(arg1)) {
+	else if (symbolp(arg1)) {
 	newform = cons(make_sym("SETQ"), list2(arg1, arg2));
     } else
 	error(IMPROPER_ARGS, "setf", arglist, th);
@@ -1874,8 +1873,8 @@ int f_defmethod(int arglist, int th)
 		 && symbolp(cadr(arg1))))) {
 	error(ILLEGAL_FORM, "defmethod", arg1, th);
     }
-    /* when (defmethod (set foo) ...) */
-    if (listp(arg1)) {
+    /* when (defmethod (setf foo) ...) */
+    if (listp(arg1) && car(arg1) == make_sym("SETF")) {
 	arg1 = cadr(arg1);
     }
 

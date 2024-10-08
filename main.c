@@ -144,6 +144,7 @@ int generic_func;		/* generic function in eval. */
 int generic_vars;		/* args list of generic function in eval. */
 int next_method;		/* head address of finded method. */
 int generic_list = NIL;		/* symbol list of generic function. */
+int setf_list = NIL;    /* generic function related setf */
 
 /* system global variable */
 int gArgC;

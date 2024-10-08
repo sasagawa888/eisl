@@ -37,7 +37,7 @@
 ($error (defclass foo (undef) ()) <undefined-entity>)
 ;;;
 ($error (defclass foo (<object>) ()) <error>)
-#|
+
 ;;;----------  ----------
 ;;;
 ($error (defclass foo () (:a)) <program-error>)
@@ -4233,5 +4233,3 @@
 ;;
 ($error (class undef) <undefined-entity>)
 
-
-|#

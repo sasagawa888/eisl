@@ -546,7 +546,7 @@ extern int generic_func;
 extern int generic_vars;
 extern int next_method;
 extern int generic_list;
-
+extern int setf_list;
 
 // flag
 extern int gArgC;

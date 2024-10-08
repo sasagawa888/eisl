@@ -99,6 +99,9 @@ void gbc_sequence(void)
     /* mark generic_list */
     mark_cell(generic_list);
 
+	/* mard setf_list. generic functions related setf */
+	mark_cell(setf_list);
+
 
     if (!thread_flag) {
 	addr = 0;

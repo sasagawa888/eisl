@@ -436,7 +436,7 @@ int f_setf(int arglist, int th)
 	return (f_setf(list2(var, arg2), th));
     }
 	/* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) */
-    else if (listp(arg1) && genericp(car(arg1))) {
+    else if (listp(arg1) && member(car(arg1),setf_list)) {
 	/* e.g. above case (foo 3 1 2) */
 	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
     }
@@ -1810,6 +1810,7 @@ int f_defgeneric(int arglist, int th)
     }
     /* when (defgeneric (setf foo) ...) */
     if (listp(arg1) && car(arg1) == make_sym("SETF")) {
+	setf_list = cons(cadr(arg1),setf_list);
 	arg1 = cadr(arg1);
     }
 

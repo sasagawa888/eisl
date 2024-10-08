@@ -103,14 +103,13 @@ in filesignal.lisp
         (format (standard-output) "FAIL~%")))
 
 ;; ISLisp 15.2.2
-#|
+
 (defgeneric (setf foo2) (value a))
 (defmethod (setf foo2) (value a)
-    (test-print a)
-    (test-print value))
+    (cons a value))
 
-(setf (foo2 10) 11)
-|#
+($test (setf (foo2 10) 11) (10 . 11))
+
 
 #|
 ;; check initialize-object

@@ -80,7 +80,7 @@ void error(int errnum, const char *fun, int arg, int th)
 		   make_str("Unbound function at "),
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("name"),
-		   make_sym("UNDEF-FUNC"), make_sym("namespace"),
+		   make_sym("UNDEF-FUN"), make_sym("namespace"),
 		   make_sym("FUNCTION"));
 	signal_condition(make_instance(cundefined_function, initargs),
 			 NIL, th);
@@ -98,9 +98,10 @@ void error(int errnum, const char *fun, int arg, int th)
 	break;
     case UNDEF_CLASS:
 	initargs =
-	    list6(make_sym("format-string"), make_str("Unbound class at "),
+	    list10(make_sym("format-string"), make_str("Unbound class at "),
 		  make_sym("format-arguments"), arg, make_sym("function"),
-		  make_sym(fun1));
+		  make_sym(fun1),make_sym("name"),arg,
+		  make_sym("namespace"),make_sym(fun1));
 	signal_condition(make_instance(cundefined_entity, initargs), NIL,
 			 th);
 	break;

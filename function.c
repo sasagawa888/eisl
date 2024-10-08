@@ -4860,6 +4860,8 @@ int f_undefined_entity_name(int arglist, int th)
 	error(UNDEF_ENTITY, "undefined-entity-name", arg1, th);
 
     fun = cdr(assoc(make_sym("j"), GET_CDR(arg1)));
+    if (fun == DUMMY)
+    fun = cdr(assoc(make_sym("c"), GET_CDR(arg1)));
     return (fun);
 }
 
@@ -4872,6 +4874,8 @@ int f_undefined_entity_namespace(int arglist, int th)
 	error(UNDEF_ENTITY, "undefined-entity-namespace", arg1, th);
 
     fun = cdr(assoc(make_sym("k"), GET_CDR(arg1)));
+    if(fun == DUMMY)
+    fun = cdr(assoc(make_sym("c"), GET_CDR(arg1)));
     return (fun);
 }
 

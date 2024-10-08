@@ -90,3 +90,14 @@ in filesignal.lisp
         (let ((v (signal-condition (create (class <simple-error>) 'format-string "message") t)))
             (test-print v))))
 |#
+
+;; check class lookup error
+(block exit
+    (with-handler
+        (lambda (condition)
+            ($assert (instancep condition (class <undefined-entity>)) t)
+            ($assert (undefined-entity-name condition) '<doesntexist>)
+            ($assert (undefined-entity-namespace condition) 'class)
+            (return-from exit nil))
+        (class <doesntexist>)
+        (format (standard-output) "FAIL~%")))

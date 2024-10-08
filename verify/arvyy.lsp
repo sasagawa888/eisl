@@ -111,3 +111,12 @@ in filesignal.lisp
 
 (setf (foo2 10) 11)
 |#
+
+#|
+;; check initialize-object
+(defclass <foo3> () ((bar3 :reader get-bar3 :writer set-bar3 :initarg bar)))
+(defmethod initialize-object ((f <foo3>) :rest args)
+    (set-bar3 3 f)
+    (call-next-method))
+($test (get-bar3 (create (class <foo3>) 'bar 0)) 3)
+|#

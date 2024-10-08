@@ -80,7 +80,7 @@ void error(int errnum, const char *fun, int arg, int th)
 		   make_str("Unbound function at "),
 		   make_sym("format-arguments"), arg, make_sym("function"),
 		   make_sym(fun1), make_sym("name"),
-		   make_sym("UNDEF-FUN"), make_sym("namespace"),
+		   make_sym("UNDEF-FUNC"), make_sym("namespace"),
 		   make_sym("FUNCTION"));
 	signal_condition(make_instance(cundefined_function, initargs),
 			 NIL, th);

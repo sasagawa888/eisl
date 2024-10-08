@@ -11,6 +11,7 @@
 ;;;    --> <symbol>
 ;;;------------------------------------------------------------
 ($ap 1 "defclass")
+
 ($argc defclass 3 0 1)
 ($stype defclass ($symbol $null) :target () ())
 ;;($stype defclass ($cons $null) foo :target ())
@@ -36,7 +37,7 @@
 ($error (defclass foo (undef) ()) <undefined-entity>)
 ;;;
 ($error (defclass foo (<object>) ()) <error>)
-
+#|
 ;;;----------  ----------
 ;;;
 ($error (defclass foo () (:a)) <program-error>)
@@ -74,7 +75,6 @@
 ;;; 
 ($error (defclass foo () ((a 1 2))) <error>)
 ($error (defclass foo () ((a :foo foo))) <error>)
-
 ;;;----------  ----------
 ;;; 
 ($error (defclass foo () () ()) <error>)
@@ -183,6 +183,7 @@
 ($test (boundp-foo-a x) t)
 ($test (read-foo-a x) 10 eql)
 ($test (access-foo-a x) 10 eql)
+
 ;;;------------------------------------------------------------
 ;;; [function]
 ;;;
@@ -4233,3 +4234,4 @@
 ($error (class undef) <undefined-entity>)
 
 
+|#

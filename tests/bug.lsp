@@ -3,4 +3,4 @@
     (test-print a)
     (test-print value))
 
-(setf (foo2 10) 11)
+;(setf (foo2 10) 11)

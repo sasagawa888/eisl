@@ -1809,8 +1809,8 @@ int f_defgeneric(int arglist, int th)
     if (!top_flag && !ignore_topchk) {
 	error(NOT_TOP_LEVEL, "defgeneric", arglist, th);
     }
-    /* when (defgeneric (set foo) ...) */
-    if (listp(arg1)) {
+    /* when (defgeneric (setf foo) ...) */
+    if (listp(arg1) && car(arg1) == make_sym("SETF")) {
 	arg1 = cadr(arg1);
     }
 

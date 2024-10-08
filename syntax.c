@@ -435,12 +435,17 @@ int f_setf(int arglist, int th)
 	var = f_macroexpand_1(list1(arg1), th);
 	return (f_setf(list2(var, arg2), th));
     }
-	/* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) */
+	else if (symbolp(arg1)) {
+	newform = cons(make_sym("SETQ"), list2(arg1, arg2));
+    }
+	/* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) 
+	 * foo is setf related generic function. (defgeneric (set foo) (a b c))
+	*/
     else if (listp(arg1) && member(car(arg1),setf_list)) {
 	/* e.g. above case (foo 3 1 2) */
 	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
     }
-    /* (setf (slot-value instance slot-name) value) */
+	/* (setf (slot-value instance slot-name) value) */
     else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
 	newform = cons(make_sym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
     }
@@ -457,9 +462,7 @@ int f_setf(int arglist, int th)
 		 cons(arg2,
 		      list2(cadr(arg1), list2(make_sym("QUOTE"), var))));
     }
-	else if (symbolp(arg1)) {
-	newform = cons(make_sym("SETQ"), list2(arg1, arg2));
-    } else
+	else
 	error(IMPROPER_ARGS, "setf", arglist, th);
 
     shelter_push(newform, th);
@@ -1529,8 +1532,8 @@ int f_defclass(int arglist, int th)
 		 * (if (not (generic-function-p (function* name)))
 		 *     (defgeneric name (x)))
 		 * (defmethod name ((x arg1))
-		 *    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y))
-		 *    (set-property 1 'reader 'read))
+		 *    (let ((y (slot-value x 'var))) (if (dummyp y) (cerror "undefined" "reader")) y)))
+		 * (set-property 1 fun 'slot)
 		 */
 		form = list3(make_sym("IF"),
 			     list2(make_sym("NOT"),
@@ -1563,7 +1566,7 @@ int f_defclass(int arglist, int th)
 		form = list4(make_sym("SET-PROPERTY"),
 			     make_int(1),
 			     list2(make_sym("QUOTE"), reader),
-			     list2(make_sym("QUOTE"), make_sym("READ")));
+			     list2(make_sym("QUOTE"), make_sym("SLOT")));
 		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":WRITER"))) {
 		writer = cadr(ls);
@@ -1578,6 +1581,7 @@ int f_defclass(int arglist, int th)
 		 * (defgeneric name (x y)))
 		 * (defmethod name (x (y arg1))
 		 *     (setf (slot-value y 'var) x))
+		 * (set-property 2 'fun 'slot)
 		 */
 		form = list3(make_sym("IF"),
 			     list2(make_sym("NOT"),
@@ -1599,6 +1603,12 @@ int f_defclass(int arglist, int th)
 				make_sym("x")));
 	
 		eval(form, 0);
+
+		form = list4(make_sym("SET-PROPERTY"),
+			     make_int(2),
+			     list2(make_sym("QUOTE"), writer),
+			     list2(make_sym("QUOTE"), make_sym("SLOT")));
+		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":ACCESSOR"))) {
 		accessor = cadr(ls);
 		if (length(ls) < 2) {
@@ -1614,6 +1624,7 @@ int f_defclass(int arglist, int th)
 		 *     (let ((y (slot-value x 'var))) (if (dummyp y) (error "undefined" "accessor") y)))
 		 * (defmethod name ((x <null>)) for setf syntax
 		 *     'var)
+		 * (set-property 3 'fun 'slot)
 		 */
 		form = list3(make_sym("IF"),
 			     list2(make_sym("NOT"),
@@ -1649,6 +1660,11 @@ int f_defclass(int arglist, int th)
 			  list2(make_sym("QUOTE"), sym));
 	
 		eval(form, 0);
+		form = list4(make_sym("SET-PROPERTY"),
+			     make_int(3),
+			     list2(make_sym("QUOTE"), accessor),
+			     list2(make_sym("QUOTE"), make_sym("SLOT")));
+		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":BOUNDP"))) {
 		boundp = cadr(ls);
 		if (nullp(boundp)) {
@@ -1662,6 +1678,7 @@ int f_defclass(int arglist, int th)
 		 * (defgeneric name (x)))
 		 * (defmethod name ((x arg1))
 		 *     (not (dummyp (slot-value x 'var))))
+		 * (set-property 4 'fun 'slot)
 		 */
 		form = list3(make_sym("IF"),
 			     list2(make_sym("NOT"),
@@ -1682,6 +1699,11 @@ int f_defclass(int arglist, int th)
 					    list2(make_sym("QUOTE"),
 						  sym)))));
 
+		eval(form, 0);
+		form = list4(make_sym("SET-PROPERTY"),
+			     make_int(4),
+			     list2(make_sym("QUOTE"), boundp),
+			     list2(make_sym("QUOTE"), make_sym("SLOT")));
 		eval(form, 0);
 	    } else if (eqp(car(ls), make_sym(":INITFORM"))) {
 		initform = cadr(ls);

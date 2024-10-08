@@ -449,13 +449,9 @@ int f_setf(int arglist, int th)
 	newform = cons(make_sym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
     }
     /* e.g. (setf (access-foo-a x) 100) */
-    else if (listp(arg1) && length(arg1) == 2) {
+    else if (listp(arg1) && length(arg1) == 2 && slot_accesor_p(car(arg1))) {
 	/* a method returns it's variable name */
-	if (genericp(car(arg1))) {
-	    var = eval(list2(car(arg1), NIL), th);
-	} else
-	    error(IMPROPER_ARGS, "setf", arg1, th);
-
+	var = eval(list2(car(arg1), NIL), th);
 	newform =
 	    cons(make_sym("SET-SLOT-VALUE"),
 		 cons(arg2,

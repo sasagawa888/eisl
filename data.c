@@ -685,23 +685,12 @@ int has_multiple_call_next_method_p2(int x)
 	return (0);
 }
 
-int writer_function_p(int x)
+int slot_accesor_p(int x)
 {
     int prop;
 
     prop = assoc(make_sym("SLOT"), GET_PROP(x));
-    if (get_int(prop) == 2)
-	return (1);
-    else
-	return (0);
-}
-
-int accesor_function_p(int x)
-{
-    int prop;
-
-    prop = assoc(make_sym("SLOT"), GET_PROP(x));
-    if (get_int(prop) == 3)
+    if (numberp(cdr(prop)))
 	return (1);
     else
 	return (0);

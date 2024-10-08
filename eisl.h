@@ -745,6 +745,7 @@ enum {
 double getETime(void);
 int readc(void);
 int absolute(int x);
+int accesor_function_p(int x);
 int add_sym(const char *name, int index);
 int adaptp(int varlist, int arglist);
 int angle(int y, int x);
@@ -1346,6 +1347,7 @@ int vector_to_list(int x);
 int vectorp(int x);
 int wait_para(void);
 int write_to_pipe(int n, int x);
+int writer_function_p(int x);
 int zerop(int addr);
 septoken separater(char buf[], char sep);
 void add_lex_env(int sym, int val, int th);

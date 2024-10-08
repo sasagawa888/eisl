@@ -1113,7 +1113,7 @@ void cut_line()
     ed_clip_start = ed_clip_end = -1;
     restore_paren();
     display_screen();
-	restore_cursol();
+    restore_cursol();
     modify_flag = true;
 }
 
@@ -1144,15 +1144,15 @@ void cut_selection()
     copy_selection();
     delete_selection();
     restore_paren();
-	ed_start = ed_clip_start - ed_scroll/2;
-	if(ed_start < 0)
-		ed_start = 0;
-	ed_row = ed_clip_start - 1;
-	if(ed_row < 0)
-		ed_row = 0;
-	ed_col = 0;
+    ed_start = ed_clip_start - ed_scroll / 2;
+    if (ed_start < 0)
+	ed_start = 0;
+    ed_row = ed_clip_start - 1;
+    if (ed_row < 0)
+	ed_row = 0;
+    ed_col = 0;
     ed_clip_start = ed_clip_end = -1;
-	display_screen();
+    display_screen();
     restore_cursol();
     modify_flag = true;
 }
@@ -1162,7 +1162,7 @@ void uncut_selection()
     paste_selection();
     restore_paren();
     display_screen();
-	restore_cursol();
+    restore_cursol();
     modify_flag = true;
 }
 
@@ -1173,28 +1173,27 @@ void save_selection()
     ed_clip_start = ed_clip_end = -1;
     restore_paren();
     display_screen();
-	restore_cursol();
+    restore_cursol();
     modify_flag = true;
 }
 
 //-----------------command----------------------------
 
-char* replace_tilde(char* fname)
+char *replace_tilde(char *fname)
 {
-	if (fname[0] == '~'){
-		static char fname1[256];
-		char *home = getenv("HOME");
-		if(home == NULL)
-		return "";
-		else{
-		strcpy(fname1,home);
-		strcat(fname1,fname+1);
-		return fname1;
-		}
-	}
+    if (fname[0] == '~') {
+	static char fname1[256];
+	char *home = getenv("HOME");
+	if (home == NULL)
+	    return "";
 	else {
-		return fname;
+	    strcpy(fname1, home);
+	    strcat(fname1, fname + 1);
+	    return fname1;
 	}
+    } else {
+	return fname;
+    }
 }
 
 bool quit_with_save(void)
@@ -1279,7 +1278,7 @@ void save_file_as()
     ESCMOVE(ed_footer, 1);
     clear_status();
     CHECK(addstr, "filename:  ");
-	strcpy(str1, replace_tilde(getname()));
+    strcpy(str1, replace_tilde(getname()));
     if (cancel_flag) {
 	cancel_flag = 0;
 	clear_status();
@@ -1571,12 +1570,12 @@ void transfer_word()
 	    display_screen();
 	    modify_flag = true;
 	    ed_col++;
-	} else if(c == CTRL('G')){
-		clear_status();
-		ESCRST();
-		display_screen();
-		restore_cursol();
-		return;
+	} else if (c == CTRL('G')) {
+	    clear_status();
+	    ESCRST();
+	    display_screen();
+	    restore_cursol();
+	    return;
 	} else {
 	    display_screen();
 	    ed_col++;
@@ -1666,7 +1665,7 @@ void pageup()
 	ed_start = 0;
     ed_row = ed_start;
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 void home()
@@ -1685,7 +1684,7 @@ void end()
 	ed_start = ed_row - ed_middle;
     recalculate_col(ed_row, ed_col);
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 void pagedn()
@@ -1698,7 +1697,7 @@ void pagedn()
     ed_row = ed_start;
     recalculate_col(ed_row, ed_col);
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 
@@ -2130,7 +2129,7 @@ void display_header(void)
     int i;
     ESCHOME();
     ESCREV();
-    for (i = 0; i < COLS-1; i++)
+    for (i = 0; i < COLS - 1; i++)
 	CHECK(addch, ' ');
     ESCHOME();
     CHECK(printw, "Edlis %1.2f        File: %s   ", VERSION, fname);
@@ -2222,7 +2221,7 @@ void help(void)
     CHECK(refresh);
     CHECK(getch);
     display_screen();
-	restore_cursol();
+    restore_cursol();
 }
 
 /*                                     COL_SIZE
@@ -3425,7 +3424,7 @@ static const char *functions_data[] = {
     "setq",
     "(setq var form) <object>",
     "Assign the result of evaluating 'form' to the variable 'var' (special form)",
-	"set-dynamic",
+    "set-dynamic",
     "(set-dynamic var form) <object>",
     "Assign the result of evaluating 'form' to the dynamic variable 'var' (special form)",
     "setf",

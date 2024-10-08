@@ -43,7 +43,7 @@ void error(int errnum, const char *fun, int arg, int th)
     repl_flag = org_repl_flag;
 #endif
 
-    
+
     // fold to upper letter.
     for (i = 0; i < (int) strlen(fun); i++) {
 	fun1[i] = toupper(fun[i]);
@@ -98,10 +98,11 @@ void error(int errnum, const char *fun, int arg, int th)
 	break;
     case UNDEF_CLASS:
 	initargs =
-	    list10(make_sym("format-string"), make_str("Unbound class at "),
-		  make_sym("format-arguments"), arg, make_sym("function"),
-		  make_sym(fun1),make_sym("name"),arg,
-		  make_sym("namespace"),make_sym(fun1));
+	    list10(make_sym("format-string"),
+		   make_str("Unbound class at "),
+		   make_sym("format-arguments"), arg, make_sym("function"),
+		   make_sym(fun1), make_sym("name"), arg,
+		   make_sym("namespace"), make_sym(fun1));
 	signal_condition(make_instance(cundefined_entity, initargs), NIL,
 			 th);
 	break;
@@ -697,7 +698,7 @@ int signal_condition(int x, int y, int th)
 	unwind_pt = 0;
 	unwind_nest = 0;
     }
-	// initialize block-pointer after unwind resolve
+    // initialize block-pointer after unwind resolve
     block_pt = 0;
 
     str = cdr(assoc(make_sym("a"), GET_CDR(x)));

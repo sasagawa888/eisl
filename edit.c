@@ -578,27 +578,28 @@ int read_stdin(void)
 
 bool check_balance(void)
 {
-	int col,paren,quote;
+    int col, paren, quote;
 
-	col = paren = quote = 0;
+    col = paren = quote = 0;
 
-	while(buffer[col][0] != 0){
-		if(buffer[col][0] == '(')
-			paren++;
-		else if(buffer[col][0] == ')')
-			paren--;
-		else if(col == 0 && buffer[col][0] == '"')
-			quote++;
-		else if(col > 0 && buffer[col][0] == '"' && buffer[col-1][0] != '\\')
-			quote++;
+    while (buffer[col][0] != 0) {
+	if (buffer[col][0] == '(')
+	    paren++;
+	else if (buffer[col][0] == ')')
+	    paren--;
+	else if (col == 0 && buffer[col][0] == '"')
+	    quote++;
+	else if (col > 0 && buffer[col][0] == '"'
+		 && buffer[col - 1][0] != '\\')
+	    quote++;
 
-		col++;
-	}
+	col++;
+    }
 
-	if(paren == 0 && quote % 2 == 0)
-		return true;
+    if (paren == 0 && quote % 2 == 0)
+	return true;
 
-	return false;
+    return false;
 }
 
 void up(int limit, int *rl_line, int *j, int *uni_j, int *pos)
@@ -689,9 +690,9 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
     switch (c) {
     case CTRL('M'):
     case EOL:
-	if(!check_balance()){
-		restore_paren_buffer(*j);
-		return false;
+	if (!check_balance()) {
+	    restore_paren_buffer(*j);
+	    return false;
 	}
 	for (*j = 0; *j <= COL_SIZE; (*j)++)
 	    if (buffer[*j][0] == 0) {
@@ -900,8 +901,8 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 	break;
 
     default:
-	if(c < 32) // if control char, ignore it.
-	return false;
+	if (c < 32)		// if control char, ignore it.
+	    return false;
 
 	for (k = COL_SIZE; k > *j; k--)
 	    buffer[k][0] = buffer[k - 1][0];

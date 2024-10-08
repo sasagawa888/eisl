@@ -434,25 +434,24 @@ int f_setf(int arglist, int th)
     } else if (listp(arg1) && macrop(car(arg1))) {
 	var = f_macroexpand_1(list1(arg1), th);
 	return (f_setf(list2(var, arg2), th));
-    }
-	else if (symbolp(arg1)) {
+    } else if (symbolp(arg1)) {
 	newform = cons(make_sym("SETQ"), list2(arg1, arg2));
     }
-	/* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) 
-	 * foo is setf related generic function. (defgeneric (set foo) (a b c))
-	*/
-    else if (listp(arg1) && member(car(arg1),setf_list)) {
+    /* e.g. when (setf (foo 1 2) 3) foo was define with (defgeneric (setf foo) (x y z)) 
+     * foo is setf related generic function. (defgeneric (set foo) (a b c))
+     */
+    else if (listp(arg1) && member(car(arg1), setf_list)) {
 	/* e.g. above case (foo 3 1 2) */
 	newform = cons(car(arg1), cons(arg2, cdr(arg1)));
     }
-	/* (setf (slot-value instance slot-name) value) */
+    /* (setf (slot-value instance slot-name) value) */
     else if (listp(arg1) && eqp(car(arg1), make_sym("SLOT-VALUE"))) {
 	newform = cons(make_sym("SET-SLOT-VALUE"), cons(arg2, cdr(arg1)));
     }
     /* e.g. (setf (access-foo-a x) 100) */
     else if (listp(arg1) && length(arg1) == 2) {
 	/* a method returns it's variable name */
-	if (functionp(car(arg1)) || genericp(car(arg1))) {
+	if (genericp(car(arg1))) {
 	    var = eval(list2(car(arg1), NIL), th);
 	} else
 	    error(IMPROPER_ARGS, "setf", arg1, th);
@@ -461,8 +460,7 @@ int f_setf(int arglist, int th)
 	    cons(make_sym("SET-SLOT-VALUE"),
 		 cons(arg2,
 		      list2(cadr(arg1), list2(make_sym("QUOTE"), var))));
-    }
-	else
+    } else
 	error(IMPROPER_ARGS, "setf", arglist, th);
 
     shelter_push(newform, th);
@@ -477,8 +475,8 @@ int f_set_dynamic(int arglist, int th)
 {
     int arg1, arg2;
 
-    arg1 = eval(car(arglist),th); // val
-    arg2 = cadr(arglist);         // var
+    arg1 = eval(car(arglist), th);	// val
+    arg2 = cadr(arglist);	// var
     if (nullp(arglist))
 	error(IMPROPER_ARGS, "set-dynamic", arglist, th);
     if (improper_list_p(arglist))
@@ -1126,7 +1124,7 @@ int f_catch(int arglist, int th)
     catch_data[catch_pt][0] = tag;
     catch_data[catch_pt][1] = ep[th];
     catch_data[catch_pt][2] = unwind_nest;
-	catch_data[catch_pt][3] = ap[th];
+    catch_data[catch_pt][3] = ap[th];
     cp = catch_pt;
     catch_pt++;
 
@@ -1206,7 +1204,7 @@ int f_throw(int arglist, int th)
 
     catch_arg = eval(arg2, th);
     ep[th] = catch_data[i][1];	/* restore environment */
-	ap[th] = catch_data[i][3];  /* restore args pointer */
+    ap[th] = catch_data[i][3];	/* restore args pointer */
     longjmp(catch_buf[i], 1);
 }
 
@@ -1542,7 +1540,7 @@ int f_defclass(int arglist, int th)
 					       reader))),
 			     list3(make_sym("DEFGENERIC"), reader,
 				   list1(make_sym("x"))));
-	
+
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), reader,
@@ -1561,7 +1559,7 @@ int f_defclass(int arglist, int th)
 					    make_str("undefined"),
 					    make_str("reader"))),
 				make_sym("y")));
-	
+
 		eval(form, 0);
 		form = list4(make_sym("SET-PROPERTY"),
 			     make_int(1),
@@ -1591,7 +1589,7 @@ int f_defclass(int arglist, int th)
 			     list3(make_sym("DEFGENERIC"), writer,
 				   list2(make_sym("x"),
 					 list2(make_sym("y"), arg1))));
-	
+
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), writer,
@@ -1601,7 +1599,7 @@ int f_defclass(int arglist, int th)
 				      make_sym("y"),
 				      list2(make_sym("QUOTE"), sym)),
 				make_sym("x")));
-	
+
 		eval(form, 0);
 
 		form = list4(make_sym("SET-PROPERTY"),
@@ -1633,7 +1631,7 @@ int f_defclass(int arglist, int th)
 					       accessor))),
 			     list3(make_sym("DEFGENERIC"), accessor,
 				   list1(make_sym("x"))));
-	
+
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), accessor,
@@ -1658,7 +1656,7 @@ int f_defclass(int arglist, int th)
 		    list4(make_sym("DEFMETHOD"), accessor,
 			  list1(list2(make_sym("x"), make_sym("<NULL>"))),
 			  list2(make_sym("QUOTE"), sym));
-	
+
 		eval(form, 0);
 		form = list4(make_sym("SET-PROPERTY"),
 			     make_int(3),
@@ -1687,7 +1685,7 @@ int f_defclass(int arglist, int th)
 					       boundp))),
 			     list3(make_sym("DEFGENERIC"), boundp,
 				   list1(make_sym("x"))));
-	
+
 		eval(form, 0);
 		form =
 		    list4(make_sym("DEFMETHOD"), boundp,
@@ -1716,7 +1714,7 @@ int f_defclass(int arglist, int th)
 		if (initform_flag) {
 		    error(ILLEGAL_FORM, "defclass", arg3, 0);
 		}
-	
+
 		initform = eval(initform, 0);
 		val = initform;
 		initform_flag = 1;
@@ -1832,7 +1830,7 @@ int f_defgeneric(int arglist, int th)
     }
     /* when (defgeneric (setf foo) ...) */
     if (listp(arg1) && car(arg1) == make_sym("SETF")) {
-	setf_list = cons(cadr(arg1),setf_list);
+	setf_list = cons(cadr(arg1), setf_list);
 	arg1 = cadr(arg1);
     }
 
@@ -2207,10 +2205,10 @@ int convert(int arg1, int arg2)
 	    double x;
 
 	    x = GET_FLT(arg1);
-		if (x == (int)x) 
-			snprintf(str, SHORT_STRSIZE, "%.1f", x);
-        else 
-	    	snprintf(str, SHORT_STRSIZE, "%g", x);
+	    if (x == (int) x)
+		snprintf(str, SHORT_STRSIZE, "%.1f", x);
+	    else
+		snprintf(str, SHORT_STRSIZE, "%g", x);
 	    return (make_str(str));
 	}
 	break;

@@ -144,7 +144,7 @@ int generic_func;		/* generic function in eval. */
 int generic_vars;		/* args list of generic function in eval. */
 int next_method;		/* head address of finded method. */
 int generic_list = NIL;		/* symbol list of generic function. */
-int setf_list = NIL;    /* generic function related setf */
+int setf_list = NIL;		/* generic function related setf */
 
 /* system global variable */
 int gArgC;
@@ -2020,9 +2020,9 @@ int apply(int func, int args, int th)
 	    while (!(IS_NIL(body))) {
 		shelter_push(body, th);
 		res = eval(car(body), th);
-		if(listp(res) && car(res) == make_sym("DEFMACRO")){
-			//if defmacro has inner defmacro, not occur error 
-			ignore_topchk = true;
+		if (listp(res) && car(res) == make_sym("DEFMACRO")) {
+		    //if defmacro has inner defmacro, not occur error 
+		    ignore_topchk = true;
 		}
 		shelter_pop(th);
 		body = cdr(body);
@@ -2425,7 +2425,7 @@ int quasi_vector_transfer(int x, int n)
 {
     int y;
 
-	y = vector(eval(quasi_transfer(vector_to_list(x),n),0));
+    y = vector(eval(quasi_transfer(vector_to_list(x), n), 0));
     return (y);
 }
 

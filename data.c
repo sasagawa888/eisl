@@ -685,12 +685,17 @@ int has_multiple_call_next_method_p2(int x)
 	return (0);
 }
 
+/*  if function is writer or accesor generic function.
+*   slot gunctions have property,
+*   1=reader, 2=writer, 3=accesor 4=boundp
+*/
+
 int slot_accesor_p(int x)
 {
     int prop;
 
-    prop = assoc(make_sym("SLOT"), GET_PROP(x));
-    if (numberp(cdr(prop)))
+    prop = cdr(assoc(make_sym("SLOT"), GET_PROP(x)));
+    if (integerp(prop) && (get_int(prop) == 2 || get_int(prop) == 3))
 	return (1);
     else
 	return (0);

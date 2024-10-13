@@ -2037,6 +2037,8 @@ bool edit_loop(void)
 		clear_status();
 		ESCRST();
 		return false;
+		default:
+		goto insert;
 	    }
 	}
 	break;
@@ -2083,6 +2085,7 @@ bool edit_loop(void)
     case TAB:
 	tab_key();
 	break;
+	insert:
     default:
 	if (ed_col >= COL_SIZE)
 	    break;

@@ -2038,8 +2038,14 @@ bool edit_loop(void)
 		ESCRST();
 		return false;
 		default:
+		if(isUni2(c) || isUni3(c) || isUni4(c)){
+		ESCMOVE(ed_footer, 1);
+		ESCREV();
+		clear_status();
+		ESCRST();
 		goto insert;
-	    }
+		}
+		}
 	}
 	break;
     case KEY_UP:

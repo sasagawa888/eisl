@@ -40,6 +40,7 @@ struct position find_lparen(int bias);
 struct position find_rparen(int bias);
 struct position find_word(const char *word);
 struct position find_word_back(const char *word);
+void add_eol(void);
 void backspace(void);
 void backspace_key(void);
 void copy_selection(void);

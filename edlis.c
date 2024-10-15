@@ -2631,6 +2631,25 @@ int find_eol1(int row)
     return (-1);
 }
 
+/* if end of line has no EOL, add EOL*/
+void add_eol(void)
+{
+	int col;
+	
+	if(ed_data[ed_end][0] == 0)
+		return;
+
+	for(col=0;col<COL_SIZE;col++){
+		if(ed_data[ed_end][col] == EOL)
+			return;
+		else if (ed_data[ed_end][col] == 0){
+			ed_data[ed_end][col] = EOL;
+			return;
+		}
+	}
+}
+
+
 struct position find_lparen(int bias)
 {
     int nest, row, col, col1, limit;	//col is position of buffer, col1 is position of display
@@ -2939,7 +2958,6 @@ void load_data(char *fname)
     ed_rparen_row = -1;
     ed_clip_start = -1;
     ed_clip_end = -1;
-    ed_data[0][0] = EOL;
     if (port != NULL) {
 	int c;
 
@@ -2949,24 +2967,17 @@ void load_data(char *fname)
 	    if (c == EOL) {
 		ed_row++;
 		ed_col = ed_col1 = 0;
-		if (ed_row >= ROW_SIZE)
+		if (ed_row > ROW_SIZE)
 		    printf("row %d over max-row", ed_row);
 	    } else {
 		ed_col++;
-		if (ed_col >= COL_SIZE)
+		if (ed_col > COL_SIZE)
 		    printf("column %d over max-column", ed_col);
 	    }
 	    c = fgetc(port);
 	}
-	/* if get EOF without EOL 
-	 *  this is a pen[EOF] -> this is a pen[EOL]
-	 */
-	if (ed_col != 0) {
-	    ed_data[ed_row][ed_col] = EOL;
-	    ed_row++;
-	}
 	ed_end = ed_row;
-	ed_data[ed_end][0] = EOL;
+	add_eol();
 	fclose(port);
     }
 }

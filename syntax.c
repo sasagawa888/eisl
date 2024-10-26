@@ -1791,7 +1791,7 @@ int f_defgeneric(int arglist, int th)
     arg2 = cadr(arglist);	/* lambda-list */
     arg3 = cddr(arglist);	/*  body */
 
-	/* when (defgeneric (setf foo) ...) */
+    /* when (defgeneric (setf foo) ...) */
     if (listp(arg1) && car(arg1) == make_sym("SETF")) {
 	setf_list = cons(cadr(arg1), setf_list);
 	arg1 = cadr(arg1);
@@ -1831,7 +1831,7 @@ int f_defgeneric(int arglist, int th)
     if (!top_flag && !ignore_topchk) {
 	error(NOT_TOP_LEVEL, "defgeneric", arglist, th);
     }
-    
+
     if (!member(arg1, generic_list))
 	generic_list = cons(arg1, generic_list);
 
@@ -1876,7 +1876,7 @@ int f_defmethod(int arglist, int th)
     arg1 = car(arglist);	/* method-name */
     arg2 = cdr(arglist);	/* parameter-profile */
 
-	/* when (defmethod (setf foo) ...) */
+    /* when (defmethod (setf foo) ...) */
     if (listp(arg1) && car(arg1) == make_sym("SETF")) {
 	arg1 = cadr(arg1);
     }
@@ -1897,7 +1897,7 @@ int f_defmethod(int arglist, int th)
 		 && symbolp(cadr(arg1))))) {
 	error(ILLEGAL_FORM, "defmethod", arg1, th);
     }
-    
+
     if (listp(car(arg2)) && illegal_lambda_p(car(arg2))) {
 	error(ILLEGAL_ARGS, "defmethod", arg2, th);
     }

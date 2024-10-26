@@ -691,15 +691,14 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
     case CTRL('M'):
     case EOL:
 	if (!check_balance()) {
-		printf
-		    ("\n() \"\" unbalance --- enter any key ---");
-		eisl_getch();
-		ESCMVLEFT(1);
-		ESCCLSL();
-		ESCMVU();
-		ESCMVLEFT(3);
-		display_buffer();
-		ESCMVLEFT(*j + 3);
+	    printf("\n() \"\" unbalance --- enter any key ---");
+	    eisl_getch();
+	    ESCMVLEFT(1);
+	    ESCCLSL();
+	    ESCMVU();
+	    ESCMVLEFT(3);
+	    display_buffer();
+	    ESCMVLEFT(*j + 3);
 	    restore_paren_buffer(*j);
 	    return false;
 	}

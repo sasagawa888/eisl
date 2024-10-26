@@ -2037,7 +2037,7 @@ bool edit_loop(void)
 		clear_status();
 		ESCRST();
 		return false;
-		}
+	    }
 	}
 	break;
     case KEY_UP:
@@ -2625,19 +2625,19 @@ int find_eol1(int row)
 /* if end of line has no EOL, add EOL*/
 void add_eol(void)
 {
-	int col;
-	
-	if(ed_data[ed_end][0] == 0)
-		return;
+    int col;
 
-	for(col=0;col<COL_SIZE;col++){
-		if(ed_data[ed_end][col] == EOL)
-			return;
-		else if (ed_data[ed_end][col] == 0){
-			ed_data[ed_end][col] = EOL;
-			return;
-		}
+    if (ed_data[ed_end][0] == 0)
+	return;
+
+    for (col = 0; col < COL_SIZE; col++) {
+	if (ed_data[ed_end][col] == EOL)
+	    return;
+	else if (ed_data[ed_end][col] == 0) {
+	    ed_data[ed_end][col] = EOL;
+	    return;
 	}
+    }
 }
 
 

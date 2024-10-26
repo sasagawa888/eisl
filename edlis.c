@@ -2912,7 +2912,7 @@ void save_data(char *fname)
     int row, col;
 
     FILE *port = fopen(fname, "w");
-    for (row = 0; row <= ed_end; row++)
+    for (row = 0; row < ed_end; row++)
 	for (col = 0; col < COL_SIZE; col++) {
 	    fputc(ed_data[row][col], port);
 	    if (ed_data[row][col] == EOL)

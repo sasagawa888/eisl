@@ -1,15 +1,18 @@
+(defclass <inner> () ((slot-inner :accessor slot-inner :initarg slot-inner)))
 
-(import "test")
+(defclass <outer> () ((slot-outer :reader slot-outer :initform (create (class <inner>) 'slot-inner 'hoge))))
 
-(defclass foo-5 () 
-   ((a :reader read-foo-a
-       :writer write-foo-a
-       :accessor access-foo-a
-       :boundp boundp-foo-a
-       :initarg a
-       :initform 1)))
-;;
-($test (generic-function-p #'read-foo-a) t)
-($test (generic-function-p #'write-foo-a) t)
-($test (generic-function-p #'access-foo-a) t)
-($test (generic-function-p #'boundp-foo-a) t)
+(let ((outer-1 (create (class <outer>)))
+      (outer-2 (create (class <outer>))))
+  (format (standard-output) "~S~%" (slot-inner (slot-outer outer-1)))
+  ;; => HOGE
+  (format (standard-output) "~S~%" (slot-inner (slot-outer outer-2)))
+  ;; => HOGE
+  (setf (slot-inner (slot-outer outer-1)) 'FUGA)
+  (format (standard-output) "~S~%" (slot-inner (slot-outer outer-1)))
+  ;; => FUGA
+  (format (standard-output) "~S~%" (slot-inner (slot-outer outer-2)))
+  ;; => Expected HOGE, but FUGA
+  )
+
+

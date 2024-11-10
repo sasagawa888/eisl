@@ -951,6 +951,7 @@ int make_instance(int cl, int initls)
     SET_CAR(addr, GET_CAR(cl));	/* super class */
     SET_CDR(addr, slotvars(cl));	/* slot vars with super class */
     SET_AUX(addr, cl);		/* class of instance */
+    SET_OPT(addr, initls);  
     while (!nullp(initls)) {
 	set_val(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
 		GET_CDR(addr));

@@ -207,11 +207,16 @@ void mark_cell(int addr)
     case GENERIC:
     case METHOD:
     case CLASS:
-    case INSTANCE:
     case LIS:
 	mark_cell(car(addr));
 	mark_cell(cdr(addr));
 	mark_cell(GET_AUX(addr));
+	return;
+	case INSTANCE:
+	mark_cell(car(addr));
+	mark_cell(cdr(addr));
+	mark_cell(GET_AUX(addr));
+	mark_cell(GET_OPT(addr));
 	return;
     case SUBR:
 	mark_cell(GET_AUX(addr));

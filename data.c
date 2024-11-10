@@ -959,6 +959,35 @@ int append(int x, int y)
 	return (cons(car(x), append(cdr(x), y)));
 }
 
+int instancep(int x)
+{
+	if(GET_TAG(x) == INSTANCE)
+		return(T);
+	else 
+		return(NIL);
+}
+
+int copy_instance(int x)
+{
+    int addr, initls, cl;
+
+    addr = freshcell();
+    SET_TAG(addr, INSTANCE);
+    SET_CAR(addr, GET_CAR(x));	/* super class */
+    SET_CDR(addr, copy(GET_CDR(x)));	/* slot vars with super class */
+    SET_AUX(addr, GET_AUX(x));  /* class of instance */
+    SET_OPT(addr, GET_OPT(x));  /* initls */
+	initls = GET_OPT(addr);
+	cl = GET_AUX(addr);
+    while (!nullp(initls)) {
+	set_val(cdr(assq(car(initls), GET_AUX(cl))), cadr(initls),
+		GET_CDR(addr));
+	initls = cddr(initls);
+	}
+    return (addr);
+}
+
+
 int copy(int x)
 {
     if (nullp(x))
@@ -973,6 +1002,8 @@ int copy(int x)
 	return (make_char(GET_NAME(x)));
     else if (stringp(x))
 	return (make_str(GET_NAME(x)));
+	else if (instancep(x))
+	return (copy_instance(x));
     else if (listp(x))
 	return (cons(copy(car(x)), copy(cdr(x))));
     else

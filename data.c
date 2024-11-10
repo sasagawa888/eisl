@@ -393,6 +393,8 @@ int subclassp(int x, int y)
 	return (0);
     else if (y == cobject)
 	return (1);
+	else if (x == cobject)
+	return(0);
     else
 	return (subclassp1(x, y));
 }

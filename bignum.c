@@ -194,6 +194,7 @@ void print_big(int x)
 }
 
 
+
 int gen_big(void)
 {
     int res;
@@ -1002,6 +1003,36 @@ int big_big_to_flt(int x)
     SET_FLT(res, val);
     return (res);
 }
+
+
+int big_big_to_str(int x)
+{
+    int y, len;
+    char str[STRSIZE],substr[20];
+
+    memset(str,0,sizeof(str));
+    if (get_sign(x) == -1) {
+        sprintf(substr, "%c", '-');
+        strcat(str,substr);
+    }
+    y = get_pointer(x);		/* get pointer of bigcell */
+    len = get_length(x);	/* get length of bignum */
+	sprintf(substr, "%d", bigcell[y]);
+    strcat(str,substr);
+    y--;
+    len--;
+
+    do {
+	    sprintf(substr, "%09d", bigcell[y]);
+        strcat(str,substr);
+	y--;
+	len--;
+    }
+    while (len > 0);
+
+    return(make_str(str));
+}
+
 
 
 /* bignum remainder of bignum and int */

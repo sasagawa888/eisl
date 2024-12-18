@@ -48,5 +48,7 @@
 ($test (funcall f 2) 11111111111111111111111111111111111122222222222222222222222222222227)
 
 ($test (gcd (expt 2 60) (expt 4 60)) 1152921504606846976)
+($test (convert (expt 2 90) <string>)  "1237940039285380274899124224")
+($test (convert (- (expt 2 90)) <string>) "-1237940039285380274899124224")
 
 (format (standard-output) "Bignum aLl $tests are done!~%")

@@ -766,6 +766,7 @@ int bignump(int x);
 int bignum_token(char buf[]);
 int big_abs(int x);
 int big_big_to_flt(int x);
+int big_big_to_str(int x);
 int big_eqp(int x, int y);
 int big_first_half(int x);
 int big_flt_to_big(int x);

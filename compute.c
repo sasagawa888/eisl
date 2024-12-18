@@ -812,10 +812,16 @@ int gcd(int x, int y)
 	return (make_flt
 		((double) abs(int_gcd(GET_FLT(x), (int) GET_FLT(y)))));
 
+	if(smallerp(x,y)){
+		int temp;
+		temp = x;
+		x = y;
+		y = temp;
+	}
     while (!zerop(y)) {
 	int r;
 
-	r = s_remainder(x, y);
+	r = f_mod(list2(x, y),0); // gcd for bugnum is not thread safety
 	x = y;
 	y = r;
 

@@ -674,6 +674,7 @@ int f_gcd(int arglist, int th)
     if (!numberp(arg2))
 	error(NOT_NUM, "gcd", arg2, th);
 
+    
     return (gcd(arg1, arg2));
 }
 

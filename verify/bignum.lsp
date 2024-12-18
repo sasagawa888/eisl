@@ -47,4 +47,6 @@
 
 ($test (funcall f 2) 11111111111111111111111111111111111122222222222222222222222222222227)
 
-(format (standard-output) "ALl $tests are done!~%")
+($test (gcd (expt 2 60) (expt 4 60)) 1152921504606846976)
+
+(format (standard-output) "Bignum aLl $tests are done!~%")

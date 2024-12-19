@@ -2,6 +2,7 @@ eisl -s verify/array.lsp
 eisl -s verify/bignum.lsp
 eisl -s verify/char.lsp
 eisl -s verify/cond.lsp
+eisl -s verify/block.lsp
 eisl -s verify/control.lsp
 eisl -s verify/declare.lsp
 eisl -s verify/elixir.lsp

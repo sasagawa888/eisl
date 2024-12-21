@@ -653,9 +653,10 @@ int f_round(int arglist, int th)
 		x = c;
 	else
 	    x = round(x);
+    
 	if (x <= 999999999.0 && x >= -999999999.0)
 	    return (make_int((int) x));
-	else
+	else if (x <= 999999999999999999.0 && x >= -999999999999999999.0)
 	    return (make_long((long long int) x));
     } else
 	return (arg1);

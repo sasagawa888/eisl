@@ -1,6 +1,6 @@
 ;; Edlis unicode test
-;; error -tai -vietnam -hindy -tamil -nepal
-;; 不具合　タイ語　ベトナム語　ヒンディー語　タミル語　ネパール語
+;; error -vietnam -hindy -tamil -nepal
+;; 不具合　ベトナム語　ヒンディー語　タミル語　ネパール語
 
 (defglobal c #\本)
 #|

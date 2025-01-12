@@ -39,7 +39,7 @@ else
 		endif
 	endif
 endif
-CFLAGS += $(INCS) -g -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -U_XOPEN_SOURCE -Inana/src
+CFLAGS += $(INCS) -g -Wall -Wextra -D_FORTIFY_SOURCE=2 $(CURSES_CFLAGS) -D_DEFAULT_SOURCE -D_XOPEN_SOURCE=600 -Inana/src
 DFLAGS := --preview=all --de -w --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 SRC_D := dextension.d disl.d
@@ -151,6 +151,22 @@ endif
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h
 endif
+
+main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o long.o link.o
+function.o: function.c eisl.h 
+extension.o: extension.c eisl.h 
+syntax.o: syntax.c eisl.h 
+data.o: data.c eisl.h 
+gbc.o: gbc.c eisl.h 
+cell.o: cell.c eisl.h 
+error.o: error.c eisl.h 
+bignum.o: bignum.c eisl.h 
+compute.o: compute.c eisl.h 
+edit.o: edit.c eisl.h 
+syntax_highlight.o: syntax_highlight.c eisl.h 
+long.o: long.c eisl.h 
+link.o: link.c eisl.h 
+
 
 nana/src/nana-config.h:
 	-cd nana; autoreconf -fi; ./configure

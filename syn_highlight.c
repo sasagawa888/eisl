@@ -50,7 +50,7 @@ static const char *builtin[] = {
     "general-vector-p", "generic-function-p", "gensym",
     "get-internal-real-time",
     "get-internal-run-time",
-    "get-output-stream-string", "get-universal-time", "hdmp", "identity",
+    "get-output-stream-string", "get-universal-time", "identity",
     "initialize-object*", "input-stream-p", "instancep", "integerp",
     "internal-time-units-per-second", "isqrt", "lcm", "length", "list",
     "listp", "load", "log", "map-into", "mapc", "mapcar", "mapcan",

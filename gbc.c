@@ -212,7 +212,7 @@ void mark_cell(int addr)
 	mark_cell(cdr(addr));
 	mark_cell(GET_AUX(addr));
 	return;
-	case INSTANCE:
+    case INSTANCE:
 	mark_cell(car(addr));
 	mark_cell(cdr(addr));
 	mark_cell(GET_AUX(addr));

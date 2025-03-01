@@ -2172,8 +2172,8 @@ int convert(int arg1, int arg2)
 	    return (arg1);
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
-	} else if (GET_AUX(arg2) == cstring){
-		return (big_big_to_str(arg1));
+	} else if (GET_AUX(arg2) == cstring) {
+	    return (big_big_to_str(arg1));
 	}
 	break;
     case INTN:

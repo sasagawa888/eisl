@@ -291,11 +291,12 @@ int increase_terminal(int row, int col)
     if (isUni3(ed_data[row][col])) {
 	unicode = utf8_to_ucs4(row, col);
 	// tai
-	if (unicode >= 0x0e00 && unicode <= 0x0e7f){
-		if((unicode >= 0x0E31 && unicode <= 0x0E3A) || (unicode >= 0x0E47 && unicode <= 0x0E4E))
-			return (0);
-		else 
-	    return (1);
+	if (unicode >= 0x0e00 && unicode <= 0x0e7f) {
+	    if ((unicode >= 0x0E31 && unicode <= 0x0E3A)
+		|| (unicode >= 0x0E47 && unicode <= 0x0E4E))
+		return (0);
+	    else
+		return (1);
 	}
 	// arabian
 	else if (unicode >= 0x0600 && unicode <= 0x06ff)
@@ -333,11 +334,12 @@ int decrease_terminal(int row, int col)
     if (isUni3(ed_data[row][col - 2])) {
 	unicode = utf8_to_ucs4(row, col - 2);
 	//tai
-	if (unicode >= 0x0e00 && unicode <= 0x0e7f){
-		if((unicode >= 0x0E31 && unicode <= 0x0E3A) || (unicode >= 0x0E47 && unicode <= 0x0E4E))
-			return (0);
-		else 
-	    return (1);
+	if (unicode >= 0x0e00 && unicode <= 0x0e7f) {
+	    if ((unicode >= 0x0E31 && unicode <= 0x0E3A)
+		|| (unicode >= 0x0E47 && unicode <= 0x0E4E))
+		return (0);
+	    else
+		return (1);
 	}
 	// arabian
 	else if (unicode >= 0x0600 && unicode <= 0x06ff)
@@ -2114,19 +2116,20 @@ bool edit_loop(void)
 	    skip = 3;
 	} else if (isUni3(c) && skip == 0) {
 	    int unicode;
-		unicode = utf8_to_ucs4(ed_row,ed_col);
-		if((unicode >= 0x0E31 && unicode <= 0x0E3A) || (unicode >= 0x0E47 && unicode <= 0x0E4E))
-			skip = 2;
-		else {
+	    unicode = utf8_to_ucs4(ed_row, ed_col);
+	    if ((unicode >= 0x0E31 && unicode <= 0x0E3A)
+		|| (unicode >= 0x0E47 && unicode <= 0x0E4E))
+		skip = 2;
+	    else {
 		ed_col1++;
-	    skip = 2;
-		}
+		skip = 2;
+	    }
 	}
 
 	if (skip > 0)
 	    skip--;
 
-	
+
 	restore_cursol();
 	modify_flag = true;
     }

@@ -653,7 +653,7 @@ int f_round(int arglist, int th)
 		x = c;
 	else
 	    x = round(x);
-    
+
 	if (x <= 999999999.0 && x >= -999999999.0)
 	    return (make_int((int) x));
 	else if (x <= 999999999999999999.0 && x >= -999999999999999999.0)
@@ -675,7 +675,7 @@ int f_gcd(int arglist, int th)
     if (!numberp(arg2))
 	error(NOT_NUM, "gcd", arg2, th);
 
-    
+
     return (gcd(arg1, arg2));
 }
 

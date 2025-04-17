@@ -12,7 +12,11 @@ not tested
     (c-lang "glutInit(&argc, argv);"))
 
 (defun glut:init-display-mode (x)
-    (cond ((eq x 'glut_single) (c-lang "glutInitDisplayMode(GLUT_SINGLE);"))))
+    (cond ((eq x 'glut_single) (c-lang "glutInitDisplayMode(GLUT_SINGLE);"))
+          ((eq x 'glut_double) (c-lang "glutInitDisplayMode(GLUT_DOUBLE);"))
+          ((eq x 'glut_rgb) (c-lang "glutInitDisplayMode(GLUT_RGB);"))
+          ((eq x 'glut_rgba) (c-lang "glutInitDisplayMode(GLUT_RGBA);"))))
+
 
 (defun glut:init-window-size (hight width)
     (c-lang "glutInitWindowSize((INT_MASK & HIGHT), (INT_MASK & WIDTH));"))

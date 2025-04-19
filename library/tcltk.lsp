@@ -93,7 +93,7 @@
 (defun tk:checkbutton (obj :rest l)
   (let ((opt (tk:option l)))
     (c-lang 
-      "strcpy(buff,''radiobutton .'');
+      "strcpy(buff,''checkbutton .'');
        strcat(buff,str_to_lower(Fgetname(OBJ)));
        strcat(buff,Fgetname(OPT));
        strcat(buff,''\n'');

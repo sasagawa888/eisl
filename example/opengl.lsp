@@ -8,7 +8,7 @@
   (glut:init-window-position 200 300)
 
   (glut:create-window "GLUT test")
-  (glut:init-display-mode "GLUT_RGBA")
+  (glut:init-display-mode 'glut_rgba)
   (gl:clear-color 1.0 1.0 1.0 1.0)
 
   (glut:display-func 'show)
@@ -29,5 +29,3 @@
   (glut:solid-teapot 0.5)
   (gl:flush)
 )
-
-(main)

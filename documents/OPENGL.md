@@ -49,6 +49,11 @@ Install OpenGL on linux and compile *library/opengl.lsp* with Easy-ISLisp.
 (glut:init)
 
 (glut:init-display-mode x)
+x:
+'glut-single
+'glut-double
+'glut-rgb
+'glut-rgba
 
 (glut:init-window-size hight width)
 
@@ -76,6 +81,8 @@ gl:y
 (glut:main-loop)
 
 (gl:clear x)
+x:
+'gl-color-buffer-bit
 
 (gl:color3d r g b)
 

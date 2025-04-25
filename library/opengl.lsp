@@ -12,10 +12,11 @@ not tested
     (c-lang "glutInit(&argc, argv);"))
 
 (defun glut:init-display-mode (x)
-    (cond ((eq x 'glut_single) (c-lang "glutInitDisplayMode(GLUT_SINGLE);"))
-          ((eq x 'glut_double) (c-lang "glutInitDisplayMode(GLUT_DOUBLE);"))
-          ((eq x 'glut_rgb) (c-lang "glutInitDisplayMode(GLUT_RGB);"))
-          ((eq x 'glut_rgba) (c-lang "glutInitDisplayMode(GLUT_RGBA);"))))
+    (cond ((eq x 'glut-single) (c-lang "glutInitDisplayMode(GLUT_SINGLE);"))
+          ((eq x 'glut-double) (c-lang "glutInitDisplayMode(GLUT_DOUBLE);"))
+          ((eq x 'glut-rgb) (c-lang "glutInitDisplayMode(GLUT_RGB);"))
+          ((eq x 'glut-rgba) (c-lang "glutInitDisplayMode(GLUT_RGBA);"))
+          (t (error "glut:init-display-mode" x))))
 
 
 (defun glut:init-window-size (hight width)
@@ -46,7 +47,8 @@ not tested
     (c-lang "glutMainLoop();"))
 
 (defun gl:clear (x)
-    (cond ((eq x 'gl_color_buffer_bit) (c-lang "glClear(GL_COLOR_BUFFER_BIT);"))))
+    (cond ((eq x 'gl-color-buffer-bit) (c-lang "glClear(GL_COLOR_BUFFER_BIT);"))
+          (t (error "gl:clear" x))))
 
 (defun gl:color3d (r g b)
     (c-lang "glColor3d(Fgetflt(R),Fgetflt(G),Fgetflt(B));"))

@@ -8,7 +8,7 @@
   (glut:init-window-position 200 300)
 
   (glut:create-window "GLUT test")
-  (glut:init-display-mode 'glut_rgba)
+  (glut:init-display-mode 'glut-rgba)
   (gl:clear-color 1.0 1.0 1.0 1.0)
 
   (glut:display-func 'show)
@@ -16,7 +16,7 @@
 )
 
 (defun show ()
-  (gl:clear 'gl_color_buffer_bit)
+  (gl:clear 'gl-color-buffer-bit)
   (gl:color3d 1.0 0.0 0.0)
   (gl:begin 'gl-line-loop)
 

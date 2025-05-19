@@ -2923,14 +2923,33 @@ void save_data(char *fname)
 {
     int row, col;
 
-    FILE *port = fopen(fname, "w");
-    for (row = 0; row < ed_end; row++)
-	for (col = 0; col < COL_SIZE; col++) {
-	    fputc(ed_data[row][col], port);
-	    if (ed_data[row][col] == EOL)
-		break;
-	}
-    fclose(port);
+    /* 
+     * If the final line does not end with a newline, 
+     * a newline will be inserted before saving.
+     */
+    col = 0;
+    while (ed_data[ed_end][col] != 0) {
+	if (ed_data[ed_end][col] == EOL)
+	    goto exit;
+	col++;
+    }
+    if (col != 0) {
+	ed_data[ed_end][col] = EOL;
+	ed_end++;
+    }
+
+
+  exit:
+    {
+	FILE *port = fopen(fname, "w");
+	for (row = 0; row < ed_end; row++)
+	    for (col = 0; col < COL_SIZE; col++) {
+		fputc(ed_data[row][col], port);
+		if (ed_data[row][col] == EOL)
+		    break;
+	    }
+	fclose(port);
+    }
 }
 
 void save_copy(char *fname)

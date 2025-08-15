@@ -658,7 +658,7 @@ int signal_condition(int x, int y, int th)
 	fflush(stdout);
 	RAISE(Exit_Process);
     }
-    if (network_flag) {
+    if (child_flag) {
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;

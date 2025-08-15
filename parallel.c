@@ -1023,7 +1023,7 @@ void close_socket(void)
     if (child_num > 0) {
 	for (i = 0; i < child_num; i++)
 	    close(child_sockfd[i]);
-    } else if (network_flag) {
+    } else if (child_flag) {
 	puts("EISL exit network mode.\n");
 	close(parent_sockfd[0]);
 	close(parent_sockfd[1]);
@@ -1549,7 +1549,7 @@ void *preceiver(void *arg)
 	memset(sub_buffer, 0, sizeof(sub_buffer));
 	m = read(child_sockfd[n], sub_buffer, sizeof(sub_buffer));
 	if (m < 0) {
-	    exception(SYSTEM_ERR, make_str("receive from child"),
+	    error(SYSTEM_ERR, "receive from child",
 		      make_int(n), 0);
 	}
 	//print_ascii(sub_buffer);printf("m=%d",m);fflush(stdout);
@@ -1586,7 +1586,7 @@ void *creceiver(void *arg)
 	    accept(parent_sockfd[0], (struct sockaddr *) &parent_addr,
 		   &parent_len);
 	if (parent_sockfd[1] < 0) {
-	    exception(SYSTEM_ERR, make_str("*creceiver"), NIL, 0);
+	    error(SYSTEM_ERR, "*creceiver", NIL, 0);
 	}
     }
 

@@ -177,7 +177,7 @@ bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
-bool network_flag = false;	/* when invoke as network child, flag is true */
+bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
 bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
 bool child_busy_flag = false;	/* while evalating in child, child_buzy_flag is true */
@@ -434,7 +434,7 @@ int main(int argc, char *argv[])
 		break;
 	    case 'n':
 		puts("EISL runs with network mode.");
-		network_flag = true;
+		child_flag = true;
 		init_parent();
 		init_receiver();
 		str = library_file("compiler.lsp");
@@ -472,7 +472,7 @@ int main(int argc, char *argv[])
 	    maybe_greet();
 	TRY while (1) {
 	    init_pointer();
-	    if (!process_flag && !network_flag) {
+	    if (!process_flag && !child_flag) {
 		fputs("> ", stdout);
 		print(eval(sread(), 0));
 		putchar('\n');
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
 #endif
 		EXCEPT(Exit_Process);
 		END_TRY;
-	    } else if (network_flag) {
+	    } else if (child_flag) {
 		pthread_mutex_lock(&mutex2);
 		while (!child_buffer_ready) {
 		    pthread_cond_wait(&md_cond, &mutex2);

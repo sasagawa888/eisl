@@ -579,7 +579,7 @@ extern bool parallel_flag;
 extern bool parallel_exit_flag;
 extern bool process_flag;
 extern bool thread_flag;
-extern bool network_flag;
+extern bool child_flag;
 extern bool connect_flag;
 extern bool receiver_exit_flag;
 extern bool child_busy_flag;

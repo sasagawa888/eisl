@@ -177,6 +177,7 @@ bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
+bool parent_flag = false;    /* when invoke as parent, flag is true */
 bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
 bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
@@ -194,7 +195,8 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 
 /* longjmp control and etc */
 Except_T Restart_Repl = { "Restart REPL" },
-    Exit_Interp = { "Exit interpreter" };
+    Exit_Interp = { "Exit interpreter" },
+	Shutdown_OS = { "Shutdown OS"};
 jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
@@ -515,6 +517,17 @@ int main(int argc, char *argv[])
 	}
 	EXCEPT(Restart_Repl);
 	EXCEPT(Exit_Interp) {
+	    quit = true;
+	    exit_thread();
+	    close_socket();
+	}
+	EXCEPT(Shutdown_OS) {
+		int i;
+		printf("Shutting down the system...\n");
+	    i = system("sudo shutdown now");
+		if (i == -1)
+		error(SYSTEM_ERR, "dp-halt shatdown", NIL,
+			  0);
 	    quit = true;
 	    exit_thread();
 	    close_socket();

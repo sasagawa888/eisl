@@ -869,6 +869,7 @@ int f_mp_eval(int arglist, int th)
 int f_dp_create(int arglist, int th)
 {
 
+    parent_flag = true;
     child_num = 0;
     while (!nullp(arglist)) {
 	if (!stringp(car(arglist)))
@@ -890,16 +891,43 @@ int f_dp_close(int arglist, int th)
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "dp-close", arglist, th);
 
-    exp = make_str("999");
+    exp = list1(make_sym("dp-close"));
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, exp);
     }
 
-    close_socket();
+    if (child_flag) {
+	    printf("Easy-ISLisp exit network mode.\n");
+	    RAISE(Restart_Repl);
+	}
+
     child_num = 0;
     return (T);
 }
 
+// close all distributed child  and shutdown
+int f_dp_halt(int arglist, int th)
+{
+    int i, exp;
+
+    if (!nullp(arglist))
+	error(ILLEGAL_ARGS, "dp-halt", arglist, th);
+
+    exp = list1(make_sym("dp-halt"));
+    for (i = 0; i < child_num; i++) {
+	send_to_child(i, exp);
+    }
+
+    if (child_flag) {
+	    printf("Easy-ISLisp exit network mode.\n");
+	    RAISE(Restart_Repl);
+	}
+
+
+    child_num = 0;
+    parent_flag = false;
+    return (T);
+}
 
 
 int f_dp_let(int arglist, int th)
@@ -1021,7 +1049,7 @@ void close_socket(void)
 {
     int i;
 
-    if (child_num > 0) {
+    if (parent_flag && child_num > 0) {
 	for (i = 0; i < child_num; i++)
 	    close(child_sockfd[i]);
     } else if (child_flag) {
@@ -1443,7 +1471,6 @@ void *creceiver(void *arg)
 
 
       exit:
-	printf("receive from parent %s\n", child_buffer);
 
 	child_buffer_ready = 1;
 	pthread_cond_signal(&md_cond);

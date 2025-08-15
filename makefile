@@ -152,7 +152,7 @@ ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h
 endif
 
-main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o long.o link.o
+main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o long.o link.o parallel.o
 function.o: function.c eisl.h 
 extension.o: extension.c eisl.h 
 syntax.o: syntax.c eisl.h 
@@ -166,6 +166,7 @@ edit.o: edit.c eisl.h
 syntax_highlight.o: syntax_highlight.c eisl.h 
 long.o: long.c eisl.h 
 link.o: link.c eisl.h 
+parallel.o: parallel.c eisl.h
 
 
 nana/src/nana-config.h:

@@ -659,12 +659,24 @@ extern int child_signal1[PROCSIZE];
 
 /* distributed parallel */
 #define PORT 5100 
+extern pthread_mutex_t mutex2;
+extern pthread_cond_t md_cond;
+extern int child_buffer_ready;
 extern int sockfd[PARASIZE];
+extern int parent_sockfd[2];
+extern int child_sockfd[PARASIZE];
 extern socklen_t parent_len;
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
 extern pthread_t receiver_thread;
+extern pthread_t preceiver_thread[PARASIZE];
+extern pthread_t creceiver_thread;
 extern int child_result[PARASIZE];
+extern char parent_buffer[BUFSIZE][PARASIZE];
+extern char child_buffer[BUFSIZE];
+extern int child_buffer_pos;
+extern int child_buffer_end;
+
 
 /* -----TCPIP for server----------------*/
 extern socklen_t server_len;

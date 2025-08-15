@@ -252,12 +252,24 @@ int child_signal[PROCSIZE];
 int child_signal1[PROCSIZE];
 
 /* -----distributed parallel & TCPIP------*/
+pthread_mutex_t mutex2;
+pthread_cond_t md_cond;
+int child_buffer_ready;
 int sockfd[PARASIZE];
+int parent_sockfd[2];
+int child_sockfd[PARASIZE];
 socklen_t parent_len;
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
 pthread_t receiver_thread;
+pthread_t preceiver_thread[PARASIZE];
+pthread_t creceiver_thread;
 int child_result[PARASIZE];
+char parent_buffer[BUFSIZE][PARASIZE];
+char child_buffer[BUFSIZE];
+int child_buffer_pos;
+int child_buffer_end;
+
 
 /* -----TCPIP for server----------------*/
 socklen_t server_len;

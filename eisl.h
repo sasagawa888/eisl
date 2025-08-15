@@ -658,7 +658,7 @@ extern int child_signal[PROCSIZE];
 extern int child_signal1[PROCSIZE];
 
 /* distributed parallel */
-#define PORT 5000 
+#define PORT 5100 
 extern int sockfd[PARASIZE];
 extern socklen_t parent_len;
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];

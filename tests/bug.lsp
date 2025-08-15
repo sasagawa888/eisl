@@ -1,22 +1,19 @@
-(defclass <parent> () ())
 
-(defclass <child> (<parent>) ())
 
-(defgeneric print-self (obj))
+(defun pair-with (x lst)
+  (if (null lst)
+      nil
+      (cons (list x (car lst))
+            (pair-with x (my-cdr lst)))))
 
-(defmethod print-self ((obj <parent>))
-  (format (standard-output) "PARENT:~S~%" (class-of obj)))
+(defun combinations-2-rec (head tail)
+  (if (null head)
+      nil
+      (append (pair-with (car head) tail)
+              (combinations-2-rec (my-cdr head) (my-cdr tail)))))
 
-(print-self (create (class <parent>)))
-;; => PARENT:<class <PARENT>>
+(defun combinations-2 (lst)
+  (combinations-2-rec lst (my-cdr lst)))
 
-(print-self (create (class <child>)))
-;; => Expected PARENT:<class <CHILD>>, Not exit matched method at PRINT-SELF (<instance>)
-
-(defmethod print-self ((obj <object>))
-  (format (standard-output) "OBJECT:~S~%" (class-of obj)))
-
-(print-self (create (class <parent>)))
-;; => PARENT:<class <PARENT>>
-(print-self (create (class <child>)))
-;; => Expected PARENT:<class <CHILD>>, but OBJECT:<class <CHILD>>.
+(defun my-cdr (x)
+  (if (null x) nil (cdr x)))

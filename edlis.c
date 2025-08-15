@@ -2602,7 +2602,7 @@ int find_eol(int row)
     int i;
 
     for (i = 0; i < COL_SIZE; i++) {
-	if (ed_data[row][i] == EOL)
+	if (ed_data[row][i] == EOL || ed_data[row][i] == 0)
 	    return (i);
     }
     return (-1);

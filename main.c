@@ -255,7 +255,7 @@ int child_signal1[PROCSIZE];
 pthread_mutex_t mutex2;
 pthread_cond_t md_cond;
 int child_buffer_ready;
-int sockfd[PARASIZE];
+//int sockfd[PARASIZE];
 int parent_sockfd[2];
 int child_sockfd[PARASIZE];
 socklen_t parent_len;
@@ -267,8 +267,8 @@ pthread_t creceiver_thread;
 int child_result[PARASIZE];
 char parent_buffer[BUFSIZE][PARASIZE];
 char child_buffer[BUFSIZE];
-int child_buffer_pos;
-int child_buffer_end;
+//int child_buffer_pos;
+//int child_buffer_end;
 
 
 /* -----TCPIP for server----------------*/
@@ -490,33 +490,26 @@ int main(int argc, char *argv[])
 		EXCEPT(Exit_Process);
 		END_TRY;
 	    } else if (network_flag) {
+		pthread_mutex_lock(&mutex2);
+		while (!child_buffer_ready) {
+		    pthread_cond_wait(&md_cond, &mutex2);
+		}
+		child_buffer_ready = 0;
 		int exp, res;
 		exp = str_to_sexp(receive_from_parent());
 		printf("receive_from_parent ");
 		print(exp);
 		printf("\n");
 		fflush(stdout);
-		if (equalp(exp, make_int(999))) {
-		    printf("exit_from_network_mode\n");
-		    close_socket();
-		    exit(0);
-		} else {
-		    TRY 
-			pthread_mutex_lock(&mutex2);
-			while (!child_buffer_ready) {
-            	pthread_cond_wait(&md_cond, &mutex2);
-        	}
-			child_buffer_ready = 0;
-			pthread_mutex_unlock(&mutex2);
-		    res = eval(exp, 0);
-		    printf("send_to_parent ");
-		    print(res);
-		    printf("\n");
-		    fflush(stdout);
-		    send_to_parent(sexp_to_str(res));
-		    EXCEPT(Exit_Network);
-		    END_TRY;
-		}
+		TRY pthread_mutex_unlock(&mutex2);
+		res = eval(exp, 0);
+		printf("send_to_parent ");
+		print(res);
+		printf("\n");
+		fflush(stdout);
+		send_to_parent(sexp_to_str(res));
+		EXCEPT(Exit_Network);
+		END_TRY;
 	    }
 
 	    if (redef_flag)

@@ -128,7 +128,7 @@ int column;
 char buffer[COL_SIZE + 1][NUM_HISTORY];
 char buffer1[COL_SIZE + 1];
 char buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
-char buffer3[STRSIZE] = { 0 };	//for Multi-Process and Distributed TCP/IP
+char buffer3[STRSIZE] = { 0 };	//for Multi-Process 
 
 /* heap ,stack and bignum */
 cell heap[CELLSIZE];
@@ -255,7 +255,6 @@ int child_signal1[PROCSIZE];
 pthread_mutex_t mutex2;
 pthread_cond_t md_cond;
 int child_buffer_ready;
-//int sockfd[PARASIZE];
 int parent_sockfd[2];
 int child_sockfd[PARASIZE];
 socklen_t parent_len;
@@ -267,9 +266,8 @@ pthread_t creceiver_thread;
 int child_result[PARASIZE];
 char parent_buffer[BUFSIZE][PARASIZE];
 char child_buffer[BUFSIZE];
-//int child_buffer_pos;
-//int child_buffer_end;
-
+char input_buffer[BUFSIZE];
+char output_buffer[BUFSIZE];
 
 /* -----TCPIP for server----------------*/
 socklen_t server_len;

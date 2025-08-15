@@ -674,8 +674,8 @@ extern pthread_t creceiver_thread;
 extern int child_result[PARASIZE];
 extern char parent_buffer[BUFSIZE][PARASIZE];
 extern char child_buffer[BUFSIZE];
-extern int child_buffer_pos;
-extern int child_buffer_end;
+extern char input_buffer[BUFSIZE];
+extern char output_buffer[BUFSIZE];
 
 
 /* -----TCPIP for server----------------*/
@@ -1310,9 +1310,6 @@ int read_from_pipe(int n);
 int read_from_pipe_part(int n);
 int receive_from_child(int n);
 int receive_from_parent(void);
-int receive_from_child_part(int n, int opt);
-int receive_from_child_part1(int n, int opt);
-int receive_from_child_part2(int n);
 int send_to_child(int n, int x);
 int sexp_to_str(int x);
 int str_to_sexp(int x);

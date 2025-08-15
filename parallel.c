@@ -878,6 +878,7 @@ int f_dp_create(int arglist, int th)
 	arglist = cdr(arglist);
 	child_num++;
     }
+    init_preceiver(child_num);
     return (T);
 }
 
@@ -1035,12 +1036,14 @@ void close_socket(void)
 
 void send_to_parent(int x)
 {
-    int n;
+    int n,i;
 
     // send message to parent
-    memset(buffer3, 0, sizeof(buffer3));
-    strcpy(buffer3, GET_NAME(x));
-    n = write(parent_sockfd[1], buffer3, strlen(buffer3));
+    memset(output_buffer, 0, sizeof(output_buffer));
+    strcpy(output_buffer, GET_NAME(x));
+    i = strlen(output_buffer);
+    output_buffer[i] = 0x16;
+    n = write(parent_sockfd[1], output_buffer, strlen(output_buffer));
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent", x, 0);
     }
@@ -1049,13 +1052,15 @@ void send_to_parent(int x)
 
 int send_to_child(int n, int x)
 {
-    int m;
+    int m,i;
 
     // send message to child
-    memset(buffer3, 0, sizeof(buffer3));
-    strcpy(buffer3, GET_NAME(x));
-    strcat(buffer3, "\n");
-    m = write(child_sockfd[n], buffer3, strlen(buffer3));
+    memset(output_buffer, 0, sizeof(output_buffer));
+    strcpy(output_buffer, GET_NAME(x));
+    strcat(output_buffer, "\n");
+    i = strlen(output_buffer);
+	output_buffer[i] = 0x16;
+    m = write(child_sockfd[n], output_buffer, strlen(output_buffer));
     if (m < 0) {
 	error(SYSTEM_ERR, "send to child", NIL, 0);
     }
@@ -1064,154 +1069,7 @@ int send_to_child(int n, int x)
 
 int receive_from_child(int n)
 {
-    int m, i, j;
-    char sub_buffer[256];
-
-    // receive from child
-  reread:
-    memset(buffer3, 0, sizeof(buffer3));
-    m = read(child_sockfd[n], buffer3, sizeof(buffer3) - 1);
-    if (m < 0) {
-	error(SYSTEM_ERR, "receive from child", make_int(n), 0);
-    }
-
-  retry:
-    if (buffer3[0] == '\x02') {
-	i = 0;
-	while (buffer3[i + 1] != '\x03') {
-	    sub_buffer[i] = buffer3[i + 1];
-	    i++;
-	}
-	sub_buffer[i] = 0;
-	printf("%s", sub_buffer);
-	j = 0;
-	i = i + 2;
-	while (buffer3[j + i] != 0) {
-	    buffer3[j] = buffer3[j + i];
-	    j++;
-	}
-	buffer3[j] = 0;
-	if (buffer3[0] == 0)
-	    goto reread;
-	else
-	    goto retry;
-    } else if (buffer3[0] == '\x15') {
-	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else {
-	return (make_str(buffer3));
-    }
-
-    return (0);
-}
-
-/* opt == 0 find NIL, opt == 1 find non NIL */
-int receive_from_child_part(int n, int opt)
-{
-    int i, m, res;
-
-    //initialize -1 (not received)
-    for (i = 0; i < n; i++) {
-	child_result[i] = -1;
-    }
-    res = receive_from_child_part1(n, opt);
-
-    // kill not received child
-    for (i = 0; i < n; i++) {
-	if (child_result[i] == -1) {
-	    // send child stop signal
-	    memset(buffer3, 0, sizeof(buffer3));
-	    buffer3[0] = '\x11';
-	    m = write(child_sockfd[i], buffer3, strlen(buffer3));
-	    if (m < 0) {
-		error(SYSTEM_ERR, "receive from child", NIL, 0);
-	    }
-	    // receive result and ignore
-	    while ((m =
-		    read(child_sockfd[i], buffer3, sizeof(buffer3) - 1)) == 0) {
-	    }
-	}
-    }
-
-    return (res);
-}
-
-
-int receive_from_child_part1(int n, int opt)
-{
-    int m, i;
-
-    // receive from child
-  retry:
-    memset(buffer3, 0, sizeof(buffer3));
-    for (i = 0; i < n; i++) {
-	if (child_result[i] == -1) {
-	    m = read(child_sockfd[i], buffer3, sizeof(buffer3));
-	}
-	if (m < 0) {
-	    error(SYSTEM_ERR, "receive from child", make_int(i), 0);
-	} else if (m > 0) {
-	    child_result[i] = receive_from_child_part2(i);
-	}
-    }
-
-    //if find non nil, return it, else retry reading.
-    for (i = 0; i < n; i++) {
-	if (opt == 1 && child_result[i] > NIL)
-	    return (child_result[i]);
-	else if (opt == 0 && child_result[i] == NIL)
-	    return (child_result[i]);
-    }
-
-
-    //if exist not received result, goto retry
-    for (i = 0; i < n; i++) {
-	if (child_result[i] == -1)
-	    goto retry;
-    }
-
-    //if opt==1 and all results are nil, return nil
-    //if opt==0 and all returls are non nil,return T
-    if (opt == 1)
-	return (NIL);
-    else if (opt == 0)
-	return (T);
-
-    return (0);
-}
-
-int receive_from_child_part2(int n)
-{
-    char sub_buffer[256];
-    int i, j;
-
-  retry:
-    if (buffer3[0] == '\x02') {
-	i = 0;
-	while (buffer3[i + 1] != '\x03') {
-	    sub_buffer[i] = buffer3[i + 1];
-	    i++;
-	}
-	sub_buffer[i] = 0;
-	printf("%s", sub_buffer);
-	j = 0;
-	i = i + 2;
-	while (buffer3[j + i] != 0) {
-	    buffer3[j] = buffer3[j + i];
-	    j++;
-	}
-	buffer3[j] = 0;
-	if (buffer3[0] == 0)
-	    return (-1);
-	else
-	    goto retry;
-
-    } else if (buffer3[0] == '\x15') {
-	error(SYSTEM_ERR, "in child", make_int(n), 0);
-    } else {
-	return (str_to_sexp(make_str(buffer3)));
-    }
-
-    return (0);
+	return (make_str(parent_buffer[n]));
 }
 
 
@@ -1452,9 +1310,9 @@ int f_dp_part(int arglist, int th)
 	i++;
     }
     if (opt == NIL) {
-	res = str_to_sexp(receive_from_child_part(n, 0));
+	//res = str_to_sexp(receive_from_child_part(n, 0));
     } else if (opt == T) {
-	res = str_to_sexp(receive_from_child_part(n, 1));
+	//res = str_to_sexp(receive_from_child_part(n, 1));
     }
     return (res);
 

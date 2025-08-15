@@ -1041,6 +1041,7 @@ void send_to_parent(int x)
     // send message to parent
     memset(output_buffer, 0, sizeof(output_buffer));
     strcpy(output_buffer, GET_NAME(x));
+    strcat(output_buffer,"\n");
     i = strlen(output_buffer);
     output_buffer[i] = 0x16;
     n = write(parent_sockfd[1], output_buffer, strlen(output_buffer));
@@ -1076,14 +1077,18 @@ int receive_from_child(int n)
 
 int f_dp_eval(int arglist, int th __unused)
 {
-    int arg1, arg2, res;
+    int arg1, arg2, res ,i;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (GET_INT(arg1) >= child_num || GET_INT(arg1) < 0)
 	error(WRONG_ARGS, "dp-eval", arg1, 0);
 
+    memset(parent_buffer[i],0,sizeof(parent_buffer[i]));
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
+    while(parent_buffer[i][0] == 0){
+	usleep(1000);
+    }
     res = str_to_sexp(receive_from_child(GET_INT(arg1)));
     return (res);
 }
@@ -1110,15 +1115,15 @@ int f_dp_transfer(int arglist, int th)
 
 	int bytes_read;
 	while ((bytes_read =
-		fread(buffer3, sizeof(char), sizeof(buffer3), file)) > 0) {
-	    m = write(child_sockfd[i], buffer3, bytes_read);
+		fread(output_buffer, sizeof(char), sizeof(output_buffer), file)) > 0) {
+	    m = write(child_sockfd[i], output_buffer, bytes_read);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
-	memset(buffer3, 0, sizeof(buffer3));
-	buffer3[0] = 0x15;
-	m = write(child_sockfd[i], buffer3, 1);
+	memset(output_buffer, 0, sizeof(output_buffer));
+	output_buffer[0] = 0x16;
+	m = write(child_sockfd[i], output_buffer, 1);
 	if (m < 0) {
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}
@@ -1147,13 +1152,13 @@ int f_dp_receive(int arglist, int th)
 
     int bytes_received;
     while ((bytes_received =
-	    read(parent_sockfd[1], buffer3, sizeof(buffer3))) > 0) {
-	if (buffer3[bytes_received - 1] == 0x15) {
-	    buffer3[bytes_received - 1] = 0;
-	    fwrite(buffer3, sizeof(char), bytes_received - 1, file);
+	    read(parent_sockfd[1], input_buffer, sizeof(input_buffer))) > 0) {
+	if (input_buffer[bytes_received - 1] == 0x16) {
+	    input_buffer[bytes_received - 1] = 0;
+	    fwrite(input_buffer, sizeof(char), bytes_received - 1, file);
 	    break;
 	}
-	fwrite(buffer3, sizeof(char), bytes_received, file);
+	fwrite(input_buffer, sizeof(char), bytes_received, file);
     }
     fclose(file);
 

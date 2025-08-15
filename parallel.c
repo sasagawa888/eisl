@@ -1216,58 +1216,6 @@ int receive_from_child_part2(int n)
 
 
 
-/* Thread for child lisp receiver
-*/
-void *receiver(void *arg __unused)
-{
-    int res;
-
-    while (1) {
-	if (receiver_exit_flag)
-	    goto exit;
-
-	if (child_busy_flag) {
-	    res = receive_from_parent();
-	    memset(buffer3, 0, sizeof(buffer3));
-	    strcpy(buffer3, GET_NAME(res));
-	  retry:
-	    if (buffer3[0] == '\x11') {
-		/* child stop */
-		exit_flag = 1;
-	    } else if (buffer3[0] == '\x12') {
-		/* child pause */
-
-	    } else if (buffer3[0] == '\x13') {
-		/* chidl resume */
-
-	    }
-
-	    if (buffer3[1] != 0) {
-		int i;
-		i = 0;
-		while (buffer3[i + 1] != 0) {
-		    buffer3[i] = buffer3[i + 1];
-		    i++;
-		}
-		buffer3[i] = 0;
-		goto retry;
-	    }
-
-	}
-
-    }
-
-  exit:
-    pthread_exit(NULL);
-}
-
-
-void init_receiver(void)
-{
-    /* create child receiver thread */
-    pthread_create(&receiver_thread, NULL, receiver, NULL);
-}
-
 int f_dp_eval(int arglist, int th __unused)
 {
     int arg1, arg2, res;
@@ -1621,9 +1569,7 @@ void *creceiver(void *arg)
 	for (i = 0; i < m - 1; i++) {
 	    if (buffer[i] == 0x11) {
 		memset(child_buffer, 0, sizeof(child_buffer));
-		strcpy(child_buffer, "fail.");
-		child_buffer_pos = 0;
-		child_buffer_end = 5;
+		strcpy(child_buffer, "nil");
 		exit_flag = 1;
 		goto exit;
 	    } else {

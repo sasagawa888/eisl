@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
 		puts("EISL runs with network mode.");
 		child_flag = true;
 		init_parent();
-		init_receiver();
+		init_creceiver();
 		str = library_file("compiler.lsp");
 		f_load(list1(make_str(str)), 0);
 		FREE(str);

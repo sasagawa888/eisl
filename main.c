@@ -501,9 +501,14 @@ int main(int argc, char *argv[])
 		    close_socket();
 		    exit(0);
 		} else {
-		    TRY child_busy_flag = true;
+		    TRY 
+			pthread_mutex_lock(&mutex2);
+			while (!child_buffer_ready) {
+            	pthread_cond_wait(&md_cond, &mutex2);
+        	}
+			child_buffer_ready = 0;
+			pthread_mutex_unlock(&mutex2);
 		    res = eval(exp, 0);
-		    child_busy_flag = false;
 		    printf("send_to_parent ");
 		    print(res);
 		    printf("\n");

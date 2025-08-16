@@ -2425,11 +2425,10 @@ defgeneric compile
                  (comp-dp-exec4 stream (+ i 1) n))))
 
     (defun comp-dp-and (stream x env args tail name global test clos)
-        (format stream "({int res;")
+        (format stream "({int res; Fclear_parent_buffer(~A);" (length x))
         (comp-dp-and1 0 stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "Fwait_part(~A,~A);", (length (cdr (cdr x))) (elt x 1))
-        (comp-dp-and3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "res;})"))
+        (format stream "res = Fwait_and(~A); res;})", (length (cdr (cdr x)))))
+
 
     ;; send to child
     (defun comp-dp-and1 (i stream x env args tail name global test clos)
@@ -2449,27 +2448,10 @@ defgeneric compile
                  (format stream ")"))))
 
 
-    ;; received args
-    (defun comp-dp-and3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-dp-and4 stream 0 (length x)))
-              ((eq opt t) (comp-dp-and5 stream 1 (length x)))
-              (t (error* "dp-and: illegal option" opt))))
-    
-    ;; receive args from pipe(option=nil)
-    (defun comp-dp-and4 (stream i n)
-        (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
-
-    ;; receive args from pipe(option=t)
-    (defun comp-dp-and5 (stream i n)
-        (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
-
-
      (defun comp-dp-or (stream x env args tail name global test clos)
-        (format stream "({int res;")
-        (comp-dp-or1 0 stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "Fwait_part(~A,~A);", (length (cdr (cdr x))) (elt x 1))
-        (comp-dp-or3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "res;})"))
+        (format stream "({int res; Fclear_parent_buffer(~A);" (length x))
+        (comp-dp-or1 0 stream (cdr x) env args tail name global test clos)
+        (format stream "res=Fwait_or(~A); res;})", (length (cdr x))))
 
     ;; send to child
     (defun comp-dp-or1 (i stream x env args tail name global test clos)
@@ -2487,21 +2469,6 @@ defgeneric compile
                  (format stream ",")
                  (comp-dp-or2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
-
-
-    ;; received args
-    (defun comp-dp-or3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-dp-or4 stream 0 (length x)))
-              ((eq opt t) (comp-dp-or5 stream 1 (length x)))
-              (t (error* "dp-or: illegal option" opt))))
-    
-    ;; receive args from pipe(option=nil)
-    (defun comp-dp-or4 (stream i n)
-        (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
-
-    ;; receive args from pipe(option=t)
-    (defun comp-dp-or5 (stream i n)
-        (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
 
 
     (defun not-need-res-p (x)

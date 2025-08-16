@@ -700,7 +700,7 @@ int f_mp_exec(int arglist, int th)
 
 int f_mp_and(int arglist, int th)
 {
-    int temp, res, n, i, exp, opt;
+    int temp, res, n, i, exp;
 
 
     n = length(arglist);
@@ -736,9 +736,8 @@ int f_mp_and(int arglist, int th)
 
 int f_mp_or(int arglist, int th)
 {
-    int temp, res, n, i, exp, opt;
+    int temp, res, n, i, exp;
 
-    opt = arglist;
     n = length(arglist);
     if (n > process_pt)
 	error(ILLEGAL_ARGS, "mp-or", arglist, th);
@@ -901,7 +900,7 @@ int f_dp_halt(int arglist, int th)
     return (T);
 }
 
-int f_dp_setid(int arglist, int th)
+int f_dp_setid(int arglist, int th __unused)
 {
     int arg1;
 
@@ -910,7 +909,7 @@ int f_dp_setid(int arglist, int th)
     return (T);
 }
 
-int f_dp_senderr(int arglist, int th)
+int f_dp_senderr(int arglist, int th __unused)
 {
     int arg1;
 
@@ -1066,7 +1065,8 @@ int f_dp_eval(int arglist, int th __unused)
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
-    if (GET_INT(arg1) >= child_num || GET_INT(arg1) < 0)
+    i = GET_INT(arg1);
+    if (i >= child_num || i < 0)
 	error(WRONG_ARGS, "dp-eval", arg1, 0);
 
     memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
@@ -1202,6 +1202,15 @@ int all_received(int *result, int size)
 
 
 /* for compiler */
+int clear_parent_buffer(int m)
+{
+    int i;
+    for(i=0;i<m;i++)
+        memset(parent_buffer[i],0,sizeof(parent_buffer[i]));
+
+    return(0);
+}
+
 int wait_all(int m)
 {
     int i, result[PARASIZE];
@@ -1215,6 +1224,7 @@ int wait_all(int m)
 	    RAISE(Restart_Repl);
 	}
     }
+    return(0);
 }
 
 /* for compiler */
@@ -1514,8 +1524,10 @@ int receive_from_parent(void)
 
 void print_ascii(char *str)
 {
-    int i;
-    for (i = 0; i < strlen(str); i++) {
+    int i ,n;
+
+    n= strlen(str);
+    for (i = 0; i < n; i++) {
 	printf("0x%02X ", (unsigned char) str[i]);
     }
     printf("\n");
@@ -1550,7 +1562,7 @@ void *preceiver(void *arg)
 	if (sub_buffer[m - 1] != 0x16)
 	    goto reread;
 
-	if (buffer[0] = 0x2) {
+	if (buffer[0] == 0x2) {
 	    memset(sub_buffer, 0, sizeof(sub_buffer));
 	    i = strlen(buffer);
 	    k = 0;

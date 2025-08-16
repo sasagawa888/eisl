@@ -837,6 +837,7 @@ int copy(int x);
 int count_args(int ls);
 int create_array(int x);
 int create_list(int x, int y);
+int clear_parent_buffer(int n);
 int dec_token(char buf[]);
 int divide(int arg1, int arg2);
 int duplicate_list_p(int ls);

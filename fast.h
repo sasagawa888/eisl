@@ -389,6 +389,11 @@ static inline int Fwait_or(int x)
     return f1[WAIT_OR_IDX] (x);
 }
 
+static inline int Fclear_parent_buffer(int x)
+{
+    return f1[CLEAR_PARENT_BUFFER_IDX] (x);
+}
+
 
 static inline int Fcons(int x, int y)
 {

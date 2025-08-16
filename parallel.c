@@ -864,6 +864,8 @@ int f_dp_close(int arglist, int th)
 
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
+    close(parent_sockfd[0]);
+    close(parent_sockfd[1]);
 	RAISE(Exit_Interp);
     }
 

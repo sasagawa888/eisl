@@ -923,6 +923,7 @@ int f_domain_error_expected_class(int arglist, int th);
 int f_domain_error_object(int arglist, int th);
 int f_dp_create(int arglist, int th);
 int f_dp_close(int arglist, int th);
+int f_dp_halt(int arglist, int th);
 int f_dp_let(int arglist, int th);
 int f_dp_eval(int arglist, int th);
 int f_dp_transfer(int arglist, int th);

@@ -91,7 +91,7 @@ static const char *extended[] = {
     "mt-create", "mt-let", "mt-call", "mt-exec", "mt-lock", "mt-close",
     "mp-create", "mp-exec", "mp-close", "mp-call", "mp-let", "mp-part",
     "mp-report", "mp-eval",
-    "dp-create", "dp-let", "dp-close", "dp-eval", "dp-transfer",
+    "dp-create", "dp-let", "dp-close", "dp-eval", "dp-transfer", "dp-halt",
     "dp-load", "dp-compile", "dp-call", "dp-exec", "dp-report", "dp-part",
 };
 

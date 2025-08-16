@@ -563,7 +563,7 @@ static inline int Fsend_to_child(int x, int y)
 }
 
 
-static inline int Fwait_part(int x)
+static inline int Fwait_part(int x, int y)
 {
     return f2[WAIT_PART_IDX] (x, y);
 }

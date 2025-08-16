@@ -899,7 +899,7 @@ int f_dp_close(int arglist, int th)
     }
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
-	RAISE(Restart_Repl);
+	RAISE(Exit_Interp);
     }
     //close_socket();
     child_num = 0;
@@ -922,10 +922,14 @@ int f_dp_halt(int arglist, int th)
     }
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
-	RAISE(Restart_Repl);
-    }
-
-
+	RAISE(Exit_Interp);
+	int i;
+	printf("Shutting down the system...\n");
+	i = system("sudo shutdown now");
+	if (i == -1)
+	error(SYSTEM_ERR, "dp-halt shatdown", NIL, 0);
+	}
+    
     child_num = 0;
     parent_flag = false;
     return (T);

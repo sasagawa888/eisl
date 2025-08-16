@@ -663,6 +663,20 @@ int signal_condition(int x, int y, int th)
 	signal_condition_x = x;
 	signal_condition_y = y;
 	printf("catch error\n");
+	str = cdr(assoc(make_sym("a"), GET_CDR(x)));
+    args = cdr(assoc(make_sym("b"), GET_CDR(x)));
+    fun = cdr(assoc(make_sym("c"), GET_CDR(x)));
+    output_stream = error_stream;
+    if (repl_flag)
+	ESCERRFRED();
+    fputs(GET_NAME(str), stderr);
+    print(fun);
+    fputc(' ', stderr);
+    print(args);
+    fputc('\n', stderr);
+    if (repl_flag)
+	ESCERRFORG();
+    output_stream = standard_output;
 	int exp;
 	exp = list2(make_sym("dp-senderr"), make_int(child_id));
 	send_to_parent(sexp_to_str(exp));

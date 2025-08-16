@@ -114,6 +114,8 @@ void init_exsubr(void)
     def_subr("DP-LOAD", f_dp_load);
     def_subr("DP-COMPILE", f_dp_compile);
     def_subr("DP-REPORT", f_dp_report);
+    def_subr("DP-SETID", f_dp_setid);
+    def_subr("DP-SENDERR", f_dp_senderr);
 
     def_subr("CREATE-SERVER-SOCKET", f_create_server_socket);
     def_subr("CREATE-CLIENT-SOCKET", f_create_client_socket);

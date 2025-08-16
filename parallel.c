@@ -901,7 +901,8 @@ int f_dp_close(int arglist, int th)
 	printf("Easy-ISLisp exit network mode.\n");
 	RAISE(Exit_Interp);
     }
-    //close_socket();
+    receiver_exit_flag = 0;
+    close_socket();
     child_num = 0;
     return (T);
 }

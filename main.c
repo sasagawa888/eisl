@@ -181,7 +181,7 @@ bool parent_flag = false;	/* when invoke as parent, flag is true */
 bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
 bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
-bool shutdown_flag = false;         /* shutdown OS on child */
+bool shutdown_flag = false;	/* shutdown OS on child */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
 double try_timer;		/* limit timer */
@@ -519,13 +519,12 @@ int main(int argc, char *argv[])
 	    quit = true;
 	    exit_thread();
 	    close_socket();
-		if(shutdown_flag){
-			printf("Shutting down the system...\n");
-	    	int ret = system("sudo shutdown now");
-	        if (ret == -1)
-		      error(SYSTEM_ERR, "dp-halt shatdown", NIL,
-			  0);
-		}
+	    if (shutdown_flag) {
+		printf("Shutting down the system...\n");
+		int ret = system("sudo shutdown now");
+		if (ret == -1)
+		    error(SYSTEM_ERR, "dp-halt shatdown", NIL, 0);
+	    }
 	}
 	END_TRY;
     }

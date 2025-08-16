@@ -357,10 +357,6 @@ static inline int Fread_from_pipe(int x)
     return f1[READ_FROM_PIPE_IDX] (x);
 }
 
-static inline int Freceive_from_child(int x)
-{
-    return f1[RECEIVE_FROM_CHILD_IDX] (x);
-}
 
 
 static inline int Fkill_rest_process(int x)
@@ -371,6 +367,21 @@ static inline int Fkill_rest_process(int x)
 static inline int Fread_from_pipe_part(int x)
 {
     return f1[READ_FROM_PIPE_PART_IDX] (x);
+}
+
+static inline int Freceive_from_child(int x)
+{
+    return f1[RECEIVE_FROM_CHILD_IDX] (x);
+}
+
+static inline int Fwait_all(int x)
+{
+    return f1[WAIT_ALL_IDX] (x);
+}
+
+static inline int Fwait_part(int x)
+{
+    return f1[WAIT_PART_IDX] (x);
 }
 
 

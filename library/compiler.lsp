@@ -2381,6 +2381,7 @@ defgeneric compile
         (unless (listp (elt x 1)) (error* "dp-let: not list" (elt x 1)))
         (format stream "({int res;")
         (comp-dp-let1 0 stream (elt x 1) env args tail name global test clos)
+        (format stream "Fwait_all(~A)", (length (elt x 1)))
         (comp-dp-let3 stream (elt x 1) env args tail name global test clos)
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null (cdr body1))
@@ -2442,6 +2443,7 @@ defgeneric compile
     (defun comp-dp-call (stream x env args tail name global test clos)
         (format stream "({int res;")
         (comp-dp-call1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "Fwait_all(~A)", (length (cdr (cdr x))))
         (comp-dp-call3 stream (cdr x) env args tail name global test clos)
         (format stream "res;})"))
 
@@ -2480,6 +2482,7 @@ defgeneric compile
     (defun comp-dp-exec (stream x env args tail name global test clos)
         (format stream "({int res;")
         (comp-dp-exec1 0 stream (cdr x) env args tail name global test clos)
+        (format stream "Fwait_all(~A)", (length (cdr (cdr x))))
         (comp-dp-exec3 stream (cdr x) env args tail name global test clos)
         (format stream "res;})"))
 
@@ -2514,6 +2517,7 @@ defgeneric compile
     (defun comp-dp-part (stream x env args tail name global test clos)
         (format stream "({int res;")
         (comp-dp-part1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "Fwait_part(~A)", (length (cdr (cdr x))))
         (comp-dp-part3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "res;})"))
 

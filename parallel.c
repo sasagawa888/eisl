@@ -904,10 +904,10 @@ int f_dp_close(int arglist, int th)
     }
 
     child_num = 0;
-	parent_flag = 0;
-	receiver_exit_flag = 1;
+    parent_flag = 0;
+    receiver_exit_flag = 1;
     for (i = 0; i < child_num; i++)
-	    close(child_sockfd[i]);
+	close(child_sockfd[i]);
     return (T);
 }
 
@@ -927,81 +927,14 @@ int f_dp_halt(int arglist, int th)
     }
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
-    shutdown_flag = true;
+	shutdown_flag = true;
 	RAISE(Exit_Interp);
-	}
-    
+    }
+
     child_num = 0;
     parent_flag = false;
     return (T);
 }
-
-
-int f_dp_let(int arglist, int th)
-{
-    int arg1, arg2, temp, exp, i, res;
-
-    arg1 = car(arglist);
-    arg2 = cdr(arglist);
-    if (length(arglist) == 0)
-	error(WRONG_ARGS, "dp-let", arglist, th);
-    if (length(arg1) > child_num)
-	error(WRONG_ARGS, "dp-let", arg1, th);
-    if (!listp(arg1))
-	error(IMPROPER_ARGS, "dp-let", arg1, th);
-    temp = arg1;
-    while (!nullp(temp)) {
-	int temparg1;
-
-	temparg1 = car(car(temp));
-	if (improper_list_p(car(temp)))
-	    error(IMPROPER_ARGS, "dp-let", car(temp), th);
-	if (length(car(temp)) != 2)
-	    error(IMPROPER_ARGS, "dp-let", car(temp), th);
-	if (!symbolp(temparg1))
-	    error(NOT_SYM, "dp-let", temparg1, th);
-	if (temparg1 == T || temparg1 == NIL
-	    || temparg1 == make_sym("*PI*")
-	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
-	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
-	    error(WRONG_ARGS, "dt-let", arg1, th);
-	if (STRING_REF(temparg1, 0) == ':'
-	    || STRING_REF(temparg1, 0) == '&')
-	    error(WRONG_ARGS, "dp-let", arg1, th);
-	if (!listp(cadr(temp)))
-	    error(WRONG_ARGS, "dp-let", arg1, th);
-	temp = cdr(temp);
-    }
-
-    temp = arg1;
-    i = 0;
-    while (!nullp(temp)) {
-	exp = eval_args(cadr(car(temp)));
-	send_to_child(i, sexp_to_str(exp));
-	temp = cdr(temp);
-	i++;
-    }
-
-    temp = arg1;
-    i = 0;
-    while (!nullp(temp)) {
-	add_lex_env(car(car(temp)), str_to_sexp(receive_from_child(i)),
-		    th);
-	temp = cdr(temp);
-	i++;
-    }
-
-    res = NIL;
-    while (arg2 != NIL) {
-	shelter_push(arg2, 0);
-	res = eval(car(arg2), 0);
-	shelter_pop(0);
-	arg2 = cdr(arg2);
-    }
-
-    return (res);
-}
-
 
 void init_parent(void)
 {
@@ -1084,6 +1017,22 @@ void send_to_parent(int x)
 
 }
 
+void send_to_parent_control(int code)
+{
+    int n;
+
+	memset(output_buffer,0,sizeof(output_buffer));
+	output_buffer[0] = code;
+	output_buffer[1] = 0x16;
+	output_buffer[2] = 0;
+    n = write(parent_sockfd[1], output_buffer, 2);
+    if (n < 0) {
+	error(SYSTEM_ERR, "send to parent code", NIL, 0);
+    }
+}
+
+
+
 int send_to_child(int n, int x)
 {
     int m, i;
@@ -1100,6 +1049,22 @@ int send_to_child(int n, int x)
     }
     return (0);
 }
+
+// send one control code
+void send_to_child_control(int n, int code)
+{
+    int m;
+
+	memset(output_buffer,0,sizeof(output_buffer));
+	output_buffer[0] = code;
+	output_buffer[1] = 0x16;
+    m = write(child_sockfd[n], output_buffer, 2);
+    if (m < 0) {
+	error(SYSTEM_ERR, "send to child constrol", NIL, 0);
+    }
+}
+
+
 
 int receive_from_child(int n)
 {
@@ -1212,7 +1177,6 @@ int f_dp_load(int arglist, int th)
 
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
-	receive_from_child(i);
     }
 
     eval(exp, 0);
@@ -1233,7 +1197,6 @@ int f_dp_compile(int arglist, int th)
 
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
-	receive_from_child(i);
     }
 
     eval(exp, 0);
@@ -1241,10 +1204,144 @@ int f_dp_compile(int arglist, int th)
     return (T);
 }
 
+int all_received(int *result, int size)
+{
+    for (int i = 0; i < size; i++) {
+	if (result[i] == 0)
+	    return 0;
+    }
+    return 1;
+}
+
+
+
+int f_dp_let(int arglist, int th)
+{
+    int arg1, arg2, temp, exp, i, res, m, result[PARASIZE];;
+
+    arg1 = car(arglist);
+    arg2 = cdr(arglist);
+    if (length(arglist) == 0)
+	error(WRONG_ARGS, "dp-let", arglist, th);
+    if (length(arg1) > child_num)
+	error(WRONG_ARGS, "dp-let", arg1, th);
+    if (!listp(arg1))
+	error(IMPROPER_ARGS, "dp-let", arg1, th);
+    temp = arg1;
+    while (!nullp(temp)) {
+	int temparg1;
+
+	temparg1 = car(car(temp));
+	if (improper_list_p(car(temp)))
+	    error(IMPROPER_ARGS, "dp-let", car(temp), th);
+	if (length(car(temp)) != 2)
+	    error(IMPROPER_ARGS, "dp-let", car(temp), th);
+	if (!symbolp(temparg1))
+	    error(NOT_SYM, "dp-let", temparg1, th);
+	if (temparg1 == T || temparg1 == NIL
+	    || temparg1 == make_sym("*PI*")
+	    || temparg1 == make_sym("*MOST-POSITIVE-FLOAT*")
+	    || temparg1 == make_sym("*MOST-NEGATIVE-FLOAT*"))
+	    error(WRONG_ARGS, "dt-let", arg1, th);
+	if (STRING_REF(temparg1, 0) == ':'
+	    || STRING_REF(temparg1, 0) == '&')
+	    error(WRONG_ARGS, "dp-let", arg1, th);
+	if (!listp(cadr(temp)))
+	    error(WRONG_ARGS, "dp-let", arg1, th);
+	temp = cdr(temp);
+    }
+
+    temp = arg1;
+    i = 0;
+    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    while (!nullp(temp)) {
+	exp = eval_args(cadr(car(temp)));
+	send_to_child(i, sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
+    }
+
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+    }
+    temp = arg1;
+    i = 0;
+    while (!nullp(temp)) {
+	add_lex_env(car(car(temp)), str_to_sexp(receive_from_child(i)),
+		    th);
+	temp = cdr(temp);
+	i++;
+    }
+
+    res = NIL;
+    while (arg2 != NIL) {
+	shelter_push(arg2, 0);
+	res = eval(car(arg2), 0);
+	shelter_pop(0);
+	arg2 = cdr(arg2);
+    }
+
+    return (res);
+}
+
+/* for compiler */
+int wait_all(int m)
+{
+    int i, result[PARASIZE];
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+    }
+}
+
+/* for compiler */
+int wait_part(int m)
+{
+    int i, j, res, result[PARASIZE];
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+	for (i = 0; i < m; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+		res = str_to_sexp(receive_from_child(i));
+		for (j = 0; j < m; j++) {
+		    if (result[j] == 0) {
+			send_to_child_control(j, 0x11);	// stop signal
+		    }
+		}
+		break;
+	    }
+	}
+    }
+    return (res);
+}
+
+
+
 // fsubr (dp-call fun arg1 arg2 ... argn)
 int f_dp_call(int arglist, int th)
 {
-    int arg1, arg2, temp, res, n, i, args, exp;
+    int arg1, arg2, temp, res, n, i, args, exp, m, result[PARASIZE];
 
     arg1 = car(arglist);	//fun
     arg2 = cdr(arglist);	//args
@@ -1258,6 +1355,7 @@ int f_dp_call(int arglist, int th)
 	temp = cdr(temp);
     }
 
+    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     i = 0;
     while (!nullp(arg2)) {
 	exp = eval_args(car(arg2));
@@ -1266,6 +1364,16 @@ int f_dp_call(int arglist, int th)
 	i++;
     }
 
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+    }
     args = NIL;
     for (i = 0; i < n; i++) {
 	args = cons(str_to_sexp(receive_from_child(i)), args);
@@ -1279,7 +1387,7 @@ int f_dp_call(int arglist, int th)
 
 int f_dp_exec(int arglist, int th)
 {
-    int temp, res, n, i, exp;
+    int temp, res, n, i, exp, m, result[PARASIZE];
 
     n = length(arglist);
     if (n > child_num)
@@ -1293,17 +1401,27 @@ int f_dp_exec(int arglist, int th)
 
     i = 0;
     temp = arglist;
+    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
 	send_to_child(i, sexp_to_str(exp));
 	temp = cdr(temp);
 	i++;
     }
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+    }
 
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(receive_from_child(i));
     }
-
     return (res);
 
 }
@@ -1318,7 +1436,7 @@ int f_dp_report(int arglist, int th __unused)
 	error(NOT_STR, "dp-report", arg1, 0);
 
     memset(sub_buffer, 0, sizeof(sub_buffer));
-    sprintf(sub_buffer, "\x02%s\x03", GET_NAME(arg1));
+    sprintf(sub_buffer, "\x02%s", GET_NAME(arg1));
     send_to_parent(make_str(sub_buffer));
     return (T);
 }
@@ -1326,7 +1444,7 @@ int f_dp_report(int arglist, int th __unused)
 
 int f_dp_part(int arglist, int th)
 {
-    int temp, res, n, i, exp, opt;
+    int temp, res, n, i, j, exp, opt, m, result[PARASIZE];
 
     opt = car(arglist);
     n = length(cdr(arglist));
@@ -1335,6 +1453,7 @@ int f_dp_part(int arglist, int th)
     if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-part", cdr(arglist), th);
     temp = cdr(arglist);
+    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
 	    error(WRONG_ARGS, "dp-part", arglist, th);
@@ -1348,13 +1467,29 @@ int f_dp_part(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-    if (opt == NIL) {
-	//res = str_to_sexp(receive_from_child_part(n, 0));
-    } else if (opt == T) {
-	//res = str_to_sexp(receive_from_child_part(n, 1));
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    Raise(Restart_Repl);
+	}
+	for (i = 0; i < m; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+		res = str_to_sexp(receive_from_child(i));
+		for (j = 0; j < m; j++) {
+		    if (result[j] == 0) {
+			send_to_child_control(j, 0x11);	// stop signal
+		    }
+		}
+		break;
+	    }
+	}
     }
     return (res);
-
 }
 
 

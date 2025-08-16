@@ -129,6 +129,8 @@ void dynamic_link(int x)
     init_f1(READ_FROM_PIPE_PART_IDX, read_from_pipe_part);
     init_f1(CHECKGBC_IDX, check_gbc);
     init_f1(RECEIVE_FROM_CHILD_IDX, receive_from_child);
+    init_f1(WAIT_ALL_IDX, wait_all);
+    init_f1(WAIT_PART_IDX, wait_part);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile

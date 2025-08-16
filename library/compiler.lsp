@@ -2271,9 +2271,9 @@ defgeneric compile
     (defun comp-mp-and (stream x env args tail name global test clos)
         (format stream "({int res;")
         (format stream "Fclear_child_signal();")
-        (comp-mp-and1 0 stream (cdr (cdr x)) env args tail name global test clos)
-        (comp-mp-and3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "exit: Fkill_rest_process(~A);" (length (cdr (cdr x))))
+        (comp-mp-and1 0 stream (cdr x) env args tail name global test clos)
+        (comp-mp-and3 stream (cdr x) env args tail name global test clos)
+        (format stream "exit: Fkill_rest_process(~A);" (length (cdr x)))
         (format stream "res;})"))
 
     ;; write to pipe
@@ -2295,31 +2295,22 @@ defgeneric compile
 
 
     ;; received args
-    (defun comp-mp-and3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-mp-and4 stream 0 (length x)))
-              ((eq opt t) (comp-mp-and5 stream 0 (length x)))
-              (t (error* "mp-and: illegal option" opt))))
+    (defun comp-mp-and3 (stream x env args tail name global test clos)
+        (comp-mp-and4 stream 0 (length x)))
     
-    ;; receive args from pipe(option=nil)
+    ;; receive args from pipe(option=t)
     (defun comp-mp-and4 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
-                 (format stream "if(res == NIL) goto exit;")
-                 (comp-mp-and4 stream (+ i 1) n))))
-
-    ;; receive args from pipe(option=t)
-    (defun comp-mp-and5 (stream i n)
-        (cond ((= i n) nil)
-              (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
                  (format stream "if(res != NIL) goto exit;")
-                 (comp-mp-and5 stream (+ i 1) n))))
+                 (comp-mp-and4 stream (+ i 1) n))))
 
     (defun comp-mp-or (stream x env args tail name global test clos)
         (format stream "({int res;")
         (format stream "Fclear_child_signal();")
-        (comp-mp-or1 0 stream (cdr (cdr x)) env args tail name global test clos)
-        (comp-mp-or3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
-        (format stream "exit: Fkill_rest_process(~A);" (length (cdr (cdr x))))
+        (comp-mp-or1 0 stream (cdr x) env args tail name global test clos)
+        (comp-mp-or3 stream (cdr x) env args tail name global test clos)
+        (format stream "exit: Fkill_rest_process(~A);" (length (cdr x)))
         (format stream "res;})"))
 
     ;; write to pipe
@@ -2341,10 +2332,8 @@ defgeneric compile
 
 
     ;; received args
-    (defun comp-mp-or3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-mp-or4 stream 0 (length x)))
-              ((eq opt t) (comp-mp-or5 stream 0 (length x)))
-              (t (error* "mp-or: illegal option" opt))))
+    (defun comp-mp-or3 (stream x env args tail name global test clos)
+        (comp-mp-or4 stream 0 (length x)))
     
     ;; receive args from pipe(option=nil)
     (defun comp-mp-or4 (stream i n)

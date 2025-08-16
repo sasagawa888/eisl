@@ -130,6 +130,8 @@ void dynamic_link(int x)
     init_f1(CHECKGBC_IDX, check_gbc);
     init_f1(RECEIVE_FROM_CHILD_IDX, receive_from_child);
     init_f1(WAIT_ALL_IDX, wait_all);
+    init_f1(WAIT_AND_IDX, wait_and);
+    init_f1(WAIT_OR_IDX, wait_or);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile
@@ -175,7 +177,6 @@ void dynamic_link(int x)
     init_f2(PSHELTERPUSH_IDX, shelter_push);
     init_f2(WRITE_TO_PIPE_IDX, write_to_pipe);
     init_f2(SEND_TO_CHILD_IDX, send_to_child);
-    init_f2(WAIT_PART_IDX, wait_part);
 
     /* argument-1 string type */
     init_f3(MAKESTR_IDX, (fn3) make_str);

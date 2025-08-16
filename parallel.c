@@ -1218,7 +1218,7 @@ int wait_all(int m)
 }
 
 /* for compiler */
-int wait_part(int m, int opt)
+int wait_and(int m)
 {
     int i, j, res, result[PARASIZE];
     while (!all_received(result, m)) {
@@ -1234,8 +1234,7 @@ int wait_part(int m, int opt)
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-		if ((opt == NIL && res == NIL)
-		    || (opt != NIL && res != NIL))
+		if (res == NIL){
 		    for (j = 0; j < m; j++) {
 			if (result[j] == 0) {
 			    send_to_child_control(j, 0x11);	// stop signal
@@ -1243,11 +1242,37 @@ int wait_part(int m, int opt)
 		    }
 		break;
 	    }
-	}
-    }
+    }}}
     return (res);
 }
 
+int wait_or(int m)
+{
+    int i, j, res, result[PARASIZE];
+    while (!all_received(result, m)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < m; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+	for (i = 0; i < m; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+		res = str_to_sexp(receive_from_child(i));
+		if (res != NIL){
+		    for (j = 0; j < m; j++) {
+			if (result[j] == 0) {
+			    send_to_child_control(j, 0x11);	// stop signal
+			}
+		    }
+		break;
+	    }
+    }}}
+    return (res);
+}
 
 
 // fsubr (dp-call fun arg1 arg2 ... argn)

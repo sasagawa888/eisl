@@ -1384,7 +1384,8 @@ int f_dp_call(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    for (i = 0; i < n; i++)
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     i = 0;
     while (!nullp(arg2)) {
 	exp = eval_args(car(arg2));
@@ -1403,6 +1404,11 @@ int f_dp_call(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    RAISE(Restart_Repl);
+	}
+	for (i = 0; i < n; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+	    }
 	}
     }
     args = NIL;
@@ -1432,7 +1438,8 @@ int f_dp_exec(int arglist, int th)
 
     i = 0;
     temp = arglist;
-    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    for (i = 0; i < n; i++)
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
 	send_to_child(i, sexp_to_str(exp));
@@ -1451,8 +1458,12 @@ int f_dp_exec(int arglist, int th)
 	    printf("ctrl+C\n");
 	    RAISE(Restart_Repl);
 	}
+	for (i = 0; i < n; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+	    }
+	}
     }
-
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(receive_from_child(i));
     }
@@ -1478,16 +1489,17 @@ int f_dp_report(int arglist, int th __unused)
 
 int f_dp_part(int arglist, int th)
 {
-    int temp, res, n, i, j, exp, opt, result[PARASIZE];
+    int temp, res, n, i, j, exp, option, result[PARASIZE];
 
-    opt = car(arglist);
+    option = car(arglist);
     n = length(cdr(arglist));
-    if (opt != T && opt != NIL)
-	error(ILLEGAL_ARGS, "dp-part", opt, th);
+    if (option != T && option != NIL)
+	error(ILLEGAL_ARGS, "dp-part", option, th);
     if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-part", cdr(arglist), th);
     temp = cdr(arglist);
-    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    for (i = 0; i < n; i++)
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
 	    error(WRONG_ARGS, "dp-part", arglist, th);
@@ -1503,7 +1515,7 @@ int f_dp_part(int arglist, int th)
     }
     for (i = 0; i < n; i++)
 	result[i] = 0;
-
+    res = NIL;
     while (!all_received(result, n)) {
 	if (ctrl_c_flag == 1) {
 	    for (i = 0; i < n; i++) {
@@ -1517,18 +1529,19 @@ int f_dp_part(int arglist, int th)
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-		if ((opt = NIL && res == NIL)
-		    || (opt != NIL && res != NIL)) {
+		if ((option == NIL && res == NIL)
+		    || (option == T && res != NIL)) {
 		    for (j = 0; j < n; j++) {
 			if (result[j] == 0) {
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
-		    break;
+		    goto exit;
 		}
 	    }
 	}
     }
+  exit:
     return (res);
 }
 

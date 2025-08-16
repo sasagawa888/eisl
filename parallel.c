@@ -897,14 +897,15 @@ int f_dp_close(int arglist, int th)
 	    send_to_child(i, sexp_to_str(exp));
 	}
     }
-    receiver_exit_flag = 0;
+
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
-    close_socket();
 	RAISE(Exit_Interp);
     }
-    close_socket();
+
     child_num = 0;
+	parent_flag = 0;
+	receiver_exit_flag = 1;
     return (T);
 }
 

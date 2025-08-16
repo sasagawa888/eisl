@@ -670,14 +670,18 @@ defgeneric compile
                (comp-mp-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mp-exec))
                (comp-mp-exec stream x env args tail name global test clos))
-              ((and (consp x) (eq (car x) 'mp-part))
-               (comp-mp-part stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'mp-and))
+               (comp-mp-and stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'mp-or))
+               (comp-mp-or stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'dp-call))
                (comp-dp-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'dp-exec))
                (comp-dp-exec stream x env args tail name global test clos))
-              ((and (consp x) (eq (car x) 'dp-part))
-               (comp-dp-part stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'dp-and))
+               (comp-dp-and stream x env args tail name global test clos))
+              ((and (consp x) (eq (car x) 'dp-or))
+               (comp-dp-or stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-input-file))
                (comp-with-open-input-file stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'with-open-output-file))
@@ -2264,51 +2268,97 @@ defgeneric compile
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe(~A));" i)
                  (comp-mp-exec4 stream (+ i 1) n))))
 
-    (defun comp-mp-part (stream x env args tail name global test clos)
+    (defun comp-mp-and (stream x env args tail name global test clos)
         (format stream "({int res;")
         (format stream "Fclear_child_signal();")
-        (comp-mp-part1 0 stream (cdr (cdr x)) env args tail name global test clos)
-        (comp-mp-part3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-and1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-and3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "exit: Fkill_rest_process(~A);" (length (cdr (cdr x))))
         (format stream "res;})"))
 
     ;; write to pipe
-    (defun comp-mp-part1 (i stream x env args tail name global test clos)
+    (defun comp-mp-and1 (i stream x env args tail name global test clos)
         (cond ((null x) nil)
               (t (format stream "Fwrite_to_pipe(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
-                 (comp-mp-part2 stream (cdr (car x)) env args tail name global test clos)
+                 (comp-mp-and2 stream (cdr (car x)) env args tail name global test clos)
                  (format stream ")));~%")
-                 (comp-mp-part1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+                 (comp-mp-and1 (+ i 1) stream (cdr x) env args tail name global test clos))))
 
     ;; eval args
-    (defun comp-mp-part2 (stream x env args tail name global test clos)
+    (defun comp-mp-and2 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               (t (format stream "Fcons(")
                  (comp stream (car x) env args tail name global test clos)
                  (format stream ",")
-                 (comp-mp-part2 stream (cdr x) env args tail name global test clos)
+                 (comp-mp-and2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
 
     ;; received args
-    (defun comp-mp-part3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-mp-part4 stream 0 (length x)))
-              ((eq opt t) (comp-mp-part5 stream 0 (length x)))
-              (t (error* "mp-part: illegal option" opt))))
+    (defun comp-mp-and3 (opt stream x env args tail name global test clos)
+        (cond ((null opt) (comp-mp-and4 stream 0 (length x)))
+              ((eq opt t) (comp-mp-and5 stream 0 (length x)))
+              (t (error* "mp-and: illegal option" opt))))
     
     ;; receive args from pipe(option=nil)
-    (defun comp-mp-part4 (stream i n)
+    (defun comp-mp-and4 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
                  (format stream "if(res == NIL) goto exit;")
-                 (comp-mp-part4 stream (+ i 1) n))))
+                 (comp-mp-and4 stream (+ i 1) n))))
 
     ;; receive args from pipe(option=t)
-    (defun comp-mp-part5 (stream i n)
+    (defun comp-mp-and5 (stream i n)
         (cond ((= i n) nil)
               (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
                  (format stream "if(res != NIL) goto exit;")
-                 (comp-mp-part5 stream (+ i 1) n))))
+                 (comp-mp-and5 stream (+ i 1) n))))
+
+    (defun comp-mp-or (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (format stream "Fclear_child_signal();")
+        (comp-mp-or1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-mp-or3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "exit: Fkill_rest_process(~A);" (length (cdr (cdr x))))
+        (format stream "res;})"))
+
+    ;; write to pipe
+    (defun comp-mp-or1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fwrite_to_pipe(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
+                 (comp-mp-or2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-mp-or1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-mp-or2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-mp-or2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+
+    ;; received args
+    (defun comp-mp-or3 (opt stream x env args tail name global test clos)
+        (cond ((null opt) (comp-mp-or4 stream 0 (length x)))
+              ((eq opt t) (comp-mp-or5 stream 0 (length x)))
+              (t (error* "mp-or: illegal option" opt))))
+    
+    ;; receive args from pipe(option=nil)
+    (defun comp-mp-or4 (stream i n)
+        (cond ((= i n) nil)
+              (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
+                 (format stream "if(res == NIL) goto exit;")
+                 (comp-mp-or4 stream (+ i 1) n))))
+
+    ;; receive args from pipe(option=t)
+    (defun comp-mp-or5 (stream i n)
+        (cond ((= i n) nil)
+              (t (format stream "res=Fstr_to_sexp(Fread_from_pipe_part(~A));" n)
+                 (format stream "if(res != NIL) goto exit;")
+                 (comp-mp-or5 stream (+ i 1) n))))
 
 
     (defun comp-dp-call (stream x env args tail name global test clos)
@@ -2385,43 +2435,83 @@ defgeneric compile
               (t (format stream "res=Fstr_to_sexp(Freceive_from_child(~A));" i)
                  (comp-dp-exec4 stream (+ i 1) n))))
 
-    (defun comp-dp-part (stream x env args tail name global test clos)
+    (defun comp-dp-and (stream x env args tail name global test clos)
         (format stream "({int res;")
-        (comp-dp-part1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-dp-and1 0 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "Fwait_part(~A,~A);", (length (cdr (cdr x))) (elt x 1))
-        (comp-dp-part3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
+        (comp-dp-and3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "res;})"))
 
     ;; send to child
-    (defun comp-dp-part1 (i stream x env args tail name global test clos)
+    (defun comp-dp-and1 (i stream x env args tail name global test clos)
         (cond ((null x) nil)
               (t (format stream "Fsend_to_child(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
-                 (comp-dp-part2 stream (cdr (car x)) env args tail name global test clos)
+                 (comp-dp-and2 stream (cdr (car x)) env args tail name global test clos)
                  (format stream ")));~%")
-                 (comp-dp-part1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+                 (comp-dp-and1 (+ i 1) stream (cdr x) env args tail name global test clos))))
 
     ;; eval args
-    (defun comp-dp-part2 (stream x env args tail name global test clos)
+    (defun comp-dp-and2 (stream x env args tail name global test clos)
         (cond ((null x) (format stream "NIL"))
               (t (format stream "Fcons(")
                  (comp stream (car x) env args tail name global test clos)
                  (format stream ",")
-                 (comp-dp-part2 stream (cdr x) env args tail name global test clos)
+                 (comp-dp-and2 stream (cdr x) env args tail name global test clos)
                  (format stream ")"))))
 
 
     ;; received args
-    (defun comp-dp-part3 (opt stream x env args tail name global test clos)
-        (cond ((null opt) (comp-dp-part4 stream 0 (length x)))
-              ((eq opt t) (comp-dp-part5 stream 1 (length x)))
-              (t (error* "dp-part: illegal option" opt))))
+    (defun comp-dp-and3 (opt stream x env args tail name global test clos)
+        (cond ((null opt) (comp-dp-and4 stream 0 (length x)))
+              ((eq opt t) (comp-dp-and5 stream 1 (length x)))
+              (t (error* "dp-and: illegal option" opt))))
     
     ;; receive args from pipe(option=nil)
-    (defun comp-dp-part4 (stream i n)
+    (defun comp-dp-and4 (stream i n)
         (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
 
     ;; receive args from pipe(option=t)
-    (defun comp-dp-part5 (stream i n)
+    (defun comp-dp-and5 (stream i n)
+        (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
+
+
+     (defun comp-dp-or (stream x env args tail name global test clos)
+        (format stream "({int res;")
+        (comp-dp-or1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "Fwait_part(~A,~A);", (length (cdr (cdr x))) (elt x 1))
+        (comp-dp-or3 (car (cdr x)) stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "res;})"))
+
+    ;; send to child
+    (defun comp-dp-or1 (i stream x env args tail name global test clos)
+        (cond ((null x) nil)
+              (t (format stream "Fsend_to_child(~A,Fsexp_to_str(Fcons(Fmakesym(\"~A\")," i (car (car x)))
+                 (comp-dp-or2 stream (cdr (car x)) env args tail name global test clos)
+                 (format stream ")));~%")
+                 (comp-dp-or1 (+ i 1) stream (cdr x) env args tail name global test clos))))
+
+    ;; eval args
+    (defun comp-dp-or2 (stream x env args tail name global test clos)
+        (cond ((null x) (format stream "NIL"))
+              (t (format stream "Fcons(")
+                 (comp stream (car x) env args tail name global test clos)
+                 (format stream ",")
+                 (comp-dp-or2 stream (cdr x) env args tail name global test clos)
+                 (format stream ")"))))
+
+
+    ;; received args
+    (defun comp-dp-or3 (opt stream x env args tail name global test clos)
+        (cond ((null opt) (comp-dp-or4 stream 0 (length x)))
+              ((eq opt t) (comp-dp-or5 stream 1 (length x)))
+              (t (error* "dp-or: illegal option" opt))))
+    
+    ;; receive args from pipe(option=nil)
+    (defun comp-dp-or4 (stream i n)
+        (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
+
+    ;; receive args from pipe(option=t)
+    (defun comp-dp-or5 (stream i n)
         (format stream "res=Fstr_to_sexp(Freceive_from_child_part(~A,~A));" n i))
 
 

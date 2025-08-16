@@ -1574,6 +1574,7 @@ void *preceiver(void *arg)
             k++;
         }
         printf("%s\n",sub_buffer);
+        goto reread;
     }
 
 	//print_ascii(buffer); 

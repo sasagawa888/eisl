@@ -902,7 +902,7 @@ int f_dp_close(int arglist, int th)
 	RAISE(Exit_Interp);
     }
     receiver_exit_flag = 0;
-    close_socket();
+    //close_socket();
     child_num = 0;
     return (T);
 }

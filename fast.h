@@ -379,12 +379,6 @@ static inline int Fwait_all(int x)
     return f1[WAIT_ALL_IDX] (x);
 }
 
-static inline int Fwait_part(int x)
-{
-    return f1[WAIT_PART_IDX] (x);
-}
-
-
 static inline int Fcons(int x, int y)
 {
     return f2[CONS_IDX] (x, y);
@@ -567,6 +561,13 @@ static inline int Fsend_to_child(int x, int y)
 {
     return f2[SEND_TO_CHILD_IDX] (x, y);
 }
+
+
+static inline int Fwait_part(int x)
+{
+    return f2[WAIT_PART_IDX] (x);
+}
+
 
 
 static inline int Fmakestr(const char *x)

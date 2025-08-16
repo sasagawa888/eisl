@@ -1335,7 +1335,7 @@ int wait_all(int m)
 }
 
 /* for compiler */
-int wait_part(int m)
+int wait_part(int m, int opt)
 {
     int i, j, res, result[PARASIZE];
     while (!all_received(result, m)) {
@@ -1351,6 +1351,7 @@ int wait_part(int m)
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
+        if((opt == NIL && res == NIL) || (opt != NIL && res != NIL))
 		for (j = 0; j < m; j++) {
 		    if (result[j] == 0) {
 			send_to_child_control(j, 0x11);	// stop signal
@@ -1507,6 +1508,7 @@ int f_dp_part(int arglist, int th)
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
+        if((opt = NIL && res == NIL) || (opt != NIL && res != NIL))
 		for (j = 0; j < m; j++) {
 		    if (result[j] == 0) {
 			send_to_child_control(j, 0x11);	// stop signal

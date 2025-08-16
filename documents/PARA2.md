@@ -25,11 +25,11 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 Executes arg1 to argn in parallel in child Lisps.
 sw == nil
 If one of arg returns nil stops exections and return nil,
-else  returns the result of the last execution.
+else  returns the result of the first execution.
 
 sw == t
 If one of arg returns non-nil stops exections and return result,
-else  returns the result of the last execution.
+else  returns the result of the first execution.
 
 
 - (dp-transfer fn): Transfers file fn to all child machines from the parent machine.
@@ -43,6 +43,9 @@ else  returns the result of the last execution.
 - (dp-report str): Display string on parent terminal.
 
 - (dp-close): Sends termination command to child machines and closes communication.
+
+- (dp-halt): Sends termination command to child machines and closes communication.
+  Shutdown OS in child machine.
 
 
 ## example

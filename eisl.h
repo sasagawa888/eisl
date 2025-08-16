@@ -1361,7 +1361,7 @@ int vector_ref(int v, int n);
 int vector_to_list(int x);
 int vectorp(int x);
 int wait_all(int m);
-int wait_part(int m);
+int wait_part(int m, int opt);
 int wait_para(void);
 int write_to_pipe(int n, int x);
 int zerop(int addr);

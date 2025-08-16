@@ -96,7 +96,6 @@ void init_exsubr(void)
     def_subr("MP-CLOSE", f_mp_close);
     def_fsubr("MP-CALL", f_mp_call);
     def_fsubr("MP-EXEC", f_mp_exec);
-    def_fsubr("MP-LET", f_mp_let);
     def_fsubr("MP-AND", f_mp_and);
     def_fsubr("MP-OR", f_mp_or);
     def_subr("MP-REPORT", f_mp_report);
@@ -105,7 +104,6 @@ void init_exsubr(void)
     def_subr("DP-CREATE", f_dp_create);
     def_subr("DP-CLOSE", f_dp_close);
     def_subr("DP-HALT", f_dp_halt);
-    def_fsubr("DP-LET", f_dp_let);
     def_fsubr("DP-CALL", f_dp_call);
     def_fsubr("DP-EXEC", f_dp_exec);
     def_fsubr("DP-AND", f_dp_and);

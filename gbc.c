@@ -250,12 +250,12 @@ void clr_cell(int addr)
 /* when free cells are less FREESIZE, invoke gbc() */
 int check_gbc(int th)
 {
-    if (exit_flag) {
+    if (ctrl_c_flag) {
 	if (parallel_flag) {
-	    exit_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Exit_Thread);
 	} else {
-	    exit_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
     }

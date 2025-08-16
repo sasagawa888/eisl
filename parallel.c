@@ -891,16 +891,17 @@ int f_dp_close(int arglist, int th)
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "dp-close", arglist, th);
 
-    exp = list1(make_sym("dp-close"));
-    for (i = 0; i < child_num; i++) {
-	send_to_child(i, exp);
-    }
-
-    if (child_flag) {
-	    printf("Easy-ISLisp exit network mode.\n");
-	    RAISE(Restart_Repl);
+    if (parent_flag) {
+	exp = list1(make_sym("dp-close"));
+	for (i = 0; i < child_num; i++) {
+	    send_to_child(i, sexp_to_str(exp));
 	}
-
+    }
+    if (child_flag) {
+	printf("Easy-ISLisp exit network mode.\n");
+	RAISE(Restart_Repl);
+    }
+    //close_socket();
     child_num = 0;
     return (T);
 }
@@ -913,15 +914,16 @@ int f_dp_halt(int arglist, int th)
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "dp-halt", arglist, th);
 
-    exp = list1(make_sym("dp-halt"));
-    for (i = 0; i < child_num; i++) {
-	send_to_child(i, exp);
-    }
-
-    if (child_flag) {
-	    printf("Easy-ISLisp exit network mode.\n");
-	    RAISE(Restart_Repl);
+    if (parent_flag) {
+	exp = list1(make_sym("dp-halt"));
+	for (i = 0; i < child_num; i++) {
+	    send_to_child(i, sexp_to_str(exp));
 	}
+    }
+    if (child_flag) {
+	printf("Easy-ISLisp exit network mode.\n");
+	RAISE(Restart_Repl);
+    }
 
 
     child_num = 0;
@@ -1004,7 +1006,6 @@ void init_parent(void)
     if (parent_sockfd[0] < 0) {
 	error(SYSTEM_ERR, "init parent", NIL, 0);
     }
-
     // initialize parent_addr
     memset((char *) &parent_addr, 0, sizeof(parent_addr));
     parent_addr.sin_family = AF_INET;
@@ -1027,7 +1028,6 @@ void init_child(int n, int x)
     if (child_sockfd[n] < 0) {
 	error(SYSTEM_ERR, "dp-create", make_int(n), 0);
     }
-
     // initialize child_addr
     memset((char *) &child_addr[n], 0, sizeof(child_addr[n]));
     child_addr[n].sin_family = AF_INET;
@@ -1064,12 +1064,12 @@ void close_socket(void)
 
 void send_to_parent(int x)
 {
-    int n,i;
+    int n, i;
 
     // send message to parent
     memset(output_buffer, 0, sizeof(output_buffer));
     strcpy(output_buffer, GET_NAME(x));
-    strcat(output_buffer,"\n");
+    strcat(output_buffer, "\n");
     i = strlen(output_buffer);
     output_buffer[i] = 0x16;
     n = write(parent_sockfd[1], output_buffer, strlen(output_buffer));
@@ -1081,14 +1081,14 @@ void send_to_parent(int x)
 
 int send_to_child(int n, int x)
 {
-    int m,i;
+    int m, i;
 
     // send message to child
     memset(output_buffer, 0, sizeof(output_buffer));
     strcpy(output_buffer, GET_NAME(x));
     strcat(output_buffer, "\n");
     i = strlen(output_buffer);
-	output_buffer[i] = 0x16;
+    output_buffer[i] = 0x16;
     m = write(child_sockfd[n], output_buffer, strlen(output_buffer));
     if (m < 0) {
 	error(SYSTEM_ERR, "send to child", NIL, 0);
@@ -1098,23 +1098,23 @@ int send_to_child(int n, int x)
 
 int receive_from_child(int n)
 {
-	return (make_str(parent_buffer[n]));
+    return (make_str(parent_buffer[n]));
 }
 
 
 
 int f_dp_eval(int arglist, int th __unused)
 {
-    int arg1, arg2, res ,i;
+    int arg1, arg2, res, i;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (GET_INT(arg1) >= child_num || GET_INT(arg1) < 0)
 	error(WRONG_ARGS, "dp-eval", arg1, 0);
 
-    memset(parent_buffer[i],0,sizeof(parent_buffer[i]));
+    memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
-    while(parent_buffer[i][0] == 0){
+    while (parent_buffer[i][0] == 0) {
 	usleep(1000);
     }
     res = str_to_sexp(receive_from_child(GET_INT(arg1)));
@@ -1143,7 +1143,8 @@ int f_dp_transfer(int arglist, int th)
 
 	int bytes_read;
 	while ((bytes_read =
-		fread(output_buffer, sizeof(char), sizeof(output_buffer), file)) > 0) {
+		fread(output_buffer, sizeof(char), sizeof(output_buffer),
+		      file)) > 0) {
 	    m = write(child_sockfd[i], output_buffer, bytes_read);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
@@ -1180,7 +1181,8 @@ int f_dp_receive(int arglist, int th)
 
     int bytes_received;
     while ((bytes_received =
-	    read(parent_sockfd[1], input_buffer, sizeof(input_buffer))) > 0) {
+	    read(parent_sockfd[1], input_buffer,
+		 sizeof(input_buffer))) > 0) {
 	if (input_buffer[bytes_received - 1] == 0x16) {
 	    input_buffer[bytes_received - 1] = 0;
 	    fwrite(input_buffer, sizeof(char), bytes_received - 1, file);
@@ -1388,8 +1390,7 @@ void *preceiver(void *arg)
 	memset(sub_buffer, 0, sizeof(sub_buffer));
 	m = read(child_sockfd[n], sub_buffer, sizeof(sub_buffer));
 	if (m < 0) {
-	    error(SYSTEM_ERR, "receive from child",
-		      make_int(n), 0);
+	    error(SYSTEM_ERR, "receive from child", make_int(n), 0);
 	}
 	//print_ascii(sub_buffer);printf("m=%d",m);fflush(stdout);
 	strcat(buffer, sub_buffer);
@@ -1461,7 +1462,7 @@ void *creceiver(void *arg)
 	    if (buffer[i] == 0x11) {
 		memset(child_buffer, 0, sizeof(child_buffer));
 		strcpy(child_buffer, "nil");
-		exit_flag = 1;
+		ctrl_c_flag = 1;
 		goto exit;
 	    } else {
 		child_buffer[j] = buffer[i];

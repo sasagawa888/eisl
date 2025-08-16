@@ -568,7 +568,7 @@ extern bool repl_flag;
 extern bool org_repl_flag;
 #endif
 extern bool option_flag;
-extern volatile sig_atomic_t exit_flag;
+extern volatile sig_atomic_t ctrl_c_flag;
 extern bool greeting_flag;
 extern bool script_flag;
 extern bool handling_resource_err;

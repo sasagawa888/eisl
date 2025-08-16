@@ -166,7 +166,7 @@ bool repl_flag = true;		/* for REPL read_line true=on,false=off */
 bool org_repl_flag = true;	/* original val for restore */
 #endif
 bool option_flag = false;	/* while handling command line option it is true, else false */
-volatile sig_atomic_t exit_flag = 0;	/* true= ctrl+C */
+volatile sig_atomic_t ctrl_c_flag = 0;	/* true= ctrl+C */
 bool greeting_flag = true;	/* for (quit) */
 bool script_flag = false;	/* for -s option */
 bool handling_resource_err = false;	/* stop infinite recursion */
@@ -177,7 +177,7 @@ bool parallel_flag = false;	/* while executing parallel */
 bool parallel_exit_flag = false;	/* To exit parallel threads */
 bool process_flag = false;	/* when invoke as child process, flag is true */
 bool thread_flag = false;	/* when invoke as multi thread, flag is true */
-bool parent_flag = false;    /* when invoke as parent, flag is true */
+bool parent_flag = false;	/* when invoke as parent, flag is true */
 bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
 bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
@@ -195,8 +195,7 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 
 /* longjmp control and etc */
 Except_T Restart_Repl = { "Restart REPL" },
-    Exit_Interp = { "Exit interpreter" },
-	Shutdown_OS = { "Shutdown OS"};
+    Exit_Interp = { "Exit interpreter" }, Shutdown_OS = { "Shutdown OS" };
 jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
@@ -522,12 +521,11 @@ int main(int argc, char *argv[])
 	    close_socket();
 	}
 	EXCEPT(Shutdown_OS) {
-		int i;
-		printf("Shutting down the system...\n");
+	    int i;
+	    printf("Shutting down the system...\n");
 	    i = system("sudo shutdown now");
-		if (i == -1)
-		error(SYSTEM_ERR, "dp-halt shatdown", NIL,
-			  0);
+	    if (i == -1)
+		error(SYSTEM_ERR, "dp-halt shatdown", NIL, 0);
 	    quit = true;
 	    exit_thread();
 	    close_socket();
@@ -597,7 +595,7 @@ void exit_thread(void)
 
 void signal_handler_c(int signo __unused)
 {
-    exit_flag = 1;
+    ctrl_c_flag = 1;
 }
 
 void signal_handler_child(int sig, siginfo_t * siginfo, void *context)

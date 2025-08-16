@@ -47,17 +47,6 @@ else  returns the result of the first execution.
 ## example
 
 ```
-(defun pfib (n)
-    (dp-let ((a (fib (- n 1)))
-             (b (fib (- n 2))))
-        (+ a b)))
-
-(defun fib (n)
-    (the <fixnum> n) 
-    (cond ((= n 0) 0)
-          ((= n 1) 1)
-          (t (+ (fib (- n 1)) (fib (- n 2))))))
-
 (defun ptarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
@@ -94,8 +83,8 @@ else  returns the result of the first execution.
           ((= (mod n 2) 0) nil)
           (t (let* ((limit (isqrt n))
                     (span (div limit 2)))
-                 (dp-part nil (coprimep n 3 span)
-                              (coprimep n (near-odd span) limit))))))
+                 (dp-or (coprimep n 3 span)
+                        (coprimep n (near-odd span) limit))))))
 
 (defun near-odd (n)
     (if (= (mod n 2) 0)
@@ -129,7 +118,7 @@ else  returns the result of the first execution.
         t))
 
 (defun woo (x y)
-    (dp-part nil (uoo x) (uoo y)))
+    (dp-or (uoo x) (uoo y)))
 
 ```
 

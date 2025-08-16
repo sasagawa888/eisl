@@ -6,11 +6,6 @@
 
 - (mt-close) close all threads.
 
-- (mt-let form body)  
-
-```
-form   ((var1 sexp1)(var2 sexp2)...)
-```
 - (mt-call fun arg ...)
 eval (fun arg ...) with paralell
 
@@ -29,17 +24,6 @@ pthread_mutex_unlock()
 ## example
 
 ```
-(defun pfib (n)
-    (mt-let ((a (fib (- n 1)))
-             (b (fib (- n 2))))
-        (+ a b)))
-
-(defun fib (n)
-    (the <fixnum> n) 
-    (cond ((= n 0) 0)
-          ((= n 1) 1)
-          (t (+ (fib (- n 1)) (fib (- n 2))))))
-
 (defun ptarai (x y z)
     (the <fixnum> x)(the <fixnum> y)(the <fixnum> z)
     (if (<= x y)
@@ -71,9 +55,8 @@ pthread_mutex_unlock()
 ```
 
 # Thread pooling
-source code syntax.c line 2546
+source code parallel.c 
 
-mt-let... f_mt_let
 mt-call.. f_mt_call
 mt-exec.. f_mt_exec
 mp-lock.. f_mt_lock

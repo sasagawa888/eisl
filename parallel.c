@@ -906,6 +906,8 @@ int f_dp_close(int arglist, int th)
     child_num = 0;
 	parent_flag = 0;
 	receiver_exit_flag = 1;
+    for (i = 0; i < child_num; i++)
+	    close(child_sockfd[i]);
     return (T);
 }
 
@@ -925,12 +927,8 @@ int f_dp_halt(int arglist, int th)
     }
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
+    shutdown_flag = true;
 	RAISE(Exit_Interp);
-	int i;
-	printf("Shutting down the system...\n");
-	i = system("sudo shutdown now");
-	if (i == -1)
-	error(SYSTEM_ERR, "dp-halt shatdown", NIL, 0);
 	}
     
     child_num = 0;
@@ -1178,7 +1176,6 @@ int f_dp_receive(int arglist, int th)
     int arg1;
     FILE *file;
 
-    child_busy_flag = false;
     arg1 = car(arglist);
 
     file = fopen(GET_NAME(arg1), "w");

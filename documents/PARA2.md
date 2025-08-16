@@ -15,22 +15,18 @@ and (dp-create ) to establish TCP/IP between child Lisp.
 
 - (dp-create c0 c1 …cn): Provides IP addresses of child machines to establish TCP/IP communication with the parent Lisp.
 
-- (dp-let forms body): Distributed parallel version of the let syntax.
-
 - (dp-call fun a0 a1 ... an): Distributed parallel version of the call syntax.
 
 - (dp-exec a0 a1 ... an): Distributed parallel version of progn
 
-- (dp-part sw a0 a1 ... an): Sidtributed paralle version partial-execution.
+- (dp-and a0 a1 ... an): Paralle version and.
 Executes arg1 to argn in parallel in child Lisps.
-sw == nil
 If one of arg returns nil stops exections and return nil,
 else  returns the result of the first execution.
 
-sw == t
+- (dp-or a0 a1 ... an): Paralle version or.
 If one of arg returns non-nil stops exections and return result,
 else  returns the result of the first execution.
-
 
 - (dp-transfer fn): Transfers file fn to all child machines from the parent machine.
 

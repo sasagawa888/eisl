@@ -698,51 +698,77 @@ int f_mp_exec(int arglist, int th)
 
 }
 
-int f_mp_part(int arglist, int th)
+int f_mp_and(int arglist, int th)
 {
     int temp, res, n, i, exp, opt;
 
-    opt = car(arglist);
-    n = length(cdr(arglist));
-    if (opt != T && opt != NIL)
-	error(ILLEGAL_ARGS, "mp-part", opt, th);
+
+    n = length(arglist);
     if (n > process_pt)
-	error(ILLEGAL_ARGS, "mp-part", cdr(arglist), th);
-    temp = cdr(arglist);
+	error(ILLEGAL_ARGS, "mp-and", arglist, th);
+    temp = arglist;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
-	    error(WRONG_ARGS, "mp-part", arglist, th);
+	    error(WRONG_ARGS, "mp-and", arglist, th);
 	temp = cdr(temp);
     }
 
     clear_child_signal();
     i = 0;
-    temp = cdr(arglist);
+    temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
 	write_to_pipe(i, sexp_to_str(exp));
 	temp = cdr(temp);
 	i++;
     }
-    if (opt == NIL) {
+    
 	for (i = 0; i < n; i++) {
 	    res = str_to_sexp(read_from_pipe_part(n));
 	    if (res == NIL)
 		break;
 	}
-    } else if (opt == T) {
+    
+    kill_rest_process(n);
+    return (res);
+
+}
+
+int f_mp_or(int arglist, int th)
+{
+    int temp, res, n, i, exp, opt;
+
+    opt = arglist;
+    n = length(arglist);
+    if (n > process_pt)
+	error(ILLEGAL_ARGS, "mp-or", arglist, th);
+    temp = cdr(arglist);
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "mp-or", arglist, th);
+	temp = cdr(temp);
+    }
+
+    clear_child_signal();
+    i = 0;
+    temp = arglist;
+    while (!nullp(temp)) {
+	exp = eval_args(car(temp));
+	write_to_pipe(i, sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
+    }
 	for (i = 0; i < n; i++) {
 	    res = str_to_sexp(read_from_pipe_part(n));
 	    if (res != NIL)
 		break;
 	}
-    }
-
 
     kill_rest_process(n);
     return (res);
 
 }
+
 
 int f_mp_let(int arglist, int th)
 {

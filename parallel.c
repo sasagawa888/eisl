@@ -1540,7 +1540,7 @@ void print_ascii(char *str)
 // Thread for parent receiver
 void *preceiver(void *arg)
 {
-    int n, m, i;
+    int n, m, i, j,k;
     char buffer[BUFSIZE], sub_buffer[BUFSIZE];
 
     n = *(int *) arg;
@@ -1564,6 +1564,17 @@ void *preceiver(void *arg)
 	// normal message  0x16 is at m-1
 	if (sub_buffer[m - 1] != 0x16)
 	    goto reread;
+
+    if (buffer[0] = 0x2){
+        memset(sub_buffer, 0, sizeof(sub_buffer));
+        i = strlen(buffer);
+        k = 0;
+        for(j=1;j<i-1;j++){
+            sub_buffer[k] = buffer[j];
+            k++;
+        }
+        printf("%s\n",sub_buffer);
+    }
 
 	//print_ascii(buffer); 
 

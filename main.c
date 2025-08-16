@@ -261,6 +261,7 @@ int child_sockfd[PARASIZE];
 socklen_t parent_len;
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
+int child_id;
 pthread_t receiver_thread;
 pthread_t preceiver_thread[PARASIZE];
 pthread_t creceiver_thread;

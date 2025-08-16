@@ -868,6 +868,7 @@ int f_mp_eval(int arglist, int th)
 
 int f_dp_create(int arglist, int th)
 {
+    int exp,i;
 
     parent_flag = true;
     child_num = 0;
@@ -880,6 +881,10 @@ int f_dp_create(int arglist, int th)
 	child_num++;
     }
     init_preceiver(child_num);
+    for(i=0;i<child_num;i++){
+		exp = list2(make_sym("dp-setid"),make_int(i));
+		send_to_child(i, sexp_to_str(exp));
+	}
     return (T);
 }
 
@@ -935,6 +940,28 @@ int f_dp_halt(int arglist, int th)
     parent_flag = false;
     return (T);
 }
+
+int f_dp_setid(int arglist, int th)
+{
+    int arg1;
+
+    arg1 = car(arglist);
+    child_id = GET_INT(arg1);
+    return(T);
+}
+
+int f_dp_senderr(int arglist, int th)
+{
+	int arg1;
+
+    arg1 = car(arglist);
+	printf("occured an error in child %d\n",GET_INT(arg1));
+	fflush(stdout);
+	return (T);
+}
+	
+
+
 
 void init_parent(void)
 {
@@ -1217,7 +1244,7 @@ int all_received(int *result, int size)
 
 int f_dp_let(int arglist, int th)
 {
-    int arg1, arg2, temp, exp, i, res, m, result[PARASIZE];;
+    int arg1, arg2, temp, exp, i, res, m, result[PARASIZE];
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
@@ -1474,7 +1501,7 @@ int f_dp_part(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-	    Raise(Restart_Repl);
+	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {

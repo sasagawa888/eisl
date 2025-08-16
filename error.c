@@ -663,8 +663,8 @@ int signal_condition(int x, int y, int th)
 	signal_condition_x = x;
 	signal_condition_y = y;
 	printf("catch error\n");
-	send_to_parent(make_sym("\x15"));
-	RAISE(Exit_Network);
+	//send_to_parent(make_sym("\x15"));
+	RAISE(Restart_Repl);
     }
     if (open_flag && error_handler == NIL) {
 	fclose(GET_PORT(input_stream));

@@ -107,7 +107,8 @@ void init_exsubr(void)
     def_fsubr("DP-LET", f_dp_let);
     def_fsubr("DP-CALL", f_dp_call);
     def_fsubr("DP-EXEC", f_dp_exec);
-    def_fsubr("DP-PART", f_dp_part);
+    def_fsubr("DP-AND", f_dp_and);
+    def_fsubr("DP-OR", f_dp_and);
     def_subr("DP-EVAL", f_dp_eval);
     def_subr("DP-TRANSFER", f_dp_transfer);
     def_subr("DP-RECEIVE", f_dp_receive);

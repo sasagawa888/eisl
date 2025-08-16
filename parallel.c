@@ -1487,22 +1487,19 @@ int f_dp_report(int arglist, int th __unused)
 }
 
 
-int f_dp_part(int arglist, int th)
+int f_dp_and(int arglist, int th)
 {
-    int temp, res, n, i, j, exp, option, result[PARASIZE];
+    int temp, res, n, i, j, exp, result[PARASIZE];
 
-    option = car(arglist);
-    n = length(cdr(arglist));
-    if (option != T && option != NIL)
-	error(ILLEGAL_ARGS, "dp-part", option, th);
+    n = length(arglist);
     if (n > child_num)
-	error(ILLEGAL_ARGS, "dp-part", cdr(arglist), th);
-    temp = cdr(arglist);
+	error(ILLEGAL_ARGS, "dp-and", cdr(arglist), th);
+    temp = arglist;
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
-	    error(WRONG_ARGS, "dp-part", arglist, th);
+	    error(WRONG_ARGS, "dp-and", arglist, th);
 	temp = cdr(temp);
     }
     i = 0;
@@ -1529,8 +1526,62 @@ int f_dp_part(int arglist, int th)
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-		if ((option == NIL && res == NIL)
-		    || (option == T && res != NIL)) {
+		if (res == NIL) {
+		    for (j = 0; j < n; j++) {
+			if (result[j] == 0) {
+			    send_to_child_control(j, 0x11);	// stop signal
+			}
+		    }
+		    goto exit;
+		}
+	    }
+	}
+    }
+  exit:
+    return (res);
+}
+
+
+int f_dp_or(int arglist, int th)
+{
+    int temp, res, n, i, j, exp, result[PARASIZE];
+
+    n = length(arglist);
+    if (n > child_num)
+	error(ILLEGAL_ARGS, "dp-or", cdr(arglist), th);
+    temp = arglist;
+    for (i = 0; i < n; i++)
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    while (!nullp(temp)) {
+	if (!listp(car(temp)))
+	    error(WRONG_ARGS, "dp-or", arglist, th);
+	temp = cdr(temp);
+    }
+    i = 0;
+    temp = cdr(arglist);
+    while (!nullp(temp)) {
+	exp = eval_args(car(temp));
+	send_to_child(i, sexp_to_str(exp));
+	temp = cdr(temp);
+	i++;
+    }
+    for (i = 0; i < n; i++)
+	result[i] = 0;
+    res = NIL;
+    while (!all_received(result, n)) {
+	if (ctrl_c_flag == 1) {
+	    for (i = 0; i < n; i++) {
+		if (result[i] == 0)
+		    send_to_child_control(i, 0x11);
+	    }
+	    printf("ctrl+C\n");
+	    RAISE(Restart_Repl);
+	}
+	for (i = 0; i < n; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+		res = str_to_sexp(receive_from_child(i));
+		if (res != NIL) {
 		    for (j = 0; j < n; j++) {
 			if (result[j] == 0) {
 			    send_to_child_control(j, 0x11);	// stop signal

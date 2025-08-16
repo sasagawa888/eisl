@@ -868,7 +868,7 @@ int f_mp_eval(int arglist, int th)
 
 int f_dp_create(int arglist, int th)
 {
-    int exp,i;
+    int exp, i;
 
     parent_flag = true;
     child_num = 0;
@@ -881,10 +881,10 @@ int f_dp_create(int arglist, int th)
 	child_num++;
     }
     init_preceiver(child_num);
-    for(i=0;i<child_num;i++){
-		exp = list2(make_sym("dp-setid"),make_int(i));
-		send_to_child(i, sexp_to_str(exp));
-	}
+    for (i = 0; i < child_num; i++) {
+	exp = list2(make_sym("dp-setid"), make_int(i));
+	send_to_child(i, sexp_to_str(exp));
+    }
     return (T);
 }
 
@@ -947,19 +947,19 @@ int f_dp_setid(int arglist, int th)
 
     arg1 = car(arglist);
     child_id = GET_INT(arg1);
-    return(T);
+    return (T);
 }
 
 int f_dp_senderr(int arglist, int th)
 {
-	int arg1;
+    int arg1;
 
     arg1 = car(arglist);
-	printf("occured an error in child %d\n",GET_INT(arg1));
-	fflush(stdout);
-	return (T);
+    printf("occured an error in child %d\n", GET_INT(arg1));
+    fflush(stdout);
+    return (T);
 }
-	
+
 
 
 
@@ -1048,10 +1048,10 @@ void send_to_parent_control(int code)
 {
     int n;
 
-	memset(output_buffer,0,sizeof(output_buffer));
-	output_buffer[0] = code;
-	output_buffer[1] = 0x16;
-	output_buffer[2] = 0;
+    memset(output_buffer, 0, sizeof(output_buffer));
+    output_buffer[0] = code;
+    output_buffer[1] = 0x16;
+    output_buffer[2] = 0;
     n = write(parent_sockfd[1], output_buffer, 2);
     if (n < 0) {
 	error(SYSTEM_ERR, "send to parent code", NIL, 0);
@@ -1082,9 +1082,9 @@ void send_to_child_control(int n, int code)
 {
     int m;
 
-	memset(output_buffer,0,sizeof(output_buffer));
-	output_buffer[0] = code;
-	output_buffer[1] = 0x16;
+    memset(output_buffer, 0, sizeof(output_buffer));
+    output_buffer[0] = code;
+    output_buffer[1] = 0x16;
     m = write(child_sockfd[n], output_buffer, 2);
     if (m < 0) {
 	error(SYSTEM_ERR, "send to child constrol", NIL, 0);
@@ -1351,12 +1351,13 @@ int wait_part(int m, int opt)
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-        if((opt == NIL && res == NIL) || (opt != NIL && res != NIL))
-		for (j = 0; j < m; j++) {
-		    if (result[j] == 0) {
-			send_to_child_control(j, 0x11);	// stop signal
+		if ((opt == NIL && res == NIL)
+		    || (opt != NIL && res != NIL))
+		    for (j = 0; j < m; j++) {
+			if (result[j] == 0) {
+			    send_to_child_control(j, 0x11);	// stop signal
+			}
 		    }
-		}
 		break;
 	    }
 	}
@@ -1369,7 +1370,7 @@ int wait_part(int m, int opt)
 // fsubr (dp-call fun arg1 arg2 ... argn)
 int f_dp_call(int arglist, int th)
 {
-    int arg1, arg2, temp, res, n, i, args, exp, m, result[PARASIZE];
+    int arg1, arg2, temp, res, n, i, args, exp, result[PARASIZE];
 
     arg1 = car(arglist);	//fun
     arg2 = cdr(arglist);	//args
@@ -1391,10 +1392,12 @@ int f_dp_call(int arglist, int th)
 	arg2 = cdr(arg2);
 	i++;
     }
+    for (i = 0; i < n; i++)
+	result[i] = 0;
 
-    while (!all_received(result, m)) {
+    while (!all_received(result, n)) {
 	if (ctrl_c_flag == 1) {
-	    for (i = 0; i < m; i++) {
+	    for (i = 0; i < n; i++) {
 		if (result[i] == 0)
 		    send_to_child_control(i, 0x11);
 	    }
@@ -1415,7 +1418,7 @@ int f_dp_call(int arglist, int th)
 
 int f_dp_exec(int arglist, int th)
 {
-    int temp, res, n, i, exp, m, result[PARASIZE];
+    int temp, res, n, i, exp, result[PARASIZE];
 
     n = length(arglist);
     if (n > child_num)
@@ -1436,9 +1439,12 @@ int f_dp_exec(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-    while (!all_received(result, m)) {
+    for (i = 0; i < n; i++)
+	result[i] = 0;
+
+    while (!all_received(result, n)) {
 	if (ctrl_c_flag == 1) {
-	    for (i = 0; i < m; i++) {
+	    for (i = 0; i < n; i++) {
 		if (result[i] == 0)
 		    send_to_child_control(i, 0x11);
 	    }
@@ -1472,7 +1478,7 @@ int f_dp_report(int arglist, int th __unused)
 
 int f_dp_part(int arglist, int th)
 {
-    int temp, res, n, i, j, exp, opt, m, result[PARASIZE];
+    int temp, res, n, i, j, exp, opt, result[PARASIZE];
 
     opt = car(arglist);
     n = length(cdr(arglist));
@@ -1495,26 +1501,31 @@ int f_dp_part(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-    while (!all_received(result, m)) {
+    for (i = 0; i < n; i++)
+	result[i] = 0;
+
+    while (!all_received(result, n)) {
 	if (ctrl_c_flag == 1) {
-	    for (i = 0; i < m; i++) {
+	    for (i = 0; i < n; i++) {
 		if (result[i] == 0)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
 	    RAISE(Restart_Repl);
 	}
-	for (i = 0; i < m; i++) {
+	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-        if((opt = NIL && res == NIL) || (opt != NIL && res != NIL))
-		for (j = 0; j < m; j++) {
-		    if (result[j] == 0) {
-			send_to_child_control(j, 0x11);	// stop signal
+		if ((opt = NIL && res == NIL)
+		    || (opt != NIL && res != NIL)) {
+		    for (j = 0; j < n; j++) {
+			if (result[j] == 0) {
+			    send_to_child_control(j, 0x11);	// stop signal
+			}
 		    }
+		    break;
 		}
-		break;
 	    }
 	}
     }
@@ -1542,7 +1553,7 @@ void print_ascii(char *str)
 // Thread for parent receiver
 void *preceiver(void *arg)
 {
-    int n, m, i, j,k;
+    int n, m, i, j, k;
     char buffer[BUFSIZE], sub_buffer[BUFSIZE];
 
     n = *(int *) arg;
@@ -1567,18 +1578,17 @@ void *preceiver(void *arg)
 	if (sub_buffer[m - 1] != 0x16)
 	    goto reread;
 
-    if (buffer[0] = 0x2){
-        memset(sub_buffer, 0, sizeof(sub_buffer));
-        i = strlen(buffer);
-        k = 0;
-        for(j=1;j<i-1;j++){
-            sub_buffer[k] = buffer[j];
-            k++;
-        }
-        printf("%s\n",sub_buffer);
-        goto reread;
-    }
-
+	if (buffer[0] = 0x2) {
+	    memset(sub_buffer, 0, sizeof(sub_buffer));
+	    i = strlen(buffer);
+	    k = 0;
+	    for (j = 1; j < i - 1; j++) {
+		sub_buffer[k] = buffer[j];
+		k++;
+	    }
+	    printf("%s\n", sub_buffer);
+	    goto reread;
+	}
 	//print_ascii(buffer); 
 
 	i = strlen(buffer);

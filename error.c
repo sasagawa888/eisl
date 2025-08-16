@@ -664,7 +664,7 @@ int signal_condition(int x, int y, int th)
 	signal_condition_y = y;
 	printf("catch error\n");
 	int exp;
-	exp = list2(make_sym("dp-senderr"),make_int(child_id));
+	exp = list2(make_sym("dp-senderr"), make_int(child_id));
 	send_to_parent(sexp_to_str(exp));
     }
     if (open_flag && error_handler == NIL) {

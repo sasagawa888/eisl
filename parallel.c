@@ -873,13 +873,17 @@ int f_dp_close(int arglist, int th)
 	RAISE(Exit_Interp);
     }
 
+    receiver_exit_flag = 1;
     for (i = 0; i < child_num; i++){
         shutdown(child_sockfd[i], SHUT_RDWR);
-	    close(child_sockfd[i]);
+    }
+    
+    for (i = 0; i < child_num; i++){
+        close(child_sockfd[i]);
     }
     child_num = 0;
     parent_flag = 0;
-    receiver_exit_flag = 1;
+    
     return (T);
 }
 
@@ -903,8 +907,16 @@ int f_dp_halt(int arglist, int th)
 	RAISE(Exit_Interp);
     }
 
+    receiver_exit_flag = 1;
+    for (i = 0; i < child_num; i++){
+        shutdown(child_sockfd[i], SHUT_RDWR);
+    }
+    
+    for (i = 0; i < child_num; i++){
+        close(child_sockfd[i]);
+    }
     child_num = 0;
-    parent_flag = false;
+    parent_flag = 0;
     return (T);
 }
 
@@ -1560,7 +1572,7 @@ void *preceiver(void *arg)
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
 	m = read(child_sockfd[n], sub_buffer, sizeof(sub_buffer));
-	if (m < 0) {
+	if (m < 0 && !receiver_exit_flag) {
 	    error(SYSTEM_ERR, "receive from child", make_int(n), 0);
 	}
 	//print_ascii(sub_buffer);printf("m=%d",m);fflush(stdout);

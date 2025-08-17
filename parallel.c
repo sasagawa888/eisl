@@ -1160,6 +1160,7 @@ int f_dp_receive(int arglist, int th)
     while ((bytes_received =
 	    read(parent_sockfd[1], transfer,
 		 sizeof(transfer))) > 0) {
+        print_ascii(transfer);
 	if (transfer[bytes_received - 1] == 0x16) {
 	    transfer[bytes_received - 1] = 0;
 	    fwrite(transfer, sizeof(char), bytes_received - 1, file);

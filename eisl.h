@@ -1424,6 +1424,7 @@ void insert_str(char ch, char buf[]);
 void load(int x, int th);
 void mark_cell(int addr);
 void print(int addr);
+void print_ascii(char *str);
 void print_big(int x);
 void print_arr(int x);
 void print_char(int addr);

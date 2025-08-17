@@ -1235,6 +1235,10 @@ int clear_parent_buffer(int m)
 int wait_all(int m)
 {
     int i, result[PARASIZE];
+
+    for(i=0;i<m;i++)
+        result[i] = 0;
+
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
 	    for (i = 0; i < m; i++) {
@@ -1257,6 +1261,10 @@ int wait_all(int m)
 int wait_and(int m)
 {
     int i, j, res, result[PARASIZE];
+
+    for(i=0;i<m;i++)
+        result[i] = 0;
+
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
 	    for (i = 0; i < m; i++) {
@@ -1285,6 +1293,10 @@ int wait_and(int m)
 int wait_or(int m)
 {
     int i, j, res, result[PARASIZE];
+
+    for(i=0;i<m;i++)
+        result[i] = 0;
+
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
 	    for (i = 0; i < m; i++) {

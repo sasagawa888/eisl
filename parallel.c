@@ -1120,16 +1120,16 @@ int f_dp_transfer(int arglist, int th)
 
 	int bytes_read;
 	while ((bytes_read =
-		fread(output_buffer, sizeof(char), sizeof(output_buffer),
+		fread(transfer, sizeof(char), sizeof(transfer),
 		      file)) > 0) {
-	    m = write(child_sockfd[i], output_buffer, bytes_read);
+	    m = write(child_sockfd[i], transfer, bytes_read);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
-	memset(output_buffer, 0, sizeof(output_buffer));
-	output_buffer[0] = 0x16;
-	m = write(child_sockfd[i], output_buffer, 1);
+	memset(transfer, 0, sizeof(transfer));
+	transfer[0] = 0x16;
+	m = write(child_sockfd[i], transfer, 1);
 	if (m < 0) {
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}
@@ -1141,6 +1141,7 @@ int f_dp_transfer(int arglist, int th)
 
     return (T);
 }
+
 
 /* child lisp */
 int f_dp_receive(int arglist, int th)
@@ -1157,14 +1158,14 @@ int f_dp_receive(int arglist, int th)
 
     int bytes_received;
     while ((bytes_received =
-	    read(parent_sockfd[1], input_buffer,
-		 sizeof(input_buffer))) > 0) {
-	if (input_buffer[bytes_received - 1] == 0x16) {
-	    input_buffer[bytes_received - 1] = 0;
-	    fwrite(input_buffer, sizeof(char), bytes_received - 1, file);
+	    read(parent_sockfd[1], transfer,
+		 sizeof(transfer))) > 0) {
+	if (transfer[bytes_received - 1] == 0x16) {
+	    transfer[bytes_received - 1] = 0;
+	    fwrite(transfer, sizeof(char), bytes_received - 1, file);
 	    break;
 	}
-	fwrite(input_buffer, sizeof(char), bytes_received, file);
+	fwrite(transfer, sizeof(char), bytes_received, file);
     }
     fclose(file);
 

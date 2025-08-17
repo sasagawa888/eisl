@@ -676,6 +676,7 @@ extern pthread_t creceiver_thread;
 extern int child_result[PARASIZE];
 extern char parent_buffer[BUFSIZE][PARASIZE];
 extern char child_buffer[BUFSIZE];
+extern char transfer[BUFSIZE];
 extern char input_buffer[BUFSIZE];
 extern char output_buffer[BUFSIZE];
 

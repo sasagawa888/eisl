@@ -268,6 +268,7 @@ pthread_t creceiver_thread;
 int child_result[PARASIZE];
 char parent_buffer[BUFSIZE][PARASIZE];
 char child_buffer[BUFSIZE];
+char transfer[BUFSIZE];	
 char input_buffer[BUFSIZE];
 char output_buffer[BUFSIZE];
 

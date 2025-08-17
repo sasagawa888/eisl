@@ -1442,7 +1442,7 @@ int f_dp_and(int arglist, int th)
 	temp = cdr(temp);
     }
     i = 0;
-    temp = cdr(arglist);
+    temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
 	send_to_child(i, sexp_to_str(exp));
@@ -1497,7 +1497,7 @@ int f_dp_or(int arglist, int th)
 	temp = cdr(temp);
     }
     i = 0;
-    temp = cdr(arglist);
+    temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
 	send_to_child(i, sexp_to_str(exp));

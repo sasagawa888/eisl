@@ -1156,12 +1156,10 @@ int f_dp_receive(int arglist, int th)
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
-    printf("dp-receive 1");fflush(stdout);
     int bytes_received;
     while ((bytes_received =
 	    read(parent_sockfd[1], transfer,
 		 sizeof(transfer))) > 0) {
-        print_ascii(transfer); fflush(stdout);
 	if (transfer[bytes_received - 1] == 0x16) {
 	    transfer[bytes_received - 1] = 0;
 	    fwrite(transfer, sizeof(char), bytes_received - 1, file);

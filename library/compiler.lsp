@@ -2351,7 +2351,7 @@ defgeneric compile
 
 
     (defun comp-dp-call (stream x env args tail name global test clos)
-        (format stream "({int res;")
+        (format stream "({int res; Fclear_parent_buffer(~A);" (length x))
         (comp-dp-call1 0 stream (cdr (cdr x)) env args tail name global test clos)
         (format stream "Fwait_all(~A);" (length (cdr (cdr x))))
         (comp-dp-call3 stream (cdr x) env args tail name global test clos)
@@ -2390,7 +2390,7 @@ defgeneric compile
                  (format stream ")"))))
 
     (defun comp-dp-exec (stream x env args tail name global test clos)
-        (format stream "({int res;")
+        (format stream "({int res; Fclear_parent_buffer(~A);" (length x))
         (comp-dp-exec1 0 stream (cdr x) env args tail name global test clos)
         (format stream "Fwait_all(~A);" (length (cdr x)))
         (comp-dp-exec3 stream (cdr x) env args tail name global test clos)

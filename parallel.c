@@ -1244,6 +1244,11 @@ int wait_all(int m)
 	    printf("ctrl+C\n");
 	    RAISE(Restart_Repl);
 	}
+    for (i = 0; i < m; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+	    }
+	}
     }
     return(0);
 }

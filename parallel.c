@@ -1156,6 +1156,7 @@ int f_dp_receive(int arglist, int th)
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
+    printf("dp-receive 1");fflush(stdout);
     int bytes_received;
     while ((bytes_received =
 	    read(parent_sockfd[1], transfer,

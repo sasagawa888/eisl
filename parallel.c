@@ -871,11 +871,11 @@ int f_dp_close(int arglist, int th)
 	RAISE(Exit_Interp);
     }
 
+    for (i = 0; i < child_num; i++)
+	close(child_sockfd[i]);
     child_num = 0;
     parent_flag = 0;
     receiver_exit_flag = 1;
-    for (i = 0; i < child_num; i++)
-	close(child_sockfd[i]);
     return (T);
 }
 

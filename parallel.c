@@ -1374,10 +1374,11 @@ int f_dp_exec(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    i = 0;
-    temp = arglist;
+    
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    i = 0;
+    temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
 	send_to_child(i, sexp_to_str(exp));

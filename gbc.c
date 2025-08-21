@@ -253,9 +253,11 @@ int check_gbc(int th)
     if (ctrl_c_flag) {
 	if (parallel_flag) {
 	    ctrl_c_flag = 0;
+		printf("\n");fflush(stdout);
 	    RAISE(Exit_Thread);
 	} else {
 	    ctrl_c_flag = 0;
+		printf("\n");fflush(stdout);
 	    RAISE(Restart_Repl);
 	}
     }

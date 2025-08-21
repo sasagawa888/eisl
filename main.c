@@ -167,7 +167,7 @@ bool org_repl_flag = true;	/* original val for restore */
 #endif
 bool option_flag = false;	/* while handling command line option it is true, else false */
 volatile sig_atomic_t ctrl_c_flag = 0;	/* true= ctrl+C */
-bool greeting_flag = true;	/* for (quit) */
+bool greeting_flag = true;	/* for greeting */
 bool script_flag = false;	/* for -s option */
 bool handling_resource_err = false;	/* stop infinite recursion */
 bool looking_for_shebang = false;	/* skip over #! */

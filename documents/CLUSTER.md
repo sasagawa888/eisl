@@ -11,12 +11,14 @@ Install
 
 sudo nano /home/username/eisl/boot.sh
 
+```
 #!/bin/bash
 # Change directory to 'nprolog'.
 # If this fails (e.g., directory does not exist), exit immediately with status 1.
 cd /home/username/eisl || exit 1
 # Run the 'npl' program with the '-n' option.
 ./eisl -n
+```
 
 Make sure the script has execute permission:
 

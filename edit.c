@@ -891,7 +891,6 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 	    return false;
 	case 'q':		// Esc+q
 	    putchar('\n');
-	    greeting_flag = false;
 	    RAISE(Exit_Interp);
 	    break;
 	case ARROW_PREFIX:

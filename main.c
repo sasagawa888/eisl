@@ -327,6 +327,8 @@ static inline void maybe_greet(void)
 {
     if (greeting_flag)
 	Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
+
+	greeting_flag = false;
 }
 
 static inline void disable_repl_flag(void)
@@ -469,8 +471,7 @@ int main(int argc, char *argv[])
     /* REPL */
     volatile bool quit = false;
     do {
-	if (!process_flag)
-	    maybe_greet();
+	maybe_greet();
 	TRY while (1) {
 	    init_pointer();
 	    if (!process_flag && !child_flag) {
@@ -646,7 +647,6 @@ int readc(void)
 	c = getc(GET_PORT(input_stream));
 	if (!script_flag && input_stream == standard_input && c == EOF) {
 	    /* ctrl+D and not script-mode quit system */
-	    greeting_flag = false;
 	    putchar('\n');
 	    RAISE(Exit_Interp);
 	} else if (script_flag)

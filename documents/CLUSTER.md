@@ -13,7 +13,7 @@ sudo nano /home/username/eisl/boot.sh
 
 ```
 #!/bin/bash
-# Change directory to 'nprolog'.
+# Change directory to 'Easy-ISLisp'.
 # If this fails (e.g., directory does not exist), exit immediately with status 1.
 cd /home/username/eisl || exit 1
 # Run the 'npl' program with the '-n' option.
@@ -34,7 +34,7 @@ sudo nano /etc/systemd/system/eisl.service
 
 ```
 [Unit]
-Description=Run N-Prolog at boot after network is ready
+Description=Run Easy-ISLisp at boot after network is ready
 After=network-online.target
 Wants=network-online.target
 

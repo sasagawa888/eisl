@@ -82,3 +82,6 @@ sudo systemctl stop eisl.service
 sudo systemctl status eisl.service
 
 ```
+
+# Troubleshooting
+It may take some time for a Raspberry Pi to become fully ready after powering on. Waiting about one minute before connecting with dp-create helps ensure stability.

@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
 	    if (!process_flag && !child_flag) {
 		fputs("> ", stdout);
 		print(eval(sread(), 0));
-		putchar('\n');
+		putchar('\n'); 
 	    } else if (process_flag) {
 		TRY print(eval(sread(), 0));
 		putchar('\n');

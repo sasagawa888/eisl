@@ -1245,6 +1245,7 @@ int wait_all(int m)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
     for (i = 0; i < m; i++) {
@@ -1271,6 +1272,7 @@ int wait_and(int m)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < m; i++) {
@@ -1303,6 +1305,7 @@ int wait_or(int m)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < m; i++) {
@@ -1358,6 +1361,7 @@ int f_dp_call(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1412,6 +1416,7 @@ int f_dp_exec(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1476,6 +1481,7 @@ int f_dp_and(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1531,6 +1537,7 @@ int f_dp_or(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
+        ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {

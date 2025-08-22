@@ -17,6 +17,7 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 - 端末上で`sudo make install`と入力する。
 - お望みなら "PREFIX=$HOME" (or wherever) という引数を与えることもできます。
 - ラズパイクラスタマシンにインストールする場合においてwiringpiを必要としない場合には NOWIRING=1 を追加すればインストールを省略できます
+最新のラズパイにはWiringPIが標準添付されていません。GPIOを必要とする場合にはWiringPIをインストールしてください。
 
 注意
 Edlisのコンパイルでcurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。

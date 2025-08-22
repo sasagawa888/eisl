@@ -16,6 +16,7 @@ Change to the git cloned or downloaded Easy-ISLisp directory.
 - You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 - For more advanced hacking on the interpreter itself, you can build a debug-mode executable by supplying a "DEBUG=1" argument to make, but this is unlikely to be needed by someone starting out.
 - You can skip installing WiringPi when setting up a Raspberry Pi cluster machine by adding NOWIRING=1.
+The latest Raspberry Pi models do not come with WiringPi preinstalled. If you need GPIO functionality, please install WiringPi.
 
 Update Easy-ISlisp
 - Type "sudo make clean".

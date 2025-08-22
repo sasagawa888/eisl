@@ -19,13 +19,13 @@
 
 
 ;(mp-create 5)
-;(primep* 100000000000031)
+;(primep* 7427466391)
 (defun primep* (n)
     (cond ((= n 2) t)
           ((= (mod n 2) 0) nil)
           (t (let* ((limit (isqrt n))
                     (span (div limit 5)))
-                 (mp-or (coprimep n 3 span)
+                 (mp-and (coprimep n 3 span)
                         (coprimep n (near-odd span) (* 2 span ))
                         (coprimep n (near-odd (* 2 span)) (* 3 span))
                         (coprimep n (near-odd (* 3 span)) (* 4 span))

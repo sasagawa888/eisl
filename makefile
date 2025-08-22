@@ -1,6 +1,8 @@
 .POSIX:
 .DELETE_ON_ERROR:
 
+NOWIRING ?= 0
+
 CC := cc
 DC := ldc2
 LD := $(CC)
@@ -83,7 +85,9 @@ else
 	CFLAGS += -std=c17
 endif
 ifeq  ($(shell uname -n),raspberrypi)
-	CFLAGS += -D__rpi__
+	ifneq ($(NOWIRING),1)
+		CFLAGS += -D__rpi__
+	endif
 endif
 ifneq ($(DEBUG),1)
 	LDFLAGS += -flto
@@ -148,6 +152,7 @@ endif
 
 %.o: %.lsp eisl
 	echo '(load "library/compiler.lsp") (compile-file "$<")' | ./eisl -r
+
 
 ifeq ($(DEBUG),1)
 main.o: nana/src/nana-config.h

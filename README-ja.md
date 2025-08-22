@@ -16,6 +16,8 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 1. Gitでクローンした，又は単にダウンロードしたEasy-ISLispのディレクトリに移動する。
 - 端末上で`sudo make install`と入力する。
 - お望みなら "PREFIX=$HOME" (or wherever) という引数を与えることもできます。
+- ラズパイクラスタマシンにインストールする場合においてwiringpiを必要としない場合には NOWIRING=1 を追加すればインストールを省略できます
+
 注意
 Edlisのコンパイルでcurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
 

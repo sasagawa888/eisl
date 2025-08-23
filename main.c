@@ -181,6 +181,7 @@ bool parent_flag = false;	/* when invoke as parent, flag is true */
 bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
 bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
+bool transfer_flag = false;    /* While transfer file data */
 bool shutdown_flag = false;	/* shutdown OS on child */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */

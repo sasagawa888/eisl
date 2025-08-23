@@ -1154,7 +1154,7 @@ int f_dp_receive(int arglist, int th)
     if (!file) {
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
-
+    transfer_flag = true;
     int bytes_received;
     while ((bytes_received =
 	    read(parent_sockfd[1], transfer,
@@ -1167,7 +1167,7 @@ int f_dp_receive(int arglist, int th)
 	fwrite(transfer, sizeof(char), bytes_received, file);
     }
     fclose(file);
-
+    transfer_flag = false;
     return (T);
 }
 
@@ -1657,6 +1657,11 @@ void *creceiver(void *arg)
 	if (receiver_exit_flag)
 	    break;
 
+    while (transfer_flag) {
+        usleep(1000);  
+        if (receiver_exit_flag)
+            goto exit_thread;
+    }
 
 	// read message from parent
 	memset(buffer, 0, sizeof(buffer));
@@ -1698,9 +1703,9 @@ void *creceiver(void *arg)
 	pthread_cond_signal(&md_cond);
 	pthread_mutex_unlock(&mutex2);
 
-
     }
 
+    exit_thread:
     pthread_exit(NULL);
 }
 

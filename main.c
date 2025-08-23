@@ -181,7 +181,6 @@ bool parent_flag = false;	/* when invoke as parent, flag is true */
 bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
 bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
-bool transfer_flag = false;    /* While transfer file data */
 bool shutdown_flag = false;	/* shutdown OS on child */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */
@@ -269,7 +268,7 @@ pthread_t creceiver_thread;
 int child_result[PARASIZE];
 char parent_buffer[BUFSIZE][PARASIZE];
 char child_buffer[BUFSIZE];
-char transfer[BUFSIZE];	
+char transfer[BUFSIZE];
 char input_buffer[BUFSIZE];
 char output_buffer[BUFSIZE];
 
@@ -329,7 +328,7 @@ static inline void maybe_greet(void)
     if (greeting_flag)
 	Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
 
-	greeting_flag = false;
+    greeting_flag = false;
 }
 
 static inline void disable_repl_flag(void)
@@ -478,7 +477,7 @@ int main(int argc, char *argv[])
 	    if (!process_flag && !child_flag) {
 		fputs("> ", stdout);
 		print(eval(sread(), 0));
-		putchar('\n'); 
+		putchar('\n');
 	    } else if (process_flag) {
 		TRY print(eval(sread(), 0));
 		putchar('\n');
@@ -505,8 +504,7 @@ int main(int argc, char *argv[])
 		print(exp);
 		printf("\n");
 		fflush(stdout);
-		TRY 
-		res = eval(exp, 0);
+		TRY res = eval(exp, 0);
 		printf("send_to_parent ");
 		print(res);
 		printf("\n");

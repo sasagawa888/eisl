@@ -4432,7 +4432,7 @@ __dead int f_quit(int arglist __unused, int th __unused)
 {
 
     if (parent_flag)
-	    error(SYSTEM_ERR,"Execute dp-close before quit", NIL,  th);
+	error(SYSTEM_ERR, "Execute dp-close before quit", NIL, th);
 
     if (!script_flag) {
 	puts("- good bye -");

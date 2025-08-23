@@ -583,7 +583,6 @@ extern bool parent_flag;
 extern bool child_flag;
 extern bool connect_flag;
 extern bool receiver_exit_flag;
-extern bool transfer_flag; 
 extern bool shutdown_flag;
 
 // try function

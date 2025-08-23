@@ -722,13 +722,13 @@ int f_mp_and(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-    
-	for (i = 0; i < n; i++) {
-	    res = str_to_sexp(read_from_pipe_part(n));
-	    if (res == NIL)
-		break;
-	}
-    
+
+    for (i = 0; i < n; i++) {
+	res = str_to_sexp(read_from_pipe_part(n));
+	if (res == NIL)
+	    break;
+    }
+
     kill_rest_process(n);
     return (res);
 
@@ -757,11 +757,11 @@ int f_mp_or(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-	for (i = 0; i < n; i++) {
-	    res = str_to_sexp(read_from_pipe_part(n));
-	    if (res != NIL)
-		break;
-	}
+    for (i = 0; i < n; i++) {
+	res = str_to_sexp(read_from_pipe_part(n));
+	if (res != NIL)
+	    break;
+    }
 
     kill_rest_process(n);
     return (res);
@@ -864,26 +864,26 @@ int f_dp_close(int arglist, int th)
 
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
-    receiver_exit_flag = 1;
-    child_flag = 0;
-    shutdown(parent_sockfd[0], SHUT_RDWR);
-    shutdown(parent_sockfd[1], SHUT_RDWR);
-    close(parent_sockfd[0]);
-    close(parent_sockfd[1]);
+	receiver_exit_flag = 1;
+	child_flag = 0;
+	shutdown(parent_sockfd[0], SHUT_RDWR);
+	shutdown(parent_sockfd[1], SHUT_RDWR);
+	close(parent_sockfd[0]);
+	close(parent_sockfd[1]);
 	RAISE(Exit_Interp);
     }
 
     receiver_exit_flag = 1;
-    for (i = 0; i < child_num; i++){
-        shutdown(child_sockfd[i], SHUT_RDWR);
+    for (i = 0; i < child_num; i++) {
+	shutdown(child_sockfd[i], SHUT_RDWR);
     }
-    
-    for (i = 0; i < child_num; i++){
-        close(child_sockfd[i]);
+
+    for (i = 0; i < child_num; i++) {
+	close(child_sockfd[i]);
     }
     child_num = 0;
     parent_flag = 0;
-    
+
     return (T);
 }
 
@@ -908,12 +908,12 @@ int f_dp_halt(int arglist, int th)
     }
 
     receiver_exit_flag = 1;
-    for (i = 0; i < child_num; i++){
-        shutdown(child_sockfd[i], SHUT_RDWR);
+    for (i = 0; i < child_num; i++) {
+	shutdown(child_sockfd[i], SHUT_RDWR);
     }
-    
-    for (i = 0; i < child_num; i++){
-        close(child_sockfd[i]);
+
+    for (i = 0; i < child_num; i++) {
+	close(child_sockfd[i]);
     }
     child_num = 0;
     parent_flag = 0;
@@ -1117,7 +1117,6 @@ int f_dp_transfer(int arglist, int th)
 
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
-    usleep(500000);
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
@@ -1155,20 +1154,18 @@ int f_dp_receive(int arglist, int th)
     if (!file) {
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
-    transfer_flag = true;
-    int bytes_received;
-    while ((bytes_received =
-	    read(parent_sockfd[1], transfer,
-		 sizeof(transfer))) > 0) {
-	if (transfer[bytes_received - 1] == 0x16) {
-	    transfer[bytes_received - 1] = 0;
-	    fwrite(transfer, sizeof(char), bytes_received - 1, file);
-	    break;
-	}
-	fwrite(transfer, sizeof(char), bytes_received, file);
+
+    pthread_mutex_lock(&mutex2);
+    while (!child_buffer_ready) {
+	pthread_cond_wait(&md_cond, &mutex2);
     }
+    child_buffer_ready = 0;
+    pthread_mutex_unlock(&mutex2);
+    int i;
+    i = strlen(child_buffer) - 1;
+    fwrite(child_buffer, sizeof(char), i, file);
+
     fclose(file);
-    transfer_flag = false;
     return (T);
 }
 
@@ -1226,18 +1223,18 @@ int all_received(int *result, int size)
 int clear_parent_buffer(int m)
 {
     int i;
-    for(i=0;i<m;i++)
-        memset(parent_buffer[i],0,sizeof(parent_buffer[i]));
+    for (i = 0; i < m; i++)
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
 
-    return(0);
+    return (0);
 }
 
 int wait_all(int m)
 {
     int i, result[PARASIZE];
 
-    for(i=0;i<m;i++)
-        result[i] = 0;
+    for (i = 0; i < m; i++)
+	result[i] = 0;
 
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
@@ -1246,16 +1243,16 @@ int wait_all(int m)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
-    for (i = 0; i < m; i++) {
+	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 	    }
 	}
     }
-    return(0);
+    return (0);
 }
 
 /* for compiler */
@@ -1263,8 +1260,8 @@ int wait_and(int m)
 {
     int i, j, res, result[PARASIZE];
 
-    for(i=0;i<m;i++)
-        result[i] = 0;
+    for (i = 0; i < m; i++)
+	result[i] = 0;
 
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
@@ -1273,22 +1270,24 @@ int wait_and(int m)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-		if (res == NIL){
+		if (res == NIL) {
 		    for (j = 0; j < m; j++) {
 			if (result[j] == 0) {
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
-		break;
+		    break;
+		}
 	    }
-    }}}
+	}
+    }
     return (res);
 }
 
@@ -1296,8 +1295,8 @@ int wait_or(int m)
 {
     int i, j, res, result[PARASIZE];
 
-    for(i=0;i<m;i++)
-        result[i] = 0;
+    for (i = 0; i < m; i++)
+	result[i] = 0;
 
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
@@ -1306,22 +1305,24 @@ int wait_or(int m)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
 		res = str_to_sexp(receive_from_child(i));
-		if (res != NIL){
+		if (res != NIL) {
 		    for (j = 0; j < m; j++) {
 			if (result[j] == 0) {
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
-		break;
+		    break;
+		}
 	    }
-    }}}
+	}
+    }
     return (res);
 }
 
@@ -1362,7 +1363,7 @@ int f_dp_call(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1396,7 +1397,7 @@ int f_dp_exec(int arglist, int th)
 	temp = cdr(temp);
     }
 
-    
+
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     i = 0;
@@ -1417,7 +1418,7 @@ int f_dp_exec(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1483,7 +1484,7 @@ int f_dp_and(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1539,7 +1540,7 @@ int f_dp_or(int arglist, int th)
 		    send_to_child_control(i, 0x11);
 	    }
 	    printf("ctrl+C\n");
-        ctrl_c_flag = 0;
+	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
 	for (i = 0; i < n; i++) {
@@ -1571,9 +1572,9 @@ int receive_from_parent(void)
 
 void print_ascii(char *str)
 {
-    int i ,n;
+    int i, n;
 
-    n= strlen(str);
+    n = strlen(str);
     for (i = 0; i < n; i++) {
 	printf("0x%02X ", (unsigned char) str[i]);
     }
@@ -1618,7 +1619,7 @@ void *preceiver(void *arg)
 		k++;
 	    }
 	    printf("%s\n", sub_buffer);
-        memset(buffer, 0, sizeof(buffer));
+	    memset(buffer, 0, sizeof(buffer));
 	    goto reread;
 	}
 	//print_ascii(buffer); 
@@ -1658,11 +1659,6 @@ void *creceiver(void *arg)
 	if (receiver_exit_flag)
 	    break;
 
-    while (transfer_flag) {
-        usleep(1000);  
-        if (receiver_exit_flag)
-            goto exit_thread;
-    }
 
 	// read message from parent
 	memset(buffer, 0, sizeof(buffer));
@@ -1706,7 +1702,6 @@ void *creceiver(void *arg)
 
     }
 
-    exit_thread:
     pthread_exit(NULL);
 }
 

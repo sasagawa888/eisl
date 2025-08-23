@@ -1117,6 +1117,7 @@ int f_dp_transfer(int arglist, int th)
 
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
+    usleep(500000);
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),

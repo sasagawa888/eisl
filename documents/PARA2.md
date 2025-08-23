@@ -36,8 +36,6 @@ else  returns the result of the first execution.
 
 - (dp-eval n sexp): Evaluates S-expression sexp on the nth child Lisp for testing.
 
-- (dp-report str): Display string on parent terminal.
-
 - (dp-close): Sends termination command to child machines and closes communication.
 
 - (dp-halt): Sends termination command to child machines and closes communication.
@@ -102,23 +100,7 @@ else  returns the result of the first execution.
           ((= (mod n 2) 0) nil)
           (t (coprimep n 3 (isqrt n)))))
 
-(import "unistd")
 
-(defun bar (x y)
-    (dp-exec (uoo x) (uoo y)))
-
-(defun uoo (x) 
-    (let ((stm (create-string-output-stream)))
-        (format stm "test1 ~A ~%" x)
-        (dp-report (get-output-stream-string stm))
-        (sleep 1)
-        (format stm "test2 ~A ~%" x)
-        (dp-report (get-output-stream-string stm))
-        (sleep 1)
-        t))
-
-(defun woo (x y)
-    (dp-or (uoo x) (uoo y)))
 
 ```
 

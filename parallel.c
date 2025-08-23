@@ -1432,6 +1432,7 @@ int f_dp_exec(int arglist, int th)
 
 }
 
+
 int f_dp_report(int arglist, int th __unused)
 {
     int arg1;
@@ -1616,6 +1617,7 @@ void *preceiver(void *arg)
 		k++;
 	    }
 	    printf("%s\n", sub_buffer);
+        memset(buffer, 0, sizeof(buffer));
 	    goto reread;
 	}
 	//print_ascii(buffer); 

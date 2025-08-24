@@ -1662,13 +1662,13 @@ void *creceiver(void *arg)
 
 
     while (1) {
-
+    loop:
 	if (receiver_exit_flag)
 	    break;
     
     if (receiver_stop_flag) {
         usleep(1000); 
-        continue;     
+        goto loop;     
     }
 
 	// read message from parent

@@ -1673,7 +1673,7 @@ void *creceiver(void *arg)
 
     m = strlen(buffer);
     //print_ascii(buffer);
-    if (strncmp(buffer,"DP-TRNSFER",10) == 0){
+    if (strncmp(buffer,"DP-TRANSFER",11) == 0){
         command = 1;
         printf("command dp-transfer"); fflush(stdout);
         goto retry;

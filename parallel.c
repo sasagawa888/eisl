@@ -1115,8 +1115,8 @@ int f_dp_transfer(int arglist, int th)
 
     
     for (i = 0; i < child_num; i++) {
-    send_to_child(i,sexp_to_str(make_sym("dp-transfer")));
-    send_to_child(i,sexp_to_str(arg1));
+    send_to_child(i,make_str("asdf"));
+    send_to_child(i,arg1);
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
@@ -1128,7 +1128,7 @@ int f_dp_transfer(int arglist, int th)
 	    }
 	}
 	
-	send_to_child(i,sexp_to_str(make_sym("end_of_file")));
+	send_to_child(i,make_str("end_of_file"));
 	fseek(file, 0, SEEK_SET);
     }
 
@@ -1673,11 +1673,11 @@ void *creceiver(void *arg)
 
     m = strlen(buffer);
     print_ascii(buffer); printf("\n");
-    if (strncmp(buffer,"DP-TRANSFER",11) == 0){
+    if (strncmp(buffer,"asdf",4) == 0){
         command = 1;
         printf("command dp-transfer"); fflush(stdout);
         goto retry;
-    } else if (strncmp(buffer,"END_OF_FILE",11) == 0){
+    } else if (strncmp(buffer,"end_of_file",11) == 0){
         command = 0;
         printf("command end_of_file"); fflush(stdout);
         goto retry;

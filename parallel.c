@@ -1672,13 +1672,12 @@ void *creceiver(void *arg)
 	    goto reread;
 
     m = strlen(buffer);
-    buffer[m-1] = 0;
-    print_ascii(buffer);
-    if (strcmp(buffer,"DP-TRNSFER\n") == 0){
+    //print_ascii(buffer);
+    if (strncmp(buffer,"DP-TRNSFER",10) == 0){
         command = 1;
         printf("command dp-transfer"); fflush(stdout);
         goto retry;
-    } else if (strcmp(buffer,"END_OF_FILE\n") == 0){
+    } else if (strncmp(buffer,"END_OF_FILE",11) == 0){
         command = 0;
         printf("command end_of_file"); fflush(stdout);
         goto retry;

@@ -1136,35 +1136,6 @@ int f_dp_transfer(int arglist, int th)
 }
 
 
-/* child lisp */
-int f_dp_receive(int arglist, int th)
-{
-    int arg1;
-    FILE *file;
-
-    arg1 = car(arglist);
-
-    file = fopen(GET_NAME(arg1), "w");
-    if (!file) {
-	error(CANT_OPEN, "dp-receive", arg1, th);
-    }
-
-    int bytes_received;
-    while ((bytes_received =
-	    read(parent_sockfd[1], transfer, sizeof(transfer))) > 0) {
-	if (transfer[bytes_received - 1] == 0x16) {
-	    transfer[bytes_received - 1] = 0;
-	    fwrite(transfer, sizeof(char), bytes_received - 1, file);
-	    break;
-	}
-	fwrite(transfer, sizeof(char), bytes_received, file);
-    }
-    fclose(file);
-
-    return (T);
-}
-
-
 int f_dp_load(int arglist, int th)
 {
     int arg1, exp, i;

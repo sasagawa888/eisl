@@ -110,7 +110,6 @@ void init_exsubr(void)
     def_fsubr("DP-OR", f_dp_or);
     def_subr("DP-EVAL", f_dp_eval);
     def_subr("DP-TRANSFER", f_dp_transfer);
-    def_subr("DP-RECEIVE", f_dp_receive);
     def_subr("DP-LOAD", f_dp_load);
     def_subr("DP-COMPILE", f_dp_compile);
     def_subr("DP-SETID", f_dp_setid);

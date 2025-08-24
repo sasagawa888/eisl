@@ -1121,14 +1121,16 @@ int f_dp_transfer(int arglist, int th)
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
 		      file)) > 0) {
-	    m = write(child_sockfd[i], transfer, bytes_read);
+        transfer[bytes_read] = 0x16;
+	    m = write(child_sockfd[i], transfer, bytes_read+1);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
 	memset(transfer, 0, sizeof(transfer));
-	transfer[0] = 0x16;
-	m = write(child_sockfd[i], transfer, 1);
+	strcpy(transfer,"end_of_file");
+    transfer[11] = 0x16;
+	m = write(child_sockfd[i], transfer, 11);
 	if (m < 0) {
 	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	}
@@ -1155,6 +1157,7 @@ int f_dp_receive(int arglist, int th)
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
+    while(1){
     pthread_mutex_lock(&mutex2);
     while (!child_buffer_ready) {
 	pthread_cond_wait(&md_cond, &mutex2);
@@ -1162,10 +1165,12 @@ int f_dp_receive(int arglist, int th)
     child_buffer_ready = 0;
     pthread_mutex_unlock(&mutex2);
     int i;
-    i = strlen(child_buffer) - 1;
-    fwrite(child_buffer, sizeof(char), i, file);
+    if(strcmp(child_buffer,"end_of_file") == 0)
+        break;
 
-    printf("%s\n",child_buffer);
+    i = strlen(child_buffer);
+    fwrite(child_buffer, sizeof(char), i, file);
+    }
 
     fclose(file);
     return (T);

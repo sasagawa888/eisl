@@ -1115,20 +1115,18 @@ int f_dp_transfer(int arglist, int th)
 
     
     for (i = 0; i < child_num; i++) {
-    send_to_child(i,make_str("asdf"));
+    send_to_child(i,make_str("***transfer***"));
     send_to_child(i,arg1);
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
 		      file)) > 0) {
-        transfer[bytes_read] = 0x16;
-	    m = write(child_sockfd[i], transfer, bytes_read+1);
+	    m = write(child_sockfd[i], transfer, bytes_read);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
-	
-	send_to_child(i,make_str("end_of_file"));
+	send_to_child_control(i,0x16);
 	fseek(file, 0, SEEK_SET);
     }
 
@@ -1673,21 +1671,11 @@ void *creceiver(void *arg)
 
     m = strlen(buffer);
     print_ascii(buffer); printf("\n");
-    if (strncmp(buffer,"asdf",4) == 0){
+    if (strncmp(buffer,"***transfer***",14) == 0){
         command = 1;
         printf("command dp-transfer"); fflush(stdout);
         goto retry;
-    } else if (strncmp(buffer,"end_of_file",11) == 0){
-        command = 0;
-        printf("command end_of_file"); fflush(stdout);
-        goto retry;
-    }
-    
-    if(command){
-        printf("%s\n",buffer);
-        fflush(stdout);
-        goto retry;
-    }
+    } 
 
 	pthread_mutex_lock(&mutex2);
 	j = 0;

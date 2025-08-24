@@ -1643,7 +1643,7 @@ void *creceiver(void *arg)
 	if (buffer[0] == 0x15) {	// dp-treansfer
 	    i = 2;
 	    j = 0;
-	    while (buffer[i] != 0x16) {
+	    while (buffer[i] != 0x16) { // get file name
 		sub_buffer[j] = buffer[i];
 		i++;
 		j++;
@@ -1657,7 +1657,7 @@ void *creceiver(void *arg)
 
 	    i++;
 	    j = 0;
-	    while (buffer[i] != 0x16) {
+	    while (buffer[i] != 0x16) { // get file data
 		sub_buffer[j] = buffer[i];
 		i++;
 		j++;
@@ -1666,7 +1666,7 @@ void *creceiver(void *arg)
 	    i = strlen(sub_buffer);
 	    fwrite(sub_buffer, sizeof(char), i, file);
 	    fclose(file);
-	    printf("command dp-transfer");
+	    printf("dp-transfer");
 	    fflush(stdout);
 	    goto retry;
 	}

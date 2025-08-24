@@ -1115,8 +1115,11 @@ int f_dp_transfer(int arglist, int th)
 
     exp = list2(make_sym("dp-receive"), arg1);
 
-    for (i = 0; i < child_num; i++) {
+    for (i = 0; i < child_num; i++) 
 	send_to_child(i, sexp_to_str(exp));
+    
+    usleep(10000);
+    for (i = 0; i < child_num; i++) {
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
@@ -1155,6 +1158,8 @@ int f_dp_receive(int arglist, int th)
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
+    receiver_exit_flag = 1;
+    usleep(10000);
     int bytes_received;
     while ((bytes_received =
 	    read(parent_sockfd[1], transfer,
@@ -1167,7 +1172,7 @@ int f_dp_receive(int arglist, int th)
 	fwrite(transfer, sizeof(char), bytes_received, file);
     }
     fclose(file);
-
+    init_creceiver();
     return (T);
 }
 

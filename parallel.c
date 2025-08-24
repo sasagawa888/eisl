@@ -1164,10 +1164,10 @@ int f_dp_receive(int arglist, int th)
     }
     child_buffer_ready = 0;
     pthread_mutex_unlock(&mutex2);
-    int i;
+   
     if(strcmp(child_buffer,"end_of_file") == 0)
         break;
-
+    int i;
     i = strlen(child_buffer);
     fwrite(child_buffer, sizeof(char), i, file);
     }

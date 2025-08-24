@@ -1674,11 +1674,11 @@ void *creceiver(void *arg)
     m = strlen(buffer);
     buffer[m-1] = 0;
     print_ascii(buffer);
-    if (strcmp(buffer,"DP-TRNSFER") == 0){
+    if (strcmp(buffer,"DP-TRNSFER\n") == 0){
         command = 1;
         printf("command dp-transfer"); fflush(stdout);
         goto retry;
-    } else if (strcmp(buffer,"END_OF_FILE") == 0){
+    } else if (strcmp(buffer,"END_OF_FILE\n") == 0){
         command = 0;
         printf("command end_of_file"); fflush(stdout);
         goto retry;

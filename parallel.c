@@ -1627,7 +1627,6 @@ void *creceiver(void *arg)
 	    break;
 
 	// read message from parent
-      retry:
 	memset(buffer, 0, sizeof(buffer));
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
@@ -1668,7 +1667,8 @@ void *creceiver(void *arg)
 	    fclose(file);
 	    printf("dp-transfer");
 	    fflush(stdout);
-	    goto retry;
+	    memset(buffer, 0, sizeof(buffer));
+        strcpy(buffer,"T\n\n");
 	}
 
 

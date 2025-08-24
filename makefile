@@ -70,7 +70,8 @@ ifeq ($(DEBUG),1)
 		LDFLAGS += -fsanitize=undefined
 	endif
 else
-	CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
+	CFLAGS += -O3 -DNDEBUG=1 -DWITHOUT_NANA=1
+#CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
 	SRC_CII += cii/src/mem.c
 endif
 OBJ_CII := $(SRC_CII:.c=.o)
@@ -186,7 +187,8 @@ edlis.o: edlis.c edlis.h term.h
 
 
 .PHONY: install
-install: eisl edlis $(OBJ_LISP)
+install: eisl edlis
+#install: eisl edlis $(OBJ_LISP)
 	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)

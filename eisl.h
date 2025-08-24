@@ -929,7 +929,6 @@ int f_dp_close(int arglist, int th);
 int f_dp_halt(int arglist, int th);
 int f_dp_eval(int arglist, int th);
 int f_dp_transfer(int arglist, int th);
-int f_dp_receive(int arglist, int th);
 int f_dp_load(int arglist, int th);
 int f_dp_compile(int arglist, int th);
 int f_dp_call(int arglist, int th);

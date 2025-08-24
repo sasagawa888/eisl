@@ -1675,6 +1675,10 @@ void *creceiver(void *arg)
 	memset(buffer, 0, sizeof(buffer));
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
+    pthread_mutex_lock(&mutex2);
+    while (receiver_stop_flag)
+        pthread_cond_wait(&stop_cond, &mutex2);
+    pthread_mutex_unlock(&mutex2);
 	n = read(parent_sockfd[1], sub_buffer, sizeof(sub_buffer));
 	if (n < 0) {
 	    error(SYSTEM_ERR, "*creceiver", NIL, 0);

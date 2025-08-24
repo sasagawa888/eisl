@@ -1653,7 +1653,6 @@ void *creceiver(void *arg)
 	    if (!file) {
 		error(CANT_OPEN, "dp-transfer", NIL, 0);
 	    }
-        /*
 	    i++;
 	    j = 0;
 	    while (buffer[i] != 0x16) { // get file data
@@ -1664,7 +1663,6 @@ void *creceiver(void *arg)
 	    sub_buffer[j] = 0;
 	    i = strlen(sub_buffer);
 	    fwrite(sub_buffer, sizeof(char), i, file);
-        */
 	    fclose(file);
 	    printf("dp-transfer");
 	    fflush(stdout);

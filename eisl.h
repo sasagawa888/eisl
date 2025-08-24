@@ -1455,6 +1455,7 @@ void signal_handler_child(int sig, siginfo_t *siginfo, void *context);
 void send_to_parent(int x);
 void send_to_parent_control(int code);
 void send_to_child_control(int n, int code);
+void send_to_child_control_without_0x16(int n, int code);
 void unbind(int th);
 void unreadc(char c);
 void ucs4_to_utf8(int n, char *p);

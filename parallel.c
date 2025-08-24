@@ -1056,6 +1056,22 @@ int send_to_child(int n, int x)
     return (0);
 }
 
+int send_to_child_without_0x16(int n, int x)
+{
+    int m, i;
+
+    // send message to child
+    memset(output_buffer, 0, sizeof(output_buffer));
+    strcpy(output_buffer, GET_NAME(x));
+    strcat(output_buffer, "\n");
+    m = write(child_sockfd[n], output_buffer, strlen(output_buffer));
+    if (m < 0) {
+	error(SYSTEM_ERR, "send to child", NIL, 0);
+    }
+    return (0);
+}
+
+
 // send one control code
 void send_to_child_control(int n, int code)
 {
@@ -1070,6 +1086,17 @@ void send_to_child_control(int n, int code)
     }
 }
 
+void send_to_child_control_without_0x16(int n, int code)
+{
+    int m;
+
+    memset(output_buffer, 0, sizeof(output_buffer));
+    output_buffer[0] = code;
+    m = write(child_sockfd[n], output_buffer, 1);
+    if (m < 0) {
+	error(SYSTEM_ERR, "send to child constrol", NIL, 0);
+    }
+}
 
 
 int receive_from_child(int n)
@@ -1115,8 +1142,8 @@ int f_dp_transfer(int arglist, int th)
 
 
     for (i = 0; i < child_num; i++) {
-	send_to_child_control(i, 0x15);
-	send_to_child(i, arg1);
+	send_to_child_control_without_0x16(i, 0x15);
+	send_to_child_without_0x16(i, arg1);
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
@@ -1640,16 +1667,14 @@ void *creceiver(void *arg)
 	    goto reread;
 
 	if (buffer[0] == 0x15) {	// dp-treansfer
-        print_ascii(buffer);
-	    /*
-        i = 2;
+        i = 1;
 	    j = 0;
-	    while (buffer[i] != 0x16) { // get file name
+	    while (buffer[i] !=  '\n') { // get file name
 		sub_buffer[j] = buffer[i];
 		i++;
 		j++;
 	    }
-	    sub_buffer[j - 1] = 0;	// \n -> '0'
+	    sub_buffer[j] = 0;	// \n -> '0'
 
 	    file = fopen(sub_buffer, "w");
 	    if (!file) {
@@ -1666,7 +1691,6 @@ void *creceiver(void *arg)
 	    i = strlen(sub_buffer);
 	    fwrite(sub_buffer, sizeof(char), i, file);
 	    fclose(file);
-        */
 	    printf("dp-transfer\n");
 	    fflush(stdout);
 	    memset(buffer, 0, sizeof(buffer));

@@ -1673,6 +1673,7 @@ void *creceiver(void *arg)
 
     m = strlen(buffer);
     buffer[m-1] = 0;
+    print_ascii(buffer);
     if (strcmp(buffer,"DP-TRNSFER") == 0){
         command = 1;
         printf("command dp-transfer"); fflush(stdout);

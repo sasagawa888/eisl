@@ -1640,6 +1640,7 @@ void *creceiver(void *arg)
 	    goto reread;
 
 	if (buffer[0] == 0x15) {	// dp-treansfer
+        /*
 	    i = 2;
 	    j = 0;
 	    while (buffer[i] != 0x16) { // get file name
@@ -1665,6 +1666,7 @@ void *creceiver(void *arg)
 	    i = strlen(sub_buffer);
 	    fwrite(sub_buffer, sizeof(char), i, file);
 	    fclose(file);
+        */
 	    printf("dp-transfer");
 	    fflush(stdout);
 	    memset(buffer, 0, sizeof(buffer));

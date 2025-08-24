@@ -1115,8 +1115,8 @@ int f_dp_transfer(int arglist, int th)
 
     
     for (i = 0; i < child_num; i++) {
-    send_to_child(i,make_str("dp-transfer"));
-    send_to_child(i,arg1);
+    send_to_child(i,sexp_to_str(make_sym("dp-transfer")));
+    send_to_child(i,sexp_to_str(arg1));
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
@@ -1128,7 +1128,7 @@ int f_dp_transfer(int arglist, int th)
 	    }
 	}
 	
-	send_to_child(i,make_str("end_of_file"));
+	send_to_child(i,sexp_to_str(make_sym("end_of_file")));
 	fseek(file, 0, SEEK_SET);
     }
 

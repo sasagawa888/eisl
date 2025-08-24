@@ -180,7 +180,8 @@ bool thread_flag = false;	/* when invoke as multi thread, flag is true */
 bool parent_flag = false;	/* when invoke as parent, flag is true */
 bool child_flag = false;	/* when invoke as network child, flag is true */
 bool connect_flag = false;	/* when child listen, connect_flag is true */
-bool receiver_exit_flag = false;	/* TO exit child TCP/IP receiver */
+bool receiver_exit_flag = false;	/* to exit child TCP/IP receiver */
+bool receiver_stop_flag = false;    /* to stop child TCP/IP receiver*/
 bool shutdown_flag = false;	/* shutdown OS on child */
 /* try function (try time s-exp binary) */
 bool try_flag;			/* true or false */

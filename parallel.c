@@ -1118,7 +1118,7 @@ int f_dp_transfer(int arglist, int th)
     for (i = 0; i < child_num; i++) 
 	send_to_child(i, sexp_to_str(exp));
     
-    usleep(10000);
+    usleep(1000000);
     for (i = 0; i < child_num; i++) {
 	int bytes_read;
 	while ((bytes_read =
@@ -1158,7 +1158,7 @@ int f_dp_receive(int arglist, int th)
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
-    receiver_exit_flag = 1;
+    receiver_stop_flag = true;
     usleep(10000);
     int bytes_received;
     while ((bytes_received =
@@ -1172,7 +1172,7 @@ int f_dp_receive(int arglist, int th)
 	fwrite(transfer, sizeof(char), bytes_received, file);
     }
     fclose(file);
-    init_creceiver();
+    receiver_stop_flag = false;
     return (T);
 }
 
@@ -1665,7 +1665,11 @@ void *creceiver(void *arg)
 
 	if (receiver_exit_flag)
 	    break;
-
+    
+    if (receiver_stop_flag) {
+        usleep(1000); 
+        continue;     
+    }
 
 	// read message from parent
 	memset(buffer, 0, sizeof(buffer));

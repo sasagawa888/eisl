@@ -1113,29 +1113,21 @@ int f_dp_transfer(int arglist, int th)
 	error(CANT_OPEN, "dp-transfer", arg1, th);
     }
 
-    exp = list2(make_sym("dp-receive"), arg1);
-
-    for (i = 0; i < child_num; i++) 
-	send_to_child(i, sexp_to_str(exp));
     
-    usleep(1000000);
     for (i = 0; i < child_num; i++) {
+    send_to_child(i,make_str("dp-transfer"));
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
 		      file)) > 0) {
-	    m = write(child_sockfd[i], transfer, bytes_read);
+        transfer[bytes_read] = 0x16;
+	    m = write(child_sockfd[i], transfer, bytes_read+1);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
-	memset(transfer, 0, sizeof(transfer));
-	transfer[0] = 0x16;
-	m = write(child_sockfd[i], transfer, 1);
-	if (m < 0) {
-	    error(SYSTEM_ERR, "dp-transfer", NIL, 0);
-	}
-	receive_from_child(i);
+	
+	send_to_child(i,make_str("end_of_file"));
 	fseek(file, 0, SEEK_SET);
     }
 
@@ -1158,8 +1150,6 @@ int f_dp_receive(int arglist, int th)
 	error(CANT_OPEN, "dp-receive", arg1, th);
     }
 
-    receiver_stop_flag = true;
-    usleep(10000);
     int bytes_received;
     while ((bytes_received =
 	    read(parent_sockfd[1], transfer,
@@ -1172,7 +1162,7 @@ int f_dp_receive(int arglist, int th)
 	fwrite(transfer, sizeof(char), bytes_received, file);
     }
     fclose(file);
-    receiver_stop_flag = false;
+   
     return (T);
 }
 
@@ -1642,7 +1632,7 @@ void *preceiver(void *arg)
 // Thread for child receiver
 void *creceiver(void *arg)
 {
-    int n, m, i, j;
+    int n, m, i, j, command;
     char buffer[BUFSIZE], sub_buffer[BUFSIZE];
 
     if (!connect_flag) {
@@ -1662,23 +1652,15 @@ void *creceiver(void *arg)
 
 
     while (1) {
-    loop:
+
 	if (receiver_exit_flag)
 	    break;
     
-    if (receiver_stop_flag) {
-        usleep(1000); 
-        goto loop;     
-    }
-
 	// read message from parent
+    retry:
 	memset(buffer, 0, sizeof(buffer));
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
-    pthread_mutex_lock(&mutex2);
-    while (receiver_stop_flag)
-        pthread_cond_wait(&stop_cond, &mutex2);
-    pthread_mutex_unlock(&mutex2);
 	n = read(parent_sockfd[1], sub_buffer, sizeof(sub_buffer));
 	if (n < 0) {
 	    error(SYSTEM_ERR, "*creceiver", NIL, 0);
@@ -1688,15 +1670,27 @@ void *creceiver(void *arg)
 	if (sub_buffer[n - 1] != 0x16)
 	    goto reread;
 
+    m = strlen(buffer);
+    buffer[m] = 0;
+    if (strcmp(buffer,"dp-transfer") == 0){
+        command = 1;
+        printf("command dp-transfer"); fflush(stdout);
+        goto retry;
+    } else if (strcmp(buffer,"end_of_file") == 0){
+        command = 0;
+        printf("command end_of_file"); fflush(stdout);
+        goto retry;
+    }
+    
+    if(command){
+        printf("%s\n",buffer);
+        fflush(stdout);
+        goto retry;
+    }
+
 	pthread_mutex_lock(&mutex2);
-
-
 	j = 0;
-
-
-	m = strlen(buffer);
-
-	for (i = 0; i < m - 1; i++) {
+	for (i = 0; i < m - 1 ; i++) {
 	    if (buffer[i] == 0x11) {
 		memset(child_buffer, 0, sizeof(child_buffer));
 		strcpy(child_buffer, "nil");

@@ -1165,6 +1165,8 @@ int f_dp_receive(int arglist, int th)
     i = strlen(child_buffer) - 1;
     fwrite(child_buffer, sizeof(char), i, file);
 
+    printf("%s\n",child_buffer);
+
     fclose(file);
     return (T);
 }

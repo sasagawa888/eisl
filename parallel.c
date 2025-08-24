@@ -1113,10 +1113,10 @@ int f_dp_transfer(int arglist, int th)
 	error(CANT_OPEN, "dp-transfer", arg1, th);
     }
 
-    
+
     for (i = 0; i < child_num; i++) {
-    send_to_child(i,make_str("***transfer***"));
-    send_to_child(i,arg1);
+	send_to_child_control(i, 0x15);
+	send_to_child(i, arg1);
 	int bytes_read;
 	while ((bytes_read =
 		fread(transfer, sizeof(char), sizeof(transfer),
@@ -1126,7 +1126,7 @@ int f_dp_transfer(int arglist, int th)
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
 	    }
 	}
-	send_to_child_control(i,0x16);
+	send_to_child_control(i, 0x16);
 	fseek(file, 0, SEEK_SET);
     }
 
@@ -1151,8 +1151,7 @@ int f_dp_receive(int arglist, int th)
 
     int bytes_received;
     while ((bytes_received =
-	    read(parent_sockfd[1], transfer,
-		 sizeof(transfer))) > 0) {
+	    read(parent_sockfd[1], transfer, sizeof(transfer))) > 0) {
 	if (transfer[bytes_received - 1] == 0x16) {
 	    transfer[bytes_received - 1] = 0;
 	    fwrite(transfer, sizeof(char), bytes_received - 1, file);
@@ -1161,7 +1160,7 @@ int f_dp_receive(int arglist, int th)
 	fwrite(transfer, sizeof(char), bytes_received, file);
     }
     fclose(file);
-   
+
     return (T);
 }
 
@@ -1631,8 +1630,9 @@ void *preceiver(void *arg)
 // Thread for child receiver
 void *creceiver(void *arg)
 {
-    int n, m, i, j, command;
+    int n, m, i, j;
     char buffer[BUFSIZE], sub_buffer[BUFSIZE];
+    FILE *file;
 
     if (!connect_flag) {
 	//wait conneting
@@ -1654,9 +1654,9 @@ void *creceiver(void *arg)
 
 	if (receiver_exit_flag)
 	    break;
-    
+
 	// read message from parent
-    retry:
+      retry:
 	memset(buffer, 0, sizeof(buffer));
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
@@ -1669,17 +1669,42 @@ void *creceiver(void *arg)
 	if (sub_buffer[n - 1] != 0x16)
 	    goto reread;
 
-    m = strlen(buffer);
-    print_ascii(buffer); printf("\n");
-    if (strncmp(buffer,"***transfer***",14) == 0){
-        command = 1;
-        printf("command dp-transfer"); fflush(stdout);
-        goto retry;
-    } 
+	if (buffer[0] == 0x15) {	// dp-treansfer
+	    i = 2;
+	    j = 0;
+	    while (buffer[i] != 0x16) {
+		sub_buffer[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    sub_buffer[j - 1] = 0;	// \n -> '0'
+
+	    file = fopen(sub_buffer, "w");
+	    if (!file) {
+		error(CANT_OPEN, "dp-transfer", NIL, 0);
+	    }
+
+	    i++;
+	    j = 0;
+	    while (buffer[i] != 0x16) {
+		sub_buffer[j] = buffer[i];
+		i++;
+		j++;
+	    }
+	    sub_buffer[j] = 0;
+	    i = strlen(sub_buffer);
+	    fwrite(sub_buffer, sizeof(char), i, file);
+	    fclose(file);
+	    printf("command dp-transfer");
+	    fflush(stdout);
+	    goto retry;
+	}
+
 
 	pthread_mutex_lock(&mutex2);
+	m = strlen(buffer);
 	j = 0;
-	for (i = 0; i < m - 1 ; i++) {
+	for (i = 0; i < m - 1; i++) {
 	    if (buffer[i] == 0x11) {
 		memset(child_buffer, 0, sizeof(child_buffer));
 		strcpy(child_buffer, "nil");

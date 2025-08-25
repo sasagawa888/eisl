@@ -1,50 +1,29 @@
 .POSIX:
 .DELETE_ON_ERROR:
 
-NOWIRING ?= 0
+USE_WIRINGPI ?= 0
+USE_FLTO ?= 0
+COMPILE_LISP ?= 0
+WITHOUT_CURSES ?= 0
 
 CC := cc
 DC := ldc2
 LD := $(CC)
-ifneq  ($(shell uname),Darwin)
-	ifeq  ($(shell uname),OpenBSD)
-		LIBS := -lm
-	else
-		LIBS := -lm -ldl
-	endif
-endif
-LIBSRASPI := -lm -ldl -lwiringPi
-LIBTHREAD := -lpthread
+LIBS := -lm -ldl -lpthread -lncurses
+LIBSRASPI := -lm -ldl -lpthread -lncurses
 INCS := -Icii/include
 
 ifeq  ($(WITHOUT_CURSES),1)
 	CURSES_CFLAGS := -DWITHOUT_CURSES=1
 	CURSES_LIBS :=
 else
-	LIBSRASPI := $(LIBSRASPI) -lncurses
-	ifeq  ($(shell uname),Darwin)
-		CURSES_CFLAGS := $(shell ncurses5.4-config --cflags)
-		CURSES_LIBS := $(shell ncurses5.4-config --libs)
-		# NCURSES_PREFIX := $(shell brew --prefix ncurses)
-		# CURSES_CFLAGS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --cflags)
-		# CURSES_LIBS := $(shell $(NCURSES_PREFIX)/bin/ncurses6-config --libs)
-	else
-		ifeq  ($(shell uname),OpenBSD)
-			CURSES_LIBS := -lncurses
-		else
-			ifeq  ($(shell uname),FreeBSD)
-				CURSES_LIBS := -lncurses
-			else
-				CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
-				CURSES_LIBS := $(shell ncursesw6-config --libs)
-			endif
-		endif
-	endif
+	CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
+	CURSES_LIBS := $(shell ncursesw6-config --libs)
 endif
+
 CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) -Inana/src
 DFLAGS := --preview=all --de -w --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
-SRC_D := dextension.d disl.d
 
 # Files in library/ that need to be compiled
 SRC_LISP := library/bit.lsp \
@@ -70,24 +49,21 @@ ifeq ($(DEBUG),1)
 		LDFLAGS += -fsanitize=undefined
 	endif
 else
+	ifeq ($(USE_FLTO),1)
+	CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
+	else
 	CFLAGS += -O3 -DNDEBUG=1 -DWITHOUT_NANA=1
-#CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
+	endif
 	SRC_CII += cii/src/mem.c
 endif
 OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_NANA := $(SRC_NANA:.c=.o)
-OBJ_D := $(SRC_D:.d=.o)
 OBJ_LISP := $(SRC_LISP:.lsp=.o)
-CXX := c++
-CXXFLAGS := $(CFLAGS) -std=c++98 -fno-exceptions -fno-rtti -Weffc++ $(CURSES_CFLAGS)
-ifeq ($(CC),c++)
-	CFLAGS := $(CXXFLAGS)
-else
-	CFLAGS += -std=c17
-endif
+
 ifeq  ($(shell uname -n),raspberrypi)
-	ifneq ($(NOWIRING),1)
+	ifneq ($(USE_WIRINGPI),1)
 		CFLAGS += -D__rpi__
+		LIBSRASPI += -lwringPi
 	endif
 endif
 ifneq ($(DEBUG),1)
@@ -140,16 +116,13 @@ all: $(TARGETS)
 
 eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) $(LIBTHREAD)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
 else
-	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) $(CURSES_LIBS) $(LIBTHREAD)
+	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) 
 endif
 
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
 	$(CC) $(CFLAGS) -c $< -o $@
-
-%.o: %.d disl.d
-	$(DC) $(DFLAGS) -c $<
 
 %.o: %.lsp eisl
 	echo '(load "library/compiler.lsp") (compile-file "$<")' | ./eisl -r
@@ -187,8 +160,11 @@ edlis.o: edlis.c edlis.h term.h
 
 
 .PHONY: install
+ifeq ($(COMPILE_LISP),1)
+install: eisl edlis $(OBJ_LISP)
+else 
 install: eisl edlis
-#install: eisl edlis $(OBJ_LISP)
+endif
 	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)

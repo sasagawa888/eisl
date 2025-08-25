@@ -3,17 +3,7 @@
 #include <signal.h>
 #include <termios.h>
 #include <ctype.h>
-
-#define _XOPEN_SOURCE 700
-#define _XOPEN_SOURCE_EXTENDED
-#define NCURSES_OPAQUE 1
-#ifdef __linux__
 #include <ncurses.h>
-#else
-#include <curses.h>
-#endif
-#undef _XOPEN_SOURCE
-#undef _XOPEN_SOURCE_EXTENDED
 #include <locale.h>
 #include <stdbool.h>
 #include <string.h>

@@ -24,6 +24,12 @@ sudo make install USE_FLTO=1
 
 ```
 
+If the ncurses library is not installed, please compile as follows. The Edlis editor will not be built.
+
+```
+sudo make install WITHOUT_CURSES=1
+```
+
 
 # Documents
 

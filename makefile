@@ -4,7 +4,6 @@
 USE_WIRINGPI ?= 0
 USE_FLTO ?= 0
 COMPILE_LISP ?= 0
-WITHOUT_CURSES ?= 0
 
 CC := cc
 DC := ldc2
@@ -12,14 +11,9 @@ LD := $(CC)
 LIBS := -lm -ldl -lpthread -lncurses
 LIBSRASPI := -lm -ldl -lpthread -lncurses
 INCS := -Icii/include
+CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
+CURSES_LIBS := $(shell ncursesw6-config --libs)
 
-ifeq  ($(WITHOUT_CURSES),1)
-	CURSES_CFLAGS := -DWITHOUT_CURSES=1
-	CURSES_LIBS :=
-else
-	CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
-	CURSES_LIBS := $(shell ncursesw6-config --libs)
-endif
 
 CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) -Inana/src
 DFLAGS := --preview=all --de -w --O3 --release --betterC
@@ -63,7 +57,7 @@ OBJ_LISP := $(SRC_LISP:.lsp=.o)
 ifeq  ($(shell uname -n),raspberrypi)
 	ifneq ($(USE_WIRINGPI),1)
 		CFLAGS += -D__rpi__
-		LIBSRASPI += -lwringPi
+		LIBSRASPI += -lwringi
 	endif
 endif
 ifneq ($(DEBUG),1)

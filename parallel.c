@@ -723,6 +723,7 @@ int f_mp_and(int arglist, int th)
 	i++;
     }
 
+    res = NIL;
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(read_from_pipe_part(n));
 	if (res == NIL)
@@ -1058,7 +1059,7 @@ int send_to_child(int n, int x)
 
 int send_to_child_without_0x16(int n, int x)
 {
-    int m, i;
+    int m;
 
     // send message to child
     memset(output_buffer, 0, sizeof(output_buffer));
@@ -1128,7 +1129,7 @@ int f_dp_eval(int arglist, int th __unused)
 /* parent lisp */
 int f_dp_transfer(int arglist, int th)
 {
-    int arg1, exp, i, m;
+    int arg1, i, m;
     FILE *file;
 
     arg1 = car(arglist);
@@ -1301,6 +1302,7 @@ int wait_or(int m)
 	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
+    res = NIL;
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
@@ -1420,6 +1422,7 @@ int f_dp_exec(int arglist, int th)
 	    }
 	}
     }
+    res = NIL;
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(receive_from_child(i));
     }

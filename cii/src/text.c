@@ -1,4 +1,4 @@
-static const char *rcsid = "$Id$";
+//static const char *rcsid = "$Id$";
 #include <string.h>
 #include <limits.h>
 #include "assert.h"
@@ -165,7 +165,7 @@ T Text_reverse(T s) {
 }
 T Text_map(T s, const T *from, const T *to) {
 	static char map[256];
-	static int inited = 0;
+	//static int inited = 0;
 	assert(s.len >= 0 && s.str);
 	if (from && to) {
 		int k;
@@ -174,7 +174,7 @@ T Text_map(T s, const T *from, const T *to) {
 		assert(from->len == to->len);
 		for (k = 0; k < from->len; k++)
 			map[(unsigned char)from->str[k]] = to->str[k];
-		inited = 1;
+		//inited = 1;
 	} else {
 		assert(from == NULL && to == NULL);
 		assert(inited);

@@ -13,6 +13,7 @@
  * syntax.c      syntax functions
  * extension.c   extended functions (non ISLisp standard)
  * gbc.c         garbage collenction
+ * parallel.c    parallel functions (non ISLisp standard)
  * edlis.c       Edlis simple CUI editor
  *
  * <cell type summary>
@@ -41,15 +42,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include "compat/term_stubs.h"
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
 #include "except.h"
 #include "str.h"
 #include "long.h"
-#include "compat/eiffel_stubs.h"
-#include "compat/curses_stubs.h"
 
 
 /* pointer */

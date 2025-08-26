@@ -31,15 +31,17 @@ SRC_LISP := library/bit.lsp \
 		library/plot.lsp \
 		library/unistd.lsp 
 
+CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation 
 
 ifeq ($(USE_FLTO),1)
-CFLAGS += -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
-else
-	ifeq ($(UNSE_GDB),1)
-		CFLAGS += -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
-	else 
-	CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation
-	endif
+CFLAGS := -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
+endif
+ifeq ($(UNSE_GDB),1)
+CFLAGS := -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
+endif 
+
+ifeq  ($(shell uname -n),raspberrypi)
+FLAGS := -O3 -DNDEBUG=1 -Wno-stringop-truncation -Wno-array-bounds
 endif
 
 SRC_CII += cii/src/mem.c

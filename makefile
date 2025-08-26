@@ -49,7 +49,7 @@ OBJ_LISP := $(SRC_LISP:.lsp=.o)
 ifeq  ($(shell uname -n),raspberrypi)
 	ifeq ($(USE_WIRINGPI),1)
 		CFLAGS += -D__rpi__
-		LIBS += -lwringPi
+		LIBS += -lwiringPi
 	endif
 endif
 

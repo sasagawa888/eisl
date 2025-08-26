@@ -41,7 +41,7 @@ CFLAGS := -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
 endif 
 
 ifeq  ($(shell uname -n),raspberrypi)
-FLAGS := -O3 -DNDEBUG=1 -Wno-stringop-truncation -Wno-array-bounds
+CFLAGS := -O3 -DNDEBUG=1 -Wno-stringop-truncation -Wno-array-bounds
 endif
 
 SRC_CII += cii/src/mem.c

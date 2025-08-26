@@ -34,15 +34,15 @@ SRC_LISP := library/bit.lsp \
 CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation 
 
 ifeq ($(USE_FLTO),1)
-CFLAGS := -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
+CFLAGS += -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
 endif
 ifeq ($(UNSE_GDB),1)
-CFLAGS := -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
+CFLAGS += -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
 endif 
 
-#ifeq  ($(shell uname -n),raspberrypi)
-#CFLAGS := -O3 -DNDEBUG=1 -Wno-stringop-truncation -Wno-array-bounds
-#endif
+ifeq  ($(shell uname -n),raspberrypi)
+CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation -Wno-array-bounds
+endif
 
 SRC_CII += cii/src/mem.c
 OBJ_CII := $(SRC_CII:.c=.o)

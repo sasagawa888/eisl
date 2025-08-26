@@ -6,8 +6,6 @@ USE_FLTO ?= 0
 COMPILE_LISP ?= 0
 
 CC := cc
-DC := ldc2
-LD := $(CC)
 LIBS := -lm -ldl -lpthread -lncurses
 LIBSRASPI := -lm -ldl -lpthread -lncurses
 INCS := -Icii/include
@@ -16,7 +14,6 @@ CURSES_LIBS := $(shell ncursesw6-config --libs)
 
 
 CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) -Inana/src
-DFLAGS := --preview=all --de -w --O3 --release --betterC
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 
 # Files in library/ that need to be compiled
@@ -34,24 +31,15 @@ SRC_LISP := library/bit.lsp \
 		library/plot.lsp \
 		library/unistd.lsp 
 
-ifeq ($(DEBUG),1)
-	CFLAGS += -Og -g -DEIFFEL_DOEND -DEIFFEL_CHECK=CHECK_ENSURE -DWITH_NANA=1
-	SRC_CII += cii/src/memchk.c cii/src/assert.c
-	SRC_NANA := nana/src/I.c
-	ifneq  ($(shell uname),OpenBSD)
-		CFLAGS += -fsanitize=undefined
-		LDFLAGS += -fsanitize=undefined
-	endif
+
+ifeq ($(USE_FLTO),1)
+CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
 else
-	ifeq ($(USE_FLTO),1)
-	CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
-	else
-	CFLAGS += -O3 -DNDEBUG=1 -DWITHOUT_NANA=1
-	endif
-	SRC_CII += cii/src/mem.c
+CFLAGS += -O3 -DNDEBUG=1 -DWITHOUT_NANA=1
 endif
+SRC_CII += cii/src/mem.c
+
 OBJ_CII := $(SRC_CII:.c=.o)
-OBJ_NANA := $(SRC_NANA:.c=.o)
 OBJ_LISP := $(SRC_LISP:.lsp=.o)
 
 ifeq  ($(shell uname -n),raspberrypi)
@@ -60,14 +48,7 @@ ifeq  ($(shell uname -n),raspberrypi)
 		LIBSRASPI += -lwringi
 	endif
 endif
-ifneq ($(DEBUG),1)
-	LDFLAGS += -flto
-	ifeq  ($(shell uname),Darwin)
-		LDFLAGS += -Wl,-S,-x
-	else
-		LDFLAGS += -s
-	endif
-endif
+
 PREFIX := /usr/local
 SHAREDIR ?= $(PREFIX)/share/eisl
 CFLAGS += -DSHAREDIR=$(SHAREDIR)
@@ -99,12 +80,9 @@ EISL_OBJS := main.o \
 	link.o \
 	parallel.o
 
-ifeq  ($(WITHOUT_CURSES),1)
-	# Without curses support, do not build edlis
-	TARGETS := eisl $(OBJ_LISP)
-else
-	TARGETS := eisl edlis $(OBJ_LISP)
-endif
+
+TARGETS := eisl edlis $(OBJ_LISP)
+
 
 all: $(TARGETS)
 
@@ -112,7 +90,7 @@ eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
 ifeq  ($(shell uname -n),raspberrypi)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
 else
-	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS) 
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) 
 endif
 
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
@@ -121,10 +99,6 @@ endif
 %.o: %.lsp eisl
 	echo '(load "library/compiler.lsp") (compile-file "$<")' | ./eisl -r
 
-
-ifeq ($(DEBUG),1)
-main.o: nana/src/nana-config.h
-endif
 
 main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o long.o link.o parallel.o
 function.o: function.c eisl.h 
@@ -147,7 +121,7 @@ nana/src/nana-config.h:
 	-cd nana; autoreconf -fi; ./configure
 
 edlis: edlis.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
-	$(CC) $(LDFLAGS) $^ -o $@ $(CURSES_LIBS)
+	$(CC) $(CFLAGS) $^ -o $@ $(CURSES_LIBS)
 
 edlis.o: edlis.c edlis.h term.h
 	$(CC) $(CFLAGS) -c edlis.c

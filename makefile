@@ -3,6 +3,7 @@
 
 USE_WIRINGPI ?= 0
 USE_FLTO ?= 0
+USE_GDB ?= 0
 COMPILE_LISP ?= 0
 
 CC := cc
@@ -12,7 +13,7 @@ CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
 CURSES_LIBS := $(shell ncursesw6-config --libs)
 
 
-CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) -Inana/src
+CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) 
 SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 
 # Files in library/ that need to be compiled
@@ -90,7 +91,7 @@ all: $(TARGETS)
 eisl: $(EISL_OBJS) $(OBJ_CII)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) 
 
-%.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
+%.o: %.c eisl.h ffi.h term.h cii/include/except.h 
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.lsp eisl
@@ -114,10 +115,7 @@ link.o: link.c eisl.h
 parallel.o: parallel.c eisl.h
 
 
-nana/src/nana-config.h:
-	-cd nana; autoreconf -fi; ./configure
-
-edlis: edlis.o syn_highlight.o $(OBJ_CII) $(OBJ_NANA)
+edlis: edlis.o syn_highlight.o $(OBJ_CII) 
 	$(CC) $(CFLAGS) $^ -o $@ $(CURSES_LIBS)
 
 edlis.o: edlis.c edlis.h term.h

@@ -7,7 +7,6 @@ COMPILE_LISP ?= 0
 
 CC := cc
 LIBS := -lm -ldl -lpthread -lncurses
-LIBSRASPI := -lm -ldl -lpthread -lncurses
 INCS := -Icii/include
 CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
 CURSES_LIBS := $(shell ncursesw6-config --libs)
@@ -33,19 +32,23 @@ SRC_LISP := library/bit.lsp \
 
 
 ifeq ($(USE_FLTO),1)
-CFLAGS += -O3 -flto -DNDEBUG=1 -DWITHOUT_NANA=1
+CFLAGS += -O3 -flto -DNDEBUG=1
 else
-CFLAGS += -O3 -DNDEBUG=1 -DWITHOUT_NANA=1
+	ifeq ($(UNSE_GDB),1)
+		CFLAGS += -O0 -g -DNDEBUG=1 
+	else 
+	CFLAGS += -O3 -DNDEBUG=1 
+	endif
 endif
-SRC_CII += cii/src/mem.c
 
+SRC_CII += cii/src/mem.c
 OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_LISP := $(SRC_LISP:.lsp=.o)
 
 ifeq  ($(shell uname -n),raspberrypi)
-	ifneq ($(USE_WIRINGPI),1)
+	ifeq ($(USE_WIRINGPI),1)
 		CFLAGS += -D__rpi__
-		LIBSRASPI += -lwringi
+		LIBS += -lwringi
 	endif
 endif
 
@@ -80,18 +83,12 @@ EISL_OBJS := main.o \
 	link.o \
 	parallel.o
 
-
 TARGETS := eisl edlis $(OBJ_LISP)
-
 
 all: $(TARGETS)
 
-eisl: $(EISL_OBJS) $(OBJ_CII) $(OBJ_NANA)
-ifeq  ($(shell uname -n),raspberrypi)
-	$(CC) $(CFLAGS) $^ -o $@ $(LIBSRASPI) 
-else
+eisl: $(EISL_OBJS) $(OBJ_CII)
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) 
-endif
 
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h nana/src/eiffel.h
 	$(CC) $(CFLAGS) -c $< -o $@

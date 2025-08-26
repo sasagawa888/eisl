@@ -1,2 +1,0 @@
-cat $1-header $1-source $1-footer >$1-source.c
-$COMPILER $CFLAGS -I../src $1-source.c -L../src -lnana -o $1.out

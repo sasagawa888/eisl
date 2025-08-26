@@ -1,5 +1,0 @@
-cycles.o: cycles.c /usr/include/stdc-predef.h nana-config.h
-
-/usr/include/stdc-predef.h:
-
-nana-config.h:

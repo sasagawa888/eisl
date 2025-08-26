@@ -1241,6 +1241,8 @@ bool quit_with_save(void)
 	}
 	while (c != 'y' && c != 'n');
     }
+	
+	return(false);
 }
 
 void save_file()

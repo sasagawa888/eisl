@@ -46,11 +46,7 @@ There are two third-party libraries that are used.
 They are "vendored" (copied into the project).
 
 1. [cii](https://github.com/drh/cii): Even though we decided not to use C++ because of its complexity, that experiment did show that some features were useful, like string processing. CII is a *C* library to try help with this and other tasks.
-2. [GNU Nana](https://github.com/pjmaker/nana): This implements [design-by-contract](https://en.wikipedia.org/wiki/Design_by_contract) for C. In practice it is used to specify preconditions for *internal* functions using `REQUIRE` and some postconditions using `ENSURE`, in DEBUG builds only. Note that this library isn't appropriate to handle any errors that can be caused by Lisp code, instead if statements and `error` are used there.
 
-As regards tools, the compiler warnings are all switched on.
-And there is a rule to run cppcheck in the top-level makefile.
-There is no need to have zero warnings, but at least the reason for them should be understood.
 We use
 [GNU Indent](https://www.gnu.org/software/indent/)
 to format the code.

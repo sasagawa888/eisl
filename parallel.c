@@ -675,6 +675,7 @@ int f_mp_exec(int arglist, int th)
     if (n > process_pt)
 	error(ILLEGAL_ARGS, "mp-exec", arglist, th);
     temp = arglist;
+    res = NIL;
     while (!nullp(temp)) {
 	if (!listp(car(temp)))
 	    error(WRONG_ARGS, "mp-exec", arglist, th);
@@ -1292,6 +1293,7 @@ int wait_or(int m)
     for (i = 0; i < m; i++)
 	result[i] = 0;
 
+    res = NIL;
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
 	    for (i = 0; i < m; i++) {
@@ -1302,7 +1304,7 @@ int wait_or(int m)
 	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
-    res = NIL;
+    
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;

@@ -87,7 +87,8 @@ static inline void ESCCLSL(void)
 
 static inline void ESCMVLEFT(int x)
 {
-    int dummy, cur_y;
+    int dummy __unused;
+    int cur_y;
 
     getyx(stdscr, cur_y, dummy);
     CHECK(move, cur_y, x - 1);

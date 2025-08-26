@@ -914,7 +914,7 @@ void profiler_print()
 */
 int f_eisl_test(int arglist, int th __unused)
 {
-    int arg1, arg2, res;
+    int arg1, res;
 
     arg1 = car(arglist);
     SET_SOCKET(100000, arg1);
@@ -1625,6 +1625,7 @@ int f_send_socket(int arglist, int th)
     n = write(GET_SOCKET(arg1), buf, 256);
     if (n < 0)
 	error(SYSTEM_ERR, "send-socket", NIL, th);
+    return(T);
 }
 
 int f_recv_socket(int arglist, int th)

@@ -45,7 +45,7 @@
 #include "eisl.h"
 #include "mem.h"
 #include "fmt.h"
-#include "except.h"
+//#include "except.h"
 #include "str.h"
 #include "long.h"
 

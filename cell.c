@@ -22,7 +22,7 @@
 #include "compat/nana_stubs.h"
 #include "mem.h"
 #include "fmt.h"
-#include "except.h"
+//#include "except.h"
 #include "str.h"
 
 void init_cell(void)

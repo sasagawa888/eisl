@@ -11,7 +11,7 @@
 #include "eisl.h"
 #include "compat/nana_stubs.h"
 #include "mem.h"
-#include "except.h"
+//#include "except.h"
 #include "fmt.h"
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)

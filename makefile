@@ -9,7 +9,7 @@ COMPILE_LISP ?= 0
 CC := cc
 LIBS := -lm -ldl -lpthread -lncurses
 INCS := -Icii/include
-CURSES_CFLAGS := $(shell ncursesw6-config --cflags)
+CURSES_CFLAGS := $(shell ncursesw6-config --cflags) 
 CURSES_LIBS := $(shell ncursesw6-config --libs)
 
 
@@ -33,12 +33,12 @@ SRC_LISP := library/bit.lsp \
 
 
 ifeq ($(USE_FLTO),1)
-CFLAGS += -O3 -flto -DNDEBUG=1
+CFLAGS += -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
 else
 	ifeq ($(UNSE_GDB),1)
-		CFLAGS += -O0 -g -DNDEBUG=1 
+		CFLAGS += -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
 	else 
-	CFLAGS += -O3 -DNDEBUG=1 
+	CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation
 	endif
 endif
 

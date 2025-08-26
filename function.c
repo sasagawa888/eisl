@@ -660,6 +660,8 @@ int f_round(int arglist, int th)
 	    return (make_long((long long int) x));
     } else
 	return (arg1);
+
+    return(NIL);
 }
 
 int f_gcd(int arglist, int th)
@@ -4128,7 +4130,8 @@ int check_dimension(int ls)
 int f_create_string(int arglist, int th)
 {
     int arg1, arg2, n, i, pos;
-    char *str, c;
+    char *str = NULL;
+    char c;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);

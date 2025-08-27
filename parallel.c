@@ -459,14 +459,11 @@ int write_to_pipe(int n, int x)
 }
 
 /*  Protocol
-*   Message: 0x02, message, 0x03
 *   Error: 0x15
 *   Computation results: non
 */
 int read_from_pipe(int n)
 {
-    char sub_buffer[256];
-    int i, j;
 
     // set nonblock mode
     int flags = fcntl(pipe_c2p[n][R], F_GETFL, 0);
@@ -474,34 +471,13 @@ int read_from_pipe(int n)
 
     int bytes_read;
 
-  reread:
     // wait until get result
     memset(buffer3, 0, sizeof(buffer3));
     while ((bytes_read =
 	    read(pipe_c2p[n][R], buffer3, sizeof(buffer3))) == -1
 	   && errno == EAGAIN);
 
-  retry:
-    if (buffer3[0] == '\x02') {
-	i = 0;
-	while (buffer3[i + 1] != '\x03') {
-	    sub_buffer[i] = buffer3[i + 1];
-	    i++;
-	}
-	sub_buffer[i] = 0;
-	printf("%s", sub_buffer);
-	j = 0;
-	i = i + 2;
-	while (buffer3[j + i] != 0) {
-	    buffer3[j] = buffer3[j + i];
-	    j++;
-	}
-	buffer3[j] = 0;
-	if (buffer3[0] == 0)
-	    goto reread;
-	else
-	    goto retry;
-    } else if (buffer3[0] == '\x15') {
+    if (buffer3[0] == '\x15') {
 	error(SYSTEM_ERR, "in child", make_int(n), 0);
     } else {
 	return (make_str(buffer3));
@@ -787,21 +763,6 @@ int f_mp_close(int arglist, int th)
     }
 
     process_pt = 0;
-    return (T);
-}
-
-int f_mp_report(int arglist, int th __unused)
-{
-    int arg1;
-
-    arg1 = car(arglist);
-    if (!stringp(arg1))
-	error(NOT_STR, "mp-report", arg1, 0);
-
-    Fmt_print("\x02");
-    printf("%s", GET_NAME(arg1));
-    Fmt_print("\x03");
-    fflush(stdout);
     return (T);
 }
 
@@ -1431,23 +1392,6 @@ int f_dp_exec(int arglist, int th)
     return (res);
 
 }
-
-
-int f_dp_report(int arglist, int th __unused)
-{
-    int arg1;
-    char sub_buffer[STRSIZE];
-
-    arg1 = car(arglist);
-    if (!stringp(arg1))
-	error(NOT_STR, "dp-report", arg1, 0);
-
-    memset(sub_buffer, 0, sizeof(sub_buffer));
-    sprintf(sub_buffer, "\x02%s", GET_NAME(arg1));
-    send_to_parent(make_str(sub_buffer));
-    return (T);
-}
-
 
 int f_dp_and(int arglist, int th)
 {

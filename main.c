@@ -370,11 +370,7 @@ int main(int argc, char *argv[])
     memset(&child_action, 0, sizeof(child_action));
     child_action.sa_sigaction = &signal_handler_child;
     child_action.sa_flags = SA_SIGINFO;
-#ifdef __linux__
     sigaction(SIGRTMIN, &child_action, NULL);
-#else
-    sigaction(SIGUSR1, &child_action, NULL);
-#endif
     if (setenv("EASY_ISLISP", STRQUOTE(SHAREDIR), /* overwrite = */ 0) ==
 	-1) {
 	perror("setenv");
@@ -482,11 +478,7 @@ int main(int argc, char *argv[])
 		fflush(stdout);
 		union sigval value;
 		value.sival_int = (int) process_num;
-#ifdef __linux__
 		sigqueue(getppid(), SIGRTMIN, value);
-#else
-		kill(getppid(), SIGUSR1);
-#endif
 		EXCEPT(Exit_Process);
 		END_TRY;
 	    } else if (child_flag) {

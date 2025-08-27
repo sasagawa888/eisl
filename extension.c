@@ -98,7 +98,6 @@ void init_exsubr(void)
     def_fsubr("MP-EXEC", f_mp_exec);
     def_fsubr("MP-AND", f_mp_and);
     def_fsubr("MP-OR", f_mp_or);
-    def_subr("MP-REPORT", f_mp_report);
     def_subr("MP-EVAL", f_mp_eval);
 
     def_subr("DP-CREATE", f_dp_create);

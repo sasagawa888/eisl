@@ -159,10 +159,8 @@ bool redef_flag = false;	/* true=redefine-class,false=not-redefine */
 bool start_flag = true;		/* true=line-start,false=not-line-start */
 bool back_flag = true;		/* for backtrace,true=on,false=off */
 bool ignore_topchk = false;	/* for FAST-compiler true=ignore,false=normal */
-#ifndef WITHOUT_CURSES
 bool repl_flag = true;		/* for REPL read_line true=on,false=off */
 bool org_repl_flag = true;	/* original val for restore */
-#endif
 bool option_flag = false;	/* while handling command line option it is true, else false */
 volatile sig_atomic_t ctrl_c_flag = 0;	/* true= ctrl+C */
 bool greeting_flag = true;	/* for greeting */
@@ -331,10 +329,8 @@ static inline void maybe_greet(void)
 
 static inline void disable_repl_flag(void)
 {
-#ifndef WITHOUT_CURSES
     repl_flag = false;
     org_repl_flag = false;
-#endif
 }
 
 int main(int argc, char *argv[])

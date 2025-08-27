@@ -1928,20 +1928,15 @@ int f_gensym(int arglist __unused, int th __unused)
 /* input and output */
 static inline bool save_repl_flag(void)
 {
-#if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
     bool result = repl_flag;
     repl_flag = false;
     return result;
-#else
-    return false;
-#endif
+
 }
 
 static inline void restore_repl_flag(bool save)
 {
-#if (__linux || __APPLE__ || defined(__OpenBSD__) || defined(__FreeBSD__)) && !defined(WITHOUT_CURSES)
     repl_flag = save;
-#endif
 }
 
 int f_read(int arglist, int th)

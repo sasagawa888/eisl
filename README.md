@@ -32,7 +32,7 @@ sudo apt install libncurses-dev
 - Ubuntu
 - Linux Mint
 
- Use of other operating systems is at your own discretion."
+ Use of other operating systems is at your own discretion.
 
 
 ### GNU Emacs support

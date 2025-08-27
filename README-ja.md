@@ -15,12 +15,9 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 
 1. Gitでクローンした，又は単にダウンロードしたEasy-ISLispのディレクトリに移動する。
 - 端末上で`sudo make install`と入力する。
-- お望みなら "PREFIX=$HOME" (or wherever) という引数を与えることもできます。
-- ラズパイクラスタマシンにインストールする場合においてwiringpiを必要としない場合には NOWIRING=1 を追加すればインストールを省略できます
-最新のラズパイにはWiringPIが標準添付されていません。GPIOを必要とする場合にはWiringPIをインストールしてください。
 
 注意
-Edlisのコンパイルでcurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
+Edlisのコンパイルでncurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
 
 ```sh
 sudo apt install libncurses-dev
@@ -31,12 +28,8 @@ sudo apt install libncurses-dev
 - 端末上で`sudo make clean`と入力する。
 - 端末上で`sudo make install`と入力する。
 
-ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使いください。
-注：WindowsバージョンのVS-CODEをWSLで使用する場合
-参照　[Windows Subsystem for Linux で Visual Studio Code の使用を開始する](https://docs.microsoft.com/ja-jp/windows/wsl/tutorials/wsl-vscode)
-
 　　　
-# サポート
+# サポートOS
 - Raspberry Pi OS
 - Ubuntu
 - Linux MINT
@@ -281,9 +274,8 @@ EISL <==================================> C
 - `(mp-create n)` n個のプロセスを生成する。PARA.mdを参照
 - `(mp-call fun a1 ... an)` マルチプロセス並列でfunに引数を適用する。PARA.mdを参照
 - `(mp-exec s1 ... sn)`  prognの並列版。PARA.mdを参照
-- `(mp-part sw s1 ... sn)`  prognの並列部分実行版。PARA.mdを参照
-- `(mp-let forms body)`  letの並列版。PARA.mdを参照
-- `(mp-report str)`  親lispの端末に文字列strを表示する。PARA.mdを参照
+- `(mp-and s1 ... sn)`  andの並列部分実行版。PARA.mdを参照
+- `(mp-or s1 ... sn)`  orの並列部分実行版。PARA.mdを参照
 - `(mp-eval n exp)`  n番目の子lispでexpを評価する。PARA.mdを参照
 - `(mp-close)`  すべてのプロセスを閉じる。PARA.mdを参照
 - `(mt-create n)` n個のスレッドを生成する。PARA1.mdを参照
@@ -296,13 +288,12 @@ EISL <==================================> C
 - `(dp-call fun a1 ... an)` 分散並列でfunに引数を適用する。PARA2.mdを参照
 - `(dp-exec s1 ... sn)`  prognの分散並列版。PARA2.mdを参照
 - `(dp-part sw s1 ... sn)`  prognの分散並列部分実行版。PARA2.mdを参照
-- `(dp-let forms body)`  letの分散並列版。PARA2.mdを参照
-- `(dp-report str)`  親lispの端末に文字列strを表示する。PARA2.mdを参照
 - `(dp-eval n exp)`  n番目の子lispでexpを評価する。PARA2.mdを参照
 - `(dp-transfer fn)`  ファイルをすべての子lispに転送する。PARA2.mdを参照
 - `(dp-compile fn)`  ファイルを親lisp及びすべての子lispでコンパイルする。PARA2.mdを参照
 - `(dp-load fn)`  ファイルを親lisp及びすべての子lispにロードする。PARA2.mdを参照
-- `(dp-close)`  すべてのスレッドを閉じる。PARA2.mdを参照
+- `(dp-close)`  すべての子機との通信を閉じる。PARA2.mdを参照
+- `(dp-halt)`　　すべての子機との通信を閉じるとともにシャットダウンする。PARA2.mdを参照
 
 # TCP/IP
 - `(create-server-socket n)` ポート番号ｎでサーバーとしてのソケットを生成する。

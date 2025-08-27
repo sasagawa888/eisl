@@ -275,27 +275,25 @@ EISL <==================================> C
 | (mp-create n)         | create n processes. see PARA.md                |   
 | (mp-call fun a1 .. an)| apply fun args with multi-process. see PARA.md |
 | (mp-exec s1 ... sn)   | progn with multi-process. see PARA.md          |
-| (mp-part sw s1 ... sn)| partial progn with multi-process. see PARA.md  |    
-| (mp-let forms body)   | let with multi-process. see PARA.md            |
+| (mp-and s1 ... sn)    | parallel and with multi-process. see PARA.md   |    
+| (mp-or s1 ... sn)     | parallel and with multi-process. see PARA.md   | 
 | (mp-eval n exp)       | evaluate exp in nth child Lisp                 |
-| (mp-report str)       | display string on parent terminal. see PARA2.md|
 | (mp-close)            | close all process. see PARA.md                 |
 | (mt-create n)         | create n threads. see PARA1.md                 |
 | (mt-call fun a1 .. an)| apply fun args with multi-thread.see PARA1.md  |
 | (mt-exec s1 ... sn)   | progn with multi-thread. see PARA1.md          |
-| (mt-let forms body)   | let with multi-thread. see PARA1.md            |
 | (mt-lock s1 ... sn)   | progn with mutex multi-thread. see PARA1.md    |
 | (mt-close)            | close all threads. see PARA1.md                |
 | (dp-create n)         | create n distributions. see PARA2.md           |
 | (dp-call fun a1 .. an)| apply fun args with distributed. see PARA2.md  |
 | (dp-exec s1 ... sn)   | progn with distributed. see PARA2.md           |
-| (dp-let forms body)   | let with distributed. see PARA2.md             |
-| (dp-part sw s1 ... sn)| partial progn with distributed. see PARA2.md   |
-| (dp-report str)       | display string on parent terminal. see PARA2.md|
+| (dp-and s1 ... sn)    | parallel and with distributed. see PARA2.md    |
+| (dp-or s1 ... sn)     | parallel or with distributed. see PARA2.md     |
 | (dp-transfer fn)      | transfer file to all child Lisp. see PARA2.md  |
 | (dp-compile fn)       | compile file in all child Lisp. see PARA2md    |
 | (dp-load fn)          | load file to parent and all child Lisp.PARA2.md|
 | (dp-close)            | close all distributions. see PARA2.md          |
+| (dp-halt)             | close all childs and shutdown see PARA2.md     |
 
 # TCP/IP functions
 

@@ -36,17 +36,12 @@ ver1.4以後はWindowsはサポートされません。WindowsでWSLをお使い
 参照　[Windows Subsystem for Linux で Visual Studio Code の使用を開始する](https://docs.microsoft.com/ja-jp/windows/wsl/tutorials/wsl-vscode)
 
 　　　
-動作確認している環境は次の通りです。
-- Ubuntu 16.04 GCC 5.4
-- Ubuntu 18.04 GCC 7.3
-- Raspberry Pi3 Raspbian GCC 6.3
-- Raspberry Pi400
-- openSUSE Leap 42.3 GCC 4.8.5
-- Debian GNU/Linux GCC 6.3 GCC 7.3
-- Linux Mint GCC ver 5.4
-- Linux Mint GCC ver9.3.0
-- macOS 11.1 clang 12.0.0 
-- OpenBSD
+# サポート
+- Raspberry Pi OS
+- Ubuntu
+- Linux MINT
+
+上記以外のOSにつきましては自己責任でお願いします。
 
 ## 実行
 

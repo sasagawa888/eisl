@@ -13,10 +13,7 @@ YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=RxBPEY5_MK
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
 - Type "sudo make install".
-- You can also supply a "PREFIX=$HOME" (or wherever) argument if you want.
 - For more advanced hacking on the interpreter itself, you can build a debug-mode executable by supplying a "DEBUG=1" argument to make, but this is unlikely to be needed by someone starting out.
-- You can skip installing WiringPi when setting up a Raspberry Pi cluster machine by adding NOWIRING=1.
-The latest Raspberry Pi models do not come with WiringPi preinstalled. If you need GPIO functionality, please install WiringPi.
 
 Update Easy-ISlisp
 - Type "sudo make clean".
@@ -29,31 +26,14 @@ In this case, enter the following from the terminal
 ```sh
 sudo apt install libncurses-dev
 ```
+# Supported OS:
 
+- Raspberry Pi OS
+- Ubuntu
+- Linux Mint
 
-Otherwise, support for `curses` can be disable with `WITHOUT_CURSES=1` in the `make` command. However, this will limit REPL support and will disable `edlis`.
+ Use of other operating systems is at your own discretion."
 
-After version 1.4 Windows OS is not supported. Please use WSL on Windows.
-see [Visual Studio Code Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
-
-We confirmed operation in the following environments.
-- Ubuntu 16.04 GCC 5.4
-- Ubuntu 18.04 GCC 7.3
-- Raspberry Pi3 Raspbian GCC 6.3
-- Raspberry Pi3 Raspbian GCC 8.3.0
-- Paspberry Pi400
-- openSUSE Leap 42.3 GCC 4.8.5
-- Debian GNU/Linux GCC 6.3 GCC 7.3
-- Linux Mint GCC ver 5.4
-- Linux Mint GCC ver9.3.0
-- macOS 11.1 clang 12.0.0 
-- OpenBSD
-
-If you use Clang on MacOS, provide option to Clang compatible with GCC.
-
-If you want to use library files from anyplace other than the `PREFIX` argument
-(default */usr/local*),
-you should set the `EASY_ISLISP` enviroment variable to point to it.
 
 ### GNU Emacs support
 ISLisp-mode of Emacs is developed by Mr. sasanidas.

@@ -13,12 +13,12 @@ YouTube [introduction of Easy-ISLisp](https://www.youtube.com/watch?v=RxBPEY5_MK
 Change to the git cloned or downloaded Easy-ISLisp directory.
 
 - Type "sudo make install".
-- For more advanced hacking on the interpreter itself, you can build a debug-mode executable by supplying a "DEBUG=1" argument to make, but this is unlikely to be needed by someone starting out.
 
 Update Easy-ISlisp
 - Type "sudo make clean".
 - Type "sudo make install".
 
+see document ATFRIST.md
 
 You may get an error that the curses.h file cannot be found when compiling EISL & Edlis.
 In this case, enter the following from the terminal

@@ -177,6 +177,7 @@ But note that it respects the UNIX convention of the `VISUAL` and `EDITOR` envir
 # WiringPi
 
 On paspberry PI, Eisl includes system function of WiringPi. 
+see document ATFIRST.md
 
 ```lisp
 EISL <==================================> C

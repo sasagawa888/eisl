@@ -34,12 +34,7 @@
 #define CTRLSTK 200
 #define BACKSIZE 30
 #define EISL_PATH_MAX 256
-#if defined(__TINYC__) && defined(__riscv)
-/* TCC in RISC-V cannot handle a larger number */
-#define COL_SIZE 51
-#else
 #define COL_SIZE 255
-#endif
 #define NUM_HISTORY 10
 #define BIGSIZE 20000000
 #define NTTBASE 1000

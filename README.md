@@ -32,8 +32,11 @@ sudo apt install libncurses-dev
 - Ubuntu
 - Linux Mint
 
- Use of other operating systems is at your own discretion.
-
+- Use of other operating systems is at your own discretion.
+Unsupported Operating Systems
+Operating systems other than the officially supported ones (Raspberry Pi OS, Ubuntu, Mint) are not officially supported, as I do not have the hardware or sufficient experience to properly test them.
+If you wish to run this project on an unsupported OS, please feel free to adapt the code on your own.
+If your modifications are successful, we encourage you to publish a branch so that others can benefit from your work.
 
 ### GNU Emacs support
 ISLisp-mode of Emacs is developed by Mr. sasanidas.

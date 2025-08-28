@@ -4,7 +4,6 @@
 USE_WIRINGPI ?= 0
 USE_FLTO ?= 0
 USE_GDB ?= 0
-COMPILE_LISP ?= 0
 
 CC := cc
 LIBS := -lm -ldl -lpthread -lncurses
@@ -86,7 +85,7 @@ EISL_OBJS := main.o \
 	link.o \
 	parallel.o
 
-TARGETS := eisl edlis $(OBJ_LISP)
+TARGETS := eisl edlis 
 
 all: $(TARGETS)
 
@@ -98,6 +97,7 @@ eisl: $(EISL_OBJS) $(OBJ_CII)
 
 %.o: %.lsp eisl
 	echo '(load "library/compiler.lsp") (compile-file "$<")' | ./eisl -r
+	touch $@
 
 
 main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o long.o link.o parallel.o
@@ -125,17 +125,16 @@ edlis.o: edlis.c edlis.h term.h
 
 
 .PHONY: install
-ifeq ($(COMPILE_LISP),1)
-install: eisl edlis $(OBJ_LISP)
-else 
 install: eisl edlis
-endif
 	$(MKDIR_PROGRAM) $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) eisl $(DESTDIR)$(bindir)/$(EISL)
 	$(INSTALL_PROGRAM) edlis $(DESTDIR)$(bindir)/$(EDLIS)
 	$(MKDIR_PROGRAM) $(DESTDIR)$(sharedir)
 	$(INSTALL_PROGRAM) library/* $(DESTDIR)$(sharedir)
 	$(INSTALL_PROGRAM) fast.h ffi.h $(DESTDIR)/$(PREFIX)/share/eisl
+
+.PHONY: lisp
+lisp: $(OBJ_LISP)
 
 .PHONY: uninstall
 uninstall:

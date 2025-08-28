@@ -13,7 +13,7 @@ Some libraries need to be compiled. They use a C wrapper and will not work unles
 Please do as follows:
 
 ```
-sudo make install COMPILE_LISP=1
+sudo make lisp
 ```
 
 By default, the installation is kept light by compiling without the -flto option. To enable faster performance with -flto, please recompile as follows:
@@ -22,12 +22,6 @@ By default, the installation is kept light by compiling without the -flto option
 sudo make clean
 sudo make install USE_FLTO=1
 
-```
-
-If the ncurses library is not installed, please compile as follows. The Edlis editor will not be built.
-
-```
-sudo make install WITHOUT_CURSES=1
 ```
 
 

@@ -13,7 +13,7 @@ Some libraries need to be compiled. They use a C wrapper and will not work unles
 Please do as follows:
 
 ```
-sudo make lisp
+make lisp
 ```
 
 By default, the installation is kept light by compiling without the -flto option. To enable faster performance with -flto, please recompile as follows:

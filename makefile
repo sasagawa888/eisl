@@ -5,7 +5,7 @@ USE_WIRINGPI ?= 0
 USE_FLTO ?= 0
 USE_GDB ?= 0
 
-CC := cc
+CC := gcc
 LIBS := -lm -ldl -lpthread -lncurses
 INCS := -Icii/include
 CURSES_CFLAGS := $(shell ncursesw6-config --cflags) 
@@ -35,7 +35,7 @@ CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation
 ifeq ($(USE_FLTO),1)
 CFLAGS += -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
 endif
-ifeq ($(UNSE_GDB),1)
+ifeq ($(USE_GDB),1)
 CFLAGS += -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
 endif 
 
@@ -143,7 +143,7 @@ uninstall:
 
 .PHONY: clean
 clean:
-	$(RM) *.o $(OBJ_CII) $(OBJ_NANA) $(OBJ_D) $(OBJ_LISP) eisl edlis
+	$(RM) *.o $(OBJ_CII) $(OBJ_D) $(OBJ_LISP) eisl edlis
 
 .PHONY: check
 check:

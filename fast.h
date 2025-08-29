@@ -28,7 +28,7 @@ static fn6 f6[NUM_FN6S];
 static fn7 f7[NUM_FN7S];
 static fn8 f8[NUM_FN8S];
 volatile sig_atomic_t exit_flag = 0;
-int child_pt;
+int child_pt = 0;
 
 void signal_handler_c(int signo)
 {
@@ -387,7 +387,7 @@ static inline int Fwait_and(int x)
 
 static inline int Fwait_or(int x)
 {
-    return f1[WAIT_OR_IDX] (x, y);
+    return f1[WAIT_OR_IDX] (x);
 }
 
 

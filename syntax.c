@@ -1191,8 +1191,8 @@ int f_throw(int arglist, int th)
      *  while executing unwind-protect, execute clean-up before throw.
      *  But, catch & throw occures in same unwind_nest level, not execute clean-up.
      */
-    if (unwind_nest > 0 &&
-	catch_data[i][2] != unwind_nest && unwind_pt > 0) {
+    if (unwind_nest > 0 && catch_data[i][2] != unwind_nest
+	&& unwind_pt > 0) {
 	unwind_pt--;
 	unwind_nest--;
 	apply(unwind_buf[unwind_pt], NIL, th);

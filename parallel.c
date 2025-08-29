@@ -1088,10 +1088,21 @@ int f_dp_eval(int arglist, int th __unused)
     return (res);
 }
 
+int all_received(int *result, int size)
+{
+    for (int i = 0; i < size; i++) {
+	if (result[i] == 0)
+	    return 0;
+    }
+    return 1;
+}
+
+
+
 /* parent lisp */
 int f_dp_transfer(int arglist, int th)
 {
-    int arg1, i, m;
+    int arg1, i, m, result[PARASIZE];
     FILE *file;
 
     arg1 = car(arglist);
@@ -1103,14 +1114,18 @@ int f_dp_transfer(int arglist, int th)
 	error(CANT_OPEN, "dp-transfer", arg1, th);
     }
 
+    for (i = 0; i < child_num; i++) {
+	result[i] = 0;
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    }
 
     for (i = 0; i < child_num; i++) {
 	send_to_child_control_without_0x16(i, 0x15);
 	send_to_child_without_0x16(i, arg1);
 	int bytes_read;
 	while ((bytes_read =
-		fread(transfer, sizeof(char), sizeof(transfer),
-		      file)) > 0) {
+		fread(transfer, sizeof(char), sizeof(transfer), file)) > 0)
+	{
 	    m = write(child_sockfd[i], transfer, bytes_read);
 	    if (m < 0) {
 		error(SYSTEM_ERR, "dp-transfer", NIL, 0);
@@ -1119,7 +1134,14 @@ int f_dp_transfer(int arglist, int th)
 	send_to_child_control(i, 0x16);
 	fseek(file, 0, SEEK_SET);
     }
-
+    while (!all_received(result, child_num)) {
+	for (i = 0; i < child_num; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+	    }
+	}
+	usleep(1000);
+    }
     fclose(file);
 
     return (T);
@@ -1128,50 +1150,60 @@ int f_dp_transfer(int arglist, int th)
 
 int f_dp_load(int arglist, int th)
 {
-    int arg1, exp, i;
+    int arg1, exp, i, result[PARASIZE];
 
     arg1 = car(arglist);
     if (!stringp(arg1))
 	error(NOT_STR, "dp-load", arg1, th);
 
     exp = list2(make_sym("LOAD"), arg1);
-
+    for (i = 0; i < child_num; i++) {
+	result[i] = 0;
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    }
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
     }
-
     eval(exp, 0);
-
+    while (!all_received(result, child_num)) {
+	for (i = 0; i < child_num; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+	    }
+	}
+	usleep(1000);
+    }
     return (T);
 }
 
 
 int f_dp_compile(int arglist, int th)
 {
-    int arg1, exp, i;
+    int arg1, exp, i, result[PARASIZE];
 
     arg1 = car(arglist);
     if (!stringp(arg1))
 	error(NOT_STR, "dp-compile", arg1, th);
 
     exp = list2(make_sym("COMPILE-FILE"), arg1);
-
+    for (i = 0; i < child_num; i++) {
+	result[i] = 0;
+	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
+    }
     for (i = 0; i < child_num; i++) {
 	send_to_child(i, sexp_to_str(exp));
     }
 
     eval(exp, 0);
-
-    return (T);
-}
-
-int all_received(int *result, int size)
-{
-    for (int i = 0; i < size; i++) {
-	if (result[i] == 0)
-	    return 0;
+    while (!all_received(result, child_num)) {
+	for (i = 0; i < child_num; i++) {
+	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+		result[i] = 1;
+	    }
+	}
+	usleep(1000);
     }
-    return 1;
+    return (T);
 }
 
 
@@ -1208,6 +1240,7 @@ int wait_all(int m)
 	    }
 	}
     }
+    //child_pt  = save;
     return (0);
 }
 
@@ -1239,11 +1272,21 @@ int wait_and(int m)
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
+		    while (!all_received(result, m)) {
+			for (i = 0; i < m; i++) {
+			    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+				result[i] = 1;
+			    }
+			}
+			usleep(1000);
+		    }
+		    //child_pt = save;
 		    break;
 		}
 	    }
 	}
     }
+    //child_pt = save;
     return (res);
 }
 
@@ -1265,7 +1308,7 @@ int wait_or(int m)
 	    ctrl_c_flag = 0;
 	    RAISE(Restart_Repl);
 	}
-    
+
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
 		result[i] = 1;
@@ -1276,11 +1319,21 @@ int wait_or(int m)
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
+		    while (!all_received(result, m)) {
+			for (i = 0; i < m; i++) {
+			    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+				result[i] = 1;
+			    }
+			}
+			usleep(1000);
+		    }
+		    //child_pt = save;
 		    break;
 		}
 	    }
 	}
     }
+    //child_pt = save;
     return (res);
 }
 
@@ -1288,12 +1341,12 @@ int wait_or(int m)
 // fsubr (dp-call fun arg1 arg2 ... argn)
 int f_dp_call(int arglist, int th)
 {
-    int arg1, arg2, temp, res, n, i, args, exp, result[PARASIZE];
+    int arg1, arg2, temp, res, n, i, save, args, exp, result[PARASIZE];
 
     arg1 = car(arglist);	//fun
     arg2 = cdr(arglist);	//args
     n = length(arg2);
-    if (n > child_num)
+    if (n + child_pt > child_num)
 	error(ILLEGAL_ARGS, "dp-call", arg2, th);
     temp = arglist;
     while (!nullp(temp)) {
@@ -1304,13 +1357,16 @@ int f_dp_call(int arglist, int th)
 
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
-    i = 0;
+
+    i = save = child_pt;
     while (!nullp(arg2)) {
 	exp = eval_args(car(arg2));
 	send_to_child(i, sexp_to_str(exp));
 	arg2 = cdr(arg2);
 	i++;
     }
+    child_pt = save;
+
     for (i = 0; i < n; i++)
 	result[i] = 0;
 
@@ -1343,10 +1399,10 @@ int f_dp_call(int arglist, int th)
 
 int f_dp_exec(int arglist, int th)
 {
-    int temp, res, n, i, exp, result[PARASIZE];
+    int temp, res, n, i, save, exp, result[PARASIZE];
 
     n = length(arglist);
-    if (n > child_num)
+    if (n + child_pt > child_num)
 	error(ILLEGAL_ARGS, "dp-exec", arglist, th);
     temp = arglist;
     while (!nullp(temp)) {
@@ -1358,7 +1414,8 @@ int f_dp_exec(int arglist, int th)
 
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
-    i = 0;
+
+    i = save = child_pt;
     temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
@@ -1366,6 +1423,8 @@ int f_dp_exec(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
+    child_pt = i;
+
     for (i = 0; i < n; i++)
 	result[i] = 0;
 
@@ -1389,13 +1448,14 @@ int f_dp_exec(int arglist, int th)
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(receive_from_child(i));
     }
+    child_pt = save;
     return (res);
 
 }
 
 int f_dp_and(int arglist, int th)
 {
-    int temp, res, n, i, j, exp, result[PARASIZE];
+    int temp, res, n, i, j, save, exp, result[PARASIZE];
 
     n = length(arglist);
     if (n > child_num)
@@ -1408,7 +1468,7 @@ int f_dp_and(int arglist, int th)
 	    error(WRONG_ARGS, "dp-and", arglist, th);
 	temp = cdr(temp);
     }
-    i = 0;
+    i = save = child_pt;
     temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
@@ -1439,19 +1499,29 @@ int f_dp_and(int arglist, int th)
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
+		    while (!all_received(result, n)) {
+			for (i = 0; i < n; i++) {
+			    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+				result[i] = 1;
+			    }
+			}
+			usleep(1000);
+		    }
+		    child_pt = save;
 		    goto exit;
 		}
 	    }
 	}
     }
   exit:
+    child_pt = save;
     return (res);
 }
 
 
 int f_dp_or(int arglist, int th)
 {
-    int temp, res, n, i, j, exp, result[PARASIZE];
+    int temp, res, n, i, j, save, exp, result[PARASIZE];
 
     n = length(arglist);
     if (n > child_num)
@@ -1464,7 +1534,7 @@ int f_dp_or(int arglist, int th)
 	    error(WRONG_ARGS, "dp-or", arglist, th);
 	temp = cdr(temp);
     }
-    i = 0;
+    i = save = child_pt;
     temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
@@ -1472,8 +1542,11 @@ int f_dp_or(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
+    child_pt = i;
+
     for (i = 0; i < n; i++)
 	result[i] = 0;
+
     res = NIL;
     while (!all_received(result, n)) {
 	if (ctrl_c_flag == 1) {
@@ -1495,12 +1568,22 @@ int f_dp_or(int arglist, int th)
 			    send_to_child_control(j, 0x11);	// stop signal
 			}
 		    }
+		    while (!all_received(result, n)) {
+			for (i = 0; i < n; i++) {
+			    if (parent_buffer[i][0] != 0 && result[i] == 0) {
+				result[i] = 1;
+			    }
+			}
+			usleep(1000);
+		    }
+		    child_pt = save;
 		    goto exit;
 		}
 	    }
 	}
     }
   exit:
+    child_pt = save;
     return (res);
 }
 
@@ -1616,9 +1699,9 @@ void *creceiver(void *arg)
 	    goto reread;
 
 	if (buffer[0] == 0x15) {	// dp-treansfer
-        i = 1;
+	    i = 1;
 	    j = 0;
-	    while (buffer[i] !=  '\n') { // get file name
+	    while (buffer[i] != '\n') {	// get file name
 		sub_buffer[j] = buffer[i];
 		i++;
 		j++;
@@ -1631,7 +1714,7 @@ void *creceiver(void *arg)
 	    }
 	    i++;
 	    j = 0;
-	    while (buffer[i] != 0x16) { // get file data
+	    while (buffer[i] != 0x16) {	// get file data
 		sub_buffer[j] = buffer[i];
 		i++;
 		j++;
@@ -1643,7 +1726,7 @@ void *creceiver(void *arg)
 	    printf("dp-transfer\n");
 	    fflush(stdout);
 	    memset(buffer, 0, sizeof(buffer));
-        strcpy(buffer,"T\n\n");
+	    strcpy(buffer, "T\n\n");
 	}
 
 

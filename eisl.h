@@ -665,6 +665,7 @@ extern socklen_t parent_len;
 extern struct sockaddr_in parent_addr, child_addr[PARASIZE];
 extern int child_num;
 extern int child_id;
+extern int child_pt;
 extern pthread_t receiver_thread;
 extern pthread_t preceiver_thread[PARASIZE];
 extern pthread_t creceiver_thread;

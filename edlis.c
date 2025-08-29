@@ -705,8 +705,8 @@ void sexp_next()
     } else {			/* atom */
 	while (ed_data[ed_row][ed_col] != ' ' &&
 	       ed_data[ed_row][ed_col] != '(' &&
-	       ed_data[ed_row][ed_col] != ')' &&
-	       ed_data[ed_row][ed_col] != EOL) {
+	       ed_data[ed_row][ed_col] != ')'
+	       && ed_data[ed_row][ed_col] != EOL) {
 	    ed_col++;
 	    ed_col1++;
 	}
@@ -902,8 +902,8 @@ void sexp_prev()
 	}
     }
 
-    if (ed_data[ed_row][ed_col] == ')' &&
-	ed_data[ed_row][ed_col - 1] == ')') {
+    if (ed_data[ed_row][ed_col] == ')'
+	&& ed_data[ed_row][ed_col - 1] == ')') {
 	ed_col--;
     }
 
@@ -1241,8 +1241,8 @@ bool quit_with_save(void)
 	}
 	while (c != 'y' && c != 'n');
     }
-	
-	return(false);
+
+    return (false);
 }
 
 void save_file()

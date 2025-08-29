@@ -1557,8 +1557,8 @@ int f_create_client_socket(int arglist, int th)
 
 
     if (connect
-	(sock, (struct sockaddr *) &client_addr,
-	 sizeof(client_addr)) < 0) {
+	(sock, (struct sockaddr *) &client_addr, sizeof(client_addr)) < 0)
+    {
 	error(SYSTEM_ERR, "create-client-socket", NIL, 0);
     }
 
@@ -1587,8 +1587,8 @@ int f_create_server_socket(int arglist, int th)
     server_addr.sin_port = htons(GET_INT(arg1));
 
     if (bind
-	(sock0, (struct sockaddr *) &server_addr,
-	 sizeof(server_addr)) < 0) {
+	(sock0, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
+    {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
     }
 
@@ -1624,7 +1624,7 @@ int f_send_socket(int arglist, int th)
     n = write(GET_SOCKET(arg1), buf, 256);
     if (n < 0)
 	error(SYSTEM_ERR, "send-socket", NIL, th);
-    return(T);
+    return (T);
 }
 
 int f_recv_socket(int arglist, int th)

@@ -661,7 +661,7 @@ int f_round(int arglist, int th)
     } else
 	return (arg1);
 
-    return(NIL);
+    return (NIL);
 }
 
 int f_gcd(int arglist, int th)
@@ -4796,8 +4796,8 @@ int f_domain_error_object(int arglist, int th)
 
     arg1 = car(arglist);
     if (!subclassp(GET_AUX(arg1), cerror) && GET_AUX(arg1) != cerror)
-	error(DOMAIN_ERR, "domain-error-object",
-	      cons(arg1, cdomain_error), th);
+	error(DOMAIN_ERR, "domain-error-object", cons(arg1, cdomain_error),
+	      th);
 
     fun = cdr(assoc(make_sym("f"), GET_CDR(arg1)));
     return (fun);

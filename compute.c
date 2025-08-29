@@ -239,7 +239,8 @@ int plus(int arg1, int arg2)
     switch (tag1) {
     case INTN:
 	switch (tag2) {
-	case INTN:{
+	case INTN:
+	    {
 		long long int l;
 
 		l = (long long int) GET_INT(arg1) +
@@ -284,7 +285,8 @@ int plus(int arg1, int arg2)
 	break;
     case FLTN:
 	switch (tag2) {
-	case FLTN:{
+	case FLTN:
+	    {
 		x1 = GET_FLT(arg1);
 		x2 = GET_FLT(arg2);
 
@@ -318,7 +320,8 @@ int minus(int arg1, int arg2)
     switch (tag1) {
     case INTN:
 	switch (tag2) {
-	case INTN:{
+	case INTN:
+	    {
 		long long int l;
 
 		l = (long long int) GET_INT(arg1) -
@@ -329,13 +332,14 @@ int minus(int arg1, int arg2)
 		    return (make_long(l));
 	    }
 
-	case FLTN:{
+	case FLTN:
+	    {
 		return minus(exact_to_inexact(arg1), arg2);
 	    }
 
 	case LONGN:
-	    return (big_minus(big_int_to_big(arg1),
-			      big_long_to_big(arg2)));
+	    return (big_minus
+		    (big_int_to_big(arg1), big_long_to_big(arg2)));
 
 	case BIGN:
 	    return (big_minus(big_int_to_big(arg1), arg2));
@@ -369,7 +373,8 @@ int minus(int arg1, int arg2)
 	break;
     case FLTN:
 	switch (tag2) {
-	case FLTN:{
+	case FLTN:
+	    {
 		x1 = GET_FLT(arg1);
 		x2 = GET_FLT(arg2);
 
@@ -416,7 +421,8 @@ int mult(int arg1, int arg2)
 			    (big_int_to_big(arg1), big_int_to_big(arg2)));
 	    }
 
-	case FLTN:{
+	case FLTN:
+	    {
 		return mult(exact_to_inexact(arg1), arg2);
 	    }
 
@@ -462,7 +468,8 @@ int mult(int arg1, int arg2)
 	break;
     case FLTN:
 	switch (tag2) {
-	case FLTN:{
+	case FLTN:
+	    {
 		x1 = GET_FLT(arg1);
 		x2 = GET_FLT(arg2);
 		y1 = x1 * x2;

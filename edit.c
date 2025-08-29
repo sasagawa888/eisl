@@ -128,8 +128,8 @@ void display_buffer()
 		while (buffer[col][0] != NUL && buffer[col][0] != EOL) {
 		    putchar(buffer[col][0]);
 		    col++;
-		    if (buffer[col - 1][0] == '"' &&
-			buffer[col - 2][0] != '\\')
+		    if (buffer[col - 1][0] == '"'
+			&& buffer[col - 2][0] != '\\')
 			break;
 		}
 		ESCRST();

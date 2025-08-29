@@ -1240,7 +1240,6 @@ int wait_all(int m)
 	    }
 	}
     }
-    //child_pt  = save;
     return (0);
 }
 
@@ -1280,13 +1279,11 @@ int wait_and(int m)
 			}
 			usleep(1000);
 		    }
-		    //child_pt = save;
 		    break;
 		}
 	    }
 	}
     }
-    //child_pt = save;
     return (res);
 }
 
@@ -1327,13 +1324,11 @@ int wait_or(int m)
 			}
 			usleep(1000);
 		    }
-		    //child_pt = save;
 		    break;
 		}
 	    }
 	}
     }
-    //child_pt = save;
     return (res);
 }
 

@@ -28,7 +28,7 @@ static fn6 f6[NUM_FN6S];
 static fn7 f7[NUM_FN7S];
 static fn8 f8[NUM_FN8S];
 volatile sig_atomic_t exit_flag = 0;
-
+int child_pt;
 
 void signal_handler_c(int signo)
 {
@@ -374,6 +374,7 @@ static inline int Freceive_from_child(int x)
     return f1[RECEIVE_FROM_CHILD_IDX] (x);
 }
 
+
 static inline int Fwait_all(int x)
 {
     return f1[WAIT_ALL_IDX] (x);
@@ -386,8 +387,10 @@ static inline int Fwait_and(int x)
 
 static inline int Fwait_or(int x)
 {
-    return f1[WAIT_OR_IDX] (x);
+    return f1[WAIT_OR_IDX] (x, y);
 }
+
+
 
 static inline int Fclear_parent_buffer(int x)
 {
@@ -577,6 +580,7 @@ static inline int Fsend_to_child(int x, int y)
 {
     return f2[SEND_TO_CHILD_IDX] (x, y);
 }
+
 
 
 static inline int Fmakestr(const char *x)

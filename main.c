@@ -258,7 +258,6 @@ socklen_t parent_len;
 struct sockaddr_in parent_addr, child_addr[PARASIZE];
 int child_num;
 int child_id;
-int child_pt;
 pthread_t receiver_thread;
 pthread_t preceiver_thread[PARASIZE];
 pthread_t creceiver_thread;
@@ -562,7 +561,6 @@ void init_pointer(void)
     generic_vars = NIL;
     big_pt0 = 0;
     unwind_nest = 0;
-    child_pt = 0;
     /* clear nest level of tracing function. */
     ls = trace_list;
     while (!nullp(ls)) {

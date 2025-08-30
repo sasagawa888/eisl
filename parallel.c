@@ -1336,12 +1336,12 @@ int wait_or(int m)
 // fsubr (dp-call fun arg1 arg2 ... argn)
 int f_dp_call(int arglist, int th)
 {
-    int arg1, arg2, temp, res, n, i, save, args, exp, result[PARASIZE];
+    int arg1, arg2, temp, res, n, i, args, exp, result[PARASIZE];
 
     arg1 = car(arglist);	//fun
     arg2 = cdr(arglist);	//args
     n = length(arg2);
-    if (n + child_pt > child_num)
+    if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-call", arg2, th);
     temp = arglist;
     while (!nullp(temp)) {
@@ -1353,14 +1353,13 @@ int f_dp_call(int arglist, int th)
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
 
-    i = save = child_pt;
+    i = 0;
     while (!nullp(arg2)) {
 	exp = eval_args(car(arg2));
 	send_to_child(i, sexp_to_str(exp));
 	arg2 = cdr(arg2);
 	i++;
     }
-    child_pt = save;
 
     for (i = 0; i < n; i++)
 	result[i] = 0;
@@ -1394,10 +1393,10 @@ int f_dp_call(int arglist, int th)
 
 int f_dp_exec(int arglist, int th)
 {
-    int temp, res, n, i, save, exp, result[PARASIZE];
+    int temp, res, n, i, exp, result[PARASIZE];
 
     n = length(arglist);
-    if (n + child_pt > child_num)
+    if (n > child_num)
 	error(ILLEGAL_ARGS, "dp-exec", arglist, th);
     temp = arglist;
     while (!nullp(temp)) {
@@ -1410,7 +1409,7 @@ int f_dp_exec(int arglist, int th)
     for (i = 0; i < n; i++)
 	memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
 
-    i = save = child_pt;
+    i = 0;
     temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
@@ -1418,7 +1417,6 @@ int f_dp_exec(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-    child_pt = i;
 
     for (i = 0; i < n; i++)
 	result[i] = 0;
@@ -1443,14 +1441,13 @@ int f_dp_exec(int arglist, int th)
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(receive_from_child(i));
     }
-    child_pt = save;
     return (res);
 
 }
 
 int f_dp_and(int arglist, int th)
 {
-    int temp, res, n, i, j, save, exp, result[PARASIZE];
+    int temp, res, n, i, j, exp, result[PARASIZE];
 
     n = length(arglist);
     if (n > child_num)
@@ -1463,7 +1460,7 @@ int f_dp_and(int arglist, int th)
 	    error(WRONG_ARGS, "dp-and", arglist, th);
 	temp = cdr(temp);
     }
-    i = save = child_pt;
+    i = 0;
     temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
@@ -1502,21 +1499,19 @@ int f_dp_and(int arglist, int th)
 			}
 			usleep(1000);
 		    }
-		    child_pt = save;
 		    goto exit;
 		}
 	    }
 	}
     }
   exit:
-    child_pt = save;
     return (res);
 }
 
 
 int f_dp_or(int arglist, int th)
 {
-    int temp, res, n, i, j, save, exp, result[PARASIZE];
+    int temp, res, n, i, j, exp, result[PARASIZE];
 
     n = length(arglist);
     if (n > child_num)
@@ -1529,7 +1524,7 @@ int f_dp_or(int arglist, int th)
 	    error(WRONG_ARGS, "dp-or", arglist, th);
 	temp = cdr(temp);
     }
-    i = save = child_pt;
+    i = 0;
     temp = arglist;
     while (!nullp(temp)) {
 	exp = eval_args(car(temp));
@@ -1537,7 +1532,6 @@ int f_dp_or(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-    child_pt = i;
 
     for (i = 0; i < n; i++)
 	result[i] = 0;
@@ -1571,14 +1565,12 @@ int f_dp_or(int arglist, int th)
 			}
 			usleep(1000);
 		    }
-		    child_pt = save;
 		    goto exit;
 		}
 	    }
 	}
     }
   exit:
-    child_pt = save;
     return (res);
 }
 

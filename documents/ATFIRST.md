@@ -24,6 +24,12 @@ sudo make install USE_FLTO=1
 
 ```
 
+When using wiringPi on Raspberry Pi: please install wiringPi and compile with the following options.
+
+```
+sudo make install WIRINGPI=1
+```
+
 
 # Documents
 

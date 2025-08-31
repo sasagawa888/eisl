@@ -20,8 +20,7 @@ Update Easy-ISlisp
 
 see document ATFRIST.md
 
-You may get an error that the curses.h file cannot be found when compiling EISL & Edlis.
-In this case, enter the following from the terminal
+Easy-ISLisp requires ncurses library. Please install ncurses.
 
 ```sh
 sudo apt install libncurses-dev

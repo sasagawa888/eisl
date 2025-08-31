@@ -17,7 +17,7 @@ ISLispについては英語版Wikipedia（[ISLisp](https://en.wikipedia.org/wiki
 - 端末上で`sudo make install`と入力する。
 
 注意
-Edlisのコンパイルでncurses.hファイルが見つからないというエラーになる場合があります。この場合にはターミナルより次のように入力してください。
+Easy-ISLispはncursesライブラリを必要とします。ncursesライブラリをインストールしてください。
 
 ```sh
 sudo apt install libncurses-dev

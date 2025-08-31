@@ -2425,8 +2425,8 @@ defgeneric compile
                  (comp-dp-exec4 stream (+ i 1) n))))
 
     (defun comp-dp-and (stream x env args tail name global test clos)
-        (format stream "({int res; Fclear_parent_buffer(~A);" (length x))
-        (comp-dp-and1 0 stream (cdr (cdr x)) env args tail name global test clos)
+        (format stream "({int res; Fclear_parent_buffer(~A);" (length (cdr x)))
+        (comp-dp-and1 0 stream (cdr x) env args tail name global test clos)
         (format stream "res = Fwait_and(~A); res;})" (length (cdr x))))
 
 
@@ -2449,7 +2449,7 @@ defgeneric compile
 
 
      (defun comp-dp-or (stream x env args tail name global test clos)
-        (format stream "({int res; Fclear_parent_buffer(~A);" (length x))
+        (format stream "({int res; Fclear_parent_buffer(~A);" (length (cdr x)))
         (comp-dp-or1 0 stream (cdr x) env args tail name global test clos)
         (format stream "res=Fwait_or(~A); res;})" (length (cdr x))))
 

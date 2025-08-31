@@ -81,8 +81,8 @@ else  returns the result of the first execution.
           ((= (mod n 2) 0) nil)
           (t (let* ((limit (isqrt n))
                     (span (div limit 2)))
-                 (dp-or (coprimep n 3 span)
-                        (coprimep n (near-odd span) limit))))))
+                 (dp-and (coprimep n 3 span)
+                         (coprimep n (near-odd span) limit))))))
 
 (defun near-odd (n)
     (if (= (mod n 2) 0)

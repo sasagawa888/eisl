@@ -41,6 +41,9 @@ else  returns the result of the first execution.
 - (dp-halt): Sends termination command to child machines and closes communication.
   Shutdown OS in child machine.
 
+- (dp-trace): Display received data from child.  
+
+- (dp-untrace): Not display received data from child.
 
 ## example
 

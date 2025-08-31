@@ -267,6 +267,7 @@ char child_buffer[BUFSIZE];
 char transfer[BUFSIZE];
 char input_buffer[BUFSIZE];
 char output_buffer[BUFSIZE];
+int dp_trace = 0;
 
 /* -----TCPIP for server----------------*/
 socklen_t server_len;

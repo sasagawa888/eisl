@@ -84,7 +84,7 @@
 
 
 
-static const float VERSION = 5.50;
+static const float VERSION = 5.51;
 static const int FREESIZE = 1000000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
@@ -675,6 +675,7 @@ extern char child_buffer[BUFSIZE];
 extern char transfer[BUFSIZE];
 extern char input_buffer[BUFSIZE];
 extern char output_buffer[BUFSIZE];
+extern int dp_trace;
 
 
 /* -----TCPIP for server----------------*/
@@ -933,6 +934,8 @@ int f_dp_and(int arglist, int th);
 int f_dp_or(int arglist, int th);
 int f_dp_setid(int arglist, int th);
 int f_dp_senderr(int arglist, int th);
+int f_dp_trace(int arglist, int th);
+int f_dp_untrace(int arglist, int th);
 int f_dummyp(int arglist, int th);
 int f_dynamic(int arglist, int th);
 int f_dynamic_let(int arglist, int th);

@@ -181,7 +181,7 @@ e.g.
 pipe is defined by a macro. The above example expands to the following function:
 
 ```
-(pipe x |> (foo 1) |> (bar 2) |> (boo 3)))
+(pipe x |> (foo 1) |> (bar 2) |> (boo 3))
 
 (boo (bar (foo x 1) 2) 3)
 ```

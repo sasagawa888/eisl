@@ -1230,7 +1230,10 @@ int f_gpio_write(int arglist, int th){
         error(SYSTEM_ERR, "gpio-write", arglist,th);
 
     res = gpiod_line_set_value(line, GET_INT(arg2));
-    return(make_int(res));
+    if(res < 0)
+        error(SYSTEM_ERR,"gpio-write ",arglist,th);
+    
+    return(T);
 }
 
 int f_gpio_read(int arglist, int th){

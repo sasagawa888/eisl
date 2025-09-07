@@ -24,7 +24,7 @@ EISL <==================================> C (libgpiod)
 ;; Write pin value
 (gpio-write pin value) <===> gpiod_line_set_value(line, value)
 ;; value: 0 or 1
-;; Returns: 0 on success, negative value on failure.
+;; Returns: T on success, nil on failure.
 
 ;; Read pin value
 (gpio-read pin) <===> gpiod_line_get_value(line)

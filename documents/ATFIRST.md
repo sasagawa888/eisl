@@ -24,10 +24,16 @@ sudo make install USE_FLTO=1
 
 ```
 
+```
+sudo apt update
+sudo apt install libgpiod-dev
+sudo make install USE_GPIO=1
+```
+
 When using wiringPi on Raspberry Pi: please install wiringPi and compile with the following options.
 
 ```
-sudo make install WIRINGPI=1
+sudo make install USE_WIRINGPI=1
 ```
 
 

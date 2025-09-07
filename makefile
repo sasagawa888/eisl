@@ -2,6 +2,7 @@
 .DELETE_ON_ERROR:
 
 USE_WIRINGPI ?= 0
+USE_GPIO ?= 0
 USE_FLTO ?= 0
 USE_GDB ?= 0
 
@@ -55,8 +56,10 @@ endif
 endif
 
 ifeq  ($(shell uname -n),raspberrypi)
+ifeq ($(USE_GPIO),1)
 CFLAGS += -D__rpigpio__
 LIBS += -lgpiod
+endif
 endif
 
 

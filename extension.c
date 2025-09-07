@@ -1050,11 +1050,11 @@ int f_pin_mode(int arglist, int th)
 	error(NOT_INT, "pin-mode", arg1, th);
 
     x = GET_INT(arg1);
-    if (arg2 == make_sym("intput"))
+    if (arg2 == make_sym("INPUT"))
 	pinMode(x, INPUT);
-    else if (arg2 == make_sym("output"))
+    else if (arg2 == make_sym("OUTPUT"))
 	pinMode(x, OUTPUT);
-    else if (arg2 == make_sym("pwm-output"))
+    else if (arg2 == make_sym("PWM-OUTPUT"))
 	pinMode(x, PWM_OUTPUT);
     else
 	error(WRONG_ARGS, "pin-mode", arg2, th);
@@ -1191,14 +1191,14 @@ int f_gpio_set_mode(int arglist, int th){
 	    error(WRONG_ARGS, "gpio-set-mode ", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT, "gpio-set-mode ", arglist, th);
-    if(!(eqp(arg2,make_sym("input")) || eqp(arg2,make_sym("output"))))
+    if(!(eqp(arg2,make_sym("INPUT")) || eqp(arg2,make_sym("OUTPUT"))))
         error(WRONG_ARGS, "gpio-set-mode ", arglist, th); 
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
         error(SYSTEM_ERR, "gpio-set-mode ", arglist, th);
 
-    if (eqp(arg2,make_sym("input"))) // input
+    if (eqp(arg2,make_sym("INPUT"))) // input
         res = gpiod_line_request_input(line, "easy-islisp");
     else // output
         res = gpiod_line_request_output(line, "easy-islisp", 0);
@@ -1268,17 +1268,17 @@ int f_gpio_event_request(int arglist, int th){
         error(NOT_INT,"gpio-event-request ", arglist, th);
     if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
         error(WRONG_ARGS, "gpio-event-request", arg1, th); 
-    if(!(eqp(arg2,make_sym("rising")) || 
-        eqp(arg2,make_sym("falling")) ||
-        eqp(arg2,make_sym("both"))))
+    if(!(eqp(arg2,make_sym("RISING")) || 
+        eqp(arg2,make_sym("FALLING")) ||
+        eqp(arg2,make_sym("BOTH"))))
         error(WRONG_ARGS,"gpio-event-request ", arglist, th);
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
         error(SYSTEM_ERR, "gpio-event-request ", arglist, th);
 
-    if (eqp(arg2,make_sym("rising")))
+    if (eqp(arg2,make_sym("RISING")))
         res = gpiod_line_request_rising_edge_events(line, "easy-islisp");
-    else if (eqp(arg2,make_sym("falling")))
+    else if (eqp(arg2,make_sym("FALLING")))
         res = gpiod_line_request_falling_edge_events(line, "easy-islisp");
     else 
         res = gpiod_line_request_both_edges_events(line, "easy-islisp");
@@ -1338,9 +1338,9 @@ int f_gpio_event_read(int arglist, int th){
     struct gpiod_line_event event;
     gpiod_line_event_read(line, &event);
     if (event.event_type == GPIOD_LINE_EVENT_RISING_EDGE) 
-        return(make_sym("rising"));
+        return(make_sym("RISING"));
     else if (event.event_type == GPIOD_LINE_EVENT_FALLING_EDGE)
-        return(make_sym("falling"));
+        return(make_sym("FALLING"));
     else 
         error(SYSTEM_ERR,"gpio-event-read ",arglist,th);
 

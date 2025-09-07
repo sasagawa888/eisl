@@ -24,6 +24,8 @@ sudo make install USE_FLTO=1
 
 ```
 
+When using gpio on Raspberry Pi: please install gpio and compile with the following options.
+
 ```
 sudo apt update
 sudo apt install libgpiod-dev

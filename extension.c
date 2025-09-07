@@ -1274,7 +1274,7 @@ int f_gpio_event_request(int arglist, int th){
 }
 
 int f_gpio_event_wait(int arglist, int th){
-    int arg1,arg2,timeout_ms,res;
+    int arg1,arg2,res;
 
     if (length(arglist) != 2)
 	    error(WRONG_ARGS, "gpio-event-wait ", arglist, th);
@@ -1313,6 +1313,8 @@ int f_gpio_event_read(int arglist, int th){
         return(make_sym("falling"));
     else 
         error(SYSTEM_ERR,"gpio-event-read ",arglist,th);
+
+    return(NIL);
 }
 
 int f_gpio_close(int arglist, int th){

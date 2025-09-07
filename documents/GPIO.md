@@ -32,12 +32,12 @@ EISL <==================================> C (libgpiod)
 
 ;; Request event detection on pin
 (gpio-event-request pin 'rising | 'falling | 'both) <===> gpiod_line_request_*_edge_events(line, "easy-islisp")
-;; Returns: 0 on success, negative value on failure. Raises error on invalid args.
+;; Returns: T on success, nil on failure. Raises error on invalid args.
 
 ;; Wait for event with timeout
 (gpio-event-wait pin timeout-ms) <===> gpiod_line_event_wait(line, &ts)
 ;; timeout-ms: integer, milliseconds
-;; Returns: 1 if event occurred, 0 if timeout, negative on error.
+;; Returns: T if event occurred, nil if timeout, negative on error.
 
 ;; Read last event
 (gpio-event-read pin) <===> gpiod_line_event_read(line, &event)

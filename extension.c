@@ -1218,8 +1218,12 @@ int f_gpio_write(int arglist, int th){
 	    error(WRONG_ARGS, "gpio-write", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT,"gpio-write ", arg1, th);
+    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 40)
+        error(WRONG_ARGS, "gpio-write", arg1, th); 
     if(!integerp(arg2))
         error(NOT_INT,"gpio-write ", arg2, th);
+    if(!(GET_INT(arg2) == 1) || GET_INT(arg2) ==)
+        error(WRONG_ARGS, "gpio-write", arg2, th); 
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
@@ -1232,11 +1236,14 @@ int f_gpio_write(int arglist, int th){
 int f_gpio_read(int arglist, int th){
     int arg1,res;
 
+    
+    arg1 = car(arglist); //pin
     if (length(arglist) != 1)
 	    error(WRONG_ARGS, "gpio-read ", arglist, th);
-    arg1 = car(arglist); //pin
     if(!integerp(arg1))
         error(NOT_INT, "gpio-read ", arg1, th);
+    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 40)
+        error(WRONG_ARGS, "gpio-write", arg1, th); 
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line) 
@@ -1249,10 +1256,11 @@ int f_gpio_read(int arglist, int th){
 int f_gpio_event_request(int arglist, int th){
     int arg1,arg2,res;
     
-    if (length(arglist) != 2)
-	    error(WRONG_ARGS, "gpio-event-request ", arglist, th);
+    
     arg1 = car(arglist);
     arg2 = cadr(arglist);
+    if (length(arglist) != 2)
+	    error(WRONG_ARGS, "gpio-event-request ", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT,"gpio-event-request ", arglist, th);
     if(!(eqp(arg2,make_sym("rising")) || 
@@ -1270,16 +1278,22 @@ int f_gpio_event_request(int arglist, int th){
     else 
         res = gpiod_line_request_both_edges_events(line, "easy-islisp");
 
-    return(make_int(res));
+    if(res==1)
+        return(T);
+    else 
+        return(NIL);
+
+    return(NIL);
 }
 
 int f_gpio_event_wait(int arglist, int th){
     int arg1,arg2,res;
 
-    if (length(arglist) != 2)
-	    error(WRONG_ARGS, "gpio-event-wait ", arglist, th);
+    
     arg1 = car(arglist);  //pin
     arg2 = cadr(arglist); //timeout
+    if (length(arglist) != 2)
+	    error(WRONG_ARGS, "gpio-event-wait ", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT,"gpio-event-wait ", arg1, th);
     if(!integerp(arg2))
@@ -1290,15 +1304,24 @@ int f_gpio_event_wait(int arglist, int th){
         error(SYSTEM_ERR, "gpio-event-wait ", arglist, th);
     struct timespec ts = { GET_INT(arg2)/1000, (GET_INT(arg2)%1000)*1000000 };
     res = gpiod_line_event_wait(line, &ts);
-    return(make_int(res));
+    if(res < 0)
+        error(SYSTEM_ERR,"gpio-event-wait ",arglist,th);
+
+    if(res == 1)
+        return(T);
+    else 
+        return(NIL);
+
+    return(NIL);
 }
 
 int f_gpio_event_read(int arglist, int th){
     int arg1;
 
+    
+    arg1 = car(arglist); //pin
     if (length(arglist) != 1)
 	    error(WRONG_ARGS, "gpio-event-read ", arglist, th);
-    arg1 = car(arglist); //pin
     if(!integerp(arg1))
         error(NOT_INT, "gpio-event-read ", arglist, th);
 

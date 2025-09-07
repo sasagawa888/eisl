@@ -995,9 +995,9 @@ int f_pwm_set_mode(int arglist, int th)
 
     arg1 = car(arglist);
 
-    if (arg1 == make_sym("pwm-mode-ms"))
+    if (arg1 == make_sym("PWM-MODE-MS"))
 	pwmSetMode(PWM_MODE_MS);
-    else if (arg1 == make_sym("pwm-mode-bal"))
+    else if (arg1 == make_sym("PWM-MODE-BAL"))
 	pwmSetMode(PWM_MODE_BAL);
     else
 	error(WRONG_ARGS, "pwm-set-mode", arg1, th);

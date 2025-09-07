@@ -1047,7 +1047,7 @@ int f_pin_mode(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     if (!integerp(arg1))
-	error(NOT_INT, "pin-,mode", arg1, th);
+	error(NOT_INT, "pin-mode", arg1, th);
 
     x = GET_INT(arg1);
     if (arg2 == make_sym("intput"))

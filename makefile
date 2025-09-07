@@ -48,11 +48,17 @@ OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_LISP := $(SRC_LISP:.lsp=.o)
 
 ifeq  ($(shell uname -n),raspberrypi)
-	ifeq ($(USE_WIRINGPI),1)
-		CFLAGS += -D__rpi__
-		LIBS += -lwiringPi
-	endif
+ifeq ($(USE_WIRINGPI),1)
+CFLAGS += -D__rpi__
+LIBS += -lwiringPi
 endif
+endif
+
+ifeq  ($(shell uname -n),raspberrypi)
+CFLAGS += -D__rpigpio__
+LIBS += -lgpiod
+endif
+
 
 PREFIX := /usr/local
 SHAREDIR ?= $(PREFIX)/share/eisl

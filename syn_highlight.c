@@ -93,6 +93,8 @@ static const char *extended[] = {
     "mp-report", "mp-eval", "dp-setid", "dp-senderr", "dp-and", "dp-or",
     "dp-create", "dp-let", "dp-close", "dp-eval", "dp-transfer", "dp-halt",
     "dp-load", "dp-compile", "dp-call", "dp-exec", "dp-trace", "dp_untrace", 
+    "gpio-init", "gpio-set-mode", "gpio-write", "gpio-read", "gpio-event-request",
+    "gpio-event-wait", "gpio-event-read", "gpio-close",
 };
 
 static bool in_syntax_table(const char *str)

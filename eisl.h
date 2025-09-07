@@ -1483,6 +1483,17 @@ int f_delay(int arglist, int th);
 int f_delay_microseconds(int arglist, int th);
 #endif
 
+#ifdef __rpigpio__
+int f_gpio_init(int arglist, int th);
+int f_gpio_set_mode(int arglist, int th);
+int f_gpio_write(int arglist, int th);
+int f_gpio_read(int arglist, int th);
+int f_gpio_event_request(int arglist, int th);
+int f_gpio_event_wait(int arglist, int th);
+int f_gpio_event_read(int arglist, int th);
+int f_gpio_close(int arglist, int th);
+#endif
+
 void debugger(int th);
 void ntt_test();
 

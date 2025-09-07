@@ -1218,7 +1218,7 @@ int f_gpio_write(int arglist, int th){
 	    error(WRONG_ARGS, "gpio-write", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT,"gpio-write ", arg1, th);
-    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 40)
+    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
         error(WRONG_ARGS, "gpio-write", arg1, th); 
     if(!integerp(arg2))
         error(NOT_INT,"gpio-write ", arg2, th);
@@ -1242,8 +1242,8 @@ int f_gpio_read(int arglist, int th){
 	    error(WRONG_ARGS, "gpio-read ", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT, "gpio-read ", arg1, th);
-    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 40)
-        error(WRONG_ARGS, "gpio-write", arg1, th); 
+    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+        error(WRONG_ARGS, "gpio-read", arg1, th); 
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line) 
@@ -1257,12 +1257,14 @@ int f_gpio_event_request(int arglist, int th){
     int arg1,arg2,res;
     
     
-    arg1 = car(arglist);
-    arg2 = cadr(arglist);
+    arg1 = car(arglist);  // pin
+    arg2 = cadr(arglist); // mode
     if (length(arglist) != 2)
 	    error(WRONG_ARGS, "gpio-event-request ", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT,"gpio-event-request ", arglist, th);
+    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+        error(WRONG_ARGS, "gpio-event-request", arg1, th); 
     if(!(eqp(arg2,make_sym("rising")) || 
         eqp(arg2,make_sym("falling")) ||
         eqp(arg2,make_sym("both"))))
@@ -1278,7 +1280,7 @@ int f_gpio_event_request(int arglist, int th){
     else 
         res = gpiod_line_request_both_edges_events(line, "easy-islisp");
 
-    if(res==1)
+    if(res==0)
         return(T);
     else 
         return(NIL);
@@ -1296,6 +1298,8 @@ int f_gpio_event_wait(int arglist, int th){
 	    error(WRONG_ARGS, "gpio-event-wait ", arglist, th);
     if(!integerp(arg1))
         error(NOT_INT,"gpio-event-wait ", arg1, th);
+    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+        error(WRONG_ARGS, "gpio-event-wait", arg1, th); 
     if(!integerp(arg2))
         error(NOT_INT,"gpio-event-wait ", arg2, th);
 

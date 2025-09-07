@@ -3,6 +3,16 @@ Currently, only IPv4 is supported. There are plans to support IPv6 in the future
 The functionality is minimal. If you need any additional features, please write in the issues.
 Pull requests are also welcome.
 
+
+| Function                      | Description                                    |
+| ----------------------------- | ---------------------------------------------- |
+| (create-server-socket port)   | create socket for server see TCPIP.md          |
+| (create-client-socket port ip)| create socket for client see TCPIP.md          |
+| (send-socket socket str)      | send message to socket                         |
+| (recv-socket socket)          | receive message from socket                    |
+| (close-socket socket)         | close socket                                   |
+  
+
 # Specifications
 - (create-server-socket port)
 Creates and returns a socket as a server based on the port number.

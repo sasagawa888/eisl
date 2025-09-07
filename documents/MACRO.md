@@ -24,11 +24,12 @@ Thanks to Mr. Hiroi.
 ```
 
 # Usage
-If you need speed, compile first.
+If you need speed, compile first. 
 
 ```lisp
+make lisp
+
 (import "compiler")
-(compile-file "library/macro.lsp)
 ```
 
 ```

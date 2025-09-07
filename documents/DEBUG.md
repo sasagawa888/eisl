@@ -1,5 +1,12 @@
 # Debug
 
+- (trace fn1 fn2 ... fn)
+- (untrace fn1 fn2 ... fn) or (untrace)
+- (backtrace)
+- (break)
+- (macroexpand-1)
+
+
 ## trace
 
 Puts the user-defined function in the trace state.

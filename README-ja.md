@@ -175,128 +175,14 @@ EISLはエディタを備えています。
 (edit "tests/foo.lsp")
 ```
 
-
-## WiringPi
-
-Raspberry PiにおいてはEislはWiringPiの組込み関数を含みます。
-
-
-```lisp
-EISL <==================================> C
-(wiringpi-spi-setup ch speed) <===> wiringPiSPISetup (SPI_CH, SPI_SPEED)
-(wiringpi-setup-gpio ) <===> wiringPiSetupGpio()
-(pin-mode n 'output) <====> pinMode(n, OUTPUT) or 'input -> INPUT 'pwm-output -> PWM-OUTPUT
-(digital-write n v) <===> digitalWrite(n, v)
-(digital-write-byte v) <===> digitalWriteByte(value)
-(digital-read pin) <===> digitalRead(pin)
-(delay-seconds howlong) <===> void delay(unsigned int howLong)
-(delay-microseconds howlong) <===> void delayMicroseconds(unsigned int howLong)
-(pull-up-dn-control pin pud) <===> pullUpDnControl(pin,pud)
-(pwm-set-mode 'pwm-mode-ms) <===> pwmSetMode(PWM_MODE_MS); or 'pwm-mode-bal -> PWM_MODE_BAL
-(pwm-set-clock n) <===> pwmSetClock(n)
-(pwm-set-range n) <===> pwmSetRange(n)
-(pwm-write pin value) <===> pwmWrite(pin , value)
-```
-
-
-### 例
-
-```lisp
-;; LED点滅
-
-(defglobal pin 5)
-(defglobal flag nil)
-
-(defun test (n)
-   (cond ((null flag) (wiringpi-setup-gpio)(setq flag t)))
-   (pin-mode pin 'output)
-   (for ((i 0 (+ i 1)))
-        ((> i n) t)
-        (digital-write pin 1)
-        (delay-seconds 1)
-        (digital-write pin 0)
-        (delay-seconds 1)))
-
-
-;; サーボモータを制御する。
-;; SG90 Micro servo Digital 9g
-
-(defun setup ()
-  (cond ((null flag) (wiringpi-setup-gpio ) (setq flag t)))
-  (pin-mode 18 'pwm-output)
-  (pwm-set-mode 'pwm-mode-ms)
-  (pwm-set-clock 400)
-  (pwm-set-range 1024))
-
-(defun test (n)
-   (pwm-write 18 n))
-```
-
-
 ## デバッグ用関数
-- `(trace fn1 fn2 ... fn)`
-- `(untrace fn1 fn2 ... fn)`又は`(untrace)`
-- `(backtrace)`
-- `(break)`
-- `(macroexpand-1)`
-
+documents/DEBUG.md を参照してください。
 
 ## 拡張関数
-- `(atom x)` xが非consならTをそうでないならNILを返す
-- `(eval x)` S式 x を評価する
-- `(nconc x y)` リストｘとリストｙを破壊的にappendする。 
-- `(random n)` 0からnまでの無作為な整数
-- `(random-real)` 0から1までの無作為な浮動小数
-- `(set-random n)` 乱数生成の種として非負整数ｎを与える 
-- `(gbc)` ガーベッジコレクション (GC) を実行.
-  - `(gbc t)` GC実行時に通達する。
-  - `(gbc nil)` GC実行時に通達しない。
-- `(heapdump n)`ｎ番目のセルからダンプリストを表示する。
-- `(instance n)`ｎ番目のセルの実体を表示する。
-- `(defmodule name body)` tests/module.lsp 参照
-- `(import lib)` ライブラリをインポートする。
-- `(quit)` インタプリタを終了する。
-- `(getenv var)`  OSから環境変数を取得する　例　(getenv "EASY_ISLISP)
-- `(line-argument n)` OSからｎ番目の起動オプションを取得する。ゼロスタート
-- `(line-argument)` OSからすべての起動オプションを取得する。
-- `(print obj)` objを標準ストリームに出力する。
-- `(system cmd)` コマンド(cmd)をbashに送る　例 (system "ls")
-- `(funcp x)` xがユーザー定義関数名ならばTをそうでなければNILを返す。
-- `(subrp x)` xが組込関数ならばTをそうでなければNILを返す。
-- `(macrop x)` xがマクロならばTをそうでなければNILを返す。
-- `(fixnump x)` xが32bit小整数ならばTを、そうでなければNILを返す。
-- `(longnump x)` xが64bit小整数ならばTを、そうでなければNILを返す。
-- `(bignump x)` xが巨大整数ならばTをそうでなければNILを返す。
-- `(macroexpand-1 x)` S式であるｘを１度だけマクロ展開する。
-- `(macroexpand-all x)` S式であるｘを完全にマクロ展開する。
+documents/EXTENDED.md を参照してください。
 
 # 並列関数
-- `(mp-create n)` n個のプロセスを生成する。PARA.mdを参照
-- `(mp-call fun a1 ... an)` マルチプロセス並列でfunに引数を適用する。PARA.mdを参照
-- `(mp-exec s1 ... sn)`  prognの並列版。PARA.mdを参照
-- `(mp-and s1 ... sn)`  andの並列部分実行版。PARA.mdを参照
-- `(mp-or s1 ... sn)`  orの並列部分実行版。PARA.mdを参照
-- `(mp-eval n exp)`  n番目の子lispでexpを評価する。PARA.mdを参照
-- `(mp-close)`  すべてのプロセスを閉じる。PARA.mdを参照
-- `(mt-create n)` n個のスレッドを生成する。PARA1.mdを参照
-- `(mt-call fun a1 ... an)` マルチスレッド並列でfunに引数を適用する。PARA1.mdを参照
-- `(mt-exec s1 ... sn)`  prognの並列版。PARA1.mdを参照
-- `(mt-let forms body)`  letの並列版。PARA1.mdを参照
-- `(mt-lock s1 ... sn)`  ミューテックスをかけたprogn。PARA1.mdを参照
-- `(mt-close)`  すべてのスレッドを閉じる。PARA1.mdを参照
-- `(dp-create n)` n個の分散を生成する。PARA2.mdを参照
-- `(dp-call fun a1 ... an)` 分散並列でfunに引数を適用する。PARA2.mdを参照
-- `(dp-exec s1 ... sn)`  prognの分散並列版。PARA2.mdを参照
-- `(dp-part sw s1 ... sn)`  prognの分散並列部分実行版。PARA2.mdを参照
-- `(dp-eval n exp)`  n番目の子lispでexpを評価する。PARA2.mdを参照
-- `(dp-transfer fn)`  ファイルをすべての子lispに転送する。PARA2.mdを参照
-- `(dp-compile fn)`  ファイルを親lisp及びすべての子lispでコンパイルする。PARA2.mdを参照
-- `(dp-load fn)`  ファイルを親lisp及びすべての子lispにロードする。PARA2.mdを参照
-- `(dp-close)`  すべての子機との通信を閉じる。PARA2.mdを参照
-- `(dp-halt)`　　すべての子機との通信を閉じるとともにシャットダウンする。PARA2.mdを参照
+documents/PARA.md を参照してください。
 
 # TCP/IP
-- `(create-server-socket n)` ポート番号ｎでサーバーとしてのソケットを生成する。
-- `(create-client-socket n ip)` ポート番号ｎでIPアドレスに対しソケットを生成する。
-- `(send-socket socket str)` socketに対して文字列strを送信する。
-- `(recv-socket socket)` socketから文字列を受信する。 
+documents/TCPIP.md を参照してください。

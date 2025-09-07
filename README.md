@@ -177,83 +177,13 @@ But note that it respects the UNIX convention of the `VISUAL` and `EDITOR` envir
 (edit file-name-string) example (edit "foo.lsp")
 
 # Functions for debug
-- (trace fn1 fn2 ... fn)
-- (untrace fn1 fn2 ... fn) or (untrace)
-- (backtrace)
-- (break)
-- (macroexpand-1)
+see documents/DEBUG/md
 
 # Extended functions
-
-| Function              | Description                                    |
-| --------------------- | ---------------------------------------------- |
-| (atom x)              | is x not cons? return T or NIL                 |
-| (eval x)              | evaluate s-expression x                        |
-| (nconc x y)           | append list x and list y  destructively        |
-| (random n)            | random-integer from 0 to n                     |
-| (random-real)         | random-float-number from 0 to 1                |
-| (set-random n)        | set random seed to non-negative number n       |
-| (gbc)                 | invoke garbage collection.                     |
-| (gbc t)               | display message when invoke GC.                |
-| (gbc nil)             | not display message when invoke GC.            |
-| (heapdump n)          | display cell dump list from nth address        |
-| (instance n)          | display instance of nth address                |
-| (defmodule name body) | see tests/module.lsp                           |
-| (import x)            | import library. e.g. (import "compiler")       |
-| (quit)                | quit from interpreter                          |
-| (load filename)       | load code from file e.g. (load "foo.lsp")      |
-| (getenv var)          | get environment-var e.g. (getenv "EASY_ISLISP")|
-| (line-argument n)     | get nth argument from OS. n is zero base       |
-| (line-argument)       | get all arguments from OS.                     |
-| (print obj)           | print obj to standard-stream                   |
-| (system cmd)          | send bash command e.g. (system "ls")           |
-| (funcp x)             | is x user-defined-function? return T or NIL    |
-| (subrp x)             | is x subr? return T or NIL                     |
-| (macrop x)            | is x macros? return T or NIL                   |
-| (fixnump x)           | is x fixnum?(32bit) return T or NIL            |
-| (longnump x)          | is x longnum?(64bit) return T or NIL           |
-| (bignump x)           | is x bignum? return T or NIL                   |
-| (macroexpand-1 x)     | macroexpand x only once                        |
-| (macroexpand-all x)   | macroexpand x completely                       |
+see documents/EXTENDED.md
 
 # Parallel functions
-
-| Function              | Description                                    |
-| --------------------- | ---------------------------------------------- |
-| (mp-create n)         | create n processes. see PARA.md                |   
-| (mp-call fun a1 .. an)| apply fun args with multi-process. see PARA.md |
-| (mp-exec s1 ... sn)   | progn with multi-process. see PARA.md          |
-| (mp-and s1 ... sn)    | parallel and with multi-process. see PARA.md   |    
-| (mp-or s1 ... sn)     | parallel and with multi-process. see PARA.md   | 
-| (mp-eval n exp)       | evaluate exp in nth child Lisp                 |
-| (mp-close)            | close all process. see PARA.md                 |
-| (mt-create n)         | create n threads. see PARA1.md                 |
-| (mt-call fun a1 .. an)| apply fun args with multi-thread.see PARA1.md  |
-| (mt-exec s1 ... sn)   | progn with multi-thread. see PARA1.md          |
-| (mt-lock s1 ... sn)   | progn with mutex multi-thread. see PARA1.md    |
-| (mt-close)            | close all threads. see PARA1.md                |
-| (dp-create n)         | create n distributions. see PARA2.md           |
-| (dp-call fun a1 .. an)| apply fun args with distributed. see PARA2.md  |
-| (dp-exec s1 ... sn)   | progn with distributed. see PARA2.md           |
-| (dp-and s1 ... sn)    | parallel and with distributed. see PARA2.md    |
-| (dp-or s1 ... sn)     | parallel or with distributed. see PARA2.md     |
-| (dp-transfer fn)      | transfer file to all child Lisp. see PARA2.md  |
-| (dp-compile fn)       | compile file in all child Lisp. see PARA2md    |
-| (dp-load fn)          | load file to parent and all child Lisp.PARA2.md|
-| (dp-close)            | close all distributions. see PARA2.md          |
-| (dp-halt)             | close all childs and shutdown see PARA2.md     |
+see documents/PARA.md
 
 # TCP/IP functions
-
-| Function                      | Description                                    |
-| ----------------------------- | ---------------------------------------------- |
-| (create-server-socket port)   | create socket for server see TCPIP.md          |
-| (create-client-socket port ip)| create socket for client see TCPIP.md          |
-| (send-socket socket str)      | send message to socket                         |
-| (recv-socket socket)          | receive message from socket                    |
-| (close-socket socket)         | close socket                                   |
-  
-
-
-
-
+see documents/TCPIP.md

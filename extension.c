@@ -1222,7 +1222,7 @@ int f_gpio_write(int arglist, int th){
         error(WRONG_ARGS, "gpio-write", arg1, th); 
     if(!integerp(arg2))
         error(NOT_INT,"gpio-write ", arg2, th);
-    if(!(GET_INT(arg2) == 1) || GET_INT(arg2) ==)
+    if(!(GET_INT(arg2) == 1 || GET_INT(arg2) == 0))
         error(WRONG_ARGS, "gpio-write", arg2, th); 
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));

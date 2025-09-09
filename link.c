@@ -212,7 +212,7 @@ void dynamic_link(int x)
     /* float input type */
     init_f8(MAKEDOUBLEFLT_IDX, make_double_flt);
 
-    init_deftfunc((tfunc) def_subr);
+    init_deftfunc((tfunc) def_compiled);
     init_tfunctions();
     init_declare();
 

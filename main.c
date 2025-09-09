@@ -1882,6 +1882,13 @@ int eval(int addr, int th)
 	    if (prof_sw == 1)
 		profiler(car(addr), en - st);
 	    return (res);
+	} else if (compiledp(car(addr))) {
+	    st = getETime();
+	    res = apply(caar(addr), evlis(cdr(addr), th), th);
+	    en = getETime();
+	    if (prof_sw == 1)
+		profiler(car(addr), en - st);
+	    return (res);
 	} else if ((val = functionp(car(addr)))) {
 	    if (GET_CDR(car(addr)) != NIL)
 		error(UNDEF_FUN, "eval", addr, th);
@@ -1918,7 +1925,7 @@ DEF_GETTER(char, TR, trace, NIL)
 int apply(int func, int args, int th)
 {
     int varlist, body, res, i, n, pexist, qexist, trace;
-    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR
+    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == COMPILED
 	     || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO
 	     || GET_TAG(func) == GENERIC) && (GET_TAG(args) == LIS
 					      || GET_TAG(args) == SYM));
@@ -1934,6 +1941,7 @@ int apply(int func, int args, int th)
 
     switch (GET_TAG(func)) {
     case SUBR:
+	case COMPILED:
 	return ((GET_SUBR(func)) (args, th));
     case FSUBR:
 	return ((GET_SUBR(func)) (args, th));
@@ -2308,6 +2316,12 @@ void def_subr(const char *symname, int (*func)(int, int))
 void def_fsubr(const char *symname, int (*func)(int, int))
 {
     bind_func(symname, FSUBR, func);
+}
+
+/* compiled function regist subr to environment. */
+void def_compiled(const char *symname, int (*func)(int, int))
+{
+    bind_func(symname, COMPILED, func);
 }
 
 

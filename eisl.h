@@ -102,7 +102,7 @@ typedef enum __packed { EMP, INTN, FLTN, LONGN, BIGN, VEC, ARR, CHR, STR,
 	SYM,
     LIS, DUMMY,
     SUBR, FSUBR, FUNC, MACRO, CLASS, INSTANCE, GENERIC, METHOD,
-    STREAM
+    STREAM, COMPILED
 } tag_t;
 typedef enum __packed { FRE, USE } flag;
 
@@ -420,10 +420,10 @@ static inline bool IS_INTEGER(int addr)
 }
 
 DEF_PREDICATE(BIGNNUM, BIGN)
-    DEF_PREDICATE(LONGNUM, LONGN)
-    DEF_PREDICATE(FLOAT, FLTN)
-    DEF_PREDICATE(LIST, LIS)
-    DEF_PREDICATE(STRING, STR)
+DEF_PREDICATE(LONGNUM, LONGN)
+DEF_PREDICATE(FLOAT, FLTN)
+DEF_PREDICATE(LIST, LIS)
+DEF_PREDICATE(STRING, STR)
 static inline bool IS_NIL(int addr)
 {
     return (addr == NIL);
@@ -435,13 +435,14 @@ static inline bool IS_T(int addr)
 }
 
 DEF_PREDICATE(VECTOR, VEC)
-    DEF_PREDICATE(ARRAY, ARR)
-    DEF_PREDICATE(SUBR, SUBR)
-    DEF_PREDICATE(FSUBR, FSUBR)
-    DEF_PREDICATE(FUNC, FUNC)
-    DEF_PREDICATE(MACRO, MACRO)
-    DEF_PREDICATE(CLASS, CLASS)
-    DEF_PREDICATE(GENERIC, GENERIC)
+DEF_PREDICATE(ARRAY, ARR)
+DEF_PREDICATE(SUBR, SUBR)
+DEF_PREDICATE(FSUBR, FSUBR)
+DEF_PREDICATE(COMPILED, COMPILED)
+DEF_PREDICATE(FUNC, FUNC)
+DEF_PREDICATE(MACRO, MACRO)
+DEF_PREDICATE(CLASS, CLASS)
+DEF_PREDICATE(GENERIC, GENERIC)
 static inline bool HAS_NAME(int addr, const char *x)
 {
     REQUIRE(CELLRANGE(addr) && heap[addr].name != NULL);
@@ -826,6 +827,7 @@ int check_gbc(int th);
 int classp(int x);
 int class_symbol_p(int x);
 int clear_child_signal(void);
+int compiledp(int addr);
 int cons(int car, int cdr);
 int copy(int x);
 int count_args(int ls);
@@ -1379,6 +1381,7 @@ void *concurrent(void *arg);
 void cut_zero(int x);
 void def_fsubr(const char *symname, int (*func)(int, int));
 void def_subr(const char *symname, int (*func)(int, int));
+void def_compiled(const char *symname, int (*func)(int, int));
 void drop_char(char buf[]);
 void error(int errnum, const char *fun, int arg, int th);
 void exit_para(void);

@@ -207,6 +207,16 @@ int fsubrp(int addr)
 	return (0);
 }
 
+int compiledp(int addr)
+{
+
+    if (IS_COMPILED(GET_CAR(addr)))
+	return (1);
+    else
+	return (0);
+}
+
+
 int functionp(int addr)
 {
     int val;

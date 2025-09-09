@@ -1568,7 +1568,7 @@ int f_mapcar(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "mapcar", arg1, th);
     return (mapcar(arg1, arg2, th));
 }
@@ -1617,7 +1617,7 @@ int f_mapc(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "mapc", arg1, th);
 
     return (mapc(arg1, arg2, th));
@@ -1646,7 +1646,7 @@ int f_maplist(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "maplist", arg1, th);
 
     return (maplist(arg1, arg2));
@@ -1682,7 +1682,7 @@ int f_mapl(int arglist, int th)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "mapl", arg1, th);
 
     return (mapl(arg1, arg2));
@@ -1708,7 +1708,7 @@ int f_mapcon(int arglist, int th)
     arg1 = car(arglist);
     arg2 = cdr(arglist);
 
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "mapcon", arg1, th);
 
     return (mapcon(arg1, arg2));
@@ -1735,7 +1735,7 @@ int f_mapcan(int arglist, int th)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "mapcan", arg1, th);
     return (mapcan(arg1, arg2));
 }
@@ -2465,7 +2465,7 @@ int f_apply(int arglist, int th)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "apply", arg1, th);
     if (!listp(last(arg2)))
 	error(NOT_LIST, "apply", last(arg2), th);
@@ -2489,7 +2489,7 @@ int f_funcall(int arglist, int th)
 
     arg1 = car(arglist);
     arg2 = cdr(arglist);
-    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)))
+    if (!(IS_FUNC(arg1)) && !(IS_SUBR(arg1)) && !(IS_COMPILED(arg1)))
 	error(NOT_FUNC, "funcall", arg1, th);
     res = apply(arg1, arg2, th);
     return (res);

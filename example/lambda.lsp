@@ -187,3 +187,32 @@ parse
 ;($test (reduce '((^ x x) y) ) y)
 ;($test (reduce '((^ x a) y) ) a)
 
+#|
+; -------------------------
+; α変換テストケース
+; -------------------------
+
+; 単純なネスト
+($test (alpha-convert (^ x x)) (^ x0 x0))
+($test (alpha-convert (^ x (^ x x))) (^ x0 (^ x1 x1)))
+
+; 自由変数は変えない
+($test (alpha-convert (^ x (y x))) (^ x0 (y x0)))
+($test (alpha-convert (^ x (^ y (x y)))) (^ x0 (^ y0 (x0 y0))))
+
+; 関数適用とネスト
+($test (alpha-convert ((^ x x) (^ x x))) ((^ x0 x0) (^ x1 x1)))
+($test (alpha-convert ((^ x (^ x x)) (^ x x))) ((^ x0 (^ x1 x1)) (^ x2 x2)))
+
+; 長いラムダ列
+($test (alpha-convert (^ x (^ x (^ x x)))) (^ x0 (^ x1 (^ x2 x2))))
+($test (alpha-convert (^ x (^ y (^ x (^ y x))))) (^ x0 (^ y0 (^ x1 (^ y1 x1)))))
+
+; 複雑な式
+($test (alpha-convert (^ x ((^ x x) x))) (^ x0 ((^ x1 x1) x0)))
+($test (alpha-convert (^ x (^ x ((^ x x) x)))) (^ x0 (^ x1 ((^ x2 x2) x1))))
+
+; 関数適用と自由変数混在
+($test (alpha-convert ((^ x (^ y (x y))) z)) ((^ x0 (^ y0 (x0 y0))) z))
+($test (alpha-convert ((^ x (^ y (x y))) (^ x x))) ((^ x0 (^ y0 (x0 y0))) (^ x1 x1)))
+|#

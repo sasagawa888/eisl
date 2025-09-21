@@ -168,6 +168,26 @@ parse
           (t (cons (replace arg (car body) y)
                    (replace arg (cdr body) y)))))
 
+(defun alpha (x)
+    (if (lambda-p x)
+        (alpha1 x (cadr x) 0)
+        x))
+
+(defun alpha1 (x a n)
+    (cond ((null x) nil)
+          ((and (symbolp x) (eq x a)) (alpha2 a n))
+          ((symbolp x) x)
+          ((lambda-p x) (alpha1 x (cadr x) (+ n 1)))
+          (t (cons (alpha1 (car x) a n)
+                   (alpha1 (cdr x) a n)))))
+
+(defun alpha2 (a n)
+    (let* ((a1 (convert a <string>))
+           (n1 (convert n <string>)))
+        (convert (string-append a1 n1) <symbol>)))
+
+    
+
 
 ;;--------------tests------------------------
 ($test (parse* "^X.X") (^ x x))

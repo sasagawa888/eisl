@@ -2,7 +2,7 @@
 Prolog interpreter in ISLisp
 
 # import
-(import "prolog")
+(load "./example/prolog.lsp")
 
 # usage as Prolog intepreter
 

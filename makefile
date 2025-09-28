@@ -26,7 +26,6 @@ SRC_LISP := library/bit.lsp \
 	    library/regex.lsp \
 	    library/tcltk.lsp \
 	    library/virtty.lsp \
-		library/prolog.lsp \
 		library/datetime.lsp \
 		library/plot.lsp \
 		library/unistd.lsp 

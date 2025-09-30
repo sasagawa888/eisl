@@ -1,9 +1,4 @@
 
 (defun foo (x)
-    (lambda (x) x))
+    (+ x 3))
 
-(defun bar (x)
-    (lambda (y) x))
-
-(defun setup ()
-        (set-property (lambda (x env) (assert x env)) 'assert 'builtin))

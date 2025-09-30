@@ -170,14 +170,14 @@ parse
 
 (defun alpha (x)
     (if (lambda-p x)
-        (alpha1 x (cadr x) 0)
+        (cons '^ (alpha1 (cdr x) (cadr x) 0))
         x))
 
 (defun alpha1 (x a n)
     (cond ((null x) nil)
-          ((and (symbolp x) (eq x a)) (alpha2 a n))
+          ((eq x a) (alpha2 a n))
           ((symbolp x) x)
-          ((lambda-p x) (alpha1 x (cadr x) (+ n 1)))
+          ((lambda-p x) (cons '^ (alpha1 (cdr x) (cadr x) (+ n 1))))
           (t (cons (alpha1 (car x) a n)
                    (alpha1 (cdr x) a n)))))
 
@@ -207,17 +207,14 @@ parse
 ;($test (reduce '((^ x x) y) ) y)
 ;($test (reduce '((^ x a) y) ) a)
 
+($test (alpha '(^ x x)) (^ x0 x0))
+($test (alpha '(^ x (^ x x))) (^ x0 (^ x1 x1)))
+($test (alpha '(^ x (y x))) (^ x0 (y x0)))
 #|
-; -------------------------
-; α変換テストケース
-; -------------------------
 
-; 単純なネスト
-($test (alpha-convert (^ x x)) (^ x0 x0))
-($test (alpha-convert (^ x (^ x x))) (^ x0 (^ x1 x1)))
 
 ; 自由変数は変えない
-($test (alpha-convert (^ x (y x))) (^ x0 (y x0)))
+
 ($test (alpha-convert (^ x (^ y (x y)))) (^ x0 (^ y0 (x0 y0))))
 
 ; 関数適用とネスト

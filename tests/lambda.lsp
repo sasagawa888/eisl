@@ -177,7 +177,9 @@ parse
     (cond ((null x) nil)
           ((eq x a) (alpha2 a n))
           ((symbolp x) x)
-          ((lambda-p x) (cons '^ (alpha1 (cdr x) (cadr x) (+ n 1))))
+          ((lambda-p x) 
+            (let ((y (alpha3 (cdr x) a n (cadr x))))
+              (cons '^ (alpha1 y (cadr x) (+ n 1)))))
           (t (cons (alpha1 (car x) a n)
                    (alpha1 (cdr x) a n)))))
 
@@ -186,7 +188,13 @@ parse
            (n1 (convert n <string>)))
         (convert (string-append a1 n1) <symbol>)))
 
-    
+(defun alpha3 (x a n b)
+    (cond ((null x ) nil)
+          ((eq x b) b)
+          ((eq x a) (alpha2 a n))
+          ((symbolp x) x)
+          (t (cons (alpha3 (car x) a n b)
+                    (alpha3 (cdr x) a n b)))))
 
 
 ;;--------------tests------------------------
@@ -210,6 +218,7 @@ parse
 ($test (alpha '(^ x x)) (^ x0 x0))
 ($test (alpha '(^ x (^ x x))) (^ x0 (^ x1 x1)))
 ($test (alpha '(^ x (y x))) (^ x0 (y x0)))
+($test (alpha '(^ x (^ y (x y)))) (^ x0 (^ y1 (x0 y1))))
 #|
 
 

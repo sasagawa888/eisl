@@ -1510,6 +1510,9 @@ void print(int addr)
     case FUNC:
 	print_obj("<function>");
 	break;
+	case COMPILED:
+	print_obj("<compiled>");
+	break;
     case MACRO:
 	print_obj("<macro>");
 	break;

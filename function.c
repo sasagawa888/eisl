@@ -1325,7 +1325,7 @@ int f_functionp(int arglist, int th)
     arg = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "functionp", arglist, th);
-    if (IS_FUNC(arg) || IS_SUBR(arg) || IS_GENERIC(arg))
+    if (IS_FUNC(arg) || IS_SUBR(arg) || IS_GENERIC(arg) || IS_COMPILED(arg))
 	return (T);
     else
 	return (NIL);

@@ -169,9 +169,14 @@ parse
                    (replace arg (cdr body) y)))))
 
 (defun alpha (x)
-    (if (lambda-p x)
-        (cons '^ (alpha1 (cdr x) (cadr x) 0))
-        x))
+    (cond ((lambda-p x) (alpha0 x 0))
+          ((symbolp x) x)
+          ((and (listp x) (= (length x) 2)) (list (alpha0 (car x) 0) (alpha0 (cadr x) 10))) 
+          (t x)))
+
+(defun alpha0 (x n)
+    (cond ((lambda-p x) (cons '^ (alpha1 (cdr x) (cadr x) n)))
+          (t x)))
 
 (defun alpha1 (x a n)
     (cond ((null x) nil)
@@ -219,7 +224,7 @@ parse
 ($test (alpha '(^ x (^ x x))) (^ x0 (^ x1 x1)))
 ($test (alpha '(^ x (y x))) (^ x0 (y x0)))
 ($test (alpha '(^ x (^ y (x y)))) (^ x0 (^ y1 (x0 y1))))
-($test (alpha '((^ x x) (^ x x))) ((^ x0 x0) (^ x1 x1)))
+($test (alpha '((^ x x) (^ x x))) ((^ x0 x0) (^ x10 x10)))
 #|
 
 

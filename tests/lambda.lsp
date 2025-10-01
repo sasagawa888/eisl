@@ -226,10 +226,11 @@ parse
 ($test (alpha '(^ x (^ y (x y)))) (^ x0 (^ y1 (x0 y1))))
 ($test (alpha '((^ x x) (^ x x))) ((^ x0 x0) (^ x10 x10)))
 ($test (alpha '((^ x (^ x x)) (^ x x))) ((^ x0 (^ x1 x1)) (^ x10 x10)))
+($test (alpha '(^ x (^ x (^ x x)))) (^ x0 (^ x1 (^ x2 x2))))
 #|
 
 ; 長いラムダ列
-($test (alpha-convert (^ x (^ x (^ x x)))) (^ x0 (^ x1 (^ x2 x2))))
+
 ($test (alpha-convert (^ x (^ y (^ x (^ y x))))) (^ x0 (^ y0 (^ x1 (^ y1 x1)))))
 
 ; 複雑な式

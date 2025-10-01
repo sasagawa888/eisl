@@ -198,8 +198,19 @@ parse
           ((eq x b) b)
           ((eq x a) (alpha2 a n))
           ((symbolp x) x)
+          ((lambda-p x) (cons '^ (cons (cadr x) (alpha3 (cddr x) a n (cadr x)))))
           (t (cons (alpha3 (car x) a n b)
                     (alpha3 (cdr x) a n b)))))
+
+(defun alpha4 (x a n b)
+    (cond ((null x) nil)
+          ((eq x b) x)
+          ((eq x a) (alpha2 a n))
+          ((symbolp x) x)
+          ((lambda-p x) 
+              (cons '^ (alpha4 y (cadr x) (+ n 1) b)))
+          (t (cons (alpha4 (car x) a n b)
+                   (alpha4 (cdr x) a n b)))))
 
 
 ;;--------------tests------------------------
@@ -227,17 +238,8 @@ parse
 ($test (alpha '((^ x x) (^ x x))) ((^ x0 x0) (^ x10 x10)))
 ($test (alpha '((^ x (^ x x)) (^ x x))) ((^ x0 (^ x1 x1)) (^ x10 x10)))
 ($test (alpha '(^ x (^ x (^ x x)))) (^ x0 (^ x1 (^ x2 x2))))
-#|
-
-; 長いラムダ列
-
-($test (alpha-convert (^ x (^ y (^ x (^ y x))))) (^ x0 (^ y0 (^ x1 (^ y1 x1)))))
-
-; 複雑な式
-($test (alpha-convert (^ x ((^ x x) x))) (^ x0 ((^ x1 x1) x0)))
-($test (alpha-convert (^ x (^ x ((^ x x) x)))) (^ x0 (^ x1 ((^ x2 x2) x1))))
-
-; 関数適用と自由変数混在
-($test (alpha-convert ((^ x (^ y (x y))) z)) ((^ x0 (^ y0 (x0 y0))) z))
-($test (alpha-convert ((^ x (^ y (x y))) (^ x x))) ((^ x0 (^ y0 (x0 y0))) (^ x1 x1)))
-|#
+;($test (alpha '(^ x (^ y (^ x (^ y x))))) (^ x0 (^ y1 (^ x2 (^ y3 x2)))))
+($test (alpha '(^ x ((^ x x) x))) (^ x0 ((^ x1 x1) x0)))
+($test (alpha '(^ x (^ x ((^ x x) x)))) (^ x0 (^ x1 ((^ x2 x2) x1))))
+($test (alpha '((^ x (^ y (x y))) z)) ((^ x0 (^ y1 (x0 y1))) z))
+($test (alpha '((^ x (^ y (x y))) (^ x x))) ((^ x0 (^ y1 (x0 y1))) (^ x10 x10)))

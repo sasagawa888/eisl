@@ -202,16 +202,6 @@ parse
           (t (cons (alpha3 (car x) a n b)
                     (alpha3 (cdr x) a n b)))))
 
-(defun alpha4 (x a n b)
-    (cond ((null x) nil)
-          ((eq x b) x)
-          ((eq x a) (alpha2 a n))
-          ((symbolp x) x)
-          ((lambda-p x) 
-              (cons '^ (alpha4 y (cadr x) (+ n 1) b)))
-          (t (cons (alpha4 (car x) a n b)
-                   (alpha4 (cdr x) a n b)))))
-
 
 ;;--------------tests------------------------
 ($test (parse* "^X.X") (^ x x))

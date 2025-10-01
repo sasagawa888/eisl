@@ -219,12 +219,9 @@ parse
 ($test (alpha '(^ x (^ x x))) (^ x0 (^ x1 x1)))
 ($test (alpha '(^ x (y x))) (^ x0 (y x0)))
 ($test (alpha '(^ x (^ y (x y)))) (^ x0 (^ y1 (x0 y1))))
+($test (alpha '((^ x x) (^ x x))) ((^ x0 x0) (^ x1 x1)))
 #|
 
-
-; 自由変数は変えない
-
-($test (alpha-convert (^ x (^ y (x y)))) (^ x0 (^ y0 (x0 y0))))
 
 ; 関数適用とネスト
 ($test (alpha-convert ((^ x x) (^ x x))) ((^ x0 x0) (^ x1 x1)))

@@ -168,10 +168,18 @@ parse
           (t (cons (replace arg (car body) y)
                    (replace arg (cdr body) y)))))
 
+(defun nestp (x)
+  (and (listp x) (not (lambda-p (car x))) (not (symbolp (car x)))))
+
 (defun alpha (x)
     (cond ((lambda-p x) (alpha0 x 0))
           ((symbolp x) x)
-          ((and (listp x) (= (length x) 2)) (list (alpha0 (car x) 0) (alpha0 (cadr x) 10))) 
+          ((and (listp x) (= (length x) 2) (nestp (car x)))
+            (alpha (alpha(car x)) (cadr x))) 
+          ((and (listp x) (= (length x) 2) (nestp (cadr x)))
+            (alpha (car x)) (alpha (cadr x)))   
+          ((and (listp x) (= (length x) 2))
+           (list (alpha0 (car x) 0) (alpha0 (cadr x) 10))) 
           (t x)))
 
 (defun alpha0 (x n)
@@ -249,8 +257,8 @@ parse
 
 ($test (alpha-beta '((^ x (^ x x)) y)) (^ x1 x1))
 
-;($test (alpha-beta '(((^ x (^ y (x y))) (^ z z)) (^ x x)))
-;       ((^ y1 ((^ z2 z2) y1)) (^ x10 x10)))
+($test (alpha-beta '(((^ x (^ y (x y))) (^ z z)) (^ x x)))
+       ((^ y1 ((^ z2 z2) y1)) (^ x10 x10)))
 
 ($test (alpha-beta '((^ x (^ y (^ x (y x)))) z))
        (^ y1 (^ x2 (y1 x2))))

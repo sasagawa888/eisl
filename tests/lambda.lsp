@@ -168,17 +168,13 @@ parse
           (t (cons (replace arg (car body) y)
                    (replace arg (cdr body) y)))))
 
-(defun nestp (x)
-  (and (listp x) (not (lambda-p (car x))) (not (symbolp (car x)))))
+(defun primitive-p (x)
+  (or (lambda-p x) (symbolp x)))
 
 (defun alpha (x)
     (cond ((lambda-p x) (alpha0 x 0))
-          ((symbolp x) x)
-          ((and (listp x) (= (length x) 2) (nestp (car x)))
-            (alpha (alpha(car x)) (cadr x))) 
-          ((and (listp x) (= (length x) 2) (nestp (cadr x)))
-            (alpha (car x)) (alpha (cadr x)))   
-          ((and (listp x) (= (length x) 2))
+          ((symbolp x) x)  
+          ((and (listp x) (= (length x) 2) (primitive-p (car x)) (primitive-p (cadr x)))
            (list (alpha0 (car x) 0) (alpha0 (cadr x) 10))) 
           (t x)))
 

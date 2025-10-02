@@ -48,7 +48,7 @@
     (cond ((catch 'exit
              (for ((s (read*) (read*)))
                   ((equal s 'end) (return-from repl t))
-                  (print* (reduce (combinator s))))) t)
+                  (print* (reduce (alpha (combinator s)))))) t)
           (t (prompt)(repl1)))))
 
 (defun read* ()

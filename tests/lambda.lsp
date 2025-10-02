@@ -222,10 +222,6 @@ parse
 ($test (parse* "ABCD") (((a b) c) d))
 ($test (parse* "A(B(C(D)))") (a (b (c d))))
 
-;($test (reduce 'y) y)
-;($test (reduce '(x y)) (x y))
-;($test (reduce '((^ x x) y) ) y)
-;($test (reduce '((^ x a) y) ) a)
 
 ($test (alpha '(^ x x)) (^ x0 x0))
 ($test (alpha '(^ x (^ x x))) (^ x0 (^ x1 x1)))
@@ -239,3 +235,22 @@ parse
 ($test (alpha '(^ x (^ x ((^ x x) x)))) (^ x0 (^ x1 ((^ x2 x2) x1))))
 ($test (alpha '((^ x (^ y (x y))) z)) ((^ x0 (^ y1 (x0 y1))) z))
 ($test (alpha '((^ x (^ y (x y))) (^ x x))) ((^ x0 (^ y1 (x0 y1))) (^ x10 x10)))
+
+
+(defun alpha-beta (x)
+    (let ((a (alpha x)))
+      (beta (car a) (cadr a))))
+
+($test (alpha-beta '((^ x x) y)) y)
+
+($test (alpha-beta '((^ x (y x)) z)) (y z))
+
+($test (alpha-beta '((^ x (^ y (x y))) z)) (^ y1 (z y1)))
+
+($test (alpha-beta '((^ x (^ x x)) y)) (^ x1 x1))
+
+;($test (alpha-beta '(((^ x (^ y (x y))) (^ z z)) (^ x x)))
+;       ((^ y1 ((^ z2 z2) y1)) (^ x10 x10)))
+
+($test (alpha-beta '((^ x (^ y (^ x (y x)))) z))
+       (^ y1 (^ x2 (y1 x2))))

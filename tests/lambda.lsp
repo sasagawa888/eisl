@@ -179,6 +179,8 @@ parse
           (t x)))
 
 ;; a is environment e.g. ((x . 2)(y . 1)(x . 0))
+;; When arguments with the same name are used, they must be distinguished.
+;; This is resolved by maintaining an association list of variables.
 (defun alpha1 (x a n)
     (cond ((null x) nil)
           ((assoc x a) (alpha2 x (cdr (assoc x a))))
@@ -195,6 +197,8 @@ parse
         (convert (string-append a1 n1) <symbol>)))
 
 ;; b is list of argument  e.g. (x y x)
+;; Free variables must be left unchanged.
+;; The arguments are kept in b and remain as they are.
 (defun alpha3 (x a n b)
     (cond ((null x ) nil)
           ((member x b) x)

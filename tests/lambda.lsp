@@ -178,7 +178,7 @@ parse
     (cond ((lambda-p x) (cons '^ (alpha1 (cdr x) (list (cons (cadr x) n)) n)))
           (t x)))
 
-;; a is environment ((x . 2)(y . 1)(x . 0))
+;; a is environment e.g. ((x . 2)(y . 1)(x . 0))
 (defun alpha1 (x a n)
     (cond ((null x) nil)
           ((assoc x a) (alpha2 x (cdr (assoc x a))))
@@ -194,6 +194,7 @@ parse
            (n1 (convert n <string>)))
         (convert (string-append a1 n1) <symbol>)))
 
+;; b is list of argument  e.g. (x y x)
 (defun alpha3 (x a n b)
     (cond ((null x ) nil)
           ((member x b) x)
@@ -201,7 +202,7 @@ parse
           ((symbolp x) x)
           ((lambda-p x) (cons '^ (cons (cadr x) (alpha3 (cddr x) a n (cons (cadr x) b)))))
           (t (cons (alpha3 (car x) a n b)
-                    (alpha3 (cdr x) a n b)))))
+                   (alpha3 (cdr x) a n b)))))
 
 
 ;;--------------tests------------------------

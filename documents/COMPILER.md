@@ -252,6 +252,7 @@ The prepared functions are as follows.
 | (c-define x y) | Insert #define. e.g. (c-define "MAXINT" "999999999")   |
 | (c-lang x)     | Insert a c language source. e.g. (c-lang "a = a + 1;") |
 | (c-option x [platform])   | Add a compile option. e.g. (c-option "-lwinmm"). Optional `platform` only adds for a particular platform. |
+| (c-return class) | By appending it at the end of a defun, you indicate to the type inference system the class of the result returned by a function implemented in C.  e.g. (c-return <string>)|
 
 `platform` above is an unquoted bareword linux, macos or openbsd.
 It does not have be quoted.

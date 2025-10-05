@@ -65,6 +65,7 @@ void init_exsubr(void)
     def_subr("C-DEFINE", f_ignore);
     def_subr("C-LANG", f_ignore);
     def_subr("C-OPTION", f_ignore);
+    def_subr("C-RETURN", f_ignore);
     def_subr("HEAPDUMP", f_heapdump);
     def_subr("INSTANCE", f_instance);
     def_subr("LINE-ARGUMENT", f_line_argument);

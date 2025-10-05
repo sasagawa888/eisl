@@ -1,4 +1,6 @@
 
-(defun foo (x)
-    (+ x 3))
+(defun foo ()
+    3)
 
+(defun bar (y)
+    (length (foo)))

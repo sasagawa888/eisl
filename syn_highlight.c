@@ -87,7 +87,7 @@ static const char *extended[] = {
     "pwm-set-clock", "pin-mode", "digital-write", "digital-read",
     "pwm-write", "pull-up-dn-control", "delay-seconds", "compile-file",
     "formatter", "line-argument", "getenv", "system",
-    "c-include", "c-define", "c-lang", "c-option", "try", "read_exp",
+    "c-include", "c-define", "c-lang", "c-option", "c-return", "try", "read_exp",
     "mt-create", "mt-let", "mt-call", "mt-exec", "mt-lock", "mt-close",
     "mp-create", "mp-exec", "mp-close", "mp-call", "mp-and", "mp-or",
     "mp-report", "mp-eval", "dp-setid", "dp-senderr", "dp-and", "dp-or",

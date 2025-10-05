@@ -185,8 +185,7 @@ defgeneric compile
     (defglobal not-need-res
                '(return-from go tagbody while the c-lang c-define c-include c-option))
     
-    (defglobal not-need-colon '(c-lang c-define c-include c-option)
-)
+    (defglobal not-need-colon '(c-lang c-define c-include c-option c-return))
     (defglobal builtin-class 
     '(<OBJECT> <BASIC-ARRAY> <GENERAL-ARRAY*> <BASIC-ARRAY*> <BASIC-VECTOR> <GENERAL-VECTOR>
        <STRING> <BUILT-IN-CLASS> <CHARACTER> <FUNCTION> <GENERIC-FUNCTION>
@@ -4257,6 +4256,7 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'let*)) (find-class (last (cdr (cdr x))) type-env))
               ((and (consp x) (eq (car x) 'while)) (class <null>))
               ((and (consp x) (eq (car x) 'lambda)) (class <function>))
+              ((and (consp x) (eq (car x) 'c-return)) (find-class (elt x 1) type-env))
               ((and (consp x) (macrop x)) (find-class (macroexpand-1 x) type-env))
               ((consp x) (class <object>))
               (t (class <object>))))

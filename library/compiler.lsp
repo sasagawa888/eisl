@@ -3974,7 +3974,7 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'labels)) (inference-labels x type-env))
               ((and (consp x) (eq (car x) 'flet)) (inference-labels x type-env))
               ((and (consp x) (eq (car x) 'function)) (inference-function x type-env))
-              ((and (consp x) (eq (car x) 'pcall)) (inference (cdr x) type-env))
+              ((and (consp x) (eq (car x) 'c-return)) type-env)
               ((and (consp x) (macrop x)) (inference (macroexpand-1 x) type-env))
               ((and (consp x) (member (car x) '(+ - * = > < >= <= /=)))
                (inference-numeric x type-env))

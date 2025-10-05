@@ -61,11 +61,11 @@ void init_exsubr(void)
     def_subr("BIGNUMP", f_bignump);
     def_subr("SELF-INTRODUCTION", f_self_introduction);
     def_subr("CLASSP", f_classp);
-    def_subr("C-INCLUDE", f_ignore);
-    def_subr("C-DEFINE", f_ignore);
-    def_subr("C-LANG", f_ignore);
-    def_subr("C-OPTION", f_ignore);
-    def_subr("C-RETURN", f_ignore);
+    def_fsubr("C-INCLUDE", f_ignore);
+    def_fsubr("C-DEFINE", f_ignore);
+    def_fsubr("C-LANG", f_ignore);
+    def_fsubr("C-OPTION", f_ignore);
+    def_fsubr("C-RETURN", f_ignore);
     def_subr("HEAPDUMP", f_heapdump);
     def_subr("INSTANCE", f_instance);
     def_subr("LINE-ARGUMENT", f_line_argument);

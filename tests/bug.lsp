@@ -1,10 +1,14 @@
 
 (defun foo ()
-    3)
+   3)
 
 (defun bar (y)
-    (length "asdf"))
+    (string-append 1 2))
 
 (defun test1 (x)
   (length x)
-  (string-append x "123"))
+  (string-append x "asdf"))
+
+(defun test2 (x)
+  (+ x 1)
+  (string-append x "asdf"))

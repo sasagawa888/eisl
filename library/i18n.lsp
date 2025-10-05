@@ -241,3 +241,4 @@
    (freelocale *latin-loc*)
    (iconv-close (car *iconvs*))
    (iconv-close (cdr *iconvs*)))
+

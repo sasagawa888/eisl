@@ -183,7 +183,7 @@ defgeneric compile
 
     (defglobal instream nil)
     (defglobal not-need-res
-               '(return-from go tagbody while the c-lang c-define c-include c-option))
+               '(return-from go tagbody while the c-lang c-define c-include c-option c-return))
     
     (defglobal not-need-colon '(c-lang c-define c-include c-option c-return))
     (defglobal builtin-class 
@@ -754,6 +754,7 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'c-define)) (comp-c-define x))
               ((and (consp x) (eq (car x) 'c-lang)) (comp-c-lang x))
               ((and (consp x) (eq (car x) 'c-option)) (comp-c-option x))
+              ((and (consp x) (eq (car x) 'c-return)) nil)
               ((and (consp x)
                     (= (length x) 3)
                     (member (car x) '(= < <= > >= + - * mod eq)))
@@ -3849,12 +3850,13 @@ defgeneric compile
     ;; for global defun
     (defglobal local-type-function nil)
     ;;for labels flet syntax
-    (defun warning (str x)
+    (defun warning (str x env)
         (format (standard-output)
-                "warning ~A ~A ~A~%"
+                "warning ~A ~A ~A ~A~%"
                 inference-name
                 str
-                x))
+                x 
+                env))
 
     ;;for debug
     (defpublic type* ()
@@ -3955,7 +3957,7 @@ defgeneric compile
               ((and (consp x) (eq (car x) 'not)) ; ignore not function
                type-env)
               ((and (consp x) (eq (car x) 'setq))
-               (cond ((not (symbolp (elt x 1))) (warning "setq type mismatch" (elt x 1)) type-env)
+               (cond ((not (symbolp (elt x 1))) (warning "setq type mismatch" (elt x 1) type-env) type-env)
                      (t (cons (cons (elt x 1) (find-class (elt x 2) type-env)) type-env))))
               ((and (consp x) (eq (car x) 'convert)) ; ignore convert function
                type-env)
@@ -3982,7 +3984,7 @@ defgeneric compile
                   (block exit-inference
                      (for ((type type-subr (cdr type)))
                           ((null type)
-                           (warning "subr type mismatch" x)
+                           (warning "subr type mismatch" x type-env)
                            'no )
                           (let ((new-env (inference-arg (cdr x) (cdr (car type)) type-env)))
                              (if (not (eq new-env 'no))
@@ -3991,7 +3993,7 @@ defgeneric compile
                (let ((type (find-function-type (car x))))
                   (if type
                       (inference-arg (cdr x) (elt type 1) type-env))))
-              (t (warning "can't inference " x) 'no)))
+              (t (warning "can't inference " x type-env) 'no)))
 
     ;; inference s-expressions
     ;; if all success return type-env else return 'no
@@ -4009,7 +4011,7 @@ defgeneric compile
                     (member (car (car x)) '(+ - * = > < >= <= /=)))
                (let ((new-env (inference (car x) type-env)))
                   (cond (new-env (inference-all1 (cdr x) new-env fn))
-                        (t (warning "numeric type mismatch" x) 'no))))
+                        (t (warning "numeric type mismatch" x type-env) 'no))))
               ((and (consp (car x)) (subrp (car (car x))))
                (let ((type-subr (property (car (car x)) 'inference)))
                   (block exit-all
@@ -4017,13 +4019,14 @@ defgeneric compile
                           ((null type)
                            'no )
                           (let ((new-env (inference-arg (cdr (car x)) (cdr (car type)) type-env)))
+                             (if (eq new-env 'no) (warning "type mismatch" (car x) type-env))
                              (if (not (eq new-env 'no))
                                  (let ((result (inference-all1 (cdr x) new-env fn)))
                                     (if (not (eq result 'no))
                                         (return-from exit-all result)))))))))
               (t
                (let ((new-env (inference (car x) type-env)))
-                  (cond ((eq new-env 'no) (warning "type mismatch" (car x)) 'no)
+                  (cond ((eq new-env 'no) (warning "type mismatch" (car x) type-env) 'no)
                         (t (inference-all1 (cdr x) new-env fn)))))))
 
     ;;cond syntax
@@ -4035,7 +4038,7 @@ defgeneric compile
               (t
                (let ((new-env (inference-cond2 (car x) type-env)))
                   (cond ((not (eq new-env 'no)) (inference-cond1 (cdr x) new-env))
-                        (t (warning "cond mismatch" (car x))
+                        (t (warning "cond mismatch" (car x) type-env)
                            (inference-cond1 (cdr x) type-env)))))))
 
     (defun inference-cond2 (x type-env)
@@ -4043,7 +4046,7 @@ defgeneric compile
               (t
                (let ((new-env (inference (car x) type-env)))
                   (cond ((not (eq new-env 'no)) (inference-cond2 (cdr x) new-env))
-                        (t (warning "cond mismatch" x)
+                        (t (warning "cond mismatch" x type-env)
                            (inference-cond2 (cdr x) type-env)))))))
 
     ;;case syntax
@@ -4056,7 +4059,7 @@ defgeneric compile
                (let ((new-env (inference-case2 (cdr (car x)) type-env)))
                   (if (not (eq new-env 'no))
                       (inference-case1 (cdr x) new-env)
-                      (warning "case mismatch" x))))))
+                      (warning "case mismatch" x type-env))))))
 
     (defun inference-case2 (x type-env)
         (if (null x)
@@ -4078,7 +4081,7 @@ defgeneric compile
                       (let ((true (inference (elt x 2) else)))
                          (if (not (eq true 'no))
                              true
-                             (progn (warning "if mismatch" x) 'no)))
+                             (progn (warning "if mismatch" x type-env) 'no)))
                       'no))
                'no)))
 
@@ -4089,7 +4092,7 @@ defgeneric compile
                (let ((true (inference (elt x 2) test)))
                   (if (not (eq true 'no))
                       true
-                      (progn (warning "if mismatch" x) 'no)))
+                      (progn (warning "if mismatch" x type-env) 'no)))
                'no)))
 
     ;; +-* ...
@@ -4119,7 +4122,7 @@ defgeneric compile
                                 (eq type (class <bignum>)))))
                       (cdr x))
                (estimate (cdr x) (class <number>) type-env))
-              (t (warning "numerical argument type mismatch" x) 'no)))
+              (t (warning "numerical argument type mismatch" x type-env) 'no)))
 
     (defun numeric-type-p (x)
         (or (subclassp x (class <number>))
@@ -4170,7 +4173,7 @@ defgeneric compile
 
     (defun inference-function (x type-env)
         (let ((new-env (unify (car (cdr x)) (class <symbol>) type-env)))
-           (cond ((eq new-env 'no) (warning "function mismatch" x) type-env)
+           (cond ((eq new-env 'no) (warning "function mismatch" x type-env) type-env)
                  (t new-env))))
 
     ;;find type-data of user defined function.

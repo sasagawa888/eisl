@@ -1355,7 +1355,7 @@ int f_append(int arglist, int th)
     int arg1;
 
     arg1 = car(arglist);
-    if (!listp(arg1) && nullp(arglist))
+    if (!listp(arg1))
 	error(NOT_CONS, "append", arg1, th);
     if (length(arg1) >= fc[th]) {
 	shelter_push(arglist, th);

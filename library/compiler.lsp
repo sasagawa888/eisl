@@ -3345,6 +3345,7 @@ defgeneric compile
         (unless (= (length x) 2) (error* "length: illegal form" x))
         (unless (or (symbolp (elt x 1))
                     (listp (elt x 1))
+                    (stringp (elt x 1))
                     (general-vector-p (elt x 1)))
                 (error* "length: illegal argument" x))
         (format stream "Flength(")

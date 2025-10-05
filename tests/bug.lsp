@@ -3,4 +3,8 @@
     3)
 
 (defun bar (y)
-    (length (foo)))
+    (length "asdf"))
+
+(defun test1 (x)
+  (length x)
+  (string-append x "123"))

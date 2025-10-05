@@ -4616,9 +4616,9 @@ defgeneric compile
             (class <object>)
             (class <symbol>)
             (class <symbol>))
-    (assert read (class <object>))
-    (assertz read (class <object>) (class <object>))
+    (assert read (class <object>) (class <object>))
     (assertz read (class <object>) (class <object>) (class <object>))
+    (assertz read (class <object>))
     (assert eval (class <object>) (class <object>))
     (assert append
             (class <list>)

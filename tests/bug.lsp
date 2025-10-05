@@ -12,3 +12,10 @@
 (defun test2 (y)
   (+ y 1)
   (string-append y "asdf"))
+
+(defun baz ()
+    (c-lang "res = Fmakeint(2);")
+    (c-return <fixnum>))
+
+(defun uoo (x)
+    (+ x (baz)))

@@ -21,4 +21,4 @@
     (c-return <fixnum>))
 
 (defun uoo (x)
-    (+ x (baz)))
+    (append x (baz)))

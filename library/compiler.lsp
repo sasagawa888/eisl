@@ -3945,6 +3945,7 @@ defgeneric compile
     (defun inference (x type-env)
         (cond ((and (symbolp x) (eq x t)) type-env)
               ((and (symbolp x) (eq x nil)) type-env)
+              ((and (symbolp x) (member x builtin-class)) (class-of x))
               ((symbolp x)
                (let ((y (refer x type-env)))
                   (if y
@@ -4217,6 +4218,7 @@ defgeneric compile
     (defun find-class (x type-env)
         (cond ((null x) (class <null>))
               ((and (symbolp x) (eq x 't)) (class <symbol>))
+              ((and (symbolp x) (member x builtin-class)) (class-of x))
               ((symbolp x) (refer x type-env))
               ((atom x) (class-of x))
               ((and (consp x) (member (car x) '(+ - * = > < >= <= /=)))

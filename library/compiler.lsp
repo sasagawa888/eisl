@@ -4006,26 +4006,10 @@ defgeneric compile
 
     (defun inference-all1 (x type-env fn)
         (cond ((null x) type-env)
-              ((and (consp (car x))
-                    (member (car (car x)) '(+ - * = > < >= <= /=)))
-               (let ((new-env (inference (car x) type-env)))
-                  (cond (new-env (inference-all1 (cdr x) new-env fn))
-                        (t (warning "numeric type mismatch" x) 'no))))
-              ((and (consp (car x)) (subrp (car (car x))))
-               (let ((type-subr (property (car (car x)) 'inference)))
-                  (block exit-all
-                     (for ((type type-subr (cdr type)))
-                          ((null type)
-                           (warning "type mismatch" (car x)) 'no )
-                          (let ((new-env (inference-arg (cdr (car x)) (cdr (car type)) type-env)))
-                             (if (not (eq new-env 'no))
-                                 (let ((result (inference-all1 (cdr x) new-env fn)))
-                                    (if (not (eq result 'no))
-                                        (return-from exit-all result)))))))))
-              (t
-               (let ((new-env (inference (car x) type-env)))
-                  (cond ((eq new-env 'no) (warning "type mismatch" (car x)) 'no)
-                        (t (inference-all1 (cdr x) new-env fn)))))))
+              (t (let ((new-env (inference (car x) type-env)))
+                    (if (eq new-env 'no)
+                        'no
+                        (inference-all1 (cdr x) new-env fn))))))
 
     ;;cond syntax
     (defun inference-cond (x type-env)

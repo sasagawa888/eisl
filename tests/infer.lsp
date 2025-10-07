@@ -7,7 +7,7 @@
 
 (defun test1 (x)
   (length x)
-  (string-append x "asdf"))
+  (append x "asdf"))
 
 (defun test2 (y)
   (let ((z (+ y 1)))

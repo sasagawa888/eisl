@@ -2419,9 +2419,16 @@ int quasi_transfer(int x, int n)
 	return (list3
 		(make_sym("CONS"), cadar(x), quasi_transfer(cdr(x), n)));
     else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE-SPLICING"))
-	     && n == 0)
+	     && n == 0){
+	int sexp;
+	sexp = eval(cadar(x),0);
+	if(nullp(sexp))
+	// ($test `((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons))) ((foo 7) . cons) equal)
+	return (quasi_transfer(cdr(x), n));
+	else
 	return (list3
 		(make_sym("APPEND"), cadar(x), quasi_transfer(cdr(x), n)));
+	}
     else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE")))
 	return (list3(make_sym("CONS"),
 		      list3(make_sym("LIST"),

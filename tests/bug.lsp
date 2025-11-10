@@ -1,24 +1,12 @@
 
-(defun foo ()
-   1)
+(defun is-even? (n)
+  (labels ((even? (n)
+             (if (= n 0)
+                 t
+                 (odd? (- n 1))))
+           (odd? (n)
+             (if (= n 0)
+                 nil
+                 (even? (- n 1)))))
+    (even? n)))
 
-(defun bar (y)
-    (string-append (foo) "asdf"))
-
-(defun test1 (x)
-  (length x)
-  (string-append x "asdf"))
-
-(defun test2 (y)
-  (let ((z (+ y 1)))
-    (append z "asdf")))
-
-(defun test3 (x)
-    (length x))
-
-(defun baz ()
-    (c-lang "res = Fmakeint(2);")
-    (c-return <fixnum>))
-
-(defun uoo (x)
-    (append x (baz)))

@@ -30,11 +30,11 @@ void init_cell(void)
     int addr, x;
 
     /* initialize heap area */
-    for (addr = 0; addr < CELLSIZE; addr++) {
+    for (addr = 0; addr < cell_size; addr++) {
 	SET_CDR(addr, addr + 1);
     }
     hp[0] = 0;
-    fc[0] = CELLSIZE;
+    fc[0] = cell_size;
 
     /* hash table for symbol */
     for (x = 0; x < HASHTBSIZE; x++)

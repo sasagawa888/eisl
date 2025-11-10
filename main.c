@@ -129,7 +129,7 @@ char buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
 char buffer3[STRSIZE] = { 0 };	//for Multi-Process 
 
 /* heap ,stack and bignum */
-cell heap[CELLSIZE];
+//cell heap[CELLSIZE];
 int stack[STACKSIZE][PARASIZE];
 int argstk[STACKSIZE][PARASIZE];
 int cell_hash_table[HASHTBSIZE];
@@ -307,6 +307,26 @@ char ed_key_down = 'B';
 char ed_key_right = 'C';
 char ed_key_left = 'D';
 
+/* Dynamic cell */
+cell *cell_area;
+cell *heap;
+int cell_size;
+#define DEFAULT_CELL_SIZE 20000000
+
+void init_cells(int requested_size) {
+    if (requested_size <= 0) requested_size = DEFAULT_CELL_SIZE;
+
+    cell_area = malloc(sizeof(cell) * requested_size);
+    if (!cell_area) {
+        fprintf(stderr, "Cannot allocate cell_area\n");
+        exit(1);
+    }
+
+    heap = cell_area;
+    cell_size = requested_size;
+
+}
+
 static void usage(void)
 {
     puts("List of options:\n"
@@ -314,6 +334,7 @@ static void usage(void)
 	 "-f           -- EISL starts after reading formatter.lsp.\n"
 	 "-h           -- display help.\n"
 	 "-l filename  -- EISL starts after reading the file.\n"
+	 "-m N(mega)   -- EISL starts with N*1000000(>=10mega) cells.\n"
 	 "-n           -- EISL starts as network child mode.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
@@ -323,7 +344,7 @@ static void usage(void)
 static inline void maybe_greet(void)
 {
     if (greeting_flag)
-	Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
+	Fmt_print("Easy-ISLisp Ver%1.2f cell=%d(mega)\n", VERSION, cell_size/1000000);
 
     greeting_flag = false;
 }
@@ -350,6 +371,7 @@ int main(int argc, char *argv[])
 	ed_key_up = key_up[2];
     }
 
+	init_cells(cell_size);
     init_stok();
     init_cell();
     init_class();
@@ -387,7 +409,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:s:p:cfrhvn")) != -1) {
+	while ((ch = getopt(argc, argv, "l:m:s:p:cfrhvn")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -426,6 +448,11 @@ int main(int argc, char *argv[])
 		process_flag = true;
 		process_num = strtol(optarg, NULL, 10);
 		break;
+		case 'm':
+		cell_size = strtol(optarg,NULL,10)*1000000;
+		if (cell_size < 10000000) 
+			cell_size = DEFAULT_CELL_SIZE;
+		break;
 	    case 'n':
 		puts("EISL runs with network mode.");
 		child_flag = true;
@@ -436,7 +463,7 @@ int main(int argc, char *argv[])
 		FREE(str);
 		break;
 	    case 'v':
-		Fmt_print("Easy-ISLisp Ver%1.2f\n", VERSION);
+		Fmt_print("Easy-ISLisp1 Ver%1.2f\n", VERSION);
 		exit(EXIT_SUCCESS);
 	    case 'h':
 		usage();

@@ -107,7 +107,7 @@ void gbc_sequence(void)
 	addr = 0;
 	hp[0] = NIL;
 	fc[0] = 0;
-	while (addr < CELLSIZE) {
+	while (addr < cell_size) {
 	    if (USED_CELL(addr))
 		NOMARK_CELL(addr);
 	    else {
@@ -125,7 +125,7 @@ void gbc_sequence(void)
 	}
 	addr = 0;
 	i = 0;
-	while (addr < CELLSIZE) {
+	while (addr < cell_size) {
 	    if (USED_CELL(addr)) {
 		NOMARK_CELL(addr);
 	    } else {
@@ -152,7 +152,7 @@ void mark_cell(int addr)
 {
     int i, m, n, x;
 
-    if (addr < 0 || addr >= CELLSIZE)
+    if (addr < 0 || addr >= cell_size)
 	return;
 
     if (USED_CELL(addr))

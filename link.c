@@ -358,7 +358,7 @@ int a_adaptp(int x, int y)
 	else
 	    return (0);
     }
-    if (x >= CELLSIZE) {
+    if (x >= cell_size) {
 	error(ILLEGAL_ARGS, "a_adaptp", x, 0);
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
@@ -383,7 +383,7 @@ int a_matchp(int x, int y)
 	else
 	    return (0);
     }
-    if (x >= CELLSIZE) {
+    if (x >= cell_size) {
 	error(ILLEGAL_ARGS, "a-matchp", x, 0);
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))

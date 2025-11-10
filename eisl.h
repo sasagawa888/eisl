@@ -84,7 +84,7 @@
 
 
 
-static const float VERSION = 5.56;
+static const float VERSION = 5.57;
 static const int FREESIZE = 1000000;
 static const int SYMSIZE = 256;
 static const int CHARSIZE = 7;	// unicode char. add \0 to tail
@@ -241,7 +241,8 @@ extern char buffer3[STRSIZE];
 
 
 /* heap and stack */
-extern cell heap[CELLSIZE];
+extern cell *heap;
+//extern cell heap[CELLSIZE];
 extern int stack[STACKSIZE][PARASIZE];
 extern int argstk[STACKSIZE][PARASIZE];
 extern int cell_hash_table[HASHTBSIZE];
@@ -264,6 +265,9 @@ extern int prof_sym[PROFSIZE];
 extern int prof_pt;
 extern double prof_dt0[PROFSIZE];
 extern int prof_dt1[PROFSIZE];
+
+/* Dynamic cell */
+extern int cell_size;
 
 
 #define DEF_GETTER(RETURN_TYPE, NAME, MEMBER, DEFAULT) \

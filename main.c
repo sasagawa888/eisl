@@ -313,7 +313,7 @@ cell *heap;
 int cell_size;
 #define DEFAULT_CELL_SIZE 20000000
 
-void init_cells(int requested_size) {
+void alloc_cell(int requested_size) {
     if (requested_size <= 0) requested_size = DEFAULT_CELL_SIZE;
 
     cell_area = malloc(sizeof(cell) * requested_size);
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
 	ed_key_up = key_up[2];
     }
 
-	init_cells(cell_size);
+	alloc_cell(cell_size);
     init_stok();
     init_cell();
     init_class();

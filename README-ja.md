@@ -61,6 +61,8 @@ List of options:
 -f           -- EISL starts after reading formatter.lsp.
 -h           -- display help.
 -l filename  -- EISL starts after reading the file.
+-m N(mega)   -- EISL starts with N*1000000(>=10mega) cells.
+-n           -- EISL starts as network child mode.
 -r           -- EISL does not use editable REPL.
 -s filename  -- EISL runs the file with script mode.
 -v           -- dislplay version number.

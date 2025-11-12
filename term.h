@@ -28,16 +28,9 @@ struct position {
 #define TAB '\t'
 #define SPACE ' '
 #define ESC 27
-// TCC does not have support for "static conts" as compile time constant
-#ifdef __TINYC__
 #define NUL '\0'
 #define BEL '\a'
 #define BS '\b'
-#else
-static const char NUL = '\0';
-static const char BEL = '\a';
-static const char BS = '\b';
-#endif
 #define DEL 127
 
 #ifndef FULLSCREEN

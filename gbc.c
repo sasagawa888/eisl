@@ -233,13 +233,15 @@ void mark_cell(int addr)
 
 void clr_cell(int addr)
 {
-    if (IS_VECTOR(addr) || IS_ARRAY(addr))
+    if (IS_VECTOR(addr) || IS_ARRAY(addr)){
+	if(heap[addr].val.car.dyna_vec)
 	FREE(heap[addr].val.car.dyna_vec);
-
+	}
 
     SET_TAG(addr, EMP);
+	if (heap[addr].name)
     FREE(heap[addr].name);
-    SET_CAR(addr, 0);
+	SET_CAR(addr, 0);
     SET_CDR(addr, 0);
     SET_AUX(addr, 0);
     SET_PROP(addr, 0);

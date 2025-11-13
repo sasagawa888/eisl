@@ -1,3 +1,7 @@
+**“This software is a technology created for peace and freedom.  
+It does not wish to serve, in any way, as a tool for oppression, suppression, human rights violations, or dictatorship.”**
+
+
 # Easy-ISLisp
 
 Easy-ISLisp(EISL) is an interpreter and compiler compatible with the [ISLisp standard](https://minejima.jp/ISLispHyperDraft/islisp-v23.html).

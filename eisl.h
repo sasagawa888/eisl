@@ -326,7 +326,7 @@ static inline char GET_CHAR(int addr)
 DEF_GETTER(signed char, OPT, option, 0)
 static inline void SET_TAG(int addr, tag_t x)
 {
-    REQUIRE(CELLRANGE(addr));
+    //REQUIRE(CELLRANGE(addr));
     heap[addr].tag = x;
 }
 

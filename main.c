@@ -128,8 +128,7 @@ char buffer1[COL_SIZE + 1];
 char buffer2[COL_SIZE + 1] = { 0 };	//for read_stdin()
 char buffer3[STRSIZE] = { 0 };	//for Multi-Process 
 
-/* heap ,stack and bignum */
-//cell heap[CELLSIZE];
+/* stack and bignum */
 int stack[STACKSIZE][PARASIZE];
 int argstk[STACKSIZE][PARASIZE];
 int cell_hash_table[HASHTBSIZE];

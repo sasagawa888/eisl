@@ -1209,21 +1209,21 @@ int f_dp_compile(int arglist, int th)
 int f_dp_trace(int arglist, int th)
 {
 
-	if(length(arglist) != 0)
-		error(WRONG_ARGS,"dp-trace ", arglist, th);
-	
-	dp_trace = 1;
-	return (T);
+    if (length(arglist) != 0)
+	error(WRONG_ARGS, "dp-trace ", arglist, th);
+
+    dp_trace = 1;
+    return (T);
 }
 
 int f_dp_untrace(int arglist, int th)
 {
 
-	if(length(arglist) != 0)
-		error(WRONG_ARGS,"dp-untrace ", arglist, th);
-	
-	dp_trace = 0;
-	return (T);
+    if (length(arglist) != 0)
+	error(WRONG_ARGS, "dp-untrace ", arglist, th);
+
+    dp_trace = 0;
+    return (T);
 }
 
 /* for compiler */
@@ -1659,9 +1659,9 @@ void *preceiver(void *arg)
 	buffer[i] = 0;
 	strcpy(parent_buffer[n], buffer);
 
-	if(dp_trace){
-		printf("From child %d: %s", n, parent_buffer[n]);
-		fflush(stdout);
+	if (dp_trace) {
+	    printf("From child %d: %s", n, parent_buffer[n]);
+	    fflush(stdout);
 	}
     }
 

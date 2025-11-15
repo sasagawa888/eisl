@@ -730,7 +730,7 @@ int vector(int lis)
  * EISL_CLOSE stream state is close
  */
 
-int make_stm(FILE * port, int type, const char *name)
+int make_stm(FILE *port, int type, const char *name)
 {
     int addr;
 

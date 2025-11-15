@@ -1325,7 +1325,8 @@ int f_functionp(int arglist, int th)
     arg = car(arglist);
     if (length(arglist) != 1)
 	error(WRONG_ARGS, "functionp", arglist, th);
-    if (IS_FUNC(arg) || IS_SUBR(arg) || IS_GENERIC(arg) || IS_COMPILED(arg))
+    if (IS_FUNC(arg) || IS_SUBR(arg) || IS_GENERIC(arg)
+	|| IS_COMPILED(arg))
 	return (T);
     else
 	return (NIL);
@@ -3575,7 +3576,7 @@ static int printr_h(int r, int n, char *b, int *sign)
     return (i + 1);
 }
 
-int fprintr(FILE * p, int r, int n)
+int fprintr(FILE *p, int r, int n)
 {
     int i, sign, len;
     char b[BININT_LEN + 1];

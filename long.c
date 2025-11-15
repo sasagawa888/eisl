@@ -4,7 +4,7 @@
 #include "long.h"
 
 void
-cvt_D(int code __unused, va_list_box * box,
+cvt_D(int code __unused, va_list_box *box,
       int put(int c, void *cl), void *cl,
       unsigned char flags[], int width, int precision)
 {

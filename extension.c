@@ -1175,186 +1175,193 @@ static struct gpiod_chip *chip = NULL;
 int f_gpio_init(int arglist, int th)
 {
     if (length(arglist) != 0)
-	    error(WRONG_ARGS, "gpio-init" , arglist, th);
+	error(WRONG_ARGS, "gpio-init", arglist, th);
     chip = gpiod_chip_open("/dev/gpiochip0");
-    if( chip != NULL)
-        return(T);
-    else 
-        return(NIL);
+    if (chip != NULL)
+	return (T);
+    else
+	return (NIL);
 }
 
-int f_gpio_set_mode(int arglist, int th){
-    int arg1,arg2,res;
+int f_gpio_set_mode(int arglist, int th)
+{
+    int arg1, arg2, res;
 
-    arg1 = car(arglist);  //pin
-    arg2 = cadr(arglist); //mode
+    arg1 = car(arglist);	//pin
+    arg2 = cadr(arglist);	//mode
     if (length(arglist) != 2)
-	    error(WRONG_ARGS, "gpio-set-mode ", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT, "gpio-set-mode ", arglist, th);
-    if(!(eqp(arg2,make_sym("INPUT")) || eqp(arg2,make_sym("OUTPUT"))))
-        error(WRONG_ARGS, "gpio-set-mode ", arglist, th); 
+	error(WRONG_ARGS, "gpio-set-mode ", arglist, th);
+    if (!integerp(arg1))
+	error(NOT_INT, "gpio-set-mode ", arglist, th);
+    if (!(eqp(arg2, make_sym("INPUT")) || eqp(arg2, make_sym("OUTPUT"))))
+	error(WRONG_ARGS, "gpio-set-mode ", arglist, th);
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
-        error(SYSTEM_ERR, "gpio-set-mode ", arglist, th);
+	error(SYSTEM_ERR, "gpio-set-mode ", arglist, th);
 
-    if (eqp(arg2,make_sym("INPUT"))) // input
-        res = gpiod_line_request_input(line, "easy-islisp");
-    else // output
-        res = gpiod_line_request_output(line, "easy-islisp", 0);
+    if (eqp(arg2, make_sym("INPUT")))	// input
+	res = gpiod_line_request_input(line, "easy-islisp");
+    else			// output
+	res = gpiod_line_request_output(line, "easy-islisp", 0);
 
-    if(res < 0)
-        error(SYSTEM_ERR,"gpio-set-mode ", arglist, th);
+    if (res < 0)
+	error(SYSTEM_ERR, "gpio-set-mode ", arglist, th);
 
-    return(T);
+    return (T);
 }
 
-int f_gpio_write(int arglist, int th){
-    int arg1,arg2,res;
+int f_gpio_write(int arglist, int th)
+{
+    int arg1, arg2, res;
 
-    arg1 = car(arglist);  //pin
-    arg2 = cadr(arglist); //value
+    arg1 = car(arglist);	//pin
+    arg2 = cadr(arglist);	//value
     if (length(arglist) != 2)
-	    error(WRONG_ARGS, "gpio-write", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT,"gpio-write ", arg1, th);
-    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
-        error(WRONG_ARGS, "gpio-write", arg1, th); 
-    if(!integerp(arg2))
-        error(NOT_INT,"gpio-write ", arg2, th);
-    if(!(GET_INT(arg2) == 1 || GET_INT(arg2) == 0))
-        error(WRONG_ARGS, "gpio-write", arg2, th); 
+	error(WRONG_ARGS, "gpio-write", arglist, th);
+    if (!integerp(arg1))
+	error(NOT_INT, "gpio-write ", arg1, th);
+    if (GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+	error(WRONG_ARGS, "gpio-write", arg1, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "gpio-write ", arg2, th);
+    if (!(GET_INT(arg2) == 1 || GET_INT(arg2) == 0))
+	error(WRONG_ARGS, "gpio-write", arg2, th);
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
-        error(SYSTEM_ERR, "gpio-write", arglist,th);
+	error(SYSTEM_ERR, "gpio-write", arglist, th);
 
     res = gpiod_line_set_value(line, GET_INT(arg2));
-    if(res < 0)
-        error(SYSTEM_ERR,"gpio-write ",arglist,th);
-    
-    return(T);
+    if (res < 0)
+	error(SYSTEM_ERR, "gpio-write ", arglist, th);
+
+    return (T);
 }
 
-int f_gpio_read(int arglist, int th){
-    int arg1,res;
+int f_gpio_read(int arglist, int th)
+{
+    int arg1, res;
 
-    
-    arg1 = car(arglist); //pin
+
+    arg1 = car(arglist);	//pin
     if (length(arglist) != 1)
-	    error(WRONG_ARGS, "gpio-read ", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT, "gpio-read ", arg1, th);
-    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
-        error(WRONG_ARGS, "gpio-read", arg1, th); 
+	error(WRONG_ARGS, "gpio-read ", arglist, th);
+    if (!integerp(arg1))
+	error(NOT_INT, "gpio-read ", arg1, th);
+    if (GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+	error(WRONG_ARGS, "gpio-read", arg1, th);
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
-    if (!line) 
-        error(SYSTEM_ERR,"gpio-read ", arglist, th);
+    if (!line)
+	error(SYSTEM_ERR, "gpio-read ", arglist, th);
 
     res = gpiod_line_get_value(line);
-    return(make_int(res));
+    return (make_int(res));
 }
 
-int f_gpio_event_request(int arglist, int th){
-    int arg1,arg2,res;
-    
-    
-    arg1 = car(arglist);  // pin
-    arg2 = cadr(arglist); // mode
+int f_gpio_event_request(int arglist, int th)
+{
+    int arg1, arg2, res;
+
+
+    arg1 = car(arglist);	// pin
+    arg2 = cadr(arglist);	// mode
     if (length(arglist) != 2)
-	    error(WRONG_ARGS, "gpio-event-request ", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT,"gpio-event-request ", arglist, th);
-    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
-        error(WRONG_ARGS, "gpio-event-request", arg1, th); 
-    if(!(eqp(arg2,make_sym("RISING")) || 
-        eqp(arg2,make_sym("FALLING")) ||
-        eqp(arg2,make_sym("BOTH"))))
-        error(WRONG_ARGS,"gpio-event-request ", arglist, th);
+	error(WRONG_ARGS, "gpio-event-request ", arglist, th);
+    if (!integerp(arg1))
+	error(NOT_INT, "gpio-event-request ", arglist, th);
+    if (GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+	error(WRONG_ARGS, "gpio-event-request", arg1, th);
+    if (!(eqp(arg2, make_sym("RISING")) ||
+	  eqp(arg2, make_sym("FALLING")) || eqp(arg2, make_sym("BOTH"))))
+	error(WRONG_ARGS, "gpio-event-request ", arglist, th);
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
-        error(SYSTEM_ERR, "gpio-event-request ", arglist, th);
+	error(SYSTEM_ERR, "gpio-event-request ", arglist, th);
 
-    if (eqp(arg2,make_sym("RISING")))
-        res = gpiod_line_request_rising_edge_events(line, "easy-islisp");
-    else if (eqp(arg2,make_sym("FALLING")))
-        res = gpiod_line_request_falling_edge_events(line, "easy-islisp");
-    else 
-        res = gpiod_line_request_both_edges_events(line, "easy-islisp");
+    if (eqp(arg2, make_sym("RISING")))
+	res = gpiod_line_request_rising_edge_events(line, "easy-islisp");
+    else if (eqp(arg2, make_sym("FALLING")))
+	res = gpiod_line_request_falling_edge_events(line, "easy-islisp");
+    else
+	res = gpiod_line_request_both_edges_events(line, "easy-islisp");
 
-    if(res==0)
-        return(T);
-    else 
-        return(NIL);
+    if (res == 0)
+	return (T);
+    else
+	return (NIL);
 
-    return(NIL);
+    return (NIL);
 }
 
-int f_gpio_event_wait(int arglist, int th){
-    int arg1,arg2,res;
+int f_gpio_event_wait(int arglist, int th)
+{
+    int arg1, arg2, res;
 
-    
-    arg1 = car(arglist);  //pin
-    arg2 = cadr(arglist); //timeout
+
+    arg1 = car(arglist);	//pin
+    arg2 = cadr(arglist);	//timeout
     if (length(arglist) != 2)
-	    error(WRONG_ARGS, "gpio-event-wait ", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT,"gpio-event-wait ", arg1, th);
-    if(GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
-        error(WRONG_ARGS, "gpio-event-wait", arg1, th); 
-    if(!integerp(arg2))
-        error(NOT_INT,"gpio-event-wait ", arg2, th);
+	error(WRONG_ARGS, "gpio-event-wait ", arglist, th);
+    if (!integerp(arg1))
+	error(NOT_INT, "gpio-event-wait ", arg1, th);
+    if (GET_INT(arg1) < 0 || GET_INT(arg1) > 27)
+	error(WRONG_ARGS, "gpio-event-wait", arg1, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "gpio-event-wait ", arg2, th);
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
     if (!line)
-        error(SYSTEM_ERR, "gpio-event-wait ", arglist, th);
-    struct timespec ts = { GET_INT(arg2)/1000, (GET_INT(arg2)%1000)*1000000 };
+	error(SYSTEM_ERR, "gpio-event-wait ", arglist, th);
+    struct timespec ts =
+	{ GET_INT(arg2) / 1000, (GET_INT(arg2) % 1000) * 1000000 };
     res = gpiod_line_event_wait(line, &ts);
-    if(res < 0)
-        error(SYSTEM_ERR,"gpio-event-wait ",arglist,th);
+    if (res < 0)
+	error(SYSTEM_ERR, "gpio-event-wait ", arglist, th);
 
-    if(res == 1)
-        return(T);
-    else 
-        return(NIL);
+    if (res == 1)
+	return (T);
+    else
+	return (NIL);
 
-    return(NIL);
+    return (NIL);
 }
 
-int f_gpio_event_read(int arglist, int th){
+int f_gpio_event_read(int arglist, int th)
+{
     int arg1;
 
-    
-    arg1 = car(arglist); //pin
+
+    arg1 = car(arglist);	//pin
     if (length(arglist) != 1)
-	    error(WRONG_ARGS, "gpio-event-read ", arglist, th);
-    if(!integerp(arg1))
-        error(NOT_INT, "gpio-event-read ", arglist, th);
+	error(WRONG_ARGS, "gpio-event-read ", arglist, th);
+    if (!integerp(arg1))
+	error(NOT_INT, "gpio-event-read ", arglist, th);
 
     struct gpiod_line *line = gpiod_chip_get_line(chip, GET_INT(arg1));
-    if (!line) 
-        error(SYSTEM_ERR, "gpio-event-read ", arglist, th);
+    if (!line)
+	error(SYSTEM_ERR, "gpio-event-read ", arglist, th);
     struct gpiod_line_event event;
     gpiod_line_event_read(line, &event);
-    if (event.event_type == GPIOD_LINE_EVENT_RISING_EDGE) 
-        return(make_sym("RISING"));
+    if (event.event_type == GPIOD_LINE_EVENT_RISING_EDGE)
+	return (make_sym("RISING"));
     else if (event.event_type == GPIOD_LINE_EVENT_FALLING_EDGE)
-        return(make_sym("FALLING"));
-    else 
-        error(SYSTEM_ERR,"gpio-event-read ",arglist,th);
+	return (make_sym("FALLING"));
+    else
+	error(SYSTEM_ERR, "gpio-event-read ", arglist, th);
 
-    return(NIL);
+    return (NIL);
 }
 
-int f_gpio_close(int arglist, int th){
+int f_gpio_close(int arglist, int th)
+{
     if (length(arglist) != 0)
-	    error(WRONG_ARGS, "gpio-close ", arglist, th);
+	error(WRONG_ARGS, "gpio-close ", arglist, th);
 
     gpiod_chip_close(chip);
     chip = NULL;
-    return(T);
+    return (T);
 }
 
 #endif

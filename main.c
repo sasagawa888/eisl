@@ -313,13 +313,15 @@ cell *heap;
 int cell_size;
 #define DEFAULT_CELL_SIZE 20000000
 
-void alloc_cell(int requested_size) {
-    if (requested_size <= 0) requested_size = DEFAULT_CELL_SIZE;
+void alloc_cell(int requested_size)
+{
+    if (requested_size <= 0)
+	requested_size = DEFAULT_CELL_SIZE;
 
     cell_area = malloc(sizeof(cell) * requested_size);
     if (!cell_area) {
-        fprintf(stderr, "Cannot allocate cell_area\n");
-        exit(1);
+	fprintf(stderr, "Cannot allocate cell_area\n");
+	exit(1);
     }
 
     heap = cell_area;
@@ -344,7 +346,8 @@ static void usage(void)
 static inline void maybe_greet(void)
 {
     if (greeting_flag)
-	Fmt_print("Easy-ISLisp Ver%1.2f cell=%d(mega)\n", VERSION, cell_size/1000000);
+	Fmt_print("Easy-ISLisp Ver%1.2f cell=%d(mega)\n", VERSION,
+		  cell_size / 1000000);
 
     greeting_flag = false;
 }
@@ -371,7 +374,7 @@ int main(int argc, char *argv[])
 	ed_key_up = key_up[2];
     }
 
-	alloc_cell(cell_size);
+    alloc_cell(cell_size);
     init_stok();
     init_cell();
     init_class();
@@ -448,10 +451,10 @@ int main(int argc, char *argv[])
 		process_flag = true;
 		process_num = strtol(optarg, NULL, 10);
 		break;
-		case 'm':
-		cell_size = strtol(optarg,NULL,10)*1000000;
-		if (cell_size < 10000000 || cell_size > 20000000) 
-			cell_size = DEFAULT_CELL_SIZE;
+	    case 'm':
+		cell_size = strtol(optarg, NULL, 10) * 1000000;
+		if (cell_size < 10000000 || cell_size > 20000000)
+		    cell_size = DEFAULT_CELL_SIZE;
 		break;
 	    case 'n':
 		puts("EISL runs with network mode.");
@@ -611,7 +614,7 @@ void signal_handler_c(int signo __unused)
     ctrl_c_flag = 1;
 }
 
-void signal_handler_child(int sig, siginfo_t * siginfo, void *context)
+void signal_handler_child(int sig, siginfo_t *siginfo, void *context)
 {
     int n;
 
@@ -1537,7 +1540,7 @@ void print(int addr)
     case FUNC:
 	print_obj("<function>");
 	break;
-	case COMPILED:
+    case COMPILED:
 	print_obj("<compiled>");
 	break;
     case MACRO:
@@ -1955,10 +1958,10 @@ DEF_GETTER(char, TR, trace, NIL)
 int apply(int func, int args, int th)
 {
     int varlist, body, res, i, n, pexist, qexist, trace;
-    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR || GET_TAG(func) == COMPILED
-	     || GET_TAG(func) == FUNC || GET_TAG(func) == MACRO
-	     || GET_TAG(func) == GENERIC) && (GET_TAG(args) == LIS
-					      || GET_TAG(args) == SYM));
+    REQUIRE((GET_TAG(func) == FSUBR || GET_TAG(func) == SUBR
+	     || GET_TAG(func) == COMPILED || GET_TAG(func) == FUNC
+	     || GET_TAG(func) == MACRO || GET_TAG(func) == GENERIC)
+	    && (GET_TAG(args) == LIS || GET_TAG(args) == SYM));
 
 
     res = NIL;
@@ -1971,7 +1974,7 @@ int apply(int func, int args, int th)
 
     switch (GET_TAG(func)) {
     case SUBR:
-	case COMPILED:
+    case COMPILED:
 	return ((GET_SUBR(func)) (args, th));
     case FSUBR:
 	return ((GET_SUBR(func)) (args, th));
@@ -2446,17 +2449,17 @@ int quasi_transfer(int x, int n)
 	return (list3
 		(make_sym("CONS"), cadar(x), quasi_transfer(cdr(x), n)));
     else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE-SPLICING"))
-	     && n == 0){
+	     && n == 0) {
 	int sexp;
-	sexp = eval(cadar(x),0);
-	if(nullp(sexp))
-	// ($test `((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons))) ((foo 7) . cons) equal)
-	return (quasi_transfer(cdr(x), n));
+	sexp = eval(cadar(x), 0);
+	if (nullp(sexp))
+	    // ($test `((foo ,(- 10 3)) ,@(cdr '(c)) . ,(car '(cons))) ((foo 7) . cons) equal)
+	    return (quasi_transfer(cdr(x), n));
 	else
-	return (list3
-		(make_sym("APPEND"), cadar(x), quasi_transfer(cdr(x), n)));
-	}
-    else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE")))
+	    return (list3
+		    (make_sym("APPEND"), cadar(x),
+		     quasi_transfer(cdr(x), n)));
+    } else if (listp(x) && eqp(caar(x), make_sym("UNQUOTE")))
 	return (list3(make_sym("CONS"),
 		      list3(make_sym("LIST"),
 			    list2(make_sym("QUOTE"), make_sym("UNQUOTE")),

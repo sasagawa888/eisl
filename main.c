@@ -345,7 +345,7 @@ static void usage(void)
 static inline void maybe_greet(void)
 {
     if (greeting_flag)
-	Fmt_print("Easy-ISLisp Ver%1.2f cell=%d(mega)\n", VERSION,
+	Fmt_print("Easy-ISLisp Ver%1.2f [%dM cells]\n", VERSION,
 		  cell_size / 1000000);
 
     greeting_flag = false;

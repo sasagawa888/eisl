@@ -450,7 +450,7 @@ int main(int argc, char *argv[])
 		break;
 		case 'm':
 		cell_size = strtol(optarg,NULL,10)*1000000;
-		if (cell_size < 10000000) 
+		if (cell_size < 10000000 || cell_size > 20000000) 
 			cell_size = DEFAULT_CELL_SIZE;
 		break;
 	    case 'n':

@@ -335,7 +335,7 @@ static void usage(void)
 	 "-f           -- EISL starts after reading formatter.lsp.\n"
 	 "-h           -- display help.\n"
 	 "-l filename  -- EISL starts after reading the file.\n"
-	 "-m N(mega)   -- EISL starts with N*1000000(>=10mega) cells.\n"
+	 "-m N         -- EISL starts with N*1000000(>=10mega) cells.\n"
 	 "-n           -- EISL starts as network child mode.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"

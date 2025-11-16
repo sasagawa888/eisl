@@ -38,6 +38,13 @@ When using wiringPi on Raspberry Pi: please install wiringPi and compile with th
 sudo make install USE_WIRINGPI=1
 ```
 
+When use GDB: 
+
+```
+sudo make clean
+sudo make install USE_GDB=1
+```
+
 
 # Documents
 

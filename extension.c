@@ -19,6 +19,10 @@
 #include <errno.h>
 #include <pthread.h>
 #include <sys/time.h>
+#include <sys/mman.h>
+#include <linux/fb.h>
+#include <linux/fb.h>
+#include <sys/ioctl.h>
 
 
 #ifdef __rpi__
@@ -1876,4 +1880,104 @@ int f_close_socket(int arglist, int th)
 	close(sock1);
 
     return (T);
+}
+
+
+//-------/dev/fb0------------------------
+
+static int fb = -1;
+static char *fbp = NULL;
+static struct fb_var_screeninfo vinfo;
+static long screensize = 0;
+
+int fb_open()
+{
+    fb = open("/dev/fb0", O_RDWR);
+    if (fb < 0)
+	return -1;
+
+    if (ioctl(fb, FBIOGET_VSCREENINFO, &vinfo)) {
+	close(fb);
+	return -1;
+    }
+
+    screensize =
+	vinfo.yres_virtual * vinfo.xres_virtual * vinfo.bits_per_pixel / 8;
+    fbp = mmap(0, screensize, PROT_READ | PROT_WRITE, MAP_SHARED, fb, 0);
+    if (fbp == MAP_FAILED) {
+	close(fb);
+	return -1;
+    }
+    return 0;
+}
+
+
+void fb_close()
+{
+    if (fbp)
+	munmap(fbp, screensize);
+    if (fb >= 0)
+	close(fb);
+}
+
+
+void fb_draw_pixel(int x, int y, unsigned int color)
+{
+    if (x < 0 || y < 0 || x >= vinfo.xres_virtual
+	|| y >= vinfo.yres_virtual)
+	return;
+    long location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel / 8) +
+	(y +
+	 vinfo.yoffset) * vinfo.xres_virtual * (vinfo.bits_per_pixel / 8);
+    *((unsigned int *) (fbp + location)) = color;
+}
+
+
+void fb_clear_screen(unsigned int color)
+{
+    for (int y = 0; y < vinfo.yres_virtual; y++) {
+	for (int x = 0; x < vinfo.xres_virtual; x++) {
+	    fb_draw_pixel(x, y, color);
+	}
+    }
+}
+
+void fb_draw_circle(int cx, int cy, int r, unsigned int color) {
+    int x = 0;
+    int y = r;
+    int d = 3 - 2 * r;
+
+    while(y >= x) {
+        fb_draw_pixel(cx+x, cy+y, color);
+        fb_draw_pixel(cx-x, cy+y, color);
+        fb_draw_pixel(cx+x, cy-y, color);
+        fb_draw_pixel(cx-x, cy-y, color);
+        fb_draw_pixel(cx+y, cy+x, color);
+        fb_draw_pixel(cx-y, cy+x, color);
+        fb_draw_pixel(cx+y, cy-x, color);
+        fb_draw_pixel(cx-y, cy-x, color);
+
+        if(d <= 0) {
+            d = d + 4*x + 6;
+        } else {
+            d = d + 4*(x - y) + 10;
+            y--;
+        }
+        x++;
+    }
+}
+
+void fb_draw_line(int x0, int y0, int x1, int y1, unsigned int color) {
+    int dx = abs(x1 - x0);
+    int sx = x0 < x1 ? 1 : -1;
+    int dy = -abs(y1 - y0);
+    int sy = y0 < y1 ? 1 : -1;
+    int err = dx + dy;
+    while(1) {
+        fb_draw_pixel(x0, y0, color);
+        if(x0 == x1 && y0 == y1) break;
+        int e2 = 2 * err;
+        if(e2 >= dy) { err += dy; x0 += sx; }
+        if(e2 <= dx) { err += dx; y0 += sy; }
+    }
 }

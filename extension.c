@@ -134,6 +134,7 @@ void init_exsubr(void)
     def_subr("GR-OPEN", f_gr_open);
     def_subr("GR-CLOSE", f_gr_close);
     def_subr("GR-CLS", f_gr_cls);
+    def_subr("GR-PSET", f_gr_pset);
     def_subr("GR-CIRCLE", f_gr_circle);
     def_subr("GR-LINE", f_gr_line);
 
@@ -2055,6 +2056,27 @@ int f_gr_cls(int arglist, int th)
 }
 
 
+
+int f_gr_pset(int arglist, int th)
+{
+    int arg1,arg2,arg3;
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    if(!integerp(arg1))
+    error(NOT_INT,"GR-PSET",arg1,th);
+    if(!integerp(arg2))
+    error(NOT_INT,"GR-PSET",arg2,th);
+    if(!symbolp(arg3))
+    error(NOT_SYM,"GR-PSET",arg3,th);
+
+    fb_draw_pixel(GET_INT(arg1),GET_INT(arg2),color_to_number(arg3));
+    return(T);
+}
+
+
+
+
 int f_gr_circle(int arglist, int th)
 {
     int arg1,arg2,arg3,arg4;
@@ -2085,16 +2107,16 @@ int f_gr_line(int arglist, int th)
     arg4 = car(cdddr(arglist));
     arg5 = car(cdr(cdddr(arglist)));
     if(!integerp(arg1))
-    error(NOT_INT,"GR-CIRCLE",arg1,th);
+    error(NOT_INT,"GR-LINE",arg1,th);
     if(!integerp(arg2))
-    error(NOT_INT,"GR-CIRCLE",arg2,th);
+    error(NOT_INT,"GR-LINE",arg2,th);
     if(!integerp(arg3))
-    error(NOT_INT,"GR-CIRCLE",arg3,th);
+    error(NOT_INT,"GR-LINE",arg3,th);
     if(!integerp(arg4))
-    error(NOT_INT,"GR-CIRCLE",arg4,th);
+    error(NOT_INT,"GR-LINE",arg4,th);
     if(!symbolp(arg5))
-    error(NOT_SYM,"GR-CIRCLE",arg5,th);
+    error(NOT_SYM,"GR-LINE",arg5,th);
 
-    fb_draw_line(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg4));
+    fb_draw_line(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg5));
     return(T);
 }

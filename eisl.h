@@ -991,6 +991,7 @@ int f_greater(int arglist, int th);
 int f_gr_open(int arglist, int th);
 int f_gr_close(int arglist, int th);
 int f_gr_cls(int arglist, int th);
+int f_gr_pset(int arglit, int th);
 int f_gr_circle(int arglist, int th);
 int f_gr_line(int arglist, int th);
 int f_heapdump(int arglist, int th);

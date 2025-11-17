@@ -2027,9 +2027,9 @@ int f_gr_open(int arglist, int th)
 	error(WRONG_ARGS, "GR-OPEN", arglist, th);
 
     res = fb_open();
-    if(res)
+    if(res==0)
     return(T);
-    else 
+    else if(res == -1)
     return(NIL);
 }
 

@@ -2166,7 +2166,7 @@ int f_gr_rect(int arglist, int th)
     error(NOT_INT,"GR-RECT",arg3,th);
     if(!integerp(arg4))
     error(NOT_INT,"GR-RECT",arg4,th);
-    if(!symbolp(arg4))
+    if(!symbolp(arg5))
     error(NOT_SYM,"GR-RECT",arg5,th);
 
     if(nullp(arg6))

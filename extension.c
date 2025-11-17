@@ -132,11 +132,11 @@ void init_exsubr(void)
     def_subr("CLOSE-SOCKET", f_close_socket);
 
     def_subr("GR-OPEN", f_gr_open);
-    def_subr("GR-FLUSH", f_gr_flush);
     def_subr("GR-CLOSE", f_gr_close);
     def_subr("GR-CLS", f_gr_cls);
     def_subr("GR-PSET", f_gr_pset);
     def_subr("GR-CIRCLE", f_gr_circle);
+    def_subr("GR-RECT", f_gr_rect);
     def_subr("GR-LINE", f_gr_line);
 
 #ifdef __rpi__
@@ -1967,28 +1967,64 @@ void fb_clear_screen(unsigned int color)
     }
 }
 
-void fb_draw_circle(int cx, int cy, int r, unsigned int color) {
+void fb_draw_circle(int cx, int cy, int r, unsigned int color, int fill) {
     int x = 0;
     int y = r;
     int d = 3 - 2 * r;
 
-    while(y >= x) {
-        fb_draw_pixel(cx+x, cy+y, color);
-        fb_draw_pixel(cx-x, cy+y, color);
-        fb_draw_pixel(cx+x, cy-y, color);
-        fb_draw_pixel(cx-x, cy-y, color);
-        fb_draw_pixel(cx+y, cy+x, color);
-        fb_draw_pixel(cx-y, cy+x, color);
-        fb_draw_pixel(cx+y, cy-x, color);
-        fb_draw_pixel(cx-y, cy-x, color);
+    while (y >= x) {
+        if (fill) {
+            // scanline 塗りつぶし
+            for (int i = cx - x; i <= cx + x; i++) {
+                fb_draw_pixel(i, cy + y, color);
+                fb_draw_pixel(i, cy - y, color);
+            }
+            for (int i = cx - y; i <= cx + y; i++) {
+                fb_draw_pixel(i, cy + x, color);
+                fb_draw_pixel(i, cy - x, color);
+            }
+        } else {
+            // 円周だけ
+            fb_draw_pixel(cx + x, cy + y, color);
+            fb_draw_pixel(cx - x, cy + y, color);
+            fb_draw_pixel(cx + x, cy - y, color);
+            fb_draw_pixel(cx - x, cy - y, color);
+            fb_draw_pixel(cx + y, cy + x, color);
+            fb_draw_pixel(cx - y, cy + x, color);
+            fb_draw_pixel(cx + y, cy - x, color);
+            fb_draw_pixel(cx - y, cy - x, color);
+        }
 
-        if(d <= 0) {
+        if (d <= 0) {
             d = d + 4*x + 6;
         } else {
             d = d + 4*(x - y) + 10;
             y--;
         }
         x++;
+    }
+}
+
+
+void fb_draw_rect(int x0, int y0, int x1, int y1, unsigned int color, int fill) {
+    if (x0 > x1) { int t=x0; x0=x1; x1=t; }
+    if (y0 > y1) { int t=y0; y0=y1; y1=t; }
+
+    if (fill) {
+        for (int y = y0; y <= y1; y++) {
+            for (int x = x0; x <= x1; x++) {
+                fb_draw_pixel(x, y, color);
+            }
+        }
+    } else {
+        for (int x = x0; x <= x1; x++) {
+            fb_draw_pixel(x, y0, color);
+            fb_draw_pixel(x, y1, color);
+        }
+        for (int y = y0+1; y < y1; y++) {
+            fb_draw_pixel(x0, y, color);
+            fb_draw_pixel(x1, y, color);
+        }
     }
 }
 
@@ -2044,14 +2080,6 @@ int f_gr_open(int arglist, int th)
     return(NIL);
 }
 
-int f_gr_flush(int arglist, int th)
-{
-    if(!nullp(arglist))
-    error(WRONG_ARGS,"GR-FLUSH",arglist,th);
-    fb_flush();
-    return(T);
-}
-
 int f_gr_close(int arglist, int th)
 {
     if (!nullp(arglist))
@@ -2096,11 +2124,12 @@ int f_gr_pset(int arglist, int th)
 
 int f_gr_circle(int arglist, int th)
 {
-    int arg1,arg2,arg3,arg4;
+    int arg1,arg2,arg3,arg4,arg5;
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
     arg4 = car(cdddr(arglist));
+    arg5 = car(cdr(cdddr(arglist)));
     if(!integerp(arg1))
     error(NOT_INT,"GR-CIRCLE",arg1,th);
     if(!integerp(arg2))
@@ -2110,9 +2139,44 @@ int f_gr_circle(int arglist, int th)
     if(!symbolp(arg4))
     error(NOT_SYM,"GR-CIRCLE",arg4,th);
 
-    fb_draw_circle(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),color_to_number(arg4));
+    if(nullp(arg5))
+    fb_draw_circle(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),color_to_number(arg4),0);
+    else if(eqp(arg5,make_sym("FILL")))
+    fb_draw_circle(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),color_to_number(arg4),1);
+
     return(T);
 }
+
+
+int f_gr_rect(int arglist, int th)
+{
+    int arg1,arg2,arg3,arg4,arg5,arg6;
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = car(cdddr(arglist));
+    arg5 = car(cdr(cdddr(arglist)));
+    arg6 = car(cddr(cdddr(arglist)));
+    
+    if(!integerp(arg1))
+    error(NOT_INT,"GR-RECT",arg1,th);
+    if(!integerp(arg2))
+    error(NOT_INT,"GR-RECT",arg2,th);
+    if(!integerp(arg3))
+    error(NOT_INT,"GR-RECT",arg3,th);
+    if(!integerp(arg4))
+    error(NOT_INT,"GR-RECT",arg4,th);
+    if(!symbolp(arg4))
+    error(NOT_SYM,"GR-RECT",arg5,th);
+
+    if(nullp(arg6))
+    fb_draw_rect(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg5),0);
+    else if(eqp(arg6,make_sym("FILL")))
+    fb_draw_rect(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg5),1);
+
+    return(T);
+}
+
 
 
 int f_gr_line(int arglist, int th)

@@ -989,6 +989,7 @@ int f_go(int arglist, int th);
 int f_getenv(int arglist, int th);
 int f_greater(int arglist, int th);
 int f_gr_open(int arglist, int th);
+int f_gr_flush(int arglist, int th);
 int f_gr_close(int arglist, int th);
 int f_gr_cls(int arglist, int th);
 int f_gr_pset(int arglit, int th);

@@ -132,6 +132,7 @@ void init_exsubr(void)
     def_subr("CLOSE-SOCKET", f_close_socket);
 
     def_subr("GR-OPEN", f_gr_open);
+    def_subr("GR-FLUSH", f_gr_flush);
     def_subr("GR-CLOSE", f_gr_close);
     def_subr("GR-CLS", f_gr_cls);
     def_subr("GR-PSET", f_gr_pset);
@@ -1927,6 +1928,14 @@ int fb_open()
     return 0;
 }
 
+void fb_flush()
+{
+    if (fb != -1) {
+        if (ioctl(fb, FBIOPAN_DISPLAY, &vinfo)) {
+            perror("FBIOPAN_DISPLAY failed");
+        }
+    }
+}
 
 void fb_close()
 {
@@ -2031,9 +2040,17 @@ int f_gr_open(int arglist, int th)
     return(T);
     else if(res == -1)
     return(NIL);
+
+    return(NIL);
 }
 
-
+int f_gr_flush(int arglist, int th)
+{
+    if(!nullp(arglist))
+    error(WRONG_ARGS,"GR-FLUSH",arglist,th);
+    fb_flush();
+    return(T);
+}
 
 int f_gr_close(int arglist, int th)
 {

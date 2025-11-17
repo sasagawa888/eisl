@@ -98,6 +98,7 @@ static const char *extended[] = {
     "gpio-init", "gpio-set-mode", "gpio-write", "gpio-read",
     "gpio-event-request",
     "gpio-event-wait", "gpio-event-read", "gpio-close",
+    "gr-open", "gr-close", "gr-cls", "gr-circle", "gr-line",
 };
 
 static bool in_syntax_table(const char *str)

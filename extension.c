@@ -131,6 +131,12 @@ void init_exsubr(void)
     def_subr("RECV-SOCKET", f_recv_socket);
     def_subr("CLOSE-SOCKET", f_close_socket);
 
+    def_subr("GR-OPEN", f_gr_open);
+    def_subr("GR-CLOSE", f_gr_close);
+    def_subr("GR-CLS", f_gr_cls);
+    def_subr("GR-CIRCLE", f_gr_circle);
+    def_subr("GR-LINE", f_gr_line);
+
 #ifdef __rpi__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
     def_subr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
@@ -1885,6 +1891,15 @@ int f_close_socket(int arglist, int th)
 
 //-------/dev/fb0------------------------
 
+#define BLACK       0x000000  
+#define BLUE        0x0000FF 
+#define RED         0xFF0000  
+#define MAGENTA     0xFF00FF  
+#define GREEN       0x00FF00 
+#define CYAN        0x00FFFF  
+#define YELLOW      0xFFFF00 
+#define WHITE       0xFFFFFF 
+
 static int fb = -1;
 static char *fbp = NULL;
 static struct fb_var_screeninfo vinfo;
@@ -1980,4 +1995,106 @@ void fb_draw_line(int x0, int y0, int x1, int y1, unsigned int color) {
         if(e2 >= dy) { err += dy; x0 += sx; }
         if(e2 <= dx) { err += dx; y0 += sy; }
     }
+}
+
+int color_to_number(int symbol)
+{
+    if(eqp(symbol,make_sym("BLACK")))
+        return(BLACK);
+    else if(eqp(symbol,make_sym("BLUE")))
+        return(BLUE);
+    else if(eqp(symbol,make_sym("RED")))
+        return(RED);
+    else if(eqp(symbol,make_sym("MAGENTA")))
+        return(MAGENTA);
+    else if(eqp(symbol,make_sym("GREEN")))
+        return(GREEN);
+    else if(eqp(symbol,make_sym("CYAN")))
+        return(CYAN);
+    else if(eqp(symbol,make_sym("YELLOW")))
+        return(YELLOW);
+    else if(eqp(symbol,make_sym("WHITE")))
+        return(WHITE);
+    
+    return(0);
+}
+
+int f_gr_open(int arglist, int th)
+{
+    int res;
+    if (!nullp(arglist))
+	error(WRONG_ARGS, "GR-OPEN", arglist, th);
+
+    res = fb_open();
+    if(res)
+    return(T);
+    else 
+    return(NIL);
+}
+
+
+
+int f_gr_close(int arglist, int th)
+{
+    if (!nullp(arglist))
+	error(WRONG_ARGS, "GR-CLOSE", arglist, th);
+
+    fb_close();
+    return(T);
+}
+
+int f_gr_cls(int arglist, int th)
+{
+    int arg1;
+    arg1 = car(arglist);
+    if(!symbolp(arg1))
+    error(NOT_SYM,"GR-CLS",arg1,th);
+
+    fb_clear_screen(color_to_number(arg1));
+    return(T);
+}
+
+
+int f_gr_circle(int arglist, int th)
+{
+    int arg1,arg2,arg3,arg4;
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = car(cdddr(arglist));
+    if(!integerp(arg1))
+    error(NOT_INT,"GR-CIRCLE",arg1,th);
+    if(!integerp(arg2))
+    error(NOT_INT,"GR-CIRCLE",arg2,th);
+    if(!integerp(arg3))
+    error(NOT_INT,"GR-CIRCLE",arg3,th);
+    if(!symbolp(arg4))
+    error(NOT_SYM,"GR-CIRCLE",arg4,th);
+
+    fb_draw_circle(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),color_to_number(arg4));
+    return(T);
+}
+
+
+int f_gr_line(int arglist, int th)
+{
+    int arg1,arg2,arg3,arg4,arg5;
+    arg1 = car(arglist);
+    arg2 = cadr(arglist);
+    arg3 = caddr(arglist);
+    arg4 = car(cdddr(arglist));
+    arg5 = car(cdr(cdddr(arglist)));
+    if(!integerp(arg1))
+    error(NOT_INT,"GR-CIRCLE",arg1,th);
+    if(!integerp(arg2))
+    error(NOT_INT,"GR-CIRCLE",arg2,th);
+    if(!integerp(arg3))
+    error(NOT_INT,"GR-CIRCLE",arg3,th);
+    if(!integerp(arg4))
+    error(NOT_INT,"GR-CIRCLE",arg4,th);
+    if(!symbolp(arg5))
+    error(NOT_SYM,"GR-CIRCLE",arg5,th);
+
+    fb_draw_line(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg4));
+    return(T);
 }

@@ -10,6 +10,16 @@ You need to use sudo when starting it.
 sudo eisl
 ```
 
+The default font on the TTY is small and hard to read. Therefore, please change the settings as follows next.
+
+```
+sudo dpkg-reconfigure console-setup
+```
+
+- UTF8
+- Terminus
+- 16*32
+
 ---
 
 ## Functions
@@ -46,16 +56,34 @@ sudo eisl
 
 ---
 
-### `(gr-circle cx cy r color)`
+### `(gr-circle cx cy r color :rest opt)`
 - **Description:** Draws a circle with the specified center, radius, and color.
 - **Arguments:** 
   - `cx`: Integer X-coordinate of the center
   - `cy`: Integer Y-coordinate of the center
   - `r`: Integer radius
   - `color`: A symbol representing the color
+  - `opt`: Symbol fill paint the figure
 - **Return:** `T`
 
 ---
+
+
+---
+
+### `(gr-rect x0 y0 x1 y1 color :rest opt)`
+- **Description:** Draws a circle with the specified center, radius, and color.
+- **Arguments:** 
+  - `x0`: Integer X-coordinate of the upper left
+  - `y0`: Integer Y-coordinate of the upper left
+  - `x1`: Integer X-coordinate of the lower right
+  - `y1`: Integer Y-coordinate of the lower right
+  - `color`: A symbol representing the color
+  - `opt`: Symbol fill paint the figure
+- **Return:** `T`
+
+---
+
 
 ### `(gr-line x0 y0 x1 y1 color)`
 - **Description:** Draws a line from `(x0, y0)` to `(x1, y1)` with the specified color.

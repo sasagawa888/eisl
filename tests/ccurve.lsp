@@ -4,8 +4,8 @@
 (defun c-curve (x0 y0 x1 y1 depth)
   (if (= depth 0)
       (gr-line x0 y0 x1 y1 'BLACK)   ;; Base case: draw a line
-      (let* ((mx (/ (+ x0 x1) 2))
-             (my (/ (+ y0 y1) 2))
+      (let* ((mx (div (+ x0 x1) 2))
+             (my (div (+ y0 y1) 2))
              ;; Rotate midpoint to form C-curve shape
              (dx (- x1 x0))
              (dy (- y1 y0))

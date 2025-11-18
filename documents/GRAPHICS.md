@@ -4,6 +4,8 @@ This is a simple graphics system utilizing `/dev/fb0`. It is implemented as a bu
 
 To use this feature, you need to switch to a physical terminal. You can switch by pressing CTRL+ALT+F3. To return to your original session, press CTRL+ALT+F7.
 
+![](graph0.png)
+
 You need to use sudo when starting it.
 
 ```
@@ -19,6 +21,9 @@ sudo dpkg-reconfigure console-setup
 - UTF8
 - Terminus
 - 16*32
+
+![](graph1.png)
+![](graph2.png)
 
 ---
 

@@ -19,4 +19,21 @@
   (gr-cls 'black)
   (c-curve 1200 300 1500 600 10))
 
+;; rect and circle
+(defun japan ()
+  (gr-open)
+  (gr-cls 'black)                
+  (draw-flag 900 300 400) 
+  (gr-close))
+
+(defun draw-flag (x0 y0 w)
+  (let* ((x1 (+ x0 w))
+         (h (div (* w 2) 3))
+         (y1 (+ y0 h))
+         (cx (+ x0 (div w 2)))
+         (cy (+ y0 (div h 2)))
+         (r (div (* h 3) 10)))
+    (gr-rect x0 y0 x1 y1 'white 'fill)
+    (gr-circle cx cy r 'red 'fill)))
+
 

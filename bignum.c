@@ -163,9 +163,9 @@ void print_big(int x)
     y = get_pointer(x);		/* get pointer of bigcell */
     len = get_length(x);	/* get length of bignum */
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	Fmt_fprint(GET_PORT(output_stream), "%d", bigcell[y]);
+	fprintf(GET_PORT(output_stream), "%d", bigcell[y]);
     } else {
-	Fmt_sfmt(str, SHORT_STRSIZE, "%d", bigcell[y]);
+	sprintf(str, "%d", bigcell[y]);
 	txt2 = Text_put(str);
 	txt1 = Text_cat(txt1, txt2);
     }
@@ -174,9 +174,9 @@ void print_big(int x)
 
     do {
 	if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	    Fmt_fprint(GET_PORT(output_stream), "%09d", bigcell[y]);
+	    fprintf(GET_PORT(output_stream), "%09d", bigcell[y]);
 	} else {
-	    Fmt_sfmt(str, SHORT_STRSIZE, "%09d", bigcell[y]);
+	    sprintf(str, "%09d", bigcell[y]);
 	    txt2 = Text_put(str);
 	    txt1 = Text_cat(txt1, txt2);
 	}

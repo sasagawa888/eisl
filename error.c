@@ -654,7 +654,7 @@ int signal_condition(int x, int y, int th)
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;
-	Fmt_print("\x15");
+	printf("\x15");
 	fflush(stdout);
 	RAISE(Exit_Process);
     }
@@ -684,7 +684,7 @@ int signal_condition(int x, int y, int th)
     if (open_flag && error_handler == NIL) {
 	fclose(GET_PORT(input_stream));
 	open_flag = false;
-	Fmt_print("around here line=%d column=%d\n", line, column);
+	printf("around here line=%d column=%d\n", line, column);
     }
     if (error_handler != NIL) {
 	int handler;

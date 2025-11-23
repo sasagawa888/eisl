@@ -2162,7 +2162,7 @@ int convert(int arg1, int arg2)
 #ifdef __rpi__
 	    sprintf(str, "%lld", GET_LONG(arg1));
 #else
-	    Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(arg1));
+	    sprintf(str, "%lld", GET_LONG(arg1));
 #endif
 	    return (make_str(str));
 	}
@@ -2185,7 +2185,7 @@ int convert(int arg1, int arg2)
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
-	    Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(arg1));
+	    sprintf(str, "%d", GET_INT(arg1));
 	    return (make_str(str));
 	}
 	break;

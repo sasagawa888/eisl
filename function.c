@@ -1920,7 +1920,7 @@ int f_gensym(int arglist __unused, int th __unused)
     int res;
     char str[SYMSIZE];
 
-    Fmt_sfmt(str, SYMSIZE, "#:G%d", genint);
+    sprintf(str, "#:G%d", genint);
     genint++;
     res = make_sym(str);
     return (res);
@@ -3761,9 +3761,9 @@ int f_format_object(int arglist, int th)
 	    charcnt = charcnt + strlen(GET_NAME(arg2));
 	} else {
 	    if (GET_OPT(arg1) != EISL_OUTSTR) {
-		Fmt_fprint(GET_PORT(arg1), "\\\"%s\\\"", GET_NAME(arg2));
+		fprintf(GET_PORT(arg1), "\\\"%s\\\"", GET_NAME(arg2));
 	    } else {
-		Fmt_sfmt(stream_str, STRSIZE, "\\\"%s\\\"",
+		sprintf(stream_str, "\\\"%s\\\"",
 			 GET_NAME(arg2));
 		append_str(arg1, stream_str);
 	    }
@@ -3775,7 +3775,7 @@ int f_format_object(int arglist, int th)
 	    charcnt = charcnt + strlen(GET_NAME(arg2));
 	} else {
 	    if (GET_OPT(arg1) != EISL_OUTSTR)
-		Fmt_fprint(GET_PORT(arg1), "#\\\\%s", GET_NAME(arg2));
+		fprintf(GET_PORT(arg1), "#\\\\%s", GET_NAME(arg2));
 	    else {
 		char *str = Str_cat("#\\\\", 1, 0, GET_NAME(arg2), 1, 0);
 		append_str(arg1, str);

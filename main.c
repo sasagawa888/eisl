@@ -345,7 +345,7 @@ static void usage(void)
 static inline void maybe_greet(void)
 {
     if (greeting_flag)
-	Fmt_print("Easy-ISLisp Ver%1.2f [%dM cells]\n", VERSION,
+	printf("Easy-ISLisp Ver%1.2f [%dM cells]\n", VERSION,
 		  cell_size / 1000000);
 
     greeting_flag = false;
@@ -465,7 +465,7 @@ int main(int argc, char *argv[])
 		FREE(str);
 		break;
 	    case 'v':
-		Fmt_print("Easy-ISLisp1 Ver%1.2f\n", VERSION);
+		printf("Easy-ISLisp1 Ver%1.2f\n", VERSION);
 		exit(EXIT_SUCCESS);
 	    case 'h':
 		usage();
@@ -1576,10 +1576,10 @@ void print(int addr)
 void print_int(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
-	Fmt_fprint(GET_PORT(output_stream), "%d", GET_INT(addr));
+	fprintf(GET_PORT(output_stream), "%d", GET_INT(addr));
     else {
 	char str[SHORT_STRSIZE];
-	Fmt_sfmt(str, SHORT_STRSIZE, "%d", GET_INT(addr));
+	sprintf(str, "%d", GET_INT(addr));
 	append_str(output_stream, str);
     }
 }
@@ -1606,14 +1606,14 @@ void print_long(int addr)
 #ifdef __rpi__
 	fprintf(GET_PORT(output_stream), "%lld", GET_LONG(addr));
 #else
-	Fmt_fprint(GET_PORT(output_stream), "%D", GET_LONG(addr));
+	fprintf(GET_PORT(output_stream), "%lld", GET_LONG(addr));
 #endif
     } else {
 	char str[SHORT_STRSIZE];
 #ifdef __rpi__
 	sprintf(str, SHORT_STRSIZE, "%lld", GET_LONG(addr));
 #else
-	Fmt_sfmt(str, SHORT_STRSIZE, "%D", GET_LONG(addr));
+	sprintf(str,  "%lld", GET_LONG(addr));
 #endif
 	append_str(output_stream, str);
     }
@@ -1670,10 +1670,10 @@ void print_arr(int x)
 	ls = cons(GET_VEC_ELT(x, i), ls);
     ls = reverse(ls);
     if (GET_OPT(output_stream) != EISL_INSTR)
-	Fmt_fprint(GET_PORT(output_stream), "#%da", dim);
+	fprintf(GET_PORT(output_stream), "#%da", dim);
     else {
 	char str[SHORT_STRSIZE];
-	Fmt_sfmt(str, SHORT_STRSIZE, "#%da", dim);
+	sprintf(str, "#%da", dim);
 	append_str(output_stream, str);
     }
     if (dim == 0)
@@ -1686,9 +1686,9 @@ void print_arr(int x)
 void print_str(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	Fmt_fprint(GET_PORT(output_stream), "\"%s\"", GET_NAME(addr));
+	fprintf(GET_PORT(output_stream), "\"%s\"", GET_NAME(addr));
     } else {
-	Fmt_sfmt(stream_str, STRSIZE, "\"%s\"", GET_NAME(addr));
+	sprintf(stream_str, "\"%s\"", GET_NAME(addr));
 	append_str(output_stream, stream_str);
     }
 }
@@ -1805,9 +1805,9 @@ void print_obj(const char *str)
 void print_class(int addr)
 {
     if (GET_OPT(output_stream) != EISL_OUTSTR)
-	Fmt_fprint(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
+	fprintf(GET_PORT(output_stream), "<class %s>", GET_NAME(addr));
     else {
-	Fmt_sfmt(stream_str, STRSIZE, "<class %s>", GET_NAME(addr));
+	sprintf(stream_str, "<class %s>", GET_NAME(addr));
 	append_str(output_stream, stream_str);
     }
 }
@@ -1824,9 +1824,9 @@ void print_stm(int addr)
 	name = GET_NAME(addr);
     }
     if (GET_OPT(output_stream) != EISL_OUTSTR)
-	Fmt_fprint(GET_PORT(output_stream), "<stream %s>", name);
+	fprintf(GET_PORT(output_stream), "<stream %s>", name);
     else {
-	Fmt_sfmt(GET_NAME(output_stream), STRSIZE, "<stream %s>", name);
+	sprintf(GET_NAME(output_stream), "<stream %s>", name);
 	append_str(output_stream, stream_str);
     }
 }

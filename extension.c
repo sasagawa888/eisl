@@ -686,7 +686,7 @@ void debugger(int th)
 	    }
 	} else if (eqp(x, make_sym(":D"))) {
 	    for (i = 0; i < thread_num; i++) {
-		Fmt_print("thread%d = ", i);
+		printf("thread%d = ", i);
 		for (j = 0; j < dp[i]; j++) {
 		    print(dynamic[j][0][i]);
 		    printf("=");
@@ -697,7 +697,7 @@ void debugger(int th)
 	    }
 	} else if (eqp(x, make_sym(":E"))) {
 	    for (i = 0; i < thread_num; i++) {
-		Fmt_print("thread%d = ", i);
+		printf("thread%d = ", i);
 		print(ep[i]);
 		putchar('\n');
 	    }
@@ -707,7 +707,7 @@ void debugger(int th)
 	} else if (eqp(x, make_sym(":Q"))) {
 	    return;
 	} else if (eqp(x, make_sym(":R"))) {
-	    Fmt_print("EP = %d (environment pointer)\n"
+	    printf("EP = %d (environment pointer)\n"
 		      "DP = %d (dynamic pointer)\n"
 		      "HP = %d (heap pointer)\n"
 		      "SP = %d (stack pointer)\n"
@@ -719,7 +719,7 @@ void debugger(int th)
 		      lp[th], thread_num, th);
 	    puts("Free cell ");
 	    for (i = 0; i < thread_num; i++) {
-		Fmt_print("thread%d = %d\n", i, fc[i]);
+		printf("thread%d = %d\n", i, fc[i]);
 	    }
 	} else if (eqp(x, make_sym(":S"))) {
 	    if (stepper_flag == 0) {
@@ -771,55 +771,55 @@ void cellprint(int addr)
 	puts("EMP");
 	break;
     case INTN:
-	Fmt_print("INTN   %d\n", GET_INT(addr));
+	printf("INTN   %d\n", GET_INT(addr));
 	break;
     case FLTN:
-	Fmt_print("FLTN   %f\n", GET_FLT(addr));
+	printf("FLTN   %f\n", GET_FLT(addr));
 	break;
     case LONGN:
-	Fmt_print("LONGN  %D\n", GET_LONG(addr));
+	printf("LONGN  %lld\n", GET_LONG(addr));
 	break;
     case BIGN:
-	Fmt_print("BIGN   %d\n", GET_CAR(addr));
+	printf("BIGN   %d\n", GET_CAR(addr));
 	break;
     case SYM:
-	Fmt_print("SYM    %07d %07d %07d %s\n", GET_CAR(addr),
+	printf("SYM    %07d %07d %07d %s\n", GET_CAR(addr),
 		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
 	break;
     case STR:
-	Fmt_print("STR    %07d %07d %07d %s\n", GET_CAR(addr),
+	printf("STR    %07d %07d %07d %s\n", GET_CAR(addr),
 		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
 	break;
     case LIS:
-	Fmt_print("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+	printf("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
 		  GET_AUX(addr));
 	break;
     case SUBR:
-	Fmt_print("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+	printf("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
 		  GET_AUX(addr));
 	break;
     case FSUBR:
-	Fmt_print("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+	printf("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
 		  GET_AUX(addr));
 	break;
     case FUNC:
-	Fmt_print("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+	printf("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
 		  GET_AUX(addr));
 	break;
     case MACRO:
-	Fmt_print("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+	printf("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
 		  GET_AUX(addr));
 	break;
     case CLASS:
-	Fmt_print("CLASS  %07d %07d %07d %s\n", GET_CAR(addr),
+	printf("CLASS  %07d %07d %07d %s\n", GET_CAR(addr),
 		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
 	break;
     case GENERIC:
-	Fmt_print("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
+	printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
 		  GET_AUX(addr));
 	break;
     default:
-	Fmt_print("cellprint(%d) tag switch default action\n", addr);
+	printf("cellprint(%d) tag switch default action\n", addr);
     }
 }
 
@@ -830,7 +830,7 @@ void heapdump(int start, int end)
 
     puts("addr    F   TAG    CAR     CDR     AUX     NAME");
     for (i = start; i <= end; i++) {
-	Fmt_print("%07d ", i);
+	printf("%07d ", i);
 	cellprint(i);
     }
 }
@@ -1399,7 +1399,7 @@ int f_time(int arglist, int th)
     st = getETime();
     eval(arg1, 0);
     en = getETime();
-    Fmt_print("Elapsed Time(second)=%.6f\n", en - st);
+    printf("Elapsed Time(second)=%.6f\n", en - st);
     return (UNDEF);
 }
 
@@ -1605,7 +1605,7 @@ int modulesubst1(int x, int module)
 {
     char str[SYMSIZE];
 
-    Fmt_sfmt(str, SYMSIZE, "%s::%s", GET_NAME(module), GET_NAME(x));
+    sprintf(str, "%s::%s", GET_NAME(module), GET_NAME(x));
     return (make_sym(str));
 }
 

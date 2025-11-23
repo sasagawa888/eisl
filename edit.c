@@ -850,10 +850,10 @@ read_line_loop(int c, int *j, int *uni_j, int *pos, int limit,
 		    for (i = 0; i < CANDIDATE; i++) {
 			if (i + k >= ed_candidate_pt)
 			    break;
-			Fmt_print("%d:%s ", i + 1, ed_candidate[i + k]);
+			printf("%d:%s ", i + 1, ed_candidate[i + k]);
 		    }
 		    if (ed_candidate_pt > k + CANDIDATE)
-			Fmt_print("4:more");
+			printf("4:more");
 		    ESCRST();
 		    bool bad_candidate_selected;
 		    do {

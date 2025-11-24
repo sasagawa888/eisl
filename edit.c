@@ -6,7 +6,6 @@
 #include <ncurses.h>
 #include "eisl.h"
 #include "except.h"
-#include "mem.h"
 
 #define TOKEN_MAX 80
 #define FRAGMENT_MAX 20

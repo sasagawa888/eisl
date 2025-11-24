@@ -43,7 +43,6 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include "eisl.h"
-#include "mem.h"
 #include "except.h"
 
 
@@ -695,7 +694,7 @@ void init_stok()
     stok.flag = GO;
     stok.type = OTHER;
     stok.bufsize = BUFSIZE;
-    stok.buf = ALLOC(BUFSIZE * sizeof(char));
+    stok.buf = malloc(BUFSIZE * sizeof(char));
     stok.buf[0] = '\0';
 }
 
@@ -703,7 +702,12 @@ void set_stok_buf(int index, char c)
 {
     if (index >= stok.bufsize) {
 	int new_bufsize = index + 1;
-	RESIZE(stok.buf, sizeof(char) * new_bufsize);
+	char *new_buf = (char *)realloc(stok.buf, new_bufsize);
+	if (!new_buf) {
+    	fprintf(stderr, "Memory allocation failed\n");
+    	exit(1);
+	}
+	stok.buf = new_buf;
 	stok.bufsize = new_bufsize;
 
     }
@@ -715,7 +719,12 @@ void replace_stok_buf(char *str)
 {
     if (strlen(str) > (size_t) stok.bufsize) {
 	int new_bufsize = strlen(str);
-	RESIZE(stok.buf, sizeof(char) * new_bufsize);
+	char *new_buf = (char *)realloc(stok.buf, new_bufsize);
+	if (!new_buf) {
+    	fprintf(stderr, "Memory allocation failed\n");
+    	exit(1);
+	}
+	stok.buf = new_buf;	
 	stok.bufsize = new_bufsize;
     }
     strcpy(stok.buf, str);

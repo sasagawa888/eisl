@@ -2159,11 +2159,7 @@ int convert(int arg1, int arg2)
 	} else if (GET_AUX(arg2) == cfloat) {
 	    return (exact_to_inexact(arg1));
 	} else if (GET_AUX(arg2) == cstring) {
-#ifdef __rpi__
 	    sprintf(str, "%lld", GET_LONG(arg1));
-#else
-	    sprintf(str, "%lld", GET_LONG(arg1));
-#endif
 	    return (make_str(str));
 	}
 	break;

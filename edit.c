@@ -34,7 +34,7 @@ int f_edit(int arglist, int th)
     }
     char *str = Str_catv(ed, 1, 0, " ", 1, 0, GET_NAME(arg1), 1, 0, NULL);
     res = system(str);
-    FREE(str);
+    free(str);
     if (res == -1)
 	error(SYSTEM_ERR, "edit", arg1, th);
     f_load(arglist, 0);

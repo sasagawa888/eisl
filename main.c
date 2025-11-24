@@ -46,7 +46,7 @@
 #include "mem.h"
 #include "except.h"
 #include "str.h"
-#include "long.h"
+
 
 
 /* pointer */
@@ -424,12 +424,12 @@ int main(int argc, char *argv[])
 	    case 'c':
 		str = library_file("compiler.lsp");
 		f_load(list1(make_str(str)), 0);
-		FREE(str);
+		free(str);
 		break;
 	    case 'f':
 		str = library_file("formatter.lsp");
 		f_load(list1(make_str(str)), 0);
-		FREE(str);
+		free(str);
 		break;
 	    case 's':
 		if (access(optarg, R_OK) == -1) {
@@ -460,7 +460,7 @@ int main(int argc, char *argv[])
 		init_creceiver();
 		str = library_file("compiler.lsp");
 		f_load(list1(make_str(str)), 0);
-		FREE(str);
+		free(str);
 		break;
 	    case 'v':
 		printf("Easy-ISLisp1 Ver%1.2f\n", VERSION);
@@ -2386,9 +2386,10 @@ void bind_macro(char *name, int addr)
     SET_CDR(val1, 0);
     val2 = freshcell();
     SET_TAG(val2, MACRO);
-    TRY heap[val2].name = Str_dup(name, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "makemacro", NIL, 0);
-    END_TRY;
+    heap[val2].name = Str_dup(name, 1, 0, 1);
+	if (heap[val2].name == NULL){
+    error(MALLOC_OVERF, "makemacro", NIL, 0);
+	}
     SET_CAR(val2, val1);
     SET_CDR(val2, 0);
     SET_AUX(val2, cfunction);	/* class */

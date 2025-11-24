@@ -2936,7 +2936,7 @@ int f_string_append(int arglist, int th)
     }
     char *str = Text_get(NULL, 0, txt1);
     int res = make_str(str);
-    FREE(str);
+    free(str);
     Text_restore(&save);
     return res;
 }
@@ -3541,7 +3541,7 @@ int f_format(int arglist, int th)
 	c = str[i];
     }
     output_stream = save;
-    FREE(str);
+    free(str);
     return (NIL);
 }
 
@@ -3778,7 +3778,7 @@ int f_format_object(int arglist, int th)
 	    else {
 		char *str = Str_cat("#\\\\", 1, 0, GET_NAME(arg2), 1, 0);
 		append_str(arg1, str);
-		FREE(str);
+		free(str);
 	    }
 	    charcnt = charcnt + 3 + strlen(GET_NAME(arg2));
 	}
@@ -4151,11 +4151,11 @@ int f_create_string(int arglist, int th)
 
 
     if (isUni1(c)) {
-	str = ALLOC(n + 1);
+	str = malloc(n + 1);
 	memset(str, c, n);
 	str[n] = NUL;
     } else if (isUni2(c)) {
-	str = ALLOC(2 * n + 1);
+	str = malloc(2 * n + 1);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4163,7 +4163,7 @@ int f_create_string(int arglist, int th)
 	}
 	str[pos] = NUL;
     } else if (isUni3(c)) {
-	str = ALLOC(3 * n + 10);
+	str = malloc(3 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4172,7 +4172,7 @@ int f_create_string(int arglist, int th)
 	}
 	str[pos] = NUL;
     } else if (isUni4(c)) {
-	str = ALLOC(4 * n + 10);
+	str = malloc(4 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4182,7 +4182,7 @@ int f_create_string(int arglist, int th)
 	}
 	str[pos] = NUL;
     } else if (isUni5(c)) {
-	str = ALLOC(5 * n + 10);
+	str = malloc(5 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4193,7 +4193,7 @@ int f_create_string(int arglist, int th)
 	}
 	str[pos] = NUL;
     } else if (isUni6(c)) {
-	str = ALLOC(6 * n + 10);
+	str = malloc(6 * n + 10);
 	pos = 0;
 	for (i = 0; i < n; i++) {
 	    str[pos++] = heap[arg2].name[0];
@@ -4207,7 +4207,7 @@ int f_create_string(int arglist, int th)
     }
 
     int res = make_str(str);
-    FREE(str);
+    free(str);
     return res;
 
 }
@@ -4273,10 +4273,10 @@ int f_create_string_input_stream(int arglist, int th)
 	error(NOT_STR, "create-string-input-stream", arg1, th);
 
     res = make_stm(stdin, EISL_INSTR, NULL);
-    TRY heap[res].name = Str_dup(GET_NAME(arg1), 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "create-string-input-stream",
-			     NIL, th);
-    END_TRY;
+    heap[res].name = Str_dup(GET_NAME(arg1), 1, 0, 1);
+    if (heap[res].name == NULL){
+    error(MALLOC_OVERF, "create-string-input-stream", NIL, th);
+    }
     return (res);
 }
 
@@ -4289,10 +4289,10 @@ int f_create_string_output_stream(int arglist, int th)
 	error(WRONG_ARGS, "create-string-output-stream", arglist, th);
 
     res = make_stm(stdout, EISL_OUTSTR, NULL);
-    TRY str = (char *) ALLOC(STRSIZE);
-    EXCEPT(Mem_Failed)
+    str = (char *) malloc(STRSIZE);
+    if (str == NULL){
 	error(MALLOC_OVERF, "create-string-output-stream", NIL, th);
-    END_TRY;
+    }
     heap[res].name = str;
     heap[res].name[0] = '\0';
     return (res);

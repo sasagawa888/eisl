@@ -1318,7 +1318,7 @@ int substr(int x, int s, int e)
     }
     str[j] = NUL;
     int res = make_str(str);
-    FREE(str);
+    free(str);
     return res;
 }
 

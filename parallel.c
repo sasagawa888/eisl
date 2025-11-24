@@ -407,10 +407,10 @@ int sexp_to_str(int x)
     char *str;
 
     res = make_stm(stdout, EISL_OUTSTR, NULL);
-    TRY str = (char *) ALLOC(STRSIZE);
-    EXCEPT(Mem_Failed)
+    str = (char *) ALLOC(STRSIZE);
+	if (str == NULL){
 	error(MALLOC_OVERF, "create-string-output-stream", NIL, 0);
-    END_TRY;
+	}
     heap[res].name = str;
     heap[res].name[0] = '\0';
 
@@ -578,10 +578,10 @@ int str_to_sexp(int x)
     int stm, save, res;
 
     stm = make_stm(stdin, EISL_INSTR, NULL);
-    TRY heap[stm].name = Str_dup(GET_NAME(x), 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "create-string-input-stream",
-			     NIL, 0);
-    END_TRY;
+    heap[stm].name = Str_dup(GET_NAME(x), 1, 0, 1);
+	if (heap[stm].name == NULL){
+    error(MALLOC_OVERF, "create-string-input-stream", NIL, 0);
+	}
 
     save = input_stream;
     input_stream = stm;

@@ -59,7 +59,7 @@ void dynamic_link(int x)
 
     hmod = dlopen(str, RTLD_LAZY);
 
-    FREE(str);
+    free(str);
     if (hmod == NULL)
 	error(ILLEGAL_ARGS, "load", x, 0);
 

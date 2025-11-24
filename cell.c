@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <pthread.h>
 #include "eisl.h"
-#include "mem.h"
+//#include "mem.h"
 #include "except.h"
 #include "str.h"
 
@@ -424,9 +424,10 @@ int make_sym1(const char *pname)
 
     addr = freshcell();
     SET_TAG(addr, SYM);
-    TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_sym", NIL, 0);
-    END_TRY;
+    heap[addr].name = Str_dup(pname, 1, 0, 1);
+    if (heap[addr].name == NULL) { 
+    error(MALLOC_OVERF, "make_sym", NIL, 0);
+    }
     SET_CAR(addr, NIL);
     SET_CDR(addr, NIL);
     SET_AUX(addr, csymbol);	// class symbol
@@ -535,9 +536,10 @@ int make_func(const char *pname, int addr)
 
     val = freshcell();
     SET_TAG(val, FUNC);
-    TRY heap[val].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_func", NIL, 0);
-    END_TRY;
+    heap[val].name = Str_dup(pname, 1, 0, 1);
+    if (heap[val].name == NULL) { 
+    error(MALLOC_OVERF, "make_func", NIL, 0);
+    }
     SET_CAR(val, addr);
     SET_CDR(val, ep[0]);	/* local environment */
     SET_AUX(val, cfunction);	/* class function */
@@ -576,9 +578,10 @@ int make_generic(char *pname, int lamlist, int body)
 
     val = freshcell();
     SET_TAG(val, GENERIC);
-    TRY heap[val].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_generic", NIL, 0);
-    END_TRY;
+    heap[val].name = Str_dup(pname, 1, 0, 1);
+    if (heap[val].name == NULL) { 
+    error(MALLOC_OVERF, "make_generic", NIL, 0);
+    }
     SET_CAR(val, lamlist);
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
     SET_CDR(val, NIL);
@@ -682,9 +685,10 @@ int make_vec(int n, int obj)
     int res, i, *vec;
 
     res = freshcell();
-    TRY vec = (int *) ALLOC(sizeof(int) * n);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_vector", NIL, 0);
-    END_TRY;
+    vec = (int *) malloc(sizeof(int) * n);
+    if (vec == NULL){
+    error(MALLOC_OVERF, "make_vector", NIL, 0);
+    }
     SET_TAG(res, VEC);
     SET_VEC(res, vec);
     for (i = 0; i < n; i++)
@@ -783,9 +787,10 @@ int make_arr(int ls, int obj)
 	size = 1;
 
     res = freshcell();
-    TRY vec = (int *) ALLOC(sizeof(int) * size);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "array", NIL, 0);
-    END_TRY;
+    vec = (int *) malloc(sizeof(int) * size);
+    if (vec == NULL){
+    error(MALLOC_OVERF, "array", NIL, 0);
+    }
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
 	SET_CDR(res, ls1);
@@ -813,9 +818,10 @@ int make_str(const char *string)
 
     addr = freshcell();
     SET_TAG(addr, STR);
-    TRY heap[addr].name = Str_dup(string, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_str", NIL, 0);
-    END_TRY;
+    heap[addr].name = Str_dup(string, 1, 0, 1);
+    if (heap[addr].name == NULL) { 
+    error(MALLOC_OVERF, "make_str", NIL, 0);
+    }
     SET_AUX(addr, cstring);	/* class string */
     return (addr);
 }
@@ -898,9 +904,10 @@ int make_char(const char *pname)
 
     addr = freshcell();
     SET_TAG(addr, CHR);
-    TRY heap[addr].name = (char *) ALLOC(CHARSIZE);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_char", NIL, 0);
-    END_TRY;
+    heap[addr].name = (char *) malloc(CHARSIZE);
+    if (heap[addr].name == NULL) { 
+    error(MALLOC_OVERF, "make_char", NIL, 0);
+    }
     if (!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0])
 	&& !isUni5(pname[0]) && !isUni6(pname[0])) {
 	heap[addr].name[0] = char_entity;
@@ -928,9 +935,10 @@ int make_class(const char *pname, int superclass)
 
     addr = freshcell();
     SET_TAG(addr, CLASS);
-    TRY heap[addr].name = Str_dup(pname, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "make_class", NIL, 0);
-    END_TRY;
+    heap[addr].name = Str_dup(pname, 1, 0, 1);
+    if (heap[addr].name == NULL) { 
+    error(MALLOC_OVERF, "make_class", NIL, 0);
+    }
     SET_CAR(addr, superclass);
     SET_CDR(addr, NIL);
     SET_AUX(addr, NIL);

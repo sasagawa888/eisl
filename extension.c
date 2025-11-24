@@ -37,7 +37,6 @@
 #endif
 
 #include "eisl.h"
-#include "mem.h"
 #include "except.h"
 #include "str.h"
 #include "text.h"
@@ -1458,21 +1457,21 @@ int f_import(int arglist, int th)
 	goto cleanup;
     }
 
-    FREE(str);
+    free(str);
     str = Str_cat(GET_NAME(arg1), 1, 0, ".lsp", 1, 0);
-    FREE(fname);
+    free(fname);
     fname = library_file(str);
     if (access(fname, R_OK) != -1) {
 	f_load(list1(make_str(fname)), 0);
 	goto cleanup;
     }
-    FREE(str);
-    FREE(fname);
+    free(str);
+    free(fname);
     error(CANT_OPEN, "import", arg1, th);
 
   cleanup:
-    FREE(str);
-    FREE(fname);
+    free(str);
+    free(fname);
     return (T);
 }
 
@@ -1682,9 +1681,10 @@ int f_try(int arglist, int th)
     str[pos] = NUL;
 
     program = make_stm(stdin, EISL_INSTR, NULL);
-    TRY heap[program].name = Str_dup(str, 1, 0, 1);
-    EXCEPT(Mem_Failed) error(MALLOC_OVERF, "try", NIL, th);
-    END_TRY;
+    heap[program].name = Str_dup(str, 1, 0, 1);
+    if (heap[program].name == NULL){
+    error(MALLOC_OVERF, "try", NIL, th);
+    }
 
     save1 = input_stream;
     save2 = output_stream;

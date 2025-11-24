@@ -6,7 +6,6 @@
 #include "eisl.h"
 #include "except.h"
 #include "str.h"
-#include "mem.h"
 
 static int outc(int c)
 {
@@ -633,10 +632,10 @@ int signal_condition(int x, int y, int th)
 	SET_OPT(x, NOTCONT);
     else {
 	SET_OPT(x, CONTINUABLE);
-	TRY heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
-	EXCEPT(Mem_Failed) error(MALLOC_OVERF, "signal-condition", NIL,
-				 th);
-	END_TRY;
+	heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
+	if (heap[x].name == NULL){
+	error(MALLOC_OVERF, "signal-condition", NIL, th);
+	}
     }
     if (ignore_flag) {
 	block_pt = 0;

@@ -19,9 +19,7 @@
 #include <stdint.h>
 #include <pthread.h>
 #include "eisl.h"
-#include "compat/nana_stubs.h"
 #include "mem.h"
-#include "fmt.h"
 #include "except.h"
 #include "str.h"
 

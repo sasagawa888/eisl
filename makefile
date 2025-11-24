@@ -89,7 +89,6 @@ EISL_OBJS := main.o \
 	compute.o \
 	edit.o \
 	syn_highlight.o \
-	long.o \
 	link.o \
 	parallel.o
 
@@ -108,7 +107,7 @@ eisl: $(EISL_OBJS) $(OBJ_CII)
 	touch $@
 
 
-main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o long.o link.o parallel.o
+main.o: function.o extension.o syntax.o data.o gbc.o cell.o error.o bignum.o compute.o edit.o syn_highlight.o link.o parallel.o
 function.o: function.c eisl.h 
 extension.o: extension.c eisl.h 
 syntax.o: syntax.c eisl.h 

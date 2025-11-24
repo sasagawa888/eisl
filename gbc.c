@@ -9,10 +9,8 @@
 #include <pthread.h>
 #include <time.h>
 #include "eisl.h"
-#include "compat/nana_stubs.h"
 #include "mem.h"
 #include "except.h"
-#include "fmt.h"
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 
@@ -226,7 +224,6 @@ void mark_cell(int addr)
 	mark_cell(GET_AUX(addr));
 	return;
     default:
-	IP(false, "mark_cell tag switch default action");
     }
 }
 

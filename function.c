@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include "eisl.h"
 #include "mem.h"
-#include "fmt.h"
 #include "except.h"
 #include "str.h"
 #include "text.h"

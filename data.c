@@ -10,7 +10,6 @@
 #include <float.h>
 #include "eisl.h"
 #include "mem.h"
-#include "fmt.h"
 #include "compat/eiffel_stubs.h"
 
 int get_int(int addr)

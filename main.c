@@ -44,7 +44,6 @@
 #include <netdb.h>
 #include "eisl.h"
 #include "mem.h"
-#include "fmt.h"
 #include "except.h"
 #include "str.h"
 #include "long.h"
@@ -361,7 +360,6 @@ int main(int argc, char *argv[])
 {
     int errret;
 
-    Fmt_register('D', cvt_D);
     if (setupterm((char *) 0, 1, &errret) == ERR ||
 	key_up == NULL || key_down == NULL ||
 	key_right == NULL || key_left == NULL) {

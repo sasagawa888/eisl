@@ -13,8 +13,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include "eisl.h"
-#include "compat/nana_stubs.h"
-#include "fmt.h"
 #include "str.h"
 #include "mem.h"
 
@@ -2270,7 +2268,6 @@ int convert(int arg1, int arg2)
 	}
 	break;
     default:
-	VL(("convert tag switch default action"));
     }
     error(OUT_OF_DOMAIN, "convert", arg1, 0);
     return (UNDEF);

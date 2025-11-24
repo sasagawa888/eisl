@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include "eisl.h"
-#include "fmt.h"
 #include "except.h"
 #include "str.h"
 #include "mem.h"

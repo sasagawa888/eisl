@@ -50,7 +50,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "eisl.h"
-#include "fmt.h"
 #include "text.h"
 
 #define DEBUG error(RESOURCE_ERR,"debug",NIL,0);

@@ -37,7 +37,7 @@
 #endif
 
 #include "eisl.h"
-#include "text.h"
+
 
 void init_exsubr(void)
 {

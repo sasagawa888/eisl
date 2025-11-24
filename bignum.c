@@ -50,7 +50,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "eisl.h"
-#include "text.h"
 
 #define DEBUG error(RESOURCE_ERR,"debug",NIL,0);
 
@@ -140,59 +139,48 @@ int make_big(char *bignum)
     }
 }
 
-
 void print_big(int x)
 {
     int y, len;
-    Text_save_T save;
-    Text_T txt1 = { 0, NULL }, txt2;
-    char str[SHORT_STRSIZE];
+    char tmp[64];
+    char *outbuf = NULL;
 
     if (GET_OPT(output_stream) == EISL_OUTSTR) {
-	save = Text_save();
+        outbuf = GET_NAME(output_stream); 
     }
 
     if (get_sign(x) == -1) {
-	if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	    fputc('-', GET_PORT(output_stream));
-	} else {
-	    txt1 = Text_put("-");
-	}
+        if (outbuf) {
+            strcat(outbuf, "-");
+        } else {
+            fputc('-', GET_PORT(output_stream));
+        }
     }
-    y = get_pointer(x);		/* get pointer of bigcell */
-    len = get_length(x);	/* get length of bignum */
-    if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	fprintf(GET_PORT(output_stream), "%d", bigcell[y]);
+
+    y = get_pointer(x);
+    len = get_length(x);
+
+    if (!outbuf) {
+        fprintf(GET_PORT(output_stream), "%d", bigcell[y]);
     } else {
-	sprintf(str, "%d", bigcell[y]);
-	txt2 = Text_put(str);
-	txt1 = Text_cat(txt1, txt2);
+        sprintf(tmp, "%d", bigcell[y]);
+        strcat(outbuf, tmp);
     }
+
     y--;
     len--;
 
-    do {
-	if (GET_OPT(output_stream) != EISL_OUTSTR) {
-	    fprintf(GET_PORT(output_stream), "%09d", bigcell[y]);
-	} else {
-	    sprintf(str, "%09d", bigcell[y]);
-	    txt2 = Text_put(str);
-	    txt1 = Text_cat(txt1, txt2);
-	}
-	y--;
-	len--;
-    }
-    while (len > 0);
-
-    if (GET_OPT(output_stream) == EISL_OUTSTR) {
-	char *out_str = GET_NAME(output_stream);
-	size_t l = strlen(out_str);
-	Text_get(out_str + l, STRSIZE - l, txt1);
-	Text_restore(&save);
+    while (len > 0) {
+        if (!outbuf) {
+            fprintf(GET_PORT(output_stream), "%09d", bigcell[y]);
+        } else {
+            sprintf(tmp, "%09d", bigcell[y]);
+            strcat(outbuf, tmp);
+        }
+        y--;
+        len--;
     }
 }
-
-
 
 int gen_big(void)
 {

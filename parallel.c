@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include "eisl.h"
-#include "text.h"
 
 
 /* multi thread parallel functions */

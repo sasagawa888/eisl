@@ -1620,11 +1620,7 @@ void print_long(int addr)
 #endif
     } else {
 	char str[SHORT_STRSIZE];
-#ifdef __rpi__
-	sprintf(str, SHORT_STRSIZE, "%lld", GET_LONG(addr));
-#else
 	sprintf(str, "%lld", GET_LONG(addr));
-#endif
 	append_str(output_stream, str);
     }
 }

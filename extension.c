@@ -1901,15 +1901,31 @@ int f_close_socket(int arglist, int th)
 
 
 //-------/dev/fb0------------------------
+#define RGB565(r,g,b)  ( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3) )
 
-#define BLACK       0x000000
-#define BLUE        0x0000FF
-#define RED         0xFF0000
-#define MAGENTA     0xFF00FF
-#define GREEN       0x00FF00
-#define CYAN        0x00FFFF
-#define YELLOW      0xFFFF00
-#define WHITE       0xFFFFFF
+#ifdef __rpi__
+    #define BLACK       RGB565(0,   0,   0)
+    #define BLUE        RGB565(0,   0, 255)
+    #define RED         RGB565(255, 0,   0)
+    #define MAGENTA     RGB565(255, 0, 255)
+    #define GREEN       RGB565(0, 255,   0)
+    #define CYAN        RGB565(0, 255, 255)
+    #define YELLOW      RGB565(255,255,  0)
+    #define WHITE       RGB565(255,255,255)
+
+#else   // RGB888
+
+    #define BLACK       0x000000
+    #define BLUE        0x0000FF
+    #define RED         0xFF0000
+    #define MAGENTA     0xFF00FF
+    #define GREEN       0x00FF00
+    #define CYAN        0x00FFFF
+    #define YELLOW      0xFFFF00
+    #define WHITE       0xFFFFFF
+
+#endif
+
 
 static int fb = -1;
 static char *fbp = NULL;

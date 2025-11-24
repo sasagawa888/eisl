@@ -42,7 +42,7 @@ void gbc_sequence(void)
 {
     int addr, i, j;
 
-    DBG_PRINTF("enter  concurrent M&S-GC free=%d\n", fc[0]);
+    DBG_PRINTF("enter  M&S-GC free=%d\n", fc[0]);
 
     /* mark hash table */
     for (i = 0; i < HASHTBSIZE; i++)
@@ -139,7 +139,7 @@ void gbc_sequence(void)
 
     }
 
-    DBG_PRINTF("exit   concurrent M&S-GC free=%d\n", fc[0]);
+    DBG_PRINTF("exit   M&S-GC free=%d\n", fc[0]);
 
 }
 

@@ -29,6 +29,7 @@ void init_cell(void)
 
     /* initialize heap area */
     for (addr = 0; addr < cell_size; addr++) {
+    heap[addr].name = NULL;
 	SET_CDR(addr, addr + 1);
     }
     hp[0] = 0;

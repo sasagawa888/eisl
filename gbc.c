@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <time.h>
 #include "eisl.h"
-#include "mem.h"
 #include "except.h"
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
@@ -231,13 +230,16 @@ void mark_cell(int addr)
 void clr_cell(int addr)
 {
     if (IS_VECTOR(addr) || IS_ARRAY(addr)) {
-	if (heap[addr].val.car.dyna_vec)
-	    FREE(heap[addr].val.car.dyna_vec);
+	if (heap[addr].val.car.dyna_vec != NULL)
+	    free(heap[addr].val.car.dyna_vec);
+		heap[addr].val.car.dyna_vec = NULL;
     }
 
     SET_TAG(addr, EMP);
-    if (heap[addr].name)
-	FREE(heap[addr].name);
+    if (heap[addr].name != NULL){
+	free(heap[addr].name);
+	heap[addr].name = NULL;
+	}
     SET_CAR(addr, 0);
     SET_CDR(addr, 0);
     SET_AUX(addr, 0);

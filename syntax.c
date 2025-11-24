@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include "eisl.h"
 #include "str.h"
-#include "mem.h"
 
 
 #define TAGBODY_LEN_MAX 100

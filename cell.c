@@ -19,7 +19,6 @@
 #include <stdint.h>
 #include <pthread.h>
 #include "eisl.h"
-#include "except.h"
 
 
 char *eisl_strdup(const char *s) {

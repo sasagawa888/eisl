@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include "eisl.h"
-#include "except.h"
 #include "text.h"
 
 

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "eisl.h"
-#include "except.h"
 
 static int outc(int c)
 {

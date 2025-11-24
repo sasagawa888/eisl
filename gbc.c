@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <time.h>
 #include "eisl.h"
-#include "except.h"
 
 #define DBG_PRINTF(msg,arg)     if(gbc_flag) printf(msg,arg)
 

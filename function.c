@@ -13,7 +13,6 @@
 #include <limits.h>
 #include <unistd.h>
 #include "eisl.h"
-#include "except.h"
 #include "text.h"
 
 #define BININT_LEN 64

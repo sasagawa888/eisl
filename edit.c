@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include "eisl.h"
-#include "except.h"
 
 #define TOKEN_MAX 80
 #define FRAGMENT_MAX 20

@@ -1979,7 +1979,11 @@ void fb_draw_pixel(int x, int y, unsigned int color)
     long location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel / 8) +
 	(y +
 	 vinfo.yoffset) * vinfo.xres_virtual * (vinfo.bits_per_pixel / 8);
+    #ifdef __rpi__
+    *((uint16_t *) (fbp + location)) = (uint16_t)color;
+    #else
     *((unsigned int *) (fbp + location)) = color;
+    #endif
 }
 
 

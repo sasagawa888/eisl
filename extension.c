@@ -1637,7 +1637,7 @@ int program;
 
 int f_try(int arglist, int th)
 {
-    int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2;
+    int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2 ,ret;
     char str[STRSIZE];
 
     arg1 = car(arglist);	//time 
@@ -1689,9 +1689,12 @@ int f_try(int arglist, int th)
 
     if (arg1 == make_sym("NO-TIME-LIMIT")) {
 	ignore_flag = true;
-	TRY res = eval(arg2, 0);
-	ELSE res = UNDEF;
-	END_TRY;
+    ret = setjmp(error_buf);
+    if(ret == 0){
+	res = eval(arg2, 0);
+    } else if(ret == 1){
+    res = UNDEF;
+    }
 	ignore_flag = false;
 	if (res == UNDEF)
 	    res = make_sym("FAILSE");
@@ -1702,9 +1705,12 @@ int f_try(int arglist, int th)
 	try_res = NIL;
 	try_flag = true;
 	ignore_flag = true;
-	TRY res = eval(arg2, th);
-	ELSE res = UNDEF;
-	END_TRY;
+    ret = setjmp(error_buf);
+    if(ret == 0){
+	res = eval(arg2, th);
+    } else if(ret == 1){
+    res = UNDEF;    
+    }
 	ignore_flag = false;
 	try_flag = false;
 	if (res == UNDEF) {
@@ -1735,7 +1741,7 @@ int f_try(int arglist, int th)
 
 int f_read_exp(int arglist, int th)
 {
-    int res, save;
+    int res, save, ret;
 
     if (!nullp(arglist))
 	error(ILLEGAL_ARGS, "read-exp", arglist, th);
@@ -1743,9 +1749,15 @@ int f_read_exp(int arglist, int th)
 
     save = input_stream;
     input_stream = program;
-    TRY res = sread();
-    ELSE res = UNDEF;
-    END_TRY;
+    ignore_flag = true;
+    res = NIL;
+    ret = setjmp(error_buf);
+    if(ret == 0){
+    res = sread();
+    } else if(ret == 1){
+    res = UNDEF;
+    }
+    ignore_flag = false;
     input_stream = save;
 
     return (res);

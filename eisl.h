@@ -18,7 +18,6 @@
 #include "compat/cdefs.h"
 #include "ffi.h"
 #include "term.h"
-#include "except.h"
 #include "compat/eiffel_stubs.h"
 
 
@@ -587,7 +586,6 @@ extern double try_timer;
 extern int try_res;
 
 /* longjmp control and etc */
-extern Except_T Restart_Repl, Exit_Interp;
 extern jmp_buf block_buf[CTRLSTK];
 extern jmp_buf catch_buf[CTRLSTK];
 extern jmp_buf cont_buf;
@@ -596,9 +594,6 @@ extern jmp_buf repl_buf;
 extern jmp_buf thread_buf;
 extern jmp_buf process_buf;
 extern jmp_buf network_buf;
-extern Except_T Exit_Thread;
-extern Except_T Exit_Process;
-extern Except_T Exit_Network;
 extern int block_tag_check[CTRLSTK];
 extern int block_data[CTRLSTK][3];
 extern int catch_data[CTRLSTK][4];

@@ -8,13 +8,13 @@ USE_GDB ?= 0
 
 CC := gcc
 LIBS := -lm -ldl -lpthread -lncurses
-INCS := -Icii/include
+INCS := 
 CURSES_CFLAGS := $(shell ncursesw6-config --cflags) 
 CURSES_LIBS := $(shell ncursesw6-config --libs)
 
 
 CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) 
-SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
+#SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 
 # Files in library/ that need to be compiled
 SRC_LISP := library/bit.lsp \
@@ -96,7 +96,7 @@ TARGETS := eisl edlis
 
 all: $(TARGETS)
 
-eisl: $(EISL_OBJS) $(OBJ_CII)
+eisl: $(EISL_OBJS) 
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) 
 
 %.o: %.c eisl.h ffi.h term.h cii/include/except.h 
@@ -124,7 +124,7 @@ link.o: link.c eisl.h
 parallel.o: parallel.c eisl.h
 
 
-edlis: edlis.o syn_highlight.o $(OBJ_CII) 
+edlis: edlis.o syn_highlight.o 
 	$(CC) $(CFLAGS) $^ -o $@ $(CURSES_LIBS)
 
 edlis.o: edlis.c edlis.h term.h

@@ -13,7 +13,6 @@
 #include <limits.h>
 #include <unistd.h>
 #include "eisl.h"
-#include "text.h"
 
 #define BININT_LEN 64
 
@@ -2904,7 +2903,7 @@ int f_string_eqsmallerp(int arglist, int th)
 	return (NIL);
 
 }
-
+/*
 int f_string_append(int arglist, int th)
 {
     int arg1;
@@ -2935,6 +2934,44 @@ int f_string_append(int arglist, int th)
     int res = make_str(str);
     free(str);
     Text_restore(&save);
+    return res;
+}
+*/
+int f_string_append(int arglist, int th)
+{
+    if (nullp(arglist))
+        return make_str("");
+
+    /* ----- 1. まず総文字数を数える ----- */
+    int total_len = 0;
+    int tmp = arglist;
+
+    while (!nullp(tmp)) {
+        int a = car(tmp);
+        if (!stringp(a))
+            error(NOT_STR, "string-append", a, th);
+        total_len += strlen(GET_NAME(a));
+        tmp = cdr(tmp);
+    }
+
+    /* ----- 2. バッファを作成 ----- */
+    char *buf = malloc(total_len + 1);
+    if (!buf)
+        error(MALLOC_OVERF, "string-append", NIL, th);
+
+    buf[0] = '\0';  /* 空文字列に初期化 */
+
+    /* ----- 3. 実際に連結 ----- */
+    while (!nullp(arglist)) {
+        int a = car(arglist);
+        strcat(buf, GET_NAME(a));
+        arglist = cdr(arglist);
+    }
+
+    /* ----- 4. EISL 文字列に変換 ----- */
+    int res = make_str(buf);
+    free(buf);
+
     return res;
 }
 

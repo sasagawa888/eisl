@@ -2266,8 +2266,8 @@ int convert(int arg1, int arg2)
 	}
 	break;
     default:
+	error(OUT_OF_DOMAIN, "convert", arg1, 0);
     }
-    error(OUT_OF_DOMAIN, "convert", arg1, 0);
     return (UNDEF);
 }
 

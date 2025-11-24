@@ -186,18 +186,17 @@ int big_pt1 = BIGNUM_PARMA;	/* pointer of parmanent bignum */
 
 
 /* longjmp control and etc */
-
 jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
 jmp_buf error_buf;
+jmp_buf init_buf;
 jmp_buf repl_buf;
 jmp_buf process_buf;
 jmp_buf network_buf;
 
 Except_T Restart_Repl = { "Restart REPL" },
     Exit_Interp = { "Exit interpreter" };
-Except_T Ignored_Error = { "Ignored error" };	/* for ignore-errors */
 Except_T Exit_Thread = { "Exit thread" };	/* for Multi-thread */
 Except_T Exit_Process = { "Exit Process" };	/* for Multi-process */
 Except_T Exit_Network = { "Exit Network" };	/* for Distributed parallel */

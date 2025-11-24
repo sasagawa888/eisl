@@ -1921,14 +1921,17 @@ int f_defmethod(int arglist, int th)
 
 int f_ignore_errors(int arglist, int th)
 {
-    volatile int res, save1, save2;
+    volatile int res, save1, save2, ret;
 
     ignore_flag = true;
     save1 = input_stream;
     save2 = output_stream;
-    TRY res = f_progn(arglist, th);
-    ELSE res = NIL;
-    END_TRY;
+	ret = setjmp(error_buf);
+	if(ret == 0){
+    res = f_progn(arglist, th);
+	} else if(res == 1){
+	res = NIL;
+	}
     ignore_flag = false;
     try_flag = false;
     input_stream = save1;

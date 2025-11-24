@@ -639,7 +639,7 @@ int signal_condition(int x, int y, int th)
     if (ignore_flag) {
 	block_pt = 0;
 	handling_resource_err = false;
-	RAISE(Ignored_Error);
+	longjmp(error_buf,1);
     }
     if (parallel_flag) {
 	handling_resource_err = false;

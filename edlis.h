@@ -3,8 +3,7 @@
 
 #ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 700
-#endif	/* 
- */
+#endif
     
 #define FULLSCREEN
 #include "term.h"

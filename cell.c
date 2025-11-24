@@ -21,72 +21,6 @@
 #include "eisl.h"
 
 
-char *eisl_strdup(const char *s)
-{
-    size_t len = strlen(s) + 1;
-    char *copy = malloc(len);
-    if (!copy)
-	return NULL;
-    memcpy(copy, s, len);
-    return copy;
-}
-
-char *eisl_strcatv(const char *first, ...)
-{
-    va_list ap;
-    size_t total_len = 0;
-
-    va_start(ap, first);
-    for (const char *s = first; s != NULL; s = va_arg(ap, const char *)) {
-	total_len += strlen(s);
-    }
-    va_end(ap);
-
-    char *result = (char *) malloc(total_len + 1);	// +1 for '\0'
-    if (!result) {
-	fprintf(stderr, "malloc failed in str_catv\n");
-	exit(1);
-    }
-
-    result[0] = '\0';
-    va_start(ap, first);
-    for (const char *s = first; s != NULL; s = va_arg(ap, const char *)) {
-	strcat(result, s);
-    }
-    va_end(ap);
-
-    return result;
-}
-
-char *eisl_strcat(const char *s1, const char *s2)
-{
-    if (!s1)
-	s1 = "";
-    if (!s2)
-	s2 = "";
-
-    size_t len1 = strlen(s1);
-    size_t len2 = strlen(s2);
-
-    char *res = (char *) malloc(len1 + len2 + 1);
-    if (!res)
-	fprintf(stderr, "malloc failed in str_cat\n");
-
-    memcpy(res, s1, len1);
-    memcpy(res + len1, s2, len2);
-    res[len1 + len2] = '\0';
-
-    return res;
-}
-
-const char *eisl_strchr(const char *str, char ch)
-{
-    if (!str)
-	return NULL;
-    return strchr(str, ch);
-}
-
-
 
 void init_cell(void)
 {
@@ -1145,3 +1079,70 @@ int make_dummy(void)
     SET_AUX(res, cnull);
     return (res);
 }
+
+
+char *eisl_strdup(const char *s)
+{
+    size_t len = strlen(s) + 1;
+    char *copy = malloc(len);
+    if (!copy)
+	return NULL;
+    memcpy(copy, s, len);
+    return copy;
+}
+
+char *eisl_strcatv(const char *first, ...)
+{
+    va_list ap;
+    size_t total_len = 0;
+
+    va_start(ap, first);
+    for (const char *s = first; s != NULL; s = va_arg(ap, const char *)) {
+	total_len += strlen(s);
+    }
+    va_end(ap);
+
+    char *result = (char *) malloc(total_len + 1);	// +1 for '\0'
+    if (!result) {
+	fprintf(stderr, "malloc failed in str_catv\n");
+	exit(1);
+    }
+
+    result[0] = '\0';
+    va_start(ap, first);
+    for (const char *s = first; s != NULL; s = va_arg(ap, const char *)) {
+	strcat(result, s);
+    }
+    va_end(ap);
+
+    return result;
+}
+
+char *eisl_strcat(const char *s1, const char *s2)
+{
+    if (!s1)
+	s1 = "";
+    if (!s2)
+	s2 = "";
+
+    size_t len1 = strlen(s1);
+    size_t len2 = strlen(s2);
+
+    char *res = (char *) malloc(len1 + len2 + 1);
+    if (!res)
+	fprintf(stderr, "malloc failed in str_cat\n");
+
+    memcpy(res, s1, len1);
+    memcpy(res + len1, s2, len2);
+    res[len1 + len2] = '\0';
+
+    return res;
+}
+
+const char *eisl_strchr(const char *str, char ch)
+{
+    if (!str)
+	return NULL;
+    return strchr(str, ch);
+}
+

@@ -222,6 +222,7 @@ void mark_cell(int addr)
 	mark_cell(GET_AUX(addr));
 	return;
     default:
+	error(SYSTEM_ERR,"gbc",NIL,0);
     }
 }
 

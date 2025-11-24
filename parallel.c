@@ -9,9 +9,7 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include "eisl.h"
-#include "mem.h"
 #include "except.h"
-#include "str.h"
 #include "text.h"
 
 
@@ -407,7 +405,7 @@ int sexp_to_str(int x)
     char *str;
 
     res = make_stm(stdout, EISL_OUTSTR, NULL);
-    str = (char *) ALLOC(STRSIZE);
+    str = (char *) malloc(STRSIZE);
 	if (str == NULL){
 	error(MALLOC_OVERF, "create-string-output-stream", NIL, 0);
 	}
@@ -578,7 +576,7 @@ int str_to_sexp(int x)
     int stm, save, res;
 
     stm = make_stm(stdin, EISL_INSTR, NULL);
-    heap[stm].name = Str_dup(GET_NAME(x), 1, 0, 1);
+    heap[stm].name = eisl_strdup(GET_NAME(x));
 	if (heap[stm].name == NULL){
     error(MALLOC_OVERF, "create-string-input-stream", NIL, 0);
 	}

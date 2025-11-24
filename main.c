@@ -45,7 +45,6 @@
 #include "eisl.h"
 #include "mem.h"
 #include "except.h"
-#include "str.h"
 
 
 
@@ -553,10 +552,9 @@ char *library_file(const char *basename)
     char *prefix;
 
     if ((prefix = getenv("EASY_ISLISP")) != NULL) {
-	return Str_catv(prefix, 1, 0, "/library/", 1, 0, basename, 1, 0,
-			NULL);
+	return eisl_strcatv(prefix, "/library/", basename, NULL);
     }
-    return Str_cat(STRQUOTE(SHAREDIR) "/library/", 1, 0, basename, 1, 0);
+    return eisl_strcat(STRQUOTE(SHAREDIR) "/library/", basename);
 }
 
 void init_dp(void)
@@ -2386,7 +2384,7 @@ void bind_macro(char *name, int addr)
     SET_CDR(val1, 0);
     val2 = freshcell();
     SET_TAG(val2, MACRO);
-    heap[val2].name = Str_dup(name, 1, 0, 1);
+    heap[val2].name = eisl_strdup(name);
 	if (heap[val2].name == NULL){
     error(MALLOC_OVERF, "makemacro", NIL, 0);
 	}

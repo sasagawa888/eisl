@@ -15,7 +15,6 @@
 #include "eisl.h"
 #include "mem.h"
 #include "except.h"
-#include "str.h"
 #include "text.h"
 
 #define BININT_LEN 64
@@ -2272,7 +2271,7 @@ void load(int arg1, int th)
     save2 = save_repl_flag();
     const char *fname = GET_NAME(arg1);
     input_stream =
-	make_stm(fopen(fname, "r"), EISL_INPUT, Str_dup(fname, 1, 0, 1));
+	make_stm(fopen(fname, "r"), EISL_INPUT, eisl_strdup(fname));
 
     if (GET_PORT(input_stream) == NULL) {
 	input_stream = save1;
@@ -3412,7 +3411,7 @@ int f_format(int arglist, int th)
 
     save = output_stream;
     output_stream = arg1;
-    str = Str_dup(GET_NAME(arg2), 1, 0, 1);
+    str = eisl_strdup(GET_NAME(arg2));
     i = 0;
     c = str[i];
     while (c != 0) {
@@ -3776,7 +3775,7 @@ int f_format_object(int arglist, int th)
 	    if (GET_OPT(arg1) != EISL_OUTSTR)
 		fprintf(GET_PORT(arg1), "#\\\\%s", GET_NAME(arg2));
 	    else {
-		char *str = Str_cat("#\\\\", 1, 0, GET_NAME(arg2), 1, 0);
+		char *str = eisl_strcat("#\\\\", GET_NAME(arg2));
 		append_str(arg1, str);
 		free(str);
 	    }
@@ -3852,9 +3851,9 @@ int f_open_input_file(int arglist, int th)
 	error(CANT_OPEN, "open-input-file", arg1, th);
 
     if (n == 1)
-	return (make_stm(port, EISL_INPUT, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INPUT, eisl_strdup(fname)));
     else
-	return (make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INPUT_BIN, eisl_strdup(fname)));
 }
 
 int f_open_output_file(int arglist, int th)
@@ -3880,9 +3879,9 @@ int f_open_output_file(int arglist, int th)
 	error(CANT_OPEN, "open-output-file", arg1, th);
 
     if (n == 1)
-	return (make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_OUTPUT, eisl_strdup(fname)));
     else
-	return (make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_OUTPUT_BIN, eisl_strdup(fname)));
 }
 
 int f_open_io_file(int arglist, int th)
@@ -3909,9 +3908,9 @@ int f_open_io_file(int arglist, int th)
 	error(CANT_OPEN, "open-io-file", arg1, th);
 
     if (n == 1)
-	return (make_stm(port, EISL_INOUT, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INOUT, eisl_strdup(fname)));
     else
-	return (make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1)));
+	return (make_stm(port, EISL_INOUT_BIN, eisl_strdup(fname)));
 }
 
 int f_close(int arglist, int th)
@@ -4273,7 +4272,7 @@ int f_create_string_input_stream(int arglist, int th)
 	error(NOT_STR, "create-string-input-stream", arg1, th);
 
     res = make_stm(stdin, EISL_INSTR, NULL);
-    heap[res].name = Str_dup(GET_NAME(arg1), 1, 0, 1);
+    heap[res].name = eisl_strdup(GET_NAME(arg1));
     if (heap[res].name == NULL){
     error(MALLOC_OVERF, "create-string-input-stream", NIL, th);
     }

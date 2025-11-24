@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 #include "eisl.h"
-#include "mem.h"
-#include "str.h"
 
 
 static void *hmod;
@@ -51,10 +49,10 @@ void dynamic_link(int x)
     initdeftfunc_t init_deftfunc;
     voidfunc_t init_tfunctions, init_declare;
 
-    if (Str_chr(GET_NAME(x), 1, 0, '/') != 0) {
-	str = Str_dup(GET_NAME(x), 1, 0, 1);
+    if (eisl_strchr(GET_NAME(x), '/') != 0) {
+	str = eisl_strdup(GET_NAME(x));
     } else {
-	str = Str_cat("./", 1, 0, GET_NAME(x), 1, 0);
+	str = eisl_strcat("./", GET_NAME(x));
     }
 
     hmod = dlopen(str, RTLD_LAZY);

@@ -9,8 +9,7 @@
 #include <stdlib.h>
 #include <float.h>
 #include "eisl.h"
-#include "mem.h"
-#include "compat/eiffel_stubs.h"
+
 
 int get_int(int addr)
 {
@@ -1249,7 +1248,7 @@ int substr(int x, int s, int e)
     int i, j, pos, c;
     char *str;
 
-    str = ALLOC(((e - s) + 1) * 6);
+    str = malloc(((e - s) + 1) * 6);
     /* for unicode allocate 6 byte for 1 char skip to start position */
     i = 0;
     pos = 0;

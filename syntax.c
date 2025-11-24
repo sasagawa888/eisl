@@ -13,7 +13,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include "eisl.h"
-#include "str.h"
+
 
 
 #define TAGBODY_LEN_MAX 100
@@ -1969,9 +1969,9 @@ int f_with_open_input_file(int arglist, int th)
 	return NIL;
     }
     if (n == 2)
-	val = make_stm(port, EISL_INPUT, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INPUT, eisl_strdup(fname));
     else
-	val = make_stm(port, EISL_INPUT_BIN, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INPUT_BIN, eisl_strdup(fname));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
     res = f_progn(arg2, th);
@@ -2008,9 +2008,9 @@ int f_with_open_output_file(int arglist, int th)
 	return NIL;
     }
     if (n == 2)
-	val = make_stm(port, EISL_OUTPUT, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_OUTPUT, eisl_strdup(fname));
     else
-	val = make_stm(port, EISL_OUTPUT_BIN, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_OUTPUT_BIN, eisl_strdup(fname));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
     res = f_progn(arg2, th);
@@ -2047,9 +2047,9 @@ int f_with_open_io_file(int arglist, int th)
 	return NIL;
     }
     if (n == 2)
-	val = make_stm(port, EISL_INOUT, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INOUT,eisl_strdup(fname));
     else
-	val = make_stm(port, EISL_INOUT_BIN, Str_dup(fname, 1, 0, 1));
+	val = make_stm(port, EISL_INOUT_BIN, eisl_strdup(fname));
     ep1 = ep[th];
     add_lex_env(sym, val, th);
     res = f_progn(arg2, th);

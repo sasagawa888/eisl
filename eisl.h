@@ -1560,6 +1560,10 @@ int set_catch_symbols(int x);
 char *get_name(int x);
 double get_flt(int x);
 int jump_to_repl();
+char *eisl_strdup(const char *s);
+char *eisl_strcatv(const char *first, ...);
+char *eisl_strcat(const char *s1, const char *s2);
+const char *eisl_strchr(const char *str, char ch);
 
 /* Edlis */
 void display_buffer(void);

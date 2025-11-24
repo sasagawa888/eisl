@@ -38,7 +38,6 @@
 
 #include "eisl.h"
 #include "except.h"
-#include "str.h"
 #include "text.h"
 
 void init_exsubr(void)
@@ -1450,7 +1449,7 @@ int f_import(int arglist, int th)
     if (!stringp(arg1))
 	error(NOT_SYM, "import", arg1, th);
 
-    char *str = Str_cat(GET_NAME(arg1), 1, 0, ".o", 1, 0);
+    char *str = eisl_strcat(GET_NAME(arg1), ".o");
     char *fname = library_file(str);
     if (access(fname, R_OK) != -1) {
 	f_load(list1(make_str(fname)), 0);
@@ -1458,7 +1457,7 @@ int f_import(int arglist, int th)
     }
 
     free(str);
-    str = Str_cat(GET_NAME(arg1), 1, 0, ".lsp", 1, 0);
+    str = eisl_strcat(GET_NAME(arg1), ".lsp");
     free(fname);
     fname = library_file(str);
     if (access(fname, R_OK) != -1) {
@@ -1681,7 +1680,7 @@ int f_try(int arglist, int th)
     str[pos] = NUL;
 
     program = make_stm(stdin, EISL_INSTR, NULL);
-    heap[program].name = Str_dup(str, 1, 0, 1);
+    heap[program].name = eisl_strdup(str);
     if (heap[program].name == NULL){
     error(MALLOC_OVERF, "try", NIL, th);
     }

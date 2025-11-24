@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include "eisl.h"
 #include "except.h"
-#include "str.h"
 
 static int outc(int c)
 {
@@ -632,7 +631,7 @@ int signal_condition(int x, int y, int th)
 	SET_OPT(x, NOTCONT);
     else {
 	SET_OPT(x, CONTINUABLE);
-	heap[x].name = Str_dup(GET_NAME(y), 1, 0, 1);
+	heap[x].name = eisl_strdup(GET_NAME(y));
 	if (heap[x].name == NULL){
 	error(MALLOC_OVERF, "signal-condition", NIL, th);
 	}

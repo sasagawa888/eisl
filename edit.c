@@ -6,7 +6,6 @@
 #include <ncurses.h>
 #include "eisl.h"
 #include "except.h"
-#include "str.h"
 #include "mem.h"
 
 #define TOKEN_MAX 80
@@ -32,7 +31,7 @@ int f_edit(int arglist, int th)
 	    ed = "edlis";
 	}
     }
-    char *str = Str_catv(ed, 1, 0, " ", 1, 0, GET_NAME(arg1), 1, 0, NULL);
+    char *str = eisl_strcatv(ed, " ", GET_NAME(arg1), NULL);
     res = system(str);
     free(str);
     if (res == -1)

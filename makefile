@@ -48,8 +48,12 @@ OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_LISP := $(SRC_LISP:.lsp=.o)
 
 ifeq  ($(shell uname -n),raspberrypi)
-ifeq ($(USE_WIRINGPI),1)
 CFLAGS += -D__rpi__
+endif
+
+ifeq  ($(shell uname -n),raspberrypi)
+ifeq ($(USE_WIRINGPI),1)
+CFLAGS += -D__rpiwiring__
 LIBS += -lwiringPi
 endif
 endif

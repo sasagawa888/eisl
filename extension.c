@@ -25,7 +25,7 @@
 #include <sys/ioctl.h>
 
 
-#ifdef __rpi__
+#ifdef __rpiwiring__
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 #include <arpa/inet.h>
@@ -135,7 +135,7 @@ void init_exsubr(void)
     def_subr("GR-RECT", f_gr_rect);
     def_subr("GR-LINE", f_gr_line);
 
-#ifdef __rpi__
+#ifdef __rpiwiring__
     def_subr("WIRINGPI-SETUP-GPIO", f_wiringpi_setup_gpio);
     def_subr("WIRINGPI-SPI-SETUP-CH-SPEED", f_wiringpi_spi_setup_ch_speed);
     def_subr("PWM-SET-MODE", f_pwm_set_mode);
@@ -968,7 +968,7 @@ int f_get_myself(int arglist, int th)
 /* for Raspberry PI 
  * wiringpi for GPIO 
  */
-#ifdef __rpi__
+#ifdef __rpiwiring__
 int f_wiringpi_setup_gpio(int arglist __unused, int th __unused)
 {
     wiringPiSetupGpio();
@@ -1901,9 +1901,9 @@ int f_close_socket(int arglist, int th)
 
 
 //-------/dev/fb0------------------------
-#define RGB565(r,g,b)  ( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | ((b & 0xF8) >> 3) )
 
 #ifdef __rpi__
+    #define RGB565(r,g,b)  ( ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | ((r & 0xF8) >> 3) )
     #define BLACK       RGB565(0,   0,   0)
     #define BLUE        RGB565(0,   0, 255)
     #define RED         RGB565(255, 0,   0)
@@ -1979,11 +1979,8 @@ void fb_draw_pixel(int x, int y, unsigned int color)
     long location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel / 8) +
 	(y +
 	 vinfo.yoffset) * vinfo.xres_virtual * (vinfo.bits_per_pixel / 8);
-    #ifdef __rpi__
-    *((uint16_t *) (fbp + location)) = (uint16_t)color;
-    #else
     *((unsigned int *) (fbp + location)) = color;
-    #endif
+
 }
 
 

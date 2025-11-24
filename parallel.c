@@ -55,7 +55,7 @@ int eval_para(int arg)
 
 void *parallel(void *arg)
 {
-	int ret;
+    int ret;
     int num = *(int *) arg;
 
     while (1) {
@@ -67,9 +67,10 @@ void *parallel(void *arg)
 
 	ep[num] = ep[0];
 	ret = setjmp(thread_buf);
-	if(ret == 0){
-	para_output[num] = eval(para_input[num], num);
-	} else if(ret == 1){}
+	if (ret == 0) {
+	    para_output[num] = eval(para_input[num], num);
+	} else if (ret == 1) {
+	}
 	mt_enqueue(num);
 	if (mt_queue_pt == mt_queue_num) {
 	    pthread_mutex_lock(&mutex);
@@ -406,9 +407,9 @@ int sexp_to_str(int x)
 
     res = make_stm(stdout, EISL_OUTSTR, NULL);
     str = (char *) malloc(STRSIZE);
-	if (str == NULL){
+    if (str == NULL) {
 	error(MALLOC_OVERF, "create-string-output-stream", NIL, 0);
-	}
+    }
     heap[res].name = str;
     heap[res].name[0] = '\0';
 
@@ -577,9 +578,9 @@ int str_to_sexp(int x)
 
     stm = make_stm(stdin, EISL_INSTR, NULL);
     heap[stm].name = eisl_strdup(GET_NAME(x));
-	if (heap[stm].name == NULL){
-    error(MALLOC_OVERF, "create-string-input-stream", NIL, 0);
-	}
+    if (heap[stm].name == NULL) {
+	error(MALLOC_OVERF, "create-string-input-stream", NIL, 0);
+    }
 
     save = input_stream;
     input_stream = stm;
@@ -830,7 +831,7 @@ int f_dp_close(int arglist, int th)
 	shutdown(parent_sockfd[1], SHUT_RDWR);
 	close(parent_sockfd[0]);
 	close(parent_sockfd[1]);
-	longjmp(repl_buf,2);
+	longjmp(repl_buf, 2);
     }
 
     receiver_exit_flag = 1;
@@ -864,7 +865,7 @@ int f_dp_halt(int arglist, int th)
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
 	shutdown_flag = true;
-	longjmp(repl_buf,2);
+	longjmp(repl_buf, 2);
     }
 
     receiver_exit_flag = 1;
@@ -1248,7 +1249,7 @@ int wait_all(int m)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-		longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1275,7 +1276,7 @@ int wait_and(int m)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1319,7 +1320,7 @@ int wait_or(int m)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 
 	for (i = 0; i < m; i++) {
@@ -1388,7 +1389,7 @@ int f_dp_call(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1445,7 +1446,7 @@ int f_dp_exec(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1495,7 +1496,7 @@ int f_dp_and(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1561,7 +1562,7 @@ int f_dp_or(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {

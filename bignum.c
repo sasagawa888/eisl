@@ -146,39 +146,39 @@ void print_big(int x)
     char *outbuf = NULL;
 
     if (GET_OPT(output_stream) == EISL_OUTSTR) {
-        outbuf = GET_NAME(output_stream); 
+	outbuf = GET_NAME(output_stream);
     }
 
     if (get_sign(x) == -1) {
-        if (outbuf) {
-            strcat(outbuf, "-");
-        } else {
-            fputc('-', GET_PORT(output_stream));
-        }
+	if (outbuf) {
+	    strcat(outbuf, "-");
+	} else {
+	    fputc('-', GET_PORT(output_stream));
+	}
     }
 
     y = get_pointer(x);
     len = get_length(x);
 
     if (!outbuf) {
-        fprintf(GET_PORT(output_stream), "%d", bigcell[y]);
+	fprintf(GET_PORT(output_stream), "%d", bigcell[y]);
     } else {
-        sprintf(tmp, "%d", bigcell[y]);
-        strcat(outbuf, tmp);
+	sprintf(tmp, "%d", bigcell[y]);
+	strcat(outbuf, tmp);
     }
 
     y--;
     len--;
 
     while (len > 0) {
-        if (!outbuf) {
-            fprintf(GET_PORT(output_stream), "%09d", bigcell[y]);
-        } else {
-            sprintf(tmp, "%09d", bigcell[y]);
-            strcat(outbuf, tmp);
-        }
-        y--;
-        len--;
+	if (!outbuf) {
+	    fprintf(GET_PORT(output_stream), "%09d", bigcell[y]);
+	} else {
+	    sprintf(tmp, "%09d", bigcell[y]);
+	    strcat(outbuf, tmp);
+	}
+	y--;
+	len--;
     }
 }
 

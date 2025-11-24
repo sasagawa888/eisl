@@ -342,7 +342,7 @@ static inline void maybe_greet(void)
 {
     if (greeting_flag)
 	printf("Easy-ISLisp Ver%1.2f [%dM cells]\n", VERSION,
-		  cell_size / 1000000);
+	       cell_size / 1000000);
 
     greeting_flag = false;
 }
@@ -355,7 +355,7 @@ static inline void disable_repl_flag(void)
 
 int main(int argc, char *argv[])
 {
-    int errret,ret;
+    int errret, ret;
 
     if (setupterm((char *) 0, 1, &errret) == ERR ||
 	key_up == NULL || key_down == NULL ||
@@ -403,7 +403,7 @@ int main(int argc, char *argv[])
     /* handle command line options */
     option_flag = true;
     ret = setjmp(repl_buf);
-	if(ret == 0){
+    if (ret == 0) {
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
@@ -477,9 +477,9 @@ int main(int argc, char *argv[])
 	    f_load(list1(make_str(script_arg)), 0);
 	    exit(EXIT_SUCCESS);
 	}
-    } else if(ret == 1){
-    exit(EXIT_FAILURE);
-	}
+    } else if (ret == 1) {
+	exit(EXIT_FAILURE);
+    }
 
     option_flag = false;
 
@@ -489,54 +489,54 @@ int main(int argc, char *argv[])
     do {
 	maybe_greet();
 	ret = setjmp(repl_buf);
-	if(ret == 0){
+	if (ret == 0) {
 	    while (1) {
-	    init_pointer();
-	    if (!process_flag && !child_flag) {
-		fputs("> ", stdout);
-		print(eval(sread(), 0));
-		putchar('\n');
-	    } else if (process_flag) {
-		ret = setjmp(process_buf);
-		if(ret == 0){
-		print(eval(sread(), 0));
-		putchar('\n');
-		fflush(stdout);
-		union sigval value;
-		value.sival_int = (int) process_num;
-		sigqueue(getppid(), SIGRTMIN, value);
-		} else if(ret == 1){}
-	    } else if (child_flag) {
-		pthread_mutex_lock(&mutex2);
-		while (!child_buffer_ready) {
-		    pthread_cond_wait(&md_cond, &mutex2);
+		init_pointer();
+		if (!process_flag && !child_flag) {
+		    fputs("> ", stdout);
+		    print(eval(sread(), 0));
+		    putchar('\n');
+		} else if (process_flag) {
+		    ret = setjmp(process_buf);
+		    if (ret == 0) {
+			print(eval(sread(), 0));
+			putchar('\n');
+			fflush(stdout);
+			union sigval value;
+			value.sival_int = (int) process_num;
+			sigqueue(getppid(), SIGRTMIN, value);
+		    } else if (ret == 1) {
+		    }
+		} else if (child_flag) {
+		    pthread_mutex_lock(&mutex2);
+		    while (!child_buffer_ready) {
+			pthread_cond_wait(&md_cond, &mutex2);
+		    }
+		    child_buffer_ready = 0;
+		    pthread_mutex_unlock(&mutex2);
+		    int exp, res;
+		    exp = str_to_sexp(receive_from_parent());
+		    printf("receive_from_parent ");
+		    print(exp);
+		    printf("\n");
+		    fflush(stdout);
+		    ret = setjmp(network_buf);
+		    if (ret == 0) {
+			res = eval(exp, 0);
+			printf("send_to_parent ");
+			print(res);
+			printf("\n");
+			fflush(stdout);
+			send_to_parent(sexp_to_str(res));
+		    } else if (ret == 1) {
+		    }
 		}
-		child_buffer_ready = 0;
-		pthread_mutex_unlock(&mutex2);
-		int exp, res;
-		exp = str_to_sexp(receive_from_parent());
-		printf("receive_from_parent ");
-		print(exp);
-		printf("\n");
-		fflush(stdout);
-		ret = setjmp(network_buf);
-		if(ret == 0){
-		res = eval(exp, 0);
-		printf("send_to_parent ");
-		print(res);
-		printf("\n");
-		fflush(stdout);
-		send_to_parent(sexp_to_str(res));
-		}
-		else if(ret == 1){}
-	    }
 
-	    if (redef_flag)
-		redef_generic();
-	}
-	}
-	else if(ret == 1){}
-	else if(ret == 2){
+		if (redef_flag)
+		    redef_generic();
+	    }
+	} else if (ret == 1) {
+	} else if (ret == 2) {
 	    quit = true;
 	    exit_thread();
 	    close_socket();
@@ -663,7 +663,7 @@ int readc(void)
 	if (!script_flag && input_stream == standard_input && c == EOF) {
 	    /* ctrl+D and not script-mode quit system */
 	    putchar('\n');
-	    longjmp(repl_buf,2);
+	    longjmp(repl_buf, 2);
 	} else if (script_flag)
 	    /* on script-mode only retrun c */
 	    return (c);
@@ -707,10 +707,10 @@ void set_stok_buf(int index, char c)
 {
     if (index >= stok.bufsize) {
 	int new_bufsize = index + 1;
-	char *new_buf = (char *)realloc(stok.buf, new_bufsize);
+	char *new_buf = (char *) realloc(stok.buf, new_bufsize);
 	if (!new_buf) {
-    	fprintf(stderr, "Memory allocation failed\n");
-    	exit(1);
+	    fprintf(stderr, "Memory allocation failed\n");
+	    exit(1);
 	}
 	stok.buf = new_buf;
 	stok.bufsize = new_bufsize;
@@ -724,12 +724,12 @@ void replace_stok_buf(char *str)
 {
     if (strlen(str) > (size_t) stok.bufsize) {
 	int new_bufsize = strlen(str);
-	char *new_buf = (char *)realloc(stok.buf, new_bufsize);
+	char *new_buf = (char *) realloc(stok.buf, new_bufsize);
 	if (!new_buf) {
-    	fprintf(stderr, "Memory allocation failed\n");
-    	exit(1);
+	    fprintf(stderr, "Memory allocation failed\n");
+	    exit(1);
 	}
-	stok.buf = new_buf;	
+	stok.buf = new_buf;
 	stok.bufsize = new_bufsize;
     }
     strcpy(stok.buf, str);
@@ -1623,7 +1623,7 @@ void print_long(int addr)
 #ifdef __rpi__
 	sprintf(str, SHORT_STRSIZE, "%lld", GET_LONG(addr));
 #else
-	sprintf(str,  "%lld", GET_LONG(addr));
+	sprintf(str, "%lld", GET_LONG(addr));
 #endif
 	append_str(output_stream, str);
     }
@@ -2399,9 +2399,9 @@ void bind_macro(char *name, int addr)
     val2 = freshcell();
     SET_TAG(val2, MACRO);
     heap[val2].name = eisl_strdup(name);
-	if (heap[val2].name == NULL){
-    error(MALLOC_OVERF, "makemacro", NIL, 0);
-	}
+    if (heap[val2].name == NULL) {
+	error(MALLOC_OVERF, "makemacro", NIL, 0);
+    }
     SET_CAR(val2, val1);
     SET_CDR(val2, 0);
     SET_AUX(val2, cfunction);	/* class */

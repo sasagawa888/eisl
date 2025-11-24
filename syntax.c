@@ -1926,12 +1926,12 @@ int f_ignore_errors(int arglist, int th)
     ignore_flag = true;
     save1 = input_stream;
     save2 = output_stream;
-	ret = setjmp(error_buf);
-	if(ret == 0){
-    res = f_progn(arglist, th);
-	} else if(res == 1){
+    ret = setjmp(error_buf);
+    if (ret == 0) {
+	res = f_progn(arglist, th);
+    } else if (res == 1) {
 	res = NIL;
-	}
+    }
     ignore_flag = false;
     try_flag = false;
     input_stream = save1;
@@ -2050,7 +2050,7 @@ int f_with_open_io_file(int arglist, int th)
 	return NIL;
     }
     if (n == 2)
-	val = make_stm(port, EISL_INOUT,eisl_strdup(fname));
+	val = make_stm(port, EISL_INOUT, eisl_strdup(fname));
     else
 	val = make_stm(port, EISL_INOUT_BIN, eisl_strdup(fname));
     ep1 = ep[th];

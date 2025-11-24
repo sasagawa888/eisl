@@ -231,14 +231,14 @@ void clr_cell(int addr)
     if (IS_VECTOR(addr) || IS_ARRAY(addr)) {
 	if (heap[addr].val.car.dyna_vec != NULL)
 	    free(heap[addr].val.car.dyna_vec);
-		heap[addr].val.car.dyna_vec = NULL;
+	heap[addr].val.car.dyna_vec = NULL;
     }
 
     SET_TAG(addr, EMP);
-    if (heap[addr].name != NULL){
+    if (heap[addr].name != NULL) {
 	free(heap[addr].name);
 	heap[addr].name = NULL;
-	}
+    }
     SET_CAR(addr, 0);
     SET_CDR(addr, 0);
     SET_AUX(addr, 0);
@@ -255,12 +255,12 @@ int check_gbc(int th)
 	    ctrl_c_flag = 0;
 	    printf("ctrl+C\n");
 	    fflush(stdout);
-	    longjmp(thread_buf,1);
+	    longjmp(thread_buf, 1);
 	} else {
 	    ctrl_c_flag = 0;
 	    printf("ctrl+C\n");
 	    fflush(stdout);
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	}
     }
 

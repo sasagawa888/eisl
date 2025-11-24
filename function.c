@@ -2903,6 +2903,7 @@ int f_string_eqsmallerp(int arglist, int th)
 	return (NIL);
 
 }
+
 /*
 int f_string_append(int arglist, int th)
 {
@@ -2940,32 +2941,32 @@ int f_string_append(int arglist, int th)
 int f_string_append(int arglist, int th)
 {
     if (nullp(arglist))
-        return make_str("");
+	return make_str("");
 
     /* ----- 1. まず総文字数を数える ----- */
     int total_len = 0;
     int tmp = arglist;
 
     while (!nullp(tmp)) {
-        int a = car(tmp);
-        if (!stringp(a))
-            error(NOT_STR, "string-append", a, th);
-        total_len += strlen(GET_NAME(a));
-        tmp = cdr(tmp);
+	int a = car(tmp);
+	if (!stringp(a))
+	    error(NOT_STR, "string-append", a, th);
+	total_len += strlen(GET_NAME(a));
+	tmp = cdr(tmp);
     }
 
     /* ----- 2. バッファを作成 ----- */
     char *buf = malloc(total_len + 1);
     if (!buf)
-        error(MALLOC_OVERF, "string-append", NIL, th);
+	error(MALLOC_OVERF, "string-append", NIL, th);
 
-    buf[0] = '\0';  /* 空文字列に初期化 */
+    buf[0] = '\0';		/* 空文字列に初期化 */
 
     /* ----- 3. 実際に連結 ----- */
     while (!nullp(arglist)) {
-        int a = car(arglist);
-        strcat(buf, GET_NAME(a));
-        arglist = cdr(arglist);
+	int a = car(arglist);
+	strcat(buf, GET_NAME(a));
+	arglist = cdr(arglist);
     }
 
     /* ----- 4. EISL 文字列に変換 ----- */
@@ -3796,8 +3797,7 @@ int f_format_object(int arglist, int th)
 	    if (GET_OPT(arg1) != EISL_OUTSTR) {
 		fprintf(GET_PORT(arg1), "\\\"%s\\\"", GET_NAME(arg2));
 	    } else {
-		sprintf(stream_str, "\\\"%s\\\"",
-			 GET_NAME(arg2));
+		sprintf(stream_str, "\\\"%s\\\"", GET_NAME(arg2));
 		append_str(arg1, stream_str);
 	    }
 	    charcnt = charcnt + 4 + strlen(GET_NAME(arg2));
@@ -4308,8 +4308,8 @@ int f_create_string_input_stream(int arglist, int th)
 
     res = make_stm(stdin, EISL_INSTR, NULL);
     heap[res].name = eisl_strdup(GET_NAME(arg1));
-    if (heap[res].name == NULL){
-    error(MALLOC_OVERF, "create-string-input-stream", NIL, th);
+    if (heap[res].name == NULL) {
+	error(MALLOC_OVERF, "create-string-input-stream", NIL, th);
     }
     return (res);
 }
@@ -4324,7 +4324,7 @@ int f_create_string_output_stream(int arglist, int th)
 
     res = make_stm(stdout, EISL_OUTSTR, NULL);
     str = (char *) malloc(STRSIZE);
-    if (str == NULL){
+    if (str == NULL) {
 	error(MALLOC_OVERF, "create-string-output-stream", NIL, th);
     }
     heap[res].name = str;
@@ -4469,7 +4469,7 @@ __dead int f_quit(int arglist __unused, int th __unused)
     if (!script_flag) {
 	puts("- good bye -");
     }
-    longjmp(repl_buf,2);
+    longjmp(repl_buf, 2);
     exit(EXIT_SUCCESS);
 }
 

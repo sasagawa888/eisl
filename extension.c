@@ -674,7 +674,7 @@ void debugger(int th)
 		 ":q quit\n"
 		 ":r room\n" ":s stepper ON/OFF\n" "other S exps eval");
 	} else if (eqp(x, make_sym(":A"))) {
-	    longjmp(repl_buf,1);
+	    longjmp(repl_buf, 1);
 	} else if (eqp(x, make_sym(":B"))) {
 	    for (i = 0; i < BACKSIZE; i++) {
 		print(backtrace[i]);
@@ -704,15 +704,15 @@ void debugger(int th)
 	    return;
 	} else if (eqp(x, make_sym(":R"))) {
 	    printf("EP = %d (environment pointer)\n"
-		      "DP = %d (dynamic pointer)\n"
-		      "HP = %d (heap pointer)\n"
-		      "SP = %d (stack pointer)\n"
-		      "AP = %d (arglist pointer)\n"
-		      "LP = %d (shelter pointer)\n"
-		      "Parallel = %d (thread_num)\n"
-		      "Thread = %d (current thread)\n",
-		      ep[th], dp[th], hp[th], sp[th], ap[th],
-		      lp[th], thread_num, th);
+		   "DP = %d (dynamic pointer)\n"
+		   "HP = %d (heap pointer)\n"
+		   "SP = %d (stack pointer)\n"
+		   "AP = %d (arglist pointer)\n"
+		   "LP = %d (shelter pointer)\n"
+		   "Parallel = %d (thread_num)\n"
+		   "Thread = %d (current thread)\n",
+		   ep[th], dp[th], hp[th], sp[th], ap[th],
+		   lp[th], thread_num, th);
 	    puts("Free cell ");
 	    for (i = 0; i < thread_num; i++) {
 		printf("thread%d = %d\n", i, fc[i]);
@@ -780,39 +780,39 @@ void cellprint(int addr)
 	break;
     case SYM:
 	printf("SYM    %07d %07d %07d %s\n", GET_CAR(addr),
-		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+	       GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
 	break;
     case STR:
 	printf("STR    %07d %07d %07d %s\n", GET_CAR(addr),
-		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+	       GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
 	break;
     case LIS:
 	printf("LIS    %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
-		  GET_AUX(addr));
+	       GET_AUX(addr));
 	break;
     case SUBR:
 	printf("SUBR   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
-		  GET_AUX(addr));
+	       GET_AUX(addr));
 	break;
     case FSUBR:
 	printf("FSUBR  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
-		  GET_AUX(addr));
+	       GET_AUX(addr));
 	break;
     case FUNC:
 	printf("FUNC   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
-		  GET_AUX(addr));
+	       GET_AUX(addr));
 	break;
     case MACRO:
 	printf("MACRO  %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
-		  GET_AUX(addr));
+	       GET_AUX(addr));
 	break;
     case CLASS:
 	printf("CLASS  %07d %07d %07d %s\n", GET_CAR(addr),
-		  GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
+	       GET_CDR(addr), GET_AUX(addr), GET_NAME(addr));
 	break;
     case GENERIC:
 	printf("GENE   %07d %07d %07d\n", GET_CAR(addr), GET_CDR(addr),
-		  GET_AUX(addr));
+	       GET_AUX(addr));
 	break;
     default:
 	printf("cellprint(%d) tag switch default action\n", addr);
@@ -1637,7 +1637,7 @@ int program;
 
 int f_try(int arglist, int th)
 {
-    int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2 ,ret;
+    int arg1, arg2, arg3, arg4, pos, c, bit, i, res, save1, save2, ret;
     char str[STRSIZE];
 
     arg1 = car(arglist);	//time 
@@ -1680,8 +1680,8 @@ int f_try(int arglist, int th)
 
     program = make_stm(stdin, EISL_INSTR, NULL);
     heap[program].name = eisl_strdup(str);
-    if (heap[program].name == NULL){
-    error(MALLOC_OVERF, "try", NIL, th);
+    if (heap[program].name == NULL) {
+	error(MALLOC_OVERF, "try", NIL, th);
     }
 
     save1 = input_stream;
@@ -1689,12 +1689,12 @@ int f_try(int arglist, int th)
 
     if (arg1 == make_sym("NO-TIME-LIMIT")) {
 	ignore_flag = true;
-    ret = setjmp(error_buf);
-    if(ret == 0){
-	res = eval(arg2, 0);
-    } else if(ret == 1){
-    res = UNDEF;
-    }
+	ret = setjmp(error_buf);
+	if (ret == 0) {
+	    res = eval(arg2, 0);
+	} else if (ret == 1) {
+	    res = UNDEF;
+	}
 	ignore_flag = false;
 	if (res == UNDEF)
 	    res = make_sym("FAILSE");
@@ -1705,12 +1705,12 @@ int f_try(int arglist, int th)
 	try_res = NIL;
 	try_flag = true;
 	ignore_flag = true;
-    ret = setjmp(error_buf);
-    if(ret == 0){
-	res = eval(arg2, th);
-    } else if(ret == 1){
-    res = UNDEF;    
-    }
+	ret = setjmp(error_buf);
+	if (ret == 0) {
+	    res = eval(arg2, th);
+	} else if (ret == 1) {
+	    res = UNDEF;
+	}
 	ignore_flag = false;
 	try_flag = false;
 	if (res == UNDEF) {
@@ -1752,10 +1752,10 @@ int f_read_exp(int arglist, int th)
     ignore_flag = true;
     res = NIL;
     ret = setjmp(error_buf);
-    if(ret == 0){
-    res = sread();
-    } else if(ret == 1){
-    res = UNDEF;
+    if (ret == 0) {
+	res = sread();
+    } else if (ret == 1) {
+	res = UNDEF;
     }
     ignore_flag = false;
     input_stream = save;
@@ -1902,14 +1902,14 @@ int f_close_socket(int arglist, int th)
 
 //-------/dev/fb0------------------------
 
-#define BLACK       0x000000  
-#define BLUE        0x0000FF 
-#define RED         0xFF0000  
-#define MAGENTA     0xFF00FF  
-#define GREEN       0x00FF00 
-#define CYAN        0x00FFFF  
-#define YELLOW      0xFFFF00 
-#define WHITE       0xFFFFFF 
+#define BLACK       0x000000
+#define BLUE        0x0000FF
+#define RED         0xFF0000
+#define MAGENTA     0xFF00FF
+#define GREEN       0x00FF00
+#define CYAN        0x00FFFF
+#define YELLOW      0xFFFF00
+#define WHITE       0xFFFFFF
 
 static int fb = -1;
 static char *fbp = NULL;
@@ -1940,9 +1940,9 @@ int fb_open()
 void fb_flush()
 {
     if (fb != -1) {
-        if (ioctl(fb, FBIOPAN_DISPLAY, &vinfo)) {
-            perror("FBIOPAN_DISPLAY failed");
-        }
+	if (ioctl(fb, FBIOPAN_DISPLAY, &vinfo)) {
+	    perror("FBIOPAN_DISPLAY failed");
+	}
     }
 }
 
@@ -1976,102 +1976,121 @@ void fb_clear_screen(unsigned int color)
     }
 }
 
-void fb_draw_circle(int cx, int cy, int r, unsigned int color, int fill) {
+void fb_draw_circle(int cx, int cy, int r, unsigned int color, int fill)
+{
     int x = 0;
     int y = r;
     int d = 3 - 2 * r;
 
     while (y >= x) {
-        if (fill) {
-            // scanline 塗りつぶし
-            for (int i = cx - x; i <= cx + x; i++) {
-                fb_draw_pixel(i, cy + y, color);
-                fb_draw_pixel(i, cy - y, color);
-            }
-            for (int i = cx - y; i <= cx + y; i++) {
-                fb_draw_pixel(i, cy + x, color);
-                fb_draw_pixel(i, cy - x, color);
-            }
-        } else {
-            // 円周だけ
-            fb_draw_pixel(cx + x, cy + y, color);
-            fb_draw_pixel(cx - x, cy + y, color);
-            fb_draw_pixel(cx + x, cy - y, color);
-            fb_draw_pixel(cx - x, cy - y, color);
-            fb_draw_pixel(cx + y, cy + x, color);
-            fb_draw_pixel(cx - y, cy + x, color);
-            fb_draw_pixel(cx + y, cy - x, color);
-            fb_draw_pixel(cx - y, cy - x, color);
-        }
+	if (fill) {
+	    // scanline 塗りつぶし
+	    for (int i = cx - x; i <= cx + x; i++) {
+		fb_draw_pixel(i, cy + y, color);
+		fb_draw_pixel(i, cy - y, color);
+	    }
+	    for (int i = cx - y; i <= cx + y; i++) {
+		fb_draw_pixel(i, cy + x, color);
+		fb_draw_pixel(i, cy - x, color);
+	    }
+	} else {
+	    // 円周だけ
+	    fb_draw_pixel(cx + x, cy + y, color);
+	    fb_draw_pixel(cx - x, cy + y, color);
+	    fb_draw_pixel(cx + x, cy - y, color);
+	    fb_draw_pixel(cx - x, cy - y, color);
+	    fb_draw_pixel(cx + y, cy + x, color);
+	    fb_draw_pixel(cx - y, cy + x, color);
+	    fb_draw_pixel(cx + y, cy - x, color);
+	    fb_draw_pixel(cx - y, cy - x, color);
+	}
 
-        if (d <= 0) {
-            d = d + 4*x + 6;
-        } else {
-            d = d + 4*(x - y) + 10;
-            y--;
-        }
-        x++;
+	if (d <= 0) {
+	    d = d + 4 * x + 6;
+	} else {
+	    d = d + 4 * (x - y) + 10;
+	    y--;
+	}
+	x++;
     }
 }
 
 
-void fb_draw_rect(int x0, int y0, int x1, int y1, unsigned int color, int fill) {
-    if (x0 > x1) { int t=x0; x0=x1; x1=t; }
-    if (y0 > y1) { int t=y0; y0=y1; y1=t; }
+void fb_draw_rect(int x0, int y0, int x1, int y1, unsigned int color,
+		  int fill)
+{
+    if (x0 > x1) {
+	int t = x0;
+	x0 = x1;
+	x1 = t;
+    }
+    if (y0 > y1) {
+	int t = y0;
+	y0 = y1;
+	y1 = t;
+    }
 
     if (fill) {
-        for (int y = y0; y <= y1; y++) {
-            for (int x = x0; x <= x1; x++) {
-                fb_draw_pixel(x, y, color);
-            }
-        }
+	for (int y = y0; y <= y1; y++) {
+	    for (int x = x0; x <= x1; x++) {
+		fb_draw_pixel(x, y, color);
+	    }
+	}
     } else {
-        for (int x = x0; x <= x1; x++) {
-            fb_draw_pixel(x, y0, color);
-            fb_draw_pixel(x, y1, color);
-        }
-        for (int y = y0+1; y < y1; y++) {
-            fb_draw_pixel(x0, y, color);
-            fb_draw_pixel(x1, y, color);
-        }
+	for (int x = x0; x <= x1; x++) {
+	    fb_draw_pixel(x, y0, color);
+	    fb_draw_pixel(x, y1, color);
+	}
+	for (int y = y0 + 1; y < y1; y++) {
+	    fb_draw_pixel(x0, y, color);
+	    fb_draw_pixel(x1, y, color);
+	}
     }
 }
 
-void fb_draw_line(int x0, int y0, int x1, int y1, unsigned int color) {
+void fb_draw_line(int x0, int y0, int x1, int y1, unsigned int color)
+{
     int dx = abs(x1 - x0);
     int sx = x0 < x1 ? 1 : -1;
     int dy = -abs(y1 - y0);
     int sy = y0 < y1 ? 1 : -1;
     int err = dx + dy;
-    while(1) {
-        fb_draw_pixel(x0, y0, color);
-        if(x0 == x1 && y0 == y1) break;
-        int e2 = 2 * err;
-        if(e2 >= dy) { err += dy; x0 += sx; }
-        if(e2 <= dx) { err += dx; y0 += sy; }
+    while (1) {
+	fb_draw_pixel(x0, y0, color);
+	if (x0 == x1 && y0 == y1)
+	    break;
+	int e2 = 2 * err;
+	if (e2 >= dy) {
+	    err += dy;
+	    x0 += sx;
+	}
+	if (e2 <= dx) {
+	    err += dx;
+	    y0 += sy;
+	}
     }
 }
 
 int color_to_number(int symbol)
 {
-    if(eqp(symbol,make_sym("BLACK")))
-        return(BLACK);
-    else if(eqp(symbol,make_sym("BLUE")))
-        return(BLUE);
-    else if(eqp(symbol,make_sym("RED")))
-        return(RED);
-    else if(eqp(symbol,make_sym("MAGENTA")))
-        return(MAGENTA);
-    else if(eqp(symbol,make_sym("GREEN")))
-        return(GREEN);
-    else if(eqp(symbol,make_sym("CYAN")))
-        return(CYAN);
-    else if(eqp(symbol,make_sym("YELLOW")))
-        return(YELLOW);
-    else if(eqp(symbol,make_sym("WHITE")))
-        return(WHITE);
-    
-    return(0);
+    if (eqp(symbol, make_sym("BLACK")))
+	return (BLACK);
+    else if (eqp(symbol, make_sym("BLUE")))
+	return (BLUE);
+    else if (eqp(symbol, make_sym("RED")))
+	return (RED);
+    else if (eqp(symbol, make_sym("MAGENTA")))
+	return (MAGENTA);
+    else if (eqp(symbol, make_sym("GREEN")))
+	return (GREEN);
+    else if (eqp(symbol, make_sym("CYAN")))
+	return (CYAN);
+    else if (eqp(symbol, make_sym("YELLOW")))
+	return (YELLOW);
+    else if (eqp(symbol, make_sym("WHITE")))
+	return (WHITE);
+
+    return (0);
 }
 
 int f_gr_open(int arglist, int th)
@@ -2081,12 +2100,12 @@ int f_gr_open(int arglist, int th)
 	error(WRONG_ARGS, "GR-OPEN", arglist, th);
 
     res = fb_open();
-    if(res==0)
-    return(T);
-    else if(res == -1)
-    return(NIL);
+    if (res == 0)
+	return (T);
+    else if (res == -1)
+	return (NIL);
 
-    return(NIL);
+    return (NIL);
 }
 
 int f_gr_close(int arglist, int th)
@@ -2095,37 +2114,37 @@ int f_gr_close(int arglist, int th)
 	error(WRONG_ARGS, "GR-CLOSE", arglist, th);
 
     fb_close();
-    return(T);
+    return (T);
 }
 
 int f_gr_cls(int arglist, int th)
 {
     int arg1;
     arg1 = car(arglist);
-    if(!symbolp(arg1))
-    error(NOT_SYM,"GR-CLS",arg1,th);
+    if (!symbolp(arg1))
+	error(NOT_SYM, "GR-CLS", arg1, th);
 
     fb_clear_screen(color_to_number(arg1));
-    return(T);
+    return (T);
 }
 
 
 
 int f_gr_pset(int arglist, int th)
 {
-    int arg1,arg2,arg3;
+    int arg1, arg2, arg3;
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
-    if(!integerp(arg1))
-    error(NOT_INT,"GR-PSET",arg1,th);
-    if(!integerp(arg2))
-    error(NOT_INT,"GR-PSET",arg2,th);
-    if(!symbolp(arg3))
-    error(NOT_SYM,"GR-PSET",arg3,th);
+    if (!integerp(arg1))
+	error(NOT_INT, "GR-PSET", arg1, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "GR-PSET", arg2, th);
+    if (!symbolp(arg3))
+	error(NOT_SYM, "GR-PSET", arg3, th);
 
-    fb_draw_pixel(GET_INT(arg1),GET_INT(arg2),color_to_number(arg3));
-    return(T);
+    fb_draw_pixel(GET_INT(arg1), GET_INT(arg2), color_to_number(arg3));
+    return (T);
 }
 
 
@@ -2133,80 +2152,85 @@ int f_gr_pset(int arglist, int th)
 
 int f_gr_circle(int arglist, int th)
 {
-    int arg1,arg2,arg3,arg4,arg5;
+    int arg1, arg2, arg3, arg4, arg5;
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
     arg4 = car(cdddr(arglist));
     arg5 = car(cdr(cdddr(arglist)));
-    if(!integerp(arg1))
-    error(NOT_INT,"GR-CIRCLE",arg1,th);
-    if(!integerp(arg2))
-    error(NOT_INT,"GR-CIRCLE",arg2,th);
-    if(!integerp(arg3))
-    error(NOT_INT,"GR-CIRCLE",arg3,th);
-    if(!symbolp(arg4))
-    error(NOT_SYM,"GR-CIRCLE",arg4,th);
+    if (!integerp(arg1))
+	error(NOT_INT, "GR-CIRCLE", arg1, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "GR-CIRCLE", arg2, th);
+    if (!integerp(arg3))
+	error(NOT_INT, "GR-CIRCLE", arg3, th);
+    if (!symbolp(arg4))
+	error(NOT_SYM, "GR-CIRCLE", arg4, th);
 
-    if(nullp(arg5))
-    fb_draw_circle(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),color_to_number(arg4),0);
-    else if(eqp(arg5,make_sym("FILL")))
-    fb_draw_circle(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),color_to_number(arg4),1);
+    if (nullp(arg5))
+	fb_draw_circle(GET_INT(arg1), GET_INT(arg2), GET_INT(arg3),
+		       color_to_number(arg4), 0);
+    else if (eqp(arg5, make_sym("FILL")))
+	fb_draw_circle(GET_INT(arg1), GET_INT(arg2), GET_INT(arg3),
+		       color_to_number(arg4), 1);
 
-    return(T);
+    return (T);
 }
 
 
 int f_gr_rect(int arglist, int th)
 {
-    int arg1,arg2,arg3,arg4,arg5,arg6;
+    int arg1, arg2, arg3, arg4, arg5, arg6;
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
     arg4 = car(cdddr(arglist));
     arg5 = car(cdr(cdddr(arglist)));
     arg6 = car(cddr(cdddr(arglist)));
-    
-    if(!integerp(arg1))
-    error(NOT_INT,"GR-RECT",arg1,th);
-    if(!integerp(arg2))
-    error(NOT_INT,"GR-RECT",arg2,th);
-    if(!integerp(arg3))
-    error(NOT_INT,"GR-RECT",arg3,th);
-    if(!integerp(arg4))
-    error(NOT_INT,"GR-RECT",arg4,th);
-    if(!symbolp(arg5))
-    error(NOT_SYM,"GR-RECT",arg5,th);
 
-    if(nullp(arg6))
-    fb_draw_rect(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg5),0);
-    else if(eqp(arg6,make_sym("FILL")))
-    fb_draw_rect(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg5),1);
+    if (!integerp(arg1))
+	error(NOT_INT, "GR-RECT", arg1, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "GR-RECT", arg2, th);
+    if (!integerp(arg3))
+	error(NOT_INT, "GR-RECT", arg3, th);
+    if (!integerp(arg4))
+	error(NOT_INT, "GR-RECT", arg4, th);
+    if (!symbolp(arg5))
+	error(NOT_SYM, "GR-RECT", arg5, th);
 
-    return(T);
+    if (nullp(arg6))
+	fb_draw_rect(GET_INT(arg1), GET_INT(arg2), GET_INT(arg3),
+		     GET_INT(arg4), color_to_number(arg5), 0);
+    else if (eqp(arg6, make_sym("FILL")))
+	fb_draw_rect(GET_INT(arg1), GET_INT(arg2), GET_INT(arg3),
+		     GET_INT(arg4), color_to_number(arg5), 1);
+
+    return (T);
 }
 
 
 
 int f_gr_line(int arglist, int th)
 {
-    int arg1,arg2,arg3,arg4,arg5;
+    int arg1, arg2, arg3, arg4, arg5;
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     arg3 = caddr(arglist);
     arg4 = car(cdddr(arglist));
     arg5 = car(cdr(cdddr(arglist)));
-    if(!integerp(arg1))
-    error(NOT_INT,"GR-LINE",arg1,th);
-    if(!integerp(arg2))
-    error(NOT_INT,"GR-LINE",arg2,th);
-    if(!integerp(arg3))
-    error(NOT_INT,"GR-LINE",arg3,th);
-    if(!integerp(arg4))
-    error(NOT_INT,"GR-LINE",arg4,th);
-    if(!symbolp(arg5))
-    error(NOT_SYM,"GR-LINE",arg5,th);
+    if (!integerp(arg1))
+	error(NOT_INT, "GR-LINE", arg1, th);
+    if (!integerp(arg2))
+	error(NOT_INT, "GR-LINE", arg2, th);
+    if (!integerp(arg3))
+	error(NOT_INT, "GR-LINE", arg3, th);
+    if (!integerp(arg4))
+	error(NOT_INT, "GR-LINE", arg4, th);
+    if (!symbolp(arg5))
+	error(NOT_SYM, "GR-LINE", arg5, th);
 
-    fb_draw_line(GET_INT(arg1),GET_INT(arg2),GET_INT(arg3),GET_INT(arg4),color_to_number(arg5));
-    return(T);
+    fb_draw_line(GET_INT(arg1), GET_INT(arg2), GET_INT(arg3),
+		 GET_INT(arg4), color_to_number(arg5));
+    return (T);
 }

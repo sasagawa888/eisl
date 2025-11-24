@@ -631,20 +631,20 @@ int signal_condition(int x, int y, int th)
     else {
 	SET_OPT(x, CONTINUABLE);
 	heap[x].name = eisl_strdup(GET_NAME(y));
-	if (heap[x].name == NULL){
-	error(MALLOC_OVERF, "signal-condition", NIL, th);
+	if (heap[x].name == NULL) {
+	    error(MALLOC_OVERF, "signal-condition", NIL, th);
 	}
     }
     if (ignore_flag) {
 	block_pt = 0;
 	handling_resource_err = false;
-	longjmp(error_buf,1);
+	longjmp(error_buf, 1);
     }
     if (parallel_flag) {
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;
-	longjmp(thread_buf,1);
+	longjmp(thread_buf, 1);
     }
     if (process_flag) {
 	handling_resource_err = false;
@@ -652,7 +652,7 @@ int signal_condition(int x, int y, int th)
 	signal_condition_y = y;
 	printf("\x15");
 	fflush(stdout);
-	longjmp(process_buf,1);
+	longjmp(process_buf, 1);
     }
     if (child_flag) {
 	handling_resource_err = false;
@@ -734,7 +734,7 @@ int signal_condition(int x, int y, int th)
 	puts("Error occurred while executing command line options.");
 	option_flag = false;
     }
-	longjmp(repl_buf,1);
+    longjmp(repl_buf, 1);
     return 0;
 }
 

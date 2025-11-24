@@ -21,59 +21,68 @@
 #include "eisl.h"
 
 
-char *eisl_strdup(const char *s) {
+char *eisl_strdup(const char *s)
+{
     size_t len = strlen(s) + 1;
     char *copy = malloc(len);
-    if (!copy) return NULL;
+    if (!copy)
+	return NULL;
     memcpy(copy, s, len);
     return copy;
 }
 
-char *eisl_strcatv(const char *first, ...) {
+char *eisl_strcatv(const char *first, ...)
+{
     va_list ap;
     size_t total_len = 0;
 
     va_start(ap, first);
     for (const char *s = first; s != NULL; s = va_arg(ap, const char *)) {
-        total_len += strlen(s);
+	total_len += strlen(s);
     }
     va_end(ap);
 
-    char *result = (char *)malloc(total_len + 1); // +1 for '\0'
+    char *result = (char *) malloc(total_len + 1);	// +1 for '\0'
     if (!result) {
-        fprintf(stderr, "malloc failed in str_catv\n");
-        exit(1);
+	fprintf(stderr, "malloc failed in str_catv\n");
+	exit(1);
     }
 
-    result[0] = '\0'; 
+    result[0] = '\0';
     va_start(ap, first);
     for (const char *s = first; s != NULL; s = va_arg(ap, const char *)) {
-        strcat(result, s);
+	strcat(result, s);
     }
     va_end(ap);
 
     return result;
 }
 
-char *eisl_strcat(const char *s1, const char *s2) {
-    if (!s1) s1 = "";
-    if (!s2) s2 = "";
+char *eisl_strcat(const char *s1, const char *s2)
+{
+    if (!s1)
+	s1 = "";
+    if (!s2)
+	s2 = "";
 
     size_t len1 = strlen(s1);
     size_t len2 = strlen(s2);
 
-    char *res = (char *)malloc(len1 + len2 + 1);
-    if (!res) fprintf(stderr, "malloc failed in str_cat\n");
+    char *res = (char *) malloc(len1 + len2 + 1);
+    if (!res)
+	fprintf(stderr, "malloc failed in str_cat\n");
 
     memcpy(res, s1, len1);
     memcpy(res + len1, s2, len2);
     res[len1 + len2] = '\0';
 
-    return res; 
+    return res;
 }
 
-const char *eisl_strchr(const char *str, char ch) {
-    if (!str) return NULL; 
+const char *eisl_strchr(const char *str, char ch)
+{
+    if (!str)
+	return NULL;
     return strchr(str, ch);
 }
 
@@ -85,7 +94,7 @@ void init_cell(void)
 
     /* initialize heap area */
     for (addr = 0; addr < cell_size; addr++) {
-    heap[addr].name = NULL;
+	heap[addr].name = NULL;
 	SET_CDR(addr, addr + 1);
     }
     hp[0] = 0;
@@ -482,8 +491,8 @@ int make_sym1(const char *pname)
     addr = freshcell();
     SET_TAG(addr, SYM);
     heap[addr].name = eisl_strdup(pname);
-    if (heap[addr].name == NULL) { 
-    error(MALLOC_OVERF, "make_sym", NIL, 0);
+    if (heap[addr].name == NULL) {
+	error(MALLOC_OVERF, "make_sym", NIL, 0);
     }
     SET_CAR(addr, NIL);
     SET_CDR(addr, NIL);
@@ -594,8 +603,8 @@ int make_func(const char *pname, int addr)
     val = freshcell();
     SET_TAG(val, FUNC);
     heap[val].name = eisl_strdup(pname);
-    if (heap[val].name == NULL) { 
-    error(MALLOC_OVERF, "make_func", NIL, 0);
+    if (heap[val].name == NULL) {
+	error(MALLOC_OVERF, "make_func", NIL, 0);
     }
     SET_CAR(val, addr);
     SET_CDR(val, ep[0]);	/* local environment */
@@ -636,8 +645,8 @@ int make_generic(char *pname, int lamlist, int body)
     val = freshcell();
     SET_TAG(val, GENERIC);
     heap[val].name = eisl_strdup(pname);
-    if (heap[val].name == NULL) { 
-    error(MALLOC_OVERF, "make_generic", NIL, 0);
+    if (heap[val].name == NULL) {
+	error(MALLOC_OVERF, "make_generic", NIL, 0);
     }
     SET_CAR(val, lamlist);
     SET_OPT(val, count_args(lamlist));	/* amount of argument */
@@ -743,8 +752,8 @@ int make_vec(int n, int obj)
 
     res = freshcell();
     vec = (int *) malloc(sizeof(int) * n);
-    if (vec == NULL){
-    error(MALLOC_OVERF, "make_vector", NIL, 0);
+    if (vec == NULL) {
+	error(MALLOC_OVERF, "make_vector", NIL, 0);
     }
     SET_TAG(res, VEC);
     SET_VEC(res, vec);
@@ -845,8 +854,8 @@ int make_arr(int ls, int obj)
 
     res = freshcell();
     vec = (int *) malloc(sizeof(int) * size);
-    if (vec == NULL){
-    error(MALLOC_OVERF, "array", NIL, 0);
+    if (vec == NULL) {
+	error(MALLOC_OVERF, "array", NIL, 0);
     }
     if (nullp(ls1)) {
 	SET_TAG(res, ARR);
@@ -876,8 +885,8 @@ int make_str(const char *string)
     addr = freshcell();
     SET_TAG(addr, STR);
     heap[addr].name = eisl_strdup(string);
-    if (heap[addr].name == NULL) { 
-    error(MALLOC_OVERF, "make_str", NIL, 0);
+    if (heap[addr].name == NULL) {
+	error(MALLOC_OVERF, "make_str", NIL, 0);
     }
     SET_AUX(addr, cstring);	/* class string */
     return (addr);
@@ -962,8 +971,8 @@ int make_char(const char *pname)
     addr = freshcell();
     SET_TAG(addr, CHR);
     heap[addr].name = (char *) malloc(CHARSIZE);
-    if (heap[addr].name == NULL) { 
-    error(MALLOC_OVERF, "make_char", NIL, 0);
+    if (heap[addr].name == NULL) {
+	error(MALLOC_OVERF, "make_char", NIL, 0);
     }
     if (!isUni2(pname[0]) && !isUni3(pname[0]) && !isUni4(pname[0])
 	&& !isUni5(pname[0]) && !isUni6(pname[0])) {
@@ -993,8 +1002,8 @@ int make_class(const char *pname, int superclass)
     addr = freshcell();
     SET_TAG(addr, CLASS);
     heap[addr].name = eisl_strdup(pname);
-    if (heap[addr].name == NULL) { 
-    error(MALLOC_OVERF, "make_class", NIL, 0);
+    if (heap[addr].name == NULL) {
+	error(MALLOC_OVERF, "make_class", NIL, 0);
     }
     SET_CAR(addr, superclass);
     SET_CDR(addr, NIL);

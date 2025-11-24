@@ -1929,7 +1929,7 @@ int f_ignore_errors(int arglist, int th)
     ret = setjmp(error_buf);
     if (ret == 0) {
 	res = f_progn(arglist, th);
-    } else if (res == 1) {
+    } else if (ret == 1) {
 	res = NIL;
     }
     ignore_flag = false;

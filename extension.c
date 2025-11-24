@@ -1902,17 +1902,26 @@ int f_close_socket(int arglist, int th)
 
 //-------/dev/fb0------------------------
 
+// RGB888 -> 16bit RGB565（Little Endian フレームバッファ用）
+static inline uint16_t rgb_to_fb(uint8_t r, uint8_t g, uint8_t b) {
+    uint16_t color = ((r & 0xF8) << 8)  // R5
+                   | ((g & 0xFC) << 3)  // G6
+                   | ((b & 0xF8) >> 3); // B5
+    // Little Endian に合わせてバイト入れ替え
+    return (color >> 8) | (color << 8);
+}
+
 #ifdef __rpi__
     #define RGB565(r,g,b)  ( ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | ((r & 0xF8) >> 3) )
-    #define BLACK       RGB565(0,   0,   0)
-    #define BLUE        RGB565(0,   0, 255)
-    #define RED         RGB565(255, 0,   0)
-    #define MAGENTA     RGB565(255, 0, 255)
-    #define GREEN       RGB565(0, 255,   0)
-    #define CYAN        RGB565(0, 255, 255)
-    #define YELLOW      RGB565(255,255,  0)
-    #define WHITE       RGB565(255,255,255)
-
+    #define BLACK   rgb_to_fb(0, 0, 0)
+    #define BLUE    rgb_to_fb(0, 0, 255)
+    #define RED     rgb_to_fb(255, 0, 0)
+    #define MAGENTA rgb_to_fb(255, 0, 255)
+    #define GREEN   rgb_to_fb(0, 255, 0)
+    #define CYAN    rgb_to_fb(0, 255, 255)
+    #define YELLOW  rgb_to_fb(255, 255, 0)
+    #define WHITE   rgb_to_fb(255, 255, 255)
+   
 #else   // RGB888
 
     #define BLACK       0x000000

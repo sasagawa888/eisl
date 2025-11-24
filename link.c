@@ -464,6 +464,6 @@ double get_flt(int x)
 
 int jump_to_repl()
 {
-    RAISE(Restart_Repl);
+    longjmp(repl_buf,1);
     return (0);
 }

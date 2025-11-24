@@ -190,16 +190,10 @@ jmp_buf block_buf[CTRLSTK];
 jmp_buf catch_buf[CTRLSTK];
 jmp_buf cont_buf;
 jmp_buf error_buf;
-jmp_buf init_buf;
 jmp_buf repl_buf;
+jmp_buf thread_buf;
 jmp_buf process_buf;
 jmp_buf network_buf;
-
-Except_T Restart_Repl = { "Restart REPL" },
-    Exit_Interp = { "Exit interpreter" };
-Except_T Exit_Thread = { "Exit thread" };	/* for Multi-thread */
-Except_T Exit_Process = { "Exit Process" };	/* for Multi-process */
-Except_T Exit_Network = { "Exit Network" };	/* for Distributed parallel */
 
 int signal_condition_x;
 int signal_condition_y;
@@ -361,7 +355,7 @@ static inline void disable_repl_flag(void)
 
 int main(int argc, char *argv[])
 {
-    int errret;
+    int errret,ret;
 
     if (setupterm((char *) 0, 1, &errret) == ERR ||
 	key_up == NULL || key_down == NULL ||
@@ -408,7 +402,8 @@ int main(int argc, char *argv[])
 
     /* handle command line options */
     option_flag = true;
-    TRY {
+    ret = setjmp(repl_buf);
+	if(ret == 0){
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
@@ -482,9 +477,9 @@ int main(int argc, char *argv[])
 	    f_load(list1(make_str(script_arg)), 0);
 	    exit(EXIT_SUCCESS);
 	}
-    }
-    EXCEPT(Restart_Repl) exit(EXIT_FAILURE);
-    END_TRY;
+    } else if(ret == 1){
+    exit(EXIT_FAILURE);
+	}
 
     option_flag = false;
 
@@ -493,21 +488,24 @@ int main(int argc, char *argv[])
     volatile bool quit = false;
     do {
 	maybe_greet();
-	TRY while (1) {
+	ret = setjmp(repl_buf);
+	if(ret == 0){
+	    while (1) {
 	    init_pointer();
 	    if (!process_flag && !child_flag) {
 		fputs("> ", stdout);
 		print(eval(sread(), 0));
 		putchar('\n');
 	    } else if (process_flag) {
-		TRY print(eval(sread(), 0));
+		ret = setjmp(process_buf);
+		if(ret == 0){
+		print(eval(sread(), 0));
 		putchar('\n');
 		fflush(stdout);
 		union sigval value;
 		value.sival_int = (int) process_num;
 		sigqueue(getppid(), SIGRTMIN, value);
-		EXCEPT(Exit_Process);
-		END_TRY;
+		} else if(ret == 1){}
 	    } else if (child_flag) {
 		pthread_mutex_lock(&mutex2);
 		while (!child_buffer_ready) {
@@ -521,21 +519,24 @@ int main(int argc, char *argv[])
 		print(exp);
 		printf("\n");
 		fflush(stdout);
-		TRY res = eval(exp, 0);
+		ret = setjmp(network_buf);
+		if(ret == 0){
+		res = eval(exp, 0);
 		printf("send_to_parent ");
 		print(res);
 		printf("\n");
 		fflush(stdout);
 		send_to_parent(sexp_to_str(res));
-		EXCEPT(Exit_Network);
-		END_TRY;
+		}
+		else if(ret == 1){}
 	    }
 
 	    if (redef_flag)
 		redef_generic();
 	}
-	EXCEPT(Restart_Repl);
-	EXCEPT(Exit_Interp) {
+	}
+	else if(ret == 1){}
+	else if(ret == 2){
 	    quit = true;
 	    exit_thread();
 	    close_socket();
@@ -546,7 +547,6 @@ int main(int argc, char *argv[])
 		    error(SYSTEM_ERR, "dp-halt shatdown", NIL, 0);
 	    }
 	}
-	END_TRY;
     }
     while (!quit);
 }
@@ -663,7 +663,7 @@ int readc(void)
 	if (!script_flag && input_stream == standard_input && c == EOF) {
 	    /* ctrl+D and not script-mode quit system */
 	    putchar('\n');
-	    RAISE(Exit_Interp);
+	    longjmp(repl_buf,2);
 	} else if (script_flag)
 	    /* on script-mode only retrun c */
 	    return (c);

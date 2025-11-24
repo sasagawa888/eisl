@@ -675,7 +675,7 @@ void debugger(int th)
 		 ":q quit\n"
 		 ":r room\n" ":s stepper ON/OFF\n" "other S exps eval");
 	} else if (eqp(x, make_sym(":A"))) {
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	} else if (eqp(x, make_sym(":B"))) {
 	    for (i = 0; i < BACKSIZE; i++) {
 		print(backtrace[i]);

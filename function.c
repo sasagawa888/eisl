@@ -4433,7 +4433,7 @@ __dead int f_quit(int arglist __unused, int th __unused)
     if (!script_flag) {
 	puts("- good bye -");
     }
-    RAISE(Exit_Interp);
+    longjmp(repl_buf,2);
     exit(EXIT_SUCCESS);
 }
 

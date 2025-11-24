@@ -645,7 +645,7 @@ int signal_condition(int x, int y, int th)
 	handling_resource_err = false;
 	signal_condition_x = x;
 	signal_condition_y = y;
-	RAISE(Exit_Thread);
+	longjmp(thread_buf,1);
     }
     if (process_flag) {
 	handling_resource_err = false;
@@ -653,7 +653,7 @@ int signal_condition(int x, int y, int th)
 	signal_condition_y = y;
 	printf("\x15");
 	fflush(stdout);
-	RAISE(Exit_Process);
+	longjmp(process_buf,1);
     }
     if (child_flag) {
 	handling_resource_err = false;
@@ -735,7 +735,7 @@ int signal_condition(int x, int y, int th)
 	puts("Error occurred while executing command line options.");
 	option_flag = false;
     }
-    RAISE(Restart_Repl);
+	longjmp(repl_buf,1);
     return 0;
 }
 

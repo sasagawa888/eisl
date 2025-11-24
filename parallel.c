@@ -57,6 +57,7 @@ int eval_para(int arg)
 
 void *parallel(void *arg)
 {
+	int ret;
     int num = *(int *) arg;
 
     while (1) {
@@ -67,9 +68,10 @@ void *parallel(void *arg)
 	    goto exit;
 
 	ep[num] = ep[0];
-	TRY para_output[num] = eval(para_input[num], num);
-	EXCEPT(Exit_Thread);
-	END_TRY;
+	ret = setjmp(thread_buf);
+	if(ret == 0){
+	para_output[num] = eval(para_input[num], num);
+	} else if(ret == 1){}
 	mt_enqueue(num);
 	if (mt_queue_pt == mt_queue_num) {
 	    pthread_mutex_lock(&mutex);
@@ -830,7 +832,7 @@ int f_dp_close(int arglist, int th)
 	shutdown(parent_sockfd[1], SHUT_RDWR);
 	close(parent_sockfd[0]);
 	close(parent_sockfd[1]);
-	RAISE(Exit_Interp);
+	longjmp(repl_buf,2);
     }
 
     receiver_exit_flag = 1;
@@ -864,7 +866,7 @@ int f_dp_halt(int arglist, int th)
     if (child_flag) {
 	printf("Easy-ISLisp exit network mode.\n");
 	shutdown_flag = true;
-	RAISE(Exit_Interp);
+	longjmp(repl_buf,2);
     }
 
     receiver_exit_flag = 1;
@@ -1248,7 +1250,7 @@ int wait_all(int m)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+		longjmp(repl_buf,1);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1275,7 +1277,7 @@ int wait_and(int m)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
 	for (i = 0; i < m; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1319,7 +1321,7 @@ int wait_or(int m)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
 
 	for (i = 0; i < m; i++) {
@@ -1388,7 +1390,7 @@ int f_dp_call(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1445,7 +1447,7 @@ int f_dp_exec(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1495,7 +1497,7 @@ int f_dp_and(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {
@@ -1561,7 +1563,7 @@ int f_dp_or(int arglist, int th)
 	    }
 	    printf("ctrl+C\n");
 	    ctrl_c_flag = 0;
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
 	for (i = 0; i < n; i++) {
 	    if (parent_buffer[i][0] != 0 && result[i] == 0) {

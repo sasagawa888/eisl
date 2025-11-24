@@ -256,12 +256,12 @@ int check_gbc(int th)
 	    ctrl_c_flag = 0;
 	    printf("ctrl+C\n");
 	    fflush(stdout);
-	    RAISE(Exit_Thread);
+	    longjmp(thread_buf,1);
 	} else {
 	    ctrl_c_flag = 0;
 	    printf("ctrl+C\n");
 	    fflush(stdout);
-	    RAISE(Restart_Repl);
+	    longjmp(repl_buf,1);
 	}
     }
 

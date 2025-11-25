@@ -2904,46 +2904,11 @@ int f_string_eqsmallerp(int arglist, int th)
 
 }
 
-/*
-int f_string_append(int arglist, int th)
-{
-    int arg1;
-
-    if (nullp(arglist))
-	return (make_str(""));
-
-    arg1 = car(arglist);
-    if (!stringp(arg1))
-	error(NOT_STR, "string-append", arg1, th);
-    arglist = cdr(arglist);
-    if (nullp(arglist))
-	return (arg1);
-    Text_save_T save = Text_save();
-    Text_T txt1 = Text_put(GET_NAME(arg1));
-    while (!nullp(arglist)) {
-	int arg2;
-
-	arg2 = car(arglist);
-	if (!stringp(arg2))
-	    error(NOT_STR, "string-append", arg2, th);
-	arglist = cdr(arglist);
-
-	Text_T txt2 = Text_put(GET_NAME(arg2));
-	txt1 = Text_cat(txt1, txt2);
-    }
-    char *str = Text_get(NULL, 0, txt1);
-    int res = make_str(str);
-    free(str);
-    Text_restore(&save);
-    return res;
-}
-*/
 int f_string_append(int arglist, int th)
 {
     if (nullp(arglist))
 	return make_str("");
 
-    /* ----- 1. まず総文字数を数える ----- */
     int total_len = 0;
     int tmp = arglist;
 
@@ -2955,21 +2920,18 @@ int f_string_append(int arglist, int th)
 	tmp = cdr(tmp);
     }
 
-    /* ----- 2. バッファを作成 ----- */
     char *buf = malloc(total_len + 1);
     if (!buf)
 	error(MALLOC_OVERF, "string-append", NIL, th);
 
-    buf[0] = '\0';		/* 空文字列に初期化 */
+    buf[0] = '\0';
 
-    /* ----- 3. 実際に連結 ----- */
     while (!nullp(arglist)) {
 	int a = car(arglist);
 	strcat(buf, GET_NAME(a));
 	arglist = cdr(arglist);
     }
 
-    /* ----- 4. EISL 文字列に変換 ----- */
     int res = make_str(buf);
     free(buf);
 

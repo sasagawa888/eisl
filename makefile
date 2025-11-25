@@ -14,7 +14,6 @@ CURSES_LIBS := $(shell ncursesw6-config --libs)
 
 
 CFLAGS += $(INCS) -Wall $(CURSES_CFLAGS) 
-#SRC_CII := cii/src/except.c cii/src/fmt.c cii/src/str.c cii/src/text.c
 
 # Files in library/ that need to be compiled
 SRC_LISP := library/bit.lsp \
@@ -30,21 +29,19 @@ SRC_LISP := library/bit.lsp \
 		library/plot.lsp \
 		library/unistd.lsp 
 
-CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation 
+CFLAGS += -O3 -Wno-stringop-truncation
 
 ifeq ($(USE_FLTO),1)
-CFLAGS += -O3 -flto -DNDEBUG=1 -Wno-stringop-truncation
+CFLAGS += -O3 -flto -Wno-stringop-truncation
 endif
 ifeq ($(USE_GDB),1)
-CFLAGS += -O0 -g -DNDEBUG=1 -Wno-stringop-truncation
+CFLAGS += -O0 -g -Wno-stringop-truncation
 endif 
 
 ifeq  ($(shell uname -n),raspberrypi)
-CFLAGS += -O3 -DNDEBUG=1 -Wno-stringop-truncation -Wno-array-bounds
+CFLAGS += -O3 -Wno-stringop-truncation
 endif
 
-SRC_CII += cii/src/mem.c
-OBJ_CII := $(SRC_CII:.c=.o)
 OBJ_LISP := $(SRC_LISP:.lsp=.o)
 
 ifeq  ($(shell uname -n),raspberrypi)
@@ -103,7 +100,7 @@ all: $(TARGETS)
 eisl: $(EISL_OBJS) 
 	$(CC) $(CFLAGS) $^ -o $@ $(LIBS) 
 
-%.o: %.c eisl.h ffi.h term.h cii/include/except.h 
+%.o: %.c eisl.h ffi.h term.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.o: %.lsp eisl
@@ -158,4 +155,4 @@ clean:
 
 .PHONY: check
 check:
-	cppcheck --enable=all --std=c11 --library=posix .
+	cppcheck --enable=warning,performance,portability --std=c17 --library=posix .

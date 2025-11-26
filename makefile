@@ -120,7 +120,6 @@ bignum.o: bignum.c eisl.h
 compute.o: compute.c eisl.h 
 edit.o: edit.c eisl.h 
 syntax_highlight.o: syntax_highlight.c eisl.h 
-long.o: long.c eisl.h 
 link.o: link.c eisl.h 
 parallel.o: parallel.c eisl.h
 

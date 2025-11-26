@@ -1,5 +1,5 @@
 /*
- * Easy-ISLisp (ISLisp) written by kenichi sasagawa 2016/4 ~ 2023/9
+ * Easy-ISLisp (ISLisp) written by kenichi sasagawa 2016/4 ~ 
  */
 
 #ifndef EISL_H

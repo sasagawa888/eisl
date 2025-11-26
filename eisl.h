@@ -510,9 +510,18 @@ static inline int IDX2R(int i, int j, int ld)
 static inline void append_str(int output_stream, const char *from)
 {
     char *to = GET_NAME(output_stream);
-    strncat(to, from, STRSIZE - strlen(to) - 1);
-    to[STRSIZE - 1] = '\0';
-    SET_PROP(output_stream, GET_PROP(output_stream) + strlen(from));
+    size_t len_to = strlen(to);
+    size_t len_from = strlen(from);
+
+    size_t remain = STRSIZE - len_to - 1;
+
+    if (remain > 0) {
+        size_t copy_len = (len_from < remain) ? len_from : remain;
+        memcpy(to + len_to, from, copy_len);
+        to[len_to + copy_len] = '\0';
+    }
+
+    SET_PROP(output_stream, GET_PROP(output_stream) + len_from);
 }
 
 static inline void output_str(int output_stream, const char *from)

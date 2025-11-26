@@ -29,17 +29,17 @@ SRC_LISP := library/bit.lsp \
 		library/plot.lsp \
 		library/unistd.lsp 
 
-CFLAGS += -O3 -Wno-stringop-truncation
+CFLAGS += -O3
 
 ifeq ($(USE_FLTO),1)
-CFLAGS += -O3 -flto -Wno-stringop-truncation
+CFLAGS += -O3 -flto
 endif
 ifeq ($(USE_GDB),1)
-CFLAGS += -O0 -g -Wno-stringop-truncation
+CFLAGS += -O0 -g
 endif 
 
 ifeq  ($(shell uname -n),raspberrypi)
-CFLAGS += -O3 -Wno-stringop-truncation
+CFLAGS += -O3
 endif
 
 OBJ_LISP := $(SRC_LISP:.lsp=.o)

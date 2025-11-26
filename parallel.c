@@ -289,7 +289,7 @@ int f_mt_call(int arglist, int th)
 
 int f_mt_exec(int arglist, int th)
 {
-    int temp, i, num[PARASIZE] = {0};
+    int temp, i, num[PARASIZE] = { 0 };
 
     if (length(arglist) == 0)
 	error(WRONG_ARGS, "mt-exec", arglist, th);
@@ -733,7 +733,7 @@ int f_mp_or(int arglist, int th)
 	temp = cdr(temp);
 	i++;
     }
-	res = NIL;
+    res = NIL;
     for (i = 0; i < n; i++) {
 	res = str_to_sexp(read_from_pipe_part(n));
 	if (res != NIL)
@@ -1075,10 +1075,10 @@ int f_dp_eval(int arglist, int th __unused)
     arg1 = car(arglist);
     arg2 = cadr(arglist);
     i = GET_INT(arg1);
-    if (i >= child_num || i < 0){
+    if (i >= child_num || i < 0) {
 	error(WRONG_ARGS, "dp-eval", arg1, 0);
-	return(0);
-	}
+	return (0);
+    }
     memset(parent_buffer[i], 0, sizeof(parent_buffer[i]));
     send_to_child(GET_INT(arg1), sexp_to_str(arg2));
     while (parent_buffer[i][0] == 0) {
@@ -1267,11 +1267,11 @@ int wait_and(int m)
 {
     int i, j, res, result[PARASIZE];
 
-    for (i = 0; i < m; i++){
+    for (i = 0; i < m; i++) {
 	result[i] = 0;
-	}
+    }
 
-	res = NIL;
+    res = NIL;
     while (!all_received(result, m)) {
 	if (ctrl_c_flag == 1) {
 	    for (i = 0; i < m; i++) {
@@ -1635,7 +1635,7 @@ void *preceiver(void *arg)
 	m = read(child_sockfd[n], sub_buffer, sizeof(sub_buffer));
 	if (m <= 0 && !receiver_exit_flag) {
 	    error(SYSTEM_ERR, "receive from child", make_int(n), 0);
-		return(0);
+	    return (0);
 	}
 	//print_ascii(sub_buffer);printf("m=%d",m);fflush(stdout);
 	strcat(buffer, sub_buffer);
@@ -1706,7 +1706,7 @@ void *creceiver(void *arg)
 	n = read(parent_sockfd[1], sub_buffer, sizeof(sub_buffer));
 	if (n <= 0) {
 	    error(SYSTEM_ERR, "*creceiver", NIL, 0);
-		return(0);
+	    return (0);
 	}
 
 	strcat(buffer, sub_buffer);

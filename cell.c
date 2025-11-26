@@ -1129,9 +1129,9 @@ char *eisl_strcat(const char *s1, const char *s2)
     size_t len2 = strlen(s2);
 
     char *res = (char *) malloc(len1 + len2 + 1);
-    if (!res){
+    if (!res) {
 	fprintf(stderr, "malloc failed in str_cat\n");
-    return NULL; 
+	return NULL;
     }
     memcpy(res, s1, len1);
     memcpy(res + len1, s2, len2);
@@ -1146,4 +1146,3 @@ const char *eisl_strchr(const char *str, char ch)
 	return NULL;
     return strchr(str, ch);
 }
-

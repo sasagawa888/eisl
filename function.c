@@ -2921,9 +2921,9 @@ int f_string_append(int arglist, int th)
     }
 
     char *buf = malloc(total_len + 1);
-    if (!buf){
+    if (!buf) {
 	error(MALLOC_OVERF, "string-append", NIL, th);
-    return(0);
+	return (0);
     }
     buf[0] = '\0';
 

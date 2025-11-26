@@ -29,7 +29,7 @@ int f_edit(int arglist, int th)
 	    ed = "edlis";
 	}
     }
-    char *str = eisl_strcatv(ed, " ", GET_NAME(arg1), (const char *)NULL);
+    char *str = eisl_strcatv(ed, " ", GET_NAME(arg1), (const char *) NULL);
     res = system(str);
     free(str);
     if (res == -1)

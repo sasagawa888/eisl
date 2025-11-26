@@ -9,6 +9,7 @@
  * functions for multi-process
  * functions for distributed-process
  * functions for TCP/IP
+ * functions for simple graphics
  */
 
 #include <stdio.h>
@@ -570,9 +571,9 @@ int f_set_random(int arglist, int th)
 	error(NOT_NUM, "set-random", arg1, th);
 
     n = GET_INT(arg1);
-    if (n < 0){
+    if (n < 0) {
 	error(ILLEGAL_ARGS, "set-random", n, th);
-    return(0);
+	return (0);
     }
     srand(n);
     return (arg1);
@@ -1783,7 +1784,7 @@ int f_create_client_socket(int arglist, int th)
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
 	error(SYSTEM_ERR, "create-client-socket", NIL, th);
-    return(0);
+	return (0);
     }
 
     memset((char *) &client_addr, 0, sizeof(client_addr));
@@ -1817,7 +1818,7 @@ int f_create_server_socket(int arglist, int th)
     sock0 = socket(AF_INET, SOCK_STREAM, 0);
     if (sock0 < 0) {
 	error(SYSTEM_ERR, "cread-server-socket", NIL, th);
-    return(0);
+	return (0);
     }
 
     memset((char *) &server_addr, 0, sizeof(server_addr));
@@ -1829,8 +1830,8 @@ int f_create_server_socket(int arglist, int th)
 	(sock0, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
     {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
-    close(sock0);
-    return(0);
+	close(sock0);
+	return (0);
     }
 
     listen(sock0, 5);
@@ -1840,8 +1841,8 @@ int f_create_server_socket(int arglist, int th)
     sock1 = accept(sock0, (struct sockaddr *) &server_addr, &parent_len);
     if (sock1 < 0) {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
-    close(sock0); 
-    return(0);
+	close(sock0);
+	return (0);
     }
 
     res = make_socket(sock1, EISL_SOCKET, "server", sock0);
@@ -1909,25 +1910,25 @@ int f_close_socket(int arglist, int th)
 //-------/dev/fb0------------------------
 
 #ifdef __rpi__
-    #define BLACK       0x000000
-    #define BLUE        0xFF0000
-    #define RED         0x0000FF
-    #define MAGENTA     0xFF00FF
-    #define GREEN       0x00FF00
-    #define CYAN        0xFFFF00
-    #define YELLOW      0x00FFFF
-    #define WHITE       0xFFFFFF
+#define BLACK       0x000000
+#define BLUE        0xFF0000
+#define RED         0x0000FF
+#define MAGENTA     0xFF00FF
+#define GREEN       0x00FF00
+#define CYAN        0xFFFF00
+#define YELLOW      0x00FFFF
+#define WHITE       0xFFFFFF
 
-#else   // RGB888
+#else				// RGB888
 
-    #define BLACK       0x000000
-    #define BLUE        0x0000FF
-    #define RED         0xFF0000
-    #define MAGENTA     0xFF00FF
-    #define GREEN       0x00FF00
-    #define CYAN        0x00FFFF
-    #define YELLOW      0xFFFF00
-    #define WHITE       0xFFFFFF
+#define BLACK       0x000000
+#define BLUE        0x0000FF
+#define RED         0xFF0000
+#define MAGENTA     0xFF00FF
+#define GREEN       0x00FF00
+#define CYAN        0x00FFFF
+#define YELLOW      0xFFFF00
+#define WHITE       0xFFFFFF
 
 #endif
 

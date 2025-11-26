@@ -556,7 +556,8 @@ char *library_file(const char *basename)
     char *prefix;
 
     if ((prefix = getenv("EASY_ISLISP")) != NULL) {
-	return eisl_strcatv(prefix, "/library/", basename, (const char *)NULL);
+	return eisl_strcatv(prefix, "/library/", basename,
+			    (const char *) NULL);
     }
     return eisl_strcat(STRQUOTE(SHAREDIR) "/library/", basename);
 }

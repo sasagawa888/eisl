@@ -570,9 +570,10 @@ int f_set_random(int arglist, int th)
 	error(NOT_NUM, "set-random", arg1, th);
 
     n = GET_INT(arg1);
-    if (n < 0)
+    if (n < 0){
 	error(ILLEGAL_ARGS, "set-random", n, th);
-
+    return(0);
+    }
     srand(n);
     return (arg1);
 }
@@ -1826,6 +1827,8 @@ int f_create_server_socket(int arglist, int th)
 	(sock0, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0)
     {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
+    close(sock0);
+    return(0);
     }
 
     listen(sock0, 5);
@@ -1835,7 +1838,8 @@ int f_create_server_socket(int arglist, int th)
     sock1 = accept(sock0, (struct sockaddr *) &server_addr, &parent_len);
     if (sock1 < 0) {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
-
+    close(sock1);
+    return(0);
     }
 
     res = make_socket(sock1, EISL_SOCKET, "server", sock0);

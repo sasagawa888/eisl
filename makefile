@@ -155,4 +155,4 @@ clean:
 
 .PHONY: check
 check:
-	cppcheck --enable=warning,performance,portability --std=c17 --library=posix .
+	cppcheck --enable=warning,performance,portability --std=c17 --library=posix -j4 .

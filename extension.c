@@ -1783,6 +1783,7 @@ int f_create_client_socket(int arglist, int th)
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
 	error(SYSTEM_ERR, "create-client-socket", NIL, th);
+    return(0);
     }
 
     memset((char *) &client_addr, 0, sizeof(client_addr));
@@ -1816,6 +1817,7 @@ int f_create_server_socket(int arglist, int th)
     sock0 = socket(AF_INET, SOCK_STREAM, 0);
     if (sock0 < 0) {
 	error(SYSTEM_ERR, "cread-server-socket", NIL, th);
+    return(0);
     }
 
     memset((char *) &server_addr, 0, sizeof(server_addr));
@@ -1838,7 +1840,7 @@ int f_create_server_socket(int arglist, int th)
     sock1 = accept(sock0, (struct sockaddr *) &server_addr, &parent_len);
     if (sock1 < 0) {
 	error(SYSTEM_ERR, "create-server-socket", NIL, th);
-    close(sock1);
+    close(sock0); 
     return(0);
     }
 

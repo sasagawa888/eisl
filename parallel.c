@@ -1633,9 +1633,11 @@ void *preceiver(void *arg)
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
 	m = read(child_sockfd[n], sub_buffer, sizeof(sub_buffer));
-	if (m <= 0 && !receiver_exit_flag) {
+	if (m < 0 && !receiver_exit_flag) {
 	    error(SYSTEM_ERR, "receive from child", make_int(n), 0);
-	    return (0);
+	    return (NULL);
+	} else if (m == 0) {
+	    return (NULL);
 	}
 	//print_ascii(sub_buffer);printf("m=%d",m);fflush(stdout);
 	strcat(buffer, sub_buffer);
@@ -1704,9 +1706,11 @@ void *creceiver(void *arg)
       reread:
 	memset(sub_buffer, 0, sizeof(sub_buffer));
 	n = read(parent_sockfd[1], sub_buffer, sizeof(sub_buffer));
-	if (n <= 0) {
+	if (n < 0) {
 	    error(SYSTEM_ERR, "*creceiver", NIL, 0);
-	    return (0);
+	    return (NULL);
+	} else if (n == 0) {
+	    return (NULL);
 	}
 
 	strcat(buffer, sub_buffer);

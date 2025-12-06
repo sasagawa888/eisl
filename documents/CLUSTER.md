@@ -62,11 +62,13 @@ Key points:
 
 When upgrading the child machine, please follow the procedure below.
 
+once
 ```
-sudo systemctl1 stop eisl.service
-cd eisl
-git pull
-sudo make install
+chmod +x update-eisl.sh
+```
+
+```
+./update-eisl.sh
 ```
 
 and reboot PIs

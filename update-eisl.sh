@@ -12,17 +12,17 @@ fi
 
 cd "$DIR"
 
-if systemctl list-unit-files | grep -q "$SERVICE"; then
-  systemctl stop "$SERVICE"
+if sudo systemctl list-unit-files | grep -q "$SERVICE"; then
+  sudo systemctl stop "$SERVICE"
 fi
 
-git stash push -m 
+git stash push 
 git pull --rebase
 make clean
 make -j$(nproc)
 
-if systemctl list-unit-files | grep -q "$SERVICE"; then
-  systemctl start "$SERVICE"
+if sudo systemctl list-unit-files | grep -q "$SERVICE"; then
+  sudo systemctl start "$SERVICE"
 fi
 
 echo "Easy-ISLisp update finished."

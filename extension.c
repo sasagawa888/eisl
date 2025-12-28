@@ -1472,6 +1472,8 @@ int f_import(int arglist, int th)
   cleanup:
     free(str);
     free(fname);
+    line = 1;
+    column = 0;
     return (T);
 }
 

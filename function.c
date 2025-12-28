@@ -2313,7 +2313,7 @@ void load(int arg1, int th)
 	save2 = save_repl_flag();
     }
   cleanup:
-    open_flag = false;
+    //open_flag = false;
     fclose(GET_PORT(input_stream));
     input_stream = save1;
     restore_repl_flag(save2);

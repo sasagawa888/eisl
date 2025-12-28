@@ -592,6 +592,7 @@ void init_pointer(void)
     generic_vars = NIL;
     big_pt0 = 0;
     unwind_nest = 0;
+	open_flag = false;
     /* clear nest level of tracing function. */
     ls = trace_list;
     while (!nullp(ls)) {

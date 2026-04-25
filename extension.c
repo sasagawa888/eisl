@@ -81,6 +81,7 @@ void init_exsubr(void)
     def_subr("EISL-IGNORE-TOPLEVEL-CHECK", f_ignore_toplevel_check);
     def_subr("EISL-TEST", f_eisl_test);
     def_subr("EISL-GET-MYSELF", f_get_myself);
+    def_subr("EISL-VERSION", f_eisl_version);
 
     def_fsubr("TIME", f_time);
     def_fsubr("TRACE", f_trace);
@@ -1400,6 +1401,17 @@ int f_time(int arglist, int th)
     printf("Elapsed Time(second)=%.6f\n", en - st);
     return (UNDEF);
 }
+
+
+int f_eisl_version(int arglist, int th)
+{
+
+    if (length(arglist) != 0)
+	error(WRONG_ARGS, "time", arglist, th);
+
+    return (make_flt(VERSION));
+}
+
 
 int f_trace(int arglist, int th)
 {

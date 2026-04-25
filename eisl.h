@@ -950,6 +950,7 @@ int f_dummyp(int arglist, int th);
 int f_dynamic(int arglist, int th);
 int f_dynamic_let(int arglist, int th);
 int f_eisl_test(int arglist, int th);
+int f_eisl_version(int arglist, int th);
 int f_elt(int arglist, int th);
 int f_eq(int arglist, int th);
 int f_eqgreater(int arglist, int th);

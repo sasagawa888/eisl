@@ -846,7 +846,10 @@ void get_token(void)
 		while (((c = readc()) != EOL) && (c != EOF)
 		       && (pos < stok.bufsize - 1) && (c != SPACE)
 		       && (c != '(') && (c != ')')) {
-		    set_stok_buf(pos++, c);
+			if(c == RET)
+				c = readc();
+			else 
+		    	set_stok_buf(pos++, c);
 		}
 
 	      chskip:
@@ -902,7 +905,10 @@ void get_token(void)
 		   && (pos < stok.bufsize - 1) && (c != SPACE)
 		   && (c != '(')
 		   && (c != ')') && (c != '`') && (c != ',') && (c != '@'))
-		set_stok_buf(pos++, c);
+		if(c == RET)
+			c = readc();
+		else 
+			set_stok_buf(pos++, c);
 
 	    set_stok_buf(pos, NUL);
 	    stok.ch = c;

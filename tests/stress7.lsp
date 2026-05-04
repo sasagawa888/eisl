@@ -108,9 +108,3 @@
    (test-boundary14 10)             ;; 10
    (test-boundary15 nil)            ;; NIL
    (test-boundary15 'ok)))          ;; OK
-
-(defun run-small ()
-  (list
-   (test-boundary1)
-   (test-boundary2 nil)
-   (test-boundary3 nil)))

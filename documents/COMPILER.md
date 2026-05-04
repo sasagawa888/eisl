@@ -26,6 +26,10 @@ for debug. not remove compiled C codes.
 - (compmile-file filename t)
 for installer. remove compiled C codes with sudo command.
 
+### for debug
+- (compile-file* filename)
+only generate object from c code.so, print debug is avairable.
+
 # Immediate value of small integer
 The interpreter of EISL created cell objects for everything, including small integers.
 For this reason, GC started soon and it was difficult to speed up.

@@ -131,6 +131,7 @@ void dynamic_link(int x)
     init_f1(WAIT_AND_IDX, wait_and);
     init_f1(WAIT_OR_IDX, wait_or);
     init_f1(CLEAR_PARENT_BUFFER_IDX, clear_parent_buffer);
+    init_f1(PRINT_IDX, print);
 
     /* argument-2 type */
     /* compiler generate should generate following code while in plet compile

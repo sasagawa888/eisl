@@ -26,6 +26,7 @@ arg1 = T;
 res = TEST_BOUNDARY2(arg1,th);
 ;res;});
 Fpshelterpush(arg2,th);
+Fprint(arg1); Fprint(arg2);
 res = Fpcallsubr(Fcar(Fmakesym("LIST")),Fcons(arg1,Flist1(arg2)),th);
 arg2=Fpshelterpop(th);
 arg1=Fpshelterpop(th);

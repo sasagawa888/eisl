@@ -397,6 +397,12 @@ static inline int Fclear_parent_buffer(int x)
 }
 
 
+static inline int Fprint(int x)
+{
+    return f1[PRINT_IDX] (x);
+}
+
+
 static inline int Fcons(int x, int y)
 {
     return f2[CONS_IDX] (x, y);

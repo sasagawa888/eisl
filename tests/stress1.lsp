@@ -131,7 +131,7 @@
      (labels ((f (x) (+ x 10)))
        (f n))))
 
-(defun run-labels-tests ()
+(defun run-all ()
   (list
    (test-labels1 5)      ;; 120
    (test-labels2 10)     ;; T

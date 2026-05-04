@@ -3722,6 +3722,7 @@ defgeneric compile
                 (cond ((null dt) nil)
                       ((and (eq (elt x 0) 'defun)
                             (member (elt dt 1) (list (class <fixnum>) (class <float>)))
+                            (not (null (elt dt 2)))
                             (subsetp (elt dt 2) (list (class <fixnum>) (class <float>)))
                             (optimize-p1 (cdr (cdr (cdr dt)))))
                        t)

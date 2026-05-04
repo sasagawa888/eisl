@@ -1971,7 +1971,8 @@ defgeneric compile
              (if (not (not-need-res-p (car body1)))
                  (format stream "res = "))
              (comp stream (car body1) env args tail name global test clos)
-             (format stream "~%")))
+             (format stream ";~%")))
+
     ;;regist-lables-name
     (defun comp-labels0 (x)
         (cond ((null x) t)

@@ -182,6 +182,9 @@ But note that it respects the UNIX convention of the `VISUAL` and `EDITOR` envir
 
 (edit file-name-string) example (edit "foo.lsp")
 
+# Youtube
+[ISLisp 1minute](https://www.youtube.com/watch?v=9g_ye5bNjkQ&list=PLZJFIgVbFOoLAX6QQ-54jnTA77aeMt83V)
+
 # Functions for debug
 see documents/DEBUG/md
 

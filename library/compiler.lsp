@@ -1962,6 +1962,7 @@ defgeneric compile
     ;;labels syntax. flet syntax is same as labels
     (defun comp-labels (stream x env args tail name global test clos)
         (format stream "({int res;")
+        (comp-labels0 (elt x 1))
         (comp-labels1 stream (elt x 1) env args tail name global test clos)
         (for ((body1 (cdr (cdr x)) (cdr body1)))
              ((null body1)
@@ -1971,6 +1972,24 @@ defgeneric compile
                  (format stream "res = "))
              (comp stream (car body1) env args tail name global test clos)
              (format stream "~%")))
+    ;;regist-lables-name
+    (defun comp-labels0 (x)
+        (cond ((null x) t)
+              (t (when (< (length (car x)) 3)
+                       (error* "labels: illegal form" (car x)))
+                 (unless (symbolp (elt (car x) 0))
+                         (error* "labels: not symbol" (elt (car x) 0)))
+                 (unless (listp (elt (car x) 1))
+                         (error* "labels: not list" (elt (car x) 1)))
+                 (setq function-arg
+                       (cons (cons (elt (car x) 0)
+                             (count-args (elt (car x) 1)))
+                             function-arg))
+                 (format code2 "auto int ")
+                 (format-object code2 (conv-name (elt (car x) 0)) nil)
+                 (gen-arg2 code2 (elt (car x) 1))
+                 (format code2 ";")
+                 (comp-labels0 (cdr x)))))
 
     (defun comp-labels1 (stream x env args tail name global test clos)
         (cond ((null x) t)
@@ -1986,8 +2005,6 @@ defgeneric compile
         (let ((local-name (elt x 0))
               (args (elt x 1))
               (body (cdr (cdr x))) )
-           (setq function-arg
-                 (cons (cons local-name (count-args args)) function-arg))
            (format code2 "int ")
            (format-object code2 (conv-name local-name) nil)
            (if (not optimize-enable)

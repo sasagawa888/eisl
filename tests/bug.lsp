@@ -1,8 +1,5 @@
 ;; CRLF test
 
-(import "list")
-
-
 (defun is-even? (n)
   (labels ((even? (n)
              (if (= n 0)

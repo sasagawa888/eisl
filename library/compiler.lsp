@@ -216,6 +216,7 @@ defgeneric compile
     (defglobal lambda-root 0)
     (defglobal lambda-history nil)
     (defglobal lambda-child-free #(nil nil nil))
+    (defglobal lambda-parent-name nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
     (defglobal inference-name nil)
@@ -247,6 +248,7 @@ defgeneric compile
                                (setq lambda-root 0)
                                (setq lambda-history nil)
                                (setq lambda-child-free #(nil nil nil))
+                               (setq lambda-parent-name nil)
                                (eisl-ignore-toplevel-check nil)))
         t)
 
@@ -578,12 +580,11 @@ defgeneric compile
                (list-to-c1 stream (eisl-readed-array-list x))
                (format stream ")"))
               ((and (symbolp x) 
-                    (> lambda-nest 0) 
-                    (member x (aref lambda-child-free (- lambda-nest 1))))
-                ;(print x)
+                    (> lambda-nest 0)
+                    (member x (aref lambda-child-free (- lambda-nest 2))))
                 (format stream "Fnth(")
-                (format-integer stream (position x (aref lambda-child-free (- lambda-nest 1))) 10)
-                (format stream ",Faux(Fmakesym(\"~A" name)
+                (format-integer stream (position x (aref lambda-child-free (- lambda-nest 2))) 10)
+                (format stream ",Faux(Fmakesym(\"~A" lambda-parent-name)
                 (format stream "\")))"))
               ((and (symbolp x) clos)
                ;;closure has free-variable
@@ -1067,7 +1068,9 @@ defgeneric compile
                   (format stream "loop:~%")))
            (gen-shelterpush stream args)
            ;; if inner lambda has outer lambda frevar , set AUX child-free-var list
+           ;; regist name for child lambda
            (cond ((elt lambda-child-free (- lambda-nest 1))
+                  (setq lambda-parent-name name)
                   (format stream "Fset_aux(Fmakesym(\"~A\")," name)
                   (free-variable-list stream (elt lambda-child-free (- lambda-nest 1)))
                   (format stream ");")))

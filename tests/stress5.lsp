@@ -82,7 +82,7 @@
    (test-map-lambda5 '(1 2 3))   ;; (12 13 14)
    (test-map-lambda6 '(0 1 2))   ;; (100 200 12)
    (test-map-lambda7 '(a b c))   ;; (10 20 99)
-   ;(test-map-lambda8 '(1 2 3))   ;; (11 12 13)
+   (test-map-lambda8 '(1 2 3))   ;; (11 12 13)
    ;(test-map-lambda9 '(1 2 3))   ;; (111 112 113)
    (test-map-lambda10 '(1 2 3))  ;; (2 3 4)
    (test-map-lambda11 '(1 2 3))  ;; (4 5 6)

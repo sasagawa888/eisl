@@ -580,7 +580,7 @@ defgeneric compile
                (list-to-c1 stream (eisl-readed-array-list x))
                (format stream ")"))
               ((and (symbolp x) 
-                    (> lambda-nest 0)
+                    (> lambda-nest 1)
                     (member x (aref lambda-child-free (- lambda-nest 2))))
                 (format stream "Fnth(")
                 (format-integer stream (position x (aref lambda-child-free (- lambda-nest 2))) 10)

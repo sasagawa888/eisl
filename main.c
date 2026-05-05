@@ -1518,6 +1518,13 @@ int read_hex(char *buf)
 }
 
 /* -----print------------------ */
+// for debug print Fprint(x)
+int eisl_print(int addr)
+{
+	print(addr);
+	return(NIL);
+}
+
 void print(int addr)
 {
     switch (GET_TAG(addr)) {

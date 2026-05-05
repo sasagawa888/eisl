@@ -1573,6 +1573,7 @@ char *eisl_strdup(const char *s);
 char *eisl_strcatv(const char *first, ...);
 char *eisl_strcat(const char *s1, const char *s2);
 const char *eisl_strchr(const char *str, char ch);
+int eisl_print(int x);
 
 /* Edlis */
 void display_buffer(void);

@@ -1037,7 +1037,7 @@ defgeneric compile
                   (gen-arg3 code2 (length args)))
                  ((and optimize-enable
                        (has-tail-recur-p (macroexpand-all body) name))
-                  (type-gen-arg3 (length args) (argument-type name))))
+                  (type-gen-arg3 stream (length args) (argument-type name))))
            (cond ((has-tail-recur-p (macroexpand-all body) name)
                   (format-object code2 (conv-name name) nil)
                   (format code2 "loop:~% if(exit_flag == 1){exit_flag = 0; Fjump_to_repl();}")))
@@ -2055,7 +2055,7 @@ defgeneric compile
                   ;;for tail recursive tempn var;
                   (gen-arg3 (length args)))
                  ((and optimize-enable (has-tail-recur-p body local-name))
-                  (type-gen-arg3 (length args) (local-argument-type name local-name))))
+                  (type-gen-arg3 stream (length args) (local-argument-type name local-name))))
            (cond ((has-tail-recur-p body local-name)
                   (format-object code2 (conv-name local-name) nil)
                   (format code2 "loop:~%")))
@@ -3823,16 +3823,16 @@ defgeneric compile
 
     ;;for tail call
     ;; when ls=(<fixnum> <float> <fixnum>) -> int temp1; double temp2; int temp3;
-    (defun type-gen-arg3 (n ls)
+    (defun type-gen-arg3 (stream n ls)
         (unless (= n 0)
                 (for ((m 1 (+ m 1)))
                      ((> m n)
-                      (format code2 "~%") )
-                     (cond ((eq (car ls) (class <fixnum>)) (format code2 "int "))
-                           ((eq (car ls) (class <float>)) (format code2 "double ")))
-                     (format code2 "temp")
-                     (format code2 (convert m <string>))
-                     (format code2 ";"))))
+                      (format stream "~%") )
+                     (cond ((eq (car ls) (class <fixnum>)) (format stream "int "))
+                           ((eq (car ls) (class <float>)) (format stream "double ")))
+                     (format stream "temp")
+                     (format stream (convert m <string>))
+                     (format stream ";"))))
 
     ;;(foo arg1 arg2) ->
     ;;  return(F_makeint(foo(Fgetint(arg1),Fgetint(arg2))));

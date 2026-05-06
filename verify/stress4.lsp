@@ -113,8 +113,8 @@
    (test-lambda-let2 10)        ;; 31
    (test-lambda-setq1 10)       ;; 20
    (test-lambda-setq2 10)       ;; 32
-   ;(test-lambda-nested1 10)     ;; 20
-   ;(test-lambda-nested2 10)     ;; 21
+   (test-lambda-nested1 10)     ;; 20
+   (test-lambda-nested2 10)     ;; 21
    (test-lambda-let-setq1 10)   ;; 13
    (test-lambda-let-setq2 10)   ;; 32
    ;(test-lambda-shadow1 10)     ;; 21
@@ -122,5 +122,5 @@
    (test-lambda-multi-body 10)  ;; 13
    (test-lambda-let-nested 10)  ;; 24
    ;(test-lambda-mix1 10)        ;; 25
-   ;(test-lambda-mix2 10)        ;; 16
+   (test-lambda-mix2 10)        ;; 16
    ))

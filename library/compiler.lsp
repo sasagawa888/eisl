@@ -1037,7 +1037,7 @@ defgeneric compile
                   (gen-arg3 code2 (length args)))
                  ((and optimize-enable
                        (has-tail-recur-p (macroexpand-all body) name))
-                  (type-gen-arg3 stream (length args) (argument-type name))))
+                  (type-gen-arg3 code2 (length args) (argument-type name))))
            (cond ((has-tail-recur-p (macroexpand-all body) name)
                   (format-object code2 (conv-name name) nil)
                   (format code2 "loop:~% if(exit_flag == 1){exit_flag = 0; Fjump_to_repl();}")))

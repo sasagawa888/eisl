@@ -28,7 +28,7 @@
               ((>= j 3))
               (setq sum (+ sum i j))))
     sum))
-#|
+
 (defun test4 ()
   ;; for inside lambda
   (mapcar
@@ -39,7 +39,7 @@
             (setq sum (+ sum x i)))
        sum))
    '(1 2 3)))
-|#
+
 
 (defun test5 ()
   ;; lambda inside for

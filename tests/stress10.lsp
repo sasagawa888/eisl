@@ -73,11 +73,12 @@
         100))
      '(1 2 3))))
 
+
+(defun square10 (x)
+  (* x x))
+
 (defun test10 ()
-  ;; labels + mapcar, but no lambda calls labels-local function
-  (labels ((square (x)
-             (* x x)))
-    (mapcar #'square '(1 2 3 4))))
+  (mapcar #'square10 '(1 2 3 4)))
 
 (defun test11 ()
   ;; while + list construction

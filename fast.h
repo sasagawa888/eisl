@@ -738,7 +738,7 @@ static inline int fast_greaterp(int x, int y)
 
 static inline int fast_eqgreaterp(int x, int y)
 {
-    return (fast_eqsmallerp(x,y));
+    return (fast_eqsmallerp(y,x));
 }
 
 static int fast_plus(int x, int y)

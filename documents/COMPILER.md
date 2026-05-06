@@ -205,6 +205,25 @@ The catch tag is supposed to be evaluated dynamically. The interpreter evaluates
 # Constraint on tag of block,return-from
 The block tag must be different from function name. If use same symbol, compiled code may occur segmentation fault.
 
+# Lambda Limitation
+
+The compiler currently does not support calling local functions defined by `labels` from inside `lambda` expressions.
+
+Example:
+
+```lisp
+(labels ((foo (x)
+           (+ x 1)))
+  (mapcar (lambda (n)
+            (foo n))
+          '(1 2 3)))
+```
+
+This limitation exists because `labels` functions are compiled as GCC local functions, while `lambda` expressions are compiled as independent static C functions. Therefore, a lambda-generated function cannot directly reference a local function defined inside another C function.
+
+This restriction applies only to compiled code. The interpreter supports this construct correctly.
+
+
 # Some More Limitations
 
 There are a few tickets that were logged for compiler limitations, but the outcome was that it was better to have such a limitation and a simpler system.

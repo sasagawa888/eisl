@@ -1082,7 +1082,7 @@ defgeneric compile
                  (format stream ";~%")
                  (gen-shelterpop stream (reverse args))
                  (format stream "return(res);}~%") )
-                (comp stream (car body1) args args nil name nil nil clos)
+                (comp stream (car body1) (append args env) args nil name nil nil clos)
                 (format stream ";~%"))))
 
     ;;when lambda nest, select nested file

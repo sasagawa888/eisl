@@ -899,7 +899,7 @@ defgeneric compile
     ;; e.g. (lambda (x) ((lambda (y) (+ x y)))) -> (x)
     (defun child-free (x arg-parent)
         (let ((body (elt x 2)))
-            (if (and (listp (car body)) (eq (car (car body)) 'lambda))
+            (if (and (listp body) (listp (car body)) (eq (car (car body)) 'lambda))
                 (difference arg-parent (elt (car body) 1))
                 nil)))
 

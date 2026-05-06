@@ -2053,7 +2053,7 @@ defgeneric compile
            (format code2 "int res;~%")
            (cond ((and (not optimize-enable) (has-tail-recur-p body local-name))
                   ;;for tail recursive tempn var;
-                  (gen-arg3 (length args)))
+                  (gen-arg3 stream (length args)))
                  ((and optimize-enable (has-tail-recur-p body local-name))
                   (type-gen-arg3 stream (length args) (local-argument-type name local-name))))
            (cond ((has-tail-recur-p body local-name)

@@ -1034,7 +1034,7 @@ defgeneric compile
            (cond ((and (not optimize-enable)
                        (has-tail-recur-p (macroexpand-all body) name))
                   ;;for tail recursive tempn var;
-                  (gen-arg3 (length args)))
+                  (gen-arg3 code2 (length args)))
                  ((and optimize-enable
                        (has-tail-recur-p (macroexpand-all body) name))
                   (type-gen-arg3 (length args) (argument-type name))))
@@ -1620,13 +1620,13 @@ defgeneric compile
     ;; Since the number of arguments for tail is unknown 
     ;; when args includes rest parameters, 
     ;; compiler define two additional arguments as a precaution.
-    (defun gen-arg3 (n)
+    (defun gen-arg3 (stream n)
         (unless (= n 0)
-                (format code2 "int ")
+                (format stream "int ")
                 (for ((m 1 (+ m 1)))
                      ((= m (+ n 2)) ;see comment
-                      (format code2 "temp~D;~%" m))
-                     (format code2 "temp~D," m))))
+                      (format stream "temp~D;~%" m))
+                     (format stream "temp~D," m))))
 
     ;;arg1 = Fnth(1,arglist);
     ;;arg2 = Fnth(2,arglist);
@@ -2848,7 +2848,7 @@ defgeneric compile
             (format stream "({int res;~%")
             (format stream "Fcheckgbc(th);~%")
             (comp-let1 stream vars env args nil name global test clos)
-            (gen-arg3 (length vars))
+            (gen-arg3 stream (length vars))
             (format stream "while(")
             (comp stream
                   (elt end 0)

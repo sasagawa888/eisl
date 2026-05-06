@@ -20,6 +20,7 @@ git stash push
 git pull --rebase
 make clean
 make -j$(nproc)
+sudo make install
 
 if sudo systemctl list-unit-files | grep -q "$SERVICE"; then
   sudo systemctl start "$SERVICE"

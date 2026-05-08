@@ -12,7 +12,7 @@
     (mp-let ((a (fib (- n 1)))
              (b (fib (- n 2))))
         (+ a b)))
-
+|#
 
 (defun test-lambda-mix1 (n)
   ((lambda (x)
@@ -39,4 +39,4 @@
        (let ((x (+ x 20)))
          (+ x 1))))
    n))
-|#
+

@@ -1,4 +1,12 @@
 
+
+(defun test-lambda-nested1 (n)
+  ((lambda (x)
+     ((lambda (y)
+        (+ x y))
+      10))
+   n))
+
 #|
 (defun fib1 (n)
     (mp-let ((a (fib (- n 1)))
@@ -14,16 +22,16 @@
           (+ a y))
         5)))
    n))
-|#
+
 
 (defun test-lambda-shadow1 (n)
   ;; variable shadowing
   ((lambda (x)
-     (let ((x1 (+ x 10)))
-       (+ x1 1)))
+     (let ((x (+ x 10)))
+       (+ x 1)))
    n))
 
-#|
+
 (defun test-lambda-shadow2 (n)
   ;; deeper shadow
   ((lambda (x)

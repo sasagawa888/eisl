@@ -1,47 +1,5 @@
 
 
-(defun test-lambda-nested1 (n)
-  ((lambda (x)
-     ((lambda (y)
-        (+ x y))
-      10))
-   n))
-
-(defun test-lambda-nested2 (n)
-  ((lambda (x)
-     ((lambda (y)
-        ((lambda (z) (+ x y z)) 3))
-      2))
-   n))
-
-#|
-(defun fib1 (n)
-    (mp-let ((a (fib (- n 1)))
-             (b (fib (- n 2))))
-        (+ a b)))
-|#
-
-(defun test-lambda-mix1 (n)
-  ((lambda (x)
-     (let ((a x))
-       (setq a (+ a 10))
-       ((lambda (y)
-          (+ a y))
-        5)))
-   n))
-
-(defun test-shadow1 (x)
-  ((lambda (x)
-     ((lambda (y) (+ x y)) 10))
-   100))
-;; => 110
-
-(defun test-shadow2 (x)
-  ((lambda (x)
-     ((lambda (x) (+ x 1)) 10))
-   100))
-;; => 11
-
 (defun test-lambda-shadow1 (n)
   ;; variable shadowing
   ((lambda (x)
@@ -58,3 +16,7 @@
          (+ x 1))))
    n))
 
+(defun test-let-parallel (x)
+  (let ((x (+ x 1))
+        (y x))
+    (+ x y)))

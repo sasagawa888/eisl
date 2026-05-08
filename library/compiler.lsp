@@ -2077,18 +2077,33 @@ defgeneric compile
                       clos)
                 (format code2 ";~%"))))
 
+    
+
+
+    ;; (let ((x (+ x 1)))
+    ;;     (* 2 x))
+    ;;       |
+    ;;       v
+    ;; (let ((xsubst (+ x 1)))
+    ;;     (* 2 xsubst))
+
     (defun comp-let (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "let: not list" (elt x 1)))
+        (let* ((vars1 (elt x 1))
+              (var2 (mapcar #'car vars1))
+              (var1 (subst var2))
+              (vars (mapcar (lambda (v f) (cons v (cdr f))) var1 vars1))
+              (body (alpha-conv (cdr (cdr x)) var2 var1)))
         (format stream "({int res;")
-        (comp-let1 stream (elt x 1) env args tail name global test clos)
-        (for ((body1 (cdr (cdr x)) (cdr body1)))
+        (comp-let1 stream vars env args tail name global test clos)
+        (for ((body1 body (cdr body1)))
              ((null (cdr body1))
               (if (and (not (tailcallp (car body1) tail name))
                       (not (not-need-res-p (car body1))))
                  (format stream "res = "))
               (comp stream
                    (car body1)
-                   (append (mapcar #'car (elt x 1)) env)
+                   (append var1 env)
                    args
                    tail
                    name
@@ -2100,7 +2115,7 @@ defgeneric compile
               (format stream "res;})~%") )
              (comp stream
                    (car body1)
-                   (append (mapcar #'car (elt x 1)) env)
+                   (append var1 env)
                    args
                    tail
                    name
@@ -2108,7 +2123,7 @@ defgeneric compile
                    test
                    clos)
              (if (not (not-need-colon-p (car body1)))
-                 (format stream ";~%"))))
+                 (format stream ";~%")))))
 
     (defun comp-let* (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "let*: not list" (elt x 1)))

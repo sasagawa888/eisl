@@ -4418,7 +4418,7 @@ defgeneric compile
                         ((subclassp* x1 y1) (cons (cons y x1) type-env))
                         ((subclassp* y1 x1) type-env)
                         (t 'no))))
-              (t (setq type-env (cons (cons x y) type-env)) type-env)))
+              (t (setq type-env (cons (cons x (refer y type-env)) type-env)) type-env)))
 
     ;;symbol is variable in unify.
     ;;but nil and t are not variable.

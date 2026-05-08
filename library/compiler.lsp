@@ -215,8 +215,6 @@ defgeneric compile
     (defglobal lambda-nest 0)
     (defglobal lambda-root 0)
     (defglobal lambda-history nil)
-    (defglobal lambda-captured #(nil nil nil))
-    (defglobal lambda-parent-name nil)
     (defglobal lambda-immediate 0)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
@@ -248,8 +246,6 @@ defgeneric compile
                                (setq lambda-count 0)
                                (setq lambda-root 0)
                                (setq lambda-history nil)
-                               (setq lambda-captured #(nil nil nil))
-                               (setq lambda-parent-name nil)
                                (setq lambda-immediate 0)
                                (eisl-ignore-toplevel-check nil)))
         t)
@@ -581,13 +577,6 @@ defgeneric compile
                (format stream ",")
                (list-to-c1 stream (eisl-readed-array-list x))
                (format stream ")"))
-              ((and (symbolp x) 
-                    (> lambda-nest 1)
-                    (member x (aref lambda-captured (- lambda-nest 2))))
-                (format stream "Fnth(")
-                (format-integer stream (position x (aref lambda-captured (- lambda-nest 2))) 10)
-                (format stream ",Faux(Fmakesym(\"~A" lambda-parent-name)
-                (format stream "\")))"))
               ((and (symbolp x) clos)
                ;;closure has free-variable
                (cond ((eq x nil) (format stream "NIL"))
@@ -875,12 +864,10 @@ defgeneric compile
         (comp-defun3 x))
 
     ;;create lambda as SUBR and invoke the SUBR.
-    ;;lambda-captured is vector 3elements. #(nest2 nest1 nest0)
     (defun comp-lambda (x env global)
         (unless (listp (elt x 1)) (error* "lambda: not list" (elt x 1)))
         (when (null (cdr (cdr x))) (error* "lambda: not exist body" x))
         (setq lambda-nest (+ lambda-nest 1))
-        (setf (elt lambda-captured (- lambda-nest 1)) (child-free x (elt x 1)))
         (cond ((= lambda-nest 1) (setq lambda-root lambda-count)))
         (let* ((name (lambda-name))
                (args (elt x 1))
@@ -900,12 +887,6 @@ defgeneric compile
                   (t (format stream "({Fcar(Fmakesym(\"~A\"));})" name)))
             (setq lambda-nest (- lambda-nest 1))))
 
-    ;; e.g. (lambda (x) ((lambda (y) (+ x y)))) -> (x)
-    (defun child-free (x arg-parent)
-        (let ((body (elt x 2)))
-            (if (and (listp body) (listp (car body)) (eq (car (car body)) 'lambda))
-                (difference arg-parent (elt (car body) 1))
-                nil)))
 
     (defun lambda-name ()
         (let ((name
@@ -1095,13 +1076,6 @@ defgeneric compile
                   (format-object stream (conv-name name) nil)
                   (format stream "loop:~%")))
            (gen-shelterpush stream args)
-           ;; if inner lambda has outer lambda frevar , set AUX child-free-var list
-           ;; regist name for child lambda
-           (cond ((elt lambda-captured (- lambda-nest 1))
-                  (setq lambda-parent-name name)
-                  (format stream "Fset_aux(Fmakesym(\"~A\")," name)
-                  (free-variable-list stream (elt lambda-captured (- lambda-nest 1)))
-                  (format stream ");")))
            (for ((body1 body (cdr body1)))
                 ((null (cdr body1))
                  (if (not (not-need-res-p (car body1)))
@@ -1135,9 +1109,6 @@ defgeneric compile
 
     (defun find-free-variable1 (x args env)
         (cond ((null x) nil)
-              ; captured var in lambda is not free-var 
-              ((and (symbolp x) (> lambda-nest 1) (member x (aref lambda-captured (- lambda-nest 2))))
-               nil)
               ((and (symbolp x) (not (member x args)) (member x env))
                (list x))
               ((atom x) nil)

@@ -2160,11 +2160,18 @@ defgeneric compile
              ((null body1) (reverse res))
              (setq res (cons (alpha-conv-let*3 (car body1)) res))))
 
+    ;; when lambda not alpha convert
     (defun alpha-conv-let*3 (x)
         (cond ((null x) nil)
               ((and (symbolp x)(assoc x let*-conv-env))
                (cdr (assoc x let*-conv-env)))
               ((atom x) x)
+              ((and (listp x)(eq (car x) 'lambda))
+                (let ((env let*-conv-env))
+                    (setq let*-conv-env (append (mapcar (lambda (x) (cons x x)) (elt x 1)) let*-conv-env))
+                       (let ((body (alpha-conv-let*2 (cdr (cdr x)))))
+                          (setq let*-conv-env env)
+                          (cons (elt x 0) (cons (elt x 1) body)))))
               (t (cons (alpha-conv-let*3 (car x))
                        (alpha-conv-let*3 (cdr x))))))
 

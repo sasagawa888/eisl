@@ -1,5 +1,5 @@
 ;; stress11 
-;; tests shdowing in let*
+;; tests shadowing in let*
 
 (defun test-let*-shadow1 (n)
     (let* ((x (+ n 1))

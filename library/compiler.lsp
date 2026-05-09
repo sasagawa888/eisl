@@ -216,6 +216,7 @@ defgeneric compile
     (defglobal lambda-root 0)
     (defglobal lambda-history nil)
     (defglobal lambda-immediate 0)
+    (defglobal let*-conv-env nil)
     (defglobal c-lang-option nil)
     (defglobal optimize-enable nil)
     (defglobal inference-name nil)
@@ -2125,8 +2126,51 @@ defgeneric compile
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%")))))
 
+    ;; comp-let*  alpha-convert to avoid shadowing
+    ;; (alpha-conv-let* x)
+    ;;(let* ((x (+ n 1))
+    ;;       (x (+ x 10)))
+    ;;  (+ x 1)))
+    ;;     |
+    ;;     V
+    ;;(let* ((x0 (+ n 1))
+    ;;       (x1 (+ x0 10)))
+    ;;  (+ x1 1)))
+    (defun subst-unique (x n)
+        (let ((res (convert (string-append (convert x <string>) (convert n <string>)) <symbol>)))
+            (setq let*-conv-env (cons (cons x res) let*-conv-env))
+            res))
+
+    (defun alpha-conv-let* (x)
+        (setq let*-conv-env nil)
+        (cons (car x)
+              (cons (alpha-conv-let*1 (mapcar #'car (elt x 1)) (mapcar #'cdr (elt x 1)) 0)
+                    (alpha-conv-let*2 (cdr (cdr x))))))
+
+    (defun alpha-conv-let*1 (vars  vals num)
+        (cond ((null vars) nil)
+              (t (let* ((var1 (subst-unique (car vars) num))
+                        (vals1 (alpha-conv-let*3 (cdr vals))))  
+                     (cons (cons var1 (car vals))
+                           (alpha-conv-let*1 (cdr vars) vals1 (+ num 1)))))))
+
+    (defun alpha-conv-let*2 (body)
+        (for ((body1 body (cdr body1))
+              (res nil))
+             ((null body1) (reverse res))
+             (setq res (cons (alpha-conv-let*3 (car body1)) res))))
+
+    (defun alpha-conv-let*3 (x)
+        (cond ((null x) nil)
+              ((and (symbolp x)(assoc x let*-conv-env))
+               (cdr (assoc x let*-conv-env)))
+              ((atom x) x)
+              (t (cons (alpha-conv-let*3 (car x))
+                       (alpha-conv-let*3 (cdr x))))))
+
     (defun comp-let* (stream x env args tail name global test clos)
         (unless (listp (elt x 1)) (error* "let*: not list" (elt x 1)))
+        (setq x (alpha-conv-let* x))
         (format stream "({int res;")
         (comp-let1 stream
                    (elt x 1)
@@ -2165,6 +2209,8 @@ defgeneric compile
                    clos)
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
+    
+
 
     (defun comp-mt-let (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")

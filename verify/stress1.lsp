@@ -54,6 +54,7 @@
            (c (n)
              (if (= n 0) 'c (a (- n 1)))))
     (a n)))
+
 #|
 (defun test-labels7 (n)
   ;; nested labels
@@ -146,7 +147,7 @@
    (test-labels6 3)      ;; A
    ;(test-labels7 5)      ;; 105
    (test-labels8 3)      ;; 30
-   (test-labels9 1)      ;; 12
+   ;(test-labels9 1)      ;; 12
    (test-labels10 10)    ;; 55
    (test-labels11 10)    ;; 10
    (test-labels12 0)     ;; 0

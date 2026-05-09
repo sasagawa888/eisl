@@ -1,0 +1,3 @@
+void init_declare(void){int th=0;
+signal(SIGINT, signal_handler_c);
+Fsetcatchsymbols(NIL);Fset_cdr(Fmakesym("*TEST-ATOMS*"),Fbigxtoparmanent(Fcons(Fmakesym("ABC1"),Fcons(Fmakesym("CDE2"),Fcons(Fmakesym("EFG3"),Fcons(Fmakesym("GHI4"),Fcons(Fmakesym("IJK5"),Fcons(Fmakesym("KLM6"),Fcons(Fmakesym("MNO7"),Fcons(Fmakesym("OPQ8"),Fcons(Fmakesym("QRS9"),Fcons(Fmakesym("STU0"),Fcons(Fmakesym("UVW1"),Fcons(Fmakesym("WXY2"),Fcons(Fmakesym("XYZ3"),Fcons(Fmakesym("A123"),Fcons(Fmakesym("B234"),Fcons(Fmakesym("C345"),Fcons(Fmakesym("D456"),Fcons(Fmakesym("D567"),Fcons(Fmakesym("E678"),Fcons(Fmakesym("F789"),Fcons(Fmakesym("G890"),NIL)))))))))))))))))))))));Fset_opt(Fmakesym("*TEST-ATOMS*"),GLOBAL);

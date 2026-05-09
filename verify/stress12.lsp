@@ -201,7 +201,14 @@
 ;;
 ;; stress-3d-point has no special stress-describe method,
 ;; so inherited <stress-point> method should be used.
+(defgeneric stress-number-method (x))
 
+(defmethod stress-number-method ((x <integer>))
+  (+ x 1))
+
+(defun stress-ilos13 ()
+  (stress-number-method 10))
+;; => 11
 
 ;; ------------------------------------------------------------
 ;; runner
@@ -214,11 +221,11 @@
    (stress-ilos3)
    (stress-ilos4)
    (stress-ilos5)
-   ;(stress-ilos6)
+   (stress-ilos6)
    (stress-ilos7)
-   ;(stress-ilos8)
+   (stress-ilos8)
    (stress-ilos9)
    (stress-ilos10)
-   (stress-ilos11)))
-   ;(stress-ilos12)))
+   (stress-ilos11)
+   (stress-ilos12)))
    

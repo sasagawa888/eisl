@@ -376,8 +376,8 @@ int a_matchp(int x, int y)
 	/* when x is out of cell range, x is fixnum */
 	if (cfixnum == GET_AUX(y))
 	    return (1);
-	else if (GET_OPT(y) == SYSTEM && subclassp(cfixnum, GET_AUX(y)))
-	    /* when built-in class, subclass is also eqclass. */
+	else if (subclassp(cfixnum, GET_AUX(y)))
+	    /* subclass is also eqclass. */
 	    return (1);
 	else
 	    return (0);
@@ -387,7 +387,7 @@ int a_matchp(int x, int y)
 	return (0);
     } else if (GET_AUX(x) == GET_AUX(y))
 	return (1);
-    else if (GET_OPT(y) == SYSTEM && subclassp(GET_AUX(x), GET_AUX(y)))
+    else if (subclassp(GET_AUX(x), GET_AUX(y)))
 	return (1);
     else
 	return (0);

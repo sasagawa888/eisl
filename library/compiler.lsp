@@ -173,6 +173,8 @@ defgeneric compile
               ((and (symbolp x) (member x vars))
                (nth subst (- (length vars) (length (member x vars)))))
               ((atom x) x)
+              ((and (listp x) (symbolp (car x)))
+               (cons (car x) (mapcar (lambda (x) (alpha-conv x vars subst)) (cdr x))))
               (t (cons (alpha-conv (car x) vars subst)
                        (alpha-conv (cdr x) vars subst)))))
 

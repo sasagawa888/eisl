@@ -1426,7 +1426,7 @@ defgeneric compile
                                          clos))))
 
     (defun comp-next-method-p (stream env args tail name global test clos)
-        (if (comp-next-method-p1 rest-method)
+        (if (comp-next-method-p1 (cdr rest-method))
             (format stream "T")
             (format stream "NIL")))
 

@@ -234,6 +234,7 @@ In particular:
 * Nested lambda expressions and free-variable analysis were improved.
 Downward lambda use cases are supported by the compiler.
 Full upward funarg closures are outside the current compiler scope.
+* Compiled code should not use local variable names that are identical to ILOS accessor or generic function names.
 
 None of this should take away from the compiler's usefulness.
 For some applications, it may even be more useful to gain access to C libraries rather than any speed-up.

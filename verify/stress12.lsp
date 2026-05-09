@@ -93,12 +93,12 @@
 ;; ------------------------------------------------------------
 ;; 6. lexical variable shadowing vs accessor name-like variable
 ;; ------------------------------------------------------------
-
+;; limitation of compiler
 (defun stress-ilos6 ()
   (let ((p (create (class <stress-point>) 'x 5 'y 7)))
-    (let ((point-x 100)
-          (point-y 200))
-      (+ point-x point-y (point-x p) (point-y p)))))
+    (let ((point-x1 100)
+          (point-y1 200))
+      (+ point-x1 point-y1 (point-x p) (point-y p)))))
 ;; => 312
 
 

@@ -18,9 +18,6 @@ The concurrent_stop_flag is set to ON to notify the main thread that it has ente
 ## Sequential Sweep
 During the "stop the world" phase, 20% of all cells are reclaimed. At this stage, the concurrent_stop_flag is set to OFF, and the system returns to concurrent operation.
 
-## Concurrent Sweep
-The concurrent_sweep_flag is set to ON to notify the main thread that it has entered the concurrent reclamation phase. The remaining 80% of cells are reclaimed. Once all cells have been reclaimed, the number of empty cells is counted, and both the concurrent_sweep_flag and concurrent_flag are set to OFF to indicate that the GC thread has finished.
-
 # Key Considerations
 
 ## Remaining Cell Count at GC Startup
@@ -28,20 +25,3 @@ After initiating GC, an initial marking is performed while the main thread is op
 
 ## Sequential Sweep
 When attempting to perform cell reclamation and cell consumption simultaneously, synchronization with the main thread using a mutex becomes necessary. This results in a decrease in speed. Additionally, if the consumption count exceeds the reclamation count, cells cannot be supplied. Therefore, we perform sequential processing to reclaim 20% of cells before transitioning to concurrent processing. The value of 20% was determined through computational experiments.
-
-# Measurement
-We recorded the values of GC initiation during the execution of ISLisp benchmark test code. The results were as follows:
-
-```
-Test 16: FFT     -> ok, time =   0.03125s.
-Test 17: Puzzle  -> ok, time =   0.046875s.
-GC (stop) (second) 0.138500 (0.021626) 
-GC (stop) (second) 0.132917 (0.021224) 
-Test 18: Triang  -> ok, time =   1.32812s.
-Test 19: Fprint  -> ok, time =   00000s.
-```
-
-The measurements were conducted on an iCore5 machine using Windows WSL Ubuntu. We observed two instances of GC being triggered, with an average duration of approximately 130 milliseconds per occurrence. The "stop the world" phase accounted for around 21 milliseconds of that time.
-
-# Comparison
-The source code, specifically the "gbc.c" file, is related to garbage collection. It contains comments at the beginning to provide clarity. By defining "#define GC 2," sequential processing is enabled; "#define GC 1" enables parallel processing, and "#define GC 0" enables concurrent processing. There is an overhead involved in dividing the processing among threads, resulting in a slightly slower execution speed. However, the "stop the world" time is kept to about one-sixth of the total duration.

@@ -669,8 +669,6 @@ defgeneric compile
                (comp-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'let*))
                (comp-let* stream x env args tail name global test clos))
-              ((and (consp x) (eq (car x) 'mt-let))
-               (comp-mt-let stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-call))
                (comp-mt-call stream x env args tail name global test clos))
               ((and (consp x) (eq (car x) 'mt-exec))
@@ -2217,31 +2215,6 @@ defgeneric compile
              (if (not (not-need-colon-p (car body1)))
                  (format stream ";~%"))))
     
-
-
-    (defun comp-mt-let (stream x env args tail name global test clos)
-        (format stream "({int num[PARASIZE];")
-        (let ((env1 (comp-mt-let1 stream x env args tail name global test clos)))
-            (comp-progn1 stream (cdr (cdr x)) (append env1 env) args tail name global test clos))
-        (format stream "res;})"))
-        
-    (defun comp-mt-let1 (stream x env args tail name global test clos)
-        ;; eval_para
-        (for ((arg1 (elt x 1) (cdr arg1))
-              (num 0 (+ num 1)))
-             ((null arg1) nil)
-             ;;num[N] = Fcons(Fmakesym(function-sym),FlistM(arg1,arg2,...argM));
-             (format stream "num[~D] = Feval_para(Fcons(Fmakesym(\"~A\")," num (car (elt (car arg1) 1)))
-             (comp-argument stream (cdr (elt (car arg1) 1)) 0 (car (elt (car arg1) 1)) env args tail name global test clos)
-             (format stream "));~%"))     
-        ;; wait
-        (format stream "Fwait_para();~%")     
-        ;; var = Fget_para_output(N);
-        (for ((arg1 (elt x 1) (cdr arg1))
-              (num 0 (+ num 1)))
-             ((null arg1) nil)
-             (format stream "int ~A = Fget_para_output(num[~D]);~%" (elt (elt arg1 0) 0) num)) 
-        (mapcar (lambda (y) (car y)) (elt x 1))) 
 
     (defun comp-mt-call (stream x env args tail name global test clos)
         (format stream "({int num[PARASIZE];")

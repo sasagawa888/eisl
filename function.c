@@ -2638,8 +2638,8 @@ int f_char_eqgreaterp(int arglist, int th)
 
 int f_char_index(int arglist, int th)
 {
-    int arg1, arg2, arg3, n, i, j, len;
-    char c;
+    int arg1, arg2, arg3, n, i, j, pos;
+    char c[CHARSIZE];
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -2666,15 +2666,95 @@ int f_char_index(int arglist, int th)
     else
 	j = 0;
 
-    c = GET_CHAR(arg1);
-    len = strlen(GET_NAME(arg2));
-    for (i = j; i < len; i++) {
-	if (STRING_REF(arg2, i) == c)
-	    break;
+    i = j;
+    pos = 0;
+    // skip j
+    while (STRING_REF(arg2, pos) != NUL) {
+    if(j == 0) break;
+	if (isUni2(STRING_REF(arg2, pos))) {
+	    pos = pos + 2;
+	    j--;
+	} else if (isUni3(STRING_REF(arg2, pos))) {
+	    pos = pos + 3;
+	    j--;
+	} else if (isUni4(STRING_REF(arg2, pos))) {
+	    pos = pos + 4;
+	    j--;
+	} else if (isUni5(STRING_REF(arg2, pos))) {
+	    pos = pos + 5;
+	    j--;
+	} else if (isUni6(STRING_REF(arg2, pos))) {
+	    pos = pos + 6;
+	    j--;
+	} else {
+	    pos = pos + 1;
+	    j--;
+	}
     }
-    if (i < len)
-	return (make_int(i));
-    else
+
+    // count i
+    while (STRING_REF(arg2, pos) != NUL) {
+	    if (isUni2(STRING_REF(arg2, pos))) {
+		c[0] = STRING_REF(arg2, pos);
+		c[1] = STRING_REF(arg2, pos + 1);
+		c[2] = NUL;
+	    } else if (isUni3(STRING_REF(arg2, pos))) {
+		c[0] = STRING_REF(arg2, pos);
+		c[1] = STRING_REF(arg2, pos + 1);
+		c[2] = STRING_REF(arg2, pos + 2);
+		c[3] = NUL;
+	    } else if (isUni4(STRING_REF(arg2, pos))) {
+		c[0] = STRING_REF(arg2, pos);
+		c[1] = STRING_REF(arg2, pos + 1);
+		c[2] = STRING_REF(arg2, pos + 2);
+		c[3] = STRING_REF(arg2, pos + 3);
+		c[4] = NUL;
+	    } else if (isUni5(STRING_REF(arg2, pos))) {
+		c[0] = STRING_REF(arg2, pos);
+		c[1] = STRING_REF(arg2, pos + 1);
+		c[2] = STRING_REF(arg2, pos + 2);
+		c[3] = STRING_REF(arg2, pos + 3);
+		c[4] = STRING_REF(arg2, pos + 4);
+		c[5] = NUL;
+	    } else if (isUni6(STRING_REF(arg2, pos))) {
+		c[0] = STRING_REF(arg2, pos);
+		c[1] = STRING_REF(arg2, pos + 1);
+		c[2] = STRING_REF(arg2, pos + 2);
+		c[3] = STRING_REF(arg2, pos + 3);
+		c[4] = STRING_REF(arg2, pos + 4);
+		c[5] = STRING_REF(arg2, pos + 5);
+		c[6] = NUL;
+	    } else {
+		c[0] = STRING_REF(arg2, pos);
+		c[1] = NUL;
+	    }
+	    if(strcmp(GET_NAME(arg1),c)==0){
+            if(i < string_length(arg2)) 
+                return(make_int(i));
+            else 
+                return(NIL);
+        }
+
+	if (isUni2(STRING_REF(arg2, pos))) {
+	    pos = pos + 2;
+	    i++;
+	} else if (isUni3(STRING_REF(arg2, pos))) {
+	    pos = pos + 3;
+	    i++;
+	} else if (isUni4(STRING_REF(arg2, pos))) {
+	    pos = pos + 4;
+	    i++;
+	} else if (isUni5(STRING_REF(arg2, pos))) {
+	    pos = pos + 5;
+	    i++;
+	} else if (isUni6(STRING_REF(arg2, pos))) {
+	    pos = pos + 6;
+	    i++;
+	} else {
+	    pos = pos + 1;
+	    i++;
+	}
+    }
 	return (NIL);
 }
 

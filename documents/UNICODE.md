@@ -71,3 +71,39 @@ e.g.
 > 
 ```
 
+### string-index 
+
+```
+Easy-ISLisp Ver5.66 [20M cells]
+> (string-index "ñ" "Español")    
+4
+> (string-index "ño" "Español")  
+4
+> (string-index "é" "Español")  
+NIL
+> (string-index "lo" "hello" 4)
+NIL
+> (string-index "ちは" "こんにちは" 2)
+3
+> (string-index "ばん" "こんにちは")
+NIL
+> (string-index "" "")
+0
+> (string-index "lo" "hello")
+3
+> 
+```
+
+### char-index
+
+```
+> (char-index #\o "Español")  
+5
+> (char-index #\o "Español" 5)
+5
+> (char-index #\o "Español" 6)
+NIL
+> (char-index #\é "Español")
+NIL
+> 
+```

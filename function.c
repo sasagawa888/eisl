@@ -3022,7 +3022,7 @@ int f_string_append(int arglist, int th)
 
 int f_string_index(int arglist, int th)
 {
-    int arg1, arg2, arg3, n, i, j, k, len1, len2;
+    int arg1, arg2, arg3, n, i, j, k, pos;
 
     arg1 = car(arglist);
     arg2 = cadr(arglist);
@@ -3046,23 +3046,72 @@ int f_string_index(int arglist, int th)
     if (string_length(arg2) == 0)
 	return (NIL);
 
-    len1 = strlen(GET_NAME(arg1));
-    len2 = strlen(GET_NAME(arg2));
     if (n == 3)
 	j = GET_INT(arg3);
     else
 	j = 0;
 
 
+    i = j;
+    pos = 0;
+    // skip j
+    while (STRING_REF(arg2, pos) != NUL) {
+    if(j == 0) break;
+	if (isUni2(STRING_REF(arg2, pos))) {
+	    pos = pos + 2;
+	    j--;
+	} else if (isUni3(STRING_REF(arg2, pos))) {
+	    pos = pos + 3;
+	    j--;
+	} else if (isUni4(STRING_REF(arg2, pos))) {
+	    pos = pos + 4;
+	    j--;
+	} else if (isUni5(STRING_REF(arg2, pos))) {
+	    pos = pos + 5;
+	    j--;
+	} else if (isUni6(STRING_REF(arg2, pos))) {
+	    pos = pos + 6;
+	    j--;
+	} else {
+	    pos = pos + 1;
+	    j--;
+	}
+    }
 
-    for (i = j; i < len2; i++)
-	for (k = 0; k < len1 + 1; k++)
-	    if (STRING_REF(arg1, k) == NUL)
-		return (make_int(i));
-	    else if (STRING_REF(arg1, k) != STRING_REF(arg2, i + k))
-		break;
-
-
+    // count i
+    while (STRING_REF(arg2, pos) != NUL) {
+        k = 0;
+	    while(STRING_REF(arg1,k) != NUL && STRING_REF(arg2,k+pos) != NUL){
+            if(STRING_REF(arg1,k) != STRING_REF(arg2,k+pos))
+                goto skip;
+            k++;
+        }
+        if(STRING_REF(arg1,k) == NIL) 
+            return(make_int(i));
+        else 
+            return(NIL);
+    skip:
+	if (isUni2(STRING_REF(arg2, pos))) {
+	    pos = pos + 2;
+	    i++;
+	} else if (isUni3(STRING_REF(arg2, pos))) {
+	    pos = pos + 3;
+	    i++;
+	} else if (isUni4(STRING_REF(arg2, pos))) {
+	    pos = pos + 4;
+	    i++;
+	} else if (isUni5(STRING_REF(arg2, pos))) {
+	    pos = pos + 5;
+	    i++;
+	} else if (isUni6(STRING_REF(arg2, pos))) {
+	    pos = pos + 6;
+	    i++;
+	} else {
+	    pos = pos + 1;
+	    i++;
+	}
+    }
+	
     return (NIL);
 }
 

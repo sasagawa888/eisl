@@ -58,6 +58,7 @@ https://vimeo.com/614514131
 $ eisl -h
 List of options:
 -c           -- EISL starts after reading compiler.lsp.
+-e           -- EISL evaluates given S-expression
 -f           -- EISL starts after reading formatter.lsp.
 -h           -- display help.
 -l filename  -- EISL starts after reading the file.

@@ -74,6 +74,7 @@ For other options, see `eisl -h`:
 $ eisl -h
 List of options:
 -c           -- EISL starts after reading compiler.lsp.
+-e           -- EISL evals given S-expression and exit.
 -f           -- EISL starts after reading formatter.lsp.
 -h           -- display help.
 -l filename  -- EISL starts after reading the file.

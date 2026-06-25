@@ -335,6 +335,7 @@ static void usage(void)
 	 "-n           -- EISL runs as network child mode.\n"
 	 "-r           -- EISL does not use editable REPL.\n"
 	 "-s filename  -- EISL runs the file with script mode.\n"
+	 "-e code      -- EISL run \"code\" and exits.\n"
 	 "-v           -- display version number.");
 }
 
@@ -407,7 +408,7 @@ int main(int argc, char *argv[])
 	if (access("startup.lsp", R_OK) == 0)
 	    f_load(list1(make_str("startup.lsp")), 0);
 
-	while ((ch = getopt(argc, argv, "l:m:s:p:cfrhvn")) != -1) {
+	while ((ch = getopt(argc, argv, "l:m:s:p:e:cfrhvn")) != -1) {
 	    char *str;
 
 	    switch (ch) {
@@ -466,6 +467,14 @@ int main(int argc, char *argv[])
 	    case 'h':
 		usage();
 		exit(EXIT_SUCCESS);
+	    case 'e':
+	      char filename[] = "/tmp/eisltmp.XXXXXX";
+	      int fd = mkstemp(filename);
+	      write(fd, optarg, strlen(optarg));
+	      close(fd);
+	      f_load(list1(make_str(filename)), 0);
+	      unlink(filename);
+	      exit(EXIT_SUCCESS);
 	    default:
 		usage();
 		exit(EXIT_FAILURE);

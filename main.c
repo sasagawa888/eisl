@@ -470,7 +470,10 @@ int main(int argc, char *argv[])
 	    case 'e':
 	      char filename[] = "/tmp/eisltmp.XXXXXX";
 	      int fd = mkstemp(filename);
-	      write(fd, optarg, strlen(optarg));
+		  if (write(fd, optarg, strlen(optarg)) < 0) {
+    		perror("write");
+    		exit(EXIT_FAILURE);
+		  }
 	      close(fd);
 	      f_load(list1(make_str(filename)), 0);
 	      unlink(filename);

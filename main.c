@@ -468,7 +468,7 @@ int main(int argc, char *argv[])
 		usage();
 		exit(EXIT_SUCCESS);
 	    case 'e':
-	      char filename[] = "/tmp/eisltmp.XXXXXX";
+	      {char filename[] = "/tmp/eisltmp.XXXXXX";
 	      int fd = mkstemp(filename);
 		  if (write(fd, optarg, strlen(optarg)) < 0) {
     		perror("write");
@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
 	      close(fd);
 	      f_load(list1(make_str(filename)), 0);
 	      unlink(filename);
-	      exit(EXIT_SUCCESS);
+	      exit(EXIT_SUCCESS);}
 	    default:
 		usage();
 		exit(EXIT_FAILURE);

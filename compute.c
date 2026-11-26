@@ -62,6 +62,11 @@ int numeqp(int x, int y)
 	else
 	    return (0);
     }
+    /* a bignum is never equal to fixnum/longnum */
+    else if (bignump(x) && (integerp(y) || longnump(y)))
+	return (0);
+    else if ((integerp(x) || longnump(x)) && bignump(y))
+	return (0);
     /* if floating point number, consider EPSILON */
     else if (floatp(x) && floatp(y)) {
 	if (GET_FLT(x) - DBL_EPSILON <= GET_FLT(y) &&
@@ -99,10 +104,12 @@ int smallerp(int x1, int x2)
 	    return (1);
 	else
 	    return (0);
-    } else if (integerp(x1) && bignump(x2))
-	return (1);
-    else if (longnump(x1) && bignump(x2))
-	return (1);
+    }
+    /* magnitude of a bignum is larger than fixnum/longnum. sign decides */
+    else if ((integerp(x1) || longnump(x1)) && bignump(x2))
+	return (big_positivep(x2));
+    else if (bignump(x1) && (integerp(x2) || longnump(x2)))
+	return (big_negativep(x1));
     else if (longnump(x1) && longnump(x2)) {
 	if (GET_LONG(x1) < GET_LONG(x2))
 	    return (1);
@@ -128,10 +135,12 @@ int eqsmallerp(int x1, int x2)
 	    return (1);
 	else
 	    return (0);
-    } else if (integerp(x1) && bignump(x2))
-	return (1);
-    else if (longnump(x1) && bignump(x2))
-	return (1);
+    }
+    /* magnitude of a bignum is larger than fixnum/longnum. sign decides */
+    else if ((integerp(x1) || longnump(x1)) && bignump(x2))
+	return (big_positivep(x2));
+    else if (bignump(x1) && (integerp(x2) || longnump(x2)))
+	return (big_negativep(x1));
     else if (longnump(x1) && longnump(x2)) {
 	if (GET_LONG(x1) <= GET_LONG(x2))
 	    return (1);

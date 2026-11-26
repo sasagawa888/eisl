@@ -93,6 +93,12 @@ int make_big(char *bignum)
 
 	bignum[j] = NUL;
     }
+    /* remove leading zero */
+    for (i = 0; bignum[i] == '0' && bignum[i + 1] != NUL; i++);
+    if (i > 0)
+	memmove(bignum, bignum + i, strlen(bignum + i) + 1);
+    if (strlen(bignum) <= 9)
+	return (make_int(sign * atoi(bignum)));
     /* length to check long data type */
     len = 0;
     /* generate bignum data cell */

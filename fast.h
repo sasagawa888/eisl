@@ -831,42 +831,17 @@ static int fast_mult(int x, int y)
 static int fast_mod(int x, int y)
 {
     int intx, inty, res;
-    long long int longx, longy;
 
-    if (x >= INT_FLAG && y >= INT_FLAG) {
-	intx = (x & INT_MASK);
-	inty = (y & INT_MASK);
+    if ((x >= INT_FLAG || x < 0) && (y >= INT_FLAG || y < 0)
+	&& y != INT_FLAG) {	/* both are immediate and y is not 0 */
+	intx = (x < 0) ? x : (x & INT_MASK);
+	inty = (y < 0) ? y : (y & INT_MASK);
 	res = intx % inty;
-	res = res | INT_FLAG;
-	return (res);
-    } else if (x >= INT_FLAG && y < 0) {
-	intx = (x & INT_MASK);
-	inty = y;
-	res = -1 * (intx % inty);
-	if (res >= 0)
-	    res = res | INT_FLAG;
-	return (res);
-    } else if (x < 0 && y >= INT_FLAG) {
-	intx = x;
-	inty = (y & INT_MASK);
-	res = inty + (intx % inty);
-	if (res >= 0)
-	    res = res | INT_FLAG;
-	return (res);
-    } else if (x < 0 && y < 0) {
-	res = -1 * ((-1 * x) % (-1 * y));
-	return (res);
-    } else if ((CELLRANGE(x) && Flongnump(x)) && !CELLRANGE(y)) {
-	longx = Fgetlong(x);
-	if (y >= INT_FLAG)
-	    inty = (y & INT_MASK);
-	longy = (long long int) inty;
-	res = (int) (longx % longy);
-	if (res >= 0)
-	    res = res | INT_FLAG;
-	return (res);
+	if (res != 0 && (res < 0) != (inty < 0))
+	    res = res + inty;
+	return (fast_immediate(res));
     } else
-	return (Fpcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y),0));
+	return (Fpcallsubr(Fcar(Fmakesym("MOD")), Flist2(x, y), 0));
 }
 
 

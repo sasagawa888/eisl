@@ -891,114 +891,49 @@ long long int isqrt1(long long int n, long long int init)
 }
 
 /* newton method for bignum */
+/* Newton method. init must be sqrt(n) or greater */
 int isqrt2(int n, int init)
 {
-    int s;
+    int s, next;
 
     s = init;
-    while (greaterp(mult(s, s), n)) {
-	//print(s);printf("\n");
-	s = divide(plus(s, divide(n, s)), make_int(2));
+    while (1) {
+	next = divide(plus(s, divide(n, s)), make_int(2));
+	if (!smallerp(next, s))
+	    return (s);
+	s = next;
     }
-    return (s);
 }
 
-/* basic isqrt (for small bignum) */
+/* isqrt of bignum */
 int isqrt3(int x)
 {
     int len, pointer, init, i;
+    double msb;
+
+    /* initial value is made of one or two MSB limbs. it is greater than the answer */
     len = get_length(x);
     pointer = get_pointer(x);
-    if (len % 2 == 0) {
-	long long int lmsb =
-	    (long long int) bigcell[pointer] * BIGNUM_BASE +
-	    (long long int) bigcell[pointer - 1];
-	init = gen_big();
-	len = (len - 2) / 2;
-	for (i = 0; i < len; i++) {
-	    bigcell[big_pt0++] = 0;
-	}
-	bigcell[big_pt0++] = (int) sqrt(lmsb) + 10000;
-	set_sign(init, 1);
-	set_pointer(init, big_pt0 - 1);
-	set_length(init, len + 1);
-    } else {
-	int msb = bigcell[pointer];
-	init = gen_big();
-	len = (len - 1) / 2;
-	for (i = 0; i < len; i++) {
-	    bigcell[big_pt0++] = 0;
-	}
-	bigcell[big_pt0++] = (int) sqrt(msb) + 1;
-	set_sign(init, 1);
-	set_pointer(init, big_pt0 - 1);
-	set_length(init, len + 1);
-    }
+    msb = bigcell[pointer];
+    if (len % 2 == 0)
+	msb = msb * BIGNUM_BASE + bigcell[pointer - 1];
+    msb = ceil(sqrt(msb + 1.0)) + 1.0;
+    len = (len - 1) / 2;
 
-    return (isqrt2(x, init));
-
+    for (i = 0; i < len; i++)
+	bigcell[big_pt0++] = 0;
+    if (msb >= BIGNUM_BASE) {	/* carry */
+	bigcell[big_pt0++] = 0;
+	bigcell[big_pt0++] = 1;
+	len++;
+    } else
+	bigcell[big_pt0++] = (int) msb;
+    init = gen_big();
+    set_sign(init, 1);
+    set_pointer(init, big_pt0 - 1);
+    set_length(init, len + 1);
+    return (isqrt2(x, big_simplify(init)));
 }
-
-
-/* idea memo
- even digits
- e.g. isqrt(12345678901234) = 3513641
- goal                     init         value
- isqrt(123456)               -           351
- isqrt(123456789012)   35100          351364
- isqrt(12345678901234) 3513640       3513641 
- 
- 
- e.g. isqrt(1234567890123) 1111111
- odd digits
- goal                  init        value
- isqrt(12345)             -          111
- isqrt(123456789)      11100       11111
- isqrt(1234567890123)  1111100   1111111
-
- size of bignum must be 10 or greater
-*/
-int isqrt4(int x)
-{
-    int len, len1, len2, init, target, res;
-
-    len = get_length(x);
-
-    if (len % 2 == 0) {
-	len1 = 3;
-	len2 = 6;
-	init = plus(isqrt3(big_take_from_left(x, len2)), make_int(1));
-	while (len2 * 2 < len) {
-	    len1 = len1 * 2;
-	    len2 = len2 * 2;
-	    target = big_take_from_left(x, len2);
-	    init = big_shift_right(init, len1 - get_length(init));
-	    init = plus(isqrt2(target, init), make_int(1));
-	}
-	len1 = len / 2;
-	len2 = len;
-	init = big_shift_right(init, len1 - get_length(init));
-	res = isqrt2(big_take_from_left(x, len2), init);
-	return (res);
-    } else {
-	len1 = 3;
-	len2 = 5;
-	init = plus(isqrt3(big_take_from_left(x, len2)), make_int(1));
-	while (len2 * 2 - 1 < len) {
-	    len1 = len1 + ((len2 * 2 - 1) - len2) / 2;
-	    len2 = len2 * 2 - 1;
-	    target = big_take_from_left(x, len2);
-	    init = big_shift_right(init, len1 - get_length(init));
-	    init = plus(isqrt2(target, init), make_int(1));
-	}
-	len1 = (len + 1) / 2;
-	len2 = len;
-	init = big_shift_right(init, len1 - get_length(init));
-	res = isqrt2(big_take_from_left(x, len2), init);
-	return (res);
-    }
-}
-
 
 int isqrt(int x)
 {
@@ -1011,10 +946,6 @@ int isqrt(int x)
 	n = GET_LONG(x);
 	init = (long long int) sqrt(n) + 1;
 	return (make_int((int) isqrt1(n, init)));
-    } else {
-	if (get_length(x) < 10)
-	    return (isqrt3(x));
-	else
-	    return (isqrt4(x));
-    }
+    } else
+	return (isqrt3(x));
 }

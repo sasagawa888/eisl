@@ -396,21 +396,6 @@ int big_shift_left(int x, int n)
 Take bignum data from left amout of n
 */
 
-int big_take_from_left(int x, int n)
-{
-    int res;
-
-    if (zerop(x))
-	return (x);
-    res = gen_big();
-    set_pointer(res, get_pointer(x));
-    set_length(res, n);
-    set_sign(res, get_sign(x));
-
-    return (res);
-
-}
-
 /* add n-zero-cells to x
 [dtMSB,dt1,dt2,..,dtLSB]
    |

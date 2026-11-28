@@ -43,7 +43,8 @@ typedef int (*fn5)(int, int, int);
 typedef char *(*fn6)(int);
 typedef double (*fn7)(int);
 typedef int (*fn8)(double);
-typedef void (*tfunc)(const char *, int (*func)(int));
+typedef void (*tfunc)(const char *, int (*func)(int, int));
+
 
 enum { GBC_IDX, GETDYNPT_IDX, GET_ERROR_HANDLER_IDX, GET_ERROR_FLAG_IDX, 
     RESTORE_ERROR_HANDLER_IDX, WAIT_PARA_IDX, JUMP_TO_REPL_IDX, CLEAR_CHILD_SIGNAL_IDX,

@@ -500,6 +500,19 @@ int mult(int arg1, int arg2)
     return (UNDEF);
 }
 
+/* when divisible, result is integer, else float.
+ * decide it with integers, because rounding of float may hide the fraction.
+ */
+static int quotient_int(int arg1, int arg2)
+{
+    int q;
+
+    q = divide(arg1, arg2);
+    if (numeqp(mult(q, arg2), arg1))
+	return (q);
+    return (quotient(exact_to_inexact(arg1), exact_to_inexact(arg2)));
+}
+
 int quotient(int arg1, int arg2)
 {
     int n, s, tag1, tag2;
@@ -543,13 +556,7 @@ int quotient(int arg1, int arg2)
 	switch (tag2) {
 	case INTN:
 	case LONGN:
-	    n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
-	    x1 = GET_FLT(n);
-	    x2 = x1 - ceil(x1);
-	    if (x2 == 0.0) {
-		return (divide(arg1, arg2));
-	    } else
-		return (n);
+	    return (quotient_int(arg1, arg2));
 	case BIGN:
 	    return (quotient
 		    (exact_to_inexact(arg1), exact_to_inexact(arg2)));
@@ -562,17 +569,7 @@ int quotient(int arg1, int arg2)
 	case INTN:
 	case LONGN:
 	case BIGN:
-	    n = quotient(exact_to_inexact(arg1), exact_to_inexact(arg2));
-	    x1 = GET_FLT(n);
-	    x2 = x1 - ceil(x1);
-	    if (x1 == 1.0)
-		return (make_int(1));
-	    else if (x1 == -1.0)
-		return (make_int(-1));
-	    else if (x2 == 0.0)
-		return (divide(arg1, arg2));
-	    else
-		return (n);
+	    return (quotient_int(arg1, arg2));
 	case FLTN:
 	    return (quotient(exact_to_inexact(arg1), arg2));
 	}
@@ -634,8 +631,6 @@ int divide(int x, int y)
 
 int s_remainder(int x, int y)
 {
-    int i;
-
     if (integerp(x) && integerp(y))
 	return (make_int(GET_INT(x) % GET_INT(y)));
     else if (integerp(x) && longnump(y))
@@ -650,10 +645,9 @@ int s_remainder(int x, int y)
 	return (long_long_remainder(x, y));
     else if (bignump(x) && integerp(y))
 	return (big_remainder_i(x, y));
-    else if (bignump(x) && longnump(y)) {
-	i = big_long_to_big(y);
-	return (minus(x, mult(divide(x, i), i)));
-    } else if (bignump(x) && bignump(y))
+    else if (bignump(x) && longnump(y))
+	return (big_remainder(x, big_long_to_big(y)));
+    else if (bignump(x) && bignump(y))
 	return (big_remainder(x, y));
 
     error(ILLEGAL_ARGS, "remainder", NIL, 0);

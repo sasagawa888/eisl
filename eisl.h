@@ -808,7 +808,6 @@ int big_plus1(int arg1, int arg2);
 int big_positivep(int x);
 int big_div(int arg1, int arg2);
 int big_div_i(int x, int y);
-int big_div1(int arg1, int arg2);
 int big_remainder(int x, int y);
 int big_remainder_i(int x, int y);
 int big_second_half(int x);

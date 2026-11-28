@@ -330,10 +330,11 @@ int big_long_to_big(int x)
     i2 = llabs(l) % BIGNUM_BASE;
     i1 = llabs(l) / BIGNUM_BASE;
     bigcell[big_pt0++] = i2;
-    bigcell[big_pt0++] = i1;
+    if (i1 != 0)
+	bigcell[big_pt0++] = i1;
     res = gen_big();
     set_pointer(res, big_pt0 - 1);
-    set_length(res, 2);
+    set_length(res, (i1 != 0) ? 2 : 1);
     if (l >= 0)
 	set_sign(res, 1);
     else
@@ -789,32 +790,14 @@ int big_mult1(int arg1, int arg2)
     return (res);
 }
 
+static int big_divide_abs(int x, int y, bool rem);
+
 int big_div(int arg1, int arg2)
 {
-    int res, x, y;
+    int res;
 
-
-    res = UNDEF;
-    /* if devidend is smaller than divisor,return 0 */
-    if (big_abs_smallerp(arg1, arg2))
-	return (make_int(0));
-
-    if (big_positivep(arg1) && big_positivep(arg2)) {
-	res = big_div1(arg1, arg2);
-    } else if (big_positivep(arg1) && big_negativep(arg2)) {
-	y = big_abs(arg2);
-	res = big_div1(arg1, y);
-	set_sign(res, -1);
-    } else if (big_negativep(arg1) && big_positivep(arg2)) {
-	x = big_abs(arg1);
-	res = big_div1(x, arg2);
-	set_sign(res, -1);
-    } else if (big_negativep(arg1) && big_negativep(arg2)) {
-	x = big_abs(arg1);
-	y = big_abs(arg2);
-	res = big_div1(x, y);
-	set_sign(res, 1);
-    }
+    res = big_divide_abs(arg1, arg2, false);
+    set_sign(res, (get_sign(arg1) == get_sign(arg2)) ? 1 : -1);
 
     if (simp_flag)
 	res = big_simplify(res);
@@ -823,153 +806,143 @@ int big_div(int arg1, int arg2)
 
 
 
-int big_div1(int arg1, int arg2)
+/* number of limbs without leading zero */
+static int big_real_length(int x)
 {
-    int shift, save1, res, len, q, dividend, pointery, msb2;
-    long long int lmsb1;
+    int pointer = get_pointer(x), len = get_length(x);
 
-
-    /* arg1 < arg2 -> 0 */
-    if (smallerp(arg1, arg2))
-	return (make_int(0));
-
-    simp_flag = false;
-    pointery = get_pointer(arg2);	//MSB pointer
-
-    /* Knuth The art of computer programing D-algorithm */
-    if (bigcell[pointery] < BIGNUM_BASE / 2) {
-	int d = BIGNUM_BASE / (1 + bigcell[pointery]);
-	arg1 = big_mult1(arg1, big_int_to_big(make_int(d)));
-	arg2 = big_mult1(arg2, big_int_to_big(make_int(d)));
+    while (len > 1 && bigcell[pointer] == 0) {
+	pointer--;
+	len--;
     }
+    return (len);
+}
+
+/* |x| / |y| by Knuth, The art of computer programing, algorithm D.
+ * return quotient (rem = false) or remainder (rem = true), sign is positive.
+ * work area is allocated by malloc, so bigcell has only the result.
+ */
+static int big_divide_abs(int x, int y, bool rem)
+{
+    int n, m, i, j, len, res, lsbx, lsby;
+    long long int d, t, borrow, carry, qhat, rhat;
+    int *u, *v, *q;
+
+    n = big_real_length(y);
+    len = big_real_length(x);
+    lsbx = get_pointer(x) - get_length(x) + 1;
+    lsby = get_pointer(y) - get_length(y) + 1;
+    m = (len >= n) ? len - n : 0;
+
+    u = (int *) calloc((size_t) len + n + 2, sizeof(int));	/* dividend -> remainder */
+    v = (int *) calloc((size_t) n + 1, sizeof(int));	/* divisor */
+    q = (int *) calloc((size_t) m + 1, sizeof(int));	/* quotient */
+    if (u == NULL || v == NULL || q == NULL) {
+	free(u);
+	free(v);
+	free(q);
+	error(MALLOC_OVERF, "bignum div", NIL, 0);
+    }
+
+    /* normalize. MSB of divisor becomes BIGNUM_BASE/2 or greater */
+    d = BIGNUM_BASE / ((long long int) bigcell[lsby + n - 1] + 1);
+    carry = 0;
+    for (i = 0; i < len; i++) {
+	t = (long long int) bigcell[lsbx + i] * d + carry;
+	u[i] = (int) (t % BIGNUM_BASE);
+	carry = t / BIGNUM_BASE;
+    }
+    u[len] = (int) carry;
+    carry = 0;
+    for (i = 0; i < n; i++) {
+	t = (long long int) bigcell[lsby + i] * d + carry;
+	v[i] = (int) (t % BIGNUM_BASE);
+	carry = t / BIGNUM_BASE;
+    }
+
+    if (n == 1) {		/* one limb */
+	carry = 0;
+	for (j = len; j >= 0; j--) {
+	    t = carry * BIGNUM_BASE + u[j];
+	    if (j <= m)
+		q[j] = (int) (t / v[0]);
+	    carry = t % v[0];
+	    u[j] = 0;
+	}
+	u[0] = (int) carry;
+    } else if (len >= n) {
+	for (j = m; j >= 0; j--) {
+	    t = (long long int) u[j + n] * BIGNUM_BASE + u[j + n - 1];
+	    qhat = t / v[n - 1];
+	    rhat = t % v[n - 1];
+	    while (qhat >= BIGNUM_BASE ||
+		   qhat * v[n - 2] > rhat * BIGNUM_BASE + u[j + n - 2]) {
+		qhat--;
+		rhat += v[n - 1];
+		if (rhat >= BIGNUM_BASE)
+		    break;
+	    }
+	    /* multiply and subtract */
+	    borrow = 0;
+	    carry = 0;
+	    for (i = 0; i < n; i++) {
+		t = qhat * v[i] + carry;
+		carry = t / BIGNUM_BASE;
+		t = (long long int) u[j + i] - (t % BIGNUM_BASE) - borrow;
+		borrow = (t < 0);
+		u[j + i] = (int) (borrow ? t + BIGNUM_BASE : t);
+	    }
+	    t = (long long int) u[j + n] - carry - borrow;
+	    if (t < 0) {	/* qhat was too large by one, add back */
+		qhat--;
+		carry = 0;
+		for (i = 0; i < n; i++) {
+		    long long int w = (long long int) u[j + i] + v[i] + carry;
+
+		    carry = (w >= BIGNUM_BASE);
+		    u[j + i] = (int) (carry ? w - BIGNUM_BASE : w);
+		}
+		t += carry;
+	    }
+	    u[j + n] = (int) t;
+	    q[j] = (int) qhat;
+	}
+    }
+
+    if (rem) {			/* denormalize remainder */
+	carry = 0;
+	for (i = n - 1; i >= 0; i--) {
+	    t = carry * BIGNUM_BASE + u[i];
+	    u[i] = (int) (t / d);
+	    carry = t % d;
+	}
+	len = n;
+    } else
+	len = m + 1;
 
     res = gen_big();
     set_sign(res, 1);
-    len = 0;
-    big_pt0 = big_pt0 + get_length(arg1);	// prepare area of answer. 
-    set_pointer(res, big_pt0);
-    pointery = get_pointer(arg2);	//MSB pointer
-    msb2 = bigcell[pointery];	// value of MSB
-    dividend = arg1;
-    save1 = BIGNUM_WORK;
-
-    do {
-	int save0 = big_pt0;
-	big_pt0 = save1;
-	shift = get_length(dividend) - get_length(arg2);
-	int pointerx = get_pointer(dividend);	// MSB
-	int msb1 = bigcell[pointerx];
-	if (msb1 > msb2) {
-	    q = msb1 / msb2;
-
-	} else {
-	    lmsb1 =
-		(long long int) bigcell[pointerx] * BIGNUM_BASE +
-		(long long int) bigcell[pointerx - 1];
-	    q = (int) (lmsb1 / (long long int) msb2);
-	    shift--;
-	    /* exception if q >= 10^10 , q = q/BIGNUMBASE. q must be smaller than BIGNUM_BASE */
-	    if (q >= BIGNUM_BASE) {
-		q = q / BIGNUM_BASE;
-		shift++;
-	    }
-	}
-
-
-	int subtract =
-	    big_shift_right(big_mult1(arg2, big_int_to_big(make_int(q))),
-			    shift);
-	dividend = big_minus(dividend, subtract);
-
-	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
-	while (negativep(dividend)) {
-	    dividend = plus(dividend, big_shift_right(arg2, shift));
-	    q--;
-	}
-
-	save1 = big_pt0;
-	big_pt0 = save0;
-	bigcell[big_pt0 - len] = q;
-	len++;
-
-    }
-    while (!big_zerop(dividend) && !smallerp(dividend, arg2));
-
-    /* when divident is smaller than divisior and shift > 0 insert zero
-     * e.g.  div(3000000000000000000,30000000000)
-     */
-    while (shift > 0) {
-	bigcell[big_pt0 - len] = 0;
-	shift--;
-	len++;
-    }
-
-    simp_flag = true;
-    big_pt0++;
-    set_pointer(res, big_pt0 - 1);
+    for (i = 0; i < len; i++)
+	bigcell[big_pt0 + i] = rem ? u[i] : q[i];
+    free(u);
+    free(v);
+    free(q);
+    while (len > 1 && bigcell[big_pt0 + len - 1] == 0)
+	len--;
+    set_pointer(res, big_pt0 + len - 1);
     set_length(res, len);
+    big_pt0 = big_pt0 + len;
     return (res);
 }
 
-
+/* sign of the remainder is the sign of dividend */
 int big_remainder(int arg1, int arg2)
 {
-    int res, len, q, dividend, pointery, save0, pointer, msb2;
-    long long int lmsb1;
+    int res;
 
-
-    /* arg1 > arg2 -> 0 */
-    if (smallerp(arg1, arg2))
-	return (make_int(0));
-
-    res = gen_big();
-    set_sign(res, 1);
-    big_pt0 = big_pt0 + get_length(arg1);	// prepare area of answer. 
-    set_pointer(res, big_pt0);
-    pointery = get_pointer(arg2);	//MSB pointer
-    msb2 = bigcell[pointery];	// value of MSB
-    dividend = arg1;
-    save0 = big_pt0;
-    big_pt0 = BIGNUM_WORK;	// change to working area
-
-    do {
-	int shift = get_length(dividend) - get_length(arg2);
-	int pointerx = get_pointer(dividend);	// MSB
-	int msb1 = bigcell[pointerx];
-	if (msb1 > msb2) {
-	    q = msb1 / msb2;
-
-	} else {
-	    lmsb1 =
-		(long long int) bigcell[pointerx] * BIGNUM_BASE +
-		(long long int) bigcell[pointerx - 1];
-	    q = (int) (lmsb1 / (long long int) msb2);
-	    shift--;
-	}
-	int subtract =
-	    big_shift_right(big_mult1(arg2, big_int_to_big(make_int(q))),
-			    shift);
-	dividend = big_minus(dividend, subtract);
-
-	/* e.g. (div 100000000000000000000000000 25000000000000000000000002) = 3 (not 4) */
-	while (negativep(dividend)) {
-	    dividend = plus(dividend, big_shift_right(arg2, shift));
-	    q--;
-	}
-
-    }
-    while (!smallerp(dividend, arg2));
-
-    big_pt0 = save0;		/* restore pointer copy dividend to big_pt0 temporarly area */
-    len = get_length(dividend);
-    pointer = get_pointer(dividend) - len + 1;	//LSB
-    int i;
-    for (i = 0; i < len; i++) {
-	bigcell[big_pt0++] = bigcell[pointer++];
-    }
-    set_pointer(res, big_pt0 - 1);
-    set_length(res, len);
-    return (res);
+    res = big_divide_abs(arg1, arg2, true);
+    set_sign(res, get_sign(arg1));
+    return (big_simplify(res));
 }
 
 
@@ -1031,7 +1004,7 @@ int big_big_to_str(int x)
 /* bignum remainder of bignum and int */
 int big_remainder_i(int x, int y)
 {
-    int abs, pointer, len, sign1, sign2;
+    int abs, pointer, len, sign1;
     long long int j, r;
 
     abs = big_abs(x);
@@ -1040,12 +1013,8 @@ int big_remainder_i(int x, int y)
     sign1 = get_sign(x);
 
     j = GET_INT(y);
-    if (j < 0) {
+    if (j < 0)
 	j = llabs(j);
-	sign2 = -1;
-    } else {
-	sign2 = 1;
-    }
 
     r = 0;
 
@@ -1062,7 +1031,7 @@ int big_remainder_i(int x, int y)
 	len--;
     }
     while (len > 0);
-    return (make_int((int) r * sign1 * sign2));
+    return (make_int((int) r * sign1));
 }
 
 int big_div_i(int x, int y)
